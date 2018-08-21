@@ -1,0 +1,15 @@
+{
+    "name": "@berry/parsers",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./lib/index.js",
+    "dependencies": {
+        "tslib": "^1"
+    },
+    "devDependencies": {
+        "pegjs": "^0.10.0"
+    },
+    "scripts": {
+        "grammar:syml": "pegjs -o sources/grammars/syml.js sources/grammars/syml.pegjs"
+    }
+}

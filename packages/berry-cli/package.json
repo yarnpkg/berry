@@ -1,0 +1,32 @@
+{
+    "name": "@berry/cli",
+    "version": "0.0.0",
+    "private": true,
+    "bin": {
+        "berry": "./bin/run.js"
+    },
+    "dependencies": {
+        "@berry/core": "0.0.0",
+        "@oclif/command": "^1",
+        "@oclif/config": "^1",
+        "@oclif/errors": "^1",
+        "@oclif/plugin-help": "^2",
+        "tslib": "^1"
+    },
+    "devDependencies": {
+        "globby": "^8"
+    },
+    "scripts": {
+        "cli": "ts-node ./bin/run.js"
+    },
+    "files": [
+        "/lib"
+    ],
+    "oclif": {
+        "bin": "berry",
+        "commands": "./sources/commands",
+        "plugins": [
+            "@oclif/plugin-help"
+        ]
+    }
+}

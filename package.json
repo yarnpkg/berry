@@ -1,0 +1,19 @@
+{
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "dependencies": {
+        "@types/globby": "^8.0.0",
+        "@types/jszip": "^3.1.4",
+        "@types/lockfile": "^1.0.0",
+        "@types/lodash": "^4.14.116",
+        "@types/mkdirp": "^0.5.2",
+        "@types/node-fetch": "^2.1.2",
+        "@types/request": "^2.47.1",
+        "@types/semver": "^5.5.0",
+        "@types/stream-to-promise": "^2.2.0",
+        "@types/tar": "^4.0.0",
+        "typescript": "^3.0.1"
+    }
+}
