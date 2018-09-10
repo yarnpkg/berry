@@ -37,6 +37,6 @@ export default class Add extends Command {
 
     });
 
-    process.stdout.write(report);
+    process.stdout.write(`${report}\n`);
   }
 }

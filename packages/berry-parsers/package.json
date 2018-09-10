@@ -2,14 +2,19 @@
     "name": "@berry/parsers",
     "version": "0.0.0",
     "private": true,
-    "main": "./lib/index.js",
+    "main": "./sources/index.ts",
+    "files": [
+        "/lib"
+    ],
     "dependencies": {
         "tslib": "^1"
     },
     "devDependencies": {
-        "pegjs": "^0.10.0"
+        "pegjs": "^0.10.0",
+        "typescript": "^3.0.1"
     },
     "scripts": {
+        "build": "tsc",
         "grammar:syml": "pegjs -o sources/grammars/syml.js sources/grammars/syml.pegjs"
     }
 }

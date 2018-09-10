@@ -1,13 +1,13 @@
 import globby = require('globby');
 
-import {createHmac}           from 'crypto';
-import {existsSync, readFile} from 'fs';
-import {resolve}              from 'path';
-import {promisify}            from 'util';
+import {createHmac}                 from 'crypto';
+import {existsSync, readFile}       from 'fs';
+import {resolve}                    from 'path';
+import {promisify}                  from 'util';
 
-import {Project}              from './Project';
-import * as structUtils       from './structUtils';
-import {Descriptor, Ident}    from './types';
+import {Project}                    from './Project';
+import * as structUtils             from './structUtils';
+import {Ident, Descriptor, Locator} from './types';
 
 const readFileP = promisify(readFile);
 
@@ -24,7 +24,7 @@ export class Workspace {
   public readonly cwd: string;
 
   // @ts-ignore: This variable is set during the setup process
-  public ident: Ident;
+  public locator: Locator;
 
   public dependencies: Map<string, Descriptor> = new Map();
   public devDependencies: Map<string, Descriptor> = new Map();
@@ -41,11 +41,10 @@ export class Workspace {
     const content = await readFileP(`${this.cwd}/package.json`, `utf8`);
     const data = JSON.parse(content);
 
-    if (data.name) {
-      this.ident = structUtils.parseIdent(data.name);
-    } else {
-      this.ident = structUtils.makeIdent(null, `unnamed-workspace-${hashWorkspaceCwd(this.cwd)}`);
-    }
+    const ident = data.name ? structUtils.parseIdent(data.name) : structUtils.makeIdent(null, `unnamed-workspace-${hashWorkspaceCwd(this.cwd)}`);
+    const reference = data.version ? data.version : `0.0.0`;
+
+    this.locator = structUtils.makeLocatorFromIdent(ident, reference);
 
     if (data.dependencies) {
       for (const [name, range] of Object.entries(data.dependencies || {})) {

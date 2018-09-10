@@ -1,19 +1,18 @@
 {
-    "name": "@berry/github",
+    "name": "@berry/libzip",
     "version": "0.0.0",
     "private": true,
-    "main": "./sources/index.ts",
+    "main": "./lib/index.js",
     "files": [
         "/lib"
     ],
     "dependencies": {
-        "@berry/core": "0.0.0",
         "tslib": "^1"
     },
     "devDependencies": {
         "typescript": "^3.0.1"
     },
     "scripts": {
-        "build": "tsc"
+        "build": "tsc && ./artifacts/build.sh"
     }
 }

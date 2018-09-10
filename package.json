@@ -4,6 +4,7 @@
         "packages/*"
     ],
     "dependencies": {
+        "@types/emscripten": "^0.0.31",
         "@types/globby": "^8.0.0",
         "@types/jszip": "^3.1.4",
         "@types/lockfile": "^1.0.0",
@@ -13,7 +14,6 @@
         "@types/request": "^2.47.1",
         "@types/semver": "^5.5.0",
         "@types/stream-to-promise": "^2.2.0",
-        "@types/tar": "^4.0.0",
-        "typescript": "^3.0.1"
+        "@types/tar": "^4.0.0"
     }
 }

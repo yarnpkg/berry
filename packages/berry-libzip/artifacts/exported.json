@@ -1,0 +1,19 @@
+[
+    "_zip_error_strerror",
+    "_zip_fclose",
+    "_zip_file_get_error",
+    "_zip_fopen",
+    "_zip_fopen_index",
+    "_zip_fread",
+    "_zip_get_error",
+    "_zip_get_name",
+    "_zip_get_num_entries",
+    "_zip_open",
+    "_zip_stat",
+    "_zip_stat_index",
+    "_zipstruct_stat",
+    "_zipstruct_stat_name",
+    "_zipstruct_stat_index",
+    "_zipstruct_stat_size",
+    "_zipstruct_stat_mtime"
+]

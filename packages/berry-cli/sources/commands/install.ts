@@ -28,6 +28,6 @@ export default class Install extends Command {
       await project.persist();
     });
 
-    process.stdout.write(report);
+    process.stdout.write(`${report}\n`);
   }
 }

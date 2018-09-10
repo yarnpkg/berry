@@ -2,6 +2,8 @@ import {readFileSync}                                             from 'fs';
 
 import {PackageInformationStores, LocationBlacklist, PnpSettings} from './types';
 
+const template = readFileSync(`${__dirname}/pnpTemplate.js`, `utf8`);
+
 function generateDatastores(packageInformationStores: PackageInformationStores, blacklistedLocations: LocationBlacklist) {
   let code = ``;
 
@@ -110,15 +112,14 @@ export function generatePnpScript(settings: PnpSettings): string {
   let dynamicallyGeneratedCode = ``;
 
   dynamicallyGeneratedCode += generateDatastores(packageInformationStores, blacklistedLocations);
+  dynamicallyGeneratedCode += `\n`;
   dynamicallyGeneratedCode += generateFindPackageLocator(packageInformationStores);
 
   const replacements = Object.assign({}, settings.replacements, {
     DYNAMICALLY_GENERATED_CODE: dynamicallyGeneratedCode,
   });
 
-  const template = readFileSync(`${__dirname}/pnpTemplate.js`, `utf8`).replace(/\${2}[A-Z]+(?:_[A-Z+])/g, name => {
-    return replacements[name];
+  return template.replace(/\/\* *global +.*\*\/\n?/g, ``).replace(/\${2}([A-Z]+(?:_[A-Z]+)*)(?:\(\))?(?:;\n)?/g, ($0, $1) => {
+    return replacements[$1];
   });
-
-  return template;
 }

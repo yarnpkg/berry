@@ -81,6 +81,14 @@ export function parseLocator(string: string): Locator {
   return makeLocatorFromIdent(makeIdent(scope, name), reference);
 }
 
+export function requirableIdent(ident: Ident) {
+  if (ident.scope) {
+    return `@${ident.scope}/${ident.name}`;
+  } else {
+    return `${ident.name}`;
+  }
+}
+
 export function stringifyIdent(ident: Ident) {
   if (ident.scope) {
     return `@${ident.scope}/${ident.name}`;

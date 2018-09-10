@@ -26,8 +26,9 @@ export class Project {
   public readonly configuration: Configuration;
   public readonly cwd: string;
 
-  public workspacesByCwd: Map<string, Workspace> | null = null;
-  public workspacesByIdent: Map<string, Workspace> | null = null;
+  public workspacesByCwd: Map<string, Workspace> = new Map();
+  public workspacesByLocator: Map<string, Workspace> = new Map();
+  public workspacesByIdent: Map<string, Array<Workspace>> = new Map();
 
   public storedResolutions: Map<string, string> = new Map();
   public storedLocations: Map<string, string> = new Map();
@@ -77,39 +78,42 @@ export class Project {
     this.storedDescriptors = new Map();
     this.storedPackages = new Map();
 
-    const content = await readFileP(`${this.cwd}/berry.lock`, `utf8`);
-    const parsed: any = parseSyml(content);
+    if (existsSync(`${this.cwd}/berry.lock`)) {
+      const content = await readFileP(`${this.cwd}/berry.lock`, `utf8`);
+      const parsed: any = parseSyml(content);
 
-    for (const key of Object.keys(parsed)) {
-      const data = parsed[key];
-      const locator = structUtils.parseLocator(data.resolution);
+      for (const key of Object.keys(parsed)) {
+        const data = parsed[key];
+        const locator = structUtils.parseLocator(data.resolution);
 
-      const dependencies = new Map<string, Descriptor>();
-      const peerDependencies = new Map<string, Descriptor>();
+        const dependencies = new Map<string, Descriptor>();
+        const peerDependencies = new Map<string, Descriptor>();
 
-      for (const dependency of Object.keys(data.dependencies || {})) {
-        const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.dependencies[dependency]);
-        dependencies.set(descriptor.descriptorHash, descriptor);
-      }
+        for (const dependency of Object.keys(data.dependencies || {})) {
+          const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.dependencies[dependency]);
+          dependencies.set(descriptor.descriptorHash, descriptor);
+        }
 
-      for (const dependency of Object.keys(data.peerDependencies || {})) {
-        const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.peerDependencies[dependency]);
-        peerDependencies.set(descriptor.descriptorHash, descriptor);
-      }
+        for (const dependency of Object.keys(data.peerDependencies || {})) {
+          const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.peerDependencies[dependency]);
+          peerDependencies.set(descriptor.descriptorHash, descriptor);
+        }
 
-      const pkg: Package = {...locator, dependencies, peerDependencies};
-      this.storedPackages.set(pkg.locatorHash, pkg);
+        const pkg: Package = {...locator, dependencies, peerDependencies};
+        this.storedPackages.set(pkg.locatorHash, pkg);
 
-      for (const entry of key.split(/ *, */g)) {
-        const descriptor = structUtils.parseDescriptor(entry);
-        this.storedDescriptors.set(descriptor.descriptorHash, descriptor);
-        this.storedResolutions.set(descriptor.descriptorHash, pkg.locatorHash);
+        for (const entry of key.split(/ *, */g)) {
+          const descriptor = structUtils.parseDescriptor(entry);
+          this.storedDescriptors.set(descriptor.descriptorHash, descriptor);
+          this.storedResolutions.set(descriptor.descriptorHash, pkg.locatorHash);
+        }
       }
     }
   }
 
   async setupWorkspaces({force = false}: {force?: boolean} = {}) {
     this.workspacesByCwd = new Map();
+    this.workspacesByLocator = new Map();
     this.workspacesByIdent = new Map();
 
     let workspaceCwds = [this.cwd];
@@ -131,25 +135,27 @@ export class Project {
   }
 
   async addWorkspace(workspaceCwd: string) {
-    if (!this.workspacesByCwd || !this.workspacesByIdent)
+    if (!this.workspacesByCwd || !this.workspacesByLocator)
       throw new Error(`Workspaces must have been setup before calling this function`);
 
     const workspace = new Workspace(workspaceCwd, {project: this});
     await workspace.setup();
 
-    if (this.workspacesByIdent.has(workspace.ident.identHash))
+    if (this.workspacesByLocator.has(workspace.locator.locatorHash))
       throw new Error(`Duplicate workspace`);
 
     this.workspacesByCwd.set(workspaceCwd, workspace);
-    this.workspacesByIdent.set(workspace.ident.identHash, workspace);
+    this.workspacesByLocator.set(workspace.locator.locatorHash, workspace);
+
+    let byIdent = this.workspacesByIdent.get(workspace.locator.identHash);
+    if (!byIdent)
+      this.workspacesByIdent.set(workspace.locator.identHash, byIdent = []);
+    byIdent.push(workspace);
 
     return workspace;
   }
 
   tryWorkspaceByCwd(workspaceCwd: string) {
-    if (!this.workspacesByCwd || !this.workspacesByIdent)
-      throw new Error(`Workspaces must have been setup before calling this function`);
-
     const workspace = this.workspacesByCwd.get(workspaceCwd);
 
     if (!workspace)
@@ -159,9 +165,6 @@ export class Project {
   }
 
   getWorkspaceByCwd(workspaceCwd: string) {
-    if (!this.workspacesByCwd || !this.workspacesByIdent)
-      throw new Error(`Workspaces must have been setup before calling this function`);
-
     const workspace = this.workspacesByCwd.get(workspaceCwd);
 
     if (!workspace)
@@ -170,11 +173,8 @@ export class Project {
     return workspace;
   }
 
-  tryWorkspaceByIdent(ident: Ident) {
-    if (!this.workspacesByCwd || !this.workspacesByIdent)
-      throw new Error(`Workspaces must have been setup before calling this function`);
-
-    const workspace = this.workspacesByIdent.get(ident.identHash);
+  tryWorkspaceByLocator(locator: Locator) {
+    const workspace = this.workspacesByLocator.get(locator.locatorHash);
 
     if (!workspace)
       return null;
@@ -182,16 +182,71 @@ export class Project {
     return workspace;
   }
 
-  getWorkspaceByIdent(ident: Ident) {
-    if (!this.workspacesByCwd || !this.workspacesByIdent)
-      throw new Error(`Workspaces must have been setup before calling this function`);
-
-    const workspace = this.workspacesByIdent.get(ident.identHash);
+  getWorkspaceByLocator(locator: Locator) {
+    const workspace = this.workspacesByLocator.get(locator.locatorHash);
 
     if (!workspace)
       throw new Error(`Workspace not found`);
 
     return workspace;
+  }
+
+  findWorkspaceByDescriptor(descriptor: Descriptor) {
+    const candidateWorkspaces = this.workspacesByIdent.get(descriptor.identHash);
+
+    if (!candidateWorkspaces)
+      return null;
+
+    const selectedWorkspace = candidateWorkspaces.find(workspace => workspace.accepts(descriptor.range));
+
+    if (!selectedWorkspace)
+      return null;
+
+    return selectedWorkspace;
+  }
+
+  makeWorkspaceResolver(): Resolver {
+    const project = this;
+    return {
+      supports(descriptor: Descriptor): boolean {
+        if (descriptor.range === `local-workspace`)
+          return true;
+
+        const candidateWorkspace = project.findWorkspaceByDescriptor(descriptor);
+
+        if (!candidateWorkspace)
+          return false;
+
+        return true;
+      },
+
+      async getCandidates(descriptor: Descriptor): Promise<Array<string>> {
+        if (descriptor.range === `local-workspace`) {
+          const candidateWorkspaces = project.workspacesByIdent.get(descriptor.identHash);
+
+          if (!candidateWorkspaces || candidateWorkspaces.length < 1)
+            throw new Error(`This range can only be resolved by a local workspace, but none match the ident`);
+
+          if (candidateWorkspaces.length > 1)
+            throw new Error(`This range must be resolved by exactly one local workspace, too many found`);
+
+          return [candidateWorkspaces[0].locator.reference];
+        } else {
+          const candidateWorkspace = project.findWorkspaceByDescriptor(descriptor);
+
+          if (!candidateWorkspace)
+            throw new Error(`Expected to find a valid workspace, but none found`);
+
+          return [candidateWorkspace.locator.reference];
+        }
+      },
+
+      async resolve(locator: Locator): Promise<Package> {
+        const workspace = project.getWorkspaceByLocator(locator);
+
+        return {... locator, dependencies: workspace.dependencies, peerDependencies: workspace.peerDependencies};
+      }
+    };
   }
 
   makeLockfileResolver(): Resolver {
@@ -232,29 +287,6 @@ export class Project {
     };
   }
 
-  makeWorkspaceResolver(): Resolver {
-    const project = this;
-    return {
-      supports(descriptor: Descriptor): boolean {
-        const candidateWorkspace = project.tryWorkspaceByIdent(descriptor);
-
-        if (!candidateWorkspace || !candidateWorkspace.accepts(descriptor.range))
-          return false;
-
-        return true;
-      },
-
-      async getCandidates(descriptor: Descriptor): Promise<Array<string>> {
-        return [descriptor.range];
-      },
-
-      async resolve(locator: Locator): Promise<Package> {
-        const workspace = project.getWorkspaceByIdent(locator);
-        return {... locator, dependencies: workspace.dependencies, peerDependencies: workspace.peerDependencies};
-      }
-    };
-  }
-
   async resolveEverything() {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
@@ -275,7 +307,7 @@ export class Project {
 
     const allResolutions = new Set<string>();
 
-    for (const workspace of this.workspacesByIdent.values()) {
+    for (const workspace of this.workspacesByLocator.values()) {
       for (const store of [workspace.dependencies, workspace.devDependencies]) {
         for (const descriptor of store.values()) {
           allDescriptors.set(descriptor.descriptorHash, descriptor);
@@ -303,10 +335,7 @@ export class Project {
         if (haveBeenResolved.has(descriptor.descriptorHash))
           return;
 
-        const matchingWorkspace = this.tryWorkspaceByIdent(descriptor);
-        const candidateReferences = !matchingWorkspace || !matchingWorkspace.accepts(descriptor.range)
-          ? await resolver.getCandidates(descriptor)
-          : [descriptor.range];
+        const candidateReferences = await resolver.getCandidates(descriptor);
 
         // Reversing it make the following algorithm prioritize the more recent releases
         candidateReferences.reverse();
@@ -450,10 +479,10 @@ export class Project {
       if (this.storedLocations.has(pkg.locatorHash))
         continue;
 
-      const candidateWorkspace = this.tryWorkspaceByIdent(pkg);
+      const workspace = this.tryWorkspaceByLocator(pkg);
 
-      if (candidateWorkspace && candidateWorkspace.accepts(pkg.reference)) {
-        this.storedLocations.set(pkg.locatorHash, candidateWorkspace.cwd);
+      if (workspace) {
+        this.storedLocations.set(pkg.locatorHash, workspace.cwd);
       } else {
         this.storedLocations.set(pkg.locatorHash, await cache.fetchFromCache(pkg, async () => {
           return await fetcher.fetch(pkg);
@@ -465,6 +494,8 @@ export class Project {
   async generatePnpFile() {
     const pnpSettings = await extractPnpSettings(this);
     const pnpScript = generatePnpScript(pnpSettings);
+
+    await writeFileP(this.configuration.pnpPath, pnpScript);
   }
 
   async install({cache}: {cache: Cache}) {

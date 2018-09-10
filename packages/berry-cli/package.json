@@ -5,26 +5,28 @@
     "bin": {
         "berry": "./bin/run.js"
     },
+    "files": [
+        "/bin",
+        "/lib"
+    ],
     "dependencies": {
         "@berry/core": "0.0.0",
         "@oclif/command": "^1",
         "@oclif/config": "^1",
         "@oclif/errors": "^1",
         "@oclif/plugin-help": "^2",
+        "globby": "^8",
         "tslib": "^1"
     },
     "devDependencies": {
-        "globby": "^8"
+        "typescript": "^3.0.1"
     },
     "scripts": {
-        "cli": "ts-node ./bin/run.js"
+        "build": "tsc"
     },
-    "files": [
-        "/lib"
-    ],
     "oclif": {
         "bin": "berry",
-        "commands": "./sources/commands",
+        "commands": "./lib/commands",
         "plugins": [
             "@oclif/plugin-help"
         ]

@@ -13,8 +13,9 @@ export class Configuration {
   public offlineCacheFolder: string | null = `./.pnp/cache`;
 
   public pnpShebang: string = `/usr/bin/env node`;
+  public pnpIgnorePattern: string | null = null;
   public pnpVirtualFolder: string = `./.pnp/virtual`;
-  public pnpPath: string = `./.pnp/.pnp.js`;
+  public pnpPath: string = `./.pnp/index.js`;
 
   // We store here the source for each settings
   private sources: {[key: string]: string} = {};

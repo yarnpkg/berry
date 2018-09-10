@@ -1,5 +1,5 @@
 {
-    "name": "@berry/github",
+    "name": "@berry/zipfs",
     "version": "0.0.0",
     "private": true,
     "main": "./sources/index.ts",
@@ -7,7 +7,7 @@
         "/lib"
     ],
     "dependencies": {
-        "@berry/core": "0.0.0",
+        "@berry/libzip": "0.0.0",
         "tslib": "^1"
     },
     "devDependencies": {

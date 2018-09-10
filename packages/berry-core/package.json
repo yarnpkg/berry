@@ -2,7 +2,10 @@
     "name": "@berry/core",
     "version": "0.0.0",
     "private": true,
-    "main": "./lib/index.js",
+    "main": "./sources/index.ts",
+    "files": [
+        "/lib"
+    ],
     "dependencies": {
         "@berry/github": "0.0.0",
         "@berry/npm": "0.0.0",
@@ -18,5 +21,11 @@
         "stream-to-promise": "^2.2.0",
         "tar": "^4.4.6",
         "tslib": "^1"
+    },
+    "devDependencies": {
+        "typescript": "^3.0.1"
+    },
+    "scripts": {
+        "build": "tsc"
     }
 }
