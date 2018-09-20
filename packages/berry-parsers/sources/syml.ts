@@ -1,4 +1,4 @@
-export {parse as parseSyml} from './grammars/syml';
+import {parse} from './grammars/syml';
 
 const simpleStringPattern = /^[a-z0-9\/.#@^~<=>+-]([a-z0-9\/.#@^~<=> +-]*[a-z0-9\/.#@^~<=>+-])?$/;
 
@@ -52,4 +52,14 @@ function stringifyValue(value: any, indentLevel: number): string {
 
 export function stringifySyml(value: any) {
   return stringifyValue(value, 0);
+}
+
+export function parseSyml(source: string) {
+  try {
+    return parse(source);
+  } catch (error) {
+    if (error.location)
+      error.message = error.message.replace(/(\.)?$/, ` (line ${error.location.start.line}, column ${error.location.start.column})$1`);
+    throw error;
+  }
 }

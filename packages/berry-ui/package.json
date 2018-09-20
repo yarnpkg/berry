@@ -1,0 +1,22 @@
+{
+    "name": "@berry/ui",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./sources/index.ts",
+    "dependencies": {
+        "@manaflair/term-strings": "^0.10.0",
+        "@manaflair/text-layout": "^0.9.3",
+        "eventemitter3": "^3.1.0",
+        "react-reconciler": "^0.14.0",
+        "ttys": "^0.0.3",
+        "yoga-dom": "^0.0.14"
+    },
+    "devDependencies": {
+        "faker": "^4.1.0",
+        "react": "^16.5.1",
+        "ts-node": "^7.0.1"
+    },
+    "peerDependencies": {
+        "react": "*"
+    }
+}

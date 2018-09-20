@@ -38,7 +38,7 @@ Literal
  */
 
 pseudostring "pseudostring"
-  = [a-z0-9\/.#@^~<=>+-]*(" "[a-z0-9\/.#@^~<=>+-])* B? { return text().replace(/^ *| *$/g, '') }
+  = [a-z0-9\/.#@^~<=>+-]+(" "[a-z0-9\/.#@^~<=>+-]+)* B? { return text().replace(/^ *| *$/g, '') }
 
 /**
  * String parsing

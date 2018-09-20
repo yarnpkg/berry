@@ -1,0 +1,22 @@
+{
+    "name": "@berry/plugin-hub",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./sources/index.ts",
+    "dependencies": {
+        "@berry/ui": "0.0.0",
+        "@manaflair/concierge": "^0.7.3",
+        "dateformat": "^3.0.3",
+        "react": "^16.5.2"
+    },
+    "devDependencies": {
+        "@berry/builder": "0.0.0"
+    },
+    "peerDependencies": {
+        "@berry/cli": "0.0.0",
+        "@berry/core": "0.0.0"
+    },
+    "scripts": {
+        "build": "@berry/build-plugin"
+    }
+}

@@ -26,6 +26,8 @@ export class Workspace {
   // @ts-ignore: This variable is set during the setup process
   public locator: Locator;
 
+  public scripts: Map<string, string> = new Map();
+
   public dependencies: Map<string, Descriptor> = new Map();
   public devDependencies: Map<string, Descriptor> = new Map();
   public peerDependencies: Map<string, Descriptor> = new Map();
@@ -46,8 +48,14 @@ export class Workspace {
 
     this.locator = structUtils.makeLocatorFromIdent(ident, reference);
 
+    if (data.scripts) {
+      for (const [name, source] of Object.entries(data.scripts)) {
+        this.scripts.set(name, String(source));
+      }
+    }
+
     if (data.dependencies) {
-      for (const [name, range] of Object.entries(data.dependencies || {})) {
+      for (const [name, range] of Object.entries(data.dependencies)) {
         if (typeof range !== 'string')
           throw new Error(`Invalid dependency range for '${name}', in '${this.cwd}'`);
 
@@ -57,7 +65,7 @@ export class Workspace {
     }
 
     if (data.devDependencies) {
-      for (const [name, range] of Object.entries(data.devDependencies || {})) {
+      for (const [name, range] of Object.entries(data.devDependencies)) {
         if (typeof range !== 'string')
           throw new Error(`Invalid dependency range for '${name}', in '${this.cwd}'`);
 

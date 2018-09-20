@@ -2,11 +2,8 @@ type TopLevelLocator = {name: null, reference: null};
 type BlacklistedLocator = {name: '\u{0000}', reference: '\u{0000}'};
 
 type PackageLocator = {name: string, reference: string} | TopLevelLocator | BlacklistedLocator;
-type PackageInformation = {packageLocation?: string, packageMainEntry?: string, packageDependencies: Map<string, string>};
+type PackageInformation = {packageLocation?: string, packageDependencies: Map<string, string>};
 type ResolutionOptions = {extensions: Array<string>};
-
-declare const $$IGNORE_PATTERN: string;
-declare const $$PACKAGE_INFORMATION_STORES: Map<string | null, Map<string | null, PackageInformation>>;
 
 interface ModuleInterface {
   id: string;
@@ -35,14 +32,13 @@ import NativeModule = require('module');
 import path = require('path');
 import StringDecoder = require('string_decoder');
 
+import {patch} from '@berry/zipfs';
+
 // @ts-ignore
 const Module: ModuleInterfaceStatic = NativeModule;
 
 // @ts-ignore
 const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding('natives')));
-
-// Used to detect whether a path should use the fallback even if within the dependency tree
-const ignorePattern = $$IGNORE_PATTERN ? new RegExp($$IGNORE_PATTERN) : null;
 
 // Splits a require request into its components, or return null if the request is a file path
 const pathRegExp = /^(?!\.{0,2}(?:\/|$))((?:@[^\/]+\/)?[^\/]+)\/?(.*|)$/;
@@ -54,10 +50,29 @@ const isStrictRegExp = /^\.{0,2}\//;
 // Matches if the path must point to a directory (ie ends with /)
 const isDirRegExp = /\/$/;
 
+// We only instantiate one of those so that we can use strict-equal comparisons
 const topLevelLocator = {name: null, reference: null};
 const blacklistedLocator = {name: `\u{0000}`, reference: `\u{0000}`};
 
-const moduleShims = new Map();
+/**
+ * The setup code will be injected here. The tables listed below are guaranteed to be filled after the call to
+ * the $$DYNAMICALLY_GENERATED_CODE function.
+ */
+
+// Used to detect whether a path should use the fallback even if within the dependency tree
+let ignorePattern: RegExp | null;
+
+// All the package informations will be stored there; key1 = package name, key2 = package reference
+let packageInformationStores: Map<string | null, Map<string | null, PackageInformation>>;
+
+// We store here the package locators that "own" specific locations on the disk
+let packageLocatorByLocationMap: Map<string, PackageLocator>;
+
+// We store a sorted arrays of the possible lengths that we need to check
+let packageLocationLengths: Array<number>;
+
+declare const $$DYNAMICALLY_GENERATED_CODE: () => void;
+$$DYNAMICALLY_GENERATED_CODE();
 
 /**
  * Used to disable the resolution hooks (for when we want to fallback to the previous resolution - we then need
@@ -75,41 +90,6 @@ function makeError(code: string, message: string, data: Object = {}): Error {
   const error = new Error(message);
   return Object.assign(error, {code, data});
 }
-
-/**
- * Ensures that the returned locator isn't a blacklisted one.
- *
- * Blacklisted packages are packages that cannot be used because their dependencies cannot be deduced. This only
- * happens with peer dependencies, which effectively have different sets of dependencies depending on their parents.
- *
- * In order to deambiguate those different sets of dependencies, the Yarn implementation of PnP will generate a
- * symlink for each combination of <package name>/<package version>/<dependent package> it will find, and will
- * blacklist the target of those symlinks. By doing this, we ensure that files loaded through a specific path
- * will always have the same set of dependencies, provided the symlinks are correctly preserved.
- *
- * Unfortunately, some tools do not preserve them, and when it happens PnP isn't able anymore to deduce the set of
- * dependencies based on the path of the file that makes the require calls. But since we've blacklisted those paths,
- * we're able to print a more helpful error message that points out that a third-party package is doing something
- * incompatible!
- */
-
-// eslint-disable-next-line no-unused-vars
-function blacklistCheck(locator: PackageLocator): PackageLocator {
-  if (locator === blacklistedLocator) {
-    throw makeError(
-      `BLACKLISTED`,
-      [
-        `A package has been resolved through a blacklisted path - this is usually caused by one of your tool calling`,
-        `"realpath" on the return value of "require.resolve". Since the returned values use symlinks to disambiguate`,
-        `peer dependencies, they must be passed untransformed to "require".`,
-      ].join(` `),
-    );
-  }
-
-  return locator;
-}
-
-$$DYNAMICALLY_GENERATED_CODE();
 
 /**
  * Returns the module that should be used to resolve require calls. It's usually the direct parent, except if we're
@@ -276,11 +256,22 @@ function callNativeResolution(request: string, issuer: string): string | false {
 }
 
 /**
+ * This key indicates which version of the standard is implemented by this resolver. The `std` key is the
+ * Plug'n'Play standard, and any other key are third-party extensions. Third-party extensions are not allowed
+ * to override the standard, and can only offer new methods.
+ *
+ * If an new version of the Plug'n'Play standard is released and some extensions conflict with newly added
+ * functions, they'll just have to fix the conflicts and bump their own version number.
+ */
+
+export const VERSIONS = {std: 1};
+
+/**
  * Gets the package information for a given locator. Returns null if they cannot be retrieved.
  */
 
 export function getPackageInformation({name, reference}: PackageLocator): PackageInformation | null {
-  const packageInformationStore = $$PACKAGE_INFORMATION_STORES.get(name);
+  const packageInformationStore = packageInformationStores.get(name);
 
   if (!packageInformationStore) {
     return null;
@@ -297,13 +288,64 @@ export function getPackageInformation({name, reference}: PackageLocator): Packag
 
 /**
  * Finds the package locator that owns the specified path. If none is found, returns null instead.
- *
- * This function's implementation is left to the implementer - no specific algorithm is needed. We do recommend
- * to make it as fast as possible though, since it'll likely be called a lot.
  */
 
-declare function findPackageLocator(p: string): PackageLocator | null;
-export {findPackageLocator};
+function findPackageLocator(location: string): PackageLocator | null {
+  let relativeLocation = path.relative(__dirname, location);
+
+  if (!relativeLocation.match(isStrictRegExp)) {
+    relativeLocation = `./${relativeLocation}`;
+  }
+
+  if (location.match(isDirRegExp) && relativeLocation.charAt(relativeLocation.length - 1) !== '/') {
+    relativeLocation = `${relativeLocation}/`;
+  }
+
+  let from = 0;
+
+  // If someone wants to use a binary search to go from O(n) to O(log n), be my guest
+  while (from < packageLocationLengths.length && packageLocationLengths[from] > relativeLocation.length)
+    from += 1;
+
+  for (let t = from; t < packageLocationLengths.length; ++t) {
+    const locator = packageLocatorByLocationMap.get(relativeLocation.substr(0, packageLocationLengths[t]));
+
+    if (!locator) {
+      continue;
+    }
+
+    // Ensures that the returned locator isn't a blacklisted one.
+    //
+    // Blacklisted packages are packages that cannot be used because their dependencies cannot be deduced. This only
+    // happens with peer dependencies, which effectively have different sets of dependencies depending on their
+    // parents.
+    //
+    // In order to deambiguate those different sets of dependencies, the Yarn implementation of PnP will generate a
+    // symlink for each combination of <package name>/<package version>/<dependent package> it will find, and will
+    // blacklist the target of those symlinks. By doing this, we ensure that files loaded through a specific path
+    // will always have the same set of dependencies, provided the symlinks are correctly preserved.
+    //
+    // Unfortunately, some tools do not preserve them, and when it happens PnP isn't able anymore to deduce the set of
+    // dependencies based on the path of the file that makes the require calls. But since we've blacklisted those
+    // paths, we're able to print a more helpful error message that points out that a third-party package is doing
+    // something incompatible!
+
+    if (locator === blacklistedLocator) {
+      throw makeError(
+       `BLACKLISTED`,
+        [
+          `A package has been resolved through a blacklisted path - this is usually caused by one of your tool`,
+          `calling "realpath" on the return value of "require.resolve". Since the returned values use symlinks to`,
+          `disambiguate peer dependencies, they must be passed untransformed to "require".`,
+        ].join(` `),
+      );
+    }
+
+    return locator;
+  }
+
+  return null;
+}
 
 /**
  * Transforms a request (what's typically passed as argument to the require function) into an unqualified path.
@@ -571,14 +613,6 @@ export function setup() {
       }
     }
 
-    // We allow to shim modules, which is useful for packages such as `resolve`
-
-    const shim = moduleShims.get(request);
-
-    if (shim) {
-      return shim;
-    }
-
     // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us which file we should load
 
     const modulePath = Module._resolveFilename(request, parent, isMain);
@@ -599,6 +633,7 @@ export function setup() {
     // The main module is exposed as global variable
 
     if (isMain) {
+      // @ts-ignore
       process.mainModule = module;
       module.id = '.';
     }
@@ -656,12 +691,15 @@ export function setup() {
 
     return false;
   };
+
+  patch(fs);
 };
 
 if (module.parent && module.parent.id === 'internal/preload') {
   setup();
 }
 
+// @ts-ignore
 if (process.mainModule === module) {
   const reportError = (code: string, message: string, data: Object) => {
     process.stdout.write(`${JSON.stringify([{code, message, data}, null])}\n`);

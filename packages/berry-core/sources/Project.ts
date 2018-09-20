@@ -5,8 +5,6 @@ import {existsSync, readFile, writeFile}                      from 'fs';
 import {dirname}                                              from 'path';
 import {promisify}                                            from 'util';
 
-import {Fetcher as GithubFetcher, Resolver as GithubResolver} from '@berry/github';
-import {Fetcher as NpmFetcher, Resolver as NpmResolver}       from '@berry/npm';
 import {parseSyml, stringifySyml}                             from '@berry/parsers';
 import {extractPnpSettings, generatePnpScript}                from '@berry/pnp';
 
@@ -263,15 +261,20 @@ export class Project {
       },
 
       async getCandidates(descriptor: Descriptor): Promise<Array<string>> {
+        let pkg = project.storedPackages.get(structUtils.convertDescriptorToLocator(descriptor).locatorHash);
+
+        if (pkg)
+          return [pkg.reference];
+
         const resolution = project.storedResolutions.get(descriptor.descriptorHash);
 
         if (!resolution)
-          throw new Error(`Expected the resolution to have been successful`);
+          throw new Error(`Expected the resolution to have been successful - resolution not found`);
 
-        const pkg = project.storedPackages.get(resolution);
+        pkg = project.storedPackages.get(resolution);
 
         if (!pkg)
-          throw new Error(`Expected the resolution to have been successful`);
+          throw new Error(`Expected the resolution to have been successful - package not found`);
 
         return [pkg.reference];
       },
@@ -291,11 +294,16 @@ export class Project {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
 
+    const pluginResolvers = [];
+
+    for (const plugin of this.configuration.plugins.values())
+      for (const resolver of plugin.resolvers || [])
+        pluginResolvers.push(resolver);
+
     const resolver = new MultiResolver([
       this.makeWorkspaceResolver(),
       this.makeLockfileResolver(),
-      new GithubResolver(),
-      new NpmResolver(),
+      ... pluginResolvers,
     ]);
 
     const allDescriptors = new Map<string, Descriptor>();
@@ -335,7 +343,14 @@ export class Project {
         if (haveBeenResolved.has(descriptor.descriptorHash))
           return;
 
-        const candidateReferences = await resolver.getCandidates(descriptor);
+        let candidateReferences;
+
+        try {
+          candidateReferences = await resolver.getCandidates(descriptor);
+        } catch (error) {
+          error.message = `${structUtils.prettyDescriptor(descriptor)}: ${error.message}`;
+          throw error;
+        }
 
         // Reversing it make the following algorithm prioritize the more recent releases
         candidateReferences.reverse();
@@ -443,7 +458,17 @@ export class Project {
         if (!locator)
           throw new Error(`The locator should have been registered`);
 
-        const pkg = allPackages.get(locator.locatorHash) || await resolver.resolve(locator);
+        let pkg = allPackages.get(locator.locatorHash);
+
+        if (!pkg) {
+          try {
+            pkg = await resolver.resolve(locator);
+          } catch (error) {
+            error.message = `${structUtils.prettyLocator(locator)}: ${error.message}`;
+            throw error;
+          }
+        }
+
         allPackages.set(pkg.locatorHash, pkg);
 
         for (const descriptor of pkg.dependencies.values()) {
@@ -465,9 +490,15 @@ export class Project {
     this.storedLocations = new Map();
 
     const fetched = new Set<string>();
+
+    const pluginFetchers = [];
+
+    for (const plugin of this.configuration.plugins.values())
+      for (const fetcher of plugin.fetchers || [])
+        pluginFetchers.push(fetcher);
+
     const fetcher = new MultiFetcher([
-      new NpmFetcher(),
-      new GithubFetcher(),
+      ... pluginFetchers,
     ]);
 
     for (const locatorHash of this.storedResolutions.values()) {

@@ -15,10 +15,7 @@ var Module = typeof Module !== 'undefined' ? Module : {};
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-var fs = require('fs');
-var path = require('path');
-
-Module.wasmBinary = fs.readFileSync(path.resolve(__dirname, './libzip.wasm'));
+Module.wasmBinary = require('./libzip.wasm');
 
 
 

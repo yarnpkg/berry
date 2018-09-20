@@ -2,6 +2,8 @@ import {parseSyml}                from '@berry/parsers';
 import {existsSync, readFileSync} from 'fs';
 import {dirname, resolve}         from 'path';
 
+import {Plugin}                   from './Plugin';
+
 const RELATIVE_KEYS = new Set([
   `offline-cache-folder`,
   `pnp-path`,
@@ -15,12 +17,14 @@ export class Configuration {
   public pnpShebang: string = `/usr/bin/env node`;
   public pnpIgnorePattern: string | null = null;
   public pnpVirtualFolder: string = `./.pnp/virtual`;
-  public pnpPath: string = `./.pnp/index.js`;
+  public pnpPath: string = `./.pnp.js`;
+
+  public plugins: Map<string, Plugin> = new Map();
 
   // We store here the source for each settings
   private sources: {[key: string]: string} = {};
 
-  static async find(startingCwd: string) {
+  static async find(startingCwd: string, plugins: Map<string, Plugin> = new Map()) {
     let projectCwd = null;
     const rcCwds = [];
 
@@ -41,7 +45,7 @@ export class Configuration {
     if (!projectCwd)
       throw new Error(`Project not found`);
 
-    const configuration = new Configuration(projectCwd);
+    const configuration = new Configuration(projectCwd, plugins);
 
     for (const rcCwd of rcCwds)
       await configuration.inherits(`${rcCwd}/.berryrc`);
@@ -49,8 +53,9 @@ export class Configuration {
     return configuration;
   }
 
-  constructor(projectCwd: string) {
+  constructor(projectCwd: string, plugins: Map<string, Plugin>) {
     this.projectCwd = projectCwd;
+    this.plugins = plugins;
 
     for (const key of RELATIVE_KEYS) {
       const name = key.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());

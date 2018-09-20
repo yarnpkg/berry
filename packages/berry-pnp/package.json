@@ -3,15 +3,13 @@
     "version": "0.0.0",
     "private": true,
     "main": "./sources/index.ts",
-    "files": [
-        "/lib"
-    ],
     "dependencies": {
         "@berry/core": "0.0.0",
         "@berry/zipfs": "0.0.0",
         "tslib": "^1"
     },
     "devDependencies": {
+        "raw-loader": "^0.5.1",
         "ts-loader": "^5.0.0",
         "typescript": "^3.0.1",
         "wasm-loader": "^1.3.0",
@@ -19,7 +17,6 @@
         "webpack-cli": "^3.1.0"
     },
     "scripts": {
-        "build": "tsc && webpack",
-        "tsc": "tsc"
+        "build": "webpack"
     }
 }

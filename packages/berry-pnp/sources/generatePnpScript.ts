@@ -1,14 +1,14 @@
+import template = require('!raw-loader!@berry/cli/lib/hook-bundle');
+
 import {readFileSync}                                             from 'fs';
 
 import {PackageInformationStores, LocationBlacklist, PnpSettings} from './types';
-
-const template = readFileSync(`${__dirname}/pnpTemplate.js`, `utf8`);
 
 function generateDatastores(packageInformationStores: PackageInformationStores, blacklistedLocations: LocationBlacklist) {
   let code = ``;
 
   // Bake the information stores into our generated code
-  code += `let packageInformationStores = new Map([\n`;
+  code += `packageInformationStores = new Map([\n`;
   for (const [packageName, packageInformationStore] of packageInformationStores) {
     code += `  [${JSON.stringify(packageName)}, new Map([\n`;
     for (const [
@@ -34,7 +34,7 @@ function generateDatastores(packageInformationStores: PackageInformationStores, 
   code += `\n`;
 
   // Also bake an inverse map that will allow us to find the package information based on the path
-  code += `let locatorsByLocations = new Map([\n`;
+  code += `packageLocatorByLocationMap = new Map([\n`;
   for (const blacklistedLocation of blacklistedLocations) {
     code += `  [${JSON.stringify(blacklistedLocation)}, blacklistedLocator],\n`;
   }
@@ -52,14 +52,10 @@ function generateDatastores(packageInformationStores: PackageInformationStores, 
   }
   code += `]);\n`;
 
-  return code;
-}
+  code += `\n`;
 
-function generateFindPackageLocator(packageInformationStores: PackageInformationStores) {
-  let code = ``;
-
-  // We get the list of each string length we'll need to check in order to find the current package context
-  const lengths = new Map();
+  // And finally generate a sorted array of all the lengths that the findPackageLocator method will need to check
+  const lengths: Map<number, number> = new Map();
 
   for (const packageInformationStore of packageInformationStores.values()) {
     for (const {packageLocation} of packageInformationStore.values()) {
@@ -80,46 +76,26 @@ function generateFindPackageLocator(packageInformationStores: PackageInformation
     return b[0] - a[0];
   });
 
-  // Generate a function that, given a file path, returns the associated package name
-  code += `exports.findPackageLocator = function findPackageLocator(location) {\n`;
-  code += `  let relativeLocation = path.relative(__dirname, location);\n`;
-  code += `\n`;
-  code += `  if (!relativeLocation.match(isStrictRegExp))\n`;
-  code += `    relativeLocation = \`./\${relativeLocation}\`;\n`;
-  code += `\n`;
-  code += `  if (location.match(isDirRegExp) && relativeLocation.charAt(relativeLocation.length - 1) !== '/')\n`;
-  code += `    relativeLocation = \`\${relativeLocation}/\`;\n`;
-  code += `\n`;
-  code += `  let match;\n`;
-
-  for (const [length] of sortedLengths) {
-    code += `\n`;
-    code += `  if (relativeLocation.length >= ${length} && relativeLocation[${length - 1}] === '/')\n`;
-    code += `    if (match = locatorsByLocations.get(relativeLocation.substr(0, ${length})))\n`;
-    code += `      return blacklistCheck(match);\n`;
+  code += `packageLocationLengths = [\n`;
+  for (const length of sortedLengths) {
+    code += `  ${length},\n`;
   }
-
-  code += `\n`;
-  code += `  return null;\n`;
-  code += `};\n`;
+  code += `];\n`;
 
   return code;
 }
 
 export function generatePnpScript(settings: PnpSettings): string {
   const {packageInformationStores, blacklistedLocations} = settings;
+  const datastores = generateDatastores(packageInformationStores, blacklistedLocations);
 
-  let dynamicallyGeneratedCode = ``;
-
-  dynamicallyGeneratedCode += generateDatastores(packageInformationStores, blacklistedLocations);
-  dynamicallyGeneratedCode += `\n`;
-  dynamicallyGeneratedCode += generateFindPackageLocator(packageInformationStores);
-
-  const replacements = Object.assign({}, settings.replacements, {
-    DYNAMICALLY_GENERATED_CODE: dynamicallyGeneratedCode,
-  });
-
-  return template.replace(/\/\* *global +.*\*\/\n?/g, ``).replace(/\${2}([A-Z]+(?:_[A-Z]+)*)(?:\(\))?(?:;\n)?/g, ($0, $1) => {
-    return replacements[$1];
-  });
+  return [
+    `function $$DYNAMICALLY_GENERATED_CODE() {\n`,
+    `  ignorePattern = null;\n`,
+    `\n`,
+    datastores.replace(/^/gm, `  `),
+    `}\n`,
+    `\n`,
+    template,
+  ].join(``);
 }

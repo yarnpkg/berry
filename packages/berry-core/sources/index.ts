@@ -2,6 +2,7 @@ export {Archive} from './Archive';
 export {Cache} from './Cache';
 export {Configuration} from './Configuration';
 export {Fetcher} from './Fetcher';
+export {Plugin} from './Plugin';
 export {Project} from './Project';
 export {Report} from './Report';
 export {Resolver} from './Resolver';

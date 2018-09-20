@@ -5,30 +5,34 @@
     "bin": {
         "berry": "./bin/run.js"
     },
-    "files": [
-        "/bin",
-        "/lib"
-    ],
     "dependencies": {
         "@berry/core": "0.0.0",
-        "@oclif/command": "^1",
-        "@oclif/config": "^1",
-        "@oclif/errors": "^1",
-        "@oclif/plugin-help": "^2",
-        "globby": "^8",
-        "tslib": "^1"
+        "@manaflair/concierge": "^0.7.3",
+        "execa": "^1.0.0",
+        "joi": "^13.6.0",
+        "tslib": "^1",
+        "val-loader": "^1.1.1"
     },
     "devDependencies": {
-        "typescript": "^3.0.1"
+        "@berry/builder": "0.0.0",
+        "@berry/plugin-github": "0.0.0",
+        "@berry/plugin-hub": "0.0.0",
+        "@berry/plugin-npm": "0.0.0"
     },
     "scripts": {
-        "build": "tsc"
+        "build": "@berry-build-bundle"
     },
-    "oclif": {
-        "bin": "berry",
-        "commands": "./lib/commands",
-        "plugins": [
-            "@oclif/plugin-help"
-        ]
+    "@berry/builder": {
+        "bundles": {
+            "light": [
+                "@berry/plugin-github",
+                "@berry/plugin-npm"
+            ],
+            "full": [
+                "@berry/plugin-github",
+                "@berry/plugin-npm",
+                "@berry/plugin-hub"
+            ]
+        }
     }
 }

@@ -2,17 +2,14 @@
     "name": "@berry/libzip",
     "version": "0.0.0",
     "private": true,
-    "main": "./lib/index.js",
+    "main": "./sources/index.ts",
     "files": [
         "/lib"
     ],
     "dependencies": {
         "tslib": "^1"
     },
-    "devDependencies": {
-        "typescript": "^3.0.1"
-    },
     "scripts": {
-        "build": "tsc && ./artifacts/build.sh"
+        "build": "./artifacts/build.sh"
     }
 }

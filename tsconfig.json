@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "React",
+    "module": "commonjs",
+    "strict": true,
+    "target": "es2017",
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
+  },
+  "include": [
+    "packages/*/sources/**/*",
+    "packages/*/types/**/*"
+  ]
+}
