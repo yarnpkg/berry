@@ -146,6 +146,19 @@
     semver: ^5.5.1
   resolution: @berry/plugin-npm@0.0.0
 
+@berry/pnp@0.0.0:
+  dependencies:
+    @berry/core: 0.0.0
+    @berry/zipfs: 0.0.0
+    tslib: ^1
+  resolution: @berry/pnp@0.0.0
+
+@berry/shell@0.0.0:
+  dependencies:
+    @berry/parsers: 0.0.0
+    stream-buffers: ^3.0.2
+  resolution: @berry/shell@0.0.0
+
 @berry/ui@0.0.0:
   dependencies:
     @manaflair/term-strings: ^0.10.0
@@ -169,6 +182,13 @@
     lodash: ^4.17.4
   resolution: @manaflair/concierge@0.7.1
 
+@manaflair/concierge@^0.7.3:
+  dependencies:
+    chalk: ^1.1.3
+    kexec: ^3.0.0
+    lodash: ^4.17.4
+  resolution: @manaflair/concierge@0.7.3
+
 @manaflair/term-strings@^0.10.0:
   dependencies:
     babel-runtime: ^6.23.0
@@ -177,6 +197,9 @@
 
 @manaflair/text-layout@^0.9.2:
   resolution: @manaflair/text-layout@0.9.2
+
+@manaflair/text-layout@^0.9.3:
+  resolution: @manaflair/text-layout@0.9.3
 
 @mrmlnc/readdir-enhanced@^2.2.1:
   dependencies:
@@ -189,6 +212,9 @@
 
 "@types/caseless@*":
   resolution: @types/caseless@0.12.1
+
+@types/dateformat@^1.0.1:
+  resolution: @types/dateformat@1.0.1
 
 @types/emscripten@^0.0.31:
   dependencies:
@@ -419,7 +445,14 @@ acorn-dynamic-import@^3.0.0:
     acorn: ^5.0.0
   resolution: acorn-dynamic-import@3.0.0
 
-"acorn@^5.6.2, acorn@^5.0.0":
+acorn-node@^1.3.0:
+  dependencies:
+    acorn: ^5.7.1
+    acorn-dynamic-import: ^3.0.0
+    xtend: ^4.0.1
+  resolution: acorn-node@1.5.2
+
+"acorn@^5.6.2, acorn@^5.0.0, acorn@^5.7.1":
   resolution: acorn@5.7.3
 
 ajv-keywords@^3.1.0:
@@ -476,6 +509,9 @@ arr-flatten@^1.1.0:
 
 arr-union@^3.1.0:
   resolution: arr-union@3.1.0
+
+array-from@^2.1.1:
+  resolution: array-from@2.1.1
 
 array-union@^1.0.1:
   dependencies:
@@ -570,6 +606,14 @@ brace-expansion@^1.1.7:
     to-regex: ^3.0.1
   resolution: braces@2.3.2
 
+brfs@^2.0.1:
+  dependencies:
+    quote-stream: ^1.0.1
+    resolve: ^1.1.5
+    static-module: ^3.0.0
+    through2: ^2.0.0
+  resolution: brfs@2.0.1
+
 brorand@^1.0.1:
   resolution: brorand@1.1.0
 
@@ -619,6 +663,9 @@ browserify-zlib@^0.2.0:
   dependencies:
     pako: ~1.0.5
   resolution: browserify-zlib@0.2.0
+
+buffer-equal@0.0.1:
+  resolution: buffer-equal@0.0.1
 
 "buffer-from@^1.1.0, buffer-from@^1.0.0":
   resolution: buffer-from@1.1.1
@@ -780,7 +827,7 @@ component-emitter@^1.2.1:
 concat-map@0.0.1:
   resolution: concat-map@0.0.1
 
-concat-stream@^1.5.0:
+"concat-stream@~1.6.0, concat-stream@^1.5.0":
   dependencies:
     buffer-from: ^1.0.0
     inherits: ^2.0.3
@@ -799,7 +846,7 @@ console-browserify@^1.1.0:
 constants-browserify@^1.0.0:
   resolution: constants-browserify@1.0.0
 
-convert-source-map@^1.1.0:
+"convert-source-map@^1.5.1, convert-source-map@^1.1.0":
   dependencies:
     safe-buffer: ~5.1.1
   resolution: convert-source-map@1.6.0
@@ -881,8 +928,16 @@ csstype@^2.2.0:
 cyclist@~0.2.2:
   resolution: cyclist@0.2.2
 
+d@1:
+  dependencies:
+    es5-ext: ^0.10.9
+  resolution: d@1.0.0
+
 date-now@^0.1.4:
   resolution: date-now@0.1.4
+
+dateformat@^3.0.3:
+  resolution: dateformat@3.0.3
 
 "debug@^2.2.0, debug@^2.3.3, debug@^2.1.2":
   dependencies:
@@ -904,6 +959,9 @@ decode-uri-component@^0.2.0:
 
 deep-extend@^0.6.0:
   resolution: deep-extend@0.6.0
+
+deep-is@~0.1.3:
+  resolution: deep-is@0.1.3
 
 define-property@^0.2.5:
   dependencies:
@@ -952,6 +1010,11 @@ dir-glob@^2.0.0:
 domain-browser@^1.1.1:
   resolution: domain-browser@1.2.0
 
+duplexer2@~0.1.4:
+  dependencies:
+    readable-stream: ^2.0.2
+  resolution: duplexer2@0.1.4
+
 "duplexify@^3.4.2, duplexify@^3.6.0":
   dependencies:
     end-of-stream: ^1.0.0
@@ -991,11 +1054,68 @@ emojis-list@^2.0.0:
     prr: ~1.0.1
   resolution: errno@0.1.7
 
+"es5-ext@~0.10.14, es5-ext@^0.10.9, es5-ext@^0.10.35":
+  dependencies:
+    es6-iterator: ~2.0.3
+    es6-symbol: ~3.1.1
+    next-tick: 1
+  resolution: es5-ext@0.10.46
+
+"es6-iterator@~2.0.1, es6-iterator@~2.0.3":
+  dependencies:
+    d: 1
+    es5-ext: ^0.10.35
+    es6-symbol: ^3.1.1
+  resolution: es6-iterator@2.0.3
+
+es6-map@^0.1.5:
+  dependencies:
+    d: 1
+    es5-ext: ~0.10.14
+    es6-iterator: ~2.0.1
+    es6-set: ~0.1.5
+    es6-symbol: ~3.1.1
+    event-emitter: ~0.3.5
+  resolution: es6-map@0.1.5
+
 es6-promise@~3.0.2:
   resolution: es6-promise@3.0.2
 
+"es6-set@^0.1.5, es6-set@~0.1.5":
+  dependencies:
+    d: 1
+    es5-ext: ~0.10.14
+    es6-iterator: ~2.0.1
+    es6-symbol: 3.1.1
+    event-emitter: ~0.3.5
+  resolution: es6-set@0.1.5
+
+"es6-symbol@^3.1.1, es6-symbol@~3.1.1, es6-symbol@3.1.1":
+  dependencies:
+    d: 1
+    es5-ext: ~0.10.14
+  resolution: es6-symbol@3.1.1
+
 "escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5":
   resolution: escape-string-regexp@1.0.5
+
+escodegen@^1.8.1:
+  dependencies:
+    esprima: ^3.1.3
+    estraverse: ^4.2.0
+    esutils: ^2.0.2
+    optionator: ^0.8.1
+    source-map: ~0.6.1
+  resolution: escodegen@1.11.0
+
+escodegen@~1.9.0:
+  dependencies:
+    esprima: ^3.1.3
+    estraverse: ^4.2.0
+    esutils: ^2.0.2
+    optionator: ^0.8.1
+    source-map: ~0.6.1
+  resolution: escodegen@1.9.1
 
 eslint-scope@^4.0.0:
   dependencies:
@@ -1003,16 +1123,28 @@ eslint-scope@^4.0.0:
     estraverse: ^4.1.1
   resolution: eslint-scope@4.0.0
 
+esprima@^3.1.3:
+  resolution: esprima@3.1.3
+
 esrecurse@^4.1.0:
   dependencies:
     estraverse: ^4.1.0
   resolution: esrecurse@4.2.1
 
-"estraverse@^4.1.1, estraverse@^4.1.0":
+"estraverse@^4.1.1, estraverse@^4.2.0, estraverse@^4.1.0":
   resolution: estraverse@4.2.0
+
+estree-is-function@^1.0.0:
+  resolution: estree-is-function@1.0.0
 
 esutils@^2.0.2:
   resolution: esutils@2.0.2
+
+event-emitter@~0.3.5:
+  dependencies:
+    d: 1
+    es5-ext: ~0.10.14
+  resolution: event-emitter@0.3.5
 
 "eventemitter3@^3.1.0, eventemitter3@*":
   resolution: eventemitter3@3.1.0
@@ -1108,6 +1240,9 @@ fast-glob@^2.0.2:
 fast-json-stable-stringify@^2.0.0:
   resolution: fast-json-stable-stringify@2.0.0
 
+fast-levenshtein@~2.0.4:
+  resolution: fast-levenshtein@2.0.6
+
 figures@^2.0.0:
   dependencies:
     escape-string-regexp: ^1.0.5
@@ -1180,6 +1315,9 @@ fsevents@^1.2.2:
     node-pre-gyp: ^0.10.0
   resolution: fsevents@1.2.4
 
+function-bind@^1.1.1:
+  resolution: function-bind@1.1.1
+
 gauge@~2.7.3:
   dependencies:
     aproba: ^1.0.3
@@ -1191,6 +1329,9 @@ gauge@~2.7.3:
     strip-ansi: ^3.0.1
     wide-align: ^1.1.0
   resolution: gauge@2.7.4
+
+get-assigned-identifiers@^1.1.0:
+  resolution: get-assigned-identifiers@1.2.0
 
 get-caller-file@^1.0.1:
   resolution: get-caller-file@1.0.3
@@ -1279,6 +1420,11 @@ has-values@^1.0.0:
     kind-of: ^4.0.0
   resolution: has-values@1.0.0
 
+has@^1.0.1:
+  dependencies:
+    function-bind: ^1.1.1
+  resolution: has@1.0.3
+
 hash-base@^3.0.0:
   dependencies:
     inherits: ^2.0.1
@@ -1344,7 +1490,7 @@ inflight@^1.0.4:
     wrappy: 1
   resolution: inflight@1.0.6
 
-"inherits@2, inherits@~2.0.1, inherits@^2.0.1, inherits@~2.0.3, inherits@2.0.3, inherits@^2.0.3":
+"inherits@2, inherits@~2.0.1, inherits@^2.0.3, inherits@~2.0.3, inherits@^2.0.1, inherits@2.0.3":
   resolution: inherits@2.0.3
 
 inherits@2.0.1:
@@ -1542,6 +1688,12 @@ lcid@^2.0.0:
     invert-kv: ^2.0.0
   resolution: lcid@2.0.0
 
+levn@~0.3.0:
+  dependencies:
+    prelude-ls: ~1.1.2
+    type-check: ~0.3.2
+  resolution: levn@0.3.0
+
 lie@~3.1.0:
   dependencies:
     immediate: ~3.0.5
@@ -1599,6 +1751,11 @@ lru-cache@^4.1.1:
     yallist: ^2.1.2
   resolution: lru-cache@4.1.3
 
+magic-string@^0.22.4:
+  dependencies:
+    vlq: ^0.2.2
+  resolution: magic-string@0.22.5
+
 make-dir@^1.0.0:
   dependencies:
     pify: ^3.0.0
@@ -1642,6 +1799,11 @@ mem@^4.0.0:
     readable-stream: ^2.0.1
   resolution: memory-fs@0.4.1
 
+merge-source-map@1.0.4:
+  dependencies:
+    source-map: ^0.5.6
+  resolution: merge-source-map@1.0.4
+
 merge2@^1.2.1:
   resolution: merge2@1.2.2
 
@@ -1682,7 +1844,7 @@ minimatch@^3.0.4:
     brace-expansion: ^1.1.7
   resolution: minimatch@3.0.4
 
-minimist@^1.2.0:
+"minimist@^1.2.0, minimist@^1.1.3":
   resolution: minimist@1.2.0
 
 minimist@0.0.8:
@@ -1770,6 +1932,9 @@ needle@^2.2.1:
 
 neo-async@^2.5.0:
   resolution: neo-async@2.5.2
+
+next-tick@1:
+  resolution: next-tick@1.0.0
 
 nice-try@^1.0.4:
   resolution: nice-try@1.0.5
@@ -1864,6 +2029,9 @@ object-copy@^0.1.0:
     kind-of: ^3.0.3
   resolution: object-copy@0.1.0
 
+object-inspect@~1.4.0:
+  resolution: object-inspect@1.4.1
+
 object-visit@^1.0.0:
   dependencies:
     isobject: ^3.0.0
@@ -1888,6 +2056,16 @@ onetime@^2.0.0:
   dependencies:
     mimic-fn: ^1.0.0
   resolution: onetime@2.0.1
+
+optionator@^0.8.1:
+  dependencies:
+    deep-is: ~0.1.3
+    fast-levenshtein: ~2.0.4
+    levn: ~0.3.0
+    prelude-ls: ~1.1.2
+    type-check: ~0.3.2
+    wordwrap: ~1.0.0
+  resolution: optionator@0.8.2
 
 os-browserify@^0.3.0:
   resolution: os-browserify@0.3.0
@@ -2017,6 +2195,9 @@ pluralize@^7.0.0:
 posix-character-classes@^0.1.0:
   resolution: posix-character-classes@0.1.1
 
+prelude-ls@~1.1.2:
+  resolution: prelude-ls@1.1.2
+
 pretty-bytes@^5.1.0:
   resolution: pretty-bytes@5.1.0
 
@@ -2087,6 +2268,13 @@ querystring-es3@^0.2.0:
 querystring@0.2.0:
   resolution: querystring@0.2.0
 
+quote-stream@^1.0.1:
+  dependencies:
+    buffer-equal: 0.0.1
+    minimist: ^1.1.3
+    through2: ^2.0.0
+  resolution: quote-stream@1.0.2
+
 "randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5":
   dependencies:
     safe-buffer: ^5.1.0
@@ -2117,24 +2305,13 @@ react-reconciler@^0.14.0:
     schedule: ^0.4.0
   resolution: react-reconciler@0.14.0
 
-react@^16.5.1:
+"react@^16.5.1, react@^16.5.2":
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
     prop-types: ^15.6.2
     schedule: ^0.5.0
   resolution: react@16.5.2
-
-"readable-stream@^2.3.3, readable-stream@^2.0.2, readable-stream@^2.3.6, readable-stream@^2.2.2, readable-stream@^2.0.0, readable-stream@^2.0.4, readable-stream@^2.1.5, readable-stream@1 || 2, readable-stream@^2.0.6":
-  dependencies:
-    core-util-is: ~1.0.0
-    inherits: ~2.0.3
-    isarray: ~1.0.0
-    process-nextick-args: ~2.0.0
-    safe-buffer: ~5.1.1
-    "string_decoder": ~1.1.1
-    util-deprecate: ~1.0.1
-  resolution: readable-stream@2.3.6
 
 "readable-stream@~2.0.6, readable-stream@^2.0.1":
   dependencies:
@@ -2145,6 +2322,17 @@ react@^16.5.1:
     "string_decoder": ~0.10.x
     util-deprecate: ~1.0.1
   resolution: readable-stream@2.0.6
+
+"readable-stream@~2.3.3, readable-stream@^2.1.5, readable-stream@^2.3.3, readable-stream@^2.2.2, readable-stream@^2.0.2, readable-stream@^2.3.6, readable-stream@^2.0.0, readable-stream@^2.0.4, readable-stream@1 || 2, readable-stream@^2.0.6":
+  dependencies:
+    core-util-is: ~1.0.0
+    inherits: ~2.0.3
+    isarray: ~1.0.0
+    process-nextick-args: ~2.0.0
+    safe-buffer: ~5.1.1
+    "string_decoder": ~1.1.1
+    util-deprecate: ~1.0.1
+  resolution: readable-stream@2.3.6
 
 readdirp@^2.0.0:
   dependencies:
@@ -2188,7 +2376,7 @@ resolve-from@^3.0.0:
 resolve-url@^0.2.1:
   resolution: resolve-url@0.2.1
 
-resolve@^1.3.2:
+"resolve@^1.1.5, resolve@^1.3.2":
   dependencies:
     path-parse: ^1.0.5
   resolution: resolve@1.8.1
@@ -2258,6 +2446,16 @@ schedule@^0.5.0:
     ajv-keywords: ^3.1.0
   resolution: schema-utils@0.4.7
 
+scope-analyzer@^2.0.1:
+  dependencies:
+    array-from: ^2.1.1
+    es6-map: ^0.1.5
+    es6-set: ^0.1.5
+    es6-symbol: ^3.1.1
+    estree-is-function: ^1.0.0
+    get-assigned-identifiers: ^1.1.0
+  resolution: scope-analyzer@2.0.5
+
 "semver@^5.5.1, semver@^5.0.1, semver@^5.5.0, semver@^5.4.1, semver@^5.3.0":
   resolution: semver@5.5.1
 
@@ -2291,6 +2489,9 @@ setimmediate@^1.0.4:
     inherits: ^2.0.1
     safe-buffer: ^5.0.1
   resolution: sha.js@2.4.11
+
+shallow-copy@~0.0.1:
+  resolution: shallow-copy@0.0.1
 
 shebang-command@^1.2.0:
   dependencies:
@@ -2367,11 +2568,34 @@ ssri@^5.2.4:
     safe-buffer: ^5.1.1
   resolution: ssri@5.3.0
 
+static-eval@^2.0.0:
+  dependencies:
+    escodegen: ^1.8.1
+  resolution: static-eval@2.0.0
+
 static-extend@^0.1.1:
   dependencies:
     define-property: ^0.2.5
     object-copy: ^0.1.0
   resolution: static-extend@0.1.2
+
+static-module@^3.0.0:
+  dependencies:
+    acorn-node: ^1.3.0
+    concat-stream: ~1.6.0
+    convert-source-map: ^1.5.1
+    duplexer2: ~0.1.4
+    escodegen: ~1.9.0
+    has: ^1.0.1
+    magic-string: ^0.22.4
+    merge-source-map: 1.0.4
+    object-inspect: ~1.4.0
+    readable-stream: ~2.3.3
+    scope-analyzer: ^2.0.1
+    shallow-copy: ~0.0.1
+    static-eval: ^2.0.0
+    through2: ~2.0.3
+  resolution: static-module@3.0.0
 
 stream-browserify@^2.0.1:
   dependencies:
@@ -2474,7 +2698,7 @@ supports-color@^2.0.0:
 through@^2.3.6:
   resolution: through@2.3.8
 
-through2@^2.0.0:
+"through2@^2.0.0, through2@~2.0.3":
   dependencies:
     readable-stream: ^2.1.5
     xtend: ~4.0.1
@@ -2520,6 +2744,11 @@ topo@3.x.x:
     hoek: 5.x.x
   resolution: topo@3.0.0
 
+transform-loader@^0.2.4:
+  dependencies:
+    loader-utils: ^1.0.2
+  resolution: transform-loader@0.2.4
+
 trim-right@^1.0.1:
   resolution: trim-right@1.0.1
 
@@ -2552,6 +2781,11 @@ tty-browserify@0.0.0:
 
 ttys@^0.0.3:
   resolution: ttys@0.0.3
+
+type-check@~0.3.2:
+  dependencies:
+    prelude-ls: ~1.1.2
+  resolution: type-check@0.3.2
 
 typedarray@^0.0.6:
   resolution: typedarray@0.0.6
@@ -2645,6 +2879,9 @@ val-loader@^1.1.1:
     loader-utils: ^1.0.0
     schema-utils: ^0.4.5
   resolution: val-loader@1.1.1
+
+vlq@^0.2.2:
+  resolution: vlq@0.2.3
 
 vm-browserify@0.0.4:
   dependencies:
@@ -2750,6 +2987,9 @@ wide-align@^1.1.0:
     string-width: "^1.0.2 || 2"
   resolution: wide-align@1.1.3
 
+wordwrap@~1.0.0:
+  resolution: wordwrap@1.0.0
+
 worker-farm@^1.5.2:
   dependencies:
     errno: ~0.1.7
@@ -2767,7 +3007,7 @@ wrappy@1:
 xregexp@4.0.0:
   resolution: xregexp@4.0.0
 
-"xtend@^4.0.0, xtend@~4.0.1":
+"xtend@~4.0.1, xtend@^4.0.1, xtend@^4.0.0":
   resolution: xtend@4.0.1
 
 "y18n@^3.2.1 || ^4.0.0, y18n@^4.0.0":

@@ -4,6 +4,9 @@ import * as path from 'path';
 
 import {ZipFS}   from './ZipFS';
 
+const ZIPFS_CACHE = Symbol(`ZIPFS_CACHE`);
+const ZIPFS_REENTRANT = Symbol(`ZIPFS_REENTRANT`);
+
 function findZip(baseFs: typeof fs, p: string) {
   p = path.resolve(process.cwd(), p);
 
@@ -43,18 +46,35 @@ function findZip(baseFs: typeof fs, p: string) {
 }
 
 function getZip(baseFs: typeof fs, p: string) {
-  return new ZipFS(baseFs, p);
+  // @ts-ignore
+  baseFs[ZIPFS_CACHE] = baseFs[ZIPFS_CACHE] || {};
+  // @ts-ignore
+  baseFs[ZIPFS_CACHE][p] = baseFs[ZIPFS_CACHE][p] || new ZipFS(baseFs, p);
+  // @ts-ignore
+  return baseFs[ZIPFS_CACHE][p];
 }
 
 function wrapSync(baseFs: typeof fs, original: any, patch: any) {
   return (p: string, ... args: Array<any>) => {
+    // @ts-ignore
+    if (baseFs[ZIPFS_REENTRANT])
+      return original(p, ... args);
+
     const zipInfo = findZip(baseFs, p);
 
     if (!zipInfo)
       return original(p, ... args);
 
-    const zip = getZip(baseFs, zipInfo.archive);
-    return patch.call(zip, zipInfo.rest, ... args);
+    // @ts-ignore
+    baseFs[ZIPFS_REENTRANT] = true;
+
+    try {
+      const zip = getZip(baseFs, zipInfo.archive);
+      return patch.call(zip, zipInfo.rest, ... args);
+    } finally {
+      // @ts-ignore
+      delete baseFs[ZIPFS_REENTRANT];
+    }
   };
 }
 
@@ -62,6 +82,10 @@ function wrapAsync(baseFs: typeof fs, original: any, patch: any) {
   type Callback = (... arg: Array<any>) => any;
 
   return (p: string, ... args: Array<any>) => {
+    // @ts-ignore
+    if (baseFs[ZIPFS_REENTRANT])
+      return original(p, ... args);
+
     const zipInfo = findZip(baseFs, p);
 
     if (!zipInfo)
@@ -75,11 +99,17 @@ function wrapAsync(baseFs: typeof fs, original: any, patch: any) {
     let result: any;
     let error: any;
 
+    // @ts-ignore
+    baseFs[ZIPFS_REENTRANT] = true;
+
     try {
       const zip = getZip(baseFs, zipInfo.archive);
       result = patch.call(zip, zipInfo.rest, ... args);
     } catch (ex) {
       error = ex;
+    } finally {
+      // @ts-ignore
+      delete baseFs[ZIPFS_REENTRANT];
     }
 
     if (cb) {
@@ -109,7 +139,7 @@ export function patch(patchedFs: typeof fs): void {
     }
 
     if (syncOrig) {
-      (patchedFs as any)[syncName] = wrapSync(baseFs, asyncOrig, fnImpl);
+      (patchedFs as any)[syncName] = wrapSync(baseFs, syncOrig, fnImpl);
       (baseFs as any)[syncName] = syncOrig;
     }
   }

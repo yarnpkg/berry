@@ -70,7 +70,6 @@ export async function extractPnpSettings(project: Project): Promise<PnpSettings>
         continue;
 
       packageInformation = {
-        packageMainEntry: null,
         packageLocation: normalizeDirectoryPath(location),
         packageDependencies: new Map(),
       };
@@ -87,17 +86,27 @@ export async function extractPnpSettings(project: Project): Promise<PnpSettings>
   }
 
   for (const workspace of project.workspacesByLocator.values()) {
-    const requirableName = structUtils.requirableIdent(workspace.locator);
+    const requirableName = workspace.cwd !== project.cwd
+      ? structUtils.requirableIdent(workspace.locator)
+      : null;
 
     let packageInformationStore = packageInformationStores.get(requirableName);
 
     if (!packageInformationStore)
       packageInformationStores.set(requirableName, packageInformationStore = new Map());
 
-    packageInformationStore.set(workspace.locator.reference, {
-      packageMainEntry: null,
+    const dependencies = new Map([
+      ... workspace.manifest.dependencies,
+      ... workspace.manifest.devDependencies,
+    ]);
+
+    const reference = workspace.cwd !== project.cwd
+      ? workspace.locator.reference
+      : null;
+
+    packageInformationStore.set(reference, {
       packageLocation: normalizeDirectoryPath(workspace.cwd),
-      packageDependencies: await visit(workspace.dependencies, workspace.locator.locatorHash),
+      packageDependencies: await visit(dependencies, workspace.locator.locatorHash),
     });
   }
 

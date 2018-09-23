@@ -15,6 +15,6 @@ export interface Locator extends Ident {
 };
 
 export interface Package extends Locator {
-  dependencies: Map<string, Descriptor>;
-  peerDependencies: Map<string, Descriptor>;
+  dependencies: Map<string, Descriptor>,
+  peerDependencies: Map<string, Descriptor>,
 };

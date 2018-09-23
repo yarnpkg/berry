@@ -21,12 +21,18 @@ export class Cache {
   public readonly configuration: Configuration;
   public readonly cwd: string;
 
+  public cacheHitCount: number = 0;
+  public cacheMissCount: number = 0;
+
   static async find(configuration: Configuration) {
     const cacheFolder = configuration.offlineCacheFolder
       ? configuration.offlineCacheFolder
       : ``;
 
-    return new Cache(cacheFolder, {configuration});
+    const cache = new Cache(cacheFolder, {configuration});
+    await cache.setup();
+
+    return cache;
   }
 
   constructor(cacheCwd: string, {configuration}: {configuration: Configuration}) {
@@ -59,7 +65,7 @@ export class Cache {
     });
   }
 
-  async fetchFromCache(locator: Locator, loader: () => Promise<any>) {
+  async fetchFromCache(locator: Locator, loader?: () => Promise<Archive>) {
     const key = this.getCacheKey(locator);
     const file = this.getFilePath(key);
 
@@ -68,14 +74,22 @@ export class Cache {
 
       try {
         archive = await Archive.load(file);
+        this.cacheHitCount += 1;
       } catch (error) {
+        this.cacheMissCount += 1;
+
+        if (!loader)
+          throw error;
+
         archive = await loader();
         await archive.store(file);
       }
+
+      return archive;
     });
   }
 
-  async writeFileIntoCache(file: string, generator: (file: string) => any) {
+  async writeFileIntoCache<T>(file: string, generator: (file: string) => Promise<T>) {
     const lock = `${file}.lock`;
 
     try {
@@ -84,11 +98,14 @@ export class Cache {
       throw new Error(`Couldn't obtain a lock on ${file}`);
     }
 
+    let entity: T;
+
     try {
-      await generator(file);
-      return file;
+      entity = await generator(file);
     } finally {
       await unlockP(lock);
     }
+
+    return {file, entity};
   }
 }

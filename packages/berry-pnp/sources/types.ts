@@ -1,6 +1,5 @@
 export type PackageInformation = {
   packageLocation: string,
-  packageMainEntry: string | null,
   packageDependencies: Map<string, string>,
 };
 

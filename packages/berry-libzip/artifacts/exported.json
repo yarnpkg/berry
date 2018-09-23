@@ -1,4 +1,5 @@
 [
+    "_zip_error_init_with_code",
     "_zip_error_strerror",
     "_zip_fclose",
     "_zip_file_get_error",
@@ -12,8 +13,11 @@
     "_zip_stat",
     "_zip_stat_index",
     "_zipstruct_stat",
+    "_zipstruct_statS",
     "_zipstruct_stat_name",
     "_zipstruct_stat_index",
     "_zipstruct_stat_size",
-    "_zipstruct_stat_mtime"
+    "_zipstruct_stat_mtime",
+    "_zipstruct_error",
+    "_zipstruct_errorS"
 ]

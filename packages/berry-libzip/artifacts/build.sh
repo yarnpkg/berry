@@ -57,9 +57,10 @@ LIBZIP_VERSION=1.5.1
         -s EXTRA_EXPORTED_RUNTIME_METHODS='["FS", "cwrap", "getValue"]' \
         -s ALLOW_MEMORY_GROWTH=1 \
         -s BINARYEN_ASYNC_COMPILATION=0 \
-        --pre-js ./loader.js \
+        --pre-js ../sources/shell.pre.js \
         -I./libzip-"$LIBZIP_VERSION"/lib \
         -I./libzip-"$LIBZIP_VERSION" \
+        -O3 \
         ./zipstruct.c \
         ./libzip-"$LIBZIP_VERSION"/lib/libzip.a \
         ./zlib-"$ZLIB_VERSION"/libz.a

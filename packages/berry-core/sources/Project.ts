@@ -70,7 +70,7 @@ export class Project {
     this.cwd = projectCwd;
   }
 
-  async setupResolutions() {
+  private async setupResolutions() {
     this.storedResolutions = new Map();
 
     this.storedDescriptors = new Map();
@@ -109,7 +109,7 @@ export class Project {
     }
   }
 
-  async setupWorkspaces({force = false}: {force?: boolean} = {}) {
+  private async setupWorkspaces({force = false}: {force?: boolean} = {}) {
     this.workspacesByCwd = new Map();
     this.workspacesByLocator = new Map();
     this.workspacesByIdent = new Map();
@@ -203,7 +203,35 @@ export class Project {
     return selectedWorkspace;
   }
 
-  makeWorkspaceResolver(): Resolver {
+  async getPackageLocation(locator: Locator, {cache = null}: {cache?: Cache | null} = {}) {
+    const workspace = this.tryWorkspaceByLocator(locator);
+
+    if (workspace) {
+      return workspace.cwd;
+    } else if (!cache) {
+      throw new Error(`The manifest for "${structUtils.prettyLocator(locator)}" cannot be located without a cache`);
+    }
+
+    const {file} = await cache.fetchFromCache(locator);
+    return file;
+  }
+
+  async getPackageManifest(locator: Locator, {cache = null}: {cache?: Cache | null} = {}) {
+    const workspace = this.tryWorkspaceByLocator(locator);
+
+    if (workspace) {
+      return workspace.manifest;
+    } else if (!cache) {
+      throw new Error(`The manifest for "${structUtils.prettyLocator(locator)}" cannot be located without a cache`);
+    }
+
+    const {entity: archive} = await cache.fetchFromCache(locator);
+    const manifest = await archive.getPackageManifest();
+
+    return manifest;
+  }
+
+  private makeWorkspaceResolver(): Resolver {
     const project = this;
     return {
       supports(descriptor: Descriptor): boolean {
@@ -242,12 +270,12 @@ export class Project {
       async resolve(locator: Locator): Promise<Package> {
         const workspace = project.getWorkspaceByLocator(locator);
 
-        return {... locator, dependencies: workspace.dependencies, peerDependencies: workspace.peerDependencies};
+        return {... locator, dependencies: workspace.manifest.dependencies, peerDependencies: workspace.manifest.peerDependencies};
       }
     };
   }
 
-  makeLockfileResolver(): Resolver {
+  private makeLockfileResolver(): Resolver {
     const project = this;
     return {
       supports(descriptor: Descriptor): boolean {
@@ -316,7 +344,7 @@ export class Project {
     const allResolutions = new Set<string>();
 
     for (const workspace of this.workspacesByLocator.values()) {
-      for (const store of [workspace.dependencies, workspace.devDependencies]) {
+      for (const store of [workspace.manifest.dependencies, workspace.manifest.devDependencies]) {
         for (const descriptor of store.values()) {
           allDescriptors.set(descriptor.descriptorHash, descriptor);
           mustBeResolved.add(descriptor.descriptorHash);
@@ -515,9 +543,8 @@ export class Project {
       if (workspace) {
         this.storedLocations.set(pkg.locatorHash, workspace.cwd);
       } else {
-        this.storedLocations.set(pkg.locatorHash, await cache.fetchFromCache(pkg, async () => {
-          return await fetcher.fetch(pkg);
-        }));
+        const {file: cacheLocation} = await cache.fetchFromCache(pkg, () => fetcher.fetch(pkg));
+        this.storedLocations.set(pkg.locatorHash, cacheLocation);
       }
     }
   }
@@ -530,8 +557,6 @@ export class Project {
   }
 
   async install({cache}: {cache: Cache}) {
-    await cache.setup();
-
     await this.resolveEverything();
     await this.fetchEverything(cache);
     await this.generatePnpFile();

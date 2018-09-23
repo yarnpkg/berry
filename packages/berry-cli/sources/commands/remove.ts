@@ -16,7 +16,7 @@ export default (concierge: any) => concierge
     const report = await Report.start({project, cache}, async () => {
       for (const entry of names) {
         const ident = structUtils.parseIdent(entry);
-        workspace.removeDependency(ident);
+        workspace.manifest.dependencies.delete(ident.identHash);
       }
 
       await project.install({cache});

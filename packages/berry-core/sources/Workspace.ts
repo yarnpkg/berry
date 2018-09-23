@@ -1,19 +1,16 @@
 import globby = require('globby');
 
-import {createHmac}                 from 'crypto';
-import {existsSync, readFile}       from 'fs';
-import {resolve}                    from 'path';
-import {promisify}                  from 'util';
+import {createHmac}           from 'crypto';
+import {existsSync, readFile} from 'fs';
+import {resolve}              from 'path';
+import {promisify}            from 'util';
 
-import {Project}                    from './Project';
-import * as structUtils             from './structUtils';
-import {Ident, Descriptor, Locator} from './types';
+import {Manifest}             from './Manifest';
+import {Project}              from './Project';
+import * as structUtils       from './structUtils';
+import {Locator}              from './types';
 
 const readFileP = promisify(readFile);
-
-export interface WorkspaceDefinition {
-  pattern: string;
-};
 
 function hashWorkspaceCwd(cwd: string) {
   return createHmac('sha256', 'berry').update(cwd).digest('hex').substr(0, 6);
@@ -24,15 +21,10 @@ export class Workspace {
   public readonly cwd: string;
 
   // @ts-ignore: This variable is set during the setup process
-  public locator: Locator;
+  public readonly locator: Locator;
 
-  public scripts: Map<string, string> = new Map();
-
-  public dependencies: Map<string, Descriptor> = new Map();
-  public devDependencies: Map<string, Descriptor> = new Map();
-  public peerDependencies: Map<string, Descriptor> = new Map();
-
-  public workspaceDefinitions: Array<WorkspaceDefinition> = [];
+  // @ts-ignore: This variable is set during the setup process
+  public readonly manifest: Manifest;
 
   constructor(workspaceCwd: string, {project}: {project: Project}) {
     this.project = project;
@@ -40,63 +32,24 @@ export class Workspace {
   }
 
   async setup() {
-    const content = await readFileP(`${this.cwd}/package.json`, `utf8`);
-    const data = JSON.parse(content);
+    const source = await readFileP(`${this.cwd}/package.json`, `utf8`);
+    const data = JSON.parse(source);
 
-    const ident = data.name ? structUtils.parseIdent(data.name) : structUtils.makeIdent(null, `unnamed-workspace-${hashWorkspaceCwd(this.cwd)}`);
-    const reference = data.version ? data.version : `0.0.0`;
+    // @ts-ignore: It's ok to initialize it now
+    this.manifest = new Manifest();
+    this.manifest.load(data);
 
+    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `unnamed-workspace-${hashWorkspaceCwd(this.cwd)}`);
+    const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
+
+    // @ts-ignore: It's ok to initialize it now
     this.locator = structUtils.makeLocatorFromIdent(ident, reference);
-
-    if (data.scripts) {
-      for (const [name, source] of Object.entries(data.scripts)) {
-        this.scripts.set(name, String(source));
-      }
-    }
-
-    if (data.dependencies) {
-      for (const [name, range] of Object.entries(data.dependencies)) {
-        if (typeof range !== 'string')
-          throw new Error(`Invalid dependency range for '${name}', in '${this.cwd}'`);
-
-        const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(name), range);
-        this.addDependency(descriptor);
-      }
-    }
-
-    if (data.devDependencies) {
-      for (const [name, range] of Object.entries(data.devDependencies)) {
-        if (typeof range !== 'string')
-          throw new Error(`Invalid dependency range for '${name}', in '${this.cwd}'`);
-
-        const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(name), range);
-        this.addDevDependency(descriptor);
-      }
-    }
-
-    if (data.peerDependencies) {
-      for (const [name, range] of Object.entries(data.peerDependencies || {})) {
-        if (typeof range !== 'string')
-          throw new Error(`Invalid dependency range for '${name}', in '${this.cwd}'`);
-
-        const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(name), range);
-        this.addPeerDependency(descriptor);
-      }
-    }
-
-    if (data.workspaces) {
-      for (const entry of data.workspaces) {
-        this.workspaceDefinitions.push({
-          pattern: entry,
-        });
-      }
-    }
   }
 
   async resolveChildWorkspaces() {
     const workspaceCwds = [];
 
-    for (const definition of this.workspaceDefinitions) {
+    for (const definition of this.manifest.workspaceDefinitions) {
       const relativeCwds = await globby(definition.pattern, {
         cwd: this.cwd,
         onlyDirectories: true,
@@ -116,29 +69,5 @@ export class Workspace {
 
   accepts(range: string) {
     return true;
-  }
-
-  addDependency(descriptor: Descriptor) {
-    this.dependencies.set(descriptor.identHash, descriptor);
-  }
-
-  removeDependency(ident: Ident) {
-    this.dependencies.delete(ident.identHash);
-  }
-
-  addDevDependency(descriptor: Descriptor) {
-    this.devDependencies.set(descriptor.identHash, descriptor);
-  }
-
-  removeDevDependency(ident: Ident) {
-    this.devDependencies.delete(ident.identHash);
-  }
-
-  addPeerDependency(descriptor: Descriptor) {
-    this.peerDependencies.set(descriptor.identHash, descriptor);
-  }
-
-  removePeerDependency(ident: Ident) {
-    this.peerDependencies.delete(ident.identHash);
   }
 }

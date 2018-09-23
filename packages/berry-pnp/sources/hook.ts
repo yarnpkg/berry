@@ -15,6 +15,8 @@ interface ModuleInterface {
   load(p: string): void;
 }
 
+declare var __non_webpack_module__: ModuleInterface;
+
 interface ModuleInterfaceStatic {
   _cache: {[p: string]: ModuleInterface};
   _extensions: {[ext: string]: any};
@@ -71,8 +73,20 @@ let packageLocatorByLocationMap: Map<string, PackageLocator>;
 // We store a sorted arrays of the possible lengths that we need to check
 let packageLocationLengths: Array<number>;
 
-declare const $$DYNAMICALLY_GENERATED_CODE: () => void;
-$$DYNAMICALLY_GENERATED_CODE();
+declare const $$DYNAMICALLY_GENERATED_CODE: (
+  topLevelLocator: PackageLocator,
+  blacklistedLocator: PackageLocator
+) => any;
+
+({
+  ignorePattern,
+  packageInformationStores,
+  packageLocatorByLocationMap,
+  packageLocationLengths,
+} = $$DYNAMICALLY_GENERATED_CODE(
+  topLevelLocator,
+  blacklistedLocator,
+));
 
 /**
  * Used to disable the resolution hooks (for when we want to fallback to the previous resolution - we then need
@@ -598,6 +612,10 @@ export function setup() {
   const originalModuleLoad = Module._load;
 
   Module._load = function(request: string, parent: ModuleInterface, isMain: boolean) {
+    if (request === `pnpapi`) {
+      return __non_webpack_module__.exports;
+    }
+
     if (!enableNativeHooks) {
       return originalModuleLoad.call(Module, request, parent, isMain);
     }
@@ -657,6 +675,10 @@ export function setup() {
   const originalModuleResolveFilename = Module._resolveFilename;
 
   Module._resolveFilename = function(request: string, parent: ModuleInterface | null, isMain: boolean, options: Object) {
+    if (request === `pnpapi`) {
+      return request;
+    }
+
     if (!enableNativeHooks) {
       return originalModuleResolveFilename.call(Module, request, parent, isMain, options);
     }
@@ -671,6 +693,10 @@ export function setup() {
   const originalFindPath = Module._findPath;
 
   Module._findPath = function(request: string, paths: Array<string>, isMain: boolean) {
+    if (request === `pnpapi`) {
+      return false;
+    }
+
     if (!enableNativeHooks) {
       return originalFindPath.call(Module, request, paths, isMain);
     }
@@ -695,12 +721,12 @@ export function setup() {
   patch(fs);
 };
 
-if (module.parent && module.parent.id === 'internal/preload') {
+if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
   setup();
 }
 
 // @ts-ignore
-if (process.mainModule === module) {
+if (process.mainModule === __non_webpack_module__) {
   const reportError = (code: string, message: string, data: Object) => {
     process.stdout.write(`${JSON.stringify([{code, message, data}, null])}\n`);
   };

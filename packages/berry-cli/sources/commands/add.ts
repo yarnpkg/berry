@@ -16,7 +16,7 @@ export default (concierge: any) => concierge
     const report = await Report.start({project, cache}, async () => {
       for (const entry of packages) {
         const descriptor = structUtils.parseDescriptor(entry);
-        workspace.addDependency(descriptor);
+        workspace.manifest.dependencies.set(descriptor.identHash, descriptor);
       }
 
       await project.install({cache});

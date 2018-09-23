@@ -5,6 +5,7 @@
     "main": "./sources/index.ts",
     "dependencies": {
         "@berry/parsers": "0.0.0",
+        "execa": "^1.0.0",
         "stream-buffers": "^3.0.2"
     }
 }

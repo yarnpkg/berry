@@ -7,6 +7,7 @@
     },
     "dependencies": {
         "@berry/core": "0.0.0",
+        "@berry/shell": "0.0.0",
         "@manaflair/concierge": "^0.7.3",
         "execa": "^1.0.0",
         "joi": "^13.6.0",
@@ -17,10 +18,11 @@
         "@berry/builder": "0.0.0",
         "@berry/plugin-github": "0.0.0",
         "@berry/plugin-hub": "0.0.0",
-        "@berry/plugin-npm": "0.0.0"
+        "@berry/plugin-npm": "0.0.0",
+        "@berry/pnp": "0.0.0"
     },
     "scripts": {
-        "build": "@berry-build-bundle"
+        "build": "node ~/yarn-1.10.0.js @berry-build-bundle"
     },
     "@berry/builder": {
         "bundles": {

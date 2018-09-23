@@ -51,6 +51,7 @@ export class ZipFS {
     `realpath`,
     `readdir`,
     `stat`,
+    `lstat`,
     `readFile`,
   ]);
 
@@ -61,10 +62,13 @@ export class ZipFS {
     const errPtr = libzip.malloc(4);
 
     try {
-      this.zip = libzip.open(p, 0, errPtr);
+      this.zip = libzip.open(`/mnt/${p}`, 0, errPtr);
 
       if (this.zip === 0) {
-        throw new Error(libzip.error.strerror(errPtr));
+        const error = libzip.struct.errorS();
+        libzip.error.initWithCode(error, libzip.getValue(errPtr, `i32`));
+
+        throw new Error(libzip.error.strerror(error));
       }
     } finally {
       libzip.free(errPtr);
@@ -116,14 +120,39 @@ export class ZipFS {
   }
 
   exists(p: string): boolean {
-    p = this.realpath(p);
+    const origP = p;
+    p = posix.resolve(`/`, p);
+
+    // Only checks in the directory entries
+    if (origP[origP.length - 1] === `/`)
+      return this.listings.has(p);
 
     return this.listings.has(p) || this.entries.has(p);
   }
 
-  stat(p: string): Stats {
+  stat(p: string) {
+    const origP = p;
     p = this.realpath(p);
 
+    // Ensures that it's a directory
+    if (origP[origP.length - 1] === `/`)
+      this.ensurePathCorrectness(p, `stat`, true);
+
+    return this.statImpl(p);
+  }
+
+  lstat(p: string) {
+    const origP = p;
+    p = posix.join(this.realpath(posix.dirname(p)), posix.basename(p));
+
+    // Ensures that it's a directory
+    if (origP[origP.length - 1] === `/`)
+      this.ensurePathCorrectness(p, `lstat`, true);
+
+    return this.statImpl(p);
+  }
+
+  private statImpl(p: string): Stats {
     if (this.listings.has(p)) {
       const uid = this.stats.uid;
       const gid = this.stats.gid;
@@ -172,21 +201,26 @@ export class ZipFS {
       const mtime = new Date(mtimeMs);
 
       return Object.assign({uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs}, IS_FILE_STAT);
-    } else {
-      this.ensurePathCorrectness(p, `stat`);
-      throw new Error(`Unreachable`);
     }
+
+    this.ensurePathCorrectness(p, `stat`);
+    throw new Error(`Unreachable`);
   }
 
   readFile(p: string, encoding?: string) {
+    const origP = p;
     p = this.realpath(p);
+
+    // Ensure that the last component is a directory (if it is we'll throw right after with EISDIR anyway)
+    if (origP[origP.length - 1] === `/`)
+      this.ensurePathCorrectness(p, `open`, true);
 
     if (this.listings.has(p))
       throw new Error(`EISDIR: illegal operation on a directory, read`);
 
     const entry = this.entries.get(p);
 
-    if (!entry)
+    if (entry === undefined)
       throw new Error(`Unreachable`);
 
     const stat = libzip.struct.statS();
@@ -239,15 +273,15 @@ export class ZipFS {
 
       const parentListing = this.listings.get(parentPath);
       if (!parentListing)
-        throw new Error(`ENOTDIR: not a directory, ${op} '${parentPath}'`);
+        throw Object.assign(new Error(`ENOTDIR: not a directory, ${op} '${parentPath}'`), {code: `ENOTDIR`});
 
       if (!parentListing.has(parts[t])) {
-        throw new Error(`ENOENT: no such file or directory, ${op} '${posix.join(parentPath, parts[t])}'`);
+        throw Object.assign(new Error(`ENOENT: no such file or directory, ${op} '${posix.join(parentPath, parts[t])}'`), {code: `ENOENT`});
       }
     }
 
     if (checkDir && !this.listings.get(p)) {
-      throw new Error(`ENOTDIR: not a directory, ${op} '${p}'`);
+      throw Object.assign(new Error(`ENOTDIR: not a directory, ${op} '${p}'`), {code: `ENOTDIR`});
     }
   }
 };

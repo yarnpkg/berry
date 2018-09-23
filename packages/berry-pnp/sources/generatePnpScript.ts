@@ -1,4 +1,4 @@
-import template = require('!raw-loader!@berry/cli/lib/hook-bundle');
+import template = require('!raw-loader!@berry/pnp/hook-bundle');
 
 import {readFileSync}                                             from 'fs';
 
@@ -13,13 +13,10 @@ function generateDatastores(packageInformationStores: PackageInformationStores, 
     code += `  [${JSON.stringify(packageName)}, new Map([\n`;
     for (const [
       packageReference,
-      {packageMainEntry, packageLocation, packageDependencies},
+      {packageLocation, packageDependencies},
     ] of packageInformationStore) {
       code += `    [${JSON.stringify(packageReference)}, {\n`;
       code += `      packageLocation: ${JSON.stringify(packageLocation)},\n`;
-      if (packageMainEntry) {
-        code += `      packageMainEntry: ${JSON.stringify(packageMainEntry)},\n`;
-      }
       code += `      packageDependencies: new Map([\n`;
       for (const [dependencyName, dependencyReference] of packageDependencies.entries()) {
         code += `        [${JSON.stringify(dependencyName)}, ${JSON.stringify(dependencyReference)}],\n`;
@@ -77,7 +74,7 @@ function generateDatastores(packageInformationStores: PackageInformationStores, 
   });
 
   code += `packageLocationLengths = [\n`;
-  for (const length of sortedLengths) {
+  for (const [length, count] of sortedLengths) {
     code += `  ${length},\n`;
   }
   code += `];\n`;
@@ -90,10 +87,21 @@ export function generatePnpScript(settings: PnpSettings): string {
   const datastores = generateDatastores(packageInformationStores, blacklistedLocations);
 
   return [
-    `function $$DYNAMICALLY_GENERATED_CODE() {\n`,
+    `var __non_webpack_module__ = module;\n`,
+    `\n`,
+    `function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {\n`,
+    `  var ignorePattern, packageInformationStores, packageLocatorByLocationMap, packageLocationLengths;\n`,
+    `\n`,
     `  ignorePattern = null;\n`,
     `\n`,
     datastores.replace(/^/gm, `  `),
+    `\n`,
+    `  return {\n`,
+    `    ignorePattern: ignorePattern,\n`,
+    `    packageInformationStores: packageInformationStores,\n`,
+    `    packageLocatorByLocationMap: packageLocatorByLocationMap,\n`,
+    `    packageLocationLengths: packageLocationLengths,\n`,
+    `  };\n`,
     `}\n`,
     `\n`,
     template,

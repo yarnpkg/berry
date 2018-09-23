@@ -7,6 +7,7 @@
         "@types/dateformat": "^1.0.1",
         "@types/emscripten": "^0.0.31",
         "@types/eventemitter3": "^2.0.2",
+        "@types/execa": "^0.9.0",
         "@types/faker": "^4.1.4",
         "@types/globby": "^8.0.0",
         "@types/jszip": "^3.1.4",
@@ -18,10 +19,8 @@
         "@types/request": "^2.47.1",
         "@types/semver": "^5.5.0",
         "@types/stream-to-promise": "^2.2.0",
-        "@types/tar": "^4.0.0"
-    },
-    "devDependencies": {
-        "@types/execa": "^0.9.0"
+        "@types/tar": "^4.0.0",
+        "typescript": "^3.0.1"
     },
     "scripts": {
         "b": "node packages/berry-cli/bin/berry"

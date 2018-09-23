@@ -27,8 +27,9 @@ concierge
       context: basedir,
       entry: `@berry/pnp/sources/hook.ts`,
       output: {
-        filename: `hook-bundle`,
+        filename: `hook-bundle.js`,
         path: path.resolve(basedir, `lib`),
+        libraryTarget: `commonjs2`,
       },
       ... commonConfig,
     };
@@ -42,6 +43,10 @@ concierge
       },
       ... commonConfig,
     };
+
+    Object.assign(mainConfig.resolve.alias, {
+        [`@berry/pnp/hook-bundle`]: path.resolve(basedir, `lib/hook-bundle.js`),
+    });
 
     mainConfig.module.rules.push({
       test: path.resolve(basedir, `sources/plugins-embed.js`),

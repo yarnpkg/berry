@@ -37,3 +37,19 @@ unsigned int zipstruct_stat_mtime(struct zip_stat * st)
 {
     return st->mtime;
 }
+
+struct zip_error * zipstruct_error(void)
+{
+    struct zip_error * ptr = calloc(1, sizeof(struct zip_error));
+
+    return ptr;
+}
+
+struct zip_error * zipstruct_errorS(void)
+{
+    static struct zip_error error;
+
+    memset(&error, 0, sizeof(error));
+
+    return &error;
+}
