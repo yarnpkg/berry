@@ -1,4 +1,4 @@
-import {Resolver}                     from './Resolver';
+import {Resolver, ResolveOptions}     from './Resolver';
 import * as structUtils               from './structUtils';
 import {Descriptor, Locator, Package} from './types';
 
@@ -9,8 +9,8 @@ export class MultiResolver implements Resolver {
     this.resolvers = resolvers;
   }
 
-  tryResolver(descriptor: Descriptor) {
-    const resolver = this.resolvers.find(resolver => resolver.supports(descriptor));
+  tryResolver(descriptor: Descriptor, opts: ResolveOptions) {
+    const resolver = this.resolvers.find(resolver => resolver.supports(descriptor, opts));
 
     if (!resolver)
      return null;
@@ -18,8 +18,8 @@ export class MultiResolver implements Resolver {
     return resolver;
   }
 
-  getResolver(descriptor: Descriptor) {
-    const resolver = this.resolvers.find(resolver => resolver.supports(descriptor));
+  getResolver(descriptor: Descriptor, opts: ResolveOptions) {
+    const resolver = this.resolvers.find(resolver => resolver.supports(descriptor, opts));
 
     if (!resolver)
       throw new Error(`Couldn't find a resolver for '${structUtils.prettyDescriptor(descriptor)}'`);
@@ -27,21 +27,21 @@ export class MultiResolver implements Resolver {
     return resolver;
   }
 
-  supports(descriptor: Descriptor): boolean {
-    const resolver = this.tryResolver(descriptor);
+  supports(descriptor: Descriptor, opts: ResolveOptions): boolean {
+    const resolver = this.tryResolver(descriptor, opts);
 
     return resolver ? true : false;
   }
 
-  async getCandidates(descriptor: Descriptor): Promise<Array<string>> {
-    const resolver = this.getResolver(descriptor);
+  async getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<string>> {
+    const resolver = this.getResolver(descriptor, opts);
 
-    return await resolver.getCandidates(descriptor);
+    return await resolver.getCandidates(descriptor, opts);
   }
 
-  async resolve(locator: Locator): Promise<Package> {
-    const resolver = this.getResolver(structUtils.convertLocatorToDescriptor(locator));
+  async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
+    const resolver = this.getResolver(structUtils.convertLocatorToDescriptor(locator), opts);
 
-    return await resolver.resolve(locator);
+    return await resolver.resolve(locator, opts);
   }
 }

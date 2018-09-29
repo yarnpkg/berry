@@ -6,12 +6,12 @@
 @babel/core@^7.0.0-beta.39:
   dependencies:
     @babel/code-frame: ^7.0.0
-    @babel/generator: ^7.0.0
-    @babel/helpers: ^7.1.0
-    @babel/parser: ^7.1.0
-    @babel/template: ^7.1.0
+    @babel/generator: ^7.1.2
+    @babel/helpers: ^7.1.2
+    @babel/parser: ^7.1.2
+    @babel/template: ^7.1.2
     @babel/traverse: ^7.1.0
-    @babel/types: ^7.0.0
+    @babel/types: ^7.1.2
     convert-source-map: ^1.1.0
     debug: ^3.1.0
     json5: ^0.5.0
@@ -19,16 +19,16 @@
     resolve: ^1.3.2
     semver: ^5.4.1
     source-map: ^0.5.0
-  resolution: @babel/core@7.1.0
+  resolution: @babel/core@7.1.2
 
-@babel/generator@^7.0.0:
+"@babel/generator@^7.1.2, @babel/generator@^7.0.0":
   dependencies:
-    @babel/types: ^7.0.0
+    @babel/types: ^7.1.2
     jsesc: ^2.5.1
     lodash: ^4.17.10
     source-map: ^0.5.0
     trim-right: ^1.0.1
-  resolution: @babel/generator@7.0.0
+  resolution: @babel/generator@7.1.2
 
 @babel/helper-function-name@^7.1.0:
   dependencies:
@@ -47,12 +47,12 @@
     @babel/types: ^7.0.0
   resolution: @babel/helper-split-export-declaration@7.0.0
 
-@babel/helpers@^7.1.0:
+@babel/helpers@^7.1.2:
   dependencies:
-    @babel/template: ^7.1.0
+    @babel/template: ^7.1.2
     @babel/traverse: ^7.1.0
-    @babel/types: ^7.0.0
-  resolution: @babel/helpers@7.1.0
+    @babel/types: ^7.1.2
+  resolution: @babel/helpers@7.1.2
 
 @babel/highlight@^7.0.0:
   dependencies:
@@ -61,15 +61,15 @@
     js-tokens: ^4.0.0
   resolution: @babel/highlight@7.0.0
 
-@babel/parser@^7.1.0:
-  resolution: @babel/parser@7.1.0
+"@babel/parser@^7.1.2, @babel/parser@^7.1.0":
+  resolution: @babel/parser@7.1.2
 
-@babel/template@^7.1.0:
+"@babel/template@^7.1.2, @babel/template@^7.1.0":
   dependencies:
     @babel/code-frame: ^7.0.0
-    @babel/parser: ^7.1.0
-    @babel/types: ^7.0.0
-  resolution: @babel/template@7.1.0
+    @babel/parser: ^7.1.2
+    @babel/types: ^7.1.2
+  resolution: @babel/template@7.1.2
 
 "@babel/traverse@^7.0.0-beta.39, @babel/traverse@^7.1.0":
   dependencies:
@@ -84,28 +84,63 @@
     lodash: ^4.17.10
   resolution: @babel/traverse@7.1.0
 
-"@babel/types@^7.0.0-beta.39, @babel/types@^7.0.0":
+"@babel/types@^7.0.0-beta.39, @babel/types@^7.1.2, @babel/types@^7.0.0":
   dependencies:
     esutils: ^2.0.2
     lodash: ^4.17.10
     to-fast-properties: ^2.0.0
-  resolution: @babel/types@7.0.0
+  resolution: @babel/types@7.1.2
 
 @berry/builder@0.0.0:
   dependencies:
-    @manaflair/concierge: ^0.7.1
+    @manaflair/concierge: "virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#0.7.3"
+    brfs: ^2.0.1
     buffer-loader: ^0.1.0
+    joi: ^13.6.0
     raw-loader: ^0.5.1
-    ts-loader: ^5.1.0
+    transform-loader: ^0.2.4
+    ts-loader: "virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.2.1"
     typescript: ^3.0.1
-    val-loader: ^1.1.1
+    val-loader: "virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#1.1.1"
     webpack: ^4.18.0
     webpack-virtual-modules: ^0.1.10
-  resolution: @berry/builder@0.0.0
+  resolution: "@berry/builder@workspace:0.0.0"
+
+"@berry/builder@workspace-base:0.0.0":
+  dependencies:
+    @manaflair/concierge: "virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#0.7.3"
+    brfs: ^2.0.1
+    buffer-loader: ^0.1.0
+    joi: ^13.6.0
+    raw-loader: ^0.5.1
+    transform-loader: ^0.2.4
+    ts-loader: "virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.2.1"
+    typescript: ^3.0.1
+    val-loader: "virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#1.1.1"
+    webpack: ^4.18.0
+    webpack-virtual-modules: ^0.1.10
+  resolution: "@berry/builder@workspace-base:0.0.0"
+
+"@berry/cli@workspace-base:0.0.0":
+  dependencies:
+    @berry/builder: 0.0.0
+    @berry/core: 0.0.0
+    @berry/plugin-github: 0.0.0
+    @berry/plugin-hub: "virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#workspace:0.0.0"
+    @berry/plugin-npm: 0.0.0
+    @berry/pnp: 0.0.0
+    @berry/shell: 0.0.0
+    @manaflair/concierge: "virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#0.7.3"
+    execa: ^1.0.0
+    joi: ^13.6.0
+    tslib: ^1
+  resolution: "@berry/cli@workspace-base:0.0.0"
 
 @berry/core@0.0.0:
   dependencies:
     @berry/parsers: 0.0.0
+    @berry/pnp: 0.0.0
+    fs-extra: ^7.0.0
     globby: ^8.0.1
     jszip: ^3.1.5
     lockfile: ^1.0.4
@@ -117,86 +152,243 @@
     stream-to-promise: ^2.2.0
     tar: ^4.4.6
     tslib: ^1
-  resolution: @berry/core@0.0.0
+  resolution: "@berry/core@workspace:0.0.0"
+
+"@berry/core@workspace-base:0.0.0":
+  dependencies:
+    @berry/parsers: 0.0.0
+    @berry/pnp: 0.0.0
+    fs-extra: ^7.0.0
+    globby: ^8.0.1
+    jszip: ^3.1.5
+    lockfile: ^1.0.4
+    logic-solver: ^2.0.1
+    mkdirp: ^0.5.1
+    node-fetch: 2.1.2
+    pluralize: ^7.0.0
+    pretty-bytes: ^5.1.0
+    stream-to-promise: ^2.2.0
+    tar: ^4.4.6
+    tslib: ^1
+    typescript: ^3.0.1
+  resolution: "@berry/core@workspace-base:0.0.0"
 
 @berry/libzip@0.0.0:
   dependencies:
     tslib: ^1
-  resolution: @berry/libzip@0.0.0
+  resolution: "@berry/libzip@workspace:0.0.0"
+
+"@berry/libzip@workspace-base:0.0.0":
+  dependencies:
+    tslib: ^1
+  resolution: "@berry/libzip@workspace-base:0.0.0"
 
 @berry/parsers@0.0.0:
   dependencies:
     tslib: ^1
-  resolution: @berry/parsers@0.0.0
+  resolution: "@berry/parsers@workspace:0.0.0"
+
+"@berry/parsers@workspace-base:0.0.0":
+  dependencies:
+    pegjs: ^0.10.0
+    tslib: ^1
+    typescript: ^3.0.1
+  resolution: "@berry/parsers@workspace-base:0.0.0"
 
 @berry/plugin-github@0.0.0:
   dependencies:
     @berry/core: 0.0.0
     tslib: ^1
-  resolution: @berry/plugin-github@0.0.0
+  resolution: "@berry/plugin-github@workspace:0.0.0"
 
-@berry/plugin-hub@0.0.0:
+"@berry/plugin-github@workspace-base:0.0.0":
   dependencies:
-    @berry/ui: 0.0.0
-  resolution: @berry/plugin-hub@0.0.0
+    @berry/core: 0.0.0
+    tslib: ^1
+    typescript: ^3.0.1
+  resolution: "@berry/plugin-github@workspace-base:0.0.0"
+
+"@berry/plugin-hub@virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#workspace:0.0.0":
+  dependencies:
+    @berry/cli: "workspace-base:0.0.0"
+    @berry/core: 0.0.0
+    @berry/ui: "virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#workspace:0.0.0"
+    @manaflair/concierge: "virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#0.7.3"
+    dateformat: ^3.0.3
+    joi: ^13.6.0
+    react: ^16.5.2
+  resolution: "@berry/plugin-hub@virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#workspace:0.0.0"
+
+"@berry/plugin-hub@workspace-base:0.0.0":
+  dependencies:
+    @berry/builder: 0.0.0
+    @berry/ui: "virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#workspace:0.0.0"
+    @manaflair/concierge: "virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#0.7.3"
+    dateformat: ^3.0.3
+    joi: ^13.6.0
+    react: ^16.5.2
+  resolution: "@berry/plugin-hub@workspace-base:0.0.0"
 
 @berry/plugin-npm@0.0.0:
   dependencies:
     @berry/core: 0.0.0
     semver: ^5.5.1
-  resolution: @berry/plugin-npm@0.0.0
+  resolution: "@berry/plugin-npm@workspace:0.0.0"
+
+"@berry/plugin-npm@workspace-base:0.0.0":
+  dependencies:
+    @berry/core: 0.0.0
+    semver: ^5.5.1
+  resolution: "@berry/plugin-npm@workspace-base:0.0.0"
 
 @berry/pnp@0.0.0:
   dependencies:
     @berry/core: 0.0.0
     @berry/zipfs: 0.0.0
     tslib: ^1
-  resolution: @berry/pnp@0.0.0
+  resolution: "@berry/pnp@workspace:0.0.0"
+
+"@berry/pnp@workspace-base:0.0.0":
+  dependencies:
+    @berry/core: 0.0.0
+    @berry/zipfs: 0.0.0
+    raw-loader: ^0.5.1
+    ts-loader: "virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#5.2.1"
+    tslib: ^1
+    typescript: ^3.0.1
+    wasm-loader: "virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#1.3.0"
+    webpack: ^4.17.2
+    webpack-cli: "virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.1"
+  resolution: "@berry/pnp@workspace-base:0.0.0"
 
 @berry/shell@0.0.0:
   dependencies:
     @berry/parsers: 0.0.0
+    execa: ^1.0.0
     stream-buffers: ^3.0.2
-  resolution: @berry/shell@0.0.0
+  resolution: "@berry/shell@workspace:0.0.0"
+
+"@berry/shell@workspace-base:0.0.0":
+  dependencies:
+    @berry/parsers: 0.0.0
+    execa: ^1.0.0
+    stream-buffers: ^3.0.2
+  resolution: "@berry/shell@workspace-base:0.0.0"
 
 @berry/ui@0.0.0:
   dependencies:
     @manaflair/term-strings: ^0.10.0
-    @manaflair/text-layout: ^0.9.2
+    @manaflair/text-layout: ^0.9.3
     eventemitter3: ^3.1.0
     react-reconciler: ^0.14.0
     ttys: ^0.0.3
     yoga-dom: ^0.0.14
-  resolution: @berry/ui@0.0.0
+  peerDependencies:
+    react: "*"
+  resolution: "@berry/ui@workspace:0.0.0"
+
+"@berry/ui@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#workspace:0.0.0":
+  dependencies:
+    @manaflair/term-strings: ^0.10.0
+    @manaflair/text-layout: ^0.9.3
+    eventemitter3: ^3.1.0
+    react: ^16.5.2
+    react-reconciler: "virtual:1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e#0.14.0"
+    ttys: ^0.0.3
+    yoga-dom: ^0.0.14
+  resolution: "@berry/ui@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#workspace:0.0.0"
+
+"@berry/ui@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#workspace:0.0.0":
+  dependencies:
+    @manaflair/term-strings: ^0.10.0
+    @manaflair/text-layout: ^0.9.3
+    eventemitter3: ^3.1.0
+    react: ^16.5.2
+    react-reconciler: "virtual:1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5#0.14.0"
+    ttys: ^0.0.3
+    yoga-dom: ^0.0.14
+  resolution: "@berry/ui@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#workspace:0.0.0"
+
+"@berry/ui@workspace-base:0.0.0":
+  dependencies:
+    @manaflair/term-strings: ^0.10.0
+    @manaflair/text-layout: ^0.9.3
+    eventemitter3: ^3.1.0
+    faker: ^4.1.0
+    react: ^16.5.1
+    react-reconciler: "virtual:87c31939ffd3d24ff010b223c0935f0c5e91cd5b92941e5d632b279dccfc6e1b5b5b8b4a3ac82556a5a38ebc09123b1c1475079859ef3b232d23fbd748e3c020#0.14.0"
+    ts-node: ^7.0.1
+    ttys: ^0.0.3
+    yoga-dom: ^0.0.14
+  resolution: "@berry/ui@workspace-base:0.0.0"
 
 @berry/zipfs@0.0.0:
   dependencies:
     @berry/libzip: 0.0.0
     tslib: ^1
-  resolution: @berry/zipfs@0.0.0
+  resolution: "@berry/zipfs@workspace:0.0.0"
 
-@manaflair/concierge@^0.7.1:
+"@berry/zipfs@workspace-base:0.0.0":
   dependencies:
-    chalk: ^1.1.3
-    kexec: ^3.0.0
-    lodash: ^4.17.4
-  resolution: @manaflair/concierge@0.7.1
+    @berry/libzip: 0.0.0
+    tslib: ^1
+    typescript: ^3.0.1
+  resolution: "@berry/zipfs@workspace-base:0.0.0"
 
 @manaflair/concierge@^0.7.3:
   dependencies:
     chalk: ^1.1.3
     kexec: ^3.0.0
     lodash: ^4.17.4
+  peerDependencies:
+    joi: 10.x.x
   resolution: @manaflair/concierge@0.7.3
+
+"@manaflair/concierge@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#0.7.3":
+  dependencies:
+    chalk: ^1.1.3
+    joi: ^13.6.0
+    kexec: ^3.0.0
+    lodash: ^4.17.4
+  resolution: "@manaflair/concierge@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#0.7.3"
+
+"@manaflair/concierge@virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#0.7.3":
+  dependencies:
+    chalk: ^1.1.3
+    joi: ^13.6.0
+    kexec: ^3.0.0
+    lodash: ^4.17.4
+  resolution: "@manaflair/concierge@virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#0.7.3"
+
+"@manaflair/concierge@virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#0.7.3":
+  dependencies:
+    chalk: ^1.1.3
+    joi: ^13.6.0
+    kexec: ^3.0.0
+    lodash: ^4.17.4
+  resolution: "@manaflair/concierge@virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#0.7.3"
+
+"@manaflair/concierge@virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#0.7.3":
+  dependencies:
+    chalk: ^1.1.3
+    joi: ^13.6.0
+    kexec: ^3.0.0
+    lodash: ^4.17.4
+  resolution: "@manaflair/concierge@virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#0.7.3"
+
+"@manaflair/concierge@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#0.7.3":
+  dependencies:
+    chalk: ^1.1.3
+    joi: ^13.6.0
+    kexec: ^3.0.0
+    lodash: ^4.17.4
+  resolution: "@manaflair/concierge@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#0.7.3"
 
 @manaflair/term-strings@^0.10.0:
   dependencies:
     babel-runtime: ^6.23.0
     color-diff: ^1.0.0
   resolution: @manaflair/term-strings@0.10.0
-
-@manaflair/text-layout@^0.9.2:
-  resolution: @manaflair/text-layout@0.9.2
 
 @manaflair/text-layout@^0.9.3:
   resolution: @manaflair/text-layout@0.9.3
@@ -242,12 +434,17 @@
     @types/node: "*"
   resolution: @types/form-data@2.2.1
 
+@types/fs-extra@^5.0.4:
+  dependencies:
+    @types/node: "*"
+  resolution: @types/fs-extra@5.0.4
+
 "@types/glob@*":
   dependencies:
     @types/events: "*"
     @types/minimatch: "*"
     @types/node: "*"
-  resolution: @types/glob@7.1.0
+  resolution: @types/glob@7.1.1
 
 @types/globby@^8.0.0:
   dependencies:
@@ -280,14 +477,12 @@
   resolution: @types/node-fetch@2.1.2
 
 "@types/node@*":
-  resolution: @types/node@10.10.1
+  resolution: @types/node@10.11.3
 
 "@types/prop-types@*":
-  dependencies:
-    @types/react: "*"
-  resolution: @types/prop-types@15.5.5
+  resolution: @types/prop-types@15.5.6
 
-"@types/react@^16.4.14, @types/react@*":
+@types/react@^16.4.14:
   dependencies:
     @types/prop-types: "*"
     csstype: ^2.2.0
@@ -320,116 +515,112 @@
 "@types/webassembly-js-api@*":
   resolution: @types/webassembly-js-api@0.0.1
 
-@webassemblyjs/ast@1.7.6:
+@webassemblyjs/ast@1.7.8:
   dependencies:
-    @webassemblyjs/helper-module-context: 1.7.6
-    @webassemblyjs/helper-wasm-bytecode: 1.7.6
-    @webassemblyjs/wast-parser: 1.7.6
-    mamacro: ^0.0.3
-  resolution: @webassemblyjs/ast@1.7.6
+    @webassemblyjs/helper-module-context: 1.7.8
+    @webassemblyjs/helper-wasm-bytecode: 1.7.8
+    @webassemblyjs/wast-parser: 1.7.8
+  resolution: @webassemblyjs/ast@1.7.8
 
-@webassemblyjs/floating-point-hex-parser@1.7.6:
-  resolution: @webassemblyjs/floating-point-hex-parser@1.7.6
+@webassemblyjs/floating-point-hex-parser@1.7.8:
+  resolution: @webassemblyjs/floating-point-hex-parser@1.7.8
 
-@webassemblyjs/helper-api-error@1.7.6:
-  resolution: @webassemblyjs/helper-api-error@1.7.6
+@webassemblyjs/helper-api-error@1.7.8:
+  resolution: @webassemblyjs/helper-api-error@1.7.8
 
-@webassemblyjs/helper-buffer@1.7.6:
-  resolution: @webassemblyjs/helper-buffer@1.7.6
+@webassemblyjs/helper-buffer@1.7.8:
+  resolution: @webassemblyjs/helper-buffer@1.7.8
 
-@webassemblyjs/helper-code-frame@1.7.6:
+@webassemblyjs/helper-code-frame@1.7.8:
   dependencies:
-    @webassemblyjs/wast-printer: 1.7.6
-  resolution: @webassemblyjs/helper-code-frame@1.7.6
+    @webassemblyjs/wast-printer: 1.7.8
+  resolution: @webassemblyjs/helper-code-frame@1.7.8
 
-@webassemblyjs/helper-fsm@1.7.6:
-  resolution: @webassemblyjs/helper-fsm@1.7.6
+@webassemblyjs/helper-fsm@1.7.8:
+  resolution: @webassemblyjs/helper-fsm@1.7.8
 
-@webassemblyjs/helper-module-context@1.7.6:
+@webassemblyjs/helper-module-context@1.7.8:
+  resolution: @webassemblyjs/helper-module-context@1.7.8
+
+@webassemblyjs/helper-wasm-bytecode@1.7.8:
+  resolution: @webassemblyjs/helper-wasm-bytecode@1.7.8
+
+@webassemblyjs/helper-wasm-section@1.7.8:
   dependencies:
-    mamacro: ^0.0.3
-  resolution: @webassemblyjs/helper-module-context@1.7.6
+    @webassemblyjs/ast: 1.7.8
+    @webassemblyjs/helper-buffer: 1.7.8
+    @webassemblyjs/helper-wasm-bytecode: 1.7.8
+    @webassemblyjs/wasm-gen: 1.7.8
+  resolution: @webassemblyjs/helper-wasm-section@1.7.8
 
-@webassemblyjs/helper-wasm-bytecode@1.7.6:
-  resolution: @webassemblyjs/helper-wasm-bytecode@1.7.6
-
-@webassemblyjs/helper-wasm-section@1.7.6:
-  dependencies:
-    @webassemblyjs/ast: 1.7.6
-    @webassemblyjs/helper-buffer: 1.7.6
-    @webassemblyjs/helper-wasm-bytecode: 1.7.6
-    @webassemblyjs/wasm-gen: 1.7.6
-  resolution: @webassemblyjs/helper-wasm-section@1.7.6
-
-@webassemblyjs/ieee754@1.7.6:
+@webassemblyjs/ieee754@1.7.8:
   dependencies:
     @xtuc/ieee754: ^1.2.0
-  resolution: @webassemblyjs/ieee754@1.7.6
+  resolution: @webassemblyjs/ieee754@1.7.8
 
-@webassemblyjs/leb128@1.7.6:
+@webassemblyjs/leb128@1.7.8:
   dependencies:
     @xtuc/long: 4.2.1
-  resolution: @webassemblyjs/leb128@1.7.6
+  resolution: @webassemblyjs/leb128@1.7.8
 
-@webassemblyjs/utf8@1.7.6:
-  resolution: @webassemblyjs/utf8@1.7.6
+@webassemblyjs/utf8@1.7.8:
+  resolution: @webassemblyjs/utf8@1.7.8
 
-@webassemblyjs/wasm-edit@1.7.6:
+@webassemblyjs/wasm-edit@1.7.8:
   dependencies:
-    @webassemblyjs/ast: 1.7.6
-    @webassemblyjs/helper-buffer: 1.7.6
-    @webassemblyjs/helper-wasm-bytecode: 1.7.6
-    @webassemblyjs/helper-wasm-section: 1.7.6
-    @webassemblyjs/wasm-gen: 1.7.6
-    @webassemblyjs/wasm-opt: 1.7.6
-    @webassemblyjs/wasm-parser: 1.7.6
-    @webassemblyjs/wast-printer: 1.7.6
-  resolution: @webassemblyjs/wasm-edit@1.7.6
+    @webassemblyjs/ast: 1.7.8
+    @webassemblyjs/helper-buffer: 1.7.8
+    @webassemblyjs/helper-wasm-bytecode: 1.7.8
+    @webassemblyjs/helper-wasm-section: 1.7.8
+    @webassemblyjs/wasm-gen: 1.7.8
+    @webassemblyjs/wasm-opt: 1.7.8
+    @webassemblyjs/wasm-parser: 1.7.8
+    @webassemblyjs/wast-printer: 1.7.8
+  resolution: @webassemblyjs/wasm-edit@1.7.8
 
-@webassemblyjs/wasm-gen@1.7.6:
+@webassemblyjs/wasm-gen@1.7.8:
   dependencies:
-    @webassemblyjs/ast: 1.7.6
-    @webassemblyjs/helper-wasm-bytecode: 1.7.6
-    @webassemblyjs/ieee754: 1.7.6
-    @webassemblyjs/leb128: 1.7.6
-    @webassemblyjs/utf8: 1.7.6
-  resolution: @webassemblyjs/wasm-gen@1.7.6
+    @webassemblyjs/ast: 1.7.8
+    @webassemblyjs/helper-wasm-bytecode: 1.7.8
+    @webassemblyjs/ieee754: 1.7.8
+    @webassemblyjs/leb128: 1.7.8
+    @webassemblyjs/utf8: 1.7.8
+  resolution: @webassemblyjs/wasm-gen@1.7.8
 
-@webassemblyjs/wasm-opt@1.7.6:
+@webassemblyjs/wasm-opt@1.7.8:
   dependencies:
-    @webassemblyjs/ast: 1.7.6
-    @webassemblyjs/helper-buffer: 1.7.6
-    @webassemblyjs/wasm-gen: 1.7.6
-    @webassemblyjs/wasm-parser: 1.7.6
-  resolution: @webassemblyjs/wasm-opt@1.7.6
+    @webassemblyjs/ast: 1.7.8
+    @webassemblyjs/helper-buffer: 1.7.8
+    @webassemblyjs/wasm-gen: 1.7.8
+    @webassemblyjs/wasm-parser: 1.7.8
+  resolution: @webassemblyjs/wasm-opt@1.7.8
 
-@webassemblyjs/wasm-parser@1.7.6:
+@webassemblyjs/wasm-parser@1.7.8:
   dependencies:
-    @webassemblyjs/ast: 1.7.6
-    @webassemblyjs/helper-api-error: 1.7.6
-    @webassemblyjs/helper-wasm-bytecode: 1.7.6
-    @webassemblyjs/ieee754: 1.7.6
-    @webassemblyjs/leb128: 1.7.6
-    @webassemblyjs/utf8: 1.7.6
-  resolution: @webassemblyjs/wasm-parser@1.7.6
+    @webassemblyjs/ast: 1.7.8
+    @webassemblyjs/helper-api-error: 1.7.8
+    @webassemblyjs/helper-wasm-bytecode: 1.7.8
+    @webassemblyjs/ieee754: 1.7.8
+    @webassemblyjs/leb128: 1.7.8
+    @webassemblyjs/utf8: 1.7.8
+  resolution: @webassemblyjs/wasm-parser@1.7.8
 
-@webassemblyjs/wast-parser@1.7.6:
+@webassemblyjs/wast-parser@1.7.8:
   dependencies:
-    @webassemblyjs/ast: 1.7.6
-    @webassemblyjs/floating-point-hex-parser: 1.7.6
-    @webassemblyjs/helper-api-error: 1.7.6
-    @webassemblyjs/helper-code-frame: 1.7.6
-    @webassemblyjs/helper-fsm: 1.7.6
+    @webassemblyjs/ast: 1.7.8
+    @webassemblyjs/floating-point-hex-parser: 1.7.8
+    @webassemblyjs/helper-api-error: 1.7.8
+    @webassemblyjs/helper-code-frame: 1.7.8
+    @webassemblyjs/helper-fsm: 1.7.8
     @xtuc/long: 4.2.1
-    mamacro: ^0.0.3
-  resolution: @webassemblyjs/wast-parser@1.7.6
+  resolution: @webassemblyjs/wast-parser@1.7.8
 
-@webassemblyjs/wast-printer@1.7.6:
+@webassemblyjs/wast-printer@1.7.8:
   dependencies:
-    @webassemblyjs/ast: 1.7.6
-    @webassemblyjs/wast-parser: 1.7.6
+    @webassemblyjs/ast: 1.7.8
+    @webassemblyjs/wast-parser: 1.7.8
     @xtuc/long: 4.2.1
-  resolution: @webassemblyjs/wast-printer@1.7.6
+  resolution: @webassemblyjs/wast-printer@1.7.8
 
 @xtuc/ieee754@^1.2.0:
   resolution: @xtuc/ieee754@1.2.0
@@ -455,8 +646,15 @@ acorn-node@^1.3.0:
 "acorn@^5.6.2, acorn@^5.0.0, acorn@^5.7.1":
   resolution: acorn@5.7.3
 
-ajv-keywords@^3.1.0:
-  resolution: ajv-keywords@3.2.0
+"ajv-keywords@virtual:b280b9fcddbd791f8bf76b36e6e7578db505457dfded8c84282cf7f2e51ef7fb0519becc414f9d62779735c3f7744f2500c4b023cabbeab6458e122d75cf07c3#3.2.0":
+  dependencies:
+    ajv: ^6.1.0
+  resolution: "ajv-keywords@virtual:b280b9fcddbd791f8bf76b36e6e7578db505457dfded8c84282cf7f2e51ef7fb0519becc414f9d62779735c3f7744f2500c4b023cabbeab6458e122d75cf07c3#3.2.0"
+
+"ajv-keywords@virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#3.2.0":
+  dependencies:
+    ajv: ^6.1.0
+  resolution: "ajv-keywords@virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#3.2.0"
 
 ajv@^6.1.0:
   dependencies:
@@ -464,10 +662,7 @@ ajv@^6.1.0:
     fast-json-stable-stringify: ^2.0.0
     json-schema-traverse: ^0.4.1
     uri-js: ^4.2.2
-  resolution: ajv@6.5.3
-
-ansi-escapes@^3.0.0:
-  resolution: ansi-escapes@3.1.0
+  resolution: ajv@6.5.4
 
 ansi-regex@^2.0.0:
   resolution: ansi-regex@2.1.1
@@ -738,9 +933,6 @@ chalk@^1.1.3:
     supports-color: ^5.3.0
   resolution: chalk@2.4.1
 
-chardet@^0.7.0:
-  resolution: chardet@0.7.0
-
 chokidar@^2.0.2:
   dependencies:
     anymatch: ^2.0.0
@@ -779,14 +971,6 @@ class-utils@^0.3.5:
     isobject: ^3.0.0
     static-extend: ^0.1.1
   resolution: class-utils@0.3.6
-
-cli-cursor@^2.1.0:
-  dependencies:
-    restore-cursor: ^2.0.0
-  resolution: cli-cursor@2.1.0
-
-cli-width@^2.0.0:
-  resolution: cli-width@2.2.0
 
 cliui@^4.0.0:
   dependencies:
@@ -1099,16 +1283,7 @@ es6-promise@~3.0.2:
 "escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5":
   resolution: escape-string-regexp@1.0.5
 
-escodegen@^1.8.1:
-  dependencies:
-    esprima: ^3.1.3
-    estraverse: ^4.2.0
-    esutils: ^2.0.2
-    optionator: ^0.8.1
-    source-map: ~0.6.1
-  resolution: escodegen@1.11.0
-
-escodegen@~1.9.0:
+"escodegen@~1.9.0, escodegen@^1.8.1":
   dependencies:
     esprima: ^3.1.3
     estraverse: ^4.2.0
@@ -1202,13 +1377,6 @@ extend-shallow@^2.0.1:
     is-extendable: ^1.0.1
   resolution: extend-shallow@3.0.2
 
-external-editor@^3.0.0:
-  dependencies:
-    chardet: ^0.7.0
-    iconv-lite: ^0.4.24
-    tmp: ^0.0.33
-  resolution: external-editor@3.0.3
-
 extglob@^2.0.4:
   dependencies:
     array-unique: ^0.3.2
@@ -1242,11 +1410,6 @@ fast-json-stable-stringify@^2.0.0:
 
 fast-levenshtein@~2.0.4:
   resolution: fast-levenshtein@2.0.6
-
-figures@^2.0.0:
-  dependencies:
-    escape-string-regexp: ^1.0.5
-  resolution: figures@2.0.0
 
 fill-range@^4.0.0:
   dependencies:
@@ -1292,6 +1455,13 @@ from2@^2.1.0:
     inherits: ^2.0.1
     readable-stream: ^2.0.0
   resolution: from2@2.3.0
+
+fs-extra@^7.0.0:
+  dependencies:
+    graceful-fs: ^4.1.2
+    jsonfile: ^4.0.0
+    universalify: ^0.1.0
+  resolution: fs-extra@7.0.0
 
 fs-minipass@^1.2.5:
   dependencies:
@@ -1366,7 +1536,7 @@ glob-to-regexp@^0.3.0:
     path-is-absolute: ^1.0.0
   resolution: glob@7.1.3
 
-global-modules-path@^2.1.0:
+global-modules-path@^2.3.0:
   resolution: global-modules-path@2.3.0
 
 globals@^11.1.0:
@@ -1383,7 +1553,7 @@ globby@^8.0.1:
     slash: ^1.0.0
   resolution: globby@8.0.1
 
-"graceful-fs@^4.1.2, graceful-fs@^4.1.11":
+"graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.11":
   resolution: graceful-fs@4.1.11
 
 has-ansi@^2.0.0:
@@ -1450,7 +1620,7 @@ hoek@5.x.x:
 https-browserify@^1.0.0:
   resolution: https-browserify@1.0.0
 
-"iconv-lite@^0.4.24, iconv-lite@^0.4.4":
+iconv-lite@^0.4.4:
   dependencies:
     safer-buffer: >= 2.1.2 < 3
   resolution: iconv-lite@0.4.24
@@ -1472,11 +1642,11 @@ ignore@^3.3.5:
 immediate@~3.0.5:
   resolution: immediate@3.0.6
 
-import-local@^1.0.0:
+import-local@^2.0.0:
   dependencies:
-    pkg-dir: ^2.0.0
+    pkg-dir: ^3.0.0
     resolve-cwd: ^2.0.0
-  resolution: import-local@1.0.0
+  resolution: import-local@2.0.0
 
 imurmurhash@^0.1.4:
   resolution: imurmurhash@0.1.4
@@ -1498,23 +1668,6 @@ inherits@2.0.1:
 
 ini@~1.3.0:
   resolution: ini@1.3.5
-
-inquirer@^6.0.0:
-  dependencies:
-    ansi-escapes: ^3.0.0
-    chalk: ^2.0.0
-    cli-cursor: ^2.1.0
-    cli-width: ^2.0.0
-    external-editor: ^3.0.0
-    figures: ^2.0.0
-    lodash: ^4.17.10
-    mute-stream: 0.0.7
-    run-async: ^2.2.0
-    rxjs: ^6.1.0
-    string-width: ^2.1.0
-    strip-ansi: ^4.0.0
-    through: ^2.3.6
-  resolution: inquirer@6.2.0
 
 interpret@^1.1.0:
   resolution: interpret@1.1.0
@@ -1603,9 +1756,6 @@ is-number@^3.0.0:
     isobject: ^3.0.1
   resolution: is-plain-object@2.0.4
 
-is-promise@^2.1.0:
-  resolution: is-promise@2.1.0
-
 is-stream@^1.1.0:
   resolution: is-stream@1.1.0
 
@@ -1636,7 +1786,7 @@ joi@^13.6.0:
     hoek: 5.x.x
     isemail: 3.x.x
     topo: 3.x.x
-  resolution: joi@13.6.0
+  resolution: joi@13.7.0
 
 "js-tokens@^3.0.0 || ^4.0.0, js-tokens@^4.0.0":
   resolution: js-tokens@4.0.0
@@ -1652,6 +1802,11 @@ json-schema-traverse@^0.4.1:
 
 json5@^0.5.0:
   resolution: json5@0.5.1
+
+jsonfile@^4.0.0:
+  dependencies:
+    graceful-fs: ^4.1.6
+  resolution: jsonfile@4.0.0
 
 jszip@^3.1.5:
   dependencies:
@@ -1700,7 +1855,7 @@ lie@~3.1.0:
   resolution: lie@3.1.1
 
 loader-runner@^2.3.0:
-  resolution: loader-runner@2.3.0
+  resolution: loader-runner@2.3.1
 
 "loader-utils@^1.0.2, loader-utils@^1.0.0, loader-utils@^1.1.0":
   dependencies:
@@ -1763,9 +1918,6 @@ make-dir@^1.0.0:
 
 make-error@^1.1.1:
   resolution: make-error@1.3.5
-
-mamacro@^0.0.3:
-  resolution: mamacro@0.0.3
 
 map-age-cleaner@^0.1.1:
   dependencies:
@@ -1902,11 +2054,8 @@ ms@^2.1.1:
 ms@2.0.0:
   resolution: ms@2.0.0
 
-mute-stream@0.0.7:
-  resolution: mute-stream@0.0.7
-
 "nan@^2.4.0, nan@^2.9.2":
-  resolution: nan@2.11.0
+  resolution: nan@2.11.1
 
 nanomatch@^1.2.9:
   dependencies:
@@ -1928,7 +2077,7 @@ needle@^2.2.1:
     debug: ^2.1.2
     iconv-lite: ^0.4.4
     sax: ^1.2.4
-  resolution: needle@2.2.3
+  resolution: needle@2.2.4
 
 neo-async@^2.5.0:
   resolution: neo-async@2.5.2
@@ -2042,20 +2191,10 @@ object.pick@^1.3.0:
     isobject: ^3.0.1
   resolution: object.pick@1.3.0
 
-"once@^1.3.0, once@~1.3.0":
+"once@^1.3.0, once@~1.3.0, once@^1.3.1":
   dependencies:
     wrappy: 1
   resolution: once@1.3.3
-
-once@^1.3.1:
-  dependencies:
-    wrappy: 1
-  resolution: once@1.4.0
-
-onetime@^2.0.0:
-  dependencies:
-    mimic-fn: ^1.0.0
-  resolution: onetime@2.0.1
 
 optionator@^0.8.1:
   dependencies:
@@ -2080,7 +2219,7 @@ os-locale@^3.0.0:
     mem: ^4.0.0
   resolution: os-locale@3.0.1
 
-"os-tmpdir@~1.0.2, os-tmpdir@^1.0.0":
+os-tmpdir@^1.0.0:
   resolution: os-tmpdir@1.0.2
 
 osenv@^0.1.4:
@@ -2176,7 +2315,7 @@ pbkdf2@^3.0.3:
     ripemd160: ^2.0.1
     safe-buffer: ^5.0.1
     sha.js: ^2.4.8
-  resolution: pbkdf2@3.0.16
+  resolution: pbkdf2@3.0.17
 
 pegjs@^0.10.0:
   resolution: pegjs@0.10.0
@@ -2188,6 +2327,11 @@ pkg-dir@^2.0.0:
   dependencies:
     find-up: ^2.1.0
   resolution: pkg-dir@2.0.0
+
+pkg-dir@^3.0.0:
+  dependencies:
+    find-up: ^3.0.0
+  resolution: pkg-dir@3.0.0
 
 pluralize@^7.0.0:
   resolution: pluralize@7.0.0
@@ -2303,7 +2447,36 @@ react-reconciler@^0.14.0:
     object-assign: ^4.1.1
     prop-types: ^15.6.2
     schedule: ^0.4.0
+  peerDependencies:
+    react: ^16.0.0
   resolution: react-reconciler@0.14.0
+
+"react-reconciler@virtual:1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5#0.14.0":
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+    prop-types: ^15.6.2
+    react: ^16.5.2
+    schedule: ^0.4.0
+  resolution: "react-reconciler@virtual:1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5#0.14.0"
+
+"react-reconciler@virtual:1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e#0.14.0":
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+    prop-types: ^15.6.2
+    react: ^16.5.2
+    schedule: ^0.4.0
+  resolution: "react-reconciler@virtual:1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e#0.14.0"
+
+"react-reconciler@virtual:87c31939ffd3d24ff010b223c0935f0c5e91cd5b92941e5d632b279dccfc6e1b5b5b8b4a3ac82556a5a38ebc09123b1c1475079859ef3b232d23fbd748e3c020#0.14.0":
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+    prop-types: ^15.6.2
+    react: ^16.5.1
+    schedule: ^0.4.0
+  resolution: "react-reconciler@virtual:87c31939ffd3d24ff010b223c0935f0c5e91cd5b92941e5d632b279dccfc6e1b5b5b8b4a3ac82556a5a38ebc09123b1c1475079859ef3b232d23fbd748e3c020#0.14.0"
 
 "react@^16.5.1, react@^16.5.2":
   dependencies:
@@ -2381,12 +2554,6 @@ resolve-url@^0.2.1:
     path-parse: ^1.0.5
   resolution: resolve@1.8.1
 
-restore-cursor@^2.0.0:
-  dependencies:
-    onetime: ^2.0.0
-    signal-exit: ^3.0.2
-  resolution: restore-cursor@2.0.0
-
 ret@~0.1.10:
   resolution: ret@0.1.15
 
@@ -2401,20 +2568,10 @@ ret@~0.1.10:
     inherits: ^2.0.1
   resolution: ripemd160@2.0.2
 
-run-async@^2.2.0:
-  dependencies:
-    is-promise: ^2.1.0
-  resolution: run-async@2.3.0
-
 "run-queue@^1.0.3, run-queue@^1.0.0":
   dependencies:
     aproba: ^1.1.1
   resolution: run-queue@1.0.3
-
-rxjs@^6.1.0:
-  dependencies:
-    tslib: ^1.9.0
-  resolution: rxjs@6.3.2
 
 "safe-buffer@^5.1.2, safe-buffer@~5.1.1, safe-buffer@~5.1.0, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1":
   resolution: safe-buffer@5.1.2
@@ -2443,7 +2600,7 @@ schedule@^0.5.0:
 "schema-utils@^0.4.5, schema-utils@^0.4.4":
   dependencies:
     ajv: ^6.1.0
-    ajv-keywords: ^3.1.0
+    ajv-keywords: "virtual:b280b9fcddbd791f8bf76b36e6e7578db505457dfded8c84282cf7f2e51ef7fb0519becc414f9d62779735c3f7744f2500c4b023cabbeab6458e122d75cf07c3#3.2.0"
   resolution: schema-utils@0.4.7
 
 scope-analyzer@^2.0.1:
@@ -2651,7 +2808,7 @@ string-width@^1.0.1:
     strip-ansi: ^3.0.0
   resolution: string-width@1.0.2
 
-"string-width@^2.1.0, string-width@^2.0.0, string-width@^2.1.1, string-width@^1.0.2 || 2":
+"string-width@^2.0.0, string-width@^2.1.1, string-width@^1.0.2 || 2":
   dependencies:
     is-fullwidth-code-point: ^2.0.0
     strip-ansi: ^4.0.0
@@ -2676,7 +2833,7 @@ strip-json-comments@~2.0.1:
 supports-color@^2.0.0:
   resolution: supports-color@2.0.0
 
-"supports-color@^5.4.0, supports-color@^5.3.0":
+"supports-color@^5.5.0, supports-color@^5.3.0":
   dependencies:
     has-flag: ^3.0.0
   resolution: supports-color@5.5.0
@@ -2695,9 +2852,6 @@ supports-color@^2.0.0:
     yallist: ^3.0.2
   resolution: tar@4.4.6
 
-through@^2.3.6:
-  resolution: through@2.3.8
-
 "through2@^2.0.0, through2@~2.0.3":
   dependencies:
     readable-stream: ^2.1.5
@@ -2708,11 +2862,6 @@ timers-browserify@^2.0.4:
   dependencies:
     setimmediate: ^1.0.4
   resolution: timers-browserify@2.0.10
-
-tmp@^0.0.33:
-  dependencies:
-    os-tmpdir: ~1.0.2
-  resolution: tmp@0.0.33
 
 to-arraybuffer@^1.0.0:
   resolution: to-arraybuffer@1.0.1
@@ -2752,14 +2901,35 @@ transform-loader@^0.2.4:
 trim-right@^1.0.1:
   resolution: trim-right@1.0.1
 
-"ts-loader@^5.1.0, ts-loader@^5.0.0":
+"ts-loader@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#5.2.1":
   dependencies:
     chalk: ^2.3.0
     enhanced-resolve: ^4.0.0
     loader-utils: ^1.0.2
     micromatch: ^3.1.4
     semver: ^5.0.1
-  resolution: ts-loader@5.1.1
+    typescript: ^3.0.1
+  resolution: "ts-loader@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#5.2.1"
+
+"ts-loader@virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.2.1":
+  dependencies:
+    chalk: ^2.3.0
+    enhanced-resolve: ^4.0.0
+    loader-utils: ^1.0.2
+    micromatch: ^3.1.4
+    semver: ^5.0.1
+    typescript: ^3.0.1
+  resolution: "ts-loader@virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.2.1"
+
+"ts-loader@virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.2.1":
+  dependencies:
+    chalk: ^2.3.0
+    enhanced-resolve: ^4.0.0
+    loader-utils: ^1.0.2
+    micromatch: ^3.1.4
+    semver: ^5.0.1
+    typescript: ^3.0.1
+  resolution: "ts-loader@virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.2.1"
 
 ts-node@^7.0.1:
   dependencies:
@@ -2791,7 +2961,7 @@ typedarray@^0.0.6:
   resolution: typedarray@0.0.6
 
 typescript@^3.0.1:
-  resolution: typescript@3.0.3
+  resolution: typescript@3.1.1
 
 uglify-es@^3.3.4:
   dependencies:
@@ -2799,7 +2969,7 @@ uglify-es@^3.3.4:
     source-map: ~0.6.1
   resolution: uglify-es@3.3.10
 
-uglifyjs-webpack-plugin@^1.2.4:
+"uglifyjs-webpack-plugin@virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#1.3.0":
   dependencies:
     cacache: ^10.0.4
     find-cache-dir: ^1.0.0
@@ -2807,9 +2977,10 @@ uglifyjs-webpack-plugin@^1.2.4:
     serialize-javascript: ^1.4.0
     source-map: ^0.6.1
     uglify-es: ^3.3.4
+    webpack: 4.20.2
     webpack-sources: ^1.1.0
     worker-farm: ^1.5.2
-  resolution: uglifyjs-webpack-plugin@1.3.0
+  resolution: "uglifyjs-webpack-plugin@virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#1.3.0"
 
 underscore@^1.7.0:
   resolution: underscore@1.9.1
@@ -2825,12 +2996,36 @@ union-value@^1.0.0:
 unique-filename@^1.1.0:
   dependencies:
     unique-slug: ^2.0.0
-  resolution: unique-filename@1.1.0
+  resolution: unique-filename@1.1.1
 
 unique-slug@^2.0.0:
   dependencies:
     imurmurhash: ^0.1.4
-  resolution: unique-slug@2.0.0
+  resolution: unique-slug@2.0.1
+
+universalify@^0.1.0:
+  resolution: universalify@0.1.2
+
+"unnamed-workspace-9761b5@workspace-base:0.0.0":
+  dependencies:
+    @types/dateformat: ^1.0.1
+    @types/emscripten: ^0.0.31
+    @types/eventemitter3: ^2.0.2
+    @types/execa: ^0.9.0
+    @types/faker: ^4.1.4
+    @types/fs-extra: ^5.0.4
+    @types/globby: ^8.0.0
+    @types/jszip: ^3.1.4
+    @types/lockfile: ^1.0.0
+    @types/lodash: ^4.14.116
+    @types/mkdirp: ^0.5.2
+    @types/node-fetch: ^2.1.2
+    @types/react: ^16.4.14
+    @types/request: ^2.47.1
+    @types/semver: ^5.5.0
+    @types/stream-to-promise: ^2.2.0
+    @types/tar: ^4.0.0
+  resolution: "unnamed-workspace-9761b5@workspace-base:0.0.0"
 
 unset-value@^1.0.0:
   dependencies:
@@ -2871,14 +3066,22 @@ util@0.10.3:
     inherits: 2.0.1
   resolution: util@0.10.3
 
-v8-compile-cache@^2.0.0:
+v8-compile-cache@^2.0.2:
   resolution: v8-compile-cache@2.0.2
 
-val-loader@^1.1.1:
+"val-loader@virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#1.1.1":
   dependencies:
     loader-utils: ^1.0.0
     schema-utils: ^0.4.5
-  resolution: val-loader@1.1.1
+    webpack: ^4.18.0
+  resolution: "val-loader@virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#1.1.1"
+
+"val-loader@virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#1.1.1":
+  dependencies:
+    loader-utils: ^1.0.0
+    schema-utils: ^0.4.5
+    webpack: ^4.18.0
+  resolution: "val-loader@virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#1.1.1"
 
 vlq@^0.2.2:
   resolution: vlq@0.2.3
@@ -2897,11 +3100,11 @@ wasm-dce@^1.0.0:
     webassembly-interpreter: 0.0.30
   resolution: wasm-dce@1.0.2
 
-wasm-loader@^1.3.0:
+"wasm-loader@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#1.3.0":
   dependencies:
     loader-utils: ^1.1.0
     wasm-dce: ^1.0.0
-  resolution: wasm-loader@1.3.0
+  resolution: "wasm-loader@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#1.3.0"
 
 watchpack@^1.5.0:
   dependencies:
@@ -2920,42 +3123,42 @@ webassembly-interpreter@0.0.30:
     webassembly-floating-point-hex-parser: 0.1.2
   resolution: webassembly-interpreter@0.0.30
 
-webpack-cli@^3.1.0:
+"webpack-cli@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.1":
   dependencies:
     chalk: ^2.4.1
     cross-spawn: ^6.0.5
-    enhanced-resolve: ^4.0.0
-    global-modules-path: ^2.1.0
-    import-local: ^1.0.0
-    inquirer: ^6.0.0
+    enhanced-resolve: ^4.1.0
+    global-modules-path: ^2.3.0
+    import-local: ^2.0.0
     interpret: ^1.1.0
     loader-utils: ^1.1.0
-    supports-color: ^5.4.0
-    v8-compile-cache: ^2.0.0
-    yargs: ^12.0.1
-  resolution: webpack-cli@3.1.0
+    supports-color: ^5.5.0
+    v8-compile-cache: ^2.0.2
+    webpack: ^4.17.2
+    yargs: ^12.0.2
+  resolution: "webpack-cli@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.1"
 
-"webpack-sources@^1.2.0, webpack-sources@^1.1.0":
+"webpack-sources@^1.3.0, webpack-sources@^1.1.0":
   dependencies:
     source-list-map: ^2.0.0
     source-map: ~0.6.1
-  resolution: webpack-sources@1.2.0
+  resolution: webpack-sources@1.3.0
 
 webpack-virtual-modules@^0.1.10:
   dependencies:
     debug: ^3.0.0
   resolution: webpack-virtual-modules@0.1.10
 
-"webpack@^4.18.0, webpack@^4.17.2":
+"webpack@^4.18.0, webpack@^4.17.2, webpack@4.20.2":
   dependencies:
-    @webassemblyjs/ast: 1.7.6
-    @webassemblyjs/helper-module-context: 1.7.6
-    @webassemblyjs/wasm-edit: 1.7.6
-    @webassemblyjs/wasm-parser: 1.7.6
+    @webassemblyjs/ast: 1.7.8
+    @webassemblyjs/helper-module-context: 1.7.8
+    @webassemblyjs/wasm-edit: 1.7.8
+    @webassemblyjs/wasm-parser: 1.7.8
     acorn: ^5.6.2
     acorn-dynamic-import: ^3.0.0
     ajv: ^6.1.0
-    ajv-keywords: ^3.1.0
+    ajv-keywords: "virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#3.2.0"
     chrome-trace-event: ^1.0.0
     enhanced-resolve: ^4.1.0
     eslint-scope: ^4.0.0
@@ -2969,10 +3172,10 @@ webpack-virtual-modules@^0.1.10:
     node-libs-browser: ^2.0.0
     schema-utils: ^0.4.4
     tapable: ^1.1.0
-    uglifyjs-webpack-plugin: ^1.2.4
+    uglifyjs-webpack-plugin: "virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#1.3.0"
     watchpack: ^1.5.0
-    webpack-sources: ^1.2.0
-  resolution: webpack@4.19.1
+    webpack-sources: ^1.3.0
+  resolution: webpack@4.20.2
 
 which-module@^2.0.0:
   resolution: which-module@2.0.0
@@ -3024,7 +3227,7 @@ yargs-parser@^10.1.0:
     camelcase: ^4.1.0
   resolution: yargs-parser@10.1.0
 
-yargs@^12.0.1:
+yargs@^12.0.2:
   dependencies:
     cliui: ^4.0.0
     decamelize: ^2.0.0

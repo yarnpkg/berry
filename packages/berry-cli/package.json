@@ -11,8 +11,7 @@
         "@manaflair/concierge": "^0.7.3",
         "execa": "^1.0.0",
         "joi": "^13.6.0",
-        "tslib": "^1",
-        "val-loader": "^1.1.1"
+        "tslib": "^1"
     },
     "devDependencies": {
         "@berry/builder": "0.0.0",
@@ -22,7 +21,7 @@
         "@berry/pnp": "0.0.0"
     },
     "scripts": {
-        "build": "node ~/yarn-1.10.0.js @berry-build-bundle"
+        "build": "yarn @berry-build-bundle"
     },
     "@berry/builder": {
         "bundles": {

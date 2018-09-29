@@ -51,8 +51,8 @@ concierge
     mainConfig.module.rules.push({
       test: path.resolve(basedir, `sources/plugins-embed.js`),
       use: {
-        loader: `val-loader`,
-          options: {plugins},
+        loader: require.resolve(`val-loader`),
+        options: {plugins},
       },
     });
 

@@ -95,18 +95,13 @@ export async function extractPnpSettings(project: Project): Promise<PnpSettings>
     if (!packageInformationStore)
       packageInformationStores.set(requirableName, packageInformationStore = new Map());
 
-    const dependencies = new Map([
-      ... workspace.manifest.dependencies,
-      ... workspace.manifest.devDependencies,
-    ]);
-
     const reference = workspace.cwd !== project.cwd
       ? workspace.locator.reference
       : null;
 
     packageInformationStore.set(reference, {
       packageLocation: normalizeDirectoryPath(workspace.cwd),
-      packageDependencies: await visit(dependencies, workspace.locator.locatorHash),
+      packageDependencies: await visit(workspace.dependencies, workspace.locator.locatorHash),
     });
   }
 

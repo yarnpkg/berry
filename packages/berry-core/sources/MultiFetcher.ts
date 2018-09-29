@@ -1,7 +1,6 @@
-import {Fetcher}        from './Fetcher';
-import {Archive}        from './Archive';
-import * as structUtils from './structUtils';
-import {Locator}        from './types';
+import {Fetcher, FetchOptions} from './Fetcher';
+import * as structUtils        from './structUtils';
+import {Locator}               from './types';
 
 export class MultiFetcher implements Fetcher {
   private readonly fetchers: Array<Fetcher>;
@@ -28,15 +27,16 @@ export class MultiFetcher implements Fetcher {
     return fetcher;
   }
 
-  supports(locator: Locator): boolean {
-    const fetcher = this.tryFetcher(locator);
+  supports(locator: Locator) {
+    if (!this.tryFetcher(locator))
+      return false;
 
-    return fetcher ? true : false;
+    return true;
   }
 
-  async fetch(locator: Locator): Promise<Archive> {
+  async fetch(locator: Locator, opts: FetchOptions) {
     const fetcher = this.getFetcher(locator);
 
-    return await fetcher.fetch(locator);
+    return await fetcher.fetch(locator, opts);
   }
 }

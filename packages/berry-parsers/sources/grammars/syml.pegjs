@@ -38,7 +38,10 @@ Literal
  */
 
 pseudostring "pseudostring"
-  = [a-z0-9\/.#@^~<=>+-]+(" "[a-z0-9\/.#@^~<=>+-]+)* B? { return text().replace(/^ *| *$/g, '') }
+  = pseudostringRestricted+ ([ ]+ pseudostringRestricted+)* B? { return text().replace(/^ *| *$/g, '') }
+
+pseudostringRestricted
+  = [a-zA-Z0-9\/.#@^~<=>+-]
 
 /**
  * String parsing

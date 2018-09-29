@@ -1,14 +1,15 @@
 import globby = require('globby');
 
-import {createHmac}           from 'crypto';
-import {existsSync, readFile} from 'fs';
-import {resolve}              from 'path';
-import {promisify}            from 'util';
+import {createHmac}            from 'crypto';
+import {existsSync, readFile}  from 'fs';
+import {resolve}               from 'path';
+import {promisify}             from 'util';
 
-import {Manifest}             from './Manifest';
-import {Project}              from './Project';
-import * as structUtils       from './structUtils';
-import {Locator}              from './types';
+import {Manifest}              from './Manifest';
+import {Project}               from './Project';
+import {WorkspaceBaseResolver} from './WorkspaceBaseResolver';
+import * as structUtils        from './structUtils';
+import {Descriptor, Locator}   from './types';
 
 const readFileP = promisify(readFile);
 
@@ -25,6 +26,9 @@ export class Workspace {
 
   // @ts-ignore: This variable is set during the setup process
   public readonly manifest: Manifest;
+
+  // Generated at resolution; basically dependencies + devDependencies
+  public dependencies: Map<string, Descriptor> = new Map();
 
   constructor(workspaceCwd: string, {project}: {project: Project}) {
     this.project = project;
@@ -69,5 +73,13 @@ export class Workspace {
 
   accepts(range: string) {
     return true;
+  }
+
+  get anchoredDescriptor() {
+    return structUtils.makeDescriptor(this.locator, `${WorkspaceBaseResolver.protocol}${this.locator.reference}`);
+  }
+
+  get anchoredLocator() {
+    return structUtils.makeLocatorFromIdent(this.locator, `${WorkspaceBaseResolver.protocol}${this.locator.reference}`);
   }
 }

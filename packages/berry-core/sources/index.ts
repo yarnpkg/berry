@@ -1,12 +1,12 @@
 export {Archive} from './Archive';
 export {Cache} from './Cache';
 export {Configuration} from './Configuration';
-export {Fetcher} from './Fetcher';
+export {Fetcher, FetchOptions} from './Fetcher';
 export {Manifest} from './Manifest';
 export {Plugin} from './Plugin';
 export {Project} from './Project';
 export {Report} from './Report';
-export {Resolver} from './Resolver';
+export {Resolver, ResolveOptions} from './Resolver';
 export {Workspace} from './Workspace';
 
 import * as httpUtils from './httpUtils';

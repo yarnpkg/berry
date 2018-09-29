@@ -1,6 +1,6 @@
 import {parse} from './grammars/syml';
 
-const simpleStringPattern = /^[a-z0-9\/.#@^~<=>+-]([a-z0-9\/.#@^~<=> +-]*[a-z0-9\/.#@^~<=>+-])?$/;
+const simpleStringPattern = /^[a-zA-Z0-9\/.#@^~<=>+-]([a-zA-Z0-9\/.#@^~<=> +-]*[a-zA-Z0-9\/.#@^~<=>+-])?$/;
 
 function stringifyString(value: string): string {
   if (value.match(simpleStringPattern)) {

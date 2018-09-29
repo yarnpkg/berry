@@ -1,4 +1,4 @@
-import mkdirp = require('mkdirp');
+import fsx = require('fs-extra');
 
 import {createHmac}    from 'crypto';
 import {writeFile}     from 'fs';
@@ -14,8 +14,6 @@ const writeFileP = promisify(writeFile);
 
 const lockP = promisify(lock);
 const unlockP = promisify(unlock);
-
-const mkdirpP = promisify(mkdirp);
 
 export class Cache {
   public readonly configuration: Configuration;
@@ -58,11 +56,20 @@ export class Cache {
   }
 
   async setup() {
-    await mkdirpP(this.cwd);
+    await fsx.mkdirp(this.cwd);
 
     await this.writeFileIntoCache(resolve(this.cwd, `.gitignore`), async (file: string) => {
       await writeFileP(file, `/.gitignore\n*.lock\n`);
     });
+  }
+
+  async fetchVirtualFolder(locator: Locator) {
+    const virtualFolder = resolve(this.cwd, `virtual`, locator.locatorHash);
+
+    // @ts-ignore: [DefinitelyTyped] The "type" parameter is missing
+    await fsx.ensureSymlink(`/`, virtualFolder, `junction`);
+
+    return virtualFolder;
   }
 
   async fetchFromCache(locator: Locator, loader?: () => Promise<Archive>) {

@@ -9,6 +9,7 @@
     "dependencies": {
         "@berry/parsers": "0.0.0",
         "@berry/pnp": "0.0.0",
+        "fs-extra": "^7.0.0",
         "globby": "^8.0.1",
         "jszip": "^3.1.5",
         "lockfile": "^1.0.4",

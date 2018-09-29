@@ -1,6 +1,6 @@
-import {createHmac}                 from 'crypto';
+import {createHmac}                          from 'crypto';
 
-import {Ident, Descriptor, Locator} from './types';
+import {Ident, Descriptor, Locator, Package} from './types';
 
 export function makeHash(... args: Array<string | null>): string {
   const hmac = createHmac(`sha512`, `berry`);
@@ -33,6 +33,22 @@ export function convertDescriptorToLocator(descriptor: Descriptor): Locator {
 
 export function convertLocatorToDescriptor(locator: Locator): Descriptor {
   return {identHash: locator.identHash, scope: locator.scope, name: locator.name, descriptorHash: locator.locatorHash, range: locator.reference};
+}
+
+export function convertPackageToLocator(pkg: Package): Locator {
+  return {identHash: pkg.identHash, scope: pkg.scope, name: pkg.name, locatorHash: pkg.locatorHash, reference: pkg.reference};
+}
+
+export function virtualizePackage(pkg: Package, entropy: string): Package {
+  if (entropy.includes(`#`))
+    throw new Error(`Invalid entropy`);
+
+  return {
+    ... makeLocatorFromIdent(pkg, `virtual:${entropy}#${pkg.reference}`),
+
+    dependencies: new Map(pkg.dependencies),
+    peerDependencies: new Map(pkg.peerDependencies),
+  };
 }
 
 export function areIdentsEqual(a: Ident, b: Ident) {

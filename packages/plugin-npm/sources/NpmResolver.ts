@@ -1,18 +1,18 @@
 import semver = require('semver');
 
-import {Resolver}                            from '@berry/core';
+import {Resolver, ResolveOptions}            from '@berry/core';
 import {httpUtils, structUtils}              from '@berry/core';
 import {Ident, Descriptor, Locator, Package} from '@berry/core';
 
 export class NpmResolver implements Resolver {
-  supports(descriptor: Descriptor): boolean {
+  supports(descriptor: Descriptor, opts: ResolveOptions): boolean {
     if (!semver.validRange(descriptor.range))
       return false;
 
     return true;
   }
 
-  async getCandidates(descriptor: Descriptor): Promise<Array<string>> {
+  async getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<string>> {
     if (semver.valid(descriptor.range))
       return [descriptor.range];
 
@@ -24,7 +24,7 @@ export class NpmResolver implements Resolver {
     return candidates;
   }
 
-  async resolve(locator: Locator): Promise<Package> {
+  async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
     if (!semver.valid(locator.reference))
       throw new Error(`Invalid reference`);
 

@@ -1,9 +1,14 @@
+import {Project}                      from './Project';
 import {Descriptor, Locator, Package} from './types';
 
+export type ResolveOptions = {
+  project: Project,
+};
+
 export interface Resolver {
-  supports(descriptor: Descriptor): boolean;
+  supports(descriptor: Descriptor, opts: ResolveOptions): boolean;
 
-  getCandidates(descriptor: Descriptor): Promise<Array<string>>;
+  getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<string>>;
 
-  resolve(locator: Locator): Promise<Package>;
+  resolve(locator: Locator, opts: ResolveOptions): Promise<Package>;
 }

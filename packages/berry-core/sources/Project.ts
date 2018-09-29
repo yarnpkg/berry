@@ -8,11 +8,18 @@ import {promisify}                                            from 'util';
 import {parseSyml, stringifySyml}                             from '@berry/parsers';
 import {extractPnpSettings, generatePnpScript}                from '@berry/pnp';
 
+import {CacheFetcher}                                         from './CacheFetcher';
 import {Cache}                                                from './Cache';
 import {Configuration}                                        from './Configuration';
+import {LockfileResolver}                                     from './LockfileResolver';
 import {MultiFetcher}                                         from './MultiFetcher';
 import {MultiResolver}                                        from './MultiResolver';
 import {Resolver}                                             from './Resolver';
+import {VirtualFetcher}                                       from './VirtualFetcher';
+import {WorkspaceBaseFetcher}                                 from './WorkspaceBaseFetcher';
+import {WorkspaceBaseResolver}                                from './WorkspaceBaseResolver';
+import {WorkspaceFetcher}                                     from './WorkspaceFetcher';
+import {WorkspaceResolver}                                    from './WorkspaceResolver';
 import {Workspace}                                            from './Workspace';
 import * as structUtils                                       from './structUtils';
 import {Ident, Descriptor, Locator, Package}                  from './types';
@@ -33,6 +40,8 @@ export class Project {
 
   public storedDescriptors: Map<string, Descriptor> = new Map();
   public storedPackages: Map<string, Package> = new Map();
+
+  public errors: Array<Error> = [];
 
   static async find(configuration: Configuration, startingCwd: string) {
     let projectCwd = null;
@@ -189,18 +198,15 @@ export class Project {
     return workspace;
   }
 
-  findWorkspaceByDescriptor(descriptor: Descriptor) {
+  findWorkspacesByDescriptor(descriptor: Descriptor) {
     const candidateWorkspaces = this.workspacesByIdent.get(descriptor.identHash);
 
     if (!candidateWorkspaces)
-      return null;
+      return [];
 
-    const selectedWorkspace = candidateWorkspaces.find(workspace => workspace.accepts(descriptor.range));
-
-    if (!selectedWorkspace)
-      return null;
-
-    return selectedWorkspace;
+    return candidateWorkspaces.filter(workspace => {
+      return workspace.accepts(descriptor.range);
+    });
   }
 
   async getPackageLocation(locator: Locator, {cache = null}: {cache?: Cache | null} = {}) {
@@ -231,93 +237,6 @@ export class Project {
     return manifest;
   }
 
-  private makeWorkspaceResolver(): Resolver {
-    const project = this;
-    return {
-      supports(descriptor: Descriptor): boolean {
-        if (descriptor.range === `local-workspace`)
-          return true;
-
-        const candidateWorkspace = project.findWorkspaceByDescriptor(descriptor);
-
-        if (!candidateWorkspace)
-          return false;
-
-        return true;
-      },
-
-      async getCandidates(descriptor: Descriptor): Promise<Array<string>> {
-        if (descriptor.range === `local-workspace`) {
-          const candidateWorkspaces = project.workspacesByIdent.get(descriptor.identHash);
-
-          if (!candidateWorkspaces || candidateWorkspaces.length < 1)
-            throw new Error(`This range can only be resolved by a local workspace, but none match the ident`);
-
-          if (candidateWorkspaces.length > 1)
-            throw new Error(`This range must be resolved by exactly one local workspace, too many found`);
-
-          return [candidateWorkspaces[0].locator.reference];
-        } else {
-          const candidateWorkspace = project.findWorkspaceByDescriptor(descriptor);
-
-          if (!candidateWorkspace)
-            throw new Error(`Expected to find a valid workspace, but none found`);
-
-          return [candidateWorkspace.locator.reference];
-        }
-      },
-
-      async resolve(locator: Locator): Promise<Package> {
-        const workspace = project.getWorkspaceByLocator(locator);
-
-        return {... locator, dependencies: workspace.manifest.dependencies, peerDependencies: workspace.manifest.peerDependencies};
-      }
-    };
-  }
-
-  private makeLockfileResolver(): Resolver {
-    const project = this;
-    return {
-      supports(descriptor: Descriptor): boolean {
-        if (project.storedResolutions.has(descriptor.descriptorHash))
-          return true;
-
-        if (project.storedPackages.has(structUtils.convertDescriptorToLocator(descriptor).locatorHash))
-          return true;
-
-        return false;
-      },
-
-      async getCandidates(descriptor: Descriptor): Promise<Array<string>> {
-        let pkg = project.storedPackages.get(structUtils.convertDescriptorToLocator(descriptor).locatorHash);
-
-        if (pkg)
-          return [pkg.reference];
-
-        const resolution = project.storedResolutions.get(descriptor.descriptorHash);
-
-        if (!resolution)
-          throw new Error(`Expected the resolution to have been successful - resolution not found`);
-
-        pkg = project.storedPackages.get(resolution);
-
-        if (!pkg)
-          throw new Error(`Expected the resolution to have been successful - package not found`);
-
-        return [pkg.reference];
-      },
-
-      async resolve(locator: Locator): Promise<Package> {
-        const pkg = project.storedPackages.get(locator.locatorHash);
-
-        if (!pkg)
-          throw new Error(`The lockfile resolver isn't meant to resolve packages - they should already have been stored into a cache`);
-
-        return pkg;
-      }
-    };
-  }
-
   async resolveEverything() {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
@@ -329,8 +248,10 @@ export class Project {
         pluginResolvers.push(resolver);
 
     const resolver = new MultiResolver([
-      this.makeWorkspaceResolver(),
-      this.makeLockfileResolver(),
+      new WorkspaceBaseResolver(),
+      new WorkspaceResolver(),
+      new LockfileResolver(),
+
       ... pluginResolvers,
     ]);
 
@@ -338,18 +259,16 @@ export class Project {
     const allLocators = new Map<string, Locator>();
     const allPackages = new Map<string, Package>(this.storedPackages);
 
-    const haveBeenResolved = new Map<string, string>();
+    const resolvedDescriptors = new Map<string, string>();
+    const resolvedLocators = new Set<string>();
+
     let mustBeResolved = new Set<string>();
 
-    const allResolutions = new Set<string>();
-
     for (const workspace of this.workspacesByLocator.values()) {
-      for (const store of [workspace.manifest.dependencies, workspace.manifest.devDependencies]) {
-        for (const descriptor of store.values()) {
-          allDescriptors.set(descriptor.descriptorHash, descriptor);
-          mustBeResolved.add(descriptor.descriptorHash);
-        }
-      }
+      const workspaceDescriptor = workspace.anchoredDescriptor;
+
+      allDescriptors.set(workspaceDescriptor.descriptorHash, workspaceDescriptor);
+      mustBeResolved.add(workspaceDescriptor.descriptorHash);
     }
 
     while (mustBeResolved.size !== 0) {
@@ -368,13 +287,13 @@ export class Project {
         if (!descriptor)
           throw new Error(`The descriptor should have been registered`);
 
-        if (haveBeenResolved.has(descriptor.descriptorHash))
+        if (resolvedDescriptors.has(descriptor.descriptorHash))
           return;
 
         let candidateReferences;
 
         try {
-          candidateReferences = await resolver.getCandidates(descriptor);
+          candidateReferences = await resolver.getCandidates(descriptor, {project: this});
         } catch (error) {
           error.message = `${structUtils.prettyDescriptor(descriptor)}: ${error.message}`;
           throw error;
@@ -390,10 +309,10 @@ export class Project {
           const locator = structUtils.makeLocatorFromDescriptor(descriptor, candidateReferences[0]);
 
           allLocators.set(locator.locatorHash, locator);
-          haveBeenResolved.set(descriptor.descriptorHash, locator.locatorHash);
+          resolvedDescriptors.set(descriptor.descriptorHash, locator.locatorHash);
 
-          if (!allResolutions.has(locator.locatorHash)) {
-            allResolutions.add(locator.locatorHash);
+          if (!resolvedLocators.has(locator.locatorHash)) {
+            resolvedLocators.add(locator.locatorHash);
             newLocators.add(locator.locatorHash);
           }
         } else {
@@ -415,11 +334,17 @@ export class Project {
       // simply reuse it and remove the current descriptor from the undecided list.
 
       for (const [descriptorHash, locatorHashes] of allCandidates.entries()) {
-        const selectedHash = locatorHashes.find(locatorHash => allResolutions.has(locatorHash));
+        const selectedHash = locatorHashes.find(locatorHash => allPackages.has(locatorHash));
 
-        if (selectedHash) {
-          haveBeenResolved.set(descriptorHash, selectedHash);
-          allCandidates.delete(descriptorHash);
+        if (!selectedHash)
+          continue;
+
+        resolvedDescriptors.set(descriptorHash, selectedHash);
+        allCandidates.delete(descriptorHash);
+
+        if (!resolvedLocators.has(selectedHash)) {
+          resolvedLocators.add(selectedHash);
+          newLocators.add(selectedHash);
         }
       }
 
@@ -468,10 +393,14 @@ export class Project {
           if (!solutionHash)
             throw new Error(`The descriptor should have been solved during the previous step`);
 
-          haveBeenResolved.set(descriptorHash, solutionHash);
+          resolvedDescriptors.set(descriptorHash, solutionHash);
         }
 
+        // As mentioned previously, all the locators of the solution set are guaranteed never to
+        // have been registered before (since otherwise they would have been picked without going
+        // through the SAT solver)
         for (const locatorHash of solutionSet) {
+          resolvedLocators.add(locatorHash);
           newLocators.add(locatorHash);
         }
       }
@@ -490,17 +419,20 @@ export class Project {
 
         if (!pkg) {
           try {
-            pkg = await resolver.resolve(locator);
+            pkg = await resolver.resolve(locator, {project: this});
           } catch (error) {
             error.message = `${structUtils.prettyLocator(locator)}: ${error.message}`;
             throw error;
           }
         }
 
+        if (!structUtils.areLocatorsEqual(locator, pkg))
+          throw new Error(`The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(locator)} to ${structUtils.prettyLocator(pkg)})`);
+
         allPackages.set(pkg.locatorHash, pkg);
 
         for (const descriptor of pkg.dependencies.values()) {
-          if (!haveBeenResolved.has(descriptor.descriptorHash)) {
+          if (!resolvedDescriptors.has(descriptor.descriptorHash)) {
             allDescriptors.set(descriptor.descriptorHash, descriptor);
             mustBeResolved.add(descriptor.descriptorHash);
           }
@@ -508,8 +440,91 @@ export class Project {
       }));
     }
 
+    //
+    const hasBeenTraversed = new Set();
+
+    const resolvePeerDependencies = (parentLocator: Locator) => {
+      if (hasBeenTraversed.has(parentLocator))
+        return;
+
+      hasBeenTraversed.add(parentLocator);
+
+      const parentPackage = allPackages.get(parentLocator.locatorHash);
+
+      if (!parentPackage)
+        throw new Error(`The package (${structUtils.prettyLocator(parentLocator)}) should have been registered`);
+
+      for (const descriptor of Array.from(parentPackage.dependencies.values())) {
+        const resolution = resolvedDescriptors.get(descriptor.descriptorHash);
+
+        if (!resolution)
+          throw new Error(`The resolution (${structUtils.prettyDescriptor(descriptor)}) should have been registered`);
+
+        let pkg = allPackages.get(resolution);
+
+        if (!pkg)
+          throw new Error(`The package (${resolution}, resolved from ${structUtils.prettyDescriptor(descriptor)}) should have been registered`);
+
+        if (pkg.peerDependencies.size > 0) {
+          pkg = structUtils.virtualizePackage(pkg, parentLocator.locatorHash);
+
+          const pkgLocator = structUtils.convertPackageToLocator(pkg);
+          const pkgDescriptor = structUtils.convertLocatorToDescriptor(pkgLocator);
+
+          parentPackage.dependencies.delete(descriptor.descriptorHash);
+          parentPackage.dependencies.set(pkgDescriptor.descriptorHash, pkgDescriptor);
+
+          resolvedDescriptors.set(pkgDescriptor.descriptorHash, pkgLocator.locatorHash);
+
+          allDescriptors.set(pkgDescriptor.descriptorHash, pkgDescriptor);
+          allPackages.set(pkg.locatorHash, pkg);
+
+          for (const peerRequest of pkg.peerDependencies.values()) {
+            let peerDescriptor = Array.from(parentPackage.dependencies.values()).find(descriptor => {
+              return structUtils.areIdentsEqual(descriptor, peerRequest);
+            });
+
+            if (!peerDescriptor && structUtils.areIdentsEqual(parentLocator, peerRequest)) {
+              peerDescriptor = structUtils.convertLocatorToDescriptor(parentLocator);
+
+              allDescriptors.set(peerDescriptor.descriptorHash, peerDescriptor);
+              resolvedDescriptors.set(peerDescriptor.descriptorHash, parentLocator.locatorHash);
+            }
+
+            if (!peerDescriptor) {
+              this.errors.push(new Error(`Unsatisfied peer dependency (${structUtils.prettyLocator(pkg)} requests ${structUtils.prettyDescriptor(peerRequest)}, but ${structUtils.prettyLocator(parentLocator)} doesn't provide it)`));
+              continue;
+            }
+
+            pkg.dependencies.set(peerDescriptor.descriptorHash, peerDescriptor);
+          }
+
+          // Clear the peer dependencies since they've been resolved to specific ranges
+          // If we don't clear them, they'll get re-resolved the next time we'll run Berry
+          pkg.peerDependencies = new Map();
+        }
+
+        resolvePeerDependencies(pkg);
+      }
+    };
+
+    for (const workspace of this.workspacesByLocator.values())
+      resolvePeerDependencies(workspace.anchoredLocator);
+
+    for (const workspace of this.workspacesByLocator.values()) {
+      const pkg = allPackages.get(workspace.anchoredLocator.locatorHash);
+
+      if (!pkg)
+        throw new Error(`Expected workspace to have been resolved`);
+
+      if (pkg.peerDependencies.size > 0)
+        throw new Error(`Didn't expect workspace to have peer dependencies`);
+
+      workspace.dependencies = pkg.dependencies;
+    }
+
     // Everything is done, we can now update our internal resolutions to reference the new ones
-    this.storedResolutions = haveBeenResolved;
+    this.storedResolutions = resolvedDescriptors;
     this.storedDescriptors = allDescriptors;
     this.storedPackages = allPackages;
   }
@@ -519,14 +534,33 @@ export class Project {
 
     const fetched = new Set<string>();
 
-    const pluginFetchers = [];
+    const getPluginFetchers = (hookName: string) => {
+      const fetchers = [];
 
-    for (const plugin of this.configuration.plugins.values())
-      for (const fetcher of plugin.fetchers || [])
-        pluginFetchers.push(fetcher);
+      for (const plugin of this.configuration.plugins.values()) {
+        if (!plugin.fetchers)
+          continue;
+
+        for (const fetcher of plugin.fetchers) {
+          if (fetcher.mountPoint === hookName) {
+            fetchers.push(fetcher);
+          }
+        }
+      }
+
+      return fetchers;
+    };
 
     const fetcher = new MultiFetcher([
-      ... pluginFetchers,
+      new VirtualFetcher(),
+      new WorkspaceBaseFetcher(),
+      new WorkspaceFetcher(),
+      new MultiFetcher(
+        getPluginFetchers(`virtual-fetchers`),
+      ),
+      new CacheFetcher(new MultiFetcher(
+        getPluginFetchers(`cached-fetchers`),
+      )),
     ]);
 
     for (const locatorHash of this.storedResolutions.values()) {
@@ -543,8 +577,8 @@ export class Project {
       if (workspace) {
         this.storedLocations.set(pkg.locatorHash, workspace.cwd);
       } else {
-        const {file: cacheLocation} = await cache.fetchFromCache(pkg, () => fetcher.fetch(pkg));
-        this.storedLocations.set(pkg.locatorHash, cacheLocation);
+        const location = await fetcher.fetch(pkg, {cache, project: this, root: fetcher});
+        this.storedLocations.set(pkg.locatorHash, location);
       }
     }
   }
@@ -618,6 +652,7 @@ export class Project {
       optimizedLockfile[key] = {
         resolution: structUtils.stringifyLocator(pkg),
         dependencies: dependencies,
+        peerDependencies: peerDependencies,
       };
     }
 
