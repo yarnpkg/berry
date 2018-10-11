@@ -155,7 +155,7 @@ export class TermRenderer {
       for (const dirtyRect of dirtyScreen.viewport(tree.elementRect))
         for (let y = dirtyRect.top, Y = dirtyRect.top + dirtyRect.height; y < Y; ++y)
           this.renderLine(renderList, y, dirtyRect.left, dirtyRect.width);
-/*
+
       if (tree.activeElement && tree.activeElement.props.caret) {
         let {left, top} = tree.activeElement.elementWorldRect;
 
@@ -165,10 +165,9 @@ export class TermRenderer {
         if (this.termOutput.isInline)
           top += this.inlineTop;
 
-        this.termOutput.write(cursor.moveTo({ x: left, y: top }));
+        this.termOutput.write(cursor.moveTo({x: left, y: top}));
         this.termOutput.write(cursor.normal);
       }
-*/
     });
   }
 
@@ -201,7 +200,8 @@ export class TermRenderer {
           if (this.termOutput.isInline)
             top += this.inlineTop;
 
-          const line = node.getLine(y - node.elementWorldRect.top, overlap.left - node.elementWorldRect.left, overlap.width);
+          const prefix = (``/*/+Date.now()/**/).substr(0, overlap.width);
+          const line = prefix + node.getLine(y - node.elementWorldRect.top, overlap.left - node.elementWorldRect.left, Math.max(0, overlap.width - prefix.length));
 
           this.termOutput.write(cursor.moveTo({x: overlap.left, y: top}));
           this.termOutput.write(line);
@@ -235,5 +235,4 @@ export class TermRenderer {
   handleExit = () => {
     this.close();
   }
-
 }

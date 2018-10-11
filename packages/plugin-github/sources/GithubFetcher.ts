@@ -1,8 +1,8 @@
-import {Archive, Fetcher, FetchOptions}   from '@berry/core';
-import {httpUtils, structUtils, tgzUtils} from '@berry/core';
-import {Locator}                          from '@berry/core';
+import {Fetcher, FetchOptions} from '@berry/core';
+import {httpUtils, tgzUtils}   from '@berry/core';
+import {Locator, Manifest}     from '@berry/core';
 
-import * as githubUtils                   from './githubUtils';
+import * as githubUtils        from './githubUtils';
 
 export class GithubFetcher implements Fetcher {
   public mountPoint: string = `cached-fetchers`;
@@ -14,13 +14,19 @@ export class GithubFetcher implements Fetcher {
     return true;
   }
 
+  async fetchManifest(locator: Locator, opts: FetchOptions): Promise<Manifest> {
+    throw new Error(`Unimplemented`);
+  }
+
   async fetch(locator: Locator, opts: FetchOptions) {
     const tgz = await httpUtils.get(this.getLocatorUrl(locator, opts));
 
-    return await tgzUtils.makeArchive(tgz);
+    return await tgzUtils.makeArchive(tgz, {
+      stripComponents: 1,
+    });
   }
 
-  getLocatorUrl(locator: Locator, opts: FetchOptions) {
+  private getLocatorUrl(locator: Locator, opts: FetchOptions) {
     const {username, reponame, branch = `master`} = githubUtils.parseGithubUrl(locator.reference);
 
     return `https://github.com/${username}/${reponame}/archive/${branch}.tar.gz`;

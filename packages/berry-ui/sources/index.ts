@@ -1,13 +1,13 @@
-// @ts-ignore
 import TextLayout = require('@manaflair/text-layout');
 // @ts-ignore
 import makeReconciler = require('react-reconciler');
+import React = require('react');
 // @ts-ignore
 import ttys = require('ttys');
-
 // @ts-ignore
-import YogaDom        from 'yoga-dom';
+import YogaDom = require('yoga-dom');
 
+import {Div}          from './Div';
 import {NodeElement}  from './NodeElement';
 import {NodeText}     from './NodeText';
 import {NodeTree}     from './NodeTree';
@@ -18,7 +18,7 @@ import {TermRenderer} from './TermRenderer';
 import {Props}        from './types';
 
 // Reexport the Div component
-export {Div} from './Div';
+export * from './Div';
 
 type HostContext = {
 };
@@ -112,7 +112,7 @@ const Reconciler = makeReconciler({
     container.insertBefore(child, before);
   },
 
-  removeChild(element: NodeElement, child: Node) {
+  removeChild(element: Node, child: Node) {
     element.removeChild(child);
   },
 
@@ -126,7 +126,10 @@ const Reconciler = makeReconciler({
 });
 
 export async function render(app: any, {stdin = ttys.stdin, stdout = ttys.stdout, inline = false} = {}) {
-  const env = {yoga: await YogaDom, textLayout: await TextLayout};
+  // Not sure why we have to do this, but the ".default" is needed when adding "browser" field support
+  const realYogaDom = YogaDom.default || YogaDom;
+
+  const env = {yoga: await realYogaDom, textLayout: await TextLayout};
 
   return new Promise((resolve, reject) => {
     const termInput = new TermInput(stdin);
@@ -141,16 +144,26 @@ export async function render(app: any, {stdin = ttys.stdin, stdout = ttys.stdout
 
     function start() {
       termInput.on(`mouse`, e => {
-        e.mouse.y -= inline ? termRenderer.inlineTop : 0;
-        nodeTree.emitMouse(e.mouse);
+        Reconciler.batchedUpdates(() => {
+          e.mouse.y -= inline ? termRenderer.inlineTop : 0;
+          nodeTree.emitMouse(e.mouse);
+        });
       });
 
       termInput.on(`key`, (e: any) => {
-        nodeTree.emitKey(e.key);
+        Reconciler.batchedUpdates(() => {
+          nodeTree.emitKey(e.key);
+        });
       });
 
       termInput.on(`data`, (e: any) => {
-        nodeTree.emitData(e.buffer);
+        Reconciler.batchedUpdates(() => {
+          nodeTree.emitData(e.buffer);
+        });
+      });
+
+      termOutput.on(`resize`, ({columns, rows}) => {
+        nodeTree.resize(columns, rows);
       });
 
       if (termOutput.isDebug)
@@ -168,7 +181,14 @@ export async function render(app: any, {stdin = ttys.stdin, stdout = ttys.stdout
     }
 
     function shutdown() {
+      // Clear the output
       termRenderer.close();
+
+      // Unmount everything
+      Reconciler.unbatchedUpdates(() => {
+        Reconciler.updateContainer(React.createElement(Div), container, null, null);
+      });
+      
       resolve();
     }
 

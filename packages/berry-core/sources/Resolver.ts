@@ -6,7 +6,9 @@ export type ResolveOptions = {
 };
 
 export interface Resolver {
-  supports(descriptor: Descriptor, opts: ResolveOptions): boolean;
+  supportsDescriptor(descriptor: Descriptor, opts: ResolveOptions): boolean;
+
+  supportsLocator(locator: Locator, opts: ResolveOptions): boolean;
 
   getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<string>>;
 

@@ -11,11 +11,17 @@ export class WorkspaceBaseFetcher implements Fetcher {
     return true;
   }
 
+  async fetchManifest(locator: Locator, opts: FetchOptions) {
+    return this.getWorkspace(locator, opts).manifest;
+  }
+
   async fetch(locator: Locator, opts: FetchOptions) {
-    locator = structUtils.makeLocatorFromIdent(locator, locator.reference.slice(WorkspaceBaseResolver.protocol.length));
+    return this.getWorkspace(locator, opts).cwd;
+  }
 
-    const workspace = opts.project.getWorkspaceByLocator(locator);
+  getWorkspace(locator: Locator, opts: FetchOptions) {
+    const normalizedLocator = structUtils.makeLocatorFromIdent(locator, locator.reference.slice(WorkspaceBaseResolver.protocol.length));
 
-    return workspace.cwd;
+    return opts.project.getWorkspaceByLocator(normalizedLocator);
   }
 }

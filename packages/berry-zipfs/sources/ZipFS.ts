@@ -1,9 +1,10 @@
+// Used for "typeof fs"
 import fs = require('fs');
 
-import {Stats, statSync} from 'fs';
-import {posix}           from 'path';
-
-import libzip            from '@berry/libzip';
+import libzip              from '@berry/libzip';
+import {ReadStream, Stats} from 'fs';
+import {posix}             from 'path';
+import {PassThrough}       from 'stream';
 
 const IS_DIRECTORY_STAT = {
   isBlockDevice: () => false,
@@ -13,6 +14,7 @@ const IS_DIRECTORY_STAT = {
   isFile: () => false,
   isSocket: () => false,
   isSymbolicLink: () => false,
+
   dev: 0,
   ino: 0,
   mode: 755,
@@ -29,6 +31,7 @@ const IS_FILE_STAT = {
   isFile: () => true,
   isSocket: () => false,
   isSymbolicLink: () => false,
+
   dev: 0,
   ino: 0,
   mode: 644,
@@ -55,6 +58,10 @@ export class ZipFS {
     `readFile`,
   ]);
 
+  public static SUPPORTED_SYNC_ONLY = new Set([
+    `createReadStream`,
+  ]);
+
   constructor(baseFs: typeof fs, p: string) {
     this.baseFs = baseFs;
     this.stats = this.baseFs.statSync(p);
@@ -62,7 +69,7 @@ export class ZipFS {
     const errPtr = libzip.malloc(4);
 
     try {
-      this.zip = libzip.open(`/mnt/${p}`, 0, errPtr);
+      this.zip = libzip.open(p, 0, errPtr);
 
       if (this.zip === 0) {
         const error = libzip.struct.errorS();
@@ -94,6 +101,28 @@ export class ZipFS {
 
       this.entries.set(p, t);
     }
+  }
+
+  createReadStream(p: string, {encoding}: {encoding?: string} = {}): ReadStream {
+    p = this.realpath(p);
+
+    const data = this.readFile(p, encoding);
+
+    const stream = Object.assign(new PassThrough(), {
+      bytesRead: 0,
+      path: p,
+      close: () => {
+        clearImmediate(immediate);
+      }
+    });
+
+    const immediate = setImmediate(() => {
+      stream.bytesRead = data.length;
+      stream.write(data);
+      stream.end();
+    });
+
+    return stream;
   }
 
   realpath(p: string): string {
@@ -257,8 +286,6 @@ export class ZipFS {
     } finally {
       libzip.free(buffer);
     }
-
-    return;
   }
 
   private ensurePathCorrectness(p: string, op: string, checkDir: boolean = false) {

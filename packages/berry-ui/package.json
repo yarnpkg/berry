@@ -4,10 +4,13 @@
     "private": true,
     "main": "./sources/index.ts",
     "dependencies": {
-        "@manaflair/term-strings": "^0.10.0",
-        "@manaflair/text-layout": "^0.9.3",
+        "@manaflair/term-strings": "^0.10.1",
+        "@manaflair/text-layout": "^0.10.2",
         "eventemitter3": "^3.1.0",
+        "first-mate": "^7.1.3",
+        "plist": "^3.0.1",
         "react-reconciler": "^0.14.0",
+        "text-buffer": "^13.14.9",
         "ttys": "^0.0.3",
         "yoga-dom": "^0.0.14"
     },

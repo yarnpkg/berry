@@ -333,7 +333,7 @@ function getYogaEnum(yoga: any, type: string, value: any) {
 
 function getYogaUnit(yoga: any, value: any) {
   if (value === `auto`) {
-    return {value: yoga.Constants.unit.auto};
+    return {value: 0, unit: yoga.Constants.unit.auto};
   } else if (typeof value === `string` && value.charAt(value.length - 1) === `%`) {
     return {value: parseFloat(value), unit: yoga.Constants.unit.percent};
   } else if (typeof value === `number` || parseFloat(value) == value) {

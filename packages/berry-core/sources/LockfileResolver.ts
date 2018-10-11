@@ -3,11 +3,22 @@ import * as structUtils           from './structUtils';
 import {Descriptor, Locator}      from './types';
 
 export class LockfileResolver implements Resolver {
-  supports(descriptor: Descriptor, opts: ResolveOptions) {
-    if (opts.project.storedResolutions.has(descriptor.descriptorHash))
+  supportsDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+    const resolution = opts.project.storedResolutions.get(descriptor.descriptorHash);
+
+    if (resolution)
       return true;
 
+    // If the descriptor matches a package that's already been used, we can just use it even if we never resolved the range before
+    // Ex: foo depends on bar@^1.0.0 that we resolved to foo@1.1.0, then we add a package qux that depends on foo@1.1.0 (without the caret)
     if (opts.project.storedPackages.has(structUtils.convertDescriptorToLocator(descriptor).locatorHash))
+      return true;
+
+    return false;
+  }
+
+  supportsLocator(locator: Locator, opts: ResolveOptions) {
+    if (opts.project.storedPackages.has(locator.locatorHash))
       return true;
 
     return false;

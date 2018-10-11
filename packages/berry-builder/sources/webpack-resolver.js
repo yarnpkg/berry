@@ -13,7 +13,16 @@ module.exports = {
 
     const MAYBE_MIXIN = /^[^\/]+$/;
 
+    resolver.getHook(`file`).intercept({
+      register: tapInfo => {
+        return tapInfo.name !== `SymlinkPlugin` ? tapInfo : {... tapInfo, fn: (request, resolveContext, callback) => {
+          callback();
+        }};
+      }
+    });
+
     const resolvedHook = resolver.ensureHook(`resolve`);
+    
     resolver.getHook(`before-module`).tapAsync(`PnpResolver`, (request, resolveContext, callback) => {
       let req = request.request;
 

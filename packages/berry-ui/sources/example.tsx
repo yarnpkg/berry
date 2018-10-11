@@ -1,8 +1,10 @@
 import Faker = require('faker');
 import React = require('react');
 
-import {Div}    from './Div';
-import {render} from './index';
+import {Input}                  from './widgets/Input';
+
+import {Div, StylePositionEnum} from './Div';
+import {render}                 from './index';
 
 Faker.seed(4242);
 const lorem = Faker.lorem.paragraphs(4);
@@ -21,7 +23,9 @@ class Focusable extends React.Component {
   };
 
   render = () =>
-    <Div onFocus={this.handleFocus} onBlur={this.handleBlur} style={{width: 10, height: 5, backgroundColor: this.state.focus ? `lightblue` : `white`}} tabIndex={0} />
+    <Div onFocus={this.handleFocus} onBlur={this.handleBlur} style={{width: 10, height: 5, backgroundColor: this.state.focus ? `lightblue` : `white`}}>
+      <Input style={{width: 10, height: 5}} defaultValue={`42`} />
+    </Div>
   ;
 }
 
@@ -32,10 +36,10 @@ class App extends React.Component {
 
   render = () =>
     <Div style={{width: `100%`, height: `100%`, backgroundColor: `red`}}>
-      <Div style={{position: `absolute`, left: 2, top: 1}}>
+      <Div style={{position: StylePositionEnum.Absolute, left: 2, top: 1}}>
         <Focusable />
       </Div>
-      <Div style={{position: `absolute`, right: 2, bottom: 1}}>
+      <Div style={{position: StylePositionEnum.Absolute, right: 2, bottom: 1}}>
         <Focusable />
       </Div>
     </Div>

@@ -3,17 +3,12 @@ import {KeySequence}             from './KeySequence';
 import {NodeTree}                from './NodeTree';
 import {Node, NodeType}          from './Node';
 import {DEFAULT_COMPUTED_STYLES} from './StyleConfiguration';
-import {StyleManager}            from './StyleManager';
 import {Props}                   from './types';
-
-const FIXED_PROPS = {
-
-};
 
 export class NodeElement extends Node {
   public props: Props = {};
 
-  private shortcuts: Map<string, () => void> = new Map();
+  private shortcutStores: Map<NodeElement | null, Map<string, (event: any) => void>> = new Map();
 
   constructor(env: Environment, props: Props = {}) {
     super(env, NodeType.ELEMENT);
@@ -23,16 +18,27 @@ export class NodeElement extends Node {
 
   setProps(props: Props) {
     this.props = Object.assign({}, props);
+
+    // Forces this node to forward all its shortcuts to its "shortcuts" map
     this.props.onShortcut = (event: any) => {
-      const callback = this.shortcuts.get(event.shortcut);
-      callback && callback();
+      for (const shortcuts of this.shortcutStores.values()) {
+        const callback = shortcuts.get(event.shortcut);
+        callback && callback(event);
+      }
     };
 
-    this.style.applyProperties(new Map(Object.entries(props.style || {})));
-    this.setShortcuts(props.shortcuts || {});
+    // Registers all shortcuts into the global listener from the tree
+    this.setShortcuts(null, props.shortcuts || {});
+
+    // Attach all the global shortcuts to the root node, under our namespace
+    if (this.rootNode)
+      this.rootNode.setShortcuts(this, props.globalShortcuts);
+
+    // Updates the node style properties
+    this.style.setProperties(new Map(Object.entries(props.style || {})));
   }
 
-  setShortcuts(shortcutDefinitions: {[shortcut: string]: () => void}) {
+  setShortcuts(namespace: NodeElement | null, shortcutDefinitions: {[shortcut: string]: () => void}) {
     const shortcuts = new Map();
 
     for (const [shortcut, callback] of Object.entries(shortcutDefinitions || {})) {
@@ -44,7 +50,9 @@ export class NodeElement extends Node {
       shortcuts.set(normalizedShortcut, callback);
     }
 
-    const oldShortcuts = new Set(this.shortcuts.keys());
+    const currentShortcuts = this.shortcutStores.get(namespace) || new Map();
+
+    const oldShortcuts = new Set(currentShortcuts.keys());
     const newShortcuts = new Set(shortcuts.keys());
 
     // We need a second copy because the first one will get mutated
@@ -63,18 +71,27 @@ export class NodeElement extends Node {
       }
     }
 
-    this.shortcuts = shortcuts;
+    this.shortcutStores.set(namespace, shortcuts);
   }
 
   linkSelf(rootNode: NodeTree, parentNode: Node) {
-    for (const shortcut of this.shortcuts.keys()) {
-      rootNode.addShortcutReference(shortcut);
+    if (this.rootNode)
+      this.rootNode.setShortcuts(this, this.props.globalShortcuts);
+
+    for (const shortcuts of this.shortcutStores.values()) {
+      for (const shortcut of shortcuts.keys()) {
+        rootNode.addShortcutReference(shortcut);
+      }
     }
   }
 
   unlinkSelf(rootNode: NodeTree, parentNode: Node) {
-    for (const shortcut of this.shortcuts.keys()) {
-      rootNode.removeShortcutReference(shortcut);
+    rootNode.shortcutStores.delete(this);
+
+    for (const shortcuts of this.shortcutStores.values()) {
+      for (const shortcut of shortcuts.keys()) {
+        rootNode.removeShortcutReference(shortcut);
+      }
     }
   }
 
@@ -99,8 +116,11 @@ export class NodeElement extends Node {
   getLine(row: number, left: number, width: number) {
     if (!(left >= 0 && left < this.elementWorldRect.width))
       throw new Error(`Out-of-bound segment start`);
-    if (!(width > 0 && width <= this.elementWorldRect.width - left))
+    if (!(width >= 0 && width <= this.elementWorldRect.width - left))
       throw new Error(`Invalid segment width`);
+    
+    if (!width)
+      return ``;
 
     if (row === 0) {
       const borderTop = this.style.get(`borderTop`);

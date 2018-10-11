@@ -5,14 +5,21 @@ import {httpUtils, structUtils}              from '@berry/core';
 import {Ident, Descriptor, Locator, Package} from '@berry/core';
 
 export class NpmResolver implements Resolver {
-  supports(descriptor: Descriptor, opts: ResolveOptions): boolean {
+  supportsDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
     if (!semver.validRange(descriptor.range))
       return false;
 
     return true;
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<string>> {
+  supportsLocator(locator: Locator, opts: ResolveOptions) {
+    if (!semver.valid(locator.reference))
+      return false;
+
+    return true;
+  }
+
+  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
     if (semver.valid(descriptor.range))
       return [descriptor.range];
 
@@ -24,7 +31,7 @@ export class NpmResolver implements Resolver {
     return candidates;
   }
 
-  async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
+  async resolve(locator: Locator, opts: ResolveOptions) {
     if (!semver.valid(locator.reference))
       throw new Error(`Invalid reference`);
 
@@ -55,7 +62,7 @@ export class NpmResolver implements Resolver {
     return {... locator, dependencies, peerDependencies};
   }
 
-  getIdentUrl(ident: Ident) {
+  private getIdentUrl(ident: Ident) {
     if (ident.scope) {
       return `https://registry.npmjs.org/@${ident.scope}%2f${ident.name}`;
     } else {

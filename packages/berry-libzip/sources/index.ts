@@ -1,13 +1,13 @@
 import libzip = require('./libzip');
 
 // @ts-ignore
-const libzipFs: typeof FS = libzip.FS;
+// const libzipFs: typeof FS = libzip.FS;
 
 // @ts-ignore
-const nodeFs: typeof NODEFS = libzipFs.filesystems.NODEFS;
+// const nodeFs: typeof NODEFS = libzipFs.filesystems.NODEFS;
 
-libzipFs.mkdir('/mnt');
-libzipFs.mount(nodeFs, {root: '/'}, '/mnt');
+//libzipFs.mkdir('/mnt');
+//libzipFs.mount(nodeFs, {root: '/'}, '/mnt');
 
 export default {
   // Those are getters because they can change after memory growth

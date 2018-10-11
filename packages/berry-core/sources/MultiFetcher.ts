@@ -34,6 +34,12 @@ export class MultiFetcher implements Fetcher {
     return true;
   }
 
+  async fetchManifest(locator: Locator, opts: FetchOptions) {
+    const fetcher = this.getFetcher(locator);
+
+    return await fetcher.fetchManifest(locator, opts);
+  }
+
   async fetch(locator: Locator, opts: FetchOptions) {
     const fetcher = this.getFetcher(locator);
 

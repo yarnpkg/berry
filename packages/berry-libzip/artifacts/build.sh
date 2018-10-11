@@ -54,9 +54,10 @@ LIBZIP_VERSION=1.5.1
         -o ../sources/libzip.js \
         -s WASM=1 \
         -s EXPORTED_FUNCTIONS="$(cat ./exported.json)" \
-        -s EXTRA_EXPORTED_RUNTIME_METHODS='["FS", "cwrap", "getValue"]' \
+        -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "getValue"]' \
         -s ALLOW_MEMORY_GROWTH=1 \
         -s BINARYEN_ASYNC_COMPILATION=0 \
+        -s NODERAWFS=1 \
         --pre-js ../sources/shell.pre.js \
         -I./libzip-"$LIBZIP_VERSION"/lib \
         -I./libzip-"$LIBZIP_VERSION" \

@@ -3,9 +3,6 @@
     "version": "0.0.0",
     "private": true,
     "main": "./sources/index.ts",
-    "files": [
-        "/lib"
-    ],
     "dependencies": {
         "tslib": "^1"
     },

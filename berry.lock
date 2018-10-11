@@ -97,6 +97,7 @@
     brfs: ^2.0.1
     buffer-loader: ^0.1.0
     joi: ^13.6.0
+    pnp-webpack-plugin: ^1.1.0
     raw-loader: ^0.5.1
     transform-loader: ^0.2.4
     ts-loader: "virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.2.1"
@@ -112,6 +113,7 @@
     brfs: ^2.0.1
     buffer-loader: ^0.1.0
     joi: ^13.6.0
+    pnp-webpack-plugin: ^1.1.0
     raw-loader: ^0.5.1
     transform-loader: ^0.2.4
     ts-loader: "virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.2.1"
@@ -142,11 +144,11 @@
     @berry/pnp: 0.0.0
     fs-extra: ^7.0.0
     globby: ^8.0.1
+    got: ^9.2.2
     jszip: ^3.1.5
     lockfile: ^1.0.4
     logic-solver: ^2.0.1
     mkdirp: ^0.5.1
-    node-fetch: 2.1.2
     pluralize: ^7.0.0
     pretty-bytes: ^5.1.0
     stream-to-promise: ^2.2.0
@@ -160,11 +162,11 @@
     @berry/pnp: 0.0.0
     fs-extra: ^7.0.0
     globby: ^8.0.1
+    got: ^9.2.2
     jszip: ^3.1.5
     lockfile: ^1.0.4
     logic-solver: ^2.0.1
     mkdirp: ^0.5.1
-    node-fetch: 2.1.2
     pluralize: ^7.0.0
     pretty-bytes: ^5.1.0
     stream-to-promise: ^2.2.0
@@ -182,6 +184,35 @@
   dependencies:
     tslib: ^1
   resolution: "@berry/libzip@workspace-base:0.0.0"
+
+"@berry/monorepo@workspace-base:0.0.0":
+  dependencies:
+    @types/dateformat: ^1.0.1
+    @types/emscripten: ^0.0.31
+    @types/eventemitter3: ^2.0.2
+    @types/execa: ^0.9.0
+    @types/faker: ^4.1.4
+    @types/first-mate: ^7.0.4
+    @types/fs-extra: ^5.0.4
+    @types/globby: ^8.0.0
+    @types/got: ^8.3.4
+    @types/jszip: ^3.1.4
+    @types/lockfile: ^1.0.0
+    @types/lodash: ^4.14.116
+    @types/mkdirp: ^0.5.2
+    @types/node-fetch: ^2.1.2
+    @types/plist: ^3.0.0
+    @types/react: ^16.4.14
+    @types/react-redux: ^6.0.9
+    @types/redux: ^3.6.0
+    @types/redux-saga: ^0.10.5
+    @types/request: ^2.47.1
+    @types/semver: ^5.5.0
+    @types/stream-to-promise: ^2.2.0
+    @types/tar: ^4.0.0
+    @types/text-buffer: ^13.0.4
+    ts-node: ^7.0.1
+  resolution: "@berry/monorepo@workspace-base:0.0.0"
 
 @berry/parsers@0.0.0:
   dependencies:
@@ -208,6 +239,22 @@
     typescript: ^3.0.1
   resolution: "@berry/plugin-github@workspace-base:0.0.0"
 
+@berry/plugin-hub@0.0.0:
+  dependencies:
+    @berry/ui: 0.0.0
+    @manaflair/concierge: ^0.7.3
+    dateformat: ^3.0.3
+    immer: ^1.7.2
+    joi: ^13.6.0
+    react: ^16.5.2
+    react-redux: ^5.0.7
+    redux: ^4.0.0
+    redux-saga: ^0.16.2
+  peerDependencies:
+    @berry/cli: 0.0.0
+    @berry/core: 0.0.0
+  resolution: "@berry/plugin-hub@workspace:0.0.0"
+
 "@berry/plugin-hub@virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#workspace:0.0.0":
   dependencies:
     @berry/cli: "workspace-base:0.0.0"
@@ -215,8 +262,12 @@
     @berry/ui: "virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#workspace:0.0.0"
     @manaflair/concierge: "virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#0.7.3"
     dateformat: ^3.0.3
+    immer: ^1.7.2
     joi: ^13.6.0
     react: ^16.5.2
+    react-redux: "virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#5.0.7"
+    redux: ^4.0.0
+    redux-saga: ^0.16.2
   resolution: "@berry/plugin-hub@virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#workspace:0.0.0"
 
 "@berry/plugin-hub@workspace-base:0.0.0":
@@ -225,8 +276,12 @@
     @berry/ui: "virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#workspace:0.0.0"
     @manaflair/concierge: "virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#0.7.3"
     dateformat: ^3.0.3
+    immer: ^1.7.2
     joi: ^13.6.0
     react: ^16.5.2
+    react-redux: "virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#5.0.7"
+    redux: ^4.0.0
+    redux-saga: ^0.16.2
   resolution: "@berry/plugin-hub@workspace-base:0.0.0"
 
 @berry/plugin-npm@0.0.0:
@@ -258,7 +313,7 @@
     typescript: ^3.0.1
     wasm-loader: "virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#1.3.0"
     webpack: ^4.17.2
-    webpack-cli: "virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.1"
+    webpack-cli: "virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.2"
   resolution: "@berry/pnp@workspace-base:0.0.0"
 
 @berry/shell@0.0.0:
@@ -277,10 +332,13 @@
 
 @berry/ui@0.0.0:
   dependencies:
-    @manaflair/term-strings: ^0.10.0
-    @manaflair/text-layout: ^0.9.3
+    @manaflair/term-strings: ^0.10.1
+    @manaflair/text-layout: ^0.10.2
     eventemitter3: ^3.1.0
+    first-mate: ^7.1.3
+    plist: ^3.0.1
     react-reconciler: ^0.14.0
+    text-buffer: ^13.14.9
     ttys: ^0.0.3
     yoga-dom: ^0.0.14
   peerDependencies:
@@ -289,34 +347,43 @@
 
 "@berry/ui@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#workspace:0.0.0":
   dependencies:
-    @manaflair/term-strings: ^0.10.0
-    @manaflair/text-layout: ^0.9.3
+    @manaflair/term-strings: ^0.10.1
+    @manaflair/text-layout: ^0.10.2
     eventemitter3: ^3.1.0
+    first-mate: ^7.1.3
+    plist: ^3.0.1
     react: ^16.5.2
     react-reconciler: "virtual:1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e#0.14.0"
+    text-buffer: ^13.14.9
     ttys: ^0.0.3
     yoga-dom: ^0.0.14
   resolution: "@berry/ui@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#workspace:0.0.0"
 
 "@berry/ui@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#workspace:0.0.0":
   dependencies:
-    @manaflair/term-strings: ^0.10.0
-    @manaflair/text-layout: ^0.9.3
+    @manaflair/term-strings: ^0.10.1
+    @manaflair/text-layout: ^0.10.2
     eventemitter3: ^3.1.0
+    first-mate: ^7.1.3
+    plist: ^3.0.1
     react: ^16.5.2
     react-reconciler: "virtual:1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5#0.14.0"
+    text-buffer: ^13.14.9
     ttys: ^0.0.3
     yoga-dom: ^0.0.14
   resolution: "@berry/ui@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#workspace:0.0.0"
 
 "@berry/ui@workspace-base:0.0.0":
   dependencies:
-    @manaflair/term-strings: ^0.10.0
-    @manaflair/text-layout: ^0.9.3
+    @manaflair/term-strings: ^0.10.1
+    @manaflair/text-layout: ^0.10.2
     eventemitter3: ^3.1.0
     faker: ^4.1.0
+    first-mate: ^7.1.3
+    plist: ^3.0.1
     react: ^16.5.1
     react-reconciler: "virtual:87c31939ffd3d24ff010b223c0935f0c5e91cd5b92941e5d632b279dccfc6e1b5b5b8b4a3ac82556a5a38ebc09123b1c1475079859ef3b232d23fbd748e3c020#0.14.0"
+    text-buffer: ^13.14.9
     ts-node: ^7.0.1
     ttys: ^0.0.3
     yoga-dom: ^0.0.14
@@ -384,14 +451,14 @@
     lodash: ^4.17.4
   resolution: "@manaflair/concierge@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#0.7.3"
 
-@manaflair/term-strings@^0.10.0:
+@manaflair/term-strings@^0.10.1:
   dependencies:
     babel-runtime: ^6.23.0
     color-diff: ^1.0.0
-  resolution: @manaflair/term-strings@0.10.0
+  resolution: @manaflair/term-strings@0.10.1
 
-@manaflair/text-layout@^0.9.3:
-  resolution: @manaflair/text-layout@0.9.3
+@manaflair/text-layout@^0.10.2:
+  resolution: @manaflair/text-layout@0.10.4
 
 @mrmlnc/readdir-enhanced@^2.2.1:
   dependencies:
@@ -401,6 +468,16 @@
 
 @nodelib/fs.stat@^1.0.1:
   resolution: @nodelib/fs.stat@1.1.2
+
+@sindresorhus/is@^0.11.0:
+  dependencies:
+    symbol-observable: ^1.2.0
+  resolution: @sindresorhus/is@0.11.0
+
+@szmarczak/http-timer@^1.1.0:
+  dependencies:
+    defer-to-connect: ^1.0.1
+  resolution: @szmarczak/http-timer@1.1.1
 
 "@types/caseless@*":
   resolution: @types/caseless@0.12.1
@@ -412,6 +489,9 @@
   dependencies:
     @types/webassembly-js-api: "*"
   resolution: @types/emscripten@0.0.31
+
+"@types/event-kit@*":
+  resolution: @types/event-kit@2.4.0
 
 @types/eventemitter3@^2.0.2:
   dependencies:
@@ -428,6 +508,11 @@
 
 @types/faker@^4.1.4:
   resolution: @types/faker@4.1.4
+
+@types/first-mate@^7.0.4:
+  dependencies:
+    @types/event-kit: "*"
+  resolution: @types/first-mate@7.0.4
 
 "@types/form-data@*":
   dependencies:
@@ -451,6 +536,11 @@
     @types/glob: "*"
     fast-glob: ^2.0.2
   resolution: @types/globby@8.0.0
+
+@types/got@^8.3.4:
+  dependencies:
+    @types/node: "*"
+  resolution: @types/got@8.3.4
 
 @types/jszip@^3.1.4:
   dependencies:
@@ -479,14 +569,42 @@
 "@types/node@*":
   resolution: @types/node@10.11.3
 
+"@types/pathwatcher@*":
+  dependencies:
+    @types/event-kit: "*"
+    @types/node: "*"
+  resolution: @types/pathwatcher@8.0.4
+
+@types/plist@^3.0.0:
+  dependencies:
+    @types/node: "*"
+    @types/xmlbuilder: "*"
+  resolution: @types/plist@3.0.0
+
 "@types/prop-types@*":
   resolution: @types/prop-types@15.5.6
 
-@types/react@^16.4.14:
+@types/react-redux@^6.0.9:
+  dependencies:
+    @types/react: "*"
+    redux: ^4.0.0
+  resolution: @types/react-redux@6.0.9
+
+"@types/react@^16.4.14, @types/react@*":
   dependencies:
     @types/prop-types: "*"
     csstype: ^2.2.0
   resolution: @types/react@16.4.14
+
+@types/redux-saga@^0.10.5:
+  dependencies:
+    redux-saga: "*"
+  resolution: @types/redux-saga@0.10.5
+
+@types/redux@^3.6.0:
+  dependencies:
+    redux: "*"
+  resolution: @types/redux@3.6.0
 
 @types/request@^2.47.1:
   dependencies:
@@ -509,11 +627,20 @@
     @types/node: "*"
   resolution: @types/tar@4.0.0
 
+@types/text-buffer@^13.0.4:
+  dependencies:
+    @types/event-kit: "*"
+    @types/pathwatcher: "*"
+  resolution: @types/text-buffer@13.0.4
+
 "@types/tough-cookie@*":
   resolution: @types/tough-cookie@2.3.3
 
 "@types/webassembly-js-api@*":
   resolution: @types/webassembly-js-api@0.0.1
+
+"@types/xmlbuilder@*":
+  resolution: @types/xmlbuilder@0.0.34
 
 @webassemblyjs/ast@1.7.8:
   dependencies:
@@ -740,6 +867,12 @@ assign-symbols@^1.0.0:
 async-each@^1.0.0:
   resolution: async-each@1.0.1
 
+async@^1.5.2:
+  resolution: async@1.5.2
+
+async@~0.2.10:
+  resolution: async@0.2.10
+
 atob@^2.1.1:
   resolution: atob@2.1.2
 
@@ -766,7 +899,7 @@ base@^0.11.1:
     pascalcase: ^0.1.1
   resolution: base@0.11.2
 
-base64-js@^1.0.2:
+"base64-js@^1.2.3, base64-js@^1.0.2":
   resolution: base64-js@1.3.0
 
 big.js@^3.1.3:
@@ -811,6 +944,9 @@ brfs@^2.0.1:
 
 brorand@^1.0.1:
   resolution: brorand@1.1.0
+
+browser-stdout@1.3.0:
+  resolution: browser-stdout@1.3.0
 
 "browserify-aes@^1.0.4, browserify-aes@^1.0.0":
   dependencies:
@@ -911,8 +1047,22 @@ cache-base@^1.0.1:
     unset-value: ^1.0.0
   resolution: cache-base@1.0.1
 
+cacheable-request@^5.0.0:
+  dependencies:
+    clone-response: ^1.0.2
+    get-stream: ^4.0.0
+    http-cache-semantics: ^4.0.0
+    keyv: ^3.0.0
+    lowercase-keys: ^1.0.1
+    normalize-url: ^3.1.0
+    responselike: ^1.0.2
+  resolution: cacheable-request@5.0.0
+
 call-me-maybe@^1.0.1:
   resolution: call-me-maybe@1.0.1
+
+camelcase@^2.0.1:
+  resolution: camelcase@2.1.1
 
 camelcase@^4.1.0:
   resolution: camelcase@4.1.0
@@ -972,6 +1122,13 @@ class-utils@^0.3.5:
     static-extend: ^0.1.1
   resolution: class-utils@0.3.6
 
+cliui@^3.0.3:
+  dependencies:
+    string-width: ^1.0.1
+    strip-ansi: ^3.0.1
+    wrap-ansi: ^2.0.0
+  resolution: cliui@3.2.0
+
 cliui@^4.0.0:
   dependencies:
     string-width: ^2.1.1
@@ -979,8 +1136,16 @@ cliui@^4.0.0:
     wrap-ansi: ^2.0.0
   resolution: cliui@4.1.0
 
+clone-response@^1.0.2:
+  dependencies:
+    mimic-response: ^1.0.0
+  resolution: clone-response@1.0.2
+
 code-point-at@^1.0.0:
   resolution: code-point-at@1.1.0
+
+coffee-script@^1.10.0:
+  resolution: coffee-script@1.12.7
 
 collection-visit@^1.0.0:
   dependencies:
@@ -1001,6 +1166,11 @@ color-name@1.1.3:
 
 commander@~2.14.1:
   resolution: commander@2.14.1
+
+commander@2.9.0:
+  dependencies:
+    graceful-readlink: >= 1.0.0
+  resolution: commander@2.9.0
 
 commondir@^1.0.1:
   resolution: commondir@1.0.1
@@ -1106,11 +1276,21 @@ crypto-browserify@^3.11.0:
     randomfill: ^1.0.3
   resolution: crypto-browserify@3.12.0
 
+cson-parser@^1.3.0:
+  dependencies:
+    coffee-script: ^1.10.0
+  resolution: cson-parser@1.3.5
+
 csstype@^2.2.0:
   resolution: csstype@2.5.7
 
 cyclist@~0.2.2:
   resolution: cyclist@0.2.2
+
+d@~0.1.1:
+  dependencies:
+    es5-ext: ~0.10.2
+  resolution: d@0.1.1
 
 d@1:
   dependencies:
@@ -1133,6 +1313,14 @@ dateformat@^3.0.3:
     ms: ^2.1.1
   resolution: debug@3.2.5
 
+debug@2.6.8:
+  dependencies:
+    ms: 2.0.0
+  resolution: debug@2.6.8
+
+decamelize@^1.1.1:
+  resolution: decamelize@1.2.0
+
 decamelize@^2.0.0:
   dependencies:
     xregexp: 4.0.0
@@ -1141,11 +1329,19 @@ decamelize@^2.0.0:
 decode-uri-component@^0.2.0:
   resolution: decode-uri-component@0.2.0
 
+decompress-response@^3.3.0:
+  dependencies:
+    mimic-response: ^1.0.0
+  resolution: decompress-response@3.3.0
+
 deep-extend@^0.6.0:
   resolution: deep-extend@0.6.0
 
 deep-is@~0.1.3:
   resolution: deep-is@0.1.3
+
+defer-to-connect@^1.0.1:
+  resolution: defer-to-connect@1.0.1
 
 define-property@^0.2.5:
   dependencies:
@@ -1166,6 +1362,11 @@ define-property@^2.0.2:
 delegates@^1.0.0:
   resolution: delegates@1.0.0
 
+delegato@^1.0.0:
+  dependencies:
+    mixto: 1.x
+  resolution: delegato@1.0.0
+
 des.js@^1.0.0:
   dependencies:
     inherits: ^2.0.1
@@ -1175,8 +1376,14 @@ des.js@^1.0.0:
 detect-libc@^1.0.2:
   resolution: detect-libc@1.0.3
 
+diff@^2.2.1:
+  resolution: diff@2.2.3
+
 diff@^3.1.0:
   resolution: diff@3.5.0
+
+diff@3.2.0:
+  resolution: diff@3.2.0
 
 diffie-hellman@^5.0.0:
   dependencies:
@@ -1199,6 +1406,9 @@ duplexer2@~0.1.4:
     readable-stream: ^2.0.2
   resolution: duplexer2@0.1.4
 
+duplexer3@^0.1.4:
+  resolution: duplexer3@0.1.4
+
 "duplexify@^3.4.2, duplexify@^3.6.0":
   dependencies:
     end-of-stream: ^1.0.0
@@ -1217,6 +1427,14 @@ elliptic@^6.0.0:
     minimalistic-assert: ^1.0.0
     minimalistic-crypto-utils: ^1.0.0
   resolution: elliptic@6.4.1
+
+"emissary@^1, emissary@^1.0.0, emissary@^1.3.2":
+  dependencies:
+    es6-weak-map: ^0.1.2
+    mixto: 1.x
+    property-accessors: ^1.1
+    underscore-plus: 1.x
+  resolution: emissary@1.3.3
 
 emojis-list@^2.0.0:
   resolution: emojis-list@2.1.0
@@ -1238,12 +1456,19 @@ emojis-list@^2.0.0:
     prr: ~1.0.1
   resolution: errno@0.1.7
 
-"es5-ext@~0.10.14, es5-ext@^0.10.9, es5-ext@^0.10.35":
+"es5-ext@~0.10.6, es5-ext@~0.10.14, es5-ext@~0.10.2, es5-ext@~0.10.5, es5-ext@^0.10.9, es5-ext@^0.10.35":
   dependencies:
     es6-iterator: ~2.0.3
     es6-symbol: ~3.1.1
     next-tick: 1
   resolution: es5-ext@0.10.46
+
+es6-iterator@~0.1.3:
+  dependencies:
+    d: ~0.1.1
+    es5-ext: ~0.10.5
+    es6-symbol: ~2.0.1
+  resolution: es6-iterator@0.1.3
 
 "es6-iterator@~2.0.1, es6-iterator@~2.0.3":
   dependencies:
@@ -1280,7 +1505,21 @@ es6-promise@~3.0.2:
     es5-ext: ~0.10.14
   resolution: es6-symbol@3.1.1
 
-"escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5":
+es6-symbol@~2.0.1:
+  dependencies:
+    d: ~0.1.1
+    es5-ext: ~0.10.5
+  resolution: es6-symbol@2.0.1
+
+es6-weak-map@^0.1.2:
+  dependencies:
+    d: ~0.1.1
+    es5-ext: ~0.10.6
+    es6-iterator: ~0.1.3
+    es6-symbol: ~2.0.1
+  resolution: es6-weak-map@0.1.4
+
+"escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5, escape-string-regexp@1.0.5":
   resolution: escape-string-regexp@1.0.5
 
 "escodegen@~1.9.0, escodegen@^1.8.1":
@@ -1320,6 +1559,9 @@ event-emitter@~0.3.5:
     d: 1
     es5-ext: ~0.10.14
   resolution: event-emitter@0.3.5
+
+"event-kit@^2.2.0, event-kit@^2.4.0, event-kit@^2.0.0, event-kit@^2.1.0":
+  resolution: event-kit@2.5.1
 
 "eventemitter3@^3.1.0, eventemitter3@*":
   resolution: eventemitter3@3.1.0
@@ -1436,6 +1678,17 @@ find-up@^3.0.0:
     locate-path: ^3.0.0
   resolution: find-up@3.0.0
 
+first-mate@^7.1.3:
+  dependencies:
+    emissary: ^1
+    event-kit: ^2.2.0
+    fs-plus: ^3.0.0
+    grim: ^2.0.1
+    oniguruma: 7.0.2
+    season: ^6.0.2
+    underscore-plus: ^1
+  resolution: first-mate@7.1.3
+
 flush-write-stream@^1.0.0:
   dependencies:
     inherits: ^2.0.1
@@ -1456,6 +1709,12 @@ from2@^2.1.0:
     readable-stream: ^2.0.0
   resolution: from2@2.3.0
 
+fs-admin@^0.1.4:
+  dependencies:
+    mocha: ^3.5.0
+    nan: ^2.10.0
+  resolution: fs-admin@0.1.7
+
 fs-extra@^7.0.0:
   dependencies:
     graceful-fs: ^4.1.2
@@ -1467,6 +1726,14 @@ fs-minipass@^1.2.5:
   dependencies:
     minipass: ^2.2.1
   resolution: fs-minipass@1.2.5
+
+fs-plus@^3.0.0:
+  dependencies:
+    async: ^1.5.2
+    mkdirp: ^0.5.1
+    rimraf: ^2.5.2
+    underscore-plus: 1.x
+  resolution: fs-plus@3.0.2
 
 fs-write-stream-atomic@^1.0.8:
   dependencies:
@@ -1506,6 +1773,9 @@ get-assigned-identifiers@^1.1.0:
 get-caller-file@^1.0.1:
   resolution: get-caller-file@1.0.3
 
+get-parameter-names@~0.2.0:
+  resolution: get-parameter-names@0.2.0
+
 get-stream@^3.0.0:
   resolution: get-stream@3.0.0
 
@@ -1536,6 +1806,16 @@ glob-to-regexp@^0.3.0:
     path-is-absolute: ^1.0.0
   resolution: glob@7.1.3
 
+glob@7.1.1:
+  dependencies:
+    fs.realpath: ^1.0.0
+    inflight: ^1.0.4
+    inherits: 2
+    minimatch: ^3.0.2
+    once: ^1.3.0
+    path-is-absolute: ^1.0.0
+  resolution: glob@7.1.1
+
 global-modules-path@^2.3.0:
   resolution: global-modules-path@2.3.0
 
@@ -1553,13 +1833,41 @@ globby@^8.0.1:
     slash: ^1.0.0
   resolution: globby@8.0.1
 
+got@^9.2.2:
+  dependencies:
+    @sindresorhus/is: ^0.11.0
+    @szmarczak/http-timer: ^1.1.0
+    cacheable-request: ^5.0.0
+    decompress-response: ^3.3.0
+    duplexer3: ^0.1.4
+    get-stream: ^4.0.0
+    mimic-response: ^1.0.1
+    p-cancelable: ^0.5.0
+    to-readable-stream: ^1.0.0
+    url-parse-lax: ^3.0.0
+  resolution: got@9.2.2
+
 "graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.11":
   resolution: graceful-fs@4.1.11
+
+graceful-readlink@>= 1.0.0:
+  resolution: graceful-readlink@1.0.1
+
+"grim@^2.0.1, grim@^2.0.2":
+  dependencies:
+    event-kit: ^2.0.0
+  resolution: grim@2.0.2
+
+growl@1.9.2:
+  resolution: growl@1.9.2
 
 has-ansi@^2.0.0:
   dependencies:
     ansi-regex: ^2.0.0
   resolution: has-ansi@2.0.0
+
+has-flag@^1.0.0:
+  resolution: has-flag@1.0.0
 
 has-flag@^3.0.0:
   resolution: has-flag@3.0.0
@@ -1607,6 +1915,9 @@ hash-base@^3.0.0:
     minimalistic-assert: ^1.0.1
   resolution: hash.js@1.1.5
 
+he@1.1.1:
+  resolution: he@1.1.1
+
 hmac-drbg@^1.0.0:
   dependencies:
     hash.js: ^1.0.3
@@ -1617,10 +1928,16 @@ hmac-drbg@^1.0.0:
 hoek@5.x.x:
   resolution: hoek@5.0.4
 
+hoist-non-react-statics@^2.5.0:
+  resolution: hoist-non-react-statics@2.5.5
+
+http-cache-semantics@^4.0.0:
+  resolution: http-cache-semantics@4.0.0
+
 https-browserify@^1.0.0:
   resolution: https-browserify@1.0.0
 
-iconv-lite@^0.4.4:
+"iconv-lite@~0.4.4, iconv-lite@^0.4.4":
   dependencies:
     safer-buffer: >= 2.1.2 < 3
   resolution: iconv-lite@0.4.24
@@ -1641,6 +1958,9 @@ ignore@^3.3.5:
 
 immediate@~3.0.5:
   resolution: immediate@3.0.6
+
+immer@^1.7.2:
+  resolution: immer@1.7.2
 
 import-local@^2.0.0:
   dependencies:
@@ -1671,6 +1991,14 @@ ini@~1.3.0:
 
 interpret@^1.1.0:
   resolution: interpret@1.1.0
+
+invariant@^2.0.0:
+  dependencies:
+    loose-envify: ^1.0.0
+  resolution: invariant@2.2.4
+
+invert-kv@^1.0.0:
+  resolution: invert-kv@1.0.0
 
 invert-kv@^2.0.0:
   resolution: invert-kv@2.0.0
@@ -1794,11 +2122,17 @@ joi@^13.6.0:
 jsesc@^2.5.1:
   resolution: jsesc@2.5.1
 
+json-buffer@3.0.0:
+  resolution: json-buffer@3.0.0
+
 json-parse-better-errors@^1.0.2:
   resolution: json-parse-better-errors@1.0.2
 
 json-schema-traverse@^0.4.1:
   resolution: json-schema-traverse@0.4.1
+
+json3@3.3.2:
+  resolution: json3@3.3.2
 
 json5@^0.5.0:
   resolution: json5@0.5.1
@@ -1822,6 +2156,11 @@ kexec@^3.0.0:
     nan: ^2.4.0
   resolution: kexec@3.0.0
 
+keyv@^3.0.0:
+  dependencies:
+    json-buffer: 3.0.0
+  resolution: keyv@3.1.0
+
 "kind-of@^3.0.2, kind-of@^3.2.0, kind-of@^3.0.3":
   dependencies:
     is-buffer: ^1.1.5
@@ -1837,6 +2176,11 @@ kind-of@^5.0.0:
 
 "kind-of@^6.0.2, kind-of@^6.0.0":
   resolution: kind-of@6.0.2
+
+lcid@^1.0.0:
+  dependencies:
+    invert-kv: ^1.0.0
+  resolution: lcid@1.0.0
 
 lcid@^2.0.0:
   dependencies:
@@ -1881,10 +2225,51 @@ lockfile@^1.0.4:
     signal-exit: ^3.0.2
   resolution: lockfile@1.0.4
 
+lodash-es@^4.17.5:
+  resolution: lodash-es@4.17.11
+
+"lodash._baseassign@^3.0.0":
+  dependencies:
+    "lodash._basecopy": ^3.0.0
+    lodash.keys: ^3.0.0
+  resolution: "lodash._baseassign@3.2.0"
+
+"lodash._basecopy@^3.0.0":
+  resolution: "lodash._basecopy@3.0.1"
+
+"lodash._basecreate@^3.0.0":
+  resolution: "lodash._basecreate@3.0.3"
+
+"lodash._getnative@^3.0.0":
+  resolution: "lodash._getnative@3.9.1"
+
+"lodash._isiterateecall@^3.0.0":
+  resolution: "lodash._isiterateecall@3.0.9"
+
+lodash.create@3.1.1:
+  dependencies:
+    "lodash._baseassign": ^3.0.0
+    "lodash._basecreate": ^3.0.0
+    "lodash._isiterateecall": ^3.0.0
+  resolution: lodash.create@3.1.1
+
 lodash.debounce@^4.0.8:
   resolution: lodash.debounce@4.0.8
 
-"lodash@^4.17.4, lodash@^4.17.10":
+lodash.isarguments@^3.0.0:
+  resolution: lodash.isarguments@3.1.0
+
+lodash.isarray@^3.0.0:
+  resolution: lodash.isarray@3.0.4
+
+lodash.keys@^3.0.0:
+  dependencies:
+    "lodash._getnative": ^3.0.0
+    lodash.isarguments: ^3.0.0
+    lodash.isarray: ^3.0.0
+  resolution: lodash.keys@3.1.2
+
+"lodash@^4.17.4, lodash@^4.17.5, lodash@^4.17.10":
   resolution: lodash@4.17.11
 
 logic-solver@^2.0.1:
@@ -1895,10 +2280,13 @@ logic-solver@^2.0.1:
 long@^3.2.0:
   resolution: long@3.2.0
 
-"loose-envify@^1.1.0, loose-envify@^1.3.1":
+"loose-envify@^1.1.0, loose-envify@^1.3.1, loose-envify@^1.0.0":
   dependencies:
     js-tokens: "^3.0.0 || ^4.0.0"
   resolution: loose-envify@1.4.0
+
+"lowercase-keys@^1.0.1, lowercase-keys@^1.0.0":
+  resolution: lowercase-keys@1.0.1
 
 lru-cache@^4.1.1:
   dependencies:
@@ -1985,13 +2373,16 @@ miller-rabin@^4.0.0:
 mimic-fn@^1.0.0:
   resolution: mimic-fn@1.2.0
 
+"mimic-response@^1.0.1, mimic-response@^1.0.0":
+  resolution: mimic-response@1.0.1
+
 "minimalistic-assert@^1.0.0, minimalistic-assert@^1.0.1":
   resolution: minimalistic-assert@1.0.1
 
 "minimalistic-crypto-utils@^1.0.0, minimalistic-crypto-utils@^1.0.1":
   resolution: minimalistic-crypto-utils@1.0.1
 
-minimatch@^3.0.4:
+"minimatch@^3.0.4, minimatch@^3.0.2":
   dependencies:
     brace-expansion: ^1.1.7
   resolution: minimatch@3.0.4
@@ -2033,10 +2424,29 @@ mixin-deep@^1.2.0:
     is-extendable: ^1.0.1
   resolution: mixin-deep@1.3.1
 
-"mkdirp@^0.5.1, mkdirp@~0.5.0, mkdirp@^0.5.0":
+mixto@1.x:
+  resolution: mixto@1.0.0
+
+"mkdirp@^0.5.1, mkdirp@~0.5.0, mkdirp@^0.5.0, mkdirp@0.5.1":
   dependencies:
     minimist: 0.0.8
   resolution: mkdirp@0.5.1
+
+mocha@^3.5.0:
+  dependencies:
+    browser-stdout: 1.3.0
+    commander: 2.9.0
+    debug: 2.6.8
+    diff: 3.2.0
+    escape-string-regexp: 1.0.5
+    glob: 7.1.1
+    growl: 1.9.2
+    he: 1.1.1
+    json3: 3.3.2
+    lodash.create: 3.1.1
+    mkdirp: 0.5.1
+    supports-color: 3.1.2
+  resolution: mocha@3.5.3
 
 move-concurrently@^1.0.1:
   dependencies:
@@ -2054,7 +2464,7 @@ ms@^2.1.1:
 ms@2.0.0:
   resolution: ms@2.0.0
 
-"nan@^2.4.0, nan@^2.9.2":
+"nan@^2.4.0, nan@^2.10.0, nan@2.x, nan@^2.9.2":
   resolution: nan@2.11.1
 
 nanomatch@^1.2.9:
@@ -2087,9 +2497,6 @@ next-tick@1:
 
 nice-try@^1.0.4:
   resolution: nice-try@1.0.5
-
-node-fetch@2.1.2:
-  resolution: node-fetch@2.1.2
 
 node-libs-browser@^2.0.0:
   dependencies:
@@ -2142,6 +2549,9 @@ normalize-path@^2.1.1:
   dependencies:
     remove-trailing-separator: ^1.0.1
   resolution: normalize-path@2.1.1
+
+normalize-url@^3.1.0:
+  resolution: normalize-url@3.3.0
 
 npm-bundled@^1.0.1:
   resolution: npm-bundled@1.0.5
@@ -2196,6 +2606,11 @@ object.pick@^1.3.0:
     wrappy: 1
   resolution: once@1.3.3
 
+oniguruma@7.0.2:
+  dependencies:
+    nan: ^2.10.0
+  resolution: oniguruma@7.0.2
+
 optionator@^0.8.1:
   dependencies:
     deep-is: ~0.1.3
@@ -2212,6 +2627,11 @@ os-browserify@^0.3.0:
 os-homedir@^1.0.0:
   resolution: os-homedir@1.0.2
 
+os-locale@^1.4.0:
+  dependencies:
+    lcid: ^1.0.0
+  resolution: os-locale@1.4.0
+
 os-locale@^3.0.0:
   dependencies:
     execa: ^0.10.0
@@ -2227,6 +2647,9 @@ osenv@^0.1.4:
     os-homedir: ^1.0.0
     os-tmpdir: ^1.0.0
   resolution: osenv@0.1.5
+
+p-cancelable@^0.5.0:
+  resolution: p-cancelable@0.5.1
 
 p-defer@^1.0.0:
   resolution: p-defer@1.0.0
@@ -2308,6 +2731,18 @@ path-type@^3.0.0:
     pify: ^3.0.0
   resolution: path-type@3.0.0
 
+pathwatcher@8.0.1:
+  dependencies:
+    async: ~0.2.10
+    emissary: ^1.3.2
+    event-kit: ^2.1.0
+    fs-plus: ^3.0.0
+    grim: ^2.0.1
+    iconv-lite: ~0.4.4
+    nan: 2.x
+    underscore-plus: ~1.x
+  resolution: pathwatcher@8.0.1
+
 pbkdf2@^3.0.3:
   dependencies:
     create-hash: ^1.1.2
@@ -2333,14 +2768,27 @@ pkg-dir@^3.0.0:
     find-up: ^3.0.0
   resolution: pkg-dir@3.0.0
 
+plist@^3.0.1:
+  dependencies:
+    base64-js: ^1.2.3
+    xmlbuilder: ^9.0.7
+    xmldom: 0.1.x
+  resolution: plist@3.0.1
+
 pluralize@^7.0.0:
   resolution: pluralize@7.0.0
+
+pnp-webpack-plugin@^1.1.0:
+  resolution: pnp-webpack-plugin@1.1.0
 
 posix-character-classes@^0.1.0:
   resolution: posix-character-classes@0.1.1
 
 prelude-ls@~1.1.2:
   resolution: prelude-ls@1.1.2
+
+prepend-http@^2.0.0:
+  resolution: prepend-http@2.0.0
 
 pretty-bytes@^5.1.0:
   resolution: pretty-bytes@5.1.0
@@ -2357,11 +2805,17 @@ process@^0.11.10:
 promise-inflight@^1.0.1:
   resolution: promise-inflight@1.0.1
 
-prop-types@^15.6.2:
+"prop-types@^15.6.2, prop-types@^15.6.0":
   dependencies:
     loose-envify: ^1.3.1
     object-assign: ^4.1.1
   resolution: prop-types@15.6.2
+
+property-accessors@^1.1:
+  dependencies:
+    es6-weak-map: ^0.1.2
+    mixto: 1.x
+  resolution: property-accessors@1.1.3
 
 prr@~1.0.1:
   resolution: prr@1.0.1
@@ -2478,6 +2932,43 @@ react-reconciler@^0.14.0:
     schedule: ^0.4.0
   resolution: "react-reconciler@virtual:87c31939ffd3d24ff010b223c0935f0c5e91cd5b92941e5d632b279dccfc6e1b5b5b8b4a3ac82556a5a38ebc09123b1c1475079859ef3b232d23fbd748e3c020#0.14.0"
 
+react-redux@^5.0.7:
+  dependencies:
+    hoist-non-react-statics: ^2.5.0
+    invariant: ^2.0.0
+    lodash: ^4.17.5
+    lodash-es: ^4.17.5
+    loose-envify: ^1.1.0
+    prop-types: ^15.6.0
+  peerDependencies:
+    react: "^0.14.0 || ^15.0.0-0 || ^16.0.0-0"
+    redux: "^2.0.0 || ^3.0.0 || ^4.0.0-0"
+  resolution: react-redux@5.0.7
+
+"react-redux@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#5.0.7":
+  dependencies:
+    hoist-non-react-statics: ^2.5.0
+    invariant: ^2.0.0
+    lodash: ^4.17.5
+    lodash-es: ^4.17.5
+    loose-envify: ^1.1.0
+    prop-types: ^15.6.0
+    react: ^16.5.2
+    redux: ^4.0.0
+  resolution: "react-redux@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#5.0.7"
+
+"react-redux@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#5.0.7":
+  dependencies:
+    hoist-non-react-statics: ^2.5.0
+    invariant: ^2.0.0
+    lodash: ^4.17.5
+    lodash-es: ^4.17.5
+    loose-envify: ^1.1.0
+    prop-types: ^15.6.0
+    react: ^16.5.2
+    redux: ^4.0.0
+  resolution: "react-redux@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#5.0.7"
+
 "react@^16.5.1, react@^16.5.2":
   dependencies:
     loose-envify: ^1.1.0
@@ -2513,6 +3004,15 @@ readdirp@^2.0.0:
     micromatch: ^3.1.10
     readable-stream: ^2.0.2
   resolution: readdirp@2.2.1
+
+"redux-saga@^0.16.2, redux-saga@*":
+  resolution: redux-saga@0.16.2
+
+"redux@^4.0.0, redux@*":
+  dependencies:
+    loose-envify: ^1.1.0
+    symbol-observable: ^1.2.0
+  resolution: redux@4.0.0
 
 regenerator-runtime@^0.11.0:
   resolution: regenerator-runtime@0.11.1
@@ -2554,10 +3054,15 @@ resolve-url@^0.2.1:
     path-parse: ^1.0.5
   resolution: resolve@1.8.1
 
+responselike@^1.0.2:
+  dependencies:
+    lowercase-keys: ^1.0.0
+  resolution: responselike@1.0.2
+
 ret@~0.1.10:
   resolution: ret@0.1.15
 
-"rimraf@^2.6.2, rimraf@^2.5.4, rimraf@^2.6.1":
+"rimraf@^2.5.2, rimraf@^2.6.2, rimraf@^2.5.4, rimraf@^2.6.1":
   dependencies:
     glob: ^7.0.5
   resolution: rimraf@2.6.2
@@ -2613,8 +3118,22 @@ scope-analyzer@^2.0.1:
     get-assigned-identifiers: ^1.1.0
   resolution: scope-analyzer@2.0.5
 
+season@^6.0.2:
+  dependencies:
+    cson-parser: ^1.3.0
+    fs-plus: ^3.0.0
+    yargs: ^3.23.0
+  resolution: season@6.0.2
+
 "semver@^5.5.1, semver@^5.0.1, semver@^5.5.0, semver@^5.4.1, semver@^5.3.0":
   resolution: semver@5.5.1
+
+serializable@^1.0.3:
+  dependencies:
+    get-parameter-names: ~0.2.0
+    mixto: 1.x
+    underscore-plus: 1.x
+  resolution: serializable@1.0.3
 
 serialize-javascript@^1.4.0:
   resolution: serialize-javascript@1.5.0
@@ -2712,7 +3231,7 @@ source-map-url@^0.4.0:
 "source-map@^0.5.6, source-map@^0.5.0":
   resolution: source-map@0.5.7
 
-"source-map@^0.6.1, source-map@~0.6.1, source-map@^0.6.0":
+"source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.1":
   resolution: source-map@0.6.1
 
 "split-string@^3.0.2, split-string@^3.0.1":
@@ -2830,6 +3349,11 @@ strip-eof@^1.0.0:
 strip-json-comments@~2.0.1:
   resolution: strip-json-comments@2.0.1
 
+superstring@2.3.4:
+  dependencies:
+    nan: ^2.10.0
+  resolution: superstring@2.3.4
+
 supports-color@^2.0.0:
   resolution: supports-color@2.0.0
 
@@ -2837,6 +3361,14 @@ supports-color@^2.0.0:
   dependencies:
     has-flag: ^3.0.0
   resolution: supports-color@5.5.0
+
+supports-color@3.1.2:
+  dependencies:
+    has-flag: ^1.0.0
+  resolution: supports-color@3.1.2
+
+symbol-observable@^1.2.0:
+  resolution: symbol-observable@1.2.0
 
 "tapable@^1.1.0, tapable@^1.0.0":
   resolution: tapable@1.1.0
@@ -2851,6 +3383,22 @@ supports-color@^2.0.0:
     safe-buffer: ^5.1.2
     yallist: ^3.0.2
   resolution: tar@4.4.6
+
+text-buffer@^13.14.9:
+  dependencies:
+    delegato: ^1.0.0
+    diff: ^2.2.1
+    emissary: ^1.0.0
+    event-kit: ^2.4.0
+    fs-admin: ^0.1.4
+    fs-plus: ^3.0.0
+    grim: ^2.0.2
+    mkdirp: ^0.5.1
+    pathwatcher: 8.0.1
+    serializable: ^1.0.3
+    superstring: 2.3.4
+    underscore-plus: ^1.0.0
+  resolution: text-buffer@13.14.10
 
 "through2@^2.0.0, through2@~2.0.3":
   dependencies:
@@ -2873,6 +3421,9 @@ to-object-path@^0.3.0:
   dependencies:
     kind-of: ^3.0.2
   resolution: to-object-path@0.3.0
+
+to-readable-stream@^1.0.0:
+  resolution: to-readable-stream@1.0.0
 
 to-regex-range@^2.1.0:
   dependencies:
@@ -2900,6 +3451,17 @@ transform-loader@^0.2.4:
 
 trim-right@^1.0.1:
   resolution: trim-right@1.0.1
+
+ts-loader@^5.2.1:
+  dependencies:
+    chalk: ^2.3.0
+    enhanced-resolve: ^4.0.0
+    loader-utils: ^1.0.2
+    micromatch: ^3.1.4
+    semver: ^5.0.1
+  peerDependencies:
+    typescript: "*"
+  resolution: ts-loader@5.2.1
 
 "ts-loader@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#5.2.1":
   dependencies:
@@ -2982,8 +3544,16 @@ uglify-es@^3.3.4:
     worker-farm: ^1.5.2
   resolution: "uglifyjs-webpack-plugin@virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#1.3.0"
 
+"underscore-plus@^1, underscore-plus@^1.0.0, underscore-plus@1.x, underscore-plus@~1.x":
+  dependencies:
+    underscore: ~1.8.3
+  resolution: underscore-plus@1.6.8
+
 underscore@^1.7.0:
   resolution: underscore@1.9.1
+
+underscore@~1.8.3:
+  resolution: underscore@1.8.3
 
 union-value@^1.0.0:
   dependencies:
@@ -3006,27 +3576,6 @@ unique-slug@^2.0.0:
 universalify@^0.1.0:
   resolution: universalify@0.1.2
 
-"unnamed-workspace-9761b5@workspace-base:0.0.0":
-  dependencies:
-    @types/dateformat: ^1.0.1
-    @types/emscripten: ^0.0.31
-    @types/eventemitter3: ^2.0.2
-    @types/execa: ^0.9.0
-    @types/faker: ^4.1.4
-    @types/fs-extra: ^5.0.4
-    @types/globby: ^8.0.0
-    @types/jszip: ^3.1.4
-    @types/lockfile: ^1.0.0
-    @types/lodash: ^4.14.116
-    @types/mkdirp: ^0.5.2
-    @types/node-fetch: ^2.1.2
-    @types/react: ^16.4.14
-    @types/request: ^2.47.1
-    @types/semver: ^5.5.0
-    @types/stream-to-promise: ^2.2.0
-    @types/tar: ^4.0.0
-  resolution: "unnamed-workspace-9761b5@workspace-base:0.0.0"
-
 unset-value@^1.0.0:
   dependencies:
     has-value: ^0.3.1
@@ -3043,6 +3592,11 @@ uri-js@^4.2.2:
 
 urix@^0.1.0:
   resolution: urix@0.1.0
+
+url-parse-lax@^3.0.0:
+  dependencies:
+    prepend-http: ^2.0.0
+  resolution: url-parse-lax@3.0.0
 
 url@^0.11.0:
   dependencies:
@@ -3068,6 +3622,14 @@ util@0.10.3:
 
 v8-compile-cache@^2.0.2:
   resolution: v8-compile-cache@2.0.2
+
+val-loader@^1.1.1:
+  dependencies:
+    loader-utils: ^1.0.0
+    schema-utils: ^0.4.5
+  peerDependencies:
+    webpack: "^2.0.0 || ^3.0.0 || ^4.0.0"
+  resolution: val-loader@1.1.1
 
 "val-loader@virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#1.1.1":
   dependencies:
@@ -3100,6 +3662,14 @@ wasm-dce@^1.0.0:
     webassembly-interpreter: 0.0.30
   resolution: wasm-dce@1.0.2
 
+wasm-loader@^1.3.0:
+  dependencies:
+    loader-utils: ^1.1.0
+    wasm-dce: ^1.0.0
+  peerDependencies:
+    wasm-dce: 1.x
+  resolution: wasm-loader@1.3.0
+
 "wasm-loader@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#1.3.0":
   dependencies:
     loader-utils: ^1.1.0
@@ -3123,7 +3693,23 @@ webassembly-interpreter@0.0.30:
     webassembly-floating-point-hex-parser: 0.1.2
   resolution: webassembly-interpreter@0.0.30
 
-"webpack-cli@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.1":
+webpack-cli@^3.1.0:
+  dependencies:
+    chalk: ^2.4.1
+    cross-spawn: ^6.0.5
+    enhanced-resolve: ^4.1.0
+    global-modules-path: ^2.3.0
+    import-local: ^2.0.0
+    interpret: ^1.1.0
+    loader-utils: ^1.1.0
+    supports-color: ^5.5.0
+    v8-compile-cache: ^2.0.2
+    yargs: ^12.0.2
+  peerDependencies:
+    webpack: ^4.x.x
+  resolution: webpack-cli@3.1.2
+
+"webpack-cli@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.2":
   dependencies:
     chalk: ^2.4.1
     cross-spawn: ^6.0.5
@@ -3136,7 +3722,7 @@ webassembly-interpreter@0.0.30:
     v8-compile-cache: ^2.0.2
     webpack: ^4.17.2
     yargs: ^12.0.2
-  resolution: "webpack-cli@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.1"
+  resolution: "webpack-cli@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.2"
 
 "webpack-sources@^1.3.0, webpack-sources@^1.1.0":
   dependencies:
@@ -3190,6 +3776,9 @@ wide-align@^1.1.0:
     string-width: "^1.0.2 || 2"
   resolution: wide-align@1.1.3
 
+window-size@^0.1.4:
+  resolution: window-size@0.1.4
+
 wordwrap@~1.0.0:
   resolution: wordwrap@1.0.0
 
@@ -3207,11 +3796,20 @@ wrap-ansi@^2.0.0:
 wrappy@1:
   resolution: wrappy@1.0.2
 
+xmlbuilder@^9.0.7:
+  resolution: xmlbuilder@9.0.7
+
+xmldom@0.1.x:
+  resolution: xmldom@0.1.27
+
 xregexp@4.0.0:
   resolution: xregexp@4.0.0
 
 "xtend@~4.0.1, xtend@^4.0.1, xtend@^4.0.0":
   resolution: xtend@4.0.1
+
+y18n@^3.2.0:
+  resolution: y18n@3.2.1
 
 "y18n@^3.2.1 || ^4.0.0, y18n@^4.0.0":
   resolution: y18n@4.0.0
@@ -3242,6 +3840,17 @@ yargs@^12.0.2:
     y18n: "^3.2.1 || ^4.0.0"
     yargs-parser: ^10.1.0
   resolution: yargs@12.0.2
+
+yargs@^3.23.0:
+  dependencies:
+    camelcase: ^2.0.1
+    cliui: ^3.0.3
+    decamelize: ^1.1.1
+    os-locale: ^1.4.0
+    string-width: ^1.0.1
+    window-size: ^0.1.4
+    y18n: ^3.2.0
+  resolution: yargs@3.32.0
 
 yn@^2.0.0:
   resolution: yn@2.0.0

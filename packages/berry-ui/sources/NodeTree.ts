@@ -1,11 +1,12 @@
 // @ts-ignore
-import {style}          from '@manaflair/term-strings';
+import {Key}            from '@manaflair/term-strings/parse';
 
 import {DirtyScreen}    from './DirtyScreen';
 import {Environment}    from './Environment';
 import {KeySequence}    from './KeySequence';
 import {NodeElement}    from './NodeElement';
 import {Node}           from './Node';
+import {Rect}           from './Rect';
 import {SyntheticEvent} from './SyntheticEvent';
 
 export class NodeTree extends NodeElement {
@@ -17,7 +18,9 @@ export class NodeTree extends NodeElement {
 
   private renderList: Array<Node> | null = null;
 
-  private activeElement: NodeElement | null = null;
+  public activeElement: NodeElement | null = null;
+
+  public removedRects: Array<Rect> = [];
 
   private mouseOverElement: NodeElement | null = null;
   private mouseEnterElements: Array<NodeElement> = [];
@@ -72,15 +75,28 @@ export class NodeTree extends NodeElement {
   focus(element: NodeElement | null) {
     if (element && element.props.tabIndex === null)
       element = null;
+    
+    if (!element) {
+      if (!this.activeElement)
+        return;
 
-    const previousElement = this.activeElement;
-    const currentElement = this.activeElement = element;
-
-    if (previousElement)
+      const previousElement = this.activeElement;
+      this.activeElement = null;        
       previousElement.dispatchEvent(new SyntheticEvent(`blur`));
+    } else {
+      if (this.activeElement === element)
+        return;
 
-    if (currentElement) {
-      currentElement.dispatchEvent(new SyntheticEvent(`focus`));
+      // Don't forget to trigger the blur event on the currently active node
+      if (this.activeElement)
+        this.focus(null);
+      
+      // If the blur event caused something else to get the focus, we
+      // effectively cancel the focus action we were about to execute
+      if (!this.activeElement) {
+        this.activeElement = element;
+        this.activeElement.dispatchEvent(new SyntheticEvent(`focus`));
+      }
     }
   }
 
@@ -130,7 +146,7 @@ export class NodeTree extends NodeElement {
         let focusElement: NodeElement | null = null;
 
         for (let node: Node | null = targetElement; !focusElement && node; node = node.parentNode)
-          if (node instanceof NodeElement && node.props.tabIndex !== null)
+          if (node instanceof NodeElement && node.props.tabIndex != null)
             focusElement = node;
 
         this.focus(focusElement);
@@ -215,7 +231,7 @@ export class NodeTree extends NodeElement {
 
     for (let monitoredShortcut of this.monitoredShortcuts.values())
       if (monitoredShortcut.keySequence.add(key))
-        shortcutEvents.push(new SyntheticEvent(`shortcut`, {bubbles: true}, {shortcut: monitoredShortcut.keySequence.name}));
+        shortcutEvents.push(new SyntheticEvent(`shortcut`, {bubbles: true, cancelable: true}, {shortcut: monitoredShortcut.keySequence.name}));
 
     for (let event of shortcutEvents)
       targetElement.dispatchEvent(event);
@@ -224,7 +240,32 @@ export class NodeTree extends NodeElement {
   }
 
   emitData(buffer: Buffer) {
+    let key = null;
+
+    if (buffer.length === 1) {
+      if (buffer[0] >= 65 && buffer[0] <= 90) {
+        key = new Key(String.fromCharCode(buffer[0] - 65 + 97), {shift: true});
+      } else if (buffer[0] >= 97 && buffer[0] <= 122) {
+        key = new Key(String.fromCharCode(buffer[0]));
+      }
+    }
+
     const targetElement = this.activeElement || this;
+
+    if (key) {
+      const shortcutEvents: Array<SyntheticEvent> = [];
+
+      for (let monitoredShortcut of this.monitoredShortcuts.values())
+        if (monitoredShortcut.keySequence.add(key))
+          shortcutEvents.push(new SyntheticEvent(`shortcut`, {bubbles: true, cancelable: true}, {shortcut: monitoredShortcut.keySequence.name}));
+
+      for (let event of shortcutEvents)
+        targetElement.dispatchEvent(event);
+      
+      if (shortcutEvents.some(event => event.defaultPrevented)) {
+        return;
+      }
+    }
 
     targetElement.dispatchEvent(new SyntheticEvent(`data`, {}, {buffer}));
   }
@@ -261,6 +302,10 @@ export class NodeTree extends NodeElement {
     }
 
     return renderList;
+  }
+
+  markDirtyRenderList() {
+    this.renderList = null;
   }
 
   private refreshProps() {

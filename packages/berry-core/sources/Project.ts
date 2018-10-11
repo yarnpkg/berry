@@ -1,28 +1,21 @@
 // @ts-ignore
 import Logic = require('logic-solver');
 
-import {existsSync, readFile, writeFile}                      from 'fs';
-import {dirname}                                              from 'path';
-import {promisify}                                            from 'util';
+import {existsSync, readFile, writeFile}       from 'fs';
+import {dirname}                               from 'path';
+import {promisify}                             from 'util';
 
-import {parseSyml, stringifySyml}                             from '@berry/parsers';
-import {extractPnpSettings, generatePnpScript}                from '@berry/pnp';
+import {parseSyml, stringifySyml}              from '@berry/parsers';
+import {extractPnpSettings, generatePnpScript} from '@berry/pnp';
 
-import {CacheFetcher}                                         from './CacheFetcher';
-import {Cache}                                                from './Cache';
-import {Configuration}                                        from './Configuration';
-import {LockfileResolver}                                     from './LockfileResolver';
-import {MultiFetcher}                                         from './MultiFetcher';
-import {MultiResolver}                                        from './MultiResolver';
-import {Resolver}                                             from './Resolver';
-import {VirtualFetcher}                                       from './VirtualFetcher';
-import {WorkspaceBaseFetcher}                                 from './WorkspaceBaseFetcher';
-import {WorkspaceBaseResolver}                                from './WorkspaceBaseResolver';
-import {WorkspaceFetcher}                                     from './WorkspaceFetcher';
-import {WorkspaceResolver}                                    from './WorkspaceResolver';
-import {Workspace}                                            from './Workspace';
-import * as structUtils                                       from './structUtils';
-import {Ident, Descriptor, Locator, Package}                  from './types';
+import {Cache}                                 from './Cache';
+import {Configuration}                         from './Configuration';
+import {MultiResolver}                         from './MultiResolver';
+import {Workspace}                             from './Workspace';
+import {WorkspaceBaseResolver}                 from './WorkspaceBaseResolver';
+import {WorkspaceResolver}                     from './WorkspaceResolver';
+import * as structUtils                        from './structUtils';
+import {Descriptor, Locator, Package}          from './types';
 
 const readFileP = promisify(readFile);
 const writeFileP = promisify(writeFile);
@@ -209,51 +202,34 @@ export class Project {
     });
   }
 
-  async getPackageLocation(locator: Locator, {cache = null}: {cache?: Cache | null} = {}) {
-    const workspace = this.tryWorkspaceByLocator(locator);
+  forgetWorkspaceResolutionCache() {
+    const resolver = new MultiResolver([
+      new WorkspaceBaseResolver(),
+      new WorkspaceResolver(),
+    ]);
 
-    if (workspace) {
-      return workspace.cwd;
-    } else if (!cache) {
-      throw new Error(`The manifest for "${structUtils.prettyLocator(locator)}" cannot be located without a cache`);
+    const forgottenPackages = new Set();
+
+    for (const pkg of this.storedPackages.values()) {
+      if (resolver.supportsLocator(pkg, {project: this})) {
+        this.storedPackages.delete(pkg.locatorHash);
+        forgottenPackages.add(pkg.locatorHash);
+      }
     }
 
-    const {file} = await cache.fetchFromCache(locator);
-    return file;
-  }
-
-  async getPackageManifest(locator: Locator, {cache = null}: {cache?: Cache | null} = {}) {
-    const workspace = this.tryWorkspaceByLocator(locator);
-
-    if (workspace) {
-      return workspace.manifest;
-    } else if (!cache) {
-      throw new Error(`The manifest for "${structUtils.prettyLocator(locator)}" cannot be located without a cache`);
+    for (const [descriptorHash, locatorHash] of this.storedResolutions) {
+      if (forgottenPackages.has(locatorHash)) {
+        this.storedResolutions.delete(descriptorHash);
+        this.storedDescriptors.delete(descriptorHash);
+      }
     }
-
-    const {entity: archive} = await cache.fetchFromCache(locator);
-    const manifest = await archive.getPackageManifest();
-
-    return manifest;
   }
 
   async resolveEverything() {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
 
-    const pluginResolvers = [];
-
-    for (const plugin of this.configuration.plugins.values())
-      for (const resolver of plugin.resolvers || [])
-        pluginResolvers.push(resolver);
-
-    const resolver = new MultiResolver([
-      new WorkspaceBaseResolver(),
-      new WorkspaceResolver(),
-      new LockfileResolver(),
-
-      ... pluginResolvers,
-    ]);
+    const resolver = this.configuration.makeResolver();
 
     const allDescriptors = new Map<string, Descriptor>();
     const allLocators = new Map<string, Locator>();
@@ -532,36 +508,7 @@ export class Project {
   async fetchEverything(cache: Cache) {
     this.storedLocations = new Map();
 
-    const fetched = new Set<string>();
-
-    const getPluginFetchers = (hookName: string) => {
-      const fetchers = [];
-
-      for (const plugin of this.configuration.plugins.values()) {
-        if (!plugin.fetchers)
-          continue;
-
-        for (const fetcher of plugin.fetchers) {
-          if (fetcher.mountPoint === hookName) {
-            fetchers.push(fetcher);
-          }
-        }
-      }
-
-      return fetchers;
-    };
-
-    const fetcher = new MultiFetcher([
-      new VirtualFetcher(),
-      new WorkspaceBaseFetcher(),
-      new WorkspaceFetcher(),
-      new MultiFetcher(
-        getPluginFetchers(`virtual-fetchers`),
-      ),
-      new CacheFetcher(new MultiFetcher(
-        getPluginFetchers(`cached-fetchers`),
-      )),
-    ]);
+    const fetcher = this.configuration.makeFetcher();
 
     for (const locatorHash of this.storedResolutions.values()) {
       const pkg = this.storedPackages.get(locatorHash);
@@ -577,7 +524,7 @@ export class Project {
       if (workspace) {
         this.storedLocations.set(pkg.locatorHash, workspace.cwd);
       } else {
-        const location = await fetcher.fetch(pkg, {cache, project: this, root: fetcher});
+        const location = await fetcher.fetch(pkg, {cache, fetcher, project: this});
         this.storedLocations.set(pkg.locatorHash, location);
       }
     }
@@ -591,6 +538,9 @@ export class Project {
   }
 
   async install({cache}: {cache: Cache}) {
+    // Ensures that we notice it when dependencies are added / removed from the workspaces manifests
+    await this.forgetWorkspaceResolutionCache();
+
     await this.resolveEverything();
     await this.fetchEverything(cache);
     await this.generatePnpFile();

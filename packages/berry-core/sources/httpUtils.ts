@@ -1,14 +1,14 @@
-import fetch from 'node-fetch';
+import got = require('got');
 
 const cache = new Map<string, Promise<Buffer>>();
 
 async function getNoCache(target: string): Promise<Buffer> {
-  const res = await fetch(target);
+  const res = await got(target, {encoding: null});
 
-  if (res.status !== 200)
-    throw new Error(`Server answered status code ${res.status}`);
+  if (res.statusCode !== 200)
+    throw new Error(`Server answered status code ${res.statusCode}`);
 
-  return await res.buffer();
+  return await res.body;
 }
 
 export function get(target: string): Promise<Buffer> {

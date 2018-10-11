@@ -9,17 +9,41 @@ export class MultiResolver implements Resolver {
     this.resolvers = resolvers;
   }
 
-  tryResolver(descriptor: Descriptor, opts: ResolveOptions) {
-    const resolver = this.resolvers.find(resolver => resolver.supports(descriptor, opts));
+  supportsDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+    const resolver = this.tryResolverByDescriptor(descriptor, opts);
+
+    return resolver ? true : false;
+  }
+
+  supportsLocator(locator: Locator, opts: ResolveOptions) {
+    const resolver = this.tryResolverByLocator(locator, opts);
+
+    return resolver ? true : false;
+  }
+
+  async getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<string>> {
+    const resolver = this.getResolverByDescriptor(descriptor, opts);
+
+    return await resolver.getCandidates(descriptor, opts);
+  }
+
+  async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
+    const resolver = this.getResolverByLocator(locator, opts);
+
+    return await resolver.resolve(locator, opts);
+  }
+
+  private tryResolverByDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+    const resolver = this.resolvers.find(resolver => resolver.supportsDescriptor(descriptor, opts));
 
     if (!resolver)
-     return null;
+      return null;
 
     return resolver;
   }
 
-  getResolver(descriptor: Descriptor, opts: ResolveOptions) {
-    const resolver = this.resolvers.find(resolver => resolver.supports(descriptor, opts));
+  private getResolverByDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+    const resolver = this.resolvers.find(resolver => resolver.supportsDescriptor(descriptor, opts));
 
     if (!resolver)
       throw new Error(`Couldn't find a resolver for '${structUtils.prettyDescriptor(descriptor)}'`);
@@ -27,21 +51,21 @@ export class MultiResolver implements Resolver {
     return resolver;
   }
 
-  supports(descriptor: Descriptor, opts: ResolveOptions): boolean {
-    const resolver = this.tryResolver(descriptor, opts);
+  private tryResolverByLocator(locator: Locator, opts: ResolveOptions) {
+    const resolver = this.resolvers.find(resolver => resolver.supportsLocator(locator, opts));
 
-    return resolver ? true : false;
+    if (!resolver)
+      return null;
+
+    return resolver;
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<string>> {
-    const resolver = this.getResolver(descriptor, opts);
+  private getResolverByLocator(locator: Locator, opts: ResolveOptions) {
+    const resolver = this.resolvers.find(resolver => resolver.supportsLocator(locator, opts));
 
-    return await resolver.getCandidates(descriptor, opts);
-  }
+    if (!resolver)
+      throw new Error(`Couldn't find a resolver for '${structUtils.prettyLocator(locator)}'`);
 
-  async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
-    const resolver = this.getResolver(structUtils.convertLocatorToDescriptor(locator), opts);
-
-    return await resolver.resolve(locator, opts);
+    return resolver;
   }
 }

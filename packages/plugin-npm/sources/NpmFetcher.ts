@@ -1,8 +1,8 @@
 import semver = require('semver');
 
-import {Archive, Fetcher, FetchOptions}   from '@berry/core';
-import {httpUtils, structUtils, tgzUtils} from '@berry/core';
-import {Locator}                          from '@berry/core';
+import {Fetcher, FetchOptions} from '@berry/core';
+import {httpUtils, tgzUtils}   from '@berry/core';
+import {Locator, Manifest}     from '@berry/core';
 
 export class NpmFetcher implements Fetcher {
   public mountPoint: string = `cached-fetchers`;
@@ -12,6 +12,10 @@ export class NpmFetcher implements Fetcher {
       return false;
 
     return true;
+  }
+
+  async fetchManifest(locator: Locator, opts: FetchOptions): Promise<Manifest> {
+    throw new Error(`Unimplemented`);
   }
 
   async fetch(locator: Locator, opts: FetchOptions) {

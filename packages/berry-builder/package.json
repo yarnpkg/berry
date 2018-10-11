@@ -11,6 +11,7 @@
         "brfs": "^2.0.1",
         "buffer-loader": "^0.1.0",
         "joi": "^13.6.0",
+        "pnp-webpack-plugin": "^1.1.0",
         "raw-loader": "^0.5.1",
         "transform-loader": "^0.2.4",
         "ts-loader": "^5.2.1",

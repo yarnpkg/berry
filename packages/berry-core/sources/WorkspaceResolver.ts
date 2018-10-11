@@ -5,7 +5,7 @@ import {Descriptor, Locator}      from './types';
 export class WorkspaceResolver implements Resolver {
   static protocol = `workspace:`;
 
-  supports(descriptor: Descriptor, opts: ResolveOptions) {
+  supportsDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
     if (descriptor.range.startsWith(WorkspaceResolver.protocol))
       return true;
 
@@ -15,6 +15,13 @@ export class WorkspaceResolver implements Resolver {
       return false;
 
     return true;
+  }
+
+  supportsLocator(locator: Locator, opts: ResolveOptions) {
+    if (locator.reference.startsWith(WorkspaceResolver.protocol))
+      return true;
+    
+    return false;
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {

@@ -2,7 +2,16 @@ import {parseSyml}                from '@berry/parsers';
 import {existsSync, readFileSync} from 'fs';
 import {dirname, resolve}         from 'path';
 
+import {CacheFetcher}             from './CacheFetcher';
+import {LockfileResolver}         from './LockfileResolver';
+import {MultiFetcher}             from './MultiFetcher';
+import {MultiResolver}            from './MultiResolver';
 import {Plugin}                   from './Plugin';
+import {VirtualFetcher}           from './VirtualFetcher';
+import {WorkspaceBaseFetcher}     from './WorkspaceBaseFetcher';
+import {WorkspaceBaseResolver}    from './WorkspaceBaseResolver';
+import {WorkspaceFetcher}         from './WorkspaceFetcher';
+import {WorkspaceResolver}        from './WorkspaceResolver';
 
 const RELATIVE_KEYS = new Set([
   `offline-cache-folder`,
@@ -98,4 +107,55 @@ export class Configuration {
       this.sources[name] = source;
     }
   }
-};
+
+  makeResolver() {
+    const pluginResolvers = [];
+
+    for (const plugin of this.plugins.values())
+      for (const resolver of plugin.resolvers || [])
+        pluginResolvers.push(resolver);
+
+    return new MultiResolver([
+      new LockfileResolver(),
+      
+      new WorkspaceBaseResolver(),
+      new WorkspaceResolver(),
+
+      ... pluginResolvers,
+    ]);
+  }
+
+  makeFetcher() {
+    const getPluginFetchers = (hookName: string) => {
+      const fetchers = [];
+
+      for (const plugin of this.plugins.values()) {
+        if (!plugin.fetchers)
+          continue;
+
+        for (const fetcher of plugin.fetchers) {
+          if (fetcher.mountPoint === hookName) {
+            fetchers.push(fetcher);
+          }
+        }
+      }
+
+      return fetchers;
+    };
+
+    return new MultiFetcher([
+      new VirtualFetcher(),
+
+      new WorkspaceBaseFetcher(),
+      new WorkspaceFetcher(),
+
+      new MultiFetcher(
+        getPluginFetchers(`virtual-fetchers`),
+      ),
+      
+      new CacheFetcher(new MultiFetcher(
+        getPluginFetchers(`cached-fetchers`),
+      )),
+    ]);
+  }
+}

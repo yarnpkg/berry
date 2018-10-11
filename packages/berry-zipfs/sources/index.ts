@@ -143,6 +143,18 @@ export function patch(patchedFs: typeof fs): void {
       (baseFs as any)[syncName] = syncOrig;
     }
   }
+
+  for (const fnName of ZipFS.SUPPORTED_SYNC_ONLY) {
+    const fnImpl: Function = (ZipFS.prototype as any)[fnName];
+
+    const syncName = fnName;
+    const syncOrig: any = (patchedFs as any)[syncName];
+
+    if (syncOrig) {
+      (patchedFs as any)[syncName] = wrapSync(baseFs, syncOrig, fnImpl);
+      (baseFs as any)[syncName] = syncOrig;
+    }
+  }
 }
 
 export function extend(baseFs: typeof fs): typeof fs {

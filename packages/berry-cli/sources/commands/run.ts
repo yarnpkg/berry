@@ -3,40 +3,41 @@ import execa = require('execa');
 import {Configuration, Project, Workspace, Cache, Locator} from '@berry/core';
 import {runShell}                                          from '@berry/shell'
 // @ts-ignore: Need to write the definition file
-import {UsageError, flags}                                 from '@manaflair/concierge';
+import {UsageError}                                        from '@manaflair/concierge';
 import {resolve}                                           from 'path';
 import {Readable, Writable}                                from 'stream';
 
 import {plugins}                                           from '../plugins';
 
 async function getDependencyBinaries({configuration, project, workspace, cache}: {configuration: Configuration, project: Project, workspace: Workspace, cache: Cache}) {
-   const binaries: Map<string, [Locator, string]> = new Map();
+  const fetcher = configuration.makeFetcher();
+  const binaries: Map<string, [Locator, string]> = new Map();
 
-   const descriptors = [
-     ... workspace.manifest.dependencies.values(),
-     ... workspace.manifest.devDependencies.values(),
-     ... workspace.manifest.peerDependencies.values(),
-   ];
+  const descriptors = [
+    ... workspace.manifest.dependencies.values(),
+    ... workspace.manifest.devDependencies.values(),
+    ... workspace.manifest.peerDependencies.values(),
+  ];
 
-   for (const descriptor of descriptors) {
-     const resolution = project.storedResolutions.get(descriptor.descriptorHash);
+  for (const descriptor of descriptors) {
+    const resolution = project.storedResolutions.get(descriptor.descriptorHash);
 
-     if (!resolution)
-       continue;
+    if (!resolution)
+      continue;
 
-     const pkg = project.storedPackages.get(resolution);
+    const pkg = project.storedPackages.get(resolution);
 
-     if (!pkg)
-       continue;
+    if (!pkg)
+      continue;
 
-     const manifest = await project.getPackageManifest(pkg, {cache});
+    const manifest = await fetcher.fetchManifest(pkg, {cache, fetcher, project});
 
-     for (const [binName, file] of manifest.bin.entries()) {
-       binaries.set(binName, [pkg, file]);
-     }
-   }
+    for (const [binName, file] of manifest.bin.entries()) {
+      binaries.set(binName, [pkg, file]);
+    }
+  }
 
-   return binaries;
+  return binaries;
 }
 
 export default (concierge: any) => concierge
@@ -66,8 +67,9 @@ export default (concierge: any) => concierge
 
     if (binary) {
       const [pkg, file] = binary;
-
-      const root = await project.getPackageLocation(pkg, {cache});
+      
+      const fetcher = configuration.makeFetcher();
+      const root = await fetcher.fetch(pkg, {cache, fetcher, project});
       const target = resolve(root, file);
 
       const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
@@ -80,7 +82,7 @@ export default (concierge: any) => concierge
         stdio[2] = stderr;
 
       try {
-        const subprocess = execa(process.execPath, [`-r`, configuration.pnpPath, target, ... args], {stdio});
+        const subprocess = execa(process.execPath, [`--require`, configuration.pnpPath, target, ... args], {stdio});
 
         if (stdin !== process.stdin)
           stdin.pipe(subprocess.stdin);

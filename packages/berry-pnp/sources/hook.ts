@@ -3,7 +3,9 @@ type BlacklistedLocator = {name: '\u{0000}', reference: '\u{0000}'};
 
 type PackageLocator = {name: string, reference: string} | TopLevelLocator | BlacklistedLocator;
 type PackageInformation = {packageLocation?: string, packageDependencies: Map<string, string>};
-type ResolutionOptions = {extensions: Array<string>};
+
+type ResolveToUnqualifiedOptions = {considerBuiltins: boolean};
+type ResolveUnqualifiedOptions = {extensions: Array<string>};
 
 interface ModuleInterface {
   id: string;
@@ -141,7 +143,7 @@ function getPackageInformationSafe(packageLocator: PackageLocator): PackageInfor
  * Implements the node resolution for folder access and extension selection
  */
 
-function applyNodeExtensionResolution(unqualifiedPath: string, {extensions}: ResolutionOptions): string | null {
+function applyNodeExtensionResolution(unqualifiedPath: string, {extensions}: ResolveUnqualifiedOptions): string | null {
   // We use this "infinite while" so that we can restart the process as long as we hit package folders
   while (true) {
     let stat;
@@ -280,6 +282,8 @@ function callNativeResolution(request: string, issuer: string): string | false {
 
 export const VERSIONS = {std: 1};
 
+export const topLevel = topLevelLocator;
+
 /**
  * Gets the package information for a given locator. Returns null if they cannot be retrieved.
  */
@@ -304,7 +308,7 @@ export function getPackageInformation({name, reference}: PackageLocator): Packag
  * Finds the package locator that owns the specified path. If none is found, returns null instead.
  */
 
-function findPackageLocator(location: string): PackageLocator | null {
+export function findPackageLocator(location: string): PackageLocator | null {
   let relativeLocation = path.relative(__dirname, location);
 
   if (!relativeLocation.match(isStrictRegExp)) {
@@ -373,10 +377,10 @@ function findPackageLocator(location: string): PackageLocator | null {
  * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
  */
 
-export function resolveToUnqualified(request: string, issuer: string | null): string | null {
+export function resolveToUnqualified(request: string, issuer: string | null, {considerBuiltins = true}: Partial<ResolveToUnqualifiedOptions> = {}): string | null {
   // Bailout if the request is a native module
 
-  if (builtinModules.has(request)) {
+  if (considerBuiltins && builtinModules.has(request)) {
     return null;
   }
 
@@ -555,7 +559,7 @@ export function resolveToUnqualified(request: string, issuer: string | null): st
 
 export function resolveUnqualified(
   unqualifiedPath: string,
-  {extensions = Object.keys(Module._extensions)}: Partial<ResolutionOptions> = {},
+  {extensions = Object.keys(Module._extensions)}: Partial<ResolveUnqualifiedOptions> = {},
 ): string {
   const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, {extensions});
 
@@ -578,15 +582,15 @@ export function resolveUnqualified(
  * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
  */
 
-export function resolveRequest(request: string, issuer: string | null): string | null {
-  let unqualifiedPath = resolveToUnqualified(request, issuer);
+export function resolveRequest(request: string, issuer: string | null, {considerBuiltins, extensions}: Partial<ResolveToUnqualifiedOptions & ResolveUnqualifiedOptions> = {}): string | null {
+  let unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
   if (unqualifiedPath === null) {
     return null;
   }
 
   try {
-    return resolveUnqualified(unqualifiedPath);
+    return resolveUnqualified(unqualifiedPath, {extensions});
   } catch (resolutionError) {
     if (resolutionError.code === 'QUALIFIED_PATH_RESOLUTION_FAILED') {
       Object.assign(resolutionError.data, {request, issuer});

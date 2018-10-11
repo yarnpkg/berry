@@ -77,11 +77,42 @@ concierge
 
         if (buildErrors) {
           process.stderr.write(buildErrors);
+          process.stderr.write(`\n`);
           return 1;
         }
       }
 
       console.log(`\u{1F525} Bundle successfully generated with the '${profile}' profile `);
+    } else {
+      const compiler = webpack([
+        hookConfig,
+        mainConfig,
+      ]);
+
+      await new Promise((resolve, reject) => {
+        compiler.watch({}, (err, {stats: allStats}) => {
+          if (err) {
+            reject(err);
+          } else {
+            const erroredStats = [];
+
+            for (const stats of allStats)
+              if (stats.compilation.errors.length > 0)
+                erroredStats.push(stats.toString(`errors-only`));
+            
+            if (erroredStats.length === 0) {
+              process.stderr.write(String(`Build succeeded at ${new Date()}\n`));
+            } else {
+              process.stderr.write(String(`Build failed at ${new Date()}\n`));
+            }
+
+            for (const stats of erroredStats) {
+              process.stderr.write(stats.toString(`errors-only`));
+              process.stderr.write(`\n`);
+            }
+          }
+        });
+      });
     }
   });
 

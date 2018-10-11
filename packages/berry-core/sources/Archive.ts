@@ -3,8 +3,6 @@ import JSZip = require('jszip');
 import {createWriteStream, readFile} from 'fs';
 import {promisify}                   from 'util';
 
-import {Manifest}                    from './Manifest';
-
 const readFileP = promisify(readFile);
 
 export class Archive {
@@ -27,17 +25,17 @@ export class Archive {
     this.zip.file(name, data, options);
   }
 
-  async getPackageManifest() {
-    const source = await this.zip.file(`package.json`).async(`text`);
-    const data = JSON.parse(source);
+  async readText(name: string) {
+    const file = this.zip.file(name);
 
-    const manifest = new Manifest();
-    manifest.load(data);
+    if (!file)
+      throw new Error(`File entry not found (${name})`);
 
-    // Since it comes from an archive, it's immutable and we freeze its content
-    Object.freeze(manifest);
+    return await file.async(`text`);
+  }
 
-    return manifest;
+  async readJson(name: string) {
+    return JSON.parse(await this.readText(name));
   }
 
   async store(target: string) {

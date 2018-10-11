@@ -1,11 +1,14 @@
+import {posix}   from 'path';
+
 import {Archive} from './Archive';
-import {Parse} from 'tar';
+import {Parse}   from 'tar';
 
 interface MakeArchiveOptions {
+  prefixPath?: string | null,
   stripComponents?: number,
 };
 
-export async function makeArchive(tgz: Buffer, {stripComponents = 0}: MakeArchiveOptions = {}): Promise<Archive> {
+export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath = null}: MakeArchiveOptions = {}): Promise<Archive> {
   const now = new Date();
 
   const archive = new Archive();
@@ -14,10 +17,15 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0}: MakeArchiv
   const parser = new Parse();
 
   function ignore(entry: any) {
+    // Disallow absolute paths; might be malicious (ex: /etc/passwd)
     if (entry[0] === `/`)
       return true;
 
     const parts = entry.path.split(/\//g);
+
+    // Same rule than for absolute paths
+    if (parts.some((part: string) => part === `..`))
+      return true;
 
     if (parts.length <= stripComponents)
       return true;
@@ -32,7 +40,7 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0}: MakeArchiv
     }
 
     const parts = entry.path.split(/\//g);
-    const mappedPath = parts.slice(stripComponents).join(`/`);
+    const mappedPath = posix.join(prefixPath || `.`, parts.slice(stripComponents).join(`/`));
 
     const chunks: Array<Buffer> = [];
 

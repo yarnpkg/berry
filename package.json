@@ -1,4 +1,5 @@
 {
+    "name": "@berry/monorepo",
     "private": true,
     "workspaces": [
         "packages/*"
@@ -9,18 +10,26 @@
         "@types/eventemitter3": "^2.0.2",
         "@types/execa": "^0.9.0",
         "@types/faker": "^4.1.4",
+        "@types/first-mate": "^7.0.4",
         "@types/fs-extra": "^5.0.4",
         "@types/globby": "^8.0.0",
+        "@types/got": "^8.3.4",
         "@types/jszip": "^3.1.4",
         "@types/lockfile": "^1.0.0",
         "@types/lodash": "^4.14.116",
         "@types/mkdirp": "^0.5.2",
         "@types/node-fetch": "^2.1.2",
+        "@types/plist": "^3.0.0",
         "@types/react": "^16.4.14",
+        "@types/react-redux": "^6.0.9",
+        "@types/redux": "^3.6.0",
+        "@types/redux-saga": "^0.10.5",
         "@types/request": "^2.47.1",
         "@types/semver": "^5.5.0",
         "@types/stream-to-promise": "^2.2.0",
-        "@types/tar": "^4.0.0"
+        "@types/tar": "^4.0.0",
+        "@types/text-buffer": "^13.0.4",
+        "ts-node": "^7.0.1"
     },
     "scripts": {
         "b": "node packages/berry-cli/bin/berry"

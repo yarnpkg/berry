@@ -23,7 +23,11 @@ export enum NodeType {
   ELEMENT,
 }
 
+let nextId = 1;
+
 export abstract class Node {
+  public readonly id: number = nextId++;
+
   public readonly env: Environment;
   public readonly yoga: any;
 
@@ -98,7 +102,7 @@ export abstract class Node {
     if (this.rootNode)
       node.linkRecursive();
 
-    this.markDirtyLayoutChildren();
+    node.markDirtyLayout();
   }
 
   appendChild(node: Node) {
@@ -128,7 +132,7 @@ export abstract class Node {
     if (this.rootNode)
       node.linkRecursive();
 
-    this.markDirtyLayoutChildren();
+    node.markDirtyLayout();
   }
 
   insertBefore(node: Node, before: Node | null) {
@@ -168,7 +172,7 @@ export abstract class Node {
     if (this.rootNode)
       node.linkRecursive();
 
-    this.markDirtyLayoutChildren();
+    this.markDirtyLayout();
   }
 
   removeChild(node: Node) {
@@ -180,14 +184,19 @@ export abstract class Node {
     if (index === -1)
       throw new Error(`Assertion failed: Cannot remove a node twice`);
 
+    // If the node is focused, we need to unfocus it
+    if (this.rootNode && this.rootNode.activeElement === node)
+      this.rootNode.focus(null);
+
+    // We'll need to refresh this part of the screen no matter what
+    if (this.rootNode)
+      this.rootNode.removedRects.push(node.elementClipRect);
+
     const previousSibling = node.previousSibling;
     const nextSibling = node.nextSibling;
-
-    if (node.rootNode)
-      node.unlinkRecursive();
-
+    
     this.yoga.removeChild(node.yoga);
-    node.childNodes.splice(index, 1);
+    this.childNodes.splice(index, 1);
 
     if (previousSibling)
       previousSibling.nextSibling = nextSibling;
@@ -201,7 +210,10 @@ export abstract class Node {
     if (this.lastChild === node)
       this.lastChild = previousSibling;
 
-    this.markDirtyLayoutChildren();
+    if (node.rootNode)
+      node.unlinkRecursive();
+
+    this.markDirtyLayout();
   }
 
   dispatchEvent(event: any) {
@@ -209,11 +221,13 @@ export abstract class Node {
 
     for (let eventSource: Node | null = this; eventSource; eventSource = eventSource.parentNode)
       if (eventSource instanceof NodeElement)
-        eventSources.unshift(eventSource);
+        eventSources.push(eventSource);
 
     event.target = this;
 
-    for (const eventSource of eventSources) {
+    for (let t = eventSources.length - 1; t >= 0; --t) {
+      const eventSource = eventSources[t];
+
       if (event.propagationStopped)
         break;
 
@@ -225,10 +239,10 @@ export abstract class Node {
 
       event.currentTarget = eventSource;
       handler.call(null, event);
-
     }
 
-    for (let eventSource of eventSources) {
+    for (let t = 0, T = eventSources.length; t < T; ++t) {
+      const eventSource = eventSources[t];
 
       if (event.propagationStopped)
         break;
@@ -245,7 +259,6 @@ export abstract class Node {
       if (!event.bubbles) {
         break;
       }
-
     }
 
     if (event.default && !event.defaultPrevented) {
@@ -269,8 +282,11 @@ export abstract class Node {
       parent.flags |= Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN;
     }
 
-    for (const child of this.childNodes) {
+    for (const child of this.childNodes)
       child.flags |= Flags.NODE_HAS_DIRTY_LAYOUT;
+    
+    if (this.rootNode) {
+      this.rootNode.markDirtyRenderList();
     }
   }
 
@@ -281,6 +297,10 @@ export abstract class Node {
       if (parent.flags & Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN)
         break;
       parent.flags |= Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN;
+    }
+    
+    if (this.rootNode) {
+      this.rootNode.markDirtyRenderList();
     }
   }
 
@@ -325,7 +345,19 @@ export abstract class Node {
   propagateLayout(dirtyRects: DirtyScreen) {
     if (this.parentNode)
       throw new Error(`Assertion failed: Cannot call propagateLayout from a non-tree node`);
+    
+    if (this.rootNode !== this as Node)
+      throw new Error(`Assertion failed: Cannot call propagateLayout from a non-tree node`);
+    
+    const thisRoot = this.rootNode;
 
+    const removedRects = thisRoot.removedRects;
+    thisRoot.removedRects = [];
+    
+    // Don't forget to redraw the parts of the screen where something has disappeared
+    for (const rect of removedRects)
+      dirtyRects.addRect(rect);
+    
     this.yoga.calculateLayout();
 
     //console.group(`layout`);
@@ -344,70 +376,42 @@ export abstract class Node {
   private cascadeLayout(dirtyScreen: DirtyScreen, force: boolean) {
     //console.group();
 
-    if (force || this.flags & (Flags.NODE_HAS_DIRTY_LAYOUT | Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN)) {
-      let doesLayoutChange = false;
-      let doesScrollChange = false;
+    if (true || this.yoga.hasNewLayout) {
+      const layout = this.yoga.getComputedLayout();
 
-      if (force || this.flags & Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN) {
-        const layout = this.yoga.getComputedLayout();
+      this.elementRect.left = layout.left;
+      this.elementRect.top = layout.top;
 
-        this.elementRect.left = layout.left;
-        this.elementRect.top = layout.top;
-
-        this.elementRect.width = layout.width;
-        this.elementRect.height = layout.height;
-
-        doesLayoutChange = this.trackChanges(`layout`, [
-          this.elementRect.left,
-          this.elementRect.top,
-          this.elementRect.width,
-          this.elementRect.height,
-        ]);
-      }
-
-      if (this.flags & (Flags.NODE_HAS_DIRTY_LAYOUT | Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN) || doesLayoutChange) {
-        for (const child of this.childNodes)
-          child.cascadeLayout(dirtyScreen, true);
-
-        const prevScrollWidth = this.scrollRect.width;
-        const prevScrollHeight = this.scrollRect.height;
-
-        const preferredScrollSize = this.getPreferredScrollSize();
-
-        this.scrollRect.width = Math.max(this.elementRect.width, preferredScrollSize.width);
-        this.scrollRect.height = Math.max(this.elementRect.height, preferredScrollSize.height);
-
-        for (const child of this.childNodes) {
-          this.scrollRect.width = Math.max(this.scrollRect.width, child.elementRect.left + child.elementRect.width);
-          this.scrollRect.height = Math.max(this.scrollRect.height, child.elementRect.top + child.elementRect.height);
-        }
-
-        this.contentRect.left = 0;//this.yoga.getComputedBorder(this.env.yoga.EDGE_LEFT) + this.yoga.getComputedPadding(this.env.yoga.EDGE_LEFT);
-        this.contentRect.top = 0;//this.yoga.getComputedBorder(this.env.yoga.EDGE_TOP) + this.yoga.getComputedPadding(this.env.yoga.EDGE_TOP);
-
-        this.contentRect.width = this.scrollRect.width;// - this.contentRect.left - this.yoga.getComputedBorder(this.env.yoga.EDGE_RIGHT) - this.yoga.getComputedPadding(this.env.yoga.EDGE_RIGHT);
-        this.contentRect.height = this.scrollRect.height;// - this.contentRect.top - this.yoga.getComputedBorder(this.env.yoga.EDGE_BOTTOM) - this.yoga.getComputedPadding(this.env.yoga.EDGE_BOTTOM);
-
-        doesScrollChange = this.trackChanges(`scroll`, [
-          this.scrollRect.width,
-          this.scrollRect.height,
-
-          this.contentRect.left,
-          this.contentRect.top,
-          this.contentRect.width,
-          this.contentRect.height,
-        ]);
-      }
-
-      if (doesLayoutChange || doesScrollChange)
-        this.markDirtyClipping();
-
-      this.flags &= ~(
-        Flags.NODE_HAS_DIRTY_LAYOUT |
-        Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN
-      );
+      this.elementRect.width = layout.width;
+      this.elementRect.height = layout.height;
     }
 
+    for (const child of this.childNodes)
+      child.cascadeLayout(dirtyScreen, true);
+
+    if (true || this.yoga.hasNewLayout) {
+      const preferredScrollSize = this.getPreferredScrollSize();
+
+      this.scrollRect.width = Math.max(this.elementRect.width, preferredScrollSize.width);
+      this.scrollRect.height = Math.max(this.elementRect.height, preferredScrollSize.height);
+
+      for (const child of this.childNodes) {
+        this.scrollRect.width = Math.max(this.scrollRect.width, child.elementRect.left + child.elementRect.width);
+        this.scrollRect.height = Math.max(this.scrollRect.height, child.elementRect.top + child.elementRect.height);
+      }
+
+      this.contentRect.left = 0;//this.yoga.getComputedBorder(this.env.yoga.EDGE_LEFT) + this.yoga.getComputedPadding(this.env.yoga.EDGE_LEFT);
+      this.contentRect.top = 0;//this.yoga.getComputedBorder(this.env.yoga.EDGE_TOP) + this.yoga.getComputedPadding(this.env.yoga.EDGE_TOP);
+
+      this.contentRect.width = this.scrollRect.width;// - this.contentRect.left - this.yoga.getComputedBorder(this.env.yoga.EDGE_RIGHT) - this.yoga.getComputedPadding(this.env.yoga.EDGE_RIGHT);
+      this.contentRect.height = this.scrollRect.height;// - this.contentRect.top - this.yoga.getComputedBorder(this.env.yoga.EDGE_BOTTOM) - this.yoga.getComputedPadding(this.env.yoga.EDGE_BOTTOM);
+    }
+
+    if (true || this.yoga.hasNewLayout)
+      this.markDirtyClipping();
+
+    this.yoga.hasNewLayout = false;
+    
     //console.groupEnd();
   }
 

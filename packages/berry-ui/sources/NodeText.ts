@@ -1,11 +1,12 @@
 import {Environment}    from './Environment';
 import {NodeTree}       from './NodeTree';
 import {Node, NodeType} from './Node';
+import { TextLayout } from '@manaflair/text-layout';
 
 export class NodeText extends Node {
   public textContent: string = ``;
 
-  private readonly textLayout: any;
+  private readonly textLayout: TextLayout;
 
   constructor(env: Environment, textContent: string) {
     super(env, NodeType.TEXT);
@@ -17,7 +18,7 @@ export class NodeText extends Node {
 
     this.yoga.setMeasureFunc((widthHint: number, widthMode: any, heightHint: number, heightMode: any) => {
       if (this.textLayout.setColumns(widthHint))
-        this.textLayout.reset();
+        this.textLayout.clearSource();
 
       const width = this.textLayout.getColumnCount();
       const height = this.textLayout.getRowCount();
@@ -33,6 +34,15 @@ export class NodeText extends Node {
       for (let node = this.nextSibling; node instanceof NodeText; node = node.nextSibling) {
         node.deactivate();
       }
+    } else {
+      this.deactivate();
+
+      let leftMostTextNode = this.previousSibling;
+
+      while (leftMostTextNode.previousSibling instanceof NodeText)
+        leftMostTextNode = leftMostTextNode.previousSibling;
+      
+      leftMostTextNode.clearTextLayout();
     }
   }
 
@@ -43,6 +53,15 @@ export class NodeText extends Node {
       if (this.nextSibling instanceof NodeText) {
         this.nextSibling.activate();
       }
+    } else {
+      this.activate();
+      
+      let leftMostTextNode = this.previousSibling;
+
+      while (leftMostTextNode.previousSibling instanceof NodeText)
+        leftMostTextNode = leftMostTextNode.previousSibling;
+      
+      leftMostTextNode.clearTextLayout();
     }
   }
 
@@ -66,7 +85,7 @@ export class NodeText extends Node {
       textNode = textNode.nextSibling;
     }
 
-    this.textLayout.reset(fullContent);
+    this.textLayout.setSource(fullContent);
     this.yoga.markDirty();
 
     this.markDirtyLayout();
@@ -82,7 +101,7 @@ export class NodeText extends Node {
   getLine(y: number, left: number, width: number) {
     const background = this.style.get(`background`);
 
-    const line = this.textLayout.getLineString(y).substr(left, width);
+    const line = this.textLayout.getLine(y).substr(left, width);
     const pad = background.repeat(Math.ceil((width - line.length) / background.length)).substr(0, width - line.length);
 
     const formattedLine = this.applyTextStyle(line);

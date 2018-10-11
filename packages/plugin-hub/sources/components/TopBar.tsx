@@ -1,13 +1,13 @@
 import React = require('react');
 
-import {Div} from '@berry/ui';
+import {Div, StyleFlexDirectionEnum} from '@berry/ui';
 
 type TopBarProps = {
   widgets: Array<() => string>,
 };
 
 const topBarStyle = {
-  flexDirection: `row`,
+  flexDirection: StyleFlexDirectionEnum.Row,
 
   width: `100%`,
   height: 1,
@@ -51,16 +51,12 @@ export class TopBar extends React.Component<TopBarProps, any> {
   </Div>;
 
   private renderWidgets() {
-    const components = [];
+    const components = this.props.widgets.map((widget, t) => <TopBarWidget key={`widget-${t}`}>
+      {widget()}
+    </TopBarWidget>);
 
-    for (const widget of this.props.widgets) {
-      if (components.length > 0)
-        components.push(<TopBarSeparator key={(components.length - 1) / 2} />);
-
-      components.push(<TopBarWidget>
-        {widget()}
-      </TopBarWidget>);
-    }
+    for (let t = 0, T = components.length - 1; t < T; ++t)
+      components.splice(1 + t * 2, 0, <TopBarSeparator key={`sep-${t}`} />);
 
     return components;
   }

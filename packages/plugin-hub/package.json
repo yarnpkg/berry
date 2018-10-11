@@ -7,8 +7,12 @@
         "@berry/ui": "0.0.0",
         "@manaflair/concierge": "^0.7.3",
         "dateformat": "^3.0.3",
+        "immer": "^1.7.2",
         "joi": "^13.6.0",
-        "react": "^16.5.2"
+        "react": "^16.5.2",
+        "react-redux": "^5.0.7",
+        "redux": "^4.0.0",
+        "redux-saga": "^0.16.2"
     },
     "devDependencies": {
         "@berry/builder": "0.0.0"

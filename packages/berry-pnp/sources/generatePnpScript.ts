@@ -16,7 +16,7 @@ function generateDatastores(packageInformationStores: PackageInformationStores, 
       {packageLocation, packageDependencies},
     ] of packageInformationStore) {
       code += `    [${JSON.stringify(packageReference)}, {\n`;
-      code += `      packageLocation: ${JSON.stringify(packageLocation)},\n`;
+      code += `      packageLocation: path.resolve(__dirname, ${JSON.stringify(packageLocation)}),\n`;
       code += `      packageDependencies: new Map([\n`;
       for (const [dependencyName, dependencyReference] of packageDependencies.entries()) {
         code += `        [${JSON.stringify(dependencyName)}, ${JSON.stringify(dependencyReference)}],\n`;
@@ -90,6 +90,8 @@ export function generatePnpScript(settings: PnpSettings): string {
     `var __non_webpack_module__ = module;\n`,
     `\n`,
     `function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {\n`,
+    `  var path = require('path');\n`,
+    `\n`,
     `  var ignorePattern, packageInformationStores, packageLocatorByLocationMap, packageLocationLengths;\n`,
     `\n`,
     `  ignorePattern = null;\n`,
