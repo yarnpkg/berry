@@ -184,14 +184,6 @@ export abstract class Node {
     if (index === -1)
       throw new Error(`Assertion failed: Cannot remove a node twice`);
 
-    // If the node is focused, we need to unfocus it
-    if (this.rootNode && this.rootNode.activeElement === node)
-      this.rootNode.focus(null);
-
-    // We'll need to refresh this part of the screen no matter what
-    if (this.rootNode)
-      this.rootNode.removedRects.push(node.elementClipRect);
-
     const previousSibling = node.previousSibling;
     const nextSibling = node.nextSibling;
     
@@ -564,6 +556,14 @@ export abstract class Node {
   private unlinkRecursive() {
     if (!this.rootNode || !this.parentNode)
       throw new Error(`Assertion failed: unlinkRecursive called on a node that hasn't been correctly setup`);
+
+    // If the node is focused, we need to unfocus it
+    if (this.rootNode && this.rootNode.activeElement === this as Node)
+      this.rootNode.focus(null);
+
+    // We'll need to refresh this part of the screen no matter what
+    if (this.rootNode)
+      this.rootNode.removedRects.push(this.elementClipRect);
 
     for (const child of this.childNodes)
       child.unlinkRecursive();

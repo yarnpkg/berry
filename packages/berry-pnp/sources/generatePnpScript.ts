@@ -1,7 +1,5 @@
 import template = require('!raw-loader!@berry/pnp/hook-bundle');
 
-import {readFileSync}                                             from 'fs';
-
 import {PackageInformationStores, LocationBlacklist, PnpSettings} from './types';
 
 function generateDatastores(packageInformationStores: PackageInformationStores, blacklistedLocations: LocationBlacklist) {

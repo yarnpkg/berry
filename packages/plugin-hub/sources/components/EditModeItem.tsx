@@ -115,7 +115,7 @@ export class EditModeItem extends React.PureComponent<EditModeItemProps, EditMod
   };
 
   renderEditMode = () => <Div style={editModeStyle}>
-    <div>{this.props.editLabel}</div>
+    {this.props.editLabel && <div>{this.props.editLabel}</div>}
     <Input style={inputStyle} autofocus={true} monoline={true} onBlur={this.handleRollbackEdit} onEnterKey={this.handleConfirmEdit} onEscapeKey={this.handleRollbackEdit} defaultValue={this.props.editInitialValue} />
   </Div>;
 

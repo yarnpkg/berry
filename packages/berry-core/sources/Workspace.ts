@@ -59,6 +59,9 @@ export class Workspace {
         onlyDirectories: true,
       });
 
+      // It seems that the return value of globby isn't in any guaranteed order - not even the directory listing order
+      relativeCwds.sort();
+
       for (const relativeCwd of relativeCwds) {
         const candidateCwd = resolve(this.cwd, relativeCwd);
 

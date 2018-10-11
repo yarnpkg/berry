@@ -21,14 +21,14 @@
     source-map: ^0.5.0
   resolution: @babel/core@7.1.2
 
-"@babel/generator@^7.1.2, @babel/generator@^7.0.0":
+"@babel/generator@^7.1.2, @babel/generator@^7.1.3":
   dependencies:
-    @babel/types: ^7.1.2
+    @babel/types: ^7.1.3
     jsesc: ^2.5.1
     lodash: ^4.17.10
     source-map: ^0.5.0
     trim-right: ^1.0.1
-  resolution: @babel/generator@7.1.2
+  resolution: @babel/generator@7.1.3
 
 @babel/helper-function-name@^7.1.0:
   dependencies:
@@ -61,8 +61,8 @@
     js-tokens: ^4.0.0
   resolution: @babel/highlight@7.0.0
 
-"@babel/parser@^7.1.2, @babel/parser@^7.1.0":
-  resolution: @babel/parser@7.1.2
+"@babel/parser@^7.1.2, @babel/parser@^7.1.3":
+  resolution: @babel/parser@7.1.3
 
 "@babel/template@^7.1.2, @babel/template@^7.1.0":
   dependencies:
@@ -74,51 +74,51 @@
 "@babel/traverse@^7.0.0-beta.39, @babel/traverse@^7.1.0":
   dependencies:
     @babel/code-frame: ^7.0.0
-    @babel/generator: ^7.0.0
+    @babel/generator: ^7.1.3
     @babel/helper-function-name: ^7.1.0
     @babel/helper-split-export-declaration: ^7.0.0
-    @babel/parser: ^7.1.0
-    @babel/types: ^7.0.0
+    @babel/parser: ^7.1.3
+    @babel/types: ^7.1.3
     debug: ^3.1.0
     globals: ^11.1.0
     lodash: ^4.17.10
-  resolution: @babel/traverse@7.1.0
+  resolution: @babel/traverse@7.1.4
 
-"@babel/types@^7.0.0-beta.39, @babel/types@^7.1.2, @babel/types@^7.0.0":
+"@babel/types@^7.0.0-beta.39, @babel/types@^7.1.2, @babel/types@^7.1.3, @babel/types@^7.0.0":
   dependencies:
     esutils: ^2.0.2
     lodash: ^4.17.10
     to-fast-properties: ^2.0.0
-  resolution: @babel/types@7.1.2
+  resolution: @babel/types@7.1.3
 
 @berry/builder@0.0.0:
   dependencies:
-    @manaflair/concierge: "virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#0.7.3"
+    @manaflair/concierge: ^0.7.3
     brfs: ^2.0.1
     buffer-loader: ^0.1.0
     joi: ^13.6.0
     pnp-webpack-plugin: ^1.1.0
     raw-loader: ^0.5.1
     transform-loader: ^0.2.4
-    ts-loader: "virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.2.1"
+    ts-loader: ^5.2.1
     typescript: ^3.0.1
-    val-loader: "virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#1.1.1"
+    val-loader: ^1.1.1
     webpack: ^4.18.0
     webpack-virtual-modules: ^0.1.10
   resolution: "@berry/builder@workspace:0.0.0"
 
 "@berry/builder@workspace-base:0.0.0":
   dependencies:
-    @manaflair/concierge: "virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#0.7.3"
+    @manaflair/concierge: ^0.7.3
     brfs: ^2.0.1
     buffer-loader: ^0.1.0
     joi: ^13.6.0
     pnp-webpack-plugin: ^1.1.0
     raw-loader: ^0.5.1
     transform-loader: ^0.2.4
-    ts-loader: "virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.2.1"
+    ts-loader: ^5.2.1
     typescript: ^3.0.1
-    val-loader: "virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#1.1.1"
+    val-loader: ^1.1.1
     webpack: ^4.18.0
     webpack-virtual-modules: ^0.1.10
   resolution: "@berry/builder@workspace-base:0.0.0"
@@ -128,11 +128,11 @@
     @berry/builder: 0.0.0
     @berry/core: 0.0.0
     @berry/plugin-github: 0.0.0
-    @berry/plugin-hub: "virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#workspace:0.0.0"
+    @berry/plugin-hub: 0.0.0
     @berry/plugin-npm: 0.0.0
     @berry/pnp: 0.0.0
     @berry/shell: 0.0.0
-    @manaflair/concierge: "virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#0.7.3"
+    @manaflair/concierge: ^0.7.3
     execa: ^1.0.0
     joi: ^13.6.0
     tslib: ^1
@@ -255,31 +255,16 @@
     @berry/core: 0.0.0
   resolution: "@berry/plugin-hub@workspace:0.0.0"
 
-"@berry/plugin-hub@virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#workspace:0.0.0":
-  dependencies:
-    @berry/cli: "workspace-base:0.0.0"
-    @berry/core: 0.0.0
-    @berry/ui: "virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#workspace:0.0.0"
-    @manaflair/concierge: "virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#0.7.3"
-    dateformat: ^3.0.3
-    immer: ^1.7.2
-    joi: ^13.6.0
-    react: ^16.5.2
-    react-redux: "virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#5.0.7"
-    redux: ^4.0.0
-    redux-saga: ^0.16.2
-  resolution: "@berry/plugin-hub@virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#workspace:0.0.0"
-
 "@berry/plugin-hub@workspace-base:0.0.0":
   dependencies:
     @berry/builder: 0.0.0
-    @berry/ui: "virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#workspace:0.0.0"
-    @manaflair/concierge: "virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#0.7.3"
+    @berry/ui: 0.0.0
+    @manaflair/concierge: ^0.7.3
     dateformat: ^3.0.3
     immer: ^1.7.2
     joi: ^13.6.0
     react: ^16.5.2
-    react-redux: "virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#5.0.7"
+    react-redux: ^5.0.7
     redux: ^4.0.0
     redux-saga: ^0.16.2
   resolution: "@berry/plugin-hub@workspace-base:0.0.0"
@@ -308,12 +293,12 @@
     @berry/core: 0.0.0
     @berry/zipfs: 0.0.0
     raw-loader: ^0.5.1
-    ts-loader: "virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#5.2.1"
+    ts-loader: ^5.2.1
     tslib: ^1
     typescript: ^3.0.1
-    wasm-loader: "virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#1.3.0"
+    wasm-loader: ^1.3.0
     webpack: ^4.17.2
-    webpack-cli: "virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.2"
+    webpack-cli: ^3.1.0
   resolution: "@berry/pnp@workspace-base:0.0.0"
 
 @berry/shell@0.0.0:
@@ -345,34 +330,6 @@
     react: "*"
   resolution: "@berry/ui@workspace:0.0.0"
 
-"@berry/ui@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#workspace:0.0.0":
-  dependencies:
-    @manaflair/term-strings: ^0.10.1
-    @manaflair/text-layout: ^0.10.2
-    eventemitter3: ^3.1.0
-    first-mate: ^7.1.3
-    plist: ^3.0.1
-    react: ^16.5.2
-    react-reconciler: "virtual:1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e#0.14.0"
-    text-buffer: ^13.14.9
-    ttys: ^0.0.3
-    yoga-dom: ^0.0.14
-  resolution: "@berry/ui@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#workspace:0.0.0"
-
-"@berry/ui@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#workspace:0.0.0":
-  dependencies:
-    @manaflair/term-strings: ^0.10.1
-    @manaflair/text-layout: ^0.10.2
-    eventemitter3: ^3.1.0
-    first-mate: ^7.1.3
-    plist: ^3.0.1
-    react: ^16.5.2
-    react-reconciler: "virtual:1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5#0.14.0"
-    text-buffer: ^13.14.9
-    ttys: ^0.0.3
-    yoga-dom: ^0.0.14
-  resolution: "@berry/ui@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#workspace:0.0.0"
-
 "@berry/ui@workspace-base:0.0.0":
   dependencies:
     @manaflair/term-strings: ^0.10.1
@@ -382,7 +339,7 @@
     first-mate: ^7.1.3
     plist: ^3.0.1
     react: ^16.5.1
-    react-reconciler: "virtual:87c31939ffd3d24ff010b223c0935f0c5e91cd5b92941e5d632b279dccfc6e1b5b5b8b4a3ac82556a5a38ebc09123b1c1475079859ef3b232d23fbd748e3c020#0.14.0"
+    react-reconciler: ^0.14.0
     text-buffer: ^13.14.9
     ts-node: ^7.0.1
     ttys: ^0.0.3
@@ -410,46 +367,6 @@
   peerDependencies:
     joi: 10.x.x
   resolution: @manaflair/concierge@0.7.3
-
-"@manaflair/concierge@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#0.7.3":
-  dependencies:
-    chalk: ^1.1.3
-    joi: ^13.6.0
-    kexec: ^3.0.0
-    lodash: ^4.17.4
-  resolution: "@manaflair/concierge@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#0.7.3"
-
-"@manaflair/concierge@virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#0.7.3":
-  dependencies:
-    chalk: ^1.1.3
-    joi: ^13.6.0
-    kexec: ^3.0.0
-    lodash: ^4.17.4
-  resolution: "@manaflair/concierge@virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#0.7.3"
-
-"@manaflair/concierge@virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#0.7.3":
-  dependencies:
-    chalk: ^1.1.3
-    joi: ^13.6.0
-    kexec: ^3.0.0
-    lodash: ^4.17.4
-  resolution: "@manaflair/concierge@virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#0.7.3"
-
-"@manaflair/concierge@virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#0.7.3":
-  dependencies:
-    chalk: ^1.1.3
-    joi: ^13.6.0
-    kexec: ^3.0.0
-    lodash: ^4.17.4
-  resolution: "@manaflair/concierge@virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#0.7.3"
-
-"@manaflair/concierge@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#0.7.3":
-  dependencies:
-    chalk: ^1.1.3
-    joi: ^13.6.0
-    kexec: ^3.0.0
-    lodash: ^4.17.4
-  resolution: "@manaflair/concierge@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#0.7.3"
 
 @manaflair/term-strings@^0.10.1:
   dependencies:
@@ -551,7 +468,7 @@
   resolution: @types/lockfile@1.0.0
 
 @types/lodash@^4.14.116:
-  resolution: @types/lodash@4.14.116
+  resolution: @types/lodash@4.14.117
 
 "@types/minimatch@*":
   resolution: @types/minimatch@3.0.3
@@ -567,7 +484,7 @@
   resolution: @types/node-fetch@2.1.2
 
 "@types/node@*":
-  resolution: @types/node@10.11.3
+  resolution: @types/node@10.11.7
 
 "@types/pathwatcher@*":
   dependencies:
@@ -594,7 +511,7 @@
   dependencies:
     @types/prop-types: "*"
     csstype: ^2.2.0
-  resolution: @types/react@16.4.14
+  resolution: @types/react@16.4.16
 
 @types/redux-saga@^0.10.5:
   dependencies:
@@ -765,23 +682,24 @@ acorn-dynamic-import@^3.0.0:
 
 acorn-node@^1.3.0:
   dependencies:
-    acorn: ^5.7.1
-    acorn-dynamic-import: ^3.0.0
+    acorn: ^6.0.1
+    acorn-walk: ^6.0.1
     xtend: ^4.0.1
-  resolution: acorn-node@1.5.2
+  resolution: acorn-node@1.6.0
 
-"acorn@^5.6.2, acorn@^5.0.0, acorn@^5.7.1":
+acorn-walk@^6.0.1:
+  resolution: acorn-walk@6.1.0
+
+"acorn@^5.6.2, acorn@^5.0.0":
   resolution: acorn@5.7.3
 
-"ajv-keywords@virtual:b280b9fcddbd791f8bf76b36e6e7578db505457dfded8c84282cf7f2e51ef7fb0519becc414f9d62779735c3f7744f2500c4b023cabbeab6458e122d75cf07c3#3.2.0":
-  dependencies:
-    ajv: ^6.1.0
-  resolution: "ajv-keywords@virtual:b280b9fcddbd791f8bf76b36e6e7578db505457dfded8c84282cf7f2e51ef7fb0519becc414f9d62779735c3f7744f2500c4b023cabbeab6458e122d75cf07c3#3.2.0"
+acorn@^6.0.1:
+  resolution: acorn@6.0.2
 
-"ajv-keywords@virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#3.2.0":
-  dependencies:
-    ajv: ^6.1.0
-  resolution: "ajv-keywords@virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#3.2.0"
+ajv-keywords@^3.1.0:
+  peerDependencies:
+    ajv: ^6.0.0
+  resolution: ajv-keywords@3.2.0
 
 ajv@^6.1.0:
   dependencies:
@@ -1311,7 +1229,7 @@ dateformat@^3.0.3:
 "debug@^3.0.0, debug@^3.1.0":
   dependencies:
     ms: ^2.1.1
-  resolution: debug@3.2.5
+  resolution: debug@3.2.6
 
 debug@2.6.8:
   dependencies:
@@ -1645,7 +1563,7 @@ fast-glob@^2.0.2:
     is-glob: ^4.0.0
     merge2: ^1.2.1
     micromatch: ^3.1.10
-  resolution: fast-glob@2.2.2
+  resolution: fast-glob@2.2.3
 
 fast-json-stable-stringify@^2.0.0:
   resolution: fast-json-stable-stringify@2.0.0
@@ -1782,7 +1700,7 @@ get-stream@^3.0.0:
 get-stream@^4.0.0:
   dependencies:
     pump: ^3.0.0
-  resolution: get-stream@4.0.0
+  resolution: get-stream@4.1.0
 
 "get-value@^2.0.6, get-value@^2.0.3":
   resolution: get-value@2.0.6
@@ -1820,7 +1738,7 @@ global-modules-path@^2.3.0:
   resolution: global-modules-path@2.3.0
 
 globals@^11.1.0:
-  resolution: globals@11.7.0
+  resolution: globals@11.8.0
 
 globby@^8.0.1:
   dependencies:
@@ -2324,7 +2242,8 @@ md5.js@^1.3.4:
   dependencies:
     hash-base: ^3.0.0
     inherits: ^2.0.1
-  resolution: md5.js@1.3.4
+    safe-buffer: ^5.1.2
+  resolution: md5.js@1.3.5
 
 mem@^4.0.0:
   dependencies:
@@ -2402,7 +2321,7 @@ minimist@0.0.8:
 minizlib@^1.1.0:
   dependencies:
     minipass: ^2.2.1
-  resolution: minizlib@1.1.0
+  resolution: minizlib@1.1.1
 
 mississippi@^2.0.0:
   dependencies:
@@ -2560,7 +2479,7 @@ npm-packlist@^1.1.6:
   dependencies:
     ignore-walk: ^3.0.1
     npm-bundled: ^1.0.1
-  resolution: npm-packlist@1.1.11
+  resolution: npm-packlist@1.1.12
 
 npm-run-path@^2.0.0:
   dependencies:
@@ -2830,7 +2749,8 @@ public-encrypt@^4.0.0:
     create-hash: ^1.1.0
     parse-asn1: ^5.0.0
     randombytes: ^2.0.1
-  resolution: public-encrypt@4.0.2
+    safe-buffer: ^5.1.2
+  resolution: public-encrypt@4.0.3
 
 "pump@^2.0.1, pump@^2.0.0":
   dependencies:
@@ -2905,33 +2825,6 @@ react-reconciler@^0.14.0:
     react: ^16.0.0
   resolution: react-reconciler@0.14.0
 
-"react-reconciler@virtual:1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5#0.14.0":
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-    prop-types: ^15.6.2
-    react: ^16.5.2
-    schedule: ^0.4.0
-  resolution: "react-reconciler@virtual:1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5#0.14.0"
-
-"react-reconciler@virtual:1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e#0.14.0":
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-    prop-types: ^15.6.2
-    react: ^16.5.2
-    schedule: ^0.4.0
-  resolution: "react-reconciler@virtual:1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e#0.14.0"
-
-"react-reconciler@virtual:87c31939ffd3d24ff010b223c0935f0c5e91cd5b92941e5d632b279dccfc6e1b5b5b8b4a3ac82556a5a38ebc09123b1c1475079859ef3b232d23fbd748e3c020#0.14.0":
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-    prop-types: ^15.6.2
-    react: ^16.5.1
-    schedule: ^0.4.0
-  resolution: "react-reconciler@virtual:87c31939ffd3d24ff010b223c0935f0c5e91cd5b92941e5d632b279dccfc6e1b5b5b8b4a3ac82556a5a38ebc09123b1c1475079859ef3b232d23fbd748e3c020#0.14.0"
-
 react-redux@^5.0.7:
   dependencies:
     hoist-non-react-statics: ^2.5.0
@@ -2944,30 +2837,6 @@ react-redux@^5.0.7:
     react: "^0.14.0 || ^15.0.0-0 || ^16.0.0-0"
     redux: "^2.0.0 || ^3.0.0 || ^4.0.0-0"
   resolution: react-redux@5.0.7
-
-"react-redux@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#5.0.7":
-  dependencies:
-    hoist-non-react-statics: ^2.5.0
-    invariant: ^2.0.0
-    lodash: ^4.17.5
-    lodash-es: ^4.17.5
-    loose-envify: ^1.1.0
-    prop-types: ^15.6.0
-    react: ^16.5.2
-    redux: ^4.0.0
-  resolution: "react-redux@virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#5.0.7"
-
-"react-redux@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#5.0.7":
-  dependencies:
-    hoist-non-react-statics: ^2.5.0
-    invariant: ^2.0.0
-    lodash: ^4.17.5
-    lodash-es: ^4.17.5
-    loose-envify: ^1.1.0
-    prop-types: ^15.6.0
-    react: ^16.5.2
-    redux: ^4.0.0
-  resolution: "react-redux@virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#5.0.7"
 
 "react@^16.5.1, react@^16.5.2":
   dependencies:
@@ -3105,7 +2974,7 @@ schedule@^0.5.0:
 "schema-utils@^0.4.5, schema-utils@^0.4.4":
   dependencies:
     ajv: ^6.1.0
-    ajv-keywords: "virtual:b280b9fcddbd791f8bf76b36e6e7578db505457dfded8c84282cf7f2e51ef7fb0519becc414f9d62779735c3f7744f2500c4b023cabbeab6458e122d75cf07c3#3.2.0"
+    ajv-keywords: ^3.1.0
   resolution: schema-utils@0.4.7
 
 scope-analyzer@^2.0.1:
@@ -3126,7 +2995,7 @@ season@^6.0.2:
   resolution: season@6.0.2
 
 "semver@^5.5.1, semver@^5.0.1, semver@^5.5.0, semver@^5.4.1, semver@^5.3.0":
-  resolution: semver@5.5.1
+  resolution: semver@5.6.0
 
 serializable@^1.0.3:
   dependencies:
@@ -3208,7 +3077,7 @@ snapdragon@^0.8.1:
   resolution: snapdragon@0.8.2
 
 source-list-map@^2.0.0:
-  resolution: source-list-map@2.0.0
+  resolution: source-list-map@2.0.1
 
 source-map-resolve@^0.5.0:
   dependencies:
@@ -3463,36 +3332,6 @@ ts-loader@^5.2.1:
     typescript: "*"
   resolution: ts-loader@5.2.1
 
-"ts-loader@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#5.2.1":
-  dependencies:
-    chalk: ^2.3.0
-    enhanced-resolve: ^4.0.0
-    loader-utils: ^1.0.2
-    micromatch: ^3.1.4
-    semver: ^5.0.1
-    typescript: ^3.0.1
-  resolution: "ts-loader@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#5.2.1"
-
-"ts-loader@virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.2.1":
-  dependencies:
-    chalk: ^2.3.0
-    enhanced-resolve: ^4.0.0
-    loader-utils: ^1.0.2
-    micromatch: ^3.1.4
-    semver: ^5.0.1
-    typescript: ^3.0.1
-  resolution: "ts-loader@virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.2.1"
-
-"ts-loader@virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.2.1":
-  dependencies:
-    chalk: ^2.3.0
-    enhanced-resolve: ^4.0.0
-    loader-utils: ^1.0.2
-    micromatch: ^3.1.4
-    semver: ^5.0.1
-    typescript: ^3.0.1
-  resolution: "ts-loader@virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.2.1"
-
 ts-node@^7.0.1:
   dependencies:
     arrify: ^1.0.0
@@ -3523,7 +3362,7 @@ typedarray@^0.0.6:
   resolution: typedarray@0.0.6
 
 typescript@^3.0.1:
-  resolution: typescript@3.1.1
+  resolution: typescript@3.1.2
 
 uglify-es@^3.3.4:
   dependencies:
@@ -3531,7 +3370,7 @@ uglify-es@^3.3.4:
     source-map: ~0.6.1
   resolution: uglify-es@3.3.10
 
-"uglifyjs-webpack-plugin@virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#1.3.0":
+uglifyjs-webpack-plugin@^1.2.4:
   dependencies:
     cacache: ^10.0.4
     find-cache-dir: ^1.0.0
@@ -3539,10 +3378,11 @@ uglify-es@^3.3.4:
     serialize-javascript: ^1.4.0
     source-map: ^0.6.1
     uglify-es: ^3.3.4
-    webpack: 4.20.2
     webpack-sources: ^1.1.0
     worker-farm: ^1.5.2
-  resolution: "uglifyjs-webpack-plugin@virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#1.3.0"
+  peerDependencies:
+    webpack: "^2.0.0 || ^3.0.0 || ^4.0.0"
+  resolution: uglifyjs-webpack-plugin@1.3.0
 
 "underscore-plus@^1, underscore-plus@^1.0.0, underscore-plus@1.x, underscore-plus@~1.x":
   dependencies:
@@ -3631,20 +3471,6 @@ val-loader@^1.1.1:
     webpack: "^2.0.0 || ^3.0.0 || ^4.0.0"
   resolution: val-loader@1.1.1
 
-"val-loader@virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#1.1.1":
-  dependencies:
-    loader-utils: ^1.0.0
-    schema-utils: ^0.4.5
-    webpack: ^4.18.0
-  resolution: "val-loader@virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#1.1.1"
-
-"val-loader@virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#1.1.1":
-  dependencies:
-    loader-utils: ^1.0.0
-    schema-utils: ^0.4.5
-    webpack: ^4.18.0
-  resolution: "val-loader@virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#1.1.1"
-
 vlq@^0.2.2:
   resolution: vlq@0.2.3
 
@@ -3669,12 +3495,6 @@ wasm-loader@^1.3.0:
   peerDependencies:
     wasm-dce: 1.x
   resolution: wasm-loader@1.3.0
-
-"wasm-loader@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#1.3.0":
-  dependencies:
-    loader-utils: ^1.1.0
-    wasm-dce: ^1.0.0
-  resolution: "wasm-loader@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#1.3.0"
 
 watchpack@^1.5.0:
   dependencies:
@@ -3709,21 +3529,6 @@ webpack-cli@^3.1.0:
     webpack: ^4.x.x
   resolution: webpack-cli@3.1.2
 
-"webpack-cli@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.2":
-  dependencies:
-    chalk: ^2.4.1
-    cross-spawn: ^6.0.5
-    enhanced-resolve: ^4.1.0
-    global-modules-path: ^2.3.0
-    import-local: ^2.0.0
-    interpret: ^1.1.0
-    loader-utils: ^1.1.0
-    supports-color: ^5.5.0
-    v8-compile-cache: ^2.0.2
-    webpack: ^4.17.2
-    yargs: ^12.0.2
-  resolution: "webpack-cli@virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.2"
-
 "webpack-sources@^1.3.0, webpack-sources@^1.1.0":
   dependencies:
     source-list-map: ^2.0.0
@@ -3744,7 +3549,7 @@ webpack-virtual-modules@^0.1.10:
     acorn: ^5.6.2
     acorn-dynamic-import: ^3.0.0
     ajv: ^6.1.0
-    ajv-keywords: "virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#3.2.0"
+    ajv-keywords: ^3.1.0
     chrome-trace-event: ^1.0.0
     enhanced-resolve: ^4.1.0
     eslint-scope: ^4.0.0
@@ -3758,7 +3563,7 @@ webpack-virtual-modules@^0.1.10:
     node-libs-browser: ^2.0.0
     schema-utils: ^0.4.4
     tapable: ^1.1.0
-    uglifyjs-webpack-plugin: "virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#1.3.0"
+    uglifyjs-webpack-plugin: ^1.2.4
     watchpack: ^1.5.0
     webpack-sources: ^1.3.0
   resolution: webpack@4.20.2

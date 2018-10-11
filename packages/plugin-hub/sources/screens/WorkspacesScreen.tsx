@@ -55,9 +55,14 @@ class WorkspacesScreen extends React.PureComponent<WorkspacesScreenProps, Worksp
   };
 
   handleFilterChange = (filter: string) => {
-    const filterRegexp = filter ? new RegExp(filter) : null;
-
-    this.setState({filter, filterRegexp});
+    this.setState(({filterRegexp}) => {
+      try {
+        filterRegexp = filter ? new RegExp(filter) : null;
+      } catch (error) {
+        // Ignore invalid regexps
+      }      
+      return {filter, filterRegexp};
+    });
   };
 
   globalShortcuts = {

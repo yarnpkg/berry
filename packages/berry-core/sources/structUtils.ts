@@ -39,6 +39,13 @@ export function convertPackageToLocator(pkg: Package): Locator {
   return {identHash: pkg.identHash, scope: pkg.scope, name: pkg.name, locatorHash: pkg.locatorHash, reference: pkg.reference};
 }
 
+export function virtualizeDescriptor(descriptor: Descriptor, entropy: string): Descriptor {
+  if (entropy.includes(`#`))
+    throw new Error(`Invalid entropy`);
+
+  return makeDescriptor(descriptor, `virtual:${entropy}#${descriptor.range}`);
+}
+
 export function virtualizePackage(pkg: Package, entropy: string): Package {
   if (entropy.includes(`#`))
     throw new Error(`Invalid entropy`);
@@ -49,6 +56,21 @@ export function virtualizePackage(pkg: Package, entropy: string): Package {
     dependencies: new Map(pkg.dependencies),
     peerDependencies: new Map(pkg.peerDependencies),
   };
+}
+
+export function isVirtualDescriptor(descriptor: Descriptor): boolean {
+  return descriptor.range.startsWith(`virtual:`);
+}
+
+export function isVirtualLocator(locator: Locator): boolean {
+  return locator.reference.startsWith(`virtual:`);
+}
+
+export function devirtualizeDescriptor(descriptor: Descriptor): Descriptor {
+  if (!isVirtualDescriptor(descriptor))
+    throw new Error(`Not a virtual descriptor`);
+  
+  return makeDescriptor(descriptor, descriptor.range.replace(/^.*#/, ``));
 }
 
 export function areIdentsEqual(a: Ident, b: Ident) {

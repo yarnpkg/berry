@@ -22,10 +22,15 @@ export async function extractPnpSettings(project: Project): Promise<PnpSettings>
     return relativeFolder.replace(/\/?$/, '/');
   }
 
-  async function visit(descriptors: Map<string, Descriptor>, parentLocator: string) {
+  async function visit(dependencies: Map<string, Descriptor>, parentLocator: string) {
     const packageDependencies = new Map();
 
-    for (const descriptor of descriptors.values()) {
+    const sortedDependencies = Array.from(dependencies.values()).sort((a, b) => {
+      // @ts-ignore
+      return (structUtils.stringifyDescriptor(a) > structUtils.stringifyDescriptor(b)) - (structUtils.stringifyDescriptor(a) < structUtils.stringifyDescriptor(b));
+    });
+
+    for (const descriptor of sortedDependencies) {
       const locatorHash = project.storedResolutions.get(descriptor.descriptorHash);
 
       if (!locatorHash)
@@ -41,7 +46,7 @@ export async function extractPnpSettings(project: Project): Promise<PnpSettings>
       packageDependencies.set(requirableName, pkg.reference);
     }
 
-    for (const descriptor of descriptors.values()) {
+    for (const descriptor of sortedDependencies) {
       const locatorHash = project.storedResolutions.get(descriptor.descriptorHash);
 
       if (!locatorHash)

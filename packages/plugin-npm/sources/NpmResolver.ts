@@ -1,6 +1,6 @@
 import semver = require('semver');
 
-import {Resolver, ResolveOptions}            from '@berry/core';
+import {Resolver, ResolveOptions, Manifest}            from '@berry/core';
 import {httpUtils, structUtils}              from '@berry/core';
 import {Ident, Descriptor, Locator, Package} from '@berry/core';
 
@@ -44,20 +44,11 @@ export class NpmResolver implements Resolver {
     if (!Object.prototype.hasOwnProperty.call(registryData.versions, locator.reference))
       throw new Error(`Registry failed to return reference "${locator.reference}"`);
 
-    const versionData = registryData.versions[locator.reference];
+    const manifest = new Manifest();
+    manifest.load(registryData.versions[locator.reference]);
 
-    const dependencies = new Map();
-    const peerDependencies = new Map();
-
-    for (const entry of Object.keys(versionData.dependencies || {})) {
-      const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(entry), versionData.dependencies[entry]);
-      dependencies.set(descriptor.descriptorHash, descriptor);
-    }
-
-    for (const entry of Object.keys(versionData.peerDependencies || {})) {
-      const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(entry), versionData.peerDependencies[entry]);
-      peerDependencies.set(descriptor.descriptorHash, descriptor);
-    }
+    const dependencies = manifest.dependencies;
+    const peerDependencies = manifest.peerDependencies;
 
     return {... locator, dependencies, peerDependencies};
   }

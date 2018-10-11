@@ -89,10 +89,10 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     const configuration = await Configuration.find(process.cwd(), plugins);
     const {project} = await Project.find(configuration, process.cwd());
 
-    await project.resolveEverything();
-
     const projectTracker = makeTracker(project, {
       cwd: true,
+      storedResolutions: true,
+      storedPackages: true,
       workspacesByCwd: {
         locator: true,
         manifest: true,

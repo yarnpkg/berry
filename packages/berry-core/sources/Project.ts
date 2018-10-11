@@ -232,11 +232,8 @@ export class Project {
     const resolver = this.configuration.makeResolver();
 
     const allDescriptors = new Map<string, Descriptor>();
-    const allLocators = new Map<string, Locator>();
-    const allPackages = new Map<string, Package>(this.storedPackages);
-
-    const resolvedDescriptors = new Map<string, string>();
-    const resolvedLocators = new Set<string>();
+    const allPackages = new Map<string, Package>();
+    const allResolutions = new Map<string, string>();
 
     let mustBeResolved = new Set<string>();
 
@@ -248,23 +245,22 @@ export class Project {
     }
 
     while (mustBeResolved.size !== 0) {
-      const allCandidates = new Map<string, Array<string>>();
-      const newLocators = new Set<string>();
+      // First, we remove from the "mustBeResolved" list all packages that have
+      // already been resolved previously.
 
-      // During this second step, we try to figure out which package can satisfy the dependencies
-      // that aren't already satisfied. If they can be satisfied by exactly one reference, or if
-      // we've already planned to use a reference that could satisfy them, then we select it. But
-      // if we end up with multiple possible candidates, then we delegate the decision to a SAT
-      // solver in the second step.
+      for (const descriptorHash of mustBeResolved)
+        if (allResolutions.has(descriptorHash))
+          mustBeResolved.delete(descriptorHash);
 
-      await Promise.all([ ... mustBeResolved ].map(async descriptorHash => {
+      // Then we request the resolvers for the list of possible references that
+      // match the given ranges. That will give us a set of candidate references
+      // for each descriptor.
+
+      const passCandidates = new Map(await Promise.all(Array.from(mustBeResolved).map(async descriptorHash => {
         const descriptor = allDescriptors.get(descriptorHash);
 
         if (!descriptor)
           throw new Error(`The descriptor should have been registered`);
-
-        if (resolvedDescriptors.has(descriptor.descriptorHash))
-          return;
 
         let candidateReferences;
 
@@ -275,70 +271,71 @@ export class Project {
           throw error;
         }
 
-        // Reversing it make the following algorithm prioritize the more recent releases
-        candidateReferences.reverse();
-
         if (candidateReferences.length === 0)
           throw new Error(`No candidate found for ${structUtils.prettyDescriptor(descriptor)}`);
 
-        if (candidateReferences.length === 1) {
-          const locator = structUtils.makeLocatorFromDescriptor(descriptor, candidateReferences[0]);
+        // Reversing it make the following algorithms prioritize the more recent releases
+        candidateReferences.reverse();
 
-          allLocators.set(locator.locatorHash, locator);
-          resolvedDescriptors.set(descriptor.descriptorHash, locator.locatorHash);
+        const candidateLocators = candidateReferences.map(reference => {
+          return structUtils.makeLocatorFromDescriptor(descriptor, reference);
+        });
 
-          if (!resolvedLocators.has(locator.locatorHash)) {
-            resolvedLocators.add(locator.locatorHash);
-            newLocators.add(locator.locatorHash);
-          }
-        } else {
-          const locatorHashes = [];
+        return [descriptor.descriptorHash, candidateLocators] as [string, Array<Locator>];
+      })));
 
-          for (const reference of candidateReferences) {
-            const locator = structUtils.makeLocatorFromDescriptor(descriptor, reference);
+      // That's where we'll store our resolutions until everything has been
+      // resolved and can be injected into the various stores.
+      //
+      // The reason we're storing them in a temporary store instead of writing
+      // them directly into the global ones is that otherwise we would end up
+      // with different store orderings between dependency loaded from a
+      // lockfiles and those who don't (when using a lockfile all descriptors
+      // will fall into the next shortcut, but when no lockfile is there only
+      // some of them will; since maps are sorted by insertion, it would affect
+      // the way they would be ordered).
 
-            allLocators.set(locator.locatorHash, locator);
-            locatorHashes.push(locator.locatorHash);
-          }
+      const passResolutions = new Map<string, Locator>();
 
-          allCandidates.set(descriptor.descriptorHash, locatorHashes);
-        }
-      }));
+      // We now make a pre-pass to automatically resolve the descriptors that
+      // can only be satisfied by a single reference.
 
-      // This is a mini-step where we simply iterate over the candidates, and see whether we've
-      // already selected one of them for a different descriptor. If it's the case, then we
-      // simply reuse it and remove the current descriptor from the undecided list.
-
-      for (const [descriptorHash, locatorHashes] of allCandidates.entries()) {
-        const selectedHash = locatorHashes.find(locatorHash => allPackages.has(locatorHash));
-
-        if (!selectedHash)
+      for (const [descriptorHash, candidateLocators] of passCandidates) {
+        if (candidateLocators.length !== 1)
           continue;
 
-        resolvedDescriptors.set(descriptorHash, selectedHash);
-        allCandidates.delete(descriptorHash);
-
-        if (!resolvedLocators.has(selectedHash)) {
-          resolvedLocators.add(selectedHash);
-          newLocators.add(selectedHash);
-        }
+        passResolutions.set(descriptorHash, candidateLocators[0]);
+        passCandidates.delete(descriptorHash);
       }
 
-      mustBeResolved = new Set<string>();
+      // We make a second pre-pass to automatically resolve the descriptors
+      // that can be satisfied by a package we're already using (deduplication).
 
-      // All entries that remain in allCandidates are from descriptors that we haven't beem able
-      // to resolve in the first place. We'll now configure our SAT solver so that it can figure
-      // it out for us. To do this, we simply add a constraint for each descriptor that lists all
-      // the descriptors it would accept. We don't have to care about the locators that have
-      // already been selected, because if there was any they would have been selected in the
-      // previous step (we never backtrace to try to find better solutions, it would be a too
-      // expensive process - we just want to get an acceptable solution, not the very best one).
+      for (const [descriptorHash, candidateLocators] of passCandidates) {
+        const selectedLocator = candidateLocators.find(locator => allPackages.has(locator.locatorHash));
 
-      if (allCandidates.size > 0) {
+        if (!selectedLocator)
+          continue;
+
+        passResolutions.set(descriptorHash, selectedLocator);
+        passCandidates.delete(descriptorHash);
+      }
+
+      // All entries that remain in "passCandidates" are from descriptors that
+      // we haven't been able to resolve in the first place. We'll now configure
+      // our SAT solver so that it can figure it out for us. To do this, we
+      // simply add a constraint for each descriptor that lists all the
+      // descriptors it would accept. We don't have to check whether the
+      // locators obtained have already been selected, because if they were the
+      // would have been resolved in the previous step (we never backtrace to
+      // try to find better solutions, it would be a too expensive process - we
+      // just want to get an acceptable solution, not the very best one).
+
+      if (passCandidates.size > 0) {
         const solver = new Logic.Solver();
 
-        for (const [descriptorHash, locatorHashes] of allCandidates.entries())
-          solver.require(Logic.or(... locatorHashes));
+        for (const candidateLocators of passCandidates.values())
+          solver.require(Logic.or(... candidateLocators.map(locator => locator.locatorHash)));
 
         let remainingSolutions = 100;
         let solution;
@@ -363,57 +360,78 @@ export class Project {
 
         const solutionSet = new Set<string>(bestSolution);
 
-        for (const [descriptorHash, locatorHashes] of allCandidates.entries()) {
-          const solutionHash = locatorHashes.find(locatorHash => solutionSet.has(locatorHash));
+        for (const [descriptorHash, candidateLocators] of passCandidates.entries()) {
+          const selectedLocator = candidateLocators.find(locator => solutionSet.has(locator.locatorHash));
 
-          if (!solutionHash)
+          if (!selectedLocator)
             throw new Error(`The descriptor should have been solved during the previous step`);
 
-          resolvedDescriptors.set(descriptorHash, solutionHash);
-        }
-
-        // As mentioned previously, all the locators of the solution set are guaranteed never to
-        // have been registered before (since otherwise they would have been picked without going
-        // through the SAT solver)
-        for (const locatorHash of solutionSet) {
-          resolvedLocators.add(locatorHash);
-          newLocators.add(locatorHash);
+          passResolutions.set(descriptorHash, selectedLocator);
+          passCandidates.delete(descriptorHash);
         }
       }
 
-      // And finally, the last step is to iterate over all the new locators that have been selected
-      // as resolution of a descriptor, and to fetch their own dependencies so that we can resolve
-      // them as well.
+      // We now iterate over the locators we've got and, for each of them that
+      // hasn't been seen before, we fetch its dependency list and schedule it
+      // for the next cycle.
 
-      await Promise.all([...newLocators].map(async locatorHash => {
-        const locator = allLocators.get(locatorHash);
+      const newLocators = new Map<string, Locator>();
 
-        if (!locator)
-          throw new Error(`The locator should have been registered`);
+      for (const locator of passResolutions.values()) {
+        if (allPackages.has(locator.locatorHash))
+          continue;
+        
+        newLocators.set(locator.locatorHash, locator);
+      }
+      
+      const newPackages = new Map(await Promise.all(Array.from(newLocators.values()).map(async locator => {
+        let pkg;
 
-        let pkg = allPackages.get(locator.locatorHash);
-
-        if (!pkg) {
-          try {
-            pkg = await resolver.resolve(locator, {project: this});
-          } catch (error) {
-            error.message = `${structUtils.prettyLocator(locator)}: ${error.message}`;
-            throw error;
-          }
+        try {
+          pkg = await resolver.resolve(locator, {project: this});
+        } catch (error) {
+          error.message = `${structUtils.prettyLocator(locator)}: ${error.message}`;
+          throw error;
         }
 
         if (!structUtils.areLocatorsEqual(locator, pkg))
           throw new Error(`The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(locator)} to ${structUtils.prettyLocator(pkg)})`);
 
-        allPackages.set(pkg.locatorHash, pkg);
+        return [pkg.locatorHash, pkg] as [string, Package];
+      })));
 
-        for (const descriptor of pkg.dependencies.values()) {
-          if (!resolvedDescriptors.has(descriptor.descriptorHash)) {
+      // Now that the resolution is finished, we can finally insert the content
+      // from our temporary stores into the global ones, by making sure to do
+      // it in a predictable order.
+
+      const stableOrder = mustBeResolved;
+      mustBeResolved = new Set();
+
+      for (const descriptorHash of stableOrder) {
+        const locator = passResolutions.get(descriptorHash);
+
+        if (!locator)
+          throw new Error(`Assertion failed: The locator should have been registered`);
+
+        allResolutions.set(descriptorHash, locator.locatorHash);
+
+        const pkg = newPackages.get(locator.locatorHash);
+
+        if (pkg) {
+          allPackages.set(pkg.locatorHash, pkg);
+
+          // The resolvers are not expected to return the dependencies in any particular order, so we must be careful and sort them ourselves
+          const sortedDependencies = Array.from(pkg.dependencies.values()).sort((a, b) => {
+            // @ts-ignore
+            return (structUtils.stringifyDescriptor(a) > structUtils.stringifyDescriptor(b)) - (structUtils.stringifyDescriptor(a) < structUtils.stringifyDescriptor(b));
+          });
+
+          for (const descriptor of sortedDependencies) {
             allDescriptors.set(descriptor.descriptorHash, descriptor);
             mustBeResolved.add(descriptor.descriptorHash);
           }
         }
-      }));
+      }
     }
 
     //
@@ -431,7 +449,7 @@ export class Project {
         throw new Error(`The package (${structUtils.prettyLocator(parentLocator)}) should have been registered`);
 
       for (const descriptor of Array.from(parentPackage.dependencies.values())) {
-        const resolution = resolvedDescriptors.get(descriptor.descriptorHash);
+        const resolution = allResolutions.get(descriptor.descriptorHash);
 
         if (!resolution)
           throw new Error(`The resolution (${structUtils.prettyDescriptor(descriptor)}) should have been registered`);
@@ -442,20 +460,18 @@ export class Project {
           throw new Error(`The package (${resolution}, resolved from ${structUtils.prettyDescriptor(descriptor)}) should have been registered`);
 
         if (pkg.peerDependencies.size > 0) {
-          pkg = structUtils.virtualizePackage(pkg, parentLocator.locatorHash);
-
-          const pkgLocator = structUtils.convertPackageToLocator(pkg);
-          const pkgDescriptor = structUtils.convertLocatorToDescriptor(pkgLocator);
+          const virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
+          const virtualizedPackage = structUtils.virtualizePackage(pkg, parentLocator.locatorHash);
 
           parentPackage.dependencies.delete(descriptor.descriptorHash);
-          parentPackage.dependencies.set(pkgDescriptor.descriptorHash, pkgDescriptor);
+          parentPackage.dependencies.set(virtualizedDescriptor.descriptorHash, virtualizedDescriptor);
 
-          resolvedDescriptors.set(pkgDescriptor.descriptorHash, pkgLocator.locatorHash);
+          allResolutions.set(virtualizedDescriptor.descriptorHash, virtualizedPackage.locatorHash);
+          allDescriptors.set(virtualizedDescriptor.descriptorHash, virtualizedDescriptor);
 
-          allDescriptors.set(pkgDescriptor.descriptorHash, pkgDescriptor);
-          allPackages.set(pkg.locatorHash, pkg);
+          allPackages.set(virtualizedPackage.locatorHash, virtualizedPackage);
 
-          for (const peerRequest of pkg.peerDependencies.values()) {
+          for (const peerRequest of virtualizedPackage.peerDependencies.values()) {
             let peerDescriptor = Array.from(parentPackage.dependencies.values()).find(descriptor => {
               return structUtils.areIdentsEqual(descriptor, peerRequest);
             });
@@ -464,7 +480,7 @@ export class Project {
               peerDescriptor = structUtils.convertLocatorToDescriptor(parentLocator);
 
               allDescriptors.set(peerDescriptor.descriptorHash, peerDescriptor);
-              resolvedDescriptors.set(peerDescriptor.descriptorHash, parentLocator.locatorHash);
+              allResolutions.set(peerDescriptor.descriptorHash, parentLocator.locatorHash);
             }
 
             if (!peerDescriptor) {
@@ -472,12 +488,12 @@ export class Project {
               continue;
             }
 
-            pkg.dependencies.set(peerDescriptor.descriptorHash, peerDescriptor);
+            virtualizedPackage.dependencies.set(peerDescriptor.descriptorHash, peerDescriptor);
           }
 
-          // Clear the peer dependencies since they've been resolved to specific ranges
-          // If we don't clear them, they'll get re-resolved the next time we'll run Berry
-          pkg.peerDependencies = new Map();
+          virtualizedPackage.peerDependencies.clear();
+
+          pkg = virtualizedPackage;
         }
 
         resolvePeerDependencies(pkg);
@@ -500,7 +516,7 @@ export class Project {
     }
 
     // Everything is done, we can now update our internal resolutions to reference the new ones
-    this.storedResolutions = resolvedDescriptors;
+    this.storedResolutions = allResolutions;
     this.storedDescriptors = allDescriptors;
     this.storedPackages = allPackages;
   }
@@ -558,8 +574,8 @@ export class Project {
 
       if (!descriptorHashes)
         reverseLookup.set(locatorHash, descriptorHashes = new Set());
-
-      descriptorHashes.add(descriptorHash);;
+      
+      descriptorHashes.add(descriptorHash);
     }
 
     const optimizedLockfile: {[key: string]: any} = {};
@@ -569,6 +585,11 @@ export class Project {
 
       if (!pkg)
         throw new Error(`The package should have been registered`);
+      
+      // Virtual packages are not persisted into the lockfile: they need to be
+      // recomputed at runtime through "resolveEverything".
+      if (structUtils.isVirtualLocator(pkg))
+        continue;
 
       const descriptors = [];
 
@@ -585,24 +606,25 @@ export class Project {
         return structUtils.stringifyDescriptor(descriptor);
       }).join(`, `);
 
-      const dependencies: {[key: string]: string} | void =
-        pkg.dependencies.size > 0 ? {} : undefined;
+      const dependencies: {[key: string]: string} = {};
+      const peerDependencies: {[key: string]: string} = {};
 
-      const peerDependencies: {[key: string]: string} | void =
-        pkg.peerDependencies.size > 0 ? {} : undefined;
-
-      if (dependencies)
-        for (const dependency of pkg.dependencies.values())
+      for (const dependency of pkg.dependencies.values()) {
+        if (!structUtils.isVirtualDescriptor(dependency)) {
           dependencies[structUtils.stringifyIdent(dependency)] = dependency.range;
+        } else {
+          const devirtualizedDependency = structUtils.devirtualizeDescriptor(dependency);
+          dependencies[structUtils.stringifyIdent(devirtualizedDependency)] = devirtualizedDependency.range;
+        }
+      }
 
-      if (peerDependencies)
-        for (const dependency of pkg.peerDependencies.values())
-          peerDependencies[structUtils.stringifyIdent(dependency)] = dependency.range;
+      for (const dependency of pkg.peerDependencies.values())
+        peerDependencies[structUtils.stringifyIdent(dependency)] = dependency.range;
 
       optimizedLockfile[key] = {
         resolution: structUtils.stringifyLocator(pkg),
-        dependencies: dependencies,
-        peerDependencies: peerDependencies,
+        dependencies: Object.keys(dependencies).length > 0 ? dependencies : undefined,
+        peerDependencies: Object.keys(peerDependencies).length > 0 ? peerDependencies : undefined,
       };
     }
 

@@ -76,7 +76,7 @@ export class Manifest {
         }
 
         const descriptor = structUtils.makeDescriptor(ident, range);
-        this.dependencies.set(name, descriptor);
+        this.dependencies.set(descriptor.descriptorHash, descriptor);
       }
     }
 
@@ -96,7 +96,7 @@ export class Manifest {
         }
 
         const descriptor = structUtils.makeDescriptor(ident, range);
-        this.devDependencies.set(name, descriptor);
+        this.devDependencies.set(descriptor.descriptorHash, descriptor);
       }
     }
 
@@ -116,7 +116,7 @@ export class Manifest {
         }
 
         const descriptor = structUtils.makeDescriptor(ident, range);
-        this.peerDependencies.set(name, descriptor);
+        this.peerDependencies.set(descriptor.descriptorHash, descriptor);
       }
     }
 
