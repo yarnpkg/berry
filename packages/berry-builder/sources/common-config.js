@@ -28,13 +28,6 @@ module.exports = {
       test: /\.tsx?$/,
       exclude: /\.d\.ts$/,
       use: `ts-loader`,
-    }, {
-      test: /\.wasm$/,
-      type: `javascript/auto`,
-      use: `buffer-loader`,
-    }, {
-      test: /\/(@manaflair[\/-])?text-layout(-[a-f0-9]+\.zip)?\/[^\/]+\.js$/,
-      use: `transform-loader?${path.dirname(require.resolve(`brfs/package.json`))}`,
     }],
   },
 

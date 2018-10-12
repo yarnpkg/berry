@@ -89,7 +89,7 @@ export class Cache {
           throw error;
 
         archive = await loader();
-        await archive.store(file);
+        await archive.move(file);
       }
 
       return archive;

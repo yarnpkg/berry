@@ -12,7 +12,6 @@
         "fs-extra": "^7.0.0",
         "globby": "^8.0.1",
         "got": "^9.2.2",
-        "jszip": "^3.1.5",
         "lockfile": "^1.0.4",
         "logic-solver": "^2.0.1",
         "mkdirp": "^0.5.1",
@@ -20,6 +19,7 @@
         "pretty-bytes": "^5.1.0",
         "stream-to-promise": "^2.2.0",
         "tar": "^4.4.6",
+        "tmp": "^0.0.33",
         "tslib": "^1"
     },
     "devDependencies": {

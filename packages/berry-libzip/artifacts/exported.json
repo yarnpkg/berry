@@ -1,9 +1,14 @@
 [
     "_free",
     "_malloc",
+
+    "_zip_close",
     "_zip_error_init_with_code",
     "_zip_error_strerror",
+    "_zip_dir_add",
+    "_zip_discard",
     "_zip_fclose",
+    "_zip_file_add",
     "_zip_file_get_error",
     "_zip_fopen",
     "_zip_fopen_index",
@@ -12,8 +17,10 @@
     "_zip_get_name",
     "_zip_get_num_entries",
     "_zip_open",
+    "_zip_source_buffer",
     "_zip_stat",
     "_zip_stat_index",
+
     "_zipstruct_stat",
     "_zipstruct_statS",
     "_zipstruct_stat_name",

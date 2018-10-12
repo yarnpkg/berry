@@ -1,6 +1,6 @@
 import React = require('react');
 
-import {Configuration, Workspace, Plugin, Project} from '@berry/core';
+import {Configuration, Workspace, Plugin, Project, structUtils} from '@berry/core';
 import {Descriptor}                                from '@berry/core';
 import {render}                                    from '@berry/ui';
 import {DraftObject, produce}                      from 'immer';
@@ -26,6 +26,14 @@ export type AddDependencyAction = {
   development: boolean,
 };
 
+export type UpdateResolutionAction = {
+  type: `UPDATE_RESOLUTION`,
+
+  descriptor: Descriptor,
+
+  reference: string,
+};
+
 export type UpdateProjectAction = {
   type: `UPDATE_PROJECT`,
 
@@ -39,6 +47,14 @@ export type Action =
 function makeBerrySaga(projectTracker: Tracker<Project>) {
   return function* berrySaga() {
     yield all([
+      takeEvery(`UPDATE_RESOLUTION`, function* ({descriptor, reference}: UpdateResolutionAction): IterableIterator<any> {
+        yield put({type: `UPDATE_PROJECT`, project: projectTracker(project => {
+          const locator = structUtils.makeLocatorFromDescriptor(descriptor, reference);
+
+          project.storedResolutions.set(descriptor.descriptorHash, locator.locatorHash);
+          project.storedPackages.set(locator.locatorHash, {... locator, dependencies: new Map(), peerDependencies: new Map()});
+        })});
+      }),
       takeEvery(`ADD_DEPENDENCY`, function* ({workspace, descriptor, kind, development}: AddDependencyAction): IterableIterator<any> {
         switch (kind) {
           case `regular`: {

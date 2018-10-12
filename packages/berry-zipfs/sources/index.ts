@@ -3,6 +3,7 @@ import fs = require('fs');
 import * as path from 'path';
 
 import {ZipFS}   from './ZipFS';
+export {ZipFS}   from './ZipFS';
 
 const ZIPFS_CACHE = Symbol(`ZIPFS_CACHE`);
 const ZIPFS_REENTRANT = Symbol(`ZIPFS_REENTRANT`);
@@ -49,7 +50,7 @@ function getZip(baseFs: typeof fs, p: string) {
   // @ts-ignore
   baseFs[ZIPFS_CACHE] = baseFs[ZIPFS_CACHE] || {};
   // @ts-ignore
-  baseFs[ZIPFS_CACHE][p] = baseFs[ZIPFS_CACHE][p] || new ZipFS(baseFs, p);
+  baseFs[ZIPFS_CACHE][p] = baseFs[ZIPFS_CACHE][p] || new ZipFS(p, {baseFs});
   // @ts-ignore
   return baseFs[ZIPFS_CACHE][p];
 }

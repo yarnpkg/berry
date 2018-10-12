@@ -98,7 +98,15 @@ export const Input = uncontrollable<string, InputProps>(``)(class Input extends 
       if (this.inputRef.current)
         this.inputRef.current.markDirtyRender();
 
-      this.setState({textLayout: this.textBuffer});
+      this.textCaret = this.textBuffer.getLastPosition();
+      this.textCaretPreferredColumn = this.textCaret.x;
+
+      this.setState({
+        textLayout: this.textBuffer,
+
+        textCaretX: this.textCaret.x,
+        textCaretY: this.textCaret.y,
+      });
     });
   }
 

@@ -58,7 +58,7 @@ LIBZIP_VERSION=1.5.1
         -s ALLOW_MEMORY_GROWTH=1 \
         -s BINARYEN_ASYNC_COMPILATION=0 \
         -s NODERAWFS=1 \
-        --pre-js ../sources/shell.pre.js \
+        -s SINGLE_FILE=1 \
         -I./libzip-"$LIBZIP_VERSION"/lib \
         -I./libzip-"$LIBZIP_VERSION" \
         -O3 \

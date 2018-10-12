@@ -11,7 +11,7 @@ interface MakeArchiveOptions {
 export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath = null}: MakeArchiveOptions = {}): Promise<Archive> {
   const now = new Date();
 
-  const archive = new Archive();
+  const archive = Archive.create();
 
   // @ts-ignore: Typescript doesn't want me to use new
   const parser = new Parse();

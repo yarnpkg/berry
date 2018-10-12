@@ -212,7 +212,7 @@ export type TrackingFilter = any;
 export type Tracker<T> = (cb: (value: T) => void) => T;
 
 export function makeTracker<T>(value: T, filter: TrackingFilter = true) {
-  return {
+  const tracker = {
     immutable: cloneValueDeep(value, filter) as T,
 
     open(cb: (value: T) => void) {
@@ -220,11 +220,13 @@ export function makeTracker<T>(value: T, filter: TrackingFilter = true) {
       const version = {};
 
       cb(makeValueObservable(value, version, filter, () => {
-        super.immutable = cloneValueChecked(super.immutable, version);
-        return super.immutable;
+        tracker.immutable = cloneValueChecked(tracker.immutable, version);
+        return tracker.immutable;
       }));
 
-      return super.immutable;
+      return tracker.immutable;
     }
   };
+
+  return tracker;
 }

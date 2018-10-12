@@ -46,12 +46,15 @@ export type EditModeItemProps = {
   children: any,
 
   onBlur?: (() => void) | null,
+  onChange?: ((value: string) => void) | null,
   onFocus?: (() => void) | null,
 };
 
 export type EditModeItemState = {
   focused: boolean,
   edited: boolean,
+  
+  initialValue: string,
 };
 
 export class EditModeItem extends React.PureComponent<EditModeItemProps, EditModeItemState> {
@@ -60,6 +63,8 @@ export class EditModeItem extends React.PureComponent<EditModeItemProps, EditMod
   state = {
     focused: false,
     edited: false,
+
+    initialValue: ``,
   };
 
   triggerFocus() {
@@ -91,15 +96,31 @@ export class EditModeItem extends React.PureComponent<EditModeItemProps, EditMod
 
     e.preventDefault();
 
-    this.setState({edited: true});
+    this.setState({edited: true, initialValue: this.props.editInitialValue || ``});
   };
 
+  // We need to have this mechanism to prevent the "handleConfirmEdit" function
+  // from inadvertendly triggering the "handleRollbackEdit" function when giving
+  // the focus to the EditModeItem (which would take the focus from the Input,
+  // causing a rollback otherwise)
+  disableBlurEvent = false;
+
   private handleRollbackEdit = () => {
-    if (!this.state.edited)
+    if (this.disableBlurEvent)
       return;
 
+    if (!this.state.edited)
+      return;
+    
     this.setState({edited: false});
+
+    this.disableBlurEvent = true;
     this.triggerFocus();
+    this.disableBlurEvent = false;
+
+    if (this.props.onChange) {
+      this.props.onChange(this.state.initialValue);
+    }
   };
 
   private handleConfirmEdit = () => {
@@ -107,7 +128,16 @@ export class EditModeItem extends React.PureComponent<EditModeItemProps, EditMod
       return;
 
     this.setState({edited: false});
+
+    this.disableBlurEvent = true;
     this.triggerFocus();
+    this.disableBlurEvent = false;
+  };
+
+  private handleChange = (value: string) => {
+    if (this.props.onChange) {
+      this.props.onChange(value);
+    }
   };
 
   private shortcuts = {
@@ -116,7 +146,7 @@ export class EditModeItem extends React.PureComponent<EditModeItemProps, EditMod
 
   renderEditMode = () => <Div style={editModeStyle}>
     {this.props.editLabel && <div>{this.props.editLabel}</div>}
-    <Input style={inputStyle} autofocus={true} monoline={true} onBlur={this.handleRollbackEdit} onEnterKey={this.handleConfirmEdit} onEscapeKey={this.handleRollbackEdit} defaultValue={this.props.editInitialValue} />
+    <Input style={inputStyle} autofocus={true} monoline={true} onBlur={this.handleRollbackEdit} onEnterKey={this.handleConfirmEdit} onEscapeKey={this.handleRollbackEdit} onChange={this.handleChange} defaultValue={this.state.initialValue} />
   </Div>;
 
   renderTextMode = () => <Div style={textModeStyle}>

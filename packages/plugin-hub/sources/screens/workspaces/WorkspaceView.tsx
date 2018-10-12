@@ -58,6 +58,8 @@ export type WorkspaceViewProps = {
   storedResolutions: Map<string, string>,
   storedPackages: Map<string, Package>,
   workspace: Workspace,
+
+  onResolutionChange: (descriptor: Descriptor, reference: string) => void,
 };
 
 export type WorkspaceViewState = {
@@ -110,7 +112,7 @@ class WorkspaceView extends React.PureComponent<WorkspaceViewProps, WorkspaceVie
                     {structUtils.prettyIdent(descriptor)}
                   </EditModeItem>
                 </FocusEntry>
-              , `n/a`)}
+              , this.props.filterRegexp ? `` : `n/a`)}
             </Div>
 
             <Div style={columnStyle}>
@@ -123,7 +125,7 @@ class WorkspaceView extends React.PureComponent<WorkspaceViewProps, WorkspaceVie
                     {descriptor.range}
                   </EditModeItem>
                 </FocusEntry>
-              , `n/a`)}
+              , this.props.filterRegexp ? `` : `n/a`)}
             </Div>
 
             <Div style={columnStyle}>
@@ -136,12 +138,12 @@ class WorkspaceView extends React.PureComponent<WorkspaceViewProps, WorkspaceVie
 
                 return (
                   <FocusEntry key={descriptor.descriptorHash} column={3} row={index}>
-                    <EditModeItem editInitialValue={pkg ? pkg.reference : ``}>
+                    <EditModeItem editInitialValue={pkg ? pkg.reference : ``} onChange={value => this.props.onResolutionChange(descriptor, value)}>
                       {pkg ? pkg.reference : `<unresolved>`}
                     </EditModeItem>
                   </FocusEntry>
                 );
-              }, `n/a`)}
+              }, this.props.filterRegexp ? `` : `n/a`)}
             </Div>
 
             <Div style={columnNameStyle}>
@@ -154,7 +156,7 @@ class WorkspaceView extends React.PureComponent<WorkspaceViewProps, WorkspaceVie
                     {structUtils.prettyIdent(descriptor)}
                   </EditModeItem>
                 </FocusEntry>
-              , `n/a`)}
+              , this.props.filterRegexp ? `` : `n/a`)}
             </Div>
 
             <Div style={columnStyle}>
@@ -167,20 +169,25 @@ class WorkspaceView extends React.PureComponent<WorkspaceViewProps, WorkspaceVie
                     {descriptor.range}
                   </EditModeItem>
                 </FocusEntry>
-              , `n/a`)}
+              , this.props.filterRegexp ? `` : `n/a`)}
             </Div>
 
             <Div style={columnStyle}>
               <Div style={headerStyle}>
                 -> resolutions
               </Div>
-              {iterate(devDependencies, (descriptor, index) =>
-                <FocusEntry key={descriptor.descriptorHash} column={6} row={index}>
-                  <EditModeItem editLabel={`${structUtils.prettyIdent(descriptor)} @ `} editInitialValue={descriptor.range}>
-                    {structUtils.prettyIdent(descriptor)} @ {descriptor.range}
-                  </EditModeItem>
-                </FocusEntry>
-              , `n/a`)}
+              {iterate(devDependencies, (descriptor, index) => {
+                const resolution = this.props.storedResolutions.get(descriptor.descriptorHash);
+                const pkg = resolution ? this.props.storedPackages.get(resolution) : null;
+
+                return (
+                  <FocusEntry key={descriptor.descriptorHash} column={6} row={index}>
+                    <EditModeItem editInitialValue={pkg ? pkg.reference : ``} onChange={value => this.props.onResolutionChange(descriptor, value)}>
+                      {pkg ? pkg.reference : `<unresolved>`}
+                    </EditModeItem>
+                  </FocusEntry>
+                );
+              }, this.props.filterRegexp ? `` : `n/a`)}
             </Div>
           </Div>
         }</FocusGroup>
@@ -189,11 +196,18 @@ class WorkspaceView extends React.PureComponent<WorkspaceViewProps, WorkspaceVie
   }
 }
 
-const ConnectedWorkspaceView = connect(({project}: {project: Project}, {cwd}: {cwd: string}) => ({
-  storedResolutions: project.storedResolutions,
-  storedPackages: project.storedPackages,
-  workspace: project.workspacesByCwd.get(cwd) as Workspace,
-}))(WorkspaceView);
+const ConnectedWorkspaceView = connect(
+  ({project}: {project: Project}, {cwd}: {cwd: string}) => ({
+    storedResolutions: project.storedResolutions,
+    storedPackages: project.storedPackages,
+    workspace: project.workspacesByCwd.get(cwd) as Workspace,
+  }),
+  dispatch => ({
+    onResolutionChange: (descriptor: Descriptor, reference: string) => {
+      dispatch({type: `UPDATE_RESOLUTION`, descriptor, reference});
+    }
+  })
+)(WorkspaceView);
 
 export {
   ConnectedWorkspaceView as WorkspaceView,

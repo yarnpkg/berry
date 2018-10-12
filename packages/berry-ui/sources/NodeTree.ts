@@ -39,11 +39,15 @@ export class NodeTree extends NodeElement {
   }
 
   requestRender() {
-    this.renderFn();
+    setImmediate(() => {
+      this.renderFn();
+    });
   }
 
   requestShutdown() {
-    this.shutdownFn();
+    setImmediate(() => {
+      this.shutdownFn();
+    });
   }
 
   resize(width: number | null, height: number | null) {

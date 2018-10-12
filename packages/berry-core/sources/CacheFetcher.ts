@@ -1,5 +1,3 @@
-import {resolve}               from 'path';
-
 import {Fetcher, FetchOptions} from './Fetcher';
 import {Manifest}              from './Manifest';
 import {Locator}               from './types';

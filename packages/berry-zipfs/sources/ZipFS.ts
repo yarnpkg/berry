@@ -40,7 +40,14 @@ const IS_FILE_STAT = {
   blocks: 1,
 };
 
+export type Options = {
+  baseFs?: typeof fs,
+  create?: boolean,
+};
+
 export class ZipFS {
+  private readonly path: string;
+
   private readonly baseFs: typeof fs;
 
   private readonly stats: Stats;
@@ -62,14 +69,30 @@ export class ZipFS {
     `createReadStream`,
   ]);
 
-  constructor(baseFs: typeof fs, p: string) {
+  constructor(p: string, {baseFs = fs, create = false}: Options = {}) {
+    this.path = p;
+
     this.baseFs = baseFs;
-    this.stats = this.baseFs.statSync(p);
+
+    try {
+      this.stats = this.baseFs.statSync(p);
+    } catch (error) {
+      if (error.code === `ENOENT` && create) {
+        this.stats = {... IS_FILE_STAT, uid: 0, gid: 0, size: 0, blksize: 0, atimeMs: 0, mtimeMs: 0, ctimeMs: 0, birthtimeMs: 0, atime: new Date(0), mtime: new Date(0), ctime: new Date(0), birthtime: new Date(0)};
+      } else {
+        throw error;
+      }
+    }
 
     const errPtr = libzip.malloc(4);
 
     try {
-      this.zip = libzip.open(p, 0, errPtr);
+      let flags = 0;
+
+      if (create)
+        flags |= libzip.ZIP_CREATE | libzip.ZIP_TRUNCATE;
+
+      this.zip = libzip.open(p, flags, errPtr);
 
       if (this.zip === 0) {
         const error = libzip.struct.errorS();
@@ -83,24 +106,29 @@ export class ZipFS {
 
     const entryCount = libzip.getNumEntries(this.zip, 0);
 
+    this.listings.set(`/`, new Set());
+
     for (let t = 0; t < entryCount; ++t) {
       const raw = libzip.getName(this.zip, t, 0);
-
       const p = posix.resolve(`/`, raw);
-      const parts = p.split(`/`);
 
-      for (let u = 1; u < parts.length; ++u) {
-        const parentPath = parts.slice(0, u).join(`/`) || `/`;
-
-        let parentListing = this.listings.get(parentPath);
-        if (!parentListing)
-          this.listings.set(parentPath, parentListing = new Set());
-
-        parentListing.add(parts[u]);
-      }
-
-      this.entries.set(p, t);
+      this.registerEntry(p, t);
     }
+  }
+
+  close(): string {
+    const rc = libzip.close(this.zip);
+
+    if (rc !== 0)
+      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+    
+    return this.path;
+  }
+
+  discard() {
+    libzip.discard(this.zip);
+
+    return this.path;
   }
 
   createReadStream(p: string, {encoding}: {encoding?: string} = {}): ReadStream {
@@ -234,6 +262,81 @@ export class ZipFS {
 
     this.ensurePathCorrectness(p, `stat`);
     throw new Error(`Unreachable`);
+  }
+
+  mkdir(p: string) {
+    p = posix.resolve(`/`, p);
+
+    if (p === `/`)
+      return;
+    
+    const index = libzip.dir.add(this.zip, p.slice(1));
+
+    if (index === -1)
+      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+
+    this.registerListing(p);
+    this.registerEntry(p, index);
+  }
+
+  mkdirp(p: string) {
+    p = posix.resolve(`/`, p);
+
+    if (p === `/`)
+      return;
+    
+    const parts = p.split(`/`);
+
+    for (let u = 2; u <= parts.length; ++u) {
+      this.mkdir(parts.slice(0, u).join(`/`));
+    }
+  }
+
+  private registerListing(p: string) {
+    let listing = this.listings.get(p);
+
+    if (listing)
+      return listing;
+    
+    const parentListing = this.registerListing(posix.dirname(p));
+    listing = new Set();
+
+    parentListing.add(posix.basename(p));
+    this.listings.set(p, listing);
+
+    return listing;
+  }
+
+  private registerEntry(p: string, index: number) {
+    const parentListing = this.registerListing(posix.dirname(p));
+    parentListing.add(posix.basename(p));
+
+    this.entries.set(p, index);
+  }
+
+  writeFile(p: string, content: Buffer | string) {
+    p = posix.join(this.realpath(posix.dirname(p)), posix.basename(p));
+
+    if (typeof content === `string`)
+      content = Buffer.from(content);
+
+    const buffer = libzip.malloc(content.byteLength);
+
+    if (!buffer)
+      throw new Error(`Couldn't allocate enough memory`);
+
+    // Copy the file into the Emscripten heap
+    const heap = new Uint8Array(libzip.HEAPU8.buffer, buffer, content.byteLength);
+    heap.set(content);
+
+    const source = libzip.source.fromBuffer(this.zip, buffer, content.byteLength, 0, true);
+
+    if (source === 0) {
+      libzip.free(buffer);
+      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+    }
+
+    libzip.file.add(this.zip, p, source, libzip.ZIP_FL_OVERWRITE);
   }
 
   readFile(p: string, encoding?: string) {

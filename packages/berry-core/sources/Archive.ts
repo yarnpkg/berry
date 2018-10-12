@@ -1,54 +1,41 @@
-import JSZip = require('jszip');
-
-import {createWriteStream, readFile} from 'fs';
-import {promisify}                   from 'util';
-
-const readFileP = promisify(readFile);
+import {ZipFS}       from '@berry/zipfs';
+import {chmod, move} from 'fs-extra';
+import {dirname}     from 'path';
+import {tmpNameSync} from 'tmp';
 
 export class Archive {
-  public readonly zip: JSZip;
+  public readonly zip: ZipFS;
 
-  static async load(path: string) {
-    const zip = new JSZip();
-
-    const content = await readFileP(path);
-    await zip.loadAsync(content);
-
-    return new Archive(zip);
+  static load(path: string) {
+    return new Archive(new ZipFS(path));
   }
 
-  constructor(zip: JSZip | null = null) {
-    this.zip = zip || new JSZip();
+  static create() {
+    return new Archive(new ZipFS(tmpNameSync(), {create: true}));
   }
 
-  addFile(name: string, data: string | Buffer | NodeJS.ReadableStream, options: {date?: Date} = {}) {
-    this.zip.file(name, data, options);
+  private constructor(zip: ZipFS) {
+    this.zip = zip;
   }
 
-  async readText(name: string) {
-    const file = this.zip.file(name);
-
-    if (!file)
-      throw new Error(`File entry not found (${name})`);
-
-    return await file.async(`text`);
+  addFile(name: string, data: Buffer | string, options: {date?: Date} = {}) {
+    this.zip.mkdirp(dirname(name));
+    this.zip.writeFile(name, data);
   }
 
-  async readJson(name: string) {
-    return JSON.parse(await this.readText(name));
+  readText(name: string): string {
+    // @ts-ignore
+    return this.zip.readFile(name, `utf8`);
   }
 
-  async store(target: string) {
-    const stream = this.zip.generateNodeStream({type: 'nodebuffer', streamFiles: true})
-      .pipe(createWriteStream(target));
+  readJson(name: string) {
+    return JSON.parse(this.readText(name));
+  }
 
-    await new Promise((resolve, reject) => {
-      stream.on(`error`, error => {
-        reject(error);
-      });
-      stream.on(`finish`, () => {
-        resolve();
-      });
-    });
+  async move(destination: string) {
+    const source = this.zip.close();
+    
+    await chmod(source, 0o644);
+    await move(source, destination);
   }
 }
