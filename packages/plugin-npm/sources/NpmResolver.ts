@@ -1,8 +1,10 @@
 import semver = require('semver');
 
-import {Resolver, ResolveOptions, Manifest}            from '@berry/core';
-import {httpUtils, structUtils}              from '@berry/core';
-import {Ident, Descriptor, Locator, Package} from '@berry/core';
+import {Resolver, ResolveOptions, Manifest} from '@berry/core';
+import {httpUtils, structUtils}             from '@berry/core';
+import {Ident, Descriptor, Locator}         from '@berry/core';
+
+import {DEFAULT_REGISTRY}                   from './constants';
 
 export class NpmResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
@@ -23,7 +25,7 @@ export class NpmResolver implements Resolver {
     if (semver.valid(descriptor.range))
       return [descriptor.range];
 
-    const httpResponse = await httpUtils.get(this.getIdentUrl(descriptor));
+    const httpResponse = await httpUtils.get(this.getIdentUrl(descriptor, opts));
 
     const versions = Object.keys(JSON.parse(httpResponse.toString()).versions);
     const candidates = versions.filter(version => semver.satisfies(version, descriptor.range));
@@ -35,7 +37,7 @@ export class NpmResolver implements Resolver {
     if (!semver.valid(locator.reference))
       throw new Error(`Invalid reference`);
 
-    const httpResponse = await httpUtils.get(this.getIdentUrl(locator));
+    const httpResponse = await httpUtils.get(this.getIdentUrl(locator, opts));
     const registryData = JSON.parse(httpResponse.toString());
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
@@ -53,11 +55,13 @@ export class NpmResolver implements Resolver {
     return {... locator, dependencies, peerDependencies};
   }
 
-  private getIdentUrl(ident: Ident) {
+  private getIdentUrl(ident: Ident, opts: ResolveOptions) {
+    const registry = opts.project.configuration.registryServer || DEFAULT_REGISTRY;
+
     if (ident.scope) {
-      return `https://registry.npmjs.org/@${ident.scope}%2f${ident.name}`;
+      return `${registry}/@${ident.scope}%2f${ident.name}`;
     } else {
-      return `https://registry.npmjs.org/${ident.name}`;
+      return `${registry}/${ident.name}`;
     }
   }
 }

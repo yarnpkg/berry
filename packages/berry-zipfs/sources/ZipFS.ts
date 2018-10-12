@@ -288,7 +288,11 @@ export class ZipFS {
     const parts = p.split(`/`);
 
     for (let u = 2; u <= parts.length; ++u) {
-      this.mkdir(parts.slice(0, u).join(`/`));
+      const subPath = parts.slice(0, u).join(`/`);
+
+      if (!this.exists(subPath)) {
+        this.mkdir(subPath);
+      }
     }
   }
 

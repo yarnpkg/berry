@@ -20,6 +20,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@types/fs-extra", "5.0.4"],
           ["@types/globby", "8.0.0"],
           ["@types/got", "8.3.4"],
+          ["@types/joi", "13.6.0"],
           ["@types/lockfile", "1.0.0"],
           ["@types/lodash", "4.14.117"],
           ["@types/mkdirp", "0.5.2"],
@@ -39,7 +40,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/dateformat", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-dateformat-7974bf5ca93ce3a3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-dateformat-7974bf5ca93ce3a3.zip/"),
         packageDependencies: new Map([
           ["@types/dateformat", "1.0.1"],
         ]),
@@ -47,7 +48,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/emscripten", new Map([
       ["0.0.31", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-emscripten-67ba42434d01a16b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-emscripten-67ba42434d01a16b.zip/"),
         packageDependencies: new Map([
           ["@types/webassembly-js-api", "0.0.1"],
           ["@types/emscripten", "0.0.31"],
@@ -56,7 +57,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/webassembly-js-api", new Map([
       ["0.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-webassembly-js-api-2a79060b1aa9d730.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-webassembly-js-api-2a79060b1aa9d730.zip/"),
         packageDependencies: new Map([
           ["@types/webassembly-js-api", "0.0.1"],
         ]),
@@ -64,7 +65,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/eventemitter3", new Map([
       ["2.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-eventemitter3-069bc52d7dcc02db.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-eventemitter3-069bc52d7dcc02db.zip/"),
         packageDependencies: new Map([
           ["eventemitter3", "3.1.0"],
           ["@types/eventemitter3", "2.0.2"],
@@ -73,7 +74,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["eventemitter3", new Map([
       ["3.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/eventemitter3-36abdf16d2e038be.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/eventemitter3-36abdf16d2e038be.zip/"),
         packageDependencies: new Map([
           ["eventemitter3", "3.1.0"],
         ]),
@@ -81,7 +82,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/execa", new Map([
       ["0.9.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-execa-a1a5b27b5a88b91f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-execa-a1a5b27b5a88b91f.zip/"),
         packageDependencies: new Map([
           ["@types/node", "10.11.7"],
           ["@types/execa", "0.9.0"],
@@ -90,7 +91,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/node", new Map([
       ["10.11.7", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-node-624969e6ce73b26d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-node-624969e6ce73b26d.zip/"),
         packageDependencies: new Map([
           ["@types/node", "10.11.7"],
         ]),
@@ -98,7 +99,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/faker", new Map([
       ["4.1.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-faker-cead86bc5bcaccf3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-faker-cead86bc5bcaccf3.zip/"),
         packageDependencies: new Map([
           ["@types/faker", "4.1.4"],
         ]),
@@ -106,7 +107,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/fs-extra", new Map([
       ["5.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-fs-extra-c5a99cc88325dc25.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-fs-extra-c5a99cc88325dc25.zip/"),
         packageDependencies: new Map([
           ["@types/node", "10.11.7"],
           ["@types/fs-extra", "5.0.4"],
@@ -115,7 +116,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/globby", new Map([
       ["8.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-globby-71751551ed58e7d3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-globby-71751551ed58e7d3.zip/"),
         packageDependencies: new Map([
           ["@types/glob", "7.1.1"],
           ["fast-glob", "2.2.3"],
@@ -125,7 +126,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/glob", new Map([
       ["7.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-glob-40ef64361c44325b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-glob-40ef64361c44325b.zip/"),
         packageDependencies: new Map([
           ["@types/events", "1.2.0"],
           ["@types/minimatch", "3.0.3"],
@@ -136,7 +137,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/events", new Map([
       ["1.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-events-8b8f573002cf3ab4.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-events-8b8f573002cf3ab4.zip/"),
         packageDependencies: new Map([
           ["@types/events", "1.2.0"],
         ]),
@@ -144,7 +145,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/minimatch", new Map([
       ["3.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-minimatch-3102f5f77510f720.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-minimatch-3102f5f77510f720.zip/"),
         packageDependencies: new Map([
           ["@types/minimatch", "3.0.3"],
         ]),
@@ -152,7 +153,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["fast-glob", new Map([
       ["2.2.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/fast-glob-c642fd396b06c748.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/fast-glob-c642fd396b06c748.zip/"),
         packageDependencies: new Map([
           ["@mrmlnc/readdir-enhanced", "2.2.1"],
           ["@nodelib/fs.stat", "1.1.2"],
@@ -166,7 +167,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@mrmlnc/readdir-enhanced", new Map([
       ["2.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@mrmlnc-readdir-enhanced-a0b9121d0adb3a5d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@mrmlnc-readdir-enhanced-a0b9121d0adb3a5d.zip/"),
         packageDependencies: new Map([
           ["call-me-maybe", "1.0.1"],
           ["glob-to-regexp", "0.3.0"],
@@ -176,7 +177,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["call-me-maybe", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/call-me-maybe-3659bd4437f4a3ea.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/call-me-maybe-3659bd4437f4a3ea.zip/"),
         packageDependencies: new Map([
           ["call-me-maybe", "1.0.1"],
         ]),
@@ -184,7 +185,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["glob-to-regexp", new Map([
       ["0.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/glob-to-regexp-c41e80b11b91a631.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/glob-to-regexp-c41e80b11b91a631.zip/"),
         packageDependencies: new Map([
           ["glob-to-regexp", "0.3.0"],
         ]),
@@ -192,7 +193,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@nodelib/fs.stat", new Map([
       ["1.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@nodelib-fs.stat-8db0fc0015829dc1.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@nodelib-fs.stat-8db0fc0015829dc1.zip/"),
         packageDependencies: new Map([
           ["@nodelib/fs.stat", "1.1.2"],
         ]),
@@ -200,7 +201,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["glob-parent", new Map([
       ["3.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/glob-parent-61be576f48fd806f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/glob-parent-61be576f48fd806f.zip/"),
         packageDependencies: new Map([
           ["is-glob", "3.1.0"],
           ["path-dirname", "1.0.2"],
@@ -210,14 +211,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["is-glob", new Map([
       ["3.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-glob-b66f2995a922d62f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-glob-b66f2995a922d62f.zip/"),
         packageDependencies: new Map([
           ["is-extglob", "2.1.1"],
           ["is-glob", "3.1.0"],
         ]),
       }],
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-glob-891817a74343fa53.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-glob-891817a74343fa53.zip/"),
         packageDependencies: new Map([
           ["is-extglob", "2.1.1"],
           ["is-glob", "4.0.0"],
@@ -226,7 +227,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["is-extglob", new Map([
       ["2.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-extglob-293932fad9e5589a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-extglob-293932fad9e5589a.zip/"),
         packageDependencies: new Map([
           ["is-extglob", "2.1.1"],
         ]),
@@ -234,7 +235,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["path-dirname", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/path-dirname-b2cdd9cfa668017c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/path-dirname-b2cdd9cfa668017c.zip/"),
         packageDependencies: new Map([
           ["path-dirname", "1.0.2"],
         ]),
@@ -242,7 +243,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["merge2", new Map([
       ["1.2.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/merge2-3d30ac803ed91dba.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/merge2-3d30ac803ed91dba.zip/"),
         packageDependencies: new Map([
           ["merge2", "1.2.2"],
         ]),
@@ -250,7 +251,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["micromatch", new Map([
       ["3.1.10", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/micromatch-c29be1a939ceeb16.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/micromatch-c29be1a939ceeb16.zip/"),
         packageDependencies: new Map([
           ["arr-diff", "4.0.0"],
           ["array-unique", "0.3.2"],
@@ -271,7 +272,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["arr-diff", new Map([
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/arr-diff-e89c00ace7a49631.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/arr-diff-e89c00ace7a49631.zip/"),
         packageDependencies: new Map([
           ["arr-diff", "4.0.0"],
         ]),
@@ -279,7 +280,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["array-unique", new Map([
       ["0.3.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/array-unique-668345ecd9a95c5e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/array-unique-668345ecd9a95c5e.zip/"),
         packageDependencies: new Map([
           ["array-unique", "0.3.2"],
         ]),
@@ -287,7 +288,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["braces", new Map([
       ["2.3.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/braces-b1d3367385d4f0a6.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/braces-b1d3367385d4f0a6.zip/"),
         packageDependencies: new Map([
           ["arr-flatten", "1.1.0"],
           ["array-unique", "0.3.2"],
@@ -305,7 +306,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["arr-flatten", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/arr-flatten-b4e203f942570a11.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/arr-flatten-b4e203f942570a11.zip/"),
         packageDependencies: new Map([
           ["arr-flatten", "1.1.0"],
         ]),
@@ -313,14 +314,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["extend-shallow", new Map([
       ["2.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/extend-shallow-b47a0903febb239b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/extend-shallow-b47a0903febb239b.zip/"),
         packageDependencies: new Map([
           ["is-extendable", "0.1.1"],
           ["extend-shallow", "2.0.1"],
         ]),
       }],
       ["3.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/extend-shallow-ef6654b1a347a4d1.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/extend-shallow-ef6654b1a347a4d1.zip/"),
         packageDependencies: new Map([
           ["assign-symbols", "1.0.0"],
           ["is-extendable", "1.0.1"],
@@ -330,13 +331,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["is-extendable", new Map([
       ["0.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-extendable-7c41ed03f999ad8e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-extendable-7c41ed03f999ad8e.zip/"),
         packageDependencies: new Map([
           ["is-extendable", "0.1.1"],
         ]),
       }],
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-extendable-580607f5bcd57e29.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-extendable-580607f5bcd57e29.zip/"),
         packageDependencies: new Map([
           ["is-plain-object", "2.0.4"],
           ["is-extendable", "1.0.1"],
@@ -345,7 +346,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["fill-range", new Map([
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/fill-range-0d0c326530de8d78.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/fill-range-0d0c326530de8d78.zip/"),
         packageDependencies: new Map([
           ["extend-shallow", "2.0.1"],
           ["is-number", "3.0.0"],
@@ -357,7 +358,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["is-number", new Map([
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-number-9d434c0ad574867b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-number-9d434c0ad574867b.zip/"),
         packageDependencies: new Map([
           ["kind-of", "3.2.2"],
           ["is-number", "3.0.0"],
@@ -366,27 +367,27 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["kind-of", new Map([
       ["3.2.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/kind-of-47ad9abbda485ab9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/kind-of-47ad9abbda485ab9.zip/"),
         packageDependencies: new Map([
           ["is-buffer", "1.1.6"],
           ["kind-of", "3.2.2"],
         ]),
       }],
       ["6.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/kind-of-cceb8ac2460e389b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/kind-of-cceb8ac2460e389b.zip/"),
         packageDependencies: new Map([
           ["kind-of", "6.0.2"],
         ]),
       }],
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/kind-of-879b1fbaa5ff9604.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/kind-of-879b1fbaa5ff9604.zip/"),
         packageDependencies: new Map([
           ["is-buffer", "1.1.6"],
           ["kind-of", "4.0.0"],
         ]),
       }],
       ["5.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/kind-of-e5cd32405caadb81.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/kind-of-e5cd32405caadb81.zip/"),
         packageDependencies: new Map([
           ["kind-of", "5.1.0"],
         ]),
@@ -394,7 +395,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["is-buffer", new Map([
       ["1.1.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-buffer-c2adb65d0d8bdac9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-buffer-c2adb65d0d8bdac9.zip/"),
         packageDependencies: new Map([
           ["is-buffer", "1.1.6"],
         ]),
@@ -402,7 +403,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["repeat-string", new Map([
       ["1.6.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/repeat-string-c35dd8e81f6a01cd.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/repeat-string-c35dd8e81f6a01cd.zip/"),
         packageDependencies: new Map([
           ["repeat-string", "1.6.1"],
         ]),
@@ -410,7 +411,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["to-regex-range", new Map([
       ["2.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/to-regex-range-72bcd000ca2c293d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/to-regex-range-72bcd000ca2c293d.zip/"),
         packageDependencies: new Map([
           ["is-number", "3.0.0"],
           ["repeat-string", "1.6.1"],
@@ -420,13 +421,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["isobject", new Map([
       ["3.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/isobject-bc5c1f9692a41890.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/isobject-bc5c1f9692a41890.zip/"),
         packageDependencies: new Map([
           ["isobject", "3.0.1"],
         ]),
       }],
       ["2.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/isobject-cf1d932fe6be27f4.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/isobject-cf1d932fe6be27f4.zip/"),
         packageDependencies: new Map([
           ["isarray", "1.0.0"],
           ["isobject", "2.1.0"],
@@ -435,7 +436,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["repeat-element", new Map([
       ["1.1.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/repeat-element-96cac51a8cc999bb.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/repeat-element-96cac51a8cc999bb.zip/"),
         packageDependencies: new Map([
           ["repeat-element", "1.1.3"],
         ]),
@@ -443,7 +444,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["snapdragon-node", new Map([
       ["2.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/snapdragon-node-faa2f9c14191465d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/snapdragon-node-faa2f9c14191465d.zip/"),
         packageDependencies: new Map([
           ["define-property", "1.0.0"],
           ["isobject", "3.0.1"],
@@ -454,21 +455,21 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["define-property", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/define-property-9482f08cc1f9476f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/define-property-9482f08cc1f9476f.zip/"),
         packageDependencies: new Map([
           ["is-descriptor", "1.0.2"],
           ["define-property", "1.0.0"],
         ]),
       }],
       ["0.2.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/define-property-64745ada86532978.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/define-property-64745ada86532978.zip/"),
         packageDependencies: new Map([
           ["is-descriptor", "0.1.6"],
           ["define-property", "0.2.5"],
         ]),
       }],
       ["2.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/define-property-67a3de3ed80b0920.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/define-property-67a3de3ed80b0920.zip/"),
         packageDependencies: new Map([
           ["is-descriptor", "1.0.2"],
           ["isobject", "3.0.1"],
@@ -478,7 +479,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["is-descriptor", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-descriptor-c99916c915a6827b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-descriptor-c99916c915a6827b.zip/"),
         packageDependencies: new Map([
           ["is-accessor-descriptor", "1.0.0"],
           ["is-data-descriptor", "1.0.0"],
@@ -487,7 +488,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["0.1.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-descriptor-5b9d2770366bf793.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-descriptor-5b9d2770366bf793.zip/"),
         packageDependencies: new Map([
           ["is-accessor-descriptor", "0.1.6"],
           ["is-data-descriptor", "0.1.4"],
@@ -498,14 +499,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["is-accessor-descriptor", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-accessor-descriptor-488cffcad32ed59a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-accessor-descriptor-488cffcad32ed59a.zip/"),
         packageDependencies: new Map([
           ["kind-of", "6.0.2"],
           ["is-accessor-descriptor", "1.0.0"],
         ]),
       }],
       ["0.1.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-accessor-descriptor-65a67690993d4e94.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-accessor-descriptor-65a67690993d4e94.zip/"),
         packageDependencies: new Map([
           ["kind-of", "3.2.2"],
           ["is-accessor-descriptor", "0.1.6"],
@@ -514,14 +515,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["is-data-descriptor", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-data-descriptor-f04138cd566fc98f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-data-descriptor-f04138cd566fc98f.zip/"),
         packageDependencies: new Map([
           ["kind-of", "6.0.2"],
           ["is-data-descriptor", "1.0.0"],
         ]),
       }],
       ["0.1.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-data-descriptor-14df5cabe6085e25.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-data-descriptor-14df5cabe6085e25.zip/"),
         packageDependencies: new Map([
           ["kind-of", "3.2.2"],
           ["is-data-descriptor", "0.1.4"],
@@ -530,7 +531,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["snapdragon-util", new Map([
       ["3.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/snapdragon-util-6146572abbf14b4c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/snapdragon-util-6146572abbf14b4c.zip/"),
         packageDependencies: new Map([
           ["kind-of", "3.2.2"],
           ["snapdragon-util", "3.0.1"],
@@ -539,7 +540,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["snapdragon", new Map([
       ["0.8.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/snapdragon-01777b171363808e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/snapdragon-01777b171363808e.zip/"),
         packageDependencies: new Map([
           ["base", "0.11.2"],
           ["debug", "2.6.9"],
@@ -555,7 +556,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["base", new Map([
       ["0.11.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/base-4e47dd8c3c3b4c37.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/base-4e47dd8c3c3b4c37.zip/"),
         packageDependencies: new Map([
           ["cache-base", "1.0.1"],
           ["class-utils", "0.3.6"],
@@ -570,7 +571,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["cache-base", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/cache-base-978aa64073d20ac2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/cache-base-978aa64073d20ac2.zip/"),
         packageDependencies: new Map([
           ["collection-visit", "1.0.0"],
           ["component-emitter", "1.2.1"],
@@ -587,7 +588,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["collection-visit", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/collection-visit-b7d89e260ef734b3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/collection-visit-b7d89e260ef734b3.zip/"),
         packageDependencies: new Map([
           ["map-visit", "1.0.0"],
           ["object-visit", "1.0.1"],
@@ -597,7 +598,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["map-visit", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/map-visit-8099fcf505ca422f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/map-visit-8099fcf505ca422f.zip/"),
         packageDependencies: new Map([
           ["object-visit", "1.0.1"],
           ["map-visit", "1.0.0"],
@@ -606,7 +607,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["object-visit", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/object-visit-eeecd32c47884f48.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/object-visit-eeecd32c47884f48.zip/"),
         packageDependencies: new Map([
           ["isobject", "3.0.1"],
           ["object-visit", "1.0.1"],
@@ -615,7 +616,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["component-emitter", new Map([
       ["1.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/component-emitter-2d9e30e3b0ccf7c9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/component-emitter-2d9e30e3b0ccf7c9.zip/"),
         packageDependencies: new Map([
           ["component-emitter", "1.2.1"],
         ]),
@@ -623,7 +624,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["get-value", new Map([
       ["2.0.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/get-value-cd01527ef83fe9cb.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/get-value-cd01527ef83fe9cb.zip/"),
         packageDependencies: new Map([
           ["get-value", "2.0.6"],
         ]),
@@ -631,7 +632,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["has-value", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/has-value-8550f40898c6a2d1.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/has-value-8550f40898c6a2d1.zip/"),
         packageDependencies: new Map([
           ["get-value", "2.0.6"],
           ["has-values", "1.0.0"],
@@ -640,7 +641,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["0.3.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/has-value-6e03733eecfa1aa9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/has-value-6e03733eecfa1aa9.zip/"),
         packageDependencies: new Map([
           ["get-value", "2.0.6"],
           ["has-values", "0.1.4"],
@@ -651,7 +652,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["has-values", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/has-values-f0c82ea20915b4b2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/has-values-f0c82ea20915b4b2.zip/"),
         packageDependencies: new Map([
           ["is-number", "3.0.0"],
           ["kind-of", "4.0.0"],
@@ -659,7 +660,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["0.1.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/has-values-db1fe74ae1c19f9f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/has-values-db1fe74ae1c19f9f.zip/"),
         packageDependencies: new Map([
           ["has-values", "0.1.4"],
         ]),
@@ -667,7 +668,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["set-value", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/set-value-f243d27f31700ad2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/set-value-f243d27f31700ad2.zip/"),
         packageDependencies: new Map([
           ["extend-shallow", "2.0.1"],
           ["is-extendable", "0.1.1"],
@@ -677,7 +678,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["0.4.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/set-value-6a8c4174792cc537.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/set-value-6a8c4174792cc537.zip/"),
         packageDependencies: new Map([
           ["extend-shallow", "2.0.1"],
           ["is-extendable", "0.1.1"],
@@ -689,7 +690,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["is-plain-object", new Map([
       ["2.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-plain-object-3ab8f29b4a2a085e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-plain-object-3ab8f29b4a2a085e.zip/"),
         packageDependencies: new Map([
           ["isobject", "3.0.1"],
           ["is-plain-object", "2.0.4"],
@@ -698,7 +699,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["split-string", new Map([
       ["3.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/split-string-91289614d8f09d56.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/split-string-91289614d8f09d56.zip/"),
         packageDependencies: new Map([
           ["extend-shallow", "3.0.2"],
           ["split-string", "3.1.0"],
@@ -707,7 +708,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["assign-symbols", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/assign-symbols-ab711500b3301bde.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/assign-symbols-ab711500b3301bde.zip/"),
         packageDependencies: new Map([
           ["assign-symbols", "1.0.0"],
         ]),
@@ -715,7 +716,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["to-object-path", new Map([
       ["0.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/to-object-path-8446eb5495c6ddfe.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/to-object-path-8446eb5495c6ddfe.zip/"),
         packageDependencies: new Map([
           ["kind-of", "3.2.2"],
           ["to-object-path", "0.3.0"],
@@ -724,7 +725,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["union-value", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/union-value-7a2f095ea8bfb34a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/union-value-7a2f095ea8bfb34a.zip/"),
         packageDependencies: new Map([
           ["arr-union", "3.1.0"],
           ["get-value", "2.0.6"],
@@ -736,7 +737,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["arr-union", new Map([
       ["3.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/arr-union-17db18e9ce1ad4b6.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/arr-union-17db18e9ce1ad4b6.zip/"),
         packageDependencies: new Map([
           ["arr-union", "3.1.0"],
         ]),
@@ -744,7 +745,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["unset-value", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/unset-value-64fece49b6e6efbc.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/unset-value-64fece49b6e6efbc.zip/"),
         packageDependencies: new Map([
           ["has-value", "0.3.1"],
           ["isobject", "3.0.1"],
@@ -754,7 +755,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["isarray", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/isarray-74b364b632c12820.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/isarray-74b364b632c12820.zip/"),
         packageDependencies: new Map([
           ["isarray", "1.0.0"],
         ]),
@@ -762,7 +763,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["class-utils", new Map([
       ["0.3.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/class-utils-d12a86ef4aa319b3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/class-utils-d12a86ef4aa319b3.zip/"),
         packageDependencies: new Map([
           ["arr-union", "3.1.0"],
           ["define-property", "0.2.5"],
@@ -774,7 +775,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["static-extend", new Map([
       ["0.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/static-extend-1b333216235daddf.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/static-extend-1b333216235daddf.zip/"),
         packageDependencies: new Map([
           ["define-property", "0.2.5"],
           ["object-copy", "0.1.0"],
@@ -784,7 +785,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["object-copy", new Map([
       ["0.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/object-copy-ebd992d4ef6ee079.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/object-copy-ebd992d4ef6ee079.zip/"),
         packageDependencies: new Map([
           ["copy-descriptor", "0.1.1"],
           ["define-property", "0.2.5"],
@@ -795,7 +796,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["copy-descriptor", new Map([
       ["0.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/copy-descriptor-e19bbd010a89d482.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/copy-descriptor-e19bbd010a89d482.zip/"),
         packageDependencies: new Map([
           ["copy-descriptor", "0.1.1"],
         ]),
@@ -803,7 +804,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["mixin-deep", new Map([
       ["1.3.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/mixin-deep-56b1d3080842c657.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/mixin-deep-56b1d3080842c657.zip/"),
         packageDependencies: new Map([
           ["for-in", "1.0.2"],
           ["is-extendable", "1.0.1"],
@@ -813,7 +814,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["for-in", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/for-in-8ac6aa6d5bb8e8d1.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/for-in-8ac6aa6d5bb8e8d1.zip/"),
         packageDependencies: new Map([
           ["for-in", "1.0.2"],
         ]),
@@ -821,7 +822,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["pascalcase", new Map([
       ["0.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pascalcase-20711584800fcc41.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pascalcase-20711584800fcc41.zip/"),
         packageDependencies: new Map([
           ["pascalcase", "0.1.1"],
         ]),
@@ -829,14 +830,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["debug", new Map([
       ["2.6.9", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/debug-4674d1510180cf31.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/debug-4674d1510180cf31.zip/"),
         packageDependencies: new Map([
           ["ms", "2.0.0"],
           ["debug", "2.6.9"],
         ]),
       }],
       ["3.2.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/debug-18fbffa99514da6a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/debug-18fbffa99514da6a.zip/"),
         packageDependencies: new Map([
           ["ms", "2.1.1"],
           ["debug", "3.2.6"],
@@ -845,13 +846,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ms", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ms-57c7de478ec1d011.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ms-57c7de478ec1d011.zip/"),
         packageDependencies: new Map([
           ["ms", "2.0.0"],
         ]),
       }],
       ["2.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ms-573954742ae7733a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ms-573954742ae7733a.zip/"),
         packageDependencies: new Map([
           ["ms", "2.1.1"],
         ]),
@@ -859,7 +860,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["map-cache", new Map([
       ["0.2.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/map-cache-b71e2f51854396c0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/map-cache-b71e2f51854396c0.zip/"),
         packageDependencies: new Map([
           ["map-cache", "0.2.2"],
         ]),
@@ -867,7 +868,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["source-map-resolve", new Map([
       ["0.5.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/source-map-resolve-56bf599c233bd8c3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/source-map-resolve-56bf599c233bd8c3.zip/"),
         packageDependencies: new Map([
           ["atob", "2.1.2"],
           ["decode-uri-component", "0.2.0"],
@@ -880,7 +881,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["atob", new Map([
       ["2.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/atob-30ed7e0125f607cd.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/atob-30ed7e0125f607cd.zip/"),
         packageDependencies: new Map([
           ["atob", "2.1.2"],
         ]),
@@ -888,7 +889,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["decode-uri-component", new Map([
       ["0.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/decode-uri-component-8fd500f861e4e3ee.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/decode-uri-component-8fd500f861e4e3ee.zip/"),
         packageDependencies: new Map([
           ["decode-uri-component", "0.2.0"],
         ]),
@@ -896,7 +897,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["resolve-url", new Map([
       ["0.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/resolve-url-e0310613383fae5c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/resolve-url-e0310613383fae5c.zip/"),
         packageDependencies: new Map([
           ["resolve-url", "0.2.1"],
         ]),
@@ -904,7 +905,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["source-map-url", new Map([
       ["0.4.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/source-map-url-b4a75c932ddf674f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/source-map-url-b4a75c932ddf674f.zip/"),
         packageDependencies: new Map([
           ["source-map-url", "0.4.0"],
         ]),
@@ -912,7 +913,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["urix", new Map([
       ["0.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/urix-bf4b02607dd2c9d6.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/urix-bf4b02607dd2c9d6.zip/"),
         packageDependencies: new Map([
           ["urix", "0.1.0"],
         ]),
@@ -920,13 +921,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["source-map", new Map([
       ["0.5.7", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/source-map-ceda55baab699730.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/source-map-ceda55baab699730.zip/"),
         packageDependencies: new Map([
           ["source-map", "0.5.7"],
         ]),
       }],
       ["0.6.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/source-map-81b5dbd121d897c3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/source-map-81b5dbd121d897c3.zip/"),
         packageDependencies: new Map([
           ["source-map", "0.6.1"],
         ]),
@@ -934,7 +935,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["use", new Map([
       ["3.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/use-4583b637f78866bf.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/use-4583b637f78866bf.zip/"),
         packageDependencies: new Map([
           ["use", "3.1.1"],
         ]),
@@ -942,7 +943,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["to-regex", new Map([
       ["3.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/to-regex-da27957fc33ab761.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/to-regex-da27957fc33ab761.zip/"),
         packageDependencies: new Map([
           ["define-property", "2.0.2"],
           ["extend-shallow", "3.0.2"],
@@ -954,7 +955,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["regex-not", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/regex-not-bbb90616db519013.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/regex-not-bbb90616db519013.zip/"),
         packageDependencies: new Map([
           ["extend-shallow", "3.0.2"],
           ["safe-regex", "1.1.0"],
@@ -964,7 +965,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["safe-regex", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/safe-regex-b9465c0a52da7b15.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/safe-regex-b9465c0a52da7b15.zip/"),
         packageDependencies: new Map([
           ["ret", "0.1.15"],
           ["safe-regex", "1.1.0"],
@@ -973,7 +974,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ret", new Map([
       ["0.1.15", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ret-cfe80c53c5571eda.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ret-cfe80c53c5571eda.zip/"),
         packageDependencies: new Map([
           ["ret", "0.1.15"],
         ]),
@@ -981,7 +982,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["extglob", new Map([
       ["2.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/extglob-a5ea7e4241a9f381.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/extglob-a5ea7e4241a9f381.zip/"),
         packageDependencies: new Map([
           ["array-unique", "0.3.2"],
           ["define-property", "1.0.0"],
@@ -997,7 +998,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["expand-brackets", new Map([
       ["2.1.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/expand-brackets-a7473238bdce3d3c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/expand-brackets-a7473238bdce3d3c.zip/"),
         packageDependencies: new Map([
           ["debug", "2.6.9"],
           ["define-property", "0.2.5"],
@@ -1012,7 +1013,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["posix-character-classes", new Map([
       ["0.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/posix-character-classes-218c2a1d43c4ad03.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/posix-character-classes-218c2a1d43c4ad03.zip/"),
         packageDependencies: new Map([
           ["posix-character-classes", "0.1.1"],
         ]),
@@ -1020,7 +1021,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["fragment-cache", new Map([
       ["0.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/fragment-cache-5e5e485a53a32090.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/fragment-cache-5e5e485a53a32090.zip/"),
         packageDependencies: new Map([
           ["map-cache", "0.2.2"],
           ["fragment-cache", "0.2.1"],
@@ -1029,7 +1030,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["nanomatch", new Map([
       ["1.2.13", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/nanomatch-8612995065effa61.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/nanomatch-8612995065effa61.zip/"),
         packageDependencies: new Map([
           ["arr-diff", "4.0.0"],
           ["array-unique", "0.3.2"],
@@ -1048,7 +1049,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["is-windows", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-windows-ac66a4e5f7df4b9c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-windows-ac66a4e5f7df4b9c.zip/"),
         packageDependencies: new Map([
           ["is-windows", "1.0.2"],
         ]),
@@ -1056,7 +1057,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["object.pick", new Map([
       ["1.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/object.pick-d4fded6a54f10105.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/object.pick-d4fded6a54f10105.zip/"),
         packageDependencies: new Map([
           ["isobject", "3.0.1"],
           ["object.pick", "1.3.0"],
@@ -1065,16 +1066,24 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/got", new Map([
       ["8.3.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-got-05007d6c6f93b685.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-got-05007d6c6f93b685.zip/"),
         packageDependencies: new Map([
           ["@types/node", "10.11.7"],
           ["@types/got", "8.3.4"],
         ]),
       }],
     ])],
+    ["@types/joi", new Map([
+      ["13.6.0", {
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-joi-d4a7e1eb1664513b.zip/"),
+        packageDependencies: new Map([
+          ["@types/joi", "13.6.0"],
+        ]),
+      }],
+    ])],
     ["@types/lockfile", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-lockfile-18242135e3cb3db2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-lockfile-18242135e3cb3db2.zip/"),
         packageDependencies: new Map([
           ["@types/lockfile", "1.0.0"],
         ]),
@@ -1082,7 +1091,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/lodash", new Map([
       ["4.14.117", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-lodash-99f5146ae4f466f4.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-lodash-99f5146ae4f466f4.zip/"),
         packageDependencies: new Map([
           ["@types/lodash", "4.14.117"],
         ]),
@@ -1090,7 +1099,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/mkdirp", new Map([
       ["0.5.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-mkdirp-26a52e47c7cd2fe0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-mkdirp-26a52e47c7cd2fe0.zip/"),
         packageDependencies: new Map([
           ["@types/node", "10.11.7"],
           ["@types/mkdirp", "0.5.2"],
@@ -1099,7 +1108,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/node-fetch", new Map([
       ["2.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-node-fetch-4237419ee3ba8fd4.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-node-fetch-4237419ee3ba8fd4.zip/"),
         packageDependencies: new Map([
           ["@types/node", "10.11.7"],
           ["@types/node-fetch", "2.1.2"],
@@ -1108,7 +1117,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/react-redux", new Map([
       ["6.0.9", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-react-redux-98c1a898e0913f59.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-react-redux-98c1a898e0913f59.zip/"),
         packageDependencies: new Map([
           ["@types/react", "16.4.16"],
           ["redux", "4.0.0"],
@@ -1118,7 +1127,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/react", new Map([
       ["16.4.16", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-react-7a08b5e68090a565.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-react-7a08b5e68090a565.zip/"),
         packageDependencies: new Map([
           ["@types/prop-types", "15.5.6"],
           ["csstype", "2.5.7"],
@@ -1128,7 +1137,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/prop-types", new Map([
       ["15.5.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-prop-types-e936b3d10a6b94b7.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-prop-types-e936b3d10a6b94b7.zip/"),
         packageDependencies: new Map([
           ["@types/prop-types", "15.5.6"],
         ]),
@@ -1136,7 +1145,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["csstype", new Map([
       ["2.5.7", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/csstype-a8661bcef6b0e9cd.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/csstype-a8661bcef6b0e9cd.zip/"),
         packageDependencies: new Map([
           ["csstype", "2.5.7"],
         ]),
@@ -1144,7 +1153,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["redux", new Map([
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/redux-d6ba548357b1eaf4.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/redux-d6ba548357b1eaf4.zip/"),
         packageDependencies: new Map([
           ["loose-envify", "1.4.0"],
           ["symbol-observable", "1.2.0"],
@@ -1154,7 +1163,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["loose-envify", new Map([
       ["1.4.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/loose-envify-1ff9e031c7be07bc.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/loose-envify-1ff9e031c7be07bc.zip/"),
         packageDependencies: new Map([
           ["js-tokens", "4.0.0"],
           ["loose-envify", "1.4.0"],
@@ -1163,7 +1172,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["js-tokens", new Map([
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/js-tokens-5d3e4915f4f384e9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/js-tokens-5d3e4915f4f384e9.zip/"),
         packageDependencies: new Map([
           ["js-tokens", "4.0.0"],
         ]),
@@ -1171,7 +1180,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["symbol-observable", new Map([
       ["1.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/symbol-observable-efaa2b0ed89ca3a3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/symbol-observable-efaa2b0ed89ca3a3.zip/"),
         packageDependencies: new Map([
           ["symbol-observable", "1.2.0"],
         ]),
@@ -1179,7 +1188,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/redux-saga", new Map([
       ["0.10.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-redux-saga-2a1e8af5a4fb7cc4.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-redux-saga-2a1e8af5a4fb7cc4.zip/"),
         packageDependencies: new Map([
           ["redux-saga", "0.16.2"],
           ["@types/redux-saga", "0.10.5"],
@@ -1188,7 +1197,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["redux-saga", new Map([
       ["0.16.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/redux-saga-d967edc59590e4a0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/redux-saga-d967edc59590e4a0.zip/"),
         packageDependencies: new Map([
           ["redux-saga", "0.16.2"],
         ]),
@@ -1196,7 +1205,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/redux", new Map([
       ["3.6.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-redux-529c614dac39f734.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-redux-529c614dac39f734.zip/"),
         packageDependencies: new Map([
           ["redux", "4.0.0"],
           ["@types/redux", "3.6.0"],
@@ -1205,7 +1214,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/request", new Map([
       ["2.47.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-request-aec12fe95d0d537e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-request-aec12fe95d0d537e.zip/"),
         packageDependencies: new Map([
           ["@types/caseless", "0.12.1"],
           ["@types/form-data", "2.2.1"],
@@ -1217,7 +1226,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/caseless", new Map([
       ["0.12.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-caseless-71fd2d56de590d24.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-caseless-71fd2d56de590d24.zip/"),
         packageDependencies: new Map([
           ["@types/caseless", "0.12.1"],
         ]),
@@ -1225,7 +1234,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/form-data", new Map([
       ["2.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-form-data-53ca89dea33b1f5a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-form-data-53ca89dea33b1f5a.zip/"),
         packageDependencies: new Map([
           ["@types/node", "10.11.7"],
           ["@types/form-data", "2.2.1"],
@@ -1234,7 +1243,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/tough-cookie", new Map([
       ["2.3.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-tough-cookie-396d0cb2d67fca48.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-tough-cookie-396d0cb2d67fca48.zip/"),
         packageDependencies: new Map([
           ["@types/tough-cookie", "2.3.3"],
         ]),
@@ -1242,7 +1251,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/semver", new Map([
       ["5.5.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-semver-241156b84eaa59f2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-semver-241156b84eaa59f2.zip/"),
         packageDependencies: new Map([
           ["@types/semver", "5.5.0"],
         ]),
@@ -1250,7 +1259,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/stream-to-promise", new Map([
       ["2.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-stream-to-promise-0abf47e5467b0808.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-stream-to-promise-0abf47e5467b0808.zip/"),
         packageDependencies: new Map([
           ["@types/node", "10.11.7"],
           ["@types/stream-to-promise", "2.2.0"],
@@ -1259,7 +1268,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/tar", new Map([
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-tar-57cdcd689933e694.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-tar-57cdcd689933e694.zip/"),
         packageDependencies: new Map([
           ["@types/node", "10.11.7"],
           ["@types/tar", "4.0.0"],
@@ -1268,7 +1277,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@types/tmp", new Map([
       ["0.0.33", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-tmp-8826a3d0a56601f2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@types-tmp-8826a3d0a56601f2.zip/"),
         packageDependencies: new Map([
           ["@types/tmp", "0.0.33"],
         ]),
@@ -1276,7 +1285,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ts-node", new Map([
       ["7.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ts-node-8070b94376573a89.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ts-node-8070b94376573a89.zip/"),
         packageDependencies: new Map([
           ["arrify", "1.0.1"],
           ["buffer-from", "1.1.1"],
@@ -1292,7 +1301,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["arrify", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/arrify-2a34fa322785982f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/arrify-2a34fa322785982f.zip/"),
         packageDependencies: new Map([
           ["arrify", "1.0.1"],
         ]),
@@ -1300,7 +1309,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["buffer-from", new Map([
       ["1.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/buffer-from-d7d4eb0d87c430ea.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/buffer-from-d7d4eb0d87c430ea.zip/"),
         packageDependencies: new Map([
           ["buffer-from", "1.1.1"],
         ]),
@@ -1308,7 +1317,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["diff", new Map([
       ["3.5.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/diff-0bef549ccd29f47d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/diff-0bef549ccd29f47d.zip/"),
         packageDependencies: new Map([
           ["diff", "3.5.0"],
         ]),
@@ -1316,7 +1325,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["make-error", new Map([
       ["1.3.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/make-error-3feea7527c3b5294.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/make-error-3feea7527c3b5294.zip/"),
         packageDependencies: new Map([
           ["make-error", "1.3.5"],
         ]),
@@ -1324,13 +1333,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["minimist", new Map([
       ["1.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/minimist-a6b317aa47d76f1c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/minimist-a6b317aa47d76f1c.zip/"),
         packageDependencies: new Map([
           ["minimist", "1.2.0"],
         ]),
       }],
       ["0.0.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/minimist-62870fb721e89fe1.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/minimist-62870fb721e89fe1.zip/"),
         packageDependencies: new Map([
           ["minimist", "0.0.8"],
         ]),
@@ -1338,7 +1347,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["mkdirp", new Map([
       ["0.5.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/mkdirp-7dc6e9583578f733.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/mkdirp-7dc6e9583578f733.zip/"),
         packageDependencies: new Map([
           ["minimist", "0.0.8"],
           ["mkdirp", "0.5.1"],
@@ -1347,7 +1356,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["source-map-support", new Map([
       ["0.5.9", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/source-map-support-073722c3a4f7d6e6.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/source-map-support-073722c3a4f7d6e6.zip/"),
         packageDependencies: new Map([
           ["buffer-from", "1.1.1"],
           ["source-map", "0.6.1"],
@@ -1357,7 +1366,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["yn", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/yn-7fd5cf6ca4fd0581.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/yn-7fd5cf6ca4fd0581.zip/"),
         packageDependencies: new Map([
           ["yn", "2.0.0"],
         ]),
@@ -1402,7 +1411,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@manaflair/concierge", new Map([
       ["virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#0.7.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/ca9cce39e73d00b2e4e944ae0f20fafb22a92a9aa8f518dac6953485c622f4ab13479b22c682397bd2d43ce7eeaa4f0751a23a17407942017831ff868b1413ac/mnt/d/berry/.pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/ca9cce39e73d00b2e4e944ae0f20fafb22a92a9aa8f518dac6953485c622f4ab13479b22c682397bd2d43ce7eeaa4f0751a23a17407942017831ff868b1413ac/mnt/d/berry/packages/berry-cli/pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/"),
         packageDependencies: new Map([
           ["chalk", "1.1.3"],
           ["joi", "13.7.0"],
@@ -1412,7 +1421,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#0.7.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/bcffe507fa373f41e98a2ee0f420a56f13077f8c84459018537a5845214004d0998133e34cbc12a105c125f0583fe8c56c63d885526041e7b3d06e31903c84d4/mnt/d/berry/.pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/bcffe507fa373f41e98a2ee0f420a56f13077f8c84459018537a5845214004d0998133e34cbc12a105c125f0583fe8c56c63d885526041e7b3d06e31903c84d4/mnt/d/berry/packages/berry-cli/pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/"),
         packageDependencies: new Map([
           ["chalk", "1.1.3"],
           ["joi", "13.7.0"],
@@ -1422,7 +1431,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#0.7.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/b8d2651e7b9133e2fe2706b415abba46cfe91049e6fbb0374b09cb694f00347a9a20afa1bfd85d15c79c22a0871f90fab3edd1590123705c48451b96da257011/mnt/d/berry/.pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/b8d2651e7b9133e2fe2706b415abba46cfe91049e6fbb0374b09cb694f00347a9a20afa1bfd85d15c79c22a0871f90fab3edd1590123705c48451b96da257011/mnt/d/berry/packages/berry-cli/pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/"),
         packageDependencies: new Map([
           ["chalk", "1.1.3"],
           ["joi", "13.7.0"],
@@ -1432,7 +1441,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#0.7.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/d2d1515573d97c80de3df0b9f6f0c0698c96231189b9f90a356df9503816772276dba80f9697dc6f52f6af08f8a8941076b32b0e5b57bc5eb25bf2fb87d174e7/mnt/d/berry/.pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/d2d1515573d97c80de3df0b9f6f0c0698c96231189b9f90a356df9503816772276dba80f9697dc6f52f6af08f8a8941076b32b0e5b57bc5eb25bf2fb87d174e7/mnt/d/berry/packages/berry-cli/pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/"),
         packageDependencies: new Map([
           ["chalk", "1.1.3"],
           ["joi", "13.7.0"],
@@ -1442,7 +1451,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#0.7.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/1de496762657fb637c8bff637ee63a44cb038a8ed17f68653ecc5192713c2bf4c5883a46ccb3c7724d6042840305ba3d8b48ec65c6d6d7d0188121756d8d45a1/mnt/d/berry/.pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/1de496762657fb637c8bff637ee63a44cb038a8ed17f68653ecc5192713c2bf4c5883a46ccb3c7724d6042840305ba3d8b48ec65c6d6d7d0188121756d8d45a1/mnt/d/berry/packages/berry-cli/pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/"),
         packageDependencies: new Map([
           ["chalk", "1.1.3"],
           ["joi", "13.7.0"],
@@ -1454,7 +1463,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["chalk", new Map([
       ["1.1.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/chalk-683a581d71468012.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/chalk-683a581d71468012.zip/"),
         packageDependencies: new Map([
           ["ansi-styles", "2.2.1"],
           ["escape-string-regexp", "1.0.5"],
@@ -1465,7 +1474,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["2.4.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/chalk-364548c0d4bd8a27.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/chalk-364548c0d4bd8a27.zip/"),
         packageDependencies: new Map([
           ["ansi-styles", "3.2.1"],
           ["escape-string-regexp", "1.0.5"],
@@ -1476,13 +1485,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ansi-styles", new Map([
       ["2.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ansi-styles-8563d381d06d36d2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ansi-styles-8563d381d06d36d2.zip/"),
         packageDependencies: new Map([
           ["ansi-styles", "2.2.1"],
         ]),
       }],
       ["3.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ansi-styles-4196e26164588a62.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ansi-styles-4196e26164588a62.zip/"),
         packageDependencies: new Map([
           ["color-convert", "1.9.3"],
           ["ansi-styles", "3.2.1"],
@@ -1491,7 +1500,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["escape-string-regexp", new Map([
       ["1.0.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/escape-string-regexp-5f1d658cd2249444.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/escape-string-regexp-5f1d658cd2249444.zip/"),
         packageDependencies: new Map([
           ["escape-string-regexp", "1.0.5"],
         ]),
@@ -1499,7 +1508,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["has-ansi", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/has-ansi-2ac5bbf5bf18d1ad.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/has-ansi-2ac5bbf5bf18d1ad.zip/"),
         packageDependencies: new Map([
           ["ansi-regex", "2.1.1"],
           ["has-ansi", "2.0.0"],
@@ -1508,13 +1517,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ansi-regex", new Map([
       ["2.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ansi-regex-7f2e83def7b22559.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ansi-regex-7f2e83def7b22559.zip/"),
         packageDependencies: new Map([
           ["ansi-regex", "2.1.1"],
         ]),
       }],
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ansi-regex-e11b7107b2278826.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ansi-regex-e11b7107b2278826.zip/"),
         packageDependencies: new Map([
           ["ansi-regex", "3.0.0"],
         ]),
@@ -1522,14 +1531,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["strip-ansi", new Map([
       ["3.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/strip-ansi-82c1f9dc0496358d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/strip-ansi-82c1f9dc0496358d.zip/"),
         packageDependencies: new Map([
           ["ansi-regex", "2.1.1"],
           ["strip-ansi", "3.0.1"],
         ]),
       }],
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/strip-ansi-4d74e74ba2a729f2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/strip-ansi-4d74e74ba2a729f2.zip/"),
         packageDependencies: new Map([
           ["ansi-regex", "3.0.0"],
           ["strip-ansi", "4.0.0"],
@@ -1538,13 +1547,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["supports-color", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/supports-color-af17f5f3f2071b15.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/supports-color-af17f5f3f2071b15.zip/"),
         packageDependencies: new Map([
           ["supports-color", "2.0.0"],
         ]),
       }],
       ["5.5.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/supports-color-4650158f01a27a0e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/supports-color-4650158f01a27a0e.zip/"),
         packageDependencies: new Map([
           ["has-flag", "3.0.0"],
           ["supports-color", "5.5.0"],
@@ -1553,7 +1562,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["joi", new Map([
       ["13.7.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/joi-83ba60f5fc3e763a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/joi-83ba60f5fc3e763a.zip/"),
         packageDependencies: new Map([
           ["hoek", "5.0.4"],
           ["isemail", "3.1.3"],
@@ -1564,7 +1573,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["hoek", new Map([
       ["5.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/hoek-f863495c807fb7f8.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/hoek-f863495c807fb7f8.zip/"),
         packageDependencies: new Map([
           ["hoek", "5.0.4"],
         ]),
@@ -1572,7 +1581,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["isemail", new Map([
       ["3.1.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/isemail-4deaefa9624847b4.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/isemail-4deaefa9624847b4.zip/"),
         packageDependencies: new Map([
           ["punycode", "2.1.1"],
           ["isemail", "3.1.3"],
@@ -1581,19 +1590,19 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["punycode", new Map([
       ["2.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/punycode-1aeea3895cbfae7e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/punycode-1aeea3895cbfae7e.zip/"),
         packageDependencies: new Map([
           ["punycode", "2.1.1"],
         ]),
       }],
       ["1.4.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/punycode-7533f50842fa3a7a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/punycode-7533f50842fa3a7a.zip/"),
         packageDependencies: new Map([
           ["punycode", "1.4.1"],
         ]),
       }],
       ["1.3.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/punycode-d76b944867ed1caa.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/punycode-d76b944867ed1caa.zip/"),
         packageDependencies: new Map([
           ["punycode", "1.3.2"],
         ]),
@@ -1601,7 +1610,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["topo", new Map([
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/topo-04302364458f9b6a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/topo-04302364458f9b6a.zip/"),
         packageDependencies: new Map([
           ["hoek", "5.0.4"],
           ["topo", "3.0.0"],
@@ -1610,7 +1619,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["kexec", new Map([
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/kexec-b7a6be6bf08a5eb5.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/kexec-b7a6be6bf08a5eb5.zip/"),
         packageDependencies: new Map([
           ["nan", "2.11.1"],
           ["kexec", "3.0.0"],
@@ -1619,7 +1628,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["nan", new Map([
       ["2.11.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/nan-29c4653878dcab21.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/nan-29c4653878dcab21.zip/"),
         packageDependencies: new Map([
           ["nan", "2.11.1"],
         ]),
@@ -1627,7 +1636,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["lodash", new Map([
       ["4.17.11", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/lodash-7e6e951cc82a452f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/lodash-7e6e951cc82a452f.zip/"),
         packageDependencies: new Map([
           ["lodash", "4.17.11"],
         ]),
@@ -1635,7 +1644,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["brfs", new Map([
       ["2.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/brfs-59384b3700c39b91.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/brfs-59384b3700c39b91.zip/"),
         packageDependencies: new Map([
           ["quote-stream", "1.0.2"],
           ["resolve", "1.8.1"],
@@ -1647,7 +1656,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["quote-stream", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/quote-stream-69d075b242f42c6a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/quote-stream-69d075b242f42c6a.zip/"),
         packageDependencies: new Map([
           ["buffer-equal", "0.0.1"],
           ["minimist", "1.2.0"],
@@ -1658,7 +1667,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["buffer-equal", new Map([
       ["0.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/buffer-equal-6d8a5535fbaa20b3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/buffer-equal-6d8a5535fbaa20b3.zip/"),
         packageDependencies: new Map([
           ["buffer-equal", "0.0.1"],
         ]),
@@ -1666,7 +1675,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["through2", new Map([
       ["2.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/through2-950c3a5a2c1a4970.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/through2-950c3a5a2c1a4970.zip/"),
         packageDependencies: new Map([
           ["readable-stream", "2.3.6"],
           ["xtend", "4.0.1"],
@@ -1676,7 +1685,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["readable-stream", new Map([
       ["2.3.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/readable-stream-2dd450b412215917.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/readable-stream-2dd450b412215917.zip/"),
         packageDependencies: new Map([
           ["core-util-is", "1.0.2"],
           ["inherits", "2.0.3"],
@@ -1689,7 +1698,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["2.0.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/readable-stream-4f0109da985ad2e9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/readable-stream-4f0109da985ad2e9.zip/"),
         packageDependencies: new Map([
           ["core-util-is", "1.0.2"],
           ["inherits", "2.0.3"],
@@ -1703,7 +1712,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["core-util-is", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/core-util-is-58240094e7ee3ef9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/core-util-is-58240094e7ee3ef9.zip/"),
         packageDependencies: new Map([
           ["core-util-is", "1.0.2"],
         ]),
@@ -1711,13 +1720,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["inherits", new Map([
       ["2.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/inherits-63d2ef9cae97bc08.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/inherits-63d2ef9cae97bc08.zip/"),
         packageDependencies: new Map([
           ["inherits", "2.0.3"],
         ]),
       }],
       ["2.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/inherits-93b575d37f513350.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/inherits-93b575d37f513350.zip/"),
         packageDependencies: new Map([
           ["inherits", "2.0.1"],
         ]),
@@ -1725,13 +1734,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["process-nextick-args", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/process-nextick-args-c79a0dbed5f9f733.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/process-nextick-args-c79a0dbed5f9f733.zip/"),
         packageDependencies: new Map([
           ["process-nextick-args", "2.0.0"],
         ]),
       }],
       ["1.0.7", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/process-nextick-args-750ea5030977049c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/process-nextick-args-750ea5030977049c.zip/"),
         packageDependencies: new Map([
           ["process-nextick-args", "1.0.7"],
         ]),
@@ -1739,7 +1748,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["safe-buffer", new Map([
       ["5.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/safe-buffer-4130fb37ba590882.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/safe-buffer-4130fb37ba590882.zip/"),
         packageDependencies: new Map([
           ["safe-buffer", "5.1.2"],
         ]),
@@ -1747,14 +1756,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["string_decoder", new Map([
       ["1.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/string_decoder-1a282a8e7c537d1c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/string_decoder-1a282a8e7c537d1c.zip/"),
         packageDependencies: new Map([
           ["safe-buffer", "5.1.2"],
           ["string_decoder", "1.1.1"],
         ]),
       }],
       ["0.10.31", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/string_decoder-9e1de83f5fa2a461.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/string_decoder-9e1de83f5fa2a461.zip/"),
         packageDependencies: new Map([
           ["string_decoder", "0.10.31"],
         ]),
@@ -1762,7 +1771,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["util-deprecate", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/util-deprecate-ed5c250b68e7c044.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/util-deprecate-ed5c250b68e7c044.zip/"),
         packageDependencies: new Map([
           ["util-deprecate", "1.0.2"],
         ]),
@@ -1770,7 +1779,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["xtend", new Map([
       ["4.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/xtend-7c25dea810673cef.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/xtend-7c25dea810673cef.zip/"),
         packageDependencies: new Map([
           ["xtend", "4.0.1"],
         ]),
@@ -1778,7 +1787,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["resolve", new Map([
       ["1.8.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/resolve-086872453205b3ed.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/resolve-086872453205b3ed.zip/"),
         packageDependencies: new Map([
           ["path-parse", "1.0.6"],
           ["resolve", "1.8.1"],
@@ -1787,7 +1796,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["path-parse", new Map([
       ["1.0.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/path-parse-61fb4287347cc688.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/path-parse-61fb4287347cc688.zip/"),
         packageDependencies: new Map([
           ["path-parse", "1.0.6"],
         ]),
@@ -1795,7 +1804,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["static-module", new Map([
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/static-module-1951de7cfb239ff0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/static-module-1951de7cfb239ff0.zip/"),
         packageDependencies: new Map([
           ["acorn-node", "1.6.0"],
           ["concat-stream", "1.6.2"],
@@ -1817,7 +1826,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["acorn-node", new Map([
       ["1.6.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/acorn-node-93b3b1cd55b5d618.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/acorn-node-93b3b1cd55b5d618.zip/"),
         packageDependencies: new Map([
           ["acorn-walk", "6.1.0"],
           ["acorn", "6.0.2"],
@@ -1828,7 +1837,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["acorn-walk", new Map([
       ["6.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/acorn-walk-9ee3748f9dc866f4.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/acorn-walk-9ee3748f9dc866f4.zip/"),
         packageDependencies: new Map([
           ["acorn-walk", "6.1.0"],
         ]),
@@ -1836,13 +1845,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["acorn", new Map([
       ["6.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/acorn-80bd2694bd160b61.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/acorn-80bd2694bd160b61.zip/"),
         packageDependencies: new Map([
           ["acorn", "6.0.2"],
         ]),
       }],
       ["5.7.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/acorn-ca34533c3b0bb287.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/acorn-ca34533c3b0bb287.zip/"),
         packageDependencies: new Map([
           ["acorn", "5.7.3"],
         ]),
@@ -1850,7 +1859,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["concat-stream", new Map([
       ["1.6.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/concat-stream-61d9aba6b2a6a81c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/concat-stream-61d9aba6b2a6a81c.zip/"),
         packageDependencies: new Map([
           ["buffer-from", "1.1.1"],
           ["inherits", "2.0.3"],
@@ -1862,7 +1871,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["typedarray", new Map([
       ["0.0.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/typedarray-7c945448dce4114e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/typedarray-7c945448dce4114e.zip/"),
         packageDependencies: new Map([
           ["typedarray", "0.0.6"],
         ]),
@@ -1870,7 +1879,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["convert-source-map", new Map([
       ["1.6.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/convert-source-map-67d7f39daea49c04.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/convert-source-map-67d7f39daea49c04.zip/"),
         packageDependencies: new Map([
           ["safe-buffer", "5.1.2"],
           ["convert-source-map", "1.6.0"],
@@ -1879,7 +1888,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["duplexer2", new Map([
       ["0.1.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/duplexer2-22482c2e3bd02554.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/duplexer2-22482c2e3bd02554.zip/"),
         packageDependencies: new Map([
           ["readable-stream", "2.3.6"],
           ["duplexer2", "0.1.4"],
@@ -1888,7 +1897,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["escodegen", new Map([
       ["1.9.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/escodegen-5145be70ff120cdc.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/escodegen-5145be70ff120cdc.zip/"),
         packageDependencies: new Map([
           ["esprima", "3.1.3"],
           ["estraverse", "4.2.0"],
@@ -1901,7 +1910,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["esprima", new Map([
       ["3.1.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/esprima-5f41440d97c3da21.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/esprima-5f41440d97c3da21.zip/"),
         packageDependencies: new Map([
           ["esprima", "3.1.3"],
         ]),
@@ -1909,7 +1918,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["estraverse", new Map([
       ["4.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/estraverse-2f378e3ee3009623.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/estraverse-2f378e3ee3009623.zip/"),
         packageDependencies: new Map([
           ["estraverse", "4.2.0"],
         ]),
@@ -1917,7 +1926,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["esutils", new Map([
       ["2.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/esutils-f7772d6c17cdc5ef.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/esutils-f7772d6c17cdc5ef.zip/"),
         packageDependencies: new Map([
           ["esutils", "2.0.2"],
         ]),
@@ -1925,7 +1934,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["optionator", new Map([
       ["0.8.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/optionator-96eed7c745d7bc53.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/optionator-96eed7c745d7bc53.zip/"),
         packageDependencies: new Map([
           ["deep-is", "0.1.3"],
           ["fast-levenshtein", "2.0.6"],
@@ -1939,7 +1948,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["deep-is", new Map([
       ["0.1.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/deep-is-625b36877314d709.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/deep-is-625b36877314d709.zip/"),
         packageDependencies: new Map([
           ["deep-is", "0.1.3"],
         ]),
@@ -1947,7 +1956,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["fast-levenshtein", new Map([
       ["2.0.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/fast-levenshtein-d3df76d3a6cc0cb3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/fast-levenshtein-d3df76d3a6cc0cb3.zip/"),
         packageDependencies: new Map([
           ["fast-levenshtein", "2.0.6"],
         ]),
@@ -1955,7 +1964,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["levn", new Map([
       ["0.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/levn-9ef24fd51373c7b1.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/levn-9ef24fd51373c7b1.zip/"),
         packageDependencies: new Map([
           ["prelude-ls", "1.1.2"],
           ["type-check", "0.3.2"],
@@ -1965,7 +1974,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["prelude-ls", new Map([
       ["1.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/prelude-ls-98f1e48187a516b8.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/prelude-ls-98f1e48187a516b8.zip/"),
         packageDependencies: new Map([
           ["prelude-ls", "1.1.2"],
         ]),
@@ -1973,7 +1982,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["type-check", new Map([
       ["0.3.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/type-check-64ccb9b361752c50.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/type-check-64ccb9b361752c50.zip/"),
         packageDependencies: new Map([
           ["prelude-ls", "1.1.2"],
           ["type-check", "0.3.2"],
@@ -1982,7 +1991,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["wordwrap", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/wordwrap-70a5c60e64180322.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/wordwrap-70a5c60e64180322.zip/"),
         packageDependencies: new Map([
           ["wordwrap", "1.0.0"],
         ]),
@@ -1990,7 +1999,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["has", new Map([
       ["1.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/has-510b95dda2e38d41.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/has-510b95dda2e38d41.zip/"),
         packageDependencies: new Map([
           ["function-bind", "1.1.1"],
           ["has", "1.0.3"],
@@ -1999,7 +2008,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["function-bind", new Map([
       ["1.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/function-bind-471be874677e3fd3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/function-bind-471be874677e3fd3.zip/"),
         packageDependencies: new Map([
           ["function-bind", "1.1.1"],
         ]),
@@ -2007,7 +2016,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["magic-string", new Map([
       ["0.22.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/magic-string-55da275043558a4d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/magic-string-55da275043558a4d.zip/"),
         packageDependencies: new Map([
           ["vlq", "0.2.3"],
           ["magic-string", "0.22.5"],
@@ -2016,7 +2025,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["vlq", new Map([
       ["0.2.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/vlq-ef5a6e12e812128d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/vlq-ef5a6e12e812128d.zip/"),
         packageDependencies: new Map([
           ["vlq", "0.2.3"],
         ]),
@@ -2024,7 +2033,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["merge-source-map", new Map([
       ["1.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/merge-source-map-0c5aa04d91cf2039.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/merge-source-map-0c5aa04d91cf2039.zip/"),
         packageDependencies: new Map([
           ["source-map", "0.5.7"],
           ["merge-source-map", "1.0.4"],
@@ -2033,7 +2042,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["object-inspect", new Map([
       ["1.4.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/object-inspect-df1013ea9f520226.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/object-inspect-df1013ea9f520226.zip/"),
         packageDependencies: new Map([
           ["object-inspect", "1.4.1"],
         ]),
@@ -2041,7 +2050,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["scope-analyzer", new Map([
       ["2.0.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/scope-analyzer-46751afcb0bdc4ab.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/scope-analyzer-46751afcb0bdc4ab.zip/"),
         packageDependencies: new Map([
           ["array-from", "2.1.1"],
           ["es6-map", "0.1.5"],
@@ -2055,7 +2064,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["array-from", new Map([
       ["2.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/array-from-90aebb59ad34d656.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/array-from-90aebb59ad34d656.zip/"),
         packageDependencies: new Map([
           ["array-from", "2.1.1"],
         ]),
@@ -2063,7 +2072,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["es6-map", new Map([
       ["0.1.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/es6-map-a88f3545d23e07dc.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/es6-map-a88f3545d23e07dc.zip/"),
         packageDependencies: new Map([
           ["d", "1.0.0"],
           ["es5-ext", "0.10.46"],
@@ -2077,7 +2086,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["d", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/d-f1e5ebe0eab84170.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/d-f1e5ebe0eab84170.zip/"),
         packageDependencies: new Map([
           ["es5-ext", "0.10.46"],
           ["d", "1.0.0"],
@@ -2086,7 +2095,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["es5-ext", new Map([
       ["0.10.46", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/es5-ext-beb9d676d0753a29.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/es5-ext-beb9d676d0753a29.zip/"),
         packageDependencies: new Map([
           ["es6-iterator", "2.0.3"],
           ["es6-symbol", "3.1.1"],
@@ -2097,7 +2106,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["es6-iterator", new Map([
       ["2.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/es6-iterator-009f413a36204ccc.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/es6-iterator-009f413a36204ccc.zip/"),
         packageDependencies: new Map([
           ["d", "1.0.0"],
           ["es5-ext", "0.10.46"],
@@ -2108,7 +2117,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["es6-symbol", new Map([
       ["3.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/es6-symbol-0dcd886cf79ab0c5.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/es6-symbol-0dcd886cf79ab0c5.zip/"),
         packageDependencies: new Map([
           ["d", "1.0.0"],
           ["es5-ext", "0.10.46"],
@@ -2118,7 +2127,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["next-tick", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/next-tick-0d5cf6a57d203aef.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/next-tick-0d5cf6a57d203aef.zip/"),
         packageDependencies: new Map([
           ["next-tick", "1.0.0"],
         ]),
@@ -2126,7 +2135,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["es6-set", new Map([
       ["0.1.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/es6-set-e2f0bb9478d4c706.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/es6-set-e2f0bb9478d4c706.zip/"),
         packageDependencies: new Map([
           ["d", "1.0.0"],
           ["es5-ext", "0.10.46"],
@@ -2139,7 +2148,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["event-emitter", new Map([
       ["0.3.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/event-emitter-e7b0f0b3cf80e131.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/event-emitter-e7b0f0b3cf80e131.zip/"),
         packageDependencies: new Map([
           ["d", "1.0.0"],
           ["es5-ext", "0.10.46"],
@@ -2149,7 +2158,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["estree-is-function", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/estree-is-function-5441d5ca7fa8815e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/estree-is-function-5441d5ca7fa8815e.zip/"),
         packageDependencies: new Map([
           ["estree-is-function", "1.0.0"],
         ]),
@@ -2157,7 +2166,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["get-assigned-identifiers", new Map([
       ["1.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/get-assigned-identifiers-e22c011255b2b2b8.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/get-assigned-identifiers-e22c011255b2b2b8.zip/"),
         packageDependencies: new Map([
           ["get-assigned-identifiers", "1.2.0"],
         ]),
@@ -2165,7 +2174,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["shallow-copy", new Map([
       ["0.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/shallow-copy-64e60cf248e2b24c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/shallow-copy-64e60cf248e2b24c.zip/"),
         packageDependencies: new Map([
           ["shallow-copy", "0.0.1"],
         ]),
@@ -2173,7 +2182,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["static-eval", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/static-eval-fbe5095513a55094.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/static-eval-fbe5095513a55094.zip/"),
         packageDependencies: new Map([
           ["escodegen", "1.9.1"],
           ["static-eval", "2.0.0"],
@@ -2182,7 +2191,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["buffer-loader", new Map([
       ["0.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/buffer-loader-8cc67608f95b6532.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/buffer-loader-8cc67608f95b6532.zip/"),
         packageDependencies: new Map([
           ["buffer-loader", "0.1.0"],
         ]),
@@ -2190,7 +2199,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["pnp-webpack-plugin", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pnp-webpack-plugin-174972530913bdd4.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pnp-webpack-plugin-174972530913bdd4.zip/"),
         packageDependencies: new Map([
           ["pnp-webpack-plugin", "1.1.0"],
         ]),
@@ -2198,7 +2207,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["raw-loader", new Map([
       ["0.5.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/raw-loader-0b4771c12e9ddd9c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/raw-loader-0b4771c12e9ddd9c.zip/"),
         packageDependencies: new Map([
           ["raw-loader", "0.5.1"],
         ]),
@@ -2206,7 +2215,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["transform-loader", new Map([
       ["0.2.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/transform-loader-1487ba46901dfa42.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/transform-loader-1487ba46901dfa42.zip/"),
         packageDependencies: new Map([
           ["loader-utils", "1.1.0"],
           ["transform-loader", "0.2.4"],
@@ -2215,7 +2224,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["loader-utils", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/loader-utils-ffc489e806ca212c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/loader-utils-ffc489e806ca212c.zip/"),
         packageDependencies: new Map([
           ["big.js", "3.2.0"],
           ["emojis-list", "2.1.0"],
@@ -2226,7 +2235,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["big.js", new Map([
       ["3.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/big.js-821b6e03134c6b08.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/big.js-821b6e03134c6b08.zip/"),
         packageDependencies: new Map([
           ["big.js", "3.2.0"],
         ]),
@@ -2234,7 +2243,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["emojis-list", new Map([
       ["2.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/emojis-list-e75e39fc693ccc0a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/emojis-list-e75e39fc693ccc0a.zip/"),
         packageDependencies: new Map([
           ["emojis-list", "2.1.0"],
         ]),
@@ -2242,7 +2251,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["json5", new Map([
       ["0.5.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/json5-07d0953b92b5661b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/json5-07d0953b92b5661b.zip/"),
         packageDependencies: new Map([
           ["json5", "0.5.1"],
         ]),
@@ -2250,7 +2259,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ts-loader", new Map([
       ["virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/b5de53e72da24a82548ac1ddae96774232b2d51a998ecdd01480eedabab6a2b89510f8b689d18e0a7ecac42596b1de456012fbe32f858978b93411ef8ebd1b25/mnt/d/berry/.pnp/cache/ts-loader-2b12e588384a460f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/b5de53e72da24a82548ac1ddae96774232b2d51a998ecdd01480eedabab6a2b89510f8b689d18e0a7ecac42596b1de456012fbe32f858978b93411ef8ebd1b25/mnt/d/berry/packages/berry-cli/pnp/cache/ts-loader-2b12e588384a460f.zip/"),
         packageDependencies: new Map([
           ["chalk", "2.4.1"],
           ["enhanced-resolve", "4.1.0"],
@@ -2262,7 +2271,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/92ae3993bd41dc19726e66e87f0382975bd60e0a6cc0a7187246288035e7d03f5d790ac4414d2c54abdc3a092351f10a8d52d7870d804dba4e4383376fb78847/mnt/d/berry/.pnp/cache/ts-loader-2b12e588384a460f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/92ae3993bd41dc19726e66e87f0382975bd60e0a6cc0a7187246288035e7d03f5d790ac4414d2c54abdc3a092351f10a8d52d7870d804dba4e4383376fb78847/mnt/d/berry/packages/berry-cli/pnp/cache/ts-loader-2b12e588384a460f.zip/"),
         packageDependencies: new Map([
           ["chalk", "2.4.1"],
           ["enhanced-resolve", "4.1.0"],
@@ -2274,7 +2283,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#5.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/fa7212079fbc792362b50ea0d47807f301192d3ad2eda64d8d4c6cbb7397d9f6d97f6a9ee5ec35a9f52768a61208e92541d0de05820bd1b986c074887c6da7ed/mnt/d/berry/.pnp/cache/ts-loader-2b12e588384a460f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/fa7212079fbc792362b50ea0d47807f301192d3ad2eda64d8d4c6cbb7397d9f6d97f6a9ee5ec35a9f52768a61208e92541d0de05820bd1b986c074887c6da7ed/mnt/d/berry/packages/berry-cli/pnp/cache/ts-loader-2b12e588384a460f.zip/"),
         packageDependencies: new Map([
           ["chalk", "2.4.1"],
           ["enhanced-resolve", "4.1.0"],
@@ -2288,7 +2297,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["color-convert", new Map([
       ["1.9.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/color-convert-20f9e6db84df6826.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/color-convert-20f9e6db84df6826.zip/"),
         packageDependencies: new Map([
           ["color-name", "1.1.3"],
           ["color-convert", "1.9.3"],
@@ -2297,7 +2306,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["color-name", new Map([
       ["1.1.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/color-name-c3c9c8e4ab57dd23.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/color-name-c3c9c8e4ab57dd23.zip/"),
         packageDependencies: new Map([
           ["color-name", "1.1.3"],
         ]),
@@ -2305,7 +2314,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["has-flag", new Map([
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/has-flag-fc58d7df8f3cdecf.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/has-flag-fc58d7df8f3cdecf.zip/"),
         packageDependencies: new Map([
           ["has-flag", "3.0.0"],
         ]),
@@ -2313,7 +2322,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["enhanced-resolve", new Map([
       ["4.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/enhanced-resolve-ca7a96950f48c9e7.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/enhanced-resolve-ca7a96950f48c9e7.zip/"),
         packageDependencies: new Map([
           ["graceful-fs", "4.1.11"],
           ["memory-fs", "0.4.1"],
@@ -2324,7 +2333,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["graceful-fs", new Map([
       ["4.1.11", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/graceful-fs-2bd74007ff5b7366.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/graceful-fs-2bd74007ff5b7366.zip/"),
         packageDependencies: new Map([
           ["graceful-fs", "4.1.11"],
         ]),
@@ -2332,7 +2341,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["memory-fs", new Map([
       ["0.4.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/memory-fs-5a0441721a664bc1.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/memory-fs-5a0441721a664bc1.zip/"),
         packageDependencies: new Map([
           ["errno", "0.1.7"],
           ["readable-stream", "2.0.6"],
@@ -2342,7 +2351,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["errno", new Map([
       ["0.1.7", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/errno-fc0bd07871694338.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/errno-fc0bd07871694338.zip/"),
         packageDependencies: new Map([
           ["prr", "1.0.1"],
           ["errno", "0.1.7"],
@@ -2351,7 +2360,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["prr", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/prr-dbaa25a063578c29.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/prr-dbaa25a063578c29.zip/"),
         packageDependencies: new Map([
           ["prr", "1.0.1"],
         ]),
@@ -2359,7 +2368,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["tapable", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/tapable-96953c122050a98c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/tapable-96953c122050a98c.zip/"),
         packageDependencies: new Map([
           ["tapable", "1.1.0"],
         ]),
@@ -2367,7 +2376,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["semver", new Map([
       ["5.6.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/semver-b1e7d603bfbadf08.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/semver-b1e7d603bfbadf08.zip/"),
         packageDependencies: new Map([
           ["semver", "5.6.0"],
         ]),
@@ -2375,7 +2384,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["typescript", new Map([
       ["3.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/typescript-5f08acaf6c59a928.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/typescript-5f08acaf6c59a928.zip/"),
         packageDependencies: new Map([
           ["typescript", "3.1.2"],
         ]),
@@ -2383,7 +2392,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["val-loader", new Map([
       ["virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#1.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/00afd7f7089aec7c6d6f20506dc33671d477fca0bf63b21d475ea95b6267f0944ee0cd94081daee253b9ee870367bbad339ff2085195ef5f5ae6fb3c2d952ad5/mnt/d/berry/.pnp/cache/val-loader-416a0aa649ec3d55.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/00afd7f7089aec7c6d6f20506dc33671d477fca0bf63b21d475ea95b6267f0944ee0cd94081daee253b9ee870367bbad339ff2085195ef5f5ae6fb3c2d952ad5/mnt/d/berry/packages/berry-cli/pnp/cache/val-loader-416a0aa649ec3d55.zip/"),
         packageDependencies: new Map([
           ["loader-utils", "1.1.0"],
           ["schema-utils", "0.4.7"],
@@ -2392,7 +2401,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#1.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/e111a433edecbf31d9e1fc66b9464e77d7279f1e9ae9b95c33b4cdb8837693edb4db2a618804eddd96f6822d9195797b77c1f91ae9478a13a546f76ee7c81bff/mnt/d/berry/.pnp/cache/val-loader-416a0aa649ec3d55.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/e111a433edecbf31d9e1fc66b9464e77d7279f1e9ae9b95c33b4cdb8837693edb4db2a618804eddd96f6822d9195797b77c1f91ae9478a13a546f76ee7c81bff/mnt/d/berry/packages/berry-cli/pnp/cache/val-loader-416a0aa649ec3d55.zip/"),
         packageDependencies: new Map([
           ["loader-utils", "1.1.0"],
           ["schema-utils", "0.4.7"],
@@ -2403,7 +2412,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["schema-utils", new Map([
       ["0.4.7", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/schema-utils-cf0ac4604518a958.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/schema-utils-cf0ac4604518a958.zip/"),
         packageDependencies: new Map([
           ["ajv-keywords", "virtual:b280b9fcddbd791f8bf76b36e6e7578db505457dfded8c84282cf7f2e51ef7fb0519becc414f9d62779735c3f7744f2500c4b023cabbeab6458e122d75cf07c3#3.2.0"],
           ["ajv", "6.5.4"],
@@ -2413,14 +2422,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ajv-keywords", new Map([
       ["virtual:b280b9fcddbd791f8bf76b36e6e7578db505457dfded8c84282cf7f2e51ef7fb0519becc414f9d62779735c3f7744f2500c4b023cabbeab6458e122d75cf07c3#3.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/91c9e2282eca01314cd7cd8e691ad9d3da9f1e3cfc9d79353799053fee26006c97b8e86210c4b74d4bbc0da7d1db843fb4a627067aec895a08653f2e87a2e80d/mnt/d/berry/.pnp/cache/ajv-keywords-17419045e912eca5.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/91c9e2282eca01314cd7cd8e691ad9d3da9f1e3cfc9d79353799053fee26006c97b8e86210c4b74d4bbc0da7d1db843fb4a627067aec895a08653f2e87a2e80d/mnt/d/berry/packages/berry-cli/pnp/cache/ajv-keywords-17419045e912eca5.zip/"),
         packageDependencies: new Map([
           ["ajv", "6.5.4"],
           ["ajv-keywords", "virtual:b280b9fcddbd791f8bf76b36e6e7578db505457dfded8c84282cf7f2e51ef7fb0519becc414f9d62779735c3f7744f2500c4b023cabbeab6458e122d75cf07c3#3.2.0"],
         ]),
       }],
       ["virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#3.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/16efa963afcaf148cd585e5794e92b4cd48d505d1267134b2cf0681674266e1cb7ae362a76367959163708e72285494b5a075184b3689def58845e772ee0d9ef/mnt/d/berry/.pnp/cache/ajv-keywords-17419045e912eca5.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/16efa963afcaf148cd585e5794e92b4cd48d505d1267134b2cf0681674266e1cb7ae362a76367959163708e72285494b5a075184b3689def58845e772ee0d9ef/mnt/d/berry/packages/berry-cli/pnp/cache/ajv-keywords-17419045e912eca5.zip/"),
         packageDependencies: new Map([
           ["ajv", "6.5.4"],
           ["ajv-keywords", "virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#3.2.0"],
@@ -2429,7 +2438,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ajv", new Map([
       ["6.5.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ajv-f0610499d26d6d2e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ajv-f0610499d26d6d2e.zip/"),
         packageDependencies: new Map([
           ["fast-deep-equal", "2.0.1"],
           ["fast-json-stable-stringify", "2.0.0"],
@@ -2441,7 +2450,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["fast-deep-equal", new Map([
       ["2.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/fast-deep-equal-28201e80ccde80f0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/fast-deep-equal-28201e80ccde80f0.zip/"),
         packageDependencies: new Map([
           ["fast-deep-equal", "2.0.1"],
         ]),
@@ -2449,7 +2458,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["fast-json-stable-stringify", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/fast-json-stable-stringify-a7b6dc4bc08b3504.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/fast-json-stable-stringify-a7b6dc4bc08b3504.zip/"),
         packageDependencies: new Map([
           ["fast-json-stable-stringify", "2.0.0"],
         ]),
@@ -2457,7 +2466,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["json-schema-traverse", new Map([
       ["0.4.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/json-schema-traverse-1d4fc2ff87892168.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/json-schema-traverse-1d4fc2ff87892168.zip/"),
         packageDependencies: new Map([
           ["json-schema-traverse", "0.4.1"],
         ]),
@@ -2465,7 +2474,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["uri-js", new Map([
       ["4.2.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/uri-js-6c208df8b4c4033b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/uri-js-6c208df8b4c4033b.zip/"),
         packageDependencies: new Map([
           ["punycode", "2.1.1"],
           ["uri-js", "4.2.2"],
@@ -2474,7 +2483,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["webpack", new Map([
       ["4.20.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/webpack-327979206597a945.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/webpack-327979206597a945.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/ast", "1.7.8"],
           ["@webassemblyjs/helper-module-context", "1.7.8"],
@@ -2506,7 +2515,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/ast", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-ast-b497bdd4fe7a4e11.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-ast-b497bdd4fe7a4e11.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/helper-module-context", "1.7.8"],
           ["@webassemblyjs/helper-wasm-bytecode", "1.7.8"],
@@ -2517,7 +2526,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/helper-module-context", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-helper-module-context-e25cf5dbe363ff22.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-helper-module-context-e25cf5dbe363ff22.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/helper-module-context", "1.7.8"],
         ]),
@@ -2525,7 +2534,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/helper-wasm-bytecode", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-helper-wasm-bytecode-65e12de9e180b872.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-helper-wasm-bytecode-65e12de9e180b872.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/helper-wasm-bytecode", "1.7.8"],
         ]),
@@ -2533,7 +2542,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/wast-parser", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-wast-parser-b83dcab9dd1cb685.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-wast-parser-b83dcab9dd1cb685.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/ast", "1.7.8"],
           ["@webassemblyjs/floating-point-hex-parser", "1.7.8"],
@@ -2547,7 +2556,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/floating-point-hex-parser", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-floating-point-hex-parser-c6f4165166b428f0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-floating-point-hex-parser-c6f4165166b428f0.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/floating-point-hex-parser", "1.7.8"],
         ]),
@@ -2555,7 +2564,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/helper-api-error", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-helper-api-error-bc39524673b0565d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-helper-api-error-bc39524673b0565d.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/helper-api-error", "1.7.8"],
         ]),
@@ -2563,7 +2572,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/helper-code-frame", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-helper-code-frame-5d19a3c435ee9d01.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-helper-code-frame-5d19a3c435ee9d01.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/wast-printer", "1.7.8"],
           ["@webassemblyjs/helper-code-frame", "1.7.8"],
@@ -2572,7 +2581,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/wast-printer", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-wast-printer-07dd806df30048b2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-wast-printer-07dd806df30048b2.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/ast", "1.7.8"],
           ["@webassemblyjs/wast-parser", "1.7.8"],
@@ -2583,7 +2592,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@xtuc/long", new Map([
       ["4.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@xtuc-long-768310435c732f5b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@xtuc-long-768310435c732f5b.zip/"),
         packageDependencies: new Map([
           ["@xtuc/long", "4.2.1"],
         ]),
@@ -2591,7 +2600,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/helper-fsm", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-helper-fsm-380dcb5984f231d8.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-helper-fsm-380dcb5984f231d8.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/helper-fsm", "1.7.8"],
         ]),
@@ -2599,7 +2608,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/wasm-edit", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-wasm-edit-7b4c2bc00620e68c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-wasm-edit-7b4c2bc00620e68c.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/ast", "1.7.8"],
           ["@webassemblyjs/helper-buffer", "1.7.8"],
@@ -2615,7 +2624,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/helper-buffer", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-helper-buffer-27557fb7bbb78daf.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-helper-buffer-27557fb7bbb78daf.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/helper-buffer", "1.7.8"],
         ]),
@@ -2623,7 +2632,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/helper-wasm-section", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-helper-wasm-section-9926dc49379f058a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-helper-wasm-section-9926dc49379f058a.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/ast", "1.7.8"],
           ["@webassemblyjs/helper-buffer", "1.7.8"],
@@ -2635,7 +2644,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/wasm-gen", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-wasm-gen-e75b26e49e6523d0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-wasm-gen-e75b26e49e6523d0.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/ast", "1.7.8"],
           ["@webassemblyjs/helper-wasm-bytecode", "1.7.8"],
@@ -2648,7 +2657,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/ieee754", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-ieee754-b7058623a3a3ef53.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-ieee754-b7058623a3a3ef53.zip/"),
         packageDependencies: new Map([
           ["@xtuc/ieee754", "1.2.0"],
           ["@webassemblyjs/ieee754", "1.7.8"],
@@ -2657,7 +2666,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@xtuc/ieee754", new Map([
       ["1.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@xtuc-ieee754-9d2c8f009209423d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@xtuc-ieee754-9d2c8f009209423d.zip/"),
         packageDependencies: new Map([
           ["@xtuc/ieee754", "1.2.0"],
         ]),
@@ -2665,7 +2674,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/leb128", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-leb128-5fb6b41f5ee1e31c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-leb128-5fb6b41f5ee1e31c.zip/"),
         packageDependencies: new Map([
           ["@xtuc/long", "4.2.1"],
           ["@webassemblyjs/leb128", "1.7.8"],
@@ -2674,7 +2683,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/utf8", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-utf8-7bc01d904ff08458.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-utf8-7bc01d904ff08458.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/utf8", "1.7.8"],
         ]),
@@ -2682,7 +2691,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/wasm-opt", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-wasm-opt-865f31f31c26c9d5.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-wasm-opt-865f31f31c26c9d5.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/ast", "1.7.8"],
           ["@webassemblyjs/helper-buffer", "1.7.8"],
@@ -2694,7 +2703,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@webassemblyjs/wasm-parser", new Map([
       ["1.7.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@webassemblyjs-wasm-parser-cd9e492dd3c34434.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@webassemblyjs-wasm-parser-cd9e492dd3c34434.zip/"),
         packageDependencies: new Map([
           ["@webassemblyjs/ast", "1.7.8"],
           ["@webassemblyjs/helper-api-error", "1.7.8"],
@@ -2708,7 +2717,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["acorn-dynamic-import", new Map([
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/acorn-dynamic-import-eecbbad55368b8ad.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/acorn-dynamic-import-eecbbad55368b8ad.zip/"),
         packageDependencies: new Map([
           ["acorn", "5.7.3"],
           ["acorn-dynamic-import", "3.0.0"],
@@ -2717,7 +2726,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["chrome-trace-event", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/chrome-trace-event-dcabbce8e23a1f6f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/chrome-trace-event-dcabbce8e23a1f6f.zip/"),
         packageDependencies: new Map([
           ["tslib", "1.9.3"],
           ["chrome-trace-event", "1.0.0"],
@@ -2726,7 +2735,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["tslib", new Map([
       ["1.9.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/tslib-e3dbf6044f68638e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/tslib-e3dbf6044f68638e.zip/"),
         packageDependencies: new Map([
           ["tslib", "1.9.3"],
         ]),
@@ -2734,7 +2743,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["eslint-scope", new Map([
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/eslint-scope-903ac1641e3cc539.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/eslint-scope-903ac1641e3cc539.zip/"),
         packageDependencies: new Map([
           ["esrecurse", "4.2.1"],
           ["estraverse", "4.2.0"],
@@ -2744,7 +2753,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["esrecurse", new Map([
       ["4.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/esrecurse-7b169284f5aff3c6.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/esrecurse-7b169284f5aff3c6.zip/"),
         packageDependencies: new Map([
           ["estraverse", "4.2.0"],
           ["esrecurse", "4.2.1"],
@@ -2753,7 +2762,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["json-parse-better-errors", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/json-parse-better-errors-231cb0742055bdbf.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/json-parse-better-errors-231cb0742055bdbf.zip/"),
         packageDependencies: new Map([
           ["json-parse-better-errors", "1.0.2"],
         ]),
@@ -2761,7 +2770,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["loader-runner", new Map([
       ["2.3.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/loader-runner-ca325b16831984a9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/loader-runner-ca325b16831984a9.zip/"),
         packageDependencies: new Map([
           ["loader-runner", "2.3.1"],
         ]),
@@ -2769,7 +2778,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["neo-async", new Map([
       ["2.5.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/neo-async-ad51cef41912fa22.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/neo-async-ad51cef41912fa22.zip/"),
         packageDependencies: new Map([
           ["neo-async", "2.5.2"],
         ]),
@@ -2777,7 +2786,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["node-libs-browser", new Map([
       ["2.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/node-libs-browser-80ada6900812b021.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/node-libs-browser-80ada6900812b021.zip/"),
         packageDependencies: new Map([
           ["assert", "1.4.1"],
           ["browserify-zlib", "0.2.0"],
@@ -2808,7 +2817,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["assert", new Map([
       ["1.4.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/assert-07817c664f49df85.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/assert-07817c664f49df85.zip/"),
         packageDependencies: new Map([
           ["util", "0.10.3"],
           ["assert", "1.4.1"],
@@ -2817,14 +2826,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["util", new Map([
       ["0.10.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/util-0600261792c54458.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/util-0600261792c54458.zip/"),
         packageDependencies: new Map([
           ["inherits", "2.0.1"],
           ["util", "0.10.3"],
         ]),
       }],
       ["0.10.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/util-6310467a9aaeac3f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/util-6310467a9aaeac3f.zip/"),
         packageDependencies: new Map([
           ["inherits", "2.0.3"],
           ["util", "0.10.4"],
@@ -2833,7 +2842,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["browserify-zlib", new Map([
       ["0.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/browserify-zlib-012cf064bce47cc2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/browserify-zlib-012cf064bce47cc2.zip/"),
         packageDependencies: new Map([
           ["pako", "1.0.6"],
           ["browserify-zlib", "0.2.0"],
@@ -2842,7 +2851,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["pako", new Map([
       ["1.0.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pako-0cd47765efa4a0a2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pako-0cd47765efa4a0a2.zip/"),
         packageDependencies: new Map([
           ["pako", "1.0.6"],
         ]),
@@ -2850,7 +2859,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["buffer", new Map([
       ["4.9.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/buffer-9ae9b1d6abd9b781.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/buffer-9ae9b1d6abd9b781.zip/"),
         packageDependencies: new Map([
           ["base64-js", "1.3.0"],
           ["ieee754", "1.1.12"],
@@ -2861,7 +2870,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["base64-js", new Map([
       ["1.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/base64-js-834b6d9f022f721d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/base64-js-834b6d9f022f721d.zip/"),
         packageDependencies: new Map([
           ["base64-js", "1.3.0"],
         ]),
@@ -2869,7 +2878,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ieee754", new Map([
       ["1.1.12", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ieee754-605bcac1c7b4ea94.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ieee754-605bcac1c7b4ea94.zip/"),
         packageDependencies: new Map([
           ["ieee754", "1.1.12"],
         ]),
@@ -2877,7 +2886,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["console-browserify", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/console-browserify-f11465a7acf9b18a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/console-browserify-f11465a7acf9b18a.zip/"),
         packageDependencies: new Map([
           ["date-now", "0.1.4"],
           ["console-browserify", "1.1.0"],
@@ -2886,7 +2895,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["date-now", new Map([
       ["0.1.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/date-now-58d46662287dc09c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/date-now-58d46662287dc09c.zip/"),
         packageDependencies: new Map([
           ["date-now", "0.1.4"],
         ]),
@@ -2894,7 +2903,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["constants-browserify", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/constants-browserify-a9332637f17e6f2a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/constants-browserify-a9332637f17e6f2a.zip/"),
         packageDependencies: new Map([
           ["constants-browserify", "1.0.0"],
         ]),
@@ -2902,7 +2911,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["crypto-browserify", new Map([
       ["3.12.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/crypto-browserify-0946ad703e17b43a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/crypto-browserify-0946ad703e17b43a.zip/"),
         packageDependencies: new Map([
           ["browserify-cipher", "1.0.1"],
           ["browserify-sign", "4.0.4"],
@@ -2921,7 +2930,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["browserify-cipher", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/browserify-cipher-2cdec5575b88da75.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/browserify-cipher-2cdec5575b88da75.zip/"),
         packageDependencies: new Map([
           ["browserify-aes", "1.2.0"],
           ["browserify-des", "1.0.2"],
@@ -2932,7 +2941,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["browserify-aes", new Map([
       ["1.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/browserify-aes-addac2367ba24b0a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/browserify-aes-addac2367ba24b0a.zip/"),
         packageDependencies: new Map([
           ["buffer-xor", "1.0.3"],
           ["cipher-base", "1.0.4"],
@@ -2946,7 +2955,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["buffer-xor", new Map([
       ["1.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/buffer-xor-fa05c090222d257b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/buffer-xor-fa05c090222d257b.zip/"),
         packageDependencies: new Map([
           ["buffer-xor", "1.0.3"],
         ]),
@@ -2954,7 +2963,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["cipher-base", new Map([
       ["1.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/cipher-base-462875dcb9d878cd.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/cipher-base-462875dcb9d878cd.zip/"),
         packageDependencies: new Map([
           ["inherits", "2.0.3"],
           ["safe-buffer", "5.1.2"],
@@ -2964,7 +2973,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["create-hash", new Map([
       ["1.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/create-hash-d61a3ea52b6eaeee.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/create-hash-d61a3ea52b6eaeee.zip/"),
         packageDependencies: new Map([
           ["cipher-base", "1.0.4"],
           ["inherits", "2.0.3"],
@@ -2977,7 +2986,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["md5.js", new Map([
       ["1.3.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/md5.js-077e842cb6171981.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/md5.js-077e842cb6171981.zip/"),
         packageDependencies: new Map([
           ["hash-base", "3.0.4"],
           ["inherits", "2.0.3"],
@@ -2988,7 +2997,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["hash-base", new Map([
       ["3.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/hash-base-c28835685b274f81.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/hash-base-c28835685b274f81.zip/"),
         packageDependencies: new Map([
           ["inherits", "2.0.3"],
           ["safe-buffer", "5.1.2"],
@@ -2998,7 +3007,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ripemd160", new Map([
       ["2.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ripemd160-b5d8187517c0bc78.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ripemd160-b5d8187517c0bc78.zip/"),
         packageDependencies: new Map([
           ["hash-base", "3.0.4"],
           ["inherits", "2.0.3"],
@@ -3008,7 +3017,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["sha.js", new Map([
       ["2.4.11", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/sha.js-9506d8eee0ff3a6a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/sha.js-9506d8eee0ff3a6a.zip/"),
         packageDependencies: new Map([
           ["inherits", "2.0.3"],
           ["safe-buffer", "5.1.2"],
@@ -3018,7 +3027,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["evp_bytestokey", new Map([
       ["1.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/evp_bytestokey-23a40f5dba97b04c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/evp_bytestokey-23a40f5dba97b04c.zip/"),
         packageDependencies: new Map([
           ["md5.js", "1.3.5"],
           ["safe-buffer", "5.1.2"],
@@ -3028,7 +3037,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["browserify-des", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/browserify-des-ba8708433c0e8728.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/browserify-des-ba8708433c0e8728.zip/"),
         packageDependencies: new Map([
           ["cipher-base", "1.0.4"],
           ["des.js", "1.0.0"],
@@ -3040,7 +3049,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["des.js", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/des.js-39209bc4091f2e77.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/des.js-39209bc4091f2e77.zip/"),
         packageDependencies: new Map([
           ["inherits", "2.0.3"],
           ["minimalistic-assert", "1.0.1"],
@@ -3050,7 +3059,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["minimalistic-assert", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/minimalistic-assert-ac7d593d2e11ad56.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/minimalistic-assert-ac7d593d2e11ad56.zip/"),
         packageDependencies: new Map([
           ["minimalistic-assert", "1.0.1"],
         ]),
@@ -3058,7 +3067,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["browserify-sign", new Map([
       ["4.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/browserify-sign-32e49bf63340a2aa.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/browserify-sign-32e49bf63340a2aa.zip/"),
         packageDependencies: new Map([
           ["bn.js", "4.11.8"],
           ["browserify-rsa", "4.0.1"],
@@ -3073,7 +3082,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["bn.js", new Map([
       ["4.11.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/bn.js-14a228c40562c196.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/bn.js-14a228c40562c196.zip/"),
         packageDependencies: new Map([
           ["bn.js", "4.11.8"],
         ]),
@@ -3081,7 +3090,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["browserify-rsa", new Map([
       ["4.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/browserify-rsa-f2c8aa99e941e20f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/browserify-rsa-f2c8aa99e941e20f.zip/"),
         packageDependencies: new Map([
           ["bn.js", "4.11.8"],
           ["randombytes", "2.0.6"],
@@ -3091,7 +3100,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["randombytes", new Map([
       ["2.0.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/randombytes-06644982fb47851e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/randombytes-06644982fb47851e.zip/"),
         packageDependencies: new Map([
           ["safe-buffer", "5.1.2"],
           ["randombytes", "2.0.6"],
@@ -3100,7 +3109,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["create-hmac", new Map([
       ["1.1.7", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/create-hmac-a073f872069566d2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/create-hmac-a073f872069566d2.zip/"),
         packageDependencies: new Map([
           ["cipher-base", "1.0.4"],
           ["create-hash", "1.2.0"],
@@ -3114,7 +3123,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["elliptic", new Map([
       ["6.4.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/elliptic-d61e469ffcedf941.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/elliptic-d61e469ffcedf941.zip/"),
         packageDependencies: new Map([
           ["bn.js", "4.11.8"],
           ["brorand", "1.1.0"],
@@ -3129,7 +3138,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["brorand", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/brorand-9f25e208e0ef573c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/brorand-9f25e208e0ef573c.zip/"),
         packageDependencies: new Map([
           ["brorand", "1.1.0"],
         ]),
@@ -3137,7 +3146,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["hash.js", new Map([
       ["1.1.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/hash.js-860579741c6f0d47.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/hash.js-860579741c6f0d47.zip/"),
         packageDependencies: new Map([
           ["inherits", "2.0.3"],
           ["minimalistic-assert", "1.0.1"],
@@ -3147,7 +3156,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["hmac-drbg", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/hmac-drbg-13faa5ee2f53f2c9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/hmac-drbg-13faa5ee2f53f2c9.zip/"),
         packageDependencies: new Map([
           ["hash.js", "1.1.5"],
           ["minimalistic-assert", "1.0.1"],
@@ -3158,7 +3167,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["minimalistic-crypto-utils", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/minimalistic-crypto-utils-47a2a135a174907a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/minimalistic-crypto-utils-47a2a135a174907a.zip/"),
         packageDependencies: new Map([
           ["minimalistic-crypto-utils", "1.0.1"],
         ]),
@@ -3166,7 +3175,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["parse-asn1", new Map([
       ["5.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/parse-asn1-63817c05d7f04f09.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/parse-asn1-63817c05d7f04f09.zip/"),
         packageDependencies: new Map([
           ["asn1.js", "4.10.1"],
           ["browserify-aes", "1.2.0"],
@@ -3179,7 +3188,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["asn1.js", new Map([
       ["4.10.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/asn1.js-dc00dc5844de6062.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/asn1.js-dc00dc5844de6062.zip/"),
         packageDependencies: new Map([
           ["bn.js", "4.11.8"],
           ["inherits", "2.0.3"],
@@ -3190,7 +3199,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["pbkdf2", new Map([
       ["3.0.17", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pbkdf2-a88dbbfa304702f0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pbkdf2-a88dbbfa304702f0.zip/"),
         packageDependencies: new Map([
           ["create-hash", "1.2.0"],
           ["create-hmac", "1.1.7"],
@@ -3203,7 +3212,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["create-ecdh", new Map([
       ["4.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/create-ecdh-c3aea86aff31f99a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/create-ecdh-c3aea86aff31f99a.zip/"),
         packageDependencies: new Map([
           ["bn.js", "4.11.8"],
           ["elliptic", "6.4.1"],
@@ -3213,7 +3222,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["diffie-hellman", new Map([
       ["5.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/diffie-hellman-d8d6eea6faa9da8f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/diffie-hellman-d8d6eea6faa9da8f.zip/"),
         packageDependencies: new Map([
           ["bn.js", "4.11.8"],
           ["miller-rabin", "4.0.1"],
@@ -3224,7 +3233,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["miller-rabin", new Map([
       ["4.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/miller-rabin-9e6e70e782dac761.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/miller-rabin-9e6e70e782dac761.zip/"),
         packageDependencies: new Map([
           ["bn.js", "4.11.8"],
           ["brorand", "1.1.0"],
@@ -3234,7 +3243,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["public-encrypt", new Map([
       ["4.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/public-encrypt-d747e265031e9a21.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/public-encrypt-d747e265031e9a21.zip/"),
         packageDependencies: new Map([
           ["bn.js", "4.11.8"],
           ["browserify-rsa", "4.0.1"],
@@ -3248,7 +3257,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["randomfill", new Map([
       ["1.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/randomfill-828fac415fe11aac.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/randomfill-828fac415fe11aac.zip/"),
         packageDependencies: new Map([
           ["randombytes", "2.0.6"],
           ["safe-buffer", "5.1.2"],
@@ -3258,7 +3267,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["domain-browser", new Map([
       ["1.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/domain-browser-dc9682dcaf6669c3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/domain-browser-dc9682dcaf6669c3.zip/"),
         packageDependencies: new Map([
           ["domain-browser", "1.2.0"],
         ]),
@@ -3266,7 +3275,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["events", new Map([
       ["1.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/events-644c12cb1e425879.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/events-644c12cb1e425879.zip/"),
         packageDependencies: new Map([
           ["events", "1.1.1"],
         ]),
@@ -3274,7 +3283,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["https-browserify", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/https-browserify-0f852522c800339e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/https-browserify-0f852522c800339e.zip/"),
         packageDependencies: new Map([
           ["https-browserify", "1.0.0"],
         ]),
@@ -3282,7 +3291,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["os-browserify", new Map([
       ["0.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/os-browserify-454fff75db54d6d4.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/os-browserify-454fff75db54d6d4.zip/"),
         packageDependencies: new Map([
           ["os-browserify", "0.3.0"],
         ]),
@@ -3290,7 +3299,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["path-browserify", new Map([
       ["0.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/path-browserify-c6143e4016aa1c76.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/path-browserify-c6143e4016aa1c76.zip/"),
         packageDependencies: new Map([
           ["path-browserify", "0.0.0"],
         ]),
@@ -3298,7 +3307,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["process", new Map([
       ["0.11.10", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/process-d958121eae92b232.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/process-d958121eae92b232.zip/"),
         packageDependencies: new Map([
           ["process", "0.11.10"],
         ]),
@@ -3306,7 +3315,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["querystring-es3", new Map([
       ["0.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/querystring-es3-daeeb08411756c06.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/querystring-es3-daeeb08411756c06.zip/"),
         packageDependencies: new Map([
           ["querystring-es3", "0.2.1"],
         ]),
@@ -3314,7 +3323,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["stream-browserify", new Map([
       ["2.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/stream-browserify-df83f902a159487c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/stream-browserify-df83f902a159487c.zip/"),
         packageDependencies: new Map([
           ["inherits", "2.0.3"],
           ["readable-stream", "2.3.6"],
@@ -3324,7 +3333,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["stream-http", new Map([
       ["2.8.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/stream-http-9239761e632e7f68.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/stream-http-9239761e632e7f68.zip/"),
         packageDependencies: new Map([
           ["builtin-status-codes", "3.0.0"],
           ["inherits", "2.0.3"],
@@ -3337,7 +3346,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["builtin-status-codes", new Map([
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/builtin-status-codes-c44982ea81acf151.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/builtin-status-codes-c44982ea81acf151.zip/"),
         packageDependencies: new Map([
           ["builtin-status-codes", "3.0.0"],
         ]),
@@ -3345,7 +3354,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["to-arraybuffer", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/to-arraybuffer-1a222dfac582b08f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/to-arraybuffer-1a222dfac582b08f.zip/"),
         packageDependencies: new Map([
           ["to-arraybuffer", "1.0.1"],
         ]),
@@ -3353,7 +3362,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["timers-browserify", new Map([
       ["2.0.10", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/timers-browserify-031ee22a639ae8dc.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/timers-browserify-031ee22a639ae8dc.zip/"),
         packageDependencies: new Map([
           ["setimmediate", "1.0.5"],
           ["timers-browserify", "2.0.10"],
@@ -3362,7 +3371,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["setimmediate", new Map([
       ["1.0.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/setimmediate-db0b1a4cf14f48d6.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/setimmediate-db0b1a4cf14f48d6.zip/"),
         packageDependencies: new Map([
           ["setimmediate", "1.0.5"],
         ]),
@@ -3370,7 +3379,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["tty-browserify", new Map([
       ["0.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/tty-browserify-300a796098204316.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/tty-browserify-300a796098204316.zip/"),
         packageDependencies: new Map([
           ["tty-browserify", "0.0.0"],
         ]),
@@ -3378,7 +3387,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["url", new Map([
       ["0.11.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/url-977da83afaca58f8.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/url-977da83afaca58f8.zip/"),
         packageDependencies: new Map([
           ["punycode", "1.3.2"],
           ["querystring", "0.2.0"],
@@ -3388,7 +3397,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["querystring", new Map([
       ["0.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/querystring-3f0300e39e34c228.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/querystring-3f0300e39e34c228.zip/"),
         packageDependencies: new Map([
           ["querystring", "0.2.0"],
         ]),
@@ -3396,7 +3405,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["vm-browserify", new Map([
       ["0.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/vm-browserify-786062f56a301dad.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/vm-browserify-786062f56a301dad.zip/"),
         packageDependencies: new Map([
           ["indexof", "0.0.1"],
           ["vm-browserify", "0.0.4"],
@@ -3405,7 +3414,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["indexof", new Map([
       ["0.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/indexof-1f89e699bcb02fa3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/indexof-1f89e699bcb02fa3.zip/"),
         packageDependencies: new Map([
           ["indexof", "0.0.1"],
         ]),
@@ -3413,7 +3422,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["uglifyjs-webpack-plugin", new Map([
       ["virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#1.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/24e14cca7180759f42a45920cad4ee5e24d23a14c1820ad5a549b7fe1c53c11d7d68c1e59758066fc014bc43dc66911b0c58d5778f5773aa8ba19f18d09b8332/mnt/d/berry/.pnp/cache/uglifyjs-webpack-plugin-19e24ce3863e4aa2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/24e14cca7180759f42a45920cad4ee5e24d23a14c1820ad5a549b7fe1c53c11d7d68c1e59758066fc014bc43dc66911b0c58d5778f5773aa8ba19f18d09b8332/mnt/d/berry/packages/berry-cli/pnp/cache/uglifyjs-webpack-plugin-19e24ce3863e4aa2.zip/"),
         packageDependencies: new Map([
           ["cacache", "10.0.4"],
           ["find-cache-dir", "1.0.0"],
@@ -3430,7 +3439,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["cacache", new Map([
       ["10.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/cacache-055a5e554df38d8b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/cacache-055a5e554df38d8b.zip/"),
         packageDependencies: new Map([
           ["bluebird", "3.5.2"],
           ["chownr", "1.1.1"],
@@ -3451,7 +3460,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["bluebird", new Map([
       ["3.5.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/bluebird-256434792e09dd2e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/bluebird-256434792e09dd2e.zip/"),
         packageDependencies: new Map([
           ["bluebird", "3.5.2"],
         ]),
@@ -3459,7 +3468,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["chownr", new Map([
       ["1.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/chownr-669df3b60d5d3402.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/chownr-669df3b60d5d3402.zip/"),
         packageDependencies: new Map([
           ["chownr", "1.1.1"],
         ]),
@@ -3467,7 +3476,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["glob", new Map([
       ["7.1.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/glob-e500f8cb1313faeb.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/glob-e500f8cb1313faeb.zip/"),
         packageDependencies: new Map([
           ["fs.realpath", "1.0.0"],
           ["inflight", "1.0.6"],
@@ -3481,7 +3490,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["fs.realpath", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/fs.realpath-d33a264ca6752b96.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/fs.realpath-d33a264ca6752b96.zip/"),
         packageDependencies: new Map([
           ["fs.realpath", "1.0.0"],
         ]),
@@ -3489,7 +3498,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["inflight", new Map([
       ["1.0.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/inflight-cfa51fdbdead974f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/inflight-cfa51fdbdead974f.zip/"),
         packageDependencies: new Map([
           ["once", "1.3.3"],
           ["wrappy", "1.0.2"],
@@ -3499,7 +3508,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["once", new Map([
       ["1.3.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/once-18d55d8900de50e3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/once-18d55d8900de50e3.zip/"),
         packageDependencies: new Map([
           ["wrappy", "1.0.2"],
           ["once", "1.3.3"],
@@ -3508,7 +3517,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["wrappy", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/wrappy-4a5048035cd63581.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/wrappy-4a5048035cd63581.zip/"),
         packageDependencies: new Map([
           ["wrappy", "1.0.2"],
         ]),
@@ -3516,7 +3525,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["minimatch", new Map([
       ["3.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/minimatch-6247f7923414e6c5.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/minimatch-6247f7923414e6c5.zip/"),
         packageDependencies: new Map([
           ["brace-expansion", "1.1.11"],
           ["minimatch", "3.0.4"],
@@ -3525,7 +3534,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["brace-expansion", new Map([
       ["1.1.11", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/brace-expansion-55d9ce43b8630d52.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/brace-expansion-55d9ce43b8630d52.zip/"),
         packageDependencies: new Map([
           ["balanced-match", "1.0.0"],
           ["concat-map", "0.0.1"],
@@ -3535,7 +3544,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["balanced-match", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/balanced-match-78983280a9d9fe6f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/balanced-match-78983280a9d9fe6f.zip/"),
         packageDependencies: new Map([
           ["balanced-match", "1.0.0"],
         ]),
@@ -3543,7 +3552,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["concat-map", new Map([
       ["0.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/concat-map-9496056e1b41661f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/concat-map-9496056e1b41661f.zip/"),
         packageDependencies: new Map([
           ["concat-map", "0.0.1"],
         ]),
@@ -3551,7 +3560,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["path-is-absolute", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/path-is-absolute-2847d4ac389da83d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/path-is-absolute-2847d4ac389da83d.zip/"),
         packageDependencies: new Map([
           ["path-is-absolute", "1.0.1"],
         ]),
@@ -3559,7 +3568,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["lru-cache", new Map([
       ["4.1.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/lru-cache-2d6a704697c37b4a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/lru-cache-2d6a704697c37b4a.zip/"),
         packageDependencies: new Map([
           ["pseudomap", "1.0.2"],
           ["yallist", "2.1.2"],
@@ -3569,7 +3578,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["pseudomap", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pseudomap-405f0831963c3057.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pseudomap-405f0831963c3057.zip/"),
         packageDependencies: new Map([
           ["pseudomap", "1.0.2"],
         ]),
@@ -3577,13 +3586,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["yallist", new Map([
       ["2.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/yallist-971482d87b390abc.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/yallist-971482d87b390abc.zip/"),
         packageDependencies: new Map([
           ["yallist", "2.1.2"],
         ]),
       }],
       ["3.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/yallist-9101722f15d720bb.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/yallist-9101722f15d720bb.zip/"),
         packageDependencies: new Map([
           ["yallist", "3.0.2"],
         ]),
@@ -3591,7 +3600,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["mississippi", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/mississippi-83aa569379563cbb.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/mississippi-83aa569379563cbb.zip/"),
         packageDependencies: new Map([
           ["concat-stream", "1.6.2"],
           ["duplexify", "3.6.0"],
@@ -3609,7 +3618,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["duplexify", new Map([
       ["3.6.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/duplexify-b0eaa1459a605865.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/duplexify-b0eaa1459a605865.zip/"),
         packageDependencies: new Map([
           ["end-of-stream", "1.1.0"],
           ["inherits", "2.0.3"],
@@ -3621,7 +3630,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["end-of-stream", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/end-of-stream-b10fdc4caed403ac.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/end-of-stream-b10fdc4caed403ac.zip/"),
         packageDependencies: new Map([
           ["once", "1.3.3"],
           ["end-of-stream", "1.1.0"],
@@ -3630,7 +3639,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["stream-shift", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/stream-shift-866885c35ba39930.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/stream-shift-866885c35ba39930.zip/"),
         packageDependencies: new Map([
           ["stream-shift", "1.0.0"],
         ]),
@@ -3638,7 +3647,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["flush-write-stream", new Map([
       ["1.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/flush-write-stream-0e2ba707aaaf9115.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/flush-write-stream-0e2ba707aaaf9115.zip/"),
         packageDependencies: new Map([
           ["inherits", "2.0.3"],
           ["readable-stream", "2.3.6"],
@@ -3648,7 +3657,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["from2", new Map([
       ["2.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/from2-730e9578bef9fe40.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/from2-730e9578bef9fe40.zip/"),
         packageDependencies: new Map([
           ["inherits", "2.0.3"],
           ["readable-stream", "2.3.6"],
@@ -3658,7 +3667,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["parallel-transform", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/parallel-transform-4eeb78f19aee99e0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/parallel-transform-4eeb78f19aee99e0.zip/"),
         packageDependencies: new Map([
           ["cyclist", "0.2.2"],
           ["inherits", "2.0.3"],
@@ -3669,7 +3678,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["cyclist", new Map([
       ["0.2.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/cyclist-e470b13e854f0d78.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/cyclist-e470b13e854f0d78.zip/"),
         packageDependencies: new Map([
           ["cyclist", "0.2.2"],
         ]),
@@ -3677,7 +3686,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["pump", new Map([
       ["2.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pump-c37f8468ad654da3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pump-c37f8468ad654da3.zip/"),
         packageDependencies: new Map([
           ["end-of-stream", "1.1.0"],
           ["once", "1.3.3"],
@@ -3685,7 +3694,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pump-fa2efe312f7aa302.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pump-fa2efe312f7aa302.zip/"),
         packageDependencies: new Map([
           ["end-of-stream", "1.1.0"],
           ["once", "1.3.3"],
@@ -3695,7 +3704,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["pumpify", new Map([
       ["1.5.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pumpify-eb8c5285fdc4d09f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pumpify-eb8c5285fdc4d09f.zip/"),
         packageDependencies: new Map([
           ["duplexify", "3.6.0"],
           ["inherits", "2.0.3"],
@@ -3706,7 +3715,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["stream-each", new Map([
       ["1.2.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/stream-each-1b40b7cd3d479208.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/stream-each-1b40b7cd3d479208.zip/"),
         packageDependencies: new Map([
           ["end-of-stream", "1.1.0"],
           ["stream-shift", "1.0.0"],
@@ -3716,7 +3725,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["move-concurrently", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/move-concurrently-88a8e91b647f96cf.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/move-concurrently-88a8e91b647f96cf.zip/"),
         packageDependencies: new Map([
           ["aproba", "1.2.0"],
           ["copy-concurrently", "1.0.5"],
@@ -3730,7 +3739,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["aproba", new Map([
       ["1.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/aproba-e82548af164e43e5.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/aproba-e82548af164e43e5.zip/"),
         packageDependencies: new Map([
           ["aproba", "1.2.0"],
         ]),
@@ -3738,7 +3747,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["copy-concurrently", new Map([
       ["1.0.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/copy-concurrently-c2238432d27ba29d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/copy-concurrently-c2238432d27ba29d.zip/"),
         packageDependencies: new Map([
           ["aproba", "1.2.0"],
           ["fs-write-stream-atomic", "1.0.10"],
@@ -3752,7 +3761,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["fs-write-stream-atomic", new Map([
       ["1.0.10", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/fs-write-stream-atomic-e6e83e923a2c82c1.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/fs-write-stream-atomic-e6e83e923a2c82c1.zip/"),
         packageDependencies: new Map([
           ["graceful-fs", "4.1.11"],
           ["iferr", "0.1.5"],
@@ -3764,7 +3773,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["iferr", new Map([
       ["0.1.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/iferr-69dbe9c12bb04289.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/iferr-69dbe9c12bb04289.zip/"),
         packageDependencies: new Map([
           ["iferr", "0.1.5"],
         ]),
@@ -3772,7 +3781,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["imurmurhash", new Map([
       ["0.1.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/imurmurhash-99d1233a56ebcdf6.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/imurmurhash-99d1233a56ebcdf6.zip/"),
         packageDependencies: new Map([
           ["imurmurhash", "0.1.4"],
         ]),
@@ -3780,7 +3789,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["rimraf", new Map([
       ["2.6.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/rimraf-8d85948d6d8aa79f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/rimraf-8d85948d6d8aa79f.zip/"),
         packageDependencies: new Map([
           ["glob", "7.1.3"],
           ["rimraf", "2.6.2"],
@@ -3789,7 +3798,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["run-queue", new Map([
       ["1.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/run-queue-aa8121480a4b1d99.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/run-queue-aa8121480a4b1d99.zip/"),
         packageDependencies: new Map([
           ["aproba", "1.2.0"],
           ["run-queue", "1.0.3"],
@@ -3798,7 +3807,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["promise-inflight", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/promise-inflight-93f16c5fe4696dde.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/promise-inflight-93f16c5fe4696dde.zip/"),
         packageDependencies: new Map([
           ["promise-inflight", "1.0.1"],
         ]),
@@ -3806,7 +3815,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ssri", new Map([
       ["5.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ssri-d637376d1bf24fa6.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ssri-d637376d1bf24fa6.zip/"),
         packageDependencies: new Map([
           ["safe-buffer", "5.1.2"],
           ["ssri", "5.3.0"],
@@ -3815,7 +3824,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["unique-filename", new Map([
       ["1.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/unique-filename-3381b52f9f0e72c5.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/unique-filename-3381b52f9f0e72c5.zip/"),
         packageDependencies: new Map([
           ["unique-slug", "2.0.1"],
           ["unique-filename", "1.1.1"],
@@ -3824,7 +3833,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["unique-slug", new Map([
       ["2.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/unique-slug-87e39663efa8d9b2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/unique-slug-87e39663efa8d9b2.zip/"),
         packageDependencies: new Map([
           ["imurmurhash", "0.1.4"],
           ["unique-slug", "2.0.1"],
@@ -3833,7 +3842,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["y18n", new Map([
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/y18n-a49e7cf437e5c8f9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/y18n-a49e7cf437e5c8f9.zip/"),
         packageDependencies: new Map([
           ["y18n", "4.0.0"],
         ]),
@@ -3841,7 +3850,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["find-cache-dir", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/find-cache-dir-4f3cea7d4e49558a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/find-cache-dir-4f3cea7d4e49558a.zip/"),
         packageDependencies: new Map([
           ["commondir", "1.0.1"],
           ["make-dir", "1.3.0"],
@@ -3852,7 +3861,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["commondir", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/commondir-2a260e152aea6413.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/commondir-2a260e152aea6413.zip/"),
         packageDependencies: new Map([
           ["commondir", "1.0.1"],
         ]),
@@ -3860,7 +3869,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["make-dir", new Map([
       ["1.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/make-dir-0501a714af11c6ee.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/make-dir-0501a714af11c6ee.zip/"),
         packageDependencies: new Map([
           ["pify", "3.0.0"],
           ["make-dir", "1.3.0"],
@@ -3869,7 +3878,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["pify", new Map([
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pify-3a748efa1544bec5.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pify-3a748efa1544bec5.zip/"),
         packageDependencies: new Map([
           ["pify", "3.0.0"],
         ]),
@@ -3877,14 +3886,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["pkg-dir", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pkg-dir-2d0476a852aa8204.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pkg-dir-2d0476a852aa8204.zip/"),
         packageDependencies: new Map([
           ["find-up", "2.1.0"],
           ["pkg-dir", "2.0.0"],
         ]),
       }],
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pkg-dir-1845faefc0bd6e63.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pkg-dir-1845faefc0bd6e63.zip/"),
         packageDependencies: new Map([
           ["find-up", "3.0.0"],
           ["pkg-dir", "3.0.0"],
@@ -3893,14 +3902,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["find-up", new Map([
       ["2.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/find-up-b66c0990e920be37.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/find-up-b66c0990e920be37.zip/"),
         packageDependencies: new Map([
           ["locate-path", "2.0.0"],
           ["find-up", "2.1.0"],
         ]),
       }],
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/find-up-b8cba382f557212c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/find-up-b8cba382f557212c.zip/"),
         packageDependencies: new Map([
           ["locate-path", "3.0.0"],
           ["find-up", "3.0.0"],
@@ -3909,7 +3918,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["locate-path", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/locate-path-bd442c76776adcb6.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/locate-path-bd442c76776adcb6.zip/"),
         packageDependencies: new Map([
           ["p-locate", "2.0.0"],
           ["path-exists", "3.0.0"],
@@ -3917,7 +3926,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/locate-path-19b635352c4fbdc9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/locate-path-19b635352c4fbdc9.zip/"),
         packageDependencies: new Map([
           ["p-locate", "3.0.0"],
           ["path-exists", "3.0.0"],
@@ -3927,14 +3936,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["p-locate", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/p-locate-24eda470e95f3ddb.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/p-locate-24eda470e95f3ddb.zip/"),
         packageDependencies: new Map([
           ["p-limit", "1.3.0"],
           ["p-locate", "2.0.0"],
         ]),
       }],
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/p-locate-142f19ca812dab50.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/p-locate-142f19ca812dab50.zip/"),
         packageDependencies: new Map([
           ["p-limit", "2.0.0"],
           ["p-locate", "3.0.0"],
@@ -3943,14 +3952,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["p-limit", new Map([
       ["1.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/p-limit-a610bb3fdbd2a210.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/p-limit-a610bb3fdbd2a210.zip/"),
         packageDependencies: new Map([
           ["p-try", "1.0.0"],
           ["p-limit", "1.3.0"],
         ]),
       }],
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/p-limit-e3ab7636f5ac4a0d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/p-limit-e3ab7636f5ac4a0d.zip/"),
         packageDependencies: new Map([
           ["p-try", "2.0.0"],
           ["p-limit", "2.0.0"],
@@ -3959,13 +3968,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["p-try", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/p-try-2b84c15ed096d445.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/p-try-2b84c15ed096d445.zip/"),
         packageDependencies: new Map([
           ["p-try", "1.0.0"],
         ]),
       }],
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/p-try-1175172796834f93.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/p-try-1175172796834f93.zip/"),
         packageDependencies: new Map([
           ["p-try", "2.0.0"],
         ]),
@@ -3973,7 +3982,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["path-exists", new Map([
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/path-exists-317e54825b489e21.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/path-exists-317e54825b489e21.zip/"),
         packageDependencies: new Map([
           ["path-exists", "3.0.0"],
         ]),
@@ -3981,7 +3990,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["serialize-javascript", new Map([
       ["1.5.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/serialize-javascript-f54f315db3b10075.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/serialize-javascript-f54f315db3b10075.zip/"),
         packageDependencies: new Map([
           ["serialize-javascript", "1.5.0"],
         ]),
@@ -3989,7 +3998,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["uglify-es", new Map([
       ["3.3.10", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/uglify-es-4a70d9ce8a3d6d46.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/uglify-es-4a70d9ce8a3d6d46.zip/"),
         packageDependencies: new Map([
           ["commander", "2.14.1"],
           ["source-map", "0.6.1"],
@@ -3999,7 +4008,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["commander", new Map([
       ["2.14.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/commander-e59faf65ea5f6402.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/commander-e59faf65ea5f6402.zip/"),
         packageDependencies: new Map([
           ["commander", "2.14.1"],
         ]),
@@ -4007,7 +4016,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["webpack-sources", new Map([
       ["1.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/webpack-sources-8282b5aeec71bb9b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/webpack-sources-8282b5aeec71bb9b.zip/"),
         packageDependencies: new Map([
           ["source-list-map", "2.0.1"],
           ["source-map", "0.6.1"],
@@ -4017,7 +4026,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["source-list-map", new Map([
       ["2.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/source-list-map-f2515a940cef8392.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/source-list-map-f2515a940cef8392.zip/"),
         packageDependencies: new Map([
           ["source-list-map", "2.0.1"],
         ]),
@@ -4025,7 +4034,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["worker-farm", new Map([
       ["1.6.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/worker-farm-1701739d5c72dcad.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/worker-farm-1701739d5c72dcad.zip/"),
         packageDependencies: new Map([
           ["errno", "0.1.7"],
           ["worker-farm", "1.6.0"],
@@ -4034,7 +4043,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["watchpack", new Map([
       ["1.6.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/watchpack-166f799b50b04921.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/watchpack-166f799b50b04921.zip/"),
         packageDependencies: new Map([
           ["chokidar", "2.0.4"],
           ["graceful-fs", "4.1.11"],
@@ -4045,7 +4054,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["chokidar", new Map([
       ["2.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/chokidar-089efb39c3ab5371.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/chokidar-089efb39c3ab5371.zip/"),
         packageDependencies: new Map([
           ["anymatch", "2.0.0"],
           ["async-each", "1.0.1"],
@@ -4066,7 +4075,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["anymatch", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/anymatch-674b633eb66f29bc.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/anymatch-674b633eb66f29bc.zip/"),
         packageDependencies: new Map([
           ["micromatch", "3.1.10"],
           ["normalize-path", "2.1.1"],
@@ -4076,7 +4085,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["normalize-path", new Map([
       ["2.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/normalize-path-776fa95067dd2655.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/normalize-path-776fa95067dd2655.zip/"),
         packageDependencies: new Map([
           ["remove-trailing-separator", "1.1.0"],
           ["normalize-path", "2.1.1"],
@@ -4085,7 +4094,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["remove-trailing-separator", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/remove-trailing-separator-ec8cf665da2ed981.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/remove-trailing-separator-ec8cf665da2ed981.zip/"),
         packageDependencies: new Map([
           ["remove-trailing-separator", "1.1.0"],
         ]),
@@ -4093,7 +4102,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["async-each", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/async-each-030469b67413f89b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/async-each-030469b67413f89b.zip/"),
         packageDependencies: new Map([
           ["async-each", "1.0.1"],
         ]),
@@ -4101,7 +4110,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["fsevents", new Map([
       ["1.2.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/fsevents-de850c64902350a6.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/fsevents-de850c64902350a6.zip/"),
         packageDependencies: new Map([
           ["nan", "2.11.1"],
           ["node-pre-gyp", "0.10.3"],
@@ -4111,7 +4120,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["node-pre-gyp", new Map([
       ["0.10.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/node-pre-gyp-d130d925fcc1b145.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/node-pre-gyp-d130d925fcc1b145.zip/"),
         packageDependencies: new Map([
           ["detect-libc", "1.0.3"],
           ["mkdirp", "0.5.1"],
@@ -4129,7 +4138,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["detect-libc", new Map([
       ["1.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/detect-libc-ff3951cc2f6ad819.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/detect-libc-ff3951cc2f6ad819.zip/"),
         packageDependencies: new Map([
           ["detect-libc", "1.0.3"],
         ]),
@@ -4137,7 +4146,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["needle", new Map([
       ["2.2.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/needle-431357e8fc0e9f9f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/needle-431357e8fc0e9f9f.zip/"),
         packageDependencies: new Map([
           ["debug", "2.6.9"],
           ["iconv-lite", "0.4.24"],
@@ -4148,7 +4157,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["iconv-lite", new Map([
       ["0.4.24", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/iconv-lite-c8de26c14591b142.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/iconv-lite-c8de26c14591b142.zip/"),
         packageDependencies: new Map([
           ["safer-buffer", "2.1.2"],
           ["iconv-lite", "0.4.24"],
@@ -4157,7 +4166,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["safer-buffer", new Map([
       ["2.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/safer-buffer-00bed014e7a5e734.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/safer-buffer-00bed014e7a5e734.zip/"),
         packageDependencies: new Map([
           ["safer-buffer", "2.1.2"],
         ]),
@@ -4165,7 +4174,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["sax", new Map([
       ["1.2.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/sax-41db0d4cb1bb0eb3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/sax-41db0d4cb1bb0eb3.zip/"),
         packageDependencies: new Map([
           ["sax", "1.2.4"],
         ]),
@@ -4173,7 +4182,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["nopt", new Map([
       ["4.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/nopt-3cb1230b2d30d3b6.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/nopt-3cb1230b2d30d3b6.zip/"),
         packageDependencies: new Map([
           ["abbrev", "1.1.1"],
           ["osenv", "0.1.5"],
@@ -4183,7 +4192,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["abbrev", new Map([
       ["1.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/abbrev-a1d6540f6451d79c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/abbrev-a1d6540f6451d79c.zip/"),
         packageDependencies: new Map([
           ["abbrev", "1.1.1"],
         ]),
@@ -4191,7 +4200,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["osenv", new Map([
       ["0.1.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/osenv-df037e9ff9fcfe09.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/osenv-df037e9ff9fcfe09.zip/"),
         packageDependencies: new Map([
           ["os-homedir", "1.0.2"],
           ["os-tmpdir", "1.0.2"],
@@ -4201,7 +4210,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["os-homedir", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/os-homedir-0100700387551b50.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/os-homedir-0100700387551b50.zip/"),
         packageDependencies: new Map([
           ["os-homedir", "1.0.2"],
         ]),
@@ -4209,7 +4218,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["os-tmpdir", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/os-tmpdir-2303ea7c90b5e7a8.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/os-tmpdir-2303ea7c90b5e7a8.zip/"),
         packageDependencies: new Map([
           ["os-tmpdir", "1.0.2"],
         ]),
@@ -4217,7 +4226,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["npm-packlist", new Map([
       ["1.1.12", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/npm-packlist-b02867bd19760fe2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/npm-packlist-b02867bd19760fe2.zip/"),
         packageDependencies: new Map([
           ["ignore-walk", "3.0.1"],
           ["npm-bundled", "1.0.5"],
@@ -4227,7 +4236,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ignore-walk", new Map([
       ["3.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ignore-walk-b4777d6f0c55ce06.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ignore-walk-b4777d6f0c55ce06.zip/"),
         packageDependencies: new Map([
           ["minimatch", "3.0.4"],
           ["ignore-walk", "3.0.1"],
@@ -4236,7 +4245,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["npm-bundled", new Map([
       ["1.0.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/npm-bundled-29eaf8ef44f90037.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/npm-bundled-29eaf8ef44f90037.zip/"),
         packageDependencies: new Map([
           ["npm-bundled", "1.0.5"],
         ]),
@@ -4244,7 +4253,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["npmlog", new Map([
       ["4.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/npmlog-59fe7e27054d1d29.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/npmlog-59fe7e27054d1d29.zip/"),
         packageDependencies: new Map([
           ["are-we-there-yet", "1.1.5"],
           ["console-control-strings", "1.1.0"],
@@ -4256,7 +4265,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["are-we-there-yet", new Map([
       ["1.1.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/are-we-there-yet-291d7aa4c66fae6d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/are-we-there-yet-291d7aa4c66fae6d.zip/"),
         packageDependencies: new Map([
           ["delegates", "1.0.0"],
           ["readable-stream", "2.3.6"],
@@ -4266,7 +4275,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["delegates", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/delegates-5c0604241491842d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/delegates-5c0604241491842d.zip/"),
         packageDependencies: new Map([
           ["delegates", "1.0.0"],
         ]),
@@ -4274,7 +4283,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["console-control-strings", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/console-control-strings-98998725625b6f37.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/console-control-strings-98998725625b6f37.zip/"),
         packageDependencies: new Map([
           ["console-control-strings", "1.1.0"],
         ]),
@@ -4282,7 +4291,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["gauge", new Map([
       ["2.7.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/gauge-2cb33cbbd9d78c47.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/gauge-2cb33cbbd9d78c47.zip/"),
         packageDependencies: new Map([
           ["aproba", "1.2.0"],
           ["console-control-strings", "1.1.0"],
@@ -4298,7 +4307,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["has-unicode", new Map([
       ["2.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/has-unicode-03fd79d5573ca11e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/has-unicode-03fd79d5573ca11e.zip/"),
         packageDependencies: new Map([
           ["has-unicode", "2.0.1"],
         ]),
@@ -4306,7 +4315,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["object-assign", new Map([
       ["4.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/object-assign-48521053e3cde603.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/object-assign-48521053e3cde603.zip/"),
         packageDependencies: new Map([
           ["object-assign", "4.1.1"],
         ]),
@@ -4314,7 +4323,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["signal-exit", new Map([
       ["3.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/signal-exit-54ce804a6526bfb8.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/signal-exit-54ce804a6526bfb8.zip/"),
         packageDependencies: new Map([
           ["signal-exit", "3.0.2"],
         ]),
@@ -4322,7 +4331,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["string-width", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/string-width-9106374ca905aead.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/string-width-9106374ca905aead.zip/"),
         packageDependencies: new Map([
           ["code-point-at", "1.1.0"],
           ["is-fullwidth-code-point", "1.0.0"],
@@ -4331,7 +4340,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["2.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/string-width-8fc6d7bd4c3452d2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/string-width-8fc6d7bd4c3452d2.zip/"),
         packageDependencies: new Map([
           ["is-fullwidth-code-point", "2.0.0"],
           ["strip-ansi", "4.0.0"],
@@ -4341,7 +4350,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["code-point-at", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/code-point-at-89891bf59e6dcde8.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/code-point-at-89891bf59e6dcde8.zip/"),
         packageDependencies: new Map([
           ["code-point-at", "1.1.0"],
         ]),
@@ -4349,14 +4358,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["is-fullwidth-code-point", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-fullwidth-code-point-491c01f695bdd48b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-fullwidth-code-point-491c01f695bdd48b.zip/"),
         packageDependencies: new Map([
           ["number-is-nan", "1.0.1"],
           ["is-fullwidth-code-point", "1.0.0"],
         ]),
       }],
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-fullwidth-code-point-98e1fe2645f35c66.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-fullwidth-code-point-98e1fe2645f35c66.zip/"),
         packageDependencies: new Map([
           ["is-fullwidth-code-point", "2.0.0"],
         ]),
@@ -4364,7 +4373,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["number-is-nan", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/number-is-nan-2d0531f7aef56b89.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/number-is-nan-2d0531f7aef56b89.zip/"),
         packageDependencies: new Map([
           ["number-is-nan", "1.0.1"],
         ]),
@@ -4372,7 +4381,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["wide-align", new Map([
       ["1.1.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/wide-align-9f9c343472f12db3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/wide-align-9f9c343472f12db3.zip/"),
         packageDependencies: new Map([
           ["string-width", "2.1.1"],
           ["wide-align", "1.1.3"],
@@ -4381,7 +4390,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["set-blocking", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/set-blocking-fedca38b7419ffd7.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/set-blocking-fedca38b7419ffd7.zip/"),
         packageDependencies: new Map([
           ["set-blocking", "2.0.0"],
         ]),
@@ -4389,7 +4398,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["rc", new Map([
       ["1.2.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/rc-263d4c79bb020e0d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/rc-263d4c79bb020e0d.zip/"),
         packageDependencies: new Map([
           ["deep-extend", "0.6.0"],
           ["ini", "1.3.5"],
@@ -4401,7 +4410,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["deep-extend", new Map([
       ["0.6.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/deep-extend-c6fb47aa9ea6f029.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/deep-extend-c6fb47aa9ea6f029.zip/"),
         packageDependencies: new Map([
           ["deep-extend", "0.6.0"],
         ]),
@@ -4409,7 +4418,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ini", new Map([
       ["1.3.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ini-d1439ae091b35e33.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ini-d1439ae091b35e33.zip/"),
         packageDependencies: new Map([
           ["ini", "1.3.5"],
         ]),
@@ -4417,7 +4426,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["strip-json-comments", new Map([
       ["2.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/strip-json-comments-31d292cad5d02437.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/strip-json-comments-31d292cad5d02437.zip/"),
         packageDependencies: new Map([
           ["strip-json-comments", "2.0.1"],
         ]),
@@ -4425,7 +4434,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["tar", new Map([
       ["4.4.6", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/tar-a8698516879181ab.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/tar-a8698516879181ab.zip/"),
         packageDependencies: new Map([
           ["chownr", "1.1.1"],
           ["fs-minipass", "1.2.5"],
@@ -4440,7 +4449,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["fs-minipass", new Map([
       ["1.2.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/fs-minipass-04ccc79539386253.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/fs-minipass-04ccc79539386253.zip/"),
         packageDependencies: new Map([
           ["minipass", "2.3.4"],
           ["fs-minipass", "1.2.5"],
@@ -4449,7 +4458,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["minipass", new Map([
       ["2.3.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/minipass-d35bb0dbf25ffab9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/minipass-d35bb0dbf25ffab9.zip/"),
         packageDependencies: new Map([
           ["safe-buffer", "5.1.2"],
           ["yallist", "3.0.2"],
@@ -4459,7 +4468,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["minizlib", new Map([
       ["1.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/minizlib-8064bfe12b07018d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/minizlib-8064bfe12b07018d.zip/"),
         packageDependencies: new Map([
           ["minipass", "2.3.4"],
           ["minizlib", "1.1.1"],
@@ -4468,7 +4477,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["is-binary-path", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-binary-path-76bbb5f55fc3137f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-binary-path-76bbb5f55fc3137f.zip/"),
         packageDependencies: new Map([
           ["binary-extensions", "1.12.0"],
           ["is-binary-path", "1.0.1"],
@@ -4477,7 +4486,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["binary-extensions", new Map([
       ["1.12.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/binary-extensions-1f7bcaca86bb20df.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/binary-extensions-1f7bcaca86bb20df.zip/"),
         packageDependencies: new Map([
           ["binary-extensions", "1.12.0"],
         ]),
@@ -4485,7 +4494,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["lodash.debounce", new Map([
       ["4.0.8", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/lodash.debounce-1910da2a0f862edf.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/lodash.debounce-1910da2a0f862edf.zip/"),
         packageDependencies: new Map([
           ["lodash.debounce", "4.0.8"],
         ]),
@@ -4493,7 +4502,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["readdirp", new Map([
       ["2.2.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/readdirp-ce4c59bf0b6ab5b9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/readdirp-ce4c59bf0b6ab5b9.zip/"),
         packageDependencies: new Map([
           ["graceful-fs", "4.1.11"],
           ["micromatch", "3.1.10"],
@@ -4504,7 +4513,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["upath", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/upath-35290c62c5b0f167.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/upath-35290c62c5b0f167.zip/"),
         packageDependencies: new Map([
           ["upath", "1.1.0"],
         ]),
@@ -4512,7 +4521,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["webpack-virtual-modules", new Map([
       ["0.1.10", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/webpack-virtual-modules-3ec10f2e6db56b69.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/webpack-virtual-modules-3ec10f2e6db56b69.zip/"),
         packageDependencies: new Map([
           ["debug", "3.2.6"],
           ["webpack-virtual-modules", "0.1.10"],
@@ -4673,7 +4682,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["fs-extra", new Map([
       ["7.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/fs-extra-2735793d799641a5.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/fs-extra-2735793d799641a5.zip/"),
         packageDependencies: new Map([
           ["graceful-fs", "4.1.11"],
           ["jsonfile", "4.0.0"],
@@ -4684,7 +4693,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["jsonfile", new Map([
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/jsonfile-7ed00fd76eaeef20.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/jsonfile-7ed00fd76eaeef20.zip/"),
         packageDependencies: new Map([
           ["graceful-fs", "4.1.11"],
           ["jsonfile", "4.0.0"],
@@ -4693,7 +4702,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["universalify", new Map([
       ["0.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/universalify-1da246c8d18fe6b2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/universalify-1da246c8d18fe6b2.zip/"),
         packageDependencies: new Map([
           ["universalify", "0.1.2"],
         ]),
@@ -4701,7 +4710,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["globby", new Map([
       ["8.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/globby-a18f1c0c53dea083.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/globby-a18f1c0c53dea083.zip/"),
         packageDependencies: new Map([
           ["array-union", "1.0.2"],
           ["dir-glob", "2.0.0"],
@@ -4716,7 +4725,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["array-union", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/array-union-db5427dd69e023c4.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/array-union-db5427dd69e023c4.zip/"),
         packageDependencies: new Map([
           ["array-uniq", "1.0.3"],
           ["array-union", "1.0.2"],
@@ -4725,7 +4734,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["array-uniq", new Map([
       ["1.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/array-uniq-d5e283b4d54ae370.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/array-uniq-d5e283b4d54ae370.zip/"),
         packageDependencies: new Map([
           ["array-uniq", "1.0.3"],
         ]),
@@ -4733,7 +4742,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["dir-glob", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/dir-glob-3aa787fd02d4ef73.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/dir-glob-3aa787fd02d4ef73.zip/"),
         packageDependencies: new Map([
           ["arrify", "1.0.1"],
           ["path-type", "3.0.0"],
@@ -4743,7 +4752,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["path-type", new Map([
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/path-type-a9ded56e3ffb7975.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/path-type-a9ded56e3ffb7975.zip/"),
         packageDependencies: new Map([
           ["pify", "3.0.0"],
           ["path-type", "3.0.0"],
@@ -4752,7 +4761,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ignore", new Map([
       ["3.3.10", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ignore-3186bdc7f146d1db.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ignore-3186bdc7f146d1db.zip/"),
         packageDependencies: new Map([
           ["ignore", "3.3.10"],
         ]),
@@ -4760,7 +4769,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["slash", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/slash-bede69755a15e4fd.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/slash-bede69755a15e4fd.zip/"),
         packageDependencies: new Map([
           ["slash", "1.0.0"],
         ]),
@@ -4768,7 +4777,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["got", new Map([
       ["9.2.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/got-88f8979a8002e681.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/got-88f8979a8002e681.zip/"),
         packageDependencies: new Map([
           ["@sindresorhus/is", "0.11.0"],
           ["@szmarczak/http-timer", "1.1.1"],
@@ -4786,7 +4795,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@sindresorhus/is", new Map([
       ["0.11.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@sindresorhus-is-7c42d1b3b9fad1d7.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@sindresorhus-is-7c42d1b3b9fad1d7.zip/"),
         packageDependencies: new Map([
           ["symbol-observable", "1.2.0"],
           ["@sindresorhus/is", "0.11.0"],
@@ -4795,7 +4804,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@szmarczak/http-timer", new Map([
       ["1.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@szmarczak-http-timer-c405c5763456819d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@szmarczak-http-timer-c405c5763456819d.zip/"),
         packageDependencies: new Map([
           ["defer-to-connect", "1.0.1"],
           ["@szmarczak/http-timer", "1.1.1"],
@@ -4804,7 +4813,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["defer-to-connect", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/defer-to-connect-6005703fe9374b92.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/defer-to-connect-6005703fe9374b92.zip/"),
         packageDependencies: new Map([
           ["defer-to-connect", "1.0.1"],
         ]),
@@ -4812,7 +4821,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["cacheable-request", new Map([
       ["5.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/cacheable-request-802164beb0e7a731.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/cacheable-request-802164beb0e7a731.zip/"),
         packageDependencies: new Map([
           ["clone-response", "1.0.2"],
           ["get-stream", "4.1.0"],
@@ -4827,7 +4836,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["clone-response", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/clone-response-4c7fea11b949e139.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/clone-response-4c7fea11b949e139.zip/"),
         packageDependencies: new Map([
           ["mimic-response", "1.0.1"],
           ["clone-response", "1.0.2"],
@@ -4836,7 +4845,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["mimic-response", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/mimic-response-83135974c586ee0f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/mimic-response-83135974c586ee0f.zip/"),
         packageDependencies: new Map([
           ["mimic-response", "1.0.1"],
         ]),
@@ -4844,14 +4853,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["get-stream", new Map([
       ["4.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/get-stream-cda596e19df18a88.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/get-stream-cda596e19df18a88.zip/"),
         packageDependencies: new Map([
           ["pump", "3.0.0"],
           ["get-stream", "4.1.0"],
         ]),
       }],
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/get-stream-578bdcedb135aa63.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/get-stream-578bdcedb135aa63.zip/"),
         packageDependencies: new Map([
           ["get-stream", "3.0.0"],
         ]),
@@ -4859,7 +4868,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["http-cache-semantics", new Map([
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/http-cache-semantics-eb5e93c14e9797b1.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/http-cache-semantics-eb5e93c14e9797b1.zip/"),
         packageDependencies: new Map([
           ["http-cache-semantics", "4.0.0"],
         ]),
@@ -4867,7 +4876,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["keyv", new Map([
       ["3.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/keyv-42fc6bc3fea10fd4.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/keyv-42fc6bc3fea10fd4.zip/"),
         packageDependencies: new Map([
           ["json-buffer", "3.0.0"],
           ["keyv", "3.1.0"],
@@ -4876,7 +4885,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["json-buffer", new Map([
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/json-buffer-66fabafa41477705.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/json-buffer-66fabafa41477705.zip/"),
         packageDependencies: new Map([
           ["json-buffer", "3.0.0"],
         ]),
@@ -4884,7 +4893,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["lowercase-keys", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/lowercase-keys-1cdb60171ce4419f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/lowercase-keys-1cdb60171ce4419f.zip/"),
         packageDependencies: new Map([
           ["lowercase-keys", "1.0.1"],
         ]),
@@ -4892,7 +4901,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["normalize-url", new Map([
       ["3.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/normalize-url-ff47bd4da7c454b8.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/normalize-url-ff47bd4da7c454b8.zip/"),
         packageDependencies: new Map([
           ["normalize-url", "3.3.0"],
         ]),
@@ -4900,7 +4909,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["responselike", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/responselike-016d9bbcc14440e3.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/responselike-016d9bbcc14440e3.zip/"),
         packageDependencies: new Map([
           ["lowercase-keys", "1.0.1"],
           ["responselike", "1.0.2"],
@@ -4909,7 +4918,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["decompress-response", new Map([
       ["3.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/decompress-response-2335c00e81a6e25a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/decompress-response-2335c00e81a6e25a.zip/"),
         packageDependencies: new Map([
           ["mimic-response", "1.0.1"],
           ["decompress-response", "3.3.0"],
@@ -4918,7 +4927,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["duplexer3", new Map([
       ["0.1.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/duplexer3-a42f2eb086e00821.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/duplexer3-a42f2eb086e00821.zip/"),
         packageDependencies: new Map([
           ["duplexer3", "0.1.4"],
         ]),
@@ -4926,7 +4935,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["p-cancelable", new Map([
       ["0.5.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/p-cancelable-dec6fe67f925b411.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/p-cancelable-dec6fe67f925b411.zip/"),
         packageDependencies: new Map([
           ["p-cancelable", "0.5.1"],
         ]),
@@ -4934,7 +4943,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["to-readable-stream", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/to-readable-stream-fff6af1ccf122f29.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/to-readable-stream-fff6af1ccf122f29.zip/"),
         packageDependencies: new Map([
           ["to-readable-stream", "1.0.0"],
         ]),
@@ -4942,7 +4951,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["url-parse-lax", new Map([
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/url-parse-lax-d32127d1b828d56c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/url-parse-lax-d32127d1b828d56c.zip/"),
         packageDependencies: new Map([
           ["prepend-http", "2.0.0"],
           ["url-parse-lax", "3.0.0"],
@@ -4951,7 +4960,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["prepend-http", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/prepend-http-428e55123891a28f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/prepend-http-428e55123891a28f.zip/"),
         packageDependencies: new Map([
           ["prepend-http", "2.0.0"],
         ]),
@@ -4959,7 +4968,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["lockfile", new Map([
       ["1.0.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/lockfile-b2e2af8c38607b82.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/lockfile-b2e2af8c38607b82.zip/"),
         packageDependencies: new Map([
           ["signal-exit", "3.0.2"],
           ["lockfile", "1.0.4"],
@@ -4968,7 +4977,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["logic-solver", new Map([
       ["2.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/logic-solver-c9ab47cc0bdf1953.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/logic-solver-c9ab47cc0bdf1953.zip/"),
         packageDependencies: new Map([
           ["underscore", "1.9.1"],
           ["logic-solver", "2.0.1"],
@@ -4977,7 +4986,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["underscore", new Map([
       ["1.9.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/underscore-108e9c3c8c88af2d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/underscore-108e9c3c8c88af2d.zip/"),
         packageDependencies: new Map([
           ["underscore", "1.9.1"],
         ]),
@@ -4985,7 +4994,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["pluralize", new Map([
       ["7.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pluralize-74553fa716ee0dcf.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pluralize-74553fa716ee0dcf.zip/"),
         packageDependencies: new Map([
           ["pluralize", "7.0.0"],
         ]),
@@ -4993,7 +5002,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["pretty-bytes", new Map([
       ["5.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pretty-bytes-8d2fd19606b6c867.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pretty-bytes-8d2fd19606b6c867.zip/"),
         packageDependencies: new Map([
           ["pretty-bytes", "5.1.0"],
         ]),
@@ -5001,7 +5010,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["stream-to-promise", new Map([
       ["2.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/stream-to-promise-544c7778feeaaaf7.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/stream-to-promise-544c7778feeaaaf7.zip/"),
         packageDependencies: new Map([
           ["any-promise", "1.3.0"],
           ["end-of-stream", "1.1.0"],
@@ -5012,7 +5021,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["any-promise", new Map([
       ["1.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/any-promise-4e8cea565497b0e7.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/any-promise-4e8cea565497b0e7.zip/"),
         packageDependencies: new Map([
           ["any-promise", "1.3.0"],
         ]),
@@ -5020,7 +5029,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["stream-to-array", new Map([
       ["2.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/stream-to-array-32895e77a7fb7c13.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/stream-to-array-32895e77a7fb7c13.zip/"),
         packageDependencies: new Map([
           ["any-promise", "1.3.0"],
           ["stream-to-array", "2.3.0"],
@@ -5029,7 +5038,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["tmp", new Map([
       ["0.0.33", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/tmp-e6858d1d12417689.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/tmp-e6858d1d12417689.zip/"),
         packageDependencies: new Map([
           ["os-tmpdir", "1.0.2"],
           ["tmp", "0.0.33"],
@@ -5056,7 +5065,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@berry/plugin-hub", new Map([
       ["virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#workspace:0.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99/mnt/d/berry/packages/plugin-hub/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99/mnt/d/berry/packages/plugin-hub/"),
         packageDependencies: new Map([
           ["@berry/cli", "workspace-base:0.0.0"],
           ["@berry/core", "workspace:0.0.0"],
@@ -5126,7 +5135,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["execa", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/execa-e1502c741599df44.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/execa-e1502c741599df44.zip/"),
         packageDependencies: new Map([
           ["cross-spawn", "6.0.5"],
           ["get-stream", "4.1.0"],
@@ -5139,7 +5148,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["0.10.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/execa-64d2333e8f66b969.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/execa-64d2333e8f66b969.zip/"),
         packageDependencies: new Map([
           ["cross-spawn", "6.0.5"],
           ["get-stream", "3.0.0"],
@@ -5154,7 +5163,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["cross-spawn", new Map([
       ["6.0.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/cross-spawn-1bc061307aef82e7.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/cross-spawn-1bc061307aef82e7.zip/"),
         packageDependencies: new Map([
           ["nice-try", "1.0.5"],
           ["path-key", "2.0.1"],
@@ -5167,7 +5176,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["nice-try", new Map([
       ["1.0.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/nice-try-a1647e9ec10320a2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/nice-try-a1647e9ec10320a2.zip/"),
         packageDependencies: new Map([
           ["nice-try", "1.0.5"],
         ]),
@@ -5175,7 +5184,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["path-key", new Map([
       ["2.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/path-key-b295fb6bb024a822.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/path-key-b295fb6bb024a822.zip/"),
         packageDependencies: new Map([
           ["path-key", "2.0.1"],
         ]),
@@ -5183,7 +5192,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["shebang-command", new Map([
       ["1.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/shebang-command-63265923634e8ca6.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/shebang-command-63265923634e8ca6.zip/"),
         packageDependencies: new Map([
           ["shebang-regex", "1.0.0"],
           ["shebang-command", "1.2.0"],
@@ -5192,7 +5201,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["shebang-regex", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/shebang-regex-3a18c59f720b4398.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/shebang-regex-3a18c59f720b4398.zip/"),
         packageDependencies: new Map([
           ["shebang-regex", "1.0.0"],
         ]),
@@ -5200,7 +5209,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["which", new Map([
       ["1.3.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/which-1316f3f827bc5bd5.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/which-1316f3f827bc5bd5.zip/"),
         packageDependencies: new Map([
           ["isexe", "2.0.0"],
           ["which", "1.3.1"],
@@ -5209,7 +5218,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["isexe", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/isexe-f1fe89e9e0fbe880.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/isexe-f1fe89e9e0fbe880.zip/"),
         packageDependencies: new Map([
           ["isexe", "2.0.0"],
         ]),
@@ -5217,7 +5226,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["is-stream", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-stream-928288332b668b81.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/is-stream-928288332b668b81.zip/"),
         packageDependencies: new Map([
           ["is-stream", "1.1.0"],
         ]),
@@ -5225,7 +5234,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["npm-run-path", new Map([
       ["2.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/npm-run-path-02d3045ebccf8db2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/npm-run-path-02d3045ebccf8db2.zip/"),
         packageDependencies: new Map([
           ["path-key", "2.0.1"],
           ["npm-run-path", "2.0.2"],
@@ -5234,7 +5243,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["p-finally", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/p-finally-2079c162f2fe4b5d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/p-finally-2079c162f2fe4b5d.zip/"),
         packageDependencies: new Map([
           ["p-finally", "1.0.0"],
         ]),
@@ -5242,7 +5251,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["strip-eof", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/strip-eof-7531ca4ee96b693b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/strip-eof-7531ca4ee96b693b.zip/"),
         packageDependencies: new Map([
           ["strip-eof", "1.0.0"],
         ]),
@@ -5250,7 +5259,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["stream-buffers", new Map([
       ["3.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/stream-buffers-6d4349f586cab2b4.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/stream-buffers-6d4349f586cab2b4.zip/"),
         packageDependencies: new Map([
           ["stream-buffers", "3.0.2"],
         ]),
@@ -5258,7 +5267,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@berry/ui", new Map([
       ["virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#workspace:0.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e/mnt/d/berry/packages/berry-ui/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e/mnt/d/berry/packages/berry-ui/"),
         packageDependencies: new Map([
           ["@manaflair/term-strings", "0.10.1"],
           ["@manaflair/text-layout", "0.10.4"],
@@ -5285,7 +5294,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#workspace:0.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5/mnt/d/berry/packages/berry-ui/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5/mnt/d/berry/packages/berry-ui/"),
         packageDependencies: new Map([
           ["@manaflair/term-strings", "0.10.1"],
           ["@manaflair/text-layout", "0.10.4"],
@@ -5300,7 +5309,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@manaflair/term-strings", new Map([
       ["0.10.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@manaflair-term-strings-6ddafc15bb514b13.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@manaflair-term-strings-6ddafc15bb514b13.zip/"),
         packageDependencies: new Map([
           ["babel-runtime", "6.26.0"],
           ["color-diff", "1.1.0"],
@@ -5310,7 +5319,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["babel-runtime", new Map([
       ["6.26.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/babel-runtime-e27bf48cf6a51fa0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/babel-runtime-e27bf48cf6a51fa0.zip/"),
         packageDependencies: new Map([
           ["core-js", "2.5.7"],
           ["regenerator-runtime", "0.11.1"],
@@ -5320,7 +5329,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["core-js", new Map([
       ["2.5.7", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/core-js-ad7da2972dad4719.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/core-js-ad7da2972dad4719.zip/"),
         packageDependencies: new Map([
           ["core-js", "2.5.7"],
         ]),
@@ -5328,7 +5337,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["regenerator-runtime", new Map([
       ["0.11.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/regenerator-runtime-b0b57f26d2376b9f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/regenerator-runtime-b0b57f26d2376b9f.zip/"),
         packageDependencies: new Map([
           ["regenerator-runtime", "0.11.1"],
         ]),
@@ -5336,7 +5345,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["color-diff", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/color-diff-223770e31c19c72e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/color-diff-223770e31c19c72e.zip/"),
         packageDependencies: new Map([
           ["color-diff", "1.1.0"],
         ]),
@@ -5344,7 +5353,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@manaflair/text-layout", new Map([
       ["0.10.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@manaflair-text-layout-72aa8c1be54c4d9f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@manaflair-text-layout-72aa8c1be54c4d9f.zip/"),
         packageDependencies: new Map([
           ["@manaflair/text-layout", "0.10.4"],
         ]),
@@ -5352,7 +5361,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["react-reconciler", new Map([
       ["virtual:1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e#0.14.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/b19ab1869ec6cee94031abc31e3ca576fc706d971e82b010e78026568181522f028dd15fdb890d822ea3a8b74e72ed7cde4ba4c3b288e846504af633443d78a9/mnt/d/berry/.pnp/cache/react-reconciler-9ae2339378513aaf.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/b19ab1869ec6cee94031abc31e3ca576fc706d971e82b010e78026568181522f028dd15fdb890d822ea3a8b74e72ed7cde4ba4c3b288e846504af633443d78a9/mnt/d/berry/packages/berry-cli/pnp/cache/react-reconciler-9ae2339378513aaf.zip/"),
         packageDependencies: new Map([
           ["loose-envify", "1.4.0"],
           ["object-assign", "4.1.1"],
@@ -5363,7 +5372,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["virtual:87c31939ffd3d24ff010b223c0935f0c5e91cd5b92941e5d632b279dccfc6e1b5b5b8b4a3ac82556a5a38ebc09123b1c1475079859ef3b232d23fbd748e3c020#0.14.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/09362d6331d5f198ee2b6186e15587dfd19be805f63df70ac0d721c207d27ab800166f479ee53c5220ae94ff9e3fcdb789031da2d297187a24721492fbce8f66/mnt/d/berry/.pnp/cache/react-reconciler-9ae2339378513aaf.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/09362d6331d5f198ee2b6186e15587dfd19be805f63df70ac0d721c207d27ab800166f479ee53c5220ae94ff9e3fcdb789031da2d297187a24721492fbce8f66/mnt/d/berry/packages/berry-cli/pnp/cache/react-reconciler-9ae2339378513aaf.zip/"),
         packageDependencies: new Map([
           ["loose-envify", "1.4.0"],
           ["object-assign", "4.1.1"],
@@ -5374,7 +5383,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["virtual:1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5#0.14.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/c1142458435ae921ce2efb69708ebea50ad6c35c835abe5802cd30e3eb3aa56ceb950ed4a1ff1bec7abe1df328c8d7eecb2c636b605fb4979ef6a97ba61000be/mnt/d/berry/.pnp/cache/react-reconciler-9ae2339378513aaf.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/c1142458435ae921ce2efb69708ebea50ad6c35c835abe5802cd30e3eb3aa56ceb950ed4a1ff1bec7abe1df328c8d7eecb2c636b605fb4979ef6a97ba61000be/mnt/d/berry/packages/berry-cli/pnp/cache/react-reconciler-9ae2339378513aaf.zip/"),
         packageDependencies: new Map([
           ["loose-envify", "1.4.0"],
           ["object-assign", "4.1.1"],
@@ -5387,7 +5396,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["prop-types", new Map([
       ["15.6.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/prop-types-75d2fa5f83ec7417.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/prop-types-75d2fa5f83ec7417.zip/"),
         packageDependencies: new Map([
           ["loose-envify", "1.4.0"],
           ["object-assign", "4.1.1"],
@@ -5397,7 +5406,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["react", new Map([
       ["16.5.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/react-490254dff8d4cee1.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/react-490254dff8d4cee1.zip/"),
         packageDependencies: new Map([
           ["loose-envify", "1.4.0"],
           ["object-assign", "4.1.1"],
@@ -5409,14 +5418,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["schedule", new Map([
       ["0.5.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/schedule-ae5738698ac6025e.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/schedule-ae5738698ac6025e.zip/"),
         packageDependencies: new Map([
           ["object-assign", "4.1.1"],
           ["schedule", "0.5.0"],
         ]),
       }],
       ["0.4.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/schedule-4265ee336d5200ba.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/schedule-4265ee336d5200ba.zip/"),
         packageDependencies: new Map([
           ["object-assign", "4.1.1"],
           ["schedule", "0.4.0"],
@@ -5425,7 +5434,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["ttys", new Map([
       ["0.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ttys-c17bc82686ac559a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/ttys-c17bc82686ac559a.zip/"),
         packageDependencies: new Map([
           ["ttys", "0.0.3"],
         ]),
@@ -5433,7 +5442,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["yoga-dom", new Map([
       ["0.0.14", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/yoga-dom-917d9f5a5c855788.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/yoga-dom-917d9f5a5c855788.zip/"),
         packageDependencies: new Map([
           ["yoga-dom", "0.0.14"],
         ]),
@@ -5441,7 +5450,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["dateformat", new Map([
       ["3.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/dateformat-6aa94cd6f1559010.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/dateformat-6aa94cd6f1559010.zip/"),
         packageDependencies: new Map([
           ["dateformat", "3.0.3"],
         ]),
@@ -5449,7 +5458,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["immer", new Map([
       ["1.7.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/immer-74432e7b14e68bba.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/immer-74432e7b14e68bba.zip/"),
         packageDependencies: new Map([
           ["immer", "1.7.2"],
         ]),
@@ -5457,7 +5466,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["react-redux", new Map([
       ["virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#5.0.7", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/4a7ba0b91b4cbef9f7d5bf42e56df53b7f7f2a0864724a7ecd7f958e5064b26d64500ae34c7c32ecfecef6737b4fd7655e14cbdd8653ed7456867de2750cdded/mnt/d/berry/.pnp/cache/react-redux-1cf257a89497e127.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/4a7ba0b91b4cbef9f7d5bf42e56df53b7f7f2a0864724a7ecd7f958e5064b26d64500ae34c7c32ecfecef6737b4fd7655e14cbdd8653ed7456867de2750cdded/mnt/d/berry/packages/berry-cli/pnp/cache/react-redux-1cf257a89497e127.zip/"),
         packageDependencies: new Map([
           ["hoist-non-react-statics", "2.5.5"],
           ["invariant", "2.2.4"],
@@ -5471,7 +5480,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
       ["virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#5.0.7", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/f5f11dd0678d2fce37b73c8a21dd571c5f8caed78f7967cf45a7bc5ad51af1add54665b7ac5d2332d40d4fff85809551c408b4519f3ea4ee33925c1670c5da55/mnt/d/berry/.pnp/cache/react-redux-1cf257a89497e127.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/f5f11dd0678d2fce37b73c8a21dd571c5f8caed78f7967cf45a7bc5ad51af1add54665b7ac5d2332d40d4fff85809551c408b4519f3ea4ee33925c1670c5da55/mnt/d/berry/packages/berry-cli/pnp/cache/react-redux-1cf257a89497e127.zip/"),
         packageDependencies: new Map([
           ["hoist-non-react-statics", "2.5.5"],
           ["invariant", "2.2.4"],
@@ -5487,7 +5496,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["hoist-non-react-statics", new Map([
       ["2.5.5", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/hoist-non-react-statics-9e36a45c1174675b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/hoist-non-react-statics-9e36a45c1174675b.zip/"),
         packageDependencies: new Map([
           ["hoist-non-react-statics", "2.5.5"],
         ]),
@@ -5495,7 +5504,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["invariant", new Map([
       ["2.2.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/invariant-6746799ce29a832f.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/invariant-6746799ce29a832f.zip/"),
         packageDependencies: new Map([
           ["loose-envify", "1.4.0"],
           ["invariant", "2.2.4"],
@@ -5504,7 +5513,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["lodash-es", new Map([
       ["4.17.11", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/lodash-es-111375b55d6eeb8c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/lodash-es-111375b55d6eeb8c.zip/"),
         packageDependencies: new Map([
           ["lodash-es", "4.17.11"],
         ]),
@@ -5512,7 +5521,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["pegjs", new Map([
       ["0.10.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/pegjs-a8accba5a468bf53.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/pegjs-a8accba5a468bf53.zip/"),
         packageDependencies: new Map([
           ["pegjs", "0.10.0"],
         ]),
@@ -5520,7 +5529,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["wasm-loader", new Map([
       ["virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#1.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/827d4485da060eca148aa08466e2173a3901039d4b578aef46e22e86b2ea0ee6c26352c94d33db9192b8710724fda1c98a60c8807e18dd40b1a70b82c27f746a/mnt/d/berry/.pnp/cache/wasm-loader-a6dcd367449e3d33.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/827d4485da060eca148aa08466e2173a3901039d4b578aef46e22e86b2ea0ee6c26352c94d33db9192b8710724fda1c98a60c8807e18dd40b1a70b82c27f746a/mnt/d/berry/packages/berry-cli/pnp/cache/wasm-loader-a6dcd367449e3d33.zip/"),
         packageDependencies: new Map([
           ["loader-utils", "1.1.0"],
           ["wasm-dce", "1.0.2"],
@@ -5530,7 +5539,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["wasm-dce", new Map([
       ["1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/wasm-dce-fa177bcfe70840f8.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/wasm-dce-fa177bcfe70840f8.zip/"),
         packageDependencies: new Map([
           ["@babel/core", "7.1.2"],
           ["@babel/traverse", "7.1.4"],
@@ -5543,7 +5552,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@babel/core", new Map([
       ["7.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@babel-core-1d54c2f766d302c7.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@babel-core-1d54c2f766d302c7.zip/"),
         packageDependencies: new Map([
           ["@babel/code-frame", "7.0.0"],
           ["@babel/generator", "7.1.3"],
@@ -5565,7 +5574,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@babel/code-frame", new Map([
       ["7.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@babel-code-frame-0e5d48b14a323c85.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@babel-code-frame-0e5d48b14a323c85.zip/"),
         packageDependencies: new Map([
           ["@babel/highlight", "7.0.0"],
           ["@babel/code-frame", "7.0.0"],
@@ -5574,7 +5583,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@babel/highlight", new Map([
       ["7.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@babel-highlight-cc070de8146c97aa.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@babel-highlight-cc070de8146c97aa.zip/"),
         packageDependencies: new Map([
           ["chalk", "2.4.1"],
           ["esutils", "2.0.2"],
@@ -5585,7 +5594,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@babel/generator", new Map([
       ["7.1.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@babel-generator-a2198324f9152c8b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@babel-generator-a2198324f9152c8b.zip/"),
         packageDependencies: new Map([
           ["@babel/types", "7.1.3"],
           ["jsesc", "2.5.1"],
@@ -5598,7 +5607,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@babel/types", new Map([
       ["7.1.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@babel-types-7ac5bddadfca3292.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@babel-types-7ac5bddadfca3292.zip/"),
         packageDependencies: new Map([
           ["esutils", "2.0.2"],
           ["lodash", "4.17.11"],
@@ -5609,7 +5618,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["to-fast-properties", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/to-fast-properties-5ab2ef682d9b3f2a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/to-fast-properties-5ab2ef682d9b3f2a.zip/"),
         packageDependencies: new Map([
           ["to-fast-properties", "2.0.0"],
         ]),
@@ -5617,7 +5626,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["jsesc", new Map([
       ["2.5.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/jsesc-c9474d6b7c1fb135.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/jsesc-c9474d6b7c1fb135.zip/"),
         packageDependencies: new Map([
           ["jsesc", "2.5.1"],
         ]),
@@ -5625,7 +5634,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["trim-right", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/trim-right-868a0fa9d636a184.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/trim-right-868a0fa9d636a184.zip/"),
         packageDependencies: new Map([
           ["trim-right", "1.0.1"],
         ]),
@@ -5633,7 +5642,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@babel/helpers", new Map([
       ["7.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@babel-helpers-3925417e994d89d5.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@babel-helpers-3925417e994d89d5.zip/"),
         packageDependencies: new Map([
           ["@babel/template", "7.1.2"],
           ["@babel/traverse", "7.1.4"],
@@ -5644,7 +5653,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@babel/template", new Map([
       ["7.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@babel-template-6eb0fa8d33da1597.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@babel-template-6eb0fa8d33da1597.zip/"),
         packageDependencies: new Map([
           ["@babel/code-frame", "7.0.0"],
           ["@babel/parser", "7.1.3"],
@@ -5655,7 +5664,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@babel/parser", new Map([
       ["7.1.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@babel-parser-d516dfa4e51ba9b5.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@babel-parser-d516dfa4e51ba9b5.zip/"),
         packageDependencies: new Map([
           ["@babel/parser", "7.1.3"],
         ]),
@@ -5663,7 +5672,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@babel/traverse", new Map([
       ["7.1.4", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@babel-traverse-f1a88a6803759aa1.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@babel-traverse-f1a88a6803759aa1.zip/"),
         packageDependencies: new Map([
           ["@babel/code-frame", "7.0.0"],
           ["@babel/generator", "7.1.3"],
@@ -5680,7 +5689,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@babel/helper-function-name", new Map([
       ["7.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@babel-helper-function-name-512a163980dee547.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@babel-helper-function-name-512a163980dee547.zip/"),
         packageDependencies: new Map([
           ["@babel/helper-get-function-arity", "7.0.0"],
           ["@babel/template", "7.1.2"],
@@ -5691,7 +5700,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@babel/helper-get-function-arity", new Map([
       ["7.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@babel-helper-get-function-arity-31e2278bea711fc8.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@babel-helper-get-function-arity-31e2278bea711fc8.zip/"),
         packageDependencies: new Map([
           ["@babel/types", "7.1.3"],
           ["@babel/helper-get-function-arity", "7.0.0"],
@@ -5700,7 +5709,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["@babel/helper-split-export-declaration", new Map([
       ["7.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@babel-helper-split-export-declaration-0b5619edafaa3c77.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/@babel-helper-split-export-declaration-0b5619edafaa3c77.zip/"),
         packageDependencies: new Map([
           ["@babel/types", "7.1.3"],
           ["@babel/helper-split-export-declaration", "7.0.0"],
@@ -5709,7 +5718,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["globals", new Map([
       ["11.8.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/globals-1b58b1326e89dd89.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/globals-1b58b1326e89dd89.zip/"),
         packageDependencies: new Map([
           ["globals", "11.8.0"],
         ]),
@@ -5717,7 +5726,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["babylon", new Map([
       ["7.0.0-beta.47", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/babylon-7760fe4afc24e0aa.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/babylon-7760fe4afc24e0aa.zip/"),
         packageDependencies: new Map([
           ["babylon", "7.0.0-beta.47"],
         ]),
@@ -5725,7 +5734,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["webassembly-interpreter", new Map([
       ["0.0.30", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/webassembly-interpreter-82a771f5bdef3158.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/webassembly-interpreter-82a771f5bdef3158.zip/"),
         packageDependencies: new Map([
           ["@babel/code-frame", "7.0.0"],
           ["long", "3.2.0"],
@@ -5736,7 +5745,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["long", new Map([
       ["3.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/long-d74296974027f78d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/long-d74296974027f78d.zip/"),
         packageDependencies: new Map([
           ["long", "3.2.0"],
         ]),
@@ -5744,7 +5753,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["webassembly-floating-point-hex-parser", new Map([
       ["0.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/webassembly-floating-point-hex-parser-2df2cdd025a05fce.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/webassembly-floating-point-hex-parser-2df2cdd025a05fce.zip/"),
         packageDependencies: new Map([
           ["webassembly-floating-point-hex-parser", "0.1.2"],
         ]),
@@ -5752,7 +5761,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["webpack-cli", new Map([
       ["virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/virtual/88b28cb628417132804a11932bd617868ddf3193bc861194cffab3779eff47b626a218d436725b833bf298546975a840a25bc06e96f9593d1be6d5f6ad6dc612/mnt/d/berry/.pnp/cache/webpack-cli-8fc25e96a0b6450d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/virtual/88b28cb628417132804a11932bd617868ddf3193bc861194cffab3779eff47b626a218d436725b833bf298546975a840a25bc06e96f9593d1be6d5f6ad6dc612/mnt/d/berry/packages/berry-cli/pnp/cache/webpack-cli-8fc25e96a0b6450d.zip/"),
         packageDependencies: new Map([
           ["chalk", "2.4.1"],
           ["cross-spawn", "6.0.5"],
@@ -5771,7 +5780,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["global-modules-path", new Map([
       ["2.3.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/global-modules-path-b79fac6f9bd395aa.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/global-modules-path-b79fac6f9bd395aa.zip/"),
         packageDependencies: new Map([
           ["global-modules-path", "2.3.0"],
         ]),
@@ -5779,7 +5788,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["import-local", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/import-local-22bc1d2185e51f68.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/import-local-22bc1d2185e51f68.zip/"),
         packageDependencies: new Map([
           ["pkg-dir", "3.0.0"],
           ["resolve-cwd", "2.0.0"],
@@ -5789,7 +5798,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["resolve-cwd", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/resolve-cwd-c384a4f13208b97d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/resolve-cwd-c384a4f13208b97d.zip/"),
         packageDependencies: new Map([
           ["resolve-from", "3.0.0"],
           ["resolve-cwd", "2.0.0"],
@@ -5798,7 +5807,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["resolve-from", new Map([
       ["3.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/resolve-from-feb3dc1f1029d666.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/resolve-from-feb3dc1f1029d666.zip/"),
         packageDependencies: new Map([
           ["resolve-from", "3.0.0"],
         ]),
@@ -5806,7 +5815,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["interpret", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/interpret-2b7cbd36e58f3e46.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/interpret-2b7cbd36e58f3e46.zip/"),
         packageDependencies: new Map([
           ["interpret", "1.1.0"],
         ]),
@@ -5814,7 +5823,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["v8-compile-cache", new Map([
       ["2.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/v8-compile-cache-d716e562a62c318b.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/v8-compile-cache-d716e562a62c318b.zip/"),
         packageDependencies: new Map([
           ["v8-compile-cache", "2.0.2"],
         ]),
@@ -5822,7 +5831,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["yargs", new Map([
       ["12.0.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/yargs-f69984a4ce057a06.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/yargs-f69984a4ce057a06.zip/"),
         packageDependencies: new Map([
           ["cliui", "4.1.0"],
           ["decamelize", "2.0.0"],
@@ -5842,7 +5851,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["cliui", new Map([
       ["4.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/cliui-1f7bbb51f7d6a9e9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/cliui-1f7bbb51f7d6a9e9.zip/"),
         packageDependencies: new Map([
           ["string-width", "2.1.1"],
           ["strip-ansi", "4.0.0"],
@@ -5853,7 +5862,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["wrap-ansi", new Map([
       ["2.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/wrap-ansi-3e26387caace8c19.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/wrap-ansi-3e26387caace8c19.zip/"),
         packageDependencies: new Map([
           ["string-width", "1.0.2"],
           ["strip-ansi", "3.0.1"],
@@ -5863,7 +5872,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["decamelize", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/decamelize-6207beb6d5ed2e79.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/decamelize-6207beb6d5ed2e79.zip/"),
         packageDependencies: new Map([
           ["xregexp", "4.0.0"],
           ["decamelize", "2.0.0"],
@@ -5872,7 +5881,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["xregexp", new Map([
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/xregexp-1c17bf546960129c.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/xregexp-1c17bf546960129c.zip/"),
         packageDependencies: new Map([
           ["xregexp", "4.0.0"],
         ]),
@@ -5880,7 +5889,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["get-caller-file", new Map([
       ["1.0.3", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/get-caller-file-02a3e3941409d068.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/get-caller-file-02a3e3941409d068.zip/"),
         packageDependencies: new Map([
           ["get-caller-file", "1.0.3"],
         ]),
@@ -5888,7 +5897,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["os-locale", new Map([
       ["3.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/os-locale-99e7467d21a15dcf.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/os-locale-99e7467d21a15dcf.zip/"),
         packageDependencies: new Map([
           ["execa", "0.10.0"],
           ["lcid", "2.0.0"],
@@ -5899,7 +5908,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["lcid", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/lcid-8836b877bf9601c0.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/lcid-8836b877bf9601c0.zip/"),
         packageDependencies: new Map([
           ["invert-kv", "2.0.0"],
           ["lcid", "2.0.0"],
@@ -5908,7 +5917,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["invert-kv", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/invert-kv-26a5b8b7ea33cea2.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/invert-kv-26a5b8b7ea33cea2.zip/"),
         packageDependencies: new Map([
           ["invert-kv", "2.0.0"],
         ]),
@@ -5916,7 +5925,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["mem", new Map([
       ["4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/mem-894872c18f2e027a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/mem-894872c18f2e027a.zip/"),
         packageDependencies: new Map([
           ["map-age-cleaner", "0.1.2"],
           ["mimic-fn", "1.2.0"],
@@ -5927,7 +5936,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["map-age-cleaner", new Map([
       ["0.1.2", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/map-age-cleaner-2fa26790d0c67c96.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/map-age-cleaner-2fa26790d0c67c96.zip/"),
         packageDependencies: new Map([
           ["p-defer", "1.0.0"],
           ["map-age-cleaner", "0.1.2"],
@@ -5936,7 +5945,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["p-defer", new Map([
       ["1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/p-defer-2a1c4c8458d60d4a.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/p-defer-2a1c4c8458d60d4a.zip/"),
         packageDependencies: new Map([
           ["p-defer", "1.0.0"],
         ]),
@@ -5944,7 +5953,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["mimic-fn", new Map([
       ["1.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/mimic-fn-8daea209db57999d.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/mimic-fn-8daea209db57999d.zip/"),
         packageDependencies: new Map([
           ["mimic-fn", "1.2.0"],
         ]),
@@ -5952,7 +5961,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["p-is-promise", new Map([
       ["1.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/p-is-promise-1709108f16de0346.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/p-is-promise-1709108f16de0346.zip/"),
         packageDependencies: new Map([
           ["p-is-promise", "1.1.0"],
         ]),
@@ -5960,7 +5969,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["require-directory", new Map([
       ["2.1.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/require-directory-74564ef8f658c394.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/require-directory-74564ef8f658c394.zip/"),
         packageDependencies: new Map([
           ["require-directory", "2.1.1"],
         ]),
@@ -5968,7 +5977,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["require-main-filename", new Map([
       ["1.0.1", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/require-main-filename-e62d4202b89cf265.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/require-main-filename-e62d4202b89cf265.zip/"),
         packageDependencies: new Map([
           ["require-main-filename", "1.0.1"],
         ]),
@@ -5976,7 +5985,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["which-module", new Map([
       ["2.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/which-module-c8902e7df1b214f9.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/which-module-c8902e7df1b214f9.zip/"),
         packageDependencies: new Map([
           ["which-module", "2.0.0"],
         ]),
@@ -5984,7 +5993,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["yargs-parser", new Map([
       ["10.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/yargs-parser-11285ffe5f78c2a7.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/yargs-parser-11285ffe5f78c2a7.zip/"),
         packageDependencies: new Map([
           ["camelcase", "4.1.0"],
           ["yargs-parser", "10.1.0"],
@@ -5993,7 +6002,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["camelcase", new Map([
       ["4.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/camelcase-2727d3c44c1164bb.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/camelcase-2727d3c44c1164bb.zip/"),
         packageDependencies: new Map([
           ["camelcase", "4.1.0"],
         ]),
@@ -6001,7 +6010,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["faker", new Map([
       ["4.1.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/faker-f0914e910104a9fa.zip/"),
+        packageLocation: path.resolve(__dirname, "./packages/berry-cli/pnp/cache/faker-f0914e910104a9fa.zip/"),
         packageDependencies: new Map([
           ["faker", "4.1.0"],
         ]),
@@ -6011,477 +6020,478 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
   
   packageLocatorByLocationMap = new Map([
     ["./", topLevelLocator],
-    ["./.pnp/cache/@types-dateformat-7974bf5ca93ce3a3.zip/", {"name":"@types/dateformat","reference":"1.0.1"}],
-    ["./.pnp/cache/@types-emscripten-67ba42434d01a16b.zip/", {"name":"@types/emscripten","reference":"0.0.31"}],
-    ["./.pnp/cache/@types-webassembly-js-api-2a79060b1aa9d730.zip/", {"name":"@types/webassembly-js-api","reference":"0.0.1"}],
-    ["./.pnp/cache/@types-eventemitter3-069bc52d7dcc02db.zip/", {"name":"@types/eventemitter3","reference":"2.0.2"}],
-    ["./.pnp/cache/eventemitter3-36abdf16d2e038be.zip/", {"name":"eventemitter3","reference":"3.1.0"}],
-    ["./.pnp/cache/@types-execa-a1a5b27b5a88b91f.zip/", {"name":"@types/execa","reference":"0.9.0"}],
-    ["./.pnp/cache/@types-node-624969e6ce73b26d.zip/", {"name":"@types/node","reference":"10.11.7"}],
-    ["./.pnp/cache/@types-faker-cead86bc5bcaccf3.zip/", {"name":"@types/faker","reference":"4.1.4"}],
-    ["./.pnp/cache/@types-fs-extra-c5a99cc88325dc25.zip/", {"name":"@types/fs-extra","reference":"5.0.4"}],
-    ["./.pnp/cache/@types-globby-71751551ed58e7d3.zip/", {"name":"@types/globby","reference":"8.0.0"}],
-    ["./.pnp/cache/@types-glob-40ef64361c44325b.zip/", {"name":"@types/glob","reference":"7.1.1"}],
-    ["./.pnp/cache/@types-events-8b8f573002cf3ab4.zip/", {"name":"@types/events","reference":"1.2.0"}],
-    ["./.pnp/cache/@types-minimatch-3102f5f77510f720.zip/", {"name":"@types/minimatch","reference":"3.0.3"}],
-    ["./.pnp/cache/fast-glob-c642fd396b06c748.zip/", {"name":"fast-glob","reference":"2.2.3"}],
-    ["./.pnp/cache/@mrmlnc-readdir-enhanced-a0b9121d0adb3a5d.zip/", {"name":"@mrmlnc/readdir-enhanced","reference":"2.2.1"}],
-    ["./.pnp/cache/call-me-maybe-3659bd4437f4a3ea.zip/", {"name":"call-me-maybe","reference":"1.0.1"}],
-    ["./.pnp/cache/glob-to-regexp-c41e80b11b91a631.zip/", {"name":"glob-to-regexp","reference":"0.3.0"}],
-    ["./.pnp/cache/@nodelib-fs.stat-8db0fc0015829dc1.zip/", {"name":"@nodelib/fs.stat","reference":"1.1.2"}],
-    ["./.pnp/cache/glob-parent-61be576f48fd806f.zip/", {"name":"glob-parent","reference":"3.1.0"}],
-    ["./.pnp/cache/is-glob-b66f2995a922d62f.zip/", {"name":"is-glob","reference":"3.1.0"}],
-    ["./.pnp/cache/is-glob-891817a74343fa53.zip/", {"name":"is-glob","reference":"4.0.0"}],
-    ["./.pnp/cache/is-extglob-293932fad9e5589a.zip/", {"name":"is-extglob","reference":"2.1.1"}],
-    ["./.pnp/cache/path-dirname-b2cdd9cfa668017c.zip/", {"name":"path-dirname","reference":"1.0.2"}],
-    ["./.pnp/cache/merge2-3d30ac803ed91dba.zip/", {"name":"merge2","reference":"1.2.2"}],
-    ["./.pnp/cache/micromatch-c29be1a939ceeb16.zip/", {"name":"micromatch","reference":"3.1.10"}],
-    ["./.pnp/cache/arr-diff-e89c00ace7a49631.zip/", {"name":"arr-diff","reference":"4.0.0"}],
-    ["./.pnp/cache/array-unique-668345ecd9a95c5e.zip/", {"name":"array-unique","reference":"0.3.2"}],
-    ["./.pnp/cache/braces-b1d3367385d4f0a6.zip/", {"name":"braces","reference":"2.3.2"}],
-    ["./.pnp/cache/arr-flatten-b4e203f942570a11.zip/", {"name":"arr-flatten","reference":"1.1.0"}],
-    ["./.pnp/cache/extend-shallow-b47a0903febb239b.zip/", {"name":"extend-shallow","reference":"2.0.1"}],
-    ["./.pnp/cache/extend-shallow-ef6654b1a347a4d1.zip/", {"name":"extend-shallow","reference":"3.0.2"}],
-    ["./.pnp/cache/is-extendable-7c41ed03f999ad8e.zip/", {"name":"is-extendable","reference":"0.1.1"}],
-    ["./.pnp/cache/is-extendable-580607f5bcd57e29.zip/", {"name":"is-extendable","reference":"1.0.1"}],
-    ["./.pnp/cache/fill-range-0d0c326530de8d78.zip/", {"name":"fill-range","reference":"4.0.0"}],
-    ["./.pnp/cache/is-number-9d434c0ad574867b.zip/", {"name":"is-number","reference":"3.0.0"}],
-    ["./.pnp/cache/kind-of-47ad9abbda485ab9.zip/", {"name":"kind-of","reference":"3.2.2"}],
-    ["./.pnp/cache/kind-of-cceb8ac2460e389b.zip/", {"name":"kind-of","reference":"6.0.2"}],
-    ["./.pnp/cache/kind-of-879b1fbaa5ff9604.zip/", {"name":"kind-of","reference":"4.0.0"}],
-    ["./.pnp/cache/kind-of-e5cd32405caadb81.zip/", {"name":"kind-of","reference":"5.1.0"}],
-    ["./.pnp/cache/is-buffer-c2adb65d0d8bdac9.zip/", {"name":"is-buffer","reference":"1.1.6"}],
-    ["./.pnp/cache/repeat-string-c35dd8e81f6a01cd.zip/", {"name":"repeat-string","reference":"1.6.1"}],
-    ["./.pnp/cache/to-regex-range-72bcd000ca2c293d.zip/", {"name":"to-regex-range","reference":"2.1.1"}],
-    ["./.pnp/cache/isobject-bc5c1f9692a41890.zip/", {"name":"isobject","reference":"3.0.1"}],
-    ["./.pnp/cache/isobject-cf1d932fe6be27f4.zip/", {"name":"isobject","reference":"2.1.0"}],
-    ["./.pnp/cache/repeat-element-96cac51a8cc999bb.zip/", {"name":"repeat-element","reference":"1.1.3"}],
-    ["./.pnp/cache/snapdragon-node-faa2f9c14191465d.zip/", {"name":"snapdragon-node","reference":"2.1.1"}],
-    ["./.pnp/cache/define-property-9482f08cc1f9476f.zip/", {"name":"define-property","reference":"1.0.0"}],
-    ["./.pnp/cache/define-property-64745ada86532978.zip/", {"name":"define-property","reference":"0.2.5"}],
-    ["./.pnp/cache/define-property-67a3de3ed80b0920.zip/", {"name":"define-property","reference":"2.0.2"}],
-    ["./.pnp/cache/is-descriptor-c99916c915a6827b.zip/", {"name":"is-descriptor","reference":"1.0.2"}],
-    ["./.pnp/cache/is-descriptor-5b9d2770366bf793.zip/", {"name":"is-descriptor","reference":"0.1.6"}],
-    ["./.pnp/cache/is-accessor-descriptor-488cffcad32ed59a.zip/", {"name":"is-accessor-descriptor","reference":"1.0.0"}],
-    ["./.pnp/cache/is-accessor-descriptor-65a67690993d4e94.zip/", {"name":"is-accessor-descriptor","reference":"0.1.6"}],
-    ["./.pnp/cache/is-data-descriptor-f04138cd566fc98f.zip/", {"name":"is-data-descriptor","reference":"1.0.0"}],
-    ["./.pnp/cache/is-data-descriptor-14df5cabe6085e25.zip/", {"name":"is-data-descriptor","reference":"0.1.4"}],
-    ["./.pnp/cache/snapdragon-util-6146572abbf14b4c.zip/", {"name":"snapdragon-util","reference":"3.0.1"}],
-    ["./.pnp/cache/snapdragon-01777b171363808e.zip/", {"name":"snapdragon","reference":"0.8.2"}],
-    ["./.pnp/cache/base-4e47dd8c3c3b4c37.zip/", {"name":"base","reference":"0.11.2"}],
-    ["./.pnp/cache/cache-base-978aa64073d20ac2.zip/", {"name":"cache-base","reference":"1.0.1"}],
-    ["./.pnp/cache/collection-visit-b7d89e260ef734b3.zip/", {"name":"collection-visit","reference":"1.0.0"}],
-    ["./.pnp/cache/map-visit-8099fcf505ca422f.zip/", {"name":"map-visit","reference":"1.0.0"}],
-    ["./.pnp/cache/object-visit-eeecd32c47884f48.zip/", {"name":"object-visit","reference":"1.0.1"}],
-    ["./.pnp/cache/component-emitter-2d9e30e3b0ccf7c9.zip/", {"name":"component-emitter","reference":"1.2.1"}],
-    ["./.pnp/cache/get-value-cd01527ef83fe9cb.zip/", {"name":"get-value","reference":"2.0.6"}],
-    ["./.pnp/cache/has-value-8550f40898c6a2d1.zip/", {"name":"has-value","reference":"1.0.0"}],
-    ["./.pnp/cache/has-value-6e03733eecfa1aa9.zip/", {"name":"has-value","reference":"0.3.1"}],
-    ["./.pnp/cache/has-values-f0c82ea20915b4b2.zip/", {"name":"has-values","reference":"1.0.0"}],
-    ["./.pnp/cache/has-values-db1fe74ae1c19f9f.zip/", {"name":"has-values","reference":"0.1.4"}],
-    ["./.pnp/cache/set-value-f243d27f31700ad2.zip/", {"name":"set-value","reference":"2.0.0"}],
-    ["./.pnp/cache/set-value-6a8c4174792cc537.zip/", {"name":"set-value","reference":"0.4.3"}],
-    ["./.pnp/cache/is-plain-object-3ab8f29b4a2a085e.zip/", {"name":"is-plain-object","reference":"2.0.4"}],
-    ["./.pnp/cache/split-string-91289614d8f09d56.zip/", {"name":"split-string","reference":"3.1.0"}],
-    ["./.pnp/cache/assign-symbols-ab711500b3301bde.zip/", {"name":"assign-symbols","reference":"1.0.0"}],
-    ["./.pnp/cache/to-object-path-8446eb5495c6ddfe.zip/", {"name":"to-object-path","reference":"0.3.0"}],
-    ["./.pnp/cache/union-value-7a2f095ea8bfb34a.zip/", {"name":"union-value","reference":"1.0.0"}],
-    ["./.pnp/cache/arr-union-17db18e9ce1ad4b6.zip/", {"name":"arr-union","reference":"3.1.0"}],
-    ["./.pnp/cache/unset-value-64fece49b6e6efbc.zip/", {"name":"unset-value","reference":"1.0.0"}],
-    ["./.pnp/cache/isarray-74b364b632c12820.zip/", {"name":"isarray","reference":"1.0.0"}],
-    ["./.pnp/cache/class-utils-d12a86ef4aa319b3.zip/", {"name":"class-utils","reference":"0.3.6"}],
-    ["./.pnp/cache/static-extend-1b333216235daddf.zip/", {"name":"static-extend","reference":"0.1.2"}],
-    ["./.pnp/cache/object-copy-ebd992d4ef6ee079.zip/", {"name":"object-copy","reference":"0.1.0"}],
-    ["./.pnp/cache/copy-descriptor-e19bbd010a89d482.zip/", {"name":"copy-descriptor","reference":"0.1.1"}],
-    ["./.pnp/cache/mixin-deep-56b1d3080842c657.zip/", {"name":"mixin-deep","reference":"1.3.1"}],
-    ["./.pnp/cache/for-in-8ac6aa6d5bb8e8d1.zip/", {"name":"for-in","reference":"1.0.2"}],
-    ["./.pnp/cache/pascalcase-20711584800fcc41.zip/", {"name":"pascalcase","reference":"0.1.1"}],
-    ["./.pnp/cache/debug-4674d1510180cf31.zip/", {"name":"debug","reference":"2.6.9"}],
-    ["./.pnp/cache/debug-18fbffa99514da6a.zip/", {"name":"debug","reference":"3.2.6"}],
-    ["./.pnp/cache/ms-57c7de478ec1d011.zip/", {"name":"ms","reference":"2.0.0"}],
-    ["./.pnp/cache/ms-573954742ae7733a.zip/", {"name":"ms","reference":"2.1.1"}],
-    ["./.pnp/cache/map-cache-b71e2f51854396c0.zip/", {"name":"map-cache","reference":"0.2.2"}],
-    ["./.pnp/cache/source-map-resolve-56bf599c233bd8c3.zip/", {"name":"source-map-resolve","reference":"0.5.2"}],
-    ["./.pnp/cache/atob-30ed7e0125f607cd.zip/", {"name":"atob","reference":"2.1.2"}],
-    ["./.pnp/cache/decode-uri-component-8fd500f861e4e3ee.zip/", {"name":"decode-uri-component","reference":"0.2.0"}],
-    ["./.pnp/cache/resolve-url-e0310613383fae5c.zip/", {"name":"resolve-url","reference":"0.2.1"}],
-    ["./.pnp/cache/source-map-url-b4a75c932ddf674f.zip/", {"name":"source-map-url","reference":"0.4.0"}],
-    ["./.pnp/cache/urix-bf4b02607dd2c9d6.zip/", {"name":"urix","reference":"0.1.0"}],
-    ["./.pnp/cache/source-map-ceda55baab699730.zip/", {"name":"source-map","reference":"0.5.7"}],
-    ["./.pnp/cache/source-map-81b5dbd121d897c3.zip/", {"name":"source-map","reference":"0.6.1"}],
-    ["./.pnp/cache/use-4583b637f78866bf.zip/", {"name":"use","reference":"3.1.1"}],
-    ["./.pnp/cache/to-regex-da27957fc33ab761.zip/", {"name":"to-regex","reference":"3.0.2"}],
-    ["./.pnp/cache/regex-not-bbb90616db519013.zip/", {"name":"regex-not","reference":"1.0.2"}],
-    ["./.pnp/cache/safe-regex-b9465c0a52da7b15.zip/", {"name":"safe-regex","reference":"1.1.0"}],
-    ["./.pnp/cache/ret-cfe80c53c5571eda.zip/", {"name":"ret","reference":"0.1.15"}],
-    ["./.pnp/cache/extglob-a5ea7e4241a9f381.zip/", {"name":"extglob","reference":"2.0.4"}],
-    ["./.pnp/cache/expand-brackets-a7473238bdce3d3c.zip/", {"name":"expand-brackets","reference":"2.1.4"}],
-    ["./.pnp/cache/posix-character-classes-218c2a1d43c4ad03.zip/", {"name":"posix-character-classes","reference":"0.1.1"}],
-    ["./.pnp/cache/fragment-cache-5e5e485a53a32090.zip/", {"name":"fragment-cache","reference":"0.2.1"}],
-    ["./.pnp/cache/nanomatch-8612995065effa61.zip/", {"name":"nanomatch","reference":"1.2.13"}],
-    ["./.pnp/cache/is-windows-ac66a4e5f7df4b9c.zip/", {"name":"is-windows","reference":"1.0.2"}],
-    ["./.pnp/cache/object.pick-d4fded6a54f10105.zip/", {"name":"object.pick","reference":"1.3.0"}],
-    ["./.pnp/cache/@types-got-05007d6c6f93b685.zip/", {"name":"@types/got","reference":"8.3.4"}],
-    ["./.pnp/cache/@types-lockfile-18242135e3cb3db2.zip/", {"name":"@types/lockfile","reference":"1.0.0"}],
-    ["./.pnp/cache/@types-lodash-99f5146ae4f466f4.zip/", {"name":"@types/lodash","reference":"4.14.117"}],
-    ["./.pnp/cache/@types-mkdirp-26a52e47c7cd2fe0.zip/", {"name":"@types/mkdirp","reference":"0.5.2"}],
-    ["./.pnp/cache/@types-node-fetch-4237419ee3ba8fd4.zip/", {"name":"@types/node-fetch","reference":"2.1.2"}],
-    ["./.pnp/cache/@types-react-redux-98c1a898e0913f59.zip/", {"name":"@types/react-redux","reference":"6.0.9"}],
-    ["./.pnp/cache/@types-react-7a08b5e68090a565.zip/", {"name":"@types/react","reference":"16.4.16"}],
-    ["./.pnp/cache/@types-prop-types-e936b3d10a6b94b7.zip/", {"name":"@types/prop-types","reference":"15.5.6"}],
-    ["./.pnp/cache/csstype-a8661bcef6b0e9cd.zip/", {"name":"csstype","reference":"2.5.7"}],
-    ["./.pnp/cache/redux-d6ba548357b1eaf4.zip/", {"name":"redux","reference":"4.0.0"}],
-    ["./.pnp/cache/loose-envify-1ff9e031c7be07bc.zip/", {"name":"loose-envify","reference":"1.4.0"}],
-    ["./.pnp/cache/js-tokens-5d3e4915f4f384e9.zip/", {"name":"js-tokens","reference":"4.0.0"}],
-    ["./.pnp/cache/symbol-observable-efaa2b0ed89ca3a3.zip/", {"name":"symbol-observable","reference":"1.2.0"}],
-    ["./.pnp/cache/@types-redux-saga-2a1e8af5a4fb7cc4.zip/", {"name":"@types/redux-saga","reference":"0.10.5"}],
-    ["./.pnp/cache/redux-saga-d967edc59590e4a0.zip/", {"name":"redux-saga","reference":"0.16.2"}],
-    ["./.pnp/cache/@types-redux-529c614dac39f734.zip/", {"name":"@types/redux","reference":"3.6.0"}],
-    ["./.pnp/cache/@types-request-aec12fe95d0d537e.zip/", {"name":"@types/request","reference":"2.47.1"}],
-    ["./.pnp/cache/@types-caseless-71fd2d56de590d24.zip/", {"name":"@types/caseless","reference":"0.12.1"}],
-    ["./.pnp/cache/@types-form-data-53ca89dea33b1f5a.zip/", {"name":"@types/form-data","reference":"2.2.1"}],
-    ["./.pnp/cache/@types-tough-cookie-396d0cb2d67fca48.zip/", {"name":"@types/tough-cookie","reference":"2.3.3"}],
-    ["./.pnp/cache/@types-semver-241156b84eaa59f2.zip/", {"name":"@types/semver","reference":"5.5.0"}],
-    ["./.pnp/cache/@types-stream-to-promise-0abf47e5467b0808.zip/", {"name":"@types/stream-to-promise","reference":"2.2.0"}],
-    ["./.pnp/cache/@types-tar-57cdcd689933e694.zip/", {"name":"@types/tar","reference":"4.0.0"}],
-    ["./.pnp/cache/@types-tmp-8826a3d0a56601f2.zip/", {"name":"@types/tmp","reference":"0.0.33"}],
-    ["./.pnp/cache/ts-node-8070b94376573a89.zip/", {"name":"ts-node","reference":"7.0.1"}],
-    ["./.pnp/cache/arrify-2a34fa322785982f.zip/", {"name":"arrify","reference":"1.0.1"}],
-    ["./.pnp/cache/buffer-from-d7d4eb0d87c430ea.zip/", {"name":"buffer-from","reference":"1.1.1"}],
-    ["./.pnp/cache/diff-0bef549ccd29f47d.zip/", {"name":"diff","reference":"3.5.0"}],
-    ["./.pnp/cache/make-error-3feea7527c3b5294.zip/", {"name":"make-error","reference":"1.3.5"}],
-    ["./.pnp/cache/minimist-a6b317aa47d76f1c.zip/", {"name":"minimist","reference":"1.2.0"}],
-    ["./.pnp/cache/minimist-62870fb721e89fe1.zip/", {"name":"minimist","reference":"0.0.8"}],
-    ["./.pnp/cache/mkdirp-7dc6e9583578f733.zip/", {"name":"mkdirp","reference":"0.5.1"}],
-    ["./.pnp/cache/source-map-support-073722c3a4f7d6e6.zip/", {"name":"source-map-support","reference":"0.5.9"}],
-    ["./.pnp/cache/yn-7fd5cf6ca4fd0581.zip/", {"name":"yn","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/@types-dateformat-7974bf5ca93ce3a3.zip/", {"name":"@types/dateformat","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/@types-emscripten-67ba42434d01a16b.zip/", {"name":"@types/emscripten","reference":"0.0.31"}],
+    ["./packages/berry-cli/pnp/cache/@types-webassembly-js-api-2a79060b1aa9d730.zip/", {"name":"@types/webassembly-js-api","reference":"0.0.1"}],
+    ["./packages/berry-cli/pnp/cache/@types-eventemitter3-069bc52d7dcc02db.zip/", {"name":"@types/eventemitter3","reference":"2.0.2"}],
+    ["./packages/berry-cli/pnp/cache/eventemitter3-36abdf16d2e038be.zip/", {"name":"eventemitter3","reference":"3.1.0"}],
+    ["./packages/berry-cli/pnp/cache/@types-execa-a1a5b27b5a88b91f.zip/", {"name":"@types/execa","reference":"0.9.0"}],
+    ["./packages/berry-cli/pnp/cache/@types-node-624969e6ce73b26d.zip/", {"name":"@types/node","reference":"10.11.7"}],
+    ["./packages/berry-cli/pnp/cache/@types-faker-cead86bc5bcaccf3.zip/", {"name":"@types/faker","reference":"4.1.4"}],
+    ["./packages/berry-cli/pnp/cache/@types-fs-extra-c5a99cc88325dc25.zip/", {"name":"@types/fs-extra","reference":"5.0.4"}],
+    ["./packages/berry-cli/pnp/cache/@types-globby-71751551ed58e7d3.zip/", {"name":"@types/globby","reference":"8.0.0"}],
+    ["./packages/berry-cli/pnp/cache/@types-glob-40ef64361c44325b.zip/", {"name":"@types/glob","reference":"7.1.1"}],
+    ["./packages/berry-cli/pnp/cache/@types-events-8b8f573002cf3ab4.zip/", {"name":"@types/events","reference":"1.2.0"}],
+    ["./packages/berry-cli/pnp/cache/@types-minimatch-3102f5f77510f720.zip/", {"name":"@types/minimatch","reference":"3.0.3"}],
+    ["./packages/berry-cli/pnp/cache/fast-glob-c642fd396b06c748.zip/", {"name":"fast-glob","reference":"2.2.3"}],
+    ["./packages/berry-cli/pnp/cache/@mrmlnc-readdir-enhanced-a0b9121d0adb3a5d.zip/", {"name":"@mrmlnc/readdir-enhanced","reference":"2.2.1"}],
+    ["./packages/berry-cli/pnp/cache/call-me-maybe-3659bd4437f4a3ea.zip/", {"name":"call-me-maybe","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/glob-to-regexp-c41e80b11b91a631.zip/", {"name":"glob-to-regexp","reference":"0.3.0"}],
+    ["./packages/berry-cli/pnp/cache/@nodelib-fs.stat-8db0fc0015829dc1.zip/", {"name":"@nodelib/fs.stat","reference":"1.1.2"}],
+    ["./packages/berry-cli/pnp/cache/glob-parent-61be576f48fd806f.zip/", {"name":"glob-parent","reference":"3.1.0"}],
+    ["./packages/berry-cli/pnp/cache/is-glob-b66f2995a922d62f.zip/", {"name":"is-glob","reference":"3.1.0"}],
+    ["./packages/berry-cli/pnp/cache/is-glob-891817a74343fa53.zip/", {"name":"is-glob","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/is-extglob-293932fad9e5589a.zip/", {"name":"is-extglob","reference":"2.1.1"}],
+    ["./packages/berry-cli/pnp/cache/path-dirname-b2cdd9cfa668017c.zip/", {"name":"path-dirname","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/merge2-3d30ac803ed91dba.zip/", {"name":"merge2","reference":"1.2.2"}],
+    ["./packages/berry-cli/pnp/cache/micromatch-c29be1a939ceeb16.zip/", {"name":"micromatch","reference":"3.1.10"}],
+    ["./packages/berry-cli/pnp/cache/arr-diff-e89c00ace7a49631.zip/", {"name":"arr-diff","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/array-unique-668345ecd9a95c5e.zip/", {"name":"array-unique","reference":"0.3.2"}],
+    ["./packages/berry-cli/pnp/cache/braces-b1d3367385d4f0a6.zip/", {"name":"braces","reference":"2.3.2"}],
+    ["./packages/berry-cli/pnp/cache/arr-flatten-b4e203f942570a11.zip/", {"name":"arr-flatten","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/extend-shallow-b47a0903febb239b.zip/", {"name":"extend-shallow","reference":"2.0.1"}],
+    ["./packages/berry-cli/pnp/cache/extend-shallow-ef6654b1a347a4d1.zip/", {"name":"extend-shallow","reference":"3.0.2"}],
+    ["./packages/berry-cli/pnp/cache/is-extendable-7c41ed03f999ad8e.zip/", {"name":"is-extendable","reference":"0.1.1"}],
+    ["./packages/berry-cli/pnp/cache/is-extendable-580607f5bcd57e29.zip/", {"name":"is-extendable","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/fill-range-0d0c326530de8d78.zip/", {"name":"fill-range","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/is-number-9d434c0ad574867b.zip/", {"name":"is-number","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/kind-of-47ad9abbda485ab9.zip/", {"name":"kind-of","reference":"3.2.2"}],
+    ["./packages/berry-cli/pnp/cache/kind-of-cceb8ac2460e389b.zip/", {"name":"kind-of","reference":"6.0.2"}],
+    ["./packages/berry-cli/pnp/cache/kind-of-879b1fbaa5ff9604.zip/", {"name":"kind-of","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/kind-of-e5cd32405caadb81.zip/", {"name":"kind-of","reference":"5.1.0"}],
+    ["./packages/berry-cli/pnp/cache/is-buffer-c2adb65d0d8bdac9.zip/", {"name":"is-buffer","reference":"1.1.6"}],
+    ["./packages/berry-cli/pnp/cache/repeat-string-c35dd8e81f6a01cd.zip/", {"name":"repeat-string","reference":"1.6.1"}],
+    ["./packages/berry-cli/pnp/cache/to-regex-range-72bcd000ca2c293d.zip/", {"name":"to-regex-range","reference":"2.1.1"}],
+    ["./packages/berry-cli/pnp/cache/isobject-bc5c1f9692a41890.zip/", {"name":"isobject","reference":"3.0.1"}],
+    ["./packages/berry-cli/pnp/cache/isobject-cf1d932fe6be27f4.zip/", {"name":"isobject","reference":"2.1.0"}],
+    ["./packages/berry-cli/pnp/cache/repeat-element-96cac51a8cc999bb.zip/", {"name":"repeat-element","reference":"1.1.3"}],
+    ["./packages/berry-cli/pnp/cache/snapdragon-node-faa2f9c14191465d.zip/", {"name":"snapdragon-node","reference":"2.1.1"}],
+    ["./packages/berry-cli/pnp/cache/define-property-9482f08cc1f9476f.zip/", {"name":"define-property","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/define-property-64745ada86532978.zip/", {"name":"define-property","reference":"0.2.5"}],
+    ["./packages/berry-cli/pnp/cache/define-property-67a3de3ed80b0920.zip/", {"name":"define-property","reference":"2.0.2"}],
+    ["./packages/berry-cli/pnp/cache/is-descriptor-c99916c915a6827b.zip/", {"name":"is-descriptor","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/is-descriptor-5b9d2770366bf793.zip/", {"name":"is-descriptor","reference":"0.1.6"}],
+    ["./packages/berry-cli/pnp/cache/is-accessor-descriptor-488cffcad32ed59a.zip/", {"name":"is-accessor-descriptor","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/is-accessor-descriptor-65a67690993d4e94.zip/", {"name":"is-accessor-descriptor","reference":"0.1.6"}],
+    ["./packages/berry-cli/pnp/cache/is-data-descriptor-f04138cd566fc98f.zip/", {"name":"is-data-descriptor","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/is-data-descriptor-14df5cabe6085e25.zip/", {"name":"is-data-descriptor","reference":"0.1.4"}],
+    ["./packages/berry-cli/pnp/cache/snapdragon-util-6146572abbf14b4c.zip/", {"name":"snapdragon-util","reference":"3.0.1"}],
+    ["./packages/berry-cli/pnp/cache/snapdragon-01777b171363808e.zip/", {"name":"snapdragon","reference":"0.8.2"}],
+    ["./packages/berry-cli/pnp/cache/base-4e47dd8c3c3b4c37.zip/", {"name":"base","reference":"0.11.2"}],
+    ["./packages/berry-cli/pnp/cache/cache-base-978aa64073d20ac2.zip/", {"name":"cache-base","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/collection-visit-b7d89e260ef734b3.zip/", {"name":"collection-visit","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/map-visit-8099fcf505ca422f.zip/", {"name":"map-visit","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/object-visit-eeecd32c47884f48.zip/", {"name":"object-visit","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/component-emitter-2d9e30e3b0ccf7c9.zip/", {"name":"component-emitter","reference":"1.2.1"}],
+    ["./packages/berry-cli/pnp/cache/get-value-cd01527ef83fe9cb.zip/", {"name":"get-value","reference":"2.0.6"}],
+    ["./packages/berry-cli/pnp/cache/has-value-8550f40898c6a2d1.zip/", {"name":"has-value","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/has-value-6e03733eecfa1aa9.zip/", {"name":"has-value","reference":"0.3.1"}],
+    ["./packages/berry-cli/pnp/cache/has-values-f0c82ea20915b4b2.zip/", {"name":"has-values","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/has-values-db1fe74ae1c19f9f.zip/", {"name":"has-values","reference":"0.1.4"}],
+    ["./packages/berry-cli/pnp/cache/set-value-f243d27f31700ad2.zip/", {"name":"set-value","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/set-value-6a8c4174792cc537.zip/", {"name":"set-value","reference":"0.4.3"}],
+    ["./packages/berry-cli/pnp/cache/is-plain-object-3ab8f29b4a2a085e.zip/", {"name":"is-plain-object","reference":"2.0.4"}],
+    ["./packages/berry-cli/pnp/cache/split-string-91289614d8f09d56.zip/", {"name":"split-string","reference":"3.1.0"}],
+    ["./packages/berry-cli/pnp/cache/assign-symbols-ab711500b3301bde.zip/", {"name":"assign-symbols","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/to-object-path-8446eb5495c6ddfe.zip/", {"name":"to-object-path","reference":"0.3.0"}],
+    ["./packages/berry-cli/pnp/cache/union-value-7a2f095ea8bfb34a.zip/", {"name":"union-value","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/arr-union-17db18e9ce1ad4b6.zip/", {"name":"arr-union","reference":"3.1.0"}],
+    ["./packages/berry-cli/pnp/cache/unset-value-64fece49b6e6efbc.zip/", {"name":"unset-value","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/isarray-74b364b632c12820.zip/", {"name":"isarray","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/class-utils-d12a86ef4aa319b3.zip/", {"name":"class-utils","reference":"0.3.6"}],
+    ["./packages/berry-cli/pnp/cache/static-extend-1b333216235daddf.zip/", {"name":"static-extend","reference":"0.1.2"}],
+    ["./packages/berry-cli/pnp/cache/object-copy-ebd992d4ef6ee079.zip/", {"name":"object-copy","reference":"0.1.0"}],
+    ["./packages/berry-cli/pnp/cache/copy-descriptor-e19bbd010a89d482.zip/", {"name":"copy-descriptor","reference":"0.1.1"}],
+    ["./packages/berry-cli/pnp/cache/mixin-deep-56b1d3080842c657.zip/", {"name":"mixin-deep","reference":"1.3.1"}],
+    ["./packages/berry-cli/pnp/cache/for-in-8ac6aa6d5bb8e8d1.zip/", {"name":"for-in","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/pascalcase-20711584800fcc41.zip/", {"name":"pascalcase","reference":"0.1.1"}],
+    ["./packages/berry-cli/pnp/cache/debug-4674d1510180cf31.zip/", {"name":"debug","reference":"2.6.9"}],
+    ["./packages/berry-cli/pnp/cache/debug-18fbffa99514da6a.zip/", {"name":"debug","reference":"3.2.6"}],
+    ["./packages/berry-cli/pnp/cache/ms-57c7de478ec1d011.zip/", {"name":"ms","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/ms-573954742ae7733a.zip/", {"name":"ms","reference":"2.1.1"}],
+    ["./packages/berry-cli/pnp/cache/map-cache-b71e2f51854396c0.zip/", {"name":"map-cache","reference":"0.2.2"}],
+    ["./packages/berry-cli/pnp/cache/source-map-resolve-56bf599c233bd8c3.zip/", {"name":"source-map-resolve","reference":"0.5.2"}],
+    ["./packages/berry-cli/pnp/cache/atob-30ed7e0125f607cd.zip/", {"name":"atob","reference":"2.1.2"}],
+    ["./packages/berry-cli/pnp/cache/decode-uri-component-8fd500f861e4e3ee.zip/", {"name":"decode-uri-component","reference":"0.2.0"}],
+    ["./packages/berry-cli/pnp/cache/resolve-url-e0310613383fae5c.zip/", {"name":"resolve-url","reference":"0.2.1"}],
+    ["./packages/berry-cli/pnp/cache/source-map-url-b4a75c932ddf674f.zip/", {"name":"source-map-url","reference":"0.4.0"}],
+    ["./packages/berry-cli/pnp/cache/urix-bf4b02607dd2c9d6.zip/", {"name":"urix","reference":"0.1.0"}],
+    ["./packages/berry-cli/pnp/cache/source-map-ceda55baab699730.zip/", {"name":"source-map","reference":"0.5.7"}],
+    ["./packages/berry-cli/pnp/cache/source-map-81b5dbd121d897c3.zip/", {"name":"source-map","reference":"0.6.1"}],
+    ["./packages/berry-cli/pnp/cache/use-4583b637f78866bf.zip/", {"name":"use","reference":"3.1.1"}],
+    ["./packages/berry-cli/pnp/cache/to-regex-da27957fc33ab761.zip/", {"name":"to-regex","reference":"3.0.2"}],
+    ["./packages/berry-cli/pnp/cache/regex-not-bbb90616db519013.zip/", {"name":"regex-not","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/safe-regex-b9465c0a52da7b15.zip/", {"name":"safe-regex","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/ret-cfe80c53c5571eda.zip/", {"name":"ret","reference":"0.1.15"}],
+    ["./packages/berry-cli/pnp/cache/extglob-a5ea7e4241a9f381.zip/", {"name":"extglob","reference":"2.0.4"}],
+    ["./packages/berry-cli/pnp/cache/expand-brackets-a7473238bdce3d3c.zip/", {"name":"expand-brackets","reference":"2.1.4"}],
+    ["./packages/berry-cli/pnp/cache/posix-character-classes-218c2a1d43c4ad03.zip/", {"name":"posix-character-classes","reference":"0.1.1"}],
+    ["./packages/berry-cli/pnp/cache/fragment-cache-5e5e485a53a32090.zip/", {"name":"fragment-cache","reference":"0.2.1"}],
+    ["./packages/berry-cli/pnp/cache/nanomatch-8612995065effa61.zip/", {"name":"nanomatch","reference":"1.2.13"}],
+    ["./packages/berry-cli/pnp/cache/is-windows-ac66a4e5f7df4b9c.zip/", {"name":"is-windows","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/object.pick-d4fded6a54f10105.zip/", {"name":"object.pick","reference":"1.3.0"}],
+    ["./packages/berry-cli/pnp/cache/@types-got-05007d6c6f93b685.zip/", {"name":"@types/got","reference":"8.3.4"}],
+    ["./packages/berry-cli/pnp/cache/@types-joi-d4a7e1eb1664513b.zip/", {"name":"@types/joi","reference":"13.6.0"}],
+    ["./packages/berry-cli/pnp/cache/@types-lockfile-18242135e3cb3db2.zip/", {"name":"@types/lockfile","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/@types-lodash-99f5146ae4f466f4.zip/", {"name":"@types/lodash","reference":"4.14.117"}],
+    ["./packages/berry-cli/pnp/cache/@types-mkdirp-26a52e47c7cd2fe0.zip/", {"name":"@types/mkdirp","reference":"0.5.2"}],
+    ["./packages/berry-cli/pnp/cache/@types-node-fetch-4237419ee3ba8fd4.zip/", {"name":"@types/node-fetch","reference":"2.1.2"}],
+    ["./packages/berry-cli/pnp/cache/@types-react-redux-98c1a898e0913f59.zip/", {"name":"@types/react-redux","reference":"6.0.9"}],
+    ["./packages/berry-cli/pnp/cache/@types-react-7a08b5e68090a565.zip/", {"name":"@types/react","reference":"16.4.16"}],
+    ["./packages/berry-cli/pnp/cache/@types-prop-types-e936b3d10a6b94b7.zip/", {"name":"@types/prop-types","reference":"15.5.6"}],
+    ["./packages/berry-cli/pnp/cache/csstype-a8661bcef6b0e9cd.zip/", {"name":"csstype","reference":"2.5.7"}],
+    ["./packages/berry-cli/pnp/cache/redux-d6ba548357b1eaf4.zip/", {"name":"redux","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/loose-envify-1ff9e031c7be07bc.zip/", {"name":"loose-envify","reference":"1.4.0"}],
+    ["./packages/berry-cli/pnp/cache/js-tokens-5d3e4915f4f384e9.zip/", {"name":"js-tokens","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/symbol-observable-efaa2b0ed89ca3a3.zip/", {"name":"symbol-observable","reference":"1.2.0"}],
+    ["./packages/berry-cli/pnp/cache/@types-redux-saga-2a1e8af5a4fb7cc4.zip/", {"name":"@types/redux-saga","reference":"0.10.5"}],
+    ["./packages/berry-cli/pnp/cache/redux-saga-d967edc59590e4a0.zip/", {"name":"redux-saga","reference":"0.16.2"}],
+    ["./packages/berry-cli/pnp/cache/@types-redux-529c614dac39f734.zip/", {"name":"@types/redux","reference":"3.6.0"}],
+    ["./packages/berry-cli/pnp/cache/@types-request-aec12fe95d0d537e.zip/", {"name":"@types/request","reference":"2.47.1"}],
+    ["./packages/berry-cli/pnp/cache/@types-caseless-71fd2d56de590d24.zip/", {"name":"@types/caseless","reference":"0.12.1"}],
+    ["./packages/berry-cli/pnp/cache/@types-form-data-53ca89dea33b1f5a.zip/", {"name":"@types/form-data","reference":"2.2.1"}],
+    ["./packages/berry-cli/pnp/cache/@types-tough-cookie-396d0cb2d67fca48.zip/", {"name":"@types/tough-cookie","reference":"2.3.3"}],
+    ["./packages/berry-cli/pnp/cache/@types-semver-241156b84eaa59f2.zip/", {"name":"@types/semver","reference":"5.5.0"}],
+    ["./packages/berry-cli/pnp/cache/@types-stream-to-promise-0abf47e5467b0808.zip/", {"name":"@types/stream-to-promise","reference":"2.2.0"}],
+    ["./packages/berry-cli/pnp/cache/@types-tar-57cdcd689933e694.zip/", {"name":"@types/tar","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/@types-tmp-8826a3d0a56601f2.zip/", {"name":"@types/tmp","reference":"0.0.33"}],
+    ["./packages/berry-cli/pnp/cache/ts-node-8070b94376573a89.zip/", {"name":"ts-node","reference":"7.0.1"}],
+    ["./packages/berry-cli/pnp/cache/arrify-2a34fa322785982f.zip/", {"name":"arrify","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/buffer-from-d7d4eb0d87c430ea.zip/", {"name":"buffer-from","reference":"1.1.1"}],
+    ["./packages/berry-cli/pnp/cache/diff-0bef549ccd29f47d.zip/", {"name":"diff","reference":"3.5.0"}],
+    ["./packages/berry-cli/pnp/cache/make-error-3feea7527c3b5294.zip/", {"name":"make-error","reference":"1.3.5"}],
+    ["./packages/berry-cli/pnp/cache/minimist-a6b317aa47d76f1c.zip/", {"name":"minimist","reference":"1.2.0"}],
+    ["./packages/berry-cli/pnp/cache/minimist-62870fb721e89fe1.zip/", {"name":"minimist","reference":"0.0.8"}],
+    ["./packages/berry-cli/pnp/cache/mkdirp-7dc6e9583578f733.zip/", {"name":"mkdirp","reference":"0.5.1"}],
+    ["./packages/berry-cli/pnp/cache/source-map-support-073722c3a4f7d6e6.zip/", {"name":"source-map-support","reference":"0.5.9"}],
+    ["./packages/berry-cli/pnp/cache/yn-7fd5cf6ca4fd0581.zip/", {"name":"yn","reference":"2.0.0"}],
     ["./packages/berry-builder/", {"name":"@berry/builder","reference":"0.0.0"}],
     ["./packages/berry-builder/", {"name":"@berry/builder","reference":"workspace:0.0.0"}],
-    ["./.pnp/cache/virtual/ca9cce39e73d00b2e4e944ae0f20fafb22a92a9aa8f518dac6953485c622f4ab13479b22c682397bd2d43ce7eeaa4f0751a23a17407942017831ff868b1413ac/mnt/d/berry/.pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/", {"name":"@manaflair/concierge","reference":"virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#0.7.3"}],
-    ["./.pnp/cache/virtual/bcffe507fa373f41e98a2ee0f420a56f13077f8c84459018537a5845214004d0998133e34cbc12a105c125f0583fe8c56c63d885526041e7b3d06e31903c84d4/mnt/d/berry/.pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/", {"name":"@manaflair/concierge","reference":"virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#0.7.3"}],
-    ["./.pnp/cache/virtual/b8d2651e7b9133e2fe2706b415abba46cfe91049e6fbb0374b09cb694f00347a9a20afa1bfd85d15c79c22a0871f90fab3edd1590123705c48451b96da257011/mnt/d/berry/.pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/", {"name":"@manaflair/concierge","reference":"virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#0.7.3"}],
-    ["./.pnp/cache/virtual/d2d1515573d97c80de3df0b9f6f0c0698c96231189b9f90a356df9503816772276dba80f9697dc6f52f6af08f8a8941076b32b0e5b57bc5eb25bf2fb87d174e7/mnt/d/berry/.pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/", {"name":"@manaflair/concierge","reference":"virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#0.7.3"}],
-    ["./.pnp/cache/virtual/1de496762657fb637c8bff637ee63a44cb038a8ed17f68653ecc5192713c2bf4c5883a46ccb3c7724d6042840305ba3d8b48ec65c6d6d7d0188121756d8d45a1/mnt/d/berry/.pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/", {"name":"@manaflair/concierge","reference":"virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#0.7.3"}],
-    ["./.pnp/cache/chalk-683a581d71468012.zip/", {"name":"chalk","reference":"1.1.3"}],
-    ["./.pnp/cache/chalk-364548c0d4bd8a27.zip/", {"name":"chalk","reference":"2.4.1"}],
-    ["./.pnp/cache/ansi-styles-8563d381d06d36d2.zip/", {"name":"ansi-styles","reference":"2.2.1"}],
-    ["./.pnp/cache/ansi-styles-4196e26164588a62.zip/", {"name":"ansi-styles","reference":"3.2.1"}],
-    ["./.pnp/cache/escape-string-regexp-5f1d658cd2249444.zip/", {"name":"escape-string-regexp","reference":"1.0.5"}],
-    ["./.pnp/cache/has-ansi-2ac5bbf5bf18d1ad.zip/", {"name":"has-ansi","reference":"2.0.0"}],
-    ["./.pnp/cache/ansi-regex-7f2e83def7b22559.zip/", {"name":"ansi-regex","reference":"2.1.1"}],
-    ["./.pnp/cache/ansi-regex-e11b7107b2278826.zip/", {"name":"ansi-regex","reference":"3.0.0"}],
-    ["./.pnp/cache/strip-ansi-82c1f9dc0496358d.zip/", {"name":"strip-ansi","reference":"3.0.1"}],
-    ["./.pnp/cache/strip-ansi-4d74e74ba2a729f2.zip/", {"name":"strip-ansi","reference":"4.0.0"}],
-    ["./.pnp/cache/supports-color-af17f5f3f2071b15.zip/", {"name":"supports-color","reference":"2.0.0"}],
-    ["./.pnp/cache/supports-color-4650158f01a27a0e.zip/", {"name":"supports-color","reference":"5.5.0"}],
-    ["./.pnp/cache/joi-83ba60f5fc3e763a.zip/", {"name":"joi","reference":"13.7.0"}],
-    ["./.pnp/cache/hoek-f863495c807fb7f8.zip/", {"name":"hoek","reference":"5.0.4"}],
-    ["./.pnp/cache/isemail-4deaefa9624847b4.zip/", {"name":"isemail","reference":"3.1.3"}],
-    ["./.pnp/cache/punycode-1aeea3895cbfae7e.zip/", {"name":"punycode","reference":"2.1.1"}],
-    ["./.pnp/cache/punycode-7533f50842fa3a7a.zip/", {"name":"punycode","reference":"1.4.1"}],
-    ["./.pnp/cache/punycode-d76b944867ed1caa.zip/", {"name":"punycode","reference":"1.3.2"}],
-    ["./.pnp/cache/topo-04302364458f9b6a.zip/", {"name":"topo","reference":"3.0.0"}],
-    ["./.pnp/cache/kexec-b7a6be6bf08a5eb5.zip/", {"name":"kexec","reference":"3.0.0"}],
-    ["./.pnp/cache/nan-29c4653878dcab21.zip/", {"name":"nan","reference":"2.11.1"}],
-    ["./.pnp/cache/lodash-7e6e951cc82a452f.zip/", {"name":"lodash","reference":"4.17.11"}],
-    ["./.pnp/cache/brfs-59384b3700c39b91.zip/", {"name":"brfs","reference":"2.0.1"}],
-    ["./.pnp/cache/quote-stream-69d075b242f42c6a.zip/", {"name":"quote-stream","reference":"1.0.2"}],
-    ["./.pnp/cache/buffer-equal-6d8a5535fbaa20b3.zip/", {"name":"buffer-equal","reference":"0.0.1"}],
-    ["./.pnp/cache/through2-950c3a5a2c1a4970.zip/", {"name":"through2","reference":"2.0.3"}],
-    ["./.pnp/cache/readable-stream-2dd450b412215917.zip/", {"name":"readable-stream","reference":"2.3.6"}],
-    ["./.pnp/cache/readable-stream-4f0109da985ad2e9.zip/", {"name":"readable-stream","reference":"2.0.6"}],
-    ["./.pnp/cache/core-util-is-58240094e7ee3ef9.zip/", {"name":"core-util-is","reference":"1.0.2"}],
-    ["./.pnp/cache/inherits-63d2ef9cae97bc08.zip/", {"name":"inherits","reference":"2.0.3"}],
-    ["./.pnp/cache/inherits-93b575d37f513350.zip/", {"name":"inherits","reference":"2.0.1"}],
-    ["./.pnp/cache/process-nextick-args-c79a0dbed5f9f733.zip/", {"name":"process-nextick-args","reference":"2.0.0"}],
-    ["./.pnp/cache/process-nextick-args-750ea5030977049c.zip/", {"name":"process-nextick-args","reference":"1.0.7"}],
-    ["./.pnp/cache/safe-buffer-4130fb37ba590882.zip/", {"name":"safe-buffer","reference":"5.1.2"}],
-    ["./.pnp/cache/string_decoder-1a282a8e7c537d1c.zip/", {"name":"string_decoder","reference":"1.1.1"}],
-    ["./.pnp/cache/string_decoder-9e1de83f5fa2a461.zip/", {"name":"string_decoder","reference":"0.10.31"}],
-    ["./.pnp/cache/util-deprecate-ed5c250b68e7c044.zip/", {"name":"util-deprecate","reference":"1.0.2"}],
-    ["./.pnp/cache/xtend-7c25dea810673cef.zip/", {"name":"xtend","reference":"4.0.1"}],
-    ["./.pnp/cache/resolve-086872453205b3ed.zip/", {"name":"resolve","reference":"1.8.1"}],
-    ["./.pnp/cache/path-parse-61fb4287347cc688.zip/", {"name":"path-parse","reference":"1.0.6"}],
-    ["./.pnp/cache/static-module-1951de7cfb239ff0.zip/", {"name":"static-module","reference":"3.0.0"}],
-    ["./.pnp/cache/acorn-node-93b3b1cd55b5d618.zip/", {"name":"acorn-node","reference":"1.6.0"}],
-    ["./.pnp/cache/acorn-walk-9ee3748f9dc866f4.zip/", {"name":"acorn-walk","reference":"6.1.0"}],
-    ["./.pnp/cache/acorn-80bd2694bd160b61.zip/", {"name":"acorn","reference":"6.0.2"}],
-    ["./.pnp/cache/acorn-ca34533c3b0bb287.zip/", {"name":"acorn","reference":"5.7.3"}],
-    ["./.pnp/cache/concat-stream-61d9aba6b2a6a81c.zip/", {"name":"concat-stream","reference":"1.6.2"}],
-    ["./.pnp/cache/typedarray-7c945448dce4114e.zip/", {"name":"typedarray","reference":"0.0.6"}],
-    ["./.pnp/cache/convert-source-map-67d7f39daea49c04.zip/", {"name":"convert-source-map","reference":"1.6.0"}],
-    ["./.pnp/cache/duplexer2-22482c2e3bd02554.zip/", {"name":"duplexer2","reference":"0.1.4"}],
-    ["./.pnp/cache/escodegen-5145be70ff120cdc.zip/", {"name":"escodegen","reference":"1.9.1"}],
-    ["./.pnp/cache/esprima-5f41440d97c3da21.zip/", {"name":"esprima","reference":"3.1.3"}],
-    ["./.pnp/cache/estraverse-2f378e3ee3009623.zip/", {"name":"estraverse","reference":"4.2.0"}],
-    ["./.pnp/cache/esutils-f7772d6c17cdc5ef.zip/", {"name":"esutils","reference":"2.0.2"}],
-    ["./.pnp/cache/optionator-96eed7c745d7bc53.zip/", {"name":"optionator","reference":"0.8.2"}],
-    ["./.pnp/cache/deep-is-625b36877314d709.zip/", {"name":"deep-is","reference":"0.1.3"}],
-    ["./.pnp/cache/fast-levenshtein-d3df76d3a6cc0cb3.zip/", {"name":"fast-levenshtein","reference":"2.0.6"}],
-    ["./.pnp/cache/levn-9ef24fd51373c7b1.zip/", {"name":"levn","reference":"0.3.0"}],
-    ["./.pnp/cache/prelude-ls-98f1e48187a516b8.zip/", {"name":"prelude-ls","reference":"1.1.2"}],
-    ["./.pnp/cache/type-check-64ccb9b361752c50.zip/", {"name":"type-check","reference":"0.3.2"}],
-    ["./.pnp/cache/wordwrap-70a5c60e64180322.zip/", {"name":"wordwrap","reference":"1.0.0"}],
-    ["./.pnp/cache/has-510b95dda2e38d41.zip/", {"name":"has","reference":"1.0.3"}],
-    ["./.pnp/cache/function-bind-471be874677e3fd3.zip/", {"name":"function-bind","reference":"1.1.1"}],
-    ["./.pnp/cache/magic-string-55da275043558a4d.zip/", {"name":"magic-string","reference":"0.22.5"}],
-    ["./.pnp/cache/vlq-ef5a6e12e812128d.zip/", {"name":"vlq","reference":"0.2.3"}],
-    ["./.pnp/cache/merge-source-map-0c5aa04d91cf2039.zip/", {"name":"merge-source-map","reference":"1.0.4"}],
-    ["./.pnp/cache/object-inspect-df1013ea9f520226.zip/", {"name":"object-inspect","reference":"1.4.1"}],
-    ["./.pnp/cache/scope-analyzer-46751afcb0bdc4ab.zip/", {"name":"scope-analyzer","reference":"2.0.5"}],
-    ["./.pnp/cache/array-from-90aebb59ad34d656.zip/", {"name":"array-from","reference":"2.1.1"}],
-    ["./.pnp/cache/es6-map-a88f3545d23e07dc.zip/", {"name":"es6-map","reference":"0.1.5"}],
-    ["./.pnp/cache/d-f1e5ebe0eab84170.zip/", {"name":"d","reference":"1.0.0"}],
-    ["./.pnp/cache/es5-ext-beb9d676d0753a29.zip/", {"name":"es5-ext","reference":"0.10.46"}],
-    ["./.pnp/cache/es6-iterator-009f413a36204ccc.zip/", {"name":"es6-iterator","reference":"2.0.3"}],
-    ["./.pnp/cache/es6-symbol-0dcd886cf79ab0c5.zip/", {"name":"es6-symbol","reference":"3.1.1"}],
-    ["./.pnp/cache/next-tick-0d5cf6a57d203aef.zip/", {"name":"next-tick","reference":"1.0.0"}],
-    ["./.pnp/cache/es6-set-e2f0bb9478d4c706.zip/", {"name":"es6-set","reference":"0.1.5"}],
-    ["./.pnp/cache/event-emitter-e7b0f0b3cf80e131.zip/", {"name":"event-emitter","reference":"0.3.5"}],
-    ["./.pnp/cache/estree-is-function-5441d5ca7fa8815e.zip/", {"name":"estree-is-function","reference":"1.0.0"}],
-    ["./.pnp/cache/get-assigned-identifiers-e22c011255b2b2b8.zip/", {"name":"get-assigned-identifiers","reference":"1.2.0"}],
-    ["./.pnp/cache/shallow-copy-64e60cf248e2b24c.zip/", {"name":"shallow-copy","reference":"0.0.1"}],
-    ["./.pnp/cache/static-eval-fbe5095513a55094.zip/", {"name":"static-eval","reference":"2.0.0"}],
-    ["./.pnp/cache/buffer-loader-8cc67608f95b6532.zip/", {"name":"buffer-loader","reference":"0.1.0"}],
-    ["./.pnp/cache/pnp-webpack-plugin-174972530913bdd4.zip/", {"name":"pnp-webpack-plugin","reference":"1.1.0"}],
-    ["./.pnp/cache/raw-loader-0b4771c12e9ddd9c.zip/", {"name":"raw-loader","reference":"0.5.1"}],
-    ["./.pnp/cache/transform-loader-1487ba46901dfa42.zip/", {"name":"transform-loader","reference":"0.2.4"}],
-    ["./.pnp/cache/loader-utils-ffc489e806ca212c.zip/", {"name":"loader-utils","reference":"1.1.0"}],
-    ["./.pnp/cache/big.js-821b6e03134c6b08.zip/", {"name":"big.js","reference":"3.2.0"}],
-    ["./.pnp/cache/emojis-list-e75e39fc693ccc0a.zip/", {"name":"emojis-list","reference":"2.1.0"}],
-    ["./.pnp/cache/json5-07d0953b92b5661b.zip/", {"name":"json5","reference":"0.5.1"}],
-    ["./.pnp/cache/virtual/b5de53e72da24a82548ac1ddae96774232b2d51a998ecdd01480eedabab6a2b89510f8b689d18e0a7ecac42596b1de456012fbe32f858978b93411ef8ebd1b25/mnt/d/berry/.pnp/cache/ts-loader-2b12e588384a460f.zip/", {"name":"ts-loader","reference":"virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.2.1"}],
-    ["./.pnp/cache/virtual/92ae3993bd41dc19726e66e87f0382975bd60e0a6cc0a7187246288035e7d03f5d790ac4414d2c54abdc3a092351f10a8d52d7870d804dba4e4383376fb78847/mnt/d/berry/.pnp/cache/ts-loader-2b12e588384a460f.zip/", {"name":"ts-loader","reference":"virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.2.1"}],
-    ["./.pnp/cache/virtual/fa7212079fbc792362b50ea0d47807f301192d3ad2eda64d8d4c6cbb7397d9f6d97f6a9ee5ec35a9f52768a61208e92541d0de05820bd1b986c074887c6da7ed/mnt/d/berry/.pnp/cache/ts-loader-2b12e588384a460f.zip/", {"name":"ts-loader","reference":"virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#5.2.1"}],
-    ["./.pnp/cache/color-convert-20f9e6db84df6826.zip/", {"name":"color-convert","reference":"1.9.3"}],
-    ["./.pnp/cache/color-name-c3c9c8e4ab57dd23.zip/", {"name":"color-name","reference":"1.1.3"}],
-    ["./.pnp/cache/has-flag-fc58d7df8f3cdecf.zip/", {"name":"has-flag","reference":"3.0.0"}],
-    ["./.pnp/cache/enhanced-resolve-ca7a96950f48c9e7.zip/", {"name":"enhanced-resolve","reference":"4.1.0"}],
-    ["./.pnp/cache/graceful-fs-2bd74007ff5b7366.zip/", {"name":"graceful-fs","reference":"4.1.11"}],
-    ["./.pnp/cache/memory-fs-5a0441721a664bc1.zip/", {"name":"memory-fs","reference":"0.4.1"}],
-    ["./.pnp/cache/errno-fc0bd07871694338.zip/", {"name":"errno","reference":"0.1.7"}],
-    ["./.pnp/cache/prr-dbaa25a063578c29.zip/", {"name":"prr","reference":"1.0.1"}],
-    ["./.pnp/cache/tapable-96953c122050a98c.zip/", {"name":"tapable","reference":"1.1.0"}],
-    ["./.pnp/cache/semver-b1e7d603bfbadf08.zip/", {"name":"semver","reference":"5.6.0"}],
-    ["./.pnp/cache/typescript-5f08acaf6c59a928.zip/", {"name":"typescript","reference":"3.1.2"}],
-    ["./.pnp/cache/virtual/00afd7f7089aec7c6d6f20506dc33671d477fca0bf63b21d475ea95b6267f0944ee0cd94081daee253b9ee870367bbad339ff2085195ef5f5ae6fb3c2d952ad5/mnt/d/berry/.pnp/cache/val-loader-416a0aa649ec3d55.zip/", {"name":"val-loader","reference":"virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#1.1.1"}],
-    ["./.pnp/cache/virtual/e111a433edecbf31d9e1fc66b9464e77d7279f1e9ae9b95c33b4cdb8837693edb4db2a618804eddd96f6822d9195797b77c1f91ae9478a13a546f76ee7c81bff/mnt/d/berry/.pnp/cache/val-loader-416a0aa649ec3d55.zip/", {"name":"val-loader","reference":"virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#1.1.1"}],
-    ["./.pnp/cache/schema-utils-cf0ac4604518a958.zip/", {"name":"schema-utils","reference":"0.4.7"}],
-    ["./.pnp/cache/virtual/91c9e2282eca01314cd7cd8e691ad9d3da9f1e3cfc9d79353799053fee26006c97b8e86210c4b74d4bbc0da7d1db843fb4a627067aec895a08653f2e87a2e80d/mnt/d/berry/.pnp/cache/ajv-keywords-17419045e912eca5.zip/", {"name":"ajv-keywords","reference":"virtual:b280b9fcddbd791f8bf76b36e6e7578db505457dfded8c84282cf7f2e51ef7fb0519becc414f9d62779735c3f7744f2500c4b023cabbeab6458e122d75cf07c3#3.2.0"}],
-    ["./.pnp/cache/virtual/16efa963afcaf148cd585e5794e92b4cd48d505d1267134b2cf0681674266e1cb7ae362a76367959163708e72285494b5a075184b3689def58845e772ee0d9ef/mnt/d/berry/.pnp/cache/ajv-keywords-17419045e912eca5.zip/", {"name":"ajv-keywords","reference":"virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#3.2.0"}],
-    ["./.pnp/cache/ajv-f0610499d26d6d2e.zip/", {"name":"ajv","reference":"6.5.4"}],
-    ["./.pnp/cache/fast-deep-equal-28201e80ccde80f0.zip/", {"name":"fast-deep-equal","reference":"2.0.1"}],
-    ["./.pnp/cache/fast-json-stable-stringify-a7b6dc4bc08b3504.zip/", {"name":"fast-json-stable-stringify","reference":"2.0.0"}],
-    ["./.pnp/cache/json-schema-traverse-1d4fc2ff87892168.zip/", {"name":"json-schema-traverse","reference":"0.4.1"}],
-    ["./.pnp/cache/uri-js-6c208df8b4c4033b.zip/", {"name":"uri-js","reference":"4.2.2"}],
-    ["./.pnp/cache/webpack-327979206597a945.zip/", {"name":"webpack","reference":"4.20.2"}],
-    ["./.pnp/cache/@webassemblyjs-ast-b497bdd4fe7a4e11.zip/", {"name":"@webassemblyjs/ast","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-helper-module-context-e25cf5dbe363ff22.zip/", {"name":"@webassemblyjs/helper-module-context","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-helper-wasm-bytecode-65e12de9e180b872.zip/", {"name":"@webassemblyjs/helper-wasm-bytecode","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-wast-parser-b83dcab9dd1cb685.zip/", {"name":"@webassemblyjs/wast-parser","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-floating-point-hex-parser-c6f4165166b428f0.zip/", {"name":"@webassemblyjs/floating-point-hex-parser","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-helper-api-error-bc39524673b0565d.zip/", {"name":"@webassemblyjs/helper-api-error","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-helper-code-frame-5d19a3c435ee9d01.zip/", {"name":"@webassemblyjs/helper-code-frame","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-wast-printer-07dd806df30048b2.zip/", {"name":"@webassemblyjs/wast-printer","reference":"1.7.8"}],
-    ["./.pnp/cache/@xtuc-long-768310435c732f5b.zip/", {"name":"@xtuc/long","reference":"4.2.1"}],
-    ["./.pnp/cache/@webassemblyjs-helper-fsm-380dcb5984f231d8.zip/", {"name":"@webassemblyjs/helper-fsm","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-wasm-edit-7b4c2bc00620e68c.zip/", {"name":"@webassemblyjs/wasm-edit","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-helper-buffer-27557fb7bbb78daf.zip/", {"name":"@webassemblyjs/helper-buffer","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-helper-wasm-section-9926dc49379f058a.zip/", {"name":"@webassemblyjs/helper-wasm-section","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-wasm-gen-e75b26e49e6523d0.zip/", {"name":"@webassemblyjs/wasm-gen","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-ieee754-b7058623a3a3ef53.zip/", {"name":"@webassemblyjs/ieee754","reference":"1.7.8"}],
-    ["./.pnp/cache/@xtuc-ieee754-9d2c8f009209423d.zip/", {"name":"@xtuc/ieee754","reference":"1.2.0"}],
-    ["./.pnp/cache/@webassemblyjs-leb128-5fb6b41f5ee1e31c.zip/", {"name":"@webassemblyjs/leb128","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-utf8-7bc01d904ff08458.zip/", {"name":"@webassemblyjs/utf8","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-wasm-opt-865f31f31c26c9d5.zip/", {"name":"@webassemblyjs/wasm-opt","reference":"1.7.8"}],
-    ["./.pnp/cache/@webassemblyjs-wasm-parser-cd9e492dd3c34434.zip/", {"name":"@webassemblyjs/wasm-parser","reference":"1.7.8"}],
-    ["./.pnp/cache/acorn-dynamic-import-eecbbad55368b8ad.zip/", {"name":"acorn-dynamic-import","reference":"3.0.0"}],
-    ["./.pnp/cache/chrome-trace-event-dcabbce8e23a1f6f.zip/", {"name":"chrome-trace-event","reference":"1.0.0"}],
-    ["./.pnp/cache/tslib-e3dbf6044f68638e.zip/", {"name":"tslib","reference":"1.9.3"}],
-    ["./.pnp/cache/eslint-scope-903ac1641e3cc539.zip/", {"name":"eslint-scope","reference":"4.0.0"}],
-    ["./.pnp/cache/esrecurse-7b169284f5aff3c6.zip/", {"name":"esrecurse","reference":"4.2.1"}],
-    ["./.pnp/cache/json-parse-better-errors-231cb0742055bdbf.zip/", {"name":"json-parse-better-errors","reference":"1.0.2"}],
-    ["./.pnp/cache/loader-runner-ca325b16831984a9.zip/", {"name":"loader-runner","reference":"2.3.1"}],
-    ["./.pnp/cache/neo-async-ad51cef41912fa22.zip/", {"name":"neo-async","reference":"2.5.2"}],
-    ["./.pnp/cache/node-libs-browser-80ada6900812b021.zip/", {"name":"node-libs-browser","reference":"2.1.0"}],
-    ["./.pnp/cache/assert-07817c664f49df85.zip/", {"name":"assert","reference":"1.4.1"}],
-    ["./.pnp/cache/util-0600261792c54458.zip/", {"name":"util","reference":"0.10.3"}],
-    ["./.pnp/cache/util-6310467a9aaeac3f.zip/", {"name":"util","reference":"0.10.4"}],
-    ["./.pnp/cache/browserify-zlib-012cf064bce47cc2.zip/", {"name":"browserify-zlib","reference":"0.2.0"}],
-    ["./.pnp/cache/pako-0cd47765efa4a0a2.zip/", {"name":"pako","reference":"1.0.6"}],
-    ["./.pnp/cache/buffer-9ae9b1d6abd9b781.zip/", {"name":"buffer","reference":"4.9.1"}],
-    ["./.pnp/cache/base64-js-834b6d9f022f721d.zip/", {"name":"base64-js","reference":"1.3.0"}],
-    ["./.pnp/cache/ieee754-605bcac1c7b4ea94.zip/", {"name":"ieee754","reference":"1.1.12"}],
-    ["./.pnp/cache/console-browserify-f11465a7acf9b18a.zip/", {"name":"console-browserify","reference":"1.1.0"}],
-    ["./.pnp/cache/date-now-58d46662287dc09c.zip/", {"name":"date-now","reference":"0.1.4"}],
-    ["./.pnp/cache/constants-browserify-a9332637f17e6f2a.zip/", {"name":"constants-browserify","reference":"1.0.0"}],
-    ["./.pnp/cache/crypto-browserify-0946ad703e17b43a.zip/", {"name":"crypto-browserify","reference":"3.12.0"}],
-    ["./.pnp/cache/browserify-cipher-2cdec5575b88da75.zip/", {"name":"browserify-cipher","reference":"1.0.1"}],
-    ["./.pnp/cache/browserify-aes-addac2367ba24b0a.zip/", {"name":"browserify-aes","reference":"1.2.0"}],
-    ["./.pnp/cache/buffer-xor-fa05c090222d257b.zip/", {"name":"buffer-xor","reference":"1.0.3"}],
-    ["./.pnp/cache/cipher-base-462875dcb9d878cd.zip/", {"name":"cipher-base","reference":"1.0.4"}],
-    ["./.pnp/cache/create-hash-d61a3ea52b6eaeee.zip/", {"name":"create-hash","reference":"1.2.0"}],
-    ["./.pnp/cache/md5.js-077e842cb6171981.zip/", {"name":"md5.js","reference":"1.3.5"}],
-    ["./.pnp/cache/hash-base-c28835685b274f81.zip/", {"name":"hash-base","reference":"3.0.4"}],
-    ["./.pnp/cache/ripemd160-b5d8187517c0bc78.zip/", {"name":"ripemd160","reference":"2.0.2"}],
-    ["./.pnp/cache/sha.js-9506d8eee0ff3a6a.zip/", {"name":"sha.js","reference":"2.4.11"}],
-    ["./.pnp/cache/evp_bytestokey-23a40f5dba97b04c.zip/", {"name":"evp_bytestokey","reference":"1.0.3"}],
-    ["./.pnp/cache/browserify-des-ba8708433c0e8728.zip/", {"name":"browserify-des","reference":"1.0.2"}],
-    ["./.pnp/cache/des.js-39209bc4091f2e77.zip/", {"name":"des.js","reference":"1.0.0"}],
-    ["./.pnp/cache/minimalistic-assert-ac7d593d2e11ad56.zip/", {"name":"minimalistic-assert","reference":"1.0.1"}],
-    ["./.pnp/cache/browserify-sign-32e49bf63340a2aa.zip/", {"name":"browserify-sign","reference":"4.0.4"}],
-    ["./.pnp/cache/bn.js-14a228c40562c196.zip/", {"name":"bn.js","reference":"4.11.8"}],
-    ["./.pnp/cache/browserify-rsa-f2c8aa99e941e20f.zip/", {"name":"browserify-rsa","reference":"4.0.1"}],
-    ["./.pnp/cache/randombytes-06644982fb47851e.zip/", {"name":"randombytes","reference":"2.0.6"}],
-    ["./.pnp/cache/create-hmac-a073f872069566d2.zip/", {"name":"create-hmac","reference":"1.1.7"}],
-    ["./.pnp/cache/elliptic-d61e469ffcedf941.zip/", {"name":"elliptic","reference":"6.4.1"}],
-    ["./.pnp/cache/brorand-9f25e208e0ef573c.zip/", {"name":"brorand","reference":"1.1.0"}],
-    ["./.pnp/cache/hash.js-860579741c6f0d47.zip/", {"name":"hash.js","reference":"1.1.5"}],
-    ["./.pnp/cache/hmac-drbg-13faa5ee2f53f2c9.zip/", {"name":"hmac-drbg","reference":"1.0.1"}],
-    ["./.pnp/cache/minimalistic-crypto-utils-47a2a135a174907a.zip/", {"name":"minimalistic-crypto-utils","reference":"1.0.1"}],
-    ["./.pnp/cache/parse-asn1-63817c05d7f04f09.zip/", {"name":"parse-asn1","reference":"5.1.1"}],
-    ["./.pnp/cache/asn1.js-dc00dc5844de6062.zip/", {"name":"asn1.js","reference":"4.10.1"}],
-    ["./.pnp/cache/pbkdf2-a88dbbfa304702f0.zip/", {"name":"pbkdf2","reference":"3.0.17"}],
-    ["./.pnp/cache/create-ecdh-c3aea86aff31f99a.zip/", {"name":"create-ecdh","reference":"4.0.3"}],
-    ["./.pnp/cache/diffie-hellman-d8d6eea6faa9da8f.zip/", {"name":"diffie-hellman","reference":"5.0.3"}],
-    ["./.pnp/cache/miller-rabin-9e6e70e782dac761.zip/", {"name":"miller-rabin","reference":"4.0.1"}],
-    ["./.pnp/cache/public-encrypt-d747e265031e9a21.zip/", {"name":"public-encrypt","reference":"4.0.3"}],
-    ["./.pnp/cache/randomfill-828fac415fe11aac.zip/", {"name":"randomfill","reference":"1.0.4"}],
-    ["./.pnp/cache/domain-browser-dc9682dcaf6669c3.zip/", {"name":"domain-browser","reference":"1.2.0"}],
-    ["./.pnp/cache/events-644c12cb1e425879.zip/", {"name":"events","reference":"1.1.1"}],
-    ["./.pnp/cache/https-browserify-0f852522c800339e.zip/", {"name":"https-browserify","reference":"1.0.0"}],
-    ["./.pnp/cache/os-browserify-454fff75db54d6d4.zip/", {"name":"os-browserify","reference":"0.3.0"}],
-    ["./.pnp/cache/path-browserify-c6143e4016aa1c76.zip/", {"name":"path-browserify","reference":"0.0.0"}],
-    ["./.pnp/cache/process-d958121eae92b232.zip/", {"name":"process","reference":"0.11.10"}],
-    ["./.pnp/cache/querystring-es3-daeeb08411756c06.zip/", {"name":"querystring-es3","reference":"0.2.1"}],
-    ["./.pnp/cache/stream-browserify-df83f902a159487c.zip/", {"name":"stream-browserify","reference":"2.0.1"}],
-    ["./.pnp/cache/stream-http-9239761e632e7f68.zip/", {"name":"stream-http","reference":"2.8.3"}],
-    ["./.pnp/cache/builtin-status-codes-c44982ea81acf151.zip/", {"name":"builtin-status-codes","reference":"3.0.0"}],
-    ["./.pnp/cache/to-arraybuffer-1a222dfac582b08f.zip/", {"name":"to-arraybuffer","reference":"1.0.1"}],
-    ["./.pnp/cache/timers-browserify-031ee22a639ae8dc.zip/", {"name":"timers-browserify","reference":"2.0.10"}],
-    ["./.pnp/cache/setimmediate-db0b1a4cf14f48d6.zip/", {"name":"setimmediate","reference":"1.0.5"}],
-    ["./.pnp/cache/tty-browserify-300a796098204316.zip/", {"name":"tty-browserify","reference":"0.0.0"}],
-    ["./.pnp/cache/url-977da83afaca58f8.zip/", {"name":"url","reference":"0.11.0"}],
-    ["./.pnp/cache/querystring-3f0300e39e34c228.zip/", {"name":"querystring","reference":"0.2.0"}],
-    ["./.pnp/cache/vm-browserify-786062f56a301dad.zip/", {"name":"vm-browserify","reference":"0.0.4"}],
-    ["./.pnp/cache/indexof-1f89e699bcb02fa3.zip/", {"name":"indexof","reference":"0.0.1"}],
-    ["./.pnp/cache/virtual/24e14cca7180759f42a45920cad4ee5e24d23a14c1820ad5a549b7fe1c53c11d7d68c1e59758066fc014bc43dc66911b0c58d5778f5773aa8ba19f18d09b8332/mnt/d/berry/.pnp/cache/uglifyjs-webpack-plugin-19e24ce3863e4aa2.zip/", {"name":"uglifyjs-webpack-plugin","reference":"virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#1.3.0"}],
-    ["./.pnp/cache/cacache-055a5e554df38d8b.zip/", {"name":"cacache","reference":"10.0.4"}],
-    ["./.pnp/cache/bluebird-256434792e09dd2e.zip/", {"name":"bluebird","reference":"3.5.2"}],
-    ["./.pnp/cache/chownr-669df3b60d5d3402.zip/", {"name":"chownr","reference":"1.1.1"}],
-    ["./.pnp/cache/glob-e500f8cb1313faeb.zip/", {"name":"glob","reference":"7.1.3"}],
-    ["./.pnp/cache/fs.realpath-d33a264ca6752b96.zip/", {"name":"fs.realpath","reference":"1.0.0"}],
-    ["./.pnp/cache/inflight-cfa51fdbdead974f.zip/", {"name":"inflight","reference":"1.0.6"}],
-    ["./.pnp/cache/once-18d55d8900de50e3.zip/", {"name":"once","reference":"1.3.3"}],
-    ["./.pnp/cache/wrappy-4a5048035cd63581.zip/", {"name":"wrappy","reference":"1.0.2"}],
-    ["./.pnp/cache/minimatch-6247f7923414e6c5.zip/", {"name":"minimatch","reference":"3.0.4"}],
-    ["./.pnp/cache/brace-expansion-55d9ce43b8630d52.zip/", {"name":"brace-expansion","reference":"1.1.11"}],
-    ["./.pnp/cache/balanced-match-78983280a9d9fe6f.zip/", {"name":"balanced-match","reference":"1.0.0"}],
-    ["./.pnp/cache/concat-map-9496056e1b41661f.zip/", {"name":"concat-map","reference":"0.0.1"}],
-    ["./.pnp/cache/path-is-absolute-2847d4ac389da83d.zip/", {"name":"path-is-absolute","reference":"1.0.1"}],
-    ["./.pnp/cache/lru-cache-2d6a704697c37b4a.zip/", {"name":"lru-cache","reference":"4.1.3"}],
-    ["./.pnp/cache/pseudomap-405f0831963c3057.zip/", {"name":"pseudomap","reference":"1.0.2"}],
-    ["./.pnp/cache/yallist-971482d87b390abc.zip/", {"name":"yallist","reference":"2.1.2"}],
-    ["./.pnp/cache/yallist-9101722f15d720bb.zip/", {"name":"yallist","reference":"3.0.2"}],
-    ["./.pnp/cache/mississippi-83aa569379563cbb.zip/", {"name":"mississippi","reference":"2.0.0"}],
-    ["./.pnp/cache/duplexify-b0eaa1459a605865.zip/", {"name":"duplexify","reference":"3.6.0"}],
-    ["./.pnp/cache/end-of-stream-b10fdc4caed403ac.zip/", {"name":"end-of-stream","reference":"1.1.0"}],
-    ["./.pnp/cache/stream-shift-866885c35ba39930.zip/", {"name":"stream-shift","reference":"1.0.0"}],
-    ["./.pnp/cache/flush-write-stream-0e2ba707aaaf9115.zip/", {"name":"flush-write-stream","reference":"1.0.3"}],
-    ["./.pnp/cache/from2-730e9578bef9fe40.zip/", {"name":"from2","reference":"2.3.0"}],
-    ["./.pnp/cache/parallel-transform-4eeb78f19aee99e0.zip/", {"name":"parallel-transform","reference":"1.1.0"}],
-    ["./.pnp/cache/cyclist-e470b13e854f0d78.zip/", {"name":"cyclist","reference":"0.2.2"}],
-    ["./.pnp/cache/pump-c37f8468ad654da3.zip/", {"name":"pump","reference":"2.0.1"}],
-    ["./.pnp/cache/pump-fa2efe312f7aa302.zip/", {"name":"pump","reference":"3.0.0"}],
-    ["./.pnp/cache/pumpify-eb8c5285fdc4d09f.zip/", {"name":"pumpify","reference":"1.5.1"}],
-    ["./.pnp/cache/stream-each-1b40b7cd3d479208.zip/", {"name":"stream-each","reference":"1.2.3"}],
-    ["./.pnp/cache/move-concurrently-88a8e91b647f96cf.zip/", {"name":"move-concurrently","reference":"1.0.1"}],
-    ["./.pnp/cache/aproba-e82548af164e43e5.zip/", {"name":"aproba","reference":"1.2.0"}],
-    ["./.pnp/cache/copy-concurrently-c2238432d27ba29d.zip/", {"name":"copy-concurrently","reference":"1.0.5"}],
-    ["./.pnp/cache/fs-write-stream-atomic-e6e83e923a2c82c1.zip/", {"name":"fs-write-stream-atomic","reference":"1.0.10"}],
-    ["./.pnp/cache/iferr-69dbe9c12bb04289.zip/", {"name":"iferr","reference":"0.1.5"}],
-    ["./.pnp/cache/imurmurhash-99d1233a56ebcdf6.zip/", {"name":"imurmurhash","reference":"0.1.4"}],
-    ["./.pnp/cache/rimraf-8d85948d6d8aa79f.zip/", {"name":"rimraf","reference":"2.6.2"}],
-    ["./.pnp/cache/run-queue-aa8121480a4b1d99.zip/", {"name":"run-queue","reference":"1.0.3"}],
-    ["./.pnp/cache/promise-inflight-93f16c5fe4696dde.zip/", {"name":"promise-inflight","reference":"1.0.1"}],
-    ["./.pnp/cache/ssri-d637376d1bf24fa6.zip/", {"name":"ssri","reference":"5.3.0"}],
-    ["./.pnp/cache/unique-filename-3381b52f9f0e72c5.zip/", {"name":"unique-filename","reference":"1.1.1"}],
-    ["./.pnp/cache/unique-slug-87e39663efa8d9b2.zip/", {"name":"unique-slug","reference":"2.0.1"}],
-    ["./.pnp/cache/y18n-a49e7cf437e5c8f9.zip/", {"name":"y18n","reference":"4.0.0"}],
-    ["./.pnp/cache/find-cache-dir-4f3cea7d4e49558a.zip/", {"name":"find-cache-dir","reference":"1.0.0"}],
-    ["./.pnp/cache/commondir-2a260e152aea6413.zip/", {"name":"commondir","reference":"1.0.1"}],
-    ["./.pnp/cache/make-dir-0501a714af11c6ee.zip/", {"name":"make-dir","reference":"1.3.0"}],
-    ["./.pnp/cache/pify-3a748efa1544bec5.zip/", {"name":"pify","reference":"3.0.0"}],
-    ["./.pnp/cache/pkg-dir-2d0476a852aa8204.zip/", {"name":"pkg-dir","reference":"2.0.0"}],
-    ["./.pnp/cache/pkg-dir-1845faefc0bd6e63.zip/", {"name":"pkg-dir","reference":"3.0.0"}],
-    ["./.pnp/cache/find-up-b66c0990e920be37.zip/", {"name":"find-up","reference":"2.1.0"}],
-    ["./.pnp/cache/find-up-b8cba382f557212c.zip/", {"name":"find-up","reference":"3.0.0"}],
-    ["./.pnp/cache/locate-path-bd442c76776adcb6.zip/", {"name":"locate-path","reference":"2.0.0"}],
-    ["./.pnp/cache/locate-path-19b635352c4fbdc9.zip/", {"name":"locate-path","reference":"3.0.0"}],
-    ["./.pnp/cache/p-locate-24eda470e95f3ddb.zip/", {"name":"p-locate","reference":"2.0.0"}],
-    ["./.pnp/cache/p-locate-142f19ca812dab50.zip/", {"name":"p-locate","reference":"3.0.0"}],
-    ["./.pnp/cache/p-limit-a610bb3fdbd2a210.zip/", {"name":"p-limit","reference":"1.3.0"}],
-    ["./.pnp/cache/p-limit-e3ab7636f5ac4a0d.zip/", {"name":"p-limit","reference":"2.0.0"}],
-    ["./.pnp/cache/p-try-2b84c15ed096d445.zip/", {"name":"p-try","reference":"1.0.0"}],
-    ["./.pnp/cache/p-try-1175172796834f93.zip/", {"name":"p-try","reference":"2.0.0"}],
-    ["./.pnp/cache/path-exists-317e54825b489e21.zip/", {"name":"path-exists","reference":"3.0.0"}],
-    ["./.pnp/cache/serialize-javascript-f54f315db3b10075.zip/", {"name":"serialize-javascript","reference":"1.5.0"}],
-    ["./.pnp/cache/uglify-es-4a70d9ce8a3d6d46.zip/", {"name":"uglify-es","reference":"3.3.10"}],
-    ["./.pnp/cache/commander-e59faf65ea5f6402.zip/", {"name":"commander","reference":"2.14.1"}],
-    ["./.pnp/cache/webpack-sources-8282b5aeec71bb9b.zip/", {"name":"webpack-sources","reference":"1.3.0"}],
-    ["./.pnp/cache/source-list-map-f2515a940cef8392.zip/", {"name":"source-list-map","reference":"2.0.1"}],
-    ["./.pnp/cache/worker-farm-1701739d5c72dcad.zip/", {"name":"worker-farm","reference":"1.6.0"}],
-    ["./.pnp/cache/watchpack-166f799b50b04921.zip/", {"name":"watchpack","reference":"1.6.0"}],
-    ["./.pnp/cache/chokidar-089efb39c3ab5371.zip/", {"name":"chokidar","reference":"2.0.4"}],
-    ["./.pnp/cache/anymatch-674b633eb66f29bc.zip/", {"name":"anymatch","reference":"2.0.0"}],
-    ["./.pnp/cache/normalize-path-776fa95067dd2655.zip/", {"name":"normalize-path","reference":"2.1.1"}],
-    ["./.pnp/cache/remove-trailing-separator-ec8cf665da2ed981.zip/", {"name":"remove-trailing-separator","reference":"1.1.0"}],
-    ["./.pnp/cache/async-each-030469b67413f89b.zip/", {"name":"async-each","reference":"1.0.1"}],
-    ["./.pnp/cache/fsevents-de850c64902350a6.zip/", {"name":"fsevents","reference":"1.2.4"}],
-    ["./.pnp/cache/node-pre-gyp-d130d925fcc1b145.zip/", {"name":"node-pre-gyp","reference":"0.10.3"}],
-    ["./.pnp/cache/detect-libc-ff3951cc2f6ad819.zip/", {"name":"detect-libc","reference":"1.0.3"}],
-    ["./.pnp/cache/needle-431357e8fc0e9f9f.zip/", {"name":"needle","reference":"2.2.4"}],
-    ["./.pnp/cache/iconv-lite-c8de26c14591b142.zip/", {"name":"iconv-lite","reference":"0.4.24"}],
-    ["./.pnp/cache/safer-buffer-00bed014e7a5e734.zip/", {"name":"safer-buffer","reference":"2.1.2"}],
-    ["./.pnp/cache/sax-41db0d4cb1bb0eb3.zip/", {"name":"sax","reference":"1.2.4"}],
-    ["./.pnp/cache/nopt-3cb1230b2d30d3b6.zip/", {"name":"nopt","reference":"4.0.1"}],
-    ["./.pnp/cache/abbrev-a1d6540f6451d79c.zip/", {"name":"abbrev","reference":"1.1.1"}],
-    ["./.pnp/cache/osenv-df037e9ff9fcfe09.zip/", {"name":"osenv","reference":"0.1.5"}],
-    ["./.pnp/cache/os-homedir-0100700387551b50.zip/", {"name":"os-homedir","reference":"1.0.2"}],
-    ["./.pnp/cache/os-tmpdir-2303ea7c90b5e7a8.zip/", {"name":"os-tmpdir","reference":"1.0.2"}],
-    ["./.pnp/cache/npm-packlist-b02867bd19760fe2.zip/", {"name":"npm-packlist","reference":"1.1.12"}],
-    ["./.pnp/cache/ignore-walk-b4777d6f0c55ce06.zip/", {"name":"ignore-walk","reference":"3.0.1"}],
-    ["./.pnp/cache/npm-bundled-29eaf8ef44f90037.zip/", {"name":"npm-bundled","reference":"1.0.5"}],
-    ["./.pnp/cache/npmlog-59fe7e27054d1d29.zip/", {"name":"npmlog","reference":"4.1.2"}],
-    ["./.pnp/cache/are-we-there-yet-291d7aa4c66fae6d.zip/", {"name":"are-we-there-yet","reference":"1.1.5"}],
-    ["./.pnp/cache/delegates-5c0604241491842d.zip/", {"name":"delegates","reference":"1.0.0"}],
-    ["./.pnp/cache/console-control-strings-98998725625b6f37.zip/", {"name":"console-control-strings","reference":"1.1.0"}],
-    ["./.pnp/cache/gauge-2cb33cbbd9d78c47.zip/", {"name":"gauge","reference":"2.7.4"}],
-    ["./.pnp/cache/has-unicode-03fd79d5573ca11e.zip/", {"name":"has-unicode","reference":"2.0.1"}],
-    ["./.pnp/cache/object-assign-48521053e3cde603.zip/", {"name":"object-assign","reference":"4.1.1"}],
-    ["./.pnp/cache/signal-exit-54ce804a6526bfb8.zip/", {"name":"signal-exit","reference":"3.0.2"}],
-    ["./.pnp/cache/string-width-9106374ca905aead.zip/", {"name":"string-width","reference":"1.0.2"}],
-    ["./.pnp/cache/string-width-8fc6d7bd4c3452d2.zip/", {"name":"string-width","reference":"2.1.1"}],
-    ["./.pnp/cache/code-point-at-89891bf59e6dcde8.zip/", {"name":"code-point-at","reference":"1.1.0"}],
-    ["./.pnp/cache/is-fullwidth-code-point-491c01f695bdd48b.zip/", {"name":"is-fullwidth-code-point","reference":"1.0.0"}],
-    ["./.pnp/cache/is-fullwidth-code-point-98e1fe2645f35c66.zip/", {"name":"is-fullwidth-code-point","reference":"2.0.0"}],
-    ["./.pnp/cache/number-is-nan-2d0531f7aef56b89.zip/", {"name":"number-is-nan","reference":"1.0.1"}],
-    ["./.pnp/cache/wide-align-9f9c343472f12db3.zip/", {"name":"wide-align","reference":"1.1.3"}],
-    ["./.pnp/cache/set-blocking-fedca38b7419ffd7.zip/", {"name":"set-blocking","reference":"2.0.0"}],
-    ["./.pnp/cache/rc-263d4c79bb020e0d.zip/", {"name":"rc","reference":"1.2.8"}],
-    ["./.pnp/cache/deep-extend-c6fb47aa9ea6f029.zip/", {"name":"deep-extend","reference":"0.6.0"}],
-    ["./.pnp/cache/ini-d1439ae091b35e33.zip/", {"name":"ini","reference":"1.3.5"}],
-    ["./.pnp/cache/strip-json-comments-31d292cad5d02437.zip/", {"name":"strip-json-comments","reference":"2.0.1"}],
-    ["./.pnp/cache/tar-a8698516879181ab.zip/", {"name":"tar","reference":"4.4.6"}],
-    ["./.pnp/cache/fs-minipass-04ccc79539386253.zip/", {"name":"fs-minipass","reference":"1.2.5"}],
-    ["./.pnp/cache/minipass-d35bb0dbf25ffab9.zip/", {"name":"minipass","reference":"2.3.4"}],
-    ["./.pnp/cache/minizlib-8064bfe12b07018d.zip/", {"name":"minizlib","reference":"1.1.1"}],
-    ["./.pnp/cache/is-binary-path-76bbb5f55fc3137f.zip/", {"name":"is-binary-path","reference":"1.0.1"}],
-    ["./.pnp/cache/binary-extensions-1f7bcaca86bb20df.zip/", {"name":"binary-extensions","reference":"1.12.0"}],
-    ["./.pnp/cache/lodash.debounce-1910da2a0f862edf.zip/", {"name":"lodash.debounce","reference":"4.0.8"}],
-    ["./.pnp/cache/readdirp-ce4c59bf0b6ab5b9.zip/", {"name":"readdirp","reference":"2.2.1"}],
-    ["./.pnp/cache/upath-35290c62c5b0f167.zip/", {"name":"upath","reference":"1.1.0"}],
-    ["./.pnp/cache/webpack-virtual-modules-3ec10f2e6db56b69.zip/", {"name":"webpack-virtual-modules","reference":"0.1.10"}],
+    ["./packages/berry-cli/pnp/cache/virtual/ca9cce39e73d00b2e4e944ae0f20fafb22a92a9aa8f518dac6953485c622f4ab13479b22c682397bd2d43ce7eeaa4f0751a23a17407942017831ff868b1413ac/mnt/d/berry/packages/berry-cli/pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/", {"name":"@manaflair/concierge","reference":"virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#0.7.3"}],
+    ["./packages/berry-cli/pnp/cache/virtual/bcffe507fa373f41e98a2ee0f420a56f13077f8c84459018537a5845214004d0998133e34cbc12a105c125f0583fe8c56c63d885526041e7b3d06e31903c84d4/mnt/d/berry/packages/berry-cli/pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/", {"name":"@manaflair/concierge","reference":"virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#0.7.3"}],
+    ["./packages/berry-cli/pnp/cache/virtual/b8d2651e7b9133e2fe2706b415abba46cfe91049e6fbb0374b09cb694f00347a9a20afa1bfd85d15c79c22a0871f90fab3edd1590123705c48451b96da257011/mnt/d/berry/packages/berry-cli/pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/", {"name":"@manaflair/concierge","reference":"virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#0.7.3"}],
+    ["./packages/berry-cli/pnp/cache/virtual/d2d1515573d97c80de3df0b9f6f0c0698c96231189b9f90a356df9503816772276dba80f9697dc6f52f6af08f8a8941076b32b0e5b57bc5eb25bf2fb87d174e7/mnt/d/berry/packages/berry-cli/pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/", {"name":"@manaflair/concierge","reference":"virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#0.7.3"}],
+    ["./packages/berry-cli/pnp/cache/virtual/1de496762657fb637c8bff637ee63a44cb038a8ed17f68653ecc5192713c2bf4c5883a46ccb3c7724d6042840305ba3d8b48ec65c6d6d7d0188121756d8d45a1/mnt/d/berry/packages/berry-cli/pnp/cache/@manaflair-concierge-239fb5c39b1b31f0.zip/", {"name":"@manaflair/concierge","reference":"virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#0.7.3"}],
+    ["./packages/berry-cli/pnp/cache/chalk-683a581d71468012.zip/", {"name":"chalk","reference":"1.1.3"}],
+    ["./packages/berry-cli/pnp/cache/chalk-364548c0d4bd8a27.zip/", {"name":"chalk","reference":"2.4.1"}],
+    ["./packages/berry-cli/pnp/cache/ansi-styles-8563d381d06d36d2.zip/", {"name":"ansi-styles","reference":"2.2.1"}],
+    ["./packages/berry-cli/pnp/cache/ansi-styles-4196e26164588a62.zip/", {"name":"ansi-styles","reference":"3.2.1"}],
+    ["./packages/berry-cli/pnp/cache/escape-string-regexp-5f1d658cd2249444.zip/", {"name":"escape-string-regexp","reference":"1.0.5"}],
+    ["./packages/berry-cli/pnp/cache/has-ansi-2ac5bbf5bf18d1ad.zip/", {"name":"has-ansi","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/ansi-regex-7f2e83def7b22559.zip/", {"name":"ansi-regex","reference":"2.1.1"}],
+    ["./packages/berry-cli/pnp/cache/ansi-regex-e11b7107b2278826.zip/", {"name":"ansi-regex","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/strip-ansi-82c1f9dc0496358d.zip/", {"name":"strip-ansi","reference":"3.0.1"}],
+    ["./packages/berry-cli/pnp/cache/strip-ansi-4d74e74ba2a729f2.zip/", {"name":"strip-ansi","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/supports-color-af17f5f3f2071b15.zip/", {"name":"supports-color","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/supports-color-4650158f01a27a0e.zip/", {"name":"supports-color","reference":"5.5.0"}],
+    ["./packages/berry-cli/pnp/cache/joi-83ba60f5fc3e763a.zip/", {"name":"joi","reference":"13.7.0"}],
+    ["./packages/berry-cli/pnp/cache/hoek-f863495c807fb7f8.zip/", {"name":"hoek","reference":"5.0.4"}],
+    ["./packages/berry-cli/pnp/cache/isemail-4deaefa9624847b4.zip/", {"name":"isemail","reference":"3.1.3"}],
+    ["./packages/berry-cli/pnp/cache/punycode-1aeea3895cbfae7e.zip/", {"name":"punycode","reference":"2.1.1"}],
+    ["./packages/berry-cli/pnp/cache/punycode-7533f50842fa3a7a.zip/", {"name":"punycode","reference":"1.4.1"}],
+    ["./packages/berry-cli/pnp/cache/punycode-d76b944867ed1caa.zip/", {"name":"punycode","reference":"1.3.2"}],
+    ["./packages/berry-cli/pnp/cache/topo-04302364458f9b6a.zip/", {"name":"topo","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/kexec-b7a6be6bf08a5eb5.zip/", {"name":"kexec","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/nan-29c4653878dcab21.zip/", {"name":"nan","reference":"2.11.1"}],
+    ["./packages/berry-cli/pnp/cache/lodash-7e6e951cc82a452f.zip/", {"name":"lodash","reference":"4.17.11"}],
+    ["./packages/berry-cli/pnp/cache/brfs-59384b3700c39b91.zip/", {"name":"brfs","reference":"2.0.1"}],
+    ["./packages/berry-cli/pnp/cache/quote-stream-69d075b242f42c6a.zip/", {"name":"quote-stream","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/buffer-equal-6d8a5535fbaa20b3.zip/", {"name":"buffer-equal","reference":"0.0.1"}],
+    ["./packages/berry-cli/pnp/cache/through2-950c3a5a2c1a4970.zip/", {"name":"through2","reference":"2.0.3"}],
+    ["./packages/berry-cli/pnp/cache/readable-stream-2dd450b412215917.zip/", {"name":"readable-stream","reference":"2.3.6"}],
+    ["./packages/berry-cli/pnp/cache/readable-stream-4f0109da985ad2e9.zip/", {"name":"readable-stream","reference":"2.0.6"}],
+    ["./packages/berry-cli/pnp/cache/core-util-is-58240094e7ee3ef9.zip/", {"name":"core-util-is","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/inherits-63d2ef9cae97bc08.zip/", {"name":"inherits","reference":"2.0.3"}],
+    ["./packages/berry-cli/pnp/cache/inherits-93b575d37f513350.zip/", {"name":"inherits","reference":"2.0.1"}],
+    ["./packages/berry-cli/pnp/cache/process-nextick-args-c79a0dbed5f9f733.zip/", {"name":"process-nextick-args","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/process-nextick-args-750ea5030977049c.zip/", {"name":"process-nextick-args","reference":"1.0.7"}],
+    ["./packages/berry-cli/pnp/cache/safe-buffer-4130fb37ba590882.zip/", {"name":"safe-buffer","reference":"5.1.2"}],
+    ["./packages/berry-cli/pnp/cache/string_decoder-1a282a8e7c537d1c.zip/", {"name":"string_decoder","reference":"1.1.1"}],
+    ["./packages/berry-cli/pnp/cache/string_decoder-9e1de83f5fa2a461.zip/", {"name":"string_decoder","reference":"0.10.31"}],
+    ["./packages/berry-cli/pnp/cache/util-deprecate-ed5c250b68e7c044.zip/", {"name":"util-deprecate","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/xtend-7c25dea810673cef.zip/", {"name":"xtend","reference":"4.0.1"}],
+    ["./packages/berry-cli/pnp/cache/resolve-086872453205b3ed.zip/", {"name":"resolve","reference":"1.8.1"}],
+    ["./packages/berry-cli/pnp/cache/path-parse-61fb4287347cc688.zip/", {"name":"path-parse","reference":"1.0.6"}],
+    ["./packages/berry-cli/pnp/cache/static-module-1951de7cfb239ff0.zip/", {"name":"static-module","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/acorn-node-93b3b1cd55b5d618.zip/", {"name":"acorn-node","reference":"1.6.0"}],
+    ["./packages/berry-cli/pnp/cache/acorn-walk-9ee3748f9dc866f4.zip/", {"name":"acorn-walk","reference":"6.1.0"}],
+    ["./packages/berry-cli/pnp/cache/acorn-80bd2694bd160b61.zip/", {"name":"acorn","reference":"6.0.2"}],
+    ["./packages/berry-cli/pnp/cache/acorn-ca34533c3b0bb287.zip/", {"name":"acorn","reference":"5.7.3"}],
+    ["./packages/berry-cli/pnp/cache/concat-stream-61d9aba6b2a6a81c.zip/", {"name":"concat-stream","reference":"1.6.2"}],
+    ["./packages/berry-cli/pnp/cache/typedarray-7c945448dce4114e.zip/", {"name":"typedarray","reference":"0.0.6"}],
+    ["./packages/berry-cli/pnp/cache/convert-source-map-67d7f39daea49c04.zip/", {"name":"convert-source-map","reference":"1.6.0"}],
+    ["./packages/berry-cli/pnp/cache/duplexer2-22482c2e3bd02554.zip/", {"name":"duplexer2","reference":"0.1.4"}],
+    ["./packages/berry-cli/pnp/cache/escodegen-5145be70ff120cdc.zip/", {"name":"escodegen","reference":"1.9.1"}],
+    ["./packages/berry-cli/pnp/cache/esprima-5f41440d97c3da21.zip/", {"name":"esprima","reference":"3.1.3"}],
+    ["./packages/berry-cli/pnp/cache/estraverse-2f378e3ee3009623.zip/", {"name":"estraverse","reference":"4.2.0"}],
+    ["./packages/berry-cli/pnp/cache/esutils-f7772d6c17cdc5ef.zip/", {"name":"esutils","reference":"2.0.2"}],
+    ["./packages/berry-cli/pnp/cache/optionator-96eed7c745d7bc53.zip/", {"name":"optionator","reference":"0.8.2"}],
+    ["./packages/berry-cli/pnp/cache/deep-is-625b36877314d709.zip/", {"name":"deep-is","reference":"0.1.3"}],
+    ["./packages/berry-cli/pnp/cache/fast-levenshtein-d3df76d3a6cc0cb3.zip/", {"name":"fast-levenshtein","reference":"2.0.6"}],
+    ["./packages/berry-cli/pnp/cache/levn-9ef24fd51373c7b1.zip/", {"name":"levn","reference":"0.3.0"}],
+    ["./packages/berry-cli/pnp/cache/prelude-ls-98f1e48187a516b8.zip/", {"name":"prelude-ls","reference":"1.1.2"}],
+    ["./packages/berry-cli/pnp/cache/type-check-64ccb9b361752c50.zip/", {"name":"type-check","reference":"0.3.2"}],
+    ["./packages/berry-cli/pnp/cache/wordwrap-70a5c60e64180322.zip/", {"name":"wordwrap","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/has-510b95dda2e38d41.zip/", {"name":"has","reference":"1.0.3"}],
+    ["./packages/berry-cli/pnp/cache/function-bind-471be874677e3fd3.zip/", {"name":"function-bind","reference":"1.1.1"}],
+    ["./packages/berry-cli/pnp/cache/magic-string-55da275043558a4d.zip/", {"name":"magic-string","reference":"0.22.5"}],
+    ["./packages/berry-cli/pnp/cache/vlq-ef5a6e12e812128d.zip/", {"name":"vlq","reference":"0.2.3"}],
+    ["./packages/berry-cli/pnp/cache/merge-source-map-0c5aa04d91cf2039.zip/", {"name":"merge-source-map","reference":"1.0.4"}],
+    ["./packages/berry-cli/pnp/cache/object-inspect-df1013ea9f520226.zip/", {"name":"object-inspect","reference":"1.4.1"}],
+    ["./packages/berry-cli/pnp/cache/scope-analyzer-46751afcb0bdc4ab.zip/", {"name":"scope-analyzer","reference":"2.0.5"}],
+    ["./packages/berry-cli/pnp/cache/array-from-90aebb59ad34d656.zip/", {"name":"array-from","reference":"2.1.1"}],
+    ["./packages/berry-cli/pnp/cache/es6-map-a88f3545d23e07dc.zip/", {"name":"es6-map","reference":"0.1.5"}],
+    ["./packages/berry-cli/pnp/cache/d-f1e5ebe0eab84170.zip/", {"name":"d","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/es5-ext-beb9d676d0753a29.zip/", {"name":"es5-ext","reference":"0.10.46"}],
+    ["./packages/berry-cli/pnp/cache/es6-iterator-009f413a36204ccc.zip/", {"name":"es6-iterator","reference":"2.0.3"}],
+    ["./packages/berry-cli/pnp/cache/es6-symbol-0dcd886cf79ab0c5.zip/", {"name":"es6-symbol","reference":"3.1.1"}],
+    ["./packages/berry-cli/pnp/cache/next-tick-0d5cf6a57d203aef.zip/", {"name":"next-tick","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/es6-set-e2f0bb9478d4c706.zip/", {"name":"es6-set","reference":"0.1.5"}],
+    ["./packages/berry-cli/pnp/cache/event-emitter-e7b0f0b3cf80e131.zip/", {"name":"event-emitter","reference":"0.3.5"}],
+    ["./packages/berry-cli/pnp/cache/estree-is-function-5441d5ca7fa8815e.zip/", {"name":"estree-is-function","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/get-assigned-identifiers-e22c011255b2b2b8.zip/", {"name":"get-assigned-identifiers","reference":"1.2.0"}],
+    ["./packages/berry-cli/pnp/cache/shallow-copy-64e60cf248e2b24c.zip/", {"name":"shallow-copy","reference":"0.0.1"}],
+    ["./packages/berry-cli/pnp/cache/static-eval-fbe5095513a55094.zip/", {"name":"static-eval","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/buffer-loader-8cc67608f95b6532.zip/", {"name":"buffer-loader","reference":"0.1.0"}],
+    ["./packages/berry-cli/pnp/cache/pnp-webpack-plugin-174972530913bdd4.zip/", {"name":"pnp-webpack-plugin","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/raw-loader-0b4771c12e9ddd9c.zip/", {"name":"raw-loader","reference":"0.5.1"}],
+    ["./packages/berry-cli/pnp/cache/transform-loader-1487ba46901dfa42.zip/", {"name":"transform-loader","reference":"0.2.4"}],
+    ["./packages/berry-cli/pnp/cache/loader-utils-ffc489e806ca212c.zip/", {"name":"loader-utils","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/big.js-821b6e03134c6b08.zip/", {"name":"big.js","reference":"3.2.0"}],
+    ["./packages/berry-cli/pnp/cache/emojis-list-e75e39fc693ccc0a.zip/", {"name":"emojis-list","reference":"2.1.0"}],
+    ["./packages/berry-cli/pnp/cache/json5-07d0953b92b5661b.zip/", {"name":"json5","reference":"0.5.1"}],
+    ["./packages/berry-cli/pnp/cache/virtual/b5de53e72da24a82548ac1ddae96774232b2d51a998ecdd01480eedabab6a2b89510f8b689d18e0a7ecac42596b1de456012fbe32f858978b93411ef8ebd1b25/mnt/d/berry/packages/berry-cli/pnp/cache/ts-loader-2b12e588384a460f.zip/", {"name":"ts-loader","reference":"virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.2.1"}],
+    ["./packages/berry-cli/pnp/cache/virtual/92ae3993bd41dc19726e66e87f0382975bd60e0a6cc0a7187246288035e7d03f5d790ac4414d2c54abdc3a092351f10a8d52d7870d804dba4e4383376fb78847/mnt/d/berry/packages/berry-cli/pnp/cache/ts-loader-2b12e588384a460f.zip/", {"name":"ts-loader","reference":"virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.2.1"}],
+    ["./packages/berry-cli/pnp/cache/virtual/fa7212079fbc792362b50ea0d47807f301192d3ad2eda64d8d4c6cbb7397d9f6d97f6a9ee5ec35a9f52768a61208e92541d0de05820bd1b986c074887c6da7ed/mnt/d/berry/packages/berry-cli/pnp/cache/ts-loader-2b12e588384a460f.zip/", {"name":"ts-loader","reference":"virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#5.2.1"}],
+    ["./packages/berry-cli/pnp/cache/color-convert-20f9e6db84df6826.zip/", {"name":"color-convert","reference":"1.9.3"}],
+    ["./packages/berry-cli/pnp/cache/color-name-c3c9c8e4ab57dd23.zip/", {"name":"color-name","reference":"1.1.3"}],
+    ["./packages/berry-cli/pnp/cache/has-flag-fc58d7df8f3cdecf.zip/", {"name":"has-flag","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/enhanced-resolve-ca7a96950f48c9e7.zip/", {"name":"enhanced-resolve","reference":"4.1.0"}],
+    ["./packages/berry-cli/pnp/cache/graceful-fs-2bd74007ff5b7366.zip/", {"name":"graceful-fs","reference":"4.1.11"}],
+    ["./packages/berry-cli/pnp/cache/memory-fs-5a0441721a664bc1.zip/", {"name":"memory-fs","reference":"0.4.1"}],
+    ["./packages/berry-cli/pnp/cache/errno-fc0bd07871694338.zip/", {"name":"errno","reference":"0.1.7"}],
+    ["./packages/berry-cli/pnp/cache/prr-dbaa25a063578c29.zip/", {"name":"prr","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/tapable-96953c122050a98c.zip/", {"name":"tapable","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/semver-b1e7d603bfbadf08.zip/", {"name":"semver","reference":"5.6.0"}],
+    ["./packages/berry-cli/pnp/cache/typescript-5f08acaf6c59a928.zip/", {"name":"typescript","reference":"3.1.2"}],
+    ["./packages/berry-cli/pnp/cache/virtual/00afd7f7089aec7c6d6f20506dc33671d477fca0bf63b21d475ea95b6267f0944ee0cd94081daee253b9ee870367bbad339ff2085195ef5f5ae6fb3c2d952ad5/mnt/d/berry/packages/berry-cli/pnp/cache/val-loader-416a0aa649ec3d55.zip/", {"name":"val-loader","reference":"virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#1.1.1"}],
+    ["./packages/berry-cli/pnp/cache/virtual/e111a433edecbf31d9e1fc66b9464e77d7279f1e9ae9b95c33b4cdb8837693edb4db2a618804eddd96f6822d9195797b77c1f91ae9478a13a546f76ee7c81bff/mnt/d/berry/packages/berry-cli/pnp/cache/val-loader-416a0aa649ec3d55.zip/", {"name":"val-loader","reference":"virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#1.1.1"}],
+    ["./packages/berry-cli/pnp/cache/schema-utils-cf0ac4604518a958.zip/", {"name":"schema-utils","reference":"0.4.7"}],
+    ["./packages/berry-cli/pnp/cache/virtual/91c9e2282eca01314cd7cd8e691ad9d3da9f1e3cfc9d79353799053fee26006c97b8e86210c4b74d4bbc0da7d1db843fb4a627067aec895a08653f2e87a2e80d/mnt/d/berry/packages/berry-cli/pnp/cache/ajv-keywords-17419045e912eca5.zip/", {"name":"ajv-keywords","reference":"virtual:b280b9fcddbd791f8bf76b36e6e7578db505457dfded8c84282cf7f2e51ef7fb0519becc414f9d62779735c3f7744f2500c4b023cabbeab6458e122d75cf07c3#3.2.0"}],
+    ["./packages/berry-cli/pnp/cache/virtual/16efa963afcaf148cd585e5794e92b4cd48d505d1267134b2cf0681674266e1cb7ae362a76367959163708e72285494b5a075184b3689def58845e772ee0d9ef/mnt/d/berry/packages/berry-cli/pnp/cache/ajv-keywords-17419045e912eca5.zip/", {"name":"ajv-keywords","reference":"virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#3.2.0"}],
+    ["./packages/berry-cli/pnp/cache/ajv-f0610499d26d6d2e.zip/", {"name":"ajv","reference":"6.5.4"}],
+    ["./packages/berry-cli/pnp/cache/fast-deep-equal-28201e80ccde80f0.zip/", {"name":"fast-deep-equal","reference":"2.0.1"}],
+    ["./packages/berry-cli/pnp/cache/fast-json-stable-stringify-a7b6dc4bc08b3504.zip/", {"name":"fast-json-stable-stringify","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/json-schema-traverse-1d4fc2ff87892168.zip/", {"name":"json-schema-traverse","reference":"0.4.1"}],
+    ["./packages/berry-cli/pnp/cache/uri-js-6c208df8b4c4033b.zip/", {"name":"uri-js","reference":"4.2.2"}],
+    ["./packages/berry-cli/pnp/cache/webpack-327979206597a945.zip/", {"name":"webpack","reference":"4.20.2"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-ast-b497bdd4fe7a4e11.zip/", {"name":"@webassemblyjs/ast","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-helper-module-context-e25cf5dbe363ff22.zip/", {"name":"@webassemblyjs/helper-module-context","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-helper-wasm-bytecode-65e12de9e180b872.zip/", {"name":"@webassemblyjs/helper-wasm-bytecode","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-wast-parser-b83dcab9dd1cb685.zip/", {"name":"@webassemblyjs/wast-parser","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-floating-point-hex-parser-c6f4165166b428f0.zip/", {"name":"@webassemblyjs/floating-point-hex-parser","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-helper-api-error-bc39524673b0565d.zip/", {"name":"@webassemblyjs/helper-api-error","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-helper-code-frame-5d19a3c435ee9d01.zip/", {"name":"@webassemblyjs/helper-code-frame","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-wast-printer-07dd806df30048b2.zip/", {"name":"@webassemblyjs/wast-printer","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@xtuc-long-768310435c732f5b.zip/", {"name":"@xtuc/long","reference":"4.2.1"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-helper-fsm-380dcb5984f231d8.zip/", {"name":"@webassemblyjs/helper-fsm","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-wasm-edit-7b4c2bc00620e68c.zip/", {"name":"@webassemblyjs/wasm-edit","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-helper-buffer-27557fb7bbb78daf.zip/", {"name":"@webassemblyjs/helper-buffer","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-helper-wasm-section-9926dc49379f058a.zip/", {"name":"@webassemblyjs/helper-wasm-section","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-wasm-gen-e75b26e49e6523d0.zip/", {"name":"@webassemblyjs/wasm-gen","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-ieee754-b7058623a3a3ef53.zip/", {"name":"@webassemblyjs/ieee754","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@xtuc-ieee754-9d2c8f009209423d.zip/", {"name":"@xtuc/ieee754","reference":"1.2.0"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-leb128-5fb6b41f5ee1e31c.zip/", {"name":"@webassemblyjs/leb128","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-utf8-7bc01d904ff08458.zip/", {"name":"@webassemblyjs/utf8","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-wasm-opt-865f31f31c26c9d5.zip/", {"name":"@webassemblyjs/wasm-opt","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/@webassemblyjs-wasm-parser-cd9e492dd3c34434.zip/", {"name":"@webassemblyjs/wasm-parser","reference":"1.7.8"}],
+    ["./packages/berry-cli/pnp/cache/acorn-dynamic-import-eecbbad55368b8ad.zip/", {"name":"acorn-dynamic-import","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/chrome-trace-event-dcabbce8e23a1f6f.zip/", {"name":"chrome-trace-event","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/tslib-e3dbf6044f68638e.zip/", {"name":"tslib","reference":"1.9.3"}],
+    ["./packages/berry-cli/pnp/cache/eslint-scope-903ac1641e3cc539.zip/", {"name":"eslint-scope","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/esrecurse-7b169284f5aff3c6.zip/", {"name":"esrecurse","reference":"4.2.1"}],
+    ["./packages/berry-cli/pnp/cache/json-parse-better-errors-231cb0742055bdbf.zip/", {"name":"json-parse-better-errors","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/loader-runner-ca325b16831984a9.zip/", {"name":"loader-runner","reference":"2.3.1"}],
+    ["./packages/berry-cli/pnp/cache/neo-async-ad51cef41912fa22.zip/", {"name":"neo-async","reference":"2.5.2"}],
+    ["./packages/berry-cli/pnp/cache/node-libs-browser-80ada6900812b021.zip/", {"name":"node-libs-browser","reference":"2.1.0"}],
+    ["./packages/berry-cli/pnp/cache/assert-07817c664f49df85.zip/", {"name":"assert","reference":"1.4.1"}],
+    ["./packages/berry-cli/pnp/cache/util-0600261792c54458.zip/", {"name":"util","reference":"0.10.3"}],
+    ["./packages/berry-cli/pnp/cache/util-6310467a9aaeac3f.zip/", {"name":"util","reference":"0.10.4"}],
+    ["./packages/berry-cli/pnp/cache/browserify-zlib-012cf064bce47cc2.zip/", {"name":"browserify-zlib","reference":"0.2.0"}],
+    ["./packages/berry-cli/pnp/cache/pako-0cd47765efa4a0a2.zip/", {"name":"pako","reference":"1.0.6"}],
+    ["./packages/berry-cli/pnp/cache/buffer-9ae9b1d6abd9b781.zip/", {"name":"buffer","reference":"4.9.1"}],
+    ["./packages/berry-cli/pnp/cache/base64-js-834b6d9f022f721d.zip/", {"name":"base64-js","reference":"1.3.0"}],
+    ["./packages/berry-cli/pnp/cache/ieee754-605bcac1c7b4ea94.zip/", {"name":"ieee754","reference":"1.1.12"}],
+    ["./packages/berry-cli/pnp/cache/console-browserify-f11465a7acf9b18a.zip/", {"name":"console-browserify","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/date-now-58d46662287dc09c.zip/", {"name":"date-now","reference":"0.1.4"}],
+    ["./packages/berry-cli/pnp/cache/constants-browserify-a9332637f17e6f2a.zip/", {"name":"constants-browserify","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/crypto-browserify-0946ad703e17b43a.zip/", {"name":"crypto-browserify","reference":"3.12.0"}],
+    ["./packages/berry-cli/pnp/cache/browserify-cipher-2cdec5575b88da75.zip/", {"name":"browserify-cipher","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/browserify-aes-addac2367ba24b0a.zip/", {"name":"browserify-aes","reference":"1.2.0"}],
+    ["./packages/berry-cli/pnp/cache/buffer-xor-fa05c090222d257b.zip/", {"name":"buffer-xor","reference":"1.0.3"}],
+    ["./packages/berry-cli/pnp/cache/cipher-base-462875dcb9d878cd.zip/", {"name":"cipher-base","reference":"1.0.4"}],
+    ["./packages/berry-cli/pnp/cache/create-hash-d61a3ea52b6eaeee.zip/", {"name":"create-hash","reference":"1.2.0"}],
+    ["./packages/berry-cli/pnp/cache/md5.js-077e842cb6171981.zip/", {"name":"md5.js","reference":"1.3.5"}],
+    ["./packages/berry-cli/pnp/cache/hash-base-c28835685b274f81.zip/", {"name":"hash-base","reference":"3.0.4"}],
+    ["./packages/berry-cli/pnp/cache/ripemd160-b5d8187517c0bc78.zip/", {"name":"ripemd160","reference":"2.0.2"}],
+    ["./packages/berry-cli/pnp/cache/sha.js-9506d8eee0ff3a6a.zip/", {"name":"sha.js","reference":"2.4.11"}],
+    ["./packages/berry-cli/pnp/cache/evp_bytestokey-23a40f5dba97b04c.zip/", {"name":"evp_bytestokey","reference":"1.0.3"}],
+    ["./packages/berry-cli/pnp/cache/browserify-des-ba8708433c0e8728.zip/", {"name":"browserify-des","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/des.js-39209bc4091f2e77.zip/", {"name":"des.js","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/minimalistic-assert-ac7d593d2e11ad56.zip/", {"name":"minimalistic-assert","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/browserify-sign-32e49bf63340a2aa.zip/", {"name":"browserify-sign","reference":"4.0.4"}],
+    ["./packages/berry-cli/pnp/cache/bn.js-14a228c40562c196.zip/", {"name":"bn.js","reference":"4.11.8"}],
+    ["./packages/berry-cli/pnp/cache/browserify-rsa-f2c8aa99e941e20f.zip/", {"name":"browserify-rsa","reference":"4.0.1"}],
+    ["./packages/berry-cli/pnp/cache/randombytes-06644982fb47851e.zip/", {"name":"randombytes","reference":"2.0.6"}],
+    ["./packages/berry-cli/pnp/cache/create-hmac-a073f872069566d2.zip/", {"name":"create-hmac","reference":"1.1.7"}],
+    ["./packages/berry-cli/pnp/cache/elliptic-d61e469ffcedf941.zip/", {"name":"elliptic","reference":"6.4.1"}],
+    ["./packages/berry-cli/pnp/cache/brorand-9f25e208e0ef573c.zip/", {"name":"brorand","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/hash.js-860579741c6f0d47.zip/", {"name":"hash.js","reference":"1.1.5"}],
+    ["./packages/berry-cli/pnp/cache/hmac-drbg-13faa5ee2f53f2c9.zip/", {"name":"hmac-drbg","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/minimalistic-crypto-utils-47a2a135a174907a.zip/", {"name":"minimalistic-crypto-utils","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/parse-asn1-63817c05d7f04f09.zip/", {"name":"parse-asn1","reference":"5.1.1"}],
+    ["./packages/berry-cli/pnp/cache/asn1.js-dc00dc5844de6062.zip/", {"name":"asn1.js","reference":"4.10.1"}],
+    ["./packages/berry-cli/pnp/cache/pbkdf2-a88dbbfa304702f0.zip/", {"name":"pbkdf2","reference":"3.0.17"}],
+    ["./packages/berry-cli/pnp/cache/create-ecdh-c3aea86aff31f99a.zip/", {"name":"create-ecdh","reference":"4.0.3"}],
+    ["./packages/berry-cli/pnp/cache/diffie-hellman-d8d6eea6faa9da8f.zip/", {"name":"diffie-hellman","reference":"5.0.3"}],
+    ["./packages/berry-cli/pnp/cache/miller-rabin-9e6e70e782dac761.zip/", {"name":"miller-rabin","reference":"4.0.1"}],
+    ["./packages/berry-cli/pnp/cache/public-encrypt-d747e265031e9a21.zip/", {"name":"public-encrypt","reference":"4.0.3"}],
+    ["./packages/berry-cli/pnp/cache/randomfill-828fac415fe11aac.zip/", {"name":"randomfill","reference":"1.0.4"}],
+    ["./packages/berry-cli/pnp/cache/domain-browser-dc9682dcaf6669c3.zip/", {"name":"domain-browser","reference":"1.2.0"}],
+    ["./packages/berry-cli/pnp/cache/events-644c12cb1e425879.zip/", {"name":"events","reference":"1.1.1"}],
+    ["./packages/berry-cli/pnp/cache/https-browserify-0f852522c800339e.zip/", {"name":"https-browserify","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/os-browserify-454fff75db54d6d4.zip/", {"name":"os-browserify","reference":"0.3.0"}],
+    ["./packages/berry-cli/pnp/cache/path-browserify-c6143e4016aa1c76.zip/", {"name":"path-browserify","reference":"0.0.0"}],
+    ["./packages/berry-cli/pnp/cache/process-d958121eae92b232.zip/", {"name":"process","reference":"0.11.10"}],
+    ["./packages/berry-cli/pnp/cache/querystring-es3-daeeb08411756c06.zip/", {"name":"querystring-es3","reference":"0.2.1"}],
+    ["./packages/berry-cli/pnp/cache/stream-browserify-df83f902a159487c.zip/", {"name":"stream-browserify","reference":"2.0.1"}],
+    ["./packages/berry-cli/pnp/cache/stream-http-9239761e632e7f68.zip/", {"name":"stream-http","reference":"2.8.3"}],
+    ["./packages/berry-cli/pnp/cache/builtin-status-codes-c44982ea81acf151.zip/", {"name":"builtin-status-codes","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/to-arraybuffer-1a222dfac582b08f.zip/", {"name":"to-arraybuffer","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/timers-browserify-031ee22a639ae8dc.zip/", {"name":"timers-browserify","reference":"2.0.10"}],
+    ["./packages/berry-cli/pnp/cache/setimmediate-db0b1a4cf14f48d6.zip/", {"name":"setimmediate","reference":"1.0.5"}],
+    ["./packages/berry-cli/pnp/cache/tty-browserify-300a796098204316.zip/", {"name":"tty-browserify","reference":"0.0.0"}],
+    ["./packages/berry-cli/pnp/cache/url-977da83afaca58f8.zip/", {"name":"url","reference":"0.11.0"}],
+    ["./packages/berry-cli/pnp/cache/querystring-3f0300e39e34c228.zip/", {"name":"querystring","reference":"0.2.0"}],
+    ["./packages/berry-cli/pnp/cache/vm-browserify-786062f56a301dad.zip/", {"name":"vm-browserify","reference":"0.0.4"}],
+    ["./packages/berry-cli/pnp/cache/indexof-1f89e699bcb02fa3.zip/", {"name":"indexof","reference":"0.0.1"}],
+    ["./packages/berry-cli/pnp/cache/virtual/24e14cca7180759f42a45920cad4ee5e24d23a14c1820ad5a549b7fe1c53c11d7d68c1e59758066fc014bc43dc66911b0c58d5778f5773aa8ba19f18d09b8332/mnt/d/berry/packages/berry-cli/pnp/cache/uglifyjs-webpack-plugin-19e24ce3863e4aa2.zip/", {"name":"uglifyjs-webpack-plugin","reference":"virtual:f10298c23794badbbd962fe0bfebecc7e2ad1a9298ff1dd70ca27046ca36af93bb2bc0ba1ee93ad2a3a7d2c1f9708b40ffd959c6a34ea1e828b8548615a875f5#1.3.0"}],
+    ["./packages/berry-cli/pnp/cache/cacache-055a5e554df38d8b.zip/", {"name":"cacache","reference":"10.0.4"}],
+    ["./packages/berry-cli/pnp/cache/bluebird-256434792e09dd2e.zip/", {"name":"bluebird","reference":"3.5.2"}],
+    ["./packages/berry-cli/pnp/cache/chownr-669df3b60d5d3402.zip/", {"name":"chownr","reference":"1.1.1"}],
+    ["./packages/berry-cli/pnp/cache/glob-e500f8cb1313faeb.zip/", {"name":"glob","reference":"7.1.3"}],
+    ["./packages/berry-cli/pnp/cache/fs.realpath-d33a264ca6752b96.zip/", {"name":"fs.realpath","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/inflight-cfa51fdbdead974f.zip/", {"name":"inflight","reference":"1.0.6"}],
+    ["./packages/berry-cli/pnp/cache/once-18d55d8900de50e3.zip/", {"name":"once","reference":"1.3.3"}],
+    ["./packages/berry-cli/pnp/cache/wrappy-4a5048035cd63581.zip/", {"name":"wrappy","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/minimatch-6247f7923414e6c5.zip/", {"name":"minimatch","reference":"3.0.4"}],
+    ["./packages/berry-cli/pnp/cache/brace-expansion-55d9ce43b8630d52.zip/", {"name":"brace-expansion","reference":"1.1.11"}],
+    ["./packages/berry-cli/pnp/cache/balanced-match-78983280a9d9fe6f.zip/", {"name":"balanced-match","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/concat-map-9496056e1b41661f.zip/", {"name":"concat-map","reference":"0.0.1"}],
+    ["./packages/berry-cli/pnp/cache/path-is-absolute-2847d4ac389da83d.zip/", {"name":"path-is-absolute","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/lru-cache-2d6a704697c37b4a.zip/", {"name":"lru-cache","reference":"4.1.3"}],
+    ["./packages/berry-cli/pnp/cache/pseudomap-405f0831963c3057.zip/", {"name":"pseudomap","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/yallist-971482d87b390abc.zip/", {"name":"yallist","reference":"2.1.2"}],
+    ["./packages/berry-cli/pnp/cache/yallist-9101722f15d720bb.zip/", {"name":"yallist","reference":"3.0.2"}],
+    ["./packages/berry-cli/pnp/cache/mississippi-83aa569379563cbb.zip/", {"name":"mississippi","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/duplexify-b0eaa1459a605865.zip/", {"name":"duplexify","reference":"3.6.0"}],
+    ["./packages/berry-cli/pnp/cache/end-of-stream-b10fdc4caed403ac.zip/", {"name":"end-of-stream","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/stream-shift-866885c35ba39930.zip/", {"name":"stream-shift","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/flush-write-stream-0e2ba707aaaf9115.zip/", {"name":"flush-write-stream","reference":"1.0.3"}],
+    ["./packages/berry-cli/pnp/cache/from2-730e9578bef9fe40.zip/", {"name":"from2","reference":"2.3.0"}],
+    ["./packages/berry-cli/pnp/cache/parallel-transform-4eeb78f19aee99e0.zip/", {"name":"parallel-transform","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/cyclist-e470b13e854f0d78.zip/", {"name":"cyclist","reference":"0.2.2"}],
+    ["./packages/berry-cli/pnp/cache/pump-c37f8468ad654da3.zip/", {"name":"pump","reference":"2.0.1"}],
+    ["./packages/berry-cli/pnp/cache/pump-fa2efe312f7aa302.zip/", {"name":"pump","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/pumpify-eb8c5285fdc4d09f.zip/", {"name":"pumpify","reference":"1.5.1"}],
+    ["./packages/berry-cli/pnp/cache/stream-each-1b40b7cd3d479208.zip/", {"name":"stream-each","reference":"1.2.3"}],
+    ["./packages/berry-cli/pnp/cache/move-concurrently-88a8e91b647f96cf.zip/", {"name":"move-concurrently","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/aproba-e82548af164e43e5.zip/", {"name":"aproba","reference":"1.2.0"}],
+    ["./packages/berry-cli/pnp/cache/copy-concurrently-c2238432d27ba29d.zip/", {"name":"copy-concurrently","reference":"1.0.5"}],
+    ["./packages/berry-cli/pnp/cache/fs-write-stream-atomic-e6e83e923a2c82c1.zip/", {"name":"fs-write-stream-atomic","reference":"1.0.10"}],
+    ["./packages/berry-cli/pnp/cache/iferr-69dbe9c12bb04289.zip/", {"name":"iferr","reference":"0.1.5"}],
+    ["./packages/berry-cli/pnp/cache/imurmurhash-99d1233a56ebcdf6.zip/", {"name":"imurmurhash","reference":"0.1.4"}],
+    ["./packages/berry-cli/pnp/cache/rimraf-8d85948d6d8aa79f.zip/", {"name":"rimraf","reference":"2.6.2"}],
+    ["./packages/berry-cli/pnp/cache/run-queue-aa8121480a4b1d99.zip/", {"name":"run-queue","reference":"1.0.3"}],
+    ["./packages/berry-cli/pnp/cache/promise-inflight-93f16c5fe4696dde.zip/", {"name":"promise-inflight","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/ssri-d637376d1bf24fa6.zip/", {"name":"ssri","reference":"5.3.0"}],
+    ["./packages/berry-cli/pnp/cache/unique-filename-3381b52f9f0e72c5.zip/", {"name":"unique-filename","reference":"1.1.1"}],
+    ["./packages/berry-cli/pnp/cache/unique-slug-87e39663efa8d9b2.zip/", {"name":"unique-slug","reference":"2.0.1"}],
+    ["./packages/berry-cli/pnp/cache/y18n-a49e7cf437e5c8f9.zip/", {"name":"y18n","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/find-cache-dir-4f3cea7d4e49558a.zip/", {"name":"find-cache-dir","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/commondir-2a260e152aea6413.zip/", {"name":"commondir","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/make-dir-0501a714af11c6ee.zip/", {"name":"make-dir","reference":"1.3.0"}],
+    ["./packages/berry-cli/pnp/cache/pify-3a748efa1544bec5.zip/", {"name":"pify","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/pkg-dir-2d0476a852aa8204.zip/", {"name":"pkg-dir","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/pkg-dir-1845faefc0bd6e63.zip/", {"name":"pkg-dir","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/find-up-b66c0990e920be37.zip/", {"name":"find-up","reference":"2.1.0"}],
+    ["./packages/berry-cli/pnp/cache/find-up-b8cba382f557212c.zip/", {"name":"find-up","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/locate-path-bd442c76776adcb6.zip/", {"name":"locate-path","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/locate-path-19b635352c4fbdc9.zip/", {"name":"locate-path","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/p-locate-24eda470e95f3ddb.zip/", {"name":"p-locate","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/p-locate-142f19ca812dab50.zip/", {"name":"p-locate","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/p-limit-a610bb3fdbd2a210.zip/", {"name":"p-limit","reference":"1.3.0"}],
+    ["./packages/berry-cli/pnp/cache/p-limit-e3ab7636f5ac4a0d.zip/", {"name":"p-limit","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/p-try-2b84c15ed096d445.zip/", {"name":"p-try","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/p-try-1175172796834f93.zip/", {"name":"p-try","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/path-exists-317e54825b489e21.zip/", {"name":"path-exists","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/serialize-javascript-f54f315db3b10075.zip/", {"name":"serialize-javascript","reference":"1.5.0"}],
+    ["./packages/berry-cli/pnp/cache/uglify-es-4a70d9ce8a3d6d46.zip/", {"name":"uglify-es","reference":"3.3.10"}],
+    ["./packages/berry-cli/pnp/cache/commander-e59faf65ea5f6402.zip/", {"name":"commander","reference":"2.14.1"}],
+    ["./packages/berry-cli/pnp/cache/webpack-sources-8282b5aeec71bb9b.zip/", {"name":"webpack-sources","reference":"1.3.0"}],
+    ["./packages/berry-cli/pnp/cache/source-list-map-f2515a940cef8392.zip/", {"name":"source-list-map","reference":"2.0.1"}],
+    ["./packages/berry-cli/pnp/cache/worker-farm-1701739d5c72dcad.zip/", {"name":"worker-farm","reference":"1.6.0"}],
+    ["./packages/berry-cli/pnp/cache/watchpack-166f799b50b04921.zip/", {"name":"watchpack","reference":"1.6.0"}],
+    ["./packages/berry-cli/pnp/cache/chokidar-089efb39c3ab5371.zip/", {"name":"chokidar","reference":"2.0.4"}],
+    ["./packages/berry-cli/pnp/cache/anymatch-674b633eb66f29bc.zip/", {"name":"anymatch","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/normalize-path-776fa95067dd2655.zip/", {"name":"normalize-path","reference":"2.1.1"}],
+    ["./packages/berry-cli/pnp/cache/remove-trailing-separator-ec8cf665da2ed981.zip/", {"name":"remove-trailing-separator","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/async-each-030469b67413f89b.zip/", {"name":"async-each","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/fsevents-de850c64902350a6.zip/", {"name":"fsevents","reference":"1.2.4"}],
+    ["./packages/berry-cli/pnp/cache/node-pre-gyp-d130d925fcc1b145.zip/", {"name":"node-pre-gyp","reference":"0.10.3"}],
+    ["./packages/berry-cli/pnp/cache/detect-libc-ff3951cc2f6ad819.zip/", {"name":"detect-libc","reference":"1.0.3"}],
+    ["./packages/berry-cli/pnp/cache/needle-431357e8fc0e9f9f.zip/", {"name":"needle","reference":"2.2.4"}],
+    ["./packages/berry-cli/pnp/cache/iconv-lite-c8de26c14591b142.zip/", {"name":"iconv-lite","reference":"0.4.24"}],
+    ["./packages/berry-cli/pnp/cache/safer-buffer-00bed014e7a5e734.zip/", {"name":"safer-buffer","reference":"2.1.2"}],
+    ["./packages/berry-cli/pnp/cache/sax-41db0d4cb1bb0eb3.zip/", {"name":"sax","reference":"1.2.4"}],
+    ["./packages/berry-cli/pnp/cache/nopt-3cb1230b2d30d3b6.zip/", {"name":"nopt","reference":"4.0.1"}],
+    ["./packages/berry-cli/pnp/cache/abbrev-a1d6540f6451d79c.zip/", {"name":"abbrev","reference":"1.1.1"}],
+    ["./packages/berry-cli/pnp/cache/osenv-df037e9ff9fcfe09.zip/", {"name":"osenv","reference":"0.1.5"}],
+    ["./packages/berry-cli/pnp/cache/os-homedir-0100700387551b50.zip/", {"name":"os-homedir","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/os-tmpdir-2303ea7c90b5e7a8.zip/", {"name":"os-tmpdir","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/npm-packlist-b02867bd19760fe2.zip/", {"name":"npm-packlist","reference":"1.1.12"}],
+    ["./packages/berry-cli/pnp/cache/ignore-walk-b4777d6f0c55ce06.zip/", {"name":"ignore-walk","reference":"3.0.1"}],
+    ["./packages/berry-cli/pnp/cache/npm-bundled-29eaf8ef44f90037.zip/", {"name":"npm-bundled","reference":"1.0.5"}],
+    ["./packages/berry-cli/pnp/cache/npmlog-59fe7e27054d1d29.zip/", {"name":"npmlog","reference":"4.1.2"}],
+    ["./packages/berry-cli/pnp/cache/are-we-there-yet-291d7aa4c66fae6d.zip/", {"name":"are-we-there-yet","reference":"1.1.5"}],
+    ["./packages/berry-cli/pnp/cache/delegates-5c0604241491842d.zip/", {"name":"delegates","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/console-control-strings-98998725625b6f37.zip/", {"name":"console-control-strings","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/gauge-2cb33cbbd9d78c47.zip/", {"name":"gauge","reference":"2.7.4"}],
+    ["./packages/berry-cli/pnp/cache/has-unicode-03fd79d5573ca11e.zip/", {"name":"has-unicode","reference":"2.0.1"}],
+    ["./packages/berry-cli/pnp/cache/object-assign-48521053e3cde603.zip/", {"name":"object-assign","reference":"4.1.1"}],
+    ["./packages/berry-cli/pnp/cache/signal-exit-54ce804a6526bfb8.zip/", {"name":"signal-exit","reference":"3.0.2"}],
+    ["./packages/berry-cli/pnp/cache/string-width-9106374ca905aead.zip/", {"name":"string-width","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/string-width-8fc6d7bd4c3452d2.zip/", {"name":"string-width","reference":"2.1.1"}],
+    ["./packages/berry-cli/pnp/cache/code-point-at-89891bf59e6dcde8.zip/", {"name":"code-point-at","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/is-fullwidth-code-point-491c01f695bdd48b.zip/", {"name":"is-fullwidth-code-point","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/is-fullwidth-code-point-98e1fe2645f35c66.zip/", {"name":"is-fullwidth-code-point","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/number-is-nan-2d0531f7aef56b89.zip/", {"name":"number-is-nan","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/wide-align-9f9c343472f12db3.zip/", {"name":"wide-align","reference":"1.1.3"}],
+    ["./packages/berry-cli/pnp/cache/set-blocking-fedca38b7419ffd7.zip/", {"name":"set-blocking","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/rc-263d4c79bb020e0d.zip/", {"name":"rc","reference":"1.2.8"}],
+    ["./packages/berry-cli/pnp/cache/deep-extend-c6fb47aa9ea6f029.zip/", {"name":"deep-extend","reference":"0.6.0"}],
+    ["./packages/berry-cli/pnp/cache/ini-d1439ae091b35e33.zip/", {"name":"ini","reference":"1.3.5"}],
+    ["./packages/berry-cli/pnp/cache/strip-json-comments-31d292cad5d02437.zip/", {"name":"strip-json-comments","reference":"2.0.1"}],
+    ["./packages/berry-cli/pnp/cache/tar-a8698516879181ab.zip/", {"name":"tar","reference":"4.4.6"}],
+    ["./packages/berry-cli/pnp/cache/fs-minipass-04ccc79539386253.zip/", {"name":"fs-minipass","reference":"1.2.5"}],
+    ["./packages/berry-cli/pnp/cache/minipass-d35bb0dbf25ffab9.zip/", {"name":"minipass","reference":"2.3.4"}],
+    ["./packages/berry-cli/pnp/cache/minizlib-8064bfe12b07018d.zip/", {"name":"minizlib","reference":"1.1.1"}],
+    ["./packages/berry-cli/pnp/cache/is-binary-path-76bbb5f55fc3137f.zip/", {"name":"is-binary-path","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/binary-extensions-1f7bcaca86bb20df.zip/", {"name":"binary-extensions","reference":"1.12.0"}],
+    ["./packages/berry-cli/pnp/cache/lodash.debounce-1910da2a0f862edf.zip/", {"name":"lodash.debounce","reference":"4.0.8"}],
+    ["./packages/berry-cli/pnp/cache/readdirp-ce4c59bf0b6ab5b9.zip/", {"name":"readdirp","reference":"2.2.1"}],
+    ["./packages/berry-cli/pnp/cache/upath-35290c62c5b0f167.zip/", {"name":"upath","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/webpack-virtual-modules-3ec10f2e6db56b69.zip/", {"name":"webpack-virtual-modules","reference":"0.1.10"}],
     ["./packages/berry-cli/", {"name":"@berry/cli","reference":"workspace-base:0.0.0"}],
     ["./packages/berry-cli/", {"name":"@berry/cli","reference":"0.0.0"}],
     ["./packages/berry-core/", {"name":"@berry/core","reference":"workspace:0.0.0"}],
@@ -6494,163 +6504,181 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./packages/berry-zipfs/", {"name":"@berry/zipfs","reference":"0.0.0"}],
     ["./packages/berry-libzip/", {"name":"@berry/libzip","reference":"workspace:0.0.0"}],
     ["./packages/berry-libzip/", {"name":"@berry/libzip","reference":"0.0.0"}],
-    ["./.pnp/cache/fs-extra-2735793d799641a5.zip/", {"name":"fs-extra","reference":"7.0.0"}],
-    ["./.pnp/cache/jsonfile-7ed00fd76eaeef20.zip/", {"name":"jsonfile","reference":"4.0.0"}],
-    ["./.pnp/cache/universalify-1da246c8d18fe6b2.zip/", {"name":"universalify","reference":"0.1.2"}],
-    ["./.pnp/cache/globby-a18f1c0c53dea083.zip/", {"name":"globby","reference":"8.0.1"}],
-    ["./.pnp/cache/array-union-db5427dd69e023c4.zip/", {"name":"array-union","reference":"1.0.2"}],
-    ["./.pnp/cache/array-uniq-d5e283b4d54ae370.zip/", {"name":"array-uniq","reference":"1.0.3"}],
-    ["./.pnp/cache/dir-glob-3aa787fd02d4ef73.zip/", {"name":"dir-glob","reference":"2.0.0"}],
-    ["./.pnp/cache/path-type-a9ded56e3ffb7975.zip/", {"name":"path-type","reference":"3.0.0"}],
-    ["./.pnp/cache/ignore-3186bdc7f146d1db.zip/", {"name":"ignore","reference":"3.3.10"}],
-    ["./.pnp/cache/slash-bede69755a15e4fd.zip/", {"name":"slash","reference":"1.0.0"}],
-    ["./.pnp/cache/got-88f8979a8002e681.zip/", {"name":"got","reference":"9.2.2"}],
-    ["./.pnp/cache/@sindresorhus-is-7c42d1b3b9fad1d7.zip/", {"name":"@sindresorhus/is","reference":"0.11.0"}],
-    ["./.pnp/cache/@szmarczak-http-timer-c405c5763456819d.zip/", {"name":"@szmarczak/http-timer","reference":"1.1.1"}],
-    ["./.pnp/cache/defer-to-connect-6005703fe9374b92.zip/", {"name":"defer-to-connect","reference":"1.0.1"}],
-    ["./.pnp/cache/cacheable-request-802164beb0e7a731.zip/", {"name":"cacheable-request","reference":"5.0.0"}],
-    ["./.pnp/cache/clone-response-4c7fea11b949e139.zip/", {"name":"clone-response","reference":"1.0.2"}],
-    ["./.pnp/cache/mimic-response-83135974c586ee0f.zip/", {"name":"mimic-response","reference":"1.0.1"}],
-    ["./.pnp/cache/get-stream-cda596e19df18a88.zip/", {"name":"get-stream","reference":"4.1.0"}],
-    ["./.pnp/cache/get-stream-578bdcedb135aa63.zip/", {"name":"get-stream","reference":"3.0.0"}],
-    ["./.pnp/cache/http-cache-semantics-eb5e93c14e9797b1.zip/", {"name":"http-cache-semantics","reference":"4.0.0"}],
-    ["./.pnp/cache/keyv-42fc6bc3fea10fd4.zip/", {"name":"keyv","reference":"3.1.0"}],
-    ["./.pnp/cache/json-buffer-66fabafa41477705.zip/", {"name":"json-buffer","reference":"3.0.0"}],
-    ["./.pnp/cache/lowercase-keys-1cdb60171ce4419f.zip/", {"name":"lowercase-keys","reference":"1.0.1"}],
-    ["./.pnp/cache/normalize-url-ff47bd4da7c454b8.zip/", {"name":"normalize-url","reference":"3.3.0"}],
-    ["./.pnp/cache/responselike-016d9bbcc14440e3.zip/", {"name":"responselike","reference":"1.0.2"}],
-    ["./.pnp/cache/decompress-response-2335c00e81a6e25a.zip/", {"name":"decompress-response","reference":"3.3.0"}],
-    ["./.pnp/cache/duplexer3-a42f2eb086e00821.zip/", {"name":"duplexer3","reference":"0.1.4"}],
-    ["./.pnp/cache/p-cancelable-dec6fe67f925b411.zip/", {"name":"p-cancelable","reference":"0.5.1"}],
-    ["./.pnp/cache/to-readable-stream-fff6af1ccf122f29.zip/", {"name":"to-readable-stream","reference":"1.0.0"}],
-    ["./.pnp/cache/url-parse-lax-d32127d1b828d56c.zip/", {"name":"url-parse-lax","reference":"3.0.0"}],
-    ["./.pnp/cache/prepend-http-428e55123891a28f.zip/", {"name":"prepend-http","reference":"2.0.0"}],
-    ["./.pnp/cache/lockfile-b2e2af8c38607b82.zip/", {"name":"lockfile","reference":"1.0.4"}],
-    ["./.pnp/cache/logic-solver-c9ab47cc0bdf1953.zip/", {"name":"logic-solver","reference":"2.0.1"}],
-    ["./.pnp/cache/underscore-108e9c3c8c88af2d.zip/", {"name":"underscore","reference":"1.9.1"}],
-    ["./.pnp/cache/pluralize-74553fa716ee0dcf.zip/", {"name":"pluralize","reference":"7.0.0"}],
-    ["./.pnp/cache/pretty-bytes-8d2fd19606b6c867.zip/", {"name":"pretty-bytes","reference":"5.1.0"}],
-    ["./.pnp/cache/stream-to-promise-544c7778feeaaaf7.zip/", {"name":"stream-to-promise","reference":"2.2.0"}],
-    ["./.pnp/cache/any-promise-4e8cea565497b0e7.zip/", {"name":"any-promise","reference":"1.3.0"}],
-    ["./.pnp/cache/stream-to-array-32895e77a7fb7c13.zip/", {"name":"stream-to-array","reference":"2.3.0"}],
-    ["./.pnp/cache/tmp-e6858d1d12417689.zip/", {"name":"tmp","reference":"0.0.33"}],
+    ["./packages/berry-cli/pnp/cache/fs-extra-2735793d799641a5.zip/", {"name":"fs-extra","reference":"7.0.0"}],
+    ["./packages/berry-cli/pnp/cache/jsonfile-7ed00fd76eaeef20.zip/", {"name":"jsonfile","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/universalify-1da246c8d18fe6b2.zip/", {"name":"universalify","reference":"0.1.2"}],
+    ["./packages/berry-cli/pnp/cache/globby-a18f1c0c53dea083.zip/", {"name":"globby","reference":"8.0.1"}],
+    ["./packages/berry-cli/pnp/cache/array-union-db5427dd69e023c4.zip/", {"name":"array-union","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/array-uniq-d5e283b4d54ae370.zip/", {"name":"array-uniq","reference":"1.0.3"}],
+    ["./packages/berry-cli/pnp/cache/dir-glob-3aa787fd02d4ef73.zip/", {"name":"dir-glob","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/path-type-a9ded56e3ffb7975.zip/", {"name":"path-type","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/ignore-3186bdc7f146d1db.zip/", {"name":"ignore","reference":"3.3.10"}],
+    ["./packages/berry-cli/pnp/cache/slash-bede69755a15e4fd.zip/", {"name":"slash","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/got-88f8979a8002e681.zip/", {"name":"got","reference":"9.2.2"}],
+    ["./packages/berry-cli/pnp/cache/@sindresorhus-is-7c42d1b3b9fad1d7.zip/", {"name":"@sindresorhus/is","reference":"0.11.0"}],
+    ["./packages/berry-cli/pnp/cache/@szmarczak-http-timer-c405c5763456819d.zip/", {"name":"@szmarczak/http-timer","reference":"1.1.1"}],
+    ["./packages/berry-cli/pnp/cache/defer-to-connect-6005703fe9374b92.zip/", {"name":"defer-to-connect","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/cacheable-request-802164beb0e7a731.zip/", {"name":"cacheable-request","reference":"5.0.0"}],
+    ["./packages/berry-cli/pnp/cache/clone-response-4c7fea11b949e139.zip/", {"name":"clone-response","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/mimic-response-83135974c586ee0f.zip/", {"name":"mimic-response","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/get-stream-cda596e19df18a88.zip/", {"name":"get-stream","reference":"4.1.0"}],
+    ["./packages/berry-cli/pnp/cache/get-stream-578bdcedb135aa63.zip/", {"name":"get-stream","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/http-cache-semantics-eb5e93c14e9797b1.zip/", {"name":"http-cache-semantics","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/keyv-42fc6bc3fea10fd4.zip/", {"name":"keyv","reference":"3.1.0"}],
+    ["./packages/berry-cli/pnp/cache/json-buffer-66fabafa41477705.zip/", {"name":"json-buffer","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/lowercase-keys-1cdb60171ce4419f.zip/", {"name":"lowercase-keys","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/normalize-url-ff47bd4da7c454b8.zip/", {"name":"normalize-url","reference":"3.3.0"}],
+    ["./packages/berry-cli/pnp/cache/responselike-016d9bbcc14440e3.zip/", {"name":"responselike","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/decompress-response-2335c00e81a6e25a.zip/", {"name":"decompress-response","reference":"3.3.0"}],
+    ["./packages/berry-cli/pnp/cache/duplexer3-a42f2eb086e00821.zip/", {"name":"duplexer3","reference":"0.1.4"}],
+    ["./packages/berry-cli/pnp/cache/p-cancelable-dec6fe67f925b411.zip/", {"name":"p-cancelable","reference":"0.5.1"}],
+    ["./packages/berry-cli/pnp/cache/to-readable-stream-fff6af1ccf122f29.zip/", {"name":"to-readable-stream","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/url-parse-lax-d32127d1b828d56c.zip/", {"name":"url-parse-lax","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/prepend-http-428e55123891a28f.zip/", {"name":"prepend-http","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/lockfile-b2e2af8c38607b82.zip/", {"name":"lockfile","reference":"1.0.4"}],
+    ["./packages/berry-cli/pnp/cache/logic-solver-c9ab47cc0bdf1953.zip/", {"name":"logic-solver","reference":"2.0.1"}],
+    ["./packages/berry-cli/pnp/cache/underscore-108e9c3c8c88af2d.zip/", {"name":"underscore","reference":"1.9.1"}],
+    ["./packages/berry-cli/pnp/cache/pluralize-74553fa716ee0dcf.zip/", {"name":"pluralize","reference":"7.0.0"}],
+    ["./packages/berry-cli/pnp/cache/pretty-bytes-8d2fd19606b6c867.zip/", {"name":"pretty-bytes","reference":"5.1.0"}],
+    ["./packages/berry-cli/pnp/cache/stream-to-promise-544c7778feeaaaf7.zip/", {"name":"stream-to-promise","reference":"2.2.0"}],
+    ["./packages/berry-cli/pnp/cache/any-promise-4e8cea565497b0e7.zip/", {"name":"any-promise","reference":"1.3.0"}],
+    ["./packages/berry-cli/pnp/cache/stream-to-array-32895e77a7fb7c13.zip/", {"name":"stream-to-array","reference":"2.3.0"}],
+    ["./packages/berry-cli/pnp/cache/tmp-e6858d1d12417689.zip/", {"name":"tmp","reference":"0.0.33"}],
     ["./packages/plugin-github/", {"name":"@berry/plugin-github","reference":"workspace:0.0.0"}],
     ["./packages/plugin-github/", {"name":"@berry/plugin-github","reference":"0.0.0"}],
-    ["./.pnp/cache/virtual/5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99/mnt/d/berry/packages/plugin-hub/", {"name":"@berry/plugin-hub","reference":"virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#workspace:0.0.0"}],
+    ["./packages/berry-cli/pnp/cache/virtual/5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99/mnt/d/berry/packages/plugin-hub/", {"name":"@berry/plugin-hub","reference":"virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#workspace:0.0.0"}],
     ["./packages/plugin-hub/", {"name":"@berry/plugin-hub","reference":"0.0.0"}],
     ["./packages/plugin-npm/", {"name":"@berry/plugin-npm","reference":"workspace:0.0.0"}],
     ["./packages/plugin-npm/", {"name":"@berry/plugin-npm","reference":"0.0.0"}],
     ["./packages/berry-shell/", {"name":"@berry/shell","reference":"workspace:0.0.0"}],
     ["./packages/berry-shell/", {"name":"@berry/shell","reference":"0.0.0"}],
-    ["./.pnp/cache/execa-e1502c741599df44.zip/", {"name":"execa","reference":"1.0.0"}],
-    ["./.pnp/cache/execa-64d2333e8f66b969.zip/", {"name":"execa","reference":"0.10.0"}],
-    ["./.pnp/cache/cross-spawn-1bc061307aef82e7.zip/", {"name":"cross-spawn","reference":"6.0.5"}],
-    ["./.pnp/cache/nice-try-a1647e9ec10320a2.zip/", {"name":"nice-try","reference":"1.0.5"}],
-    ["./.pnp/cache/path-key-b295fb6bb024a822.zip/", {"name":"path-key","reference":"2.0.1"}],
-    ["./.pnp/cache/shebang-command-63265923634e8ca6.zip/", {"name":"shebang-command","reference":"1.2.0"}],
-    ["./.pnp/cache/shebang-regex-3a18c59f720b4398.zip/", {"name":"shebang-regex","reference":"1.0.0"}],
-    ["./.pnp/cache/which-1316f3f827bc5bd5.zip/", {"name":"which","reference":"1.3.1"}],
-    ["./.pnp/cache/isexe-f1fe89e9e0fbe880.zip/", {"name":"isexe","reference":"2.0.0"}],
-    ["./.pnp/cache/is-stream-928288332b668b81.zip/", {"name":"is-stream","reference":"1.1.0"}],
-    ["./.pnp/cache/npm-run-path-02d3045ebccf8db2.zip/", {"name":"npm-run-path","reference":"2.0.2"}],
-    ["./.pnp/cache/p-finally-2079c162f2fe4b5d.zip/", {"name":"p-finally","reference":"1.0.0"}],
-    ["./.pnp/cache/strip-eof-7531ca4ee96b693b.zip/", {"name":"strip-eof","reference":"1.0.0"}],
-    ["./.pnp/cache/stream-buffers-6d4349f586cab2b4.zip/", {"name":"stream-buffers","reference":"3.0.2"}],
-    ["./.pnp/cache/virtual/1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e/mnt/d/berry/packages/berry-ui/", {"name":"@berry/ui","reference":"virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#workspace:0.0.0"}],
+    ["./packages/berry-cli/pnp/cache/execa-e1502c741599df44.zip/", {"name":"execa","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/execa-64d2333e8f66b969.zip/", {"name":"execa","reference":"0.10.0"}],
+    ["./packages/berry-cli/pnp/cache/cross-spawn-1bc061307aef82e7.zip/", {"name":"cross-spawn","reference":"6.0.5"}],
+    ["./packages/berry-cli/pnp/cache/nice-try-a1647e9ec10320a2.zip/", {"name":"nice-try","reference":"1.0.5"}],
+    ["./packages/berry-cli/pnp/cache/path-key-b295fb6bb024a822.zip/", {"name":"path-key","reference":"2.0.1"}],
+    ["./packages/berry-cli/pnp/cache/shebang-command-63265923634e8ca6.zip/", {"name":"shebang-command","reference":"1.2.0"}],
+    ["./packages/berry-cli/pnp/cache/shebang-regex-3a18c59f720b4398.zip/", {"name":"shebang-regex","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/which-1316f3f827bc5bd5.zip/", {"name":"which","reference":"1.3.1"}],
+    ["./packages/berry-cli/pnp/cache/isexe-f1fe89e9e0fbe880.zip/", {"name":"isexe","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/is-stream-928288332b668b81.zip/", {"name":"is-stream","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/npm-run-path-02d3045ebccf8db2.zip/", {"name":"npm-run-path","reference":"2.0.2"}],
+    ["./packages/berry-cli/pnp/cache/p-finally-2079c162f2fe4b5d.zip/", {"name":"p-finally","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/strip-eof-7531ca4ee96b693b.zip/", {"name":"strip-eof","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/stream-buffers-6d4349f586cab2b4.zip/", {"name":"stream-buffers","reference":"3.0.2"}],
+    ["./packages/berry-cli/pnp/cache/virtual/1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e/mnt/d/berry/packages/berry-ui/", {"name":"@berry/ui","reference":"virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#workspace:0.0.0"}],
     ["./packages/berry-ui/", {"name":"@berry/ui","reference":"0.0.0"}],
-    ["./.pnp/cache/virtual/1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5/mnt/d/berry/packages/berry-ui/", {"name":"@berry/ui","reference":"virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#workspace:0.0.0"}],
-    ["./.pnp/cache/@manaflair-term-strings-6ddafc15bb514b13.zip/", {"name":"@manaflair/term-strings","reference":"0.10.1"}],
-    ["./.pnp/cache/babel-runtime-e27bf48cf6a51fa0.zip/", {"name":"babel-runtime","reference":"6.26.0"}],
-    ["./.pnp/cache/core-js-ad7da2972dad4719.zip/", {"name":"core-js","reference":"2.5.7"}],
-    ["./.pnp/cache/regenerator-runtime-b0b57f26d2376b9f.zip/", {"name":"regenerator-runtime","reference":"0.11.1"}],
-    ["./.pnp/cache/color-diff-223770e31c19c72e.zip/", {"name":"color-diff","reference":"1.1.0"}],
-    ["./.pnp/cache/@manaflair-text-layout-72aa8c1be54c4d9f.zip/", {"name":"@manaflair/text-layout","reference":"0.10.4"}],
-    ["./.pnp/cache/virtual/b19ab1869ec6cee94031abc31e3ca576fc706d971e82b010e78026568181522f028dd15fdb890d822ea3a8b74e72ed7cde4ba4c3b288e846504af633443d78a9/mnt/d/berry/.pnp/cache/react-reconciler-9ae2339378513aaf.zip/", {"name":"react-reconciler","reference":"virtual:1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e#0.14.0"}],
-    ["./.pnp/cache/virtual/09362d6331d5f198ee2b6186e15587dfd19be805f63df70ac0d721c207d27ab800166f479ee53c5220ae94ff9e3fcdb789031da2d297187a24721492fbce8f66/mnt/d/berry/.pnp/cache/react-reconciler-9ae2339378513aaf.zip/", {"name":"react-reconciler","reference":"virtual:87c31939ffd3d24ff010b223c0935f0c5e91cd5b92941e5d632b279dccfc6e1b5b5b8b4a3ac82556a5a38ebc09123b1c1475079859ef3b232d23fbd748e3c020#0.14.0"}],
-    ["./.pnp/cache/virtual/c1142458435ae921ce2efb69708ebea50ad6c35c835abe5802cd30e3eb3aa56ceb950ed4a1ff1bec7abe1df328c8d7eecb2c636b605fb4979ef6a97ba61000be/mnt/d/berry/.pnp/cache/react-reconciler-9ae2339378513aaf.zip/", {"name":"react-reconciler","reference":"virtual:1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5#0.14.0"}],
-    ["./.pnp/cache/prop-types-75d2fa5f83ec7417.zip/", {"name":"prop-types","reference":"15.6.2"}],
-    ["./.pnp/cache/react-490254dff8d4cee1.zip/", {"name":"react","reference":"16.5.2"}],
-    ["./.pnp/cache/schedule-ae5738698ac6025e.zip/", {"name":"schedule","reference":"0.5.0"}],
-    ["./.pnp/cache/schedule-4265ee336d5200ba.zip/", {"name":"schedule","reference":"0.4.0"}],
-    ["./.pnp/cache/ttys-c17bc82686ac559a.zip/", {"name":"ttys","reference":"0.0.3"}],
-    ["./.pnp/cache/yoga-dom-917d9f5a5c855788.zip/", {"name":"yoga-dom","reference":"0.0.14"}],
-    ["./.pnp/cache/dateformat-6aa94cd6f1559010.zip/", {"name":"dateformat","reference":"3.0.3"}],
-    ["./.pnp/cache/immer-74432e7b14e68bba.zip/", {"name":"immer","reference":"1.7.2"}],
-    ["./.pnp/cache/virtual/4a7ba0b91b4cbef9f7d5bf42e56df53b7f7f2a0864724a7ecd7f958e5064b26d64500ae34c7c32ecfecef6737b4fd7655e14cbdd8653ed7456867de2750cdded/mnt/d/berry/.pnp/cache/react-redux-1cf257a89497e127.zip/", {"name":"react-redux","reference":"virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#5.0.7"}],
-    ["./.pnp/cache/virtual/f5f11dd0678d2fce37b73c8a21dd571c5f8caed78f7967cf45a7bc5ad51af1add54665b7ac5d2332d40d4fff85809551c408b4519f3ea4ee33925c1670c5da55/mnt/d/berry/.pnp/cache/react-redux-1cf257a89497e127.zip/", {"name":"react-redux","reference":"virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#5.0.7"}],
-    ["./.pnp/cache/hoist-non-react-statics-9e36a45c1174675b.zip/", {"name":"hoist-non-react-statics","reference":"2.5.5"}],
-    ["./.pnp/cache/invariant-6746799ce29a832f.zip/", {"name":"invariant","reference":"2.2.4"}],
-    ["./.pnp/cache/lodash-es-111375b55d6eeb8c.zip/", {"name":"lodash-es","reference":"4.17.11"}],
-    ["./.pnp/cache/pegjs-a8accba5a468bf53.zip/", {"name":"pegjs","reference":"0.10.0"}],
-    ["./.pnp/cache/virtual/827d4485da060eca148aa08466e2173a3901039d4b578aef46e22e86b2ea0ee6c26352c94d33db9192b8710724fda1c98a60c8807e18dd40b1a70b82c27f746a/mnt/d/berry/.pnp/cache/wasm-loader-a6dcd367449e3d33.zip/", {"name":"wasm-loader","reference":"virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#1.3.0"}],
-    ["./.pnp/cache/wasm-dce-fa177bcfe70840f8.zip/", {"name":"wasm-dce","reference":"1.0.2"}],
-    ["./.pnp/cache/@babel-core-1d54c2f766d302c7.zip/", {"name":"@babel/core","reference":"7.1.2"}],
-    ["./.pnp/cache/@babel-code-frame-0e5d48b14a323c85.zip/", {"name":"@babel/code-frame","reference":"7.0.0"}],
-    ["./.pnp/cache/@babel-highlight-cc070de8146c97aa.zip/", {"name":"@babel/highlight","reference":"7.0.0"}],
-    ["./.pnp/cache/@babel-generator-a2198324f9152c8b.zip/", {"name":"@babel/generator","reference":"7.1.3"}],
-    ["./.pnp/cache/@babel-types-7ac5bddadfca3292.zip/", {"name":"@babel/types","reference":"7.1.3"}],
-    ["./.pnp/cache/to-fast-properties-5ab2ef682d9b3f2a.zip/", {"name":"to-fast-properties","reference":"2.0.0"}],
-    ["./.pnp/cache/jsesc-c9474d6b7c1fb135.zip/", {"name":"jsesc","reference":"2.5.1"}],
-    ["./.pnp/cache/trim-right-868a0fa9d636a184.zip/", {"name":"trim-right","reference":"1.0.1"}],
-    ["./.pnp/cache/@babel-helpers-3925417e994d89d5.zip/", {"name":"@babel/helpers","reference":"7.1.2"}],
-    ["./.pnp/cache/@babel-template-6eb0fa8d33da1597.zip/", {"name":"@babel/template","reference":"7.1.2"}],
-    ["./.pnp/cache/@babel-parser-d516dfa4e51ba9b5.zip/", {"name":"@babel/parser","reference":"7.1.3"}],
-    ["./.pnp/cache/@babel-traverse-f1a88a6803759aa1.zip/", {"name":"@babel/traverse","reference":"7.1.4"}],
-    ["./.pnp/cache/@babel-helper-function-name-512a163980dee547.zip/", {"name":"@babel/helper-function-name","reference":"7.1.0"}],
-    ["./.pnp/cache/@babel-helper-get-function-arity-31e2278bea711fc8.zip/", {"name":"@babel/helper-get-function-arity","reference":"7.0.0"}],
-    ["./.pnp/cache/@babel-helper-split-export-declaration-0b5619edafaa3c77.zip/", {"name":"@babel/helper-split-export-declaration","reference":"7.0.0"}],
-    ["./.pnp/cache/globals-1b58b1326e89dd89.zip/", {"name":"globals","reference":"11.8.0"}],
-    ["./.pnp/cache/babylon-7760fe4afc24e0aa.zip/", {"name":"babylon","reference":"7.0.0-beta.47"}],
-    ["./.pnp/cache/webassembly-interpreter-82a771f5bdef3158.zip/", {"name":"webassembly-interpreter","reference":"0.0.30"}],
-    ["./.pnp/cache/long-d74296974027f78d.zip/", {"name":"long","reference":"3.2.0"}],
-    ["./.pnp/cache/webassembly-floating-point-hex-parser-2df2cdd025a05fce.zip/", {"name":"webassembly-floating-point-hex-parser","reference":"0.1.2"}],
-    ["./.pnp/cache/virtual/88b28cb628417132804a11932bd617868ddf3193bc861194cffab3779eff47b626a218d436725b833bf298546975a840a25bc06e96f9593d1be6d5f6ad6dc612/mnt/d/berry/.pnp/cache/webpack-cli-8fc25e96a0b6450d.zip/", {"name":"webpack-cli","reference":"virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.2"}],
-    ["./.pnp/cache/global-modules-path-b79fac6f9bd395aa.zip/", {"name":"global-modules-path","reference":"2.3.0"}],
-    ["./.pnp/cache/import-local-22bc1d2185e51f68.zip/", {"name":"import-local","reference":"2.0.0"}],
-    ["./.pnp/cache/resolve-cwd-c384a4f13208b97d.zip/", {"name":"resolve-cwd","reference":"2.0.0"}],
-    ["./.pnp/cache/resolve-from-feb3dc1f1029d666.zip/", {"name":"resolve-from","reference":"3.0.0"}],
-    ["./.pnp/cache/interpret-2b7cbd36e58f3e46.zip/", {"name":"interpret","reference":"1.1.0"}],
-    ["./.pnp/cache/v8-compile-cache-d716e562a62c318b.zip/", {"name":"v8-compile-cache","reference":"2.0.2"}],
-    ["./.pnp/cache/yargs-f69984a4ce057a06.zip/", {"name":"yargs","reference":"12.0.2"}],
-    ["./.pnp/cache/cliui-1f7bbb51f7d6a9e9.zip/", {"name":"cliui","reference":"4.1.0"}],
-    ["./.pnp/cache/wrap-ansi-3e26387caace8c19.zip/", {"name":"wrap-ansi","reference":"2.1.0"}],
-    ["./.pnp/cache/decamelize-6207beb6d5ed2e79.zip/", {"name":"decamelize","reference":"2.0.0"}],
-    ["./.pnp/cache/xregexp-1c17bf546960129c.zip/", {"name":"xregexp","reference":"4.0.0"}],
-    ["./.pnp/cache/get-caller-file-02a3e3941409d068.zip/", {"name":"get-caller-file","reference":"1.0.3"}],
-    ["./.pnp/cache/os-locale-99e7467d21a15dcf.zip/", {"name":"os-locale","reference":"3.0.1"}],
-    ["./.pnp/cache/lcid-8836b877bf9601c0.zip/", {"name":"lcid","reference":"2.0.0"}],
-    ["./.pnp/cache/invert-kv-26a5b8b7ea33cea2.zip/", {"name":"invert-kv","reference":"2.0.0"}],
-    ["./.pnp/cache/mem-894872c18f2e027a.zip/", {"name":"mem","reference":"4.0.0"}],
-    ["./.pnp/cache/map-age-cleaner-2fa26790d0c67c96.zip/", {"name":"map-age-cleaner","reference":"0.1.2"}],
-    ["./.pnp/cache/p-defer-2a1c4c8458d60d4a.zip/", {"name":"p-defer","reference":"1.0.0"}],
-    ["./.pnp/cache/mimic-fn-8daea209db57999d.zip/", {"name":"mimic-fn","reference":"1.2.0"}],
-    ["./.pnp/cache/p-is-promise-1709108f16de0346.zip/", {"name":"p-is-promise","reference":"1.1.0"}],
-    ["./.pnp/cache/require-directory-74564ef8f658c394.zip/", {"name":"require-directory","reference":"2.1.1"}],
-    ["./.pnp/cache/require-main-filename-e62d4202b89cf265.zip/", {"name":"require-main-filename","reference":"1.0.1"}],
-    ["./.pnp/cache/which-module-c8902e7df1b214f9.zip/", {"name":"which-module","reference":"2.0.0"}],
-    ["./.pnp/cache/yargs-parser-11285ffe5f78c2a7.zip/", {"name":"yargs-parser","reference":"10.1.0"}],
-    ["./.pnp/cache/camelcase-2727d3c44c1164bb.zip/", {"name":"camelcase","reference":"4.1.0"}],
-    ["./.pnp/cache/faker-f0914e910104a9fa.zip/", {"name":"faker","reference":"4.1.0"}],
+    ["./packages/berry-cli/pnp/cache/virtual/1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5/mnt/d/berry/packages/berry-ui/", {"name":"@berry/ui","reference":"virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#workspace:0.0.0"}],
+    ["./packages/berry-cli/pnp/cache/@manaflair-term-strings-6ddafc15bb514b13.zip/", {"name":"@manaflair/term-strings","reference":"0.10.1"}],
+    ["./packages/berry-cli/pnp/cache/babel-runtime-e27bf48cf6a51fa0.zip/", {"name":"babel-runtime","reference":"6.26.0"}],
+    ["./packages/berry-cli/pnp/cache/core-js-ad7da2972dad4719.zip/", {"name":"core-js","reference":"2.5.7"}],
+    ["./packages/berry-cli/pnp/cache/regenerator-runtime-b0b57f26d2376b9f.zip/", {"name":"regenerator-runtime","reference":"0.11.1"}],
+    ["./packages/berry-cli/pnp/cache/color-diff-223770e31c19c72e.zip/", {"name":"color-diff","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/@manaflair-text-layout-72aa8c1be54c4d9f.zip/", {"name":"@manaflair/text-layout","reference":"0.10.4"}],
+    ["./packages/berry-cli/pnp/cache/virtual/b19ab1869ec6cee94031abc31e3ca576fc706d971e82b010e78026568181522f028dd15fdb890d822ea3a8b74e72ed7cde4ba4c3b288e846504af633443d78a9/mnt/d/berry/packages/berry-cli/pnp/cache/react-reconciler-9ae2339378513aaf.zip/", {"name":"react-reconciler","reference":"virtual:1edb0463ac5967487f7c7adad2e179671e70aaca02dcdf7802b3a70cb0acfd5c75576e592e3b411233bd7584746ebbc6b9d99133d85988eab82cc8aabd28107e#0.14.0"}],
+    ["./packages/berry-cli/pnp/cache/virtual/09362d6331d5f198ee2b6186e15587dfd19be805f63df70ac0d721c207d27ab800166f479ee53c5220ae94ff9e3fcdb789031da2d297187a24721492fbce8f66/mnt/d/berry/packages/berry-cli/pnp/cache/react-reconciler-9ae2339378513aaf.zip/", {"name":"react-reconciler","reference":"virtual:87c31939ffd3d24ff010b223c0935f0c5e91cd5b92941e5d632b279dccfc6e1b5b5b8b4a3ac82556a5a38ebc09123b1c1475079859ef3b232d23fbd748e3c020#0.14.0"}],
+    ["./packages/berry-cli/pnp/cache/virtual/c1142458435ae921ce2efb69708ebea50ad6c35c835abe5802cd30e3eb3aa56ceb950ed4a1ff1bec7abe1df328c8d7eecb2c636b605fb4979ef6a97ba61000be/mnt/d/berry/packages/berry-cli/pnp/cache/react-reconciler-9ae2339378513aaf.zip/", {"name":"react-reconciler","reference":"virtual:1541394f338c8960fa75aff069f3de7085841f8c494f12dcec329db7959274057199fd1823efff410ddd9a6ff9ce63378f42ebdad3d34d64114e58249006fdd5#0.14.0"}],
+    ["./packages/berry-cli/pnp/cache/prop-types-75d2fa5f83ec7417.zip/", {"name":"prop-types","reference":"15.6.2"}],
+    ["./packages/berry-cli/pnp/cache/react-490254dff8d4cee1.zip/", {"name":"react","reference":"16.5.2"}],
+    ["./packages/berry-cli/pnp/cache/schedule-ae5738698ac6025e.zip/", {"name":"schedule","reference":"0.5.0"}],
+    ["./packages/berry-cli/pnp/cache/schedule-4265ee336d5200ba.zip/", {"name":"schedule","reference":"0.4.0"}],
+    ["./packages/berry-cli/pnp/cache/ttys-c17bc82686ac559a.zip/", {"name":"ttys","reference":"0.0.3"}],
+    ["./packages/berry-cli/pnp/cache/yoga-dom-917d9f5a5c855788.zip/", {"name":"yoga-dom","reference":"0.0.14"}],
+    ["./packages/berry-cli/pnp/cache/dateformat-6aa94cd6f1559010.zip/", {"name":"dateformat","reference":"3.0.3"}],
+    ["./packages/berry-cli/pnp/cache/immer-74432e7b14e68bba.zip/", {"name":"immer","reference":"1.7.2"}],
+    ["./packages/berry-cli/pnp/cache/virtual/4a7ba0b91b4cbef9f7d5bf42e56df53b7f7f2a0864724a7ecd7f958e5064b26d64500ae34c7c32ecfecef6737b4fd7655e14cbdd8653ed7456867de2750cdded/mnt/d/berry/packages/berry-cli/pnp/cache/react-redux-1cf257a89497e127.zip/", {"name":"react-redux","reference":"virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#5.0.7"}],
+    ["./packages/berry-cli/pnp/cache/virtual/f5f11dd0678d2fce37b73c8a21dd571c5f8caed78f7967cf45a7bc5ad51af1add54665b7ac5d2332d40d4fff85809551c408b4519f3ea4ee33925c1670c5da55/mnt/d/berry/packages/berry-cli/pnp/cache/react-redux-1cf257a89497e127.zip/", {"name":"react-redux","reference":"virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#5.0.7"}],
+    ["./packages/berry-cli/pnp/cache/hoist-non-react-statics-9e36a45c1174675b.zip/", {"name":"hoist-non-react-statics","reference":"2.5.5"}],
+    ["./packages/berry-cli/pnp/cache/invariant-6746799ce29a832f.zip/", {"name":"invariant","reference":"2.2.4"}],
+    ["./packages/berry-cli/pnp/cache/lodash-es-111375b55d6eeb8c.zip/", {"name":"lodash-es","reference":"4.17.11"}],
+    ["./packages/berry-cli/pnp/cache/pegjs-a8accba5a468bf53.zip/", {"name":"pegjs","reference":"0.10.0"}],
+    ["./packages/berry-cli/pnp/cache/virtual/827d4485da060eca148aa08466e2173a3901039d4b578aef46e22e86b2ea0ee6c26352c94d33db9192b8710724fda1c98a60c8807e18dd40b1a70b82c27f746a/mnt/d/berry/packages/berry-cli/pnp/cache/wasm-loader-a6dcd367449e3d33.zip/", {"name":"wasm-loader","reference":"virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#1.3.0"}],
+    ["./packages/berry-cli/pnp/cache/wasm-dce-fa177bcfe70840f8.zip/", {"name":"wasm-dce","reference":"1.0.2"}],
+    ["./packages/berry-cli/pnp/cache/@babel-core-1d54c2f766d302c7.zip/", {"name":"@babel/core","reference":"7.1.2"}],
+    ["./packages/berry-cli/pnp/cache/@babel-code-frame-0e5d48b14a323c85.zip/", {"name":"@babel/code-frame","reference":"7.0.0"}],
+    ["./packages/berry-cli/pnp/cache/@babel-highlight-cc070de8146c97aa.zip/", {"name":"@babel/highlight","reference":"7.0.0"}],
+    ["./packages/berry-cli/pnp/cache/@babel-generator-a2198324f9152c8b.zip/", {"name":"@babel/generator","reference":"7.1.3"}],
+    ["./packages/berry-cli/pnp/cache/@babel-types-7ac5bddadfca3292.zip/", {"name":"@babel/types","reference":"7.1.3"}],
+    ["./packages/berry-cli/pnp/cache/to-fast-properties-5ab2ef682d9b3f2a.zip/", {"name":"to-fast-properties","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/jsesc-c9474d6b7c1fb135.zip/", {"name":"jsesc","reference":"2.5.1"}],
+    ["./packages/berry-cli/pnp/cache/trim-right-868a0fa9d636a184.zip/", {"name":"trim-right","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/@babel-helpers-3925417e994d89d5.zip/", {"name":"@babel/helpers","reference":"7.1.2"}],
+    ["./packages/berry-cli/pnp/cache/@babel-template-6eb0fa8d33da1597.zip/", {"name":"@babel/template","reference":"7.1.2"}],
+    ["./packages/berry-cli/pnp/cache/@babel-parser-d516dfa4e51ba9b5.zip/", {"name":"@babel/parser","reference":"7.1.3"}],
+    ["./packages/berry-cli/pnp/cache/@babel-traverse-f1a88a6803759aa1.zip/", {"name":"@babel/traverse","reference":"7.1.4"}],
+    ["./packages/berry-cli/pnp/cache/@babel-helper-function-name-512a163980dee547.zip/", {"name":"@babel/helper-function-name","reference":"7.1.0"}],
+    ["./packages/berry-cli/pnp/cache/@babel-helper-get-function-arity-31e2278bea711fc8.zip/", {"name":"@babel/helper-get-function-arity","reference":"7.0.0"}],
+    ["./packages/berry-cli/pnp/cache/@babel-helper-split-export-declaration-0b5619edafaa3c77.zip/", {"name":"@babel/helper-split-export-declaration","reference":"7.0.0"}],
+    ["./packages/berry-cli/pnp/cache/globals-1b58b1326e89dd89.zip/", {"name":"globals","reference":"11.8.0"}],
+    ["./packages/berry-cli/pnp/cache/babylon-7760fe4afc24e0aa.zip/", {"name":"babylon","reference":"7.0.0-beta.47"}],
+    ["./packages/berry-cli/pnp/cache/webassembly-interpreter-82a771f5bdef3158.zip/", {"name":"webassembly-interpreter","reference":"0.0.30"}],
+    ["./packages/berry-cli/pnp/cache/long-d74296974027f78d.zip/", {"name":"long","reference":"3.2.0"}],
+    ["./packages/berry-cli/pnp/cache/webassembly-floating-point-hex-parser-2df2cdd025a05fce.zip/", {"name":"webassembly-floating-point-hex-parser","reference":"0.1.2"}],
+    ["./packages/berry-cli/pnp/cache/virtual/88b28cb628417132804a11932bd617868ddf3193bc861194cffab3779eff47b626a218d436725b833bf298546975a840a25bc06e96f9593d1be6d5f6ad6dc612/mnt/d/berry/packages/berry-cli/pnp/cache/webpack-cli-8fc25e96a0b6450d.zip/", {"name":"webpack-cli","reference":"virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.2"}],
+    ["./packages/berry-cli/pnp/cache/global-modules-path-b79fac6f9bd395aa.zip/", {"name":"global-modules-path","reference":"2.3.0"}],
+    ["./packages/berry-cli/pnp/cache/import-local-22bc1d2185e51f68.zip/", {"name":"import-local","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/resolve-cwd-c384a4f13208b97d.zip/", {"name":"resolve-cwd","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/resolve-from-feb3dc1f1029d666.zip/", {"name":"resolve-from","reference":"3.0.0"}],
+    ["./packages/berry-cli/pnp/cache/interpret-2b7cbd36e58f3e46.zip/", {"name":"interpret","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/v8-compile-cache-d716e562a62c318b.zip/", {"name":"v8-compile-cache","reference":"2.0.2"}],
+    ["./packages/berry-cli/pnp/cache/yargs-f69984a4ce057a06.zip/", {"name":"yargs","reference":"12.0.2"}],
+    ["./packages/berry-cli/pnp/cache/cliui-1f7bbb51f7d6a9e9.zip/", {"name":"cliui","reference":"4.1.0"}],
+    ["./packages/berry-cli/pnp/cache/wrap-ansi-3e26387caace8c19.zip/", {"name":"wrap-ansi","reference":"2.1.0"}],
+    ["./packages/berry-cli/pnp/cache/decamelize-6207beb6d5ed2e79.zip/", {"name":"decamelize","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/xregexp-1c17bf546960129c.zip/", {"name":"xregexp","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/get-caller-file-02a3e3941409d068.zip/", {"name":"get-caller-file","reference":"1.0.3"}],
+    ["./packages/berry-cli/pnp/cache/os-locale-99e7467d21a15dcf.zip/", {"name":"os-locale","reference":"3.0.1"}],
+    ["./packages/berry-cli/pnp/cache/lcid-8836b877bf9601c0.zip/", {"name":"lcid","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/invert-kv-26a5b8b7ea33cea2.zip/", {"name":"invert-kv","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/mem-894872c18f2e027a.zip/", {"name":"mem","reference":"4.0.0"}],
+    ["./packages/berry-cli/pnp/cache/map-age-cleaner-2fa26790d0c67c96.zip/", {"name":"map-age-cleaner","reference":"0.1.2"}],
+    ["./packages/berry-cli/pnp/cache/p-defer-2a1c4c8458d60d4a.zip/", {"name":"p-defer","reference":"1.0.0"}],
+    ["./packages/berry-cli/pnp/cache/mimic-fn-8daea209db57999d.zip/", {"name":"mimic-fn","reference":"1.2.0"}],
+    ["./packages/berry-cli/pnp/cache/p-is-promise-1709108f16de0346.zip/", {"name":"p-is-promise","reference":"1.1.0"}],
+    ["./packages/berry-cli/pnp/cache/require-directory-74564ef8f658c394.zip/", {"name":"require-directory","reference":"2.1.1"}],
+    ["./packages/berry-cli/pnp/cache/require-main-filename-e62d4202b89cf265.zip/", {"name":"require-main-filename","reference":"1.0.1"}],
+    ["./packages/berry-cli/pnp/cache/which-module-c8902e7df1b214f9.zip/", {"name":"which-module","reference":"2.0.0"}],
+    ["./packages/berry-cli/pnp/cache/yargs-parser-11285ffe5f78c2a7.zip/", {"name":"yargs-parser","reference":"10.1.0"}],
+    ["./packages/berry-cli/pnp/cache/camelcase-2727d3c44c1164bb.zip/", {"name":"camelcase","reference":"4.1.0"}],
+    ["./packages/berry-cli/pnp/cache/faker-f0914e910104a9fa.zip/", {"name":"faker","reference":"4.1.0"}],
   ]);
   
   packageLocationLengths = [
-    218,
-    215,
-    211,
-    207,
-    206,
-    205,
-    204,
-    182,
-    180,
+    254,
+    251,
+    247,
+    243,
+    242,
+    241,
+    240,
+    200,
+    198,
+    93,
+    91,
+    90,
+    89,
+    88,
+    87,
+    85,
+    84,
+    81,
+    80,
+    79,
+    78,
+    77,
+    76,
     75,
+    74,
     73,
     72,
     71,
     70,
     69,
+    68,
     67,
     66,
+    65,
+    64,
     63,
     62,
     61,
@@ -6661,24 +6689,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     56,
     55,
     54,
-    53,
-    52,
-    51,
-    50,
-    49,
-    48,
-    47,
-    46,
-    45,
-    44,
-    43,
-    42,
-    41,
-    40,
-    39,
-    38,
-    37,
-    36,
     25,
     24,
     23,
@@ -7657,7 +7667,10 @@ class ZipFS {
             return;
         const parts = p.split(`/`);
         for (let u = 2; u <= parts.length; ++u) {
-            this.mkdir(parts.slice(0, u).join(`/`));
+            const subPath = parts.slice(0, u).join(`/`);
+            if (!this.exists(subPath)) {
+                this.mkdir(subPath);
+            }
         }
     }
     registerListing(p) {

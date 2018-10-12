@@ -195,6 +195,7 @@
     @types/fs-extra: ^5.0.4
     @types/globby: ^8.0.0
     @types/got: ^8.3.4
+    @types/joi: ^13.6.0
     @types/lockfile: ^1.0.0
     @types/lodash: ^4.14.116
     @types/mkdirp: ^0.5.2
@@ -441,6 +442,9 @@
   dependencies:
     @types/node: "*"
   resolution: @types/got@8.3.4
+
+@types/joi@^13.6.0:
+  resolution: @types/joi@13.6.0
 
 @types/lockfile@^1.0.0:
   resolution: @types/lockfile@1.0.0

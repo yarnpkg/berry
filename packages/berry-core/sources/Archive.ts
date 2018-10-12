@@ -34,7 +34,7 @@ export class Archive {
 
   async move(destination: string) {
     const source = this.zip.close();
-    
+
     await chmod(source, 0o644);
     await move(source, destination);
   }

@@ -4,6 +4,8 @@ import {Fetcher, FetchOptions} from '@berry/core';
 import {httpUtils, tgzUtils}   from '@berry/core';
 import {Locator, Manifest}     from '@berry/core';
 
+import {DEFAULT_REGISTRY}      from './constants';
+
 export class NpmFetcher implements Fetcher {
   public mountPoint: string = `cached-fetchers`;
 
@@ -27,10 +29,12 @@ export class NpmFetcher implements Fetcher {
   }
 
   getLocatorUrl(locator: Locator, opts: FetchOptions) {
+    const registry = opts.project.configuration.registryServer || DEFAULT_REGISTRY;
+
     if (locator.scope) {
-      return `https://registry.npmjs.org/@${locator.scope}/${locator.name}/-/${locator.name}-${locator.reference}.tgz`;
+      return `${registry}/@${locator.scope}/${locator.name}/-/${locator.name}-${locator.reference}.tgz`;
     } else {
-      return `https://registry.npmjs.org/${locator.name}/-/${locator.name}-${locator.reference}.tgz`;
+      return `${registry}/${locator.name}/-/${locator.name}-${locator.reference}.tgz`;
     }
   }
 }

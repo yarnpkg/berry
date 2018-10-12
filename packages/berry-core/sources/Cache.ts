@@ -23,8 +23,8 @@ export class Cache {
   public cacheMissCount: number = 0;
 
   static async find(configuration: Configuration) {
-    const cacheFolder = configuration.offlineCacheFolder
-      ? configuration.offlineCacheFolder
+    const cacheFolder = configuration.cacheFolder
+      ? configuration.cacheFolder
       : ``;
 
     const cache = new Cache(cacheFolder, {configuration});

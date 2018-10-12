@@ -14,14 +14,16 @@ import {WorkspaceFetcher}         from './WorkspaceFetcher';
 import {WorkspaceResolver}        from './WorkspaceResolver';
 
 const RELATIVE_KEYS = new Set([
-  `offline-cache-folder`,
+  `cache-folder`,
   `pnp-path`,
 ]);
 
 export class Configuration {
   public projectCwd: string;
 
-  public offlineCacheFolder: string | null = `./.pnp/cache`;
+  public cacheFolder: string | null = `./.pnp/cache`;
+
+  public registryServer: string | null = null;
 
   public pnpShebang: string = `/usr/bin/env node`;
   public pnpIgnorePattern: string | null = null;
@@ -57,7 +59,24 @@ export class Configuration {
     const configuration = new Configuration(projectCwd, plugins);
 
     for (const rcCwd of rcCwds)
-      await configuration.inherits(`${rcCwd}/.berryrc`);
+      configuration.inherits(`${rcCwd}/.berryrc`);
+    
+    const environmentData: {[key: string]: any} = {};
+    const environmentPrefix = `berry_`;
+
+    for (let [key, value] of Object.entries(process.env)) {
+      key = key.toLowerCase();
+
+      if (!key.startsWith(environmentPrefix))
+        continue;
+      
+      key = key.slice(environmentPrefix.length);
+      key = key.replace(/_([a-z])/g, ($0, $1) => $1.toUpperCase());
+
+      environmentData[key] = value;
+    }
+
+    configuration.use(`environment`, environmentData, process.cwd());
 
     return configuration;
   }
@@ -80,12 +99,14 @@ export class Configuration {
     }
   }
 
-  async inherits(source: string) {
-    const folder = dirname(source);
-
+  inherits(source: string) {
     const content = readFileSync(source, `utf8`);
     const data = parseSyml(content);
 
+    this.use(source, data, dirname(source));
+  }
+
+  use(source: string, data: {[key: string]: any}, folder: string) {
     for (const key of Object.keys(data)) {
       const name = key.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
 
