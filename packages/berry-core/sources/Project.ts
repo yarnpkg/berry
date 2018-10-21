@@ -1,24 +1,20 @@
 // @ts-ignore
 import Logic = require('logic-solver');
 
-import {existsSync, readFile, writeFile}       from 'fs';
-import {dirname}                               from 'path';
-import {promisify}                             from 'util';
+import {chmod, existsSync, readFile, writeFile} from 'fs-extra';
+import {dirname}                                from 'path';
 
-import {parseSyml, stringifySyml}              from '@berry/parsers';
-import {extractPnpSettings, generatePnpScript} from '@berry/pnp';
+import {parseSyml, stringifySyml}               from '@berry/parsers';
+import {extractPnpSettings, generatePnpScript}  from '@berry/pnp';
 
-import {Cache}                                 from './Cache';
-import {Configuration}                         from './Configuration';
-import {MultiResolver}                         from './MultiResolver';
-import {Workspace}                             from './Workspace';
-import {WorkspaceBaseResolver}                 from './WorkspaceBaseResolver';
-import {WorkspaceResolver}                     from './WorkspaceResolver';
-import * as structUtils                        from './structUtils';
-import {Descriptor, Locator, Package}          from './types';
-
-const readFileP = promisify(readFile);
-const writeFileP = promisify(writeFile);
+import {Cache}                                  from './Cache';
+import {Configuration}                          from './Configuration';
+import {MultiResolver}                          from './MultiResolver';
+import {Workspace}                              from './Workspace';
+import {WorkspaceBaseResolver}                  from './WorkspaceBaseResolver';
+import {WorkspaceResolver}                      from './WorkspaceResolver';
+import * as structUtils                         from './structUtils';
+import {Descriptor, Locator, Package}           from './types';
 
 export class Project {
   public readonly configuration: Configuration;
@@ -79,15 +75,19 @@ export class Project {
     this.storedPackages = new Map();
 
     if (existsSync(`${this.cwd}/berry.lock`)) {
-      const content = await readFileP(`${this.cwd}/berry.lock`, `utf8`);
+      const content = await readFile(`${this.cwd}/berry.lock`, `utf8`);
       const parsed: any = parseSyml(content);
 
       for (const key of Object.keys(parsed)) {
         const data = parsed[key];
         const locator = structUtils.parseLocator(data.resolution);
 
+        const binaries = new Map<string, string>();
         const dependencies = new Map<string, Descriptor>();
         const peerDependencies = new Map<string, Descriptor>();
+
+        for (const binary of Object.keys(data.binaries || {}))
+          binaries.set(binary, data.binaries[binary]);
 
         for (const dependency of Object.keys(data.dependencies || {})) {
           const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.dependencies[dependency]);
@@ -99,7 +99,7 @@ export class Project {
           peerDependencies.set(descriptor.descriptorHash, descriptor);
         }
 
-        const pkg: Package = {...locator, dependencies, peerDependencies};
+        const pkg: Package = {...locator, binaries, dependencies, peerDependencies};
         this.storedPackages.set(pkg.locatorHash, pkg);
 
         for (const entry of key.split(/ *, */g)) {
@@ -127,7 +127,7 @@ export class Project {
 
         const workspace = await this.addWorkspace(workspaceCwd);
 
-        for (const workspaceCwd of await workspace.resolveChildWorkspaces()) {
+        for (const workspaceCwd of workspace.workspacesCwds) {
           workspaceCwds.push(workspaceCwd);
         }
       }
@@ -211,7 +211,7 @@ export class Project {
     const forgottenPackages = new Set();
 
     for (const pkg of this.storedPackages.values()) {
-      if (resolver.supportsLocator(pkg, {project: this})) {
+      if (resolver.supportsLocator(pkg, {project: this, resolver})) {
         this.storedPackages.delete(pkg.locatorHash);
         forgottenPackages.add(pkg.locatorHash);
       }
@@ -225,11 +225,15 @@ export class Project {
     }
   }
 
-  async resolveEverything() {
+  async resolveEverything(cache: Cache) {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
 
     const resolver = this.configuration.makeResolver();
+    const fetcher = this.configuration.makeFetcher();
+
+    const resolverOptions = {project: this, resolver, fetcher, cache};
+    const fetcherOptions = {project: this, fetcher, cache}
 
     const allDescriptors = new Map<string, Descriptor>();
     const allPackages = new Map<string, Package>();
@@ -265,7 +269,7 @@ export class Project {
         let candidateReferences;
 
         try {
-          candidateReferences = await resolver.getCandidates(descriptor, {project: this});
+          candidateReferences = await resolver.getCandidates(descriptor, {project: this, cache, fetcher, resolver});
         } catch (error) {
           error.message = `${structUtils.prettyDescriptor(descriptor)}: ${error.message}`;
           throw error;
@@ -380,15 +384,15 @@ export class Project {
       for (const locator of passResolutions.values()) {
         if (allPackages.has(locator.locatorHash))
           continue;
-        
+
         newLocators.set(locator.locatorHash, locator);
       }
-      
+
       const newPackages = new Map(await Promise.all(Array.from(newLocators.values()).map(async locator => {
         let pkg;
 
         try {
-          pkg = await resolver.resolve(locator, {project: this});
+          pkg = await resolver.resolve(locator, {project: this, cache, fetcher, resolver});
         } catch (error) {
           error.message = `${structUtils.prettyLocator(locator)}: ${error.message}`;
           throw error;
@@ -396,6 +400,19 @@ export class Project {
 
         if (!structUtils.areLocatorsEqual(locator, pkg))
           throw new Error(`The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(locator)} to ${structUtils.prettyLocator(pkg)})`);
+
+        const rawDependencies = pkg.dependencies;
+        const rawPeerDependencies = pkg.peerDependencies;
+
+        const dependencies = pkg.dependencies = new Map();
+        const peerDependencies = pkg.peerDependencies = new Map();
+
+        for (const [source, target] of [[rawDependencies, dependencies], [rawPeerDependencies, peerDependencies]]) {
+          for (const descriptor of source.values()) {
+            const normalizedDescriptor = await resolver.normalizeDescriptor(descriptor, locator, {project: this, resolver});
+            target.set(normalizedDescriptor.descriptorHash, normalizedDescriptor);
+          }
+        }
 
         return [pkg.locatorHash, pkg] as [string, Package];
       })));
@@ -541,7 +558,7 @@ export class Project {
         this.storedLocations.set(pkg.locatorHash, workspace.cwd);
       } else {
         const location = await fetcher.fetch(pkg, {cache, fetcher, project: this});
-        this.storedLocations.set(pkg.locatorHash, location);
+        this.storedLocations.set(pkg.locatorHash, location.getRealPath());
       }
     }
   }
@@ -550,14 +567,25 @@ export class Project {
     const pnpSettings = await extractPnpSettings(this);
     const pnpScript = generatePnpScript(pnpSettings);
 
-    await writeFileP(this.configuration.pnpPath, pnpScript);
+    try {
+      const currentScript = await readFile(this.configuration.pnpPath, `utf8`);
+
+      if (currentScript === pnpScript) {
+        return;
+      }
+    } catch (error) {
+      // ignore errors, no big deal
+    }
+
+    await writeFile(this.configuration.pnpPath, pnpScript);
+    await chmod(this.configuration.pnpPath, 0o755);
   }
 
   async install({cache}: {cache: Cache}) {
     // Ensures that we notice it when dependencies are added / removed from the workspaces manifests
     await this.forgetWorkspaceResolutionCache();
 
-    await this.resolveEverything();
+    await this.resolveEverything(cache);
     await this.fetchEverything(cache);
     await this.generatePnpFile();
   }
@@ -574,7 +602,7 @@ export class Project {
 
       if (!descriptorHashes)
         reverseLookup.set(locatorHash, descriptorHashes = new Set());
-      
+
       descriptorHashes.add(descriptorHash);
     }
 
@@ -585,7 +613,7 @@ export class Project {
 
       if (!pkg)
         throw new Error(`The package should have been registered`);
-      
+
       // Virtual packages are not persisted into the lockfile: they need to be
       // recomputed at runtime through "resolveEverything".
       if (structUtils.isVirtualLocator(pkg))
@@ -629,7 +657,7 @@ export class Project {
     }
 
     const content = stringifySyml(optimizedLockfile);
-    await writeFileP(`${this.cwd}/berry.lock`, content);
+    await writeFile(`${this.cwd}/berry.lock`, content);
   }
 
   async persist() {

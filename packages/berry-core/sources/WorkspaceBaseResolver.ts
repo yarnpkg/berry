@@ -1,4 +1,5 @@
 import {Resolver, ResolveOptions} from './Resolver';
+import {WorkspaceResolver}        from './WorkspaceResolver';
 import * as structUtils           from './structUtils';
 import {Descriptor, Locator}      from './types';
 
@@ -15,8 +16,12 @@ export class WorkspaceBaseResolver implements Resolver {
   supportsLocator(locator: Locator, opts: ResolveOptions) {
     if (!locator.reference.startsWith(WorkspaceBaseResolver.protocol))
       return false;
-    
+
     return true;
+  }
+
+  async normalizeDescriptor(descriptor: Descriptor, locator: Locator, opts: ResolveOptions) {
+    return descriptor;
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
@@ -28,9 +33,25 @@ export class WorkspaceBaseResolver implements Resolver {
 
     const workspace = opts.project.getWorkspaceByLocator(normalizedLocator);
 
+    const binaries = new Map(workspace.manifest.bin);
     const dependencies = new Map([... workspace.manifest.dependencies, ... workspace.manifest.devDependencies]);
-    const peerDependencies = new Map(); // No peer dependencies for workspaces when installed as root points
 
-    return {... locator, dependencies, peerDependencies};
+    for (const workspaceCwd of workspace.workspacesCwds) {
+      const childWorkspace = opts.project.getWorkspaceByCwd(workspaceCwd);
+
+      const hasDep = Array.from(dependencies.values()).some(descriptor => {
+        return descriptor.identHash === childWorkspace.locator.identHash;
+      });
+
+      if (!hasDep) {
+        const childDescriptor = structUtils.makeDescriptor(childWorkspace.locator, `${WorkspaceResolver.protocol}${childWorkspace.locator}`);
+        dependencies.set(childDescriptor.descriptorHash, childDescriptor);
+      }
+    }
+
+    // No peer dependencies for workspaces when installed as root points
+    const peerDependencies = new Map();
+
+    return {... locator, binaries, dependencies, peerDependencies};
   }
 }

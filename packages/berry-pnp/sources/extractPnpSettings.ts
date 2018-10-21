@@ -6,11 +6,12 @@ import {structUtils}                                                            
 import {PackageInformationStores, LocationBlacklist, TemplateReplacements, PnpSettings} from './types';
 
 export async function extractPnpSettings(project: Project): Promise<PnpSettings> {
+  const shebang = project.configuration.pnpShebang;
+
   const packageInformationStores: PackageInformationStores = new Map();
   const blacklistedLocations: LocationBlacklist = new Set();
   const replacements: TemplateReplacements = {};
 
-  replacements.SHEBANG = project.configuration.pnpShebang;
   replacements.IGNORE_PATTERN = JSON.stringify(project.configuration.pnpIgnorePattern);
 
   function normalizeDirectoryPath(folder: string) {
@@ -110,5 +111,5 @@ export async function extractPnpSettings(project: Project): Promise<PnpSettings>
     });
   }
 
-  return {packageInformationStores, blacklistedLocations, replacements};
+  return {shebang, packageInformationStores, blacklistedLocations, replacements};
 }

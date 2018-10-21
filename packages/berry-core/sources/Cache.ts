@@ -1,14 +1,15 @@
 import fsx = require('fs-extra');
 
-import {createHmac}    from 'crypto';
-import {writeFile}     from 'fs';
-import {lock, unlock}  from 'lockfile';
-import {resolve}       from 'path';
-import {promisify}     from 'util';
+import {FakeFS, ZipFS, NodeFS}      from '@berry/zipfs';
+import {createHmac}                 from 'crypto';
+import {writeFile}                  from 'fs';
+import {lock, unlock}               from 'lockfile';
+import {dirname, relative, resolve} from 'path';
+import {promisify}                  from 'util';
 
-import {Archive}       from './Archive';
-import {Configuration} from './Configuration';
-import {Locator}       from './types';
+import {Archive}                    from './Archive';
+import {Configuration}              from './Configuration';
+import {Locator}                    from './types';
 
 const writeFileP = promisify(writeFile);
 
@@ -63,24 +64,24 @@ export class Cache {
     });
   }
 
-  async fetchVirtualFolder(locator: Locator) {
-    const virtualFolder = resolve(this.cwd, `virtual`, locator.locatorHash);
+  async ensureVirtualLink(locator: Locator, target: string) {
+    const virtualLink = resolve(this.cwd, `virtual`, locator.locatorHash);
 
     // @ts-ignore: [DefinitelyTyped] The "type" parameter is missing
-    await fsx.ensureSymlink(`/`, virtualFolder, `junction`);
+    await fsx.ensureSymlink(relative(dirname(virtualLink), target), virtualLink);
 
-    return virtualFolder;
+    return virtualLink;
   }
 
-  async fetchFromCache(locator: Locator, loader?: () => Promise<Archive>) {
+  async fetchFromCache(locator: Locator, loader?: () => Promise<FakeFS>) {
     const key = this.getCacheKey(locator);
     const file = this.getFilePath(key);
 
-    return await this.writeFileIntoCache(file, async () => {
-      let archive;
+    return await this.writeFileIntoCache<FakeFS>(file, async () => {
+      let fs;
 
       try {
-        archive = await Archive.load(file);
+        fs = new ZipFS(file, {baseFs: new NodeFS()});
         this.cacheHitCount += 1;
       } catch (error) {
         this.cacheMissCount += 1;
@@ -88,11 +89,20 @@ export class Cache {
         if (!loader)
           throw error;
 
-        archive = await loader();
-        await archive.move(file);
+        fs = await loader();
+
+        if (!(fs instanceof ZipFS))
+          throw new Error(`The fetchers plugged into the cache must return a ZipFS instance`);
+
+        const source = fs.close();
+
+        await fsx.chmod(source, 0o644);
+        await fsx.move(source, file);
+
+        fs = new ZipFS(file);
       }
 
-      return archive;
+      return fs;
     });
   }
 
@@ -105,14 +115,10 @@ export class Cache {
       throw new Error(`Couldn't obtain a lock on ${file}`);
     }
 
-    let entity: T;
-
     try {
-      entity = await generator(file);
+      return await generator(file);
     } finally {
       await unlockP(lock);
     }
-
-    return {file, entity};
   }
 }

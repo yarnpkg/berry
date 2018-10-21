@@ -62,6 +62,7 @@ LIBZIP_VERSION=1.5.1
         -I./libzip-"$LIBZIP_VERSION"/lib \
         -I./libzip-"$LIBZIP_VERSION" \
         -O3 \
+        --llvm-lto 1 \
         ./zipstruct.c \
         ./libzip-"$LIBZIP_VERSION"/lib/libzip.a \
         ./zlib-"$ZLIB_VERSION"/libz.a

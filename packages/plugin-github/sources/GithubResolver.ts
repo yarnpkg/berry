@@ -1,16 +1,20 @@
-import {Resolver, ResolveOptions}            from '@berry/core';
-import {httpUtils, structUtils}              from '@berry/core';
-import {Ident, Descriptor, Locator, Package} from '@berry/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
+import {httpUtils, structUtils}                          from '@berry/core';
+import {Ident, Descriptor, Locator, Package}             from '@berry/core';
 
-import * as githubUtils                      from './githubUtils';
+import * as githubUtils                                  from './githubUtils';
 
 export class GithubResolver implements Resolver {
-  supportsDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     return githubUtils.isGithubUrl(descriptor.range);
   }
 
-  supportsLocator(locator: Locator, opts: ResolveOptions) {
+  supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
     return githubUtils.isGithubUrl(locator.reference);
+  }
+
+  async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
+    return descriptor;
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
@@ -18,9 +22,10 @@ export class GithubResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
+    const binaries = new Map();
     const dependencies = new Map();
     const peerDependencies = new Map();
 
-    return {... locator, dependencies, peerDependencies};
+    return {... locator, binaries, dependencies, peerDependencies};
   }
 }

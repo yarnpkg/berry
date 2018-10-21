@@ -6,7 +6,7 @@ import {plugins}                               from '../plugins';
 
 export default (concierge: any) => concierge
 
-  .command(`install [--cwd PATH]`)
+  .command(`install [-f] [--cwd PATH]`)
   .describe(`install the project's dependencies`)
 
   .validate(Joi.object().unknown().keys({

@@ -1,17 +1,43 @@
-import {posix}   from 'path';
-
-import {Archive} from './Archive';
-import {Parse}   from 'tar';
+import {FakeFS, JailFS, ZipFS, NodeFS} from '@berry/zipfs';
+import {posix}                         from 'path';
+import {Parse}                         from 'tar';
+import {tmpNameSync}                   from 'tmp';
 
 interface MakeArchiveOptions {
   prefixPath?: string | null,
   stripComponents?: number,
 };
 
-export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath = null}: MakeArchiveOptions = {}): Promise<Archive> {
-  const now = new Date();
+export async function makeArchiveFromDirectory(source: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS} = {}): Promise<ZipFS> {
+  const zipFs = new ZipFS(tmpNameSync(), {create: true});
 
-  const archive = Archive.create();
+  function processDirectory(source: string, target: string) {
+    const listing = baseFs.readdir(source);
+
+    for (const entry of listing) {
+      const sourcePath = posix.resolve(source, entry);
+      const targetPath = posix.resolve(target, entry);
+
+      const stat = baseFs.lstat(sourcePath);
+
+      if (stat.isDirectory()) {
+        zipFs.mkdir(targetPath);
+        processDirectory(sourcePath, targetPath);
+      } else if (stat.isFile()) {
+        zipFs.writeFile(targetPath, baseFs.readFile(sourcePath));
+      } else {
+        // TODO: More file types
+      }
+    }
+  }
+
+  processDirectory(source, `/`);
+
+  return zipFs;
+}
+
+export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath = null}: MakeArchiveOptions = {}): Promise<ZipFS> {
+  const zipFs = new ZipFS(tmpNameSync(), {create: true});
 
   // @ts-ignore: Typescript doesn't want me to use new
   const parser = new Parse();
@@ -23,7 +49,7 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
 
     const parts = entry.path.split(/\//g);
 
-    // Same rule than for absolute paths
+    // We also ignore paths that could lead to escaping outside the archive
     if (parts.some((part: string) => part === `..`))
       return true;
 
@@ -49,19 +75,27 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
     });
 
     entry.on(`end`, () => {
-      archive.addFile(mappedPath, Buffer.concat(chunks), {
-        date: now,
-      });
+      switch (entry.type) {
+        case `Directory`: {
+          zipFs.mkdirp(mappedPath);
+        } break;
+
+        case `OldFile`:
+        case `File`: {
+          zipFs.mkdirp(posix.dirname(mappedPath));
+          zipFs.writeFile(mappedPath, Buffer.concat(chunks));
+        } break;
+      }
     });
   });
 
-  return await new Promise<Archive>((resolve, reject) =>  {
+  return await new Promise<ZipFS>((resolve, reject) =>  {
     parser.on(`error`, (error: Error) => {
       reject(error);
     });
 
     parser.on(`close`, () => {
-      resolve(archive);
+      resolve(zipFs);
     });
 
     parser.end(tgz);

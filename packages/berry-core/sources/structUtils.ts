@@ -27,6 +27,10 @@ export function makeLocatorFromDescriptor(descriptor: Descriptor, reference: str
   return {identHash: descriptor.identHash, scope: descriptor.scope, name: descriptor.name, locatorHash: makeHash(descriptor.identHash, reference), reference};
 }
 
+export function convertToIdent(source: Descriptor | Locator | Package): Ident {
+  return {identHash: source.identHash, scope: source.scope, name: source.name};
+}
+
 export function convertDescriptorToLocator(descriptor: Descriptor): Locator {
   return {identHash: descriptor.identHash, scope: descriptor.scope, name: descriptor.name, locatorHash: descriptor.descriptorHash, reference: descriptor.range};
 }
@@ -53,6 +57,7 @@ export function virtualizePackage(pkg: Package, entropy: string): Package {
   return {
     ... makeLocatorFromIdent(pkg, `virtual:${entropy}#${pkg.reference}`),
 
+    binaries: new Map(pkg.binaries),
     dependencies: new Map(pkg.dependencies),
     peerDependencies: new Map(pkg.peerDependencies),
   };
@@ -69,7 +74,7 @@ export function isVirtualLocator(locator: Locator): boolean {
 export function devirtualizeDescriptor(descriptor: Descriptor): Descriptor {
   if (!isVirtualDescriptor(descriptor))
     throw new Error(`Not a virtual descriptor`);
-  
+
   return makeDescriptor(descriptor, descriptor.range.replace(/^.*#/, ``));
 }
 

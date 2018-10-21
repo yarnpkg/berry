@@ -1,10 +1,10 @@
-// Used for "typeof fs"
-import fs = require('fs');
-
 import libzip              from '@berry/libzip';
 import {ReadStream, Stats} from 'fs';
 import {posix}             from 'path';
 import {PassThrough}       from 'stream';
+
+import {FakeFS}            from './FakeFS';
+import {NodeFS}            from './NodeFS';
 
 const IS_DIRECTORY_STAT = {
   isBlockDevice: () => false,
@@ -41,14 +41,14 @@ const IS_FILE_STAT = {
 };
 
 export type Options = {
-  baseFs?: typeof fs,
+  baseFs?: FakeFS,
   create?: boolean,
 };
 
-export class ZipFS {
+export class ZipFS extends FakeFS {
   private readonly path: string;
 
-  private readonly baseFs: typeof fs;
+  private readonly baseFs: FakeFS;
 
   private readonly stats: Stats;
   private readonly zip: number;
@@ -56,26 +56,15 @@ export class ZipFS {
   private readonly listings: Map<string, Set<string>> = new Map();
   private readonly entries: Map<string, number> = new Map();
 
-  public static SUPPORTED = new Set([
-    `exists`,
-    `realpath`,
-    `readdir`,
-    `stat`,
-    `lstat`,
-    `readFile`,
-  ]);
+  constructor(p: string, {baseFs = new NodeFS(), create = false}: Options = {}) {
+    super();
 
-  public static SUPPORTED_SYNC_ONLY = new Set([
-    `createReadStream`,
-  ]);
-
-  constructor(p: string, {baseFs = fs, create = false}: Options = {}) {
     this.path = p;
 
     this.baseFs = baseFs;
 
     try {
-      this.stats = this.baseFs.statSync(p);
+      this.stats = this.baseFs.stat(p);
     } catch (error) {
       if (error.code === `ENOENT` && create) {
         this.stats = {... IS_FILE_STAT, uid: 0, gid: 0, size: 0, blksize: 0, atimeMs: 0, mtimeMs: 0, ctimeMs: 0, birthtimeMs: 0, atime: new Date(0), mtime: new Date(0), ctime: new Date(0), birthtime: new Date(0)};
@@ -116,12 +105,16 @@ export class ZipFS {
     }
   }
 
-  close(): string {
+  getRealPath() {
+    return this.path;
+  }
+
+  close() {
     const rc = libzip.close(this.zip);
 
     if (rc !== 0)
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
-    
+
     return this.path;
   }
 
@@ -269,8 +262,8 @@ export class ZipFS {
 
     if (p === `/`)
       return;
-    
-    const index = libzip.dir.add(this.zip, p.slice(1));
+
+    const index = libzip.dir.add(this.zip, posix.relative(`/`, p));
 
     if (index === -1)
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
@@ -279,29 +272,12 @@ export class ZipFS {
     this.registerEntry(p, index);
   }
 
-  mkdirp(p: string) {
-    p = posix.resolve(`/`, p);
-
-    if (p === `/`)
-      return;
-    
-    const parts = p.split(`/`);
-
-    for (let u = 2; u <= parts.length; ++u) {
-      const subPath = parts.slice(0, u).join(`/`);
-
-      if (!this.exists(subPath)) {
-        this.mkdir(subPath);
-      }
-    }
-  }
-
   private registerListing(p: string) {
     let listing = this.listings.get(p);
 
     if (listing)
       return listing;
-    
+
     const parentListing = this.registerListing(posix.dirname(p));
     listing = new Set();
 
@@ -309,6 +285,10 @@ export class ZipFS {
     this.listings.set(p, listing);
 
     return listing;
+  }
+
+  readlink(p: string): string {
+    throw new Error(`Unimplemented`);
   }
 
   private registerEntry(p: string, index: number) {
@@ -340,9 +320,13 @@ export class ZipFS {
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
     }
 
-    libzip.file.add(this.zip, p, source, libzip.ZIP_FL_OVERWRITE);
+    const index = libzip.file.add(this.zip, posix.relative(`/`, p), source, libzip.ZIP_FL_OVERWRITE);
+
+    this.registerEntry(p, index);
   }
 
+  readFile(p: string, encoding: 'utf8'): string;
+  readFile(p: string, encoding?: string): Buffer;
   readFile(p: string, encoding?: string) {
     const origP = p;
     p = this.realpath(p);

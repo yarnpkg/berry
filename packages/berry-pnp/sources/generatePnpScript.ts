@@ -81,10 +81,11 @@ function generateDatastores(packageInformationStores: PackageInformationStores, 
 }
 
 export function generatePnpScript(settings: PnpSettings): string {
-  const {packageInformationStores, blacklistedLocations} = settings;
+  const {shebang, packageInformationStores, blacklistedLocations} = settings;
   const datastores = generateDatastores(packageInformationStores, blacklistedLocations);
 
   return [
+    shebang ? `${shebang}\n\n` : ``,
     `var __non_webpack_module__ = module;\n`,
     `\n`,
     `function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {\n`,

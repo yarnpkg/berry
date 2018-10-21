@@ -16,6 +16,7 @@
     "devDependencies": {
         "@berry/builder": "0.0.0",
         "@berry/plugin-github": "0.0.0",
+        "@berry/plugin-http": "0.0.0",
         "@berry/plugin-hub": "0.0.0",
         "@berry/plugin-npm": "0.0.0",
         "@berry/pnp": "0.0.0"
@@ -26,10 +27,16 @@
     "@berry/builder": {
         "bundles": {
             "light": [
+                "@berry/plugin-file",
+                "@berry/plugin-link",
+                "@berry/plugin-http",
                 "@berry/plugin-github",
                 "@berry/plugin-npm"
             ],
             "full": [
+                "@berry/plugin-file",
+                "@berry/plugin-link",
+                "@berry/plugin-http",
                 "@berry/plugin-github",
                 "@berry/plugin-npm",
                 "@berry/plugin-hub"

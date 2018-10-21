@@ -1,6 +1,6 @@
-import {Resolver, ResolveOptions}     from './Resolver';
-import * as structUtils               from './structUtils';
-import {Descriptor, Locator, Package} from './types';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import * as structUtils                                  from './structUtils';
+import {Descriptor, Locator, Package}                    from './types';
 
 export class MultiResolver implements Resolver {
   private readonly resolvers: Array<Resolver>;
@@ -9,16 +9,22 @@ export class MultiResolver implements Resolver {
     this.resolvers = resolvers;
   }
 
-  supportsDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     const resolver = this.tryResolverByDescriptor(descriptor, opts);
 
     return resolver ? true : false;
   }
 
-  supportsLocator(locator: Locator, opts: ResolveOptions) {
+  supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
     const resolver = this.tryResolverByLocator(locator, opts);
 
     return resolver ? true : false;
+  }
+
+  async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions): Promise<Descriptor> {
+    const resolver = this.getResolverByDescriptor(descriptor, opts);
+
+    return await resolver.normalizeDescriptor(descriptor, fromLocator, opts);
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<string>> {
@@ -33,7 +39,7 @@ export class MultiResolver implements Resolver {
     return await resolver.resolve(locator, opts);
   }
 
-  private tryResolverByDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+  private tryResolverByDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     const resolver = this.resolvers.find(resolver => resolver.supportsDescriptor(descriptor, opts));
 
     if (!resolver)
@@ -42,7 +48,7 @@ export class MultiResolver implements Resolver {
     return resolver;
   }
 
-  private getResolverByDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+  private getResolverByDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     const resolver = this.resolvers.find(resolver => resolver.supportsDescriptor(descriptor, opts));
 
     if (!resolver)
@@ -51,7 +57,7 @@ export class MultiResolver implements Resolver {
     return resolver;
   }
 
-  private tryResolverByLocator(locator: Locator, opts: ResolveOptions) {
+  private tryResolverByLocator(locator: Locator, opts: MinimalResolveOptions) {
     const resolver = this.resolvers.find(resolver => resolver.supportsLocator(locator, opts));
 
     if (!resolver)
@@ -60,7 +66,7 @@ export class MultiResolver implements Resolver {
     return resolver;
   }
 
-  private getResolverByLocator(locator: Locator, opts: ResolveOptions) {
+  private getResolverByLocator(locator: Locator, opts: MinimalResolveOptions) {
     const resolver = this.resolvers.find(resolver => resolver.supportsLocator(locator, opts));
 
     if (!resolver)

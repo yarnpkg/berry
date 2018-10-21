@@ -36,7 +36,7 @@ import NativeModule = require('module');
 import path = require('path');
 import StringDecoder = require('string_decoder');
 
-import {patch} from '@berry/zipfs';
+import {NodeFS, ZipOpenFS, patch} from '@berry/zipfs';
 
 // @ts-ignore
 const Module: ModuleInterfaceStatic = NativeModule;
@@ -607,6 +607,9 @@ export function resolveRequest(request: string, issuer: string | null, {consider
  */
 
 export function setup() {
+  // @ts-ignore
+  process.versions.pnp = String(VERSIONS.std);
+
   // A small note: we don't replace the cache here (and instead use the native one). This is an effort to not
   // break code similar to "delete require.cache[require.resolve(FOO)]", where FOO is a package located outside
   // of the Yarn dependency tree. In this case, we defer the load to the native loader. If we were to replace the
@@ -722,7 +725,13 @@ export function setup() {
     return false;
   };
 
-  patch(fs);
+  // We must copy the fs into a local, because otherwise
+  // 1. we would make the NodeFS instance use the function that we patched (infinite loop)
+  // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
+  const localFs: typeof fs = {...fs};
+  const nodeFs = new NodeFS(localFs);
+
+  patch(fs, new ZipOpenFS({baseFs: nodeFs}));
 };
 
 if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {

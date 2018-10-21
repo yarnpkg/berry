@@ -25,7 +25,7 @@ export class Configuration {
 
   public registryServer: string | null = null;
 
-  public pnpShebang: string = `/usr/bin/env node`;
+  public pnpShebang: string = `#!/usr/bin/env node`;
   public pnpIgnorePattern: string | null = null;
   public pnpVirtualFolder: string = `./.pnp/virtual`;
   public pnpPath: string = `./.pnp.js`;

@@ -8,7 +8,7 @@
         "@manaflair/text-layout": "^0.10.2",
         "eventemitter3": "^3.1.0",
         "react-reconciler": "^0.14.0",
-        "ttys": "^0.0.3",
+        "reopen-tty": "^1.1.2",
         "yoga-dom": "^0.0.14"
     },
     "devDependencies": {

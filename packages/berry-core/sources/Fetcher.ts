@@ -1,19 +1,21 @@
-import {Archive}  from './Archive';
+import {FakeFS}   from '@berry/zipfs';
+
 import {Cache}    from './Cache';
 import {Manifest} from './Manifest';
 import {Project}  from './Project';
 import {Locator}  from './types';
 
-export type FetchOptions = {
-  cache: Cache,
-  fetcher: Fetcher,
+export type MinimalFetchOptions = {
   project: Project,
+  fetcher: Fetcher,
+};
+
+export type FetchOptions = MinimalFetchOptions & {
+  cache: Cache,
 };
 
 export interface Fetcher {
-  supports(locator: Locator): boolean;
+  supports(locator: Locator, opts: MinimalFetchOptions): boolean;
 
-  fetchManifest(locator: Locator, opts: FetchOptions): Promise<Manifest>;
-
-  fetch(locator: Locator, opts: FetchOptions): Promise<any>;
+  fetch(locator: Locator, opts: FetchOptions): Promise<FakeFS>;
 }

@@ -1,6 +1,6 @@
-import {Fetcher, FetchOptions} from './Fetcher';
-import * as structUtils        from './structUtils';
-import {Locator}               from './types';
+import {Fetcher, FetchOptions, MinimalFetchOptions} from './Fetcher';
+import * as structUtils                             from './structUtils';
+import {Locator}                                    from './types';
 
 export class MultiFetcher implements Fetcher {
   private readonly fetchers: Array<Fetcher>;
@@ -9,8 +9,21 @@ export class MultiFetcher implements Fetcher {
     this.fetchers = fetchers;
   }
 
-  tryFetcher(locator: Locator) {
-    const fetcher = this.fetchers.find(fetcher => fetcher.supports(locator));
+  supports(locator: Locator, opts: MinimalFetchOptions) {
+    if (!this.tryFetcher(locator, opts))
+      return false;
+
+    return true;
+  }
+
+  async fetch(locator: Locator, opts: FetchOptions) {
+    const fetcher = this.getFetcher(locator, opts);
+
+    return await fetcher.fetch(locator, opts);
+  }
+
+  private tryFetcher(locator: Locator, opts: MinimalFetchOptions) {
+    const fetcher = this.fetchers.find(fetcher => fetcher.supports(locator, opts));
 
     if (!fetcher)
       return null;
@@ -18,31 +31,12 @@ export class MultiFetcher implements Fetcher {
     return fetcher;
   }
 
-  getFetcher(locator: Locator) {
-    const fetcher = this.fetchers.find(fetcher => fetcher.supports(locator));
+  private getFetcher(locator: Locator, opts: MinimalFetchOptions) {
+    const fetcher = this.fetchers.find(fetcher => fetcher.supports(locator, opts));
 
     if (!fetcher)
       throw new Error(`Couldn't find a fetcher for '${structUtils.prettyLocator(locator)}'`);
 
     return fetcher;
-  }
-
-  supports(locator: Locator) {
-    if (!this.tryFetcher(locator))
-      return false;
-
-    return true;
-  }
-
-  async fetchManifest(locator: Locator, opts: FetchOptions) {
-    const fetcher = this.getFetcher(locator);
-
-    return await fetcher.fetchManifest(locator, opts);
-  }
-
-  async fetch(locator: Locator, opts: FetchOptions) {
-    const fetcher = this.getFetcher(locator);
-
-    return await fetcher.fetch(locator, opts);
   }
 }

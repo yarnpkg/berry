@@ -11,6 +11,7 @@ export type LocationBlacklist = Set<string>;
 export type TemplateReplacements = {[key: string]: string};
 
 export type PnpSettings = {
+  shebang?: string | null,
   packageInformationStores: PackageInformationStores,
   blacklistedLocations: LocationBlacklist,
   replacements: TemplateReplacements,

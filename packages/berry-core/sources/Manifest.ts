@@ -1,3 +1,5 @@
+import {FakeFS}            from '@berry/zipfs';
+
 import * as structUtils    from './structUtils';
 import {Ident, Descriptor} from './types';
 
@@ -17,6 +19,13 @@ export class Manifest {
   public peerDependencies: Map<string, Descriptor> = new Map();
 
   public workspaceDefinitions: Array<WorkspaceDefinition> = [];
+
+  loadFile(fakeFs: FakeFS, path: string = `package.json`) {
+    const content = fakeFs.readFile(path, `utf8`);
+    const data = JSON.parse(content);
+
+    this.load(data);
+  }
 
   load(data: any) {
     if (typeof data !== `object` || data === null)

@@ -3,17 +3,7 @@
     "version": "0.0.0",
     "private": true,
     "main": "./sources/index.ts",
-    "files": [
-        "/lib"
-    ],
     "dependencies": {
-        "@berry/libzip": "0.0.0",
-        "tslib": "^1"
-    },
-    "devDependencies": {
-        "typescript": "^3.0.1"
-    },
-    "scripts": {
-        "build": "tsc"
+        "@berry/libzip": "0.0.0"
     }
 }

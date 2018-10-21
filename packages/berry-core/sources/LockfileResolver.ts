@@ -24,6 +24,10 @@ export class LockfileResolver implements Resolver {
     return false;
   }
 
+  async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: ResolveOptions) {
+    return descriptor;
+  }
+
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
     let pkg = opts.project.storedPackages.get(structUtils.convertDescriptorToLocator(descriptor).locatorHash);
 

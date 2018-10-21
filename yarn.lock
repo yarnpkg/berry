@@ -3505,6 +3505,11 @@ remove-trailing-separator@^1.0.1:
   resolved "https://registry.yarnpkg.com/remove-trailing-separator/-/remove-trailing-separator-1.1.0.tgz#c24bce2a283adad5bc3f58e0d48249b92379d8ef"
   integrity sha1-wkvOKig62tW8P1jg1IJJuSN52O8=
 
+reopen-tty@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/reopen-tty/-/reopen-tty-1.1.2.tgz#657d79580daede29e27dfb4cfd97f2450dceec95"
+  integrity sha512-MZaeHYPFK+vfM8VoqdDj9vR7H2A/nX+I2SvS5U82RocjtvPI8Y6xVf5NFxpHIUuo9urTosrRLyA89ZsY+prfqg==
+
 repeat-element@^1.1.2:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/repeat-element/-/repeat-element-1.1.3.tgz#782e0d825c0c5a3bb39731f84efee6b742e6b1ce"
@@ -4115,11 +4120,6 @@ tty-browserify@0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/tty-browserify/-/tty-browserify-0.0.0.tgz#a157ba402da24e9bf957f9aa69d524eed42901a6"
   integrity sha1-oVe6QC2iTpv5V/mqadUk7tQpAaY=
-
-ttys@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/ttys/-/ttys-0.0.3.tgz#15bacde7831020de5f2f28f01b1732ef03651f4d"
-  integrity sha1-FbrN54MQIN5fLyjwGxcy7wNlH00=
 
 type-check@~0.3.2:
   version "0.3.2"

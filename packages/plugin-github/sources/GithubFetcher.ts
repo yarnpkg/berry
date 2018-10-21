@@ -1,13 +1,13 @@
-import {Fetcher, FetchOptions} from '@berry/core';
-import {httpUtils, tgzUtils}   from '@berry/core';
-import {Locator, Manifest}     from '@berry/core';
+import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
+import {httpUtils, tgzUtils}                        from '@berry/core';
+import {Locator, Manifest}                          from '@berry/core';
 
-import * as githubUtils        from './githubUtils';
+import * as githubUtils                             from './githubUtils';
 
 export class GithubFetcher implements Fetcher {
   public mountPoint: string = `cached-fetchers`;
 
-  supports(locator: Locator) {
+  supports(locator: Locator, opts: MinimalFetchOptions) {
     if (!githubUtils.isGithubUrl(locator.reference))
       return false;
 
@@ -26,7 +26,7 @@ export class GithubFetcher implements Fetcher {
     });
   }
 
-  private getLocatorUrl(locator: Locator, opts: FetchOptions) {
+  private getLocatorUrl(locator: Locator, opts: MinimalFetchOptions) {
     const {username, reponame, branch = `master`} = githubUtils.parseGithubUrl(locator.reference);
 
     return `https://github.com/${username}/${reponame}/archive/${branch}.tar.gz`;

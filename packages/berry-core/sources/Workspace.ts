@@ -27,7 +27,10 @@ export class Workspace {
   // @ts-ignore: This variable is set during the setup process
   public readonly manifest: Manifest;
 
-  // Generated at resolution; basically dependencies + devDependencies
+  // @ts-ignore: This variable is set during the setup process
+  public readonly workspacesCwds: Set<string> = new Set();
+
+  // Generated at resolution; basically dependencies + devDependencies + child workspaces
   public dependencies: Map<string, Descriptor> = new Map();
 
   constructor(workspaceCwd: string, {project}: {project: Project}) {
@@ -46,12 +49,8 @@ export class Workspace {
     const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `unnamed-workspace-${hashWorkspaceCwd(this.cwd)}`);
     const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
 
-    // @ts-ignore: It's ok to initialize it now
+    // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.locator = structUtils.makeLocatorFromIdent(ident, reference);
-  }
-
-  async resolveChildWorkspaces() {
-    const workspaceCwds = [];
 
     for (const definition of this.manifest.workspaceDefinitions) {
       const relativeCwds = await globby(definition.pattern, {
@@ -66,12 +65,10 @@ export class Workspace {
         const candidateCwd = resolve(this.cwd, relativeCwd);
 
         if (existsSync(`${candidateCwd}/package.json`)) {
-          workspaceCwds.push(candidateCwd);
+          this.workspacesCwds.add(candidateCwd);
         }
       }
     }
-
-    return workspaceCwds;
   }
 
   accepts(range: string) {

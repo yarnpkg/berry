@@ -1,3 +1,5 @@
+import {JailFS}                from '@berry/zipfs';
+
 import {Fetcher, FetchOptions} from './Fetcher';
 import {WorkspaceBaseResolver} from './WorkspaceBaseResolver';
 import * as structUtils        from './structUtils';
@@ -11,12 +13,8 @@ export class WorkspaceBaseFetcher implements Fetcher {
     return true;
   }
 
-  async fetchManifest(locator: Locator, opts: FetchOptions) {
-    return this.getWorkspace(locator, opts).manifest;
-  }
-
   async fetch(locator: Locator, opts: FetchOptions) {
-    return this.getWorkspace(locator, opts).cwd;
+    return new JailFS(this.getWorkspace(locator, opts).cwd);
   }
 
   getWorkspace(locator: Locator, opts: FetchOptions) {

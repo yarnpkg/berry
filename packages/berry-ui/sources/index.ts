@@ -3,19 +3,22 @@ import TextLayout = require('@manaflair/text-layout');
 import makeReconciler = require('react-reconciler');
 import React = require('react');
 // @ts-ignore
-import ttys = require('ttys');
+import reopenTty = require('reopen-tty');
 // @ts-ignore
 import YogaDom = require('yoga-dom');
 
-import {Div}          from './Div';
-import {NodeElement}  from './NodeElement';
-import {NodeText}     from './NodeText';
-import {NodeTree}     from './NodeTree';
-import {Node}         from './Node';
-import {TermInput}    from './TermInput';
-import {TermOutput}   from './TermOutput';
-import {TermRenderer} from './TermRenderer';
-import {Props}        from './types';
+import {Readable, Writable}                                    from 'stream';
+import {ReadStream as ReadableTTY, WriteStream as WritableTTY} from 'tty';
+
+import {Div}                                                   from './Div';
+import {NodeElement}                                           from './NodeElement';
+import {NodeText}                                              from './NodeText';
+import {NodeTree}                                              from './NodeTree';
+import {Node}                                                  from './Node';
+import {TermInput}                                             from './TermInput';
+import {TermOutput}                                            from './TermOutput';
+import {TermRenderer}                                          from './TermRenderer';
+import {Props}                                                 from './types';
 
 // Reexport the Div component
 export * from './Div';
@@ -125,13 +128,53 @@ const Reconciler = makeReconciler({
   },
 });
 
-export async function render(app: any, {stdin = ttys.stdin, stdout = ttys.stdout, inline = false} = {}) {
+function openStdin() {
+  return new Promise<ReadableTTY>((resolve, reject) => {
+    return reopenTty.stdin((err: Error, tty: ReadableTTY) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(tty);
+      }
+    });
+  });
+}
+
+function openStdout() {
+  return new Promise<WritableTTY>((resolve, reject) => {
+    return reopenTty.stdout((err: Error, tty: WritableTTY) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(tty);
+      }
+    });
+  });
+}
+
+export type Options = {
+  stdin?: Readable | ReadableTTY | null,
+  stdout?: Writable | WritableTTY | null,
+  inline?: boolean,
+};
+
+export async function render(app: any, {stdin = null, stdout = null, inline = false}: Options = {}) {
+  if (stdin === null)
+    stdin = await openStdin();
+  if (stdout === null)
+    stdout = await openStdout();
+
   // Not sure why we have to do this, but the ".default" is needed when adding "browser" field support
   const realYogaDom = YogaDom.default || YogaDom;
 
   const env = {yoga: await realYogaDom, textLayout: await TextLayout};
 
   return new Promise((resolve, reject) => {
+    if (!stdin)
+      throw new Error(`Assertion failed: missing stdin`);
+    if (!stdout)
+      throw new Error(`Assertion failed: missing stdout`);
+  
     const termInput = new TermInput(stdin);
     const termOutput = new TermOutput(stdout, {isInline: inline, isDebug: false});
 

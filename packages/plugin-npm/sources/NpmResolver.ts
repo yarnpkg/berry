@@ -1,24 +1,28 @@
 import semver = require('semver');
 
-import {Resolver, ResolveOptions, Manifest} from '@berry/core';
-import {httpUtils, structUtils}             from '@berry/core';
-import {Ident, Descriptor, Locator}         from '@berry/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions, Manifest} from '@berry/core';
+import {httpUtils, structUtils}                                    from '@berry/core';
+import {Ident, Descriptor, Locator}                                from '@berry/core';
 
-import {DEFAULT_REGISTRY}                   from './constants';
+import {DEFAULT_REGISTRY}                                          from './constants';
 
 export class NpmResolver implements Resolver {
-  supportsDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     if (!semver.validRange(descriptor.range))
       return false;
 
     return true;
   }
 
-  supportsLocator(locator: Locator, opts: ResolveOptions) {
+  supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
     if (!semver.valid(locator.reference))
       return false;
 
     return true;
+  }
+
+  async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
+    return descriptor;
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
@@ -49,13 +53,14 @@ export class NpmResolver implements Resolver {
     const manifest = new Manifest();
     manifest.load(registryData.versions[locator.reference]);
 
+    const binaries = manifest.bin;
     const dependencies = manifest.dependencies;
     const peerDependencies = manifest.peerDependencies;
 
-    return {... locator, dependencies, peerDependencies};
+    return {... locator, binaries, dependencies, peerDependencies};
   }
 
-  private getIdentUrl(ident: Ident, opts: ResolveOptions) {
+  private getIdentUrl(ident: Ident, opts: MinimalResolveOptions) {
     const registry = opts.project.configuration.registryServer || DEFAULT_REGISTRY;
 
     if (ident.scope) {

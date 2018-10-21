@@ -1,44 +1,15 @@
 import execa = require('execa');
 
-import {Configuration, Project, Workspace, Cache, Locator} from '@berry/core';
-import {runShell}                                          from '@berry/shell'
+import {Configuration, Project, Workspace, Cache, Locator, Manifest} from '@berry/core';
+import {runShell}                                                    from '@berry/shell'
 // @ts-ignore: Need to write the definition file
-import {UsageError}                                        from '@manaflair/concierge';
-import {resolve}                                           from 'path';
-import {Readable, Writable}                                from 'stream';
+import {UsageError}                                                  from '@manaflair/concierge';
+import {resolve}                                                     from 'path';
+import {Readable, Writable}                                          from 'stream';
 
-import {plugins}                                           from '../plugins';
+import {plugins}                                                     from '../plugins';
 
-async function getDependencyBinaries({configuration, project, workspace, cache}: {configuration: Configuration, project: Project, workspace: Workspace, cache: Cache}) {
-  const fetcher = configuration.makeFetcher();
-  const binaries: Map<string, [Locator, string]> = new Map();
-
-  const descriptors = [
-    ... workspace.manifest.dependencies.values(),
-    ... workspace.manifest.devDependencies.values(),
-    ... workspace.manifest.peerDependencies.values(),
-  ];
-
-  for (const descriptor of descriptors) {
-    const resolution = project.storedResolutions.get(descriptor.descriptorHash);
-
-    if (!resolution)
-      continue;
-
-    const pkg = project.storedPackages.get(resolution);
-
-    if (!pkg)
-      continue;
-
-    const manifest = await fetcher.fetchManifest(pkg, {cache, fetcher, project});
-
-    for (const [binName, file] of manifest.bin.entries()) {
-      binaries.set(binName, [pkg, file]);
-    }
-  }
-
-  return binaries;
-}
+import {getDependencyBinaries}                                       from './bin';
 
 export default (concierge: any) => concierge
 
@@ -67,10 +38,10 @@ export default (concierge: any) => concierge
 
     if (binary) {
       const [pkg, file] = binary;
-      
+
       const fetcher = configuration.makeFetcher();
-      const root = await fetcher.fetch(pkg, {cache, fetcher, project});
-      const target = resolve(root, file);
+      const pkgFs = await fetcher.fetch(pkg, {cache, fetcher, project});
+      const target = resolve(pkgFs.getRealPath(), file);
 
       const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
 

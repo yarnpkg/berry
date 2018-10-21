@@ -20,8 +20,12 @@ export class WorkspaceResolver implements Resolver {
   supportsLocator(locator: Locator, opts: ResolveOptions) {
     if (locator.reference.startsWith(WorkspaceResolver.protocol))
       return true;
-    
+
     return false;
+  }
+
+  async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: ResolveOptions) {
+    return descriptor;
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
@@ -44,9 +48,22 @@ export class WorkspaceResolver implements Resolver {
 
     const workspace = opts.project.getWorkspaceByLocator(normalizedLocator);
 
+    const binaries = new Map(workspace.manifest.bin);
     const dependencies = new Map(workspace.manifest.dependencies);
     const peerDependencies = new Map(workspace.manifest.peerDependencies);
 
-    return {... locator, dependencies, peerDependencies};
+    for (const workspaceCwd of workspace.workspacesCwds) {
+      const childWorkspace = opts.project.getWorkspaceByCwd(workspaceCwd);
+
+      const hasDep = Array.from(dependencies.values()).some(descriptor => descriptor.identHash === childWorkspace.locator.identHash);
+      const hasPeerDep = Array.from(dependencies.values()).some(descriptor => descriptor.identHash === childWorkspace.locator.identHash);
+
+      if (!hasDep && !hasPeerDep) {
+        const childDescriptor = structUtils.makeDescriptor(childWorkspace.locator, `${WorkspaceResolver.protocol}${childWorkspace.locator}`);
+        dependencies.set(childDescriptor.descriptorHash, childDescriptor);
+      }
+    }
+
+    return {... locator, binaries, dependencies, peerDependencies};
   }
 }
