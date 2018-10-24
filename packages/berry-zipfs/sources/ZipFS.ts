@@ -43,6 +43,7 @@ const IS_FILE_STAT = {
 export type Options = {
   baseFs?: FakeFS,
   create?: boolean,
+  stats?: Stats,
 };
 
 export class ZipFS extends FakeFS {
@@ -56,20 +57,24 @@ export class ZipFS extends FakeFS {
   private readonly listings: Map<string, Set<string>> = new Map();
   private readonly entries: Map<string, number> = new Map();
 
-  constructor(p: string, {baseFs = new NodeFS(), create = false}: Options = {}) {
+  constructor(p: string, {baseFs = new NodeFS(), create = false, stats}: Options = {}) {
     super();
 
     this.path = p;
 
     this.baseFs = baseFs;
 
-    try {
-      this.stats = this.baseFs.stat(p);
-    } catch (error) {
-      if (error.code === `ENOENT` && create) {
-        this.stats = {... IS_FILE_STAT, uid: 0, gid: 0, size: 0, blksize: 0, atimeMs: 0, mtimeMs: 0, ctimeMs: 0, birthtimeMs: 0, atime: new Date(0), mtime: new Date(0), ctime: new Date(0), birthtime: new Date(0)};
-      } else {
-        throw error;
+    if (stats) {
+      this.stats = stats;
+    } else {
+      try {
+        this.stats = this.baseFs.statSync(p);
+      } catch (error) {
+        if (error.code === `ENOENT` && create) {
+          this.stats = {... IS_FILE_STAT, uid: 0, gid: 0, size: 0, blksize: 0, atimeMs: 0, mtimeMs: 0, ctimeMs: 0, birthtimeMs: 0, atime: new Date(0), mtime: new Date(0), ctime: new Date(0), birthtime: new Date(0)};
+        } else {
+          throw error;
+        }
       }
     }
 
@@ -112,7 +117,7 @@ export class ZipFS extends FakeFS {
   close() {
     const rc = libzip.close(this.zip);
 
-    if (rc !== 0)
+    if (rc === -1)
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
     return this.path;
@@ -125,10 +130,6 @@ export class ZipFS extends FakeFS {
   }
 
   createReadStream(p: string, {encoding}: {encoding?: string} = {}): ReadStream {
-    p = this.realpath(p);
-
-    const data = this.readFile(p, encoding);
-
     const stream = Object.assign(new PassThrough(), {
       bytesRead: 0,
       path: p,
@@ -138,6 +139,8 @@ export class ZipFS extends FakeFS {
     });
 
     const immediate = setImmediate(() => {
+      const data = this.readFileSync(p, encoding);
+  
       stream.bytesRead = data.length;
       stream.write(data);
       stream.end();
@@ -146,63 +149,62 @@ export class ZipFS extends FakeFS {
     return stream;
   }
 
-  realpath(p: string): string {
-    p = posix.resolve(`/`, p);
-
-    if (this.listings.has(p) || this.entries.has(p))
-      return p;
-
-    this.ensurePathCorrectness(p, `stat`);
-    throw new Error(`Unreachable`);
+  async realpathPromise(p: string) {
+    return this.realpathSync(p);
   }
 
-  readdir(p: string): Array<string> {
-    p = this.realpath(p);
-
-    const directoryListing = this.listings.get(p);
-
-    if (!directoryListing) {
-      this.ensurePathCorrectness(p, `scandir`, true);
-      throw new Error(`Unreachable`);
-    }
-
-    return Array.from(directoryListing);
+  realpathSync(p: string): string {
+    const resolvedP = this.resolveFilename(`lstat '${p}'`, p);
+    
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw Object.assign(new Error(`ENOENT: no such file or directory, lstat '${p}'`), {code: `ENOENT`});
+    
+    return resolvedP;
   }
 
-  exists(p: string): boolean {
-    const origP = p;
-    p = posix.resolve(`/`, p);
-
-    // Only checks in the directory entries
-    if (origP[origP.length - 1] === `/`)
-      return this.listings.has(p);
-
-    return this.listings.has(p) || this.entries.has(p);
+  async existsPromise(p: string) {
+    return this.existsSync(p);
   }
 
-  stat(p: string) {
-    const origP = p;
-    p = this.realpath(p);
-
-    // Ensures that it's a directory
-    if (origP[origP.length - 1] === `/`)
-      this.ensurePathCorrectness(p, `stat`, true);
-
-    return this.statImpl(p);
+  existsSync(p: string): boolean {
+    const resolvedP = this.resolveFilename(`stat '${p}'`, p);
+    
+    return this.entries.has(resolvedP) || this.listings.has(resolvedP);
   }
 
-  lstat(p: string) {
-    const origP = p;
-    p = posix.join(this.realpath(posix.dirname(p)), posix.basename(p));
-
-    // Ensures that it's a directory
-    if (origP[origP.length - 1] === `/`)
-      this.ensurePathCorrectness(p, `lstat`, true);
-
-    return this.statImpl(p);
+  async statPromise(p: string) {
+    return this.statSync(p);
   }
 
-  private statImpl(p: string): Stats {
+  statSync(p: string) {
+    const resolvedP = this.resolveFilename(`stat '${p}'`, p);
+    
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw Object.assign(new Error(`ENOENT: no such file or directory, stat '${p}'`), {code: `ENOENT`});
+
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw Object.assign(new Error(`ENOTDIR: not a directory, stat '${p}'`), {code: `ENOTDIR`});
+
+    return this.statImpl(`stat '${p}'`, p);
+  }
+
+  async lstatPromise(p: string) {
+    return this.lstatSync(p);
+  }
+
+  lstatSync(p: string) {
+    const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false);
+    
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw Object.assign(new Error(`ENOENT: no such file or directory, lstat '${p}'`), {code: `ENOENT`});
+
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw Object.assign(new Error(`ENOTDIR: not a directory, lstat '${p}'`), {code: `ENOTDIR`});
+
+    return this.statImpl(`lstat '${p}'`, p);
+  }
+
+  private statImpl(reason: string, p: string): Stats {
     if (this.listings.has(p)) {
       const uid = this.stats.uid;
       const gid = this.stats.gid;
@@ -230,7 +232,7 @@ export class ZipFS extends FakeFS {
       const stat = libzip.struct.statS();
 
       const rc = libzip.statIndex(this.zip, entry, 0, 0, stat);
-      if (rc !== 0)
+      if (rc === -1)
         throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
       const uid = this.stats.uid;
@@ -253,23 +255,7 @@ export class ZipFS extends FakeFS {
       return Object.assign({uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs}, IS_FILE_STAT);
     }
 
-    this.ensurePathCorrectness(p, `stat`);
     throw new Error(`Unreachable`);
-  }
-
-  mkdir(p: string) {
-    p = posix.resolve(`/`, p);
-
-    if (p === `/`)
-      return;
-
-    const index = libzip.dir.add(this.zip, posix.relative(`/`, p));
-
-    if (index === -1)
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
-
-    this.registerListing(p);
-    this.registerEntry(p, index);
   }
 
   private registerListing(p: string) {
@@ -287,10 +273,6 @@ export class ZipFS extends FakeFS {
     return listing;
   }
 
-  readlink(p: string): string {
-    throw new Error(`Unimplemented`);
-  }
-
   private registerEntry(p: string, index: number) {
     const parentListing = this.registerListing(posix.dirname(p));
     parentListing.add(posix.basename(p));
@@ -298,9 +280,56 @@ export class ZipFS extends FakeFS {
     this.entries.set(p, index);
   }
 
-  writeFile(p: string, content: Buffer | string) {
-    p = posix.join(this.realpath(posix.dirname(p)), posix.basename(p));
+  private resolveFilename(reason: string, p: string, resolveLastComponent: boolean = true) {
+    let resolvedP = posix.resolve(`/`, p);
 
+    if (resolvedP === `/`)
+      return `/`;
+
+    while (true) {
+      const parentP = this.resolveFilename(reason, posix.dirname(resolvedP), true);
+
+      const isDir = this.listings.has(parentP);
+      const doesExist = this.entries.has(parentP);
+
+      if (!isDir && !doesExist)
+        throw Object.assign(new Error(`ENOENT: no such file or directory, ${reason}`), {code: `ENOENT`});
+      
+      if (!isDir)
+        throw Object.assign(new Error(`ENOTDIR: not a directory, ${reason}`), {code: `ENOTDIR`});
+
+      resolvedP = posix.resolve(parentP, posix.basename(resolvedP));
+
+      const index = libzip.name.locate(this.zip, resolvedP);
+      if (index === -1 || !resolveLastComponent) {
+        break;
+      }
+
+      const attrs = libzip.file.getExternalAttributes(this.zip, index, 0, 0, libzip.uint08S, libzip.uint32S);
+      if (attrs === -1)
+        throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+        
+      const opsys = libzip.getValue(libzip.uint08S, `i8`) >>> 0;
+
+      if (opsys === libzip.ZIP_OPSYS_UNIX) {
+        const attributes = libzip.getValue(libzip.uint32S, `i32`) >>> 16;
+
+        // Follows symlinks
+        if ((attributes & 0o170000) === 0o120000) {
+          const target = this.getFileSource(index).toString();
+          resolvedP = posix.resolve(posix.dirname(resolvedP), target);
+        } else {
+          break;
+        }
+      } else {
+        break;
+      }
+    }
+    
+    return resolvedP;
+  }
+
+  private setFileSource(p: string, content: Buffer | string) {
     if (typeof content === `string`)
       content = Buffer.from(content);
 
@@ -320,40 +349,21 @@ export class ZipFS extends FakeFS {
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
     }
 
-    const index = libzip.file.add(this.zip, posix.relative(`/`, p), source, libzip.ZIP_FL_OVERWRITE);
-
-    this.registerEntry(p, index);
+    return libzip.file.add(this.zip, p, source, libzip.ZIP_FL_OVERWRITE);
   }
 
-  readFile(p: string, encoding: 'utf8'): string;
-  readFile(p: string, encoding?: string): Buffer;
-  readFile(p: string, encoding?: string) {
-    const origP = p;
-    p = this.realpath(p);
-
-    // Ensure that the last component is a directory (if it is we'll throw right after with EISDIR anyway)
-    if (origP[origP.length - 1] === `/`)
-      this.ensurePathCorrectness(p, `open`, true);
-
-    if (this.listings.has(p))
-      throw new Error(`EISDIR: illegal operation on a directory, read`);
-
-    const entry = this.entries.get(p);
-
-    if (entry === undefined)
-      throw new Error(`Unreachable`);
-
+  private getFileSource(index: number) {
     const stat = libzip.struct.statS();
 
-    const rc = libzip.statIndex(this.zip, entry, 0, 0, stat);
-    if (rc !== 0)
+    const rc = libzip.statIndex(this.zip, index, 0, 0, stat);
+    if (rc === -1)
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
     const size = libzip.struct.statSize(stat);
     const buffer = libzip.malloc(size);
 
     try {
-      const file = libzip.fopenIndex(this.zip, entry, 0, 0);
+      const file = libzip.fopenIndex(this.zip, index, 0, 0);
       if (file === 0)
         throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
@@ -370,7 +380,7 @@ export class ZipFS extends FakeFS {
         const memory = libzip.HEAPU8.subarray(buffer, buffer + size);
         const data = Buffer.from(memory);
 
-        return encoding ? data.toString(encoding) : data;
+        return data;
       } finally {
         libzip.fclose(file);
       }
@@ -379,27 +389,154 @@ export class ZipFS extends FakeFS {
     }
   }
 
-  private ensurePathCorrectness(p: string, op: string, checkDir: boolean = false) {
-    const parts = p.split('/');
+  async writeFilePromise(p: string, content: Buffer | string) {
+    return this.writeFileSync(p, content);
+  }
 
-    // Removes the last component if it's empty ("/", or "/foo/bar/")
-    if (!parts[parts.length - 1])
-      parts.pop();
+  writeFileSync(p: string, content: Buffer | string) {
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
 
-    for (let t = 1; t < parts.length; ++t) {
-      const parentPath = parts.slice(0, t).join(`/`) || `/`;
+    if (this.listings.has(resolvedP))
+      throw Object.assign(new Error(`EISDIR: illegal operation on a directory, open '${p}'`), {code: `EISDIR`});
 
-      const parentListing = this.listings.get(parentPath);
-      if (!parentListing)
-        throw Object.assign(new Error(`ENOTDIR: not a directory, ${op} '${parentPath}'`), {code: `ENOTDIR`});
+    const existed = this.entries.has(resolvedP);
+    const index = this.setFileSource(resolvedP, content);
 
-      if (!parentListing.has(parts[t])) {
-        throw Object.assign(new Error(`ENOENT: no such file or directory, ${op} '${posix.join(parentPath, parts[t])}'`), {code: `ENOENT`});
-      }
+    if (!existed) {
+      this.registerEntry(resolvedP, index);
     }
+  }
 
-    if (checkDir && !this.listings.get(p)) {
-      throw Object.assign(new Error(`ENOTDIR: not a directory, ${op} '${p}'`), {code: `ENOTDIR`});
+  async mkdirPromise(p: string) {
+    return this.mkdirSync(p);
+  }
+
+  mkdirSync(p: string) {
+    const resolvedP = this.resolveFilename(`mkdir '${p}'`, p);
+
+    if (this.entries.has(resolvedP) || this.listings.has(resolvedP))
+      throw Object.assign(new Error(`EEXIST: file already exists, mkdir '${p}'`), {code: `EEXIST`});
+
+    const index = libzip.dir.add(this.zip, resolvedP);
+    if (index === -1)
+      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+
+    this.registerListing(resolvedP);
+    this.registerEntry(resolvedP, index);
+  }
+
+  async symlinkPromise(target: string, p: string) {
+    return this.symlinkSync(target, p);
+  }
+
+  symlinkSync(target: string, p: string) {
+    const resolvedP = this.resolveFilename(`symlink '${target}' -> '${p}'`, p);
+
+    if (this.listings.has(resolvedP))
+      throw Object.assign(new Error(`EISDIR: illegal operation on a directory, symlink '${target}' -> '${p}'`), {code: `EISDIR`});
+
+    if (this.entries.has(resolvedP))
+      throw Object.assign(new Error(`EEXIST: file already exists, symlink '${target}' -> '${p}'`), {code: `EEXIST`});
+
+    const index = this.setFileSource(resolvedP, target);
+  
+    this.registerEntry(resolvedP, index);
+
+    const rc = libzip.file.setExternalAttributes(this.zip, index, 0, 0, libzip.ZIP_OPSYS_UNIX, (0o120000 | 0o644) << 16);
+    if (rc === -1) {
+      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
     }
+  }
+
+  readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
+  readFilePromise(p: string, encoding?: string): Promise<Buffer>;
+  async readFilePromise(p: string, encoding?: string) {
+    // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
+    switch (encoding) {
+      case `utf8`:
+        return this.readFileSync(p, encoding);
+      default:
+        return this.readFileSync(p, encoding);
+    }
+  }
+
+  readFileSync(p: string, encoding: 'utf8'): string;
+  readFileSync(p: string, encoding?: string): Buffer;
+  readFileSync(p: string, encoding?: string) {
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw Object.assign(new Error(`ENOENT: no such file or directory, open '${p}'`), {code: `ENOENT`});
+
+    // Ensures that the last component is a directory, if the user said so (even if it is we'll throw right after with EISDIR anyway)
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw Object.assign(new Error(`ENOTDIR: not a directory, open '${p}'`), {code: `ENOTDIR`});
+
+    if (this.listings.has(resolvedP))
+      throw Object.assign(new Error(`EISDIR: illegal operation on a directory, read`), {code: `EISDIR`});
+
+    const entry = this.entries.get(resolvedP);
+
+    if (entry === undefined)
+      throw new Error(`Unreachable`);
+
+    const data = this.getFileSource(entry);
+
+    return encoding ? data.toString(encoding) : data;
+  }
+
+  async readdirPromise(p: string) {
+    return this.readdirSync(p);
+  }
+
+  readdirSync(p: string): Array<string> {
+    const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
+
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw Object.assign(new Error(`ENOENT: no such file or directory, scandir '${p}'`), {code: `ENOENT`});
+
+    const directoryListing = this.listings.get(resolvedP);
+
+    if (!directoryListing)
+      throw Object.assign(new Error(`ENOTDIR: not a directory, scandir '${p}'`), {code: `ENOTDIR`});
+
+    return Array.from(directoryListing);
+  }
+
+  async readlinkPromise(p: string) {
+    return this.readlinkSync(p);
+  }
+
+  readlinkSync(p: string): string {
+    const resolvedP = this.resolveFilename(`readlink '${p}'`, p, false);
+
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw Object.assign(new Error(`ENOENT: no such file or directory, readlink '${p}'`), {code: `ENOENT`});
+
+    // Ensure that the last component is a directory (if it is we'll throw right after with EISDIR anyway)
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw Object.assign(new Error(`ENOTDIR: not a directory, open '${p}'`), {code: `ENOTDIR`});
+
+    if (this.listings.has(resolvedP))
+      throw Object.assign(new Error(`EINVAL: invalid argument, readlink '${p}'`), {code: `EINVAL`});
+
+    const entry = this.entries.get(resolvedP);
+
+    if (entry === undefined)
+      throw new Error(`Unreachable`);
+
+    const rc = libzip.file.getExternalAttributes(this.zip, entry, 0, 0, libzip.uint08S, libzip.uint32S);
+    if (rc === -1)
+      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+    
+    const opsys = libzip.getValue(libzip.uint08S, `i8`) >>> 0;
+    if (opsys !== libzip.ZIP_OPSYS_UNIX)
+      throw Object.assign(new Error(`EINVAL: invalid argument, readlink '${p}'`), {code: `EINVAL`});
+
+    const attributes = libzip.getValue(libzip.uint32S, `i32`) >>> 16;
+    if ((attributes & 0o170000) !== 0o120000)
+      throw Object.assign(new Error(`EINVAL: invalid argument, readlink '${p}'`), {code: `EINVAL`});
+    
+    return this.getFileSource(entry).toString();
   }
 };

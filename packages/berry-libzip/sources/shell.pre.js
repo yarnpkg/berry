@@ -1,1 +1,1 @@
-var Module = {wasmBinary: require('./libzip.wasm')};
+const frozenFs = Object.assign({}, require('fs'));

@@ -1,8 +1,8 @@
 import semver = require('semver');
 
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {httpUtils, tgzUtils}                        from '@berry/core';
-import {Locator, Manifest}                          from '@berry/core';
+import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
+import {Locator}                                    from '@berry/core';
 
 import {DEFAULT_REGISTRY}                           from './constants';
 
@@ -18,10 +18,17 @@ export class NpmFetcher implements Fetcher {
 
   async fetch(locator: Locator, opts: FetchOptions) {
     const tgz = await httpUtils.get(this.getLocatorUrl(locator, opts));
+    const prefixPath = `node_modules/${structUtils.requirableIdent(locator)}`;
 
-    return await tgzUtils.makeArchive(tgz, {
+    const archive = await tgzUtils.makeArchive(tgz, {
       stripComponents: 1,
+      prefixPath,
     });
+
+    // Since we installed everything into a subdirectory, we need to create this symlink to instruct the cache as to which directory to use
+    await archive.symlinkPromise(prefixPath, `berry-pkg`);
+
+    return archive;
   }
 
   private getLocatorUrl(locator: Locator, opts: FetchOptions) {

@@ -1,15 +1,14 @@
 import fsx = require('fs-extra');
 
-import {FakeFS, ZipFS, NodeFS}      from '@berry/zipfs';
-import {createHmac}                 from 'crypto';
-import {writeFile}                  from 'fs';
-import {lock, unlock}               from 'lockfile';
-import {dirname, relative, resolve} from 'path';
-import {promisify}                  from 'util';
+import {FakeFS, ZipFS, NodeFS, JailFS} from '@berry/zipfs';
+import {createHmac}                    from 'crypto';
+import {writeFile}                     from 'fs';
+import {lock, unlock}                  from 'lockfile';
+import {dirname, relative, resolve}    from 'path';
+import {promisify}                     from 'util';
 
-import {Archive}                    from './Archive';
-import {Configuration}              from './Configuration';
-import {Locator}                    from './types';
+import {Configuration}                 from './Configuration';
+import {Locator}                       from './types';
 
 const writeFileP = promisify(writeFile);
 
@@ -65,10 +64,33 @@ export class Cache {
   }
 
   async ensureVirtualLink(locator: Locator, target: string) {
-    const virtualLink = resolve(this.cwd, `virtual`, locator.locatorHash);
+    let virtualLink = resolve(this.cwd, `virtual`, locator.locatorHash);
 
-    // @ts-ignore: [DefinitelyTyped] The "type" parameter is missing
-    await fsx.ensureSymlink(relative(dirname(virtualLink), target), virtualLink);
+    if (target.endsWith(`.zip`))
+      virtualLink += `.zip`;
+
+    const relativeTarget = relative(dirname(virtualLink), target);
+
+    let currentLink;
+
+    try {
+      currentLink = await fsx.readlink(virtualLink);
+    } catch (error) {
+      if (error.code !== `ENOENT`) {
+        throw error;
+      }
+    }
+
+    if (currentLink !== undefined) {
+      if (currentLink === relativeTarget) {
+        return virtualLink;
+      } else {
+        throw new Error(`Conflicting virtual paths`);
+      }
+    }
+
+    await fsx.mkdirp(dirname(virtualLink));
+    await fsx.symlink(relativeTarget, virtualLink);
 
     return virtualLink;
   }
@@ -101,6 +123,9 @@ export class Cache {
 
         fs = new ZipFS(file);
       }
+
+      if (await fs.existsPromise(`berry-pkg`))
+        fs = new JailFS(await fs.readlinkPromise(`berry-pkg`), {baseFs: fs});
 
       return fs;
     });

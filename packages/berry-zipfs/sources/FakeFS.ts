@@ -6,26 +6,40 @@ export abstract class FakeFS {
 
   abstract createReadStream(p: string, opts: {encoding?: string}): ReadStream;
 
-  abstract realpath(p: string): string;
+  abstract realpathPromise(p: string): Promise<string>;
+  abstract realpathSync(p: string): string;
 
-  abstract readdir(p: string): Array<string>;
+  abstract readdirPromise(p: string): Promise<Array<string>>;
+  abstract readdirSync(p: string): Array<string>;
 
-  abstract exists(p: string): boolean;
+  abstract existsPromise(p: string): Promise<boolean>;
+  abstract existsSync(p: string): boolean;
 
-  abstract stat(p: string): Stats;
+  abstract statPromise(p: string): Promise<Stats>;
+  abstract statSync(p: string): Stats;
 
-  abstract lstat(p: string): Stats;
+  abstract lstatPromise(p: string): Promise<Stats>;
+  abstract lstatSync(p: string): Stats;
 
-  abstract mkdir(p: string): void;
+  abstract mkdirPromise(p: string): Promise<void>;
+  abstract mkdirSync(p: string): void;
 
-  abstract readlink(p: string): string;
+  abstract symlinkPromise(target: string, p: string): Promise<void>;
+  abstract symlinkSync(target: string, p: string): void;
 
-  abstract writeFile(p: string, content: Buffer | string): void;
+  abstract writeFilePromise(p: string, content: Buffer | string): void;
+  abstract writeFileSync(p: string, content: Buffer | string): void;
 
-  abstract readFile(p: string, encoding: 'utf8'): string;
-  abstract readFile(p: string, encoding?: string): Buffer;
+  abstract readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
+  abstract readFilePromise(p: string, encoding?: string): Promise<Buffer>;
 
-  mkdirp(p: string) {
+  abstract readFileSync(p: string, encoding: 'utf8'): string;
+  abstract readFileSync(p: string, encoding?: string): Buffer;
+
+  abstract readlinkPromise(p: string): Promise<string>;
+  abstract readlinkSync(p: string): string;
+
+  async mkdirpPromise(p: string) {
     p = posix.resolve(`/`, p);
 
     if (p === `/`)
@@ -36,8 +50,25 @@ export abstract class FakeFS {
     for (let u = 2; u <= parts.length; ++u) {
       const subPath = parts.slice(0, u).join(`/`);
 
-      if (!this.exists(subPath)) {
-        this.mkdir(subPath);
+      if (!this.existsSync(subPath)) {
+        await this.mkdirPromise(subPath);
+      }
+    }
+  }
+
+  mkdirpSync(p: string) {
+    p = posix.resolve(`/`, p);
+
+    if (p === `/`)
+      return;
+
+    const parts = p.split(`/`);
+
+    for (let u = 2; u <= parts.length; ++u) {
+      const subPath = parts.slice(0, u).join(`/`);
+
+      if (!this.existsSync(subPath)) {
+        this.mkdirSync(subPath);
       }
     }
   }

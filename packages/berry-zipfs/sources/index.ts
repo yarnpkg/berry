@@ -33,57 +33,58 @@ function wrapAsync(fn: Function) {
   };
 }
 
-export function patch(patchedFs: typeof fs, fakeFs: FakeFS): void {
-  const SUPPORTED = new Set([
-    `exists`,
-    `realpath`,
-    `readdir`,
-    `stat`,
-    `lstat`,
-    `readlink`,
-    `readFile`,
-    `writeFile`,
-  ]);
-
-  const SUPPORTED_SYNC_ONLY = new Set([
+export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
+  const SYNC_IMPLEMENTATIONS = new Set([
     `createReadStream`,
+    `existsSync`,
+    `realpathSync`,
+    `readdirSync`,
+    `statSync`,
+    `lstatSync`,
+    `readlinkSync`,
+    `readFileSync`,
+    `writeFileSync`,
   ]);
 
-  for (const fnName of SUPPORTED) {
-    // @ts-ignore
-    const fakeImpl: Function = fakeFs[fnName].bind(fakeFs);
+  const ASYNC_IMPLEMENTATIONS = new Set([
+    `existsPromise`,
+    `realpathPromise`,
+    `readdirPromise`,
+    `statPromise`,
+    `lstatPromise`,
+    `readlinkPromise`,
+    `readFilePromise`,
+    `writeFilePromise`,
+  ]);
 
-    const asyncName = fnName;
-    const syncName = `${fnName}Sync`;
+  for (const fnName of ASYNC_IMPLEMENTATIONS) {
+    const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
+    const origName = fnName.replace(/Promise$/, ``);
 
-    const asyncOrig: any = (patchedFs as any)[asyncName];
-    const syncOrig: any = (patchedFs as any)[syncName];
+    (patchedFs as any)[origName] = (... args: Array<any>) => {
+      const hasCallback = typeof args[args.length - 1] === `function`;
+      const callback = hasCallback ? args.pop() : () => {};
 
-    if (asyncOrig)
-      (patchedFs as any)[asyncName] = wrapAsync(fakeImpl);
-
-    if (syncOrig) {
-      (patchedFs as any)[syncName] = wrapSync(fakeImpl);
-    }
+      fakeImpl(... args).then((result: any) => {
+        callback(undefined, result);
+      }, (error: Error) => {
+        callback(error);
+      });
+    };
   }
 
-  for (const fnName of SUPPORTED_SYNC_ONLY) {
-    // @ts-ignore
-    const fakeImpl: Function = fakeFs[fnName].bind(fakeFs);
+  for (const fnName of SYNC_IMPLEMENTATIONS) {
+    const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
+    const origName = fnName;
 
-    const syncName = fnName;
-    const syncOrig: any = (patchedFs as any)[syncName];
-
-    if (syncOrig) {
-      (patchedFs as any)[syncName] = wrapSync(fakeImpl);
-    }
+    (patchedFs as any)[origName] = fakeImpl;
   }
 }
 
-export function extend(realFs: typeof fs, fakeFs: FakeFS): typeof fs {
+export function extendFs(realFs: typeof fs, fakeFs: FakeFS): typeof fs {
   const patchedFs = Object.create(realFs);
 
-  patch(patchedFs, fakeFs);
+  patchFs(patchedFs, fakeFs);
 
   return patchedFs;
 }

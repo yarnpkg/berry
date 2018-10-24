@@ -1,5 +1,4 @@
 import {AliasFS}               from '@berry/zipfs';
-import {relative, resolve}     from 'path';
 
 import {Fetcher, FetchOptions} from './Fetcher';
 import * as structUtils        from './structUtils';

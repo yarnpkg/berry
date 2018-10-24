@@ -5,7 +5,7 @@
     "main": "./sources/index.ts",
     "dependencies": {
         "@manaflair/term-strings": "^0.10.1",
-        "@manaflair/text-layout": "^0.10.2",
+        "@manaflair/text-layout": "^0.11.0",
         "eventemitter3": "^3.1.0",
         "react-reconciler": "^0.14.0",
         "reopen-tty": "^1.1.2",

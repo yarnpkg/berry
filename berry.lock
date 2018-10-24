@@ -372,7 +372,7 @@
 "@berry/ui@workspace-base:0.0.0":
   dependencies:
     @manaflair/term-strings: ^0.10.1
-    @manaflair/text-layout: ^0.10.2
+    @manaflair/text-layout: ^0.11.0
     eventemitter3: ^3.1.0
     faker: ^4.1.0
     react: ^16.5.1
@@ -385,7 +385,7 @@
 "@berry/ui@workspace:[object Object], @berry/ui@0.0.0":
   dependencies:
     @manaflair/term-strings: ^0.10.1
-    @manaflair/text-layout: ^0.10.2
+    @manaflair/text-layout: ^0.11.0
     eventemitter3: ^3.1.0
     react-reconciler: ^0.14.0
     reopen-tty: ^1.1.2
@@ -419,8 +419,8 @@
     color-diff: ^1.0.0
   resolution: @manaflair/term-strings@0.10.1
 
-@manaflair/text-layout@^0.10.2:
-  resolution: @manaflair/text-layout@0.10.4
+@manaflair/text-layout@^0.11.0:
+  resolution: @manaflair/text-layout@0.11.0
 
 @mrmlnc/readdir-enhanced@^2.2.1:
   dependencies:
@@ -489,6 +489,7 @@
   dependencies:
     @types/glob: "*"
     fast-glob: ^2.0.2
+    minimatch: ^3.0.4
   resolution: @types/globby@8.0.0
 
 @types/got@^8.3.4:
@@ -2610,6 +2611,8 @@ readdirp@^2.0.0:
   resolution: readdirp@2.2.1
 
 "redux-saga@^0.16.2, redux-saga@*":
+  dependencies:
+    redux: ^4.0.0
   resolution: redux-saga@0.16.2
 
 "redux@^4.0.0, redux@*":

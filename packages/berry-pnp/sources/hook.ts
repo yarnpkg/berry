@@ -36,7 +36,7 @@ import NativeModule = require('module');
 import path = require('path');
 import StringDecoder = require('string_decoder');
 
-import {NodeFS, ZipOpenFS, patch} from '@berry/zipfs';
+import {NodeFS, ZipOpenFS, patchFs} from '@berry/zipfs';
 
 // @ts-ignore
 const Module: ModuleInterfaceStatic = NativeModule;
@@ -731,7 +731,7 @@ export function setup() {
   const localFs: typeof fs = {...fs};
   const nodeFs = new NodeFS(localFs);
 
-  patch(fs, new ZipOpenFS({baseFs: nodeFs}));
+  patchFs(fs, new ZipOpenFS({baseFs: nodeFs, filter: /\.pnp/}));
 };
 
 if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {

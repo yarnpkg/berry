@@ -51,7 +51,7 @@ LIBZIP_VERSION=1.5.1
     source ~/emsdk-portable/emsdk_env.sh
 
     emcc \
-        -o ../sources/libzip.js \
+        -o ./build.js \
         -s WASM=1 \
         -s EXPORTED_FUNCTIONS="$(cat ./exported.json)" \
         -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "getValue"]' \
@@ -66,4 +66,10 @@ LIBZIP_VERSION=1.5.1
         ./zipstruct.c \
         ./libzip-"$LIBZIP_VERSION"/lib/libzip.a \
         ./zlib-"$ZLIB_VERSION"/libz.a
+    
+    cat > ../sources/libzip.js \
+        "../sources/shell.pre.js" \
+        <(sed -s 's/require("fs")/frozenFs/g' ./build.js) \
+        "../sources/shell.post.js"
+        
 )

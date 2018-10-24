@@ -19,13 +19,13 @@ export class Archive {
   }
 
   addFile(name: string, data: Buffer | string, options: {date?: Date} = {}) {
-    this.zip.mkdirp(dirname(name));
-    this.zip.writeFile(name, data);
+    this.zip.mkdirpSync(dirname(name));
+    this.zip.writeFileSync(name, data);
   }
 
   readText(name: string): string {
     // @ts-ignore
-    return this.zip.readFile(name, `utf8`);
+    return this.zip.readFileSync(name, `utf8`);
   }
 
   readJson(name: string) {

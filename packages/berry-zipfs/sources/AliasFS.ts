@@ -26,47 +26,99 @@ export class AliasFS extends FakeFS {
     return this.baseFs.createReadStream(p, opts);
   }
 
-  realpath(p: string) {
-    return this.baseFs.realpath(p);
+  async realpathPromise(p: string) {
+    return await this.baseFs.realpathPromise(p);
   }
 
-  readdir(p: string) {
-    return this.baseFs.readdir(p);
+  realpathSync(p: string) {
+    return this.baseFs.realpathSync(p);
   }
 
-  exists(p: string) {
-    return this.baseFs.exists(p);
+  async existsPromise(p: string) {
+    return await this.baseFs.existsPromise(p);
   }
 
-  stat(p: string) {
-    return this.baseFs.stat(p);
+  existsSync(p: string) {
+    return this.baseFs.existsSync(p);
   }
 
-  lstat(p: string) {
-    return this.baseFs.lstat(p);
+  async statPromise(p: string) {
+    return await this.baseFs.statPromise(p);
   }
 
-  mkdir(p: string) {
-    return this.baseFs.mkdir(p);
+  statSync(p: string) {
+    return this.baseFs.statSync(p);
   }
 
-  readlink(p: string) {
-    return this.baseFs.readlink(p);
+  async lstatPromise(p: string) {
+    return await this.baseFs.lstatPromise(p);
   }
 
-  writeFile(p: string, content: Buffer | string) {
-    this.baseFs.writeFile(p, content);
+  lstatSync(p: string) {
+    return this.baseFs.lstatSync(p);
   }
 
-  readFile(p: string, encoding: 'utf8'): string;
-  readFile(p: string, encoding?: string): Buffer;
-  readFile(p: string, encoding?: string) {
+  async writeFilePromise(p: string, content: Buffer | string) {
+    return await this.baseFs.writeFilePromise(p, content);
+  }
+
+  writeFileSync(p: string, content: Buffer | string) {
+    return this.baseFs.writeFileSync(p, content);
+  }
+  
+  async mkdirPromise(p: string) {
+    return await this.baseFs.mkdirPromise(p);
+  }
+
+  mkdirSync(p: string) {
+    return this.baseFs.mkdirSync(p);
+  }
+
+  async symlinkPromise(target: string, p: string) {
+    return await this.baseFs.symlinkPromise(target, p);
+  }
+
+  symlinkSync(target: string, p: string) {
+    return this.baseFs.symlinkSync(target, p);
+  }
+
+  readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
+  readFilePromise(p: string, encoding?: string): Promise<Buffer>;
+  async readFilePromise(p: string, encoding?: string) {
     // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
     switch (encoding) {
       case `utf8`:
-        return this.baseFs.readFile(p, encoding);
+        return await this.baseFs.readFilePromise(p, encoding);
       default:
-        return this.baseFs.readFile(p, encoding);
+        return await this.baseFs.readFilePromise(p, encoding);
     }
+  }
+
+  readFileSync(p: string, encoding: 'utf8'): string;
+  readFileSync(p: string, encoding?: string): Buffer;
+  readFileSync(p: string, encoding?: string) {
+    // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
+    switch (encoding) {
+      case `utf8`:
+        return this.baseFs.readFileSync(p, encoding);
+      default:
+        return this.baseFs.readFileSync(p, encoding);
+    }
+  }
+
+  async readdirPromise(p: string) {
+    return await this.baseFs.readdirPromise(p);
+  }
+
+  readdirSync(p: string) {
+    return this.baseFs.readdirSync(p);
+  }
+
+  async readlinkPromise(p: string) {
+    return await this.baseFs.readlinkPromise(p);
+  }
+
+  readlinkSync(p: string) {
+    return this.baseFs.readlinkSync(p);
   }
 }

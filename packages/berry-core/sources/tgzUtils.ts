@@ -12,19 +12,19 @@ export async function makeArchiveFromDirectory(source: string, {baseFs = new Nod
   const zipFs = new ZipFS(tmpNameSync(), {create: true});
 
   function processDirectory(source: string, target: string) {
-    const listing = baseFs.readdir(source);
+    const listing = baseFs.readdirSync(source);
 
     for (const entry of listing) {
       const sourcePath = posix.resolve(source, entry);
       const targetPath = posix.resolve(target, entry);
 
-      const stat = baseFs.lstat(sourcePath);
+      const stat = baseFs.lstatSync(sourcePath);
 
       if (stat.isDirectory()) {
-        zipFs.mkdir(targetPath);
+        zipFs.mkdirSync(targetPath);
         processDirectory(sourcePath, targetPath);
       } else if (stat.isFile()) {
-        zipFs.writeFile(targetPath, baseFs.readFile(sourcePath));
+        zipFs.writeFileSync(targetPath, baseFs.readFileSync(sourcePath));
       } else {
         // TODO: More file types
       }
@@ -77,13 +77,13 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
     entry.on(`end`, () => {
       switch (entry.type) {
         case `Directory`: {
-          zipFs.mkdirp(mappedPath);
+          zipFs.mkdirpSync(mappedPath);
         } break;
 
         case `OldFile`:
         case `File`: {
-          zipFs.mkdirp(posix.dirname(mappedPath));
-          zipFs.writeFile(mappedPath, Buffer.concat(chunks));
+          zipFs.mkdirpSync(posix.dirname(mappedPath));
+          zipFs.writeFileSync(mappedPath, Buffer.concat(chunks));
         } break;
       }
     });

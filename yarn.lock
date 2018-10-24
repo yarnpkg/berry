@@ -136,10 +136,10 @@
     babel-runtime "^6.23.0"
     color-diff "^1.0.0"
 
-"@manaflair/text-layout@^0.10.2":
-  version "0.10.2"
-  resolved "https://registry.yarnpkg.com/@manaflair/text-layout/-/text-layout-0.10.2.tgz#41c4e70c68e590f8e1f5e5fd0eec3816bacd7217"
-  integrity sha512-syWpNlm9OgLRtr/uIAPojlfKBptc4EYFyoDdu9NDZ68fdnMS2ZWYsqwFvA7bClSuyVjEC8NtVJBVB2rU6RfbYw==
+"@manaflair/text-layout@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@manaflair/text-layout/-/text-layout-0.11.0.tgz#bcd9a9d29198b98af513d20013688e39c06c9f46"
+  integrity sha512-4C8usTE6adzF1l6PEhPTkgg/YOgJwfQJLJ4gZ69XzXk7hBgGtphiKiwOqEkeqpRkMpiOMN1UiwqrPHZYg8BgVA==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"

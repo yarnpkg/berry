@@ -24,7 +24,7 @@ export class TarballFileFetcher implements Fetcher {
     const {parentLocator, filePath} = this.parseLocator(locator);
     const parentFs = await opts.fetcher.fetch(parentLocator, opts);
 
-    return await tgzUtils.makeArchive(parentFs.readFile(filePath), {
+    return await tgzUtils.makeArchive(parentFs.readFileSync(filePath), {
       stripComponents: 1,
     });
   }

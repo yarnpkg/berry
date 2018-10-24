@@ -1,5 +1,7 @@
 import fs = require('fs');
 
+import {Stats}  from 'fs';
+
 import {FakeFS} from './FakeFS';
 
 export class NodeFS extends FakeFS {
@@ -19,42 +21,118 @@ export class NodeFS extends FakeFS {
     return this.realFs.createReadStream(this.fromPortablePath(p), opts);
   }
 
-  realpath(p: string) {
+  async realpathPromise(p: string) {
+    return await new Promise<string>((resolve, reject) => {
+      this.realFs.realpath(p, this.makeCallback(resolve, reject))
+    });
+  }
+
+  realpathSync(p: string) {
     return this.toPortablePath(this.realFs.realpathSync(this.fromPortablePath(p)));
   }
 
-  readdir(p: string) {
-    return this.realFs.readdirSync(this.fromPortablePath(p));
+  async existsPromise(p: string) {
+    return await new Promise<boolean>(resolve => {
+      this.realFs.exists(p, resolve);
+    });
   }
 
-  exists(p: string) {
+  existsSync(p: string) {
     return this.realFs.existsSync(this.fromPortablePath(p));
   }
 
-  stat(p: string) {
+  async statPromise(p: string) {
+    return await new Promise<Stats>((resolve, reject) => {
+      this.realFs.stat(p, this.makeCallback(resolve, reject))
+    });
+  }
+
+  statSync(p: string) {
     return this.realFs.statSync(this.fromPortablePath(p));
   }
 
-  lstat(p: string) {
+  async lstatPromise(p: string) {
+    return await new Promise<Stats>((resolve, reject) => {
+      this.realFs.lstat(p, this.makeCallback(resolve, reject))
+    });
+  }
+
+  lstatSync(p: string) {
     return this.realFs.lstatSync(this.fromPortablePath(p));
   }
 
-  mkdir(p: string) {
-    return this.realFs.mkdirSync(this.fromPortablePath(p));
+  async writeFilePromise(p: string, content: Buffer | string) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.writeFile(p, content, this.makeCallback(resolve, reject))
+    });
   }
 
-  readlink(p: string) {
-    return this.realFs.readlinkSync(this.fromPortablePath(p));
-  }
-
-  writeFile(p: string, content: Buffer | string) {
+  writeFileSync(p: string, content: Buffer | string) {
     this.realFs.writeFileSync(this.fromPortablePath(p), content);
   }
 
-  readFile(p: string, encoding: 'utf8'): string;
-  readFile(p: string, encoding?: string): Buffer;
-  readFile(p: string, encoding?: string) {
+  async mkdirPromise(p: string) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.mkdir(p, this.makeCallback(resolve, reject))
+    });
+  }
+
+  mkdirSync(p: string) {
+    return this.realFs.mkdirSync(this.fromPortablePath(p));
+  }
+
+  async symlinkPromise(target: string, p: string) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.symlink(target, this.fromPortablePath(p), this.makeCallback(resolve, reject));
+    });
+  }
+
+  symlinkSync(target: string, p: string) {
+    return this.realFs.symlinkSync(target, this.fromPortablePath(p));
+  }
+
+  readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
+  readFilePromise(p: string, encoding?: string): Promise<Buffer>;
+  async readFilePromise(p: string, encoding?: string) {
+    return await new Promise<any>((resolve, reject) => {
+      this.realFs.readFile(this.fromPortablePath(p), encoding, this.makeCallback(resolve, reject));
+    });
+  }
+
+  readFileSync(p: string, encoding: 'utf8'): string;
+  readFileSync(p: string, encoding?: string): Buffer;
+  readFileSync(p: string, encoding?: string) {
     return this.realFs.readFileSync(this.fromPortablePath(p), encoding);
+  }
+
+  async readdirPromise(p: string) {
+    return await new Promise<Array<string>>((resolve, reject) => {
+      this.realFs.readdir(p, this.makeCallback(resolve, reject))
+    });
+  }
+
+  readdirSync(p: string) {
+    return this.realFs.readdirSync(this.fromPortablePath(p));
+  }
+
+  async readlinkPromise(p: string) {
+    return await new Promise<string>((resolve, reject) => {
+      this.realFs.readlink(p, this.makeCallback(resolve, reject))
+    });
+  }
+
+  readlinkSync(p: string) {
+    return this.realFs.readlinkSync(this.fromPortablePath(p));
+  }
+
+  private makeCallback<T>(resolve: (value?: T) => void, reject: (reject: Error) => void) {
+    return (err: Error, result?: T) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    };
   }
 
   private fromPortablePath(p: string) {

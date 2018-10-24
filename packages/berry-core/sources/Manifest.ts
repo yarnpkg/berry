@@ -21,7 +21,7 @@ export class Manifest {
   public workspaceDefinitions: Array<WorkspaceDefinition> = [];
 
   loadFile(fakeFs: FakeFS, path: string = `package.json`) {
-    const content = fakeFs.readFile(path, `utf8`);
+    const content = fakeFs.readFileSync(path, `utf8`);
     const data = JSON.parse(content);
 
     this.load(data);

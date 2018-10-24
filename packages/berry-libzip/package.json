@@ -7,6 +7,6 @@
         "tslib": "^1"
     },
     "scripts": {
-        "build": "./artifacts/build.sh"
+        "build": "cd ./artifacts && ./build.sh"
     }
 }
