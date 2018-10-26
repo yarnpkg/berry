@@ -1,9 +1,9 @@
-import {Resolver, ResolveOptions} from './Resolver';
-import * as structUtils           from './structUtils';
-import {Descriptor, Locator}      from './types';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import * as structUtils                                  from './structUtils';
+import {Descriptor, Locator}                             from './types';
 
 export class LockfileResolver implements Resolver {
-  supportsDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     const resolution = opts.project.storedResolutions.get(descriptor.descriptorHash);
 
     if (resolution)
@@ -17,14 +17,18 @@ export class LockfileResolver implements Resolver {
     return false;
   }
 
-  supportsLocator(locator: Locator, opts: ResolveOptions) {
+  supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
     if (opts.project.storedPackages.has(locator.locatorHash))
       return true;
 
     return false;
   }
 
-  async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: ResolveOptions) {
+  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions): boolean {
+    throw new Error(`The shouldPersistResolution method shouldn't be called on the lockfile resolver, which would always answer yes`);
+  }
+
+  async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     return descriptor;
   }
 

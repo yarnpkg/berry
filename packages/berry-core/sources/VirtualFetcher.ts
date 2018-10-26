@@ -22,8 +22,7 @@ export class VirtualFetcher implements Fetcher {
     const nextLocator = structUtils.makeLocatorFromIdent(locator, nextReference);
 
     const parentFs = await opts.fetcher.fetch(nextLocator, opts);
-    const virtualLink = await opts.cache.ensureVirtualLink(locator, parentFs.getRealPath());
-
-    return new AliasFS(virtualLink, {baseFs: parentFs});
+    
+    return await opts.cache.ensureVirtualLink(locator, parentFs);
   }
 }

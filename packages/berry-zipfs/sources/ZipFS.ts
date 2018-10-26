@@ -167,8 +167,14 @@ export class ZipFS extends FakeFS {
   }
 
   existsSync(p: string): boolean {
-    const resolvedP = this.resolveFilename(`stat '${p}'`, p);
-    
+    let resolvedP;
+
+    try {
+      resolvedP = this.resolveFilename(`stat '${p}'`, p);
+    } catch (error) {
+      return false;
+    }
+      
     return this.entries.has(resolvedP) || this.listings.has(resolvedP);
   }
 

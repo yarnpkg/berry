@@ -1,26 +1,30 @@
-import {Resolver, ResolveOptions} from './Resolver';
-import {WorkspaceResolver}        from './WorkspaceResolver';
-import * as structUtils           from './structUtils';
-import {Descriptor, Locator}      from './types';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import {WorkspaceResolver}                               from './WorkspaceResolver';
+import * as structUtils                                  from './structUtils';
+import {Descriptor, Locator}                             from './types';
 
 export class WorkspaceBaseResolver implements Resolver {
   static protocol = `workspace-base:`;
 
-  supportsDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     if (!descriptor.range.startsWith(WorkspaceBaseResolver.protocol))
       return false;
 
     return true;
   }
 
-  supportsLocator(locator: Locator, opts: ResolveOptions) {
+  supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
     if (!locator.reference.startsWith(WorkspaceBaseResolver.protocol))
       return false;
 
     return true;
   }
 
-  async normalizeDescriptor(descriptor: Descriptor, locator: Locator, opts: ResolveOptions) {
+  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
+    return false;
+  }
+
+  async normalizeDescriptor(descriptor: Descriptor, locator: Locator, opts: MinimalResolveOptions) {
     return descriptor;
   }
 

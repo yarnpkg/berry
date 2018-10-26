@@ -21,6 +21,10 @@ export class NpmResolver implements Resolver {
     return true;
   }
 
+  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
+    return true;
+  }
+
   async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     return descriptor;
   }

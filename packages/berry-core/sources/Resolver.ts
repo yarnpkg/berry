@@ -16,6 +16,8 @@ export interface Resolver {
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions): boolean;
 
+  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions): boolean;
+
   normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions): Promise<Descriptor>;
 
   getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<string>>;

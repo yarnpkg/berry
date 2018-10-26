@@ -1,7 +1,7 @@
 const path = require(`path`);
 const webpack = require(`webpack`);
 const PnpWebpackPlugin = require(`pnp-webpack-plugin`);
-Error.stackTraceLimit=Infinity
+
 module.exports = {
   mode: `development`,
   devtool: false,
@@ -27,7 +27,8 @@ module.exports = {
     rules: [{
       test: /\.tsx?$/,
       exclude: /\.d\.ts$/,
-      use: `ts-loader`,
+      loader: `ts-loader`,
+      options: PnpWebpackPlugin.tsLoaderOptions(),
     }],
   },
 

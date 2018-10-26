@@ -5,8 +5,8 @@ import {Descriptor, Locator, Package}                    from './types';
 export class MultiResolver implements Resolver {
   private readonly resolvers: Array<Resolver>;
 
-  constructor(resolvers: Array<Resolver>) {
-    this.resolvers = resolvers;
+  constructor(resolvers: Array<Resolver | null>) {
+    this.resolvers = resolvers.filter(resolver => resolver) as Array<Resolver>;
   }
 
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -19,6 +19,12 @@ export class MultiResolver implements Resolver {
     const resolver = this.tryResolverByLocator(locator, opts);
 
     return resolver ? true : false;
+  }
+
+  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
+    const resolver = this.getResolverByLocator(locator, opts);
+
+    return resolver.shouldPersistResolution(locator, opts);
   }
 
   async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions): Promise<Descriptor> {

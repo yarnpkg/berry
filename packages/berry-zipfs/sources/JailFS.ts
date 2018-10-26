@@ -15,7 +15,7 @@ export class JailFS extends FakeFS {
   constructor(target: string, {baseFs = new NodeFS()}: JailFSOptions = {}) {
     super();
 
-    this.target = target;
+    this.target = posix.resolve(`/`, target);
     this.baseFs = baseFs;
   }
 
@@ -136,7 +136,7 @@ export class JailFS extends FakeFS {
   }
 
   private toJailedPath(p: string) {
-    const relative = posix.relative(this.target, posix.normalize(p));
+    const relative = posix.relative(this.target, posix.resolve(`/`, p));
 
     if (relative.match(/^(\.\.)?\//))
       throw new Error(`Resolving this path (${p}) would escape the jail (${this.target})`);

@@ -1,12 +1,12 @@
 import querystring = require('querystring');
 
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {Locator} from '@berry/core';
-import {structUtils}                    from '@berry/core';
-import {JailFS}                         from '@berry/zipfs';
-import {posix}                          from 'path';
+import {Locator}                                    from '@berry/core';
+import {structUtils}                                from '@berry/core';
+import {JailFS}                                     from '@berry/zipfs';
+import {posix}                                      from 'path';
 
-import {LINK_PROTOCOL}                  from './constants';
+import {LINK_PROTOCOL}                              from './constants';
 
 export class LinkFetcher implements Fetcher {
   public mountPoint: string = `virtual-fetchers`;
@@ -22,7 +22,11 @@ export class LinkFetcher implements Fetcher {
     const {parentLocator, linkPath} = this.parseLocator(locator);
     const parentFs = await opts.fetcher.fetch(parentLocator, opts);
 
-    return new JailFS(posix.resolve(`/`, linkPath), {baseFs: parentFs});
+    if (posix.isAbsolute(linkPath)) {
+      return new JailFS(linkPath);
+    } else {
+      return new JailFS(posix.resolve(`/`, linkPath), {baseFs: parentFs});
+    }
   }
 
   private parseLocator(locator: Locator) {

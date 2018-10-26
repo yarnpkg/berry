@@ -64,6 +64,11 @@
 "@babel/parser@^7.1.2, @babel/parser@^7.1.3":
   resolution: @babel/parser@7.1.3
 
+"@babel/runtime@^7.1.2, @babel/runtime@^7.0.0":
+  dependencies:
+    regenerator-runtime: ^0.12.0
+  resolution: @babel/runtime@7.1.2
+
 "@babel/template@^7.1.2, @babel/template@^7.1.0":
   dependencies:
     @babel/code-frame: ^7.0.0
@@ -97,10 +102,10 @@
     brfs: ^2.0.1
     buffer-loader: ^0.1.0
     joi: ^13.6.0
-    pnp-webpack-plugin: ^1.1.0
+    pnp-webpack-plugin: "portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"
     raw-loader: ^0.5.1
     transform-loader: ^0.2.4
-    ts-loader: ^5.2.1
+    ts-loader: "portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"
     typescript: ^3.0.1
     val-loader: ^1.1.1
     webpack: ^4.18.0
@@ -113,10 +118,10 @@
     brfs: ^2.0.1
     buffer-loader: ^0.1.0
     joi: ^13.6.0
-    pnp-webpack-plugin: ^1.1.0
+    pnp-webpack-plugin: "portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"
     raw-loader: ^0.5.1
     transform-loader: ^0.2.4
-    ts-loader: ^5.2.1
+    ts-loader: "portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"
     typescript: ^3.0.1
     val-loader: ^1.1.1
     webpack: ^4.18.0
@@ -225,6 +230,7 @@
     @types/lockfile: ^1.0.0
     @types/lodash: ^4.14.116
     @types/mkdirp: ^0.5.2
+    @types/node: ^10.12.0
     @types/node-fetch: ^2.1.2
     @types/react: ^16.4.14
     @types/react-redux: ^6.0.9
@@ -294,7 +300,7 @@
     react: ^16.5.2
     react-redux: ^5.0.7
     redux: ^4.0.0
-    redux-saga: ^0.16.2
+    redux-saga: ^1.0.0-beta.3
   resolution: "@berry/plugin-hub@workspace-base:0.0.0"
 
 "@berry/plugin-hub@workspace:[object Object], @berry/plugin-hub@0.0.0":
@@ -307,7 +313,7 @@
     react: ^16.5.2
     react-redux: ^5.0.7
     redux: ^4.0.0
-    redux-saga: ^0.16.2
+    redux-saga: ^1.0.0-beta.3
   peerDependencies:
     @berry/cli: 0.0.0
     @berry/core: 0.0.0
@@ -387,6 +393,7 @@
     @manaflair/term-strings: ^0.10.1
     @manaflair/text-layout: ^0.11.0
     eventemitter3: ^3.1.0
+    faker: ^4.1.0
     react-reconciler: ^0.14.0
     reopen-tty: ^1.1.2
     yoga-dom: ^0.0.14
@@ -430,6 +437,22 @@
 
 @nodelib/fs.stat@^1.0.1:
   resolution: @nodelib/fs.stat@1.1.2
+
+@redux-saga/deferred@^1.0.0-beta.3:
+  resolution: @redux-saga/deferred@1.0.0-beta.3
+
+@redux-saga/delay-p@^1.0.0-beta.3:
+  dependencies:
+    @redux-saga/symbols: ^1.0.0-beta.3
+  resolution: @redux-saga/delay-p@1.0.0-beta.3
+
+@redux-saga/is@^1.0.0-beta.3:
+  dependencies:
+    @redux-saga/symbols: ^1.0.0-beta.3
+  resolution: @redux-saga/is@1.0.0-beta.3
+
+@redux-saga/symbols@^1.0.0-beta.3:
+  resolution: @redux-saga/symbols@1.0.0-beta.3
 
 @sindresorhus/is@^0.11.0:
   dependencies:
@@ -489,7 +512,6 @@
   dependencies:
     @types/glob: "*"
     fast-glob: ^2.0.2
-    minimatch: ^3.0.4
   resolution: @types/globby@8.0.0
 
 @types/got@^8.3.4:
@@ -519,7 +541,7 @@
     @types/node: "*"
   resolution: @types/node-fetch@2.1.2
 
-"@types/node@*":
+"@types/node@^10.12.0, @types/node@*":
   resolution: @types/node@10.12.0
 
 "@types/prop-types@*":
@@ -577,112 +599,112 @@
 "@types/webassembly-js-api@*":
   resolution: @types/webassembly-js-api@0.0.1
 
-@webassemblyjs/ast@1.7.8:
+@webassemblyjs/ast@1.7.10:
   dependencies:
-    @webassemblyjs/helper-module-context: 1.7.8
-    @webassemblyjs/helper-wasm-bytecode: 1.7.8
-    @webassemblyjs/wast-parser: 1.7.8
-  resolution: @webassemblyjs/ast@1.7.8
+    @webassemblyjs/helper-module-context: 1.7.10
+    @webassemblyjs/helper-wasm-bytecode: 1.7.10
+    @webassemblyjs/wast-parser: 1.7.10
+  resolution: @webassemblyjs/ast@1.7.10
 
-@webassemblyjs/floating-point-hex-parser@1.7.8:
-  resolution: @webassemblyjs/floating-point-hex-parser@1.7.8
+@webassemblyjs/floating-point-hex-parser@1.7.10:
+  resolution: @webassemblyjs/floating-point-hex-parser@1.7.10
 
-@webassemblyjs/helper-api-error@1.7.8:
-  resolution: @webassemblyjs/helper-api-error@1.7.8
+@webassemblyjs/helper-api-error@1.7.10:
+  resolution: @webassemblyjs/helper-api-error@1.7.10
 
-@webassemblyjs/helper-buffer@1.7.8:
-  resolution: @webassemblyjs/helper-buffer@1.7.8
+@webassemblyjs/helper-buffer@1.7.10:
+  resolution: @webassemblyjs/helper-buffer@1.7.10
 
-@webassemblyjs/helper-code-frame@1.7.8:
+@webassemblyjs/helper-code-frame@1.7.10:
   dependencies:
-    @webassemblyjs/wast-printer: 1.7.8
-  resolution: @webassemblyjs/helper-code-frame@1.7.8
+    @webassemblyjs/wast-printer: 1.7.10
+  resolution: @webassemblyjs/helper-code-frame@1.7.10
 
-@webassemblyjs/helper-fsm@1.7.8:
-  resolution: @webassemblyjs/helper-fsm@1.7.8
+@webassemblyjs/helper-fsm@1.7.10:
+  resolution: @webassemblyjs/helper-fsm@1.7.10
 
-@webassemblyjs/helper-module-context@1.7.8:
-  resolution: @webassemblyjs/helper-module-context@1.7.8
+@webassemblyjs/helper-module-context@1.7.10:
+  resolution: @webassemblyjs/helper-module-context@1.7.10
 
-@webassemblyjs/helper-wasm-bytecode@1.7.8:
-  resolution: @webassemblyjs/helper-wasm-bytecode@1.7.8
+@webassemblyjs/helper-wasm-bytecode@1.7.10:
+  resolution: @webassemblyjs/helper-wasm-bytecode@1.7.10
 
-@webassemblyjs/helper-wasm-section@1.7.8:
+@webassemblyjs/helper-wasm-section@1.7.10:
   dependencies:
-    @webassemblyjs/ast: 1.7.8
-    @webassemblyjs/helper-buffer: 1.7.8
-    @webassemblyjs/helper-wasm-bytecode: 1.7.8
-    @webassemblyjs/wasm-gen: 1.7.8
-  resolution: @webassemblyjs/helper-wasm-section@1.7.8
+    @webassemblyjs/ast: 1.7.10
+    @webassemblyjs/helper-buffer: 1.7.10
+    @webassemblyjs/helper-wasm-bytecode: 1.7.10
+    @webassemblyjs/wasm-gen: 1.7.10
+  resolution: @webassemblyjs/helper-wasm-section@1.7.10
 
-@webassemblyjs/ieee754@1.7.8:
+@webassemblyjs/ieee754@1.7.10:
   dependencies:
     @xtuc/ieee754: ^1.2.0
-  resolution: @webassemblyjs/ieee754@1.7.8
+  resolution: @webassemblyjs/ieee754@1.7.10
 
-@webassemblyjs/leb128@1.7.8:
+@webassemblyjs/leb128@1.7.10:
   dependencies:
     @xtuc/long: 4.2.1
-  resolution: @webassemblyjs/leb128@1.7.8
+  resolution: @webassemblyjs/leb128@1.7.10
 
-@webassemblyjs/utf8@1.7.8:
-  resolution: @webassemblyjs/utf8@1.7.8
+@webassemblyjs/utf8@1.7.10:
+  resolution: @webassemblyjs/utf8@1.7.10
 
-@webassemblyjs/wasm-edit@1.7.8:
+@webassemblyjs/wasm-edit@1.7.10:
   dependencies:
-    @webassemblyjs/ast: 1.7.8
-    @webassemblyjs/helper-buffer: 1.7.8
-    @webassemblyjs/helper-wasm-bytecode: 1.7.8
-    @webassemblyjs/helper-wasm-section: 1.7.8
-    @webassemblyjs/wasm-gen: 1.7.8
-    @webassemblyjs/wasm-opt: 1.7.8
-    @webassemblyjs/wasm-parser: 1.7.8
-    @webassemblyjs/wast-printer: 1.7.8
-  resolution: @webassemblyjs/wasm-edit@1.7.8
+    @webassemblyjs/ast: 1.7.10
+    @webassemblyjs/helper-buffer: 1.7.10
+    @webassemblyjs/helper-wasm-bytecode: 1.7.10
+    @webassemblyjs/helper-wasm-section: 1.7.10
+    @webassemblyjs/wasm-gen: 1.7.10
+    @webassemblyjs/wasm-opt: 1.7.10
+    @webassemblyjs/wasm-parser: 1.7.10
+    @webassemblyjs/wast-printer: 1.7.10
+  resolution: @webassemblyjs/wasm-edit@1.7.10
 
-@webassemblyjs/wasm-gen@1.7.8:
+@webassemblyjs/wasm-gen@1.7.10:
   dependencies:
-    @webassemblyjs/ast: 1.7.8
-    @webassemblyjs/helper-wasm-bytecode: 1.7.8
-    @webassemblyjs/ieee754: 1.7.8
-    @webassemblyjs/leb128: 1.7.8
-    @webassemblyjs/utf8: 1.7.8
-  resolution: @webassemblyjs/wasm-gen@1.7.8
+    @webassemblyjs/ast: 1.7.10
+    @webassemblyjs/helper-wasm-bytecode: 1.7.10
+    @webassemblyjs/ieee754: 1.7.10
+    @webassemblyjs/leb128: 1.7.10
+    @webassemblyjs/utf8: 1.7.10
+  resolution: @webassemblyjs/wasm-gen@1.7.10
 
-@webassemblyjs/wasm-opt@1.7.8:
+@webassemblyjs/wasm-opt@1.7.10:
   dependencies:
-    @webassemblyjs/ast: 1.7.8
-    @webassemblyjs/helper-buffer: 1.7.8
-    @webassemblyjs/wasm-gen: 1.7.8
-    @webassemblyjs/wasm-parser: 1.7.8
-  resolution: @webassemblyjs/wasm-opt@1.7.8
+    @webassemblyjs/ast: 1.7.10
+    @webassemblyjs/helper-buffer: 1.7.10
+    @webassemblyjs/wasm-gen: 1.7.10
+    @webassemblyjs/wasm-parser: 1.7.10
+  resolution: @webassemblyjs/wasm-opt@1.7.10
 
-@webassemblyjs/wasm-parser@1.7.8:
+@webassemblyjs/wasm-parser@1.7.10:
   dependencies:
-    @webassemblyjs/ast: 1.7.8
-    @webassemblyjs/helper-api-error: 1.7.8
-    @webassemblyjs/helper-wasm-bytecode: 1.7.8
-    @webassemblyjs/ieee754: 1.7.8
-    @webassemblyjs/leb128: 1.7.8
-    @webassemblyjs/utf8: 1.7.8
-  resolution: @webassemblyjs/wasm-parser@1.7.8
+    @webassemblyjs/ast: 1.7.10
+    @webassemblyjs/helper-api-error: 1.7.10
+    @webassemblyjs/helper-wasm-bytecode: 1.7.10
+    @webassemblyjs/ieee754: 1.7.10
+    @webassemblyjs/leb128: 1.7.10
+    @webassemblyjs/utf8: 1.7.10
+  resolution: @webassemblyjs/wasm-parser@1.7.10
 
-@webassemblyjs/wast-parser@1.7.8:
+@webassemblyjs/wast-parser@1.7.10:
   dependencies:
-    @webassemblyjs/ast: 1.7.8
-    @webassemblyjs/floating-point-hex-parser: 1.7.8
-    @webassemblyjs/helper-api-error: 1.7.8
-    @webassemblyjs/helper-code-frame: 1.7.8
-    @webassemblyjs/helper-fsm: 1.7.8
+    @webassemblyjs/ast: 1.7.10
+    @webassemblyjs/floating-point-hex-parser: 1.7.10
+    @webassemblyjs/helper-api-error: 1.7.10
+    @webassemblyjs/helper-code-frame: 1.7.10
+    @webassemblyjs/helper-fsm: 1.7.10
     @xtuc/long: 4.2.1
-  resolution: @webassemblyjs/wast-parser@1.7.8
+  resolution: @webassemblyjs/wast-parser@1.7.10
 
-@webassemblyjs/wast-printer@1.7.8:
+@webassemblyjs/wast-printer@1.7.10:
   dependencies:
-    @webassemblyjs/ast: 1.7.8
-    @webassemblyjs/wast-parser: 1.7.8
+    @webassemblyjs/ast: 1.7.10
+    @webassemblyjs/wast-parser: 1.7.10
     @xtuc/long: 4.2.1
-  resolution: @webassemblyjs/wast-printer@1.7.8
+  resolution: @webassemblyjs/wast-printer@1.7.10
 
 @xtuc/ieee754@^1.2.0:
   resolution: @xtuc/ieee754@1.2.0
@@ -698,20 +720,26 @@ acorn-dynamic-import@^3.0.0:
     acorn: ^5.0.0
   resolution: acorn-dynamic-import@3.0.0
 
+acorn-dynamic-import@^4.0.0:
+  peerDependencies:
+    acorn: ^6.0.0
+  resolution: acorn-dynamic-import@4.0.0
+
 acorn-node@^1.3.0:
   dependencies:
-    acorn: ^6.0.1
-    acorn-walk: ^6.0.1
+    acorn: ^6.0.2
+    acorn-dynamic-import: ^4.0.0
+    acorn-walk: ^6.1.0
     xtend: ^4.0.1
-  resolution: acorn-node@1.6.0
+  resolution: acorn-node@1.6.2
 
-acorn-walk@^6.0.1:
+acorn-walk@^6.1.0:
   resolution: acorn-walk@6.1.0
 
 "acorn@^5.6.2, acorn@^5.0.0":
   resolution: acorn@5.7.3
 
-acorn@^6.0.1:
+acorn@^6.0.2:
   resolution: acorn@6.0.2
 
 ajv-keywords@^3.1.0:
@@ -1715,8 +1743,12 @@ hmac-drbg@^1.0.0:
 hoek@5.x.x:
   resolution: hoek@5.0.4
 
-hoist-non-react-statics@^2.5.0:
-  resolution: hoist-non-react-statics@2.5.5
+hoist-non-react-statics@^3.0.0:
+  dependencies:
+    react-is: ^16.3.2
+  peerDependencies:
+    react: >=14.x
+  resolution: hoist-non-react-statics@3.0.1
 
 http-cache-semantics@^4.0.0:
   resolution: http-cache-semantics@4.0.0
@@ -1744,7 +1776,7 @@ ignore@^3.3.5:
   resolution: ignore@3.3.10
 
 immer@^1.7.2:
-  resolution: immer@1.7.2
+  resolution: immer@1.7.3
 
 import-local@^2.0.0:
   dependencies:
@@ -1776,7 +1808,7 @@ ini@~1.3.0:
 interpret@^1.1.0:
   resolution: interpret@1.1.0
 
-invariant@^2.0.0:
+invariant@^2.2.4:
   dependencies:
     loose-envify: ^1.0.0
   resolution: invariant@2.2.4
@@ -1984,13 +2016,10 @@ lockfile@^1.0.4:
     signal-exit: ^3.0.2
   resolution: lockfile@1.0.4
 
-lodash-es@^4.17.5:
-  resolution: lodash-es@4.17.11
-
 lodash.debounce@^4.0.8:
   resolution: lodash.debounce@4.0.8
 
-"lodash@^4.17.4, lodash@^4.17.5, lodash@^4.17.10":
+"lodash@^4.17.4, lodash@^4.17.10":
   resolution: lodash@4.17.11
 
 logic-solver@^2.0.1:
@@ -2119,7 +2148,7 @@ minimist@0.0.8:
   dependencies:
     safe-buffer: ^5.1.2
     yallist: ^3.0.0
-  resolution: minipass@2.3.4
+  resolution: minipass@2.3.5
 
 minizlib@^1.1.0:
   dependencies:
@@ -2452,8 +2481,15 @@ pkg-dir@^3.0.0:
 pluralize@^7.0.0:
   resolution: pluralize@7.0.0
 
-pnp-webpack-plugin@^1.1.0:
-  resolution: pnp-webpack-plugin@1.1.0
+"pnp-webpack-plugin@portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0":
+  dependencies:
+    ts-pnp: ^1.0.0
+  resolution: "pnp-webpack-plugin@portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"
+
+"pnp-webpack-plugin@portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace%3A0.0.0":
+  dependencies:
+    ts-pnp: ^1.0.0
+  resolution: "pnp-webpack-plugin@portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"
 
 posix-character-classes@^0.1.0:
   resolution: posix-character-classes@0.1.1
@@ -2476,7 +2512,7 @@ process@^0.11.10:
 promise-inflight@^1.0.1:
   resolution: promise-inflight@1.0.1
 
-"prop-types@^15.6.2, prop-types@^15.6.0":
+"prop-types@^15.6.2, prop-types@^15.6.1":
   dependencies:
     loose-envify: ^1.3.1
     object-assign: ^4.1.1
@@ -2561,6 +2597,12 @@ rc@^1.2.7:
     strip-json-comments: ~2.0.1
   resolution: rc@1.2.8
 
+"react-is@^16.6.0, react-is@^16.3.2":
+  resolution: react-is@16.6.0
+
+react-lifecycles-compat@^3.0.0:
+  resolution: react-lifecycles-compat@3.0.4
+
 react-reconciler@^0.14.0:
   dependencies:
     loose-envify: ^1.1.0
@@ -2573,24 +2615,25 @@ react-reconciler@^0.14.0:
 
 react-redux@^5.0.7:
   dependencies:
-    hoist-non-react-statics: ^2.5.0
-    invariant: ^2.0.0
-    lodash: ^4.17.5
-    lodash-es: ^4.17.5
+    @babel/runtime: ^7.1.2
+    hoist-non-react-statics: ^3.0.0
+    invariant: ^2.2.4
     loose-envify: ^1.1.0
-    prop-types: ^15.6.0
+    prop-types: ^15.6.1
+    react-is: ^16.6.0
+    react-lifecycles-compat: ^3.0.0
   peerDependencies:
     react: "^0.14.0 || ^15.0.0-0 || ^16.0.0-0"
     redux: "^2.0.0 || ^3.0.0 || ^4.0.0-0"
-  resolution: react-redux@5.0.7
+  resolution: react-redux@5.1.0
 
 "react@^16.5.1, react@^16.5.2":
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
     prop-types: ^15.6.2
-    schedule: ^0.5.0
-  resolution: react@16.5.2
+    scheduler: ^0.10.0
+  resolution: react@16.6.0
 
 "readable-stream@~2.3.3, readable-stream@^2.1.5, readable-stream@^2.0.1, readable-stream@^2.3.3, readable-stream@^2.2.2, readable-stream@^2.0.2, readable-stream@^2.3.6, readable-stream@^2.0.0, readable-stream@^2.0.4, readable-stream@1 || 2, readable-stream@^2.0.6":
   dependencies:
@@ -2610,12 +2653,20 @@ readdirp@^2.0.0:
     readable-stream: ^2.0.2
   resolution: readdirp@2.2.1
 
-"redux-saga@^0.16.2, redux-saga@*":
-  dependencies:
-    redux: ^4.0.0
+"redux-saga@*":
   resolution: redux-saga@0.16.2
 
-"redux@^4.0.0, redux@*":
+redux-saga@^1.0.0-beta.3:
+  dependencies:
+    @babel/runtime: ^7.0.0
+    @redux-saga/deferred: ^1.0.0-beta.3
+    @redux-saga/delay-p: ^1.0.0-beta.3
+    @redux-saga/is: ^1.0.0-beta.3
+    @redux-saga/symbols: ^1.0.0-beta.3
+    redux: >=0.10 <5
+  resolution: redux-saga@1.0.0-beta.3
+
+"redux@^4.0.0, redux@*, redux@>=0.10 <5":
   dependencies:
     loose-envify: ^1.4.0
     symbol-observable: ^1.2.0
@@ -2623,6 +2674,9 @@ readdirp@^2.0.0:
 
 regenerator-runtime@^0.11.0:
   resolution: regenerator-runtime@0.11.1
+
+regenerator-runtime@^0.12.0:
+  resolution: regenerator-runtime@0.12.1
 
 "regex-not@^1.0.0, regex-not@^1.0.2":
   dependencies:
@@ -2707,10 +2761,11 @@ schedule@^0.4.0:
     object-assign: ^4.1.1
   resolution: schedule@0.4.0
 
-schedule@^0.5.0:
+scheduler@^0.10.0:
   dependencies:
+    loose-envify: ^1.1.0
     object-assign: ^4.1.1
-  resolution: schedule@0.5.0
+  resolution: scheduler@0.10.0
 
 "schema-utils@^0.4.5, schema-utils@^0.4.4":
   dependencies:
@@ -3035,6 +3090,28 @@ ts-loader@^5.2.1:
     typescript: "*"
   resolution: ts-loader@5.2.2
 
+"ts-loader@portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0":
+  dependencies:
+    chalk: ^2.3.0
+    enhanced-resolve: ^4.0.0
+    loader-utils: ^1.0.2
+    micromatch: ^3.1.4
+    semver: ^5.0.1
+  peerDependencies:
+    typescript: "*"
+  resolution: "ts-loader@portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"
+
+"ts-loader@portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace%3A0.0.0":
+  dependencies:
+    chalk: ^2.3.0
+    enhanced-resolve: ^4.0.0
+    loader-utils: ^1.0.2
+    micromatch: ^3.1.4
+    semver: ^5.0.1
+  peerDependencies:
+    typescript: "*"
+  resolution: "ts-loader@portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"
+
 ts-node@^7.0.1:
   dependencies:
     arrify: ^1.0.0
@@ -3046,6 +3123,11 @@ ts-node@^7.0.1:
     source-map-support: ^0.5.6
     yn: ^2.0.0
   resolution: ts-node@7.0.1
+
+ts-pnp@^1.0.0:
+  peerDependencies:
+    typescript: "*"
+  resolution: ts-pnp@1.0.0
 
 "tslib@^1, tslib@^1.9.0":
   resolution: tslib@1.9.3
@@ -3232,12 +3314,12 @@ webpack-virtual-modules@^0.1.10:
     debug: ^3.0.0
   resolution: webpack-virtual-modules@0.1.10
 
-"webpack@^4.18.0, webpack@^4.17.2, webpack@4.21.0":
+"webpack@^4.18.0, webpack@^4.17.2, webpack@4.23.1":
   dependencies:
-    @webassemblyjs/ast: 1.7.8
-    @webassemblyjs/helper-module-context: 1.7.8
-    @webassemblyjs/wasm-edit: 1.7.8
-    @webassemblyjs/wasm-parser: 1.7.8
+    @webassemblyjs/ast: 1.7.10
+    @webassemblyjs/helper-module-context: 1.7.10
+    @webassemblyjs/wasm-edit: 1.7.10
+    @webassemblyjs/wasm-parser: 1.7.10
     acorn: ^5.6.2
     acorn-dynamic-import: ^3.0.0
     ajv: ^6.1.0
@@ -3258,7 +3340,7 @@ webpack-virtual-modules@^0.1.10:
     uglifyjs-webpack-plugin: ^1.2.4
     watchpack: ^1.5.0
     webpack-sources: ^1.3.0
-  resolution: webpack@4.21.0
+  resolution: webpack@4.23.1
 
 which-module@^2.0.0:
   resolution: which-module@2.0.0

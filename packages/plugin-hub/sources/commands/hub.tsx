@@ -1,7 +1,8 @@
 import React = require('react');
 
-import {Configuration, Workspace, Plugin, Project, structUtils} from '@berry/core';
+import {Configuration, Workspace, Plugin, Project} from '@berry/core';
 import {Descriptor}                                from '@berry/core';
+import {structUtils}                               from '@berry/core';
 import {render}                                    from '@berry/ui';
 import {DraftObject, produce}                      from 'immer';
 import {Provider}                                  from 'react-redux';

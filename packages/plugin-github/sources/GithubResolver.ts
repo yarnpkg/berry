@@ -13,6 +13,10 @@ export class GithubResolver implements Resolver {
     return githubUtils.isGithubUrl(locator.reference);
   }
 
+  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
+    return true;
+  }
+
   async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     return descriptor;
   }

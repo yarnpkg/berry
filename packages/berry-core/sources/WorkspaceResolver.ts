@@ -1,11 +1,11 @@
-import {Resolver, ResolveOptions} from './Resolver';
-import * as structUtils           from './structUtils';
-import {Descriptor, Locator}      from './types';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import * as structUtils                                  from './structUtils';
+import {Descriptor, Locator}                             from './types';
 
 export class WorkspaceResolver implements Resolver {
   static protocol = `workspace:`;
 
-  supportsDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     if (descriptor.range.startsWith(WorkspaceResolver.protocol))
       return true;
 
@@ -17,14 +17,18 @@ export class WorkspaceResolver implements Resolver {
     return true;
   }
 
-  supportsLocator(locator: Locator, opts: ResolveOptions) {
+  supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
     if (locator.reference.startsWith(WorkspaceResolver.protocol))
       return true;
 
     return false;
   }
 
-  async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: ResolveOptions) {
+  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
+    return false;
+  }
+
+  async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     return descriptor;
   }
 

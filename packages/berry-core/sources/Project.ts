@@ -202,16 +202,15 @@ export class Project {
     });
   }
 
-  forgetWorkspaceResolutionCache() {
-    const resolver = new MultiResolver([
-      new WorkspaceBaseResolver(),
-      new WorkspaceResolver(),
-    ]);
+  forgetTransientResolutions() {
+    const resolver = this.configuration.makeResolver({
+      useLockfile: false,
+    });
 
     const forgottenPackages = new Set();
 
     for (const pkg of this.storedPackages.values()) {
-      if (resolver.supportsLocator(pkg, {project: this, resolver})) {
+      if (!resolver.shouldPersistResolution(pkg, {project: this, resolver})) {
         this.storedPackages.delete(pkg.locatorHash);
         forgottenPackages.add(pkg.locatorHash);
       }
@@ -582,8 +581,8 @@ export class Project {
   }
 
   async install({cache}: {cache: Cache}) {
-    // Ensures that we notice it when dependencies are added / removed from the workspaces manifests
-    await this.forgetWorkspaceResolutionCache();
+    // Ensures that we notice it when dependencies are added / removed from all sources coming from the filesystem
+    await this.forgetTransientResolutions();
 
     await this.resolveEverything(cache);
     await this.fetchEverything(cache);

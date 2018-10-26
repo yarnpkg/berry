@@ -1,7 +1,6 @@
 import {FakeFS}   from '@berry/zipfs';
 
 import {Cache}    from './Cache';
-import {Manifest} from './Manifest';
 import {Project}  from './Project';
 import {Locator}  from './types';
 

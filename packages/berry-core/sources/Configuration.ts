@@ -129,7 +129,7 @@ export class Configuration {
     }
   }
 
-  makeResolver() {
+  makeResolver({useLockfile = true}: {useLockfile?: boolean} = {}) {
     const pluginResolvers = [];
 
     for (const plugin of this.plugins.values())
@@ -137,7 +137,7 @@ export class Configuration {
         pluginResolvers.push(resolver);
 
     return new MultiResolver([
-      new LockfileResolver(),
+      useLockfile ? new LockfileResolver() : null,
       
       new WorkspaceBaseResolver(),
       new WorkspaceResolver(),

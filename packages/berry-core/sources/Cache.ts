@@ -1,14 +1,14 @@
 import fsx = require('fs-extra');
 
-import {FakeFS, ZipFS, NodeFS, JailFS} from '@berry/zipfs';
-import {createHmac}                    from 'crypto';
-import {writeFile}                     from 'fs';
-import {lock, unlock}                  from 'lockfile';
-import {dirname, relative, resolve}    from 'path';
-import {promisify}                     from 'util';
+import {AliasFS, FakeFS, ZipFS, NodeFS, JailFS} from '@berry/zipfs';
+import {createHmac}                             from 'crypto';
+import {writeFile}                              from 'fs';
+import {lock, unlock}                           from 'lockfile';
+import {dirname, relative, resolve}             from 'path';
+import {promisify}                              from 'util';
 
-import {Configuration}                 from './Configuration';
-import {Locator}                       from './types';
+import {Configuration}                          from './Configuration';
+import {Locator}                                from './types';
 
 const writeFileP = promisify(writeFile);
 
@@ -63,13 +63,20 @@ export class Cache {
     });
   }
 
-  async ensureVirtualLink(locator: Locator, target: string) {
+  async ensureVirtualLink(locator: Locator, packageFs: FakeFS) {
+    const jails = [];
+
+    while (packageFs instanceof JailFS) {
+      jails.unshift(packageFs.getTarget());
+      packageFs = packageFs.getBaseFs();
+    }
+
     let virtualLink = resolve(this.cwd, `virtual`, locator.locatorHash);
 
-    if (target.endsWith(`.zip`))
+    if (packageFs instanceof ZipFS)
       virtualLink += `.zip`;
 
-    const relativeTarget = relative(dirname(virtualLink), target);
+    const relativeTarget = relative(dirname(virtualLink), packageFs.getRealPath());
 
     let currentLink;
 
@@ -81,18 +88,20 @@ export class Cache {
       }
     }
 
-    if (currentLink !== undefined) {
-      if (currentLink === relativeTarget) {
-        return virtualLink;
-      } else {
-        throw new Error(`Conflicting virtual paths`);
-      }
+    if (currentLink !== undefined && currentLink !== relativeTarget)
+      throw new Error(`Conflicting virtual paths`);
+
+    if (currentLink === undefined) {
+      await fsx.mkdirp(dirname(virtualLink));
+      await fsx.symlink(relativeTarget, virtualLink);
     }
 
-    await fsx.mkdirp(dirname(virtualLink));
-    await fsx.symlink(relativeTarget, virtualLink);
+    let virtualFs: FakeFS = new AliasFS(virtualLink, {baseFs: packageFs});
 
-    return virtualLink;
+    for (const jail of jails)
+      virtualFs = new JailFS(jail, {baseFs: packageFs});
+    
+    return virtualFs;
   }
 
   async fetchFromCache(locator: Locator, loader?: () => Promise<FakeFS>) {

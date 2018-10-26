@@ -30,6 +30,10 @@ export class TarballFileResolver implements Resolver {
     return false;
   }
 
+  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
+    return true;
+  }
+
   async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     if (FILE_REGEXP.test(descriptor.range))
       descriptor = structUtils.makeDescriptor(descriptor, `file:${descriptor.range}`);
