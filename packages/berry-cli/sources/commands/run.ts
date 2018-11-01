@@ -7,6 +7,7 @@ import {UsageError}                                                  from '@mana
 import {resolve}                                                     from 'path';
 import {Readable, Writable}                                          from 'stream';
 
+import * as execUtils                                                from '../utils/execUtils';
 import {plugins}                                                     from '../plugins';
 
 import {getDependencyBinaries}                                       from './bin';
@@ -17,20 +18,21 @@ export default (concierge: any) => concierge
   .describe(`run a script defined in the package.json`)
   .flags({proxyArguments: true})
 
-  .action(async ({stdin, stdout, stderr, name, args}: {stdin: Readable, stdout: Writable, stderr: Writable, name: string, args: Array<string>}) => {
-    const configuration = await Configuration.find(process.cwd(), plugins);
-    const {project, workspace} = await Project.find(configuration, process.cwd());
+  .action(async ({cwd, stdin, stdout, stderr, name, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, name: string, args: Array<string>}) => {
+    const configuration = await Configuration.find(cwd, plugins);
+    const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
 
     const script = workspace.manifest.scripts.get(name);
 
     if (script) {
       try {
-        await runShell(script, {args: args, stdin, stdout, stderr});
-        return 0;
+        await runShell(script, {cwd: workspace.cwd, args: args, stdin, stdout, stderr});
       } catch {
         return 1;
       }
+
+      return 0;
     }
 
     const binaries = await getDependencyBinaries({configuration, project, workspace, cache});
@@ -43,29 +45,7 @@ export default (concierge: any) => concierge
       const pkgFs = await fetcher.fetch(pkg, {cache, fetcher, project});
       const target = resolve(pkgFs.getRealPath(), file);
 
-      const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
-
-      if (stdin === process.stdin)
-        stdio[0] = stdin;
-      if (stdout === process.stdout)
-        stdio[1] = stdout;
-      if (stderr === process.stderr)
-        stdio[2] = stderr;
-
-      try {
-        const subprocess = execa(process.execPath, [`--require`, configuration.pnpPath, target, ... args], {stdio});
-
-        if (stdin !== process.stdin)
-          stdin.pipe(subprocess.stdin);
-        if (stdout !== process.stdout)
-          subprocess.stdout.pipe(stdout);
-        if (stderr !== process.stderr)
-          subprocess.stderr.pipe(stderr);
-
-        return 0;
-      } catch (error) {
-        return 1;
-      }
+      return await execUtils.execFile(process.execPath, [`--require`, configuration.pnpPath, target, ... args], {cwd: process.cwd(), stdin, stdout, stderr});
     }
 
     throw new UsageError(`Couldn't find a script named "${name}"`);

@@ -8262,6 +8262,8 @@ class ZipFS extends FakeFS_1.FakeFS {
         this.listings.set(`/`, new Set());
         for (let t = 0; t < entryCount; ++t) {
             const raw = libzip_1.default.getName(this.zip, t, 0);
+            if (path_1.posix.isAbsolute(raw))
+                continue;
             const p = path_1.posix.resolve(`/`, raw);
             this.registerEntry(p, t);
         }
@@ -8446,7 +8448,7 @@ class ZipFS extends FakeFS_1.FakeFS {
             libzip_1.default.free(buffer);
             throw new Error(libzip_1.default.error.strerror(libzip_1.default.getError(this.zip)));
         }
-        return libzip_1.default.file.add(this.zip, p, source, libzip_1.default.ZIP_FL_OVERWRITE);
+        return libzip_1.default.file.add(this.zip, path_1.posix.relative(`/`, p), source, libzip_1.default.ZIP_FL_OVERWRITE);
     }
     getFileSource(index) {
         const stat = libzip_1.default.struct.statS();
@@ -8499,7 +8501,7 @@ class ZipFS extends FakeFS_1.FakeFS {
         const resolvedP = this.resolveFilename(`mkdir '${p}'`, p);
         if (this.entries.has(resolvedP) || this.listings.has(resolvedP))
             throw Object.assign(new Error(`EEXIST: file already exists, mkdir '${p}'`), { code: `EEXIST` });
-        const index = libzip_1.default.dir.add(this.zip, resolvedP);
+        const index = libzip_1.default.dir.add(this.zip, path_1.posix.relative(`/`, resolvedP));
         if (index === -1)
             throw new Error(libzip_1.default.error.strerror(libzip_1.default.getError(this.zip)));
         this.registerListing(resolvedP);

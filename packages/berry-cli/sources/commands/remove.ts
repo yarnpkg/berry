@@ -1,5 +1,6 @@
 import {Configuration, Cache, Project, Report} from '@berry/core';
 import {structUtils}                           from '@berry/core';
+import {Writable}                              from 'stream';
 
 import {plugins}                               from '../plugins';
 
@@ -8,9 +9,9 @@ export default (concierge: any) => concierge
   .command(`remove [... names]`)
   .describe(`remove dependencies from the project`)
 
-  .action(async ({stdout, names}: {stdout: NodeJS.WritableStream, names: Array<string>}) => {
-    const configuration = await Configuration.find(process.cwd());
-    const {project, workspace} = await Project.find(configuration, process.cwd());
+  .action(async ({cwd, stdout, names}: {cwd: string, stdout: Writable, names: Array<string>}) => {
+    const configuration = await Configuration.find(cwd, plugins);
+    const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
 
     const report = await Report.start({project, cache}, async () => {
@@ -23,5 +24,7 @@ export default (concierge: any) => concierge
       await project.persist();
     });
 
-    stdout.write(`${report}\n`);
+    stdout.write(report);
+
+    return project.errors.length === 0 ? 0 : 1;
   });

@@ -104,6 +104,10 @@ export class ZipFS extends FakeFS {
 
     for (let t = 0; t < entryCount; ++t) {
       const raw = libzip.getName(this.zip, t, 0);
+      
+      if (posix.isAbsolute(raw))
+        continue;
+
       const p = posix.resolve(`/`, raw);
 
       this.registerEntry(p, t);
@@ -355,7 +359,7 @@ export class ZipFS extends FakeFS {
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
     }
 
-    return libzip.file.add(this.zip, p, source, libzip.ZIP_FL_OVERWRITE);
+    return libzip.file.add(this.zip, posix.relative(`/`, p), source, libzip.ZIP_FL_OVERWRITE);
   }
 
   private getFileSource(index: number) {
@@ -423,7 +427,7 @@ export class ZipFS extends FakeFS {
     if (this.entries.has(resolvedP) || this.listings.has(resolvedP))
       throw Object.assign(new Error(`EEXIST: file already exists, mkdir '${p}'`), {code: `EEXIST`});
 
-    const index = libzip.dir.add(this.zip, resolvedP);
+    const index = libzip.dir.add(this.zip, posix.relative(`/`, resolvedP));
     if (index === -1)
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 

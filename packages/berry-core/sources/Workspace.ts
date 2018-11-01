@@ -54,8 +54,11 @@ export class Workspace {
 
     for (const definition of this.manifest.workspaceDefinitions) {
       const relativeCwds = await globby(definition.pattern, {
+        absolute: true,
         cwd: this.cwd,
+        expandDirectories: false,
         onlyDirectories: true,
+        onlyFiles: false,
       });
 
       // It seems that the return value of globby isn't in any guaranteed order - not even the directory listing order

@@ -38,20 +38,39 @@ export class Report {
       ? `${Math.round(finalTime / 10) / 100}s`
       : `${Math.round(finalTime / 600) / 100}m`;
 
-    const parts = [];
+    let fetchStatus = ``;
 
     if (cacheHitCount > 1) {
-      parts.push(`${cacheHitCount} packages were already cached`);
+      fetchStatus += ` - ${cacheHitCount} packages were already cached`;
     } else if (cacheHitCount === 1) {
-      parts.push(`one package was already cached`);
+      fetchStatus += ` - one package was already cached`;
     }
 
-    if (cacheMissCount > 1) {
-      parts.push(`${cacheMissCount} packages had to be fetched`);
-    } else if (cacheMissCount === 1) {
-      parts.push(`one package had to be fetched`);
+    if (cacheHitCount > 0) {
+      if (cacheMissCount > 1) {
+        fetchStatus += `, ${cacheMissCount} had to be fetched`;
+      } else if (cacheMissCount === 1) {
+        fetchStatus += `, one had to be fetched`;
+      }
+    } else {
+      if (cacheMissCount > 1) {
+        fetchStatus += ` - ${cacheMissCount} packages had to be fetched`;
+      } else if (cacheMissCount === 1) {
+        fetchStatus += ` - one package had to be fetched`;
+      }
     }
 
-    return `Done in ${timing}${parts.map(part => ` - ${part}`).join(``)}.`;
+    const withErrors = this.project.errors.length > 0
+      ? ` with errors`
+      : ``;
+    
+    let result = ``;
+
+    for (const error of this.project.errors)
+      result += `${error.message}\n`;
+
+    result += `Done${withErrors} in ${timing}${fetchStatus}.\n`;
+
+    return result;
   }
 }

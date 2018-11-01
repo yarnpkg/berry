@@ -1,10 +1,8 @@
-import Joi = require('joi');
-
 import {Configuration, Project, Workspace, Cache, Locator, Manifest} from '@berry/core';
 // @ts-ignore: Need to write the definition file
 import {UsageError}                                                  from '@manaflair/concierge';
 import {resolve}                                                     from 'path';
-import {Readable, Writable}                                          from 'stream';
+import {Writable}                                                    from 'stream';
 
 import {plugins}                                                     from '../plugins';
 
@@ -44,14 +42,10 @@ export async function getDependencyBinaries({configuration, project, workspace, 
 
 export default (concierge: any) => concierge
 
-  .command(`bin <name> [--cwd PATH]`)
+  .command(`bin <name>`)
   .describe(`get the path to a binary script`)
 
-  .validate(Joi.object().unknown().keys({
-    cwd: Joi.string().default(process.cwd()),
-  }))
-
-  .action(async ({cwd, stdin, stdout, stderr, name}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, name: string}) => {
+  .action(async ({cwd, stdout, name}: {cwd: string, stdout: Writable, name: string}) => {
     const configuration = await Configuration.find(cwd, plugins);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
