@@ -21,6 +21,9 @@ const RELATIVE_KEYS = new Set([
 export class Configuration {
   public projectCwd: string;
 
+  public httpProxy: string | null = null;
+  public httpsProxy: string | null = null;
+
   public cacheFolder: string | null = `./.pnp/cache`;
 
   public registryServer: string | null = null;
@@ -60,7 +63,7 @@ export class Configuration {
 
     for (const rcCwd of rcCwds)
       configuration.inherits(`${rcCwd}/.berryrc`);
-    
+
     const environmentData: {[key: string]: any} = {};
     const environmentPrefix = `berry_`;
 
@@ -69,7 +72,7 @@ export class Configuration {
 
       if (!key.startsWith(environmentPrefix))
         continue;
-      
+
       key = key.slice(environmentPrefix.length);
       key = key.replace(/_([a-z])/g, ($0, $1) => $1.toUpperCase());
 
@@ -138,7 +141,7 @@ export class Configuration {
 
     return new MultiResolver([
       useLockfile ? new LockfileResolver() : null,
-      
+
       new WorkspaceBaseResolver(),
       new WorkspaceResolver(),
 
@@ -173,7 +176,7 @@ export class Configuration {
       new MultiFetcher(
         getPluginFetchers(`virtual-fetchers`),
       ),
-      
+
       new CacheFetcher(new MultiFetcher(
         getPluginFetchers(`cached-fetchers`),
       )),

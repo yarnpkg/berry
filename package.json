@@ -28,6 +28,7 @@
         "@types/stream-to-promise": "^2.2.0",
         "@types/tar": "^4.0.0",
         "@types/tmp": "^0.0.33",
+        "@types/tunnel": "^0.0.0",
         "ts-node": "^7.0.1"
     },
     "scripts": {

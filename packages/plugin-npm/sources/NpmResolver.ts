@@ -33,7 +33,7 @@ export class NpmResolver implements Resolver {
     if (semver.valid(descriptor.range))
       return [descriptor.range];
 
-    const httpResponse = await httpUtils.get(this.getIdentUrl(descriptor, opts));
+    const httpResponse = await httpUtils.get(this.getIdentUrl(descriptor, opts), opts.project.configuration);
 
     const versions = Object.keys(JSON.parse(httpResponse.toString()).versions);
     const candidates = versions.filter(version => semver.satisfies(version, descriptor.range));
@@ -45,7 +45,7 @@ export class NpmResolver implements Resolver {
     if (!semver.valid(locator.reference))
       throw new Error(`Invalid reference`);
 
-    const httpResponse = await httpUtils.get(this.getIdentUrl(locator, opts));
+    const httpResponse = await httpUtils.get(this.getIdentUrl(locator, opts), opts.project.configuration);
     const registryData = JSON.parse(httpResponse.toString());
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))

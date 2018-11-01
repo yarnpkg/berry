@@ -18,7 +18,7 @@ export class TarballHttpFetcher implements Fetcher {
   }
 
   async fetch(locator: Locator, opts: FetchOptions) {
-    const tgz = await httpUtils.get(locator.reference);
+    const tgz = await httpUtils.get(locator.reference, opts.project.configuration);
 
     return await tgzUtils.makeArchive(tgz, {
       stripComponents: 1,

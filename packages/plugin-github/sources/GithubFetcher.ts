@@ -15,7 +15,7 @@ export class GithubFetcher implements Fetcher {
   }
 
   async fetch(locator: Locator, opts: FetchOptions) {
-    const tgz = await httpUtils.get(this.getLocatorUrl(locator, opts));
+    const tgz = await httpUtils.get(this.getLocatorUrl(locator, opts), opts.project.configuration);
     const prefixPath = `node_modules/${structUtils.requirableIdent(locator)}`;
 
     const archive = await tgzUtils.makeArchive(tgz, {

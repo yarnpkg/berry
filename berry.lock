@@ -170,6 +170,7 @@
     tar: ^4.4.6
     tmp: ^0.0.33
     tslib: ^1
+    tunnel: ^0.0.6
     typescript: ^3.0.1
   resolution: "@berry/core@workspace-base:0.0.0"
 
@@ -189,6 +190,7 @@
     tar: ^4.4.6
     tmp: ^0.0.33
     tslib: ^1
+    tunnel: ^0.0.6
   resolution: "@berry/core@workspace:0.0.0"
 
 "@berry/libzip@workspace-base:0.0.0":
@@ -241,6 +243,7 @@
     @types/stream-to-promise: ^2.2.0
     @types/tar: ^4.0.0
     @types/tmp: ^0.0.33
+    @types/tunnel: ^0.0.0
     ts-node: ^7.0.1
   resolution: "@berry/monorepo@workspace-base:0.0.0"
 
@@ -595,6 +598,11 @@
 
 "@types/tough-cookie@*":
   resolution: @types/tough-cookie@2.3.3
+
+@types/tunnel@^0.0.0:
+  dependencies:
+    @types/node: "*"
+  resolution: @types/tunnel@0.0.0
 
 "@types/webassembly-js-api@*":
   resolution: @types/webassembly-js-api@0.0.1
@@ -3134,6 +3142,9 @@ ts-pnp@^1.0.0:
 
 tty-browserify@0.0.0:
   resolution: tty-browserify@0.0.0
+
+tunnel@^0.0.6:
+  resolution: tunnel@0.0.6
 
 type-check@~0.3.2:
   dependencies:

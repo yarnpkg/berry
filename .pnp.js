@@ -52,6 +52,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@types/stream-to-promise", "2.2.0"],
           ["@types/tar", "4.0.0"],
           ["@types/tmp", "0.0.33"],
+          ["@types/tunnel", "0.0.0"],
           ["ts-node", "7.0.1"],
         ]),
       }],
@@ -4193,6 +4194,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["tar", "4.4.6"],
           ["tmp", "0.0.33"],
           ["tslib", "1.9.3"],
+          ["tunnel", "0.0.6"],
           ["@berry/core", "workspace:0.0.0"],
         ]),
       }],
@@ -4213,6 +4215,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["tar", "4.4.6"],
           ["tmp", "0.0.33"],
           ["tslib", "1.9.3"],
+          ["tunnel", "0.0.6"],
           ["typescript", "3.1.3"],
         ]),
       }],
@@ -4723,6 +4726,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageDependencies: new Map([
           ["os-tmpdir", "1.0.2"],
           ["tmp", "0.0.33"],
+        ]),
+      }],
+    ])],
+    ["tunnel", new Map([
+      ["0.0.6", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/tunnel-4317fa1944aefb42.zip/node_modules/tunnel/"),
+        packageDependencies: new Map([
+          ["tunnel", "0.0.6"],
         ]),
       }],
     ])],
@@ -5748,6 +5759,15 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-tmp-8826a3d0a56601f2.zip/node_modules/@types/tmp/"),
         packageDependencies: new Map([
           ["@types/tmp", "0.0.33"],
+        ]),
+      }],
+    ])],
+    ["@types/tunnel", new Map([
+      ["0.0.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-tunnel-5ac3876df1f0ad92.zip/node_modules/@types/tunnel/"),
+        packageDependencies: new Map([
+          ["@types/node", "10.12.0"],
+          ["@types/tunnel", "0.0.0"],
         ]),
       }],
     ])],
@@ -6780,6 +6800,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.pnp/cache/any-promise-4e8cea565497b0e7.zip/node_modules/any-promise/", {"name":"any-promise","reference":"1.3.0"}],
     ["./.pnp/cache/stream-to-array-32895e77a7fb7c13.zip/node_modules/stream-to-array/", {"name":"stream-to-array","reference":"2.3.0"}],
     ["./.pnp/cache/tmp-e6858d1d12417689.zip/node_modules/tmp/", {"name":"tmp","reference":"0.0.33"}],
+    ["./.pnp/cache/tunnel-4317fa1944aefb42.zip/node_modules/tunnel/", {"name":"tunnel","reference":"0.0.6"}],
     ["./packages/berry-shell/", {"name":"@berry/shell","reference":"workspace:0.0.0"}],
     ["./packages/berry-shell/", {"name":"@berry/shell","reference":"0.0.0"}],
     ["./.pnp/cache/execa-e1502c741599df44.zip/node_modules/execa/", {"name":"execa","reference":"1.0.0"}],
@@ -6887,6 +6908,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.pnp/cache/@types-stream-to-promise-0abf47e5467b0808.zip/node_modules/@types/stream-to-promise/", {"name":"@types/stream-to-promise","reference":"2.2.0"}],
     ["./.pnp/cache/@types-tar-57cdcd689933e694.zip/node_modules/@types/tar/", {"name":"@types/tar","reference":"4.0.0"}],
     ["./.pnp/cache/@types-tmp-8826a3d0a56601f2.zip/node_modules/@types/tmp/", {"name":"@types/tmp","reference":"0.0.33"}],
+    ["./.pnp/cache/@types-tunnel-5ac3876df1f0ad92.zip/node_modules/@types/tunnel/", {"name":"@types/tunnel","reference":"0.0.0"}],
     ["./.pnp/cache/ts-node-8070b94376573a89.zip/node_modules/ts-node/", {"name":"ts-node","reference":"7.0.1"}],
     ["./.pnp/cache/diff-0bef549ccd29f47d.zip/node_modules/diff/", {"name":"diff","reference":"3.5.0"}],
     ["./.pnp/cache/make-error-3feea7527c3b5294.zip/node_modules/make-error/", {"name":"make-error","reference":"1.3.5"}],
