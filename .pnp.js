@@ -17,8 +17,10 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@berry/builder", "workspace:0.0.0"],
           ["@berry/cli", "workspace:0.0.0"],
           ["@berry/core", "workspace:0.0.0"],
+          ["@berry/json-proxy", "workspace:0.0.0"],
           ["@berry/libzip", "workspace:0.0.0"],
           ["@berry/parsers", "workspace:0.0.0"],
+          ["@berry/plugin-constraints", "workspace:0.0.0"],
           ["@berry/plugin-file", "workspace:0.0.0"],
           ["@berry/plugin-github", "workspace:0.0.0"],
           ["@berry/plugin-http", "workspace:0.0.0"],
@@ -37,10 +39,12 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@types/fs-extra", "5.0.4"],
           ["@types/globby", "8.0.0"],
           ["@types/got", "8.3.4"],
+          ["@types/inquirer", "0.0.43"],
           ["@types/joi", "13.6.1"],
           ["@types/lockfile", "1.0.0"],
           ["@types/lodash", "4.14.117"],
           ["@types/mkdirp", "0.5.2"],
+          ["@types/node-emoji", "1.8.0"],
           ["@types/node-fetch", "2.1.2"],
           ["@types/node", "10.12.0"],
           ["@types/react-redux", "6.0.9"],
@@ -50,6 +54,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@types/request", "2.47.1"],
           ["@types/semver", "5.5.0"],
           ["@types/stream-to-promise", "2.2.0"],
+          ["@types/supports-color", "5.3.0"],
           ["@types/tar", "4.0.0"],
           ["@types/tmp", "0.0.33"],
           ["@types/tunnel", "0.0.0"],
@@ -4136,7 +4141,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@manaflair/concierge", "virtual:f9fdfa4470e7e61ae3dcf77ba5920540e8d12a235316b1be465aeb7686692a5d2dd66fbf47de7336b114cc5f9cef0c6ce74102d48d66310e7280b5dbcc7d74e8#0.7.3"],
           ["execa", "1.0.0"],
           ["joi", "13.7.0"],
-          ["tslib", "1.9.3"],
           ["@berry/cli", "workspace:0.0.0"],
         ]),
       }],
@@ -4154,7 +4158,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@manaflair/concierge", "virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#0.7.3"],
           ["execa", "1.0.0"],
           ["joi", "13.7.0"],
-          ["tslib", "1.9.3"],
           ["@berry/cli", "workspace-base:0.0.0"],
         ]),
       }],
@@ -4172,7 +4175,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@manaflair/concierge", "virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#0.7.3"],
           ["execa", "1.0.0"],
           ["joi", "13.7.0"],
-          ["tslib", "1.9.3"],
         ]),
       }],
     ])],
@@ -4180,20 +4182,23 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
       ["workspace:0.0.0", {
         packageLocation: path.resolve(__dirname, "./packages/berry-core/"),
         packageDependencies: new Map([
+          ["@berry/json-proxy", "workspace:0.0.0"],
           ["@berry/parsers", "workspace:0.0.0"],
           ["@berry/pnp", "workspace:0.0.0"],
+          ["chalk", "2.4.1"],
           ["fs-extra", "7.0.0"],
           ["globby", "8.0.1"],
           ["got", "9.2.2"],
+          ["json-file-plus", "3.3.1"],
           ["lockfile", "1.0.4"],
           ["logic-solver", "2.0.1"],
           ["mkdirp", "0.5.1"],
           ["pluralize", "7.0.0"],
           ["pretty-bytes", "5.1.0"],
           ["stream-to-promise", "2.2.0"],
+          ["supports-color", "5.5.0"],
           ["tar", "4.4.6"],
           ["tmp", "0.0.33"],
-          ["tslib", "1.9.3"],
           ["tunnel", "0.0.6"],
           ["@berry/core", "workspace:0.0.0"],
         ]),
@@ -4201,22 +4206,38 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
       ["0.0.0", {
         packageLocation: path.resolve(__dirname, "./packages/berry-core/"),
         packageDependencies: new Map([
+          ["@berry/json-proxy", "workspace:0.0.0"],
           ["@berry/parsers", "workspace:0.0.0"],
           ["@berry/pnp", "workspace:0.0.0"],
+          ["chalk", "2.4.1"],
           ["fs-extra", "7.0.0"],
           ["globby", "8.0.1"],
           ["got", "9.2.2"],
+          ["json-file-plus", "3.3.1"],
           ["lockfile", "1.0.4"],
           ["logic-solver", "2.0.1"],
           ["mkdirp", "0.5.1"],
           ["pluralize", "7.0.0"],
           ["pretty-bytes", "5.1.0"],
           ["stream-to-promise", "2.2.0"],
+          ["supports-color", "5.5.0"],
           ["tar", "4.4.6"],
           ["tmp", "0.0.33"],
-          ["tslib", "1.9.3"],
           ["tunnel", "0.0.6"],
           ["typescript", "3.1.3"],
+        ]),
+      }],
+    ])],
+    ["@berry/json-proxy", new Map([
+      ["workspace:0.0.0", {
+        packageLocation: path.resolve(__dirname, "./packages/berry-json-proxy/"),
+        packageDependencies: new Map([
+          ["@berry/json-proxy", "workspace:0.0.0"],
+        ]),
+      }],
+      ["0.0.0", {
+        packageLocation: path.resolve(__dirname, "./packages/berry-json-proxy/"),
+        packageDependencies: new Map([
         ]),
       }],
     ])],
@@ -4224,7 +4245,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
       ["workspace:0.0.0", {
         packageLocation: path.resolve(__dirname, "./packages/berry-parsers/"),
         packageDependencies: new Map([
-          ["tslib", "1.9.3"],
           ["@berry/parsers", "workspace:0.0.0"],
         ]),
       }],
@@ -4232,7 +4252,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./packages/berry-parsers/"),
         packageDependencies: new Map([
           ["pegjs", "0.10.0"],
-          ["tslib", "1.9.3"],
           ["typescript", "3.1.3"],
         ]),
       }],
@@ -4243,7 +4262,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageDependencies: new Map([
           ["@berry/core", "workspace:0.0.0"],
           ["@berry/zipfs", "workspace:0.0.0"],
-          ["tslib", "1.9.3"],
           ["@berry/pnp", "workspace:0.0.0"],
         ]),
       }],
@@ -4254,7 +4272,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@berry/zipfs", "workspace:0.0.0"],
           ["raw-loader", "0.5.1"],
           ["ts-loader", "virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#5.2.2"],
-          ["tslib", "1.9.3"],
           ["typescript", "3.1.3"],
           ["wasm-loader", "virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#1.3.0"],
           ["webpack-cli", "virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#3.1.2"],
@@ -4281,14 +4298,12 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
       ["workspace:0.0.0", {
         packageLocation: path.resolve(__dirname, "./packages/berry-libzip/"),
         packageDependencies: new Map([
-          ["tslib", "1.9.3"],
           ["@berry/libzip", "workspace:0.0.0"],
         ]),
       }],
       ["0.0.0", {
         packageLocation: path.resolve(__dirname, "./packages/berry-libzip/"),
         packageDependencies: new Map([
-          ["tslib", "1.9.3"],
         ]),
       }],
     ])],
@@ -4650,6 +4665,118 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
+    ["json-file-plus", new Map([
+      ["3.3.1", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/json-file-plus-068e5b272757ef51.zip/node_modules/json-file-plus/"),
+        packageDependencies: new Map([
+          ["is", "3.2.1"],
+          ["node.extend", "2.0.1"],
+          ["object.assign", "4.1.0"],
+          ["promiseback", "2.0.2"],
+          ["safer-buffer", "2.1.2"],
+          ["json-file-plus", "3.3.1"],
+        ]),
+      }],
+    ])],
+    ["is", new Map([
+      ["3.2.1", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-cd37dd5daac35969.zip/node_modules/is/"),
+        packageDependencies: new Map([
+          ["is", "3.2.1"],
+        ]),
+      }],
+    ])],
+    ["node.extend", new Map([
+      ["2.0.1", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/node.extend-46a65ee7d214ec83.zip/node_modules/node.extend/"),
+        packageDependencies: new Map([
+          ["has", "1.0.3"],
+          ["is", "3.2.1"],
+          ["node.extend", "2.0.1"],
+        ]),
+      }],
+    ])],
+    ["object.assign", new Map([
+      ["4.1.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/object.assign-163cee1bbdfa60af.zip/node_modules/object.assign/"),
+        packageDependencies: new Map([
+          ["define-properties", "1.1.3"],
+          ["function-bind", "1.1.1"],
+          ["has-symbols", "1.0.0"],
+          ["object-keys", "1.0.12"],
+          ["object.assign", "4.1.0"],
+        ]),
+      }],
+    ])],
+    ["define-properties", new Map([
+      ["1.1.3", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/define-properties-afeba74b21f3a708.zip/node_modules/define-properties/"),
+        packageDependencies: new Map([
+          ["object-keys", "1.0.12"],
+          ["define-properties", "1.1.3"],
+        ]),
+      }],
+    ])],
+    ["object-keys", new Map([
+      ["1.0.12", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/object-keys-650ea6d0703c8d46.zip/node_modules/object-keys/"),
+        packageDependencies: new Map([
+          ["object-keys", "1.0.12"],
+        ]),
+      }],
+    ])],
+    ["has-symbols", new Map([
+      ["1.0.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/has-symbols-ed049437a453f70a.zip/node_modules/has-symbols/"),
+        packageDependencies: new Map([
+          ["has-symbols", "1.0.0"],
+        ]),
+      }],
+    ])],
+    ["promiseback", new Map([
+      ["2.0.2", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/promiseback-5c229407feeb9b00.zip/node_modules/promiseback/"),
+        packageDependencies: new Map([
+          ["is-callable", "1.1.4"],
+          ["promise-deferred", "2.0.1"],
+          ["promiseback", "2.0.2"],
+        ]),
+      }],
+    ])],
+    ["is-callable", new Map([
+      ["1.1.4", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-callable-5bd1bd20c89571f1.zip/node_modules/is-callable/"),
+        packageDependencies: new Map([
+          ["is-callable", "1.1.4"],
+        ]),
+      }],
+    ])],
+    ["promise-deferred", new Map([
+      ["2.0.1", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/promise-deferred-4f879d0f5349c1ab.zip/node_modules/promise-deferred/"),
+        packageDependencies: new Map([
+          ["promise", "6.1.0"],
+          ["promise-deferred", "2.0.1"],
+        ]),
+      }],
+    ])],
+    ["promise", new Map([
+      ["6.1.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/promise-b0c96d5b48b42402.zip/node_modules/promise/"),
+        packageDependencies: new Map([
+          ["asap", "1.0.0"],
+          ["promise", "6.1.0"],
+        ]),
+      }],
+    ])],
+    ["asap", new Map([
+      ["1.0.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/asap-5b1a6678f9e88f53.zip/node_modules/asap/"),
+        packageDependencies: new Map([
+          ["asap", "1.0.0"],
+        ]),
+      }],
+    ])],
     ["lockfile", new Map([
       ["1.0.4", {
         packageLocation: path.resolve(__dirname, "./.pnp/cache/lockfile-b2e2af8c38607b82.zip/node_modules/lockfile/"),
@@ -4888,6 +5015,195 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
+    ["@berry/plugin-constraints", new Map([
+      ["workspace:0.0.0", {
+        packageLocation: path.resolve(__dirname, "./packages/plugin-constraints/"),
+        packageDependencies: new Map([
+          ["@berry/core", "workspace:0.0.0"],
+          ["inquirer", "6.2.0"],
+          ["node-emoji", "1.8.1"],
+          ["tau-prolog", "0.2.38"],
+          ["@berry/plugin-constraints", "workspace:0.0.0"],
+        ]),
+      }],
+      ["0.0.0", {
+        packageLocation: path.resolve(__dirname, "./packages/plugin-constraints/"),
+        packageDependencies: new Map([
+          ["@berry/core", "workspace:0.0.0"],
+          ["inquirer", "6.2.0"],
+          ["node-emoji", "1.8.1"],
+          ["tau-prolog", "0.2.38"],
+        ]),
+      }],
+    ])],
+    ["inquirer", new Map([
+      ["6.2.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/inquirer-5d1c044583c6b4ae.zip/node_modules/inquirer/"),
+        packageDependencies: new Map([
+          ["ansi-escapes", "3.1.0"],
+          ["chalk", "2.4.1"],
+          ["cli-cursor", "2.1.0"],
+          ["cli-width", "2.2.0"],
+          ["external-editor", "3.0.3"],
+          ["figures", "2.0.0"],
+          ["lodash", "4.17.11"],
+          ["mute-stream", "0.0.7"],
+          ["run-async", "2.3.0"],
+          ["rxjs", "6.3.3"],
+          ["string-width", "2.1.1"],
+          ["strip-ansi", "4.0.0"],
+          ["through", "2.3.8"],
+          ["inquirer", "6.2.0"],
+        ]),
+      }],
+    ])],
+    ["ansi-escapes", new Map([
+      ["3.1.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/ansi-escapes-063c5f5cfc7c920d.zip/node_modules/ansi-escapes/"),
+        packageDependencies: new Map([
+          ["ansi-escapes", "3.1.0"],
+        ]),
+      }],
+    ])],
+    ["cli-cursor", new Map([
+      ["2.1.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/cli-cursor-bcfcf6f1108d570e.zip/node_modules/cli-cursor/"),
+        packageDependencies: new Map([
+          ["restore-cursor", "2.0.0"],
+          ["cli-cursor", "2.1.0"],
+        ]),
+      }],
+    ])],
+    ["restore-cursor", new Map([
+      ["2.0.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/restore-cursor-bdfbe5c160d5dd8d.zip/node_modules/restore-cursor/"),
+        packageDependencies: new Map([
+          ["onetime", "2.0.1"],
+          ["signal-exit", "3.0.2"],
+          ["restore-cursor", "2.0.0"],
+        ]),
+      }],
+    ])],
+    ["onetime", new Map([
+      ["2.0.1", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/onetime-3fefc522cf8933fe.zip/node_modules/onetime/"),
+        packageDependencies: new Map([
+          ["mimic-fn", "1.2.0"],
+          ["onetime", "2.0.1"],
+        ]),
+      }],
+    ])],
+    ["mimic-fn", new Map([
+      ["1.2.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/mimic-fn-8daea209db57999d.zip/node_modules/mimic-fn/"),
+        packageDependencies: new Map([
+          ["mimic-fn", "1.2.0"],
+        ]),
+      }],
+    ])],
+    ["cli-width", new Map([
+      ["2.2.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/cli-width-a1d084bb3e5ff159.zip/node_modules/cli-width/"),
+        packageDependencies: new Map([
+          ["cli-width", "2.2.0"],
+        ]),
+      }],
+    ])],
+    ["external-editor", new Map([
+      ["3.0.3", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/external-editor-7ad5ca0ce97e542b.zip/node_modules/external-editor/"),
+        packageDependencies: new Map([
+          ["chardet", "0.7.0"],
+          ["iconv-lite", "0.4.24"],
+          ["tmp", "0.0.33"],
+          ["external-editor", "3.0.3"],
+        ]),
+      }],
+    ])],
+    ["chardet", new Map([
+      ["0.7.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/chardet-2fd0d9630d02c81a.zip/node_modules/chardet/"),
+        packageDependencies: new Map([
+          ["chardet", "0.7.0"],
+        ]),
+      }],
+    ])],
+    ["figures", new Map([
+      ["2.0.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/figures-2c2ff6acb0411a20.zip/node_modules/figures/"),
+        packageDependencies: new Map([
+          ["escape-string-regexp", "1.0.5"],
+          ["figures", "2.0.0"],
+        ]),
+      }],
+    ])],
+    ["mute-stream", new Map([
+      ["0.0.7", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/mute-stream-c19ab1f9b07bb46b.zip/node_modules/mute-stream/"),
+        packageDependencies: new Map([
+          ["mute-stream", "0.0.7"],
+        ]),
+      }],
+    ])],
+    ["run-async", new Map([
+      ["2.3.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/run-async-32bb8b16ec20acd2.zip/node_modules/run-async/"),
+        packageDependencies: new Map([
+          ["is-promise", "2.1.0"],
+          ["run-async", "2.3.0"],
+        ]),
+      }],
+    ])],
+    ["is-promise", new Map([
+      ["2.1.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/is-promise-131d6e8731871d1b.zip/node_modules/is-promise/"),
+        packageDependencies: new Map([
+          ["is-promise", "2.1.0"],
+        ]),
+      }],
+    ])],
+    ["rxjs", new Map([
+      ["6.3.3", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/rxjs-4073e968e2de301c.zip/node_modules/rxjs/"),
+        packageDependencies: new Map([
+          ["tslib", "1.9.3"],
+          ["rxjs", "6.3.3"],
+        ]),
+      }],
+    ])],
+    ["through", new Map([
+      ["2.3.8", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/through-d9f9b265f167e89e.zip/node_modules/through/"),
+        packageDependencies: new Map([
+          ["through", "2.3.8"],
+        ]),
+      }],
+    ])],
+    ["node-emoji", new Map([
+      ["1.8.1", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/node-emoji-ced8e2c31e888cbe.zip/node_modules/node-emoji/"),
+        packageDependencies: new Map([
+          ["lodash.toarray", "4.4.0"],
+          ["node-emoji", "1.8.1"],
+        ]),
+      }],
+    ])],
+    ["lodash.toarray", new Map([
+      ["4.4.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/lodash.toarray-a9b1ef4b699d457c.zip/node_modules/lodash.toarray/"),
+        packageDependencies: new Map([
+          ["lodash.toarray", "4.4.0"],
+        ]),
+      }],
+    ])],
+    ["tau-prolog", new Map([
+      ["0.2.38", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/tau-prolog-76d76334bc2c3bd2.zip/node_modules/tau-prolog/"),
+        packageDependencies: new Map([
+          ["tau-prolog", "0.2.38"],
+        ]),
+      }],
+    ])],
     ["@berry/plugin-file", new Map([
       ["workspace:0.0.0", {
         packageLocation: path.resolve(__dirname, "./packages/plugin-file/"),
@@ -4908,7 +5224,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./packages/plugin-github/"),
         packageDependencies: new Map([
           ["@berry/core", "workspace:0.0.0"],
-          ["tslib", "1.9.3"],
           ["@berry/plugin-github", "workspace:0.0.0"],
         ]),
       }],
@@ -4916,7 +5231,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./packages/plugin-github/"),
         packageDependencies: new Map([
           ["@berry/core", "workspace:0.0.0"],
-          ["tslib", "1.9.3"],
           ["typescript", "3.1.3"],
         ]),
       }],
@@ -4942,11 +5256,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageDependencies: new Map([
           ["@berry/cli", "workspace:0.0.0"],
           ["@berry/core", "workspace:0.0.0"],
+          ["@berry/json-proxy", "workspace:0.0.0"],
           ["@berry/ui", "virtual:29c7dadf0d457f206582b8683745b4d32f2a483c5a334f3baf91c660095e58e9dd3937026dbc33c16e58df96c5b44a17564e1af0f7418e49f96f0f6219ac6061#workspace:0.0.0"],
           ["@manaflair/concierge", "virtual:29c7dadf0d457f206582b8683745b4d32f2a483c5a334f3baf91c660095e58e9dd3937026dbc33c16e58df96c5b44a17564e1af0f7418e49f96f0f6219ac6061#0.7.3"],
           ["dateformat", "3.0.3"],
           ["immer", "1.7.3"],
           ["joi", "13.7.0"],
+          ["pretty-bytes", "5.1.0"],
           ["react-redux", "virtual:29c7dadf0d457f206582b8683745b4d32f2a483c5a334f3baf91c660095e58e9dd3937026dbc33c16e58df96c5b44a17564e1af0f7418e49f96f0f6219ac6061#5.1.0"],
           ["react", "16.6.0"],
           ["redux-saga", "1.0.0-beta.3"],
@@ -4959,11 +5275,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageDependencies: new Map([
           ["@berry/cli", "workspace-base:0.0.0"],
           ["@berry/core", "workspace:0.0.0"],
+          ["@berry/json-proxy", "workspace:0.0.0"],
           ["@berry/ui", "virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#workspace:0.0.0"],
           ["@manaflair/concierge", "virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#0.7.3"],
           ["dateformat", "3.0.3"],
           ["immer", "1.7.3"],
           ["joi", "13.7.0"],
+          ["pretty-bytes", "5.1.0"],
           ["react-redux", "virtual:5eb422019b04ff43aaee15fd5ef30e2944b7280338fd1e8e8eba450d7fe301f93eeace31e4ed7d60c3ea247a96342623f1929c81cf2de8b2b386154ced6d7b99#5.1.0"],
           ["react", "16.6.0"],
           ["redux-saga", "1.0.0-beta.3"],
@@ -4975,11 +5293,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./packages/plugin-hub/"),
         packageDependencies: new Map([
           ["@berry/builder", "workspace:0.0.0"],
+          ["@berry/json-proxy", "workspace:0.0.0"],
           ["@berry/ui", "virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#workspace:0.0.0"],
           ["@manaflair/concierge", "virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#0.7.3"],
           ["dateformat", "3.0.3"],
           ["immer", "1.7.3"],
           ["joi", "13.7.0"],
+          ["pretty-bytes", "5.1.0"],
           ["react-redux", "virtual:c2ccc77a0b8ba136df20b10e8da43f57b0f4ea4389bd5fc422631c060a444a08ca2aee92795cca7d25f7295562501d425b5106fa23012f3cd0579a23e787f4bc#5.1.0"],
           ["react", "16.6.0"],
           ["redux-saga", "1.0.0-beta.3"],
@@ -5595,6 +5915,153 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
+    ["@types/inquirer", new Map([
+      ["0.0.43", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-inquirer-c75bc52e2cf29669.zip/node_modules/@types/inquirer/"),
+        packageDependencies: new Map([
+          ["@types/rx", "4.1.1"],
+          ["@types/through", "0.0.29"],
+          ["@types/inquirer", "0.0.43"],
+        ]),
+      }],
+    ])],
+    ["@types/rx", new Map([
+      ["4.1.1", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-rx-bbfda936bb533bd7.zip/node_modules/@types/rx/"),
+        packageDependencies: new Map([
+          ["@types/rx-core-binding", "4.0.4"],
+          ["@types/rx-core", "4.0.3"],
+          ["@types/rx-lite-aggregates", "4.0.3"],
+          ["@types/rx-lite-async", "4.0.2"],
+          ["@types/rx-lite-backpressure", "4.0.3"],
+          ["@types/rx-lite-coincidence", "4.0.3"],
+          ["@types/rx-lite-experimental", "4.0.1"],
+          ["@types/rx-lite-joinpatterns", "4.0.1"],
+          ["@types/rx-lite-testing", "4.0.1"],
+          ["@types/rx-lite-time", "4.0.3"],
+          ["@types/rx-lite-virtualtime", "4.0.3"],
+          ["@types/rx-lite", "4.0.6"],
+          ["@types/rx", "4.1.1"],
+        ]),
+      }],
+    ])],
+    ["@types/rx-core-binding", new Map([
+      ["4.0.4", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-rx-core-binding-7b19115f6f2ca8ac.zip/node_modules/@types/rx-core-binding/"),
+        packageDependencies: new Map([
+          ["@types/rx-core", "4.0.3"],
+          ["@types/rx-core-binding", "4.0.4"],
+        ]),
+      }],
+    ])],
+    ["@types/rx-core", new Map([
+      ["4.0.3", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-rx-core-4e9f88c4d3ea8305.zip/node_modules/@types/rx-core/"),
+        packageDependencies: new Map([
+          ["@types/rx-core", "4.0.3"],
+        ]),
+      }],
+    ])],
+    ["@types/rx-lite-aggregates", new Map([
+      ["4.0.3", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-rx-lite-aggregates-36791540ebf8bb5b.zip/node_modules/@types/rx-lite-aggregates/"),
+        packageDependencies: new Map([
+          ["@types/rx-lite", "4.0.6"],
+          ["@types/rx-lite-aggregates", "4.0.3"],
+        ]),
+      }],
+    ])],
+    ["@types/rx-lite", new Map([
+      ["4.0.6", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-rx-lite-3f1f4deb66a288b7.zip/node_modules/@types/rx-lite/"),
+        packageDependencies: new Map([
+          ["@types/rx-core-binding", "4.0.4"],
+          ["@types/rx-core", "4.0.3"],
+          ["@types/rx-lite", "4.0.6"],
+        ]),
+      }],
+    ])],
+    ["@types/rx-lite-async", new Map([
+      ["4.0.2", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-rx-lite-async-afb51945d57112ec.zip/node_modules/@types/rx-lite-async/"),
+        packageDependencies: new Map([
+          ["@types/rx-lite", "4.0.6"],
+          ["@types/rx-lite-async", "4.0.2"],
+        ]),
+      }],
+    ])],
+    ["@types/rx-lite-backpressure", new Map([
+      ["4.0.3", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-rx-lite-backpressure-c7c528cf0df5a108.zip/node_modules/@types/rx-lite-backpressure/"),
+        packageDependencies: new Map([
+          ["@types/rx-lite", "4.0.6"],
+          ["@types/rx-lite-backpressure", "4.0.3"],
+        ]),
+      }],
+    ])],
+    ["@types/rx-lite-coincidence", new Map([
+      ["4.0.3", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-rx-lite-coincidence-9ce1b3fe450fc087.zip/node_modules/@types/rx-lite-coincidence/"),
+        packageDependencies: new Map([
+          ["@types/rx-lite", "4.0.6"],
+          ["@types/rx-lite-coincidence", "4.0.3"],
+        ]),
+      }],
+    ])],
+    ["@types/rx-lite-experimental", new Map([
+      ["4.0.1", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-rx-lite-experimental-30fa007ccd0112f6.zip/node_modules/@types/rx-lite-experimental/"),
+        packageDependencies: new Map([
+          ["@types/rx-lite", "4.0.6"],
+          ["@types/rx-lite-experimental", "4.0.1"],
+        ]),
+      }],
+    ])],
+    ["@types/rx-lite-joinpatterns", new Map([
+      ["4.0.1", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-rx-lite-joinpatterns-a428afddf513e527.zip/node_modules/@types/rx-lite-joinpatterns/"),
+        packageDependencies: new Map([
+          ["@types/rx-lite", "4.0.6"],
+          ["@types/rx-lite-joinpatterns", "4.0.1"],
+        ]),
+      }],
+    ])],
+    ["@types/rx-lite-testing", new Map([
+      ["4.0.1", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-rx-lite-testing-c9122ece132486d6.zip/node_modules/@types/rx-lite-testing/"),
+        packageDependencies: new Map([
+          ["@types/rx-lite-virtualtime", "4.0.3"],
+          ["@types/rx-lite-testing", "4.0.1"],
+        ]),
+      }],
+    ])],
+    ["@types/rx-lite-virtualtime", new Map([
+      ["4.0.3", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-rx-lite-virtualtime-e72db6c1119f134c.zip/node_modules/@types/rx-lite-virtualtime/"),
+        packageDependencies: new Map([
+          ["@types/rx-lite", "4.0.6"],
+          ["@types/rx-lite-virtualtime", "4.0.3"],
+        ]),
+      }],
+    ])],
+    ["@types/rx-lite-time", new Map([
+      ["4.0.3", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-rx-lite-time-c935e8a689821935.zip/node_modules/@types/rx-lite-time/"),
+        packageDependencies: new Map([
+          ["@types/rx-lite", "4.0.6"],
+          ["@types/rx-lite-time", "4.0.3"],
+        ]),
+      }],
+    ])],
+    ["@types/through", new Map([
+      ["0.0.29", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-through-ab4cfa2d5a0afe13.zip/node_modules/@types/through/"),
+        packageDependencies: new Map([
+          ["@types/node", "10.12.0"],
+          ["@types/through", "0.0.29"],
+        ]),
+      }],
+    ])],
     ["@types/joi", new Map([
       ["13.6.1", {
         packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-joi-8a9b0de512e7d9e9.zip/node_modules/@types/joi/"),
@@ -5625,6 +6092,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageDependencies: new Map([
           ["@types/node", "10.12.0"],
           ["@types/mkdirp", "0.5.2"],
+        ]),
+      }],
+    ])],
+    ["@types/node-emoji", new Map([
+      ["1.8.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-node-emoji-7ad52b3b0bc7b216.zip/node_modules/@types/node-emoji/"),
+        packageDependencies: new Map([
+          ["@types/node-emoji", "1.8.0"],
         ]),
       }],
     ])],
@@ -5742,6 +6217,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageDependencies: new Map([
           ["@types/node", "10.12.0"],
           ["@types/stream-to-promise", "2.2.0"],
+        ]),
+      }],
+    ])],
+    ["@types/supports-color", new Map([
+      ["5.3.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-supports-color-fa08803ca0f82504.zip/node_modules/@types/supports-color/"),
+        packageDependencies: new Map([
+          ["@types/supports-color", "5.3.0"],
         ]),
       }],
     ])],
@@ -6253,14 +6736,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
-    ["mimic-fn", new Map([
-      ["1.2.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/mimic-fn-8daea209db57999d.zip/node_modules/mimic-fn/"),
-        packageDependencies: new Map([
-          ["mimic-fn", "1.2.0"],
-        ]),
-      }],
-    ])],
     ["p-is-promise", new Map([
       ["1.1.0", {
         packageLocation: path.resolve(__dirname, "./.pnp/cache/p-is-promise-1709108f16de0346.zip/node_modules/p-is-promise/"),
@@ -6744,6 +7219,8 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./packages/berry-cli/", {"name":"@berry/cli","reference":"0.0.0"}],
     ["./packages/berry-core/", {"name":"@berry/core","reference":"workspace:0.0.0"}],
     ["./packages/berry-core/", {"name":"@berry/core","reference":"0.0.0"}],
+    ["./packages/berry-json-proxy/", {"name":"@berry/json-proxy","reference":"workspace:0.0.0"}],
+    ["./packages/berry-json-proxy/", {"name":"@berry/json-proxy","reference":"0.0.0"}],
     ["./packages/berry-parsers/", {"name":"@berry/parsers","reference":"workspace:0.0.0"}],
     ["./packages/berry-parsers/", {"name":"@berry/parsers","reference":"0.0.0"}],
     ["./packages/berry-pnp/", {"name":"@berry/pnp","reference":"workspace:0.0.0"}],
@@ -6791,6 +7268,18 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.pnp/cache/to-readable-stream-fff6af1ccf122f29.zip/node_modules/to-readable-stream/", {"name":"to-readable-stream","reference":"1.0.0"}],
     ["./.pnp/cache/url-parse-lax-d32127d1b828d56c.zip/node_modules/url-parse-lax/", {"name":"url-parse-lax","reference":"3.0.0"}],
     ["./.pnp/cache/prepend-http-428e55123891a28f.zip/node_modules/prepend-http/", {"name":"prepend-http","reference":"2.0.0"}],
+    ["./.pnp/cache/json-file-plus-068e5b272757ef51.zip/node_modules/json-file-plus/", {"name":"json-file-plus","reference":"3.3.1"}],
+    ["./.pnp/cache/is-cd37dd5daac35969.zip/node_modules/is/", {"name":"is","reference":"3.2.1"}],
+    ["./.pnp/cache/node.extend-46a65ee7d214ec83.zip/node_modules/node.extend/", {"name":"node.extend","reference":"2.0.1"}],
+    ["./.pnp/cache/object.assign-163cee1bbdfa60af.zip/node_modules/object.assign/", {"name":"object.assign","reference":"4.1.0"}],
+    ["./.pnp/cache/define-properties-afeba74b21f3a708.zip/node_modules/define-properties/", {"name":"define-properties","reference":"1.1.3"}],
+    ["./.pnp/cache/object-keys-650ea6d0703c8d46.zip/node_modules/object-keys/", {"name":"object-keys","reference":"1.0.12"}],
+    ["./.pnp/cache/has-symbols-ed049437a453f70a.zip/node_modules/has-symbols/", {"name":"has-symbols","reference":"1.0.0"}],
+    ["./.pnp/cache/promiseback-5c229407feeb9b00.zip/node_modules/promiseback/", {"name":"promiseback","reference":"2.0.2"}],
+    ["./.pnp/cache/is-callable-5bd1bd20c89571f1.zip/node_modules/is-callable/", {"name":"is-callable","reference":"1.1.4"}],
+    ["./.pnp/cache/promise-deferred-4f879d0f5349c1ab.zip/node_modules/promise-deferred/", {"name":"promise-deferred","reference":"2.0.1"}],
+    ["./.pnp/cache/promise-b0c96d5b48b42402.zip/node_modules/promise/", {"name":"promise","reference":"6.1.0"}],
+    ["./.pnp/cache/asap-5b1a6678f9e88f53.zip/node_modules/asap/", {"name":"asap","reference":"1.0.0"}],
     ["./.pnp/cache/lockfile-b2e2af8c38607b82.zip/node_modules/lockfile/", {"name":"lockfile","reference":"1.0.4"}],
     ["./.pnp/cache/logic-solver-c9ab47cc0bdf1953.zip/node_modules/logic-solver/", {"name":"logic-solver","reference":"2.0.1"}],
     ["./.pnp/cache/underscore-108e9c3c8c88af2d.zip/node_modules/underscore/", {"name":"underscore","reference":"1.9.1"}],
@@ -6817,6 +7306,26 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.pnp/cache/p-finally-2079c162f2fe4b5d.zip/node_modules/p-finally/", {"name":"p-finally","reference":"1.0.0"}],
     ["./.pnp/cache/strip-eof-7531ca4ee96b693b.zip/node_modules/strip-eof/", {"name":"strip-eof","reference":"1.0.0"}],
     ["./.pnp/cache/stream-buffers-6d4349f586cab2b4.zip/node_modules/stream-buffers/", {"name":"stream-buffers","reference":"3.0.2"}],
+    ["./packages/plugin-constraints/", {"name":"@berry/plugin-constraints","reference":"workspace:0.0.0"}],
+    ["./packages/plugin-constraints/", {"name":"@berry/plugin-constraints","reference":"0.0.0"}],
+    ["./.pnp/cache/inquirer-5d1c044583c6b4ae.zip/node_modules/inquirer/", {"name":"inquirer","reference":"6.2.0"}],
+    ["./.pnp/cache/ansi-escapes-063c5f5cfc7c920d.zip/node_modules/ansi-escapes/", {"name":"ansi-escapes","reference":"3.1.0"}],
+    ["./.pnp/cache/cli-cursor-bcfcf6f1108d570e.zip/node_modules/cli-cursor/", {"name":"cli-cursor","reference":"2.1.0"}],
+    ["./.pnp/cache/restore-cursor-bdfbe5c160d5dd8d.zip/node_modules/restore-cursor/", {"name":"restore-cursor","reference":"2.0.0"}],
+    ["./.pnp/cache/onetime-3fefc522cf8933fe.zip/node_modules/onetime/", {"name":"onetime","reference":"2.0.1"}],
+    ["./.pnp/cache/mimic-fn-8daea209db57999d.zip/node_modules/mimic-fn/", {"name":"mimic-fn","reference":"1.2.0"}],
+    ["./.pnp/cache/cli-width-a1d084bb3e5ff159.zip/node_modules/cli-width/", {"name":"cli-width","reference":"2.2.0"}],
+    ["./.pnp/cache/external-editor-7ad5ca0ce97e542b.zip/node_modules/external-editor/", {"name":"external-editor","reference":"3.0.3"}],
+    ["./.pnp/cache/chardet-2fd0d9630d02c81a.zip/node_modules/chardet/", {"name":"chardet","reference":"0.7.0"}],
+    ["./.pnp/cache/figures-2c2ff6acb0411a20.zip/node_modules/figures/", {"name":"figures","reference":"2.0.0"}],
+    ["./.pnp/cache/mute-stream-c19ab1f9b07bb46b.zip/node_modules/mute-stream/", {"name":"mute-stream","reference":"0.0.7"}],
+    ["./.pnp/cache/run-async-32bb8b16ec20acd2.zip/node_modules/run-async/", {"name":"run-async","reference":"2.3.0"}],
+    ["./.pnp/cache/is-promise-131d6e8731871d1b.zip/node_modules/is-promise/", {"name":"is-promise","reference":"2.1.0"}],
+    ["./.pnp/cache/rxjs-4073e968e2de301c.zip/node_modules/rxjs/", {"name":"rxjs","reference":"6.3.3"}],
+    ["./.pnp/cache/through-d9f9b265f167e89e.zip/node_modules/through/", {"name":"through","reference":"2.3.8"}],
+    ["./.pnp/cache/node-emoji-ced8e2c31e888cbe.zip/node_modules/node-emoji/", {"name":"node-emoji","reference":"1.8.1"}],
+    ["./.pnp/cache/lodash.toarray-a9b1ef4b699d457c.zip/node_modules/lodash.toarray/", {"name":"lodash.toarray","reference":"4.4.0"}],
+    ["./.pnp/cache/tau-prolog-76d76334bc2c3bd2.zip/node_modules/tau-prolog/", {"name":"tau-prolog","reference":"0.2.38"}],
     ["./packages/plugin-file/", {"name":"@berry/plugin-file","reference":"workspace:0.0.0"}],
     ["./packages/plugin-file/", {"name":"@berry/plugin-file","reference":"0.0.0"}],
     ["./packages/plugin-github/", {"name":"@berry/plugin-github","reference":"workspace:0.0.0"}],
@@ -6889,10 +7398,26 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.pnp/cache/@types-events-8b8f573002cf3ab4.zip/node_modules/@types/events/", {"name":"@types/events","reference":"1.2.0"}],
     ["./.pnp/cache/@types-minimatch-3102f5f77510f720.zip/node_modules/@types/minimatch/", {"name":"@types/minimatch","reference":"3.0.3"}],
     ["./.pnp/cache/@types-got-05007d6c6f93b685.zip/node_modules/@types/got/", {"name":"@types/got","reference":"8.3.4"}],
+    ["./.pnp/cache/@types-inquirer-c75bc52e2cf29669.zip/node_modules/@types/inquirer/", {"name":"@types/inquirer","reference":"0.0.43"}],
+    ["./.pnp/cache/@types-rx-bbfda936bb533bd7.zip/node_modules/@types/rx/", {"name":"@types/rx","reference":"4.1.1"}],
+    ["./.pnp/cache/@types-rx-core-binding-7b19115f6f2ca8ac.zip/node_modules/@types/rx-core-binding/", {"name":"@types/rx-core-binding","reference":"4.0.4"}],
+    ["./.pnp/cache/@types-rx-core-4e9f88c4d3ea8305.zip/node_modules/@types/rx-core/", {"name":"@types/rx-core","reference":"4.0.3"}],
+    ["./.pnp/cache/@types-rx-lite-aggregates-36791540ebf8bb5b.zip/node_modules/@types/rx-lite-aggregates/", {"name":"@types/rx-lite-aggregates","reference":"4.0.3"}],
+    ["./.pnp/cache/@types-rx-lite-3f1f4deb66a288b7.zip/node_modules/@types/rx-lite/", {"name":"@types/rx-lite","reference":"4.0.6"}],
+    ["./.pnp/cache/@types-rx-lite-async-afb51945d57112ec.zip/node_modules/@types/rx-lite-async/", {"name":"@types/rx-lite-async","reference":"4.0.2"}],
+    ["./.pnp/cache/@types-rx-lite-backpressure-c7c528cf0df5a108.zip/node_modules/@types/rx-lite-backpressure/", {"name":"@types/rx-lite-backpressure","reference":"4.0.3"}],
+    ["./.pnp/cache/@types-rx-lite-coincidence-9ce1b3fe450fc087.zip/node_modules/@types/rx-lite-coincidence/", {"name":"@types/rx-lite-coincidence","reference":"4.0.3"}],
+    ["./.pnp/cache/@types-rx-lite-experimental-30fa007ccd0112f6.zip/node_modules/@types/rx-lite-experimental/", {"name":"@types/rx-lite-experimental","reference":"4.0.1"}],
+    ["./.pnp/cache/@types-rx-lite-joinpatterns-a428afddf513e527.zip/node_modules/@types/rx-lite-joinpatterns/", {"name":"@types/rx-lite-joinpatterns","reference":"4.0.1"}],
+    ["./.pnp/cache/@types-rx-lite-testing-c9122ece132486d6.zip/node_modules/@types/rx-lite-testing/", {"name":"@types/rx-lite-testing","reference":"4.0.1"}],
+    ["./.pnp/cache/@types-rx-lite-virtualtime-e72db6c1119f134c.zip/node_modules/@types/rx-lite-virtualtime/", {"name":"@types/rx-lite-virtualtime","reference":"4.0.3"}],
+    ["./.pnp/cache/@types-rx-lite-time-c935e8a689821935.zip/node_modules/@types/rx-lite-time/", {"name":"@types/rx-lite-time","reference":"4.0.3"}],
+    ["./.pnp/cache/@types-through-ab4cfa2d5a0afe13.zip/node_modules/@types/through/", {"name":"@types/through","reference":"0.0.29"}],
     ["./.pnp/cache/@types-joi-8a9b0de512e7d9e9.zip/node_modules/@types/joi/", {"name":"@types/joi","reference":"13.6.1"}],
     ["./.pnp/cache/@types-lockfile-18242135e3cb3db2.zip/node_modules/@types/lockfile/", {"name":"@types/lockfile","reference":"1.0.0"}],
     ["./.pnp/cache/@types-lodash-99f5146ae4f466f4.zip/node_modules/@types/lodash/", {"name":"@types/lodash","reference":"4.14.117"}],
     ["./.pnp/cache/@types-mkdirp-26a52e47c7cd2fe0.zip/node_modules/@types/mkdirp/", {"name":"@types/mkdirp","reference":"0.5.2"}],
+    ["./.pnp/cache/@types-node-emoji-7ad52b3b0bc7b216.zip/node_modules/@types/node-emoji/", {"name":"@types/node-emoji","reference":"1.8.0"}],
     ["./.pnp/cache/@types-node-fetch-4237419ee3ba8fd4.zip/node_modules/@types/node-fetch/", {"name":"@types/node-fetch","reference":"2.1.2"}],
     ["./.pnp/cache/@types-react-redux-98c1a898e0913f59.zip/node_modules/@types/react-redux/", {"name":"@types/react-redux","reference":"6.0.9"}],
     ["./.pnp/cache/@types-react-1c7be28b88168c00.zip/node_modules/@types/react/", {"name":"@types/react","reference":"16.4.18"}],
@@ -6906,6 +7431,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.pnp/cache/@types-tough-cookie-396d0cb2d67fca48.zip/node_modules/@types/tough-cookie/", {"name":"@types/tough-cookie","reference":"2.3.3"}],
     ["./.pnp/cache/@types-semver-241156b84eaa59f2.zip/node_modules/@types/semver/", {"name":"@types/semver","reference":"5.5.0"}],
     ["./.pnp/cache/@types-stream-to-promise-0abf47e5467b0808.zip/node_modules/@types/stream-to-promise/", {"name":"@types/stream-to-promise","reference":"2.2.0"}],
+    ["./.pnp/cache/@types-supports-color-fa08803ca0f82504.zip/node_modules/@types/supports-color/", {"name":"@types/supports-color","reference":"5.3.0"}],
     ["./.pnp/cache/@types-tar-57cdcd689933e694.zip/node_modules/@types/tar/", {"name":"@types/tar","reference":"4.0.0"}],
     ["./.pnp/cache/@types-tmp-8826a3d0a56601f2.zip/node_modules/@types/tmp/", {"name":"@types/tmp","reference":"0.0.33"}],
     ["./.pnp/cache/@types-tunnel-5ac3876df1f0ad92.zip/node_modules/@types/tunnel/", {"name":"@types/tunnel","reference":"0.0.0"}],
@@ -6956,7 +7482,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.pnp/cache/mem-894872c18f2e027a.zip/node_modules/mem/", {"name":"mem","reference":"4.0.0"}],
     ["./.pnp/cache/map-age-cleaner-2fa26790d0c67c96.zip/node_modules/map-age-cleaner/", {"name":"map-age-cleaner","reference":"0.1.2"}],
     ["./.pnp/cache/p-defer-2a1c4c8458d60d4a.zip/node_modules/p-defer/", {"name":"p-defer","reference":"1.0.0"}],
-    ["./.pnp/cache/mimic-fn-8daea209db57999d.zip/node_modules/mimic-fn/", {"name":"mimic-fn","reference":"1.2.0"}],
     ["./.pnp/cache/p-is-promise-1709108f16de0346.zip/node_modules/p-is-promise/", {"name":"p-is-promise","reference":"1.1.0"}],
     ["./.pnp/cache/require-directory-74564ef8f658c394.zip/node_modules/require-directory/", {"name":"require-directory","reference":"2.1.1"}],
     ["./.pnp/cache/require-main-filename-e62d4202b89cf265.zip/node_modules/require-main-filename/", {"name":"require-main-filename","reference":"1.0.1"}],
@@ -7004,6 +7529,8 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     51,
     41,
     32,
+    30,
+    28,
     25,
     24,
     23,

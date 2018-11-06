@@ -6,12 +6,11 @@
         "berry": "./bin/run.js"
     },
     "dependencies": {
-        "@berry/core": "0.0.0",
-        "@berry/shell": "0.0.0",
+        "@berry/core": "workspace:0.0.0",
+        "@berry/shell": "workspace:0.0.0",
         "@manaflair/concierge": "^0.7.3",
         "execa": "^1.0.0",
-        "joi": "^13.6.0",
-        "tslib": "^1"
+        "joi": "^13.6.0"
     },
     "devDependencies": {
         "@berry/builder": "0.0.0",
@@ -26,20 +25,32 @@
     },
     "@berry/builder": {
         "bundles": {
+            "ci": [
+                "@berry/plugin-file",
+                "@berry/plugin-link"
+            ],
             "light": [
                 "@berry/plugin-file",
-                "@berry/plugin-link",
-                "@berry/plugin-http",
                 "@berry/plugin-github",
+                "@berry/plugin-http",
+                "@berry/plugin-link",
+                "@berry/plugin-npm"
+            ],
+            "standard": [
+                "@berry/plugin-constraints",
+                "@berry/plugin-file",
+                "@berry/plugin-github",
+                "@berry/plugin-http",
+                "@berry/plugin-link",
                 "@berry/plugin-npm"
             ],
             "full": [
                 "@berry/plugin-file",
-                "@berry/plugin-link",
-                "@berry/plugin-http",
                 "@berry/plugin-github",
-                "@berry/plugin-npm",
-                "@berry/plugin-hub"
+                "@berry/plugin-http",
+                "@berry/plugin-hub",
+                "@berry/plugin-link",
+                "@berry/plugin-npm"
             ]
         }
     }

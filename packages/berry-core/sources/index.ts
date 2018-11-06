@@ -12,6 +12,9 @@ export {Workspace} from './Workspace';
 import * as httpUtils from './httpUtils';
 export {httpUtils};
 
+import * as miscUtils from './miscUtils';
+export {miscUtils};
+
 import * as structUtils from './structUtils';
 export {structUtils};
 

@@ -70,7 +70,7 @@ class WorkspaceView extends React.PureComponent<WorkspaceViewProps, WorkspaceVie
     if (!this.props.filterRegexp)
       return false;
 
-    if (this.props.filterRegexp.test(structUtils.prettyIdent(descriptor)))
+    if (this.props.filterRegexp.test(structUtils.stringifyIdent(descriptor)))
       return false;
     
     return true;
@@ -93,7 +93,7 @@ class WorkspaceView extends React.PureComponent<WorkspaceViewProps, WorkspaceVie
       <Div style={mainStyle}>
         <Div style={infoStyle}>
           <Div style={nameStyle}>
-            {structUtils.prettyLocator(this.props.workspace.locator)}
+            {structUtils.stringifyLocator(this.props.workspace.locator)}
           </Div>
           <Div style={cwdStyle}>
             {this.props.workspace.cwd}
@@ -108,8 +108,8 @@ class WorkspaceView extends React.PureComponent<WorkspaceViewProps, WorkspaceVie
               </Div>
               {iterate(dependencies, (descriptor, index) =>
                 <FocusEntry key={descriptor.descriptorHash} column={1} row={index}>
-                  <EditModeItem editInitialValue={structUtils.prettyIdent(descriptor)}>
-                    {structUtils.prettyIdent(descriptor)}
+                  <EditModeItem editInitialValue={structUtils.stringifyIdent(descriptor)}>
+                    {structUtils.stringifyIdent(descriptor)}
                   </EditModeItem>
                 </FocusEntry>
               , this.props.filterRegexp ? `` : `n/a`)}
@@ -152,8 +152,8 @@ class WorkspaceView extends React.PureComponent<WorkspaceViewProps, WorkspaceVie
               </Div>
               {iterate(devDependencies, (descriptor, index) =>
                 <FocusEntry key={descriptor.descriptorHash} column={4} row={index}>
-                  <EditModeItem editInitialValue={structUtils.prettyIdent(descriptor)}>
-                    {structUtils.prettyIdent(descriptor)}
+                  <EditModeItem editInitialValue={structUtils.stringifyIdent(descriptor)}>
+                    {structUtils.stringifyIdent(descriptor)}
                   </EditModeItem>
                 </FocusEntry>
               , this.props.filterRegexp ? `` : `n/a`)}

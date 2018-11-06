@@ -20,5 +20,5 @@ export const ProjectName = (project: Project) => () => {
   if (!topLevelWorkspace)
     return `notfound`;
 
-  return structUtils.prettyIdent(topLevelWorkspace.locator);
+  return structUtils.stringifyIdent(topLevelWorkspace.locator);
 };

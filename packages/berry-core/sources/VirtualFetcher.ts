@@ -17,7 +17,7 @@ export class VirtualFetcher implements Fetcher {
       throw new Error(`Invalid virtual package reference`);
 
     const nextReference = locator.reference.slice(splitPoint + 1);
-    const nextLocator = structUtils.makeLocatorFromIdent(locator, nextReference);
+    const nextLocator = structUtils.makeLocator(locator, nextReference);
 
     const parentFs = await opts.fetcher.fetch(nextLocator, opts);
     

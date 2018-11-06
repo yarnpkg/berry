@@ -4,15 +4,17 @@
     "private": true,
     "main": "./sources/index.ts",
     "dependencies": {
-        "@berry/ui": "0.0.0",
+        "@berry/json-proxy": "workspace:0.0.0",
+        "@berry/ui": "workspace:0.0.0",
         "@manaflair/concierge": "^0.7.3",
         "dateformat": "^3.0.3",
         "immer": "^1.7.2",
         "joi": "^13.6.0",
-        "react": "^16.5.2",
+        "pretty-bytes": "^5.0.0",
         "react-redux": "^5.0.7",
-        "redux": "^4.0.0",
-        "redux-saga": "^1.0.0-beta.3"
+        "react": "^16.5.2",
+        "redux-saga": "^1.0.0-beta.3",
+        "redux": "^4.0.0"
     },
     "devDependencies": {
         "@berry/builder": "0.0.0"

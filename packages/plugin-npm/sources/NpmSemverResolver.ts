@@ -6,7 +6,7 @@ import {Ident, Descriptor, Locator}                                from '@berry/
 
 import {DEFAULT_REGISTRY}                                          from './constants';
 
-export class NpmResolver implements Resolver {
+export class NpmSemverResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     if (!semver.validRange(descriptor.range))
       return false;
@@ -49,7 +49,7 @@ export class NpmResolver implements Resolver {
     const registryData = JSON.parse(httpResponse.toString());
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
-      throw new Error(`Registry returned invalid data for "${structUtils.prettyLocator(locator)}"`);
+      throw new Error(`Registry returned invalid data for "${structUtils.prettyLocator(opts.project.configuration, locator)}"`);
 
     if (!Object.prototype.hasOwnProperty.call(registryData.versions, locator.reference))
       throw new Error(`Registry failed to return reference "${locator.reference}"`);

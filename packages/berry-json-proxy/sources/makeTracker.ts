@@ -78,6 +78,65 @@ function cloneValueDeep(value: any, filter: TrackingFilter): any {
   }
 }
 
+function compareValuesDeep(a: any, b: any): boolean {
+  if (a === b) {
+    return true;
+  } else if ((a == null) !== (b == null)) {
+    return false;
+  } else if (Array.isArray(a)) {
+    if (!Array.isArray(b))
+      return false;
+    if (a.length !== b.length)
+      return false;
+    
+    for (let t = 0, T = a.length; t < T; ++t)
+      if (!compareValuesDeep(a[t], b[t]))
+        return false;
+    
+    return true;
+  } else if (a instanceof Set) {
+    if (!(b instanceof Set))
+      return false;
+    if (a.size !== b.size)
+      return false;
+    
+    for (const key of a.entries())
+      if (!b.has(key))
+        return false;
+    
+    return true;
+  } else if (a instanceof Map) {
+    if (!(b instanceof Map))
+      return false;
+    if (a.size !== b.size)
+      return false;
+    
+    for (const [key, value] of a.entries())
+      if (!compareValuesDeep(value, b.get(key)))
+        return false;
+    
+    return true;
+  } else if (a.constructor === Object) {
+    if (b.constructor !== Object)
+      return false;
+    
+    const aKeys = Object.keys(a);
+    const bKeys = Object.keys(b);
+
+    for (let t = 0, T = aKeys.length; t < T; ++t)
+      if (aKeys[t] !== bKeys[t])
+        return false;
+    
+    for (let t = 0, T = aKeys.length; t < T; ++t)
+      if (!compareValuesDeep(a[aKeys[t]], b[bKeys[t]]))
+        return false;
+
+    return true;
+  } else {
+    return false;
+  }
+}
+
 const proxyHandlerSet = (version: TrackingVersion, filter: TrackingFilter, ensureCloning: () => Set<any>) => ({
   get(source: Set<any>, prop: string | number | symbol): any {
     switch (prop) {
@@ -158,6 +217,10 @@ const proxyHandlerObject = (version: TrackingVersion, filter: TrackingFilter, en
     // @ts-ignore
     const value = source[prop];
 
+    // Typescript doesn't allow symbol in its index types
+    if (typeof prop === `symbol`)
+      return value;
+
     if (filter !== true && !filter[prop])
       return value;
 
@@ -179,13 +242,18 @@ const proxyHandlerObject = (version: TrackingVersion, filter: TrackingFilter, en
     });
   },
   set(source: Object, prop: string | number | symbol, value: any): boolean {
-    // We ensure that our parent is cloned, then assign the new value into it
-    const clonedParent = ensureCloning();
-
     // @ts-ignore
-    clonedParent[prop] = cloneValueDeep(value);
+    const currentValue = source[prop];
+
+    if (!compareValuesDeep(currentValue, value)) {
+      // We ensure that our parent is cloned, then assign the new value into it
+      const clonedParent = ensureCloning();
 
       // @ts-ignore
+      clonedParent[prop] = cloneValueDeep(value, filter);
+    }
+
+    // @ts-ignore
     source[prop] = value;
 
     return true;
@@ -207,7 +275,8 @@ function makeValueObservable(value: any, version: TrackingVersion, filter: Track
 }
 
 export type TrackingVersion = Object;
-export type TrackingFilter = any;
+export type TrackingFilter = true | TrackingFilterObject;
+interface TrackingFilterObject {[key: string]: TrackingFilter}
 
 export type Tracker<T> = (cb: (value: T) => void) => T;
 

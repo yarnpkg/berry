@@ -1,3 +1,5 @@
+import supportsColor = require('supports-color');
+
 import {parseSyml}                from '@berry/parsers';
 import {existsSync, readFileSync} from 'fs';
 import {dirname, resolve}         from 'path';
@@ -19,6 +21,9 @@ const RELATIVE_KEYS = new Set([
 ]);
 
 export class Configuration {
+  public enableEmojis: boolean = !!supportsColor.stdout;
+  public enableColors: boolean = !!supportsColor.stdout;
+
   public projectCwd: string;
 
   public httpProxy: string | null = null;

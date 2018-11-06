@@ -3,6 +3,7 @@ import React = require('react');
 import {Configuration, Workspace, Plugin, Project} from '@berry/core';
 import {Descriptor}                                from '@berry/core';
 import {structUtils}                               from '@berry/core';
+import {Tracker, makeTracker}                      from '@berry/json-proxy';
 import {render}                                    from '@berry/ui';
 import {DraftObject, produce}                      from 'immer';
 import {Provider}                                  from 'react-redux';
@@ -11,7 +12,6 @@ import createSagaMiddleware                        from 'redux-saga';
 import {createStore, applyMiddleware}              from 'redux';
 
 import {WorkspacesScreen}                          from '../screens/WorkspacesScreen';
-import {Tracker, makeTracker}                      from '../makeTracker';
 
 export type State = {
   project: Project,
@@ -50,7 +50,7 @@ function makeBerrySaga(projectTracker: Tracker<Project>) {
     yield all([
       takeEvery(`UPDATE_RESOLUTION`, function* ({descriptor, reference}: UpdateResolutionAction): IterableIterator<any> {
         yield put({type: `UPDATE_PROJECT`, project: projectTracker(project => {
-          const locator = structUtils.makeLocatorFromDescriptor(descriptor, reference);
+          const locator = structUtils.makeLocator(descriptor, reference);
 
           project.storedResolutions.set(descriptor.descriptorHash, locator.locatorHash);
           project.storedPackages.set(locator.locatorHash, {... locator, binaries: new Map(), dependencies: new Map(), peerDependencies: new Map()});

@@ -120,7 +120,7 @@ class DescriptorEntry extends React.PureComponent<any, any> {
         : descriptorEntryStyle;
     
     return <Div ref={this.mainRef} tabIndex={0} onFocus={this.handleFocus} onBlur={this.handleBlur} style={style} shortcuts={{... this.shortcuts, ... this.props.shortcuts}}>
-      <div>{structUtils.prettyIdent(this.props.descriptor)}@</div>
+      <div>{structUtils.stringifyIdent(this.props.descriptor)}@</div>
       {content}
     </Div>;
   }
@@ -167,7 +167,7 @@ class ResolutionEntry extends React.PureComponent<any, any> {
   }
 
   render = () => <Div ref={this.mainRef} tabIndex={0} onFocus={this.handleFocus} onBlur={this.handleBlur} style={this.state.focused ? focusedResolutionEntryStyle : resolutionEntryStyle} shortcuts={this.props.shortcuts}>
-    {this.props.pkg ? structUtils.prettyLocator(this.props.pkg) : `unresolved`}
+    {this.props.pkg ? structUtils.stringifyLocator(this.props.pkg) : `unresolved`}
   </Div>;
 }
 
@@ -224,7 +224,7 @@ export class WorkspaceTree extends React.PureComponent<WorkspaceTreeProps, any> 
     {Array.from(this.props.project.workspacesByLocator.values()).map((workspace, index) => <Div key={workspace.locator.locatorHash}>
       <Div style={index === 0 ? workspaceEntryStyle : workspaceEntryStyleNthp1}>
         <Div style={workspaceNameStyle}>
-          {structUtils.prettyLocator(workspace.locator)}
+          {structUtils.stringifyLocator(workspace.locator)}
         </Div>
         <Div style={workspaceCwdStyle}>
           {workspace.cwd}

@@ -18,7 +18,7 @@ export class WorkspaceBaseFetcher implements Fetcher {
   }
 
   getWorkspace(locator: Locator, opts: FetchOptions) {
-    const normalizedLocator = structUtils.makeLocatorFromIdent(locator, locator.reference.slice(WorkspaceBaseResolver.protocol.length));
+    const normalizedLocator = structUtils.makeLocator(locator, locator.reference.slice(WorkspaceBaseResolver.protocol.length));
 
     return opts.project.getWorkspaceByLocator(normalizedLocator);
   }

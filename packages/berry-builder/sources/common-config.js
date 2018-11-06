@@ -13,7 +13,7 @@ module.exports = {
   },
 
   resolve: {
-    alias: {},
+    alias: {[`supports-color`]: `supports-color/index`},
     extensions: [`.js`, `.ts`, `.tsx`, `.json`],
     mainFields: [`browser`, `module`, `main`],
     plugins: [PnpWebpackPlugin],

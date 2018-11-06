@@ -131,76 +131,82 @@
 "@berry/cli@workspace-base:0.0.0":
   dependencies:
     @berry/builder: 0.0.0
-    @berry/core: 0.0.0
+    @berry/core: "workspace:0.0.0"
     @berry/plugin-github: 0.0.0
     @berry/plugin-http: 0.0.0
     @berry/plugin-hub: 0.0.0
     @berry/plugin-npm: 0.0.0
     @berry/pnp: 0.0.0
-    @berry/shell: 0.0.0
+    @berry/shell: "workspace:0.0.0"
     @manaflair/concierge: ^0.7.3
     execa: ^1.0.0
     joi: ^13.6.0
-    tslib: ^1
   resolution: "@berry/cli@workspace-base:0.0.0"
 
 "@berry/cli@workspace:[object Object]":
   dependencies:
-    @berry/core: 0.0.0
-    @berry/shell: 0.0.0
+    @berry/core: "workspace:0.0.0"
+    @berry/shell: "workspace:0.0.0"
     @manaflair/concierge: ^0.7.3
     execa: ^1.0.0
     joi: ^13.6.0
-    tslib: ^1
   resolution: "@berry/cli@workspace:0.0.0"
 
 "@berry/core@workspace-base:0.0.0":
   dependencies:
-    @berry/parsers: 0.0.0
-    @berry/pnp: 0.0.0
+    @berry/json-proxy: "workspace:0.0.0"
+    @berry/parsers: "workspace:0.0.0"
+    @berry/pnp: "workspace:0.0.0"
+    chalk: ^2.4.1
     fs-extra: ^7.0.0
     globby: ^8.0.1
     got: ^9.2.2
+    json-file-plus: ^3.3.1
     lockfile: ^1.0.4
     logic-solver: ^2.0.1
     mkdirp: ^0.5.1
     pluralize: ^7.0.0
     pretty-bytes: ^5.1.0
     stream-to-promise: ^2.2.0
+    supports-color: ^5.5.0
     tar: ^4.4.6
     tmp: ^0.0.33
-    tslib: ^1
     tunnel: ^0.0.6
     typescript: ^3.0.1
   resolution: "@berry/core@workspace-base:0.0.0"
 
-"@berry/core@workspace:[object Object], @berry/core@0.0.0":
+"@berry/core@workspace:[object Object], @berry/core@workspace:0.0.0":
   dependencies:
-    @berry/parsers: 0.0.0
-    @berry/pnp: 0.0.0
+    @berry/json-proxy: "workspace:0.0.0"
+    @berry/parsers: "workspace:0.0.0"
+    @berry/pnp: "workspace:0.0.0"
+    chalk: ^2.4.1
     fs-extra: ^7.0.0
     globby: ^8.0.1
     got: ^9.2.2
+    json-file-plus: ^3.3.1
     lockfile: ^1.0.4
     logic-solver: ^2.0.1
     mkdirp: ^0.5.1
     pluralize: ^7.0.0
     pretty-bytes: ^5.1.0
     stream-to-promise: ^2.2.0
+    supports-color: ^5.5.0
     tar: ^4.4.6
     tmp: ^0.0.33
-    tslib: ^1
     tunnel: ^0.0.6
   resolution: "@berry/core@workspace:0.0.0"
 
+"@berry/json-proxy@workspace-base:0.0.0":
+  resolution: "@berry/json-proxy@workspace-base:0.0.0"
+
+"@berry/json-proxy@workspace:[object Object], @berry/json-proxy@workspace:0.0.0":
+  resolution: "@berry/json-proxy@workspace:0.0.0"
+
 "@berry/libzip@workspace-base:0.0.0":
-  dependencies:
-    tslib: ^1
   resolution: "@berry/libzip@workspace-base:0.0.0"
 
-"@berry/libzip@workspace:[object Object], @berry/libzip@0.0.0":
-  dependencies:
-    tslib: ^1
+"@berry/libzip@workspace:[object Object], @berry/libzip@workspace:0.0.0":
   resolution: "@berry/libzip@workspace:0.0.0"
 
 "@berry/monorepo@workspace-base:0.0.0":
@@ -208,8 +214,10 @@
     @berry/builder: "workspace:[object Object]"
     @berry/cli: "workspace:[object Object]"
     @berry/core: "workspace:[object Object]"
+    @berry/json-proxy: "workspace:[object Object]"
     @berry/libzip: "workspace:[object Object]"
     @berry/parsers: "workspace:[object Object]"
+    @berry/plugin-constraints: "workspace:[object Object]"
     @berry/plugin-file: "workspace:[object Object]"
     @berry/plugin-github: "workspace:[object Object]"
     @berry/plugin-http: "workspace:[object Object]"
@@ -228,11 +236,13 @@
     @types/fs-extra: ^5.0.4
     @types/globby: ^8.0.0
     @types/got: ^8.3.4
+    @types/inquirer: ^0.0.43
     @types/joi: ^13.6.0
     @types/lockfile: ^1.0.0
     @types/lodash: ^4.14.116
     @types/mkdirp: ^0.5.2
     @types/node: ^10.12.0
+    @types/node-emoji: ^1.8.0
     @types/node-fetch: ^2.1.2
     @types/react: ^16.4.14
     @types/react-redux: ^6.0.9
@@ -241,6 +251,7 @@
     @types/request: ^2.47.1
     @types/semver: ^5.5.0
     @types/stream-to-promise: ^2.2.0
+    @types/supports-color: ^5.3.0
     @types/tar: ^4.0.0
     @types/tmp: ^0.0.33
     @types/tunnel: ^0.0.0
@@ -250,56 +261,69 @@
 "@berry/parsers@workspace-base:0.0.0":
   dependencies:
     pegjs: ^0.10.0
-    tslib: ^1
     typescript: ^3.0.1
   resolution: "@berry/parsers@workspace-base:0.0.0"
 
-"@berry/parsers@workspace:[object Object], @berry/parsers@0.0.0":
-  dependencies:
-    tslib: ^1
+"@berry/parsers@workspace:[object Object], @berry/parsers@workspace:0.0.0":
   resolution: "@berry/parsers@workspace:0.0.0"
+
+"@berry/plugin-constraints@workspace-base:0.0.0":
+  dependencies:
+    @berry/core: "workspace:0.0.0"
+    inquirer: ^6.2.0
+    node-emoji: ^1.8.1
+    tau-prolog: ^0.2.38
+  resolution: "@berry/plugin-constraints@workspace-base:0.0.0"
+
+"@berry/plugin-constraints@workspace:[object Object]":
+  dependencies:
+    @berry/core: "workspace:0.0.0"
+    inquirer: ^6.2.0
+    node-emoji: ^1.8.1
+    tau-prolog: ^0.2.38
+  resolution: "@berry/plugin-constraints@workspace:0.0.0"
 
 "@berry/plugin-file@workspace-base:0.0.0":
   dependencies:
-    @berry/core: 0.0.0
+    @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-file@workspace-base:0.0.0"
 
 "@berry/plugin-file@workspace:[object Object]":
   dependencies:
-    @berry/core: 0.0.0
+    @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-file@workspace:0.0.0"
 
 "@berry/plugin-github@workspace-base:0.0.0":
   dependencies:
-    @berry/core: 0.0.0
-    tslib: ^1
+    @berry/core: "workspace:0.0.0"
     typescript: ^3.0.1
   resolution: "@berry/plugin-github@workspace-base:0.0.0"
 
 "@berry/plugin-github@workspace:[object Object], @berry/plugin-github@0.0.0":
   dependencies:
-    @berry/core: 0.0.0
-    tslib: ^1
+    @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-github@workspace:0.0.0"
 
 "@berry/plugin-http@workspace-base:0.0.0":
   dependencies:
-    @berry/core: 0.0.0
+    @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-http@workspace-base:0.0.0"
 
 "@berry/plugin-http@workspace:[object Object], @berry/plugin-http@0.0.0":
   dependencies:
-    @berry/core: 0.0.0
+    @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-http@workspace:0.0.0"
 
 "@berry/plugin-hub@workspace-base:0.0.0":
   dependencies:
     @berry/builder: 0.0.0
-    @berry/ui: 0.0.0
+    @berry/json-proxy: "workspace:0.0.0"
+    @berry/ui: "workspace:0.0.0"
     @manaflair/concierge: ^0.7.3
     dateformat: ^3.0.3
     immer: ^1.7.2
     joi: ^13.6.0
+    pretty-bytes: ^5.0.0
     react: ^16.5.2
     react-redux: ^5.0.7
     redux: ^4.0.0
@@ -308,11 +332,13 @@
 
 "@berry/plugin-hub@workspace:[object Object], @berry/plugin-hub@0.0.0":
   dependencies:
-    @berry/ui: 0.0.0
+    @berry/json-proxy: "workspace:0.0.0"
+    @berry/ui: "workspace:0.0.0"
     @manaflair/concierge: ^0.7.3
     dateformat: ^3.0.3
     immer: ^1.7.2
     joi: ^13.6.0
+    pretty-bytes: ^5.0.0
     react: ^16.5.2
     react-redux: ^5.0.7
     redux: ^4.0.0
@@ -324,56 +350,54 @@
 
 "@berry/plugin-link@workspace-base:0.0.0":
   dependencies:
-    @berry/core: 0.0.0
+    @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-link@workspace-base:0.0.0"
 
 "@berry/plugin-link@workspace:[object Object]":
   dependencies:
-    @berry/core: 0.0.0
+    @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-link@workspace:0.0.0"
 
 "@berry/plugin-npm@workspace-base:0.0.0":
   dependencies:
-    @berry/core: 0.0.0
+    @berry/core: "workspace:0.0.0"
     semver: ^5.5.1
   resolution: "@berry/plugin-npm@workspace-base:0.0.0"
 
 "@berry/plugin-npm@workspace:[object Object], @berry/plugin-npm@0.0.0":
   dependencies:
-    @berry/core: 0.0.0
+    @berry/core: "workspace:0.0.0"
     semver: ^5.5.1
   resolution: "@berry/plugin-npm@workspace:0.0.0"
 
 "@berry/pnp@workspace-base:0.0.0":
   dependencies:
-    @berry/core: 0.0.0
-    @berry/zipfs: 0.0.0
+    @berry/core: "workspace:0.0.0"
+    @berry/zipfs: "workspace:0.0.0"
     raw-loader: ^0.5.1
     ts-loader: ^5.2.1
-    tslib: ^1
     typescript: ^3.0.1
     wasm-loader: ^1.3.0
     webpack: ^4.17.2
     webpack-cli: ^3.1.0
   resolution: "@berry/pnp@workspace-base:0.0.0"
 
-"@berry/pnp@workspace:[object Object], @berry/pnp@0.0.0":
+"@berry/pnp@workspace:[object Object], @berry/pnp@0.0.0, @berry/pnp@workspace:0.0.0":
   dependencies:
-    @berry/core: 0.0.0
-    @berry/zipfs: 0.0.0
-    tslib: ^1
+    @berry/core: "workspace:0.0.0"
+    @berry/zipfs: "workspace:0.0.0"
   resolution: "@berry/pnp@workspace:0.0.0"
 
 "@berry/shell@workspace-base:0.0.0":
   dependencies:
-    @berry/parsers: 0.0.0
+    @berry/parsers: "workspace:0.0.0"
     execa: ^1.0.0
     stream-buffers: ^3.0.2
   resolution: "@berry/shell@workspace-base:0.0.0"
 
-"@berry/shell@workspace:[object Object], @berry/shell@0.0.0":
+"@berry/shell@workspace:[object Object], @berry/shell@workspace:0.0.0":
   dependencies:
-    @berry/parsers: 0.0.0
+    @berry/parsers: "workspace:0.0.0"
     execa: ^1.0.0
     stream-buffers: ^3.0.2
   resolution: "@berry/shell@workspace:0.0.0"
@@ -391,7 +415,7 @@
     yoga-dom: ^0.0.14
   resolution: "@berry/ui@workspace-base:0.0.0"
 
-"@berry/ui@workspace:[object Object], @berry/ui@0.0.0":
+"@berry/ui@workspace:[object Object], @berry/ui@workspace:0.0.0":
   dependencies:
     @manaflair/term-strings: ^0.10.1
     @manaflair/text-layout: ^0.11.0
@@ -406,12 +430,12 @@
 
 "@berry/zipfs@workspace-base:0.0.0":
   dependencies:
-    @berry/libzip: 0.0.0
+    @berry/libzip: "workspace:0.0.0"
   resolution: "@berry/zipfs@workspace-base:0.0.0"
 
-"@berry/zipfs@workspace:[object Object], @berry/zipfs@0.0.0":
+"@berry/zipfs@workspace:[object Object], @berry/zipfs@workspace:0.0.0":
   dependencies:
-    @berry/libzip: 0.0.0
+    @berry/libzip: "workspace:0.0.0"
   resolution: "@berry/zipfs@workspace:0.0.0"
 
 @manaflair/concierge@^0.7.3:
@@ -522,6 +546,12 @@
     @types/node: "*"
   resolution: @types/got@8.3.4
 
+@types/inquirer@^0.0.43:
+  dependencies:
+    @types/rx: "*"
+    @types/through: "*"
+  resolution: @types/inquirer@0.0.43
+
 @types/joi@^13.6.0:
   resolution: @types/joi@13.6.1
 
@@ -538,6 +568,9 @@
   dependencies:
     @types/node: "*"
   resolution: @types/mkdirp@0.5.2
+
+@types/node-emoji@^1.8.0:
+  resolution: @types/node-emoji@1.8.0
 
 @types/node-fetch@^2.1.2:
   dependencies:
@@ -580,6 +613,81 @@
     @types/tough-cookie: "*"
   resolution: @types/request@2.47.1
 
+"@types/rx-core-binding@*":
+  dependencies:
+    @types/rx-core: "*"
+  resolution: @types/rx-core-binding@4.0.4
+
+"@types/rx-core@*":
+  resolution: @types/rx-core@4.0.3
+
+"@types/rx-lite-aggregates@*":
+  dependencies:
+    @types/rx-lite: "*"
+  resolution: @types/rx-lite-aggregates@4.0.3
+
+"@types/rx-lite-async@*":
+  dependencies:
+    @types/rx-lite: "*"
+  resolution: @types/rx-lite-async@4.0.2
+
+"@types/rx-lite-backpressure@*":
+  dependencies:
+    @types/rx-lite: "*"
+  resolution: @types/rx-lite-backpressure@4.0.3
+
+"@types/rx-lite-coincidence@*":
+  dependencies:
+    @types/rx-lite: "*"
+  resolution: @types/rx-lite-coincidence@4.0.3
+
+"@types/rx-lite-experimental@*":
+  dependencies:
+    @types/rx-lite: "*"
+  resolution: @types/rx-lite-experimental@4.0.1
+
+"@types/rx-lite-joinpatterns@*":
+  dependencies:
+    @types/rx-lite: "*"
+  resolution: @types/rx-lite-joinpatterns@4.0.1
+
+"@types/rx-lite-testing@*":
+  dependencies:
+    @types/rx-lite-virtualtime: "*"
+  resolution: @types/rx-lite-testing@4.0.1
+
+"@types/rx-lite-time@*":
+  dependencies:
+    @types/rx-lite: "*"
+  resolution: @types/rx-lite-time@4.0.3
+
+"@types/rx-lite-virtualtime@*":
+  dependencies:
+    @types/rx-lite: "*"
+  resolution: @types/rx-lite-virtualtime@4.0.3
+
+"@types/rx-lite@*":
+  dependencies:
+    @types/rx-core: "*"
+    @types/rx-core-binding: "*"
+  resolution: @types/rx-lite@4.0.6
+
+"@types/rx@*":
+  dependencies:
+    @types/rx-core: "*"
+    @types/rx-core-binding: "*"
+    @types/rx-lite: "*"
+    @types/rx-lite-aggregates: "*"
+    @types/rx-lite-async: "*"
+    @types/rx-lite-backpressure: "*"
+    @types/rx-lite-coincidence: "*"
+    @types/rx-lite-experimental: "*"
+    @types/rx-lite-joinpatterns: "*"
+    @types/rx-lite-testing: "*"
+    @types/rx-lite-time: "*"
+    @types/rx-lite-virtualtime: "*"
+  resolution: @types/rx@4.1.1
+
 @types/semver@^5.5.0:
   resolution: @types/semver@5.5.0
 
@@ -588,10 +696,18 @@
     @types/node: "*"
   resolution: @types/stream-to-promise@2.2.0
 
+@types/supports-color@^5.3.0:
+  resolution: @types/supports-color@5.3.0
+
 @types/tar@^4.0.0:
   dependencies:
     @types/node: "*"
   resolution: @types/tar@4.0.0
+
+"@types/through@*":
+  dependencies:
+    @types/node: "*"
+  resolution: @types/through@0.0.29
 
 @types/tmp@^0.0.33:
   resolution: @types/tmp@0.0.33
@@ -763,6 +879,9 @@ ajv@^6.1.0:
     uri-js: ^4.2.2
   resolution: ajv@6.5.4
 
+ansi-escapes@^3.0.0:
+  resolution: ansi-escapes@3.1.0
+
 ansi-regex@^2.0.0:
   resolution: ansi-regex@2.1.1
 
@@ -820,6 +939,9 @@ array-unique@^0.3.2:
 
 "arrify@^1.0.0, arrify@^1.0.1":
   resolution: arrify@1.0.1
+
+asap@~1.0.0:
+  resolution: asap@1.0.0
 
 asn1.js@^4.0.0:
   dependencies:
@@ -1036,12 +1158,15 @@ chalk@^1.1.3:
     supports-color: ^2.0.0
   resolution: chalk@1.1.3
 
-"chalk@^2.3.0, chalk@^2.4.1, chalk@^2.0.0":
+"chalk@^2.4.1, chalk@^2.3.0, chalk@^2.0.0":
   dependencies:
     ansi-styles: ^3.2.1
     escape-string-regexp: ^1.0.5
     supports-color: ^5.3.0
   resolution: chalk@2.4.1
+
+chardet@^0.7.0:
+  resolution: chardet@0.7.0
 
 chokidar@^2.0.2:
   dependencies:
@@ -1081,6 +1206,14 @@ class-utils@^0.3.5:
     isobject: ^3.0.0
     static-extend: ^0.1.1
   resolution: class-utils@0.3.6
+
+cli-cursor@^2.1.0:
+  dependencies:
+    restore-cursor: ^2.0.0
+  resolution: cli-cursor@2.1.0
+
+cli-width@^2.0.0:
+  resolution: cli-width@2.2.0
 
 cliui@^4.0.0:
   dependencies:
@@ -1267,6 +1400,11 @@ deep-is@~0.1.3:
 defer-to-connect@^1.0.1:
   resolution: defer-to-connect@1.0.1
 
+define-properties@^1.1.2:
+  dependencies:
+    object-keys: ^1.0.12
+  resolution: define-properties@1.1.3
+
 define-property@^0.2.5:
   dependencies:
     is-descriptor: ^0.1.0
@@ -1400,7 +1538,7 @@ es6-map@^0.1.5:
     es5-ext: ~0.10.14
   resolution: es6-symbol@3.1.1
 
-"escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5":
+"escape-string-regexp@^1.0.5, escape-string-regexp@^1.0.2":
   resolution: escape-string-regexp@1.0.5
 
 "escodegen@~1.9.0, escodegen@^1.8.1":
@@ -1497,6 +1635,13 @@ extend-shallow@^2.0.1:
     is-extendable: ^1.0.1
   resolution: extend-shallow@3.0.2
 
+external-editor@^3.0.0:
+  dependencies:
+    chardet: ^0.7.0
+    iconv-lite: ^0.4.24
+    tmp: ^0.0.33
+  resolution: external-editor@3.0.3
+
 extglob@^2.0.4:
   dependencies:
     array-unique: ^0.3.2
@@ -1530,6 +1675,11 @@ fast-json-stable-stringify@^2.0.0:
 
 fast-levenshtein@~2.0.4:
   resolution: fast-levenshtein@2.0.6
+
+figures@^2.0.0:
+  dependencies:
+    escape-string-regexp: ^1.0.5
+  resolution: figures@2.0.0
 
 fill-range@^4.0.0:
   dependencies:
@@ -1698,6 +1848,9 @@ has-ansi@^2.0.0:
 has-flag@^3.0.0:
   resolution: has-flag@3.0.0
 
+has-symbols@^1.0.0:
+  resolution: has-symbols@1.0.0
+
 has-unicode@^2.0.0:
   resolution: has-unicode@2.0.1
 
@@ -1724,7 +1877,7 @@ has-values@^1.0.0:
     kind-of: ^4.0.0
   resolution: has-values@1.0.0
 
-has@^1.0.1:
+"has@^1.0.1, has@^1.0.3":
   dependencies:
     function-bind: ^1.1.1
   resolution: has@1.0.3
@@ -1764,7 +1917,7 @@ http-cache-semantics@^4.0.0:
 https-browserify@^1.0.0:
   resolution: https-browserify@1.0.0
 
-iconv-lite@^0.4.4:
+"iconv-lite@^0.4.24, iconv-lite@^0.4.4":
   dependencies:
     safer-buffer: >= 2.1.2 < 3
   resolution: iconv-lite@0.4.24
@@ -1813,6 +1966,23 @@ inherits@2.0.1:
 ini@~1.3.0:
   resolution: ini@1.3.5
 
+inquirer@^6.2.0:
+  dependencies:
+    ansi-escapes: ^3.0.0
+    chalk: ^2.0.0
+    cli-cursor: ^2.1.0
+    cli-width: ^2.0.0
+    external-editor: ^3.0.0
+    figures: ^2.0.0
+    lodash: ^4.17.10
+    mute-stream: 0.0.7
+    run-async: ^2.2.0
+    rxjs: ^6.1.0
+    string-width: ^2.1.0
+    strip-ansi: ^4.0.0
+    through: ^2.3.6
+  resolution: inquirer@6.2.0
+
 interpret@^1.1.0:
   resolution: interpret@1.1.0
 
@@ -1841,6 +2011,9 @@ is-binary-path@^1.0.0:
 
 is-buffer@^1.1.5:
   resolution: is-buffer@1.1.6
+
+is-callable@^1.1.0:
+  resolution: is-callable@1.1.4
 
 is-data-descriptor@^0.1.4:
   dependencies:
@@ -1905,11 +2078,17 @@ is-number@^3.0.0:
     isobject: ^3.0.1
   resolution: is-plain-object@2.0.4
 
+is-promise@^2.1.0:
+  resolution: is-promise@2.1.0
+
 is-stream@^1.1.0:
   resolution: is-stream@1.1.0
 
 is-windows@^1.0.2:
   resolution: is-windows@1.0.2
+
+is@^3.2.1:
+  resolution: is@3.2.1
 
 "isarray@~1.0.0, isarray@^1.0.0, isarray@1.0.0":
   resolution: isarray@1.0.0
@@ -1945,6 +2124,15 @@ jsesc@^2.5.1:
 
 json-buffer@3.0.0:
   resolution: json-buffer@3.0.0
+
+json-file-plus@^3.3.1:
+  dependencies:
+    is: ^3.2.1
+    node.extend: ^2.0.0
+    object.assign: ^4.1.0
+    promiseback: ^2.0.2
+    safer-buffer: ^2.0.2
+  resolution: json-file-plus@3.3.1
 
 json-parse-better-errors@^1.0.2:
   resolution: json-parse-better-errors@1.0.2
@@ -2026,6 +2214,9 @@ lockfile@^1.0.4:
 
 lodash.debounce@^4.0.8:
   resolution: lodash.debounce@4.0.8
+
+lodash.toarray@^4.4.0:
+  resolution: lodash.toarray@4.4.0
 
 "lodash@^4.17.4, lodash@^4.17.10":
   resolution: lodash@4.17.11
@@ -2204,6 +2395,9 @@ ms@^2.1.1:
 ms@2.0.0:
   resolution: ms@2.0.0
 
+mute-stream@0.0.7:
+  resolution: mute-stream@0.0.7
+
 "nan@^2.4.0, nan@^2.9.2":
   resolution: nan@2.11.1
 
@@ -2237,6 +2431,11 @@ next-tick@1:
 
 nice-try@^1.0.4:
   resolution: nice-try@1.0.5
+
+node-emoji@^1.8.1:
+  dependencies:
+    lodash.toarray: ^4.4.0
+  resolution: node-emoji@1.8.1
 
 node-libs-browser@^2.0.0:
   dependencies:
@@ -2278,6 +2477,12 @@ node-pre-gyp@^0.10.0:
     semver: ^5.3.0
     tar: ^4
   resolution: node-pre-gyp@0.10.3
+
+node.extend@^2.0.0:
+  dependencies:
+    has: ^1.0.3
+    is: ^3.2.1
+  resolution: node.extend@2.0.1
 
 nopt@^4.0.1:
   dependencies:
@@ -2331,10 +2536,21 @@ object-copy@^0.1.0:
 object-inspect@~1.4.0:
   resolution: object-inspect@1.4.1
 
+"object-keys@^1.0.11, object-keys@^1.0.12":
+  resolution: object-keys@1.0.12
+
 object-visit@^1.0.0:
   dependencies:
     isobject: ^3.0.0
   resolution: object-visit@1.0.1
+
+object.assign@^4.1.0:
+  dependencies:
+    define-properties: ^1.1.2
+    function-bind: ^1.1.1
+    has-symbols: ^1.0.0
+    object-keys: ^1.0.11
+  resolution: object.assign@4.1.0
 
 object.pick@^1.3.0:
   dependencies:
@@ -2345,6 +2561,11 @@ object.pick@^1.3.0:
   dependencies:
     wrappy: 1
   resolution: once@1.3.3
+
+onetime@^2.0.0:
+  dependencies:
+    mimic-fn: ^1.0.0
+  resolution: onetime@2.0.1
 
 optionator@^0.8.1:
   dependencies:
@@ -2508,7 +2729,7 @@ prelude-ls@~1.1.2:
 prepend-http@^2.0.0:
   resolution: prepend-http@2.0.0
 
-pretty-bytes@^5.1.0:
+"pretty-bytes@^5.1.0, pretty-bytes@^5.0.0":
   resolution: pretty-bytes@5.1.0
 
 process-nextick-args@~2.0.0:
@@ -2517,8 +2738,24 @@ process-nextick-args@~2.0.0:
 process@^0.11.10:
   resolution: process@0.11.10
 
+promise-deferred@^2.0.1:
+  dependencies:
+    promise: ~6.1.0
+  resolution: promise-deferred@2.0.1
+
 promise-inflight@^1.0.1:
   resolution: promise-inflight@1.0.1
+
+promise@~6.1.0:
+  dependencies:
+    asap: ~1.0.0
+  resolution: promise@6.1.0
+
+promiseback@^2.0.2:
+  dependencies:
+    is-callable: ^1.1.0
+    promise-deferred: ^2.0.1
+  resolution: promiseback@2.0.2
 
 "prop-types@^15.6.2, prop-types@^15.6.1":
   dependencies:
@@ -2731,6 +2968,12 @@ responselike@^1.0.2:
     lowercase-keys: ^1.0.0
   resolution: responselike@1.0.2
 
+restore-cursor@^2.0.0:
+  dependencies:
+    onetime: ^2.0.0
+    signal-exit: ^3.0.2
+  resolution: restore-cursor@2.0.0
+
 ret@~0.1.10:
   resolution: ret@0.1.15
 
@@ -2745,10 +2988,20 @@ ret@~0.1.10:
     inherits: ^2.0.1
   resolution: ripemd160@2.0.2
 
+run-async@^2.2.0:
+  dependencies:
+    is-promise: ^2.1.0
+  resolution: run-async@2.3.0
+
 "run-queue@^1.0.3, run-queue@^1.0.0":
   dependencies:
     aproba: ^1.1.1
   resolution: run-queue@1.0.3
+
+rxjs@^6.1.0:
+  dependencies:
+    tslib: ^1.9.0
+  resolution: rxjs@6.3.3
 
 "safe-buffer@^5.1.2, safe-buffer@~5.1.1, safe-buffer@~5.1.0, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1":
   resolution: safe-buffer@5.1.2
@@ -2758,7 +3011,7 @@ safe-regex@^1.1.0:
     ret: ~0.1.10
   resolution: safe-regex@1.1.0
 
-safer-buffer@>= 2.1.2 < 3:
+"safer-buffer@^2.0.2, safer-buffer@>= 2.1.2 < 3":
   resolution: safer-buffer@2.1.2
 
 sax@^1.2.4:
@@ -2983,7 +3236,7 @@ string-width@^1.0.1:
     strip-ansi: ^3.0.0
   resolution: string-width@1.0.2
 
-"string-width@^2.0.0, string-width@^2.1.1, string-width@^1.0.2 || 2":
+"string-width@^2.1.0, string-width@^2.0.0, string-width@^2.1.1, string-width@^1.0.2 || 2":
   dependencies:
     is-fullwidth-code-point: ^2.0.0
     strip-ansi: ^4.0.0
@@ -3029,6 +3282,12 @@ symbol-observable@^1.2.0:
     safe-buffer: ^5.1.2
     yallist: ^3.0.2
   resolution: tar@4.4.6
+
+tau-prolog@^0.2.38:
+  resolution: tau-prolog@0.2.38
+
+through@^2.3.6:
+  resolution: through@2.3.8
 
 "through2@^2.0.0, through2@~2.0.3":
   dependencies:
@@ -3137,7 +3396,7 @@ ts-pnp@^1.0.0:
     typescript: "*"
   resolution: ts-pnp@1.0.0
 
-"tslib@^1, tslib@^1.9.0":
+tslib@^1.9.0:
   resolution: tslib@1.9.3
 
 tty-browserify@0.0.0:

@@ -9,10 +9,7 @@ import {extractPnpSettings, generatePnpScript}  from '@berry/pnp';
 
 import {Cache}                                  from './Cache';
 import {Configuration}                          from './Configuration';
-import {MultiResolver}                          from './MultiResolver';
 import {Workspace}                              from './Workspace';
-import {WorkspaceBaseResolver}                  from './WorkspaceBaseResolver';
-import {WorkspaceResolver}                      from './WorkspaceResolver';
 import * as structUtils                         from './structUtils';
 import {Descriptor, Locator, Package}           from './types';
 
@@ -270,18 +267,18 @@ export class Project {
         try {
           candidateReferences = await resolver.getCandidates(descriptor, {project: this, cache, fetcher, resolver});
         } catch (error) {
-          error.message = `${structUtils.prettyDescriptor(descriptor)}: ${error.message}`;
+          error.message = `${structUtils.prettyDescriptor(this.configuration, descriptor)}: ${error.message}`;
           throw error;
         }
 
         if (candidateReferences.length === 0)
-          throw new Error(`No candidate found for ${structUtils.prettyDescriptor(descriptor)}`);
+          throw new Error(`No candidate found for ${structUtils.prettyDescriptor(this.configuration, descriptor)}`);
 
         // Reversing it make the following algorithms prioritize the more recent releases
         candidateReferences.reverse();
 
         const candidateLocators = candidateReferences.map(reference => {
-          return structUtils.makeLocatorFromDescriptor(descriptor, reference);
+          return structUtils.makeLocator(descriptor, reference);
         });
 
         return [descriptor.descriptorHash, candidateLocators] as [string, Array<Locator>];
@@ -393,12 +390,12 @@ export class Project {
         try {
           pkg = await resolver.resolve(locator, {project: this, cache, fetcher, resolver});
         } catch (error) {
-          error.message = `${structUtils.prettyLocator(locator)}: ${error.message}`;
+          error.message = `${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
           throw error;
         }
 
         if (!structUtils.areLocatorsEqual(locator, pkg))
-          throw new Error(`The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(locator)} to ${structUtils.prettyLocator(pkg)})`);
+          throw new Error(`The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(this.configuration, locator)} to ${structUtils.prettyLocator(this.configuration, pkg)})`);
 
         const rawDependencies = pkg.dependencies;
         const rawPeerDependencies = pkg.peerDependencies;
@@ -438,8 +435,10 @@ export class Project {
 
           // The resolvers are not expected to return the dependencies in any particular order, so we must be careful and sort them ourselves
           const sortedDependencies = Array.from(pkg.dependencies.values()).sort((a, b) => {
-            // @ts-ignore
-            return (structUtils.stringifyDescriptor(a) > structUtils.stringifyDescriptor(b)) - (structUtils.stringifyDescriptor(a) < structUtils.stringifyDescriptor(b));
+            const astring = structUtils.stringifyDescriptor(a);
+            const bstring = structUtils.stringifyDescriptor(b);
+
+            return astring.localeCompare(bstring, `en`, {sensitivity: `variant`, caseFirst: `upper`});
           });
 
           for (const descriptor of sortedDependencies) {
@@ -462,18 +461,18 @@ export class Project {
       const parentPackage = allPackages.get(parentLocator.locatorHash);
 
       if (!parentPackage)
-        throw new Error(`The package (${structUtils.prettyLocator(parentLocator)}) should have been registered`);
+        throw new Error(`The package (${structUtils.prettyLocator(this.configuration, parentLocator)}) should have been registered`);
 
       for (const descriptor of Array.from(parentPackage.dependencies.values())) {
         const resolution = allResolutions.get(descriptor.descriptorHash);
 
         if (!resolution)
-          throw new Error(`The resolution (${structUtils.prettyDescriptor(descriptor)}) should have been registered`);
+          throw new Error(`The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
         let pkg = allPackages.get(resolution);
 
         if (!pkg)
-          throw new Error(`The package (${resolution}, resolved from ${structUtils.prettyDescriptor(descriptor)}) should have been registered`);
+          throw new Error(`The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
         if (pkg.peerDependencies.size > 0) {
           const virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
@@ -500,7 +499,7 @@ export class Project {
             }
 
             if (!peerDescriptor) {
-              this.errors.push(new Error(`Unsatisfied peer dependency (${structUtils.prettyLocator(pkg)} requests ${structUtils.prettyDescriptor(peerRequest)}, but ${structUtils.prettyLocator(parentLocator)} doesn't provide it)`));
+              this.errors.push(new Error(`Unsatisfied peer dependency (${structUtils.prettyLocator(this.configuration, pkg)} requests ${structUtils.prettyDescriptor(this.configuration, peerRequest)}, but ${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide it)`));
               continue;
             }
 
@@ -656,10 +655,21 @@ export class Project {
     }
 
     const content = stringifySyml(optimizedLockfile);
-    await writeFile(`${this.cwd}/berry.lock`, content);
+
+    const currentContent = existsSync(`${this.cwd}/berry.lock`)
+      ? await readFile(`${this.cwd}/berry.lock`, `utf8`)
+      : null;
+
+    if (currentContent !== content) {
+      await writeFile(`${this.cwd}/berry.lock`, content);
+    }
   }
 
   async persist() {
     await this.persistLockfile();
+    
+    for (const workspace of this.workspacesByCwd.values()) {
+      await workspace.persistManifest();
+    }
   }
 }

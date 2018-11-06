@@ -6,9 +6,6 @@
     "files": [
         "/lib"
     ],
-    "dependencies": {
-        "tslib": "^1"
-    },
     "devDependencies": {
         "pegjs": "^0.10.0",
         "typescript": "^3.0.1"

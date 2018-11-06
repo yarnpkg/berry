@@ -4,6 +4,6 @@
     "private": true,
     "main": "./sources/index.ts",
     "dependencies": {
-        "@berry/libzip": "0.0.0"
+        "@berry/libzip": "workspace:0.0.0"
     }
 }

@@ -58,7 +58,7 @@ export class MultiResolver implements Resolver {
     const resolver = this.resolvers.find(resolver => resolver.supportsDescriptor(descriptor, opts));
 
     if (!resolver)
-      throw new Error(`Couldn't find a resolver for '${structUtils.prettyDescriptor(descriptor)}'`);
+      throw new Error(`Couldn't find a resolver for '${structUtils.prettyDescriptor(opts.project.configuration, descriptor)}'`);
 
     return resolver;
   }
@@ -76,7 +76,7 @@ export class MultiResolver implements Resolver {
     const resolver = this.resolvers.find(resolver => resolver.supportsLocator(locator, opts));
 
     if (!resolver)
-      throw new Error(`Couldn't find a resolver for '${structUtils.prettyLocator(locator)}'`);
+      throw new Error(`Couldn't find a resolver for '${structUtils.prettyLocator(opts.project.configuration, locator)}'`);
 
     return resolver;
   }

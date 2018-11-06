@@ -4,6 +4,6 @@
     "private": true,
     "main": "./sources/index.ts",
     "dependencies": {
-        "@berry/core": "0.0.0"
+        "@berry/core": "workspace:0.0.0"
     }
 }

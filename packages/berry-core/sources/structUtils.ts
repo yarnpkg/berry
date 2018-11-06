@@ -1,6 +1,21 @@
+import chalk = require('chalk');
+
 import {createHmac}                          from 'crypto';
 
+import {Configuration}                       from './Configuration';
+import * as miscUtils                        from './miscUtils';
 import {Ident, Descriptor, Locator, Package} from './types';
+
+// @ts-ignore
+const ctx = new chalk.constructor({enabled: true});
+
+function color(configuration: Configuration, text: string, color: string) {
+  if (configuration.enableColors) {
+    return ctx.keyword(color)(text);
+  } else {
+    return text;
+  }
+}
 
 export function makeHash(... args: Array<string | null>): string {
   const hmac = createHmac(`sha512`, `berry`);
@@ -19,12 +34,8 @@ export function makeDescriptor(ident: Ident, range: string): Descriptor {
   return {identHash: ident.identHash, scope: ident.scope, name: ident.name, descriptorHash: makeHash(ident.identHash, range), range};
 }
 
-export function makeLocatorFromIdent(ident: Ident, reference: string): Locator {
+export function makeLocator(ident: Ident, reference: string): Locator {
   return {identHash: ident.identHash, scope: ident.scope, name: ident.name, locatorHash: makeHash(ident.identHash, reference), reference};
-}
-
-export function makeLocatorFromDescriptor(descriptor: Descriptor, reference: string): Locator {
-  return {identHash: descriptor.identHash, scope: descriptor.scope, name: descriptor.name, locatorHash: makeHash(descriptor.identHash, reference), reference};
 }
 
 export function convertToIdent(source: Descriptor | Locator | Package): Ident {
@@ -55,7 +66,7 @@ export function virtualizePackage(pkg: Package, entropy: string): Package {
     throw new Error(`Invalid entropy`);
 
   return {
-    ... makeLocatorFromIdent(pkg, `virtual:${entropy}#${pkg.reference}`),
+    ... makeLocator(pkg, `virtual:${entropy}#${pkg.reference}`),
 
     binaries: new Map(pkg.binaries),
     dependencies: new Map(pkg.dependencies),
@@ -121,7 +132,7 @@ export function parseLocator(string: string): Locator {
     throw new Error(`Parse error (${string})`);
 
   let [, scope, name, reference] = match;
-  return makeLocatorFromIdent(makeIdent(scope, name), reference);
+  return makeLocator(makeIdent(scope, name), reference);
 }
 
 export function requirableIdent(ident: Ident) {
@@ -156,26 +167,32 @@ export function stringifyLocator(locator: Locator) {
   }
 }
 
-export function prettyIdent(ident: Ident) {
+export function prettyIdent(configuration: Configuration, ident: Ident) {
   if (ident.scope) {
-    return `@${ident.scope}/${ident.name}`;
+    return `${color(configuration, `@${ident.scope}/`, `orange`)}${color(configuration, ident.name, `green`)}`;
   } else {
-    return `${ident.name}`;
+    return `${color(configuration, ident.name, `green`)}`;
   }
 }
 
-export function prettyDescriptor(descriptor: Descriptor) {
-  if (descriptor.scope) {
-    return `@${descriptor.scope}/${descriptor.name}@${descriptor.range}`;
-  } else {
-    return `${descriptor.name}@${descriptor.range}`;
-  }
+export function prettyRange(configuration: Configuration, range: string) {
+  return `${color(configuration, range, `blue`)}`;
 }
 
-export function prettyLocator(locator: Locator) {
-  if (locator.scope) {
-    return `@${locator.scope}/${locator.name}@${locator.reference}`;
-  } else {
-    return `${locator.name}@${locator.reference}`;
-  }
+export function prettyDescriptor(configuration: Configuration, descriptor: Descriptor) {
+  return `${prettyIdent(configuration, descriptor)}@${prettyRange(configuration, descriptor.range)}`;
+}
+
+export function prettyReference(configuration: Configuration, reference: string) {
+  return `${color(configuration, reference, `violet`)}`;
+}
+
+export function prettyLocator(configuration: Configuration, locator: Locator) {
+  return `${prettyIdent(configuration, locator)}@${prettyReference(configuration, locator.reference)}`;
+}
+
+export function sortDescriptors(descriptors: Iterable<Descriptor>) {
+  return miscUtils.sortMap(descriptors, [
+    descriptor => stringifyDescriptor(descriptor),
+  ]);
 }

@@ -1,14 +1,16 @@
-import {Plugin}      from '@berry/core';
+import {Plugin}            from '@berry/core';
 
-import {NpmFetcher}  from './NpmFetcher';
-import {NpmResolver} from './NpmResolver';
+import {NpmFetcher}        from './NpmFetcher';
+import {NpmSemverResolver} from './NpmSemverResolver';
+import {NpmTagResolver}    from './NpmTagResolver';
 
 const plugin: Plugin = {
   fetchers: [
     new NpmFetcher(),
   ],
   resolvers: [
-    new NpmResolver(),
+    new NpmSemverResolver(),
+    new NpmTagResolver(),
   ],
 };
 

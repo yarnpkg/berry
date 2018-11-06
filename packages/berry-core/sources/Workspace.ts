@@ -1,5 +1,6 @@
 import globby = require('globby');
 
+import {makeUpdater}           from '@berry/json-proxy';
 import {createHmac}            from 'crypto';
 import {existsSync, readFile}  from 'fs';
 import {resolve}               from 'path';
@@ -50,7 +51,7 @@ export class Workspace {
     const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
 
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
-    this.locator = structUtils.makeLocatorFromIdent(ident, reference);
+    this.locator = structUtils.makeLocator(ident, reference);
 
     for (const definition of this.manifest.workspaceDefinitions) {
       const relativeCwds = await globby(definition.pattern, {
@@ -83,6 +84,16 @@ export class Workspace {
   }
 
   get anchoredLocator() {
-    return structUtils.makeLocatorFromIdent(this.locator, `${WorkspaceBaseResolver.protocol}${this.locator.reference}`);
+    return structUtils.makeLocator(this.locator, `${WorkspaceBaseResolver.protocol}${this.locator.reference}`);
+  }
+
+  async persistManifest() {
+    const updater = await makeUpdater(`${this.cwd}/package.json`);
+
+    updater.open((tracker: Object) => {
+      this.manifest.exportTo(tracker);
+    });
+
+    await updater.save();
   }
 }

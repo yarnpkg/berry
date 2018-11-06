@@ -1,0 +1,11 @@
+{
+    "docs": {
+        "Overall Design": ["workspaces", "plugnplay", "offline-cache", "plugin-system"],
+        "Tips & Tricks": ["team-collaboration", "workspaces-constraints", "zero-install-cis"],
+        "Contributing": ["compiling-bundle", "writing-a-plugin", "day-to-day-maintenance"],
+        "Extra Resources": ["dependency-contract", "optional-plugins"]
+    },
+    "docs-other": {
+        "First Category": ["doc4", "doc5"]
+    }
+}

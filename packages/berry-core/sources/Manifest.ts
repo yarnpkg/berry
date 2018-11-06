@@ -144,4 +144,18 @@ export class Manifest {
 
     return errors;
   }
+
+  exportTo(data: {[key: string]: any}) {
+    data.dependencies = this.dependencies.size === 0 ? undefined : Object.assign({}, ... structUtils.sortDescriptors(this.dependencies.values()).map(dependency => {
+      return {[structUtils.stringifyIdent(dependency)]: dependency.range};
+    }));
+
+    data.devDependencies = this.devDependencies.size === 0 ? undefined : Object.assign({}, ... structUtils.sortDescriptors(this.devDependencies.values()).map(dependency => {
+      return {[structUtils.stringifyIdent(dependency)]: dependency.range};
+    }));
+
+    data.peerDependencies = this.peerDependencies.size === 0 ? undefined : Object.assign({}, ... structUtils.sortDescriptors(this.peerDependencies.values()).map(dependency => {
+      return {[structUtils.stringifyIdent(dependency)]: dependency.range};
+    }));
+  }
 };
