@@ -45,6 +45,7 @@
                 "@berry/plugin-npm"
             ],
             "full": [
+                "@berry/plugin-constraints",
                 "@berry/plugin-file",
                 "@berry/plugin-github",
                 "@berry/plugin-http",
