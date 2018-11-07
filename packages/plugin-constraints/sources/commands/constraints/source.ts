@@ -6,6 +6,8 @@ import {Constraints}                    from '../../Constraints';
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .command(`constraints source [--full]`)
+
+  .categorize(`Constraint commands`)
   .describe(`print the source code for the constraints`)
 
   .action(async ({cwd, stdout, full}: {cwd: string, stdout: Writable, full: boolean}) => {

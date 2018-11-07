@@ -9,6 +9,8 @@ import {Constraints}                                from '../../Constraints';
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .command(`constraints check`)
+
+  .categorize(`Constraint commands`)
   .describe(`check that the project constraints are met`)
 
   .action(async ({cwd, stdout}: {cwd: string, stdout: Writable}) => {
@@ -29,7 +31,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
         for (const invalid of invalidDependencies)
           stdout.write(`${emoji.get(`link`)} ${structUtils.prettyLocator(configuration, packageLocator)} is fixed to ${structUtils.prettyDescriptor(configuration, structUtils.makeDescriptor(dependencyIdent, dependencyRange))}.\n`);
-        
+
         hasErrors = hasErrors || invalidDependencies.length > 0;
       } else {
         const invalidDependencies = Array.from(workspace.manifest.dependencies.values()).filter((dependency: Descriptor) => {
@@ -38,7 +40,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
         for (const invalid of invalidDependencies)
           stdout.write(`${emoji.get(`no_entry`)} ${structUtils.prettyLocator(configuration, packageLocator)} is forbidden from depending on ${structUtils.prettyIdent(configuration, dependencyIdent)}.\n`);
-        
+
         hasErrors = hasErrors || invalidDependencies.length > 0;
       }
     }
@@ -53,7 +55,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
       for (const invalid of invalidDependencies)
         stdout.write(`${emoji.get(`x`)} ${structUtils.prettyLocator(configuration, packageLocator)}'s dependency on ${structUtils.prettyDescriptor(configuration, invalid)} is invalid${reason ? ` (reason: ${reason})` : ``}.\n`);
-      
+
       hasErrors = hasErrors || invalidDependencies.length > 0;
     }
 

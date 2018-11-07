@@ -4,6 +4,8 @@ import {Writable}               from 'stream';
 export default (concierge: any) => concierge
 
   .command(`workspaces list`)
+
+  .categorize(`Workspace commands`)
   .describe(`list all available workspaces`)
 
   .action(async ({cwd, stdout}: {cwd: string, stdout: Writable}) => {

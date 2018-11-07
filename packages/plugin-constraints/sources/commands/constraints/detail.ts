@@ -9,6 +9,8 @@ import {Constraints}                    from '../../Constraints';
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .command(`constraints detail`)
+
+  .categorize(`Constraint commands`)
   .describe(`print the project constraints`)
 
   .action(async ({cwd, stdout}: {cwd: string, stdout: Writable}) => {
