@@ -3,6 +3,7 @@ import execa = require('execa');
 import streamBuffers = require('stream-buffers');
 
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
+import {delimiter, posix}                                                 from 'path';
 import {Stream, PassThrough, Readable, Writable}                          from 'stream';
 import {StringDecoder}                                                    from 'string_decoder';
 
@@ -11,6 +12,7 @@ export type ShellOptions = {
   builtins: {[key: string]: (args: Array<string>, opts: ShellOptions) => Promise<void>},
   cwd: string,
   env: {[key: string]: string | undefined},
+  paths?: Array<string>,
   stdin: Readable,
   stdout: Writable,
   stderr: Writable,
@@ -18,7 +20,7 @@ export type ShellOptions = {
 };
 
 const BUILTINS = {
-  async command([ident, ... rest]: Array<string>, {cwd, env, stdin, stdout, stderr}: ShellOptions) {
+  async command([ident, ... rest]: Array<string>, {cwd, env: commandEnv, stdin, stdout, stderr}: ShellOptions) {
     const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
 
     if (stdin === process.stdin)
@@ -28,9 +30,18 @@ const BUILTINS = {
     if (stderr === process.stderr)
       stdio[2] = stderr;
 
+    const env: {[key: string]: string} = {};
+
+    for (const key of Object.keys(commandEnv))
+      env[key.toUpperCase()] = commandEnv[key] as string;
+
+    if (env.PATH && posix.delimiter !== delimiter)
+      env.PATH = env.PATH.replace(new RegExp(posix.delimiter, `g`), delimiter);
+
     const subprocess = execa(ident, rest, {
       cwd,
       stdio,
+      env,
     });
 
     if (stdin !== process.stdin)
@@ -41,7 +52,7 @@ const BUILTINS = {
       subprocess.stderr.pipe(stderr);
 
     return new Promise((resolve, reject) => {
-      process.on(`exit`, code => {
+      subprocess.on(`exit`, code => {
         if (code === 0) {
           resolve();
         } else {
@@ -291,12 +302,23 @@ export async function runShell(command: string, {
   args = [],
   builtins = {},
   cwd = process.cwd(),
-  env = process.env,
+  env: userEnv = process.env,
+  paths = [],
   stdin = process.stdin,
   stdout = process.stdout,
   stderr = process.stderr,
   variables = {},
 }: Partial<ShellOptions> = {}) {
+  const env: {[key: string]: string} = {};
+
+  for (const key of Object.keys(userEnv))
+    env[key.toUpperCase()] = userEnv[key] as string;
+
+  if (paths.length > 0)
+    env.PATH = env.PATH
+      ? `${paths.join(posix.delimiter)}${posix.delimiter}${env.PATH}`
+      : `${paths.join(posix.delimiter)}`;
+
   const ast = parseShell(command);
 
   // Inject the default builtins

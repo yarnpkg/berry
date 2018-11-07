@@ -12,6 +12,14 @@ import {plugins}                                                     from '../pl
 
 import {getDependencyBinaries}                                       from './bin';
 
+async function makeExtraPaths() {
+  const runPath = await execUtils.makePathWrapper(`run`, process.execPath, [process.argv[1], `run`]);
+  const berryPath = await execUtils.makePathWrapper(`berry`, process.execPath, [process.argv[1]]);
+  const nodePath = await execUtils.makePathWrapper(`node`, process.execPath);
+
+  return [runPath, berryPath, nodePath];
+}
+
 export default (concierge: any) => concierge
 
   .command(`run <name> [... args]`)
@@ -27,7 +35,7 @@ export default (concierge: any) => concierge
 
     if (script) {
       try {
-        await runShell(script, {cwd: workspace.cwd, args: args, stdin, stdout, stderr});
+        await runShell(script, {cwd: workspace.cwd, args: args, stdin, stdout, stderr, paths: await makeExtraPaths()});
       } catch {
         return 1;
       }
@@ -45,7 +53,7 @@ export default (concierge: any) => concierge
       const pkgFs = await fetcher.fetch(pkg, {cache, fetcher, project});
       const target = resolve(pkgFs.getRealPath(), file);
 
-      return await execUtils.execFile(process.execPath, [`--require`, configuration.pnpPath, target, ... args], {cwd: process.cwd(), stdin, stdout, stderr});
+      return await execUtils.execFile(process.execPath, [`--require`, configuration.pnpPath, target, ... args], {cwd: process.cwd(), stdin, stdout, stderr, paths: await makeExtraPaths()});
     }
 
     throw new UsageError(`Couldn't find a script named "${name}"`);
