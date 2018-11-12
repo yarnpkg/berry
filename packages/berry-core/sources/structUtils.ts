@@ -120,7 +120,7 @@ export function parseDescriptor(string: string): Descriptor {
   let [, scope, name, range] = match;
 
   if (!range)
-    range = `latest`;
+    range = `unknown`;
 
   return makeDescriptor(makeIdent(scope, name), range);
 }

@@ -1,3 +1,5 @@
+import semver = require('semver');
+
 import {Configuration, Cache, Project, Report} from '@berry/core';
 import {structUtils}                           from '@berry/core';
 import {Writable}                              from 'stream';
@@ -15,10 +17,41 @@ export default (concierge: any) => concierge
     const cache = await Cache.find(configuration);
 
     const report = await Report.start({project, cache}, async () => {
-      for (const entry of packages) {
+      const resolver = configuration.makeResolver({useLockfile: false});
+      const fetcher = configuration.makeFetcher();
+
+      const descriptors = await Promise.all(packages.map(async entry => {
         const descriptor = structUtils.parseDescriptor(entry);
+
+        if (descriptor.range !== `unknown`)
+          return descriptor;
+
+        const latestDescriptor = structUtils.makeDescriptor(descriptor, `latest`);
+
+        let candidateReferences;
+
+        try {
+          candidateReferences = await resolver.getCandidates(latestDescriptor, {project, cache, fetcher, resolver});
+        } catch (error) {
+          error.message = `${structUtils.prettyDescriptor(configuration, descriptor)}: ${error.message}`;
+          throw error;
+        }
+
+        if (candidateReferences.length === 0)
+          throw new Error(`No candidate found for ${structUtils.prettyDescriptor(configuration, latestDescriptor)}`);
+
+        const bestReference = candidateReferences[candidateReferences.length - 1];
+
+        if (!semver.valid(bestReference))
+          return structUtils.makeDescriptor(latestDescriptor, bestReference);
+
+        const prefix = `^`;
+
+        return structUtils.makeDescriptor(latestDescriptor, `${prefix}${bestReference}`);
+      }));
+
+      for (const descriptor of descriptors)
         workspace.manifest.dependencies.set(descriptor.identHash, descriptor);
-      }
 
       await project.install({cache});
       await project.persist();
