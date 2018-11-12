@@ -38,6 +38,10 @@ export class NpmSemverResolver implements Resolver {
     const versions = Object.keys(JSON.parse(httpResponse.toString()).versions);
     const candidates = versions.filter(version => semver.satisfies(version, descriptor.range));
 
+    candidates.sort((a, b) => {
+      return semver.compare(a, b);
+    });
+
     return candidates;
   }
 
