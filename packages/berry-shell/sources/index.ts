@@ -3,13 +3,17 @@ import execa = require('execa');
 import streamBuffers = require('stream-buffers');
 
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
+import {stat}                                                             from 'fs';
 import {delimiter, posix}                                                 from 'path';
 import {Stream, PassThrough, Readable, Writable}                          from 'stream';
 import {StringDecoder}                                                    from 'string_decoder';
+import {promisify}                                                        from 'util';
+
+const statP = promisify(stat);
 
 export type ShellOptions = {
   args: Array<string>,
-  builtins: {[key: string]: (args: Array<string>, opts: ShellOptions) => Promise<void>},
+  builtins: {[key: string]: (args: Array<string>, commandOpts: ShellOptions, shellOpts: ShellOptions) => Promise<void>},
   cwd: string,
   env: {[key: string]: string | undefined},
   paths?: Array<string>,
@@ -20,7 +24,17 @@ export type ShellOptions = {
 };
 
 const BUILTINS = {
-  async command([ident, ... rest]: Array<string>, {cwd, env: commandEnv, stdin, stdout, stderr}: ShellOptions) {
+  async cd([target, ... rest]: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
+    const stat = await statP(target);
+
+    if (!stat.isDirectory()) {
+      commandOpts.stderr.write(`cd: not a directory\n`);
+      throw new Error(`cd: not a directory`);
+    };
+
+    contextOpts.cwd = target;
+  },
+  async command([ident, ... rest]: Array<string>, {cwd, env: commandEnv, stdin, stdout, stderr}: ShellOptions, contextOpts: ShellOptions) {
     const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
 
     if (stdin === process.stdin)
@@ -52,6 +66,18 @@ const BUILTINS = {
       subprocess.stderr.pipe(stderr);
 
     return new Promise((resolve, reject) => {
+      subprocess.on(`error`, error => {
+        // @ts-ignore
+        switch (error.code) {
+          case `ENOENT`: {
+            stderr.write(`command not found: ${ident}\n`);
+          } break;
+          default: {
+            stderr.write(`uncaught error: ${error.message}\n`);
+          } break;
+        }
+        reject(error);
+      });
       subprocess.on(`exit`, code => {
         if (code === 0) {
           resolve();
@@ -85,7 +111,7 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
       text += decoder.end();
     });
 
-    await runShellAst(ast, opts);
+    await runShellAst(ast, {... opts});
 
     return text;
   }
@@ -206,8 +232,8 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
 
     const ident = args[0];
     const builtin = Object.prototype.hasOwnProperty.call(builtins, ident)
-      ? (opts: ShellOptions) => builtins[ident](args.slice(1), opts)
-      : (opts: ShellOptions) => builtins.command(args, opts);
+      ? (commandOpts: ShellOptions) => builtins[ident](args.slice(1), commandOpts, opts)
+      : (commandOpts: ShellOptions) => builtins.command(args, commandOpts, opts);
 
     return (promises: Array<Promise<void>>) => {
       next(promises);

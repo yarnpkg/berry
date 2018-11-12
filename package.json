@@ -35,6 +35,6 @@
         "ts-node": "^7.0.1"
     },
     "scripts": {
-        "b": "node packages/berry-cli/bin/berry"
+        "build": "cd packages/berry-cli && berry build"
     }
 }
