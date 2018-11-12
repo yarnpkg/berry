@@ -8,10 +8,10 @@ import {plugins}                               from '../plugins';
 
 export default (concierge: any) => concierge
 
-  .command(`add [... packages]`)
+  .command(`add [... packages] [-E,--exact] [-T,--tilde] [-D,--dev] [-P,--peer]`)
   .describe(`add dependencies to the project`)
 
-  .action(async ({cwd, stdout, packages}: {cwd: string, stdout: Writable, packages: Array<string>}) => {
+  .action(async ({cwd, stdout, packages, exact, tilde, dev, peer}: {cwd: string, stdout: Writable, packages: Array<string>, exact: boolean, tilde: boolean, dev: boolean, peer: boolean}) => {
     const configuration = await Configuration.find(cwd, plugins);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -45,13 +45,15 @@ export default (concierge: any) => concierge
         if (!semver.valid(bestReference))
           return structUtils.makeDescriptor(latestDescriptor, bestReference);
 
-        const prefix = `^`;
+        const prefix = exact ? `` : tilde ? `~` : `^`;
 
         return structUtils.makeDescriptor(latestDescriptor, `${prefix}${bestReference}`);
       }));
 
+      const target = dev ? `devDependencies` : peer ? `peerDependencies` : `dependencies`;
+
       for (const descriptor of descriptors)
-        workspace.manifest.dependencies.set(descriptor.identHash, descriptor);
+        workspace.manifest[target].set(descriptor.identHash, descriptor);
 
       await project.install({cache});
       await project.persist();
