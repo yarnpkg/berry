@@ -5,6 +5,34 @@
     "previous": "Previous",
     "tagline": "A modern package manager by the team that brought you Yarn",
     "docs": {
+      "api-about": {
+        "title": "About this API",
+        "sidebar_label": "About this API"
+      },
+      "api-examples": {
+        "title": "Basic Examples",
+        "sidebar_label": "Basic Examples"
+      },
+      "api-reference": {
+        "title": "API Reference",
+        "sidebar_label": "API Reference"
+      },
+      "class-configuration": {
+        "title": "Configuration",
+        "sidebar_label": "Configuration"
+      },
+      "class-project": {
+        "title": "Project",
+        "sidebar_label": "Project"
+      },
+      "class-report": {
+        "title": "Report",
+        "sidebar_label": "Report"
+      },
+      "class-workspace": {
+        "title": "Workspace",
+        "sidebar_label": "Workspace"
+      },
       "compiling-bundle": {
         "title": "Compiling Berry",
         "sidebar_label": "Compiling Berry"
@@ -17,11 +45,17 @@
         "title": "Dependency Contract",
         "sidebar_label": "Dependency Contract"
       },
-      "doc4": {
-        "title": "Other Document"
+      "interface-fetcher": {
+        "title": "Fetcher",
+        "sidebar_label": "Fetcher"
       },
-      "doc5": {
-        "title": "Fifth Document"
+      "interface-plugin": {
+        "title": "Plugin",
+        "sidebar_label": "Plugin"
+      },
+      "interface-resolver": {
+        "title": "Resolver",
+        "sidebar_label": "Resolver"
       },
       "offline-cache": {
         "title": "Offline Cache",
@@ -30,6 +64,30 @@
       "optional-plugins": {
         "title": "Optional Plugins",
         "sidebar_label": "Optional Plugins"
+      },
+      "package-fakefs": {
+        "title": "@berry/fakefs",
+        "sidebar_label": "@berry/fakefs"
+      },
+      "package-json-proxy": {
+        "title": "@berry/json-proxy",
+        "sidebar_label": "@berry/json-proxy"
+      },
+      "package-libzip": {
+        "title": "@berry/libzip",
+        "sidebar_label": "@berry/libzip"
+      },
+      "package-parsers": {
+        "title": "@berry/parsers",
+        "sidebar_label": "@berry/parsers"
+      },
+      "package-shell": {
+        "title": "@berry/shell",
+        "sidebar_label": "@berry/shell"
+      },
+      "package-ui": {
+        "title": "@berry/ui",
+        "sidebar_label": "@berry/ui"
       },
       "plugin-system": {
         "title": "Berry's Plugin System",
@@ -69,8 +127,10 @@
       "Overall Design": "Overall Design",
       "Tips & Tricks": "Tips & Tricks",
       "Contributing": "Contributing",
-      "Extra Resources": "Extra Resources",
-      "First Category": "First Category"
+      "Other Resources": "Other Resources",
+      "Overview": "Overview",
+      "API Reference": "API Reference",
+      "Packages": "Packages"
     }
   },
   "pages-strings": {

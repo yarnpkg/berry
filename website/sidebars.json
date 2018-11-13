@@ -1,11 +1,52 @@
 {
     "docs": {
-        "Overall Design": ["workspaces", "plugnplay", "offline-cache", "plugin-system"],
-        "Tips & Tricks": ["team-collaboration", "workspaces-constraints", "zero-install-cis"],
-        "Contributing": ["compiling-bundle", "writing-a-plugin", "day-to-day-maintenance"],
-        "Extra Resources": ["dependency-contract", "optional-plugins"]
+        "Overall Design": [
+            "workspaces",
+            "plugnplay",
+            "offline-cache",
+            "plugin-system"
+        ],
+        "Tips & Tricks": [
+            "enhanced-scripting",
+            "enterprise-practices",
+            "workspaces-constraints",
+            "zero-install-cis"
+        ],
+        "Contributing": [
+            "compiling-a-bundle",
+            "writing-a-plugin",
+            "opening-an-issue",
+            "day-to-day-maintenance"
+        ],
+        "Other Resources": [
+            "api-reference",
+            "dependency-contract",
+            "acceptance-tests",
+            "optional-plugins",
+            "frequently-asked-questions"
+        ]
     },
-    "docs-other": {
-        "First Category": ["doc4", "doc5"]
+    "api": {
+        "Overview": [
+            "api-about",
+            "api-examples"
+        ],
+        "API Reference": [
+            "class-configuration",
+            "interface-fetcher",
+            "interface-plugin",
+            "class-project",
+            "class-report",
+            "interface-resolver",
+            "class-workspace"
+        ],
+        "Packages": [
+            "package-fakefs",
+            "package-json-proxy",
+            "package-libzip",
+            "package-parsers",
+            "package-shell",
+            "package-ui"
+        ]
     }
 }
