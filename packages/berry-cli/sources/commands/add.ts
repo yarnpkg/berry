@@ -52,8 +52,13 @@ export default (concierge: any) => concierge
 
       const target = dev ? `devDependencies` : peer ? `peerDependencies` : `dependencies`;
 
-      for (const descriptor of descriptors)
+      for (const descriptor of descriptors) {
+        workspace.manifest[target] = new Map(Array.from(workspace.manifest[target].entries()).filter(([hash, other]) => {
+          return !structUtils.areIdentsEqual(descriptor, other);
+        }));
+
         workspace.manifest[target].set(descriptor.identHash, descriptor);
+      }
 
       await project.install({cache});
       await project.persist();
