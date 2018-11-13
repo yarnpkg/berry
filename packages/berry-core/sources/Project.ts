@@ -630,7 +630,7 @@ export class Project {
 
       const key = descriptors.map(descriptor => {
         return structUtils.stringifyDescriptor(descriptor);
-      }).join(`, `);
+      }).sort().join(`, `);
 
       const dependencies: {[key: string]: string} = {};
       const peerDependencies: {[key: string]: string} = {};
