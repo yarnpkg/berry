@@ -70,10 +70,10 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["brfs", "2.0.1"],
           ["buffer-loader", "0.1.0"],
           ["joi", "13.7.0"],
-          ["pnp-webpack-plugin", "portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"],
+          ["pnp-webpack-plugin", "1.2.0"],
           ["raw-loader", "0.5.1"],
           ["transform-loader", "0.2.4"],
-          ["ts-loader", "virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"],
+          ["ts-loader", "virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.3.0"],
           ["typescript", "3.1.3"],
           ["val-loader", "virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#1.1.1"],
           ["webpack-virtual-modules", "0.1.10"],
@@ -88,10 +88,10 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["brfs", "2.0.1"],
           ["buffer-loader", "0.1.0"],
           ["joi", "13.7.0"],
-          ["pnp-webpack-plugin", "portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"],
+          ["pnp-webpack-plugin", "1.2.0"],
           ["raw-loader", "0.5.1"],
           ["transform-loader", "0.2.4"],
-          ["ts-loader", "virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"],
+          ["ts-loader", "virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.3.0"],
           ["typescript", "3.1.3"],
           ["val-loader", "virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#1.1.1"],
           ["webpack-virtual-modules", "0.1.10"],
@@ -945,32 +945,19 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
       }],
     ])],
     ["pnp-webpack-plugin", new Map([
-      ["portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace%3A0.0.0", {
-        packageLocation: path.resolve(__dirname, "../../../home/arcanis/pnp-webpack-plugin/"),
+      ["1.2.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/pnp-webpack-plugin-7e3fc30686d6f2b5.zip/node_modules/pnp-webpack-plugin/"),
         packageDependencies: new Map([
-          ["ts-pnp", "virtual:8ab7db1cff9931d4ed9b2e996595197d20e8c8dfd62fe4de1ea4a8379c8836e765910bf4250c6626aa9250bd2d6fd65c573cdf6e3145260afbd78a2d8318aa6b#1.0.0"],
-          ["pnp-webpack-plugin", "portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"],
-        ]),
-      }],
-      ["portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0", {
-        packageLocation: path.resolve(__dirname, "../../../home/arcanis/pnp-webpack-plugin/"),
-        packageDependencies: new Map([
-          ["ts-pnp", "virtual:e65503315e7a54c4689fc647473accc6955f7382853bc4bed2833418a68bdd5f6b86aaf10376986563be1de65e52391ccf96300ce8cdb45b59ebaef394cbf75d#1.0.0"],
-          ["pnp-webpack-plugin", "portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"],
+          ["ts-pnp", "virtual:537e7f5601b88ad2fc4c5e78b3ee69bcf777b3a50f4b35ac14b82ac7f2d561fa2e762c829bbe4e6bccf21193bf24baa446aba0b994bd1a2e19b47e80c6e0676b#1.0.0"],
+          ["pnp-webpack-plugin", "1.2.0"],
         ]),
       }],
     ])],
     ["ts-pnp", new Map([
-      ["virtual:8ab7db1cff9931d4ed9b2e996595197d20e8c8dfd62fe4de1ea4a8379c8836e765910bf4250c6626aa9250bd2d6fd65c573cdf6e3145260afbd78a2d8318aa6b#1.0.0", {
+      ["virtual:537e7f5601b88ad2fc4c5e78b3ee69bcf777b3a50f4b35ac14b82ac7f2d561fa2e762c829bbe4e6bccf21193bf24baa446aba0b994bd1a2e19b47e80c6e0676b#1.0.0", {
         packageLocation: path.resolve(__dirname, "./.pnp/cache/ts-pnp-2859a7fb7493fb41.zip/node_modules/ts-pnp/"),
         packageDependencies: new Map([
-          ["ts-pnp", "virtual:8ab7db1cff9931d4ed9b2e996595197d20e8c8dfd62fe4de1ea4a8379c8836e765910bf4250c6626aa9250bd2d6fd65c573cdf6e3145260afbd78a2d8318aa6b#1.0.0"],
-        ]),
-      }],
-      ["virtual:e65503315e7a54c4689fc647473accc6955f7382853bc4bed2833418a68bdd5f6b86aaf10376986563be1de65e52391ccf96300ce8cdb45b59ebaef394cbf75d#1.0.0", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/ts-pnp-2859a7fb7493fb41.zip/node_modules/ts-pnp/"),
-        packageDependencies: new Map([
-          ["ts-pnp", "virtual:e65503315e7a54c4689fc647473accc6955f7382853bc4bed2833418a68bdd5f6b86aaf10376986563be1de65e52391ccf96300ce8cdb45b59ebaef394cbf75d#1.0.0"],
+          ["ts-pnp", "virtual:537e7f5601b88ad2fc4c5e78b3ee69bcf777b3a50f4b35ac14b82ac7f2d561fa2e762c829bbe4e6bccf21193bf24baa446aba0b994bd1a2e19b47e80c6e0676b#1.0.0"],
         ]),
       }],
     ])],
@@ -1027,8 +1014,8 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
       }],
     ])],
     ["ts-loader", new Map([
-      ["virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace%3A0.0.0", {
-        packageLocation: path.resolve(__dirname, "../../../home/arcanis/ts-loader/"),
+      ["virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.3.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/ts-loader-2fc1582af1c347db.zip/node_modules/ts-loader/"),
         packageDependencies: new Map([
           ["chalk", "2.4.1"],
           ["enhanced-resolve", "4.1.0"],
@@ -1036,11 +1023,11 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["micromatch", "3.1.10"],
           ["semver", "5.6.0"],
           ["typescript", "3.1.3"],
-          ["ts-loader", "virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"],
+          ["ts-loader", "virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.3.0"],
         ]),
       }],
-      ["virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0", {
-        packageLocation: path.resolve(__dirname, "../../../home/arcanis/ts-loader/"),
+      ["virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.3.0", {
+        packageLocation: path.resolve(__dirname, "./.pnp/cache/ts-loader-2fc1582af1c347db.zip/node_modules/ts-loader/"),
         packageDependencies: new Map([
           ["chalk", "2.4.1"],
           ["enhanced-resolve", "4.1.0"],
@@ -1048,7 +1035,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["micromatch", "3.1.10"],
           ["semver", "5.6.0"],
           ["typescript", "3.1.3"],
-          ["ts-loader", "virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"],
+          ["ts-loader", "virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.3.0"],
         ]),
       }],
       ["virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#5.2.2", {
@@ -6890,18 +6877,16 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.pnp/cache/shallow-copy-64e60cf248e2b24c.zip/node_modules/shallow-copy/", {"name":"shallow-copy","reference":"0.0.1"}],
     ["./.pnp/cache/static-eval-fbe5095513a55094.zip/node_modules/static-eval/", {"name":"static-eval","reference":"2.0.0"}],
     ["./.pnp/cache/buffer-loader-8cc67608f95b6532.zip/node_modules/buffer-loader/", {"name":"buffer-loader","reference":"0.1.0"}],
-    ["../../../home/arcanis/pnp-webpack-plugin/", {"name":"pnp-webpack-plugin","reference":"portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"}],
-    ["../../../home/arcanis/pnp-webpack-plugin/", {"name":"pnp-webpack-plugin","reference":"portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"}],
-    ["./.pnp/cache/ts-pnp-2859a7fb7493fb41.zip/node_modules/ts-pnp/", {"name":"ts-pnp","reference":"virtual:8ab7db1cff9931d4ed9b2e996595197d20e8c8dfd62fe4de1ea4a8379c8836e765910bf4250c6626aa9250bd2d6fd65c573cdf6e3145260afbd78a2d8318aa6b#1.0.0"}],
-    ["./.pnp/cache/ts-pnp-2859a7fb7493fb41.zip/node_modules/ts-pnp/", {"name":"ts-pnp","reference":"virtual:e65503315e7a54c4689fc647473accc6955f7382853bc4bed2833418a68bdd5f6b86aaf10376986563be1de65e52391ccf96300ce8cdb45b59ebaef394cbf75d#1.0.0"}],
+    ["./.pnp/cache/pnp-webpack-plugin-7e3fc30686d6f2b5.zip/node_modules/pnp-webpack-plugin/", {"name":"pnp-webpack-plugin","reference":"1.2.0"}],
+    ["./.pnp/cache/ts-pnp-2859a7fb7493fb41.zip/node_modules/ts-pnp/", {"name":"ts-pnp","reference":"virtual:537e7f5601b88ad2fc4c5e78b3ee69bcf777b3a50f4b35ac14b82ac7f2d561fa2e762c829bbe4e6bccf21193bf24baa446aba0b994bd1a2e19b47e80c6e0676b#1.0.0"}],
     ["./.pnp/cache/raw-loader-0b4771c12e9ddd9c.zip/node_modules/raw-loader/", {"name":"raw-loader","reference":"0.5.1"}],
     ["./.pnp/cache/transform-loader-1487ba46901dfa42.zip/node_modules/transform-loader/", {"name":"transform-loader","reference":"0.2.4"}],
     ["./.pnp/cache/loader-utils-ffc489e806ca212c.zip/node_modules/loader-utils/", {"name":"loader-utils","reference":"1.1.0"}],
     ["./.pnp/cache/big.js-821b6e03134c6b08.zip/node_modules/big.js/", {"name":"big.js","reference":"3.2.0"}],
     ["./.pnp/cache/emojis-list-e75e39fc693ccc0a.zip/node_modules/emojis-list/", {"name":"emojis-list","reference":"2.1.0"}],
     ["./.pnp/cache/json5-07d0953b92b5661b.zip/node_modules/json5/", {"name":"json5","reference":"0.5.1"}],
-    ["../../../home/arcanis/ts-loader/", {"name":"ts-loader","reference":"virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"}],
-    ["../../../home/arcanis/ts-loader/", {"name":"ts-loader","reference":"virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"}],
+    ["./.pnp/cache/ts-loader-2fc1582af1c347db.zip/node_modules/ts-loader/", {"name":"ts-loader","reference":"virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#5.3.0"}],
+    ["./.pnp/cache/ts-loader-2fc1582af1c347db.zip/node_modules/ts-loader/", {"name":"ts-loader","reference":"virtual:ae93240556793aa8bc35c57aac01e37dff99e8cc9b174fba639281e9d8e77ccd253b790d729a9c430229d3da72936fe9a4ce0a29783e900302c4fe615b3eacfa#5.3.0"}],
     ["./.pnp/cache/ts-loader-3e89d2fd8a424f4e.zip/node_modules/ts-loader/", {"name":"ts-loader","reference":"virtual:2d8bab7298a9ee1d52ff648401bafc3750180f2cd2d82a3b9993ad74b15765e251cb372b354d3d094f8bea4e3d636d9aa991ca0e68eed5aae580e4291458b04f#5.2.2"}],
     ["./.pnp/cache/color-convert-20f9e6db84df6826.zip/node_modules/color-convert/", {"name":"color-convert","reference":"1.9.3"}],
     ["./.pnp/cache/color-name-c3c9c8e4ab57dd23.zip/node_modules/color-name/", {"name":"color-name","reference":"1.1.3"}],
@@ -7533,8 +7518,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     55,
     53,
     51,
-    41,
-    32,
     30,
     28,
     25,

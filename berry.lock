@@ -102,10 +102,10 @@
     brfs: ^2.0.1
     buffer-loader: ^0.1.0
     joi: ^13.6.0
-    pnp-webpack-plugin: "portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"
+    pnp-webpack-plugin: ^1.2.0
     raw-loader: ^0.5.1
     transform-loader: ^0.2.4
-    ts-loader: "portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"
+    ts-loader: ^5.3.0
     typescript: ^3.0.1
     val-loader: ^1.1.1
     webpack: ^4.18.0
@@ -118,10 +118,10 @@
     brfs: ^2.0.1
     buffer-loader: ^0.1.0
     joi: ^13.6.0
-    pnp-webpack-plugin: "portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"
+    pnp-webpack-plugin: ^1.2.0
     raw-loader: ^0.5.1
     transform-loader: ^0.2.4
-    ts-loader: "portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"
+    ts-loader: ^5.3.0
     typescript: ^3.0.1
     val-loader: ^1.1.1
     webpack: ^4.18.0
@@ -2714,15 +2714,10 @@ pkg-dir@^3.0.0:
 pluralize@^7.0.0:
   resolution: pluralize@7.0.0
 
-"pnp-webpack-plugin@portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0":
+pnp-webpack-plugin@^1.2.0:
   dependencies:
     ts-pnp: ^1.0.0
-  resolution: "pnp-webpack-plugin@portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"
-
-"pnp-webpack-plugin@portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace%3A0.0.0":
-  dependencies:
-    ts-pnp: ^1.0.0
-  resolution: "pnp-webpack-plugin@portal:/home/arcanis/pnp-webpack-plugin?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"
+  resolution: pnp-webpack-plugin@1.2.0
 
 posix-character-classes@^0.1.0:
   resolution: posix-character-classes@0.1.1
@@ -3361,7 +3356,7 @@ ts-loader@^5.2.1:
     typescript: "*"
   resolution: ts-loader@5.2.2
 
-"ts-loader@portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0":
+ts-loader@^5.3.0:
   dependencies:
     chalk: ^2.3.0
     enhanced-resolve: ^4.0.0
@@ -3370,18 +3365,7 @@ ts-loader@^5.2.1:
     semver: ^5.0.1
   peerDependencies:
     typescript: "*"
-  resolution: "ts-loader@portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace-base%3A0.0.0"
-
-"ts-loader@portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace%3A0.0.0":
-  dependencies:
-    chalk: ^2.3.0
-    enhanced-resolve: ^4.0.0
-    loader-utils: ^1.0.2
-    micromatch: ^3.1.4
-    semver: ^5.0.1
-  peerDependencies:
-    typescript: "*"
-  resolution: "ts-loader@portal:/home/arcanis/ts-loader?locator=%40berry%2Fbuilder%40workspace%3A0.0.0"
+  resolution: ts-loader@5.3.0
 
 ts-node@^7.0.1:
   dependencies:
