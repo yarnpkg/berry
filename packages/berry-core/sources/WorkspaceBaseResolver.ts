@@ -48,7 +48,7 @@ export class WorkspaceBaseResolver implements Resolver {
       });
 
       if (!hasDep) {
-        const childDescriptor = structUtils.makeDescriptor(childWorkspace.locator, `${WorkspaceResolver.protocol}${childWorkspace.locator}`);
+        const childDescriptor = structUtils.makeDescriptor(childWorkspace.locator, `${WorkspaceResolver.protocol}${childWorkspace.locator.reference}`);
         dependencies.set(childDescriptor.descriptorHash, childDescriptor);
       }
     }

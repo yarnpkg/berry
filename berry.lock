@@ -112,7 +112,7 @@
     webpack-virtual-modules: ^0.1.10
   resolution: "@berry/builder@workspace-base:0.0.0"
 
-"@berry/builder@workspace:[object Object], @berry/builder@0.0.0":
+"@berry/builder@workspace:0.0.0, @berry/builder@0.0.0":
   dependencies:
     @manaflair/concierge: ^0.7.3
     brfs: ^2.0.1
@@ -145,7 +145,7 @@
     tmp: ^0.0.33
   resolution: "@berry/cli@workspace-base:0.0.0"
 
-"@berry/cli@workspace:[object Object]":
+"@berry/cli@workspace:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
     @berry/shell: "workspace:0.0.0"
@@ -179,7 +179,7 @@
     typescript: ^3.0.1
   resolution: "@berry/core@workspace-base:0.0.0"
 
-"@berry/core@workspace:[object Object], @berry/core@workspace:0.0.0":
+"@berry/core@workspace:0.0.0":
   dependencies:
     @berry/json-proxy: "workspace:0.0.0"
     @berry/parsers: "workspace:0.0.0"
@@ -204,34 +204,34 @@
 "@berry/json-proxy@workspace-base:0.0.0":
   resolution: "@berry/json-proxy@workspace-base:0.0.0"
 
-"@berry/json-proxy@workspace:[object Object], @berry/json-proxy@workspace:0.0.0":
+"@berry/json-proxy@workspace:0.0.0":
   resolution: "@berry/json-proxy@workspace:0.0.0"
 
 "@berry/libzip@workspace-base:0.0.0":
   resolution: "@berry/libzip@workspace-base:0.0.0"
 
-"@berry/libzip@workspace:[object Object], @berry/libzip@workspace:0.0.0":
+"@berry/libzip@workspace:0.0.0":
   resolution: "@berry/libzip@workspace:0.0.0"
 
 "@berry/monorepo@workspace-base:0.0.0":
   dependencies:
-    @berry/builder: "workspace:[object Object]"
-    @berry/cli: "workspace:[object Object]"
-    @berry/core: "workspace:[object Object]"
-    @berry/json-proxy: "workspace:[object Object]"
-    @berry/libzip: "workspace:[object Object]"
-    @berry/parsers: "workspace:[object Object]"
-    @berry/plugin-constraints: "workspace:[object Object]"
-    @berry/plugin-file: "workspace:[object Object]"
-    @berry/plugin-github: "workspace:[object Object]"
-    @berry/plugin-http: "workspace:[object Object]"
-    @berry/plugin-hub: "workspace:[object Object]"
-    @berry/plugin-link: "workspace:[object Object]"
-    @berry/plugin-npm: "workspace:[object Object]"
-    @berry/pnp: "workspace:[object Object]"
-    @berry/shell: "workspace:[object Object]"
-    @berry/ui: "workspace:[object Object]"
-    @berry/zipfs: "workspace:[object Object]"
+    @berry/builder: "workspace:0.0.0"
+    @berry/cli: "workspace:0.0.0"
+    @berry/core: "workspace:0.0.0"
+    @berry/json-proxy: "workspace:0.0.0"
+    @berry/libzip: "workspace:0.0.0"
+    @berry/parsers: "workspace:0.0.0"
+    @berry/plugin-constraints: "workspace:0.0.0"
+    @berry/plugin-file: "workspace:0.0.0"
+    @berry/plugin-github: "workspace:0.0.0"
+    @berry/plugin-http: "workspace:0.0.0"
+    @berry/plugin-hub: "workspace:0.0.0"
+    @berry/plugin-link: "workspace:0.0.0"
+    @berry/plugin-npm: "workspace:0.0.0"
+    @berry/pnp: "workspace:0.0.0"
+    @berry/shell: "workspace:0.0.0"
+    @berry/ui: "workspace:0.0.0"
+    @berry/zipfs: "workspace:0.0.0"
     @types/dateformat: ^1.0.1
     @types/emscripten: ^0.0.31
     @types/eventemitter3: ^2.0.2
@@ -268,7 +268,7 @@
     typescript: ^3.0.1
   resolution: "@berry/parsers@workspace-base:0.0.0"
 
-"@berry/parsers@workspace:[object Object], @berry/parsers@workspace:0.0.0":
+"@berry/parsers@workspace:0.0.0":
   resolution: "@berry/parsers@workspace:0.0.0"
 
 "@berry/plugin-constraints@workspace-base:0.0.0":
@@ -279,7 +279,7 @@
     tau-prolog: ^0.2.38
   resolution: "@berry/plugin-constraints@workspace-base:0.0.0"
 
-"@berry/plugin-constraints@workspace:[object Object]":
+"@berry/plugin-constraints@workspace:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
     inquirer: ^6.2.0
@@ -292,7 +292,7 @@
     @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-file@workspace-base:0.0.0"
 
-"@berry/plugin-file@workspace:[object Object]":
+"@berry/plugin-file@workspace:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-file@workspace:0.0.0"
@@ -303,7 +303,7 @@
     typescript: ^3.0.1
   resolution: "@berry/plugin-github@workspace-base:0.0.0"
 
-"@berry/plugin-github@workspace:[object Object], @berry/plugin-github@0.0.0":
+"@berry/plugin-github@workspace:0.0.0, @berry/plugin-github@0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-github@workspace:0.0.0"
@@ -313,7 +313,7 @@
     @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-http@workspace-base:0.0.0"
 
-"@berry/plugin-http@workspace:[object Object], @berry/plugin-http@0.0.0":
+"@berry/plugin-http@workspace:0.0.0, @berry/plugin-http@0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-http@workspace:0.0.0"
@@ -334,7 +334,7 @@
     redux-saga: ^1.0.0-beta.3
   resolution: "@berry/plugin-hub@workspace-base:0.0.0"
 
-"@berry/plugin-hub@workspace:[object Object], @berry/plugin-hub@0.0.0":
+"@berry/plugin-hub@workspace:0.0.0, @berry/plugin-hub@0.0.0":
   dependencies:
     @berry/json-proxy: "workspace:0.0.0"
     @berry/ui: "workspace:0.0.0"
@@ -357,7 +357,7 @@
     @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-link@workspace-base:0.0.0"
 
-"@berry/plugin-link@workspace:[object Object]":
+"@berry/plugin-link@workspace:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-link@workspace:0.0.0"
@@ -368,7 +368,7 @@
     semver: ^5.5.1
   resolution: "@berry/plugin-npm@workspace-base:0.0.0"
 
-"@berry/plugin-npm@workspace:[object Object], @berry/plugin-npm@0.0.0":
+"@berry/plugin-npm@workspace:0.0.0, @berry/plugin-npm@0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
     semver: ^5.5.1
@@ -386,7 +386,7 @@
     webpack-cli: ^3.1.0
   resolution: "@berry/pnp@workspace-base:0.0.0"
 
-"@berry/pnp@workspace:[object Object], @berry/pnp@0.0.0, @berry/pnp@workspace:0.0.0":
+"@berry/pnp@workspace:0.0.0, @berry/pnp@0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
     @berry/zipfs: "workspace:0.0.0"
@@ -399,7 +399,7 @@
     stream-buffers: ^3.0.2
   resolution: "@berry/shell@workspace-base:0.0.0"
 
-"@berry/shell@workspace:[object Object], @berry/shell@workspace:0.0.0":
+"@berry/shell@workspace:0.0.0":
   dependencies:
     @berry/parsers: "workspace:0.0.0"
     execa: ^1.0.0
@@ -419,7 +419,7 @@
     yoga-dom: ^0.0.14
   resolution: "@berry/ui@workspace-base:0.0.0"
 
-"@berry/ui@workspace:[object Object], @berry/ui@workspace:0.0.0":
+"@berry/ui@workspace:0.0.0":
   dependencies:
     @manaflair/term-strings: ^0.10.1
     @manaflair/text-layout: ^0.11.0
@@ -437,7 +437,7 @@
     @berry/libzip: "workspace:0.0.0"
   resolution: "@berry/zipfs@workspace-base:0.0.0"
 
-"@berry/zipfs@workspace:[object Object], @berry/zipfs@workspace:0.0.0":
+"@berry/zipfs@workspace:0.0.0":
   dependencies:
     @berry/libzip: "workspace:0.0.0"
   resolution: "@berry/zipfs@workspace:0.0.0"

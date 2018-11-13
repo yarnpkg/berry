@@ -667,7 +667,7 @@ export class Project {
 
   async persist() {
     await this.persistLockfile();
-    
+
     for (const workspace of this.workspacesByCwd.values()) {
       await workspace.persistManifest();
     }
