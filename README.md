@@ -19,6 +19,7 @@ Because Berry is compatible with Plug'n'Play by default, Node installations are 
 The following packages are generic and can be used in a variety of purposes:
 
 - [berry-core]() allows any application to manipulate a project programmatically
+- [berry-json-proxy]() allows to temporarily convert any POD object to an immutable object
 - [berry-libzip]() contains zlib+libzip bindings compiled to WebAssembly
 - [berry-parsers]() can be used to parse [Syml]() and the language used by [berry-shell]()
 - [berry-shell]() is a portable bash-like shell interpreter
@@ -29,9 +30,12 @@ The following packages are generic and can be used in a variety of purposes:
 
 The following packages are plugins for Berry and can be installed through `berry add plugin <plugin-name>`. Note that some of them are typically already shipped with the regular Berry bundles. Such plugins are marked with a star:
 
-- [plugin-contrib]() contains various commands that aren't needed by most projects (`upgrade interactive`)
+- [plugin-constraints]() adds various commands for enforcing constraints across workspaces.
+- [plugin-file★]() adds support for using `file:` references as dependencies.
 - [plugin-github★]() adds support for using Github references as dependencies. [This plugin doesn't use git.](https://stackoverflow.com/a/13636954/880703)
+- [plugin-http★]() adds support for using straight URL references as dependencies (tgz archives only).
 - [plugin-hub]() contains a UI designed to efficiently manage large-scale projects with multiple workspaces
+- [plugin-link★]() adds support for using `link:` and `portal:` references as dependencies.
 - [plugin-npm★]() adds support for using [semver ranges]() as dependencies, resolving them to an NPM-like registry
 
 ## Berry packages
