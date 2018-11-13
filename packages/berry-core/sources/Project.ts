@@ -498,8 +498,12 @@ export class Project {
               allResolutions.set(peerDescriptor.descriptorHash, parentLocator.locatorHash);
             }
 
+            const isOptional = peerRequest.range.beginsWith(`optional:`);
+
             if (!peerDescriptor) {
-              this.errors.push(new Error(`Unsatisfied peer dependency (${structUtils.prettyLocator(this.configuration, pkg)} requests ${structUtils.prettyDescriptor(this.configuration, peerRequest)}, but ${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide it)`));
+              if (!isOptional)
+                this.errors.push(new Error(`Unsatisfied peer dependency (${structUtils.prettyLocator(this.configuration, pkg)} requests ${structUtils.prettyDescriptor(this.configuration, peerRequest)}, but ${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide it)`));
+
               continue;
             }
 
