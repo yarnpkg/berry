@@ -7,7 +7,7 @@
         "@berry-build-plugin": "./sources/build-plugin.js"
     },
     "dependencies": {
-        "@manaflair/concierge": "^0.7.3",
+        "@manaflair/concierge": "^0.9.1",
         "brfs": "^2.0.1",
         "buffer-loader": "^0.1.0",
         "joi": "^13.6.0",
