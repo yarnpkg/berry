@@ -464,6 +464,9 @@ export class Project {
         throw new Error(`The package (${structUtils.prettyLocator(this.configuration, parentLocator)}) should have been registered`);
 
       for (const descriptor of Array.from(parentPackage.dependencies.values())) {
+        if (descriptor.range === `missing:`)
+          continue;
+
         const resolution = allResolutions.get(descriptor.descriptorHash);
 
         if (!resolution)
@@ -486,6 +489,8 @@ export class Project {
 
           allPackages.set(virtualizedPackage.locatorHash, virtualizedPackage);
 
+          const missingPeerDependencies = new Set();
+
           for (const peerRequest of virtualizedPackage.peerDependencies.values()) {
             let peerDescriptor = Array.from(parentPackage.dependencies.values()).find(descriptor => {
               return structUtils.areIdentsEqual(descriptor, peerRequest);
@@ -498,24 +503,31 @@ export class Project {
               allResolutions.set(peerDescriptor.descriptorHash, parentLocator.locatorHash);
             }
 
-            const isOptional = peerRequest.range.beginsWith(`optional:`);
+            const isOptional = peerRequest.range.startsWith(`optional:`);
 
             if (!peerDescriptor) {
               if (!isOptional)
                 this.errors.push(new Error(`Unsatisfied peer dependency (${structUtils.prettyLocator(this.configuration, pkg)} requests ${structUtils.prettyDescriptor(this.configuration, peerRequest)}, but ${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide it)`));
 
-              continue;
+              peerDescriptor = structUtils.makeDescriptor(peerRequest, `missing:`);
             }
+
+            if (peerDescriptor.range === `missing:`)
+              missingPeerDependencies.add(peerDescriptor.descriptorHash);
 
             virtualizedPackage.dependencies.set(peerDescriptor.descriptorHash, peerDescriptor);
           }
 
           virtualizedPackage.peerDependencies.clear();
 
-          pkg = virtualizedPackage;
-        }
+          resolvePeerDependencies(virtualizedPackage);
 
-        resolvePeerDependencies(pkg);
+          for (const missingPeerDependency of missingPeerDependencies) {
+            virtualizedPackage.dependencies.delete(missingPeerDependency);
+          }
+        } else {
+          resolvePeerDependencies(pkg);
+        }
       }
     };
 
