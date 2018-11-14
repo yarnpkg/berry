@@ -1,100 +1,7 @@
-"@babel/code-frame@^7.0.0, @babel/code-frame@^7.0.0-beta.36":
-  dependencies:
-    @babel/highlight: ^7.0.0
-  resolution: @babel/code-frame@7.0.0
-
-@babel/core@^7.0.0-beta.39:
-  dependencies:
-    @babel/code-frame: ^7.0.0
-    @babel/generator: ^7.1.2
-    @babel/helpers: ^7.1.2
-    @babel/parser: ^7.1.2
-    @babel/template: ^7.1.2
-    @babel/traverse: ^7.1.0
-    @babel/types: ^7.1.2
-    convert-source-map: ^1.1.0
-    debug: ^3.1.0
-    json5: ^0.5.0
-    lodash: ^4.17.10
-    resolve: ^1.3.2
-    semver: ^5.4.1
-    source-map: ^0.5.0
-  resolution: @babel/core@7.1.2
-
-"@babel/generator@^7.1.2, @babel/generator@^7.1.3":
-  dependencies:
-    @babel/types: ^7.1.3
-    jsesc: ^2.5.1
-    lodash: ^4.17.10
-    source-map: ^0.5.0
-    trim-right: ^1.0.1
-  resolution: @babel/generator@7.1.3
-
-@babel/helper-function-name@^7.1.0:
-  dependencies:
-    @babel/helper-get-function-arity: ^7.0.0
-    @babel/template: ^7.1.0
-    @babel/types: ^7.0.0
-  resolution: @babel/helper-function-name@7.1.0
-
-@babel/helper-get-function-arity@^7.0.0:
-  dependencies:
-    @babel/types: ^7.0.0
-  resolution: @babel/helper-get-function-arity@7.0.0
-
-@babel/helper-split-export-declaration@^7.0.0:
-  dependencies:
-    @babel/types: ^7.0.0
-  resolution: @babel/helper-split-export-declaration@7.0.0
-
-@babel/helpers@^7.1.2:
-  dependencies:
-    @babel/template: ^7.1.2
-    @babel/traverse: ^7.1.0
-    @babel/types: ^7.1.2
-  resolution: @babel/helpers@7.1.2
-
-@babel/highlight@^7.0.0:
-  dependencies:
-    chalk: ^2.0.0
-    esutils: ^2.0.2
-    js-tokens: ^4.0.0
-  resolution: @babel/highlight@7.0.0
-
-"@babel/parser@^7.1.2, @babel/parser@^7.1.3":
-  resolution: @babel/parser@7.1.3
-
 "@babel/runtime@^7.0.0, @babel/runtime@^7.1.2":
   dependencies:
     regenerator-runtime: ^0.12.0
   resolution: @babel/runtime@7.1.2
-
-"@babel/template@^7.1.0, @babel/template@^7.1.2":
-  dependencies:
-    @babel/code-frame: ^7.0.0
-    @babel/parser: ^7.1.2
-    @babel/types: ^7.1.2
-  resolution: @babel/template@7.1.2
-
-"@babel/traverse@^7.0.0-beta.39, @babel/traverse@^7.1.0":
-  dependencies:
-    @babel/code-frame: ^7.0.0
-    @babel/generator: ^7.1.3
-    @babel/helper-function-name: ^7.1.0
-    @babel/helper-split-export-declaration: ^7.0.0
-    @babel/parser: ^7.1.3
-    @babel/types: ^7.1.3
-    debug: ^3.1.0
-    globals: ^11.1.0
-    lodash: ^4.17.10
-  resolution: @babel/traverse@7.1.4
-
-"@babel/types@^7.0.0, @babel/types@^7.0.0-beta.39, @babel/types@^7.1.2, @babel/types@^7.1.3":
-  dependencies:
-    esutils: ^2.0.2
-    lodash: ^4.17.10
-    to-fast-properties: ^2.0.0
-  resolution: @babel/types@7.1.3
 
 "@berry/builder@0.0.0, @berry/builder@workspace:0.0.0":
   dependencies:
@@ -384,12 +291,6 @@
   dependencies:
     @berry/core: "workspace:0.0.0"
     @berry/zipfs: "workspace:0.0.0"
-    raw-loader: ^0.5.1
-    ts-loader: ^5.2.1
-    typescript: ^3.0.1
-    wasm-loader: ^1.3.0
-    webpack: ^4.17.2
-    webpack-cli: ^3.1.0
   resolution: "@berry/pnp@workspace-base:0.0.0"
 
 "@berry/shell@workspace-base:0.0.0":
@@ -974,9 +875,6 @@ babel-runtime@^6.23.0:
     regenerator-runtime: ^0.11.0
   resolution: babel-runtime@6.26.0
 
-babylon@^7.0.0-beta.39:
-  resolution: babylon@7.0.0-beta.47
-
 balanced-match@^1.0.0:
   resolution: balanced-match@1.0.0
 
@@ -1150,9 +1048,6 @@ cacheable-request@^5.0.0:
 call-me-maybe@^1.0.1:
   resolution: call-me-maybe@1.0.1
 
-camelcase@^4.1.0:
-  resolution: camelcase@4.1.0
-
 chalk@^1.1.3:
   dependencies:
     ansi-styles: ^2.2.1
@@ -1219,13 +1114,6 @@ cli-cursor@^2.1.0:
 cli-width@^2.0.0:
   resolution: cli-width@2.2.0
 
-cliui@^4.0.0:
-  dependencies:
-    string-width: ^2.1.1
-    strip-ansi: ^4.0.0
-    wrap-ansi: ^2.0.0
-  resolution: cliui@4.1.0
-
 clone-response@^1.0.2:
   dependencies:
     mimic-response: ^1.0.0
@@ -1282,7 +1170,7 @@ console-browserify@^1.1.0:
 constants-browserify@^1.0.0:
   resolution: constants-browserify@1.0.0
 
-"convert-source-map@^1.1.0, convert-source-map@^1.5.1":
+convert-source-map@^1.5.1:
   dependencies:
     safe-buffer: ~5.1.1
   resolution: convert-source-map@1.6.0
@@ -1331,7 +1219,7 @@ create-ecdh@^4.0.0:
     sha.js: ^2.4.8
   resolution: create-hmac@1.1.7
 
-"cross-spawn@^6.0.0, cross-spawn@^6.0.5":
+cross-spawn@^6.0.0:
   dependencies:
     nice-try: ^1.0.4
     path-key: ^2.0.1
@@ -1377,15 +1265,10 @@ dateformat@^3.0.3:
     ms: 2.0.0
   resolution: debug@2.6.9
 
-"debug@^3.0.0, debug@^3.1.0":
+debug@^3.0.0:
   dependencies:
     ms: ^2.1.1
   resolution: debug@3.2.6
-
-decamelize@^2.0.0:
-  dependencies:
-    xregexp: 4.0.0
-  resolution: decamelize@2.0.0
 
 decode-uri-component@^0.2.0:
   resolution: decode-uri-component@0.2.0
@@ -1595,17 +1478,6 @@ events@^1.0.0:
     safe-buffer: ^5.1.1
   resolution: "evp_bytestokey@1.0.3"
 
-execa@^0.10.0:
-  dependencies:
-    cross-spawn: ^6.0.0
-    get-stream: ^3.0.0
-    is-stream: ^1.1.0
-    npm-run-path: ^2.0.0
-    p-finally: ^1.0.0
-    signal-exit: ^3.0.0
-    strip-eof: ^1.0.0
-  resolution: execa@0.10.0
-
 execa@^1.0.0:
   dependencies:
     cross-spawn: ^6.0.0
@@ -1705,11 +1577,6 @@ find-up@^2.1.0:
     locate-path: ^2.0.0
   resolution: find-up@2.1.0
 
-find-up@^3.0.0:
-  dependencies:
-    locate-path: ^3.0.0
-  resolution: find-up@3.0.0
-
 flush-write-stream@^1.0.0:
   dependencies:
     inherits: ^2.0.1
@@ -1777,12 +1644,6 @@ gauge@~2.7.3:
 get-assigned-identifiers@^1.1.0:
   resolution: get-assigned-identifiers@1.2.0
 
-get-caller-file@^1.0.1:
-  resolution: get-caller-file@1.0.3
-
-get-stream@^3.0.0:
-  resolution: get-stream@3.0.0
-
 get-stream@^4.0.0:
   dependencies:
     pump: ^3.0.0
@@ -1809,12 +1670,6 @@ glob-to-regexp@^0.3.0:
     once: ^1.3.0
     path-is-absolute: ^1.0.0
   resolution: glob@7.1.3
-
-global-modules-path@^2.3.0:
-  resolution: global-modules-path@2.3.0
-
-globals@^11.1.0:
-  resolution: globals@11.8.0
 
 globby@^8.0.1:
   dependencies:
@@ -1943,12 +1798,6 @@ ignore@^3.3.5:
 immer@^1.7.2:
   resolution: immer@1.7.3
 
-import-local@^2.0.0:
-  dependencies:
-    pkg-dir: ^3.0.0
-    resolve-cwd: ^2.0.0
-  resolution: import-local@2.0.0
-
 imurmurhash@^0.1.4:
   resolution: imurmurhash@0.1.4
 
@@ -1987,16 +1836,10 @@ inquirer@^6.2.0:
     through: ^2.3.6
   resolution: inquirer@6.2.0
 
-interpret@^1.1.0:
-  resolution: interpret@1.1.0
-
 invariant@^2.2.4:
   dependencies:
     loose-envify: ^1.0.0
   resolution: invariant@2.2.4
-
-invert-kv@^2.0.0:
-  resolution: invert-kv@2.0.0
 
 is-accessor-descriptor@^0.1.6:
   dependencies:
@@ -2120,11 +1963,8 @@ joi@^13.6.0:
     topo: 3.x.x
   resolution: joi@13.7.0
 
-"js-tokens@^3.0.0 || ^4.0.0, js-tokens@^4.0.0":
+"js-tokens@^3.0.0 || ^4.0.0":
   resolution: js-tokens@4.0.0
-
-jsesc@^2.5.1:
-  resolution: jsesc@2.5.1
 
 json-buffer@3.0.0:
   resolution: json-buffer@3.0.0
@@ -2178,11 +2018,6 @@ kind-of@^5.0.0:
 "kind-of@^6.0.0, kind-of@^6.0.2":
   resolution: kind-of@6.0.2
 
-lcid@^2.0.0:
-  dependencies:
-    invert-kv: ^2.0.0
-  resolution: lcid@2.0.0
-
 levn@~0.3.0:
   dependencies:
     prelude-ls: ~1.1.2
@@ -2205,12 +2040,6 @@ locate-path@^2.0.0:
     path-exists: ^3.0.0
   resolution: locate-path@2.0.0
 
-locate-path@^3.0.0:
-  dependencies:
-    p-locate: ^3.0.0
-    path-exists: ^3.0.0
-  resolution: locate-path@3.0.0
-
 lockfile@^1.0.4:
   dependencies:
     signal-exit: ^3.0.2
@@ -2229,9 +2058,6 @@ logic-solver@^2.0.1:
   dependencies:
     underscore: ^1.7.0
   resolution: logic-solver@2.0.1
-
-long@^3.2.0:
-  resolution: long@3.2.0
 
 "loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.3.1, loose-envify@^1.4.0":
   dependencies:
@@ -2260,11 +2086,6 @@ make-dir@^1.0.0:
 make-error@^1.1.1:
   resolution: make-error@1.3.5
 
-map-age-cleaner@^0.1.1:
-  dependencies:
-    p-defer: ^1.0.0
-  resolution: map-age-cleaner@0.1.2
-
 map-cache@^0.2.2:
   resolution: map-cache@0.2.2
 
@@ -2279,13 +2100,6 @@ md5.js@^1.3.4:
     inherits: ^2.0.1
     safe-buffer: ^5.1.2
   resolution: md5.js@1.3.5
-
-mem@^4.0.0:
-  dependencies:
-    map-age-cleaner: ^0.1.1
-    mimic-fn: ^1.0.0
-    p-is-promise: ^1.1.0
-  resolution: mem@4.0.0
 
 "memory-fs@^0.4.0, memory-fs@~0.4.1":
   dependencies:
@@ -2587,13 +2401,6 @@ os-browserify@^0.3.0:
 os-homedir@^1.0.0:
   resolution: os-homedir@1.0.2
 
-os-locale@^3.0.0:
-  dependencies:
-    execa: ^0.10.0
-    lcid: ^2.0.0
-    mem: ^4.0.0
-  resolution: os-locale@3.0.1
-
 "os-tmpdir@^1.0.0, os-tmpdir@~1.0.2":
   resolution: os-tmpdir@1.0.2
 
@@ -2606,40 +2413,21 @@ osenv@^0.1.4:
 p-cancelable@^0.5.0:
   resolution: p-cancelable@0.5.1
 
-p-defer@^1.0.0:
-  resolution: p-defer@1.0.0
-
 p-finally@^1.0.0:
   resolution: p-finally@1.0.0
-
-p-is-promise@^1.1.0:
-  resolution: p-is-promise@1.1.0
 
 p-limit@^1.1.0:
   dependencies:
     p-try: ^1.0.0
   resolution: p-limit@1.3.0
 
-p-limit@^2.0.0:
-  dependencies:
-    p-try: ^2.0.0
-  resolution: p-limit@2.0.0
-
 p-locate@^2.0.0:
   dependencies:
     p-limit: ^1.1.0
   resolution: p-locate@2.0.0
 
-p-locate@^3.0.0:
-  dependencies:
-    p-limit: ^2.0.0
-  resolution: p-locate@3.0.0
-
 p-try@^1.0.0:
   resolution: p-try@1.0.0
-
-p-try@^2.0.0:
-  resolution: p-try@2.0.0
 
 pako@~1.0.5:
   resolution: pako@1.0.6
@@ -2705,11 +2493,6 @@ pkg-dir@^2.0.0:
   dependencies:
     find-up: ^2.1.0
   resolution: pkg-dir@2.0.0
-
-pkg-dir@^3.0.0:
-  dependencies:
-    find-up: ^3.0.0
-  resolution: pkg-dir@3.0.0
 
 pluralize@^7.0.0:
   resolution: pluralize@7.0.0
@@ -2940,24 +2723,10 @@ repeat-element@^1.1.2:
 repeat-string@^1.6.1:
   resolution: repeat-string@1.6.1
 
-require-directory@^2.1.1:
-  resolution: require-directory@2.1.1
-
-require-main-filename@^1.0.1:
-  resolution: require-main-filename@1.0.1
-
-resolve-cwd@^2.0.0:
-  dependencies:
-    resolve-from: ^3.0.0
-  resolution: resolve-cwd@2.0.0
-
-resolve-from@^3.0.0:
-  resolution: resolve-from@3.0.0
-
 resolve-url@^0.2.1:
   resolution: resolve-url@0.2.1
 
-"resolve@^1.1.5, resolve@^1.3.2":
+resolve@^1.1.5:
   dependencies:
     path-parse: ^1.0.5
   resolution: resolve@1.8.1
@@ -3043,13 +2812,13 @@ scope-analyzer@^2.0.1:
     get-assigned-identifiers: ^1.1.0
   resolution: scope-analyzer@2.0.5
 
-"semver@^5.0.1, semver@^5.3.0, semver@^5.4.1, semver@^5.5.0, semver@^5.5.1":
+"semver@^5.0.1, semver@^5.3.0, semver@^5.5.0, semver@^5.5.1":
   resolution: semver@5.6.0
 
 serialize-javascript@^1.4.0:
   resolution: serialize-javascript@1.5.0
 
-"set-blocking@^2.0.0, set-blocking@~2.0.0":
+set-blocking@~2.0.0:
   resolution: set-blocking@2.0.0
 
 set-value@^0.4.3:
@@ -3139,7 +2908,7 @@ source-map-support@^0.5.6:
 source-map-url@^0.4.0:
   resolution: source-map-url@0.4.0
 
-"source-map@^0.5.0, source-map@^0.5.6":
+source-map@^0.5.6:
   resolution: source-map@0.5.7
 
 "source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.1":
@@ -3235,7 +3004,7 @@ string-width@^1.0.1:
     strip-ansi: ^3.0.0
   resolution: string-width@1.0.2
 
-"string-width@^1.0.2 || 2, string-width@^2.0.0, string-width@^2.1.0, string-width@^2.1.1":
+"string-width@^1.0.2 || 2, string-width@^2.1.0":
   dependencies:
     is-fullwidth-code-point: ^2.0.0
     strip-ansi: ^4.0.0
@@ -3307,9 +3076,6 @@ tmp@^0.0.33:
 to-arraybuffer@^1.0.0:
   resolution: to-arraybuffer@1.0.1
 
-to-fast-properties@^2.0.0:
-  resolution: to-fast-properties@2.0.0
-
 to-object-path@^0.3.0:
   dependencies:
     kind-of: ^3.0.2
@@ -3341,20 +3107,6 @@ transform-loader@^0.2.4:
   dependencies:
     loader-utils: ^1.0.2
   resolution: transform-loader@0.2.4
-
-trim-right@^1.0.1:
-  resolution: trim-right@1.0.1
-
-ts-loader@^5.2.1:
-  dependencies:
-    chalk: ^2.3.0
-    enhanced-resolve: ^4.0.0
-    loader-utils: ^1.0.2
-    micromatch: ^3.1.4
-    semver: ^5.0.1
-  peerDependencies:
-    typescript: "*"
-  resolution: ts-loader@5.2.2
 
 ts-loader@^5.3.0:
   dependencies:
@@ -3492,9 +3244,6 @@ util@0.10.3:
     inherits: 2.0.1
   resolution: util@0.10.3
 
-v8-compile-cache@^2.0.2:
-  resolution: v8-compile-cache@2.0.2
-
 val-loader@^1.1.1:
   dependencies:
     loader-utils: ^1.0.0
@@ -3511,55 +3260,12 @@ vm-browserify@0.0.4:
     indexof: 0.0.1
   resolution: vm-browserify@0.0.4
 
-wasm-dce@^1.0.0:
-  dependencies:
-    @babel/core: ^7.0.0-beta.39
-    @babel/traverse: ^7.0.0-beta.39
-    @babel/types: ^7.0.0-beta.39
-    babylon: ^7.0.0-beta.39
-    webassembly-interpreter: 0.0.30
-  resolution: wasm-dce@1.0.2
-
-wasm-loader@^1.3.0:
-  dependencies:
-    loader-utils: ^1.1.0
-    wasm-dce: ^1.0.0
-  peerDependencies:
-    wasm-dce: 1.x
-  resolution: wasm-loader@1.3.0
-
 watchpack@^1.5.0:
   dependencies:
     chokidar: ^2.0.2
     graceful-fs: ^4.1.2
     neo-async: ^2.5.0
   resolution: watchpack@1.6.0
-
-webassembly-floating-point-hex-parser@0.1.2:
-  resolution: webassembly-floating-point-hex-parser@0.1.2
-
-webassembly-interpreter@0.0.30:
-  dependencies:
-    @babel/code-frame: ^7.0.0-beta.36
-    long: ^3.2.0
-    webassembly-floating-point-hex-parser: 0.1.2
-  resolution: webassembly-interpreter@0.0.30
-
-webpack-cli@^3.1.0:
-  dependencies:
-    chalk: ^2.4.1
-    cross-spawn: ^6.0.5
-    enhanced-resolve: ^4.1.0
-    global-modules-path: ^2.3.0
-    import-local: ^2.0.0
-    interpret: ^1.1.0
-    loader-utils: ^1.1.0
-    supports-color: ^5.5.0
-    v8-compile-cache: ^2.0.2
-    yargs: ^12.0.2
-  peerDependencies:
-    webpack: ^4.x.x
-  resolution: webpack-cli@3.1.2
 
 "webpack-sources@^1.1.0, webpack-sources@^1.3.0":
   dependencies:
@@ -3572,7 +3278,7 @@ webpack-virtual-modules@^0.1.10:
     debug: ^3.0.0
   resolution: webpack-virtual-modules@0.1.10
 
-"webpack@4.23.1, webpack@^4.17.2, webpack@^4.18.0":
+"webpack@4.23.1, webpack@^4.18.0":
   dependencies:
     @webassemblyjs/ast: 1.7.10
     @webassemblyjs/helper-module-context: 1.7.10
@@ -3600,9 +3306,6 @@ webpack-virtual-modules@^0.1.10:
     webpack-sources: ^1.3.0
   resolution: webpack@4.23.1
 
-which-module@^2.0.0:
-  resolution: which-module@2.0.0
-
 which@^1.2.9:
   dependencies:
     isexe: ^2.0.0
@@ -3621,22 +3324,13 @@ worker-farm@^1.5.2:
     errno: ~0.1.7
   resolution: worker-farm@1.6.0
 
-wrap-ansi@^2.0.0:
-  dependencies:
-    string-width: ^1.0.1
-    strip-ansi: ^3.0.1
-  resolution: wrap-ansi@2.1.0
-
 wrappy@1:
   resolution: wrappy@1.0.2
-
-xregexp@4.0.0:
-  resolution: xregexp@4.0.0
 
 "xtend@^4.0.0, xtend@^4.0.1, xtend@~4.0.1":
   resolution: xtend@4.0.1
 
-"y18n@^3.2.1 || ^4.0.0, y18n@^4.0.0":
+y18n@^4.0.0:
   resolution: y18n@4.0.0
 
 yallist@^2.1.2:
@@ -3644,27 +3338,6 @@ yallist@^2.1.2:
 
 "yallist@^3.0.0, yallist@^3.0.2":
   resolution: yallist@3.0.2
-
-yargs-parser@^10.1.0:
-  dependencies:
-    camelcase: ^4.1.0
-  resolution: yargs-parser@10.1.0
-
-yargs@^12.0.2:
-  dependencies:
-    cliui: ^4.0.0
-    decamelize: ^2.0.0
-    find-up: ^3.0.0
-    get-caller-file: ^1.0.1
-    os-locale: ^3.0.0
-    require-directory: ^2.1.1
-    require-main-filename: ^1.0.1
-    set-blocking: ^2.0.0
-    string-width: ^2.0.0
-    which-module: ^2.0.0
-    y18n: "^3.2.1 || ^4.0.0"
-    yargs-parser: ^10.1.0
-  resolution: yargs@12.0.2
 
 yn@^2.0.0:
   resolution: yn@2.0.0
