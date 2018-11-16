@@ -11,7 +11,7 @@
         "typescript": "^3.0.1"
     },
     "scripts": {
-        "grammar:shell": "pegjs -o sources/grammars/shell.js sources/grammars/shell.pegjs",
-        "grammar:syml": "pegjs -o sources/grammars/syml.js sources/grammars/syml.pegjs"
+        "grammar:shell": "run pegjs -o sources/grammars/shell.js sources/grammars/shell.pegjs",
+        "grammar:syml": "run pegjs -o sources/grammars/syml.js sources/grammars/syml.pegjs"
     }
 }
