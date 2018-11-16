@@ -16,7 +16,7 @@ concierge
       throw new UsageError(`This command requires your package.json to contain specific configuration keys`);
 
     if (!profile)
-      throw new UsageError(`You must select a profile`);
+      profile = `standard`;
 
     if (!Object.prototype.hasOwnProperty.call(pkgJson[`@berry/builder`].bundles, profile))
       throw new UsageError(`Invalid profile`);
