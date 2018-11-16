@@ -11,7 +11,12 @@ PropertyStatements
   = statements:PropertyStatement* { return Object.assign({}, ... statements) }
 
 PropertyStatement
-  = Samedent property:Name B? ":" B? value:Expression { return {[property]: value} }
+  = Samedent "#" [^\n]+ EOL+ { return {} }
+  / Samedent property:Name B? ":" B? value:Expression { return {[property]: value} }
+  // Compatibility with the old lockfile format (key-values without a ":")
+  / Samedent property:LegacyName B value:Literal EOL+ { return {[property]: value} }
+  // Compatibility with the old lockfile format (multiple keys for a same value)
+  / Samedent property:Name others:(B? "," B? other:Name { return other })+ B? ":" B? value:Expression { return Object.assign({}, ... [property].concat(others).map(property => ({[property]: value}))) }
 
 Expression
   = EOL Indent statements:PropertyStatements Dedent { return statements }
@@ -30,6 +35,10 @@ Name
   = string
   / pseudostring
 
+LegacyName
+  = string
+  / pseudostringRestricted+ { return text() }
+
 Literal
   = string
   / pseudostring
@@ -41,7 +50,9 @@ pseudostring "pseudostring"
   = pseudostringRestricted+ ([ ]+ pseudostringRestricted+)* B? { return text().replace(/^ *| *$/g, '') }
 
 pseudostringRestricted
-  = [a-zA-Z0-9\/.#@^~<=>+-]
+  // Some of those character might not be allowed by a strict YAML parser, but
+  // accept them nonetheless because we're compatible with the older lockfile
+  = [a-zA-Z0-9\/.*#@^~<=>_+-]
 
 /**
  * String parsing

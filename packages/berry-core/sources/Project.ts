@@ -17,6 +17,11 @@ export class Project {
   public readonly configuration: Configuration;
   public readonly cwd: string;
 
+  // Is meant to be populated by the consumer. When the descriptor referenced by
+  // the key should be resolved, the second one is resolved instead and its
+  // result is used as final resolution for the first entry.
+  public resolutionAliases: Map<string, string> = new Map();
+
   public workspacesByCwd: Map<string, Workspace> = new Map();
   public workspacesByLocator: Map<string, Workspace> = new Map();
   public workspacesByIdent: Map<string, Array<Workspace>> = new Map();
@@ -225,15 +230,28 @@ export class Project {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
 
+    // Note that the resolution process is "offline" until everything has been
+    // successfully resolved; all the processing is expected to have zero side
+    // effects until we're ready to set all the variables at once (the one
+    // exception being when a resolver needs to fetch a package, in which case
+    // we might need to populate the cache).
+
+    // This makes it possible to use the same Project instance for multiple
+    // purposes at the same time (since `resolveEverything` is async, it might
+    // happen that we want to do something while waiting for it to end; if we
+    // were to mutate the project then it would end up in a partial state that
+    // could lead to hard-to-debug issues).
+
     const resolver = this.configuration.makeResolver();
     const fetcher = this.configuration.makeFetcher();
 
     const resolverOptions = {project: this, resolver, fetcher, cache};
-    const fetcherOptions = {project: this, fetcher, cache}
 
     const allDescriptors = new Map<string, Descriptor>();
     const allPackages = new Map<string, Package>();
     const allResolutions = new Map<string, string>();
+
+    const haveBeenAliased = new Set<string>();
 
     let mustBeResolved = new Set<string>();
 
@@ -245,7 +263,45 @@ export class Project {
     }
 
     while (mustBeResolved.size !== 0) {
-      // First, we remove from the "mustBeResolved" list all packages that have
+      // First, we replace all packages to be resolved by their aliases
+
+      for (const descriptorHash of mustBeResolved) {
+        const aliasHash = this.resolutionAliases.get(descriptorHash);
+
+        if (aliasHash === undefined)
+          continue;
+        
+        // It doesn't cost us much to support the case where a descriptor is
+        // equal to its own alias (which should mean "no alias")
+        if (descriptorHash === aliasHash)
+          continue;
+
+        const alias = this.storedDescriptors.get(aliasHash);
+
+        if (!alias)
+          throw new Error(`The alias should have been registered`);
+
+        // If it's already been "resolved" (in reality it will be the temporary
+        // resolution we've set in the next few lines) we can just skip it
+        if (allResolutions.has(descriptorHash))
+          continue;
+
+        // Temporarily set an invalid resolution; we will replace it by the
+        // actual one after we've finished resolving the aliases
+        allResolutions.set(descriptorHash, `temporary`);
+
+        // We can now replace the descriptor by its alias (once everything will
+        // have been resolved, we'll do a pass to copy the aliases resolutions
+        // into their respective sources)
+        mustBeResolved.delete(descriptorHash);
+        mustBeResolved.add(aliasHash);
+
+        allDescriptors.set(aliasHash, alias);
+
+        haveBeenAliased.add(descriptorHash);
+      }
+
+      // Then we remove from the "mustBeResolved" list all packages that have
       // already been resolved previously.
 
       for (const descriptorHash of mustBeResolved)
@@ -265,7 +321,7 @@ export class Project {
         let candidateReferences;
 
         try {
-          candidateReferences = await resolver.getCandidates(descriptor, {project: this, cache, fetcher, resolver});
+          candidateReferences = await resolver.getCandidates(descriptor, resolverOptions);
         } catch (error) {
           error.message = `${structUtils.prettyDescriptor(this.configuration, descriptor)}: ${error.message}`;
           throw error;
@@ -388,7 +444,7 @@ export class Project {
         let pkg;
 
         try {
-          pkg = await resolver.resolve(locator, {project: this, cache, fetcher, resolver});
+          pkg = await resolver.resolve(locator, resolverOptions);
         } catch (error) {
           error.message = `${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
           throw error;
@@ -405,7 +461,7 @@ export class Project {
 
         for (const [source, target] of [[rawDependencies, dependencies], [rawPeerDependencies, peerDependencies]]) {
           for (const descriptor of source.values()) {
-            const normalizedDescriptor = await resolver.normalizeDescriptor(descriptor, locator, {project: this, resolver});
+            const normalizedDescriptor = await resolver.normalizeDescriptor(descriptor, locator, resolverOptions);
             target.set(normalizedDescriptor.descriptorHash, normalizedDescriptor);
           }
         }
@@ -433,7 +489,9 @@ export class Project {
         if (pkg) {
           allPackages.set(pkg.locatorHash, pkg);
 
-          // The resolvers are not expected to return the dependencies in any particular order, so we must be careful and sort them ourselves
+          // The resolvers are not expected to return the dependencies in any
+          // particular order, so we must be careful and sort them ourselves in
+          // order to have 100% reproductible builds
           const sortedDependencies = Array.from(pkg.dependencies.values()).sort((a, b) => {
             const astring = structUtils.stringifyDescriptor(a);
             const bstring = structUtils.stringifyDescriptor(b);
@@ -449,14 +507,58 @@ export class Project {
       }
     }
 
-    //
+    // Each package that should have been resolved but was skipped because it
+    // was aliased will now see the resolution for its alias propagated to it
+
+    while (haveBeenAliased.size > 0) {
+      let hasChanged = false;
+
+      for (const descriptorHash of haveBeenAliased) {
+        const descriptor = allDescriptors.get(descriptorHash);
+
+        if (!descriptor)
+          throw new Error(`The descriptor should have been registered`);
+
+        const aliasHash = this.resolutionAliases.get(descriptorHash);
+
+        if (aliasHash === undefined)
+          throw new Error(`The descriptor should have an alias`);
+
+        const resolution = allResolutions.get(aliasHash);
+
+        if (resolution === undefined)
+          throw new Error(`The resolution should have been registered`);
+
+        // The following can happen if a package gets aliased to another package
+        // that's itself aliased - in this case we just process all those we can
+        // do, then make new passes until everything is resolved
+        if (resolution === `temporary`)
+          continue;
+        
+        haveBeenAliased.delete(descriptorHash);
+
+        allResolutions.set(descriptorHash, resolution);
+
+        hasChanged = true;
+      }
+
+      if (!hasChanged) {
+        throw new Error(`Alias loop detected`);
+      }
+    }
+    
+    // In this step we now create virtual packages for each package with at
+    // least one peer dependency. We also use it to search for the alias
+    // descriptors aren't depended upon by anything and can be safely pruned.
+
     const hasBeenTraversed = new Set();
+    const volatileDescriptors = new Set(this.resolutionAliases.values());
 
     const resolvePeerDependencies = (parentLocator: Locator) => {
-      if (hasBeenTraversed.has(parentLocator))
+      if (hasBeenTraversed.has(parentLocator.locatorHash))
         return;
 
-      hasBeenTraversed.add(parentLocator);
+      hasBeenTraversed.add(parentLocator.locatorHash);
 
       const parentPackage = allPackages.get(parentLocator.locatorHash);
 
@@ -464,6 +566,8 @@ export class Project {
         throw new Error(`The package (${structUtils.prettyLocator(this.configuration, parentLocator)}) should have been registered`);
 
       for (const descriptor of Array.from(parentPackage.dependencies.values())) {
+        volatileDescriptors.delete(descriptor.descriptorHash);
+
         if (descriptor.range === `missing:`)
           continue;
 
@@ -533,6 +637,17 @@ export class Project {
 
     for (const workspace of this.workspacesByLocator.values())
       resolvePeerDependencies(workspace.anchoredLocator);
+    
+    // All descriptors still referenced within the volatileDescriptors set are
+    // descriptors that aren't depended upon by anything in the dependency tree.
+
+    for (const descriptorHash of volatileDescriptors) {
+      allDescriptors.delete(descriptorHash);
+      allResolutions.delete(descriptorHash);        
+    }
+
+    // Import the dependencies for each resolved workspaces into their own
+    // Workspace instance.
 
     for (const workspace of this.workspacesByLocator.values()) {
       const pkg = allPackages.get(workspace.anchoredLocator.locatorHash);
@@ -546,7 +661,9 @@ export class Project {
       workspace.dependencies = pkg.dependencies;
     }
 
-    // Everything is done, we can now update our internal resolutions to reference the new ones
+    // Everything is done, we can now update our internal resolutions to
+    // reference the new ones
+
     this.storedResolutions = allResolutions;
     this.storedDescriptors = allDescriptors;
     this.storedPackages = allPackages;

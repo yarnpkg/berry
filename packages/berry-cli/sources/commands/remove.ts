@@ -2,6 +2,8 @@ import {Configuration, Cache, Project, Report} from '@berry/core';
 import {structUtils}                           from '@berry/core';
 import {Writable}                              from 'stream';
 
+import {registerLegacyYarnResolutions}         from '../utils/miscUtils';
+
 import {plugins}                               from '../plugins';
 
 export default (concierge: any) => concierge
@@ -15,6 +17,8 @@ export default (concierge: any) => concierge
     const cache = await Cache.find(configuration);
 
     const report = await Report.start({project, cache}, async () => {
+      await registerLegacyYarnResolutions(project);
+
       for (const entry of names) {
         const ident = structUtils.parseIdent(entry);
         workspace.manifest.dependencies.delete(ident.identHash);

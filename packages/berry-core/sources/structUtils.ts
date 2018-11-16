@@ -112,10 +112,19 @@ export function parseIdent(string: string): Ident {
 }
 
 export function parseDescriptor(string: string): Descriptor {
+  const descriptor = tryParseDescriptor(string);
+
+  if (!descriptor)
+    throw new Error(`Parse error (${string})`);
+
+  return descriptor;
+}
+
+export function tryParseDescriptor(string: string): Descriptor | null {
   const match = string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))?$/);
 
   if (!match)
-    throw new Error(`Parse error (${string})`);
+    return null;
 
   let [, scope, name, range] = match;
 

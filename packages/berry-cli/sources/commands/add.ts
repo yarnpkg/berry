@@ -4,6 +4,8 @@ import {Configuration, Cache, Project, Report} from '@berry/core';
 import {structUtils}                           from '@berry/core';
 import {Writable}                              from 'stream';
 
+import {registerLegacyYarnResolutions}         from '../utils/miscUtils';
+
 import {plugins}                               from '../plugins';
 
 export default (concierge: any) => concierge
@@ -17,6 +19,8 @@ export default (concierge: any) => concierge
     const cache = await Cache.find(configuration);
 
     const report = await Report.start({project, cache}, async () => {
+      await registerLegacyYarnResolutions(project);
+
       const resolver = configuration.makeResolver({useLockfile: false});
       const fetcher = configuration.makeFetcher();
 
