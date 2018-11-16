@@ -1,3 +1,6 @@
+__metadata:
+  version: 1
+
 "@babel/runtime@^7.0.0, @babel/runtime@^7.1.2":
   dependencies:
     regenerator-runtime: ^0.12.0
@@ -936,7 +939,7 @@ brorand@^1.0.1:
     buffer-xor: ^1.0.3
     cipher-base: ^1.0.0
     create-hash: ^1.1.0
-    "evp_bytestokey": ^1.0.3
+    evp_bytestokey: ^1.0.3
     inherits: ^2.0.1
     safe-buffer: ^5.0.1
   resolution: browserify-aes@1.2.0
@@ -945,7 +948,7 @@ browserify-cipher@^1.0.0:
   dependencies:
     browserify-aes: ^1.0.4
     browserify-des: ^1.0.0
-    "evp_bytestokey": ^1.0.0
+    evp_bytestokey: ^1.0.0
   resolution: browserify-cipher@1.0.1
 
 browserify-des@^1.0.0:
@@ -1472,7 +1475,7 @@ events@^1.0.0:
   dependencies:
     md5.js: ^1.3.4
     safe-buffer: ^5.1.1
-  resolution: "evp_bytestokey@1.0.3"
+  resolution: evp_bytestokey@1.0.3
 
 execa@^1.0.0:
   dependencies:
@@ -2274,7 +2277,7 @@ node-libs-browser@^2.0.0:
     readable-stream: ^2.3.3
     stream-browserify: ^2.0.1
     stream-http: ^2.7.2
-    "string_decoder": ^1.0.0
+    string_decoder: ^1.0.0
     timers-browserify: ^2.0.4
     tty-browserify: 0.0.0
     url: ^0.11.0
@@ -2444,7 +2447,7 @@ parse-asn1@^5.0.0:
     asn1.js: ^4.0.0
     browserify-aes: ^1.0.0
     create-hash: ^1.1.0
-    "evp_bytestokey": ^1.0.0
+    evp_bytestokey: ^1.0.0
     pbkdf2: ^3.0.3
   resolution: parse-asn1@5.1.1
 
@@ -2669,7 +2672,7 @@ react-redux@^5.0.7:
     isarray: ~1.0.0
     process-nextick-args: ~2.0.0
     safe-buffer: ~5.1.1
-    "string_decoder": ~1.1.1
+    string_decoder: ~1.1.1
     util-deprecate: ~1.0.1
   resolution: readable-stream@2.3.6
 
@@ -2995,7 +2998,7 @@ stream-to-promise@^2.2.0:
 "string_decoder@^1.0.0, string_decoder@~1.1.1":
   dependencies:
     safe-buffer: ~5.1.0
-  resolution: "string_decoder@1.1.1"
+  resolution: string_decoder@1.1.1
 
 string-width@^1.0.1:
   dependencies:

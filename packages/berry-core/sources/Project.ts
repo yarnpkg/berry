@@ -83,6 +83,9 @@ export class Project {
       const parsed: any = parseSyml(content);
 
       for (const key of Object.keys(parsed)) {
+        if (key === `__metadata`)
+          continue;
+
         const data = parsed[key];
         const locator = structUtils.parseLocator(data.resolution);
 
@@ -740,6 +743,10 @@ export class Project {
     }
 
     const optimizedLockfile: {[key: string]: any} = {};
+
+    optimizedLockfile[`__metadata`] = {
+      version: 1,
+    };
 
     for (const [locatorHash, descriptorHashes] of reverseLookup.entries()) {
       const pkg = this.storedPackages.get(locatorHash);
