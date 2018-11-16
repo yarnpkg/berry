@@ -50,7 +50,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@types/react-redux", "6.0.9"],
           ["@types/react", "16.7.6"],
           ["@types/redux-saga", "0.10.5"],
-          ["@types/redux", "3.6.31"],
           ["@types/request", "2.48.1"],
           ["@types/semver", "5.5.0"],
           ["@types/stream-to-promise", "2.2.0"],
@@ -6081,14 +6080,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
-    ["@types/redux", new Map([
-      ["3.6.31", {
-        packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-redux-5a7ff8bfd26d280d.zip/node_modules/@types/redux/"),
-        packageDependencies: new Map([
-          ["@types/redux", "3.6.31"],
-        ]),
-      }],
-    ])],
     ["@types/request", new Map([
       ["2.48.1", {
         packageLocation: path.resolve(__dirname, "./.pnp/cache/@types-request-b32f7bc7c4c56885.zip/node_modules/@types/request/"),
@@ -6864,7 +6855,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.pnp/cache/@types-prop-types-e936b3d10a6b94b7.zip/node_modules/@types/prop-types/", {"name":"@types/prop-types","reference":"15.5.6"}],
     ["./.pnp/cache/csstype-a8661bcef6b0e9cd.zip/node_modules/csstype/", {"name":"csstype","reference":"2.5.7"}],
     ["./.pnp/cache/@types-redux-saga-2a1e8af5a4fb7cc4.zip/node_modules/@types/redux-saga/", {"name":"@types/redux-saga","reference":"0.10.5"}],
-    ["./.pnp/cache/@types-redux-5a7ff8bfd26d280d.zip/node_modules/@types/redux/", {"name":"@types/redux","reference":"3.6.31"}],
     ["./.pnp/cache/@types-request-b32f7bc7c4c56885.zip/node_modules/@types/request/", {"name":"@types/request","reference":"2.48.1"}],
     ["./.pnp/cache/@types-caseless-71fd2d56de590d24.zip/node_modules/@types/caseless/", {"name":"@types/caseless","reference":"0.12.1"}],
     ["./.pnp/cache/@types-form-data-53ca89dea33b1f5a.zip/node_modules/@types/form-data/", {"name":"@types/form-data","reference":"2.2.1"}],

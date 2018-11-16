@@ -24,7 +24,6 @@
         "@types/react-redux": "^6.0.9",
         "@types/react": "^16.4.14",
         "@types/redux-saga": "^0.10.5",
-        "@types/redux": "^3.6.0",
         "@types/request": "^2.47.1",
         "@types/semver": "^5.5.0",
         "@types/stream-to-promise": "^2.2.0",
