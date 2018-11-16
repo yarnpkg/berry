@@ -76,8 +76,10 @@ export class Project {
     this.storedDescriptors = new Map();
     this.storedPackages = new Map();
 
-    if (existsSync(`${this.cwd}/berry.lock`)) {
-      const content = await readFile(`${this.cwd}/berry.lock`, `utf8`);
+    const lockfilePath = `${this.cwd}/${this.configuration.lockfileName}`;
+
+    if (existsSync(lockfilePath)) {
+      const content = await readFile(lockfilePath, `utf8`);
       const parsed: any = parseSyml(content);
 
       for (const key of Object.keys(parsed)) {
@@ -787,14 +789,15 @@ export class Project {
       };
     }
 
+    const lockfilePath = `${this.cwd}/${this.configuration.lockfileName}`;
     const content = stringifySyml(optimizedLockfile);
 
-    const currentContent = existsSync(`${this.cwd}/berry.lock`)
-      ? await readFile(`${this.cwd}/berry.lock`, `utf8`)
+    const currentContent = existsSync(lockfilePath)
+      ? await readFile(lockfilePath, `utf8`)
       : null;
 
     if (currentContent !== content) {
-      await writeFile(`${this.cwd}/berry.lock`, content);
+      await writeFile(lockfilePath, content);
     }
   }
 

@@ -21,6 +21,8 @@ const RELATIVE_KEYS = new Set([
 ]);
 
 export class Configuration {
+  public lockfileName: string = `berry.lock`;
+
   public enableEmojis: boolean = !!supportsColor.stdout;
   public enableColors: boolean = !!supportsColor.stdout;
 
