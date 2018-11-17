@@ -1,3 +1,12 @@
+// This function transforms an iterable into an array and sorts it according to
+// the mapper functions provided as parameter. The mappers are expected to take
+// each element from the iterable and generate a string from it, that will then
+// be used to compare the entries.
+//
+// Using sortMap is more efficient than kinda reimplementing the logic in a sort
+// predicate because sortMap caches the result of the mappers in such a way that
+// they are guaranteed to be executed exactly once for each element.
+
 export function sortMap<T>(values: Iterable<T>, mappers: Array<(value: T) => string>) {
   const asArray = Array.from(values);
 
