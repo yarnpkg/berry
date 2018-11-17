@@ -1,7 +1,6 @@
 import fsx = require('fs-extra');
 
 import {AliasFS, FakeFS, ZipFS, NodeFS, JailFS} from '@berry/zipfs';
-import {createHmac}                             from 'crypto';
 import {writeFile}                              from 'fs';
 import {lock, unlock}                           from 'lockfile';
 import {dirname, relative, resolve}             from 'path';
@@ -38,16 +37,11 @@ export class Cache {
     this.cwd = cacheCwd;
   }
 
-  getCacheKey({scope, name, reference}: Locator) {
-    const hash = createHmac(`sha256`, `berry`)
-      .update(JSON.stringify({scope, name, reference}))
-      .digest(`hex`)
-      .substr(0, 16);
-
-    if (scope) {
-      return `@${scope}-${name}-${hash}`;
+  getCacheKey(locator: Locator) {
+    if (locator.scope) {
+      return `@${locator.scope}-${locator.name}-${locator.locatorHash}`;
     } else {
-      return `${name}-${hash}`;
+      return `${locator.name}-${locator.locatorHash}`;
     }
   }
 
