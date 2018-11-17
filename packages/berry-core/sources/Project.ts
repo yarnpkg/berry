@@ -10,6 +10,7 @@ import {extractPnpSettings, generatePnpScript}  from '@berry/pnp';
 import {Cache}                                  from './Cache';
 import {Configuration}                          from './Configuration';
 import {Workspace}                              from './Workspace';
+import * as miscUtils                           from './miscUtils';
 import * as structUtils                         from './structUtils';
 import {Descriptor, Locator, Package}           from './types';
 
@@ -500,11 +501,8 @@ export class Project {
           // The resolvers are not expected to return the dependencies in any
           // particular order, so we must be careful and sort them ourselves in
           // order to have 100% reproductible builds
-          const sortedDependencies = Array.from(pkg.dependencies.values()).sort((a, b) => {
-            const astring = structUtils.stringifyDescriptor(a);
-            const bstring = structUtils.stringifyDescriptor(b);
-
-            return astring.localeCompare(bstring, `en`, {sensitivity: `variant`, caseFirst: `upper`});
+          const sortedDependencies = miscUtils.sortMap(pkg.dependencies.values(), descriptor => {
+            return structUtils.stringifyDescriptor(descriptor);
           });
 
           for (const descriptor of sortedDependencies) {
