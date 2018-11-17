@@ -22,6 +22,8 @@ export class Project {
   // result is used as final resolution for the first entry.
   public resolutionAliases: Map<string, string> = new Map();
 
+  public workspaces: Array<Workspace> = [];
+
   public workspacesByCwd: Map<string, Workspace> = new Map();
   public workspacesByLocator: Map<string, Workspace> = new Map();
   public workspacesByIdent: Map<string, Array<Workspace>> = new Map();
@@ -119,6 +121,8 @@ export class Project {
   }
 
   private async setupWorkspaces({force = false}: {force?: boolean} = {}) {
+    this.workspaces = [];
+
     this.workspacesByCwd = new Map();
     this.workspacesByLocator = new Map();
     this.workspacesByIdent = new Map();
@@ -142,14 +146,13 @@ export class Project {
   }
 
   async addWorkspace(workspaceCwd: string) {
-    if (!this.workspacesByCwd || !this.workspacesByLocator)
-      throw new Error(`Workspaces must have been setup before calling this function`);
-
     const workspace = new Workspace(workspaceCwd, {project: this});
     await workspace.setup();
 
     if (this.workspacesByLocator.has(workspace.locator.locatorHash))
       throw new Error(`Duplicate workspace`);
+
+    this.workspaces.push(workspace);
 
     this.workspacesByCwd.set(workspaceCwd, workspace);
     this.workspacesByLocator.set(workspace.locator.locatorHash, workspace);
