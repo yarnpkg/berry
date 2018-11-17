@@ -15,12 +15,31 @@ import {WorkspaceBaseResolver}    from './WorkspaceBaseResolver';
 import {WorkspaceFetcher}         from './WorkspaceFetcher';
 import {WorkspaceResolver}        from './WorkspaceResolver';
 
+// The keys defined in this array will be resolved and normalized relative to
+// the path of their source configuration (usually the .berryrc directory)
 const RELATIVE_KEYS = new Set([
   `cache-folder`,
   `pnp-path`,
 ]);
 
 export class Configuration {
+  // General rules:
+  //
+  // - filenames that don't accept actual paths must end with the "Name" suffix
+  //   ex: lockfileName
+  //
+  // - folders must end with the "Folder" suffix
+  //   ex: cacheFolder, pnpVirtualFolder
+  //
+  // - actual paths to a file must end with the "Path" suffix
+  //   ex: pnpPath
+  //
+  // - options that tweaks the strictness must begin with the "allow" prefix
+  //   ex: allowInvalidChecksums
+  //
+  // - options that enable a feature must begin with the "enable" prefix
+  //   ex: enableEmojis, enableColors
+
   public lockfileName: string = `berry.lock`;
 
   public enableEmojis: boolean = !!supportsColor.stdout;
