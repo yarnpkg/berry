@@ -22,6 +22,12 @@ const RELATIVE_KEYS = new Set([
   `pnp-path`,
 ]);
 
+const BOOLEAN_KEYS = new Set([
+  `enable-colors`,
+  `enable-emojis`,
+  `ignore-path`,
+]);
+
 export class Configuration {
   // General rules:
   //
@@ -39,6 +45,9 @@ export class Configuration {
   //
   // - options that enable a feature must begin with the "enable" prefix
   //   ex: enableEmojis, enableColors
+
+  public executablePath: string | null = null;
+  public ignorePath: boolean = false;
 
   public lockfileName: string = `berry.lock`;
 
@@ -94,6 +103,8 @@ export class Configuration {
     const environmentPrefix = `berry_`;
 
     for (let [key, value] of Object.entries(process.env)) {
+      let rvalue: any = value;
+
       key = key.toLowerCase();
 
       if (!key.startsWith(environmentPrefix))
@@ -102,7 +113,23 @@ export class Configuration {
       key = key.slice(environmentPrefix.length);
       key = key.replace(/_([a-z])/g, ($0, $1) => $1.toUpperCase());
 
-      environmentData[key] = value;
+      if (BOOLEAN_KEYS.has(key)) {
+        switch (rvalue) {
+          case `1`: {
+            rvalue = true;
+          } break;
+
+          case `0`: {
+            rvalue = false;
+          } break;
+
+          default: {
+            throw new Error(`Invalid value for key ${key}`);
+          } break;
+        }
+      }
+
+      environmentData[key] = rvalue;
     }
 
     configuration.use(`environment`, environmentData, process.cwd());

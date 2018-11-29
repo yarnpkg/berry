@@ -279,7 +279,7 @@ export class Project {
 
         if (aliasHash === undefined)
           continue;
-        
+
         // It doesn't cost us much to support the case where a descriptor is
         // equal to its own alias (which should mean "no alias")
         if (descriptorHash === aliasHash)
@@ -501,9 +501,9 @@ export class Project {
           // The resolvers are not expected to return the dependencies in any
           // particular order, so we must be careful and sort them ourselves in
           // order to have 100% reproductible builds
-          const sortedDependencies = miscUtils.sortMap(pkg.dependencies.values(), descriptor => {
+          const sortedDependencies = miscUtils.sortMap(pkg.dependencies.values(), [descriptor => {
             return structUtils.stringifyDescriptor(descriptor);
-          });
+          }]);
 
           for (const descriptor of sortedDependencies) {
             allDescriptors.set(descriptor.descriptorHash, descriptor);
@@ -540,7 +540,7 @@ export class Project {
         // do, then make new passes until everything is resolved
         if (resolution === `temporary`)
           continue;
-        
+
         haveBeenAliased.delete(descriptorHash);
 
         allResolutions.set(descriptorHash, resolution);
@@ -552,7 +552,7 @@ export class Project {
         throw new Error(`Alias loop detected`);
       }
     }
-    
+
     // In this step we now create virtual packages for each package with at
     // least one peer dependency. We also use it to search for the alias
     // descriptors aren't depended upon by anything and can be safely pruned.
@@ -643,13 +643,13 @@ export class Project {
 
     for (const workspace of this.workspacesByLocator.values())
       resolvePeerDependencies(workspace.anchoredLocator);
-    
+
     // All descriptors still referenced within the volatileDescriptors set are
     // descriptors that aren't depended upon by anything in the dependency tree.
 
     for (const descriptorHash of volatileDescriptors) {
       allDescriptors.delete(descriptorHash);
-      allResolutions.delete(descriptorHash);        
+      allResolutions.delete(descriptorHash);
     }
 
     // Import the dependencies for each resolved workspaces into their own
