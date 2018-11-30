@@ -41,6 +41,7 @@ import {NodeFS, ZipOpenFS, patchFs} from '@berry/zipfs';
 // @ts-ignore
 const Module: ModuleInterfaceStatic = NativeModule;
 
+const pnpFile = path.resolve(__dirname, __filename);
 // @ts-ignore
 const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding('natives')));
 
@@ -378,6 +379,12 @@ export function findPackageLocator(location: string): PackageLocator | null {
  */
 
 export function resolveToUnqualified(request: string, issuer: string | null, {considerBuiltins = true}: Partial<ResolveToUnqualifiedOptions> = {}): string | null {
+  // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
+
+  if (request === `pnpapi`) {
+    return pnpFile;
+  }
+
   // Bailout if the request is a native module
 
   if (considerBuiltins && builtinModules.has(request)) {
@@ -619,10 +626,6 @@ export function setup() {
   const originalModuleLoad = Module._load;
 
   Module._load = function(request: string, parent: ModuleInterface, isMain: boolean) {
-    if (request === `pnpapi`) {
-      return __non_webpack_module__.exports;
-    }
-
     if (!enableNativeHooks) {
       return originalModuleLoad.call(Module, request, parent, isMain);
     }
@@ -636,6 +639,12 @@ export function setup() {
       } finally {
         enableNativeHooks = true;
       }
+    }
+
+    // The 'pnpapi' name is reserved to return the PnP api currently in use by the program
+
+    if (request === `pnpapi`) {
+      return __non_webpack_module__.exports;
     }
 
     // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us which file we should load
