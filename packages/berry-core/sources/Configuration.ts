@@ -1,19 +1,23 @@
 import supportsColor = require('supports-color');
 
-import {parseSyml}                from '@berry/parsers';
-import {existsSync, readFileSync} from 'fs';
-import {dirname, resolve}         from 'path';
+import {parseSyml, stringifySyml}        from '@berry/parsers';
+import {existsSync, readFile, writeFile} from 'fs';
+import {dirname, resolve}                from 'path';
+import {promisify}                       from 'util';
 
-import {CacheFetcher}             from './CacheFetcher';
-import {LockfileResolver}         from './LockfileResolver';
-import {MultiFetcher}             from './MultiFetcher';
-import {MultiResolver}            from './MultiResolver';
-import {Plugin}                   from './Plugin';
-import {VirtualFetcher}           from './VirtualFetcher';
-import {WorkspaceBaseFetcher}     from './WorkspaceBaseFetcher';
-import {WorkspaceBaseResolver}    from './WorkspaceBaseResolver';
-import {WorkspaceFetcher}         from './WorkspaceFetcher';
-import {WorkspaceResolver}        from './WorkspaceResolver';
+import {CacheFetcher}                    from './CacheFetcher';
+import {LockfileResolver}                from './LockfileResolver';
+import {MultiFetcher}                    from './MultiFetcher';
+import {MultiResolver}                   from './MultiResolver';
+import {Plugin}                          from './Plugin';
+import {VirtualFetcher}                  from './VirtualFetcher';
+import {WorkspaceBaseFetcher}            from './WorkspaceBaseFetcher';
+import {WorkspaceBaseResolver}           from './WorkspaceBaseResolver';
+import {WorkspaceFetcher}                from './WorkspaceFetcher';
+import {WorkspaceResolver}               from './WorkspaceResolver';
+
+const readFileP = promisify(readFile);
+const writeFileP = promisify(writeFile);
 
 // The keys defined in this array will be resolved and normalized relative to
 // the path of their source configuration (usually the .berryrc directory)
@@ -97,7 +101,7 @@ export class Configuration {
     const configuration = new Configuration(projectCwd, plugins);
 
     for (const rcCwd of rcCwds)
-      configuration.inherits(`${rcCwd}/.berryrc`);
+      await configuration.inherits(`${rcCwd}/.berryrc`);
 
     const environmentData: {[key: string]: any} = {};
     const environmentPrefix = `berry_`;
@@ -137,6 +141,29 @@ export class Configuration {
     return configuration;
   }
 
+  static async updateConfiguration(cwd: string, patch: any) {
+    const configurationPath = `${cwd}/.berryrc`;
+
+    const current = existsSync(configurationPath)
+      ? parseSyml(await readFileP(configurationPath, `utf8`)) as any
+      : {};
+
+    let patched = false;
+
+    for (const key of Object.keys(patch)) {
+      if (current[key] === patch[key])
+        continue;
+
+      current[key] = patch[key];
+      patched = true;
+    }
+
+    if (!patched)
+      return;
+
+    await writeFileP(configurationPath, stringifySyml(current));
+  }
+
   constructor(projectCwd: string, plugins: Map<string, Plugin>) {
     this.projectCwd = projectCwd;
     this.plugins = plugins;
@@ -155,8 +182,8 @@ export class Configuration {
     }
   }
 
-  inherits(source: string) {
-    const content = readFileSync(source, `utf8`);
+  async inherits(source: string) {
+    const content = await readFileP(source, `utf8`);
     const data = parseSyml(content);
 
     this.use(source, data, dirname(source));

@@ -11,7 +11,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .command(`constraints apply`)
 
-  .categorize(`Constraint commands`)
+  .categorize(`Constraints-related commands`)
   .describe(`apply the project constraints`)
 
   .action(async ({cwd, stdin, stdout}: {cwd: string, stdin: Readable, stdout: Writable}) => {

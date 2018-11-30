@@ -1,5 +1,3 @@
-import Joi = require('joi');
-
 import {Configuration, Cache, Project, Report} from '@berry/core';
 import {Writable}                              from 'stream';
 
