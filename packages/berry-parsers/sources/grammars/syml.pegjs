@@ -93,4 +93,6 @@ S "white space"
   = [ \t\n\r]+
 
 EOL
-  = "\n"
+  = "\r\n"
+  / "\n"
+  / "\r"
