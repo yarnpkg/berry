@@ -68,7 +68,6 @@ export function virtualizePackage(pkg: Package, entropy: string): Package {
   return {
     ... makeLocator(pkg, `virtual:${entropy}#${pkg.reference}`),
 
-    binaries: new Map(pkg.binaries),
     dependencies: new Map(pkg.dependencies),
     peerDependencies: new Map(pkg.peerDependencies),
   };

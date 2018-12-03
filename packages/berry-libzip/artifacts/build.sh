@@ -57,6 +57,7 @@ LIBZIP_VERSION=1.5.1
         -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "getValue"]' \
         -s ALLOW_MEMORY_GROWTH=1 \
         -s BINARYEN_ASYNC_COMPILATION=0 \
+        -s ENVIRONMENT=node \
         -s NODERAWFS=1 \
         -s SINGLE_FILE=1 \
         -I./libzip-"$LIBZIP_VERSION"/lib \
@@ -66,10 +67,10 @@ LIBZIP_VERSION=1.5.1
         ./zipstruct.c \
         ./libzip-"$LIBZIP_VERSION"/lib/libzip.a \
         ./zlib-"$ZLIB_VERSION"/libz.a
-    
+
     cat > ../sources/libzip.js \
         "../sources/shell.pre.js" \
-        <(sed -s 's/require("fs")/frozenFs/g' ./build.js) \
+        <(sed 's/require("fs")/frozenFs/g' ./build.js) \
         "../sources/shell.post.js"
-        
+
 )

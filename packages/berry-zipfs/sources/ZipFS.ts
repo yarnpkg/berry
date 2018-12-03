@@ -6,39 +6,42 @@ import {PassThrough}       from 'stream';
 import {FakeFS}            from './FakeFS';
 import {NodeFS}            from './NodeFS';
 
-const IS_DIRECTORY_STAT = {
-  isBlockDevice: () => false,
-  isCharacterDevice: () => false,
-  isDirectory: () => true,
-  isFIFO: () => false,
-  isFile: () => false,
-  isSocket: () => false,
-  isSymbolicLink: () => false,
+const S_IFMT = 0o170000;
 
-  dev: 0,
-  ino: 0,
-  mode: 755,
-  nlink: 1,
-  rdev: 0,
-  blocks: 1,
-};
+const S_IFDIR = 0o040000;
+const S_IFREG = 0o100000;
+const S_IFLNK = 0o120000;
 
-const IS_FILE_STAT = {
-  isBlockDevice: () => false,
-  isCharacterDevice: () => false,
-  isDirectory: () => false,
-  isFIFO: () => false,
-  isFile: () => true,
-  isSocket: () => false,
-  isSymbolicLink: () => false,
+class StatEntry {
+  public dev: number = 0;
+  public ino: number = 0;
+  public mode: number = 0;
+  public nlink: number = 1;
+  public rdev: number = 0;
+  public blocks: number = 1;
 
-  dev: 0,
-  ino: 0,
-  mode: 644,
-  nlink: 1,
-  rdev: 0,
-  blocks: 1,
-};
+  isBlockDevice() {
+    return false;
+  }
+  isCharacterDevice() {
+    return false;
+  }
+  isDirectory() {
+    return (this.mode & S_IFMT) === S_IFDIR;
+  }
+  isFIFO() {
+    return false;
+  }
+  isFile() {
+    return (this.mode & S_IFMT) === S_IFREG;
+  }
+  isSocket() {
+    return false;
+  }
+  isSymbolicLink() {
+    return (this.mode & S_IFMT) === S_IFLNK;
+  }
+}
 
 export type Options = {
   baseFs?: FakeFS,
@@ -71,7 +74,7 @@ export class ZipFS extends FakeFS {
         this.stats = this.baseFs.statSync(p);
       } catch (error) {
         if (error.code === `ENOENT` && create) {
-          this.stats = {... IS_FILE_STAT, uid: 0, gid: 0, size: 0, blksize: 0, atimeMs: 0, mtimeMs: 0, ctimeMs: 0, birthtimeMs: 0, atime: new Date(0), mtime: new Date(0), ctime: new Date(0), birthtime: new Date(0)};
+          this.stats = Object.assign(new StatEntry(), {uid: 0, gid: 0, size: 0, blksize: 0, atimeMs: 0, mtimeMs: 0, ctimeMs: 0, birthtimeMs: 0, atime: new Date(0), mtime: new Date(0), ctime: new Date(0), birthtime: new Date(0), mode: S_IFREG | 0o644});
         } else {
           throw error;
         }
@@ -81,10 +84,9 @@ export class ZipFS extends FakeFS {
     const errPtr = libzip.malloc(4);
 
     try {
-      let flags = 0;
-
-      if (create)
-        flags |= libzip.ZIP_CREATE | libzip.ZIP_TRUNCATE;
+      const flags = create
+        ? libzip.ZIP_CREATE | libzip.ZIP_TRUNCATE
+        : 0;
 
       this.zip = libzip.open(p, flags, errPtr);
 
@@ -104,7 +106,7 @@ export class ZipFS extends FakeFS {
 
     for (let t = 0; t < entryCount; ++t) {
       const raw = libzip.getName(this.zip, t, 0);
-      
+
       if (posix.isAbsolute(raw))
         continue;
 
@@ -144,7 +146,7 @@ export class ZipFS extends FakeFS {
 
     const immediate = setImmediate(() => {
       const data = this.readFileSync(p, encoding);
-  
+
       stream.bytesRead = data.length;
       stream.write(data);
       stream.end();
@@ -159,10 +161,10 @@ export class ZipFS extends FakeFS {
 
   realpathSync(p: string): string {
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p);
-    
+
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw Object.assign(new Error(`ENOENT: no such file or directory, lstat '${p}'`), {code: `ENOENT`});
-    
+
     return resolvedP;
   }
 
@@ -178,7 +180,7 @@ export class ZipFS extends FakeFS {
     } catch (error) {
       return false;
     }
-      
+
     return this.entries.has(resolvedP) || this.listings.has(resolvedP);
   }
 
@@ -188,14 +190,14 @@ export class ZipFS extends FakeFS {
 
   statSync(p: string) {
     const resolvedP = this.resolveFilename(`stat '${p}'`, p);
-    
+
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw Object.assign(new Error(`ENOENT: no such file or directory, stat '${p}'`), {code: `ENOENT`});
 
     if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
       throw Object.assign(new Error(`ENOTDIR: not a directory, stat '${p}'`), {code: `ENOTDIR`});
 
-    return this.statImpl(`stat '${p}'`, p);
+    return this.statImpl(`stat '${p}'`, resolvedP);
   }
 
   async lstatPromise(p: string) {
@@ -204,7 +206,7 @@ export class ZipFS extends FakeFS {
 
   lstatSync(p: string) {
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false);
-    
+
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw Object.assign(new Error(`ENOENT: no such file or directory, lstat '${p}'`), {code: `ENOENT`});
 
@@ -233,7 +235,9 @@ export class ZipFS extends FakeFS {
       const ctime = new Date(ctimeMs);
       const mtime = new Date(mtimeMs);
 
-      return Object.assign({uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs}, IS_DIRECTORY_STAT);
+      const mode = S_IFDIR | 0o755;
+
+      return Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
     }
 
     const entry = this.entries.get(p);
@@ -262,7 +266,11 @@ export class ZipFS extends FakeFS {
       const ctime = new Date(ctimeMs);
       const mtime = new Date(mtimeMs);
 
-      return Object.assign({uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs}, IS_FILE_STAT);
+      const mode = this.isSymbolicLink(entry)
+        ? S_IFLNK | 0o644
+        : S_IFREG | 0o644;
+
+      return Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
     }
 
     throw new Error(`Unreachable`);
@@ -304,38 +312,27 @@ export class ZipFS extends FakeFS {
 
       if (!isDir && !doesExist)
         throw Object.assign(new Error(`ENOENT: no such file or directory, ${reason}`), {code: `ENOENT`});
-      
+
       if (!isDir)
         throw Object.assign(new Error(`ENOTDIR: not a directory, ${reason}`), {code: `ENOTDIR`});
 
       resolvedP = posix.resolve(parentP, posix.basename(resolvedP));
 
-      const index = libzip.name.locate(this.zip, resolvedP);
-      if (index === -1 || !resolveLastComponent) {
+      if (!resolveLastComponent)
         break;
-      }
 
-      const attrs = libzip.file.getExternalAttributes(this.zip, index, 0, 0, libzip.uint08S, libzip.uint32S);
-      if (attrs === -1)
-        throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
-        
-      const opsys = libzip.getValue(libzip.uint08S, `i8`) >>> 0;
+      const index = libzip.name.locate(this.zip, resolvedP);
+      if (index === -1)
+        break;
 
-      if (opsys === libzip.ZIP_OPSYS_UNIX) {
-        const attributes = libzip.getValue(libzip.uint32S, `i32`) >>> 16;
-
-        // Follows symlinks
-        if ((attributes & 0o170000) === 0o120000) {
-          const target = this.getFileSource(index).toString();
-          resolvedP = posix.resolve(posix.dirname(resolvedP), target);
-        } else {
-          break;
-        }
+      if (this.isSymbolicLink(index)) {
+        const target = this.getFileSource(index).toString();
+        resolvedP = posix.resolve(posix.dirname(resolvedP), target);
       } else {
         break;
       }
     }
-    
+
     return resolvedP;
   }
 
@@ -360,6 +357,19 @@ export class ZipFS extends FakeFS {
     }
 
     return libzip.file.add(this.zip, posix.relative(`/`, p), source, libzip.ZIP_FL_OVERWRITE);
+  }
+
+  private isSymbolicLink(index: number) {
+    const attrs = libzip.file.getExternalAttributes(this.zip, index, 0, 0, libzip.uint08S, libzip.uint32S);
+    if (attrs === -1)
+      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+
+    const opsys = libzip.getValue(libzip.uint08S, `i8`) >>> 0;
+    if (opsys !== libzip.ZIP_OPSYS_UNIX)
+      return false;
+
+    const attributes = libzip.getValue(libzip.uint32S, `i32`) >>> 16;
+    return (attributes & S_IFMT) === S_IFLNK;
   }
 
   private getFileSource(index: number) {
@@ -449,7 +459,7 @@ export class ZipFS extends FakeFS {
       throw Object.assign(new Error(`EEXIST: file already exists, symlink '${target}' -> '${p}'`), {code: `EEXIST`});
 
     const index = this.setFileSource(resolvedP, target);
-  
+
     this.registerEntry(resolvedP, index);
 
     const rc = libzip.file.setExternalAttributes(this.zip, index, 0, 0, libzip.ZIP_OPSYS_UNIX, (0o120000 | 0o644) << 16);
@@ -474,7 +484,7 @@ export class ZipFS extends FakeFS {
   readFileSync(p: string, encoding?: string): Buffer;
   readFileSync(p: string, encoding?: string) {
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
-    
+
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw Object.assign(new Error(`ENOENT: no such file or directory, open '${p}'`), {code: `ENOENT`});
 
@@ -538,7 +548,7 @@ export class ZipFS extends FakeFS {
     const rc = libzip.file.getExternalAttributes(this.zip, entry, 0, 0, libzip.uint08S, libzip.uint32S);
     if (rc === -1)
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
-    
+
     const opsys = libzip.getValue(libzip.uint08S, `i8`) >>> 0;
     if (opsys !== libzip.ZIP_OPSYS_UNIX)
       throw Object.assign(new Error(`EINVAL: invalid argument, readlink '${p}'`), {code: `EINVAL`});
@@ -546,7 +556,7 @@ export class ZipFS extends FakeFS {
     const attributes = libzip.getValue(libzip.uint32S, `i32`) >>> 16;
     if ((attributes & 0o170000) !== 0o120000)
       throw Object.assign(new Error(`EINVAL: invalid argument, readlink '${p}'`), {code: `EINVAL`});
-    
+
     return this.getFileSource(entry).toString();
   }
 };

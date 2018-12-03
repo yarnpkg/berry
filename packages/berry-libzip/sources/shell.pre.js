@@ -1,1 +1,1 @@
-const frozenFs = Object.assign({}, require('fs'));
+var frozenFs = Object.assign({}, require('fs'));

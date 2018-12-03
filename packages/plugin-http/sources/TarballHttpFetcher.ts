@@ -22,6 +22,7 @@ export class TarballHttpFetcher implements Fetcher {
 
     return await tgzUtils.makeArchive(tgz, {
       stripComponents: 1,
+      prefixPath: `berry-pkg`,
     });
   }
 }

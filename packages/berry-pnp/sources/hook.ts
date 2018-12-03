@@ -740,7 +740,7 @@ export function setup() {
   const localFs: typeof fs = {...fs};
   const nodeFs = new NodeFS(localFs);
 
-  patchFs(fs, new ZipOpenFS({baseFs: nodeFs, filter: /\.pnp/}));
+  patchFs(fs, new ZipOpenFS({baseFs: nodeFs, filter: /\.zip\//}));
 };
 
 if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {

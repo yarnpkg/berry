@@ -24,8 +24,13 @@ export class TarballFileFetcher implements Fetcher {
     const {parentLocator, filePath} = this.parseLocator(locator);
     const parentFs = await opts.fetcher.fetch(parentLocator, opts);
 
-    return await tgzUtils.makeArchive(parentFs.readFileSync(filePath), {
+    const tgzData = posix.isAbsolute(filePath)
+      ? await opts.rootFs.readFilePromise(filePath)
+      : await parentFs.readFilePromise(filePath);
+
+    return await tgzUtils.makeArchive(tgzData, {
       stripComponents: 1,
+      prefixPath: `berry-pkg`,
     });
   }
 

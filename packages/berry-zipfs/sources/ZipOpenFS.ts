@@ -1,10 +1,11 @@
 import {posix}  from 'path';
 
 import {FakeFS} from './FakeFS';
+import {NodeFS} from './NodeFS';
 import {ZipFS}  from './ZipFS';
 
 export type ZipOpenFSOptions = {
-  baseFs: FakeFS,
+  baseFs?: FakeFS,
   filter?: RegExp,
 };
 
@@ -18,7 +19,7 @@ export class ZipOpenFS extends FakeFS {
   private isZip: Set<string> = new Set();
   private notZip: Set<string> = new Set();
 
-  constructor({baseFs, filter}: ZipOpenFSOptions) {
+  constructor({baseFs = new NodeFS(), filter}: ZipOpenFSOptions) {
     super();
 
     this.baseFs = baseFs;
@@ -240,6 +241,9 @@ export class ZipOpenFS extends FakeFS {
   }
 
   private findZip2(p: string) {
+    if (this.filter && !this.filter.test(p))
+      return null;
+
     if (p.endsWith(`.zip`)) {
       return {archivePath: p, subPath: `/`};
     } else {
@@ -258,7 +262,7 @@ export class ZipOpenFS extends FakeFS {
   private findZip(p: string) {
     if (this.filter && !this.filter.test(p))
       return null;
-      
+
     const parts = p.split(/\//g);
 
     for (let t = 2; t <= parts.length; ++t) {

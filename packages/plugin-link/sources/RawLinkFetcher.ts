@@ -25,7 +25,9 @@ export class RawLinkFetcher implements Fetcher {
     if (posix.isAbsolute(linkPath)) {
       return new JailFS(linkPath);
     } else {
-      return new JailFS(posix.resolve(`/`, linkPath), {baseFs: parentFs});
+      return new JailFS(linkPath, {
+        baseFs: parentFs,
+      });
     }
   }
 

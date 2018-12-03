@@ -39,14 +39,12 @@ export class LinkResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const fakeFs = await opts.fetcher.fetch(locator, opts);
-
-    const manifest = new Manifest();
-    manifest.loadFile(fakeFs);
+    const packageFs = await opts.fetcher.fetch(locator, opts);
+    const manifest = await Manifest.fromFile(`package.json`, {baseFs: packageFs});
 
     const dependencies = manifest.dependencies;
     const peerDependencies = manifest.peerDependencies;
 
-    return {... locator, binaries: new Map(), dependencies, peerDependencies};
+    return {... locator, dependencies, peerDependencies};
   }
 }

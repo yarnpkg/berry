@@ -53,7 +53,7 @@ function makeBerrySaga(projectTracker: Tracker<Project>) {
           const locator = structUtils.makeLocator(descriptor, reference);
 
           project.storedResolutions.set(descriptor.descriptorHash, locator.locatorHash);
-          project.storedPackages.set(locator.locatorHash, {... locator, binaries: new Map(), dependencies: new Map(), peerDependencies: new Map()});
+          project.storedPackages.set(locator.locatorHash, {... locator, dependencies: new Map(), peerDependencies: new Map()});
         })});
       }),
       takeEvery(`ADD_DEPENDENCY`, function* ({workspace, descriptor, kind, development}: AddDependencyAction): IterableIterator<any> {

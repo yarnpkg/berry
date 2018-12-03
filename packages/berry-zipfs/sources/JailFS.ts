@@ -16,6 +16,7 @@ export class JailFS extends FakeFS {
     super();
 
     this.target = posix.resolve(`/`, target);
+
     this.baseFs = baseFs;
   }
 

@@ -21,7 +21,10 @@ export class FileFetcher implements Fetcher {
     const {parentLocator, filePath} = this.parseLocator(locator);
     const parentFs = await opts.fetcher.fetch(parentLocator, opts);
 
-    return await tgzUtils.makeArchiveFromDirectory(posix.resolve(`/`, filePath), {baseFs: parentFs});
+    return await tgzUtils.makeArchiveFromDirectory(posix.resolve(`/`, filePath), {
+      baseFs: posix.isAbsolute(filePath) ? opts.rootFs : parentFs,
+      prefixPath: `berry-pkg`,
+    });
   }
 
   private parseLocator(locator: Locator) {

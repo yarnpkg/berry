@@ -11,6 +11,7 @@ export type MinimalFetchOptions = {
 
 export type FetchOptions = MinimalFetchOptions & {
   cache: Cache,
+  rootFs: FakeFS,
 };
 
 export interface Fetcher {

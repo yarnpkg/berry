@@ -15,6 +15,9 @@ export {httpUtils};
 import * as miscUtils from './miscUtils';
 export {miscUtils};
 
+import * as scriptUtils from './scriptUtils';
+export {scriptUtils};
+
 import * as structUtils from './structUtils';
 export {structUtils};
 

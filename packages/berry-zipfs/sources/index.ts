@@ -3,6 +3,7 @@ import fs = require('fs');
 import {FakeFS}    from './FakeFS';
 
 export {AliasFS}   from './AliasFS';
+export {CwdFS}     from './CwdFS';
 export {JailFS}    from './JailFS';
 export {NodeFS}    from './NodeFS';
 export {FakeFS}    from './FakeFS';

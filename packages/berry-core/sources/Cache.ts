@@ -1,13 +1,14 @@
 import fsx = require('fs-extra');
 
-import {AliasFS, FakeFS, ZipFS, NodeFS, JailFS} from '@berry/zipfs';
-import {writeFile}                              from 'fs';
-import {lock, unlock}                           from 'lockfile';
-import {dirname, relative, resolve}             from 'path';
-import {promisify}                              from 'util';
+import {AliasFS, FakeFS, JailFS, NodeFS, ZipFS}  from '@berry/zipfs';
+import {writeFile}                               from 'fs';
+import {lock, unlock}                            from 'lockfile';
+import {dirname, relative, resolve}              from 'path';
+import {promisify}                               from 'util';
 
-import {Configuration}                          from './Configuration';
-import {Locator}                                from './types';
+import {Configuration}                           from './Configuration';
+import * as structUtils                          from './structUtils';
+import {Locator}                                 from './types';
 
 const writeFileP = promisify(writeFile);
 
@@ -65,7 +66,7 @@ export class Cache {
       packageFs = packageFs.getBaseFs();
     }
 
-    let virtualLink = resolve(this.cwd, `virtual`, locator.locatorHash);
+    let virtualLink = resolve(this.cwd, `virtual`, this.getCacheKey(locator));
 
     if (packageFs instanceof ZipFS)
       virtualLink += `.zip`;
@@ -93,8 +94,8 @@ export class Cache {
     let virtualFs: FakeFS = new AliasFS(virtualLink, {baseFs: packageFs});
 
     for (const jail of jails)
-      virtualFs = new JailFS(jail, {baseFs: packageFs});
-    
+      virtualFs = new JailFS(jail, {baseFs: virtualFs});
+
     return virtualFs;
   }
 
@@ -102,35 +103,49 @@ export class Cache {
     const key = this.getCacheKey(locator);
     const file = this.getFilePath(key);
 
-    return await this.writeFileIntoCache<FakeFS>(file, async () => {
-      let fs;
+    const baseFs = new NodeFS();
 
-      try {
-        fs = new ZipFS(file, {baseFs: new NodeFS()});
+    return await this.writeFileIntoCache<FakeFS>(file, async () => {
+      let packageFs;
+
+      if (baseFs.existsSync(file)) {
+        try {
+          packageFs = new ZipFS(file, {baseFs});
+        } catch (error) {
+          error.message = `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
+          throw error;
+        }
         this.cacheHitCount += 1;
-      } catch (error) {
+      } else {
         this.cacheMissCount += 1;
 
         if (!loader)
-          throw error;
+          throw new Error(`Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
 
-        fs = await loader();
+        packageFs = await loader();
 
-        if (!(fs instanceof ZipFS))
+        if (!(packageFs instanceof ZipFS))
           throw new Error(`The fetchers plugged into the cache must return a ZipFS instance`);
 
-        const source = fs.close();
+        const source = packageFs.close();
 
         await fsx.chmod(source, 0o644);
         await fsx.move(source, file);
 
-        fs = new ZipFS(file);
+        packageFs = new ZipFS(file);
       }
 
-      if (await fs.existsPromise(`berry-pkg`))
-        fs = new JailFS(await fs.readlinkPromise(`berry-pkg`), {baseFs: fs});
+      if (packageFs.existsSync(`berry-pkg`)) {
+        const stat = packageFs.statSync(`berry-pkg`);
 
-      return fs;
+        if (stat.isSymbolicLink()) {
+          packageFs = new JailFS(await packageFs.readlinkPromise(`berry-pkg`), {baseFs: packageFs});
+        } else {
+          packageFs = new JailFS(`berry-pkg`, {baseFs: packageFs});
+        }
+      }
+
+      return packageFs;
     });
   }
 

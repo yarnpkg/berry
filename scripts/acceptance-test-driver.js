@@ -32,7 +32,7 @@ const pkgDriver = generatePkgDriver({
 
     const res = await execFile(
       process.execPath,
-      [`${__dirname}/../packages/berry-cli/bin/berry`, ...beforeArgs, command, ...middleArgs, ...args],
+      [`${__dirname}/../packages/berry-cli/bin/berry.js`, ...beforeArgs, command, ...middleArgs, ...args],
       {
         env: Object.assign(
           {

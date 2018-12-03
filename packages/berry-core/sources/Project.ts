@@ -6,6 +6,7 @@ import {dirname}                                from 'path';
 
 import {parseSyml, stringifySyml}               from '@berry/parsers';
 import {extractPnpSettings, generatePnpScript}  from '@berry/pnp';
+import {NodeFS}                                 from '@berry/zipfs';
 
 import {Cache}                                  from './Cache';
 import {Configuration}                          from './Configuration';
@@ -92,12 +93,8 @@ export class Project {
         const data = parsed[key];
         const locator = structUtils.parseLocator(data.resolution);
 
-        const binaries = new Map<string, string>();
         const dependencies = new Map<string, Descriptor>();
         const peerDependencies = new Map<string, Descriptor>();
-
-        for (const binary of Object.keys(data.binaries || {}))
-          binaries.set(binary, data.binaries[binary]);
 
         for (const dependency of Object.keys(data.dependencies || {})) {
           const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.dependencies[dependency]);
@@ -109,7 +106,7 @@ export class Project {
           peerDependencies.set(descriptor.descriptorHash, descriptor);
         }
 
-        const pkg: Package = {...locator, binaries, dependencies, peerDependencies};
+        const pkg: Package = {...locator, dependencies, peerDependencies};
         this.storedPackages.set(pkg.locatorHash, pkg);
 
         for (const entry of key.split(/ *, */g)) {
@@ -254,7 +251,7 @@ export class Project {
     const resolver = this.configuration.makeResolver();
     const fetcher = this.configuration.makeFetcher();
 
-    const resolverOptions = {project: this, resolver, fetcher, cache};
+    const resolverOptions = {project: this, rootFs: new NodeFS(), resolver, fetcher, cache};
 
     const allDescriptors = new Map<string, Descriptor>();
     const allPackages = new Map<string, Package>();
@@ -555,7 +552,8 @@ export class Project {
 
     // In this step we now create virtual packages for each package with at
     // least one peer dependency. We also use it to search for the alias
-    // descriptors aren't depended upon by anything and can be safely pruned.
+    // descriptors that aren't depended upon by anything and can be safely
+    // pruned.
 
     const hasBeenTraversed = new Set();
     const volatileDescriptors = new Set(this.resolutionAliases.values());
@@ -679,6 +677,7 @@ export class Project {
     this.storedLocations = new Map();
 
     const fetcher = this.configuration.makeFetcher();
+    const fetcherOptions = {project: this, rootFs: new NodeFS(), cache, fetcher};
 
     for (const locatorHash of this.storedResolutions.values()) {
       const pkg = this.storedPackages.get(locatorHash);
@@ -694,7 +693,7 @@ export class Project {
       if (workspace) {
         this.storedLocations.set(pkg.locatorHash, workspace.cwd);
       } else {
-        const location = await fetcher.fetch(pkg, {cache, fetcher, project: this});
+        const location = await fetcher.fetch(pkg, fetcherOptions);
         this.storedLocations.set(pkg.locatorHash, location.getRealPath());
       }
     }

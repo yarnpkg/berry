@@ -3,12 +3,12 @@ import {posix}                         from 'path';
 import {Parse}                         from 'tar';
 import {tmpNameSync}                   from 'tmp';
 
-interface MakeArchiveOptions {
+interface MakeArchiveFromDirectoryOptions {
+  baseFs?: FakeFS,
   prefixPath?: string | null,
-  stripComponents?: number,
 };
 
-export async function makeArchiveFromDirectory(source: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS} = {}): Promise<ZipFS> {
+export async function makeArchiveFromDirectory(source: string, {baseFs = new NodeFS(), prefixPath = `/`}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
   const zipFs = new ZipFS(tmpNameSync(), {create: true});
 
   function processDirectory(source: string, target: string) {
@@ -31,12 +31,20 @@ export async function makeArchiveFromDirectory(source: string, {baseFs = new Nod
     }
   }
 
-  processDirectory(source, `/`);
+  const target = posix.resolve(`/`, prefixPath);
+
+  zipFs.mkdirSync(target);
+  processDirectory(source, target);
 
   return zipFs;
 }
 
-export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath = null}: MakeArchiveOptions = {}): Promise<ZipFS> {
+interface MakeArchiveOptions {
+  prefixPath?: string | null,
+  stripComponents?: number,
+};
+
+export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath = `.`}: MakeArchiveOptions = {}): Promise<ZipFS> {
   const zipFs = new ZipFS(tmpNameSync(), {create: true});
 
   // @ts-ignore: Typescript doesn't want me to use new
@@ -66,7 +74,7 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
     }
 
     const parts = entry.path.split(/\//g);
-    const mappedPath = posix.join(prefixPath || `.`, parts.slice(stripComponents).join(`/`));
+    const mappedPath = posix.join(prefixPath, parts.slice(stripComponents).join(`/`));
 
     const chunks: Array<Buffer> = [];
 

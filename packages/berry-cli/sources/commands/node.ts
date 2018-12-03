@@ -1,9 +1,11 @@
 import execa = require('execa');
 
-import {Configuration}      from '@berry/core';
-import {Readable, Writable} from 'stream';
+import {Configuration, Project} from '@berry/core';
+import {existsSync}             from 'fs';
+import {Readable, Writable}     from 'stream';
 
-import {plugins}            from '../plugins';
+import * as execUtils           from '../utils/execUtils';
+import {plugins}                from '../plugins';
 
 export default (concierge: any) => concierge
 
@@ -13,8 +15,9 @@ export default (concierge: any) => concierge
 
   .action(async ({cwd, stdin, stdout, stderr, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, args: Array<string>}) => {
     const configuration = await Configuration.find(cwd, plugins);
+    const {project} = await Project.find(configuration, cwd);
 
-    await execa(`node`, [`-r`, configuration.pnpPath, ... args], {
-      stdin, stdout, stderr
-    });
+    const env = await execUtils.makeExecEnv(project);
+
+    await execa(`node`, args, { stdin, stdout, stderr, env });
   });

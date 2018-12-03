@@ -4,6 +4,6 @@
     "private": true,
     "main": "./sources/index.ts",
     "scripts": {
-        "build": "cd ./artifacts && ./build.sh"
+        "build:libzip": "cd ./artifacts && ./build.sh"
     }
 }

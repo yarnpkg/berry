@@ -2,6 +2,7 @@ import semver = require('semver');
 
 import {Configuration, Cache, Project, Report} from '@berry/core';
 import {structUtils}                           from '@berry/core';
+import {NodeFS}                                from '@berry/zipfs';
 import {Writable}                              from 'stream';
 
 import {registerLegacyYarnResolutions}         from '../utils/miscUtils';
@@ -24,6 +25,8 @@ export default (concierge: any) => concierge
       const resolver = configuration.makeResolver({useLockfile: false});
       const fetcher = configuration.makeFetcher();
 
+      const resolverOptions = {rootFs: new NodeFS(), project, cache, fetcher, resolver};
+
       const descriptors = await Promise.all(packages.map(async entry => {
         const descriptor = structUtils.parseDescriptor(entry);
 
@@ -35,7 +38,7 @@ export default (concierge: any) => concierge
         let candidateReferences;
 
         try {
-          candidateReferences = await resolver.getCandidates(latestDescriptor, {project, cache, fetcher, resolver});
+          candidateReferences = await resolver.getCandidates(latestDescriptor, resolverOptions);
         } catch (error) {
           error.message = `${structUtils.prettyDescriptor(configuration, descriptor)}: ${error.message}`;
           throw error;
