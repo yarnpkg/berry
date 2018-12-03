@@ -38,12 +38,8 @@ export default (concierge: any) => concierge
     const binaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace, {cache});
     const binary = binaries.get(name);
 
-    if (binary) {
-      const [pkg, packageFs, file] = binary;
-      const target = resolve(packageFs.getRealPath(), file);
-
-      return await execUtils.execFile(process.execPath, [target, ... args], {cwd: process.cwd(), stdin, stdout, stderr});
-    }
+    if (binary)
+      return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, name, args, {cache, stdin, stdout, stderr});
 
     // When it fails, we try to check whether it's a global script (ie we look
     // into all the workspaces to find one that exports this script). We only do

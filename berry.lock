@@ -81,6 +81,7 @@ __metadata:
     @berry/parsers: "workspace:0.0.0"
     @berry/pnp: "workspace:0.0.0"
     chalk: ^2.4.1
+    execa: ^1.0.0
     fs-extra: ^7.0.0
     globby: ^8.0.1
     got: ^9.2.2
@@ -104,6 +105,7 @@ __metadata:
     @berry/parsers: "workspace:0.0.0"
     @berry/pnp: "workspace:0.0.0"
     chalk: ^2.4.1
+    execa: ^1.0.0
     fs-extra: ^7.0.0
     globby: ^8.0.1
     got: ^9.2.2

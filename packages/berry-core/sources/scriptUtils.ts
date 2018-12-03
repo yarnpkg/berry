@@ -2,7 +2,7 @@ import {runShell}           from '@berry/shell';
 import {FakeFS, NodeFS}     from '@berry/zipfs';
 import {chmod, writeFile}   from 'fs-extra';
 import {existsSync}         from 'fs';
-import {delimiter}          from 'path';
+import {delimiter, resolve} from 'path';
 import {Readable, Writable} from 'stream';
 import {dirSync}            from 'tmp';
 
@@ -10,6 +10,7 @@ import {Cache}              from './Cache';
 import {Manifest}           from './Manifest';
 import {Project}            from './Project';
 import {Workspace}          from './Workspace';
+import * as execUtils       from './execUtils';
 import * as structUtils     from './structUtils';
 import {Locator}            from './types';
 
@@ -138,4 +139,39 @@ type GetWorkspaceAccessibleBinariesOptions = {
 
 export async function getWorkspaceAccessibleBinaries(workspace: Workspace, {cache}: GetWorkspaceAccessibleBinariesOptions) {
   return await getPackageAccessibleBinaries(workspace.anchoredLocator, {project: workspace.project, cache});
+}
+
+type ExecutePackageAccessibleBinaryOptions = {
+  cache: Cache,
+  project: Project,
+  stdin: Readable,
+  stdout: Writable,
+  stderr: Writable,
+};
+
+export async function executePackageAccessibleBinary(locator: Locator, binaryName: string, args: Array<string>, {cache, project, stdin, stdout, stderr}: ExecutePackageAccessibleBinaryOptions) {
+  const packageAccessibleBinaries = await getPackageAccessibleBinaries(locator, {cache, project});
+  const binary = packageAccessibleBinaries.get(binaryName);
+
+  if (!binary)
+    throw new Error(`Binary not found (${binaryName}) for ${structUtils.prettyLocator(project.configuration, locator)}`);
+
+  const cwd = process.cwd();
+  const env = await makeScriptEnv(project);
+
+  const [pkg, packageFs, file] = binary;
+  const target = resolve(packageFs.getRealPath(), file);
+
+  return await execUtils.execFile(process.execPath, [target, ... args], {cwd, env, stdin, stdout, stderr});
+}
+
+type ExecuteWorkspaceAccessibleBinaryOptions = {
+  cache: Cache,
+  stdin: Readable,
+  stdout: Writable,
+  stderr: Writable,
+};
+
+export async function executeWorkspaceAccessibleBinary(workspace: Workspace, binaryName: string, args: Array<string>, {cache, stdin, stdout, stderr}: ExecuteWorkspaceAccessibleBinaryOptions) {
+  return await executePackageAccessibleBinary(workspace.anchoredLocator, binaryName, args, {project: workspace.project, cache, stdin, stdout, stderr});
 }
