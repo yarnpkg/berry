@@ -12,7 +12,7 @@ steps:
 
 - script: |
     git clone https://github.com/yarnpkg/yarn.git
-    cp scripts/acceptance-test-driver.js yarn/packages/pkg-tests/berry.test.js
+    echo "require('$(pwd)/scripts/acceptance-test-driver.js')" > yarn/packages/pkg-tests/berry.test.js
     cd yarn/packages/pkg-tests
     yarn
   displayName: 'Install the acceptance tests'
