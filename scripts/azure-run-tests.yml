@@ -11,14 +11,14 @@ steps:
   displayName: 'Install and build'
 
 - script: |
-    git clone git@github.com:yarnpkg/yarn
+    git clone https://github.com/yarnpkg/yarn.git
+    cp scripts/acceptance-test-driver.js yarn/packages/pkg-tests/berry.test.js
     cd yarn/packages/pkg-tests
     yarn
   displayName: 'Install the acceptance tests'
 
 - script: |
     cd yarn/packages/pkg-tests
-    cp test-driver.js yarn/packages/pkg-tests/berry.test.js
     yarn jest berry --reporters=default --reporters=jest-junit
   displayName: 'Run the acceptance tests'
 
