@@ -48,9 +48,7 @@ export class WorkspaceResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const normalizedLocator = structUtils.makeLocator(locator, locator.reference.slice(WorkspaceResolver.protocol.length));
-
-    const workspace = opts.project.getWorkspaceByLocator(normalizedLocator);
+    const workspace = opts.project.getWorkspaceByLocator(locator);
 
     const binaries = new Map(workspace.manifest.bin);
     const dependencies = new Map(workspace.manifest.dependencies);

@@ -32,6 +32,10 @@ export class CwdFS extends FakeFS {
     return this.baseFs;
   }
 
+  resolve(p: string) {
+    return this.baseFs.resolve(this.fromCwdPath(p));
+  }
+
   createReadStream(p: string, opts: {encoding?: string}) {
     return this.baseFs.createReadStream(this.fromCwdPath(p), opts);
   }

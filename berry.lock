@@ -49,6 +49,7 @@ __metadata:
     @berry/plugin-github: 0.0.0
     @berry/plugin-http: 0.0.0
     @berry/plugin-hub: 0.0.0
+    @berry/plugin-node: 0.0.0
     @berry/plugin-npm: 0.0.0
     @berry/pnp: 0.0.0
     @berry/shell: "workspace:0.0.0"
@@ -148,7 +149,9 @@ __metadata:
     @berry/plugin-http: "workspace:0.0.0"
     @berry/plugin-hub: "workspace:0.0.0"
     @berry/plugin-link: "workspace:0.0.0"
+    @berry/plugin-node: "workspace:0.0.0"
     @berry/plugin-npm: "workspace:0.0.0"
+    @berry/plugin-pnp: "workspace:0.0.0"
     @berry/pnp: "workspace:0.0.0"
     @berry/shell: "workspace:0.0.0"
     @berry/ui: "workspace:0.0.0"
@@ -282,6 +285,16 @@ __metadata:
     @berry/core: "workspace:0.0.0"
   resolution: "@berry/plugin-link@workspace:0.0.0"
 
+"@berry/plugin-node@0.0.0, @berry/plugin-node@workspace:0.0.0":
+  dependencies:
+    @berry/core: "workspace:0.0.0"
+  resolution: "@berry/plugin-node@workspace:0.0.0"
+
+"@berry/plugin-node@workspace-base:0.0.0":
+  dependencies:
+    @berry/core: "workspace:0.0.0"
+  resolution: "@berry/plugin-node@workspace-base:0.0.0"
+
 "@berry/plugin-npm@0.0.0, @berry/plugin-npm@workspace:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
@@ -293,6 +306,16 @@ __metadata:
     @berry/core: "workspace:0.0.0"
     semver: ^5.5.1
   resolution: "@berry/plugin-npm@workspace-base:0.0.0"
+
+"@berry/plugin-pnp@workspace-base:0.0.0":
+  dependencies:
+    @berry/core: "workspace:0.0.0"
+  resolution: "@berry/plugin-pnp@workspace-base:0.0.0"
+
+"@berry/plugin-pnp@workspace:0.0.0":
+  dependencies:
+    @berry/core: "workspace:0.0.0"
+  resolution: "@berry/plugin-pnp@workspace:0.0.0"
 
 "@berry/pnp@0.0.0, @berry/pnp@workspace:0.0.0":
   dependencies:

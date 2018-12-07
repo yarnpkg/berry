@@ -64,7 +64,7 @@ type ExecutePackageScriptOptions = {
 
 export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cache, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
   const fetcher = project.configuration.makeFetcher();
-  const fetcherOptions = {rootFs: new NodeFS(), cache, fetcher, project};
+  const fetcherOptions = {readOnly: true, rootFs: new NodeFS(), cache, fetcher, project};
 
   const packageFs = await fetcher.fetch(locator, fetcherOptions);
   const manifest = await Manifest.fromFile(`package.json`, {baseFs: packageFs});
@@ -102,7 +102,7 @@ export async function getPackageAccessibleBinaries(locator: Locator, {cache, pro
     throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
 
   const fetcher = project.configuration.makeFetcher();
-  const fetcherOptions = {rootFs: new NodeFS(), cache, fetcher, project};
+  const fetcherOptions = {readOnly: true, rootFs: new NodeFS(), cache, fetcher, project};
 
   const binaries: Map<string, [Locator, FakeFS, string]> = new Map();
 

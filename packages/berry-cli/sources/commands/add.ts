@@ -25,7 +25,7 @@ export default (concierge: any) => concierge
       const resolver = configuration.makeResolver({useLockfile: false});
       const fetcher = configuration.makeFetcher();
 
-      const resolverOptions = {rootFs: new NodeFS(), project, cache, fetcher, resolver};
+      const resolverOptions = {readOnly: false, rootFs: new NodeFS(), project, cache, fetcher, resolver};
 
       const descriptors = await Promise.all(packages.map(async entry => {
         const descriptor = structUtils.parseDescriptor(entry);

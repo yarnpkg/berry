@@ -26,7 +26,9 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@berry/plugin-http", "workspace:0.0.0"],
           ["@berry/plugin-hub", "virtual:0f1ee9e8b50611c405f526b1fe77e66ac54615651ac6875b8cf37bb46d832fc8b55e28e0e32d7db455d269d8fe57c75777b678f5b62a6fa095912bfe59ebd1e8#workspace:0.0.0"],
           ["@berry/plugin-link", "workspace:0.0.0"],
+          ["@berry/plugin-node", "workspace:0.0.0"],
           ["@berry/plugin-npm", "workspace:0.0.0"],
+          ["@berry/plugin-pnp", "workspace:0.0.0"],
           ["@berry/pnp", "workspace:0.0.0"],
           ["@berry/shell", "workspace:0.0.0"],
           ["@berry/ui", "virtual:0f1ee9e8b50611c405f526b1fe77e66ac54615651ac6875b8cf37bb46d832fc8b55e28e0e32d7db455d269d8fe57c75777b678f5b62a6fa095912bfe59ebd1e8#workspace:0.0.0"],
@@ -4096,6 +4098,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@berry/plugin-github", "workspace:0.0.0"],
           ["@berry/plugin-http", "workspace:0.0.0"],
           ["@berry/plugin-hub", "virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#workspace:0.0.0"],
+          ["@berry/plugin-node", "workspace:0.0.0"],
           ["@berry/plugin-npm", "workspace:0.0.0"],
           ["@berry/pnp", "workspace:0.0.0"],
           ["@berry/shell", "workspace:0.0.0"],
@@ -4118,6 +4121,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@berry/plugin-github", "workspace:0.0.0"],
           ["@berry/plugin-http", "workspace:0.0.0"],
           ["@berry/plugin-hub", "virtual:6bceb20537b8baae25a01edf2cedadcc67979f59c1beef46caea059724a49486ea75b67cf82ca197685b1d2704ed0d2e74e08920e464ba15d132f45435abc482#workspace:0.0.0"],
+          ["@berry/plugin-node", "workspace:0.0.0"],
           ["@berry/plugin-npm", "workspace:0.0.0"],
           ["@berry/pnp", "workspace:0.0.0"],
           ["@berry/shell", "workspace:0.0.0"],
@@ -5715,6 +5719,21 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
+    ["@berry/plugin-node", new Map([
+      ["workspace:0.0.0", {
+        packageLocation: path.resolve(__dirname, "./packages/plugin-node/"),
+        packageDependencies: new Map([
+          ["@berry/core", "workspace:0.0.0"],
+          ["@berry/plugin-node", "workspace:0.0.0"],
+        ]),
+      }],
+      ["0.0.0", {
+        packageLocation: path.resolve(__dirname, "./packages/plugin-node/"),
+        packageDependencies: new Map([
+          ["@berry/core", "workspace:0.0.0"],
+        ]),
+      }],
+    ])],
     ["@berry/plugin-npm", new Map([
       ["workspace:0.0.0", {
         packageLocation: path.resolve(__dirname, "./packages/plugin-npm/"),
@@ -5729,6 +5748,21 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageDependencies: new Map([
           ["@berry/core", "workspace:0.0.0"],
           ["semver", "5.6.0"],
+        ]),
+      }],
+    ])],
+    ["@berry/plugin-pnp", new Map([
+      ["workspace:0.0.0", {
+        packageLocation: path.resolve(__dirname, "./packages/plugin-pnp/"),
+        packageDependencies: new Map([
+          ["@berry/core", "workspace:0.0.0"],
+          ["@berry/plugin-pnp", "workspace:0.0.0"],
+        ]),
+      }],
+      ["0.0.0", {
+        packageLocation: path.resolve(__dirname, "./packages/plugin-pnp/"),
+        packageDependencies: new Map([
+          ["@berry/core", "workspace:0.0.0"],
         ]),
       }],
     ])],
@@ -6822,8 +6856,12 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.pnp/cache/@redux-saga-is-998fcabf5fb70539f7d498a79cddb717c05df20096317bff621280e8c84c79fc91ca7feb3eacefc6f7452abdd5f880d99da1f1f0930217d5257f247f130597bf.zip/node_modules/@redux-saga/is/", {"name":"@redux-saga/is","reference":"1.0.0-beta.3"}],
     ["./packages/plugin-link/", {"name":"@berry/plugin-link","reference":"workspace:0.0.0"}],
     ["./packages/plugin-link/", {"name":"@berry/plugin-link","reference":"0.0.0"}],
+    ["./packages/plugin-node/", {"name":"@berry/plugin-node","reference":"workspace:0.0.0"}],
+    ["./packages/plugin-node/", {"name":"@berry/plugin-node","reference":"0.0.0"}],
     ["./packages/plugin-npm/", {"name":"@berry/plugin-npm","reference":"workspace:0.0.0"}],
     ["./packages/plugin-npm/", {"name":"@berry/plugin-npm","reference":"0.0.0"}],
+    ["./packages/plugin-pnp/", {"name":"@berry/plugin-pnp","reference":"workspace:0.0.0"}],
+    ["./packages/plugin-pnp/", {"name":"@berry/plugin-pnp","reference":"0.0.0"}],
     ["./.pnp/cache/@types-dateformat-bb5f43770089828c3771a9bbfae0fa84fc4c758fbb87ef3ae4c5632466c646b75cf626f549dc8495e24df1d04e003ba81cecdd8ffbb31984dee2d6145ce0ff2f.zip/node_modules/@types/dateformat/", {"name":"@types/dateformat","reference":"1.0.1"}],
     ["./.pnp/cache/@types-emscripten-bfd3ecfa1a24ba12cef3e96c345a3eddb3c859589631b2cc459940df479fba8d9c7bcea41755adf9b10236bfc593cedd6e32b09ed8c4c0355f0d138def599fa2.zip/node_modules/@types/emscripten/", {"name":"@types/emscripten","reference":"0.0.31"}],
     ["./.pnp/cache/@types-webassembly-js-api-271337107960c522caed50d7f5d2bd2fde5a118891b6f0c8e7861e8a59e1e36b8bbd1064922f19f5f85133dd262c31c5b0efcd93d38686919389ff690d9984fb.zip/node_modules/@types/webassembly-js-api/", {"name":"@types/webassembly-js-api","reference":"0.0.1"}],

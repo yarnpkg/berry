@@ -23,21 +23,27 @@ class StatEntry {
   isBlockDevice() {
     return false;
   }
+
   isCharacterDevice() {
     return false;
   }
+
   isDirectory() {
     return (this.mode & S_IFMT) === S_IFDIR;
   }
+
   isFIFO() {
     return false;
   }
+
   isFile() {
     return (this.mode & S_IFMT) === S_IFREG;
   }
+
   isSocket() {
     return false;
   }
+
   isSymbolicLink() {
     return (this.mode & S_IFMT) === S_IFLNK;
   }

@@ -2,6 +2,7 @@ export {Archive} from './Archive';
 export {Cache} from './Cache';
 export {Configuration} from './Configuration';
 export {Fetcher, FetchOptions, MinimalFetchOptions} from './Fetcher';
+export {Linker, LinkOptions, MinimalLinkOptions} from './Linker';
 export {Manifest} from './Manifest';
 export {Plugin} from './Plugin';
 export {Project} from './Project';

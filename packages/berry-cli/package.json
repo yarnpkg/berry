@@ -22,6 +22,7 @@
         "@berry/plugin-github": "0.0.0",
         "@berry/plugin-http": "0.0.0",
         "@berry/plugin-hub": "0.0.0",
+        "@berry/plugin-node": "0.0.0",
         "@berry/plugin-npm": "0.0.0",
         "@berry/pnp": "0.0.0"
     },
@@ -58,6 +59,9 @@
                 "@berry/plugin-hub",
                 "@berry/plugin-link",
                 "@berry/plugin-npm"
+            ],
+            "node": [
+                "@berry/plugin-node"
             ]
         }
     }

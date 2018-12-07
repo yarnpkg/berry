@@ -9,7 +9,7 @@ const commonConfig = require(`./common-config`);
 
 concierge
   .command(`[-w,--watch] [--profile TYPE] [--plugin PLUGIN ...]`)
-    .action(async ({watch, profile, plugin}) => {
+  .action(async ({watch, profile, plugin, stdout}) => {
     const pkgJson = require(`${basedir}/package.json`);
 
     if (!pkgJson[`@berry/builder`] || !pkgJson[`@berry/builder`].bundles)
@@ -18,10 +18,16 @@ concierge
     if (!profile)
       profile = `standard`;
 
-    if (!Object.prototype.hasOwnProperty.call(pkgJson[`@berry/builder`].bundles, profile))
+    const profiles = profile.split(/\+/g);
+
+    if (!profiles.every(profile => Object.prototype.hasOwnProperty.call(pkgJson[`@berry/builder`].bundles, profile)))
       throw new UsageError(`Invalid profile`);
 
-    const plugins = Array.from(new Set(pkgJson[`@berry/builder`].bundles[profile].concat(plugin)));
+    const plugins = Array.from(new Set(profiles.reduce((acc, profile) => {
+      return acc.concat(pkgJson[`@berry/builder`].bundles[profile]);
+    }, plugin)));
+
+    stdout.write(`The following plugins will be compiled in the final bundle: ${plugins.join(`, `)}\n`);
 
     const hookConfig = {
       context: basedir,
@@ -99,7 +105,7 @@ concierge
             for (const stats of allStats)
               if (stats.compilation.errors.length > 0)
                 erroredStats.push(stats.toString(`errors-only`));
-            
+
             if (erroredStats.length === 0) {
               process.stderr.write(String(`Build succeeded at ${new Date()}\n`));
             } else {

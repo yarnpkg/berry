@@ -262,4 +262,14 @@ export class Configuration {
       )),
     ]);
   }
+
+  getLinkers() {
+    const linkers = [];
+
+    for (const plugin of this.plugins.values())
+      for (const linker of plugin.linkers || [])
+        linkers.push(linker);
+
+    return linkers;
+  }
 }

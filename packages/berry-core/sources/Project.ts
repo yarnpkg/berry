@@ -6,10 +6,13 @@ import {dirname}                                from 'path';
 
 import {parseSyml, stringifySyml}               from '@berry/parsers';
 import {extractPnpSettings, generatePnpScript}  from '@berry/pnp';
-import {NodeFS}                                 from '@berry/zipfs';
+import {CwdFS, FakeFS, NodeFS}                  from '@berry/zipfs';
 
 import {Cache}                                  from './Cache';
 import {Configuration}                          from './Configuration';
+import {Linker}                                 from './Linker';
+import {WorkspaceBaseResolver}                  from './WorkspaceBaseResolver';
+import {WorkspaceResolver}                      from './WorkspaceResolver';
 import {Workspace}                              from './Workspace';
 import * as miscUtils                           from './miscUtils';
 import * as structUtils                         from './structUtils';
@@ -173,7 +176,7 @@ export class Project {
   }
 
   getWorkspaceByCwd(workspaceCwd: string) {
-    const workspace = this.workspacesByCwd.get(workspaceCwd);
+    const workspace = this.tryWorkspaceByCwd(workspaceCwd);
 
     if (!workspace)
       throw new Error(`Workspace not found (${workspaceCwd})`);
@@ -182,6 +185,11 @@ export class Project {
   }
 
   tryWorkspaceByLocator(locator: Locator) {
+    if (locator.reference.startsWith(WorkspaceBaseResolver.protocol))
+      locator = structUtils.makeLocator(locator, locator.reference.slice(WorkspaceBaseResolver.protocol.length));
+    else if (locator.reference.startsWith(WorkspaceResolver.protocol))
+      locator = structUtils.makeLocator(locator, locator.reference.slice(WorkspaceResolver.protocol.length));
+
     const workspace = this.workspacesByLocator.get(locator.locatorHash);
 
     if (!workspace)
@@ -191,7 +199,7 @@ export class Project {
   }
 
   getWorkspaceByLocator(locator: Locator) {
-    const workspace = this.workspacesByLocator.get(locator.locatorHash);
+    const workspace = this.tryWorkspaceByLocator(locator);
 
     if (!workspace)
       throw new Error(`Workspace not found`);
@@ -251,7 +259,7 @@ export class Project {
     const resolver = this.configuration.makeResolver();
     const fetcher = this.configuration.makeFetcher();
 
-    const resolverOptions = {project: this, rootFs: new NodeFS(), resolver, fetcher, cache};
+    const resolverOptions = {project: this, readOnly: false, rootFs: new NodeFS(), resolver, fetcher, cache};
 
     const allDescriptors = new Map<string, Descriptor>();
     const allPackages = new Map<string, Package>();
@@ -677,7 +685,7 @@ export class Project {
     this.storedLocations = new Map();
 
     const fetcher = this.configuration.makeFetcher();
-    const fetcherOptions = {project: this, rootFs: new NodeFS(), cache, fetcher};
+    const fetcherOptions = {project: this, readOnly: false, rootFs: new NodeFS(), cache, fetcher};
 
     for (const locatorHash of this.storedResolutions.values()) {
       const pkg = this.storedPackages.get(locatorHash);
@@ -696,6 +704,80 @@ export class Project {
         const location = await fetcher.fetch(pkg, fetcherOptions);
         this.storedLocations.set(pkg.locatorHash, location.getRealPath());
       }
+    }
+  }
+
+  async linkEverything(cache: Cache) {
+    const fetcher = this.configuration.makeFetcher();
+    const fetcherOptions = {project: this, readOnly: true, rootFs: new NodeFS(), cache, fetcher};
+
+    const linkers = this.configuration.getLinkers();
+    const linkerOptions = {project: this};
+
+    const linkerDefinitions = new Map(linkers.map(linker => [linker, null] as [Linker, any]));
+
+    const packageFsCache = new Map<string, FakeFS>();
+
+    const dispatchLinkers = async (locator: Locator, currentLinker: Linker | null, currentState: any) => {
+      const pkg = this.storedPackages.get(locator.locatorHash);
+      if (!pkg)
+        throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, locator)}) should have been registered`);
+
+      const dependenciesByLinkers = new Map(linkers.map(linker => [linker, []] as [Linker, Array<Package>]));
+
+      for (const descriptor of pkg.dependencies.values()) {
+        const resolution = this.storedResolutions.get(descriptor.descriptorHash);
+        if (!resolution)
+          throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+
+        const dependency = this.storedPackages.get(resolution);
+        if (!dependency)
+          throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+
+        const linker = linkers.find(linker => linker.supports(dependency, linkerOptions));
+        if (!linker) // Note that the following is not an assertion: it can happen during a normal usage
+          throw new Error(`The package ${structUtils.prettyLocator(this.configuration, locator)} isn't supported by any of the available linkers`);
+
+        const linkerDependencies = dependenciesByLinkers.get(linker);
+        if (!linkerDependencies)
+          throw new Error(`Assertion failed: The linker should have been registered`);
+
+        linkerDependencies.push(dependency);
+      }
+
+      for (const [linker, packageList] of dependenciesByLinkers.entries()) {
+        let linkerDefinition = linkerDefinitions.get(linker);
+        if (!linkerDefinition)
+          linkerDefinitions.set(linker, linkerDefinition = await linker.setup(linkerOptions));
+
+        const {dependencyTreeTraversal} = linkerDefinition;
+        if (!dependencyTreeTraversal)
+          continue;
+
+        const baseState = currentLinker !== linker
+          ? await dependencyTreeTraversal.onRoot(pkg, currentState.targetFs)
+          : currentState;
+
+        for (const pkg of packageList) {
+          const edgeState = await dependencyTreeTraversal.onEdge(baseState, pkg);
+
+          let packageFs = packageFsCache.get(pkg.locatorHash);
+          if (!packageFs)
+            packageFsCache.set(pkg.locatorHash, packageFs = await fetcher.fetch(pkg, fetcherOptions));
+
+          const result = await dependencyTreeTraversal.onPackage(edgeState, pkg, packageFs);
+          if (!result)
+            continue;
+
+          const [nodeState, buildFn] = result;
+          await dispatchLinkers(pkg, linker, nodeState);
+        }
+      }
+    };
+
+    for (const workspace of this.workspacesByCwd.values()) {
+      console.log(workspace.cwd, workspace.anchoredLocator)
+      await dispatchLinkers(workspace.anchoredLocator, null, {targetFs: new CwdFS(workspace.cwd)});
     }
   }
 
@@ -723,6 +805,8 @@ export class Project {
 
     await this.resolveEverything(cache);
     await this.fetchEverything(cache);
+    await this.linkEverything(cache);
+
     await this.generatePnpFile();
   }
 

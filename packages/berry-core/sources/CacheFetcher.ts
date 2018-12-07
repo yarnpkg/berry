@@ -14,6 +14,9 @@ export class CacheFetcher implements Fetcher {
   }
 
   async fetch(locator: Locator, opts: FetchOptions) {
+    if (opts.readOnly)
+      return await opts.cache.fetchFromCache(locator);
+
     return await opts.cache.fetchFromCache(locator, () => {
       return this.next.fetch(locator, opts);
     });

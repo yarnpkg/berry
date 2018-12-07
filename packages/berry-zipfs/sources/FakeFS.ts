@@ -4,6 +4,10 @@ import {posix}             from 'path';
 export abstract class FakeFS {
   abstract getRealPath(): string;
 
+  resolve(p: string): string {
+    return posix.resolve(`/`, p);
+  }
+
   abstract createReadStream(p: string, opts: {encoding?: string}): ReadStream;
 
   abstract realpathPromise(p: string): Promise<string>;
@@ -40,10 +44,12 @@ export abstract class FakeFS {
   abstract readlinkSync(p: string): string;
 
   async mkdirpPromise(p: string) {
-    p = posix.resolve(`/`, p);
+    p = this.resolve(p);
 
     if (p === `/`)
       return;
+
+    console.log({p})
 
     const parts = p.split(`/`);
 
@@ -51,13 +57,14 @@ export abstract class FakeFS {
       const subPath = parts.slice(0, u).join(`/`);
 
       if (!this.existsSync(subPath)) {
+        console.log({subPath})
         await this.mkdirPromise(subPath);
       }
     }
   }
 
   mkdirpSync(p: string) {
-    p = posix.resolve(`/`, p);
+    p = this.resolve(p);
 
     if (p === `/`)
       return;
@@ -70,6 +77,40 @@ export abstract class FakeFS {
       if (!this.existsSync(subPath)) {
         this.mkdirSync(subPath);
       }
+    }
+  }
+
+  async copyPromise(destination: string, source: string, {baseFs = this}: {baseFs?: FakeFS} = {}) {
+    const stat = await baseFs.lstatPromise(source);
+
+    if (stat.isDirectory()) {
+      await this.mkdirpPromise(destination);
+      const directoryListing = await baseFs.readdirPromise(source);
+      await Promise.all(directoryListing.map(entry => {
+        this.copyPromise(posix.join(destination, entry), posix.join(source, entry), {baseFs});
+      }));
+    } else if (stat.isFile()) {
+      const content = await baseFs.readFilePromise(source);
+      await baseFs.writeFilePromise(destination, content);
+    } else {
+      throw new Error(`Unsupported file type (mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
+    }
+  }
+
+  copySync(source: string, destination: string, {baseFs = this}: {baseFs?: FakeFS} = {}) {
+    const stat = baseFs.lstatSync(source);
+
+    if (stat.isDirectory()) {
+      this.mkdirpSync(destination);
+      const directoryListing = baseFs.readdirSync(source);
+      for (const entry of directoryListing) {
+        this.copySync(posix.join(destination, entry), posix.join(source, entry), {baseFs});
+      }
+    } else if (stat.isFile()) {
+      const content = baseFs.readFileSync(source);
+      baseFs.writeFileSync(destination, content);
+    } else {
+      throw new Error(`Unsupported file type (mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
     }
   }
 };
