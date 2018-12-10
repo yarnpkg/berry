@@ -4,7 +4,6 @@ import {structUtils}                                       from '@berry/core';
 import {CwdFS, FakeFS}                                     from '@berry/zipfs';
 
 type DTTState = {
-  chain: Map<string, string>,
   targetFs: FakeFS,
 };
 
@@ -21,6 +20,12 @@ export class NodeLinker implements Linker<DTTState> {
           return tree;
 
           function checkInheritedDependencies(transitiveDependency: LinkTree, directDependency: LinkTree) {
+            // If the transitive dependency depends on a dependency provided by
+            // its immediate parent, then it cannot be hoisted above its parent
+            for (let identHash of transitiveDependency.inheritedDependencies)
+              if (directDependency.children.find(children => children.locator.identHash === identHash))
+                return false;
+
             return true;
           }
 
@@ -53,28 +58,23 @@ export class NodeLinker implements Linker<DTTState> {
           }
         },
 
-        async onRoot(locator: Locator, targetFs: FakeFS | null): Promise<DTTState> {
+        async onRoot(locator: Locator, targetFs: FakeFS): Promise<DTTState> {
           if (!targetFs)
             throw new Error(`Assertion failed: this linker cannot be the direct root of a dependency tree`);
 
-          return {chain: new Map(), targetFs};
+          return {targetFs};
         },
 
-        async onEdge({chain, targetFs}: DTTState, locator: Locator): Promise<DTTState> {
-          const nextTargetPath = `node_modules/${structUtils.requirableIdent(locator)}`;
-          const nextTargetFs = new CwdFS(nextTargetPath, {baseFs: targetFs});
+        async onPackage({targetFs: parentFs}: DTTState, locator: Locator, packageFs: FakeFS): Promise<[DTTState, null]> {
+          if (!parentFs)
+            throw new Error(`Foo`);
+          const targetPath = `node_modules/${structUtils.requirableIdent(locator)}`;
+          const targetFs = new CwdFS(targetPath, {baseFs: parentFs});
 
-          return {targetFs: nextTargetFs, chain};
-        },
-
-        async onPackage({chain, targetFs}: DTTState, locator: Locator, packageFs: FakeFS): Promise<[DTTState, null]> {
           await targetFs.mkdirpPromise(`.`);
           await targetFs.copyPromise(`.`, `.`, {baseFs: packageFs});
 
-          const nextChain = new Map(chain);
-          nextChain.set(locator.identHash, locator.locatorHash);
-
-          return [{chain: nextChain, targetFs}, null];
+          return [{targetFs}, null];
         },
       },
     };

@@ -92,7 +92,7 @@ export interface DependencyTreeTraversal<State> {
    * the onPackage handler when called on the first-level dependencies.
    */
 
-  onRoot(locator: Locator, targetFs: FakeFS | null): Promise<State>;
+  onRoot(locator: Locator, targetFs: FakeFS): Promise<State>;
 
   /**
    * Called once for each package in the dependency tree. The expectation is
@@ -111,7 +111,7 @@ export type LinkDefinition<State> = {
   dependencyTreeTraversal?: DependencyTreeTraversal<State>,
 };
 
-export interface Linker<State = any> {
+export interface Linker<State = {targetFs: FakeFS}> {
   supports(pkg: Package, opts: MinimalLinkOptions): boolean;
 
   setup(opts: LinkOptions): Promise<LinkDefinition<State>>;
