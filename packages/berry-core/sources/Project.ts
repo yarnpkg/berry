@@ -97,17 +97,17 @@ export class Project {
         const data = parsed[key];
         const locator = structUtils.parseLocator(data.resolution);
 
-        const dependencies = new Map<DescriptorHash, Descriptor>();
-        const peerDependencies = new Map<DescriptorHash, Descriptor>();
+        const dependencies = new Map<IdentHash, Descriptor>();
+        const peerDependencies = new Map<IdentHash, Descriptor>();
 
         for (const dependency of Object.keys(data.dependencies || {})) {
           const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.dependencies[dependency]);
-          dependencies.set(descriptor.descriptorHash, descriptor);
+          dependencies.set(descriptor.identHash, descriptor);
         }
 
         for (const dependency of Object.keys(data.peerDependencies || {})) {
           const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.peerDependencies[dependency]);
-          peerDependencies.set(descriptor.descriptorHash, descriptor);
+          peerDependencies.set(descriptor.identHash, descriptor);
         }
 
         const pkg: Package = {...locator, dependencies, peerDependencies};
@@ -473,7 +473,7 @@ export class Project {
         for (const [source, target] of [[rawDependencies, dependencies], [rawPeerDependencies, peerDependencies]]) {
           for (const descriptor of source.values()) {
             const normalizedDescriptor = await resolver.normalizeDescriptor(descriptor, locator, resolverOptions);
-            target.set(normalizedDescriptor.descriptorHash, normalizedDescriptor);
+            target.set(normalizedDescriptor.identHash, normalizedDescriptor);
           }
         }
 
@@ -587,8 +587,8 @@ export class Project {
           const virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
           const virtualizedPackage = structUtils.virtualizePackage(pkg, parentLocator.locatorHash);
 
-          parentPackage.dependencies.delete(descriptor.descriptorHash);
-          parentPackage.dependencies.set(virtualizedDescriptor.descriptorHash, virtualizedDescriptor);
+          parentPackage.dependencies.delete(descriptor.identHash);
+          parentPackage.dependencies.set(virtualizedDescriptor.identHash, virtualizedDescriptor);
 
           allResolutions.set(virtualizedDescriptor.descriptorHash, virtualizedPackage.locatorHash);
           allDescriptors.set(virtualizedDescriptor.descriptorHash, virtualizedDescriptor);
@@ -598,9 +598,7 @@ export class Project {
           const missingPeerDependencies = new Set();
 
           for (const peerRequest of virtualizedPackage.peerDependencies.values()) {
-            let peerDescriptor = Array.from(parentPackage.dependencies.values()).find(descriptor => {
-              return structUtils.areIdentsEqual(descriptor, peerRequest);
-            });
+            let peerDescriptor = parentPackage.dependencies.get(peerRequest.identHash);
 
             if (!peerDescriptor && structUtils.areIdentsEqual(parentLocator, peerRequest)) {
               peerDescriptor = structUtils.convertLocatorToDescriptor(parentLocator);
@@ -618,10 +616,11 @@ export class Project {
               peerDescriptor = structUtils.makeDescriptor(peerRequest, `missing:`);
             }
 
-            if (peerDescriptor.range === `missing:`)
+            if (peerDescriptor.range === `missing:`) {
               missingPeerDependencies.add(peerDescriptor.descriptorHash);
-
-            virtualizedPackage.dependencies.set(peerDescriptor.descriptorHash, peerDescriptor);
+            } else {
+              virtualizedPackage.dependencies.set(peerDescriptor.identHash, peerDescriptor);
+            }
           }
 
           // If you find this line, it's because I forgot to remove it after

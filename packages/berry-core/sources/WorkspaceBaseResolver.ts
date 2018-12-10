@@ -41,14 +41,14 @@ export class WorkspaceBaseResolver implements Resolver {
     for (const workspaceCwd of workspace.workspacesCwds) {
       const childWorkspace = opts.project.getWorkspaceByCwd(workspaceCwd);
 
-      const hasDep = Array.from(dependencies.values()).some(descriptor => {
-        return descriptor.identHash === childWorkspace.locator.identHash;
-      });
+      // If the workspace being resolved has an explicit dependency on one of
+      // its sub-workspaces, then we must honor it over the implicit dependency
+      const hasExplicitDep = dependencies.has(childWorkspace.locator.identHash);
+      if (hasExplicitDep)
+        continue;
 
-      if (!hasDep) {
-        const childDescriptor = structUtils.makeDescriptor(childWorkspace.locator, `${WorkspaceResolver.protocol}${childWorkspace.locator.reference}`);
-        dependencies.set(childDescriptor.descriptorHash, childDescriptor);
-      }
+      const childDescriptor = structUtils.makeDescriptor(childWorkspace.locator, `${WorkspaceResolver.protocol}${childWorkspace.locator.reference}`);
+      dependencies.set(childDescriptor.identHash, childDescriptor);
     }
 
     // No peer dependencies for workspaces when installed as root points

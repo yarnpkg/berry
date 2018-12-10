@@ -57,13 +57,14 @@ export class WorkspaceResolver implements Resolver {
     for (const workspaceCwd of workspace.workspacesCwds) {
       const childWorkspace = opts.project.getWorkspaceByCwd(workspaceCwd);
 
-      const hasDep = Array.from(dependencies.values()).some(descriptor => descriptor.identHash === childWorkspace.locator.identHash);
-      const hasPeerDep = Array.from(dependencies.values()).some(descriptor => descriptor.identHash === childWorkspace.locator.identHash);
+      // If the workspace being resolved has an explicit dependency on one of
+      // its sub-workspaces, then we must honor it over the implicit dependency
+      const hasExplicitDep = dependencies.has(childWorkspace.locator.identHash);
+      if (hasExplicitDep)
+        continue;
 
-      if (!hasDep && !hasPeerDep) {
-        const childDescriptor = structUtils.makeDescriptor(childWorkspace.locator, `${WorkspaceResolver.protocol}${childWorkspace.locator}`);
-        dependencies.set(childDescriptor.descriptorHash, childDescriptor);
-      }
+      const childDescriptor = structUtils.makeDescriptor(childWorkspace.locator, `${WorkspaceResolver.protocol}${childWorkspace.locator.reference}`);
+      dependencies.set(childDescriptor.identHash, childDescriptor);
     }
 
     return {... locator, binaries, dependencies, peerDependencies};

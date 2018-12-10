@@ -21,6 +21,6 @@ export interface Locator extends Ident {
 };
 
 export interface Package extends Locator {
-  dependencies: Map<DescriptorHash, Descriptor>,
-  peerDependencies: Map<DescriptorHash, Descriptor>,
+  dependencies: Map<IdentHash, Descriptor>,
+  peerDependencies: Map<IdentHash, Descriptor>,
 };

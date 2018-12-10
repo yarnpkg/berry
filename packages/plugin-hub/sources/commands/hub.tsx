@@ -62,12 +62,12 @@ function makeBerrySaga(projectTracker: Tracker<Project>) {
             if (development) {
               yield put({type: `UPDATE_PROJECT`, project: projectTracker((project: Project) => {
                 const proxyWorkspace = project.getWorkspaceByCwd(workspace.cwd);
-                proxyWorkspace.manifest.dependencies.set(descriptor.descriptorHash, descriptor);
+                proxyWorkspace.manifest.dependencies.set(descriptor.identHash, descriptor);
               })});
             } else {
               yield put({type: `UPDATE_PROJECT`, project: projectTracker((project: Project) => {
                 const proxyWorkspace = project.getWorkspaceByCwd(workspace.cwd);
-                proxyWorkspace.manifest.devDependencies.set(descriptor.descriptorHash, descriptor);
+                proxyWorkspace.manifest.devDependencies.set(descriptor.identHash, descriptor);
               })});
             }
           } break;
@@ -75,7 +75,7 @@ function makeBerrySaga(projectTracker: Tracker<Project>) {
           case `peer`: {
             yield put({type: `UPDATE_PROJECT`, project: projectTracker((project: Project) => {
               const proxyWorkspace = project.getWorkspaceByCwd(workspace.cwd);
-              proxyWorkspace.manifest.peerDependencies.set(descriptor.descriptorHash, descriptor);
+              proxyWorkspace.manifest.peerDependencies.set(descriptor.identHash, descriptor);
             })});
           } break;
         }

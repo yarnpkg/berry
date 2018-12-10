@@ -33,12 +33,10 @@ export async function extractPnpSettings(project: Project): Promise<PnpSettings>
 
     for (const descriptor of sortedDependencies) {
       const locatorHash = project.storedResolutions.get(descriptor.descriptorHash);
-
       if (!locatorHash)
         throw new Error(`Expected to find a resolution, but none found`);
 
       const pkg = project.storedPackages.get(locatorHash);
-
       if (!pkg)
         throw new Error(`Expected to find a package, but none found`);
 
@@ -49,29 +47,24 @@ export async function extractPnpSettings(project: Project): Promise<PnpSettings>
 
     for (const descriptor of sortedDependencies) {
       const locatorHash = project.storedResolutions.get(descriptor.descriptorHash);
-
       if (!locatorHash)
         throw new Error(`Expected to find a resolution, but none found`);
 
       const pkg = project.storedPackages.get(locatorHash);
-
       if (!pkg)
         throw new Error(`Expected to find a package, but none found`);
 
       const location = project.storedLocations.get(pkg.locatorHash);
-
       if (!location)
         throw new Error(`Expected to find a location, but none found`);
 
       const requirableName = structUtils.requirableIdent(pkg);
 
       let packageInformationStore = packageInformationStores.get(requirableName);
-
       if (!packageInformationStore)
         packageInformationStores.set(requirableName, packageInformationStore = new Map());
 
       let packageInformation = packageInformationStore.get(pkg.reference);
-
       if (packageInformation)
         continue;
 
@@ -97,7 +90,6 @@ export async function extractPnpSettings(project: Project): Promise<PnpSettings>
       : null;
 
     let packageInformationStore = packageInformationStores.get(requirableName);
-
     if (!packageInformationStore)
       packageInformationStores.set(requirableName, packageInformationStore = new Map());
 

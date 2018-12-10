@@ -10,6 +10,7 @@ import {Manifest}              from './Manifest';
 import {Project}               from './Project';
 import {WorkspaceBaseResolver} from './WorkspaceBaseResolver';
 import * as structUtils        from './structUtils';
+import {IdentHash}             from './types';
 import {Descriptor, Locator}   from './types';
 
 const readFileP = promisify(readFile);
@@ -32,7 +33,7 @@ export class Workspace {
   public readonly workspacesCwds: Set<string> = new Set();
 
   // Generated at resolution; basically dependencies + devDependencies + child workspaces
-  public dependencies: Map<string, Descriptor> = new Map();
+  public dependencies: Map<IdentHash, Descriptor> = new Map();
 
   constructor(workspaceCwd: string, {project}: {project: Project}) {
     this.project = project;

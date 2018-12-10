@@ -15,9 +15,9 @@ export class Manifest {
   public bin: Map<string, string> = new Map();
   public scripts: Map<string, string> = new Map();
 
-  public dependencies: Map<DescriptorHash, Descriptor> = new Map();
-  public devDependencies: Map<DescriptorHash, Descriptor> = new Map();
-  public peerDependencies: Map<DescriptorHash, Descriptor> = new Map();
+  public dependencies: Map<IdentHash, Descriptor> = new Map();
+  public devDependencies: Map<IdentHash, Descriptor> = new Map();
+  public peerDependencies: Map<IdentHash, Descriptor> = new Map();
 
   public workspaceDefinitions: Array<WorkspaceDefinition> = [];
 
@@ -93,7 +93,7 @@ export class Manifest {
         }
 
         const descriptor = structUtils.makeDescriptor(ident, range);
-        this.dependencies.set(descriptor.descriptorHash, descriptor);
+        this.dependencies.set(descriptor.identHash, descriptor);
       }
     }
 
@@ -113,7 +113,7 @@ export class Manifest {
         }
 
         const descriptor = structUtils.makeDescriptor(ident, range);
-        this.devDependencies.set(descriptor.descriptorHash, descriptor);
+        this.devDependencies.set(descriptor.identHash, descriptor);
       }
     }
 
@@ -133,7 +133,7 @@ export class Manifest {
         }
 
         const descriptor = structUtils.makeDescriptor(ident, range);
-        this.peerDependencies.set(descriptor.descriptorHash, descriptor);
+        this.peerDependencies.set(descriptor.identHash, descriptor);
       }
     }
 

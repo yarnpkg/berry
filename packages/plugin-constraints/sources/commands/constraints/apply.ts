@@ -46,8 +46,8 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
           if (result.confirmed) {
             const newDescriptor = structUtils.makeDescriptor(invalid, dependencyRange);
 
-            workspace.manifest.dependencies.delete(invalid.descriptorHash);
-            workspace.manifest.dependencies.set(newDescriptor.descriptorHash, newDescriptor);
+            workspace.manifest.dependencies.delete(invalid.identHash);
+            workspace.manifest.dependencies.set(newDescriptor.identHash, newDescriptor);
           }
         }
       } else {
@@ -64,7 +64,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
           // @ts-ignore
           if (result.confirmed) {
-            workspace.manifest.dependencies.delete(invalid.descriptorHash);
+            workspace.manifest.dependencies.delete(invalid.identHash);
           }
         }
       }
