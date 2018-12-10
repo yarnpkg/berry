@@ -1,10 +1,11 @@
 import chalk = require('chalk');
 
-import {createHmac}                          from 'crypto';
+import {createHmac}                             from 'crypto';
 
-import {Configuration}                       from './Configuration';
-import * as miscUtils                        from './miscUtils';
-import {Ident, Descriptor, Locator, Package} from './types';
+import {Configuration}                          from './Configuration';
+import * as miscUtils                           from './miscUtils';
+import {IdentHash, DescriptorHash, LocatorHash} from './types';
+import {Ident, Descriptor, Locator, Package}    from './types';
 
 // @ts-ignore
 const ctx = new chalk.constructor({enabled: true});
@@ -17,25 +18,25 @@ function color(configuration: Configuration, text: string, color: string) {
   }
 }
 
-export function makeHash(... args: Array<string | null>): string {
+export function makeHash<T>(... args: Array<string | null>): T {
   const hmac = createHmac(`sha512`, `berry`);
 
   for (const arg of args)
     hmac.update(arg ? arg : ``);
 
-  return hmac.digest(`hex`);
+  return hmac.digest(`hex`) as unknown as T;
 }
 
 export function makeIdent(scope: string | null, name: string): Ident {
-  return {identHash: makeHash(scope, name), scope, name};
+  return {identHash: makeHash<IdentHash>(scope, name), scope, name};
 }
 
 export function makeDescriptor(ident: Ident, range: string): Descriptor {
-  return {identHash: ident.identHash, scope: ident.scope, name: ident.name, descriptorHash: makeHash(ident.identHash, range), range};
+  return {identHash: ident.identHash, scope: ident.scope, name: ident.name, descriptorHash: makeHash<DescriptorHash>(ident.identHash, range), range};
 }
 
 export function makeLocator(ident: Ident, reference: string): Locator {
-  return {identHash: ident.identHash, scope: ident.scope, name: ident.name, locatorHash: makeHash(ident.identHash, reference), reference};
+  return {identHash: ident.identHash, scope: ident.scope, name: ident.name, locatorHash: makeHash<LocatorHash>(ident.identHash, reference), reference};
 }
 
 export function convertToIdent(source: Descriptor | Locator | Package): Ident {
@@ -43,11 +44,11 @@ export function convertToIdent(source: Descriptor | Locator | Package): Ident {
 }
 
 export function convertDescriptorToLocator(descriptor: Descriptor): Locator {
-  return {identHash: descriptor.identHash, scope: descriptor.scope, name: descriptor.name, locatorHash: descriptor.descriptorHash, reference: descriptor.range};
+  return {identHash: descriptor.identHash, scope: descriptor.scope, name: descriptor.name, locatorHash: descriptor.descriptorHash as unknown as LocatorHash, reference: descriptor.range};
 }
 
 export function convertLocatorToDescriptor(locator: Locator): Descriptor {
-  return {identHash: locator.identHash, scope: locator.scope, name: locator.name, descriptorHash: locator.locatorHash, range: locator.reference};
+  return {identHash: locator.identHash, scope: locator.scope, name: locator.name, descriptorHash: locator.locatorHash as unknown as DescriptorHash, range: locator.reference};
 }
 
 export function convertPackageToLocator(pkg: Package): Locator {

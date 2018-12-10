@@ -21,7 +21,11 @@ export default (concierge: any) => concierge
 
       for (const entry of names) {
         const ident = structUtils.parseIdent(entry);
-        workspace.manifest.dependencies.delete(ident.identHash);
+        for (const descriptor of workspace.manifest.dependencies.values()) {
+          if (structUtils.areIdentsEqual(ident, descriptor)) {
+            workspace.manifest.dependencies.delete(descriptor.descriptorHash);
+          }
+        }
       }
 
       await project.install({cache});

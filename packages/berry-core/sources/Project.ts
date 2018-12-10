@@ -16,6 +16,7 @@ import {WorkspaceResolver}                      from './WorkspaceResolver';
 import {Workspace}                              from './Workspace';
 import * as miscUtils                           from './miscUtils';
 import * as structUtils                         from './structUtils';
+import {IdentHash, DescriptorHash, LocatorHash} from './types';
 import {Descriptor, Locator, Package}           from './types';
 
 export class Project {
@@ -25,19 +26,19 @@ export class Project {
   // Is meant to be populated by the consumer. When the descriptor referenced by
   // the key should be resolved, the second one is resolved instead and its
   // result is used as final resolution for the first entry.
-  public resolutionAliases: Map<string, string> = new Map();
+  public resolutionAliases: Map<DescriptorHash, DescriptorHash> = new Map();
 
   public workspaces: Array<Workspace> = [];
 
   public workspacesByCwd: Map<string, Workspace> = new Map();
-  public workspacesByLocator: Map<string, Workspace> = new Map();
-  public workspacesByIdent: Map<string, Array<Workspace>> = new Map();
+  public workspacesByLocator: Map<LocatorHash, Workspace> = new Map();
+  public workspacesByIdent: Map<IdentHash, Array<Workspace>> = new Map();
 
-  public storedResolutions: Map<string, string> = new Map();
-  public storedLocations: Map<string, string> = new Map();
+  public storedResolutions: Map<DescriptorHash, LocatorHash> = new Map();
+  public storedLocations: Map<LocatorHash, string> = new Map();
 
-  public storedDescriptors: Map<string, Descriptor> = new Map();
-  public storedPackages: Map<string, Package> = new Map();
+  public storedDescriptors: Map<DescriptorHash, Descriptor> = new Map();
+  public storedPackages: Map<LocatorHash, Package> = new Map();
 
   public errors: Array<Error> = [];
 
@@ -96,8 +97,8 @@ export class Project {
         const data = parsed[key];
         const locator = structUtils.parseLocator(data.resolution);
 
-        const dependencies = new Map<string, Descriptor>();
-        const peerDependencies = new Map<string, Descriptor>();
+        const dependencies = new Map<DescriptorHash, Descriptor>();
+        const peerDependencies = new Map<DescriptorHash, Descriptor>();
 
         for (const dependency of Object.keys(data.dependencies || {})) {
           const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.dependencies[dependency]);
@@ -261,13 +262,13 @@ export class Project {
 
     const resolverOptions = {project: this, readOnly: false, rootFs: new NodeFS(), resolver, fetcher, cache};
 
-    const allDescriptors = new Map<string, Descriptor>();
-    const allPackages = new Map<string, Package>();
-    const allResolutions = new Map<string, string>();
+    const allDescriptors = new Map<DescriptorHash, Descriptor>();
+    const allPackages = new Map<LocatorHash, Package>();
+    const allResolutions = new Map<DescriptorHash, LocatorHash>();
 
-    const haveBeenAliased = new Set<string>();
+    const haveBeenAliased = new Set<DescriptorHash>();
 
-    let mustBeResolved = new Set<string>();
+    let mustBeResolved = new Set<DescriptorHash>();
 
     for (const workspace of this.workspacesByLocator.values()) {
       const workspaceDescriptor = workspace.anchoredDescriptor;
@@ -281,7 +282,6 @@ export class Project {
 
       for (const descriptorHash of mustBeResolved) {
         const aliasHash = this.resolutionAliases.get(descriptorHash);
-
         if (aliasHash === undefined)
           continue;
 
@@ -291,7 +291,6 @@ export class Project {
           continue;
 
         const alias = this.storedDescriptors.get(aliasHash);
-
         if (!alias)
           throw new Error(`The alias should have been registered`);
 
@@ -302,7 +301,7 @@ export class Project {
 
         // Temporarily set an invalid resolution; we will replace it by the
         // actual one after we've finished resolving the aliases
-        allResolutions.set(descriptorHash, `temporary`);
+        allResolutions.set(descriptorHash, `temporary` as LocatorHash);
 
         // We can now replace the descriptor by its alias (once everything will
         // have been resolved, we'll do a pass to copy the aliases resolutions
@@ -351,7 +350,7 @@ export class Project {
           return structUtils.makeLocator(descriptor, reference);
         });
 
-        return [descriptor.descriptorHash, candidateLocators] as [string, Array<Locator>];
+        return [descriptor.descriptorHash, candidateLocators] as [DescriptorHash, Array<Locator>];
       })));
 
       // That's where we'll store our resolutions until everything has been
@@ -365,7 +364,7 @@ export class Project {
       // some of them will; since maps are sorted by insertion, it would affect
       // the way they would be ordered).
 
-      const passResolutions = new Map<string, Locator>();
+      const passResolutions = new Map<DescriptorHash, Locator>();
 
       // We now make a pre-pass to automatically resolve the descriptors that
       // can only be satisfied by a single reference.
@@ -383,7 +382,6 @@ export class Project {
 
       for (const [descriptorHash, candidateLocators] of passCandidates) {
         const selectedLocator = candidateLocators.find(locator => allPackages.has(locator.locatorHash));
-
         if (!selectedLocator)
           continue;
 
@@ -428,11 +426,10 @@ export class Project {
         if (!bestSolution)
           throw new Error(`Error during the resolution process - this theoretically cannot happen`);
 
-        const solutionSet = new Set<string>(bestSolution);
+        const solutionSet = new Set<LocatorHash>(bestSolution as Array<LocatorHash>);
 
         for (const [descriptorHash, candidateLocators] of passCandidates.entries()) {
           const selectedLocator = candidateLocators.find(locator => solutionSet.has(locator.locatorHash));
-
           if (!selectedLocator)
             throw new Error(`The descriptor should have been solved during the previous step`);
 
@@ -445,7 +442,7 @@ export class Project {
       // hasn't been seen before, we fetch its dependency list and schedule it
       // for the next cycle.
 
-      const newLocators = new Map<string, Locator>();
+      const newLocators = new Map<LocatorHash, Locator>();
 
       for (const locator of passResolutions.values()) {
         if (allPackages.has(locator.locatorHash))
@@ -480,7 +477,7 @@ export class Project {
           }
         }
 
-        return [pkg.locatorHash, pkg] as [string, Package];
+        return [pkg.locatorHash, pkg] as [LocatorHash, Package];
       })));
 
       // Now that the resolution is finished, we can finally insert the content
@@ -492,7 +489,6 @@ export class Project {
 
       for (const descriptorHash of stableOrder) {
         const locator = passResolutions.get(descriptorHash);
-
         if (!locator)
           throw new Error(`Assertion failed: The locator should have been registered`);
 
@@ -526,17 +522,14 @@ export class Project {
 
       for (const descriptorHash of haveBeenAliased) {
         const descriptor = allDescriptors.get(descriptorHash);
-
         if (!descriptor)
           throw new Error(`The descriptor should have been registered`);
 
         const aliasHash = this.resolutionAliases.get(descriptorHash);
-
         if (aliasHash === undefined)
           throw new Error(`The descriptor should have an alias`);
 
         const resolution = allResolutions.get(aliasHash);
-
         if (resolution === undefined)
           throw new Error(`The resolution should have been registered`);
 
@@ -573,7 +566,6 @@ export class Project {
       hasBeenTraversed.add(parentLocator.locatorHash);
 
       const parentPackage = allPackages.get(parentLocator.locatorHash);
-
       if (!parentPackage)
         throw new Error(`The package (${structUtils.prettyLocator(this.configuration, parentLocator)}) should have been registered`);
 
@@ -584,12 +576,10 @@ export class Project {
           continue;
 
         const resolution = allResolutions.get(descriptor.descriptorHash);
-
         if (!resolution)
           throw new Error(`The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
         let pkg = allPackages.get(resolution);
-
         if (!pkg)
           throw new Error(`The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
@@ -670,7 +660,6 @@ export class Project {
 
     for (const workspace of this.workspacesByLocator.values()) {
       const pkg = allPackages.get(workspace.anchoredLocator.locatorHash);
-
       if (!pkg)
         throw new Error(`Expected workspace to have been resolved`);
 
@@ -855,7 +844,6 @@ export class Project {
 
     try {
       const currentScript = await readFile(this.configuration.pnpPath, `utf8`);
-
       if (currentScript === pnpScript) {
         return;
       }
@@ -883,11 +871,10 @@ export class Project {
     // reverse lookup table, where the key will be the resolved locator and the value will be a set
     // of all the descriptors that resolved to it. Then we use it to construct an optimized version
     // if the final object.
-    const reverseLookup = new Map<string, Set<string>>();
+    const reverseLookup = new Map<LocatorHash, Set<DescriptorHash>>();
 
     for (const [descriptorHash, locatorHash] of this.storedResolutions.entries()) {
       let descriptorHashes = reverseLookup.get(locatorHash);
-
       if (!descriptorHashes)
         reverseLookup.set(locatorHash, descriptorHashes = new Set());
 
@@ -902,7 +889,6 @@ export class Project {
 
     for (const [locatorHash, descriptorHashes] of reverseLookup.entries()) {
       const pkg = this.storedPackages.get(locatorHash);
-
       if (!pkg)
         throw new Error(`The package should have been registered`);
 
@@ -915,7 +901,6 @@ export class Project {
 
       for (const descriptorHash of descriptorHashes) {
         const descriptor = this.storedDescriptors.get(descriptorHash);
-
         if (!descriptor)
           throw new Error(`The descriptor should have been registered`);
 

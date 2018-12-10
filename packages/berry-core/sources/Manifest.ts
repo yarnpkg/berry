@@ -1,7 +1,8 @@
-import {FakeFS, NodeFS}    from '@berry/zipfs';
+import {FakeFS, NodeFS}            from '@berry/zipfs';
 
-import * as structUtils    from './structUtils';
-import {Ident, Descriptor} from './types';
+import * as structUtils            from './structUtils';
+import {IdentHash, DescriptorHash} from './types';
+import {Ident, Descriptor}         from './types';
 
 export interface WorkspaceDefinition {
   pattern: string;
@@ -14,9 +15,9 @@ export class Manifest {
   public bin: Map<string, string> = new Map();
   public scripts: Map<string, string> = new Map();
 
-  public dependencies: Map<string, Descriptor> = new Map();
-  public devDependencies: Map<string, Descriptor> = new Map();
-  public peerDependencies: Map<string, Descriptor> = new Map();
+  public dependencies: Map<DescriptorHash, Descriptor> = new Map();
+  public devDependencies: Map<DescriptorHash, Descriptor> = new Map();
+  public peerDependencies: Map<DescriptorHash, Descriptor> = new Map();
 
   public workspaceDefinitions: Array<WorkspaceDefinition> = [];
 

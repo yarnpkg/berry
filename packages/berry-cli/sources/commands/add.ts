@@ -64,7 +64,7 @@ export default (concierge: any) => concierge
           return !structUtils.areIdentsEqual(descriptor, other);
         }));
 
-        workspace.manifest[target].set(descriptor.identHash, descriptor);
+        workspace.manifest[target].set(descriptor.descriptorHash, descriptor);
       }
 
       await project.install({cache});
