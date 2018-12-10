@@ -65,7 +65,7 @@ export class AliasFS extends FakeFS {
   writeFileSync(p: string, content: Buffer | string) {
     return this.baseFs.writeFileSync(p, content);
   }
-  
+
   async mkdirPromise(p: string) {
     return await this.baseFs.mkdirPromise(p);
   }

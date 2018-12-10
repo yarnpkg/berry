@@ -15,8 +15,12 @@ export type FetchOptions = MinimalFetchOptions & {
   rootFs: FakeFS,
 };
 
+// The returned function is the cleanup function that frees the resources that
+// may have been allocated by the fetcher (such as closing file descriptors)
+export type FetchResult = [FakeFS, () => Promise<void>];
+
 export interface Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions): boolean;
 
-  fetch(locator: Locator, opts: FetchOptions): Promise<FakeFS>;
+  fetch(locator: Locator, opts: FetchOptions): Promise<FetchResult>;
 }

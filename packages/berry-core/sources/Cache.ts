@@ -7,6 +7,7 @@ import {dirname, relative, resolve}              from 'path';
 import {promisify}                               from 'util';
 
 import {Configuration}                           from './Configuration';
+import {FetchResult}                             from './Fetcher';
 import * as structUtils                          from './structUtils';
 import {Locator}                                 from './types';
 
@@ -99,22 +100,14 @@ export class Cache {
     return virtualFs;
   }
 
-  async fetchFromCache(locator: Locator, loader?: () => Promise<FakeFS>) {
+  async fetchFromCache(locator: Locator, loader?: () => Promise<FetchResult>): Promise<FetchResult> {
     const key = this.getCacheKey(locator);
     const file = this.getFilePath(key);
 
     const baseFs = new NodeFS();
 
-    return await this.writeFileIntoCache<FakeFS>(file, async () => {
-      let packageFs;
-
+    return await this.writeFileIntoCache<FetchResult>(file, async () => {
       if (baseFs.existsSync(file)) {
-        try {
-          packageFs = new ZipFS(file, {baseFs});
-        } catch (error) {
-          error.message = `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
-          throw error;
-        }
         this.cacheHitCount += 1;
       } else {
         this.cacheMissCount += 1;
@@ -122,21 +115,30 @@ export class Cache {
         if (!loader)
           throw new Error(`Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
 
-        packageFs = await loader();
+        const [packageFs, release] = await loader();
 
         if (!(packageFs instanceof ZipFS))
           throw new Error(`The fetchers plugged into the cache must return a ZipFS instance`);
 
-        const source = packageFs.close();
+        const source = packageFs.getRealPath();
+        await release();
 
         await fsx.chmod(source, 0o644);
         await fsx.move(source, file);
+      }
 
-        packageFs = new ZipFS(file);
+      let zipFs: ZipFS;
+      let packageFs: FakeFS;
+
+      try {
+        packageFs = zipFs = new ZipFS(file, {readOnly: true, baseFs});
+      } catch (error) {
+        error.message = `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
+        throw error;
       }
 
       if (packageFs.existsSync(`berry-pkg`)) {
-        const stat = packageFs.statSync(`berry-pkg`);
+        const stat = await packageFs.lstatPromise(`berry-pkg`);
 
         if (stat.isSymbolicLink()) {
           packageFs = new JailFS(await packageFs.readlinkPromise(`berry-pkg`), {baseFs: packageFs});
@@ -145,7 +147,7 @@ export class Cache {
         }
       }
 
-      return packageFs;
+      return [packageFs, async () => zipFs.close()] as FetchResult;
     });
   }
 

@@ -1,7 +1,7 @@
-import {Linker, LinkOptions, MinimalLinkOptions}        from '@berry/core';
-import {Locator, Manifest, Package, Project, Workspace} from '@berry/core';
-import {structUtils}                                    from '@berry/core';
-import {CwdFS, FakeFS}                                  from '@berry/zipfs';
+import {Linker, LinkOptions, LinkTree, MinimalLinkOptions} from '@berry/core';
+import {Locator, Manifest, Package, Project, Workspace}    from '@berry/core';
+import {structUtils}                                       from '@berry/core';
+import {CwdFS, FakeFS}                                     from '@berry/zipfs';
 
 type DTTState = {
   chain: Map<string, string>,
@@ -16,6 +16,43 @@ export class NodeLinker implements Linker<DTTState> {
   async setup(opts: LinkOptions) {
     return {
       dependencyTreeTraversal: {
+        hoist(tree: LinkTree): LinkTree {
+          divideAndConquer(tree);
+          return tree;
+
+          function checkInheritedDependencies(transitiveDependency: LinkTree, directDependency: LinkTree) {
+            return true;
+          }
+
+          function divideAndConquer(tree: LinkTree) {
+            for (const children of tree.children)
+              divideAndConquer(children);
+
+            for (const directDependency of Array.from(tree.children)) {
+              for (const transitiveDependency of Array.from(directDependency.children)) {
+                let availableDependency = tree.children.find(dependency => dependency.locator.identHash === directDependency.locator.identHash);
+                const isHoistable = (!availableDependency || availableDependency.locator.locatorHash === directDependency.locator.locatorHash) && checkInheritedDependencies(transitiveDependency, directDependency);
+
+                if (isHoistable && !availableDependency) {
+                  tree.children.push(availableDependency = {
+                    ... transitiveDependency,
+                    hoistedFrom: [],
+                    isHardDependency: false,
+                  });
+                }
+
+                if (isHoistable) {
+                  if (!availableDependency)
+                    throw new Error(`Assertion failed: the dependency should be available`);
+
+                  availableDependency.hoistedFrom = availableDependency.hoistedFrom.concat(transitiveDependency.hoistedFrom);
+                  directDependency.children.splice(directDependency.children.indexOf(transitiveDependency), 1);
+                }
+              }
+            }
+          }
+        },
+
         async onRoot(locator: Locator, targetFs: FakeFS | null): Promise<DTTState> {
           if (!targetFs)
             throw new Error(`Assertion failed: this linker cannot be the direct root of a dependency tree`);
@@ -30,10 +67,7 @@ export class NodeLinker implements Linker<DTTState> {
           return {targetFs: nextTargetFs, chain};
         },
 
-        async onPackage({chain, targetFs}: DTTState, locator: Locator, packageFs: FakeFS): Promise<[DTTState, null] | null> {
-          if (chain.get(locator.identHash) === locator.locatorHash)
-            return null;
-
+        async onPackage({chain, targetFs}: DTTState, locator: Locator, packageFs: FakeFS): Promise<[DTTState, null]> {
           await targetFs.mkdirpPromise(`.`);
           await targetFs.copyPromise(`.`, `.`, {baseFs: packageFs});
 

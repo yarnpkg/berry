@@ -52,6 +52,7 @@ class StatEntry {
 export type Options = {
   baseFs?: FakeFS,
   create?: boolean,
+  readOnly?: boolean,
   stats?: Stats,
 };
 
@@ -66,7 +67,9 @@ export class ZipFS extends FakeFS {
   private readonly listings: Map<string, Set<string>> = new Map();
   private readonly entries: Map<string, number> = new Map();
 
-  constructor(p: string, {baseFs = new NodeFS(), create = false, stats}: Options = {}) {
+  private ready = false;
+
+  constructor(p: string, {baseFs = new NodeFS(), create = false, readOnly = false, stats}: Options = {}) {
     super();
 
     this.path = p;
@@ -90,9 +93,13 @@ export class ZipFS extends FakeFS {
     const errPtr = libzip.malloc(4);
 
     try {
-      const flags = create
-        ? libzip.ZIP_CREATE | libzip.ZIP_TRUNCATE
-        : 0;
+      let flags = 0;
+
+      if (create)
+        flags |= libzip.ZIP_CREATE | libzip.ZIP_TRUNCATE;
+
+      if (readOnly)
+        flags |= libzip.ZIP_RDONLY;
 
       this.zip = libzip.open(p, flags, errPtr);
 
@@ -120,6 +127,8 @@ export class ZipFS extends FakeFS {
 
       this.registerEntry(p, t);
     }
+
+    this.ready = true;
   }
 
   getRealPath() {
@@ -127,18 +136,19 @@ export class ZipFS extends FakeFS {
   }
 
   close() {
+    if (!this.ready)
+      throw Object.assign(new Error(`EBUSY: archive closed, close`), {code: `EBUSY`});
+
     const rc = libzip.close(this.zip);
 
     if (rc === -1)
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
-    return this.path;
+    this.ready = false;
   }
 
   discard() {
     libzip.discard(this.zip);
-
-    return this.path;
   }
 
   createReadStream(p: string, {encoding}: {encoding?: string} = {}): ReadStream {
@@ -151,11 +161,16 @@ export class ZipFS extends FakeFS {
     });
 
     const immediate = setImmediate(() => {
-      const data = this.readFileSync(p, encoding);
+      try {
+        const data = this.readFileSync(p, encoding);
 
-      stream.bytesRead = data.length;
-      stream.write(data);
-      stream.end();
+        stream.bytesRead = data.length;
+        stream.write(data);
+        stream.end();
+      } catch (error) {
+        stream.emit(`error`, error);
+        stream.end();
+      }
     });
 
     return stream;
@@ -219,7 +234,7 @@ export class ZipFS extends FakeFS {
     if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
       throw Object.assign(new Error(`ENOTDIR: not a directory, lstat '${p}'`), {code: `ENOTDIR`});
 
-    return this.statImpl(`lstat '${p}'`, p);
+    return this.statImpl(`lstat '${p}'`, resolvedP);
   }
 
   private statImpl(reason: string, p: string): Stats {
@@ -305,6 +320,9 @@ export class ZipFS extends FakeFS {
   }
 
   private resolveFilename(reason: string, p: string, resolveLastComponent: boolean = true) {
+    if (!this.ready)
+      throw Object.assign(new Error(`EBUSY: archive closed, ${reason}`), {code: `EBUSY`});
+
     let resolvedP = posix.resolve(`/`, p);
 
     if (resolvedP === `/`)

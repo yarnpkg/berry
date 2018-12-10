@@ -1,11 +1,11 @@
 import querystring = require('querystring');
 
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {Locator}                                    from '@berry/core';
-import {structUtils, tgzUtils}                      from '@berry/core';
-import {posix}                                      from 'path';
+import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from '@berry/core';
+import {Locator}                                                 from '@berry/core';
+import {structUtils, tgzUtils}                                   from '@berry/core';
+import {posix}                                                   from 'path';
 
-import {TARBALL_REGEXP, PROTOCOL}                   from './constants';
+import {TARBALL_REGEXP, PROTOCOL}                                from './constants';
 
 export class TarballFileFetcher implements Fetcher {
   public mountPoint: string = `cached-fetchers`;
@@ -22,16 +22,21 @@ export class TarballFileFetcher implements Fetcher {
 
   async fetch(locator: Locator, opts: FetchOptions) {
     const {parentLocator, filePath} = this.parseLocator(locator);
-    const parentFs = await opts.fetcher.fetch(parentLocator, opts);
 
-    const tgzData = posix.isAbsolute(filePath)
-      ? await opts.rootFs.readFilePromise(filePath)
-      : await parentFs.readFilePromise(filePath);
+    const [baseFs, release] = posix.isAbsolute(filePath)
+      ? [opts.rootFs, async () => {}]
+      : await opts.fetcher.fetch(parentLocator, opts);
 
-    return await tgzUtils.makeArchive(tgzData, {
-      stripComponents: 1,
-      prefixPath: `berry-pkg`,
-    });
+    try {
+      const packageFs = await tgzUtils.makeArchive(await baseFs.readFilePromise(filePath), {
+        prefixPath: `berry-pkg`,
+        stripComponents: 1,
+      });
+
+      return [packageFs, async () => packageFs.close()] as FetchResult;
+    } finally {
+      release();
+    }
   }
 
   private parseLocator(locator: Locator) {

@@ -1,8 +1,8 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
-import {Locator}                                    from '@berry/core';
+import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from '@berry/core';
+import {httpUtils, structUtils, tgzUtils}                        from '@berry/core';
+import {Locator}                                                 from '@berry/core';
 
-import * as githubUtils                             from './githubUtils';
+import * as githubUtils                                          from './githubUtils';
 
 export class GithubFetcher implements Fetcher {
   public mountPoint: string = `cached-fetchers`;
@@ -18,15 +18,15 @@ export class GithubFetcher implements Fetcher {
     const tgz = await httpUtils.get(this.getLocatorUrl(locator, opts), opts.project.configuration);
     const prefixPath = `node_modules/${structUtils.requirableIdent(locator)}`;
 
-    const archive = await tgzUtils.makeArchive(tgz, {
+    const packageFs = await tgzUtils.makeArchive(tgz, {
       stripComponents: 1,
       prefixPath,
     });
 
     // Since we installed everything into a subdirectory, we need to create this symlink to instruct the cache as to which directory to use
-    await archive.symlinkPromise(prefixPath, `berry-pkg`);
+    await packageFs.symlinkPromise(prefixPath, `berry-pkg`);
 
-    return archive;
+    return [packageFs, async () => packageFs.close()] as FetchResult;
   }
 
   private getLocatorUrl(locator: Locator, opts: MinimalFetchOptions) {

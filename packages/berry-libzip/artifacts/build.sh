@@ -26,7 +26,7 @@ LIBZIP_VERSION=1.5.1
     emmake make zlibstatic
 )
 
-[[ -f ./libzip-"$LIBZIP_VERSION"/lib/libzip.a ]] || (
+(
     cd "$THIS_DIR"
 
     if ! [[ -e libzip-"$LIBZIP_VERSION".tar.gz ]]; then
@@ -43,6 +43,8 @@ LIBZIP_VERSION=1.5.1
 
     emcmake cmake -Wno-dev -DBUILD_SHARED_LIBS=OFF -DENABLE_GNUTLS=OFF -DENABLE_OPENSSL=OFF -DENABLE_COMMONCRYPTO=OFF -DZLIB_LIBRARY="$THIS_DIR"/zlib-"$ZLIB_VERSION"/libz.a -DZLIB_INCLUDE_DIR="$THIS_DIR"/zlib-"$ZLIB_VERSION" .
     emmake make zip
+
+    echo Built zip
 )
 
 (
@@ -60,6 +62,7 @@ LIBZIP_VERSION=1.5.1
         -s ENVIRONMENT=node \
         -s NODERAWFS=1 \
         -s SINGLE_FILE=1 \
+        -s ASSERTIONS=1 -s SAFE_HEAP=1 \
         -I./libzip-"$LIBZIP_VERSION"/lib \
         -I./libzip-"$LIBZIP_VERSION" \
         -O3 \

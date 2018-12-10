@@ -1,11 +1,11 @@
 import querystring = require('querystring');
 
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {Locator}                                    from '@berry/core';
-import {structUtils, tgzUtils}                      from '@berry/core';
-import {posix}                                      from 'path';
+import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from '@berry/core';
+import {Locator}                                                 from '@berry/core';
+import {structUtils, tgzUtils}                                   from '@berry/core';
+import {posix}                                                   from 'path';
 
-import {PROTOCOL}                                   from './constants';
+import {PROTOCOL}                                                from './constants';
 
 export class FileFetcher implements Fetcher {
   public mountPoint: string = `cached-fetchers`;
@@ -19,12 +19,21 @@ export class FileFetcher implements Fetcher {
 
   async fetch(locator: Locator, opts: FetchOptions) {
     const {parentLocator, filePath} = this.parseLocator(locator);
-    const parentFs = await opts.fetcher.fetch(parentLocator, opts);
 
-    return await tgzUtils.makeArchiveFromDirectory(posix.resolve(`/`, filePath), {
-      baseFs: posix.isAbsolute(filePath) ? opts.rootFs : parentFs,
-      prefixPath: `berry-pkg`,
-    });
+    let [baseFs, release] = posix.isAbsolute(filePath)
+      ? [opts.rootFs, async () => {}]
+      : await opts.fetcher.fetch(parentLocator, opts);
+
+    try {
+      const packageFs = await tgzUtils.makeArchiveFromDirectory(filePath, {
+        prefixPath: `berry-pkg`,
+        baseFs,
+      });
+
+      return [packageFs, async () => packageFs.close()] as FetchResult;
+    } finally {
+      await release();
+    }
   }
 
   private parseLocator(locator: Locator) {

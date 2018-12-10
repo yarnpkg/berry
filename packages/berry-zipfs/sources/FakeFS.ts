@@ -49,15 +49,12 @@ export abstract class FakeFS {
     if (p === `/`)
       return;
 
-    console.log({p})
-
     const parts = p.split(`/`);
 
     for (let u = 2; u <= parts.length; ++u) {
       const subPath = parts.slice(0, u).join(`/`);
 
       if (!this.existsSync(subPath)) {
-        console.log({subPath})
         await this.mkdirPromise(subPath);
       }
     }
@@ -87,7 +84,7 @@ export abstract class FakeFS {
       await this.mkdirpPromise(destination);
       const directoryListing = await baseFs.readdirPromise(source);
       await Promise.all(directoryListing.map(entry => {
-        this.copyPromise(posix.join(destination, entry), posix.join(source, entry), {baseFs});
+        return this.copyPromise(posix.join(destination, entry), posix.join(source, entry), {baseFs});
       }));
     } else if (stat.isFile()) {
       const content = await baseFs.readFilePromise(source);

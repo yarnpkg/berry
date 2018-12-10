@@ -6,7 +6,7 @@ import {dirname}                                from 'path';
 
 import {parseSyml, stringifySyml}               from '@berry/parsers';
 import {extractPnpSettings, generatePnpScript}  from '@berry/pnp';
-import {CwdFS, FakeFS, NodeFS}                  from '@berry/zipfs';
+import {CwdFS, FakeFS, NodeFS, ZipFS}           from '@berry/zipfs';
 
 import {Cache}                                  from './Cache';
 import {Configuration}                          from './Configuration';
@@ -634,7 +634,14 @@ export class Project {
             virtualizedPackage.dependencies.set(peerDescriptor.descriptorHash, peerDescriptor);
           }
 
-          virtualizedPackage.peerDependencies.clear();
+          // If you find this line, it's because I forgot to remove it after
+          // successfully implementing the linkers tree traversal. We were
+          // previously entirely removing the peer dependencies (because we
+          // didn't need them to compute the PnP map, due to its
+          // characteristics), but now we need to preserve the information
+          // for other linkers.
+          //
+          // virtualizedPackage.peerDependencies.clear();
 
           resolvePeerDependencies(virtualizedPackage);
 
@@ -701,12 +708,13 @@ export class Project {
       if (workspace) {
         this.storedLocations.set(pkg.locatorHash, workspace.cwd);
       } else {
-        const location = await fetcher.fetch(pkg, fetcherOptions);
-        this.storedLocations.set(pkg.locatorHash, location.getRealPath());
+        const [packageFs, release] = await fetcher.fetch(pkg, fetcherOptions);
+        this.storedLocations.set(pkg.locatorHash, packageFs.getRealPath());
+        await release();
       }
     }
   }
-
+/*
   async linkEverything(cache: Cache) {
     const fetcher = this.configuration.makeFetcher();
     const fetcherOptions = {project: this, readOnly: true, rootFs: new NodeFS(), cache, fetcher};
@@ -716,7 +724,65 @@ export class Project {
 
     const linkerDefinitions = new Map(linkers.map(linker => [linker, null] as [Linker, any]));
 
-    const packageFsCache = new Map<string, FakeFS>();
+    // Generate a recursive TreeNode tree from the specified locator passed as
+    // parameter. The tree contains the relations between packages, but also
+    // extraneous data structures used by the hoisting algorithms to indicate
+    // the original location of the packages in the dependency tree.
+
+    const generateLinkTree = async (treeLinker: Linker, locator: Locator, packageList: Set<string>, buildOrder: number) => {
+      const pkg = this.storedPackages.get(locator.locatorHash);
+      if (!pkg)
+        throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, locator)}) should have been registered`);
+
+      const childrenLocators = [];
+      const inheritedDependencies = [];
+
+      const linker = linkers.find(linker => linker.supports(pkg, linkerOptions));
+      if (linker === treeLinker) {
+        // In this first pass, we split the dependencies in two buckets: the first
+        // one with the direct dependencies, and the second one with the deps that
+        // are obtained from a package located somewhere in our dependency chain.
+
+        for (const descriptor of pkg.dependencies.values()) {
+          const resolution = this.storedResolutions.get(descriptor.descriptorHash);
+          if (!resolution)
+            throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+
+          const dependency = this.storedPackages.get(resolution);
+          if (!dependency)
+            throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+
+          // If this isn't the first time that a package is found in the same
+          // branch, then it's a circular dependency that we must break. To do
+          // this, we change it to be an inherited dependency (we are allowed to
+          // do this because it doesn't change the original version).
+          if (packageList.has(dependency.locatorHash)) {
+            inheritedDependencies.push(dependency.locatorHash);
+          } else {
+            childrenLocators.push(dependency.locatorHash);
+          }
+        }
+      }
+
+      // Then in a second pass (we have to do it in a second pass so that the
+      // packageList can be fully ready for the next recursion) we iterate over
+      // the children locators and recurse to build their own trees.
+
+      const nextPackageList = new Set([...packageList, ...childrenLocators]);
+
+      const children = childrenLocators.map(locator => {
+        //return generateLinkTree(treeLinker, locator, nextPackageList, buildOrder + 1);
+      }) as any;
+
+      return {
+        hoistedFrom: [],
+        isHardDependency: true,
+        buildOrder,
+        children,
+        inheritedDependencies,
+        locator,
+      };
+    };
 
     const dispatchLinkers = async (locator: Locator, currentLinker: Linker | null, currentState: any) => {
       const pkg = this.storedPackages.get(locator.locatorHash);
@@ -754,20 +820,23 @@ export class Project {
         if (!dependencyTreeTraversal)
           continue;
 
+        //const linkTree = generateLinkTree(linker, packageList);
+
         const baseState = currentLinker !== linker
           ? await dependencyTreeTraversal.onRoot(pkg, currentState.targetFs)
           : currentState;
 
         for (const pkg of packageList) {
           const edgeState = await dependencyTreeTraversal.onEdge(baseState, pkg);
+          const [packageFs, release] = await fetcher.fetch(pkg, fetcherOptions);
 
-          let packageFs = packageFsCache.get(pkg.locatorHash);
-          if (!packageFs)
-            packageFsCache.set(pkg.locatorHash, packageFs = await fetcher.fetch(pkg, fetcherOptions));
+          let result;
 
-          const result = await dependencyTreeTraversal.onPackage(edgeState, pkg, packageFs);
-          if (!result)
-            continue;
+          try {
+            result = await dependencyTreeTraversal.onPackage(edgeState, pkg, packageFs);
+          } finally {
+            await release();
+          }
 
           const [nodeState, buildFn] = result;
           await dispatchLinkers(pkg, linker, nodeState);
@@ -776,11 +845,10 @@ export class Project {
     };
 
     for (const workspace of this.workspacesByCwd.values()) {
-      console.log(workspace.cwd, workspace.anchoredLocator)
       await dispatchLinkers(workspace.anchoredLocator, null, {targetFs: new CwdFS(workspace.cwd)});
     }
   }
-
+*/
   async generatePnpFile() {
     const pnpSettings = await extractPnpSettings(this);
     const pnpScript = generatePnpScript(pnpSettings);
@@ -805,7 +873,7 @@ export class Project {
 
     await this.resolveEverything(cache);
     await this.fetchEverything(cache);
-    await this.linkEverything(cache);
+    // await this.linkEverything(cache);
 
     await this.generatePnpFile();
   }

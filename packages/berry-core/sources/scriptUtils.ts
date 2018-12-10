@@ -66,17 +66,22 @@ export async function executePackageScript(locator: Locator, scriptName: string,
   const fetcher = project.configuration.makeFetcher();
   const fetcherOptions = {readOnly: true, rootFs: new NodeFS(), cache, fetcher, project};
 
-  const packageFs = await fetcher.fetch(locator, fetcherOptions);
-  const manifest = await Manifest.fromFile(`package.json`, {baseFs: packageFs});
+  const [packageFs, release] = await fetcher.fetch(locator, fetcherOptions);
 
-  const script = manifest.scripts.get(scriptName);
-  if (script === undefined)
-    return;
+  try {
+    const manifest = await Manifest.fromFile(`package.json`, {baseFs: packageFs});
 
-  const cwd = packageFs.getRealPath();
-  const env = await makeScriptEnv(project);
+    const script = manifest.scripts.get(scriptName);
+    if (script === undefined)
+      return;
 
-  await runShell(script, {args, cwd, env, stdin, stdout, stderr});
+    const cwd = packageFs.getRealPath();
+    const env = await makeScriptEnv(project);
+
+    await runShell(script, {args, cwd, env, stdin, stdout, stderr});
+  } finally {
+    await release();
+  }
 }
 
 type ExecuteWorkspaceScriptOptions = {
@@ -122,7 +127,7 @@ export async function getPackageAccessibleBinaries(locator: Locator, {cache, pro
     if (!pkg)
       continue;
 
-    const packageFs = await fetcher.fetch(pkg, fetcherOptions);
+    const [packageFs, release] = await fetcher.fetch(pkg, fetcherOptions);
     const manifest = await Manifest.fromFile(`package.json`, {baseFs: packageFs});
 
     for (const [binName, file] of manifest.bin.entries()) {

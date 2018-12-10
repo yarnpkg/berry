@@ -37,12 +37,17 @@ export class TarballHttpResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const packageFs = await opts.fetcher.fetch(locator, opts);
-    const manifest = await Manifest.fromFile(`package.json`, {baseFs: packageFs});
+    const [baseFs, release] = await opts.fetcher.fetch(locator, opts);
 
-    const dependencies = manifest.dependencies;
-    const peerDependencies = manifest.peerDependencies;
+    try {
+      const manifest = await Manifest.fromFile(`package.json`, {baseFs});
 
-    return {... locator, dependencies, peerDependencies};
+      const dependencies = manifest.dependencies;
+      const peerDependencies = manifest.peerDependencies;
+
+      return {... locator, dependencies, peerDependencies};
+    } finally {
+      await release();
+    }
   }
 }

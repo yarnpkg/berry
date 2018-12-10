@@ -7,6 +7,16 @@ import {execFileSync}  from 'child_process';
 
 import {plugins}       from './plugins';
 
+const x = process.exit;
+// @ts-ignore
+process.exit = n => (console.log(new Error(`Exiting ${n}`).stack), x(n))
+
+process.removeAllListeners("unhandledRejection");
+process.on('unhandledRejection', err => {
+  console.error(`unhandled`, err.stack);
+  process.exit(1);
+});
+
 function parseBoolean(value: string | undefined) {
   if (value === undefined) {
     return false;
