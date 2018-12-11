@@ -20,9 +20,7 @@ export class NodeLinker implements Linker<DTTState> {
           return tree;
 
           function checkInheritedDependencies(transitiveDependency: LinkTree, directDependency: LinkTree) {
-            // If the transitive dependency depends on a dependency provided by
-            // its immediate parent, then it cannot be hoisted above its parent
-            for (let identHash of transitiveDependency.inheritedDependencies)
+            for (const identHash of transitiveDependency.inheritedDependencies)
               if (directDependency.children.find(children => children.locator.identHash === identHash))
                 return false;
 
@@ -35,24 +33,58 @@ export class NodeLinker implements Linker<DTTState> {
 
             for (const directDependency of Array.from(tree.children)) {
               for (const transitiveDependency of Array.from(directDependency.children)) {
-                let availableDependency = tree.children.find(dependency => dependency.locator.identHash === directDependency.locator.identHash);
-                const isHoistable = (!availableDependency || availableDependency.locator.locatorHash === directDependency.locator.locatorHash) && checkInheritedDependencies(transitiveDependency, directDependency);
+                // If the transitive dependency depends on a dependency provided by
+                // its immediate parent, then it cannot be hoisted above its parent
+                if (!checkInheritedDependencies(transitiveDependency, directDependency))
+                  continue;
 
-                if (isHoistable && !availableDependency) {
-                  tree.children.push(availableDependency = {
-                    ... transitiveDependency,
-                    hoistedFrom: [],
-                    isHardDependency: false,
-                  });
-                }
+                // We only allow the hoister to hoist packages that have the
+                // exact same locator (the reasoning is that any optimization
+                // such as merging two overlapping semver ranges should have
+                // been done ahead of time, during the resolution. Doing it
+                // here would require the linker to have a business logic of
+                // what even is "semver", and we want to avoid this to keep
+                // it as pure as possible).
+                //
+                // NOTE: If we want to do this later, the best way is to make
+                // the resolver a required linker option (similar to how the
+                // fetcher is a required resolver option) and add a new member
+                // to the Resolver interface that would be tasked of saying
+                // whether a specified locator is compatible with a specified
+                // descriptor. The main issue is that the LinkTree currently
+                // doesn't contain the descriptors (only the full resolved
+                // locators), so it would have to be reworked.
+                //
+                // NOTE (bis): Even when doing this, it would still have other
+                // issues. In particular, the dependencies of the package to
+                // merge would be hoisted, but then the package to merge would
+                // be merged and removed from the tree - but its dependencies
+                // wouldn't, having been hoisted. This case cannot happen under
+                // the current circumstances, because we are guaranteed that
+                // two packages with the same locators have exactly the same set
+                // of dependencies no matter what (even if they have peer
+                // dependencies, because they'll have been transformed into
+                // virtual packages).
+                const availableDependency = tree.children.find(dependency => structUtils.areIdentsEqual(dependency.locator, transitiveDependency.locator));
+                if (availableDependency && !structUtils.areLocatorsEqual(availableDependency.locator, transitiveDependency.locator))
+                  continue;
 
-                if (isHoistable) {
-                  if (!availableDependency)
-                    throw new Error(`Assertion failed: the dependency should be available`);
+                // If the previous test passed, then the transitive dependency
+                // can be successfully hoisted! In which case we remove it from
+                // its parent.
+                directDependency.children.splice(directDependency.children.indexOf(transitiveDependency), 1);
 
-                  availableDependency.hoistedFrom = availableDependency.hoistedFrom.concat(transitiveDependency.hoistedFrom);
-                  directDependency.children.splice(directDependency.children.indexOf(transitiveDependency), 1);
-                }
+                // If there already is a strictly identical locator, then we can
+                // entirely prune the transitive branch from the tree.
+                if (availableDependency)
+                  continue;
+
+                tree.children.push(transitiveDependency);
+
+                if (transitiveDependency.isHardDependency)
+                  transitiveDependency.hoistedFrom.push(directDependency);
+
+                transitiveDependency.isHardDependency = false;
               }
             }
           }

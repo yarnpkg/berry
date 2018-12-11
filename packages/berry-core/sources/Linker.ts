@@ -2,6 +2,7 @@ import {FakeFS}           from '@berry/zipfs';
 
 import {Cache}            from './Cache';
 import {Project}          from './Project';
+import {IdentHash}        from './types';
 import {Package, Locator} from './types';
 
 export type MinimalLinkOptions = {
@@ -14,9 +15,9 @@ export type LinkOptions = MinimalLinkOptions & {
 export type LinkTree = {
   locator: Locator,
   children: Array<LinkTree>,
-  inheritedDependencies: Array<string>,
+  inheritedDependencies: Array<IdentHash>,
   isHardDependency: boolean,
-  hoistedFrom: Array<Array<string>>,
+  hoistedFrom: Array<LinkTree>,
   buildOrder: number,
 };
 

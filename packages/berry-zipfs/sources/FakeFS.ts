@@ -88,7 +88,7 @@ export abstract class FakeFS {
       }));
     } else if (stat.isFile()) {
       const content = await baseFs.readFilePromise(source);
-      await baseFs.writeFilePromise(destination, content);
+      await this.writeFilePromise(destination, content);
     } else {
       throw new Error(`Unsupported file type (mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
     }
@@ -105,7 +105,7 @@ export abstract class FakeFS {
       }
     } else if (stat.isFile()) {
       const content = baseFs.readFileSync(source);
-      baseFs.writeFileSync(destination, content);
+      this.writeFileSync(destination, content);
     } else {
       throw new Error(`Unsupported file type (mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
     }

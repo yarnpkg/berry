@@ -766,8 +766,7 @@ export class Project {
       // the children locators and recurse to build their own trees.
 
       const nextAvailablePackages = new Map(availablePackages);
-      for (const locator of childrenLocators)
-        nextAvailablePackages.set(locator.identHash, locator.locatorHash);
+      nextAvailablePackages.set(locator.identHash, locator.locatorHash);
 
       const children = childrenLocators.map(locator => {
         return generateLinkTree(treeLinker, locator, nextAvailablePackages, buildOrder + 1);
