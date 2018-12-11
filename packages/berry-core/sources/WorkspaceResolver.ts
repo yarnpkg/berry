@@ -1,6 +1,7 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator}                             from './types';
+import {LinkType}                                        from './types';
 
 export class WorkspaceResolver implements Resolver {
   static protocol = `workspace:`;
@@ -50,7 +51,9 @@ export class WorkspaceResolver implements Resolver {
   async resolve(locator: Locator, opts: ResolveOptions) {
     const workspace = opts.project.getWorkspaceByLocator(locator);
 
-    const binaries = new Map(workspace.manifest.bin);
+    const languageName = opts.project.configuration.defaultLanguageName;
+    const linkType = LinkType.SOFT;
+
     const dependencies = new Map(workspace.manifest.dependencies);
     const peerDependencies = new Map(workspace.manifest.peerDependencies);
 
@@ -67,6 +70,6 @@ export class WorkspaceResolver implements Resolver {
       dependencies.set(childDescriptor.identHash, childDescriptor);
     }
 
-    return {... locator, binaries, dependencies, peerDependencies};
+    return {... locator, languageName, linkType, dependencies, peerDependencies};
   }
 }

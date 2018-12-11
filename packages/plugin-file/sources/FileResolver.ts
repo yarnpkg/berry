@@ -2,6 +2,7 @@ import querystring = require('querystring');
 
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
 import {Descriptor, Locator, Manifest}                   from '@berry/core';
+import {LinkType}                                        from '@berry/core';
 import {structUtils}                                     from '@berry/core';
 
 import {FILE_REGEXP, PROTOCOL}                           from './constants';
@@ -50,10 +51,13 @@ export class FileResolver implements Resolver {
     try {
       const manifest = await Manifest.fromFile(`package.json`, {baseFs});
 
+      const languageName = opts.project.configuration.defaultLanguageName;
+      const linkType = LinkType.HARD;
+
       const dependencies = manifest.dependencies;
       const peerDependencies = manifest.peerDependencies;
 
-      return {... locator, dependencies, peerDependencies};
+      return {... locator, languageName, linkType, dependencies, peerDependencies};
     } finally {
       await release();
     }

@@ -1,5 +1,6 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
 import {httpUtils, structUtils}                          from '@berry/core';
+import {LinkType}                                        from '@berry/core';
 import {Ident, Descriptor, Locator, Package}             from '@berry/core';
 
 import * as githubUtils                                  from './githubUtils';
@@ -26,10 +27,12 @@ export class GithubResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const binaries = new Map();
+    const languageName = opts.project.configuration.defaultLanguageName;
+    const linkType = LinkType.HARD;
+
     const dependencies = new Map();
     const peerDependencies = new Map();
 
-    return {... locator, binaries, dependencies, peerDependencies};
+    return {... locator, languageName, linkType, dependencies, peerDependencies};
   }
 }

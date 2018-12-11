@@ -21,6 +21,7 @@ module.exports = {
   },
 
   resolveLoader: {
+    modules: [`${__dirname}/../node_modules`],
     plugins: [PnpWebpackPlugin.moduleLoader(module)],
   },
 

@@ -2,6 +2,7 @@ import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import {WorkspaceResolver}                               from './WorkspaceResolver';
 import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator}                             from './types';
+import {LinkType}                                        from './types';
 
 export class WorkspaceBaseResolver implements Resolver {
   static protocol = `workspace-base:`;
@@ -35,8 +36,11 @@ export class WorkspaceBaseResolver implements Resolver {
   async resolve(locator: Locator, opts: ResolveOptions) {
     const workspace = opts.project.getWorkspaceByLocator(locator);
 
-    const binaries = new Map(workspace.manifest.bin);
+    const languageName = `unknown`;
+    const linkType = LinkType.SOFT;
+
     const dependencies = new Map([... workspace.manifest.dependencies, ... workspace.manifest.devDependencies]);
+    const peerDependencies = new Map();
 
     for (const workspaceCwd of workspace.workspacesCwds) {
       const childWorkspace = opts.project.getWorkspaceByCwd(workspaceCwd);
@@ -51,9 +55,6 @@ export class WorkspaceBaseResolver implements Resolver {
       dependencies.set(childDescriptor.identHash, childDescriptor);
     }
 
-    // No peer dependencies for workspaces when installed as root points
-    const peerDependencies = new Map();
-
-    return {... locator, binaries, dependencies, peerDependencies};
+    return {... locator, languageName, linkType, dependencies, peerDependencies};
   }
 }

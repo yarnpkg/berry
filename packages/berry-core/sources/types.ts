@@ -20,7 +20,12 @@ export interface Locator extends Ident {
   reference: string,
 };
 
+export enum LinkType { HARD = 'hard', SOFT = 'soft' };
+
 export interface Package extends Locator {
+  languageName: string,
+  linkType: LinkType,
+
   dependencies: Map<IdentHash, Descriptor>,
   peerDependencies: Map<IdentHash, Descriptor>,
 };

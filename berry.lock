@@ -7,6 +7,8 @@ __metadata:
 "@babel/runtime@^7.0.0, @babel/runtime@^7.1.2":
   dependencies:
     regenerator-runtime: ^0.12.0
+  languageName: node
+  linkType: hard
   resolution: @babel/runtime@7.1.5
 
 "@berry/builder@0.0.0, @berry/builder@workspace:0.0.0":
@@ -23,6 +25,8 @@ __metadata:
     val-loader: ^1.1.1
     webpack: ^4.18.0
     webpack-virtual-modules: ^0.1.10
+  languageName: node
+  linkType: soft
   resolution: "@berry/builder@workspace:0.0.0"
 
 "@berry/builder@workspace-base:0.0.0":
@@ -39,6 +43,8 @@ __metadata:
     val-loader: ^1.1.1
     webpack: ^4.18.0
     webpack-virtual-modules: ^0.1.10
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/builder@workspace-base:0.0.0"
 
 "@berry/cli@workspace-base:0.0.0":
@@ -60,6 +66,8 @@ __metadata:
     joi: ^13.6.0
     semver: ^5.5.1
     tmp: ^0.0.33
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/cli@workspace-base:0.0.0"
 
 "@berry/cli@workspace:0.0.0":
@@ -74,6 +82,8 @@ __metadata:
     joi: ^13.6.0
     semver: ^5.5.1
     tmp: ^0.0.33
+  languageName: node
+  linkType: soft
   resolution: "@berry/cli@workspace:0.0.0"
 
 "@berry/core@workspace-base:0.0.0":
@@ -98,6 +108,8 @@ __metadata:
     tmp: ^0.0.33
     tunnel: ^0.0.6
     typescript: ^3.0.1
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/core@workspace-base:0.0.0"
 
 "@berry/core@workspace:0.0.0":
@@ -121,18 +133,28 @@ __metadata:
     tar: ^4.4.6
     tmp: ^0.0.33
     tunnel: ^0.0.6
+  languageName: node
+  linkType: soft
   resolution: "@berry/core@workspace:0.0.0"
 
 "@berry/json-proxy@workspace-base:0.0.0":
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/json-proxy@workspace-base:0.0.0"
 
 "@berry/json-proxy@workspace:0.0.0":
+  languageName: node
+  linkType: soft
   resolution: "@berry/json-proxy@workspace:0.0.0"
 
 "@berry/libzip@workspace-base:0.0.0":
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/libzip@workspace-base:0.0.0"
 
 "@berry/libzip@workspace:0.0.0":
+  languageName: node
+  linkType: soft
   resolution: "@berry/libzip@workspace:0.0.0"
 
 "@berry/monorepo@workspace-base:0.0.0":
@@ -183,15 +205,21 @@ __metadata:
     @types/tmp: ^0.0.33
     @types/tunnel: ^0.0.0
     ts-node: ^7.0.1
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/monorepo@workspace-base:0.0.0"
 
 "@berry/parsers@workspace-base:0.0.0":
   dependencies:
     pegjs: ^0.10.0
     typescript: ^3.0.1
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/parsers@workspace-base:0.0.0"
 
 "@berry/parsers@workspace:0.0.0":
+  languageName: node
+  linkType: soft
   resolution: "@berry/parsers@workspace:0.0.0"
 
 "@berry/plugin-constraints@workspace-base:0.0.0":
@@ -200,6 +228,8 @@ __metadata:
     inquirer: ^6.2.0
     node-emoji: ^1.8.1
     tau-prolog: ^0.2.38
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/plugin-constraints@workspace-base:0.0.0"
 
 "@berry/plugin-constraints@workspace:0.0.0":
@@ -208,37 +238,51 @@ __metadata:
     inquirer: ^6.2.0
     node-emoji: ^1.8.1
     tau-prolog: ^0.2.38
+  languageName: node
+  linkType: soft
   resolution: "@berry/plugin-constraints@workspace:0.0.0"
 
 "@berry/plugin-file@workspace-base:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/plugin-file@workspace-base:0.0.0"
 
 "@berry/plugin-file@workspace:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
+  languageName: node
+  linkType: soft
   resolution: "@berry/plugin-file@workspace:0.0.0"
 
 "@berry/plugin-github@0.0.0, @berry/plugin-github@workspace:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
+  languageName: node
+  linkType: soft
   resolution: "@berry/plugin-github@workspace:0.0.0"
 
 "@berry/plugin-github@workspace-base:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
     typescript: ^3.0.1
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/plugin-github@workspace-base:0.0.0"
 
 "@berry/plugin-http@0.0.0, @berry/plugin-http@workspace:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
+  languageName: node
+  linkType: soft
   resolution: "@berry/plugin-http@workspace:0.0.0"
 
 "@berry/plugin-http@workspace-base:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/plugin-http@workspace-base:0.0.0"
 
 "@berry/plugin-hub@0.0.0, @berry/plugin-hub@workspace:0.0.0":
@@ -254,6 +298,8 @@ __metadata:
     react-redux: ^5.0.7
     redux: ^4.0.0
     redux-saga: ^1.0.0-beta.3
+  languageName: node
+  linkType: soft
   peerDependencies:
     @berry/cli: 0.0.0
     @berry/core: 0.0.0
@@ -273,60 +319,82 @@ __metadata:
     react-redux: ^5.0.7
     redux: ^4.0.0
     redux-saga: ^1.0.0-beta.3
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/plugin-hub@workspace-base:0.0.0"
 
 "@berry/plugin-link@workspace-base:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/plugin-link@workspace-base:0.0.0"
 
 "@berry/plugin-link@workspace:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
+  languageName: node
+  linkType: soft
   resolution: "@berry/plugin-link@workspace:0.0.0"
 
 "@berry/plugin-node@0.0.0, @berry/plugin-node@workspace:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
+  languageName: node
+  linkType: soft
   resolution: "@berry/plugin-node@workspace:0.0.0"
 
 "@berry/plugin-node@workspace-base:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/plugin-node@workspace-base:0.0.0"
 
 "@berry/plugin-npm@0.0.0, @berry/plugin-npm@workspace:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
     semver: ^5.5.1
+  languageName: node
+  linkType: soft
   resolution: "@berry/plugin-npm@workspace:0.0.0"
 
 "@berry/plugin-npm@workspace-base:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
     semver: ^5.5.1
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/plugin-npm@workspace-base:0.0.0"
 
 "@berry/plugin-pnp@workspace-base:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/plugin-pnp@workspace-base:0.0.0"
 
 "@berry/plugin-pnp@workspace:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
+  languageName: node
+  linkType: soft
   resolution: "@berry/plugin-pnp@workspace:0.0.0"
 
 "@berry/pnp@0.0.0, @berry/pnp@workspace:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
     @berry/zipfs: "workspace:0.0.0"
+  languageName: node
+  linkType: soft
   resolution: "@berry/pnp@workspace:0.0.0"
 
 "@berry/pnp@workspace-base:0.0.0":
   dependencies:
     @berry/core: "workspace:0.0.0"
     @berry/zipfs: "workspace:0.0.0"
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/pnp@workspace-base:0.0.0"
 
 "@berry/shell@workspace-base:0.0.0":
@@ -334,6 +402,8 @@ __metadata:
     @berry/parsers: "workspace:0.0.0"
     execa: ^1.0.0
     stream-buffers: ^3.0.2
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/shell@workspace-base:0.0.0"
 
 "@berry/shell@workspace:0.0.0":
@@ -341,6 +411,8 @@ __metadata:
     @berry/parsers: "workspace:0.0.0"
     execa: ^1.0.0
     stream-buffers: ^3.0.2
+  languageName: node
+  linkType: soft
   resolution: "@berry/shell@workspace:0.0.0"
 
 "@berry/ui@workspace-base:0.0.0":
@@ -354,6 +426,8 @@ __metadata:
     reopen-tty: ^1.1.2
     ts-node: ^7.0.1
     yoga-dom: ^0.0.14
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/ui@workspace-base:0.0.0"
 
 "@berry/ui@workspace:0.0.0":
@@ -365,6 +439,8 @@ __metadata:
     react-reconciler: ^0.14.0
     reopen-tty: ^1.1.2
     yoga-dom: ^0.0.14
+  languageName: node
+  linkType: soft
   peerDependencies:
     react: "*"
   resolution: "@berry/ui@workspace:0.0.0"
@@ -372,11 +448,15 @@ __metadata:
 "@berry/zipfs@workspace-base:0.0.0":
   dependencies:
     @berry/libzip: "workspace:0.0.0"
+  languageName: unknown
+  linkType: soft
   resolution: "@berry/zipfs@workspace-base:0.0.0"
 
 "@berry/zipfs@workspace:0.0.0":
   dependencies:
     @berry/libzip: "workspace:0.0.0"
+  languageName: node
+  linkType: soft
   resolution: "@berry/zipfs@workspace:0.0.0"
 
 @manaflair/concierge@^0.9.1:
@@ -384,6 +464,8 @@ __metadata:
     chalk: ^1.1.3
     kexec: ^3.0.0
     lodash: ^4.17.4
+  languageName: node
+  linkType: hard
   peerDependencies:
     joi: 10.x.x
   resolution: @manaflair/concierge@0.9.1
@@ -392,81 +474,119 @@ __metadata:
   dependencies:
     babel-runtime: ^6.23.0
     color-diff: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: @manaflair/term-strings@0.10.1
 
 @manaflair/text-layout@^0.11.0:
+  languageName: node
+  linkType: hard
   resolution: @manaflair/text-layout@0.11.0
 
 @mrmlnc/readdir-enhanced@^2.2.1:
   dependencies:
     call-me-maybe: ^1.0.1
     glob-to-regexp: ^0.3.0
+  languageName: node
+  linkType: hard
   resolution: @mrmlnc/readdir-enhanced@2.2.1
 
 @nodelib/fs.stat@^1.1.2:
+  languageName: node
+  linkType: hard
   resolution: @nodelib/fs.stat@1.1.3
 
 @redux-saga/deferred@^1.0.0-beta.3:
+  languageName: node
+  linkType: hard
   resolution: @redux-saga/deferred@1.0.0-beta.3
 
 @redux-saga/delay-p@^1.0.0-beta.3:
   dependencies:
     @redux-saga/symbols: ^1.0.0-beta.3
+  languageName: node
+  linkType: hard
   resolution: @redux-saga/delay-p@1.0.0-beta.3
 
 @redux-saga/is@^1.0.0-beta.3:
   dependencies:
     @redux-saga/symbols: ^1.0.0-beta.3
+  languageName: node
+  linkType: hard
   resolution: @redux-saga/is@1.0.0-beta.3
 
 @redux-saga/symbols@^1.0.0-beta.3:
+  languageName: node
+  linkType: hard
   resolution: @redux-saga/symbols@1.0.0-beta.3
 
 @sindresorhus/is@^0.12.0:
   dependencies:
     symbol-observable: ^1.2.0
+  languageName: node
+  linkType: hard
   resolution: @sindresorhus/is@0.12.0
 
 @szmarczak/http-timer@^1.1.0:
   dependencies:
     defer-to-connect: ^1.0.1
+  languageName: node
+  linkType: hard
   resolution: @szmarczak/http-timer@1.1.1
 
 "@types/caseless@*":
+  languageName: node
+  linkType: hard
   resolution: @types/caseless@0.12.1
 
 @types/dateformat@^1.0.1:
+  languageName: node
+  linkType: hard
   resolution: @types/dateformat@1.0.1
 
 @types/emscripten@^0.0.31:
   dependencies:
     @types/webassembly-js-api: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/emscripten@0.0.31
 
 @types/eventemitter3@^2.0.2:
   dependencies:
     eventemitter3: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/eventemitter3@2.0.2
 
 "@types/events@*":
+  languageName: node
+  linkType: hard
   resolution: @types/events@1.2.0
 
 @types/execa@^0.9.0:
   dependencies:
     @types/node: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/execa@0.9.0
 
 @types/faker@^4.1.4:
+  languageName: node
+  linkType: hard
   resolution: @types/faker@4.1.4
 
 "@types/form-data@*":
   dependencies:
     @types/node: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/form-data@2.2.1
 
 @types/fs-extra@^5.0.4:
   dependencies:
     @types/node: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/fs-extra@5.0.4
 
 "@types/glob@*":
@@ -474,71 +594,103 @@ __metadata:
     @types/events: "*"
     @types/minimatch: "*"
     @types/node: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/glob@7.1.1
 
 @types/globby@^8.0.0:
   dependencies:
     @types/glob: "*"
     fast-glob: ^2.0.2
+  languageName: node
+  linkType: hard
   resolution: @types/globby@8.0.0
 
 @types/got@^8.3.4:
   dependencies:
     @types/node: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/got@8.3.5
 
 @types/inquirer@^0.0.43:
   dependencies:
     @types/rx: "*"
     @types/through: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/inquirer@0.0.43
 
 @types/joi@^13.6.0:
+  languageName: node
+  linkType: hard
   resolution: @types/joi@13.6.3
 
 @types/lockfile@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: @types/lockfile@1.0.0
 
 @types/lodash@^4.14.116:
+  languageName: node
+  linkType: hard
   resolution: @types/lodash@4.14.118
 
 "@types/minimatch@*":
+  languageName: node
+  linkType: hard
   resolution: @types/minimatch@3.0.3
 
 @types/mkdirp@^0.5.2:
   dependencies:
     @types/node: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/mkdirp@0.5.2
 
 @types/node-emoji@^1.8.0:
+  languageName: node
+  linkType: hard
   resolution: @types/node-emoji@1.8.0
 
 @types/node-fetch@^2.1.2:
   dependencies:
     @types/node: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/node-fetch@2.1.3
 
 "@types/node@*, @types/node@^10.12.0":
+  languageName: node
+  linkType: hard
   resolution: @types/node@10.12.9
 
 "@types/prop-types@*":
+  languageName: node
+  linkType: hard
   resolution: @types/prop-types@15.5.6
 
 @types/react-redux@^6.0.9:
   dependencies:
     @types/react: "*"
     redux: ^4.0.0
+  languageName: node
+  linkType: hard
   resolution: @types/react-redux@6.0.9
 
 "@types/react@*, @types/react@^16.4.14":
   dependencies:
     @types/prop-types: "*"
     csstype: ^2.2.0
+  languageName: node
+  linkType: hard
   resolution: @types/react@16.7.6
 
 @types/redux-saga@^0.10.5:
   dependencies:
     redux-saga: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/redux-saga@0.10.5
 
 @types/request@^2.47.1:
@@ -547,65 +699,91 @@ __metadata:
     @types/form-data: "*"
     @types/node: "*"
     @types/tough-cookie: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/request@2.48.1
 
 "@types/rx-core-binding@*":
   dependencies:
     @types/rx-core: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/rx-core-binding@4.0.4
 
 "@types/rx-core@*":
+  languageName: node
+  linkType: hard
   resolution: @types/rx-core@4.0.3
 
 "@types/rx-lite-aggregates@*":
   dependencies:
     @types/rx-lite: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/rx-lite-aggregates@4.0.3
 
 "@types/rx-lite-async@*":
   dependencies:
     @types/rx-lite: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/rx-lite-async@4.0.2
 
 "@types/rx-lite-backpressure@*":
   dependencies:
     @types/rx-lite: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/rx-lite-backpressure@4.0.3
 
 "@types/rx-lite-coincidence@*":
   dependencies:
     @types/rx-lite: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/rx-lite-coincidence@4.0.3
 
 "@types/rx-lite-experimental@*":
   dependencies:
     @types/rx-lite: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/rx-lite-experimental@4.0.1
 
 "@types/rx-lite-joinpatterns@*":
   dependencies:
     @types/rx-lite: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/rx-lite-joinpatterns@4.0.1
 
 "@types/rx-lite-testing@*":
   dependencies:
     @types/rx-lite-virtualtime: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/rx-lite-testing@4.0.1
 
 "@types/rx-lite-time@*":
   dependencies:
     @types/rx-lite: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/rx-lite-time@4.0.3
 
 "@types/rx-lite-virtualtime@*":
   dependencies:
     @types/rx-lite: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/rx-lite-virtualtime@4.0.3
 
 "@types/rx-lite@*":
   dependencies:
     @types/rx-core: "*"
     @types/rx-core-binding: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/rx-lite@4.0.6
 
 "@types/rx@*":
@@ -622,41 +800,61 @@ __metadata:
     @types/rx-lite-testing: "*"
     @types/rx-lite-time: "*"
     @types/rx-lite-virtualtime: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/rx@4.1.1
 
 @types/semver@^5.5.0:
+  languageName: node
+  linkType: hard
   resolution: @types/semver@5.5.0
 
 @types/stream-to-promise@^2.2.0:
   dependencies:
     @types/node: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/stream-to-promise@2.2.0
 
 @types/supports-color@^5.3.0:
+  languageName: node
+  linkType: hard
   resolution: @types/supports-color@5.3.0
 
 @types/tar@^4.0.0:
   dependencies:
     @types/node: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/tar@4.0.0
 
 "@types/through@*":
   dependencies:
     @types/node: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/through@0.0.29
 
 @types/tmp@^0.0.33:
+  languageName: node
+  linkType: hard
   resolution: @types/tmp@0.0.33
 
 "@types/tough-cookie@*":
+  languageName: node
+  linkType: hard
   resolution: @types/tough-cookie@2.3.4
 
 @types/tunnel@^0.0.0:
   dependencies:
     @types/node: "*"
+  languageName: node
+  linkType: hard
   resolution: @types/tunnel@0.0.0
 
 "@types/webassembly-js-api@*":
+  languageName: node
+  linkType: hard
   resolution: @types/webassembly-js-api@0.0.1
 
 @webassemblyjs/ast@1.7.11:
@@ -664,29 +862,45 @@ __metadata:
     @webassemblyjs/helper-module-context: 1.7.11
     @webassemblyjs/helper-wasm-bytecode: 1.7.11
     @webassemblyjs/wast-parser: 1.7.11
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/ast@1.7.11
 
 @webassemblyjs/floating-point-hex-parser@1.7.11:
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/floating-point-hex-parser@1.7.11
 
 @webassemblyjs/helper-api-error@1.7.11:
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/helper-api-error@1.7.11
 
 @webassemblyjs/helper-buffer@1.7.11:
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/helper-buffer@1.7.11
 
 @webassemblyjs/helper-code-frame@1.7.11:
   dependencies:
     @webassemblyjs/wast-printer: 1.7.11
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/helper-code-frame@1.7.11
 
 @webassemblyjs/helper-fsm@1.7.11:
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/helper-fsm@1.7.11
 
 @webassemblyjs/helper-module-context@1.7.11:
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/helper-module-context@1.7.11
 
 @webassemblyjs/helper-wasm-bytecode@1.7.11:
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/helper-wasm-bytecode@1.7.11
 
 @webassemblyjs/helper-wasm-section@1.7.11:
@@ -695,19 +909,27 @@ __metadata:
     @webassemblyjs/helper-buffer: 1.7.11
     @webassemblyjs/helper-wasm-bytecode: 1.7.11
     @webassemblyjs/wasm-gen: 1.7.11
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/helper-wasm-section@1.7.11
 
 @webassemblyjs/ieee754@1.7.11:
   dependencies:
     @xtuc/ieee754: ^1.2.0
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/ieee754@1.7.11
 
 @webassemblyjs/leb128@1.7.11:
   dependencies:
     @xtuc/long: 4.2.1
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/leb128@1.7.11
 
 @webassemblyjs/utf8@1.7.11:
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/utf8@1.7.11
 
 @webassemblyjs/wasm-edit@1.7.11:
@@ -720,6 +942,8 @@ __metadata:
     @webassemblyjs/wasm-opt: 1.7.11
     @webassemblyjs/wasm-parser: 1.7.11
     @webassemblyjs/wast-printer: 1.7.11
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/wasm-edit@1.7.11
 
 @webassemblyjs/wasm-gen@1.7.11:
@@ -729,6 +953,8 @@ __metadata:
     @webassemblyjs/ieee754: 1.7.11
     @webassemblyjs/leb128: 1.7.11
     @webassemblyjs/utf8: 1.7.11
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/wasm-gen@1.7.11
 
 @webassemblyjs/wasm-opt@1.7.11:
@@ -737,6 +963,8 @@ __metadata:
     @webassemblyjs/helper-buffer: 1.7.11
     @webassemblyjs/wasm-gen: 1.7.11
     @webassemblyjs/wasm-parser: 1.7.11
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/wasm-opt@1.7.11
 
 @webassemblyjs/wasm-parser@1.7.11:
@@ -747,6 +975,8 @@ __metadata:
     @webassemblyjs/ieee754: 1.7.11
     @webassemblyjs/leb128: 1.7.11
     @webassemblyjs/utf8: 1.7.11
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/wasm-parser@1.7.11
 
 @webassemblyjs/wast-parser@1.7.11:
@@ -757,6 +987,8 @@ __metadata:
     @webassemblyjs/helper-code-frame: 1.7.11
     @webassemblyjs/helper-fsm: 1.7.11
     @xtuc/long: 4.2.1
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/wast-parser@1.7.11
 
 @webassemblyjs/wast-printer@1.7.11:
@@ -764,23 +996,35 @@ __metadata:
     @webassemblyjs/ast: 1.7.11
     @webassemblyjs/wast-parser: 1.7.11
     @xtuc/long: 4.2.1
+  languageName: node
+  linkType: hard
   resolution: @webassemblyjs/wast-printer@1.7.11
 
 @xtuc/ieee754@^1.2.0:
+  languageName: node
+  linkType: hard
   resolution: @xtuc/ieee754@1.2.0
 
 @xtuc/long@4.2.1:
+  languageName: node
+  linkType: hard
   resolution: @xtuc/long@4.2.1
 
 abbrev@1:
+  languageName: node
+  linkType: hard
   resolution: abbrev@1.1.1
 
 acorn-dynamic-import@^3.0.0:
   dependencies:
     acorn: ^5.0.0
+  languageName: node
+  linkType: hard
   resolution: acorn-dynamic-import@3.0.0
 
 acorn-dynamic-import@^4.0.0:
+  languageName: node
+  linkType: hard
   peerDependencies:
     acorn: ^6.0.0
   resolution: acorn-dynamic-import@4.0.0
@@ -791,18 +1035,28 @@ acorn-node@^1.3.0:
     acorn-dynamic-import: ^4.0.0
     acorn-walk: ^6.1.0
     xtend: ^4.0.1
+  languageName: node
+  linkType: hard
   resolution: acorn-node@1.6.2
 
 acorn-walk@^6.1.0:
+  languageName: node
+  linkType: hard
   resolution: acorn-walk@6.1.1
 
 "acorn@^5.0.0, acorn@^5.6.2":
+  languageName: node
+  linkType: hard
   resolution: acorn@5.7.3
 
 acorn@^6.0.2:
+  languageName: node
+  linkType: hard
   resolution: acorn@6.0.4
 
 ajv-keywords@^3.1.0:
+  languageName: node
+  linkType: hard
   peerDependencies:
     ajv: ^6.0.0
   resolution: ajv-keywords@3.2.0
@@ -813,70 +1067,108 @@ ajv@^6.1.0:
     fast-json-stable-stringify: ^2.0.0
     json-schema-traverse: ^0.4.1
     uri-js: ^4.2.2
+  languageName: node
+  linkType: hard
   resolution: ajv@6.5.5
 
 ansi-escapes@^3.0.0:
+  languageName: node
+  linkType: hard
   resolution: ansi-escapes@3.1.0
 
 ansi-regex@^2.0.0:
+  languageName: node
+  linkType: hard
   resolution: ansi-regex@2.1.1
 
 ansi-regex@^3.0.0:
+  languageName: node
+  linkType: hard
   resolution: ansi-regex@3.0.0
 
 ansi-styles@^2.2.1:
+  languageName: node
+  linkType: hard
   resolution: ansi-styles@2.2.1
 
 ansi-styles@^3.2.1:
   dependencies:
     color-convert: ^1.9.0
+  languageName: node
+  linkType: hard
   resolution: ansi-styles@3.2.1
 
 "any-promise@^1.1.0, any-promise@~1.3.0":
+  languageName: node
+  linkType: hard
   resolution: any-promise@1.3.0
 
 anymatch@^2.0.0:
   dependencies:
     micromatch: ^3.1.4
     normalize-path: ^2.1.1
+  languageName: node
+  linkType: hard
   resolution: anymatch@2.0.0
 
 "aproba@^1.0.3, aproba@^1.1.1":
+  languageName: node
+  linkType: hard
   resolution: aproba@1.2.0
 
 are-we-there-yet@~1.1.2:
   dependencies:
     delegates: ^1.0.0
     readable-stream: ^2.0.6
+  languageName: node
+  linkType: hard
   resolution: are-we-there-yet@1.1.5
 
 arr-diff@^4.0.0:
+  languageName: node
+  linkType: hard
   resolution: arr-diff@4.0.0
 
 arr-flatten@^1.1.0:
+  languageName: node
+  linkType: hard
   resolution: arr-flatten@1.1.0
 
 arr-union@^3.1.0:
+  languageName: node
+  linkType: hard
   resolution: arr-union@3.1.0
 
 array-from@^2.1.1:
+  languageName: node
+  linkType: hard
   resolution: array-from@2.1.1
 
 array-union@^1.0.1:
   dependencies:
     array-uniq: ^1.0.1
+  languageName: node
+  linkType: hard
   resolution: array-union@1.0.2
 
 array-uniq@^1.0.1:
+  languageName: node
+  linkType: hard
   resolution: array-uniq@1.0.3
 
 array-unique@^0.3.2:
+  languageName: node
+  linkType: hard
   resolution: array-unique@0.3.2
 
 "arrify@^1.0.0, arrify@^1.0.1":
+  languageName: node
+  linkType: hard
   resolution: arrify@1.0.1
 
 asap@~1.0.0:
+  languageName: node
+  linkType: hard
   resolution: asap@1.0.0
 
 asn1.js@^4.0.0:
@@ -884,29 +1176,43 @@ asn1.js@^4.0.0:
     bn.js: ^4.0.0
     inherits: ^2.0.1
     minimalistic-assert: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: asn1.js@4.10.1
 
 assert@^1.1.1:
   dependencies:
     util: 0.10.3
+  languageName: node
+  linkType: hard
   resolution: assert@1.4.1
 
 assign-symbols@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: assign-symbols@1.0.0
 
 async-each@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: async-each@1.0.1
 
 atob@^2.1.1:
+  languageName: node
+  linkType: hard
   resolution: atob@2.1.2
 
 babel-runtime@^6.23.0:
   dependencies:
     core-js: ^2.4.0
     regenerator-runtime: ^0.11.0
+  languageName: node
+  linkType: hard
   resolution: babel-runtime@6.26.0
 
 balanced-match@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: balanced-match@1.0.0
 
 base@^0.11.1:
@@ -918,27 +1224,41 @@ base@^0.11.1:
     isobject: ^3.0.1
     mixin-deep: ^1.2.0
     pascalcase: ^0.1.1
+  languageName: node
+  linkType: hard
   resolution: base@0.11.2
 
 base64-js@^1.0.2:
+  languageName: node
+  linkType: hard
   resolution: base64-js@1.3.0
 
 big.js@^3.1.3:
+  languageName: node
+  linkType: hard
   resolution: big.js@3.2.0
 
 binary-extensions@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: binary-extensions@1.12.0
 
 bluebird@^3.5.1:
+  languageName: node
+  linkType: hard
   resolution: bluebird@3.5.3
 
 "bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.4.0":
+  languageName: node
+  linkType: hard
   resolution: bn.js@4.11.8
 
 brace-expansion@^1.1.7:
   dependencies:
     balanced-match: ^1.0.0
     concat-map: 0.0.1
+  languageName: node
+  linkType: hard
   resolution: brace-expansion@1.1.11
 
 "braces@^2.3.0, braces@^2.3.1":
@@ -953,6 +1273,8 @@ brace-expansion@^1.1.7:
     snapdragon-node: ^2.0.1
     split-string: ^3.0.2
     to-regex: ^3.0.1
+  languageName: node
+  linkType: hard
   resolution: braces@2.3.2
 
 brfs@^2.0.1:
@@ -961,9 +1283,13 @@ brfs@^2.0.1:
     resolve: ^1.1.5
     static-module: ^3.0.0
     through2: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: brfs@2.0.1
 
 brorand@^1.0.1:
+  languageName: node
+  linkType: hard
   resolution: brorand@1.1.0
 
 "browserify-aes@^1.0.0, browserify-aes@^1.0.4":
@@ -974,6 +1300,8 @@ brorand@^1.0.1:
     evp_bytestokey: ^1.0.3
     inherits: ^2.0.1
     safe-buffer: ^5.0.1
+  languageName: node
+  linkType: hard
   resolution: browserify-aes@1.2.0
 
 browserify-cipher@^1.0.0:
@@ -981,6 +1309,8 @@ browserify-cipher@^1.0.0:
     browserify-aes: ^1.0.4
     browserify-des: ^1.0.0
     evp_bytestokey: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: browserify-cipher@1.0.1
 
 browserify-des@^1.0.0:
@@ -989,12 +1319,16 @@ browserify-des@^1.0.0:
     des.js: ^1.0.0
     inherits: ^2.0.1
     safe-buffer: ^5.1.2
+  languageName: node
+  linkType: hard
   resolution: browserify-des@1.0.2
 
 browserify-rsa@^4.0.0:
   dependencies:
     bn.js: ^4.1.0
     randombytes: ^2.0.1
+  languageName: node
+  linkType: hard
   resolution: browserify-rsa@4.0.1
 
 browserify-sign@^4.0.0:
@@ -1006,23 +1340,35 @@ browserify-sign@^4.0.0:
     elliptic: ^6.0.0
     inherits: ^2.0.1
     parse-asn1: ^5.0.0
+  languageName: node
+  linkType: hard
   resolution: browserify-sign@4.0.4
 
 browserify-zlib@^0.2.0:
   dependencies:
     pako: ~1.0.5
+  languageName: node
+  linkType: hard
   resolution: browserify-zlib@0.2.0
 
 buffer-equal@0.0.1:
+  languageName: node
+  linkType: hard
   resolution: buffer-equal@0.0.1
 
 "buffer-from@^1.0.0, buffer-from@^1.1.0":
+  languageName: node
+  linkType: hard
   resolution: buffer-from@1.1.1
 
 buffer-loader@^0.1.0:
+  languageName: node
+  linkType: hard
   resolution: buffer-loader@0.1.0
 
 buffer-xor@^1.0.3:
+  languageName: node
+  linkType: hard
   resolution: buffer-xor@1.0.3
 
 buffer@^4.3.0:
@@ -1030,9 +1376,13 @@ buffer@^4.3.0:
     base64-js: ^1.0.2
     ieee754: ^1.1.4
     isarray: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: buffer@4.9.1
 
 builtin-status-codes@^3.0.0:
+  languageName: node
+  linkType: hard
   resolution: builtin-status-codes@3.0.0
 
 cacache@^10.0.4:
@@ -1050,6 +1400,8 @@ cacache@^10.0.4:
     ssri: ^5.2.4
     unique-filename: ^1.1.0
     y18n: ^4.0.0
+  languageName: node
+  linkType: hard
   resolution: cacache@10.0.4
 
 cache-base@^1.0.1:
@@ -1063,6 +1415,8 @@ cache-base@^1.0.1:
     to-object-path: ^0.3.0
     union-value: ^1.0.0
     unset-value: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: cache-base@1.0.1
 
 cacheable-request@^5.1.0:
@@ -1074,9 +1428,13 @@ cacheable-request@^5.1.0:
     lowercase-keys: ^1.0.1
     normalize-url: ^3.1.0
     responselike: ^1.0.2
+  languageName: node
+  linkType: hard
   resolution: cacheable-request@5.2.0
 
 call-me-maybe@^1.0.1:
+  languageName: node
+  linkType: hard
   resolution: call-me-maybe@1.0.1
 
 chalk@^1.1.3:
@@ -1086,6 +1444,8 @@ chalk@^1.1.3:
     has-ansi: ^2.0.0
     strip-ansi: ^3.0.0
     supports-color: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: chalk@1.1.3
 
 "chalk@^2.0.0, chalk@^2.3.0, chalk@^2.4.1":
@@ -1093,9 +1453,13 @@ chalk@^1.1.3:
     ansi-styles: ^3.2.1
     escape-string-regexp: ^1.0.5
     supports-color: ^5.3.0
+  languageName: node
+  linkType: hard
   resolution: chalk@2.4.1
 
 chardet@^0.7.0:
+  languageName: node
+  linkType: hard
   resolution: chardet@0.7.0
 
 chokidar@^2.0.2:
@@ -1113,20 +1477,28 @@ chokidar@^2.0.2:
     path-is-absolute: ^1.0.0
     readdirp: ^2.0.0
     upath: ^1.0.5
+  languageName: node
+  linkType: hard
   resolution: chokidar@2.0.4
 
 "chownr@^1.0.1, chownr@^1.1.1":
+  languageName: node
+  linkType: hard
   resolution: chownr@1.1.1
 
 chrome-trace-event@^1.0.0:
   dependencies:
     tslib: ^1.9.0
+  languageName: node
+  linkType: hard
   resolution: chrome-trace-event@1.0.0
 
 "cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3":
   dependencies:
     inherits: ^2.0.1
     safe-buffer: ^5.0.1
+  languageName: node
+  linkType: hard
   resolution: cipher-base@1.0.4
 
 class-utils@^0.3.5:
@@ -1135,51 +1507,77 @@ class-utils@^0.3.5:
     define-property: ^0.2.5
     isobject: ^3.0.0
     static-extend: ^0.1.1
+  languageName: node
+  linkType: hard
   resolution: class-utils@0.3.6
 
 cli-cursor@^2.1.0:
   dependencies:
     restore-cursor: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: cli-cursor@2.1.0
 
 cli-width@^2.0.0:
+  languageName: node
+  linkType: hard
   resolution: cli-width@2.2.0
 
 clone-response@^1.0.2:
   dependencies:
     mimic-response: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: clone-response@1.0.2
 
 code-point-at@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: code-point-at@1.1.0
 
 collection-visit@^1.0.0:
   dependencies:
     map-visit: ^1.0.0
     object-visit: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: collection-visit@1.0.0
 
 color-convert@^1.9.0:
   dependencies:
     color-name: 1.1.3
+  languageName: node
+  linkType: hard
   resolution: color-convert@1.9.3
 
 color-diff@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: color-diff@1.1.0
 
 color-name@1.1.3:
+  languageName: node
+  linkType: hard
   resolution: color-name@1.1.3
 
 commander@~2.14.1:
+  languageName: node
+  linkType: hard
   resolution: commander@2.14.1
 
 commondir@^1.0.1:
+  languageName: node
+  linkType: hard
   resolution: commondir@1.0.1
 
 component-emitter@^1.2.1:
+  languageName: node
+  linkType: hard
   resolution: component-emitter@1.2.1
 
 concat-map@0.0.1:
+  languageName: node
+  linkType: hard
   resolution: concat-map@0.0.1
 
 "concat-stream@^1.5.0, concat-stream@~1.6.0":
@@ -1188,22 +1586,32 @@ concat-map@0.0.1:
     inherits: ^2.0.3
     readable-stream: ^2.2.2
     typedarray: ^0.0.6
+  languageName: node
+  linkType: hard
   resolution: concat-stream@1.6.2
 
 console-browserify@^1.1.0:
   dependencies:
     date-now: ^0.1.4
+  languageName: node
+  linkType: hard
   resolution: console-browserify@1.1.0
 
 "console-control-strings@^1.0.0, console-control-strings@~1.1.0":
+  languageName: node
+  linkType: hard
   resolution: console-control-strings@1.1.0
 
 constants-browserify@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: constants-browserify@1.0.0
 
 convert-source-map@^1.5.1:
   dependencies:
     safe-buffer: ~5.1.1
+  languageName: node
+  linkType: hard
   resolution: convert-source-map@1.6.0
 
 copy-concurrently@^1.0.0:
@@ -1214,21 +1622,31 @@ copy-concurrently@^1.0.0:
     mkdirp: ^0.5.1
     rimraf: ^2.5.4
     run-queue: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: copy-concurrently@1.0.5
 
 copy-descriptor@^0.1.0:
+  languageName: node
+  linkType: hard
   resolution: copy-descriptor@0.1.1
 
 core-js@^2.4.0:
+  languageName: node
+  linkType: hard
   resolution: core-js@2.5.7
 
 core-util-is@~1.0.0:
+  languageName: node
+  linkType: hard
   resolution: core-util-is@1.0.2
 
 create-ecdh@^4.0.0:
   dependencies:
     bn.js: ^4.1.0
     elliptic: ^6.0.0
+  languageName: node
+  linkType: hard
   resolution: create-ecdh@4.0.3
 
 "create-hash@^1.1.0, create-hash@^1.1.2":
@@ -1238,6 +1656,8 @@ create-ecdh@^4.0.0:
     md5.js: ^1.3.4
     ripemd160: ^2.0.1
     sha.js: ^2.4.0
+  languageName: node
+  linkType: hard
   resolution: create-hash@1.2.0
 
 "create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4":
@@ -1248,6 +1668,8 @@ create-ecdh@^4.0.0:
     ripemd160: ^2.0.0
     safe-buffer: ^5.0.1
     sha.js: ^2.4.8
+  languageName: node
+  linkType: hard
   resolution: create-hmac@1.1.7
 
 cross-spawn@^6.0.0:
@@ -1257,6 +1679,8 @@ cross-spawn@^6.0.0:
     semver: ^5.5.0
     shebang-command: ^1.2.0
     which: ^1.2.9
+  languageName: node
+  linkType: hard
   resolution: cross-spawn@6.0.5
 
 crypto-browserify@^3.11.0:
@@ -1272,86 +1696,128 @@ crypto-browserify@^3.11.0:
     public-encrypt: ^4.0.0
     randombytes: ^2.0.0
     randomfill: ^1.0.3
+  languageName: node
+  linkType: hard
   resolution: crypto-browserify@3.12.0
 
 csstype@^2.2.0:
+  languageName: node
+  linkType: hard
   resolution: csstype@2.5.7
 
 cyclist@~0.2.2:
+  languageName: node
+  linkType: hard
   resolution: cyclist@0.2.2
 
 d@1:
   dependencies:
     es5-ext: ^0.10.9
+  languageName: node
+  linkType: hard
   resolution: d@1.0.0
 
 date-now@^0.1.4:
+  languageName: node
+  linkType: hard
   resolution: date-now@0.1.4
 
 dateformat@^3.0.3:
+  languageName: node
+  linkType: hard
   resolution: dateformat@3.0.3
 
 "debug@^2.1.2, debug@^2.2.0, debug@^2.3.3":
   dependencies:
     ms: 2.0.0
+  languageName: node
+  linkType: hard
   resolution: debug@2.6.9
 
 debug@^3.0.0:
   dependencies:
     ms: ^2.1.1
+  languageName: node
+  linkType: hard
   resolution: debug@3.2.6
 
 decode-uri-component@^0.2.0:
+  languageName: node
+  linkType: hard
   resolution: decode-uri-component@0.2.0
 
 decompress-response@^3.3.0:
   dependencies:
     mimic-response: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: decompress-response@3.3.0
 
 deep-extend@^0.6.0:
+  languageName: node
+  linkType: hard
   resolution: deep-extend@0.6.0
 
 deep-is@~0.1.3:
+  languageName: node
+  linkType: hard
   resolution: deep-is@0.1.3
 
 defer-to-connect@^1.0.1:
+  languageName: node
+  linkType: hard
   resolution: defer-to-connect@1.0.1
 
 define-properties@^1.1.2:
   dependencies:
     object-keys: ^1.0.12
+  languageName: node
+  linkType: hard
   resolution: define-properties@1.1.3
 
 define-property@^0.2.5:
   dependencies:
     is-descriptor: ^0.1.0
+  languageName: node
+  linkType: hard
   resolution: define-property@0.2.5
 
 define-property@^1.0.0:
   dependencies:
     is-descriptor: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: define-property@1.0.0
 
 define-property@^2.0.2:
   dependencies:
     is-descriptor: ^1.0.2
     isobject: ^3.0.1
+  languageName: node
+  linkType: hard
   resolution: define-property@2.0.2
 
 delegates@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: delegates@1.0.0
 
 des.js@^1.0.0:
   dependencies:
     inherits: ^2.0.1
     minimalistic-assert: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: des.js@1.0.0
 
 detect-libc@^1.0.2:
+  languageName: node
+  linkType: hard
   resolution: detect-libc@1.0.3
 
 diff@^3.1.0:
+  languageName: node
+  linkType: hard
   resolution: diff@3.5.0
 
 diffie-hellman@^5.0.0:
@@ -1359,23 +1825,33 @@ diffie-hellman@^5.0.0:
     bn.js: ^4.1.0
     miller-rabin: ^4.0.0
     randombytes: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: diffie-hellman@5.0.3
 
 dir-glob@^2.0.0:
   dependencies:
     arrify: ^1.0.1
     path-type: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: dir-glob@2.0.0
 
 domain-browser@^1.1.1:
+  languageName: node
+  linkType: hard
   resolution: domain-browser@1.2.0
 
 duplexer2@~0.1.4:
   dependencies:
     readable-stream: ^2.0.2
+  languageName: node
+  linkType: hard
   resolution: duplexer2@0.1.4
 
 duplexer3@^0.1.4:
+  languageName: node
+  linkType: hard
   resolution: duplexer3@0.1.4
 
 "duplexify@^3.4.2, duplexify@^3.6.0":
@@ -1384,6 +1860,8 @@ duplexer3@^0.1.4:
     inherits: ^2.0.1
     readable-stream: ^2.0.0
     stream-shift: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: duplexify@3.6.1
 
 elliptic@^6.0.0:
@@ -1395,14 +1873,20 @@ elliptic@^6.0.0:
     inherits: ^2.0.1
     minimalistic-assert: ^1.0.0
     minimalistic-crypto-utils: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: elliptic@6.4.1
 
 emojis-list@^2.0.0:
+  languageName: node
+  linkType: hard
   resolution: emojis-list@2.1.0
 
 "end-of-stream@^1.0.0, end-of-stream@^1.1.0, end-of-stream@~1.1.0":
   dependencies:
     once: ~1.3.0
+  languageName: node
+  linkType: hard
   resolution: end-of-stream@1.1.0
 
 "enhanced-resolve@^4.0.0, enhanced-resolve@^4.1.0":
@@ -1410,11 +1894,15 @@ emojis-list@^2.0.0:
     graceful-fs: ^4.1.2
     memory-fs: ^0.4.0
     tapable: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: enhanced-resolve@4.1.0
 
 "errno@^0.1.3, errno@~0.1.7":
   dependencies:
     prr: ~1.0.1
+  languageName: node
+  linkType: hard
   resolution: errno@0.1.7
 
 "es5-ext@^0.10.35, es5-ext@^0.10.9, es5-ext@~0.10.14":
@@ -1422,6 +1910,8 @@ emojis-list@^2.0.0:
     es6-iterator: ~2.0.3
     es6-symbol: ~3.1.1
     next-tick: 1
+  languageName: node
+  linkType: hard
   resolution: es5-ext@0.10.46
 
 "es6-iterator@~2.0.1, es6-iterator@~2.0.3":
@@ -1429,6 +1919,8 @@ emojis-list@^2.0.0:
     d: 1
     es5-ext: ^0.10.35
     es6-symbol: ^3.1.1
+  languageName: node
+  linkType: hard
   resolution: es6-iterator@2.0.3
 
 es6-map@^0.1.5:
@@ -1439,6 +1931,8 @@ es6-map@^0.1.5:
     es6-set: ~0.1.5
     es6-symbol: ~3.1.1
     event-emitter: ~0.3.5
+  languageName: node
+  linkType: hard
   resolution: es6-map@0.1.5
 
 "es6-set@^0.1.5, es6-set@~0.1.5":
@@ -1448,15 +1942,21 @@ es6-map@^0.1.5:
     es6-iterator: ~2.0.1
     es6-symbol: 3.1.1
     event-emitter: ~0.3.5
+  languageName: node
+  linkType: hard
   resolution: es6-set@0.1.5
 
 "es6-symbol@3.1.1, es6-symbol@^3.1.1, es6-symbol@~3.1.1":
   dependencies:
     d: 1
     es5-ext: ~0.10.14
+  languageName: node
+  linkType: hard
   resolution: es6-symbol@3.1.1
 
 "escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5":
+  languageName: node
+  linkType: hard
   resolution: escape-string-regexp@1.0.5
 
 "escodegen@^1.8.1, escodegen@~1.9.0":
@@ -1466,47 +1966,69 @@ es6-map@^0.1.5:
     esutils: ^2.0.2
     optionator: ^0.8.1
     source-map: ~0.6.1
+  languageName: node
+  linkType: hard
   resolution: escodegen@1.9.1
 
 eslint-scope@^4.0.0:
   dependencies:
     esrecurse: ^4.1.0
     estraverse: ^4.1.1
+  languageName: node
+  linkType: hard
   resolution: eslint-scope@4.0.0
 
 esprima@^3.1.3:
+  languageName: node
+  linkType: hard
   resolution: esprima@3.1.3
 
 esrecurse@^4.1.0:
   dependencies:
     estraverse: ^4.1.0
+  languageName: node
+  linkType: hard
   resolution: esrecurse@4.2.1
 
 "estraverse@^4.1.0, estraverse@^4.1.1, estraverse@^4.2.0":
+  languageName: node
+  linkType: hard
   resolution: estraverse@4.2.0
 
 estree-is-function@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: estree-is-function@1.0.0
 
 esutils@^2.0.2:
+  languageName: node
+  linkType: hard
   resolution: esutils@2.0.2
 
 event-emitter@~0.3.5:
   dependencies:
     d: 1
     es5-ext: ~0.10.14
+  languageName: node
+  linkType: hard
   resolution: event-emitter@0.3.5
 
 "eventemitter3@*, eventemitter3@^3.1.0":
+  languageName: node
+  linkType: hard
   resolution: eventemitter3@3.1.0
 
 events@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: events@1.1.1
 
 "evp_bytestokey@^1.0.0, evp_bytestokey@^1.0.3":
   dependencies:
     md5.js: ^1.3.4
     safe-buffer: ^5.1.1
+  languageName: node
+  linkType: hard
   resolution: evp_bytestokey@1.0.3
 
 execa@^1.0.0:
@@ -1518,6 +2040,8 @@ execa@^1.0.0:
     p-finally: ^1.0.0
     signal-exit: ^3.0.0
     strip-eof: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: execa@1.0.0
 
 expand-brackets@^2.1.4:
@@ -1529,17 +2053,23 @@ expand-brackets@^2.1.4:
     regex-not: ^1.0.0
     snapdragon: ^0.8.1
     to-regex: ^3.0.1
+  languageName: node
+  linkType: hard
   resolution: expand-brackets@2.1.4
 
 extend-shallow@^2.0.1:
   dependencies:
     is-extendable: ^0.1.0
+  languageName: node
+  linkType: hard
   resolution: extend-shallow@2.0.1
 
 "extend-shallow@^3.0.0, extend-shallow@^3.0.2":
   dependencies:
     assign-symbols: ^1.0.0
     is-extendable: ^1.0.1
+  languageName: node
+  linkType: hard
   resolution: extend-shallow@3.0.2
 
 external-editor@^3.0.0:
@@ -1547,6 +2077,8 @@ external-editor@^3.0.0:
     chardet: ^0.7.0
     iconv-lite: ^0.4.24
     tmp: ^0.0.33
+  languageName: node
+  linkType: hard
   resolution: external-editor@3.0.3
 
 extglob@^2.0.4:
@@ -1559,12 +2091,18 @@ extglob@^2.0.4:
     regex-not: ^1.0.0
     snapdragon: ^0.8.1
     to-regex: ^3.0.1
+  languageName: node
+  linkType: hard
   resolution: extglob@2.0.4
 
 faker@^4.1.0:
+  languageName: node
+  linkType: hard
   resolution: faker@4.1.0
 
 fast-deep-equal@^2.0.1:
+  languageName: node
+  linkType: hard
   resolution: fast-deep-equal@2.0.1
 
 fast-glob@^2.0.2:
@@ -1575,17 +2113,25 @@ fast-glob@^2.0.2:
     is-glob: ^4.0.0
     merge2: ^1.2.3
     micromatch: ^3.1.10
+  languageName: node
+  linkType: hard
   resolution: fast-glob@2.2.4
 
 fast-json-stable-stringify@^2.0.0:
+  languageName: node
+  linkType: hard
   resolution: fast-json-stable-stringify@2.0.0
 
 fast-levenshtein@~2.0.4:
+  languageName: node
+  linkType: hard
   resolution: fast-levenshtein@2.0.6
 
 figures@^2.0.0:
   dependencies:
     escape-string-regexp: ^1.0.5
+  languageName: node
+  linkType: hard
   resolution: figures@2.0.0
 
 fill-range@^4.0.0:
@@ -1594,6 +2140,8 @@ fill-range@^4.0.0:
     is-number: ^3.0.0
     repeat-string: ^1.6.1
     to-regex-range: ^2.1.0
+  languageName: node
+  linkType: hard
   resolution: fill-range@4.0.0
 
 find-cache-dir@^1.0.0:
@@ -1601,31 +2149,43 @@ find-cache-dir@^1.0.0:
     commondir: ^1.0.1
     make-dir: ^1.0.0
     pkg-dir: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: find-cache-dir@1.0.0
 
 find-up@^2.1.0:
   dependencies:
     locate-path: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: find-up@2.1.0
 
 flush-write-stream@^1.0.0:
   dependencies:
     inherits: ^2.0.1
     readable-stream: ^2.0.4
+  languageName: node
+  linkType: hard
   resolution: flush-write-stream@1.0.3
 
 for-in@^1.0.2:
+  languageName: node
+  linkType: hard
   resolution: for-in@1.0.2
 
 fragment-cache@^0.2.1:
   dependencies:
     map-cache: ^0.2.2
+  languageName: node
+  linkType: hard
   resolution: fragment-cache@0.2.1
 
 from2@^2.1.0:
   dependencies:
     inherits: ^2.0.1
     readable-stream: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: from2@2.3.0
 
 fs-extra@^7.0.0:
@@ -1633,11 +2193,15 @@ fs-extra@^7.0.0:
     graceful-fs: ^4.1.2
     jsonfile: ^4.0.0
     universalify: ^0.1.0
+  languageName: node
+  linkType: hard
   resolution: fs-extra@7.0.1
 
 fs-minipass@^1.2.5:
   dependencies:
     minipass: ^2.2.1
+  languageName: node
+  linkType: hard
   resolution: fs-minipass@1.2.5
 
 fs-write-stream-atomic@^1.0.8:
@@ -1646,18 +2210,26 @@ fs-write-stream-atomic@^1.0.8:
     iferr: ^0.1.5
     imurmurhash: ^0.1.4
     readable-stream: "1 || 2"
+  languageName: node
+  linkType: hard
   resolution: fs-write-stream-atomic@1.0.10
 
 fs.realpath@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: fs.realpath@1.0.0
 
 fsevents@^1.2.2:
   dependencies:
     nan: ^2.9.2
     node-pre-gyp: ^0.10.0
+  languageName: node
+  linkType: hard
   resolution: fsevents@1.2.4
 
 function-bind@^1.1.1:
+  languageName: node
+  linkType: hard
   resolution: function-bind@1.1.1
 
 gauge@~2.7.3:
@@ -1670,26 +2242,38 @@ gauge@~2.7.3:
     string-width: ^1.0.1
     strip-ansi: ^3.0.1
     wide-align: ^1.1.0
+  languageName: node
+  linkType: hard
   resolution: gauge@2.7.4
 
 get-assigned-identifiers@^1.1.0:
+  languageName: node
+  linkType: hard
   resolution: get-assigned-identifiers@1.2.0
 
 "get-stream@^4.0.0, get-stream@^4.1.0":
   dependencies:
     pump: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: get-stream@4.1.0
 
 "get-value@^2.0.3, get-value@^2.0.6":
+  languageName: node
+  linkType: hard
   resolution: get-value@2.0.6
 
 glob-parent@^3.1.0:
   dependencies:
     is-glob: ^3.1.0
     path-dirname: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: glob-parent@3.1.0
 
 glob-to-regexp@^0.3.0:
+  languageName: node
+  linkType: hard
   resolution: glob-to-regexp@0.3.0
 
 "glob@^7.0.5, glob@^7.1.2":
@@ -1700,6 +2284,8 @@ glob-to-regexp@^0.3.0:
     minimatch: ^3.0.4
     once: ^1.3.0
     path-is-absolute: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: glob@7.1.3
 
 globby@^8.0.1:
@@ -1711,6 +2297,8 @@ globby@^8.0.1:
     ignore: ^3.3.5
     pify: ^3.0.0
     slash: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: globby@8.0.1
 
 got@^9.2.2:
@@ -1726,23 +2314,35 @@ got@^9.2.2:
     p-cancelable: ^1.0.0
     to-readable-stream: ^1.0.0
     url-parse-lax: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: got@9.3.2
 
 "graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.6":
+  languageName: node
+  linkType: hard
   resolution: graceful-fs@4.1.15
 
 has-ansi@^2.0.0:
   dependencies:
     ansi-regex: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: has-ansi@2.0.0
 
 has-flag@^3.0.0:
+  languageName: node
+  linkType: hard
   resolution: has-flag@3.0.0
 
 has-symbols@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: has-symbols@1.0.0
 
 has-unicode@^2.0.0:
+  languageName: node
+  linkType: hard
   resolution: has-unicode@2.0.1
 
 has-value@^0.3.1:
@@ -1750,6 +2350,8 @@ has-value@^0.3.1:
     get-value: ^2.0.3
     has-values: ^0.1.4
     isobject: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: has-value@0.3.1
 
 has-value@^1.0.0:
@@ -1757,32 +2359,44 @@ has-value@^1.0.0:
     get-value: ^2.0.6
     has-values: ^1.0.0
     isobject: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: has-value@1.0.0
 
 has-values@^0.1.4:
+  languageName: node
+  linkType: hard
   resolution: has-values@0.1.4
 
 has-values@^1.0.0:
   dependencies:
     is-number: ^3.0.0
     kind-of: ^4.0.0
+  languageName: node
+  linkType: hard
   resolution: has-values@1.0.0
 
 "has@^1.0.1, has@^1.0.3":
   dependencies:
     function-bind: ^1.1.1
+  languageName: node
+  linkType: hard
   resolution: has@1.0.3
 
 hash-base@^3.0.0:
   dependencies:
     inherits: ^2.0.1
     safe-buffer: ^5.0.1
+  languageName: node
+  linkType: hard
   resolution: hash-base@3.0.4
 
 "hash.js@^1.0.0, hash.js@^1.0.3":
   dependencies:
     inherits: ^2.0.3
     minimalistic-assert: ^1.0.1
+  languageName: node
+  linkType: hard
   resolution: hash.js@1.1.5
 
 hmac-drbg@^1.0.0:
@@ -1790,68 +2404,104 @@ hmac-drbg@^1.0.0:
     hash.js: ^1.0.3
     minimalistic-assert: ^1.0.0
     minimalistic-crypto-utils: ^1.0.1
+  languageName: node
+  linkType: hard
   resolution: hmac-drbg@1.0.1
 
 hoek@5.x.x:
+  languageName: node
+  linkType: hard
   resolution: hoek@5.0.4
 
 hoek@6.x.x:
+  languageName: node
+  linkType: hard
   resolution: hoek@6.0.3
 
 hoist-non-react-statics@^3.1.0:
   dependencies:
     react-is: ^16.3.2
+  languageName: node
+  linkType: hard
   peerDependencies:
     react: >=14.x
   resolution: hoist-non-react-statics@3.1.0
 
 http-cache-semantics@^4.0.0:
+  languageName: node
+  linkType: hard
   resolution: http-cache-semantics@4.0.0
 
 https-browserify@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: https-browserify@1.0.0
 
 "iconv-lite@^0.4.24, iconv-lite@^0.4.4":
   dependencies:
     safer-buffer: >= 2.1.2 < 3
+  languageName: node
+  linkType: hard
   resolution: iconv-lite@0.4.24
 
 ieee754@^1.1.4:
+  languageName: node
+  linkType: hard
   resolution: ieee754@1.1.12
 
 iferr@^0.1.5:
+  languageName: node
+  linkType: hard
   resolution: iferr@0.1.5
 
 ignore-walk@^3.0.1:
   dependencies:
     minimatch: ^3.0.4
+  languageName: node
+  linkType: hard
   resolution: ignore-walk@3.0.1
 
 ignore@^3.3.5:
+  languageName: node
+  linkType: hard
   resolution: ignore@3.3.10
 
 immer@^1.7.2:
+  languageName: node
+  linkType: hard
   resolution: immer@1.7.4
 
 imurmurhash@^0.1.4:
+  languageName: node
+  linkType: hard
   resolution: imurmurhash@0.1.4
 
 indexof@0.0.1:
+  languageName: node
+  linkType: hard
   resolution: indexof@0.0.1
 
 inflight@^1.0.4:
   dependencies:
     once: ^1.3.0
     wrappy: 1
+  languageName: node
+  linkType: hard
   resolution: inflight@1.0.6
 
 "inherits@2, inherits@2.0.3, inherits@^2.0.1, inherits@^2.0.3, inherits@~2.0.1, inherits@~2.0.3":
+  languageName: node
+  linkType: hard
   resolution: inherits@2.0.3
 
 inherits@2.0.1:
+  languageName: node
+  linkType: hard
   resolution: inherits@2.0.1
 
 ini@~1.3.0:
+  languageName: node
+  linkType: hard
   resolution: ini@1.3.5
 
 inquirer@^6.2.0:
@@ -1869,42 +2519,60 @@ inquirer@^6.2.0:
     string-width: ^2.1.0
     strip-ansi: ^4.0.0
     through: ^2.3.6
+  languageName: node
+  linkType: hard
   resolution: inquirer@6.2.0
 
 invariant@^2.2.4:
   dependencies:
     loose-envify: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: invariant@2.2.4
 
 is-accessor-descriptor@^0.1.6:
   dependencies:
     kind-of: ^3.0.2
+  languageName: node
+  linkType: hard
   resolution: is-accessor-descriptor@0.1.6
 
 is-accessor-descriptor@^1.0.0:
   dependencies:
     kind-of: ^6.0.0
+  languageName: node
+  linkType: hard
   resolution: is-accessor-descriptor@1.0.0
 
 is-binary-path@^1.0.0:
   dependencies:
     binary-extensions: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: is-binary-path@1.0.1
 
 is-buffer@^1.1.5:
+  languageName: node
+  linkType: hard
   resolution: is-buffer@1.1.6
 
 is-callable@^1.1.0:
+  languageName: node
+  linkType: hard
   resolution: is-callable@1.1.4
 
 is-data-descriptor@^0.1.4:
   dependencies:
     kind-of: ^3.0.2
+  languageName: node
+  linkType: hard
   resolution: is-data-descriptor@0.1.4
 
 is-data-descriptor@^1.0.0:
   dependencies:
     kind-of: ^6.0.0
+  languageName: node
+  linkType: hard
   resolution: is-data-descriptor@1.0.0
 
 is-descriptor@^0.1.0:
@@ -1912,6 +2580,8 @@ is-descriptor@^0.1.0:
     is-accessor-descriptor: ^0.1.6
     is-data-descriptor: ^0.1.4
     kind-of: ^5.0.0
+  languageName: node
+  linkType: hard
   resolution: is-descriptor@0.1.6
 
 "is-descriptor@^1.0.0, is-descriptor@^1.0.2":
@@ -1919,76 +2589,114 @@ is-descriptor@^0.1.0:
     is-accessor-descriptor: ^1.0.0
     is-data-descriptor: ^1.0.0
     kind-of: ^6.0.2
+  languageName: node
+  linkType: hard
   resolution: is-descriptor@1.0.2
 
 "is-extendable@^0.1.0, is-extendable@^0.1.1":
+  languageName: node
+  linkType: hard
   resolution: is-extendable@0.1.1
 
 is-extendable@^1.0.1:
   dependencies:
     is-plain-object: ^2.0.4
+  languageName: node
+  linkType: hard
   resolution: is-extendable@1.0.1
 
 "is-extglob@^2.1.0, is-extglob@^2.1.1":
+  languageName: node
+  linkType: hard
   resolution: is-extglob@2.1.1
 
 is-fullwidth-code-point@^1.0.0:
   dependencies:
     number-is-nan: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: is-fullwidth-code-point@1.0.0
 
 is-fullwidth-code-point@^2.0.0:
+  languageName: node
+  linkType: hard
   resolution: is-fullwidth-code-point@2.0.0
 
 is-glob@^3.1.0:
   dependencies:
     is-extglob: ^2.1.0
+  languageName: node
+  linkType: hard
   resolution: is-glob@3.1.0
 
 is-glob@^4.0.0:
   dependencies:
     is-extglob: ^2.1.1
+  languageName: node
+  linkType: hard
   resolution: is-glob@4.0.0
 
 is-number@^3.0.0:
   dependencies:
     kind-of: ^3.0.2
+  languageName: node
+  linkType: hard
   resolution: is-number@3.0.0
 
 "is-plain-object@^2.0.1, is-plain-object@^2.0.3, is-plain-object@^2.0.4":
   dependencies:
     isobject: ^3.0.1
+  languageName: node
+  linkType: hard
   resolution: is-plain-object@2.0.4
 
 is-promise@^2.1.0:
+  languageName: node
+  linkType: hard
   resolution: is-promise@2.1.0
 
 is-stream@^1.1.0:
+  languageName: node
+  linkType: hard
   resolution: is-stream@1.1.0
 
 is-windows@^1.0.2:
+  languageName: node
+  linkType: hard
   resolution: is-windows@1.0.2
 
 is@^3.2.1:
+  languageName: node
+  linkType: hard
   resolution: is@3.2.1
 
 "isarray@1.0.0, isarray@^1.0.0, isarray@~1.0.0":
+  languageName: node
+  linkType: hard
   resolution: isarray@1.0.0
 
 isemail@3.x.x:
   dependencies:
     punycode: 2.x.x
+  languageName: node
+  linkType: hard
   resolution: isemail@3.2.0
 
 isexe@^2.0.0:
+  languageName: node
+  linkType: hard
   resolution: isexe@2.0.0
 
 isobject@^2.0.0:
   dependencies:
     isarray: 1.0.0
+  languageName: node
+  linkType: hard
   resolution: isobject@2.1.0
 
 "isobject@^3.0.0, isobject@^3.0.1":
+  languageName: node
+  linkType: hard
   resolution: isobject@3.0.1
 
 joi@^13.6.0:
@@ -1996,12 +2704,18 @@ joi@^13.6.0:
     hoek: 5.x.x
     isemail: 3.x.x
     topo: 3.x.x
+  languageName: node
+  linkType: hard
   resolution: joi@13.7.0
 
 "js-tokens@^3.0.0 || ^4.0.0":
+  languageName: node
+  linkType: hard
   resolution: js-tokens@4.0.0
 
 json-buffer@3.0.0:
+  languageName: node
+  linkType: hard
   resolution: json-buffer@3.0.0
 
 json-file-plus@^3.3.1:
@@ -2011,55 +2725,81 @@ json-file-plus@^3.3.1:
     object.assign: ^4.1.0
     promiseback: ^2.0.2
     safer-buffer: ^2.0.2
+  languageName: node
+  linkType: hard
   resolution: json-file-plus@3.3.1
 
 json-parse-better-errors@^1.0.2:
+  languageName: node
+  linkType: hard
   resolution: json-parse-better-errors@1.0.2
 
 json-schema-traverse@^0.4.1:
+  languageName: node
+  linkType: hard
   resolution: json-schema-traverse@0.4.1
 
 json5@^0.5.0:
+  languageName: node
+  linkType: hard
   resolution: json5@0.5.1
 
 jsonfile@^4.0.0:
   dependencies:
     graceful-fs: ^4.1.6
+  languageName: node
+  linkType: hard
   resolution: jsonfile@4.0.0
 
 kexec@^3.0.0:
   dependencies:
     nan: ^2.4.0
+  languageName: node
+  linkType: hard
   resolution: kexec@3.0.0
 
 keyv@^3.0.0:
   dependencies:
     json-buffer: 3.0.0
+  languageName: node
+  linkType: hard
   resolution: keyv@3.1.0
 
 "kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0":
   dependencies:
     is-buffer: ^1.1.5
+  languageName: node
+  linkType: hard
   resolution: kind-of@3.2.2
 
 kind-of@^4.0.0:
   dependencies:
     is-buffer: ^1.1.5
+  languageName: node
+  linkType: hard
   resolution: kind-of@4.0.0
 
 kind-of@^5.0.0:
+  languageName: node
+  linkType: hard
   resolution: kind-of@5.1.0
 
 "kind-of@^6.0.0, kind-of@^6.0.2":
+  languageName: node
+  linkType: hard
   resolution: kind-of@6.0.2
 
 levn@~0.3.0:
   dependencies:
     prelude-ls: ~1.1.2
     type-check: ~0.3.2
+  languageName: node
+  linkType: hard
   resolution: levn@0.3.0
 
 loader-runner@^2.3.0:
+  languageName: node
+  linkType: hard
   resolution: loader-runner@2.3.1
 
 "loader-utils@^1.0.0, loader-utils@^1.0.2, loader-utils@^1.1.0":
@@ -2067,66 +2807,96 @@ loader-runner@^2.3.0:
     big.js: ^3.1.3
     emojis-list: ^2.0.0
     json5: ^0.5.0
+  languageName: node
+  linkType: hard
   resolution: loader-utils@1.1.0
 
 locate-path@^2.0.0:
   dependencies:
     p-locate: ^2.0.0
     path-exists: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: locate-path@2.0.0
 
 lockfile@^1.0.4:
   dependencies:
     signal-exit: ^3.0.2
+  languageName: node
+  linkType: hard
   resolution: lockfile@1.0.4
 
 lodash.debounce@^4.0.8:
+  languageName: node
+  linkType: hard
   resolution: lodash.debounce@4.0.8
 
 lodash.toarray@^4.4.0:
+  languageName: node
+  linkType: hard
   resolution: lodash.toarray@4.4.0
 
 "lodash@^4.17.10, lodash@^4.17.4":
+  languageName: node
+  linkType: hard
   resolution: lodash@4.17.11
 
 logic-solver@^2.0.1:
   dependencies:
     underscore: ^1.7.0
+  languageName: node
+  linkType: hard
   resolution: logic-solver@2.0.1
 
 "loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.3.1, loose-envify@^1.4.0":
   dependencies:
     js-tokens: "^3.0.0 || ^4.0.0"
+  languageName: node
+  linkType: hard
   resolution: loose-envify@1.4.0
 
 "lowercase-keys@^1.0.0, lowercase-keys@^1.0.1":
+  languageName: node
+  linkType: hard
   resolution: lowercase-keys@1.0.1
 
 lru-cache@^4.1.1:
   dependencies:
     pseudomap: ^1.0.2
     yallist: ^2.1.2
+  languageName: node
+  linkType: hard
   resolution: lru-cache@4.1.3
 
 magic-string@^0.22.4:
   dependencies:
     vlq: ^0.2.2
+  languageName: node
+  linkType: hard
   resolution: magic-string@0.22.5
 
 make-dir@^1.0.0:
   dependencies:
     pify: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: make-dir@1.3.0
 
 make-error@^1.1.1:
+  languageName: node
+  linkType: hard
   resolution: make-error@1.3.5
 
 map-cache@^0.2.2:
+  languageName: node
+  linkType: hard
   resolution: map-cache@0.2.2
 
 map-visit@^1.0.0:
   dependencies:
     object-visit: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: map-visit@1.0.0
 
 md5.js@^1.3.4:
@@ -2134,20 +2904,28 @@ md5.js@^1.3.4:
     hash-base: ^3.0.0
     inherits: ^2.0.1
     safe-buffer: ^5.1.2
+  languageName: node
+  linkType: hard
   resolution: md5.js@1.3.5
 
 "memory-fs@^0.4.0, memory-fs@~0.4.1":
   dependencies:
     errno: ^0.1.3
     readable-stream: ^2.0.1
+  languageName: node
+  linkType: hard
   resolution: memory-fs@0.4.1
 
 merge-source-map@1.0.4:
   dependencies:
     source-map: ^0.5.6
+  languageName: node
+  linkType: hard
   resolution: merge-source-map@1.0.4
 
 merge2@^1.2.3:
+  languageName: node
+  linkType: hard
   resolution: merge2@1.2.3
 
 "micromatch@^3.1.10, micromatch@^3.1.4, micromatch@^3.1.8":
@@ -2165,46 +2943,68 @@ merge2@^1.2.3:
     regex-not: ^1.0.0
     snapdragon: ^0.8.1
     to-regex: ^3.0.2
+  languageName: node
+  linkType: hard
   resolution: micromatch@3.1.10
 
 miller-rabin@^4.0.0:
   dependencies:
     bn.js: ^4.0.0
     brorand: ^1.0.1
+  languageName: node
+  linkType: hard
   resolution: miller-rabin@4.0.1
 
 mimic-fn@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: mimic-fn@1.2.0
 
 "mimic-response@^1.0.0, mimic-response@^1.0.1":
+  languageName: node
+  linkType: hard
   resolution: mimic-response@1.0.1
 
 "minimalistic-assert@^1.0.0, minimalistic-assert@^1.0.1":
+  languageName: node
+  linkType: hard
   resolution: minimalistic-assert@1.0.1
 
 "minimalistic-crypto-utils@^1.0.0, minimalistic-crypto-utils@^1.0.1":
+  languageName: node
+  linkType: hard
   resolution: minimalistic-crypto-utils@1.0.1
 
 minimatch@^3.0.4:
   dependencies:
     brace-expansion: ^1.1.7
+  languageName: node
+  linkType: hard
   resolution: minimatch@3.0.4
 
 "minimist@^1.1.3, minimist@^1.2.0":
+  languageName: node
+  linkType: hard
   resolution: minimist@1.2.0
 
 minimist@0.0.8:
+  languageName: node
+  linkType: hard
   resolution: minimist@0.0.8
 
 "minipass@^2.2.1, minipass@^2.3.4":
   dependencies:
     safe-buffer: ^5.1.2
     yallist: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: minipass@2.3.5
 
 minizlib@^1.1.1:
   dependencies:
     minipass: ^2.2.1
+  languageName: node
+  linkType: hard
   resolution: minizlib@1.1.1
 
 mississippi@^2.0.0:
@@ -2219,17 +3019,23 @@ mississippi@^2.0.0:
     pumpify: ^1.3.3
     stream-each: ^1.1.0
     through2: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: mississippi@2.0.0
 
 mixin-deep@^1.2.0:
   dependencies:
     for-in: ^1.0.2
     is-extendable: ^1.0.1
+  languageName: node
+  linkType: hard
   resolution: mixin-deep@1.3.1
 
 "mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0":
   dependencies:
     minimist: 0.0.8
+  languageName: node
+  linkType: hard
   resolution: mkdirp@0.5.1
 
 move-concurrently@^1.0.1:
@@ -2240,18 +3046,28 @@ move-concurrently@^1.0.1:
     mkdirp: ^0.5.1
     rimraf: ^2.5.4
     run-queue: ^1.0.3
+  languageName: node
+  linkType: hard
   resolution: move-concurrently@1.0.1
 
 ms@^2.1.1:
+  languageName: node
+  linkType: hard
   resolution: ms@2.1.1
 
 ms@2.0.0:
+  languageName: node
+  linkType: hard
   resolution: ms@2.0.0
 
 mute-stream@0.0.7:
+  languageName: node
+  linkType: hard
   resolution: mute-stream@0.0.7
 
 "nan@^2.4.0, nan@^2.9.2":
+  languageName: node
+  linkType: hard
   resolution: nan@2.11.1
 
 nanomatch@^1.2.9:
@@ -2267,6 +3083,8 @@ nanomatch@^1.2.9:
     regex-not: ^1.0.0
     snapdragon: ^0.8.1
     to-regex: ^3.0.1
+  languageName: node
+  linkType: hard
   resolution: nanomatch@1.2.13
 
 needle@^2.2.1:
@@ -2274,20 +3092,30 @@ needle@^2.2.1:
     debug: ^2.1.2
     iconv-lite: ^0.4.4
     sax: ^1.2.4
+  languageName: node
+  linkType: hard
   resolution: needle@2.2.4
 
 neo-async@^2.5.0:
+  languageName: node
+  linkType: hard
   resolution: neo-async@2.6.0
 
 next-tick@1:
+  languageName: node
+  linkType: hard
   resolution: next-tick@1.0.0
 
 nice-try@^1.0.4:
+  languageName: node
+  linkType: hard
   resolution: nice-try@1.0.5
 
 node-emoji@^1.8.1:
   dependencies:
     lodash.toarray: ^4.4.0
+  languageName: node
+  linkType: hard
   resolution: node-emoji@1.8.1
 
 node-libs-browser@^2.0.0:
@@ -2315,6 +3143,8 @@ node-libs-browser@^2.0.0:
     url: ^0.11.0
     util: ^0.10.3
     vm-browserify: 0.0.4
+  languageName: node
+  linkType: hard
   resolution: node-libs-browser@2.1.0
 
 node-pre-gyp@^0.10.0:
@@ -2329,40 +3159,56 @@ node-pre-gyp@^0.10.0:
     rimraf: ^2.6.1
     semver: ^5.3.0
     tar: ^4
+  languageName: node
+  linkType: hard
   resolution: node-pre-gyp@0.10.3
 
 node.extend@^2.0.0:
   dependencies:
     has: ^1.0.3
     is: ^3.2.1
+  languageName: node
+  linkType: hard
   resolution: node.extend@2.0.1
 
 nopt@^4.0.1:
   dependencies:
     abbrev: 1
     osenv: ^0.1.4
+  languageName: node
+  linkType: hard
   resolution: nopt@4.0.1
 
 normalize-path@^2.1.1:
   dependencies:
     remove-trailing-separator: ^1.0.1
+  languageName: node
+  linkType: hard
   resolution: normalize-path@2.1.1
 
 normalize-url@^3.1.0:
+  languageName: node
+  linkType: hard
   resolution: normalize-url@3.3.0
 
 npm-bundled@^1.0.1:
+  languageName: node
+  linkType: hard
   resolution: npm-bundled@1.0.5
 
 npm-packlist@^1.1.6:
   dependencies:
     ignore-walk: ^3.0.1
     npm-bundled: ^1.0.1
+  languageName: node
+  linkType: hard
   resolution: npm-packlist@1.1.12
 
 npm-run-path@^2.0.0:
   dependencies:
     path-key: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: npm-run-path@2.0.2
 
 npmlog@^4.0.2:
@@ -2371,12 +3217,18 @@ npmlog@^4.0.2:
     console-control-strings: ~1.1.0
     gauge: ~2.7.3
     set-blocking: ~2.0.0
+  languageName: node
+  linkType: hard
   resolution: npmlog@4.1.2
 
 number-is-nan@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: number-is-nan@1.0.1
 
 "object-assign@^4.1.0, object-assign@^4.1.1":
+  languageName: node
+  linkType: hard
   resolution: object-assign@4.1.1
 
 object-copy@^0.1.0:
@@ -2384,17 +3236,25 @@ object-copy@^0.1.0:
     copy-descriptor: ^0.1.0
     define-property: ^0.2.5
     kind-of: ^3.0.3
+  languageName: node
+  linkType: hard
   resolution: object-copy@0.1.0
 
 object-inspect@~1.4.0:
+  languageName: node
+  linkType: hard
   resolution: object-inspect@1.4.1
 
 "object-keys@^1.0.11, object-keys@^1.0.12":
+  languageName: node
+  linkType: hard
   resolution: object-keys@1.0.12
 
 object-visit@^1.0.0:
   dependencies:
     isobject: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: object-visit@1.0.1
 
 object.assign@^4.1.0:
@@ -2403,21 +3263,29 @@ object.assign@^4.1.0:
     function-bind: ^1.1.1
     has-symbols: ^1.0.0
     object-keys: ^1.0.11
+  languageName: node
+  linkType: hard
   resolution: object.assign@4.1.0
 
 object.pick@^1.3.0:
   dependencies:
     isobject: ^3.0.1
+  languageName: node
+  linkType: hard
   resolution: object.pick@1.3.0
 
 "once@^1.3.0, once@^1.3.1, once@~1.3.0":
   dependencies:
     wrappy: 1
+  languageName: node
+  linkType: hard
   resolution: once@1.3.3
 
 onetime@^2.0.0:
   dependencies:
     mimic-fn: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: onetime@2.0.1
 
 optionator@^0.8.1:
@@ -2428,43 +3296,65 @@ optionator@^0.8.1:
     prelude-ls: ~1.1.2
     type-check: ~0.3.2
     wordwrap: ~1.0.0
+  languageName: node
+  linkType: hard
   resolution: optionator@0.8.2
 
 os-browserify@^0.3.0:
+  languageName: node
+  linkType: hard
   resolution: os-browserify@0.3.0
 
 os-homedir@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: os-homedir@1.0.2
 
 "os-tmpdir@^1.0.0, os-tmpdir@~1.0.2":
+  languageName: node
+  linkType: hard
   resolution: os-tmpdir@1.0.2
 
 osenv@^0.1.4:
   dependencies:
     os-homedir: ^1.0.0
     os-tmpdir: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: osenv@0.1.5
 
 p-cancelable@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: p-cancelable@1.0.0
 
 p-finally@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: p-finally@1.0.0
 
 p-limit@^1.1.0:
   dependencies:
     p-try: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: p-limit@1.3.0
 
 p-locate@^2.0.0:
   dependencies:
     p-limit: ^1.1.0
+  languageName: node
+  linkType: hard
   resolution: p-locate@2.0.0
 
 p-try@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: p-try@1.0.0
 
 pako@~1.0.5:
+  languageName: node
+  linkType: hard
   resolution: pako@1.0.6
 
 parallel-transform@^1.1.0:
@@ -2472,6 +3362,8 @@ parallel-transform@^1.1.0:
     cyclist: ~0.2.2
     inherits: ^2.0.3
     readable-stream: ^2.1.5
+  languageName: node
+  linkType: hard
   resolution: parallel-transform@1.1.0
 
 parse-asn1@^5.0.0:
@@ -2481,32 +3373,50 @@ parse-asn1@^5.0.0:
     create-hash: ^1.1.0
     evp_bytestokey: ^1.0.0
     pbkdf2: ^3.0.3
+  languageName: node
+  linkType: hard
   resolution: parse-asn1@5.1.1
 
 pascalcase@^0.1.1:
+  languageName: node
+  linkType: hard
   resolution: pascalcase@0.1.1
 
 path-browserify@0.0.0:
+  languageName: node
+  linkType: hard
   resolution: path-browserify@0.0.0
 
 path-dirname@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: path-dirname@1.0.2
 
 path-exists@^3.0.0:
+  languageName: node
+  linkType: hard
   resolution: path-exists@3.0.0
 
 path-is-absolute@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: path-is-absolute@1.0.1
 
 "path-key@^2.0.0, path-key@^2.0.1":
+  languageName: node
+  linkType: hard
   resolution: path-key@2.0.1
 
 path-parse@^1.0.5:
+  languageName: node
+  linkType: hard
   resolution: path-parse@1.0.6
 
 path-type@^3.0.0:
   dependencies:
     pify: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: path-type@3.0.0
 
 pbkdf2@^3.0.3:
@@ -2516,74 +3426,112 @@ pbkdf2@^3.0.3:
     ripemd160: ^2.0.1
     safe-buffer: ^5.0.1
     sha.js: ^2.4.8
+  languageName: node
+  linkType: hard
   resolution: pbkdf2@3.0.17
 
 pegjs@^0.10.0:
+  languageName: node
+  linkType: hard
   resolution: pegjs@0.10.0
 
 pify@^3.0.0:
+  languageName: node
+  linkType: hard
   resolution: pify@3.0.0
 
 pkg-dir@^2.0.0:
   dependencies:
     find-up: ^2.1.0
+  languageName: node
+  linkType: hard
   resolution: pkg-dir@2.0.0
 
 pluralize@^7.0.0:
+  languageName: node
+  linkType: hard
   resolution: pluralize@7.0.0
 
 pnp-webpack-plugin@^1.2.0:
   dependencies:
     ts-pnp: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: pnp-webpack-plugin@1.2.0
 
 posix-character-classes@^0.1.0:
+  languageName: node
+  linkType: hard
   resolution: posix-character-classes@0.1.1
 
 prelude-ls@~1.1.2:
+  languageName: node
+  linkType: hard
   resolution: prelude-ls@1.1.2
 
 prepend-http@^2.0.0:
+  languageName: node
+  linkType: hard
   resolution: prepend-http@2.0.0
 
 pretty-bytes@^5.1.0:
+  languageName: node
+  linkType: hard
   resolution: pretty-bytes@5.1.0
 
 process-nextick-args@~2.0.0:
+  languageName: node
+  linkType: hard
   resolution: process-nextick-args@2.0.0
 
 process@^0.11.10:
+  languageName: node
+  linkType: hard
   resolution: process@0.11.10
 
 promise-deferred@^2.0.1:
   dependencies:
     promise: ~6.1.0
+  languageName: node
+  linkType: hard
   resolution: promise-deferred@2.0.1
 
 promise-inflight@^1.0.1:
+  languageName: node
+  linkType: hard
   resolution: promise-inflight@1.0.1
 
 promise@~6.1.0:
   dependencies:
     asap: ~1.0.0
+  languageName: node
+  linkType: hard
   resolution: promise@6.1.0
 
 promiseback@^2.0.2:
   dependencies:
     is-callable: ^1.1.0
     promise-deferred: ^2.0.1
+  languageName: node
+  linkType: hard
   resolution: promiseback@2.0.2
 
 "prop-types@^15.6.1, prop-types@^15.6.2":
   dependencies:
     loose-envify: ^1.3.1
     object-assign: ^4.1.1
+  languageName: node
+  linkType: hard
   resolution: prop-types@15.6.2
 
 prr@~1.0.1:
+  languageName: node
+  linkType: hard
   resolution: prr@1.0.1
 
 pseudomap@^1.0.2:
+  languageName: node
+  linkType: hard
   resolution: pseudomap@1.0.2
 
 public-encrypt@^4.0.0:
@@ -2594,18 +3542,24 @@ public-encrypt@^4.0.0:
     parse-asn1: ^5.0.0
     randombytes: ^2.0.1
     safe-buffer: ^5.1.2
+  languageName: node
+  linkType: hard
   resolution: public-encrypt@4.0.3
 
 "pump@^2.0.0, pump@^2.0.1":
   dependencies:
     end-of-stream: ^1.1.0
     once: ^1.3.1
+  languageName: node
+  linkType: hard
   resolution: pump@2.0.1
 
 pump@^3.0.0:
   dependencies:
     end-of-stream: ^1.1.0
     once: ^1.3.1
+  languageName: node
+  linkType: hard
   resolution: pump@3.0.0
 
 pumpify@^1.3.3:
@@ -2613,21 +3567,33 @@ pumpify@^1.3.3:
     duplexify: ^3.6.0
     inherits: ^2.0.3
     pump: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: pumpify@1.5.1
 
 punycode@^1.2.4:
+  languageName: node
+  linkType: hard
   resolution: punycode@1.4.1
 
 punycode@1.3.2:
+  languageName: node
+  linkType: hard
   resolution: punycode@1.3.2
 
 "punycode@2.x.x, punycode@^2.1.0":
+  languageName: node
+  linkType: hard
   resolution: punycode@2.1.1
 
 querystring-es3@^0.2.0:
+  languageName: node
+  linkType: hard
   resolution: querystring-es3@0.2.1
 
 querystring@0.2.0:
+  languageName: node
+  linkType: hard
   resolution: querystring@0.2.0
 
 quote-stream@^1.0.1:
@@ -2635,20 +3601,28 @@ quote-stream@^1.0.1:
     buffer-equal: 0.0.1
     minimist: ^1.1.3
     through2: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: quote-stream@1.0.2
 
 "randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5":
   dependencies:
     safe-buffer: ^5.1.0
+  languageName: node
+  linkType: hard
   resolution: randombytes@2.0.6
 
 randomfill@^1.0.3:
   dependencies:
     randombytes: ^2.0.5
     safe-buffer: ^5.1.0
+  languageName: node
+  linkType: hard
   resolution: randomfill@1.0.4
 
 raw-loader@^0.5.1:
+  languageName: node
+  linkType: hard
   resolution: raw-loader@0.5.1
 
 rc@^1.2.7:
@@ -2657,12 +3631,18 @@ rc@^1.2.7:
     ini: ~1.3.0
     minimist: ^1.2.0
     strip-json-comments: ~2.0.1
+  languageName: node
+  linkType: hard
   resolution: rc@1.2.8
 
 "react-is@^16.3.2, react-is@^16.6.0":
+  languageName: node
+  linkType: hard
   resolution: react-is@16.6.3
 
 react-lifecycles-compat@^3.0.0:
+  languageName: node
+  linkType: hard
   resolution: react-lifecycles-compat@3.0.4
 
 react-reconciler@^0.14.0:
@@ -2671,6 +3651,8 @@ react-reconciler@^0.14.0:
     object-assign: ^4.1.1
     prop-types: ^15.6.2
     schedule: ^0.4.0
+  languageName: node
+  linkType: hard
   peerDependencies:
     react: ^16.0.0
   resolution: react-reconciler@0.14.0
@@ -2684,6 +3666,8 @@ react-redux@^5.0.7:
     prop-types: ^15.6.1
     react-is: ^16.6.0
     react-lifecycles-compat: ^3.0.0
+  languageName: node
+  linkType: hard
   peerDependencies:
     react: "^0.14.0 || ^15.0.0-0 || ^16.0.0-0"
     redux: "^2.0.0 || ^3.0.0 || ^4.0.0-0"
@@ -2695,6 +3679,8 @@ react-redux@^5.0.7:
     object-assign: ^4.1.1
     prop-types: ^15.6.2
     scheduler: ^0.11.2
+  languageName: node
+  linkType: hard
   resolution: react@16.6.3
 
 "readable-stream@1 || 2, readable-stream@^2.0.0, readable-stream@^2.0.1, readable-stream@^2.0.2, readable-stream@^2.0.4, readable-stream@^2.0.6, readable-stream@^2.1.5, readable-stream@^2.2.2, readable-stream@^2.3.3, readable-stream@^2.3.6, readable-stream@~2.3.3, readable-stream@~2.3.6":
@@ -2706,6 +3692,8 @@ react-redux@^5.0.7:
     safe-buffer: ~5.1.1
     string_decoder: ~1.1.1
     util-deprecate: ~1.0.1
+  languageName: node
+  linkType: hard
   resolution: readable-stream@2.3.6
 
 readdirp@^2.0.0:
@@ -2713,9 +3701,13 @@ readdirp@^2.0.0:
     graceful-fs: ^4.1.11
     micromatch: ^3.1.10
     readable-stream: ^2.0.2
+  languageName: node
+  linkType: hard
   resolution: readdirp@2.2.1
 
 "redux-saga@*":
+  languageName: node
+  linkType: hard
   resolution: redux-saga@0.16.2
 
 redux-saga@^1.0.0-beta.3:
@@ -2726,115 +3718,167 @@ redux-saga@^1.0.0-beta.3:
     @redux-saga/is: ^1.0.0-beta.3
     @redux-saga/symbols: ^1.0.0-beta.3
     redux: >=0.10 <5
+  languageName: node
+  linkType: hard
   resolution: redux-saga@1.0.0-beta.3
 
 "redux@>=0.10 <5, redux@^4.0.0":
   dependencies:
     loose-envify: ^1.4.0
     symbol-observable: ^1.2.0
+  languageName: node
+  linkType: hard
   resolution: redux@4.0.1
 
 regenerator-runtime@^0.11.0:
+  languageName: node
+  linkType: hard
   resolution: regenerator-runtime@0.11.1
 
 regenerator-runtime@^0.12.0:
+  languageName: node
+  linkType: hard
   resolution: regenerator-runtime@0.12.1
 
 "regex-not@^1.0.0, regex-not@^1.0.2":
   dependencies:
     extend-shallow: ^3.0.2
     safe-regex: ^1.1.0
+  languageName: node
+  linkType: hard
   resolution: regex-not@1.0.2
 
 remove-trailing-separator@^1.0.1:
+  languageName: node
+  linkType: hard
   resolution: remove-trailing-separator@1.1.0
 
 reopen-tty@^1.1.2:
+  languageName: node
+  linkType: hard
   resolution: reopen-tty@1.1.2
 
 repeat-element@^1.1.2:
+  languageName: node
+  linkType: hard
   resolution: repeat-element@1.1.3
 
 repeat-string@^1.6.1:
+  languageName: node
+  linkType: hard
   resolution: repeat-string@1.6.1
 
 resolve-url@^0.2.1:
+  languageName: node
+  linkType: hard
   resolution: resolve-url@0.2.1
 
 resolve@^1.1.5:
   dependencies:
     path-parse: ^1.0.5
+  languageName: node
+  linkType: hard
   resolution: resolve@1.8.1
 
 responselike@^1.0.2:
   dependencies:
     lowercase-keys: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: responselike@1.0.2
 
 restore-cursor@^2.0.0:
   dependencies:
     onetime: ^2.0.0
     signal-exit: ^3.0.2
+  languageName: node
+  linkType: hard
   resolution: restore-cursor@2.0.0
 
 ret@~0.1.10:
+  languageName: node
+  linkType: hard
   resolution: ret@0.1.15
 
 "rimraf@^2.5.4, rimraf@^2.6.1, rimraf@^2.6.2":
   dependencies:
     glob: ^7.0.5
+  languageName: node
+  linkType: hard
   resolution: rimraf@2.6.2
 
 "ripemd160@^2.0.0, ripemd160@^2.0.1":
   dependencies:
     hash-base: ^3.0.0
     inherits: ^2.0.1
+  languageName: node
+  linkType: hard
   resolution: ripemd160@2.0.2
 
 run-async@^2.2.0:
   dependencies:
     is-promise: ^2.1.0
+  languageName: node
+  linkType: hard
   resolution: run-async@2.3.0
 
 "run-queue@^1.0.0, run-queue@^1.0.3":
   dependencies:
     aproba: ^1.1.1
+  languageName: node
+  linkType: hard
   resolution: run-queue@1.0.3
 
 rxjs@^6.1.0:
   dependencies:
     tslib: ^1.9.0
+  languageName: node
+  linkType: hard
   resolution: rxjs@6.3.3
 
 "safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1":
+  languageName: node
+  linkType: hard
   resolution: safe-buffer@5.1.2
 
 safe-regex@^1.1.0:
   dependencies:
     ret: ~0.1.10
+  languageName: node
+  linkType: hard
   resolution: safe-regex@1.1.0
 
 "safer-buffer@>= 2.1.2 < 3, safer-buffer@^2.0.2":
+  languageName: node
+  linkType: hard
   resolution: safer-buffer@2.1.2
 
 sax@^1.2.4:
+  languageName: node
+  linkType: hard
   resolution: sax@1.2.4
 
 schedule@^0.4.0:
   dependencies:
     object-assign: ^4.1.1
+  languageName: node
+  linkType: hard
   resolution: schedule@0.4.0
 
 scheduler@^0.11.2:
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
+  languageName: node
+  linkType: hard
   resolution: scheduler@0.11.2
 
 "schema-utils@^0.4.4, schema-utils@^0.4.5":
   dependencies:
     ajv: ^6.1.0
     ajv-keywords: ^3.1.0
+  languageName: node
+  linkType: hard
   resolution: schema-utils@0.4.7
 
 scope-analyzer@^2.0.1:
@@ -2845,15 +3889,23 @@ scope-analyzer@^2.0.1:
     es6-symbol: ^3.1.1
     estree-is-function: ^1.0.0
     get-assigned-identifiers: ^1.1.0
+  languageName: node
+  linkType: hard
   resolution: scope-analyzer@2.0.5
 
 "semver@^5.0.1, semver@^5.3.0, semver@^5.5.0, semver@^5.5.1":
+  languageName: node
+  linkType: hard
   resolution: semver@5.6.0
 
 serialize-javascript@^1.4.0:
+  languageName: node
+  linkType: hard
   resolution: serialize-javascript@1.5.0
 
 set-blocking@~2.0.0:
+  languageName: node
+  linkType: hard
   resolution: set-blocking@2.0.0
 
 set-value@^0.4.3:
@@ -2862,6 +3914,8 @@ set-value@^0.4.3:
     is-extendable: ^0.1.1
     is-plain-object: ^2.0.1
     to-object-path: ^0.3.0
+  languageName: node
+  linkType: hard
   resolution: set-value@0.4.3
 
 set-value@^2.0.0:
@@ -2870,32 +3924,48 @@ set-value@^2.0.0:
     is-extendable: ^0.1.1
     is-plain-object: ^2.0.3
     split-string: ^3.0.1
+  languageName: node
+  linkType: hard
   resolution: set-value@2.0.0
 
 setimmediate@^1.0.4:
+  languageName: node
+  linkType: hard
   resolution: setimmediate@1.0.5
 
 "sha.js@^2.4.0, sha.js@^2.4.8":
   dependencies:
     inherits: ^2.0.1
     safe-buffer: ^5.0.1
+  languageName: node
+  linkType: hard
   resolution: sha.js@2.4.11
 
 shallow-copy@~0.0.1:
+  languageName: node
+  linkType: hard
   resolution: shallow-copy@0.0.1
 
 shebang-command@^1.2.0:
   dependencies:
     shebang-regex: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: shebang-command@1.2.0
 
 shebang-regex@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: shebang-regex@1.0.0
 
 "signal-exit@^3.0.0, signal-exit@^3.0.2":
+  languageName: node
+  linkType: hard
   resolution: signal-exit@3.0.2
 
 slash@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: slash@1.0.0
 
 snapdragon-node@^2.0.1:
@@ -2903,11 +3973,15 @@ snapdragon-node@^2.0.1:
     define-property: ^1.0.0
     isobject: ^3.0.0
     snapdragon-util: ^3.0.1
+  languageName: node
+  linkType: hard
   resolution: snapdragon-node@2.1.1
 
 snapdragon-util@^3.0.1:
   dependencies:
     kind-of: ^3.2.0
+  languageName: node
+  linkType: hard
   resolution: snapdragon-util@3.0.1
 
 snapdragon@^0.8.1:
@@ -2920,9 +3994,13 @@ snapdragon@^0.8.1:
     source-map: ^0.5.6
     source-map-resolve: ^0.5.0
     use: ^3.1.0
+  languageName: node
+  linkType: hard
   resolution: snapdragon@0.8.2
 
 source-list-map@^2.0.0:
+  languageName: node
+  linkType: hard
   resolution: source-list-map@2.0.1
 
 source-map-resolve@^0.5.0:
@@ -2932,42 +4010,60 @@ source-map-resolve@^0.5.0:
     resolve-url: ^0.2.1
     source-map-url: ^0.4.0
     urix: ^0.1.0
+  languageName: node
+  linkType: hard
   resolution: source-map-resolve@0.5.2
 
 source-map-support@^0.5.6:
   dependencies:
     buffer-from: ^1.0.0
     source-map: ^0.6.0
+  languageName: node
+  linkType: hard
   resolution: source-map-support@0.5.9
 
 source-map-url@^0.4.0:
+  languageName: node
+  linkType: hard
   resolution: source-map-url@0.4.0
 
 source-map@^0.5.6:
+  languageName: node
+  linkType: hard
   resolution: source-map@0.5.7
 
 "source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.1":
+  languageName: node
+  linkType: hard
   resolution: source-map@0.6.1
 
 "split-string@^3.0.1, split-string@^3.0.2":
   dependencies:
     extend-shallow: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: split-string@3.1.0
 
 ssri@^5.2.4:
   dependencies:
     safe-buffer: ^5.1.1
+  languageName: node
+  linkType: hard
   resolution: ssri@5.3.0
 
 static-eval@^2.0.0:
   dependencies:
     escodegen: ^1.8.1
+  languageName: node
+  linkType: hard
   resolution: static-eval@2.0.0
 
 static-extend@^0.1.1:
   dependencies:
     define-property: ^0.2.5
     object-copy: ^0.1.0
+  languageName: node
+  linkType: hard
   resolution: static-extend@0.1.2
 
 static-module@^3.0.0:
@@ -2986,21 +4082,29 @@ static-module@^3.0.0:
     shallow-copy: ~0.0.1
     static-eval: ^2.0.0
     through2: ~2.0.3
+  languageName: node
+  linkType: hard
   resolution: static-module@3.0.0
 
 stream-browserify@^2.0.1:
   dependencies:
     inherits: ~2.0.1
     readable-stream: ^2.0.2
+  languageName: node
+  linkType: hard
   resolution: stream-browserify@2.0.1
 
 stream-buffers@^3.0.2:
+  languageName: node
+  linkType: hard
   resolution: stream-buffers@3.0.2
 
 stream-each@^1.1.0:
   dependencies:
     end-of-stream: ^1.1.0
     stream-shift: ^1.0.0
+  languageName: node
+  linkType: hard
   resolution: stream-each@1.2.3
 
 stream-http@^2.7.2:
@@ -3010,14 +4114,20 @@ stream-http@^2.7.2:
     readable-stream: ^2.3.6
     to-arraybuffer: ^1.0.0
     xtend: ^4.0.0
+  languageName: node
+  linkType: hard
   resolution: stream-http@2.8.3
 
 stream-shift@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: stream-shift@1.0.0
 
 stream-to-array@~2.3.0:
   dependencies:
     any-promise: ^1.1.0
+  languageName: node
+  linkType: hard
   resolution: stream-to-array@2.3.0
 
 stream-to-promise@^2.2.0:
@@ -3025,11 +4135,15 @@ stream-to-promise@^2.2.0:
     any-promise: ~1.3.0
     end-of-stream: ~1.1.0
     stream-to-array: ~2.3.0
+  languageName: node
+  linkType: hard
   resolution: stream-to-promise@2.2.0
 
 "string_decoder@^1.0.0, string_decoder@~1.1.1":
   dependencies:
     safe-buffer: ~5.1.0
+  languageName: node
+  linkType: hard
   resolution: string_decoder@1.1.1
 
 string-width@^1.0.1:
@@ -3037,42 +4151,62 @@ string-width@^1.0.1:
     code-point-at: ^1.0.0
     is-fullwidth-code-point: ^1.0.0
     strip-ansi: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: string-width@1.0.2
 
 "string-width@^1.0.2 || 2, string-width@^2.1.0":
   dependencies:
     is-fullwidth-code-point: ^2.0.0
     strip-ansi: ^4.0.0
+  languageName: node
+  linkType: hard
   resolution: string-width@2.1.1
 
 "strip-ansi@^3.0.0, strip-ansi@^3.0.1":
   dependencies:
     ansi-regex: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: strip-ansi@3.0.1
 
 strip-ansi@^4.0.0:
   dependencies:
     ansi-regex: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: strip-ansi@4.0.0
 
 strip-eof@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: strip-eof@1.0.0
 
 strip-json-comments@~2.0.1:
+  languageName: node
+  linkType: hard
   resolution: strip-json-comments@2.0.1
 
 supports-color@^2.0.0:
+  languageName: node
+  linkType: hard
   resolution: supports-color@2.0.0
 
 "supports-color@^5.3.0, supports-color@^5.5.0":
   dependencies:
     has-flag: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: supports-color@5.5.0
 
 symbol-observable@^1.2.0:
+  languageName: node
+  linkType: hard
   resolution: symbol-observable@1.2.0
 
 "tapable@^1.0.0, tapable@^1.1.0":
+  languageName: node
+  linkType: hard
   resolution: tapable@1.1.0
 
 "tar@^4, tar@^4.4.6":
@@ -3084,45 +4218,65 @@ symbol-observable@^1.2.0:
     mkdirp: ^0.5.0
     safe-buffer: ^5.1.2
     yallist: ^3.0.2
+  languageName: node
+  linkType: hard
   resolution: tar@4.4.8
 
 tau-prolog@^0.2.38:
+  languageName: node
+  linkType: hard
   resolution: tau-prolog@0.2.38
 
 through@^2.3.6:
+  languageName: node
+  linkType: hard
   resolution: through@2.3.8
 
 "through2@^2.0.0, through2@~2.0.3":
   dependencies:
     readable-stream: ~2.3.6
     xtend: ~4.0.1
+  languageName: node
+  linkType: hard
   resolution: through2@2.0.5
 
 timers-browserify@^2.0.4:
   dependencies:
     setimmediate: ^1.0.4
+  languageName: node
+  linkType: hard
   resolution: timers-browserify@2.0.10
 
 tmp@^0.0.33:
   dependencies:
     os-tmpdir: ~1.0.2
+  languageName: node
+  linkType: hard
   resolution: tmp@0.0.33
 
 to-arraybuffer@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: to-arraybuffer@1.0.1
 
 to-object-path@^0.3.0:
   dependencies:
     kind-of: ^3.0.2
+  languageName: node
+  linkType: hard
   resolution: to-object-path@0.3.0
 
 to-readable-stream@^1.0.0:
+  languageName: node
+  linkType: hard
   resolution: to-readable-stream@1.0.0
 
 to-regex-range@^2.1.0:
   dependencies:
     is-number: ^3.0.0
     repeat-string: ^1.6.1
+  languageName: node
+  linkType: hard
   resolution: to-regex-range@2.1.1
 
 "to-regex@^3.0.1, to-regex@^3.0.2":
@@ -3131,16 +4285,22 @@ to-regex-range@^2.1.0:
     extend-shallow: ^3.0.2
     regex-not: ^1.0.2
     safe-regex: ^1.1.0
+  languageName: node
+  linkType: hard
   resolution: to-regex@3.0.2
 
 topo@3.x.x:
   dependencies:
     hoek: 6.x.x
+  languageName: node
+  linkType: hard
   resolution: topo@3.0.3
 
 transform-loader@^0.2.4:
   dependencies:
     loader-utils: ^1.0.2
+  languageName: node
+  linkType: hard
   resolution: transform-loader@0.2.4
 
 ts-loader@^5.3.0:
@@ -3150,6 +4310,8 @@ ts-loader@^5.3.0:
     loader-utils: ^1.0.2
     micromatch: ^3.1.4
     semver: ^5.0.1
+  languageName: node
+  linkType: hard
   peerDependencies:
     typescript: "*"
   resolution: ts-loader@5.3.0
@@ -3164,37 +4326,55 @@ ts-node@^7.0.1:
     mkdirp: ^0.5.1
     source-map-support: ^0.5.6
     yn: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: ts-node@7.0.1
 
 ts-pnp@^1.0.0:
+  languageName: node
+  linkType: hard
   peerDependencies:
     typescript: "*"
   resolution: ts-pnp@1.0.0
 
 tslib@^1.9.0:
+  languageName: node
+  linkType: hard
   resolution: tslib@1.9.3
 
 tty-browserify@0.0.0:
+  languageName: node
+  linkType: hard
   resolution: tty-browserify@0.0.0
 
 tunnel@^0.0.6:
+  languageName: node
+  linkType: hard
   resolution: tunnel@0.0.6
 
 type-check@~0.3.2:
   dependencies:
     prelude-ls: ~1.1.2
+  languageName: node
+  linkType: hard
   resolution: type-check@0.3.2
 
 typedarray@^0.0.6:
+  languageName: node
+  linkType: hard
   resolution: typedarray@0.0.6
 
 typescript@^3.0.1:
+  languageName: node
+  linkType: hard
   resolution: typescript@3.1.6
 
 uglify-es@^3.3.4:
   dependencies:
     commander: ~2.14.1
     source-map: ~0.6.1
+  languageName: node
+  linkType: hard
   resolution: uglify-es@3.3.10
 
 uglifyjs-webpack-plugin@^1.2.4:
@@ -3207,11 +4387,15 @@ uglifyjs-webpack-plugin@^1.2.4:
     uglify-es: ^3.3.4
     webpack-sources: ^1.1.0
     worker-farm: ^1.5.2
+  languageName: node
+  linkType: hard
   peerDependencies:
     webpack: "^2.0.0 || ^3.0.0 || ^4.0.0"
   resolution: uglifyjs-webpack-plugin@1.3.0
 
 underscore@^1.7.0:
+  languageName: node
+  linkType: hard
   resolution: underscore@1.9.1
 
 union-value@^1.0.0:
@@ -3220,79 +4404,113 @@ union-value@^1.0.0:
     get-value: ^2.0.6
     is-extendable: ^0.1.1
     set-value: ^0.4.3
+  languageName: node
+  linkType: hard
   resolution: union-value@1.0.0
 
 unique-filename@^1.1.0:
   dependencies:
     unique-slug: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: unique-filename@1.1.1
 
 unique-slug@^2.0.0:
   dependencies:
     imurmurhash: ^0.1.4
+  languageName: node
+  linkType: hard
   resolution: unique-slug@2.0.1
 
 universalify@^0.1.0:
+  languageName: node
+  linkType: hard
   resolution: universalify@0.1.2
 
 unset-value@^1.0.0:
   dependencies:
     has-value: ^0.3.1
     isobject: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: unset-value@1.0.0
 
 upath@^1.0.5:
+  languageName: node
+  linkType: hard
   resolution: upath@1.1.0
 
 uri-js@^4.2.2:
   dependencies:
     punycode: ^2.1.0
+  languageName: node
+  linkType: hard
   resolution: uri-js@4.2.2
 
 urix@^0.1.0:
+  languageName: node
+  linkType: hard
   resolution: urix@0.1.0
 
 url-parse-lax@^3.0.0:
   dependencies:
     prepend-http: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: url-parse-lax@3.0.0
 
 url@^0.11.0:
   dependencies:
     punycode: 1.3.2
     querystring: 0.2.0
+  languageName: node
+  linkType: hard
   resolution: url@0.11.0
 
 use@^3.1.0:
+  languageName: node
+  linkType: hard
   resolution: use@3.1.1
 
 util-deprecate@~1.0.1:
+  languageName: node
+  linkType: hard
   resolution: util-deprecate@1.0.2
 
 util@^0.10.3:
   dependencies:
     inherits: 2.0.3
+  languageName: node
+  linkType: hard
   resolution: util@0.10.4
 
 util@0.10.3:
   dependencies:
     inherits: 2.0.1
+  languageName: node
+  linkType: hard
   resolution: util@0.10.3
 
 val-loader@^1.1.1:
   dependencies:
     loader-utils: ^1.0.0
     schema-utils: ^0.4.5
+  languageName: node
+  linkType: hard
   peerDependencies:
     webpack: "^2.0.0 || ^3.0.0 || ^4.0.0"
   resolution: val-loader@1.1.1
 
 vlq@^0.2.2:
+  languageName: node
+  linkType: hard
   resolution: vlq@0.2.3
 
 vm-browserify@0.0.4:
   dependencies:
     indexof: 0.0.1
+  languageName: node
+  linkType: hard
   resolution: vm-browserify@0.0.4
 
 watchpack@^1.5.0:
@@ -3300,17 +4518,23 @@ watchpack@^1.5.0:
     chokidar: ^2.0.2
     graceful-fs: ^4.1.2
     neo-async: ^2.5.0
+  languageName: node
+  linkType: hard
   resolution: watchpack@1.6.0
 
 "webpack-sources@^1.1.0, webpack-sources@^1.3.0":
   dependencies:
     source-list-map: ^2.0.0
     source-map: ~0.6.1
+  languageName: node
+  linkType: hard
   resolution: webpack-sources@1.3.0
 
 webpack-virtual-modules@^0.1.10:
   dependencies:
     debug: ^3.0.0
+  languageName: node
+  linkType: hard
   resolution: webpack-virtual-modules@0.1.10
 
 "webpack@4.25.1, webpack@^4.18.0":
@@ -3339,43 +4563,67 @@ webpack-virtual-modules@^0.1.10:
     uglifyjs-webpack-plugin: ^1.2.4
     watchpack: ^1.5.0
     webpack-sources: ^1.3.0
+  languageName: node
+  linkType: hard
   resolution: webpack@4.25.1
 
 which@^1.2.9:
   dependencies:
     isexe: ^2.0.0
+  languageName: node
+  linkType: hard
   resolution: which@1.3.1
 
 wide-align@^1.1.0:
   dependencies:
     string-width: "^1.0.2 || 2"
+  languageName: node
+  linkType: hard
   resolution: wide-align@1.1.3
 
 wordwrap@~1.0.0:
+  languageName: node
+  linkType: hard
   resolution: wordwrap@1.0.0
 
 worker-farm@^1.5.2:
   dependencies:
     errno: ~0.1.7
+  languageName: node
+  linkType: hard
   resolution: worker-farm@1.6.0
 
 wrappy@1:
+  languageName: node
+  linkType: hard
   resolution: wrappy@1.0.2
 
 "xtend@^4.0.0, xtend@^4.0.1, xtend@~4.0.1":
+  languageName: node
+  linkType: hard
   resolution: xtend@4.0.1
 
 y18n@^4.0.0:
+  languageName: node
+  linkType: hard
   resolution: y18n@4.0.0
 
 yallist@^2.1.2:
+  languageName: node
+  linkType: hard
   resolution: yallist@2.1.2
 
 "yallist@^3.0.0, yallist@^3.0.2":
+  languageName: node
+  linkType: hard
   resolution: yallist@3.0.2
 
 yn@^2.0.0:
+  languageName: node
+  linkType: hard
   resolution: yn@2.0.0
 
 yoga-dom@^0.0.14:
+  languageName: node
+  linkType: hard
   resolution: yoga-dom@0.0.14

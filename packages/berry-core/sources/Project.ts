@@ -18,6 +18,7 @@ import * as miscUtils                           from './miscUtils';
 import * as structUtils                         from './structUtils';
 import {IdentHash, DescriptorHash, LocatorHash} from './types';
 import {Descriptor, Locator, Package}           from './types';
+import {LinkType}                               from './types';
 
 export class Project {
   public readonly configuration: Configuration;
@@ -97,6 +98,9 @@ export class Project {
         const data = parsed[key];
         const locator = structUtils.parseLocator(data.resolution);
 
+        const languageName = data.languageName || `node`;
+        const linkType = data.linkType as LinkType || LinkType.HARD;
+
         const dependencies = new Map<IdentHash, Descriptor>();
         const peerDependencies = new Map<IdentHash, Descriptor>();
 
@@ -110,7 +114,7 @@ export class Project {
           peerDependencies.set(descriptor.identHash, descriptor);
         }
 
-        const pkg: Package = {...locator, dependencies, peerDependencies};
+        const pkg: Package = {...locator, languageName, linkType, dependencies, peerDependencies};
         this.storedPackages.set(pkg.locatorHash, pkg);
 
         for (const entry of key.split(/ *, */g)) {
@@ -727,36 +731,46 @@ export class Project {
 
       const linker = linkers.find(linker => linker.supports(pkg, linkerOptions));
       if (linker === treeLinker) {
-        // Register the peer dependency in the tree, so that our linkers will
-        // know that they shouldn't hoist the package at a level where they
-        // wouldn't be able to access the inherited packages anymore.
+        let linkerDefinition = linkerDefinitions.get(linker);
+        if (!linkerDefinition)
+          throw new Error(`Assertion failed: The linker should have been instantiated`);
 
-        for (const descriptor of pkg.peerDependencies.values())
-          inheritedDependencies.push(descriptor.identHash);
+        const {dependencyTreeTraversal} = linkerDefinition;
+        if (!dependencyTreeTraversal)
+          throw new Error(`Assertion failed: The linker should have a tree traversal strategy defined`);
 
-        // In this first pass, we split the dependencies in two buckets: the
-        // first one with the direct dependencies, and the second one with the
-        // deps that are obtained from a package located somewhere in our
-        // dependency chain.
+        if (buildOrder === 0 || !dependencyTreeTraversal.supportsTraversal || dependencyTreeTraversal.supportsTraversal(pkg, linkerOptions)) {
+          // Register the peer dependency in the tree, so that our linkers will
+          // know that they shouldn't hoist the package at a level where they
+          // wouldn't be able to access the inherited packages anymore.
 
-        for (const descriptor of pkg.dependencies.values()) {
-          const resolution = this.storedResolutions.get(descriptor.descriptorHash);
-          if (!resolution)
-            throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+          for (const descriptor of pkg.peerDependencies.values())
+            inheritedDependencies.push(descriptor.identHash);
 
-          const dependency = this.storedPackages.get(resolution);
-          if (!dependency)
-            throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+          // In this first pass, we split the dependencies in two buckets: the
+          // first one with the direct dependencies, and the second one with the
+          // deps that are obtained from a package located somewhere in our
+          // dependency chain.
 
-          // If this isn't the first time that a package is found in the same
-          // branch, then it's a circular dependency that we must break. To do
-          // this, we change it to be an inherited dependency (we are allowed to
-          // do this because it doesn't change the version that will be used).
+          for (const descriptor of pkg.dependencies.values()) {
+            const resolution = this.storedResolutions.get(descriptor.descriptorHash);
+            if (!resolution)
+              throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
-          if (availablePackages.get(descriptor.identHash) === dependency.locatorHash) {
-            inheritedDependencies.push(dependency.identHash);
-          } else {
-            childrenLocators.push(dependency);
+            const dependency = this.storedPackages.get(resolution);
+            if (!dependency)
+              throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+
+            // If this isn't the first time that a package is found in the same
+            // branch, then it's a circular dependency that we must break. To do
+            // this, we change it to be an inherited dependency (we are allowed to
+            // do this because it doesn't change the version that will be used).
+
+            if (availablePackages.get(descriptor.identHash) === dependency.locatorHash) {
+              inheritedDependencies.push(dependency.identHash);
+            } else {
+              childrenLocators.push(dependency);
+            }
           }
         }
       }
@@ -972,7 +986,14 @@ export class Project {
       for (const dependency of pkg.peerDependencies.values())
         peerDependencies[structUtils.stringifyIdent(dependency)] = dependency.range;
 
+      const rest = (pkg => {
+        // Remove the fields we're not interested in to only keep the ones we want
+        const {identHash, scope, name, locatorHash, reference, dependencies, peerDependencies, ... rest} = pkg;
+        return rest;
+      })(pkg);
+
       optimizedLockfile[key] = {
+        ... rest,
         resolution: structUtils.stringifyLocator(pkg),
         dependencies: Object.keys(dependencies).length > 0 ? dependencies : undefined,
         peerDependencies: Object.keys(peerDependencies).length > 0 ? peerDependencies : undefined,

@@ -2,6 +2,7 @@ import React = require('react');
 
 import {Configuration, Workspace, Plugin, Project} from '@berry/core';
 import {Descriptor}                                from '@berry/core';
+import {LinkType}                                  from '@berry/core';
 import {structUtils}                               from '@berry/core';
 import {Tracker, makeTracker}                      from '@berry/json-proxy';
 import {render}                                    from '@berry/ui';
@@ -52,8 +53,14 @@ function makeBerrySaga(projectTracker: Tracker<Project>) {
         yield put({type: `UPDATE_PROJECT`, project: projectTracker(project => {
           const locator = structUtils.makeLocator(descriptor, reference);
 
+          const languageName = ``;
+          const linkType = LinkType.HARD;
+
+          const dependencies = new Map();
+          const peerDependencies = new Map();
+
           project.storedResolutions.set(descriptor.descriptorHash, locator.locatorHash);
-          project.storedPackages.set(locator.locatorHash, {... locator, dependencies: new Map(), peerDependencies: new Map()});
+          project.storedPackages.set(locator.locatorHash, {... locator, languageName, linkType, dependencies, peerDependencies});
         })});
       }),
       takeEvery(`ADD_DEPENDENCY`, function* ({workspace, descriptor, kind, development}: AddDependencyAction): IterableIterator<any> {

@@ -40,6 +40,18 @@ export interface DependencyTreeTraversal<State> {
    */
 
   /**
+   * Returns true if the traversal is supported by the linker for the given
+   * node. Some linkers don't support every type of node (for example, the
+   * Node linker doesn't support traversing soft dependencies; it doesn't
+   * have any way to express their dependencies through symlinks).
+   *
+   * It is advised to log a warning when you return false, but only if it's the
+   * first time you've reported this warning.
+   */
+
+  supportsTraversal?(pkg: Package, opts: LinkOptions): boolean;
+
+  /**
    * Given a tree, must return another tree that's been reworked in a suitable
    * way. Nodes can be removed if needed (for example if two packages must be
    * merged into one), but not added (you cannot use this to dynamically add a
@@ -105,7 +117,7 @@ export interface DependencyTreeTraversal<State> {
    * any access to it (including read-only) will be an undefined behavior.
    */
 
-  onPackage(state: State, locator: Locator, packageFs: FakeFS): Promise<[State, null]>;
+  onPackage(state: State, pkg: Package, packageFs: FakeFS): Promise<[State, null]>;
 };
 
 export type LinkDefinition<State> = {

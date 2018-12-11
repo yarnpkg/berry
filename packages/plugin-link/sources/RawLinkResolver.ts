@@ -2,6 +2,7 @@ import querystring = require('querystring');
 
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
 import {Descriptor, Locator}                             from '@berry/core';
+import {LinkType}                                        from '@berry/core';
 import {structUtils}                                     from '@berry/core';
 
 import {RAW_LINK_PROTOCOL}                               from './constants';
@@ -39,6 +40,12 @@ export class RawLinkResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    return {... locator, binaries: new Map(), dependencies: new Map(), peerDependencies: new Map()};
+    const languageName = opts.project.configuration.defaultLanguageName;
+    const linkType = LinkType.SOFT;
+
+    const dependencies = new Map();
+    const peerDependencies = new Map();
+
+    return {... locator, languageName, linkType, dependencies, peerDependencies};
   }
 }

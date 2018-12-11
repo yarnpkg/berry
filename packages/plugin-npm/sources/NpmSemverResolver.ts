@@ -1,8 +1,9 @@
 import semver = require('semver');
 
 import {Resolver, ResolveOptions, MinimalResolveOptions, Manifest} from '@berry/core';
-import {httpUtils, structUtils}                                    from '@berry/core';
 import {Ident, Descriptor, Locator}                                from '@berry/core';
+import {LinkType}                                                  from '@berry/core';
+import {httpUtils, structUtils}                                    from '@berry/core';
 
 import {DEFAULT_REGISTRY}                                          from './constants';
 
@@ -61,11 +62,13 @@ export class NpmSemverResolver implements Resolver {
     const manifest = new Manifest();
     manifest.load(registryData.versions[locator.reference]);
 
-    const binaries = manifest.bin;
+    const languageName = `node`;
+    const linkType = LinkType.HARD;
+
     const dependencies = manifest.dependencies;
     const peerDependencies = manifest.peerDependencies;
 
-    return {... locator, binaries, dependencies, peerDependencies};
+    return {... locator, languageName, linkType, dependencies, peerDependencies};
   }
 
   private getIdentUrl(ident: Ident, opts: MinimalResolveOptions) {

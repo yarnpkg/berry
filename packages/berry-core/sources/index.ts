@@ -25,3 +25,4 @@ import * as tgzUtils from './tgzUtils';
 export {tgzUtils};
 
 export {Ident, Descriptor, Locator, Package} from './types';
+export {LinkType} from './types';

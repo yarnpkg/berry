@@ -1,7 +1,9 @@
 import {Linker, LinkOptions, LinkTree, MinimalLinkOptions} from '@berry/core';
 import {Locator, Manifest, Package, Project, Workspace}    from '@berry/core';
+import {LinkType}                                          from '@berry/core';
 import {structUtils}                                       from '@berry/core';
 import {CwdFS, FakeFS}                                     from '@berry/zipfs';
+import {posix}                                             from 'path';
 
 type DTTState = {
   targetFs: FakeFS,
@@ -13,8 +15,45 @@ export class NodeLinker implements Linker<DTTState> {
   }
 
   async setup(opts: LinkOptions) {
+    let softLinkWarningPrinted = false;
+
     return {
       dependencyTreeTraversal: {
+        supportsTraversal(pkg: Package, opts: LinkOptions) {
+          switch (pkg.linkType) {
+            case LinkType.HARD: {
+              return true;
+            }
+
+            // Soft dependencies are problematic with the Node linker because
+            // their own dependencies cannot be properly represented (this is
+            // in part because Node uses realpath by default to figure out
+            // where to find the modules it needs to load).
+            //
+            // The best thing we can do is to warn the user about it, and hope
+            // that they switch to a safer alternative (such as the Plug'n'Play
+            // linker, which doesn't have any of these problems).
+
+            case LinkType.SOFT: {
+              if (pkg.dependencies.size > 0 || pkg.peerDependencies.size > 0) {
+                if (!softLinkWarningPrinted) {
+                  console.warn([
+                    `Due to how the Node resolution algorithm works, the Node`,
+                    `linker cannot support installing transitive dependencies`,
+                    `of soft dependencies. In consequence, parts of the`,
+                    `dependency tree will now be pruned. This can have`,
+                    `unexpected effects at runtime (such as some peer`,
+                    `dependencies not being found), so beware. To fix this`,
+                    `problem, consider switching to the Plug'n'Play linker.`,
+                  ].join(` `));
+                  softLinkWarningPrinted = true;
+                }
+              }
+              return false;
+            }
+          }
+        },
+
         hoist(tree: LinkTree): LinkTree {
           divideAndConquer(tree);
           return tree;
@@ -97,16 +136,34 @@ export class NodeLinker implements Linker<DTTState> {
           return {targetFs};
         },
 
-        async onPackage({targetFs: parentFs}: DTTState, locator: Locator, packageFs: FakeFS): Promise<[DTTState, null]> {
-          if (!parentFs)
-            throw new Error(`Foo`);
-          const targetPath = `node_modules/${structUtils.requirableIdent(locator)}`;
-          const targetFs = new CwdFS(targetPath, {baseFs: parentFs});
+        async onPackage({targetFs: parentFs}: DTTState, pkg: Package, packageFs: FakeFS): Promise<[DTTState, null]> {
+          switch (pkg.linkType) {
+            // Hard dependencies are copied as-is from their source to the
+            // destination.
 
-          await targetFs.mkdirpPromise(`.`);
-          await targetFs.copyPromise(`.`, `.`, {baseFs: packageFs});
+            case LinkType.HARD: {
+              const targetPath = `node_modules/${structUtils.requirableIdent(pkg)}`;
+              const targetFs = new CwdFS(targetPath, {baseFs: parentFs});
 
-          return [{targetFs}, null];
+              await targetFs.mkdirpPromise(`.`);
+              await targetFs.copyPromise(`.`, `.`, {baseFs: packageFs});
+
+              return [{targetFs}, null];
+            }
+
+            // Soft dependencies are created using a symlink to the actual
+            // location on the disk.
+
+            case LinkType.SOFT: {
+              const targetPath = `node_modules/${structUtils.requirableIdent(pkg)}`;
+              const targetFs = new CwdFS(targetPath, {baseFs: parentFs});
+
+              await parentFs.mkdirpPromise(posix.dirname(targetPath));
+              await parentFs.symlinkPromise(packageFs.getRealPath(), targetPath);
+
+              return [{targetFs}, null];
+            }
+          }
         },
       },
     };

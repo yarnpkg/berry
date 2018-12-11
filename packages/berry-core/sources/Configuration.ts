@@ -60,6 +60,8 @@ export class Configuration {
 
   public projectCwd: string;
 
+  public defaultLanguageName: string = `node`;
+
   public httpProxy: string | null = null;
   public httpsProxy: string | null = null;
 
