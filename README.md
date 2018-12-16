@@ -1,4 +1,4 @@
-# Berry
+# <img src="./icon.svg" width="32" height="32" align="bottom" /> Berry
 
 Berry is a modern package manager split into various packages. Its novel architecture allows to do things currently impossible with existing solutions:
 
