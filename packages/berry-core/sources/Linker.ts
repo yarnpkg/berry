@@ -1,9 +1,10 @@
-import {FakeFS}           from '@berry/zipfs';
+import {FakeFS}                       from '@berry/zipfs';
 
-import {Cache}            from './Cache';
-import {Project}          from './Project';
-import {IdentHash}        from './types';
-import {Package, Locator} from './types';
+import {Cache}                        from './Cache';
+import {FetchResult}                  from './Fetcher';
+import {Project}                      from './Project';
+import {IdentHash}                    from './types';
+import {Descriptor, Package, Locator} from './types';
 
 export type MinimalLinkOptions = {
   project: Project,
@@ -13,12 +14,74 @@ export type LinkOptions = MinimalLinkOptions & {
 };
 
 export type LinkTree = {
+  /**
+   * The locator of the package represented by this node.
+   */
+
   locator: Locator,
+
+  /**
+   * The children nodes for the current one. Typically one for each dependency,
+   * including peer dependencies (because they'll have been resolved into actual
+   * dependencies before the linker was initialized).
+   */
+
   children: Array<LinkTree>,
+
+  /**
+   * The list of dependencies that the node relies on from its ancestors. This
+   * typically is the set of peer dependencies, plus any package that would
+   * cause an infinite loop if it was represented as a proper children. For
+   * example, in a case of A -> B -> A, B will have an inherited dependencies
+   * on A in order to break the loop.
+   */
+
   inheritedDependencies: Array<IdentHash>,
+
+  /**
+   * Indicates whether the parent of the node has a hard dependency on the
+   * current node. It always equals true, unless the hoister manipulates the
+   * tree (in which case it's the hoister responsibility to keep it accurate).
+   */
+
   isHardDependency: boolean,
+
+  /**
+   * Indicates whether the node is supported by the current linker. Packages
+   * that aren't supported typically shouldn't be hoisted outside of their
+   * parent package.
+   */
+
+  isSupportedNode: boolean,
+
+  /**
+   * Represents the list of nodes that had the current node as hard dependency
+   * at some point in the process. Used in order to link them together after
+   * they've been installed on the disk.
+   */
+
   hoistedFrom: Array<LinkTree>,
+
+  /**
+   * The higher the number, the sooner its build steps should be executed.
+   * Additionally, only nodes with an identical build order may be executed
+   * concurrently. By default the tree is numbered per depth - this should be
+   * a safe default for most use case, and we advise to preserve it even when
+   * hoisting packages around.
+   */
+
   buildOrder: number,
+};
+
+export interface PackageListTraversal<State> {
+  /**
+   * Called once for each package in the dependency tree.
+   */
+
+  onPackageMap(packageMap: Map<Locator, Package>, targetFs: FakeFS, api: {
+    fetchLocator: (locator: Locator) => Promise<FetchResult>,
+    resolveDescriptor: (descriptor: Descriptor) => Promise<Locator>,
+  }): Promise<void>;
 };
 
 export interface DependencyTreeTraversal<State> {
@@ -121,6 +184,25 @@ export interface DependencyTreeTraversal<State> {
 };
 
 export type LinkDefinition<State> = {
+  /**
+   * This hook is called the first time the linker is initialized, and is called
+   * with the full set of packages from the dependency tree - including those
+   * that might not be supported by the plugin.
+   *
+   * Example: The Plug'n'Play linker would use this hook in order to generate
+   * the .pnp.js file.
+   */
+
+  packageMapTraversal?: PackageListTraversal<State>,
+
+  /**
+   * This hook is called once for each dependency tree in the project - whether
+   * they are a workspace base or a frontier between linkers.
+   *
+   * Example: The Node linker would use this hook in order to build the
+   * filesystem hierarchy of the node_modules folder.
+   */
+
   dependencyTreeTraversal?: DependencyTreeTraversal<State>,
 };
 

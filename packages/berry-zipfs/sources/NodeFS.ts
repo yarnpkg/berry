@@ -23,7 +23,7 @@ export class NodeFS extends FakeFS {
 
   async realpathPromise(p: string) {
     return await new Promise<string>((resolve, reject) => {
-      this.realFs.realpath(p, this.makeCallback(resolve, reject))
+      this.realFs.realpath(p, this.makeCallback(resolve, reject));
     });
   }
 
@@ -43,7 +43,7 @@ export class NodeFS extends FakeFS {
 
   async statPromise(p: string) {
     return await new Promise<Stats>((resolve, reject) => {
-      this.realFs.stat(p, this.makeCallback(resolve, reject))
+      this.realFs.stat(p, this.makeCallback(resolve, reject));
     });
   }
 
@@ -53,7 +53,7 @@ export class NodeFS extends FakeFS {
 
   async lstatPromise(p: string) {
     return await new Promise<Stats>((resolve, reject) => {
-      this.realFs.lstat(p, this.makeCallback(resolve, reject))
+      this.realFs.lstat(p, this.makeCallback(resolve, reject));
     });
   }
 
@@ -61,9 +61,19 @@ export class NodeFS extends FakeFS {
     return this.realFs.lstatSync(this.fromPortablePath(p));
   }
 
+  async chmodPromise(p: string, mask: number) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.chmod(this.fromPortablePath(p), mask, this.makeCallback(resolve, reject));
+    });
+  }
+
+  chmodSync(p: string, mask: number) {
+    return this.realFs.chmodSync(this.fromPortablePath(p), mask);
+  }
+
   async writeFilePromise(p: string, content: Buffer | string) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.writeFile(p, content, this.makeCallback(resolve, reject))
+      this.realFs.writeFile(p, content, this.makeCallback(resolve, reject));
     });
   }
 
@@ -73,7 +83,7 @@ export class NodeFS extends FakeFS {
 
   async mkdirPromise(p: string) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.mkdir(p, this.makeCallback(resolve, reject))
+      this.realFs.mkdir(p, this.makeCallback(resolve, reject));
     });
   }
 
@@ -107,7 +117,7 @@ export class NodeFS extends FakeFS {
 
   async readdirPromise(p: string) {
     return await new Promise<Array<string>>((resolve, reject) => {
-      this.realFs.readdir(p, this.makeCallback(resolve, reject))
+      this.realFs.readdir(p, this.makeCallback(resolve, reject));
     });
   }
 
@@ -117,7 +127,7 @@ export class NodeFS extends FakeFS {
 
   async readlinkPromise(p: string) {
     return await new Promise<string>((resolve, reject) => {
-      this.realFs.readlink(p, this.makeCallback(resolve, reject))
+      this.realFs.readlink(p, this.makeCallback(resolve, reject));
     });
   }
 

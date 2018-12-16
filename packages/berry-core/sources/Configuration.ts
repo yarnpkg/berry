@@ -88,12 +88,13 @@ export class Configuration {
 
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
-      if (existsSync(`${currentCwd}/package.json`)) {
+
+      if (existsSync(`${currentCwd}/package.json`))
         projectCwd = currentCwd;
-      }
-      if (existsSync(`${currentCwd}/.berryrc`)) {
+
+      if (existsSync(`${currentCwd}/.berryrc`))
         rcCwds.push(currentCwd);
-      }
+
       nextCwd = dirname(currentCwd);
     }
 

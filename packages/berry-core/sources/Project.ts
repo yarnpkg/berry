@@ -5,7 +5,6 @@ import {chmod, existsSync, readFile, writeFile} from 'fs-extra';
 import {dirname}                                from 'path';
 
 import {parseSyml, stringifySyml}               from '@berry/parsers';
-import {extractPnpSettings, generatePnpScript}  from '@berry/pnp';
 import {CwdFS, FakeFS, NodeFS, ZipFS}           from '@berry/zipfs';
 
 import {Cache}                                  from './Cache';
@@ -169,6 +168,10 @@ export class Project {
     byIdent.push(workspace);
 
     return workspace;
+  }
+
+  get topLevelWorkspace() {
+    return this.getWorkspaceByCwd(this.cwd);
   }
 
   tryWorkspaceByCwd(workspaceCwd: string) {
@@ -627,15 +630,6 @@ export class Project {
             }
           }
 
-          // If you find this line, it's because I forgot to remove it after
-          // successfully implementing the linkers tree traversal. We were
-          // previously entirely removing the peer dependencies (because we
-          // didn't need them to compute the PnP map, due to its
-          // characteristics), but now we need to preserve the information
-          // for other linkers.
-          //
-          // virtualizedPackage.peerDependencies.clear();
-
           resolvePeerDependencies(virtualizedPackage);
 
           for (const missingPeerDependency of missingPeerDependencies) {
@@ -708,20 +702,72 @@ export class Project {
   }
 
   async linkEverything(cache: Cache) {
+    const rootFs = new NodeFS();
+
     const fetcher = this.configuration.makeFetcher();
-    const fetcherOptions = {project: this, readOnly: true, rootFs: new NodeFS(), cache, fetcher};
+    const fetcherOptions = {project: this, readOnly: true, cache, fetcher, rootFs};
 
     const linkers = this.configuration.getLinkers();
     const linkerOptions = {project: this};
 
     const linkerDefinitions = new Map(linkers.map(linker => [linker, null] as [Linker, any]));
 
+    // Make sure that a linker is only instantiated once; additionally, it
+    // automatically calls the package map traversal logic during instantiation,
+    // so it's guaranteed to be executed before the tree traversal logic (and
+    // not to be called at all if none of the packages within the dependency
+    // tree match the linker).
+
+    const instantiateLinker = async (linker: Linker) => {
+      let linkerDefinition = linkerDefinitions.get(linker);
+
+      if (!linkerDefinition) {
+        linkerDefinition = await linker.setup(linkerOptions);
+        linkerDefinitions.set(linker, linkerDefinition);
+
+        const {packageMapTraversal} = linkerDefinition;
+        if (packageMapTraversal) {
+          // The package map traversal logic offers a small interface to query
+          // the data from the resolution tree. This avoids us having to do it
+          // preemptively.
+
+          await packageMapTraversal.onPackageMap(this.storedPackages, rootFs, {
+            resolveDescriptor: async (descriptor: Descriptor) => {
+              const resolution = this.storedResolutions.get(descriptor.descriptorHash);
+              if (!resolution)
+                throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+
+              const pkg = this.storedPackages.get(resolution);
+              if (!pkg)
+                throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+
+              return pkg;
+            },
+
+            fetchLocator: async (locator: Locator) => {
+              return await fetcher.fetch(locator, fetcherOptions);
+            },
+          });
+        }
+      }
+
+      return linkerDefinition;
+    };
+
     // Generate a recursive TreeNode tree from the specified locator passed as
     // parameter. The tree contains the relations between packages, but also
     // extraneous data structures used by the hoisting algorithms to indicate
     // the original location of the packages in the dependency tree.
 
-    const generateLinkTree = (treeLinker: Linker, locator: Locator, availablePackages: Map<IdentHash, LocatorHash> = new Map(), buildOrder: number = 0): LinkTree => {
+    const generateLinkTreeImpl = (treeLinker: Linker, locator: Locator, availablePackages: Map<IdentHash, LocatorHash>, depth: number): LinkTree => {
+      const treeLinkerDefinition = linkerDefinitions.get(treeLinker);
+      if (!treeLinkerDefinition)
+        throw new Error(`Assertion failed: The linker should have been instantiated`);
+
+      const {dependencyTreeTraversal} = treeLinkerDefinition;
+      if (!dependencyTreeTraversal)
+        throw new Error(`Assertion failed: The linker should have a tree traversal strategy defined`);
+
       const pkg = this.storedPackages.get(locator.locatorHash);
       if (!pkg)
         throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, locator)}) should have been registered`);
@@ -729,48 +775,44 @@ export class Project {
       const childrenLocators: Array<Locator> = [];
       const inheritedDependencies: Array<IdentHash> = [];
 
-      const linker = linkers.find(linker => linker.supports(pkg, linkerOptions));
-      if (linker === treeLinker) {
-        let linkerDefinition = linkerDefinitions.get(linker);
-        if (!linkerDefinition)
-          throw new Error(`Assertion failed: The linker should have been instantiated`);
+      const pkgLinker = linkers.find(linker => linker.supports(pkg, linkerOptions));
 
-        const {dependencyTreeTraversal} = linkerDefinition;
-        if (!dependencyTreeTraversal)
-          throw new Error(`Assertion failed: The linker should have a tree traversal strategy defined`);
+      const isTreeRoot = depth === 0;
+      const isSupportedNode = isTreeRoot || pkgLinker === treeLinker;
+      const isTraversable = isTreeRoot || (pkgLinker === treeLinker && (!dependencyTreeTraversal.supportsTraversal || dependencyTreeTraversal.supportsTraversal(pkg)));
 
-        if (buildOrder === 0 || !dependencyTreeTraversal.supportsTraversal || dependencyTreeTraversal.supportsTraversal(pkg, linkerOptions)) {
-          // Register the peer dependency in the tree, so that our linkers will
-          // know that they shouldn't hoist the package at a level where they
-          // wouldn't be able to access the inherited packages anymore.
+      if (isTraversable) {
+        // Register the peer dependency in the tree, so that our linkers will
+        // know that they shouldn't hoist the package at a level where they
+        // wouldn't be able to access the inherited packages anymore.
 
-          for (const descriptor of pkg.peerDependencies.values())
-            inheritedDependencies.push(descriptor.identHash);
+        for (const descriptor of pkg.peerDependencies.values())
+          inheritedDependencies.push(descriptor.identHash);
 
-          // In this first pass, we split the dependencies in two buckets: the
-          // first one with the direct dependencies, and the second one with the
-          // deps that are obtained from a package located somewhere in our
-          // dependency chain.
+        // In this first pass, we split the dependencies in two buckets: the
+        // first one with the direct dependencies, and the second one with the
+        // deps that are obtained from a package located somewhere in our
+        // dependency chain.
 
-          for (const descriptor of pkg.dependencies.values()) {
-            const resolution = this.storedResolutions.get(descriptor.descriptorHash);
-            if (!resolution)
-              throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+        for (const descriptor of pkg.dependencies.values()) {
+          const resolution = this.storedResolutions.get(descriptor.descriptorHash);
+          if (!resolution)
+            throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
-            const dependency = this.storedPackages.get(resolution);
-            if (!dependency)
-              throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+          const dependency = this.storedPackages.get(resolution);
+          if (!dependency)
+            throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
-            // If this isn't the first time that a package is found in the same
-            // branch, then it's a circular dependency that we must break. To do
-            // this, we change it to be an inherited dependency (we are allowed to
-            // do this because it doesn't change the version that will be used).
+          // If this isn't the first time that a package is found in the same
+          // branch, then it's a circular dependency that we must break. To do
+          // this, we change it to be an inherited dependency (we are allowed
+          // to do this because it doesn't change the version that will be
+          // used in the end).
 
-            if (availablePackages.get(descriptor.identHash) === dependency.locatorHash) {
-              inheritedDependencies.push(dependency.identHash);
-            } else {
-              childrenLocators.push(dependency);
-            }
+          if (availablePackages.get(descriptor.identHash) === dependency.locatorHash) {
+            inheritedDependencies.push(dependency.identHash);
+          } else {
+            childrenLocators.push(dependency);
           }
         }
       }
@@ -783,24 +825,29 @@ export class Project {
       nextAvailablePackages.set(locator.identHash, locator.locatorHash);
 
       const children = childrenLocators.map(locator => {
-        return generateLinkTree(treeLinker, locator, nextAvailablePackages, buildOrder + 1);
+        return generateLinkTreeImpl(treeLinker, locator, nextAvailablePackages, depth + 1);
       });
 
       return {
+        buildOrder: depth,
         hoistedFrom: [],
         isHardDependency: true,
-        buildOrder,
         children,
         inheritedDependencies,
+        isSupportedNode,
         locator,
       };
+    };
+
+    const generateLinkTree = (treeLinker: Linker, locator: Locator) => {
+      return generateLinkTreeImpl(treeLinker, locator, new Map(), 0);
     };
 
     // Given a tree, calls the linker hooks on each level of the tree. When it
     // finds a leaf belonging to another linker than the current one, a new link
     // tree is created and iterated.
 
-    const applyTree = async (linkTree: LinkTree, globalLinker: Linker, currentState: {targetFs: FakeFS}) => {
+    const applyDependencyTreeTraversal = async (linkTree: LinkTree, globalLinker: Linker, currentState: {targetFs: FakeFS}) => {
       let linkerDefinition = linkerDefinitions.get(globalLinker);
       if (!linkerDefinition)
         throw new Error(`Assertion failed: The linker should have been instantiated`);
@@ -834,7 +881,7 @@ export class Project {
           await release();
         }
 
-        await applyTree(children, globalLinker, nextState);
+        await applyDependencyTreeTraversal(children, globalLinker, nextState);
       }
 
       for (const leaf of leaves) {
@@ -876,43 +923,26 @@ export class Project {
         if (packageList.length === 0)
           continue;
 
-        let linkerDefinition = linkerDefinitions.get(linker);
-        if (!linkerDefinition)
-          linkerDefinitions.set(linker, linkerDefinition = await linker.setup(linkerOptions));
-
+        const linkerDefinition = await instantiateLinker(linker);
         const {dependencyTreeTraversal} = linkerDefinition;
-        if (!dependencyTreeTraversal)
-          continue;
 
-        let linkTree = generateLinkTree(linker, locator);
-        if (dependencyTreeTraversal.hoist)
-          linkTree = await dependencyTreeTraversal.hoist(linkTree, linkerOptions);
+        if (dependencyTreeTraversal) {
+          const linkerTree = generateLinkTree(linker, locator);
+          const optimizedTree = dependencyTreeTraversal.hoist
+            ? await dependencyTreeTraversal.hoist(linkerTree, linkerOptions)
+            : linkerTree;
 
-        const baseState = await dependencyTreeTraversal.onRoot(pkg, targetFs);
-        await applyTree(linkTree, linker, baseState);
+          const baseState = await dependencyTreeTraversal.onRoot(pkg, targetFs);
+          await applyDependencyTreeTraversal(linkerTree, linker, baseState);
+        }
       }
     };
 
     for (const workspace of this.workspacesByCwd.values()) {
-      await dispatchLinkers(workspace.anchoredLocator, new CwdFS(workspace.cwd));
+      await dispatchLinkers(workspace.anchoredLocator, new CwdFS(workspace.cwd, {
+        baseFs: rootFs,
+      }));
     }
-  }
-
-  async generatePnpFile() {
-    const pnpSettings = await extractPnpSettings(this);
-    const pnpScript = generatePnpScript(pnpSettings);
-
-    try {
-      const currentScript = await readFile(this.configuration.pnpPath, `utf8`);
-      if (currentScript === pnpScript) {
-        return;
-      }
-    } catch (error) {
-      // ignore errors, no big deal
-    }
-
-    await writeFile(this.configuration.pnpPath, pnpScript);
-    await chmod(this.configuration.pnpPath, 0o755);
   }
 
   async install({cache}: {cache: Cache}) {
@@ -922,8 +952,6 @@ export class Project {
     await this.resolveEverything(cache);
     await this.fetchEverything(cache);
     await this.linkEverything(cache);
-
-    await this.generatePnpFile();
   }
 
   async persistLockfile() {

@@ -72,6 +72,12 @@ export class NodeLinker implements Linker<DTTState> {
 
             for (const directDependency of Array.from(tree.children)) {
               for (const transitiveDependency of Array.from(directDependency.children)) {
+                // Packages that aren't supported by this linker should not be
+                // hoisted, as it would prevent other linkers from connecting
+                // them to their right dependent.
+                if (!transitiveDependency.isSupportedNode)
+                  continue;
+
                 // If the transitive dependency depends on a dependency provided by
                 // its immediate parent, then it cannot be hoisted above its parent
                 if (!checkInheritedDependencies(transitiveDependency, directDependency))

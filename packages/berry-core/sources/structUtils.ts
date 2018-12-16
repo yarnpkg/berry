@@ -7,6 +7,9 @@ import * as miscUtils                           from './miscUtils';
 import {IdentHash, DescriptorHash, LocatorHash} from './types';
 import {Ident, Descriptor, Locator, Package}    from './types';
 
+const VIRTUAL_PROTOCOL = `virtual:`;
+const VIRTUAL_ABBREVIATE = 12;
+
 // @ts-ignore
 const ctx = new chalk.constructor({enabled: true});
 
@@ -78,11 +81,11 @@ export function virtualizePackage(pkg: Package, entropy: string): Package {
 }
 
 export function isVirtualDescriptor(descriptor: Descriptor): boolean {
-  return descriptor.range.startsWith(`virtual:`);
+  return descriptor.range.startsWith(VIRTUAL_PROTOCOL);
 }
 
 export function isVirtualLocator(locator: Locator): boolean {
-  return locator.reference.startsWith(`virtual:`);
+  return locator.reference.startsWith(VIRTUAL_PROTOCOL);
 }
 
 export function devirtualizeDescriptor(descriptor: Descriptor): Descriptor {
@@ -188,6 +191,9 @@ export function prettyIdent(configuration: Configuration, ident: Ident) {
 }
 
 export function prettyRange(configuration: Configuration, range: string) {
+  if (range.startsWith(VIRTUAL_PROTOCOL))
+    range = range.substr(0, VIRTUAL_PROTOCOL.length + VIRTUAL_ABBREVIATE);
+
   return `${color(configuration, range, `blue`)}`;
 }
 
@@ -196,6 +202,9 @@ export function prettyDescriptor(configuration: Configuration, descriptor: Descr
 }
 
 export function prettyReference(configuration: Configuration, reference: string) {
+  if (reference.startsWith(VIRTUAL_PROTOCOL))
+    reference = reference.substr(0, VIRTUAL_PROTOCOL.length + VIRTUAL_ABBREVIATE);
+
   return `${color(configuration, reference, `violet`)}`;
 }
 

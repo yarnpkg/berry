@@ -433,6 +433,14 @@ export class ZipFS extends FakeFS {
     }
   }
 
+  async chmodPromise(p: string, mask: number) {
+    return this.chmodSync(p, mask);
+  }
+
+  chmodSync(p: string, mask: number) {
+    throw Object.assign(new Error(`ENOSYS: unimplemented operation, chmod '${p}'`), {code: `ENOSYS`});
+  }
+
   async writeFilePromise(p: string, content: Buffer | string) {
     return this.writeFileSync(p, content);
   }

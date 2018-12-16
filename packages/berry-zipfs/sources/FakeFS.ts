@@ -25,6 +25,9 @@ export abstract class FakeFS {
   abstract lstatPromise(p: string): Promise<Stats>;
   abstract lstatSync(p: string): Stats;
 
+  abstract chmodPromise(p: string, mask: number): Promise<void>;
+  abstract chmodSync(p: string, mask: number): void;
+
   abstract mkdirPromise(p: string): Promise<void>;
   abstract mkdirSync(p: string): void;
 
@@ -109,5 +112,31 @@ export abstract class FakeFS {
     } else {
       throw new Error(`Unsupported file type (mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
     }
+  }
+
+  async changeFilePromise(p: string, content: string) {
+    try {
+      const current = await this.readFilePromise(p, `utf8`);
+      if (current === content) {
+        return;
+      }
+    } catch (error) {
+      // ignore errors, no big deal
+    }
+
+    await this.writeFilePromise(p, content);
+  }
+
+  changeFileSync(p: string, content: string) {
+    try {
+      const current = this.readFileSync(p, `utf8`);
+      if (current === content) {
+        return;
+      }
+    } catch (error) {
+      // ignore errors, no big deal
+    }
+
+    this.writeFileSync(p, content);
   }
 };

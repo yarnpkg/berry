@@ -58,6 +58,14 @@ export class AliasFS extends FakeFS {
     return this.baseFs.lstatSync(p);
   }
 
+  async chmodPromise(p: string, mask: number) {
+    return await this.baseFs.chmodPromise(p, mask);
+  }
+
+  chmodSync(p: string, mask: number) {
+    return this.baseFs.chmodSync(p, mask);
+  }
+
   async writeFilePromise(p: string, content: Buffer | string) {
     return await this.baseFs.writeFilePromise(p, content);
   }

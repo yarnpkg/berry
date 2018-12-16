@@ -68,6 +68,14 @@ export class JailFS extends FakeFS {
     return this.baseFs.lstatSync(this.fromJailedPath(p));
   }
 
+  async chmodPromise(p: string, mask: number) {
+    return await this.baseFs.chmodPromise(this.fromJailedPath(p), mask);
+  }
+
+  chmodSync(p: string, mask: number) {
+    return this.baseFs.chmodSync(this.fromJailedPath(p), mask);
+  }
+
   async writeFilePromise(p: string, content: Buffer | string) {
     return await this.baseFs.writeFilePromise(this.fromJailedPath(p), content);
   }

@@ -106,6 +106,22 @@ export class ZipOpenFS extends FakeFS {
     });
   }
 
+  async chmodPromise(p: string, mask: number) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.chmodPromise(p, mask);
+    }, async (zipFs, {archivePath, subPath}) => {
+      return await zipFs.chmodPromise(subPath, mask);
+    });
+  }
+
+  chmodSync(p: string, mask: number) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.chmodSync(p, mask);
+    }, (zipFs, {subPath}) => {
+      return zipFs.chmodSync(subPath, mask);
+    });
+  }
+
   async writeFilePromise(p: string, content: Buffer | string) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.writeFilePromise(p, content);

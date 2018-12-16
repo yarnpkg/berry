@@ -62,6 +62,9 @@
             ],
             "node": [
                 "@berry/plugin-node"
+            ],
+            "pnp": [
+                "@berry/plugin-pnp"
             ]
         }
     }
