@@ -27,7 +27,7 @@
         "@berry/pnp": "0.0.0"
     },
     "scripts": {
-        "build": "run @berry-build-bundle"
+        "build:cli": "run @berry-build-bundle"
     },
     "@berry/builder": {
         "bundles": {

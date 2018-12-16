@@ -25,7 +25,7 @@ The following packages are generic and can be used in a variety of purposes (inc
 
 ## Berry plugins
 
-The following packages are plugins for Berry and can be installed through `berry add plugin <plugin-name>`. Note that some of them are typically already shipped with the regular Berry bundles. Such plugins are marked with a star:
+The following packages are plugins for Berry and can be installed through `berry add plugin <plugin-name>`. Note that some of them are typically already shipped with the regular Berry bundles. Such plugins are marked with a star (★).
 
 - [plugin-constraints]() adds various commands for enforcing constraints across workspaces.
 - [plugin-file★]() adds support for using `file:` references as dependencies.
@@ -37,19 +37,21 @@ The following packages are plugins for Berry and can be installed through `berry
 - [plugin-npm★]() adds support for using [semver ranges]() as dependencies, resolving them to an NPM-like registry
 - [plugin-pnp★]() adds support for installing Javascript dependencies through the [Plug'n'Play]() specification
 
+To create your own plugin, please refer to the [documentation]().
+
 ## Berry packages
 
 The following packages are meant to be used with Berry, and won't be useful to other applications:
 
 - [berry-builder]() contains a CLI tool to package berry and its plugins
-- [berry-cli]() is a CLI built on top of [berry-core]() and some core plugins
+- [berry-cli]() is a CLI built on top of [berry-core]()
 
 ## Build your own bundle
 
-Clone the repository, then once inside it run the following command:
+Clone the repository then run the following command:
 
 ```
-$> berry && berry build
+$> berry build:cli
 ```
 
 ## License (MIT)

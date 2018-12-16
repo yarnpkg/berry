@@ -32,9 +32,5 @@
         "@types/tmp": "^0.0.33",
         "@types/tunnel": "^0.0.0",
         "ts-node": "^7.0.1"
-    },
-    "scripts": {
-        "build": "cd packages/berry-cli && run build",
-        "env": "env"
     }
 }

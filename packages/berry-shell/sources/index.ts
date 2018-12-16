@@ -25,6 +25,8 @@ export type ShellOptions = {
 
 const BUILTINS = {
   async cd([target, ... rest]: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
+    target = posix.resolve(contextOpts.cwd, target);
+
     const stat = await statP(target);
 
     if (!stat.isDirectory()) {
