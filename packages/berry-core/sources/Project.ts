@@ -9,7 +9,8 @@ import {CwdFS, FakeFS, NodeFS, ZipFS}           from '@berry/zipfs';
 
 import {Cache}                                  from './Cache';
 import {Configuration}                          from './Configuration';
-import {Linker, LinkTree}                       from './Linker';
+import {Installer, BuildDirective}              from './Installer';
+import {Linker}                                 from './Linker';
 import {WorkspaceBaseResolver}                  from './WorkspaceBaseResolver';
 import {WorkspaceResolver}                      from './WorkspaceResolver';
 import {Workspace}                              from './Workspace';
@@ -177,15 +178,11 @@ export class Project {
   tryWorkspaceByCwd(workspaceCwd: string) {
     const workspace = this.workspacesByCwd.get(workspaceCwd);
 
-    if (!workspace)
-      return null;
-
-    return workspace;
+    return workspace ? workspace : null;
   }
 
   getWorkspaceByCwd(workspaceCwd: string) {
     const workspace = this.tryWorkspaceByCwd(workspaceCwd);
-
     if (!workspace)
       throw new Error(`Workspace not found (${workspaceCwd})`);
 
@@ -200,17 +197,13 @@ export class Project {
 
     const workspace = this.workspacesByLocator.get(locator.locatorHash);
 
-    if (!workspace)
-      return null;
-
-    return workspace;
+    return workspace ? workspace : null;
   }
 
   getWorkspaceByLocator(locator: Locator) {
     const workspace = this.tryWorkspaceByLocator(locator);
-
     if (!workspace)
-      throw new Error(`Workspace not found`);
+      throw new Error(`Workspace not found (${structUtils.prettyLocator(this.configuration, locator)})`);
 
     return workspace;
   }
@@ -299,7 +292,7 @@ export class Project {
 
         const alias = this.storedDescriptors.get(aliasHash);
         if (!alias)
-          throw new Error(`The alias should have been registered`);
+          throw new Error(`Assertion failed: The alias should have been registered`);
 
         // If it's already been "resolved" (in reality it will be the temporary
         // resolution we've set in the next few lines) we can just skip it
@@ -334,9 +327,8 @@ export class Project {
 
       const passCandidates = new Map(await Promise.all(Array.from(mustBeResolved).map(async descriptorHash => {
         const descriptor = allDescriptors.get(descriptorHash);
-
         if (!descriptor)
-          throw new Error(`The descriptor should have been registered`);
+          throw new Error(`Assertion failed: The descriptor should have been registered`);
 
         let candidateReferences;
 
@@ -431,14 +423,14 @@ export class Project {
         }
 
         if (!bestSolution)
-          throw new Error(`Error during the resolution process - this theoretically cannot happen`);
+          throw new Error(`Assertion failed: No resolution found by the SAT solver`);
 
         const solutionSet = new Set<LocatorHash>(bestSolution as Array<LocatorHash>);
 
         for (const [descriptorHash, candidateLocators] of passCandidates.entries()) {
           const selectedLocator = candidateLocators.find(locator => solutionSet.has(locator.locatorHash));
           if (!selectedLocator)
-            throw new Error(`The descriptor should have been solved during the previous step`);
+            throw new Error(`Assertion failed: The descriptor should have been solved during the previous step`);
 
           passResolutions.set(descriptorHash, selectedLocator);
           passCandidates.delete(descriptorHash);
@@ -469,7 +461,7 @@ export class Project {
         }
 
         if (!structUtils.areLocatorsEqual(locator, pkg))
-          throw new Error(`The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(this.configuration, locator)} to ${structUtils.prettyLocator(this.configuration, pkg)})`);
+          throw new Error(`Assertion failed: The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(this.configuration, locator)} to ${structUtils.prettyLocator(this.configuration, pkg)})`);
 
         const rawDependencies = pkg.dependencies;
         const rawPeerDependencies = pkg.peerDependencies;
@@ -530,15 +522,15 @@ export class Project {
       for (const descriptorHash of haveBeenAliased) {
         const descriptor = allDescriptors.get(descriptorHash);
         if (!descriptor)
-          throw new Error(`The descriptor should have been registered`);
+          throw new Error(`Assertion failed: The descriptor should have been registered`);
 
         const aliasHash = this.resolutionAliases.get(descriptorHash);
         if (aliasHash === undefined)
-          throw new Error(`The descriptor should have an alias`);
+          throw new Error(`Assertion failed: The descriptor should have an alias`);
 
         const resolution = allResolutions.get(aliasHash);
         if (resolution === undefined)
-          throw new Error(`The resolution should have been registered`);
+          throw new Error(`Assertion failed: The resolution should have been registered`);
 
         // The following can happen if a package gets aliased to another package
         // that's itself aliased - in this case we just process all those we can
@@ -574,7 +566,7 @@ export class Project {
 
       const parentPackage = allPackages.get(parentLocator.locatorHash);
       if (!parentPackage)
-        throw new Error(`The package (${structUtils.prettyLocator(this.configuration, parentLocator)}) should have been registered`);
+        throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, parentLocator)}) should have been registered`);
 
       for (const descriptor of Array.from(parentPackage.dependencies.values())) {
         volatileDescriptors.delete(descriptor.descriptorHash);
@@ -584,11 +576,11 @@ export class Project {
 
         const resolution = allResolutions.get(descriptor.descriptorHash);
         if (!resolution)
-          throw new Error(`The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+          throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
         let pkg = allPackages.get(resolution);
         if (!pkg)
-          throw new Error(`The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+          throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
         if (pkg.peerDependencies.size > 0) {
           const virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
@@ -658,10 +650,10 @@ export class Project {
     for (const workspace of this.workspacesByLocator.values()) {
       const pkg = allPackages.get(workspace.anchoredLocator.locatorHash);
       if (!pkg)
-        throw new Error(`Expected workspace to have been resolved`);
+        throw new Error(`Assertion failed: Expected workspace to have been resolved`);
 
       if (pkg.peerDependencies.size > 0)
-        throw new Error(`Didn't expect workspace to have peer dependencies`);
+        throw new Error(`Assertion failed: Didn't expect root workspaces to have peer dependencies`);
 
       workspace.dependencies = pkg.dependencies;
     }
@@ -682,9 +674,8 @@ export class Project {
 
     for (const locatorHash of this.storedResolutions.values()) {
       const pkg = this.storedPackages.get(locatorHash);
-
       if (!pkg)
-        throw new Error(`The locator should have been registered`);
+        throw new Error(`Assertion failed: The locator should have been registered`);
 
       if (this.storedLocations.has(pkg.locatorHash))
         continue;
@@ -710,238 +701,155 @@ export class Project {
     const linkers = this.configuration.getLinkers();
     const linkerOptions = {project: this};
 
-    const linkerDefinitions = new Map(linkers.map(linker => [linker, null] as [Linker, any]));
+    const installers = new Map(linkers.map(linker => {
+      return [linker, linker.makeInstaller(linkerOptions)] as [Linker, Installer];
+    }));
 
-    // Make sure that a linker is only instantiated once; additionally, it
-    // automatically calls the package map traversal logic during instantiation,
-    // so it's guaranteed to be executed before the tree traversal logic (and
-    // not to be called at all if none of the packages within the dependency
-    // tree match the linker).
+    const packageLinkers: Map<LocatorHash, Linker> = new Map();
+    const packageLocations: Map<LocatorHash, string> = new Map();
+    const packageBuildDirectives: Map<LocatorHash, BuildDirective> = new Map();
 
-    const instantiateLinker = async (linker: Linker) => {
-      let linkerDefinition = linkerDefinitions.get(linker);
+    // Step 1: Installing the packages on the disk
 
-      if (!linkerDefinition) {
-        linkerDefinition = await linker.setup(linkerOptions);
-        linkerDefinitions.set(linker, linkerDefinition);
+    for (const pkg of this.storedPackages.values()) {
+      const linker = linkers.find(linker => linker.supports(pkg, linkerOptions));
+      if (!linker)
+        throw new Error(`The package ${structUtils.prettyLocator(this.configuration, pkg)} isn't supported by any of the available linkers`);
 
-        const {packageMapTraversal} = linkerDefinition;
-        if (packageMapTraversal) {
-          // The package map traversal logic offers a small interface to query
-          // the data from the resolution tree. This avoids us having to do it
-          // preemptively.
+      const installer = installers.get(linker);
+      if (!installer)
+        throw new Error(`Assertion failed: The installer should have been registered`);
+      
+      const [packageFs, release] = await fetcher.fetch(pkg, fetcherOptions);
 
-          await packageMapTraversal.onPackageMap(this.storedPackages, rootFs, {
-            resolveDescriptor: async (descriptor: Descriptor) => {
-              const resolution = this.storedResolutions.get(descriptor.descriptorHash);
-              if (!resolution)
-                throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
-
-              const pkg = this.storedPackages.get(resolution);
-              if (!pkg)
-                throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
-
-              return pkg;
-            },
-
-            fetchLocator: async (locator: Locator) => {
-              return await fetcher.fetch(locator, fetcherOptions);
-            },
-          });
-        }
+      let installStatus;
+      try {
+        installStatus = await installer.installPackage(pkg, pkg.linkType, packageFs);
+      } finally {
+        await release();
       }
 
-      return linkerDefinition;
-    };
+      packageLinkers.set(pkg.locatorHash, linker);
+      packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
 
-    // Generate a recursive TreeNode tree from the specified locator passed as
-    // parameter. The tree contains the relations between packages, but also
-    // extraneous data structures used by the hoisting algorithms to indicate
-    // the original location of the packages in the dependency tree.
-
-    const generateLinkTreeImpl = (treeLinker: Linker, locator: Locator, availablePackages: Map<IdentHash, LocatorHash>, depth: number): LinkTree => {
-      const treeLinkerDefinition = linkerDefinitions.get(treeLinker);
-      if (!treeLinkerDefinition)
-        throw new Error(`Assertion failed: The linker should have been instantiated`);
-
-      const {dependencyTreeTraversal} = treeLinkerDefinition;
-      if (!dependencyTreeTraversal)
-        throw new Error(`Assertion failed: The linker should have a tree traversal strategy defined`);
-
-      const pkg = this.storedPackages.get(locator.locatorHash);
-      if (!pkg)
-        throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, locator)}) should have been registered`);
-
-      const childrenLocators: Array<Locator> = [];
-      const inheritedDependencies: Array<IdentHash> = [];
-
-      const pkgLinker = linkers.find(linker => linker.supports(pkg, linkerOptions));
-
-      const isTreeRoot = depth === 0;
-      const isSupportedNode = isTreeRoot || pkgLinker === treeLinker;
-      const isTraversable = isTreeRoot || (pkgLinker === treeLinker && (!dependencyTreeTraversal.supportsTraversal || dependencyTreeTraversal.supportsTraversal(pkg)));
-
-      if (isTraversable) {
-        // Register the peer dependency in the tree, so that our linkers will
-        // know that they shouldn't hoist the package at a level where they
-        // wouldn't be able to access the inherited packages anymore.
-
-        for (const descriptor of pkg.peerDependencies.values())
-          inheritedDependencies.push(descriptor.identHash);
-
-        // In this first pass, we split the dependencies in two buckets: the
-        // first one with the direct dependencies, and the second one with the
-        // deps that are obtained from a package located somewhere in our
-        // dependency chain.
-
-        for (const descriptor of pkg.dependencies.values()) {
-          const resolution = this.storedResolutions.get(descriptor.descriptorHash);
-          if (!resolution)
-            throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
-
-          const dependency = this.storedPackages.get(resolution);
-          if (!dependency)
-            throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
-
-          // If this isn't the first time that a package is found in the same
-          // branch, then it's a circular dependency that we must break. To do
-          // this, we change it to be an inherited dependency (we are allowed
-          // to do this because it doesn't change the version that will be
-          // used in the end).
-
-          if (availablePackages.get(descriptor.identHash) === dependency.locatorHash) {
-            inheritedDependencies.push(dependency.identHash);
-          } else {
-            childrenLocators.push(dependency);
-          }
-        }
+      if (installStatus.buildDirective) {
+        packageBuildDirectives.set(pkg.locatorHash, installStatus.buildDirective);
       }
+    }
 
-      // Then in a second pass (we have to do it in a second pass so that the
-      // packageList can be fully ready for the next recursion) we iterate over
-      // the children locators and recurse to build their own trees.
+    // Step 2: Link packages together
 
-      const nextAvailablePackages = new Map(availablePackages);
-      nextAvailablePackages.set(locator.identHash, locator.locatorHash);
+    const externalDependents: Map<LocatorHash, Array<string>> = new Map();
 
-      const children = childrenLocators.map(locator => {
-        return generateLinkTreeImpl(treeLinker, locator, nextAvailablePackages, depth + 1);
-      });
+    for (const pkg of this.storedPackages.values()) {
+      const packageLinker = packageLinkers.get(pkg.locatorHash);
+      if (!packageLinker)
+        throw new Error(`Assertion failed: The linker should have been found`);
 
-      return {
-        buildOrder: depth,
-        hoistedFrom: [],
-        isHardDependency: true,
-        children,
-        inheritedDependencies,
-        isSupportedNode,
-        locator,
-      };
-    };
+      const installer = installers.get(packageLinker);
+      if (!installer)
+        throw new Error(`Assertion failed: The installer should have been registered`);
+      
+      const packageLocation = packageLocations.get(pkg.locatorHash);
+      if (!packageLocation)
+        throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, pkg)}) should have been registered`);
 
-    const generateLinkTree = (treeLinker: Linker, locator: Locator) => {
-      return generateLinkTreeImpl(treeLinker, locator, new Map(), 0);
-    };
-
-    // Given a tree, calls the linker hooks on each level of the tree. When it
-    // finds a leaf belonging to another linker than the current one, a new link
-    // tree is created and iterated.
-
-    const applyDependencyTreeTraversal = async (linkTree: LinkTree, globalLinker: Linker, currentState: {targetFs: FakeFS}) => {
-      let linkerDefinition = linkerDefinitions.get(globalLinker);
-      if (!linkerDefinition)
-        throw new Error(`Assertion failed: The linker should have been instantiated`);
-
-      const {dependencyTreeTraversal} = linkerDefinition;
-      if (!dependencyTreeTraversal)
-        throw new Error(`Assertion failed: The linker should have a tree traversal strategy defined`);
-
-      const leaves: Array<LinkTree> = [];
-
-      for (const children of linkTree.children) {
-        const pkg = this.storedPackages.get(children.locator.locatorHash);
-        if (!pkg)
-          throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, children.locator)}) should have been registered`);
-
-        // If the children isn't supported by the current linker, then we must
-        // link it as part of its own dependency tree.
-
-        const linker = linkers.find(linker => linker.supports(pkg, linkerOptions));
-        if (linker !== globalLinker) {
-          leaves.push(children);
-          continue;
-        }
-
-        const [packageFs, release] = await fetcher.fetch(pkg, fetcherOptions);
-
-        let nextState;
-        try {
-          [nextState] = await dependencyTreeTraversal.onPackage(currentState, pkg, packageFs);
-        } finally {
-          await release();
-        }
-
-        await applyDependencyTreeTraversal(children, globalLinker, nextState);
-      }
-
-      for (const leaf of leaves) {
-        if (leaf.children.length > 0 || leaf.inheritedDependencies.length > 0)
-          throw new Error(`Assertion failed: A linker hoisted a leaf belonging to another linker in such a way that it acquired new dependencies (happened on ${structUtils.prettyLocator(this.configuration, leaf.locator)})`);
-
-        await dispatchLinkers(leaf.locator, currentState.targetFs);
-      }
-    };
-
-    const dispatchLinkers = async (locator: Locator, targetFs: FakeFS) => {
-      const pkg = this.storedPackages.get(locator.locatorHash);
-      if (!pkg)
-        throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, locator)}) should have been registered`);
-
-      const dependenciesByLinkers = new Map(linkers.map(linker => [linker, []] as [Linker, Array<Package>]));
+      const internalDependencies = [];
 
       for (const descriptor of pkg.dependencies.values()) {
         const resolution = this.storedResolutions.get(descriptor.descriptorHash);
         if (!resolution)
           throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
-
+        
         const dependency = this.storedPackages.get(resolution);
         if (!dependency)
           throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
-
-        const linker = linkers.find(linker => linker.supports(dependency, linkerOptions));
-        if (!linker) // Note that the following is not an assertion: it can happen during a normal usage
-          throw new Error(`The package ${structUtils.prettyLocator(this.configuration, dependency)} isn't supported by any of the available linkers`);
-
-        const linkerDependencies = dependenciesByLinkers.get(linker);
-        if (!linkerDependencies)
-          throw new Error(`Assertion failed: The linker should have been registered`);
-
-        linkerDependencies.push(dependency);
-      }
-
-      for (const [linker, packageList] of dependenciesByLinkers.entries()) {
-        if (packageList.length === 0)
-          continue;
-
-        const linkerDefinition = await instantiateLinker(linker);
-        const {dependencyTreeTraversal} = linkerDefinition;
-
-        if (dependencyTreeTraversal) {
-          const linkerTree = generateLinkTree(linker, locator);
-          const optimizedTree = dependencyTreeTraversal.hoist
-            ? await dependencyTreeTraversal.hoist(linkerTree, linkerOptions)
-            : linkerTree;
-
-          const baseState = await dependencyTreeTraversal.onRoot(pkg, targetFs);
-          await applyDependencyTreeTraversal(linkerTree, linker, baseState);
+        
+        const dependencyLinker = packageLinkers.get(resolution);
+        if (!dependencyLinker)
+          throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+        
+        if (dependencyLinker === packageLinker) {
+          internalDependencies.push(dependency);
+        } else {
+          let externalEntry = externalDependents.get(resolution);
+          if (!externalEntry)
+            externalDependents.set(resolution, externalEntry = []);
+          
+          externalEntry.push(packageLocation);
         }
       }
-    };
 
-    for (const workspace of this.workspacesByCwd.values()) {
-      await dispatchLinkers(workspace.anchoredLocator, new CwdFS(workspace.cwd, {
-        baseFs: rootFs,
-      }));
+      await installer.attachInternalDependencies(pkg, internalDependencies);
+    }
+
+    for (const [locatorHash, dependentPaths] of externalDependents) {
+      const pkg = this.storedPackages.get(locatorHash);
+      if (!pkg)
+        throw new Error(`Assertion failed: The package should have been registered`);
+
+      const packageLinker = packageLinkers.get(pkg.locatorHash);
+      if (!packageLinker)
+        throw new Error(`Assertion failed: The linker should have been found`);
+
+      const installer = installers.get(packageLinker);
+      if (!installer)
+        throw new Error(`Assertion failed: The installer should have been registered`);
+      
+      await installer.attachExternalDependents(pkg, dependentPaths);
+    }
+
+    // Step 3: Inform our linkers that they should have all the info needed
+
+    for (const installer of installers.values())
+      await installer.finalizeInstall();
+
+    // Step 4: Build the packages in multiple steps
+
+    const readyPackages = new Set(this.storedPackages.keys());
+    const buildablePackages = new Set(packageBuildDirectives.keys());
+
+    for (const locatorHash of buildablePackages)
+      readyPackages.delete(locatorHash);
+    
+    while (buildablePackages.size > 0) {
+      const savedSize = buildablePackages.size;
+
+      for (const locatorHash of buildablePackages) {
+        const pkg = this.storedPackages.get(locatorHash);
+        if (!pkg)
+          throw new Error(`Assertion failed: The package should have been registered`);
+  
+        let isBuildable = true;
+        for (const dependency of pkg.dependencies.values()) {
+          const resolution = this.storedResolutions.get(dependency.descriptorHash);
+          if (!resolution)
+            throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, dependency)}) should have been registered`);
+          
+          if (buildablePackages.has(resolution)) {
+            isBuildable = false;
+            break;
+          }
+        }
+
+        if (!isBuildable)
+          continue;
+        
+        buildablePackages.delete(locatorHash);
+      }
+
+      if (savedSize === buildablePackages.size) {
+        const prettyLocators = Array.from(buildablePackages).map(locatorHash => {
+          const pkg = this.storedPackages.get(locatorHash);
+          if (!pkg)
+            throw new Error(`Assertion failed: The package should have been registered`);
+  
+          return structUtils.prettyLocator(this.configuration, pkg);
+        }).join(`, `);
+
+        this.errors.push(new Error(`Some packages have circular dependencies that make their build order unsatisfiable - as a result they won't be built (affected packages are: ${prettyLocators})`));
+        break;
+      }
     }
   }
 
@@ -978,7 +886,7 @@ export class Project {
     for (const [locatorHash, descriptorHashes] of reverseLookup.entries()) {
       const pkg = this.storedPackages.get(locatorHash);
       if (!pkg)
-        throw new Error(`The package should have been registered`);
+        throw new Error(`Assertion failed: The package should have been registered`);
 
       // Virtual packages are not persisted into the lockfile: they need to be
       // recomputed at runtime through "resolveEverything".
@@ -990,7 +898,7 @@ export class Project {
       for (const descriptorHash of descriptorHashes) {
         const descriptor = this.storedDescriptors.get(descriptorHash);
         if (!descriptor)
-          throw new Error(`The descriptor should have been registered`);
+          throw new Error(`Assertion failed: The descriptor should have been registered`);
 
         descriptors.push(descriptor);
       }

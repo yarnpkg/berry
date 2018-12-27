@@ -1,8 +1,9 @@
-import {FakeFS, NodeFS}            from '@berry/zipfs';
+import {FakeFS, NodeFS}    from '@berry/zipfs';
+import {posix}             from 'path';
 
-import * as structUtils            from './structUtils';
-import {IdentHash, DescriptorHash} from './types';
-import {Ident, Descriptor}         from './types';
+import * as structUtils    from './structUtils';
+import {IdentHash}         from './types';
+import {Ident, Descriptor} from './types';
 
 export interface WorkspaceDefinition {
   pattern: string;
@@ -20,6 +21,10 @@ export class Manifest {
   public peerDependencies: Map<IdentHash, Descriptor> = new Map();
 
   public workspaceDefinitions: Array<WorkspaceDefinition> = [];
+
+  static async find(path: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS} = {}) {
+    return await Manifest.fromFile(posix.join(path, `package.json`), {baseFs});
+  }
 
   static async fromFile(path: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS} = {}) {
     const manifest = new Manifest();

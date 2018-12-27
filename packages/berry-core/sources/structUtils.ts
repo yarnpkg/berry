@@ -182,6 +182,14 @@ export function stringifyLocator(locator: Locator) {
   }
 }
 
+export function slugifyLocator(locator: Locator) {
+  if (locator.scope) {
+    return `@${locator.scope}-${locator.name}-${locator.locatorHash}`;
+  } else {
+    return `${locator.name}-${locator.locatorHash}`;
+  }
+}
+
 export function prettyIdent(configuration: Configuration, ident: Ident) {
   if (ident.scope) {
     return `${color(configuration, `@${ident.scope}/`, `orange`)}${color(configuration, ident.name, `green`)}`;

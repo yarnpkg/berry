@@ -7,18 +7,26 @@ import {LinkType}                                        from './types';
 export class WorkspaceBaseResolver implements Resolver {
   static protocol = `workspace-base:`;
 
-  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
+  static isWorkspaceBaseDescriptor(descriptor: Descriptor) {
     if (!descriptor.range.startsWith(WorkspaceBaseResolver.protocol))
       return false;
 
     return true;
   }
 
-  supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
+  static isWorkspaceBaseLocator(locator: Locator) {
     if (!locator.reference.startsWith(WorkspaceBaseResolver.protocol))
       return false;
 
     return true;
+  }
+
+  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return WorkspaceBaseResolver.isWorkspaceBaseDescriptor(descriptor);
+  }
+
+  supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
+    return WorkspaceBaseResolver.isWorkspaceBaseLocator(locator);
   }
 
   shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {

@@ -9,6 +9,9 @@ export class Report {
   private cacheHitStart: number = 0;
   private cacheMissStart: number = 0;
 
+  private messages: Array<string> = [];
+  private messageSet: Set<string> = new Set();
+
   static async start({project, cache}: {project: Project, cache: Cache}, cb: () => Promise<any>) {
     const report = new Report({project, cache});
     await report.setup();
@@ -27,6 +30,21 @@ export class Report {
     this.startTime = Date.now();
     this.cacheHitStart = this.cache.cacheHitCount;
     this.cacheMissStart = this.cache.cacheMissCount;
+
+    this.messages = [];
+    this.messageSet = new Set();
+  }
+
+  log(message: string) {
+    this.messages.push(message);
+    this.messageSet.add(message);
+  }
+
+  logOnce(message: string) {
+    if (this.messageSet.has(message))
+      return;
+
+    this.log(message);
   }
 
   async finalize() {

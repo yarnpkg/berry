@@ -24,11 +24,13 @@ const writeFileP = promisify(writeFile);
 const RELATIVE_KEYS = new Set([
   `cache-folder`,
   `pnp-path`,
+  `pnp-unplugged-folder`,
 ]);
 
 const BOOLEAN_KEYS = new Set([
   `enable-colors`,
   `enable-emojis`,
+  `enable-scripts`,
   `ignore-path`,
 ]);
 
@@ -50,34 +52,45 @@ export class Configuration {
   // - options that enable a feature must begin with the "enable" prefix
   //   ex: enableEmojis, enableColors
 
+  // Should not be manually set - detected automatically
+  public plugins: Map<string, Plugin> = new Map();
+
+  // Should not be manually set - detected automatically
+  public projectCwd: string;
+
+  // Should not be manually set - computed automatically
+  private sources: {[key: string]: string} = {};
+
+  // Settings related to the proxying Berry to a specific executable
   public executablePath: string | null = null;
   public ignorePath: boolean = false;
 
+  // Settings related to the package manager internal names
   public lockfileName: string = `berry.lock`;
+  public cacheFolder: string | null = `./.berry/cache`;
 
+  // Settings related to the output style
   public enableEmojis: boolean = !!supportsColor.stdout;
   public enableColors: boolean = !!supportsColor.stdout;
 
-  public projectCwd: string;
-
+  // Settings related to how packages are interpreted by default
   public defaultLanguageName: string = `node`;
 
+  // Settings related to network proxies
   public httpProxy: string | null = null;
   public httpsProxy: string | null = null;
 
-  public cacheFolder: string | null = `./.pnp/cache`;
-
+  // Settings related to the registry used to resolve semver requests
   public registryServer: string | null = null;
 
+  // Settings related to PnP
   public pnpShebang: string = `#!/usr/bin/env node`;
   public pnpIgnorePattern: string | null = null;
-  public pnpVirtualFolder: string = `./.pnp/virtual`;
+  public pnpUnpluggedFolder: string = `./.berry/pnp/unplugged`;
   public pnpPath: string = `./.pnp.js`;
 
-  public plugins: Map<string, Plugin> = new Map();
-
-  // We store here the source for each settings
-  private sources: {[key: string]: string} = {};
+  // Settings related to security
+  public enableScripts: boolean = true;
 
   static async find(startingCwd: string, plugins: Map<string, Plugin> = new Map()) {
     let projectCwd = null;
