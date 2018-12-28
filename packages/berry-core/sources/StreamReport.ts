@@ -105,6 +105,16 @@ export class StreamReport extends Report {
   }
 
   async finalize() {
+    let installStatus = ``;
+
+    if (this.errorCount > 0) {
+      installStatus = `Failed with errors`;
+    } else if (this.warningCount > 0) {
+      installStatus = `Done with warnings`;
+    } else {
+      installStatus = `Done`;
+    }
+
     let fetchStatus = ``;
 
     if (this.cacheHitCount > 1) {
@@ -127,15 +137,9 @@ export class StreamReport extends Report {
       }
     }
 
-    const withErrors = this.errorCount > 0
-      ? ` with errors`
-      : this.warningCount > 0
-        ? ` with warnings`
-        : ``;
-      
     const timing = this.formatTiming(Date.now() - this.startTime);
 
-    this.reportInfo(MessageName.UNNAMED, `Done${withErrors} in ${timing}${fetchStatus}.`);
+    this.reportInfo(MessageName.UNNAMED, `${installStatus} in ${timing}${fetchStatus}`);
   }
 
   private formatTiming(timing: number) {

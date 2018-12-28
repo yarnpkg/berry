@@ -202,6 +202,8 @@ export function prettyRange(configuration: Configuration, range: string) {
   if (range.startsWith(VIRTUAL_PROTOCOL))
     range = range.substr(0, VIRTUAL_PROTOCOL.length + VIRTUAL_ABBREVIATE);
 
+  range = range.replace(/\?.*/, `?[...]`);
+
   return `${color(configuration, range, `blue`)}`;
 }
 
@@ -212,6 +214,8 @@ export function prettyDescriptor(configuration: Configuration, descriptor: Descr
 export function prettyReference(configuration: Configuration, reference: string) {
   if (reference.startsWith(VIRTUAL_PROTOCOL))
     reference = reference.substr(0, VIRTUAL_PROTOCOL.length + VIRTUAL_ABBREVIATE);
+  
+  reference = reference.replace(/\?.*/, `?[...]`);
 
   return `${color(configuration, reference, `violet`)}`;
 }
