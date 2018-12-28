@@ -48,7 +48,7 @@ class PnpInstaller implements Installer {
 
     const buildScripts = await this.getBuildScripts(packageFs);
 
-    if (buildScripts.length > 0 && this.opts.project.configuration.enableScripts) {
+    if (buildScripts.length > 0 && !this.opts.project.configuration.enableScripts) {
       this.opts.report.reportInfo(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, locator)} lists build scripts, but all build scripts have been disabled.`);
       buildScripts.length = 0;
     }
