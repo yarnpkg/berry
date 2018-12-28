@@ -7,7 +7,7 @@ steps:
 
 - bash: |
     ./packages/berry-cli/bin/berry
-    ./packages/berry-cli/bin/berry build
+    ./packages/berry-cli/bin/berry build:cli --profile standard+pnp
   displayName: 'Install and build'
 
 - script: |
