@@ -1,9 +1,24 @@
+import chalk = require('chalk');
+
 import {Writable}            from 'stream';
 
+import {Configuration}       from './Configuration';
 import {Report, MessageName} from './Report';
 import {Locator}             from './types';
 
+// @ts-ignore
+const ctx = new chalk.constructor({enabled: true});
+
+function color(configuration: Configuration, text: string, color: string) {
+  if (configuration.enableColors) {
+    return ctx.keyword(color)(text);
+  } else {
+    return text;
+  }
+}
+
 export type StreamReportOptions = {
+  configuration: Configuration,
   stdout: Writable,
 };
 
@@ -22,6 +37,7 @@ export class StreamReport extends Report {
     return report;
   }
 
+  private configuration: Configuration;
   private stdout: Writable;
 
   private cacheHitCount: number = 0;
@@ -34,9 +50,10 @@ export class StreamReport extends Report {
 
   private indent: number = 0;
 
-  constructor({stdout}: StreamReportOptions) {
+  constructor({configuration, stdout}: StreamReportOptions) {
     super();
 
+    this.configuration = configuration;
     this.stdout = stdout;
   }
 
@@ -53,7 +70,7 @@ export class StreamReport extends Report {
   }
 
   startTimerSync<T>(what: string, cb: () => T) {
-    this.reportInfo(MessageName.UNNAMED, `Starting ${what}`);
+    this.reportInfo(MessageName.UNNAMED, `┌ ${what}`);
 
     const before = Date.now();
     this.indent += 1;
@@ -67,12 +84,12 @@ export class StreamReport extends Report {
       const after = Date.now();
       this.indent -= 1;
 
-      this.reportInfo(MessageName.UNNAMED, `Completing ${what} (after ${this.formatTiming(after - before)})`);
+      this.reportInfo(MessageName.UNNAMED, `└ Completed in ${this.formatTiming(after - before)}`);
     }
   }
 
   async startTimerPromise<T>(what: string, cb: () => Promise<T>) {
-    this.reportInfo(MessageName.UNNAMED, `Starting ${what}`);
+    this.reportInfo(MessageName.UNNAMED, `┌ ${what}`);
 
     const before = Date.now();
     this.indent += 1;
@@ -86,22 +103,22 @@ export class StreamReport extends Report {
       const after = Date.now();
       this.indent -= 1;
 
-      this.reportInfo(MessageName.UNNAMED, `Completing ${what} (after ${this.formatTiming(after - before)})`);
+      this.reportInfo(MessageName.UNNAMED, `└ Completed in ${this.formatTiming(after - before)}`);
     }
   }
 
   reportInfo(name: MessageName, text: string) {
-    this.stdout.write(`${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    this.stdout.write(`${color(this.configuration, `-`, `blue`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
   }
 
   reportWarning(name: MessageName, text: string) {
     this.warningCount += 1;
-    this.stdout.write(`${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    this.stdout.write(`${color(this.configuration, `?`, `yellow`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
   }
 
   reportError(name: MessageName, text: string) {
     this.errorCount += 1;
-    this.stdout.write(`${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    this.stdout.write(`${color(this.configuration, `!`, `red`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
   }
 
   async finalize() {
@@ -153,6 +170,6 @@ export class StreamReport extends Report {
   }
 
   private formatIndent() {
-    return `  `.repeat(this.indent);
+    return `│ `.repeat(this.indent);
   }
 }

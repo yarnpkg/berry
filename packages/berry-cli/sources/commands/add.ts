@@ -19,7 +19,7 @@ export default (concierge: any) => concierge
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
 
-    const report = await StreamReport.start({stdout}, async (report: StreamReport) => {
+    const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
       await registerLegacyYarnResolutions(project);
 
       const resolver = configuration.makeResolver({useLockfile: false});

@@ -15,7 +15,7 @@ const ctx = new chalk.constructor({enabled: true});
 
 function color(configuration: Configuration, text: string, color: string) {
   if (configuration.enableColors) {
-    return ctx.keyword(color)(text);
+    return ctx.hex(color)(text);
   } else {
     return text;
   }
@@ -192,9 +192,9 @@ export function slugifyLocator(locator: Locator) {
 
 export function prettyIdent(configuration: Configuration, ident: Ident) {
   if (ident.scope) {
-    return `${color(configuration, `@${ident.scope}/`, `orange`)}${color(configuration, ident.name, `green`)}`;
+    return `${color(configuration, `@${ident.scope}/`, `#d75f00`)}${color(configuration, ident.name, `#d7875f`)}`;
   } else {
-    return `${color(configuration, ident.name, `green`)}`;
+    return `${color(configuration, ident.name, `#d7875f`)}`;
   }
 }
 
@@ -204,11 +204,11 @@ export function prettyRange(configuration: Configuration, range: string) {
 
   range = range.replace(/\?.*/, `?[...]`);
 
-  return `${color(configuration, range, `blue`)}`;
+  return `${color(configuration, range, `#00afaf`)}`;
 }
 
 export function prettyDescriptor(configuration: Configuration, descriptor: Descriptor) {
-  return `${prettyIdent(configuration, descriptor)}@${prettyRange(configuration, descriptor.range)}`;
+  return `${prettyIdent(configuration, descriptor)}${color(configuration, `@`, `#00afaf`)}${prettyRange(configuration, descriptor.range)}`;
 }
 
 export function prettyReference(configuration: Configuration, reference: string) {
@@ -217,11 +217,11 @@ export function prettyReference(configuration: Configuration, reference: string)
   
   reference = reference.replace(/\?.*/, `?[...]`);
 
-  return `${color(configuration, reference, `violet`)}`;
+  return `${color(configuration, reference, `#87afff`)}`;
 }
 
 export function prettyLocator(configuration: Configuration, locator: Locator) {
-  return `${prettyIdent(configuration, locator)}@${prettyReference(configuration, locator.reference)}`;
+  return `${prettyIdent(configuration, locator)}${color(configuration, `@`, `#87afff`)}${prettyReference(configuration, locator.reference)}`;
 }
 
 export function sortDescriptors(descriptors: Iterable<Descriptor>) {

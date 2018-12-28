@@ -614,7 +614,7 @@ export class Project {
 
             if (!peerDescriptor) {
               if (!isOptional)
-                report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `Unsatisfied peer dependency (${structUtils.prettyLocator(this.configuration, pkg)} requests ${structUtils.prettyDescriptor(this.configuration, peerRequest)}, but ${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide it)`);
+                report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide ${structUtils.prettyDescriptor(this.configuration, peerRequest)} requested by ${structUtils.prettyLocator(this.configuration, pkg)}`);
 
               peerDescriptor = structUtils.makeDescriptor(peerRequest, `missing:`);
             }
