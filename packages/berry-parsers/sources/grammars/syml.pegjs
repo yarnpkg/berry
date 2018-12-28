@@ -11,7 +11,7 @@ PropertyStatements
   = statements:PropertyStatement* { return Object.assign({}, ... statements) }
 
 PropertyStatement
-  = Samedent "#" [^\n]+ EOL+ { return {} }
+  = Samedent "#" (!EOL .)+ EOL+ { return {} }
   / Samedent property:Name B? ":" B? value:Expression { return {[property]: value} }
   // Compatibility with the old lockfile format (key-values without a ":")
   / Samedent property:LegacyName B value:Literal EOL+ { return {[property]: value} }
