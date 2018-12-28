@@ -122,6 +122,9 @@ function compareValuesDeep(a: any, b: any): boolean {
     
     const aKeys = Object.keys(a);
     const bKeys = Object.keys(b);
+    
+    if (aKeys.length !== bKeys.length)
+      return false;
 
     for (let t = 0, T = aKeys.length; t < T; ++t)
       if (aKeys[t] !== bKeys[t])
