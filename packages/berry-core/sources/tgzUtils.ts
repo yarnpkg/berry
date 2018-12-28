@@ -10,31 +10,9 @@ interface MakeArchiveFromDirectoryOptions {
 
 export async function makeArchiveFromDirectory(source: string, {baseFs = new NodeFS(), prefixPath = `/`}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
   const zipFs = new ZipFS(tmpNameSync(), {create: true});
-
-  function processDirectory(source: string, target: string) {
-    const listing = baseFs.readdirSync(source);
-
-    for (const entry of listing) {
-      const sourcePath = posix.resolve(source, entry);
-      const targetPath = posix.resolve(target, entry);
-
-      const stat = baseFs.lstatSync(sourcePath);
-
-      if (stat.isDirectory()) {
-        zipFs.mkdirSync(targetPath);
-        processDirectory(sourcePath, targetPath);
-      } else if (stat.isFile()) {
-        zipFs.writeFileSync(targetPath, baseFs.readFileSync(sourcePath));
-      } else {
-        // TODO: More file types
-      }
-    }
-  }
-
   const target = posix.resolve(`/`, prefixPath);
 
-  zipFs.mkdirSync(target);
-  processDirectory(source, target);
+  await zipFs.copyPromise(target, source, {baseFs});
 
   return zipFs;
 }
