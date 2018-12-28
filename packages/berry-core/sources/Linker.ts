@@ -1,12 +1,14 @@
-import {Installer}                    from './Installer';
-import {Project}                      from './Project';
-import {Locator, Package}             from './types';
+import {Installer}        from './Installer';
+import {Project}          from './Project';
+import {Report}           from './Report';
+import {Locator, Package} from './types';
 
 export type MinimalLinkOptions = {
   project: Project,
 };
 
 export type LinkOptions = MinimalLinkOptions & {
+  report: Report,
 };
 
 export interface Linker {

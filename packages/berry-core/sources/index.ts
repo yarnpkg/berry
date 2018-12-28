@@ -6,8 +6,9 @@ export {Linker, LinkOptions, MinimalLinkOptions} from './Linker';
 export {Manifest} from './Manifest';
 export {Plugin} from './Plugin';
 export {Project} from './Project';
-export {Report} from './Report';
+export {Report, MessageName} from './Report';
 export {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+export {StreamReport} from './StreamReport';
 export {Workspace} from './Workspace';
 
 import * as httpUtils from './httpUtils';

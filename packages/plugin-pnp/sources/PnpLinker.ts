@@ -1,4 +1,4 @@
-import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType}               from '@berry/core';
+import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName}  from '@berry/core';
 import {LocatorHash, Locator, Package}                                                        from '@berry/core';
 import {structUtils}                                                                          from '@berry/core';
 import {PackageInformationStores, LocationBlacklist, TemplateReplacements, generatePnpScript} from '@berry/pnp';
@@ -49,12 +49,12 @@ class PnpInstaller implements Installer {
     const buildScripts = await this.getBuildScripts(packageFs);
 
     if (buildScripts.length > 0 && this.opts.project.configuration.enableScripts) {
-      console.info(`${structUtils.prettyLocator(this.opts.project.configuration, locator)} lists build scripts, but all build scripts have been disabled.`);
+      this.opts.report.reportInfo(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, locator)} lists build scripts, but all build scripts have been disabled.`);
       buildScripts.length = 0;
     }
 
     if (buildScripts.length > 0 && linkType !== LinkType.HARD) {
-      console.info(`${structUtils.prettyLocator(this.opts.project.configuration, locator)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
+      this.opts.report.reportWarning(MessageName.SOFT_LINK_BUILD, `${structUtils.prettyLocator(this.opts.project.configuration, locator)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
       buildScripts.length = 0;
     }
 

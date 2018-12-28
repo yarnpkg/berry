@@ -11,6 +11,7 @@ import {Cache}                                  from './Cache';
 import {Configuration}                          from './Configuration';
 import {Installer, BuildDirective}              from './Installer';
 import {Linker}                                 from './Linker';
+import {Report, MessageName}                    from './Report';
 import {WorkspaceBaseResolver}                  from './WorkspaceBaseResolver';
 import {WorkspaceResolver}                      from './WorkspaceResolver';
 import {Workspace}                              from './Workspace';
@@ -19,6 +20,11 @@ import * as structUtils                         from './structUtils';
 import {IdentHash, DescriptorHash, LocatorHash} from './types';
 import {Descriptor, Locator, Package}           from './types';
 import {LinkType}                               from './types';
+
+export type InstallOptions = {
+  cache: Cache,
+  report: Report,
+};
 
 export class Project {
   public readonly configuration: Configuration;
@@ -40,8 +46,6 @@ export class Project {
 
   public storedDescriptors: Map<DescriptorHash, Descriptor> = new Map();
   public storedPackages: Map<LocatorHash, Package> = new Map();
-
-  public errors: Array<Error> = [];
 
   static async find(configuration: Configuration, startingCwd: string) {
     let projectCwd = null;
@@ -241,7 +245,7 @@ export class Project {
     }
   }
 
-  async resolveEverything(cache: Cache) {
+  async resolveEverything({cache, report}: InstallOptions) {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
 
@@ -610,7 +614,7 @@ export class Project {
 
             if (!peerDescriptor) {
               if (!isOptional)
-                this.errors.push(new Error(`Unsatisfied peer dependency (${structUtils.prettyLocator(this.configuration, pkg)} requests ${structUtils.prettyDescriptor(this.configuration, peerRequest)}, but ${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide it)`));
+                report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `Unsatisfied peer dependency (${structUtils.prettyLocator(this.configuration, pkg)} requests ${structUtils.prettyDescriptor(this.configuration, peerRequest)}, but ${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide it)`);
 
               peerDescriptor = structUtils.makeDescriptor(peerRequest, `missing:`);
             }
@@ -666,7 +670,7 @@ export class Project {
     this.storedPackages = allPackages;
   }
 
-  async fetchEverything(cache: Cache) {
+  async fetchEverything({cache}: InstallOptions) {
     this.storedLocations = new Map();
 
     const fetcher = this.configuration.makeFetcher();
@@ -692,14 +696,14 @@ export class Project {
     }
   }
 
-  async linkEverything(cache: Cache) {
+  async linkEverything({cache, report}: InstallOptions) {
     const rootFs = new NodeFS();
 
     const fetcher = this.configuration.makeFetcher();
     const fetcherOptions = {project: this, readOnly: true, cache, fetcher, rootFs};
 
     const linkers = this.configuration.getLinkers();
-    const linkerOptions = {project: this};
+    const linkerOptions = {project: this, report};
 
     const installers = new Map(linkers.map(linker => {
       return [linker, linker.makeInstaller(linkerOptions)] as [Linker, Installer];
@@ -847,19 +851,27 @@ export class Project {
           return structUtils.prettyLocator(this.configuration, pkg);
         }).join(`, `);
 
-        this.errors.push(new Error(`Some packages have circular dependencies that make their build order unsatisfiable - as a result they won't be built (affected packages are: ${prettyLocators})`));
+        report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Some packages have circular dependencies that make their build order unsatisfiable - as a result they won't be built (affected packages are: ${prettyLocators})`);
         break;
       }
     }
   }
 
-  async install({cache}: {cache: Cache}) {
+  async install(opts: InstallOptions) {
     // Ensures that we notice it when dependencies are added / removed from all sources coming from the filesystem
     await this.forgetTransientResolutions();
 
-    await this.resolveEverything(cache);
-    await this.fetchEverything(cache);
-    await this.linkEverything(cache);
+    await opts.report.startTimerPromise(`Resolution step`, async () => {
+      await this.resolveEverything(opts);
+    });
+
+    await opts.report.startTimerPromise(`Fetch step`, async () => {
+      await this.fetchEverything(opts);
+    });
+
+    await opts.report.startTimerPromise(`Link step`, async () => {
+      await this.linkEverything(opts);
+    });
   }
 
   async persistLockfile() {

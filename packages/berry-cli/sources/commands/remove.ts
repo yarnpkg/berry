@@ -1,10 +1,10 @@
-import {Configuration, Cache, Project, Report} from '@berry/core';
-import {structUtils}                           from '@berry/core';
-import {Writable}                              from 'stream';
+import {Configuration, Cache, Project, StreamReport} from '@berry/core';
+import {structUtils}                                 from '@berry/core';
+import {Writable}                                    from 'stream';
 
-import {registerLegacyYarnResolutions}         from '../utils/miscUtils';
+import {registerLegacyYarnResolutions}               from '../utils/miscUtils';
 
-import {plugins}                               from '../plugins';
+import {plugins}                                     from '../plugins';
 
 export default (concierge: any) => concierge
 
@@ -16,7 +16,7 @@ export default (concierge: any) => concierge
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
 
-    const report = await Report.start({project, cache}, async () => {
+    const report = await StreamReport.start({stdout}, async (report: StreamReport) => {
       await registerLegacyYarnResolutions(project);
 
       for (const entry of names) {
@@ -27,11 +27,9 @@ export default (concierge: any) => concierge
         workspace.manifest.peerDependencies.delete(ident.identHash);
       }
 
-      await project.install({cache});
+      await project.install({cache, report});
       await project.persist();
     });
 
-    stdout.write(report);
-
-    return project.errors.length === 0 ? 0 : 1;
+    return report.hasErrors() ? 1 : 0;
   });
