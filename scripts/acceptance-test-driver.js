@@ -18,6 +18,9 @@ const {
 } = require(`pkg-tests-specs`);
 
 const pkgDriver = generatePkgDriver({
+  getName() {
+    return `berry`;
+  },
   async runDriver(
     path,
     [command, ...args],
