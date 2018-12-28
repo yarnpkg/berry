@@ -14,7 +14,7 @@ export class StreamReport extends Report {
     try {
       await cb(report);
     } catch (error) {
-      report.reportError(MessageName.EXCEPTION, error.message);
+      report.reportErrorOnce(MessageName.EXCEPTION, error.message, {key: error});
     } finally {
       await report.finalize();
     }
@@ -55,33 +55,39 @@ export class StreamReport extends Report {
   startTimerSync<T>(what: string, cb: () => T) {
     this.reportInfo(MessageName.UNNAMED, `Starting ${what}`);
 
+    const before = Date.now();
     this.indent += 1;
 
-    const before = Date.now();
-    const res = cb();
-    const after = Date.now();
+    try {
+      return cb();
+    } catch (error) {
+      this.reportErrorOnce(MessageName.EXCEPTION, error.message, {key: error});
+      throw error;
+    } finally {
+      const after = Date.now();
+      this.indent -= 1;
 
-    this.indent -= 1;
-
-    this.reportInfo(MessageName.UNNAMED, `Completing ${what} (after ${this.formatTiming(after - before)})`);
-
-    return res;
+      this.reportInfo(MessageName.UNNAMED, `Completing ${what} (after ${this.formatTiming(after - before)})`);
+    }
   }
 
   async startTimerPromise<T>(what: string, cb: () => Promise<T>) {
     this.reportInfo(MessageName.UNNAMED, `Starting ${what}`);
 
+    const before = Date.now();
     this.indent += 1;
 
-    const before = Date.now();
-    const res = await cb();
-    const after = Date.now();
+    try {
+      return await cb();
+    } catch (error) {
+      this.reportErrorOnce(MessageName.EXCEPTION, error.message, {key: error});
+      throw error;
+    } finally {
+      const after = Date.now();
+      this.indent -= 1;
 
-    this.indent -= 1;
-
-    this.reportInfo(MessageName.UNNAMED, `Completing ${what} (after ${this.formatTiming(after - before)})`);
-
-    return res;
+      this.reportInfo(MessageName.UNNAMED, `Completing ${what} (after ${this.formatTiming(after - before)})`);
+    }
   }
 
   reportInfo(name: MessageName, text: string) {

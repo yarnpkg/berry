@@ -13,9 +13,9 @@ export enum MessageName {
 }
 
 export abstract class Report {
-  private reportedInfos: Set<MessageName | string> = new Set();
-  private reportedWarnings: Set<MessageName | string> = new Set();
-  private reportedErrors: Set<MessageName | string> = new Set();
+  private reportedInfos: Set<any> = new Set();
+  private reportedWarnings: Set<any> = new Set();
+  private reportedErrors: Set<any> = new Set();
 
   abstract reportCacheHit(locator: Locator): void;
   abstract reportCacheMiss(locator: Locator): void;
@@ -29,7 +29,7 @@ export abstract class Report {
 
   abstract finalize(): void;
 
-  reportInfoOnce(name: MessageName, text: string, opts?: {key?: MessageName | string}) {
+  reportInfoOnce(name: MessageName, text: string, opts?: {key?: any}) {
     const key = opts && opts.key ? opts.key : text;
 
     if (!this.reportedInfos.has(key)) {
@@ -38,7 +38,7 @@ export abstract class Report {
     }
   }
 
-  reportWarningOnce(name: MessageName, text: string, opts?: {key?: MessageName | string}) {
+  reportWarningOnce(name: MessageName, text: string, opts?: {key?: any}) {
     const key = opts && opts.key ? opts.key : text;
 
     if (!this.reportedWarnings.has(key)) {
@@ -47,7 +47,7 @@ export abstract class Report {
     }
   }
 
-  reportErrorOnce(name: MessageName, text: string, opts?: {key?: MessageName | string}) {
+  reportErrorOnce(name: MessageName, text: string, opts?: {key?: any}) {
     const key = opts && opts.key ? opts.key : text;
 
     if (!this.reportedErrors.has(key)) {
