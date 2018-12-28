@@ -55,6 +55,7 @@ const BUILTINS = {
       env.PATH = env.PATH.replace(new RegExp(posix.delimiter, `g`), delimiter);
 
     const subprocess = execa(ident, rest, {
+      preferLocal: false,
       cwd,
       stdio,
       env,
