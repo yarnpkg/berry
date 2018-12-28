@@ -21,7 +21,7 @@ export class JailFS extends FakeFS {
   }
 
   getRealPath() {
-    return posix.resolve(this.baseFs.getRealPath(), posix.relative(`/`, posix.resolve(`/`, this.target)));
+    return posix.resolve(this.baseFs.getRealPath(), posix.relative(`/`, this.target));
   }
 
   getTarget() {
@@ -141,15 +141,15 @@ export class JailFS extends FakeFS {
   }
 
   private fromJailedPath(p: string) {
-    return posix.resolve(this.target, posix.relative(`/`, posix.resolve(`/`, p)));
+    const normalized = posix.normalize(p);
+
+    if (normalized.match(/^(\.\.)?\//))
+      throw new Error(`Resolving this path (${p}) would escape the jail`);
+
+    return posix.resolve(this.target, p);
   }
 
   private toJailedPath(p: string) {
-    const relative = posix.relative(this.target, posix.resolve(`/`, p));
-
-    if (relative.match(/^(\.\.)?\//))
-      throw new Error(`Resolving this path (${p}) would escape the jail (${this.target})`);
-
-    return posix.resolve(`/`, relative);
+    return p;
   }
 }

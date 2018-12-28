@@ -7626,7 +7626,7 @@ class JailFS extends FakeFS_1.FakeFS {
         this.baseFs = baseFs;
     }
     getRealPath() {
-        return path_1.posix.resolve(this.baseFs.getRealPath(), path_1.posix.relative(`/`, path_1.posix.resolve(`/`, this.target)));
+        return path_1.posix.resolve(this.baseFs.getRealPath(), path_1.posix.relative(`/`, this.target));
     }
     getTarget() {
         return this.target;
@@ -7716,13 +7716,13 @@ class JailFS extends FakeFS_1.FakeFS {
         return this.baseFs.readlinkSync(this.fromJailedPath(p));
     }
     fromJailedPath(p) {
-        return path_1.posix.resolve(this.target, path_1.posix.relative(`/`, path_1.posix.resolve(`/`, p)));
+        const normalized = path_1.posix.normalize(p);
+        if (normalized.match(/^(\.\.)?\//))
+            throw new Error(`Resolving this path (${p}) would escape the jail`);
+        return path_1.posix.resolve(this.target, p);
     }
     toJailedPath(p) {
-        const relative = path_1.posix.relative(this.target, path_1.posix.resolve(`/`, p));
-        if (relative.match(/^(\.\.)?\//))
-            throw new Error(`Resolving this path (${p}) would escape the jail (${this.target})`);
-        return path_1.posix.resolve(`/`, relative);
+        return p;
     }
 }
 exports.JailFS = JailFS;
