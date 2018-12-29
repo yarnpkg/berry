@@ -33,7 +33,7 @@ export class NodeFS extends FakeFS {
 
   async existsPromise(p: string) {
     return await new Promise<boolean>(resolve => {
-      this.realFs.exists(p, resolve);
+      this.realFs.exists(this.fromPortablePath(p), resolve);
     });
   }
 

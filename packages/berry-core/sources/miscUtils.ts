@@ -1,3 +1,17 @@
+// Webpack has this annoying tendency to replace dynamic requires by a stub
+// code that simply throws when called. It's all fine and dandy in the context
+// of a web application, but is quite annoying when working with Node projects!
+
+export function dynamicRequire(path: string) {
+  // @ts-ignore
+  if (typeof __webpack_require__ !== 'undefined') {
+    // @ts-ignore
+    return __non_webpack_require__(path);
+  } else {
+    return require(path);
+  }
+}
+
 // This function transforms an iterable into an array and sorts it according to
 // the mapper functions provided as parameter. The mappers are expected to take
 // each element from the iterable and generate a string from it, that will then

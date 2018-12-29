@@ -35,11 +35,11 @@ export default (concierge: any) => concierge
     // If we can't find it, we then check whether one of the dependencies of the
     // current workspace exports a binary with the requested name
 
-    const binaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace, {cache});
+    const binaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace);
     const binary = binaries.get(name);
 
     if (binary)
-      return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, name, args, {cache, stdin, stdout, stderr});
+      return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, name, args, {cwd, stdin, stdout, stderr});
 
     // When it fails, we try to check whether it's a global script (ie we look
     // into all the workspaces to find one that exports this script). We only do

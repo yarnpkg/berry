@@ -48,7 +48,6 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
   ]);
 
   const ASYNC_IMPLEMENTATIONS = new Set([
-    `existsPromise`,
     `realpathPromise`,
     `readdirPromise`,
     `statPromise`,
@@ -57,6 +56,14 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
     `readFilePromise`,
     `writeFilePromise`,
   ]);
+
+  (patchedFs as any).exists = (p: string, callback?: (result: boolean) => any) => {
+    fakeFs.existsPromise(p).then(result => {
+      if (callback) {
+        callback(result);
+      }
+    });
+  };
 
   for (const fnName of ASYNC_IMPLEMENTATIONS) {
     const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);

@@ -1,14 +1,15 @@
-import {runShell}           from '@berry/shell';
-import {FakeFS, NodeFS}     from '@berry/zipfs';
+import {runShell}                         from '@berry/shell';
+import {CwdFS, FakeFS, NodeFS, ZipOpenFS} from '@berry/zipfs';
 import {chmod, writeFile}   from 'fs-extra';
 import {existsSync}         from 'fs';
-import {delimiter, resolve} from 'path';
+import {delimiter, resolve, posix} from 'path';
 import {Readable, Writable} from 'stream';
 import {dirSync}            from 'tmp';
 
 import {Cache}              from './Cache';
 import {Manifest}           from './Manifest';
 import {Project}            from './Project';
+import {StreamReport}       from './StreamReport';
 import {Workspace}          from './Workspace';
 import * as execUtils       from './execUtils';
 import * as structUtils     from './structUtils';
@@ -96,87 +97,119 @@ export async function executeWorkspaceScript(workspace: Workspace, scriptName: s
 }
 
 type GetPackageAccessibleBinariesOptions = {
-  cache: Cache,
   project: Project,
 };
 
-export async function getPackageAccessibleBinaries(locator: Locator, {cache, project}: GetPackageAccessibleBinariesOptions) {
+/**
+ * Return the binaries that can be accessed by the specified package
+ * 
+ * @param locator The queried package
+ * @param project The project owning the package
+ */
+
+export async function getPackageAccessibleBinaries(locator: Locator, {project}: GetPackageAccessibleBinariesOptions) {
   const pkg = project.storedPackages.get(locator.locatorHash);
 
   if (!pkg)
     throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
 
-  const fetcher = project.configuration.makeFetcher();
-  const fetcherOptions = {readOnly: true, rootFs: new NodeFS(), cache, fetcher, project};
+  return await ZipOpenFS.openPromise(async (zipOpenFs: ZipOpenFS) => {
+    const configuration = project.configuration;
+    const stdout = new Writable();
 
-  const binaries: Map<string, [Locator, FakeFS, string]> = new Map();
-
-  const descriptors = [
-    ... pkg.dependencies.values(),
-    ... pkg.peerDependencies.values(),
-  ];
-
-  for (const descriptor of descriptors) {
-    const resolution = project.storedResolutions.get(descriptor.descriptorHash);
-
-    if (!resolution)
-      continue;
-
-    const pkg = project.storedPackages.get(resolution);
-
-    if (!pkg)
-      continue;
-
-    const [packageFs, release] = await fetcher.fetch(pkg, fetcherOptions);
-    const manifest = await Manifest.fromFile(`package.json`, {baseFs: packageFs});
-
-    for (const [binName, file] of manifest.bin.entries()) {
-      binaries.set(binName, [pkg, packageFs, file]);
+    const linkers = project.configuration.getLinkers();
+    const linkerOptions = {project, report: new StreamReport({ configuration, stdout })};
+  
+    const binaries: Map<string, [Locator, string]> = new Map();
+  
+    const descriptors = [
+      ... pkg.dependencies.values(),
+      ... pkg.peerDependencies.values(),
+    ];
+  
+    for (const descriptor of descriptors) {
+      const resolution = project.storedResolutions.get(descriptor.descriptorHash);
+      if (!resolution)
+        continue;
+  
+      const pkg = project.storedPackages.get(resolution);
+      if (!pkg)
+        continue;
+      
+      const linker = linkers.find(linker => linker.supports(pkg, linkerOptions));
+      if (!linker)
+        continue;
+      
+      const packageLocation = await linker.findPackage(pkg, linkerOptions);
+      
+      const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
+      const manifest = await Manifest.find(`.`, {baseFs: packageFs});
+  
+      for (const [binName, file] of manifest.bin.entries()) {
+        binaries.set(binName, [pkg, posix.resolve(packageLocation, file)]);
+      }
     }
-  }
-
-  return binaries;
+  
+    return binaries;
+  });
 }
 
-type GetWorkspaceAccessibleBinariesOptions = {
-  cache: Cache,
-};
+/**
+ * Return the binaries that can be accessed by the specified workspace
+ * 
+ * @param workspace The queried workspace
+ */
 
-export async function getWorkspaceAccessibleBinaries(workspace: Workspace, {cache}: GetWorkspaceAccessibleBinariesOptions) {
-  return await getPackageAccessibleBinaries(workspace.anchoredLocator, {project: workspace.project, cache});
+export async function getWorkspaceAccessibleBinaries(workspace: Workspace) {
+  return await getPackageAccessibleBinaries(workspace.anchoredLocator, {project: workspace.project});
 }
 
 type ExecutePackageAccessibleBinaryOptions = {
-  cache: Cache,
+  cwd: string,
   project: Project,
   stdin: Readable,
   stdout: Writable,
   stderr: Writable,
 };
 
-export async function executePackageAccessibleBinary(locator: Locator, binaryName: string, args: Array<string>, {cache, project, stdin, stdout, stderr}: ExecutePackageAccessibleBinaryOptions) {
-  const packageAccessibleBinaries = await getPackageAccessibleBinaries(locator, {cache, project});
-  const binary = packageAccessibleBinaries.get(binaryName);
+/**
+ * Execute a binary from the specified package.
+ * 
+ * Note that "binary" in this sense means "a Javascript file". Actual native
+ * binaries cannot be executed this way, because we use Node in order to
+ * transparently read from the archives.
+ * 
+ * @param locator The queried package
+ * @param binaryName The name of the binary file to execute
+ * @param args The arguments to pass to the file
+ */
 
+export async function executePackageAccessibleBinary(locator: Locator, binaryName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageAccessibleBinaryOptions) {
+  const packageAccessibleBinaries = await getPackageAccessibleBinaries(locator, {project});
+
+  const binary = packageAccessibleBinaries.get(binaryName);
   if (!binary)
     throw new Error(`Binary not found (${binaryName}) for ${structUtils.prettyLocator(project.configuration, locator)}`);
 
-  const cwd = process.cwd();
-  const env = await makeScriptEnv(project);
-
-  const [pkg, packageFs, file] = binary;
-  const target = resolve(packageFs.getRealPath(), file);
-
-  return await execUtils.execFile(process.execPath, [target, ... args], {cwd, env, stdin, stdout, stderr});
+  const [pkg, binaryPath] = binary;
+  await execUtils.execFile(process.execPath, [binaryPath, ... args], {cwd, stdin, stdout, stderr});
 }
 
 type ExecuteWorkspaceAccessibleBinaryOptions = {
-  cache: Cache,
+  cwd: string,
   stdin: Readable,
   stdout: Writable,
   stderr: Writable,
 };
 
-export async function executeWorkspaceAccessibleBinary(workspace: Workspace, binaryName: string, args: Array<string>, {cache, stdin, stdout, stderr}: ExecuteWorkspaceAccessibleBinaryOptions) {
-  return await executePackageAccessibleBinary(workspace.anchoredLocator, binaryName, args, {project: workspace.project, cache, stdin, stdout, stderr});
+/**
+ * Execute a binary from the specified workspace
+ * 
+ * @param workspace The queried package
+ * @param binaryName The name of the binary file to execute
+ * @param args The arguments to pass to the file
+ */
+
+export async function executeWorkspaceAccessibleBinary(workspace: Workspace, binaryName: string, args: Array<string>, {cwd, stdin, stdout, stderr}: ExecuteWorkspaceAccessibleBinaryOptions) {
+  return await executePackageAccessibleBinary(workspace.anchoredLocator, binaryName, args, {project: workspace.project, cwd, stdin, stdout, stderr});
 }

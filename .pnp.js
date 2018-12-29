@@ -7764,7 +7764,7 @@ class NodeFS extends FakeFS_1.FakeFS {
     }
     async existsPromise(p) {
         return await new Promise(resolve => {
-            this.realFs.exists(p, resolve);
+            this.realFs.exists(this.fromPortablePath(p), resolve);
         });
     }
     existsSync(p) {
@@ -8324,7 +8324,7 @@ const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-zipfs/sources/Fak
 const NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-zipfs/sources/NodeFS.ts");
 const ZipFS_1 = __webpack_require__(/*! ./ZipFS */ "../berry-zipfs/sources/ZipFS.ts");
 class ZipOpenFS extends FakeFS_1.FakeFS {
-    constructor({ baseFs = new NodeFS_1.NodeFS(), filter }) {
+    constructor({ baseFs = new NodeFS_1.NodeFS(), filter = null } = {}) {
         super();
         this.zipInstances = new Map();
         this.isZip = new Set();
@@ -8334,8 +8334,31 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
         this.isZip = new Set();
         this.notZip = new Set();
     }
+    static open(fn) {
+        const zipOpenFs = new ZipOpenFS();
+        try {
+            return fn(zipOpenFs);
+        }
+        finally {
+            zipOpenFs.close();
+        }
+    }
+    static async openPromise(fn) {
+        const zipOpenFs = new ZipOpenFS();
+        try {
+            return await fn(zipOpenFs);
+        }
+        finally {
+            zipOpenFs.close();
+        }
+    }
     getRealPath() {
         return this.baseFs.getRealPath();
+    }
+    close() {
+        for (const zipFs of this.zipInstances.values()) {
+            zipFs.close();
+        }
     }
     createReadStream(p, opts) {
         return this.makeCallSync(p, () => {
@@ -8654,7 +8677,6 @@ function patchFs(patchedFs, fakeFs) {
         `writeFileSync`,
     ]);
     const ASYNC_IMPLEMENTATIONS = new Set([
-        `existsPromise`,
         `realpathPromise`,
         `readdirPromise`,
         `statPromise`,
@@ -8663,6 +8685,13 @@ function patchFs(patchedFs, fakeFs) {
         `readFilePromise`,
         `writeFilePromise`,
     ]);
+    patchedFs.exists = (p, callback) => {
+        fakeFs.existsPromise(p).then(result => {
+            if (callback) {
+                callback(result);
+            }
+        });
+    };
     for (const fnName of ASYNC_IMPLEMENTATIONS) {
         const fakeImpl = fakeFs[fnName].bind(fakeFs);
         const origName = fnName.replace(/Promise$/, ``);

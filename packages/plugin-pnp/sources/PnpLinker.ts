@@ -1,6 +1,6 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName}  from '@berry/core';
 import {LocatorHash, Locator, Package}                                                        from '@berry/core';
-import {structUtils}                                                                          from '@berry/core';
+import {miscUtils, structUtils}                                                               from '@berry/core';
 import {PackageInformationStores, LocationBlacklist, TemplateReplacements, generatePnpScript} from '@berry/pnp';
 import {CwdFS, FakeFS, NodeFS}                                                                from '@berry/zipfs';
 import {posix}                                                                                from 'path';
@@ -16,7 +16,7 @@ export class PnpLinker implements Linker {
     if (!await fs.existsPromise(opts.project.configuration.pnpPath))
       throw new Error(`Couldn't find the PnP package map at the root of the project - run an install to generate it`);
 
-    const pnpFile = require(opts.project.configuration.pnpPath);
+    const pnpFile = miscUtils.dynamicRequire(opts.project.configuration.pnpPath);
     delete require.cache[opts.project.configuration.pnpPath];
 
     const packageLocator = {name: structUtils.requirableIdent(locator), reference: locator.reference};

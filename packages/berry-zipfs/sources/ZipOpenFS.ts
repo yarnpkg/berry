@@ -6,20 +6,38 @@ import {ZipFS}  from './ZipFS';
 
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS,
-  filter?: RegExp,
+  filter?: RegExp | null,
 };
 
 export class ZipOpenFS extends FakeFS {
+  static open<T>(fn: (zipOpenFs: ZipOpenFS) => Promise<T>): Promise<T> {
+    const zipOpenFs = new ZipOpenFS();
+    try {
+      return fn(zipOpenFs);
+    } finally {
+      zipOpenFs.close();
+    }
+  }
+
+  static async openPromise<T>(fn: (zipOpenFs: ZipOpenFS) => Promise<T>): Promise<T> {
+    const zipOpenFs = new ZipOpenFS();
+    try {
+      return await fn(zipOpenFs);
+    } finally {
+      zipOpenFs.close();
+    }
+  }
+
   private readonly baseFs: FakeFS;
 
   private readonly zipInstances: Map<string, ZipFS> = new Map();
 
-  private readonly filter?: RegExp;
+  private readonly filter?: RegExp | null;
 
   private isZip: Set<string> = new Set();
   private notZip: Set<string> = new Set();
 
-  constructor({baseFs = new NodeFS(), filter}: ZipOpenFSOptions) {
+  constructor({baseFs = new NodeFS(), filter = null}: ZipOpenFSOptions = {}) {
     super();
 
     this.baseFs = baseFs;
@@ -32,6 +50,12 @@ export class ZipOpenFS extends FakeFS {
 
   getRealPath() {
     return this.baseFs.getRealPath();
+  }
+
+  close() {
+    for (const zipFs of this.zipInstances.values()) {
+      zipFs.close();
+    }
   }
 
   createReadStream(p: string, opts: {encoding?: string}) {

@@ -1,12 +1,11 @@
-import {Configuration, Project, Workspace, Cache, Locator, Manifest} from '@berry/core';
-import {scriptUtils}                                                 from '@berry/core';
-import {NodeFS}                                                      from '@berry/zipfs';
+import {Configuration, Project, Cache} from '@berry/core';
+import {scriptUtils}                   from '@berry/core';
 // @ts-ignore: Need to write the definition file
-import {UsageError}                                                  from '@manaflair/concierge';
-import {resolve}                                                     from 'path';
-import {Writable}                                                    from 'stream';
+import {UsageError}                    from '@manaflair/concierge';
+import {resolve}                       from 'path';
+import {Writable}                      from 'stream';
 
-import {plugins}                                                     from '../plugins';
+import {plugins}                       from '../plugins';
 
 export default (concierge: any) => concierge
 
@@ -18,14 +17,12 @@ export default (concierge: any) => concierge
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
 
-    const binaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace, {cache});
+    const binaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace);
     const binary = binaries.get(name);
 
     if (!binary)
       throw new UsageError(`Couldn't find a binary named "${name}"`);
 
-    const [pkg, packageFs, file] = binary;
-    const target = resolve(packageFs.getRealPath(), file);
-
-    stdout.write(`${target}\n`);
+    const [pkg, binaryFile] = binary;
+    stdout.write(`${binaryFile}\n`);
   });
