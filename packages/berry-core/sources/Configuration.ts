@@ -68,6 +68,7 @@ export class Configuration {
   // Settings related to the package manager internal names
   public lockfileName: string = `berry.lock`;
   public cacheFolder: string | null = `./.berry/cache`;
+  public bstatePath: string = `./.berry/buildState.json`;
 
   // Settings related to the output style
   public enableEmojis: boolean = !!supportsColor.stdout;
@@ -133,12 +134,14 @@ export class Configuration {
       key = key.slice(environmentPrefix.length);
       key = key.replace(/_([a-z])/g, ($0, $1) => $1.toUpperCase());
 
-      if (BOOLEAN_KEYS.has(key)) {
+      if (BOOLEAN_KEYS.has(key.replace(/[A-Z]/g, $0 => `-${$0.toLowerCase()}`))) {
         switch (rvalue) {
+          case `true`:
           case `1`: {
             rvalue = true;
           } break;
 
+          case `false`:
           case `0`: {
             rvalue = false;
           } break;

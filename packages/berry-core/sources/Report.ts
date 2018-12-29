@@ -10,6 +10,8 @@ export enum MessageName {
   CYCLIC_DEPENDENCIES = 3,
   DISABLED_BUILD_SCRIPTS = 4,
   SOFT_LINK_BUILD = 5,
+  MUST_BUILD = 6,
+  MUST_REBUILD = 7,
 }
 
 export abstract class Report {

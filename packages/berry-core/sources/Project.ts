@@ -1,6 +1,7 @@
 // @ts-ignore
 import Logic = require('logic-solver');
 
+import {createHmac}                             from 'crypto';
 import {chmod, existsSync, readFile, writeFile} from 'fs-extra';
 import {dirname}                                from 'path';
 
@@ -816,6 +817,46 @@ export class Project {
     for (const locatorHash of buildablePackages)
       readyPackages.delete(locatorHash);
     
+    // We'll use this function is order to compute a hash for each package
+    // that exposes a build directive. If the hash changes compared to the
+    // previous run, the package is rebuilt. This has the advantage of making
+    // the rebuilds much more predictable than before, and to give us the tools
+    // later to improve this further by explaining *why* a rebuild happened.
+    
+    const getBuildHash = (locator: Locator) => {
+      const hash = createHmac(`sha512`, `berry`);
+      
+      const traverse = (locatorHash: LocatorHash, seenPackages: Set<string> = new Set()) => {
+        hash.update(locatorHash);
+
+        if (!seenPackages.has(locatorHash)) {
+          seenPackages.add(locatorHash);
+        } else {
+          return;
+        }
+
+        const pkg = this.storedPackages.get(locatorHash);
+        if (!pkg)
+          throw new Error(`Assertion failed: The package should have been registered`);
+
+        for (const dependency of pkg.dependencies.values()) {
+          const resolution = this.storedResolutions.get(dependency.descriptorHash);
+          if (!resolution)
+            throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, dependency)}) should have been registered`);
+
+          traverse(resolution, new Set(seenPackages));
+        }
+      };
+
+      traverse(locator.locatorHash);
+
+      return hash.digest(`hex`);
+    };
+
+    const bstate = existsSync(this.configuration.bstatePath)
+      ? parseSyml(await readFile(this.configuration.bstatePath, `utf8`)) as {[key: string]: string}
+      : {};
+
     while (buildablePackages.size > 0) {
       const savedSize = buildablePackages.size;
 
@@ -836,11 +877,32 @@ export class Project {
           }
         }
 
+        // Wait until all dependencies of the current package have been built
+        // before trying to build it (since it might need them to build itself)
         if (!isBuildable)
           continue;
         
         buildablePackages.delete(locatorHash);
+
+        const buildHash = getBuildHash(pkg);
+        
+        // No need to rebuild the package if its hash didn't change
+        if (Object.prototype.hasOwnProperty.call(bstate, pkg.locatorHash) && buildHash === bstate[pkg.locatorHash])
+          continue;
+        
+        if (Object.prototype.hasOwnProperty.call(bstate, pkg.locatorHash))
+          report.reportInfo(MessageName.MUST_REBUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be rebuilt because its dependency tree changed`);
+        else
+          report.reportInfo(MessageName.MUST_BUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be built because it never did before`);
+        
+        bstate[pkg.locatorHash] = buildHash;
       }
+
+      await writeFile(this.configuration.bstatePath, stringifySyml(bstate));
+
+      // If we reach this code, it means that we have circular dependencies
+      // somewhere. Worst, it means that the circular dependencies both have
+      // build scripts, making them unsatisfiable.
 
       if (savedSize === buildablePackages.size) {
         const prettyLocators = Array.from(buildablePackages).map(locatorHash => {
