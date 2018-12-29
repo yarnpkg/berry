@@ -9,7 +9,7 @@ import {plugins}                       from '../plugins';
 
 export default (concierge: any) => concierge
 
-  .command(`bin <name>`)
+  .command(`bin [name]`)
   .describe(`get the path to a binary script`)
 
   .action(async ({cwd, stdout, name}: {cwd: string, stdout: Writable, name: string}) => {
@@ -18,11 +18,18 @@ export default (concierge: any) => concierge
     const cache = await Cache.find(configuration);
 
     const binaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace);
-    const binary = binaries.get(name);
 
-    if (!binary)
-      throw new UsageError(`Couldn't find a binary named "${name}"`);
+    if (name) {
+      const binary = binaries.get(name);
 
-    const [pkg, binaryFile] = binary;
-    stdout.write(`${binaryFile}\n`);
+      if (!binary)
+        throw new UsageError(`Couldn't find a binary named "${name}"`);
+
+      const [pkg, binaryFile] = binary;
+      stdout.write(`${binaryFile}\n`);
+    } else {
+      for (const name of binaries.keys()) {
+        stdout.write(`${name}\n`);
+      }
+    }
   });
