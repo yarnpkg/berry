@@ -11,7 +11,7 @@ const ctx = new chalk.constructor({enabled: true});
 
 function color(configuration: Configuration, text: string, color: string) {
   if (configuration.enableColors) {
-    return ctx.keyword(color)(text);
+    return ctx[color](text);
   } else {
     return text;
   }
@@ -108,17 +108,17 @@ export class StreamReport extends Report {
   }
 
   reportInfo(name: MessageName, text: string) {
-    this.stdout.write(`${color(this.configuration, `-`, `blue`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    this.stdout.write(`${color(this.configuration, `➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
   }
 
   reportWarning(name: MessageName, text: string) {
     this.warningCount += 1;
-    this.stdout.write(`${color(this.configuration, `?`, `yellow`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    this.stdout.write(`${color(this.configuration, `➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
   }
 
   reportError(name: MessageName, text: string) {
     this.errorCount += 1;
-    this.stdout.write(`${color(this.configuration, `!`, `red`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    this.stdout.write(`${color(this.configuration, `➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
   }
 
   async finalize() {

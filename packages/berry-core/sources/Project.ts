@@ -885,16 +885,16 @@ export class Project {
         buildablePackages.delete(locatorHash);
 
         const buildHash = getBuildHash(pkg);
-        
+
         // No need to rebuild the package if its hash didn't change
         if (Object.prototype.hasOwnProperty.call(bstate, pkg.locatorHash) && buildHash === bstate[pkg.locatorHash])
           continue;
-        
+
         if (Object.prototype.hasOwnProperty.call(bstate, pkg.locatorHash))
           report.reportInfo(MessageName.MUST_REBUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be rebuilt because its dependency tree changed`);
         else
           report.reportInfo(MessageName.MUST_BUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be built because it never did before`);
-        
+
         bstate[pkg.locatorHash] = buildHash;
       }
 
