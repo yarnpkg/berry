@@ -155,8 +155,15 @@ export class StreamReport extends Report {
     }
 
     const timing = this.formatTiming(Date.now() - this.startTime);
+    const message = `${installStatus} in ${timing}${fetchStatus}`;
 
-    this.reportInfo(MessageName.UNNAMED, `${installStatus} in ${timing}${fetchStatus}`);
+    if (this.errorCount > 0) {
+      this.reportError(MessageName.UNNAMED, message);
+    } else if (this.warningCount > 0) {
+      this.reportWarning(MessageName.UNNAMED, message);
+    } else {
+      this.reportInfo(MessageName.UNNAMED, message);
+    }
   }
 
   private formatTiming(timing: number) {
