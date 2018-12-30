@@ -22,7 +22,6 @@ export default (concierge: any) => concierge
   .action(async ({cwd, stdin, stdout, stderr, name, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, name: string, args: Array<string>}) => {
     const configuration = await Configuration.find(cwd, plugins);
     const {project, workspace} = await Project.find(configuration, cwd);
-    const cache = await Cache.find(configuration);
 
     // First we check to see whether a script exist inside the current workspace
     // for the given name
@@ -30,7 +29,7 @@ export default (concierge: any) => concierge
     const manifest = await Manifest.fromFile(`${workspace.cwd}/package.json`);
 
     if (manifest.scripts.has(name))
-      return await scriptUtils.executeWorkspaceScript(workspace, name, args, {cache, stdin, stdout, stderr});
+      return await scriptUtils.executeWorkspaceScript(workspace, name, args, {stdin, stdout, stderr});
 
     // If we can't find it, we then check whether one of the dependencies of the
     // current workspace exports a binary with the requested name
@@ -57,7 +56,7 @@ export default (concierge: any) => concierge
       }) as Array<Workspace>;
 
       if (filteredWorkspaces.length === 1) {
-        return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], name, args, {cache, stdin, stdout, stderr});
+        return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], name, args, {stdin, stdout, stderr});
       }
     }
 

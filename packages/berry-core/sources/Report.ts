@@ -12,6 +12,7 @@ export enum MessageName {
   SOFT_LINK_BUILD = 5,
   MUST_BUILD = 6,
   MUST_REBUILD = 7,
+  BUILD_FAILED = 8,
 }
 
 export abstract class Report {

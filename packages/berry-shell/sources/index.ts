@@ -85,7 +85,7 @@ const BUILTINS = {
         if (code === 0) {
           resolve();
         } else {
-          reject();
+          reject(new Error(`Process exited with error code ${code}`));
         }
       });
     });

@@ -3,7 +3,7 @@ import {CwdFS, FakeFS, NodeFS, ZipOpenFS} from '@berry/zipfs';
 import {chmod, writeFile}   from 'fs-extra';
 import {existsSync}         from 'fs';
 import {delimiter, resolve, posix} from 'path';
-import {Readable, Writable} from 'stream';
+import {PassThrough, Readable, Writable} from 'stream';
 import {dirSync}            from 'tmp';
 
 import {Cache}              from './Cache';
@@ -56,44 +56,53 @@ export async function makeScriptEnv(project: Project) {
 }
 
 type ExecutePackageScriptOptions = {
-  cache: Cache,
   project: Project,
   stdin: Readable,
   stdout: Writable,
   stderr: Writable,
 };
 
-export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cache, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
-  const fetcher = project.configuration.makeFetcher();
-  const fetcherOptions = {readOnly: true, rootFs: new NodeFS(), cache, fetcher, project};
+export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
+  const pkg = project.storedPackages.get(locator.locatorHash);
 
-  const [packageFs, release] = await fetcher.fetch(locator, fetcherOptions);
+  if (!pkg)
+    throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
 
-  try {
-    const manifest = await Manifest.fromFile(`package.json`, {baseFs: packageFs});
+  return await ZipOpenFS.openPromise(async (zipOpenFs: ZipOpenFS) => {
+    const configuration = project.configuration;
+    const stdout = new PassThrough();
 
-    const script = manifest.scripts.get(scriptName);
-    if (script === undefined)
-      return;
+    const linkers = project.configuration.getLinkers();
+    const linkerOptions = {project, report: new StreamReport({ configuration, stdout })};
 
-    const cwd = packageFs.getRealPath();
+    const linker = linkers.find(linker => linker.supports(pkg, linkerOptions));
+    if (!linker)
+      throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
+
+    const packageLocation = await linker.findPackage(pkg, linkerOptions);
+
+    const cwd = packageLocation;
     const env = await makeScriptEnv(project);
 
+    const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
+    const manifest = await Manifest.find(`.`, {baseFs: packageFs});
+
+    const script = manifest.scripts.get(scriptName);
+    if (!script)
+      return;
+
     await runShell(script, {args, cwd, env, stdin, stdout, stderr});
-  } finally {
-    await release();
-  }
+  });
 }
 
 type ExecuteWorkspaceScriptOptions = {
-  cache: Cache,
   stdin: Readable,
   stdout: Writable,
   stderr: Writable,
 };
 
-export async function executeWorkspaceScript(workspace: Workspace, scriptName: string, args: Array<string>, {cache, stdin, stdout, stderr}: ExecuteWorkspaceScriptOptions) {
-  return await executePackageScript(workspace.anchoredLocator, scriptName, args, {project: workspace.project, cache, stdin, stdout, stderr});
+export async function executeWorkspaceScript(workspace: Workspace, scriptName: string, args: Array<string>, {stdin, stdout, stderr}: ExecuteWorkspaceScriptOptions) {
+  return await executePackageScript(workspace.anchoredLocator, scriptName, args, {project: workspace.project, stdin, stdout, stderr});
 }
 
 type GetPackageAccessibleBinariesOptions = {

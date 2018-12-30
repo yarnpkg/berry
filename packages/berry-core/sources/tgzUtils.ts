@@ -70,6 +70,7 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
         case `File`: {
           zipFs.mkdirpSync(posix.dirname(mappedPath));
           zipFs.writeFileSync(mappedPath, Buffer.concat(chunks));
+          zipFs.chmodSync(mappedPath, entry.mode);
         } break;
       }
     });

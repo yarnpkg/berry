@@ -95,6 +95,9 @@ export abstract class FakeFS {
     } else {
       throw new Error(`Unsupported file type (mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
     }
+
+    const mode = stat.mode & 0o777;
+    await this.chmodPromise(destination, mode);
   }
 
   copySync(source: string, destination: string, {baseFs = this}: {baseFs?: FakeFS} = {}) {
@@ -112,6 +115,9 @@ export abstract class FakeFS {
     } else {
       throw new Error(`Unsupported file type (mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
     }
+
+    const mode = stat.mode & 0o777;
+    this.chmodSync(destination, mode);
   }
 
   async changeFilePromise(p: string, content: string) {

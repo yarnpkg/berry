@@ -5,6 +5,10 @@ import {PackageInformationStores, LocationBlacklist, TemplateReplacements, gener
 import {CwdFS, FakeFS, NodeFS}                                                                from '@berry/zipfs';
 import {posix}                                                                                from 'path';
 
+const UNPLUGGED_PACKAGES = new Set([
+  structUtils.makeIdent(null, `node-pre-gyp`).identHash,
+]);
+
 export class PnpLinker implements Linker {
   supports(pkg: Package, opts: MinimalLinkOptions) {
     return true;
@@ -58,7 +62,7 @@ class PnpInstaller implements Installer {
       buildScripts.length = 0;
     }
 
-    if (buildScripts.length > 0)
+    if (buildScripts.length > 0 || this.isUnplugged(locator))
       packageFs = await this.unplugPackage(locator, packageFs);
 
     const packageLocation = this.normalizeDirectoryPath(packageFs.getRealPath());
@@ -181,5 +185,9 @@ class PnpInstaller implements Installer {
     await fs.copyPromise(unplugPath, `.`, {baseFs: packageFs});
 
     return new CwdFS(unplugPath);
+  }
+
+  private isUnplugged(locator: Locator) {
+    return UNPLUGGED_PACKAGES.has(locator.identHash);
   }
 }

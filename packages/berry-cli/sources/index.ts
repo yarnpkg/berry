@@ -7,10 +7,6 @@ import {execFileSync}  from 'child_process';
 
 import {plugins}       from './plugins';
 
-const x = process.exit;
-// @ts-ignore
-process.exit = n => (console.log(new Error(`Exiting ${n}`).stack), x(n))
-
 process.removeAllListeners("unhandledRejection");
 process.on('unhandledRejection', err => {
   console.error(`unhandled`, err.stack);

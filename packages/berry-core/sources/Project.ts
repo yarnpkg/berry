@@ -1,26 +1,29 @@
 // @ts-ignore
 import Logic = require('logic-solver');
 
-import {createHmac}                             from 'crypto';
-import {chmod, existsSync, readFile, writeFile} from 'fs-extra';
-import {dirname}                                from 'path';
+import {createHmac}                                         from 'crypto';
+import {createWriteStream, existsSync, readFile, writeFile} from 'fs-extra';
+import {dirname}                                            from 'path';
+import {PassThrough}                                        from 'stream';
+import {tmpNameSync}                                        from 'tmp';
 
-import {parseSyml, stringifySyml}               from '@berry/parsers';
-import {CwdFS, FakeFS, NodeFS, ZipFS}           from '@berry/zipfs';
+import {parseSyml, stringifySyml}                           from '@berry/parsers';
+import {CwdFS, FakeFS, NodeFS, ZipFS}                       from '@berry/zipfs';
 
-import {Cache}                                  from './Cache';
-import {Configuration}                          from './Configuration';
-import {Installer, BuildDirective}              from './Installer';
-import {Linker}                                 from './Linker';
-import {Report, MessageName}                    from './Report';
-import {WorkspaceBaseResolver}                  from './WorkspaceBaseResolver';
-import {WorkspaceResolver}                      from './WorkspaceResolver';
-import {Workspace}                              from './Workspace';
-import * as miscUtils                           from './miscUtils';
-import * as structUtils                         from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash} from './types';
-import {Descriptor, Locator, Package}           from './types';
-import {LinkType}                               from './types';
+import {Cache}                                              from './Cache';
+import {Configuration}                                      from './Configuration';
+import {Installer, BuildDirective}                          from './Installer';
+import {Linker}                                             from './Linker';
+import {Report, MessageName}                                from './Report';
+import {WorkspaceBaseResolver}                              from './WorkspaceBaseResolver';
+import {WorkspaceResolver}                                  from './WorkspaceResolver';
+import {Workspace}                                          from './Workspace';
+import * as miscUtils                                       from './miscUtils';
+import * as structUtils                                     from './structUtils';
+import {IdentHash, DescriptorHash, LocatorHash}             from './types';
+import {Descriptor, Locator, Package}                       from './types';
+import {LinkType}                                           from './types';
+import { scriptUtils } from '.';
 
 export type InstallOptions = {
   cache: Cache,
@@ -893,9 +896,35 @@ export class Project {
         if (Object.prototype.hasOwnProperty.call(bstate, pkg.locatorHash))
           report.reportInfo(MessageName.MUST_REBUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be rebuilt because its dependency tree changed`);
         else
-          report.reportInfo(MessageName.MUST_BUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be built because it never did before`);
+          report.reportInfo(MessageName.MUST_BUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be built because it never did before or the last one failed`);
+        
+        const buildDirective = packageBuildDirectives.get(pkg.locatorHash);
+        if (!buildDirective)
+          throw new Error(`Assertion failed: The build directive should have been registered`);
 
-        bstate[pkg.locatorHash] = buildHash;
+        for (const scriptName of buildDirective.scriptNames) {
+          const stdin = new PassThrough();
+          stdin.end();
+
+          const logFile = tmpNameSync({
+            prefix: `buildfile-`,
+            postfix: `.log`,
+          });
+
+          const stdout = createWriteStream(logFile);
+          const stderr = stdout;
+
+          stdout.write(`# This file contains the result of Berry building a package (${structUtils.stringifyLocator(pkg)})\n`);
+          stdout.write(`\n`);
+
+          try {
+            await scriptUtils.executePackageScript(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
+            bstate[pkg.locatorHash] = buildHash;
+          } catch (error) {
+            report.reportError(MessageName.BUILD_FAILED, `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (logs can be found here: ${logFile})`);
+            delete bstate[pkg.locatorHash];
+          }
+        }
       }
 
       await writeFile(this.configuration.bstatePath, stringifySyml(bstate));

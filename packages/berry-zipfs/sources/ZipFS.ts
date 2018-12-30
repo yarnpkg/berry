@@ -287,14 +287,24 @@ export class ZipFS extends FakeFS {
       const ctime = new Date(ctimeMs);
       const mtime = new Date(mtimeMs);
 
-      const mode = this.isSymbolicLink(entry)
-        ? S_IFLNK | 0o644
-        : S_IFREG | 0o644;
+      const mode = this.getUnixMode(entry, S_IFREG | 0o644);
 
       return Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
     }
 
     throw new Error(`Unreachable`);
+  }
+
+  private getUnixMode(index: number, defaultMode: number) {
+    const rc = libzip.file.getExternalAttributes(this.zip, index, 0, 0, libzip.uint08S, libzip.uint32S);
+    if (rc === -1)
+      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+
+    const opsys = libzip.getValue(libzip.uint08S, `i8`) >>> 0;
+    if (opsys !== libzip.ZIP_OPSYS_UNIX)
+      return defaultMode;
+
+    return libzip.getValue(libzip.uint32S, `i32`) >>> 16;
   }
 
   private registerListing(p: string) {
@@ -438,7 +448,22 @@ export class ZipFS extends FakeFS {
   }
 
   chmodSync(p: string, mask: number) {
-    throw Object.assign(new Error(`ENOSYS: unimplemented operation, chmod '${p}'`), {code: `ENOSYS`});
+    const resolvedP = this.resolveFilename(`chmod '${p}'`, p);
+
+    if (this.listings.has(resolvedP))
+      throw Object.assign(new Error(`EISDIR: illegal operation on a directory, chmod '${p}'`), {code: `EISDIR`});
+
+    const entry = this.entries.get(resolvedP);
+    if (entry === undefined)
+      throw new Error(`Unreachable`);
+    
+    const oldMod = this.getUnixMode(entry, S_IFREG | 0o000);
+    const newMod = oldMod & (~0o777) | mask;
+
+    const rc = libzip.file.setExternalAttributes(this.zip, entry, 0, 0, libzip.ZIP_OPSYS_UNIX, newMod << 16);
+    if (rc === -1) {
+      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+    }
   }
 
   async writeFilePromise(p: string, content: Buffer | string) {
@@ -528,7 +553,6 @@ export class ZipFS extends FakeFS {
       throw Object.assign(new Error(`EISDIR: illegal operation on a directory, read`), {code: `EISDIR`});
 
     const entry = this.entries.get(resolvedP);
-
     if (entry === undefined)
       throw new Error(`Unreachable`);
 

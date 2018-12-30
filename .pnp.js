@@ -5150,7 +5150,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["node-pre-gyp", new Map([
       ["0.10.3", {
-        packageLocation: path.resolve(__dirname, "./.berry/cache/node-pre-gyp-e9a1fe02703cba7940268e7a097f14ec5e500eed08c314bcee5fa9de68b13574a2522ed5af0679124e83d40d11f13dd7684238fccfc7d6434ec78658d3f065f5.zip/node_modules/node-pre-gyp/"),
+        packageLocation: path.resolve(__dirname, "./.berry/pnp/unplugged/node-pre-gyp-e9a1fe02703cba7940268e7a097f14ec5e500eed08c314bcee5fa9de68b13574a2522ed5af0679124e83d40d11f13dd7684238fccfc7d6434ec78658d3f065f5/"),
         packageDependencies: new Map([
           ["detect-libc", "1.0.3"],
           ["mkdirp", "0.5.1"],
@@ -6353,7 +6353,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/run-queue-16d93f257f9acbaf6d569432bdce0134a870b6200c041c0d5e0d1e51efa84ccc140eb62304e80e583b216a0b6610437c8ea0d63ba61b4fc37d88af36af728f86.zip/node_modules/run-queue/", {"name":"run-queue","reference":"1.0.3"}],
     ["./.berry/cache/unique-slug-b18aa543e88a0ef532e3be5d002ee311e34fed97e047d3f09fd9509034cc9102b9cfb610414b2b30d70cba405f21c73c50cf119ea191a28c4d51aac5fbdf86db.zip/node_modules/unique-slug/", {"name":"unique-slug","reference":"2.0.1"}],
     ["./.berry/cache/find-up-27ef83d01c741b13c2393fc0226b802211c2f67d13d186395f8c7d77a977c0e4bd5c3bf3fc646ea31618646cc79e25167d473c7f5c05a5765eaf68a97e796807.zip/node_modules/find-up/", {"name":"find-up","reference":"2.1.0"}],
-    ["./.berry/cache/node-pre-gyp-e9a1fe02703cba7940268e7a097f14ec5e500eed08c314bcee5fa9de68b13574a2522ed5af0679124e83d40d11f13dd7684238fccfc7d6434ec78658d3f065f5.zip/node_modules/node-pre-gyp/", {"name":"node-pre-gyp","reference":"0.10.3"}],
+    ["./.berry/pnp/unplugged/node-pre-gyp-e9a1fe02703cba7940268e7a097f14ec5e500eed08c314bcee5fa9de68b13574a2522ed5af0679124e83d40d11f13dd7684238fccfc7d6434ec78658d3f065f5/", {"name":"node-pre-gyp","reference":"0.10.3"}],
     ["./.berry/cache/binary-extensions-e7aac2eff081f89f1972d301368ce7a1f12adb7f47172b2944f7450463054dd89fdc30a5b6764115f03016ea299203b0adc8483a5b9a9bd651df34a0b933ad9c.zip/node_modules/binary-extensions/", {"name":"binary-extensions","reference":"1.12.0"}],
     ["./.berry/cache/remove-trailing-separator-ad6ca0e7d13320ec70a7f968c704f6f8fd99915a4fe4278de8429d7750b59af9eca52d5075d5a892bfe973cfaf760787c29068dbd7509911e9c766f659b90fcc.zip/node_modules/remove-trailing-separator/", {"name":"remove-trailing-separator","reference":"1.1.0"}],
     ["./.berry/cache/balanced-match-d1d5724f0132182f8de903164a132cbcf99950c90a012a66c6f0d178a45aec83f3739559fb90576c0018d9845399b4219916db86b63bf006420ddd083137f5e4.zip/node_modules/balanced-match/", {"name":"balanced-match","reference":"1.0.0"}],
@@ -7558,6 +7558,8 @@ class FakeFS {
         else {
             throw new Error(`Unsupported file type (mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
         }
+        const mode = stat.mode & 0o777;
+        await this.chmodPromise(destination, mode);
     }
     copySync(source, destination, { baseFs = this } = {}) {
         const stat = baseFs.lstatSync(source);
@@ -7575,6 +7577,8 @@ class FakeFS {
         else {
             throw new Error(`Unsupported file type (mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
         }
+        const mode = stat.mode & 0o777;
+        this.chmodSync(destination, mode);
     }
     async changeFilePromise(p, content) {
         try {
@@ -8083,12 +8087,19 @@ class ZipFS extends FakeFS_1.FakeFS {
             const birthtime = new Date(birthtimeMs);
             const ctime = new Date(ctimeMs);
             const mtime = new Date(mtimeMs);
-            const mode = this.isSymbolicLink(entry)
-                ? S_IFLNK | 0o644
-                : S_IFREG | 0o644;
+            const mode = this.getUnixMode(entry, S_IFREG | 0o644);
             return Object.assign(new StatEntry(), { uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode });
         }
         throw new Error(`Unreachable`);
+    }
+    getUnixMode(index, defaultMode) {
+        const rc = libzip_1.default.file.getExternalAttributes(this.zip, index, 0, 0, libzip_1.default.uint08S, libzip_1.default.uint32S);
+        if (rc === -1)
+            throw new Error(libzip_1.default.error.strerror(libzip_1.default.getError(this.zip)));
+        const opsys = libzip_1.default.getValue(libzip_1.default.uint08S, `i8`) >>> 0;
+        if (opsys !== libzip_1.default.ZIP_OPSYS_UNIX)
+            return defaultMode;
+        return libzip_1.default.getValue(libzip_1.default.uint32S, `i32`) >>> 16;
     }
     registerListing(p) {
         let listing = this.listings.get(p);
@@ -8196,7 +8207,18 @@ class ZipFS extends FakeFS_1.FakeFS {
         return this.chmodSync(p, mask);
     }
     chmodSync(p, mask) {
-        throw Object.assign(new Error(`ENOSYS: unimplemented operation, chmod '${p}'`), { code: `ENOSYS` });
+        const resolvedP = this.resolveFilename(`chmod '${p}'`, p);
+        if (this.listings.has(resolvedP))
+            throw Object.assign(new Error(`EISDIR: illegal operation on a directory, chmod '${p}'`), { code: `EISDIR` });
+        const entry = this.entries.get(resolvedP);
+        if (entry === undefined)
+            throw new Error(`Unreachable`);
+        const oldMod = this.getUnixMode(entry, S_IFREG | 0o000);
+        const newMod = oldMod & (~0o777) | mask;
+        const rc = libzip_1.default.file.setExternalAttributes(this.zip, entry, 0, 0, libzip_1.default.ZIP_OPSYS_UNIX, newMod << 16);
+        if (rc === -1) {
+            throw new Error(libzip_1.default.error.strerror(libzip_1.default.getError(this.zip)));
+        }
     }
     async writeFilePromise(p, content) {
         return this.writeFileSync(p, content);
