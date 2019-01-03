@@ -1,9 +1,8 @@
-// @ts-ignore
-import pl = require('tau-prolog');
-
 import {Ident, Descriptor, Locator, Project} from '@berry/core';
 import {miscUtils, structUtils}              from '@berry/core';
 import {existsSync, readFileSync}            from 'fs';
+// @ts-ignore
+import pl                                    from 'tau-prolog';
 
 export type DependencyMismatch = {
   packageLocator: Locator,

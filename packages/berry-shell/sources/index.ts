@@ -1,11 +1,8 @@
-import execa = require('execa');
-// @ts-ignore
-import streamBuffers = require('stream-buffers');
-
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
+import execa                                                              from 'execa';
 import {stat}                                                             from 'fs';
 import {delimiter, posix}                                                 from 'path';
-import {Stream, PassThrough, Readable, Writable}                          from 'stream';
+import {PassThrough, Readable, Writable}                                  from 'stream';
 import {StringDecoder}                                                    from 'string_decoder';
 import {promisify}                                                        from 'util';
 
@@ -36,6 +33,7 @@ const BUILTINS = {
 
     contextOpts.cwd = target;
   },
+
   async command([ident, ... rest]: Array<string>, {cwd, env: commandEnv, stdin, stdout, stderr}: ShellOptions, contextOpts: ShellOptions) {
     const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
 
@@ -85,7 +83,9 @@ const BUILTINS = {
         if (code === 0) {
           resolve();
         } else {
-          reject(new Error(`Process exited with error code ${code}`));
+          reject(Object.assign(new Error(`Process exited with error code ${code}`), {
+            cmd: `ok`, code,
+          }));
         }
       });
     });

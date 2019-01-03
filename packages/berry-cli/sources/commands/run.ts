@@ -1,17 +1,10 @@
-import execa = require('execa');
-
-import {Configuration, Project, Workspace, Cache, Locator, Manifest} from '@berry/core';
-import {scriptUtils}                                                 from '@berry/core';
-import {runShell}                                                    from '@berry/shell'
-import {NodeFS}                                                      from '@berry/zipfs';
+import {Configuration, Project, Workspace, Manifest} from '@berry/core';
+import {scriptUtils}                                 from '@berry/core';
 // @ts-ignore: Need to write the definition file
-import {UsageError}                                                  from '@manaflair/concierge';
-import {existsSync}                                                  from 'fs';
-import {delimiter, resolve}                                          from 'path';
-import {Readable, Writable}                                          from 'stream';
+import {UsageError}                                  from '@manaflair/concierge';
+import {Readable, Writable}                          from 'stream';
 
-import * as execUtils                                                from '../utils/execUtils';
-import {plugins}                                                     from '../plugins';
+import {plugins}                                     from '../plugins';
 
 export default (concierge: any) => concierge
 
@@ -28,8 +21,17 @@ export default (concierge: any) => concierge
 
     const manifest = await Manifest.fromFile(`${workspace.cwd}/package.json`);
 
-    if (manifest.scripts.has(name))
-      return await scriptUtils.executeWorkspaceScript(workspace, name, args, {stdin, stdout, stderr});
+    if (manifest.scripts.has(name)) {
+      try {
+        return await scriptUtils.executeWorkspaceScript(workspace, name, args, {stdin, stdout, stderr});
+      } catch (error) {
+        if (error.cmd) {
+          return 1;
+        } else {
+          throw error;
+        }
+      }
+    }
 
     // If we can't find it, we then check whether one of the dependencies of the
     // current workspace exports a binary with the requested name
@@ -37,8 +39,17 @@ export default (concierge: any) => concierge
     const binaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace);
     const binary = binaries.get(name);
 
-    if (binary)
-      return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, name, args, {cwd, stdin, stdout, stderr});
+    if (binary) {
+      try {
+        return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, name, args, {cwd, stdin, stdout, stderr});
+      } catch (error) {
+        if (error.cmd) {
+          return 1;
+        } else {
+          throw error;
+        }
+      }
+    }
 
     // When it fails, we try to check whether it's a global script (ie we look
     // into all the workspaces to find one that exports this script). We only do
@@ -56,7 +67,15 @@ export default (concierge: any) => concierge
       }) as Array<Workspace>;
 
       if (filteredWorkspaces.length === 1) {
-        return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], name, args, {stdin, stdout, stderr});
+        try {
+          return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], name, args, {stdin, stdout, stderr});
+        } catch (error) {
+          if (error.cmd) {
+            return 1;
+          } else {
+            throw error;
+          }
+        }
       }
     }
 

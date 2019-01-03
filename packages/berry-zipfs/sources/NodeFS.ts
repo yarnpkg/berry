@@ -1,8 +1,6 @@
-import fs = require('fs');
+import fs, {Stats} from 'fs';
 
-import {Stats}  from 'fs';
-
-import {FakeFS} from './FakeFS';
+import {FakeFS}    from './FakeFS';
 
 export class NodeFS extends FakeFS {
   private readonly realFs: typeof fs;

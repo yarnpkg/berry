@@ -1,8 +1,7 @@
-import supportsColor = require('supports-color');
-
 import {parseSyml, stringifySyml}        from '@berry/parsers';
 import {existsSync, readFile, writeFile} from 'fs';
 import {dirname, resolve}                from 'path';
+import supportsColor                     from 'supports-color';
 import {promisify}                       from 'util';
 
 import {CacheFetcher}                    from './CacheFetcher';

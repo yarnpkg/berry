@@ -1,4 +1,4 @@
-import libzip = require('./libzip');
+import libzip from './libzip';
 
 const number64 = [
   `number`, // low

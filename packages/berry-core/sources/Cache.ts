@@ -1,7 +1,5 @@
-import fsx = require('fs-extra');
-
 import {AliasFS, FakeFS, JailFS, NodeFS, ZipFS}  from '@berry/zipfs';
-import {writeFile}                               from 'fs';
+import fsx                                       from 'fs-extra';
 import {lock, unlock}                            from 'lockfile';
 import {dirname, relative, resolve}              from 'path';
 import {promisify}                               from 'util';
@@ -10,8 +8,6 @@ import {Configuration}                           from './Configuration';
 import {FetchResult}                             from './Fetcher';
 import * as structUtils                          from './structUtils';
 import {Locator}                                 from './types';
-
-const writeFileP = promisify(writeFile);
 
 const lockP = promisify(lock);
 const unlockP = promisify(unlock);
@@ -55,7 +51,7 @@ export class Cache {
     await fsx.mkdirp(this.cwd);
 
     await this.writeFileIntoCache(resolve(this.cwd, `.gitignore`), async (file: string) => {
-      await writeFileP(file, `/.gitignore\n*.lock\n`);
+      await fsx.writeFile(file, `/.gitignore\n*.lock\n`);
     });
   }
 

@@ -1,7 +1,6 @@
-import EventEmitter = require('eventemitter3');
-
 // @ts-ignore
 import {Key, Mouse, parseTerminalInputs}   from '@manaflair/term-strings/parse';
+import EventEmitter                        from 'eventemitter3';
 import {Readable}                          from 'stream';
 import {ReadStream as ReadableTTY}         from 'tty';
 

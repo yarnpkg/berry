@@ -1,4 +1,5 @@
-import template = require('!raw-loader!@berry/pnp/hook-bundle');
+// @ts-ignore: This isn't a classical file; it's automatically generated (type string)
+import template                                                   from '@berry/pnp/sources/hook-bundle.js';
 
 import {PackageInformationStores, LocationBlacklist, PnpSettings} from './types';
 

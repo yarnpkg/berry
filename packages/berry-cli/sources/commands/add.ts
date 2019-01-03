@@ -1,8 +1,7 @@
-import semver = require('semver');
-
 import {Configuration, Cache, Project, StreamReport} from '@berry/core';
 import {structUtils}                                 from '@berry/core';
 import {NodeFS}                                      from '@berry/zipfs';
+import semver                                        from 'semver';
 import {Writable}                                    from 'stream';
 
 import {registerLegacyYarnResolutions}               from '../utils/miscUtils';

@@ -1,31 +1,17 @@
 #!/usr/bin/env node
 
-const {concierge, UsageError} = require(`@manaflair/concierge`);
+const {concierge} = require(`@manaflair/concierge`);
 const path = require(`path`);
 const webpack = require(`webpack`);
 
 const basedir = process.cwd();
 const commonConfig = require(`./common-config`);
+const findPlugins = require(`./find-plugins`);
 
 concierge
   .command(`[-w,--watch] [--profile TYPE] [--plugin PLUGIN ...]`)
   .action(async ({watch, profile, plugin, stdout}) => {
-    const pkgJson = require(`${basedir}/package.json`);
-
-    if (!pkgJson[`@berry/builder`] || !pkgJson[`@berry/builder`].bundles)
-      throw new UsageError(`This command requires your package.json to contain specific configuration keys`);
-
-    if (!profile)
-      profile = `standard`;
-
-    const profiles = profile.split(/\+/g);
-
-    if (!profiles.every(profile => Object.prototype.hasOwnProperty.call(pkgJson[`@berry/builder`].bundles, profile)))
-      throw new UsageError(`Invalid profile`);
-
-    const plugins = Array.from(new Set(profiles.reduce((acc, profile) => {
-      return acc.concat(pkgJson[`@berry/builder`].bundles[profile]);
-    }, plugin)));
+    const plugins = findPlugins({basedir, profile, plugin});
 
     stdout.write(`The following plugins will be compiled in the final bundle: ${plugins.join(`, `)}\n`);
 
@@ -51,7 +37,7 @@ concierge
     };
 
     Object.assign(mainConfig.resolve.alias, {
-        [`@berry/pnp/hook-bundle`]: path.resolve(basedir, `lib/hook-bundle.js`),
+        [`@berry/pnp/sources/hook-bundle.js`]: path.resolve(basedir, `lib/hook-bundle.js`),
     });
 
     mainConfig.module.rules.push({
@@ -60,6 +46,13 @@ concierge
         loader: require.resolve(`val-loader`),
         options: {plugins},
       },
+    });
+
+    mainConfig.module.rules.push({
+      test: path.resolve(basedir, `lib/hook-bundle.js`),
+      use: {
+        loader: require.resolve(`raw-loader`)
+      }
     });
 
     if (!watch) {

@@ -1,14 +1,10 @@
-import chalk = require('chalk');
-import Joi = require('joi');
-import semver = require('semver');
-
 import {Configuration, Project}          from '@berry/core';
 import {httpUtils}                       from '@berry/core';
-import {parseSyml, stringifySyml}        from '@berry/parsers';
+import chalk                             from 'chalk';
 import {mkdirp, chmod, writeFile}        from 'fs-extra';
-import {existsSync}                      from 'fs';
+import Joi                               from 'joi';
 import {dirname, resolve}                from 'path';
-import {SemVer}                          from 'semver';
+import semver, {SemVer}                  from 'semver';
 import {Readable, Writable}              from 'stream';
 
 import {plugins}                         from '../../plugins';

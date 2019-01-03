@@ -1,9 +1,8 @@
-import Joi = require('joi');
-
 import {Configuration} from '@berry/core';
 // @ts-ignore
 import {concierge}     from '@manaflair/concierge';
 import {execFileSync}  from 'child_process';
+import Joi             from 'joi';
 
 import {plugins}       from './plugins';
 
@@ -62,8 +61,13 @@ async function run() {
   if (configuration.executablePath !== null && !configuration.ignorePath) {
     runBinary(configuration.executablePath);
   } else {
-    // @ts-ignore: require.context is valid with Webpack
-    concierge.directory(require.context(`./commands`, true, /\.ts$/));
+    // @ts-ignore: IS_WEBPACK is valid with Webpack
+    if (typeof IS_WEBPACK !== `undefined`) {
+      // @ts-ignore: require.context is valid with Webpack
+      concierge.directory(require.context(`./commands`, true, /\.ts$/));
+    } else {
+      concierge.directory(`${__dirname}/commands`, true, /\.ts$/);
+    }
 
     concierge.topLevel(`[--cwd PATH]`).validate(Joi.object().unknown().keys({
       cwd: Joi.string().default(process.cwd()),

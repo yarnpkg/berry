@@ -1,10 +1,9 @@
-import querystring = require('querystring');
-
 import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from '@berry/core';
 import {Locator}                                                 from '@berry/core';
 import {structUtils}                                             from '@berry/core';
 import {JailFS}                                                  from '@berry/zipfs';
 import {posix}                                                   from 'path';
+import querystring                                               from 'querystring';
 
 import {LINK_PROTOCOL}                                           from './constants';
 

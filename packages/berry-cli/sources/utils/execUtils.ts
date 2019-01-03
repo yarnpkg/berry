@@ -1,6 +1,5 @@
-import execa = require('execa');
-
 import {Project}                      from '@berry/core';
+import execa                          from 'execa';
 import {chmod, existsSync, writeFile} from 'fs';
 import {delimiter}                    from 'path';
 import {Readable, Writable}           from 'stream';

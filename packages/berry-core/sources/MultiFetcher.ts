@@ -35,7 +35,7 @@ export class MultiFetcher implements Fetcher {
     const fetcher = this.fetchers.find(fetcher => fetcher.supports(locator, opts));
 
     if (!fetcher)
-      throw new Error(`Couldn't find a fetcher for '${structUtils.prettyLocator(opts.project.configuration, locator)}'`);
+      throw new Error(`Couldn't find a fetcher for ${structUtils.prettyLocator(opts.project.configuration, locator)}`);
 
     return fetcher;
   }

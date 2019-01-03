@@ -31,12 +31,11 @@ interface ModuleInterfaceStatic {
   new(p: string, parent: ModuleInterface | null): ModuleInterface;
 }
 
-import fs = require('fs');
-import NativeModule = require('module');
-import path = require('path');
-import StringDecoder = require('string_decoder');
-
 import {NodeFS, ZipOpenFS, patchFs} from '@berry/zipfs';
+import fs                           from 'fs';
+import NativeModule                 from 'module';
+import path                         from 'path';
+import StringDecoder                from 'string_decoder';
 
 // @ts-ignore
 const Module: ModuleInterfaceStatic = NativeModule;

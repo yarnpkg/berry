@@ -1,7 +1,6 @@
-import emoji = require('node-emoji');
-
 import {Configuration, Project, Plugin} from '@berry/core';
 import {structUtils}                    from '@berry/core';
+import emoji                            from 'node-emoji';
 import {Writable}                       from 'stream';
 
 import {Constraints}                    from '../../Constraints';

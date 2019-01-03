@@ -1,6 +1,6 @@
-// @ts-ignore
-import embedPlugins = require('./plugins-embed.js');
+import {Plugin}     from '@berry/core';
 
-import {Plugin} from '@berry/core';
+// @ts-ignore
+import embedPlugins from './plugins-embed.js';
 
 export const plugins: Map<string, Plugin> = embedPlugins;

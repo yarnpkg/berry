@@ -1,8 +1,7 @@
-import emoji = require('node-emoji');
-import inquirer = require('inquirer');
-
 import {Configuration, Descriptor, Project, Plugin} from '@berry/core';
 import {structUtils}                                from '@berry/core';
+import inquirer                                     from 'inquirer';
+import emoji                                        from 'node-emoji';
 import {Readable, Writable}                         from 'stream';
 
 import {Constraints}                                from '../../Constraints';

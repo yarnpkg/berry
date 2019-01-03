@@ -1,10 +1,8 @@
-import got = require('got');
-import tunnel = require('tunnel');
+import got                    from 'got';
+import tunnel, {ProxyOptions} from 'tunnel';
+import {URL}                  from 'url';
 
-import {ProxyOptions}  from 'tunnel';
-import {URL}           from 'url';
-
-import {Configuration} from './Configuration';
+import {Configuration}        from './Configuration';
 
 const cache = new Map<string, Promise<Buffer>>();
 

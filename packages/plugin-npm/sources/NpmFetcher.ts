@@ -1,8 +1,7 @@
-import semver = require('semver');
-
 import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from '@berry/core';
 import {httpUtils, structUtils, tgzUtils}                        from '@berry/core';
 import {Locator}                                                 from '@berry/core';
+import semver                                                    from 'semver';
 
 import {DEFAULT_REGISTRY}                                        from './constants';
 

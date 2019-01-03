@@ -1,8 +1,7 @@
-// @ts-ignore
-import Logic = require('logic-solver');
-
 import {createHmac}                                         from 'crypto';
 import {createWriteStream, existsSync, readFile, writeFile} from 'fs-extra';
+// @ts-ignore
+import Logic                                                from 'logic-solver';
 import {dirname}                                            from 'path';
 import {PassThrough}                                        from 'stream';
 import {tmpNameSync}                                        from 'tmp';

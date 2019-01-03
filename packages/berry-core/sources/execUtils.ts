@@ -1,5 +1,4 @@
-import execa = require('execa');
-
+import execa                from 'execa';
 import {Readable, Writable} from 'stream';
 
 export type ExecOptions = {

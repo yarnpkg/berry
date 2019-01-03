@@ -1,9 +1,8 @@
-import semver = require('semver');
-
 import {Resolver, ResolveOptions, MinimalResolveOptions, Manifest} from '@berry/core';
 import {Ident, Descriptor, Locator}                                from '@berry/core';
 import {LinkType}                                                  from '@berry/core';
 import {httpUtils, structUtils}                                    from '@berry/core';
+import semver                                                      from 'semver';
 
 import {DEFAULT_REGISTRY}                                          from './constants';
 

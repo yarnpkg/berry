@@ -1,5 +1,4 @@
-import chalk = require('chalk');
-
+import chalk                 from 'chalk';
 import {Writable}            from 'stream';
 
 import {Configuration}       from './Configuration';
@@ -7,7 +6,7 @@ import {Report, MessageName} from './Report';
 import {Locator}             from './types';
 
 // @ts-ignore
-const ctx = new chalk.constructor({enabled: true});
+const ctx: any = new chalk.constructor({enabled: true});
 
 function color(configuration: Configuration, text: string, color: string) {
   if (configuration.enableColors) {

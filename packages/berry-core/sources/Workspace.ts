@@ -1,8 +1,7 @@
-import globby = require('globby');
-
 import {makeUpdater}           from '@berry/json-proxy';
 import {createHmac}            from 'crypto';
 import {existsSync, readFile}  from 'fs';
+import globby                  from 'globby';
 import {resolve}               from 'path';
 import {promisify}             from 'util';
 

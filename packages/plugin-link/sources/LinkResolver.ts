@@ -1,9 +1,8 @@
-import querystring = require('querystring');
-
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
 import {Descriptor, Locator, Manifest}                   from '@berry/core';
 import {LinkType}                                        from '@berry/core';
 import {structUtils}                                     from '@berry/core';
+import querystring                                       from 'querystring';
 
 import {LINK_PROTOCOL}                                   from './constants';
 

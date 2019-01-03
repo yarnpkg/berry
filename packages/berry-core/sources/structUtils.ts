@@ -1,5 +1,4 @@
-import chalk = require('chalk');
-
+import chalk                                    from 'chalk';
 import {createHmac}                             from 'crypto';
 
 import {Configuration}                          from './Configuration';

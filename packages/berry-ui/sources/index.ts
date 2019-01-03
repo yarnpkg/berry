@@ -1,14 +1,13 @@
-import TextLayout = require('@manaflair/text-layout');
+import TextLayout                                              from '@manaflair/text-layout';
 // @ts-ignore
-import makeReconciler = require('react-reconciler');
-import React = require('react');
+import makeReconciler                                          from 'react-reconciler';
+import React                                                   from 'react';
 // @ts-ignore
-import reopenTty = require('reopen-tty');
-// @ts-ignore
-import YogaDom = require('yoga-dom');
-
+import reopenTty                                               from 'reopen-tty';
 import {Readable, Writable}                                    from 'stream';
 import {ReadStream as ReadableTTY, WriteStream as WritableTTY} from 'tty';
+// @ts-ignore
+import YogaDom                                                 from 'yoga-dom';
 
 import {Div}                                                   from './Div';
 import {NodeElement}                                           from './NodeElement';

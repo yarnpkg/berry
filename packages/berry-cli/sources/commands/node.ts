@@ -1,6 +1,5 @@
-import execa = require('execa');
-
 import {Configuration, Project} from '@berry/core';
+import execa                    from 'execa';
 import {existsSync}             from 'fs';
 import {Readable, Writable}     from 'stream';
 
@@ -19,5 +18,13 @@ export default (concierge: any) => concierge
 
     const env = await execUtils.makeExecEnv(project);
 
-    await execa(`node`, args, { stdin, stdout, stderr, env });
+    try {
+      await execa(`node`, args, {cwd, stdin, stdout, stderr, env});
+    } catch (error) {
+      if (error.cmd) {
+        return error.code;
+      } else {
+        throw error;
+      }
+    }
   });

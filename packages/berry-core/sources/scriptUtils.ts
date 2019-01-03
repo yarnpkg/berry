@@ -70,10 +70,9 @@ export async function executePackageScript(locator: Locator, scriptName: string,
 
   return await ZipOpenFS.openPromise(async (zipOpenFs: ZipOpenFS) => {
     const configuration = project.configuration;
-    const stdout = new PassThrough();
 
     const linkers = project.configuration.getLinkers();
-    const linkerOptions = {project, report: new StreamReport({ configuration, stdout })};
+    const linkerOptions = {project, report: new StreamReport({stdout: new PassThrough(), configuration})};
 
     const linker = linkers.find(linker => linker.supports(pkg, linkerOptions));
     if (!linker)
