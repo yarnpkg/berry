@@ -3,7 +3,8 @@ import {FakeFS}                         from '@berry/zipfs';
 import {LinkType, LocatorHash, Locator} from './types';
 
 export type BuildDirective = {
-  scriptNames: Array<string>,
+  disabledReason?: string;
+  scriptNames: Array<string>;
 };
 
 export type InstallStatus = {

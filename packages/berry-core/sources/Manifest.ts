@@ -9,6 +9,14 @@ export interface WorkspaceDefinition {
   pattern: string;
 };
 
+export interface DependencyMeta {
+  build?: boolean;
+};
+
+export interface PeerDependencyMeta {
+  optional?: boolean;
+};
+
 export class Manifest {
   public name: Ident | null = null;
   public version: string | null = null;
@@ -21,6 +29,9 @@ export class Manifest {
   public peerDependencies: Map<IdentHash, Descriptor> = new Map();
 
   public workspaceDefinitions: Array<WorkspaceDefinition> = [];
+
+  public dependenciesMeta: Map<string, DependencyMeta> = new Map();
+  public peerDependenciesMeta: Map<string, PeerDependencyMeta> = new Map();
 
   static async find(path: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS} = {}) {
     return await Manifest.fromFile(posix.join(path, `package.json`), {baseFs});
@@ -152,6 +163,28 @@ export class Manifest {
         this.workspaceDefinitions.push({
           pattern: entry,
         });
+      }
+    }
+
+    if (typeof data.dependenciesMeta === `object` && data.dependenciesMeta !== null) {
+      for (const [name, meta] of Object.entries(data.dependenciesMeta)) {
+        if (typeof meta !== `object` || meta === null) {
+          errors.push(new Error(`Invalid meta field for '${name}`));
+          continue;
+        }
+
+        this.dependenciesMeta.set(name, meta);
+      }
+    }
+
+    if (typeof data.peerDependenciesMeta === `object` && data.peerDependenciesMeta !== null) {
+      for (const [name, meta] of Object.entries(data.peerDependenciesMeta)) {
+        if (typeof meta !== `object` || meta === null) {
+          errors.push(new Error(`Invalid meta field for '${name}`));
+          continue;
+        }
+
+        this.peerDependenciesMeta.set(name, meta);
       }
     }
 

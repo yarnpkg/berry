@@ -40,7 +40,8 @@ LegacyName
   / pseudostringRestricted+ { return text() }
 
 Literal
-  = string
+  = null
+  / string
   / pseudostring
 
 /**
@@ -58,25 +59,28 @@ pseudostringRestricted
  * String parsing
  */
 
+null
+  = "null" { return null }
+
 string "string"
-  = '"' '"' { return "";    }
-  / '"' chars:chars '"' { return chars; }
+  = '"' '"' { return "" }
+  / '"' chars:chars '"' { return chars }
 
 chars
-  = chars:char+ { return chars.join(""); }
+  = chars:char+ { return chars.join(``) }
 
 char
   = [^"\\\0-\x1F\x7f]
-  / '\\"' { return '"';  }
-  / "\\\\" { return "\\"; }
-  / "\\/" { return "/";  }
-  / "\\b" { return "\b"; }
-  / "\\f" { return "\f"; }
-  / "\\n" { return "\n"; }
-  / "\\r" { return "\r"; }
-  / "\\t" { return "\t"; }
+  / '\\"' { return `"` }
+  / "\\\\" { return `\\` }
+  / "\\/" { return `/`  }
+  / "\\b" { return `\b` }
+  / "\\f" { return `\f` }
+  / "\\n" { return `\n` }
+  / "\\r" { return `\r` }
+  / "\\t" { return `\t` }
   / "\\u" h1:hexDigit h2:hexDigit h3:hexDigit h4:hexDigit {
-      return String.fromCharCode(parseInt("0x" + h1 + h2 + h3 + h4));
+      return String.fromCharCode(parseInt(`0x${h1}${h2}${h3}${h4}`));
     }
 
 hexDigit

@@ -62,6 +62,14 @@ class PnpInstaller implements Installer {
       buildScripts.length = 0;
     }
 
+    const dependenciesMeta = this.opts.project.topLevelWorkspace.manifest.dependenciesMeta;
+    const dependencyMeta = dependenciesMeta.get(structUtils.stringifyLocator(locator)) || dependenciesMeta.get(structUtils.stringifyIdent(locator));
+
+    if (buildScripts.length > 0 && dependencyMeta && dependencyMeta.build === false) {
+      this.opts.report.reportInfo(MessageName.BUILD_DISABLED, `${structUtils.prettyLocator(this.opts.project.configuration, locator)} lists build scripts, but its build has been explicitly disabled through configuration.`);
+      buildScripts.length = 0;
+    }
+
     if (buildScripts.length > 0 || this.isUnplugged(locator))
       packageFs = await this.unplugPackage(locator, packageFs);
 

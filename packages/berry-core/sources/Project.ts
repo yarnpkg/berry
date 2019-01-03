@@ -890,7 +890,7 @@ export class Project {
         const buildHash = getBuildHash(pkg);
 
         // No need to rebuild the package if its hash didn't change
-        if (Object.prototype.hasOwnProperty.call(bstate, pkg.locatorHash) && buildHash === bstate[pkg.locatorHash])
+        if (Object.prototype.hasOwnProperty.call(bstate, pkg.locatorHash) && bstate[pkg.locatorHash] === buildHash)
           continue;
 
         if (Object.prototype.hasOwnProperty.call(bstate, pkg.locatorHash))

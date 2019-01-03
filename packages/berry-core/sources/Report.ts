@@ -13,6 +13,7 @@ export enum MessageName {
   MUST_BUILD = 6,
   MUST_REBUILD = 7,
   BUILD_FAILED = 8,
+  BUILD_DISABLED = 9,
 }
 
 export abstract class Report {

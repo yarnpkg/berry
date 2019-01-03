@@ -22,11 +22,14 @@ const writeFileP = promisify(writeFile);
 // The keys defined in this array will be resolved and normalized relative to
 // the path of their source configuration (usually the .berryrc directory)
 const RELATIVE_KEYS = new Set([
+  `bstate-path`,
   `cache-folder`,
   `pnp-path`,
   `pnp-unplugged-folder`,
 ]);
 
+// The keys defined here will be casted into booleans (and will throw an error
+// if the value cannot be safely coerced into a boolean)
 const BOOLEAN_KEYS = new Set([
   `enable-colors`,
   `enable-emojis`,

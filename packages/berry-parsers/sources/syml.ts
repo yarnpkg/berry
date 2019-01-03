@@ -11,6 +11,14 @@ function stringifyString(value: string): string {
 }
 
 function stringifyValue(value: any, indentLevel: number): string {
+  if (value === null) {
+    if (indentLevel === 0) {
+      throw new Error(`Null is not a valid top-level value`);
+    } else {
+      return ` null`;
+    }
+  }
+
   if (typeof value === 'number') {
     if (indentLevel === 0) {
       return `${value.toString()}\n`;

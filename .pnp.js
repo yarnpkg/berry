@@ -4551,7 +4551,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["fsevents", new Map([
       ["1.2.4", {
-        packageLocation: path.resolve(__dirname, "./.berry/pnp/unplugged/fsevents-32865734b016707aaa393401d7ca29951484031f9d2f16dfdef70e25a1d25c203f32bb60f74acb8501b7e3b0fe30c9cb0e7075030848ad5cee41e5257bc8fa21/"),
+        packageLocation: path.resolve(__dirname, "./.berry/cache/fsevents-32865734b016707aaa393401d7ca29951484031f9d2f16dfdef70e25a1d25c203f32bb60f74acb8501b7e3b0fe30c9cb0e7075030848ad5cee41e5257bc8fa21.zip/node_modules/fsevents/"),
         packageDependencies: new Map([
           ["nan", "2.11.1"],
           ["node-pre-gyp", "0.10.3"],
@@ -6283,7 +6283,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/commander-67ca8c540ce3eff7ef8e7d2247ce367c24ec5064b061ff3de49b1c82d9ef0e453e55406a1c0267976a9aedbb2aaa67902471c6fa4a598116c0734898f6c64dda.zip/node_modules/commander/", {"name":"commander","reference":"2.14.1"}],
     ["./.berry/cache/anymatch-5e739b93fe3ad70fad509d2d76d0c7222128826bd21a0ad9632902eb1ae90cda231df3d227ee6526bbe65c23857767c0c885afa50a4a77847d2f91d08ec7f419.zip/node_modules/anymatch/", {"name":"anymatch","reference":"2.0.0"}],
     ["./.berry/cache/async-each-b63bc7f9240c04add2acf6e55c2912a9c11c0e476e145c355113fdc6a2f7909edbb688f1004e27780b55c71c3a8e41051025556b065af08f1a205ffeebb175be.zip/node_modules/async-each/", {"name":"async-each","reference":"1.0.1"}],
-    ["./.berry/pnp/unplugged/fsevents-32865734b016707aaa393401d7ca29951484031f9d2f16dfdef70e25a1d25c203f32bb60f74acb8501b7e3b0fe30c9cb0e7075030848ad5cee41e5257bc8fa21/", {"name":"fsevents","reference":"1.2.4"}],
+    ["./.berry/cache/fsevents-32865734b016707aaa393401d7ca29951484031f9d2f16dfdef70e25a1d25c203f32bb60f74acb8501b7e3b0fe30c9cb0e7075030848ad5cee41e5257bc8fa21.zip/node_modules/fsevents/", {"name":"fsevents","reference":"1.2.4"}],
     ["./.berry/cache/is-binary-path-471bf416c935ffd5fb0ced3be3de1a42240f83b788aa48fd515051fe958d283571e47127bb95681402fbbea77de193f05fcd00b23f0d957f2da45eeef9151807.zip/node_modules/is-binary-path/", {"name":"is-binary-path","reference":"1.0.1"}],
     ["./.berry/cache/lodash.debounce-e6fe2009b999352f02bb746fa8a15f374d8d2ef4aaf73c1b7281d40e628d0b2babedb8728606d687656070ef50db519716f48a50d53ca2095a59e61ae98edeef.zip/node_modules/lodash.debounce/", {"name":"lodash.debounce","reference":"4.0.8"}],
     ["./.berry/cache/normalize-path-c9fbe0d9f628b604fd6538019ace470a5c26bdd78d356a43c9b533489f96c9cd26ebd4cc388e277b621c0bece03eeb84748350c110c7397c16d3d57d73c9fa64.zip/node_modules/normalize-path/", {"name":"normalize-path","reference":"2.1.1"}],
@@ -6460,7 +6460,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     169,
     167,
     165,
-    161,
     30,
     28,
     25,
