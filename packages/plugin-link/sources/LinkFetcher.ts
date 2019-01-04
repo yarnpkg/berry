@@ -21,7 +21,7 @@ export class LinkFetcher implements Fetcher {
     const {parentLocator, linkPath} = this.parseLocator(locator);
 
     if (posix.isAbsolute(linkPath))
-      return [new JailFS(linkPath, {baseFs: opts.rootFs}), async () => {}] as FetchResult;
+      return [new JailFS(linkPath), async () => {}] as FetchResult;
 
     const [baseFs, release] = await opts.fetcher.fetch(parentLocator, opts);
     const packageFs = new JailFS(linkPath, {baseFs});

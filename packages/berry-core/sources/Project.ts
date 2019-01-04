@@ -1,3 +1,4 @@
+import {parseSyml, stringifySyml}                           from '@berry/parsers';
 import {createHmac}                                         from 'crypto';
 import {createWriteStream, existsSync, readFile, writeFile} from 'fs-extra';
 // @ts-ignore
@@ -6,14 +7,11 @@ import {dirname}                                            from 'path';
 import {PassThrough}                                        from 'stream';
 import {tmpNameSync}                                        from 'tmp';
 
-import {parseSyml, stringifySyml}                           from '@berry/parsers';
-import {CwdFS, FakeFS, NodeFS, ZipFS}                       from '@berry/zipfs';
-
 import {Cache}                                              from './Cache';
 import {Configuration}                                      from './Configuration';
 import {Installer, BuildDirective}                          from './Installer';
 import {Linker}                                             from './Linker';
-import {Report, MessageName}                                from './Report';
+import {Report, ReportError, MessageName}                   from './Report';
 import {WorkspaceBaseResolver}                              from './WorkspaceBaseResolver';
 import {WorkspaceResolver}                                  from './WorkspaceResolver';
 import {Workspace}                                          from './Workspace';
@@ -267,8 +265,8 @@ export class Project {
     const resolver = this.configuration.makeResolver();
     const fetcher = this.configuration.makeFetcher();
 
-    const resolverOptions = {project: this, readOnly: false, rootFs: new NodeFS(), resolver, fetcher, cache};
-
+    const resolverOptions = {project: this, readOnly: false, cache, fetcher, report, resolver};
+    
     const allDescriptors = new Map<DescriptorHash, Descriptor>();
     const allPackages = new Map<LocatorHash, Package>();
     const allResolutions = new Map<DescriptorHash, LocatorHash>();
@@ -673,11 +671,11 @@ export class Project {
     this.storedPackages = allPackages;
   }
 
-  async fetchEverything({cache}: InstallOptions) {
+  async fetchEverything({cache, report}: InstallOptions) {
     this.storedLocations = new Map();
 
     const fetcher = this.configuration.makeFetcher();
-    const fetcherOptions = {project: this, readOnly: false, rootFs: new NodeFS(), cache, fetcher};
+    const fetcherOptions = {project: this, readOnly: false, cache, fetcher, report};
 
     for (const locatorHash of this.storedResolutions.values()) {
       const pkg = this.storedPackages.get(locatorHash);
@@ -700,10 +698,8 @@ export class Project {
   }
 
   async linkEverything({cache, report}: InstallOptions) {
-    const rootFs = new NodeFS();
-
     const fetcher = this.configuration.makeFetcher();
-    const fetcherOptions = {project: this, readOnly: true, cache, fetcher, rootFs};
+    const fetcherOptions = {project: this, readOnly: true, cache, fetcher, report};
 
     const linkers = this.configuration.getLinkers();
     const linkerOptions = {project: this, report};
@@ -721,7 +717,7 @@ export class Project {
     for (const pkg of this.storedPackages.values()) {
       const linker = linkers.find(linker => linker.supports(pkg, linkerOptions));
       if (!linker)
-        throw new Error(`The package ${structUtils.prettyLocator(this.configuration, pkg)} isn't supported by any of the available linkers`);
+        throw new ReportError(MessageName.LINKER_NOT_FOUND, `${structUtils.prettyLocator(this.configuration, pkg)} isn't supported by any available linker`);
 
       const installer = installers.get(linker);
       if (!installer)

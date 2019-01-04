@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from '@berry/core';
 import {Locator}                                                 from '@berry/core';
 import {structUtils}                                             from '@berry/core';
-import {JailFS}                                                  from '@berry/zipfs';
+import {JailFS, NodeFS}                                          from '@berry/zipfs';
 import {posix}                                                   from 'path';
 import querystring                                               from 'querystring';
 
@@ -19,10 +19,9 @@ export class RawLinkFetcher implements Fetcher {
 
   async fetch(locator: Locator, opts: FetchOptions) {
     const {parentLocator, linkPath} = this.parseLocator(locator);
-    const parentFs = await opts.fetcher.fetch(parentLocator, opts);
 
     const [baseFs, release] = posix.isAbsolute(linkPath)
-      ? [opts.rootFs, async () => {}]
+      ? [new NodeFS(), async () => {}]
       : await opts.fetcher.fetch(parentLocator, opts);
 
     return [new JailFS(linkPath, {baseFs}), release] as FetchResult;

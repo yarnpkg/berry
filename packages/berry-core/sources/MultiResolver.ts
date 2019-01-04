@@ -1,3 +1,4 @@
+import {MessageName, ReportError}                        from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator, Package}                    from './types';
@@ -58,7 +59,7 @@ export class MultiResolver implements Resolver {
     const resolver = this.resolvers.find(resolver => resolver.supportsDescriptor(descriptor, opts));
 
     if (!resolver)
-      throw new Error(`Couldn't find a resolver for ${structUtils.prettyDescriptor(opts.project.configuration, descriptor)}`);
+      throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `${structUtils.prettyDescriptor(opts.project.configuration, descriptor)} isn't supported by any available resolver`);
 
     return resolver;
   }

@@ -1,4 +1,5 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from './Fetcher';
+import {MessageName, ReportError}                   from './Report';
 import * as structUtils                             from './structUtils';
 import {Locator}                                    from './types';
 
@@ -35,7 +36,7 @@ export class MultiFetcher implements Fetcher {
     const fetcher = this.fetchers.find(fetcher => fetcher.supports(locator, opts));
 
     if (!fetcher)
-      throw new Error(`Couldn't find a fetcher for ${structUtils.prettyLocator(opts.project.configuration, locator)}`);
+      throw new ReportError(MessageName.FETCHER_NOT_FOUND, `${structUtils.prettyLocator(opts.project.configuration, locator)} isn't supported by any available fetcher`);
 
     return fetcher;
   }

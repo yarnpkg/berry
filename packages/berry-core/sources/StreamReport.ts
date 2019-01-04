@@ -28,7 +28,7 @@ export class StreamReport extends Report {
     try {
       await cb(report);
     } catch (error) {
-      report.reportErrorOnce(MessageName.EXCEPTION, error.message, {key: error});
+      report.reportExceptionOnce(error);
     } finally {
       await report.finalize();
     }
@@ -77,7 +77,7 @@ export class StreamReport extends Report {
     try {
       return cb();
     } catch (error) {
-      this.reportErrorOnce(MessageName.EXCEPTION, error.message, {key: error});
+      this.reportExceptionOnce(error);
       throw error;
     } finally {
       const after = Date.now();
@@ -96,7 +96,7 @@ export class StreamReport extends Report {
     try {
       return await cb();
     } catch (error) {
-      this.reportErrorOnce(MessageName.EXCEPTION, error.message, {key: error});
+      this.reportExceptionOnce(error);
       throw error;
     } finally {
       const after = Date.now();

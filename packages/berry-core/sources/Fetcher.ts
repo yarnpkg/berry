@@ -1,8 +1,9 @@
-import {FakeFS}   from '@berry/zipfs';
+import {FakeFS}  from '@berry/zipfs';
 
-import {Cache}    from './Cache';
-import {Project}  from './Project';
-import {Locator}  from './types';
+import {Cache}   from './Cache';
+import {Project} from './Project';
+import {Report}  from './Report';
+import {Locator} from './types';
 
 export type MinimalFetchOptions = {
   project: Project,
@@ -12,7 +13,7 @@ export type MinimalFetchOptions = {
 export type FetchOptions = MinimalFetchOptions & {
   cache: Cache,
   readOnly: boolean,
-  rootFs: FakeFS,
+  report: Report,
 };
 
 // The returned function is the cleanup function that frees the resources that

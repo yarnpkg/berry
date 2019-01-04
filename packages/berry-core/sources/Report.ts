@@ -9,11 +9,24 @@ export enum MessageName {
   MISSING_PEER_DEPENDENCY = 2,
   CYCLIC_DEPENDENCIES = 3,
   DISABLED_BUILD_SCRIPTS = 4,
-  SOFT_LINK_BUILD = 5,
-  MUST_BUILD = 6,
-  MUST_REBUILD = 7,
-  BUILD_FAILED = 8,
-  BUILD_DISABLED = 9,
+  BUILD_DISABLED = 5,
+  SOFT_LINK_BUILD = 6,
+  MUST_BUILD = 7,
+  MUST_REBUILD = 8,
+  BUILD_FAILED = 9,
+  RESOLVER_NOT_FOUND = 10,
+  FETCHER_NOT_FOUND = 11,
+  LINKER_NOT_FOUND = 12,
+}
+
+export class ReportError extends Error {
+  public reportCode: MessageName;
+
+  constructor(code: MessageName, message: string) {
+    super(message);
+
+    this.reportCode = code;
+  }
 }
 
 export abstract class Report {
@@ -57,6 +70,14 @@ export abstract class Report {
     if (!this.reportedErrors.has(key)) {
       this.reportedErrors.add(key);
       this.reportError(name, text);
+    }
+  }
+
+  reportExceptionOnce(error: Error | ReportError) {
+    if (error instanceof ReportError) {
+      this.reportErrorOnce(error.reportCode, error.message, {key: error});
+    } else {
+      this.reportErrorOnce(MessageName.EXCEPTION, error.message, {key: error});
     }
   }
 }

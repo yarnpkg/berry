@@ -50,13 +50,27 @@ become A depends on C, B depends on C, C doesn't depend on anything.
 
 ### BR0004
 
-A package has build scripts, but they've been disabled explicitly.
+A package has build scripts, but they've been disabled across the project.
 
 Build scripts can be disabled on a global basis through the use of the
 `enable-scripts` settings. When it happens, a warning is still emitted to let
 you know that the installation might not be complete.
 
+The safest way to downgrade the warning into a notification is to explicitly
+disable build scripts for the affected packages through the use of the
+`dependenciesMeta[].build` key.
+
 ### BR0005
+
+A package has build scripts, but they've been disabled through its
+configuration.
+
+Build scripts can be disabled on a per-project basis through the use of the
+`dependenciesMeta` settings from the `package.json` file. When it happens, a
+notification is still emitted to let you know that the installation might not
+be complete.
+
+### BR0006
 
 A package has build scripts, but is linked through a soft link.
 
@@ -93,7 +107,7 @@ There are a few workarounds:
     you'll need to run a script before being able to see your changes, which is
     often not what you seek.
 
-### BR0006
+### BR0007
 
 A package must be built.
 
@@ -102,7 +116,7 @@ will need to be built in order for the installation to complete. This usually
 occurs in only two cases: either the package never has been built before, or its
 previous build failed (returned a non-zero exit code).
 
-### BR0007
+### BR0008
 
 A package must be rebuilt.
 
@@ -113,7 +127,7 @@ that this also include its transitive dependencies, which sometimes may cause
 surprising rebuilds (for example, if A depends on B that depends on C@1, and if
 Berry decides for some reason to bump C to C@2, then A will need to be rebuilt).
 
-### BR0008
+### BR0009
 
 A package build failed.
 
@@ -122,3 +136,43 @@ package described as having build directives couldn't get built successfully.
 
 To see the actual error message, read the file linked in the report. It will
 contain the full output of the failing script.
+
+### BR0010
+
+A resolver cannot be found for the given package.
+
+Resolvers are the components tasked from converting ranges (`^1.0.0`) into
+references (`1.2.3`). They each contain their own logic to do so - the semver
+resolver is the most famous one but far from being the only one. The GitHub
+resolver transforms GitHub repositories into tarball urls, the Git resolver
+normalizes the paths sent to git, ... each resolver takes care of a different
+resolution strategy. A missing resolver means that one of those strategies is
+missing.
+
+This error is usually caused by a Berry plugin being missing. Plugins are the
+most common way to ship new resolvers to Berry.
+
+### BR0011
+
+A fetcher cannot be found for the given package.
+
+Fetchers are the components that take references and fetch the source code from
+the remote location. A semver fetcher would likely fetch the packages from some
+registry, while a workspace fetcher would simply redirect to the location on
+the disk where the sources can be found.
+
+This error is usually caused by a Berry plugin being missing. Plugins are the
+most common way to ship new resolvers to Berry.
+
+### BR0012
+
+A linker cannot be found for the given package.
+
+Linkers are the components tasked from extracting the sources from the
+artifacts returned by the fetchers and putting them on the disk in a manner
+that can be understood by the target environment. The Node linker would use
+the Plug'n'Play strategy, while a PHP linker would use an autoload strategy
+instead.
+
+This error is usually caused by a Berry plugin being missing. Plugins are the
+most common way to ship new resolvers to Berry.

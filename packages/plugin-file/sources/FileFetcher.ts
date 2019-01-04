@@ -1,6 +1,7 @@
 import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from '@berry/core';
 import {Locator}                                                 from '@berry/core';
 import {structUtils, tgzUtils}                                   from '@berry/core';
+import {NodeFS}                                                  from '@berry/zipfs';
 import {posix}                                                   from 'path';
 import querystring                                               from 'querystring';
 
@@ -19,8 +20,8 @@ export class FileFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const {parentLocator, filePath} = this.parseLocator(locator);
 
-    let [baseFs, release] = posix.isAbsolute(filePath)
-      ? [opts.rootFs, async () => {}]
+    const [baseFs, release] = posix.isAbsolute(filePath)
+      ? [new NodeFS(), async () => {}]
       : await opts.fetcher.fetch(parentLocator, opts);
 
     try {

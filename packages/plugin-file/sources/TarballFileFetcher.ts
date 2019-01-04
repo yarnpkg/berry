@@ -1,6 +1,7 @@
 import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from '@berry/core';
 import {Locator}                                                 from '@berry/core';
 import {structUtils, tgzUtils}                                   from '@berry/core';
+import {NodeFS}                                                  from '@berry/zipfs';
 import {posix}                                                   from 'path';
 import querystring                                               from 'querystring';
 
@@ -23,7 +24,7 @@ export class TarballFileFetcher implements Fetcher {
     const {parentLocator, filePath} = this.parseLocator(locator);
 
     const [baseFs, release] = posix.isAbsolute(filePath)
-      ? [opts.rootFs, async () => {}]
+      ? [new NodeFS(), async () => {}]
       : await opts.fetcher.fetch(parentLocator, opts);
 
     try {

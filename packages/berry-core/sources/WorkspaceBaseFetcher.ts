@@ -14,7 +14,7 @@ export class WorkspaceBaseFetcher implements Fetcher {
   }
 
   async fetch(locator: Locator, opts: FetchOptions) {
-    return [new JailFS(this.getWorkspace(locator, opts).cwd, {baseFs: opts.rootFs}), async () => {}] as FetchResult;
+    return [new JailFS(this.getWorkspace(locator, opts).cwd), async () => {}] as FetchResult;
   }
 
   getWorkspace(locator: Locator, opts: FetchOptions) {
