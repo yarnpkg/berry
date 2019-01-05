@@ -17,6 +17,7 @@ export enum MessageName {
   RESOLVER_NOT_FOUND = 10,
   FETCHER_NOT_FOUND = 11,
   LINKER_NOT_FOUND = 12,
+  FETCH_NOT_CACHED = 13,
 }
 
 export class ReportError extends Error {
