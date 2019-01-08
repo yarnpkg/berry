@@ -45,7 +45,7 @@ export class LinkResolver implements Resolver {
       const manifest = await Manifest.fromFile(`package.json`, {baseFs});
 
       const languageName = opts.project.configuration.defaultLanguageName;
-      const linkType = LinkType.HARD;
+      const linkType = LinkType.SOFT;
 
       const dependencies = manifest.dependencies;
       const peerDependencies = manifest.peerDependencies;
