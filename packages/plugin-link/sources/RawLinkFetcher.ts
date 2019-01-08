@@ -8,7 +8,7 @@ import querystring                                               from 'querystri
 import {RAW_LINK_PROTOCOL}                                       from './constants';
 
 export class RawLinkFetcher implements Fetcher {
-  public mountPoint: string = `virtual-fetchers`;
+  static mountPoint: string = `virtual-fetchers`;
 
   supports(locator: Locator, opts: MinimalFetchOptions) {
     if (!locator.reference.startsWith(RAW_LINK_PROTOCOL))

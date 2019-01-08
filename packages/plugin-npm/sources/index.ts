@@ -6,11 +6,11 @@ import {NpmTagResolver}    from './NpmTagResolver';
 
 const plugin: Plugin = {
   fetchers: [
-    new NpmFetcher(),
+    NpmFetcher,
   ],
   resolvers: [
-    new NpmSemverResolver(),
-    new NpmTagResolver(),
+    NpmSemverResolver,
+    NpmTagResolver,
   ],
 };
 

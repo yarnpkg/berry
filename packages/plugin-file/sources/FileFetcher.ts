@@ -8,7 +8,7 @@ import querystring                                               from 'querystri
 import {PROTOCOL}                                                from './constants';
 
 export class FileFetcher implements Fetcher {
-  public mountPoint: string = `cached-fetchers`;
+  static mountPoint: string = `cached-fetchers`;
 
   supports(locator: Locator, opts: MinimalFetchOptions) {
     if (!locator.reference.startsWith(PROTOCOL))

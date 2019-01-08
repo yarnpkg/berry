@@ -5,7 +5,7 @@ import {Locator}                                                 from '@berry/co
 import * as githubUtils                                          from './githubUtils';
 
 export class GithubFetcher implements Fetcher {
-  public mountPoint: string = `cached-fetchers`;
+  static mountPoint: string = `cached-fetchers`;
 
   supports(locator: Locator, opts: MinimalFetchOptions) {
     if (!githubUtils.isGithubUrl(locator.reference))

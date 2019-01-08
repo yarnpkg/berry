@@ -7,16 +7,12 @@ import {LinkResolver}    from './LinkResolver';
 
 const plugin: Plugin = {
   fetchers: [
-    new RawLinkFetcher(),
-    new LinkFetcher(),
-  ],
-  linkers: [
-    //new RawLinkLinker(),
-    //new LinkLinker(),
+    RawLinkFetcher,
+    LinkFetcher,
   ],
   resolvers: [
-    new RawLinkResolver(),
-    new LinkResolver(),
+    RawLinkResolver,
+    LinkResolver,
   ],
 };
 

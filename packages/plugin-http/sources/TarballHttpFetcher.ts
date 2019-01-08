@@ -5,7 +5,7 @@ import {Locator, Manifest}                                       from '@berry/co
 import {TARBALL_REGEXP, PROTOCOL_REGEXP}                         from './constants';
 
 export class TarballHttpFetcher implements Fetcher {
-  public mountPoint: string = `cached-fetchers`;
+  static mountPoint: string = `cached-fetchers`;
 
   supports(locator: Locator, opts: MinimalFetchOptions) {
     if (!TARBALL_REGEXP.test(locator.reference))

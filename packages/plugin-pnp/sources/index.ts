@@ -4,7 +4,7 @@ import {PnpLinker} from './PnpLinker';
 
 const plugin: Plugin = {
   linkers: [
-    new PnpLinker(),
+    PnpLinker,
   ],
 };
 

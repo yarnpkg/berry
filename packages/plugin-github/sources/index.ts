@@ -5,10 +5,10 @@ import {GithubResolver} from './GithubResolver';
 
 const plugin: Plugin = {
   fetchers: [
-    new GithubFetcher(),
+    GithubFetcher,
   ],
   resolvers: [
-    new GithubResolver(),
+    GithubResolver,
   ],
 };
 

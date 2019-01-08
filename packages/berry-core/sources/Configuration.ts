@@ -238,7 +238,7 @@ export class Configuration {
 
     for (const plugin of this.plugins.values())
       for (const resolver of plugin.resolvers || [])
-        pluginResolvers.push(resolver);
+        pluginResolvers.push(new resolver());
 
     return new MultiResolver([
       useLockfile ? new LockfileResolver() : null,
@@ -260,7 +260,7 @@ export class Configuration {
 
         for (const fetcher of plugin.fetchers) {
           if (fetcher.mountPoint === hookName) {
-            fetchers.push(fetcher);
+            fetchers.push(new fetcher());
           }
         }
       }
@@ -289,7 +289,7 @@ export class Configuration {
 
     for (const plugin of this.plugins.values())
       for (const linker of plugin.linkers || [])
-        linkers.push(linker);
+        linkers.push(new linker());
 
     return linkers;
   }

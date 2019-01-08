@@ -8,7 +8,7 @@ import querystring                                               from 'querystri
 import {LINK_PROTOCOL}                                           from './constants';
 
 export class LinkFetcher implements Fetcher {
-  public mountPoint: string = `virtual-fetchers`;
+  static mountPoint: string = `virtual-fetchers`;
 
   supports(locator: Locator, opts: MinimalFetchOptions) {
     if (!locator.reference.startsWith(LINK_PROTOCOL))

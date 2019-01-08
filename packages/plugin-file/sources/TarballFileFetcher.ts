@@ -8,7 +8,7 @@ import querystring                                               from 'querystri
 import {TARBALL_REGEXP, PROTOCOL}                                from './constants';
 
 export class TarballFileFetcher implements Fetcher {
-  public mountPoint: string = `cached-fetchers`;
+  static mountPoint: string = `cached-fetchers`;
 
   supports(locator: Locator, opts: MinimalFetchOptions) {
     if (!TARBALL_REGEXP.test(locator.reference))

@@ -6,7 +6,7 @@ import semver                                                    from 'semver';
 import {DEFAULT_REGISTRY}                                        from './constants';
 
 export class NpmFetcher implements Fetcher {
-  public mountPoint: string = `cached-fetchers`;
+  static mountPoint: string = `cached-fetchers`;
 
   supports(locator: Locator, opts: MinimalFetchOptions) {
     if (!semver.valid(locator.reference))

@@ -2,9 +2,23 @@ import {Fetcher}  from './Fetcher';
 import {Linker}   from './Linker';
 import {Resolver} from './Resolver';
 
+export interface FetcherPlugin {
+  mountPoint: string;
+
+  new(): Fetcher;
+};
+
+export interface LinkerPlugin {
+  new(): Linker;
+};
+
+export interface ResolverPlugin {
+  new(): Resolver;
+};
+
 export type Plugin = {
   commands?: Array<(concierge: any, plugins: Map<string, Plugin>) => any>,
-  fetchers?: Array<Fetcher & {mountPoint: string}>,
-  linkers?: Array<Linker>,
-  resolvers?: Array<Resolver>,
+  fetchers?: Array<FetcherPlugin>,
+  linkers?: Array<LinkerPlugin>,
+  resolvers?: Array<ResolverPlugin>,
 };

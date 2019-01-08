@@ -5,10 +5,10 @@ import {TarballHttpFetcher}  from './TarballHttpFetcher';
 
 const plugin: Plugin = {
   fetchers: [
-    new TarballHttpFetcher(),
+    TarballHttpFetcher,
   ],
   resolvers: [
-    new TarballHttpResolver(),
+    TarballHttpResolver,
   ],
 };
 
