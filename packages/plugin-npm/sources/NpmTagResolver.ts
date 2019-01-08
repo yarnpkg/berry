@@ -22,7 +22,7 @@ export class NpmTagResolver implements Resolver {
     throw new Error(`Unreachable`);
   }
 
-  async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
+  normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     return descriptor;
   }
 

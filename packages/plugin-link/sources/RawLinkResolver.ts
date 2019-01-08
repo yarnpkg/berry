@@ -25,7 +25,7 @@ export class RawLinkResolver implements Resolver {
     return false;
   }
 
-  async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
+  normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     if (descriptor.range.includes(`?`))
       throw new Error(`Link-type dependencies cannot contain the character "?"`);
 

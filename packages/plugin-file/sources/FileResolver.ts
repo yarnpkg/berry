@@ -28,7 +28,7 @@ export class FileResolver implements Resolver {
     return false;
   }
 
-  async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
+  normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     if (FILE_REGEXP.test(descriptor.range))
       descriptor = structUtils.makeDescriptor(descriptor, `file:${descriptor.range}`);
 

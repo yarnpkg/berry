@@ -25,7 +25,7 @@ export class NpmSemverResolver implements Resolver {
     return true;
   }
 
-  async normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
+  normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     return descriptor;
   }
 
