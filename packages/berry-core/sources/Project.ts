@@ -283,43 +283,7 @@ export class Project {
     }
 
     while (mustBeResolved.size !== 0) {
-      // First, we replace all packages to be resolved by their aliases
-
-      for (const descriptorHash of mustBeResolved) {
-        const aliasHash = this.resolutionAliases.get(descriptorHash);
-        if (aliasHash === undefined)
-          continue;
-
-        // It doesn't cost us much to support the case where a descriptor is
-        // equal to its own alias (which should mean "no alias")
-        if (descriptorHash === aliasHash)
-          continue;
-
-        const alias = this.storedDescriptors.get(aliasHash);
-        if (!alias)
-          throw new Error(`Assertion failed: The alias should have been registered`);
-
-        // If it's already been "resolved" (in reality it will be the temporary
-        // resolution we've set in the next few lines) we can just skip it
-        if (allResolutions.has(descriptorHash))
-          continue;
-
-        // Temporarily set an invalid resolution; we will replace it by the
-        // actual one after we've finished resolving the aliases
-        allResolutions.set(descriptorHash, `temporary` as LocatorHash);
-
-        // We can now replace the descriptor by its alias (once everything will
-        // have been resolved, we'll do a pass to copy the aliases resolutions
-        // into their respective sources)
-        mustBeResolved.delete(descriptorHash);
-        mustBeResolved.add(aliasHash);
-
-        allDescriptors.set(aliasHash, alias);
-
-        haveBeenAliased.add(descriptorHash);
-      }
-
-      // Then we remove from the "mustBeResolved" list all packages that have
+      // We remove from the "mustBeResolved" list all packages that have
       // already been resolved previously.
 
       for (const descriptorHash of mustBeResolved)
@@ -443,8 +407,8 @@ export class Project {
       }
 
       // We now iterate over the locators we've got and, for each of them that
-      // hasn't been seen before, we fetch its dependency list and schedule it
-      // for the next cycle.
+      // hasn't been seen before, we fetch its dependency list and schedule
+      // them for the next cycle.
 
       const newLocators = new Map<LocatorHash, Locator>();
 
@@ -499,21 +463,56 @@ export class Project {
         allResolutions.set(descriptorHash, locator.locatorHash);
 
         const pkg = newPackages.get(locator.locatorHash);
+        if (!pkg)
+          continue;
 
-        if (pkg) {
-          allPackages.set(pkg.locatorHash, pkg);
+        allPackages.set(pkg.locatorHash, pkg);
 
-          // The resolvers are not expected to return the dependencies in any
-          // particular order, so we must be careful and sort them ourselves in
-          // order to have 100% reproductible builds
-          const sortedDependencies = miscUtils.sortMap(pkg.dependencies.values(), [descriptor => {
-            return structUtils.stringifyDescriptor(descriptor);
-          }]);
+        // The resolvers are not expected to return the dependencies in any
+        // particular order, so we must be careful and sort them ourselves in
+        // order to have 100% reproductible builds
+        const sortedDependencies = miscUtils.sortMap(pkg.dependencies.values(), [descriptor => {
+          return structUtils.stringifyDescriptor(descriptor);
+        }]);
 
-          for (const descriptor of sortedDependencies) {
-            allDescriptors.set(descriptor.descriptorHash, descriptor);
-            mustBeResolved.add(descriptor.descriptorHash);
-          }
+        for (const descriptor of sortedDependencies) {
+          allDescriptors.set(descriptor.descriptorHash, descriptor);
+          mustBeResolved.add(descriptor.descriptorHash);
+
+          // We must check and make sure that the descriptor didn't get aliased
+          // to something else
+          const aliasHash = this.resolutionAliases.get(descriptor.descriptorHash);
+          if (aliasHash === undefined)
+            continue;
+
+          // It doesn't cost us much to support the case where a descriptor is
+          // equal to its own alias (which should mean "no alias")
+          if (descriptor.descriptorHash === aliasHash)
+            continue;
+
+          const alias = this.storedDescriptors.get(aliasHash);
+          if (!alias)
+            throw new Error(`Assertion failed: The alias should have been registered`);
+
+          // If it's already been "resolved" (in reality it will be the temporary
+          // resolution we've set in the next few lines) we simply must skip it
+          if (allResolutions.has(descriptor.descriptorHash))
+            continue;
+
+          // Temporarily set an invalid resolution so that it won't be resolved
+          // multiple times if it is found multiple times in the dependency
+          // tree (this is only temporary, we will replace it by the actual
+          // resolution after we've finished resolving everything)
+          allResolutions.set(descriptor.descriptorHash, `temporary` as LocatorHash);
+
+          // We can now replace the descriptor by its alias in the list of
+          // descriptors that must be resolved
+          mustBeResolved.delete(descriptor.descriptorHash);
+          mustBeResolved.add(aliasHash);
+
+          allDescriptors.set(aliasHash, alias);
+
+          haveBeenAliased.add(descriptor.descriptorHash);
         }
       }
     }
