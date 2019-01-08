@@ -78,7 +78,7 @@ export abstract class Report {
     if (error instanceof ReportError) {
       this.reportErrorOnce(error.reportCode, error.message, {key: error});
     } else {
-      this.reportErrorOnce(MessageName.EXCEPTION, error.message, {key: error});
+      this.reportErrorOnce(MessageName.EXCEPTION, error.stack || error.message, {key: error});
     }
   }
 }
