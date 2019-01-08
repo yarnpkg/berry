@@ -34,7 +34,7 @@ export class TarballFileResolver implements Resolver {
     return true;
   }
 
-  normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
+  bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     if (FILE_REGEXP.test(descriptor.range))
       descriptor = structUtils.makeDescriptor(descriptor, `file:${descriptor.range}`);
 

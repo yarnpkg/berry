@@ -28,10 +28,10 @@ export class MultiResolver implements Resolver {
     return resolver.shouldPersistResolution(locator, opts);
   }
 
-  normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions): Descriptor {
+  bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions): Descriptor {
     const resolver = this.getResolverByDescriptor(descriptor, opts);
 
-    return resolver.normalizeDescriptor(descriptor, fromLocator, opts);
+    return resolver.bindDescriptor(descriptor, fromLocator, opts);
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<string>> {

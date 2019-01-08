@@ -29,7 +29,7 @@ export class WorkspaceResolver implements Resolver {
     return false;
   }
 
-  normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
+  bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     return descriptor;
   }
 

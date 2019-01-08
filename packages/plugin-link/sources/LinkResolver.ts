@@ -25,7 +25,7 @@ export class LinkResolver implements Resolver {
     return false;
   }
 
-  normalizeDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
+  bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     if (descriptor.range.includes(`?`))
       throw new Error(`Link-type dependencies cannot contain the character "?"`);
 

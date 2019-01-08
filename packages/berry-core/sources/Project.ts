@@ -440,7 +440,7 @@ export class Project {
 
         for (const [source, target] of [[rawDependencies, dependencies], [rawPeerDependencies, peerDependencies]]) {
           for (const descriptor of source.values()) {
-            const normalizedDescriptor = await resolver.normalizeDescriptor(descriptor, locator, resolverOptions);
+            const normalizedDescriptor = await resolver.bindDescriptor(descriptor, locator, resolverOptions);
             target.set(normalizedDescriptor.identHash, normalizedDescriptor);
           }
         }
