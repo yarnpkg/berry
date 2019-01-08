@@ -36,6 +36,24 @@ const BOOLEAN_KEYS = new Set([
   `ignore-path`,
 ]);
 
+function parseBoolean(value: string) {
+  switch (value) {
+    case `true`:
+    case `1`: {
+      return true;
+    } break;
+
+    case `false`:
+    case `0`: {
+      return false;
+    } break;
+
+    default: {
+      throw new Error(`Invalid value`);
+    } break;
+  }
+}
+
 export class Configuration {
   // General rules:
   //
@@ -126,35 +144,14 @@ export class Configuration {
     const environmentPrefix = `berry_`;
 
     for (let [key, value] of Object.entries(process.env)) {
-      let rvalue: any = value;
-
       key = key.toLowerCase();
 
       if (!key.startsWith(environmentPrefix))
         continue;
 
       key = key.slice(environmentPrefix.length);
-      key = key.replace(/_([a-z])/g, ($0, $1) => $1.toUpperCase());
 
-      if (BOOLEAN_KEYS.has(key.replace(/[A-Z]/g, $0 => `-${$0.toLowerCase()}`))) {
-        switch (rvalue) {
-          case `true`:
-          case `1`: {
-            rvalue = true;
-          } break;
-
-          case `false`:
-          case `0`: {
-            rvalue = false;
-          } break;
-
-          default: {
-            throw new Error(`Invalid value for key ${key}`);
-          } break;
-        }
-      }
-
-      environmentData[key] = rvalue;
+      environmentData[key] = value;
     }
 
     configuration.use(`environment`, environmentData, process.cwd());
@@ -212,7 +209,7 @@ export class Configuration {
 
   use(source: string, data: {[key: string]: any}, folder: string) {
     for (const key of Object.keys(data)) {
-      const name = key.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
+      const name = key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
 
       if (Object.prototype.hasOwnProperty.call(this.sources, name))
         continue;
@@ -222,6 +219,9 @@ export class Configuration {
 
       if (RELATIVE_KEYS.has(key))
         value = resolve(folder, value);
+      
+      if (BOOLEAN_KEYS.has(key) && typeof value === `string`)
+        value = parseBoolean(value);
 
       if (!Object.prototype.hasOwnProperty.call(this, name))
         throw new Error(`Unknown configuration option "${key}"`);
