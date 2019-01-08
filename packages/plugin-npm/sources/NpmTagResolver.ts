@@ -42,7 +42,7 @@ export class NpmTagResolver implements Resolver {
       ? distTags[descriptor.range]
       : null;
 
-    return resolution ? [resolution] : [];
+    return resolution ? [structUtils.makeLocator(descriptor, resolution)] : [];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {

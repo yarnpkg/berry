@@ -31,7 +31,7 @@ export class NpmSemverResolver implements Resolver {
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
     if (semver.valid(descriptor.range))
-      return [descriptor.range];
+      return [structUtils.convertDescriptorToLocator(descriptor)];
 
     const httpResponse = await httpUtils.get(this.getIdentUrl(descriptor, opts), opts.project.configuration);
 
@@ -42,7 +42,9 @@ export class NpmSemverResolver implements Resolver {
       return semver.compare(a, b);
     });
 
-    return candidates;
+    return candidates.map(reference => {
+      return structUtils.makeLocator(descriptor, reference);
+    });
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

@@ -38,7 +38,7 @@ export class WorkspaceBaseResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
-    return [descriptor.range];
+    return [structUtils.convertDescriptorToLocator(descriptor)];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

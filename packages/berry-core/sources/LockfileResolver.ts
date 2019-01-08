@@ -34,21 +34,18 @@ export class LockfileResolver implements Resolver {
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
     let pkg = opts.project.storedPackages.get(structUtils.convertDescriptorToLocator(descriptor).locatorHash);
-
     if (pkg)
-      return [pkg.reference];
+      return [pkg];
 
     const resolution = opts.project.storedResolutions.get(descriptor.descriptorHash);
-
     if (!resolution)
       throw new Error(`Expected the resolution to have been successful - resolution not found`);
 
     pkg = opts.project.storedPackages.get(resolution);
-
     if (!pkg)
       throw new Error(`Expected the resolution to have been successful - package not found`);
 
-    return [pkg.reference];
+    return [pkg];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

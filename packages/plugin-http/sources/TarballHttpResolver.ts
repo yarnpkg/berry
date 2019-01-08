@@ -1,6 +1,7 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
 import {Descriptor, Locator, Manifest}                   from '@berry/core';
 import {LinkType}                                        from '@berry/core';
+import {structUtils}                                     from '@berry/core';
 
 import {PROTOCOL_REGEXP, TARBALL_REGEXP}                 from './constants';
 
@@ -34,7 +35,7 @@ export class TarballHttpResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
-    return [descriptor.range];
+    return [structUtils.convertDescriptorToLocator(descriptor)];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

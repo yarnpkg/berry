@@ -20,7 +20,7 @@ export interface Resolver {
 
   bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions): Descriptor;
 
-  getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<string>>;
+  getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<Locator>>;
 
   resolve(locator: Locator, opts: ResolveOptions): Promise<Package>;
 }

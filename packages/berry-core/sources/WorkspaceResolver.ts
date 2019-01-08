@@ -45,7 +45,7 @@ export class WorkspaceResolver implements Resolver {
     if (candidateWorkspaces.length > 1)
       throw new Error(`This range must be resolved by exactly one local workspace, too many found`);
 
-    return [`${WorkspaceResolver.protocol}${candidateWorkspaces[0].locator.reference}`];
+    return [structUtils.makeLocator(descriptor, `${WorkspaceResolver.protocol}${candidateWorkspaces[0].locator.reference}`)];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

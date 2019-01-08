@@ -41,7 +41,7 @@ export class FileResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
-    return [descriptor.range];
+    return [structUtils.makeLocator(descriptor, descriptor.range)];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

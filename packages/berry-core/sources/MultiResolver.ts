@@ -28,19 +28,19 @@ export class MultiResolver implements Resolver {
     return resolver.shouldPersistResolution(locator, opts);
   }
 
-  bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions): Descriptor {
+  bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     const resolver = this.getResolverByDescriptor(descriptor, opts);
 
     return resolver.bindDescriptor(descriptor, fromLocator, opts);
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<string>> {
+  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
     const resolver = this.getResolverByDescriptor(descriptor, opts);
 
     return await resolver.getCandidates(descriptor, opts);
   }
 
-  async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
+  async resolve(locator: Locator, opts: ResolveOptions) {
     const resolver = this.getResolverByLocator(locator, opts);
 
     return await resolver.resolve(locator, opts);

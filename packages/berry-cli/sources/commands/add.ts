@@ -34,26 +34,26 @@ export default (concierge: any) => concierge
 
         const latestDescriptor = structUtils.makeDescriptor(descriptor, `latest`);
 
-        let candidateReferences;
+        let candidateLocators;
 
         try {
-          candidateReferences = await resolver.getCandidates(latestDescriptor, resolverOptions);
+          candidateLocators = await resolver.getCandidates(latestDescriptor, resolverOptions);
         } catch (error) {
           error.message = `${structUtils.prettyDescriptor(configuration, descriptor)}: ${error.message}`;
           throw error;
         }
 
-        if (candidateReferences.length === 0)
+        if (candidateLocators.length === 0)
           throw new Error(`No candidate found for ${structUtils.prettyDescriptor(configuration, latestDescriptor)}`);
 
-        const bestReference = candidateReferences[candidateReferences.length - 1];
+        const bestLocator = candidateLocators[candidateLocators.length - 1];
 
-        if (!semver.valid(bestReference))
-          return structUtils.makeDescriptor(latestDescriptor, bestReference);
+        if (!semver.valid(bestLocator.reference))
+          return structUtils.convertLocatorToDescriptor(bestLocator);
 
         const prefix = exact ? `` : tilde ? `~` : `^`;
 
-        return structUtils.makeDescriptor(latestDescriptor, `${prefix}${bestReference}`);
+        return structUtils.makeDescriptor(bestLocator, `${prefix}${bestLocator.reference}`);
       }));
 
       const target = dev ? `devDependencies` : peer ? `peerDependencies` : `dependencies`;

@@ -299,24 +299,20 @@ export class Project {
         if (!descriptor)
           throw new Error(`Assertion failed: The descriptor should have been registered`);
 
-        let candidateReferences;
+        let candidateLocators;
 
         try {
-          candidateReferences = await resolver.getCandidates(descriptor, resolverOptions);
+          candidateLocators = await resolver.getCandidates(descriptor, resolverOptions);
         } catch (error) {
           error.message = `${structUtils.prettyDescriptor(this.configuration, descriptor)}: ${error.message}`;
           throw error;
         }
 
-        if (candidateReferences.length === 0)
+        if (candidateLocators.length === 0)
           throw new Error(`No candidate found for ${structUtils.prettyDescriptor(this.configuration, descriptor)}`);
 
         // Reversing it make the following algorithms prioritize the more recent releases
-        candidateReferences.reverse();
-
-        const candidateLocators = candidateReferences.map(reference => {
-          return structUtils.makeLocator(descriptor, reference);
-        });
+        candidateLocators.reverse();
 
         return [descriptor.descriptorHash, candidateLocators] as [DescriptorHash, Array<Locator>];
       })));
