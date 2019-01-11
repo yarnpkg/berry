@@ -77,7 +77,7 @@ export class MultiResolver implements Resolver {
     const resolver = this.resolvers.find(resolver => resolver.supportsLocator(locator, opts));
 
     if (!resolver)
-      throw new Error(`Couldn't find a resolver for ${structUtils.prettyLocator(opts.project.configuration, locator)}`);
+      throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `${structUtils.prettyLocator(opts.project.configuration, locator)} isn't supported by any available resolver`);
 
     return resolver;
   }
