@@ -37,7 +37,6 @@ function wrapAsync(fn: Function) {
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
   const SYNC_IMPLEMENTATIONS = new Set([
     `createReadStream`,
-    `existsSync`,
     `realpathSync`,
     `readdirSync`,
     `statSync`,
@@ -57,10 +56,22 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
     `writeFilePromise`,
   ]);
 
+  (patchedFs as any).existsSync = (p: string) => {
+    try {
+      return fakeFs.existsSync(p);
+    } catch (error) {
+      return false;
+    }
+  };
+
   (patchedFs as any).exists = (p: string, callback?: (result: boolean) => any) => {
     fakeFs.existsPromise(p).then(result => {
       if (callback) {
         callback(result);
+      }
+    }, () => {
+      if (callback) {
+        callback(false);
       }
     });
   };
