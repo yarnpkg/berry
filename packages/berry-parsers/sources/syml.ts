@@ -2,6 +2,10 @@ import {parse} from './grammars/syml';
 
 const simpleStringPattern = /^[a-zA-Z0-9\/.#@^~<=>_+-]([a-zA-Z0-9 \/.#@^~<=>_+-]*[a-zA-Z0-9\/.#@^~<=>_+-])?$/;
 
+// The following keys will always be stored at the top of the object, in the
+// specified order. It's not fair but life isn't fair either.
+const specialObjectKeys = [`resolution`, `dependencies`];
+
 function stringifyString(value: string): string {
   if (value.match(simpleStringPattern)) {
     return value;
@@ -39,7 +43,17 @@ function stringifyValue(value: any, indentLevel: number): string {
     const indent = `  `.repeat(indentLevel);
 
     const keys = Object.keys(value).sort((a, b) => {
-      return a.localeCompare(b);
+      const aIndex = specialObjectKeys.indexOf(a);
+      const bIndex = specialObjectKeys.indexOf(b);
+
+      if (aIndex === -1 && bIndex === -1)
+        return a.localeCompare(b);
+      if (aIndex !== -1 && bIndex === -1)
+        return -1;
+      if (bIndex === -1 && bIndex !== -1)
+        return +1;
+      
+      return aIndex - bIndex;
     });
 
     const fields = keys.filter(key => {
