@@ -1,10 +1,11 @@
-import {Configuration, Project, Workspace, Manifest} from '@berry/core';
-import {scriptUtils}                                 from '@berry/core';
+import {Configuration, Project, Workspace, Manifest, Cache} from '@berry/core';
+import {scriptUtils}                                        from '@berry/core';
 // @ts-ignore: Need to write the definition file
-import {UsageError}                                  from '@manaflair/concierge';
-import {Readable, Writable}                          from 'stream';
+import {UsageError}                                         from '@manaflair/concierge';
+import {Readable, Writable}                                 from 'stream';
 
-import {plugins}                                     from '../plugins';
+import {LightReport}                                        from '../LightReport';
+import {plugins}                                            from '../plugins';
 
 export default (concierge: any) => concierge
 
@@ -15,6 +16,14 @@ export default (concierge: any) => concierge
   .action(async ({cwd, stdin, stdout, stderr, name, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, name: string, args: Array<string>}) => {
     const configuration = await Configuration.find(cwd, plugins);
     const {project, workspace} = await Project.find(configuration, cwd);
+    const cache = await Cache.find(configuration);
+
+    const report = await LightReport.start({configuration, stdout}, async (report: LightReport) => {
+      await project.resolveEverything({lockfileOnly: true, cache, report});
+    });
+
+    if (report.hasErrors())
+      return 1;
 
     // First we check to see whether a script exist inside the current workspace
     // for the given name

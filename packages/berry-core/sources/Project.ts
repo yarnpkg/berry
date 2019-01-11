@@ -28,6 +28,7 @@ import { scriptUtils } from '.';
 export type InstallOptions = {
   cache: Cache,
   report: Report,
+  lockfileOnly?: boolean,
 };
 
 export class Project {
@@ -244,7 +245,7 @@ export class Project {
     }
   }
 
-  async resolveEverything({cache, report}: InstallOptions) {
+  async resolveEverything({cache, report, lockfileOnly}: InstallOptions) {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
 
@@ -263,7 +264,7 @@ export class Project {
     const yarnResolver = new YarnResolver();
     await yarnResolver.setup(this, {report});
 
-    const configResolver = this.configuration.makeResolver();
+    const configResolver = lockfileOnly ? new MultiResolver([]) : this.configuration.makeResolver();
     const aliasResolver = new AliasResolver(configResolver);
 
     const resolver = new MultiResolver([new LockfileResolver(), yarnResolver, aliasResolver]);
@@ -285,8 +286,6 @@ export class Project {
     }
 
     while (mustBeResolved.size !== 0) {
-      report.reportInfo(MessageName.RESOLUTION_PACK, `Resolution pack: ${mustBeResolved.size} elements`);
-
       // We remove from the "mustBeResolved" list all packages that have
       // already been resolved previously.
 
@@ -430,12 +429,13 @@ export class Project {
         const dependencies = pkg.dependencies = new Map();
         const peerDependencies = pkg.peerDependencies = new Map();
 
-        for (const [source, target] of [[rawDependencies, dependencies], [rawPeerDependencies, peerDependencies]]) {
-          for (const descriptor of source.values()) {
-            const normalizedDescriptor = resolver.bindDescriptor(descriptor, locator, resolverOptions);
-            target.set(normalizedDescriptor.identHash, normalizedDescriptor);
-          }
+        for (const descriptor of rawDependencies.values()) {
+          const normalizedDescriptor = resolver.bindDescriptor(descriptor, locator, resolverOptions);
+          dependencies.set(normalizedDescriptor.identHash, normalizedDescriptor);
         }
+
+        for (const descriptor of rawPeerDependencies.values())
+          peerDependencies.set(descriptor.identHash, descriptor);
 
         return [pkg.locatorHash, pkg] as [LocatorHash, Package];
       })));
