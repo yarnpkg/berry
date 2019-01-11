@@ -18,6 +18,10 @@ export enum MessageName {
   FETCHER_NOT_FOUND = 11,
   LINKER_NOT_FOUND = 12,
   FETCH_NOT_CACHED = 13,
+  YARN_IMPORT_FAILED = 14,
+  REMOTE_INVALID = 15,
+  REMOTE_NOT_FOUND = 16,
+  RESOLUTION_PACK = 17,
 }
 
 export class ReportError extends Error {

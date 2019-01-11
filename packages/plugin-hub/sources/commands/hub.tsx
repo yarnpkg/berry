@@ -6,7 +6,7 @@ import {LinkType}                                  from '@berry/core';
 import {structUtils}                               from '@berry/core';
 import {Tracker, makeTracker}                      from '@berry/json-proxy';
 import {render}                                    from '@berry/ui';
-import {DraftObject, produce}                      from 'immer';
+import {Draft, produce}                            from 'immer';
 import {Provider}                                  from 'react-redux';
 import {all, put, takeEvery}                       from 'redux-saga/effects';
 import createSagaMiddleware                        from 'redux-saga';
@@ -95,7 +95,7 @@ function projectReducer(state: State | undefined, action: Action): State {
   if (!state)
     throw new Error(`The initial state shouldn't be empty`);
 
-  return produce(state, (draft: DraftObject<State>) => {
+  return produce(state, (draft: Draft<State>) => {
     switch (action.type) {
       case `UPDATE_PROJECT`: {
         draft.project = action.project;

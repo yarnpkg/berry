@@ -1,12 +1,17 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
-import {httpUtils, structUtils}                          from '@berry/core';
-import {Ident, Descriptor, Locator, Package}             from '@berry/core';
+import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
+import {httpUtils, structUtils}                                                    from '@berry/core';
+import {Ident, Descriptor, Locator, Package}                                       from '@berry/core';
 
-import {DEFAULT_REGISTRY, TAG_REGEXP}                    from './constants';
+import {DEFAULT_REGISTRY, PROTOCOL}                                                from './constants';
+
+export const TAG_REGEXP = /^[a-z]+$/;
 
 export class NpmTagResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!TAG_REGEXP.test(descriptor.range))
+    if (!descriptor.range.startsWith(PROTOCOL))
+      return false;
+
+    if (!TAG_REGEXP.test(descriptor.range.slice(PROTOCOL.length)))
       return false;
 
     return true;
@@ -17,7 +22,7 @@ export class NpmTagResolver implements Resolver {
     return false;
   }
 
-  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions): boolean {
+  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions): never {
     // Once transformed into locators, the tags are resolved by the NpmSemverResolver
     throw new Error(`Unreachable`);
   }
@@ -27,22 +32,20 @@ export class NpmTagResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+    const tag = descriptor.range.slice(PROTOCOL.length);
+
     const httpResponse = await httpUtils.get(this.getIdentUrl(descriptor, opts), opts.project.configuration);
     const registryData = JSON.parse(httpResponse.toString());
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `dist-tags`))
-      throw new Error(`Registry returned invalid data for "${structUtils.prettyDescriptor(opts.project.configuration, descriptor)}"`);
+      throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data - missing "dist-tags" field`);
 
     const distTags = registryData[`dist-tags`];
       
-    if (!Object.prototype.hasOwnProperty.call(distTags, descriptor.range))
-      throw new Error(`Registry failed to return tag "${descriptor.range}"`);
+    if (!Object.prototype.hasOwnProperty.call(distTags, tag))
+      throw new ReportError(MessageName.REMOTE_NOT_FOUND, `Registry failed to return tag "${tag}"`);
 
-    const resolution = Object.prototype.hasOwnProperty.call(distTags, descriptor.range)
-      ? distTags[descriptor.range]
-      : null;
-
-    return resolution ? [structUtils.makeLocator(descriptor, resolution)] : [];
+    return [structUtils.makeLocator(descriptor, `${PROTOCOL}${distTags[tag]}`)];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {

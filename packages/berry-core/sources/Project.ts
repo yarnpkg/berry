@@ -7,14 +7,18 @@ import {dirname}                                            from 'path';
 import {PassThrough}                                        from 'stream';
 import {tmpNameSync}                                        from 'tmp';
 
+import {AliasResolver}                                      from './AliasResolver';
 import {Cache}                                              from './Cache';
 import {Configuration}                                      from './Configuration';
 import {Installer, BuildDirective}                          from './Installer';
 import {Linker}                                             from './Linker';
+import {LockfileResolver}                                   from './LockfileResolver';
+import {MultiResolver}                                      from './MultiResolver';
 import {Report, ReportError, MessageName}                   from './Report';
 import {WorkspaceBaseResolver}                              from './WorkspaceBaseResolver';
 import {WorkspaceResolver}                                  from './WorkspaceResolver';
 import {Workspace}                                          from './Workspace';
+import {YarnResolver}                                       from './YarnResolver';
 import * as miscUtils                                       from './miscUtils';
 import * as structUtils                                     from './structUtils';
 import {IdentHash, DescriptorHash, LocatorHash}             from './types';
@@ -101,7 +105,7 @@ export class Project {
           continue;
 
         const data = parsed[key];
-        const locator = structUtils.parseLocator(data.resolution);
+        const locator = structUtils.parseLocator(data.resolution, true);
 
         const languageName = data.languageName || `node`;
         const linkType = data.linkType as LinkType || LinkType.HARD;
@@ -225,10 +229,7 @@ export class Project {
   }
 
   forgetTransientResolutions() {
-    const resolver = this.configuration.makeResolver({
-      useLockfile: false,
-    });
-
+    const resolver = this.configuration.makeResolver();
     const forgottenPackages = new Set();
 
     for (const pkg of this.storedPackages.values()) {
@@ -255,14 +256,20 @@ export class Project {
     // effects until we're ready to set all the variables at once (the one
     // exception being when a resolver needs to fetch a package, in which case
     // we might need to populate the cache).
-
+    //
     // This makes it possible to use the same Project instance for multiple
     // purposes at the same time (since `resolveEverything` is async, it might
     // happen that we want to do something while waiting for it to end; if we
     // were to mutate the project then it would end up in a partial state that
     // could lead to hard-to-debug issues).
 
-    const resolver = this.configuration.makeResolver();
+    const yarnResolver = new YarnResolver();
+    await yarnResolver.setup(this, {report});
+
+    const configResolver = this.configuration.makeResolver();
+    const aliasResolver = new AliasResolver(configResolver);
+
+    const resolver = new MultiResolver([new LockfileResolver(), yarnResolver, aliasResolver]);
     const fetcher = this.configuration.makeFetcher();
 
     const resolverOptions = {project: this, readOnly: false, cache, fetcher, report, resolver};
@@ -270,8 +277,6 @@ export class Project {
     const allDescriptors = new Map<DescriptorHash, Descriptor>();
     const allPackages = new Map<LocatorHash, Package>();
     const allResolutions = new Map<DescriptorHash, LocatorHash>();
-
-    const haveBeenAliased = new Set<DescriptorHash>();
 
     let mustBeResolved = new Set<DescriptorHash>();
 
@@ -283,6 +288,8 @@ export class Project {
     }
 
     while (mustBeResolved.size !== 0) {
+      report.reportInfo(MessageName.RESOLUTION_PACK, `Resolution pack: ${mustBeResolved.size} elements`);
+
       // We remove from the "mustBeResolved" list all packages that have
       // already been resolved previously.
 
@@ -406,24 +413,16 @@ export class Project {
       // hasn't been seen before, we fetch its dependency list and schedule
       // them for the next cycle.
 
-      const newLocators = new Map<LocatorHash, Locator>();
+      const newLocators = Array.from(passResolutions.values()).filter(locator => {
+        return !allPackages.has(locator.locatorHash);
+      });
 
-      for (const locator of passResolutions.values()) {
-        if (allPackages.has(locator.locatorHash))
-          continue;
-
-        newLocators.set(locator.locatorHash, locator);
-      }
-
-      const newPackages = new Map(await Promise.all(Array.from(newLocators.values()).map(async locator => {
-        let pkg;
-
-        try {
-          pkg = await resolver.resolve(locator, resolverOptions);
-        } catch (error) {
-          error.message = `${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
-          throw error;
-        }
+      const newPackages = new Map(await Promise.all(newLocators.map(async locator => {
+        let pkg = await miscUtils.prettifyAsyncErrors(async () => {
+          return await resolver.resolve(locator, resolverOptions);
+        }, message => {
+          return `${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;
+        });
 
         if (!structUtils.areLocatorsEqual(locator, pkg))
           throw new Error(`Assertion failed: The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(this.configuration, locator)} to ${structUtils.prettyLocator(this.configuration, pkg)})`);
@@ -436,7 +435,7 @@ export class Project {
 
         for (const [source, target] of [[rawDependencies, dependencies], [rawPeerDependencies, peerDependencies]]) {
           for (const descriptor of source.values()) {
-            const normalizedDescriptor = await resolver.bindDescriptor(descriptor, locator, resolverOptions);
+            const normalizedDescriptor = resolver.bindDescriptor(descriptor, locator, resolverOptions);
             target.set(normalizedDescriptor.identHash, normalizedDescriptor);
           }
         }
@@ -444,14 +443,16 @@ export class Project {
         return [pkg.locatorHash, pkg] as [LocatorHash, Package];
       })));
 
-      // Now that the resolution is finished, we can finally insert the content
-      // from our temporary stores into the global ones, by making sure to do
-      // it in a predictable order.
+      // Now that the resolution is finished, we can finally insert the data
+      // stored inside our pass stores into the resolution ones (we now have
+      // the guarantee that they'll always be inserted into in the same order,
+      // since mustBeResolved is stable regardless of the order in which the
+      // resolvers return)
 
-      const stableOrder = mustBeResolved;
+      const haveBeenResolved = mustBeResolved;
       mustBeResolved = new Set();
 
-      for (const descriptorHash of stableOrder) {
+      for (const descriptorHash of haveBeenResolved) {
         const locator = passResolutions.get(descriptorHash);
         if (!locator)
           throw new Error(`Assertion failed: The locator should have been registered`);
@@ -474,79 +475,7 @@ export class Project {
         for (const descriptor of sortedDependencies) {
           allDescriptors.set(descriptor.descriptorHash, descriptor);
           mustBeResolved.add(descriptor.descriptorHash);
-
-          // We must check and make sure that the descriptor didn't get aliased
-          // to something else
-          const aliasHash = this.resolutionAliases.get(descriptor.descriptorHash);
-          if (aliasHash === undefined)
-            continue;
-
-          // It doesn't cost us much to support the case where a descriptor is
-          // equal to its own alias (which should mean "no alias")
-          if (descriptor.descriptorHash === aliasHash)
-            continue;
-
-          const alias = this.storedDescriptors.get(aliasHash);
-          if (!alias)
-            throw new Error(`Assertion failed: The alias should have been registered`);
-
-          // If it's already been "resolved" (in reality it will be the temporary
-          // resolution we've set in the next few lines) we simply must skip it
-          if (allResolutions.has(descriptor.descriptorHash))
-            continue;
-
-          // Temporarily set an invalid resolution so that it won't be resolved
-          // multiple times if it is found multiple times in the dependency
-          // tree (this is only temporary, we will replace it by the actual
-          // resolution after we've finished resolving everything)
-          allResolutions.set(descriptor.descriptorHash, `temporary` as LocatorHash);
-
-          // We can now replace the descriptor by its alias in the list of
-          // descriptors that must be resolved
-          mustBeResolved.delete(descriptor.descriptorHash);
-          mustBeResolved.add(aliasHash);
-
-          allDescriptors.set(aliasHash, alias);
-
-          haveBeenAliased.add(descriptor.descriptorHash);
         }
-      }
-    }
-
-    // Each package that should have been resolved but was skipped because it
-    // was aliased will now see the resolution for its alias propagated to it
-
-    while (haveBeenAliased.size > 0) {
-      let hasChanged = false;
-
-      for (const descriptorHash of haveBeenAliased) {
-        const descriptor = allDescriptors.get(descriptorHash);
-        if (!descriptor)
-          throw new Error(`Assertion failed: The descriptor should have been registered`);
-
-        const aliasHash = this.resolutionAliases.get(descriptorHash);
-        if (aliasHash === undefined)
-          throw new Error(`Assertion failed: The descriptor should have an alias`);
-
-        const resolution = allResolutions.get(aliasHash);
-        if (resolution === undefined)
-          throw new Error(`Assertion failed: The resolution should have been registered`);
-
-        // The following can happen if a package gets aliased to another package
-        // that's itself aliased - in this case we just process all those we can
-        // do, then make new passes until everything is resolved
-        if (resolution === `temporary`)
-          continue;
-
-        haveBeenAliased.delete(descriptorHash);
-
-        allResolutions.set(descriptorHash, resolution);
-
-        hasChanged = true;
-      }
-
-      if (!hasChanged) {
-        throw new Error(`Alias loop detected`);
       }
     }
 
@@ -982,7 +911,11 @@ export class Project {
         throw new Error(`Assertion failed: The package should have been registered`);
 
       // Virtual packages are not persisted into the lockfile: they need to be
-      // recomputed at runtime through "resolveEverything".
+      // recomputed at runtime through "resolveEverything". We do this (instead
+      // of "forgetting" them when reading the file like for "link:" locators)
+      // because it would otherwise be super annoying to manually change the
+      // resolutions from a lockfile - I'd like to allow at least for the time
+      // being.
       if (structUtils.isVirtualLocator(pkg))
         continue;
 

@@ -18,6 +18,7 @@
         "mkdirp": "^0.5.1",
         "pluralize": "^7.0.0",
         "pretty-bytes": "^5.1.0",
+        "semver": "^5.6.0",
         "stream-to-promise": "^2.2.0",
         "supports-color": "^5.5.0",
         "tar": "^4.4.6",

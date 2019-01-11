@@ -57,6 +57,18 @@ export function convertPackageToLocator(pkg: Package): Locator {
   return {identHash: pkg.identHash, scope: pkg.scope, name: pkg.name, locatorHash: pkg.locatorHash, reference: pkg.reference};
 }
 
+export function renamePackage(pkg: Package, locator: Locator) {
+  return {
+    ... locator,
+    
+    languageName: pkg.languageName,
+    linkType: pkg.linkType,
+
+    dependencies: new Map(pkg.dependencies),
+    peerDependencies: new Map(pkg.peerDependencies),
+  };
+}
+
 export function virtualizeDescriptor(descriptor: Descriptor, entropy: string): Descriptor {
   if (entropy.includes(`#`))
     throw new Error(`Invalid entropy`);
@@ -68,15 +80,7 @@ export function virtualizePackage(pkg: Package, entropy: string): Package {
   if (entropy.includes(`#`))
     throw new Error(`Invalid entropy`);
 
-  return {
-    ... makeLocator(pkg, `virtual:${entropy}#${pkg.reference}`),
-
-    languageName: pkg.languageName,
-    linkType: pkg.linkType,
-
-    dependencies: new Map(pkg.dependencies),
-    peerDependencies: new Map(pkg.peerDependencies),
-  };
+  return renamePackage(pkg, makeLocator(pkg, `virtual:${entropy}#${pkg.reference}`));
 }
 
 export function isVirtualDescriptor(descriptor: Descriptor): boolean {
@@ -107,7 +111,7 @@ export function areLocatorsEqual(a: Locator, b: Locator) {
 }
 
 export function parseIdent(string: string): Ident {
-  const match = string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)$/);
+  const match = string.match(/^(?:@([^\/]+?)\/)?([^\/]+)$/);
 
   if (!match)
     throw new Error(`Parse error (${string})`);
@@ -116,8 +120,8 @@ export function parseIdent(string: string): Ident {
   return makeIdent(scope, name);
 }
 
-export function parseDescriptor(string: string): Descriptor {
-  const descriptor = tryParseDescriptor(string);
+export function parseDescriptor(string: string, strict: boolean = false): Descriptor {
+  const descriptor = tryParseDescriptor(string, strict);
 
   if (!descriptor)
     throw new Error(`Parse error (${string})`);
@@ -125,8 +129,10 @@ export function parseDescriptor(string: string): Descriptor {
   return descriptor;
 }
 
-export function tryParseDescriptor(string: string): Descriptor | null {
-  const match = string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))?$/);
+export function tryParseDescriptor(string: string, strict: boolean = false): Descriptor | null {
+  const match = strict
+    ? string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))$/)
+    : string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))?$/);
 
   if (!match)
     return null;
@@ -139,8 +145,10 @@ export function tryParseDescriptor(string: string): Descriptor | null {
   return makeDescriptor(makeIdent(scope, name), range);
 }
 
-export function parseLocator(string: string): Locator {
-  const match = string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)@(.+)$/);
+export function parseLocator(string: string, strict: boolean = false): Locator {
+  const match = strict
+    ? string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))$/)
+    : string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))?$/);
 
   if (!match)
     throw new Error(`Parse error (${string})`);

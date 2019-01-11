@@ -1,21 +1,27 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions, Manifest} from '@berry/core';
-import {Ident, Descriptor, Locator}                                from '@berry/core';
-import {LinkType}                                                  from '@berry/core';
-import {httpUtils, structUtils}                                    from '@berry/core';
-import semver                                                      from 'semver';
+import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest} from '@berry/core';
+import {Ident, Descriptor, Locator}                                                          from '@berry/core';
+import {LinkType}                                                                            from '@berry/core';
+import {httpUtils, structUtils}                                                              from '@berry/core';
+import semver                                                                                from 'semver';
 
-import {DEFAULT_REGISTRY}                                          from './constants';
+import {DEFAULT_REGISTRY, PROTOCOL}                                                          from './constants';
 
 export class NpmSemverResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!semver.validRange(descriptor.range))
+    if (!descriptor.range.startsWith(PROTOCOL))
+      return false;
+
+    if (!semver.validRange(descriptor.range.slice(PROTOCOL.length)))
       return false;
 
     return true;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!semver.valid(locator.reference))
+    if (!locator.reference.startsWith(PROTOCOL))
+      return false;
+
+    if (!semver.valid(locator.reference.slice(PROTOCOL.length)))
       return false;
 
     return true;
@@ -30,38 +36,39 @@ export class NpmSemverResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
-    if (semver.valid(descriptor.range))
+    const range = descriptor.range.slice(PROTOCOL.length);
+
+    if (semver.valid(range))
       return [structUtils.convertDescriptorToLocator(descriptor)];
 
     const httpResponse = await httpUtils.get(this.getIdentUrl(descriptor, opts), opts.project.configuration);
 
     const versions = Object.keys(JSON.parse(httpResponse.toString()).versions);
-    const candidates = versions.filter(version => semver.satisfies(version, descriptor.range));
+    const candidates = versions.filter(version => semver.satisfies(version, range));
 
     candidates.sort((a, b) => {
       return semver.compare(a, b);
     });
 
-    return candidates.map(reference => {
-      return structUtils.makeLocator(descriptor, reference);
+    return candidates.map(version => {
+      return structUtils.makeLocator(descriptor, `${PROTOCOL}${version}`);
     });
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    if (!semver.valid(locator.reference))
-      throw new Error(`Invalid reference`);
+    const version = locator.reference.slice(PROTOCOL.length);
 
     const httpResponse = await httpUtils.get(this.getIdentUrl(locator, opts), opts.project.configuration);
     const registryData = JSON.parse(httpResponse.toString());
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
-      throw new Error(`Registry returned invalid data for "${structUtils.prettyLocator(opts.project.configuration, locator)}"`);
+      throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
 
-    if (!Object.prototype.hasOwnProperty.call(registryData.versions, locator.reference))
-      throw new Error(`Registry failed to return reference "${locator.reference}"`);
+    if (!Object.prototype.hasOwnProperty.call(registryData.versions, version))
+      throw new ReportError(MessageName.REMOTE_NOT_FOUND, `Registry failed to return reference "${version}"`);
 
     const manifest = new Manifest();
-    manifest.load(registryData.versions[locator.reference]);
+    manifest.load(registryData.versions[version]);
 
     const languageName = `node`;
     const linkType = LinkType.HARD;

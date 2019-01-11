@@ -1,3 +1,15 @@
+// Executes a chunk of code but slightly modify its exception message if it
+// throws something
+
+export async function prettifyAsyncErrors<T>(fn: () => Promise<T>, update: (message: string) => string) {
+  try {
+    return await fn();
+  } catch (error) {
+    error.message = update(error.message);
+    throw error;
+  }
+}
+
 // Webpack has this annoying tendency to replace dynamic requires by a stub
 // code that simply throws when called. It's all fine and dandy in the context
 // of a web application, but is quite annoying when working with Node projects!

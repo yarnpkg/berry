@@ -3,13 +3,16 @@ import {httpUtils, structUtils, tgzUtils}                        from '@berry/co
 import {Locator}                                                 from '@berry/core';
 import semver                                                    from 'semver';
 
-import {DEFAULT_REGISTRY}                                        from './constants';
+import {DEFAULT_REGISTRY, PROTOCOL}                              from './constants';
 
 export class NpmFetcher implements Fetcher {
   static mountPoint: string = `cached-fetchers`;
 
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (!semver.valid(locator.reference))
+    if (!locator.reference.startsWith(PROTOCOL))
+      return false;
+
+    if (!semver.valid(locator.reference.slice(PROTOCOL.length)))
       return false;
 
     return true;
@@ -31,12 +34,9 @@ export class NpmFetcher implements Fetcher {
   }
 
   private getLocatorUrl(locator: Locator, opts: FetchOptions) {
+    const version = locator.reference.slice(PROTOCOL.length);
     const registry = opts.project.configuration.registryServer || DEFAULT_REGISTRY;
 
-    if (locator.scope) {
-      return `${registry}/@${locator.scope}/${locator.name}/-/${locator.name}-${locator.reference}.tgz`;
-    } else {
-      return `${registry}/${locator.name}/-/${locator.name}-${locator.reference}.tgz`;
-    }
+    return `${registry}/${structUtils.requirableIdent(locator)}/-/${locator.name}-${version}.tgz`;
   }
 }

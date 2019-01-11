@@ -41,7 +41,7 @@ export class LinkFetcher implements Fetcher {
     if (typeof queryString.locator !== `string`)
       throw new Error(`Invalid link-type locator`);
 
-    const parentLocator = structUtils.parseLocator(queryString.locator);
+    const parentLocator = structUtils.parseLocator(queryString.locator, true);
 
     return {parentLocator, linkPath};
   }

@@ -1,3 +1,4 @@
+import {parseResolution}   from '@berry/parsers';
 import {FakeFS, NodeFS}    from '@berry/zipfs';
 import {posix}             from 'path';
 
@@ -33,6 +34,8 @@ export class Manifest {
   public dependenciesMeta: Map<string, DependencyMeta> = new Map();
   public peerDependenciesMeta: Map<string, PeerDependencyMeta> = new Map();
 
+  public resolutions: Array<{pattern: any, reference: string}> = [];
+
   static async find(path: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS} = {}) {
     return await Manifest.fromFile(posix.join(path, `package.json`), {baseFs});
   }
@@ -53,7 +56,7 @@ export class Manifest {
 
   load(data: any) {
     if (typeof data !== `object` || data === null)
-      throw new Error(`Utterly invalid manifest data`);
+      throw new Error(`Utterly invalid manifest data (${data})`);
 
     const errors: Array<Error> = [];
 
@@ -185,6 +188,22 @@ export class Manifest {
         }
 
         this.peerDependenciesMeta.set(name, meta);
+      }
+    }
+
+    if (typeof data.resolutions === `object` && data.resolutions !== null) {
+      for (const [pattern, reference] of Object.entries(data.resolutions)) {
+        if (typeof reference !== `string`) {
+          errors.push(new Error(`Invalid resolution entry for '${pattern}'`));
+          continue;
+        }
+
+        try {
+          this.resolutions.push({pattern: parseResolution(pattern), reference});
+        } catch (error) {
+          errors.push(error);
+          continue;
+        } 
       }
     }
 

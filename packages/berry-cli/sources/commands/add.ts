@@ -21,7 +21,7 @@ export default (concierge: any) => concierge
     const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
       await registerLegacyYarnResolutions(project);
 
-      const resolver = configuration.makeResolver({useLockfile: false});
+      const resolver = configuration.makeResolver();
       const fetcher = configuration.makeFetcher();
 
       const resolverOptions = {readOnly: false, rootFs: new NodeFS(), project, cache, fetcher, report, resolver};

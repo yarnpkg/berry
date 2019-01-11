@@ -51,7 +51,7 @@ export class TarballFileFetcher implements Fetcher {
     if (typeof queryString.locator !== `string`)
       throw new Error(`Invalid file-type locator`);
 
-    const parentLocator = structUtils.parseLocator(queryString.locator);
+    const parentLocator = structUtils.parseLocator(queryString.locator, true);
 
     return {parentLocator, filePath};
   }

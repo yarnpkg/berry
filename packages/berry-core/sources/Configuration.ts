@@ -5,10 +5,11 @@ import supportsColor                     from 'supports-color';
 import {promisify}                       from 'util';
 
 import {CacheFetcher}                    from './CacheFetcher';
-import {LockfileResolver}                from './LockfileResolver';
 import {MultiFetcher}                    from './MultiFetcher';
 import {MultiResolver}                   from './MultiResolver';
 import {Plugin}                          from './Plugin';
+import {SemverResolver}                  from './SemverResolver';
+import {TagResolver}                     from './TagResolver';
 import {VirtualFetcher}                  from './VirtualFetcher';
 import {WorkspaceBaseFetcher}            from './WorkspaceBaseFetcher';
 import {WorkspaceBaseResolver}           from './WorkspaceBaseResolver';
@@ -96,6 +97,7 @@ export class Configuration {
 
   // Settings related to how packages are interpreted by default
   public defaultLanguageName: string = `node`;
+  public defaultProtocol: string = `npm:`;
 
   // Settings related to network proxies
   public httpProxy: string | null = null;
@@ -233,7 +235,7 @@ export class Configuration {
     }
   }
 
-  makeResolver({useLockfile = true}: {useLockfile?: boolean} = {}) {
+  makeResolver() {
     const pluginResolvers = [];
 
     for (const plugin of this.plugins.values())
@@ -241,10 +243,11 @@ export class Configuration {
         pluginResolvers.push(new resolver());
 
     return new MultiResolver([
-      useLockfile ? new LockfileResolver() : null,
-
       new WorkspaceBaseResolver(),
       new WorkspaceResolver(),
+
+      new SemverResolver(),
+      new TagResolver(),
 
       ... pluginResolvers,
     ]);

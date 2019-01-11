@@ -6,6 +6,8 @@ import Joi             from 'joi';
 
 import {plugins}       from './plugins';
 
+Error.stackTraceLimit = Infinity;
+
 process.removeAllListeners("unhandledRejection");
 process.on('unhandledRejection', err => {
   console.error(`unhandled`, err.stack);
