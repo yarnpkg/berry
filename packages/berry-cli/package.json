@@ -9,6 +9,7 @@
         "@berry/core": "workspace:0.0.0",
         "@berry/parsers": "workspace:0.0.0",
         "@berry/shell": "workspace:0.0.0",
+        "@berry/zipfs": "workspace:0.0.0",
         "@manaflair/concierge": "^0.9.1",
         "chalk": "^2.4.1",
         "execa": "^1.0.0",
@@ -18,12 +19,16 @@
         "tmp": "^0.0.33"
     },
     "devDependencies": {
-        "@berry/builder": "0.0.0",
-        "@berry/plugin-github": "0.0.0",
-        "@berry/plugin-http": "0.0.0",
-        "@berry/plugin-hub": "0.0.0",
-        "@berry/plugin-npm": "0.0.0",
-        "@berry/pnp": "0.0.0"
+        "@berry/builder": "workspace:0.0.0",
+        "@berry/plugin-constraints": "workspace:0.0.0",
+        "@berry/plugin-file": "workspace:0.0.0",
+        "@berry/plugin-github": "workspace:0.0.0",
+        "@berry/plugin-http": "workspace:0.0.0",
+        "@berry/plugin-hub": "workspace:0.0.0",
+        "@berry/plugin-link": "workspace:0.0.0",
+        "@berry/plugin-npm": "workspace:0.0.0",
+        "@berry/plugin-pnp": "workspace:0.0.0",
+        "@berry/pnp": "workspace:0.0.0"
     },
     "scripts": {
         "build:cli": "run @berry-build-bundle",

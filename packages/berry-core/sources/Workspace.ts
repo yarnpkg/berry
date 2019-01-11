@@ -7,7 +7,7 @@ import {promisify}             from 'util';
 
 import {Manifest}              from './Manifest';
 import {Project}               from './Project';
-import {WorkspaceBaseResolver} from './WorkspaceBaseResolver';
+import {WorkspaceResolver}     from './WorkspaceResolver';
 import * as structUtils        from './structUtils';
 import {IdentHash}             from './types';
 import {Descriptor, Locator}   from './types';
@@ -80,11 +80,11 @@ export class Workspace {
   }
 
   get anchoredDescriptor() {
-    return structUtils.makeDescriptor(this.locator, `${WorkspaceBaseResolver.protocol}${this.locator.reference}`);
+    return structUtils.makeDescriptor(this.locator, `${WorkspaceResolver.protocol}${this.locator.reference}`);
   }
 
   get anchoredLocator() {
-    return structUtils.makeLocator(this.locator, `${WorkspaceBaseResolver.protocol}${this.locator.reference}`);
+    return structUtils.makeLocator(this.locator, `${WorkspaceResolver.protocol}${this.locator.reference}`);
   }
 
   async persistManifest() {

@@ -1,7 +1,8 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
-import {Descriptor, Locator}                             from '@berry/core';
-import {structUtils}                                     from '@berry/core';
 import semver                                            from 'semver';
+
+import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import * as structUtils                                  from './structUtils';
+import {Descriptor, Locator}                             from './types';
 
 export class SemverResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {

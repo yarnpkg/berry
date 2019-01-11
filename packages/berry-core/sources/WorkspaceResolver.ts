@@ -11,18 +11,17 @@ export class WorkspaceResolver implements Resolver {
       return true;
 
     const matchingWorkspaces = opts.project.findWorkspacesByDescriptor(descriptor);
-
-    if (matchingWorkspaces.length === 0)
-      return false;
-
-    return true;
-  }
-
-  supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (locator.reference.startsWith(WorkspaceResolver.protocol))
+    if (matchingWorkspaces.length > 0)
       return true;
 
     return false;
+  }
+
+  supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
+    if (!locator.reference.startsWith(WorkspaceResolver.protocol))
+      return false;
+
+    return true;
   }
 
   shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
@@ -41,7 +40,6 @@ export class WorkspaceResolver implements Resolver {
 
     if (candidateWorkspaces.length < 1)
       throw new Error(`This range can only be resolved by a local workspace, but none match the specified range`);
-
     if (candidateWorkspaces.length > 1)
       throw new Error(`This range must be resolved by exactly one local workspace, too many found`);
 
@@ -51,24 +49,11 @@ export class WorkspaceResolver implements Resolver {
   async resolve(locator: Locator, opts: ResolveOptions) {
     const workspace = opts.project.getWorkspaceByLocator(locator);
 
-    const languageName = opts.project.configuration.defaultLanguageName;
+    const languageName = `unknown`;
     const linkType = LinkType.SOFT;
 
-    const dependencies = new Map(workspace.manifest.dependencies);
-    const peerDependencies = new Map(workspace.manifest.peerDependencies);
-
-    for (const workspaceCwd of workspace.workspacesCwds) {
-      const childWorkspace = opts.project.getWorkspaceByCwd(workspaceCwd);
-
-      // If the workspace being resolved has an explicit dependency on one of
-      // its sub-workspaces, then we must honor it over the implicit dependency
-      const hasExplicitDep = dependencies.has(childWorkspace.locator.identHash);
-      if (hasExplicitDep)
-        continue;
-
-      const childDescriptor = structUtils.makeDescriptor(childWorkspace.locator, `${WorkspaceResolver.protocol}${childWorkspace.locator.reference}`);
-      dependencies.set(childDescriptor.identHash, childDescriptor);
-    }
+    const dependencies = new Map([... workspace.manifest.dependencies, ... workspace.manifest.devDependencies]);
+    const peerDependencies = new Map([... workspace.manifest.peerDependencies]);
 
     return {... locator, languageName, linkType, dependencies, peerDependencies};
   }

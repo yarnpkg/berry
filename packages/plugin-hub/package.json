@@ -4,6 +4,7 @@
     "private": true,
     "main": "./sources/index.ts",
     "dependencies": {
+        "@berry/core": "workspace:0.0.0",
         "@berry/json-proxy": "workspace:0.0.0",
         "@berry/ui": "workspace:0.0.0",
         "@manaflair/concierge": "^0.9.1",
@@ -15,13 +16,6 @@
         "react": "^16.5.2",
         "redux-saga": "^1.0.0-beta.3",
         "redux": "^4.0.0"
-    },
-    "devDependencies": {
-        "@berry/builder": "0.0.0"
-    },
-    "peerDependencies": {
-        "@berry/cli": "0.0.0",
-        "@berry/core": "0.0.0"
     },
     "scripts": {
         "build": "@berry/build-plugin"

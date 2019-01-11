@@ -1,6 +1,6 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
-import {Descriptor, Locator}                             from '@berry/core';
-import {structUtils}                                     from '@berry/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import * as structUtils                                  from './structUtils';
+import {Descriptor, Locator}                             from './types';
 
 export const TAG_REGEXP = /^[a-z]+$/;
 

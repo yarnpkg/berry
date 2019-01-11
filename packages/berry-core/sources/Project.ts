@@ -15,7 +15,6 @@ import {Linker}                                             from './Linker';
 import {LockfileResolver}                                   from './LockfileResolver';
 import {MultiResolver}                                      from './MultiResolver';
 import {Report, ReportError, MessageName}                   from './Report';
-import {WorkspaceBaseResolver}                              from './WorkspaceBaseResolver';
 import {WorkspaceResolver}                                  from './WorkspaceResolver';
 import {Workspace}                                          from './Workspace';
 import {YarnResolver}                                       from './YarnResolver';
@@ -199,9 +198,7 @@ export class Project {
   }
 
   tryWorkspaceByLocator(locator: Locator) {
-    if (locator.reference.startsWith(WorkspaceBaseResolver.protocol))
-      locator = structUtils.makeLocator(locator, locator.reference.slice(WorkspaceBaseResolver.protocol.length));
-    else if (locator.reference.startsWith(WorkspaceResolver.protocol))
+    if (locator.reference.startsWith(WorkspaceResolver.protocol))
       locator = structUtils.makeLocator(locator, locator.reference.slice(WorkspaceResolver.protocol.length));
 
     const workspace = this.workspacesByLocator.get(locator.locatorHash);
@@ -580,9 +577,6 @@ export class Project {
       const pkg = allPackages.get(workspace.anchoredLocator.locatorHash);
       if (!pkg)
         throw new Error(`Assertion failed: Expected workspace to have been resolved`);
-
-      if (pkg.peerDependencies.size > 0)
-        throw new Error(`Assertion failed: Didn't expect root workspaces to have peer dependencies`);
 
       workspace.dependencies = pkg.dependencies;
     }
