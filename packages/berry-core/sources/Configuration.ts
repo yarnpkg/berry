@@ -1,4 +1,5 @@
 import {parseSyml, stringifySyml}        from '@berry/parsers';
+import chalk                             from 'chalk';
 import {existsSync, readFile, writeFile} from 'fs';
 import {dirname, resolve}                from 'path';
 import supportsColor                     from 'supports-color';
@@ -13,6 +14,9 @@ import {TagResolver}                     from './TagResolver';
 import {VirtualFetcher}                  from './VirtualFetcher';
 import {WorkspaceFetcher}                from './WorkspaceFetcher';
 import {WorkspaceResolver}               from './WorkspaceResolver';
+
+// @ts-ignore
+const ctx: any = new chalk.constructor({enabled: true});
 
 const readFileP = promisify(readFile);
 const writeFileP = promisify(writeFile);
@@ -289,5 +293,17 @@ export class Configuration {
         linkers.push(new linker());
 
     return linkers;
+  }
+
+  format(text: string, color: string) {
+    if (this.enableColors) {
+      if (color.charAt(0) === `#`) {
+        return ctx.hex(color)(text);
+      } else {
+        return ctx[color](text);
+      }
+    } else {
+      return text;
+    }
   }
 }

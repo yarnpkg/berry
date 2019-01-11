@@ -1,4 +1,3 @@
-import chalk                                    from 'chalk';
 import {createHmac}                             from 'crypto';
 
 import {Configuration}                          from './Configuration';
@@ -8,17 +7,6 @@ import {Ident, Descriptor, Locator, Package}    from './types';
 
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 12;
-
-// @ts-ignore
-const ctx = new chalk.constructor({enabled: true});
-
-function color(configuration: Configuration, text: string, color: string) {
-  if (configuration.enableColors) {
-    return ctx.hex(color)(text);
-  } else {
-    return text;
-  }
-}
 
 export function makeHash<T>(... args: Array<string | null>): T {
   const hmac = createHmac(`sha512`, `berry`);
@@ -199,9 +187,9 @@ export function slugifyLocator(locator: Locator) {
 
 export function prettyIdent(configuration: Configuration, ident: Ident) {
   if (ident.scope) {
-    return `${color(configuration, `@${ident.scope}/`, `#d75f00`)}${color(configuration, ident.name, `#d7875f`)}`;
+    return `${configuration.format(`@${ident.scope}/`, `#d75f00`)}${configuration.format(ident.name, `#d7875f`)}`;
   } else {
-    return `${color(configuration, ident.name, `#d7875f`)}`;
+    return `${configuration.format(ident.name, `#d7875f`)}`;
   }
 }
 
@@ -211,11 +199,11 @@ export function prettyRange(configuration: Configuration, range: string) {
 
   range = range.replace(/\?.*/, `?[...]`);
 
-  return `${color(configuration, range, `#00afaf`)}`;
+  return `${configuration.format(range, `#00afaf`)}`;
 }
 
 export function prettyDescriptor(configuration: Configuration, descriptor: Descriptor) {
-  return `${prettyIdent(configuration, descriptor)}${color(configuration, `@`, `#00afaf`)}${prettyRange(configuration, descriptor.range)}`;
+  return `${prettyIdent(configuration, descriptor)}${configuration.format(`@`, `#00afaf`)}${prettyRange(configuration, descriptor.range)}`;
 }
 
 export function prettyReference(configuration: Configuration, reference: string) {
@@ -224,11 +212,11 @@ export function prettyReference(configuration: Configuration, reference: string)
   
   reference = reference.replace(/\?.*/, `?[...]`);
 
-  return `${color(configuration, reference, `#87afff`)}`;
+  return `${configuration.format(reference, `#87afff`)}`;
 }
 
 export function prettyLocator(configuration: Configuration, locator: Locator) {
-  return `${prettyIdent(configuration, locator)}${color(configuration, `@`, `#87afff`)}${prettyReference(configuration, locator.reference)}`;
+  return `${prettyIdent(configuration, locator)}${configuration.format(`@`, `#87afff`)}${prettyReference(configuration, locator.reference)}`;
 }
 
 export function sortDescriptors(descriptors: Iterable<Descriptor>) {
