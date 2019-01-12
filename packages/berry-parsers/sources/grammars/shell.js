@@ -195,8 +195,8 @@ function peg$parse(input, options) {
       peg$c51 = /^[@*#a-zA-Z0-9_\-]/,
       peg$c52 = peg$classExpectation(["@", "*", "#", ["a", "z"], ["A", "Z"], ["0", "9"], "_", "-"], false, false),
       peg$c53 = function() { return text() },
-      peg$c54 = /^[()$|<>&; \t]/,
-      peg$c55 = peg$classExpectation(["(", ")", "$", "|", "<", ">", "&", ";", " ", "\t"], false, false),
+      peg$c54 = /^[()$|<>&; \t"']/,
+      peg$c55 = peg$classExpectation(["(", ")", "$", "|", "<", ">", "&", ";", " ", "\t", "\"", "'"], false, false),
       peg$c56 = /^[ \t]/,
       peg$c57 = peg$classExpectation([" ", "\t"], false, false),
 

@@ -77,6 +77,6 @@ Identifier
   = [@*#a-zA-Z0-9_-]+ { return text() }
 
 SpecialShellChars
-  = [()$|<>&; \t]
+  = [()$|<>&; \t"']
 
 S = [ \t]+

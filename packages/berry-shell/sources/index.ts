@@ -147,6 +147,7 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
     };
 
     for (const commandArg of commandArgs) {
+      console.log(commandArg)
       for (const segment of commandArg) {
 
         if (typeof segment === 'string') {
