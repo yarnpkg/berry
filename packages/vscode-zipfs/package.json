@@ -1,0 +1,46 @@
+{
+    "name": "vscode-zipfs",
+    "displayName": "ZipFS - a zip file system",
+    "description": "Allows to easily inspect and modify files stored within zip archives.",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.23.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onFileSystem:zipfs",
+        "onCommand:zipfs.workspaceInit"
+    ],
+    "main": "./build/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "zipfs.workspaceInit",
+                "title": "Open Workspace",
+                "category": "ZipFS"
+            }
+        ],
+        "menus": {
+            "commandPalette": [
+                {
+                    "command": "memfs.init",
+                    "when": "workbenchState == workspace"
+                }
+            ]
+        }
+    },
+    "devDependencies": {
+        "@berry/zipfs": "workspace:0.0.0",
+        "pnp-webpack-plugin": "^1.2.1",
+        "ts-loader": "^5.3.3",
+        "typescript": "^3.0.1",
+        "webpack-cli": "npm:3.2.1",
+        "webpack": "^4.28.4"
+    },
+    "scripts": {
+        "build:vscode-zipfs": "run build",
+        "build": "run webpack-cli"
+    }
+}
