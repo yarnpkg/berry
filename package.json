@@ -36,6 +36,9 @@
     "dependenciesMeta": {
         "fsevents": {
             "build": false
+        },
+        "webpack-cli": {
+            "build": false
         }
     }
 }
