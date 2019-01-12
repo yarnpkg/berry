@@ -34,6 +34,10 @@ const BUILTINS = {
     contextOpts.cwd = target;
   },
 
+  pwd([target, ... rest]: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
+    commandOpts.stdout.write(`${contextOpts.cwd}\n`);
+  },
+
   async command([ident, ... rest]: Array<string>, {cwd, env: commandEnv, stdin, stdout, stderr}: ShellOptions, contextOpts: ShellOptions) {
     const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
 
@@ -114,7 +118,7 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
       text += decoder.end();
     });
 
-    await runShellAst(ast, {... opts});
+    await runShellAst(ast, {... opts, stdout});
 
     return text;
   }
