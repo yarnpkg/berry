@@ -55,7 +55,7 @@ const BUILTINS = {
 
     if (env.PATH && posix.delimiter !== delimiter)
       env.PATH = env.PATH.replace(new RegExp(posix.delimiter, `g`), delimiter);
-
+    
     const subprocess = execa(ident, rest, {
       preferLocal: false,
       cwd,
@@ -205,8 +205,9 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
           }
         }
 
-        close();
       }
+
+      close();
     }
 
     return interpolated;
