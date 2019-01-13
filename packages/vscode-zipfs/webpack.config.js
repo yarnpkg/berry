@@ -7,11 +7,12 @@ module.exports = {
 
   target: `node`,
 
-  context: __dirname,
-  entry: `./sources/index.ts`,
+  context: `${__dirname}/sources`,
+  entry: `./index.ts`,
 
   output: {
     filename: `index.js`,
+    libraryTarget: `commonjs2`,
     path: path.resolve(__dirname, `build`),
   },
 
@@ -23,9 +24,20 @@ module.exports = {
     }], 
   },
 
+  externals: {
+    [`vscode`]: `vscode`,
+  },
+
+  resolve: {
+    extensions: [`.ts`, `.js`],
+    plugins: [
+      PnpWebpackPlugin,
+    ],
+  },
+
   resolveLoader: {
     plugins: [
       PnpWebpackPlugin.moduleLoader(module),
-    ]
-  }
+    ],
+  },
 };

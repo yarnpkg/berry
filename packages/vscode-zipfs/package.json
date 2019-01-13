@@ -1,5 +1,6 @@
 {
     "name": "vscode-zipfs",
+    "publisher": "arcanis",
     "displayName": "ZipFS - a zip file system",
     "description": "Allows to easily inspect and modify files stored within zip archives.",
     "version": "0.0.1",
@@ -10,23 +11,52 @@
         "Other"
     ],
     "activationEvents": [
-        "onFileSystem:zipfs",
-        "onCommand:zipfs.workspaceInit"
+        "workspaceContains:**/*.zip",
+        "onLanguage:zip",
+        "onFileSystem:zip"
     ],
-    "main": "./build/extension",
+    "main": "./build/index.js",
     "contributes": {
+        "languages": [
+            {
+                "id": "zip",
+                "aliases": [
+                    "Zip Archive",
+                    "ZIP"
+                ],
+                "extensions": [
+                    ".zip"
+                ]
+            }
+        ],
         "commands": [
             {
-                "command": "zipfs.workspaceInit",
-                "title": "Open Workspace",
-                "category": "ZipFS"
+                "command": "zipfs.mountZipFile",
+                "title": "Mount as Zip",
+                "category": "Zip"
+            },
+            {
+                "command": "zipfs.mountZipEditor",
+                "title": "Mount the current file as a workspace",
+                "category": "Zip"
             }
         ],
         "menus": {
+            "explorer/context": [
+                {
+                    "when": "resourceLangId == zip",
+                    "command": "zipfs.mountZipFile",
+                    "group": "navigation"
+                }
+            ],
             "commandPalette": [
                 {
-                    "command": "memfs.init",
-                    "when": "workbenchState == workspace"
+                    "when": "false",
+                    "command": "zipfs.mountZipFile"
+                },
+                {
+                    "when": "editorLangId == zip",
+                    "command": "zipfs.mountZipEditor"
                 }
             ]
         }
@@ -36,11 +66,14 @@
         "pnp-webpack-plugin": "^1.2.1",
         "ts-loader": "^5.3.3",
         "typescript": "^3.0.1",
+        "vsce": "npm:1.54.0",
         "webpack-cli": "npm:3.2.1",
         "webpack": "^4.28.4"
     },
     "scripts": {
         "build:vscode-zipfs": "run build",
-        "build": "run webpack-cli"
+        "build": "run webpack-cli",
+        "watch": "run webpack-cli --watch",
+        "code": "code --extensionDevelopmentPath=\"$(pwd)\" \"$(pwd)\""
     }
 }

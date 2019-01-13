@@ -1,20 +1,21 @@
-import {ZipFS}     from '@berry/zipfs';
+import {ZipOpenFS} from '@berry/zipfs';
 import {posix}     from 'path';
 import * as vscode from 'vscode';
 
-export class VSCodeZipFS {
-}
-
-/*
-export class VSCodeZipFS implements vscode.FileSystemProvider {
-    private readonly zipFs: ZipFS;
-
-    constructor(zipFs: ZipFS) {
-        this.zipFs = zipFs;
-    }
+export class ZipFSProvider implements vscode.FileSystemProvider {
+    private readonly zipFs = new ZipOpenFS({useCache: false});
 
     stat(uri: vscode.Uri): vscode.FileStat {
-        return this.zipFs.statSync(uri.path);
+        const stat: any = this.zipFs.statSync(uri.path);
+
+        if (stat.isDirectory())
+            stat.type = vscode.FileType.Directory;
+        else if (stat.isFile())
+            stat.type = vscode.FileType.File;
+        else
+            stat.type = vscode.FileType.Unknown;
+
+        return stat;
     }
 
     readDirectory(uri: vscode.Uri): [string, vscode.FileType][] {
@@ -35,11 +36,16 @@ export class VSCodeZipFS implements vscode.FileSystemProvider {
     }
 
     readFile(uri: vscode.Uri): Uint8Array {
-        return this.zipFs.readFile(uri.path);
+        return this.zipFs.readFileSync(uri.path) as any as Buffer;
     }
 
     writeFile(uri: vscode.Uri, content: Uint8Array, options: {create: boolean, overwrite: boolean}): void {
-        throw new Error(`Not supported`);
+        if (!options.create && !this.zipFs.existsSync(uri.path))
+            throw new Error(``);
+        if (options.create && !options.overwrite && this.zipFs.existsSync(uri.path))
+            throw new Error(``);
+        
+        this.zipFs.writeFileSync(uri.path, new Buffer(content));
     }
 
     rename(oldUri: vscode.Uri, newUri: vscode.Uri, options: { overwrite: boolean }): void {
@@ -51,14 +57,13 @@ export class VSCodeZipFS implements vscode.FileSystemProvider {
     }
 
     createDirectory(uri: vscode.Uri): void {
-        throw new Error(`Not supported`);
+        this.zipFs.mkdirSync(uri.path);
     }
 
     private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
     readonly onDidChangeFile = this._emitter.event;
 
-    watch(resource: vscode.Uri, opts): vscode.Disposable {
+    watch(resource: vscode.Uri, opts: any): vscode.Disposable {
         return new vscode.Disposable(() => {});
     }
 }
-*/
