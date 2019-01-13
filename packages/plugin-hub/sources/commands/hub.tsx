@@ -1,3 +1,6 @@
+export default () => {};
+
+/*
 import React = require('react');
 
 import {Configuration, Workspace, Plugin, Project} from '@berry/core';
@@ -98,7 +101,7 @@ function projectReducer(state: State | undefined, action: Action): State {
   return produce(state, (draft: Draft<State>) => {
     switch (action.type) {
       case `UPDATE_PROJECT`: {
-        draft.project = action.project;
+        //draft.project = action.project;
       } break;
     }
   });
@@ -132,3 +135,4 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       <WorkspacesScreen />
     </Provider>);
   });
+*/
