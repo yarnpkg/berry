@@ -200,7 +200,9 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
     throw new Error(`Binary not found (${binaryName}) for ${structUtils.prettyLocator(project.configuration, locator)}`);
 
   const [pkg, binaryPath] = binary;
-  await execUtils.execFile(process.execPath, [binaryPath, ... args], {cwd, stdin, stdout, stderr});
+  const env = await makeScriptEnv(project);
+
+  await execUtils.execFile(process.execPath, [binaryPath, ... args], {cwd, env, stdin, stdout, stderr});
 }
 
 type ExecuteWorkspaceAccessibleBinaryOptions = {
