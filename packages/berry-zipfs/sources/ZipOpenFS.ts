@@ -7,6 +7,7 @@ import {ZipFS}  from './ZipFS';
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS,
   filter?: RegExp | null,
+  useCache?: boolean,
 };
 
 export class ZipOpenFS extends FakeFS {
@@ -30,17 +31,19 @@ export class ZipOpenFS extends FakeFS {
 
   private readonly baseFs: FakeFS;
 
-  private readonly zipInstances: Map<string, ZipFS> = new Map();
+  private readonly zipInstances: Map<string, ZipFS> | null;
 
   private readonly filter?: RegExp | null;
 
   private isZip: Set<string> = new Set();
   private notZip: Set<string> = new Set();
 
-  constructor({baseFs = new NodeFS(), filter = null}: ZipOpenFSOptions = {}) {
+  constructor({baseFs = new NodeFS(), filter = null, useCache = true}: ZipOpenFSOptions = {}) {
     super();
 
     this.baseFs = baseFs;
+
+    this.zipInstances = useCache ? new Map() : null;
 
     this.filter = filter;
 
@@ -53,8 +56,10 @@ export class ZipOpenFS extends FakeFS {
   }
 
   close() {
-    for (const zipFs of this.zipInstances.values()) {
-      zipFs.close();
+    if (this.zipInstances) {
+      for (const zipFs of this.zipInstances.values()) {
+        zipFs.close();
+      }
     }
   }
 
@@ -266,7 +271,7 @@ export class ZipOpenFS extends FakeFS {
     if (!zipInfo)
       return await discard();
 
-    return await accept(await this.getZipPromise(zipInfo.archivePath), zipInfo);
+    return await this.getZipPromise(zipInfo.archivePath, async zipFs => await accept(zipFs, zipInfo));
   }
 
   private makeCallSync<T>(p: string, discard: () => T, accept: (zipFS: ZipFS, zipInfo: {archivePath: string, subPath: string}) => T): T {
@@ -277,7 +282,7 @@ export class ZipOpenFS extends FakeFS {
     if (!zipInfo)
       return discard();
 
-    return accept(this.getZipSync(zipInfo.archivePath), zipInfo);
+    return this.getZipSync(zipInfo.archivePath, zipFs => accept(zipFs, zipInfo));
   }
 
   private findZip2(p: string) {
@@ -347,21 +352,41 @@ export class ZipOpenFS extends FakeFS {
     return null;
   }
 
-  private async getZipPromise(p: string) {
-    let zipFs = this.zipInstances.get(p);
+  private async getZipPromise<T>(p: string, accept: (zipFs: ZipFS) => Promise<T>) {
+    if (this.zipInstances) {
+      let zipFs = this.zipInstances.get(p);
 
-    if (!zipFs)
-      this.zipInstances.set(p, zipFs = new ZipFS(p, {baseFs: this.baseFs, stats: await this.baseFs.statPromise(p)}));
+      if (!zipFs)
+        this.zipInstances.set(p, zipFs = new ZipFS(p, {baseFs: this.baseFs, stats: await this.baseFs.statPromise(p)}));
 
-    return zipFs;
+      return await accept(zipFs);
+    } else {
+      const zipFs = new ZipFS(p, {baseFs: this.baseFs, stats: await this.baseFs.statPromise(p)});
+
+      try {
+        return await accept(zipFs);
+      } finally {
+        zipFs.close();
+      }
+    }
   }
 
-  private getZipSync(p: string) {
-    let zipFs = this.zipInstances.get(p);
+  private getZipSync<T>(p: string, accept: (zipFs: ZipFS) => T) {
+    if (this.zipInstances) {
+      let zipFs = this.zipInstances.get(p);
 
-    if (!zipFs)
-      this.zipInstances.set(p, zipFs = new ZipFS(p, {baseFs: this.baseFs}));
+      if (!zipFs)
+        this.zipInstances.set(p, zipFs = new ZipFS(p, {baseFs: this.baseFs}));
 
-    return zipFs;
+      return accept(zipFs);
+    } else {
+      const zipFs = new ZipFS(p, {baseFs: this.baseFs});
+
+      try {
+        return accept(zipFs);
+      } finally {
+        zipFs.close();
+      }
+    }
   }
 }
