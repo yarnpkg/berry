@@ -22,6 +22,10 @@ export class AliasFS extends FakeFS {
     return this.target;
   }
 
+  getBaseFs() {
+    return this.baseFs;
+  }
+
   createReadStream(p: string, opts: {encoding?: string}) {
     return this.baseFs.createReadStream(p, opts);
   }

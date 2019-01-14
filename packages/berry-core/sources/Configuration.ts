@@ -24,8 +24,10 @@ const writeFileP = promisify(writeFile);
 // The keys defined in this array will be resolved and normalized relative to
 // the path of their source configuration (usually the .berryrc directory)
 const RELATIVE_KEYS = new Set([
+  `executable-path`,
   `bstate-path`,
   `cache-folder`,
+  `virtual-folder`,
   `pnp-path`,
   `pnp-unplugged-folder`,
 ]);
@@ -90,7 +92,8 @@ export class Configuration {
 
   // Settings related to the package manager internal names
   public lockfileName: string = `berry.lock`;
-  public cacheFolder: string | null = `./.berry/cache`;
+  public cacheFolder: string = `./.berry/cache`;
+  public virtualFolder: string = `./.berry/virtual`;
   public bstatePath: string = `./.berry/buildState.json`;
 
   // Settings related to the output style
