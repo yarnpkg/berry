@@ -266,8 +266,7 @@ export class ZipOpenFS extends FakeFS {
   private async makeCallPromise<T>(p: string, discard: () => Promise<T>, accept: (zipFS: ZipFS, zipInfo: {archivePath: string, subPath: string}) => Promise<T>): Promise<T> {
     p = posix.normalize(posix.resolve(`/`, p));
 
-    const zipInfo = this.findZip2(p);
-
+    const zipInfo = this.findZip(p);
     if (!zipInfo)
       return await discard();
 
@@ -277,8 +276,7 @@ export class ZipOpenFS extends FakeFS {
   private makeCallSync<T>(p: string, discard: () => T, accept: (zipFS: ZipFS, zipInfo: {archivePath: string, subPath: string}) => T): T {
     p = posix.normalize(posix.resolve(`/`, p));
 
-    const zipInfo = this.findZip2(p);
-
+    const zipInfo = this.findZip(p);
     if (!zipInfo)
       return discard();
 

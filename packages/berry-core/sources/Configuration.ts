@@ -5,7 +5,6 @@ import {dirname, resolve}                from 'path';
 import supportsColor                     from 'supports-color';
 import {promisify}                       from 'util';
 
-import {CacheFetcher}                    from './CacheFetcher';
 import {MultiFetcher}                    from './MultiFetcher';
 import {MultiResolver}                   from './MultiResolver';
 import {Plugin}                          from './Plugin';
@@ -257,34 +256,17 @@ export class Configuration {
   }
 
   makeFetcher() {
-    const getPluginFetchers = (hookName: string) => {
-      const fetchers = [];
+    const pluginFetchers = [];
 
-      for (const plugin of this.plugins.values()) {
-        if (!plugin.fetchers)
-          continue;
-
-        for (const fetcher of plugin.fetchers) {
-          if (fetcher.mountPoint === hookName) {
-            fetchers.push(new fetcher());
-          }
-        }
-      }
-
-      return fetchers;
-    };
+    for (const plugin of this.plugins.values())
+      for (const fetcher of plugin.fetchers || [])
+        pluginFetchers.push(new fetcher());
 
     return new MultiFetcher([
       new VirtualFetcher(),
       new WorkspaceFetcher(),
 
-      new MultiFetcher(
-        getPluginFetchers(`virtual-fetchers`),
-      ),
-
-      new CacheFetcher(new MultiFetcher(
-        getPluginFetchers(`cached-fetchers`),
-      )),
+      ... pluginFetchers,
     ]);
   }
 

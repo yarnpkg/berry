@@ -1,4 +1,4 @@
-import {AliasFS, FakeFS, ZipFS}             from '@berry/zipfs';
+import {AliasFS}                            from '@berry/zipfs';
 import {mkdirp}                             from 'fs-extra';
 import {readlink, symlink}                  from 'fs';
 import {dirname, relative, resolve}         from 'path';
@@ -28,20 +28,14 @@ export class VirtualFetcher implements Fetcher {
     const nextReference = locator.reference.slice(splitPoint + 1);
     const nextLocator = structUtils.makeLocator(locator, nextReference);
 
-    const [parentFs, release] = await opts.fetcher.fetch(nextLocator, opts);
+    const parentFetch = await opts.fetcher.fetch(nextLocator, opts);
 
-    try {
-      return [await this.ensureVirtualLink(locator, parentFs, opts), release] as FetchResult;
-    } catch (error) {
-      await release();
-      throw error;
-    }
+    return await this.ensureVirtualLink(locator, parentFetch, opts);
   }
 
-  private async ensureVirtualLink(locator: Locator, targetFs: FakeFS, opts: FetchOptions) {
-    let virtualLink = resolve(opts.project.configuration.virtualFolder, opts.cache.getCacheKey(locator));
-    if (targetFs instanceof ZipFS)
-      virtualLink += `.zip`;
+  private async ensureVirtualLink(locator: Locator, sourceFetch: FetchResult, opts: FetchOptions) {
+    const virtualLink = resolve(opts.project.configuration.virtualFolder, opts.cache.getCacheKey(locator));
+    const relativeTarget = relative(dirname(virtualLink), sourceFetch.packageFs.getRealPath());
 
     let currentLink;
     try {
@@ -52,16 +46,17 @@ export class VirtualFetcher implements Fetcher {
       }
     }
 
-    const relativeTarget = relative(dirname(virtualLink), targetFs.getRealPath());
-
     if (currentLink !== undefined && currentLink !== relativeTarget)
-      throw new Error(`Conflicting virtual paths (${currentLink} != ${relativeTarget})`);
+      throw new Error(`Conflicting virtual paths (current ${currentLink} != new ${relativeTarget})`);
 
     if (currentLink === undefined) {
       await mkdirp(dirname(virtualLink));
       await symlinkP(relativeTarget, virtualLink);
     }
 
-    return new AliasFS(virtualLink, {baseFs: targetFs});    
+    return {
+      ... sourceFetch,
+      packageFs: new AliasFS(virtualLink, {baseFs: sourceFetch.packageFs})
+    };
   }
 }

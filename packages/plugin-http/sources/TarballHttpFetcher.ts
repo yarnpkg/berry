@@ -1,12 +1,10 @@
-import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from '@berry/core';
-import {httpUtils, tgzUtils}                                     from '@berry/core';
-import {Locator, Manifest}                                       from '@berry/core';
+import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
+import {Locator, MessageName}                       from '@berry/core';
+import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
 
-import {TARBALL_REGEXP, PROTOCOL_REGEXP}                         from './constants';
+import {TARBALL_REGEXP, PROTOCOL_REGEXP}            from './constants';
 
 export class TarballHttpFetcher implements Fetcher {
-  static mountPoint: string = `cached-fetchers`;
-
   supports(locator: Locator, opts: MinimalFetchOptions) {
     if (!TARBALL_REGEXP.test(locator.reference))
       return false;
@@ -18,13 +16,19 @@ export class TarballHttpFetcher implements Fetcher {
   }
 
   async fetch(locator: Locator, opts: FetchOptions) {
-    const tgz = await httpUtils.get(locator.reference, opts.project.configuration);
-
-    const packageFs = await tgzUtils.makeArchive(tgz, {
-      stripComponents: 1,
-      prefixPath: `berry-pkg`,
+    const packageFs = await opts.cache.fetchFromCache(locator, async () => {
+      opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote server`);
+      return await this.fetchFromNetwork(locator, opts);
     });
 
-    return [packageFs, async () => packageFs.close()] as FetchResult;
+    return {packageFs, prefixPath: `/`};
+  }
+
+  async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
+    const sourceBuffer = await httpUtils.get(locator.reference, opts.project.configuration);
+
+    return await tgzUtils.makeArchive(sourceBuffer, {
+      stripComponents: 1,
+    });
   }
 }

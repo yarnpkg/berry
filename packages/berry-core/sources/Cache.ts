@@ -55,14 +55,14 @@ export class Cache {
     });
   }
 
-  async fetchFromCache(locator: Locator, loader?: () => Promise<FetchResult>): Promise<FetchResult> {
+  async fetchFromCache(locator: Locator, loader?: () => Promise<ZipFS>): Promise<ZipFS> {
     const key = this.getCacheKey(locator);
-    const file = this.getFilePath(key);
+    const cachePath = this.getFilePath(key);
 
     const baseFs = new NodeFS();
 
-    return await this.writeFileIntoCache<FetchResult>(file, async () => {
-      if (baseFs.existsSync(file)) {
+    return await this.writeFileIntoCache<ZipFS>(cachePath, async () => {
+      if (baseFs.existsSync(cachePath)) {
         this.cacheHitCount += 1;
       } else {
         this.cacheMissCount += 1;
@@ -70,39 +70,25 @@ export class Cache {
         if (!loader)
           throw new Error(`Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
 
-        const [packageFs, release] = await loader();
+        const zipFs = await loader();
+        const originalPath = zipFs.getRealPath();
 
-        if (!(packageFs instanceof ZipFS))
-          throw new Error(`The fetchers plugged into the cache must return a ZipFS instance`);
+        zipFs.close();
 
-        const source = packageFs.getRealPath();
-        await release();
-
-        await chmodP(source, 0o644);
-        await move(source, file);
+        await chmodP(originalPath, 0o644);
+        await move(originalPath, cachePath);
       }
 
       let zipFs: ZipFS;
-      let packageFs: FakeFS;
 
       try {
-        packageFs = zipFs = new ZipFS(file, {readOnly: true, baseFs});
+        zipFs = new ZipFS(cachePath, {readOnly: true, baseFs});
       } catch (error) {
         error.message = `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
         throw error;
       }
 
-      if (packageFs.existsSync(`berry-pkg`)) {
-        const stat = await packageFs.lstatPromise(`berry-pkg`);
-
-        if (stat.isSymbolicLink()) {
-          packageFs = new JailFS(await packageFs.readlinkPromise(`berry-pkg`), {baseFs: packageFs});
-        } else {
-          packageFs = new JailFS(`berry-pkg`, {baseFs: packageFs});
-        }
-      }
-
-      return [packageFs, async () => zipFs.close()] as FetchResult;
+      return zipFs;
     });
   }
 

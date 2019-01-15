@@ -1053,7 +1053,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@szmarczak/http-timer@npm:^1.1.0":
+"@szmarczak/http-timer@npm:^1.1.2":
   resolution: "@szmarczak/http-timer@npm:1.1.2"
   dependencies:
     defer-to-connect: "npm:^1.0.1"
@@ -1595,7 +1595,7 @@ __metadata:
     ajv: ^6.0.0
 
 "ajv@npm:^6.1.0":
-  resolution: "ajv@npm:6.6.2"
+  resolution: "ajv@npm:6.7.0"
   dependencies:
     fast-deep-equal: "npm:^2.0.1"
     fast-json-stable-stringify: "npm:^2.0.0"
@@ -1984,8 +1984,8 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cacheable-request@npm:^5.1.0":
-  resolution: "cacheable-request@npm:5.2.1"
+"cacheable-request@npm:^6.0.0":
+  resolution: "cacheable-request@npm:6.0.0"
   dependencies:
     clone-response: "npm:^1.0.2"
     get-stream: "npm:^4.0.0"
@@ -3071,11 +3071,11 @@ __metadata:
   linkType: hard
 
 "got@npm:^9.2.2":
-  resolution: "got@npm:9.5.0"
+  resolution: "got@npm:9.5.1"
   dependencies:
     @sindresorhus/is: "npm:^0.14.0"
-    @szmarczak/http-timer: "npm:^1.1.0"
-    cacheable-request: "npm:^5.1.0"
+    @szmarczak/http-timer: "npm:^1.1.2"
+    cacheable-request: "npm:^6.0.0"
     decompress-response: "npm:^3.3.0"
     duplexer3: "npm:^0.1.4"
     get-stream: "npm:^4.1.0"
@@ -3258,7 +3258,7 @@ __metadata:
   linkType: hard
 
 "immer@npm:^1.7.2":
-  resolution: "immer@npm:1.10.3"
+  resolution: "immer@npm:1.10.5"
   languageName: node
   linkType: hard
 
@@ -4306,7 +4306,7 @@ __metadata:
   linkType: hard
 
 "pako@npm:~1.0.5":
-  resolution: "pako@npm:1.0.7"
+  resolution: "pako@npm:1.0.8"
   languageName: node
   linkType: hard
 

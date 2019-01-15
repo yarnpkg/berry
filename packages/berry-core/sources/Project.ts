@@ -1,9 +1,10 @@
 import {parseSyml, stringifySyml}                           from '@berry/parsers';
+import {JailFS}                                             from '@berry/zipfs';
 import {createHmac}                                         from 'crypto';
 import {createWriteStream, existsSync, readFile, writeFile} from 'fs-extra';
 // @ts-ignore
 import Logic                                                from 'logic-solver';
-import {dirname}                                            from 'path';
+import {dirname, posix}                                     from 'path';
 import {PassThrough}                                        from 'stream';
 import {tmpNameSync}                                        from 'tmp';
 
@@ -47,7 +48,6 @@ export class Project {
   public workspacesByIdent: Map<IdentHash, Array<Workspace>> = new Map();
 
   public storedResolutions: Map<DescriptorHash, LocatorHash> = new Map();
-  public storedLocations: Map<LocatorHash, string> = new Map();
 
   public storedDescriptors: Map<DescriptorHash, Descriptor> = new Map();
   public storedPackages: Map<LocatorHash, Package> = new Map();
@@ -590,28 +590,23 @@ export class Project {
   }
 
   async fetchEverything({cache, report}: InstallOptions) {
-    this.storedLocations = new Map();
-
     const fetcher = this.configuration.makeFetcher();
     const fetcherOptions = {project: this, readOnly: false, cache, fetcher, report};
 
-    for (const locatorHash of this.storedResolutions.values()) {
+    const locatorHashes = miscUtils.sortMap(this.storedResolutions.values(), [(locatorHash: LocatorHash) => {
       const pkg = this.storedPackages.get(locatorHash);
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
 
-      if (this.storedLocations.has(pkg.locatorHash))
-        continue;
+      return structUtils.stringifyLocator(pkg);
+    }]);
 
-      const workspace = this.tryWorkspaceByLocator(pkg);
+    for (const locatorHash of locatorHashes) {
+      const pkg = this.storedPackages.get(locatorHash);
+      if (!pkg)
+        throw new Error(`Assertion failed: The locator should have been registered`);
 
-      if (workspace) {
-        this.storedLocations.set(pkg.locatorHash, workspace.cwd);
-      } else {
-        const [packageFs, release] = await fetcher.fetch(pkg, fetcherOptions);
-        this.storedLocations.set(pkg.locatorHash, packageFs.getRealPath());
-        await release();
-      }
+      await fetcher.fetch(pkg, fetcherOptions);
     }
   }
 
@@ -641,14 +636,8 @@ export class Project {
       if (!installer)
         throw new Error(`Assertion failed: The installer should have been registered`);
       
-      const [packageFs, release] = await fetcher.fetch(pkg, fetcherOptions);
-
-      let installStatus;
-      try {
-        installStatus = await installer.installPackage(pkg, pkg.linkType, packageFs);
-      } finally {
-        await release();
-      }
+      const packageFetch = await fetcher.fetch(pkg, fetcherOptions);
+      const installStatus = await installer.installPackage(pkg, pkg.linkType, new JailFS(packageFetch.prefixPath, {baseFs: packageFetch.packageFs}));
 
       packageLinkers.set(pkg.locatorHash, linker);
       packageLocations.set(pkg.locatorHash, installStatus.packageLocation);

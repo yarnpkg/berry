@@ -2,6 +2,7 @@ import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
 import {Descriptor, Locator, Manifest}                   from '@berry/core';
 import {LinkType}                                        from '@berry/core';
 import {structUtils}                                     from '@berry/core';
+import {posix}                                           from 'path';
 import querystring                                       from 'querystring';
 
 import {FILE_REGEXP, PROTOCOL}                           from './constants';
@@ -45,20 +46,16 @@ export class FileResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const [baseFs, release] = await opts.fetcher.fetch(locator, opts);
+    const packageFetch = await opts.fetcher.fetch(locator, opts);
 
-    try {
-      const manifest = await Manifest.fromFile(`package.json`, {baseFs});
+    const manifest = await Manifest.fromFile(posix.resolve(packageFetch.prefixPath, `package.json`), {baseFs: packageFetch.packageFs});
 
-      const languageName = opts.project.configuration.defaultLanguageName;
-      const linkType = LinkType.HARD;
+    const languageName = opts.project.configuration.defaultLanguageName;
+    const linkType = LinkType.HARD;
 
-      const dependencies = manifest.dependencies;
-      const peerDependencies = manifest.peerDependencies;
+    const dependencies = manifest.dependencies;
+    const peerDependencies = manifest.peerDependencies;
 
-      return {... locator, languageName, linkType, dependencies, peerDependencies};
-    } finally {
-      await release();
-    }
+    return {... locator, languageName, linkType, dependencies, peerDependencies};
   }
 }

@@ -3,8 +3,6 @@ import {Linker}   from './Linker';
 import {Resolver} from './Resolver';
 
 export interface FetcherPlugin {
-  mountPoint: string;
-
   new(): Fetcher;
 };
 

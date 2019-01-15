@@ -146,7 +146,7 @@ export class ZipFS extends FakeFS {
     const rc = libzip.close(this.zip);
     if (rc === -1)
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
-    
+
     // Libzip overrides the chmod when writing the archive, which is a weird
     // behavior I don't totally understand (plus the umask seems bogus in some
     // weird cases - maybe related to emscripten?)

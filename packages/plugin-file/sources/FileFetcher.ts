@@ -1,15 +1,13 @@
-import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from '@berry/core';
-import {Locator}                                                 from '@berry/core';
-import {structUtils, tgzUtils}                                   from '@berry/core';
-import {NodeFS}                                                  from '@berry/zipfs';
-import {posix}                                                   from 'path';
-import querystring                                               from 'querystring';
+import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
+import {Locator, MessageName}                       from '@berry/core';
+import {structUtils, tgzUtils}                      from '@berry/core';
+import {NodeFS}                                     from '@berry/zipfs';
+import {posix}                                      from 'path';
+import querystring                                  from 'querystring';
 
-import {PROTOCOL}                                                from './constants';
+import {PROTOCOL}                                   from './constants';
 
 export class FileFetcher implements Fetcher {
-  static mountPoint: string = `cached-fetchers`;
-
   supports(locator: Locator, opts: MinimalFetchOptions) {
     if (!locator.reference.startsWith(PROTOCOL))
       return false;
@@ -18,22 +16,31 @@ export class FileFetcher implements Fetcher {
   }
 
   async fetch(locator: Locator, opts: FetchOptions) {
+    const packageFs = await opts.cache.fetchFromCache(locator, async () => {
+      opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`);
+      return await this.fetchFromDisk(locator, opts);
+    });
+
+    return {packageFs, prefixPath: `/`};
+  }
+
+  async fetchFromDisk(locator: Locator, opts: FetchOptions) {
     const {parentLocator, filePath} = this.parseLocator(locator);
 
-    const [baseFs, release] = posix.isAbsolute(filePath)
-      ? [new NodeFS(), async () => {}]
+    const parentFetch = posix.isAbsolute(filePath)
+      ? {packageFs: new NodeFS(), prefixPath: `/`, localPath: `/`}
       : await opts.fetcher.fetch(parentLocator, opts);
 
-    try {
-      const packageFs = await tgzUtils.makeArchiveFromDirectory(filePath, {
-        prefixPath: `berry-pkg`,
-        baseFs,
-      });
+    const effectiveParentFetch = parentFetch.localPath
+      ? {packageFs: new NodeFS(), prefixPath: parentFetch.localPath}
+      : parentFetch;
 
-      return [packageFs, async () => packageFs.close()] as FetchResult;
-    } finally {
-      await release();
-    }
+    const sourceFs = effectiveParentFetch.packageFs;
+    const sourcePath = posix.resolve(effectiveParentFetch.prefixPath, filePath);
+
+    return await tgzUtils.makeArchiveFromDirectory(sourcePath, {
+      baseFs: sourceFs,
+    });
   }
 
   private parseLocator(locator: Locator) {
@@ -42,7 +49,7 @@ export class FileFetcher implements Fetcher {
     if (qsIndex === -1)
       throw new Error(`Invalid file-type locator`);
 
-    const filePath = locator.reference.slice(PROTOCOL.length, qsIndex);
+    const filePath = posix.normalize(locator.reference.slice(PROTOCOL.length, qsIndex));
     const queryString = querystring.parse(locator.reference.slice(qsIndex + 1));
 
     if (typeof queryString.locator !== `string`)

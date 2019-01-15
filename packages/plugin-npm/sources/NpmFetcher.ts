@@ -1,13 +1,11 @@
-import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from '@berry/core';
-import {httpUtils, structUtils, tgzUtils}                        from '@berry/core';
-import {Locator}                                                 from '@berry/core';
-import semver                                                    from 'semver';
+import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
+import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
+import {Locator, MessageName}                       from '@berry/core';
+import semver                                       from 'semver';
 
-import {DEFAULT_REGISTRY, PROTOCOL}                              from './constants';
+import {DEFAULT_REGISTRY, PROTOCOL}                 from './constants';
 
 export class NpmFetcher implements Fetcher {
-  static mountPoint: string = `cached-fetchers`;
-
   supports(locator: Locator, opts: MinimalFetchOptions) {
     if (!locator.reference.startsWith(PROTOCOL))
       return false;
@@ -19,18 +17,21 @@ export class NpmFetcher implements Fetcher {
   }
 
   async fetch(locator: Locator, opts: FetchOptions) {
-    const tgz = await httpUtils.get(this.getLocatorUrl(locator, opts), opts.project.configuration);
-    const prefixPath = `node_modules/${structUtils.requirableIdent(locator)}`;
-
-    const packageFs = await tgzUtils.makeArchive(tgz, {
-      stripComponents: 1,
-      prefixPath,
+    const packageFs = await opts.cache.fetchFromCache(locator, async () => {
+      opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote registry`);
+      return await this.fetchFromNetwork(locator, opts);
     });
 
-    // Since we installed everything into a subdirectory, we need to create this symlink to instruct the cache as to which directory to use
-    await packageFs.symlinkPromise(prefixPath, `berry-pkg`);
+    return {packageFs, prefixPath: this.getPrefixPath(locator)};
+  }
 
-    return [packageFs, async () => packageFs.close()] as FetchResult;
+  async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
+    const sourceBuffer = await httpUtils.get(this.getLocatorUrl(locator, opts), opts.project.configuration);
+
+    return await tgzUtils.makeArchive(sourceBuffer, {
+      stripComponents: 1,
+      prefixPath: this.getPrefixPath(locator),
+    });
   }
 
   private getLocatorUrl(locator: Locator, opts: FetchOptions) {
@@ -38,5 +39,9 @@ export class NpmFetcher implements Fetcher {
     const registry = opts.project.configuration.registryServer || DEFAULT_REGISTRY;
 
     return `${registry}/${structUtils.requirableIdent(locator)}/-/${locator.name}-${version}.tgz`;
+  }
+
+  private getPrefixPath(locator: Locator) {
+    return `/node_modules/${structUtils.requirableIdent(locator)}`;
   }
 }
