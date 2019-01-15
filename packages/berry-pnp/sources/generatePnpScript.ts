@@ -1,3 +1,4 @@
+import {miscUtils}                                                from '@berry/core';
 // @ts-ignore: This isn't a classical file; it's automatically generated (type string)
 import template                                                   from '@berry/pnp/sources/hook-bundle.js';
 
@@ -8,16 +9,13 @@ function generateDatastores(packageInformationStores: PackageInformationStores, 
 
   // Bake the information stores into our generated code
   code += `packageInformationStores = new Map([\n`;
-  for (const [packageName, packageInformationStore] of packageInformationStores) {
+  for (const [packageName, packageInformationStore] of miscUtils.sortMap(packageInformationStores, ([packageName]) => packageName === null ? `0` : `1${packageName}`)) {
     code += `  [${JSON.stringify(packageName)}, new Map([\n`;
-    for (const [
-      packageReference,
-      {packageLocation, packageDependencies},
-    ] of packageInformationStore) {
+    for (const [packageReference, {packageLocation, packageDependencies}] of miscUtils.sortMap(packageInformationStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
       code += `    [${JSON.stringify(packageReference)}, {\n`;
       code += `      packageLocation: path.resolve(__dirname, ${JSON.stringify(packageLocation)}),\n`;
       code += `      packageDependencies: new Map([\n`;
-      for (const [dependencyName, dependencyReference] of packageDependencies.entries()) {
+      for (const [dependencyName, dependencyReference] of miscUtils.sortMap(packageDependencies.entries(), ([dependencyName]) => dependencyName)) {
         code += `        [${JSON.stringify(dependencyName)}, ${JSON.stringify(dependencyReference)}],\n`;
       }
       code += `      ]),\n`;
@@ -31,11 +29,11 @@ function generateDatastores(packageInformationStores: PackageInformationStores, 
 
   // Also bake an inverse map that will allow us to find the package information based on the path
   code += `packageLocatorByLocationMap = new Map([\n`;
-  for (const blacklistedLocation of blacklistedLocations) {
+  for (const blacklistedLocation of miscUtils.sortMap(blacklistedLocations, location => location)) {
     code += `  [${JSON.stringify(blacklistedLocation)}, blacklistedLocator],\n`;
   }
-  for (const [packageName, packageInformationStore] of packageInformationStores) {
-    for (const [packageReference, {packageLocation}] of packageInformationStore) {
+  for (const [packageName, packageInformationStore] of miscUtils.sortMap(packageInformationStores, ([packageName]) => packageName === null ? `0` : `1${packageName}`)) {
+    for (const [packageReference, {packageLocation}] of miscUtils.sortMap(packageInformationStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
       if (packageName !== null) {
         code += `  [${JSON.stringify(packageLocation)}, ${JSON.stringify({
           name: packageName,

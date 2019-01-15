@@ -33,8 +33,11 @@ export function dynamicRequire(path: string) {
 // predicate because sortMap caches the result of the mappers in such a way that
 // they are guaranteed to be executed exactly once for each element.
 
-export function sortMap<T>(values: Iterable<T>, mappers: Array<(value: T) => string>) {
+export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) | Array<(value: T) => string>) {
   const asArray = Array.from(values);
+
+  if (!Array.isArray(mappers))
+    mappers = [mappers];
 
   const stringified: Array<Array<string>> = [];
   
