@@ -4,7 +4,7 @@
 __metadata:
   version: 1
 
-"@babel/code-frame@npm:^7.0.0":
+"@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.0.0-beta.35":
   version: 7.0.0
   resolution: "@babel/code-frame@npm:7.0.0"
   dependencies:
@@ -1707,6 +1707,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"abab@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "abab@npm:2.0.0"
+  languageName: node
+  linkType: hard
+
 "abbrev@npm:1":
   version: 1.1.1
   resolution: "abbrev@npm:1.1.1"
@@ -1729,6 +1735,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"acorn-globals@npm:^4.1.0":
+  version: 4.3.0
+  resolution: "acorn-globals@npm:4.3.0"
+  dependencies:
+    acorn: "npm:^6.0.1"
+    acorn-walk: "npm:^6.0.1"
+  languageName: node
+  linkType: hard
+
 "acorn-node@npm:^1.3.0":
   version: 1.6.2
   resolution: "acorn-node@npm:1.6.2"
@@ -1740,19 +1755,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn-walk@npm:^6.1.0":
+"acorn-walk@npm:^6.0.1, acorn-walk@npm:^6.1.0":
   version: 6.1.1
   resolution: "acorn-walk@npm:6.1.1"
   languageName: node
   linkType: hard
 
-"acorn@npm:^5.0.0, acorn@npm:^5.6.2":
+"acorn@npm:^5.0.0, acorn@npm:^5.5.3, acorn@npm:^5.6.2":
   version: 5.7.3
   resolution: "acorn@npm:5.7.3"
   languageName: node
   linkType: hard
 
-"acorn@npm:^6.0.2":
+"acorn@npm:^6.0.1, acorn@npm:^6.0.2":
   version: 6.0.5
   resolution: "acorn@npm:6.0.5"
   languageName: node
@@ -1774,7 +1789,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^6.1.0":
+"ajv@npm:^6.1.0, ajv@npm:^6.5.5":
   version: 6.7.0
   resolution: "ajv@npm:6.7.0"
   dependencies:
@@ -1815,7 +1830,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-styles@npm:^3.2.1":
+"ansi-styles@npm:^3.2.0, ansi-styles@npm:^3.2.1":
   version: 3.2.1
   resolution: "ansi-styles@npm:3.2.1"
   dependencies:
@@ -1835,6 +1850,14 @@ __metadata:
   dependencies:
     micromatch: "npm:^3.1.4"
     normalize-path: "npm:^2.1.1"
+  languageName: node
+  linkType: hard
+
+"append-transform@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "append-transform@npm:0.4.0"
+  dependencies:
+    default-require-extensions: "npm:^1.0.0"
   languageName: node
   linkType: hard
 
@@ -1861,13 +1884,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"arr-diff@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "arr-diff@npm:2.0.0"
+  dependencies:
+    arr-flatten: "npm:^1.0.1"
+  languageName: node
+  linkType: hard
+
 "arr-diff@npm:^4.0.0":
   version: 4.0.0
   resolution: "arr-diff@npm:4.0.0"
   languageName: node
   linkType: hard
 
-"arr-flatten@npm:^1.1.0":
+"arr-flatten@npm:^1.0.1, arr-flatten@npm:^1.1.0":
   version: 1.1.0
   resolution: "arr-flatten@npm:1.1.0"
   languageName: node
@@ -1879,9 +1910,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"array-equal@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "array-equal@npm:1.0.0"
+  languageName: node
+  linkType: hard
+
+"array-foreach@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "array-foreach@npm:1.0.2"
+  languageName: node
+  linkType: hard
+
 "array-from@npm:^2.1.1":
   version: 2.1.1
   resolution: "array-from@npm:2.1.1"
+  languageName: node
+  linkType: hard
+
+"array-map@npm:0.0.0":
+  version: 0.0.0
+  resolution: "array-map@npm:0.0.0"
   languageName: node
   linkType: hard
 
@@ -1896,6 +1945,12 @@ __metadata:
 "array-uniq@npm:^1.0.1":
   version: 1.0.3
   resolution: "array-uniq@npm:1.0.3"
+  languageName: node
+  linkType: hard
+
+"array-unique@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "array-unique@npm:0.2.1"
   languageName: node
   linkType: hard
 
@@ -1927,6 +1982,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"asn1@npm:~0.2.3":
+  version: 0.2.4
+  resolution: "asn1@npm:0.2.4"
+  dependencies:
+    safer-buffer: "npm:~2.1.0"
+  languageName: node
+  linkType: hard
+
+"assert-plus@npm:1.0.0, assert-plus@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "assert-plus@npm:1.0.0"
+  languageName: node
+  linkType: hard
+
 "assert@npm:^1.1.1":
   version: 1.4.1
   resolution: "assert@npm:1.4.1"
@@ -1941,9 +2010,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"astral-regex@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "astral-regex@npm:1.0.0"
+  languageName: node
+  linkType: hard
+
 "async-each@npm:^1.0.0":
   version: 1.0.1
   resolution: "async-each@npm:1.0.1"
+  languageName: node
+  linkType: hard
+
+"async-limiter@npm:~1.0.0":
+  version: 1.0.0
+  resolution: "async-limiter@npm:1.0.0"
+  languageName: node
+  linkType: hard
+
+"async@npm:^2.1.4, async@npm:^2.5.0":
+  version: 2.6.1
+  resolution: "async@npm:2.6.1"
+  dependencies:
+    lodash: "npm:^4.17.10"
+  languageName: node
+  linkType: hard
+
+"asynckit@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "asynckit@npm:0.4.0"
   languageName: node
   linkType: hard
 
@@ -1953,12 +2048,645 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-runtime@npm:^6.23.0":
+"aws-sign2@npm:~0.7.0":
+  version: 0.7.0
+  resolution: "aws-sign2@npm:0.7.0"
+  languageName: node
+  linkType: hard
+
+"aws4@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "aws4@npm:1.8.0"
+  languageName: node
+  linkType: hard
+
+"babel-code-frame@npm:^6.26.0":
+  version: 6.26.0
+  resolution: "babel-code-frame@npm:6.26.0"
+  dependencies:
+    chalk: "npm:^1.1.3"
+    esutils: "npm:^2.0.2"
+    js-tokens: "npm:^3.0.2"
+  languageName: node
+  linkType: hard
+
+"babel-core@npm:^6.0.0, babel-core@npm:^6.26.0":
+  version: 6.26.3
+  resolution: "babel-core@npm:6.26.3"
+  dependencies:
+    babel-code-frame: "npm:^6.26.0"
+    babel-generator: "npm:^6.26.0"
+    babel-helpers: "npm:^6.24.1"
+    babel-messages: "npm:^6.23.0"
+    babel-register: "npm:^6.26.0"
+    babel-runtime: "npm:^6.26.0"
+    babel-template: "npm:^6.26.0"
+    babel-traverse: "npm:^6.26.0"
+    babel-types: "npm:^6.26.0"
+    babylon: "npm:^6.18.0"
+    convert-source-map: "npm:^1.5.1"
+    debug: "npm:^2.6.9"
+    json5: "npm:^0.5.1"
+    lodash: "npm:^4.17.4"
+    minimatch: "npm:^3.0.4"
+    path-is-absolute: "npm:^1.0.1"
+    private: "npm:^0.1.8"
+    slash: "npm:^1.0.0"
+    source-map: "npm:^0.5.7"
+  languageName: node
+  linkType: hard
+
+"babel-generator@npm:^6.18.0, babel-generator@npm:^6.26.0":
+  version: 6.26.1
+  resolution: "babel-generator@npm:6.26.1"
+  dependencies:
+    babel-messages: "npm:^6.23.0"
+    babel-runtime: "npm:^6.26.0"
+    babel-types: "npm:^6.26.0"
+    detect-indent: "npm:^4.0.0"
+    jsesc: "npm:^1.3.0"
+    lodash: "npm:^4.17.4"
+    source-map: "npm:^0.5.7"
+    trim-right: "npm:^1.0.1"
+  languageName: node
+  linkType: hard
+
+"babel-helper-builder-binary-assignment-operator-visitor@npm:^6.24.1":
+  version: 6.24.1
+  resolution: "babel-helper-builder-binary-assignment-operator-visitor@npm:6.24.1"
+  dependencies:
+    babel-helper-explode-assignable-expression: "npm:^6.24.1"
+    babel-runtime: "npm:^6.22.0"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-helper-call-delegate@npm:^6.24.1":
+  version: 6.24.1
+  resolution: "babel-helper-call-delegate@npm:6.24.1"
+  dependencies:
+    babel-helper-hoist-variables: "npm:^6.24.1"
+    babel-runtime: "npm:^6.22.0"
+    babel-traverse: "npm:^6.24.1"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-helper-define-map@npm:^6.24.1":
+  version: 6.26.0
+  resolution: "babel-helper-define-map@npm:6.26.0"
+  dependencies:
+    babel-helper-function-name: "npm:^6.24.1"
+    babel-runtime: "npm:^6.26.0"
+    babel-types: "npm:^6.26.0"
+    lodash: "npm:^4.17.4"
+  languageName: node
+  linkType: hard
+
+"babel-helper-explode-assignable-expression@npm:^6.24.1":
+  version: 6.24.1
+  resolution: "babel-helper-explode-assignable-expression@npm:6.24.1"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+    babel-traverse: "npm:^6.24.1"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-helper-function-name@npm:^6.24.1":
+  version: 6.24.1
+  resolution: "babel-helper-function-name@npm:6.24.1"
+  dependencies:
+    babel-helper-get-function-arity: "npm:^6.24.1"
+    babel-runtime: "npm:^6.22.0"
+    babel-template: "npm:^6.24.1"
+    babel-traverse: "npm:^6.24.1"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-helper-get-function-arity@npm:^6.24.1":
+  version: 6.24.1
+  resolution: "babel-helper-get-function-arity@npm:6.24.1"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-helper-hoist-variables@npm:^6.24.1":
+  version: 6.24.1
+  resolution: "babel-helper-hoist-variables@npm:6.24.1"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-helper-optimise-call-expression@npm:^6.24.1":
+  version: 6.24.1
+  resolution: "babel-helper-optimise-call-expression@npm:6.24.1"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-helper-regex@npm:^6.24.1":
+  version: 6.26.0
+  resolution: "babel-helper-regex@npm:6.26.0"
+  dependencies:
+    babel-runtime: "npm:^6.26.0"
+    babel-types: "npm:^6.26.0"
+    lodash: "npm:^4.17.4"
+  languageName: node
+  linkType: hard
+
+"babel-helper-remap-async-to-generator@npm:^6.24.1":
+  version: 6.24.1
+  resolution: "babel-helper-remap-async-to-generator@npm:6.24.1"
+  dependencies:
+    babel-helper-function-name: "npm:^6.24.1"
+    babel-runtime: "npm:^6.22.0"
+    babel-template: "npm:^6.24.1"
+    babel-traverse: "npm:^6.24.1"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-helper-replace-supers@npm:^6.24.1":
+  version: 6.24.1
+  resolution: "babel-helper-replace-supers@npm:6.24.1"
+  dependencies:
+    babel-helper-optimise-call-expression: "npm:^6.24.1"
+    babel-messages: "npm:^6.23.0"
+    babel-runtime: "npm:^6.22.0"
+    babel-template: "npm:^6.24.1"
+    babel-traverse: "npm:^6.24.1"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-helpers@npm:^6.24.1":
+  version: 6.24.1
+  resolution: "babel-helpers@npm:6.24.1"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+    babel-template: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-jest@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "babel-jest@npm:23.6.0"
+  dependencies:
+    babel-plugin-istanbul: "npm:^4.1.6"
+    babel-preset-jest: "npm:^23.2.0"
+  peerDependencies:
+    babel-core: "^6.0.0 || ^7.0.0-0"
+  languageName: node
+  linkType: hard
+
+"babel-messages@npm:^6.23.0":
+  version: 6.23.0
+  resolution: "babel-messages@npm:6.23.0"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-check-es2015-constants@npm:^6.22.0":
+  version: 6.22.0
+  resolution: "babel-plugin-check-es2015-constants@npm:6.22.0"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-istanbul@npm:^4.1.6":
+  version: 4.1.6
+  resolution: "babel-plugin-istanbul@npm:4.1.6"
+  dependencies:
+    babel-plugin-syntax-object-rest-spread: "npm:^6.13.0"
+    find-up: "npm:^2.1.0"
+    istanbul-lib-instrument: "npm:^1.10.1"
+    test-exclude: "npm:^4.2.1"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-jest-hoist@npm:^23.2.0":
+  version: 23.2.0
+  resolution: "babel-plugin-jest-hoist@npm:23.2.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-syntax-async-functions@npm:^6.8.0":
+  version: 6.13.0
+  resolution: "babel-plugin-syntax-async-functions@npm:6.13.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-syntax-exponentiation-operator@npm:^6.8.0":
+  version: 6.13.0
+  resolution: "babel-plugin-syntax-exponentiation-operator@npm:6.13.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-syntax-flow@npm:^6.18.0":
+  version: 6.18.0
+  resolution: "babel-plugin-syntax-flow@npm:6.18.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-syntax-object-rest-spread@npm:^6.13.0":
+  version: 6.13.0
+  resolution: "babel-plugin-syntax-object-rest-spread@npm:6.13.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-syntax-trailing-function-commas@npm:^6.22.0":
+  version: 6.22.0
+  resolution: "babel-plugin-syntax-trailing-function-commas@npm:6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-async-to-generator@npm:^6.22.0":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-async-to-generator@npm:6.24.1"
+  dependencies:
+    babel-helper-remap-async-to-generator: "npm:^6.24.1"
+    babel-plugin-syntax-async-functions: "npm:^6.8.0"
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-arrow-functions@npm:^6.22.0":
+  version: 6.22.0
+  resolution: "babel-plugin-transform-es2015-arrow-functions@npm:6.22.0"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-block-scoped-functions@npm:^6.22.0":
+  version: 6.22.0
+  resolution: "babel-plugin-transform-es2015-block-scoped-functions@npm:6.22.0"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-block-scoping@npm:^6.23.0":
+  version: 6.26.0
+  resolution: "babel-plugin-transform-es2015-block-scoping@npm:6.26.0"
+  dependencies:
+    babel-runtime: "npm:^6.26.0"
+    babel-template: "npm:^6.26.0"
+    babel-traverse: "npm:^6.26.0"
+    babel-types: "npm:^6.26.0"
+    lodash: "npm:^4.17.4"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-classes@npm:^6.23.0":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-es2015-classes@npm:6.24.1"
+  dependencies:
+    babel-helper-define-map: "npm:^6.24.1"
+    babel-helper-function-name: "npm:^6.24.1"
+    babel-helper-optimise-call-expression: "npm:^6.24.1"
+    babel-helper-replace-supers: "npm:^6.24.1"
+    babel-messages: "npm:^6.23.0"
+    babel-runtime: "npm:^6.22.0"
+    babel-template: "npm:^6.24.1"
+    babel-traverse: "npm:^6.24.1"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-computed-properties@npm:^6.22.0":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-es2015-computed-properties@npm:6.24.1"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+    babel-template: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-destructuring@npm:^6.23.0":
+  version: 6.23.0
+  resolution: "babel-plugin-transform-es2015-destructuring@npm:6.23.0"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-duplicate-keys@npm:^6.22.0":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-es2015-duplicate-keys@npm:6.24.1"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-for-of@npm:^6.23.0":
+  version: 6.23.0
+  resolution: "babel-plugin-transform-es2015-for-of@npm:6.23.0"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-function-name@npm:^6.22.0":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-es2015-function-name@npm:6.24.1"
+  dependencies:
+    babel-helper-function-name: "npm:^6.24.1"
+    babel-runtime: "npm:^6.22.0"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-literals@npm:^6.22.0":
+  version: 6.22.0
+  resolution: "babel-plugin-transform-es2015-literals@npm:6.22.0"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-modules-amd@npm:^6.22.0, babel-plugin-transform-es2015-modules-amd@npm:^6.24.1":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-es2015-modules-amd@npm:6.24.1"
+  dependencies:
+    babel-plugin-transform-es2015-modules-commonjs: "npm:^6.24.1"
+    babel-runtime: "npm:^6.22.0"
+    babel-template: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-modules-commonjs@npm:^6.23.0, babel-plugin-transform-es2015-modules-commonjs@npm:^6.24.1":
+  version: 6.26.2
+  resolution: "babel-plugin-transform-es2015-modules-commonjs@npm:6.26.2"
+  dependencies:
+    babel-plugin-transform-strict-mode: "npm:^6.24.1"
+    babel-runtime: "npm:^6.26.0"
+    babel-template: "npm:^6.26.0"
+    babel-types: "npm:^6.26.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-modules-systemjs@npm:^6.23.0":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-es2015-modules-systemjs@npm:6.24.1"
+  dependencies:
+    babel-helper-hoist-variables: "npm:^6.24.1"
+    babel-runtime: "npm:^6.22.0"
+    babel-template: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-modules-umd@npm:^6.23.0":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-es2015-modules-umd@npm:6.24.1"
+  dependencies:
+    babel-plugin-transform-es2015-modules-amd: "npm:^6.24.1"
+    babel-runtime: "npm:^6.22.0"
+    babel-template: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-object-super@npm:^6.22.0":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-es2015-object-super@npm:6.24.1"
+  dependencies:
+    babel-helper-replace-supers: "npm:^6.24.1"
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-parameters@npm:^6.23.0":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-es2015-parameters@npm:6.24.1"
+  dependencies:
+    babel-helper-call-delegate: "npm:^6.24.1"
+    babel-helper-get-function-arity: "npm:^6.24.1"
+    babel-runtime: "npm:^6.22.0"
+    babel-template: "npm:^6.24.1"
+    babel-traverse: "npm:^6.24.1"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-shorthand-properties@npm:^6.22.0":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-es2015-shorthand-properties@npm:6.24.1"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-spread@npm:^6.22.0":
+  version: 6.22.0
+  resolution: "babel-plugin-transform-es2015-spread@npm:6.22.0"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-sticky-regex@npm:^6.22.0":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-es2015-sticky-regex@npm:6.24.1"
+  dependencies:
+    babel-helper-regex: "npm:^6.24.1"
+    babel-runtime: "npm:^6.22.0"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-template-literals@npm:^6.22.0":
+  version: 6.22.0
+  resolution: "babel-plugin-transform-es2015-template-literals@npm:6.22.0"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-typeof-symbol@npm:^6.23.0":
+  version: 6.23.0
+  resolution: "babel-plugin-transform-es2015-typeof-symbol@npm:6.23.0"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-es2015-unicode-regex@npm:^6.22.0":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-es2015-unicode-regex@npm:6.24.1"
+  dependencies:
+    babel-helper-regex: "npm:^6.24.1"
+    babel-runtime: "npm:^6.22.0"
+    regexpu-core: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-exponentiation-operator@npm:^6.22.0":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-exponentiation-operator@npm:6.24.1"
+  dependencies:
+    babel-helper-builder-binary-assignment-operator-visitor: "npm:^6.24.1"
+    babel-plugin-syntax-exponentiation-operator: "npm:^6.8.0"
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-flow-strip-types@npm:^6.22.0":
+  version: 6.22.0
+  resolution: "babel-plugin-transform-flow-strip-types@npm:6.22.0"
+  dependencies:
+    babel-plugin-syntax-flow: "npm:^6.18.0"
+    babel-runtime: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-regenerator@npm:^6.22.0":
+  version: 6.26.0
+  resolution: "babel-plugin-transform-regenerator@npm:6.26.0"
+  dependencies:
+    regenerator-transform: "npm:^0.10.0"
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-strict-mode@npm:^6.24.1":
+  version: 6.24.1
+  resolution: "babel-plugin-transform-strict-mode@npm:6.24.1"
+  dependencies:
+    babel-runtime: "npm:^6.22.0"
+    babel-types: "npm:^6.24.1"
+  languageName: node
+  linkType: hard
+
+"babel-preset-env@npm:^1.6.1":
+  version: 1.7.0
+  resolution: "babel-preset-env@npm:1.7.0"
+  dependencies:
+    babel-plugin-check-es2015-constants: "npm:^6.22.0"
+    babel-plugin-syntax-trailing-function-commas: "npm:^6.22.0"
+    babel-plugin-transform-async-to-generator: "npm:^6.22.0"
+    babel-plugin-transform-es2015-arrow-functions: "npm:^6.22.0"
+    babel-plugin-transform-es2015-block-scoped-functions: "npm:^6.22.0"
+    babel-plugin-transform-es2015-block-scoping: "npm:^6.23.0"
+    babel-plugin-transform-es2015-classes: "npm:^6.23.0"
+    babel-plugin-transform-es2015-computed-properties: "npm:^6.22.0"
+    babel-plugin-transform-es2015-destructuring: "npm:^6.23.0"
+    babel-plugin-transform-es2015-duplicate-keys: "npm:^6.22.0"
+    babel-plugin-transform-es2015-for-of: "npm:^6.23.0"
+    babel-plugin-transform-es2015-function-name: "npm:^6.22.0"
+    babel-plugin-transform-es2015-literals: "npm:^6.22.0"
+    babel-plugin-transform-es2015-modules-amd: "npm:^6.22.0"
+    babel-plugin-transform-es2015-modules-commonjs: "npm:^6.23.0"
+    babel-plugin-transform-es2015-modules-systemjs: "npm:^6.23.0"
+    babel-plugin-transform-es2015-modules-umd: "npm:^6.23.0"
+    babel-plugin-transform-es2015-object-super: "npm:^6.22.0"
+    babel-plugin-transform-es2015-parameters: "npm:^6.23.0"
+    babel-plugin-transform-es2015-shorthand-properties: "npm:^6.22.0"
+    babel-plugin-transform-es2015-spread: "npm:^6.22.0"
+    babel-plugin-transform-es2015-sticky-regex: "npm:^6.22.0"
+    babel-plugin-transform-es2015-template-literals: "npm:^6.22.0"
+    babel-plugin-transform-es2015-typeof-symbol: "npm:^6.23.0"
+    babel-plugin-transform-es2015-unicode-regex: "npm:^6.22.0"
+    babel-plugin-transform-exponentiation-operator: "npm:^6.22.0"
+    babel-plugin-transform-regenerator: "npm:^6.22.0"
+    browserslist: "npm:^3.2.6"
+    invariant: "npm:^2.2.2"
+    semver: "npm:^5.3.0"
+  languageName: node
+  linkType: hard
+
+"babel-preset-flow@npm:^6.23.0":
+  version: 6.23.0
+  resolution: "babel-preset-flow@npm:6.23.0"
+  dependencies:
+    babel-plugin-transform-flow-strip-types: "npm:^6.22.0"
+  languageName: node
+  linkType: hard
+
+"babel-preset-jest@npm:^23.2.0":
+  version: 23.2.0
+  resolution: "babel-preset-jest@npm:23.2.0"
+  dependencies:
+    babel-plugin-jest-hoist: "npm:^23.2.0"
+    babel-plugin-syntax-object-rest-spread: "npm:^6.13.0"
+  languageName: node
+  linkType: hard
+
+"babel-register@npm:^6.26.0":
+  version: 6.26.0
+  resolution: "babel-register@npm:6.26.0"
+  dependencies:
+    babel-core: "npm:^6.26.0"
+    babel-runtime: "npm:^6.26.0"
+    core-js: "npm:^2.5.0"
+    home-or-tmp: "npm:^2.0.0"
+    lodash: "npm:^4.17.4"
+    mkdirp: "npm:^0.5.1"
+    source-map-support: "npm:^0.4.15"
+  languageName: node
+  linkType: hard
+
+"babel-runtime@npm:^6.18.0, babel-runtime@npm:^6.22.0, babel-runtime@npm:^6.23.0, babel-runtime@npm:^6.26.0":
   version: 6.26.0
   resolution: "babel-runtime@npm:6.26.0"
   dependencies:
     core-js: "npm:^2.4.0"
     regenerator-runtime: "npm:^0.11.0"
+  languageName: node
+  linkType: hard
+
+"babel-template@npm:^6.16.0, babel-template@npm:^6.24.1, babel-template@npm:^6.26.0":
+  version: 6.26.0
+  resolution: "babel-template@npm:6.26.0"
+  dependencies:
+    babel-runtime: "npm:^6.26.0"
+    babel-traverse: "npm:^6.26.0"
+    babel-types: "npm:^6.26.0"
+    babylon: "npm:^6.18.0"
+    lodash: "npm:^4.17.4"
+  languageName: node
+  linkType: hard
+
+"babel-traverse@npm:^6.0.0, babel-traverse@npm:^6.18.0, babel-traverse@npm:^6.24.1, babel-traverse@npm:^6.26.0":
+  version: 6.26.0
+  resolution: "babel-traverse@npm:6.26.0"
+  dependencies:
+    babel-code-frame: "npm:^6.26.0"
+    babel-messages: "npm:^6.23.0"
+    babel-runtime: "npm:^6.26.0"
+    babel-types: "npm:^6.26.0"
+    babylon: "npm:^6.18.0"
+    debug: "npm:^2.6.8"
+    globals: "npm:^9.18.0"
+    invariant: "npm:^2.2.2"
+    lodash: "npm:^4.17.4"
+  languageName: node
+  linkType: hard
+
+"babel-types@npm:^6.0.0, babel-types@npm:^6.18.0, babel-types@npm:^6.19.0, babel-types@npm:^6.24.1, babel-types@npm:^6.26.0":
+  version: 6.26.0
+  resolution: "babel-types@npm:6.26.0"
+  dependencies:
+    babel-runtime: "npm:^6.26.0"
+    esutils: "npm:^2.0.2"
+    lodash: "npm:^4.17.4"
+    to-fast-properties: "npm:^1.0.3"
+  languageName: node
+  linkType: hard
+
+"babylon@npm:^6.18.0":
+  version: 6.18.0
+  resolution: "babylon@npm:6.18.0"
   languageName: node
   linkType: hard
 
@@ -1988,6 +2716,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bcrypt-pbkdf@npm:^1.0.0":
+  version: 1.0.2
+  resolution: "bcrypt-pbkdf@npm:1.0.2"
+  dependencies:
+    tweetnacl: "npm:^0.14.3"
+  languageName: node
+  linkType: hard
+
 "big.js@npm:^5.2.2":
   version: 5.2.2
   resolution: "big.js@npm:5.2.2"
@@ -1997,6 +2733,15 @@ __metadata:
 "binary-extensions@npm:^1.0.0":
   version: 1.12.0
   resolution: "binary-extensions@npm:1.12.0"
+  languageName: node
+  linkType: hard
+
+"bl@npm:^1.0.0":
+  version: 1.2.2
+  resolution: "bl@npm:1.2.2"
+  dependencies:
+    readable-stream: "npm:^2.3.5"
+    safe-buffer: "npm:^5.1.1"
   languageName: node
   linkType: hard
 
@@ -2024,6 +2769,16 @@ __metadata:
   dependencies:
     balanced-match: "npm:^1.0.0"
     concat-map: "npm:0.0.1"
+  languageName: node
+  linkType: hard
+
+"braces@npm:^1.8.2":
+  version: 1.8.5
+  resolution: "braces@npm:1.8.5"
+  dependencies:
+    expand-range: "npm:^1.8.1"
+    preserve: "npm:^0.2.0"
+    repeat-element: "npm:^1.1.2"
   languageName: node
   linkType: hard
 
@@ -2058,6 +2813,20 @@ __metadata:
 "brorand@npm:^1.0.1":
   version: 1.1.0
   resolution: "brorand@npm:1.1.0"
+  languageName: node
+  linkType: hard
+
+"browser-process-hrtime@npm:^0.1.2":
+  version: 0.1.3
+  resolution: "browser-process-hrtime@npm:0.1.3"
+  languageName: node
+  linkType: hard
+
+"browser-resolve@npm:^1.11.3":
+  version: 1.11.3
+  resolution: "browser-resolve@npm:1.11.3"
+  dependencies:
+    resolve: "npm:1.1.7"
   languageName: node
   linkType: hard
 
@@ -2126,6 +2895,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"browserslist@npm:^3.2.6":
+  version: 3.2.8
+  resolution: "browserslist@npm:3.2.8"
+  dependencies:
+    caniuse-lite: "npm:^1.0.30000844"
+    electron-to-chromium: "npm:^1.3.47"
+  languageName: node
+  linkType: hard
+
 "browserslist@npm:^4.3.4":
   version: 4.4.0
   resolution: "browserslist@npm:4.4.0"
@@ -2133,6 +2911,29 @@ __metadata:
     caniuse-lite: "npm:^1.0.30000928"
     electron-to-chromium: "npm:^1.3.100"
     node-releases: "npm:^1.1.3"
+  languageName: node
+  linkType: hard
+
+"bser@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "bser@npm:2.0.0"
+  dependencies:
+    node-int64: "npm:^0.4.0"
+  languageName: node
+  linkType: hard
+
+"buffer-alloc-unsafe@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "buffer-alloc-unsafe@npm:1.1.0"
+  languageName: node
+  linkType: hard
+
+"buffer-alloc@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "buffer-alloc@npm:1.2.0"
+  dependencies:
+    buffer-alloc-unsafe: "npm:^1.1.0"
+    buffer-fill: "npm:^1.0.0"
   languageName: node
   linkType: hard
 
@@ -2145,6 +2946,12 @@ __metadata:
 "buffer-equal@npm:0.0.1":
   version: 0.0.1
   resolution: "buffer-equal@npm:0.0.1"
+  languageName: node
+  linkType: hard
+
+"buffer-fill@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "buffer-fill@npm:1.0.0"
   languageName: node
   linkType: hard
 
@@ -2173,6 +2980,12 @@ __metadata:
     base64-js: "npm:^1.0.2"
     ieee754: "npm:^1.1.4"
     isarray: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
+"builtin-modules@npm:^1.0.0":
+  version: 1.1.1
+  resolution: "builtin-modules@npm:1.1.1"
   languageName: node
   linkType: hard
 
@@ -2239,15 +3052,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"callsites@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "callsites@npm:2.0.0"
+  languageName: node
+  linkType: hard
+
+"camelcase@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "camelcase@npm:4.1.0"
+  languageName: node
+  linkType: hard
+
 "camelcase@npm:^5.0.0":
   version: 5.0.0
   resolution: "camelcase@npm:5.0.0"
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30000928":
+"caniuse-lite@npm:^1.0.30000844, caniuse-lite@npm:^1.0.30000928":
   version: 1.0.30000928
   resolution: "caniuse-lite@npm:1.0.30000928"
+  languageName: node
+  linkType: hard
+
+"capture-exit@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "capture-exit@npm:1.2.0"
+  dependencies:
+    rsvp: "npm:^3.3.3"
+  languageName: node
+  linkType: hard
+
+"caseless@npm:~0.12.0":
+  version: 0.12.0
+  resolution: "caseless@npm:0.12.0"
   languageName: node
   linkType: hard
 
@@ -2263,7 +3102,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^2.0.0, chalk@npm:^2.3.0, chalk@npm:^2.4.1":
+"chalk@npm:^2.0.0, chalk@npm:^2.0.1, chalk@npm:^2.3.0, chalk@npm:^2.4.1":
   version: 2.4.2
   resolution: "chalk@npm:2.4.2"
   dependencies:
@@ -2312,7 +3151,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chownr@npm:^1.1.1":
+"chownr@npm:^1.0.1, chownr@npm:^1.1.1":
   version: 1.1.1
   resolution: "chownr@npm:1.1.1"
   languageName: node
@@ -2323,6 +3162,12 @@ __metadata:
   resolution: "chrome-trace-event@npm:1.0.0"
   dependencies:
     tslib: "npm:^1.9.0"
+  languageName: node
+  linkType: hard
+
+"ci-info@npm:^1.5.0":
+  version: 1.6.0
+  resolution: "ci-info@npm:1.6.0"
   languageName: node
   linkType: hard
 
@@ -2378,6 +3223,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"co@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "co@npm:4.6.0"
+  languageName: node
+  linkType: hard
+
 "code-point-at@npm:^1.0.0":
   version: 1.1.0
   resolution: "code-point-at@npm:1.1.0"
@@ -2410,6 +3261,14 @@ __metadata:
 "color-name@npm:1.1.3":
   version: 1.1.3
   resolution: "color-name@npm:1.1.3"
+  languageName: node
+  linkType: hard
+
+"combined-stream@npm:^1.0.6, combined-stream@npm:~1.0.6":
+  version: 1.0.7
+  resolution: "combined-stream@npm:1.0.7"
+  dependencies:
+    delayed-stream: "npm:~1.0.0"
   languageName: node
   linkType: hard
 
@@ -2474,7 +3333,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"convert-source-map@npm:^1.1.0, convert-source-map@npm:^1.5.1":
+"convert-source-map@npm:^1.1.0, convert-source-map@npm:^1.4.0, convert-source-map@npm:^1.5.1":
   version: 1.6.0
   resolution: "convert-source-map@npm:1.6.0"
   dependencies:
@@ -2501,13 +3360,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^2.4.0, core-js@npm:^2.5.7":
+"core-js@npm:^2.4.0, core-js@npm:^2.5.0, core-js@npm:^2.5.7":
   version: 2.6.2
   resolution: "core-js@npm:2.6.2"
   languageName: node
   linkType: hard
 
-"core-util-is@npm:~1.0.0":
+"core-util-is@npm:1.0.2, core-util-is@npm:~1.0.0":
   version: 1.0.2
   resolution: "core-util-is@npm:1.0.2"
   languageName: node
@@ -2544,6 +3403,16 @@ __metadata:
     ripemd160: "npm:^2.0.0"
     safe-buffer: "npm:^5.0.1"
     sha.js: "npm:^2.4.8"
+  languageName: node
+  linkType: hard
+
+"cross-spawn@npm:^5.0.1":
+  version: 5.1.0
+  resolution: "cross-spawn@npm:5.1.0"
+  dependencies:
+    lru-cache: "npm:^4.0.1"
+    shebang-command: "npm:^1.2.0"
+    which: "npm:^1.2.9"
   languageName: node
   linkType: hard
 
@@ -2594,6 +3463,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cssom@npm:0.3.x, cssom@npm:>= 0.3.2 < 0.4.0":
+  version: 0.3.4
+  resolution: "cssom@npm:0.3.4"
+  languageName: node
+  linkType: hard
+
+"cssstyle@npm:^1.0.0":
+  version: 1.1.1
+  resolution: "cssstyle@npm:1.1.1"
+  dependencies:
+    cssom: "npm:0.3.x"
+  languageName: node
+  linkType: hard
+
 "csstype@npm:^2.2.0":
   version: 2.6.0
   resolution: "csstype@npm:2.6.0"
@@ -2614,6 +3497,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dashdash@npm:^1.12.0":
+  version: 1.14.1
+  resolution: "dashdash@npm:1.14.1"
+  dependencies:
+    assert-plus: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
+"data-urls@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "data-urls@npm:1.1.0"
+  dependencies:
+    abab: "npm:^2.0.0"
+    whatwg-mimetype: "npm:^2.2.0"
+    whatwg-url: "npm:^7.0.0"
+  languageName: node
+  linkType: hard
+
 "date-now@npm:^0.1.4":
   version: 0.1.4
   resolution: "date-now@npm:0.1.4"
@@ -2626,7 +3527,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:^2.1.2, debug@npm:^2.2.0, debug@npm:^2.3.3":
+"debug@npm:^2.1.2, debug@npm:^2.2.0, debug@npm:^2.3.3, debug@npm:^2.6.8, debug@npm:^2.6.9":
   version: 2.6.9
   resolution: "debug@npm:2.6.9"
   dependencies:
@@ -2634,7 +3535,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:^3.0.0":
+"debug@npm:^3.0.0, debug@npm:^3.1.0":
   version: 3.2.6
   resolution: "debug@npm:3.2.6"
   dependencies:
@@ -2650,7 +3551,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"decamelize@npm:^1.2.0":
+"decamelize@npm:^1.1.1, decamelize@npm:^1.2.0":
   version: 1.2.0
   resolution: "decamelize@npm:1.2.0"
   languageName: node
@@ -2679,6 +3580,14 @@ __metadata:
 "deep-is@npm:~0.1.3":
   version: 0.1.3
   resolution: "deep-is@npm:0.1.3"
+  languageName: node
+  linkType: hard
+
+"default-require-extensions@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "default-require-extensions@npm:1.0.0"
+  dependencies:
+    strip-bom: "npm:^2.0.0"
   languageName: node
   linkType: hard
 
@@ -2721,6 +3630,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"delayed-stream@npm:~1.0.0":
+  version: 1.0.0
+  resolution: "delayed-stream@npm:1.0.0"
+  languageName: node
+  linkType: hard
+
 "delegates@npm:^1.0.0":
   version: 1.0.0
   resolution: "delegates@npm:1.0.0"
@@ -2748,13 +3663,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"detect-indent@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "detect-indent@npm:4.0.0"
+  dependencies:
+    repeating: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
 "detect-libc@npm:^1.0.2":
   version: 1.0.3
   resolution: "detect-libc@npm:1.0.3"
   languageName: node
   linkType: hard
 
-"diff@npm:^3.1.0":
+"detect-newline@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "detect-newline@npm:2.1.0"
+  languageName: node
+  linkType: hard
+
+"diff@npm:^3.1.0, diff@npm:^3.2.0":
   version: 3.5.0
   resolution: "diff@npm:3.5.0"
   languageName: node
@@ -2803,6 +3732,14 @@ __metadata:
 "domelementtype@npm:1, domelementtype@npm:^1.3.0":
   version: 1.3.1
   resolution: "domelementtype@npm:1.3.1"
+  languageName: node
+  linkType: hard
+
+"domexception@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "domexception@npm:1.0.1"
+  dependencies:
+    webidl-conversions: "npm:^4.0.2"
   languageName: node
   linkType: hard
 
@@ -2857,7 +3794,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-to-chromium@npm:^1.3.100":
+"ecc-jsbn@npm:~0.1.1":
+  version: 0.1.2
+  resolution: "ecc-jsbn@npm:0.1.2"
+  dependencies:
+    jsbn: "npm:~0.1.0"
+    safer-buffer: "npm:^2.1.0"
+  languageName: node
+  linkType: hard
+
+"electron-to-chromium@npm:^1.3.100, electron-to-chromium@npm:^1.3.47":
   version: 1.3.103
   resolution: "electron-to-chromium@npm:1.3.103"
   languageName: node
@@ -2912,6 +3858,37 @@ __metadata:
   resolution: "errno@npm:0.1.7"
   dependencies:
     prr: "npm:~1.0.1"
+  languageName: node
+  linkType: hard
+
+"error-ex@npm:^1.2.0":
+  version: 1.3.2
+  resolution: "error-ex@npm:1.3.2"
+  dependencies:
+    is-arrayish: "npm:^0.2.1"
+  languageName: node
+  linkType: hard
+
+"es-abstract@npm:^1.5.1":
+  version: 1.13.0
+  resolution: "es-abstract@npm:1.13.0"
+  dependencies:
+    es-to-primitive: "npm:^1.2.0"
+    function-bind: "npm:^1.1.1"
+    has: "npm:^1.0.3"
+    is-callable: "npm:^1.1.4"
+    is-regex: "npm:^1.0.4"
+    object-keys: "npm:^1.0.12"
+  languageName: node
+  linkType: hard
+
+"es-to-primitive@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "es-to-primitive@npm:1.2.0"
+  dependencies:
+    is-callable: "npm:^1.1.4"
+    is-date-object: "npm:^1.0.1"
+    is-symbol: "npm:^1.0.2"
   languageName: node
   linkType: hard
 
@@ -2975,7 +3952,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escodegen@npm:^1.8.1, escodegen@npm:~1.9.0":
+"escodegen@npm:^1.8.1, escodegen@npm:^1.9.1, escodegen@npm:~1.9.0":
   version: 1.9.1
   resolution: "escodegen@npm:1.9.1"
   dependencies:
@@ -2999,6 +3976,12 @@ __metadata:
 "esprima@npm:^3.1.3":
   version: 3.1.3
   resolution: "esprima@npm:3.1.3"
+  languageName: node
+  linkType: hard
+
+"esprima@npm:^4.0.0":
+  version: 4.0.1
+  resolution: "esprima@npm:4.0.1"
   languageName: node
   linkType: hard
 
@@ -3058,6 +4041,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"exec-sh@npm:^0.2.0":
+  version: 0.2.2
+  resolution: "exec-sh@npm:0.2.2"
+  dependencies:
+    merge: "npm:^1.2.0"
+  languageName: node
+  linkType: hard
+
+"execa@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "execa@npm:0.7.0"
+  dependencies:
+    cross-spawn: "npm:^5.0.1"
+    get-stream: "npm:^3.0.0"
+    is-stream: "npm:^1.1.0"
+    npm-run-path: "npm:^2.0.0"
+    p-finally: "npm:^1.0.0"
+    signal-exit: "npm:^3.0.0"
+    strip-eof: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
 "execa@npm:^1.0.0":
   version: 1.0.0
   resolution: "execa@npm:1.0.0"
@@ -3069,6 +4074,20 @@ __metadata:
     p-finally: "npm:^1.0.0"
     signal-exit: "npm:^3.0.0"
     strip-eof: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
+"exit@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "exit@npm:0.1.2"
+  languageName: node
+  linkType: hard
+
+"expand-brackets@npm:^0.1.4":
+  version: 0.1.5
+  resolution: "expand-brackets@npm:0.1.5"
+  dependencies:
+    is-posix-bracket: "npm:^0.1.0"
   languageName: node
   linkType: hard
 
@@ -3086,11 +4105,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expand-range@npm:^1.8.1":
+  version: 1.8.2
+  resolution: "expand-range@npm:1.8.2"
+  dependencies:
+    fill-range: "npm:^2.1.0"
+  languageName: node
+  linkType: hard
+
 "expand-tilde@npm:^2.0.0, expand-tilde@npm:^2.0.2":
   version: 2.0.2
   resolution: "expand-tilde@npm:2.0.2"
   dependencies:
     homedir-polyfill: "npm:^1.0.1"
+  languageName: node
+  linkType: hard
+
+"expect@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "expect@npm:23.6.0"
+  dependencies:
+    ansi-styles: "npm:^3.2.0"
+    jest-diff: "npm:^23.6.0"
+    jest-get-type: "npm:^22.1.0"
+    jest-matcher-utils: "npm:^23.6.0"
+    jest-message-util: "npm:^23.4.0"
+    jest-regex-util: "npm:^23.3.0"
   languageName: node
   linkType: hard
 
@@ -3111,6 +4151,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"extend@npm:~3.0.2":
+  version: 3.0.2
+  resolution: "extend@npm:3.0.2"
+  languageName: node
+  linkType: hard
+
 "external-editor@npm:^3.0.0":
   version: 3.0.3
   resolution: "external-editor@npm:3.0.3"
@@ -3118,6 +4164,14 @@ __metadata:
     chardet: "npm:^0.7.0"
     iconv-lite: "npm:^0.4.24"
     tmp: "npm:^0.0.33"
+  languageName: node
+  linkType: hard
+
+"extglob@npm:^0.3.1":
+  version: 0.3.2
+  resolution: "extglob@npm:0.3.2"
+  dependencies:
+    is-extglob: "npm:^1.0.0"
   languageName: node
   linkType: hard
 
@@ -3133,6 +4187,12 @@ __metadata:
     regex-not: "npm:^1.0.0"
     snapdragon: "npm:^0.8.1"
     to-regex: "npm:^3.0.1"
+  languageName: node
+  linkType: hard
+
+"extsprintf@npm:1.3.0, extsprintf@npm:^1.2.0":
+  version: 1.3.0
+  resolution: "extsprintf@npm:1.3.0"
   languageName: node
   linkType: hard
 
@@ -3173,6 +4233,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fb-watchman@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "fb-watchman@npm:2.0.0"
+  dependencies:
+    bser: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
 "fd-slicer@npm:~1.1.0":
   version: 1.1.0
   resolution: "fd-slicer@npm:1.1.0"
@@ -3192,6 +4260,33 @@ __metadata:
   resolution: "figures@npm:2.0.0"
   dependencies:
     escape-string-regexp: "npm:^1.0.5"
+  languageName: node
+  linkType: hard
+
+"filename-regex@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "filename-regex@npm:2.0.1"
+  languageName: node
+  linkType: hard
+
+"fileset@npm:^2.0.2":
+  version: 2.0.3
+  resolution: "fileset@npm:2.0.3"
+  dependencies:
+    glob: "npm:^7.0.3"
+    minimatch: "npm:^3.0.3"
+  languageName: node
+  linkType: hard
+
+"fill-range@npm:^2.1.0":
+  version: 2.2.4
+  resolution: "fill-range@npm:2.2.4"
+  dependencies:
+    is-number: "npm:^2.1.0"
+    isobject: "npm:^2.0.0"
+    randomatic: "npm:^3.0.0"
+    repeat-element: "npm:^1.1.2"
+    repeat-string: "npm:^1.5.2"
   languageName: node
   linkType: hard
 
@@ -3223,6 +4318,15 @@ __metadata:
     commondir: "npm:^1.0.1"
     make-dir: "npm:^1.0.0"
     pkg-dir: "npm:^3.0.0"
+  languageName: node
+  linkType: hard
+
+"find-up@npm:^1.0.0":
+  version: 1.1.2
+  resolution: "find-up@npm:1.1.2"
+  dependencies:
+    path-exists: "npm:^2.0.0"
+    pinkie-promise: "npm:^2.0.0"
   languageName: node
   linkType: hard
 
@@ -3262,9 +4366,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"for-in@npm:^1.0.2":
+"for-in@npm:^1.0.1, for-in@npm:^1.0.2":
   version: 1.0.2
   resolution: "for-in@npm:1.0.2"
+  languageName: node
+  linkType: hard
+
+"for-own@npm:^0.1.4":
+  version: 0.1.5
+  resolution: "for-own@npm:0.1.5"
+  dependencies:
+    for-in: "npm:^1.0.1"
+  languageName: node
+  linkType: hard
+
+"forever-agent@npm:~0.6.1":
+  version: 0.6.1
+  resolution: "forever-agent@npm:0.6.1"
+  languageName: node
+  linkType: hard
+
+"form-data@npm:~2.3.2":
+  version: 2.3.3
+  resolution: "form-data@npm:2.3.3"
+  dependencies:
+    asynckit: "npm:^0.4.0"
+    combined-stream: "npm:^1.0.6"
+    mime-types: "npm:^2.1.12"
   languageName: node
   linkType: hard
 
@@ -3282,6 +4410,12 @@ __metadata:
   dependencies:
     inherits: "npm:^2.0.1"
     readable-stream: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
+"fs-constants@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "fs-constants@npm:1.0.0"
   languageName: node
   linkType: hard
 
@@ -3320,7 +4454,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@npm:^1.2.2":
+"fsevents@npm:^1.2.2, fsevents@npm:^1.2.3":
   version: 1.2.4
   resolution: "fsevents@npm:1.2.4"
   dependencies:
@@ -3362,6 +4496,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"get-stream@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "get-stream@npm:3.0.0"
+  languageName: node
+  linkType: hard
+
 "get-stream@npm:^4.0.0, get-stream@npm:^4.1.0":
   version: 4.1.0
   resolution: "get-stream@npm:4.1.0"
@@ -3373,6 +4513,31 @@ __metadata:
 "get-value@npm:^2.0.3, get-value@npm:^2.0.6":
   version: 2.0.6
   resolution: "get-value@npm:2.0.6"
+  languageName: node
+  linkType: hard
+
+"getpass@npm:^0.1.1":
+  version: 0.1.7
+  resolution: "getpass@npm:0.1.7"
+  dependencies:
+    assert-plus: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
+"glob-base@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "glob-base@npm:0.3.0"
+  dependencies:
+    glob-parent: "npm:^2.0.0"
+    is-glob: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
+"glob-parent@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "glob-parent@npm:2.0.0"
+  dependencies:
+    is-glob: "npm:^2.0.0"
   languageName: node
   linkType: hard
 
@@ -3391,7 +4556,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^7.0.6, glob@npm:^7.1.2, glob@npm:^7.1.3":
+"glob@npm:^7.0.3, glob@npm:^7.0.6, glob@npm:^7.1.1, glob@npm:^7.1.2, glob@npm:^7.1.3":
   version: 7.1.3
   resolution: "glob@npm:7.1.3"
   dependencies:
@@ -3438,6 +4603,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"globals@npm:^9.18.0":
+  version: 9.18.0
+  resolution: "globals@npm:9.18.0"
+  languageName: node
+  linkType: hard
+
 "globby@npm:^8.0.1":
   version: 8.0.2
   resolution: "globby@npm:8.0.2"
@@ -3470,9 +4641,41 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graceful-fs@npm:^4.1.11, graceful-fs@npm:^4.1.15, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6":
+"graceful-fs@npm:^4.1.11, graceful-fs@npm:^4.1.15, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.1.9":
   version: 4.1.15
   resolution: "graceful-fs@npm:4.1.15"
+  languageName: node
+  linkType: hard
+
+"growly@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "growly@npm:1.3.0"
+  languageName: node
+  linkType: hard
+
+"handlebars@npm:^4.0.3":
+  version: 4.0.12
+  resolution: "handlebars@npm:4.0.12"
+  dependencies:
+    async: "npm:^2.5.0"
+    optimist: "npm:^0.6.1"
+    source-map: "npm:^0.6.1"
+    uglify-js: "npm:^3.1.4"
+  languageName: node
+  linkType: hard
+
+"har-schema@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "har-schema@npm:2.0.0"
+  languageName: node
+  linkType: hard
+
+"har-validator@npm:~5.1.0":
+  version: 5.1.3
+  resolution: "har-validator@npm:5.1.3"
+  dependencies:
+    ajv: "npm:^6.5.5"
+    har-schema: "npm:^2.0.0"
   languageName: node
   linkType: hard
 
@@ -3481,6 +4684,12 @@ __metadata:
   resolution: "has-ansi@npm:2.0.0"
   dependencies:
     ansi-regex: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
+"has-flag@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "has-flag@npm:1.0.0"
   languageName: node
   linkType: hard
 
@@ -3593,6 +4802,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"home-or-tmp@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "home-or-tmp@npm:2.0.0"
+  dependencies:
+    os-homedir: "npm:^1.0.0"
+    os-tmpdir: "npm:^1.0.1"
+  languageName: node
+  linkType: hard
+
 "home-or-tmp@npm:^3.0.0":
   version: 3.0.0
   resolution: "home-or-tmp@npm:3.0.0"
@@ -3604,6 +4822,20 @@ __metadata:
   resolution: "homedir-polyfill@npm:1.0.1"
   dependencies:
     parse-passwd: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
+"hosted-git-info@npm:^2.1.4":
+  version: 2.7.1
+  resolution: "hosted-git-info@npm:2.7.1"
+  languageName: node
+  linkType: hard
+
+"html-encoding-sniffer@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "html-encoding-sniffer@npm:1.0.2"
+  dependencies:
+    whatwg-encoding: "npm:^1.0.1"
   languageName: node
   linkType: hard
 
@@ -3626,13 +4858,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"http-signature@npm:~1.2.0":
+  version: 1.2.0
+  resolution: "http-signature@npm:1.2.0"
+  dependencies:
+    assert-plus: "npm:^1.0.0"
+    jsprim: "npm:^1.2.2"
+    sshpk: "npm:^1.7.0"
+  languageName: node
+  linkType: hard
+
 "https-browserify@npm:^1.0.0":
   version: 1.0.0
   resolution: "https-browserify@npm:1.0.0"
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:^0.4.24, iconv-lite@npm:^0.4.4":
+"iconv-lite@npm:0.4.24, iconv-lite@npm:^0.4.24, iconv-lite@npm:^0.4.4":
   version: 0.4.24
   resolution: "iconv-lite@npm:0.4.24"
   dependencies:
@@ -3669,6 +4911,15 @@ __metadata:
 "immer@npm:^1.7.2":
   version: 1.10.5
   resolution: "immer@npm:1.10.5"
+  languageName: node
+  linkType: hard
+
+"import-local@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "import-local@npm:1.0.0"
+  dependencies:
+    pkg-dir: "npm:^2.0.0"
+    resolve-cwd: "npm:^2.0.0"
   languageName: node
   linkType: hard
 
@@ -3746,11 +4997,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"invariant@npm:^2.2.2, invariant@npm:^2.2.4":
+"invariant@npm:2.2.4, invariant@npm:^2.2.2, invariant@npm:^2.2.4":
   version: 2.2.4
   resolution: "invariant@npm:2.2.4"
   dependencies:
     loose-envify: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
+"invert-kv@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "invert-kv@npm:1.0.0"
   languageName: node
   linkType: hard
 
@@ -3776,6 +5033,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-array@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "is-array@npm:1.0.1"
+  languageName: node
+  linkType: hard
+
+"is-arrayish@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "is-arrayish@npm:0.2.1"
+  languageName: node
+  linkType: hard
+
 "is-binary-path@npm:^1.0.0":
   version: 1.0.1
   resolution: "is-binary-path@npm:1.0.1"
@@ -3790,9 +5059,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-callable@npm:^1.1.0":
+"is-builtin-module@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "is-builtin-module@npm:1.0.0"
+  dependencies:
+    builtin-modules: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
+"is-callable@npm:^1.1.0, is-callable@npm:^1.1.4":
   version: 1.1.4
   resolution: "is-callable@npm:1.1.4"
+  languageName: node
+  linkType: hard
+
+"is-ci@npm:^1.0.10":
+  version: 1.2.1
+  resolution: "is-ci@npm:1.2.1"
+  dependencies:
+    ci-info: "npm:^1.5.0"
   languageName: node
   linkType: hard
 
@@ -3809,6 +5094,12 @@ __metadata:
   resolution: "is-data-descriptor@npm:1.0.0"
   dependencies:
     kind-of: "npm:^6.0.0"
+  languageName: node
+  linkType: hard
+
+"is-date-object@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "is-date-object@npm:1.0.1"
   languageName: node
   linkType: hard
 
@@ -3832,6 +5123,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-dotfile@npm:^1.0.0":
+  version: 1.0.3
+  resolution: "is-dotfile@npm:1.0.3"
+  languageName: node
+  linkType: hard
+
+"is-equal-shallow@npm:^0.1.3":
+  version: 0.1.3
+  resolution: "is-equal-shallow@npm:0.1.3"
+  dependencies:
+    is-primitive: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
 "is-extendable@npm:^0.1.0, is-extendable@npm:^0.1.1":
   version: 0.1.1
   resolution: "is-extendable@npm:0.1.1"
@@ -3846,9 +5151,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-extglob@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "is-extglob@npm:1.0.0"
+  languageName: node
+  linkType: hard
+
 "is-extglob@npm:^2.1.0, is-extglob@npm:^2.1.1":
   version: 2.1.1
   resolution: "is-extglob@npm:2.1.1"
+  languageName: node
+  linkType: hard
+
+"is-finite@npm:^1.0.0":
+  version: 1.0.2
+  resolution: "is-finite@npm:1.0.2"
+  dependencies:
+    number-is-nan: "npm:^1.0.0"
   languageName: node
   linkType: hard
 
@@ -3863,6 +5182,20 @@ __metadata:
 "is-fullwidth-code-point@npm:^2.0.0":
   version: 2.0.0
   resolution: "is-fullwidth-code-point@npm:2.0.0"
+  languageName: node
+  linkType: hard
+
+"is-generator-fn@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "is-generator-fn@npm:1.0.0"
+  languageName: node
+  linkType: hard
+
+"is-glob@npm:^2.0.0, is-glob@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "is-glob@npm:2.0.1"
+  dependencies:
+    is-extglob: "npm:^1.0.0"
   languageName: node
   linkType: hard
 
@@ -3882,11 +5215,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-number@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "is-number@npm:2.1.0"
+  dependencies:
+    kind-of: "npm:^3.0.2"
+  languageName: node
+  linkType: hard
+
 "is-number@npm:^3.0.0":
   version: 3.0.0
   resolution: "is-number@npm:3.0.0"
   dependencies:
     kind-of: "npm:^3.0.2"
+  languageName: node
+  linkType: hard
+
+"is-number@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "is-number@npm:4.0.0"
   languageName: node
   linkType: hard
 
@@ -3898,15 +5245,55 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-posix-bracket@npm:^0.1.0":
+  version: 0.1.1
+  resolution: "is-posix-bracket@npm:0.1.1"
+  languageName: node
+  linkType: hard
+
+"is-primitive@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "is-primitive@npm:2.0.0"
+  languageName: node
+  linkType: hard
+
 "is-promise@npm:^2.1.0":
   version: 2.1.0
   resolution: "is-promise@npm:2.1.0"
   languageName: node
   linkType: hard
 
+"is-regex@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "is-regex@npm:1.0.4"
+  dependencies:
+    has: "npm:^1.0.1"
+  languageName: node
+  linkType: hard
+
 "is-stream@npm:^1.1.0":
   version: 1.1.0
   resolution: "is-stream@npm:1.1.0"
+  languageName: node
+  linkType: hard
+
+"is-symbol@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "is-symbol@npm:1.0.2"
+  dependencies:
+    has-symbols: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
+"is-typedarray@npm:~1.0.0":
+  version: 1.0.0
+  resolution: "is-typedarray@npm:1.0.0"
+  languageName: node
+  linkType: hard
+
+"is-utf8@npm:^0.2.0":
+  version: 0.2.1
+  resolution: "is-utf8@npm:0.2.1"
   languageName: node
   linkType: hard
 
@@ -3956,6 +5343,453 @@ __metadata:
   languageName: node
   linkType: hard
 
+"isstream@npm:~0.1.2":
+  version: 0.1.2
+  resolution: "isstream@npm:0.1.2"
+  languageName: node
+  linkType: hard
+
+"istanbul-api@npm:^1.3.1":
+  version: 1.3.7
+  resolution: "istanbul-api@npm:1.3.7"
+  dependencies:
+    async: "npm:^2.1.4"
+    fileset: "npm:^2.0.2"
+    istanbul-lib-coverage: "npm:^1.2.1"
+    istanbul-lib-hook: "npm:^1.2.2"
+    istanbul-lib-instrument: "npm:^1.10.2"
+    istanbul-lib-report: "npm:^1.1.5"
+    istanbul-lib-source-maps: "npm:^1.2.6"
+    istanbul-reports: "npm:^1.5.1"
+    js-yaml: "npm:^3.7.0"
+    mkdirp: "npm:^0.5.1"
+    once: "npm:^1.4.0"
+  languageName: node
+  linkType: hard
+
+"istanbul-lib-coverage@npm:^1.2.0, istanbul-lib-coverage@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "istanbul-lib-coverage@npm:1.2.1"
+  languageName: node
+  linkType: hard
+
+"istanbul-lib-hook@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "istanbul-lib-hook@npm:1.2.2"
+  dependencies:
+    append-transform: "npm:^0.4.0"
+  languageName: node
+  linkType: hard
+
+"istanbul-lib-instrument@npm:^1.10.1, istanbul-lib-instrument@npm:^1.10.2":
+  version: 1.10.2
+  resolution: "istanbul-lib-instrument@npm:1.10.2"
+  dependencies:
+    babel-generator: "npm:^6.18.0"
+    babel-template: "npm:^6.16.0"
+    babel-traverse: "npm:^6.18.0"
+    babel-types: "npm:^6.18.0"
+    babylon: "npm:^6.18.0"
+    istanbul-lib-coverage: "npm:^1.2.1"
+    semver: "npm:^5.3.0"
+  languageName: node
+  linkType: hard
+
+"istanbul-lib-report@npm:^1.1.5":
+  version: 1.1.5
+  resolution: "istanbul-lib-report@npm:1.1.5"
+  dependencies:
+    istanbul-lib-coverage: "npm:^1.2.1"
+    mkdirp: "npm:^0.5.1"
+    path-parse: "npm:^1.0.5"
+    supports-color: "npm:^3.1.2"
+  languageName: node
+  linkType: hard
+
+"istanbul-lib-source-maps@npm:^1.2.4, istanbul-lib-source-maps@npm:^1.2.6":
+  version: 1.2.6
+  resolution: "istanbul-lib-source-maps@npm:1.2.6"
+  dependencies:
+    debug: "npm:^3.1.0"
+    istanbul-lib-coverage: "npm:^1.2.1"
+    mkdirp: "npm:^0.5.1"
+    rimraf: "npm:^2.6.1"
+    source-map: "npm:^0.5.3"
+  languageName: node
+  linkType: hard
+
+"istanbul-reports@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "istanbul-reports@npm:1.5.1"
+  dependencies:
+    handlebars: "npm:^4.0.3"
+  languageName: node
+  linkType: hard
+
+"jest-changed-files@npm:^23.4.2":
+  version: 23.4.2
+  resolution: "jest-changed-files@npm:23.4.2"
+  dependencies:
+    throat: "npm:^4.0.0"
+  languageName: node
+  linkType: hard
+
+"jest-cli@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-cli@npm:23.6.0"
+  dependencies:
+    ansi-escapes: "npm:^3.0.0"
+    chalk: "npm:^2.0.1"
+    exit: "npm:^0.1.2"
+    glob: "npm:^7.1.2"
+    graceful-fs: "npm:^4.1.11"
+    import-local: "npm:^1.0.0"
+    is-ci: "npm:^1.0.10"
+    istanbul-api: "npm:^1.3.1"
+    istanbul-lib-coverage: "npm:^1.2.0"
+    istanbul-lib-instrument: "npm:^1.10.1"
+    istanbul-lib-source-maps: "npm:^1.2.4"
+    jest-changed-files: "npm:^23.4.2"
+    jest-config: "npm:^23.6.0"
+    jest-environment-jsdom: "npm:^23.4.0"
+    jest-get-type: "npm:^22.1.0"
+    jest-haste-map: "npm:^23.6.0"
+    jest-message-util: "npm:^23.4.0"
+    jest-regex-util: "npm:^23.3.0"
+    jest-resolve-dependencies: "npm:^23.6.0"
+    jest-runner: "npm:^23.6.0"
+    jest-runtime: "npm:^23.6.0"
+    jest-snapshot: "npm:^23.6.0"
+    jest-util: "npm:^23.4.0"
+    jest-validate: "npm:^23.6.0"
+    jest-watcher: "npm:^23.4.0"
+    jest-worker: "npm:^23.2.0"
+    micromatch: "npm:^2.3.11"
+    node-notifier: "npm:^5.2.1"
+    prompts: "npm:^0.1.9"
+    realpath-native: "npm:^1.0.0"
+    rimraf: "npm:^2.5.4"
+    slash: "npm:^1.0.0"
+    string-length: "npm:^2.0.0"
+    strip-ansi: "npm:^4.0.0"
+    which: "npm:^1.2.12"
+    yargs: "npm:^11.0.0"
+  languageName: node
+  linkType: hard
+
+"jest-config@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-config@npm:23.6.0"
+  dependencies:
+    babel-core: "npm:^6.0.0"
+    babel-jest: "npm:^23.6.0"
+    chalk: "npm:^2.0.1"
+    glob: "npm:^7.1.1"
+    jest-environment-jsdom: "npm:^23.4.0"
+    jest-environment-node: "npm:^23.4.0"
+    jest-get-type: "npm:^22.1.0"
+    jest-jasmine2: "npm:^23.6.0"
+    jest-regex-util: "npm:^23.3.0"
+    jest-resolve: "npm:^23.6.0"
+    jest-util: "npm:^23.4.0"
+    jest-validate: "npm:^23.6.0"
+    micromatch: "npm:^2.3.11"
+    pretty-format: "npm:^23.6.0"
+  languageName: node
+  linkType: hard
+
+"jest-diff@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-diff@npm:23.6.0"
+  dependencies:
+    chalk: "npm:^2.0.1"
+    diff: "npm:^3.2.0"
+    jest-get-type: "npm:^22.1.0"
+    pretty-format: "npm:^23.6.0"
+  languageName: node
+  linkType: hard
+
+"jest-docblock@npm:^23.2.0":
+  version: 23.2.0
+  resolution: "jest-docblock@npm:23.2.0"
+  dependencies:
+    detect-newline: "npm:^2.1.0"
+  languageName: node
+  linkType: hard
+
+"jest-each@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-each@npm:23.6.0"
+  dependencies:
+    chalk: "npm:^2.0.1"
+    pretty-format: "npm:^23.6.0"
+  languageName: node
+  linkType: hard
+
+"jest-environment-jsdom@npm:^23.4.0":
+  version: 23.4.0
+  resolution: "jest-environment-jsdom@npm:23.4.0"
+  dependencies:
+    jest-mock: "npm:^23.2.0"
+    jest-util: "npm:^23.4.0"
+    jsdom: "npm:^11.5.1"
+  languageName: node
+  linkType: hard
+
+"jest-environment-node@npm:^23.4.0":
+  version: 23.4.0
+  resolution: "jest-environment-node@npm:23.4.0"
+  dependencies:
+    jest-mock: "npm:^23.2.0"
+    jest-util: "npm:^23.4.0"
+  languageName: node
+  linkType: hard
+
+"jest-get-type@npm:^22.1.0":
+  version: 22.4.3
+  resolution: "jest-get-type@npm:22.4.3"
+  languageName: node
+  linkType: hard
+
+"jest-haste-map@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-haste-map@npm:23.6.0"
+  dependencies:
+    fb-watchman: "npm:^2.0.0"
+    graceful-fs: "npm:^4.1.11"
+    invariant: "npm:^2.2.4"
+    jest-docblock: "npm:^23.2.0"
+    jest-serializer: "npm:^23.0.1"
+    jest-worker: "npm:^23.2.0"
+    micromatch: "npm:^2.3.11"
+    sane: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
+"jest-jasmine2@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-jasmine2@npm:23.6.0"
+  dependencies:
+    babel-traverse: "npm:^6.0.0"
+    chalk: "npm:^2.0.1"
+    co: "npm:^4.6.0"
+    expect: "npm:^23.6.0"
+    is-generator-fn: "npm:^1.0.0"
+    jest-diff: "npm:^23.6.0"
+    jest-each: "npm:^23.6.0"
+    jest-matcher-utils: "npm:^23.6.0"
+    jest-message-util: "npm:^23.4.0"
+    jest-snapshot: "npm:^23.6.0"
+    jest-util: "npm:^23.4.0"
+    pretty-format: "npm:^23.6.0"
+  languageName: node
+  linkType: hard
+
+"jest-junit@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "jest-junit@npm:5.2.0"
+  dependencies:
+    jest-config: "npm:^23.6.0"
+    jest-validate: "npm:^23.0.1"
+    mkdirp: "npm:^0.5.1"
+    strip-ansi: "npm:^4.0.0"
+    xml: "npm:^1.0.1"
+  languageName: node
+  linkType: hard
+
+"jest-leak-detector@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-leak-detector@npm:23.6.0"
+  dependencies:
+    pretty-format: "npm:^23.6.0"
+  languageName: node
+  linkType: hard
+
+"jest-matcher-utils@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-matcher-utils@npm:23.6.0"
+  dependencies:
+    chalk: "npm:^2.0.1"
+    jest-get-type: "npm:^22.1.0"
+    pretty-format: "npm:^23.6.0"
+  languageName: node
+  linkType: hard
+
+"jest-message-util@npm:^23.4.0":
+  version: 23.4.0
+  resolution: "jest-message-util@npm:23.4.0"
+  dependencies:
+    @babel/code-frame: "npm:^7.0.0-beta.35"
+    chalk: "npm:^2.0.1"
+    micromatch: "npm:^2.3.11"
+    slash: "npm:^1.0.0"
+    stack-utils: "npm:^1.0.1"
+  languageName: node
+  linkType: hard
+
+"jest-mock@npm:^23.2.0":
+  version: 23.2.0
+  resolution: "jest-mock@npm:23.2.0"
+  languageName: node
+  linkType: hard
+
+"jest-pnp-resolver@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "jest-pnp-resolver@npm:1.0.2"
+  peerDependencies:
+    jest-resolve: "*"
+  languageName: node
+  linkType: hard
+
+"jest-regex-util@npm:^23.3.0":
+  version: 23.3.0
+  resolution: "jest-regex-util@npm:23.3.0"
+  languageName: node
+  linkType: hard
+
+"jest-resolve-dependencies@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-resolve-dependencies@npm:23.6.0"
+  dependencies:
+    jest-regex-util: "npm:^23.3.0"
+    jest-snapshot: "npm:^23.6.0"
+  languageName: node
+  linkType: hard
+
+"jest-resolve@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-resolve@npm:23.6.0"
+  dependencies:
+    browser-resolve: "npm:^1.11.3"
+    chalk: "npm:^2.0.1"
+    realpath-native: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
+"jest-runner@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-runner@npm:23.6.0"
+  dependencies:
+    exit: "npm:^0.1.2"
+    graceful-fs: "npm:^4.1.11"
+    jest-config: "npm:^23.6.0"
+    jest-docblock: "npm:^23.2.0"
+    jest-haste-map: "npm:^23.6.0"
+    jest-jasmine2: "npm:^23.6.0"
+    jest-leak-detector: "npm:^23.6.0"
+    jest-message-util: "npm:^23.4.0"
+    jest-runtime: "npm:^23.6.0"
+    jest-util: "npm:^23.4.0"
+    jest-worker: "npm:^23.2.0"
+    source-map-support: "npm:^0.5.6"
+    throat: "npm:^4.0.0"
+  languageName: node
+  linkType: hard
+
+"jest-runtime@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-runtime@npm:23.6.0"
+  dependencies:
+    babel-core: "npm:^6.0.0"
+    babel-plugin-istanbul: "npm:^4.1.6"
+    chalk: "npm:^2.0.1"
+    convert-source-map: "npm:^1.4.0"
+    exit: "npm:^0.1.2"
+    fast-json-stable-stringify: "npm:^2.0.0"
+    graceful-fs: "npm:^4.1.11"
+    jest-config: "npm:^23.6.0"
+    jest-haste-map: "npm:^23.6.0"
+    jest-message-util: "npm:^23.4.0"
+    jest-regex-util: "npm:^23.3.0"
+    jest-resolve: "npm:^23.6.0"
+    jest-snapshot: "npm:^23.6.0"
+    jest-util: "npm:^23.4.0"
+    jest-validate: "npm:^23.6.0"
+    micromatch: "npm:^2.3.11"
+    realpath-native: "npm:^1.0.0"
+    slash: "npm:^1.0.0"
+    strip-bom: "npm:3.0.0"
+    write-file-atomic: "npm:^2.1.0"
+    yargs: "npm:^11.0.0"
+  languageName: node
+  linkType: hard
+
+"jest-serializer@npm:^23.0.1":
+  version: 23.0.1
+  resolution: "jest-serializer@npm:23.0.1"
+  languageName: node
+  linkType: hard
+
+"jest-snapshot@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-snapshot@npm:23.6.0"
+  dependencies:
+    babel-types: "npm:^6.0.0"
+    chalk: "npm:^2.0.1"
+    jest-diff: "npm:^23.6.0"
+    jest-matcher-utils: "npm:^23.6.0"
+    jest-message-util: "npm:^23.4.0"
+    jest-resolve: "npm:^23.6.0"
+    mkdirp: "npm:^0.5.1"
+    natural-compare: "npm:^1.4.0"
+    pretty-format: "npm:^23.6.0"
+    semver: "npm:^5.5.0"
+  languageName: node
+  linkType: hard
+
+"jest-util@npm:^23.4.0":
+  version: 23.4.0
+  resolution: "jest-util@npm:23.4.0"
+  dependencies:
+    callsites: "npm:^2.0.0"
+    chalk: "npm:^2.0.1"
+    graceful-fs: "npm:^4.1.11"
+    is-ci: "npm:^1.0.10"
+    jest-message-util: "npm:^23.4.0"
+    mkdirp: "npm:^0.5.1"
+    slash: "npm:^1.0.0"
+    source-map: "npm:^0.6.0"
+  languageName: node
+  linkType: hard
+
+"jest-validate@npm:^23.0.1, jest-validate@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest-validate@npm:23.6.0"
+  dependencies:
+    chalk: "npm:^2.0.1"
+    jest-get-type: "npm:^22.1.0"
+    leven: "npm:^2.1.0"
+    pretty-format: "npm:^23.6.0"
+  languageName: node
+  linkType: hard
+
+"jest-watcher@npm:^23.4.0":
+  version: 23.4.0
+  resolution: "jest-watcher@npm:23.4.0"
+  dependencies:
+    ansi-escapes: "npm:^3.0.0"
+    chalk: "npm:^2.0.1"
+    string-length: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
+"jest-worker@npm:^23.2.0":
+  version: 23.2.0
+  resolution: "jest-worker@npm:23.2.0"
+  dependencies:
+    merge-stream: "npm:^1.0.1"
+  languageName: node
+  linkType: hard
+
+"jest@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "jest@npm:23.6.0"
+  dependencies:
+    import-local: "npm:^1.0.0"
+    jest-cli: "npm:^23.6.0"
+  languageName: node
+  linkType: hard
+
 "joi@npm:^13.6.0":
   version: 13.7.0
   resolution: "joi@npm:13.7.0"
@@ -3975,6 +5809,66 @@ __metadata:
 "js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
+  languageName: node
+  linkType: hard
+
+"js-tokens@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "js-tokens@npm:3.0.2"
+  languageName: node
+  linkType: hard
+
+"js-yaml@npm:^3.7.0":
+  version: 3.12.1
+  resolution: "js-yaml@npm:3.12.1"
+  dependencies:
+    argparse: "npm:^1.0.7"
+    esprima: "npm:^4.0.0"
+  languageName: node
+  linkType: hard
+
+"jsbn@npm:~0.1.0":
+  version: 0.1.1
+  resolution: "jsbn@npm:0.1.1"
+  languageName: node
+  linkType: hard
+
+"jsdom@npm:^11.5.1":
+  version: 11.12.0
+  resolution: "jsdom@npm:11.12.0"
+  dependencies:
+    abab: "npm:^2.0.0"
+    acorn: "npm:^5.5.3"
+    acorn-globals: "npm:^4.1.0"
+    array-equal: "npm:^1.0.0"
+    cssom: "npm:>= 0.3.2 < 0.4.0"
+    cssstyle: "npm:^1.0.0"
+    data-urls: "npm:^1.0.0"
+    domexception: "npm:^1.0.1"
+    escodegen: "npm:^1.9.1"
+    html-encoding-sniffer: "npm:^1.0.2"
+    left-pad: "npm:^1.3.0"
+    nwsapi: "npm:^2.0.7"
+    parse5: "npm:4.0.0"
+    pn: "npm:^1.1.0"
+    request: "npm:^2.87.0"
+    request-promise-native: "npm:^1.0.5"
+    sax: "npm:^1.2.4"
+    symbol-tree: "npm:^3.2.2"
+    tough-cookie: "npm:^2.3.4"
+    w3c-hr-time: "npm:^1.0.1"
+    webidl-conversions: "npm:^4.0.2"
+    whatwg-encoding: "npm:^1.0.3"
+    whatwg-mimetype: "npm:^2.1.0"
+    whatwg-url: "npm:^6.4.1"
+    ws: "npm:^5.2.0"
+    xml-name-validator: "npm:^3.0.0"
+  languageName: node
+  linkType: hard
+
+"jsesc@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "jsesc@npm:1.3.0"
   languageName: node
   linkType: hard
 
@@ -4020,6 +5914,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"json-schema@npm:0.2.3":
+  version: 0.2.3
+  resolution: "json-schema@npm:0.2.3"
+  languageName: node
+  linkType: hard
+
+"json-stringify-safe@npm:~5.0.1":
+  version: 5.0.1
+  resolution: "json-stringify-safe@npm:5.0.1"
+  languageName: node
+  linkType: hard
+
+"json5@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "json5@npm:0.5.1"
+  languageName: node
+  linkType: hard
+
 "json5@npm:^1.0.1":
   version: 1.0.1
   resolution: "json5@npm:1.0.1"
@@ -4041,6 +5953,17 @@ __metadata:
   resolution: "jsonfile@npm:4.0.0"
   dependencies:
     graceful-fs: "npm:^4.1.6"
+  languageName: node
+  linkType: hard
+
+"jsprim@npm:^1.2.2":
+  version: 1.4.1
+  resolution: "jsprim@npm:1.4.1"
+  dependencies:
+    assert-plus: "npm:1.0.0"
+    extsprintf: "npm:1.3.0"
+    json-schema: "npm:0.2.3"
+    verror: "npm:1.10.0"
   languageName: node
   linkType: hard
 
@@ -4088,11 +6011,45 @@ __metadata:
   languageName: node
   linkType: hard
 
+"klaw@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "klaw@npm:2.1.1"
+  dependencies:
+    graceful-fs: "npm:^4.1.9"
+  languageName: node
+  linkType: hard
+
+"kleur@npm:^2.0.1":
+  version: 2.0.2
+  resolution: "kleur@npm:2.0.2"
+  languageName: node
+  linkType: hard
+
+"lcid@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "lcid@npm:1.0.0"
+  dependencies:
+    invert-kv: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
 "lcid@npm:^2.0.0":
   version: 2.0.0
   resolution: "lcid@npm:2.0.0"
   dependencies:
     invert-kv: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
+"left-pad@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "left-pad@npm:1.3.0"
+  languageName: node
+  linkType: hard
+
+"leven@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "leven@npm:2.1.0"
   languageName: node
   linkType: hard
 
@@ -4116,6 +6073,18 @@ __metadata:
   resolution: "linkify-it@npm:2.1.0"
   dependencies:
     uc.micro: "npm:^1.0.1"
+  languageName: node
+  linkType: hard
+
+"load-json-file@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "load-json-file@npm:1.1.0"
+  dependencies:
+    graceful-fs: "npm:^4.1.2"
+    parse-json: "npm:^2.2.0"
+    pify: "npm:^2.0.0"
+    pinkie-promise: "npm:^2.0.0"
+    strip-bom: "npm:^2.0.0"
   languageName: node
   linkType: hard
 
@@ -4167,13 +6136,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.sortby@npm:^4.7.0":
+  version: 4.7.0
+  resolution: "lodash.sortby@npm:4.7.0"
+  languageName: node
+  linkType: hard
+
 "lodash.toarray@npm:^4.4.0":
   version: 4.4.0
   resolution: "lodash.toarray@npm:4.4.0"
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.15.0, lodash@npm:^4.17.10, lodash@npm:^4.17.4":
+"lodash@npm:^4.13.1, lodash@npm:^4.15.0, lodash@npm:^4.17.10, lodash@npm:^4.17.4":
   version: 4.17.11
   resolution: "lodash@npm:4.17.11"
   languageName: node
@@ -4198,6 +6173,15 @@ __metadata:
 "lowercase-keys@npm:^1.0.0, lowercase-keys@npm:^1.0.1":
   version: 1.0.1
   resolution: "lowercase-keys@npm:1.0.1"
+  languageName: node
+  linkType: hard
+
+"lru-cache@npm:^4.0.1":
+  version: 4.1.5
+  resolution: "lru-cache@npm:4.1.5"
+  dependencies:
+    pseudomap: "npm:^1.0.2"
+    yallist: "npm:^2.1.2"
   languageName: node
   linkType: hard
 
@@ -4228,6 +6212,14 @@ __metadata:
 "make-error@npm:^1.1.1":
   version: 1.3.5
   resolution: "make-error@npm:1.3.5"
+  languageName: node
+  linkType: hard
+
+"makeerror@npm:1.0.x":
+  version: 1.0.11
+  resolution: "makeerror@npm:1.0.11"
+  dependencies:
+    tmpl: "npm:1.0.x"
   languageName: node
   linkType: hard
 
@@ -4265,6 +6257,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"math-random@npm:^1.0.1":
+  version: 1.0.4
+  resolution: "math-random@npm:1.0.4"
+  languageName: node
+  linkType: hard
+
 "md5.js@npm:^1.3.4":
   version: 1.3.5
   resolution: "md5.js@npm:1.3.5"
@@ -4278,6 +6276,14 @@ __metadata:
 "mdurl@npm:^1.0.1":
   version: 1.0.1
   resolution: "mdurl@npm:1.0.1"
+  languageName: node
+  linkType: hard
+
+"mem@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "mem@npm:1.1.0"
+  dependencies:
+    mimic-fn: "npm:^1.0.0"
   languageName: node
   linkType: hard
 
@@ -4308,9 +6314,43 @@ __metadata:
   languageName: node
   linkType: hard
 
+"merge-stream@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "merge-stream@npm:1.0.1"
+  dependencies:
+    readable-stream: "npm:^2.0.1"
+  languageName: node
+  linkType: hard
+
+"merge@npm:^1.2.0":
+  version: 1.2.1
+  resolution: "merge@npm:1.2.1"
+  languageName: node
+  linkType: hard
+
 "merge2@npm:^1.2.3":
   version: 1.2.3
   resolution: "merge2@npm:1.2.3"
+  languageName: node
+  linkType: hard
+
+"micromatch@npm:^2.3.11":
+  version: 2.3.11
+  resolution: "micromatch@npm:2.3.11"
+  dependencies:
+    arr-diff: "npm:^2.0.0"
+    array-unique: "npm:^0.2.1"
+    braces: "npm:^1.8.2"
+    expand-brackets: "npm:^0.1.4"
+    extglob: "npm:^0.3.1"
+    filename-regex: "npm:^2.0.0"
+    is-extglob: "npm:^1.0.0"
+    is-glob: "npm:^2.0.1"
+    kind-of: "npm:^3.0.2"
+    normalize-path: "npm:^2.0.1"
+    object.omit: "npm:^2.0.0"
+    parse-glob: "npm:^3.0.4"
+    regex-cache: "npm:^0.4.2"
   languageName: node
   linkType: hard
 
@@ -4340,6 +6380,20 @@ __metadata:
   dependencies:
     bn.js: "npm:^4.0.0"
     brorand: "npm:^1.0.1"
+  languageName: node
+  linkType: hard
+
+"mime-db@npm:~1.37.0":
+  version: 1.37.0
+  resolution: "mime-db@npm:1.37.0"
+  languageName: node
+  linkType: hard
+
+"mime-types@npm:^2.1.12, mime-types@npm:~2.1.19":
+  version: 2.1.21
+  resolution: "mime-types@npm:2.1.21"
+  dependencies:
+    mime-db: "npm:~1.37.0"
   languageName: node
   linkType: hard
 
@@ -4381,13 +6435,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimist@npm:^1.1.3, minimist@npm:^1.2.0":
+"minimist@npm:^1.1.1, minimist@npm:^1.1.3, minimist@npm:^1.2.0":
   version: 1.2.0
   resolution: "minimist@npm:1.2.0"
   languageName: node
   linkType: hard
 
-"minimist@npm:0.0.8":
+"minimist@npm:0.0.8, minimist@npm:~0.0.1":
   version: 0.0.8
   resolution: "minimist@npm:0.0.8"
   languageName: node
@@ -4499,6 +6553,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"natural-compare@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "natural-compare@npm:1.4.0"
+  languageName: node
+  linkType: hard
+
 "needle@npm:^2.2.1":
   version: 2.2.4
   resolution: "needle@npm:2.2.4"
@@ -4535,6 +6595,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-int64@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "node-int64@npm:0.4.0"
+  languageName: node
+  linkType: hard
+
 "node-libs-browser@npm:^2.0.0":
   version: 2.1.0
   resolution: "node-libs-browser@npm:2.1.0"
@@ -4568,6 +6634,17 @@ __metadata:
 "node-modules-regexp@npm:^1.0.0":
   version: 1.0.0
   resolution: "node-modules-regexp@npm:1.0.0"
+  languageName: node
+  linkType: hard
+
+"node-notifier@npm:^5.2.1":
+  version: 5.3.0
+  resolution: "node-notifier@npm:5.3.0"
+  dependencies:
+    growly: "npm:^1.3.0"
+    semver: "npm:^5.5.0"
+    shellwords: "npm:^0.1.1"
+    which: "npm:^1.3.0"
   languageName: node
   linkType: hard
 
@@ -4614,7 +6691,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"normalize-path@npm:^2.1.1":
+"normalize-package-data@npm:^2.3.2":
+  version: 2.4.0
+  resolution: "normalize-package-data@npm:2.4.0"
+  dependencies:
+    hosted-git-info: "npm:^2.1.4"
+    is-builtin-module: "npm:^1.0.0"
+    semver: "npm:2 || 3 || 4 || 5"
+    validate-npm-package-license: "npm:^3.0.1"
+  languageName: node
+  linkType: hard
+
+"normalize-path@npm:^2.0.1, normalize-path@npm:^2.1.1":
   version: 2.1.1
   resolution: "normalize-path@npm:2.1.1"
   dependencies:
@@ -4676,6 +6764,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nwsapi@npm:^2.0.7":
+  version: 2.0.9
+  resolution: "nwsapi@npm:2.0.9"
+  languageName: node
+  linkType: hard
+
+"oauth-sign@npm:~0.9.0":
+  version: 0.9.0
+  resolution: "oauth-sign@npm:0.9.0"
+  languageName: node
+  linkType: hard
+
 "object-assign@npm:^4.1.0, object-assign@npm:^4.1.1":
   version: 4.1.1
   resolution: "object-assign@npm:4.1.1"
@@ -4723,6 +6823,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"object.getownpropertydescriptors@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "object.getownpropertydescriptors@npm:2.0.3"
+  dependencies:
+    define-properties: "npm:^1.1.2"
+    es-abstract: "npm:^1.5.1"
+  languageName: node
+  linkType: hard
+
+"object.omit@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "object.omit@npm:2.0.1"
+  dependencies:
+    for-own: "npm:^0.1.4"
+    is-extendable: "npm:^0.1.1"
+  languageName: node
+  linkType: hard
+
 "object.pick@npm:^1.3.0":
   version: 1.3.0
   resolution: "object.pick@npm:1.3.0"
@@ -4739,11 +6857,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"once@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "once@npm:1.4.0"
+  dependencies:
+    wrappy: "npm:1"
+  languageName: node
+  linkType: hard
+
 "onetime@npm:^2.0.0":
   version: 2.0.1
   resolution: "onetime@npm:2.0.1"
   dependencies:
     mimic-fn: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
+"optimist@npm:^0.6.1":
+  version: 0.6.1
+  resolution: "optimist@npm:0.6.1"
+  dependencies:
+    minimist: "npm:~0.0.1"
+    wordwrap: "npm:~0.0.2"
   languageName: node
   linkType: hard
 
@@ -4772,6 +6907,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"os-locale@npm:^2.0.0":
+  version: 2.1.0
+  resolution: "os-locale@npm:2.1.0"
+  dependencies:
+    execa: "npm:^0.7.0"
+    lcid: "npm:^1.0.0"
+    mem: "npm:^1.1.0"
+  languageName: node
+  linkType: hard
+
 "os-locale@npm:^3.0.0":
   version: 3.1.0
   resolution: "os-locale@npm:3.1.0"
@@ -4782,7 +6927,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"os-tmpdir@npm:^1.0.0, os-tmpdir@npm:~1.0.1, os-tmpdir@npm:~1.0.2":
+"os-tmpdir@npm:^1.0.0, os-tmpdir@npm:^1.0.1, os-tmpdir@npm:~1.0.1, os-tmpdir@npm:~1.0.2":
   version: 1.0.2
   resolution: "os-tmpdir@npm:1.0.2"
   languageName: node
@@ -4893,6 +7038,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"parse-glob@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "parse-glob@npm:3.0.4"
+  dependencies:
+    glob-base: "npm:^0.3.0"
+    is-dotfile: "npm:^1.0.0"
+    is-extglob: "npm:^1.0.0"
+    is-glob: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
+"parse-json@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "parse-json@npm:2.2.0"
+  dependencies:
+    error-ex: "npm:^1.2.0"
+  languageName: node
+  linkType: hard
+
 "parse-passwd@npm:^1.0.0":
   version: 1.0.0
   resolution: "parse-passwd@npm:1.0.0"
@@ -4915,6 +7079,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"parse5@npm:4.0.0":
+  version: 4.0.0
+  resolution: "parse5@npm:4.0.0"
+  languageName: node
+  linkType: hard
+
 "pascalcase@npm:^0.1.1":
   version: 0.1.1
   resolution: "pascalcase@npm:0.1.1"
@@ -4933,13 +7103,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"path-exists@npm:^2.0.0":
+  version: 2.1.0
+  resolution: "path-exists@npm:2.1.0"
+  dependencies:
+    pinkie-promise: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
 "path-exists@npm:^3.0.0":
   version: 3.0.0
   resolution: "path-exists@npm:3.0.0"
   languageName: node
   linkType: hard
 
-"path-is-absolute@npm:^1.0.0":
+"path-is-absolute@npm:^1.0.0, path-is-absolute@npm:^1.0.1":
   version: 1.0.1
   resolution: "path-is-absolute@npm:1.0.1"
   languageName: node
@@ -4951,9 +7129,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-parse@npm:^1.0.6":
+"path-parse@npm:^1.0.5, path-parse@npm:^1.0.6":
   version: 1.0.6
   resolution: "path-parse@npm:1.0.6"
+  languageName: node
+  linkType: hard
+
+"path-type@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "path-type@npm:1.1.0"
+  dependencies:
+    graceful-fs: "npm:^4.1.2"
+    pify: "npm:^2.0.0"
+    pinkie-promise: "npm:^2.0.0"
   languageName: node
   linkType: hard
 
@@ -4989,9 +7177,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"performance-now@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "performance-now@npm:2.1.0"
+  languageName: node
+  linkType: hard
+
+"pify@npm:^2.0.0":
+  version: 2.3.0
+  resolution: "pify@npm:2.3.0"
+  languageName: node
+  linkType: hard
+
 "pify@npm:^3.0.0":
   version: 3.0.0
   resolution: "pify@npm:3.0.0"
+  languageName: node
+  linkType: hard
+
+"pinkie-promise@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "pinkie-promise@npm:2.0.1"
+  dependencies:
+    pinkie: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
+"pinkie@npm:^2.0.0":
+  version: 2.0.4
+  resolution: "pinkie@npm:2.0.4"
   languageName: node
   linkType: hard
 
@@ -5019,9 +7233,46 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pkg-tests-core@1.0.0, pkg-tests-core@workspace:0.0.0":
+  version: 0.0.0
+  resolution: "pkg-tests-core@workspace:0.0.0"
+  dependencies:
+    fs-extra: "npm:^7.0.0"
+    invariant: "npm:2.2.4"
+    klaw: "npm:^2.1.1"
+    minimatch: "npm:^3.0.4"
+    semver: "npm:^5.5.0"
+    super-resolve: "npm:^1.0.0"
+    tar-fs: "npm:^1.16.0"
+    tmp: "npm:^0.0.33"
+  languageName: unknown
+  linkType: soft
+
+"pkg-tests-fixtures@workspace:0.0.0":
+  version: 0.0.0
+  resolution: "pkg-tests-fixtures@workspace:0.0.0"
+  languageName: unknown
+  linkType: soft
+
+"pkg-tests-specs@workspace:0.0.0":
+  version: 0.0.0
+  resolution: "pkg-tests-specs@workspace:0.0.0"
+  dependencies:
+    fs-extra: "npm:^7.0.0"
+    pkg-tests-core: 1.0.0
+    semver: "npm:^5.6.0"
+  languageName: unknown
+  linkType: soft
+
 "pluralize@npm:^7.0.0":
   version: 7.0.0
   resolution: "pluralize@npm:7.0.0"
+  languageName: node
+  linkType: hard
+
+"pn@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "pn@npm:1.1.0"
   languageName: node
   linkType: hard
 
@@ -5051,13 +7302,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"preserve@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "preserve@npm:0.2.0"
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^1.10.2":
+  version: 1.15.3
+  resolution: "prettier@npm:1.15.3"
+  languageName: node
+  linkType: hard
+
 "pretty-bytes@npm:^5.1.0":
   version: 5.1.0
   resolution: "pretty-bytes@npm:5.1.0"
   languageName: node
   linkType: hard
 
-"private@npm:^0.1.6":
+"pretty-format@npm:^23.6.0":
+  version: 23.6.0
+  resolution: "pretty-format@npm:23.6.0"
+  dependencies:
+    ansi-regex: "npm:^3.0.0"
+    ansi-styles: "npm:^3.2.0"
+  languageName: node
+  linkType: hard
+
+"private@npm:^0.1.6, private@npm:^0.1.8":
   version: 0.1.8
   resolution: "private@npm:0.1.8"
   languageName: node
@@ -5106,6 +7378,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prompts@npm:^0.1.9":
+  version: 0.1.14
+  resolution: "prompts@npm:0.1.14"
+  dependencies:
+    kleur: "npm:^2.0.1"
+    sisteransi: "npm:^0.1.1"
+  languageName: node
+  linkType: hard
+
 "prop-types@npm:^15.6.1, prop-types@npm:^15.6.2":
   version: 15.6.2
   resolution: "prop-types@npm:15.6.2"
@@ -5121,6 +7402,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pseudomap@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "pseudomap@npm:1.0.2"
+  languageName: node
+  linkType: hard
+
+"psl@npm:^1.1.24, psl@npm:^1.1.28":
+  version: 1.1.31
+  resolution: "psl@npm:1.1.31"
+  languageName: node
+  linkType: hard
+
 "public-encrypt@npm:^4.0.0":
   version: 4.0.3
   resolution: "public-encrypt@npm:4.0.3"
@@ -5131,6 +7424,15 @@ __metadata:
     parse-asn1: "npm:^5.0.0"
     randombytes: "npm:^2.0.1"
     safe-buffer: "npm:^5.1.2"
+  languageName: node
+  linkType: hard
+
+"pump@npm:^1.0.0":
+  version: 1.0.3
+  resolution: "pump@npm:1.0.3"
+  dependencies:
+    end-of-stream: "npm:^1.1.0"
+    once: "npm:^1.3.1"
   languageName: node
   linkType: hard
 
@@ -5162,7 +7464,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"punycode@npm:^1.2.4":
+"punycode@npm:^1.2.4, punycode@npm:^1.4.1":
   version: 1.4.1
   resolution: "punycode@npm:1.4.1"
   languageName: node
@@ -5174,7 +7476,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"punycode@npm:2.x.x, punycode@npm:^2.1.0":
+"punycode@npm:2.x.x, punycode@npm:^2.1.0, punycode@npm:^2.1.1":
   version: 2.1.1
   resolution: "punycode@npm:2.1.1"
   languageName: node
@@ -5183,6 +7485,12 @@ __metadata:
 "q@npm:^1.0.1":
   version: 1.5.1
   resolution: "q@npm:1.5.1"
+  languageName: node
+  linkType: hard
+
+"qs@npm:~6.5.2":
+  version: 6.5.2
+  resolution: "qs@npm:6.5.2"
   languageName: node
   linkType: hard
 
@@ -5205,6 +7513,16 @@ __metadata:
     buffer-equal: "npm:0.0.1"
     minimist: "npm:^1.1.3"
     through2: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
+"randomatic@npm:^3.0.0":
+  version: 3.1.1
+  resolution: "randomatic@npm:3.1.1"
+  dependencies:
+    is-number: "npm:^4.0.0"
+    kind-of: "npm:^6.0.0"
+    math-random: "npm:^1.0.1"
   languageName: node
   linkType: hard
 
@@ -5295,6 +7613,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"read-pkg-up@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "read-pkg-up@npm:1.0.1"
+  dependencies:
+    find-up: "npm:^1.0.0"
+    read-pkg: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
+"read-pkg@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "read-pkg@npm:1.1.0"
+  dependencies:
+    load-json-file: "npm:^1.0.0"
+    normalize-package-data: "npm:^2.3.2"
+    path-type: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
 "read@npm:^1.0.7":
   version: 1.0.7
   resolution: "read@npm:1.0.7"
@@ -5313,7 +7650,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:1 || 2, readable-stream@npm:^2.0.0, readable-stream@npm:^2.0.1, readable-stream@npm:^2.0.2, readable-stream@npm:^2.0.4, readable-stream@npm:^2.0.6, readable-stream@npm:^2.1.5, readable-stream@npm:^2.2.2, readable-stream@npm:^2.3.3, readable-stream@npm:^2.3.6, readable-stream@npm:~2.3.3, readable-stream@npm:~2.3.6":
+"readable-stream@npm:1 || 2, readable-stream@npm:^2.0.0, readable-stream@npm:^2.0.1, readable-stream@npm:^2.0.2, readable-stream@npm:^2.0.4, readable-stream@npm:^2.0.6, readable-stream@npm:^2.1.5, readable-stream@npm:^2.2.2, readable-stream@npm:^2.3.0, readable-stream@npm:^2.3.3, readable-stream@npm:^2.3.5, readable-stream@npm:^2.3.6, readable-stream@npm:~2.3.3, readable-stream@npm:~2.3.6":
   version: 2.3.6
   resolution: "readable-stream@npm:2.3.6"
   dependencies:
@@ -5334,6 +7671,14 @@ __metadata:
     graceful-fs: "npm:^4.1.11"
     micromatch: "npm:^3.1.10"
     readable-stream: "npm:^2.0.2"
+  languageName: node
+  linkType: hard
+
+"realpath-native@npm:^1.0.0":
+  version: 1.0.2
+  resolution: "realpath-native@npm:1.0.2"
+  dependencies:
+    util.promisify: "npm:^1.0.0"
   languageName: node
   linkType: hard
 
@@ -5375,7 +7720,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regenerate@npm:^1.4.0":
+"regenerate@npm:^1.2.1, regenerate@npm:^1.4.0":
   version: 1.4.0
   resolution: "regenerate@npm:1.4.0"
   languageName: node
@@ -5393,11 +7738,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"regenerator-transform@npm:^0.10.0":
+  version: 0.10.1
+  resolution: "regenerator-transform@npm:0.10.1"
+  dependencies:
+    babel-runtime: "npm:^6.18.0"
+    babel-types: "npm:^6.19.0"
+    private: "npm:^0.1.6"
+  languageName: node
+  linkType: hard
+
 "regenerator-transform@npm:^0.13.3":
   version: 0.13.3
   resolution: "regenerator-transform@npm:0.13.3"
   dependencies:
     private: "npm:^0.1.6"
+  languageName: node
+  linkType: hard
+
+"regex-cache@npm:^0.4.2":
+  version: 0.4.4
+  resolution: "regex-cache@npm:0.4.4"
+  dependencies:
+    is-equal-shallow: "npm:^0.1.3"
   languageName: node
   linkType: hard
 
@@ -5407,6 +7770,16 @@ __metadata:
   dependencies:
     extend-shallow: "npm:^3.0.2"
     safe-regex: "npm:^1.1.0"
+  languageName: node
+  linkType: hard
+
+"regexpu-core@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "regexpu-core@npm:2.0.0"
+  dependencies:
+    regenerate: "npm:^1.2.1"
+    regjsgen: "npm:^0.2.0"
+    regjsparser: "npm:^0.1.4"
   languageName: node
   linkType: hard
 
@@ -5423,9 +7796,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"regjsgen@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "regjsgen@npm:0.2.0"
+  languageName: node
+  linkType: hard
+
 "regjsgen@npm:^0.5.0":
   version: 0.5.0
   resolution: "regjsgen@npm:0.5.0"
+  languageName: node
+  linkType: hard
+
+"regjsparser@npm:^0.1.4":
+  version: 0.1.5
+  resolution: "regjsparser@npm:0.1.5"
+  dependencies:
+    jsesc: "npm:~0.5.0"
   languageName: node
   linkType: hard
 
@@ -5455,9 +7842,66 @@ __metadata:
   languageName: node
   linkType: hard
 
-"repeat-string@npm:^1.6.1":
+"repeat-string@npm:^1.5.2, repeat-string@npm:^1.6.1":
   version: 1.6.1
   resolution: "repeat-string@npm:1.6.1"
+  languageName: node
+  linkType: hard
+
+"repeating@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "repeating@npm:2.0.1"
+  dependencies:
+    is-finite: "npm:^1.0.0"
+  languageName: node
+  linkType: hard
+
+"request-promise-core@npm:1.1.1":
+  version: 1.1.1
+  resolution: "request-promise-core@npm:1.1.1"
+  dependencies:
+    lodash: "npm:^4.13.1"
+  peerDependencies:
+    request: ^2.34
+  languageName: node
+  linkType: hard
+
+"request-promise-native@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "request-promise-native@npm:1.0.5"
+  dependencies:
+    request-promise-core: "npm:1.1.1"
+    stealthy-require: "npm:^1.1.0"
+    tough-cookie: "npm:>=2.3.3"
+  peerDependencies:
+    request: ^2.34
+  languageName: node
+  linkType: hard
+
+"request@npm:^2.87.0":
+  version: 2.88.0
+  resolution: "request@npm:2.88.0"
+  dependencies:
+    aws-sign2: "npm:~0.7.0"
+    aws4: "npm:^1.8.0"
+    caseless: "npm:~0.12.0"
+    combined-stream: "npm:~1.0.6"
+    extend: "npm:~3.0.2"
+    forever-agent: "npm:~0.6.1"
+    form-data: "npm:~2.3.2"
+    har-validator: "npm:~5.1.0"
+    http-signature: "npm:~1.2.0"
+    is-typedarray: "npm:~1.0.0"
+    isstream: "npm:~0.1.2"
+    json-stringify-safe: "npm:~5.0.1"
+    mime-types: "npm:~2.1.19"
+    oauth-sign: "npm:~0.9.0"
+    performance-now: "npm:^2.1.0"
+    qs: "npm:~6.5.2"
+    safe-buffer: "npm:^5.1.2"
+    tough-cookie: "npm:~2.4.3"
+    tunnel-agent: "npm:^0.6.0"
+    uuid: "npm:^3.3.2"
   languageName: node
   linkType: hard
 
@@ -5510,6 +7954,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"resolve@npm:1.1.7":
+  version: 1.1.7
+  resolution: "resolve@npm:1.1.7"
+  languageName: node
+  linkType: hard
+
 "responselike@npm:^1.0.2":
   version: 1.0.2
   resolution: "responselike@npm:1.0.2"
@@ -5547,6 +7997,12 @@ __metadata:
   dependencies:
     hash-base: "npm:^3.0.0"
     inherits: "npm:^2.0.1"
+  languageName: node
+  linkType: hard
+
+"rsvp@npm:^3.3.3":
+  version: 3.6.2
+  resolution: "rsvp@npm:3.6.2"
   languageName: node
   linkType: hard
 
@@ -5588,9 +8044,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"safer-buffer@npm:>= 2.1.2 < 3, safer-buffer@npm:^2.0.2":
+"safer-buffer@npm:>= 2.1.2 < 3, safer-buffer@npm:^2.0.2, safer-buffer@npm:^2.1.0, safer-buffer@npm:~2.1.0":
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
+  languageName: node
+  linkType: hard
+
+"sane@npm:^2.0.0":
+  version: 2.5.2
+  resolution: "sane@npm:2.5.2"
+  dependencies:
+    anymatch: "npm:^2.0.0"
+    capture-exit: "npm:^1.2.0"
+    exec-sh: "npm:^0.2.0"
+    fb-watchman: "npm:^2.0.0"
+    fsevents: "npm:^1.2.3"
+    micromatch: "npm:^3.1.4"
+    minimist: "npm:^1.1.1"
+    walker: "npm:~1.0.5"
+    watch: "npm:~0.18.0"
   languageName: node
   linkType: hard
 
@@ -5649,7 +8121,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^5.0.1, semver@npm:^5.1.0, semver@npm:^5.3.0, semver@npm:^5.4.1, semver@npm:^5.5.0, semver@npm:^5.6.0":
+"semver@npm:2 || 3 || 4 || 5, semver@npm:^5.0.1, semver@npm:^5.1.0, semver@npm:^5.3.0, semver@npm:^5.4.1, semver@npm:^5.5.0, semver@npm:^5.6.0":
   version: 5.6.0
   resolution: "semver@npm:5.6.0"
   languageName: node
@@ -5724,9 +8196,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"shellwords@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "shellwords@npm:0.1.1"
+  languageName: node
+  linkType: hard
+
 "signal-exit@npm:^3.0.0, signal-exit@npm:^3.0.2":
   version: 3.0.2
   resolution: "signal-exit@npm:3.0.2"
+  languageName: node
+  linkType: hard
+
+"sisteransi@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "sisteransi@npm:0.1.1"
   languageName: node
   linkType: hard
 
@@ -5787,6 +8271,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"source-map-support@npm:^0.4.15":
+  version: 0.4.18
+  resolution: "source-map-support@npm:0.4.18"
+  dependencies:
+    source-map: "npm:^0.5.6"
+  languageName: node
+  linkType: hard
+
 "source-map-support@npm:^0.5.6, source-map-support@npm:^0.5.9, source-map-support@npm:~0.5.6":
   version: 0.5.10
   resolution: "source-map-support@npm:0.5.10"
@@ -5802,7 +8294,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map@npm:^0.5.0, source-map@npm:^0.5.6":
+"source-map@npm:^0.5.0, source-map@npm:^0.5.3, source-map@npm:^0.5.6, source-map@npm:^0.5.7":
   version: 0.5.7
   resolution: "source-map@npm:0.5.7"
   languageName: node
@@ -5811,6 +8303,36 @@ __metadata:
 "source-map@npm:^0.6.0, source-map@npm:^0.6.1, source-map@npm:~0.6.1":
   version: 0.6.1
   resolution: "source-map@npm:0.6.1"
+  languageName: node
+  linkType: hard
+
+"spdx-correct@npm:^3.0.0":
+  version: 3.1.0
+  resolution: "spdx-correct@npm:3.1.0"
+  dependencies:
+    spdx-expression-parse: "npm:^3.0.0"
+    spdx-license-ids: "npm:^3.0.0"
+  languageName: node
+  linkType: hard
+
+"spdx-exceptions@npm:^2.1.0":
+  version: 2.2.0
+  resolution: "spdx-exceptions@npm:2.2.0"
+  languageName: node
+  linkType: hard
+
+"spdx-expression-parse@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "spdx-expression-parse@npm:3.0.0"
+  dependencies:
+    spdx-exceptions: "npm:^2.1.0"
+    spdx-license-ids: "npm:^3.0.0"
+  languageName: node
+  linkType: hard
+
+"spdx-license-ids@npm:^3.0.0":
+  version: 3.0.3
+  resolution: "spdx-license-ids@npm:3.0.3"
   languageName: node
   linkType: hard
 
@@ -5828,11 +8350,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sshpk@npm:^1.7.0":
+  version: 1.16.0
+  resolution: "sshpk@npm:1.16.0"
+  dependencies:
+    asn1: "npm:~0.2.3"
+    assert-plus: "npm:^1.0.0"
+    bcrypt-pbkdf: "npm:^1.0.0"
+    dashdash: "npm:^1.12.0"
+    ecc-jsbn: "npm:~0.1.1"
+    getpass: "npm:^0.1.1"
+    jsbn: "npm:~0.1.0"
+    safer-buffer: "npm:^2.0.2"
+    tweetnacl: "npm:~0.14.0"
+  languageName: node
+  linkType: hard
+
 "ssri@npm:^6.0.1":
   version: 6.0.1
   resolution: "ssri@npm:6.0.1"
   dependencies:
     figgy-pudding: "npm:^3.5.1"
+  languageName: node
+  linkType: hard
+
+"stack-utils@npm:^1.0.1":
+  version: 1.0.2
+  resolution: "stack-utils@npm:1.0.2"
   languageName: node
   linkType: hard
 
@@ -5871,6 +8415,12 @@ __metadata:
     shallow-copy: "npm:~0.0.1"
     static-eval: "npm:^2.0.0"
     through2: "npm:~2.0.3"
+  languageName: node
+  linkType: hard
+
+"stealthy-require@npm:^1.1.0":
+  version: 1.1.1
+  resolution: "stealthy-require@npm:1.1.1"
   languageName: node
   linkType: hard
 
@@ -5950,6 +8500,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"string-length@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "string-length@npm:2.0.0"
+  dependencies:
+    astral-regex: "npm:^1.0.0"
+    strip-ansi: "npm:^4.0.0"
+  languageName: node
+  linkType: hard
+
 "string-width@npm:^1.0.1":
   version: 1.0.2
   resolution: "string-width@npm:1.0.2"
@@ -5993,6 +8552,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"strip-bom@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "strip-bom@npm:2.0.0"
+  dependencies:
+    is-utf8: "npm:^0.2.0"
+  languageName: node
+  linkType: hard
+
+"strip-bom@npm:3.0.0":
+  version: 3.0.0
+  resolution: "strip-bom@npm:3.0.0"
+  languageName: node
+  linkType: hard
+
 "strip-eof@npm:^1.0.0":
   version: 1.0.0
   resolution: "strip-eof@npm:1.0.0"
@@ -6005,9 +8578,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"super-resolve@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "super-resolve@npm:1.0.0"
+  dependencies:
+    array-foreach: "npm:^1.0.2"
+    array-map: "npm:0.0.0"
+    is-array: "npm:^1.0.1"
+    object-keys: "npm:^1.0.11"
+  languageName: node
+  linkType: hard
+
 "supports-color@npm:^2.0.0":
   version: 2.0.0
   resolution: "supports-color@npm:2.0.0"
+  languageName: node
+  linkType: hard
+
+"supports-color@npm:^3.1.2":
+  version: 3.2.3
+  resolution: "supports-color@npm:3.2.3"
+  dependencies:
+    has-flag: "npm:^1.0.0"
   languageName: node
   linkType: hard
 
@@ -6025,9 +8617,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"symbol-tree@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "symbol-tree@npm:3.2.2"
+  languageName: node
+  linkType: hard
+
 "tapable@npm:^1.0.0, tapable@npm:^1.1.0":
   version: 1.1.1
   resolution: "tapable@npm:1.1.1"
+  languageName: node
+  linkType: hard
+
+"tar-fs@npm:^1.16.0":
+  version: 1.16.3
+  resolution: "tar-fs@npm:1.16.3"
+  dependencies:
+    chownr: "npm:^1.0.1"
+    mkdirp: "npm:^0.5.1"
+    pump: "npm:^1.0.0"
+    tar-stream: "npm:^1.1.2"
+  languageName: node
+  linkType: hard
+
+"tar-stream@npm:^1.1.2":
+  version: 1.6.2
+  resolution: "tar-stream@npm:1.6.2"
+  dependencies:
+    bl: "npm:^1.0.0"
+    buffer-alloc: "npm:^1.2.0"
+    end-of-stream: "npm:^1.0.0"
+    fs-constants: "npm:^1.0.0"
+    readable-stream: "npm:^2.3.0"
+    to-buffer: "npm:^1.1.1"
+    xtend: "npm:^4.0.0"
   languageName: node
   linkType: hard
 
@@ -6078,6 +8701,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"test-exclude@npm:^4.2.1":
+  version: 4.2.3
+  resolution: "test-exclude@npm:4.2.3"
+  dependencies:
+    arrify: "npm:^1.0.1"
+    micromatch: "npm:^2.3.11"
+    object-assign: "npm:^4.1.0"
+    read-pkg-up: "npm:^1.0.1"
+    require-main-filename: "npm:^1.0.1"
+  languageName: node
+  linkType: hard
+
+"throat@npm:^4.0.0":
+  version: 4.1.0
+  resolution: "throat@npm:4.1.0"
+  languageName: node
+  linkType: hard
+
 "through@npm:^2.3.6":
   version: 2.3.8
   resolution: "through@npm:2.3.8"
@@ -6117,9 +8758,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tmpl@npm:1.0.x":
+  version: 1.0.4
+  resolution: "tmpl@npm:1.0.4"
+  languageName: node
+  linkType: hard
+
 "to-arraybuffer@npm:^1.0.0":
   version: 1.0.1
   resolution: "to-arraybuffer@npm:1.0.1"
+  languageName: node
+  linkType: hard
+
+"to-buffer@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "to-buffer@npm:1.1.1"
+  languageName: node
+  linkType: hard
+
+"to-fast-properties@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "to-fast-properties@npm:1.0.3"
   languageName: node
   linkType: hard
 
@@ -6168,6 +8827,32 @@ __metadata:
   resolution: "topo@npm:3.0.3"
   dependencies:
     hoek: "npm:6.x.x"
+  languageName: node
+  linkType: hard
+
+"tough-cookie@npm:>=2.3.3, tough-cookie@npm:^2.3.4":
+  version: 2.5.0
+  resolution: "tough-cookie@npm:2.5.0"
+  dependencies:
+    psl: "npm:^1.1.28"
+    punycode: "npm:^2.1.1"
+  languageName: node
+  linkType: hard
+
+"tough-cookie@npm:~2.4.3":
+  version: 2.4.3
+  resolution: "tough-cookie@npm:2.4.3"
+  dependencies:
+    psl: "npm:^1.1.24"
+    punycode: "npm:^1.4.1"
+  languageName: node
+  linkType: hard
+
+"tr46@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "tr46@npm:1.0.1"
+  dependencies:
+    punycode: "npm:^2.1.0"
   languageName: node
   linkType: hard
 
@@ -6234,6 +8919,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tunnel-agent@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "tunnel-agent@npm:0.6.0"
+  dependencies:
+    safe-buffer: "npm:^5.0.1"
+  languageName: node
+  linkType: hard
+
 "tunnel@npm:^0.0.6":
   version: 0.0.6
   resolution: "tunnel@npm:0.0.6"
@@ -6243,6 +8936,12 @@ __metadata:
 "tunnel@npm:0.0.4":
   version: 0.0.4
   resolution: "tunnel@npm:0.0.4"
+  languageName: node
+  linkType: hard
+
+"tweetnacl@npm:^0.14.3, tweetnacl@npm:~0.14.0":
+  version: 0.14.5
+  resolution: "tweetnacl@npm:0.14.5"
   languageName: node
   linkType: hard
 
@@ -6300,6 +8999,15 @@ __metadata:
 "uc.micro@npm:^1.0.1, uc.micro@npm:^1.0.5":
   version: 1.0.5
   resolution: "uc.micro@npm:1.0.5"
+  languageName: node
+  linkType: hard
+
+"uglify-js@npm:^3.1.4":
+  version: 3.4.9
+  resolution: "uglify-js@npm:3.4.9"
+  dependencies:
+    commander: "npm:~2.17.1"
+    source-map: "npm:~0.6.1"
   languageName: node
   linkType: hard
 
@@ -6375,6 +9083,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"unnamed-workspace-e416d2@workspace:0.0.0":
+  version: 0.0.0
+  resolution: "unnamed-workspace-e416d2@workspace:0.0.0"
+  dependencies:
+    babel-preset-env: "npm:^1.6.1"
+    babel-preset-flow: "npm:^6.23.0"
+    jest: "npm:^23.6.0"
+    jest-environment-node: "npm:^23.4.0"
+    jest-junit: "npm:^5.2.0"
+    jest-pnp-resolver: "npm:^1.0.2"
+    jest-resolve: "npm:^23.6.0"
+    prettier: "npm:^1.10.2"
+  languageName: unknown
+  linkType: soft
+
 "unset-value@npm:^1.0.0":
   version: 1.0.0
   resolution: "unset-value@npm:1.0.0"
@@ -6439,6 +9162,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"util.promisify@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "util.promisify@npm:1.0.0"
+  dependencies:
+    define-properties: "npm:^1.1.2"
+    object.getownpropertydescriptors: "npm:^2.0.3"
+  languageName: node
+  linkType: hard
+
 "util@npm:^0.10.3":
   version: 0.10.4
   resolution: "util@npm:0.10.4"
@@ -6452,6 +9184,12 @@ __metadata:
   resolution: "util@npm:0.10.3"
   dependencies:
     inherits: "npm:2.0.1"
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^3.3.2":
+  version: 3.3.2
+  resolution: "uuid@npm:3.3.2"
   languageName: node
   linkType: hard
 
@@ -6469,6 +9207,25 @@ __metadata:
     schema-utils: "npm:^0.4.5"
   peerDependencies:
     webpack: "^2.0.0 || ^3.0.0 || ^4.0.0"
+  languageName: node
+  linkType: hard
+
+"validate-npm-package-license@npm:^3.0.1":
+  version: 3.0.4
+  resolution: "validate-npm-package-license@npm:3.0.4"
+  dependencies:
+    spdx-correct: "npm:^3.0.0"
+    spdx-expression-parse: "npm:^3.0.0"
+  languageName: node
+  linkType: hard
+
+"verror@npm:1.10.0":
+  version: 1.10.0
+  resolution: "verror@npm:1.10.0"
+  dependencies:
+    assert-plus: "npm:^1.0.0"
+    core-util-is: "npm:1.0.2"
+    extsprintf: "npm:^1.2.0"
   languageName: node
   linkType: hard
 
@@ -6535,6 +9292,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"w3c-hr-time@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "w3c-hr-time@npm:1.0.1"
+  dependencies:
+    browser-process-hrtime: "npm:^0.1.2"
+  languageName: node
+  linkType: hard
+
+"walker@npm:~1.0.5":
+  version: 1.0.7
+  resolution: "walker@npm:1.0.7"
+  dependencies:
+    makeerror: "npm:1.0.x"
+  languageName: node
+  linkType: hard
+
+"watch@npm:~0.18.0":
+  version: 0.18.0
+  resolution: "watch@npm:0.18.0"
+  dependencies:
+    exec-sh: "npm:^0.2.0"
+    minimist: "npm:^1.2.0"
+  languageName: node
+  linkType: hard
+
 "watchpack@npm:^1.5.0":
   version: 1.6.0
   resolution: "watchpack@npm:1.6.0"
@@ -6542,6 +9324,12 @@ __metadata:
     chokidar: "npm:^2.0.2"
     graceful-fs: "npm:^4.1.2"
     neo-async: "npm:^2.5.0"
+  languageName: node
+  linkType: hard
+
+"webidl-conversions@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "webidl-conversions@npm:4.0.2"
   languageName: node
   linkType: hard
 
@@ -6615,13 +9403,47 @@ __metadata:
   languageName: node
   linkType: hard
 
+"whatwg-encoding@npm:^1.0.1, whatwg-encoding@npm:^1.0.3":
+  version: 1.0.5
+  resolution: "whatwg-encoding@npm:1.0.5"
+  dependencies:
+    iconv-lite: "npm:0.4.24"
+  languageName: node
+  linkType: hard
+
+"whatwg-mimetype@npm:^2.1.0, whatwg-mimetype@npm:^2.2.0":
+  version: 2.3.0
+  resolution: "whatwg-mimetype@npm:2.3.0"
+  languageName: node
+  linkType: hard
+
+"whatwg-url@npm:^6.4.1":
+  version: 6.5.0
+  resolution: "whatwg-url@npm:6.5.0"
+  dependencies:
+    lodash.sortby: "npm:^4.7.0"
+    tr46: "npm:^1.0.1"
+    webidl-conversions: "npm:^4.0.2"
+  languageName: node
+  linkType: hard
+
+"whatwg-url@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "whatwg-url@npm:7.0.0"
+  dependencies:
+    lodash.sortby: "npm:^4.7.0"
+    tr46: "npm:^1.0.1"
+    webidl-conversions: "npm:^4.0.2"
+  languageName: node
+  linkType: hard
+
 "which-module@npm:^2.0.0":
   version: 2.0.0
   resolution: "which-module@npm:2.0.0"
   languageName: node
   linkType: hard
 
-"which@npm:^1.2.14, which@npm:^1.2.9":
+"which@npm:^1.2.12, which@npm:^1.2.14, which@npm:^1.2.9, which@npm:^1.3.0":
   version: 1.3.1
   resolution: "which@npm:1.3.1"
   dependencies:
@@ -6634,6 +9456,12 @@ __metadata:
   resolution: "wide-align@npm:1.1.3"
   dependencies:
     string-width: "npm:^1.0.2 || 2"
+  languageName: node
+  linkType: hard
+
+"wordwrap@npm:~0.0.2":
+  version: 0.0.3
+  resolution: "wordwrap@npm:0.0.3"
   languageName: node
   linkType: hard
 
@@ -6666,15 +9494,57 @@ __metadata:
   languageName: node
   linkType: hard
 
+"write-file-atomic@npm:^2.1.0":
+  version: 2.3.0
+  resolution: "write-file-atomic@npm:2.3.0"
+  dependencies:
+    graceful-fs: "npm:^4.1.11"
+    imurmurhash: "npm:^0.1.4"
+    signal-exit: "npm:^3.0.2"
+  languageName: node
+  linkType: hard
+
+"ws@npm:^5.2.0":
+  version: 5.2.2
+  resolution: "ws@npm:5.2.2"
+  dependencies:
+    async-limiter: "npm:~1.0.0"
+  languageName: node
+  linkType: hard
+
+"xml-name-validator@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "xml-name-validator@npm:3.0.0"
+  languageName: node
+  linkType: hard
+
+"xml@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "xml@npm:1.0.1"
+  languageName: node
+  linkType: hard
+
 "xtend@npm:^4.0.0, xtend@npm:^4.0.1, xtend@npm:~4.0.1":
   version: 4.0.1
   resolution: "xtend@npm:4.0.1"
   languageName: node
   linkType: hard
 
+"y18n@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "y18n@npm:3.2.1"
+  languageName: node
+  linkType: hard
+
 "y18n@npm:^3.2.1 || ^4.0.0, y18n@npm:^4.0.0":
   version: 4.0.0
   resolution: "y18n@npm:4.0.0"
+  languageName: node
+  linkType: hard
+
+"yallist@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "yallist@npm:2.1.2"
   languageName: node
   linkType: hard
 
@@ -6690,6 +9560,33 @@ __metadata:
   dependencies:
     camelcase: "npm:^5.0.0"
     decamelize: "npm:^1.2.0"
+  languageName: node
+  linkType: hard
+
+"yargs-parser@npm:^9.0.2":
+  version: 9.0.2
+  resolution: "yargs-parser@npm:9.0.2"
+  dependencies:
+    camelcase: "npm:^4.1.0"
+  languageName: node
+  linkType: hard
+
+"yargs@npm:^11.0.0":
+  version: 11.1.0
+  resolution: "yargs@npm:11.1.0"
+  dependencies:
+    cliui: "npm:^4.0.0"
+    decamelize: "npm:^1.1.1"
+    find-up: "npm:^2.1.0"
+    get-caller-file: "npm:^1.0.1"
+    os-locale: "npm:^2.0.0"
+    require-directory: "npm:^2.1.1"
+    require-main-filename: "npm:^1.0.1"
+    set-blocking: "npm:^2.0.0"
+    string-width: "npm:^2.0.0"
+    which-module: "npm:^2.0.0"
+    y18n: "npm:^3.2.1"
+    yargs-parser: "npm:^9.0.2"
   languageName: node
   linkType: hard
 

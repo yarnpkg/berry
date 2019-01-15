@@ -1,0 +1,30 @@
+{
+    "private": true,
+    "workspaces": [
+        "pkg-tests-core",
+        "pkg-tests-fixtures",
+        "pkg-tests-pnp",
+        "pkg-tests-specs"
+    ],
+    "dependencies": {
+        "babel-preset-env": "^1.6.1",
+        "babel-preset-flow": "^6.23.0",
+        "jest-environment-node": "^23.4.0",
+        "jest-junit": "^5.2.0",
+        "jest-pnp-resolver": "^1.0.2",
+        "jest-resolve": "^23.6.0",
+        "jest": "^23.6.0",
+        "prettier": "^1.10.2"
+    },
+    "scripts": {
+        "prettier": "run prettier --write '**/*.js'",
+        "run:tests": "run jest"
+    },
+    "prettier": {
+        "singleQuote": true,
+        "trailingComma": "all",
+        "bracketSpacing": false,
+        "printWidth": 120,
+        "parser": "flow"
+    }
+}
