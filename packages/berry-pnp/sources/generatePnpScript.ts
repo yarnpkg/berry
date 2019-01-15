@@ -15,9 +15,10 @@ function generateDatastores(packageInformationStores: PackageInformationStores, 
       code += `    [${JSON.stringify(packageReference)}, {\n`;
       code += `      packageLocation: path.resolve(__dirname, ${JSON.stringify(packageLocation)}),\n`;
       code += `      packageDependencies: new Map([\n`;
-      for (const [dependencyName, dependencyReference] of miscUtils.sortMap(packageDependencies.entries(), ([dependencyName]) => dependencyName)) {
+      if (packageName !== null)
+        code += `        [${JSON.stringify(packageName)}, ${JSON.stringify(packageReference)}],\n`;
+      for (const [dependencyName, dependencyReference] of miscUtils.sortMap(packageDependencies.entries(), ([dependencyName]) => dependencyName))
         code += `        [${JSON.stringify(dependencyName)}, ${JSON.stringify(dependencyReference)}],\n`;
-      }
       code += `      ]),\n`;
       code += `    }],\n`;
     }
