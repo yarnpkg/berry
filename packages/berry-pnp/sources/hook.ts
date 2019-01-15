@@ -45,7 +45,7 @@ const pnpFile = path.resolve(__dirname, __filename);
 const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding('natives')));
 
 // Splits a require request into its components, or return null if the request is a file path
-const pathRegExp = /^(?!\.{0,2}(?:\/|$))((?:@[^\/]+\/)?[^\/]+)\/?(.*|)$/;
+const pathRegExp = /^(?![a-zA-Z]:[\\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^\/]+\/)?[^\/]+)\/?(.*|)$/;
 
 // Matches if the path starts with a valid path qualifier (./, ../, /)
 // eslint-disable-next-line no-unused-vars
@@ -54,9 +54,16 @@ const isStrictRegExp = /^\.{0,2}\//;
 // Matches if the path must point to a directory (ie ends with /)
 const isDirRegExp = /\/$/;
 
+// Matches backslashes of Windows paths
+const backwardSlashRegExp = /\\/g;
+
 // We only instantiate one of those so that we can use strict-equal comparisons
 const topLevelLocator = {name: null, reference: null};
 const blacklistedLocator = {name: `\u{0000}`, reference: `\u{0000}`};
+
+// Used for compatibility purposes - cf setupCompatibilityLayer
+const patchedModules: Array<[RegExp, (issuer: PackageLocator | null, exports: any) => any]> = [];
+const fallbackLocators: Array<PackageLocator> = [topLevelLocator];
 
 /**
  * The setup code will be injected here. The tables listed below are guaranteed to be filled after the call to
@@ -167,9 +174,8 @@ function applyNodeExtensionResolution(unqualifiedPath: string, {extensions}: Res
       // we would lose the information that would tell us what are the dependencies of pkg-with-peers relative to its
       // ancestors.
 
-      if (fs.lstatSync(unqualifiedPath).isSymbolicLink()) {
+      if (fs.lstatSync(unqualifiedPath).isSymbolicLink())
         unqualifiedPath = path.normalize(path.resolve(path.dirname(unqualifiedPath), fs.readlinkSync(unqualifiedPath)));
-      }
 
       return unqualifiedPath;
     }
@@ -185,15 +191,17 @@ function applyNodeExtensionResolution(unqualifiedPath: string, {extensions}: Res
 
       let nextUnqualifiedPath;
 
-      if (pkgJson && pkgJson.main) {
+      if (pkgJson && pkgJson.main)
         nextUnqualifiedPath = path.resolve(unqualifiedPath, pkgJson.main);
-      }
 
       // If the "main" field changed the path, we start again from this new location
 
       if (nextUnqualifiedPath && nextUnqualifiedPath !== unqualifiedPath) {
-        unqualifiedPath = nextUnqualifiedPath;
-        continue;
+        const resolution = applyNodeExtensionResolution(nextUnqualifiedPath, {extensions});
+
+        if (resolution !== null) {
+          return resolution;
+        }
       }
     }
 
@@ -207,9 +215,8 @@ function applyNodeExtensionResolution(unqualifiedPath: string, {extensions}: Res
         return fs.existsSync(candidateFile);
       });
 
-    if (qualifiedPath) {
+    if (qualifiedPath)
       return qualifiedPath;
-    }
 
     // Otherwise, we check if the path is a folder - in such a case, we try to use its index
 
@@ -250,13 +257,25 @@ function makeFakeModule(path: string): ModuleInterface {
 }
 
 /**
+ * Normalize path to posix format.
+ */
+
+function normalizePath(p: string) {
+  p = path.normalize(p);
+
+  if (process.platform === 'win32')
+    p = p.replace(backwardSlashRegExp, '/');
+
+  return p;
+}
+
+/**
  * Forward the resolution to the next resolver (usually the native one)
  */
 
 function callNativeResolution(request: string, issuer: string): string | false {
-  if (issuer.endsWith('/')) {
+  if (issuer.endsWith('/'))
     issuer += 'internal.js';
-  }
 
   try {
     enableNativeHooks = false;
@@ -291,15 +310,13 @@ export const topLevel = topLevelLocator;
 export function getPackageInformation({name, reference}: PackageLocator): PackageInformation | null {
   const packageInformationStore = packageInformationStores.get(name);
 
-  if (!packageInformationStore) {
+  if (!packageInformationStore)
     return null;
-  }
 
   const packageInformation = packageInformationStore.get(reference);
 
-  if (!packageInformation) {
+  if (!packageInformation)
     return null;
-  }
 
   return packageInformation;
 };
@@ -309,15 +326,13 @@ export function getPackageInformation({name, reference}: PackageLocator): Packag
  */
 
 export function findPackageLocator(location: string): PackageLocator | null {
-  let relativeLocation = path.relative(__dirname, location);
+  let relativeLocation = normalizePath(path.relative(__dirname, location));
 
-  if (!relativeLocation.match(isStrictRegExp)) {
+  if (!relativeLocation.match(isStrictRegExp))
     relativeLocation = `./${relativeLocation}`;
-  }
 
-  if (location.match(isDirRegExp) && relativeLocation.charAt(relativeLocation.length - 1) !== '/') {
+  if (location.match(isDirRegExp) && !relativeLocation.endsWith(`/`))
     relativeLocation = `${relativeLocation}/`;
-  }
 
   let from = 0;
 
@@ -327,10 +342,8 @@ export function findPackageLocator(location: string): PackageLocator | null {
 
   for (let t = from; t < packageLocationLengths.length; ++t) {
     const locator = packageLocatorByLocationMap.get(relativeLocation.substr(0, packageLocationLengths[t]));
-
-    if (!locator) {
+    if (!locator)
       continue;
-    }
 
     // Ensures that the returned locator isn't a blacklisted one.
     //
@@ -380,31 +393,26 @@ export function findPackageLocator(location: string): PackageLocator | null {
 export function resolveToUnqualified(request: string, issuer: string | null, {considerBuiltins = true}: Partial<ResolveToUnqualifiedOptions> = {}): string | null {
   // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
 
-  if (request === `pnpapi`) {
+  if (request === `pnpapi`)
     return pnpFile;
-  }
 
   // Bailout if the request is a native module
 
-  if (considerBuiltins && builtinModules.has(request)) {
+  if (considerBuiltins && builtinModules.has(request))
     return null;
-  }
 
   // We allow disabling the pnp resolution for some subpaths. This is because some projects, often legacy,
   // contain multiple levels of dependencies (ie. a yarn.lock inside a subfolder of a yarn.lock). This is
   // typically solved using workspaces, but not all of them have been converted already.
 
-  if (ignorePattern && issuer && ignorePattern.test(issuer)) {
+  if (ignorePattern && issuer && ignorePattern.test(normalizePath(issuer))) {
     const result = callNativeResolution(request, issuer);
 
     if (result === false) {
       throw makeError(
         `BUILTIN_NODE_RESOLUTION_FAIL`,
         `The builtin node resolution algorithm was unable to resolve the module referenced by "${request}" and requested from "${issuer}" (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp "$$BLACKLIST")`,
-        {
-          request,
-          issuer,
-        },
+        {request, issuer},
       );
     }
 
@@ -425,10 +433,7 @@ export function resolveToUnqualified(request: string, issuer: string | null, {co
         throw makeError(
           `API_ERROR`,
           `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`,
-          {
-            request,
-            issuer,
-          }
+          {request, issuer},
         );
       }
 
@@ -448,10 +453,7 @@ export function resolveToUnqualified(request: string, issuer: string | null, {co
       throw makeError(
         `API_ERROR`,
         `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`,
-        {
-          request,
-          issuer,
-        }
+        {request, issuer},
       );
     }
 
@@ -469,10 +471,7 @@ export function resolveToUnqualified(request: string, issuer: string | null, {co
         throw makeError(
           `BUILTIN_NODE_RESOLUTION_FAIL`,
           `The builtin node resolution algorithm was unable to resolve the module referenced by "${request}" and requested from "${issuer}" (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree)`,
-          {
-            request,
-            issuer,
-          },
+          {request, issuer},
         );
       }
 
@@ -485,13 +484,15 @@ export function resolveToUnqualified(request: string, issuer: string | null, {co
 
     let dependencyReference = issuerInformation.packageDependencies.get(dependencyName);
 
-    // If we can't find it, we check if we can potentially load it from the top-level packages
-    // it's a bit of a hack, but it improves compatibility with the existing Node ecosystem. Hopefully we should
-    // eventually be able to kill it and become stricter once pnp gets enough traction
+    // If we can't find it, we check if we can potentially load it from the packages that have been defined as potential fallbacks.
+    // It's a bit of a hack, but it improves compatibility with the existing Node ecosystem. Hopefully we should eventually be able
+    // to kill this logic and become stricter once pnp gets enough traction and the affected packages fix themselves.
 
-    if (dependencyReference === undefined) {
-      const topLevelInformation = getPackageInformationSafe(topLevelLocator);
-      dependencyReference = topLevelInformation.packageDependencies.get(dependencyName);
+    if (issuerLocator !== topLevelLocator) {
+      for (let t = 0, T = fallbackLocators.length; dependencyReference === undefined && t < T; ++t) {
+        const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
+        dependencyReference = fallbackInformation.packageDependencies.get(dependencyName);
+      }
     }
 
     // If we can't find the path, and if the package making the request is the top-level, we can offer nicer error messages
@@ -522,9 +523,7 @@ export function resolveToUnqualified(request: string, issuer: string | null, {co
           const candidates = Array.from(issuerInformation.packageDependencies.keys());
           throw makeError(
             `UNDECLARED_DEPENDENCY`,
-            `Package "${issuerLocator.name}@${issuerLocator.reference}" (via "${issuer}") is trying to require the package "${dependencyName}" (via "${request}") without it being listed in its dependencies (${candidates.join(
-              `, `,
-            )})`,
+            `Package "${issuerLocator.name}@${issuerLocator.reference}" (via "${issuer}") is trying to require the package "${dependencyName}" (via "${request}") without it being listed in its dependencies (${candidates.join(`, `)})`,
             {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName, candidates},
           );
         }
@@ -642,9 +641,8 @@ export function setup() {
 
     // The 'pnpapi' name is reserved to return the PnP api currently in use by the program
 
-    if (request === `pnpapi`) {
+    if (request === `pnpapi`)
       return __non_webpack_module__.exports;
-    }
 
     // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us which file we should load
 
@@ -654,9 +652,8 @@ export function setup() {
 
     const cacheEntry = Module._cache[modulePath];
 
-    if (cacheEntry) {
+    if (cacheEntry)
       return cacheEntry.exports;
-    }
 
     // Create a new module and store it into the cache
 
@@ -684,37 +681,77 @@ export function setup() {
       }
     }
 
+    // Some modules might have to be patched for compatibility purposes
+
+    for (const [filter, patchFn] of patchedModules)
+      if (filter.test(request))
+        module.exports = patchFn(parent.filename ? findPackageLocator(parent.filename) : null, module.exports);
+
     return module.exports;
   };
 
   const originalModuleResolveFilename = Module._resolveFilename;
 
-  Module._resolveFilename = function(request: string, parent: ModuleInterface | null, isMain: boolean, options: Object) {
-    if (request === `pnpapi`) {
+  Module._resolveFilename = function(request: string, parent: ModuleInterface | null, isMain: boolean, options: {[key: string]: any}) {
+    if (request === `pnpapi`)
       return request;
-    }
 
-    if (!enableNativeHooks) {
+    if (!enableNativeHooks)
       return originalModuleResolveFilename.call(Module, request, parent, isMain, options);
+    
+    let issuers;
+
+    if (options) {
+      const optionNames = new Set(Object.keys(options));
+      optionNames.delete('paths');
+
+       if (optionNames.size > 0) {
+        throw makeError(
+          `UNSUPPORTED`,
+          `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(', ')})`
+        );
+      }
+
+       if (options.paths) {
+        issuers = options.paths.map((entry: string) => {
+          return `${path.normalize(entry)}/`;
+        });
+      }
     }
 
-    const issuerModule = getIssuerModule(parent);
-    const issuer = issuerModule ? issuerModule.filename : process.cwd() + '/';
+    if (!issuers) {
+      const issuerModule = getIssuerModule(parent);
+      const issuer = issuerModule ? issuerModule.filename : `${process.cwd()}/`;
 
-    const resolution = resolveRequest(request, issuer);
-    return resolution !== null ? resolution : request;
+      issuers = [issuer];
+    }
+
+    let firstError;
+
+    for (const issuer of issuers) {
+      let resolution;
+  
+      try {
+        resolution = resolveRequest(request, issuer);
+      } catch (error) {
+        firstError = firstError || error;
+        continue;
+      }
+
+      return resolution !== null ? resolution : request;
+    }
+  
+    throw firstError;
   };
 
   const originalFindPath = Module._findPath;
 
   Module._findPath = function(request: string, paths: Array<string>, isMain: boolean) {
-    if (request === `pnpapi`) {
+    if (request === `pnpapi`)
       return false;
-    }
 
-    if (!enableNativeHooks) {
+    if (!enableNativeHooks)
       return originalFindPath.call(Module, request, paths, isMain);
-    }
 
     for (const path of paths) {
       let resolution;
@@ -741,6 +778,76 @@ export function setup() {
 
   patchFs(fs, new ZipOpenFS({baseFs: nodeFs}));
 };
+
+export function setupCompatibilityLayer() {
+  // ESLint currently doesn't have any portable way for shared configs to specify their own
+  // plugins that should be used (https://github.com/eslint/eslint/issues/10125). This will
+  // likely get fixed at some point, but it'll take time and in the meantime we'll just add
+  // additional fallback entries for common shared configs.
+
+  for (const name of [`react-scripts`]) {
+    const packageInformationStore = packageInformationStores.get(name);
+    if (packageInformationStore) {
+      for (const reference of packageInformationStore.keys()) {
+        if (reference === null)
+          throw new Error(`Assertion failed: This reference shouldn't be null`);
+
+        fallbackLocators.push({name, reference});
+      }
+    }
+  }
+
+  // Modern versions of `resolve` support a specific entry point that custom resolvers can use
+  // to inject a specific resolution logic without having to patch the whole package.
+  //
+  // Cf: https://github.com/browserify/resolve/pull/174
+
+  patchedModules.push([
+    /^\.\/normalize-options\.js$/,
+    (issuer, normalizeOptions) => {
+      if (!issuer || issuer.name !== 'resolve')
+        return normalizeOptions;
+
+      return (request: string, opts: {[key: string]: any}) => {
+        opts = opts || {};
+
+        if (opts.forceNodeResolution)
+          return opts;
+
+        opts.preserveSymlinks = true;
+        opts.paths = function (request: string, basedir: string, getNodeModulesDir: () => Array<string>, opts: any) {
+          // Extract the name of the package being requested (1=full name, 2=scope name, 3=local name)
+          const parts = request.match(/^((?:(@[^\/]+)\/)?([^\/]+))/);
+          if (!parts)
+            throw new Error(`Assertion failed: Expected the "resolve" package to call the "paths" callback with package names only (got "${request}")`);
+
+          // make sure that basedir ends with a slash
+          if (basedir.charAt(basedir.length - 1) !== '/')
+            basedir = path.join(basedir, '/');
+
+          // This is guaranteed to return the path to the "package.json" file from the given package
+          const manifestPath = resolveToUnqualified(`${parts[1]}/package.json`, basedir, {
+            considerBuiltins: false,
+          });
+
+          if (manifestPath === null)
+            throw new Error(`Assertion failed: The resolution thinks that "${parts[1]}" is a Node builtin`);
+
+          // The first dirname strips the package.json, the second strips the local named folder
+          let nodeModules = path.dirname(path.dirname(manifestPath));
+
+          // Strips the scope named folder if needed
+          if (parts[2])
+            nodeModules = path.dirname(nodeModules);
+
+          return [nodeModules];
+        };
+
+        return opts;
+      };
+    },
+  ]);
+}
 
 if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
   setup();
@@ -789,9 +896,8 @@ if (process.mainModule === __non_webpack_module__) {
 
       do {
         const index = buffer.indexOf('\n');
-        if (index === -1) {
+        if (index === -1)
           break;
-        }
 
         const line = buffer.slice(0, index);
         buffer = buffer.slice(index + 1);
