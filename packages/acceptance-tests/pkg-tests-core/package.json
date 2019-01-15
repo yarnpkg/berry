@@ -1,13 +1,15 @@
 {
     "name": "pkg-tests-core",
-    "version": "1.0.0",
+    "version": "0.0.0",
+    "private": true,
     "main": "./sources/index.js",
     "dependencies": {
         "fs-extra": "^7.0.0",
-        "invariant": "npm:2.2.4",
+        "invariant": "^2.2.4",
         "klaw": "^2.1.1",
         "minimatch": "^3.0.4",
-        "semver": "^5.5.0",
+        "pkg-tests-fixtures": "workspace:0.0.0",
+        "semver": "^5.6.0",
         "super-resolve": "^1.0.0",
         "tar-fs": "^1.16.0",
         "tmp": "^0.0.33"

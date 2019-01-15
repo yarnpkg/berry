@@ -8721,6 +8721,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["invariant", "npm:2.2.4"],
           ["klaw", "npm:2.1.1"],
           ["minimatch", "npm:3.0.4"],
+          ["pkg-tests-fixtures", "workspace:0.0.0"],
           ["semver", "npm:5.6.0"],
           ["super-resolve", "npm:1.0.0"],
           ["tar-fs", "npm:1.16.3"],

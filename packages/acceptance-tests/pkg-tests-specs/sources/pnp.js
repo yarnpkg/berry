@@ -1,12 +1,12 @@
-const cp = require('child_process');
-const {existsSync, statSync, stat, rename, readdir, remove} = require('fs-extra');
-const {relative, isAbsolute} = require('path');
-const {satisfies} = require('semver');
+const cp = require(`child_process`);
+const {existsSync, statSync, stat, rename, readdir, remove} = require(`fs-extra`);
+const {relative, isAbsolute} = require(`path`);
+const {satisfies} = require(`semver`);
 
 const {
   fs: {createTemporaryFolder, readFile, readJson, writeFile, writeJson},
   tests: {getPackageDirectoryPath, testIf},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 module.exports = makeTemporaryEnv => {
   const {
@@ -14,7 +14,7 @@ module.exports = makeTemporaryEnv => {
     lock: lockSpecs,
     script: scriptSpecs,
     workspace: workspaceSpecs,
-  } = require('pkg-tests-specs');
+  } = require(`pkg-tests-specs`);
 
   describe(`Plug'n'Play`, () => {
     basicSpecs(
@@ -839,7 +839,9 @@ module.exports = makeTemporaryEnv => {
         async ({path, run, source}) => {
           await run(`install`);
 
-          expect(await readFile(`${path}/.pnp.js`, `utf-8`)).toMatch(/^#!foo\n/);
+          const pnpJs = await readFile(`${path}/.pnp.js`, `utf8`);
+
+          expect(pnpJs.replace(/\n.*/s, ``)).toMatch(/^#!foo$/);
         },
       ),
     );
@@ -1000,7 +1002,7 @@ module.exports = makeTemporaryEnv => {
 
               await run2(`install`);
 
-              expect(readFile(`${path2}/.pnp.js`, 'utf8')).resolves.toEqual(await readFile(`${path}/.pnp.js`, 'utf8'));
+              expect(readFile(`${path2}/.pnp.js`, `utf8`)).resolves.toEqual(await readFile(`${path}/.pnp.js`, `utf8`));
             },
           )();
         },
@@ -1063,7 +1065,7 @@ module.exports = makeTemporaryEnv => {
             `module.exports = "unplugged";\n`,
           );
 
-          await expect(source(`require('various-requires/relative-require')`)).resolves.toMatch('unplugged');
+          await expect(source(`require('various-requires/relative-require')`)).resolves.toMatch(`unplugged`);
           await expect(source(`require('no-deps/package.json')`)).resolves.toMatchObject({
             name: `no-deps`,
             version: `1.0.0`,
@@ -1113,7 +1115,7 @@ module.exports = makeTemporaryEnv => {
     );
 
     test(
-      'it should allow unplugging package (semver) ranges from a pnp installation',
+      `it should allow unplugging package (semver) ranges from a pnp installation`,
       makeTemporaryEnv(
         {
           dependencies: {
@@ -1135,7 +1137,7 @@ module.exports = makeTemporaryEnv => {
     );
 
     test(
-      'it should properly unplug a package with peer dependencies',
+      `it should properly unplug a package with peer dependencies`,
       makeTemporaryEnv(
         {
           dependencies: {[`provides-peer-deps-1-0-0`]: `1.0.0`, [`provides-peer-deps-2-0-0`]: `1.0.0`},
@@ -1308,7 +1310,7 @@ module.exports = makeTemporaryEnv => {
 
           await run(`unplug`, `various-requires`, `no-deps`);
 
-          await expect(source(`require('various-requires/relative-require')`)).resolves.toMatch('unplugged');
+          await expect(source(`require('various-requires/relative-require')`)).resolves.toMatch(`unplugged`);
           await expect(source(`require('no-deps/package.json')`)).resolves.toMatchObject({
             name: `no-deps`,
             version: `1.0.0`,

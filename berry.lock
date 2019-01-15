@@ -4997,7 +4997,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"invariant@npm:2.2.4, invariant@npm:^2.2.2, invariant@npm:^2.2.4":
+"invariant@npm:^2.2.2, invariant@npm:^2.2.4":
   version: 2.2.4
   resolution: "invariant@npm:2.2.4"
   dependencies:
@@ -7233,14 +7233,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pkg-tests-core@1.0.0, pkg-tests-core@workspace:0.0.0":
+"pkg-tests-core@workspace:0.0.0":
   version: 0.0.0
   resolution: "pkg-tests-core@workspace:0.0.0"
   dependencies:
     fs-extra: "npm:^7.0.0"
-    invariant: "npm:2.2.4"
+    invariant: "npm:^2.2.4"
     klaw: "npm:^2.1.1"
     minimatch: "npm:^3.0.4"
+    pkg-tests-fixtures: "workspace:0.0.0"
     semver: "npm:^5.5.0"
     super-resolve: "npm:^1.0.0"
     tar-fs: "npm:^1.16.0"
@@ -7259,7 +7260,7 @@ __metadata:
   resolution: "pkg-tests-specs@workspace:0.0.0"
   dependencies:
     fs-extra: "npm:^7.0.0"
-    pkg-tests-core: 1.0.0
+    pkg-tests-core: "workspace:0.0.0"
     semver: "npm:^5.6.0"
   languageName: unknown
   linkType: soft
