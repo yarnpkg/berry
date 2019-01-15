@@ -76,7 +76,7 @@ export class NpmSemverResolver implements Resolver {
     const dependencies = manifest.dependencies;
     const peerDependencies = manifest.peerDependencies;
 
-    return {... locator, languageName, linkType, dependencies, peerDependencies};
+    return {... locator, version, languageName, linkType, dependencies, peerDependencies};
   }
 
   private getIdentUrl(ident: Ident, opts: MinimalResolveOptions) {

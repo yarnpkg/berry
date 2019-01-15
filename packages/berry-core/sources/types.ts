@@ -23,6 +23,8 @@ export interface Locator extends Ident {
 export enum LinkType { HARD = 'hard', SOFT = 'soft' };
 
 export interface Package extends Locator {
+  version: string,
+
   languageName: string,
   linkType: LinkType,
 

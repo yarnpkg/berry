@@ -44,12 +44,14 @@ export class TarballHttpResolver implements Resolver {
 
     const manifest = await Manifest.fromFile(posix.resolve(packageFetch.prefixPath, `package.json`), {baseFs: packageFetch.packageFs});
 
+    const version = manifest.version || `0.0.0`;
+
     const languageName = opts.project.configuration.defaultLanguageName;
     const linkType = LinkType.HARD;
 
     const dependencies = manifest.dependencies;
     const peerDependencies = manifest.peerDependencies;
 
-    return {... locator, languageName, linkType, dependencies, peerDependencies};
+    return {... locator, version, languageName, linkType, dependencies, peerDependencies};
   }
 }

@@ -107,6 +107,8 @@ export class Project {
         const data = parsed[key];
         const locator = structUtils.parseLocator(data.resolution, true);
 
+        const version = data.version;
+
         const languageName = data.languageName || `node`;
         const linkType = data.linkType as LinkType || LinkType.HARD;
 
@@ -123,7 +125,7 @@ export class Project {
           peerDependencies.set(descriptor.identHash, descriptor);
         }
 
-        const pkg: Package = {...locator, languageName, linkType, dependencies, peerDependencies};
+        const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies};
         this.storedPackages.set(pkg.locatorHash, pkg);
 
         for (const entry of key.split(/ *, */g)) {

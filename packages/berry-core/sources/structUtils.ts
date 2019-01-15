@@ -48,6 +48,8 @@ export function convertPackageToLocator(pkg: Package): Locator {
 export function renamePackage(pkg: Package, locator: Locator) {
   return {
     ... locator,
+
+    version: pkg.version,
     
     languageName: pkg.languageName,
     linkType: pkg.linkType,

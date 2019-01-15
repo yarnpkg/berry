@@ -49,12 +49,14 @@ export class WorkspaceResolver implements Resolver {
   async resolve(locator: Locator, opts: ResolveOptions) {
     const workspace = opts.project.getWorkspaceByLocator(locator);
 
+    const version = workspace.manifest.version || `0.0.0`;
+
     const languageName = `unknown`;
     const linkType = LinkType.SOFT;
 
     const dependencies = new Map([... workspace.manifest.dependencies, ... workspace.manifest.devDependencies]);
     const peerDependencies = new Map([... workspace.manifest.peerDependencies]);
 
-    return {... locator, languageName, linkType, dependencies, peerDependencies};
+    return {... locator, version, languageName, linkType, dependencies, peerDependencies};
   }
 }

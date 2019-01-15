@@ -4,7 +4,7 @@ const simpleStringPattern = /^[a-zA-Z0-9\/.#@^~<=>_+-]([a-zA-Z0-9 \/.#@^~<=>_+-]
 
 // The following keys will always be stored at the top of the object, in the
 // specified order. It's not fair but life isn't fair either.
-const specialObjectKeys = [`resolution`, `dependencies`];
+const specialObjectKeys = [`version`, `resolution`, `dependencies`, `peerDependencies`];
 
 function stringifyString(value: string): string {
   if (value.match(simpleStringPattern)) {
@@ -50,7 +50,7 @@ function stringifyValue(value: any, indentLevel: number): string {
         return a.localeCompare(b);
       if (aIndex !== -1 && bIndex === -1)
         return -1;
-      if (bIndex === -1 && bIndex !== -1)
+      if (aIndex === -1 && bIndex !== -1)
         return +1;
       
       return aIndex - bIndex;
