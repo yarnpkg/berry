@@ -7,7 +7,7 @@ import {promisify}                       from 'util';
 
 import {MultiFetcher}                    from './MultiFetcher';
 import {MultiResolver}                   from './MultiResolver';
-import {Plugin}                          from './Plugin';
+import {Plugin, BerryHooks}              from './Plugin';
 import {SemverResolver}                  from './SemverResolver';
 import {TagResolver}                     from './TagResolver';
 import {VirtualFetcher}                  from './VirtualFetcher';
@@ -278,6 +278,20 @@ export class Configuration {
         linkers.push(new linker());
 
     return linkers;
+  }
+
+  async triggerHook<U extends any[], V>(get: (hooks: BerryHooks) => ((... args: U) => V) | undefined, ... args: U): Promise<void> {
+    for (const plugin of this.plugins.values()) {
+      const hooks = plugin.hooks;
+      if (!hooks)
+        continue;
+
+      const hook = get(hooks);
+      if (!hook)
+        continue;
+
+      await hook(... args);
+    }
   }
 
   format(text: string, color: string) {

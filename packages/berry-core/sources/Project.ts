@@ -867,6 +867,10 @@ export class Project {
     await opts.report.startTimerPromise(`Link step`, async () => {
       await this.linkEverything(opts);
     });
+
+    await this.configuration.triggerHook(hooks => {
+      return hooks.afterAllInstalled;
+    }, this);
   }
 
   async persistLockfile() {
