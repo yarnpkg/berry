@@ -5,6 +5,7 @@ import {PackageInformationStores, LocationBlacklist, TemplateReplacements, gener
 import {CwdFS, FakeFS, NodeFS}                                                                from '@berry/zipfs';
 import {posix}                                                                                from 'path';
 
+// Some packages do weird stuff and MUST be unplugged. I don't like them.
 const UNPLUGGED_PACKAGES = new Set([
   structUtils.makeIdent(null, `node-pre-gyp`).identHash,
 ]);

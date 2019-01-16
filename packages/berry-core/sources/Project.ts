@@ -94,10 +94,8 @@ export class Project {
     this.storedDescriptors = new Map();
     this.storedPackages = new Map();
 
-    const lockfilePath = `${this.cwd}/${this.configuration.lockfileName}`;
-
-    if (existsSync(lockfilePath)) {
-      const content = await readFile(lockfilePath, `utf8`);
+    if (existsSync(this.configuration.lockfilePath)) {
+      const content = await readFile(this.configuration.lockfilePath, `utf8`);
       const parsed: any = parseSyml(content);
 
       for (const key of Object.keys(parsed)) {
@@ -956,7 +954,7 @@ export class Project {
       `# Manual changes might be lost - proceed with caution!\n`
     ].join(``) + `\n`;
 
-    const lockfilePath = `${this.cwd}/${this.configuration.lockfileName}`;
+    const lockfilePath = this.configuration.lockfilePath;
     const content = header + stringifySyml(optimizedLockfile);
 
     const currentContent = existsSync(lockfilePath)

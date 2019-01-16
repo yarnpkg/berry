@@ -20,41 +20,126 @@ const ctx: any = new chalk.constructor({enabled: true});
 const readFileP = promisify(readFile);
 const writeFileP = promisify(writeFile);
 
-// The keys defined in this array will be resolved and normalized relative to
-// the path of their source configuration (usually the .berryrc directory)
-const RELATIVE_KEYS = new Set([
-  `executable-path`,
-  `bstate-path`,
-  `cache-folder`,
-  `virtual-folder`,
-  `pnp-path`,
-  `pnp-unplugged-folder`,
-]);
+export enum SettingsType {
+  BOOLEAN,
+  ABSOLUTE_PATH,
+  STRING,
+};
 
-// The keys defined here will be casted into booleans (and will throw an error
-// if the value cannot be safely coerced into a boolean)
-const BOOLEAN_KEYS = new Set([
-  `enable-colors`,
-  `enable-emojis`,
-  `enable-scripts`,
-  `ignore-path`,
-]);
+export type SettingsDefinition = {
+  type: SettingsType,
+  default: any,
+  isArray?: boolean,
+  isNullable?: boolean,
+};
 
-function parseBoolean(value: string) {
+export const coreDefinitions = {
+  // Settings related to the proxying Berry to a specific executable
+  executablePath: {
+    type: SettingsType.ABSOLUTE_PATH,
+    default: null,
+  },
+  ignorePath: {
+    type: SettingsType.BOOLEAN,
+    default: false,
+  },
+
+  // Settings related to the package manager internal names
+  lockfilePath: {
+    type: SettingsType.ABSOLUTE_PATH,
+    default: `./berry.lock`,
+  },
+  cacheFolder: {
+    type: SettingsType.ABSOLUTE_PATH,
+    default: `./.berry/cache`,
+  },
+  virtualFolder: {
+    type: SettingsType.ABSOLUTE_PATH,
+    default: `./.berry/virtual`,
+  },
+  bstatePath: {
+    type: SettingsType.ABSOLUTE_PATH,
+    default: `./.berry/buildState.json`,
+  },
+
+  // Settings related to the output style
+  enableEmojis: {
+    type: SettingsType.BOOLEAN,
+    default: !!supportsColor.stdout,
+    defaultText: `<dynamic>`,
+  },
+  enableColors: {
+    type: SettingsType.BOOLEAN,
+    default: !!supportsColor.stdout,
+    defaultText: `<dynamic>`,
+  },
+
+  // Settings related to how packages are interpreted by default
+  defaultLanguageName: {
+    type: SettingsType.STRING,
+    default: `node`,
+  },
+  defaultProtocol: {
+    type: SettingsType.STRING,
+    default: `npm:`,
+  },
+
+  // Settings related to network proxies
+  httpProxy: {
+    type: SettingsType.STRING,
+    default: null,
+  },
+  httpsProxy: {
+    type: SettingsType.STRING,
+    default: null,
+  },
+
+  // Settings related to the registry used to resolve semver requests
+  registryServer: {
+    type: SettingsType.STRING,
+    default: null,
+  },
+
+  // Settings related to security
+  enableScripts: {
+    type: SettingsType.BOOLEAN,
+    default: null,
+  },
+};
+
+function parseBoolean(value: unknown) {
   switch (value) {
     case `true`:
-    case `1`: {
+    case `1`:
+    case 1:
+    case true: {
       return true;
     } break;
 
     case `false`:
-    case `0`: {
+    case `0`:
+    case 0:
+    case false: {
       return false;
     } break;
 
     default: {
-      throw new Error(`Invalid value`);
+      throw new Error(`Couldn't parse "${value}" as a boolean`);
     } break;
+  }
+}
+
+function parseValue(value: unknown, type: SettingsType, folder: string) {
+  if (type === SettingsType.BOOLEAN)
+    return parseBoolean(value);
+
+  if (typeof value !== `string`)
+    throw new Error(`Expected value to be a string`);
+  
+  if (type === SettingsType.ABSOLUTE_PATH) {
+    return resolve(folder, value);
+  } else {
+    return value;
   }
 }
 
@@ -62,13 +147,14 @@ export class Configuration {
   // General rules:
   //
   // - filenames that don't accept actual paths must end with the "Name" suffix
-  //   ex: lockfileName
+  //   prefer to use absolute paths instead, since they are automatically resolved
+  //   ex: lockfileName (doesn't actually exist)
   //
   // - folders must end with the "Folder" suffix
   //   ex: cacheFolder, pnpVirtualFolder
   //
   // - actual paths to a file must end with the "Path" suffix
-  //   ex: pnpPath
+  //   ex: lockfilePath, pnpPath
   //
   // - options that tweaks the strictness must begin with the "allow" prefix
   //   ex: allowInvalidChecksums
@@ -76,48 +162,14 @@ export class Configuration {
   // - options that enable a feature must begin with the "enable" prefix
   //   ex: enableEmojis, enableColors
 
-  // Should not be manually set - detected automatically
-  public plugins: Map<string, Plugin> = new Map();
-
-  // Should not be manually set - detected automatically
   public projectCwd: string;
 
-  // Should not be manually set - computed automatically
-  private sources: {[key: string]: string} = {};
+  private plugins: Map<string, Plugin> = new Map();
+  
+  private settings: Map<string, SettingsDefinition> = new Map();
+  private sources: Map<string, string> = new Map();
 
-  // Settings related to the proxying Berry to a specific executable
-  public executablePath: string | null = null;
-  public ignorePath: boolean = false;
-
-  // Settings related to the package manager internal names
-  public lockfileName: string = `berry.lock`;
-  public cacheFolder: string = `./.berry/cache`;
-  public virtualFolder: string = `./.berry/virtual`;
-  public bstatePath: string = `./.berry/buildState.json`;
-
-  // Settings related to the output style
-  public enableEmojis: boolean = !!supportsColor.stdout;
-  public enableColors: boolean = !!supportsColor.stdout;
-
-  // Settings related to how packages are interpreted by default
-  public defaultLanguageName: string = `node`;
-  public defaultProtocol: string = `npm:`;
-
-  // Settings related to network proxies
-  public httpProxy: string | null = null;
-  public httpsProxy: string | null = null;
-
-  // Settings related to the registry used to resolve semver requests
-  public registryServer: string | null = null;
-
-  // Settings related to PnP
-  public pnpShebang: string = `#!/usr/bin/env node`;
-  public pnpIgnorePattern: string | null = null;
-  public pnpUnpluggedFolder: string = `./.berry/pnp/unplugged`;
-  public pnpPath: string = `./.pnp.js`;
-
-  // Settings related to security
-  public enableScripts: boolean = true;
+  [name: string]: any;
 
   static async find(startingCwd: string, plugins: Map<string, Plugin> = new Map()) {
     let projectCwd = null;
@@ -192,17 +244,32 @@ export class Configuration {
     this.projectCwd = projectCwd;
     this.plugins = plugins;
 
-    for (const key of RELATIVE_KEYS) {
-      const name = key.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
+    const importSettings = (definitions: {[name: string]: SettingsDefinition}) => {
+      for (const [name, definition] of Object.entries(definitions)) {
+        if (this.settings.has(name))
+          throw new Error(`Cannot redefine settings "${name}"`);
+        else if (name in this)
+          throw new Error(`Settings named "${name}" conflicts with an actual property`);
 
-      // @ts-ignore
-      let value = this[name];
+        this.settings.set(name, definition);
 
-      if (!value)
-        continue;
+        const value = definition.type === SettingsType.ABSOLUTE_PATH && definition.default !== null
+          ? Array.isArray(definition.default)
+            ? definition.default.map((entry: string) => resolve(this.projectCwd, entry))
+            : resolve(this.projectCwd, definition.default)
+          : definition.default;
+        
+        // @ts-ignore
+        this[name] = value;
+      }
+    };
 
-      // @ts-ignore
-      this[name] = resolve(projectCwd, value);
+    importSettings(coreDefinitions);
+
+    for (const plugin of this.plugins.values()) {
+      if (plugin.configuration) {
+        importSettings(plugin.configuration);
+      }
     }
   }
 
@@ -213,29 +280,34 @@ export class Configuration {
     this.use(source, data, dirname(source));
   }
 
-  use(source: string, data: {[key: string]: any}, folder: string) {
+  use(source: string, data: {[key: string]: unknown}, folder: string) {
     for (const key of Object.keys(data)) {
       const name = key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
 
-      if (Object.prototype.hasOwnProperty.call(this.sources, name))
-        continue;
-
-      // @ts-ignore
-      let value = data[key];
-
-      if (RELATIVE_KEYS.has(key))
-        value = resolve(folder, value);
+      const definition = this.settings.get(name);
+      if (!definition)
+        throw new Error(`Unknown configuration settings "${name}" - have you forgot a plugin?`);
       
-      if (BOOLEAN_KEYS.has(key) && typeof value === `string`)
-        value = parseBoolean(value);
-
-      if (!Object.prototype.hasOwnProperty.call(this, name))
-        throw new Error(`Unknown configuration option "${key}"`);
+      if (this.sources.has(name))
+        continue;
+      
+      let value = data[key];
+      if (value === null && !definition.isNullable && definition.default !== null)
+        throw new Error(`Non-nullable configuration settings "${name}" cannot be set to null`);
+      
+      if (Array.isArray(value)) {
+        if (!definition.isArray && !Array.isArray(definition.default)) {
+          throw new Error(`Non-array configuration settings "${name}" cannot be an array`);
+        } else {
+          value = value.map(sub => parseValue(sub, definition.type, folder));
+        }
+      } else {
+        value = parseValue(value, definition.type, folder);
+      }
 
       // @ts-ignore
       this[name] = value;
-
-      this.sources[name] = source;
+      this.sources.set(name, source);
     }
   }
 

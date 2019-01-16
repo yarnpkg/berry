@@ -1322,8 +1322,8 @@ __metadata:
   linkType: hard
 
 "@types/react-redux@npm:^6.0.9":
-  version: 6.0.12
-  resolution: "@types/react-redux@npm:6.0.12"
+  version: 6.0.13
+  resolution: "@types/react-redux@npm:6.0.13"
   dependencies:
     @types/react: "npm:*"
     redux: "npm:^4.0.0"
@@ -1331,8 +1331,8 @@ __metadata:
   linkType: hard
 
 "@types/react@npm:*, @types/react@npm:^16.4.14":
-  version: 16.7.18
-  resolution: "@types/react@npm:16.7.18"
+  version: 16.7.20
+  resolution: "@types/react@npm:16.7.20"
   dependencies:
     @types/prop-types: "npm:*"
     csstype: "npm:^2.2.0"
@@ -3071,8 +3071,8 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30000844, caniuse-lite@npm:^1.0.30000928":
-  version: 1.0.30000928
-  resolution: "caniuse-lite@npm:1.0.30000928"
+  version: 1.0.30000929
+  resolution: "caniuse-lite@npm:1.0.30000929"
   languageName: node
   linkType: hard
 
@@ -3893,8 +3893,8 @@ __metadata:
   linkType: hard
 
 "es5-ext@npm:^0.10.35, es5-ext@npm:^0.10.9, es5-ext@npm:~0.10.14":
-  version: 0.10.46
-  resolution: "es5-ext@npm:0.10.46"
+  version: 0.10.47
+  resolution: "es5-ext@npm:0.10.47"
   dependencies:
     es6-iterator: "npm:~2.0.3"
     es6-symbol: "npm:~3.1.1"
@@ -4455,8 +4455,8 @@ __metadata:
   linkType: hard
 
 "fsevents@npm:^1.2.2, fsevents@npm:^1.2.3":
-  version: 1.2.4
-  resolution: "fsevents@npm:1.2.4"
+  version: 1.2.6
+  resolution: "fsevents@npm:1.2.6"
   dependencies:
     nan: "npm:^2.9.2"
     node-pre-gyp: "npm:^0.10.0"
@@ -6089,8 +6089,8 @@ __metadata:
   linkType: hard
 
 "loader-runner@npm:^2.3.0":
-  version: 2.3.1
-  resolution: "loader-runner@npm:2.3.1"
+  version: 2.4.0
+  resolution: "loader-runner@npm:2.4.0"
   languageName: node
   linkType: hard
 
@@ -7242,7 +7242,7 @@ __metadata:
     klaw: "npm:^2.1.1"
     minimatch: "npm:^3.0.4"
     pkg-tests-fixtures: "workspace:0.0.0"
-    semver: "npm:^5.5.0"
+    semver: "npm:^5.6.0"
     super-resolve: "npm:^1.0.0"
     tar-fs: "npm:^1.16.0"
     tmp: "npm:^0.0.33"

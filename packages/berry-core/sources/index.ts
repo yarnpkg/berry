@@ -1,5 +1,5 @@
 export {Cache} from './Cache';
-export {Configuration} from './Configuration';
+export {Configuration, SettingsDefinition, SettingsType} from './Configuration';
 export {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from './Fetcher';
 export {Installer} from './Installer';
 export {Linker, LinkOptions, MinimalLinkOptions} from './Linker';
