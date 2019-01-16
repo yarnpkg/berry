@@ -1,19 +1,18 @@
-import {runShell}                         from '@berry/shell';
-import {CwdFS, FakeFS, NodeFS, ZipOpenFS} from '@berry/zipfs';
-import {chmod, writeFile}   from 'fs-extra';
-import {existsSync}         from 'fs';
-import {delimiter, resolve, posix} from 'path';
+import {runShell}                        from '@berry/shell';
+import {CwdFS, ZipOpenFS}                from '@berry/zipfs';
+import {chmod, writeFile}                from 'fs-extra';
+import {existsSync}                      from 'fs';
+import {delimiter, posix}                from 'path';
 import {PassThrough, Readable, Writable} from 'stream';
-import {dirSync}            from 'tmp';
+import {dirSync}                         from 'tmp';
 
-import {Cache}              from './Cache';
-import {Manifest}           from './Manifest';
-import {Project}            from './Project';
-import {StreamReport}       from './StreamReport';
-import {Workspace}          from './Workspace';
-import * as execUtils       from './execUtils';
-import * as structUtils     from './structUtils';
-import {Locator}            from './types';
+import {Manifest}                        from './Manifest';
+import {Project}                         from './Project';
+import {StreamReport}                    from './StreamReport';
+import {Workspace}                       from './Workspace';
+import * as execUtils                    from './execUtils';
+import * as structUtils                  from './structUtils';
+import {Locator}                         from './types';
 
 async function makePathWrapper(name: string, argv0: string, args: Array<string> = []) {
   const pathWrapper = dirSync().name;
