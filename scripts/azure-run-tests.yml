@@ -11,14 +11,7 @@ steps:
   displayName: 'Install and build'
 
 - script: |
-    git clone https://github.com/yarnpkg/yarn.git
-    echo "require('$(pwd)/scripts/acceptance-test-driver.js')" > yarn/packages/pkg-tests/berry.test.js
-    cd yarn/packages/pkg-tests
-    yarn
-  displayName: 'Install the acceptance tests'
-
-- script: |
-    cd yarn/packages/pkg-tests
+    cd ./packages/acceptance-tests
     yarn jest berry --reporters=default --reporters=jest-junit
   displayName: 'Run the acceptance tests'
 
