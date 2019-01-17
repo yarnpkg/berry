@@ -2,7 +2,7 @@ import {makeUpdater}           from '@berry/json-proxy';
 import {createHmac}            from 'crypto';
 import {existsSync, readFile}  from 'fs';
 import globby                  from 'globby';
-import {resolve}               from 'path';
+import {posix, resolve}        from 'path';
 import {promisify}             from 'util';
 
 import {Manifest}              from './Manifest';
@@ -47,7 +47,10 @@ export class Workspace {
     this.manifest = new Manifest();
     this.manifest.load(data);
 
-    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `unnamed-workspace-${hashWorkspaceCwd(this.cwd)}`);
+    // We use posix.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path
+    const relativePath = posix.relative(this.project.cwd, this.cwd);
+
+    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `unnamed-workspace-${hashWorkspaceCwd(relativePath)}`);
     const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
 
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
