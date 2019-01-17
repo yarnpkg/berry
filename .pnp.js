@@ -1356,7 +1356,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["execa", "npm:1.0.0"],
           ["fs-extra", "npm:7.0.1"],
           ["globby", "npm:8.0.2"],
-          ["got", "npm:9.5.1"],
+          ["got", "npm:9.6.0"],
           ["json-file-plus", "npm:3.3.1"],
           ["lockfile", "npm:1.0.4"],
           ["logic-solver", "npm:2.0.1"],
@@ -5737,10 +5737,10 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
       }],
     ])],
     ["got", new Map([
-      ["npm:9.5.1", {
-        packageLocation: path.resolve(__dirname, "./.berry/cache/got-12dd088637af5d908970aa54fbf456b9dc3b54fea97e07a32e00b982e13103dd1c5ccec27db3f027e031b3055b448575f44f11d63948ac86b69e3754f747bf9a.zip/node_modules/got/"),
+      ["npm:9.6.0", {
+        packageLocation: path.resolve(__dirname, "./.berry/cache/got-1abbd4cb9c039313c982e9ec3b120c58b0d8ce66660022654e7beb1f31465f0d570b795c29f7ed8ac6ba7f9f7f082308cbb87d07056ad6cee4ffd44a98c5fb71.zip/node_modules/got/"),
         packageDependencies: new Map([
-          ["got", "npm:9.5.1"],
+          ["got", "npm:9.6.0"],
           ["@sindresorhus/is", "npm:0.14.0"],
           ["@szmarczak/http-timer", "npm:1.1.2"],
           ["cacheable-request", "npm:6.0.0"],
@@ -12142,7 +12142,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/globals-3bf559da21db7e2a93d6548ac4f01d373f95ef9f6c6154dd27bbb111de7bb2376e1d2a9332162dc3a636f93f83157dd055242da154def355d4d2ca0b805dd02c.zip/node_modules/globals/", {"name":"globals","reference":"npm:11.10.0"}],
     ["./.berry/cache/globals-46cd875985edbf519814a162b540d65ad873b385df617cf45b250f95aef208899bc1d54c6cc529f2cd35b721628d7d4d2f48a366509ed73f8b1c4a1060021103.zip/node_modules/globals/", {"name":"globals","reference":"npm:9.18.0"}],
     ["./.berry/cache/globby-5128202196a0330d94d13f1cfb97767ca0e745d891226a686db7c641acfd7de24acf0ae7bbccab03a564cfaf3f29b93033e7078b191168f7d415731daa05e566.zip/node_modules/globby/", {"name":"globby","reference":"npm:8.0.2"}],
-    ["./.berry/cache/got-12dd088637af5d908970aa54fbf456b9dc3b54fea97e07a32e00b982e13103dd1c5ccec27db3f027e031b3055b448575f44f11d63948ac86b69e3754f747bf9a.zip/node_modules/got/", {"name":"got","reference":"npm:9.5.1"}],
+    ["./.berry/cache/got-1abbd4cb9c039313c982e9ec3b120c58b0d8ce66660022654e7beb1f31465f0d570b795c29f7ed8ac6ba7f9f7f082308cbb87d07056ad6cee4ffd44a98c5fb71.zip/node_modules/got/", {"name":"got","reference":"npm:9.6.0"}],
     ["./.berry/cache/graceful-fs-e2b29e95dfbf48f44c6700f2c5a64decc07897141ab3fdd1e2ca5a39494bd4d0bb15bbadd7508f770b57ad31566bdded07a02e81c0f6783e8a47d612b754aaf6.zip/node_modules/graceful-fs/", {"name":"graceful-fs","reference":"npm:4.1.15"}],
     ["./.berry/cache/growly-ab183aae4aece5725a7468cb63a6fafc5af7de8676081b240cc1c21bb63130ba4b8b50c3f578e034d5d904638e4afcdcc8abeb4dd006bbc22b0963cada22c478.zip/node_modules/growly/", {"name":"growly","reference":"npm:1.3.0"}],
     ["./.berry/cache/handlebars-e9d7c49de880377a029fb41c26a70cb2b6eaab62e7946164004faf46a06095a5027a90220c490d58edbc063449e8a098bf4e3fd8c65e3926bbb1760a4b524866.zip/node_modules/handlebars/", {"name":"handlebars","reference":"npm:4.0.12"}],

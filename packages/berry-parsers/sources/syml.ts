@@ -1,6 +1,6 @@
 import {parse} from './grammars/syml';
 
-const simpleStringPattern = /^[a-zA-Z0-9\/.#@^~<=>_+-]([a-zA-Z0-9 \/.#@^~<=>_+-]*[a-zA-Z0-9\/.#@^~<=>_+-])?$/;
+const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@`]).([ \t]*(?![ \t\r\n])(?![,\][{}:#]).)*$/;
 
 // The following keys will always be stored at the top of the object, in the
 // specified order. It's not fair but life isn't fair either.
@@ -37,6 +37,14 @@ function stringifyValue(value: any, indentLevel: number): string {
     } else {
       return ` ${stringifyString(value)}`;
     }
+  }
+
+  if (Array.isArray(value)) {
+    const indent = `  `.repeat(indentLevel);
+
+    return value.map(sub => {
+      return `\n${indent}-${stringifyValue(sub, indentLevel + 1)}`;
+    }).join(``);
   }
 
   if (typeof value === 'object' && value) {

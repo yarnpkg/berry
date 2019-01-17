@@ -7,6 +7,13 @@
 Start
   = PropertyStatements
 
+ItemStatements
+  = statements:ItemStatement* { return [].concat(... statements) }
+
+ItemStatement
+  = Samedent "#" (!EOL .)+ EOL+ { return [] }
+  / Samedent "-" B+ value:Expression { return value }
+
 PropertyStatements
   = statements:PropertyStatement* { return Object.assign({}, ... statements) }
 
@@ -20,6 +27,7 @@ PropertyStatement
 
 Expression
   = EOL Indent statements:PropertyStatements Dedent { return statements }
+  / EOL Indent statements:ItemStatements Dedent { return statements }
   / expression:Literal EOL+ { return expression }
 
 Samedent "correct indentation"
@@ -37,7 +45,7 @@ Name
 
 LegacyName
   = string
-  / pseudostringRestricted+ { return text() }
+  / pseudostringLegacy
 
 Literal
   = null
@@ -48,12 +56,10 @@ Literal
  */
 
 pseudostring "pseudostring"
-  = pseudostringRestricted+ ([ ]+ pseudostringRestricted+)* B? { return text().replace(/^ *| *$/g, '') }
+  = (!Sc ![-?:,\][{}#&*!|>'"%@`] .) (B? !Sc ![,\][{}:#] .)* B? { return text().replace(/^ *| *$/g, '') }
 
-pseudostringRestricted
-  // Some of those character might not be allowed by a strict YAML parser, but
-  // accept them nonetheless because we're compatible with the older lockfile
-  = [a-zA-Z0-9\/.*#@^~<=>_+-]
+pseudostringLegacy
+  = [a-zA-Z\/-] (![^\r\n :,].)* B? { return text().replace(/^ *| *$/g, '') }
 
 /**
  * String parsing
@@ -91,10 +97,16 @@ hexDigit
  */
 
 B "blank space"
-  = [ \t]+
+  = Bc+
+
+Bc
+  = [ \t]
 
 S "white space"
-  = [ \t\n\r]+
+  = Sc+
+
+Sc
+  = [ \t\r\n]
 
 EOL
   = "\r\n"
