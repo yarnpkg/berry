@@ -1,5 +1,5 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName}  from '@berry/core';
-import {LocatorHash, Locator, Package}                                                        from '@berry/core';
+import {FetchResult, Locator, Package}                                                        from '@berry/core';
 import {miscUtils, structUtils}                                                               from '@berry/core';
 import {PackageInformationStores, LocationBlacklist, TemplateReplacements, generatePnpScript} from '@berry/pnp';
 import {CwdFS, FakeFS, NodeFS}                                                                from '@berry/zipfs';
@@ -47,11 +47,11 @@ class PnpInstaller implements Installer {
     this.opts = opts;
   }
 
-  async installPackage(locator: Locator, linkType: LinkType, packageFs: FakeFS) {
+  async installPackage(locator: Locator, linkType: LinkType, fetchResult: FetchResult) {
     const key1 = structUtils.requirableIdent(locator);
     const key2 = locator.reference;
 
-    const buildScripts = await this.getBuildScripts(packageFs);
+    const buildScripts = await this.getBuildScripts(fetchResult);
 
     if (buildScripts.length > 0 && !this.opts.project.configuration.enableScripts) {
       this.opts.report.reportWarning(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, locator)} lists build scripts, but all build scripts have been disabled.`);
@@ -71,10 +71,13 @@ class PnpInstaller implements Installer {
       buildScripts.length = 0;
     }
 
-    if (buildScripts.length > 0 || this.isUnplugged(locator))
-      packageFs = await this.unplugPackage(locator, packageFs);
+    const packageFs = linkType !== LinkType.SOFT && (buildScripts.length > 0 || this.isUnplugged(locator))
+      ? await this.unplugPackage(locator, fetchResult.packageFs)
+      : fetchResult.packageFs;
 
-    const packageLocation = this.normalizeDirectoryPath(packageFs.getRealPath());
+    const packageRawLocation = posix.resolve(packageFs.getRealPath(), posix.relative(`/`, fetchResult.prefixPath));
+
+    const packageLocation = this.normalizeDirectoryPath(packageRawLocation);
     const packageDependencies = new Map();
 
     const packageInformationStore = this.getPackageInformationStore(key1);
@@ -171,9 +174,9 @@ class PnpInstaller implements Installer {
     return relativeFolder.replace(/\/?$/, '/');
   }
 
-  private async getBuildScripts(packageFs: FakeFS) {
+  private async getBuildScripts(fetchResult: FetchResult) {
     const buildScripts = [];
-    const {scripts} = await Manifest.find(`.`, {baseFs: packageFs});
+    const {scripts} = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
 
     for (const scriptName of [`preinstall`, `install`, `postinstall`])
       if (scripts.has(scriptName))
@@ -191,7 +194,7 @@ class PnpInstaller implements Installer {
 
     const fs = new NodeFS();
     await fs.mkdirpPromise(unplugPath);
-    await fs.copyPromise(unplugPath, `.`, {baseFs: packageFs});
+    await fs.copyPromise(unplugPath, `.`, {baseFs: packageFs, overwrite: false});
 
     return new CwdFS(unplugPath);
   }

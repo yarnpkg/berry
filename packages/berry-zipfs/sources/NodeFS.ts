@@ -21,12 +21,12 @@ export class NodeFS extends FakeFS {
 
   async realpathPromise(p: string) {
     return await new Promise<string>((resolve, reject) => {
-      this.realFs.realpath(p, this.makeCallback(resolve, reject));
+      this.realFs.realpath(p, {}, this.makeCallback(resolve, reject));
     });
   }
 
   realpathSync(p: string) {
-    return this.toPortablePath(this.realFs.realpathSync(this.fromPortablePath(p)));
+    return this.toPortablePath(this.realFs.realpathSync(this.fromPortablePath(p), {}));
   }
 
   async existsPromise(p: string) {

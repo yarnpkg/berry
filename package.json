@@ -4,6 +4,10 @@
     "workspaces": [
         "packages/*"
     ],
+    "resolutions": {
+        "react": "15.0.0",
+        "flatmap-stream": "fail"
+    },
     "dependencies": {
         "@types/dateformat": "^1.0.1",
         "@types/emscripten": "^0.0.31",

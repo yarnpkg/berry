@@ -12,7 +12,7 @@ steps:
 
 - script: |
     cd ./packages/acceptance-tests
-    yarn jest berry --reporters=default --reporters=jest-junit
+    berry jest berry --reporters=default --reporters=jest-junit
   displayName: 'Run the acceptance tests'
 
 - task: PublishTestResults@2

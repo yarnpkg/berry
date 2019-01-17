@@ -1488,7 +1488,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["immer", "npm:1.10.5"],
           ["joi", "npm:13.7.0"],
           ["pretty-bytes", "npm:5.1.0"],
-          ["react", "npm:16.7.0"],
+          ["react", "npm:15.0.0"],
           ["react-redux", "virtual:c0142dc866b438ed89c8706f67dce620da19315cfcbbb47b41d6a9d8324b321b3be92f3f635321191cf498af800acf122dae75879dbcd6103a1b27a00aad08f5#npm:5.1.1"],
           ["redux", "npm:4.0.1"],
           ["redux-saga", "npm:1.0.0-rc.0"],
@@ -1557,7 +1557,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@manaflair/text-layout", "npm:0.11.0"],
           ["eventemitter3", "npm:3.1.0"],
           ["faker", "npm:4.1.0"],
-          ["react", "npm:16.7.0"],
+          ["react", "npm:15.0.0"],
           ["react-reconciler", "virtual:7f70b98e4e64a9f21ec92e0af65942d30f544ff454cb933ca01b495e25d96aac20abd7be16516f9708a50efd87eb65a939b5a8ad0957a4d144d2b8e392025362#npm:0.14.0"],
           ["reopen-tty", "npm:1.1.2"],
           ["ts-node", "npm:7.0.1"],
@@ -1572,7 +1572,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@manaflair/text-layout", "npm:0.11.0"],
           ["eventemitter3", "npm:3.1.0"],
           ["faker", "npm:4.1.0"],
-          ["react", "npm:16.7.0"],
+          ["react", "npm:15.0.0"],
           ["react-reconciler", "virtual:907a1705be47f8ddb78ecef562efff3e6dfa4e10a00b647b5da8548ec240fe7ac0201da588b88cc9ba2d3135a6d2b7de3fd172b3c54b0f75957958bc5cf28d04#npm:0.14.0"],
           ["reopen-tty", "npm:1.1.2"],
           ["ts-node", "npm:7.0.1"],
@@ -2715,6 +2715,12 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./.berry/cache/asap-60ab2f7a72be550a7daed6a0c4ab4a4bcaad017f8b17fa329deeee51c58a88ec3a9283d5cee4fb04b20e6c1bc5e497186f65770f4f10f5aff4a2297bf36c54b8.zip/node_modules/asap/"),
         packageDependencies: new Map([
           ["asap", "npm:1.0.0"],
+        ]),
+      }],
+      ["npm:2.0.6", {
+        packageLocation: path.resolve(__dirname, "./.berry/cache/asap-8ca6b8317603884a6a96ac7e92e1da2454332f8d8678917449a144241d341a11803dfa7eb53df20b0fe6ae7cb7c850852457a399a47c72c4ed975797e183e8a4.zip/node_modules/asap/"),
+        packageDependencies: new Map([
+          ["asap", "npm:2.0.6"],
         ]),
       }],
     ])],
@@ -4314,6 +4320,12 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
       }],
     ])],
     ["core-js", new Map([
+      ["npm:1.2.7", {
+        packageLocation: path.resolve(__dirname, "./.berry/cache/core-js-4625d3e3ac879088e8d42c052eca1d5d1d048f5b4388486e3b6f20e2caa79b9ce14440c71063263af90cf0632f604277cf1307171b75a33736abf9393bbf81f5.zip/node_modules/core-js/"),
+        packageDependencies: new Map([
+          ["core-js", "npm:1.2.7"],
+        ]),
+      }],
       ["npm:2.6.2", {
         packageLocation: path.resolve(__dirname, "./.berry/cache/core-js-89440eeeb885141bac217d666d90e83a23d1c757163ee6adbc4d416975c98baf6f7750d21f148f060cbbdaad9cd777aaa1a1388aa34a6605bc6d2bd6527803f3.zip/node_modules/core-js/"),
         packageDependencies: new Map([
@@ -4853,6 +4865,15 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
+    ["encoding", new Map([
+      ["npm:0.1.12", {
+        packageLocation: path.resolve(__dirname, "./.berry/cache/encoding-3d82f45e1f0ccb4520222c6fdee7559988bd3ebbdcc740b098cfe302f626fc870b7de02d22400e840d559560154a09896e6ed73aa9ce572dbf16d1ceb9e8f39d.zip/node_modules/encoding/"),
+        packageDependencies: new Map([
+          ["encoding", "npm:0.1.12"],
+          ["iconv-lite", "npm:0.4.24"],
+        ]),
+      }],
+    ])],
     ["end-of-stream", new Map([
       ["npm:1.1.0", {
         packageLocation: path.resolve(__dirname, "./.berry/cache/end-of-stream-cca04893aab79b2f2c0c6c207aaa8e643efd928e1ecfc88c5cc17c9989501d205a397aa8e493657071cc047b00a9000e5dad382b84ab08536061c3901601070c.zip/node_modules/end-of-stream/"),
@@ -5315,6 +5336,21 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageDependencies: new Map([
           ["fb-watchman", "npm:2.0.0"],
           ["bser", "npm:2.0.0"],
+        ]),
+      }],
+    ])],
+    ["fbjs", new Map([
+      ["npm:0.8.17", {
+        packageLocation: path.resolve(__dirname, "./.berry/cache/fbjs-b014ef1c21ddae1cf6bfda6e8a49c09eeb58757f21d34fe4f0f5d4f51e41b38d448d963d8cd5aaf34d8e33548416a15d79024b630e8c784580952c7f5936055e.zip/node_modules/fbjs/"),
+        packageDependencies: new Map([
+          ["fbjs", "npm:0.8.17"],
+          ["core-js", "npm:1.2.7"],
+          ["isomorphic-fetch", "npm:2.2.1"],
+          ["loose-envify", "npm:1.4.0"],
+          ["object-assign", "npm:4.1.1"],
+          ["promise", "npm:7.3.1"],
+          ["setimmediate", "npm:1.0.5"],
+          ["ua-parser-js", "npm:0.7.19"],
         ]),
       }],
     ])],
@@ -6570,6 +6606,16 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./.berry/cache/isobject-6bda0ef6cd2c77f9799c26e928d58fb00d77684c62fd8503d9ccfc3fd110ec97f03d85af49fcd942621a0c42a92a5e5bb820d18f0dae860dc25e269674cc5a56.zip/node_modules/isobject/"),
         packageDependencies: new Map([
           ["isobject", "npm:3.0.1"],
+        ]),
+      }],
+    ])],
+    ["isomorphic-fetch", new Map([
+      ["npm:2.2.1", {
+        packageLocation: path.resolve(__dirname, "./.berry/cache/isomorphic-fetch-6775b093b6ed3eacc83868786cb35338b41a9efa5ee21ef5343c21d87a81c4e625792dd466238aee36c44a15784f2dcaeb77192dc1daa063fed8ed7caa417884.zip/node_modules/isomorphic-fetch/"),
+        packageDependencies: new Map([
+          ["isomorphic-fetch", "npm:2.2.1"],
+          ["node-fetch", "npm:1.7.3"],
+          ["whatwg-fetch", "npm:3.0.0"],
         ]),
       }],
     ])],
@@ -7990,6 +8036,16 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
+    ["node-fetch", new Map([
+      ["npm:1.7.3", {
+        packageLocation: path.resolve(__dirname, "./.berry/cache/node-fetch-382faf60dfe30044072c4744e8a16957f3d8f68e94d19e685f0de35cca9dad9f6212c52a6e0c2612a9f865ddc11e017f1cbf93d2dd7e067506e0918a784648e9.zip/node_modules/node-fetch/"),
+        packageDependencies: new Map([
+          ["node-fetch", "npm:1.7.3"],
+          ["encoding", "npm:0.1.12"],
+          ["is-stream", "npm:1.1.0"],
+        ]),
+      }],
+    ])],
     ["node-int64", new Map([
       ["npm:0.4.0", {
         packageLocation: path.resolve(__dirname, "./.berry/cache/node-int64-81b3a411ce87ada0d54a201073807837e4b8240a69298105057dc8834a8c37d0b9a3e7e7692c909e09bd3706aa1d842c53a83108a5d585703df210b7fa81fb4a.zip/node_modules/node-int64/"),
@@ -8051,7 +8107,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["node-pre-gyp", new Map([
       ["npm:0.10.3", {
-        packageLocation: path.resolve(__dirname, "./.berry/pnp/unplugged/node-pre-gyp-f5bfc8add82de455181cfc0157a6c80cb44229afe031e299ac8b624ddda7b752f7eae53e12ab4f8a765eab91543bf507cb45ce4ecb3c97b908e699ca9d213d95/"),
+        packageLocation: path.resolve(__dirname, "./.berry/pnp/unplugged/node-pre-gyp-f5bfc8add82de455181cfc0157a6c80cb44229afe031e299ac8b624ddda7b752f7eae53e12ab4f8a765eab91543bf507cb45ce4ecb3c97b908e699ca9d213d95/node_modules/node-pre-gyp/"),
         packageDependencies: new Map([
           ["node-pre-gyp", "npm:0.10.3"],
           ["detect-libc", "npm:1.0.3"],
@@ -8873,6 +8929,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["asap", "npm:1.0.0"],
         ]),
       }],
+      ["npm:7.3.1", {
+        packageLocation: path.resolve(__dirname, "./.berry/cache/promise-ef5ba26fe7a8caad3a49a6fabbf09db9b9b5caf419e2d33f6d39f1535ee73609732b15152b2d294b62947167261372ba3d5e12ad52f4bcfa54f015f1aa95752b.zip/node_modules/promise/"),
+        packageDependencies: new Map([
+          ["promise", "npm:7.3.1"],
+          ["asap", "npm:2.0.6"],
+        ]),
+      }],
     ])],
     ["promise-deferred", new Map([
       ["npm:2.0.1", {
@@ -9110,14 +9173,13 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
       }],
     ])],
     ["react", new Map([
-      ["npm:16.7.0", {
-        packageLocation: path.resolve(__dirname, "./.berry/cache/react-bb77f32379e2e88449577d7e776fd3cfb87080ad88a038f91ca012a8096278d1d81d391d7d8362e775eda5c8c51a06b8f2c6e7e22131e7db6ef98dcd54d8e3b2.zip/node_modules/react/"),
+      ["npm:15.0.0", {
+        packageLocation: path.resolve(__dirname, "./.berry/cache/react-e6e18a26e1d3a7d683595b411f4b44424d617fab898014d1f795645eb8d61f23a9a871bfbb247f7c5920e6490d72962eac71c472c6089e808c2b7a5fb1ac54a6.zip/node_modules/react/"),
         packageDependencies: new Map([
-          ["react", "npm:16.7.0"],
+          ["react", "npm:15.0.0"],
+          ["fbjs", "npm:0.8.17"],
           ["loose-envify", "npm:1.4.0"],
           ["object-assign", "npm:4.1.1"],
-          ["prop-types", "npm:15.6.2"],
-          ["scheduler", "npm:0.12.0"],
         ]),
       }],
     ])],
@@ -9155,7 +9217,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["loose-envify", "npm:1.4.0"],
           ["object-assign", "npm:4.1.1"],
           ["prop-types", "npm:15.6.2"],
-          ["react", "npm:16.7.0"],
+          ["react", "npm:15.0.0"],
           ["schedule", "npm:0.4.0"],
         ]),
       }],
@@ -9166,7 +9228,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["loose-envify", "npm:1.4.0"],
           ["object-assign", "npm:4.1.1"],
           ["prop-types", "npm:15.6.2"],
-          ["react", "npm:16.7.0"],
+          ["react", "npm:15.0.0"],
           ["schedule", "npm:0.4.0"],
         ]),
       }],
@@ -9194,7 +9256,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["invariant", "npm:2.2.4"],
           ["loose-envify", "npm:1.4.0"],
           ["prop-types", "npm:15.6.2"],
-          ["react", "npm:16.7.0"],
+          ["react", "npm:15.0.0"],
           ["react-is", "npm:16.7.0"],
           ["react-lifecycles-compat", "npm:3.0.4"],
           ["redux", "npm:4.0.1"],
@@ -9737,16 +9799,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./.berry/cache/schedule-82af278cd5a6e65f0dacb20f6573e518aefd027ffb26120ff966d7a11b24b9f968250f97a5027c4b54668d35b1f6118c6d14ee4c1e22082d0f3f561402fc6090.zip/node_modules/schedule/"),
         packageDependencies: new Map([
           ["schedule", "npm:0.4.0"],
-          ["object-assign", "npm:4.1.1"],
-        ]),
-      }],
-    ])],
-    ["scheduler", new Map([
-      ["npm:0.12.0", {
-        packageLocation: path.resolve(__dirname, "./.berry/cache/scheduler-6de155577e3e2a7f1f559a1bd2e7c60a1ca1761691ad53e1ab18b107e1932a47309d7bcc7ad5a4e3dd54506af96d0d2ef1017517992c357811aa6b8a65b883bd.zip/node_modules/scheduler/"),
-        packageDependencies: new Map([
-          ["scheduler", "npm:0.12.0"],
-          ["loose-envify", "npm:1.4.0"],
           ["object-assign", "npm:4.1.1"],
         ]),
       }],
@@ -10824,6 +10876,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
+    ["ua-parser-js", new Map([
+      ["npm:0.7.19", {
+        packageLocation: path.resolve(__dirname, "./.berry/cache/ua-parser-js-b0f4ebf8fa02370c2ae043bbd012a435b9a2174c3ea0df22506f77386db3baea2edff0b0ba21b2aac7f5973e6f53a6b61d5bd2efd5e2bf00fe1e09fadf07883b.zip/node_modules/ua-parser-js/"),
+        packageDependencies: new Map([
+          ["ua-parser-js", "npm:0.7.19"],
+        ]),
+      }],
+    ])],
     ["uc.micro", new Map([
       ["npm:1.0.5", {
         packageLocation: path.resolve(__dirname, "./.berry/cache/uc.micro-5d04020fb0bfc82ad07c9344676989502b46a9e6b8d304b8a0677c40f960188ad7f521f76c875b623538467c54ca898ff1a6f0418e08d9c6a20037c2a8ac096e.zip/node_modules/uc.micro/"),
@@ -11318,6 +11378,14 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageDependencies: new Map([
           ["whatwg-encoding", "npm:1.0.5"],
           ["iconv-lite", "npm:0.4.24"],
+        ]),
+      }],
+    ])],
+    ["whatwg-fetch", new Map([
+      ["npm:3.0.0", {
+        packageLocation: path.resolve(__dirname, "./.berry/cache/whatwg-fetch-6f7afabbd107ecf3b654e5d2ed0c053af2f2b3c37f8776bb8ba89c91fd714b160b77e8c0fcea89f6e193f4ce4da0b87a02d7b354aff5c4052dff60791daee8aa.zip/node_modules/whatwg-fetch/"),
+        packageDependencies: new Map([
+          ["whatwg-fetch", "npm:3.0.0"],
         ]),
       }],
     ])],
@@ -11847,6 +11915,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/array-unique-3e92b7786ddda9d607bd5fe9c3550867707fb45077fa72958fc1ec3b0cf47196d4ffab10dd66605c4fb3140b94fd318ac9c954e867a32c4c98fc831c136800aa.zip/node_modules/array-unique/", {"name":"array-unique","reference":"npm:0.3.2"}],
     ["./.berry/cache/arrify-66e1abd997ff939cd948d2d31e10ada56cf5556e7fa3a9be2e0ddd057f77809620a4ad06c54054a92f1a801c8189efab2286974036e9dd6dd470cadbcf5a6285.zip/node_modules/arrify/", {"name":"arrify","reference":"npm:1.0.1"}],
     ["./.berry/cache/asap-60ab2f7a72be550a7daed6a0c4ab4a4bcaad017f8b17fa329deeee51c58a88ec3a9283d5cee4fb04b20e6c1bc5e497186f65770f4f10f5aff4a2297bf36c54b8.zip/node_modules/asap/", {"name":"asap","reference":"npm:1.0.0"}],
+    ["./.berry/cache/asap-8ca6b8317603884a6a96ac7e92e1da2454332f8d8678917449a144241d341a11803dfa7eb53df20b0fe6ae7cb7c850852457a399a47c72c4ed975797e183e8a4.zip/node_modules/asap/", {"name":"asap","reference":"npm:2.0.6"}],
     ["./.berry/cache/asn1-a25799b6734e342a2d3bd58416085102a699ed6381ac566e3272c8049b631786f7c95dd908206aef5c5eb5129807f9a6a20a4f7bfbd280cac6a4e5a815c315cf.zip/node_modules/asn1/", {"name":"asn1","reference":"npm:0.2.4"}],
     ["./.berry/cache/asn1.js-7ce860effd4e36b17ab8dfb6b6374be120af5c665463f2641b5b99653071a3012c3755e5e5160d39ce21b8e1262eb1c3400f64a61cd8f3b2dc5db1dfa74b41cb.zip/node_modules/asn1.js/", {"name":"asn1.js","reference":"npm:4.10.1"}],
     ["./.berry/cache/assert-7f85ac853b2ad111424011d2c7a446c95b8871a7aa3ec4d0dede58553cf81255eaadfbc24a0c45404b65af05d682076ed4d561db892912c483a98490913e6a01.zip/node_modules/assert/", {"name":"assert","reference":"npm:1.4.1"}],
@@ -12002,6 +12071,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/convert-source-map-c01729263389f8302375a8b3a0f218f4edf236951a0481179b1d1c577ab67c8023666ec4793c8a73d47a5ee6b88d55a7ef92c66d72e4fbd79c9f8ec07c3ebbe8.zip/node_modules/convert-source-map/", {"name":"convert-source-map","reference":"npm:1.6.0"}],
     ["./.berry/cache/copy-concurrently-4a8ccf81b8d6f66742af5d38b0f54d70278db22fd34bd130e68f5eef13929a30c8c841a230b46aef1426d582583e64f3179002606c12f7100040461d933913ea.zip/node_modules/copy-concurrently/", {"name":"copy-concurrently","reference":"npm:1.0.5"}],
     ["./.berry/cache/copy-descriptor-2b545bd6d5ce658ba318acbf149acfe090fc41c9ced2f4c295516898211da4ab350f46c4b493964c61572761ecb7e4b547f51c3927944483062605daedb9e23a.zip/node_modules/copy-descriptor/", {"name":"copy-descriptor","reference":"npm:0.1.1"}],
+    ["./.berry/cache/core-js-4625d3e3ac879088e8d42c052eca1d5d1d048f5b4388486e3b6f20e2caa79b9ce14440c71063263af90cf0632f604277cf1307171b75a33736abf9393bbf81f5.zip/node_modules/core-js/", {"name":"core-js","reference":"npm:1.2.7"}],
     ["./.berry/cache/core-js-89440eeeb885141bac217d666d90e83a23d1c757163ee6adbc4d416975c98baf6f7750d21f148f060cbbdaad9cd777aaa1a1388aa34a6605bc6d2bd6527803f3.zip/node_modules/core-js/", {"name":"core-js","reference":"npm:2.6.2"}],
     ["./.berry/cache/core-util-is-0092c88e334464f960c5d376edaafbaf1713fb6fd97b081fa4219a69645517dfd13298b989ce3a1de41c89b2ead4ce50659a0ca785fbdc73b67c8835dfba3ee4.zip/node_modules/core-util-is/", {"name":"core-util-is","reference":"npm:1.0.2"}],
     ["./.berry/cache/create-ecdh-e0e65f8c9038bdc2d88cbd51dbf6ea6e62dab30d3261cf74d9635d5e430d0fe44f88f60ce60ae04addaa92a5a984c91371442d9c9f8446047da4e646f6c1b644.zip/node_modules/create-ecdh/", {"name":"create-ecdh","reference":"npm:4.0.3"}],
@@ -12061,6 +12131,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/electron-to-chromium-d7af6c69dcc406959affc125b7e8c8e9ff19ef22c856926c2b03d319f454776bc1753057e0eb04893322546691227ab30efffd2e481ccd05e22ce114212d09d6.zip/node_modules/electron-to-chromium/", {"name":"electron-to-chromium","reference":"npm:1.3.103"}],
     ["./.berry/cache/elliptic-5a416ddf045215fecb6926fd1fbd6752b1a422629fee89b98efe73bc3ef2b318f303263f6c03008c7132aec18060893631df8060722cd4ad5ebb762ee1a65458.zip/node_modules/elliptic/", {"name":"elliptic","reference":"npm:6.4.1"}],
     ["./.berry/cache/emojis-list-e850d428733214c13e410332be408f881a46bf08904643ed9ca3b870d0d329734bf5cc292a983653fb2460678a0f9748ba4a31761801098b1e6a0d7a4116ab0f.zip/node_modules/emojis-list/", {"name":"emojis-list","reference":"npm:2.1.0"}],
+    ["./.berry/cache/encoding-3d82f45e1f0ccb4520222c6fdee7559988bd3ebbdcc740b098cfe302f626fc870b7de02d22400e840d559560154a09896e6ed73aa9ce572dbf16d1ceb9e8f39d.zip/node_modules/encoding/", {"name":"encoding","reference":"npm:0.1.12"}],
     ["./.berry/cache/end-of-stream-cca04893aab79b2f2c0c6c207aaa8e643efd928e1ecfc88c5cc17c9989501d205a397aa8e493657071cc047b00a9000e5dad382b84ab08536061c3901601070c.zip/node_modules/end-of-stream/", {"name":"end-of-stream","reference":"npm:1.1.0"}],
     ["./.berry/cache/enhanced-resolve-c350598b881663dac59a011b733b632e0e3e2a812e35efe3e92490e15a7af5e34e84741e5e04998070da1b1b487529cbf6a2313b44751e1254ae6afb611cc83d.zip/node_modules/enhanced-resolve/", {"name":"enhanced-resolve","reference":"npm:4.1.0"}],
     ["./.berry/cache/entities-4d2abba21587e9796f1dfce02d5a2b138144516066a790dc3558cc7c9632c93d2cccc38625b48683d5d970e80ba0059de46a3ebe0b4a685072d8443135e15f43.zip/node_modules/entities/", {"name":"entities","reference":"npm:1.1.2"}],
@@ -12108,6 +12179,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/fast-json-stable-stringify-d465eda072f4c60becf380d43f6806db9fa8f90a45d20d7ef6a804bf4cdffe05a3c7ea00dd22ee5f8e10b58adbeac6fcb6e66140802b2f32a6ce4dc897340d04.zip/node_modules/fast-json-stable-stringify/", {"name":"fast-json-stable-stringify","reference":"npm:2.0.0"}],
     ["./.berry/cache/fast-levenshtein-0d432cf29794206a74437a380bc65f959d9d711c57ad6d5a0cef5e959243a95917b0965d975902a89a93a017529411ac91adc768c8ba7d656ec06ca3d0c734f3.zip/node_modules/fast-levenshtein/", {"name":"fast-levenshtein","reference":"npm:2.0.6"}],
     ["./.berry/cache/fb-watchman-bdb00c7ad8012047e4163c0a303e13c9dd14154997095e92725824df957aef6521c582fc616b4fa69c0f6e01645b2b7d52f848c3cd781baf186cf0d1bf296658.zip/node_modules/fb-watchman/", {"name":"fb-watchman","reference":"npm:2.0.0"}],
+    ["./.berry/cache/fbjs-b014ef1c21ddae1cf6bfda6e8a49c09eeb58757f21d34fe4f0f5d4f51e41b38d448d963d8cd5aaf34d8e33548416a15d79024b630e8c784580952c7f5936055e.zip/node_modules/fbjs/", {"name":"fbjs","reference":"npm:0.8.17"}],
     ["./.berry/cache/fd-slicer-284aadf865a9307023f5185e85c9f6fd5038988e9017d4da6aaedacab3f174bd70f637d7867e1175ec46209b7c34da060077fa6b3659614e82c8fb0599355b63.zip/node_modules/fd-slicer/", {"name":"fd-slicer","reference":"npm:1.1.0"}],
     ["./.berry/cache/figgy-pudding-38c47236f8af8d06abe9b8bbc92f7c14e08d78ef0b0192c3ffa2a5f39aa806466cb708c15406bc361ec6a0ad2812e287b4b336c31e8920d34c89bcc63af60380.zip/node_modules/figgy-pudding/", {"name":"figgy-pudding","reference":"npm:3.5.1"}],
     ["./.berry/cache/figures-3635d0e852d84f7da3926ce0fbc88bc43ba79bff9707896061a2f20013d56736f1ec3b4482903be417fe62b150eae1d7686de151be175551402a213b85bdddcc.zip/node_modules/figures/", {"name":"figures","reference":"npm:2.0.0"}],
@@ -12249,6 +12321,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/isexe-d1b4c3f90d8b946bd1331ddedbb8aa042c73bb22df76332850605d40b67d4855018de497eb3c045185e927cc3fee5926c5ba9034723e48f6eb38c4390336ab47.zip/node_modules/isexe/", {"name":"isexe","reference":"npm:2.0.0"}],
     ["./.berry/cache/isobject-b24093be39f45976accacbf4fe8c707f59d3ec2fb8be2d16c2ac3457f5121b4aed8abac2d78004651dfdc981b52138b1d34b8de7ef2ddba9b27dcd98ad7bfb2e.zip/node_modules/isobject/", {"name":"isobject","reference":"npm:2.1.0"}],
     ["./.berry/cache/isobject-6bda0ef6cd2c77f9799c26e928d58fb00d77684c62fd8503d9ccfc3fd110ec97f03d85af49fcd942621a0c42a92a5e5bb820d18f0dae860dc25e269674cc5a56.zip/node_modules/isobject/", {"name":"isobject","reference":"npm:3.0.1"}],
+    ["./.berry/cache/isomorphic-fetch-6775b093b6ed3eacc83868786cb35338b41a9efa5ee21ef5343c21d87a81c4e625792dd466238aee36c44a15784f2dcaeb77192dc1daa063fed8ed7caa417884.zip/node_modules/isomorphic-fetch/", {"name":"isomorphic-fetch","reference":"npm:2.2.1"}],
     ["./.berry/cache/isstream-4ea66d07cfb0dd1ac8f3e882d2f0db94cc135ae8faee424fcc07dc9a27abccdbe24e0a0b3e321101582bce30cd54697d9ca92f7dda24197db6c65b28e8529070.zip/node_modules/isstream/", {"name":"isstream","reference":"npm:0.1.2"}],
     ["./.berry/cache/istanbul-api-bc6d38f14168689276048b849f38d70bdbf19cd0e64577b932671d137044e8b2b7bf607c77b4305a03ddc112417847642e065e16178c86b02c78b8a2407da0fa.zip/node_modules/istanbul-api/", {"name":"istanbul-api","reference":"npm:1.3.7"}],
     ["./.berry/cache/istanbul-lib-coverage-e79e6e65e8637a13e1367c7c1c227bb702e5ce3d23486bb8cb7e20bf147f86fe80cfb91b3ddffd5e2287501c4337e5a5ed0dbcd4e3558eec2fad30f454365d2f.zip/node_modules/istanbul-lib-coverage/", {"name":"istanbul-lib-coverage","reference":"npm:1.2.1"}],
@@ -12386,11 +12459,12 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/next-tick-28b958407099e69c85b5eeb9092afb34bed75109e3c6f1b6346b08143d9026ebe2b7873235eb3c8f76b4c11bbca5d2f78eb56106d48823b2b98e777f9639000c.zip/node_modules/next-tick/", {"name":"next-tick","reference":"npm:1.0.0"}],
     ["./.berry/cache/nice-try-1b4389500d2e208f98169c362cd24e04ffecdad3f6eb5fd1951e0965d085956b63be18125f9bb9db7a5cac423837c91c1a2f55a8e1b98f4f2463ca27d00852fc.zip/node_modules/nice-try/", {"name":"nice-try","reference":"npm:1.0.5"}],
     ["./.berry/cache/node-emoji-f3606ff0bfed767bcf219924892d74d05108a1271bb308b7a559bcbed06caee2d98e750d7c60c90e1cb2389f946cb88444c781c9683e42200489febdeeeb42c0.zip/node_modules/node-emoji/", {"name":"node-emoji","reference":"npm:1.8.1"}],
+    ["./.berry/cache/node-fetch-382faf60dfe30044072c4744e8a16957f3d8f68e94d19e685f0de35cca9dad9f6212c52a6e0c2612a9f865ddc11e017f1cbf93d2dd7e067506e0918a784648e9.zip/node_modules/node-fetch/", {"name":"node-fetch","reference":"npm:1.7.3"}],
     ["./.berry/cache/node-int64-81b3a411ce87ada0d54a201073807837e4b8240a69298105057dc8834a8c37d0b9a3e7e7692c909e09bd3706aa1d842c53a83108a5d585703df210b7fa81fb4a.zip/node_modules/node-int64/", {"name":"node-int64","reference":"npm:0.4.0"}],
     ["./.berry/cache/node-libs-browser-67eccb34759ca4750e9c8083b1f9360bdc7fcc942924ceff9b84e8d5f3a538496b1cfcdde4cf39ed53e1e4edd259a46f12ff10f414514af30f42d80591eb6d96.zip/node_modules/node-libs-browser/", {"name":"node-libs-browser","reference":"npm:2.2.0"}],
     ["./.berry/cache/node-modules-regexp-0db2ec292bf8cae5336dbfb4c3476d3dcf5492a8e14cd1e57889eb91dbb7174a94cc3d16ee4cd109a67ffcd3f0523abf9f63698d7840b6994d90ab61e9f8b861.zip/node_modules/node-modules-regexp/", {"name":"node-modules-regexp","reference":"npm:1.0.0"}],
     ["./.berry/cache/node-notifier-591c00c9585c2d4cc76e8f999689d730be19493ccc559b4886b7012d3543a30afd3399a9ad78afc79923fa14f7a080c0e88d4f691753d2db94342936cd595c96.zip/node_modules/node-notifier/", {"name":"node-notifier","reference":"npm:5.3.0"}],
-    ["./.berry/pnp/unplugged/node-pre-gyp-f5bfc8add82de455181cfc0157a6c80cb44229afe031e299ac8b624ddda7b752f7eae53e12ab4f8a765eab91543bf507cb45ce4ecb3c97b908e699ca9d213d95/", {"name":"node-pre-gyp","reference":"npm:0.10.3"}],
+    ["./.berry/pnp/unplugged/node-pre-gyp-f5bfc8add82de455181cfc0157a6c80cb44229afe031e299ac8b624ddda7b752f7eae53e12ab4f8a765eab91543bf507cb45ce4ecb3c97b908e699ca9d213d95/node_modules/node-pre-gyp/", {"name":"node-pre-gyp","reference":"npm:0.10.3"}],
     ["./.berry/cache/node-releases-f6a1c9a76ea367ddbdfe784548956b9ebf193179242d24be0b692033ccdb382fd0c4bceccbf5b12ba837e0be80d110178d96c8803298d0d59ae54ed514adafd3.zip/node_modules/node-releases/", {"name":"node-releases","reference":"npm:1.1.3"}],
     ["./.berry/cache/node.extend-7864582ad41c32f2bb56d78e52df58eaac46a449517a601b7d51494eabac84b0d411f32f7bb19c945c8709f6026c63df9930e400851c8e064653bb2fda14210f.zip/node_modules/node.extend/", {"name":"node.extend","reference":"npm:2.0.2"}],
     ["./.berry/cache/nopt-f86f336a262fe64c91213cebb6b3d299c90c7814d2a73a8657823b94e9a8ef1895115af0cdac9bfb6b18f52b88881143878e3093e6abc75bb54a9e81a7f32277.zip/node_modules/nopt/", {"name":"nopt","reference":"npm:4.0.1"}],
@@ -12482,6 +12556,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/process-9fe95b99ea2cab3b8e695258a5981094158798d9004af8ebc1a3ea63ca4b9d9d58704d4af42d38fa04470f1ff5089726878ea45b170548fdd03093fe5aca458b.zip/node_modules/process/", {"name":"process","reference":"npm:0.11.10"}],
     ["./.berry/cache/process-nextick-args-7c8b742449d42d1d867c2c190f0ff159bddad09b41120d36643e6b66ca9861ade989cb8f2833a3de171848f50a91e49d7b12091be0bfa3cd18d4bcdde936b34f.zip/node_modules/process-nextick-args/", {"name":"process-nextick-args","reference":"npm:2.0.0"}],
     ["./.berry/cache/promise-c6b92fb4ce37795bf38060319890b3d7f2ab0e8bf5e4f183c50e9514d9b4c339b8acabe1c076e61649a2a0d02d37dd4f183a69b7c1daee6468758d1148053a42.zip/node_modules/promise/", {"name":"promise","reference":"npm:6.1.0"}],
+    ["./.berry/cache/promise-ef5ba26fe7a8caad3a49a6fabbf09db9b9b5caf419e2d33f6d39f1535ee73609732b15152b2d294b62947167261372ba3d5e12ad52f4bcfa54f015f1aa95752b.zip/node_modules/promise/", {"name":"promise","reference":"npm:7.3.1"}],
     ["./.berry/cache/promise-deferred-54303eaba28dd4c10a9bfe842d6db9c6dda84c0ef6184470892bfebf8bdc6db58e2fa1acf2818ff593789bc7f29cd8784f597c3178f6238efe169dade5fe55dd.zip/node_modules/promise-deferred/", {"name":"promise-deferred","reference":"npm:2.0.1"}],
     ["./.berry/cache/promise-inflight-283730fa74f98815eb54f4bc95bf986396507e9c5ac37459482f2ddf06e489f04f18b18cbc6915371c0ccb0d5cd78215542c27c33e039216af8a2c3184a82456.zip/node_modules/promise-inflight/", {"name":"promise-inflight","reference":"npm:1.0.1"}],
     ["./.berry/cache/promiseback-5dabc0168e88ad1c250b7f86bf2fb2cd5a153b2c7cd02aa129679af96e04d0c4dd4c6be5bae15a4a2453d49c7b9cc2ac6fc19d3e6ce8a395b6331cb7ea79860f.zip/node_modules/promiseback/", {"name":"promiseback","reference":"npm:2.0.2"}],
@@ -12508,7 +12583,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/randomfill-f897aa7249ece3b43cc6cae2beaaf3ffbf0e8d54c94583883ce9ea39a7037bee8182eb8ed55439b7d887251e0899190299b376befb7d2c4045d0c13455d9fbcc.zip/node_modules/randomfill/", {"name":"randomfill","reference":"npm:1.0.4"}],
     ["./.berry/cache/raw-loader-f0593b7a46a6ce51870f72152bce6d8b3ab0f9da4e3dd7e00d00649b2c33d48a16a2685ebfc3fbafd7c9cc93213193d30b7cfcdc3032bf948a09afbfdcf54d37.zip/node_modules/raw-loader/", {"name":"raw-loader","reference":"npm:0.5.1"}],
     ["./.berry/cache/rc-1627751389893c338defe7df0e9534b84724dc63fcc8874df54a52a7422de178577b4072d666af88cf24897f412e6417b1b0f3878f56b06d7de83d9496473973.zip/node_modules/rc/", {"name":"rc","reference":"npm:1.2.8"}],
-    ["./.berry/cache/react-bb77f32379e2e88449577d7e776fd3cfb87080ad88a038f91ca012a8096278d1d81d391d7d8362e775eda5c8c51a06b8f2c6e7e22131e7db6ef98dcd54d8e3b2.zip/node_modules/react/", {"name":"react","reference":"npm:16.7.0"}],
+    ["./.berry/cache/react-e6e18a26e1d3a7d683595b411f4b44424d617fab898014d1f795645eb8d61f23a9a871bfbb247f7c5920e6490d72962eac71c472c6089e808c2b7a5fb1ac54a6.zip/node_modules/react/", {"name":"react","reference":"npm:15.0.0"}],
     ["./.berry/cache/react-is-d93b7d0811f9926afdbbda68231bc7394babc43d84a34cdd3d9bd565a22e60f935c88117fbb07c838043926c7f2887d617850ab15f6acd967e22d791c58e0c36.zip/node_modules/react-is/", {"name":"react-is","reference":"npm:16.7.0"}],
     ["./.berry/cache/react-lifecycles-compat-aaab2e440f29726c0232b51d53245007f81a1b10920f8f8523e1958f7ed64a67ab86afac667266fcaf8ee3d6490dfd625d4c781f0de15b35c747494f88a2a271.zip/node_modules/react-lifecycles-compat/", {"name":"react-lifecycles-compat","reference":"npm:3.0.4"}],
     ["./.berry/cache/react-reconciler-577c15bc61067719d03371fb535e7445bee90e335d40a306e9471d30627fb09d6eb9e19548395306daa2fb37627471a1aa88fb5a2358f0a6c6c70a30c0b9f22f.zip/node_modules/react-reconciler/", {"name":"react-reconciler","reference":"npm:0.14.0"}],
@@ -12573,7 +12648,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/sane-a95b5284c8ecfca3e130cc709b614a1b918e4a95679368969a0a0d7e1cbc7ed08d94b425f67d8a5fbca8acf3d8fe8e50a7141a84fb9cc668d04d3f9a417aeaa7.zip/node_modules/sane/", {"name":"sane","reference":"npm:2.5.2"}],
     ["./.berry/cache/sax-a8badd55720d95400b379c5a0763fa9f1049f4d4051818726e5a7e5f9b167d3d7378a438ffdc0f40ceea71531e639aa0799c38ffe6a4a016da7d0a3221465365.zip/node_modules/sax/", {"name":"sax","reference":"npm:1.2.4"}],
     ["./.berry/cache/schedule-82af278cd5a6e65f0dacb20f6573e518aefd027ffb26120ff966d7a11b24b9f968250f97a5027c4b54668d35b1f6118c6d14ee4c1e22082d0f3f561402fc6090.zip/node_modules/schedule/", {"name":"schedule","reference":"npm:0.4.0"}],
-    ["./.berry/cache/scheduler-6de155577e3e2a7f1f559a1bd2e7c60a1ca1761691ad53e1ab18b107e1932a47309d7bcc7ad5a4e3dd54506af96d0d2ef1017517992c357811aa6b8a65b883bd.zip/node_modules/scheduler/", {"name":"scheduler","reference":"npm:0.12.0"}],
     ["./.berry/cache/schema-utils-0f96ecddbb91db660acd035b2b26e45b0ad4cf34f5db09aa35d1d25645a0fd50e9c8f1c06c7b635144819d0e1d3dbe26a636a70d0c7738f568c0d56e8f69d896.zip/node_modules/schema-utils/", {"name":"schema-utils","reference":"npm:0.4.7"}],
     ["./.berry/cache/schema-utils-72a10026d1e4aa98837bcd346d69988ccee98290d607080bb9594fa9b01f47e4011decc198459eee047b3469b5403420e7b7dbf3ba8a6b7e574c03385cb39e0c.zip/node_modules/schema-utils/", {"name":"schema-utils","reference":"npm:1.0.0"}],
     ["./.berry/cache/scope-analyzer-794b6bbe2374eb84a6efed4be28fb1c98149e726acc7f2a5f5cfd55e6a001ad9f72d238600f4db0b187a6a1617bdad1482df27e754602a31a3a46da614d24235.zip/node_modules/scope-analyzer/", {"name":"scope-analyzer","reference":"npm:2.0.5"}],
@@ -12688,6 +12762,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/typescript-compare-03015795f19b525dc3af2a0eed339c0154f3f1b1032f8f0a4625b7c19577840c442a7cc825c8c6baa27b8d7fe144a0505db5c5f9055fb55fe372f6af9690d6e6.zip/node_modules/typescript-compare/", {"name":"typescript-compare","reference":"npm:0.0.2"}],
     ["./.berry/cache/typescript-logic-0f95dc458b33801df94de58da0a7f72d1d2736aa3f692c18d3be94e6655b2837c5d8175fa41ff358dffa53e5d456acd9524901df57173edf1956f3a4f69c71d0.zip/node_modules/typescript-logic/", {"name":"typescript-logic","reference":"npm:0.0.0"}],
     ["./.berry/cache/typescript-tuple-4b031099f2ea036f4baa334b4ff9879ace5f785fc07b03546587e917bd0057f751c6ff528b5d16a87b0e52eaac9d05a7369cc7e2c561766d83e7eb68b6f12816.zip/node_modules/typescript-tuple/", {"name":"typescript-tuple","reference":"npm:2.1.0"}],
+    ["./.berry/cache/ua-parser-js-b0f4ebf8fa02370c2ae043bbd012a435b9a2174c3ea0df22506f77386db3baea2edff0b0ba21b2aac7f5973e6f53a6b61d5bd2efd5e2bf00fe1e09fadf07883b.zip/node_modules/ua-parser-js/", {"name":"ua-parser-js","reference":"npm:0.7.19"}],
     ["./.berry/cache/uc.micro-5d04020fb0bfc82ad07c9344676989502b46a9e6b8d304b8a0677c40f960188ad7f521f76c875b623538467c54ca898ff1a6f0418e08d9c6a20037c2a8ac096e.zip/node_modules/uc.micro/", {"name":"uc.micro","reference":"npm:1.0.5"}],
     ["./.berry/cache/uglify-js-b8ffd561ef5b92a0d19d68149148f132dc4fa878cbfba41bfe58a8002e8b3216d1f6ada668b87b8fdaf5d4131357b567c707e671ed79c0df3fa4f3f3e1524fb1.zip/node_modules/uglify-js/", {"name":"uglify-js","reference":"npm:3.4.9"}],
     ["./.berry/cache/underscore-ec169b0dcadf8798c50baab7c39d1b88f326599e9c103a6af3389c5fb9ce55da6aa8c0ea897f4ddcce90e5c48857d1debdde14c6f3b0886d4f06569d826bc986.zip/node_modules/underscore/", {"name":"underscore","reference":"npm:1.8.3"}],
@@ -12735,6 +12810,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/webpack-sources-9f9e0044ba75694fc21545c7ca42ab67f67de1db6a498c28da1f9fdb240d6e888909a7c751f036a307a7e02467c7abf26953ef4d5521d3e2a48b737c1efbf8be.zip/node_modules/webpack-sources/", {"name":"webpack-sources","reference":"npm:1.3.0"}],
     ["./.berry/cache/webpack-virtual-modules-2b04d5df7d0d50bbbb081fca5da72fc1683bc7565d951f2a3927832ef30ae0704705fe87c441a0fc730740be79f3dd428280828d5bcf306266152bf43bffc1f5.zip/node_modules/webpack-virtual-modules/", {"name":"webpack-virtual-modules","reference":"npm:0.1.10"}],
     ["./.berry/cache/whatwg-encoding-1322912bbabfbe130fa5d25781df4453c215a4ca7a01116226799cc12c8a8ca421d4d3e6fcbd45e9ab695ae09e96db5f8a54a888f1b5bb28064172ec85a1625c.zip/node_modules/whatwg-encoding/", {"name":"whatwg-encoding","reference":"npm:1.0.5"}],
+    ["./.berry/cache/whatwg-fetch-6f7afabbd107ecf3b654e5d2ed0c053af2f2b3c37f8776bb8ba89c91fd714b160b77e8c0fcea89f6e193f4ce4da0b87a02d7b354aff5c4052dff60791daee8aa.zip/node_modules/whatwg-fetch/", {"name":"whatwg-fetch","reference":"npm:3.0.0"}],
     ["./.berry/cache/whatwg-mimetype-f4a27dc8ddccb5df51e96af023272c3dd370c43f55300a20961d5ea8b4fb45fbdbed2d33a50f0c84e67886358b563076769057bea3fdfb0192db709bbfbb4157.zip/node_modules/whatwg-mimetype/", {"name":"whatwg-mimetype","reference":"npm:2.3.0"}],
     ["./.berry/cache/whatwg-url-76d17126eb1d62b4fe4de8bd9ab3e9939b4414b5e03a55c78b2846529ee44a3613571654cba6f8766727b70005296e7df16e74577fc30d83a65ffdac48dd7efc.zip/node_modules/whatwg-url/", {"name":"whatwg-url","reference":"npm:6.5.0"}],
     ["./.berry/cache/whatwg-url-8300a8afa8cc9f5ca7eb2e888ebb63f427142a743aeead7a9fde074e58ddfca82c14820daaf6de9f91973c12f34611f80d5248a8a80c290716130810a601f546.zip/node_modules/whatwg-url/", {"name":"whatwg-url","reference":"npm:7.0.0"}],
@@ -13988,40 +14064,44 @@ class FakeFS {
             }
         }
     }
-    async copyPromise(destination, source, { baseFs = this } = {}) {
+    async copyPromise(destination, source, { baseFs = this, overwrite = true } = {}) {
         const stat = await baseFs.lstatPromise(source);
         if (stat.isDirectory()) {
             await this.mkdirpPromise(destination);
             const directoryListing = await baseFs.readdirPromise(source);
             await Promise.all(directoryListing.map(entry => {
-                return this.copyPromise(path_1.posix.join(destination, entry), path_1.posix.join(source, entry), { baseFs });
+                return this.copyPromise(path_1.posix.join(destination, entry), path_1.posix.join(source, entry), { baseFs, overwrite });
             }));
         }
         else if (stat.isFile()) {
-            const content = await baseFs.readFilePromise(source);
-            await this.writeFilePromise(destination, content);
+            if (!await this.existsPromise(destination) || overwrite) {
+                const content = await baseFs.readFilePromise(source);
+                await this.writeFilePromise(destination, content);
+            }
         }
         else {
-            throw new Error(`Unsupported file type (mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
+            throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
         }
         const mode = stat.mode & 0o777;
         await this.chmodPromise(destination, mode);
     }
-    copySync(source, destination, { baseFs = this } = {}) {
+    copySync(destination, source, { baseFs = this, overwrite = true } = {}) {
         const stat = baseFs.lstatSync(source);
         if (stat.isDirectory()) {
             this.mkdirpSync(destination);
             const directoryListing = baseFs.readdirSync(source);
             for (const entry of directoryListing) {
-                this.copySync(path_1.posix.join(destination, entry), path_1.posix.join(source, entry), { baseFs });
+                this.copySync(path_1.posix.join(destination, entry), path_1.posix.join(source, entry), { baseFs, overwrite });
             }
         }
         else if (stat.isFile()) {
-            const content = baseFs.readFileSync(source);
-            this.writeFileSync(destination, content);
+            if (!this.existsSync(destination) || overwrite) {
+                const content = baseFs.readFileSync(source);
+                this.writeFileSync(destination, content);
+            }
         }
         else {
-            throw new Error(`Unsupported file type (mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
+            throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
         }
         const mode = stat.mode & 0o777;
         this.chmodSync(destination, mode);
@@ -14211,11 +14291,11 @@ class NodeFS extends FakeFS_1.FakeFS {
     }
     async realpathPromise(p) {
         return await new Promise((resolve, reject) => {
-            this.realFs.realpath(p, this.makeCallback(resolve, reject));
+            this.realFs.realpath(p, {}, this.makeCallback(resolve, reject));
         });
     }
     realpathSync(p) {
-        return this.toPortablePath(this.realFs.realpathSync(this.fromPortablePath(p)));
+        return this.toPortablePath(this.realFs.realpathSync(this.fromPortablePath(p), {}));
     }
     async existsPromise(p) {
         return await new Promise(resolve => {
@@ -15237,6 +15317,8 @@ function patchFs(patchedFs, fakeFs) {
         const origName = fnName;
         patchedFs[origName] = fakeImpl;
     }
+    patchedFs.realpathSync.native = patchedFs.realpathSync;
+    patchedFs.realpath.native = patchedFs.realpath;
 }
 exports.patchFs = patchFs;
 function extendFs(realFs, fakeFs) {

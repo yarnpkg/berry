@@ -80,40 +80,44 @@ export abstract class FakeFS {
     }
   }
 
-  async copyPromise(destination: string, source: string, {baseFs = this}: {baseFs?: FakeFS} = {}) {
+  async copyPromise(destination: string, source: string, {baseFs = this, overwrite = true}: {baseFs?: FakeFS, overwrite?: boolean} = {}) {
     const stat = await baseFs.lstatPromise(source);
 
     if (stat.isDirectory()) {
       await this.mkdirpPromise(destination);
       const directoryListing = await baseFs.readdirPromise(source);
       await Promise.all(directoryListing.map(entry => {
-        return this.copyPromise(posix.join(destination, entry), posix.join(source, entry), {baseFs});
+        return this.copyPromise(posix.join(destination, entry), posix.join(source, entry), {baseFs, overwrite});
       }));
     } else if (stat.isFile()) {
-      const content = await baseFs.readFilePromise(source);
-      await this.writeFilePromise(destination, content);
+      if (!await this.existsPromise(destination) || overwrite) {
+        const content = await baseFs.readFilePromise(source);
+        await this.writeFilePromise(destination, content);
+      }
     } else {
-      throw new Error(`Unsupported file type (mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
+      throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
     }
 
     const mode = stat.mode & 0o777;
     await this.chmodPromise(destination, mode);
   }
 
-  copySync(source: string, destination: string, {baseFs = this}: {baseFs?: FakeFS} = {}) {
+  copySync(destination: string, source: string, {baseFs = this, overwrite = true}: {baseFs?: FakeFS, overwrite?: boolean} = {}) {
     const stat = baseFs.lstatSync(source);
 
     if (stat.isDirectory()) {
       this.mkdirpSync(destination);
       const directoryListing = baseFs.readdirSync(source);
       for (const entry of directoryListing) {
-        this.copySync(posix.join(destination, entry), posix.join(source, entry), {baseFs});
+        this.copySync(posix.join(destination, entry), posix.join(source, entry), {baseFs, overwrite});
       }
     } else if (stat.isFile()) {
-      const content = baseFs.readFileSync(source);
-      this.writeFileSync(destination, content);
+      if (!this.existsSync(destination) || overwrite) {
+        const content = baseFs.readFileSync(source);
+        this.writeFileSync(destination, content);
+      }
     } else {
-      throw new Error(`Unsupported file type (mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
+      throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
     }
 
     const mode = stat.mode & 0o777;

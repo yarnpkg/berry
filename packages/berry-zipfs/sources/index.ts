@@ -98,6 +98,9 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
 
     (patchedFs as any)[origName] = fakeImpl;
   }
+
+  patchedFs.realpathSync.native = patchedFs.realpathSync;
+  patchedFs.realpath.native = patchedFs.realpath;
 }
 
 export function extendFs(realFs: typeof fs, fakeFs: FakeFS): typeof fs {

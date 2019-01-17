@@ -637,7 +637,7 @@ export class Project {
         throw new Error(`Assertion failed: The installer should have been registered`);
       
       const packageFetch = await fetcher.fetch(pkg, fetcherOptions);
-      const installStatus = await installer.installPackage(pkg, pkg.linkType, new JailFS(packageFetch.prefixPath, {baseFs: packageFetch.packageFs}));
+      const installStatus = await installer.installPackage(pkg, pkg.linkType, packageFetch);
 
       packageLinkers.set(pkg.locatorHash, linker);
       packageLocations.set(pkg.locatorHash, installStatus.packageLocation);

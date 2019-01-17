@@ -992,7 +992,7 @@ __metadata:
     immer: "npm:^1.7.2"
     joi: "npm:^13.6.0"
     pretty-bytes: "npm:^5.1.0"
-    react: "npm:^16.5.2"
+    react: "npm:15.0.0"
     react-redux: "npm:^5.0.7"
     redux: "npm:^4.0.0"
     redux-saga: "npm:^1.0.0-beta.3"
@@ -1055,7 +1055,7 @@ __metadata:
     "@manaflair/text-layout": "npm:^0.11.0"
     eventemitter3: "npm:^3.1.0"
     faker: "npm:^4.1.0"
-    react: "npm:^16.5.1"
+    react: "npm:15.0.0"
     react-reconciler: "npm:^0.14.0"
     reopen-tty: "npm:^1.1.2"
     ts-node: "npm:^7.0.1"
@@ -1982,6 +1982,12 @@ __metadata:
 "asap@npm:~1.0.0":
   version: 1.0.0
   resolution: "asap@npm:1.0.0"
+  languageName: node
+  linkType: hard
+
+"asap@npm:~2.0.3":
+  version: 2.0.6
+  resolution: "asap@npm:2.0.6"
   languageName: node
   linkType: hard
 
@@ -3373,6 +3379,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"core-js@npm:^1.0.0":
+  version: 1.2.7
+  resolution: "core-js@npm:1.2.7"
+  languageName: node
+  linkType: hard
+
 "core-js@npm:^2.4.0, core-js@npm:^2.5.0, core-js@npm:^2.5.7":
   version: 2.6.2
   resolution: "core-js@npm:2.6.2"
@@ -3842,6 +3854,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"encoding@npm:^0.1.11":
+  version: 0.1.12
+  resolution: "encoding@npm:0.1.12"
+  dependencies:
+    iconv-lite: "npm:~0.4.13"
+  languageName: node
+  linkType: hard
+
 "end-of-stream@npm:^1.0.0, end-of-stream@npm:^1.1.0, end-of-stream@npm:~1.1.0":
   version: 1.1.0
   resolution: "end-of-stream@npm:1.1.0"
@@ -4251,6 +4271,20 @@ __metadata:
   resolution: "fb-watchman@npm:2.0.0"
   dependencies:
     bser: "npm:^2.0.0"
+  languageName: node
+  linkType: hard
+
+"fbjs@npm:^0.8.0":
+  version: 0.8.17
+  resolution: "fbjs@npm:0.8.17"
+  dependencies:
+    core-js: "npm:^1.0.0"
+    isomorphic-fetch: "npm:^2.1.1"
+    loose-envify: "npm:^1.0.0"
+    object-assign: "npm:^4.1.0"
+    promise: "npm:^7.1.1"
+    setimmediate: "npm:^1.0.5"
+    ua-parser-js: "npm:^0.7.18"
   languageName: node
   linkType: hard
 
@@ -4887,7 +4921,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:0.4.24, iconv-lite@npm:^0.4.24, iconv-lite@npm:^0.4.4":
+"iconv-lite@npm:0.4.24, iconv-lite@npm:^0.4.24, iconv-lite@npm:^0.4.4, iconv-lite@npm:~0.4.13":
   version: 0.4.24
   resolution: "iconv-lite@npm:0.4.24"
   dependencies:
@@ -5284,7 +5318,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-stream@npm:^1.1.0":
+"is-stream@npm:^1.0.1, is-stream@npm:^1.1.0":
   version: 1.1.0
   resolution: "is-stream@npm:1.1.0"
   languageName: node
@@ -5353,6 +5387,15 @@ __metadata:
 "isobject@npm:^3.0.0, isobject@npm:^3.0.1":
   version: 3.0.1
   resolution: "isobject@npm:3.0.1"
+  languageName: node
+  linkType: hard
+
+"isomorphic-fetch@npm:^2.1.1":
+  version: 2.2.1
+  resolution: "isomorphic-fetch@npm:2.2.1"
+  dependencies:
+    node-fetch: "npm:^1.0.1"
+    whatwg-fetch: "npm:>=0.10.0"
   languageName: node
   linkType: hard
 
@@ -6608,6 +6651,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-fetch@npm:^1.0.1":
+  version: 1.7.3
+  resolution: "node-fetch@npm:1.7.3"
+  dependencies:
+    encoding: "npm:^0.1.11"
+    is-stream: "npm:^1.0.1"
+  languageName: node
+  linkType: hard
+
 "node-int64@npm:^0.4.0":
   version: 0.4.0
   resolution: "node-int64@npm:0.4.0"
@@ -6789,7 +6841,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"object-assign@npm:^4.1.0, object-assign@npm:^4.1.1":
+"object-assign@npm:^4.0.1, object-assign@npm:^4.1.0, object-assign@npm:^4.1.1":
   version: 4.1.1
   resolution: "object-assign@npm:4.1.1"
   languageName: node
@@ -7375,6 +7427,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"promise@npm:^7.1.1":
+  version: 7.3.1
+  resolution: "promise@npm:7.3.1"
+  dependencies:
+    asap: "npm:~2.0.3"
+  languageName: node
+  linkType: hard
+
 "promise@npm:~6.1.0":
   version: 6.1.0
   resolution: "promise@npm:6.1.0"
@@ -7616,14 +7676,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.5.1, react@npm:^16.5.2":
-  version: 16.7.0
-  resolution: "react@npm:16.7.0"
+"react@npm:15.0.0":
+  version: 15.0.0
+  resolution: "react@npm:15.0.0"
   dependencies:
+    fbjs: "npm:^0.8.0"
     loose-envify: "npm:^1.1.0"
-    object-assign: "npm:^4.1.1"
-    prop-types: "npm:^15.6.2"
-    scheduler: "npm:^0.12.0"
+    object-assign: "npm:^4.0.1"
   languageName: node
   linkType: hard
 
@@ -8094,15 +8153,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "scheduler@npm:0.12.0"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-    object-assign: "npm:^4.1.1"
-  languageName: node
-  linkType: hard
-
 "schema-utils@npm:^0.4.4, schema-utils@npm:^0.4.5":
   version: 0.4.7
   resolution: "schema-utils@npm:0.4.7"
@@ -8175,7 +8225,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"setimmediate@npm:^1.0.4":
+"setimmediate@npm:^1.0.4, setimmediate@npm:^1.0.5":
   version: 1.0.5
   resolution: "setimmediate@npm:1.0.5"
   languageName: node
@@ -9010,6 +9060,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ua-parser-js@npm:^0.7.18":
+  version: 0.7.19
+  resolution: "ua-parser-js@npm:0.7.19"
+  languageName: node
+  linkType: hard
+
 "uc.micro@npm:^1.0.1, uc.micro@npm:^1.0.5":
   version: 1.0.5
   resolution: "uc.micro@npm:1.0.5"
@@ -9422,6 +9478,12 @@ __metadata:
   resolution: "whatwg-encoding@npm:1.0.5"
   dependencies:
     iconv-lite: "npm:0.4.24"
+  languageName: node
+  linkType: hard
+
+"whatwg-fetch@npm:>=0.10.0":
+  version: 3.0.0
+  resolution: "whatwg-fetch@npm:3.0.0"
   languageName: node
   linkType: hard
 
