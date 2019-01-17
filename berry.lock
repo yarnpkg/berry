@@ -4026,9 +4026,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"events@npm:^1.0.0":
-  version: 1.1.1
-  resolution: "events@npm:1.1.1"
+"events@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "events@npm:3.0.0"
   languageName: node
   linkType: hard
 
@@ -6602,8 +6602,8 @@ __metadata:
   linkType: hard
 
 "node-libs-browser@npm:^2.0.0":
-  version: 2.1.0
-  resolution: "node-libs-browser@npm:2.1.0"
+  version: 2.2.0
+  resolution: "node-libs-browser@npm:2.2.0"
   dependencies:
     assert: "npm:^1.1.1"
     browserify-zlib: "npm:^0.2.0"
@@ -6612,7 +6612,7 @@ __metadata:
     constants-browserify: "npm:^1.0.0"
     crypto-browserify: "npm:^3.11.0"
     domain-browser: "npm:^1.1.1"
-    events: "npm:^1.0.0"
+    events: "npm:^3.0.0"
     https-browserify: "npm:^1.0.0"
     os-browserify: "npm:^0.3.0"
     path-browserify: "npm:0.0.0"
@@ -6626,7 +6626,7 @@ __metadata:
     timers-browserify: "npm:^2.0.4"
     tty-browserify: "npm:0.0.0"
     url: "npm:^0.11.0"
-    util: "npm:^0.10.3"
+    util: "npm:^0.11.0"
     vm-browserify: "npm:0.0.4"
   languageName: node
   linkType: hard
@@ -9172,9 +9172,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"util@npm:^0.10.3":
-  version: 0.10.4
-  resolution: "util@npm:0.10.4"
+"util@npm:^0.11.0":
+  version: 0.11.1
+  resolution: "util@npm:0.11.1"
   dependencies:
     inherits: "npm:2.0.3"
   languageName: node

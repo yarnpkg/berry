@@ -11,8 +11,7 @@ ItemStatements
   = statements:ItemStatement* { return [].concat(... statements) }
 
 ItemStatement
-  = Samedent "#" (!EOL .)+ EOL+ { return [] }
-  / Samedent "-" B+ value:Expression { return value }
+  = Samedent "-" B value:Expression { return value }
 
 PropertyStatements
   = statements:PropertyStatement* { return Object.assign({}, ... statements) }
@@ -26,12 +25,15 @@ PropertyStatement
   / Samedent property:Name others:(B? "," B? other:Name { return other })+ B? ":" B? value:Expression { return Object.assign({}, ... [property].concat(others).map(property => ({[property]: value}))) }
 
 Expression
-  = EOL Indent statements:PropertyStatements Dedent { return statements }
-  / EOL Indent statements:ItemStatements Dedent { return statements }
+  =  &(EOL Extradent "-" B) EOL Indent statements:ItemStatements Dedent { return statements }
+  / EOL Indent statements:PropertyStatements Dedent { return statements }
   / expression:Literal EOL+ { return expression }
 
 Samedent "correct indentation"
   = spaces:" "* &{ return spaces.length === indentLevel * INDENT_STEP }
+
+Extradent
+  = spaces:" "* &{ return spaces.length === (indentLevel + 1) * INDENT_STEP }
 
 Indent
   = &{ indentLevel++; return true }
@@ -45,7 +47,7 @@ Name
 
 LegacyName
   = string
-  / pseudostringLegacy
+  / pseudostringLegacy+ { return text() }
 
 Literal
   = null
@@ -56,10 +58,10 @@ Literal
  */
 
 pseudostring "pseudostring"
-  = (!Sc ![-?:,\][{}#&*!|>'"%@`] .) (B? !Sc ![,\][{}:#] .)* B? { return text().replace(/^ *| *$/g, '') }
+  = [^\r\n\t ?:,\][{}#&*!|>'"%@`-] (B? [^\r\n\t ,\][{}:#])* { return text().replace(/^ *| *$/g, '') }
 
 pseudostringLegacy
-  = [a-zA-Z\/-] (![^\r\n :,].)* B? { return text().replace(/^ *| *$/g, '') }
+  = "-"? [a-zA-Z\/] [^\r\n\t :,]* { return text().replace(/^ *| *$/g, '') }
 
 /**
  * String parsing
@@ -97,16 +99,10 @@ hexDigit
  */
 
 B "blank space"
-  = Bc+
-
-Bc
-  = [ \t]
+  = [ \t]+
 
 S "white space"
-  = Sc+
-
-Sc
-  = [ \t\r\n]
+  = [ \t\n\r]+
 
 EOL
   = "\r\n"

@@ -13,6 +13,7 @@ import {TagResolver}                     from './TagResolver';
 import {VirtualFetcher}                  from './VirtualFetcher';
 import {WorkspaceFetcher}                from './WorkspaceFetcher';
 import {WorkspaceResolver}               from './WorkspaceResolver';
+import * as structUtils                  from './structUtils';
 
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});
@@ -21,9 +22,11 @@ const readFileP = promisify(readFile);
 const writeFileP = promisify(writeFile);
 
 export enum SettingsType {
-  BOOLEAN,
-  ABSOLUTE_PATH,
-  STRING,
+  BOOLEAN = 'BOOLEAN',
+  ABSOLUTE_PATH = 'ABSOLUTE_PATH',
+  LOCATOR = 'LOCATOR',
+  LOCATOR_LOOSE = 'LOCATOR_LOOSE',
+  STRING = 'STRING',
 };
 
 export type SettingsDefinition = {
@@ -138,6 +141,10 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
   
   if (type === SettingsType.ABSOLUTE_PATH) {
     return resolve(folder, value);
+  } else if (type === SettingsType.LOCATOR_LOOSE) {
+    return structUtils.parseLocator(value, false);
+  } else if (type === SettingsType.LOCATOR) {
+    return structUtils.parseLocator(value);
   } else {
     return value;
   }

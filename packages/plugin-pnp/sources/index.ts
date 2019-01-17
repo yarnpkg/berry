@@ -17,7 +17,7 @@ const plugin: Plugin = {
       default: `./.berry/pnp/unplugged`,
     },
     pnpUnpluggedPackages: {
-      type: SettingsType.ABSOLUTE_PATH,
+      type: SettingsType.LOCATOR_LOOSE,
       default: [],
     },
     pnpPath: {

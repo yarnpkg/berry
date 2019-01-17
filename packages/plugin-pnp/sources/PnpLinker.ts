@@ -6,7 +6,7 @@ import {CwdFS, FakeFS, NodeFS}                                                  
 import {posix}                                                                                from 'path';
 
 // Some packages do weird stuff and MUST be unplugged. I don't like them.
-const UNPLUGGED_PACKAGES = new Set([
+const FORCED_UNPLUG_PACKAGES = new Set([
   structUtils.makeIdent(null, `node-pre-gyp`).identHash,
 ]);
 
@@ -197,6 +197,12 @@ class PnpInstaller implements Installer {
   }
 
   private isUnplugged(locator: Locator) {
-    return UNPLUGGED_PACKAGES.has(locator.identHash);
+    if (this.opts.project.configuration.pnpUnpluggedPackages.find((l: Locator) => l.reference ? structUtils.areLocatorsEqual(l, locator) : structUtils.areIdentsEqual(l, locator)))
+      return true;
+
+    if (FORCED_UNPLUG_PACKAGES.has(locator.identHash))
+      return true;
+
+    return false;
   }
 }
