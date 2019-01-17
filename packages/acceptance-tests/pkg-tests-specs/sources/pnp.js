@@ -1025,11 +1025,11 @@ module.exports = makeTemporaryEnv => {
           await run(`install`);
           await run(`unplug`, `various-requires`);
 
-          const listing = await readdir(`${path}/.pnp/unplugged`);
+          const listing = await readdir(`${path}/.berry/pnp/unplugged`);
           expect(listing).toHaveLength(1);
 
           await writeFile(
-            `${path}/.pnp/unplugged/${listing[0]}/node_modules/various-requires/alternative-index.js`,
+            `${path}/.berry/pnp/unplugged/${listing[0]}/node_modules/various-requires/alternative-index.js`,
             `module.exports = "unplugged";\n`,
           );
 
@@ -1057,11 +1057,11 @@ module.exports = makeTemporaryEnv => {
         async ({path, run, source}) => {
           await run(`unplug`, `various-requires`);
 
-          const listing = await readdir(`${path}/.pnp/unplugged`);
+          const listing = await readdir(`${path}/.berry/pnp/unplugged`);
           expect(listing).toHaveLength(1);
 
           await writeFile(
-            `${path}/.pnp/unplugged/${listing[0]}/node_modules/various-requires/alternative-index.js`,
+            `${path}/.berry/pnp/unplugged/${listing[0]}/node_modules/various-requires/alternative-index.js`,
             `module.exports = "unplugged";\n`,
           );
 
@@ -1070,24 +1070,6 @@ module.exports = makeTemporaryEnv => {
             name: `no-deps`,
             version: `1.0.0`,
           });
-        },
-      ),
-    );
-
-    test(
-      `it should produce an error if unplugging with pnp disabled`,
-      makeTemporaryEnv(
-        {
-          dependencies: {
-            [`no-deps`]: `1.0.0`,
-            [`various-requires`]: `1.0.0`,
-          },
-        },
-        {
-          plugNPlay: false,
-        },
-        async ({path, run, source}) => {
-          await expect(run(`unplug`, `various-requires`)).rejects.toBeTruthy();
         },
       ),
     );
@@ -1109,7 +1091,7 @@ module.exports = makeTemporaryEnv => {
           await run(`install`);
           await run(`unplug`, `various-requires`, `no-deps`);
 
-          await expect(readdir(`${path}/.pnp/unplugged`)).resolves.toHaveLength(3);
+          await expect(readdir(`${path}/.berry/pnp/unplugged`)).resolves.toHaveLength(3);
         },
       ),
     );
@@ -1131,7 +1113,7 @@ module.exports = makeTemporaryEnv => {
           await run(`install`);
           await run(`unplug`, `various-requires`, `no-deps@^1.0.0`);
 
-          await expect(readdir(`${path}/.pnp/unplugged`)).resolves.toHaveLength(2);
+          await expect(readdir(`${path}/.berry/pnp/unplugged`)).resolves.toHaveLength(2);
         },
       ),
     );
@@ -1213,7 +1195,7 @@ module.exports = makeTemporaryEnv => {
           await run(`unplug`, `various-requires`);
           await run(`install`);
 
-          await expect(readdir(`${path}/.pnp/unplugged`)).resolves.toHaveLength(1);
+          await expect(readdir(`${path}/.berry/pnp/unplugged`)).resolves.toHaveLength(1);
         },
       ),
     );
@@ -1234,13 +1216,13 @@ module.exports = makeTemporaryEnv => {
           await run(`unplug`, `various-requires`);
           await run(`unplug`, `no-deps`);
 
-          await expect(readdir(`${path}/.pnp/unplugged`)).resolves.toHaveLength(2);
+          await expect(readdir(`${path}/.berry/pnp/unplugged`)).resolves.toHaveLength(2);
         },
       ),
     );
 
     test(
-      `it should clear the specified packages when using --clear`,
+      `it should clear the specified packages when using --reset with arguments`,
       makeTemporaryEnv(
         {
           dependencies: {
@@ -1254,17 +1236,17 @@ module.exports = makeTemporaryEnv => {
         async ({path, run, source}) => {
           await run(`unplug`, `various-requires`);
 
-          await expect(readdir(`${path}/.pnp/unplugged`)).resolves.toHaveLength(1);
+          await expect(readdir(`${path}/.berry/pnp/unplugged`)).resolves.toHaveLength(1);
 
-          await run(`unplug`, `various-requires`, `--clear`);
+          await run(`unplug`, `various-requires`, `--reset`);
 
-          expect(existsSync(`${path}/.pnp/unplugged`)).toEqual(false);
+          expect(existsSync(`${path}/.berry/pnp/unplugged`)).toEqual(false);
         },
       ),
     );
 
     test(
-      `it should clear the whole unplugged folder when using unplug --clear-all`,
+      `it should clear the whole unplugged folder when using unplug --reset without arguments`,
       makeTemporaryEnv(
         {
           dependencies: {
@@ -1277,9 +1259,9 @@ module.exports = makeTemporaryEnv => {
         },
         async ({path, run, source}) => {
           await run(`unplug`, `various-requires`);
-          await run(`unplug`, `--clear-all`);
+          await run(`unplug`, `--reset`);
 
-          expect(existsSync(`${path}/.pnp/unplugged`)).toEqual(false);
+          expect(existsSync(`${path}/.berry/pnp/unplugged`)).toEqual(false);
         },
       ),
     );
@@ -1300,11 +1282,11 @@ module.exports = makeTemporaryEnv => {
           await run(`install`);
           await run(`unplug`, `various-requires`);
 
-          const listing = await readdir(`${path}/.pnp/unplugged`);
+          const listing = await readdir(`${path}/.berry/pnp/unplugged`);
           expect(listing).toHaveLength(1);
 
           await writeFile(
-            `${path}/.pnp/unplugged/${listing[0]}/node_modules/various-requires/alternative-index.js`,
+            `${path}/.berry/pnp/unplugged/${listing[0]}/node_modules/various-requires/alternative-index.js`,
             `module.exports = "unplugged";\n`,
           );
 
@@ -1320,6 +1302,22 @@ module.exports = makeTemporaryEnv => {
     );
 
     test(
+      `it should not automatically unplug all packages`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`no-deps`]: `1.0.0`},
+        },
+        {plugNPlay: true},
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          const listing = await readdir(`${path}/.berry/pnp/unplugged`);
+          expect(listing).toHaveLength(0);
+        },
+      ),
+    );
+
+    test(
       `it should automatically unplug packages with postinstall scripts`,
       makeTemporaryEnv(
         {
@@ -1329,14 +1327,8 @@ module.exports = makeTemporaryEnv => {
         async ({path, run, source}) => {
           await run(`install`);
 
-          const resolution = await source(`require.resolve('no-deps-scripted')`);
-          const cacheRelativeResolution = relative(`${path}/.cache`, resolution);
-
-          expect(
-            cacheRelativeResolution &&
-              !cacheRelativeResolution.startsWith(`..${path.sep}`) &&
-              !isAbsolute(cacheRelativeResolution),
-          );
+          const listing = await readdir(`${path}/.berry/pnp/unplugged`);
+          expect(listing).toHaveLength(1);
         },
       ),
     );
@@ -1353,7 +1345,7 @@ module.exports = makeTemporaryEnv => {
 
           const rndBefore = await source(`require('no-deps-scripted/rnd.js')`);
 
-          await remove(`${path}/.pnp`);
+          await remove(`${path}/.berry`);
           await remove(`${path}/.pnp.js`);
 
           await run(`install`);
