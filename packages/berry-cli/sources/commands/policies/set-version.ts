@@ -1,6 +1,5 @@
 import {Configuration, Project}          from '@berry/core';
 import {httpUtils}                       from '@berry/core';
-import chalk                             from 'chalk';
 import {mkdirp, chmod, writeFile}        from 'fs-extra';
 import Joi                               from 'joi';
 import {dirname, resolve}                from 'path';
@@ -8,17 +7,6 @@ import semver, {SemVer}                  from 'semver';
 import {Readable, Writable}              from 'stream';
 
 import {plugins}                         from '../../plugins';
-
-// @ts-ignore
-const ctx = new chalk.constructor({enabled: true});
-
-function color(configuration: Configuration, text: string, color: string) {
-  if (configuration.enableColors) {
-    return ctx.keyword(color)(text);
-  } else {
-    return text;
-  }
-}
 
 type ReleaseAsset = {
   id: any,
@@ -101,7 +89,7 @@ export default (concierge: any) => concierge
     const configuration = await Configuration.find(cwd, plugins);
     const {project} = await Project.find(configuration, cwd);
 
-    stdout.write(`Resolving ${color(configuration, range, `yellow`)} to a url...\n`);
+    stdout.write(`Resolving ${configuration.format(range, `yellow`)} to a url...\n`);
 
     if (range === `rc`) {
       range = `latest`;
@@ -140,13 +128,13 @@ export default (concierge: any) => concierge
       bundleVersion = release.version.version;
     }
 
-    stdout.write(`Downloading ${color(configuration, bundleUrl, `green`)}...\n`);
+    stdout.write(`Downloading ${configuration.format(bundleUrl, `green`)}...\n`);
     const bundle = await httpUtils.get(bundleUrl, configuration);
 
     const executablePath = `.berry/releases/berry-${bundleVersion}.js`;
     const absoluteExecutablePath = resolve(project.cwd, executablePath);
 
-    stdout.write(`Saving it into ${color(configuration, executablePath, `magenta`)}...\n`);
+    stdout.write(`Saving it into ${configuration.format(executablePath, `magenta`)}...\n`);
     await mkdirp(dirname(absoluteExecutablePath));
     await writeFile(absoluteExecutablePath, bundle);
     await chmod(absoluteExecutablePath, 0o755);
