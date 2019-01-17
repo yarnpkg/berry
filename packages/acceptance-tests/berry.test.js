@@ -26,16 +26,12 @@ const pkgDriver = generatePkgDriver({
     [command, ...args],
     {cwd, projectFolder, registryUrl, plugNPlay, plugnplayShebang, plugnplayBlacklist, env},
   ) {
-    let beforeArgs = [];
-    let middleArgs = [];
-
-    if (projectFolder) {
-      beforeArgs = [...beforeArgs, `--cwd`, projectFolder];
-    }
+    if (projectFolder)
+      args = [...args, `--cwd`, projectFolder];
 
     const res = await execFile(
       process.execPath,
-      [`${__dirname}/../berry-cli/bin/berry.js`, ...beforeArgs, command, ...middleArgs, ...args],
+      [`${__dirname}/../berry-cli/bin/berry.js`, command, ...args],
       {
         env: Object.assign(
           {
