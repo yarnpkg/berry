@@ -1,20 +1,20 @@
 jobs:
 
-- job: Windows
-  pool: 'Hosted VS2017'
+# - job: Windows
+#   pool: 'Hosted VS2017'
 
-  variables:
-    os_name: Windows
+#   variables:
+#     os_name: Windows
 
-  strategy:
-    matrix:
-      node_8_x:
-        node_version: 8.x
-      node_10_x:
-        node_version: 10.x
+#   strategy:
+#     matrix:
+#       node_8_x:
+#         node_version: 8.x
+#       node_10_x:
+#         node_version: 10.x
 
-  steps:
-  - template: scripts/azure-run-tests.yml
+#   steps:
+#   - template: scripts/azure-run-tests.yml
 
 - job: Linux
   pool:
@@ -33,19 +33,19 @@ jobs:
   steps:
   - template: scripts/azure-run-tests.yml
 
-- job: OSX
-  pool:
-    vmImage: 'macOS 10.13'
+# - job: OSX
+#   pool:
+#     vmImage: 'macOS 10.13'
 
-  variables:
-    os_name: OSX
+#   variables:
+#     os_name: OSX
 
-  strategy:
-    matrix:
-      node_8_x:
-        node_version: 8.x
-      node_10_x:
-        node_version: 10.x
+#   strategy:
+#     matrix:
+#       node_8_x:
+#         node_version: 8.x
+#       node_10_x:
+#         node_version: 10.x
 
-  steps:
-  - template: scripts/azure-run-tests.yml
+#   steps:
+#   - template: scripts/azure-run-tests.yml

@@ -11,8 +11,7 @@ steps:
   displayName: 'Install and build'
 
 - script: |
-    cd ./packages/acceptance-tests
-    berry jest berry --reporters=default --reporters=jest-junit
+    ./packages/berry-cli/bin/berry run:tests acceptance-tests/berry
   displayName: 'Run the acceptance tests'
 
 - task: PublishTestResults@2

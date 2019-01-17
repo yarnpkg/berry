@@ -3,5 +3,9 @@ module.exports = {
     testEnvironment: require.resolve(`jest-environment-node`),
     modulePathIgnorePatterns: [
         `<rootDir>/pkg-tests-fixtures/packages/`,
+    ],
+    reporters: [
+        `default`,
+        require.resolve(`jest-junit`),
     ]
 };
