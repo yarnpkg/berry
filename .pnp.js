@@ -6954,10 +6954,10 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["jest-pnp-resolver", "npm:1.0.2"],
         ]),
       }],
-      ["virtual:ad2b147454c68a85b34a1b0a4631199a3b95e31a529e43c6c678f8195de4c0c66519f37cb1059877f51a698211c2b20c6fb365632ec2ddc90b1c3c85fcafeb73#npm:1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.berry/virtual/jest-pnp-resolver-aae9adca58d353dadec7ac4c3fb053fb1d3fe5b2463097debdff7542f3bf7497703a6a4a19b1e7405f47be967d6ce69166f1322cd138d9d2bc415a43f0f61385/node_modules/jest-pnp-resolver/"),
+      ["virtual:974a67b8af42f5e536c673a2a5c4aeb748a3d1591f50f4223293919873c00ca888ce89afc6ec3bcefc6a1663fc142d8d40ee64b6990e09ea9a90cea3f9f4023d#npm:1.0.2", {
+        packageLocation: path.resolve(__dirname, "./.berry/virtual/jest-pnp-resolver-449adbce5250d6be8b155f9d6c8cdde6392d11ac6363008a7a54fcca264b1e3678b5b14068683daddc70c1630344f139d9071f3226121b19671d6d673acb87cc/node_modules/jest-pnp-resolver/"),
         packageDependencies: new Map([
-          ["jest-pnp-resolver", "virtual:ad2b147454c68a85b34a1b0a4631199a3b95e31a529e43c6c678f8195de4c0c66519f37cb1059877f51a698211c2b20c6fb365632ec2ddc90b1c3c85fcafeb73#npm:1.0.2"],
+          ["jest-pnp-resolver", "virtual:974a67b8af42f5e536c673a2a5c4aeb748a3d1591f50f4223293919873c00ca888ce89afc6ec3bcefc6a1663fc142d8d40ee64b6990e09ea9a90cea3f9f4023d#npm:1.0.2"],
           ["jest-resolve", "npm:23.6.0"],
         ]),
       }],
@@ -10988,17 +10988,17 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
-    ["unnamed-workspace-e416d2", new Map([
+    ["unnamed-workspace-06d141", new Map([
       ["workspace:0.0.0", {
         packageLocation: path.resolve(__dirname, "./packages/acceptance-tests/"),
         packageDependencies: new Map([
-          ["unnamed-workspace-e416d2", "workspace:0.0.0"],
+          ["unnamed-workspace-06d141", "workspace:0.0.0"],
           ["babel-preset-env", "npm:1.7.0"],
           ["babel-preset-flow", "npm:6.23.0"],
           ["jest", "npm:23.6.0"],
           ["jest-environment-node", "npm:23.4.0"],
           ["jest-junit", "npm:5.2.0"],
-          ["jest-pnp-resolver", "virtual:ad2b147454c68a85b34a1b0a4631199a3b95e31a529e43c6c678f8195de4c0c66519f37cb1059877f51a698211c2b20c6fb365632ec2ddc90b1c3c85fcafeb73#npm:1.0.2"],
+          ["jest-pnp-resolver", "virtual:974a67b8af42f5e536c673a2a5c4aeb748a3d1591f50f4223293919873c00ca888ce89afc6ec3bcefc6a1663fc142d8d40ee64b6990e09ea9a90cea3f9f4023d#npm:1.0.2"],
           ["jest-resolve", "npm:23.6.0"],
           ["prettier", "npm:1.15.3"],
         ]),
@@ -12348,7 +12348,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/jest-message-util-d4e0fc68b1b4fe302b80dfa5f32062668e1c6af2d41bc11919245fdbc2f26b646a8ba2a577d2a3bfc9016745352ee70a6d7818a350f666b11b015d2a8678d9cd.zip/node_modules/jest-message-util/", {"name":"jest-message-util","reference":"npm:23.4.0"}],
     ["./.berry/cache/jest-mock-374ad04b4c0cda93bc03333f81dd4c5c6bacadd70493cf6de6a265cdba9815061744117e25591bf3e26a23060410f287510f1541cf9fe6dab6a9cf26302c7fc3.zip/node_modules/jest-mock/", {"name":"jest-mock","reference":"npm:23.2.0"}],
     ["./.berry/cache/jest-pnp-resolver-b5c0e28cde2454e7b2d3aea338a73ae7b26c8a5743f5fb4786a478e1326b4165d378b207f249020abb9cc0a9b66f0f958b55bcd71f3afd87a6f0239b3455c8d6.zip/node_modules/jest-pnp-resolver/", {"name":"jest-pnp-resolver","reference":"npm:1.0.2"}],
-    ["./.berry/virtual/jest-pnp-resolver-aae9adca58d353dadec7ac4c3fb053fb1d3fe5b2463097debdff7542f3bf7497703a6a4a19b1e7405f47be967d6ce69166f1322cd138d9d2bc415a43f0f61385/node_modules/jest-pnp-resolver/", {"name":"jest-pnp-resolver","reference":"virtual:ad2b147454c68a85b34a1b0a4631199a3b95e31a529e43c6c678f8195de4c0c66519f37cb1059877f51a698211c2b20c6fb365632ec2ddc90b1c3c85fcafeb73#npm:1.0.2"}],
+    ["./.berry/virtual/jest-pnp-resolver-449adbce5250d6be8b155f9d6c8cdde6392d11ac6363008a7a54fcca264b1e3678b5b14068683daddc70c1630344f139d9071f3226121b19671d6d673acb87cc/node_modules/jest-pnp-resolver/", {"name":"jest-pnp-resolver","reference":"virtual:974a67b8af42f5e536c673a2a5c4aeb748a3d1591f50f4223293919873c00ca888ce89afc6ec3bcefc6a1663fc142d8d40ee64b6990e09ea9a90cea3f9f4023d#npm:1.0.2"}],
     ["./.berry/cache/jest-regex-util-fc6715b558167e64b6cf3958ce4791ed9ce70d308767daaf28ccfeb60830512802b2632d9600dc6f979a1456fc51e31d3f4969d760fd460e76983375d4c2c5c7.zip/node_modules/jest-regex-util/", {"name":"jest-regex-util","reference":"npm:23.3.0"}],
     ["./.berry/cache/jest-resolve-9b4919bebe050ace6f39589a580c0c4e93eba86ba78a8d53b2366d726e9bd4c22187ec41d105207ba27c7216c1de59655e413241fa7fe0f5ce014cda2ab99b1c.zip/node_modules/jest-resolve/", {"name":"jest-resolve","reference":"npm:23.6.0"}],
     ["./.berry/cache/jest-resolve-dependencies-22cd038bf44e4844bbb582b27114b0518fdfc6e7680bcc6da80d1894a7c33c0480c7aab6f0fe6fac6e17809cd3cc7242d934203419d7c5f3010c6162fc7a2e43.zip/node_modules/jest-resolve-dependencies/", {"name":"jest-resolve-dependencies","reference":"npm:23.6.0"}],
@@ -12775,7 +12775,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/unique-filename-3f8caa124171d2d26084527d5d693871e2c1231a0d28c2334167c7f4b740239218ba6ce95e3720f05efb660747812e8dc818c88e05f2adf9d41a9cde65ddb9a1.zip/node_modules/unique-filename/", {"name":"unique-filename","reference":"npm:1.1.1"}],
     ["./.berry/cache/unique-slug-3383fbdf4bbdd1845fb2d14eb368028353d0256c557ca21daefc9a4075c4732371c935780177c1c9105f5dd580b5d9ec0128079e6cb83afe81490b1ba74befb3.zip/node_modules/unique-slug/", {"name":"unique-slug","reference":"npm:2.0.1"}],
     ["./.berry/cache/universalify-ac4941e8fce3d09718efd5bdfc6d7567c8f85eb7b5484a4e1572cc33c64338f6c807ae58e7af62ce4d3b03c3b113a8d0cb5eee5672468bb6385b78dcf8f9250a.zip/node_modules/universalify/", {"name":"universalify","reference":"npm:0.1.2"}],
-    ["./packages/acceptance-tests/", {"name":"unnamed-workspace-e416d2","reference":"workspace:0.0.0"}],
+    ["./packages/acceptance-tests/", {"name":"unnamed-workspace-06d141","reference":"workspace:0.0.0"}],
     ["./.berry/cache/unset-value-b436376d085f535601b404d9be4451265939f948a6c0fcc506148dc74718522e139f3e2455ac2e0f7869d3dbf49a4e464a8c7f6075e63496b6e43e86790d5d82.zip/node_modules/unset-value/", {"name":"unset-value","reference":"npm:1.0.0"}],
     ["./.berry/cache/upath-3e63abd75fd05e0cde607f2a6b6be00646b7d0dc82cb7d78994fceeb379ad1fae0df55335fbbc879f33b38f4db0de0281918fe767051d7990db93ab56d9154dc.zip/node_modules/upath/", {"name":"upath","reference":"npm:1.1.0"}],
     ["./.berry/cache/uri-js-f07de78d80b8cf6abe4ed33f58afbf5c76a86c7ef9f4e8494a6c4691a45e745baf85c97f0e4adea441e1a8edef88f9d18956a60983965b749c354fec6c89d6ff.zip/node_modules/uri-js/", {"name":"uri-js","reference":"npm:4.2.2"}],

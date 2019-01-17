@@ -40,10 +40,12 @@ const pkgDriver = generatePkgDriver({
         env: Object.assign(
           {
             [`BERRY_CACHE_FOLDER`]: `${path}/.berry/cache`,
-            [`BERRY_PNP_SHEBANG`]: plugnplayShebang,
 //          [`BERRY_PNP_BLACKLIST`]: plugnplayBlacklist || ``,
             [`BERRY_REGISTRY_SERVER`]: registryUrl,
             [`PATH`]: `${path}/bin${delimiter}${process.env.PATH}`,
+          },
+          plugnplayShebang && {
+            [`BERRY_PNP_SHEBANG`]: plugnplayShebang
           },
           env,
         ),

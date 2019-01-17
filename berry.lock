@@ -9153,9 +9153,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unnamed-workspace-e416d2@workspace:0.0.0":
+"unnamed-workspace-06d141@workspace:0.0.0":
   version: 0.0.0
-  resolution: "unnamed-workspace-e416d2@workspace:0.0.0"
+  resolution: "unnamed-workspace-06d141@workspace:0.0.0"
   dependencies:
     babel-preset-env: "npm:^1.6.1"
     babel-preset-flow: "npm:^6.23.0"
