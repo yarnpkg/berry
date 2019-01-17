@@ -1332,7 +1332,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@berry/pnp", "workspace:0.0.0"],
           ["@berry/shell", "workspace:0.0.0"],
           ["@berry/zipfs", "workspace:0.0.0"],
-          ["@manaflair/concierge", "virtual:f9fdfa4470e7e61ae3dcf77ba5920540e8d12a235316b1be465aeb7686692a5d2dd66fbf47de7336b114cc5f9cef0c6ce74102d48d66310e7280b5dbcc7d74e8#npm:0.9.1"],
+          ["@manaflair/concierge", "virtual:f9fdfa4470e7e61ae3dcf77ba5920540e8d12a235316b1be465aeb7686692a5d2dd66fbf47de7336b114cc5f9cef0c6ce74102d48d66310e7280b5dbcc7d74e8#npm:0.9.2"],
           ["chalk", "npm:2.4.2"],
           ["execa", "npm:1.0.0"],
           ["fs-extra", "npm:7.0.1"],
@@ -1520,6 +1520,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./packages/plugin-pnp/"),
         packageDependencies: new Map([
           ["@berry/plugin-pnp", "workspace:0.0.0"],
+          ["@berry/cli", "workspace:0.0.0"],
           ["@berry/core", "workspace:0.0.0"],
           ["@berry/pnp", "workspace:0.0.0"],
           ["@berry/zipfs", "workspace:0.0.0"],
@@ -1598,6 +1599,15 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["lodash", "npm:4.17.11"],
         ]),
       }],
+      ["npm:0.9.2", {
+        packageLocation: path.resolve(__dirname, "./.berry/cache/@manaflair-concierge-57a2c56b6b4066bf1fed23a8a696d265a6fe98a6e6f82d37eee10402a98b14a0bb1a65b5b98ae842a72d76d1f8ee0b43025561177126b7ffc56028d46bd79f00.zip/node_modules/@manaflair/concierge/"),
+        packageDependencies: new Map([
+          ["@manaflair/concierge", "npm:0.9.2"],
+          ["chalk", "npm:1.1.3"],
+          ["kexec", "npm:3.0.0"],
+          ["lodash", "npm:4.17.11"],
+        ]),
+      }],
       ["virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#npm:0.9.1", {
         packageLocation: path.resolve(__dirname, "./.berry/virtual/@manaflair-concierge-764bb03c054baf706334f321c8b57558165b5ece99fa5612f6e68f8ddb305b68eb98dd3b28865212abe34d7c539ea25e28df21975eba574b366a2d4a63852fc2/node_modules/@manaflair/concierge/"),
         packageDependencies: new Map([
@@ -1618,10 +1628,10 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["lodash", "npm:4.17.11"],
         ]),
       }],
-      ["virtual:f9fdfa4470e7e61ae3dcf77ba5920540e8d12a235316b1be465aeb7686692a5d2dd66fbf47de7336b114cc5f9cef0c6ce74102d48d66310e7280b5dbcc7d74e8#npm:0.9.1", {
-        packageLocation: path.resolve(__dirname, "./.berry/virtual/@manaflair-concierge-33e8654be48e280e32d4f549a40639ea8f5df69678a0aed6b8ce8fd61c80b79323e371462765b1de3bc76847b543f5dc529995113b1ad2df63592b2c1a9a4c1f/node_modules/@manaflair/concierge/"),
+      ["virtual:f9fdfa4470e7e61ae3dcf77ba5920540e8d12a235316b1be465aeb7686692a5d2dd66fbf47de7336b114cc5f9cef0c6ce74102d48d66310e7280b5dbcc7d74e8#npm:0.9.2", {
+        packageLocation: path.resolve(__dirname, "./.berry/virtual/@manaflair-concierge-8a423e7e1240231a2603ce648f29f8416687ee14b5f31abcfebcc86cb551e480bb69b9040a6591f6d7c7f6fc26642a578c9101699801279c51810f8ba3f1bc8d/node_modules/@manaflair/concierge/"),
         packageDependencies: new Map([
-          ["@manaflair/concierge", "virtual:f9fdfa4470e7e61ae3dcf77ba5920540e8d12a235316b1be465aeb7686692a5d2dd66fbf47de7336b114cc5f9cef0c6ce74102d48d66310e7280b5dbcc7d74e8#npm:0.9.1"],
+          ["@manaflair/concierge", "virtual:f9fdfa4470e7e61ae3dcf77ba5920540e8d12a235316b1be465aeb7686692a5d2dd66fbf47de7336b114cc5f9cef0c6ce74102d48d66310e7280b5dbcc7d74e8#npm:0.9.2"],
           ["chalk", "npm:1.1.3"],
           ["joi", "npm:13.7.0"],
           ["kexec", "npm:3.0.0"],
@@ -8766,7 +8776,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["pnp-webpack-plugin", new Map([
       ["npm:1.2.1", {
-        packageLocation: path.resolve(__dirname, "./.berry/pnp/unplugged/pnp-webpack-plugin-7f3c2b5a9b7b6edd5754020068ba313d2752c827c0d180f221a44c051f7a99c6ec7648ce10bc64235f353399fe7e477157a045a2548fcf0646086b65d0559935/"),
+        packageLocation: path.resolve(__dirname, "./.berry/cache/pnp-webpack-plugin-7f3c2b5a9b7b6edd5754020068ba313d2752c827c0d180f221a44c051f7a99c6ec7648ce10bc64235f353399fe7e477157a045a2548fcf0646086b65d0559935.zip/node_modules/pnp-webpack-plugin/"),
         packageDependencies: new Map([
           ["pnp-webpack-plugin", "npm:1.2.1"],
           ["ts-pnp", "virtual:7f3c2b5a9b7b6edd5754020068ba313d2752c827c0d180f221a44c051f7a99c6ec7648ce10bc64235f353399fe7e477157a045a2548fcf0646086b65d0559935#npm:1.0.0"],
@@ -11711,9 +11721,10 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./packages/berry-ui/", {"name":"@berry/ui","reference":"workspace:0.0.0"}],
     ["./packages/berry-zipfs/", {"name":"@berry/zipfs","reference":"workspace:0.0.0"}],
     ["./.berry/cache/@manaflair-concierge-4296f8d52c6af7194ae246178db3d8dd339a640981660603abd1d01e9ad74b2440b00683a928950cf5981538a8d4c7a0f4ea9f8b713e4136f22ad35d22fea2f5.zip/node_modules/@manaflair/concierge/", {"name":"@manaflair/concierge","reference":"npm:0.9.1"}],
+    ["./.berry/cache/@manaflair-concierge-57a2c56b6b4066bf1fed23a8a696d265a6fe98a6e6f82d37eee10402a98b14a0bb1a65b5b98ae842a72d76d1f8ee0b43025561177126b7ffc56028d46bd79f00.zip/node_modules/@manaflair/concierge/", {"name":"@manaflair/concierge","reference":"npm:0.9.2"}],
     ["./.berry/virtual/@manaflair-concierge-764bb03c054baf706334f321c8b57558165b5ece99fa5612f6e68f8ddb305b68eb98dd3b28865212abe34d7c539ea25e28df21975eba574b366a2d4a63852fc2/node_modules/@manaflair/concierge/", {"name":"@manaflair/concierge","reference":"virtual:9cb5d60db761b0c9644181f94b4ee548fa716d1acd303c73142d688e3c6a7698de6e70197192a1dbc3ebec64998535546a82a875495f959716fb3a4ad3800b7d#npm:0.9.1"}],
     ["./.berry/virtual/@manaflair-concierge-2a645f1213b1740f21d548fba01a1b8161b69bc0c7fceb9ef13e57fe49fe13a1ea35b59a4bf841e6f2d92b298cbb515dea7e8a8bfd000fb4b07632e067673231/node_modules/@manaflair/concierge/", {"name":"@manaflair/concierge","reference":"virtual:c0142dc866b438ed89c8706f67dce620da19315cfcbbb47b41d6a9d8324b321b3be92f3f635321191cf498af800acf122dae75879dbcd6103a1b27a00aad08f5#npm:0.9.1"}],
-    ["./.berry/virtual/@manaflair-concierge-33e8654be48e280e32d4f549a40639ea8f5df69678a0aed6b8ce8fd61c80b79323e371462765b1de3bc76847b543f5dc529995113b1ad2df63592b2c1a9a4c1f/node_modules/@manaflair/concierge/", {"name":"@manaflair/concierge","reference":"virtual:f9fdfa4470e7e61ae3dcf77ba5920540e8d12a235316b1be465aeb7686692a5d2dd66fbf47de7336b114cc5f9cef0c6ce74102d48d66310e7280b5dbcc7d74e8#npm:0.9.1"}],
+    ["./.berry/virtual/@manaflair-concierge-8a423e7e1240231a2603ce648f29f8416687ee14b5f31abcfebcc86cb551e480bb69b9040a6591f6d7c7f6fc26642a578c9101699801279c51810f8ba3f1bc8d/node_modules/@manaflair/concierge/", {"name":"@manaflair/concierge","reference":"virtual:f9fdfa4470e7e61ae3dcf77ba5920540e8d12a235316b1be465aeb7686692a5d2dd66fbf47de7336b114cc5f9cef0c6ce74102d48d66310e7280b5dbcc7d74e8#npm:0.9.2"}],
     ["./.berry/cache/@manaflair-term-strings-dc2439556e12e319eb14684f2269f0350a7dc3c924dd18a40d20be9ab723a2cdd0b0af546a146b848834ea20b5d13c538d7efd7a82306ffb7641d08d3caff7a9.zip/node_modules/@manaflair/term-strings/", {"name":"@manaflair/term-strings","reference":"npm:0.10.1"}],
     ["./.berry/cache/@manaflair-text-layout-ca96d63f8116307c5c20a15ca36ffab13e46f88675fd6c2c7b19ee7dc9928b05983ca20421ac09567865bc13cef5988e70072cab368aa09894a10139a1cafd96.zip/node_modules/@manaflair/text-layout/", {"name":"@manaflair/text-layout","reference":"npm:0.11.0"}],
     ["./.berry/cache/@mrmlnc-readdir-enhanced-2f6af447bdeb1de8e3ce74f1d983ceb37ab09a6321bb98d3aefef42d774ddf9089e3ce6270d0f3dd9a541cb9e20c4c9829f2dd4542eab4a83ba565db2942b8b0.zip/node_modules/@mrmlnc/readdir-enhanced/", {"name":"@mrmlnc/readdir-enhanced","reference":"npm:2.2.1"}],
@@ -12459,7 +12470,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./packages/acceptance-tests/pkg-tests-specs/", {"name":"pkg-tests-specs","reference":"workspace:0.0.0"}],
     ["./.berry/cache/pluralize-eb5751f972fc04a1ce861fc9a18c1a1bd1def93fef1b0306e382e39b2c0c658a58612d2284e0c862decc71bbfc5ace2ac816c3bd0e8f69d1e35824651f020b10.zip/node_modules/pluralize/", {"name":"pluralize","reference":"npm:7.0.0"}],
     ["./.berry/cache/pn-a6cb67fb11106776f0cadeca019f0758866e6fe73507368be50ab2ab2e041c3a915e24c743f71b72d8800eb1812d0f98669ee38b66a9a9a5165a00d8a663dec0.zip/node_modules/pn/", {"name":"pn","reference":"npm:1.1.0"}],
-    ["./.berry/pnp/unplugged/pnp-webpack-plugin-7f3c2b5a9b7b6edd5754020068ba313d2752c827c0d180f221a44c051f7a99c6ec7648ce10bc64235f353399fe7e477157a045a2548fcf0646086b65d0559935/", {"name":"pnp-webpack-plugin","reference":"npm:1.2.1"}],
+    ["./.berry/cache/pnp-webpack-plugin-7f3c2b5a9b7b6edd5754020068ba313d2752c827c0d180f221a44c051f7a99c6ec7648ce10bc64235f353399fe7e477157a045a2548fcf0646086b65d0559935.zip/node_modules/pnp-webpack-plugin/", {"name":"pnp-webpack-plugin","reference":"npm:1.2.1"}],
     ["./.berry/cache/posix-character-classes-9da76e1830a211fcca3b9f2e9871c73ce06725c1c4ac1ffd3503a038616d7540b9d04b1f1058eca2f8542b1a5e425f1dee89bc6cc9d8e8c20ecc100d6a48466a.zip/node_modules/posix-character-classes/", {"name":"posix-character-classes","reference":"npm:0.1.1"}],
     ["./.berry/cache/prelude-ls-b39a134e3a8643d11f3d2cc0ec5341f8a6b7c905bf4dccccd2c10f4919f4e2a67d1ad35a0752d9ee82efaab8b5b3971f73ab626988b06c42a0d1ac2e78397f67.zip/node_modules/prelude-ls/", {"name":"prelude-ls","reference":"npm:1.1.2"}],
     ["./.berry/cache/prepend-http-4c439c39480372309cdb2c9a0c5b38d898d659a115a855f1aa51356b436079c799a1d4b1f33bd3876fb94a12bc775845cba25bd980666d2f46e899378b92a58e.zip/node_modules/prepend-http/", {"name":"prepend-http","reference":"npm:2.0.0"}],

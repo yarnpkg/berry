@@ -28,7 +28,7 @@ concierge
 
     const mainConfig = {
       context: basedir,
-      entry: `./sources/index.ts`,
+      entry: `./sources/cli.ts`,
       output: {
         filename: `berry.js`,
         path: path.resolve(basedir, `bin`),

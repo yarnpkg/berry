@@ -265,7 +265,7 @@ export class Configuration {
             ? definition.default.map((entry: string) => resolve(this.projectCwd, entry))
             : resolve(this.projectCwd, definition.default)
           : definition.default;
-        
+
         // @ts-ignore
         this[name] = value;
       }

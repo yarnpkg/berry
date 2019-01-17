@@ -2,6 +2,7 @@
     "name": "@berry/cli",
     "version": "0.0.0",
     "private": true,
+    "main": "./sources/index.ts",
     "bin": {
         "berry": "./bin/run.js"
     },
@@ -10,7 +11,7 @@
         "@berry/parsers": "workspace:0.0.0",
         "@berry/shell": "workspace:0.0.0",
         "@berry/zipfs": "workspace:0.0.0",
-        "@manaflair/concierge": "^0.9.1",
+        "@manaflair/concierge": "^0.9.2",
         "chalk": "^2.4.1",
         "execa": "^1.0.0",
         "fs-extra": "^7.0.0",

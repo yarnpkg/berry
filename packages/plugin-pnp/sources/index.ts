@@ -1,5 +1,6 @@
 import {Plugin, SettingsType} from '@berry/core';
 
+import unplug                 from './commands/unplug';
 import {PnpLinker}            from './PnpLinker';
 
 const plugin: Plugin = {
@@ -25,6 +26,9 @@ const plugin: Plugin = {
       default: `./.pnp.js`,
     },
   },
+  commands: [
+    unplug,
+  ],
   linkers: [
     PnpLinker,
   ],
