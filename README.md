@@ -1,14 +1,14 @@
-# <img src="./icon.svg" width="32" height="32" align="bottom" /> Berry
+# <img src="./icon.svg" width="32" height="32" align="bottom" /> Yarn - Berry Edition
 
-Berry is a modern package manager split into various packages. Its novel architecture allows to do things currently impossible with existing solutions:
+Yarn is a modern package manager split into various packages. Its novel architecture allows to do things currently impossible with existing solutions:
 
-- Berry supports plugins; adding a plugin is as simple as adding it into your repository
-- Berry supports Node by default but isn't limited to it - plugins can add support for other languages
-- Berry supports [workspaces]() natively, and its CLI takes advantage of that
-- Berry uses professional-grade terminal UIs built thanks to a generic React renderer, [berry-ui]()
-- Berry uses a portable shell to execute package scripts, guaranteeing they work the same way on Windows and Linux
-- Berry is first and foremost a Node API that can be used programmatically (through [berry-core]())
-- Berry is written in TypeScript, and fully typechecked
+- Yarn supports plugins; adding a plugin is as simple as adding it into your repository
+- Yarn supports Node by default but isn't limited to it - plugins can add support for other languages
+- Yarn supports [workspaces]() natively, and its CLI takes advantage of that
+- Yarn uses professional-grade terminal UIs built thanks to a generic React renderer, [berry-ui]()
+- Yarn uses a portable shell to execute package scripts, guaranteeing they work the same way on Windows and Linux
+- Yarn is first and foremost a Node API that can be used programmatically (through [berry-core]())
+- Yarn is written in TypeScript, and fully typechecked
 
 ## Generic packages
 
