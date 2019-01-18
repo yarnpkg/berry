@@ -48,10 +48,11 @@ The following packages are meant to be used with Berry, and won't be useful to o
 
 ## Build your own bundle
 
-Clone the repository then run the following command:
+Clone this repository, then run the following commands:
 
 ```
-$> berry build:cli
+$> ./packages/berry-cli/bin/berry
+$> ./packages/berry-cli/bin/berry build:cli --profile standard+pnp
 ```
 
 ## License (MIT)
