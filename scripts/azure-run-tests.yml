@@ -11,7 +11,7 @@ steps:
   displayName: 'Install and build'
 
 - script: |
-    ./packages/berry-cli/bin/berry run:tests acceptance-tests/berry
+    ./packages/berry-cli/bin/berry run:tests:berry
   displayName: 'Run the acceptance tests'
 
 - task: PublishTestResults@2

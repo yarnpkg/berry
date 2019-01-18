@@ -18,7 +18,8 @@
     },
     "scripts": {
         "prettier": "run prettier --write '**/*.js'",
-        "run:tests": "run jest"
+        "run:tests": "run jest",
+        "run:tests:berry": "run run:tests acceptance-tests/berry"
     },
     "prettier": {
         "singleQuote": true,
