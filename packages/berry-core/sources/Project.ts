@@ -1,5 +1,4 @@
 import {parseSyml, stringifySyml}                           from '@berry/parsers';
-import {JailFS}                                             from '@berry/zipfs';
 import {createHmac}                                         from 'crypto';
 import {createWriteStream, existsSync, readFile, writeFile} from 'fs-extra';
 // @ts-ignore
@@ -20,11 +19,11 @@ import {WorkspaceResolver}                                  from './WorkspaceRes
 import {Workspace}                                          from './Workspace';
 import {YarnResolver}                                       from './YarnResolver';
 import * as miscUtils                                       from './miscUtils';
+import * as scriptUtils                                     from './scriptUtils';
 import * as structUtils                                     from './structUtils';
 import {IdentHash, DescriptorHash, LocatorHash}             from './types';
 import {Descriptor, Locator, Package}                       from './types';
 import {LinkType}                                           from './types';
-import { scriptUtils } from '.';
 
 export type InstallOptions = {
   cache: Cache,
@@ -51,6 +50,7 @@ export class Project {
 
   public storedDescriptors: Map<DescriptorHash, Descriptor> = new Map();
   public storedPackages: Map<LocatorHash, Package> = new Map();
+  public storedChecksums: Map<LocatorHash, string> = new Map();
 
   static async find(configuration: Configuration, startingCwd: string) {
     let projectCwd = null;
