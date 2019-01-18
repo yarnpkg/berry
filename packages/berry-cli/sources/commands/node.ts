@@ -1,12 +1,10 @@
-import {Configuration, Project} from '@berry/core';
-import execa                    from 'execa';
-import {existsSync}             from 'fs';
-import {Readable, Writable}     from 'stream';
+import {Configuration, Plugin, Project} from '@berry/core';
+import execa                            from 'execa';
+import {Readable, Writable}             from 'stream';
 
-import * as execUtils           from '../utils/execUtils';
-import {plugins}                from '../plugins';
+import * as execUtils                   from '../utils/execUtils';
 
-export default (concierge: any) => concierge
+export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .command(`node [... args]`)
   .describe(`run node with the hook already setup`)

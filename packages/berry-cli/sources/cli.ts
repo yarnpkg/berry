@@ -56,9 +56,7 @@ async function run() {
       for (const command of plugin.commands || [])
         command(concierge, plugins);
 
-    concierge.runExit(process.argv0, process.argv.slice(2), {
-      plugins,
-    });
+    concierge.runExit(process.argv0, process.argv.slice(2));
   }
 }
 

@@ -1,14 +1,12 @@
-import {Configuration, Cache, Project, StreamReport} from '@berry/core';
-import {structUtils}                                 from '@berry/core';
-import {NodeFS}                                      from '@berry/zipfs';
-import semver                                        from 'semver';
-import {Writable}                                    from 'stream';
+import {Configuration, Cache, Plugin, Project, StreamReport} from '@berry/core';
+import {structUtils}                                         from '@berry/core';
+import {NodeFS}                                              from '@berry/zipfs';
+import semver                                                from 'semver';
+import {Writable}                                            from 'stream';
 
-import {registerLegacyYarnResolutions}               from '../utils/miscUtils';
+import {registerLegacyYarnResolutions}                       from '../utils/miscUtils';
 
-import {plugins}                                     from '../plugins';
-
-export default (concierge: any) => concierge
+export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .command(`add [... packages] [-E,--exact] [-T,--tilde] [-D,--dev] [-P,--peer]`)
   .describe(`add dependencies to the project`)

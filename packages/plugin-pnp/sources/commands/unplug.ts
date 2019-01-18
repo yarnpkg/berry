@@ -2,12 +2,12 @@ import {Configuration, Locator, Plugin, Project} from '@berry/core';
 import {miscUtils, structUtils}                  from '@berry/core';
 import {Writable}                                from 'stream';
 
-export default (concierge: any) => concierge
+export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .command(`unplug [... packages] [--reset]`)
   .describe(`configure packages to be unplugged when installed`)
 
-  .action(async ({plugins, cwd, stdout, packages, reset, ... env}: {plugins: Map<string, Plugin>, cwd: string, stdout: Writable, packages: Array<string>, reset: boolean}) => {
+  .action(async ({cwd, stdout, packages, reset, ... env}: {cwd: string, stdout: Writable, packages: Array<string>, reset: boolean}) => {
     const configuration = await Configuration.find(cwd, plugins);
     const {project} = await Project.find(configuration, cwd);
 

@@ -1,13 +1,12 @@
-import {Configuration, Project, Workspace, Manifest, Cache} from '@berry/core';
-import {scriptUtils}                                        from '@berry/core';
+import {Configuration, Plugin, Project, Workspace, Manifest, Cache} from '@berry/core';
+import {scriptUtils}                                                from '@berry/core';
 // @ts-ignore: Need to write the definition file
-import {UsageError}                                         from '@manaflair/concierge';
-import {Readable, Writable}                                 from 'stream';
+import {UsageError}                                                 from '@manaflair/concierge';
+import {Readable, Writable}                                         from 'stream';
 
-import {LightReport}                                        from '../LightReport';
-import {plugins}                                            from '../plugins';
+import {LightReport}                                                from '../LightReport';
 
-export default (concierge: any) => concierge
+export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .command(`run <name> [... args]`)
   .describe(`run a script defined in the package.json`)

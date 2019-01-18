@@ -1,17 +1,15 @@
-import {Configuration, Cache, Project, StreamReport} from '@berry/core';
-import {structUtils}                                 from '@berry/core';
-import {Writable}                                    from 'stream';
+import {Configuration, Cache, Plugin, Project, StreamReport} from '@berry/core';
+import {structUtils}                                         from '@berry/core';
+import {Writable}                                            from 'stream';
 
-import {registerLegacyYarnResolutions}               from '../utils/miscUtils';
-
-import {plugins}                                     from '../plugins';
+import {registerLegacyYarnResolutions}                       from '../utils/miscUtils';
 
 export default (concierge: any) => concierge
 
   .command(`remove [... names]`)
   .describe(`remove dependencies from the project`)
 
-  .action(async ({cwd, stdout, names}: {cwd: string, stdout: Writable, names: Array<string>}) => {
+  .action(async ({plugins, cwd, stdout, names}: {plugins: Map<string, Plugin>, cwd: string, stdout: Writable, names: Array<string>}) => {
     const configuration = await Configuration.find(cwd, plugins);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);

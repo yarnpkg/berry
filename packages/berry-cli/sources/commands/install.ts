@@ -1,11 +1,9 @@
-import {Configuration, Cache, Project, StreamReport} from '@berry/core';
-import {Writable}                                    from 'stream';
+import {Configuration, Cache, Plugin, Project, StreamReport} from '@berry/core';
+import {Writable}                                            from 'stream';
 
-import {registerLegacyYarnResolutions}               from '../utils/miscUtils';
+import {registerLegacyYarnResolutions}                       from '../utils/miscUtils';
 
-import {plugins}                                     from '../plugins';
-
-export default (concierge: any) => concierge
+export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .command(`install [-f]`)
   .describe(`install the project dependencies`)
