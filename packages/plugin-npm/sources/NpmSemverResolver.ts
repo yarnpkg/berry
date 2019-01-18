@@ -47,7 +47,7 @@ export class NpmSemverResolver implements Resolver {
     const candidates = versions.filter(version => semver.satisfies(version, range));
 
     candidates.sort((a, b) => {
-      return semver.compare(a, b);
+      return -semver.compare(a, b);
     });
 
     return candidates.map(version => {

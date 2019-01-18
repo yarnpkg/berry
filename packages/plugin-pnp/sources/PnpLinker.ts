@@ -11,7 +11,7 @@ const FORCED_UNPLUG_PACKAGES = new Set([
 ]);
 
 export class PnpLinker implements Linker {
-  supports(pkg: Package, opts: MinimalLinkOptions) {
+  supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
     return true;
   }
 

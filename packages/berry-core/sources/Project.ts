@@ -314,9 +314,6 @@ export class Project {
         if (candidateLocators.length === 0)
           throw new Error(`No candidate found for ${structUtils.prettyDescriptor(this.configuration, descriptor)}`);
 
-        // Reversing it make the following algorithms prioritize the more recent releases
-        candidateLocators.reverse();
-
         return [descriptor.descriptorHash, candidateLocators] as [DescriptorHash, Array<Locator>];
       })));
 
