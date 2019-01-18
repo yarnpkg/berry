@@ -106,7 +106,7 @@ export const coreDefinitions = {
   // Settings related to security
   enableScripts: {
     type: SettingsType.BOOLEAN,
-    default: null,
+    default: true,
   },
 };
 
@@ -169,7 +169,7 @@ export class Configuration {
   // - options that enable a feature must begin with the "enable" prefix
   //   ex: enableEmojis, enableColors
 
-  public projectCwd: string;
+  public projectCwd: string | null;
 
   private plugins: Map<string, Plugin> = new Map();
   
@@ -196,9 +196,6 @@ export class Configuration {
 
       nextCwd = dirname(currentCwd);
     }
-
-    if (!projectCwd)
-      throw new Error(`Project not found`);
 
     const configuration = new Configuration(projectCwd, plugins);
 
@@ -247,7 +244,7 @@ export class Configuration {
     await writeFileP(configurationPath, stringifySyml(current));
   }
 
-  constructor(projectCwd: string, plugins: Map<string, Plugin>) {
+  constructor(projectCwd: string | null, plugins: Map<string, Plugin>) {
     this.projectCwd = projectCwd;
     this.plugins = plugins;
 
@@ -260,14 +257,34 @@ export class Configuration {
 
         this.settings.set(name, definition);
 
-        const value = definition.type === SettingsType.ABSOLUTE_PATH && definition.default !== null
-          ? Array.isArray(definition.default)
-            ? definition.default.map((entry: string) => resolve(this.projectCwd, entry))
-            : resolve(this.projectCwd, definition.default)
-          : definition.default;
-
-        // @ts-ignore
-        this[name] = value;
+        if (definition.type === SettingsType.ABSOLUTE_PATH && definition.default !== null) {
+          if (this.projectCwd === null) {
+            if (definition.isNullable || definition.default === null) {
+              this[name] = null;
+            } else {
+              Object.defineProperty(this, name, {
+                configurable: true,
+                get: () => {
+                  throw new Error(`Unusable configuration settings "${name}" - not in a project folder`);
+                },
+                set: (newValue: any) => {
+                  Object.defineProperty(this, name, {
+                    value: newValue,
+                  });
+                },
+              });
+            }
+          } else {
+            const projectCwd = this.projectCwd;
+            if (Array.isArray(definition.default)) {
+              this[name] = definition.default.map((entry: string) => resolve(projectCwd, entry));
+            } else {
+              this[name] = resolve(projectCwd, definition.default);
+            }
+          }
+        } else {
+          this[name] = definition.default;
+        }
       }
     };
 
