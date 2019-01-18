@@ -27,7 +27,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     // First we check to see whether a script exist inside the current workspace
     // for the given name
 
-    const manifest = await Manifest.fromFile(`${workspace.cwd}/package.json`);
+    const manifest = await Manifest.find(workspace.cwd);
 
     if (manifest.scripts.has(name)) {
       try {
@@ -66,7 +66,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
     if (name.includes(`:`)) {
       let candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
-        const manifest = await Manifest.fromFile(`${workspace.cwd}/package.json`);
+        const manifest = await Manifest.find(workspace.cwd);
         return manifest.scripts.has(name) ? workspace : null;
       }));
 

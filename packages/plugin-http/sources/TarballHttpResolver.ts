@@ -42,7 +42,7 @@ export class TarballHttpResolver implements Resolver {
   async resolve(locator: Locator, opts: ResolveOptions) {
     const packageFetch = await opts.fetcher.fetch(locator, opts);
 
-    const manifest = await Manifest.fromFile(posix.resolve(packageFetch.prefixPath, `package.json`), {baseFs: packageFetch.packageFs});
+    const manifest = await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
 
     const version = manifest.version || `0.0.0`;
 
