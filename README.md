@@ -52,7 +52,7 @@ Clone this repository, then run the following commands:
 
 ```
 $> ./packages/berry-cli/bin/berry
-$> ./packages/berry-cli/bin/berry build:cli --profile standard+pnp
+$> ./packages/berry-cli/bin/berry build:cli
 ```
 
 ## License (MIT)
