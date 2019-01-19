@@ -838,6 +838,7 @@ __metadata:
     "@berry/core": "workspace:0.0.0"
     "@berry/parsers": "workspace:0.0.0"
     "@berry/plugin-constraints": "workspace:0.0.0"
+    "@berry/plugin-essentials": "workspace:0.0.0"
     "@berry/plugin-file": "workspace:0.0.0"
     "@berry/plugin-github": "workspace:0.0.0"
     "@berry/plugin-http": "workspace:0.0.0"
@@ -951,6 +952,20 @@ __metadata:
     inquirer: "npm:^6.2.0"
     node-emoji: "npm:^1.8.1"
     tau-prolog: "npm:^0.2.38"
+  languageName: unknown
+  linkType: soft
+
+"@berry/plugin-essentials@workspace:0.0.0":
+  version: 0.0.0
+  resolution: "@berry/plugin-essentials@workspace:0.0.0"
+  dependencies:
+    "@berry/core": "workspace:0.0.0"
+    "@berry/parsers": "workspace:0.0.0"
+    "@manaflair/concierge": "npm:^0.9.2"
+    execa: "npm:^1.0.0"
+    fs-extra: "npm:^7.0.0"
+    joi: "npm:^13.6.0"
+    semver: "npm:^5.6.0"
   languageName: unknown
   linkType: soft
 

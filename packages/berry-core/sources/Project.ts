@@ -270,7 +270,7 @@ export class Project {
     const resolver = new MultiResolver([new LockfileResolver(), yarnResolver, aliasResolver]);
     const fetcher = this.configuration.makeFetcher();
 
-    const resolverOptions = {project: this, readOnly: false, cache, fetcher, report, resolver};
+    const resolverOptions = {checksums: this.storedChecksums, project: this, readOnly: false, cache, fetcher, report, resolver};
     
     const allDescriptors = new Map<DescriptorHash, Descriptor>();
     const allPackages = new Map<LocatorHash, Package>();
@@ -588,7 +588,7 @@ export class Project {
 
   async fetchEverything({cache, report}: InstallOptions) {
     const fetcher = this.configuration.makeFetcher();
-    const fetcherOptions = {project: this, readOnly: false, cache, fetcher, report};
+    const fetcherOptions = {checksums: this.storedChecksums, project: this, readOnly: false, cache, fetcher, report};
 
     const locatorHashes = miscUtils.sortMap(this.storedResolutions.values(), [(locatorHash: LocatorHash) => {
       const pkg = this.storedPackages.get(locatorHash);
@@ -609,7 +609,7 @@ export class Project {
 
   async linkEverything({cache, report}: InstallOptions) {
     const fetcher = this.configuration.makeFetcher();
-    const fetcherOptions = {project: this, readOnly: true, cache, fetcher, report};
+    const fetcherOptions = {checksums: this.storedChecksums, project: this, readOnly: true, cache, fetcher, report};
 
     const linkers = this.configuration.getLinkers();
     const linkerOptions = {project: this, report};
@@ -625,7 +625,7 @@ export class Project {
     // Step 1: Installing the packages on the disk
 
     for (const pkg of this.storedPackages.values()) {
-      const linker = linkers.find(linker => linker.supports(pkg, linkerOptions));
+      const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
       if (!linker)
         throw new ReportError(MessageName.LINKER_NOT_FOUND, `${structUtils.prettyLocator(this.configuration, pkg)} isn't supported by any available linker`);
 

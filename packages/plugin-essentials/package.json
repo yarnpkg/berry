@@ -1,0 +1,15 @@
+{
+  "name": "@berry/plugin-essentials",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/core": "workspace:0.0.0",
+    "@berry/parsers": "workspace:0.0.0",
+    "@manaflair/concierge": "^0.9.2",
+    "execa": "^1.0.0",
+    "fs-extra": "^7.0.0",
+    "joi": "^13.6.0",
+    "semver": "^5.6.0"
+  }
+}

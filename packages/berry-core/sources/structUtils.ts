@@ -1,6 +1,5 @@
-import {createHmac}                             from 'crypto';
-
 import {Configuration}                          from './Configuration';
+import * as hashUtils                           from './hashUtils';
 import * as miscUtils                           from './miscUtils';
 import {IdentHash, DescriptorHash, LocatorHash} from './types';
 import {Ident, Descriptor, Locator, Package}    from './types';
@@ -8,25 +7,16 @@ import {Ident, Descriptor, Locator, Package}    from './types';
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 12;
 
-export function makeHash<T>(... args: Array<string | null>): T {
-  const hmac = createHmac(`sha512`, `berry`);
-
-  for (const arg of args)
-    hmac.update(arg ? arg : ``);
-
-  return hmac.digest(`hex`) as unknown as T;
-}
-
 export function makeIdent(scope: string | null, name: string): Ident {
-  return {identHash: makeHash<IdentHash>(scope, name), scope, name};
+  return {identHash: hashUtils.makeHash<IdentHash>(scope, name), scope, name};
 }
 
 export function makeDescriptor(ident: Ident, range: string): Descriptor {
-  return {identHash: ident.identHash, scope: ident.scope, name: ident.name, descriptorHash: makeHash<DescriptorHash>(ident.identHash, range), range};
+  return {identHash: ident.identHash, scope: ident.scope, name: ident.name, descriptorHash: hashUtils.makeHash<DescriptorHash>(ident.identHash, range), range};
 }
 
 export function makeLocator(ident: Ident, reference: string): Locator {
-  return {identHash: ident.identHash, scope: ident.scope, name: ident.name, locatorHash: makeHash<LocatorHash>(ident.identHash, reference), reference};
+  return {identHash: ident.identHash, scope: ident.scope, name: ident.name, locatorHash: hashUtils.makeHash<LocatorHash>(ident.identHash, reference), reference};
 }
 
 export function convertToIdent(source: Descriptor | Locator | Package): Ident {

@@ -178,7 +178,7 @@ export class Configuration {
 
   [name: string]: any;
 
-  static async find(startingCwd: string, plugins: Map<string, Plugin> = new Map()) {
+  static async find(startingCwd: string, plugins: Map<string, Plugin>) {
     let projectCwd = null;
     const rcCwds = [];
 

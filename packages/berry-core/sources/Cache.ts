@@ -1,20 +1,24 @@
-import {FakeFS, JailFS, NodeFS, ZipFS}  from '@berry/zipfs';
-import {mkdirp, move}                   from 'fs-extra';
-import {chmod, writeFile}               from 'fs';
-import {lock, unlock}                   from 'lockfile';
-import {resolve}                        from 'path';
-import {promisify}                      from 'util';
+import {NodeFS, ZipFS}        from '@berry/zipfs';
+import {mkdirp, move}         from 'fs-extra';
+import {chmod, writeFile}     from 'fs';
+import {lock, unlock}         from 'lockfile';
+import {resolve}              from 'path';
+import {promisify}            from 'util';
 
-import {Configuration}                  from './Configuration';
-import {FetchResult}                    from './Fetcher';
-import * as structUtils                 from './structUtils';
-import {Locator}                        from './types';
+import {Configuration}        from './Configuration';
+import * as hashUtils         from './hashUtils';
+import * as structUtils       from './structUtils';
+import {LocatorHash, Locator} from './types';
 
 const chmodP = promisify(chmod);
 const writeFileP = promisify(writeFile);
 
 const lockP = promisify(lock);
 const unlockP = promisify(unlock);
+
+export type FetchFromCacheOptions = {
+  checksums: Map<LocatorHash, Locator>,
+};
 
 export class Cache {
   public readonly configuration: Configuration;
@@ -55,15 +59,29 @@ export class Cache {
     });
   }
 
-  async fetchFromCache(locator: Locator, loader?: () => Promise<ZipFS>): Promise<ZipFS> {
+  async fetchPackageFromCache(locator: Locator, checksum: string | null, loader?: () => Promise<ZipFS>): Promise<[ZipFS, string]> {
     const key = this.getCacheKey(locator);
     const cachePath = this.getFilePath(key);
 
     const baseFs = new NodeFS();
 
-    return await this.writeFileIntoCache<ZipFS>(cachePath, async () => {
+    const validateFile = async (path: string) => {
+      const expectedChecksum = checksum;
+      const actualChecksum = await hashUtils.checksumFile(cachePath);
+
+      if (expectedChecksum !== null && actualChecksum !== expectedChecksum)
+        throw new Error(`Invalid cache entry per the checksum check`);
+      
+      return actualChecksum;
+    };
+
+    return await this.writeFileIntoCache<[ZipFS, string]>(cachePath, async () => {
+      let checksum;
+
       if (baseFs.existsSync(cachePath)) {
         this.cacheHitCount += 1;
+
+        checksum = await validateFile(cachePath);
       } else {
         this.cacheMissCount += 1;
 
@@ -74,6 +92,9 @@ export class Cache {
         const originalPath = zipFs.getRealPath();
 
         zipFs.close();
+
+        // Do this before moving the file so that we don't pollute the cache with corrupted archives
+        checksum = await validateFile(originalPath);
 
         await chmodP(originalPath, 0o644);
         await move(originalPath, cachePath);
@@ -88,7 +109,7 @@ export class Cache {
         throw error;
       }
 
-      return zipFs;
+      return [zipFs, checksum];
     });
   }
 

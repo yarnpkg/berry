@@ -22,6 +22,7 @@
     "devDependencies": {
         "@berry/builder": "workspace:0.0.0",
         "@berry/plugin-constraints": "workspace:0.0.0",
+        "@berry/plugin-essentials": "workspace:0.0.0",
         "@berry/plugin-file": "workspace:0.0.0",
         "@berry/plugin-github": "workspace:0.0.0",
         "@berry/plugin-http": "workspace:0.0.0",
@@ -37,36 +38,14 @@
     },
     "@berry/builder": {
         "bundles": {
-            "ci": [
-                "@berry/plugin-constraints",
-                "@berry/plugin-file",
-                "@berry/plugin-link"
-            ],
-            "light": [
-                "@berry/plugin-file",
-                "@berry/plugin-github",
-                "@berry/plugin-http",
-                "@berry/plugin-link",
-                "@berry/plugin-npm"
-            ],
             "standard": [
+                "@berry/plugin-essentials",
                 "@berry/plugin-constraints",
                 "@berry/plugin-file",
                 "@berry/plugin-github",
                 "@berry/plugin-http",
                 "@berry/plugin-link",
-                "@berry/plugin-npm"
-            ],
-            "full": [
-                "@berry/plugin-constraints",
-                "@berry/plugin-file",
-                "@berry/plugin-github",
-                "@berry/plugin-http",
-                "@berry/plugin-hub",
-                "@berry/plugin-link",
-                "@berry/plugin-npm"
-            ],
-            "pnp": [
+                "@berry/plugin-npm",
                 "@berry/plugin-pnp"
             ]
         }

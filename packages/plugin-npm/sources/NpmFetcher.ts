@@ -17,12 +17,18 @@ export class NpmFetcher implements Fetcher {
   }
 
   async fetch(locator: Locator, opts: FetchOptions) {
-    const packageFs = await opts.cache.fetchFromCache(locator, async () => {
-      opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote registry`);
-      return await this.fetchFromNetwork(locator, opts);
-    });
+    const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 
-    return {packageFs, prefixPath: this.getPrefixPath(locator)};
+    const [packageFs, checksum] = await opts.cache.fetchPackageFromCache(
+      locator,
+      expectedChecksum,
+      async () => {
+        opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote registry`);
+        return await this.fetchFromNetwork(locator, opts);
+      },
+    );
+
+    return {packageFs, prefixPath: this.getPrefixPath(locator), checksum};
   }
 
   async fetchFromNetwork(locator: Locator, opts: FetchOptions) {

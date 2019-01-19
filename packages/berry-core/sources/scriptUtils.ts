@@ -73,7 +73,7 @@ export async function executePackageScript(locator: Locator, scriptName: string,
     const linkers = project.configuration.getLinkers();
     const linkerOptions = {project, report: new StreamReport({stdout: new PassThrough(), configuration})};
 
-    const linker = linkers.find(linker => linker.supports(pkg, linkerOptions));
+    const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
     if (!linker)
       throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
 
@@ -143,7 +143,7 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
       if (!pkg)
         continue;
       
-      const linker = linkers.find(linker => linker.supports(pkg, linkerOptions));
+      const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
       if (!linker)
         continue;
       
