@@ -22,6 +22,7 @@ export enum MessageName {
   REMOTE_INVALID = 15,
   REMOTE_NOT_FOUND = 16,
   RESOLUTION_PACK = 17,
+  CACHE_CHECKSUM_MISMATCH = 18,
 }
 
 export class ReportError extends Error {

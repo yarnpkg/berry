@@ -113,6 +113,9 @@ export class Project {
         const dependencies = new Map<IdentHash, Descriptor>();
         const peerDependencies = new Map<IdentHash, Descriptor>();
 
+        if (data.checksum != null)
+          this.storedChecksums.set(locator.locatorHash, data.checksum);
+
         for (const dependency of Object.keys(data.dependencies || {})) {
           const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.dependencies[dependency]);
           dependencies.set(descriptor.identHash, descriptor);
@@ -603,7 +606,13 @@ export class Project {
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
 
-      await fetcher.fetch(pkg, fetcherOptions);
+      const fetchResult = await fetcher.fetch(pkg, fetcherOptions);
+
+      if (fetchResult.checksum) {
+        this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
+      } else {
+        this.storedChecksums.delete(pkg.locatorHash);
+      }
     }
   }
 
@@ -941,6 +950,7 @@ export class Project {
       optimizedLockfile[key] = {
         ... rest,
         resolution: structUtils.stringifyLocator(pkg),
+        checksum: this.storedChecksums.get(pkg.locatorHash),
         dependencies: Object.keys(dependencies).length > 0 ? dependencies : undefined,
         peerDependencies: Object.keys(peerDependencies).length > 0 ? peerDependencies : undefined,
       };

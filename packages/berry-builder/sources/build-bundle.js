@@ -13,7 +13,10 @@ concierge
   .action(async ({watch, profile, plugin, stdout}) => {
     const plugins = findPlugins({basedir, profile, plugin});
 
-    stdout.write(`The following plugins will be compiled in the final bundle: ${plugins.join(`, `)}\n`);
+    stdout.write(`The following plugins will be compiled in the final bundle:\n\n`);
+
+    for (const plugin of plugins)
+      stdout.write(`- ${plugin}\n`);
 
     const hookConfig = {
       context: basedir,
@@ -75,13 +78,14 @@ concierge
         });
 
         if (buildErrors) {
+          process.stdout.write(`\n`);
           process.stderr.write(buildErrors);
           process.stderr.write(`\n`);
           return 1;
         }
       }
 
-      console.log(`\u{1F525} Bundle successfully generated with the '${profile}' profile `);
+      process.stdout.write(`\nDone!\n`);
     } else {
       const compiler = webpack([
         hookConfig,

@@ -1,14 +1,15 @@
-import {NodeFS, ZipFS}        from '@berry/zipfs';
-import {mkdirp, move}         from 'fs-extra';
-import {chmod, writeFile}     from 'fs';
-import {lock, unlock}         from 'lockfile';
-import {resolve}              from 'path';
-import {promisify}            from 'util';
+import {NodeFS, ZipFS}            from '@berry/zipfs';
+import {mkdirp, move}             from 'fs-extra';
+import {chmod, writeFile}         from 'fs';
+import {lock, unlock}             from 'lockfile';
+import {resolve}                  from 'path';
+import {promisify}                from 'util';
 
-import {Configuration}        from './Configuration';
-import * as hashUtils         from './hashUtils';
-import * as structUtils       from './structUtils';
-import {LocatorHash, Locator} from './types';
+import {Configuration}            from './Configuration';
+import {MessageName, ReportError} from './Report';
+import * as hashUtils             from './hashUtils';
+import * as structUtils           from './structUtils';
+import {LocatorHash, Locator}     from './types';
 
 const chmodP = promisify(chmod);
 const writeFileP = promisify(writeFile);
@@ -70,7 +71,7 @@ export class Cache {
       const actualChecksum = await hashUtils.checksumFile(cachePath);
 
       if (expectedChecksum !== null && actualChecksum !== expectedChecksum)
-        throw new Error(`Invalid cache entry per the checksum check`);
+        throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `${structUtils.prettyLocator(this.configuration, locator)} doesn't resolve to an archive that matches the expected checksum`);
       
       return actualChecksum;
     };
