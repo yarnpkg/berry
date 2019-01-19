@@ -68,7 +68,7 @@ export class Cache {
 
     const validateFile = async (path: string) => {
       const expectedChecksum = checksum;
-      const actualChecksum = await hashUtils.checksumFile(cachePath);
+      const actualChecksum = await hashUtils.checksumFile(path);
 
       if (expectedChecksum !== null && actualChecksum !== expectedChecksum)
         throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `${structUtils.prettyLocator(this.configuration, locator)} doesn't resolve to an archive that matches the expected checksum`);
@@ -93,11 +93,11 @@ export class Cache {
         const originalPath = zipFs.getRealPath();
 
         zipFs.close();
+        await chmodP(originalPath, 0o644);
 
         // Do this before moving the file so that we don't pollute the cache with corrupted archives
         checksum = await validateFile(originalPath);
 
-        await chmodP(originalPath, 0o644);
         await move(originalPath, cachePath);
       }
 
