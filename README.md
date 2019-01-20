@@ -28,6 +28,7 @@ The following packages are generic and can be used in a variety of purposes (inc
 The following packages are plugins for Berry and can be installed through `berry add plugin <plugin-name>`. Note that some of them are typically already shipped with the regular Berry bundles. Such plugins are marked with a star (★).
 
 - [plugin-constraints]() adds various commands for enforcing constraints across workspaces.
+- [plugin-essentials★]() adds various commands deemed necessary for a package manager (add, remove, ...).
 - [plugin-file★]() adds support for using `file:` references as dependencies.
 - [plugin-github★]() adds support for using Github references as dependencies. [This plugin doesn't use git.](https://stackoverflow.com/a/13636954/880703)
 - [plugin-http★]() adds support for using straight URL references as dependencies (tgz archives only).
@@ -51,9 +52,10 @@ The following packages are meant to be used with Berry, and won't be useful to o
 Clone this repository, then run the following commands:
 
 ```
-$> ./packages/berry-cli/bin/berry
 $> ./packages/berry-cli/bin/berry build:cli
 ```
+
+Note that no other command is needed! Since the repository contains our dependencies, you don't need to run any install. Everything works, and everything is guaranteed to work even ten years from now 🙂
 
 ## License (MIT)
 

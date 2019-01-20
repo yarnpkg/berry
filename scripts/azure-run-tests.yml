@@ -6,9 +6,8 @@ steps:
   displayName: 'Install Node.js'
 
 - bash: |
-    ./packages/berry-cli/bin/berry
     ./packages/berry-cli/bin/berry build:cli
-  displayName: 'Install and build'
+  displayName: 'Build the standard bundle'
 
 - script: |
     ./packages/berry-cli/bin/berry run:tests:berry
