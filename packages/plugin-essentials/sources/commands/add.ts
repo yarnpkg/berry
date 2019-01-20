@@ -26,13 +26,13 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       const descriptors = await Promise.all(packages.map(async entry => {
         const descriptor = structUtils.parseDescriptor(entry);
 
+        // If the range is specified, no need to generate it out of thin air
         if (descriptor.range !== `unknown`)
           return descriptor;
 
         const latestDescriptor = structUtils.makeDescriptor(descriptor, `latest`);
 
         let candidateLocators;
-
         try {
           candidateLocators = await resolver.getCandidates(latestDescriptor, resolverOptions);
         } catch (error) {
@@ -44,16 +44,39 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
           throw new Error(`No candidate found for ${structUtils.prettyDescriptor(configuration, latestDescriptor)}`);
 
         const bestLocator = candidateLocators[candidateLocators.length - 1];
+        const protocolIndex = bestLocator.reference.indexOf(`:`);
 
-        if (!semver.valid(bestLocator.reference))
+        const protocol = protocolIndex !== -1
+          ? bestLocator.reference.slice(0, protocolIndex + 1)
+          : null;
+
+        const pathname = protocolIndex !== -1
+          ? bestLocator.reference.slice(protocolIndex + 1)
+          : bestLocator.reference;
+
+        if (!semver.valid(pathname) || exact)
           return structUtils.convertLocatorToDescriptor(bestLocator);
 
-        const prefix = exact ? `` : tilde ? `~` : `^`;
+        const newProtocol = protocol !== configuration.defaultProtocol
+          ? protocol
+          : null;
 
-        return structUtils.makeDescriptor(bestLocator, `${prefix}${bestLocator.reference}`);
+        const newPathname = tilde
+          ? `~${pathname}`
+          : `^${pathname}`;
+
+        const newRange = newProtocol !== null
+          ? `${newProtocol}${newPathname}`
+          : `${newPathname}`;
+
+        return structUtils.makeDescriptor(bestLocator, newRange);
       }));
 
-      const target = dev ? `devDependencies` : peer ? `peerDependencies` : `dependencies`;
+      const target = dev
+        ? `devDependencies`
+        : peer
+          ? `peerDependencies`
+          : `dependencies`;
 
       for (const descriptor of descriptors)
         workspace.manifest[target].set(descriptor.identHash, descriptor);
