@@ -84,6 +84,14 @@ export class JailFS extends FakeFS {
     return this.baseFs.writeFileSync(this.fromJailedPath(p), content);
   }
 
+  async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    return await this.baseFs.utimesPromise(this.fromJailedPath(p), atime, mtime);
+  }
+
+  utimesSync(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    return this.baseFs.utimesSync(this.fromJailedPath(p), atime, mtime);
+  }
+
   async mkdirPromise(p: string) {
     return await this.baseFs.mkdirPromise(this.fromJailedPath(p));
   }

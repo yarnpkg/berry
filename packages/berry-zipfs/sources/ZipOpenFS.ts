@@ -167,6 +167,22 @@ export class ZipOpenFS extends FakeFS {
     });
   }
 
+  async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.utimesPromise(p, atime, mtime);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.utimesPromise(subPath, atime, mtime);
+    });
+  }
+
+  utimesSync(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.utimesSync(p, atime, mtime);
+    }, (zipFs, {subPath}) => {
+      return zipFs.utimesSync(subPath, atime, mtime);
+    });
+  }
+
   async mkdirPromise(p: string) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.mkdirPromise(p);

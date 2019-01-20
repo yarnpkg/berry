@@ -2,6 +2,7 @@ import libzip              from '@berry/libzip';
 import {ReadStream, Stats} from 'fs';
 import {posix}             from 'path';
 import {PassThrough}       from 'stream';
+import {isDate}            from 'util';
 
 import {FakeFS}            from './FakeFS';
 import {NodeFS}            from './NodeFS';
@@ -55,6 +56,26 @@ export type Options = {
   readOnly?: boolean,
   stats?: Stats,
 };
+
+function toUnixTimestamp(time: Date | string | number) {
+  if (typeof time === 'string' && String(+time) === time) {
+    return +time;
+  }
+  // @ts-ignore
+  if (Number.isFinite(time)) {
+    if (time < 0) {
+      return Date.now() / 1000;
+    } else {
+      return time;
+    }
+  }
+  if (isDate(time)) {
+    // convert to 123.456 UNIX timestamp
+    // @ts-ignore
+    return time.getTime() / 1000;
+  }
+  throw new Error(`Invalid time`);
+}
 
 export class ZipFS extends FakeFS {
   private readonly path: string;
@@ -459,7 +480,7 @@ export class ZipFS extends FakeFS {
   }
 
   chmodSync(p: string, mask: number) {
-    const resolvedP = this.resolveFilename(`chmod '${p}'`, p);
+    const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
 
     if (this.listings.has(resolvedP)) {
       if (mask === 0o755) {
@@ -500,6 +521,41 @@ export class ZipFS extends FakeFS {
     }
   }
 
+  async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    return this.utimesSync(p, atime, mtime);
+  }
+
+  utimesSync(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    const resolvedP = this.resolveFilename(`chmod '${p}'`, p);
+
+    return this.utimesImpl(resolvedP, mtime);
+  }
+
+  async lutimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    return this.lutimesSync(p, atime, mtime);
+  }
+
+  lutimesSync(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
+
+    return this.utimesImpl(resolvedP, mtime);
+  }
+
+  private utimesImpl(resolvedP: string, mtime: Date | string | number) {
+    if (this.listings.has(resolvedP))
+      if (!this.entries.has(resolvedP))
+        this.hydrateDirectory(resolvedP);
+ 
+    const entry = this.entries.get(resolvedP);
+    if (entry === undefined)
+      throw new Error(`Unreachable`);
+    
+    const rc = libzip.file.setMtime(this.zip, entry, 0, toUnixTimestamp(mtime), 0);
+    if (rc === -1) {
+      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+    }
+  }
+
   async mkdirPromise(p: string) {
     return this.mkdirSync(p);
   }
@@ -510,12 +566,18 @@ export class ZipFS extends FakeFS {
     if (this.entries.has(resolvedP) || this.listings.has(resolvedP))
       throw Object.assign(new Error(`EEXIST: file already exists, mkdir '${p}'`), {code: `EEXIST`});
 
+    this.hydrateDirectory(resolvedP);
+  }
+
+  private hydrateDirectory(resolvedP: string) {
     const index = libzip.dir.add(this.zip, posix.relative(`/`, resolvedP));
     if (index === -1)
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
     this.registerListing(resolvedP);
     this.registerEntry(resolvedP, index);
+
+    return index;
   }
 
   async symlinkPromise(target: string, p: string) {
@@ -535,7 +597,7 @@ export class ZipFS extends FakeFS {
 
     this.registerEntry(resolvedP, index);
 
-    const rc = libzip.file.setExternalAttributes(this.zip, index, 0, 0, libzip.ZIP_OPSYS_UNIX, (0o120000 | 0o644) << 16);
+    const rc = libzip.file.setExternalAttributes(this.zip, index, 0, 0, libzip.ZIP_OPSYS_UNIX, (0o120000 | 0o777) << 16);
     if (rc === -1) {
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
     }

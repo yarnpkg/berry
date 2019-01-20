@@ -37,6 +37,9 @@ export abstract class FakeFS {
   abstract writeFilePromise(p: string, content: Buffer | string): void;
   abstract writeFileSync(p: string, content: Buffer | string): void;
 
+  abstract utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
+  abstract utimesSync(p: string, atime: Date | string | number, mtime: Date | string | number): void;
+
   abstract readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
   abstract readFilePromise(p: string, encoding?: string): Promise<Buffer>;
 
@@ -46,9 +49,8 @@ export abstract class FakeFS {
   abstract readlinkPromise(p: string): Promise<string>;
   abstract readlinkSync(p: string): string;
 
-  async mkdirpPromise(p: string) {
+  async mkdirpPromise(p: string, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
     p = this.resolve(p);
-
     if (p === `/`)
       return;
 
@@ -59,13 +61,19 @@ export abstract class FakeFS {
 
       if (!this.existsSync(subPath)) {
         await this.mkdirPromise(subPath);
+
+        if (chmod != null)
+          await this.chmodPromise(subPath, chmod);
+
+        if (utimes != null) {
+          await this.utimesPromise(subPath, utimes[0], utimes[1]);
+        }
       }
     }
   }
 
-  mkdirpSync(p: string) {
+  mkdirpSync(p: string, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
     p = this.resolve(p);
-
     if (p === `/`)
       return;
 
@@ -76,6 +84,13 @@ export abstract class FakeFS {
 
       if (!this.existsSync(subPath)) {
         this.mkdirSync(subPath);
+
+        if (chmod != null)
+          this.chmodSync(subPath, chmod);
+
+        if (utimes != null) {
+          this.utimesSync(subPath, utimes[0], utimes[1]);
+        }
       }
     }
   }

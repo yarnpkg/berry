@@ -12,6 +12,7 @@
     "_zip_file_get_error",
     "_zip_file_get_external_attributes",
     "_zip_file_set_external_attributes",
+    "_zip_file_set_mtime",
     "_zip_fopen",
     "_zip_fopen_index",
     "_zip_fread",

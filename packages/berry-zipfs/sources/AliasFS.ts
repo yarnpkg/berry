@@ -78,6 +78,14 @@ export class AliasFS extends FakeFS {
     return this.baseFs.writeFileSync(p, content);
   }
 
+  async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    return await this.baseFs.utimesPromise(p, atime, mtime);
+  }
+
+  utimesSync(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    return this.baseFs.utimesSync(p, atime, mtime);
+  }
+
   async mkdirPromise(p: string) {
     return await this.baseFs.mkdirPromise(p);
   }

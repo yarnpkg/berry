@@ -88,6 +88,14 @@ export class CwdFS extends FakeFS {
     return this.baseFs.writeFileSync(this.fromCwdPath(p), content);
   }
 
+  async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    return await this.baseFs.utimesPromise(this.fromCwdPath(p), atime, mtime);
+  }
+
+  utimesSync(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    return this.baseFs.utimesSync(this.fromCwdPath(p), atime, mtime);
+  }
+
   async mkdirPromise(p: string) {
     return await this.baseFs.mkdirPromise(this.fromCwdPath(p));
   }

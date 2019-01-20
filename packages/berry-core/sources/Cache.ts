@@ -3,6 +3,7 @@ import {mkdirp, move}             from 'fs-extra';
 import {chmod, writeFile}         from 'fs';
 import {lock, unlock}             from 'lockfile';
 import {resolve}                  from 'path';
+import semver                     from 'semver';
 import {promisify}                from 'util';
 
 import {Configuration}            from './Configuration';
@@ -41,11 +42,25 @@ export class Cache {
   }
 
   getCacheKey(locator: Locator) {
-    if (locator.scope) {
-      return `@${locator.scope}-${locator.name}-${locator.locatorHash}`;
-    } else {
-      return `${locator.name}-${locator.locatorHash}`;
-    }
+    const protocolIndex = locator.reference.indexOf(`:`);
+
+    const protocol = protocolIndex !== -1
+      ? locator.reference.slice(0, protocolIndex)
+      : `exotic`;
+
+    const version = protocolIndex !== -1
+      ? semver.valid(locator.reference.slice(protocolIndex + 1))
+      : null;
+    
+    const humanReference = version !== null
+      ? `${protocol}-${version}`
+      : protocol;
+
+    const cacheKey = locator.scope
+      ? `@${locator.scope}-${locator.name}-${humanReference}-${locator.locatorHash}`
+      : `${locator.name}-${humanReference}-${locator.locatorHash}`;
+    
+    return cacheKey;
   }
 
   getFilePath(key: string) {
@@ -93,6 +108,7 @@ export class Cache {
         const originalPath = zipFs.getRealPath();
 
         zipFs.close();
+
         await chmodP(originalPath, 0o644);
 
         // Do this before moving the file so that we don't pollute the cache with corrupted archives

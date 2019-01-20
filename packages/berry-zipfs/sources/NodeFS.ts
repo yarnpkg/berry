@@ -79,6 +79,16 @@ export class NodeFS extends FakeFS {
     this.realFs.writeFileSync(this.fromPortablePath(p), content);
   }
 
+  async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.utimes(p, atime, mtime, this.makeCallback(resolve, reject));
+    });
+  }
+
+  utimesSync(p: string, atime: Date | string | number, mtime: Date | string | number) {
+    this.realFs.utimesSync(p, atime, mtime);
+  }
+
   async mkdirPromise(p: string) {
     return await new Promise<void>((resolve, reject) => {
       this.realFs.mkdir(p, this.makeCallback(resolve, reject));

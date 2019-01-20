@@ -25,6 +25,9 @@ interface MakeArchiveOptions {
 export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath = `.`}: MakeArchiveOptions = {}): Promise<ZipFS> {
   const zipFs = new ZipFS(tmpNameSync(), {create: true});
 
+  // 1980-01-01, like Fedora
+  const defaultTime = 315532800;
+
   // @ts-ignore: Typescript doesn't want me to use new
   const parser = new Parse();
 
@@ -56,6 +59,12 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
 
     const chunks: Array<Buffer> = [];
 
+    let mode = 0o644;
+
+    // If a single executable bit is set, normalize so that all are
+    if (entry.type === `Directory` || (entry.mode & 0o111) !== 0)
+      mode |= 0o111;
+
     entry.on(`data`, (chunk: Buffer) => {
       chunks.push(chunk);
     });
@@ -63,14 +72,27 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
     entry.on(`end`, () => {
       switch (entry.type) {
         case `Directory`: {
-          zipFs.mkdirpSync(mappedPath);
+          zipFs.mkdirpSync(posix.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+
+          zipFs.mkdirSync(mappedPath);
+          zipFs.chmodSync(mappedPath, mode);
+          zipFs.utimesSync(mappedPath, defaultTime, defaultTime);
         } break;
 
         case `OldFile`:
         case `File`: {
-          zipFs.mkdirpSync(posix.dirname(mappedPath));
+          zipFs.mkdirpSync(posix.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+
           zipFs.writeFileSync(mappedPath, Buffer.concat(chunks));
-          zipFs.chmodSync(mappedPath, entry.mode);
+          zipFs.chmodSync(mappedPath, mode);
+          zipFs.utimesSync(mappedPath, defaultTime, defaultTime);
+        } break;
+
+        case `SymbolicLink`: {
+          zipFs.mkdirpSync(posix.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+
+          zipFs.symlinkSync(entry.linkpath, mappedPath);
+          zipFs.lutimesSync(mappedPath, defaultTime, defaultTime);
         } break;
       }
     });
