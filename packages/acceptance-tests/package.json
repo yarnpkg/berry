@@ -17,7 +17,7 @@
         "prettier": "^1.10.2"
     },
     "scripts": {
-        "prettier": "run prettier --write '**/*.js'",
+        "prettier": "prettier --write '**/*.js'",
         "run:tests": "run jest",
         "run:tests:berry": "run run:tests acceptance-tests/berry"
     },

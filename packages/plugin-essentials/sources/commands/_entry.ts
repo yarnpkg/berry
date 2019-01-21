@@ -24,6 +24,6 @@ export default (concierge: any) => concierge
     
     // berry start
     } else {
-      return await concierge.run(null, [`run`, ... args], {stdout, env});
+      return await concierge.run(null, [`run`, ... args], {stdout, ... env});
     }
   });
