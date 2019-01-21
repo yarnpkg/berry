@@ -18,21 +18,29 @@ export class LinkFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const {parentLocator, linkPath} = this.parseLocator(locator);
 
+    // If the link target is an absolute path we can directly access it via its
+    // location on the disk. Otherwise we must go through the package fs.
     const parentFetch = posix.isAbsolute(linkPath)
       ? {packageFs: new NodeFS(), prefixPath: `/`, localPath: `/`}
       : await opts.fetcher.fetch(parentLocator, opts);
 
+    // If the package fs publicized its "original location" (for example like
+    // in the case of "file:" packages), we use it to derive the real location.
     const effectiveParentFetch = parentFetch.localPath
       ? {packageFs: new NodeFS(), prefixPath: parentFetch.localPath}
       : parentFetch;
     
+    // Discard the parent fs unless we really need it to access the files
+    if (parentFetch !== effectiveParentFetch && parentFetch.releaseFs)
+      parentFetch.releaseFs();
+
     const sourceFs = effectiveParentFetch.packageFs;
     const sourcePath = posix.resolve(effectiveParentFetch.prefixPath, linkPath);
 
     if (parentFetch.localPath) {
-      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), prefixPath: `/`, localPath: sourcePath};
+      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: `/`, localPath: sourcePath};
     } else {
-      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), prefixPath: `/`};
+      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: `/`};
     }
   }
 

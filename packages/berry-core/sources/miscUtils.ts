@@ -1,3 +1,17 @@
+// Executes a chunk of code and calls a cleanup function once it returns (even
+// if it throws an exception)
+
+export async function releaseAfterUseAsync<T>(fn: () => Promise<T>, cleanup?: () => any) {
+  if (!cleanup)
+    return await fn();
+
+  try {
+    return await fn();
+  } finally {
+    await cleanup();
+  }
+}
+
 // Executes a chunk of code but slightly modify its exception message if it
 // throws something
 

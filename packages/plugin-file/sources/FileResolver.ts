@@ -1,8 +1,7 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
 import {Descriptor, Locator, Manifest}                   from '@berry/core';
 import {LinkType}                                        from '@berry/core';
-import {structUtils}                                     from '@berry/core';
-import {posix}                                           from 'path';
+import {miscUtils, structUtils}                          from '@berry/core';
 import querystring                                       from 'querystring';
 
 import {FILE_REGEXP, PROTOCOL}                           from './constants';
@@ -48,7 +47,9 @@ export class FileResolver implements Resolver {
   async resolve(locator: Locator, opts: ResolveOptions) {
     const packageFetch = await opts.fetcher.fetch(locator, opts);
 
-    const manifest = await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
+    const manifest = await miscUtils.releaseAfterUseAsync(async () => {
+      return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
+    }, packageFetch.releaseFs);
 
     const version = manifest.version || `0.0.0`;
 

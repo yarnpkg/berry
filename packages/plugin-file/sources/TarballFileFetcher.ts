@@ -1,6 +1,6 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
 import {Locator, MessageName}                       from '@berry/core';
-import {structUtils, tgzUtils}                      from '@berry/core';
+import {miscUtils, structUtils, tgzUtils}           from '@berry/core';
 import {NodeFS}                                     from '@berry/zipfs';
 import {posix}                                      from 'path';
 import querystring                                  from 'querystring';
@@ -43,21 +43,29 @@ export class TarballFileFetcher implements Fetcher {
   async fetchFromDisk(locator: Locator, opts: FetchOptions) {
     const {parentLocator, filePath} = this.parseLocator(locator);
 
+    // If the file target is an absolute path we can directly access it via its
+    // location on the disk. Otherwise we must go through the package fs.
     const parentFetch = posix.isAbsolute(filePath)
       ? {packageFs: new NodeFS(), prefixPath: `/`, localPath: `/`}
       : await opts.fetcher.fetch(parentLocator, opts);
 
+    // If the package fs publicized its "original location" (for example like
+    // in the case of "file:" packages), we use it to derive the real location.
     const effectiveParentFetch = parentFetch.localPath
       ? {packageFs: new NodeFS(), prefixPath: parentFetch.localPath}
       : parentFetch;
+
+    // Discard the parent fs unless we really need it to access the files
+    if (parentFetch !== effectiveParentFetch && parentFetch.releaseFs)
+      parentFetch.releaseFs();
 
     const sourceFs = effectiveParentFetch.packageFs;
     const sourcePath = posix.resolve(effectiveParentFetch.prefixPath, filePath);
     const sourceBuffer = await sourceFs.readFilePromise(sourcePath);
 
-    return await tgzUtils.makeArchive(sourceBuffer, {
-      stripComponents: 1,
-    });
+    return await miscUtils.releaseAfterUseAsync(async () => {
+      return await tgzUtils.makeArchive(sourceBuffer, {stripComponents: 1});
+    }, effectiveParentFetch.releaseFs);
   }
 
   private parseLocator(locator: Locator) {
