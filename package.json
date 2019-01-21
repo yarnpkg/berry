@@ -44,5 +44,8 @@
         "webpack-cli": {
             "build": false
         }
+    },
+    "scripts": {
+        "grep": "grep -RF \"$@\" $(find packages -path 'packages/*/sources')"
     }
 }
