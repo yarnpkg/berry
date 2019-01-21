@@ -14635,7 +14635,7 @@ class ZipFS extends FakeFS_1.FakeFS {
     getRealPath() {
         return this.path;
     }
-    close() {
+    saveAndClose() {
         if (!this.ready)
             throw Object.assign(new Error(`EBUSY: archive closed, close`), { code: `EBUSY` });
         const previousMod = this.baseFs.existsSync(this.path)
@@ -14653,8 +14653,9 @@ class ZipFS extends FakeFS_1.FakeFS {
             this.baseFs.chmodSync(this.path, previousMod);
         this.ready = false;
     }
-    discard() {
+    discardAndClose() {
         libzip_1.default.discard(this.zip);
+        this.ready = false;
     }
     createReadStream(p, { encoding } = {}) {
         const stream = Object.assign(new stream_1.PassThrough(), {
@@ -15070,7 +15071,7 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
             return fn(zipOpenFs);
         }
         finally {
-            zipOpenFs.close();
+            zipOpenFs.saveAndClose();
         }
     }
     static async openPromise(fn) {
@@ -15079,16 +15080,25 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
             return await fn(zipOpenFs);
         }
         finally {
-            zipOpenFs.close();
+            zipOpenFs.saveAndClose();
         }
     }
     getRealPath() {
         return this.baseFs.getRealPath();
     }
-    close() {
+    saveAndClose() {
         if (this.zipInstances) {
-            for (const zipFs of this.zipInstances.values()) {
-                zipFs.close();
+            for (const [path, zipFs] of this.zipInstances.entries()) {
+                zipFs.saveAndClose();
+                this.zipInstances.delete(path);
+            }
+        }
+    }
+    discardAndClose() {
+        if (this.zipInstances) {
+            for (const [path, zipFs] of this.zipInstances.entries()) {
+                zipFs.discardAndClose();
+                this.zipInstances.delete(path);
             }
         }
     }
@@ -15361,7 +15371,7 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
                 return await accept(zipFs);
             }
             finally {
-                zipFs.close();
+                zipFs.saveAndClose();
             }
         }
     }
@@ -15378,7 +15388,7 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
                 return accept(zipFs);
             }
             finally {
-                zipFs.close();
+                zipFs.saveAndClose();
             }
         }
     }

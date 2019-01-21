@@ -16,7 +16,7 @@ export class ZipOpenFS extends FakeFS {
     try {
       return fn(zipOpenFs);
     } finally {
-      zipOpenFs.close();
+      zipOpenFs.saveAndClose();
     }
   }
 
@@ -25,7 +25,7 @@ export class ZipOpenFS extends FakeFS {
     try {
       return await fn(zipOpenFs);
     } finally {
-      zipOpenFs.close();
+      zipOpenFs.saveAndClose();
     }
   }
 
@@ -55,10 +55,20 @@ export class ZipOpenFS extends FakeFS {
     return this.baseFs.getRealPath();
   }
 
-  close() {
+  saveAndClose() {
     if (this.zipInstances) {
-      for (const zipFs of this.zipInstances.values()) {
-        zipFs.close();
+      for (const [path, zipFs] of this.zipInstances.entries()) {
+        zipFs.saveAndClose();
+        this.zipInstances.delete(path);
+      }
+    }
+  }
+
+  discardAndClose() {
+    if (this.zipInstances) {
+      for (const [path, zipFs] of this.zipInstances.entries()) {
+        zipFs.discardAndClose();
+        this.zipInstances.delete(path);
       }
     }
   }
@@ -380,7 +390,7 @@ export class ZipOpenFS extends FakeFS {
       try {
         return await accept(zipFs);
       } finally {
-        zipFs.close();
+        zipFs.saveAndClose();
       }
     }
   }
@@ -399,7 +409,7 @@ export class ZipOpenFS extends FakeFS {
       try {
         return accept(zipFs);
       } finally {
-        zipFs.close();
+        zipFs.saveAndClose();
       }
     }
   }

@@ -107,7 +107,7 @@ export class Cache {
         const zipFs = await loader();
         const originalPath = zipFs.getRealPath();
 
-        zipFs.close();
+        zipFs.saveAndClose();
 
         await chmodP(originalPath, 0o644);
 

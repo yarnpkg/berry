@@ -156,7 +156,7 @@ export class ZipFS extends FakeFS {
     return this.path;
   }
 
-  close() {
+  saveAndClose() {
     if (!this.ready)
       throw Object.assign(new Error(`EBUSY: archive closed, close`), {code: `EBUSY`});
 
@@ -179,8 +179,10 @@ export class ZipFS extends FakeFS {
     this.ready = false;
   }
 
-  discard() {
+  discardAndClose() {
     libzip.discard(this.zip);
+
+    this.ready = false;
   }
 
   createReadStream(p: string, {encoding}: {encoding?: string} = {}): ReadStream {
