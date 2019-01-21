@@ -608,10 +608,13 @@ export class Project {
 
       const fetchResult = await fetcher.fetch(pkg, fetcherOptions);
 
-      if (fetchResult.checksum) {
+      if (fetchResult.checksum)
         this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
-      } else {
+      else
         this.storedChecksums.delete(pkg.locatorHash);
+
+      if (fetchResult.releaseFs) {
+        fetchResult.releaseFs();
       }
     }
   }
@@ -642,8 +645,16 @@ export class Project {
       if (!installer)
         throw new Error(`Assertion failed: The installer should have been registered`);
       
-      const packageFetch = await fetcher.fetch(pkg, fetcherOptions);
-      const installStatus = await installer.installPackage(pkg, pkg.linkType, packageFetch);
+      const fetchResult = await fetcher.fetch(pkg, fetcherOptions);
+
+      let installStatus;
+      try {
+        installStatus = await installer.installPackage(pkg, pkg.linkType, fetchResult);
+      } finally {
+        if (fetchResult.releaseFs) {
+          fetchResult.releaseFs();
+        }
+      }
 
       packageLinkers.set(pkg.locatorHash, linker);
       packageLocations.set(pkg.locatorHash, installStatus.packageLocation);

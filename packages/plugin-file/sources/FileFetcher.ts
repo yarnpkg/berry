@@ -27,7 +27,12 @@ export class FileFetcher implements Fetcher {
       },
     );
 
-    return {packageFs, prefixPath: `/`, checksum};
+    return {
+      packageFs,
+      releaseFs: () => packageFs.discardAndClose(),
+      prefixPath: `/`,
+      checksum,
+    };
   }
 
   async fetchFromDisk(locator: Locator, opts: FetchOptions) {

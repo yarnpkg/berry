@@ -1,4 +1,4 @@
-import {FakeFS}               from '@berry/zipfs';
+import {FakeFS, ZipFS}        from '@berry/zipfs';
 
 import {Cache}                from './Cache';
 import {Project}              from './Project';
@@ -19,9 +19,10 @@ export type FetchOptions = MinimalFetchOptions & {
 
 export type FetchResult = {
   packageFs: FakeFS,
+  releaseFs?: () => void,
   prefixPath: string,
-  localPath?: string | null,
-  checksum?: string | null,
+  localPath?: string
+  checksum?: string,
 };
 
 /**

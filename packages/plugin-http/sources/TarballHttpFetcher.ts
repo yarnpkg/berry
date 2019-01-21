@@ -27,7 +27,12 @@ export class TarballHttpFetcher implements Fetcher {
       },
     );
 
-    return {packageFs, prefixPath: `/`, checksum};
+    return {
+      packageFs,
+      releaseFs: () => packageFs.discardAndClose(),
+      prefixPath: `/`,
+      checksum,
+    };
   }
 
   async fetchFromNetwork(locator: Locator, opts: FetchOptions) {

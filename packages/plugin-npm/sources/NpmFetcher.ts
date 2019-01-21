@@ -28,7 +28,12 @@ export class NpmFetcher implements Fetcher {
       },
     );
 
-    return {packageFs, prefixPath: this.getPrefixPath(locator), checksum};
+    return {
+      packageFs,
+      releaseFs: () => packageFs.discardAndClose(),
+      prefixPath: this.getPrefixPath(locator),
+      checksum,
+    };
   }
 
   async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
