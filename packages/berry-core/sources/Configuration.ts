@@ -307,6 +307,8 @@ export class Configuration {
   use(source: string, data: {[key: string]: unknown}, folder: string) {
     for (const key of Object.keys(data)) {
       const name = key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
+      if (name === `binFolder`)
+        continue;
 
       const definition = this.settings.get(name);
       if (!definition)

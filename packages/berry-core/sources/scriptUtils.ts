@@ -1,6 +1,6 @@
 import {runShell}                        from '@berry/shell';
 import {CwdFS, ZipOpenFS}                from '@berry/zipfs';
-import {chmod, writeFile}                from 'fs-extra';
+import {chmod, remove, writeFile}        from 'fs-extra';
 import {existsSync}                      from 'fs';
 import {delimiter, posix}                from 'path';
 import {PassThrough, Readable, Writable} from 'stream';
@@ -14,44 +14,46 @@ import * as execUtils                    from './execUtils';
 import * as structUtils                  from './structUtils';
 import {Locator}                         from './types';
 
-async function makePathWrapper(name: string, argv0: string, args: Array<string> = []) {
-  const pathWrapper = dirSync().name;
-
+async function makePathWrapper(location: string, name: string, argv0: string, args: Array<string> = []) {
   if (process.platform === `win32`) {
-    await writeFile(`${pathWrapper}/${name}.cmd`, `@"${pathWrapper}\\${name}.cmd" ${args.join(` `)} %*\n`);
+    await writeFile(`${location}/${name}.cmd`, `@"${location}\\${name}.cmd" ${args.join(` `)} %*\n`);
   } else {
-    await writeFile(`${pathWrapper}/${name}`, `#!/usr/bin/env bash\n"${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
-    await chmod(`${pathWrapper}/${name}`, 0o755);
+    await writeFile(`${location}/${name}`, `#!/usr/bin/env bash\n"${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
+    await chmod(`${location}/${name}`, 0o755);
   }
-
-  return pathWrapper;
 }
 
 export async function makeScriptEnv(project: Project) {
   const scriptEnv = {... process.env};
+  const binFolder = scriptEnv.BERRY_BIN_FOLDER = dirSync().name;
 
   // Register some binaries that must be made available in all subprocesses
   // spawned by Berry
 
-  const paths = [
-    await makePathWrapper(`run`, process.execPath, [process.argv[1], `run`]),
-    await makePathWrapper(`berry`, process.execPath, [process.argv[1]]),
-    await makePathWrapper(`node`, process.execPath),
-  ];
+  await makePathWrapper(binFolder, `run`, process.execPath, [process.argv[1], `run`]),
+  await makePathWrapper(binFolder, `berry`, process.execPath, [process.argv[1]]),
+  await makePathWrapper(binFolder, `node`, process.execPath),
 
   scriptEnv.PATH = scriptEnv.PATH
-    ? `${paths.join(delimiter)}${delimiter}${scriptEnv.PATH}`
-    : `${paths.join(delimiter)}`;
+    ? `${binFolder}${delimiter}${scriptEnv.PATH}`
+    : `${binFolder}`;
 
   // Add the .pnp.js file to the Node options, so that we're sure that PnP will
   // be correctly setup
 
   const pnpPath = `${project.cwd}/.pnp.js`;
+  const pnpRequire = `--require ${pnpPath}`;
 
-  if (existsSync(pnpPath))
-    scriptEnv.NODE_OPTIONS = `--require ${pnpPath} ${scriptEnv.NODE_OPTIONS || ''}`;
+  if (existsSync(pnpPath)) {
+    let nodeOptions = scriptEnv.NODE_OPTIONS || ``;
 
-  return scriptEnv;
+    nodeOptions = nodeOptions.replace(/\s*--require\s+\S*\.pnp\.js\s*/g, ` `).trim();
+    nodeOptions = nodeOptions ? `${pnpRequire} ${nodeOptions}` : pnpRequire;
+
+    scriptEnv.NODE_OPTIONS = nodeOptions;
+  }
+
+  return scriptEnv as (typeof scriptEnv) & {BERRY_BIN_FOLDER: string};
 }
 
 type ExecutePackageScriptOptions = {
@@ -63,7 +65,6 @@ type ExecutePackageScriptOptions = {
 
 export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
   const pkg = project.storedPackages.get(locator.locatorHash);
-
   if (!pkg)
     throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
 
@@ -82,6 +83,9 @@ export async function executePackageScript(locator: Locator, scriptName: string,
     const cwd = packageLocation;
     const env = await makeScriptEnv(project);
 
+    for (const [binaryName, [pkg, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
+      await makePathWrapper(env.BERRY_BIN_FOLDER, binaryName, process.execPath, [binaryPath]);
+
     const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
     const manifest = await Manifest.find(`.`, {baseFs: packageFs});
 
@@ -89,7 +93,11 @@ export async function executePackageScript(locator: Locator, scriptName: string,
     if (!script)
       return;
 
-    await runShell(script, {args, cwd, env, stdin, stdout, stderr});
+    try {
+      await runShell(script, {args, cwd, env, stdin, stdout, stderr});
+    } finally {
+      await remove(env.BERRY_BIN_FOLDER);
+    }
   });
 }
 
@@ -201,7 +209,14 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
   const [pkg, binaryPath] = binary;
   const env = await makeScriptEnv(project);
 
-  await execUtils.execFile(process.execPath, [binaryPath, ... args], {cwd, env, stdin, stdout, stderr});
+  for (const [binaryName, [pkg, binaryPath]] of packageAccessibleBinaries)
+    await makePathWrapper(env.BERRY_BIN_FOLDER, binaryName, process.execPath, [binaryPath]);
+
+  try {
+    await execUtils.execFile(process.execPath, [binaryPath, ... args], {cwd, env, stdin, stdout, stderr});
+  } finally {
+    await remove(env.BERRY_BIN_FOLDER);
+  }
 }
 
 type ExecuteWorkspaceAccessibleBinaryOptions = {
