@@ -195,9 +195,21 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
                 } break;
 
                 default: {
-                  if (!Object.prototype.hasOwnProperty.call(variables, segment.name))
-                    throw new Error(`Unset variable "${segment.name}"`);
-                  interpolated[interpolated.length - 1] += variables[segment.name];
+                  if (Number.isFinite(segment.name)) {
+                    const argIndex = Number(segment.name);
+
+                    if (!(argIndex >= 0 && argIndex < args.length)) {
+                      throw new Error(`Unbound argument #${argIndex}`);
+                    } else {
+                      push(args[argIndex]);
+                    }
+                  } else {
+                    if (!Object.prototype.hasOwnProperty.call(variables, segment.name)) {
+                      throw new Error(`Unbound variable "${segment.name}"`);
+                    } else {
+                      push(variables[segment.name]);
+                    }
+                  }
                 } break;
 
               }
@@ -299,7 +311,7 @@ function locateArgsVariable(node: ShellLine): boolean {
 
             switch (segment.type) {
               case `variable`: {
-                return segment.name === `@` || segment.name === `#` || segment.name === `*`;
+                return segment.name === `@` || segment.name === `#` || segment.name === `*` || Number.isFinite(segment.name);
               } break;
 
               case `shell`: {

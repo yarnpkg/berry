@@ -33,7 +33,7 @@
         "title": "Workspace",
         "sidebar_label": "Workspace"
       },
-      "compiling-bundle": {
+      "compiling-a-bundle": {
         "title": "Compiling Berry",
         "sidebar_label": "Compiling Berry"
       },
@@ -44,6 +44,22 @@
       "dependency-contract": {
         "title": "Dependency Contract",
         "sidebar_label": "Dependency Contract"
+      },
+      "enhanced-scripting": {
+        "title": "Enhanced Scripting",
+        "sidebar_label": "Enhanced Scripting"
+      },
+      "enterprise-practices": {
+        "title": "Enterprise Practices",
+        "sidebar_label": "Enterprise Practices"
+      },
+      "error-messages": {
+        "title": "Error Messages",
+        "sidebar_label": "Error Messages"
+      },
+      "frequently-asked-questions": {
+        "title": "Frequently Asked Questions",
+        "sidebar_label": "Frequently Asked Questions"
       },
       "interface-fetcher": {
         "title": "Fetcher",
@@ -60,6 +76,10 @@
       "offline-cache": {
         "title": "Offline Cache",
         "sidebar_label": "Offline Cache"
+      },
+      "opening-an-issue": {
+        "title": "Opening an Issue",
+        "sidebar_label": "Opening an Issue"
       },
       "optional-plugins": {
         "title": "Optional Plugins",
@@ -96,10 +116,6 @@
       "plugnplay": {
         "title": "Plug'n'Play",
         "sidebar_label": "Plug'n'Play"
-      },
-      "team-collaboration": {
-        "title": "Team Collaboration",
-        "sidebar_label": "Team Collaboration"
       },
       "workspaces-constraints": {
         "title": "Workspaces Constraints",

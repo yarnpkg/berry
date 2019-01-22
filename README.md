@@ -1,6 +1,7 @@
 # <img src="./icon.svg" width="32" height="32" align="bottom" /> Yarn - Berry Edition
 
-Yarn is a modern package manager split into various packages. Its novel architecture allows to do things currently impossible with existing solutions:
+Yarn is a modern package manager split into various packages. Its novel
+architecture allows to do things currently impossible with existing solutions:
 
 - Yarn supports plugins; adding a plugin is as simple as adding it into your repository
 - Yarn supports Node by default but isn't limited to it - plugins can add support for other languages
@@ -12,40 +13,43 @@ Yarn is a modern package manager split into various packages. Its novel architec
 
 ## Generic packages
 
-The following packages are generic and can be used in a variety of purposes (including to implement other package managers, but not only):
+The following packages are generic and can be used in a variety of purposes
+(including to implement other package managers, but not only):
 
-- [berry-core]() allows any application to manipulate a project programmatically
-- [berry-json-proxy]() allows to temporarily convert any POD object to an immutable object
-- [berry-libzip]() contains zlib+libzip bindings compiled to WebAssembly
-- [berry-parsers]() can be used to parse [Syml]() and the language used by [berry-shell]()
-- [berry-pnp]() can be used to generate [Plug'n'Play-compatible]() hooks
-- [berry-shell]() is a portable bash-like shell interpreter
-- [berry-ui]() is a React renderer targeting terminals
-- [berry-zipfs]() is a `fs` implementation that can read files from zip archives
+- [berry-core](packages/berry-core) allows any application to manipulate a project programmatically
+- [berry-json-proxy](packages/berry-json-proxy) allows to temporarily convert any POD object to an immutable object
+- [berry-libzip](packages/berry-libzip) contains zlib+libzip bindings compiled to WebAssembly
+- [berry-parsers](packages/berry-parsers) can be used to parse [Syml]() and the language used by [berry-shell]()
+- [berry-pnp](packages/berry-pnp) can be used to generate [Plug'n'Play-compatible]() hooks
+- [berry-shell](packages/berry-shell) is a portable bash-like shell interpreter
+- [berry-ui](packages/berry-ui) is a React renderer targeting terminals
+- [berry-zipfs](packages/berry-zipfs) is a `fs` implementation that can read files from zip archives
 
 ## Berry plugins
 
-The following packages are plugins for Berry and can be installed through `berry add plugin <plugin-name>`. Note that some of them are typically already shipped with the regular Berry bundles. Such plugins are marked with a star (★).
+The following packages are plugins for Berry and can be installed through
+`berry add plugin <plugin-name>`. Note that some of them are typically already
+shipped with the regular Berry bundles. Such plugins are marked with a star (★).
 
-- [plugin-constraints]() adds various commands for enforcing constraints across workspaces.
-- [plugin-essentials★]() adds various commands deemed necessary for a package manager (add, remove, ...).
-- [plugin-file★]() adds support for using `file:` references as dependencies.
-- [plugin-github★]() adds support for using Github references as dependencies. [This plugin doesn't use git.](https://stackoverflow.com/a/13636954/880703)
-- [plugin-http★]() adds support for using straight URL references as dependencies (tgz archives only).
-- [plugin-hub]() contains a UI designed to efficiently manage large-scale projects with multiple workspaces
-- [plugin-link★]() adds support for using `link:` and `portal:` references as dependencies.
-- [plugin-node★]() adds support for installing Javascript dependencies through `node_modules` directories
-- [plugin-npm★]() adds support for using [semver ranges]() as dependencies, resolving them to an NPM-like registry
-- [plugin-pnp★]() adds support for installing Javascript dependencies through the [Plug'n'Play]() specification
+- [plugin-constraints](packages/plugin-constraints) adds various commands for enforcing constraints across workspaces.
+- [plugin-essentials★](packages/plugin-essentials) adds various commands deemed necessary for a package manager (add, remove, ...).
+- [plugin-file★](packages/plugin-file) adds support for using `file:` references as dependencies.
+- [plugin-github★](packages/plugin-github) adds support for using Github references as dependencies. [This plugin doesn't use git.](https://stackoverflow.com/a/13636954/880703)
+- [plugin-http★](packages/plugin-http) adds support for using straight URL references as dependencies (tgz archives only).
+- [plugin-hub](packages/plugin-hub) contains a UI designed to efficiently manage large-scale projects with multiple workspaces
+- [plugin-link★](packages/plugin-link) adds support for using `link:` and `portal:` references as dependencies.
+- [plugin-npm★](packages/plugin-npm) adds support for using [semver ranges]() as dependencies, resolving them to an NPM-like registry
+- [plugin-pnp★](packages/plugin-pnp) adds support for installing Javascript dependencies through the [Plug'n'Play]() specification
 
 To create your own plugin, please refer to the [documentation]().
 
 ## Berry packages
 
-The following packages are meant to be used with Berry, and won't be useful to other applications:
+The following packages are meant to be used with Berry, and won't be useful to
+other applications:
 
-- [berry-builder]() contains a CLI tool to package berry and its plugins
-- [berry-cli]() is a CLI built on top of [berry-core]()
+- [berry-builder](packages/berry-builder) contains a CLI tool to package berry and its plugins
+- [berry-cli](packages/berry-cli) is a CLI entry point built on top of [berry-core]()
 
 ## Build your own bundle
 
@@ -55,14 +59,28 @@ Clone this repository, then run the following commands:
 $> ./packages/berry-cli/bin/berry build:cli
 ```
 
-Note that no other command is needed! Since the repository contains our dependencies, you don't need to run any install. Everything works, and everything is guaranteed to work even ten years from now 🙂
+Note that no other command is needed! Since the repository contains our
+dependencies, you don't need to run any install. Everything works, and
+everything is guaranteed to work even ten years from now 🙂
 
 ## License (MIT)
 
 > **Copyright © 2019 Yarn contributors**
 >
-> Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+> Permission is hereby granted, free of charge, to any person obtaining a copy
+> of this software and associated documentation files (the "Software"), to deal
+> in the Software without restriction, including without limitation the rights
+> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+> copies of the Software, and to permit persons to whom the Software is
+> furnished to do so, subject to the following conditions:
 >
-> The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+> The above copyright notice and this permission notice shall be included in
+> all copies or substantial portions of the Software.
 >
-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+> SOFTWARE.

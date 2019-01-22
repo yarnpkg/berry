@@ -1,5 +1,9 @@
 /* your custom css */
 
+.docMainContainer p {
+    text-align: justify;
+}
+
 @media only screen and (min-device-width: 360px) and (max-device-width: 736px) {
 }
 
