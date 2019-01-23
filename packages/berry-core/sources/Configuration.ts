@@ -30,6 +30,7 @@ export enum SettingsType {
 };
 
 export type SettingsDefinition = {
+  description: string,
   type: SettingsType,
   default: any,
   isArray?: boolean,
@@ -39,39 +40,47 @@ export type SettingsDefinition = {
 export const coreDefinitions = {
   // Settings related to the proxying Berry to a specific executable
   executablePath: {
+    description: `Path to the local executable that must be used over the global one`,
     type: SettingsType.ABSOLUTE_PATH,
     default: null,
   },
   ignorePath: {
+    description: `If true, the local executable will be ignored when using the global one`,
     type: SettingsType.BOOLEAN,
     default: false,
   },
 
   // Settings related to the package manager internal names
   lockfilePath: {
+    description: `Path of the file where the dependency tree must be stored`,
     type: SettingsType.ABSOLUTE_PATH,
     default: `./berry.lock`,
   },
   cacheFolder: {
+    description: `Folder where the cache files must be written`,
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.berry/cache`,
   },
   virtualFolder: {
+    description: `Folder where the symlinks generated for virtual packages must be written`,
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.berry/virtual`,
   },
   bstatePath: {
+    description: `Path of the file where the current state of the built packages must be stored`,
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.berry/buildState.json`,
   },
 
   // Settings related to the output style
   enableEmojis: {
+    description: `If true, the CLI is allowed to use emojis in its output`,
     type: SettingsType.BOOLEAN,
     default: !!supportsColor.stdout,
     defaultText: `<dynamic>`,
   },
   enableColors: {
+    description: `If true, the CLI is allowed to use colors in its output`,
     type: SettingsType.BOOLEAN,
     default: !!supportsColor.stdout,
     defaultText: `<dynamic>`,
@@ -79,32 +88,38 @@ export const coreDefinitions = {
 
   // Settings related to how packages are interpreted by default
   defaultLanguageName: {
+    description: `Default language mode that should be used when a package doesn't offer any insight`,
     type: SettingsType.STRING,
     default: `node`,
   },
   defaultProtocol: {
+    description: `Default resolution protocol used when resolving pure semver and tag ranges`,
     type: SettingsType.STRING,
     default: `npm:`,
   },
 
   // Settings related to network proxies
   httpProxy: {
+    description: `URL of the http proxy that must be used for outgoing http requests`,
     type: SettingsType.STRING,
     default: null,
   },
   httpsProxy: {
+    description: `URL of the http proxy that must be used for outgoing https requests`,
     type: SettingsType.STRING,
     default: null,
   },
 
   // Settings related to the registry used to resolve semver requests
   registryServer: {
+    description: `URL of the selected npm registry (note: npm enterprise isn't supported)`,
     type: SettingsType.STRING,
     default: null,
   },
 
   // Settings related to security
   enableScripts: {
+    description: `If true, packages are allowed to have install scripts by default`,
     type: SettingsType.BOOLEAN,
     default: true,
   },
@@ -171,10 +186,10 @@ export class Configuration {
 
   public projectCwd: string | null;
 
-  private plugins: Map<string, Plugin> = new Map();
+  public plugins: Map<string, Plugin> = new Map();
   
-  private settings: Map<string, SettingsDefinition> = new Map();
-  private sources: Map<string, string> = new Map();
+  public settings: Map<string, SettingsDefinition> = new Map();
+  public sources: Map<string, string> = new Map();
 
   [name: string]: any;
 

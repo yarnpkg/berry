@@ -6,6 +6,7 @@ import listWorkspaces    from './commands/workspaces/list';
 import entry             from './commands/_entry';
 import add               from './commands/add';
 import bin               from './commands/bin';
+import config            from './commands/config';
 import exec              from './commands/exec';
 import help              from './commands/help';
 import install           from './commands/install';
@@ -21,6 +22,7 @@ const plugin: Plugin = {
     entry,
     add,
     bin,
+    config,
     exec,
     help,
     install,
