@@ -195,9 +195,9 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
                 } break;
 
                 default: {
-                  if (Number.isFinite(segment.name)) {
-                    const argIndex = Number(segment.name);
+                  const argIndex = parseInt(segment.name, 10);
 
+                  if (Number.isFinite(argIndex)) {
                     if (!(argIndex >= 0 && argIndex < args.length)) {
                       throw new Error(`Unbound argument #${argIndex}`);
                     } else {
@@ -311,7 +311,7 @@ function locateArgsVariable(node: ShellLine): boolean {
 
             switch (segment.type) {
               case `variable`: {
-                return segment.name === `@` || segment.name === `#` || segment.name === `*` || Number.isFinite(segment.name);
+                return segment.name === `@` || segment.name === `#` || segment.name === `*` || Number.isFinite(parseInt(segment.name, 10));
               } break;
 
               case `shell`: {
