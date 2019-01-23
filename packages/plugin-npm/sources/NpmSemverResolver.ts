@@ -4,7 +4,7 @@ import {LinkType}                                                               
 import {httpUtils, structUtils}                                                              from '@berry/core';
 import semver                                                                                from 'semver';
 
-import {DEFAULT_REGISTRY, PROTOCOL}                                                          from './constants';
+import {PROTOCOL}                                                                            from './constants';
 
 export class NpmSemverResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -80,7 +80,7 @@ export class NpmSemverResolver implements Resolver {
   }
 
   private getIdentUrl(ident: Ident, opts: MinimalResolveOptions) {
-    const registry = opts.project.configuration.registryServer || DEFAULT_REGISTRY;
+    const registry = opts.project.configuration.registryServer;
 
     if (ident.scope) {
       return `${registry}/@${ident.scope}%2f${ident.name}`;

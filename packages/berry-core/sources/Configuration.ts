@@ -110,13 +110,6 @@ export const coreDefinitions = {
     default: null,
   },
 
-  // Settings related to the registry used to resolve semver requests
-  registryServer: {
-    description: `URL of the selected npm registry (note: npm enterprise isn't supported)`,
-    type: SettingsType.STRING,
-    default: null,
-  },
-
   // Settings related to security
   enableScripts: {
     description: `If true, packages are allowed to have install scripts by default`,

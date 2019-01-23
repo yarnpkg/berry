@@ -2,7 +2,7 @@ import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOption
 import {httpUtils, structUtils}                                                    from '@berry/core';
 import {Ident, Descriptor, Locator, Package}                                       from '@berry/core';
 
-import {DEFAULT_REGISTRY, PROTOCOL}                                                from './constants';
+import {PROTOCOL}                                                                  from './constants';
 
 export const TAG_REGEXP = /^[a-z]+$/;
 
@@ -54,7 +54,7 @@ export class NpmTagResolver implements Resolver {
   }
 
   private getIdentUrl(ident: Ident, opts: MinimalResolveOptions) {
-    const registry = opts.project.configuration.registryServer || DEFAULT_REGISTRY;
+    const registry = opts.project.configuration.registryServer;
 
     if (ident.scope) {
       return `${registry}/@${ident.scope}%2f${ident.name}`;

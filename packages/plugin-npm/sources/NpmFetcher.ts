@@ -3,7 +3,7 @@ import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
 import {Locator, MessageName}                       from '@berry/core';
 import semver                                       from 'semver';
 
-import {DEFAULT_REGISTRY, PROTOCOL}                 from './constants';
+import {PROTOCOL}                                   from './constants';
 
 export class NpmFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -47,7 +47,7 @@ export class NpmFetcher implements Fetcher {
 
   private getLocatorUrl(locator: Locator, opts: FetchOptions) {
     const version = locator.reference.slice(PROTOCOL.length);
-    const registry = opts.project.configuration.registryServer || DEFAULT_REGISTRY;
+    const registry = opts.project.configuration.npmRegistryServer;
 
     return `${registry}/${structUtils.requirableIdent(locator)}/-/${locator.name}-${version}.tgz`;
   }
