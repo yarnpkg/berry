@@ -1,8 +1,9 @@
 import {Plugin}          from '@berry/core';
 
-import setVersionPolicy  from './commands/policies/set-version';
-import foreachWorkspaces from './commands/workspaces/foreach';
-import listWorkspaces    from './commands/workspaces/list';
+import setConfig         from './commands/x-config/set';
+import setVersionPolicy  from './commands/x-policies/set-version';
+import foreachWorkspaces from './commands/x-workspaces/foreach';
+import listWorkspaces    from './commands/x-workspaces/list';
 import entry             from './commands/_entry';
 import add               from './commands/add';
 import bin               from './commands/bin';
@@ -16,6 +17,7 @@ import run               from './commands/run';
 
 const plugin: Plugin = {
   commands: [
+    setConfig,
     setVersionPolicy,
     foreachWorkspaces,
     listWorkspaces,
