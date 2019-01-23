@@ -10,6 +10,10 @@ export default (concierge: any) => concierge
     // berry --version
     if (args.length === 1 && args[0] === `--version`) {
       stdout.write(`v2.0.0\n`);
+
+    // berry --help
+    } else if (args.length === 1 && (args[0] === `--help` || args[0] === `-h`)) {
+      concierge.usage(env.argv0, {stream: stdout});
     
     // berry --frozen-lockfile
     } else if (args.length === 0 || args[0].charAt(0) === `-`) {
