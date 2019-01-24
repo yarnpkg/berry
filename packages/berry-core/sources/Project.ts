@@ -484,17 +484,7 @@ export class Project {
     const hasBeenTraversed = new Set();
     const volatileDescriptors = new Set(this.resolutionAliases.values());
 
-    let indent = 0;
-
     const resolvePeerDependencies = (parentLocator: Locator) => {
-      indent += 1;
-      console.log(` `.repeat(indent) + structUtils.prettyLocator(this.configuration, parentLocator));
-      const result = realResolvePeerDependencies(parentLocator)
-      indent -= 1;
-      return result;
-    };
-    
-    const realResolvePeerDependencies = (parentLocator: Locator) => {
       if (hasBeenTraversed.has(parentLocator.locatorHash))
         return;
 
@@ -518,6 +508,9 @@ export class Project {
         if (!pkg)
           throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
+        // Note that we must protect against against infinite recursion by
+        // preventing virtual locators from being re-resolved again (cf the
+        // Dragon Test 3)
         if (pkg.peerDependencies.size > 0 && !structUtils.isVirtualLocator(pkg)) {
           const virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
           const virtualizedPackage = structUtils.virtualizePackage(pkg, parentLocator.locatorHash);

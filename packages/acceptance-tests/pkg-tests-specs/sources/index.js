@@ -1,5 +1,8 @@
 /* @flow */
 
+exports.command = {};
+exports.command.add = require('./commands/add');
+
 exports.basic = require('./basic');
 exports.dragon = require('./dragon');
 exports.lock = require('./lock');

@@ -2,7 +2,9 @@
 
 import type {PackageDriver} from 'pkg-tests-core';
 
-const {fs: {writeFile, writeJson}} = require('pkg-tests-core');
+const {
+  fs: {writeFile, writeJson},
+} = require('pkg-tests-core');
 
 module.exports = (makeTemporaryEnv: PackageDriver) => {
   describe(`Workspaces tests`, () => {

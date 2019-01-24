@@ -9,6 +9,7 @@ const {
 
 const {
   basic: basicSpecs,
+  command: commandSpecs,
   dragon: dragonSpecs,
   lock: lockSpecs,
   pnp: pnpSpecs,
@@ -26,28 +27,23 @@ const pkgDriver = generatePkgDriver({
     [command, ...args],
     {cwd, projectFolder, registryUrl, plugNPlay, plugnplayShebang, plugnplayBlacklist, env},
   ) {
-    if (projectFolder)
-      args = [...args, `--cwd`, projectFolder];
+    if (projectFolder) args = [...args, `--cwd`, projectFolder];
 
-    const res = await execFile(
-      process.execPath,
-      [`${__dirname}/../berry-cli/bin/berry.js`, command, ...args],
-      {
-        env: Object.assign(
-          {
-            [`BERRY_CACHE_FOLDER`]: `${path}/.berry/cache`,
-//          [`BERRY_PNP_BLACKLIST`]: plugnplayBlacklist || ``,
-            [`BERRY_NPM_REGISTRY_SERVER`]: registryUrl,
-            [`PATH`]: `${path}/bin${delimiter}${process.env.PATH}`,
-          },
-          plugnplayShebang && {
-            [`BERRY_PNP_SHEBANG`]: plugnplayShebang
-          },
-          env,
-        ),
-        cwd: cwd || path,
-      },
-    );
+    const res = await execFile(process.execPath, [`${__dirname}/../berry-cli/bin/berry.js`, command, ...args], {
+      env: Object.assign(
+        {
+          [`BERRY_CACHE_FOLDER`]: `${path}/.berry/cache`,
+          //          [`BERRY_PNP_BLACKLIST`]: plugnplayBlacklist || ``,
+          [`BERRY_NPM_REGISTRY_SERVER`]: registryUrl,
+          [`PATH`]: `${path}/bin${delimiter}${process.env.PATH}`,
+        },
+        plugnplayShebang && {
+          [`BERRY_PNP_SHEBANG`]: plugnplayShebang,
+        },
+        env,
+      ),
+      cwd: cwd || path,
+    });
 
     if (process.env.JEST_LOG_SPAWNS) {
       console.log(`===== stdout:`);
@@ -68,6 +64,8 @@ beforeEach(async () => {
   await startPackageServer();
   await getPackageRegistry();
 });
+
+commandSpecs.add(pkgDriver);
 
 basicSpecs(pkgDriver);
 lockSpecs(pkgDriver);

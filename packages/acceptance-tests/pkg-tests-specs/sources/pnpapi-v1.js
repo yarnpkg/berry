@@ -1,5 +1,7 @@
 const {normalize} = require('path');
-const {fs: {writeFile, writeJson}} = require('pkg-tests-core');
+const {
+  fs: {writeFile, writeJson},
+} = require('pkg-tests-core');
 
 module.exports = makeTemporaryEnv => {
   describe(`Plug'n'Play API (v1)`, () => {

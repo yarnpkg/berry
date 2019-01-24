@@ -2,7 +2,9 @@
 
 import type {PackageDriver} from 'pkg-tests-core';
 
-const {fs: {writeFile, writeJson}} = require('pkg-tests-core');
+const {
+  fs: {writeFile, writeJson},
+} = require('pkg-tests-core');
 
 // Here be dragons. The biggest and baddest tests, that just can't be described in a single line of summary. Because
 // of this, they each must be clearly documented and explained.

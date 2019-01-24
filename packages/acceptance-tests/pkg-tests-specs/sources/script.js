@@ -5,7 +5,9 @@ import type {PackageDriver} from 'pkg-tests-core';
 const {existsSync, mkdirp} = require('fs-extra');
 const {isAbsolute, resolve} = require('path');
 
-const {fs: {createTemporaryFolder, makeFakeBinary}} = require(`pkg-tests-core`);
+const {
+  fs: {createTemporaryFolder, makeFakeBinary},
+} = require(`pkg-tests-core`);
 
 module.exports = (makeTemporaryEnv: PackageDriver) => {
   const globalName = makeTemporaryEnv.getPackageManagerName();
@@ -107,7 +109,9 @@ module.exports = (makeTemporaryEnv: PackageDriver) => {
           const {stdout} = await run(`bin`, `has-bin-entries`);
 
           expect(stdout.trim()).not.toEqual(``);
-          await expect(source(`require('fs').existsSync(${JSON.stringify(resolve(path, stdout.trim()))})`)).resolves.toEqual(true);
+          await expect(
+            source(`require('fs').existsSync(${JSON.stringify(resolve(path, stdout.trim()))})`),
+          ).resolves.toEqual(true);
         },
       ),
     );
@@ -147,7 +151,9 @@ module.exports = (makeTemporaryEnv: PackageDriver) => {
           });
 
           expect(stdout.trim()).not.toEqual(``);
-          await expect(source(`require('fs').existsSync(${JSON.stringify(resolve(path, stdout.trim()))})`)).resolves.toEqual(true);
+          await expect(
+            source(`require('fs').existsSync(${JSON.stringify(resolve(path, stdout.trim()))})`),
+          ).resolves.toEqual(true);
         },
       ),
     );

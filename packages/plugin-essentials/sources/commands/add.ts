@@ -54,16 +54,18 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
           ? bestLocator.reference.slice(protocolIndex + 1)
           : bestLocator.reference;
 
-        if (!semver.valid(pathname) || exact)
+        if (!semver.valid(pathname))
           return structUtils.convertLocatorToDescriptor(bestLocator);
 
         const newProtocol = protocol !== configuration.defaultProtocol
           ? protocol
           : null;
 
-        const newPathname = tilde
-          ? `~${pathname}`
-          : `^${pathname}`;
+        const newPathname = exact
+          ? pathname
+          : tilde
+            ? `~${pathname}`
+            : `^${pathname}`;
 
         const newRange = newProtocol !== null
           ? `${newProtocol}${newPathname}`

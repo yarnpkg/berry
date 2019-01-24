@@ -2,7 +2,10 @@
 
 import type {PackageDriver} from 'pkg-tests-core';
 
-const {fs: {writeFile, writeJson}, tests: {setPackageWhitelist}} = require('pkg-tests-core');
+const {
+  fs: {writeFile, writeJson},
+  tests: {setPackageWhitelist},
+} = require('pkg-tests-core');
 
 module.exports = (makeTemporaryEnv: PackageDriver) => {
   describe(`Lock tests`, () => {

@@ -300,7 +300,13 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
   });
 };
 
-exports.generatePkgDriver = function generatePkgDriver({getName, runDriver}: {|getName: () => string, runDriver: PackageRunDriver|}): PackageDriver {
+exports.generatePkgDriver = function generatePkgDriver({
+  getName,
+  runDriver,
+}: {|
+  getName: () => string,
+  runDriver: PackageRunDriver,
+|}): PackageDriver {
   function withConfig(definition): PackageDriver {
     const makeTemporaryEnv = (packageJson, subDefinition, fn) => {
       if (typeof subDefinition === 'function') {
