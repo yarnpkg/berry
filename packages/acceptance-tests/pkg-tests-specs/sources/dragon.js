@@ -120,5 +120,33 @@ module.exports = (makeTemporaryEnv: PackageDriver) => {
         },
       ),
     );
+
+    test(
+      `it should pass the dragon test 3`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`dragon-test-3-a`]: `1.0.0`,
+          },
+        },
+        {
+          plugNPlay: true,
+        },
+        async ({path, run, source}) => {
+          // This test assumes the following:
+          //
+          // . -> A -> B -> A@* (peer dep)
+          //        -> C@* (peer dep)
+          //
+          // In this situation, because A has a peer dependency (on C), it must be instantiated
+          // once for each time it is found in the dependency tree. The problem is that since one
+          // of its dependencies (B) has itself a peer dependency on A, we can reach a state where
+          // the package manager will make an infinite loop - it will instantiate A, then B, then
+          // A, then B, etc, until it eventually runs out of memory.
+
+          await run(`install`);
+        },
+      ),
+    );
   });
 };

@@ -37,7 +37,7 @@ const pkgDriver = generatePkgDriver({
           {
             [`BERRY_CACHE_FOLDER`]: `${path}/.berry/cache`,
 //          [`BERRY_PNP_BLACKLIST`]: plugnplayBlacklist || ``,
-            [`BERRY_REGISTRY_SERVER`]: registryUrl,
+            [`BERRY_NPM_REGISTRY_SERVER`]: registryUrl,
             [`PATH`]: `${path}/bin${delimiter}${process.env.PATH}`,
           },
           plugnplayShebang && {
