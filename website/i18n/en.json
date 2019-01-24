@@ -3,7 +3,7 @@
   "localized-strings": {
     "next": "Next",
     "previous": "Previous",
-    "tagline": "A modern package manager by the team that brought you Yarn",
+    "tagline": "Package management made modern",
     "docs": {
       "api-about": {
         "title": "About this API",
@@ -33,9 +33,12 @@
         "title": "Workspace",
         "sidebar_label": "Workspace"
       },
+      "cli-commands": {
+        "title": "CLI Commands",
+        "sidebar_label": "CLI Commands"
+      },
       "compiling-a-bundle": {
-        "title": "Compiling Berry",
-        "sidebar_label": "Compiling Berry"
+        "title": "compiling-a-bundle"
       },
       "day-to-day-maintenance": {
         "title": "Day-to-Day Maintenance",

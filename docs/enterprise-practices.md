@@ -13,11 +13,11 @@ enterprise users.
 
 ## Make a policy against packages with build scripts
 
-> Note: For obvious reasons, this particular recommendation mostly applies to
-> interpreted languages rather than compiled ones.
-
 **Why?** Build scripts cause a bunch of problems in the context of a package
-manager, are a vulnerability risk, and have portability issues.
+manager (such as causing the deoptimization of part of your dependency tree,
+since the artifacts must be kept local to your projects rather than shared
+between multiple installs), are a vulnerability risk, and have portability
+issues.
 
 **How?** Apart from avoiding packages that have build scripts, you also can
 disable those build scripts if they don't offer sensible benefits. This can be

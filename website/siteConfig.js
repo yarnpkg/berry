@@ -21,8 +21,8 @@ const users = [
 ];
 
 const siteConfig = {
-  title: 'Berry', // Title for your website.
-  tagline: 'A modern package manager by the team that brought you Yarn',
+  title: 'Yarn - Berry edition', // Title for your website.
+  tagline: 'Package management made modern',
   url: 'https://arcanis.github.io', // Your website URL
   baseUrl: '/berry/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
@@ -30,15 +30,15 @@ const siteConfig = {
   //   baseUrl: '/test-site/',
 
   // Used for publishing and more
-  projectName: 'berry',
-  organizationName: 'arcanis',
+  projectName: 'yarn',
+  organizationName: 'yarnpkg',
   // For top-level user or org sites, the organization is still the same.
   // e.g., for the https://JoelMarcey.github.io site, it would be set like...
   //   organizationName: 'JoelMarcey'
 
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
-    {doc: 'workspaces', label: 'Docs'},
+    {doc: 'cli-commands', label: 'Docs'},
     {doc: 'class-configuration', label: 'API'},
     {page: 'help', label: 'Help'},
   ],
@@ -49,12 +49,12 @@ const siteConfig = {
   /* path to images for header/footer */
   headerIcon: 'img/docusaurus.svg',
   footerIcon: 'img/docusaurus.svg',
-  favicon: 'img/favicon.png',
+  favicon: 'img/favicon.ico',
 
   /* Colors for website */
   colors: {
-    primaryColor: '#741a82',
-    secondaryColor: '#c957db',
+    primaryColor: '#25799f',
+    secondaryColor: '#2188b6',
   },
 
   /* Custom fonts for website */
@@ -72,7 +72,7 @@ const siteConfig = {
   */
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
-  copyright: `Copyright © ${new Date().getFullYear()} The Berry core team`,
+  copyright: `Copyright © ${new Date().getFullYear()} Yarn contributors`,
 
   highlight: {
     // Highlight.js theme to use for syntax highlighting in code blocks.

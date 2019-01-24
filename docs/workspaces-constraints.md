@@ -24,12 +24,14 @@ As we mentioned, Prolog is a fact-based engine. It starts with a list of
 *facts* that are always true, and a list of *predicates* that basically read as
 "predicate `f(X)` is true if `u(X)` and `v(X)` are both true". By computing for
 which values of `X` are `u(X)` and `v(X)` true, Prolog is able to automatically
-compute the list of values for which `f(X)` would be true.
+compute the list of values for which `f(X)` would be true. This is particularly
+useful for contraints, because it allows you to write very simple but powerful
+rules that have the ability to affect all your workspaces in very few lines.
 
-Going back to the constraints the *facts* are definitions created by the
-package manager, and the *predicates* are the set of actions that you want to
-perform. In order to do this, the constraint engine exposes the following
-functions:
+Going back to the constraint engine, the *facts* are the definitions created by
+the package manager (such as "fact: the root workspace depends on Lodash"), and
+the *predicates* are the set of rules that you want to enforce accross your
+project (check below for some recipes).
 
 ### Query predicate
 
@@ -112,6 +114,13 @@ the reason why the dependency isn't allowed).
 The following constraints are a good starting point to figure out how to write
 your owns. If you build others that would be a good fit for this section, open
 a PR and we'll add them here!
+
+> **Quick note about the Prolog syntax**
+>
+> Be aware that in prolog `X :- Y` basically means "X is true for each Y that's
+> true". Similarly, know that UpperCamelCase names are variables that get
+> "replaced" by every compatible value possible. Finally, the special variable
+> name `_` simply discard the parameter value.
 
 **Prevent all workspaces from depending on a specific package**
 

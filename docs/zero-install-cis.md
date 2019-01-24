@@ -4,8 +4,6 @@ title: Zero-Install CIs
 sidebar_label: Zero-Install CIs
 ---
 
-## Context
-
 One of the explicit goals in Berry is to make it extremely easy to setup a
 project where your dependencies *don't need to be installed*. This is
 particularly important for production-grade applications, since any code

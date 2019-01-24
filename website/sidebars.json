@@ -20,6 +20,7 @@
         ],
         "Other Resources": [
             "api-reference",
+            "cli-commands",
             "dependency-contract",
             "acceptance-tests",
             "optional-plugins",
