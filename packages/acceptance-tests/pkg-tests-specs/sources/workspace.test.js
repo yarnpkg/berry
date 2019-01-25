@@ -8,7 +8,7 @@ const {
 
 describe(`Workspaces tests`, () => {
   test(
-    `it should implicitely make workspaces require-able from the top-level`,
+    `it should not implicitely make workspaces require-able`,
     makeTemporaryEnv(
       {
         private: true,
@@ -29,7 +29,7 @@ describe(`Workspaces tests`, () => {
 
         await run(`install`);
 
-        await expect(source(`require('workspace-a')`)).resolves.toEqual(42);
+        await expect(source(`require('workspace-a')`)).rejects.toBeTruthy();
       },
     ),
   );
