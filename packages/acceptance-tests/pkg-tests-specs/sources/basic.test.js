@@ -1,7 +1,3 @@
-/* @flow */
-
-import type {PackageDriver} from 'pkg-tests-core';
-
 const {
   fs: {createTemporaryFolder, writeFile, writeJson},
   tests: {getPackageArchivePath, getPackageHttpArchivePath, getPackageDirectoryPath},

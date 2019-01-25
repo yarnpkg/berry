@@ -851,6 +851,7 @@ export function setupCompatibilityLayer() {
 
 if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
   setup();
+  setupCompatibilityLayer();
 }
 
 // @ts-ignore

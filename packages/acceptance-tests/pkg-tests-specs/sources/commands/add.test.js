@@ -1,7 +1,3 @@
-/* @flow */
-
-import type {PackageDriver} from 'pkg-tests-core';
-
 const {
   fs: {readJson},
 } = require('pkg-tests-core');

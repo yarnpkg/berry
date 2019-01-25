@@ -1,7 +1,3 @@
-/* @flow */
-
-import type {PackageDriver} from 'pkg-tests-core';
-
 const {existsSync, mkdirp} = require('fs-extra');
 const {isAbsolute, resolve} = require('path');
 
