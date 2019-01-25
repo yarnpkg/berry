@@ -7,25 +7,14 @@ const {
   exec: {execFile},
 } = require(`pkg-tests-core`);
 
-const {
-  basic: basicSpecs,
-  command: commandSpecs,
-  dragon: dragonSpecs,
-  lock: lockSpecs,
-  pnp: pnpSpecs,
-  pnpapiV1: pnpapiV1Specs,
-  script: scriptSpecs,
-  workspace: workspaceSpecs,
-} = require(`pkg-tests-specs`);
-
-const pkgDriver = generatePkgDriver({
+global.makeTemporaryEnv = generatePkgDriver({
   getName() {
     return `berry`;
   },
   async runDriver(
     path,
     [command, ...args],
-    {cwd, projectFolder, registryUrl, plugNPlay, plugnplayShebang, plugnplayBlacklist, env},
+    {cwd, projectFolder, registryUrl, plugnplayShebang, plugnplayBlacklist, env},
   ) {
     if (projectFolder) args = [...args, `--cwd`, projectFolder];
 
@@ -64,13 +53,3 @@ beforeEach(async () => {
   await startPackageServer();
   await getPackageRegistry();
 });
-
-commandSpecs.add(pkgDriver);
-
-basicSpecs(pkgDriver);
-lockSpecs(pkgDriver);
-scriptSpecs(pkgDriver);
-workspaceSpecs(pkgDriver);
-pnpSpecs(pkgDriver);
-pnpapiV1Specs(pkgDriver);
-dragonSpecs(pkgDriver);
