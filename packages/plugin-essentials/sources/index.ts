@@ -1,9 +1,9 @@
 import {Plugin}          from '@berry/core';
 
-import setConfig         from './commands/x-config/set';
-import setVersionPolicy  from './commands/x-policies/set-version';
-import foreachWorkspaces from './commands/x-workspaces/foreach';
-import listWorkspaces    from './commands/x-workspaces/list';
+import setConfig         from './commands/config/set';
+import setVersionPolicy  from './commands/policies/set-version';
+import foreachWorkspaces from './commands/workspaces/foreach';
+import listWorkspaces    from './commands/workspaces/list';
 import entry             from './commands/_entry';
 import add               from './commands/add';
 import bin               from './commands/bin';
