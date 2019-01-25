@@ -10,6 +10,7 @@ import bin               from './commands/bin';
 import config            from './commands/config';
 import exec              from './commands/exec';
 import help              from './commands/help';
+import init              from './commands/init';
 import install           from './commands/install';
 import node              from './commands/node';
 import remove            from './commands/remove';
@@ -27,6 +28,7 @@ const plugin: Plugin = {
     config,
     exec,
     help,
+    init,
     install,
     node,
     remove,

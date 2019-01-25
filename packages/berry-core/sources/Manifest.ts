@@ -211,6 +211,16 @@ export class Manifest {
   }
 
   exportTo(data: {[key: string]: any}) {
+    if (this.name !== null)
+      data.name = structUtils.stringifyIdent(this.name);
+    else
+      delete data.name;
+
+    if (this.version !== null)
+      data.version = this.version;
+    else
+      delete data.version;
+
     data.dependencies = this.dependencies.size === 0 ? undefined : Object.assign({}, ... structUtils.sortDescriptors(this.dependencies.values()).map(dependency => {
       return {[structUtils.stringifyIdent(dependency)]: dependency.range};
     }));

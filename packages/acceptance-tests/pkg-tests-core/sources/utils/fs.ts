@@ -150,6 +150,10 @@ exports.createTemporaryFile = async function createTemporaryFile(filePath: strin
   }
 };
 
+exports.mkdirp = async function mkdirp(target: string): Promise<void> {
+  await fs.mkdirp(target);
+};
+
 exports.writeFile = async function writeFile(target: string, body: string | Buffer): Promise<void> {
   await fs.mkdirp(path.dirname(target));
   await fs.writeFile(target, body);

@@ -9,7 +9,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps@1.0.0`);
 
-        expect(await readJson(`${path}/package.json`)).toMatchObject({
+        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `1.0.0`,
           },

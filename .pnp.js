@@ -1486,6 +1486,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageDependencies: new Map([
           ["@berry/plugin-essentials", "workspace:0.0.0"],
           ["@berry/core", "workspace:0.0.0"],
+          ["@berry/json-proxy", "workspace:0.0.0"],
           ["@berry/parsers", "workspace:0.0.0"],
           ["@manaflair/concierge", "virtual:1e56db0a024e528d70b7e64707b0bfb794e436e6a6990c251e023cda2f7e74aa0a92f3c97f2961281197fed25b938b95838b74f8e4a7454c54611a5dd81d4094#npm:0.9.2"],
           ["execa", "npm:1.0.0"],
