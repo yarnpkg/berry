@@ -8133,7 +8133,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
     ["node-pre-gyp", new Map([
       ["npm:0.10.3", {
-        packageLocation: path.resolve(__dirname, "./.berry/pnp/unplugged/node-pre-gyp-f5bfc8add82de455181cfc0157a6c80cb44229afe031e299ac8b624ddda7b752f7eae53e12ab4f8a765eab91543bf507cb45ce4ecb3c97b908e699ca9d213d95/node_modules/node-pre-gyp/"),
+        packageLocation: path.resolve(__dirname, "./.berry/pnp/unplugged/node-pre-gyp-npm-0.10.3-f5bfc8add82de455181cfc0157a6c80cb44229afe031e299ac8b624ddda7b752/node_modules/node-pre-gyp/"),
         packageDependencies: new Map([
           ["node-pre-gyp", "npm:0.10.3"],
           ["detect-libc", "npm:1.0.3"],
@@ -12492,7 +12492,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/node-libs-browser-npm-2.2.0-67eccb34759ca4750e9c8083b1f9360bdc7fcc942924ceff9b84e8d5f3a53849.zip/node_modules/node-libs-browser/", {"name":"node-libs-browser","reference":"npm:2.2.0"}],
     ["./.berry/cache/node-modules-regexp-npm-1.0.0-0db2ec292bf8cae5336dbfb4c3476d3dcf5492a8e14cd1e57889eb91dbb7174a.zip/node_modules/node-modules-regexp/", {"name":"node-modules-regexp","reference":"npm:1.0.0"}],
     ["./.berry/cache/node-notifier-npm-5.3.0-591c00c9585c2d4cc76e8f999689d730be19493ccc559b4886b7012d3543a30a.zip/node_modules/node-notifier/", {"name":"node-notifier","reference":"npm:5.3.0"}],
-    ["./.berry/pnp/unplugged/node-pre-gyp-f5bfc8add82de455181cfc0157a6c80cb44229afe031e299ac8b624ddda7b752f7eae53e12ab4f8a765eab91543bf507cb45ce4ecb3c97b908e699ca9d213d95/node_modules/node-pre-gyp/", {"name":"node-pre-gyp","reference":"npm:0.10.3"}],
+    ["./.berry/pnp/unplugged/node-pre-gyp-npm-0.10.3-f5bfc8add82de455181cfc0157a6c80cb44229afe031e299ac8b624ddda7b752/node_modules/node-pre-gyp/", {"name":"node-pre-gyp","reference":"npm:0.10.3"}],
     ["./.berry/cache/node-releases-npm-1.1.3-f6a1c9a76ea367ddbdfe784548956b9ebf193179242d24be0b692033ccdb382f.zip/node_modules/node-releases/", {"name":"node-releases","reference":"npm:1.1.3"}],
     ["./.berry/cache/node.extend-npm-2.0.2-7864582ad41c32f2bb56d78e52df58eaac46a449517a601b7d51494eabac84b0.zip/node_modules/node.extend/", {"name":"node.extend","reference":"npm:2.0.2"}],
     ["./.berry/cache/nopt-npm-4.0.1-f86f336a262fe64c91213cebb6b3d299c90c7814d2a73a8657823b94e9a8ef18.zip/node_modules/nopt/", {"name":"nopt","reference":"npm:4.0.1"}],

@@ -1,3 +1,5 @@
+import semver                                   from 'semver';
+
 import {Configuration}                          from './Configuration';
 import * as hashUtils                           from './hashUtils';
 import * as miscUtils                           from './miscUtils';
@@ -170,11 +172,29 @@ export function stringifyLocator(locator: Locator) {
 }
 
 export function slugifyLocator(locator: Locator) {
-  if (locator.scope) {
-    return `@${locator.scope}-${locator.name}-${locator.locatorHash}`;
-  } else {
-    return `${locator.name}-${locator.locatorHash}`;
-  }
+  const protocolIndex = locator.reference.indexOf(`:`);
+
+  const protocol = protocolIndex !== -1
+    ? locator.reference.slice(0, protocolIndex)
+    : `exotic`;
+
+  const version = protocolIndex !== -1
+    ? semver.valid(locator.reference.slice(protocolIndex + 1))
+    : null;
+  
+  const humanReference = version !== null
+    ? `${protocol}-${version}`
+    : protocol;
+
+  // eCryptfs limits the filename size to less than the usual (255); they recommend 140 characters max
+  // https://unix.stackexchange.com/a/32834/24106
+  const hashTruncate = 128 / 2;
+
+  const slug = locator.scope
+    ? `@${locator.scope}-${locator.name}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`
+    : `${locator.name}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`;
+
+  return slug;
 }
 
 export function prettyIdent(configuration: Configuration, ident: Ident) {

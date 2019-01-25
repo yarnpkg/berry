@@ -3,7 +3,6 @@ import {mkdirp, move}             from 'fs-extra';
 import {chmod, writeFile}         from 'fs';
 import {lock, unlock}             from 'lockfile';
 import {resolve}                  from 'path';
-import semver                     from 'semver';
 import {promisify}                from 'util';
 
 import {Configuration}            from './Configuration';
@@ -42,29 +41,7 @@ export class Cache {
   }
 
   getCacheKey(locator: Locator) {
-    const protocolIndex = locator.reference.indexOf(`:`);
-
-    const protocol = protocolIndex !== -1
-      ? locator.reference.slice(0, protocolIndex)
-      : `exotic`;
-
-    const version = protocolIndex !== -1
-      ? semver.valid(locator.reference.slice(protocolIndex + 1))
-      : null;
-    
-    const humanReference = version !== null
-      ? `${protocol}-${version}`
-      : protocol;
-
-    // eCryptfs limits the filename size to less than the usual (255); they recommend 140 characters max
-    // https://unix.stackexchange.com/a/32834/24106
-    const hashTruncate = 128 / 2;
-
-    const cacheKey = locator.scope
-      ? `@${locator.scope}-${locator.name}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`
-      : `${locator.name}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`;
-    
-    return cacheKey;
+    return structUtils.slugifyLocator(locator);
   }
 
   getFilePath(key: string) {
