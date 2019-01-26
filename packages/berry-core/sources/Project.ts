@@ -10,6 +10,7 @@ import {tmpNameSync}                                        from 'tmp';
 import {AliasResolver}                                      from './AliasResolver';
 import {Cache}                                              from './Cache';
 import {Configuration}                                      from './Configuration';
+import {Fetcher}                                            from './Fetcher';
 import {Installer, BuildDirective}                          from './Installer';
 import {Linker}                                             from './Linker';
 import {LockfileResolver}                                   from './LockfileResolver';
@@ -27,6 +28,7 @@ import {LinkType}                                           from './types';
 
 export type InstallOptions = {
   cache: Cache,
+  fetcher?: Fetcher,
   report: Report,
   lockfileOnly?: boolean,
 };
@@ -592,8 +594,8 @@ export class Project {
     this.storedPackages = allPackages;
   }
 
-  async fetchEverything({cache, report}: InstallOptions) {
-    const fetcher = this.configuration.makeFetcher();
+  async fetchEverything({cache, report, fetcher: userFetcher}: InstallOptions) {
+    const fetcher = userFetcher || this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, readOnly: false, cache, fetcher, report};
 
     const locatorHashes = miscUtils.sortMap(this.storedResolutions.values(), [(locatorHash: LocatorHash) => {

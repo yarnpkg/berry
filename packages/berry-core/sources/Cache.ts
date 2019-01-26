@@ -48,6 +48,10 @@ export class Cache {
     return resolve(this.cwd, `${key}.zip`);
   }
 
+  getLocatorPath(locator: Locator) {
+    return this.getFilePath(this.getCacheKey(locator));
+  }
+
   async setup() {
     await mkdirp(this.cwd);
 
@@ -57,9 +61,7 @@ export class Cache {
   }
 
   async fetchPackageFromCache(locator: Locator, checksum: string | null, loader?: () => Promise<ZipFS>): Promise<[ZipFS, string]> {
-    const key = this.getCacheKey(locator);
-    const cachePath = this.getFilePath(key);
-
+    const cachePath = this.getLocatorPath(locator);
     const baseFs = new NodeFS();
 
     const validateFile = async (path: string) => {

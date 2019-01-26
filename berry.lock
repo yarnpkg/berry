@@ -1034,6 +1034,7 @@ __metadata:
     "@berry/core": "workspace:0.0.0"
     "@berry/json-proxy": "workspace:0.0.0"
     "@berry/parsers": "workspace:0.0.0"
+    "@berry/zipfs": "workspace:0.0.0"
     "@manaflair/concierge": "npm:^0.9.2"
     execa: "npm:^1.0.0"
     fs-extra: "npm:^7.0.0"

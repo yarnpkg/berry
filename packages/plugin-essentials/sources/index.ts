@@ -1,5 +1,6 @@
 import {Plugin}          from '@berry/core';
 
+import cleanCache        from './commands/cache/clean';
 import setConfig         from './commands/config/set';
 import setVersionPolicy  from './commands/policies/set-version';
 import foreachWorkspaces from './commands/workspaces/foreach';
@@ -18,6 +19,7 @@ import run               from './commands/run';
 
 const plugin: Plugin = {
   commands: [
+    cleanCache,
     setConfig,
     setVersionPolicy,
     foreachWorkspaces,

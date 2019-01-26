@@ -1488,6 +1488,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@berry/core", "workspace:0.0.0"],
           ["@berry/json-proxy", "workspace:0.0.0"],
           ["@berry/parsers", "workspace:0.0.0"],
+          ["@berry/zipfs", "workspace:0.0.0"],
           ["@manaflair/concierge", "virtual:1e56db0a024e528d70b7e64707b0bfb794e436e6a6990c251e023cda2f7e74aa0a92f3c97f2961281197fed25b938b95838b74f8e4a7454c54611a5dd81d4094#npm:0.9.2"],
           ["execa", "npm:1.0.0"],
           ["fs-extra", "npm:7.0.1"],
@@ -13633,6 +13634,12 @@ class AliasFS extends FakeFS_1.FakeFS {
     writeFileSync(p, content) {
         return this.baseFs.writeFileSync(p, content);
     }
+    async unlinkPromise(p) {
+        return await this.baseFs.unlinkPromise(p);
+    }
+    unlinkSync(p) {
+        return this.baseFs.unlinkSync(p);
+    }
     async utimesPromise(p, atime, mtime) {
         return await this.baseFs.utimesPromise(p, atime, mtime);
     }
@@ -13644,6 +13651,12 @@ class AliasFS extends FakeFS_1.FakeFS {
     }
     mkdirSync(p) {
         return this.baseFs.mkdirSync(p);
+    }
+    async rmdirPromise(p) {
+        return await this.baseFs.rmdirPromise(p);
+    }
+    rmdirSync(p) {
+        return this.baseFs.rmdirSync(p);
     }
     async symlinkPromise(target, p) {
         return await this.baseFs.symlinkPromise(target, p);
@@ -13757,6 +13770,12 @@ class CwdFS extends FakeFS_1.FakeFS {
     writeFileSync(p, content) {
         return this.baseFs.writeFileSync(this.fromCwdPath(p), content);
     }
+    async unlinkPromise(p) {
+        return await this.baseFs.unlinkPromise(this.fromCwdPath(p));
+    }
+    unlinkSync(p) {
+        return this.baseFs.unlinkSync(this.fromCwdPath(p));
+    }
     async utimesPromise(p, atime, mtime) {
         return await this.baseFs.utimesPromise(this.fromCwdPath(p), atime, mtime);
     }
@@ -13768,6 +13787,12 @@ class CwdFS extends FakeFS_1.FakeFS {
     }
     mkdirSync(p) {
         return this.baseFs.mkdirSync(this.fromCwdPath(p));
+    }
+    async rmdirPromise(p) {
+        return await this.baseFs.rmdirPromise(this.fromCwdPath(p));
+    }
+    rmdirSync(p) {
+        return this.baseFs.rmdirSync(this.fromCwdPath(p));
     }
     async symlinkPromise(target, p) {
         return await this.baseFs.symlinkPromise(target, this.fromCwdPath(p));
@@ -14003,6 +14028,12 @@ class JailFS extends FakeFS_1.FakeFS {
     writeFileSync(p, content) {
         return this.baseFs.writeFileSync(this.fromJailedPath(p), content);
     }
+    async unlinkPromise(p) {
+        return await this.baseFs.rmdirPromise(this.fromJailedPath(p));
+    }
+    unlinkSync(p) {
+        return this.baseFs.rmdirSync(this.fromJailedPath(p));
+    }
     async utimesPromise(p, atime, mtime) {
         return await this.baseFs.utimesPromise(this.fromJailedPath(p), atime, mtime);
     }
@@ -14014,6 +14045,12 @@ class JailFS extends FakeFS_1.FakeFS {
     }
     mkdirSync(p) {
         return this.baseFs.mkdirSync(this.fromJailedPath(p));
+    }
+    async rmdirPromise(p) {
+        return await this.baseFs.rmdirPromise(this.fromJailedPath(p));
+    }
+    rmdirSync(p) {
+        return this.baseFs.rmdirSync(this.fromJailedPath(p));
     }
     async symlinkPromise(target, p) {
         return await this.baseFs.symlinkPromise(target, this.fromJailedPath(p));
@@ -14142,6 +14179,14 @@ class NodeFS extends FakeFS_1.FakeFS {
     writeFileSync(p, content) {
         this.realFs.writeFileSync(this.fromPortablePath(p), content);
     }
+    async unlinkPromise(p) {
+        return await new Promise((resolve, reject) => {
+            this.realFs.unlink(p, this.makeCallback(resolve, reject));
+        });
+    }
+    unlinkSync(p) {
+        return this.realFs.unlinkSync(this.fromPortablePath(p));
+    }
     async utimesPromise(p, atime, mtime) {
         return await new Promise((resolve, reject) => {
             this.realFs.utimes(p, atime, mtime, this.makeCallback(resolve, reject));
@@ -14157,6 +14202,14 @@ class NodeFS extends FakeFS_1.FakeFS {
     }
     mkdirSync(p) {
         return this.realFs.mkdirSync(this.fromPortablePath(p));
+    }
+    async rmdirPromise(p) {
+        return await new Promise((resolve, reject) => {
+            this.realFs.rmdir(p, this.makeCallback(resolve, reject));
+        });
+    }
+    rmdirSync(p) {
+        return this.realFs.rmdirSync(this.fromPortablePath(p));
     }
     async symlinkPromise(target, p) {
         return await new Promise((resolve, reject) => {
@@ -14618,6 +14671,12 @@ class ZipFS extends FakeFS_1.FakeFS {
             this.registerEntry(resolvedP, index);
         }
     }
+    async unlinkPromise(p) {
+        return this.unlinkSync(p);
+    }
+    unlinkSync(p) {
+        throw new Error(`Unimplemented`);
+    }
     async utimesPromise(p, atime, mtime) {
         return this.utimesSync(p, atime, mtime);
     }
@@ -14652,6 +14711,12 @@ class ZipFS extends FakeFS_1.FakeFS {
         if (this.entries.has(resolvedP) || this.listings.has(resolvedP))
             throw Object.assign(new Error(`EEXIST: file already exists, mkdir '${p}'`), { code: `EEXIST` });
         this.hydrateDirectory(resolvedP);
+    }
+    async rmdirPromise(p) {
+        return this.rmdirSync(p);
+    }
+    rmdirSync(p) {
+        throw new Error(`Unimplemented`);
     }
     hydrateDirectory(resolvedP) {
         const index = libzip_1.default.dir.add(this.zip, path_1.posix.relative(`/`, resolvedP));
@@ -14899,6 +14964,20 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
             return zipFs.writeFileSync(subPath, content);
         });
     }
+    async unlinkPromise(p) {
+        return await this.makeCallPromise(p, async () => {
+            return await this.baseFs.unlinkPromise(p);
+        }, async (zipFs, { archivePath, subPath }) => {
+            return await zipFs.unlinkPromise(subPath);
+        });
+    }
+    unlinkSync(p) {
+        return this.makeCallSync(p, () => {
+            return this.baseFs.unlinkSync(p);
+        }, (zipFs, { subPath }) => {
+            return zipFs.unlinkSync(subPath);
+        });
+    }
     async utimesPromise(p, atime, mtime) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.utimesPromise(p, atime, mtime);
@@ -14925,6 +15004,20 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
             return this.baseFs.mkdirSync(p);
         }, (zipFs, { subPath }) => {
             return zipFs.mkdirSync(subPath);
+        });
+    }
+    async rmdirPromise(p) {
+        return await this.makeCallPromise(p, async () => {
+            return await this.baseFs.rmdirPromise(p);
+        }, async (zipFs, { archivePath, subPath }) => {
+            return await zipFs.rmdirPromise(subPath);
+        });
+    }
+    rmdirSync(p) {
+        return this.makeCallSync(p, () => {
+            return this.baseFs.rmdirSync(p);
+        }, (zipFs, { subPath }) => {
+            return zipFs.rmdirSync(subPath);
         });
     }
     async symlinkPromise(target, p) {
@@ -15114,14 +15207,15 @@ exports.ZipOpenFS = ZipOpenFS;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-zipfs/sources/NodeFS.ts");
 var AliasFS_1 = __webpack_require__(/*! ./AliasFS */ "../berry-zipfs/sources/AliasFS.ts");
 exports.AliasFS = AliasFS_1.AliasFS;
 var CwdFS_1 = __webpack_require__(/*! ./CwdFS */ "../berry-zipfs/sources/CwdFS.ts");
 exports.CwdFS = CwdFS_1.CwdFS;
 var JailFS_1 = __webpack_require__(/*! ./JailFS */ "../berry-zipfs/sources/JailFS.ts");
 exports.JailFS = JailFS_1.JailFS;
-var NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-zipfs/sources/NodeFS.ts");
-exports.NodeFS = NodeFS_1.NodeFS;
+var NodeFS_2 = __webpack_require__(/*! ./NodeFS */ "../berry-zipfs/sources/NodeFS.ts");
+exports.NodeFS = NodeFS_2.NodeFS;
 var FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-zipfs/sources/FakeFS.ts");
 exports.FakeFS = FakeFS_1.FakeFS;
 var ZipFS_1 = __webpack_require__(/*! ./ZipFS */ "../berry-zipfs/sources/ZipFS.ts");
@@ -15215,6 +15309,7 @@ function extendFs(realFs, fakeFs) {
     return patchedFs;
 }
 exports.extendFs = extendFs;
+exports.xfs = new NodeFS_1.NodeFS();
 
 
 /***/ }),
