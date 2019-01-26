@@ -10,7 +10,7 @@ steps:
   displayName: 'Build the standard bundle'
 
 - script: |
-    ./packages/berry-cli/bin/berry run:tests:berry
+    ./packages/berry-cli/bin/berry run:tests
   displayName: 'Run the acceptance tests'
 
 - task: PublishTestResults@2
