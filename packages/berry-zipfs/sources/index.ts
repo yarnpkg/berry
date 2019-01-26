@@ -1,6 +1,7 @@
 import fs          from 'fs';
 
 import {FakeFS}    from './FakeFS';
+import {NodeFS}    from './NodeFS';
 
 export {AliasFS}   from './AliasFS';
 export {CwdFS}     from './CwdFS';
@@ -110,3 +111,5 @@ export function extendFs(realFs: typeof fs, fakeFs: FakeFS): typeof fs {
 
   return patchedFs;
 }
+
+export const xfs = new NodeFS();

@@ -79,6 +79,16 @@ export class NodeFS extends FakeFS {
     this.realFs.writeFileSync(this.fromPortablePath(p), content);
   }
 
+  async unlinkPromise(p: string) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.unlink(p, this.makeCallback(resolve, reject));
+    });
+  }
+
+  unlinkSync(p: string) {
+    return this.realFs.unlinkSync(this.fromPortablePath(p));
+  }
+
   async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
     return await new Promise<void>((resolve, reject) => {
       this.realFs.utimes(p, atime, mtime, this.makeCallback(resolve, reject));
@@ -97,6 +107,16 @@ export class NodeFS extends FakeFS {
 
   mkdirSync(p: string) {
     return this.realFs.mkdirSync(this.fromPortablePath(p));
+  }
+
+  async rmdirPromise(p: string) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.rmdir(p, this.makeCallback(resolve, reject));
+    });
+  }
+
+  rmdirSync(p: string) {
+    return this.realFs.rmdirSync(this.fromPortablePath(p));
   }
 
   async symlinkPromise(target: string, p: string) {

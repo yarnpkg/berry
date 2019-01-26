@@ -31,11 +31,17 @@ export abstract class FakeFS {
   abstract mkdirPromise(p: string): Promise<void>;
   abstract mkdirSync(p: string): void;
 
+  abstract rmdirPromise(p: string): Promise<void>;
+  abstract rmdirSync(p: string): void;
+
   abstract symlinkPromise(target: string, p: string): Promise<void>;
   abstract symlinkSync(target: string, p: string): void;
 
   abstract writeFilePromise(p: string, content: Buffer | string): void;
   abstract writeFileSync(p: string, content: Buffer | string): void;
+
+  abstract unlinkPromise(p: string): Promise<void>;
+  abstract unlinkSync(p: string): void;
 
   abstract utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
   abstract utimesSync(p: string, atime: Date | string | number, mtime: Date | string | number): void;

@@ -78,6 +78,14 @@ export class AliasFS extends FakeFS {
     return this.baseFs.writeFileSync(p, content);
   }
 
+  async unlinkPromise(p: string) {
+    return await this.baseFs.unlinkPromise(p);
+  }
+
+  unlinkSync(p: string) {
+    return this.baseFs.unlinkSync(p);
+  }
+
   async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
     return await this.baseFs.utimesPromise(p, atime, mtime);
   }
@@ -92,6 +100,14 @@ export class AliasFS extends FakeFS {
 
   mkdirSync(p: string) {
     return this.baseFs.mkdirSync(p);
+  }
+
+  async rmdirPromise(p: string) {
+    return await this.baseFs.rmdirPromise(p);
+  }
+
+  rmdirSync(p: string) {
+    return this.baseFs.rmdirSync(p);
   }
 
   async symlinkPromise(target: string, p: string) {

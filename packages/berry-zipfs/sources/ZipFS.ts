@@ -523,6 +523,14 @@ export class ZipFS extends FakeFS {
     }
   }
 
+  async unlinkPromise(p: string) {
+    return this.unlinkSync(p);
+  }
+
+  unlinkSync(p: string) {
+    throw new Error(`Unimplemented`);
+  }
+
   async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
     return this.utimesSync(p, atime, mtime);
   }
@@ -569,6 +577,14 @@ export class ZipFS extends FakeFS {
       throw Object.assign(new Error(`EEXIST: file already exists, mkdir '${p}'`), {code: `EEXIST`});
 
     this.hydrateDirectory(resolvedP);
+  }
+
+  async rmdirPromise(p: string) {
+    return this.rmdirSync(p);
+  }
+
+  rmdirSync(p: string) {
+    throw new Error(`Unimplemented`);
   }
 
   private hydrateDirectory(resolvedP: string) {

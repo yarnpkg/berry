@@ -88,6 +88,14 @@ export class CwdFS extends FakeFS {
     return this.baseFs.writeFileSync(this.fromCwdPath(p), content);
   }
 
+  async unlinkPromise(p: string) {
+    return await this.baseFs.unlinkPromise(this.fromCwdPath(p));
+  }
+
+  unlinkSync(p: string) {
+    return this.baseFs.unlinkSync(this.fromCwdPath(p));
+  }
+
   async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
     return await this.baseFs.utimesPromise(this.fromCwdPath(p), atime, mtime);
   }
@@ -102,6 +110,14 @@ export class CwdFS extends FakeFS {
 
   mkdirSync(p: string) {
     return this.baseFs.mkdirSync(this.fromCwdPath(p));
+  }
+
+  async rmdirPromise(p: string) {
+    return await this.baseFs.rmdirPromise(this.fromCwdPath(p));
+  }
+
+  rmdirSync(p: string) {
+    return this.baseFs.rmdirSync(this.fromCwdPath(p));
   }
 
   async symlinkPromise(target: string, p: string) {

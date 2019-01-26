@@ -177,6 +177,22 @@ export class ZipOpenFS extends FakeFS {
     });
   }
 
+  async unlinkPromise(p: string) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.unlinkPromise(p);
+    }, async (zipFs, {archivePath, subPath}) => {
+      return await zipFs.unlinkPromise(subPath);
+    });
+  }
+
+  unlinkSync(p: string) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.unlinkSync(p);
+    }, (zipFs, {subPath}) => {
+      return zipFs.unlinkSync(subPath);
+    });
+  }
+
   async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.utimesPromise(p, atime, mtime);
@@ -206,6 +222,22 @@ export class ZipOpenFS extends FakeFS {
       return this.baseFs.mkdirSync(p);
     }, (zipFs, {subPath}) => {
       return zipFs.mkdirSync(subPath);
+    });
+  }
+
+  async rmdirPromise(p: string) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.rmdirPromise(p);
+    }, async (zipFs, {archivePath, subPath}) => {
+      return await zipFs.rmdirPromise(subPath);
+    });
+  }
+
+  rmdirSync(p: string) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.rmdirSync(p);
+    }, (zipFs, {subPath}) => {
+      return zipFs.rmdirSync(subPath);
     });
   }
 
