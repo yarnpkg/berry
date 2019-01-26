@@ -31,11 +31,30 @@ export class FileFetcher implements Fetcher {
       packageFs,
       releaseFs: () => packageFs.discardAndClose(),
       prefixPath: `/`,
+      localPath: await this.fetchLocalPath(locator, opts),
       checksum,
     };
   }
 
-  async fetchFromDisk(locator: Locator, opts: FetchOptions) {
+  private async fetchLocalPath(locator: Locator, opts: FetchOptions) {
+    const {parentLocator, filePath} = this.parseLocator(locator);
+
+    if (posix.isAbsolute(filePath))
+      return filePath;
+    
+    const parentFetch = await opts.fetcher.fetch(parentLocator, opts);
+
+    if (parentFetch.releaseFs)
+      parentFetch.releaseFs();
+    
+    if (parentFetch.localPath) {
+      return posix.resolve(parentFetch.localPath, filePath);
+    } else {
+      return undefined;
+    }
+  }
+
+  private async fetchFromDisk(locator: Locator, opts: FetchOptions) {
     const {parentLocator, filePath} = this.parseLocator(locator);
 
     // If the file target is an absolute path we can directly access it via its
