@@ -9,7 +9,7 @@ import {basename}           from 'path';
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
-  .command(`init [-i,--interactive]`)
+  .command(`init`)
   .describe(`create a new package`)
 
   .action(async ({cwd}: {cwd: string}) => {
