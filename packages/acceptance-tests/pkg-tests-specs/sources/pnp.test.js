@@ -658,49 +658,6 @@ describe(`Plug'n'Play`, () => {
     }),
   );
 
-  test(
-    `it should install dependencies using pnp when the installConfig.pnp field is set to true`,
-    makeTemporaryEnv(
-      {
-        dependencies: {[`no-deps`]: `1.0.0`},
-        installConfig: {pnp: true},
-      },
-      async ({path, run, source}) => {
-        await run(`install`);
-
-        expect(existsSync(`${path}/.pnp.js`)).toEqual(true);
-      },
-    ),
-  );
-
-  test(
-    `it should update the installConfig.pnp field of the package.json when installing with --disable-pnp`,
-    makeTemporaryEnv(
-      {
-        installConfig: {pnp: true},
-      },
-      async ({path, run, source}) => {
-        await run(`install`, `--disable-pnp`);
-
-        await expect(readJson(`${path}/package.json`)).resolves.not.toHaveProperty('installConfig.pnp');
-      },
-    ),
-  );
-
-  test(
-    `it should not remove other fields than installConfig.pnp when using --disable-pnp`,
-    makeTemporaryEnv(
-      {
-        installConfig: {pnp: true, foo: true},
-      },
-      async ({path, run, source}) => {
-        await run(`install`, `--disable-pnp`);
-
-        await expect(readJson(`${path}/package.json`)).resolves.toHaveProperty('installConfig.foo', true);
-      },
-    ),
-  );
-
   testIf(
     () => process.platform !== 'win32',
     `it should generate a file that can be used as an executable to resolve a request (valid request)`,
@@ -791,7 +748,7 @@ describe(`Plug'n'Play`, () => {
       {},
       {
         plugNPlay: true,
-        plugnplayShebang: `foo`,
+        plugnplayShebang: `#!foo`,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -918,7 +875,7 @@ describe(`Plug'n'Play`, () => {
           async ({path: path2, run: run2, source: source2}) => {
             // Move the install artifacts into a new location
             // If the .pnp.js file references absolute paths, they will stop working
-            await rename(`${path}/.cache`, `${path2}/.cache`);
+            await rename(`${path}/.berry`, `${path2}/.berry`);
             await rename(`${path}/.pnp.js`, `${path2}/.pnp.js`);
 
             await expect(source2(`require('no-deps')`)).resolves.toMatchObject({
