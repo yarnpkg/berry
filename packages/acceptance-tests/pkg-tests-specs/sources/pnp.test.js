@@ -630,34 +630,6 @@ describe(`Plug'n'Play`, () => {
     }),
   );
 
-  test(
-    `it should not update the installConfig.pnp field of the package.json when installing with an environment override`,
-    makeTemporaryEnv(
-      {},
-      {
-        plugNPlay: true,
-      },
-      async ({path, run, source}) => {
-        await run(`install`);
-
-        await expect(readJson(`${path}/package.json`)).resolves.not.toMatchObject({
-          installConfig: {pnp: true},
-        });
-      },
-    ),
-  );
-
-  test(
-    `it should update the installConfig.pnp field of the package.json when installing with --enable-pnp`,
-    makeTemporaryEnv({}, async ({path, run, source}) => {
-      await run(`install`, `--enable-pnp`);
-
-      await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
-        installConfig: {pnp: true},
-      });
-    }),
-  );
-
   testIf(
     () => process.platform !== 'win32',
     `it should generate a file that can be used as an executable to resolve a request (valid request)`,
@@ -1225,8 +1197,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await readdir(`${path}/.berry/pnp/unplugged`);
-        expect(listing).toHaveLength(0);
+        expect(existsSync(`${path}/.berry/pnp/unplugged`)).toEqual(false);
       },
     ),
   );
