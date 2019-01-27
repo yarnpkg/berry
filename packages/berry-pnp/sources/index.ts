@@ -1,3 +1,3 @@
-export {PackageInformationStores, LocationBlacklist, TemplateReplacements, PnpSettings} from './types';
+export {PackageInformationStores, LocationBlacklist, PnpSettings} from './types';
 
 export {generatePnpScript} from './generatePnpScript';

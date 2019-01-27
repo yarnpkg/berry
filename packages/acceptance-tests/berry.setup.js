@@ -22,7 +22,7 @@ global.makeTemporaryEnv = generatePkgDriver({
       env: Object.assign(
         {
           [`BERRY_CACHE_FOLDER`]: `${path}/.berry/cache`,
-          //          [`BERRY_PNP_BLACKLIST`]: plugnplayBlacklist || ``,
+          [`BERRY_PNP_IGNORE_PATTERN`]: plugnplayBlacklist || ``,
           [`BERRY_NPM_REGISTRY_SERVER`]: registryUrl,
           [`PATH`]: `${path}/bin${delimiter}${process.env.PATH}`,
         },

@@ -81,8 +81,8 @@ function generateDatastores(packageInformationStores: PackageInformationStores, 
 }
 
 export function generatePnpScript(settings: PnpSettings): string {
-  const {shebang, packageInformationStores, blacklistedLocations} = settings;
-  const datastores = generateDatastores(packageInformationStores, blacklistedLocations);
+  const {shebang, ignorePattern, packageInformationStores, blacklistedLocations} = settings;
+  const datastores = generateDatastores(packageInformationStores, blacklistedLocations || new Set());
 
   return [
     shebang ? `${shebang}\n\n` : ``,
@@ -93,7 +93,7 @@ export function generatePnpScript(settings: PnpSettings): string {
     `\n`,
     `  var ignorePattern, packageInformationStores, packageLocatorByLocationMap, packageLocationLengths;\n`,
     `\n`,
-    `  ignorePattern = null;\n`,
+    `  ignorePattern = ${ignorePattern != null ? `new RegExp(${JSON.stringify(ignorePattern)})` : `null`};\n`,
     `\n`,
     datastores.replace(/^/gm, `  `),
     `\n`,

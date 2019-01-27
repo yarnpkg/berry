@@ -8,11 +8,9 @@ export type PackageInformationStores = Map<string | null, PackageInformationStor
 
 export type LocationBlacklist = Set<string>;
 
-export type TemplateReplacements = {[key: string]: string};
-
 export type PnpSettings = {
   shebang?: string | null,
+  ignorePattern?: string | null,
+  blacklistedLocations?: LocationBlacklist,
   packageInformationStores: PackageInformationStores,
-  blacklistedLocations: LocationBlacklist,
-  replacements: TemplateReplacements,
 };

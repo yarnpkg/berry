@@ -1,9 +1,9 @@
-import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName}  from '@berry/core';
-import {FetchResult, Locator, Package}                                                        from '@berry/core';
-import {miscUtils, structUtils}                                                               from '@berry/core';
-import {PackageInformationStores, LocationBlacklist, TemplateReplacements, generatePnpScript} from '@berry/pnp';
-import {CwdFS, FakeFS, NodeFS}                                                                from '@berry/zipfs';
-import {posix}                                                                                from 'path';
+import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName} from '@berry/core';
+import {FetchResult, Locator, Package}                                                       from '@berry/core';
+import {miscUtils, structUtils}                                                              from '@berry/core';
+import {PackageInformationStores, LocationBlacklist, generatePnpScript}                      from '@berry/pnp';
+import {CwdFS, FakeFS, NodeFS}                                                               from '@berry/zipfs';
+import {posix}                                                                               from 'path';
 
 // Some packages do weird stuff and MUST be unplugged. I don't like them.
 const FORCED_UNPLUG_PACKAGES = new Set([
@@ -113,13 +113,11 @@ class PnpInstaller implements Installer {
     ]));
 
     const shebang = this.opts.project.configuration.pnpShebang;
+    const ignorePattern = this.opts.project.configuration.pnpIgnorePattern;
     const blacklistedLocations: LocationBlacklist = new Set();
-    const replacements: TemplateReplacements = {};
     const packageInformationStores = this.packageInformationStores;
-
-    replacements.IGNORE_PATTERN = JSON.stringify(this.opts.project.configuration.pnpIgnorePattern);
-  
-    const pnpScript = generatePnpScript({shebang, blacklistedLocations, replacements, packageInformationStores});
+    
+    const pnpScript = generatePnpScript({shebang, ignorePattern, blacklistedLocations, packageInformationStores});
 
     const fs = new NodeFS();
     await fs.changeFilePromise(this.opts.project.configuration.pnpPath, pnpScript);
@@ -130,7 +128,7 @@ class PnpInstaller implements Installer {
     } else {
       for (const entry of await fs.readdirPromise(this.opts.project.configuration.pnpUnpluggedFolder)) {
         const unpluggedPath = posix.resolve(this.opts.project.configuration.pnpUnpluggedFolder, entry);
-        
+
         if (!this.unpluggedPaths.has(unpluggedPath)) {
           await fs.removePromise(unpluggedPath);
         }
