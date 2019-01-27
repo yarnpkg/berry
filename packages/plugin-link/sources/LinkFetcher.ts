@@ -15,6 +15,21 @@ export class LinkFetcher implements Fetcher {
     return true;
   }
 
+  getLocalPath(locator: Locator, opts: FetchOptions) {
+    const {parentLocator, linkPath} = this.parseLocator(locator);
+
+    if (posix.isAbsolute(linkPath))
+      return linkPath;
+    
+    const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
+
+    if (parentLocalPath !== null) {
+      return posix.resolve(parentLocalPath, linkPath);
+    } else {
+      return null;
+    }
+  }
+
   async fetch(locator: Locator, opts: FetchOptions) {
     const {parentLocator, linkPath} = this.parseLocator(locator);
 

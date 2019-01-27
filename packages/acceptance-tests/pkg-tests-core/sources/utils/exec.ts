@@ -7,8 +7,8 @@ exports.execFile = function(
 ): Promise<{stdout: Buffer, stderr: Buffer}> {
   return new Promise((resolve, reject) => {
     cp.execFile(path, args, options, (error, stdout, stderr) => {
-      if (error) {  
-        reject(error);
+      if (error) {
+        reject(new Error(`${error.message}\n\n===== stdout:\n${stdout}\n\n===== stderr:\n${stderr}`));
       } else {
         stdout = stdout.replace(/\r\n?/g, `\n`);
         stderr = stderr.replace(/\r\n?/g, `\n`);

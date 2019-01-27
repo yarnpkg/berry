@@ -19,6 +19,18 @@ export class VirtualFetcher implements Fetcher {
     return true;
   }
 
+  getLocalPath(locator: Locator, opts: FetchOptions) {
+    const splitPoint = locator.reference.indexOf(`#`);
+
+    if (splitPoint === -1)
+      throw new Error(`Invalid virtual package reference`);
+
+    const nextReference = locator.reference.slice(splitPoint + 1);
+    const nextLocator = structUtils.makeLocator(locator, nextReference);
+
+    return opts.fetcher.getLocalPath(nextLocator, opts);
+  }
+
   async fetch(locator: Locator, opts: FetchOptions) {
     const splitPoint = locator.reference.indexOf(`#`);
 

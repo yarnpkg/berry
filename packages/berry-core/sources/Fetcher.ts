@@ -21,7 +21,7 @@ export type FetchResult = {
   packageFs: FakeFS,
   releaseFs?: () => void,
   prefixPath: string,
-  localPath?: string
+  localPath?: string | null
   checksum?: string,
 };
 
@@ -42,6 +42,16 @@ export interface Fetcher {
    * @param opts The fetch options.
    */
   supports(locator: Locator, opts: MinimalFetchOptions): boolean;
+
+  /**
+   * This function must return the local path for the given package. The local
+   * path is the one that's used to resolve relative dependency sources, for
+   * example "file:./foo".
+   * 
+   * @param locator The source locator.
+   * @param opts The fetch options.
+   */
+  getLocalPath(locator: Locator, opts: FetchOptions): string | null;
 
   /**
    * This function must return a object describing where the package manager

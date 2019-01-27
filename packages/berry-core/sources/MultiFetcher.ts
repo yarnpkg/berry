@@ -17,6 +17,12 @@ export class MultiFetcher implements Fetcher {
     return true;
   }
 
+  getLocalPath(locator: Locator, opts: FetchOptions) {
+    const fetcher = this.getFetcher(locator, opts);
+
+    return fetcher.getLocalPath(locator, opts);
+  }
+
   async fetch(locator: Locator, opts: FetchOptions) {
     const fetcher = this.getFetcher(locator, opts);
 

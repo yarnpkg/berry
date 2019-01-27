@@ -15,6 +15,21 @@ export class FileFetcher implements Fetcher {
     return true;
   }
 
+  getLocalPath(locator: Locator, opts: FetchOptions) {
+    const {parentLocator, filePath} = this.parseLocator(locator);
+
+    if (posix.isAbsolute(filePath))
+      return filePath;
+    
+    const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
+
+    if (parentLocalPath !== null) {
+      return posix.resolve(parentLocalPath, filePath);
+    } else {
+      return null;
+    }
+  }
+
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 
@@ -31,27 +46,9 @@ export class FileFetcher implements Fetcher {
       packageFs,
       releaseFs: () => packageFs.discardAndClose(),
       prefixPath: `/`,
-      localPath: await this.fetchLocalPath(locator, opts),
+      localPath: this.getLocalPath(locator, opts),
       checksum,
     };
-  }
-
-  private async fetchLocalPath(locator: Locator, opts: FetchOptions) {
-    const {parentLocator, filePath} = this.parseLocator(locator);
-
-    if (posix.isAbsolute(filePath))
-      return filePath;
-    
-    const parentFetch = await opts.fetcher.fetch(parentLocator, opts);
-
-    if (parentFetch.releaseFs)
-      parentFetch.releaseFs();
-    
-    if (parentFetch.localPath) {
-      return posix.resolve(parentFetch.localPath, filePath);
-    } else {
-      return undefined;
-    }
   }
 
   private async fetchFromDisk(locator: Locator, opts: FetchOptions) {

@@ -25,8 +25,7 @@ export class Cache {
   public readonly configuration: Configuration;
   public readonly cwd: string;
 
-  public cacheHitCount: number = 0;
-  public cacheMissCount: number = 0;
+  private mutexes: Map<LocatorHash, Promise<string>> = new Map();
 
   static async find(configuration: Configuration) {
     const cache = new Cache(configuration.cacheFolder, {configuration});
@@ -60,12 +59,11 @@ export class Cache {
     });
   }
 
-  async fetchPackageFromCache(locator: Locator, checksum: string | null, loader?: () => Promise<ZipFS>): Promise<[ZipFS, string]> {
+  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, loader?: () => Promise<ZipFS>): Promise<[ZipFS, string]> {
     const cachePath = this.getLocatorPath(locator);
     const baseFs = new NodeFS();
 
     const validateFile = async (path: string) => {
-      const expectedChecksum = checksum;
       const actualChecksum = await hashUtils.checksumFile(path);
 
       if (expectedChecksum !== null && actualChecksum !== expectedChecksum)
@@ -74,19 +72,11 @@ export class Cache {
       return actualChecksum;
     };
 
-    return await this.writeFileIntoCache<[ZipFS, string]>(cachePath, async () => {
-      let checksum;
+    const loadPackage = async () => {
+      if (!loader)
+        throw new Error(`Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
 
-      if (baseFs.existsSync(cachePath)) {
-        this.cacheHitCount += 1;
-
-        checksum = await validateFile(cachePath);
-      } else {
-        this.cacheMissCount += 1;
-
-        if (!loader)
-          throw new Error(`Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
-
+      return await this.writeFileIntoCache(cachePath, async () => {
         const zipFs = await loader();
         const originalPath = zipFs.getRealPath();
 
@@ -95,22 +85,42 @@ export class Cache {
         await chmodP(originalPath, 0o644);
 
         // Do this before moving the file so that we don't pollute the cache with corrupted archives
-        checksum = await validateFile(originalPath);
+        const checksum = await validateFile(originalPath);
 
+        // Doing a move is important to ensure atomic writes (todo: cross-drive?)
         await move(originalPath, cachePath);
-      }
 
-      let zipFs: ZipFS;
+        return checksum;
+      });
+    };
+
+    const loadPackageThroughMutex = async () => {
+      const mutex = loadPackage();
+      this.mutexes.set(locator.locatorHash, mutex);
 
       try {
-        zipFs = new ZipFS(cachePath, {readOnly: true, baseFs});
-      } catch (error) {
-        error.message = `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
-        throw error;
+        return await mutex;
+      } finally {
+        this.mutexes.delete(locator.locatorHash);
       }
+    };
 
-      return [zipFs, checksum];
-    });
+    for (let mutex; mutex = this.mutexes.get(locator.locatorHash);)
+      await mutex;
+
+    const checksum = baseFs.existsSync(cachePath)
+      ? await validateFile(cachePath)
+      : await loadPackageThroughMutex();
+
+    let zipFs: ZipFS;
+    try {
+      zipFs = new ZipFS(cachePath, {readOnly: true, baseFs});
+    } catch (error) {
+      error.message = `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
+      throw error;
+    }
+
+    return [zipFs, checksum];
   }
 
   async writeFileIntoCache<T>(file: string, generator: (file: string) => Promise<T>) {
@@ -119,7 +129,7 @@ export class Cache {
     try {
       await lockP(lock);
     } catch (error) {
-      throw new Error(`Couldn't obtain a lock on ${file}`);
+      throw new Error(`Couldn't obtain a lock on ${file} (${error.message})`);
     }
 
     try {

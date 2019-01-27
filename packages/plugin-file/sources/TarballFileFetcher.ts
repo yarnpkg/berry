@@ -20,6 +20,10 @@ export class TarballFileFetcher implements Fetcher {
     return false;
   }
 
+  getLocalPath(locator: Locator, opts: FetchOptions) {
+    return null;
+  }
+
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 

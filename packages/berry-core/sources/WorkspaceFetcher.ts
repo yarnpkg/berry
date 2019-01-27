@@ -13,6 +13,10 @@ export class WorkspaceFetcher implements Fetcher {
     return true;
   }
 
+  getLocalPath(locator: Locator, opts: FetchOptions) {
+    return this.getWorkspace(locator, opts).cwd;
+  }
+
   async fetch(locator: Locator, opts: FetchOptions) {
     const sourcePath = this.getWorkspace(locator, opts).cwd;
 

@@ -10,15 +10,6 @@ const {
 
 describe(`Plug'n'Play`, () => {
   test(
-    `it should not use pnp when setting the override to false`,
-    makeTemporaryEnv({}, {plugNPlay: false}, async ({path, run, source}) => {
-      await run(`install`);
-
-      expect(existsSync(`${path}/.pnp.js`)).toEqual(false);
-    }),
-  );
-
-  test(
     `it should not touch the .pnp.js file when it already exists and is up-to-date`,
     makeTemporaryEnv(
       {},

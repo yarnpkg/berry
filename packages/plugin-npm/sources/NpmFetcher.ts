@@ -16,6 +16,10 @@ export class NpmFetcher implements Fetcher {
     return true;
   }
 
+  getLocalPath(locator: Locator, opts: FetchOptions) {
+    return null;
+  }
+
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 
@@ -36,7 +40,7 @@ export class NpmFetcher implements Fetcher {
     };
   }
 
-  async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
+  private async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
     const sourceBuffer = await httpUtils.get(this.getLocatorUrl(locator, opts), opts.project.configuration);
 
     return await tgzUtils.makeArchive(sourceBuffer, {
