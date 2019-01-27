@@ -150,12 +150,13 @@ function getPackageInformationSafe(packageLocator: PackageLocator): PackageInfor
  * Implements the node resolution for folder access and extension selection
  */
 
-function applyNodeExtensionResolution(unqualifiedPath: string, {extensions}: ResolveUnqualifiedOptions): string | null {
+function applyNodeExtensionResolution(unqualifiedPath: string, candidates: Array<string>, {extensions}: ResolveUnqualifiedOptions): string | null {
   // We use this "infinite while" so that we can restart the process as long as we hit package folders
   while (true) {
     let stat;
 
     try {
+      candidates.push(unqualifiedPath);
       stat = fs.statSync(unqualifiedPath);
     } catch (error) {}
 
@@ -197,7 +198,7 @@ function applyNodeExtensionResolution(unqualifiedPath: string, {extensions}: Res
       // If the "main" field changed the path, we start again from this new location
 
       if (nextUnqualifiedPath && nextUnqualifiedPath !== unqualifiedPath) {
-        const resolution = applyNodeExtensionResolution(nextUnqualifiedPath, {extensions});
+        const resolution = applyNodeExtensionResolution(nextUnqualifiedPath, candidates, {extensions});
 
         if (resolution !== null) {
           return resolution;
@@ -212,6 +213,7 @@ function applyNodeExtensionResolution(unqualifiedPath: string, {extensions}: Res
         return `${unqualifiedPath}${extension}`;
       })
       .find(candidateFile => {
+        candidates.push(candidateFile);
         return fs.existsSync(candidateFile);
       });
 
@@ -226,6 +228,7 @@ function applyNodeExtensionResolution(unqualifiedPath: string, {extensions}: Res
           return `${unqualifiedPath}/index${extension}`;
         })
         .find(candidateFile => {
+          candidates.push(candidateFile);
           return fs.existsSync(candidateFile);
         });
 
@@ -411,7 +414,7 @@ export function resolveToUnqualified(request: string, issuer: string | null, {co
     if (result === false) {
       throw makeError(
         `BUILTIN_NODE_RESOLUTION_FAIL`,
-        `The builtin node resolution algorithm was unable to resolve the module referenced by "${request}" and requested from "${issuer}" (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp "$$BLACKLIST")`,
+        `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${request}"\nRequired by: ${issuer}\n`,
         {request, issuer},
       );
     }
@@ -470,7 +473,7 @@ export function resolveToUnqualified(request: string, issuer: string | null, {co
       if (result === false) {
         throw makeError(
           `BUILTIN_NODE_RESOLUTION_FAIL`,
-          `The builtin node resolution algorithm was unable to resolve the module referenced by "${request}" and requested from "${issuer}" (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree)`,
+          `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree)\n\nRequire path: "${request}"\nRequired by: ${issuer}\n`,
           {request, issuer},
         );
       }
@@ -502,13 +505,13 @@ export function resolveToUnqualified(request: string, issuer: string | null, {co
         if (issuerLocator === topLevelLocator) {
           throw makeError(
             `MISSING_PEER_DEPENDENCY`,
-            `You seem to be requiring a peer dependency ("${dependencyName}"), but it is not installed (which might be because you're the top-level package)`,
+            `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
             {request, issuer, dependencyName},
           );
         } else {
           throw makeError(
             `MISSING_PEER_DEPENDENCY`,
-            `Package "${issuerLocator.name}@${issuerLocator.reference}" is trying to access a peer dependency ("${dependencyName}") that should be provided by its direct ancestor but isn't`,
+            `A package is trying to access a peer dependency that should be provided by its direct ancestor but isn't\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
             {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
           );
         }
@@ -516,14 +519,14 @@ export function resolveToUnqualified(request: string, issuer: string | null, {co
         if (issuerLocator === topLevelLocator) {
           throw makeError(
             `UNDECLARED_DEPENDENCY`,
-            `You cannot require a package ("${dependencyName}") that is not declared in your dependencies (via "${issuer}")`,
+            `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
             {request, issuer, dependencyName},
           );
         } else {
           const candidates = Array.from(issuerInformation.packageDependencies.keys());
           throw makeError(
             `UNDECLARED_DEPENDENCY`,
-            `Package "${issuerLocator.name}@${issuerLocator.reference}" (via "${issuer}") is trying to require the package "${dependencyName}" (via "${request}") without it being listed in its dependencies (${candidates.join(`, `)})`,
+            `A package is trying to access another package without the second one being listed as a dependency of the first one\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
             {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName, candidates},
           );
         }
@@ -538,7 +541,7 @@ export function resolveToUnqualified(request: string, issuer: string | null, {co
     if (!dependencyInformation.packageLocation) {
       throw makeError(
         `MISSING_DEPENDENCY`,
-        `Package "${dependencyLocator.name}@${dependencyLocator.reference}" is a valid dependency, but hasn't been installed and thus cannot be required (it might be caused if you install a partial tree, such as on production environments)`,
+        `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
         {request, issuer, dependencyLocator: Object.assign({}, dependencyLocator)},
       );
     }
@@ -566,14 +569,15 @@ export function resolveUnqualified(
   unqualifiedPath: string,
   {extensions = Object.keys(Module._extensions)}: Partial<ResolveUnqualifiedOptions> = {},
 ): string {
-  const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, {extensions});
+  const candidates: Array<string> = [];
+  const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, {extensions});
 
   if (qualifiedPath) {
     return path.normalize(qualifiedPath);
   } else {
     throw makeError(
       `QUALIFIED_PATH_RESOLUTION_FAILED`,
-      `Couldn't find a suitable Node resolution for unqualified path "${unqualifiedPath}"`,
+      `Couldn't find a suitable Node resolution for the specified unqualified path\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected resolution: ${candidate}\n`).join(``)}`,
       {unqualifiedPath},
     );
   }
