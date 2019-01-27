@@ -93,7 +93,7 @@ export function generatePnpScript(settings: PnpSettings): string {
     `\n`,
     `  var ignorePattern, packageInformationStores, packageLocatorByLocationMap, packageLocationLengths;\n`,
     `\n`,
-    `  ignorePattern = ${ignorePattern != null ? `new RegExp(${JSON.stringify(ignorePattern)})` : `null`};\n`,
+    `  ignorePattern = ${ignorePattern ? `new RegExp(${JSON.stringify(ignorePattern)})` : `null`};\n`,
     `\n`,
     datastores.replace(/^/gm, `  `),
     `\n`,
