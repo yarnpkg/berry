@@ -40,6 +40,7 @@ export class PnpLinker implements Linker {
 
 class PnpInstaller implements Installer {
   private readonly packageInformationStores: PackageInformationStores = new Map();
+  private readonly unpluggedPaths: Set<string> = new Set();
 
   private readonly opts: LinkOptions;
 
@@ -123,6 +124,18 @@ class PnpInstaller implements Installer {
     const fs = new NodeFS();
     await fs.changeFilePromise(this.opts.project.configuration.pnpPath, pnpScript);
     await fs.chmodPromise(this.opts.project.configuration.pnpPath, 0o755);
+
+    if (this.unpluggedPaths.size === 0) {
+      await fs.removePromise(this.opts.project.configuration.pnpUnpluggedFolder);
+    } else {
+      for (const entry of await fs.readdirPromise(this.opts.project.configuration.pnpUnpluggedFolder)) {
+        const unpluggedPath = posix.resolve(this.opts.project.configuration.pnpUnpluggedFolder, entry);
+        
+        if (!this.unpluggedPaths.has(unpluggedPath)) {
+          await fs.removePromise(unpluggedPath);
+        }
+      }
+    }
   }
 
   private getPackageInformationStore(key: string) {
@@ -191,6 +204,7 @@ class PnpInstaller implements Installer {
 
   private async unplugPackage(locator: Locator, packageFs: FakeFS) {
     const unplugPath = this.getUnpluggedPath(locator);
+    this.unpluggedPaths.add(unplugPath);
 
     const fs = new NodeFS();
     await fs.mkdirpPromise(unplugPath);

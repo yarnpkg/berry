@@ -55,6 +55,50 @@ export abstract class FakeFS {
   abstract readlinkPromise(p: string): Promise<string>;
   abstract readlinkSync(p: string): string;
 
+  async removePromise(p: string) {
+    let stat;
+    try {
+      stat = await this.lstatPromise(p);
+    } catch (error) {
+      if (error.code === `ENOENT`) {
+        return;
+      } else {
+        throw error;
+      }
+    }
+
+    if (stat.isDirectory()) {
+      for (const entry of await this.readdirPromise(p))
+        await this.removePromise(posix.resolve(p, entry));
+      
+      await this.rmdirPromise(p);
+    } else {
+      await this.unlinkPromise(p);
+    }
+  }
+
+  removeSync(p: string) {
+    let stat;
+    try {
+      stat = this.lstatSync(p);
+    } catch (error) {
+      if (error.code === `ENOENT`) {
+        return;
+      } else {
+        throw error;
+      }
+    }
+
+    if (stat.isDirectory()) {
+      for (const entry of this.readdirSync(p))
+        this.removeSync(posix.resolve(p, entry));
+      
+      this.rmdirSync(p);
+    } else {
+      this.unlinkSync(p);
+    }
+  }
+
   async mkdirpPromise(p: string, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
     p = this.resolve(p);
     if (p === `/`)

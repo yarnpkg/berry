@@ -13854,6 +13854,50 @@ class FakeFS {
     resolve(p) {
         return path_1.posix.resolve(`/`, p);
     }
+    async removePromise(p) {
+        let stat;
+        try {
+            stat = await this.lstatPromise(p);
+        }
+        catch (error) {
+            if (error.code === `ENOENT`) {
+                return;
+            }
+            else {
+                throw error;
+            }
+        }
+        if (stat.isDirectory()) {
+            for (const entry of await this.readdirPromise(p))
+                await this.removePromise(path_1.posix.resolve(p, entry));
+            await this.rmdirPromise(p);
+        }
+        else {
+            await this.unlinkPromise(p);
+        }
+    }
+    removeSync(p) {
+        let stat;
+        try {
+            stat = this.lstatSync(p);
+        }
+        catch (error) {
+            if (error.code === `ENOENT`) {
+                return;
+            }
+            else {
+                throw error;
+            }
+        }
+        if (stat.isDirectory()) {
+            for (const entry of this.readdirSync(p))
+                this.removeSync(path_1.posix.resolve(p, entry));
+            this.rmdirSync(p);
+        }
+        else {
+            this.unlinkSync(p);
+        }
+    }
     async mkdirpPromise(p, { chmod, utimes } = {}) {
         p = this.resolve(p);
         if (p === `/`)
