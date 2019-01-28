@@ -86,6 +86,12 @@ export function generatePnpScript(settings: PnpSettings): string {
 
   return [
     shebang ? `${shebang}\n\n` : ``,
+    `try {\n`, 
+    `  Object.freeze({}).detectStrictMode = true;\n`,
+    `} catch (error) {\n`,
+    `  throw new Error(\`The whole PnP file got strict-mode-ified, which is known to break (Emscripten libraries aren't strict mode). This usually happens when the file goes through Babel.\`);\n`,
+    `}\n`,
+    `\n`,
     `var __non_webpack_module__ = module;\n`,
     `\n`,
     `function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {\n`,

@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 
+try {
+  Object.freeze({}).detectStrictMode = true;
+} catch (error) {
+  throw new Error(`The whole PnP file got strict-mode-ified, which is known to break (Emscripten libraries aren't strict mode). This usually happens when the file goes through Babel.`);
+}
+
 var __non_webpack_module__ = module;
 
 function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
@@ -13521,6 +13527,11 @@ exports.setupCompatibilityLayer = setupCompatibilityLayer;
 if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
     setup();
     setupCompatibilityLayer();
+    if (__non_webpack_module__.filename) {
+        // We delete it from the cache in order to support the case where the CLI resolver is invoked from "yarn run"
+        // It's annoying because it might cause some issues when the file is multiple times in NODE_OPTIONS, but it shouldn't happen anyway.
+        delete Module._cache[__non_webpack_module__.filename];
+    }
 }
 // @ts-ignore
 if (process.mainModule === __non_webpack_module__) {
@@ -14800,6 +14811,10 @@ class ZipFS extends FakeFS_1.FakeFS {
         }
     }
     readFileSync(p, encoding) {
+        // This is messed up regarding the TS signatures
+        if (typeof encoding === `object`)
+            // @ts-ignore
+            encoding = encoding ? encoding.encoding : undefined;
         const resolvedP = this.resolveFilename(`open '${p}'`, p);
         if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
             throw Object.assign(new Error(`ENOENT: no such file or directory, open '${p}'`), { code: `ENOENT` });

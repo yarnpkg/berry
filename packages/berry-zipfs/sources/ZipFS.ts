@@ -636,6 +636,11 @@ export class ZipFS extends FakeFS {
   readFileSync(p: string, encoding: 'utf8'): string;
   readFileSync(p: string, encoding?: string): Buffer;
   readFileSync(p: string, encoding?: string) {
+    // This is messed up regarding the TS signatures
+    if (typeof encoding === `object`)
+      // @ts-ignore
+      encoding = encoding ? encoding.encoding : undefined;
+
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))

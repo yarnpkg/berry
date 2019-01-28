@@ -156,17 +156,21 @@ export class Manifest {
       }
     }
 
-    if (Array.isArray(data.workspaces)) {
-      for (const entry of data.workspaces) {
-        if (typeof entry !== `string`) {
-          errors.push(new Error(`Invalid workspace definition for '${entry}'`));
-          continue;
-        }
+    const workspaces = Array.isArray(data.workspaces)
+      ? data.workspaces
+      : typeof data.workspaces === `object` && data.workspaces !== null && Array.isArray(data.workspaces.packages)
+        ? data.workspaces.packages
+        : [];
 
-        this.workspaceDefinitions.push({
-          pattern: entry,
-        });
+    for (const entry of workspaces) {
+      if (typeof entry !== `string`) {
+        errors.push(new Error(`Invalid workspace definition for '${entry}'`));
+        continue;
       }
+
+      this.workspaceDefinitions.push({
+        pattern: entry,
+      });
     }
 
     if (typeof data.dependenciesMeta === `object` && data.dependenciesMeta !== null) {
