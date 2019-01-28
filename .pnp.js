@@ -1401,6 +1401,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["lockfile", "npm:1.0.4"],
           ["logic-solver", "npm:2.0.1"],
           ["mkdirp", "npm:0.5.1"],
+          ["p-limit", "npm:2.1.0"],
           ["pluralize", "npm:7.0.0"],
           ["pretty-bytes", "npm:5.1.0"],
           ["semver", "npm:5.6.0"],

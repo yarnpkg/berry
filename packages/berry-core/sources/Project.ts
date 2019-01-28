@@ -4,6 +4,8 @@ import {createWriteStream, existsSync, readFile, writeFile} from 'fs-extra';
 // @ts-ignore
 import Logic                                                from 'logic-solver';
 import {dirname, posix}                                     from 'path';
+// @ts-ignore
+import pLimit                                               from 'p-limit';
 import {PassThrough}                                        from 'stream';
 import {tmpNameSync}                                        from 'tmp';
 
@@ -606,7 +608,9 @@ export class Project {
       return structUtils.stringifyLocator(pkg);
     }]);
 
-    for (const locatorHash of locatorHashes) {
+    const limit = pLimit(5);
+
+    await Promise.all(locatorHashes.map(locatorHash => limit(async () => {
       const pkg = this.storedPackages.get(locatorHash);
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
@@ -621,7 +625,7 @@ export class Project {
       if (fetchResult.releaseFs) {
         fetchResult.releaseFs();
       }
-    }
+    })));
   }
 
   async linkEverything({cache, report}: InstallOptions) {
