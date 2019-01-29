@@ -69,7 +69,7 @@ export const coreDefinitions = {
   bstatePath: {
     description: `Path of the file where the current state of the built packages must be stored`,
     type: SettingsType.ABSOLUTE_PATH,
-    default: `./.berry/buildState.json`,
+    default: `./.berry/buildState.yml`,
   },
 
   // Settings related to the output style
