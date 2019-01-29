@@ -20,16 +20,14 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     const report = await constraints.process();
     let hasErrors = false;
 
-    for (const {packageLocator, dependencyIdent, dependencyRange} of report.enforcedDependencyRanges) {
-      const workspace = project.getWorkspaceByLocator(packageLocator);
-
+    for (const {workspace, dependencyIdent, dependencyRange} of report.enforcedDependencyRanges) {
       if (dependencyRange !== null) {
         const invalidDependencies = Array.from(workspace.manifest.dependencies.values()).filter((dependency: Descriptor) => {
           return structUtils.areIdentsEqual(dependency, dependencyIdent) && dependency.range !== dependencyRange;
         });
 
         for (const invalid of invalidDependencies)
-          stdout.write(`${emoji.get(`link`)} ${structUtils.prettyLocator(configuration, packageLocator)} is fixed to ${structUtils.prettyDescriptor(configuration, structUtils.makeDescriptor(dependencyIdent, dependencyRange))}.\n`);
+          stdout.write(`${emoji.get(`link`)} ${structUtils.prettyLocator(configuration, workspace.locator)} is fixed to ${structUtils.prettyDescriptor(configuration, structUtils.makeDescriptor(dependencyIdent, dependencyRange))}.\n`);
 
         hasErrors = hasErrors || invalidDependencies.length > 0;
       } else {
@@ -38,22 +36,20 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
         });
 
         for (const invalid of invalidDependencies)
-          stdout.write(`${emoji.get(`no_entry`)} ${structUtils.prettyLocator(configuration, packageLocator)} is forbidden from depending on ${structUtils.prettyIdent(configuration, dependencyIdent)}.\n`);
+          stdout.write(`${emoji.get(`no_entry`)} ${structUtils.prettyLocator(configuration, workspace.locator)} is forbidden from depending on ${structUtils.prettyIdent(configuration, dependencyIdent)}.\n`);
 
         hasErrors = hasErrors || invalidDependencies.length > 0;
       }
     }
 
 
-    for (const {packageLocator, dependencyDescriptor, reason} of report.invalidDependencies) {
-      const workspace = project.getWorkspaceByLocator(packageLocator);
-
+    for (const {workspace, dependencyIdent, reason} of report.invalidDependencies) {
       const invalidDependencies = Array.from(workspace.manifest.dependencies.values()).filter((dependency: Descriptor) => {
-        return structUtils.areDescriptorsEqual(dependency, dependencyDescriptor);
+        return structUtils.areIdentsEqual(dependency, dependencyIdent);
       });
 
       for (const invalid of invalidDependencies)
-        stdout.write(`${emoji.get(`x`)} ${structUtils.prettyLocator(configuration, packageLocator)}'s dependency on ${structUtils.prettyDescriptor(configuration, invalid)} is invalid${reason ? ` (reason: ${reason})` : ``}.\n`);
+        stdout.write(`${emoji.get(`x`)} ${structUtils.prettyLocator(configuration, workspace.locator)}'s dependency on ${structUtils.prettyDescriptor(configuration, invalid)} is invalid${reason ? ` (reason: ${reason})` : ``}.\n`);
 
       hasErrors = hasErrors || invalidDependencies.length > 0;
     }

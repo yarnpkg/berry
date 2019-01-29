@@ -26,9 +26,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       output: stdout,
     });
 
-    for (const {packageLocator, dependencyIdent, dependencyRange} of report.enforcedDependencyRanges) {
-      const workspace = project.getWorkspaceByLocator(packageLocator);
-
+    for (const {workspace, dependencyIdent, dependencyRange} of report.enforcedDependencyRanges) {
       if (dependencyRange !== null) {
         const invalidDependencies = Array.from(workspace.manifest.dependencies.values()).filter((dependency: Descriptor) => {
           return structUtils.areIdentsEqual(dependency, dependencyIdent) && dependency.range !== dependencyRange;
@@ -38,7 +36,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
           const result = await prompt({
             type: `confirm`,
             name: `confirmed`,
-            message: `Change ${structUtils.prettyIdent(configuration, invalid)} from ${structUtils.prettyRange(configuration, invalid.range)} to ${structUtils.prettyRange(configuration, dependencyRange)} in ${structUtils.prettyLocator(configuration, packageLocator)}?`,
+            message: `${structUtils.prettyLocator(configuration, workspace.locator)}: Change ${structUtils.prettyIdent(configuration, invalid)} into ${structUtils.prettyRange(configuration, dependencyRange)}?`,
           });
 
           // @ts-ignore
@@ -58,7 +56,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
           const result = await prompt({
             type: `confirm`,
             name: `confirmed`,
-            message: `Remove ${structUtils.prettyDescriptor(configuration, invalid)} from ${structUtils.prettyLocator(configuration, packageLocator)}?`,
+            message: `${structUtils.prettyLocator(configuration, workspace.locator)}: Remove ${structUtils.prettyDescriptor(configuration, invalid)} from the dependencies?`,
           });
 
           // @ts-ignore

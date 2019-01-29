@@ -192,32 +192,20 @@ export class Project {
   }
 
   tryWorkspaceByCwd(workspaceCwd: string) {
-    const workspace = this.workspacesByCwd.get(workspaceCwd);
+    if (!posix.isAbsolute(workspaceCwd))
+      workspaceCwd = posix.resolve(this.cwd, workspaceCwd);
 
-    return workspace ? workspace : null;
+    const workspace = this.workspacesByCwd.get(workspaceCwd);
+    if (!workspace)
+      return null;
+
+    return workspace;
   }
 
   getWorkspaceByCwd(workspaceCwd: string) {
     const workspace = this.tryWorkspaceByCwd(workspaceCwd);
     if (!workspace)
       throw new Error(`Workspace not found (${workspaceCwd})`);
-
-    return workspace;
-  }
-
-  tryWorkspaceByLocator(locator: Locator) {
-    if (locator.reference.startsWith(WorkspaceResolver.protocol))
-      locator = structUtils.makeLocator(locator, locator.reference.slice(WorkspaceResolver.protocol.length));
-
-    const workspace = this.workspacesByLocator.get(locator.locatorHash);
-
-    return workspace ? workspace : null;
-  }
-
-  getWorkspaceByLocator(locator: Locator) {
-    const workspace = this.tryWorkspaceByLocator(locator);
-    if (!workspace)
-      throw new Error(`Workspace not found (${structUtils.prettyLocator(this.configuration, locator)})`);
 
     return workspace;
   }

@@ -4,7 +4,7 @@
     "private": true,
     "main": "./sources/index.ts",
     "dependencies": {
-        "@berry/core": "workspace:0.0.0",
+        "@berry/core": "workspace:*",
         "inquirer": "^6.2.0",
         "node-emoji": "^1.8.1",
         "tau-prolog": "^0.2.38"

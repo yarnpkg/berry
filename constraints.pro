@@ -5,25 +5,28 @@ constraints_min_version(1).
 % In order to see them in action, run `berry constraints detail`
 
 % This rule will prevent two of our workspaces from depending on different versions of a same dependency
-invalid_dependency(PackageIdent, PackageReference, DependencyIdent, DependencyRange, "This dependency conflicts with another one from another workspace") :-
-  described_dependency(PackageIdent, PackageReference, DependencyIdent, DependencyRange),
-  described_dependency(_, _, DependencyIdent, DependencyRange2),
+gen_invalid_dependency(WorkspaceCwd, DependencyIdent, "This dependency conflicts with another one from another workspace") :-
+  workspace_has_dependency(WorkspaceCwd, DependencyIdent, DependencyRange),
+  workspace_has_dependency(_, DependencyIdent, DependencyRange2),
   DependencyRange \= DependencyRange2.
 
-singleton_dependency("webpack", "@berry/builder").
-singleton_dependency("typescript", "@berry/builder").
-
 % This rule will prevent workspaces from depending on non-workspace versions of available workspaces
-enforced_dependency_range(PackageIdent, PackageReference, DependencyIdent, "workspace:0.0.0") :-
-  is_workspace(DependencyIdent, _, _),
-  described_dependency(PackageIdent, PackageReference, DependencyIdent, _).
+gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, "workspace:*") :-
+  workspace_ident(_, DependencyIdent),
+  workspace_has_dependency(WorkspaceCwd, DependencyIdent, _).
 
-% This rule will prevent workspaces from depending on the specified package (using `singleton_dependency` as store), except for one single workspace
-enforced_dependency_range(PackageIdent, PackageReference, DependencyIdent, null) :-
-  described_dependency(PackageIdent, PackageReference, DependencyIdent, _),
-  singleton_dependency(DependencyIdent, _),
-  \+(singleton_dependency(DependencyIdent, PackageIdent)).
+% The following rules describes which workspaces are allowed to depend on respectively "webpack" and "typescript"
+workspace_allowed_dependency(WorkspaceCwd, "webpack") :-
+  workspace_ident(WorkspaceCwd, "@berry/builder").
+workspace_allowed_dependency(WorkspaceCwd, "typescript"):-
+  workspace_ident(WorkspaceCwd, "@berry/builder").
+
+% This rule will prevent workspaces from depending any blacklisted package
+gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, null) :-
+  workspace_has_dependency(WorkspaceCwd, DependencyIdent, _),
+  workspace_allowed_dependency(_, DependencyIdent),
+  \+(workspace_allowed_dependency(WorkspaceIdent, DependencyIdent)).
 
 % This rule will prevent all workspaces from depending on tslib
-enforced_dependency_range(PackageIdent, PackageReference, "tslib", null) :-
-  described_dependency(PackageIdent, PackageReference, "tslib", _).
+gen_enforced_dependency_range(WorkspaceCwd, "tslib", null) :-
+  workspace_has_dependency(WorkspaceCwd, "tslib", _).

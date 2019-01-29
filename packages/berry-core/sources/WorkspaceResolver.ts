@@ -33,9 +33,6 @@ export class WorkspaceResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
-    if (descriptor.range.startsWith(WorkspaceResolver.protocol))
-      descriptor = structUtils.makeDescriptor(descriptor, descriptor.range.slice(WorkspaceResolver.protocol.length));
-
     const candidateWorkspaces = opts.project.findWorkspacesByDescriptor(descriptor);
 
     if (candidateWorkspaces.length < 1)
@@ -43,11 +40,11 @@ export class WorkspaceResolver implements Resolver {
     if (candidateWorkspaces.length > 1)
       throw new Error(`This range must be resolved by exactly one local workspace, too many found`);
 
-    return [structUtils.makeLocator(descriptor, `${WorkspaceResolver.protocol}${candidateWorkspaces[0].locator.reference}`)];
+    return [candidateWorkspaces[0].anchoredLocator];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const workspace = opts.project.getWorkspaceByLocator(locator);
+    const workspace = opts.project.getWorkspaceByCwd(locator.reference.slice(WorkspaceResolver.protocol.length));
 
     const version = workspace.manifest.version || `0.0.0`;
 

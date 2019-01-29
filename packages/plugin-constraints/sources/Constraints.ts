@@ -1,8 +1,8 @@
-import {Ident, Descriptor, Locator, Project} from '@berry/core';
-import {miscUtils, structUtils}              from '@berry/core';
-import {existsSync, readFileSync}            from 'fs';
+import {Ident, Locator, Project, Workspace} from '@berry/core';
+import {miscUtils, structUtils}             from '@berry/core';
+import {existsSync, readFileSync}           from 'fs';
 // @ts-ignore
-import pl                                    from 'tau-prolog';
+import pl                                   from 'tau-prolog';
 
 export type DependencyMismatch = {
   packageLocator: Locator,
@@ -35,10 +35,12 @@ export class Constraints {
     let database = ``;
 
     for (const workspace of this.project.workspacesByCwd.values()) {
-      database += `is_workspace(${escape(structUtils.stringifyIdent(workspace.locator))}, ${escape(workspace.locator.reference)}, ${escape(workspace.cwd)}).\n`;
+      database += `workspace(${escape(workspace.cwd)}).\n`;
+      database += `workspace_ident(${escape(workspace.cwd)}, ${escape(structUtils.stringifyIdent(workspace.locator))}).\n`
+      database += `workspace_version(${escape(workspace.manifest.version)}).\n`
 
       for (const dependency of workspace.manifest.dependencies.values()) {
-        database += `described_dependency(${escape(structUtils.stringifyIdent(workspace.locator))}, ${escape(workspace.locator.reference)}, ${escape(structUtils.stringifyIdent(dependency))}, ${escape(dependency.range)}).\n`;
+        database += `workspace_has_dependency(${escape(workspace.cwd)}, ${escape(structUtils.stringifyIdent(dependency))}, ${escape(dependency.range)}).\n`;
       }
     }
 
@@ -48,8 +50,11 @@ export class Constraints {
   getDeclarations() {
     let declarations = ``;
 
-    declarations += `enforced_dependency_range(_, _, _, _) :- false.\n`;
-    declarations += `invalid_dependency(_, _, _, _, _) :- false.\n`;
+    // (Cwd, DependencyIdent, DependencyRange)
+    declarations += `gen_enforced_dependency_range(_, _, _) :- false.\n`;
+
+    // (Cwd, DependencyIdent, Reason)
+    declarations += `gen_invalid_dependency(_, _, _) :- false.\n`;
 
     return declarations;
   }
@@ -63,68 +68,60 @@ export class Constraints {
     session.consult(this.fullSource);
 
     let enforcedDependencyRanges: Array<{
-      packageLocator: Locator,
+      workspace: Workspace,
       dependencyIdent: Ident,
       dependencyRange: string | null,
     }> = [];
 
-    for (const answer of await makeQuery(`is_workspace(PackageIdent, PackageReference, _), enforced_dependency_range(PackageIdent, PackageReference, DependencyIdent, DependencyRange).`)) {
+    for (const answer of await makeQuery(`workspace(WorkspaceCwd), gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, DependencyRange).`)) {
       if (answer.id === `throw`)
         throw new Error(pl.format_answer(answer));
 
-      const packageRawIdent = parseLink(answer.links.PackageIdent);
-      const packageReference = parseLink(answer.links.PackageReference);
+      const workspaceCwd = parseLink(answer.links.WorkspaceCwd);
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyRange = parseLink(answer.links.DependencyRange);
 
-      if (packageRawIdent === null || packageReference === null || dependencyRawIdent === null)
+      if (workspaceCwd === null || dependencyRawIdent === null)
         throw new Error(`Invalid rule`);
 
-      const packageIdent = structUtils.parseIdent(packageRawIdent);
+      const workspace = this.project.getWorkspaceByCwd(workspaceCwd);
       const dependencyIdent = structUtils.parseIdent(dependencyRawIdent);
       
-      const packageLocator = structUtils.makeLocator(packageIdent, packageReference);
-
-      enforcedDependencyRanges.push({packageLocator, dependencyIdent, dependencyRange});
+      enforcedDependencyRanges.push({workspace, dependencyIdent, dependencyRange});
     }
 
     enforcedDependencyRanges = miscUtils.sortMap(enforcedDependencyRanges, [
       ({dependencyRange}) => dependencyRange !== null ? `0` : `1`,
+      ({workspace}) => structUtils.stringifyIdent(workspace.locator),
       ({dependencyIdent}) => structUtils.stringifyIdent(dependencyIdent),
-      ({packageLocator}) => structUtils.stringifyLocator(packageLocator),
     ]);
 
     let invalidDependencies: Array<{
-      packageLocator: Locator,
-      dependencyDescriptor: Descriptor,
+      workspace: Workspace,
+      dependencyIdent: Ident,
       reason: string | null,
     }> = [];
 
-    for (const answer of await makeQuery(`is_workspace(PackageIdent, PackageReference, _), invalid_dependency(PackageIdent, PackageReference, DependencyIdent, DependencyRange, Reason).`)) {
+    for (const answer of await makeQuery(`workspace(WorkspaceCwd), gen_invalid_dependency(WorkspaceCwd, DependencyIdent, Reason).`)) {
       if (answer.id === `throw`)
         throw new Error(pl.format_answer(answer));
 
-      const packageRawIdent = parseLink(answer.links.PackageIdent);
-      const packageReference = parseLink(answer.links.PackageReference);
+      const workspaceCwd = parseLink(answer.links.WorkspaceCwd);
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
-      const dependencyRange = parseLink(answer.links.DependencyRange);
       const reason = parseLink(answer.links.Reason);
 
-      if (packageRawIdent === null || packageReference === null || dependencyRawIdent === null || dependencyRange === null)
+      if (workspaceCwd === null || dependencyRawIdent === null)
         throw new Error(`Invalid rule`);
 
-      const packageIdent = structUtils.parseIdent(packageRawIdent);
+      const workspace = this.project.getWorkspaceByCwd(workspaceCwd);
       const dependencyIdent = structUtils.parseIdent(dependencyRawIdent);
-      
-      const packageLocator = structUtils.makeLocator(packageIdent, packageReference);
-      const dependencyDescriptor = structUtils.makeDescriptor(dependencyIdent, dependencyRange);
 
-      invalidDependencies.push({packageLocator, dependencyDescriptor, reason});
+      invalidDependencies.push({workspace, dependencyIdent, reason});
     }
 
     invalidDependencies = miscUtils.sortMap(invalidDependencies, [
-      ({dependencyDescriptor}) => structUtils.stringifyDescriptor(dependencyDescriptor),
-      ({packageLocator}) => structUtils.stringifyLocator(packageLocator),
+      ({workspace}) => structUtils.stringifyIdent(workspace.locator),
+      ({dependencyIdent}) => structUtils.stringifyIdent(dependencyIdent),
     ]);
 
     return {enforcedDependencyRanges, invalidDependencies};
@@ -168,7 +165,7 @@ export class Constraints {
   }
 }
 
-function escape(what: string | undefined) {
+function escape(what: string | null) {
   if (typeof what === `string`) {
     return JSON.stringify(what);
   } else {

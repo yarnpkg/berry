@@ -2,7 +2,8 @@ import {makeUpdater}           from '@berry/json-proxy';
 import {createHmac}            from 'crypto';
 import {existsSync, readFile}  from 'fs';
 import globby                  from 'globby';
-import {posix, resolve}        from 'path';
+import {posix}                 from 'path';
+import semver                  from 'semver';
 import {promisify}             from 'util';
 
 import {Manifest}              from './Manifest';
@@ -40,17 +41,13 @@ export class Workspace {
   }
 
   async setup() {
-    const source = await readFileP(`${this.cwd}/package.json`, `utf8`);
-    const data = JSON.parse(source);
-
     // @ts-ignore: It's ok to initialize it now
-    this.manifest = new Manifest();
-    this.manifest.load(data);
+    this.manifest = await Manifest.find(this.cwd);
 
     // We use posix.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path
     const relativePath = posix.relative(this.project.cwd, this.cwd);
 
-    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `unnamed-workspace-${hashWorkspaceCwd(relativePath)}`);
+    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashWorkspaceCwd(relativePath)}`);
     const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
 
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
@@ -69,7 +66,7 @@ export class Workspace {
       relativeCwds.sort();
 
       for (const relativeCwd of relativeCwds) {
-        const candidateCwd = resolve(this.cwd, relativeCwd);
+        const candidateCwd = posix.resolve(this.cwd, relativeCwd);
 
         if (existsSync(`${candidateCwd}/package.json`)) {
           this.workspacesCwds.add(candidateCwd);
@@ -79,15 +76,49 @@ export class Workspace {
   }
 
   accepts(range: string) {
-    return true;
+    const protocolIndex = range.indexOf(`:`);
+
+    const protocol = protocolIndex !== -1
+      ? range.slice(0, protocolIndex + 1)
+      : null;
+
+    const pathname = protocolIndex !== -1
+      ? range.slice(protocolIndex + 1)
+      : range;
+    
+    if (protocol === WorkspaceResolver.protocol && pathname === this.relativeCwd)
+      return true;
+    
+    if (!semver.validRange(pathname))
+      return false;
+
+    if (protocol === WorkspaceResolver.protocol)
+      return semver.satisfies(this.manifest.version !== null ? this.manifest.version : `0.0.0`, pathname);
+    
+    if (this.manifest.version !== null)
+      return semver.satisfies(this.manifest.version, pathname);
+
+    return false;
+  }
+
+  get relativeCwd() {
+    return posix.relative(this.project.cwd, this.cwd) || `.`;
   }
 
   get anchoredDescriptor() {
-    return structUtils.makeDescriptor(this.locator, `${WorkspaceResolver.protocol}${this.locator.reference}`);
+    return structUtils.makeDescriptor(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
   }
 
   get anchoredLocator() {
-    return structUtils.makeLocator(this.locator, `${WorkspaceResolver.protocol}${this.locator.reference}`);
+    return structUtils.makeLocator(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
+  }
+
+  computeCandidateName() {
+    if (this.cwd === this.project.cwd) {
+      return `root-workspace`;
+    } else {
+      return `${posix.basename(this.cwd)}` || `unnamed-workspace`;
+    }
   }
 
   async persistManifest() {

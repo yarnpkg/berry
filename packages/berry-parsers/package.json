@@ -7,8 +7,7 @@
         "/lib"
     ],
     "devDependencies": {
-        "pegjs": "^0.10.0",
-        "typescript": "^3.0.1"
+        "pegjs": "^0.10.0"
     },
     "scripts": {
         "grammar:shell": "run pegjs -o sources/grammars/shell.js sources/grammars/shell.pegjs",

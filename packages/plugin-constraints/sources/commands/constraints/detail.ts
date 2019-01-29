@@ -19,15 +19,15 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
     const report = await constraints.process();
 
-    for (const {packageLocator, dependencyIdent, dependencyRange} of report.enforcedDependencyRanges) {
+    for (const {workspace, dependencyIdent, dependencyRange} of report.enforcedDependencyRanges) {
       if (dependencyRange !== null) {
-        stdout.write(`${emoji.get(`link`)} ${structUtils.prettyLocator(configuration, packageLocator)} is fixed to ${structUtils.prettyDescriptor(configuration, structUtils.makeDescriptor(dependencyIdent, dependencyRange))}.\n`);
+        stdout.write(`${emoji.get(`link`)} ${structUtils.prettyLocator(configuration, workspace.locator)} is fixed to ${structUtils.prettyDescriptor(configuration, structUtils.makeDescriptor(dependencyIdent, dependencyRange))}.\n`);
       } else {
-        stdout.write(`${emoji.get(`no_entry`)} ${structUtils.prettyLocator(configuration, packageLocator)} is forbidden from depending on ${structUtils.prettyIdent(configuration, dependencyIdent)}.\n`);
+        stdout.write(`${emoji.get(`no_entry`)} ${structUtils.prettyLocator(configuration, workspace.locator)} is forbidden from depending on ${structUtils.prettyIdent(configuration, dependencyIdent)}.\n`);
       }
     }
 
-    for (const {packageLocator, dependencyDescriptor, reason} of report.invalidDependencies) {
-      stdout.write(`${emoji.get(`x`)} ${structUtils.prettyLocator(configuration, packageLocator)}'s dependency on ${structUtils.prettyDescriptor(configuration, dependencyDescriptor)} is invalid${reason ? ` (reason: ${reason})` : ``}.\n`);
+    for (const {workspace, dependencyIdent, reason} of report.invalidDependencies) {
+      stdout.write(`${emoji.get(`x`)} ${structUtils.prettyLocator(configuration, workspace.locator)}'s dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)} is invalid${reason ? ` (reason: ${reason})` : ``}.\n`);
     }
   });

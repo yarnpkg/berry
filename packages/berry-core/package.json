@@ -4,11 +4,11 @@
     "private": true,
     "main": "./sources/index.ts",
     "dependencies": {
-        "@berry/json-proxy": "workspace:0.0.0",
-        "@berry/parsers": "workspace:0.0.0",
-        "@berry/pnp": "workspace:0.0.0",
-        "@berry/shell": "workspace:0.0.0",
-        "@berry/zipfs": "workspace:0.0.0",
+        "@berry/json-proxy": "workspace:*",
+        "@berry/parsers": "workspace:*",
+        "@berry/pnp": "workspace:*",
+        "@berry/shell": "workspace:*",
+        "@berry/zipfs": "workspace:*",
         "chalk": "^2.4.1",
         "execa": "^1.0.0",
         "fs-extra": "^7.0.0",
@@ -27,8 +27,5 @@
         "tar": "^4.4.6",
         "tmp": "^0.0.33",
         "tunnel": "^0.0.6"
-    },
-    "devDependencies": {
-        "typescript": "^3.0.1"
     }
 }

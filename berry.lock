@@ -877,17 +877,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@berry/builder@workspace:0.0.0":
+"@berry/builder@workspace:*, @berry/builder@workspace:packages/berry-builder":
   version: 0.0.0
-  resolution: "@berry/builder@workspace:0.0.0"
+  resolution: "@berry/builder@workspace:packages/berry-builder"
   dependencies:
     "@babel/core": "npm:^7.2.2"
     "@babel/plugin-proposal-class-properties": "npm:^7.2.3"
     "@babel/preset-env": "npm:^7.2.3"
     "@babel/preset-typescript": "npm:^7.1.0"
     "@babel/register": "npm:^7.0.0"
-    "@berry/cli": "workspace:0.0.0"
-    "@manaflair/concierge": "npm:^0.9.1"
+    "@berry/cli": "workspace:*"
+    "@manaflair/concierge": "npm:^0.9.2"
     brfs: "npm:^2.0.1"
     buffer-loader: "npm:^0.1.0"
     joi: "npm:^13.6.0"
@@ -895,32 +895,32 @@ __metadata:
     raw-loader: "npm:^0.5.1"
     transform-loader: "npm:^0.2.4"
     ts-loader: "npm:^5.3.0"
-    typescript: "npm:^3.0.1"
+    typescript: "npm:^3.2.4"
     val-loader: "npm:^1.1.1"
     webpack: "npm:^4.18.0"
     webpack-virtual-modules: "npm:^0.1.10"
   languageName: unknown
   linkType: soft
 
-"@berry/cli@workspace:0.0.0":
+"@berry/cli@workspace:*, @berry/cli@workspace:packages/berry-cli":
   version: 0.0.0
-  resolution: "@berry/cli@workspace:0.0.0"
+  resolution: "@berry/cli@workspace:packages/berry-cli"
   dependencies:
-    "@berry/builder": "workspace:0.0.0"
-    "@berry/core": "workspace:0.0.0"
-    "@berry/parsers": "workspace:0.0.0"
-    "@berry/plugin-constraints": "workspace:0.0.0"
-    "@berry/plugin-essentials": "workspace:0.0.0"
-    "@berry/plugin-file": "workspace:0.0.0"
-    "@berry/plugin-github": "workspace:0.0.0"
-    "@berry/plugin-http": "workspace:0.0.0"
-    "@berry/plugin-hub": "workspace:0.0.0"
-    "@berry/plugin-link": "workspace:0.0.0"
-    "@berry/plugin-npm": "workspace:0.0.0"
-    "@berry/plugin-pnp": "workspace:0.0.0"
-    "@berry/pnp": "workspace:0.0.0"
-    "@berry/shell": "workspace:0.0.0"
-    "@berry/zipfs": "workspace:0.0.0"
+    "@berry/builder": "workspace:*"
+    "@berry/core": "workspace:*"
+    "@berry/parsers": "workspace:*"
+    "@berry/plugin-constraints": "workspace:*"
+    "@berry/plugin-essentials": "workspace:*"
+    "@berry/plugin-file": "workspace:*"
+    "@berry/plugin-github": "workspace:*"
+    "@berry/plugin-http": "workspace:*"
+    "@berry/plugin-hub": "workspace:*"
+    "@berry/plugin-link": "workspace:*"
+    "@berry/plugin-npm": "workspace:*"
+    "@berry/plugin-pnp": "workspace:*"
+    "@berry/pnp": "workspace:*"
+    "@berry/shell": "workspace:*"
+    "@berry/zipfs": "workspace:*"
     "@manaflair/concierge": "npm:^0.9.2"
     chalk: "npm:^2.4.1"
     execa: "npm:^1.0.0"
@@ -931,15 +931,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/core@workspace:0.0.0":
+"@berry/core@workspace:*, @berry/core@workspace:packages/berry-core":
   version: 0.0.0
-  resolution: "@berry/core@workspace:0.0.0"
+  resolution: "@berry/core@workspace:packages/berry-core"
   dependencies:
-    "@berry/json-proxy": "workspace:0.0.0"
-    "@berry/parsers": "workspace:0.0.0"
-    "@berry/pnp": "workspace:0.0.0"
-    "@berry/shell": "workspace:0.0.0"
-    "@berry/zipfs": "workspace:0.0.0"
+    "@berry/json-proxy": "workspace:*"
+    "@berry/parsers": "workspace:*"
+    "@berry/pnp": "workspace:*"
+    "@berry/shell": "workspace:*"
+    "@berry/zipfs": "workspace:*"
     chalk: "npm:^2.4.1"
     execa: "npm:^1.0.0"
     fs-extra: "npm:^7.0.0"
@@ -958,25 +958,24 @@ __metadata:
     tar: "npm:^4.4.6"
     tmp: "npm:^0.0.33"
     tunnel: "npm:^0.0.6"
-    typescript: "npm:^3.0.1"
   languageName: unknown
   linkType: soft
 
-"@berry/json-proxy@workspace:0.0.0":
+"@berry/json-proxy@workspace:*, @berry/json-proxy@workspace:packages/berry-json-proxy":
   version: 0.0.0
-  resolution: "@berry/json-proxy@workspace:0.0.0"
+  resolution: "@berry/json-proxy@workspace:packages/berry-json-proxy"
   languageName: unknown
   linkType: soft
 
-"@berry/libzip@workspace:0.0.0":
+"@berry/libzip@workspace:*, @berry/libzip@workspace:packages/berry-libzip":
   version: 0.0.0
-  resolution: "@berry/libzip@workspace:0.0.0"
+  resolution: "@berry/libzip@workspace:packages/berry-libzip"
   languageName: unknown
   linkType: soft
 
-"@berry/monorepo@workspace:0.0.0":
+"@berry/monorepo@workspace:.":
   version: 0.0.0
-  resolution: "@berry/monorepo@workspace:0.0.0"
+  resolution: "@berry/monorepo@workspace:."
   dependencies:
     "@types/dateformat": "npm:^1.0.1"
     "@types/emscripten": "npm:^0.0.31"
@@ -1008,34 +1007,33 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/parsers@workspace:0.0.0":
+"@berry/parsers@workspace:*, @berry/parsers@workspace:packages/berry-parsers":
   version: 0.0.0
-  resolution: "@berry/parsers@workspace:0.0.0"
+  resolution: "@berry/parsers@workspace:packages/berry-parsers"
   dependencies:
     pegjs: "npm:^0.10.0"
-    typescript: "npm:^3.0.1"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-constraints@workspace:0.0.0":
+"@berry/plugin-constraints@workspace:*, @berry/plugin-constraints@workspace:packages/plugin-constraints":
   version: 0.0.0
-  resolution: "@berry/plugin-constraints@workspace:0.0.0"
+  resolution: "@berry/plugin-constraints@workspace:packages/plugin-constraints"
   dependencies:
-    "@berry/core": "workspace:0.0.0"
+    "@berry/core": "workspace:*"
     inquirer: "npm:^6.2.0"
     node-emoji: "npm:^1.8.1"
     tau-prolog: "npm:^0.2.38"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-essentials@workspace:0.0.0":
+"@berry/plugin-essentials@workspace:*, @berry/plugin-essentials@workspace:packages/plugin-essentials":
   version: 0.0.0
-  resolution: "@berry/plugin-essentials@workspace:0.0.0"
+  resolution: "@berry/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
-    "@berry/core": "workspace:0.0.0"
-    "@berry/json-proxy": "workspace:0.0.0"
-    "@berry/parsers": "workspace:0.0.0"
-    "@berry/zipfs": "workspace:0.0.0"
+    "@berry/core": "workspace:*"
+    "@berry/json-proxy": "workspace:*"
+    "@berry/parsers": "workspace:*"
+    "@berry/zipfs": "workspace:*"
     "@manaflair/concierge": "npm:^0.9.2"
     execa: "npm:^1.0.0"
     fs-extra: "npm:^7.0.0"
@@ -1044,40 +1042,39 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-file@workspace:0.0.0":
+"@berry/plugin-file@workspace:*, @berry/plugin-file@workspace:packages/plugin-file":
   version: 0.0.0
-  resolution: "@berry/plugin-file@workspace:0.0.0"
+  resolution: "@berry/plugin-file@workspace:packages/plugin-file"
   dependencies:
-    "@berry/core": "workspace:0.0.0"
-    "@berry/zipfs": "workspace:0.0.0"
+    "@berry/core": "workspace:*"
+    "@berry/zipfs": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-github@workspace:0.0.0":
+"@berry/plugin-github@workspace:*, @berry/plugin-github@workspace:packages/plugin-github":
   version: 0.0.0
-  resolution: "@berry/plugin-github@workspace:0.0.0"
+  resolution: "@berry/plugin-github@workspace:packages/plugin-github"
   dependencies:
-    "@berry/core": "workspace:0.0.0"
-    typescript: "npm:^3.0.1"
+    "@berry/core": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-http@workspace:0.0.0":
+"@berry/plugin-http@workspace:*, @berry/plugin-http@workspace:packages/plugin-http":
   version: 0.0.0
-  resolution: "@berry/plugin-http@workspace:0.0.0"
+  resolution: "@berry/plugin-http@workspace:packages/plugin-http"
   dependencies:
-    "@berry/core": "workspace:0.0.0"
+    "@berry/core": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-hub@workspace:0.0.0":
+"@berry/plugin-hub@workspace:*, @berry/plugin-hub@workspace:packages/plugin-hub":
   version: 0.0.0
-  resolution: "@berry/plugin-hub@workspace:0.0.0"
+  resolution: "@berry/plugin-hub@workspace:packages/plugin-hub"
   dependencies:
-    "@berry/core": "workspace:0.0.0"
-    "@berry/json-proxy": "workspace:0.0.0"
-    "@berry/ui": "workspace:0.0.0"
-    "@manaflair/concierge": "npm:^0.9.1"
+    "@berry/core": "workspace:*"
+    "@berry/json-proxy": "workspace:*"
+    "@berry/ui": "workspace:*"
+    "@manaflair/concierge": "npm:^0.9.2"
     dateformat: "npm:^3.0.3"
     immer: "npm:^1.7.2"
     joi: "npm:^13.6.0"
@@ -1089,57 +1086,57 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-link@workspace:0.0.0":
+"@berry/plugin-link@workspace:*, @berry/plugin-link@workspace:packages/plugin-link":
   version: 0.0.0
-  resolution: "@berry/plugin-link@workspace:0.0.0"
+  resolution: "@berry/plugin-link@workspace:packages/plugin-link"
   dependencies:
-    "@berry/core": "workspace:0.0.0"
-    "@berry/zipfs": "workspace:0.0.0"
+    "@berry/core": "workspace:*"
+    "@berry/zipfs": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-npm@workspace:0.0.0":
+"@berry/plugin-npm@workspace:*, @berry/plugin-npm@workspace:packages/plugin-npm":
   version: 0.0.0
-  resolution: "@berry/plugin-npm@workspace:0.0.0"
+  resolution: "@berry/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
-    "@berry/core": "workspace:0.0.0"
+    "@berry/core": "workspace:*"
     semver: "npm:^5.6.0"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-pnp@workspace:0.0.0":
+"@berry/plugin-pnp@workspace:*, @berry/plugin-pnp@workspace:packages/plugin-pnp":
   version: 0.0.0
-  resolution: "@berry/plugin-pnp@workspace:0.0.0"
+  resolution: "@berry/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
-    "@berry/cli": "workspace:0.0.0"
-    "@berry/core": "workspace:0.0.0"
-    "@berry/pnp": "workspace:0.0.0"
-    "@berry/zipfs": "workspace:0.0.0"
+    "@berry/cli": "workspace:*"
+    "@berry/core": "workspace:*"
+    "@berry/pnp": "workspace:*"
+    "@berry/zipfs": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@berry/pnp@workspace:0.0.0":
+"@berry/pnp@workspace:*, @berry/pnp@workspace:packages/berry-pnp":
   version: 0.0.0
-  resolution: "@berry/pnp@workspace:0.0.0"
+  resolution: "@berry/pnp@workspace:packages/berry-pnp"
   dependencies:
-    "@berry/core": "workspace:0.0.0"
-    "@berry/zipfs": "workspace:0.0.0"
+    "@berry/core": "workspace:*"
+    "@berry/zipfs": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@berry/shell@workspace:0.0.0":
+"@berry/shell@workspace:*, @berry/shell@workspace:packages/berry-shell":
   version: 0.0.0
-  resolution: "@berry/shell@workspace:0.0.0"
+  resolution: "@berry/shell@workspace:packages/berry-shell"
   dependencies:
-    "@berry/parsers": "workspace:0.0.0"
+    "@berry/parsers": "workspace:*"
     execa: "npm:^1.0.0"
     stream-buffers: "npm:^3.0.2"
   languageName: unknown
   linkType: soft
 
-"@berry/ui@workspace:0.0.0":
+"@berry/ui@workspace:*, @berry/ui@workspace:packages/berry-ui":
   version: 0.0.0
-  resolution: "@berry/ui@workspace:0.0.0"
+  resolution: "@berry/ui@workspace:packages/berry-ui"
   dependencies:
     "@manaflair/term-strings": "npm:^0.10.1"
     "@manaflair/text-layout": "npm:^0.11.0"
@@ -1155,26 +1152,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/zipfs@workspace:0.0.0":
+"@berry/zipfs@workspace:*, @berry/zipfs@workspace:packages/berry-zipfs":
   version: 0.0.0
-  resolution: "@berry/zipfs@workspace:0.0.0"
+  resolution: "@berry/zipfs@workspace:packages/berry-zipfs"
   dependencies:
-    "@berry/libzip": "workspace:0.0.0"
+    "@berry/libzip": "workspace:*"
   languageName: unknown
   linkType: soft
-
-"@manaflair/concierge@npm:^0.9.1":
-  version: 0.9.1
-  resolution: "@manaflair/concierge@npm:0.9.1"
-  dependencies:
-    chalk: "npm:^1.1.3"
-    kexec: "npm:^3.0.0"
-    lodash: "npm:^4.17.4"
-  peerDependencies:
-    joi: 10.x.x
-  checksum: ad87799ea2d3f0d964a5be435efc88f6d6cd3c2761e04f7e7ac506bf535d046ea9a6c480eb4be977f4fa9b76acff3581127a08654e854f913ba7d3b10bda3975
-  languageName: node
-  linkType: hard
 
 "@manaflair/concierge@npm:^0.9.2":
   version: 0.9.2
@@ -1904,6 +1888,23 @@ __metadata:
   checksum: 2172af3fa92927ca2b5f491a28433d8f760c7aaa503c6445dbd7415a3348b7a3aa88a7ae820ba2d9f733c23fd5bfa95a7b0c08ba7f7663132f1da8a207d6afac
   languageName: node
   linkType: hard
+
+"acceptance-tests-06d141@workspace:packages/acceptance-tests":
+  version: 0.0.0
+  resolution: "acceptance-tests-06d141@workspace:packages/acceptance-tests"
+  dependencies:
+    "@babel/core": "npm:^7.2.2"
+    "@babel/preset-typescript": "npm:^7.1.0"
+    babel-jest: "npm:^23.6.0"
+    jest: "npm:24.0.0-alpha.16"
+    jest-environment-node: "npm:^23.4.0"
+    jest-junit: "npm:^5.2.0"
+    jest-pnp-resolver: "npm:^1.0.2"
+    jest-resolve: "npm:^23.6.0"
+    prettier: "npm:^1.10.2"
+    typescript: "npm:^3.2.4"
+  languageName: unknown
+  linkType: soft
 
 "acorn-dynamic-import@npm:^3.0.0":
   version: 3.0.0
@@ -7875,15 +7876,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pkg-tests-core@workspace:0.0.0":
+"pkg-tests-core@workspace:*, pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core":
   version: 0.0.0
-  resolution: "pkg-tests-core@workspace:0.0.0"
+  resolution: "pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core"
   dependencies:
     fs-extra: "npm:^7.0.0"
     invariant: "npm:^2.2.4"
     klaw: "npm:^2.1.1"
     minimatch: "npm:^3.0.4"
-    pkg-tests-fixtures: "workspace:0.0.0"
+    pkg-tests-fixtures: "workspace:*"
     semver: "npm:^5.6.0"
     super-resolve: "npm:^1.0.0"
     tar-fs: "npm:^1.16.0"
@@ -7891,18 +7892,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"pkg-tests-fixtures@workspace:0.0.0":
+"pkg-tests-fixtures@workspace:*, pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures":
   version: 0.0.0
-  resolution: "pkg-tests-fixtures@workspace:0.0.0"
+  resolution: "pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures"
   languageName: unknown
   linkType: soft
 
-"pkg-tests-specs@workspace:0.0.0":
+"pkg-tests-specs@workspace:packages/acceptance-tests/pkg-tests-specs":
   version: 0.0.0
-  resolution: "pkg-tests-specs@workspace:0.0.0"
+  resolution: "pkg-tests-specs@workspace:packages/acceptance-tests/pkg-tests-specs"
   dependencies:
     fs-extra: "npm:^7.0.0"
-    pkg-tests-core: "workspace:0.0.0"
+    pkg-tests-core: "workspace:*"
     semver: "npm:^5.6.0"
   languageName: unknown
   linkType: soft
@@ -9847,13 +9848,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^3.0.1":
-  version: 3.2.2
-  resolution: "typescript@npm:3.2.2"
-  checksum: 1d7745e669af22a4fa2cdd54b2ea2e09cf27664f004c152e8382d2fae01dc48ead61a789d2db4558760717e477ab0d0343b8d95c2cf962e42dd2c938c5adb9b9
-  languageName: node
-  linkType: hard
-
 "typescript@npm:^3.2.4":
   version: 3.2.4
   resolution: "typescript@npm:3.2.4"
@@ -9966,23 +9960,6 @@ __metadata:
   checksum: 4b5b2e127f37bdc4f19953ab96b5931d2341dc5d45a855c2f598058bcb661db45243fc523e562ada557b14fcbb67e987a110fc82fcb2585b7f7cea01fd430aa9
   languageName: node
   linkType: hard
-
-"unnamed-workspace-06d141@workspace:0.0.0":
-  version: 0.0.0
-  resolution: "unnamed-workspace-06d141@workspace:0.0.0"
-  dependencies:
-    "@babel/core": "npm:^7.2.2"
-    "@babel/preset-typescript": "npm:^7.1.0"
-    babel-jest: "npm:^23.6.0"
-    jest: "npm:24.0.0-alpha.16"
-    jest-environment-node: "npm:^23.4.0"
-    jest-junit: "npm:^5.2.0"
-    jest-pnp-resolver: "npm:^1.0.2"
-    jest-resolve: "npm:^23.6.0"
-    prettier: "npm:^1.10.2"
-    typescript: "npm:^3.2.4"
-  languageName: unknown
-  linkType: soft
 
 "unset-value@npm:^1.0.0":
   version: 1.0.0
@@ -10173,14 +10150,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vscode-zipfs@workspace:0.0.0":
+"vscode-zipfs@workspace:packages/vscode-zipfs":
   version: 0.0.0
-  resolution: "vscode-zipfs@workspace:0.0.0"
+  resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
-    "@berry/zipfs": "workspace:0.0.0"
+    "@berry/zipfs": "workspace:*"
     pnp-webpack-plugin: "npm:^1.2.1"
     ts-loader: "npm:^5.3.3"
-    typescript: "npm:^3.0.1"
+    typescript: "npm:^3.2.4"
     vsce: "npm:1.54.0"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:3.2.1"
