@@ -13,9 +13,6 @@ describe(`Plug'n'Play`, () => {
     `it should not touch the .pnp.js file when it already exists and is up-to-date`,
     makeTemporaryEnv(
       {},
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -37,9 +34,6 @@ describe(`Plug'n'Play`, () => {
     `it should update the .pnp.js file when it already exists but isn't up-to-date`,
     makeTemporaryEnv(
       {},
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -73,9 +67,6 @@ describe(`Plug'n'Play`, () => {
           [`no-deps`]: `1.0.0`,
         },
       },
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -98,9 +89,6 @@ describe(`Plug'n'Play`, () => {
           [`one-fixed-dep-2`]: getPackageDirectoryPath(`one-fixed-dep`, `1.0.0`),
           [`no-deps`]: `2.0.0`,
         },
-      },
-      {
-        plugNPlay: true,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -125,9 +113,6 @@ describe(`Plug'n'Play`, () => {
     `it should correctly resolve native Node modules`,
     makeTemporaryEnv(
       {},
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -140,9 +125,6 @@ describe(`Plug'n'Play`, () => {
     `it should correctly resolve relative imports`,
     makeTemporaryEnv(
       {},
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await writeFile(`${path}/foo.js`, `module.exports = 42;\n`);
 
@@ -158,9 +140,6 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       {
         dependencies: {[`various-requires`]: `1.0.0`},
-      },
-      {
-        plugNPlay: true,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -178,9 +157,6 @@ describe(`Plug'n'Play`, () => {
           [`various-requires`]: `1.0.0`,
         },
       },
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -191,7 +167,7 @@ describe(`Plug'n'Play`, () => {
 
   test(
     `it should correctly resolve an absolute path even when the issuer doesn't exist`,
-    makeTemporaryEnv({}, {plugNPlay: true}, async ({path, run, source}) => {
+    makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
       const api = require(`${path}/.pnp.js`);
@@ -203,9 +179,6 @@ describe(`Plug'n'Play`, () => {
     `it should fallback to the top-level dependencies when it cannot require a transitive dependency require`,
     makeTemporaryEnv(
       {dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`}},
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -221,9 +194,6 @@ describe(`Plug'n'Play`, () => {
     `it should throw an exception if a dependency tries to require something it doesn't own`,
     makeTemporaryEnv(
       {dependencies: {[`various-requires`]: `1.0.0`}},
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -238,7 +208,6 @@ describe(`Plug'n'Play`, () => {
       {
         dependencies: {[`various-requires`]: `1.0.0`},
       },
-      {plugNPlay: true},
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -253,7 +222,6 @@ describe(`Plug'n'Play`, () => {
       {
         dependencies: {[`self-require-trap`]: `1.0.0`},
       },
-      {plugNPlay: true},
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -271,9 +239,6 @@ describe(`Plug'n'Play`, () => {
         dependencies: {[`no-deps`]: `1.0.0`},
         scripts: {myScript: `node -p "require('no-deps/package.json').version"`},
       },
-      {
-        plugNPlay: true,
-      },
       async ({path, run}) => {
         await run(`install`);
 
@@ -289,9 +254,6 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       {
         dependencies: {[`provides-peer-deps-1-0-0`]: `1.0.0`, [`provides-peer-deps-2-0-0`]: `1.0.0`},
-      },
-      {
-        plugNPlay: true,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -351,9 +313,6 @@ describe(`Plug'n'Play`, () => {
       {
         dependencies: {[`custom-dep-a`]: `file:./custom-dep-a`},
       },
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await writeFile(
           `${path}/custom-dep-a/index.js`,
@@ -383,9 +342,6 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       {
         dependencies: {[`custom-dep-a`]: `file:./custom-dep-a`},
-      },
-      {
-        plugNPlay: true,
       },
       async ({path, run, source}) => {
         await writeFile(
@@ -425,9 +381,6 @@ describe(`Plug'n'Play`, () => {
         {
           private: true,
           workspaces: [`workspace-*`],
-        },
-        {
-          plugNPlay: true,
         },
         async ({path, run, source}) => {
           await writeJson(`${path}/workspace-a/package.json`, {
@@ -469,9 +422,6 @@ describe(`Plug'n'Play`, () => {
         {
           dependencies: {},
         },
-        {
-          plugNPlay: true,
-        },
         async ({path, run, source}) => {
           await run(`install`);
 
@@ -510,9 +460,6 @@ describe(`Plug'n'Play`, () => {
         {
           dependencies: {[`no-deps`]: `1.0.0`},
         },
-        {
-          plugNPlay: true,
-        },
         async ({path, run, source}) => {
           await run(`install`);
 
@@ -524,7 +471,7 @@ describe(`Plug'n'Play`, () => {
 
   test(
     `it should load the index.js file when loading from a folder`,
-    makeTemporaryEnv({}, {plugNPlay: true}, async ({path, run, source}) => {
+    makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
       const tmp = await createTemporaryFolder();
@@ -537,7 +484,7 @@ describe(`Plug'n'Play`, () => {
 
   test(
     `it should resolve the .js extension`,
-    makeTemporaryEnv({}, {plugNPlay: true}, async ({path, run, source}) => {
+    makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
       const tmp = await createTemporaryFolder();
@@ -556,7 +503,6 @@ describe(`Plug'n'Play`, () => {
           [`invalid-main`]: `1.0.0`,
         },
       },
-      {plugNPlay: true},
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -570,7 +516,7 @@ describe(`Plug'n'Play`, () => {
 
   test(
     `it should use the regular Node resolution when requiring files outside of the pnp install tree`,
-    makeTemporaryEnv({}, {plugNPlay: true}, async ({path, run, source}) => {
+    makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
       const tmp = await createTemporaryFolder();
@@ -586,9 +532,6 @@ describe(`Plug'n'Play`, () => {
     `it should allow scripts outside of the dependency tree to require files within the dependency tree`,
     makeTemporaryEnv(
       {dependencies: {[`no-deps`]: `1.0.0`}},
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -606,9 +549,6 @@ describe(`Plug'n'Play`, () => {
     `it should export the PnP API through the 'pnpapi' name`,
     makeTemporaryEnv(
       {},
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -619,7 +559,7 @@ describe(`Plug'n'Play`, () => {
 
   test(
     `it should expose the PnP version through 'process.versions.pnp'`,
-    makeTemporaryEnv({}, {plugNPlay: true}, async ({path, run, source}) => {
+    makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
       const pnpapiVersionsStd = await source(`require('pnpapi').VERSIONS.std`);
@@ -638,9 +578,6 @@ describe(`Plug'n'Play`, () => {
         dependencies: {
           [`no-deps`]: `1.0.0`,
         },
-      },
-      {
-        plugNPlay: true,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -669,9 +606,6 @@ describe(`Plug'n'Play`, () => {
           [`no-deps`]: `1.0.0`,
         },
       },
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -693,9 +627,6 @@ describe(`Plug'n'Play`, () => {
         dependencies: {
           [`no-deps`]: `1.0.0`,
         },
-      },
-      {
-        plugNPlay: true,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -719,8 +650,7 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       {},
       {
-        plugNPlay: true,
-        plugnplayShebang: `#!foo`,
+        pnpShebang: `#!foo`,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -737,8 +667,7 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       {},
       {
-        plugNPlay: true,
-        plugnplayBlacklist: `/foo/`,
+        pnpIgnorePattern: `/foo/`,
       },
       async ({path, run, source}) => {
         await writeFile(`${path}/foo/shouldwork.js`, `module.exports = require('bad-dep');\n`);
@@ -760,8 +689,7 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       {},
       {
-        plugNPlay: true,
-        plugnplayBlacklist: `/foo/`,
+        pnpIgnorePattern: `/foo/`,
       },
       async ({path, run, source}) => {
         await writeFile(`${path}/foo/filea.js`, `module.exports = require('./fileb');\n`);
@@ -781,9 +709,6 @@ describe(`Plug'n'Play`, () => {
         dependencies: {
           [`no-deps`]: `1.0.0`,
         },
-      },
-      {
-        plugNPlay: true,
       },
       async ({path, run, source}) => {
         // This is to allow a maximal compatibility with packages that expect to
@@ -807,9 +732,6 @@ describe(`Plug'n'Play`, () => {
           [`no-deps`]: `2.0.0`,
         },
       },
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         // This is to allow a maximal compatibility with packages that expect to
         // be located inside a node_modules directory. Various tools (such as
@@ -831,18 +753,12 @@ describe(`Plug'n'Play`, () => {
           [`no-deps`]: `1.0.0`,
         },
       },
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
         await makeTemporaryEnv(
           {
             [`no-deps`]: `1.0.0`,
-          },
-          {
-            plugNPlay: true,
           },
           async ({path: path2, run: run2, source: source2}) => {
             // Move the install artifacts into a new location
@@ -868,9 +784,6 @@ describe(`Plug'n'Play`, () => {
           [`no-deps`]: `1.0.0`,
         },
       },
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -879,9 +792,6 @@ describe(`Plug'n'Play`, () => {
             dependencies: {
               [`no-deps`]: `1.0.0`,
             },
-          },
-          {
-            plugNPlay: true,
           },
           async ({path: path2, run: run2, source: source2}) => {
             expect(path2).not.toEqual(path);
@@ -907,9 +817,6 @@ describe(`Plug'n'Play`, () => {
             unplugged: true,
           },
         },
-      },
-      {
-        plugNPlay: true,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -939,9 +846,6 @@ describe(`Plug'n'Play`, () => {
             unplugged: true,
           },
         },
-      },
-      {
-        plugNPlay: true,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -977,9 +881,6 @@ describe(`Plug'n'Play`, () => {
           },
         },
       },
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -1002,9 +903,6 @@ describe(`Plug'n'Play`, () => {
             unplugged: true,
           },
         },
-      },
-      {
-        plugNPlay: true,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -1033,9 +931,6 @@ describe(`Plug'n'Play`, () => {
             unplugged: true,
           },
         },
-      },
-      {
-        plugNPlay: true,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -1102,9 +997,6 @@ describe(`Plug'n'Play`, () => {
           },
         },
       },
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -1131,7 +1023,6 @@ describe(`Plug'n'Play`, () => {
           [`no-deps`]: `1.0.0`,
         },
       },
-      {plugNPlay: true},
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -1146,7 +1037,6 @@ describe(`Plug'n'Play`, () => {
       {
         dependencies: {[`no-deps-scripted`]: `1.0.0`},
       },
-      {plugNPlay: true},
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -1162,7 +1052,6 @@ describe(`Plug'n'Play`, () => {
       {
         dependencies: {[`no-deps-scripted`]: `1.0.0`},
       },
-      {plugNPlay: true},
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -1188,7 +1077,6 @@ describe(`Plug'n'Play`, () => {
       {
         dependencies: {[`no-deps`]: `1.0.0`},
       },
-      {plugNPlay: true},
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -1215,7 +1103,6 @@ describe(`Plug'n'Play`, () => {
         dependencies: {[`no-deps`]: `1.0.0`},
         scripts: {[`script`]: `node main.js`},
       },
-      {plugNPlay: true},
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -1237,7 +1124,7 @@ describe(`Plug'n'Play`, () => {
 
   test(
     `it should properly forward the NODE_OPTIONS environment variable`,
-    makeTemporaryEnv({}, {plugNPlay: true}, async ({path, run, source}) => {
+    makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
       await writeFile(`${path}/foo.js`, `console.log(42);`);
@@ -1259,7 +1146,6 @@ describe(`Plug'n'Play`, () => {
           [`resolve`]: `1.9.0`,
         },
       },
-      {plugNPlay: true},
       async ({path, run, source}) => {
         await run(`install`);
 

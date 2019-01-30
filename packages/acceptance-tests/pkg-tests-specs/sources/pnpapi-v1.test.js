@@ -6,7 +6,7 @@ const {
 describe(`Plug'n'Play API (v1)`, () => {
   test(
     `it should expose VERSIONS`,
-    makeTemporaryEnv({}, {plugNPlay: true}, async ({path, run, source}) => {
+    makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
       await expect(source(`require('pnpapi').VERSIONS`)).resolves.toMatchObject({std: 1});
@@ -15,7 +15,7 @@ describe(`Plug'n'Play API (v1)`, () => {
 
   test(
     `it should expose resolveToUnqualified`,
-    makeTemporaryEnv({}, {plugNPlay: true}, async ({path, run, source}) => {
+    makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
       await expect(source(`typeof require('pnpapi').resolveToUnqualified`)).resolves.toEqual(`function`);
@@ -24,7 +24,7 @@ describe(`Plug'n'Play API (v1)`, () => {
 
   test(
     `it should expose resolveToUnqualified`,
-    makeTemporaryEnv({}, {plugNPlay: true}, async ({path, run, source}) => {
+    makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
       await expect(source(`typeof require('pnpapi').resolveUnqualified`)).resolves.toEqual(`function`);
@@ -32,8 +32,8 @@ describe(`Plug'n'Play API (v1)`, () => {
   );
 
   test(
-    `it should expose resolveToUnqualified`,
-    makeTemporaryEnv({}, {plugNPlay: true}, async ({path, run, source}) => {
+    `it should expose resolveRequest`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
       await expect(source(`typeof require('pnpapi').resolveRequest`)).resolves.toEqual(`function`);
@@ -42,8 +42,8 @@ describe(`Plug'n'Play API (v1)`, () => {
 
   describe(`resolveRequest`, () => {
     test(
-      `it should return the path to the PnP file for when 'pnpapi' is requested`,
-      makeTemporaryEnv({}, {plugNPlay: true}, async ({path, run, source}) => {
+      `it should return the path to the PnP file when 'pnpapi' is requested`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`install`);
 
         await expect(
@@ -54,7 +54,7 @@ describe(`Plug'n'Play API (v1)`, () => {
 
     test(
       `it should return null for builtins`,
-      makeTemporaryEnv({}, {plugNPlay: true}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`install`);
 
         await expect(source(`require('pnpapi').resolveRequest('fs', ${JSON.stringify(path)} + '/')`)).resolves.toEqual(
@@ -69,7 +69,6 @@ describe(`Plug'n'Play API (v1)`, () => {
         {
           dependencies: {[`fs`]: `link:./fs`},
         },
-        {plugNPlay: true},
         async ({path, run, source}) => {
           await writeFile(`${path}/fs/index.js`, `module.exports = 'Hello world';`);
           await writeJson(`${path}/fs/package.json`, {
@@ -88,7 +87,7 @@ describe(`Plug'n'Play API (v1)`, () => {
 
     test(
       `it should support the 'extensions' option`,
-      makeTemporaryEnv({}, {plugNPlay: true}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({path, run, source}) => {
         await writeFile(`${path}/foo.bar`, `hello world`);
 
         await run(`install`);

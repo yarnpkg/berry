@@ -14,20 +14,25 @@ global.makeTemporaryEnv = generatePkgDriver({
   async runDriver(
     path,
     [command, ...args],
-    {cwd, projectFolder, registryUrl, plugnplayShebang, plugnplayBlacklist, env},
+    {cwd, projectFolder, registryUrl, env, ...config},
   ) {
-    if (projectFolder) args = [...args, `--cwd`, projectFolder];
+    if (projectFolder) {
+      args = [...args, `--cwd`, projectFolder];
+    }
+
+    const rcEnv = {};
+
+    for (const [key, value] of Object.entries(config)) {
+      rcEnv[`BERRY_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = value;
+    }
 
     const res = await execFile(process.execPath, [`${__dirname}/../berry-cli/bin/berry.js`, command, ...args], {
       env: Object.assign(
         {
-          [`BERRY_CACHE_FOLDER`]: `${path}/.berry/cache`,
-          [`BERRY_PNP_IGNORE_PATTERN`]: plugnplayBlacklist || ``,
-          [`BERRY_NPM_REGISTRY_SERVER`]: registryUrl,
           [`PATH`]: `${path}/bin${delimiter}${process.env.PATH}`,
-        },
-        plugnplayShebang && {
-          [`BERRY_PNP_SHEBANG`]: plugnplayShebang,
+          [`BERRY_CACHE_FOLDER`]: `${path}/.berry/cache`,
+          [`BERRY_NPM_REGISTRY_SERVER`]: registryUrl,
+          ...rcEnv,
         },
         env,
       ),
