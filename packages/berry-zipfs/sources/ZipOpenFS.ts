@@ -294,6 +294,8 @@ export class ZipOpenFS extends FakeFS {
       return await this.baseFs.readdirPromise(p);
     }, async (zipFs, {archivePath, subPath}) => {
       return await zipFs.readdirPromise(subPath);
+    }, {
+      requireSubpath: false,
     });
   }
 
@@ -302,6 +304,8 @@ export class ZipOpenFS extends FakeFS {
       return this.baseFs.readdirSync(p);
     }, (zipFs, {subPath}) => {
       return zipFs.readdirSync(subPath);
+    }, {
+      requireSubpath: false,
     });
   }
 
@@ -321,43 +325,30 @@ export class ZipOpenFS extends FakeFS {
     })
   }
 
-  private async makeCallPromise<T>(p: string, discard: () => Promise<T>, accept: (zipFS: ZipFS, zipInfo: {archivePath: string, subPath: string}) => Promise<T>): Promise<T> {
+  private async makeCallPromise<T>(p: string, discard: () => Promise<T>, accept: (zipFS: ZipFS, zipInfo: {archivePath: string, subPath: string}) => Promise<T>, {requireSubpath = true}: {requireSubpath?: boolean} = {}): Promise<T> {
     p = posix.normalize(posix.resolve(`/`, p));
 
     const zipInfo = this.findZip(p);
     if (!zipInfo)
       return await discard();
+    
+    if (requireSubpath && zipInfo.subPath === `/`)
+      return await discard();
 
     return await this.getZipPromise(zipInfo.archivePath, async zipFs => await accept(zipFs, zipInfo));
   }
 
-  private makeCallSync<T>(p: string, discard: () => T, accept: (zipFS: ZipFS, zipInfo: {archivePath: string, subPath: string}) => T): T {
+  private makeCallSync<T>(p: string, discard: () => T, accept: (zipFS: ZipFS, zipInfo: {archivePath: string, subPath: string}) => T, {requireSubpath = true}: {requireSubpath?: boolean} = {}): T {
     p = posix.normalize(posix.resolve(`/`, p));
 
     const zipInfo = this.findZip(p);
     if (!zipInfo)
       return discard();
 
+    if (requireSubpath && zipInfo.subPath === `/`)
+      return discard();
+
     return this.getZipSync(zipInfo.archivePath, zipFs => accept(zipFs, zipInfo));
-  }
-
-  private findZip2(p: string) {
-    if (this.filter && !this.filter.test(p))
-      return null;
-
-    if (p.endsWith(`.zip`)) {
-      return {archivePath: p, subPath: `/`};
-    } else {
-      const index = p.indexOf(`.zip/`);
-
-      if (index === -1)
-        return null;
-
-      const archivePath = p.substr(0, index + 4);
-      const subPath = `/${p.substr(index + 5)}`;
-
-      return {archivePath, subPath};
-    }
   }
 
   private findZip(p: string) {

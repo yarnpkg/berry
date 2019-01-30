@@ -38,22 +38,34 @@ function wrapAsync(fn: Function) {
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
   const SYNC_IMPLEMENTATIONS = new Set([
     `createReadStream`,
-    `realpathSync`,
-    `readdirSync`,
-    `statSync`,
+    `chmodSync`,
     `lstatSync`,
     `readlinkSync`,
     `readFileSync`,
+    `readdirSync`,
+    `readlinkSync`,
+    `realpathSync`,
+    `rmdirSync`,
+    `statSync`,
+    `symlinkSync`,
+    `unlinkSync`,
+    `utimesSync`,
     `writeFileSync`,
   ]);
 
   const ASYNC_IMPLEMENTATIONS = new Set([
-    `realpathPromise`,
-    `readdirPromise`,
-    `statPromise`,
     `lstatPromise`,
-    `readlinkPromise`,
+    `chmodPromise`,
+    `readdirPromise`,
+    `realpathPromise`,
     `readFilePromise`,
+    `readdirPromise`,
+    `readlinkPromise`,
+    `rmdirPromise`,
+    `statPromise`,
+    `symlinkPromise`,
+    `unlinkPromise`,
+    `utimesPromise`,
     `writeFilePromise`,
   ]);
 

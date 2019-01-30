@@ -15128,6 +15128,8 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
             return await this.baseFs.readdirPromise(p);
         }, async (zipFs, { archivePath, subPath }) => {
             return await zipFs.readdirPromise(subPath);
+        }, {
+            requireSubpath: false,
         });
     }
     readdirSync(p) {
@@ -15135,6 +15137,8 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
             return this.baseFs.readdirSync(p);
         }, (zipFs, { subPath }) => {
             return zipFs.readdirSync(subPath);
+        }, {
+            requireSubpath: false,
         });
     }
     async readlinkPromise(p) {
@@ -15151,34 +15155,23 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
             return zipFs.readlinkSync(subPath);
         });
     }
-    async makeCallPromise(p, discard, accept) {
+    async makeCallPromise(p, discard, accept, { requireSubpath = true } = {}) {
         p = path_1.posix.normalize(path_1.posix.resolve(`/`, p));
         const zipInfo = this.findZip(p);
         if (!zipInfo)
             return await discard();
+        if (requireSubpath && zipInfo.subPath === `/`)
+            return await discard();
         return await this.getZipPromise(zipInfo.archivePath, async (zipFs) => await accept(zipFs, zipInfo));
     }
-    makeCallSync(p, discard, accept) {
+    makeCallSync(p, discard, accept, { requireSubpath = true } = {}) {
         p = path_1.posix.normalize(path_1.posix.resolve(`/`, p));
         const zipInfo = this.findZip(p);
         if (!zipInfo)
             return discard();
+        if (requireSubpath && zipInfo.subPath === `/`)
+            return discard();
         return this.getZipSync(zipInfo.archivePath, zipFs => accept(zipFs, zipInfo));
-    }
-    findZip2(p) {
-        if (this.filter && !this.filter.test(p))
-            return null;
-        if (p.endsWith(`.zip`)) {
-            return { archivePath: p, subPath: `/` };
-        }
-        else {
-            const index = p.indexOf(`.zip/`);
-            if (index === -1)
-                return null;
-            const archivePath = p.substr(0, index + 4);
-            const subPath = `/${p.substr(index + 5)}`;
-            return { archivePath, subPath };
-        }
     }
     findZip(p) {
         if (this.filter && !this.filter.test(p))
@@ -15308,21 +15301,33 @@ function wrapAsync(fn) {
 function patchFs(patchedFs, fakeFs) {
     const SYNC_IMPLEMENTATIONS = new Set([
         `createReadStream`,
-        `realpathSync`,
-        `readdirSync`,
-        `statSync`,
+        `chmodSync`,
         `lstatSync`,
         `readlinkSync`,
         `readFileSync`,
+        `readdirSync`,
+        `readlinkSync`,
+        `realpathSync`,
+        `rmdirSync`,
+        `statSync`,
+        `symlinkSync`,
+        `unlinkSync`,
+        `utimesSync`,
         `writeFileSync`,
     ]);
     const ASYNC_IMPLEMENTATIONS = new Set([
-        `realpathPromise`,
-        `readdirPromise`,
-        `statPromise`,
         `lstatPromise`,
-        `readlinkPromise`,
+        `chmodPromise`,
+        `readdirPromise`,
+        `realpathPromise`,
         `readFilePromise`,
+        `readdirPromise`,
+        `readlinkPromise`,
+        `rmdirPromise`,
+        `statPromise`,
+        `symlinkPromise`,
+        `unlinkPromise`,
+        `utimesPromise`,
         `writeFilePromise`,
     ]);
     patchedFs.existsSync = (p) => {
