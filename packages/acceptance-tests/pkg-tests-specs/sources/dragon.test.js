@@ -64,9 +64,6 @@ describe(`Dragon tests`, () => {
           [`dragon-test-2-a`]: `1.0.0`,
         },
       },
-      {
-        plugNPlay: true,
-      },
       async ({path, run, source}) => {
         // This test assumes the following:
         //
@@ -125,9 +122,6 @@ describe(`Dragon tests`, () => {
         dependencies: {
           [`dragon-test-3-a`]: `1.0.0`,
         },
-      },
-      {
-        plugNPlay: true,
       },
       async ({path, run, source}) => {
         // This test assumes the following:
