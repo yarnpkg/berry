@@ -11,7 +11,7 @@ export interface WorkspaceDefinition {
 };
 
 export interface DependencyMeta {
-  build?: boolean;
+  built?: boolean;
 };
 
 export interface PeerDependencyMeta {
