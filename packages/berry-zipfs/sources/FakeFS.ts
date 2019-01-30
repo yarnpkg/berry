@@ -1,6 +1,12 @@
 import {ReadStream, Stats} from 'fs';
 import {posix}             from 'path';
 
+export type WriteFileOptions = Partial<{
+  encoding: string | null,
+  mode: number,
+  flag: string,
+}> | string;
+
 export abstract class FakeFS {
   abstract getRealPath(): string;
 
@@ -37,8 +43,8 @@ export abstract class FakeFS {
   abstract symlinkPromise(target: string, p: string): Promise<void>;
   abstract symlinkSync(target: string, p: string): void;
 
-  abstract writeFilePromise(p: string, content: Buffer | string): void;
-  abstract writeFileSync(p: string, content: Buffer | string): void;
+  abstract writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
+  abstract writeFileSync(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
 
   abstract unlinkPromise(p: string): Promise<void>;
   abstract unlinkSync(p: string): void;

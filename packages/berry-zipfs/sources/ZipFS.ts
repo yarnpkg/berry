@@ -1,11 +1,11 @@
-import libzip              from '@berry/libzip';
-import {ReadStream, Stats} from 'fs';
-import {posix}             from 'path';
-import {PassThrough}       from 'stream';
-import {isDate}            from 'util';
+import libzip                     from '@berry/libzip';
+import {ReadStream, Stats}        from 'fs';
+import {posix}                    from 'path';
+import {PassThrough}              from 'stream';
+import {isDate}                   from 'util';
 
-import {FakeFS}            from './FakeFS';
-import {NodeFS}            from './NodeFS';
+import {FakeFS, WriteFileOptions} from './FakeFS';
+import {NodeFS}                   from './NodeFS';
 
 const S_IFMT = 0o170000;
 
@@ -404,9 +404,9 @@ export class ZipFS extends FakeFS {
     return resolvedP;
   }
 
-  private setFileSource(p: string, content: Buffer | string) {
-    if (typeof content === `string`)
-      content = Buffer.from(content);
+  private setFileSource(p: string, content: string | Buffer | ArrayBuffer | DataView) {
+    if (!Buffer.isBuffer(content))
+      content = Buffer.from(content as any);
 
     const buffer = libzip.malloc(content.byteLength);
 
@@ -415,7 +415,7 @@ export class ZipFS extends FakeFS {
 
     // Copy the file into the Emscripten heap
     const heap = new Uint8Array(libzip.HEAPU8.buffer, buffer, content.byteLength);
-    heap.set(content);
+    heap.set(content as any);
 
     const source = libzip.source.fromBuffer(this.zip, buffer, content.byteLength, 0, true);
 
@@ -505,21 +505,35 @@ export class ZipFS extends FakeFS {
     }
   }
 
-  async writeFilePromise(p: string, content: Buffer | string) {
-    return this.writeFileSync(p, content);
+  async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return this.writeFileSync(p, content, opts);
   }
 
-  writeFileSync(p: string, content: Buffer | string) {
+  writeFileSync(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
 
     if (this.listings.has(resolvedP))
       throw Object.assign(new Error(`EISDIR: illegal operation on a directory, open '${p}'`), {code: `EISDIR`});
 
-    const existed = this.entries.has(resolvedP);
-    const index = this.setFileSource(resolvedP, content);
+    const index = this.entries.get(resolvedP);
 
-    if (!existed) {
-      this.registerEntry(resolvedP, index);
+    if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
+      content = Buffer.concat([this.getFileSource(index), Buffer.from(content as any)]);
+
+    let encoding = null;
+    
+    if (typeof opts === `string`)
+      encoding = opts;
+    else if (typeof opts === `object` && opts.encoding)
+      encoding = opts.encoding;
+
+    if (encoding !== null)
+      content = content.toString(encoding);
+
+    const newIndex = this.setFileSource(resolvedP, content);
+
+    if (newIndex !== index) {
+      this.registerEntry(resolvedP, newIndex);
     }
   }
 

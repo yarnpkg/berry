@@ -1,7 +1,7 @@
-import {posix}  from 'path';
+import {posix}                    from 'path';
 
-import {FakeFS} from './FakeFS';
-import {NodeFS} from './NodeFS';
+import {FakeFS, WriteFileOptions} from './FakeFS';
+import {NodeFS}                   from './NodeFS';
 
 export type JailFSOptions = {
   baseFs?: FakeFS,
@@ -76,12 +76,12 @@ export class JailFS extends FakeFS {
     return this.baseFs.chmodSync(this.fromJailedPath(p), mask);
   }
 
-  async writeFilePromise(p: string, content: Buffer | string) {
-    return await this.baseFs.writeFilePromise(this.fromJailedPath(p), content);
+  async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return await this.baseFs.writeFilePromise(this.fromJailedPath(p), content, opts);
   }
 
-  writeFileSync(p: string, content: Buffer | string) {
-    return this.baseFs.writeFileSync(this.fromJailedPath(p), content);
+  writeFileSync(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return this.baseFs.writeFileSync(this.fromJailedPath(p), content, opts);
   }
 
   async unlinkPromise(p: string) {

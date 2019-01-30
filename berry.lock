@@ -10151,7 +10151,7 @@ __metadata:
   linkType: hard
 
 "vscode-zipfs@workspace:packages/vscode-zipfs":
-  version: 0.0.0
+  version: 0.0.1
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
     "@berry/zipfs": "workspace:*"

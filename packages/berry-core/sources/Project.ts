@@ -778,6 +778,7 @@ export class Project {
 
     while (buildablePackages.size > 0) {
       const savedSize = buildablePackages.size;
+      const buildPromises = [];
 
       for (const locatorHash of buildablePackages) {
         const pkg = this.storedPackages.get(locatorHash);
@@ -818,30 +819,34 @@ export class Project {
         if (!buildDirective)
           throw new Error(`Assertion failed: The build directive should have been registered`);
 
-        for (const scriptName of buildDirective.scriptNames) {
-          const stdin = new PassThrough();
-          stdin.end();
+        buildPromises.push((async () => {
+          for (const scriptName of buildDirective.scriptNames) {
+            const stdin = new PassThrough();
+            stdin.end();
 
-          const logFile = tmpNameSync({
-            prefix: `buildfile-`,
-            postfix: `.log`,
-          });
+            const logFile = tmpNameSync({
+              prefix: `buildfile-`,
+              postfix: `.log`,
+            });
 
-          const stdout = createWriteStream(logFile);
-          const stderr = stdout;
+            const stdout = createWriteStream(logFile);
+            const stderr = stdout;
 
-          stdout.write(`# This file contains the result of Berry building a package (${structUtils.stringifyLocator(pkg)})\n`);
-          stdout.write(`\n`);
+            stdout.write(`# This file contains the result of Berry building a package (${structUtils.stringifyLocator(pkg)})\n`);
+            stdout.write(`\n`);
 
-          try {
-            await scriptUtils.executePackageScript(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
-            bstate[pkg.locatorHash] = buildHash;
-          } catch (error) {
-            report.reportError(MessageName.BUILD_FAILED, `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (logs can be found here: ${logFile})`);
-            delete bstate[pkg.locatorHash];
+            try {
+              await scriptUtils.executePackageScript(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
+              bstate[pkg.locatorHash] = buildHash;
+            } catch (error) {
+              report.reportError(MessageName.BUILD_FAILED, `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (logs can be found here: ${logFile})`);
+              delete bstate[pkg.locatorHash];
+            }
           }
-        }
+        })());
       }
+
+      await Promise.all(buildPromises);
 
       // If we reach this code, it means that we have circular dependencies
       // somewhere. Worst, it means that the circular dependencies both have

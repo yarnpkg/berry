@@ -13624,11 +13624,11 @@ class AliasFS extends FakeFS_1.FakeFS {
     chmodSync(p, mask) {
         return this.baseFs.chmodSync(p, mask);
     }
-    async writeFilePromise(p, content) {
-        return await this.baseFs.writeFilePromise(p, content);
+    async writeFilePromise(p, content, opts) {
+        return await this.baseFs.writeFilePromise(p, content, opts);
     }
-    writeFileSync(p, content) {
-        return this.baseFs.writeFileSync(p, content);
+    writeFileSync(p, content, opts) {
+        return this.baseFs.writeFileSync(p, content, opts);
     }
     async unlinkPromise(p) {
         return await this.baseFs.unlinkPromise(p);
@@ -13760,11 +13760,11 @@ class CwdFS extends FakeFS_1.FakeFS {
     chmodSync(p, mask) {
         return this.baseFs.chmodSync(this.fromCwdPath(p), mask);
     }
-    async writeFilePromise(p, content) {
-        return await this.baseFs.writeFilePromise(this.fromCwdPath(p), content);
+    async writeFilePromise(p, content, opts) {
+        return await this.baseFs.writeFilePromise(this.fromCwdPath(p), content, opts);
     }
-    writeFileSync(p, content) {
-        return this.baseFs.writeFileSync(this.fromCwdPath(p), content);
+    writeFileSync(p, content, opts) {
+        return this.baseFs.writeFileSync(this.fromCwdPath(p), content, opts);
     }
     async unlinkPromise(p) {
         return await this.baseFs.unlinkPromise(this.fromCwdPath(p));
@@ -14062,11 +14062,11 @@ class JailFS extends FakeFS_1.FakeFS {
     chmodSync(p, mask) {
         return this.baseFs.chmodSync(this.fromJailedPath(p), mask);
     }
-    async writeFilePromise(p, content) {
-        return await this.baseFs.writeFilePromise(this.fromJailedPath(p), content);
+    async writeFilePromise(p, content, opts) {
+        return await this.baseFs.writeFilePromise(this.fromJailedPath(p), content, opts);
     }
-    writeFileSync(p, content) {
-        return this.baseFs.writeFileSync(this.fromJailedPath(p), content);
+    writeFileSync(p, content, opts) {
+        return this.baseFs.writeFileSync(this.fromJailedPath(p), content, opts);
     }
     async unlinkPromise(p) {
         return await this.baseFs.rmdirPromise(this.fromJailedPath(p));
@@ -14211,13 +14211,23 @@ class NodeFS extends FakeFS_1.FakeFS {
     chmodSync(p, mask) {
         return this.realFs.chmodSync(this.fromPortablePath(p), mask);
     }
-    async writeFilePromise(p, content) {
+    async writeFilePromise(p, content, opts) {
         return await new Promise((resolve, reject) => {
-            this.realFs.writeFile(p, content, this.makeCallback(resolve, reject));
+            if (opts) {
+                this.realFs.writeFile(p, content, opts, this.makeCallback(resolve, reject));
+            }
+            else {
+                this.realFs.writeFile(p, content, this.makeCallback(resolve, reject));
+            }
         });
     }
-    writeFileSync(p, content) {
-        this.realFs.writeFileSync(this.fromPortablePath(p), content);
+    writeFileSync(p, content, opts) {
+        if (opts) {
+            this.realFs.writeFileSync(this.fromPortablePath(p), content, opts);
+        }
+        else {
+            this.realFs.writeFileSync(this.fromPortablePath(p), content);
+        }
     }
     async unlinkPromise(p) {
         return await new Promise((resolve, reject) => {
@@ -14619,7 +14629,7 @@ class ZipFS extends FakeFS_1.FakeFS {
         return resolvedP;
     }
     setFileSource(p, content) {
-        if (typeof content === `string`)
+        if (!Buffer.isBuffer(content))
             content = Buffer.from(content);
         const buffer = libzip_1.default.malloc(content.byteLength);
         if (!buffer)
@@ -14698,17 +14708,26 @@ class ZipFS extends FakeFS_1.FakeFS {
             throw new Error(libzip_1.default.error.strerror(libzip_1.default.getError(this.zip)));
         }
     }
-    async writeFilePromise(p, content) {
-        return this.writeFileSync(p, content);
+    async writeFilePromise(p, content, opts) {
+        return this.writeFileSync(p, content, opts);
     }
-    writeFileSync(p, content) {
+    writeFileSync(p, content, opts) {
         const resolvedP = this.resolveFilename(`open '${p}'`, p);
         if (this.listings.has(resolvedP))
             throw Object.assign(new Error(`EISDIR: illegal operation on a directory, open '${p}'`), { code: `EISDIR` });
-        const existed = this.entries.has(resolvedP);
-        const index = this.setFileSource(resolvedP, content);
-        if (!existed) {
-            this.registerEntry(resolvedP, index);
+        const index = this.entries.get(resolvedP);
+        if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
+            content = Buffer.concat([this.getFileSource(index), Buffer.from(content)]);
+        let encoding = null;
+        if (typeof opts === `string`)
+            encoding = opts;
+        else if (typeof opts === `object` && opts.encoding)
+            encoding = opts.encoding;
+        if (encoding !== null)
+            content = content.toString(encoding);
+        const newIndex = this.setFileSource(resolvedP, content);
+        if (newIndex !== index) {
+            this.registerEntry(resolvedP, newIndex);
         }
     }
     async unlinkPromise(p) {
@@ -14994,18 +15013,18 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
             return zipFs.chmodSync(subPath, mask);
         });
     }
-    async writeFilePromise(p, content) {
+    async writeFilePromise(p, content, opts) {
         return await this.makeCallPromise(p, async () => {
-            return await this.baseFs.writeFilePromise(p, content);
+            return await this.baseFs.writeFilePromise(p, content, opts);
         }, async (zipFs, { archivePath, subPath }) => {
-            return await zipFs.writeFilePromise(subPath, content);
+            return await zipFs.writeFilePromise(subPath, content, opts);
         });
     }
-    writeFileSync(p, content) {
+    writeFileSync(p, content, opts) {
         return this.makeCallSync(p, () => {
-            return this.baseFs.writeFileSync(p, content);
+            return this.baseFs.writeFileSync(p, content, opts);
         }, (zipFs, { subPath }) => {
-            return zipFs.writeFileSync(subPath, content);
+            return zipFs.writeFileSync(subPath, content, opts);
         });
     }
     async unlinkPromise(p) {

@@ -1,6 +1,6 @@
-import fs, {Stats} from 'fs';
+import fs, {Stats}                from 'fs';
 
-import {FakeFS}    from './FakeFS';
+import {FakeFS, WriteFileOptions} from './FakeFS';
 
 export class NodeFS extends FakeFS {
   private readonly realFs: typeof fs;
@@ -69,14 +69,22 @@ export class NodeFS extends FakeFS {
     return this.realFs.chmodSync(this.fromPortablePath(p), mask);
   }
 
-  async writeFilePromise(p: string, content: Buffer | string) {
+  async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.writeFile(p, content, this.makeCallback(resolve, reject));
+      if (opts) {
+        this.realFs.writeFile(p, content, opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.writeFile(p, content, this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  writeFileSync(p: string, content: Buffer | string) {
-    this.realFs.writeFileSync(this.fromPortablePath(p), content);
+  writeFileSync(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    if (opts) {
+      this.realFs.writeFileSync(this.fromPortablePath(p), content, opts);
+    } else {
+      this.realFs.writeFileSync(this.fromPortablePath(p), content);
+    }
   }
 
   async unlinkPromise(p: string) {

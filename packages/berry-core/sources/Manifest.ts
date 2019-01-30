@@ -68,6 +68,9 @@ export class Manifest {
       }
     }
 
+    if (typeof data.version === `string`)
+      this.version = data.version;
+
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
         this.bin = new Map([[structUtils.stringifyIdent(this.name), data.bin]]);

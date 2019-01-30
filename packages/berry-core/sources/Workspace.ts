@@ -85,7 +85,7 @@ export class Workspace {
     const pathname = protocolIndex !== -1
       ? range.slice(protocolIndex + 1)
       : range;
-    
+
     if (protocol === WorkspaceResolver.protocol && pathname === this.relativeCwd)
       return true;
     

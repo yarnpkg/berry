@@ -1,8 +1,8 @@
-import {posix}  from 'path';
+import {posix}                    from 'path';
 
-import {FakeFS} from './FakeFS';
-import {NodeFS} from './NodeFS';
-import {ZipFS}  from './ZipFS';
+import {FakeFS, WriteFileOptions} from './FakeFS';
+import {NodeFS}                   from './NodeFS';
+import {ZipFS}                    from './ZipFS';
 
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS,
@@ -161,19 +161,19 @@ export class ZipOpenFS extends FakeFS {
     });
   }
 
-  async writeFilePromise(p: string, content: Buffer | string) {
+  async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.writeFilePromise(p, content);
+      return await this.baseFs.writeFilePromise(p, content, opts);
     }, async (zipFs, {archivePath, subPath}) => {
-      return await zipFs.writeFilePromise(subPath, content);
+      return await zipFs.writeFilePromise(subPath, content, opts);
     });
   }
 
-  writeFileSync(p: string, content: Buffer | string) {
+  writeFileSync(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.writeFileSync(p, content);
+      return this.baseFs.writeFileSync(p, content, opts);
     }, (zipFs, {subPath}) => {
-      return zipFs.writeFileSync(subPath, content);
+      return zipFs.writeFileSync(subPath, content, opts);
     });
   }
 

@@ -1,6 +1,6 @@
-import {posix}  from 'path';
+import {posix}                    from 'path';
 
-import {FakeFS} from './FakeFS';
+import {FakeFS, WriteFileOptions} from './FakeFS';
 
 export type AliasFSOptions = {
   baseFs: FakeFS,
@@ -70,12 +70,12 @@ export class AliasFS extends FakeFS {
     return this.baseFs.chmodSync(p, mask);
   }
 
-  async writeFilePromise(p: string, content: Buffer | string) {
-    return await this.baseFs.writeFilePromise(p, content);
+  async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return await this.baseFs.writeFilePromise(p, content, opts);
   }
 
-  writeFileSync(p: string, content: Buffer | string) {
-    return this.baseFs.writeFileSync(p, content);
+  writeFileSync(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return this.baseFs.writeFileSync(p, content, opts);
   }
 
   async unlinkPromise(p: string) {
