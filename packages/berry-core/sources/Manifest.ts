@@ -1,10 +1,11 @@
-import {parseResolution}   from '@berry/parsers';
-import {FakeFS, NodeFS}    from '@berry/zipfs';
-import {posix}             from 'path';
+import {parseResolution}            from '@berry/parsers';
+import {FakeFS, NodeFS}             from '@berry/zipfs';
+import {posix}                      from 'path';
+import semver                       from 'semver';
 
-import * as structUtils    from './structUtils';
-import {IdentHash}         from './types';
-import {Ident, Descriptor} from './types';
+import * as structUtils             from './structUtils';
+import {IdentHash}                  from './types';
+import {Ident, Descriptor, Locator} from './types';
 
 export interface WorkspaceDefinition {
   pattern: string;
@@ -12,6 +13,7 @@ export interface WorkspaceDefinition {
 
 export interface DependencyMeta {
   built?: boolean;
+  unplugged?: boolean;
 };
 
 export interface PeerDependencyMeta {
@@ -31,8 +33,8 @@ export class Manifest {
 
   public workspaceDefinitions: Array<WorkspaceDefinition> = [];
 
-  public dependenciesMeta: Map<string, DependencyMeta> = new Map();
-  public peerDependenciesMeta: Map<string, PeerDependencyMeta> = new Map();
+  public dependenciesMeta: Map<IdentHash, Map<string, DependencyMeta>> = new Map();
+  public peerDependenciesMeta: Map<IdentHash, Map<string, PeerDependencyMeta>> = new Map();
 
   public resolutions: Array<{pattern: any, reference: string}> = [];
 
@@ -177,24 +179,44 @@ export class Manifest {
     }
 
     if (typeof data.dependenciesMeta === `object` && data.dependenciesMeta !== null) {
-      for (const [name, meta] of Object.entries(data.dependenciesMeta)) {
+      for (const [pattern, meta] of Object.entries(data.dependenciesMeta)) {
         if (typeof meta !== `object` || meta === null) {
-          errors.push(new Error(`Invalid meta field for '${name}`));
+          errors.push(new Error(`Invalid meta field for '${pattern}`));
           continue;
         }
 
-        this.dependenciesMeta.set(name, meta);
+        const descriptor = structUtils.parseDescriptor(pattern);
+        if (descriptor.range !== `unknown` && !semver.valid(descriptor.range)) {
+          errors.push(new Error(`Invalid meta field range for '${pattern}'`));
+          continue;
+        }
+
+        let dependencyMetaSet = this.dependenciesMeta.get(descriptor.identHash);
+        if (!dependencyMetaSet)
+          this.dependenciesMeta.set(descriptor.identHash, dependencyMetaSet = new Map());
+        
+        dependencyMetaSet.set(descriptor.range, meta);
       }
     }
 
     if (typeof data.peerDependenciesMeta === `object` && data.peerDependenciesMeta !== null) {
-      for (const [name, meta] of Object.entries(data.peerDependenciesMeta)) {
+      for (const [pattern, meta] of Object.entries(data.peerDependenciesMeta)) {
         if (typeof meta !== `object` || meta === null) {
-          errors.push(new Error(`Invalid meta field for '${name}`));
+          errors.push(new Error(`Invalid meta field for '${pattern}`));
           continue;
         }
 
-        this.peerDependenciesMeta.set(name, meta);
+        const descriptor = structUtils.parseDescriptor(pattern);
+        if (descriptor.range !== `unknown` && !semver.valid(descriptor.range)) {
+          errors.push(new Error(`Invalid meta field range for '${pattern}'`));
+          continue;
+        }
+
+        let peerDependencyMetaSet = this.peerDependenciesMeta.get(descriptor.identHash);
+        if (!peerDependencyMetaSet)
+          this.peerDependenciesMeta.set(descriptor.identHash, peerDependencyMetaSet = new Map());
+        
+        peerDependencyMetaSet.set(descriptor.range, meta);
       }
     }
 

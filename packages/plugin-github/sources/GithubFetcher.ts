@@ -31,7 +31,7 @@ export class GithubFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs: () => packageFs.discardAndClose(),
-      prefixPath: `/`,
+      prefixPath: `/sources`,
       checksum,
     };
   }
@@ -41,6 +41,7 @@ export class GithubFetcher implements Fetcher {
 
     return await tgzUtils.makeArchive(sourceBuffer, {
       stripComponents: 1,
+      prefixPath: `/sources`,
     });
   }
 

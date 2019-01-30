@@ -6,6 +6,7 @@ import Logic                                                from 'logic-solver';
 import {dirname, posix}                                     from 'path';
 // @ts-ignore
 import pLimit                                               from 'p-limit';
+import semver                                               from 'semver';
 import {PassThrough}                                        from 'stream';
 import {tmpNameSync}                                        from 'tmp';
 
@@ -16,6 +17,7 @@ import {Fetcher}                                            from './Fetcher';
 import {Installer, BuildDirective}                          from './Installer';
 import {Linker}                                             from './Linker';
 import {LockfileResolver}                                   from './LockfileResolver';
+import {DependencyMeta}                                     from './Manifest';
 import {MultiResolver}                                      from './MultiResolver';
 import {Report, ReportError, MessageName}                   from './Report';
 import {WorkspaceResolver}                                  from './WorkspaceResolver';
@@ -25,7 +27,7 @@ import * as miscUtils                                       from './miscUtils';
 import * as scriptUtils                                     from './scriptUtils';
 import * as structUtils                                     from './structUtils';
 import {IdentHash, DescriptorHash, LocatorHash}             from './types';
-import {Descriptor, Locator, Package}                       from './types';
+import {Descriptor, Ident, Locator, Package}                from './types';
 import {LinkType}                                           from './types';
 
 export type InstallOptions = {
@@ -238,6 +240,29 @@ export class Project {
         this.storedDescriptors.delete(descriptorHash);
       }
     }
+  }
+
+  getDependencyMeta(ident: Ident, version: string): DependencyMeta {
+    const dependencyMeta = {};
+
+    const dependenciesMeta = this.topLevelWorkspace.manifest.dependenciesMeta;
+    const dependencyMetaSet = dependenciesMeta.get(ident.identHash);
+
+    if (!dependencyMetaSet)
+      return dependencyMeta;
+    
+    const defaultMeta = dependencyMetaSet.get(`unknown`);
+    if (defaultMeta)
+      Object.assign(dependencyMeta, defaultMeta);
+
+    if (!semver.valid(version))
+      return dependencyMeta;
+
+    for (const [range, meta] of dependencyMetaSet)
+      if (range !== `unknown` && range === version)
+        Object.assign(dependencyMeta, meta);
+
+    return dependencyMeta;
   }
 
   async resolveEverything({cache, report, lockfileOnly}: InstallOptions) {
@@ -646,7 +671,7 @@ export class Project {
 
       let installStatus;
       try {
-        installStatus = await installer.installPackage(pkg, pkg.linkType, fetchResult);
+        installStatus = await installer.installPackage(pkg, fetchResult);
       } finally {
         if (fetchResult.releaseFs) {
           fetchResult.releaseFs();

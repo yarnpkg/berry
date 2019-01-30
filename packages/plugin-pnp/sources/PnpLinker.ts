@@ -1,9 +1,9 @@
-import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName} from '@berry/core';
-import {FetchResult, Locator, Package}                                                       from '@berry/core';
-import {miscUtils, structUtils}                                                              from '@berry/core';
-import {PackageInformationStores, LocationBlacklist, generatePnpScript}                      from '@berry/pnp';
-import {CwdFS, FakeFS, NodeFS}                                                               from '@berry/zipfs';
-import {posix}                                                                               from 'path';
+import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName, DependencyMeta} from '@berry/core';
+import {FetchResult, Ident, Locator, Package}                                                                from '@berry/core';
+import {miscUtils, structUtils}                                                                              from '@berry/core';
+import {PackageInformationStores, LocationBlacklist, generatePnpScript}                                      from '@berry/pnp';
+import {CwdFS, FakeFS, NodeFS}                                                                               from '@berry/zipfs';
+import {posix}                                                                                               from 'path';
 
 // Some packages do weird stuff and MUST be unplugged. I don't like them.
 const FORCED_UNPLUG_PACKAGES = new Set([
@@ -48,32 +48,31 @@ class PnpInstaller implements Installer {
     this.opts = opts;
   }
 
-  async installPackage(locator: Locator, linkType: LinkType, fetchResult: FetchResult) {
-    const key1 = structUtils.requirableIdent(locator);
-    const key2 = locator.reference;
+  async installPackage(pkg: Package, fetchResult: FetchResult) {
+    const key1 = structUtils.requirableIdent(pkg);
+    const key2 = pkg.reference;
 
     const buildScripts = await this.getBuildScripts(fetchResult);
 
     if (buildScripts.length > 0 && !this.opts.project.configuration.enableScripts) {
-      this.opts.report.reportWarning(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, locator)} lists build scripts, but all build scripts have been disabled.`);
+      this.opts.report.reportWarning(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
       buildScripts.length = 0;
     }
 
-    if (buildScripts.length > 0 && linkType !== LinkType.HARD) {
-      this.opts.report.reportWarning(MessageName.SOFT_LINK_BUILD, `${structUtils.prettyLocator(this.opts.project.configuration, locator)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
+    if (buildScripts.length > 0 && pkg.linkType !== LinkType.HARD) {
+      this.opts.report.reportWarning(MessageName.SOFT_LINK_BUILD, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
       buildScripts.length = 0;
     }
-
-    const dependenciesMeta = this.opts.project.topLevelWorkspace.manifest.dependenciesMeta;
-    const dependencyMeta = dependenciesMeta.get(structUtils.stringifyLocator(locator)) || dependenciesMeta.get(structUtils.stringifyIdent(locator));
+    
+    const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
 
     if (buildScripts.length > 0 && dependencyMeta && dependencyMeta.built === false) {
-      this.opts.report.reportInfo(MessageName.BUILD_DISABLED, `${structUtils.prettyLocator(this.opts.project.configuration, locator)} lists build scripts, but its build has been explicitly disabled through configuration.`);
+      this.opts.report.reportInfo(MessageName.BUILD_DISABLED, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but its build has been explicitly disabled through configuration.`);
       buildScripts.length = 0;
     }
 
-    const packageFs = linkType !== LinkType.SOFT && (buildScripts.length > 0 || this.isUnplugged(locator))
-      ? await this.unplugPackage(locator, fetchResult.packageFs)
+    const packageFs = pkg.linkType !== LinkType.SOFT && (buildScripts.length > 0 || this.isUnplugged(pkg, dependencyMeta))
+      ? await this.unplugPackage(pkg, fetchResult.packageFs)
       : fetchResult.packageFs;
 
     const packageRawLocation = posix.resolve(packageFs.getRealPath(), posix.relative(`/`, fetchResult.prefixPath));
@@ -211,11 +210,11 @@ class PnpInstaller implements Installer {
     return new CwdFS(unplugPath);
   }
 
-  private isUnplugged(locator: Locator) {
-    if (this.opts.project.configuration.pnpUnpluggedPackages.find((l: Locator) => l.reference ? structUtils.areLocatorsEqual(l, locator) : structUtils.areIdentsEqual(l, locator)))
+  private isUnplugged(ident: Ident, dependencyMeta: DependencyMeta) {
+    if (dependencyMeta.unplugged)
       return true;
 
-    if (FORCED_UNPLUG_PACKAGES.has(locator.identHash))
+    if (FORCED_UNPLUG_PACKAGES.has(ident.identHash))
       return true;
 
     return false;

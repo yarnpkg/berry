@@ -1,6 +1,5 @@
 import {Plugin, SettingsType} from '@berry/core';
 
-import unplug                 from './commands/unplug';
 import {PnpLinker}            from './PnpLinker';
 
 const plugin: Plugin = {
@@ -20,20 +19,12 @@ const plugin: Plugin = {
       type: SettingsType.ABSOLUTE_PATH,
       default: `./.berry/pnp/unplugged`,
     },
-    pnpUnpluggedPackages: {
-      description: `List of packages that must be explicitly unplugged if possible`,
-      type: SettingsType.LOCATOR_LOOSE,
-      default: [],
-    },
     pnpPath: {
       description: `Path of the file where the PnP hook must be written`,
       type: SettingsType.ABSOLUTE_PATH,
       default: `./.pnp.js`,
     },
   },
-  commands: [
-    unplug,
-  ],
   linkers: [
     PnpLinker,
   ],

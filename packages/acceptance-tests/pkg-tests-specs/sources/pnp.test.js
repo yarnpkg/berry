@@ -896,12 +896,16 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
-    `it should allow unplugging packages from a pnp installation`,
+    `it should allow unplugging a simple package from a pnp installation`,
     makeTemporaryEnv(
       {
         dependencies: {
           [`no-deps`]: `1.0.0`,
-          [`various-requires`]: `1.0.0`,
+        },
+        dependenciesMeta: {
+          [`no-deps`]: {
+            unplugged: true,
+          },
         },
       },
       {
@@ -909,97 +913,106 @@ describe(`Plug'n'Play`, () => {
       },
       async ({path, run, source}) => {
         await run(`install`);
-        await run(`unplug`, `various-requires`);
 
         const listing = await readdir(`${path}/.berry/pnp/unplugged`);
         expect(listing).toHaveLength(1);
 
         await writeFile(
-          `${path}/.berry/pnp/unplugged/${listing[0]}/node_modules/various-requires/alternative-index.js`,
+          `${path}/.berry/pnp/unplugged/${listing[0]}/node_modules/no-deps/index.js`,
           `module.exports = "unplugged";\n`,
         );
 
-        await expect(source(`require('various-requires/relative-require')`)).resolves.toMatch('unplugged');
-        await expect(source(`require('no-deps/package.json')`)).resolves.toMatchObject({
-          name: `no-deps`,
-          version: `1.0.0`,
+        await expect(source(`require('no-deps')`)).resolves.toEqual('unplugged');
+      },
+    ),
+  );
+
+  test(
+    `it should allow unplugging a deep package from a pnp installation`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`one-fixed-dep`]: `1.0.0`,
+        },
+        dependenciesMeta: {
+          [`no-deps`]: {
+            unplugged: true,
+          },
+        },
+      },
+      {
+        plugNPlay: true,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        const listing = await readdir(`${path}/.berry/pnp/unplugged`);
+        expect(listing).toHaveLength(1);
+
+        await writeFile(
+          `${path}/.berry/pnp/unplugged/${listing[0]}/node_modules/no-deps/index.js`,
+          `module.exports = "unplugged";\n`,
+        );
+
+        await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `unplugged`,
+          },
         });
       },
     ),
   );
 
   test(
-    `it should allow unplugging packages from a still uninstalled pnp installation`,
+    `it should allow unplugging multiple identically named packages from a pnp installation`,
     makeTemporaryEnv(
       {
         dependencies: {
-          [`no-deps`]: `1.0.0`,
-          [`various-requires`]: `1.0.0`,
+          [`one-fixed-dep`]: `1.0.0`,
+          [`no-deps`]: `2.0.0`,
+        },
+        dependenciesMeta: {
+          [`no-deps`]: {
+            unplugged: true,
+          },
         },
       },
       {
         plugNPlay: true,
       },
       async ({path, run, source}) => {
-        await run(`unplug`, `various-requires`);
+        await run(`install`);
+
+        const listing = await readdir(`${path}/.berry/pnp/unplugged`);
+        expect(listing).toHaveLength(2);
+      },
+    ),
+  );
+
+  test(
+    `it should allow picking the unplugged packages by locator`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`one-fixed-dep`]: `1.0.0`,
+          [`no-deps`]: `2.0.0`,
+        },
+        dependenciesMeta: {
+          [`no-deps@1.0.0`]: {
+            unplugged: true,
+          },
+        },
+      },
+      {
+        plugNPlay: true,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
 
         const listing = await readdir(`${path}/.berry/pnp/unplugged`);
         expect(listing).toHaveLength(1);
 
-        await writeFile(
-          `${path}/.berry/pnp/unplugged/${listing[0]}/node_modules/various-requires/alternative-index.js`,
-          `module.exports = "unplugged";\n`,
-        );
-
-        await expect(source(`require('various-requires/relative-require')`)).resolves.toMatch(`unplugged`);
-        await expect(source(`require('no-deps/package.json')`)).resolves.toMatchObject({
-          name: `no-deps`,
-          version: `1.0.0`,
-        });
-      },
-    ),
-  );
-
-  test(
-    `it should allow unplugging multiple (deep) packages from a pnp installation`,
-    makeTemporaryEnv(
-      {
-        dependencies: {
-          [`no-deps`]: `2.0.0`,
-          [`one-fixed-dep`]: `1.0.0`,
-          [`various-requires`]: `1.0.0`,
-        },
-      },
-      {
-        plugNPlay: true,
-      },
-      async ({path, run, source}) => {
-        await run(`install`);
-        await run(`unplug`, `various-requires`, `no-deps`);
-
-        await expect(readdir(`${path}/.berry/pnp/unplugged`)).resolves.toHaveLength(3);
-      },
-    ),
-  );
-
-  test(
-    `it should allow unplugging package (semver) ranges from a pnp installation`,
-    makeTemporaryEnv(
-      {
-        dependencies: {
-          [`no-deps`]: `2.0.0`,
-          [`one-fixed-dep`]: `1.0.0`,
-          [`various-requires`]: `1.0.0`,
-        },
-      },
-      {
-        plugNPlay: true,
-      },
-      async ({path, run, source}) => {
-        await run(`install`);
-        await run(`unplug`, `various-requires`, `no-deps@^1.0.0`);
-
-        await expect(readdir(`${path}/.berry/pnp/unplugged`)).resolves.toHaveLength(2);
+        expect(listing[0]).toMatch(/1.0.0/);
       },
     ),
   );
@@ -1008,13 +1021,24 @@ describe(`Plug'n'Play`, () => {
     `it should properly unplug a package with peer dependencies`,
     makeTemporaryEnv(
       {
-        dependencies: {[`provides-peer-deps-1-0-0`]: `1.0.0`, [`provides-peer-deps-2-0-0`]: `1.0.0`},
+        dependencies: {
+          [`provides-peer-deps-1-0-0`]: `1.0.0`,
+          [`provides-peer-deps-2-0-0`]: `1.0.0`,
+        },
+        dependenciesMeta: {
+          [`no-deps`]: {
+            unplugged: true,
+          },
+          [`peer-deps`]: {
+            unplugged: true,
+          },
+        },
       },
       {
         plugNPlay: true,
       },
       async ({path, run, source}) => {
-        await run(`unplug`, `no-deps`, `peer-deps`);
+        await run(`install`);
 
         await expect(
           source(`require('provides-peer-deps-1-0-0') !== require('provides-peer-deps-2-0-0')`),
@@ -1066,99 +1090,16 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
-    `it shouldn't clear the unplugged folder when running an install`,
-    makeTemporaryEnv(
-      {
-        dependencies: {
-          [`no-deps`]: `1.0.0`,
-          [`various-requires`]: `1.0.0`,
-        },
-      },
-      {
-        plugNPlay: true,
-      },
-      async ({path, run, source}) => {
-        await run(`unplug`, `various-requires`);
-        await run(`install`);
-
-        await expect(readdir(`${path}/.berry/pnp/unplugged`)).resolves.toHaveLength(1);
-      },
-    ),
-  );
-
-  test(
-    `it shouldn't clear the unplugged folder when unplugging new packages`,
-    makeTemporaryEnv(
-      {
-        dependencies: {
-          [`no-deps`]: `1.0.0`,
-          [`various-requires`]: `1.0.0`,
-        },
-      },
-      {
-        plugNPlay: true,
-      },
-      async ({path, run, source}) => {
-        await run(`unplug`, `various-requires`);
-        await run(`unplug`, `no-deps`);
-
-        await expect(readdir(`${path}/.berry/pnp/unplugged`)).resolves.toHaveLength(2);
-      },
-    ),
-  );
-
-  test(
-    `it should clear the specified packages when using --reset with arguments`,
-    makeTemporaryEnv(
-      {
-        dependencies: {
-          [`no-deps`]: `1.0.0`,
-          [`various-requires`]: `1.0.0`,
-        },
-      },
-      {
-        plugNPlay: true,
-      },
-      async ({path, run, source}) => {
-        await run(`unplug`, `various-requires`);
-
-        await expect(readdir(`${path}/.berry/pnp/unplugged`)).resolves.toHaveLength(1);
-
-        await run(`unplug`, `various-requires`, `--reset`);
-
-        expect(existsSync(`${path}/.berry/pnp/unplugged`)).toEqual(false);
-      },
-    ),
-  );
-
-  test(
-    `it should clear the whole unplugged folder when using unplug --reset without arguments`,
-    makeTemporaryEnv(
-      {
-        dependencies: {
-          [`no-deps`]: `1.0.0`,
-          [`various-requires`]: `1.0.0`,
-        },
-      },
-      {
-        plugNPlay: true,
-      },
-      async ({path, run, source}) => {
-        await run(`unplug`, `various-requires`);
-        await run(`unplug`, `--reset`);
-
-        expect(existsSync(`${path}/.berry/pnp/unplugged`)).toEqual(false);
-      },
-    ),
-  );
-
-  test(
     `it should not override an already unplugged package`,
     makeTemporaryEnv(
       {
         dependencies: {
           [`no-deps`]: `1.0.0`,
-          [`various-requires`]: `1.0.0`,
+        },
+        dependenciesMeta: {
+          [`no-deps`]: {
+            unplugged: true,
+          },
         },
       },
       {
@@ -1166,23 +1107,18 @@ describe(`Plug'n'Play`, () => {
       },
       async ({path, run, source}) => {
         await run(`install`);
-        await run(`unplug`, `various-requires`);
 
         const listing = await readdir(`${path}/.berry/pnp/unplugged`);
         expect(listing).toHaveLength(1);
 
         await writeFile(
-          `${path}/.berry/pnp/unplugged/${listing[0]}/node_modules/various-requires/alternative-index.js`,
+          `${path}/.berry/pnp/unplugged/${listing[0]}/node_modules/no-deps/index.js`,
           `module.exports = "unplugged";\n`,
         );
 
-        await run(`unplug`, `various-requires`, `no-deps`);
+        await run(`install`);
 
-        await expect(source(`require('various-requires/relative-require')`)).resolves.toMatch(`unplugged`);
-        await expect(source(`require('no-deps/package.json')`)).resolves.toMatchObject({
-          name: `no-deps`,
-          version: `1.0.0`,
-        });
+        await expect(source(`require('no-deps')`)).resolves.toEqual(`unplugged`);
       },
     ),
   );
@@ -1191,7 +1127,9 @@ describe(`Plug'n'Play`, () => {
     `it should not automatically unplug all packages`,
     makeTemporaryEnv(
       {
-        dependencies: {[`no-deps`]: `1.0.0`},
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
       },
       {plugNPlay: true},
       async ({path, run, source}) => {

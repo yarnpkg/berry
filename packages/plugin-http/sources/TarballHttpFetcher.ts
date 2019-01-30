@@ -34,7 +34,7 @@ export class TarballHttpFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs: () => packageFs.discardAndClose(),
-      prefixPath: `/`,
+      prefixPath: `/sources`,
       checksum,
     };
   }
@@ -44,6 +44,7 @@ export class TarballHttpFetcher implements Fetcher {
 
     return await tgzUtils.makeArchive(sourceBuffer, {
       stripComponents: 1,
+      prefixPath: `/sources`,
     });
   }
 }

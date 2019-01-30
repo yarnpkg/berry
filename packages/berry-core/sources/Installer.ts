@@ -1,5 +1,5 @@
-import {FetchResult}       from './Fetcher';
-import {LinkType, Locator} from './types';
+import {FetchResult}                from './Fetcher';
+import {LinkType, Locator, Package} from './types';
 
 export type BuildDirective = {
   disabledReason?: string;
@@ -25,11 +25,10 @@ export interface Installer {
    * This function is guaranteed to be called for all packages before the
    * dependencies start to be attached.
    * 
-   * @param locator The package being installed
-   * @param linkType Whether it's a soft install or hard install
+   * @param pkg The package being installed
    * @param fetchResult The fetched information about the package
    */
-  installPackage(locator: Locator, linkType: LinkType, fetchResult: FetchResult): Promise<InstallStatus>;
+  installPackage(pkg: Package, fetchResult: FetchResult): Promise<InstallStatus>;
 
   /**
    * Link a package and its internal (same-linker) dependencies.

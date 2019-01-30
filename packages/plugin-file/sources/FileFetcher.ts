@@ -45,7 +45,7 @@ export class FileFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs: () => packageFs.discardAndClose(),
-      prefixPath: `/`,
+      prefixPath: `/sources`,
       localPath: this.getLocalPath(locator, opts),
       checksum,
     };
@@ -74,7 +74,10 @@ export class FileFetcher implements Fetcher {
     const sourcePath = posix.resolve(effectiveParentFetch.prefixPath, filePath);
 
     return await miscUtils.releaseAfterUseAsync(async () => {
-      return await tgzUtils.makeArchiveFromDirectory(sourcePath, {baseFs: sourceFs});
+      return await tgzUtils.makeArchiveFromDirectory(sourcePath, {
+        baseFs: sourceFs,
+        prefixPath: `/sources`,
+      });
     }, effectiveParentFetch.releaseFs);
   }
 

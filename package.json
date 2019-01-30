@@ -39,10 +39,10 @@
     },
     "dependenciesMeta": {
         "fsevents": {
-            "build": false
+            "built": false
         },
         "webpack-cli": {
-            "build": false
+            "built": false
         }
     },
     "scripts": {

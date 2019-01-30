@@ -96,7 +96,7 @@ export function parseIdent(string: string): Ident {
   const match = string.match(/^(?:@([^\/]+?)\/)?([^\/]+)$/);
 
   if (!match)
-    throw new Error(`Parse error (${string})`);
+    throw new Error(`Invalid ident (${string})`);
 
   const [, scope, name] = match;
   return makeIdent(scope, name);
@@ -106,7 +106,7 @@ export function parseDescriptor(string: string, strict: boolean = false): Descri
   const descriptor = tryParseDescriptor(string, strict);
 
   if (!descriptor)
-    throw new Error(`Parse error (${string})`);
+    throw new Error(`Invalid descriptor (${string})`);
 
   return descriptor;
 }
@@ -118,8 +118,11 @@ export function tryParseDescriptor(string: string, strict: boolean = false): Des
 
   if (!match)
     return null;
-
+  
   let [, scope, name, range] = match;
+
+  if (range === `unknown`)
+    throw new Error(`Invalid range (${string})`);
 
   if (!range)
     range = `unknown`;
@@ -128,14 +131,30 @@ export function tryParseDescriptor(string: string, strict: boolean = false): Des
 }
 
 export function parseLocator(string: string, strict: boolean = false): Locator {
+  const locator = tryParseLocator(string, strict);
+
+  if (!locator)
+    throw new Error(`Invalid locator (${string})`);
+  
+  return locator;
+}
+
+export function tryParseLocator(string: string, strict: boolean = false): Locator | null {
   const match = strict
     ? string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))$/)
     : string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))?$/);
 
   if (!match)
-    throw new Error(`Parse error (${string})`);
+    return null;
 
   let [, scope, name, reference] = match;
+
+  if (reference === `unknown`)
+    throw new Error(`Invalid reference (${string})`);
+
+  if (!reference)
+    reference = `unknown`;
+
   return makeLocator(makeIdent(scope, name), reference);
 }
 

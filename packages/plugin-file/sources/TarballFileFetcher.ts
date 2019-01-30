@@ -39,7 +39,7 @@ export class TarballFileFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs: () => packageFs.discardAndClose(),
-      prefixPath: `/`,
+      prefixPath: `/sources`,
       checksum,
     };
   }
@@ -68,7 +68,10 @@ export class TarballFileFetcher implements Fetcher {
     const sourceBuffer = await sourceFs.readFilePromise(sourcePath);
 
     return await miscUtils.releaseAfterUseAsync(async () => {
-      return await tgzUtils.makeArchive(sourceBuffer, {stripComponents: 1});
+      return await tgzUtils.makeArchive(sourceBuffer, {
+        stripComponents: 1,
+        prefixPath: `/sources`,
+      });
     }, effectiveParentFetch.releaseFs);
   }
 
