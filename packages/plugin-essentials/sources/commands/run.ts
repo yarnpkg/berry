@@ -29,17 +29,8 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
     const manifest = await Manifest.find(workspace.cwd);
 
-    if (manifest.scripts.has(name)) {
-      try {
-        return await scriptUtils.executeWorkspaceScript(workspace, name, args, {stdin, stdout, stderr});
-      } catch (error) {
-        if (error.cmd) {
-          return 1;
-        } else {
-          throw error;
-        }
-      }
-    }
+    if (manifest.scripts.has(name))
+      return await scriptUtils.executeWorkspaceScript(workspace, name, args, {stdin, stdout, stderr});
 
     // If we can't find it, we then check whether one of the dependencies of the
     // current workspace exports a binary with the requested name
@@ -47,17 +38,8 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     const binaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace);
     const binary = binaries.get(name);
 
-    if (binary) {
-      try {
-        return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, name, args, {cwd, stdin, stdout, stderr});
-      } catch (error) {
-        if (error.cmd) {
-          return 1;
-        } else {
-          throw error;
-        }
-      }
-    }
+    if (binary)
+      return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, name, args, {cwd, stdin, stdout, stderr});
 
     // When it fails, we try to check whether it's a global script (ie we look
     // into all the workspaces to find one that exports this script). We only do
@@ -75,15 +57,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       }) as Array<Workspace>;
 
       if (filteredWorkspaces.length === 1) {
-        try {
-          return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], name, args, {stdin, stdout, stderr});
-        } catch (error) {
-          if (error.cmd) {
-            return 1;
-          } else {
-            throw error;
-          }
-        }
+        return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], name, args, {stdin, stdout, stderr});
       }
     }
 

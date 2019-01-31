@@ -860,11 +860,12 @@ export class Project {
             stdout.write(`# This file contains the result of Berry building a package (${structUtils.stringifyLocator(pkg)})\n`);
             stdout.write(`\n`);
 
-            try {
-              await scriptUtils.executePackageScript(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
+            const exitCode = await scriptUtils.executePackageScript(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
+
+            if (exitCode === 0) {
               bstate[pkg.locatorHash] = buildHash;
-            } catch (error) {
-              report.reportError(MessageName.BUILD_FAILED, `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (logs can be found here: ${logFile})`);
+            } else {
+              report.reportError(MessageName.BUILD_FAILED, `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${exitCode}, logs can be found here: ${logFile})`);
               delete bstate[pkg.locatorHash];
             }
           }

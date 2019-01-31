@@ -94,7 +94,7 @@ export async function executePackageScript(locator: Locator, scriptName: string,
       return;
 
     try {
-      await runShell(script, {args, cwd, env, stdin, stdout, stderr});
+      return await runShell(script, {args, cwd, env, stdin, stdout, stderr});
     } finally {
       await remove(env.BERRY_BIN_FOLDER);
     }

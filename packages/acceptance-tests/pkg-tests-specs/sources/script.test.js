@@ -49,24 +49,6 @@ describe(`Scripts tests`, () => {
   );
 
   test(
-    `it should allow to execute the dependencies binaries`,
-    makeTemporaryEnv(
-      {
-        dependencies: {
-          [`has-bin-entries`]: `1.0.0`,
-        },
-      },
-      async ({path, run, source}) => {
-        await run(`install`);
-
-        await expect(run(`run`, `has-bin-entries`, `success`)).resolves.toMatchObject({
-          stdout: `success\n`,
-        });
-      },
-    ),
-  );
-
-  test(
     `it should allow to execute the dependencies binaries even from a different cwd than the project root`,
     makeTemporaryEnv(
       {
@@ -149,24 +131,6 @@ describe(`Scripts tests`, () => {
         await expect(
           source(`require('fs').existsSync(${JSON.stringify(resolve(path, stdout.trim()))})`),
         ).resolves.toEqual(true);
-      },
-    ),
-  );
-
-  test(
-    `it shouldn't require the "--" flag to stop interpreting options after "run" commands`,
-    makeTemporaryEnv(
-      {
-        dependencies: {
-          [`has-bin-entries`]: `1.0.0`,
-        },
-      },
-      async ({path, run, source}) => {
-        await run(`install`);
-
-        await expect(run(`run`, `has-bin-entries`, `--hello`)).resolves.toMatchObject({
-          stdout: `--hello\n`,
-        });
       },
     ),
   );

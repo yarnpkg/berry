@@ -8,11 +8,14 @@ import {promisify}                                                        from '
 
 const statP = promisify(stat);
 
+export type ShellBuiltin = (args: Array<string>, commandOpts: ShellOptions, shellOpts: ShellOptions) => Promise<number>;
+
 export type ShellOptions = {
   args: Array<string>,
-  builtins: {[key: string]: (args: Array<string>, commandOpts: ShellOptions, shellOpts: ShellOptions) => Promise<void>},
+  builtins: {[key: string]: ShellBuiltin},
   cwd: string,
   env: {[key: string]: string | undefined},
+  exitCode: number | null,
   paths?: Array<string>,
   stdin: Readable,
   stdout: Writable,
@@ -22,23 +25,39 @@ export type ShellOptions = {
 
 const BUILTINS = {
   async cd([target, ... rest]: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
-    target = posix.resolve(contextOpts.cwd, target);
-
-    const stat = await statP(target);
+    const resolvedTarget = posix.resolve(contextOpts.cwd, target);
+    const stat = await statP(resolvedTarget);
 
     if (!stat.isDirectory()) {
       commandOpts.stderr.write(`cd: not a directory\n`);
-      throw new Error(`cd: not a directory`);
-    };
-
-    contextOpts.cwd = target;
+      return 1;
+    } else {
+      contextOpts.cwd = target;
+      return 0;
+    }
   },
 
-  pwd([target, ... rest]: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
+  pwd(args: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
     commandOpts.stdout.write(`${contextOpts.cwd}\n`);
+    return 0;
+  },
+
+  true(args: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
+    return 0;
+  },
+
+  false(args: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
+    return 1;
+  },
+
+  exit([code, ... rest]: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
+    return contextOpts.exitCode = parseInt(code, 10);
   },
 
   async command([ident, ... rest]: Array<string>, {cwd, env: commandEnv, stdin, stdout, stderr}: ShellOptions, contextOpts: ShellOptions) {
+    if (typeof ident === `undefined`)
+      return 0;
+
     const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
 
     if (stdin === process.stdin)
@@ -70,26 +89,29 @@ const BUILTINS = {
     if (stderr !== process.stderr)
       subprocess.stderr.pipe(stderr);
 
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       subprocess.on(`error`, error => {
         // @ts-ignore
         switch (error.code) {
           case `ENOENT`: {
             stderr.write(`command not found: ${ident}\n`);
+            resolve(127);
+          } break;
+          case `EACCESS`: {
+            stderr.write(`permission denied: ${ident}\n`);
+            resolve(128);
           } break;
           default: {
             stderr.write(`uncaught error: ${error.message}\n`);
+            resolve(1);
           } break;
         }
-        reject(error);
       });
       subprocess.on(`exit`, code => {
-        if (code === 0) {
-          resolve();
+        if (code !== null) {
+          resolve(code);
         } else {
-          reject(Object.assign(new Error(`Process exited with error code ${code}`), {
-            cmd: `ok`, code,
-          }));
+          resolve(129);
         }
       });
     });
@@ -226,7 +248,7 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
   }
 
   async function unrollCommandChain(node: CommandChain, {stdin, stdout, stderr}: {stdin: Readable, stdout: Writable, stderr: Writable}) {
-    let next = (promises: Array<Promise<void>>) => {};
+    let next = (promises: Array<Promise<number>>) => {};
 
     if (node.then) {
       const pipe = new PassThrough();
@@ -248,51 +270,82 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
     const args = await interpolateArguments(node.args);
 
     if (args.length < 1)
-      return () => {};
+      return () => [];
 
     const ident = args[0];
     const builtin = Object.prototype.hasOwnProperty.call(builtins, ident)
       ? (commandOpts: ShellOptions) => builtins[ident](args.slice(1), commandOpts, opts)
       : (commandOpts: ShellOptions) => builtins.command(args, commandOpts, opts);
 
-    return (promises: Array<Promise<void>>) => {
+    return (promises: Array<Promise<number>> = []) => {
       next(promises);
-      promises.push(builtin({... opts, stdin, stdout, stderr}));
+
+      if (opts.exitCode === null)
+        promises.push(builtin({... opts, stdin, stdout, stderr}));
+
+      return promises;
     };
   }
 
   async function executeCommandChain(node: CommandChain) {
     const unrolledExecution = await unrollCommandChain(node, {stdin, stdout, stderr});
+    const exitCodes = await Promise.all(unrolledExecution());
 
-    const promises: Array<Promise<void>> = [];
-    unrolledExecution(promises);
-
-    await Promise.all(promises);
+    if (exitCodes.length > 0) {
+      return exitCodes[exitCodes.length - 1];
+    } else {
+      return 0;
+    }
   }
 
-  async function executeCommandLine(node: CommandLine) {
+  async function executeCommandLine(node: CommandLine): Promise<number> {
     if (!node.then) {
-      await executeCommandChain(node.chain);
+      return await executeCommandChain(node.chain);
     } else switch (node.then.type) {
       case `&&`: {
-        await executeCommandChain(node.chain);
-        await executeCommandLine(node.then.line);
+        const code = await executeCommandChain(node.chain);
+
+        if (opts.exitCode !== null)
+          return opts.exitCode;
+
+        if (code === 0) {
+          return await executeCommandLine(node.then.line);
+        } else {
+          return code;
+        }
       } break;
 
       case `||`: {
-        try {
-          await executeCommandChain(node.chain);
-        } catch (error) {
-          await executeCommandLine(node.then.line);
+        const code = await executeCommandChain(node.chain);
+
+        if (opts.exitCode !== null)
+          return opts.exitCode;
+
+        if (code !== 0) {
+          return await executeCommandLine(node.then.line);
+        } else {
+          return code;
         }
+      } break;
+
+      default: {
+        throw new Error(`Unsupported command type: "${node.then.type}"`);
       } break;
     }
   }
 
   async function executeShellLine(node: ShellLine) {
+    let lastExitCode = 0;
+
     for (const command of node) {
-      await executeCommandLine(command);
+      lastExitCode = await executeCommandLine(command);
+      
+      if (opts.exitCode !== null) {
+        return opts.exitCode;
+      }
     }
+    
+    return lastExitCode;
   }
 
   return executeShellLine(ast);
@@ -370,6 +423,7 @@ export async function runShell(command: string, {
   // Inject the default builtins
   builtins = Object.assign({}, builtins, BUILTINS);
 
+  // If the shell line doesn't use the args, inject it at the end of the last command
   if (!locateArgsVariable(ast) && ast.length > 0) {
     let command = ast[ast.length - 1];
 
@@ -386,11 +440,12 @@ export async function runShell(command: string, {
     }));
   }
 
-  await runShellAst(ast, {
+  return await runShellAst(ast, {
     args,
     builtins,
     cwd,
     env,
+    exitCode: null,
     stdin,
     stdout,
     stderr,
