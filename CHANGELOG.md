@@ -8,6 +8,10 @@
 
   - Registry hostnames finally aren't part of the lockfile anymore. It means that you can switch the registry at any time by changing the `npmRegistryServer` settings. One unfortunate side effect is that NPM Enterprise cannot be supported by default anymore (they use their own weird conventions), and as such you will need to enable `npmRegistryEnterprise: true` in your settings if you're in this case. Send complaints to npm.
 
+### Notable changes
+
+  - The meaning of `devDependencies` is slightly altered. Until then dev dependencies were described as "dependencies we only use in development". Given that we now advocate for all your packages to be stored within the repository (in order to guarantee reproducible builds), this doesn't really make sense anymore. As a result, our description of dev dependencies is now "dependencies that aren't installed by the package consumers". It doesn't really change anything else than the name, but the more you know.
+
 ### Workspaces
 
   - Workspaces can now be referenced using the special `workspace:` protocol. This protocol accepts either a relative path to the workspace, or a semver range that will be compared against the `version` fields from candidate workspaces.
