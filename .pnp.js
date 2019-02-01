@@ -13559,6 +13559,9 @@ class AliasFS extends FakeFS_1.FakeFS {
     createReadStream(p, opts) {
         return this.baseFs.createReadStream(p, opts);
     }
+    createWriteStream(p, opts) {
+        return this.baseFs.createWriteStream(p, opts);
+    }
     async realpathPromise(p) {
         return await this.baseFs.realpathPromise(p);
     }
@@ -13588,6 +13591,12 @@ class AliasFS extends FakeFS_1.FakeFS {
     }
     chmodSync(p, mask) {
         return this.baseFs.chmodSync(p, mask);
+    }
+    async renamePromise(oldP, newP) {
+        return await this.baseFs.renamePromise(oldP, newP);
+    }
+    renameSync(oldP, newP) {
+        return this.baseFs.renameSync(oldP, newP);
     }
     async writeFilePromise(p, content, opts) {
         return await this.baseFs.writeFilePromise(p, content, opts);
@@ -13695,6 +13704,9 @@ class CwdFS extends FakeFS_1.FakeFS {
     createReadStream(p, opts) {
         return this.baseFs.createReadStream(this.fromCwdPath(p), opts);
     }
+    createWriteStream(p, opts) {
+        return this.baseFs.createWriteStream(this.fromCwdPath(p), opts);
+    }
     async realpathPromise(p) {
         return await this.baseFs.realpathPromise(this.fromCwdPath(p));
     }
@@ -13724,6 +13736,12 @@ class CwdFS extends FakeFS_1.FakeFS {
     }
     chmodSync(p, mask) {
         return this.baseFs.chmodSync(this.fromCwdPath(p), mask);
+    }
+    async renamePromise(oldP, newP) {
+        return await this.baseFs.renamePromise(this.fromCwdPath(oldP), this.fromCwdPath(newP));
+    }
+    renameSync(oldP, newP) {
+        return this.baseFs.renameSync(this.fromCwdPath(oldP), this.fromCwdPath(newP));
     }
     async writeFilePromise(p, content, opts) {
         return await this.baseFs.writeFilePromise(this.fromCwdPath(p), content, opts);
@@ -13959,6 +13977,34 @@ class FakeFS {
         }
         this.writeFileSync(p, content);
     }
+    async movePromise(fromP, toP) {
+        try {
+            await this.renamePromise(fromP, toP);
+        }
+        catch (error) {
+            if (error.code === `EXDEV`) {
+                await this.copyPromise(toP, fromP);
+                await this.removePromise(fromP);
+            }
+            else {
+                throw error;
+            }
+        }
+    }
+    moveSync(fromP, toP) {
+        try {
+            this.renameSync(fromP, toP);
+        }
+        catch (error) {
+            if (error.code === `EXDEV`) {
+                this.copySync(toP, fromP);
+                this.removeSync(fromP);
+            }
+            else {
+                throw error;
+            }
+        }
+    }
 }
 exports.FakeFS = FakeFS;
 ;
@@ -13997,6 +14043,9 @@ class JailFS extends FakeFS_1.FakeFS {
     createReadStream(p, opts) {
         return this.baseFs.createReadStream(this.fromJailedPath(p), opts);
     }
+    createWriteStream(p, opts) {
+        return this.baseFs.createWriteStream(this.fromJailedPath(p), opts);
+    }
     async realpathPromise(p) {
         return this.toJailedPath(await this.baseFs.realpathPromise(this.fromJailedPath(p)));
     }
@@ -14026,6 +14075,12 @@ class JailFS extends FakeFS_1.FakeFS {
     }
     chmodSync(p, mask) {
         return this.baseFs.chmodSync(this.fromJailedPath(p), mask);
+    }
+    async renamePromise(oldP, newP) {
+        return await this.baseFs.renamePromise(this.fromJailedPath(oldP), this.fromJailedPath(newP));
+    }
+    renameSync(oldP, newP) {
+        return this.baseFs.renameSync(this.fromJailedPath(oldP), this.fromJailedPath(newP));
     }
     async writeFilePromise(p, content, opts) {
         return await this.baseFs.writeFilePromise(this.fromJailedPath(p), content, opts);
@@ -14136,6 +14191,9 @@ class NodeFS extends FakeFS_1.FakeFS {
     createReadStream(p, opts) {
         return this.realFs.createReadStream(this.fromPortablePath(p), opts);
     }
+    createWriteStream(p, opts) {
+        return this.realFs.createWriteStream(this.fromPortablePath(p), opts);
+    }
     async realpathPromise(p) {
         return await new Promise((resolve, reject) => {
             this.realFs.realpath(p, {}, this.makeCallback(resolve, reject));
@@ -14175,6 +14233,14 @@ class NodeFS extends FakeFS_1.FakeFS {
     }
     chmodSync(p, mask) {
         return this.realFs.chmodSync(this.fromPortablePath(p), mask);
+    }
+    async renamePromise(oldP, newP) {
+        return await new Promise((resolve, reject) => {
+            this.realFs.rename(this.fromPortablePath(oldP), this.fromPortablePath(newP), this.makeCallback(resolve, reject));
+        });
+    }
+    renameSync(oldP, newP) {
+        return this.realFs.renameSync(this.fromPortablePath(oldP), this.fromPortablePath(newP));
     }
     async writeFilePromise(p, content, opts) {
         return await new Promise((resolve, reject) => {
@@ -14453,6 +14519,25 @@ class ZipFS extends FakeFS_1.FakeFS {
         });
         return stream;
     }
+    createWriteStream(p, { encoding } = {}) {
+        const stream = Object.assign(new stream_1.PassThrough(), {
+            bytesWritten: 0,
+            path: p,
+            close: () => {
+                stream.end();
+            },
+        });
+        const chunks = [];
+        stream.on(`data`, chunk => {
+            const chunkBuffer = Buffer.from(chunk);
+            stream.bytesWritten += chunkBuffer.length;
+            chunks.push(chunkBuffer);
+        });
+        stream.on(`end`, () => {
+            this.writeFileSync(p, Buffer.concat(chunks), encoding);
+        });
+        return stream;
+    }
     async realpathPromise(p) {
         return this.realpathSync(p);
     }
@@ -14672,6 +14757,12 @@ class ZipFS extends FakeFS_1.FakeFS {
         if (rc === -1) {
             throw new Error(libzip_1.default.error.strerror(libzip_1.default.getError(this.zip)));
         }
+    }
+    async renamePromise(oldP, newP) {
+        return this.renameSync(oldP, newP);
+    }
+    renameSync(oldP, newP) {
+        throw new Error(`Unimplemented`);
     }
     async writeFilePromise(p, content, opts) {
         return this.writeFileSync(p, content, opts);
@@ -14905,7 +14996,14 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
         return this.makeCallSync(p, () => {
             return this.baseFs.createReadStream(p, opts);
         }, (zipFs, { subPath }) => {
-            return zipFs.createReadStream(subPath);
+            return zipFs.createReadStream(subPath, opts);
+        });
+    }
+    createWriteStream(p, opts) {
+        return this.makeCallSync(p, () => {
+            return this.baseFs.createWriteStream(p, opts);
+        }, (zipFs, { subPath }) => {
+            return zipFs.createWriteStream(subPath, opts);
         });
     }
     async realpathPromise(p) {
@@ -14976,6 +15074,46 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
             return this.baseFs.chmodSync(p, mask);
         }, (zipFs, { subPath }) => {
             return zipFs.chmodSync(subPath, mask);
+        });
+    }
+    async renamePromise(oldP, newP) {
+        return await this.makeCallPromise(oldP, async () => {
+            return await this.makeCallPromise(newP, async () => {
+                return await this.baseFs.renamePromise(oldP, newP);
+            }, async () => {
+                throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
+            });
+        }, async (zipFsO, { archivePath: archivePathO, subPath: subPathO }) => {
+            return await this.makeCallPromise(newP, async () => {
+                throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
+            }, async (zipFsN, { archivePath: archivePathN, subPath: subPathN }) => {
+                if (zipFsO !== zipFsN) {
+                    throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
+                }
+                else {
+                    return await zipFsO.renamePromise(subPathO, subPathN);
+                }
+            });
+        });
+    }
+    renameSync(oldP, newP) {
+        return this.makeCallSync(oldP, async () => {
+            return this.makeCallSync(newP, async () => {
+                return this.baseFs.renameSync(oldP, newP);
+            }, async () => {
+                throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
+            });
+        }, async (zipFsO, { archivePath: archivePathO, subPath: subPathO }) => {
+            return this.makeCallSync(newP, async () => {
+                throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
+            }, async (zipFsN, { archivePath: archivePathN, subPath: subPathN }) => {
+                if (zipFsO !== zipFsN) {
+                    throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
+                }
+                else {
+                    return zipFsO.renameSync(subPathO, subPathN);
+                }
+            });
         });
     }
     async writeFilePromise(p, content, opts) {
