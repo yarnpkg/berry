@@ -76,7 +76,7 @@ describe(`Commands`, () => {
 
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
           peerDependencies: {
-            [`no-deps`]: `^2.0.0`,
+            [`no-deps`]: `*`,
           },
         });
       }),
