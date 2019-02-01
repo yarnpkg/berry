@@ -104,5 +104,42 @@ describe(`Commands`, () => {
         await expect(readJson(`${path}/package.json`)).resolves.not.toHaveProperty(`devDependencies`);
       }),
     );
+
+    test.concurrent(
+      `it should remove all the occurences of the specified dependency when using -A`,
+      makeTemporaryEnv({
+        private: true,
+        workspaces: [
+          `packages/*`,
+        ],
+      }, async ({path, run, source}) => {
+        await writeJson(`${path}/packages/workspace-a/package.json`, {
+          name: `workspace-a`,
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await writeJson(`${path}/packages/workspace-b/package.json`, {
+          name: `workspace-b`,
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await writeJson(`${path}/packages/workspace-c/package.json`, {
+          name: `workspace-c`,
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await run(`remove`, `-A`, `no-deps`);
+
+        await expect(readJson(`${path}/packages/workspace-a/package.json`)).resolves.not.toHaveProperty(`dependencies`);
+        await expect(readJson(`${path}/packages/workspace-b/package.json`)).resolves.not.toHaveProperty(`dependencies`);
+        await expect(readJson(`${path}/packages/workspace-c/package.json`)).resolves.not.toHaveProperty(`dependencies`);
+      }),
+    );
   });
 });
