@@ -1,5 +1,5 @@
 {
-    "name": "@berry/fslsib",
+    "name": "@berry/fslib",
     "version": "0.0.0",
     "private": true,
     "main": "./sources/index.ts",

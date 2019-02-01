@@ -12735,17 +12735,17 @@ module.exports =
 /************************************************************************/
 /******/ ({
 
-/***/ "../berry-fakefs/sources/AliasFS.ts":
-/*!******************************************!*\
-  !*** ../berry-fakefs/sources/AliasFS.ts ***!
-  \******************************************/
+/***/ "../berry-fslib/sources/AliasFS.ts":
+/*!*****************************************!*\
+  !*** ../berry-fslib/sources/AliasFS.ts ***!
+  \*****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fakefs/sources/FakeFS.ts");
+const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fslib/sources/FakeFS.ts");
 class AliasFS extends FakeFS_1.FakeFS {
     constructor(target, { baseFs }) {
         super();
@@ -12872,10 +12872,10 @@ exports.AliasFS = AliasFS;
 
 /***/ }),
 
-/***/ "../berry-fakefs/sources/CwdFS.ts":
-/*!****************************************!*\
-  !*** ../berry-fakefs/sources/CwdFS.ts ***!
-  \****************************************/
+/***/ "../berry-fslib/sources/CwdFS.ts":
+/*!***************************************!*\
+  !*** ../berry-fslib/sources/CwdFS.ts ***!
+  \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12883,8 +12883,8 @@ exports.AliasFS = AliasFS;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __webpack_require__(/*! path */ "path");
-const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fakefs/sources/FakeFS.ts");
-const NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-fakefs/sources/NodeFS.ts");
+const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fslib/sources/FakeFS.ts");
+const NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-fslib/sources/NodeFS.ts");
 class CwdFS extends FakeFS_1.FakeFS {
     constructor(target, { baseFs = new NodeFS_1.NodeFS() } = {}) {
         super();
@@ -13020,10 +13020,10 @@ exports.CwdFS = CwdFS;
 
 /***/ }),
 
-/***/ "../berry-fakefs/sources/FakeFS.ts":
-/*!*****************************************!*\
-  !*** ../berry-fakefs/sources/FakeFS.ts ***!
-  \*****************************************/
+/***/ "../berry-fslib/sources/FakeFS.ts":
+/*!****************************************!*\
+  !*** ../berry-fslib/sources/FakeFS.ts ***!
+  \****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -13214,10 +13214,10 @@ exports.FakeFS = FakeFS;
 
 /***/ }),
 
-/***/ "../berry-fakefs/sources/JailFS.ts":
-/*!*****************************************!*\
-  !*** ../berry-fakefs/sources/JailFS.ts ***!
-  \*****************************************/
+/***/ "../berry-fslib/sources/JailFS.ts":
+/*!****************************************!*\
+  !*** ../berry-fslib/sources/JailFS.ts ***!
+  \****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -13225,8 +13225,8 @@ exports.FakeFS = FakeFS;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __webpack_require__(/*! path */ "path");
-const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fakefs/sources/FakeFS.ts");
-const NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-fakefs/sources/NodeFS.ts");
+const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fslib/sources/FakeFS.ts");
+const NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-fslib/sources/NodeFS.ts");
 class JailFS extends FakeFS_1.FakeFS {
     constructor(target, { baseFs = new NodeFS_1.NodeFS() } = {}) {
         super();
@@ -13367,10 +13367,10 @@ exports.JailFS = JailFS;
 
 /***/ }),
 
-/***/ "../berry-fakefs/sources/NodeFS.ts":
-/*!*****************************************!*\
-  !*** ../berry-fakefs/sources/NodeFS.ts ***!
-  \*****************************************/
+/***/ "../berry-fslib/sources/NodeFS.ts":
+/*!****************************************!*\
+  !*** ../berry-fslib/sources/NodeFS.ts ***!
+  \****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -13381,7 +13381,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(__webpack_require__(/*! fs */ "fs"));
-const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fakefs/sources/FakeFS.ts");
+const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fslib/sources/FakeFS.ts");
 class NodeFS extends FakeFS_1.FakeFS {
     constructor(realFs = fs_1.default) {
         super();
@@ -13548,10 +13548,10 @@ exports.NodeFS = NodeFS;
 
 /***/ }),
 
-/***/ "../berry-fakefs/sources/ZipFS.ts":
-/*!****************************************!*\
-  !*** ../berry-fakefs/sources/ZipFS.ts ***!
-  \****************************************/
+/***/ "../berry-fslib/sources/ZipFS.ts":
+/*!***************************************!*\
+  !*** ../berry-fslib/sources/ZipFS.ts ***!
+  \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -13565,8 +13565,8 @@ const libzip_1 = __importDefault(__webpack_require__(/*! @berry/libzip */ "../be
 const path_1 = __webpack_require__(/*! path */ "path");
 const stream_1 = __webpack_require__(/*! stream */ "stream");
 const util_1 = __webpack_require__(/*! util */ "util");
-const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fakefs/sources/FakeFS.ts");
-const NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-fakefs/sources/NodeFS.ts");
+const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fslib/sources/FakeFS.ts");
+const NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-fslib/sources/NodeFS.ts");
 const S_IFMT = 0o170000;
 const S_IFDIR = 0o040000;
 const S_IFREG = 0o100000;
@@ -14132,10 +14132,10 @@ exports.ZipFS = ZipFS;
 
 /***/ }),
 
-/***/ "../berry-fakefs/sources/ZipOpenFS.ts":
-/*!********************************************!*\
-  !*** ../berry-fakefs/sources/ZipOpenFS.ts ***!
-  \********************************************/
+/***/ "../berry-fslib/sources/ZipOpenFS.ts":
+/*!*******************************************!*\
+  !*** ../berry-fslib/sources/ZipOpenFS.ts ***!
+  \*******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -14143,9 +14143,9 @@ exports.ZipFS = ZipFS;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __webpack_require__(/*! path */ "path");
-const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fakefs/sources/FakeFS.ts");
-const NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-fakefs/sources/NodeFS.ts");
-const ZipFS_1 = __webpack_require__(/*! ./ZipFS */ "../berry-fakefs/sources/ZipFS.ts");
+const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fslib/sources/FakeFS.ts");
+const NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-fslib/sources/NodeFS.ts");
+const ZipFS_1 = __webpack_require__(/*! ./ZipFS */ "../berry-fslib/sources/ZipFS.ts");
 class ZipOpenFS extends FakeFS_1.FakeFS {
     constructor({ baseFs = new NodeFS_1.NodeFS(), filter = null, useCache = true } = {}) {
         super();
@@ -14558,30 +14558,30 @@ exports.ZipOpenFS = ZipOpenFS;
 
 /***/ }),
 
-/***/ "../berry-fakefs/sources/index.ts":
-/*!****************************************!*\
-  !*** ../berry-fakefs/sources/index.ts ***!
-  \****************************************/
+/***/ "../berry-fslib/sources/index.ts":
+/*!***************************************!*\
+  !*** ../berry-fslib/sources/index.ts ***!
+  \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-fakefs/sources/NodeFS.ts");
-var AliasFS_1 = __webpack_require__(/*! ./AliasFS */ "../berry-fakefs/sources/AliasFS.ts");
+const NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-fslib/sources/NodeFS.ts");
+var AliasFS_1 = __webpack_require__(/*! ./AliasFS */ "../berry-fslib/sources/AliasFS.ts");
 exports.AliasFS = AliasFS_1.AliasFS;
-var CwdFS_1 = __webpack_require__(/*! ./CwdFS */ "../berry-fakefs/sources/CwdFS.ts");
+var CwdFS_1 = __webpack_require__(/*! ./CwdFS */ "../berry-fslib/sources/CwdFS.ts");
 exports.CwdFS = CwdFS_1.CwdFS;
-var JailFS_1 = __webpack_require__(/*! ./JailFS */ "../berry-fakefs/sources/JailFS.ts");
+var JailFS_1 = __webpack_require__(/*! ./JailFS */ "../berry-fslib/sources/JailFS.ts");
 exports.JailFS = JailFS_1.JailFS;
-var NodeFS_2 = __webpack_require__(/*! ./NodeFS */ "../berry-fakefs/sources/NodeFS.ts");
+var NodeFS_2 = __webpack_require__(/*! ./NodeFS */ "../berry-fslib/sources/NodeFS.ts");
 exports.NodeFS = NodeFS_2.NodeFS;
-var FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fakefs/sources/FakeFS.ts");
+var FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fslib/sources/FakeFS.ts");
 exports.FakeFS = FakeFS_1.FakeFS;
-var ZipFS_1 = __webpack_require__(/*! ./ZipFS */ "../berry-fakefs/sources/ZipFS.ts");
+var ZipFS_1 = __webpack_require__(/*! ./ZipFS */ "../berry-fslib/sources/ZipFS.ts");
 exports.ZipFS = ZipFS_1.ZipFS;
-var ZipOpenFS_1 = __webpack_require__(/*! ./ZipOpenFS */ "../berry-fakefs/sources/ZipOpenFS.ts");
+var ZipOpenFS_1 = __webpack_require__(/*! ./ZipOpenFS */ "../berry-fslib/sources/ZipOpenFS.ts");
 exports.ZipOpenFS = ZipOpenFS_1.ZipOpenFS;
 function wrapSync(fn) {
     return fn;
@@ -14818,7 +14818,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fakefs_1 = __webpack_require__(/*! @berry/fakefs */ "../berry-fakefs/sources/index.ts");
+const fslib_1 = __webpack_require__(/*! @berry/fslib */ "../berry-fslib/sources/index.ts");
 const fs_1 = __importDefault(__webpack_require__(/*! fs */ "fs"));
 const module_1 = __importDefault(__webpack_require__(/*! module */ "module"));
 const path_1 = __importDefault(__webpack_require__(/*! path */ "path"));
@@ -15361,8 +15361,8 @@ function setup() {
     // 1. we would make the NodeFS instance use the function that we patched (infinite loop)
     // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
     const localFs = Object.assign({}, fs_1.default);
-    const nodeFs = new fakefs_1.NodeFS(localFs);
-    fakefs_1.patchFs(fs_1.default, new fakefs_1.ZipOpenFS({ baseFs: nodeFs }));
+    const nodeFs = new fslib_1.NodeFS(localFs);
+    fslib_1.patchFs(fs_1.default, new fslib_1.ZipOpenFS({ baseFs: nodeFs }));
 }
 exports.setup = setup;
 ;
