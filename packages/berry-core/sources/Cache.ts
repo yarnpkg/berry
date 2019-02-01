@@ -1,5 +1,4 @@
-import {NodeFS, ZipFS}            from '@berry/zipfs';
-import {mkdirp, move}             from 'fs-extra';
+import {NodeFS, ZipFS, xfs}       from '@berry/zipfs';
 import {chmod, writeFile}         from 'fs';
 import {lock, unlock}             from 'lockfile';
 import {resolve}                  from 'path';
@@ -52,7 +51,7 @@ export class Cache {
   }
 
   async setup() {
-    await mkdirp(this.cwd);
+    await xfs.mkdirpPromise(this.cwd);
 
     await this.writeFileIntoCache(resolve(this.cwd, `.gitignore`), async (file: string) => {
       await writeFileP(file, `/.gitignore\n*.lock\n`);
@@ -88,7 +87,7 @@ export class Cache {
         const checksum = await validateFile(originalPath);
 
         // Doing a move is important to ensure atomic writes (todo: cross-drive?)
-        await move(originalPath, cachePath);
+        await xfs.movePromise(originalPath, cachePath);
 
         return checksum;
       });

@@ -1,6 +1,7 @@
-import fs, {Stats}                from 'fs';
+import fs, {Stats}                                         from 'fs';
 
-import {FakeFS, WriteFileOptions} from './FakeFS';
+import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
+import {FakeFS, WriteFileOptions}                          from './FakeFS';
 
 export class NodeFS extends FakeFS {
   private readonly realFs: typeof fs;
@@ -15,8 +16,12 @@ export class NodeFS extends FakeFS {
     return `/`;
   }
 
-  createReadStream(p: string, opts: {encoding?: string}) {
+  createReadStream(p: string, opts?: CreateReadStreamOptions) {
     return this.realFs.createReadStream(this.fromPortablePath(p), opts);
+  }
+
+  createWriteStream(p: string, opts?: CreateWriteStreamOptions) {
+    return this.realFs.createWriteStream(this.fromPortablePath(p), opts);
   }
 
   async realpathPromise(p: string) {
@@ -67,6 +72,16 @@ export class NodeFS extends FakeFS {
 
   chmodSync(p: string, mask: number) {
     return this.realFs.chmodSync(this.fromPortablePath(p), mask);
+  }
+
+  async renamePromise(oldP: string, newP: string) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.rename(this.fromPortablePath(oldP), this.fromPortablePath(newP), this.makeCallback(resolve, reject));
+    });
+  }
+
+  renameSync(oldP: string, newP: string) {
+    return this.realFs.renameSync(this.fromPortablePath(oldP), this.fromPortablePath(newP));
   }
 
   async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {

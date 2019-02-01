@@ -4,7 +4,6 @@
     "private": true,
     "main": "./sources/index.js",
     "dependencies": {
-        "fs-extra": "^7.0.0",
         "pkg-tests-core": "workspace:*",
         "semver": "^5.6.0"
     }

@@ -1375,7 +1375,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@manaflair/concierge", "virtual:368ef86f927ff947b0ed5be7794e4a10c3724211420d835aaf5632decaa3191c742cf493af1fa7837634714191c4ecdd5d7a1246e8e9359881ec4749c7a8a7fc#npm:0.9.2"],
           ["chalk", "npm:2.4.2"],
           ["execa", "npm:1.0.0"],
-          ["fs-extra", "npm:7.0.1"],
           ["joi", "npm:13.7.0"],
           ["semver", "npm:5.6.0"],
           ["tmp", "npm:0.0.33"],
@@ -1394,7 +1393,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@berry/zipfs", "workspace:packages/berry-zipfs"],
           ["chalk", "npm:2.4.2"],
           ["execa", "npm:1.0.0"],
-          ["fs-extra", "npm:7.0.1"],
           ["globby", "npm:8.0.2"],
           ["got", "npm:9.6.0"],
           ["json-file-plus", "npm:3.3.1"],
@@ -1496,7 +1494,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@berry/zipfs", "workspace:packages/berry-zipfs"],
           ["@manaflair/concierge", "virtual:1c336608a4ee4545cde4a7be6ea8538fc99b43984bd05411d3dfafa06311a2a15221ac672631d6c8a506b1e5e7419dbe1ff6691b960d1624a3a4e1dffe18183e#npm:0.9.2"],
           ["execa", "npm:1.0.0"],
-          ["fs-extra", "npm:7.0.1"],
           ["inquirer", "npm:6.2.1"],
           ["joi", "npm:13.7.0"],
           ["semver", "npm:5.6.0"],
@@ -5176,17 +5173,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
-    ["fs-extra", new Map([
-      ["npm:7.0.1", {
-        packageLocation: path.resolve(__dirname, "./.berry/cache/fs-extra-npm-7.0.1-9bde47fa683bb20fb7383d0477c640a9f3b41cd60db420222bffda4700361e90.zip/node_modules/fs-extra/"),
-        packageDependencies: new Map([
-          ["fs-extra", "npm:7.0.1"],
-          ["graceful-fs", "npm:4.1.15"],
-          ["jsonfile", "npm:4.0.0"],
-          ["universalify", "npm:0.1.2"],
-        ]),
-      }],
-    ])],
     ["fs-minipass", new Map([
       ["npm:1.2.5", {
         packageLocation: path.resolve(__dirname, "./.berry/cache/fs-minipass-npm-1.2.5-f92a35c6aaefa3b57adc98310027a98574ebca87c29dce031458634789d3d88d.zip/node_modules/fs-minipass/"),
@@ -7098,15 +7084,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
-    ["jsonfile", new Map([
-      ["npm:4.0.0", {
-        packageLocation: path.resolve(__dirname, "./.berry/cache/jsonfile-npm-4.0.0-d41074f81a9e8678e7add9bfc7024055ed70142f517dfef6d564c7fef774b805.zip/node_modules/jsonfile/"),
-        packageDependencies: new Map([
-          ["jsonfile", "npm:4.0.0"],
-          ["graceful-fs", "npm:4.1.15"],
-        ]),
-      }],
-    ])],
     ["jsprim", new Map([
       ["npm:1.4.1", {
         packageLocation: path.resolve(__dirname, "./.berry/cache/jsprim-npm-1.4.1-d8b72187afa35c0560cf42bc712995ab29d354dea0e8b17720dc3d833d9f3667.zip/node_modules/jsprim/"),
@@ -8590,7 +8567,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./packages/acceptance-tests/pkg-tests-core/"),
         packageDependencies: new Map([
           ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"],
-          ["fs-extra", "npm:7.0.1"],
           ["invariant", "npm:2.2.4"],
           ["klaw", "npm:2.1.1"],
           ["minimatch", "npm:3.0.4"],
@@ -8615,7 +8591,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./packages/acceptance-tests/pkg-tests-specs/"),
         packageDependencies: new Map([
           ["pkg-tests-specs", "workspace:packages/acceptance-tests/pkg-tests-specs"],
-          ["fs-extra", "npm:7.0.1"],
           ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"],
           ["semver", "npm:5.6.0"],
         ]),
@@ -10790,14 +10765,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
-    ["universalify", new Map([
-      ["npm:0.1.2", {
-        packageLocation: path.resolve(__dirname, "./.berry/cache/universalify-npm-0.1.2-ac4941e8fce3d09718efd5bdfc6d7567c8f85eb7b5484a4e1572cc33c64338f6.zip/node_modules/universalify/"),
-        packageDependencies: new Map([
-          ["universalify", "npm:0.1.2"],
-        ]),
-      }],
-    ])],
     ["unset-value", new Map([
       ["npm:1.0.0", {
         packageLocation: path.resolve(__dirname, "./.berry/cache/unset-value-npm-1.0.0-b436376d085f535601b404d9be4451265939f948a6c0fcc506148dc74718522e.zip/node_modules/unset-value/"),
@@ -11926,7 +11893,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/fragment-cache-npm-0.2.1-1bd9e3928c25e1bf703a70e4d372c84248489cd64d3ffc0708a165db18e8b958.zip/node_modules/fragment-cache/", {"name":"fragment-cache","reference":"npm:0.2.1"}],
     ["./.berry/cache/from2-npm-2.3.0-36e9a8c13bfedf8c6ffcdce300bd9f0195c93ccc2576f8d747d1ad2fc2d5e9f5.zip/node_modules/from2/", {"name":"from2","reference":"npm:2.3.0"}],
     ["./.berry/cache/fs-constants-npm-1.0.0-a21955d1b19b35f78b60cc54cb7df89dd9e82ec4a992393971ac4fa240e26e3b.zip/node_modules/fs-constants/", {"name":"fs-constants","reference":"npm:1.0.0"}],
-    ["./.berry/cache/fs-extra-npm-7.0.1-9bde47fa683bb20fb7383d0477c640a9f3b41cd60db420222bffda4700361e90.zip/node_modules/fs-extra/", {"name":"fs-extra","reference":"npm:7.0.1"}],
     ["./.berry/cache/fs-minipass-npm-1.2.5-f92a35c6aaefa3b57adc98310027a98574ebca87c29dce031458634789d3d88d.zip/node_modules/fs-minipass/", {"name":"fs-minipass","reference":"npm:1.2.5"}],
     ["./.berry/cache/fs-write-stream-atomic-npm-1.0.10-11a6b126bf6de1e7e33b02e532d7cfdb17efeb60fa23adcdec0ee6a6093693a0.zip/node_modules/fs-write-stream-atomic/", {"name":"fs-write-stream-atomic","reference":"npm:1.0.10"}],
     ["./.berry/cache/fs.realpath-npm-1.0.0-7db695eaa32929846a6b9c32a918d29bede6c8a58831ae3cb3ea82c221508d29.zip/node_modules/fs.realpath/", {"name":"fs.realpath","reference":"npm:1.0.0"}],
@@ -12119,7 +12085,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/json5-npm-0.5.1-d88a050d07c5607172f418407ce7475009a2061f7136647aa119ff5447ed3c9b.zip/node_modules/json5/", {"name":"json5","reference":"npm:0.5.1"}],
     ["./.berry/cache/json5-npm-1.0.1-d57a00d7ccb2990b09c2e3493a9560b40bb307a3ea25ce4b0767a28dcd15c30e.zip/node_modules/json5/", {"name":"json5","reference":"npm:1.0.1"}],
     ["./.berry/cache/json5-npm-2.1.0-8405172778a92187c6f572a3ff2b6c709024c5ba68a02a405df86ec0081e760b.zip/node_modules/json5/", {"name":"json5","reference":"npm:2.1.0"}],
-    ["./.berry/cache/jsonfile-npm-4.0.0-d41074f81a9e8678e7add9bfc7024055ed70142f517dfef6d564c7fef774b805.zip/node_modules/jsonfile/", {"name":"jsonfile","reference":"npm:4.0.0"}],
     ["./.berry/cache/jsprim-npm-1.4.1-d8b72187afa35c0560cf42bc712995ab29d354dea0e8b17720dc3d833d9f3667.zip/node_modules/jsprim/", {"name":"jsprim","reference":"npm:1.4.1"}],
     ["./.berry/cache/kexec-npm-3.0.0-8ea02a3cc89e8f12da1ab0eb5ff98dec067d8f8bb875425feeab0a3101d8b916.zip/node_modules/kexec/", {"name":"kexec","reference":"npm:3.0.0"}],
     ["./.berry/cache/keyv-npm-3.1.0-a49fef0909f7d7ec4684c73e5c18d896a593543ebd98cfa00d20455babd554df.zip/node_modules/keyv/", {"name":"keyv","reference":"npm:3.1.0"}],
@@ -12514,7 +12479,6 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.berry/cache/union-value-npm-1.0.0-29659aac55ba42a50c67a62ab6e1398849ce40f6e06c686fcab5332d659a9f7c.zip/node_modules/union-value/", {"name":"union-value","reference":"npm:1.0.0"}],
     ["./.berry/cache/unique-filename-npm-1.1.1-3f8caa124171d2d26084527d5d693871e2c1231a0d28c2334167c7f4b7402392.zip/node_modules/unique-filename/", {"name":"unique-filename","reference":"npm:1.1.1"}],
     ["./.berry/cache/unique-slug-npm-2.0.1-3383fbdf4bbdd1845fb2d14eb368028353d0256c557ca21daefc9a4075c47323.zip/node_modules/unique-slug/", {"name":"unique-slug","reference":"npm:2.0.1"}],
-    ["./.berry/cache/universalify-npm-0.1.2-ac4941e8fce3d09718efd5bdfc6d7567c8f85eb7b5484a4e1572cc33c64338f6.zip/node_modules/universalify/", {"name":"universalify","reference":"npm:0.1.2"}],
     ["./.berry/cache/unset-value-npm-1.0.0-b436376d085f535601b404d9be4451265939f948a6c0fcc506148dc74718522e.zip/node_modules/unset-value/", {"name":"unset-value","reference":"npm:1.0.0"}],
     ["./.berry/cache/upath-npm-1.1.0-3e63abd75fd05e0cde607f2a6b6be00646b7d0dc82cb7d78994fceeb379ad1fa.zip/node_modules/upath/", {"name":"upath","reference":"npm:1.1.0"}],
     ["./.berry/cache/uri-js-npm-4.2.2-f07de78d80b8cf6abe4ed33f58afbf5c76a86c7ef9f4e8494a6c4691a45e745b.zip/node_modules/uri-js/", {"name":"uri-js","reference":"npm:4.2.2"}],

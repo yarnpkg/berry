@@ -1,9 +1,9 @@
 import {Manifest, Plugin}   from '@berry/core';
 import {structUtils}        from '@berry/core';
 import {makeUpdater}        from '@berry/json-proxy';
+import {xfs}                from '@berry/zipfs';
 // @ts-ignore
 import {UsageError}         from '@manaflair/concierge';
-import {mkdirp}             from 'fs-extra';
 import {existsSync}         from 'fs';
 import {basename}           from 'path';
 
@@ -14,7 +14,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .action(async ({cwd}: {cwd: string}) => {
     if (!existsSync(cwd))
-      await mkdirp(cwd);
+      await xfs.mkdirpPromise(cwd);
 
     if (existsSync(`${cwd}/package.json`))
       throw new UsageError(`A package.json already exists in the specified directory`);

@@ -1,8 +1,9 @@
-import {posix}                    from 'path';
+import {posix}                                             from 'path';
 
-import {FakeFS, WriteFileOptions} from './FakeFS';
-import {NodeFS}                   from './NodeFS';
-import {ZipFS}                    from './ZipFS';
+import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
+import {FakeFS, WriteFileOptions}                          from './FakeFS';
+import {NodeFS}                                            from './NodeFS';
+import {ZipFS}                                             from './ZipFS';
 
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS,
@@ -73,11 +74,19 @@ export class ZipOpenFS extends FakeFS {
     }
   }
 
-  createReadStream(p: string, opts: {encoding?: string}) {
+  createReadStream(p: string, opts?: CreateReadStreamOptions) {
     return this.makeCallSync(p, () => {
       return this.baseFs.createReadStream(p, opts);
     }, (zipFs, {subPath}) => {
-      return zipFs.createReadStream(subPath);
+      return zipFs.createReadStream(subPath, opts);
+    });
+  }
+
+  createWriteStream(p: string, opts?: CreateWriteStreamOptions) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.createWriteStream(p, opts);
+    }, (zipFs, {subPath}) => {
+      return zipFs.createWriteStream(subPath, opts);
     });
   }
 
@@ -158,6 +167,46 @@ export class ZipOpenFS extends FakeFS {
       return this.baseFs.chmodSync(p, mask);
     }, (zipFs, {subPath}) => {
       return zipFs.chmodSync(subPath, mask);
+    });
+  }
+
+  async renamePromise(oldP: string, newP: string) {
+    return await this.makeCallPromise(oldP, async () => {
+      return await this.makeCallPromise(newP, async () => {
+        return await this.baseFs.renamePromise(oldP, newP);
+      }, async () => {
+        throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
+      });
+    }, async (zipFsO, {archivePath: archivePathO, subPath: subPathO}) => {
+      return await this.makeCallPromise(newP, async () => {
+        throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
+      }, async (zipFsN, {archivePath: archivePathN, subPath: subPathN}) => {
+        if (zipFsO !== zipFsN) {
+          throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
+        } else {
+          return await zipFsO.renamePromise(subPathO, subPathN);
+        }
+      });
+    });
+  }
+
+  renameSync(oldP: string, newP: string) {
+    return this.makeCallSync(oldP, async () => {
+      return this.makeCallSync(newP, async () => {
+        return this.baseFs.renameSync(oldP, newP);
+      }, async () => {
+        throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
+      });
+    }, async (zipFsO, {archivePath: archivePathO, subPath: subPathO}) => {
+      return this.makeCallSync(newP, async () => {
+        throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
+      }, async (zipFsN, {archivePath: archivePathN, subPath: subPathN}) => {
+        if (zipFsO !== zipFsN) {
+          throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
+        } else {
+          return zipFsO.renameSync(subPathO, subPathN);
+        }
+      });
     });
   }
 

@@ -1,6 +1,6 @@
 import {Configuration, Plugin, Project} from '@berry/core';
 import {httpUtils}                      from '@berry/core';
-import {mkdirp, chmod, writeFile}       from 'fs-extra';
+import {xfs}                            from '@berry/zipfs';
 import Joi                              from 'joi';
 import {dirname, resolve}               from 'path';
 import semver, {SemVer}                 from 'semver';
@@ -133,9 +133,9 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     const absoluteExecutablePath = resolve(project.cwd, executablePath);
 
     stdout.write(`Saving it into ${configuration.format(executablePath, `magenta`)}...\n`);
-    await mkdirp(dirname(absoluteExecutablePath));
-    await writeFile(absoluteExecutablePath, bundle);
-    await chmod(absoluteExecutablePath, 0o755);
+    await xfs.mkdirpPromise(dirname(absoluteExecutablePath));
+    await xfs.writeFilePromise(absoluteExecutablePath, bundle);
+    await xfs.chmodPromise(absoluteExecutablePath, 0o755);
 
     await Configuration.updateConfiguration(project.cwd, {
       executablePath,

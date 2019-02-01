@@ -1,7 +1,6 @@
 import {parseSyml, stringifySyml}                           from '@berry/parsers';
 import {xfs}                                                from '@berry/zipfs';
 import {createHmac}                                         from 'crypto';
-import {createWriteStream, existsSync, readFile, writeFile} from 'fs-extra';
 // @ts-ignore
 import Logic                                                from 'logic-solver';
 import {dirname, posix}                                     from 'path';
@@ -68,7 +67,7 @@ export class Project {
 
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
-      if (existsSync(`${currentCwd}/package.json`)) {
+      if (xfs.existsSync(`${currentCwd}/package.json`)) {
         projectCwd = currentCwd;
         if (!workspaceCwd) {
           workspaceCwd = currentCwd;
@@ -103,8 +102,8 @@ export class Project {
 
     const lockfilePath = this.configuration.get(`lockfilePath`);
 
-    if (existsSync(lockfilePath)) {
-      const content = await readFile(lockfilePath, `utf8`);
+    if (xfs.existsSync(lockfilePath)) {
+      const content = await xfs.readFilePromise(lockfilePath, `utf8`);
       const parsed: any = parseSyml(content);
 
       for (const key of Object.keys(parsed)) {
@@ -801,8 +800,8 @@ export class Project {
     };
 
     const bstatePath = this.configuration.get(`bstatePath`);
-    const bstate = existsSync(bstatePath)
-      ? parseSyml(await readFile(bstatePath, `utf8`)) as {[key: string]: string}
+    const bstate = xfs.existsSync(bstatePath)
+      ? parseSyml(await xfs.readFilePromise(bstatePath, `utf8`)) as {[key: string]: string}
       : {};
 
     while (buildablePackages.size > 0) {
@@ -858,7 +857,7 @@ export class Project {
               postfix: `.log`,
             });
 
-            const stdout = createWriteStream(logFile);
+            const stdout = xfs.createWriteStream(logFile);
             const stderr = stdout;
 
             stdout.write(`# This file contains the result of Berry building a package (${structUtils.stringifyLocator(pkg)})\n`);

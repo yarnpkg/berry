@@ -10,7 +10,6 @@
     "@berry/zipfs": "workspace:*",
     "@manaflair/concierge": "^0.9.2",
     "execa": "^1.0.0",
-    "fs-extra": "^7.0.0",
     "inquirer": "^6.2.0",
     "joi": "^13.6.0",
     "semver": "^5.6.0"

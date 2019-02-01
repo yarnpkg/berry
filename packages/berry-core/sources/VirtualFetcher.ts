@@ -1,5 +1,4 @@
-import {AliasFS}                            from '@berry/zipfs';
-import {mkdirp}                             from 'fs-extra';
+import {AliasFS, xfs}                       from '@berry/zipfs';
 import {readlink, symlink}                  from 'fs';
 import {dirname, relative, resolve}         from 'path';
 import {promisify}                          from 'util';
@@ -64,7 +63,7 @@ export class VirtualFetcher implements Fetcher {
       throw new Error(`Conflicting virtual paths (current ${currentLink} != new ${relativeTarget})`);
 
     if (currentLink === undefined) {
-      await mkdirp(dirname(virtualPath));
+      await xfs.mkdirpPromise(dirname(virtualPath));
       await symlinkP(relativeTarget, virtualPath);
     }
 

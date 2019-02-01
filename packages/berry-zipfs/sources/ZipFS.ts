@@ -1,11 +1,12 @@
-import libzip                     from '@berry/libzip';
-import {ReadStream, Stats}        from 'fs';
-import {posix}                    from 'path';
-import {PassThrough}              from 'stream';
-import {isDate}                   from 'util';
+import libzip                                              from '@berry/libzip';
+import {ReadStream, Stats, WriteStream}                    from 'fs';
+import {posix}                                             from 'path';
+import {PassThrough}                                       from 'stream';
+import {isDate}                                            from 'util';
 
-import {FakeFS, WriteFileOptions} from './FakeFS';
-import {NodeFS}                   from './NodeFS';
+import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
+import {FakeFS, WriteFileOptions}                          from './FakeFS';
+import {NodeFS}                                            from './NodeFS';
 
 const S_IFMT = 0o170000;
 
@@ -185,7 +186,7 @@ export class ZipFS extends FakeFS {
     this.ready = false;
   }
 
-  createReadStream(p: string, {encoding}: {encoding?: string} = {}): ReadStream {
+  createReadStream(p: string, {encoding}: CreateReadStreamOptions = {}): ReadStream {
     const stream = Object.assign(new PassThrough(), {
       bytesRead: 0,
       path: p,
@@ -205,6 +206,30 @@ export class ZipFS extends FakeFS {
         stream.emit(`error`, error);
         stream.end();
       }
+    });
+
+    return stream;
+  }
+
+  createWriteStream(p: string, {encoding}: CreateWriteStreamOptions = {}): WriteStream {
+    const stream = Object.assign(new PassThrough(), {
+      bytesWritten: 0,
+      path: p,
+      close: () => {
+        stream.end();
+      },
+    });
+
+    const chunks: Array<Buffer> = [];
+
+    stream.on(`data`, chunk => {
+      const chunkBuffer = Buffer.from(chunk);
+      stream.bytesWritten += chunkBuffer.length;
+      chunks.push(chunkBuffer);
+    });
+
+    stream.on(`end`, () => {
+      this.writeFileSync(p, Buffer.concat(chunks), encoding);
     });
 
     return stream;
@@ -503,6 +528,14 @@ export class ZipFS extends FakeFS {
     if (rc === -1) {
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
     }
+  }
+
+  async renamePromise(oldP: string, newP: string) {
+    return this.renameSync(oldP, newP);
+  }
+
+  renameSync(oldP: string, newP: string): never {
+    throw new Error(`Unimplemented`);
   }
 
   async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {

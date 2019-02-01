@@ -1,7 +1,8 @@
-import {posix}                    from 'path';
+import {posix}                                             from 'path';
 
-import {FakeFS, WriteFileOptions} from './FakeFS';
-import {NodeFS}                   from './NodeFS';
+import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
+import {FakeFS, WriteFileOptions}                          from './FakeFS';
+import {NodeFS}                                            from './NodeFS';
 
 export type JailFSOptions = {
   baseFs?: FakeFS,
@@ -32,8 +33,12 @@ export class JailFS extends FakeFS {
     return this.baseFs;
   }
 
-  createReadStream(p: string, opts: {encoding?: string}) {
+  createReadStream(p: string, opts?: CreateReadStreamOptions) {
     return this.baseFs.createReadStream(this.fromJailedPath(p), opts);
+  }
+
+  createWriteStream(p: string, opts?: CreateWriteStreamOptions) {
+    return this.baseFs.createWriteStream(this.fromJailedPath(p), opts);
   }
 
   async realpathPromise(p: string) {
@@ -74,6 +79,14 @@ export class JailFS extends FakeFS {
 
   chmodSync(p: string, mask: number) {
     return this.baseFs.chmodSync(this.fromJailedPath(p), mask);
+  }
+
+  async renamePromise(oldP: string, newP: string) {
+    return await this.baseFs.renamePromise(this.fromJailedPath(oldP), this.fromJailedPath(newP));
+  }
+
+  renameSync(oldP: string, newP: string) {
+    return this.baseFs.renameSync(this.fromJailedPath(oldP), this.fromJailedPath(newP));
   }
 
   async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {

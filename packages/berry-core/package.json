@@ -11,7 +11,6 @@
         "@berry/zipfs": "workspace:*",
         "chalk": "^2.4.1",
         "execa": "^1.0.0",
-        "fs-extra": "^7.0.0",
         "globby": "^8.0.1",
         "got": "^9.2.2",
         "json-file-plus": "^3.3.1",

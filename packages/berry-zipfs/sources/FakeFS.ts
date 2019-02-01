@@ -1,8 +1,16 @@
-import {ReadStream, Stats} from 'fs';
-import {posix}             from 'path';
+import {ReadStream, Stats, WriteStream} from 'fs';
+import {posix}                          from 'path';
+
+export type CreateReadStreamOptions = Partial<{
+  encoding: string,
+}>;
+
+export type CreateWriteStreamOptions = Partial<{
+  encoding: string,
+}>;
 
 export type WriteFileOptions = Partial<{
-  encoding: string | null,
+  encoding: string,
   mode: number,
   flag: string,
 }> | string;
@@ -14,7 +22,8 @@ export abstract class FakeFS {
     return posix.resolve(`/`, p);
   }
 
-  abstract createReadStream(p: string, opts: {encoding?: string}): ReadStream;
+  abstract createWriteStream(p: string, opts?: CreateWriteStreamOptions): WriteStream;
+  abstract createReadStream(p: string, opts?: CreateReadStreamOptions): ReadStream;
 
   abstract realpathPromise(p: string): Promise<string>;
   abstract realpathSync(p: string): string;
@@ -42,6 +51,9 @@ export abstract class FakeFS {
 
   abstract symlinkPromise(target: string, p: string): Promise<void>;
   abstract symlinkSync(target: string, p: string): void;
+
+  abstract renamePromise(oldP: string, newP: string): Promise<void>;
+  abstract renameSync(oldP: string, newP: string): void;
 
   abstract writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
   abstract writeFileSync(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
@@ -219,5 +231,31 @@ export abstract class FakeFS {
     }
 
     this.writeFileSync(p, content);
+  }
+
+  async movePromise(fromP: string, toP: string) {
+    try {
+      await this.renamePromise(fromP, toP);
+    } catch (error) {
+      if (error.code === `EXDEV`) {
+        await this.copyPromise(toP, fromP);
+        await this.removePromise(fromP);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  moveSync(fromP: string, toP: string) {
+    try {
+      this.renameSync(fromP, toP);
+    } catch (error) {
+      if (error.code === `EXDEV`) {
+        this.copySync(toP, fromP);
+        this.removeSync(fromP);
+      } else {
+        throw error;
+      }
+    }
   }
 };

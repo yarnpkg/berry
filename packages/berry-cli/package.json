@@ -14,7 +14,6 @@
         "@manaflair/concierge": "^0.9.2",
         "chalk": "^2.4.1",
         "execa": "^1.0.0",
-        "fs-extra": "^7.0.0",
         "joi": "^13.6.0",
         "semver": "^5.6.0",
         "tmp": "^0.0.33"

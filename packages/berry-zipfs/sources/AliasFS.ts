@@ -1,6 +1,7 @@
-import {posix}                    from 'path';
+import {posix}                                             from 'path';
 
-import {FakeFS, WriteFileOptions} from './FakeFS';
+import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
+import {FakeFS, WriteFileOptions}                          from './FakeFS';
 
 export type AliasFSOptions = {
   baseFs: FakeFS,
@@ -26,8 +27,12 @@ export class AliasFS extends FakeFS {
     return this.baseFs;
   }
 
-  createReadStream(p: string, opts: {encoding?: string}) {
+  createReadStream(p: string, opts?: CreateReadStreamOptions) {
     return this.baseFs.createReadStream(p, opts);
+  }
+
+  createWriteStream(p: string, opts?: CreateWriteStreamOptions) {
+    return this.baseFs.createWriteStream(p, opts);
   }
 
   async realpathPromise(p: string) {
@@ -68,6 +73,14 @@ export class AliasFS extends FakeFS {
 
   chmodSync(p: string, mask: number) {
     return this.baseFs.chmodSync(p, mask);
+  }
+
+  async renamePromise(oldP: string, newP: string) {
+    return await this.baseFs.renamePromise(oldP, newP);
+  }
+
+  renameSync(oldP: string, newP: string) {
+    return this.baseFs.renameSync(oldP, newP);
   }
 
   async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {

@@ -1,6 +1,5 @@
 import {runShell}                        from '@berry/shell';
-import {CwdFS, ZipOpenFS}                from '@berry/zipfs';
-import {chmod, remove, writeFile}        from 'fs-extra';
+import {CwdFS, ZipOpenFS, xfs}           from '@berry/zipfs';
 import {existsSync}                      from 'fs';
 import {delimiter, posix}                from 'path';
 import {PassThrough, Readable, Writable} from 'stream';
@@ -16,10 +15,10 @@ import {Locator}                         from './types';
 
 async function makePathWrapper(location: string, name: string, argv0: string, args: Array<string> = []) {
   if (process.platform === `win32`) {
-    await writeFile(`${location}/${name}.cmd`, `@"${location}\\${name}.cmd" ${args.join(` `)} %*\n`);
+    await xfs.writeFilePromise(`${location}/${name}.cmd`, `@"${location}\\${name}.cmd" ${args.join(` `)} %*\n`);
   } else {
-    await writeFile(`${location}/${name}`, `#!/usr/bin/env bash\n"${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
-    await chmod(`${location}/${name}`, 0o755);
+    await xfs.writeFilePromise(`${location}/${name}`, `#!/usr/bin/env bash\n"${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
+    await xfs.chmodPromise(`${location}/${name}`, 0o755);
   }
 }
 
@@ -81,10 +80,12 @@ export async function executePackageScript(locator: Locator, scriptName: string,
     const packageLocation = await linker.findPackage(pkg, linkerOptions);
 
     const cwd = packageLocation;
+
     const env = await makeScriptEnv(project);
+    const binFolder = env.BERRY_BIN_FOLDER;
 
     for (const [binaryName, [pkg, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
-      await makePathWrapper(env.BERRY_BIN_FOLDER, binaryName, process.execPath, [binaryPath]);
+      await makePathWrapper(binFolder, binaryName, process.execPath, [binaryPath]);
 
     const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
     const manifest = await Manifest.find(`.`, {baseFs: packageFs});
@@ -96,7 +97,7 @@ export async function executePackageScript(locator: Locator, scriptName: string,
     try {
       return await runShell(script, {args, cwd, env, stdin, stdout, stderr});
     } finally {
-      await remove(env.BERRY_BIN_FOLDER);
+      await xfs.removePromise(binFolder);
     }
   });
 }
@@ -215,7 +216,7 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
   try {
     await execUtils.execFile(process.execPath, [binaryPath, ... args], {cwd, env, stdin, stdout, stderr});
   } finally {
-    await remove(env.BERRY_BIN_FOLDER);
+    await xfs.removePromise(env.BERRY_BIN_FOLDER);
   }
 }
 
