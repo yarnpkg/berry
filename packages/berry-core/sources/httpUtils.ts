@@ -20,11 +20,14 @@ async function getNoCache(target: string, configuration: Configuration): Promise
   const url = new URL(target);
   let agent;
 
-  if (configuration.httpProxy && url.protocol === `http:`)
-    agent = tunnel.httpOverHttp(parseProxy(configuration.httpProxy));
+  const httpProxy = configuration.get(`httpProxy`);
+  const httpsProxy = configuration.get(`httpsProxy`);
 
-  if (configuration.httpsProxy && url.protocol === `https:`)
-    agent = tunnel.httpsOverHttp(parseProxy(configuration.httpsProxy));
+  if (httpProxy && url.protocol === `http:`)
+    agent = tunnel.httpOverHttp(parseProxy(httpProxy));
+
+  if (httpsProxy && url.protocol === `https:`)
+    agent = tunnel.httpsOverHttp(parseProxy(httpsProxy));
 
   const res = await got(target, {agent, encoding: null});
 

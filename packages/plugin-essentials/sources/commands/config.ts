@@ -16,7 +16,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
     const inspectConfig = {
       breakLength: Infinity,
-      colors: configuration.enableColors,
+      colors: configuration.get(`enableColors`),
       maxArrayLength: 2,
     };
 
@@ -35,11 +35,11 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       }, 0);
 
       for (const [key, description] of keysAndDescriptions) {
-        stdout.write(`${key.padEnd(maxKeyLength, ` `)} ${description.padEnd(maxDescriptionLength, ` `)} ${inspect(configuration[key], inspectConfig)}\n`);
+        stdout.write(`${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(configuration.values.get(key), inspectConfig)}\n`);
       }
     } else {
       for (const key of keys) {
-        stdout.write(`${key.padEnd(maxKeyLength, ` `)} ${inspect(configuration[key], inspectConfig)}\n`);
+        stdout.write(`${key.padEnd(maxKeyLength, ` `)}   ${inspect(configuration.values.get(key), inspectConfig)}\n`);
       }
     }
   });

@@ -38,7 +38,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
         continue;
       }
       
-      if (interactive || (configuration.preferInteractive && (stdout as any).isTTY)) {
+      if (interactive || (configuration.get(`preferInteractive`) && (stdout as any).isTTY)) {
         askedQuestions = true;
 
         const descriptorFromProject = await fetchDescriptorFromProject(descriptor, {project, dev, peer, prompt});
@@ -189,7 +189,7 @@ async function fetchDescriptorFromLatest(ident: Ident, {project, resolver, resol
   if (!semver.valid(pathname))
     return structUtils.convertLocatorToDescriptor(bestLocator);
 
-  const newProtocol = protocol !== project.configuration.defaultProtocol
+  const newProtocol = protocol !== project.configuration.get(`defaultProtocol`)
     ? protocol
     : null;
 

@@ -47,7 +47,7 @@ export class LinkResolver implements Resolver {
 
     const version = manifest.version || `0.0.0`;
 
-    const languageName = opts.project.configuration.defaultLanguageName;
+    const languageName = opts.project.configuration.get(`defaultLanguageName`);
     const linkType = LinkType.SOFT;
 
     const dependencies = manifest.dependencies;

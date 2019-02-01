@@ -18,11 +18,12 @@ export class PnpLinker implements Linker {
   async findPackage(locator: Locator, opts: LinkOptions) {
     const fs = new NodeFS();
 
-    if (!await fs.existsPromise(opts.project.configuration.pnpPath))
+    const pnpPath = opts.project.configuration.get(`pnpPath`);
+    if (!await fs.existsPromise(pnpPath))
       throw new Error(`Couldn't find the PnP package map at the root of the project - run an install to generate it`);
 
-    const pnpFile = miscUtils.dynamicRequire(opts.project.configuration.pnpPath);
-    delete require.cache[opts.project.configuration.pnpPath];
+    const pnpFile = miscUtils.dynamicRequire(pnpPath);
+    delete require.cache[pnpPath];
 
     const packageLocator = {name: structUtils.requirableIdent(locator), reference: locator.reference};
     const packageInformation = pnpFile.getPackageInformation(packageLocator);
@@ -54,7 +55,7 @@ class PnpInstaller implements Installer {
 
     const buildScripts = await this.getBuildScripts(fetchResult);
 
-    if (buildScripts.length > 0 && !this.opts.project.configuration.enableScripts) {
+    if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
       this.opts.report.reportWarning(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
       buildScripts.length = 0;
     }
@@ -111,23 +112,24 @@ class PnpInstaller implements Installer {
       [null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)],
     ]));
 
-    const shebang = this.opts.project.configuration.pnpShebang;
-    const ignorePattern = this.opts.project.configuration.pnpIgnorePattern;
+    const shebang = this.opts.project.configuration.get(`pnpShebang`);
+    const ignorePattern = this.opts.project.configuration.get(`pnpIgnorePattern`);
     const blacklistedLocations: LocationBlacklist = new Set();
     const packageInformationStores = this.packageInformationStores;
-    
+
+    const pnpPath = this.opts.project.configuration.get(`pnpPath`);
     const pnpScript = generatePnpScript({shebang, ignorePattern, blacklistedLocations, packageInformationStores});
 
     const fs = new NodeFS();
-    await fs.changeFilePromise(this.opts.project.configuration.pnpPath, pnpScript);
-    await fs.chmodPromise(this.opts.project.configuration.pnpPath, 0o755);
+    await fs.changeFilePromise(pnpPath, pnpScript);
+    await fs.chmodPromise(pnpPath, 0o755);
 
+    const pnpUnpluggedFolder = this.opts.project.configuration.get(`pnpUnpluggedFolder`);
     if (this.unpluggedPaths.size === 0) {
-      await fs.removePromise(this.opts.project.configuration.pnpUnpluggedFolder);
+      await fs.removePromise(pnpUnpluggedFolder);
     } else {
-      for (const entry of await fs.readdirPromise(this.opts.project.configuration.pnpUnpluggedFolder)) {
-        const unpluggedPath = posix.resolve(this.opts.project.configuration.pnpUnpluggedFolder, entry);
-
+      for (const entry of await fs.readdirPromise(pnpUnpluggedFolder)) {
+        const unpluggedPath = posix.resolve(pnpUnpluggedFolder, entry);
         if (!this.unpluggedPaths.has(unpluggedPath)) {
           await fs.removePromise(unpluggedPath);
         }
@@ -196,7 +198,7 @@ class PnpInstaller implements Installer {
   }
 
   private getUnpluggedPath(locator: Locator) {
-    return posix.resolve(this.opts.project.configuration.pnpUnpluggedFolder, structUtils.slugifyLocator(locator));
+    return posix.resolve(this.opts.project.configuration.get(`pnpUnpluggedFolder`), structUtils.slugifyLocator(locator));
   }
 
   private async unplugPackage(locator: Locator, packageFs: FakeFS) {

@@ -46,12 +46,14 @@ export class VirtualFetcher implements Fetcher {
   }
 
   private async ensureVirtualLink(locator: Locator, sourceFetch: FetchResult, opts: FetchOptions) {
-    const virtualLink = resolve(opts.project.configuration.virtualFolder, opts.cache.getCacheKey(locator));
-    const relativeTarget = relative(dirname(virtualLink), sourceFetch.packageFs.getRealPath());
+    const virtualFolder = opts.project.configuration.get(`virtualFolder`);
+    const virtualPath = resolve(virtualFolder, opts.cache.getCacheKey(locator));
+
+    const relativeTarget = relative(dirname(virtualPath), sourceFetch.packageFs.getRealPath());
 
     let currentLink;
     try {
-      currentLink = await readlinkP(virtualLink);
+      currentLink = await readlinkP(virtualPath);
     } catch (error) {
       if (error.code !== `ENOENT`) {
         throw error;
@@ -62,13 +64,13 @@ export class VirtualFetcher implements Fetcher {
       throw new Error(`Conflicting virtual paths (current ${currentLink} != new ${relativeTarget})`);
 
     if (currentLink === undefined) {
-      await mkdirp(dirname(virtualLink));
-      await symlinkP(relativeTarget, virtualLink);
+      await mkdirp(dirname(virtualPath));
+      await symlinkP(relativeTarget, virtualPath);
     }
 
     return {
       ... sourceFetch,
-      packageFs: new AliasFS(virtualLink, {baseFs: sourceFetch.packageFs})
+      packageFs: new AliasFS(virtualPath, {baseFs: sourceFetch.packageFs})
     };
   }
 }

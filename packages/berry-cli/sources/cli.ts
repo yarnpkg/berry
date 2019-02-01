@@ -37,8 +37,11 @@ function runBinary(path: string) {
 async function run() {
   const configuration = await Configuration.find(process.cwd(), plugins);
 
-  if (configuration.executablePath !== null && !configuration.ignorePath) {
-    runBinary(configuration.executablePath);
+  const executablePath = configuration.get(`executablePath`);
+  const ignorePath = configuration.get(`ignorePath`);
+
+  if (executablePath !== null && !ignorePath) {
+    runBinary(executablePath);
   } else {
     concierge.topLevel(`[--cwd PATH]`).validate(Joi.object().unknown().keys({
       cwd: Joi.string().default(process.cwd()),

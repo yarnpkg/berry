@@ -181,9 +181,9 @@ export class Configuration {
   public plugins: Map<string, Plugin> = new Map();
   
   public settings: Map<string, SettingsDefinition> = new Map();
-  public sources: Map<string, string> = new Map();
 
-  [name: string]: any;
+  public values: Map<string, any> = new Map();
+  public sources: Map<string, string> = new Map();
 
   static async find(startingCwd: string, plugins: Map<string, Plugin>) {
     let projectCwd = null;
@@ -267,30 +267,18 @@ export class Configuration {
         if (definition.type === SettingsType.ABSOLUTE_PATH && definition.default !== null) {
           if (this.projectCwd === null) {
             if (definition.isNullable || definition.default === null) {
-              this[name] = null;
-            } else {
-              Object.defineProperty(this, name, {
-                configurable: true,
-                get: () => {
-                  throw new Error(`Unusable configuration settings "${name}" - not in a project folder`);
-                },
-                set: (newValue: any) => {
-                  Object.defineProperty(this, name, {
-                    value: newValue,
-                  });
-                },
-              });
+              this.values.set(name, null);
             }
           } else {
             const projectCwd = this.projectCwd;
             if (Array.isArray(definition.default)) {
-              this[name] = definition.default.map((entry: string) => resolve(projectCwd, entry));
+              this.values.set(name, definition.default.map((entry: string) => resolve(projectCwd, entry)));
             } else {
-              this[name] = resolve(projectCwd, definition.default);
+              this.values.set(name, resolve(projectCwd, definition.default));
             }
           }
         } else {
-          this[name] = definition.default;
+          this.values.set(name, definition.default);
         }
       }
     };
@@ -339,9 +327,16 @@ export class Configuration {
       }
 
       // @ts-ignore
-      this[name] = value;
+      this.values.set(name, value);
       this.sources.set(name, source);
     }
+  }
+
+  get(key: string) {
+    if (!this.values.has(key))
+      throw new Error(`Invalid configuration key "${key}"`);
+
+    return this.values.get(key);
   }
 
   makeResolver() {
@@ -400,7 +395,7 @@ export class Configuration {
   }
 
   format(text: string, color: string) {
-    if (this.enableColors) {
+    if (this.get(`enableColors`)) {
       if (color.charAt(0) === `#`) {
         return ctx.hex(color)(text);
       } else {

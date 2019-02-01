@@ -29,7 +29,7 @@ export class GithubResolver implements Resolver {
   async resolve(locator: Locator, opts: ResolveOptions) {
     const version = `0.0.0`;
 
-    const languageName = opts.project.configuration.defaultLanguageName;
+    const languageName = opts.project.configuration.get(`defaultLanguageName`);
     const linkType = LinkType.HARD;
 
     const dependencies = new Map();

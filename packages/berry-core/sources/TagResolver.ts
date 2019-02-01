@@ -38,10 +38,10 @@ export class TagResolver implements Resolver {
   }
 
   private forwardDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return structUtils.makeDescriptor(descriptor, `${opts.project.configuration.defaultProtocol}${descriptor.range}`);
+    return structUtils.makeDescriptor(descriptor, `${opts.project.configuration.get(`defaultProtocol`)}${descriptor.range}`);
   }
 
   private forwardLocator(locator: Locator, opts: MinimalResolveOptions) {
-    return structUtils.makeLocator(locator, `${opts.project.configuration.defaultProtocol}${locator.reference}`);
+    return structUtils.makeLocator(locator, `${opts.project.configuration.get(`defaultProtocol`)}${locator.reference}`);
   }
 }

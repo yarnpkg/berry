@@ -28,7 +28,7 @@ export class Cache {
   private mutexes: Map<LocatorHash, Promise<string>> = new Map();
 
   static async find(configuration: Configuration) {
-    const cache = new Cache(configuration.cacheFolder, {configuration});
+    const cache = new Cache(configuration.get(`cacheFolder`), {configuration});
     await cache.setup();
 
     return cache;

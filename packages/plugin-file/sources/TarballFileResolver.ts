@@ -59,7 +59,7 @@ export class TarballFileResolver implements Resolver {
 
     const version = manifest.version || `0.0.0`;
 
-    const languageName = opts.project.configuration.defaultLanguageName;
+    const languageName = opts.project.configuration.get(`defaultLanguageName`);
     const linkType = LinkType.HARD;
 
     const dependencies = manifest.dependencies;
