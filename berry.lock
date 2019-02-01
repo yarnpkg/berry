@@ -4501,6 +4501,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fs-extra@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "fs-extra@npm:7.0.1"
+  dependencies:
+    graceful-fs: "npm:^4.1.2"
+    jsonfile: "npm:^4.0.0"
+    universalify: "npm:^0.1.0"
+  checksum: c8d46f14d71f65d7e75aae3a2f6adfadd79d86a96a0f14998d16901f7fd1a6fe63c88f0eae5d7c935461c60b23b2492abe0fe905eb63c1669831b9e23d84890c
+  languageName: node
+  linkType: hard
+
 "fs-minipass@npm:^1.2.5":
   version: 1.2.5
   resolution: "fs-minipass@npm:1.2.5"
@@ -4730,7 +4741,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graceful-fs@npm:^4.1.11, graceful-fs@npm:^4.1.15, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.9":
+"graceful-fs@npm:^4.1.11, graceful-fs@npm:^4.1.15, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.1.9":
   version: 4.1.15
   resolution: "graceful-fs@npm:4.1.15"
   checksum: ee96fff19881c5d5221d1648fe7ca03228a8aa5c5bdb2729e82107581d04acdc3fea6314670c3da7bd5ac2cd16a10a93c203637d22cbd30f35f9ab52c750ad1d
@@ -6410,6 +6421,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jsonfile@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "jsonfile@npm:4.0.0"
+  dependencies:
+    graceful-fs: "npm:^4.1.6"
+  checksum: d57d003c3987e8744de2cbf2a52ad7b73004239bab739c0799e298dac8a03e2fdda2f8b6151d4aae138c78536bb5be133e2b7dece282c02d5ab953f96d7575e9
+  languageName: node
+  linkType: hard
+
 "jsprim@npm:^1.2.2":
   version: 1.4.1
   resolution: "jsprim@npm:1.4.1"
@@ -7879,6 +7899,7 @@ __metadata:
   version: 0.0.0
   resolution: "pkg-tests-specs@workspace:packages/acceptance-tests/pkg-tests-specs"
   dependencies:
+    fs-extra: "npm:^7.0.1"
     pkg-tests-core: "workspace:*"
     semver: "npm:^5.6.0"
   languageName: unknown
@@ -9927,6 +9948,13 @@ __metadata:
   dependencies:
     imurmurhash: "npm:^0.1.4"
   checksum: 2198883625ee9458075d9c35562e14cecb03c7bd4d1fc036e06ee1d2aa517a1f7034dbcc12c70a73026f369e7098eb8c67563bcbc5a1976845974a772a06dcd5
+  languageName: node
+  linkType: hard
+
+"universalify@npm:^0.1.0":
+  version: 0.1.2
+  resolution: "universalify@npm:0.1.2"
+  checksum: 4b5b2e127f37bdc4f19953ab96b5931d2341dc5d45a855c2f598058bcb661db45243fc523e562ada557b14fcbb67e987a110fc82fcb2585b7f7cea01fd430aa9
   languageName: node
   linkType: hard
 
