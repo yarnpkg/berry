@@ -1,4 +1,4 @@
-import {NodeFS}     from '@berry/zipfs';
+import {NodeFS}     from '@berry/fslib';
 import {createHmac} from 'crypto';
 
 export function makeHash<T>(... args: Array<string | null>): T {

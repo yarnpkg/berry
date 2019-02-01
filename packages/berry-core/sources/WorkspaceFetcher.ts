@@ -1,8 +1,7 @@
-import {JailFS}                             from '@berry/zipfs';
+import {JailFS}                             from '@berry/fslib';
 
 import {Fetcher, FetchOptions, FetchResult} from './Fetcher';
 import {WorkspaceResolver}                  from './WorkspaceResolver';
-import * as structUtils                     from './structUtils';
 import {Locator}                            from './types';
 
 export class WorkspaceFetcher implements Fetcher {

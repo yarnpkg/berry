@@ -1,5 +1,5 @@
+import {xfs}                                                from '@berry/fslib';
 import {parseSyml, stringifySyml}                           from '@berry/parsers';
-import {xfs}                                                from '@berry/zipfs';
 import {createHmac}                                         from 'crypto';
 // @ts-ignore
 import Logic                                                from 'logic-solver';

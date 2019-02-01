@@ -1,7 +1,7 @@
-import {FakeFS, JailFS, ZipFS, NodeFS} from '@berry/zipfs';
-import {posix}                         from 'path';
-import {Parse}                         from 'tar';
-import {tmpNameSync}                   from 'tmp';
+import {FakeFS, ZipFS, NodeFS} from '@berry/fslib';
+import {posix}                 from 'path';
+import {Parse}                 from 'tar';
+import {tmpNameSync}           from 'tmp';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS,

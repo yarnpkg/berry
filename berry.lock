@@ -908,6 +908,7 @@ __metadata:
   dependencies:
     "@berry/builder": "workspace:*"
     "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
     "@berry/parsers": "workspace:*"
     "@berry/plugin-constraints": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
@@ -920,7 +921,6 @@ __metadata:
     "@berry/plugin-pnp": "workspace:*"
     "@berry/pnp": "workspace:*"
     "@berry/shell": "workspace:*"
-    "@berry/zipfs": "workspace:*"
     "@manaflair/concierge": "npm:^0.9.2"
     chalk: "npm:^2.4.1"
     execa: "npm:^1.0.0"
@@ -934,11 +934,11 @@ __metadata:
   version: 0.0.0
   resolution: "@berry/core@workspace:packages/berry-core"
   dependencies:
+    "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/parsers": "workspace:*"
     "@berry/pnp": "workspace:*"
     "@berry/shell": "workspace:*"
-    "@berry/zipfs": "workspace:*"
     chalk: "npm:^2.4.1"
     execa: "npm:^1.0.0"
     globby: "npm:^8.0.1"
@@ -956,6 +956,14 @@ __metadata:
     tar: "npm:^4.4.6"
     tmp: "npm:^0.0.33"
     tunnel: "npm:^0.0.6"
+  languageName: unknown
+  linkType: soft
+
+"@berry/fslib@workspace:*, @berry/fslib@workspace:packages/berry-fslib":
+  version: 0.0.0
+  resolution: "@berry/fslib@workspace:packages/berry-fslib"
+  dependencies:
+    "@berry/libzip": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1029,9 +1037,9 @@ __metadata:
   resolution: "@berry/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
     "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/parsers": "workspace:*"
-    "@berry/zipfs": "workspace:*"
     "@manaflair/concierge": "npm:^0.9.2"
     execa: "npm:^1.0.0"
     inquirer: "npm:^6.2.0"
@@ -1045,7 +1053,7 @@ __metadata:
   resolution: "@berry/plugin-file@workspace:packages/plugin-file"
   dependencies:
     "@berry/core": "workspace:*"
-    "@berry/zipfs": "workspace:*"
+    "@berry/fslib": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1089,7 +1097,7 @@ __metadata:
   resolution: "@berry/plugin-link@workspace:packages/plugin-link"
   dependencies:
     "@berry/core": "workspace:*"
-    "@berry/zipfs": "workspace:*"
+    "@berry/fslib": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1108,8 +1116,8 @@ __metadata:
   dependencies:
     "@berry/cli": "workspace:*"
     "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
     "@berry/pnp": "workspace:*"
-    "@berry/zipfs": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1118,7 +1126,7 @@ __metadata:
   resolution: "@berry/pnp@workspace:packages/berry-pnp"
   dependencies:
     "@berry/core": "workspace:*"
-    "@berry/zipfs": "workspace:*"
+    "@berry/fslib": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1147,14 +1155,6 @@ __metadata:
     yoga-dom: "npm:^0.0.14"
   peerDependencies:
     react: "*"
-  languageName: unknown
-  linkType: soft
-
-"@berry/zipfs@workspace:*, @berry/zipfs@workspace:packages/berry-zipfs":
-  version: 0.0.0
-  resolution: "@berry/zipfs@workspace:packages/berry-zipfs"
-  dependencies:
-    "@berry/libzip": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -10123,7 +10123,7 @@ __metadata:
   version: 0.0.1
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
-    "@berry/zipfs": "workspace:*"
+    "@berry/fslib": "workspace:*"
     pnp-webpack-plugin: "npm:^1.2.1"
     ts-loader: "npm:^5.3.3"
     typescript: "npm:^3.2.4"

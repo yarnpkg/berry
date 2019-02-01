@@ -4,11 +4,11 @@
     "private": true,
     "main": "./sources/index.ts",
     "dependencies": {
+        "@berry/fslib": "workspace:*",
         "@berry/json-proxy": "workspace:*",
         "@berry/parsers": "workspace:*",
         "@berry/pnp": "workspace:*",
         "@berry/shell": "workspace:*",
-        "@berry/zipfs": "workspace:*",
         "chalk": "^2.4.1",
         "execa": "^1.0.0",
         "globby": "^8.0.1",

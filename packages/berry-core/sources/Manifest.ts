@@ -1,11 +1,11 @@
-import {parseResolution}            from '@berry/parsers';
-import {FakeFS, NodeFS}             from '@berry/zipfs';
-import {posix}                      from 'path';
-import semver                       from 'semver';
+import {FakeFS, NodeFS}    from '@berry/fslib';
+import {parseResolution}   from '@berry/parsers';
+import {posix}             from 'path';
+import semver              from 'semver';
 
-import * as structUtils             from './structUtils';
-import {IdentHash}                  from './types';
-import {Ident, Descriptor, Locator} from './types';
+import * as structUtils    from './structUtils';
+import {IdentHash}         from './types';
+import {Ident, Descriptor} from './types';
 
 export interface WorkspaceDefinition {
   pattern: string;

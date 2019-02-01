@@ -1,5 +1,5 @@
 import {Configuration, Cache, Plugin, Project, Locator, MessageName, StreamReport} from '@berry/core';
-import {ZipFS, xfs}                                                                from '@berry/zipfs';
+import {ZipFS, xfs}                                                                from '@berry/fslib';
 import {posix}                                                                     from 'path';
 import {Writable}                                                                  from 'stream';
 

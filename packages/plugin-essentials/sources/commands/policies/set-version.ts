@@ -1,6 +1,6 @@
 import {Configuration, Plugin, Project} from '@berry/core';
 import {httpUtils}                      from '@berry/core';
-import {xfs}                            from '@berry/zipfs';
+import {xfs}                            from '@berry/fslib';
 import Joi                              from 'joi';
 import {dirname, resolve}               from 'path';
 import semver, {SemVer}                 from 'semver';

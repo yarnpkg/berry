@@ -1,4 +1,4 @@
-import {ZipOpenFS} from '@berry/zipfs';
+import {ZipOpenFS} from '@berry/fslib';
 import {posix}     from 'path';
 import * as vscode from 'vscode';
 

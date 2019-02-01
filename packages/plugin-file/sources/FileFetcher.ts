@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
 import {Locator, MessageName}                       from '@berry/core';
 import {miscUtils, structUtils, tgzUtils}           from '@berry/core';
-import {NodeFS}                                     from '@berry/zipfs';
+import {NodeFS}                                     from '@berry/fslib';
 import {posix}                                      from 'path';
 import querystring                                  from 'querystring';
 

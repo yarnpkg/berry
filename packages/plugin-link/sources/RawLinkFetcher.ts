@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
 import {Locator}                                    from '@berry/core';
 import {structUtils}                                from '@berry/core';
-import {JailFS, NodeFS}                             from '@berry/zipfs';
+import {JailFS, NodeFS}                             from '@berry/fslib';
 import {posix}                                      from 'path';
 import querystring                                  from 'querystring';
 

@@ -62,7 +62,7 @@
         }
     },
     "devDependencies": {
-        "@berry/zipfs": "workspace:*",
+        "@berry/fslib": "workspace:*",
         "pnp-webpack-plugin": "^1.2.1",
         "ts-loader": "^5.3.3",
         "typescript": "^3.2.4",

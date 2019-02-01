@@ -5,6 +5,6 @@
     "main": "./sources/index.ts",
     "dependencies": {
         "@berry/core": "workspace:*",
-        "@berry/zipfs": "workspace:*"
+        "@berry/fslib": "workspace:*"
     }
 }

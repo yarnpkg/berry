@@ -31,7 +31,7 @@ interface ModuleInterfaceStatic {
   new(p: string, parent: ModuleInterface | null): ModuleInterface;
 }
 
-import {NodeFS, ZipOpenFS, patchFs} from '@berry/zipfs';
+import {NodeFS, ZipOpenFS, patchFs} from '@berry/fslib';
 import fs                           from 'fs';
 import NativeModule                 from 'module';
 import path                         from 'path';

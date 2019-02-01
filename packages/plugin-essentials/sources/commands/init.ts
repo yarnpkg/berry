@@ -1,7 +1,7 @@
 import {Manifest, Plugin}   from '@berry/core';
 import {structUtils}        from '@berry/core';
+import {xfs}                from '@berry/fslib';
 import {makeUpdater}        from '@berry/json-proxy';
-import {xfs}                from '@berry/zipfs';
 // @ts-ignore
 import {UsageError}         from '@manaflair/concierge';
 import {existsSync}         from 'fs';

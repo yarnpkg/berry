@@ -1,5 +1,5 @@
+import {CwdFS, ZipOpenFS, xfs}           from '@berry/fslib';
 import {runShell}                        from '@berry/shell';
-import {CwdFS, ZipOpenFS, xfs}           from '@berry/zipfs';
 import {existsSync}                      from 'fs';
 import {delimiter, posix}                from 'path';
 import {PassThrough, Readable, Writable} from 'stream';

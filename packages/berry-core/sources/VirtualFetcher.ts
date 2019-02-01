@@ -1,4 +1,4 @@
-import {AliasFS, xfs}                       from '@berry/zipfs';
+import {AliasFS, xfs}                       from '@berry/fslib';
 import {readlink, symlink}                  from 'fs';
 import {dirname, relative, resolve}         from 'path';
 import {promisify}                          from 'util';

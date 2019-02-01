@@ -1,4 +1,4 @@
-import {FakeFS, ZipFS}        from '@berry/zipfs';
+import {FakeFS}               from '@berry/fslib';
 
 import {Cache}                from './Cache';
 import {Project}              from './Project';

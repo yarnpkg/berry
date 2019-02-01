@@ -1,8 +1,8 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName, DependencyMeta} from '@berry/core';
 import {FetchResult, Ident, Locator, Package}                                                                from '@berry/core';
 import {miscUtils, structUtils}                                                                              from '@berry/core';
+import {CwdFS, FakeFS, NodeFS}                                                                               from '@berry/fslib';
 import {PackageInformationStores, LocationBlacklist, generatePnpScript}                                      from '@berry/pnp';
-import {CwdFS, FakeFS, NodeFS}                                                                               from '@berry/zipfs';
 import {posix}                                                                                               from 'path';
 
 // Some packages do weird stuff and MUST be unplugged. I don't like them.

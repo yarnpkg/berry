@@ -1,4 +1,4 @@
-import {NodeFS, ZipFS, xfs}       from '@berry/zipfs';
+import {NodeFS, ZipFS, xfs}       from '@berry/fslib';
 import {chmod, writeFile}         from 'fs';
 import {lock, unlock}             from 'lockfile';
 import {resolve}                  from 'path';

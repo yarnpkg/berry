@@ -6,7 +6,7 @@
     "dependencies": {
         "@berry/cli": "workspace:*",
         "@berry/core": "workspace:*",
-        "@berry/pnp": "workspace:*",
-        "@berry/zipfs": "workspace:*"
+        "@berry/fslib": "workspace:*",
+        "@berry/pnp": "workspace:*"
     }
 }
