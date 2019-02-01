@@ -1,5 +1,5 @@
 const {
-  fs: {readJson},
+  fs: {readJson, writeJson},
 } = require('pkg-tests-core');
 
 describe(`Commands`, () => {
