@@ -1037,6 +1037,7 @@ __metadata:
     "@manaflair/concierge": "npm:^0.9.2"
     execa: "npm:^1.0.0"
     fs-extra: "npm:^7.0.0"
+    inquirer: "npm:^6.2.0"
     joi: "npm:^13.6.0"
     semver: "npm:^5.6.0"
   languageName: unknown

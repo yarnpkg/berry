@@ -1497,6 +1497,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@manaflair/concierge", "virtual:1c336608a4ee4545cde4a7be6ea8538fc99b43984bd05411d3dfafa06311a2a15221ac672631d6c8a506b1e5e7419dbe1ff6691b960d1624a3a4e1dffe18183e#npm:0.9.2"],
           ["execa", "npm:1.0.0"],
           ["fs-extra", "npm:7.0.1"],
+          ["inquirer", "npm:6.2.1"],
           ["joi", "npm:13.7.0"],
           ["semver", "npm:5.6.0"],
         ]),

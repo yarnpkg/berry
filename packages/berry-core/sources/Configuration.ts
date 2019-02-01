@@ -73,17 +73,16 @@ export const coreDefinitions = {
   },
 
   // Settings related to the output style
-  enableEmojis: {
-    description: `If true, the CLI is allowed to use emojis in its output`,
-    type: SettingsType.BOOLEAN,
-    default: !!supportsColor.stdout,
-    defaultText: `<dynamic>`,
-  },
   enableColors: {
     description: `If true, the CLI is allowed to use colors in its output`,
     type: SettingsType.BOOLEAN,
     default: !!supportsColor.stdout,
     defaultText: `<dynamic>`,
+  },
+  enableInteractive: {
+    description: `If true, the CLI is allowed to ask questions when it makes sense`,
+    type: SettingsType.BOOLEAN,
+    default: false,
   },
 
   // Settings related to how packages are interpreted by default
