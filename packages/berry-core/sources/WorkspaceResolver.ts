@@ -1,5 +1,5 @@
+import {ReportError, MessageName}                        from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator}                             from './types';
 import {LinkType}                                        from './types';
 
@@ -35,10 +35,16 @@ export class WorkspaceResolver implements Resolver {
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
     const candidateWorkspaces = opts.project.findWorkspacesByDescriptor(descriptor);
 
-    if (candidateWorkspaces.length < 1)
-      throw new Error(`This range can only be resolved by a local workspace, but none match the specified range`);
+    if (candidateWorkspaces.length < 1) {
+      if (!opts.project.workspacesByIdent.has(descriptor.identHash)) {
+        throw new ReportError(MessageName.WORKSPACE_NOT_FOUND, `No local workspace found for this name`);
+      } else {
+        throw new ReportError(MessageName.WORKSPACE_NOT_FOUND, `No local workspace found for this range`);
+      }
+    }
+    
     if (candidateWorkspaces.length > 1)
-      throw new Error(`This range must be resolved by exactly one local workspace, too many found`);
+      throw new ReportError(MessageName.TOO_MANY_MATCHING_WORKSPACES, `Too many workspaces match this range, please disambiguate`);
 
     return [candidateWorkspaces[0].anchoredLocator];
   }

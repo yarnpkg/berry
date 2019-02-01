@@ -20,7 +20,7 @@ import {LockfileResolver}                                   from './LockfileReso
 import {DependencyMeta}                                     from './Manifest';
 import {MultiResolver}                                      from './MultiResolver';
 import {Report, ReportError, MessageName}                   from './Report';
-import {WorkspaceResolver}                                  from './WorkspaceResolver';
+import {RunInstallPleaseResolver}                           from './RunInstallPleaseResolver';
 import {Workspace}                                          from './Workspace';
 import {YarnResolver}                                       from './YarnResolver';
 import * as miscUtils                                       from './miscUtils';
@@ -286,10 +286,12 @@ export class Project {
     const yarnResolver = new YarnResolver();
     await yarnResolver.setup(this, {report});
 
-    const configResolver = lockfileOnly ? new MultiResolver([]) : this.configuration.makeResolver();
+    const realResolver = this.configuration.makeResolver();
+
+    const configResolver = lockfileOnly ? new MultiResolver([]) : realResolver;
     const aliasResolver = new AliasResolver(configResolver);
 
-    const resolver = new MultiResolver([new LockfileResolver(), yarnResolver, aliasResolver]);
+    const resolver = new MultiResolver([new LockfileResolver(), yarnResolver, aliasResolver, lockfileOnly ? new RunInstallPleaseResolver(realResolver) : null]);
     const fetcher = this.configuration.makeFetcher();
 
     const resolverOptions = {checksums: this.storedChecksums, project: this, readOnly: false, cache, fetcher, report, resolver};

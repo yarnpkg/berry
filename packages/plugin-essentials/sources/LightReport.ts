@@ -13,7 +13,6 @@ export class LightReport extends Report {
     try {
       await cb(report);
     } catch (error) {
-      console.log(error.stack)
       report.reportExceptionOnce(error);
     } finally {
       await report.finalize();

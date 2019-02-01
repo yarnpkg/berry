@@ -24,6 +24,9 @@ export enum MessageName {
   RESOLUTION_PACK = 17,
   CACHE_CHECKSUM_MISMATCH = 18,
   UNUSED_CACHE_ENTRY = 19,
+  MISSING_LOCKFILE_ENTRY = 20,
+  WORKSPACE_NOT_FOUND = 21,
+  TOO_MANY_MATCHING_WORKSPACES = 22,
 }
 
 export class ReportError extends Error {
@@ -34,6 +37,10 @@ export class ReportError extends Error {
 
     this.reportCode = code;
   }
+}
+
+export function isReportError(error: Error): error is ReportError {
+  return typeof (error as ReportError).reportCode !== `undefined`;
 }
 
 export abstract class Report {
@@ -81,7 +88,7 @@ export abstract class Report {
   }
 
   reportExceptionOnce(error: Error | ReportError) {
-    if (error instanceof ReportError) {
+    if (isReportError(error)) {
       this.reportErrorOnce(error.reportCode, error.message, {key: error});
     } else {
       this.reportErrorOnce(MessageName.EXCEPTION, error.stack || error.message, {key: error});
