@@ -8587,6 +8587,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./packages/acceptance-tests/pkg-tests-core/"),
         packageDependencies: new Map([
           ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"],
+          ["fs-extra", "npm:7.0.1"],
           ["invariant", "npm:2.2.4"],
           ["klaw", "npm:2.1.1"],
           ["minimatch", "npm:3.0.4"],
