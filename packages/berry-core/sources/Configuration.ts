@@ -79,8 +79,8 @@ export const coreDefinitions = {
     default: !!supportsColor.stdout,
     defaultText: `<dynamic>`,
   },
-  enableInteractive: {
-    description: `If true, the CLI is allowed to ask questions when it makes sense`,
+  preferInteractive: {
+    description: `If true, the CLI will automatically use the interactive mode when called from a TTY`,
     type: SettingsType.BOOLEAN,
     default: false,
   },

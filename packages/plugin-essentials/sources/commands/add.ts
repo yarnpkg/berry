@@ -38,7 +38,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
         continue;
       }
       
-      if (interactive || (configuration.enableInteractive && (stdout as any).isTTY)) {
+      if (interactive || (configuration.preferInteractive && (stdout as any).isTTY)) {
         askedQuestions = true;
 
         const descriptorFromProject = await fetchDescriptorFromProject(descriptor, {project, dev, peer, prompt});
