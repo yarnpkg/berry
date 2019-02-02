@@ -1,7 +1,8 @@
 import {parseSyml, stringifySyml}        from '@berry/parsers';
 import chalk                             from 'chalk';
 import {existsSync, readFile, writeFile} from 'fs';
-import {dirname, resolve}                from 'path';
+import {homedir}                         from 'os';
+import {posix}                           from 'path';
 import supportsColor                     from 'supports-color';
 import {promisify}                       from 'util';
 
@@ -51,6 +52,11 @@ export const coreDefinitions = {
   },
 
   // Settings related to the package manager internal names
+  globalFolder: {
+    description: `Folder where are stored the system-wide settings`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: getDefaultGlobalFolder(),
+  },
   lockfilePath: {
     description: `Path of the file where the dependency tree must be stored`,
     type: SettingsType.ABSOLUTE_PATH,
@@ -147,13 +153,23 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
     throw new Error(`Expected value to be a string`);
   
   if (type === SettingsType.ABSOLUTE_PATH) {
-    return resolve(folder, value);
+    return posix.resolve(folder, value);
   } else if (type === SettingsType.LOCATOR_LOOSE) {
     return structUtils.parseLocator(value, false);
   } else if (type === SettingsType.LOCATOR) {
     return structUtils.parseLocator(value);
   } else {
     return value;
+  }
+}
+
+function getDefaultGlobalFolder() {
+  if (process.platform === `win32`) {
+    return posix.resolve(process.env.LOCALAPPDATA || posix.join(homedir(), 'AppData', 'Local'));
+  } else if (process.env.XDG_DATA_HOME) {
+    return posix.resolve(process.env.XDG_DATA_HOME, 'yarn/modern');
+  } else {
+    return posix.resolve(homedir(), `.local/share/yarn/modern`);
   }
 }
 
@@ -201,7 +217,7 @@ export class Configuration {
       if (existsSync(`${currentCwd}/.berryrc`))
         rcCwds.push(currentCwd);
 
-      nextCwd = dirname(currentCwd);
+      nextCwd = posix.dirname(currentCwd);
     }
 
     const configuration = new Configuration(projectCwd, plugins);
@@ -272,9 +288,9 @@ export class Configuration {
           } else {
             const projectCwd = this.projectCwd;
             if (Array.isArray(definition.default)) {
-              this.values.set(name, definition.default.map((entry: string) => resolve(projectCwd, entry)));
+              this.values.set(name, definition.default.map((entry: string) => posix.resolve(projectCwd, entry)));
             } else {
-              this.values.set(name, resolve(projectCwd, definition.default));
+              this.values.set(name, posix.resolve(projectCwd, definition.default));
             }
           }
         } else {
@@ -296,7 +312,7 @@ export class Configuration {
     const content = await readFileP(source, `utf8`);
     const data = parseSyml(content);
 
-    this.use(source, data, dirname(source));
+    this.use(source, data, posix.dirname(source));
   }
 
   use(source: string, data: {[key: string]: unknown}, folder: string) {

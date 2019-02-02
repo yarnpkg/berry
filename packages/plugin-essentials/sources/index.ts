@@ -13,6 +13,7 @@ import exec              from './commands/exec';
 import help              from './commands/help';
 import init              from './commands/init';
 import install           from './commands/install';
+import link              from './commands/link';
 import node              from './commands/node';
 import remove            from './commands/remove';
 import run               from './commands/run';
@@ -32,6 +33,7 @@ const plugin: Plugin = {
     help,
     init,
     install,
+    link,
     node,
     remove,
     run,

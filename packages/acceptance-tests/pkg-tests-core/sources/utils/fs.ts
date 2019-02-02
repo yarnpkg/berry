@@ -126,6 +126,8 @@ exports.createTemporaryFolder = function createTemporaryFolder(): Promise<string
         resolve(dirPath);
       }
     });
+  }).then(path => {
+    return fs.realpath(path);
   });
 };
 
