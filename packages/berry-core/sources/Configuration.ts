@@ -222,9 +222,6 @@ export class Configuration {
 
     const configuration = new Configuration(projectCwd, plugins);
 
-    for (const rcCwd of rcCwds)
-      await configuration.inherits(`${rcCwd}/.berryrc`);
-
     const environmentData: {[key: string]: any} = {};
     const environmentPrefix = `berry_`;
 
@@ -239,7 +236,10 @@ export class Configuration {
       environmentData[key] = value;
     }
 
-    configuration.use(`environment`, environmentData, process.cwd());
+    configuration.use(`<environment>`, environmentData, process.cwd());
+
+    for (const rcCwd of rcCwds)
+      await configuration.inherits(`${rcCwd}/.berryrc`);
 
     return configuration;
   }
@@ -318,6 +318,8 @@ export class Configuration {
   use(source: string, data: {[key: string]: unknown}, folder: string) {
     for (const key of Object.keys(data)) {
       const name = key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
+
+      // binFolder is the magic location where the parent process stored the current binaries; not an actual configuration settings
       if (name === `binFolder`)
         continue;
 

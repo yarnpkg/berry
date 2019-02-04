@@ -1,10 +1,11 @@
-import {Configuration} from '@berry/core';
+import {Configuration}         from '@berry/core';
+import {xfs}                   from '@berry/fslib';
 // @ts-ignore
-import {concierge}     from '@manaflair/concierge';
-import {execFileSync}  from 'child_process';
-import Joi             from 'joi';
+import {UsageError, concierge} from '@manaflair/concierge';
+import {execFileSync}          from 'child_process';
+import Joi                     from 'joi';
 
-import {plugins}       from './plugins';
+import {plugins}               from './plugins';
 
 Error.stackTraceLimit = Infinity;
 
@@ -41,7 +42,12 @@ async function run() {
   const ignorePath = configuration.get(`ignorePath`);
 
   if (executablePath !== null && !ignorePath) {
-    runBinary(executablePath);
+    if (!xfs.existsSync(executablePath)) {
+      concierge.error(new UsageError(`The "executable-path" option has been set (in ${configuration.sources.get(`executablePath`)}), but the specified location doesn't exists (${executablePath}).`), {stream: process.stderr});
+      process.exitCode = 1;
+    } else {
+      runBinary(executablePath);
+    }
   } else {
     concierge.topLevel(`[--cwd PATH]`).validate(Joi.object().unknown().keys({
       cwd: Joi.string().default(process.cwd()),
