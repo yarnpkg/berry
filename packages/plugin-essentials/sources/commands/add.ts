@@ -9,8 +9,6 @@ import inquirer                                           from 'inquirer';
 import semver                                             from 'semver';
 import {Readable, Writable}                               from 'stream';
 
-import {registerLegacyYarnResolutions}                    from '../utils/miscUtils';
-
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .command(`add [... packages] [-E,--exact] [-T,--tilde] [-D,--dev] [-P,--peer] [-i,--interactive]`)
@@ -67,8 +65,6 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       process.stdout.write(`\n`);
 
     const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
-      await registerLegacyYarnResolutions(project);
-
       const fetcher = project.configuration.makeFetcher();
       const resolver = project.configuration.makeResolver();
   

@@ -1,10 +1,6 @@
 import {WorkspaceRequiredError}                              from '@berry/cli';
 import {Configuration, Cache, Plugin, Project, StreamReport} from '@berry/core';
-// @ts-ignore
-import {UsageError}                                          from '@manaflair/concierge';
 import {Writable}                                            from 'stream';
-
-import {registerLegacyYarnResolutions}                       from '../utils/miscUtils';
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
@@ -20,8 +16,6 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       throw new WorkspaceRequiredError(cwd);
 
     const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
-      await registerLegacyYarnResolutions(project);
-
       await project.install({cache, report});
     });
 

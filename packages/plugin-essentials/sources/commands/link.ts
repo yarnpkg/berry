@@ -7,8 +7,6 @@ import {UsageError}                                          from '@manaflair/co
 import {posix}                                               from 'path';
 import {Writable}                                            from 'stream';
 
-import {registerLegacyYarnResolutions}                       from '../utils/miscUtils';
-
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .command(`link [... packages]`)
@@ -51,17 +49,15 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
       const cache = await Cache.find(configuration);
 
-      const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
-        await registerLegacyYarnResolutions(project);
-
-        for (const descriptor of descriptors) {
-          if (workspace.manifest.devDependencies.has(descriptor.identHash)) {
-            workspace.manifest.devDependencies.set(descriptor.identHash, descriptor);
-          } else {
-            workspace.manifest.dependencies.set(descriptor.identHash, descriptor);
-          }
+      for (const descriptor of descriptors) {
+        if (workspace.manifest.devDependencies.has(descriptor.identHash)) {
+          workspace.manifest.devDependencies.set(descriptor.identHash, descriptor);
+        } else {
+          workspace.manifest.dependencies.set(descriptor.identHash, descriptor);
         }
+      }
 
+      const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
         await project.install({cache, report});
       });
 

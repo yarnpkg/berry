@@ -25,6 +25,7 @@ import {RunInstallPleaseResolver}                           from './RunInstallPl
 import {Workspace}                                          from './Workspace';
 import {YarnResolver}                                       from './YarnResolver';
 import * as miscUtils                                       from './miscUtils';
+import {registerLegacyYarnResolutions}                      from './registerLegacyYarnResolutions';
 import * as scriptUtils                                     from './scriptUtils';
 import * as structUtils                                     from './structUtils';
 import {IdentHash, DescriptorHash, LocatorHash}             from './types';
@@ -111,47 +112,52 @@ export class Project {
     this.storedDescriptors = new Map();
     this.storedPackages = new Map();
 
+    await registerLegacyYarnResolutions(this);
+
     const lockfilePath = this.configuration.get(`lockfilePath`);
 
     if (xfs.existsSync(lockfilePath)) {
       const content = await xfs.readFilePromise(lockfilePath, `utf8`);
       const parsed: any = parseSyml(content);
 
-      for (const key of Object.keys(parsed)) {
-        if (key === `__metadata`)
-          continue;
+      // Protects against v1 lockfiles
+      if (parsed.__metadata) {
+        for (const key of Object.keys(parsed)) {
+          if (key === `__metadata`)
+            continue;
 
-        const data = parsed[key];
-        const locator = structUtils.parseLocator(data.resolution, true);
+          const data = parsed[key];
+          const locator = structUtils.parseLocator(data.resolution, true);
 
-        const version = data.version;
+          const version = data.version;
 
-        const languageName = data.languageName || `node`;
-        const linkType = data.linkType as LinkType || LinkType.HARD;
+          const languageName = data.languageName || `node`;
+          const linkType = data.linkType as LinkType || LinkType.HARD;
 
-        const dependencies = new Map<IdentHash, Descriptor>();
-        const peerDependencies = new Map<IdentHash, Descriptor>();
+          const dependencies = new Map<IdentHash, Descriptor>();
+          const peerDependencies = new Map<IdentHash, Descriptor>();
 
-        if (data.checksum != null)
-          this.storedChecksums.set(locator.locatorHash, data.checksum);
+          if (data.checksum != null)
+            this.storedChecksums.set(locator.locatorHash, data.checksum);
 
-        for (const dependency of Object.keys(data.dependencies || {})) {
-          const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.dependencies[dependency]);
-          dependencies.set(descriptor.identHash, descriptor);
-        }
+          for (const dependency of Object.keys(data.dependencies || {})) {
+            const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.dependencies[dependency]);
+            dependencies.set(descriptor.identHash, descriptor);
+          }
 
-        for (const dependency of Object.keys(data.peerDependencies || {})) {
-          const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.peerDependencies[dependency]);
-          peerDependencies.set(descriptor.identHash, descriptor);
-        }
+          for (const dependency of Object.keys(data.peerDependencies || {})) {
+            const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.peerDependencies[dependency]);
+            peerDependencies.set(descriptor.identHash, descriptor);
+          }
 
-        const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies};
-        this.storedPackages.set(pkg.locatorHash, pkg);
+          const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies};
+          this.storedPackages.set(pkg.locatorHash, pkg);
 
-        for (const entry of key.split(/ *, */g)) {
-          const descriptor = structUtils.parseDescriptor(entry);
-          this.storedDescriptors.set(descriptor.descriptorHash, descriptor);
-          this.storedResolutions.set(descriptor.descriptorHash, pkg.locatorHash);
+          for (const entry of key.split(/ *, */g)) {
+            const descriptor = structUtils.parseDescriptor(entry);
+            this.storedDescriptors.set(descriptor.descriptorHash, descriptor);
+            this.storedResolutions.set(descriptor.descriptorHash, pkg.locatorHash);
+          }
         }
       }
     }

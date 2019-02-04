@@ -3,8 +3,6 @@ import {Configuration, Cache, Plugin, Project, StreamReport} from '@berry/core';
 import {structUtils}                                         from '@berry/core';
 import {Writable}                                            from 'stream';
 
-import {registerLegacyYarnResolutions}                       from '../utils/miscUtils';
-
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .command(`remove [... names] [-A,--all]`)
@@ -19,8 +17,6 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       throw new WorkspaceRequiredError(cwd);
 
     const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
-      await registerLegacyYarnResolutions(project);
-
       const affectedWorkspaces = all
         ? project.workspaces
         : [workspace];
