@@ -188,4 +188,16 @@ describe(`Scripts tests`, () => {
       },
     ),
   );
+
+  test(
+    `it should allow dependencies with install scripts to run their own subscripts`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`no-deps-nested-postinstall`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+      },
+    ),
+  );
 });

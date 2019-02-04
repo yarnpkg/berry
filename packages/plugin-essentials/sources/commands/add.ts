@@ -1,7 +1,10 @@
+import {WorkspaceRequiredError}                           from '@berry/cli';
 import {Configuration, Cache, Descriptor, DescriptorHash} from '@berry/core';
 import {Ident, Locator, Plugin, Project, Resolver}        from '@berry/core';
 import {ResolveOptions, StreamReport}                     from '@berry/core';
 import {structUtils}                                      from '@berry/core';
+// @ts-ignore
+import {UsageError}                                       from '@manaflair/concierge';
 import inquirer                                           from 'inquirer';
 import semver                                             from 'semver';
 import {Readable, Writable}                               from 'stream';
@@ -18,7 +21,10 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
 
-      // @ts-ignore
+    if (!workspace)
+      throw new WorkspaceRequiredError(cwd);
+
+    // @ts-ignore
     const prompt = inquirer.createPromptModule({
       input: stdin,
       output: stdout,
@@ -85,7 +91,6 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
         workspace.manifest[target].set(descriptor.identHash, descriptor);
 
       await project.install({cache, report});
-      await project.persist();
     });
 
     return report.hasErrors() ? 1 : 0;

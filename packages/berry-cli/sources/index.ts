@@ -1,0 +1,1 @@
+export {WorkspaceRequiredError} from './WorkspaceRequiredError';

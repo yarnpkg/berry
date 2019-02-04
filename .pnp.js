@@ -1497,6 +1497,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./packages/plugin-essentials/"),
         packageDependencies: new Map([
           ["@berry/plugin-essentials", "workspace:packages/plugin-essentials"],
+          ["@berry/cli", "workspace:packages/berry-cli"],
           ["@berry/core", "workspace:packages/berry-core"],
           ["@berry/fslib", "workspace:packages/berry-fslib"],
           ["@berry/json-proxy", "workspace:packages/berry-json-proxy"],

@@ -55,6 +55,33 @@ export async function makeScriptEnv(project: Project) {
   return scriptEnv as (typeof scriptEnv) & {BERRY_BIN_FOLDER: string};
 }
 
+type HasPackageScriptOption = {
+  project: Project,
+};
+
+export async function hasPackageScript(locator: Locator, scriptName: string, {project}: HasPackageScriptOption) {
+  const pkg = project.storedPackages.get(locator.locatorHash);
+  if (!pkg)
+    throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
+
+  return await ZipOpenFS.openPromise(async (zipOpenFs: ZipOpenFS) => {
+    const configuration = project.configuration;
+
+    const linkers = project.configuration.getLinkers();
+    const linkerOptions = {project, report: new StreamReport({stdout: new PassThrough(), configuration})};
+
+    const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
+    if (!linker)
+      throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
+
+    const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
+    const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
+    const manifest = await Manifest.find(`.`, {baseFs: packageFs});
+
+    return manifest.scripts.has(scriptName);
+  });
+}
+
 type ExecutePackageScriptOptions = {
   project: Project,
   stdin: Readable,
@@ -77,18 +104,17 @@ export async function executePackageScript(locator: Locator, scriptName: string,
     if (!linker)
       throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
 
-    const packageLocation = await linker.findPackage(pkg, linkerOptions);
-
-    const cwd = packageLocation;
-
     const env = await makeScriptEnv(project);
     const binFolder = env.BERRY_BIN_FOLDER;
 
     for (const [binaryName, [pkg, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
       await makePathWrapper(binFolder, binaryName, process.execPath, [binaryPath]);
 
+    const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
     const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
     const manifest = await Manifest.find(`.`, {baseFs: packageFs});
+
+    const cwd = packageLocation;
 
     const script = manifest.scripts.get(scriptName);
     if (!script)
@@ -156,8 +182,7 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
       if (!linker)
         continue;
       
-      const packageLocation = await linker.findPackage(pkg, linkerOptions);
-      
+      const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
       const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
       const manifest = await Manifest.find(`.`, {baseFs: packageFs});
   

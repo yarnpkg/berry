@@ -15,6 +15,7 @@ import {Cache}                                              from './Cache';
 import {Configuration}                                      from './Configuration';
 import {Fetcher}                                            from './Fetcher';
 import {Installer, BuildDirective}                          from './Installer';
+import {LightReport}                                        from './LightReport';
 import {Linker}                                             from './Linker';
 import {LockfileResolver}                                   from './LockfileResolver';
 import {DependencyMeta}                                     from './Manifest';
@@ -29,6 +30,7 @@ import * as structUtils                                     from './structUtils'
 import {IdentHash, DescriptorHash, LocatorHash}             from './types';
 import {Descriptor, Ident, Locator, Package}                from './types';
 import {LinkType}                                           from './types';
+import { ThrowReport } from './ThrowReport';
 
 export type InstallOptions = {
   cache: Cache,
@@ -58,9 +60,9 @@ export class Project {
   public storedPackages: Map<LocatorHash, Package> = new Map();
   public storedChecksums: Map<LocatorHash, string> = new Map();
 
-  static async find(configuration: Configuration, startingCwd: string) {
+  static async find(configuration: Configuration, startingCwd: string): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
     let projectCwd = null;
-    let workspaceCwd = null;
+    let packageCwd = null;
 
     let nextCwd = startingCwd;
     let currentCwd = null;
@@ -69,14 +71,14 @@ export class Project {
       currentCwd = nextCwd;
       if (xfs.existsSync(`${currentCwd}/package.json`)) {
         projectCwd = currentCwd;
-        if (!workspaceCwd) {
-          workspaceCwd = currentCwd;
+        if (!packageCwd) {
+          packageCwd = currentCwd;
         }
       }
       nextCwd = dirname(currentCwd);
     }
 
-    if (!projectCwd || !workspaceCwd)
+    if (!projectCwd || !packageCwd)
       throw new Error(`Project not found`);
 
     const project = new Project(projectCwd, {configuration});
@@ -84,9 +86,18 @@ export class Project {
     await project.setupResolutions();
     await project.setupWorkspaces();
 
-    const workspace = project.getWorkspaceByCwd(workspaceCwd);
+    // If we're in a workspace, no need to go any further to find which package we're in
+    const workspace = project.tryWorkspaceByCwd(packageCwd);
+    if (workspace)
+      return {project, workspace, locator: workspace.anchoredLocator};
 
-    return {project, workspace};
+    // Otherwise, we need to ask the project (which will in turn ask the linkers for help)
+    // Note: the trailing slash is caused by a quirk in the PnP implementation that requires folders to end with a trailing slash to disambiguate them from regular files
+    const locator = await project.findLocatorForLocation(`${packageCwd}/`);
+    if (locator)
+      return {project, locator, workspace: null};
+
+    throw new Error(`Current cwd (${packageCwd}) doesn't seem to be A) a workspace, or B) a package that belongs to ${projectCwd}'s dependency tree`);
   }
 
   constructor(projectCwd: string, {configuration}: {configuration: Configuration}) {
@@ -265,6 +276,22 @@ export class Project {
         Object.assign(dependencyMeta, meta);
 
     return dependencyMeta;
+  }
+
+  async findLocatorForLocation(cwd: string) {
+    const report = new ThrowReport();
+
+    const linkers = this.configuration.getLinkers();
+    const linkerOptions = {project: this, report};
+
+    for (const linker of linkers) {
+      const locator = await linker.findPackageLocator(cwd, linkerOptions);
+      if (locator) {
+        return locator;
+      }
+    }
+
+    return null;
   }
 
   async resolveEverything({cache, report, lockfileOnly}: InstallOptions) {
@@ -912,6 +939,8 @@ export class Project {
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
     });
+
+    await this.persist();
 
     await opts.report.startTimerPromise(`Link step`, async () => {
       await this.linkEverything(opts);

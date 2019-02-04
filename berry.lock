@@ -1036,6 +1036,7 @@ __metadata:
   version: 0.0.0
   resolution: "@berry/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
+    "@berry/cli": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"

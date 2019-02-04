@@ -13,11 +13,10 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   .describe(`create a new package`)
 
   .action(async ({cwd}: {cwd: string}) => {
-    if (!existsSync(cwd))
-      await xfs.mkdirpPromise(cwd);
-
     if (existsSync(`${cwd}/package.json`))
       throw new UsageError(`A package.json already exists in the specified directory`);
+    if (!existsSync(cwd))
+      await xfs.mkdirpPromise(cwd);
 
     const updater = await makeUpdater(`${cwd}/package.json`);
 

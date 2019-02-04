@@ -1,5 +1,5 @@
 import {Configuration, Plugin, Project} from '@berry/core';
-import {scriptUtils}                    from '@berry/core';
+import {scriptUtils, structUtils}       from '@berry/core';
 // @ts-ignore: Need to write the definition file
 import {UsageError}                     from '@manaflair/concierge';
 import {Writable}                       from 'stream';
@@ -11,15 +11,14 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .action(async ({cwd, stdout, name}: {cwd: string, stdout: Writable, name: string}) => {
     const configuration = await Configuration.find(cwd, plugins);
-    const {workspace} = await Project.find(configuration, cwd);
+    const {project, locator} = await Project.find(configuration, cwd);
 
-    const binaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace);
+    const binaries = await scriptUtils.getPackageAccessibleBinaries(locator, {project});
 
     if (name) {
       const binary = binaries.get(name);
-
       if (!binary)
-        throw new UsageError(`Couldn't find a binary named "${name}"`);
+        throw new UsageError(`Couldn't find a binary named "${name}" for package "${structUtils.prettyLocator(configuration, locator)}"`);
 
       const [pkg, binaryFile] = binary;
       stdout.write(`${binaryFile}\n`);

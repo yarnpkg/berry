@@ -1,10 +1,9 @@
 import {Configuration, Plugin, Project, Workspace, Manifest, Cache} from '@berry/core';
+import {LightReport, ThrowReport}                                   from '@berry/core';
 import {scriptUtils}                                                from '@berry/core';
-// @ts-ignore: Need to write the definition file
+// @ts-ignore
 import {UsageError}                                                 from '@manaflair/concierge';
 import {Readable, Writable}                                         from 'stream';
-
-import {LightReport}                                                from '../LightReport';
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
@@ -14,7 +13,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .action(async ({cwd, stdin, stdout, stderr, name, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, name: string, args: Array<string>}) => {
     const configuration = await Configuration.find(cwd, plugins);
-    const {project, workspace} = await Project.find(configuration, cwd);
+    const {project, workspace, locator} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
 
     const report = await LightReport.start({configuration, stdout}, async (report: LightReport) => {
@@ -27,29 +26,29 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     // First we check to see whether a script exist inside the current workspace
     // for the given name
 
-    const manifest = await Manifest.find(workspace.cwd);
-
-    if (manifest.scripts.has(name))
-      return await scriptUtils.executeWorkspaceScript(workspace, name, args, {stdin, stdout, stderr});
+    if (await scriptUtils.hasPackageScript(locator, name, {project}))
+      return await scriptUtils.executePackageScript(locator, name, args, {project, stdin, stdout, stderr});
 
     // If we can't find it, we then check whether one of the dependencies of the
     // current workspace exports a binary with the requested name
 
-    const binaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace);
+    const binaries = await scriptUtils.getPackageAccessibleBinaries(locator, {project});
     const binary = binaries.get(name);
 
     if (binary)
-      return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, name, args, {cwd, stdin, stdout, stderr});
+      return await scriptUtils.executePackageAccessibleBinary(locator, name, args, {cwd, project, stdin, stdout, stderr});
 
     // When it fails, we try to check whether it's a global script (ie we look
     // into all the workspaces to find one that exports this script). We only do
     // this if the script name contains a colon character (":"), and we skip
     // this logic if multiple workspaces share the same script name.
+    // 
+    // We also disable this logic for packages coming from third-parties (ie
+    // not workspaces). Not particular reason except maybe security concerns.
 
-    if (name.includes(`:`)) {
+    if (workspace && name.includes(`:`)) {
       let candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
-        const manifest = await Manifest.find(workspace.cwd);
-        return manifest.scripts.has(name) ? workspace : null;
+        return workspace.manifest.scripts.has(name) ? workspace : null;
       }));
 
       let filteredWorkspaces = candidateWorkspaces.filter(workspace => {

@@ -18,7 +18,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     const {project} = await Project.find(configuration, cwd);
     const constraints = await Constraints.find(project);
 
-    const report = await constraints.process();
+    const result = await constraints.process();
 
     // @ts-ignore
     const prompt = inquirer.createPromptModule({
@@ -26,7 +26,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       output: stdout,
     });
 
-    for (const {workspace, dependencyIdent, dependencyRange} of report.enforcedDependencyRanges) {
+    for (const {workspace, dependencyIdent, dependencyRange} of result.enforcedDependencyRanges) {
       if (dependencyRange !== null) {
         const invalidDependencies = Array.from(workspace.manifest.dependencies.values()).filter((dependency: Descriptor) => {
           return structUtils.areIdentsEqual(dependency, dependencyIdent) && dependency.range !== dependencyRange;
@@ -66,6 +66,4 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
         }
       }
     }
-
-    await project.persist();
   });

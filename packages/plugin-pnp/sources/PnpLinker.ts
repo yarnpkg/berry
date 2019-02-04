@@ -15,7 +15,7 @@ export class PnpLinker implements Linker {
     return true;
   }
 
-  async findPackage(locator: Locator, opts: LinkOptions) {
+  async findPackageLocation(locator: Locator, opts: LinkOptions) {
     const fs = new NodeFS();
 
     const pnpPath = opts.project.configuration.get(`pnpPath`);
@@ -32,6 +32,23 @@ export class PnpLinker implements Linker {
       throw new Error(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed pnp map`);
 
     return packageInformation.packageLocation;
+  }
+
+  async findPackageLocator(location: string, opts: LinkOptions) {
+    const fs = new NodeFS();
+
+    const pnpPath = opts.project.configuration.get(`pnpPath`);
+    if (!await fs.existsPromise(pnpPath))
+      throw new Error(`Couldn't find the PnP package map at the root of the project - run an install to generate it`);
+
+    const pnpFile = miscUtils.dynamicRequire(pnpPath);
+    delete require.cache[pnpPath];
+
+    const locator = pnpFile.findPackageLocator(location);
+    if (!locator)
+      return null;
+
+    return structUtils.makeLocator(structUtils.parseIdent(locator.name), locator.reference);
   }
 
   makeInstaller(opts: LinkOptions) {

@@ -1,9 +1,8 @@
 import {Configuration, Cache, Plugin, Project, Locator, MessageName, StreamReport} from '@berry/core';
+import {LightReport}                                                               from '@berry/core';
 import {ZipFS, xfs}                                                                from '@berry/fslib';
 import {posix}                                                                     from 'path';
 import {Writable}                                                                  from 'stream';
-
-import {LightReport}                                                               from '../../LightReport';
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 

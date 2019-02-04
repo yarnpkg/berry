@@ -49,8 +49,24 @@ export interface Linker {
    * @param locator The queried package.
    * @param opts The link options.
    */
-  findPackage(locator: Locator, opts: LinkOptions): Promise<string>;
+  findPackageLocation(locator: Locator, opts: LinkOptions): Promise<string>;
 
+  /**
+   * This function must, given a specified location on the disk, find the
+   * locator for the package that owns it. This function is allowed to fail if
+   * the location doesn't seem to be owned by any package covered by the
+   * current linker, in which case it should return null.
+   * 
+   * The main case where this function is called is when a postinstall script
+   * for a third-party package calls another script of its. In this situation,
+   * we must figure out who's making the "run" call, and we can't really rely
+   * on anything else than the location on the disk to do so.
+   * 
+   * @param location The queried location on the disk.
+   * @param opts The link options.
+   */
+  findPackageLocator(location: string, opts: LinkOptions): Promise<Locator | null>;
+  
   /**
    * This function must instantiate an Installer object that describes how to
    * install the packages on the disk. Check the Installer file for more

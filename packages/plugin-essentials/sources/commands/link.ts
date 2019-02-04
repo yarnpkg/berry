@@ -1,3 +1,4 @@
+import {WorkspaceRequiredError}                              from '@berry/cli';
 import {Configuration, Cache, Plugin, Project, StreamReport} from '@berry/core';
 import {structUtils}                                         from '@berry/core';
 import {xfs}                                                 from '@berry/fslib';
@@ -16,6 +17,9 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   .action(async ({cwd, stdout, packages}: {cwd: string, stdout: Writable, packages: Array<string>}) => {
     const configuration = await Configuration.find(cwd, plugins);
     const {project, workspace} = await Project.find(configuration, cwd);
+
+    if (!workspace)
+      throw new WorkspaceRequiredError(cwd);
 
     const globalFolder = configuration.get(`globalFolder`);
 
@@ -59,7 +63,6 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
         }
 
         await project.install({cache, report});
-        await project.persist();
       });
 
       return report.hasErrors() ? 1 : 0;
