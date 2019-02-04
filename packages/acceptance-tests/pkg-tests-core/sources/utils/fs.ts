@@ -117,8 +117,8 @@ exports.packToFile = function packToFile(target: string, source: string, options
   });
 };
 
-exports.createTemporaryFolder = function createTemporaryFolder(): Promise<string> {
-  return new Promise((resolve, reject) => {
+exports.createTemporaryFolder = function createTemporaryFolder(name?: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
     tmp.dir({unsafeCleanup: true}, (error, dirPath) => {
       if (error) {
         reject(error);
@@ -126,8 +126,15 @@ exports.createTemporaryFolder = function createTemporaryFolder(): Promise<string
         resolve(dirPath);
       }
     });
-  }).then(path => {
-    return fs.realpath(path);
+  }).then(async dirPath => {
+    dirPath = fs.realpathSync(dirPath);
+
+    if (name) {
+      dirPath = path.join(dirPath, name);
+      await exports.mkdirp(dirPath);
+    }
+    
+    return dirPath;
   });
 };
 
