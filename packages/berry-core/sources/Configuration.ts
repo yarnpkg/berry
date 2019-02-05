@@ -18,6 +18,9 @@ import * as structUtils                  from './structUtils';
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});
 
+export const RCFILE_NAME = `.yarnrc`;
+export const ENVIRONMENT_PREFIX = `yarn_`;
+
 export enum SettingsType {
   BOOLEAN = 'BOOLEAN',
   ABSOLUTE_PATH = 'ABSOLUTE_PATH',
@@ -56,22 +59,22 @@ export const coreDefinitions = {
   lockfilePath: {
     description: `Path of the file where the dependency tree must be stored`,
     type: SettingsType.ABSOLUTE_PATH,
-    default: `./berry.lock`,
+    default: `./yarn.lock`,
   },
   cacheFolder: {
     description: `Folder where the cache files must be written`,
     type: SettingsType.ABSOLUTE_PATH,
-    default: `./.berry/cache`,
+    default: `./.yarn/cache`,
   },
   virtualFolder: {
     description: `Folder where the symlinks generated for virtual packages must be written`,
     type: SettingsType.ABSOLUTE_PATH,
-    default: `./.berry/virtual`,
+    default: `./.yarn/virtual`,
   },
   bstatePath: {
     description: `Path of the file where the current state of the built packages must be stored`,
     type: SettingsType.ABSOLUTE_PATH,
-    default: `./.berry/build-state.yml`,
+    default: `./.yarn/build-state.yml`,
   },
 
   // Settings related to the output style
@@ -215,7 +218,7 @@ export class Configuration {
       if (xfs.existsSync(`${currentCwd}/package.json`))
         projectCwd = currentCwd;
 
-      if (xfs.existsSync(`${currentCwd}/.berryrc`))
+      if (xfs.existsSync(`${currentCwd}/${RCFILE_NAME}`))
         rcCwds.push(currentCwd);
 
       nextCwd = posix.dirname(currentCwd);
@@ -224,15 +227,14 @@ export class Configuration {
     const configuration = new Configuration(projectCwd, plugins);
 
     const environmentData: {[key: string]: any} = {};
-    const environmentPrefix = `berry_`;
 
     for (let [key, value] of Object.entries(process.env)) {
       key = key.toLowerCase();
 
-      if (!key.startsWith(environmentPrefix))
+      if (!key.startsWith(ENVIRONMENT_PREFIX))
         continue;
 
-      key = key.slice(environmentPrefix.length);
+      key = key.slice(ENVIRONMENT_PREFIX.length);
 
       environmentData[key] = value;
     }
@@ -240,13 +242,13 @@ export class Configuration {
     configuration.use(`<environment>`, environmentData, process.cwd());
 
     for (const rcCwd of rcCwds)
-      await configuration.inherits(`${rcCwd}/.berryrc`);
+      await configuration.inherits(`${rcCwd}/${RCFILE_NAME}`);
 
     return configuration;
   }
 
   static async updateConfiguration(cwd: string, patch: any) {
-    const configurationPath = `${cwd}/.berryrc`;
+    const configurationPath = `${cwd}/${RCFILE_NAME}`;
 
     const current = xfs.existsSync(configurationPath)
       ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any

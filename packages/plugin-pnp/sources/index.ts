@@ -17,7 +17,7 @@ const plugin: Plugin = {
     pnpUnpluggedFolder: {
       description: `Folder where the unplugged packages must be stored`,
       type: SettingsType.ABSOLUTE_PATH,
-      default: `./.berry/pnp/unplugged`,
+      default: `./.yarn/unplugged`,
     },
     pnpPath: {
       description: `Path of the file where the PnP hook must be written`,
