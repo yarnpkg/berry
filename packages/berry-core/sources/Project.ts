@@ -25,7 +25,6 @@ import {RunInstallPleaseResolver}                           from './RunInstallPl
 import {Workspace}                                          from './Workspace';
 import {YarnResolver}                                       from './YarnResolver';
 import * as miscUtils                                       from './miscUtils';
-import {registerLegacyYarnResolutions}                      from './registerLegacyYarnResolutions';
 import * as scriptUtils                                     from './scriptUtils';
 import * as structUtils                                     from './structUtils';
 import {IdentHash, DescriptorHash, LocatorHash}             from './types';
@@ -111,8 +110,6 @@ export class Project {
 
     this.storedDescriptors = new Map();
     this.storedPackages = new Map();
-
-    await registerLegacyYarnResolutions(this);
 
     const lockfilePath = this.configuration.get(`lockfilePath`);
 

@@ -11,9 +11,8 @@ const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ... args: Array<string
   // This one come from Git urls
   [/^git\+https:\/\/.*\.git#.*$/, (version, $0) => $0],
   // These ones come from the npm registry
-  [/^https?:\/\/registry\.yarnpkg\.com\/([^\/]+)/, version => `npm:${version}`],
-  [/^https?:\/\/registry\.npmjs\.org\/([^\/]+)/, version => `npm:${version}`],
-  // This one is from the old Yarn offline mirror
+  [/^https?:\/\/[^\/]+\/([^\/]+)\/-\/\1-[^\/]+\.tgz(?:#|$)/, version => `npm:${version}`],
+  // This one is from the old Yarn offline mirror - we assume they came from npm
   [/^[^\/]+\.tgz#[0-9a-f]+$/, version => `npm:${version}`],
 ];
 
@@ -23,40 +22,46 @@ export class YarnResolver implements Resolver {
   async setup(project: Project, {report}: {report: Report}) {
     const lockfilePath = `${project.cwd}/yarn.lock`;
 
-    if (existsSync(lockfilePath)) {
-      const resolutions = this.resolutions = new Map();
+    // No need to enable it if the lockfile doesn't exist
+    if (!existsSync(lockfilePath))
+      return;
 
-      const content = readFileSync(lockfilePath, `utf8`);
-      const parsed = parseSyml(content);
+    const content = readFileSync(lockfilePath, `utf8`);
+    const parsed = parseSyml(content);
+
+    // No need to enable it either if the lockfile is modern
+    if (Object.prototype.hasOwnProperty.call(parsed, `__metadata`))
+      return;
     
-      for (const key of Object.keys(parsed)) {
-        const descriptor = structUtils.tryParseDescriptor(key);
-    
-        if (!descriptor) {
-          report.reportWarning(MessageName.YARN_IMPORT_FAILED, `Failed to parse the string "${key}" into a proper descriptor`);
-          continue;
-        }
-        
-        const {version, resolved} = (parsed as any)[key];
-        let reference;
+    const resolutions = this.resolutions = new Map();
 
-        for (const [pattern, matcher] of IMPORTED_PATTERNS) {
-          const match = resolved.match(pattern);
-
-          if (match) {
-            reference = matcher(version, ... match);
-            break;
-          }
-        }
-        
-        if (!reference) {
-          report.reportWarning(MessageName.YARN_IMPORT_FAILED, `${structUtils.prettyDescriptor(project.configuration, descriptor)}: Only some patterns can be imported from legacy lockfiles (not "${resolved}")`);
-          continue;
-        }
-        
-        const resolution = structUtils.makeLocator(descriptor, reference);
-        resolutions.set(descriptor.descriptorHash, resolution);
+    for (const key of Object.keys(parsed)) {
+      const descriptor = structUtils.tryParseDescriptor(key);
+  
+      if (!descriptor) {
+        report.reportWarning(MessageName.YARN_IMPORT_FAILED, `Failed to parse the string "${key}" into a proper descriptor`);
+        continue;
       }
+      
+      const {version, resolved} = (parsed as any)[key];
+      let reference;
+
+      for (const [pattern, matcher] of IMPORTED_PATTERNS) {
+        const match = resolved.match(pattern);
+
+        if (match) {
+          reference = matcher(version, ... match);
+          break;
+        }
+      }
+      
+      if (!reference) {
+        report.reportWarning(MessageName.YARN_IMPORT_FAILED, `${structUtils.prettyDescriptor(project.configuration, descriptor)}: Only some patterns can be imported from legacy lockfiles (not "${resolved}")`);
+        continue;
+      }
+      
+      const resolution = structUtils.makeLocator(descriptor, reference);
+      resolutions.set(descriptor.descriptorHash, resolution);
     }
   }
   
