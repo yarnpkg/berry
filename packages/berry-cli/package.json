@@ -26,6 +26,7 @@
         "@berry/plugin-github": "workspace:*",
         "@berry/plugin-http": "workspace:*",
         "@berry/plugin-hub": "workspace:*",
+        "@berry/plugin-init": "workspace:*",
         "@berry/plugin-link": "workspace:*",
         "@berry/plugin-npm": "workspace:*",
         "@berry/plugin-pnp": "workspace:*",
@@ -39,6 +40,7 @@
         "bundles": {
             "standard": [
                 "@berry/plugin-essentials",
+                "@berry/plugin-init",
                 "@berry/plugin-constraints",
                 "@berry/plugin-file",
                 "@berry/plugin-github",

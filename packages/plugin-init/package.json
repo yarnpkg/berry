@@ -1,0 +1,12 @@
+{
+  "name": "@berry/plugin-init",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/core": "workspace:*",
+    "@berry/fslib": "workspace:*",
+    "@berry/json-proxy": "workspace:*",
+    "@manaflair/concierge": "^0.9.2"
+  }
+}

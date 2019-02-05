@@ -916,6 +916,7 @@ __metadata:
     "@berry/plugin-github": "workspace:*"
     "@berry/plugin-http": "workspace:*"
     "@berry/plugin-hub": "workspace:*"
+    "@berry/plugin-init": "workspace:*"
     "@berry/plugin-link": "workspace:*"
     "@berry/plugin-npm": "workspace:*"
     "@berry/plugin-pnp": "workspace:*"
@@ -1092,6 +1093,17 @@ __metadata:
     react-redux: "npm:^5.0.7"
     redux: "npm:^4.0.0"
     redux-saga: "npm:^1.0.0-beta.3"
+  languageName: unknown
+  linkType: soft
+
+"@berry/plugin-init@workspace:*, @berry/plugin-init@workspace:packages/plugin-init":
+  version: 0.0.0
+  resolution: "@berry/plugin-init@workspace:packages/plugin-init"
+  dependencies:
+    "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
+    "@berry/json-proxy": "workspace:*"
+    "@manaflair/concierge": "npm:^0.9.2"
   languageName: unknown
   linkType: soft
 

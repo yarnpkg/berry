@@ -10,7 +10,6 @@ import add               from './commands/add';
 import bin               from './commands/bin';
 import config            from './commands/config';
 import help              from './commands/help';
-import init              from './commands/init';
 import install           from './commands/install';
 import link              from './commands/link';
 import node              from './commands/node';
@@ -29,7 +28,6 @@ const plugin: Plugin = {
     bin,
     config,
     help,
-    init,
     install,
     link,
     node,

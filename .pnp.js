@@ -1367,6 +1367,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@berry/plugin-github", "workspace:packages/plugin-github"],
           ["@berry/plugin-http", "workspace:packages/plugin-http"],
           ["@berry/plugin-hub", "workspace:packages/plugin-hub"],
+          ["@berry/plugin-init", "workspace:packages/plugin-init"],
           ["@berry/plugin-link", "workspace:packages/plugin-link"],
           ["@berry/plugin-npm", "workspace:packages/plugin-npm"],
           ["@berry/plugin-pnp", "workspace:packages/plugin-pnp"],
@@ -1560,6 +1561,18 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         ]),
       }],
     ])],
+    ["@berry/plugin-init", new Map([
+      ["workspace:packages/plugin-init", {
+        packageLocation: path.resolve(__dirname, "./packages/plugin-init/"),
+        packageDependencies: new Map([
+          ["@berry/plugin-init", "workspace:packages/plugin-init"],
+          ["@berry/core", "workspace:packages/berry-core"],
+          ["@berry/fslib", "workspace:packages/berry-fslib"],
+          ["@berry/json-proxy", "workspace:packages/berry-json-proxy"],
+          ["@manaflair/concierge", "virtual:8dbf54c5a2e73b2986f8d990445ce1d00bbb0fdba1e4d81d1ebd93b0d3d29189e02cd58439e0542a1bec29c3c724fa480b381aae663f8c2c37a02df2183707ec#npm:0.9.2"],
+        ]),
+      }],
+    ])],
     ["@berry/plugin-link", new Map([
       ["workspace:packages/plugin-link", {
         packageLocation: path.resolve(__dirname, "./packages/plugin-link/"),
@@ -1692,6 +1705,15 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["@manaflair/concierge", "virtual:4618db608ddd5ff4b385ac4f8bba9302fe80be01f8be4f2c09326b6232f308ff5592ae5490aee3e37d21fb1703c6a7a0990d92b6e5f86a74e640f011f12da48b#npm:0.9.2"],
           ["chalk", "npm:1.1.3"],
           ["joi", "npm:13.7.0"],
+          ["kexec", "npm:3.0.0"],
+          ["lodash", "npm:4.17.11"],
+        ]),
+      }],
+      ["virtual:8dbf54c5a2e73b2986f8d990445ce1d00bbb0fdba1e4d81d1ebd93b0d3d29189e02cd58439e0542a1bec29c3c724fa480b381aae663f8c2c37a02df2183707ec#npm:0.9.2", {
+        packageLocation: path.resolve(__dirname, "./.yarn/virtual/@manaflair-concierge-virtual-3d6e462df929d64a74ca6f7d3a3b5463e01ae93284575e2e354a4ec5812a3e3c/node_modules/@manaflair/concierge/"),
+        packageDependencies: new Map([
+          ["@manaflair/concierge", "virtual:8dbf54c5a2e73b2986f8d990445ce1d00bbb0fdba1e4d81d1ebd93b0d3d29189e02cd58439e0542a1bec29c3c724fa480b381aae663f8c2c37a02df2183707ec#npm:0.9.2"],
+          ["chalk", "npm:1.1.3"],
           ["kexec", "npm:3.0.0"],
           ["lodash", "npm:4.17.11"],
         ]),
@@ -11553,6 +11575,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./packages/plugin-github/", {"name":"@berry/plugin-github","reference":"workspace:packages/plugin-github"}],
     ["./packages/plugin-http/", {"name":"@berry/plugin-http","reference":"workspace:packages/plugin-http"}],
     ["./packages/plugin-hub/", {"name":"@berry/plugin-hub","reference":"workspace:packages/plugin-hub"}],
+    ["./packages/plugin-init/", {"name":"@berry/plugin-init","reference":"workspace:packages/plugin-init"}],
     ["./packages/plugin-link/", {"name":"@berry/plugin-link","reference":"workspace:packages/plugin-link"}],
     ["./packages/plugin-npm/", {"name":"@berry/plugin-npm","reference":"workspace:packages/plugin-npm"}],
     ["./packages/plugin-pnp/", {"name":"@berry/plugin-pnp","reference":"workspace:packages/plugin-pnp"}],
@@ -11565,6 +11588,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.yarn/virtual/@manaflair-concierge-virtual-398951493761df32399c531c6a901813dd79e9c1e44e226fce23e6e4fe826415/node_modules/@manaflair/concierge/", {"name":"@manaflair/concierge","reference":"virtual:368ef86f927ff947b0ed5be7794e4a10c3724211420d835aaf5632decaa3191c742cf493af1fa7837634714191c4ecdd5d7a1246e8e9359881ec4749c7a8a7fc#npm:0.9.2"}],
     ["./.yarn/virtual/@manaflair-concierge-virtual-81f9f03011511c463cb4954cadf9fc6315de39c7823e8309d7b99e47e8a8127e/node_modules/@manaflair/concierge/", {"name":"@manaflair/concierge","reference":"virtual:451e10e454d9fda3e395127fd945a02bbebfed7b1b93118275b1395dffb60092b0a4b3230b0dbc75becfcc013b274d1a9d0b596fabc2999a7307a6d9f626120f#npm:0.9.2"}],
     ["./.yarn/virtual/@manaflair-concierge-virtual-8e324598d802896461ebb34cce2875a2b3c883b55d73337534692c81e520949c/node_modules/@manaflair/concierge/", {"name":"@manaflair/concierge","reference":"virtual:4618db608ddd5ff4b385ac4f8bba9302fe80be01f8be4f2c09326b6232f308ff5592ae5490aee3e37d21fb1703c6a7a0990d92b6e5f86a74e640f011f12da48b#npm:0.9.2"}],
+    ["./.yarn/virtual/@manaflair-concierge-virtual-3d6e462df929d64a74ca6f7d3a3b5463e01ae93284575e2e354a4ec5812a3e3c/node_modules/@manaflair/concierge/", {"name":"@manaflair/concierge","reference":"virtual:8dbf54c5a2e73b2986f8d990445ce1d00bbb0fdba1e4d81d1ebd93b0d3d29189e02cd58439e0542a1bec29c3c724fa480b381aae663f8c2c37a02df2183707ec#npm:0.9.2"}],
     ["./.yarn/virtual/@manaflair-concierge-virtual-0225dfd48a4921e433faf0c15957f98c20de50460a74d67f63980b212958cc51/node_modules/@manaflair/concierge/", {"name":"@manaflair/concierge","reference":"virtual:e2ecac46318b7293d10abbd3204f2d38fd4ddb0e57cbf70b5c3ca33b80040651674a508ab9c6a680ec7bb9a42bd8030d40fb48b320b774f4c6d9e1e1d36aa0c8#npm:0.9.2"}],
     ["./.yarn/cache/@manaflair-term-strings-npm-0.10.1-dc2439556e12e319eb14684f2269f0350a7dc3c924dd18a40d20be9ab723a2cd.zip/node_modules/@manaflair/term-strings/", {"name":"@manaflair/term-strings","reference":"npm:0.10.1"}],
     ["./.yarn/cache/@manaflair-text-layout-npm-0.11.0-ca96d63f8116307c5c20a15ca36ffab13e46f88675fd6c2c7b19ee7dc9928b05.zip/node_modules/@manaflair/text-layout/", {"name":"@manaflair/text-layout","reference":"npm:0.11.0"}],
