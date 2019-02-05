@@ -13,12 +13,12 @@ describe(`Commands`, () => {
     }, async ({path, run, source}) => {
       await run(`install`);
 
-      const fileCount1 = (await readdir(`${path}/.berry/cache`)).length;
+      const fileCount1 = (await readdir(`${path}/.yarn/cache`)).length;
 
       await run(`remove`, `one-fixed-dep`);
       await run(`cache`, `clean`);
 
-      const fileCount2 = (await readdir(`${path}/.berry/cache`)).length;
+      const fileCount2 = (await readdir(`${path}/.yarn/cache`)).length;
 
       expect(fileCount2).toEqual(fileCount1 - 2);
     }));
@@ -31,12 +31,12 @@ describe(`Commands`, () => {
     }, async ({path, run, source}) => {
       await run(`install`);
 
-      const fileCount1 = (await readdir(`${path}/.berry/cache`)).length;
+      const fileCount1 = (await readdir(`${path}/.yarn/cache`)).length;
 
       await run(`remove`, `one-fixed-dep`);
       await run(`cache`, `clean`);
 
-      const fileCount2 = (await readdir(`${path}/.berry/cache`)).length;
+      const fileCount2 = (await readdir(`${path}/.yarn/cache`)).length;
 
       expect(fileCount2).toEqual(fileCount1 - 1);
     }));

@@ -632,7 +632,7 @@ describe(`Plug'n'Play`, () => {
           async ({path: path2, run: run2, source: source2}) => {
             // Move the install artifacts into a new location
             // If the .pnp.js file references absolute paths, they will stop working
-            await rename(`${path}/.berry`, `${path2}/.berry`);
+            await rename(`${path}/.yarn`, `${path2}/.yarn`);
             await rename(`${path}/.pnp.js`, `${path2}/.pnp.js`);
 
             await expect(source2(`require('no-deps')`)).resolves.toMatchObject({
@@ -690,11 +690,11 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await readdir(`${path}/.berry/pnp/unplugged`);
+        const listing = await readdir(`${path}/.yarn/unplugged`);
         expect(listing).toHaveLength(1);
 
         await writeFile(
-          `${path}/.berry/pnp/unplugged/${listing[0]}/node_modules/no-deps/index.js`,
+          `${path}/.yarn/unplugged/${listing[0]}/node_modules/no-deps/index.js`,
           `module.exports = "unplugged";\n`,
         );
 
@@ -719,11 +719,11 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await readdir(`${path}/.berry/pnp/unplugged`);
+        const listing = await readdir(`${path}/.yarn/unplugged`);
         expect(listing).toHaveLength(1);
 
         await writeFile(
-          `${path}/.berry/pnp/unplugged/${listing[0]}/node_modules/no-deps/index.js`,
+          `${path}/.yarn/unplugged/${listing[0]}/node_modules/no-deps/index.js`,
           `module.exports = "unplugged";\n`,
         );
 
@@ -753,7 +753,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await readdir(`${path}/.berry/pnp/unplugged`);
+        const listing = await readdir(`${path}/.yarn/unplugged`);
         expect(listing).toHaveLength(2);
       },
     ),
@@ -776,7 +776,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await readdir(`${path}/.berry/pnp/unplugged`);
+        const listing = await readdir(`${path}/.yarn/unplugged`);
         expect(listing).toHaveLength(1);
 
         expect(listing[0]).toMatch(/1.0.0/);
@@ -869,11 +869,11 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await readdir(`${path}/.berry/pnp/unplugged`);
+        const listing = await readdir(`${path}/.yarn/unplugged`);
         expect(listing).toHaveLength(1);
 
         await writeFile(
-          `${path}/.berry/pnp/unplugged/${listing[0]}/node_modules/no-deps/index.js`,
+          `${path}/.yarn/unplugged/${listing[0]}/node_modules/no-deps/index.js`,
           `module.exports = "unplugged";\n`,
         );
 
@@ -895,7 +895,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        expect(existsSync(`${path}/.berry/pnp/unplugged`)).toEqual(false);
+        expect(existsSync(`${path}/.yarn/unplugged`)).toEqual(false);
       },
     ),
   );
@@ -909,7 +909,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await readdir(`${path}/.berry/pnp/unplugged`);
+        const listing = await readdir(`${path}/.yarn/unplugged`);
         expect(listing).toHaveLength(1);
       },
     ),
@@ -926,7 +926,7 @@ describe(`Plug'n'Play`, () => {
 
         const rndBefore = await source(`require('no-deps-scripted/rnd.js')`);
 
-        await remove(`${path}/.berry`);
+        await remove(`${path}/.yarn`);
         await remove(`${path}/.pnp.js`);
 
         await run(`install`);
