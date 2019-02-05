@@ -1,0 +1,242 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Commands constraints check test (empty project / empty constraints) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints check test (empty project / gen_enforced_dependency_range (extraneous)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints check test (empty project / gen_enforced_dependency_range (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0023: root-workspace-76eec1 must depend on no-deps (via 2.0.0), but doesn't
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (empty project / gen_enforced_dependency_range (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0023: root-workspace-76eec1 must depend on one-fixed-dep (via 1.0.0), but doesn't
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (multiple workspaces / empty constraints) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints check test (multiple workspaces / gen_enforced_dependency_range (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0025: workspace-a-01beb5 has an extraneous dependency on no-deps
+➤ BR0025: workspace-b-d95f30 has an extraneous dependency on no-deps
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (multiple workspaces / gen_enforced_dependency_range (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0023: root-workspace-76eec1 must depend on no-deps (via 2.0.0), but doesn't
+➤ BR0024: workspace-a-01beb5 must depend on no-deps via 2.0.0, but uses 1.0.0 instead
+➤ BR0024: workspace-a-01beb5 must depend on no-deps via 2.0.0, but uses 1.0.0 instead
+➤ BR0024: workspace-b-d95f30 must depend on no-deps via 2.0.0, but uses 1.0.0 instead
+➤ BR0024: workspace-b-d95f30 must depend on no-deps via 2.0.0, but uses 1.0.0 instead
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (multiple workspaces / gen_enforced_dependency_range (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0023: root-workspace-76eec1 must depend on one-fixed-dep (via 1.0.0), but doesn't
+➤ BR0023: workspace-a-01beb5 must depend on one-fixed-dep (via 1.0.0), but doesn't
+➤ BR0023: workspace-b-d95f30 must depend on one-fixed-dep (via 1.0.0), but doesn't
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (one regular dependency / empty constraints) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints check test (one regular dependency / gen_enforced_dependency_range (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0025: root-workspace-76eec1 has an extraneous dependency on no-deps
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (one regular dependency / gen_enforced_dependency_range (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0024: root-workspace-76eec1 must depend on no-deps via 2.0.0, but uses 1.0.0 instead
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (one regular dependency / gen_enforced_dependency_range (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0023: root-workspace-76eec1 must depend on one-fixed-dep (via 1.0.0), but doesn't
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two development dependencies / empty constraints) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints check test (two development dependencies / gen_enforced_dependency_range (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0025: root-workspace-76eec1 has an extraneous dependency on no-deps
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two development dependencies / gen_enforced_dependency_range (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0024: root-workspace-76eec1 must depend on no-deps via 2.0.0, but uses 1.0.0 instead
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two development dependencies / gen_enforced_dependency_range (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0023: root-workspace-76eec1 must depend on one-fixed-dep (via 1.0.0), but doesn't
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies / empty constraints) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies / gen_enforced_dependency_range (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0025: root-workspace-76eec1 has an extraneous dependency on no-deps
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies / gen_enforced_dependency_range (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0024: root-workspace-76eec1 must depend on no-deps via 2.0.0, but uses 1.0.0 instead
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies / gen_enforced_dependency_range (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0023: root-workspace-76eec1 must depend on one-fixed-dep (via 1.0.0), but doesn't
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / empty constraints) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0025: root-workspace-76eec1 has an extraneous dependency on no-deps
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0024: root-workspace-76eec1 must depend on no-deps via 2.0.0, but uses 1.0.0 instead
+➤ BR0024: root-workspace-76eec1 must depend on no-deps via 2.0.0, but uses 1.0.0 instead
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0023: root-workspace-76eec1 must depend on one-fixed-dep (via 1.0.0), but doesn't
+➤ BR0000: Failed with errors
+",
+}
+`;

@@ -18,7 +18,7 @@ exports.execFile = function(
       if (error)
         error.message += `\n\n===== stdout:\n\n\`\`\`\n${stdout}\`\`\`\n\n===== stderr:\n\n\`\`\`\n${stderr}\`\`\`\n\n`;
 
-      const result = error ? error : {};
+      const result = error ? error : {code: 0};
       Object.assign(result, {stdout, stderr});
 
       if (error) {

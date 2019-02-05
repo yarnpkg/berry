@@ -85,6 +85,11 @@ export const coreDefinitions = {
     default: !!supportsColor.stdout,
     defaultText: `<dynamic>`,
   },
+  enableTimers: {
+    description: `If true, the CLI is allowed to print the time spent executing commands`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
   preferInteractive: {
     description: `If true, the CLI will automatically use the interactive mode when called from a TTY`,
     type: SettingsType.BOOLEAN,

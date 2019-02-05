@@ -75,7 +75,11 @@ export class StreamReport extends Report {
       const after = Date.now();
       this.indent -= 1;
 
-      this.reportInfo(MessageName.UNNAMED, `└ Completed in ${this.formatTiming(after - before)}`);
+      if (this.configuration.get(`enableTimers`)) {
+        this.reportInfo(MessageName.UNNAMED, `└ Completed in ${this.formatTiming(after - before)}`);
+      } else {
+        this.reportInfo(MessageName.UNNAMED, `└ Completed`);
+      }
     }
   }
 
@@ -94,7 +98,11 @@ export class StreamReport extends Report {
       const after = Date.now();
       this.indent -= 1;
 
-      this.reportInfo(MessageName.UNNAMED, `└ Completed in ${this.formatTiming(after - before)}`);
+      if (this.configuration.get(`enableTimers`)) {
+        this.reportInfo(MessageName.UNNAMED, `└ Completed in ${this.formatTiming(after - before)}`);
+      } else {
+        this.reportInfo(MessageName.UNNAMED, `└ Completed`);
+      }
     }
   }
 
@@ -146,7 +154,9 @@ export class StreamReport extends Report {
     }
 
     const timing = this.formatTiming(Date.now() - this.startTime);
-    const message = `${installStatus} in ${timing}${fetchStatus}`;
+    const message = this.configuration.get(`enableTimers`)
+      ? `${installStatus} in ${timing}${fetchStatus}`
+      : installStatus;
 
     if (this.errorCount > 0) {
       this.reportError(MessageName.UNNAMED, message);
