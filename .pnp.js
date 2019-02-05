@@ -2489,8 +2489,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
           ["jest", "npm:24.0.0-alpha.16"],
           ["jest-environment-node", "npm:23.4.0"],
           ["jest-junit", "npm:5.2.0"],
-          ["jest-pnp-resolver", "virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:1.0.2"],
-          ["jest-resolve", "npm:23.6.0"],
+          ["jest-pnp-resolver", "virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:1.1.0"],
           ["prettier", "npm:1.15.3"],
           ["typescript", "npm:3.2.4"],
         ]),
@@ -6724,17 +6723,16 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
       }],
     ])],
     ["jest-pnp-resolver", new Map([
-      ["npm:1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.yarn/cache/jest-pnp-resolver-npm-1.0.2-b5c0e28cde2454e7b2d3aea338a73ae7b26c8a5743f5fb4786a478e1326b4165.zip/node_modules/jest-pnp-resolver/"),
+      ["npm:1.1.0", {
+        packageLocation: path.resolve(__dirname, "./.yarn/cache/jest-pnp-resolver-npm-1.1.0-795aca0dc9693daa85c77c3acf526878b1ea7155d375bef7e568da891f7d722e.zip/node_modules/jest-pnp-resolver/"),
         packageDependencies: new Map([
-          ["jest-pnp-resolver", "npm:1.0.2"],
+          ["jest-pnp-resolver", "npm:1.1.0"],
         ]),
       }],
-      ["virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:1.0.2", {
-        packageLocation: path.resolve(__dirname, "./.yarn/virtual/jest-pnp-resolver-virtual-f1d67e89855e3d817a65bc31a0e5bfa64a89a736abec2571d01e39f3f0d205f5/node_modules/jest-pnp-resolver/"),
+      ["virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:1.1.0", {
+        packageLocation: path.resolve(__dirname, "./.yarn/virtual/jest-pnp-resolver-virtual-3ab5237c52f482633525021d5c39b918ed7445c957f12ceab70372e2566c0efa/node_modules/jest-pnp-resolver/"),
         packageDependencies: new Map([
-          ["jest-pnp-resolver", "virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:1.0.2"],
-          ["jest-resolve", "npm:23.6.0"],
+          ["jest-pnp-resolver", "virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:1.1.0"],
         ]),
       }],
     ])],
@@ -12117,8 +12115,8 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.yarn/cache/jest-message-util-npm-24.0.0-alpha.16-08f084011ce2d0ec1117c545213d44c118b339725b14a722a4d8ef4181d5facb.zip/node_modules/jest-message-util/", {"name":"jest-message-util","reference":"npm:24.0.0-alpha.16"}],
     ["./.yarn/cache/jest-mock-npm-23.2.0-374ad04b4c0cda93bc03333f81dd4c5c6bacadd70493cf6de6a265cdba981506.zip/node_modules/jest-mock/", {"name":"jest-mock","reference":"npm:23.2.0"}],
     ["./.yarn/cache/jest-mock-npm-24.0.0-alpha.16-abd284b472a36c4d7a0856c0e3cf371bfa9edeb265cd1e30d01f1e35793e88c2.zip/node_modules/jest-mock/", {"name":"jest-mock","reference":"npm:24.0.0-alpha.16"}],
-    ["./.yarn/cache/jest-pnp-resolver-npm-1.0.2-b5c0e28cde2454e7b2d3aea338a73ae7b26c8a5743f5fb4786a478e1326b4165.zip/node_modules/jest-pnp-resolver/", {"name":"jest-pnp-resolver","reference":"npm:1.0.2"}],
-    ["./.yarn/virtual/jest-pnp-resolver-virtual-f1d67e89855e3d817a65bc31a0e5bfa64a89a736abec2571d01e39f3f0d205f5/node_modules/jest-pnp-resolver/", {"name":"jest-pnp-resolver","reference":"virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:1.0.2"}],
+    ["./.yarn/cache/jest-pnp-resolver-npm-1.1.0-795aca0dc9693daa85c77c3acf526878b1ea7155d375bef7e568da891f7d722e.zip/node_modules/jest-pnp-resolver/", {"name":"jest-pnp-resolver","reference":"npm:1.1.0"}],
+    ["./.yarn/virtual/jest-pnp-resolver-virtual-3ab5237c52f482633525021d5c39b918ed7445c957f12ceab70372e2566c0efa/node_modules/jest-pnp-resolver/", {"name":"jest-pnp-resolver","reference":"virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:1.1.0"}],
     ["./.yarn/cache/jest-regex-util-npm-23.3.0-fc6715b558167e64b6cf3958ce4791ed9ce70d308767daaf28ccfeb608305128.zip/node_modules/jest-regex-util/", {"name":"jest-regex-util","reference":"npm:23.3.0"}],
     ["./.yarn/cache/jest-regex-util-npm-24.0.0-alpha.16-ef753e7bd41fa3543529547c19abfb58765741da9b64e840b6458661dc53772f.zip/node_modules/jest-regex-util/", {"name":"jest-regex-util","reference":"npm:24.0.0-alpha.16"}],
     ["./.yarn/cache/jest-resolve-npm-23.6.0-9b4919bebe050ace6f39589a580c0c4e93eba86ba78a8d53b2366d726e9bd4c2.zip/node_modules/jest-resolve/", {"name":"jest-resolve","reference":"npm:23.6.0"}],
