@@ -40,6 +40,10 @@ export class LightReport extends Report {
     return this.errorCount > 0;
   }
 
+  exitCode() {
+    return this.hasErrors() ? 1 : 0;
+  }
+
   reportCacheHit(locator: Locator) {
   }
 

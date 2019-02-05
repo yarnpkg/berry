@@ -1,21 +1,22 @@
-import {Configuration, Descriptor, Project, Plugin} from '@berry/core';
-import {structUtils}                                from '@berry/core';
-import inquirer                                     from 'inquirer';
-import emoji                                        from 'node-emoji';
-import {Readable, Writable}                         from 'stream';
+import {Cache, Configuration, Descriptor, Project, Plugin} from '@berry/core';
+import {StreamReport}                                      from '@berry/core';
+import {structUtils}                                       from '@berry/core';
+import inquirer                                            from 'inquirer';
+import {Readable, Writable}                                from 'stream';
 
-import {Constraints}                                from '../../Constraints';
+import {Constraints}                                       from '../../Constraints';
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
-  .command(`constraints apply`)
+  .command(`constraints fix`)
 
   .categorize(`Constraints-related commands`)
-  .describe(`apply the project constraints`)
+  .describe(`make the project constraint-compliant if possible`)
 
   .action(async ({cwd, stdin, stdout}: {cwd: string, stdin: Readable, stdout: Writable}) => {
     const configuration = await Configuration.find(cwd, plugins);
     const {project} = await Project.find(configuration, cwd);
+    const cache = await Cache.find(configuration);
     const constraints = await Constraints.find(project);
 
     const result = await constraints.process();
@@ -25,6 +26,8 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       input: stdin,
       output: stdout,
     });
+
+    let modified = false;
 
     for (const {workspace, dependencyIdent, dependencyRange} of result.enforcedDependencyRanges) {
       if (dependencyRange !== null) {
@@ -45,6 +48,8 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
             workspace.manifest.dependencies.delete(invalid.identHash);
             workspace.manifest.dependencies.set(newDescriptor.identHash, newDescriptor);
+
+            modified = true;
           }
         }
       } else {
@@ -62,8 +67,20 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
           // @ts-ignore
           if (result.confirmed) {
             workspace.manifest.dependencies.delete(invalid.identHash);
+
+            modified = true;
           }
         }
       }
+    }
+
+    if (modified) {
+      stdout.write(`\n`);
+
+      const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
+        await project.install({cache, report});
+      });
+
+      return report.exitCode();
     }
   });

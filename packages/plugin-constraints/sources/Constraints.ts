@@ -130,7 +130,7 @@ export class Constraints {
       if (link.id === `null`) {
         return null;
       } else {
-        return String.fromCharCode(... link.toJavaScript());
+        return link.toJavaScript();
       }
     }
 
@@ -167,7 +167,7 @@ export class Constraints {
 
 function escape(what: string | null) {
   if (typeof what === `string`) {
-    return JSON.stringify(what);
+    return `'${what}'`;
   } else {
     return `[]`;
   }

@@ -89,7 +89,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       await project.install({cache, report});
     });
 
-    return report.hasErrors() ? 1 : 0;
+    return report.exitCode();
   });
 
 async function fetchDescriptorFromProject(ident: Ident, {project, dev, peer, prompt}: {project: Project, dev: boolean, peer: boolean, prompt: any}) {

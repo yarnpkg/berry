@@ -5,21 +5,22 @@ constraints_min_version(1).
 % In order to see them in action, run `berry constraints detail`
 
 % This rule will prevent two of our workspaces from depending on different versions of a same dependency
-gen_invalid_dependency(WorkspaceCwd, DependencyIdent, "This dependency conflicts with another one from another workspace") :-
+gen_invalid_dependency(WorkspaceCwd, DependencyIdent, 'This dependency conflicts with another one from another workspace') :-
   workspace_has_dependency(WorkspaceCwd, DependencyIdent, DependencyRange),
   workspace_has_dependency(_, DependencyIdent, DependencyRange2),
-  DependencyRange \= DependencyRange2.
+  DependencyRange \= DependencyRange2,
+  \+(gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, _)).
 
 % This rule will prevent workspaces from depending on non-workspace versions of available workspaces
-gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, "workspace:*") :-
+gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, 'workspace:*') :-
   workspace_ident(_, DependencyIdent),
   workspace_has_dependency(WorkspaceCwd, DependencyIdent, _).
 
 % The following rules describes which workspaces are allowed to depend on respectively "webpack" and "typescript"
-workspace_allowed_dependency(WorkspaceCwd, "webpack") :-
-  workspace_ident(WorkspaceCwd, "@berry/builder").
-workspace_allowed_dependency(WorkspaceCwd, "typescript"):-
-  workspace_ident(WorkspaceCwd, "@berry/builder").
+workspace_allowed_dependency(WorkspaceCwd, 'webpack') :-
+  workspace_ident(WorkspaceCwd, '@berry/builder').
+workspace_allowed_dependency(WorkspaceCwd, 'typescript'):-
+  workspace_ident(WorkspaceCwd, '@berry/builder').
 
 % This rule will prevent workspaces from depending any blacklisted package
 gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, null) :-
@@ -28,5 +29,5 @@ gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, null) :-
   \+(workspace_allowed_dependency(WorkspaceIdent, DependencyIdent)).
 
 % This rule will prevent all workspaces from depending on tslib
-gen_enforced_dependency_range(WorkspaceCwd, "tslib", null) :-
-  workspace_has_dependency(WorkspaceCwd, "tslib", _).
+gen_enforced_dependency_range(WorkspaceCwd, 'tslib', null) :-
+  workspace_has_dependency(WorkspaceCwd, 'tslib', _).

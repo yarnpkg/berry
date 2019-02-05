@@ -34,5 +34,5 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       await project.install({cache, report});
     });
 
-    return report.hasErrors() ? 1 : 0;
+    return report.exitCode();
   });

@@ -1,15 +1,13 @@
 import {Plugin}          from '@berry/core';
 
-import applyConstraints  from './commands/constraints/apply';
 import checkConstraints  from './commands/constraints/check';
-import detailConstraints from './commands/constraints/detail';
+import fixConstraints    from './commands/constraints/fix';
 import sourceConstraints from './commands/constraints/source';
 
 const plugin: Plugin = {
   commands: [
-    applyConstraints,
+    fixConstraints,
     checkConstraints,
-    detailConstraints,
     sourceConstraints,
   ],
 };

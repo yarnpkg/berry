@@ -1,6 +1,7 @@
 import semver                                   from 'semver';
 
 import {Configuration}                          from './Configuration';
+import {Workspace}                              from './Workspace';
 import * as hashUtils                           from './hashUtils';
 import * as miscUtils                           from './miscUtils';
 import {IdentHash, DescriptorHash, LocatorHash} from './types';
@@ -254,4 +255,14 @@ export function sortDescriptors(descriptors: Iterable<Descriptor>) {
   return miscUtils.sortMap(descriptors, [
     descriptor => stringifyDescriptor(descriptor),
   ]);
+}
+
+export function prettyWorkspace(configuration: Configuration, workspace: Workspace) {
+  const byIdent = workspace.project.workspacesByIdent.get(workspace.locator.identHash);
+
+  if (!byIdent || byIdent.length <= 1) {
+    return prettyIdent(configuration, workspace.locator);
+  } else {
+    return prettyLocator(configuration, workspace.anchoredLocator);
+  }
 }
