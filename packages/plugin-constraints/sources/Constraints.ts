@@ -1,6 +1,6 @@
 import {Ident, Locator, Project, Workspace} from '@berry/core';
 import {miscUtils, structUtils}             from '@berry/core';
-import {existsSync, readFileSync}           from 'fs';
+import {xfs}                                from '@berry/fslib';
 // @ts-ignore
 import pl                                   from 'tau-prolog';
 
@@ -26,8 +26,8 @@ export class Constraints {
   constructor(project: Project) {
     this.project = project;
 
-    if (existsSync(`${project.cwd}/constraints.pro`)) {
-      this.source = readFileSync(`${project.cwd}/constraints.pro`, `utf8`);
+    if (xfs.existsSync(`${project.cwd}/constraints.pro`)) {
+      this.source = xfs.readFileSync(`${project.cwd}/constraints.pro`, `utf8`);
     }
   }
 

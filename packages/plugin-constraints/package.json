@@ -5,6 +5,7 @@
     "main": "./sources/index.ts",
     "dependencies": {
         "@berry/core": "workspace:*",
+        "@berry/fslib": "workspace:*",
         "inquirer": "^6.2.0",
         "node-emoji": "^1.8.1",
         "tau-prolog": "^0.2.38"

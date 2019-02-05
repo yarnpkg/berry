@@ -4,7 +4,6 @@ import {xfs}                from '@berry/fslib';
 import {makeUpdater}        from '@berry/json-proxy';
 // @ts-ignore
 import {UsageError}         from '@manaflair/concierge';
-import {existsSync}         from 'fs';
 import {basename}           from 'path';
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
@@ -13,9 +12,9 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   .describe(`create a new package`)
 
   .action(async ({cwd}: {cwd: string}) => {
-    if (existsSync(`${cwd}/package.json`))
+    if (xfs.existsSync(`${cwd}/package.json`))
       throw new UsageError(`A package.json already exists in the specified directory`);
-    if (!existsSync(cwd))
+    if (!xfs.existsSync(cwd))
       await xfs.mkdirpPromise(cwd);
 
     const updater = await makeUpdater(`${cwd}/package.json`);

@@ -1,10 +1,9 @@
+import {xfs}                   from '@berry/fslib';
 import {makeUpdater}           from '@berry/json-proxy';
 import {createHmac}            from 'crypto';
-import {existsSync, readFile}  from 'fs';
 import globby                  from 'globby';
 import {posix}                 from 'path';
 import semver                  from 'semver';
-import {promisify}             from 'util';
 
 import {Manifest}              from './Manifest';
 import {Project}               from './Project';
@@ -12,8 +11,6 @@ import {WorkspaceResolver}     from './WorkspaceResolver';
 import * as structUtils        from './structUtils';
 import {IdentHash}             from './types';
 import {Descriptor, Locator}   from './types';
-
-const readFileP = promisify(readFile);
 
 function hashWorkspaceCwd(cwd: string) {
   return createHmac('sha256', 'berry').update(cwd).digest('hex').substr(0, 6);
@@ -68,7 +65,7 @@ export class Workspace {
       for (const relativeCwd of relativeCwds) {
         const candidateCwd = posix.resolve(this.cwd, relativeCwd);
 
-        if (existsSync(`${candidateCwd}/package.json`)) {
+        if (xfs.existsSync(`${candidateCwd}/package.json`)) {
           this.workspacesCwds.add(candidateCwd);
         }
       }

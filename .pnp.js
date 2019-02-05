@@ -1486,6 +1486,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageDependencies: new Map([
           ["@berry/plugin-constraints", "workspace:packages/plugin-constraints"],
           ["@berry/core", "workspace:packages/berry-core"],
+          ["@berry/fslib", "workspace:packages/berry-fslib"],
           ["inquirer", "npm:6.2.1"],
           ["node-emoji", "npm:1.8.1"],
           ["tau-prolog", "npm:0.2.49"],
@@ -1605,6 +1606,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
         packageLocation: path.resolve(__dirname, "./packages/berry-shell/"),
         packageDependencies: new Map([
           ["@berry/shell", "workspace:packages/berry-shell"],
+          ["@berry/fslib", "workspace:packages/berry-fslib"],
           ["@berry/parsers", "workspace:packages/berry-parsers"],
           ["execa", "npm:1.0.0"],
           ["stream-buffers", "npm:3.0.2"],

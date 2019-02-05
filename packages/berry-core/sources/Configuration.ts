@@ -1,10 +1,9 @@
+import {xfs}                             from '@berry/fslib';
 import {parseSyml, stringifySyml}        from '@berry/parsers';
 import chalk                             from 'chalk';
-import {existsSync, readFile, writeFile} from 'fs';
 import {homedir}                         from 'os';
 import {posix}                           from 'path';
 import supportsColor                     from 'supports-color';
-import {promisify}                       from 'util';
 
 import {MultiFetcher}                    from './MultiFetcher';
 import {MultiResolver}                   from './MultiResolver';
@@ -18,9 +17,6 @@ import * as structUtils                  from './structUtils';
 
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});
-
-const readFileP = promisify(readFile);
-const writeFileP = promisify(writeFile);
 
 export enum SettingsType {
   BOOLEAN = 'BOOLEAN',
@@ -216,10 +212,10 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (existsSync(`${currentCwd}/package.json`))
+      if (xfs.existsSync(`${currentCwd}/package.json`))
         projectCwd = currentCwd;
 
-      if (existsSync(`${currentCwd}/.berryrc`))
+      if (xfs.existsSync(`${currentCwd}/.berryrc`))
         rcCwds.push(currentCwd);
 
       nextCwd = posix.dirname(currentCwd);
@@ -252,8 +248,8 @@ export class Configuration {
   static async updateConfiguration(cwd: string, patch: any) {
     const configurationPath = `${cwd}/.berryrc`;
 
-    const current = existsSync(configurationPath)
-      ? parseSyml(await readFileP(configurationPath, `utf8`)) as any
+    const current = xfs.existsSync(configurationPath)
+      ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any
       : {};
 
     let patched = false;
@@ -269,7 +265,7 @@ export class Configuration {
     if (!patched)
       return;
 
-    await writeFileP(configurationPath, stringifySyml(current));
+    await xfs.writeFilePromise(configurationPath, stringifySyml(current));
   }
 
   constructor(projectCwd: string | null, plugins: Map<string, Plugin>) {
@@ -314,7 +310,7 @@ export class Configuration {
   }
 
   async inherits(source: string) {
-    const content = await readFileP(source, `utf8`);
+    const content = await xfs.readFilePromise(source, `utf8`);
     const data = parseSyml(content);
 
     this.use(source, data, posix.dirname(source));

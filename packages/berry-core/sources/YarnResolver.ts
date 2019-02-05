@@ -1,5 +1,5 @@
+import {xfs}                                             from '@berry/fslib';
 import {parseSyml}                                       from '@berry/parsers';
-import {existsSync, readFileSync}                        from 'fs';
 
 import {Project}                                         from './Project';
 import {MessageName, Report}                             from './Report';
@@ -23,10 +23,10 @@ export class YarnResolver implements Resolver {
     const lockfilePath = `${project.cwd}/yarn.lock`;
 
     // No need to enable it if the lockfile doesn't exist
-    if (!existsSync(lockfilePath))
+    if (!xfs.existsSync(lockfilePath))
       return;
 
-    const content = readFileSync(lockfilePath, `utf8`);
+    const content = await xfs.readFilePromise(lockfilePath, `utf8`);
     const parsed = parseSyml(content);
 
     // No need to enable it either if the lockfile is modern

@@ -1,12 +1,9 @@
+import {xfs}                                                              from '@berry/fslib';
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
 import execa                                                              from 'execa';
-import {stat}                                                             from 'fs';
 import {delimiter, posix}                                                 from 'path';
 import {PassThrough, Readable, Writable}                                  from 'stream';
 import {StringDecoder}                                                    from 'string_decoder';
-import {promisify}                                                        from 'util';
-
-const statP = promisify(stat);
 
 export type ShellBuiltin = (args: Array<string>, commandOpts: ShellOptions, shellOpts: ShellOptions) => Promise<number>;
 
@@ -26,7 +23,7 @@ export type ShellOptions = {
 const BUILTINS = {
   async cd([target, ... rest]: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
     const resolvedTarget = posix.resolve(contextOpts.cwd, target);
-    const stat = await statP(resolvedTarget);
+    const stat = await xfs.statPromise(resolvedTarget);
 
     if (!stat.isDirectory()) {
       commandOpts.stderr.write(`cd: not a directory\n`);

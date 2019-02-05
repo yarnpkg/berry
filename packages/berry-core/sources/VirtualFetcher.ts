@@ -1,14 +1,9 @@
 import {AliasFS, xfs}                       from '@berry/fslib';
-import {readlink, symlink}                  from 'fs';
 import {dirname, relative, resolve}         from 'path';
-import {promisify}                          from 'util';
 
 import {Fetcher, FetchOptions, FetchResult} from './Fetcher';
 import * as structUtils                     from './structUtils';
 import {Locator}                            from './types';
-
-const readlinkP = promisify(readlink);
-const symlinkP = promisify(symlink);
 
 export class VirtualFetcher implements Fetcher {
   supports(locator: Locator) {
@@ -52,7 +47,7 @@ export class VirtualFetcher implements Fetcher {
 
     let currentLink;
     try {
-      currentLink = await readlinkP(virtualPath);
+      currentLink = await xfs.readlinkPromise(virtualPath);
     } catch (error) {
       if (error.code !== `ENOENT`) {
         throw error;
@@ -64,7 +59,7 @@ export class VirtualFetcher implements Fetcher {
 
     if (currentLink === undefined) {
       await xfs.mkdirpPromise(dirname(virtualPath));
-      await symlinkP(relativeTarget, virtualPath);
+      await xfs.symlinkPromise(relativeTarget, virtualPath);
     }
 
     return {

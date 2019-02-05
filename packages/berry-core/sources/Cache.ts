@@ -1,5 +1,4 @@
 import {NodeFS, ZipFS, xfs}       from '@berry/fslib';
-import {chmod, writeFile}         from 'fs';
 import {lock, unlock}             from 'lockfile';
 import {resolve}                  from 'path';
 import {promisify}                from 'util';
@@ -9,9 +8,6 @@ import {MessageName, ReportError} from './Report';
 import * as hashUtils             from './hashUtils';
 import * as structUtils           from './structUtils';
 import {LocatorHash, Locator}     from './types';
-
-const chmodP = promisify(chmod);
-const writeFileP = promisify(writeFile);
 
 const lockP = promisify(lock);
 const unlockP = promisify(unlock);
@@ -54,7 +50,7 @@ export class Cache {
     await xfs.mkdirpPromise(this.cwd);
 
     await this.writeFileIntoCache(resolve(this.cwd, `.gitignore`), async (file: string) => {
-      await writeFileP(file, `/.gitignore\n*.lock\n`);
+      await xfs.writeFilePromise(file, `/.gitignore\n*.lock\n`);
     });
   }
 
@@ -81,7 +77,7 @@ export class Cache {
 
         zipFs.saveAndClose();
 
-        await chmodP(originalPath, 0o644);
+        await xfs.chmodPromise(originalPath, 0o644);
 
         // Do this before moving the file so that we don't pollute the cache with corrupted archives
         const checksum = await validateFile(originalPath);

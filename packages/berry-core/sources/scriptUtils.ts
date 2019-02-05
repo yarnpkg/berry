@@ -1,6 +1,5 @@
 import {CwdFS, ZipOpenFS, xfs}           from '@berry/fslib';
 import {runShell}                        from '@berry/shell';
-import {existsSync}                      from 'fs';
 import {delimiter, posix}                from 'path';
 import {PassThrough, Readable, Writable} from 'stream';
 import {dirSync}                         from 'tmp';
@@ -43,7 +42,7 @@ export async function makeScriptEnv(project: Project) {
   const pnpPath = `${project.cwd}/.pnp.js`;
   const pnpRequire = `--require ${pnpPath}`;
 
-  if (existsSync(pnpPath)) {
+  if (xfs.existsSync(pnpPath)) {
     let nodeOptions = scriptEnv.NODE_OPTIONS || ``;
 
     nodeOptions = nodeOptions.replace(/\s*--require\s+\S*\.pnp\.js\s*/g, ` `).trim();

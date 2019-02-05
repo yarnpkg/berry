@@ -1026,6 +1026,7 @@ __metadata:
   resolution: "@berry/plugin-constraints@workspace:packages/plugin-constraints"
   dependencies:
     "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
     inquirer: "npm:^6.2.0"
     node-emoji: "npm:^1.8.1"
     tau-prolog: "npm:^0.2.38"
@@ -1135,6 +1136,7 @@ __metadata:
   version: 0.0.0
   resolution: "@berry/shell@workspace:packages/berry-shell"
   dependencies:
+    "@berry/fslib": "workspace:*"
     "@berry/parsers": "workspace:*"
     execa: "npm:^1.0.0"
     stream-buffers: "npm:^3.0.2"
