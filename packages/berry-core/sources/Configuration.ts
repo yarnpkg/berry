@@ -1,5 +1,7 @@
 import {xfs}                             from '@berry/fslib';
 import {parseSyml, stringifySyml}        from '@berry/parsers';
+// @ts-ignore
+import {UsageError}                      from '@manaflair/concierge';
 import chalk                             from 'chalk';
 import {homedir}                         from 'os';
 import {posix}                           from 'path';
@@ -17,6 +19,52 @@ import * as structUtils                  from './structUtils';
 
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});
+
+const legacyNames = new Set([
+  `network-concurrency`,
+  `child-concurrency`,
+  `network-timeout`,
+  `proxy`,
+  `strict-ssl`,
+  `ca`,
+  `cert`,
+  `key`,
+  `plugnplay-override`,
+  `plugnplay-shebang`,
+  `plugnplay-blacklist`,
+  `workspaces-experimental`,
+  `workspaces-nohoist-experimental`,
+  `offline-cache-folder`,
+  `yarn-offline-mirror-pruning`,
+  `enable-meta-folder`,
+  `yarn-enable-lockfile-versions`,
+  `yarn-link-file-dependencies`,
+  `experimental-pack-script-packages-in-mirror`,
+  `unsafe-disable-integrity-migration`,
+  `production`,
+  `no-progress`,
+  `registry`,
+  `version-commit-hooks`,
+  `version-git-tag`,
+  `version-git-message`,
+  `version-sign-git-tag`,
+  `version-tag-prefix`,
+  `save-prefix`,
+  `save-exact`,
+  `init-author-name`,
+  `init-author-email`,
+  `init-author-url`,
+  `init-version`,
+  `init-license`,
+  `init-private`,
+  `ignore-scripts`,
+  `ignore-platform`,
+  `ignore-engines`,
+  `ignore-optional`,
+  `force`,
+  `disable-self-update-check`,
+  `username`,
+]);
 
 export const RCFILE_NAME = `.yarnrc`;
 export const ENVIRONMENT_PREFIX = `yarn_`;
@@ -328,7 +376,7 @@ export class Configuration {
 
       const definition = this.settings.get(name);
       if (!definition)
-        throw new Error(`Unknown configuration settings "${name}" - have you forgot a plugin?`);
+        throw new UsageError(`${legacyNames.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} (via ${source}) - run "yarn config -v" to see the list of settings supported in Yarn`);
       
       if (this.sources.has(name))
         continue;

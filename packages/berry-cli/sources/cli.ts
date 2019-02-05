@@ -7,13 +7,9 @@ import Joi                     from 'joi';
 
 import {plugins}               from './plugins';
 
-Error.stackTraceLimit = Infinity;
-
-process.removeAllListeners(`unhandledRejection`);
-process.on(`unhandledRejection`, err => {
-  console.error(`unhandled`, err.stack);
-  process.exit(1);
-});
+concierge.topLevel(`[--cwd PATH]`).validate(Joi.object().unknown().keys({
+  cwd: Joi.string().default(process.cwd()),
+}));
 
 function runBinary(path: string) {
   if (path.endsWith(`.js`)) {
@@ -43,16 +39,16 @@ async function run() {
 
   if (executablePath !== null && !ignorePath) {
     if (!xfs.existsSync(executablePath)) {
-      concierge.error(new UsageError(`The "executable-path" option has been set (in ${configuration.sources.get(`executablePath`)}), but the specified location doesn't exists (${executablePath}).`), {stream: process.stderr});
+      concierge.error(new UsageError(`The "executable-path" option has been set (in ${configuration.sources.get(`executablePath`)}), but the specified location doesn't exist (${executablePath}).`), {stream: process.stderr});
       process.exitCode = 1;
     } else {
-      runBinary(executablePath);
+      try {
+        runBinary(executablePath);
+      } catch (error) {
+        process.exitCode = error.code || 1;
+      }
     }
   } else {
-    concierge.topLevel(`[--cwd PATH]`).validate(Joi.object().unknown().keys({
-      cwd: Joi.string().default(process.cwd()),
-    }));
-
     for (const plugin of plugins.values())
       for (const command of plugin.commands || [])
         command(concierge, plugins);
@@ -62,6 +58,6 @@ async function run() {
 }
 
 run().catch(error => {
-  console.error(error.stack);
+  concierge.error(error, {stream: process.stdout});
   process.exitCode = 1;
 });
