@@ -1,4 +1,21 @@
-# <img src="./icon.svg" width="32" height="32" align="bottom" /> Yarn - Berry Edition
+<p align="center">
+  <a href="https://yarnpkg.com/">
+    <img alt="Yarn" src="https://github.com/yarnpkg/assets/blob/master/yarn-kitten-full.png?raw=true" width="546">
+  </a>
+</p>
+
+<p align="center">
+  Fast, reliable, and secure dependency management.
+</p>
+
+<p align="center">
+  <a href="https://dev.azure.com/yarnpkg/yarn/_build"><img alt="Azure Pipelines status" src="https://dev.azure.com/yarnpkg/yarn/_apis/build/status/Yarn%20Acceptance%20Tests"></a>
+  <a href="https://discord.gg/yarnpkg"><img alt="Discord Chat" src="https://img.shields.io/discord/226791405589233664.svg"></a>
+  <img alt="Stable Release" src="https://img.shields.io/github/release/yarnpkg/yarn.svg?style=flat">
+  <img alt="Prerelease" src="https://img.shields.io/github/release-pre/yarnpkg/yarn.svg?style=flat">
+</p>
+
+---
 
 Yarn is a modern package manager split into various packages. Its novel architecture allows to do things currently impossible with existing solutions:
 
