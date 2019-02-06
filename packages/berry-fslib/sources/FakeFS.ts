@@ -128,7 +128,15 @@ export abstract class FakeFS {
       const subPath = parts.slice(0, u).join(`/`);
 
       if (!this.existsSync(subPath)) {
-        await this.mkdirPromise(subPath);
+        try {
+          await this.mkdirPromise(subPath);
+        } catch (error) {
+          if (error.code === `EEXIST`) {
+            continue;
+          } else {
+            throw error;
+          }
+        }
 
         if (chmod != null)
           await this.chmodPromise(subPath, chmod);
@@ -151,7 +159,15 @@ export abstract class FakeFS {
       const subPath = parts.slice(0, u).join(`/`);
 
       if (!this.existsSync(subPath)) {
-        this.mkdirSync(subPath);
+        try {
+          this.mkdirSync(subPath);
+        } catch (error) {
+          if (error.code === `EEXIST`) {
+            continue;
+          } else {
+            throw error;
+          }
+        }
 
         if (chmod != null)
           this.chmodSync(subPath, chmod);
