@@ -60,18 +60,20 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     
     const unlinkReport = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
       if (!virtualsOnly) {
-        for (const entry of await xfs.readdirPromise(cache.cwd)) {
-          if (entry === `.gitignore`)
-            continue;
+        if (xfs.existsSync(cache.cwd)) {
+          for (const entry of await xfs.readdirPromise(cache.cwd)) {
+            if (entry === `.gitignore`)
+              continue;
 
-          const file = posix.join(cache.cwd, entry);
-          if (seen.has(file))
-            continue;
+            const file = posix.join(cache.cwd, entry);
+            if (seen.has(file))
+              continue;
 
-          report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${entry} seems to be unused`);
+            report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${entry} seems to be unused`);
 
-          if (!dryRun) {
-            await xfs.unlinkPromise(file);
+            if (!dryRun) {
+              await xfs.unlinkPromise(file);
+            }
           }
         }
       }
@@ -79,19 +81,21 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       if (!zipOnly) {
         const virtualFolder = configuration.get(`virtualFolder`);
 
-        for (const entry of await xfs.readdirPromise(virtualFolder)) {
-          const file = posix.join(virtualFolder, entry);
+        if (xfs.existsSync(virtualFolder)) {
+          for (const entry of await xfs.readdirPromise(virtualFolder)) {
+            const file = posix.join(virtualFolder, entry);
 
-          const relativeTarget = await xfs.readlinkPromise(file);
-          const absoluteTarget = posix.resolve(posix.dirname(file), relativeTarget);
+            const relativeTarget = await xfs.readlinkPromise(file);
+            const absoluteTarget = posix.resolve(posix.dirname(file), relativeTarget);
 
-          if (xfs.existsSync(absoluteTarget))
-            continue;
+            if (xfs.existsSync(absoluteTarget))
+              continue;
 
-          report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${entry} seems to be unused`);
+            report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${entry} seems to be unused`);
 
-          if (!dryRun) {
-            await xfs.unlinkPromise(file);
+            if (!dryRun) {
+              await xfs.unlinkPromise(file);
+            }
           }
         }
       }
