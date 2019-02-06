@@ -6,7 +6,7 @@ const {copy} = require('fs-extra');
 
 describe(`Protocols`, () => {
   describe(`portal:`, () => {
-    test.concurrent(
+    test(
       `it should link a remote project into the current dependency tree`,
       makeTemporaryEnv({
         dependencies: {
@@ -22,7 +22,7 @@ describe(`Protocols`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should take into account portals' own dependencies`,
       makeTemporaryEnv({
         dependencies: {
@@ -44,7 +44,7 @@ describe(`Protocols`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should allow portals to access their peer dependencies (single occurence)`,
       makeTemporaryEnv({
         dependencies: {
@@ -67,7 +67,7 @@ describe(`Protocols`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should allow portals to access their peer dependencies (multiple occurences)`,
       makeTemporaryEnv({
         dependencies: {

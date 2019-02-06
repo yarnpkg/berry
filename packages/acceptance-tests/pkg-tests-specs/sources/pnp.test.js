@@ -531,7 +531,7 @@ describe(`Plug'n'Play`, () => {
     ),
   );
 
-  it(
+  test(
     `it should not be enabled for paths matching the specified regex`,
     makeTemporaryEnv(
       {},
@@ -553,7 +553,7 @@ describe(`Plug'n'Play`, () => {
     ),
   );
 
-  it(
+  test(
     `it should not break relative requires for files within a blacklist`,
     makeTemporaryEnv(
       {},

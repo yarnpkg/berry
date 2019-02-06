@@ -4,7 +4,7 @@ const {
 
 describe(`Commands`, () => {
   describe(`remove`, () => {
-    test.concurrent(
+    test(
       `it should remove a specific regular dependency amongst many`,
       makeTemporaryEnv({
         dependencies: {
@@ -18,7 +18,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should remove a specific development dependency amongst many`,
       makeTemporaryEnv({
         devDependencies: {
@@ -32,7 +32,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should leave alone other regular dependencies`,
       makeTemporaryEnv({
         dependencies: {
@@ -46,7 +46,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should leave alone other development dependencies`,
       makeTemporaryEnv({
         devDependencies: {
@@ -60,7 +60,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should remove a dependency from both regular and development environments`,
       makeTemporaryEnv({
         dependencies: {
@@ -79,7 +79,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should remove the last regular dependency from the current project`,
       makeTemporaryEnv({
         dependencies: {
@@ -92,7 +92,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should remove the last development dependency from the current project`,
       makeTemporaryEnv({
         devDependencies: {
@@ -105,7 +105,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should remove all the occurences of the specified dependency when using -A`,
       makeTemporaryEnv({
         private: true,

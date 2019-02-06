@@ -4,7 +4,7 @@ const {
 
 describe(`Commands`, () => {
   describe(`link`, () => {
-    test.concurrent(
+    test(
       `it should work with the classic link workflow`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const tmp = await createTemporaryFolder();

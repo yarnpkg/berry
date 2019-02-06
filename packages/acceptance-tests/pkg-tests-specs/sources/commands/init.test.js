@@ -4,7 +4,7 @@ const {
 
 describe(`Commands`, () => {
   describe(`add`, () => {
-    test.concurrent(
+    test(
       `it should create a new package.json in the local directory if it doesn't exist`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const tmp = await createTemporaryFolder();
@@ -20,7 +20,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should create a new package.json in the specified directory if it doesn't exist`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const tmp = await createTemporaryFolder();
@@ -34,7 +34,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should create a new package.json in the specified directory even if said directory doesn't exist`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const tmp = await createTemporaryFolder();

@@ -1,7 +1,7 @@
 describe(`Commands`, () => {
   for (const [description, args] of [[`with prefix`, [`run`]], [`without prefix`, []]]) {
     describe(`run ${description}`, () => {
-      test.concurrent(`it should run the selected script if available`, makeTemporaryEnv({
+      test(`it should run the selected script if available`, makeTemporaryEnv({
         scripts: {
           foo: `echo hello`,
         },
@@ -13,7 +13,7 @@ describe(`Commands`, () => {
         });
       }));
 
-      test.concurrent(`it should properly forward the script exit codes`, makeTemporaryEnv({
+      test(`it should properly forward the script exit codes`, makeTemporaryEnv({
         scripts: {
           foo: `exit 42`,
         },
@@ -65,7 +65,7 @@ describe(`Commands`, () => {
         ),
       );
     
-      test.concurrent(
+      test(
         `it shouldn't require the "--" flag to stop interpreting options after "run" commands (scripts)`,
         makeTemporaryEnv(
           {
@@ -83,7 +83,7 @@ describe(`Commands`, () => {
         ),
       );    
 
-      test.concurrent(
+      test(
         `it shouldn't require the "--" flag to stop interpreting options after "run" commands (binaries)`,
         makeTemporaryEnv(
           {

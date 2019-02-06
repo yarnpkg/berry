@@ -6,7 +6,7 @@ const {
 
 describe(`Commands`, () => {
   describe(`cache clean`, () => {
-    test.concurrent(`it should remove inactive entries from the cache`, makeTemporaryEnv({
+    test(`it should remove inactive entries from the cache`, makeTemporaryEnv({
       dependencies: {
         [`one-fixed-dep`]: `1.0.0`,
       },
@@ -23,7 +23,7 @@ describe(`Commands`, () => {
       expect(fileCount2).toEqual(fileCount1 - 2);
     }));
 
-    test.concurrent(`it shouldn't remove active entries from the cache`, makeTemporaryEnv({
+    test(`it shouldn't remove active entries from the cache`, makeTemporaryEnv({
       dependencies: {
         [`no-deps`]: `1.0.0`,
         [`one-fixed-dep`]: `1.0.0`,

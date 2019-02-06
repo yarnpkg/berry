@@ -4,7 +4,7 @@ const {
 
 describe(`Commands`, () => {
   describe(`add`, () => {
-    test.concurrent(
+    test(
       `it should add a new regular dependency to the current project (explicit semver)`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps@1.0.0`);
@@ -17,7 +17,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should add a new regular dependency to the current project (implicit caret)`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`);
@@ -30,7 +30,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should add a new regular dependency to the current project (implicit tilde)`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-T`);
@@ -43,7 +43,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should add a new regular dependency to the current project (implicit exact)`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-E`);
@@ -56,7 +56,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should add a new development dependency to the current project`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-D`);
@@ -69,7 +69,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test.concurrent(
+    test(
       `it should add a new peer dependency to the current project`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-P`);
