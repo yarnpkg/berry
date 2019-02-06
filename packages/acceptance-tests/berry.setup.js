@@ -23,7 +23,7 @@ global.makeTemporaryEnv = generatePkgDriver({
     const rcEnv = {};
 
     for (const [key, value] of Object.entries(config)) {
-      rcEnv[`BERRY_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = value;
+      rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = value;
     }
 
     const res = await execFile(process.execPath, [`${__dirname}/../berry-cli/bin/berry.js`, command, ...args], {
