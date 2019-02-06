@@ -48,6 +48,21 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
         report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${entry} seems to be unused`);
         await xfs.unlinkPromise(file);
       }
+
+      const virtualFolder = configuration.get(`virtualFolder`);
+
+      for (const entry of await xfs.readdirPromise(virtualFolder)) {
+        const file = posix.join(virtualFolder, entry);
+
+        const relativeTarget = await xfs.readlinkPromise(file);
+        const absoluteTarget = posix.resolve(posix.dirname(file), relativeTarget);
+
+        if (xfs.existsSync(absoluteTarget))
+          continue;
+
+        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${entry} seems to be unused`);
+        await xfs.unlinkPromise(file);
+      }
     });
 
     return 0;
