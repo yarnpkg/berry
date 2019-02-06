@@ -8,6 +8,15 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   .command(`config [-v,--verbose]`)
   .describe(`display the current configuration`)
 
+  .detail(`
+    This command prints the current active configuration settings. When used together with the \`-v,--verbose\` option, the output will contain the settings description on top of the regular key/value information.
+  `)
+
+  .example(
+    `Prints the active configuration settings`,
+    `yarn config`,
+  )
+
   .action(async ({cwd, stdout, verbose}: {cwd: string, stdout: Writable, verbose: boolean}) => {
     const configuration = await Configuration.find(cwd, plugins);
 

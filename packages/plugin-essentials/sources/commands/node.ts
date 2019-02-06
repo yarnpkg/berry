@@ -9,6 +9,17 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   .describe(`run node with the hook already setup`)
   .flags({proxyArguments: true})
 
+  .detail(`
+    This command simply runs Node. It also makes sure to call it in a way that's compatible with the current project (for example, on PnP projects the environment will be setup in such a way that PnP will be correctly injected into the environment).
+
+    The Node process will use the exact same version of Node as the one used to run Yarn itself, which might be a good way to ensure that your commands always use a consistent Node version.
+  `)
+
+  .example(
+    `Runs a Node script`,
+    `yarn node ./my-script.js`,
+  )
+
   .action(async ({cwd, stdin, stdout, stderr, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, args: Array<string>}) => {
     const configuration = await Configuration.find(cwd, plugins);
     const {project} = await Project.find(configuration, cwd);

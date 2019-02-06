@@ -11,6 +11,18 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   .describe(`run a script defined in the package.json`)
   .flags({proxyArguments: true})
 
+  .detail(`
+    This command will run a tool. The exact tool that will be executed will depend on the current state of your workspace:
+
+    - If the \`scripts\` field from your local package.json contains a matching script name, its definition will get executed.
+
+    - Otherwise, if one of the local workspace's dependencies exposes a binary with a matching name, this binary will get executed.
+
+    - Otherwise, if the specified name contains a colon character and if one of the workspaces in the project contains exactly one script with a matching name, then this script will get executed.
+
+    Whatever happens, the cwd of the spawned process will be the workspace that declares the script (which makes it possible to call commands cross-workspaces using the third syntax).
+  `)
+
   .action(async ({cwd, stdin, stdout, stderr, name, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, name: string, args: Array<string>}) => {
     const configuration = await Configuration.find(cwd, plugins);
     const {project, workspace, locator} = await Project.find(configuration, cwd);

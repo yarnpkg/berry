@@ -12,6 +12,24 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   .command(`link [... packages]`)
   .describe(`connect local packages together`)
 
+  .detail(`
+    When used without arguments, this command will register the current workspace into a global store. This will have no effect on the workspace itself.
+
+    When used with arguments, Yarn will add entries in the \`resolutions\` field from the project package.json for each package name passed in argument that can be matched with a workspace previously registered into the global store.
+
+    This workflow makes it simpler to work with a local version of your libraries.
+  `)
+
+  .example(
+    `Registers a local workspace for use in another application`,
+    `yarn link`,
+  )
+
+  .example(
+    `Configures the project to always use the local version of my-package`,
+    `yarn link my-package`,
+  )
+
   .action(async ({cwd, stdout, packages}: {cwd: string, stdout: Writable, packages: Array<string>}) => {
     const configuration = await Configuration.find(cwd, plugins);
     const {project, workspace} = await Project.find(configuration, cwd);

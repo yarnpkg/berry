@@ -7,7 +7,7 @@ import {Writable}                                                               
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .command(`cache clean`)
-  .describe(`remove the 'unused' (?) packages from the cache`)
+  .describe(`remove the 'unused' packages from the cache`)
 
   .action(async ({cwd, stdout}: {cwd: string, stdout: Writable}) => {
     const configuration = await Configuration.find(cwd, plugins);

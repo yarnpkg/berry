@@ -18,12 +18,12 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     This command adds a package to the package.json for the nearest workspace.
 
     - The package will by default be added to the regular \`dependencies\` field, but this behavior can be overriden thanks to the \`-D,--dev\` flag (which will cause the dependency to be added to the \`devDependencies\` field instead) and the \`-P,--peer\` flag (which will do the same but for \`peerDependencies\`).
-    
+
     - If the added package doesn't specify a range at all its \`latest\` tag will be resolved and the returned version will be used to generate a new semver range (using the \`^\` modifier by default, or the \`~\` modifier if \`-T,--tilde\` is specified, or no modifier at all if \`-E,--exact\` is specified). One exception: if you use \`-P,--peer\` the default range will be \`*\` and won't be resolved at all.
     
-    - If the added package specifies a tag range (such as \`latest\` or \`rc\`), Yarn will resolve this tag to a semver version and use that in the resulting \`package.json\` entry (meaning that \`yarn add foo@latest\` will have exactly the same effect as \`yarn add foo\`).
+    - If the added package specifies a tag range (such as \`latest\` or \`rc\`), Yarn will resolve this tag to a semver version and use that in the resulting package.json entry (meaning that \`yarn add foo@latest\` will have exactly the same effect as \`yarn add foo\`).
     
-    - For a compilation of all the supported protocols, please consult the dedicated page from our website: .
+    For a compilation of all the supported protocols, please consult the dedicated page from our website: .
   `)
 
   .example(

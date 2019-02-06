@@ -8,6 +8,20 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   .command(`remove [... names] [-A,--all]`)
   .describe(`remove dependencies from the project`)
 
+  .detail(`
+    This command will remove the specified packages from the current workspace. If the \`-A,--all\` option is set, the operation will be applied to all workspaces from the current project.
+  `)
+
+  .example(
+    `Removes a dependency from the current project`,
+    `yarn remove lodash`,
+  )
+
+  .example(
+    `Removes a dependency from all workspaces at once`,
+    `yarn remove lodash --all`,
+  )
+
   .action(async ({cwd, stdout, names, all}: {cwd: string, stdout: Writable, names: Array<string>, all: boolean}) => {
     const configuration = await Configuration.find(cwd, plugins);
     const {project, workspace} = await Project.find(configuration, cwd);
