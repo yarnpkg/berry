@@ -36,16 +36,16 @@ function runBinary(path: string) {
 async function run() {
   const configuration = await Configuration.find(process.cwd(), plugins);
 
-  const executablePath = configuration.get(`executablePath`);
+  const yarnPath = configuration.get(`yarnPath`);
   const ignorePath = configuration.get(`ignorePath`);
 
-  if (executablePath !== null && !ignorePath) {
-    if (!xfs.existsSync(executablePath)) {
-      concierge.error(new UsageError(`The "executable-path" option has been set (in ${configuration.sources.get(`executablePath`)}), but the specified location doesn't exist (${executablePath}).`), {stream: process.stderr});
+  if (yarnPath !== null && !ignorePath) {
+    if (!xfs.existsSync(yarnPath)) {
+      concierge.error(new UsageError(`The "yarn-path" option has been set (in ${configuration.sources.get(`yarnPath`)}), but the specified location doesn't exist (${yarnPath}).`), {stream: process.stderr});
       process.exitCode = 1;
     } else {
       try {
-        runBinary(executablePath);
+        runBinary(yarnPath);
       } catch (error) {
         process.exitCode = error.code || 1;
       }

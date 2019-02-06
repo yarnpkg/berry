@@ -87,7 +87,7 @@ export type SettingsDefinition = {
 
 export const coreDefinitions = {
   // Settings related to the proxying Berry to a specific executable
-  executablePath: {
+  yarnPath: {
     description: `Path to the local executable that must be used over the global one`,
     type: SettingsType.ABSOLUTE_PATH,
     default: null,
