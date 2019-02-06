@@ -11,7 +11,7 @@
         "@berry/fslib": "workspace:*",
         "@berry/parsers": "workspace:*",
         "@berry/shell": "workspace:*",
-        "@manaflair/concierge": "^0.9.2",
+        "@manaflair/concierge": "^0.10.1",
         "chalk": "^2.4.1",
         "execa": "^1.0.0",
         "joi": "^13.6.0",

@@ -7,6 +7,6 @@
     "@berry/core": "workspace:*",
     "@berry/fslib": "workspace:*",
     "@berry/json-proxy": "workspace:*",
-    "@manaflair/concierge": "^0.9.2"
+    "@manaflair/concierge": "^0.10.1"
   }
 }

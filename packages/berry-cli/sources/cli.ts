@@ -1,11 +1,13 @@
 import {Configuration}         from '@berry/core';
 import {xfs}                   from '@berry/fslib';
 // @ts-ignore
-import {UsageError, concierge} from '@manaflair/concierge';
+import {UsageError, Concierge} from '@manaflair/concierge';
 import {execFileSync}          from 'child_process';
 import Joi                     from 'joi';
 
 import {plugins}               from './plugins';
+
+const concierge = new Concierge({Joi, configKey: null});
 
 concierge.topLevel(`[--cwd PATH]`).validate(Joi.object().unknown().keys({
   cwd: Joi.string().default(process.cwd()),
@@ -53,7 +55,7 @@ async function run() {
       for (const command of plugin.commands || [])
         command(concierge, plugins);
 
-    concierge.runExit(process.argv0, process.argv.slice(2));
+    concierge.runExit(`yarn`, process.argv.slice(2));
   }
 }
 
