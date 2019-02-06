@@ -12,6 +12,17 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   .categorize(`Constraints-related commands`)
   .describe(`check that the project constraints are met`)
 
+  .detail(`
+    This command will run constraints on your project and emit errors for each one that is found but isn't met. If any error is emitted the process will exit with a non-zero exit code.
+
+    For more information as to how to write constraints, please consult our dedicated page on our website: .
+  `)
+
+  .example(
+    `Checks that all constraints are satisfied`,
+    `yarn constraints check`,
+  )
+
   .action(async ({cwd, stdout}: {cwd: string, stdout: Writable}) => {
     const configuration = await Configuration.find(cwd, plugins);
     const {project} = await Project.find(configuration, cwd);

@@ -11,6 +11,17 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   .command(`init`)
   .describe(`create a new package`)
 
+  .detail(`
+    This command will setup a new package in your local directory.
+
+    Note that it currently is less powerful than the \`init\` command that was shipped with the v1 (in particular it doesn't support customizing the author), but it's mostly a case of us not having time to do everything. Implementing the missing features should be very simple, and would be a great way for you to contribute to a project used by millions of developers everyday. Please open a PR!
+  `)
+
+  .example(
+    `Create a new package in the local directory`,
+    `yarn init`,
+  )
+
   .action(async ({cwd}: {cwd: string}) => {
     if (xfs.existsSync(`${cwd}/package.json`))
       throw new UsageError(`A package.json already exists in the specified directory`);

@@ -34,6 +34,14 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     if (!workspace)
       throw new WorkspaceRequiredError(cwd);
 
+    // Important: Because other commands also need to run installs, if you
+    // get in a situation where you need to change this file in order to
+    // customize the install it's very likely you're doing something wrong.
+    // This file should stay super super simple, and the configuration and
+    // install logic should be implemented elsewhere (probably in either of
+    // the Configuration and Install classes). Feel free to open an issue
+    // in order to ask for design feedback before writing features.
+
     const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
       await project.install({cache, report});
     });

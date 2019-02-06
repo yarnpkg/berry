@@ -14,7 +14,7 @@
         "@babel/preset-typescript": "^7.1.0",
         "@babel/register": "^7.0.0",
         "@berry/cli": "workspace:*",
-        "@manaflair/concierge": "^0.10.1",
+        "@manaflair/concierge": "^0.10.2",
         "brfs": "^2.0.1",
         "buffer-loader": "^0.1.0",
         "joi": "^13.6.0",

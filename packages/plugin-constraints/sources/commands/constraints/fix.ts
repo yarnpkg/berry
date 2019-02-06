@@ -1,5 +1,5 @@
 import {Cache, Configuration, Descriptor, Project, Plugin} from '@berry/core';
-import {StreamReport}                                      from '@berry/core';
+import {MessageName, StreamReport}                         from '@berry/core';
 import {structUtils}                                       from '@berry/core';
 import inquirer                                            from 'inquirer';
 import {Readable, Writable}                                from 'stream';
@@ -12,6 +12,17 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .categorize(`Constraints-related commands`)
   .describe(`make the project constraint-compliant if possible`)
+
+  .detail(`
+    This command will run constraints on your project and try its best to automatically fix any error it finds. If some errors cannot be automatically fixed (in particular all errors triggered by \`gen_invalid_dependency\` rules) the process will exit with a non-zero exit code, and an install will be automatically be ran otherwise.
+
+    For more information as to how to write constraints, please consult our dedicated page on our website: .
+  `)
+
+  .example(
+    `Automatically fixes as many things as possible in your project`,
+    `yarn constraints fix`,
+  )
 
   .action(async ({cwd, stdin, stdout}: {cwd: string, stdin: Readable, stdout: Writable}) => {
     const configuration = await Configuration.find(cwd, plugins);
@@ -72,6 +83,24 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
           }
         }
       }
+    }
+
+    if (result.invalidDependencies) {
+      if (modified)
+        stdout.write(`\n`);
+
+      const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
+        for (const {workspace, dependencyIdent, reason} of result.invalidDependencies) {
+          const dependencyDescriptor = workspace.manifest.dependencies.get(dependencyIdent.identHash);
+          const devDependencyDescriptor = workspace.manifest.devDependencies.get(dependencyIdent.identHash);
+  
+          if (dependencyDescriptor || devDependencyDescriptor) {
+            report.reportError(MessageName.CONSTRAINTS_INVALID_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} has an unfixable invalid dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)} (invalid because ${reason})`);
+          }
+        }
+      });
+
+      return report.exitCode();
     }
 
     if (modified) {

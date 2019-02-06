@@ -74,7 +74,7 @@ async function fetchReleases(configuration: Configuration, {includePrereleases =
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
-  .command(`policies set-version [range] [--rc]`)
+  .command(`policies set-version [range]`)
 
   .categorize(`Policies-related commands`)
   .describe(`lock the version of Berry used in the project`)
@@ -82,6 +82,34 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   .validate(Joi.object().unknown().keys({
     range: Joi.string().default(`latest`),
   }))
+
+  .detail(`
+    This command will download a specific release of Yarn directly from the Yarn Github repository, will store it inside your project, and will change the \`yarn-path\` settings from your project .yarnrc to point to the new file.
+
+    A very good use case for this command is to enforce the version of Yarn used by the any single member of your team inside a same project - by doing this you ensure that you have control on Yarn upgrades and downgrades (including on your deployment servers), and get rid of most of the headaches related to someone using a slightly different version and getting a different behavior than you.
+
+    Important: because you're currently using Yarn v2 (which is still in developer preview stage), running this command will by default download the latest nightly from the Github repository. Once the v2 will have stabilized running this command will instead fetch the latest stable release. Regardless of this, using the \`nightly\` range will always fetch the latest nightlies from the repository.
+  `)
+
+  .example(
+    `Downloads the latest release from the Yarn repository`,
+    `yarn policies set-version`,
+  )
+
+  .example(
+    `Downloads the latest nightly release from the Yarn repository`,
+    `yarn policies set-version nightly`,
+  )
+
+  .example(
+    `Switches back to Yarn v1`,
+    `yarn policies set-version ^1`,
+  )
+
+  .example(
+    `Switches back to a specific release`,
+    `yarn policies set-version 1.14.0`,
+  )
 
   .action(async ({cwd, stdout, range, rc}: {cwd: string, stdin: Readable, stdout: Writable, range: string, rc: boolean}) => {
     const configuration = await Configuration.find(cwd, plugins);
