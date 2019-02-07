@@ -69,6 +69,10 @@ export class LightReport extends Report {
     this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${text}\n`);
   }
 
+  reportJson(data: any) {
+    // Just ignore the json output
+  }
+
   async finalize() {
     if (this.errorCount > 0) {
       this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} Errors happened when preparing the environment required to run this command.\n`);

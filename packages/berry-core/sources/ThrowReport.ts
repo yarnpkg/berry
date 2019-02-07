@@ -25,9 +25,10 @@ export class ThrowReport extends Report {
   reportError(name: MessageName, text: string) {
   }
 
-  async finalize() {
+  reportJson(data: any) {
+    // Just ignore the json output
   }
 
-  private formatName(name: MessageName) {
+  async finalize() {
   }
 }

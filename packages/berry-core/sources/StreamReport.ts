@@ -120,6 +120,10 @@ export class StreamReport extends Report {
     this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
   }
 
+  reportJson(data: any) {
+    // Just ignore the json output
+  }
+
   async finalize() {
     let installStatus = ``;
 

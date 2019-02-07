@@ -61,6 +61,7 @@ export abstract class Report {
   abstract reportInfo(name: MessageName, text: string): void;
   abstract reportWarning(name: MessageName, text: string): void;
   abstract reportError(name: MessageName, text: string): void;
+  abstract reportJson(data: any): void;
 
   abstract finalize(): void;
 

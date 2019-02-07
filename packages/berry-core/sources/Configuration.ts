@@ -66,8 +66,8 @@ const legacyNames = new Set([
   `username`,
 ]);
 
-export const RCFILE_NAME = `.yarnrc`;
 export const ENVIRONMENT_PREFIX = `yarn_`;
+export const DEFAULT_RC_FILENAME = `.yarnrc`;
 
 export enum SettingsType {
   BOOLEAN = 'BOOLEAN',
@@ -123,6 +123,11 @@ export const coreDefinitions = {
     description: `Path of the file where the current state of the built packages must be stored`,
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.yarn/build-state.yml`,
+  },
+  rcFilename: {
+    description: `Name of the files where the configuration can be found`,
+    type: SettingsType.STRING,
+    default: getRcFilename(),
   },
 
   // Settings related to the output style
@@ -225,6 +230,34 @@ function getDefaultGlobalFolder() {
   }
 }
 
+function getEnvironmentSettings() {
+  const environmentSettings: {[key: string]: any} = {};
+
+  for (let [key, value] of Object.entries(process.env)) {
+    key = key.toLowerCase();
+
+    if (!key.startsWith(ENVIRONMENT_PREFIX))
+      continue;
+
+    key = key.slice(ENVIRONMENT_PREFIX.length);
+    key = key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
+
+    environmentSettings[key] = value;
+  }
+  
+  return environmentSettings;
+}
+
+function getRcFilename() {
+  const environmentSettings = getEnvironmentSettings();
+
+  if (Object.prototype.hasOwnProperty.call(environmentSettings, `rcFilename`)) {
+    return environmentSettings.rcFilename;
+  } else {
+    return DEFAULT_RC_FILENAME;
+  }
+}
+
 export class Configuration {
   // General rules:
   //
@@ -260,43 +293,37 @@ export class Configuration {
     let nextCwd = startingCwd;
     let currentCwd = null;
 
+    const rcFilename = getRcFilename();
+
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
       if (xfs.existsSync(`${currentCwd}/package.json`))
         projectCwd = currentCwd;
 
-      if (xfs.existsSync(`${currentCwd}/${RCFILE_NAME}`))
+      if (xfs.existsSync(`${currentCwd}/${rcFilename}`))
         rcCwds.push(currentCwd);
 
       nextCwd = posix.dirname(currentCwd);
     }
 
+    const environmentSettings = getEnvironmentSettings();
+
+    // The rc filename is set through the default configuration
+    delete environmentSettings.rcFilename;
+
     const configuration = new Configuration(projectCwd, plugins);
-
-    const environmentData: {[key: string]: any} = {};
-
-    for (let [key, value] of Object.entries(process.env)) {
-      key = key.toLowerCase();
-
-      if (!key.startsWith(ENVIRONMENT_PREFIX))
-        continue;
-
-      key = key.slice(ENVIRONMENT_PREFIX.length);
-
-      environmentData[key] = value;
-    }
-
-    configuration.use(`<environment>`, environmentData, process.cwd());
+    configuration.use(`<environment>`, environmentSettings, process.cwd());
 
     for (const rcCwd of rcCwds)
-      await configuration.inherits(`${rcCwd}/${RCFILE_NAME}`);
+      await configuration.inherits(`${rcCwd}/${rcFilename}`);
 
     return configuration;
   }
 
   static async updateConfiguration(cwd: string, patch: any) {
-    const configurationPath = `${cwd}/${RCFILE_NAME}`;
+    const rcFilename = getRcFilename();
+    const configurationPath = `${cwd}/${rcFilename}`;
 
     const current = xfs.existsSync(configurationPath)
       ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any
@@ -373,6 +400,10 @@ export class Configuration {
       // binFolder is the magic location where the parent process stored the current binaries; not an actual configuration settings
       if (name === `binFolder`)
         continue;
+      
+      // It wouldn't make much sense, would it
+      if (name === `rcFilename`)
+        throw new UsageError(`The rcFilename settings can only be set via ${`${ENVIRONMENT_PREFIX}RC_FILENAME`.toUpperCase()}, not via a rc file (in ${source})`);
 
       const definition = this.settings.get(name);
       if (!definition)

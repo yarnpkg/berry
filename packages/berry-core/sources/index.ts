@@ -2,6 +2,7 @@ export {Cache}                                                   from './Cache';
 export {Configuration, SettingsDefinition, SettingsType}         from './Configuration';
 export {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from './Fetcher';
 export {Installer}                                               from './Installer';
+export {JsonReport}                                              from './JsonReport';
 export {LightReport}                                             from './LightReport';
 export {Linker, LinkOptions, MinimalLinkOptions}                 from './Linker';
 export {Manifest, DependencyMeta, PeerDependencyMeta}            from './Manifest';

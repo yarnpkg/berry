@@ -1,11 +1,18 @@
-import {Configuration, Plugin} from '@berry/core';
-import {miscUtils}             from '@berry/core';
-import {Writable}              from 'stream';
-import {inspect}               from 'util';
+import {Configuration, JsonReport, Plugin} from '@berry/core';
+import {miscUtils}                         from '@berry/core';
+import {Writable}                          from 'stream';
+import {inspect}                           from 'util';
+
+function fromEntries(iterable: Iterable<[any, any] | {0: any, 1: any}>): {[key: string]: any} {
+  return [... iterable].reduce((obj, { 0:key, 1: val}) => Object.assign(obj, {
+    [key]: val,
+  }), {});
+}
+
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
-  .command(`config [-v,--verbose]`)
+  .command(`config [-v,--verbose] [--json]`)
   .describe(`display the current configuration`)
 
   .detail(`
@@ -17,38 +24,47 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     `yarn config`,
   )
 
-  .action(async ({cwd, stdout, verbose}: {cwd: string, stdout: Writable, verbose: boolean}) => {
+  .action(async ({cwd, stdout, verbose, json}: {cwd: string, stdout: Writable, verbose: boolean, json: boolean}) => {
     const configuration = await Configuration.find(cwd, plugins);
 
     const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
     const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
 
-    const inspectConfig = {
-      breakLength: Infinity,
-      colors: configuration.get(`enableColors`),
-      maxArrayLength: 2,
-    };
+    if (json) {
+      const data = fromEntries(configuration.settings.entries());
 
-    if (verbose) {
-      const keysAndDescriptions = keys.map(key => {
-        const settings = configuration.settings.get(key);
+      for (const key of Object.keys(data))
+        data[key].effective = configuration.get(key);
 
-        if (!settings)
-          throw new Error(`Assertion failed: This settings ("${key}") should have been registered`);
-
-        return [key, settings.description] as [string, string];
-      });
-
-      const maxDescriptionLength = keysAndDescriptions.reduce((max, [, description]) => {
-        return Math.max(max, description.length);
-      }, 0);
-
-      for (const [key, description] of keysAndDescriptions) {
-        stdout.write(`${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(configuration.values.get(key), inspectConfig)}\n`);
-      }
+      return JsonReport.send({stdout}, data);
     } else {
-      for (const key of keys) {
-        stdout.write(`${key.padEnd(maxKeyLength, ` `)}   ${inspect(configuration.values.get(key), inspectConfig)}\n`);
+      const inspectConfig = {
+        breakLength: Infinity,
+        colors: configuration.get(`enableColors`),
+        maxArrayLength: 2,
+      };
+  
+      if (verbose) {
+        const keysAndDescriptions = keys.map(key => {
+          const settings = configuration.settings.get(key);
+
+          if (!settings)
+            throw new Error(`Assertion failed: This settings ("${key}") should have been registered`);
+
+          return [key, settings.description] as [string, string];
+        });
+
+        const maxDescriptionLength = keysAndDescriptions.reduce((max, [, description]) => {
+          return Math.max(max, description.length);
+        }, 0);
+
+        for (const [key, description] of keysAndDescriptions) {
+          stdout.write(`${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(configuration.values.get(key), inspectConfig)}\n`);
+        }
+      } else {
+        for (const key of keys) {
+          stdout.write(`${key.padEnd(maxKeyLength, ` `)}   ${inspect(configuration.values.get(key), inspectConfig)}\n`);
+        }
       }
     }
   });
