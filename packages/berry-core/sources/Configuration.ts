@@ -21,49 +21,49 @@ import * as structUtils                  from './structUtils';
 const ctx: any = new chalk.constructor({enabled: true});
 
 const legacyNames = new Set([
-  `network-concurrency`,
-  `child-concurrency`,
-  `network-timeout`,
+  `networkConcurrency`,
+  `childConcurrency`,
+  `networkTimeout`,
   `proxy`,
-  `strict-ssl`,
+  `strictSsl`,
   `ca`,
   `cert`,
   `key`,
-  `last-update-check`,
-  `plugnplay-override`,
-  `plugnplay-shebang`,
-  `plugnplay-blacklist`,
-  `workspaces-experimental`,
-  `workspaces-nohoist-experimental`,
-  `offline-cache-folder`,
-  `yarn-offline-mirror-pruning`,
-  `enable-meta-folder`,
-  `yarn-enable-lockfile-versions`,
-  `yarn-link-file-dependencies`,
-  `experimental-pack-script-packages-in-mirror`,
-  `unsafe-disable-integrity-migration`,
+  `lastUpdateCheck`,
+  `plugnplayOverride`,
+  `plugnplayShebang`,
+  `plugnplayBlacklist`,
+  `workspacesExperimental`,
+  `workspacesNohoistExperimental`,
+  `offlineCacheFolder`,
+  `yarnOfflineMirrorPruning`,
+  `enableMetaFolder`,
+  `yarnEnableLockfileVersions`,
+  `yarnLinkFileDependencies`,
+  `experimentalPackScriptPackagesInMirror`,
+  `unsafeDisableIntegrityMigration`,
   `production`,
-  `no-progress`,
+  `noProgress`,
   `registry`,
-  `version-commit-hooks`,
-  `version-git-tag`,
-  `version-git-message`,
-  `version-sign-git-tag`,
-  `version-tag-prefix`,
-  `save-prefix`,
-  `save-exact`,
-  `init-author-name`,
-  `init-author-email`,
-  `init-author-url`,
-  `init-version`,
-  `init-license`,
-  `init-private`,
-  `ignore-scripts`,
-  `ignore-platform`,
-  `ignore-engines`,
-  `ignore-optional`,
+  `versionCommitHooks`,
+  `versionGitTag`,
+  `versionGitMessage`,
+  `versionSignGitTag`,
+  `versionTagPrefix`,
+  `savePrefix`,
+  `saveExact`,
+  `initAuthorName`,
+  `initAuthorEmail`,
+  `initAuthorUrl`,
+  `initVersion`,
+  `initLicense`,
+  `initPrivate`,
+  `ignoreScripts`,
+  `ignorePlatform`,
+  `ignoreEngines`,
+  `ignoreOptional`,
   `force`,
-  `disable-self-update-check`,
+  `disableSelfUpdateCheck`,
   `username`,
 ]);
 
@@ -395,6 +395,9 @@ export class Configuration {
   }
 
   use(source: string, data: {[key: string]: unknown}, folder: string) {
+    if (typeof data.berry === `object` && data.berry !== null)
+      data = data.berry;
+
     for (const key of Object.keys(data)) {
       const name = key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
 
@@ -409,7 +412,7 @@ export class Configuration {
       const definition = this.settings.get(name);
       if (!definition)
         throw new UsageError(`${legacyNames.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} (via ${source}) - run "yarn config -v" to see the list of settings supported in Yarn`);
-      
+
       if (this.sources.has(name))
         continue;
       
