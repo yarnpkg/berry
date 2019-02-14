@@ -1,13 +1,11 @@
-import {WorkspaceRequiredError}                           from '@berry/cli';
-import {Configuration, Cache, Descriptor, DescriptorHash} from '@berry/core';
-import {Ident, Locator, Plugin, Project, Resolver}        from '@berry/core';
-import {ResolveOptions, StreamReport}                     from '@berry/core';
-import {structUtils}                                      from '@berry/core';
-// @ts-ignore
-import {UsageError}                                       from '@manaflair/concierge';
-import inquirer                                           from 'inquirer';
-import semver                                             from 'semver';
-import {Readable, Writable}                               from 'stream';
+import {WorkspaceRequiredError}                                                from '@berry/cli';
+import {Cache, Configuration, Descriptor, Ident, MessageName, Plugin, Project} from '@berry/core';
+import {StreamReport}                                                          from '@berry/core';
+import {structUtils}                                                           from '@berry/core';
+import inquirer                                                                from 'inquirer';
+import {Readable, Writable}                                                    from 'stream';
+
+import * as suggestUtils                                                       from '../suggestUtils';
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
@@ -19,9 +17,11 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
     - The package will by default be added to the regular \`dependencies\` field, but this behavior can be overriden thanks to the \`-D,--dev\` flag (which will cause the dependency to be added to the \`devDependencies\` field instead) and the \`-P,--peer\` flag (which will do the same but for \`peerDependencies\`).
 
-    - If the added package doesn't specify a range at all its \`latest\` tag will be resolved and the returned version will be used to generate a new semver range (using the \`^\` modifier by default, or the \`~\` modifier if \`-T,--tilde\` is specified, or no modifier at all if \`-E,--exact\` is specified). One exception: if you use \`-P,--peer\` the default range will be \`*\` and won't be resolved at all.
+    - If the added package doesn't specify a range at all its \`latest\` tag will be resolved and the returned version will be used to generate a new semver range (using the \`^\` modifier by default, or the \`~\` modifier if \`-T,--tilde\` is specified, or no modifier at all if \`-E,--exact\` is specified). Two exceptions to this rule: the first one is that if the package is a workspace then its local version will be used, and the second one is that if you use \`-P,--peer\` the default range will be \`*\` and won't be resolved at all.
     
     - If the added package specifies a tag range (such as \`latest\` or \`rc\`), Yarn will resolve this tag to a semver version and use that in the resulting package.json entry (meaning that \`yarn add foo@latest\` will have exactly the same effect as \`yarn add foo\`).
+
+    If the \`-i,--interactive\` option is used (or if the \`preferInteractive\` settings is toggled on) the command will first try to check whether other workspaces in the project use the specified package and, if so, will offer to reuse them.
     
     For a compilation of all the supported protocols, please consult the dedicated page from our website: .
   `)
@@ -50,181 +50,84 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       output: stdout,
     });
 
-    const descriptors: Array<Descriptor> = [];
-    const idents: Array<Ident> = [];
+    const target = peer
+      ? suggestUtils.Target.PEER
+      : dev
+        ? suggestUtils.Target.DEVELOPMENT
+        : suggestUtils.Target.REGULAR;
+
+    const modifier = exact
+      ? suggestUtils.Modifier.EXACT
+      : tilde
+        ? suggestUtils.Modifier.TILDE
+        : suggestUtils.Modifier.CARET;
+
+    const strategies = interactive ? [
+      suggestUtils.Strategy.REUSE,
+      suggestUtils.Strategy.PROJECT,
+      suggestUtils.Strategy.LATEST,
+    ] : [
+      suggestUtils.Strategy.PROJECT,
+      suggestUtils.Strategy.LATEST,
+    ];
+
+    const maxResults = interactive
+      ? Infinity
+      : 1;
+
+    const allSuggestions = await Promise.all(packages.map(async pseudoDescriptor => {
+      const request = structUtils.parseDescriptor(pseudoDescriptor);
+      const suggestions = await suggestUtils.getSuggestedDescriptors(request, null, {project, cache, target, modifier, strategies, maxResults});
+
+      return [request, suggestions] as [Descriptor, Array<suggestUtils.Suggestion>];
+    }));
+
+    const checkReport = await StreamReport.start({configuration, stdout}, async report => {
+      for (const [request, suggestions] of allSuggestions) {
+        if (suggestions.length === 0) {
+          report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range`);
+        }
+      }
+    });
+
+    if (checkReport.hasErrors())
+      return checkReport.exitCode();
 
     let askedQuestions = false;
 
-    for (const entry of packages) {
-      const descriptor = structUtils.parseDescriptor(entry);
+    for (const [request, suggestions] of allSuggestions) {
+      let selected;
 
-      // If the range is specified, no need to generate it out of thin air
-      if (descriptor.range !== `unknown`) {
-        descriptors.push(descriptor);
-        continue;
-      }
-      
-      if (interactive || (configuration.get(`preferInteractive`) && (stdout as any).isTTY)) {
+      if (suggestions.length === 1) {
+        selected = suggestions[0].descriptor;
+      } else {
         askedQuestions = true;
-
-        const descriptorFromProject = await fetchDescriptorFromProject(descriptor, {project, dev, peer, prompt});
-
-        if (descriptorFromProject) {
-          descriptors.push(descriptorFromProject);
-          continue;
-        }
+        ({answer: selected} = await prompt({
+          type: `list`,
+          name: `answer`,
+          message: `Which range to you want to use?`,
+          choices: suggestions.map(({descriptor, reason}) => {
+            return {
+              name: reason,
+              value: descriptor as Descriptor,
+              short: structUtils.prettyDescriptor(project.configuration, descriptor),
+            };
+          }),
+        }));
       }
-      
-      if (peer) {
-        descriptors.push(structUtils.makeDescriptor(descriptor, `*`));
-        continue;
-      }
 
-      idents.push(descriptor);
+      workspace.manifest[target].set(
+        selected.identHash,
+        selected,
+      );
     }
 
     if (askedQuestions)
-      process.stdout.write(`\n`);
+      stdout.write(`\n`);
 
-    const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
-      const fetcher = project.configuration.makeFetcher();
-      const resolver = project.configuration.makeResolver();
-  
-      const resolverOptions = {checksums: project.storedChecksums, readOnly: false, project, cache, fetcher, report, resolver};
-    
-      const finalDescriptorList = [
-        ... descriptors,
-        ... await Promise.all(idents.map(async ident => {
-          return await fetchDescriptorFromLatest(ident, {project, resolver, resolverOptions, exact, tilde});
-        })),
-      ];
-  
-      const target = dev
-        ? `devDependencies`
-        : peer
-          ? `peerDependencies`
-          : `dependencies`;
-
-      for (const descriptor of finalDescriptorList)
-        workspace.manifest[target].set(descriptor.identHash, descriptor);
-
-      await project.install({cache, report});
+    const installReport = await StreamReport.start({configuration, stdout}, async report => {
+        await project.install({cache, report});
     });
 
-    return report.exitCode();
+    return installReport.exitCode();
   });
-
-async function fetchDescriptorFromProject(ident: Ident, {project, dev, peer, prompt}: {project: Project, dev: boolean, peer: boolean, prompt: any}) {
-  const candidates: Map<DescriptorHash, {
-    descriptor: Descriptor,
-    locators: Array<Locator>,
-  }> = new Map();
-
-  const getDescriptorEntry = (descriptor: Descriptor) => {
-    let entry = candidates.get(descriptor.descriptorHash);
-
-    if (!entry) {
-      candidates.set(descriptor.descriptorHash, entry = {
-        descriptor,
-        locators: [],
-      });
-    }
-
-    return entry;
-  };
-
-  for (const workspace of project.workspaces) {
-    if (peer) {
-      const peerDescriptor = workspace.manifest.peerDependencies.get(ident.identHash);
-
-      if (peerDescriptor !== undefined) {
-        getDescriptorEntry(peerDescriptor).locators.push(workspace.locator);
-      }
-    } else {
-      const regularDescriptor = workspace.manifest.dependencies.get(ident.identHash);
-      const developmentDescriptor = workspace.manifest.devDependencies.get(ident.identHash);
-
-      if (dev) {
-        if (developmentDescriptor !== undefined) {
-          getDescriptorEntry(developmentDescriptor).locators.push(workspace.locator);
-        } else if (regularDescriptor !== undefined) {
-          getDescriptorEntry(regularDescriptor).locators.push(workspace.locator);
-        }
-      } else {
-        if (regularDescriptor !== undefined) {
-          getDescriptorEntry(regularDescriptor).locators.push(workspace.locator);
-        } else if (developmentDescriptor !== undefined) {
-          getDescriptorEntry(developmentDescriptor).locators.push(workspace.locator);
-        }
-      }
-    }
-  }
-
-  const result = await prompt({
-    type: `list`,
-    name: `answer`,
-    message: `Which range to you want to use?`,
-    choices: Array.from(candidates.values()).map(({descriptor, locators}) => {
-      return {
-        name: `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)} (originally used by ${locators.map(locator => structUtils.prettyLocator(project.configuration, locator)).join(`, `)})`,
-        value: descriptor as Descriptor | null,
-        short: structUtils.prettyDescriptor(project.configuration, descriptor),
-      };
-    }).concat([{
-      name: `Resolve from latest`,
-      value: null,
-      short: `latest`,
-    }]),
-  });
-
-  if (result.answer) {
-    return result.answer as Descriptor;
-  } else {
-    return null;
-  }
-}
-
-async function fetchDescriptorFromLatest(ident: Ident, {project, resolver, resolverOptions, exact, tilde}: {project: Project, resolver: Resolver, resolverOptions: ResolveOptions, exact: boolean, tilde: boolean}) {
-  const latestDescriptor = structUtils.makeDescriptor(ident, `latest`);
-
-  let candidateLocators;
-  try {
-    candidateLocators = await resolver.getCandidates(latestDescriptor, resolverOptions);
-  } catch (error) {
-    error.message = `${structUtils.prettyDescriptor(project.configuration, latestDescriptor)}: ${error.message}`;
-    throw error;
-  }
-
-  if (candidateLocators.length === 0)
-    throw new Error(`No candidate found for ${structUtils.prettyDescriptor(project.configuration, latestDescriptor)}`);
-
-  const bestLocator = candidateLocators[candidateLocators.length - 1];
-  const protocolIndex = bestLocator.reference.indexOf(`:`);
-
-  const protocol = protocolIndex !== -1
-    ? bestLocator.reference.slice(0, protocolIndex + 1)
-    : null;
-
-  const pathname = protocolIndex !== -1
-    ? bestLocator.reference.slice(protocolIndex + 1)
-    : bestLocator.reference;
-
-  if (!semver.valid(pathname))
-    return structUtils.convertLocatorToDescriptor(bestLocator);
-
-  const newProtocol = protocol !== project.configuration.get(`defaultProtocol`)
-    ? protocol
-    : null;
-
-  const newPathname = exact
-    ? pathname
-    : tilde
-      ? `~${pathname}`
-      : `^${pathname}`;
-
-  const newRange = newProtocol !== null
-    ? `${newProtocol}${newPathname}`
-    : `${newPathname}`;
-
-  return structUtils.makeDescriptor(bestLocator, newRange);  
-}

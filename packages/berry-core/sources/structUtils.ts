@@ -159,6 +159,29 @@ export function tryParseLocator(string: string, strict: boolean = false): Locato
   return makeLocator(makeIdent(scope, name), reference);
 }
 
+export function parseRange(range: string) {
+  const protocolIndex = range.indexOf(`:`);
+  const protocol = protocolIndex !== -1 ? range.slice(0, protocolIndex + 1) : null;
+  const protocolRest = protocolIndex !== -1 ? range.slice(protocolIndex + 1) : range;
+
+  const hashIndex = protocolRest.indexOf(`#`);
+  const source = hashIndex !== -1 ? protocolRest.slice(0, hashIndex) : null;
+  const selector = hashIndex !== -1 ? protocolRest.slice(hashIndex + 1) : protocolRest;
+
+  return {protocol, source, selector};
+}
+
+export function makeRange({protocol, source, selector}: {protocol: string | null, source: string | null, selector: string}) {
+  let range = ``;
+
+  if (protocol !== null)
+    range += `${protocol}:`;
+  if (source !== null)
+    range += `${source}#`;
+  
+  return range + selector;
+}
+
 export function requirableIdent(ident: Ident) {
   if (ident.scope) {
     return `@${ident.scope}/${ident.name}`;

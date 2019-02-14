@@ -15,6 +15,7 @@ import link              from './commands/link';
 import node              from './commands/node';
 import remove            from './commands/remove';
 import run               from './commands/run';
+import up                from './commands/up';
 
 const plugin: Plugin = {
   commands: [
@@ -33,6 +34,7 @@ const plugin: Plugin = {
     node,
     remove,
     run,
+    up,
   ],
 };
 

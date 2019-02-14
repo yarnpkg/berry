@@ -239,6 +239,23 @@ export class Manifest {
     return errors;
   }
 
+  getForScope(type: string) {
+    switch (type) {
+      case `dependencies`:
+        return this.dependencies;
+
+      case `devDependencies`:
+        return this.devDependencies;
+
+      case `peerDependencies`:
+        return this.peerDependencies;
+
+      default: {
+        throw new Error(`Unsupported value ("${type}")`);
+      }
+    }
+  }
+
   exportTo(data: {[key: string]: any}) {
     if (this.name !== null)
       data.name = structUtils.stringifyIdent(this.name);

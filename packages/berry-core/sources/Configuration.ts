@@ -29,6 +29,7 @@ const legacyNames = new Set([
   `ca`,
   `cert`,
   `key`,
+  `last-update-check`,
   `plugnplay-override`,
   `plugnplay-shebang`,
   `plugnplay-blacklist`,
