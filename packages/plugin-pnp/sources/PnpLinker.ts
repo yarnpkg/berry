@@ -2,7 +2,7 @@ import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, 
 import {FetchResult, Ident, Locator, Package}                                                                from '@berry/core';
 import {miscUtils, structUtils}                                                                              from '@berry/core';
 import {CwdFS, FakeFS, NodeFS}                                                                               from '@berry/fslib';
-import {PackageInformationStores, LocationBlacklist, generatePnpScript}                                      from '@berry/pnp';
+import {PackageInformationStores, LocationBlacklist, generateInlinePnpScript}                                from '@berry/pnp';
 import {posix}                                                                                               from 'path';
 
 // Some packages do weird stuff and MUST be unplugged. I don't like them.
@@ -135,7 +135,7 @@ class PnpInstaller implements Installer {
     const packageInformationStores = this.packageInformationStores;
 
     const pnpPath = this.opts.project.configuration.get(`pnpPath`);
-    const pnpScript = generatePnpScript({shebang, ignorePattern, blacklistedLocations, packageInformationStores});
+    const pnpScript = generateInlinePnpScript({shebang, ignorePattern, blacklistedLocations, packageInformationStores});
 
     const fs = new NodeFS();
     await fs.changeFilePromise(pnpPath, pnpScript);

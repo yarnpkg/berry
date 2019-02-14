@@ -4,7 +4,7 @@ import template                                                   from '@berry/p
 
 import {PackageInformationStores, LocationBlacklist, PnpSettings} from './types';
 
-function generateDatastores(packageInformationStores: PackageInformationStores, blacklistedLocations: LocationBlacklist) {
+function generateInlineDatastores(packageInformationStores: PackageInformationStores, blacklistedLocations: LocationBlacklist) {
   let code = ``;
 
   // Bake the information stores into our generated code
@@ -80,9 +80,9 @@ function generateDatastores(packageInformationStores: PackageInformationStores, 
   return code;
 }
 
-export function generatePnpScript(settings: PnpSettings): string {
+export function generateInlinePnpScript(settings: PnpSettings): string {
   const {shebang, ignorePattern, packageInformationStores, blacklistedLocations} = settings;
-  const datastores = generateDatastores(packageInformationStores, blacklistedLocations || new Set());
+  const datastores = generateInlineDatastores(packageInformationStores, blacklistedLocations || new Set());
 
   return [
     shebang ? `${shebang}\n\n` : ``,

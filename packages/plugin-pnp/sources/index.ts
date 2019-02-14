@@ -19,8 +19,13 @@ const plugin: Plugin = {
       type: SettingsType.ABSOLUTE_PATH,
       default: `./.yarn/unplugged`,
     },
+    pnpDataPath: {
+      description: `Path of the file where the PnP data (used by the loader) must be written`,
+      type: SettingsType.ABSOLUTE_PATH,
+      default: `./.pnp.data.json`,
+    },
     pnpPath: {
-      description: `Path of the file where the PnP hook must be written`,
+      description: `Path of the file where the PnP loader must be written`,
       type: SettingsType.ABSOLUTE_PATH,
       default: `./.pnp.js`,
     },
