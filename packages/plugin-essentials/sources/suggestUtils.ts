@@ -158,7 +158,7 @@ export async function fetchDescriptorFromLatest(ident: Ident, {project, cache}: 
   const fetcher = project.configuration.makeFetcher();
   const resolver = project.configuration.makeResolver();
 
-  const resolverOptions = {checksums: project.storedChecksums, readOnly: false, project, cache, fetcher, report, resolver};
+  const resolverOptions = {checksums: project.storedChecksums, project, cache, fetcher, report, resolver};
 
   let candidateLocators;
   try {

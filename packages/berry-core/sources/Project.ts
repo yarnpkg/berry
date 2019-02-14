@@ -324,7 +324,7 @@ export class Project {
     const resolver = new MultiResolver([new LockfileResolver(), yarnResolver, aliasResolver, lockfileOnly ? new RunInstallPleaseResolver(realResolver) : null]);
     const fetcher = this.configuration.makeFetcher();
 
-    const resolverOptions = {checksums: this.storedChecksums, project: this, readOnly: false, cache, fetcher, report, resolver};
+    const resolverOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, resolver};
     
     const allDescriptors = new Map<DescriptorHash, Descriptor>();
     const allPackages = new Map<LocatorHash, Package>();
@@ -645,7 +645,7 @@ export class Project {
 
   async fetchEverything({cache, report, fetcher: userFetcher}: InstallOptions) {
     const fetcher = userFetcher || this.configuration.makeFetcher();
-    const fetcherOptions = {checksums: this.storedChecksums, project: this, readOnly: false, cache, fetcher, report};
+    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
 
     const locatorHashes = miscUtils.sortMap(this.storedResolutions.values(), [(locatorHash: LocatorHash) => {
       const pkg = this.storedPackages.get(locatorHash);
@@ -677,7 +677,7 @@ export class Project {
 
   async linkEverything({cache, report}: InstallOptions) {
     const fetcher = this.configuration.makeFetcher();
-    const fetcherOptions = {checksums: this.storedChecksums, project: this, readOnly: true, cache, fetcher, report};
+    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
 
     const linkers = this.configuration.getLinkers();
     const linkerOptions = {project: this, report};

@@ -13,7 +13,6 @@ export type MinimalFetchOptions = {
 export type FetchOptions = MinimalFetchOptions & {
   cache: Cache,
   checksums: Map<LocatorHash, string>,
-  readOnly: boolean,
   report: Report,
 };
 
