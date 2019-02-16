@@ -23,5 +23,5 @@ export type RuntimeState = {
   ignorePattern: RegExp | null,
   packageRegistry: PackageRegistry,
   packageLocatorsByLocations: Map<string, PackageLocator>;
-  packageLocationLengths: Array<number>
+  packageLocationLengths: Array<number>,
 };

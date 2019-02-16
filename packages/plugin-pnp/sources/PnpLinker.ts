@@ -1,8 +1,8 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName, DependencyMeta} from '@berry/core';
 import {FetchResult, Ident, Locator, Package}                                                                from '@berry/core';
 import {miscUtils, structUtils}                                                                              from '@berry/core';
-import {CwdFS, FakeFS, NodeFS}                                                                               from '@berry/fslib';
-import {PackageRegistry, generateInlinePnpScript}                                                            from '@berry/pnp';
+import {CwdFS, FakeFS, xfs}                                                                                  from '@berry/fslib';
+import {PackageRegistry, generateInlinePnpScript, generateSplitPnpScript}                                    from '@berry/pnp';
 import {posix}                                                                                               from 'path';
 
 // Some packages do weird stuff and MUST be unplugged. I don't like them.
@@ -16,10 +16,8 @@ export class PnpLinker implements Linker {
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
-    const fs = new NodeFS();
-
     const pnpPath = opts.project.configuration.get(`pnpPath`);
-    if (!await fs.existsPromise(pnpPath))
+    if (!xfs.existsSync(pnpPath))
       throw new Error(`Couldn't find the PnP package map at the root of the project - run an install to generate it`);
 
     const pnpFile = miscUtils.dynamicRequire(pnpPath);
@@ -35,10 +33,8 @@ export class PnpLinker implements Linker {
   }
 
   async findPackageLocator(location: string, opts: LinkOptions) {
-    const fs = new NodeFS();
-
     const pnpPath = opts.project.configuration.get(`pnpPath`);
-    if (!await fs.existsPromise(pnpPath))
+    if (!xfs.existsSync(pnpPath))
       throw new Error(`Couldn't find the PnP package map at the root of the project - run an install to generate it`);
 
     const pnpFile = miscUtils.dynamicRequire(pnpPath);
@@ -135,20 +131,36 @@ class PnpInstaller implements Installer {
     const packageRegistry = this.packageRegistry;
 
     const pnpPath = this.opts.project.configuration.get(`pnpPath`);
-    const pnpScript = generateInlinePnpScript({shebang, ignorePattern, blacklistedLocations, packageRegistry});
+    const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
 
-    const fs = new NodeFS();
-    await fs.changeFilePromise(pnpPath, pnpScript);
-    await fs.chmodPromise(pnpPath, 0o755);
+    const pnpSettings = {shebang, ignorePattern, blacklistedLocations, packageRegistry};
+
+    if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
+      const loaderFile = generateInlinePnpScript(pnpSettings);
+
+      await xfs.changeFilePromise(pnpPath, loaderFile);
+      await xfs.chmodPromise(pnpPath, 0o755);
+
+      await xfs.removePromise(pnpDataPath);
+    } else {
+      const dataLocation = posix.relative(posix.dirname(pnpPath), pnpDataPath);
+      const {dataFile, loaderFile} = generateSplitPnpScript({... pnpSettings, dataLocation});
+
+      await xfs.changeFilePromise(pnpPath, loaderFile);
+      await xfs.chmodPromise(pnpPath, 0o755);
+
+      await xfs.changeFilePromise(pnpDataPath, dataFile);
+      await xfs.chmodPromise(pnpDataPath, 0o644);
+    }
 
     const pnpUnpluggedFolder = this.opts.project.configuration.get(`pnpUnpluggedFolder`);
     if (this.unpluggedPaths.size === 0) {
-      await fs.removePromise(pnpUnpluggedFolder);
+      await xfs.removePromise(pnpUnpluggedFolder);
     } else {
-      for (const entry of await fs.readdirPromise(pnpUnpluggedFolder)) {
+      for (const entry of await xfs.readdirPromise(pnpUnpluggedFolder)) {
         const unpluggedPath = posix.resolve(pnpUnpluggedFolder, entry);
         if (!this.unpluggedPaths.has(unpluggedPath)) {
-          await fs.removePromise(unpluggedPath);
+          await xfs.removePromise(unpluggedPath);
         }
       }
     }
@@ -222,9 +234,8 @@ class PnpInstaller implements Installer {
     const unplugPath = this.getUnpluggedPath(locator);
     this.unpluggedPaths.add(unplugPath);
 
-    const fs = new NodeFS();
-    await fs.mkdirpPromise(unplugPath);
-    await fs.copyPromise(unplugPath, `.`, {baseFs: packageFs, overwrite: false});
+    await xfs.mkdirpPromise(unplugPath);
+    await xfs.copyPromise(unplugPath, `.`, {baseFs: packageFs, overwrite: false});
 
     return new CwdFS(unplugPath);
   }

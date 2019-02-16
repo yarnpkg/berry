@@ -14,6 +14,11 @@ const plugin: Plugin = {
       type: SettingsType.STRING,
       default: null,
     },
+    pnpEnableInlining: {
+      description: `If true, the PnP data will be inlined along with the generated loader`,
+      type: SettingsType.BOOLEAN,
+      default: true,
+    },
     pnpUnpluggedFolder: {
       description: `Folder where the unplugged packages must be stored`,
       type: SettingsType.ABSOLUTE_PATH,

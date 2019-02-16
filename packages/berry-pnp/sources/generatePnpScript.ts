@@ -30,7 +30,7 @@ function generateLoader(shebang: string | null | undefined, datastores: string) 
   ].join(``);
 }
 
-function generatePackageInformationRegistryData(settings: PnpSettings): PackageRegistryData {
+function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData {
   const packageRegistryData: PackageRegistryData = [];
 
   for (const [packageName, packageStore] of miscUtils.sortMap(settings.packageRegistry, ([packageName]) => packageName === null ? `0` : `1${packageName}`)) {
@@ -74,7 +74,7 @@ function generateLocationLengthData(settings: PnpSettings): LocationLengthData {
 function generateInlinedData(settings: PnpSettings) {
   let code = ``;
 
-  const packageRegistryData = generatePackageInformationRegistryData(settings);
+  const packageRegistryData = generatePackageRegistryData(settings);
   const locationBlacklistData = generateLocationBlacklistData(settings);
   const locationLengthData = generateLocationLengthData(settings);
 
@@ -87,9 +87,9 @@ function generateInlinedData(settings: PnpSettings) {
 
   // Bake the information stores into our generated code
   code += `runtimeState.packageRegistry = new Map([\n`;
-  for (const [packageName, packageInformationStoreData] of packageRegistryData) {
+  for (const [packageName, packageStoreData] of packageRegistryData) {
     code += `  [${JSON.stringify(packageName)}, new Map([\n`;
-    for (const [packageReference, {packageLocation, packageDependencies}] of packageInformationStoreData) {
+    for (const [packageReference, {packageLocation, packageDependencies}] of packageStoreData) {
       code += `    [${JSON.stringify(packageReference)}, {\n`;
       code += `      packageLocation: path.resolve(__dirname, ${JSON.stringify(packageLocation)}),\n`;
       code += `      packageDependencies: new Map([\n`;
@@ -143,13 +143,55 @@ function generateExternalData(settings: PnpSettings) {
     `is entirely unspecified and WILL change from a version to another.`,
   ];
 
-  data.ignorePattern = settings.ignorePattern;
+  data.packageRegistryData = generatePackageRegistryData(settings);
+  data.locationBlacklistData = generateLocationBlacklistData(settings);
+  data.locationLengthData = generateLocationLengthData(settings);
 
   return JSON.stringify(data, null, `  `) + `\n`;
 }
 
-function generateExternalReader() {
-  return ``;
+function generateExternalReader(dataLocation: string) {
+  let code = ``;
+
+  code += `var data = require(path.resolve(__dirname, ${JSON.stringify(dataLocation)}));\n`;
+
+  code += `\n`;
+
+  code += `runtimeState.ignorePattern = data.ignorePatternData ? new RegExp(data.ignorePatternData) : null;\n`;
+
+  code += `\n`;
+
+  code += `runtimeState.packageRegistry = new Map(data.packageRegistryData.map(function (entry) {\n`;
+  code += `  return [entry[0], new Map(entry[1].map(function (entry) {\n`;
+  code += `    return [entry[0], {\n`;
+  code += `      packageLocation: path.resolve(__dirname, entry[1].packageLocation),`;
+  code += `      packageDependencies: new Map(entry[1].packageDependencies),\n`;
+  code += `    }];\n`;
+  code += `  }))];\n`;
+  code += `}));\n`;
+
+  code += `\n`;
+
+  code += `runtimeState.packageLocatorsByLocations = new Map(data.locationBlacklistData.map(function (location) {\n`;
+  code += `  return [location, null];\n`;
+  code += `}));\n`
+  code += `data.packageRegistryData.forEach(function (entry) {\n`;
+  code += `  var packageName = entry[0], store = entry[1];\n`
+  code += `  store.forEach(function (entry) {\n`;
+  code += `    var packageReference = entry[0], information = entry[1];\n`;
+  code += `    if (packageName !== null && packageReference !== null) {\n`;
+  code += `      runtimeState.packageLocatorsByLocations.set(information.packageLocation, {name: packageName, reference: packageReference});\n`;
+  code += `    } else {\n`;
+  code += `      runtimeState.packageLocatorsByLocations.set(information.packageLocation, topLevelLocator);\n`;
+  code += `    }\n;`
+  code += `  });\n`;
+  code += `});\n`
+
+  code += `\n`;
+
+  code += `runtimeState.packageLocationLengths = data.locationLengthData;\n`;
+
+  return code;
 }
 
 export function generateInlinePnpScript(settings: PnpSettings): string {
@@ -159,9 +201,9 @@ export function generateInlinePnpScript(settings: PnpSettings): string {
   return loaderFile;
 }
 
-export function generateSplitPnpScript(settings: PnpSettings): {dataFile: string, loaderFile: string} {
+export function generateSplitPnpScript(settings: PnpSettings & {dataLocation: string}): {dataFile: string, loaderFile: string} {
   const externalData = generateExternalData(settings);
-  const loaderFile = generateLoader(settings.shebang, generateExternalReader());
+  const loaderFile = generateLoader(settings.shebang, generateExternalReader(settings.dataLocation));
   
   return {dataFile: externalData, loaderFile};
 }
