@@ -1,23 +1,99 @@
-import {miscUtils}                                                from '@berry/core';
+import {miscUtils}                                                                        from '@berry/core';
 // @ts-ignore: This isn't a classical file; it's automatically generated (type string)
-import template                                                   from '@berry/pnp/sources/hook-bundle.js';
+import template                                                                           from '@berry/pnp/sources/hook-bundle.js';
 
-import {PackageInformationStores, LocationBlacklist, PnpSettings} from './types';
+import {PackageRegistryData, PackageStoreData, LocationBlacklistData, LocationLengthData} from './types';
+import {PnpSettings}                                                                      from './types';
 
-function generateInlineDatastores(packageInformationStores: PackageInformationStores, blacklistedLocations: LocationBlacklist) {
+function generateLoader(shebang: string | null | undefined, datastores: string) {
+  return [
+    shebang ? `${shebang}\n\n` : ``,
+    `try {\n`, 
+    `  Object.freeze({}).detectStrictMode = true;\n`,
+    `} catch (error) {\n`,
+    `  throw new Error(\`The whole PnP file got strict-mode-ified, which is known to break (Emscripten libraries aren't strict mode). This usually happens when the file goes through Babel.\`);\n`,
+    `}\n`,
+    `\n`,
+    `var __non_webpack_module__ = module;\n`,
+    `\n`,
+    `function $$SETUP_STATE(topLevelLocator) {\n`,
+    `  var path = require('path');\n`,
+    `\n`,
+    `  var runtimeState = {};\n`,
+    `\n`,
+    datastores.replace(/^/gm, `  `),
+    `\n`,
+    `  return runtimeState;\n`,
+    `}\n`,
+    `\n`,
+    template,
+  ].join(``);
+}
+
+function generatePackageInformationRegistryData(settings: PnpSettings): PackageRegistryData {
+  const packageRegistryData: PackageRegistryData = [];
+
+  for (const [packageName, packageStore] of miscUtils.sortMap(settings.packageRegistry, ([packageName]) => packageName === null ? `0` : `1${packageName}`)) {
+    const packageStoreData: PackageStoreData = [];
+    packageRegistryData.push([packageName, packageStoreData]);
+
+    for (const [packageReference, {packageLocation, packageDependencies}] of miscUtils.sortMap(packageStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
+      const normalizedDependencies: Array<[string, string]> = [];
+
+      if (packageName !== null && packageReference !== null && !packageDependencies.has(packageName))
+        normalizedDependencies.push([packageName, packageReference]);
+
+      for (const [dependencyName, dependencyReference] of miscUtils.sortMap(packageDependencies.entries(), ([dependencyName]) => dependencyName))
+        normalizedDependencies.push([dependencyName, dependencyReference]);
+
+      packageStoreData.push([packageReference, {
+        packageLocation,
+        packageDependencies: normalizedDependencies,
+      }]);
+    }
+  }
+
+  return packageRegistryData;
+}
+
+function generateLocationBlacklistData(settings: PnpSettings): LocationBlacklistData {
+  return miscUtils.sortMap(settings.blacklistedLocations || [], location => location);
+}
+
+function generateLocationLengthData(settings: PnpSettings): LocationLengthData {
+  const lengths = new Set();
+
+  for (const packageInformationStore of settings.packageRegistry.values())
+    for (const {packageLocation} of packageInformationStore.values())
+      if (packageLocation !== null)
+        lengths.add(packageLocation.length);
+
+  return Array.from(lengths).sort((a, b) => b - a);
+}
+
+function generateInlinedData(settings: PnpSettings) {
   let code = ``;
 
+  const packageRegistryData = generatePackageInformationRegistryData(settings);
+  const locationBlacklistData = generateLocationBlacklistData(settings);
+  const locationLengthData = generateLocationLengthData(settings);
+
+  // Integrates the ignore pattern
+  code += settings.ignorePattern
+    ? `runtimeState.ignorePattern = new RegExp(${JSON.stringify(settings.ignorePattern)});\n`
+    : `runtimeState.ignorePattern = null;\n`;
+
+  code += `\n`;
+
   // Bake the information stores into our generated code
-  code += `packageInformationStores = new Map([\n`;
-  for (const [packageName, packageInformationStore] of miscUtils.sortMap(packageInformationStores, ([packageName]) => packageName === null ? `0` : `1${packageName}`)) {
+  code += `runtimeState.packageRegistry = new Map([\n`;
+  for (const [packageName, packageInformationStoreData] of packageRegistryData) {
     code += `  [${JSON.stringify(packageName)}, new Map([\n`;
-    for (const [packageReference, {packageLocation, packageDependencies}] of miscUtils.sortMap(packageInformationStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
+    for (const [packageReference, {packageLocation, packageDependencies}] of packageInformationStoreData) {
       code += `    [${JSON.stringify(packageReference)}, {\n`;
       code += `      packageLocation: path.resolve(__dirname, ${JSON.stringify(packageLocation)}),\n`;
       code += `      packageDependencies: new Map([\n`;
-      if (packageName !== null)
-        code += `        [${JSON.stringify(packageName)}, ${JSON.stringify(packageReference)}],\n`;
-      for (const [dependencyName, dependencyReference] of miscUtils.sortMap(packageDependencies.entries(), ([dependencyName]) => dependencyName))
+      for (const [dependencyName, dependencyReference] of packageDependencies)
         code += `        [${JSON.stringify(dependencyName)}, ${JSON.stringify(dependencyReference)}],\n`;
       code += `      ]),\n`;
       code += `    }],\n`;
@@ -29,12 +105,11 @@ function generateInlineDatastores(packageInformationStores: PackageInformationSt
   code += `\n`;
 
   // Also bake an inverse map that will allow us to find the package information based on the path
-  code += `packageLocatorByLocationMap = new Map([\n`;
-  for (const blacklistedLocation of miscUtils.sortMap(blacklistedLocations, location => location)) {
-    code += `  [${JSON.stringify(blacklistedLocation)}, blacklistedLocator],\n`;
-  }
-  for (const [packageName, packageInformationStore] of miscUtils.sortMap(packageInformationStores, ([packageName]) => packageName === null ? `0` : `1${packageName}`)) {
-    for (const [packageReference, {packageLocation}] of miscUtils.sortMap(packageInformationStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
+  code += `runtimeState.packageLocatorsByLocations = new Map([\n`;
+  for (const blacklistedLocation of locationBlacklistData)
+    code += `  [${JSON.stringify(blacklistedLocation)}, null],\n`;
+  for (const [packageName, packageInformationStoreData] of packageRegistryData) {
+    for (const [packageReference, {packageLocation}] of packageInformationStoreData) {
       if (packageName !== null) {
         code += `  [${JSON.stringify(packageLocation)}, ${JSON.stringify({
           name: packageName,
@@ -49,68 +124,44 @@ function generateInlineDatastores(packageInformationStores: PackageInformationSt
 
   code += `\n`;
 
-  // And finally generate a sorted array of all the lengths that the findPackageLocator method will need to check
-  const lengths: Map<number, number> = new Map();
-
-  for (const packageInformationStore of packageInformationStores.values()) {
-    for (const {packageLocation} of packageInformationStore.values()) {
-      if (packageLocation === null) {
-        continue;
-      }
-
-      const length = packageLocation.length;
-      const count = (lengths.get(length) || 0) + 1;
-
-      lengths.set(length, count);
-    }
-  }
-
-  // We must try the larger lengths before the smaller ones, because smaller ones might also match the longest ones
-  // (for instance, /project/path will match /project/path/.pnp/global/node_modules/pnp-cf5f9c17b8f8db)
-  const sortedLengths = Array.from(lengths.entries()).sort((a, b) => {
-    return b[0] - a[0];
-  });
-
-  code += `packageLocationLengths = [\n`;
-  for (const [length, count] of sortedLengths) {
+  // Those lengths will be used to find to which package belongs a file
+  code += `runtimeState.packageLocationLengths = [\n`;
+  for (const length of locationLengthData)
     code += `  ${length},\n`;
-  }
   code += `];\n`;
 
   return code;
 }
 
-export function generateInlinePnpScript(settings: PnpSettings): string {
-  const {shebang, ignorePattern, packageInformationStores, blacklistedLocations} = settings;
-  const datastores = generateInlineDatastores(packageInformationStores, blacklistedLocations || new Set());
+function generateExternalData(settings: PnpSettings) {
+  const data: any = {};
 
-  return [
-    shebang ? `${shebang}\n\n` : ``,
-    `try {\n`, 
-    `  Object.freeze({}).detectStrictMode = true;\n`,
-    `} catch (error) {\n`,
-    `  throw new Error(\`The whole PnP file got strict-mode-ified, which is known to break (Emscripten libraries aren't strict mode). This usually happens when the file goes through Babel.\`);\n`,
-    `}\n`,
-    `\n`,
-    `var __non_webpack_module__ = module;\n`,
-    `\n`,
-    `function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {\n`,
-    `  var path = require('path');\n`,
-    `\n`,
-    `  var ignorePattern, packageInformationStores, packageLocatorByLocationMap, packageLocationLengths;\n`,
-    `\n`,
-    `  ignorePattern = ${ignorePattern ? `new RegExp(${JSON.stringify(ignorePattern)})` : `null`};\n`,
-    `\n`,
-    datastores.replace(/^/gm, `  `),
-    `\n`,
-    `  return {\n`,
-    `    ignorePattern: ignorePattern,\n`,
-    `    packageInformationStores: packageInformationStores,\n`,
-    `    packageLocatorByLocationMap: packageLocatorByLocationMap,\n`,
-    `    packageLocationLengths: packageLocationLengths,\n`,
-    `  };\n`,
-    `}\n`,
-    `\n`,
-    template,
-  ].join(``);
+  data.__info = [
+    `This file is automatically generated. Do not touch it, or risk`,
+    `your modifications being lost. We also recommend you not to read`,
+    `it either without using the @berry/pnp package, as the data layout`,
+    `is entirely unspecified and WILL change from a version to another.`,
+  ];
+
+  data.ignorePattern = settings.ignorePattern;
+
+  return JSON.stringify(data, null, `  `) + `\n`;
+}
+
+function generateExternalReader() {
+  return ``;
+}
+
+export function generateInlinePnpScript(settings: PnpSettings): string {
+  const inlinedData = generateInlinedData(settings);
+  const loaderFile = generateLoader(settings.shebang, inlinedData);
+
+  return loaderFile;
+}
+
+export function generateSplitPnpScript(settings: PnpSettings): {dataFile: string, loaderFile: string} {
+  const externalData = generateExternalData(settings);
+  const loaderFile = generateLoader(settings.shebang, generateExternalReader());
+  
+  return {dataFile: externalData, loaderFile};
 }

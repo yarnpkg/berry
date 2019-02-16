@@ -2,7 +2,7 @@ import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, 
 import {FetchResult, Ident, Locator, Package}                                                                from '@berry/core';
 import {miscUtils, structUtils}                                                                              from '@berry/core';
 import {CwdFS, FakeFS, NodeFS}                                                                               from '@berry/fslib';
-import {PackageInformationStores, LocationBlacklist, generateInlinePnpScript}                                from '@berry/pnp';
+import {PackageRegistry, generateInlinePnpScript}                                                            from '@berry/pnp';
 import {posix}                                                                                               from 'path';
 
 // Some packages do weird stuff and MUST be unplugged. I don't like them.
@@ -57,7 +57,7 @@ export class PnpLinker implements Linker {
 }
 
 class PnpInstaller implements Installer {
-  private readonly packageInformationStores: PackageInformationStores = new Map();
+  private readonly packageRegistry: PackageRegistry = new Map();
   private readonly unpluggedPaths: Set<string> = new Set();
 
   private readonly opts: LinkOptions;
@@ -98,8 +98,8 @@ class PnpInstaller implements Installer {
     const packageLocation = this.normalizeDirectoryPath(packageRawLocation);
     const packageDependencies = new Map();
 
-    const packageInformationStore = this.getPackageInformationStore(key1);
-    packageInformationStore.set(key2, {packageLocation, packageDependencies});
+    const packageStore = this.getPackageStore(key1);
+    packageStore.set(key2, {packageLocation, packageDependencies});
 
     return {
       packageLocation,
@@ -125,17 +125,17 @@ class PnpInstaller implements Installer {
   }
 
   async finalizeInstall() {
-    this.packageInformationStores.set(null, new Map([
+    this.packageRegistry.set(null, new Map([
       [null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)],
     ]));
 
     const shebang = this.opts.project.configuration.get(`pnpShebang`);
     const ignorePattern = this.opts.project.configuration.get(`pnpIgnorePattern`);
-    const blacklistedLocations: LocationBlacklist = new Set();
-    const packageInformationStores = this.packageInformationStores;
+    const blacklistedLocations = new Set<string>();
+    const packageRegistry = this.packageRegistry;
 
     const pnpPath = this.opts.project.configuration.get(`pnpPath`);
-    const pnpScript = generateInlinePnpScript({shebang, ignorePattern, blacklistedLocations, packageInformationStores});
+    const pnpScript = generateInlinePnpScript({shebang, ignorePattern, blacklistedLocations, packageRegistry});
 
     const fs = new NodeFS();
     await fs.changeFilePromise(pnpPath, pnpScript);
@@ -154,20 +154,20 @@ class PnpInstaller implements Installer {
     }
   }
 
-  private getPackageInformationStore(key: string) {
-    let packageInformationStore = this.packageInformationStores.get(key);
+  private getPackageStore(key: string) {
+    let packageStore = this.packageRegistry.get(key);
 
-    if (!packageInformationStore)
-      this.packageInformationStores.set(key, packageInformationStore = new Map());
+    if (!packageStore)
+      this.packageRegistry.set(key, packageStore = new Map());
 
-    return packageInformationStore;
+    return packageStore;
   }
 
   private getPackageInformation(locator: Locator) {
     const key1 = structUtils.requirableIdent(locator);
     const key2 = locator.reference;
 
-    const packageInformationStore = this.packageInformationStores.get(key1);
+    const packageInformationStore = this.packageRegistry.get(key1);
     if (!packageInformationStore)
       throw new Error(`Assertion failed: The package information store should have been available (for ${structUtils.prettyIdent(this.opts.project.configuration, locator)})`);
 
@@ -179,13 +179,13 @@ class PnpInstaller implements Installer {
   }
 
   private getDiskInformation(path: string) {
-    const packageInformationStore = this.getPackageInformationStore(`@@disk`);
+    const packageStore = this.getPackageStore(`@@disk`);
     const normalizedPath = this.normalizeDirectoryPath(path);
 
-    let diskInformation = packageInformationStore.get(normalizedPath);
+    let diskInformation = packageStore.get(normalizedPath);
 
     if (!diskInformation) {
-      packageInformationStore.set(normalizedPath, diskInformation = {
+      packageStore.set(normalizedPath, diskInformation = {
         packageLocation: normalizedPath,
         packageDependencies: new Map(),
       });

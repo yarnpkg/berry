@@ -1,9 +1,3 @@
-type TopLevelLocator = {name: null, reference: null};
-type BlacklistedLocator = {name: '\u{0000}', reference: '\u{0000}'};
-
-type PackageLocator = {name: string, reference: string} | TopLevelLocator | BlacklistedLocator;
-type PackageInformation = {packageLocation?: string, packageDependencies: Map<string, string>};
-
 type ResolveToUnqualifiedOptions = {considerBuiltins: boolean};
 type ResolveUnqualifiedOptions = {extensions: Array<string>};
 
@@ -37,6 +31,8 @@ import NativeModule                 from 'module';
 import path                         from 'path';
 import StringDecoder                from 'string_decoder';
 
+import {PackageInformation, PackageLocator, RuntimeState} from './types';
+
 // @ts-ignore
 const Module: ModuleInterfaceStatic = NativeModule;
 
@@ -59,7 +55,6 @@ const backwardSlashRegExp = /\\/g;
 
 // We only instantiate one of those so that we can use strict-equal comparisons
 const topLevelLocator = {name: null, reference: null};
-const blacklistedLocator = {name: `\u{0000}`, reference: `\u{0000}`};
 
 // Used for compatibility purposes - cf setupCompatibilityLayer
 const patchedModules: Array<[RegExp, (issuer: PackageLocator | null, exports: any) => any]> = [];
@@ -70,32 +65,15 @@ const fallbackLocators: Array<PackageLocator> = [topLevelLocator];
  * the $$DYNAMICALLY_GENERATED_CODE function.
  */
 
-// Used to detect whether a path should use the fallback even if within the dependency tree
-let ignorePattern: RegExp | null;
+// @ts-ignore
+const runtimeState = $$SETUP_STATE(topLevelLocator);
 
-// All the package informations will be stored there; key1 = package name, key2 = package reference
-let packageInformationStores: Map<string | null, Map<string | null, PackageInformation>>;
-
-// We store here the package locators that "own" specific locations on the disk
-let packageLocatorByLocationMap: Map<string, PackageLocator>;
-
-// We store a sorted arrays of the possible lengths that we need to check
-let packageLocationLengths: Array<number>;
-
-declare const $$DYNAMICALLY_GENERATED_CODE: (
-  topLevelLocator: PackageLocator,
-  blacklistedLocator: PackageLocator
-) => any;
-
-({
+const {
   ignorePattern,
-  packageInformationStores,
-  packageLocatorByLocationMap,
+  packageRegistry,
+  packageLocatorsByLocations,
   packageLocationLengths,
-} = $$DYNAMICALLY_GENERATED_CODE(
-  topLevelLocator,
-  blacklistedLocator,
-));
+} = runtimeState as RuntimeState;
 
 /**
  * Used to disable the resolution hooks (for when we want to fallback to the previous resolution - we then need
@@ -311,7 +289,7 @@ export const topLevel = topLevelLocator;
  */
 
 export function getPackageInformation({name, reference}: PackageLocator): PackageInformation | null {
-  const packageInformationStore = packageInformationStores.get(name);
+  const packageInformationStore = packageRegistry.get(name);
 
   if (!packageInformationStore)
     return null;
@@ -344,7 +322,7 @@ export function findPackageLocator(location: string): PackageLocator | null {
     from += 1;
 
   for (let t = from; t < packageLocationLengths.length; ++t) {
-    const locator = packageLocatorByLocationMap.get(relativeLocation.substr(0, packageLocationLengths[t]));
+    const locator = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]));
     if (!locator)
       continue;
 
@@ -364,7 +342,7 @@ export function findPackageLocator(location: string): PackageLocator | null {
     // paths, we're able to print a more helpful error message that points out that a third-party package is doing
     // something incompatible!
 
-    if (locator === blacklistedLocator) {
+    if (locator === null) {
       throw makeError(
        `BLACKLISTED`,
         [
@@ -790,7 +768,7 @@ export function setupCompatibilityLayer() {
   // additional fallback entries for common shared configs.
 
   for (const name of [`react-scripts`]) {
-    const packageInformationStore = packageInformationStores.get(name);
+    const packageInformationStore = packageRegistry.get(name);
     if (packageInformationStore) {
       for (const reference of packageInformationStore.keys()) {
         if (reference === null)

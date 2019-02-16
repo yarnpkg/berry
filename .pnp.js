@@ -8,14 +8,14 @@ try {
 
 var __non_webpack_module__ = module;
 
-function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
+function $$SETUP_STATE(topLevelLocator) {
   var path = require('path');
 
-  var ignorePattern, packageInformationStores, packageLocatorByLocationMap, packageLocationLengths;
+  var runtimeState = {};
 
-  ignorePattern = null;
-
-  packageInformationStores = new Map([
+  runtimeState.ignorePattern = null;
+  
+  runtimeState.packageRegistry = new Map([
     [null, new Map([
       [null, {
         packageLocation: path.resolve(__dirname, "./"),
@@ -11372,7 +11372,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ])],
   ]);
   
-  packageLocatorByLocationMap = new Map([
+  runtimeState.packageLocatorsByLocations = new Map([
     ["./", topLevelLocator],
     ["./.yarn/cache/@babel-code-frame-npm-7.0.0-9215195d5cc804c7cc3461c8ead201d29b9b4b586ee500fcf0ff5b7e64a5beb7.zip/node_modules/@babel/code-frame/", {"name":"@babel/code-frame","reference":"npm:7.0.0"}],
     ["./.yarn/cache/@babel-core-npm-7.2.2-f1aa728a83acde324a5fa71810f5331eef5aa77f7aca69e02dbdbfc928c90910.zip/node_modules/@babel/core/", {"name":"@babel/core","reference":"npm:7.2.2"}],
@@ -12539,7 +12539,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     ["./.yarn/cache/yoga-dom-npm-0.0.14-6ef3820fc7174eae2fc4f1f10c18fbae62b2e71d456ff6164f2f1b5f2d17e41f.zip/node_modules/yoga-dom/", {"name":"yoga-dom","reference":"npm:0.0.14"}],
   ]);
   
-  packageLocationLengths = [
+  runtimeState.packageLocationLengths = [
     220,
     204,
     202,
@@ -12638,12 +12638,7 @@ function $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator) {
     2,
   ];
   
-  return {
-    ignorePattern: ignorePattern,
-    packageInformationStores: packageInformationStores,
-    packageLocatorByLocationMap: packageLocatorByLocationMap,
-    packageLocationLengths: packageLocationLengths,
-  };
+  return runtimeState;
 }
 
 module.exports =
@@ -14859,7 +14854,6 @@ const isDirRegExp = /\/$/;
 const backwardSlashRegExp = /\\/g;
 // We only instantiate one of those so that we can use strict-equal comparisons
 const topLevelLocator = { name: null, reference: null };
-const blacklistedLocator = { name: `\u{0000}`, reference: `\u{0000}` };
 // Used for compatibility purposes - cf setupCompatibilityLayer
 const patchedModules = [];
 const fallbackLocators = [topLevelLocator];
@@ -14867,20 +14861,9 @@ const fallbackLocators = [topLevelLocator];
  * The setup code will be injected here. The tables listed below are guaranteed to be filled after the call to
  * the $$DYNAMICALLY_GENERATED_CODE function.
  */
-// Used to detect whether a path should use the fallback even if within the dependency tree
-let ignorePattern;
-// All the package informations will be stored there; key1 = package name, key2 = package reference
-let packageInformationStores;
-// We store here the package locators that "own" specific locations on the disk
-let packageLocatorByLocationMap;
-// We store a sorted arrays of the possible lengths that we need to check
-let packageLocationLengths;
-({
-    ignorePattern,
-    packageInformationStores,
-    packageLocatorByLocationMap,
-    packageLocationLengths,
-} = $$DYNAMICALLY_GENERATED_CODE(topLevelLocator, blacklistedLocator));
+// @ts-ignore
+const runtimeState = $$SETUP_STATE(topLevelLocator);
+const { ignorePattern, packageRegistry, packageLocatorsByLocations, packageLocationLengths, } = runtimeState;
 /**
  * Used to disable the resolution hooks (for when we want to fallback to the previous resolution - we then need
  * a way to "reset" the environment temporarily)
@@ -15046,7 +15029,7 @@ exports.topLevel = topLevelLocator;
  * Gets the package information for a given locator. Returns null if they cannot be retrieved.
  */
 function getPackageInformation({ name, reference }) {
-    const packageInformationStore = packageInformationStores.get(name);
+    const packageInformationStore = packageRegistry.get(name);
     if (!packageInformationStore)
         return null;
     const packageInformation = packageInformationStore.get(reference);
@@ -15070,7 +15053,7 @@ function findPackageLocator(location) {
     while (from < packageLocationLengths.length && packageLocationLengths[from] > relativeLocation.length)
         from += 1;
     for (let t = from; t < packageLocationLengths.length; ++t) {
-        const locator = packageLocatorByLocationMap.get(relativeLocation.substr(0, packageLocationLengths[t]));
+        const locator = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]));
         if (!locator)
             continue;
         // Ensures that the returned locator isn't a blacklisted one.
@@ -15088,7 +15071,7 @@ function findPackageLocator(location) {
         // dependencies based on the path of the file that makes the require calls. But since we've blacklisted those
         // paths, we're able to print a more helpful error message that points out that a third-party package is doing
         // something incompatible!
-        if (locator === blacklistedLocator) {
+        if (locator === null) {
             throw makeError(`BLACKLISTED`, [
                 `A package has been resolved through a blacklisted path - this is usually caused by one of your tool`,
                 `calling "realpath" on the return value of "require.resolve". Since the returned values use symlinks to`,
@@ -15392,7 +15375,7 @@ function setupCompatibilityLayer() {
     // likely get fixed at some point, but it'll take time and in the meantime we'll just add
     // additional fallback entries for common shared configs.
     for (const name of [`react-scripts`]) {
-        const packageInformationStore = packageInformationStores.get(name);
+        const packageInformationStore = packageRegistry.get(name);
         if (packageInformationStore) {
             for (const reference of packageInformationStore.keys()) {
                 if (reference === null)
