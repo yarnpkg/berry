@@ -1,3 +1,9 @@
+// Note: most of those types are useless for most users. Just check the
+// PnpSettings and PnpApi types at the end and you'll be fine.
+//
+// Apart from that, note that the "Data"-suffixed types are the ones stored
+// within the state files (hence why they only use JSON datatypes).
+
 export type PackageLocator = {name: string, reference: string} | {name: null, reference: null};
 
 export type PackageInformation = {packageLocation: string, packageDependencies: Map<string, string>};
@@ -12,6 +18,13 @@ export type PackageRegistryData = Array<[string | null, PackageStoreData]>;
 export type LocationBlacklistData = Array<string>;
 export type LocationLengthData = Array<number>;
 
+export type RuntimeState = {
+  ignorePattern: RegExp | null,
+  packageRegistry: PackageRegistry,
+  packageLocatorsByLocations: Map<string, PackageLocator>;
+  packageLocationLengths: Array<number>,
+};
+
 export type PnpSettings = {
   shebang?: string | null,
   ignorePattern?: string | null,
@@ -19,9 +32,14 @@ export type PnpSettings = {
   packageRegistry: PackageRegistry,
 };
 
-export type RuntimeState = {
-  ignorePattern: RegExp | null,
-  packageRegistry: PackageRegistry,
-  packageLocatorsByLocations: Map<string, PackageLocator>;
-  packageLocationLengths: Array<number>,
+export type PnpApi = {
+  VERSIONS: {std: number, [key: string]: number},
+  topLevel: {name: null, reference: null},
+
+  getPackageInformation: (locator: PackageLocator) => PackageInformation | null,
+  findPackageLocator: (location: string) => PackageLocator | null,
+
+  resolveToUnqualified: (request: string, issuer: string | null, opts?: {considerBuiltins?: boolean}) => string | null,
+  resolveUnqualified: (unqualified: string, opts?: {extensions?: Array<string>}) => string,
+  resolveRequest: (request: string, issuer: string | null, opts?: {considerBuiltins?: boolean, extensions?: Array<string>}) => string | null,
 };

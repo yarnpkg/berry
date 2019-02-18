@@ -16,7 +16,7 @@ function generateLoader(shebang: string | null | undefined, datastores: string) 
     `\n`,
     `var __non_webpack_module__ = module;\n`,
     `\n`,
-    `function $$SETUP_STATE(topLevelLocator) {\n`,
+    `function $$SETUP_STATE() {\n`,
     `  var path = require('path');\n`,
     `\n`,
     `  var runtimeState = {};\n`,
@@ -110,14 +110,10 @@ function generateInlinedData(settings: PnpSettings) {
     code += `  [${JSON.stringify(blacklistedLocation)}, null],\n`;
   for (const [packageName, packageInformationStoreData] of packageRegistryData) {
     for (const [packageReference, {packageLocation}] of packageInformationStoreData) {
-      if (packageName !== null) {
-        code += `  [${JSON.stringify(packageLocation)}, ${JSON.stringify({
-          name: packageName,
-          reference: packageReference,
-        })}],\n`;
-      } else {
-        code += `  [${JSON.stringify(packageLocation)}, topLevelLocator],\n`;
-      }
+      code += `  [${JSON.stringify(packageLocation)}, ${JSON.stringify({
+        name: packageName,
+        reference: packageReference,
+      })}],\n`;
     }
   }
   code += `]);\n`;
@@ -179,11 +175,7 @@ function generateExternalReader(dataLocation: string) {
   code += `  var packageName = entry[0], store = entry[1];\n`
   code += `  store.forEach(function (entry) {\n`;
   code += `    var packageReference = entry[0], information = entry[1];\n`;
-  code += `    if (packageName !== null && packageReference !== null) {\n`;
-  code += `      runtimeState.packageLocatorsByLocations.set(information.packageLocation, {name: packageName, reference: packageReference});\n`;
-  code += `    } else {\n`;
-  code += `      runtimeState.packageLocatorsByLocations.set(information.packageLocation, topLevelLocator);\n`;
-  code += `    }\n;`
+  code += `    runtimeState.packageLocatorsByLocations.set(information.packageLocation, {name: packageName, reference: packageReference});\n`;
   code += `  });\n`;
   code += `});\n`
 
