@@ -1010,6 +1010,7 @@ __metadata:
     "@types/supports-color": "npm:^5.3.0"
     "@types/tar": "npm:^4.0.0"
     "@types/tmp": "npm:^0.0.33"
+    "@types/treeify": "npm:^1.0.0"
     "@types/tunnel": "npm:^0.0.0"
     ts-node: "npm:^7.0.1"
   languageName: unknown
@@ -1049,6 +1050,7 @@ __metadata:
     inquirer: "npm:^6.2.0"
     joi: "npm:^13.6.0"
     semver: "npm:^5.6.0"
+    treeify: "npm:^1.1.0"
   languageName: unknown
   linkType: soft
 
@@ -1674,6 +1676,13 @@ __metadata:
   version: 2.3.4
   resolution: "@types/tough-cookie@npm:2.3.4"
   checksum: 22185cbefa6794203951770c7b8a7deeb286374f789a4dcfeceadd24747980e31e703969bfc9424c96f1a29d58931417b22aaf8f1aa518efb801bd3bdc69e2d6
+  languageName: node
+  linkType: hard
+
+"@types/treeify@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@types/treeify@npm:1.0.0"
+  checksum: 785cc3ab4c3fde0a4075b6ceb33bbbba54dcc8717baf749a44e10961ce8b540434ca24a1257561335a6abfbbbcbdbf207ec8a953778915861119506b0cc2243d
   languageName: node
   linkType: hard
 
@@ -9707,6 +9716,13 @@ __metadata:
   dependencies:
     loader-utils: "npm:^1.0.2"
   checksum: acef590f443308ffb05cb5e396b70de0ca29b9606eee6bdf696c3d3323f763eff1e5b748c506d1f1eb2c7e91b73d622342d4ec3b829e0493efc5799ac7c84af4
+  languageName: node
+  linkType: hard
+
+"treeify@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "treeify@npm:1.1.0"
+  checksum: 69c115616f13c051387c3bc0b3d137ef47865419b6238df2df129de1920eb6cb49c4018a52dcd2799aa413c02e70e2c33bf7e89654168d54e1da91a6a66caac9
   languageName: node
   linkType: hard
 

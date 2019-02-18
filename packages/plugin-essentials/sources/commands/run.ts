@@ -33,7 +33,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     });
 
     if (report.hasErrors())
-      return 1;
+      return report.exitCode();
 
     // First we check to see whether a script exist inside the current workspace
     // for the given name

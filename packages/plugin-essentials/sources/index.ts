@@ -16,6 +16,7 @@ import node              from './commands/node';
 import remove            from './commands/remove';
 import run               from './commands/run';
 import up                from './commands/up';
+import why               from './commands/why';
 
 const plugin: Plugin = {
   commands: [
@@ -35,6 +36,7 @@ const plugin: Plugin = {
     remove,
     run,
     up,
+    why,
   ],
 };
 
