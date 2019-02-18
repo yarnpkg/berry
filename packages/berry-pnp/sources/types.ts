@@ -18,10 +18,18 @@ export type PackageRegistryData = Array<[string | null, PackageStoreData]>;
 export type LocationBlacklistData = Array<string>;
 export type LocationLengthData = Array<number>;
 
+export type SerializedState = {
+  ignorePatternData: string | null,
+  packageRegistryData: PackageRegistryData,
+  locationBlacklistData: LocationBlacklistData,
+  locationLengthData: LocationLengthData,
+};
+
 export type RuntimeState = {
+  basePath: string,
   ignorePattern: RegExp | null,
   packageRegistry: PackageRegistry,
-  packageLocatorsByLocations: Map<string, PackageLocator>;
+  packageLocatorsByLocations: Map<string, PackageLocator | null>;
   packageLocationLengths: Array<number>,
 };
 

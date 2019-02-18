@@ -20,7 +20,7 @@ concierge
 
     const hookConfig = {
       context: basedir,
-      entry: `@berry/pnp/sources/loader/entryPoint.ts`,
+      entry: `@berry/pnp/sources/loader/_entryPoint.ts`,
       output: {
         filename: `hook-bundle.js`,
         path: path.resolve(basedir, `lib`),

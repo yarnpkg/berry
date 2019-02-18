@@ -2,7 +2,7 @@ import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, 
 import {FetchResult, Ident, Locator, Package}                                                                from '@berry/core';
 import {miscUtils, structUtils}                                                                              from '@berry/core';
 import {CwdFS, FakeFS, xfs}                                                                                  from '@berry/fslib';
-import {PackageRegistry, generateInlinePnpScript, generateSplitPnpScript}                                    from '@berry/pnp';
+import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@berry/pnp';
 import {posix}                                                                                               from 'path';
 
 // Some packages do weird stuff and MUST be unplugged. I don't like them.
@@ -136,7 +136,7 @@ class PnpInstaller implements Installer {
     const pnpSettings = {shebang, ignorePattern, blacklistedLocations, packageRegistry};
 
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
-      const loaderFile = generateInlinePnpScript(pnpSettings);
+      const loaderFile = generateInlinedScript(pnpSettings);
 
       await xfs.changeFilePromise(pnpPath, loaderFile);
       await xfs.chmodPromise(pnpPath, 0o755);
@@ -144,7 +144,7 @@ class PnpInstaller implements Installer {
       await xfs.removePromise(pnpDataPath);
     } else {
       const dataLocation = posix.relative(posix.dirname(pnpPath), pnpDataPath);
-      const {dataFile, loaderFile} = generateSplitPnpScript({... pnpSettings, dataLocation});
+      const {dataFile, loaderFile} = generateSplitScript({... pnpSettings, dataLocation});
 
       await xfs.changeFilePromise(pnpPath, loaderFile);
       await xfs.chmodPromise(pnpPath, 0o755);

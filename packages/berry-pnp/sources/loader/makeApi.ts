@@ -1,5 +1,5 @@
 import fs                                                         from 'fs';
-import NativeModule                                               from 'module';
+import Module                                                     from 'module';
 import path                                                       from 'path';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types';
@@ -9,13 +9,9 @@ import {makeError}                                                from './intern
 export type MakeApiOptions = {
   compatibilityMode?: boolean,
   pnpapiResolution: string,
-  basePath: string,
 };
 
 export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpApi {
-  // @ts-ignore
-  const Module: ModuleInterfaceStatic = NativeModule;
-
   // @ts-ignore
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding('natives')));
 
@@ -269,7 +265,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function findPackageLocator(location: string): PackageLocator | null {
-    let relativeLocation = normalizePath(path.relative(opts.basePath, location));
+    let relativeLocation = normalizePath(path.relative(runtimeState.basePath, location));
 
     if (!relativeLocation.match(isStrictRegExp))
       relativeLocation = `./${relativeLocation}`;
@@ -431,7 +427,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       // It's a bit of a hack, but it improves compatibility with the existing Node ecosystem. Hopefully we should eventually be able
       // to kill this logic and become stricter once pnp gets enough traction and the affected packages fix themselves.
 
-      if (issuerLocator !== topLevelLocator) {
+      if (issuerLocator.name !== null) {
         for (let t = 0, T = fallbackLocators.length; dependencyReference === undefined && t < T; ++t) {
           const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
           dependencyReference = fallbackInformation.packageDependencies.get(dependencyName);
@@ -442,7 +438,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       if (!dependencyReference) {
         if (dependencyReference === null) {
-          if (issuerLocator === topLevelLocator) {
+          if (issuerLocator.name === null) {
             throw makeError(
               `MISSING_PEER_DEPENDENCY`,
               `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
@@ -456,7 +452,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
             );
           }
         } else {
-          if (issuerLocator === topLevelLocator) {
+          if (issuerLocator.name === null) {
             throw makeError(
               `UNDECLARED_DEPENDENCY`,
               `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
@@ -488,7 +484,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       // Now that we know which package we should resolve to, we only have to find out the file location
 
-      const dependencyLocation = path.resolve(opts.basePath, dependencyInformation.packageLocation);
+      const dependencyLocation = path.resolve(runtimeState.basePath, dependencyInformation.packageLocation);
 
       if (subPath) {
         unqualifiedPath = path.resolve(dependencyLocation, subPath);
