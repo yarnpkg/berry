@@ -388,10 +388,15 @@ export class Configuration {
   }
 
   async inherits(source: string) {
-    const content = await xfs.readFilePromise(source, `utf8`);
-    const data = parseSyml(content);
+    try {
+      const content = await xfs.readFilePromise(source, `utf8`);
+      const data = parseSyml(content);
 
-    this.use(source, data, posix.dirname(source));
+      this.use(source, data, posix.dirname(source));
+    } catch (error) {
+      error.message += ` (in ${source})`;
+      throw error;
+    }
   }
 
   use(source: string, data: {[key: string]: unknown}, folder: string) {
