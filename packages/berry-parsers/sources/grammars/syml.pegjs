@@ -20,7 +20,7 @@ PropertyStatement
   = Samedent "#" (!EOL .)+ EOL+ { return {} }
   / Samedent property:Name B? ":" B? value:Expression { return {[property]: value} }
   // Compatibility with the old lockfile format (key-values without a ":")
-  / Samedent property:LegacyName B value:Literal EOL+ { return {[property]: value} }
+  / Samedent property:LegacyName B value:LegacyLiteral EOL+ { return {[property]: value} }
   // Compatibility with the old lockfile format (multiple keys for a same value)
   / Samedent property:Name others:(B? "," B? other:Name { return other })+ B? ":" B? value:Expression { return Object.assign({}, ... [property].concat(others).map(property => ({[property]: value}))) }
 
@@ -53,6 +53,11 @@ Literal
   = null
   / string
   / pseudostring
+
+LegacyLiteral
+  = null
+  / string
+  / pseudostringLegacy
 
 /**
  */

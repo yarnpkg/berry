@@ -631,7 +631,7 @@ function peg$parse(input, options) {
           if (s2 !== peg$FAILED) {
             s3 = peg$parseB();
             if (s3 !== peg$FAILED) {
-              s4 = peg$parseLiteral();
+              s4 = peg$parseLegacyLiteral();
               if (s4 !== peg$FAILED) {
                 s5 = [];
                 s6 = peg$parseEOL();
@@ -1128,6 +1128,20 @@ function peg$parse(input, options) {
       s0 = peg$parsestring();
       if (s0 === peg$FAILED) {
         s0 = peg$parsepseudostring();
+      }
+    }
+
+    return s0;
+  }
+
+  function peg$parseLegacyLiteral() {
+    var s0;
+
+    s0 = peg$parsenull();
+    if (s0 === peg$FAILED) {
+      s0 = peg$parsestring();
+      if (s0 === peg$FAILED) {
+        s0 = peg$parsepseudostringLegacy();
       }
     }
 
