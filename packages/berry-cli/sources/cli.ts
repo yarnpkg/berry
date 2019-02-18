@@ -19,7 +19,7 @@ function runBinary(path: string) {
       stdio: `inherit`,
       env: {
         ... process.env,
-        BERRY_IGNORE_PATH: `1`,
+        YARN_IGNORE_PATH: `1`,
       }
     });
   } else {
@@ -27,7 +27,7 @@ function runBinary(path: string) {
       stdio: `inherit`,
       env: {
         ... process.env,
-        BERRY_IGNORE_PATH: `1`,
+        YARN_IGNORE_PATH: `1`,
       }
     });
   }
