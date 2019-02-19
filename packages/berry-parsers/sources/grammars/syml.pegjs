@@ -66,7 +66,7 @@ pseudostring "pseudostring"
   = [^\r\n\t ?:,\][{}#&*!|>'"%@`-] (B? [^\r\n\t ,\][{}:#])* { return text().replace(/^ *| *$/g, '') }
 
 pseudostringLegacy
-  = "--"? [a-zA-Z\/] [^\r\n\t :,]* { return text().replace(/^ *| *$/g, '') }
+  = "--"? [a-zA-Z\/0-9] [^\r\n\t :,]* { return text().replace(/^ *| *$/g, '') }
 
 /**
  * String parsing

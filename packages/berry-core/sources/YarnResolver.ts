@@ -11,7 +11,7 @@ const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ... args: Array<string
   // This one come from Git urls
   [/^git\+https:\/\/.*\.git#.*$/, (version, $0) => $0],
   // These ones come from the npm registry
-  [/^https?:\/\/[^\/]+\/([^\/]+)\/-\/\1-[^\/]+\.tgz(?:#|$)/, version => `npm:${version}`],
+  [/^https?:\/\/[^\/]+\/(?:@[^\/]+\/)?([^\/]+)\/-\/\1-[^\/]+\.tgz(?:#|$)/, version => `npm:${version}`],
   // This one is from the old Yarn offline mirror - we assume they came from npm
   [/^[^\/]+\.tgz#[0-9a-f]+$/, version => `npm:${version}`],
 ];

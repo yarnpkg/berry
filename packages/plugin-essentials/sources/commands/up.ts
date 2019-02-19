@@ -1,10 +1,10 @@
-import {WorkspaceRequiredError}                                                                  from '@berry/cli';
-import {Cache, Configuration, Descriptor, MessageName, Plugin, Project, StreamReport, Workspace} from '@berry/core';
-import {structUtils}                                                                             from '@berry/core';
-import inquirer                                                                                  from 'inquirer';
-import {Readable, Writable}                                                                      from 'stream';
+import {WorkspaceRequiredError}                                                                               from '@berry/cli';
+import {Cache, Configuration, Descriptor, LightReport, MessageName, Plugin, Project, StreamReport, Workspace} from '@berry/core';
+import {structUtils}                                                                                          from '@berry/core';
+import inquirer                                                                                               from 'inquirer';
+import {Readable, Writable}                                                                                   from 'stream';
 
-import * as suggestUtils                                                                         from '../suggestUtils';
+import * as suggestUtils                                                                                      from '../suggestUtils';
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
@@ -89,11 +89,11 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   
     const allSuggestions = await Promise.all(allSuggestionsPromises);
   
-    const checkReport = await StreamReport.start({configuration, stdout}, async report => {
+    const checkReport = await LightReport.start({configuration, stdout}, async report => {
       for (const [workspace, target, existing, suggestions] of allSuggestions) {
         if (suggestions.length === 0) {
           report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range`);
-        } else if (suggestions.length > 1) {
+        } else if (suggestions.length > 1 && !interactive) {
           report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} has multiple possible upgrade strategies; use -i to disambiguate manually`);
         }
       }

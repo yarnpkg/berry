@@ -21,6 +21,15 @@ export class Workspace {
   public readonly cwd: string;
 
   // @ts-ignore: This variable is set during the setup process
+  public readonly relativeCwd: string;
+
+  // @ts-ignore: This variable is set during the setup process
+  public readonly anchoredDescriptor: Descriptor;
+
+  // @ts-ignore: This variable is set during the setup process
+  public readonly anchoredLocator: Locator;
+
+  // @ts-ignore: This variable is set during the setup process
   public readonly locator: Locator;
 
   // @ts-ignore: This variable is set during the setup process
@@ -42,13 +51,20 @@ export class Workspace {
     this.manifest = await Manifest.find(this.cwd);
 
     // We use posix.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path
-    const relativePath = posix.relative(this.project.cwd, this.cwd);
+    // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
+    this.relativeCwd = posix.relative(this.project.cwd, this.cwd) || `.`;
 
-    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashWorkspaceCwd(relativePath)}`);
+    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashWorkspaceCwd(this.relativeCwd)}`);
     const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
 
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.locator = structUtils.makeLocator(ident, reference);
+
+    // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
+    this.anchoredDescriptor = structUtils.makeDescriptor(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
+
+    // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
+    this.anchoredLocator = structUtils.makeLocator(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
 
     for (const definition of this.manifest.workspaceDefinitions) {
       const relativeCwds = await globby(definition.pattern, {
@@ -96,18 +112,6 @@ export class Workspace {
       return semver.satisfies(this.manifest.version, pathname);
 
     return false;
-  }
-
-  get relativeCwd() {
-    return posix.relative(this.project.cwd, this.cwd) || `.`;
-  }
-
-  get anchoredDescriptor() {
-    return structUtils.makeDescriptor(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
-  }
-
-  get anchoredLocator() {
-    return structUtils.makeLocator(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
   }
 
   computeCandidateName() {

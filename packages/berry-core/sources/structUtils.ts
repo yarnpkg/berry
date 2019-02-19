@@ -81,6 +81,13 @@ export function devirtualizeDescriptor(descriptor: Descriptor): Descriptor {
   return makeDescriptor(descriptor, descriptor.range.replace(/^.*#/, ``));
 }
 
+export function devirtualizeLocator(locator: Locator): Locator {
+  if (!isVirtualLocator(locator))
+    throw new Error(`Not a virtual descriptor`);
+
+  return makeLocator(locator, locator.reference.replace(/^.*#/, ``));
+}
+
 export function areIdentsEqual(a: Ident, b: Ident) {
   return a.identHash === b.identHash;
 }
@@ -248,13 +255,20 @@ export function prettyIdent(configuration: Configuration, ident: Ident) {
   }
 }
 
+function prettyRangeNoColor(range: string): string {
+  if (range.startsWith(VIRTUAL_PROTOCOL)) {
+    const nested = prettyRangeNoColor(range.substr(range.indexOf(`#`) + 1));
+    const abbrev = range.substr(VIRTUAL_PROTOCOL.length, VIRTUAL_ABBREVIATE);
+
+    // I'm not satisfied of how the virtual packages appear in the output
+    return false ? `${nested} (virtual:${abbrev})` : nested;
+  } else {
+    return range.replace(/\?.*/, `?[...]`);
+  }
+}
+
 export function prettyRange(configuration: Configuration, range: string) {
-  if (range.startsWith(VIRTUAL_PROTOCOL))
-    range = range.substr(0, VIRTUAL_PROTOCOL.length + VIRTUAL_ABBREVIATE);
-
-  range = range.replace(/\?.*/, `?[...]`);
-
-  return `${configuration.format(range, `#00afaf`)}`;
+  return `${configuration.format(prettyRangeNoColor(range), `#00afaf`)}`;
 }
 
 export function prettyDescriptor(configuration: Configuration, descriptor: Descriptor) {
@@ -262,12 +276,7 @@ export function prettyDescriptor(configuration: Configuration, descriptor: Descr
 }
 
 export function prettyReference(configuration: Configuration, reference: string) {
-  if (reference.startsWith(VIRTUAL_PROTOCOL))
-    reference = reference.substr(0, VIRTUAL_PROTOCOL.length + VIRTUAL_ABBREVIATE);
-  
-  reference = reference.replace(/\?.*/, `?[...]`);
-
-  return `${configuration.format(reference, `#87afff`)}`;
+  return `${configuration.format(prettyRangeNoColor(reference), `#87afff`)}`;
 }
 
 export function prettyLocator(configuration: Configuration, locator: Locator) {

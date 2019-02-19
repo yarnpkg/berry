@@ -25,6 +25,6 @@
         "typescript": "^3.2.4",
         "val-loader": "^1.1.1",
         "webpack-virtual-modules": "^0.1.10",
-        "webpack": "^4.18.0"
+        "webpack": "^4.28.4"
     }
 }

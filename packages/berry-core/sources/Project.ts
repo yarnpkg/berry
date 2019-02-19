@@ -189,13 +189,10 @@ export class Project {
     const workspace = new Workspace(workspaceCwd, {project: this});
     await workspace.setup();
 
-    if (this.workspacesByLocator.has(workspace.locator.locatorHash))
-      throw new Error(`Duplicate workspace`);
-
     this.workspaces.push(workspace);
 
     this.workspacesByCwd.set(workspaceCwd, workspace);
-    this.workspacesByLocator.set(workspace.locator.locatorHash, workspace);
+    this.workspacesByLocator.set(workspace.anchoredLocator.locatorHash, workspace);
 
     let byIdent = this.workspacesByIdent.get(workspace.locator.identHash);
     if (!byIdent)
@@ -224,6 +221,25 @@ export class Project {
     const workspace = this.tryWorkspaceByCwd(workspaceCwd);
     if (!workspace)
       throw new Error(`Workspace not found (${workspaceCwd})`);
+
+    return workspace;
+  }
+
+  tryWorkspaceByLocator(locator: Locator) {
+    if (structUtils.isVirtualLocator(locator))
+      locator = structUtils.devirtualizeLocator(locator);
+
+    const workspace = this.workspacesByLocator.get(locator.locatorHash);
+    if (!workspace)
+      return null;
+
+    return workspace;
+  }
+
+  getWorkspaceByLocator(locator: Locator) {
+    const workspace = this.tryWorkspaceByLocator(locator);
+    if (!workspace)
+      throw new Error(`Workspace not found (${structUtils.prettyLocator(this.configuration, locator)})`);
 
     return workspace;
   }
@@ -330,9 +346,11 @@ export class Project {
     const allPackages = new Map<LocatorHash, Package>();
     const allResolutions = new Map<DescriptorHash, LocatorHash>();
 
+    const haveBeenAliased = new Set<DescriptorHash>();
+
     let mustBeResolved = new Set<DescriptorHash>();
 
-    for (const workspace of this.workspacesByLocator.values()) {
+    for (const workspace of this.workspaces) {
       const workspaceDescriptor = workspace.anchoredDescriptor;
 
       allDescriptors.set(workspaceDescriptor.descriptorHash, workspaceDescriptor);
@@ -480,12 +498,12 @@ export class Project {
         const dependencies = pkg.dependencies = new Map();
         const peerDependencies = pkg.peerDependencies = new Map();
 
-        for (const descriptor of rawDependencies.values()) {
+        for (const descriptor of miscUtils.sortMap(rawDependencies.values(), descriptor => structUtils.stringifyIdent(descriptor))) {
           const normalizedDescriptor = resolver.bindDescriptor(descriptor, locator, resolverOptions);
           dependencies.set(normalizedDescriptor.identHash, normalizedDescriptor);
         }
 
-        for (const descriptor of rawPeerDependencies.values())
+        for (const descriptor of miscUtils.sortMap(rawPeerDependencies.values(), descriptor => structUtils.stringifyIdent(descriptor)))
           peerDependencies.set(descriptor.identHash, descriptor);
 
         return [pkg.locatorHash, pkg] as [LocatorHash, Package];
@@ -523,8 +541,80 @@ export class Project {
         for (const descriptor of sortedDependencies) {
           allDescriptors.set(descriptor.descriptorHash, descriptor);
           mustBeResolved.add(descriptor.descriptorHash);
+
+          // We must check and make sure that the descriptor didn't get aliased	
+          // to something else	
+          const aliasHash = this.resolutionAliases.get(descriptor.descriptorHash);
+          if (aliasHash === undefined)	
+            continue;	
+
+           // It doesn't cost us much to support the case where a descriptor is	
+          // equal to its own alias (which should mean "no alias")	
+          if (descriptor.descriptorHash === aliasHash)	
+            continue;	
+
+           const alias = this.storedDescriptors.get(aliasHash);	
+          if (!alias)	
+            throw new Error(`Assertion failed: The alias should have been registered`);	
+
+           // If it's already been "resolved" (in reality it will be the temporary	
+          // resolution we've set in the next few lines) we simply must skip it	
+          if (allResolutions.has(descriptor.descriptorHash))	
+            continue;	
+
+           // Temporarily set an invalid resolution so that it won't be resolved	
+          // multiple times if it is found multiple times in the dependency	
+          // tree (this is only temporary, we will replace it by the actual	
+          // resolution after we've finished resolving everything)	
+          allResolutions.set(descriptor.descriptorHash, `temporary` as LocatorHash);	
+
+           // We can now replace the descriptor by its alias in the list of	
+          // descriptors that must be resolved	
+          mustBeResolved.delete(descriptor.descriptorHash);	
+          mustBeResolved.add(aliasHash);	
+
+          allDescriptors.set(aliasHash, alias);	
+
+          haveBeenAliased.add(descriptor.descriptorHash);
         }
       }
+    }
+
+    // Each package that should have been resolved but was skipped because it	
+    // was aliased will now see the resolution for its alias propagated to it	
+
+     while (haveBeenAliased.size > 0) {	
+      let hasChanged = false;	
+
+       for (const descriptorHash of haveBeenAliased) {	
+        const descriptor = allDescriptors.get(descriptorHash);	
+        if (!descriptor)	
+          throw new Error(`Assertion failed: The descriptor should have been registered`);	
+
+         const aliasHash = this.resolutionAliases.get(descriptorHash);	
+        if (aliasHash === undefined)	
+          throw new Error(`Assertion failed: The descriptor should have an alias`);	
+
+         const resolution = allResolutions.get(aliasHash);	
+        if (resolution === undefined)	
+          throw new Error(`Assertion failed: The resolution should have been registered`);	
+
+         // The following can happen if a package gets aliased to another package	
+        // that's itself aliased - in this case we just process all those we can	
+        // do, then make new passes until everything is resolved	
+        if (resolution === `temporary`)	
+          continue;	
+
+         haveBeenAliased.delete(descriptorHash);	
+
+         allResolutions.set(descriptorHash, resolution);	
+
+         hasChanged = true;	
+      }	
+
+       if (!hasChanged) {	
+        throw new Error(`Alias loop detected`);	
+      }	
     }
 
     // In this step we now create virtual packages for each package with at
@@ -589,7 +679,7 @@ export class Project {
             const isOptional = peerRequest.range.startsWith(`optional:`);
 
             if (!peerDescriptor) {
-              if (!isOptional)
+              if (!isOptional && !parentPackage.peerDependencies.has(peerRequest.identHash))
                 report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide ${structUtils.prettyDescriptor(this.configuration, peerRequest)} requested by ${structUtils.prettyLocator(this.configuration, pkg)}`);
 
               peerDescriptor = structUtils.makeDescriptor(peerRequest, `missing:`);
@@ -604,16 +694,20 @@ export class Project {
 
           resolvePeerDependencies(virtualizedPackage);
 
-          for (const missingPeerDependency of missingPeerDependencies) {
+          for (const missingPeerDependency of missingPeerDependencies)
             virtualizedPackage.dependencies.delete(missingPeerDependency);
-          }
+
+          // Since we've had to add new dependencies we need to sort them all over again
+          virtualizedPackage.dependencies = new Map(miscUtils.sortMap(virtualizedPackage.dependencies, ([identHash, descriptor]) => {
+            return structUtils.stringifyIdent(descriptor);
+          }));
         } else {
           resolvePeerDependencies(pkg);
         }
       }
     };
 
-    for (const workspace of this.workspacesByLocator.values())
+    for (const workspace of this.workspaces)
       resolvePeerDependencies(workspace.anchoredLocator);
 
     // All descriptors still referenced within the volatileDescriptors set are
@@ -627,7 +721,7 @@ export class Project {
     // Import the dependencies for each resolved workspaces into their own
     // Workspace instance.
 
-    for (const workspace of this.workspacesByLocator.values()) {
+    for (const workspace of this.workspaces) {
       const pkg = allPackages.get(workspace.anchoredLocator.locatorHash);
       if (!pkg)
         throw new Error(`Assertion failed: Expected workspace to have been resolved`);

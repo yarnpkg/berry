@@ -1,11 +1,11 @@
-import {WorkspaceRequiredError}                                                from '@berry/cli';
-import {Cache, Configuration, Descriptor, Ident, MessageName, Plugin, Project} from '@berry/core';
-import {StreamReport}                                                          from '@berry/core';
-import {structUtils}                                                           from '@berry/core';
-import inquirer                                                                from 'inquirer';
-import {Readable, Writable}                                                    from 'stream';
+import {WorkspaceRequiredError}                                            from '@berry/cli';
+import {Cache, Configuration, Descriptor, Ident, LightReport, MessageName} from '@berry/core';
+import {Plugin, Project, StreamReport}                                     from '@berry/core';
+import {structUtils}                                                       from '@berry/core';
+import inquirer                                                            from 'inquirer';
+import {Readable, Writable}                                                from 'stream';
 
-import * as suggestUtils                                                       from '../suggestUtils';
+import * as suggestUtils                                                   from '../suggestUtils';
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
@@ -82,7 +82,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       return [request, suggestions] as [Descriptor, Array<suggestUtils.Suggestion>];
     }));
 
-    const checkReport = await StreamReport.start({configuration, stdout}, async report => {
+    const checkReport = await LightReport.start({configuration, stdout}, async report => {
       for (const [request, suggestions] of allSuggestions) {
         if (suggestions.length === 0) {
           report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range`);

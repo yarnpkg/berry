@@ -1,6 +1,6 @@
 import {WorkspaceRequiredError}                                                              from '@berry/cli';
 import {Cache, Configuration, LightReport, LocatorHash, Package, Plugin, Project, Workspace} from '@berry/core';
-import {structUtils}                                                                         from '@berry/core';
+import {miscUtils, structUtils}                                                              from '@berry/core';
 import {Writable}                                                                            from 'stream';
 import {asTree}                                                                              from 'treeify';
 
@@ -37,21 +37,28 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
     type TreeNode = {[key: string]: TreeNode};
 
+    const empty = {} as TreeNode;
     const tree = {} as TreeNode;
+
     const printed = new Set();
 
-    const makeBuilder = (previous: (() => TreeNode | null) | null, pkg: Package) => {
+    const makeBuilder = (previous: (() => TreeNode) | null, pkg: Package, range: string | null) => {
       return () => {
         const target = previous ? previous() : tree;
-        if (target === null)
-          return null;
+        if (target === empty)
+          return empty;
 
-        const label = structUtils.prettyLocator(configuration, pkg);
-        if (!Object.prototype.hasOwnProperty.call(target, label))
-          target[label] = {} as TreeNode;
-        
-        if ((previous && project.workspacesByLocator.has(pkg.locatorHash)) || printed.has(pkg.locatorHash))
-          return null;
+        const label = range !== null
+          ? `${structUtils.prettyLocator(configuration, pkg)} (via ${structUtils.prettyRange(configuration, range)})`
+          : `${structUtils.prettyLocator(configuration, pkg)}`;
+
+        if (!Object.prototype.hasOwnProperty.call(target, label)) {
+          if ((previous && project.tryWorkspaceByLocator(pkg)) || printed.has(pkg.locatorHash)) {
+            target[label] = empty;
+          } else {
+            target[label] = {} as TreeNode;
+          }
+        }
 
         printed.add(pkg.locatorHash);
         return target[label];
@@ -63,10 +70,10 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
       if (!workspacePkg)
         throw new Error(`Assertion failed: The package should have been registered`);
 
-      traversePackage(makeBuilder(null, workspacePkg), workspacePkg, new Set());
+      traversePackage(makeBuilder(null, workspacePkg, null), workspacePkg, new Set());
     };
 
-    const traversePackage = (builder: () => TreeNode | null, pkg: Package, seen: Set<LocatorHash>) => {
+    const traversePackage = (builder: () => TreeNode, pkg: Package, seen: Set<LocatorHash>) => {
       if (seen.has(pkg.locatorHash))
         return;
       
@@ -89,11 +96,15 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
         if (!nextPkg)
           throw new Error(`Assertion failed: The package should have been registered`);
 
-        traversePackage(makeBuilder(builder, nextPkg), nextPkg, nextSeen);
+        traversePackage(makeBuilder(builder, nextPkg, dependency.range), nextPkg, nextSeen);
       }
     };
 
-    for (const workspace of project.workspaces)
+    const sortedWorkspaces = miscUtils.sortMap(project.workspaces, workspace => {
+      return structUtils.stringifyLocator(workspace.anchoredLocator);
+    });
+
+    for (const workspace of sortedWorkspaces)
       processWorkspace(workspace);
 
     let treeOutput = asTree(tree, false, false);
