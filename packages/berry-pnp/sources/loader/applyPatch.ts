@@ -165,21 +165,31 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     if (!enableNativeHooks)
       return originalModuleResolveFilename.call(Module, request, parent, isMain, options);
-    
+
+    if (options && options.plugnplay === false) {
+      try {
+        enableNativeHooks = false;
+        return originalModuleResolveFilename.call(Module, request, parent, isMain, options);
+      } finally {
+        enableNativeHooks = true;
+      }
+    }
+
     let issuers;
 
     if (options) {
       const optionNames = new Set(Object.keys(options));
-      optionNames.delete('paths');
+      optionNames.delete(`paths`);
+      optionNames.delete(`plugnplay`);
 
-       if (optionNames.size > 0) {
+      if (optionNames.size > 0) {
         throw makeError(
           `UNSUPPORTED`,
           `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(', ')})`
         );
       }
 
-       if (options.paths) {
+      if (options.paths) {
         issuers = options.paths.map((entry: string) => {
           return `${path.normalize(entry)}/`;
         });
