@@ -54,6 +54,7 @@ export function generateSerializedState(settings: PnpSettings): SerializedState 
     `is entirely unspecified and WILL change from a version to another.`,
   ];
 
+  data.ignorePatternData = settings.ignorePattern || null;
   data.packageRegistryData = generatePackageRegistryData(settings);
   data.locationBlacklistData = generateLocationBlacklistData(settings);
   data.locationLengthData = generateLocationLengthData(settings);

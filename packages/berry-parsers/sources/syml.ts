@@ -55,7 +55,7 @@ function stringifyValue(value: any, indentLevel: number): string {
       const bIndex = specialObjectKeys.indexOf(b);
 
       if (aIndex === -1 && bIndex === -1)
-        return a.localeCompare(b);
+        return a < b ? -1 : a > b ? +1 : 0;
       if (aIndex !== -1 && bIndex === -1)
         return -1;
       if (aIndex === -1 && bIndex !== -1)

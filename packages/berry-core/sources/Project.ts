@@ -531,14 +531,7 @@ export class Project {
 
         allPackages.set(pkg.locatorHash, pkg);
 
-        // The resolvers are not expected to return the dependencies in any
-        // particular order, so we must be careful and sort them ourselves in
-        // order to have 100% reproductible builds
-        const sortedDependencies = miscUtils.sortMap(pkg.dependencies.values(), [descriptor => {
-          return structUtils.stringifyDescriptor(descriptor);
-        }]);
-
-        for (const descriptor of sortedDependencies) {
+        for (const descriptor of pkg.dependencies.values()) {
           allDescriptors.set(descriptor.descriptorHash, descriptor);
           mustBeResolved.add(descriptor.descriptorHash);
 

@@ -62,7 +62,7 @@ export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) 
 
   indices.sort((a, b) => {
     for (const layer of stringified) {
-      const comparison = layer[a].localeCompare(layer[b], `en`, {sensitivity: `variant`, caseFirst: `upper`});
+      const comparison = layer[a] < layer[b] ? -1 : layer[a] > layer[b] ? +1 : 0;
 
       if (comparison !== 0) {
         return comparison;

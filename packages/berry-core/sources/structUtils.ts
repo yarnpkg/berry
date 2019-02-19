@@ -285,7 +285,8 @@ export function prettyLocator(configuration: Configuration, locator: Locator) {
 
 export function sortDescriptors(descriptors: Iterable<Descriptor>) {
   return miscUtils.sortMap(descriptors, [
-    descriptor => stringifyDescriptor(descriptor),
+    descriptor => stringifyIdent(descriptor),
+    descriptor => descriptor.range,
   ]);
 }
 

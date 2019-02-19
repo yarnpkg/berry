@@ -31112,10 +31112,20 @@ function applyPatch(pnpapi, opts) {
             return request;
         if (!enableNativeHooks)
             return originalModuleResolveFilename.call(module_1.default, request, parent, isMain, options);
+        if (options && options.plugnplay === false) {
+            try {
+                enableNativeHooks = false;
+                return originalModuleResolveFilename.call(module_1.default, request, parent, isMain, options);
+            }
+            finally {
+                enableNativeHooks = true;
+            }
+        }
         let issuers;
         if (options) {
             const optionNames = new Set(Object.keys(options));
-            optionNames.delete('paths');
+            optionNames.delete(`paths`);
+            optionNames.delete(`plugnplay`);
             if (optionNames.size > 0) {
                 throw internalTools_1.makeError(`UNSUPPORTED`, `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(', ')})`);
             }
@@ -31441,7 +31451,7 @@ function makeApi(runtimeState, opts) {
         // would give us the paths to give to _resolveFilename), we can as well not use
         // the {paths} option at all, since it internally makes _resolveFilename create another
         // fake module anyway.
-        return module_1.default._resolveFilename(request, makeFakeModule(issuer), false);
+        return module_1.default._resolveFilename(request, makeFakeModule(issuer), false, { plugnplay: false });
     }
     /**
      * This key indicates which version of the standard is implemented by this resolver. The `std` key is the
