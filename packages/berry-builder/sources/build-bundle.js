@@ -37,6 +37,13 @@ concierge
         path: path.resolve(basedir, `bin`),
       },
       ... commonConfig,
+      plugins: commonConfig.plugins.concat([
+        new webpack.BannerPlugin({
+          entryOnly: true,
+          banner: `#!/usr/bin/env node`,
+          raw: true,
+        }),
+      ]),
     };
 
     Object.assign(mainConfig.resolve.alias, {

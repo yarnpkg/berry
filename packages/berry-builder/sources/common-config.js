@@ -3,7 +3,7 @@ const webpack = require(`webpack`);
 const PnpWebpackPlugin = require(`pnp-webpack-plugin`);
 
 module.exports = {
-  mode: `development`,
+  mode: `none`,
   devtool: false,
 
   target: `node`,
