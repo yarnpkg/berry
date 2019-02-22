@@ -87,6 +87,13 @@ export type SettingsDefinition = {
 };
 
 export const coreDefinitions = {
+  // Not implemented for now, but since it's part of all Yarn installs we want to declare it in order to improve drop-in compatibility
+  lastUpdateCheck: {
+    description: `Last timestamp we checked whether new Yarn versions were available`,
+    type: SettingsType.STRING,
+    default: null,
+  },
+
   // Settings related to the proxying Berry to a specific executable
   yarnPath: {
     description: `Path to the local executable that must be used over the global one`,
