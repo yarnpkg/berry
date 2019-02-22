@@ -45,22 +45,26 @@ export class VirtualFetcher implements Fetcher {
 
     const relativeTarget = relative(dirname(virtualPath), sourceFetch.packageFs.getRealPath());
 
-    let currentLink;
-    try {
-      currentLink = await xfs.readlinkPromise(virtualPath);
-    } catch (error) {
-      if (error.code !== `ENOENT`) {
-        throw error;
+    // Doesn't need locking, and the folder must exist for the lock to succeed
+    await xfs.mkdirpPromise(dirname(virtualPath));
+
+    await xfs.lockPromise(virtualPath, async () => {
+      let currentLink;
+      try {
+        currentLink = await xfs.readlinkPromise(virtualPath);
+      } catch (error) {
+        if (error.code !== `ENOENT`) {
+          throw error;
+        }
       }
-    }
 
-    if (currentLink !== undefined && currentLink !== relativeTarget)
-      throw new Error(`Conflicting virtual paths (current ${currentLink} != new ${relativeTarget})`);
+      if (currentLink !== undefined && currentLink !== relativeTarget)
+        throw new Error(`Conflicting virtual paths (current ${currentLink} != new ${relativeTarget})`);
 
-    if (currentLink === undefined) {
-      await xfs.mkdirpPromise(dirname(virtualPath));
-      await xfs.symlinkPromise(relativeTarget, virtualPath);
-    }
+      if (currentLink === undefined) {
+        await xfs.symlinkPromise(relativeTarget, virtualPath);
+      }
+    });
 
     return {
       ... sourceFetch,

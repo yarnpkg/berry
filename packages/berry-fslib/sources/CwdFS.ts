@@ -37,6 +37,22 @@ export class CwdFS extends FakeFS {
     return this.baseFs.resolve(this.fromCwdPath(p));
   }
 
+  async openPromise(p: string, flags: string, mode?: number) {
+    return await this.baseFs.openPromise(this.fromCwdPath(p), flags, mode);
+  }
+
+  openSync(p: string, flags: string, mode?: number) {
+    return this.baseFs.openSync(this.fromCwdPath(p), flags, mode);
+  }
+
+  async closePromise(fd: number) {
+    await this.baseFs.closePromise(fd);
+  }
+
+  closeSync(fd: number) {
+    this.baseFs.closeSync(fd);
+  }
+
   createReadStream(p: string, opts?: CreateReadStreamOptions) {
     return this.baseFs.createReadStream(this.fromCwdPath(p), opts);
   }

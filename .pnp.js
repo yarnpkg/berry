@@ -16,6 +16,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       "it either without using the @berry/pnp package, as the data layout",
       "is entirely unspecified and WILL change from a version to another."
     ],
+    "ignorePatternData": null,
     "packageRegistryData": [
       [
         null,
@@ -25248,43 +25249,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
-        "string_decoder",
-        [
-          [
-            "npm:1.1.1",
-            {
-              "packageLocation": "./.yarn/cache/string_decoder-npm-1.1.1-ab04f5f5e77b83f3c5c1b857715f5d2a38cfa079a1c64dbfd5af4dca508f87e3.zip/node_modules/string_decoder/",
-              "packageDependencies": [
-                [
-                  "string_decoder",
-                  "npm:1.1.1"
-                ],
-                [
-                  "safe-buffer",
-                  "npm:5.1.2"
-                ]
-              ]
-            }
-          ],
-          [
-            "npm:1.2.0",
-            {
-              "packageLocation": "./.yarn/cache/string_decoder-npm-1.2.0-1d50ba703e235fb48c8a84511b2913416b58dd4f47a1e3dc09c8a69504c40285.zip/node_modules/string_decoder/",
-              "packageDependencies": [
-                [
-                  "string_decoder",
-                  "npm:1.2.0"
-                ],
-                [
-                  "safe-buffer",
-                  "npm:5.1.2"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
         "string-length",
         [
           [
@@ -25352,6 +25316,43 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "strip-ansi",
                   "npm:4.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "string_decoder",
+        [
+          [
+            "npm:1.1.1",
+            {
+              "packageLocation": "./.yarn/cache/string_decoder-npm-1.1.1-ab04f5f5e77b83f3c5c1b857715f5d2a38cfa079a1c64dbfd5af4dca508f87e3.zip/node_modules/string_decoder/",
+              "packageDependencies": [
+                [
+                  "string_decoder",
+                  "npm:1.1.1"
+                ],
+                [
+                  "safe-buffer",
+                  "npm:5.1.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:1.2.0",
+            {
+              "packageLocation": "./.yarn/cache/string_decoder-npm-1.2.0-1d50ba703e235fb48c8a84511b2913416b58dd4f47a1e3dc09c8a69504c40285.zip/node_modules/string_decoder/",
+              "packageDependencies": [
+                [
+                  "string_decoder",
+                  "npm:1.2.0"
+                ],
+                [
+                  "safe-buffer",
+                  "npm:5.1.2"
                 ]
               ]
             }
@@ -28825,6 +28826,18 @@ class AliasFS extends FakeFS_1.FakeFS {
     getBaseFs() {
         return this.baseFs;
     }
+    async openPromise(p, flags, mode) {
+        return await this.baseFs.openPromise(p, flags, mode);
+    }
+    openSync(p, flags, mode) {
+        return this.baseFs.openSync(p, flags, mode);
+    }
+    async closePromise(fd) {
+        await this.baseFs.closePromise(fd);
+    }
+    closeSync(fd) {
+        this.baseFs.closeSync(fd);
+    }
     createReadStream(p, opts) {
         return this.baseFs.createReadStream(p, opts);
     }
@@ -28969,6 +28982,18 @@ class CwdFS extends FakeFS_1.FakeFS {
     }
     resolve(p) {
         return this.baseFs.resolve(this.fromCwdPath(p));
+    }
+    async openPromise(p, flags, mode) {
+        return await this.baseFs.openPromise(this.fromCwdPath(p), flags, mode);
+    }
+    openSync(p, flags, mode) {
+        return this.baseFs.openSync(this.fromCwdPath(p), flags, mode);
+    }
+    async closePromise(fd) {
+        await this.baseFs.closePromise(fd);
+    }
+    closeSync(fd) {
+        this.baseFs.closeSync(fd);
     }
     createReadStream(p, opts) {
         return this.baseFs.createReadStream(this.fromCwdPath(p), opts);
@@ -29294,6 +29319,37 @@ class FakeFS {
             }
         }
     }
+    async lockPromise(affectedPath, callback) {
+        const lockPath = `${affectedPath}.lock`;
+        const interval = 1000 / 60;
+        const timeout = Date.now() + 60 * 1000;
+        let fd = null;
+        while (fd === null) {
+            try {
+                fd = await this.openPromise(lockPath, `wx`);
+            }
+            catch (error) {
+                if (error.code === `EEXIST`) {
+                    if (Date.now() < timeout) {
+                        await new Promise(resolve => setTimeout(resolve, interval));
+                    }
+                    else {
+                        throw new Error(`Couldn't acquire a lock in a reasonable time (${timeout / 1000}s)`);
+                    }
+                }
+                else {
+                    throw error;
+                }
+            }
+        }
+        try {
+            await callback();
+        }
+        finally {
+            await this.closePromise(fd);
+            await this.unlinkPromise(lockPath);
+        }
+    }
 }
 exports.FakeFS = FakeFS;
 ;
@@ -29328,6 +29384,18 @@ class JailFS extends FakeFS_1.FakeFS {
     }
     getBaseFs() {
         return this.baseFs;
+    }
+    async openPromise(p, flags, mode) {
+        return await this.baseFs.openPromise(this.fromJailedPath(p), flags, mode);
+    }
+    openSync(p, flags, mode) {
+        return this.baseFs.openSync(this.fromJailedPath(p), flags, mode);
+    }
+    async closePromise(fd) {
+        await this.baseFs.closePromise(fd);
+    }
+    closeSync(fd) {
+        this.baseFs.closeSync(fd);
     }
     createReadStream(p, opts) {
         return this.baseFs.createReadStream(this.fromJailedPath(p), opts);
@@ -29476,6 +29544,22 @@ class NodeFS extends FakeFS_1.FakeFS {
     }
     getRealPath() {
         return `/`;
+    }
+    async openPromise(p, flags, mode) {
+        return await new Promise((resolve, reject) => {
+            this.realFs.open(p, flags, mode, this.makeCallback(resolve, reject));
+        });
+    }
+    openSync(p, flags, mode) {
+        return this.realFs.openSync(p, flags, mode);
+    }
+    async closePromise(fd) {
+        await new Promise((resolve, reject) => {
+            this.realFs.close(fd, this.makeCallback(resolve, reject));
+        });
+    }
+    closeSync(fd) {
+        this.realFs.closeSync(fd);
     }
     createReadStream(p, opts) {
         return this.realFs.createReadStream(this.fromPortablePath(p), opts);
@@ -29785,6 +29869,18 @@ class ZipFS extends FakeFS_1.FakeFS {
     discardAndClose() {
         libzip_1.default.discard(this.zip);
         this.ready = false;
+    }
+    async openPromise(p, flags, mode) {
+        return this.openSync(p, flags, mode);
+    }
+    openSync(p, flags, mode) {
+        throw new Error(`Unimplemented`);
+    }
+    async closePromise(fd) {
+        this.closeSync(fd);
+    }
+    closeSync(fd) {
+        throw new Error(`Unimplemented`);
     }
     createReadStream(p, { encoding } = {}) {
         const stream = Object.assign(new stream_1.PassThrough(), {
@@ -30280,6 +30376,26 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
                 this.zipInstances.delete(path);
             }
         }
+    }
+    async openPromise(p, flags, mode) {
+        return await this.makeCallPromise(p, async () => {
+            return await this.baseFs.openPromise(p, flags, mode);
+        }, async (zipFs, { archivePath, subPath }) => {
+            throw new Error(`Unsupported action (we wouldn't be able to disambiguate the close)`);
+        });
+    }
+    openSync(p, flags, mode) {
+        return this.makeCallSync(p, () => {
+            return this.baseFs.openSync(p, flags, mode);
+        }, (zipFs, { archivePath, subPath }) => {
+            throw new Error(`Unsupported action (we wouldn't be able to disambiguate the close)`);
+        });
+    }
+    async closePromise(fd) {
+        return await this.baseFs.closePromise(fd);
+    }
+    closeSync(fd) {
+        return this.baseFs.closeSync(fd);
     }
     createReadStream(p, opts) {
         return this.makeCallSync(p, () => {

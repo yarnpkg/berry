@@ -22,6 +22,12 @@ export abstract class FakeFS {
     return posix.resolve(`/`, p);
   }
 
+  abstract openPromise(p: string, flags: string, mode?: number): Promise<number>;
+  abstract openSync(p: string, flags: string, mode?: number): number;
+
+  abstract closePromise(fd: number): void;
+  abstract closeSync(fd: number): void;
+
   abstract createWriteStream(p: string, opts?: CreateWriteStreamOptions): WriteStream;
   abstract createReadStream(p: string, opts?: CreateReadStreamOptions): ReadStream;
 
@@ -272,6 +278,38 @@ export abstract class FakeFS {
       } else {
         throw error;
       }
+    }
+  }
+
+  async lockPromise(affectedPath: string, callback: () => Promise<void>) {
+    const lockPath = `${affectedPath}.lock`;
+
+    const interval = 1000 / 60;
+    const timeout = Date.now() + 60 * 1000;
+
+    let fd = null;
+
+    while (fd === null) {
+      try {
+        fd = await this.openPromise(lockPath, `wx`);
+      } catch (error) {
+        if (error.code === `EEXIST`) {
+          if (Date.now() < timeout) {
+            await new Promise(resolve => setTimeout(resolve, interval));
+          } else {
+            throw new Error(`Couldn't acquire a lock in a reasonable time (${timeout / 1000}s)`);
+          }
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    try {
+      await callback();
+    } finally {
+      await this.closePromise(fd);
+      await this.unlinkPromise(lockPath);
     }
   }
 };

@@ -186,6 +186,22 @@ export class ZipFS extends FakeFS {
     this.ready = false;
   }
 
+  async openPromise(p: string, flags: string, mode?: number) {
+    return this.openSync(p, flags, mode);
+  }
+
+  openSync(p: string, flags: string, mode?: number): never {
+    throw new Error(`Unimplemented`);
+  }
+
+  async closePromise(fd: number) {
+    this.closeSync(fd);
+  }
+
+  closeSync(fd: number): never {
+    throw new Error(`Unimplemented`);
+  }
+
   createReadStream(p: string, {encoding}: CreateReadStreamOptions = {}): ReadStream {
     const stream = Object.assign(new PassThrough(), {
       bytesRead: 0,

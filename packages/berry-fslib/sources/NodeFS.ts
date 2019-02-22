@@ -16,6 +16,26 @@ export class NodeFS extends FakeFS {
     return `/`;
   }
 
+  async openPromise(p: string, flags: string, mode?: number) {
+    return await new Promise<number>((resolve, reject) => {
+      this.realFs.open(p, flags, mode, this.makeCallback(resolve, reject));
+    });
+  }
+
+  openSync(p: string, flags: string, mode?: number) {
+    return this.realFs.openSync(p, flags, mode);
+  }
+
+  async closePromise(fd: number) {
+    await new Promise<void>((resolve, reject) => {
+      this.realFs.close(fd, this.makeCallback(resolve, reject));
+    });
+  }
+
+  closeSync(fd: number) {
+    this.realFs.closeSync(fd);
+  }
+
   createReadStream(p: string, opts?: CreateReadStreamOptions) {
     return this.realFs.createReadStream(this.fromPortablePath(p), opts);
   }

@@ -74,6 +74,30 @@ export class ZipOpenFS extends FakeFS {
     }
   }
 
+  async openPromise(p: string, flags: string, mode?: number) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.openPromise(p, flags, mode);
+    }, async (zipFs, {archivePath, subPath}) => {
+      throw new Error(`Unsupported action (we wouldn't be able to disambiguate the close)`);
+    });
+  }
+
+  openSync(p: string, flags: string, mode?: number) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.openSync(p, flags, mode);
+    }, (zipFs, {archivePath, subPath}) => {
+      throw new Error(`Unsupported action (we wouldn't be able to disambiguate the close)`);
+    });
+  }
+
+  async closePromise(fd: number) {
+    return await this.baseFs.closePromise(fd);
+  }
+
+  closeSync(fd: number) {
+    return this.baseFs.closeSync(fd);
+  }
+
   createReadStream(p: string, opts?: CreateReadStreamOptions) {
     return this.makeCallSync(p, () => {
       return this.baseFs.createReadStream(p, opts);

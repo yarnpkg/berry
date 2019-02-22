@@ -33,6 +33,22 @@ export class JailFS extends FakeFS {
     return this.baseFs;
   }
 
+  async openPromise(p: string, flags: string, mode?: number) {
+    return await this.baseFs.openPromise(this.fromJailedPath(p), flags, mode);
+  }
+
+  openSync(p: string, flags: string, mode?: number) {
+    return this.baseFs.openSync(this.fromJailedPath(p), flags, mode);
+  }
+
+  async closePromise(fd: number) {
+    await this.baseFs.closePromise(fd);
+  }
+
+  closeSync(fd: number) {
+    this.baseFs.closeSync(fd);
+  }
+
   createReadStream(p: string, opts?: CreateReadStreamOptions) {
     return this.baseFs.createReadStream(this.fromJailedPath(p), opts);
   }
