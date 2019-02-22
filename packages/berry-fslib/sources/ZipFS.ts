@@ -526,7 +526,7 @@ export class ZipFS extends FakeFS {
     const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
 
     if (this.listings.has(resolvedP)) {
-      if (mask === 0o755) {
+      if ((mask & 0o755) === 0o755) {
         return;
       } else {
         throw Object.assign(new Error(`EISDIR: illegal operation on a directory, chmod '${p}'`), {code: `EISDIR`});
@@ -536,7 +536,7 @@ export class ZipFS extends FakeFS {
     const entry = this.entries.get(resolvedP);
     if (entry === undefined)
       throw new Error(`Unreachable`);
-    
+
     const oldMod = this.getUnixMode(entry, S_IFREG | 0o000);
     const newMod = oldMod & (~0o777) | mask;
 
@@ -598,7 +598,7 @@ export class ZipFS extends FakeFS {
       content = Buffer.concat([this.getFileSource(index), Buffer.from(content as any)]);
 
     let encoding = null;
-    
+
     if (typeof opts === `string`)
       encoding = opts;
     else if (typeof opts === `object` && opts.encoding)
@@ -646,11 +646,11 @@ export class ZipFS extends FakeFS {
     if (this.listings.has(resolvedP))
       if (!this.entries.has(resolvedP))
         this.hydrateDirectory(resolvedP);
- 
+
     const entry = this.entries.get(resolvedP);
     if (entry === undefined)
       throw new Error(`Unreachable`);
-    
+
     const rc = libzip.file.setMtime(this.zip, entry, 0, toUnixTimestamp(mtime), 0);
     if (rc === -1) {
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
