@@ -1,20 +1,26 @@
-import {Manifest, Plugin}   from '@berry/core';
-import {structUtils}        from '@berry/core';
-import {xfs}                from '@berry/fslib';
-import {makeUpdater}        from '@berry/json-proxy';
+import {Configuration, Manifest, Plugin} from '@berry/core';
+import {structUtils}                     from '@berry/core';
+import {xfs}                             from '@berry/fslib';
+import {updateAndSave}                   from '@berry/json-proxy';
 // @ts-ignore
-import {UsageError}         from '@manaflair/concierge';
-import {basename}           from 'path';
+import {UsageError}                      from '@manaflair/concierge';
+import {basename}                        from 'path';
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
-  .command(`init`)
+  .command(`init [-p,--private]`)
   .describe(`create a new package`)
 
   .detail(`
     This command will setup a new package in your local directory.
 
-    Note that it currently is less powerful than the \`init\` command that was shipped with the v1 (in particular it doesn't support customizing the author), but it's mostly a case of us not having time to do everything. Implementing the missing features should be very simple, and would be a great way for you to contribute to a project used by millions of developers everyday. Please open a PR!
+    If the \`-p,--private\` option is set, the package will be private by default.
+
+    The following settings can be used in order to affect what the generated package.json will look like:
+
+      - \`initLicense\`
+      - \`initScope\`
+      - \`initVersion\`
   `)
 
   .example(
@@ -22,20 +28,26 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
     `yarn init`,
   )
 
-  .action(async ({cwd}: {cwd: string}) => {
+  .example(
+    `Create a new private package in the local directory`,
+    `yarn init -p`,
+  )
+
+  .action(async ({cwd, private: notPublic}: {cwd: string, private: boolean}) => {
     if (xfs.existsSync(`${cwd}/package.json`))
       throw new UsageError(`A package.json already exists in the specified directory`);
     if (!xfs.existsSync(cwd))
       await xfs.mkdirpPromise(cwd);
 
-    const updater = await makeUpdater(`${cwd}/package.json`);
+    const configuration = await Configuration.find(cwd, plugins);
 
     const manifest = new Manifest();
-    manifest.name = structUtils.makeIdent(null, basename(cwd));
+    manifest.name = structUtils.makeIdent(configuration.get(`initScope`), basename(cwd));
+    manifest.version = configuration.get(`initVersion`);
+    manifest.private = notPublic;
+    manifest.license = configuration.get(`initLicense`);
 
-    updater.open((tracker: Object) => {
+    await updateAndSave(`${cwd}/package.json`, (tracker: Object) => {
       manifest.exportTo(tracker);
     });
-
-    await updater.save();
   });

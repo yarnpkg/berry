@@ -24,6 +24,9 @@ export class Manifest {
   public name: Ident | null = null;
   public version: string | null = null;
 
+  public ["private"]: boolean = false;
+  public license: string | null = null;
+
   public bin: Map<string, string> = new Map();
   public scripts: Map<string, string> = new Map();
 
@@ -89,6 +92,12 @@ export class Manifest {
         this.bin.set(key, value);
       }
     }
+
+    if (typeof data.private === `boolean`)
+      this.private = data.private;
+
+    if (typeof data.license === `string`)
+      this.license = data.license;
 
     if (typeof data.scripts === `object` && data.scripts !== null) {
       for (const [key, value] of Object.entries(data.scripts)) {
@@ -266,6 +275,16 @@ export class Manifest {
       data.version = this.version;
     else
       delete data.version;
+
+    if (this.private)
+      data.private = true;
+    else
+      delete data.private;
+
+    if (this.license !== null)
+      data.license = this.license;
+    else
+      delete data.license;
 
     data.dependencies = this.dependencies.size === 0 ? undefined : Object.assign({}, ... structUtils.sortDescriptors(this.dependencies.values()).map(dependency => {
       return {[structUtils.stringifyIdent(dependency)]: dependency.range};

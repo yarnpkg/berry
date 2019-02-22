@@ -39,3 +39,9 @@ export async function makeUpdater(filename: string) {
     }
   };
 }
+
+export async function updateAndSave(filename: string, cb: (value: Object) => void) {
+  const updater = await makeUpdater(filename);
+  updater.open(cb);
+  await updater.save();
+}
