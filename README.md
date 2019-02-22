@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://dev.azure.com/yarnpkg/yarn/_build"><img alt="Azure Pipelines status" src="https://dev.azure.com/yarnpkg/yarn/_apis/build/status/Yarn%20Acceptance%20Tests"></a>
+  <a href="https://dev.azure.com/yarnpkg/berry/_build"><img alt="Azure Pipelines status" src="https://dev.azure.com/yarnpkg/berry/_apis/build/status/yarnpkg.berry"></a>
   <a href="https://discord.gg/yarnpkg"><img alt="Discord Chat" src="https://img.shields.io/discord/226791405589233664.svg"></a>
   <img alt="Stable Release" src="https://img.shields.io/github/release/yarnpkg/yarn.svg?style=flat">
   <img alt="Prerelease" src="https://img.shields.io/github/release-pre/yarnpkg/yarn.svg?style=flat">
@@ -30,9 +30,11 @@ Yarn is a modern package manager split into various packages. Its novel architec
 
 Because this repository is about the modern but experimental version of Yarn (aka Yarn v2), the install process is slightly different for the time being.
 
-- First, make sure you are using [the latest Yarn release](https://yarnpkg.com/en/docs/install).
-- Then go into your project and run `yarn policies set-version berry`
-- To revert, just remove the local `.yarnrc` file that's been created
+- Open one of your project
+- First run `yarn policies set-config nightly` - to be sure that the next command will work
+- Then run `yarn policies set-config berry` - this will fetch the v2 bundle
+- And voilà! Just run any command, such as `yarn config -v` - they will use the v2
+- To revert, just remove the local change to your `.yarnrc` file
 
 ## Generic packages
 
