@@ -3621,7 +3621,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "pnp-webpack-plugin",
-                  "npm:1.3.0"
+                  "npm:1.3.1"
                 ],
                 [
                   "raw-loader",
@@ -21612,17 +21612,17 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "pnp-webpack-plugin",
         [
           [
-            "npm:1.3.0",
+            "npm:1.3.1",
             {
-              "packageLocation": "./.yarn/cache/pnp-webpack-plugin-npm-1.3.0-84a72c11d26d238e95e8e26b6261f2d8f488b154e535b67b4bcbe1dff8960e05.zip/node_modules/pnp-webpack-plugin/",
+              "packageLocation": "./.yarn/cache/pnp-webpack-plugin-npm-1.3.1-caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035.zip/node_modules/pnp-webpack-plugin/",
               "packageDependencies": [
                 [
                   "pnp-webpack-plugin",
-                  "npm:1.3.0"
+                  "npm:1.3.1"
                 ],
                 [
                   "ts-pnp",
-                  "virtual:84a72c11d26d238e95e8e26b6261f2d8f488b154e535b67b4bcbe1dff8960e05bf0177318dad5568bbf819da9d34e218cc1e2aea06726d21d427a34cc152e649#npm:1.0.0"
+                  "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.0"
                 ]
               ]
             }
@@ -26425,13 +26425,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             }
           ],
           [
-            "virtual:84a72c11d26d238e95e8e26b6261f2d8f488b154e535b67b4bcbe1dff8960e05bf0177318dad5568bbf819da9d34e218cc1e2aea06726d21d427a34cc152e649#npm:1.0.0",
+            "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.0",
             {
-              "packageLocation": "./.yarn/virtual/ts-pnp-virtual-71c1c009537b0769207ffb1ed3624769473a92634ae0daddfd2b686993179d92/node_modules/ts-pnp/",
+              "packageLocation": "./.yarn/virtual/ts-pnp-virtual-3e9f52d52f850a3afc0817366adfd4f24c47c53b24095141826258ce7db735f1/node_modules/ts-pnp/",
               "packageDependencies": [
                 [
                   "ts-pnp",
-                  "virtual:84a72c11d26d238e95e8e26b6261f2d8f488b154e535b67b4bcbe1dff8960e05bf0177318dad5568bbf819da9d34e218cc1e2aea06726d21d427a34cc152e649#npm:1.0.0"
+                  "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.0"
                 ]
               ]
             }
@@ -27434,7 +27434,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "pnp-webpack-plugin",
-                  "npm:1.3.0"
+                  "npm:1.3.1"
                 ],
                 [
                   "ts-loader",
