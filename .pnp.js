@@ -4286,7 +4286,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "react",
-                  "npm:15.0.0"
+                  "npm:16.8.3"
                 ],
                 [
                   "react-redux",
@@ -4509,7 +4509,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "react",
-                  "npm:15.0.0"
+                  "npm:16.8.3"
                 ],
                 [
                   "react-reconciler",
@@ -4557,7 +4557,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "react",
-                  "npm:15.0.0"
+                  "npm:16.8.3"
                 ],
                 [
                   "react-reconciler",
@@ -7191,18 +7191,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "asap",
                   "npm:1.0.0"
-                ]
-              ]
-            }
-          ],
-          [
-            "npm:2.0.6",
-            {
-              "packageLocation": "./.yarn/cache/asap-npm-2.0.6-8ca6b8317603884a6a96ac7e92e1da2454332f8d8678917449a144241d341a11.zip/node_modules/asap/",
-              "packageDependencies": [
-                [
-                  "asap",
-                  "npm:2.0.6"
                 ]
               ]
             }
@@ -10106,18 +10094,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "core-js",
         [
           [
-            "npm:1.2.7",
-            {
-              "packageLocation": "./.yarn/cache/core-js-npm-1.2.7-4625d3e3ac879088e8d42c052eca1d5d1d048f5b4388486e3b6f20e2caa79b9c.zip/node_modules/core-js/",
-              "packageDependencies": [
-                [
-                  "core-js",
-                  "npm:1.2.7"
-                ]
-              ]
-            }
-          ],
-          [
             "npm:2.6.2",
             {
               "packageLocation": "./.yarn/cache/core-js-npm-2.6.2-89440eeeb885141bac217d666d90e83a23d1c757163ee6adbc4d416975c98baf.zip/node_modules/core-js/",
@@ -11404,27 +11380,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
-        "encoding",
-        [
-          [
-            "npm:0.1.12",
-            {
-              "packageLocation": "./.yarn/cache/encoding-npm-0.1.12-3d82f45e1f0ccb4520222c6fdee7559988bd3ebbdcc740b098cfe302f626fc87.zip/node_modules/encoding/",
-              "packageDependencies": [
-                [
-                  "encoding",
-                  "npm:0.1.12"
-                ],
-                [
-                  "iconv-lite",
-                  "npm:0.4.24"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
         "end-of-stream",
         [
           [
@@ -12580,51 +12535,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "bser",
                   "npm:2.0.0"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
-        "fbjs",
-        [
-          [
-            "npm:0.8.17",
-            {
-              "packageLocation": "./.yarn/cache/fbjs-npm-0.8.17-b014ef1c21ddae1cf6bfda6e8a49c09eeb58757f21d34fe4f0f5d4f51e41b38d.zip/node_modules/fbjs/",
-              "packageDependencies": [
-                [
-                  "fbjs",
-                  "npm:0.8.17"
-                ],
-                [
-                  "core-js",
-                  "npm:1.2.7"
-                ],
-                [
-                  "isomorphic-fetch",
-                  "npm:2.2.1"
-                ],
-                [
-                  "loose-envify",
-                  "npm:1.4.0"
-                ],
-                [
-                  "object-assign",
-                  "npm:4.1.1"
-                ],
-                [
-                  "promise",
-                  "npm:7.3.1"
-                ],
-                [
-                  "setimmediate",
-                  "npm:1.0.5"
-                ],
-                [
-                  "ua-parser-js",
-                  "npm:0.7.19"
                 ]
               ]
             }
@@ -15580,31 +15490,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "isobject",
                   "npm:3.0.1"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
-        "isomorphic-fetch",
-        [
-          [
-            "npm:2.2.1",
-            {
-              "packageLocation": "./.yarn/cache/isomorphic-fetch-npm-2.2.1-6775b093b6ed3eacc83868786cb35338b41a9efa5ee21ef5343c21d87a81c4e6.zip/node_modules/isomorphic-fetch/",
-              "packageDependencies": [
-                [
-                  "isomorphic-fetch",
-                  "npm:2.2.1"
-                ],
-                [
-                  "node-fetch",
-                  "npm:1.7.3"
-                ],
-                [
-                  "whatwg-fetch",
-                  "npm:3.0.0"
                 ]
               ]
             }
@@ -19784,31 +19669,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
-        "node-fetch",
-        [
-          [
-            "npm:1.7.3",
-            {
-              "packageLocation": "./.yarn/cache/node-fetch-npm-1.7.3-382faf60dfe30044072c4744e8a16957f3d8f68e94d19e685f0de35cca9dad9f.zip/node_modules/node-fetch/",
-              "packageDependencies": [
-                [
-                  "node-fetch",
-                  "npm:1.7.3"
-                ],
-                [
-                  "encoding",
-                  "npm:0.1.12"
-                ],
-                [
-                  "is-stream",
-                  "npm:1.1.0"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
         "node-int64",
         [
           [
@@ -21985,22 +21845,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
-          ],
-          [
-            "npm:7.3.1",
-            {
-              "packageLocation": "./.yarn/cache/promise-npm-7.3.1-ef5ba26fe7a8caad3a49a6fabbf09db9b9b5caf419e2d33f6d39f1535ee73609.zip/node_modules/promise/",
-              "packageDependencies": [
-                [
-                  "promise",
-                  "npm:7.3.1"
-                ],
-                [
-                  "asap",
-                  "npm:2.0.6"
-                ]
-              ]
-            }
           ]
         ]
       ],
@@ -22553,17 +22397,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "react",
         [
           [
-            "npm:15.0.0",
+            "npm:16.8.3",
             {
-              "packageLocation": "./.yarn/cache/react-npm-15.0.0-e6e18a26e1d3a7d683595b411f4b44424d617fab898014d1f795645eb8d61f23.zip/node_modules/react/",
+              "packageLocation": "./.yarn/cache/react-npm-16.8.3-bc9a60d1f52b95ad92edc569aeddc16bcfeaf6bd43d11f603c7a698db7fa87dc.zip/node_modules/react/",
               "packageDependencies": [
                 [
                   "react",
-                  "npm:15.0.0"
-                ],
-                [
-                  "fbjs",
-                  "npm:0.8.17"
+                  "npm:16.8.3"
                 ],
                 [
                   "loose-envify",
@@ -22572,6 +22412,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "object-assign",
                   "npm:4.1.1"
+                ],
+                [
+                  "prop-types",
+                  "npm:15.6.2"
+                ],
+                [
+                  "scheduler",
+                  "npm:0.13.3"
                 ]
               ]
             }
@@ -22666,7 +22514,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "react",
-                  "npm:15.0.0"
+                  "npm:16.8.3"
                 ],
                 [
                   "schedule",
@@ -22698,7 +22546,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "react",
-                  "npm:15.0.0"
+                  "npm:16.8.3"
                 ],
                 [
                   "schedule",
@@ -22783,7 +22631,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "react",
-                  "npm:15.0.0"
+                  "npm:16.8.3"
                 ],
                 [
                   "react-is",
@@ -24099,6 +23947,31 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "schedule",
                   "npm:0.4.0"
+                ],
+                [
+                  "object-assign",
+                  "npm:4.1.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "scheduler",
+        [
+          [
+            "npm:0.13.3",
+            {
+              "packageLocation": "./.yarn/cache/scheduler-npm-0.13.3-f3267a7e3f8423a461a399cd007d25f646648e5b49e1aa450cd0ef7e76a043a4.zip/node_modules/scheduler/",
+              "packageDependencies": [
+                [
+                  "scheduler",
+                  "npm:0.13.3"
+                ],
+                [
+                  "loose-envify",
+                  "npm:1.4.0"
                 ],
                 [
                   "object-assign",
@@ -26806,23 +26679,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
-        "ua-parser-js",
-        [
-          [
-            "npm:0.7.19",
-            {
-              "packageLocation": "./.yarn/cache/ua-parser-js-npm-0.7.19-b0f4ebf8fa02370c2ae043bbd012a435b9a2174c3ea0df22506f77386db3baea.zip/node_modules/ua-parser-js/",
-              "packageDependencies": [
-                [
-                  "ua-parser-js",
-                  "npm:0.7.19"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
         "uc.micro",
         [
           [
@@ -28062,23 +27918,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "iconv-lite",
                   "npm:0.4.24"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
-        "whatwg-fetch",
-        [
-          [
-            "npm:3.0.0",
-            {
-              "packageLocation": "./.yarn/cache/whatwg-fetch-npm-3.0.0-6f7afabbd107ecf3b654e5d2ed0c053af2f2b3c37f8776bb8ba89c91fd714b16.zip/node_modules/whatwg-fetch/",
-              "packageDependencies": [
-                [
-                  "whatwg-fetch",
-                  "npm:3.0.0"
                 ]
               ]
             }
