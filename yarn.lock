@@ -888,7 +888,7 @@
     brfs: "npm:^2.0.1"
     buffer-loader: "npm:^0.1.0"
     joi: "npm:^13.6.0"
-    pnp-webpack-plugin: "npm:^1.2.0"
+    pnp-webpack-plugin: "npm:^1.3.0"
     raw-loader: "npm:^0.5.1"
     transform-loader: "npm:^0.2.4"
     ts-loader: "npm:^5.3.0"
@@ -7935,12 +7935,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pnp-webpack-plugin@npm:^1.2.0, pnp-webpack-plugin@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "pnp-webpack-plugin@npm:1.2.1"
+"pnp-webpack-plugin@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "pnp-webpack-plugin@npm:1.3.0"
   dependencies:
     ts-pnp: "npm:^1.0.0"
-  checksum: cb6e677ae2aa11b027b5c009d566f73a3c07cdd130fa1be63a77f0a924ba73d11cfcfc2de9a742df9461d6c1e39912d88439e9266b34c90902693dbcc169a6ea
+  checksum: 6b2fd75238ea4c5880f22798ee4da76e99eda12c26c1bd646e54c31894d27801ccdc5bdbb18e744525a82f4cce222d5d5463733d3ba4dac1580882c7ae07d81b
   languageName: node
   linkType: hard
 
@@ -10175,7 +10175,7 @@ __metadata:
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
     "@berry/fslib": "workspace:*"
-    pnp-webpack-plugin: "npm:^1.2.1"
+    pnp-webpack-plugin: "npm:^1.3.0"
     ts-loader: "npm:^5.3.3"
     typescript: "npm:^3.2.4"
     vsce: "npm:1.54.0"

@@ -3621,7 +3621,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "pnp-webpack-plugin",
-                  "npm:1.2.1"
+                  "npm:1.3.0"
                 ],
                 [
                   "raw-loader",
@@ -21752,17 +21752,17 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "pnp-webpack-plugin",
         [
           [
-            "npm:1.2.1",
+            "npm:1.3.0",
             {
-              "packageLocation": "./.yarn/cache/pnp-webpack-plugin-npm-1.2.1-7f3c2b5a9b7b6edd5754020068ba313d2752c827c0d180f221a44c051f7a99c6.zip/node_modules/pnp-webpack-plugin/",
+              "packageLocation": "./.yarn/cache/pnp-webpack-plugin-npm-1.3.0-84a72c11d26d238e95e8e26b6261f2d8f488b154e535b67b4bcbe1dff8960e05.zip/node_modules/pnp-webpack-plugin/",
               "packageDependencies": [
                 [
                   "pnp-webpack-plugin",
-                  "npm:1.2.1"
+                  "npm:1.3.0"
                 ],
                 [
                   "ts-pnp",
-                  "virtual:7f3c2b5a9b7b6edd5754020068ba313d2752c827c0d180f221a44c051f7a99c6ec7648ce10bc64235f353399fe7e477157a045a2548fcf0646086b65d0559935#npm:1.0.0"
+                  "virtual:84a72c11d26d238e95e8e26b6261f2d8f488b154e535b67b4bcbe1dff8960e05bf0177318dad5568bbf819da9d34e218cc1e2aea06726d21d427a34cc152e649#npm:1.0.0"
                 ]
               ]
             }
@@ -26552,13 +26552,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             }
           ],
           [
-            "virtual:7f3c2b5a9b7b6edd5754020068ba313d2752c827c0d180f221a44c051f7a99c6ec7648ce10bc64235f353399fe7e477157a045a2548fcf0646086b65d0559935#npm:1.0.0",
+            "virtual:84a72c11d26d238e95e8e26b6261f2d8f488b154e535b67b4bcbe1dff8960e05bf0177318dad5568bbf819da9d34e218cc1e2aea06726d21d427a34cc152e649#npm:1.0.0",
             {
-              "packageLocation": "./.yarn/virtual/ts-pnp-virtual-2a436a8b9e5f75e0ee9bd338c8ed1d89e23b99d2036b8a5c0ef5a4d96b44f5ea/node_modules/ts-pnp/",
+              "packageLocation": "./.yarn/virtual/ts-pnp-virtual-71c1c009537b0769207ffb1ed3624769473a92634ae0daddfd2b686993179d92/node_modules/ts-pnp/",
               "packageDependencies": [
                 [
                   "ts-pnp",
-                  "virtual:7f3c2b5a9b7b6edd5754020068ba313d2752c827c0d180f221a44c051f7a99c6ec7648ce10bc64235f353399fe7e477157a045a2548fcf0646086b65d0559935#npm:1.0.0"
+                  "virtual:84a72c11d26d238e95e8e26b6261f2d8f488b154e535b67b4bcbe1dff8960e05bf0177318dad5568bbf819da9d34e218cc1e2aea06726d21d427a34cc152e649#npm:1.0.0"
                 ]
               ]
             }
@@ -27578,7 +27578,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "pnp-webpack-plugin",
-                  "npm:1.2.1"
+                  "npm:1.3.0"
                 ],
                 [
                   "ts-loader",
@@ -28880,6 +28880,12 @@ class AliasFS extends FakeFS_1.FakeFS {
     renameSync(oldP, newP) {
         return this.baseFs.renameSync(oldP, newP);
     }
+    async copyFilePromise(sourceP, destP, flags) {
+        return await this.baseFs.copyFilePromise(sourceP, destP, flags);
+    }
+    copyFileSync(sourceP, destP, flags) {
+        return this.baseFs.copyFileSync(sourceP, destP, flags);
+    }
     async writeFilePromise(p, content, opts) {
         return await this.baseFs.writeFilePromise(p, content, opts);
     }
@@ -29036,6 +29042,12 @@ class CwdFS extends FakeFS_1.FakeFS {
     }
     renameSync(oldP, newP) {
         return this.baseFs.renameSync(this.fromCwdPath(oldP), this.fromCwdPath(newP));
+    }
+    async copyFilePromise(sourceP, destP, flags) {
+        return await this.baseFs.copyFilePromise(this.fromCwdPath(sourceP), this.fromCwdPath(destP), flags);
+    }
+    copyFileSync(sourceP, destP, flags) {
+        return this.baseFs.copyFileSync(this.fromCwdPath(sourceP), this.fromCwdPath(destP), flags);
     }
     async writeFilePromise(p, content, opts) {
         return await this.baseFs.writeFilePromise(this.fromCwdPath(p), content, opts);
@@ -29439,6 +29451,12 @@ class JailFS extends FakeFS_1.FakeFS {
     renameSync(oldP, newP) {
         return this.baseFs.renameSync(this.fromJailedPath(oldP), this.fromJailedPath(newP));
     }
+    async copyFilePromise(sourceP, destP, flags) {
+        return await this.baseFs.copyFilePromise(this.fromJailedPath(sourceP), this.fromJailedPath(destP), flags);
+    }
+    copyFileSync(sourceP, destP, flags) {
+        return this.baseFs.copyFileSync(this.fromJailedPath(sourceP), this.fromJailedPath(destP), flags);
+    }
     async writeFilePromise(p, content, opts) {
         return await this.baseFs.writeFilePromise(this.fromJailedPath(p), content, opts);
     }
@@ -29615,6 +29633,14 @@ class NodeFS extends FakeFS_1.FakeFS {
     renameSync(oldP, newP) {
         return this.realFs.renameSync(this.fromPortablePath(oldP), this.fromPortablePath(newP));
     }
+    async copyFilePromise(sourceP, destP, flags = 0) {
+        return await new Promise((resolve, reject) => {
+            this.realFs.copyFile(this.fromPortablePath(sourceP), this.fromPortablePath(destP), flags, this.makeCallback(resolve, reject));
+        });
+    }
+    copyFileSync(sourceP, destP, flags = 0) {
+        return this.realFs.copyFileSync(this.fromPortablePath(sourceP), this.fromPortablePath(destP), flags);
+    }
     async writeFilePromise(p, content, opts) {
         return await new Promise((resolve, reject) => {
             if (opts) {
@@ -29733,6 +29759,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const libzip_1 = __importDefault(__webpack_require__(/*! @berry/libzip */ "../berry-libzip/sources/index.ts"));
+const fs_1 = __webpack_require__(/*! fs */ "fs");
 const path_1 = __webpack_require__(/*! path */ "path");
 const stream_1 = __webpack_require__(/*! stream */ "stream");
 const util_1 = __webpack_require__(/*! util */ "util");
@@ -30149,6 +30176,26 @@ class ZipFS extends FakeFS_1.FakeFS {
     renameSync(oldP, newP) {
         throw new Error(`Unimplemented`);
     }
+    async copyFilePromise(sourceP, destP, flags) {
+        return this.copyFileSync(sourceP, destP, flags);
+    }
+    copyFileSync(sourceP, destP, flags = 0) {
+        if ((flags & fs_1.constants.COPYFILE_FICLONE_FORCE) !== 0)
+            throw Object.assign(new Error(`ENOSYS: unsupported clone operation, copyfile '${sourceP}' -> ${destP}'`), { code: `ENOSYS` });
+        const resolvedSourceP = this.resolveFilename(`copyfile '${sourceP} -> ${destP}'`, sourceP);
+        const indexSource = this.entries.get(resolvedSourceP);
+        if (typeof indexSource === `undefined`)
+            throw Object.assign(new Error(`EINVAL: invalid argument, copyfile '${sourceP}' -> '${destP}'`), { code: `EINVAL` });
+        const resolvedDestP = this.resolveFilename(`copyfile '${sourceP}' -> ${destP}'`, destP);
+        const indexDest = this.entries.get(resolvedDestP);
+        if ((flags & (fs_1.constants.COPYFILE_EXCL | fs_1.constants.COPYFILE_FICLONE_FORCE)) !== 0 && typeof indexDest !== `undefined`)
+            throw Object.assign(new Error(`EEXIST: file already exists, copyfile '${sourceP}' -> '${destP}'`), { code: `EEXIST` });
+        const source = this.getFileSource(indexSource);
+        const newIndex = this.setFileSource(resolvedDestP, source);
+        if (newIndex !== indexDest) {
+            this.registerEntry(resolvedDestP, newIndex);
+        }
+    }
     async writeFilePromise(p, content, opts) {
         return this.writeFileSync(p, content, opts);
     }
@@ -30325,6 +30372,7 @@ exports.ZipFS = ZipFS;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = __webpack_require__(/*! fs */ "fs");
 const path_1 = __webpack_require__(/*! path */ "path");
 const FakeFS_1 = __webpack_require__(/*! ./FakeFS */ "../berry-fslib/sources/FakeFS.ts");
 const NodeFS_1 = __webpack_require__(/*! ./NodeFS */ "../berry-fslib/sources/NodeFS.ts");
@@ -30502,21 +30550,89 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
         });
     }
     renameSync(oldP, newP) {
-        return this.makeCallSync(oldP, async () => {
-            return this.makeCallSync(newP, async () => {
+        return this.makeCallSync(oldP, () => {
+            return this.makeCallSync(newP, () => {
                 return this.baseFs.renameSync(oldP, newP);
             }, async () => {
                 throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
             });
-        }, async (zipFsO, { archivePath: archivePathO, subPath: subPathO }) => {
-            return this.makeCallSync(newP, async () => {
+        }, (zipFsO, { archivePath: archivePathO, subPath: subPathO }) => {
+            return this.makeCallSync(newP, () => {
                 throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
-            }, async (zipFsN, { archivePath: archivePathN, subPath: subPathN }) => {
+            }, (zipFsN, { archivePath: archivePathN, subPath: subPathN }) => {
                 if (zipFsO !== zipFsN) {
                     throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
                 }
                 else {
                     return zipFsO.renameSync(subPathO, subPathN);
+                }
+            });
+        });
+    }
+    async copyFilePromise(sourceP, destP, flags = 0) {
+        const fallback = async (sourceFs, sourceP, destFs, destP) => {
+            if ((flags & fs_1.constants.COPYFILE_FICLONE_FORCE) !== 0)
+                throw Object.assign(new Error(`EXDEV: cross-device clone not permitted, copyfile '${sourceP}' -> ${destP}'`), { code: `EXDEV` });
+            if ((flags & fs_1.constants.COPYFILE_EXCL) && await this.existsPromise(sourceP))
+                throw Object.assign(new Error(`EEXIST: file already exists, copyfile '${sourceP}' -> '${destP}'`), { code: `EEXIST` });
+            let content;
+            try {
+                content = await sourceFs.readFilePromise(sourceP);
+            }
+            catch (error) {
+                throw Object.assign(new Error(`EINVAL: invalid argument, copyfile '${sourceP}' -> '${destP}'`), { code: `EINVAL` });
+            }
+            await destFs.writeFilePromise(destP, content);
+        };
+        return await this.makeCallPromise(sourceP, async () => {
+            return await this.makeCallPromise(destP, async () => {
+                return await this.baseFs.copyFilePromise(sourceP, destP, flags);
+            }, async (zipFsD, { archivePath: archivePathD, subPath: subPathD }) => {
+                return await fallback(this.baseFs, sourceP, zipFsD, subPathD);
+            });
+        }, async (zipFsS, { archivePath: archivePathS, subPath: subPathS }) => {
+            return await this.makeCallPromise(destP, async () => {
+                return await fallback(zipFsS, subPathS, this.baseFs, destP);
+            }, async (zipFsD, { archivePath: archivePathD, subPath: subPathD }) => {
+                if (zipFsS !== zipFsD) {
+                    return await fallback(zipFsS, subPathS, zipFsD, subPathD);
+                }
+                else {
+                    return await zipFsS.copyFilePromise(subPathS, subPathD, flags);
+                }
+            });
+        });
+    }
+    copyFileSync(sourceP, destP, flags = 0) {
+        const fallback = (sourceFs, sourceP, destFs, destP) => {
+            if ((flags & fs_1.constants.COPYFILE_FICLONE_FORCE) !== 0)
+                throw Object.assign(new Error(`EXDEV: cross-device clone not permitted, copyfile '${sourceP}' -> ${destP}'`), { code: `EXDEV` });
+            if ((flags & fs_1.constants.COPYFILE_EXCL) && this.existsSync(sourceP))
+                throw Object.assign(new Error(`EEXIST: file already exists, copyfile '${sourceP}' -> '${destP}'`), { code: `EEXIST` });
+            let content;
+            try {
+                content = sourceFs.readFileSync(sourceP);
+            }
+            catch (error) {
+                throw Object.assign(new Error(`EINVAL: invalid argument, copyfile '${sourceP}' -> '${destP}'`), { code: `EINVAL` });
+            }
+            destFs.writeFileSync(destP, content);
+        };
+        return this.makeCallSync(sourceP, () => {
+            return this.makeCallSync(destP, () => {
+                return this.baseFs.copyFileSync(sourceP, destP, flags);
+            }, (zipFsD, { archivePath: archivePathD, subPath: subPathD }) => {
+                return fallback(this.baseFs, sourceP, zipFsD, subPathD);
+            });
+        }, (zipFsS, { archivePath: archivePathS, subPath: subPathS }) => {
+            return this.makeCallSync(destP, () => {
+                return fallback(zipFsS, subPathS, this.baseFs, destP);
+            }, (zipFsD, { archivePath: archivePathD, subPath: subPathD }) => {
+                if (zipFsS !== zipFsD) {
+                    return fallback(zipFsS, subPathS, zipFsD, subPathD);
+                }
+                else {
+                    return zipFsS.copyFileSync(subPathS, subPathD, flags);
                 }
             });
         });
@@ -30810,7 +30926,9 @@ function patchFs(patchedFs, fakeFs) {
     const SYNC_IMPLEMENTATIONS = new Set([
         `createReadStream`,
         `chmodSync`,
+        `copyFileSync`,
         `lstatSync`,
+        `openSync`,
         `readlinkSync`,
         `readFileSync`,
         `readdirSync`,
@@ -30824,8 +30942,10 @@ function patchFs(patchedFs, fakeFs) {
         `writeFileSync`,
     ]);
     const ASYNC_IMPLEMENTATIONS = new Set([
-        `lstatPromise`,
         `chmodPromise`,
+        `copyFilePromise`,
+        `lstatPromise`,
+        `openPromise`,
         `readdirPromise`,
         `realpathPromise`,
         `readFilePromise`,
@@ -31428,7 +31548,7 @@ function makeApi(runtimeState, opts) {
         // plugins that should be used (https://github.com/eslint/eslint/issues/10125). This will
         // likely get fixed at some point, but it'll take time and in the meantime we'll just add
         // additional fallback entries for common shared configs.
-        for (const name of [`react-scripts`]) {
+        for (const name of [`gatsby`, `react-scripts`]) {
             const packageStore = runtimeState.packageRegistry.get(name);
             if (packageStore) {
                 for (const reference of packageStore.keys()) {
