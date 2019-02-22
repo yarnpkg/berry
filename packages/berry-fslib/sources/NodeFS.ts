@@ -104,6 +104,16 @@ export class NodeFS extends FakeFS {
     return this.realFs.renameSync(this.fromPortablePath(oldP), this.fromPortablePath(newP));
   }
 
+  async copyFilePromise(sourceP: string, destP: string, flags: number = 0) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.copyFile(this.fromPortablePath(sourceP), this.fromPortablePath(destP), flags, this.makeCallback(resolve, reject));
+    });
+  }
+
+  copyFileSync(sourceP: string, destP: string, flags: number = 0) {
+    return this.realFs.copyFileSync(this.fromPortablePath(sourceP), this.fromPortablePath(destP), flags);
+  }
+
   async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return await new Promise<void>((resolve, reject) => {
       if (opts) {

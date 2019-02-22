@@ -61,6 +61,9 @@ export abstract class FakeFS {
   abstract renamePromise(oldP: string, newP: string): Promise<void>;
   abstract renameSync(oldP: string, newP: string): void;
 
+  abstract copyFilePromise(sourceP: string, destP: string, flags?: number): Promise<void>;
+  abstract copyFileSync(sourceP: string, destP: string, flags?: number): void;
+
   abstract writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
   abstract writeFileSync(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
 

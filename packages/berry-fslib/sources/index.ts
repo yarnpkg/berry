@@ -39,7 +39,9 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
   const SYNC_IMPLEMENTATIONS = new Set([
     `createReadStream`,
     `chmodSync`,
+    `copyFileSync`,
     `lstatSync`,
+    `openSync`,
     `readlinkSync`,
     `readFileSync`,
     `readdirSync`,
@@ -54,8 +56,10 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
   ]);
 
   const ASYNC_IMPLEMENTATIONS = new Set([
-    `lstatPromise`,
     `chmodPromise`,
+    `copyFilePromise`,
+    `lstatPromise`,
+    `openPromise`,
     `readdirPromise`,
     `realpathPromise`,
     `readFilePromise`,

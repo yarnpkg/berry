@@ -32,7 +32,7 @@ export class YarnResolver implements Resolver {
     // No need to enable it either if the lockfile is modern
     if (Object.prototype.hasOwnProperty.call(parsed, `__metadata`))
       return;
-    
+
     const resolutions = this.resolutions = new Map();
 
     for (const key of Object.keys(parsed)) {

@@ -99,6 +99,14 @@ export class AliasFS extends FakeFS {
     return this.baseFs.renameSync(oldP, newP);
   }
 
+  async copyFilePromise(sourceP: string, destP: string, flags?: number) {
+    return await this.baseFs.copyFilePromise(sourceP, destP, flags);
+  }
+
+  copyFileSync(sourceP: string, destP: string, flags?: number) {
+    return this.baseFs.copyFileSync(sourceP, destP, flags);
+  }
+
   async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return await this.baseFs.writeFilePromise(p, content, opts);
   }

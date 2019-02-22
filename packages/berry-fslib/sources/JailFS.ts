@@ -105,6 +105,14 @@ export class JailFS extends FakeFS {
     return this.baseFs.renameSync(this.fromJailedPath(oldP), this.fromJailedPath(newP));
   }
 
+  async copyFilePromise(sourceP: string, destP: string, flags?: number) {
+    return await this.baseFs.copyFilePromise(this.fromJailedPath(sourceP), this.fromJailedPath(destP), flags);
+  }
+
+  copyFileSync(sourceP: string, destP: string, flags?: number) {
+    return this.baseFs.copyFileSync(this.fromJailedPath(sourceP), this.fromJailedPath(destP), flags);
+  }
+
   async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return await this.baseFs.writeFilePromise(this.fromJailedPath(p), content, opts);
   }

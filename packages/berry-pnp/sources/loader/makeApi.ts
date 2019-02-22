@@ -40,7 +40,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // likely get fixed at some point, but it'll take time and in the meantime we'll just add
     // additional fallback entries for common shared configs.
 
-    for (const name of [`react-scripts`]) {
+    for (const name of [`gatsby`, `react-scripts`]) {
       const packageStore = runtimeState.packageRegistry.get(name);
       if (packageStore) {
         for (const reference of packageStore.keys()) {

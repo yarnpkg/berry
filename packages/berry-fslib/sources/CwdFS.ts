@@ -109,6 +109,14 @@ export class CwdFS extends FakeFS {
     return this.baseFs.renameSync(this.fromCwdPath(oldP), this.fromCwdPath(newP));
   }
 
+  async copyFilePromise(sourceP: string, destP: string, flags?: number) {
+    return await this.baseFs.copyFilePromise(this.fromCwdPath(sourceP), this.fromCwdPath(destP), flags);
+  }
+
+  copyFileSync(sourceP: string, destP: string, flags?: number) {
+    return this.baseFs.copyFileSync(this.fromCwdPath(sourceP), this.fromCwdPath(destP), flags);
+  }
+
   async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return await this.baseFs.writeFilePromise(this.fromCwdPath(p), content, opts);
   }

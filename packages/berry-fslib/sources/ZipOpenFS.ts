@@ -1,3 +1,4 @@
+import {constants}                                         from 'fs';
 import {posix}                                             from 'path';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
@@ -215,20 +216,92 @@ export class ZipOpenFS extends FakeFS {
   }
 
   renameSync(oldP: string, newP: string) {
-    return this.makeCallSync(oldP, async () => {
-      return this.makeCallSync(newP, async () => {
+    return this.makeCallSync(oldP, () => {
+      return this.makeCallSync(newP, () => {
         return this.baseFs.renameSync(oldP, newP);
       }, async () => {
         throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
       });
-    }, async (zipFsO, {archivePath: archivePathO, subPath: subPathO}) => {
-      return this.makeCallSync(newP, async () => {
+    }, (zipFsO, {archivePath: archivePathO, subPath: subPathO}) => {
+      return this.makeCallSync(newP, () => {
         throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
-      }, async (zipFsN, {archivePath: archivePathN, subPath: subPathN}) => {
+      }, (zipFsN, {archivePath: archivePathN, subPath: subPathN}) => {
         if (zipFsO !== zipFsN) {
           throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
         } else {
           return zipFsO.renameSync(subPathO, subPathN);
+        }
+      });
+    });
+  }
+
+  async copyFilePromise(sourceP: string, destP: string, flags: number = 0) {
+    const fallback = async (sourceFs: FakeFS, sourceP: string, destFs: FakeFS, destP: string) => {
+      if ((flags & constants.COPYFILE_FICLONE_FORCE) !== 0)
+        throw Object.assign(new Error(`EXDEV: cross-device clone not permitted, copyfile '${sourceP}' -> ${destP}'`), {code: `EXDEV`});
+      if ((flags & constants.COPYFILE_EXCL) && await this.existsPromise(sourceP))
+        throw Object.assign(new Error(`EEXIST: file already exists, copyfile '${sourceP}' -> '${destP}'`), {code: `EEXIST`});
+
+      let content;
+      try {
+        content = await sourceFs.readFilePromise(sourceP);
+      } catch (error) {
+        throw Object.assign(new Error(`EINVAL: invalid argument, copyfile '${sourceP}' -> '${destP}'`), {code: `EINVAL`});
+      }
+
+      await destFs.writeFilePromise(destP, content);
+    };
+
+    return await this.makeCallPromise(sourceP, async () => {
+      return await this.makeCallPromise(destP, async () => {
+        return await this.baseFs.copyFilePromise(sourceP, destP, flags);
+      }, async (zipFsD, {archivePath: archivePathD, subPath: subPathD}) => {
+        return await fallback(this.baseFs, sourceP, zipFsD, subPathD);
+      });
+    }, async (zipFsS, {archivePath: archivePathS, subPath: subPathS}) => {
+      return await this.makeCallPromise(destP, async () => {
+        return await fallback(zipFsS, subPathS, this.baseFs, destP);
+      }, async (zipFsD, {archivePath: archivePathD, subPath: subPathD}) => {
+        if (zipFsS !== zipFsD) {
+          return await fallback(zipFsS, subPathS, zipFsD, subPathD);
+        } else {
+          return await zipFsS.copyFilePromise(subPathS, subPathD, flags);
+        }
+      });
+    });
+  }
+
+  copyFileSync(sourceP: string, destP: string, flags: number = 0) {
+    const fallback = (sourceFs: FakeFS, sourceP: string, destFs: FakeFS, destP: string) => {
+      if ((flags & constants.COPYFILE_FICLONE_FORCE) !== 0)
+        throw Object.assign(new Error(`EXDEV: cross-device clone not permitted, copyfile '${sourceP}' -> ${destP}'`), {code: `EXDEV`});
+      if ((flags & constants.COPYFILE_EXCL) && this.existsSync(sourceP))
+        throw Object.assign(new Error(`EEXIST: file already exists, copyfile '${sourceP}' -> '${destP}'`), {code: `EEXIST`});
+
+      let content;
+      try {
+        content = sourceFs.readFileSync(sourceP);
+      } catch (error) {
+        throw Object.assign(new Error(`EINVAL: invalid argument, copyfile '${sourceP}' -> '${destP}'`), {code: `EINVAL`});
+      }
+
+      destFs.writeFileSync(destP, content);
+    };
+
+    return this.makeCallSync(sourceP, () => {
+      return this.makeCallSync(destP, () => {
+        return this.baseFs.copyFileSync(sourceP, destP, flags);
+      }, (zipFsD, {archivePath: archivePathD, subPath: subPathD}) => {
+        return fallback(this.baseFs, sourceP, zipFsD, subPathD);
+      });
+    }, (zipFsS, {archivePath: archivePathS, subPath: subPathS}) => {
+      return this.makeCallSync(destP, () => {
+        return fallback(zipFsS, subPathS, this.baseFs, destP);
+      }, (zipFsD, {archivePath: archivePathD, subPath: subPathD}) => {
+        if (zipFsS !== zipFsD) {
+          return fallback(zipFsS, subPathS, zipFsD, subPathD);
+        } else {
+          return zipFsS.copyFileSync(subPathS, subPathD, flags);
         }
       });
     });

@@ -1,5 +1,5 @@
 import libzip                                              from '@berry/libzip';
-import {ReadStream, Stats, WriteStream}                    from 'fs';
+import {ReadStream, Stats, WriteStream, constants}         from 'fs';
 import {posix}                                             from 'path';
 import {PassThrough}                                       from 'stream';
 import {isDate}                                            from 'util';
@@ -552,6 +552,34 @@ export class ZipFS extends FakeFS {
 
   renameSync(oldP: string, newP: string): never {
     throw new Error(`Unimplemented`);
+  }
+
+  async copyFilePromise(sourceP: string, destP: string, flags?: number) {
+    return this.copyFileSync(sourceP, destP, flags);
+  }
+
+  copyFileSync(sourceP: string, destP: string, flags: number = 0) {
+    if ((flags & constants.COPYFILE_FICLONE_FORCE) !== 0)
+      throw Object.assign(new Error(`ENOSYS: unsupported clone operation, copyfile '${sourceP}' -> ${destP}'`), {code: `ENOSYS`});
+
+    const resolvedSourceP = this.resolveFilename(`copyfile '${sourceP} -> ${destP}'`, sourceP);
+    const indexSource = this.entries.get(resolvedSourceP);
+
+    if (typeof indexSource === `undefined`)
+      throw Object.assign(new Error(`EINVAL: invalid argument, copyfile '${sourceP}' -> '${destP}'`), {code: `EINVAL`});
+
+    const resolvedDestP = this.resolveFilename(`copyfile '${sourceP}' -> ${destP}'`, destP);
+    const indexDest = this.entries.get(resolvedDestP);
+
+    if ((flags & (constants.COPYFILE_EXCL | constants.COPYFILE_FICLONE_FORCE)) !== 0 && typeof indexDest !== `undefined`)
+      throw Object.assign(new Error(`EEXIST: file already exists, copyfile '${sourceP}' -> '${destP}'`), {code: `EEXIST`});
+
+    const source = this.getFileSource(indexSource);
+    const newIndex = this.setFileSource(resolvedDestP, source);
+
+    if (newIndex !== indexDest) {
+      this.registerEntry(resolvedDestP, newIndex);
+    }
   }
 
   async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
