@@ -1,5 +1,7 @@
 import {WorkspaceRequiredError}                              from '@berry/cli';
 import {Configuration, Cache, Plugin, Project, StreamReport} from '@berry/core';
+import {xfs}                                                 from '@berry/fslib';
+import {parseSyml, stringifySyml}                            from '@berry/parsers';
 import {Writable}                                            from 'stream';
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
@@ -28,6 +30,10 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
   .action(async ({cwd, stdout}: {cwd: string, stdout: Writable}) => {
     const configuration = await Configuration.find(cwd, plugins);
+
+    if (configuration.projectCwd !== null)
+      await autofixMergeConflicts(configuration);
+
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
 
@@ -48,3 +54,86 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
     return report.exitCode();
   });
+
+const MERGE_CONFLICT_ANCESTOR = `|||||||`;
+const MERGE_CONFLICT_END = `>>>>>>>`;
+const MERGE_CONFLICT_SEP = `=======`;
+const MERGE_CONFLICT_START = `<<<<<<<`;
+
+async function autofixMergeConflicts(configuration: Configuration) {
+  const lockfilePath = configuration.get(`lockfilePath`);
+  const file = await xfs.readFilePromise(lockfilePath, `utf8`);
+
+  if (!file.includes(MERGE_CONFLICT_START))
+    return;
+
+  const [left, right] = getVariants(file);
+
+  let parsedLeft;
+  let parsedRight;
+
+  try {
+    parsedLeft = parseSyml(left);
+    parsedRight = parseSyml(right);
+  } catch (error) {
+    throw new Error(`The individual variant of the lockfile failed to parse`);
+  }
+
+  const merged = Object.assign({}, parsedLeft, parsedRight);
+  const serialized = stringifySyml(merged);
+
+  await xfs.changeFilePromise(lockfilePath, serialized);
+}
+
+function getVariants(file: string) {
+  const variants: [Array<string>, Array<string>] = [[], []];
+  const lines = file.split(/\r?\n/g);
+
+  let skip = false;
+
+  while (lines.length > 0) {
+    const line = lines.shift();
+    if (typeof line === `undefined`)
+      throw new Error(`Assertion failed: Some lines should remain`);
+
+    if (line.startsWith(MERGE_CONFLICT_START)) {
+      // get the first variant
+      while (lines.length > 0) {
+        const conflictLine = lines.shift();
+        if (typeof conflictLine === `undefined`)
+          throw new Error(`Assertion failed: Some lines should remain`);
+
+        if (conflictLine === MERGE_CONFLICT_SEP) {
+          skip = false;
+          break;
+        } else if (skip || conflictLine.startsWith(MERGE_CONFLICT_ANCESTOR)) {
+          skip = true;
+          continue;
+        } else {
+          variants[0].push(conflictLine);
+        }
+      }
+
+      // get the second variant
+      while (lines.length > 0) {
+        const conflictLine = lines.shift();
+        if (typeof conflictLine === `undefined`)
+          throw new Error(`Assertion failed: Some lines should remain`);
+
+        if (conflictLine.startsWith(MERGE_CONFLICT_END)) {
+          break;
+        } else {
+          variants[1].push(conflictLine);
+        }
+      }
+    } else {
+      variants[0].push(line);
+      variants[1].push(line);
+    }
+  }
+
+  return [
+    variants[0].join(`\n`),
+    variants[1].join(`\n`),
+  ];
+}
