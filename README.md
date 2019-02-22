@@ -31,7 +31,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
 Because this repository is about the modern but experimental version of Yarn (aka Yarn v2), the install process is slightly different for the time being.
 
 - First, make sure you are using [the latest Yarn release](https://yarnpkg.com/en/docs/install).
-- Then go into your project and run `yarn policies set-version berry-nightly`
+- Then go into your project and run `yarn policies set-version berry`
 - To revert, just remove the local `.yarnrc` file that's been created
 
 ## Generic packages

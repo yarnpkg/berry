@@ -17,17 +17,17 @@ PropertyStatements
   = statements:PropertyStatement* { return Object.assign({}, ... statements) }
 
 PropertyStatement
-  = Samedent "#" (!EOL .)+ EOL+ { return {} }
+  = B? ("#" (!EOL .)+)? EOL_ANY+ { return {} }
   / Samedent property:Name B? ":" B? value:Expression { return {[property]: value} }
   // Compatibility with the old lockfile format (key-values without a ":")
-  / Samedent property:LegacyName B value:LegacyLiteral EOL+ { return {[property]: value} }
+  / Samedent property:LegacyName B value:LegacyLiteral EOL_ANY+ { return {[property]: value} }
   // Compatibility with the old lockfile format (multiple keys for a same value)
   / Samedent property:Name others:(B? "," B? other:Name { return other })+ B? ":" B? value:Expression { return Object.assign({}, ... [property].concat(others).map(property => ({[property]: value}))) }
 
 Expression
-  =  &(EOL Extradent "-" B) EOL Indent statements:ItemStatements Dedent { return statements }
+  =  &(EOL Extradent "-" B) EOL_ANY Indent statements:ItemStatements Dedent { return statements }
   / EOL Indent statements:PropertyStatements Dedent { return statements }
-  / expression:Literal EOL+ { return expression }
+  / expression:Literal EOL_ANY+ { return expression }
 
 Samedent "correct indentation"
   = spaces:" "* &{ return spaces.length === indentLevel * INDENT_STEP }
@@ -108,6 +108,9 @@ B "blank space"
 
 S "white space"
   = [ \t\n\r]+
+
+EOL_ANY
+  = EOL (B? EOL)*
 
 EOL
   = "\r\n"
