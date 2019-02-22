@@ -62,8 +62,10 @@ const MERGE_CONFLICT_START = `<<<<<<<`;
 
 async function autofixMergeConflicts(configuration: Configuration) {
   const lockfilePath = configuration.get(`lockfilePath`);
-  const file = await xfs.readFilePromise(lockfilePath, `utf8`);
+  if (!await xfs.existsPromise(lockfilePath))
+    return;
 
+  const file = await xfs.readFilePromise(lockfilePath, `utf8`);
   if (!file.includes(MERGE_CONFLICT_START))
     return;
 
