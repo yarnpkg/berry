@@ -1,6 +1,5 @@
 {
   "name": "@berry/plugin-essentials",
-  "version": "0.0.0",
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {

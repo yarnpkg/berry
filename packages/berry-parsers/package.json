@@ -1,17 +1,13 @@
 {
-    "name": "@berry/parsers",
-    "version": "0.0.0",
-    "private": true,
-    "main": "./sources/index.ts",
-    "files": [
-        "/lib"
-    ],
-    "devDependencies": {
-        "pegjs": "^0.10.0"
-    },
-    "scripts": {
-        "grammar:shell": "run pegjs -o sources/grammars/shell.js sources/grammars/shell.pegjs",
-        "grammar:resolution": "run pegjs -o sources/grammars/resolution.js sources/grammars/resolution.pegjs",
-        "grammar:syml": "run pegjs -o sources/grammars/syml.js sources/grammars/syml.pegjs"
-    }
+  "name": "@berry/parsers",
+  "private": true,
+  "main": "./sources/index.ts",
+  "devDependencies": {
+    "pegjs": "^0.10.0"
+  },
+  "scripts": {
+    "grammar:shell": "run pegjs -o sources/grammars/shell.js sources/grammars/shell.pegjs",
+    "grammar:resolution": "run pegjs -o sources/grammars/resolution.js sources/grammars/resolution.pegjs",
+    "grammar:syml": "run pegjs -o sources/grammars/syml.js sources/grammars/syml.pegjs"
+  }
 }

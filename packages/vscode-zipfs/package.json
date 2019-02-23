@@ -1,79 +1,79 @@
 {
-    "name": "vscode-zipfs",
-    "publisher": "arcanis",
-    "displayName": "ZipFS - a zip file system",
-    "description": "Allows to easily inspect and modify files stored within zip archives.",
-    "version": "0.0.1",
-    "engines": {
-        "vscode": "^1.23.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "workspaceContains:**/*.zip",
-        "onLanguage:zip",
-        "onFileSystem:zip"
-    ],
-    "main": "./build/index.js",
-    "contributes": {
-        "languages": [
-            {
-                "id": "zip",
-                "aliases": [
-                    "Zip Archive",
-                    "ZIP"
-                ],
-                "extensions": [
-                    ".zip"
-                ]
-            }
+  "name": "vscode-zipfs",
+  "publisher": "arcanis",
+  "displayName": "ZipFS - a zip file system",
+  "description": "Allows to easily inspect and modify files stored within zip archives.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.23.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/*.zip",
+    "onLanguage:zip",
+    "onFileSystem:zip"
+  ],
+  "main": "./build/index.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "zip",
+        "aliases": [
+          "Zip Archive",
+          "ZIP"
         ],
-        "commands": [
-            {
-                "command": "zipfs.mountZipFile",
-                "title": "Mount as Zip",
-                "category": "Zip"
-            },
-            {
-                "command": "zipfs.mountZipEditor",
-                "title": "Mount the current file as a workspace",
-                "category": "Zip"
-            }
-        ],
-        "menus": {
-            "explorer/context": [
-                {
-                    "when": "resourceLangId == zip",
-                    "command": "zipfs.mountZipFile",
-                    "group": "navigation"
-                }
-            ],
-            "commandPalette": [
-                {
-                    "when": "false",
-                    "command": "zipfs.mountZipFile"
-                },
-                {
-                    "when": "editorLangId == zip",
-                    "command": "zipfs.mountZipEditor"
-                }
-            ]
+        "extensions": [
+          ".zip"
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "command": "zipfs.mountZipFile",
+        "title": "Mount as Zip",
+        "category": "Zip"
+      },
+      {
+        "command": "zipfs.mountZipEditor",
+        "title": "Mount the current file as a workspace",
+        "category": "Zip"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "resourceLangId == zip",
+          "command": "zipfs.mountZipFile",
+          "group": "navigation"
         }
-    },
-    "devDependencies": {
-        "@berry/fslib": "workspace:*",
-        "pnp-webpack-plugin": "^1.3.1",
-        "ts-loader": "^5.3.3",
-        "typescript": "^3.2.4",
-        "vsce": "npm:1.54.0",
-        "webpack": "^4.28.4",
-        "webpack-cli": "npm:3.2.1"
-    },
-    "scripts": {
-        "build:vscode-zipfs": "run build",
-        "build": "run webpack-cli",
-        "watch": "run webpack-cli --watch",
-        "code": "code --extensionDevelopmentPath=\"$(pwd)\" \"$(pwd)\""
+      ],
+      "commandPalette": [
+        {
+          "when": "false",
+          "command": "zipfs.mountZipFile"
+        },
+        {
+          "when": "editorLangId == zip",
+          "command": "zipfs.mountZipEditor"
+        }
+      ]
     }
+  },
+  "devDependencies": {
+    "@berry/fslib": "workspace:*",
+    "pnp-webpack-plugin": "^1.3.1",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.2.4",
+    "vsce": "npm:1.54.0",
+    "webpack": "^4.28.4",
+    "webpack-cli": "npm:3.2.1"
+  },
+  "scripts": {
+    "build:vscode-zipfs": "run build",
+    "build": "run webpack-cli",
+    "watch": "run webpack-cli --watch",
+    "code": "code --extensionDevelopmentPath=\"$(pwd)\" \"$(pwd)\""
+  }
 }

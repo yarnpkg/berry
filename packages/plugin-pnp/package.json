@@ -1,12 +1,11 @@
 {
-    "name": "@berry/plugin-pnp",
-    "version": "0.0.0",
-    "private": true,
-    "main": "./sources/index.ts",
-    "dependencies": {
-        "@berry/cli": "workspace:*",
-        "@berry/core": "workspace:*",
-        "@berry/fslib": "workspace:*",
-        "@berry/pnp": "workspace:*"
-    }
+  "name": "@berry/plugin-pnp",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/cli": "workspace:*",
+    "@berry/core": "workspace:*",
+    "@berry/fslib": "workspace:*",
+    "@berry/pnp": "workspace:*"
+  }
 }

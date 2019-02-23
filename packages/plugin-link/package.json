@@ -1,10 +1,9 @@
 {
-    "name": "@berry/plugin-link",
-    "version": "0.0.0",
-    "private": true,
-    "main": "./sources/index.ts",
-    "dependencies": {
-        "@berry/core": "workspace:*",
-        "@berry/fslib": "workspace:*"
-    }
+  "name": "@berry/plugin-link",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/core": "workspace:*",
+    "@berry/fslib": "workspace:*"
+  }
 }

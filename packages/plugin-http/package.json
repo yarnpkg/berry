@@ -1,9 +1,8 @@
 {
-    "name": "@berry/plugin-http",
-    "version": "0.0.0",
-    "private": true,
-    "main": "./sources/index.ts",
-    "dependencies": {
-        "@berry/core": "workspace:*"
-    }
+  "name": "@berry/plugin-http",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/core": "workspace:*"
+  }
 }

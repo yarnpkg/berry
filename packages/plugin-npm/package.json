@@ -1,10 +1,9 @@
 {
-    "name": "@berry/plugin-npm",
-    "version": "0.0.0",
-    "private": true,
-    "main": "./sources/index.ts",
-    "dependencies": {
-        "@berry/core": "workspace:*",
-        "semver": "^5.6.0"
-    }
+  "name": "@berry/plugin-npm",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/core": "workspace:*",
+    "semver": "^5.6.0"
+  }
 }

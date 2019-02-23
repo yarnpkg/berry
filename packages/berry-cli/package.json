@@ -1,54 +1,53 @@
 {
-    "name": "@berry/cli",
-    "version": "0.0.0",
-    "private": true,
-    "main": "./sources/index.ts",
-    "bin": {
-        "berry": "./bin/run.js"
-    },
-    "dependencies": {
-        "@berry/core": "workspace:*",
-        "@berry/fslib": "workspace:*",
-        "@berry/parsers": "workspace:*",
-        "@berry/shell": "workspace:*",
-        "@manaflair/concierge": "^0.10.2",
-        "chalk": "^2.4.1",
-        "execa": "^1.0.0",
-        "joi": "^13.6.0",
-        "semver": "^5.6.0",
-        "tmp": "^0.0.33"
-    },
-    "devDependencies": {
-        "@berry/builder": "workspace:*",
-        "@berry/plugin-constraints": "workspace:*",
-        "@berry/plugin-essentials": "workspace:*",
-        "@berry/plugin-file": "workspace:*",
-        "@berry/plugin-github": "workspace:*",
-        "@berry/plugin-http": "workspace:*",
-        "@berry/plugin-hub": "workspace:*",
-        "@berry/plugin-init": "workspace:*",
-        "@berry/plugin-link": "workspace:*",
-        "@berry/plugin-npm": "workspace:*",
-        "@berry/plugin-pnp": "workspace:*",
-        "@berry/pnp": "workspace:*"
-    },
-    "scripts": {
-        "build:cli": "run @berry-build-bundle",
-        "run:cli": "run @berry-run"
-    },
-    "@berry/builder": {
-        "bundles": {
-            "standard": [
-                "@berry/plugin-essentials",
-                "@berry/plugin-init",
-                "@berry/plugin-constraints",
-                "@berry/plugin-file",
-                "@berry/plugin-github",
-                "@berry/plugin-http",
-                "@berry/plugin-link",
-                "@berry/plugin-npm",
-                "@berry/plugin-pnp"
-            ]
-        }
+  "name": "@berry/cli",
+  "private": true,
+  "main": "./sources/index.ts",
+  "bin": {
+    "berry": "./bin/run.js"
+  },
+  "dependencies": {
+    "@berry/core": "workspace:*",
+    "@berry/fslib": "workspace:*",
+    "@berry/parsers": "workspace:*",
+    "@berry/shell": "workspace:*",
+    "@manaflair/concierge": "^0.10.2",
+    "chalk": "^2.4.1",
+    "execa": "^1.0.0",
+    "joi": "^13.6.0",
+    "semver": "^5.6.0",
+    "tmp": "^0.0.33"
+  },
+  "devDependencies": {
+    "@berry/builder": "workspace:*",
+    "@berry/plugin-constraints": "workspace:*",
+    "@berry/plugin-essentials": "workspace:*",
+    "@berry/plugin-file": "workspace:*",
+    "@berry/plugin-github": "workspace:*",
+    "@berry/plugin-http": "workspace:*",
+    "@berry/plugin-hub": "workspace:*",
+    "@berry/plugin-init": "workspace:*",
+    "@berry/plugin-link": "workspace:*",
+    "@berry/plugin-npm": "workspace:*",
+    "@berry/plugin-pnp": "workspace:*",
+    "@berry/pnp": "workspace:*"
+  },
+  "scripts": {
+    "build:cli": "run @berry-build-bundle",
+    "run:cli": "run @berry-run"
+  },
+  "@berry/builder": {
+    "bundles": {
+      "standard": [
+        "@berry/plugin-essentials",
+        "@berry/plugin-init",
+        "@berry/plugin-constraints",
+        "@berry/plugin-file",
+        "@berry/plugin-github",
+        "@berry/plugin-http",
+        "@berry/plugin-link",
+        "@berry/plugin-npm",
+        "@berry/plugin-pnp"
+      ]
     }
+  }
 }

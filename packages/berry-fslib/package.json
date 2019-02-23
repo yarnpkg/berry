@@ -1,9 +1,8 @@
 {
-    "name": "@berry/fslib",
-    "version": "0.0.0",
-    "private": true,
-    "main": "./sources/index.ts",
-    "dependencies": {
-        "@berry/libzip": "workspace:*"
-    }
+  "name": "@berry/fslib",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/libzip": "workspace:*"
+  }
 }

@@ -1,9 +1,8 @@
 {
-    "name": "@berry/libzip",
-    "version": "0.0.0",
-    "private": true,
-    "main": "./sources/index.ts",
-    "scripts": {
-        "build:libzip": "cd ./artifacts && ./build.sh"
-    }
+  "name": "@berry/libzip",
+  "private": true,
+  "main": "./sources/index.ts",
+  "scripts": {
+    "build:libzip": "cd ./artifacts && ./build.sh"
+  }
 }
