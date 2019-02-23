@@ -1,4 +1,6 @@
 node_modules
 yarn-error.log
-/packages/*/bundles
 /.yarn/build-state.yml
+
+/packages/*/bundles/*
+!/packages/berry-pnp/bundles/hook.js
