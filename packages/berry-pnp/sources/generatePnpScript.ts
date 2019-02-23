@@ -1,5 +1,6 @@
-// @ts-ignore: This isn't a classical file; it's automatically generated (type string)
-import template                  from '@berry/pnp/sources/hook-bundle.js';
+// @ts-ignore
+import template                  from '@berry/pnp/bundles/hook';
+import {readFileSync}            from 'fs';
 
 import {generateSerializedState} from './generateSerializedState';
 import {SerializedState}         from './types';

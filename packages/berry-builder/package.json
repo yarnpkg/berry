@@ -25,6 +25,7 @@
         "typescript": "^3.2.4",
         "val-loader": "^1.1.1",
         "webpack": "^4.28.4",
+        "webpack-merge": "^4.2.1",
         "webpack-virtual-modules": "^0.1.10"
     }
 }

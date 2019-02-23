@@ -1,4 +1,4 @@
 node_modules
 yarn-error.log
-/packages/*/lib
-.yarn/build-state.yml
+/packages/*/bundles
+/.yarn/build-state.yml

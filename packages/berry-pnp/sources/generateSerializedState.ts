@@ -1,22 +1,52 @@
-import {miscUtils}                                                      from '@berry/core';
-
 import {LocationBlacklistData, LocationLengthData, PackageRegistryData} from './types';
 import {PackageStoreData, PnpSettings, SerializedState}                 from './types';
+
+// Keep this function is sync with its implementation in:
+// @berry/core/sources/miscUtils.ts
+export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) | Array<(value: T) => string>) {
+  const asArray = Array.from(values);
+
+  if (!Array.isArray(mappers))
+    mappers = [mappers];
+
+  const stringified: Array<Array<string>> = [];
+
+  for (const mapper of mappers)
+    stringified.push(asArray.map(value => mapper(value)));
+
+  const indices = asArray.map((_, index) => index);
+
+  indices.sort((a, b) => {
+    for (const layer of stringified) {
+      const comparison = layer[a] < layer[b] ? -1 : layer[a] > layer[b] ? +1 : 0;
+
+      if (comparison !== 0) {
+        return comparison;
+      }
+    }
+
+    return 0;
+  });
+
+  return indices.map(index => {
+    return asArray[index];
+  });
+}
 
 function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData {
   const packageRegistryData: PackageRegistryData = [];
 
-  for (const [packageName, packageStore] of miscUtils.sortMap(settings.packageRegistry, ([packageName]) => packageName === null ? `0` : `1${packageName}`)) {
+  for (const [packageName, packageStore] of sortMap(settings.packageRegistry, ([packageName]) => packageName === null ? `0` : `1${packageName}`)) {
     const packageStoreData: PackageStoreData = [];
     packageRegistryData.push([packageName, packageStoreData]);
 
-    for (const [packageReference, {packageLocation, packageDependencies}] of miscUtils.sortMap(packageStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
+    for (const [packageReference, {packageLocation, packageDependencies}] of sortMap(packageStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
       const normalizedDependencies: Array<[string, string]> = [];
 
       if (packageName !== null && packageReference !== null && !packageDependencies.has(packageName))
         normalizedDependencies.push([packageName, packageReference]);
 
-      for (const [dependencyName, dependencyReference] of miscUtils.sortMap(packageDependencies.entries(), ([dependencyName]) => dependencyName))
+      for (const [dependencyName, dependencyReference] of sortMap(packageDependencies.entries(), ([dependencyName]) => dependencyName))
         normalizedDependencies.push([dependencyName, dependencyReference]);
 
       packageStoreData.push([packageReference, {
@@ -30,7 +60,7 @@ function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData
 }
 
 function generateLocationBlacklistData(settings: PnpSettings): LocationBlacklistData {
-  return miscUtils.sortMap(settings.blacklistedLocations || [], location => location);
+  return sortMap(settings.blacklistedLocations || [], location => location);
 }
 
 function generateLocationLengthData(settings: PnpSettings): LocationLengthData {

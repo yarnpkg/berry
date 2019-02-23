@@ -3,6 +3,7 @@
     "version": "0.0.0",
     "private": true,
     "main": "./sources/index.ts",
+    "sideEffects": false,
     "dependencies": {
         "@berry/fslib": "workspace:*",
         "@berry/json-proxy": "workspace:*",

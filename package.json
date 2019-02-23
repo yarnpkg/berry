@@ -32,7 +32,8 @@
         "@types/tmp": "^0.0.33",
         "@types/treeify": "^1.0.0",
         "@types/tunnel": "^0.0.0",
-        "ts-node": "^7.0.1"
+        "ts-node": "^7.0.1",
+        "typescript": "^3.3.3333"
     },
     "dependenciesMeta": {
         "fsevents": {
@@ -41,8 +42,5 @@
         "webpack-cli": {
             "built": false
         }
-    },
-    "scripts": {
-        "grep": "grep -RF \"$@\" $(find packages -path 'packages/*/sources')"
     }
 }
