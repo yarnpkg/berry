@@ -1143,8 +1143,6 @@
   dependencies:
     "@berry/builder": "workspace:packages/berry-builder"
     "@berry/fslib": "workspace:*"
-    pnp-webpack-plugin: "npm:^1.3.1"
-    ts-loader: "npm:^5.3.3"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:3.2.1"
     webpack-sources: "npm:^1.3.0"
@@ -9716,11 +9714,11 @@ __metadata:
   linkType: hard
 
 "ts-pnp@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "ts-pnp@npm:1.0.0"
+  version: 1.0.1
+  resolution: "ts-pnp@npm:1.0.1"
   peerDependencies:
     typescript: "*"
-  checksum: f56566174d744fc0724413dc5f8afbcb2d56416896f651c3d3bfc8da2955f844686326b6e05d7ecc392c15755f4994b521e2bd57c9ddc068a4ec54c4a1c87779
+  checksum: c96371e17300ee9ec30fb31ca6f9673aeeba0ce70e869a421c1ea88b2f00ff3591a6da2dcacd815834fdacbbfb3dccedc5bacf7822ca667207178502ec03303f
   languageName: node
   linkType: hard
 

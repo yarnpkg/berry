@@ -4454,14 +4454,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-fslib"
                 ],
                 [
-                  "pnp-webpack-plugin",
-                  "npm:1.3.1"
-                ],
-                [
-                  "ts-loader",
-                  "virtual:f4d240d432c09c02b448fe8953b87497dc932bb8eef14c1f96e15d30a2f7c83203b9729fac558ad596ce07305a22905ae5155625d64068386e0e0423b324acf2#npm:5.3.3"
-                ],
-                [
                   "webpack",
                   "npm:4.28.4"
                 ],
@@ -21654,7 +21646,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "ts-pnp",
-                  "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.0"
+                  "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.1"
                 ]
               ]
             }
@@ -26389,38 +26381,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
-          ],
-          [
-            "virtual:f4d240d432c09c02b448fe8953b87497dc932bb8eef14c1f96e15d30a2f7c83203b9729fac558ad596ce07305a22905ae5155625d64068386e0e0423b324acf2#npm:5.3.3",
-            {
-              "packageLocation": "./.yarn/virtual/ts-loader-virtual-b902ac2a2aac24531c1f8f234c1f057c970052768f1f0b5a9a3fa4b8865ee330/node_modules/ts-loader/",
-              "packageDependencies": [
-                [
-                  "ts-loader",
-                  "virtual:f4d240d432c09c02b448fe8953b87497dc932bb8eef14c1f96e15d30a2f7c83203b9729fac558ad596ce07305a22905ae5155625d64068386e0e0423b324acf2#npm:5.3.3"
-                ],
-                [
-                  "chalk",
-                  "npm:2.4.2"
-                ],
-                [
-                  "enhanced-resolve",
-                  "npm:4.1.0"
-                ],
-                [
-                  "loader-utils",
-                  "npm:1.2.3"
-                ],
-                [
-                  "micromatch",
-                  "npm:3.1.10"
-                ],
-                [
-                  "semver",
-                  "npm:5.6.0"
-                ]
-              ]
-            }
           ]
         ]
       ],
@@ -26477,25 +26437,25 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "ts-pnp",
         [
           [
-            "npm:1.0.0",
+            "npm:1.0.1",
             {
-              "packageLocation": "./.yarn/cache/ts-pnp-npm-1.0.0-028d6a0abf88d861767a71b9267fb12b55c39a542bff5c1c2f88a3975598be53.zip/node_modules/ts-pnp/",
+              "packageLocation": "./.yarn/cache/ts-pnp-npm-1.0.1-3fcffca98b4d9fa86bc6d8a1873cbbbacfc6eb17762f5ea6da9b742c21462c32.zip/node_modules/ts-pnp/",
               "packageDependencies": [
                 [
                   "ts-pnp",
-                  "npm:1.0.0"
+                  "npm:1.0.1"
                 ]
               ]
             }
           ],
           [
-            "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.0",
+            "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.1",
             {
-              "packageLocation": "./.yarn/virtual/ts-pnp-virtual-3e9f52d52f850a3afc0817366adfd4f24c47c53b24095141826258ce7db735f1/node_modules/ts-pnp/",
+              "packageLocation": "./.yarn/virtual/ts-pnp-virtual-7cd9bee15ff909de4cc54f7ac9e970e8662e395f5b60f0e3183e882dd6c4beaa/node_modules/ts-pnp/",
               "packageDependencies": [
                 [
                   "ts-pnp",
-                  "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.0"
+                  "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.1"
                 ]
               ]
             }
