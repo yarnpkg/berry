@@ -78,7 +78,7 @@ The following packages are meant to be used by Yarn itself, and probably won't b
 Clone this repository, then run the following commands:
 
 ```
-$> ./packages/berry-cli/bin/berry build:cli
+$> yarn build:cli
 ```
 
-Note that no other command is needed! Since the repository contains our dependencies, you don't need to run any install. Everything works, and everything is guaranteed to work even ten years from now.
+Note that no other command is needed! Since our dependencies are checked-in within the repository (within the [`.yarn/cache`](.yarn/cache) directory), you don't need to run any install. Everything just works right after cloning the project, and is guaranteed to continue to work ten years from now 🙂
