@@ -1,3 +1,5 @@
+import {DependencyMeta, PeerDependencyMeta} from './Manifest';
+
 export type IdentHash = string & { __ident_hash: string };
 
 export interface Ident {
@@ -23,11 +25,14 @@ export interface Locator extends Ident {
 export enum LinkType { HARD = 'hard', SOFT = 'soft' };
 
 export interface Package extends Locator {
-  version: string,
+  version: string | null,
 
   languageName: string,
   linkType: LinkType,
 
   dependencies: Map<IdentHash, Descriptor>,
   peerDependencies: Map<IdentHash, Descriptor>,
+
+  dependenciesMeta: Map<string, Map<string | null, DependencyMeta>>,
+  peerDependenciesMeta: Map<string, PeerDependencyMeta>,
 };

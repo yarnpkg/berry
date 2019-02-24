@@ -6453,7 +6453,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "babel-jest",
-                  "virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:23.6.0"
+                  "virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:24.1.0"
                 ],
                 [
                   "jest",
@@ -6461,7 +6461,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "jest-environment-node",
-                  "npm:23.4.0"
+                  "npm:24.0.0"
                 ],
                 [
                   "jest-junit",
@@ -7714,21 +7714,33 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             }
           ],
           [
-            "virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:23.6.0",
+            "virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:24.1.0",
             {
-              "packageLocation": "./.yarn/virtual/babel-jest-virtual-e87568046beeaf9da86a7b7beadf67bfb439631b7a8e62cb4303f0639dd5f056/node_modules/babel-jest/",
+              "packageLocation": "./.yarn/virtual/babel-jest-virtual-72072098c5ce34467f04e8a746b83496183bae6599284b912e58cd9a76dc02e5/node_modules/babel-jest/",
               "packageDependencies": [
                 [
                   "babel-jest",
-                  "virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:23.6.0"
+                  "virtual:01fe729ad968bdcf2c14ab53bbfa886c4c43eb3a84c3e50a9bfc4e06de5addf67984f1f90c5434847bc7ddc9bdf9d867fd7f25b08b5177a76e6d8e7b9e7a6da9#npm:24.1.0"
+                ],
+                [
+                  "@babel/core",
+                  "npm:7.2.2"
                 ],
                 [
                   "babel-plugin-istanbul",
-                  "npm:4.1.6"
+                  "npm:5.1.1"
                 ],
                 [
                   "babel-preset-jest",
-                  "npm:23.2.0"
+                  "npm:24.1.0"
+                ],
+                [
+                  "chalk",
+                  "npm:2.4.2"
+                ],
+                [
+                  "slash",
+                  "npm:2.0.0"
                 ]
               ]
             }

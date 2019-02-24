@@ -5,7 +5,6 @@ import {Descriptor, Locator}                             from './types';
 export class LockfileResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     const resolution = opts.project.storedResolutions.get(descriptor.descriptorHash);
-
     if (resolution)
       return true;
 

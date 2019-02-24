@@ -3,6 +3,7 @@ import {parseResolution}   from '@berry/parsers';
 import {posix}             from 'path';
 import semver              from 'semver';
 
+import * as miscUtils      from './miscUtils';
 import * as structUtils    from './structUtils';
 import {IdentHash}         from './types';
 import {Ident, Descriptor} from './types';
@@ -27,6 +28,8 @@ export class Manifest {
   public ["private"]: boolean = false;
   public license: string | null = null;
 
+  public languageName: string | null = null;
+
   public bin: Map<string, string> = new Map();
   public scripts: Map<string, string> = new Map();
 
@@ -36,8 +39,8 @@ export class Manifest {
 
   public workspaceDefinitions: Array<WorkspaceDefinition> = [];
 
-  public dependenciesMeta: Map<IdentHash, Map<string, DependencyMeta>> = new Map();
-  public peerDependenciesMeta: Map<IdentHash, Map<string, PeerDependencyMeta>> = new Map();
+  public dependenciesMeta: Map<string, Map<string | null, DependencyMeta>> = new Map();
+  public peerDependenciesMeta: Map<string, PeerDependencyMeta> = new Map();
 
   public resolutions: Array<{pattern: any, reference: string}> = [];
 
@@ -200,11 +203,14 @@ export class Manifest {
           continue;
         }
 
-        let dependencyMetaSet = this.dependenciesMeta.get(descriptor.identHash);
+        const identString = structUtils.stringifyIdent(descriptor);
+        const range = descriptor.range !== `unknown` ? descriptor.range : null;
+
+        let dependencyMetaSet = this.dependenciesMeta.get(identString);
         if (!dependencyMetaSet)
-          this.dependenciesMeta.set(descriptor.identHash, dependencyMetaSet = new Map());
+          this.dependenciesMeta.set(identString, dependencyMetaSet = new Map());
         
-        dependencyMetaSet.set(descriptor.range, meta);
+        dependencyMetaSet.set(range, meta);
       }
     }
 
@@ -216,16 +222,13 @@ export class Manifest {
         }
 
         const descriptor = structUtils.parseDescriptor(pattern);
-        if (descriptor.range !== `unknown` && !semver.valid(descriptor.range)) {
+        if (descriptor.range !== `unknown`) {
           errors.push(new Error(`Invalid meta field range for '${pattern}'`));
           continue;
         }
 
-        let peerDependencyMetaSet = this.peerDependenciesMeta.get(descriptor.identHash);
-        if (!peerDependencyMetaSet)
-          this.peerDependenciesMeta.set(descriptor.identHash, peerDependencyMetaSet = new Map());
-        
-        peerDependencyMetaSet.set(descriptor.range, meta);
+        const identString = structUtils.stringifyIdent(descriptor);
+        this.peerDependenciesMeta.set(identString, meta);
       }
     }
 
@@ -286,6 +289,11 @@ export class Manifest {
     else
       delete data.license;
 
+    if (this.languageName !== null)
+      data.languageName = this.languageName;
+    else
+      delete data.languageName;
+
     data.dependencies = this.dependencies.size === 0 ? undefined : Object.assign({}, ... structUtils.sortDescriptors(this.dependencies.values()).map(dependency => {
       return {[structUtils.stringifyIdent(dependency)]: dependency.range};
     }));
@@ -296,6 +304,25 @@ export class Manifest {
 
     data.peerDependencies = this.peerDependencies.size === 0 ? undefined : Object.assign({}, ... structUtils.sortDescriptors(this.peerDependencies.values()).map(dependency => {
       return {[structUtils.stringifyIdent(dependency)]: dependency.range};
+    }));
+
+    data.dependenciesMeta = {};
+
+    for (const [identString, dependencyMetaSet] of miscUtils.sortMap(this.dependenciesMeta.entries(), ([identString, dependencyMetaSet]) => identString)) {
+      for (const [range, meta] of miscUtils.sortMap(dependencyMetaSet.entries(), ([range, meta]) => range !== null ? `0${range}` : `1`)) {
+        const key = range !== null
+          ? structUtils.stringifyDescriptor(structUtils.makeDescriptor(structUtils.parseIdent(identString), range))
+          : identString;
+
+        data.dependenciesMeta[key] = meta;
+      }
+    }
+
+    if (Object.keys(data.dependenciesMeta).length === 0)
+      data.dependenciesMeta = undefined;
+
+    data.peerDependenciesMeta = this.peerDependenciesMeta.size === 0 ? undefined : Object.assign({}, ... miscUtils.sortMap(this.peerDependenciesMeta.entries(), ([identString, meta]) => identString).map(([identString, meta]) => {
+      return {[identString]: meta};
     }));
   }
 };

@@ -1,36 +1,40 @@
-import {xfs}                                                from '@berry/fslib';
-import {parseSyml, stringifySyml}                           from '@berry/parsers';
-import {createHmac}                                         from 'crypto';
+import {xfs}                                    from '@berry/fslib';
+import {parseSyml, stringifySyml}               from '@berry/parsers';
+import {createHmac}                             from 'crypto';
 // @ts-ignore
-import Logic                                                from 'logic-solver';
-import {dirname, posix}                                     from 'path';
+import Logic                                    from 'logic-solver';
+import {dirname, posix}                         from 'path';
 // @ts-ignore
-import pLimit                                               from 'p-limit';
-import semver                                               from 'semver';
-import {PassThrough}                                        from 'stream';
-import {tmpNameSync}                                        from 'tmp';
+import pLimit                                   from 'p-limit';
+import semver                                   from 'semver';
+import {PassThrough}                            from 'stream';
+import {tmpNameSync}                            from 'tmp';
 
-import {AliasResolver}                                      from './AliasResolver';
-import {Cache}                                              from './Cache';
-import {Configuration}                                      from './Configuration';
-import {Fetcher}                                            from './Fetcher';
-import {Installer, BuildDirective}                          from './Installer';
-import {LightReport}                                        from './LightReport';
-import {Linker}                                             from './Linker';
-import {LockfileResolver}                                   from './LockfileResolver';
-import {DependencyMeta}                                     from './Manifest';
-import {MultiResolver}                                      from './MultiResolver';
-import {Report, ReportError, MessageName}                   from './Report';
-import {RunInstallPleaseResolver}                           from './RunInstallPleaseResolver';
-import {Workspace}                                          from './Workspace';
-import {YarnResolver}                                       from './YarnResolver';
-import * as miscUtils                                       from './miscUtils';
-import * as scriptUtils                                     from './scriptUtils';
-import * as structUtils                                     from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash}             from './types';
-import {Descriptor, Ident, Locator, Package}                from './types';
-import {LinkType}                                           from './types';
-import { ThrowReport } from './ThrowReport';
+import {AliasResolver}                          from './AliasResolver';
+import {Cache}                                  from './Cache';
+import {Configuration}                          from './Configuration';
+import {Fetcher}                                from './Fetcher';
+import {Installer, BuildDirective}              from './Installer';
+import {Linker}                                 from './Linker';
+import {LockfileResolver}                       from './LockfileResolver';
+import {DependencyMeta, Manifest}               from './Manifest';
+import {MultiResolver}                          from './MultiResolver';
+import {Report, ReportError, MessageName}       from './Report';
+import {RunInstallPleaseResolver}               from './RunInstallPleaseResolver';
+import {ThrowReport}                            from './ThrowReport';
+import {Workspace}                              from './Workspace';
+import {YarnResolver}                           from './YarnResolver';
+import * as miscUtils                           from './miscUtils';
+import * as scriptUtils                         from './scriptUtils';
+import * as structUtils                         from './structUtils';
+import {IdentHash, DescriptorHash, LocatorHash} from './types';
+import {Descriptor, Ident, Locator, Package}    from './types';
+import {LinkType}                               from './types';
+
+// When upgraded, the lockfile entries have to be resolved again (but the specific
+// versions are still pinned, no worry). Bump it when you change the fields within
+// the Package type; no more no less.
+const LOCKFILE_VERSION = 2;
 
 export type InstallOptions = {
   cache: Cache,
@@ -106,6 +110,8 @@ export class Project {
   }
 
   private async setupResolutions() {
+    const resolver = this.configuration.makeResolver();
+
     this.storedResolutions = new Map();
 
     this.storedDescriptors = new Map();
@@ -119,6 +125,8 @@ export class Project {
 
       // Protects against v1 lockfiles
       if (parsed.__metadata) {
+        const lockfileVersion = parsed.__metadata.version;
+
         for (const key of Object.keys(parsed)) {
           if (key === `__metadata`)
             continue;
@@ -126,34 +134,50 @@ export class Project {
           const data = parsed[key];
           const locator = structUtils.parseLocator(data.resolution, true);
 
-          const version = data.version;
+          const manifest = new Manifest();
+          manifest.load(data);
 
-          const languageName = data.languageName || `node`;
-          const linkType = data.linkType as LinkType || LinkType.HARD;
+          const version = manifest.version;
 
-          const dependencies = new Map<IdentHash, Descriptor>();
-          const peerDependencies = new Map<IdentHash, Descriptor>();
+          const languageName = manifest.languageName || this.configuration.get(`defaultLanguageName`);
+          const linkType = data.linkType as LinkType;
+
+          const dependencies = manifest.dependencies;
+          const peerDependencies = manifest.peerDependencies;
+
+          const dependenciesMeta = manifest.dependenciesMeta;
+          const peerDependenciesMeta = manifest.peerDependenciesMeta;
 
           if (data.checksum != null)
             this.storedChecksums.set(locator.locatorHash, data.checksum);
 
-          for (const dependency of Object.keys(data.dependencies || {})) {
-            const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.dependencies[dependency]);
-            dependencies.set(descriptor.identHash, descriptor);
+          if (lockfileVersion >= LOCKFILE_VERSION) {
+            const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies, dependenciesMeta, peerDependenciesMeta};
+            this.storedPackages.set(pkg.locatorHash, pkg);
           }
-
-          for (const dependency of Object.keys(data.peerDependencies || {})) {
-            const descriptor = structUtils.makeDescriptor(structUtils.parseIdent(dependency), data.peerDependencies[dependency]);
-            peerDependencies.set(descriptor.identHash, descriptor);
-          }
-
-          const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies};
-          this.storedPackages.set(pkg.locatorHash, pkg);
 
           for (const entry of key.split(/ *, */g)) {
             const descriptor = structUtils.parseDescriptor(entry);
+
             this.storedDescriptors.set(descriptor.descriptorHash, descriptor);
-            this.storedResolutions.set(descriptor.descriptorHash, pkg.locatorHash);
+
+            if (lockfileVersion >= LOCKFILE_VERSION) {
+              // If the lockfile is up-to-date, we can simply register the
+              // resolution as a done deal.
+
+              this.storedResolutions.set(descriptor.descriptorHash, locator.locatorHash);
+            } else {
+              // But if it isn't, then we instead setup an alias so that the
+              // descriptor will be re-resolved (so that we get to retrieve the
+              // new fields) while still resolving to the same locators.
+
+              const resolutionDescriptor = structUtils.convertLocatorToDescriptor(locator);
+
+              if (resolutionDescriptor.descriptorHash !== descriptor.descriptorHash) {
+                this.storedDescriptors.set(resolutionDescriptor.descriptorHash, resolutionDescriptor);
+                this.resolutionAliases.set(descriptor.descriptorHash, resolutionDescriptor.descriptorHash);
+              }
+            }
           }
         }
       }
@@ -274,24 +298,24 @@ export class Project {
     }
   }
 
-  getDependencyMeta(ident: Ident, version: string): DependencyMeta {
+  getDependencyMeta(ident: Ident, version: string | null): DependencyMeta {
     const dependencyMeta = {};
 
     const dependenciesMeta = this.topLevelWorkspace.manifest.dependenciesMeta;
-    const dependencyMetaSet = dependenciesMeta.get(ident.identHash);
+    const dependencyMetaSet = dependenciesMeta.get(structUtils.stringifyIdent(ident));
 
     if (!dependencyMetaSet)
       return dependencyMeta;
     
-    const defaultMeta = dependencyMetaSet.get(`unknown`);
+    const defaultMeta = dependencyMetaSet.get(null);
     if (defaultMeta)
       Object.assign(dependencyMeta, defaultMeta);
 
-    if (!semver.valid(version))
+    if (version === null || !semver.valid(version))
       return dependencyMeta;
 
     for (const [range, meta] of dependencyMetaSet)
-      if (range !== `unknown` && range === version)
+      if (range !== null && range === version)
         Object.assign(dependencyMeta, meta);
 
     return dependencyMeta;
@@ -669,11 +693,14 @@ export class Project {
               allResolutions.set(peerDescriptor.descriptorHash, parentLocator.locatorHash);
             }
 
-            const isOptional = peerRequest.range.startsWith(`optional:`);
-
             if (!peerDescriptor) {
-              if (!isOptional && !parentPackage.peerDependencies.has(peerRequest.identHash))
-                report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide ${structUtils.prettyDescriptor(this.configuration, peerRequest)} requested by ${structUtils.prettyLocator(this.configuration, pkg)}`);
+              if (!parentPackage.peerDependencies.has(peerRequest.identHash)) {
+                const peerDependencyMeta = virtualizedPackage.peerDependenciesMeta.get(structUtils.stringifyIdent(peerRequest));
+
+                if (!peerDependencyMeta || !peerDependencyMeta.optional) {
+                  report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide ${structUtils.prettyDescriptor(this.configuration, peerRequest)} requested by ${structUtils.prettyLocator(this.configuration, pkg)}`);
+                }
+              }
 
               peerDescriptor = structUtils.makeDescriptor(peerRequest, `missing:`);
             }
@@ -719,7 +746,7 @@ export class Project {
       if (!pkg)
         throw new Error(`Assertion failed: Expected workspace to have been resolved`);
 
-      workspace.dependencies = pkg.dependencies;
+      workspace.dependencies = new Map(pkg.dependencies);
     }
 
     // Everything is done, we can now update our internal resolutions to
@@ -1059,7 +1086,7 @@ export class Project {
     const optimizedLockfile: {[key: string]: any} = {};
 
     optimizedLockfile[`__metadata`] = {
-      version: 1,
+      version: LOCKFILE_VERSION,
     };
 
     for (const [locatorHash, descriptorHashes] of reverseLookup.entries()) {
@@ -1069,10 +1096,10 @@ export class Project {
 
       // Virtual packages are not persisted into the lockfile: they need to be
       // recomputed at runtime through "resolveEverything". We do this (instead
-      // of "forgetting" them when reading the file like for "link:" locators)
-      // because it would otherwise be super annoying to manually change the
-      // resolutions from a lockfile - I'd like to allow at least for the time
-      // being.
+      // of "forgetting" them when reading the file like for "link:" locators
+      // or workspaces) because it would otherwise be super annoying to manually
+      // change the resolutions from a lockfile (since you'd need to also update
+      // all its virtual instances). Also it would take a bunch of useless space.
       if (structUtils.isVirtualLocator(pkg))
         continue;
 
@@ -1090,33 +1117,37 @@ export class Project {
         return structUtils.stringifyDescriptor(descriptor);
       }).sort().join(`, `);
 
-      const dependencies: {[key: string]: string} = {};
-      const peerDependencies: {[key: string]: string} = {};
+      const manifest = new Manifest();
 
-      for (const dependency of pkg.dependencies.values()) {
-        if (!structUtils.isVirtualDescriptor(dependency)) {
-          dependencies[structUtils.stringifyIdent(dependency)] = dependency.range;
-        } else {
-          const devirtualizedDependency = structUtils.devirtualizeDescriptor(dependency);
-          dependencies[structUtils.stringifyIdent(devirtualizedDependency)] = devirtualizedDependency.range;
-        }
-      }
+      manifest.version = pkg.version;
 
-      for (const dependency of pkg.peerDependencies.values())
-        peerDependencies[structUtils.stringifyIdent(dependency)] = dependency.range;
+      manifest.languageName = pkg.languageName;
 
-      const rest = (pkg => {
+      manifest.dependencies = new Map(pkg.dependencies);
+      manifest.peerDependencies = new Map(pkg.peerDependencies);
+
+      manifest.dependenciesMeta = new Map(pkg.dependenciesMeta);
+      manifest.peerDependenciesMeta = new Map(pkg.peerDependenciesMeta);
+
+      // Since we don't keep the virtual packages in the lockfile, we must make
+      // sure we don't reference them within the dependencies of our packages
+      for (const [identHash, descriptor] of manifest.dependencies)
+        if (structUtils.isVirtualDescriptor(descriptor))
+          manifest.dependencies.set(identHash, structUtils.devirtualizeDescriptor(descriptor));
+
+      const serialized = (() => {
         // Remove the fields we're not interested in to only keep the ones we want
         const {identHash, scope, name, locatorHash, reference, dependencies, peerDependencies, ... rest} = pkg;
         return rest;
-      })(pkg);
+      })();
+
+      manifest.exportTo(serialized);
 
       optimizedLockfile[key] = {
-        ... rest,
+        ... serialized,
+
         resolution: structUtils.stringifyLocator(pkg),
         checksum: this.storedChecksums.get(pkg.locatorHash),
-        dependencies: Object.keys(dependencies).length > 0 ? dependencies : undefined,
-        peerDependencies: Object.keys(peerDependencies).length > 0 ? peerDependencies : undefined,
       };
     }
 

@@ -51,14 +51,19 @@ export class FileResolver implements Resolver {
       return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
     }, packageFetch.releaseFs);
 
-    const version = manifest.version || `0.0.0`;
+    return {
+      ... locator,
 
-    const languageName = opts.project.configuration.get(`defaultLanguageName`);
-    const linkType = LinkType.HARD;
+      version: manifest.version || `0.0.0`,
+      
+      languageName: opts.project.configuration.get(`defaultLanguageName`),
+      linkType: LinkType.HARD,
+      
+      dependencies: manifest.dependencies,
+      peerDependencies: manifest.peerDependencies,
 
-    const dependencies = manifest.dependencies;
-    const peerDependencies = manifest.peerDependencies;
-
-    return {... locator, version, languageName, linkType, dependencies, peerDependencies};
+      dependenciesMeta: manifest.dependenciesMeta,
+      peerDependenciesMeta: manifest.peerDependenciesMeta,
+    };
   }
 }

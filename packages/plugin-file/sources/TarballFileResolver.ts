@@ -57,14 +57,19 @@ export class TarballFileResolver implements Resolver {
       return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
     }, packageFetch.releaseFs);
 
-    const version = manifest.version || `0.0.0`;
+    return {
+      ... locator,
 
-    const languageName = opts.project.configuration.get(`defaultLanguageName`);
-    const linkType = LinkType.HARD;
+      version: manifest.version || `0.0.0`,
 
-    const dependencies = manifest.dependencies;
-    const peerDependencies = manifest.peerDependencies;
+      languageName: opts.project.configuration.get(`defaultLanguageName`),
+      linkType: LinkType.HARD,
 
-    return {... locator, version, languageName, linkType, dependencies, peerDependencies};
+      dependencies: manifest.dependencies,
+      peerDependencies: manifest.peerDependencies,
+
+      dependenciesMeta: manifest.dependenciesMeta,
+      peerDependenciesMeta: manifest.peerDependenciesMeta,
+    };
   }
 }

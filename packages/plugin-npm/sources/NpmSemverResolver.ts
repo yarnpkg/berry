@@ -70,13 +70,20 @@ export class NpmSemverResolver implements Resolver {
     const manifest = new Manifest();
     manifest.load(registryData.versions[version]);
 
-    const languageName = `node`;
-    const linkType = LinkType.HARD;
+    return {
+      ... locator,
 
-    const dependencies = manifest.dependencies;
-    const peerDependencies = manifest.peerDependencies;
+      version,
 
-    return {... locator, version, languageName, linkType, dependencies, peerDependencies};
+      languageName: `node`,
+      linkType: LinkType.HARD,
+
+      dependencies: manifest.dependencies,
+      peerDependencies: manifest.peerDependencies,
+
+      dependenciesMeta: manifest.dependenciesMeta,
+      peerDependenciesMeta: manifest.peerDependenciesMeta,
+    };
   }
 
   private getIdentUrl(ident: Ident, opts: MinimalResolveOptions) {

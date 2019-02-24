@@ -51,6 +51,7 @@ LegacyName
 
 Literal
   = null
+  / boolean
   / string
   / pseudostring
 
@@ -74,6 +75,10 @@ pseudostringLegacy
 
 null
   = "null" { return null }
+
+boolean
+  = "true" { return true }
+  / "false" { return false }
 
 string "string"
   = '"' '"' { return "" }

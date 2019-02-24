@@ -39,14 +39,19 @@ export class RawLinkResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const version = `0.0.0`;
+    return {
+      ... locator,
 
-    const languageName = opts.project.configuration.get(`defaultLanguageName`);
-    const linkType = LinkType.SOFT;
+      version: `0.0.0`,
 
-    const dependencies = new Map();
-    const peerDependencies = new Map();
+      languageName: opts.project.configuration.get(`defaultLanguageName`),
+      linkType: LinkType.SOFT,
 
-    return {... locator, version, languageName, linkType, dependencies, peerDependencies};
+      dependencies: new Map(),
+      peerDependencies: new Map(),
+
+      dependenciesMeta: new Map(),
+      peerDependenciesMeta: new Map(),
+    };
   }
 }

@@ -52,14 +52,19 @@ export class WorkspaceResolver implements Resolver {
   async resolve(locator: Locator, opts: ResolveOptions) {
     const workspace = opts.project.getWorkspaceByCwd(locator.reference.slice(WorkspaceResolver.protocol.length));
 
-    const version = workspace.manifest.version || `0.0.0`;
+    return {
+      ... locator,
 
-    const languageName = `unknown`;
-    const linkType = LinkType.SOFT;
+      version: workspace.manifest.version || `0.0.0`,
 
-    const dependencies = new Map([... workspace.manifest.dependencies, ... workspace.manifest.devDependencies]);
-    const peerDependencies = new Map([... workspace.manifest.peerDependencies]);
+      languageName: `unknown`,
+      linkType: LinkType.SOFT,
 
-    return {... locator, version, languageName, linkType, dependencies, peerDependencies};
+      dependencies: new Map([... workspace.manifest.dependencies, ... workspace.manifest.devDependencies]),
+      peerDependencies: new Map([... workspace.manifest.peerDependencies]),
+
+      dependenciesMeta: workspace.manifest.dependenciesMeta,
+      peerDependenciesMeta: workspace.manifest.peerDependenciesMeta,
+    };
   }
 }

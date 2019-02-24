@@ -4,7 +4,7 @@ const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@`]).([ \t]*(?![ \t\r\n])(?!
 
 // The following keys will always be stored at the top of the object, in the
 // specified order. It's not fair but life isn't fair either.
-const specialObjectKeys = [`version`, `resolution`, `dependencies`, `peerDependencies`];
+const specialObjectKeys = [`__metadata`, `version`, `resolution`, `dependencies`, `peerDependencies`, `dependenciesMeta`, `peerDependenciesMeta`];
 
 function stringifyString(value: string): string {
   if (value.match(simpleStringPattern)) {
@@ -23,7 +23,7 @@ function stringifyValue(value: any, indentLevel: number): string {
     }
   }
 
-  if (typeof value === 'number') {
+  if (typeof value === `number` || typeof value === `boolean`) {
     if (indentLevel === 0) {
       return `${value.toString()}\n`;
     } else {
@@ -31,7 +31,7 @@ function stringifyValue(value: any, indentLevel: number): string {
     }
   }
 
-  if (typeof value === 'string') {
+  if (typeof value === `string`) {
     if (indentLevel === 0) {
       return `${stringifyString(value)}\n`;
     } else {
@@ -47,7 +47,7 @@ function stringifyValue(value: any, indentLevel: number): string {
     }).join(``);
   }
 
-  if (typeof value === 'object' && value) {
+  if (typeof value === `object` && value) {
     const indent = `  `.repeat(indentLevel);
 
     const keys = Object.keys(value).sort((a, b) => {
