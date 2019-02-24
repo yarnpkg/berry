@@ -28,7 +28,8 @@ CommandChainType
   / '|'
 
 Command
-  = S* args:Argument+ S* { return { args } }
+  = S* "(" S* subshell:ShellLine S* ")" S* { return { subshell } }
+  / S* args:Argument+ S* { return { args } }
 
 Argument
   = S* segments:ArgumentSegment+ { return [].concat(... segments) }

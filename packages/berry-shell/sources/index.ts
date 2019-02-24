@@ -264,24 +264,35 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
       }
     }
 
-    const args = await interpolateArguments(node.args);
+    if (node.subshell) {
+      return (promises: Array<Promise<number>> = []) => {
+        next(promises);
 
-    if (args.length < 1)
-      return () => [];
+        if (opts.exitCode === null)
+          promises.push(runShellAst(node.subshell, {... opts, stdin, stdout, stderr}));
 
-    const ident = args[0];
-    const builtin = Object.prototype.hasOwnProperty.call(builtins, ident)
-      ? (commandOpts: ShellOptions) => builtins[ident](args.slice(1), commandOpts, opts)
-      : (commandOpts: ShellOptions) => builtins.command(args, commandOpts, opts);
+        return promises;
+      };
+    } else if (node.args) {
+      const args = await interpolateArguments(node.args);
 
-    return (promises: Array<Promise<number>> = []) => {
-      next(promises);
+      if (args.length < 1)
+        return () => [];
 
-      if (opts.exitCode === null)
-        promises.push(builtin({... opts, stdin, stdout, stderr}));
+      const ident = args[0];
+      const builtin = Object.prototype.hasOwnProperty.call(builtins, ident)
+        ? (commandOpts: ShellOptions) => builtins[ident](args.slice(1), commandOpts, opts)
+        : (commandOpts: ShellOptions) => builtins.command(args, commandOpts, opts);
 
-      return promises;
-    };
+      return (promises: Array<Promise<number>> = []) => {
+        next(promises);
+
+        if (opts.exitCode === null)
+          promises.push(builtin({... opts, stdin, stdout, stderr}));
+
+        return promises;
+      }
+    }
   }
 
   async function executeCommandChain(node: CommandChain) {

@@ -10,8 +10,12 @@ steps:
   displayName: 'Build the standard bundle'
 
 - script: |
-    ./packages/berry-cli/bin/berry run:tests
-  displayName: 'Run the acceptance tests'
+    ./packages/berry-cli/bin/berry test:integration
+  displayName: 'Run the integration tests'
+
+- scripts: |
+    ./packages/berry-cli/bin/berry test:unit
+  displayName: 'Run the unit tests'
 
 - task: PublishTestResults@2
   inputs:

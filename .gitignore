@@ -1,5 +1,8 @@
 node_modules
 yarn-error.log
+
+junit.xml
+
 /.yarn/build-state.yml
 
 /packages/*/bundles/*

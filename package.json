@@ -5,6 +5,12 @@
     "packages/*"
   ],
   "dependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.3",
+    "@babel/plugin-proposal-class-properties": "^7.3.3",
+    "@babel/plugin-transform-modules-commonjs": "^7.2.0",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-typescript": "^7.1.0",
     "@types/dateformat": "^1.0.1",
     "@types/emscripten": "^0.0.31",
     "@types/eventemitter3": "^2.0.2",
@@ -32,6 +38,11 @@
     "@types/tmp": "^0.0.33",
     "@types/treeify": "^1.0.0",
     "@types/tunnel": "^0.0.0",
+    "babel-jest": "^24.1.0",
+    "jest": "^24.1.0",
+    "jest-environment-node": "^24.0.0",
+    "jest-junit": "^5.2.0",
+    "jest-pnp-resolver": "^1.1.0",
     "ts-node": "^7.0.1",
     "typescript": "^3.3.3333"
   },
@@ -42,5 +53,8 @@
     "webpack-cli": {
       "built": false
     }
+  },
+  "scripts": {
+    "test:unit": "jest"
   }
 }

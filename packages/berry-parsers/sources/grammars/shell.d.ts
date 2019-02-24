@@ -5,6 +5,9 @@ export type CommandSegment = string |
 export type CommandChain = {
   args: Array<Array<CommandSegment>>,
   then?: {type: '|&' | '|', chain: CommandChain},
+} | {
+  subshell: ShellLine,
+  then?: {type: '|&' | '|', chain: CommandChain},
 };
 
 export type CommandLine = {
