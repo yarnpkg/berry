@@ -29,6 +29,7 @@
     "@berry/plugin-link": "workspace:*",
     "@berry/plugin-npm": "workspace:*",
     "@berry/plugin-pnp": "workspace:*",
+    "@berry/plugin-typescript": "workspace:*",
     "@berry/pnp": "workspace:*"
   },
   "scripts": {

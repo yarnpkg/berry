@@ -9,7 +9,7 @@ import supportsColor                     from 'supports-color';
 
 import {MultiFetcher}                    from './MultiFetcher';
 import {MultiResolver}                   from './MultiResolver';
-import {Plugin, BerryHooks}              from './Plugin';
+import {Plugin, Hooks}                   from './Plugin';
 import {SemverResolver}                  from './SemverResolver';
 import {TagResolver}                     from './TagResolver';
 import {VirtualFetcher}                  from './VirtualFetcher';
@@ -496,9 +496,9 @@ export class Configuration {
     return linkers;
   }
 
-  async triggerHook<U extends any[], V>(get: (hooks: BerryHooks) => ((... args: U) => V) | undefined, ... args: U): Promise<void> {
+  async triggerHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((... args: U) => V) | undefined, ... args: U): Promise<void> {
     for (const plugin of this.plugins.values()) {
-      const hooks = plugin.hooks;
+      const hooks = plugin.hooks as HooksDefinition;
       if (!hooks)
         continue;
 
@@ -507,6 +507,12 @@ export class Configuration {
         continue;
 
       await hook(... args);
+    }
+  }
+
+  async triggerMultipleHooks<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((... args: U) => V) | undefined, argsList: Array<U>): Promise<void> {
+    for (const args of argsList) {
+      await this.triggerHook(get, ... args);
     }
   }
 

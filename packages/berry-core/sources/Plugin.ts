@@ -18,7 +18,7 @@ export interface ResolverPlugin {
 
 // We keep this one an interface because we allow other plugins to extend it
 // with new hooks, cf TypeScript documentation on declaration merging
-export interface BerryHooks {
+export interface Hooks {
   afterAllInstalled?: (project: Project) => void,
 };
 
@@ -28,5 +28,5 @@ export type Plugin = {
   fetchers?: Array<FetcherPlugin>,
   linkers?: Array<LinkerPlugin>,
   resolvers?: Array<ResolverPlugin>,
-  hooks?: BerryHooks,
+  hooks?: {[key: string]: any},
 };

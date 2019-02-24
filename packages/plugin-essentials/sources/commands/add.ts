@@ -1,11 +1,12 @@
 import {WorkspaceRequiredError}                                            from '@berry/cli';
 import {Cache, Configuration, Descriptor, Ident, LightReport, MessageName} from '@berry/core';
-import {Plugin, Project, StreamReport}                                     from '@berry/core';
+import {Plugin, Project, StreamReport, Workspace}                          from '@berry/core';
 import {structUtils}                                                       from '@berry/core';
 import inquirer                                                            from 'inquirer';
 import {Readable, Writable}                                                from 'stream';
 
 import * as suggestUtils                                                   from '../suggestUtils';
+import {Hooks}                                                             from '..';
 
 export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
@@ -95,6 +96,12 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
 
     let askedQuestions = false;
 
+    const afterNewWorkspaceDependencyList: Array<[
+      Workspace,
+      suggestUtils.Target,
+      Descriptor
+    ]> = [];
+
     for (const [request, suggestions] of allSuggestions) {
       let selected;
 
@@ -120,13 +127,24 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
         selected.identHash,
         selected,
       );
+
+      afterNewWorkspaceDependencyList.push([
+        workspace,
+        target,
+        selected,
+      ]);
     }
+
+    await configuration.triggerMultipleHooks(
+      (hooks: Hooks) => hooks.afterNewWorkspaceDependency,
+      afterNewWorkspaceDependencyList,
+    );
 
     if (askedQuestions)
       stdout.write(`\n`);
 
     const installReport = await StreamReport.start({configuration, stdout}, async report => {
-        await project.install({cache, report});
+      await project.install({cache, report});
     });
 
     return installReport.exitCode();

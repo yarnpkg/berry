@@ -5523,6 +5523,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/plugin-pnp"
                 ],
                 [
+                  "@berry/plugin-typescript",
+                  "workspace:packages/plugin-typescript"
+                ],
+                [
                   "@berry/pnp",
                   "workspace:packages/berry-pnp"
                 ],
@@ -6261,6 +6265,31 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/pnp",
                   "workspace:packages/berry-pnp"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@berry/plugin-typescript",
+        [
+          [
+            "workspace:packages/plugin-typescript",
+            {
+              "packageLocation": "./packages/plugin-typescript/",
+              "packageDependencies": [
+                [
+                  "@berry/plugin-typescript",
+                  "workspace:packages/plugin-typescript"
+                ],
+                [
+                  "@berry/core",
+                  "workspace:packages/berry-core"
+                ],
+                [
+                  "@berry/plugin-essentials",
+                  "workspace:packages/plugin-essentials"
                 ]
               ]
             }
