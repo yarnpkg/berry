@@ -13,7 +13,7 @@ steps:
     ./packages/berry-cli/bin/berry test:integration
   displayName: 'Run the integration tests'
 
-- scripts: |
+- script: |
     ./packages/berry-cli/bin/berry test:unit
   displayName: 'Run the unit tests'
 
