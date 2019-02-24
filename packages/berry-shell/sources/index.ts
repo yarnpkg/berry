@@ -89,9 +89,9 @@ const BUILTINS = {
     if (stdin !== process.stdin)
       stdin.pipe(subprocess.stdin);
     if (stdout !== process.stdout)
-      subprocess.stdout.pipe(stdout);
+      subprocess.stdout.pipe(stdout, {end: false});
     if (stderr !== process.stderr)
-      subprocess.stderr.pipe(stderr);
+      subprocess.stderr.pipe(stderr, {end: false});
 
     return new Promise(resolve => {
       subprocess.on(`error`, error => {
@@ -350,18 +350,7 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions, {stdin, stdout, s
     if (!node.then) {
       return await executeCommandChain(node.chain, state);
     } else {
-      const stdin = state.stdin;
-
-      const stdout = new PassThrough();
-      const stderr = new PassThrough();
-
-      // Note: No copy; we want sub-executions to mutate our current state
-      const variables = state.variables;
-
-      stdout.pipe(state.stdout, {end: false});
-      stderr.pipe(state.stderr, {end: false});
-
-      const code = await executeCommandChain(node.chain, {stdin, stdout, stderr, variables});
+      const code = await executeCommandChain(node.chain, state);
 
       if (opts.exitCode !== null)
         return opts.exitCode;
@@ -398,16 +387,7 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions, {stdin, stdout, s
     for (const command of node) {
       const stdin = state.stdin;
 
-      const stdout = new PassThrough();
-      const stderr = new PassThrough();
-
-      // Note: No copy; we want sub-executions to mutate our current state
-      const variables = state.variables;
-
-      stdout.pipe(state.stdout, {end: false});
-      stderr.pipe(state.stderr, {end: false});
-
-      lastExitCode = await executeCommandLine(command, {stdin, stdout, stderr, variables});
+      lastExitCode = await executeCommandLine(command, state);
       
       state.variables[`?`] = String(lastExitCode);
 
@@ -416,9 +396,6 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions, {stdin, stdout, s
       }
     }
 
-    state.stdout.end();
-    state.stderr.end();
-    
     return lastExitCode;
   }
 
