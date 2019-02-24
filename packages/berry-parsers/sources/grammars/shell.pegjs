@@ -1,5 +1,5 @@
 Start
-  = ShellLine
+  = line:ShellLine? { return line ? line : [] }
 
 ShellLine
   = main:CommandLine then:ShellLineThen? { return [ main ].concat(then || []) }
@@ -28,8 +28,8 @@ CommandChainType
   / '|'
 
 Command
-  = S* "(" S* subshell:ShellLine S* ")" S* { return { subshell } }
-  / S* args:Argument+ S* { return { args } }
+  = S* "(" S* subshell:ShellLine S* ")" S* { return { type: `subshell`, subshell } }
+  / S* args:Argument+ S* { return { type: `command`, args } }
 
 Argument
   = S* segments:ArgumentSegment+ { return [].concat(... segments) }
@@ -75,7 +75,7 @@ Variable
   / '$' name:Identifier { return name }
 
 Identifier
-  = [@*#a-zA-Z0-9_-]+ { return text() }
+  = [@*?#a-zA-Z0-9_-]+ { return text() }
 
 SpecialShellChars
   = [()$|<>&; \t"']

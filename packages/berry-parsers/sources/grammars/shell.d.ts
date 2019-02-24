@@ -2,17 +2,31 @@ export type CommandSegment = string |
   {type: `shell`, shell: ShellLine, quoted: boolean} |
   {type: `variable`, name: string, quoted: boolean};
 
-export type CommandChain = {
+export type Command = {
+  type: `command`,
   args: Array<Array<CommandSegment>>,
-  then?: {type: '|&' | '|', chain: CommandChain},
 } | {
+  type: `subshell`,
   subshell: ShellLine,
-  then?: {type: '|&' | '|', chain: CommandChain},
+};
+
+export type CommandChain = Command & {
+  then?: CommandChainThen,
+};
+
+export type CommandChainThen = {
+  type: '|&' | '|',
+  chain: CommandChain,
 };
 
 export type CommandLine = {
   chain: CommandChain,
-  then?: {type: '&&' | '||', line: CommandLine},
+  then?: CommandLineThen,
+};
+
+export type CommandLineThen = {
+  type: '&&' | '||',
+  line: CommandLine,
 };
 
 export type ShellLine = Array<CommandLine>;

@@ -20,6 +20,13 @@ export type ShellOptions = {
   variables: {[key: string]: string},
 };
 
+export type ShellState = {
+  stdin: Readable,
+  stdout: Writable,
+  stderr: Writable,
+  variables: {[key: string]: string},
+};
+
 const BUILTINS = {
   async cd([target, ... rest]: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
     const resolvedTarget = posix.resolve(contextOpts.cwd, target);
@@ -115,12 +122,8 @@ const BUILTINS = {
   },
 };
 
-function deepCompare(a: any, b: any) {
-  return JSON.stringify(a) === JSON.stringify(b);
-}
-
-async function runShellAst(ast: ShellLine, opts: ShellOptions) {
-  const {args, builtins, cwd, stdin, stdout, stderr, variables} = opts;
+async function runShellAst(ast: ShellLine, opts: ShellOptions, {stdin, stdout, stderr, variables}: ShellState) {
+  const {args, builtins, cwd} = opts;
   const errors: Array<Error> = [];
 
   async function executeSubshell(ast: ShellLine) {
@@ -137,12 +140,12 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
       text += decoder.end();
     });
 
-    await runShellAst(ast, {... opts, stdout});
+    await runShellAst(ast, opts, {stdin, stdout, stderr, variables});
 
     return text.replace(/[\r\n]+$/, ``);
   }
 
-  async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>) {
+  async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, variables: {[key: string]: string}) {
     const interpolated: Array<string> = [];
     let interpolatedSegments: Array<string> = [];
 
@@ -223,7 +226,7 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
                       push(args[argIndex]);
                     }
                   } else {
-                    if (!Object.prototype.hasOwnProperty.call(variables, segment.name)) {
+                    if (!(segment.name in variables)) {
                       throw new Error(`Unbound variable "${segment.name}"`);
                     } else {
                       push(variables[segment.name]);
@@ -244,13 +247,30 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
     return interpolated;
   }
 
-  async function unrollCommandChain(node: CommandChain, {stdin, stdout, stderr}: {stdin: Readable, stdout: Writable, stderr: Writable}) {
+  /**
+   * Unroll a command chain. A command chain is a list of commands linked
+   * together thanks to the use of either of the `|` or `|&` operators:
+   * 
+   * $ cat hello | grep world | grep -v foobar
+   * 
+   * This function returns a callback that, when called, will simultaneously
+   * start all the processes from the command chain starting from the last
+   * one (we must be careful not to start by the first one, otherwise any
+   * data it would write before its followup spawn could be lost).
+   * 
+   * The return value of this callback is an array of promises that resolve to
+   * the exit code of the respective process in the command chain.
+   */
+
+  async function unrollCommandChain(node: CommandChain, {stdin, stdout, stderr, variables}: ShellState) {
     let next = (promises: Array<Promise<number>>) => {};
 
+    // If the node as a followup, then we first need to replace its stdout and
+    // stderr streams in order to forward them to the next command
     if (node.then) {
       const pipe = new PassThrough();
 
-      next = await unrollCommandChain(node.then.chain, {stdin: pipe, stdout, stderr});
+      next = await unrollCommandChain(node.then.chain, {stdin: pipe, stdout, stderr, variables});
 
       switch (node.then.type) {
         case `|&`: {
@@ -264,39 +284,55 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
       }
     }
 
-    if (node.subshell) {
-      return (promises: Array<Promise<number>> = []) => {
-        next(promises);
+    switch (node.type) {
 
-        if (opts.exitCode === null)
-          promises.push(runShellAst(node.subshell, {... opts, stdin, stdout, stderr}));
+      // If the node is a subshell, we just have to recurse and execute its AST
+      // after having updated the stdin/stdout/stderr state.
+      case `subshell`: {
+        return (promises: Array<Promise<number>> = []) => {
+          next(promises);
 
-        return promises;
-      };
-    } else if (node.args) {
-      const args = await interpolateArguments(node.args);
+          if (opts.exitCode === null)
+            promises.push(runShellAst(node.subshell, opts, {stdin, stdout, stderr, variables: Object.create(variables)}));
 
-      if (args.length < 1)
-        return () => [];
+          return promises;
+        };
+      } break;
 
-      const ident = args[0];
-      const builtin = Object.prototype.hasOwnProperty.call(builtins, ident)
-        ? (commandOpts: ShellOptions) => builtins[ident](args.slice(1), commandOpts, opts)
-        : (commandOpts: ShellOptions) => builtins.command(args, commandOpts, opts);
+      // If the node is a simple command, we interpolate its arguments with the
+      // available variables then call the matching builtin (if no builtin
+      // matches we default to "command", just like regular shells do).
+      case `command`: {
+        const args = await interpolateArguments(node.args, variables);
 
-      return (promises: Array<Promise<number>> = []) => {
-        next(promises);
+        if (args.length < 1)
+          return () => [];
 
-        if (opts.exitCode === null)
-          promises.push(builtin({... opts, stdin, stdout, stderr}));
+        const ident = args[0];
+        const builtin = Object.prototype.hasOwnProperty.call(builtins, ident)
+          ? (commandOpts: ShellOptions) => builtins[ident](args.slice(1), commandOpts, opts)
+          : (commandOpts: ShellOptions) => builtins.command(args, commandOpts, opts);
 
-        return promises;
-      }
+        return (promises: Array<Promise<number>> = []) => {
+          next(promises);
+
+          if (opts.exitCode === null)
+            promises.push(builtin({... opts, stdin, stdout, stderr}));
+
+          return promises;
+        };
+      } break;
+
     }
   }
 
-  async function executeCommandChain(node: CommandChain) {
-    const unrolledExecution = await unrollCommandChain(node, {stdin, stdout, stderr});
+  /**
+   * Execute a command chain and return the exit code for the right-most
+   * command (so `false | true` would return 0 and `true | false` would
+   * return 1).
+   */
+  async function executeCommandChain(node: CommandChain, state: ShellState) {
+    const unrolledExecution = await unrollCommandChain(node, state);
     const exitCodes = await Promise.all(unrolledExecution());
 
     if (exitCodes.length > 0) {
@@ -306,57 +342,87 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions) {
     }
   }
 
-  async function executeCommandLine(node: CommandLine): Promise<number> {
+  /**
+   * Execute a command line. A command line is a list of command shells linked
+   * together thanks to the use of either of the `||` or `&&` operators.
+   */
+  async function executeCommandLine(node: CommandLine, state: ShellState): Promise<number> {
     if (!node.then) {
-      return await executeCommandChain(node.chain);
-    } else switch (node.then.type) {
-      case `&&`: {
-        const code = await executeCommandChain(node.chain);
+      return await executeCommandChain(node.chain, state);
+    } else {
+      const stdin = state.stdin;
 
-        if (opts.exitCode !== null)
-          return opts.exitCode;
+      const stdout = new PassThrough();
+      const stderr = new PassThrough();
 
-        if (code === 0) {
-          return await executeCommandLine(node.then.line);
-        } else {
-          return code;
-        }
-      } break;
+      // Note: No copy; we want sub-executions to mutate our current state
+      const variables = state.variables;
 
-      case `||`: {
-        const code = await executeCommandChain(node.chain);
+      stdout.pipe(state.stdout, {end: false});
+      stderr.pipe(state.stderr, {end: false});
 
-        if (opts.exitCode !== null)
-          return opts.exitCode;
+      const code = await executeCommandChain(node.chain, {stdin, stdout, stderr, variables});
 
-        if (code !== 0) {
-          return await executeCommandLine(node.then.line);
-        } else {
-          return code;
-        }
-      } break;
+      if (opts.exitCode !== null)
+        return opts.exitCode;
 
-      default: {
-        throw new Error(`Unsupported command type: "${node.then.type}"`);
-      } break;
+      state.variables[`?`] = String(code);
+
+      switch (node.then.type) {
+        case `&&`: {
+          if (code === 0) {
+            return await executeCommandLine(node.then.line, state);
+          } else {
+            return code;
+          }
+        } break;
+
+        case `||`: {
+          if (code !== 0) {
+            return await executeCommandLine(node.then.line, state);
+          } else {
+            return code;
+          }
+        } break;
+
+        default: {
+          throw new Error(`Unsupported command type: "${node.then.type}"`);
+        } break;
+      }
     }
   }
 
-  async function executeShellLine(node: ShellLine) {
+  async function executeShellLine(node: ShellLine, state: ShellState) {
     let lastExitCode = 0;
 
     for (const command of node) {
-      lastExitCode = await executeCommandLine(command);
+      const stdin = state.stdin;
+
+      const stdout = new PassThrough();
+      const stderr = new PassThrough();
+
+      // Note: No copy; we want sub-executions to mutate our current state
+      const variables = state.variables;
+
+      stdout.pipe(state.stdout, {end: false});
+      stderr.pipe(state.stderr, {end: false});
+
+      lastExitCode = await executeCommandLine(command, {stdin, stdout, stderr, variables});
       
+      state.variables[`?`] = String(lastExitCode);
+
       if (opts.exitCode !== null) {
         return opts.exitCode;
       }
     }
+
+    state.stdout.end();
+    state.stderr.end();
     
     return lastExitCode;
   }
 
-  return executeShellLine(ast);
+  return executeShellLine(ast, {stdin, stdout, stderr, variables});
 }
 
 function locateArgsVariable(node: ShellLine): boolean {
@@ -365,26 +431,36 @@ function locateArgsVariable(node: ShellLine): boolean {
       let chain = command.chain;
 
       while (chain) {
-        const hasArgs = chain.args.some(arg => {
-          return arg.some(segment => {
-            if (typeof segment === 'string')
-              return false;
+        let hasArgs;
 
-            switch (segment.type) {
-              case `variable`: {
-                return segment.name === `@` || segment.name === `#` || segment.name === `*` || Number.isFinite(parseInt(segment.name, 10));
-              } break;
+        switch (chain.type) {
+          case `subshell`: {
+            hasArgs = locateArgsVariable(chain.subshell);
+          } break;
 
-              case `shell`: {
-                return locateArgsVariable(segment.shell);
-              } break;
+          case `command`: {
+            hasArgs = chain.args.some(arg => {
+              return arg.some(segment => {
+                if (typeof segment === 'string')
+                  return false;
 
-              default: {
-                return false;
-              } break;
-            }
-          });
-        });
+                switch (segment.type) {
+                  case `variable`: {
+                    return segment.name === `@` || segment.name === `#` || segment.name === `*` || Number.isFinite(parseInt(segment.name, 10));
+                  } break;
+
+                  case `shell`: {
+                    return locateArgsVariable(segment.shell);
+                  } break;
+
+                  default: {
+                    return false;
+                  } break;
+                }
+              });
+            });
+          } break;
+        }
 
         if (hasArgs)
           return true;
@@ -443,9 +519,11 @@ export async function runShell(command: string, {
     while (chain.then)
       chain = chain.then.chain;
 
-    chain.args = chain.args.concat(args.map(arg => {
-      return [arg];
-    }));
+    if (chain.type === `command`) {
+      chain.args = chain.args.concat(args.map(arg => {
+        return [arg];
+      }));
+    }
   }
 
   return await runShellAst(ast, {
@@ -458,5 +536,12 @@ export async function runShell(command: string, {
     stdout,
     stderr,
     variables,
+  }, {
+    stdin,
+    stdout,
+    stderr,
+    variables: Object.assign(Object.create(variables), {
+      [`?`]: 0,
+    }),
   });
 }
