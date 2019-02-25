@@ -58,6 +58,11 @@ const BUILTINS = {
     return contextOpts.exitCode = parseInt(code, 10);
   },
 
+  echo(args: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
+    commandOpts.stdout.write(`${args.join(` `)}\n`);
+    return 0;
+  },
+
   async command([ident, ... rest]: Array<string>, {cwd, env: commandEnv, stdin, stdout, stderr}: ShellOptions, contextOpts: ShellOptions) {
     if (typeof ident === `undefined`)
       return 0;
