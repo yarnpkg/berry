@@ -3,5 +3,5 @@ module.exports = {
   testEnvironment: require.resolve(`jest-environment-node`),
   transformIgnorePatterns: [`<rootDir>/packages/berry-libzip/sources/libzip.js$`, `/.pnp.js$`],
   modulePathIgnorePatterns: [`<rootDir>/packages/acceptance-tests`],
-  reporters: [`default`, require.resolve(`jest-junit`)],
+  reporters: [`default`, [require.resolve(`jest-junit`), {output: `<rootDir>/junit.xml`}]],
 };
