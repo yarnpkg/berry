@@ -53,6 +53,13 @@ describe(`Simple shell features`, () => {
     });
   });
 
+  it(`should throw an error when a command doesn't exist`, async () => {
+    await expect(bufferResult(`this-command-doesnt-exist-sorry`)).resolves.toMatchObject({
+      exitCode: 127,
+      stderr: `command not found: this-command-doesnt-exist-sorry\n`,
+    });
+  });
+
   it(`should forward the specified exit code when running exit`, async () => {
     await expect(bufferResult(`exit 1`)).resolves.toMatchObject({
       exitCode: 1,
@@ -60,6 +67,12 @@ describe(`Simple shell features`, () => {
 
     await expect(bufferResult(`exit 42`)).resolves.toMatchObject({
       exitCode: 42,
+    });
+  });
+
+  it(`should pipe the result of a command into another`, async () => {
+    await expect(bufferResult(`echo hello world | wc -w`)).resolves.toMatchObject({
+      stdout: `2\n`,
     });
   });
 
@@ -90,6 +103,23 @@ describe(`Simple shell features`, () => {
   it(`should execute both branches regardless of their exit status when using ';'`, async () => {
     await expect(bufferResult(`echo foo; echo bar`)).resolves.toMatchObject({
       stdout: `foo\nbar\n`,
+    });
+  });
+
+  it(`should immediatly stop the execution when calling 'exit'`, async () => {
+    await expect(bufferResult(`echo hello; exit 1; echo world`)).resolves.toMatchObject({
+      exitCode: 1,
+      stdout: `hello\n`,
+    });
+
+    await expect(bufferResult(`echo hello && exit 0 && echo world`)).resolves.toMatchObject({
+      exitCode: 0,
+      stdout: `hello\n`,
+    });
+
+    await expect(bufferResult(`(echo hello; exit 1); echo world`)).resolves.toMatchObject({
+      exitCode: 1,
+      stdout: `hello\n`,
     });
   });
 

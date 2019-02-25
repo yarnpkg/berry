@@ -127,6 +127,19 @@ const BUILTINS = {
   },
 };
 
+// Keep this function is sync with its implementation in:
+// @berry/core/sources/miscUtils.ts
+async function releaseAfterUseAsync<T>(fn: () => Promise<T>, cleanup?: () => any) {
+  if (!cleanup)
+    return await fn();
+
+  try {
+    return await fn();
+  } finally {
+    await cleanup();
+  }
+}
+
 async function runShellAst(ast: ShellLine, opts: ShellOptions, {stdin, stdout, stderr, variables}: ShellState) {
   const {args, builtins, cwd} = opts;
   const errors: Array<Error> = [];
@@ -269,6 +282,7 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions, {stdin, stdout, s
 
   async function unrollCommandChain(node: CommandChain, {stdin, stdout, stderr, variables}: ShellState) {
     let next = (promises: Array<Promise<number>>) => {};
+    let closeStreams = () => {};
 
     // If the node as a followup, then we first need to replace its stdout and
     // stderr streams in order to forward them to the next command
@@ -276,6 +290,7 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions, {stdin, stdout, s
       const pipe = new PassThrough();
 
       next = await unrollCommandChain(node.then.chain, {stdin: pipe, stdout, stderr, variables});
+      closeStreams = () => pipe.end();
 
       switch (node.then.type) {
         case `|&`: {
@@ -289,46 +304,56 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions, {stdin, stdout, s
       }
     }
 
-    switch (node.type) {
+    const commandArgs = node.type === `command`
+      ? await interpolateArguments(node.args, variables)
+      : null;
 
-      // If the node is a subshell, we just have to recurse and execute its AST
-      // after having updated the stdin/stdout/stderr state.
-      case `subshell`: {
-        return (promises: Array<Promise<number>> = []) => {
-          next(promises);
+    return (promises: Array<Promise<number>> = []) => {
+      next(promises);
 
-          if (opts.exitCode === null)
-            promises.push(runShellAst(node.subshell, opts, {stdin, stdout, stderr, variables: Object.create(variables)}));
+      if (opts.exitCode !== null)
+        return promises;
 
-          return promises;
-        };
-      } break;
+      let promise;
 
-      // If the node is a simple command, we interpolate its arguments with the
-      // available variables then call the matching builtin (if no builtin
-      // matches we default to "command", just like regular shells do).
-      case `command`: {
-        const args = await interpolateArguments(node.args, variables);
+      switch (node.type) {
+        // If the node is a subshell, we just have to recurse and execute its AST
+        // after having updated the stdin/stdout/stderr state.
+        case `subshell`: {
+          promise = runShellAst(node.subshell, opts, {stdin, stdout, stderr, variables: Object.create(variables)});
+        } break;
 
-        if (args.length < 1)
-          return () => [];
+        // If the node is a simple command, we interpolate its arguments with the
+        // available variables then call the matching builtin (if no builtin
+        // matches we default to "command", just like regular shells do).
+        case `command`: {
+          if (commandArgs === null) {
+            throw new Error(`Assertion failed: The arguments should have been interpolated`);
+          } else if (commandArgs.length === 0) {
+            promise = Promise.resolve(0);
+          } else if (Object.prototype.hasOwnProperty.call(builtins, commandArgs[0])) {
+            promise = Promise.resolve(builtins[commandArgs[0]](commandArgs.slice(1), {... opts, stdin, stdout, stderr}, opts));
+          } else {
+            promise = Promise.resolve(builtins.command(commandArgs, {... opts, stdin, stdout, stderr}, opts));
+          }
+        } break;
 
-        const ident = args[0];
-        const builtin = Object.prototype.hasOwnProperty.call(builtins, ident)
-          ? (commandOpts: ShellOptions) => builtins[ident](args.slice(1), commandOpts, opts)
-          : (commandOpts: ShellOptions) => builtins.command(args, commandOpts, opts);
+        default: {
+          // @ts-ignore
+          throw new Error(`Unsupported command type: "${node.type}"`);
+        } break;
+      }
 
-        return (promises: Array<Promise<number>> = []) => {
-          next(promises);
+      promises.push(promise.then(result => {
+        closeStreams();
+        return result;
+      }, error => {
+        closeStreams();
+        throw error;
+      }));
 
-          if (opts.exitCode === null)
-            promises.push(builtin({... opts, stdin, stdout, stderr}));
-
-          return promises;
-        };
-      } break;
-
-    }
+      return promises;
+    };
   }
 
   /**

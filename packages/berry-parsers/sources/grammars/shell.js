@@ -409,7 +409,7 @@ function peg$parse(input, options) {
           s4 = peg$parseS();
         }
         if (s3 !== peg$FAILED) {
-          s4 = peg$parseCommandLine();
+          s4 = peg$parseShellLine();
           if (s4 !== peg$FAILED) {
             s5 = [];
             s6 = peg$parseS();

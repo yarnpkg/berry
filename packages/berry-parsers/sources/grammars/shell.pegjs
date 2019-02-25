@@ -5,7 +5,7 @@ ShellLine
   = main:CommandLine then:ShellLineThen? { return [ main ].concat(then || []) }
 
 ShellLineThen
-  = S* ';' S* then:CommandLine S* { return then }
+  = S* ';' S* then:ShellLine S* { return then }
 
 CommandLine
   = chain:CommandChain then:CommandLineThen? { return then ? { chain, then } : { chain } }
