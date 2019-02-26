@@ -25,6 +25,7 @@
     "val-loader": "^1.1.1",
     "webpack": "^4.28.4",
     "webpack-merge": "^4.2.1",
+    "webpack-sources": "^1.3.0",
     "webpack-virtual-modules": "^0.1.10"
   }
 }

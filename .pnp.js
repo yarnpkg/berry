@@ -95,10 +95,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:1.0.0"
                 ],
                 [
-                  "@types/lodash",
-                  "npm:4.14.119"
-                ],
-                [
                   "@types/mkdirp",
                   "npm:0.5.2"
                 ],
@@ -5446,6 +5442,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:4.2.1"
                 ],
                 [
+                  "webpack-sources",
+                  "npm:1.3.0"
+                ],
+                [
                   "webpack-virtual-modules",
                   "npm:0.1.10"
                 ]
@@ -5806,10 +5806,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/lockfile",
                   "npm:1.0.0"
-                ],
-                [
-                  "@types/lodash",
-                  "npm:4.14.119"
                 ],
                 [
                   "@types/mkdirp",
@@ -6282,6 +6278,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/plugin-typescript",
                   "workspace:packages/plugin-typescript"
+                ],
+                [
+                  "@berry/builder",
+                  "workspace:packages/berry-builder"
                 ],
                 [
                   "@berry/core",
@@ -7012,23 +7012,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/lockfile",
                   "npm:1.0.0"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
-        "@types/lodash",
-        [
-          [
-            "npm:4.14.119",
-            {
-              "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.119-8b9b06db8a00c90a15f5492c74cfd7a6bc3bb18e1870f83ead1d9b71d47ade54.zip/node_modules/@types/lodash/",
-              "packageDependencies": [
-                [
-                  "@types/lodash",
-                  "npm:4.14.119"
                 ]
               ]
             }
@@ -23486,6 +23469,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "pkg-tests-specs",
                   "workspace:packages/acceptance-tests/pkg-tests-specs"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@berry/parsers",
+                  "workspace:packages/berry-parsers"
                 ],
                 [
                   "fs-extra",

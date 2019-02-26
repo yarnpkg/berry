@@ -1,10 +1,10 @@
-import {Configuration, Plugin, Project} from '@berry/core';
-import {httpUtils}                      from '@berry/core';
-import {xfs}                            from '@berry/fslib';
-import Joi                              from 'joi';
-import {dirname, resolve}               from 'path';
-import semver, {SemVer}                 from 'semver';
-import {Readable, Writable}             from 'stream';
+import {Configuration, PluginConfiguration, Project} from '@berry/core';
+import {httpUtils}                                   from '@berry/core';
+import {xfs}                                         from '@berry/fslib';
+import Joi                                           from 'joi';
+import {dirname, resolve}                            from 'path';
+import semver, {SemVer}                              from 'semver';
+import {Readable, Writable}                          from 'stream';
 
 type ReleaseAsset = {
   id: any,
@@ -72,7 +72,7 @@ async function fetchReleases(configuration: Configuration, {includePrereleases =
   return releases;
 }
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`policies set-version [range]`)
 
@@ -117,7 +117,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   )
 
   .action(async ({cwd, stdout, range, rc}: {cwd: string, stdin: Readable, stdout: Writable, range: string, rc: boolean}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
 
     stdout.write(`Resolving ${configuration.format(range, `yellow`)} to a url...\n`);

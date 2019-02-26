@@ -15,6 +15,8 @@ import {TagResolver}                     from './TagResolver';
 import {VirtualFetcher}                  from './VirtualFetcher';
 import {WorkspaceFetcher}                from './WorkspaceFetcher';
 import {WorkspaceResolver}               from './WorkspaceResolver';
+import * as miscUtils                    from './miscUtils';
+import * as nodeUtils                    from './nodeUtils';
 import * as structUtils                  from './structUtils';
 
 // @ts-ignore
@@ -84,6 +86,11 @@ export type SettingsDefinition = {
   default: any,
   isArray?: boolean,
   isNullable?: boolean,
+};
+
+export type PluginConfiguration = {
+  modules: Map<string, any>,
+  plugins: Set<string>,
 };
 
 export const coreDefinitions = {
@@ -257,13 +264,13 @@ function getEnvironmentSettings() {
 }
 
 function getRcFilename() {
-  const environmentSettings = getEnvironmentSettings();
+  const rcKey = `${ENVIRONMENT_PREFIX}rc_filename`;
 
-  if (Object.prototype.hasOwnProperty.call(environmentSettings, `rcFilename`)) {
-    return environmentSettings.rcFilename;
-  } else {
-    return DEFAULT_RC_FILENAME;
-  }
+  for (const [key, value] of Object.entries(process.env))
+    if (key.toLowerCase() === rcKey)
+      return value;
+
+  return DEFAULT_RC_FILENAME;
 }
 
 export class Configuration {
@@ -294,14 +301,101 @@ export class Configuration {
   public values: Map<string, any> = new Map();
   public sources: Map<string, string> = new Map();
 
-  static async find(startingCwd: string, plugins: Map<string, Plugin>) {
+  /**
+   * Instantiate a new configuration object exposing the configuration obtained
+   * from reading the various rc files and the environment settings.
+   * 
+   * The `pluginConfiguration` parameter is expected to indicate:
+   * 
+   * 1. which modules should be made available to plugins when they require a
+   *    package (this is the dynamic linking part - for example we want all the
+   *    plugins to use the exact same version of @berry/core, which also is the
+   *    version used by the running Yarn instance).
+   * 
+   * 2. which of those modules are actually plugins that need to be injected
+   *    within the configuration.
+   * 
+   * Note that some extra plugins will be automatically added based on the
+   * content of the rc files - with the rc plugins taking precedence over
+   * the other ones.
+   * 
+   * One particularity: the plugin initialization order is quite strict, with
+   * plugins listed in /foo/bar/.yarnrc taking precedence over plugins listed
+   * in /foo/.yarnrc and /.yarnrc. Additionally, while plugins can depend on
+   * one another, they can only depend on plugins that have been instantiated
+   * before them (so a plugin listed in /foo/.yarnrc can depend on another
+   * one listed on /foo/bar/.yarnrc, but not the other way around).
+   */
+
+  static async find(startingCwd: string, pluginConfiguration: PluginConfiguration | null) {
+    const environmentSettings = getEnvironmentSettings();
+    delete environmentSettings.rcFilename;
+
+    const {projectCwd, rcFiles} = await Configuration.getRcData(startingCwd);
+    const plugins = new Map();    
+
+    if (pluginConfiguration !== null) {
+      for (const request of pluginConfiguration.plugins.keys())
+        plugins.set(request, pluginConfiguration.modules.get(request).default);
+
+      const requireEntries = new Map(pluginConfiguration.modules);
+      for (const request of nodeUtils.builtinModules())
+        requireEntries.set(request, () => nodeUtils.dynamicRequire(request));
+
+      const dynamicPlugins = new Set();
+
+      for (const {path, cwd, data} of rcFiles) {
+        if (!Array.isArray(data.plugins))
+          continue;
+
+        for (const pluginPath of data.plugins) {
+          const {factory, name} = nodeUtils.dynamicRequire(posix.resolve(cwd, pluginPath));
+
+          // Prevent plugin redefinition so that the ones declared deeper in the
+          // filesystem always have precedence over the ones below.
+          if (dynamicPlugins.has(name))
+            continue;
+
+          const pluginRequireEntries = new Map(requireEntries);
+          const pluginRequire = (request: string) => {
+            if (pluginRequireEntries.has(request)) {
+              return pluginRequireEntries.get(request);
+            } else {
+              throw new UsageError(`This plugin cannot access the package referenced via ${request} which is neither a builtin, nor an exposed entry`);
+            }
+          };
+
+          const plugin = miscUtils.prettifySyncErrors(() => {
+            return factory(pluginRequire);
+          }, message => {
+            return `${message} (when initializing ${name}, defined in ${path})`;
+          });
+
+          requireEntries.set(name, plugin);
+
+          dynamicPlugins.add(name);
+          plugins.set(name, plugin);
+        }
+      }
+    }
+
+    const configuration = new Configuration(projectCwd, plugins);
+    configuration.useWithSource(`<environment>`, environmentSettings, startingCwd);
+
+    for (const {path, cwd, data} of rcFiles)
+      configuration.useWithSource(path, data, cwd);
+
+    return configuration;
+  }
+
+  static async getRcData(startingCwd: string) {
+    const rcFilename = getRcFilename();
+
     let projectCwd = null;
-    const rcCwds = [];
+    const rcFiles = [];
 
     let nextCwd = startingCwd;
     let currentCwd = null;
-
-    const rcFilename = getRcFilename();
 
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
@@ -309,24 +403,19 @@ export class Configuration {
       if (xfs.existsSync(`${currentCwd}/package.json`))
         projectCwd = currentCwd;
 
-      if (xfs.existsSync(`${currentCwd}/${rcFilename}`))
-        rcCwds.push(currentCwd);
+      const rcPath = `${currentCwd}/${rcFilename}`;
+
+      if (xfs.existsSync(rcPath)) {
+        const content = await xfs.readFilePromise(rcPath, `utf8`);
+        const data = parseSyml(content) as any;
+
+        rcFiles.push({path: rcPath, cwd: currentCwd, data});
+      }
 
       nextCwd = posix.dirname(currentCwd);
     }
 
-    const environmentSettings = getEnvironmentSettings();
-
-    // The rc filename is set through the default configuration
-    delete environmentSettings.rcFilename;
-
-    const configuration = new Configuration(projectCwd, plugins);
-    configuration.use(`<environment>`, environmentSettings, process.cwd());
-
-    for (const rcCwd of rcCwds)
-      await configuration.inherits(`${rcCwd}/${rcFilename}`);
-
-    return configuration;
+    return {projectCwd, rcFiles};
   }
 
   static async updateConfiguration(cwd: string, patch: any) {
@@ -394,12 +483,9 @@ export class Configuration {
     }
   }
 
-  async inherits(source: string) {
+  useWithSource(source: string, data: {[key: string]: unknown}, folder: string) {
     try {
-      const content = await xfs.readFilePromise(source, `utf8`);
-      const data = parseSyml(content);
-
-      this.use(source, data, posix.dirname(source));
+      this.use(source, data, folder);
     } catch (error) {
       error.message += ` (in ${source})`;
       throw error;
@@ -413,17 +499,21 @@ export class Configuration {
     for (const key of Object.keys(data)) {
       const name = key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
 
+      // The plugins have already been loaded at this point
+      if (name === `plugins`)
+        continue;
+
       // binFolder is the magic location where the parent process stored the current binaries; not an actual configuration settings
       if (name === `binFolder`)
         continue;
       
-      // It wouldn't make much sense, would it
+      // It wouldn't make much sense, would it?
       if (name === `rcFilename`)
-        throw new UsageError(`The rcFilename settings can only be set via ${`${ENVIRONMENT_PREFIX}RC_FILENAME`.toUpperCase()}, not via a rc file (in ${source})`);
+        throw new UsageError(`The rcFilename settings can only be set via ${`${ENVIRONMENT_PREFIX}RC_FILENAME`.toUpperCase()}, not via a rc file`);
 
       const definition = this.settings.get(name);
       if (!definition)
-        throw new UsageError(`${legacyNames.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} (via ${source}) - run "yarn config -v" to see the list of settings supported in Yarn`);
+        throw new UsageError(`${legacyNames.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
 
       if (this.sources.has(name))
         continue;

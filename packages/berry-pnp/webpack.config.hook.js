@@ -15,8 +15,8 @@ module.exports = makeConfig({
 
   plugins: [
     { apply: compiler => {
-      compiler.hooks.compilation.tap('MyPlugin', compilation => {
-        compilation.hooks.optimizeChunkAssets.tap(`RawPlugin`, chunks => {
+      compiler.hooks.compilation.tap(`MyPlugin`, compilation => {
+        compilation.hooks.optimizeChunkAssets.tap(`MyPlugin`, chunks => {
           for (const chunk of chunks) {
             for (const file of chunk.files) {
               compilation.assets[file] = new RawSource(`module.exports = ${JSON.stringify(

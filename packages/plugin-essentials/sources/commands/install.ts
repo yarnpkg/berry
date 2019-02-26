@@ -1,10 +1,10 @@
-import {WorkspaceRequiredError}                              from '@berry/cli';
-import {Configuration, Cache, Plugin, Project, StreamReport} from '@berry/core';
-import {xfs}                                                 from '@berry/fslib';
-import {parseSyml, stringifySyml}                            from '@berry/parsers';
-import {Writable}                                            from 'stream';
+import {WorkspaceRequiredError}                                           from '@berry/cli';
+import {Configuration, Cache, PluginConfiguration, Project, StreamReport} from '@berry/core';
+import {xfs}                                                              from '@berry/fslib';
+import {parseSyml, stringifySyml}                                         from '@berry/parsers';
+import {Writable}                                                         from 'stream';
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`install [-f]`)
   .describe(`install the project dependencies`)
@@ -29,7 +29,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   )
 
   .action(async ({cwd, stdout}: {cwd: string, stdout: Writable}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     if (configuration.projectCwd !== null)
       await autofixMergeConflicts(configuration);

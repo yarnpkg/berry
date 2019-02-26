@@ -1,13 +1,13 @@
-import {WorkspaceRequiredError}                              from '@berry/cli';
-import {Configuration, Cache, Plugin, Project, StreamReport} from '@berry/core';
-import {structUtils}                                         from '@berry/core';
-import {xfs}                                                 from '@berry/fslib';
+import {WorkspaceRequiredError}                                           from '@berry/cli';
+import {Configuration, Cache, PluginConfiguration, Project, StreamReport} from '@berry/core';
+import {structUtils}                                                      from '@berry/core';
+import {xfs}                                                              from '@berry/fslib';
 // @ts-ignore
-import {UsageError}                                          from '@manaflair/concierge';
-import {posix}                                               from 'path';
-import {Writable}                                            from 'stream';
+import {UsageError}                                                       from '@manaflair/concierge';
+import {posix}                                                            from 'path';
+import {Writable}                                                         from 'stream';
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`link [... packages]`)
   .describe(`connect local packages together`)
@@ -31,7 +31,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   )
 
   .action(async ({cwd, stdout, packages}: {cwd: string, stdout: Writable, packages: Array<string>}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
 
     if (!workspace)
