@@ -1,6 +1,8 @@
-module.exports = function (require) {
 
-var plugin =
+                    module.exports = {};
+                    
+                    module.exports.factory = function (require) {
+                      var plugin =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -137,9 +139,9 @@ module.exports = require("@berry/core");
 module.exports = require("@berry/plugin-essentials");
 
 /***/ })
-/******/ ]);
+/******/ ]);                    
+                      return plugin;
+                    };
 
-return plugin;
-};
-
-module.exports.name = "@berry/plugin-typescript";
+                    module.exports.name = "@berry/plugin-typescript";
+                  

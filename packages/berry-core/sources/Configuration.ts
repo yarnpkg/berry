@@ -264,13 +264,13 @@ function getEnvironmentSettings() {
 }
 
 function getRcFilename() {
-  const environmentSettings = getEnvironmentSettings();
+  const rcKey = `${ENVIRONMENT_PREFIX}RC_FILENAME`;
 
-  if (Object.prototype.hasOwnProperty.call(environmentSettings, `rcFilename`)) {
-    return environmentSettings.rcFilename;
-  } else {
-    return DEFAULT_RC_FILENAME;
-  }
+  for (const [key, value] of Object.entries(process.env))
+    if (key.toUpperCase() === rcKey)
+      return value;
+
+  return DEFAULT_RC_FILENAME;
 }
 
 export class Configuration {
@@ -329,35 +329,30 @@ export class Configuration {
 
   static async find(startingCwd: string, pluginConfiguration: PluginConfiguration) {
     const environmentSettings = getEnvironmentSettings();
-
-    const rcFilename = environmentSettings.rcFilename;
     delete environmentSettings.rcFilename;
 
-    const {projectCwd, rcFiles} = await Configuration.getRcData(startingCwd, rcFilename);
+    const {projectCwd, rcFiles} = await Configuration.getRcData(startingCwd);
 
-    const modules = new Map(pluginConfiguration.modules);
-    const plugins = new Map();
-    
+    const plugins = new Map();    
     for (const request of pluginConfiguration.plugins.keys())
-      plugins.set(request, modules.get(request));
+      plugins.set(request, pluginConfiguration.modules.get(request).default);
 
-    const requireEntries = new Map();
+    const requireEntries = new Map(pluginConfiguration.modules);
     for (const request of nodeUtils.builtinModules())
       requireEntries.set(request, () => nodeUtils.dynamicRequire(request));
 
     const dynamicPlugins = new Set();
 
-    for (const {cwd, data} of rcFiles) {
+    for (const {path, cwd, data} of rcFiles) {
       if (!Array.isArray(data.plugins))
         continue;
 
       for (const pluginPath of data.plugins) {
-        const pluginFactory = nodeUtils.dynamicRequire(posix.resolve(cwd, pluginPath));
-        const pluginName = pluginFactory.name;
+        const {factory, name} = nodeUtils.dynamicRequire(posix.resolve(cwd, pluginPath));
 
         // Prevent plugin redefinition so that the ones declared deeper in the
         // filesystem always have precedence over the ones below.
-        if (dynamicPlugins.has(pluginName))
+        if (dynamicPlugins.has(name))
           continue;
 
         const pluginRequireEntries = new Map(requireEntries);
@@ -365,33 +360,35 @@ export class Configuration {
           if (pluginRequireEntries.has(request)) {
             return pluginRequireEntries.get(request);
           } else {
-            throw new Error(`Plugin ${plugin.name} cannot access module named ${request} which is neither a builtin, nor an exposed entry`);
+            throw new UsageError(`This plugin cannot access the package referenced via ${request} which is neither a builtin, nor an exposed entry`);
           }
         };
 
         const plugin = miscUtils.prettifySyncErrors(() => {
-          return pluginFactory(pluginRequire);
+          return factory(pluginRequire);
         }, message => {
-          return `${message} (when initializing ${pluginName})`;
+          return `${message} (when initializing ${name}, defined in ${path})`;
         });
 
-        requireEntries.set(pluginName, plugin);
+        requireEntries.set(name, plugin);
 
-        dynamicPlugins.add(pluginName);
-        plugins.set(pluginName, plugin);
+        dynamicPlugins.add(name);
+        plugins.set(name, plugin);
       }
     }
 
     const configuration = new Configuration(projectCwd, plugins);
     configuration.useWithSource(`<environment>`, environmentSettings, startingCwd);
 
-    for (const {cwd, data} of rcFiles)
-      configuration.useWithSource(data, data, cwd);
+    for (const {path, cwd, data} of rcFiles)
+      configuration.useWithSource(path, data, cwd);
 
     return configuration;
   }
 
-  static async getRcData(startingCwd: string, rcFilename: string) {
+  static async getRcData(startingCwd: string) {
+    const rcFilename = getRcFilename();
+
     let projectCwd = null;
     const rcFiles = [];
 
@@ -410,7 +407,7 @@ export class Configuration {
         const content = await xfs.readFilePromise(rcPath, `utf8`);
         const data = parseSyml(content) as any;
 
-        rcFiles.push({cwd: currentCwd, data});
+        rcFiles.push({path: rcPath, cwd: currentCwd, data});
       }
 
       nextCwd = posix.dirname(currentCwd);

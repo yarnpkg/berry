@@ -8,6 +8,6 @@
     "@berry/plugin-essentials": "workspace:*"
   },
   "scripts": {
-    "build:plugin-typescript": "run @berry-build-plugin ."
+    "build:plugin-typescript": "run @berry-build-plugin"
   }
 }

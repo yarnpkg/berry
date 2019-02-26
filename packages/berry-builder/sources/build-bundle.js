@@ -32,6 +32,8 @@ concierge
 
       module: {
         rules: [{
+          // This file is particular in that it exposes the bundle
+          // configuration to the bundle itself (primitive introspection).
           test: path.resolve(basedir, `sources/pluginConfiguration.raw.js`),
           use: {
             loader: require.resolve(`val-loader`),
