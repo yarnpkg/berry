@@ -327,53 +327,55 @@ export class Configuration {
    * one listed on /foo/bar/.yarnrc, but not the other way around).
    */
 
-  static async find(startingCwd: string, pluginConfiguration: PluginConfiguration) {
+  static async find(startingCwd: string, pluginConfiguration: PluginConfiguration | null) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
     const {projectCwd, rcFiles} = await Configuration.getRcData(startingCwd);
-
     const plugins = new Map();    
-    for (const request of pluginConfiguration.plugins.keys())
-      plugins.set(request, pluginConfiguration.modules.get(request).default);
 
-    const requireEntries = new Map(pluginConfiguration.modules);
-    for (const request of nodeUtils.builtinModules())
-      requireEntries.set(request, () => nodeUtils.dynamicRequire(request));
+    if (pluginConfiguration !== null) {
+      for (const request of pluginConfiguration.plugins.keys())
+        plugins.set(request, pluginConfiguration.modules.get(request).default);
 
-    const dynamicPlugins = new Set();
+      const requireEntries = new Map(pluginConfiguration.modules);
+      for (const request of nodeUtils.builtinModules())
+        requireEntries.set(request, () => nodeUtils.dynamicRequire(request));
 
-    for (const {path, cwd, data} of rcFiles) {
-      if (!Array.isArray(data.plugins))
-        continue;
+      const dynamicPlugins = new Set();
 
-      for (const pluginPath of data.plugins) {
-        const {factory, name} = nodeUtils.dynamicRequire(posix.resolve(cwd, pluginPath));
-
-        // Prevent plugin redefinition so that the ones declared deeper in the
-        // filesystem always have precedence over the ones below.
-        if (dynamicPlugins.has(name))
+      for (const {path, cwd, data} of rcFiles) {
+        if (!Array.isArray(data.plugins))
           continue;
 
-        const pluginRequireEntries = new Map(requireEntries);
-        const pluginRequire = (request: string) => {
-          if (pluginRequireEntries.has(request)) {
-            return pluginRequireEntries.get(request);
-          } else {
-            throw new UsageError(`This plugin cannot access the package referenced via ${request} which is neither a builtin, nor an exposed entry`);
-          }
-        };
+        for (const pluginPath of data.plugins) {
+          const {factory, name} = nodeUtils.dynamicRequire(posix.resolve(cwd, pluginPath));
 
-        const plugin = miscUtils.prettifySyncErrors(() => {
-          return factory(pluginRequire);
-        }, message => {
-          return `${message} (when initializing ${name}, defined in ${path})`;
-        });
+          // Prevent plugin redefinition so that the ones declared deeper in the
+          // filesystem always have precedence over the ones below.
+          if (dynamicPlugins.has(name))
+            continue;
 
-        requireEntries.set(name, plugin);
+          const pluginRequireEntries = new Map(requireEntries);
+          const pluginRequire = (request: string) => {
+            if (pluginRequireEntries.has(request)) {
+              return pluginRequireEntries.get(request);
+            } else {
+              throw new UsageError(`This plugin cannot access the package referenced via ${request} which is neither a builtin, nor an exposed entry`);
+            }
+          };
 
-        dynamicPlugins.add(name);
-        plugins.set(name, plugin);
+          const plugin = miscUtils.prettifySyncErrors(() => {
+            return factory(pluginRequire);
+          }, message => {
+            return `${message} (when initializing ${name}, defined in ${path})`;
+          });
+
+          requireEntries.set(name, plugin);
+
+          dynamicPlugins.add(name);
+          plugins.set(name, plugin);
+        }
       }
     }
 

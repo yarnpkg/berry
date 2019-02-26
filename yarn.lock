@@ -8077,6 +8077,8 @@ __metadata:
   version: 0.0.0
   resolution: "pkg-tests-specs@workspace:packages/acceptance-tests/pkg-tests-specs"
   dependencies:
+    "@berry/fslib": "workspace:*"
+    "@berry/parsers": "workspace:*"
     fs-extra: "npm:^7.0.1"
     pkg-tests-core: "workspace:*"
     semver: "npm:^5.6.0"
