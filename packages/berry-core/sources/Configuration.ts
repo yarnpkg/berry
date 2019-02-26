@@ -264,10 +264,10 @@ function getEnvironmentSettings() {
 }
 
 function getRcFilename() {
-  const rcKey = `${ENVIRONMENT_PREFIX}RC_FILENAME`;
+  const rcKey = `${ENVIRONMENT_PREFIX}rc_filename`;
 
   for (const [key, value] of Object.entries(process.env))
-    if (key.toUpperCase() === rcKey)
+    if (key.toLowerCase() === rcKey)
       return value;
 
   return DEFAULT_RC_FILENAME;
