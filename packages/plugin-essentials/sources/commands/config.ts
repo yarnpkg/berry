@@ -1,7 +1,7 @@
-import {Configuration, JsonReport, Plugin} from '@berry/core';
-import {miscUtils}                         from '@berry/core';
-import {Writable}                          from 'stream';
-import {inspect}                           from 'util';
+import {Configuration, JsonReport, PluginConfiguration} from '@berry/core';
+import {miscUtils}                                      from '@berry/core';
+import {Writable}                                       from 'stream';
+import {inspect}                                        from 'util';
 
 function fromEntries(iterable: Iterable<[any, any] | {0: any, 1: any}>): {[key: string]: any} {
   return [... iterable].reduce((obj, { 0:key, 1: val}) => Object.assign(obj, {
@@ -10,7 +10,7 @@ function fromEntries(iterable: Iterable<[any, any] | {0: any, 1: any}>): {[key: 
 }
 
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`config [-v,--verbose] [--json]`)
   .describe(`display the current configuration`)
@@ -25,7 +25,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   )
 
   .action(async ({cwd, stdout, verbose, json}: {cwd: string, stdout: Writable, verbose: boolean, json: boolean}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
     const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);

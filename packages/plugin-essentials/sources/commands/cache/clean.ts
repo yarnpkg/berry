@@ -1,10 +1,11 @@
-import {Configuration, Cache, Plugin, Project, Locator, MessageName, StreamReport} from '@berry/core';
-import {LightReport}                                                               from '@berry/core';
-import {ZipFS, xfs}                                                                from '@berry/fslib';
-import {posix}                                                                     from 'path';
-import {Writable}                                                                  from 'stream';
+import {Configuration, Cache, PluginConfiguration, Project} from '@berry/core';
+import {Locator, MessageName, StreamReport}                 from '@berry/core';
+import {LightReport}                                        from '@berry/core';
+import {ZipFS, xfs}                                         from '@berry/fslib';
+import {posix}                                              from 'path';
+import {Writable}                                           from 'stream';
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`cache clean [--zip-only] [--virtuals-only] [--dry-run] [--json]`)
   .describe(`remove the unused packages from the cache`)
@@ -28,7 +29,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   )
 
   .action(async ({cwd, stdout, zipOnly, virtualsOnly, dryRun, json}: {cwd: string, stdout: Writable, zipOnly: boolean, virtualsOnly: boolean, dryRun: boolean, json: boolean}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
 

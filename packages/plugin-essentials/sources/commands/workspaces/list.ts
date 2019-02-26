@@ -1,7 +1,7 @@
-import {Configuration, Plugin, Project} from '@berry/core';
-import {Writable}                       from 'stream';
+import {Configuration, PluginConfiguration, Project} from '@berry/core';
+import {Writable}                                    from 'stream';
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`workspaces list`)
 
@@ -9,7 +9,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   .describe(`list all available workspaces`)
 
   .action(async ({cwd, stdout}: {cwd: string, stdout: Writable}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
 
     for (const cwd of project.workspacesByCwd.keys())

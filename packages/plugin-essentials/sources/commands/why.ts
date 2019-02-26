@@ -1,10 +1,11 @@
-import {WorkspaceRequiredError}                                                              from '@berry/cli';
-import {Cache, Configuration, LightReport, LocatorHash, Package, Plugin, Project, Workspace} from '@berry/core';
-import {miscUtils, structUtils}                                                              from '@berry/core';
-import {Writable}                                                                            from 'stream';
-import {asTree}                                                                              from 'treeify';
+import {WorkspaceRequiredError}                                  from '@berry/cli';
+import {Cache, Configuration, LightReport, LocatorHash, Package} from '@berry/core';
+import {PluginConfiguration, Project, Workspace}                 from '@berry/core';
+import {miscUtils, structUtils}                                  from '@berry/core';
+import {Writable}                                                from 'stream';
+import {asTree}                                                  from 'treeify';
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`why <package> [-v,--verbose]`)
   .describe(`display the reason why a package is needed`)
@@ -21,7 +22,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   )
 
   .action(async ({cwd, stdout, package: packageName, verbose}: {cwd: string, stdout: Writable, package: string, verbose: boolean}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
 

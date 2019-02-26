@@ -1,11 +1,11 @@
-import {Configuration, Plugin, Project, Workspace, Manifest, Cache} from '@berry/core';
-import {LightReport, ThrowReport}                                   from '@berry/core';
-import {scriptUtils}                                                from '@berry/core';
+import {Configuration, PluginConfiguration, Project, Workspace, Manifest, Cache} from '@berry/core';
+import {LightReport, ThrowReport}                                                from '@berry/core';
+import {scriptUtils}                                                             from '@berry/core';
 // @ts-ignore
-import {UsageError}                                                 from '@manaflair/concierge';
-import {Readable, Writable}                                         from 'stream';
+import {UsageError}                                                              from '@manaflair/concierge';
+import {Readable, Writable}                                                      from 'stream';
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`run <name> [... args]`)
   .describe(`run a script defined in the package.json`)
@@ -24,7 +24,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   `)
 
   .action(async ({cwd, stdin, stdout, stderr, name, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, name: string, args: Array<string>}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace, locator} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
 

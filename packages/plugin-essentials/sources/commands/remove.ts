@@ -1,9 +1,9 @@
-import {WorkspaceRequiredError}                              from '@berry/cli';
-import {Configuration, Cache, Plugin, Project, StreamReport} from '@berry/core';
-import {structUtils}                                         from '@berry/core';
-import {Writable}                                            from 'stream';
+import {WorkspaceRequiredError}                                           from '@berry/cli';
+import {Configuration, Cache, PluginConfiguration, Project, StreamReport} from '@berry/core';
+import {structUtils}                                                      from '@berry/core';
+import {Writable}                                                         from 'stream';
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`remove [... names] [-A,--all]`)
   .describe(`remove dependencies from the project`)
@@ -23,7 +23,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   )
 
   .action(async ({cwd, stdout, names, all}: {cwd: string, stdout: Writable, names: Array<string>, all: boolean}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
 

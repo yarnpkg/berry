@@ -5,6 +5,7 @@ const path = require(`path`);
 const webpack = require(`webpack`);
 
 const basedir = process.cwd();
+const dynamicLibs = require(`./dynamic-libs`);
 const findPlugins = require(`./find-plugins`);
 const makeConfig = require(`./make-config`);
 
@@ -12,6 +13,7 @@ concierge
   .command(`[-w,--watch] [--profile TYPE] [--plugin PLUGIN ...]`)
   .action(async ({watch, profile, plugin, stdout, stderr}) => {
     const plugins = findPlugins({basedir, profile, plugin});
+    const modules = Array.from(dynamicLibs).concat(plugins);
 
     stdout.write(`The following plugins will be compiled in the final bundle:\n\n`);
 
@@ -30,10 +32,10 @@ concierge
 
       module: {
         rules: [{
-          test: path.resolve(basedir, `sources/plugins-embed.js`),
+          test: path.resolve(basedir, `sources/pluginConfiguration.raw.js`),
           use: {
             loader: require.resolve(`val-loader`),
-            options: {plugins},
+            options: {modules, plugins},
           },
         }],
       },

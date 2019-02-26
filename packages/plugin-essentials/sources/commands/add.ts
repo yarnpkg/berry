@@ -1,14 +1,14 @@
-import {WorkspaceRequiredError}                                            from '@berry/cli';
-import {Cache, Configuration, Descriptor, Ident, LightReport, MessageName} from '@berry/core';
-import {Plugin, Project, StreamReport, Workspace}                          from '@berry/core';
-import {structUtils}                                                       from '@berry/core';
-import inquirer                                                            from 'inquirer';
-import {Readable, Writable}                                                from 'stream';
+import {WorkspaceRequiredError}                                     from '@berry/cli';
+import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@berry/core';
+import {PluginConfiguration, Project, StreamReport, Workspace}      from '@berry/core';
+import {structUtils}                                                from '@berry/core';
+import inquirer                                                     from 'inquirer';
+import {Readable, Writable}                                         from 'stream';
 
-import * as suggestUtils                                                   from '../suggestUtils';
-import {Hooks}                                                             from '..';
+import * as suggestUtils                                            from '../suggestUtils';
+import {Hooks}                                                      from '..';
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`add [... packages] [-E,--exact] [-T,--tilde] [-D,--dev] [-P,--peer] [-i,--interactive]`)
   .describe(`add dependencies to the project`)
@@ -38,7 +38,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   )
 
   .action(async ({cwd, stdin, stdout, packages, exact, tilde, dev, peer, interactive}: {cwd: string, stdin: Readable, stdout: Writable, packages: Array<string>, exact: boolean, tilde: boolean, dev: boolean, peer: boolean, interactive: boolean}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
 

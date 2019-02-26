@@ -1,11 +1,11 @@
-import {Configuration, Descriptor, Project, Plugin} from '@berry/core';
-import {MessageName, StreamReport}                  from '@berry/core';
-import {structUtils}                                from '@berry/core';
-import {Writable}                                   from 'stream';
+import {Configuration, Descriptor, Project, PluginConfiguration} from '@berry/core';
+import {MessageName, StreamReport}                               from '@berry/core';
+import {structUtils}                                             from '@berry/core';
+import {Writable}                                                from 'stream';
 
-import {Constraints}                                from '../../Constraints';
+import {Constraints}                                             from '../../Constraints';
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`constraints check`)
 
@@ -24,7 +24,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   )
 
   .action(async ({cwd, stdout}: {cwd: string, stdout: Writable}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
     const constraints = await Constraints.find(project);
 

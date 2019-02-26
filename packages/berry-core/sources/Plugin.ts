@@ -1,8 +1,8 @@
-import {SettingsDefinition} from './Configuration';
-import {Fetcher}            from './Fetcher';
-import {Linker}             from './Linker';
-import {Project}            from './Project';
-import {Resolver}           from './Resolver';
+import {SettingsDefinition, PluginConfiguration} from './Configuration';
+import {Fetcher}                                 from './Fetcher';
+import {Linker}                                  from './Linker';
+import {Project}                                 from './Project';
+import {Resolver}                                from './Resolver';
 
 export interface FetcherPlugin {
   new(): Fetcher;
@@ -24,7 +24,7 @@ export interface Hooks {
 
 export type Plugin = {
   configuration?: {[key: string]: SettingsDefinition},
-  commands?: Array<(concierge: any, plugins: Map<string, Plugin>) => any>,
+  commands?: Array<(concierge: any, pluginConfiguration: PluginConfiguration) => any>,
   fetchers?: Array<FetcherPlugin>,
   linkers?: Array<LinkerPlugin>,
   resolvers?: Array<ResolverPlugin>,

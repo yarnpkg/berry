@@ -1074,6 +1074,7 @@ __metadata:
     val-loader: "npm:^1.1.1"
     webpack: "npm:^4.28.4"
     webpack-merge: "npm:^4.2.1"
+    webpack-sources: "npm:^1.3.0"
     webpack-virtual-modules: "npm:^0.1.10"
   languageName: unknown
   linkType: soft
@@ -1179,7 +1180,6 @@ __metadata:
     "@types/inquirer": "npm:^0.0.43"
     "@types/joi": "npm:^13.6.0"
     "@types/lockfile": "npm:^1.0.0"
-    "@types/lodash": "npm:^4.14.116"
     "@types/mkdirp": "npm:^0.5.2"
     "@types/node": "npm:^10.12.0"
     "@types/node-emoji": "npm:^1.8.0"
@@ -1336,6 +1336,7 @@ __metadata:
   version: 0.0.0
   resolution: "@berry/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
+    "@berry/builder": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
   languageName: unknown
@@ -1606,13 +1607,6 @@ __metadata:
   version: 1.0.0
   resolution: "@types/lockfile@npm:1.0.0"
   checksum: e7beb41eee0afd5d485aece71f9cceca0562828371e161d8bce0e356e20ee292710a72dd7716560ad4e68d7928bd6d3da921d1edbc8aa2c634d63e6a9929e7dc
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:^4.14.116":
-  version: 4.14.119
-  resolution: "@types/lodash@npm:4.14.119"
-  checksum: 52584cccfad0440e3af4d39dd590c7b90256bb9c3b3973f3feb36cde16fd1c47bacd285378f0181db991ff1bb0fda245345f36f23b3b7b1cffedc4c0ae3ba8db
   languageName: node
   linkType: hard
 

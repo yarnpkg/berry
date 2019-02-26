@@ -5,7 +5,7 @@ import {UsageError, Concierge} from '@manaflair/concierge';
 import {execFileSync}          from 'child_process';
 import Joi                     from 'joi';
 
-import {plugins}               from './plugins';
+import {pluginConfiguration}   from './pluginConfiguration';
 
 const concierge = new Concierge({Joi, configKey: null});
 
@@ -34,7 +34,7 @@ function runBinary(path: string) {
 }
 
 async function run() {
-  const configuration = await Configuration.find(process.cwd(), plugins);
+  const configuration = await Configuration.find(process.cwd(), pluginConfiguration);
 
   const yarnPath = configuration.get(`yarnPath`);
   const ignorePath = configuration.get(`ignorePath`);
@@ -51,9 +51,9 @@ async function run() {
       }
     }
   } else {
-    for (const plugin of plugins.values())
+    for (const plugin of configuration.plugins.values())
       for (const command of plugin.commands || [])
-        command(concierge, plugins);
+        command(concierge, pluginConfiguration);
 
     concierge.runExit(`yarn`, process.argv.slice(2));
   }

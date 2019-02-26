@@ -1,12 +1,12 @@
-import {Configuration, Manifest, Plugin} from '@berry/core';
-import {structUtils}                     from '@berry/core';
-import {xfs}                             from '@berry/fslib';
-import {updateAndSave}                   from '@berry/json-proxy';
+import {Configuration, Manifest, PluginConfiguration} from '@berry/core';
+import {structUtils}                                  from '@berry/core';
+import {xfs}                                          from '@berry/fslib';
+import {updateAndSave}                                from '@berry/json-proxy';
 // @ts-ignore
-import {UsageError}                      from '@manaflair/concierge';
-import {basename}                        from 'path';
+import {UsageError}                                   from '@manaflair/concierge';
+import {basename}                                     from 'path';
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`init [-p,--private]`)
   .describe(`create a new package`)
@@ -36,10 +36,11 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   .action(async ({cwd, private: notPublic}: {cwd: string, private: boolean}) => {
     if (xfs.existsSync(`${cwd}/package.json`))
       throw new UsageError(`A package.json already exists in the specified directory`);
+
     if (!xfs.existsSync(cwd))
       await xfs.mkdirpPromise(cwd);
 
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     const manifest = new Manifest();
     manifest.name = structUtils.makeIdent(configuration.get(`initScope`), basename(cwd));

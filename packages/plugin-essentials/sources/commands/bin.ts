@@ -1,10 +1,10 @@
-import {Configuration, Plugin, Project} from '@berry/core';
-import {scriptUtils, structUtils}       from '@berry/core';
+import {Configuration, PluginConfiguration, Project} from '@berry/core';
+import {scriptUtils, structUtils}                    from '@berry/core';
 // @ts-ignore: Need to write the definition file
-import {UsageError}                     from '@manaflair/concierge';
-import {Writable}                       from 'stream';
+import {UsageError}                                  from '@manaflair/concierge';
+import {Writable}                                    from 'stream';
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`bin [name] [-v,--verbose]`)
   .describe(`get the path to a binary script`)
@@ -26,7 +26,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   )
 
   .action(async ({cwd, stdout, name, verbose}: {cwd: string, stdout: Writable, name: string, verbose: boolean}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, locator} = await Project.find(configuration, cwd);
 
     const binaries = await scriptUtils.getPackageAccessibleBinaries(locator, {project});

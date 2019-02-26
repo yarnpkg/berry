@@ -1,9 +1,9 @@
-import {WorkspaceRequiredError}                              from '@berry/cli';
-import {Configuration, Cache, Plugin, Project, StreamReport} from '@berry/core';
-import {structUtils}                                         from '@berry/core';
-import {Writable}                                            from 'stream';
+import {WorkspaceRequiredError}                                           from '@berry/cli';
+import {Configuration, Cache, PluginConfiguration, Project, StreamReport} from '@berry/core';
+import {structUtils}                                                      from '@berry/core';
+import {Writable}                                                         from 'stream';
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`policies set-resolution <descriptor> <resolution> [-s,--save]`)
   .describe(`enforce a package resolution`)
@@ -22,7 +22,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   )
 
   .action(async ({cwd, stdout, descriptor: fromDescriptorRaw, resolution: toRange, save}: {cwd: string, stdout: Writable, descriptor: string, resolution: string, save: boolean}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
   

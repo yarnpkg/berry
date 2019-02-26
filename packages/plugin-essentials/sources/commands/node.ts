@@ -1,9 +1,9 @@
-import {Configuration, Plugin, Project} from '@berry/core';
-import {scriptUtils}                    from '@berry/core';
-import execa                            from 'execa';
-import {Readable, Writable}             from 'stream';
+import {Configuration, PluginConfiguration, Project} from '@berry/core';
+import {scriptUtils}                                 from '@berry/core';
+import execa                                         from 'execa';
+import {Readable, Writable}                          from 'stream';
 
-export default (concierge: any, plugins: Map<string, Plugin>) => concierge
+export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`node [... args]`)
   .describe(`run node with the hook already setup`)
@@ -21,7 +21,7 @@ export default (concierge: any, plugins: Map<string, Plugin>) => concierge
   )
 
   .action(async ({cwd, stdin, stdout, stderr, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, args: Array<string>}) => {
-    const configuration = await Configuration.find(cwd, plugins);
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
 
     const env = await scriptUtils.makeScriptEnv(project);
