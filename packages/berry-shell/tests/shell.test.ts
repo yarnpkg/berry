@@ -71,7 +71,7 @@ describe(`Simple shell features`, () => {
   });
 
   it(`should pipe the result of a command into another`, async () => {
-    await expect(bufferResult(`echo hello world | wc -w`)).resolves.toMatchObject({
+    await expect(bufferResult(`echo hello world | wc -w | tr -d ' '`)).resolves.toMatchObject({
       stdout: `2\n`,
     });
   });
