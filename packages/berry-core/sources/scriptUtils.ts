@@ -120,7 +120,7 @@ export async function executePackageScript(locator: Locator, scriptName: string,
       return;
 
     try {
-      return await runShell(script, {args, cwd, env, stdin, stdout, stderr});
+      return await runShell(script, args, {cwd, env, stdin, stdout, stderr});
     } finally {
       await xfs.removePromise(binFolder);
     }

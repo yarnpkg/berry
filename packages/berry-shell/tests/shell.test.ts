@@ -16,7 +16,7 @@ const bufferResult = async (command: string, args: Array<string> = []) => {
     stderrChunks.push(chunk);
   });
 
-  const exitCode = await runShell(command, {args, stdout, stderr});
+  const exitCode = await runShell(command, args, {stdout, stderr});
 
   return {
     exitCode,
@@ -114,11 +114,6 @@ describe(`Simple shell features`, () => {
 
     await expect(bufferResult(`echo hello && exit 0 && echo world`)).resolves.toMatchObject({
       exitCode: 0,
-      stdout: `hello\n`,
-    });
-
-    await expect(bufferResult(`(echo hello; exit 1); echo world`)).resolves.toMatchObject({
-      exitCode: 1,
       stdout: `hello\n`,
     });
   });

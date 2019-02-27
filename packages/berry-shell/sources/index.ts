@@ -1,131 +1,187 @@
 import {xfs}                                                              from '@berry/fslib';
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
-import execa                                                              from 'execa';
+import {spawn}                                                            from 'child_process';
 import {delimiter, posix}                                                 from 'path';
-import {PassThrough, Readable, Writable}                                  from 'stream';
+import {PassThrough, Readable, Stream, Writable}                          from 'stream';
 import {StringDecoder}                                                    from 'string_decoder';
 
-export type ShellBuiltin = (args: Array<string>, commandOpts: ShellOptions, shellOpts: ShellOptions) => Promise<number>;
+export type UserOptions = {
+  builtins: {[key: string]: UserBuiltin},
+  cwd: string,
+  env: {[key: string]: string | undefined},
+  paths: Array<string>,
+  stdin: Readable,
+  stdout: Writable,
+  stderr: Writable,
+  variables: {[key: string]: string},
+};
+
+export type UserBuiltin = (
+  args: Array<string>,
+  opts: ShellOptions,
+  state: ShellState,
+) => Promise<number>;
+
+export type ShellBuiltin = (
+  args: Array<string>,
+  opts: ShellOptions,
+  state: ShellState,
+  mustPipe: boolean,
+) => Promise<{
+  stdin: Writable | null,
+  promise: Promise<number>,
+}>;
 
 export type ShellOptions = {
   args: Array<string>,
-  builtins: {[key: string]: ShellBuiltin},
-  cwd: string,
-  env: {[key: string]: string | undefined},
-  exitCode: number | null,
-  paths?: Array<string>,
-  stdin: Readable,
-  stdout: Writable,
-  stderr: Writable,
-  variables: {[key: string]: string},
+  builtins: Map<string, ShellBuiltin>,
 };
 
 export type ShellState = {
+  cwd: string,
+  environment: {[key: string]: string},
+  exitCode: number | null,
   stdin: Readable,
   stdout: Writable,
   stderr: Writable,
   variables: {[key: string]: string},
 };
 
-const BUILTINS = {
-  async cd([target, ... rest]: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
-    const resolvedTarget = posix.resolve(contextOpts.cwd, target);
+function makeBuiltin(builtin: (args: Array<string>, opts: ShellOptions, state: ShellState) => Promise<number>): ShellBuiltin {
+  return async (args: Array<string>, opts: ShellOptions, state: ShellState, mustPipe: boolean) => {
+    if (!mustPipe) {
+      return {
+        stdin: null,
+        promise: builtin(args, opts, state),
+      };
+    } else {
+      const stdin = new PassThrough();
+      return {
+        stdin,
+        promise: builtin(args, opts, {... state, stdin}).then(result => {
+          stdin.end();
+          return result;
+        }, error => {
+          stdin.end();
+          throw error;
+        }),
+      }
+    }
+  };
+}
+
+function cloneState(state: ShellState, mergeWith: Partial<ShellState> = {}) {
+  const newState = {... state, ... mergeWith};
+
+  newState.environment = {... state.environment, ... mergeWith.environment };
+  newState.variables = {... state.variables, ... mergeWith.variables };
+
+  return newState;
+}
+
+const BUILTINS = new Map<string, ShellBuiltin>([
+  [`cd`, makeBuiltin(async ([target, ... rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
+    const resolvedTarget = posix.resolve(state.cwd, target);
     const stat = await xfs.statPromise(resolvedTarget);
 
     if (!stat.isDirectory()) {
-      commandOpts.stderr.write(`cd: not a directory\n`);
+      state.stderr.write(`cd: not a directory\n`);
       return 1;
     } else {
-      contextOpts.cwd = target;
+      state.cwd = target;
       return 0;
     }
-  },
+  })],
 
-  pwd(args: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
-    commandOpts.stdout.write(`${contextOpts.cwd}\n`);
+  [`pwd`, makeBuiltin(async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
+    state.stdout.write(`${state.cwd}\n`);
     return 0;
-  },
+  })],
 
-  true(args: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
+  [`true`, makeBuiltin(async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
     return 0;
-  },
+  })],
 
-  false(args: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
+  [`false`, makeBuiltin(async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
     return 1;
-  },
+  })],
 
-  exit([code, ... rest]: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
-    return contextOpts.exitCode = parseInt(code, 10);
-  },
+  [`exit`, makeBuiltin(async ([code, ... rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
+    return state.exitCode = parseInt(code, 10);
+  })],
 
-  echo(args: Array<string>, commandOpts: ShellOptions, contextOpts: ShellOptions) {
-    commandOpts.stdout.write(`${args.join(` `)}\n`);
+  [`echo`, makeBuiltin(async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
+    state.stdout.write(`${args.join(` `)}\n`);
     return 0;
-  },
+  })],
 
-  async command([ident, ... rest]: Array<string>, {cwd, env: commandEnv, stdin, stdout, stderr}: ShellOptions, contextOpts: ShellOptions) {
+  [`command`, async ([ident, ... rest]: Array<string>, opts: ShellOptions, state: ShellState, mustPipe: boolean) => {
     if (typeof ident === `undefined`)
-      return 0;
+      return makeBuiltin(async () => 0)([], opts, state, mustPipe);
 
-    const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
+    const stdio: Array<any> = [state.stdin, state.stdout, state.stderr];
+    const isUserStream = (stream: Stream) => stream instanceof PassThrough;
 
-    if (stdin === process.stdin)
-      stdio[0] = stdin;
-    if (stdout === process.stdout)
-      stdio[1] = stdout;
-    if (stderr === process.stderr)
-      stdio[2] = stderr;
+    if (isUserStream(state.stdin) || mustPipe)
+      stdio[0] = `pipe`;
+    if (isUserStream(state.stdout))
+      stdio[1] = `pipe`;
+    if (isUserStream(state.stderr))
+      stdio[2] = `pipe`;
 
-    const env: {[key: string]: string} = {};
+    const normalizedEnv: {[key: string]: string} = {};
+    for (const key of Object.keys(state.environment))
+      normalizedEnv[key.toUpperCase()] = state.environment[key] as string;
 
-    for (const key of Object.keys(commandEnv))
-      env[key.toUpperCase()] = commandEnv[key] as string;
+    // We must make sure the PATH is properly converted into the
+    // system-specific format
+    if (normalizedEnv.PATH && posix.delimiter !== delimiter)
+      normalizedEnv.PATH = normalizedEnv.PATH.replace(new RegExp(posix.delimiter, `g`), delimiter);
 
-    if (env.PATH && posix.delimiter !== delimiter)
-      env.PATH = env.PATH.replace(new RegExp(posix.delimiter, `g`), delimiter);
-    
-    const subprocess = execa(ident, rest, {
-      preferLocal: false,
-      cwd,
+    const subprocess = spawn(ident, rest, {
+      cwd: state.cwd,
+      env: normalizedEnv,
       stdio,
-      env,
     });
 
-    if (stdin !== process.stdin)
-      stdin.pipe(subprocess.stdin);
-    if (stdout !== process.stdout)
-      subprocess.stdout.pipe(stdout, {end: false});
-    if (stderr !== process.stderr)
-      subprocess.stderr.pipe(stderr, {end: false});
+    if (isUserStream(state.stdin) && !mustPipe)
+      state.stdin.pipe(subprocess.stdin);
+    if (isUserStream(state.stdout))
+      subprocess.stdout.pipe(state.stdout);
+    if (isUserStream(state.stderr))
+      subprocess.stderr.pipe(state.stderr);
 
-    return new Promise(resolve => {
-      subprocess.on(`error`, error => {
-        // @ts-ignore
-        switch (error.code) {
-          case `ENOENT`: {
-            stderr.write(`command not found: ${ident}\n`);
-            resolve(127);
-          } break;
-          case `EACCESS`: {
-            stderr.write(`permission denied: ${ident}\n`);
-            resolve(128);
-          } break;
-          default: {
-            stderr.write(`uncaught error: ${error.message}\n`);
-            resolve(1);
-          } break;
-        }
-      });
-      subprocess.on(`exit`, code => {
-        if (code !== null) {
-          resolve(code);
-        } else {
-          resolve(129);
-        }
-      });
-    });
-  },
-};
+    return {
+      stdin: subprocess.stdin,
+      promise: new Promise(resolve => {
+        subprocess.on(`error`, error => {
+          // @ts-ignore
+          switch (error.code) {
+            case `ENOENT`: {
+              state.stderr.write(`command not found: ${ident}\n`);
+              resolve(127);
+            } break;
+            case `EACCESS`: {
+              state.stderr.write(`permission denied: ${ident}\n`);
+              resolve(128);
+            } break;
+            default: {
+              state.stderr.write(`uncaught error: ${error.message}\n`);
+              resolve(1);
+            } break;
+          }
+        });
+        subprocess.on(`exit`, code => {
+          if (code !== null) {
+            resolve(code);
+          } else {
+            resolve(129);
+          }
+        });
+      }),
+    };
+  }],
+]);
 
 // Keep this function is sync with its implementation in:
 // @berry/core/sources/miscUtils.ts
@@ -140,237 +196,248 @@ async function releaseAfterUseAsync<T>(fn: () => Promise<T>, cleanup?: () => any
   }
 }
 
-async function runShellAst(ast: ShellLine, opts: ShellOptions, {stdin, stdout, stderr, variables}: ShellState) {
-  const {args, builtins, cwd} = opts;
-  const errors: Array<Error> = [];
+async function executeBufferedSubshell(ast: ShellLine, opts: ShellOptions, state: ShellState) {
+  const chunks: Array<Buffer> = [];
+  const stdout = new PassThrough();
 
-  async function executeSubshell(ast: ShellLine) {
-    let text = ``;
+  stdout.on(`data`, chunk => chunks.push(chunk));
+  await runShellAst(ast, opts, cloneState(state, {stdout}));
 
-    const decoder = new StringDecoder();
-    const stdout = new PassThrough();
+  return Buffer.concat(chunks).toString().replace(/[\r\n]+$/, ``);
+}
 
-    stdout.on(`data`, chunk => {
-      text += decoder.write(chunk);
-    });
+async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, opts: ShellOptions, state: ShellState) {
+  const interpolated: Array<string> = [];
+  let interpolatedSegments: Array<string> = [];
 
-    stdout.on(`end`, () => {
-      text += decoder.end();
-    });
+  const split = (raw: string) => {
+    return raw.match(/[^ \r\n\t]+/g) || [];
+  };
 
-    await runShellAst(ast, opts, {stdin, stdout, stderr, variables});
+  const push = (segment: string) => {
+    interpolatedSegments.push(segment);
+  };
 
-    return text.replace(/[\r\n]+$/, ``);
-  }
+  const close = () => {
+    if (interpolatedSegments.length > 0)
+      interpolated.push(interpolatedSegments.join(``));
+    interpolatedSegments = [];
+  };
 
-  async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, variables: {[key: string]: string}) {
-    const interpolated: Array<string> = [];
-    let interpolatedSegments: Array<string> = [];
+  const pushAndClose = (segment: string) => {
+    push(segment);
+    close();
+  };
 
-    const split = (raw: string) => {
-      return raw.match(/[^ \r\n\t]+/g) || [];
-    };
+  for (const commandArg of commandArgs) {
+    for (const segment of commandArg) {
 
-    const push = (segment: string) => {
-      interpolatedSegments.push(segment);
-    };
+      if (typeof segment === 'string') {
 
-    const close = () => {
-      if (interpolatedSegments.length > 0)
-        interpolated.push(interpolatedSegments.join(``));
-      interpolatedSegments = [];
-    };
+        push(segment);
 
-    const pushAndClose = (segment: string) => {
-      push(segment);
-      close();
-    };
+      } else {
 
-    for (const commandArg of commandArgs) {
-      for (const segment of commandArg) {
+        switch (segment.type) {
 
-        if (typeof segment === 'string') {
+          case `shell`: {
+            const raw = await executeBufferedSubshell(segment.shell, opts, state);
+            if (segment.quoted) {
+              push(raw);
+            } else for (const part of split(raw)) {
+              pushAndClose(part);
+            }
+          } break;
 
-          push(segment);
+          case `variable`: {
+            switch (segment.name) {
 
-        } else {
+              case `#`: {
+                push(String(opts.args.length));
+              } break;
 
-          switch (segment.type) {
-
-            case `shell`: {
-              const raw = await executeSubshell(segment.shell);
-              if (segment.quoted) {
-                push(raw);
-              } else for (const part of split(raw)) {
-                pushAndClose(part);
-              }
-            } break;
-
-            case `variable`: {
-              switch (segment.name) {
-
-                case `#`: {
-                  push(String(args.length));
-                } break;
-
-                case `@`: {
-                  if (segment.quoted) {
-                    for (const raw of args) {
-                      pushAndClose(raw);
-                    }
-                  } else for (const raw of args) {
-                    for (const part of split(raw)) {
-                      pushAndClose(part);
-                    }
+              case `@`: {
+                if (segment.quoted) {
+                  for (const raw of opts.args) {
+                    pushAndClose(raw);
                   }
-                } break;
-
-                case `*`: {
-                  const raw = args.join(` `);
-                  if (segment.quoted) {
-                    push(raw);
-                  } else for (const part of split(raw)) {
+                } else for (const raw of opts.args) {
+                  for (const part of split(raw)) {
                     pushAndClose(part);
                   }
-                } break;
+                }
+              } break;
 
-                default: {
-                  const argIndex = parseInt(segment.name, 10);
+              case `*`: {
+                const raw = opts.args.join(` `);
+                if (segment.quoted) {
+                  push(raw);
+                } else for (const part of split(raw)) {
+                  pushAndClose(part);
+                }
+              } break;
 
-                  if (Number.isFinite(argIndex)) {
-                    if (!(argIndex >= 0 && argIndex < args.length)) {
-                      throw new Error(`Unbound argument #${argIndex}`);
-                    } else {
-                      push(args[argIndex]);
-                    }
+              default: {
+                const argIndex = parseInt(segment.name, 10);
+
+                if (Number.isFinite(argIndex)) {
+                  if (!(argIndex >= 0 && argIndex < opts.args.length)) {
+                    throw new Error(`Unbound argument #${argIndex}`);
                   } else {
-                    if (!(segment.name in variables)) {
-                      throw new Error(`Unbound variable "${segment.name}"`);
-                    } else {
-                      push(variables[segment.name]);
-                    }
+                    push(opts.args[argIndex]);
                   }
-                } break;
+                } else {
+                  if (!(segment.name in state.variables)) {
+                    throw new Error(`Unbound variable "${segment.name}"`);
+                  } else {
+                    push(state.variables[segment.name]);
+                  }
+                }
+              } break;
 
-              }
-            } break;
-          }
+            }
+          } break;
         }
-
       }
 
-      close();
     }
 
-    return interpolated;
+    close();
   }
 
-  /**
-   * Unroll a command chain. A command chain is a list of commands linked
-   * together thanks to the use of either of the `|` or `|&` operators:
-   * 
-   * $ cat hello | grep world | grep -v foobar
-   * 
-   * This function returns a callback that, when called, will simultaneously
-   * start all the processes from the command chain starting from the last
-   * one (we must be careful not to start by the first one, otherwise any
-   * data it would write before its followup spawn could be lost).
-   * 
-   * The return value of this callback is an array of promises that resolve to
-   * the exit code of the respective process in the command chain.
-   */
+  return interpolated;
+}
 
-  async function unrollCommandChain(node: CommandChain, {stdin, stdout, stderr, variables}: ShellState) {
-    let next = (promises: Array<Promise<number>>) => {};
-    let closeStreams = () => {};
+/**
+ * Executes a command chain. A command chain is a list of commands linked
+ * together thanks to the use of either of the `|` or `|&` operators:
+ * 
+ * $ cat hello | grep world | grep -v foobar
+ */
 
-    // If the node as a followup, then we first need to replace its stdout and
-    // stderr streams in order to forward them to the next command
-    if (node.then) {
-      const pipe = new PassThrough();
+function makeCommandAction(args: Array<string>, opts: ShellOptions) {
+  if (!opts.builtins.has(args[0]))
+    args = [`command`, ... args];
 
-      next = await unrollCommandChain(node.then.chain, {stdin: pipe, stdout, stderr, variables});
-      closeStreams = () => pipe.end();
+  const [name, ... rest] = args;
 
-      switch (node.then.type) {
-        case `|&`: {
-          stdout = pipe;
-          stderr = pipe;
-        } break;
+  const builtin = opts.builtins.get(name);
+  if (typeof builtin === `undefined`)
+    throw new Error(`Assertion failed: A builtin should exist for "${name}"`)
 
-        case `|`: {
-          stdout = pipe;
-        } break;
-      }
+  return async (state: ShellState, mustPipe: boolean) => {
+    const {stdin, promise} = await builtin(rest, opts, state, mustPipe);
+    return {stdin, promise};
+  };
+}
+
+function makeSubshellAction(ast: ShellLine, opts: ShellOptions) {
+  return async (state: ShellState, mustPipe: boolean) => {
+    const stdin = new PassThrough();
+    const promise = runShellAst(ast, opts, cloneState(state, {stdin}));
+
+    return {stdin: stdin as Writable, promise};
+  };
+}
+
+async function executeCommandChain(node: CommandChain, opts: ShellOptions, state: ShellState) {
+  const parts = [];
+
+  // First we interpolate all the commands (we don't interpolate subshells
+  // because they operate in their own contexts and are allowed to define
+  // new internal variables)
+
+  let current: CommandChain | null = node;
+  let pipeType = null;
+
+  while (current) {
+    let action;
+
+    switch (current.type) {
+      case `command`: {
+        action = makeCommandAction(await interpolateArguments(current.args, opts, state), opts);
+      } break;
+
+      case `subshell`: {
+        action = makeSubshellAction(current.subshell, opts);
+      } break;
     }
 
-    const commandArgs = node.type === `command`
-      ? await interpolateArguments(node.args, variables)
-      : null;
+    if (typeof action === `undefined`)
+      throw new Error(`Assertion failed: An action should have been generated`);
 
-    return (promises: Array<Promise<number>> = []) => {
-      next(promises);
+    parts.push({action, pipeType});
 
-      if (opts.exitCode !== null)
-        return promises;
-
-      let promise;
-
-      switch (node.type) {
-        // If the node is a subshell, we just have to recurse and execute its AST
-        // after having updated the stdin/stdout/stderr state.
-        case `subshell`: {
-          promise = runShellAst(node.subshell, opts, {stdin, stdout, stderr, variables: Object.create(variables)});
-        } break;
-
-        // If the node is a simple command, we interpolate its arguments with the
-        // available variables then call the matching builtin (if no builtin
-        // matches we default to "command", just like regular shells do).
-        case `command`: {
-          if (commandArgs === null) {
-            throw new Error(`Assertion failed: The arguments should have been interpolated`);
-          } else if (commandArgs.length === 0) {
-            promise = Promise.resolve(0);
-          } else if (Object.prototype.hasOwnProperty.call(builtins, commandArgs[0])) {
-            promise = Promise.resolve(builtins[commandArgs[0]](commandArgs.slice(1), {... opts, stdin, stdout, stderr}, opts));
-          } else {
-            promise = Promise.resolve(builtins.command(commandArgs, {... opts, stdin, stdout, stderr}, opts));
-          }
-        } break;
-
-        default: {
-          // @ts-ignore
-          throw new Error(`Unsupported command type: "${node.type}"`);
-        } break;
-      }
-
-      promises.push(promise.then(result => {
-        closeStreams();
-        return result;
-      }, error => {
-        closeStreams();
-        throw error;
-      }));
-
-      return promises;
-    };
-  }
-
-  /**
-   * Execute a command chain and return the exit code for the right-most
-   * command (so `false | true` would return 0 and `true | false` would
-   * return 1).
-   */
-  async function executeCommandChain(node: CommandChain, state: ShellState) {
-    const unrolledExecution = await unrollCommandChain(node, state);
-    const exitCodes = await Promise.all(unrolledExecution());
-
-    if (exitCodes.length > 0) {
-      return exitCodes[exitCodes.length - 1];
+    if (typeof current.then !== `undefined`) {
+      pipeType = current.then.type;
+      current = current.then.chain;
     } else {
-      return 0;
+      current = null;
+      pipeType = null;
     }
   }
+
+  // Note that the execution starts from the right-most command and
+  // progressively moves towards the left-most command. We run them in this
+  // order because otherwise we would risk a race condition where (let's
+  // use A | B as example) A would start writing before B is ready, which
+  // could cause the pipe buffer to overflow and some writes to be lost.
+
+  let stdout = state.stdout;
+  let stderr = state.stderr;
+
+  const promises = [];
+
+  for (let t = parts.length - 1; t >= 0; --t) {
+    const {action, pipeType} = parts[t];
+    const {stdin, promise} = await action(Object.assign(state, {stdout, stderr}), pipeType !== null);
+
+    // If stdout has been piped (ie if the command we're execting isn't the
+    // right-most one), then we must close the pipe after our process has
+    // finished writing into it. We don't need to do this for the last command
+    // because this responsibility goes to the caller (otherwise we would risk
+    // closing the real stdout, which isn't meant to happen).
+    if (t !== parts.length - 1) {
+      const thisStdout = stdout;
+
+      promise.then(() => {
+        thisStdout.end();
+      }, () => {
+        thisStdout.end();
+      });
+    }
+
+    promises.push(promise);
+
+    switch (pipeType) {
+      case null: {
+        // no pipe!
+      } break;
+
+      case `|`: {
+        if (stdin === null)
+          throw new Error(`Assertion failed: The pipe is expected to return a writable stream`);
+
+        stdout = stdin;
+      } break;
+
+      case `|&`: {
+        if (stdin === null)
+          throw new Error(`Assertion failed: The pipe is expected to return a writable stream`);
+
+        stdout = stdin;
+        stderr = stdin;
+      } break;
+    }
+  }
+
+  const exitCodes = await Promise.all(promises);
+
+  return exitCodes[exitCodes.length - 1];
+}
+
+async function runShellAst(ast: ShellLine, opts: ShellOptions, state: ShellState) {
+  const errors: Array<Error> = [];
 
   /**
    * Execute a command line. A command line is a list of command shells linked
@@ -378,12 +445,12 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions, {stdin, stdout, s
    */
   async function executeCommandLine(node: CommandLine, state: ShellState): Promise<number> {
     if (!node.then) {
-      return await executeCommandChain(node.chain, state);
+      return await executeCommandChain(node.chain, opts, state);
     } else {
-      const code = await executeCommandChain(node.chain, state);
+      const code = await executeCommandChain(node.chain, opts, state);
 
-      if (opts.exitCode !== null)
-        return opts.exitCode;
+      if (state.exitCode !== null)
+        return state.exitCode;
 
       state.variables[`?`] = String(code);
 
@@ -421,15 +488,15 @@ async function runShellAst(ast: ShellLine, opts: ShellOptions, {stdin, stdout, s
       
       state.variables[`?`] = String(lastExitCode);
 
-      if (opts.exitCode !== null) {
-        return opts.exitCode;
+      if (state.exitCode !== null) {
+        return state.exitCode;
       }
     }
 
     return lastExitCode;
   }
 
-  return executeShellLine(ast, {stdin, stdout, stderr, variables});
+  return executeShellLine(ast, state);
 }
 
 function locateArgsVariable(node: ShellLine): boolean {
@@ -488,41 +555,42 @@ function locateArgsVariable(node: ShellLine): boolean {
   });
 }
 
-export async function runShell(command: string, {
-  args = [],
+export async function runShell(command: string, args: Array<string> = [], {
   builtins = {},
   cwd = process.cwd(),
-  env: userEnv = process.env,
+  env = process.env,
   paths = [],
   stdin = process.stdin,
   stdout = process.stdout,
   stderr = process.stderr,
   variables = {},
-}: Partial<ShellOptions> = {}) {
-  const env: {[key: string]: string} = {};
-
-  for (const key of Object.keys(userEnv))
-    env[key.toUpperCase()] = userEnv[key] as string;
+}: Partial<UserOptions> = {}) {
+  const normalizedEnv: {[key: string]: string} = {};
+  for (const key of Object.keys(env))
+    if (typeof env[key] !== `undefined`)
+      normalizedEnv[key.toUpperCase()] = env[key] as string;
 
   if (paths.length > 0)
-    env.PATH = env.PATH
+    normalizedEnv.PATH = normalizedEnv.PATH
       ? `${paths.join(posix.delimiter)}${posix.delimiter}${env.PATH}`
       : `${paths.join(posix.delimiter)}`;
 
-  const ast = parseShell(command);
+  if (normalizedEnv.PATH && delimiter !== posix.delimiter)
+    normalizedEnv.PATH = normalizedEnv.PATH.replace(new RegExp(delimiter, `g`), posix.delimiter);
 
-  // Inject the default builtins
-  builtins = Object.assign({}, builtins, BUILTINS);
+  const normalizedBuiltins = new Map(BUILTINS);
+  for (const [key, action] of Object.entries(builtins))
+    normalizedBuiltins.set(key, makeBuiltin(action));
+
+  const ast = parseShell(command);
 
   // If the shell line doesn't use the args, inject it at the end of the last command
   if (!locateArgsVariable(ast) && ast.length > 0) {
     let command = ast[ast.length - 1];
-
     while (command.then)
       command = command.then.line;
 
     let chain = command.chain;
-
     while (chain.then)
       chain = chain.then.chain;
 
@@ -535,15 +603,11 @@ export async function runShell(command: string, {
 
   return await runShellAst(ast, {
     args,
-    builtins,
-    cwd,
-    env,
-    exitCode: null,
-    stdin,
-    stdout,
-    stderr,
-    variables,
+    builtins: normalizedBuiltins,
   }, {
+    cwd,
+    environment: normalizedEnv,
+    exitCode: null,
     stdin,
     stdout,
     stderr,
