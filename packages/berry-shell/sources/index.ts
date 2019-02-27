@@ -201,7 +201,7 @@ async function executeBufferedSubshell(ast: ShellLine, opts: ShellOptions, state
   const stdout = new PassThrough();
 
   stdout.on(`data`, chunk => chunks.push(chunk));
-  await runShellAst(ast, opts, cloneState(state, {stdout}));
+  await executeShellLine(ast, opts, cloneState(state, {stdout}));
 
   return Buffer.concat(chunks).toString().replace(/[\r\n]+$/, ``);
 }
@@ -334,7 +334,7 @@ function makeCommandAction(args: Array<string>, opts: ShellOptions) {
 function makeSubshellAction(ast: ShellLine, opts: ShellOptions) {
   return async (state: ShellState, mustPipe: boolean) => {
     const stdin = new PassThrough();
-    const promise = runShellAst(ast, opts, cloneState(state, {stdin}));
+    const promise = executeShellLine(ast, opts, cloneState(state, {stdin}));
 
     return {stdin: stdin as Writable, promise};
   };
@@ -436,67 +436,61 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
   return exitCodes[exitCodes.length - 1];
 }
 
-async function runShellAst(ast: ShellLine, opts: ShellOptions, state: ShellState) {
-  const errors: Array<Error> = [];
+/**
+ * Execute a command line. A command line is a list of command shells linked
+ * together thanks to the use of either of the `||` or `&&` operators.
+ */
+async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: ShellState): Promise<number> {
+  if (!node.then)
+    return await executeCommandChain(node.chain, opts, state);
 
-  /**
-   * Execute a command line. A command line is a list of command shells linked
-   * together thanks to the use of either of the `||` or `&&` operators.
-   */
-  async function executeCommandLine(node: CommandLine, state: ShellState): Promise<number> {
-    if (!node.then) {
-      return await executeCommandChain(node.chain, opts, state);
-    } else {
-      const code = await executeCommandChain(node.chain, opts, state);
+  const code = await executeCommandChain(node.chain, opts, state);
 
-      if (state.exitCode !== null)
-        return state.exitCode;
+  // If the execution aborted (usually through "exit"), we must bailout
+  if (state.exitCode !== null)
+    return state.exitCode;
 
-      state.variables[`?`] = String(code);
+  // We must update $?, which always contains the exit code from the last command
+  state.variables[`?`] = String(code);
 
-      switch (node.then.type) {
-        case `&&`: {
-          if (code === 0) {
-            return await executeCommandLine(node.then.line, state);
-          } else {
-            return code;
-          }
-        } break;
-
-        case `||`: {
-          if (code !== 0) {
-            return await executeCommandLine(node.then.line, state);
-          } else {
-            return code;
-          }
-        } break;
-
-        default: {
-          throw new Error(`Unsupported command type: "${node.then.type}"`);
-        } break;
+  switch (node.then.type) {
+    case `&&`: {
+      if (code === 0) {
+        return await executeCommandLine(node.then.line, opts, state);
+      } else {
+        return code;
       }
-    }
+    } break;
+
+    case `||`: {
+      if (code !== 0) {
+        return await executeCommandLine(node.then.line, opts, state);
+      } else {
+        return code;
+      }
+    } break;
+
+    default: {
+      throw new Error(`Unsupported command type: "${node.then.type}"`);
+    } break;
+  }
+}
+
+async function executeShellLine(node: ShellLine, opts: ShellOptions, state: ShellState) {
+  let lastExitCode = 0;
+
+  for (const command of node) {
+    lastExitCode = await executeCommandLine(command, opts, state);
+
+    // If the execution aborted (usually through "exit"), we must bailout
+    if (state.exitCode !== null)
+      return state.exitCode;
+
+    // We must update $?, which always contains the exit code from the last command
+    state.variables[`?`] = String(lastExitCode);
   }
 
-  async function executeShellLine(node: ShellLine, state: ShellState) {
-    let lastExitCode = 0;
-
-    for (const command of node) {
-      const stdin = state.stdin;
-
-      lastExitCode = await executeCommandLine(command, state);
-      
-      state.variables[`?`] = String(lastExitCode);
-
-      if (state.exitCode !== null) {
-        return state.exitCode;
-      }
-    }
-
-    return lastExitCode;
-  }
-
-  return executeShellLine(ast, state);
+  return lastExitCode;
 }
 
 function locateArgsVariable(node: ShellLine): boolean {
@@ -555,7 +549,7 @@ function locateArgsVariable(node: ShellLine): boolean {
   });
 }
 
-export async function runShell(command: string, args: Array<string> = [], {
+export async function execute(command: string, args: Array<string> = [], {
   builtins = {},
   cwd = process.cwd(),
   env = process.env,
@@ -601,7 +595,7 @@ export async function runShell(command: string, args: Array<string> = [], {
     }
   }
 
-  return await runShellAst(ast, {
+  return await executeShellLine(ast, {
     args,
     builtins: normalizedBuiltins,
   }, {

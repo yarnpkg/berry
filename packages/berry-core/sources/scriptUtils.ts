@@ -1,5 +1,5 @@
 import {CwdFS, ZipOpenFS, xfs}           from '@berry/fslib';
-import {runShell}                        from '@berry/shell';
+import {execute}                         from '@berry/shell';
 import {delimiter, posix}                from 'path';
 import {PassThrough, Readable, Writable} from 'stream';
 import {dirSync}                         from 'tmp';
@@ -120,7 +120,7 @@ export async function executePackageScript(locator: Locator, scriptName: string,
       return;
 
     try {
-      return await runShell(script, args, {cwd, env, stdin, stdout, stderr});
+      return await execute(script, args, {cwd, env, stdin, stdout, stderr});
     } finally {
       await xfs.removePromise(binFolder);
     }

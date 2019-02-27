@@ -1,4 +1,4 @@
-import {runShell}    from '@berry/shell';
+import {execute}     from '@berry/shell';
 import {PassThrough} from 'stream';
 
 const bufferResult = async (command: string, args: Array<string> = []) => {
@@ -16,7 +16,7 @@ const bufferResult = async (command: string, args: Array<string> = []) => {
     stderrChunks.push(chunk);
   });
 
-  const exitCode = await runShell(command, args, {stdout, stderr});
+  const exitCode = await execute(command, args, {stdout, stderr});
 
   return {
     exitCode,
