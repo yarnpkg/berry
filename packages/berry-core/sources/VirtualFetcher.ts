@@ -1,9 +1,9 @@
-import {AliasFS, xfs}                       from '@berry/fslib';
-import {dirname, relative, resolve}         from 'path';
+import {AliasFS, xfs}                                            from '@berry/fslib';
+import {dirname, relative, resolve}                              from 'path';
 
-import {Fetcher, FetchOptions, FetchResult} from './Fetcher';
-import * as structUtils                     from './structUtils';
-import {Locator}                            from './types';
+import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from './Fetcher';
+import * as structUtils                                          from './structUtils';
+import {Locator}                                                 from './types';
 
 export class VirtualFetcher implements Fetcher {
   supports(locator: Locator) {
@@ -39,10 +39,19 @@ export class VirtualFetcher implements Fetcher {
     return await this.ensureVirtualLink(locator, parentFetch, opts);
   }
 
-  private async ensureVirtualLink(locator: Locator, sourceFetch: FetchResult, opts: FetchOptions) {
-    const virtualFolder = opts.project.configuration.get(`virtualFolder`);
-    const virtualPath = resolve(virtualFolder, opts.cache.getCacheKey(locator));
+  getLocatorFilename(locator: Locator) {
+    return structUtils.slugifyLocator(locator);
+  }
 
+  getLocatorPath(locator: Locator, opts: MinimalFetchOptions) {
+    const virtualFolder = opts.project.configuration.get(`virtualFolder`);
+    const virtualPath = resolve(virtualFolder, this.getLocatorFilename(locator));
+
+    return virtualPath;
+  }
+
+  private async ensureVirtualLink(locator: Locator, sourceFetch: FetchResult, opts: FetchOptions) {
+    const virtualPath = this.getLocatorPath(locator, opts);
     const relativeTarget = relative(dirname(virtualPath), sourceFetch.packageFs.getRealPath());
 
     // Doesn't need locking, and the folder must exist for the lock to succeed

@@ -12,6 +12,7 @@ export {ReportError, Report, MessageName}                                     fr
 export {Resolver, ResolveOptions, MinimalResolveOptions}                      from './Resolver';
 export {StreamReport}                                                         from './StreamReport';
 export {ThrowReport}                                                          from './ThrowReport';
+export {VirtualFetcher}                                                       from './VirtualFetcher';
 export {Workspace}                                                            from './Workspace';
 export {IdentHash, DescriptorHash, LocatorHash}                               from './types';
 export {Ident, Descriptor, Locator, Package}                                  from './types';
