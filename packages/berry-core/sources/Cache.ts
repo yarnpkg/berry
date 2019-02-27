@@ -1,6 +1,6 @@
 import {NodeFS, ZipFS, xfs}       from '@berry/fslib';
 import {lock, unlock}             from 'lockfile';
-import {resolve}                  from 'path';
+import posix                      from 'path';
 import {promisify}                from 'util';
 
 import {Configuration}            from './Configuration';
@@ -34,22 +34,18 @@ export class Cache {
     this.cwd = cacheCwd;
   }
 
-  getCacheKey(locator: Locator) {
-    return structUtils.slugifyLocator(locator);
-  }
-
-  getFilePath(key: string) {
-    return resolve(this.cwd, `${key}.zip`);
+  getLocatorFilename(locator: Locator) {
+    return `${structUtils.slugifyLocator(locator)}.zip`;
   }
 
   getLocatorPath(locator: Locator) {
-    return this.getFilePath(this.getCacheKey(locator));
+    return posix.resolve(this.cwd, this.getLocatorFilename(locator));
   }
 
   async setup() {
     await xfs.mkdirpPromise(this.cwd);
 
-    await this.writeFileIntoCache(resolve(this.cwd, `.gitignore`), async (file: string) => {
+    await this.writeFileIntoCache(posix.resolve(this.cwd, `.gitignore`), async (file: string) => {
       await xfs.writeFilePromise(file, `/.gitignore\n*.lock\n`);
     });
   }
