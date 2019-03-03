@@ -2,13 +2,13 @@ import {xfs}           from '@berry/fslib';
 import {stringifySyml} from '@berry/parsers';
 
 const PLUGIN_A = `
-const factory = () => { console.log('Hello world A'); return {}; };
+const factory = () => { console.log('Hello world A'); return {default:{}}; };
 const name = '@berry/plugin-a';
 module.exports = {factory, name};
 `;
 
 const PLUGIN_B = `
-const factory = () => { console.log('Hello world B'); return {}; };
+const factory = () => { console.log('Hello world B'); return {default:{}}; };
 const name = '@berry/plugin-b';
 module.exports = {factory, name};
 `;
