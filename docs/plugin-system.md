@@ -20,7 +20,7 @@ $ yarn add @berry/core
 $ yarn add -D @berry/builder
 ```
 
-Then create an index file in `sources/index.ts`:
+Then create an index file (use TypeScript! just create an `index.ts` at the root of your plugin instead of the usual `index.js` - our builder will take care of it):
 
 ```
 import {Plugin}   from '@berry/core';
@@ -39,14 +39,14 @@ const plugin: Plugin = {
 export default plugin;
 ```
 
-Then build your plugin by running `yarn @berry-build-plugin`, which will generate a file in `bin/@berry/plugin-hello.js`. Now the only remaining thing you have to do is activate the plugin! In order to do this, just open the `.yarnrc` located at the root of the repository and extend the `plugins` key in order to register your newly built plugin:
+Finally, build your plugin by running the `yarn @berry-build-plugin` command which will generate a new file in `bin/@berry/plugin-hello.js`. The only thing that now remains is for you to activate your shiny new plugin! In order to do this, just open the `.yarnrc` located at the root of the repository and extend the `plugins` key in order to register your new one:
 
 ```
 plugins:
   - "./packages/plugin-hello/bin/@berry/plugin-hello.js"
 ```
 
-And that's it! You can now run `yarn hello`, and Yarn will great you.
+And that's it! You can now run `yarn hello`, and Yarn will happily great you.
 
 ## What can plugins do?
 
