@@ -223,7 +223,7 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
 
   if (typeof value !== `string`)
     throw new Error(`Expected value to be a string`);
-  
+
   if (type === SettingsType.ABSOLUTE_PATH) {
     return posix.resolve(folder, value);
   } else if (type === SettingsType.LOCATOR_LOOSE) {
@@ -259,7 +259,7 @@ function getEnvironmentSettings() {
 
     environmentSettings[key] = value;
   }
-  
+
   return environmentSettings;
 }
 
@@ -295,7 +295,7 @@ export class Configuration {
   public projectCwd: string | null;
 
   public plugins: Map<string, Plugin> = new Map();
-  
+
   public settings: Map<string, SettingsDefinition> = new Map();
 
   public values: Map<string, any> = new Map();
@@ -304,21 +304,21 @@ export class Configuration {
   /**
    * Instantiate a new configuration object exposing the configuration obtained
    * from reading the various rc files and the environment settings.
-   * 
+   *
    * The `pluginConfiguration` parameter is expected to indicate:
-   * 
+   *
    * 1. which modules should be made available to plugins when they require a
    *    package (this is the dynamic linking part - for example we want all the
    *    plugins to use the exact same version of @berry/core, which also is the
    *    version used by the running Yarn instance).
-   * 
+   *
    * 2. which of those modules are actually plugins that need to be injected
    *    within the configuration.
-   * 
+   *
    * Note that some extra plugins will be automatically added based on the
    * content of the rc files - with the rc plugins taking precedence over
    * the other ones.
-   * 
+   *
    * One particularity: the plugin initialization order is quite strict, with
    * plugins listed in /foo/bar/.yarnrc taking precedence over plugins listed
    * in /foo/.yarnrc and /.yarnrc. Additionally, while plugins can depend on
@@ -332,7 +332,7 @@ export class Configuration {
     delete environmentSettings.rcFilename;
 
     const {projectCwd, rcFiles} = await Configuration.getRcData(startingCwd);
-    const plugins = new Map();    
+    const plugins = new Map();
 
     if (pluginConfiguration !== null) {
       for (const request of pluginConfiguration.plugins.keys())
@@ -366,7 +366,7 @@ export class Configuration {
           };
 
           const plugin = miscUtils.prettifySyncErrors(() => {
-            return factory(pluginRequire);
+            return factory(pluginRequire).default;
           }, message => {
             return `${message} (when initializing ${name}, defined in ${path})`;
           });
@@ -506,7 +506,7 @@ export class Configuration {
       // binFolder is the magic location where the parent process stored the current binaries; not an actual configuration settings
       if (name === `binFolder`)
         continue;
-      
+
       // It wouldn't make much sense, would it?
       if (name === `rcFilename`)
         throw new UsageError(`The rcFilename settings can only be set via ${`${ENVIRONMENT_PREFIX}RC_FILENAME`.toUpperCase()}, not via a rc file`);
@@ -517,11 +517,11 @@ export class Configuration {
 
       if (this.sources.has(name))
         continue;
-      
+
       let value = data[key];
       if (value === null && !definition.isNullable && definition.default !== null)
         throw new Error(`Non-nullable configuration settings "${name}" cannot be set to null`);
-      
+
       if (Array.isArray(value)) {
         if (!definition.isArray && !Array.isArray(definition.default)) {
           throw new Error(`Non-array configuration settings "${name}" cannot be an array`);
