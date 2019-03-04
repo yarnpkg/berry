@@ -1,7 +1,11 @@
-import {WorkspaceRequiredError}                                           from '@berry/cli';
-import {Configuration, Cache, PluginConfiguration, Project, StreamReport} from '@berry/core';
-import {structUtils}                                                      from '@berry/core';
-import {Writable}                                                         from 'stream';
+import {WorkspaceRequiredError}                                         from '@berry/cli';
+import {Configuration, Cache, Descriptor, PluginConfiguration, Project} from '@berry/core';
+import {StreamReport, Workspace}                                        from '@berry/core';
+import {structUtils}                                                    from '@berry/core';
+import {Writable}                                                       from 'stream';
+
+import * as suggestUtils                                                from '../suggestUtils';
+import {Hooks}                                                          from '..';
 
 export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
@@ -30,23 +34,56 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     if (!workspace)
       throw new WorkspaceRequiredError(cwd);
 
-    const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
-      const affectedWorkspaces = all
-        ? project.workspaces
-        : [workspace];
+    const affectedWorkspaces = all
+      ? project.workspaces
+      : [workspace];
 
-      for (const workspace of affectedWorkspaces) {
-        for (const entry of names) {
-          const ident = structUtils.parseIdent(entry);
+    const targets = [
+      suggestUtils.Target.REGULAR,
+      suggestUtils.Target.DEVELOPMENT,
+      suggestUtils.Target.PEER,
+    ];
 
-          workspace.manifest.dependencies.delete(ident.identHash);
-          workspace.manifest.devDependencies.delete(ident.identHash);
-          workspace.manifest.peerDependencies.delete(ident.identHash);
+    let hasChanged = false;
+
+    const afterWorkspaceDependencyRemovalList: Array<[
+      Workspace,
+      suggestUtils.Target,
+      Descriptor
+    ]> = [];
+
+    for (const workspace of affectedWorkspaces) {
+      for (const entry of names) {
+        const ident = structUtils.parseIdent(entry);
+
+        for (const target of targets) {
+          const current = workspace.manifest[target].get(ident.identHash);
+
+          if (typeof current !== `undefined`) {
+            workspace.manifest[target].delete(ident.identHash);
+
+            afterWorkspaceDependencyRemovalList.push([
+              workspace,
+              target,
+              current,
+            ]);
+
+            hasChanged = true;
+          }
         }
       }
+    }
 
-      await project.install({cache, report});
-    });
+    if (hasChanged) {
+      await configuration.triggerMultipleHooks(
+        (hooks: Hooks) => hooks.afterWorkspaceDependencyRemoval,
+        afterWorkspaceDependencyRemovalList,
+      );
 
-    return report.exitCode();
+      const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
+        await project.install({cache, report});
+      });
+
+      return report.exitCode();
+    }
   });

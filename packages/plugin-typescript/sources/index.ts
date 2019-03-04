@@ -3,7 +3,7 @@ import {httpUtils, structUtils}               from '@berry/core';
 import {Hooks as EssentialsHooks}             from '@berry/plugin-essentials';
 import {suggestUtils}                         from '@berry/plugin-essentials';
 
-const afterNewWorkspaceDependency = async (
+const afterWorkspaceDependencyAddition = async (
   workspace: Workspace,
   dependencyTarget: suggestUtils.Target,
   descriptor: Descriptor,
@@ -39,7 +39,7 @@ const afterNewWorkspaceDependency = async (
 
 const plugin: Plugin = {
   hooks: {
-    afterNewWorkspaceDependency,
+    afterWorkspaceDependencyAddition,
   } as (
     EssentialsHooks
   ),

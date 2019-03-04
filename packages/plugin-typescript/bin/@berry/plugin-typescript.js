@@ -99,7 +99,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(1);
 const core_2 = __webpack_require__(1);
 const plugin_essentials_1 = __webpack_require__(2);
-const afterNewWorkspaceDependency = async (workspace, dependencyTarget, descriptor) => {
+const afterWorkspaceDependencyAddition = async (workspace, dependencyTarget, descriptor) => {
     if (descriptor.scope === `types`)
         return;
     const project = workspace.project;
@@ -120,7 +120,7 @@ const afterNewWorkspaceDependency = async (workspace, dependencyTarget, descript
 };
 const plugin = {
     hooks: {
-        afterNewWorkspaceDependency,
+        afterWorkspaceDependencyAddition,
     },
 };
 exports.default = plugin;
