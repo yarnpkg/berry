@@ -95,10 +95,18 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
       return checkReport.exitCode();
 
     let askedQuestions = false;
+    let hasChanged = false;
 
-    const afterNewWorkspaceDependencyList: Array<[
+    const afterWorkspaceDependencyAdditionList: Array<[
       Workspace,
       suggestUtils.Target,
+      Descriptor
+    ]> = [];
+
+    const afterWorkspaceDependencyReplacementList: Array<[
+      Workspace,
+      suggestUtils.Target,
+      Descriptor,
       Descriptor
     ]> = [];
 
@@ -123,29 +131,51 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
         }));
       }
 
-      workspace.manifest[target].set(
-        selected.identHash,
-        selected,
-      );
+      const current = workspace.manifest[target].get(selected.identHash);
 
-      afterNewWorkspaceDependencyList.push([
-        workspace,
-        target,
-        selected,
-      ]);
+      if (typeof current === `undefined` || current.descriptorHash !== selected.descriptorHash) {
+        workspace.manifest[target].set(
+          selected.identHash,
+          selected,
+        );
+
+        if (typeof current === `undefined`) {
+          afterWorkspaceDependencyAdditionList.push([
+            workspace,
+            target,
+            selected,
+          ]);
+        } else {
+          afterWorkspaceDependencyReplacementList.push([
+            workspace,
+            target,
+            current,
+            selected,
+          ]);
+        }
+
+        hasChanged = true;
+      }
     }
 
-    await configuration.triggerMultipleHooks(
-      (hooks: Hooks) => hooks.afterNewWorkspaceDependency,
-      afterNewWorkspaceDependencyList,
-    );
+    if (hasChanged) {
+      await configuration.triggerMultipleHooks(
+        (hooks: Hooks) => hooks.afterWorkspaceDependencyAddition,
+        afterWorkspaceDependencyAdditionList,
+      );
 
-    if (askedQuestions)
-      stdout.write(`\n`);
+      await configuration.triggerMultipleHooks(
+        (hooks: Hooks) => hooks.afterWorkspaceDependencyReplacement,
+        afterWorkspaceDependencyReplacementList,
+      );
 
-    const installReport = await StreamReport.start({configuration, stdout}, async report => {
-      await project.install({cache, report});
-    });
+      if (askedQuestions)
+        stdout.write(`\n`);
 
-    return installReport.exitCode();
+      const installReport = await StreamReport.start({configuration, stdout}, async report => {
+        await project.install({cache, report});
+      });
+
+      return installReport.exitCode();
+    }
   });

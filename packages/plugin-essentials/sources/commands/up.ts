@@ -6,6 +6,7 @@ import inquirer                                                     from 'inquir
 import {Readable, Writable}                                         from 'stream';
 
 import * as suggestUtils                                            from '../suggestUtils';
+import {Hooks}                                                      from '..';
 
 export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
@@ -104,7 +105,15 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
       return checkReport.exitCode();
   
     let askedQuestions = false;
+    let hasChanged = false;
   
+    const afterWorkspaceDependencyReplacementList: Array<[
+      Workspace,
+      suggestUtils.Target,
+      Descriptor,
+      Descriptor
+    ]> = [];
+
     for (const [workspace, target, existing, suggestions] of allSuggestions) {
       let selected;
   
@@ -126,18 +135,41 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
         }));
       }
   
-      workspace.manifest[target].set(
-        selected.identHash,
-        selected,
-      );
+      const current = workspace.manifest[target].get(selected.identHash);
+
+      if (typeof current === `undefined`)
+        throw new Error(`Assertion failed: This descriptor should have a matching entry`);
+
+      if (current.descriptorHash !== selected.descriptorHash) {
+        workspace.manifest[target].set(
+          selected.identHash,
+          selected,
+        );
+
+        afterWorkspaceDependencyReplacementList.push([
+          workspace,
+          target,
+          current,
+          selected,
+        ]);
+
+        hasChanged = true;
+      }
     }
   
-    if (askedQuestions)
-      stdout.write(`\n`);
-  
-    const installReport = await StreamReport.start({configuration, stdout}, async report => {
-        await project.install({cache, report});
-    });  
-  
-    return installReport.exitCode();
+    if (hasChanged) {
+      await configuration.triggerMultipleHooks(
+        (hooks: Hooks) => hooks.afterWorkspaceDependencyReplacement,
+        afterWorkspaceDependencyReplacementList,
+      );
+
+      if (askedQuestions)
+        stdout.write(`\n`);
+    
+      const installReport = await StreamReport.start({configuration, stdout}, async report => {
+          await project.install({cache, report});
+      });  
+    
+      return installReport.exitCode();
+    }
   });

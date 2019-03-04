@@ -23,11 +23,22 @@ import * as suggestUtils               from './suggestUtils';
 export {suggestUtils};
 
 export interface Hooks {
-  afterNewWorkspaceDependency?: (
+  afterWorkspaceDependencyAddition?: (
     workspace: Workspace,
     target: suggestUtils.Target,
     descriptor: Descriptor,
-  ) => void,
+  ) => Promise<void>,
+  afterWorkspaceDependencyReplacement?: (
+    workspace: Workspace,
+    target: suggestUtils.Target,
+    fromDescriptor: Descriptor,
+    toDescriptor: Descriptor,
+  ) => Promise<void>;
+  afterWorkspaceDependencyRemoval?: (
+    workspace: Workspace,
+    target: suggestUtils.Target,
+    descriptor: Descriptor,
+  ) => Promise<void>,
 };
 
 const plugin: Plugin = {
