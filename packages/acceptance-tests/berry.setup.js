@@ -9,7 +9,7 @@ const {
 
 global.makeTemporaryEnv = generatePkgDriver({
   getName() {
-    return `berry`;
+    return `yarn`;
   },
   async runDriver(
     path,
