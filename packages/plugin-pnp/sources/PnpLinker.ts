@@ -7,6 +7,8 @@ import {posix}                                                                  
 
 // Some packages do weird stuff and MUST be unplugged. I don't like them.
 const FORCED_UNPLUG_PACKAGES = new Set([
+  structUtils.makeIdent(null, `nan`).identHash,
+  structUtils.makeIdent(null, `node-gyp`).identHash,
   structUtils.makeIdent(null, `node-pre-gyp`).identHash,
 ]);
 
