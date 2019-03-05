@@ -5,5 +5,7 @@ junit.xml
 
 /.yarn/build-state.yml
 
+/packages/*/bin/*
 /packages/*/bundles/*
+
 !/packages/berry-pnp/bundles/hook.js

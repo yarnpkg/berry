@@ -6,15 +6,15 @@ steps:
   displayName: 'Install Node.js'
 
 - bash: |
-    ./packages/berry-cli/bin/berry build:cli
+    node ./scripts/run-yarn.js build:cli
   displayName: 'Build the standard bundle'
 
 - script: |
-    ./packages/berry-cli/bin/berry test:integration
+    node ./scripts/run-yarn.js test:integration
   displayName: 'Run the integration tests'
 
 - script: |
-    ./packages/berry-cli/bin/berry test:unit
+    node ./scripts/run-yarn.js test:unit
   displayName: 'Run the unit tests'
 
 - task: PublishTestResults@2

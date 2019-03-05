@@ -10,5 +10,8 @@
   },
   "devDependencies": {
     "@berry/builder": "workspace:packages/berry-builder"
+  },
+  "scripts": {
+    "build:plugin-pack": "run @berry-build-plugin"
   }
 }
