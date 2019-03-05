@@ -6235,6 +6235,43 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "@berry/plugin-pack",
+        [
+          [
+            "workspace:packages/plugin-pack",
+            {
+              "packageLocation": "./packages/plugin-pack/",
+              "packageDependencies": [
+                [
+                  "@berry/plugin-pack",
+                  "workspace:packages/plugin-pack"
+                ],
+                [
+                  "@berry/builder",
+                  "workspace:packages/berry-builder"
+                ],
+                [
+                  "@berry/core",
+                  "workspace:packages/berry-core"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@berry/json-proxy",
+                  "workspace:packages/berry-json-proxy"
+                ],
+                [
+                  "@manaflair/concierge",
+                  "npm:0.10.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "@berry/plugin-pnp",
         [
           [
