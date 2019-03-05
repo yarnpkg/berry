@@ -38,7 +38,7 @@ concierge
 
       output: {
         filename: `${pluginName}.js`,
-        path: `${pluginPath}/bin`,
+        path: `${pluginPath}/bundles`,
         libraryTarget: `var`,
         library: `plugin`,
       },
@@ -64,9 +64,9 @@ concierge
                 for (const file of chunk.files) {
                   compilation.assets[file] = new RawSource(`
                     module.exports = {};
-                    
+
                     module.exports.factory = function (require) {
-                      ${compilation.assets[file].source()}                    
+                      ${compilation.assets[file].source()}
                       return plugin;
                     };
 
