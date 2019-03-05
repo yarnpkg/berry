@@ -1,6 +1,6 @@
 
                     module.exports = {};
-                    
+
                     module.exports.factory = function (require) {
                       var plugin =
 /******/ (function(modules) { // webpackBootstrap
@@ -95,53 +95,44 @@
 
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = __webpack_require__(1);
-const core_2 = __webpack_require__(1);
-const plugin_essentials_1 = __webpack_require__(2);
-const afterWorkspaceDependencyAddition = async (workspace, dependencyTarget, descriptor) => {
-    if (descriptor.scope === `types`)
-        return;
-    const project = workspace.project;
-    const configuration = project.configuration;
-    const cache = await core_1.Cache.find(configuration);
-    const typesName = descriptor.scope
-        ? `${descriptor.scope}__${descriptor.name}`
-        : `${descriptor.name}`;
-    const target = plugin_essentials_1.suggestUtils.Target.REGULAR;
-    const modifier = plugin_essentials_1.suggestUtils.Modifier.EXACT;
-    const strategies = [plugin_essentials_1.suggestUtils.Strategy.LATEST];
-    const request = core_2.structUtils.makeDescriptor(core_2.structUtils.makeIdent(`types`, typesName), `unknown`);
-    const suggestions = await plugin_essentials_1.suggestUtils.getSuggestedDescriptors(request, null, { project, cache, target, modifier, strategies });
-    if (suggestions.length === 0)
-        return;
-    const selected = suggestions[0].descriptor;
-    workspace.manifest[target].set(selected.identHash, selected);
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+const pack_1 = __importDefault(__webpack_require__(1));
 const plugin = {
-    hooks: {
-        afterWorkspaceDependencyAddition,
-    },
+    commands: [
+        pack_1.default,
+    ],
 };
 exports.default = plugin;
 
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = require("@berry/core");
+"use strict";
 
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = (concierge, pluginConfiguration) => concierge
+    .command(`pack [--filename]`)
+    .describe(`Creates a compressed gzip archive of package dependencies.`)
+    .detail(`
+    This command will create a new compressed gzip archive of package dependencies in your local directory.
 
-module.exports = require("@berry/plugin-essentials");
+    \`--filename\` parameter names the archive of package as given filename.
+  `)
+    .example(`Creates a compressed gzip archive of the package dependencies.`, `yarn pack`)
+    .example(`Creates a compressed gzip archive of package dependencies with the given filename.`, `yarn pack --filename`)
+    .action(() => {
+});
+
 
 /***/ })
-/******/ ]);                    
+/******/ ]);
                       return plugin;
                     };
 
-                    module.exports.name = "@berry/plugin-typescript";
+                    module.exports.name = "@berry/plugin-pack";
                   

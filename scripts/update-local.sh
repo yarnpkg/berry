@@ -5,11 +5,16 @@ set -e
 THIS_DIR=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 mkdir -p "$THIS_DIR"/local
 
-yarn build:cli
-cp "$THIS_DIR"/../packages/berry-cli/bin/berry.js "$THIS_DIR"/local/berry.js
+make_build() {
+  yarn "$1"
 
-yarn build:plugin-pack
-cp "$THIS_DIR"/../packages/plugin-pack/bin/@berry/plugin-pack.js "$THIS_DIR"/local/berry-plugin-pack.js
+  local src="$THIS_DIR"/../packages/"$2"/bundles/"$3"
+  local dest="$THIS_DIR"/../packages/"$2"/bin/"$3"
 
-yarn build:plugin-typescript
-cp "$THIS_DIR"/../packages/plugin-typescript/bin/@berry/plugin-typescript.js "$THIS_DIR"/local/berry-plugin-typescript.js
+  mkdir -p $(dirname "$dest")
+  cp "$src" "$dest"
+}
+
+make_build build:cli berry-cli berry.js
+make_build build:plugin-pack plugin-pack @berry/plugin-pack.js
+make_build build:plugin-typescript plugin-typescript @berry/plugin-typescript.js

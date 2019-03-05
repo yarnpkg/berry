@@ -27,7 +27,7 @@ concierge
 
       output: {
         filename: `berry.js`,
-        path: path.resolve(basedir, `bin`),
+        path: `${basedir}/bundles`,
       },
 
       module: {
