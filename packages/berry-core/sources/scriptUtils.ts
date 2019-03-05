@@ -29,7 +29,8 @@ export async function makeScriptEnv(project: Project) {
   // spawned by Berry
 
   await makePathWrapper(binFolder, `run`, process.execPath, [process.argv[1], `run`]),
-  await makePathWrapper(binFolder, `berry`, process.execPath, [process.argv[1]]),
+  await makePathWrapper(binFolder, `yarn`, process.execPath, [process.argv[1]]),
+  await makePathWrapper(binFolder, `yarnpkg`, process.execPath, [process.argv[1]]),
   await makePathWrapper(binFolder, `node`, process.execPath),
 
   scriptEnv.PATH = scriptEnv.PATH
