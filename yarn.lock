@@ -1321,6 +1321,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@berry/plugin-pack@workspace:packages/plugin-pack":
+  version: 0.0.0
+  resolution: "@berry/plugin-pack@workspace:packages/plugin-pack"
+  dependencies:
+    "@berry/builder": "workspace:packages/berry-builder"
+    "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
+    "@berry/json-proxy": "workspace:*"
+    "@manaflair/concierge": "npm:^0.10.2"
+  languageName: unknown
+  linkType: soft
+
 "@berry/plugin-pnp@workspace:*, @berry/plugin-pnp@workspace:packages/plugin-pnp":
   version: 0.0.0
   resolution: "@berry/plugin-pnp@workspace:packages/plugin-pnp"
