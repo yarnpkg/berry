@@ -83,10 +83,18 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
       return [request, suggestions] as [Descriptor, Array<suggestUtils.Suggestion>];
     }));
 
-    const checkReport = await LightReport.start({configuration, stdout}, async report => {
+    const checkReport = await LightReport.start({configuration, stdout, suggestInstall: false}, async report => {
       for (const [request, suggestions] of allSuggestions) {
-        if (suggestions.length === 0) {
-          report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range`);
+        const nonNullSuggestions = suggestions.filter(suggestion => {
+          return suggestion.descriptor !== null;
+        });
+
+        if (nonNullSuggestions.length === 0) {
+          if (!project.configuration.get(`enableNetwork`)) {
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled)`);
+          } else {
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range`);
+          }
         }
       }
     });
@@ -113,20 +121,25 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     for (const [request, suggestions] of allSuggestions) {
       let selected;
 
-      if (suggestions.length === 1) {
-        selected = suggestions[0].descriptor;
+      const nonNullSuggestions = suggestions.filter(suggestion => {
+        return suggestion.descriptor !== null;
+      });
+
+      if (nonNullSuggestions.length === 1) {
+        selected = nonNullSuggestions[0].descriptor;
       } else {
         askedQuestions = true;
         ({answer: selected} = await prompt({
           type: `list`,
           name: `answer`,
           message: `Which range to you want to use?`,
-          choices: suggestions.map(({descriptor, reason}) => {
-            return {
-              name: reason,
-              value: descriptor as Descriptor,
-              short: structUtils.prettyDescriptor(project.configuration, descriptor),
-            };
+          choices: suggestions.map(({descriptor, reason}) => descriptor ? {
+            name: reason,
+            value: descriptor as Descriptor,
+            short: structUtils.prettyDescriptor(project.configuration, descriptor),
+          } : {
+            name: reason,
+            disabled: (): boolean => true,
           }),
         }));
       }

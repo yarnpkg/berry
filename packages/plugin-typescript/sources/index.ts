@@ -26,10 +26,13 @@ const afterWorkspaceDependencyAddition = async (
   const request = structUtils.makeDescriptor(structUtils.makeIdent(`types`, typesName), `unknown`);
   const suggestions = await suggestUtils.getSuggestedDescriptors(request, null, {project, cache, target, modifier, strategies});
 
-  if (suggestions.length === 0)
+  const nonNullSuggestions = suggestions.filter(suggestion => suggestion.descriptor !== null);
+  if (nonNullSuggestions.length === 0)
     return;
 
-  const selected = suggestions[0].descriptor;
+  const selected = nonNullSuggestions[0].descriptor;
+  if (selected === null)
+    return;
 
   workspace.manifest[target].set(
     selected.identHash,
