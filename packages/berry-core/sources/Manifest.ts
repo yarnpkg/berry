@@ -81,6 +81,15 @@ export class Manifest {
     if (typeof data.version === `string`)
       this.version = data.version;
 
+    if (typeof data.private === `boolean`)
+      this.private = data.private;
+
+    if (typeof data.license === `string`)
+      this.license = data.license;
+
+    if (typeof data.languageName === `string`)
+      this.languageName = data.languageName;
+
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
         this.bin = new Map([[structUtils.stringifyIdent(this.name), data.bin]]);
@@ -97,12 +106,6 @@ export class Manifest {
         this.bin.set(key, value);
       }
     }
-
-    if (typeof data.private === `boolean`)
-      this.private = data.private;
-
-    if (typeof data.license === `string`)
-      this.license = data.license;
 
     if (typeof data.scripts === `object` && data.scripts !== null) {
       for (const [key, value] of Object.entries(data.scripts)) {

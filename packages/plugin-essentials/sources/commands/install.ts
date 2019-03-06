@@ -6,7 +6,7 @@ import {Writable}                                                         from '
 
 export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
-  .command(`install [-f]`)
+  .command(`install [--frozen-lockfile?]`)
   .describe(`install the project dependencies`)
 
   .detail(`
@@ -28,11 +28,14 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     `yarn install`,
   )
 
-  .action(async ({cwd, stdout}: {cwd: string, stdout: Writable}) => {
+  .action(async ({cwd, stdout, frozenLockfile}: {cwd: string, stdout: Writable, frozenLockfile: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
+    if (frozenLockfile === null)
+      frozenLockfile = configuration.get(`frozenInstalls`);
+
     if (configuration.projectCwd !== null)
-      await autofixMergeConflicts(configuration);
+      await autofixMergeConflicts(configuration, frozenLockfile);
 
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -49,7 +52,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     // in order to ask for design feedback before writing features.
 
     const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
-      await project.install({cache, report});
+      await project.install({cache, report, frozenLockfile});
     });
 
     return report.exitCode();
@@ -60,7 +63,7 @@ const MERGE_CONFLICT_END = `>>>>>>>`;
 const MERGE_CONFLICT_SEP = `=======`;
 const MERGE_CONFLICT_START = `<<<<<<<`;
 
-async function autofixMergeConflicts(configuration: Configuration) {
+async function autofixMergeConflicts(configuration: Configuration, frozenLockfile: boolean) {
   const lockfilePath = configuration.get(`lockfilePath`);
   if (!await xfs.existsPromise(lockfilePath))
     return;
@@ -68,6 +71,9 @@ async function autofixMergeConflicts(configuration: Configuration) {
   const file = await xfs.readFilePromise(lockfilePath, `utf8`);
   if (!file.includes(MERGE_CONFLICT_START))
     return;
+
+  if (frozenLockfile)
+    throw new Error(`Cannot autofix a lockfile when operating with a frozen lockfile`);
 
   const [left, right] = getVariants(file);
 
@@ -78,7 +84,7 @@ async function autofixMergeConflicts(configuration: Configuration) {
     parsedLeft = parseSyml(left);
     parsedRight = parseSyml(right);
   } catch (error) {
-    throw new Error(`The individual variant of the lockfile failed to parse`);
+    throw new Error(`The individual variants of the lockfile failed to parse`);
   }
 
   const merged = Object.assign({}, parsedLeft, parsedRight);
