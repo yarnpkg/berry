@@ -91,11 +91,19 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
   
     const allSuggestions = await Promise.all(allSuggestionsPromises);
   
-    const checkReport = await LightReport.start({configuration, stdout}, async report => {
+    const checkReport = await LightReport.start({configuration, stdout, suggestInstall: false}, async report => {
       for (const [workspace, target, existing, suggestions] of allSuggestions) {
-        if (suggestions.length === 0) {
-          report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range`);
-        } else if (suggestions.length > 1 && !interactive) {
+        const nonNullSuggestions = suggestions.filter(suggestion => {
+          return suggestion.descriptor !== null;
+        });
+
+        if (nonNullSuggestions.length === 0) {
+          if (!project.configuration.get(`enableNetwork`)) {
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range (note: network resolution has been disabled)`);
+          } else {
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range`);
+          }
+        } else if (nonNullSuggestions.length > 1 && !interactive) {
           report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} has multiple possible upgrade strategies; use -i to disambiguate manually`);
         }
       }
@@ -117,20 +125,25 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     for (const [workspace, target, existing, suggestions] of allSuggestions) {
       let selected;
   
-      if (suggestions.length === 1) {
-        selected = suggestions[0];
+      const nonNullSuggestions = suggestions.filter(suggestion => {
+        return suggestion.descriptor !== null;
+      });
+
+      if (nonNullSuggestions.length === 1) {
+        selected = nonNullSuggestions[0].descriptor;
       } else {
         askedQuestions = true;
         ({answer: selected} = await prompt({
           type: `list`,
           name: `answer`,
           message: `Which range to you want to use in ${structUtils.prettyWorkspace(configuration, workspace)} ❯ ${target}?`,
-          choices: suggestions.map(({descriptor, reason}) => {
-            return {
-              name: reason,
-              value: descriptor as Descriptor,
-              short: structUtils.prettyDescriptor(project.configuration, descriptor),
-            };
+          choices: suggestions.map(({descriptor, reason}) => descriptor ? {
+            name: reason,
+            value: descriptor as Descriptor,
+            short: structUtils.prettyDescriptor(project.configuration, descriptor),
+          } : {
+            name: reason,
+            disabled: (): boolean => true,
           }),
         }));
       }

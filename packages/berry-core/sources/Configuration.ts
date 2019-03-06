@@ -175,7 +175,12 @@ export const coreDefinitions = {
     default: `npm:`,
   },
 
-  // Settings related to network proxies
+  // Settings related to network access
+  enableNetwork: {
+    description: `If false, the package manager will refuse to use the network if required to`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
   httpProxy: {
     description: `URL of the http proxy that must be used for outgoing http requests`,
     type: SettingsType.STRING,

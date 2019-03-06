@@ -17,6 +17,9 @@ function parseProxy(specifier: string) {
 }
 
 async function getNoCache(target: string, configuration: Configuration): Promise<Buffer> {
+  if (!configuration.get(`enableNetwork`))
+    throw new Error(`Network access have been disabled by configuration (when querying ${target})`);
+
   const url = new URL(target);
   let agent;
 
@@ -32,7 +35,7 @@ async function getNoCache(target: string, configuration: Configuration): Promise
   const res = await got(target, {agent, encoding: null});
 
   if (res.statusCode !== 200)
-    throw new Error(`Server answered status code ${res.statusCode}`);
+    throw new Error(`The remote server answered with an HTTP ${res.statusCode} (when querying ${target})`);
 
   return await res.body;
 }

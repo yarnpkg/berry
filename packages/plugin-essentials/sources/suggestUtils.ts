@@ -128,6 +128,9 @@ export async function getSuggestedDescriptors(request: Descriptor, previous: Des
         } else if (target === Target.PEER) {
           const reason = `Use * (catch-all peer dependency pattern)`;
           suggested.push({descriptor: structUtils.makeDescriptor(request, `*`), reason})
+        } else if (!project.configuration.get(`enableNetwork`)) {
+          const reason = `Resolve from latest ${project.configuration.format(`(unavailable because enableNetwork is toggled off)`, `grey`)}`;
+          suggested.push({descriptor: null, reason});
         } else {
           let latest;
           try {
