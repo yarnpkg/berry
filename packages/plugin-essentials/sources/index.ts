@@ -1,25 +1,26 @@
-import {Descriptor, Plugin, Workspace} from '@berry/core';
+import {Descriptor, Plugin, SettingsType} from '@berry/core';
+import {Workspace}                        from '@berry/core';
 
-import cleanCache                      from './commands/cache/clean';
-import setConfig                       from './commands/config/set';
-import setResolutionPolicy             from './commands/policies/set-resolution';
-import setVersionPolicy                from './commands/policies/set-version';
-import foreachWorkspaces               from './commands/workspaces/foreach';
-import listWorkspaces                  from './commands/workspaces/list';
-import entry                           from './commands/_entry';
-import add                             from './commands/add';
-import bin                             from './commands/bin';
-import config                          from './commands/config';
-import help                            from './commands/help';
-import install                         from './commands/install';
-import link                            from './commands/link';
-import node                            from './commands/node';
-import remove                          from './commands/remove';
-import run                             from './commands/run';
-import up                              from './commands/up';
-import why                             from './commands/why';
+import cleanCache                         from './commands/cache/clean';
+import setConfig                          from './commands/config/set';
+import setResolutionPolicy                from './commands/policies/set-resolution';
+import setVersionPolicy                   from './commands/policies/set-version';
+import foreachWorkspaces                  from './commands/workspaces/foreach';
+import listWorkspaces                     from './commands/workspaces/list';
+import entry                              from './commands/_entry';
+import add                                from './commands/add';
+import bin                                from './commands/bin';
+import config                             from './commands/config';
+import help                               from './commands/help';
+import install                            from './commands/install';
+import link                               from './commands/link';
+import node                               from './commands/node';
+import remove                             from './commands/remove';
+import run                                from './commands/run';
+import up                                 from './commands/up';
+import why                                from './commands/why';
 
-import * as suggestUtils               from './suggestUtils';
+import * as suggestUtils                  from './suggestUtils';
 export {suggestUtils};
 
 export interface Hooks {
@@ -42,6 +43,13 @@ export interface Hooks {
 };
 
 const plugin: Plugin = {
+  configuration: {
+    frozenInstalls: {
+      description: `If true, prevents the install command from modifying the lockfile`,
+      type: SettingsType.BOOLEAN,
+      default: false,
+    },
+  },
   commands: [
     cleanCache,
     setConfig,

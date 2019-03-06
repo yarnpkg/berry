@@ -40,6 +40,7 @@ export type InstallOptions = {
   cache: Cache,
   fetcher?: Fetcher,
   report: Report,
+  frozenLockfile?: boolean,
   lockfileOnly?: boolean,
 };
 
@@ -1046,11 +1047,19 @@ export class Project {
   }
 
   async install(opts: InstallOptions) {
-    // Ensures that we notice it when dependencies are added / removed from all sources coming from the filesystem
-    await this.forgetTransientResolutions();
-
     await opts.report.startTimerPromise(`Resolution step`, async () => {
+      // If we operate with a frozen lockfile, we take a snapshot of it to later make sure it didn't change
+      const initialLockfile = opts.frozenLockfile ? this.generateLockfile() : null;
+
+      // Ensures that we notice it when dependencies are added / removed from all sources coming from the filesystem
+      if (!opts.lockfileOnly)
+        await this.forgetTransientResolutions();
+
       await this.resolveEverything(opts);
+
+      if (opts.frozenLockfile && this.generateLockfile() !== initialLockfile) {
+        throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been modified by this install, which is explicitly forbidden`);
+      }
     });
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {
@@ -1068,7 +1077,7 @@ export class Project {
     }, this);
   }
 
-  async persistLockfile() {
+  generateLockfile() {
     // We generate the data structure that will represent our lockfile. To do this, we create a
     // reverse lookup table, where the key will be the resolved locator and the value will be a set
     // of all the descriptors that resolved to it. Then we use it to construct an optimized version
@@ -1156,8 +1165,12 @@ export class Project {
       `# Manual changes might be lost - proceed with caution!\n`
     ].join(``) + `\n`;
 
+    return header + stringifySyml(optimizedLockfile);
+  }
+
+  async persistLockfile() {
     const lockfilePath = this.configuration.get(`lockfilePath`);
-    const lockfileContent = header + stringifySyml(optimizedLockfile);
+    const lockfileContent = this.generateLockfile();
 
     await xfs.changeFilePromise(lockfilePath, lockfileContent);
   }
