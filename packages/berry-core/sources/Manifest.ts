@@ -44,6 +44,8 @@ export class Manifest {
 
   public resolutions: Array<{pattern: any, reference: string}> = [];
 
+  public files: Set<String> = new Set();
+
   static async find(path: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS} = {}) {
     return await Manifest.fromFile(posix.join(path, `package.json`), {baseFs});
   }
@@ -248,6 +250,16 @@ export class Manifest {
       }
     }
 
+    if (Array.isArray(data.files) && data.files.length !== 0) {
+      for (const filename of data.files) {
+        if (typeof filename !== `string`) {
+          errors.push(new Error(`Invalid files entry for '${filename}'`));
+          continue;
+        }
+        this.files.add(filename);
+      }
+    }
+
     return errors;
   }
 
@@ -324,5 +336,11 @@ export class Manifest {
     data.peerDependenciesMeta = this.peerDependenciesMeta.size === 0 ? undefined : Object.assign({}, ... miscUtils.sortMap(this.peerDependenciesMeta.entries(), ([identString, meta]) => identString).map(([identString, meta]) => {
       return {[identString]: meta};
     }));
+    
+    if(this.files.size === 0) {
+      data.files = undefined;
+    } else {
+      data.files = Array.from(this.files);
+    }
   }
 };
