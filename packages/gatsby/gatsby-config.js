@@ -1,11 +1,39 @@
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Default Starter`,
-    description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
-    author: `@gatsbyjs`,
+    title: `Yarn - Package Manager`,
+    description: `Foo`,
+    author: ``,
+    menuLinks: [{
+      name: `Home`,
+      link: `/`,
+    }, {
+      name: `Getting started`,
+      link: `/getting-started`,
+    }, {
+      name: `Configuration`,
+      link: `/configuration/package-json`,
+    }, {
+      name: `Features`,
+      link: `/offline-mirror`,
+    }]
   },
   plugins: [
+    `gatsby-plugin-emotion`,
     `gatsby-plugin-react-helmet`,
+    {
+      resolve: `gatsby-plugin-prefetch-google-fonts`,
+      options: {
+        fonts: [{
+          family: `Open Sans`,
+          variants: [`300`, `400`],
+        }, {
+          family: `Abel`,
+          variants: [`300`, `400`],
+        }, {
+          family: `PT Mono`,
+        }],
+      },
+    },
     {
       resolve: `gatsby-source-filesystem`,
       options: {

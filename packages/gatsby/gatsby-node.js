@@ -15,6 +15,9 @@ module.exports = {
         ],
       },
       resolve: {
+        alias: {
+          [`@emotion/core`]: require.resolve(`@emotion/core`),
+        },
         plugins: [
           PnpWebpackPlugin.bind(`${__dirname}/.cache`, module, `gatsby`),
           PnpWebpackPlugin.bind(`${__dirname}/public`, module, `gatsby`),

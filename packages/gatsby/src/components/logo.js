@@ -1,6 +1,8 @@
 import Img                    from 'gatsby-image';
-import {StaticQuery, graphql} from 'gatsby';
+import PropTypes              from 'prop-types';
 import React                  from 'react';
+
+import yarnKittenFull         from '../images/yarn-kitten-full.svg';
 
 /*
  * This component is built using `gatsby-image` to automatically serve optimized
@@ -13,21 +15,17 @@ import React                  from 'react';
  * - `StaticQuery`: https://gatsby.dev/staticquery
  */
 
-const Image = () => (
-  <StaticQuery
-    query={graphql`
-      query {
-        placeholderImage: file(relativePath: { eq: "gatsby-astronaut.png" }) {
-          childImageSharp {
-            fluid(maxWidth: 300) {
-              ...GatsbyImageSharpFluid
-            }
-          }
-        }
-      }
-    `}
-    render={data => <Img fluid={data.placeholderImage.childImageSharp.fluid} />}
-  />
+const Logo = ({align, height}) => (
+  <img src={yarnKittenFull} style={{height, verticalAlign: align}} />
 );
 
-export default Image;
+Logo.propTypes = {
+  align: PropTypes.string,
+  height: PropTypes.number,
+};
+
+Logo.defaultProps = {
+  height: 100,
+};
+
+export default Logo;
