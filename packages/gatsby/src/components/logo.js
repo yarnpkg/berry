@@ -1,8 +1,7 @@
-import Img                    from 'gatsby-image';
-import PropTypes              from 'prop-types';
-import React                  from 'react';
+import PropTypes      from 'prop-types';
+import React          from 'react';
 
-import yarnKittenFull         from '../images/yarn-kitten-full.svg';
+import yarnKittenFull from '../images/yarn-kitten-full.svg';
 
 /*
  * This component is built using `gatsby-image` to automatically serve optimized
@@ -16,12 +15,15 @@ import yarnKittenFull         from '../images/yarn-kitten-full.svg';
  */
 
 const Logo = ({align, height}) => (
-  <img src={yarnKittenFull} style={{height, verticalAlign: align}} />
+  <img alt={`Yarn`} src={yarnKittenFull} style={{height, verticalAlign: align}} />
 );
 
 Logo.propTypes = {
   align: PropTypes.string,
-  height: PropTypes.number,
+  height: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string,
+  ]),
 };
 
 Logo.defaultProps = {

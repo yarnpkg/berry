@@ -77,6 +77,55 @@ const YarnrcDoc = () => <>
           The relative path to the lockfile where the dependencies should be read from and written to. There are very little reason to change this setting!
         </>}
       />
+      <SymlStringProperty
+        name={`npmRegistryServer`}
+        placeholder={`https://registry.yarnpkg.com`}
+        description={<>
+          Defines the hostname of the remote server from where Yarn should fetch the metadata and archives when querying the npm registry.
+        </>}
+      />
+      <SymlStringProperty
+        name={`pnpDataPath`}
+        placeholder={`#!/usr/bin/env node`}
+        description={<>
+          The location where Yarn will read and write the <code>.pnp.meta.json</code> file.
+        </>}
+      />
+      <SymlBooleanProperty
+        name={`pnpEnableInlining`}
+        placeholder={`true`}
+        description={<>
+          If true (the default), Yarn will generate a single <code>.pnp.js</code> file that contains all the required data for your project to work properly. If toggled off, Yarn will also generate a <code>.pnp.data.json</code> file meant to be consumed by the <code>@berry/pnp</code> package.
+        </>}
+      />
+      <SymlStringProperty
+        name={`pnpIgnorePattern`}
+        placeholder={`^\\./subdir/.*`}
+        description={<>
+          Files matching the following location (in term of relative path compared to the generated <code>.pnp.js</code> file) will not be covered by PnP and will use the regular Node resolution. Typically only needed if you have subprojects that aren't yet part of your workspace tree.
+        </>}
+      />
+      <SymlStringProperty
+        name={`pnpPath`}
+        placeholder={`#!/usr/bin/env node`}
+        description={<>
+          The location where Yarn will read and write the <code>.pnp.js</code> file.
+        </>}
+      />
+      <SymlStringProperty
+        name={`pnpShebang`}
+        placeholder={`#!/usr/bin/env node`}
+        description={<>
+          A header that will be prepended to the generated <code>.pnp.js</code> file. You're allowed to write multiple lines, but this is slightly frowned upon.
+        </>}
+      />
+      <SymlStringProperty
+        name={`pnpUnpluggedFolder`}
+        placeholder={`#!/usr/bin/env node`}
+        description={<>
+          The path where unplugged packages will be stored on the disk.
+        </>}
+      />
       <SymlBooleanProperty
         name={`preferInteractive`}
         placeholder={`true`}

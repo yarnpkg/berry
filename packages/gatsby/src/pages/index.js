@@ -58,7 +58,7 @@ const IndexPage = () => <>
   <Layout>
     <SEO title="Home" keywords={[`gatsby`, `application`, `react`]} />
     <SearchContainer>
-      <SearchBar type={`search`} placeholder={`Search packages (i.e. babel, webpack, react...)`} autofocus={`true`} />
+      <SearchBar type={`search`} placeholder={`Search packages (i.e. babel, webpack, react...)`} autoFocus={true} />
     </SearchContainer>
     <Hero>
       <HeroTitle>

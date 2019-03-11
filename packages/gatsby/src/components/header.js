@@ -43,10 +43,10 @@ const MenuEntry = styled(Link)`
   text-transform: uppercase;
 
   color: #000000;
-`;
 
-const activeMenu = css`
-  border-bottom: 3px solid #2188b6;
+  &.active {
+    border-bottom: 3px solid #2188b6;
+  }
 `;
 
 const Header = ({siteTitle}) => (
@@ -73,11 +73,11 @@ const Header = ({siteTitle}) => (
           <Logo height={`3em`} align={`middle`} />
         </MenuLogo>
 
-        {data.site.siteMetadata.menuLinks.map(({name, link}) => <>
-          <MenuEntry to={link} css={activeMenu}>
+        {data.site.siteMetadata.menuLinks.map(({name, link}) => <React.Fragment key={name}>
+          <MenuEntry to={link} activeClassName={`active`} partiallyActive={link !== `/`}>
             {name}
           </MenuEntry>
-        </>)}
+        </React.Fragment >)}
       </MenuContainer>
     </>}
   />

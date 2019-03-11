@@ -35,7 +35,7 @@ export const SymlDescription = styled.div`
 
   font-family: "Open Sans";
 
-  &:first-child {
+  &:first-of-type {
     margin-top: 0;
   }
 `;
