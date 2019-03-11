@@ -55,5 +55,8 @@
   },
   "scripts": {
     "test:unit": "jest"
+  },
+  "resolutions": {
+    "gatsby-link": "portal:/Users/mael/gatsby/packages/gatsby-link"
   }
 }

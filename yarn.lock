@@ -8020,21 +8020,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gatsby-link@npm:^2.0.14":
+"gatsby-link@portal:/Users/mael/gatsby/packages/gatsby-link?locator=gatsby%40npm%3A2.1.24":
   version: 2.0.14
-  resolution: "gatsby-link@npm:2.0.14"
+  resolution: "gatsby-link@portal:/Users/mael/gatsby/packages/gatsby-link?locator=gatsby%40npm%3A2.1.24"
   dependencies:
     "@babel/runtime": "npm:^7.0.0"
-    "@reach/router": "npm:^1.1.1"
     "@types/reach__router": "npm:^1.0.0"
     prop-types: "npm:^15.6.1"
   peerDependencies:
+    "@reach/router": ^1.1.1
     gatsby: ^2.0.0
     react: ^16.4.2
     react-dom: ^16.4.2
-  checksum: c56642ed0a0c1d87f7922cf041bbd5d29ec8d867a69461b4ca26e19a30572ccc7823cb35f13c670c349ec0d1aa9d73b928ba4e1aed46da354e0dc8de9200f1af
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "gatsby-plugin-emotion@portal:/Users/mael/gatsby/packages/gatsby-plugin-emotion?locator=%40berry%2Fgatsby%40workspace%3Apackages%2Fgatsby":
   version: 4.0.4
@@ -8266,7 +8265,7 @@ __metadata:
     fs-exists-cached: "npm:1.0.0"
     fs-extra: "npm:^5.0.0"
     gatsby-cli: "npm:^2.4.13"
-    gatsby-link: "npm:^2.0.14"
+    gatsby-link: "portal:/Users/mael/gatsby/packages/gatsby-link?locator=gatsby%40npm%3A2.1.24"
     gatsby-plugin-page-creator: "npm:^2.0.9"
     gatsby-react-router-scroll: "npm:^2.0.4"
     glob: "npm:^7.1.1"
