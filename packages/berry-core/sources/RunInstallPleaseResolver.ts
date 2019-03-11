@@ -22,7 +22,7 @@ export class RunInstallPleaseResolver implements Resolver {
   }
 
   bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions): never {
-    throw new Error(`Unreachable`);
+    throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `A dependency cannot be retrieved from the lockfile; try to make an install to update your resolutions`);
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<never> {
