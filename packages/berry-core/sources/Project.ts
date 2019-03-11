@@ -359,10 +359,10 @@ export class Project {
 
     const realResolver = this.configuration.makeResolver();
 
-    const configResolver = lockfileOnly ? new MultiResolver([]) : realResolver;
-    const aliasResolver = new AliasResolver(configResolver);
+    const resolver = lockfileOnly
+      ? new MultiResolver([new LockfileResolver(), new RunInstallPleaseResolver(realResolver)])
+      : new AliasResolver(new MultiResolver([new LockfileResolver(), yarnResolver, realResolver]));
 
-    const resolver = new MultiResolver([new LockfileResolver(), yarnResolver, aliasResolver, lockfileOnly ? new RunInstallPleaseResolver(realResolver) : null]);
     const fetcher = this.configuration.makeFetcher();
 
     const resolverOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, resolver};
@@ -653,9 +653,17 @@ export class Project {
       if (!parentPackage)
         throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, parentLocator)}) should have been registered`);
 
-      for (const descriptor of Array.from(parentPackage.dependencies.values())) {
-        volatileDescriptors.delete(descriptor.descriptorHash);
+      const subResolutions: Array<[
+        Locator,
+        (() => void) | null
+      ]> = [];
 
+      // During this first pass we virtualize the descriptors. This allows us
+      // to reference them from their sibling without being order-dependent,
+      // which is required to solve cases where packages with peer dependencies
+      // have peer dependencies themselves.
+
+      for (const descriptor of Array.from(parentPackage.dependencies.values())) {
         if (descriptor.range === `missing:`)
           continue;
 
@@ -670,7 +678,7 @@ export class Project {
         // Note that we must protect against against infinite recursion by
         // preventing virtual locators from being re-resolved again (cf the
         // Dragon Test 3)
-        if (pkg.peerDependencies.size > 0 && !structUtils.isVirtualLocator(pkg)) {
+        if (pkg.peerDependencies.size > 0 && !parentPackage.peerDependencies.has(pkg.identHash)) {
           const virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
           const virtualizedPackage = structUtils.virtualizePackage(pkg, parentLocator.locatorHash);
 
@@ -681,10 +689,32 @@ export class Project {
           allDescriptors.set(virtualizedDescriptor.descriptorHash, virtualizedDescriptor);
 
           allPackages.set(virtualizedPackage.locatorHash, virtualizedPackage);
+        }
+      }
 
+      // During this second pass we now modify the dependencies of our new
+      // virtual packages (since all our siblings have been updated we don't
+      // risk anymore setting the reference to something that will later be
+      // modified)
+
+      for (const descriptor of Array.from(parentPackage.dependencies.values())) {
+        volatileDescriptors.delete(descriptor.descriptorHash);
+
+        if (descriptor.range === `missing:`)
+          continue;
+
+        const resolution = allResolutions.get(descriptor.descriptorHash);
+        if (!resolution)
+          throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+
+        let pkg = allPackages.get(resolution);
+        if (!pkg)
+          throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+
+        if (pkg.peerDependencies.size > 0 && !parentPackage.peerDependencies.has(pkg.identHash)) {
           const missingPeerDependencies = new Set();
 
-          for (const peerRequest of virtualizedPackage.peerDependencies.values()) {
+          for (const peerRequest of pkg.peerDependencies.values()) {
             let peerDescriptor = parentPackage.dependencies.get(peerRequest.identHash);
 
             if (!peerDescriptor && structUtils.areIdentsEqual(parentLocator, peerRequest)) {
@@ -696,7 +726,7 @@ export class Project {
 
             if (!peerDescriptor) {
               if (!parentPackage.peerDependencies.has(peerRequest.identHash)) {
-                const peerDependencyMeta = virtualizedPackage.peerDependenciesMeta.get(structUtils.stringifyIdent(peerRequest));
+                const peerDependencyMeta = pkg.peerDependenciesMeta.get(structUtils.stringifyIdent(peerRequest));
 
                 if (!peerDependencyMeta || !peerDependencyMeta.optional) {
                   report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide ${structUtils.prettyDescriptor(this.configuration, peerRequest)} requested by ${structUtils.prettyLocator(this.configuration, pkg)}`);
@@ -709,19 +739,20 @@ export class Project {
             if (peerDescriptor.range === `missing:`) {
               missingPeerDependencies.add(peerDescriptor.descriptorHash);
             } else {
-              virtualizedPackage.dependencies.set(peerDescriptor.identHash, peerDescriptor);
+              pkg.dependencies.set(peerDescriptor.identHash, peerDescriptor);
             }
           }
 
-          resolvePeerDependencies(virtualizedPackage);
-
-          for (const missingPeerDependency of missingPeerDependencies)
-            virtualizedPackage.dependencies.delete(missingPeerDependency);
-
           // Since we've had to add new dependencies we need to sort them all over again
-          virtualizedPackage.dependencies = new Map(miscUtils.sortMap(virtualizedPackage.dependencies, ([identHash, descriptor]) => {
+          pkg.dependencies = new Map(miscUtils.sortMap(pkg.dependencies, ([identHash, descriptor]) => {
             return structUtils.stringifyIdent(descriptor);
           }));
+
+          resolvePeerDependencies(pkg);
+
+          for (const missingPeerDependency of missingPeerDependencies) {
+            pkg.dependencies.delete(missingPeerDependency);
+          }
         } else {
           resolvePeerDependencies(pkg);
         }
