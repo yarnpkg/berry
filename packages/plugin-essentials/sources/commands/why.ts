@@ -7,13 +7,13 @@ import {asTree}                                                  from 'treeify';
 
 export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
-  .command(`why <package> [-v,--verbose]`)
+  .command(`why <package> [--peers]`)
   .describe(`display the reason why a package is needed`)
 
   .detail(`
     This command prints the exact reasons why a package appears in the dependency tree.
 
-    If \`-v,--verbose\` is true, the output will include the complete package hierarchy between the top-level and the specified package. Otherwise, only the direct dependencies from your workspaces will be printed.
+    If \`--peers\` is set, the command will also print the peer dependencies that match the specified name.
   `)
 
   .example(
@@ -21,7 +21,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     `yarn why lodash`,
   )
 
-  .action(async ({cwd, stdout, package: packageName, verbose}: {cwd: string, stdout: Writable, package: string, verbose: boolean}) => {
+  .action(async ({cwd, stdout, package: packageName, peers}: {cwd: string, stdout: Writable, package: string, peers: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -86,7 +86,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
 
       for (const dependency of pkg.dependencies.values()) {
         // We don't want to consider peer dependencies in "yarn why"
-        if (pkg.peerDependencies.has(dependency.identHash))
+        if (!peers && pkg.peerDependencies.has(dependency.identHash))
           continue;
 
         const resolution = project.storedResolutions.get(dependency.descriptorHash);
