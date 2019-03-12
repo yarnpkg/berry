@@ -7,7 +7,7 @@ export const SymlContainer = styled.div`
 
   font-family: "PT Mono";
 
-  background: #222222;
+  background: #2c3340;
   color: #ffffff;
 
   code {

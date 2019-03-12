@@ -1,6 +1,6 @@
 import React                                     from 'react';
 
-import Layout                                    from '../../components/layout';
+import Layout                                    from '../../components/layout-configuration';
 import {SymlContainer}                           from '../../components/syml';
 import {SymlBooleanProperty, SymlStringProperty} from '../../components/syml';
 

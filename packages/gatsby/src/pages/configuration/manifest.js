@@ -3,7 +3,7 @@ import React                                    from 'react';
 import {JsonContainer, JsonObject, JsonString}  from '../../components/json';
 import {JsonArrayProperty, JsonBooleanProperty} from '../../components/json';
 import {JsonObjectProperty, JsonStringProperty} from '../../components/json';
-import Layout                                   from '../../components/layout';
+import Layout                                   from '../../components/layout-configuration';
 
 const PackageJsonDoc = () => <>
   <Layout>

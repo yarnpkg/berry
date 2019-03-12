@@ -26,4 +26,39 @@ module.exports = {
       },
     });
   },
+  createPages: async ({actions: {createPage, createRedirect}, graphql}) => {
+    const result = await graphql(`{
+      allMarkdownRemark {
+        edges {
+          node {
+            frontmatter {
+              path
+            }
+          }
+        }
+      }
+    }`);
+
+    result.data.allMarkdownRemark.edges.forEach(({node}) => {
+      createPage({
+        path: node.frontmatter.path,
+        component: `${__dirname}/src/templates/featureTemplate.js`,
+        context: {},
+      });
+    });
+
+    createRedirect({
+      fromPath: `/configuration`,
+      toPath: `/configuration/manifest`,
+      redirectInBrowser: true,
+      isPermanent: true,
+    });
+
+    createRedirect({
+      fromPath: `/features`,
+      toPath: `/features/pnp`,
+      redirectInBrowser: true,
+      isPermanent: true,
+    });
+  },
 };

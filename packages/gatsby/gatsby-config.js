@@ -11,10 +11,10 @@ module.exports = {
       link: `/getting-started`,
     }, {
       name: `Configuration`,
-      link: `/configuration/package-json`,
+      link: `/configuration`,
     }, {
       name: `Features`,
-      link: `/offline-mirror`,
+      link: `/features`,
     }]
   },
   plugins: [
@@ -55,7 +55,15 @@ module.exports = {
         icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
       },
     },
-    // this (optional) plugin enables Progressive Web App + Offline functionality
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/content`,
+        name: `markdown-pages`,
+      },
+    },
+    `gatsby-transformer-remark`,
+      // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // 'gatsby-plugin-offline',
   ],

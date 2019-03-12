@@ -6,6 +6,12 @@ import React                        from 'react';
 
 import Logo                         from './logo';
 
+const HeaderContainer = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 1;
+`;
+
 const NewsContainer = styled.header`
   padding: 0.8em 1em;
 
@@ -28,14 +34,21 @@ const MenuContainer = styled.header`
 `;
 
 const MenuLogo = styled(Link)`
-  padding: 0.8em 1em;
+  display: flex;
+  align-items: center;
+
+  padding: 0 1em;
 `;
 
 const MenuEntry = styled(Link)`
   display: flex;
   align-items: center;
 
-  padding: 0.8em 1em;
+  height: 4em;
+
+  border: 3px solid transparent;
+
+  padding: 0 1em;
 
   font-family: Abel;
   font-weight: light;
@@ -45,7 +58,7 @@ const MenuEntry = styled(Link)`
   color: #000000;
 
   &.active {
-    border-bottom: 3px solid #2188b6;
+    border-bottom-color: #2188b6;
   }
 `;
 
@@ -64,21 +77,23 @@ const Header = ({siteTitle}) => (
       }
     `}
     render={data => <>
-      <NewsContainer>
-        <Highlight>Latest article:</Highlight> "Journey to the v2"
-      </NewsContainer>
+      <HeaderContainer>
+        <NewsContainer>
+          <Highlight>Latest article:</Highlight> "Journey to the v2"
+        </NewsContainer>
 
-      <MenuContainer>
-        <MenuLogo to={`/`}>
-          <Logo height={`3em`} align={`middle`} />
-        </MenuLogo>
+        <MenuContainer>
+          <MenuLogo to={`/`}>
+            <Logo height={`3em`} align={`middle`} />
+          </MenuLogo>
 
-        {data.site.siteMetadata.menuLinks.map(({name, link}) => <React.Fragment key={name}>
-          <MenuEntry to={link} activeClassName={`active`} partiallyActive={link !== `/`}>
-            {name}
-          </MenuEntry>
-        </React.Fragment >)}
-      </MenuContainer>
+          {data.site.siteMetadata.menuLinks.map(({name, link}) => <React.Fragment key={name}>
+            <MenuEntry to={link} activeClassName={`active`} partiallyActive={link !== `/`}>
+              {name}
+            </MenuEntry>
+          </React.Fragment >)}
+        </MenuContainer>
+      </HeaderContainer>
     </>}
   />
 );
