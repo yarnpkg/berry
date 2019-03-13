@@ -15,7 +15,7 @@ describe(`Lock tests`, () => {
           await run(`install`);
         });
         await setPackageWhitelist(new Map([[`no-deps`, new Set([`1.0.0`, `1.1.0`])]]), async () => {
-          await run(`install`, `-f`);
+          await run(`install`);
         });
         await expect(source(`require('no-deps')`)).resolves.toMatchObject({
           name: `no-deps`,
