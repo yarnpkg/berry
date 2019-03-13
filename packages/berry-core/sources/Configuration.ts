@@ -343,9 +343,11 @@ export class Configuration {
       for (const request of pluginConfiguration.plugins.keys())
         plugins.set(request, pluginConfiguration.modules.get(request).default);
 
-      const requireEntries = new Map(pluginConfiguration.modules);
+      const requireEntries = new Map();
       for (const request of nodeUtils.builtinModules())
         requireEntries.set(request, () => nodeUtils.dynamicRequire(request));
+      for (const [request, embedModule] of pluginConfiguration.modules)
+        requireEntries.set(request, () => embedModule);
 
       const dynamicPlugins = new Set();
 
@@ -364,7 +366,7 @@ export class Configuration {
           const pluginRequireEntries = new Map(requireEntries);
           const pluginRequire = (request: string) => {
             if (pluginRequireEntries.has(request)) {
-              return pluginRequireEntries.get(request);
+              return pluginRequireEntries.get(request)();
             } else {
               throw new UsageError(`This plugin cannot access the package referenced via ${request} which is neither a builtin, nor an exposed entry`);
             }
@@ -376,7 +378,7 @@ export class Configuration {
             return `${message} (when initializing ${name}, defined in ${path})`;
           });
 
-          requireEntries.set(name, plugin);
+          requireEntries.set(name, () => plugin);
 
           dynamicPlugins.add(name);
           plugins.set(name, plugin);
