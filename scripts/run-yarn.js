@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const {existsSync} = require(`fs`);
 
 if (existsSync(`${__dirname}/../packages/berry-cli/bundles/berry.js`)) {

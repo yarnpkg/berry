@@ -20,9 +20,11 @@ PropertyStatement
   = B? ("#" (!EOL .)+)? EOL_ANY+ { return {} }
   / Samedent property:Name B? ":" B? value:Expression { return {[property]: value} }
   // Compatibility with the old lockfile format (key-values without a ":")
+  / Samedent property:LegacyName B? ":" B? value:Expression { return {[property]: value} }
+  // Compatibility with the old lockfile format (key-values without a ":")
   / Samedent property:LegacyName B value:LegacyLiteral EOL_ANY+ { return {[property]: value} }
   // Compatibility with the old lockfile format (multiple keys for a same value)
-  / Samedent property:Name others:(B? "," B? other:Name { return other })+ B? ":" B? value:Expression { return Object.assign({}, ... [property].concat(others).map(property => ({[property]: value}))) }
+  / Samedent property:LegacyName others:(B? "," B? other:LegacyName { return other })+ B? ":" B? value:Expression { return Object.assign({}, ... [property].concat(others).map(property => ({[property]: value}))) }
 
 Expression
   =  &(EOL Extradent "-" B) EOL_ANY Indent statements:ItemStatements Dedent { return statements }
