@@ -1,4 +1,5 @@
 module.exports = {
+  pathPrefix: `/berry`,
   siteMetadata: {
     title: `Yarn - Package Manager`,
     description: `Foo`,

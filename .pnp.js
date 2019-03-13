@@ -26469,6 +26469,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:7.2.3"
                 ],
                 [
+                  "@emotion/babel-preset-css-prop",
+                  "npm:10.0.7"
+                ],
+                [
                   "@gatsbyjs/relay-compiler",
                   "npm:2.0.0-printer-fix.2"
                 ],
@@ -26963,6 +26967,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@babel/traverse",
                   "npm:7.2.3"
+                ],
+                [
+                  "@emotion/babel-preset-css-prop",
+                  "npm:10.0.7"
                 ],
                 [
                   "@gatsbyjs/relay-compiler",
