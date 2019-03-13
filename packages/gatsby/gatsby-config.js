@@ -30,6 +30,9 @@ module.exports = {
           family: `Abel`,
           variants: [`300`, `400`],
         }, {
+          family: `Baumans`,
+          variants: [`400`],
+        }, {
           family: `PT Mono`,
         }],
       },
@@ -63,7 +66,8 @@ module.exports = {
       },
     },
     `gatsby-transformer-remark`,
-      // this (optional) plugin enables Progressive Web App + Offline functionality
+    `gatsby-plugin-remove-trailing-slashes`,
+    // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // 'gatsby-plugin-offline',
   ],

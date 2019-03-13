@@ -9,6 +9,8 @@ import Navigation            from '../components/navigation';
 const Container = styled.div`
   border-top: 1px solid #cfdee9;
 
+  padding: 2em;
+
   text-align: justify;
 `;
 

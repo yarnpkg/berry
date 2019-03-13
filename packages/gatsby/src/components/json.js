@@ -7,8 +7,8 @@ export const JsonContainer = styled.div`
 
   font-family: "PT Mono";
 
-  background: #2c3340;
-  color: #ffffff;
+  background: #242424;
+  color: #ddddcc;
 
   code {
     font-family: "PT Mono";
@@ -28,15 +28,15 @@ export const marginContainer = css`
 `;
 
 export const jsonKey = css`
-  color: #0089bb;
+  color: #8ac6f2;
 `;
 
 export const stringValue = css`
-  color: #0a840a;
+  color: #95e454;
 `;
 
 export const booleanValue = css`
-  color: #d0a218;
+  color: #f08080;
 `;
 
 export const JsonDescription = styled.div`

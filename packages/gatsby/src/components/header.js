@@ -1,4 +1,3 @@
-import {css}                        from '@emotion/core';
 import styled                       from '@emotion/styled';
 import {Link, StaticQuery, graphql} from 'gatsby';
 import PropTypes                    from 'prop-types';

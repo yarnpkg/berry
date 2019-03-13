@@ -7,8 +7,8 @@ export const SymlContainer = styled.div`
 
   font-family: "PT Mono";
 
-  background: #2c3340;
-  color: #ffffff;
+  background: #3f3f3f;
+  color: #ddddcc;
 
   code {
     font-family: "PT Mono";
@@ -18,15 +18,15 @@ export const SymlContainer = styled.div`
 `;
 
 export const symlKey = css`
-  color: #0089bb;
+  color: #dfc47d;
 `;
 
 export const stringValue = css`
-  color: #0a840a;
+  color: #cc9393;
 `;
 
 export const booleanValue = css`
-  color: #d0a218;
+  color: #eddd3d;
 `;
 
 export const SymlDescription = styled.div`

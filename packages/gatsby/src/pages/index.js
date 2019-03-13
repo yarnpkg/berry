@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import {Link} from 'gatsby';
 import React  from 'react';
 
 import Layout from '../components/layout';

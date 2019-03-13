@@ -65,11 +65,11 @@ const Content = styled.div`
 const Navigation = ({items, children}) => <>
   <Container>
     <Menu>
-      {items.map(({to, name}) => <>
+      {items.map(({to, name}) => <React.Fragment key={name}>
         <MenuEntry to={to} activeClassName={`active`}>
           {name}
         </MenuEntry>
-      </>)}
+      </React.Fragment>)}
     </Menu>
     <Content>
       {children}
