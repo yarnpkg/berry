@@ -1,8 +1,20 @@
-import {Plugin, SettingsType} from '@berry/core';
+import {Plugin, Project, SettingsType} from '@berry/core';
+import {Hooks as StageHooks}           from '@berry/plugin-stage';
 
-import {PnpLinker}            from './PnpLinker';
+import {PnpLinker}                     from './PnpLinker';
+
+function populateYarnPaths(project: Project, definePath: (path: string | null) => void) {
+  definePath(project.configuration.get(`pnpDataPath`));
+  definePath(project.configuration.get(`pnpPath`));
+  definePath(project.configuration.get(`pnpUnpluggedFolder`));
+}
 
 const plugin: Plugin = {
+  hooks: {
+    populateYarnPaths,
+  } as (
+    StageHooks
+  ),
   configuration: {
     pnpShebang: {
       description: `String to prepend to the generated PnP script`,

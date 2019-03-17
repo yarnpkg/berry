@@ -26,7 +26,7 @@ global.makeTemporaryEnv = generatePkgDriver({
       rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = value;
     }
 
-    const res = await execFile(process.execPath, [`${__dirname}/../berry-cli/bin/berry.js`, command, ...args], {
+    const res = await execFile(process.execPath, [`${__dirname}/../../scripts/run-yarn.js`, command, ...args], {
       env: Object.assign(
         {
           [`PATH`]: `${path}/bin${delimiter}${process.env.PATH}`,
