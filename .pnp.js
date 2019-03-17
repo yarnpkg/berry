@@ -8876,8 +8876,45 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-fslib"
                 ],
                 [
+                  "@berry/plugin-stage",
+                  "workspace:packages/plugin-stage"
+                ],
+                [
                   "@berry/pnp",
                   "workspace:packages/berry-pnp"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@berry/plugin-stage",
+        [
+          [
+            "workspace:packages/plugin-stage",
+            {
+              "packageLocation": "./packages/plugin-stage/",
+              "packageDependencies": [
+                [
+                  "@berry/plugin-stage",
+                  "workspace:packages/plugin-stage"
+                ],
+                [
+                  "@berry/builder",
+                  "workspace:packages/berry-builder"
+                ],
+                [
+                  "@berry/core",
+                  "workspace:packages/berry-core"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@manaflair/concierge",
+                  "npm:0.11.0"
                 ]
               ]
             }
@@ -43571,6 +43608,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/fslib",
                   "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@berry/monorepo",
+                  "workspace:."
                 ],
                 [
                   "@berry/parsers",
