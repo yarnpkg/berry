@@ -5,6 +5,7 @@
     "main": "./sources/index.js",
     "dependencies": {
         "@berry/fslib": "workspace:*",
+        "@berry/monorepo": "workspace:*",
         "@berry/parsers": "workspace:*",
         "fs-extra": "^7.0.1",
         "pkg-tests-core": "workspace:*",

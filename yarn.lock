@@ -1556,7 +1556,19 @@ __metadata:
     "@berry/cli": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
+    "@berry/plugin-stage": "workspace:packages/plugin-stage"
     "@berry/pnp": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@berry/plugin-stage@workspace:packages/plugin-stage":
+  version: 0.0.0
+  resolution: "@berry/plugin-stage@workspace:packages/plugin-stage"
+  dependencies:
+    "@berry/builder": "workspace:*"
+    "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
+    "@manaflair/concierge": "npm:^0.11.0"
   languageName: unknown
   linkType: soft
 
@@ -14370,6 +14382,7 @@ __metadata:
   resolution: "pkg-tests-specs@workspace:packages/acceptance-tests/pkg-tests-specs"
   dependencies:
     "@berry/fslib": "workspace:*"
+    "@berry/monorepo": "workspace:*"
     "@berry/parsers": "workspace:*"
     fs-extra: "npm:^7.0.1"
     pkg-tests-core: "workspace:*"
