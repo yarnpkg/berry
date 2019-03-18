@@ -1,7 +1,6 @@
-// @ts-ignore
-import {UsageError}                                  from '@manaflair/concierge';
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {xfs}                                         from '@berry/fslib';
+import {UsageError}                                  from '@manaflair/concierge';
 import {posix}                                       from 'path';
 import {Writable}                                    from 'stream';
 

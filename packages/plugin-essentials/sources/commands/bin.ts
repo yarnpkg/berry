@@ -1,6 +1,5 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {scriptUtils, structUtils}                    from '@berry/core';
-// @ts-ignore: Need to write the definition file
 import {UsageError}                                  from '@manaflair/concierge';
 import {Writable}                                    from 'stream';
 

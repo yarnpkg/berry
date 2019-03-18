@@ -2,13 +2,14 @@ import {WorkspaceRequiredError}                                     from '@berry
 import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@berry/core';
 import {PluginConfiguration, Project, StreamReport, Workspace}      from '@berry/core';
 import {structUtils}                                                from '@berry/core';
+import {Concierge}                                                  from '@manaflair/concierge';
 import inquirer                                                     from 'inquirer';
 import {Readable, Writable}                                         from 'stream';
 
 import * as suggestUtils                                            from '../suggestUtils';
 import {Hooks}                                                      from '..';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (concierge: Concierge, pluginConfiguration: PluginConfiguration) => concierge
 
   .command(`add [... packages] [-E,--exact] [-T,--tilde] [-D,--dev] [-P,--peer] [-i,--interactive]`)
   .describe(`add dependencies to the project`)

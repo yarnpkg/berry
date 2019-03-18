@@ -2,7 +2,6 @@ import {WorkspaceRequiredError}                                           from '
 import {Configuration, Cache, PluginConfiguration, Project, StreamReport} from '@berry/core';
 import {structUtils}                                                      from '@berry/core';
 import {xfs}                                                              from '@berry/fslib';
-// @ts-ignore
 import {UsageError}                                                       from '@manaflair/concierge';
 import {posix}                                                            from 'path';
 import {Writable}                                                         from 'stream';

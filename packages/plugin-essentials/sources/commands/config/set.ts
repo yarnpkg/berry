@@ -1,5 +1,4 @@
 import {Configuration, PluginConfiguration} from '@berry/core';
-// @ts-ignore
 import {UsageError}                         from '@manaflair/concierge';
 
 export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge

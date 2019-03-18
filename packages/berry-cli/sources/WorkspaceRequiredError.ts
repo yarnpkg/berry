@@ -1,4 +1,3 @@
-// @ts-ignore
 import {UsageError} from '@manaflair/concierge';
 
 export class WorkspaceRequiredError extends UsageError {

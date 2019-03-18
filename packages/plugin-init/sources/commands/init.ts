@@ -2,7 +2,6 @@ import {Configuration, Manifest, PluginConfiguration} from '@berry/core';
 import {structUtils}                                  from '@berry/core';
 import {xfs}                                          from '@berry/fslib';
 import {updateAndSave}                                from '@berry/json-proxy';
-// @ts-ignore
 import {UsageError}                                   from '@manaflair/concierge';
 import {basename}                                     from 'path';
 

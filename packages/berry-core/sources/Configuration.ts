@@ -1,6 +1,5 @@
 import {xfs}                             from '@berry/fslib';
 import {parseSyml, stringifySyml}        from '@berry/parsers';
-// @ts-ignore
 import {UsageError}                      from '@manaflair/concierge';
 import chalk                             from 'chalk';
 import {homedir}                         from 'os';

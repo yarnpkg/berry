@@ -1,7 +1,6 @@
 import {Configuration, PluginConfiguration, Project, Workspace, Manifest, Cache} from '@berry/core';
 import {LightReport, ThrowReport}                                                from '@berry/core';
 import {scriptUtils}                                                             from '@berry/core';
-// @ts-ignore
 import {UsageError}                                                              from '@manaflair/concierge';
 import {Readable, Writable}                                                      from 'stream';
 
