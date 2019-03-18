@@ -7858,7 +7858,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "@manaflair/concierge",
-                  "npm:0.11.0"
+                  "npm:0.12.1"
                 ],
                 [
                   "brfs",
@@ -7999,7 +7999,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "@manaflair/concierge",
-                  "npm:0.11.0"
+                  "npm:0.12.1"
                 ],
                 [
                   "chalk",
@@ -8060,7 +8060,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "@manaflair/concierge",
-                  "npm:0.11.0"
+                  "npm:0.12.1"
                 ],
                 [
                   "chalk",
@@ -8572,7 +8572,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "@manaflair/concierge",
-                  "npm:0.11.0"
+                  "npm:0.12.1"
                 ],
                 [
                   "execa",
@@ -8692,7 +8692,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "@manaflair/concierge",
-                  "npm:0.11.0"
+                  "npm:0.12.1"
                 ],
                 [
                   "dateformat",
@@ -8757,7 +8757,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "@manaflair/concierge",
-                  "npm:0.11.0"
+                  "npm:0.12.1"
                 ]
               ]
             }
@@ -8844,7 +8844,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "@manaflair/concierge",
-                  "npm:0.11.0"
+                  "npm:0.12.1"
                 ]
               ]
             }
@@ -8914,7 +8914,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "@manaflair/concierge",
-                  "npm:0.11.0"
+                  "npm:0.12.1"
                 ]
               ]
             }
@@ -9774,13 +9774,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "@manaflair/concierge",
         [
           [
-            "npm:0.11.0",
+            "npm:0.12.1",
             {
-              "packageLocation": "./.yarn/cache/@manaflair-concierge-npm-0.11.0-76408aa4db2be639e979e2374405e7fe4266ab8b8715dbc4de9e0d58b984a421.zip/node_modules/@manaflair/concierge/",
+              "packageLocation": "./.yarn/cache/@manaflair-concierge-npm-0.12.1-987f3547dd3a12d10a8127c69f5759341ce33e9d9ff0d772b8b79fdec63e838b.zip/node_modules/@manaflair/concierge/",
               "packageDependencies": [
                 [
                   "@manaflair/concierge",
-                  "npm:0.11.0"
+                  "npm:0.12.1"
                 ],
                 [
                   "chalk",
