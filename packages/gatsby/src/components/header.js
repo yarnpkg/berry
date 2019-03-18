@@ -1,14 +1,17 @@
-import styled                       from '@emotion/styled';
-import {Link, StaticQuery, graphql} from 'gatsby';
-import PropTypes                    from 'prop-types';
-import React                        from 'react';
+import styled                          from '@emotion/styled';
+import {Link, graphql, useStaticQuery} from 'gatsby';
+import PropTypes                       from 'prop-types';
+import React, {useState}               from 'react';
 
-import Logo                         from './logo';
+import Logo                            from './logo';
+import {ifDesktop, ifMobile}           from './responsive';
 
 const HeaderContainer = styled.div`
-  position: sticky;
-  top: 0;
-  z-index: 1;
+  ${ifDesktop} {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
 `;
 
 const NewsContainer = styled.header`
@@ -27,9 +30,15 @@ const Highlight = styled.span`
 `;
 
 const MenuContainer = styled.header`
-  display: flex;
-
   background: #ffffff;
+
+  ${ifDesktop} {
+    display: flex;
+  }
+`;
+
+const MenuTools = styled.div`
+  display: flex;
 `;
 
 const MenuLogo = styled(Link)`
@@ -37,6 +46,54 @@ const MenuLogo = styled(Link)`
   align-items: center;
 
   padding: 0 1em;
+
+  ${ifMobile} {
+    margin-right: auto;
+
+    padding: 1em;
+  }
+`;
+
+const MenuToggle = styled.button`
+  margin: 1em;
+  margin-left: 0;
+
+  border: 1px solid lightgrey;
+  border-radius: 10px;
+
+  width: 3em;
+  height: 3em;
+
+  font-size: inherit;
+
+  background: #ffffff;
+
+  ${ifDesktop} {
+    display: none;
+  }
+`;
+
+const MenuNavigation = styled.div`
+  background: #ffffff;
+
+  ${ifDesktop} {
+    display: flex;
+  }
+
+  ${ifMobile} {
+    position: absolute;
+    z-index: 1;
+
+    width: 100%;
+
+    transform: scaleY(0);
+    transform-origin: top left;
+    transition: transform .3s;
+
+    &.expanded {
+      transform: scaleY(1);
+    }
+  }
 `;
 
 const MenuEntry = styled(Link)`
@@ -56,46 +113,63 @@ const MenuEntry = styled(Link)`
 
   color: #000000;
 
-  &.active {
-    border-bottom-color: #2188b6;
+  ${ifDesktop} {
+    &.active {
+      border-bottom-color: #2188b6;
+    }
+  }
+
+  ${ifMobile} {
+    width: 100%;
   }
 `;
 
-const Header = ({siteTitle}) => (
-  <StaticQuery
-    query={graphql`
-      query SiteQuery {
-        site {
-          siteMetadata {
-            menuLinks {
-              name
-              link
-            }
+const Header = () => {
+  const data = useStaticQuery(graphql`
+    query SiteQuery {
+      site {
+        siteMetadata {
+          menuLinks {
+            name
+            link
           }
         }
       }
-    `}
-    render={data => <>
-      <HeaderContainer>
-        <NewsContainer>
-          <Highlight>Latest article:</Highlight> "Journey to the v2"
-        </NewsContainer>
+    }
+  `);
 
-        <MenuContainer>
+  const [
+    expanded,
+    setExpanded,
+  ] = useState(false);
+
+  return <>
+    <HeaderContainer>
+      <NewsContainer>
+        <Highlight>Latest article:</Highlight> "Journey to the v2"
+      </NewsContainer>
+
+      <MenuContainer>
+        <MenuTools>
           <MenuLogo to={`/`}>
             <Logo height={`3em`} align={`middle`} />
           </MenuLogo>
+          <MenuToggle onClick={() => setExpanded(!expanded)}>
+            {`≡`}
+          </MenuToggle>
+        </MenuTools>
 
+        <MenuNavigation className={expanded ? `expanded` : ``}>
           {data.site.siteMetadata.menuLinks.map(({name, link}) => <React.Fragment key={name}>
             <MenuEntry to={link} activeClassName={`active`} partiallyActive={link !== `/`}>
               {name}
             </MenuEntry>
-          </React.Fragment >)}
-        </MenuContainer>
-      </HeaderContainer>
-    </>}
-  />
-);
+          </React.Fragment>)}
+        </MenuNavigation>
+      </MenuContainer>
+    </HeaderContainer>
+  </>
+};
 
 Header.propTypes = {
   siteTitle: PropTypes.string,

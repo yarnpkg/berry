@@ -8,11 +8,15 @@
 import './layout.css';
 
 import PropTypes from 'prop-types';
+import {Helmet}  from 'react-helmet';
 import React     from 'react';
 
 import Header    from './header';
 
 const Layout = ({ children }) => <>
+  <Helmet>
+    <meta name={`viewport`} content={`width=device-width, initial-scale=1`} />
+  </Helmet>
   <Header/>
   <main>
     {children}

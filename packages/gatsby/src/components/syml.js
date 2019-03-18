@@ -15,6 +15,10 @@ export const SymlContainer = styled.div`
 
     color: #639db1;
   }
+
+  &, span {
+    white-space: nowrap;
+  }
 `;
 
 export const symlKey = css`
@@ -34,6 +38,7 @@ export const SymlDescription = styled.div`
   margin-bottom: 0.5em;
 
   font-family: "Open Sans";
+  white-space: normal;
 
   &:first-of-type {
     margin-top: 0;

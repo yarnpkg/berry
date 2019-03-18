@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
-import React  from 'react';
+import styled     from '@emotion/styled';
+import React      from 'react';
 
-import Layout from '../components/layout';
-import SEO    from '../components/seo';
+import Layout     from '../components/layout';
+import {ifMobile} from '../components/responsive';
+import SEO        from '../components/seo';
 
 const SearchContainer = styled.div`
   background: #25799f;
@@ -32,6 +33,10 @@ const Hero = styled.div`
   padding: 5em 6em;
 
   background: #2188b6;
+
+  ${ifMobile} {
+    padding: .5em;
+  }
 `;
 
 const HeroTitle = styled.div`

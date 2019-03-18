@@ -1,7 +1,7 @@
 ---
 category: features
-path: /features/offline-mirror
-title: "Offline Mirror"
+path: /features/offline-cache
+title: "Offline Cache"
 ---
 
 The offline cache is a feature that allows Yarn to work just fine even if the network goes down for any reason - whether it's because your employer didn't pay the utility bill or because the place where are hosted your packages becomes unavailable. It also is entirely compatible with [Zero-Installs](/features/zero-installs) and doesn't store more than a single file for each package, making it suitable for being stored within a repository.

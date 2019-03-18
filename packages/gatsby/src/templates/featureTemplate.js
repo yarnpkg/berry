@@ -5,13 +5,16 @@ import React                 from 'react';
 import Layout                from '../components/layout';
 import {PrerenderedMarkdown} from '../components/markdown';
 import Navigation            from '../components/navigation';
+import {ifDesktop}           from '../components/responsive';
 
 const Container = styled.div`
-  border-top: 1px solid #cfdee9;
-
   padding: 2em;
 
-  text-align: justify;
+  ${ifDesktop} {
+    border-top: 1px solid #cfdee9;
+
+    text-align: justify;
+  }
 `;
 
 export default function Template({data}) {

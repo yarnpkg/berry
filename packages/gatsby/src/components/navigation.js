@@ -1,22 +1,27 @@
-import styled from '@emotion/styled';
-import {Link} from 'gatsby';
-import React  from 'react';
+import styled      from '@emotion/styled';
+import {Link}      from 'gatsby';
+import React       from 'react';
+
+import {ifDesktop} from './responsive';
 
 const Container = styled.div`
   position: relative;
 
-  padding-left: 300px;
-
+  ${ifDesktop} {
+    padding-left: 300px;
+  }
 `;
 
 const Menu = styled.div`
-  position: fixed;
-  left: 0;
+  ${ifDesktop} {
+    position: fixed;
+    left: 0;
 
-  width: 300px;
-  height: calc(100vh - 4em);
+    width: 300px;
+    height: calc(100vh - 4em);
 
-  background: #d1dee8;
+    background: #d1dee8;
+  }
 `;
 
 const MenuEntry = styled(Link)`
