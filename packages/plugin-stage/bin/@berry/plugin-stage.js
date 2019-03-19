@@ -115,11 +115,10 @@ exports.default = plugin;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-// @ts-ignore
-const concierge_1 = __webpack_require__(2);
-const core_1 = __webpack_require__(19);
-const fslib_1 = __webpack_require__(20);
-const path_1 = __webpack_require__(16);
+const core_1 = __webpack_require__(2);
+const fslib_1 = __webpack_require__(3);
+const concierge_1 = __webpack_require__(4);
+const path_1 = __webpack_require__(18);
 const GitDriver_1 = __webpack_require__(21);
 const MercurialDriver_1 = __webpack_require__(24);
 const ALL_DRIVERS = [
@@ -233,6 +232,18 @@ function resolveToVcs(cwd, path) {
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+module.exports = require("@berry/core");
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = require("@berry/fslib");
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -242,7 +253,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _core = __webpack_require__(3);
+var _core = __webpack_require__(5);
 
 Object.keys(_core).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -255,7 +266,7 @@ Object.keys(_core).forEach(function (key) {
 });
 
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -266,7 +277,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.concierge = exports.Concierge = exports.UsageError = undefined;
 
-var _UsageError = __webpack_require__(4);
+var _UsageError = __webpack_require__(6);
 
 Object.defineProperty(exports, 'UsageError', {
   enumerable: true,
@@ -275,7 +286,7 @@ Object.defineProperty(exports, 'UsageError', {
   }
 });
 
-var _Concierge = __webpack_require__(5);
+var _Concierge = __webpack_require__(7);
 
 Object.defineProperty(exports, 'Concierge', {
   enumerable: true,
@@ -286,7 +297,7 @@ Object.defineProperty(exports, 'Concierge', {
 var concierge = exports.concierge = new _Concierge.Concierge();
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -302,10 +313,12 @@ var UsageError = exports.UsageError = function UsageError(message) {
     _classCallCheck(this, UsageError);
 
     this.message = message;
+
+    this.isUsageError = true;
 };
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -316,31 +329,29 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Concierge = undefined;
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _chalk = __webpack_require__(6);
+var _chalk = __webpack_require__(8);
 
 var _chalk2 = _interopRequireDefault(_chalk);
 
-var _fs = __webpack_require__(14);
+var _fs = __webpack_require__(16);
 
 var _fs2 = _interopRequireDefault(_fs);
 
-var _lodash = __webpack_require__(15);
+var _lodash = __webpack_require__(17);
 
-var _path = __webpack_require__(16);
+var _path = __webpack_require__(18);
 
 var _path2 = _interopRequireDefault(_path);
 
-var _Command = __webpack_require__(17);
+var _Command = __webpack_require__(19);
 
-var _UsageError = __webpack_require__(4);
+var _UsageError = __webpack_require__(6);
 
-var _parse = __webpack_require__(18);
+var _parse = __webpack_require__(20);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -599,10 +610,10 @@ var Concierge = function () {
             var stream = _ref2.stream;
 
 
-            if (_error instanceof _UsageError.UsageError) {
+            if (_error && _error.isUsageError) {
 
                 stream.write('' + _chalk2.default.red.bold('Error') + _chalk2.default.bold(':') + ' ' + _error.message + '\n');
-            } else if ((typeof _error === 'undefined' ? 'undefined' : _typeof(_error)) === 'object' && _error && _error.message) {
+            } else if (_error && _error.message) {
 
                 var stackIndex = _error.stack ? _error.stack.search(/\n *at /) : -1;
 
@@ -1454,7 +1465,7 @@ var Concierge = function () {
 
                         result = result.then(null, function (error) {
 
-                            if (error instanceof _UsageError.UsageError) {
+                            if (error && error.isUsageError) {
 
                                 _this2.usage(argv0, { command: selectedCommand, error: error, stream: stderr });
 
@@ -1470,7 +1481,7 @@ var Concierge = function () {
                 }
             } catch (error) {
 
-                if (error instanceof _UsageError.UsageError) {
+                if (error && error.isUsageError) {
 
                     this.usage(argv0, { command: selectedCommand, error: error, stream: stderr });
 
@@ -1516,16 +1527,16 @@ var Concierge = function () {
 exports.Concierge = Concierge;
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var escapeStringRegexp = __webpack_require__(7);
-var ansiStyles = __webpack_require__(8);
-var stripAnsi = __webpack_require__(10);
-var hasAnsi = __webpack_require__(12);
-var supportsColor = __webpack_require__(13);
+var escapeStringRegexp = __webpack_require__(9);
+var ansiStyles = __webpack_require__(10);
+var stripAnsi = __webpack_require__(12);
+var hasAnsi = __webpack_require__(14);
+var supportsColor = __webpack_require__(15);
 var defineProps = Object.defineProperties;
 var isSimpleWindowsTerm = process.platform === 'win32' && !/^xterm/i.test(process.env.TERM);
 
@@ -1639,7 +1650,7 @@ module.exports.supportsColor = supportsColor;
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1657,7 +1668,7 @@ module.exports = function (str) {
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1727,10 +1738,10 @@ Object.defineProperty(module, 'exports', {
 	get: assembleStyles
 });
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(9)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)(module)))
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -1758,12 +1769,12 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var ansiRegex = __webpack_require__(11)();
+var ansiRegex = __webpack_require__(13)();
 
 module.exports = function (str) {
 	return typeof str === 'string' ? str.replace(ansiRegex, '') : str;
@@ -1771,7 +1782,7 @@ module.exports = function (str) {
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1782,18 +1793,18 @@ module.exports = function () {
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var ansiRegex = __webpack_require__(11);
+var ansiRegex = __webpack_require__(13);
 var re = new RegExp(ansiRegex().source); // remove the `g` flag
 module.exports = re.test.bind(re);
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1850,13 +1861,13 @@ module.exports = (function () {
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18959,16 +18970,16 @@ module.exports = require("fs");
   else {}
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(9)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)(module)))
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18981,7 +18992,7 @@ exports.Command = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _chalk = __webpack_require__(6);
+var _chalk = __webpack_require__(8);
 
 var _chalk2 = _interopRequireDefault(_chalk);
 
@@ -19208,7 +19219,7 @@ var Command = function () {
 exports.Command = Command;
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21284,18 +21295,6 @@ module.exports = {
 };
 
 /***/ }),
-/* 19 */
-/***/ (function(module, exports) {
-
-module.exports = require("@berry/core");
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports) {
-
-module.exports = require("@berry/fslib");
-
-/***/ }),
 /* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -21310,7 +21309,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const child_process_1 = __webpack_require__(22);
-const path_1 = __webpack_require__(16);
+const path_1 = __webpack_require__(18);
 const stageUtils = __importStar(__webpack_require__(23));
 const MESSAGE_MARKER = `Commit generated via \`yarn stage\``;
 const COMMIT_DEPTH = 11;
@@ -21398,8 +21397,8 @@ module.exports = require("child_process");
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const fslib_1 = __webpack_require__(20);
-const path_1 = __webpack_require__(16);
+const fslib_1 = __webpack_require__(3);
+const path_1 = __webpack_require__(18);
 function findVcsRoot(cwd, { marker }) {
     do {
         if (!fslib_1.xfs.existsSync(`${cwd}/${marker}`)) {
