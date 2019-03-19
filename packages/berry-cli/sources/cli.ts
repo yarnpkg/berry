@@ -40,7 +40,7 @@ async function run() {
 
   if (yarnPath !== null && !ignorePath) {
     if (!xfs.existsSync(yarnPath)) {
-      concierge.error(new UsageError(`The "yarn-path" option has been set (in ${configuration.sources.get(`yarnPath`)}), but the specified location doesn't exist (${yarnPath}).`), {stream: process.stderr});
+      concierge.error(new Error(`The "yarn-path" option has been set (in ${configuration.sources.get(`yarnPath`)}), but the specified location doesn't exist (${yarnPath}).`), {stream: process.stderr});
       process.exitCode = 1;
     } else {
       try {
