@@ -8205,6 +8205,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:4.0.6"
                 ],
                 [
+                  "gatsby-plugin-favicon",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:3.1.5"
+                ],
+                [
                   "gatsby-plugin-manifest",
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.0.22"
                 ],
@@ -9764,6 +9768,1561 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "yargs",
                   "npm:9.0.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/bmp",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-bmp-npm-0.5.4-fe99d6450c7aff876c1e9368180fd1b391329efdd2e8716f5c7abc11067739b0.zip/node_modules/@jimp/bmp/",
+              "packageDependencies": [
+                [
+                  "@jimp/bmp",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "bmp-js",
+                  "npm:0.1.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-bmp-virtual-f2ec6ae8effad8ffe1f4e6345a646dd7735ebf8a8b5f563e1eda4fbe1c8638ab/node_modules/@jimp/bmp/",
+              "packageDependencies": [
+                [
+                  "@jimp/bmp",
+                  "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "bmp-js",
+                  "npm:0.1.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/core",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-core-npm-0.5.4-d4f5bacc3c8d0bd1e4e9a4015a1f59c3e6e38f1c6da2198034d46ba0f8e7ae04.zip/node_modules/@jimp/core/",
+              "packageDependencies": [
+                [
+                  "@jimp/core",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "any-base",
+                  "npm:1.1.0"
+                ],
+                [
+                  "buffer",
+                  "npm:5.2.1"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "exif-parser",
+                  "npm:0.1.12"
+                ],
+                [
+                  "file-type",
+                  "npm:9.0.0"
+                ],
+                [
+                  "load-bmfont",
+                  "npm:1.4.0"
+                ],
+                [
+                  "mkdirp",
+                  "npm:0.5.1"
+                ],
+                [
+                  "phin",
+                  "npm:2.9.3"
+                ],
+                [
+                  "pixelmatch",
+                  "npm:4.0.2"
+                ],
+                [
+                  "tinycolor2",
+                  "npm:1.4.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/custom",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-custom-npm-0.5.4-d9959a4d10b5bf816f3f5d6e6a793963b3852611f5186cf74b6fa8a7417ca3d0.zip/node_modules/@jimp/custom/",
+              "packageDependencies": [
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/core",
+                  "npm:0.5.4"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/gif",
+        [
+          [
+            "npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-gif-npm-0.5.0-6a8f02dd9b522a70a1d6eaff7c851ba50d1a40db7dc9e3020a5ad6588c4b6aaf.zip/node_modules/@jimp/gif/",
+              "packageDependencies": [
+                [
+                  "@jimp/gif",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "omggif",
+                  "npm:1.0.9"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-gif-virtual-c8538e88200a7c3db634a7e183ad69778df57c7727d1cb25c0ba9a75e5f58efd/node_modules/@jimp/gif/",
+              "packageDependencies": [
+                [
+                  "@jimp/gif",
+                  "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.0"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "omggif",
+                  "npm:1.0.9"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/jpeg",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-jpeg-npm-0.5.4-d587f09d79d93af7d4e149620175343a813018c73b730154cac86846e25b01be.zip/node_modules/@jimp/jpeg/",
+              "packageDependencies": [
+                [
+                  "@jimp/jpeg",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "jpeg-js",
+                  "npm:0.3.4"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-jpeg-virtual-5814c38bc741fea0fa1f4b02cff7fa19354308d91d77213bc1690a6ebd3d94a8/node_modules/@jimp/jpeg/",
+              "packageDependencies": [
+                [
+                  "@jimp/jpeg",
+                  "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "jpeg-js",
+                  "npm:0.3.4"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-blit",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-blit-npm-0.5.4-f2c82af4ad21e8eaa6ec8a81ebde568865438e4200dce7307e8486765221406a.zip/node_modules/@jimp/plugin-blit/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-blit",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-blit-virtual-bc8e2f4cafeb4f75378da80ccdcf6d5a95e8747f5084ede272e7d9c8b9b4c430/node_modules/@jimp/plugin-blit/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-blit",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-blur",
+        [
+          [
+            "npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-blur-npm-0.5.0-dc5900c970139e661d926b217d748531e5ee5c1657470e6f37f137ce8b8863cf.zip/node_modules/@jimp/plugin-blur/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-blur",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-blur-virtual-dd636359145505c2e9ebd1f4d08f426020e8e25ade1853ecdc44e7935dce36c3/node_modules/@jimp/plugin-blur/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-blur",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-color",
+        [
+          [
+            "npm:0.5.5",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-color-npm-0.5.5-3d533adc6ae6a66b4952af8a33ecf80298058a686a59369b84dd672cb1e1dd42.zip/node_modules/@jimp/plugin-color/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-color",
+                  "npm:0.5.5"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "tinycolor2",
+                  "npm:1.4.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.5",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-color-virtual-c02cf76a52ed951bcb67aa89cc9e4d051789478a64acb9680fd82c73573a61c5/node_modules/@jimp/plugin-color/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-color",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.5"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "tinycolor2",
+                  "npm:1.4.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-contain",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-contain-npm-0.5.4-ef9936b67105760e1684e9a5ccc0758bddeaca2ad9f31add76dca2986fd5313f.zip/node_modules/@jimp/plugin-contain/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-contain",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-contain-virtual-4b6c00c31cbcea05257c90ac64bad255d34a1fb13556ddb95f276713983c4bbd/node_modules/@jimp/plugin-contain/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-contain",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-blit",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-resize",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-scale",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-cover",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-cover-npm-0.5.4-a7bcd194e0a76d7d13ab0e3d44371afb0e3f49eaedb2b0c1268ce2c466be8a88.zip/node_modules/@jimp/plugin-cover/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-cover",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-cover-virtual-735d857efaf13815d04062146a73ac296f186c530791b8b4a0622cb04c79d869/node_modules/@jimp/plugin-cover/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-cover",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-crop",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-resize",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-scale",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-crop",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-crop-npm-0.5.4-43984909c397f60e381b990383c5bd694bd3f7073b3351853f0712253b4be28b.zip/node_modules/@jimp/plugin-crop/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-crop",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-crop-virtual-4eb55ac18c4a86502fb79330b30b9efd0d23d67571ad2dd5341a2ced3d93a09e/node_modules/@jimp/plugin-crop/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-crop",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-displace",
+        [
+          [
+            "npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-displace-npm-0.5.0-4bf4218ba5454f88f697d9d89016d0b61d72d96eb1de8715b183bd0510ccb948.zip/node_modules/@jimp/plugin-displace/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-displace",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-displace-virtual-1c03153717023f8b85c407ea5171e820cbf375f47ba0c990d320b1c6d028bf1a/node_modules/@jimp/plugin-displace/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-displace",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-dither",
+        [
+          [
+            "npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-dither-npm-0.5.0-7b178d1c9c5fc93c557adb1b3456badeb9c2f0012d91af0eb5916ab2e8a635d1.zip/node_modules/@jimp/plugin-dither/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-dither",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-dither-virtual-49c1dfa96149cf420d7587e9d50939d19bc1093475fec3736ba4cfd7e86c86c4/node_modules/@jimp/plugin-dither/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-dither",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-flip",
+        [
+          [
+            "npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-flip-npm-0.5.0-7752d8ccd007e16fa87cf20dbbb7e057db534c040f9d628163a77e48d240c921.zip/node_modules/@jimp/plugin-flip/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-flip",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-flip-virtual-07109c5224006519a61e529fec7a3f8362c81e11f1075e649badb313218c1a67/node_modules/@jimp/plugin-flip/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-flip",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-rotate",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-gaussian",
+        [
+          [
+            "npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-gaussian-npm-0.5.0-f25ddb4cc33f7620caf12fb385fa0e184b37cf7a982a112d8697278d1323c859.zip/node_modules/@jimp/plugin-gaussian/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-gaussian",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-gaussian-virtual-92b64fd45c1a090e048f2994a042e0b1483d8522e7b3244c612faed36bb9b2b6/node_modules/@jimp/plugin-gaussian/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-gaussian",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-invert",
+        [
+          [
+            "npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-invert-npm-0.5.0-235b7504a15c9b4a8c4eb6288e742337fec2ca93366f5c1ec6954be2a5eaca57.zip/node_modules/@jimp/plugin-invert/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-invert",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-invert-virtual-9c9566c1192294f37b3c6ad783e36cbf89be4ced598267f28bbfe01f70d578e3/node_modules/@jimp/plugin-invert/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-invert",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-mask",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-mask-npm-0.5.4-ade4735526d2ba355340281a4b8b7ba59f1d7276ee0447f572d56b782523fad4.zip/node_modules/@jimp/plugin-mask/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-mask",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-mask-virtual-6d90cd3b4e1dfc2b097a5db18d0c53e5953003d48c4b37f34109704eb576ad4f/node_modules/@jimp/plugin-mask/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-mask",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-normalize",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-normalize-npm-0.5.4-ace7b74fb40cfc9a10d7c3457216315fb9f8763e0e01b57ceade52ed882d2fbd.zip/node_modules/@jimp/plugin-normalize/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-normalize",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-normalize-virtual-a1559a2491a035a187616f787ada57937c0a407527a68e91809ee382ec64b054/node_modules/@jimp/plugin-normalize/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-normalize",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-print",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-print-npm-0.5.4-0b588141f47eebda9b3466c10b350ebace6b9eda638374bc8f91a17a00238017.zip/node_modules/@jimp/plugin-print/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-print",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "load-bmfont",
+                  "npm:1.4.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-print-virtual-ce83cba8ff2265b58424e94a6f40b2da6490eec819f481aa135f804567ff0d17/node_modules/@jimp/plugin-print/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-print",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-blit",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "load-bmfont",
+                  "npm:1.4.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-resize",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-resize-npm-0.5.4-0ba338c8cb666c13ae5390a662b8c9f2fa75703ec853f350f6a0cf6587335d07.zip/node_modules/@jimp/plugin-resize/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-resize",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-resize-virtual-0091aa6b2dbe77f597505a684dc936fc9018cf58744c77e516117fc340c76361/node_modules/@jimp/plugin-resize/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-resize",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-rotate",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-rotate-npm-0.5.4-5b75c8476a0d9879485e549b57f557ae601478da1e7fcdbdbc90ca2c9bc1dbf4.zip/node_modules/@jimp/plugin-rotate/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-rotate",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-rotate-virtual-b92b3f8291cc1e75968937b3357ffa879078e0de00dbf00a8321fcef3b37da9f/node_modules/@jimp/plugin-rotate/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-rotate",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-blit",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-crop",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-resize",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugin-scale",
+        [
+          [
+            "npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugin-scale-npm-0.5.0-740597fd8fcb5ac931806bdc69923eb43df650a38450d86e9c5ba57389d3ec56.zip/node_modules/@jimp/plugin-scale/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-scale",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugin-scale-virtual-0dd0b92c8cd7b359456792a850b4feaf8d358e4104eef13e35061ec294999bd8/node_modules/@jimp/plugin-scale/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugin-scale",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-resize",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/plugins",
+        [
+          [
+            "npm:0.5.5",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-plugins-npm-0.5.5-99370c9ae106de6427ca4bf03edd345a611adab3db0fda508a787ff3c5feedaa.zip/node_modules/@jimp/plugins/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugins",
+                  "npm:0.5.5"
+                ],
+                [
+                  "@jimp/plugin-blit",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-blur",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/plugin-color",
+                  "npm:0.5.5"
+                ],
+                [
+                  "@jimp/plugin-contain",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-cover",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-crop",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-displace",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/plugin-dither",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/plugin-flip",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/plugin-gaussian",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/plugin-invert",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/plugin-mask",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-normalize",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-print",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-resize",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-rotate",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-scale",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "timm",
+                  "npm:1.6.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:8faf832a6a8337ce6a7801727552cd65e6d7856380a969c7afc96ec398a5a7380ca0a1ca5a0864d58885f5578b7380f70005fe2a6d3b2d9cedfb6299d68ae314#npm:0.5.5",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-plugins-virtual-5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8/node_modules/@jimp/plugins/",
+              "packageDependencies": [
+                [
+                  "@jimp/plugins",
+                  "virtual:8faf832a6a8337ce6a7801727552cd65e6d7856380a969c7afc96ec398a5a7380ca0a1ca5a0864d58885f5578b7380f70005fe2a6d3b2d9cedfb6299d68ae314#npm:0.5.5"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-blit",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-blur",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/plugin-color",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.5"
+                ],
+                [
+                  "@jimp/plugin-contain",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-cover",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-crop",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-displace",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/plugin-dither",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/plugin-flip",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/plugin-gaussian",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/plugin-invert",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "@jimp/plugin-mask",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-normalize",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-print",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-resize",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-rotate",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugin-scale",
+                  "virtual:5d9efed5009b7fb862a838792e1aa252dee402d90366c14482b224c95d302ca8fa0c40469ffbc5bb8aba24e9e713f86790def947dd0151cce3482b71ab67dbd6#npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "timm",
+                  "npm:1.6.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/png",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-png-npm-0.5.4-fb79731751ebf5390055c146fa7f25be12189d5d5aa941c97f7cf73910fd4ef5.zip/node_modules/@jimp/png/",
+              "packageDependencies": [
+                [
+                  "@jimp/png",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "pngjs",
+                  "npm:3.3.3"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-png-virtual-2cc7601f7677167fad0b6c233c1d163e76aa88607ad9beb2b3d2c973581f0d0f/node_modules/@jimp/png/",
+              "packageDependencies": [
+                [
+                  "@jimp/png",
+                  "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "pngjs",
+                  "npm:3.3.3"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/tiff",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-tiff-npm-0.5.4-bdb2bb9799f6fab6afd28d1838bacb13a849767b5b392365a285ce45abd10cfa.zip/node_modules/@jimp/tiff/",
+              "packageDependencies": [
+                [
+                  "@jimp/tiff",
+                  "npm:0.5.4"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "utif",
+                  "npm:2.0.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-tiff-virtual-7d5a424b6e320958218ff651f8985be8c02c51352bf9f549134e4b82f9b384e2/node_modules/@jimp/tiff/",
+              "packageDependencies": [
+                [
+                  "@jimp/tiff",
+                  "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "utif",
+                  "npm:2.0.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/types",
+        [
+          [
+            "npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-types-npm-0.5.4-ac88c37a659a58cb219e011b2235d1cd1c63cc9656d5394e75603ae3fe248a0d.zip/node_modules/@jimp/types/",
+              "packageDependencies": [
+                [
+                  "@jimp/types",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/bmp",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/gif",
+                  "npm:0.5.0"
+                ],
+                [
+                  "@jimp/jpeg",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/png",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/tiff",
+                  "npm:0.5.4"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "timm",
+                  "npm:1.6.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:8faf832a6a8337ce6a7801727552cd65e6d7856380a969c7afc96ec398a5a7380ca0a1ca5a0864d58885f5578b7380f70005fe2a6d3b2d9cedfb6299d68ae314#npm:0.5.4",
+            {
+              "packageLocation": "./.yarn/virtual/@jimp-types-virtual-945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342/node_modules/@jimp/types/",
+              "packageDependencies": [
+                [
+                  "@jimp/types",
+                  "virtual:8faf832a6a8337ce6a7801727552cd65e6d7856380a969c7afc96ec398a5a7380ca0a1ca5a0864d58885f5578b7380f70005fe2a6d3b2d9cedfb6299d68ae314#npm:0.5.4"
+                ],
+                [
+                  "@jimp/bmp",
+                  "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.4"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/gif",
+                  "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.0"
+                ],
+                [
+                  "@jimp/jpeg",
+                  "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.4"
+                ],
+                [
+                  "@jimp/png",
+                  "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.4"
+                ],
+                [
+                  "@jimp/tiff",
+                  "virtual:945e8e70f0d2dac4e5ae64c57734fd907279500997c7b38e93ec90e7e23e0342111ae4093dd97a0719d791c5342b5e8e769995cd996e96efacef20ddeb9710c9#npm:0.5.4"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "timm",
+                  "npm:1.6.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@jimp/utils",
+        [
+          [
+            "npm:0.5.0",
+            {
+              "packageLocation": "./.yarn/cache/@jimp-utils-npm-0.5.0-1349987c147e444cf0818e6ab5082272af872dfcc9107c42cc6c0dc1dc3ceb59.zip/node_modules/@jimp/utils/",
+              "packageDependencies": [
+                [
+                  "@jimp/utils",
+                  "npm:0.5.0"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
                 ]
               ]
             }
@@ -12479,6 +14038,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "color-convert",
                   "npm:1.9.3"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "any-base",
+        [
+          [
+            "npm:1.1.0",
+            {
+              "packageLocation": "./.yarn/cache/any-base-npm-1.1.0-bda2f619f1536533fc98238dca68e875e1efe6d8c4e49dd261c4cbc3a12054e7.zip/node_modules/any-base/",
+              "packageDependencies": [
+                [
+                  "any-base",
+                  "npm:1.1.0"
                 ]
               ]
             }
@@ -15636,6 +17212,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "bmp-js",
         [
           [
+            "npm:0.0.1",
+            {
+              "packageLocation": "./.yarn/cache/bmp-js-npm-0.0.1-63d3e9eb343b055cde768bfeeb9b89a93b7a6cbea71d2b26baed2c128b7ba4b6.zip/node_modules/bmp-js/",
+              "packageDependencies": [
+                [
+                  "bmp-js",
+                  "npm:0.0.1"
+                ]
+              ]
+            }
+          ],
+          [
             "npm:0.0.3",
             {
               "packageLocation": "./.yarn/cache/bmp-js-npm-0.0.3-5503444bef91607e4879236da827951b505b4f2d33d6be567a686076612a5807.zip/node_modules/bmp-js/",
@@ -15643,6 +17231,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "bmp-js",
                   "npm:0.0.3"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:0.1.0",
+            {
+              "packageLocation": "./.yarn/cache/bmp-js-npm-0.1.0-88bf568f5ba646d55abd4d0b0793fd08e32f66066d6a18f8e3cac7d4e85423cb.zip/node_modules/bmp-js/",
+              "packageDependencies": [
+                [
+                  "bmp-js",
+                  "npm:0.1.0"
                 ]
               ]
             }
@@ -16963,6 +18563,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             }
           ],
           [
+            "npm:3.0.0",
+            {
+              "packageLocation": "./.yarn/cache/camelcase-npm-3.0.0-75434f378ecbbdaedfddf57704354f115fff06bc6b66df03a8d372060cc25891.zip/node_modules/camelcase/",
+              "packageDependencies": [
+                [
+                  "camelcase",
+                  "npm:3.0.0"
+                ]
+              ]
+            }
+          ],
+          [
             "npm:4.1.0",
             {
               "packageLocation": "./.yarn/cache/camelcase-npm-4.1.0-d3859c616617561899d79076db6eaf5f3a3e2ff31dd585df649ff8ab7c7ec88c.zip/node_modules/camelcase/",
@@ -17830,6 +19442,40 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "clone",
+        [
+          [
+            "npm:2.1.2",
+            {
+              "packageLocation": "./.yarn/cache/clone-npm-2.1.2-5f5f1a61f052552d4ad7863b8de3c66b4b5e33be58e87f675a44b951e48ce158.zip/node_modules/clone/",
+              "packageDependencies": [
+                [
+                  "clone",
+                  "npm:2.1.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "clone-buffer",
+        [
+          [
+            "npm:1.0.0",
+            {
+              "packageLocation": "./.yarn/cache/clone-buffer-npm-1.0.0-bdcd312d06430c19524e461ddb3f05cd03ea01ecdf6b96aa41219644c3835c2f.zip/node_modules/clone-buffer/",
+              "packageDependencies": [
+                [
+                  "clone-buffer",
+                  "npm:1.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "clone-response",
         [
           [
@@ -17844,6 +19490,52 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "mimic-response",
                   "npm:1.0.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "clone-stats",
+        [
+          [
+            "npm:1.0.0",
+            {
+              "packageLocation": "./.yarn/cache/clone-stats-npm-1.0.0-a5592cd2b542dfd45819533c9d7f12491e515918acdb93fe1d0b4235cec1cff5.zip/node_modules/clone-stats/",
+              "packageDependencies": [
+                [
+                  "clone-stats",
+                  "npm:1.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "cloneable-readable",
+        [
+          [
+            "npm:1.1.2",
+            {
+              "packageLocation": "./.yarn/cache/cloneable-readable-npm-1.1.2-ce3f113a4b590249adfccda3a5c7d68728d7f7ff24e04ffdaa6ac16e4e6f9167.zip/node_modules/cloneable-readable/",
+              "packageDependencies": [
+                [
+                  "cloneable-readable",
+                  "npm:1.1.2"
+                ],
+                [
+                  "inherits",
+                  "npm:2.0.3"
+                ],
+                [
+                  "process-nextick-args",
+                  "npm:2.0.0"
+                ],
+                [
+                  "readable-stream",
+                  "npm:2.3.6"
                 ]
               ]
             }
@@ -19050,6 +20742,35 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "sha.js",
                   "npm:2.4.11"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "create-react-class",
+        [
+          [
+            "npm:15.6.3",
+            {
+              "packageLocation": "./.yarn/cache/create-react-class-npm-15.6.3-61c75b57e79706cdeaa6908177219b0e63b268f8f985a5baaf76b1197a15c33b.zip/node_modules/create-react-class/",
+              "packageDependencies": [
+                [
+                  "create-react-class",
+                  "npm:15.6.3"
+                ],
+                [
+                  "fbjs",
+                  "npm:0.8.17"
+                ],
+                [
+                  "loose-envify",
+                  "npm:1.4.0"
+                ],
+                [
+                  "object-assign",
+                  "npm:4.1.1"
                 ]
               ]
             }
@@ -21580,6 +23301,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "domhandler",
         [
           [
+            "npm:2.3.0",
+            {
+              "packageLocation": "./.yarn/cache/domhandler-npm-2.3.0-6f1bc7c7052e4eec47812ff22db9da9647bb54cc4f7ed63aacc10772b8b10caa.zip/node_modules/domhandler/",
+              "packageDependencies": [
+                [
+                  "domhandler",
+                  "npm:2.3.0"
+                ],
+                [
+                  "domelementtype",
+                  "npm:1.3.1"
+                ]
+              ]
+            }
+          ],
+          [
             "npm:2.4.2",
             {
               "packageLocation": "./.yarn/cache/domhandler-npm-2.4.2-fb2dee89e02dc42c473006bf057334bffd781a7efd4801b17e404c75987cd5fb.zip/node_modules/domhandler/",
@@ -22589,6 +24326,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "es6-promise",
                   "npm:3.3.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:4.2.6",
+            {
+              "packageLocation": "./.yarn/cache/es6-promise-npm-4.2.6-744ae81d4a7cef00c404d4d1d66c2efb83b56b834b06c25a62d76cae6a4ece87.zip/node_modules/es6-promise/",
+              "packageDependencies": [
+                [
+                  "es6-promise",
+                  "npm:4.2.6"
                 ]
               ]
             }
@@ -24813,6 +26562,39 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "extract-zip",
+        [
+          [
+            "npm:1.6.7",
+            {
+              "packageLocation": "./.yarn/cache/extract-zip-npm-1.6.7-09305506bfbe6e7d92f8d8e979f08378d05e66e6938eebfbe142691cdf79a15d.zip/node_modules/extract-zip/",
+              "packageDependencies": [
+                [
+                  "extract-zip",
+                  "npm:1.6.7"
+                ],
+                [
+                  "concat-stream",
+                  "npm:1.6.2"
+                ],
+                [
+                  "debug",
+                  "npm:2.6.9"
+                ],
+                [
+                  "mkdirp",
+                  "npm:0.5.1"
+                ],
+                [
+                  "yauzl",
+                  "npm:2.4.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "extsprintf",
         [
           [
@@ -24949,6 +26731,148 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "fastparse",
                   "npm:1.1.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "favicons",
+        [
+          [
+            "npm:5.3.0",
+            {
+              "packageLocation": "./.yarn/cache/favicons-npm-5.3.0-1625c5a309c8b864301e6152f6e0db4a1ac6325924bdf63aa68fc4ac7ddcb2d0.zip/node_modules/favicons/",
+              "packageDependencies": [
+                [
+                  "favicons",
+                  "npm:5.3.0"
+                ],
+                [
+                  "@babel/polyfill",
+                  "npm:7.2.5"
+                ],
+                [
+                  "cheerio",
+                  "npm:1.0.0-rc.2"
+                ],
+                [
+                  "clone",
+                  "npm:2.1.2"
+                ],
+                [
+                  "colors",
+                  "npm:1.3.3"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "image-size",
+                  "npm:0.6.3"
+                ],
+                [
+                  "jimp",
+                  "npm:0.5.6"
+                ],
+                [
+                  "jsontoxml",
+                  "npm:1.0.1"
+                ],
+                [
+                  "lodash.defaultsdeep",
+                  "npm:4.6.0"
+                ],
+                [
+                  "require-directory",
+                  "npm:2.1.1"
+                ],
+                [
+                  "svg2png",
+                  "npm:4.1.1"
+                ],
+                [
+                  "through2",
+                  "npm:3.0.1"
+                ],
+                [
+                  "tinycolor2",
+                  "npm:1.4.1"
+                ],
+                [
+                  "to-ico",
+                  "npm:1.1.5"
+                ],
+                [
+                  "util.promisify",
+                  "npm:1.0.0"
+                ],
+                [
+                  "vinyl",
+                  "npm:2.2.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "favicons-webpack-plugin",
+        [
+          [
+            "git+https://github.com/Creatiwity/favicons-webpack-plugin.git#f262255febeeca348bf7ae5cc140e0386c074e2c",
+            {
+              "packageLocation": "./.yarn/cache/favicons-webpack-plugin-git+https-6866137cc2630f17cd89ff0b7abb0623375569f21405922cc4b9d36b6f0a2f68.zip/sources/",
+              "packageDependencies": [
+                [
+                  "favicons-webpack-plugin",
+                  "git+https://github.com/Creatiwity/favicons-webpack-plugin.git#f262255febeeca348bf7ae5cc140e0386c074e2c"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "favicons",
+                  "npm:5.3.0"
+                ],
+                [
+                  "loader-utils",
+                  "npm:1.2.3"
+                ],
+                [
+                  "lodash",
+                  "npm:4.17.11"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:385b7848d49da9d94e9e9ecdd1b9882135c78e8440c2057e3514845a7cb9f11c4edc3977337d851602fa1563876edd950c2ed11d78671ebee8eb810d0205e7ec#git+https://github.com/Creatiwity/favicons-webpack-plugin.git#f262255febeeca348bf7ae5cc140e0386c074e2c",
+            {
+              "packageLocation": "./.yarn/virtual/favicons-webpack-plugin-virtual-071f5a3cd69ea29a09550f0f4aa2671f29e89d24dd2475840ace70a407afb9b3/sources/",
+              "packageDependencies": [
+                [
+                  "favicons-webpack-plugin",
+                  "virtual:385b7848d49da9d94e9e9ecdd1b9882135c78e8440c2057e3514845a7cb9f11c4edc3977337d851602fa1563876edd950c2ed11d78671ebee8eb810d0205e7ec#git+https://github.com/Creatiwity/favicons-webpack-plugin.git#f262255febeeca348bf7ae5cc140e0386c074e2c"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ],
+                [
+                  "favicons",
+                  "npm:5.3.0"
+                ],
+                [
+                  "loader-utils",
+                  "npm:1.2.3"
+                ],
+                [
+                  "lodash",
+                  "npm:4.17.11"
                 ]
               ]
             }
@@ -25122,6 +27046,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       [
         "fd-slicer",
         [
+          [
+            "npm:1.0.1",
+            {
+              "packageLocation": "./.yarn/cache/fd-slicer-npm-1.0.1-51a0f359523a7542d609be80fd4399ea9caeb5e9cb4c0df5db675534f423861a.zip/node_modules/fd-slicer/",
+              "packageDependencies": [
+                [
+                  "fd-slicer",
+                  "npm:1.0.1"
+                ],
+                [
+                  "pend",
+                  "npm:1.2.0"
+                ]
+              ]
+            }
+          ],
           [
             "npm:1.1.0",
             {
@@ -25342,6 +27282,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
+          ],
+          [
+            "npm:9.0.0",
+            {
+              "packageLocation": "./.yarn/cache/file-type-npm-9.0.0-311315762384bc3b0ee38c637ce5da36319149e843578fdda9f4d0daea496478.zip/node_modules/file-type/",
+              "packageDependencies": [
+                [
+                  "file-type",
+                  "npm:9.0.0"
+                ]
+              ]
+            }
           ]
         ]
       ],
@@ -25356,6 +27308,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "file-uri-to-path",
                   "npm:1.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "file-url",
+        [
+          [
+            "npm:2.0.2",
+            {
+              "packageLocation": "./.yarn/cache/file-url-npm-2.0.2-445c3cce1140eb0a690d18144ed71daca39e9ab5311acb349156eb9d7d5afe74.zip/node_modules/file-url/",
+              "packageDependencies": [
+                [
+                  "file-url",
+                  "npm:2.0.2"
                 ]
               ]
             }
@@ -26195,6 +28164,30 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       [
         "fs-extra",
         [
+          [
+            "npm:1.0.0",
+            {
+              "packageLocation": "./.yarn/cache/fs-extra-npm-1.0.0-af503b206be9d85831b8095b25e256cb929990a3ed1e9cc4d796916a0f08d2de.zip/node_modules/fs-extra/",
+              "packageDependencies": [
+                [
+                  "fs-extra",
+                  "npm:1.0.0"
+                ],
+                [
+                  "graceful-fs",
+                  "npm:4.1.15"
+                ],
+                [
+                  "jsonfile",
+                  "npm:2.4.0"
+                ],
+                [
+                  "klaw",
+                  "npm:1.3.1"
+                ]
+              ]
+            }
+          ],
           [
             "npm:4.0.3",
             {
@@ -27724,6 +29717,67 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "gatsby",
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.1.31"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "gatsby-plugin-favicon",
+        [
+          [
+            "npm:3.1.5",
+            {
+              "packageLocation": "./.yarn/cache/gatsby-plugin-favicon-npm-3.1.5-eea7e1ef1e0fd20e9bafef94d36b134a1469a5d895b57649c32b6470035a44aa.zip/node_modules/gatsby-plugin-favicon/",
+              "packageDependencies": [
+                [
+                  "gatsby-plugin-favicon",
+                  "npm:3.1.5"
+                ],
+                [
+                  "favicons-webpack-plugin",
+                  "git+https://github.com/Creatiwity/favicons-webpack-plugin.git#f262255febeeca348bf7ae5cc140e0386c074e2c"
+                ],
+                [
+                  "html-react-parser",
+                  "npm:0.4.7"
+                ],
+                [
+                  "lodash",
+                  "npm:4.17.11"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:3.1.5",
+            {
+              "packageLocation": "./.yarn/virtual/gatsby-plugin-favicon-virtual-385b7848d49da9d94e9e9ecdd1b9882135c78e8440c2057e3514845a7cb9f11c/node_modules/gatsby-plugin-favicon/",
+              "packageDependencies": [
+                [
+                  "gatsby-plugin-favicon",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:3.1.5"
+                ],
+                [
+                  "favicons-webpack-plugin",
+                  "virtual:385b7848d49da9d94e9e9ecdd1b9882135c78e8440c2057e3514845a7cb9f11c4edc3977337d851602fa1563876edd950c2ed11d78671ebee8eb810d0205e7ec#git+https://github.com/Creatiwity/favicons-webpack-plugin.git#f262255febeeca348bf7ae5cc140e0386c074e2c"
+                ],
+                [
+                  "gatsby",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.1.31"
+                ],
+                [
+                  "html-react-parser",
+                  "virtual:385b7848d49da9d94e9e9ecdd1b9882135c78e8440c2057e3514845a7cb9f11c4edc3977337d851602fa1563876edd950c2ed11d78671ebee8eb810d0205e7ec#npm:0.4.7"
+                ],
+                [
+                  "lodash",
+                  "npm:4.17.11"
+                ],
+                [
+                  "react",
+                  "npm:16.8.4"
                 ]
               ]
             }
@@ -30694,6 +32748,31 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "hasha",
+        [
+          [
+            "npm:2.2.0",
+            {
+              "packageLocation": "./.yarn/cache/hasha-npm-2.2.0-afad7520ecd9ee386f0b2a11646311b1121ca397fdbd30212816451412b74e1f.zip/node_modules/hasha/",
+              "packageDependencies": [
+                [
+                  "hasha",
+                  "npm:2.2.0"
+                ],
+                [
+                  "is-stream",
+                  "npm:1.1.0"
+                ],
+                [
+                  "pinkie-promise",
+                  "npm:2.0.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "hast-to-hyperscript",
         [
           [
@@ -31282,6 +33361,31 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "html-dom-parser",
+        [
+          [
+            "npm:0.1.3",
+            {
+              "packageLocation": "./.yarn/cache/html-dom-parser-npm-0.1.3-1fedcf5586f1417fee2db6bbdd8f34a4abcd1378dd8ab5cb686d32ad555cff30.zip/node_modules/html-dom-parser/",
+              "packageDependencies": [
+                [
+                  "html-dom-parser",
+                  "npm:0.1.3"
+                ],
+                [
+                  "domhandler",
+                  "npm:2.3.0"
+                ],
+                [
+                  "htmlparser2",
+                  "npm:3.9.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "html-encoding-sniffer",
         [
           [
@@ -31313,6 +33417,63 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "html-entities",
                   "npm:1.2.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "html-react-parser",
+        [
+          [
+            "npm:0.4.7",
+            {
+              "packageLocation": "./.yarn/cache/html-react-parser-npm-0.4.7-240b44d93cd2ed5dee077bfa9963a9dc8ffc1d7ab9fe70c9a338c8a0de9cde6f.zip/node_modules/html-react-parser/",
+              "packageDependencies": [
+                [
+                  "html-react-parser",
+                  "npm:0.4.7"
+                ],
+                [
+                  "html-dom-parser",
+                  "npm:0.1.3"
+                ],
+                [
+                  "react-dom-core",
+                  "npm:0.0.3"
+                ],
+                [
+                  "style-to-object",
+                  "npm:0.2.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:385b7848d49da9d94e9e9ecdd1b9882135c78e8440c2057e3514845a7cb9f11c4edc3977337d851602fa1563876edd950c2ed11d78671ebee8eb810d0205e7ec#npm:0.4.7",
+            {
+              "packageLocation": "./.yarn/virtual/html-react-parser-virtual-eb984aafa4809c536767e60d24b7bd923578a3333b3da246798b062a7744d91f/node_modules/html-react-parser/",
+              "packageDependencies": [
+                [
+                  "html-react-parser",
+                  "virtual:385b7848d49da9d94e9e9ecdd1b9882135c78e8440c2057e3514845a7cb9f11c4edc3977337d851602fa1563876edd950c2ed11d78671ebee8eb810d0205e7ec#npm:0.4.7"
+                ],
+                [
+                  "html-dom-parser",
+                  "npm:0.1.3"
+                ],
+                [
+                  "react",
+                  "npm:16.8.4"
+                ],
+                [
+                  "react-dom-core",
+                  "virtual:eb984aafa4809c536767e60d24b7bd923578a3333b3da246798b062a7744d91f6e12c455abcc9a9551da1dbbe8b3b7d12f4e0f00dffcc2bd1a0c60e2e9dd4eff#npm:0.0.3"
+                ],
+                [
+                  "style-to-object",
+                  "npm:0.2.2"
                 ]
               ]
             }
@@ -31407,6 +33568,42 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "readable-stream",
                   "npm:3.2.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:3.9.1",
+            {
+              "packageLocation": "./.yarn/cache/htmlparser2-npm-3.9.1-b67a9401e47a3e03928eae0933c7e9570cdd375f934a96aa226d9bf84cde89d1.zip/node_modules/htmlparser2/",
+              "packageDependencies": [
+                [
+                  "htmlparser2",
+                  "npm:3.9.1"
+                ],
+                [
+                  "domelementtype",
+                  "npm:1.3.1"
+                ],
+                [
+                  "domhandler",
+                  "npm:2.4.2"
+                ],
+                [
+                  "domutils",
+                  "npm:1.7.0"
+                ],
+                [
+                  "entities",
+                  "npm:1.1.2"
+                ],
+                [
+                  "inherits",
+                  "npm:2.0.3"
+                ],
+                [
+                  "readable-stream",
+                  "npm:2.3.6"
                 ]
               ]
             }
@@ -31819,6 +34016,35 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "minimatch",
                   "npm:3.0.4"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "image-size",
+        [
+          [
+            "npm:0.5.5",
+            {
+              "packageLocation": "./.yarn/cache/image-size-npm-0.5.5-a09c86dc5f111cae205ba90e653f49fa7e72da23d90f268485d4ebaa4487d6bc.zip/node_modules/image-size/",
+              "packageDependencies": [
+                [
+                  "image-size",
+                  "npm:0.5.5"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:0.6.3",
+            {
+              "packageLocation": "./.yarn/cache/image-size-npm-0.6.3-c13d0b7b64773339cf6de82a89c5fcdad21ba00bca409c1db5cd29f63edb8cff.zip/node_modules/image-size/",
+              "packageDependencies": [
+                [
+                  "image-size",
+                  "npm:0.6.3"
                 ]
               ]
             }
@@ -36383,6 +38609,38 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
+          ],
+          [
+            "npm:0.5.6",
+            {
+              "packageLocation": "./.yarn/cache/jimp-npm-0.5.6-8faf832a6a8337ce6a7801727552cd65e6d7856380a969c7afc96ec398a5a738.zip/node_modules/jimp/",
+              "packageDependencies": [
+                [
+                  "jimp",
+                  "npm:0.5.6"
+                ],
+                [
+                  "@babel/polyfill",
+                  "npm:7.2.5"
+                ],
+                [
+                  "@jimp/custom",
+                  "npm:0.5.4"
+                ],
+                [
+                  "@jimp/plugins",
+                  "virtual:8faf832a6a8337ce6a7801727552cd65e6d7856380a969c7afc96ec398a5a7380ca0a1ca5a0864d58885f5578b7380f70005fe2a6d3b2d9cedfb6299d68ae314#npm:0.5.5"
+                ],
+                [
+                  "@jimp/types",
+                  "virtual:8faf832a6a8337ce6a7801727552cd65e6d7856380a969c7afc96ec398a5a7380ca0a1ca5a0864d58885f5578b7380f70005fe2a6d3b2d9cedfb6299d68ae314#npm:0.5.4"
+                ],
+                [
+                  "core-js",
+                  "npm:2.6.2"
+                ]
+              ]
+            }
           ]
         ]
       ],
@@ -36467,6 +38725,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "jpeg-js",
         [
           [
+            "npm:0.1.2",
+            {
+              "packageLocation": "./.yarn/cache/jpeg-js-npm-0.1.2-d970323b93fc92f43e8de47e1752496976c723eca48ab8a3e4dc12756bef7d16.zip/node_modules/jpeg-js/",
+              "packageDependencies": [
+                [
+                  "jpeg-js",
+                  "npm:0.1.2"
+                ]
+              ]
+            }
+          ],
+          [
             "npm:0.2.0",
             {
               "packageLocation": "./.yarn/cache/jpeg-js-npm-0.2.0-972472bc1f54cbaebe3b7a0f10e30a7e611d384fe191f404df33eb15c5cfaea4.zip/node_modules/jpeg-js/",
@@ -36474,6 +38744,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "jpeg-js",
                   "npm:0.2.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:0.3.4",
+            {
+              "packageLocation": "./.yarn/cache/jpeg-js-npm-0.3.4-abc2f892045142517cfcb04db805e037b73366cb4ed5c7a32508a7e326e6c8c5.zip/node_modules/jpeg-js/",
+              "packageDependencies": [
+                [
+                  "jpeg-js",
+                  "npm:0.3.4"
                 ]
               ]
             }
@@ -36996,6 +39278,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "jsonfile",
         [
           [
+            "npm:2.4.0",
+            {
+              "packageLocation": "./.yarn/cache/jsonfile-npm-2.4.0-20fcfd034e6bb85a27001f6e789b2826e0a4ed98fe66fa8e0de9eefb80969580.zip/node_modules/jsonfile/",
+              "packageDependencies": [
+                [
+                  "jsonfile",
+                  "npm:2.4.0"
+                ],
+                [
+                  "graceful-fs",
+                  "npm:4.1.15"
+                ]
+              ]
+            }
+          ],
+          [
             "npm:4.0.0",
             {
               "packageLocation": "./.yarn/cache/jsonfile-npm-4.0.0-d41074f81a9e8678e7add9bfc7024055ed70142f517dfef6d564c7fef774b805.zip/node_modules/jsonfile/",
@@ -37024,6 +39322,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "jsonify",
                   "npm:0.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "jsontoxml",
+        [
+          [
+            "npm:1.0.1",
+            {
+              "packageLocation": "./.yarn/cache/jsontoxml-npm-1.0.1-fc89d35b4c7d00b18cf312fb99d34034db8e08dcaef588bcc2997a6d0a8b6e69.zip/node_modules/jsontoxml/",
+              "packageDependencies": [
+                [
+                  "jsontoxml",
+                  "npm:1.0.1"
                 ]
               ]
             }
@@ -37099,6 +39414,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "lodash.kebabcase",
                   "npm:4.1.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "kew",
+        [
+          [
+            "npm:0.7.0",
+            {
+              "packageLocation": "./.yarn/cache/kew-npm-0.7.0-9850ff38778387be0073ad7bc66753142a5a61cf7f3026e7f1ca705a579dc4a1.zip/node_modules/kew/",
+              "packageDependencies": [
+                [
+                  "kew",
+                  "npm:0.7.0"
                 ]
               ]
             }
@@ -37223,6 +39555,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       [
         "klaw",
         [
+          [
+            "npm:1.3.1",
+            {
+              "packageLocation": "./.yarn/cache/klaw-npm-1.3.1-26f88f88936bae6beed87d116dc591226542c8178b0ec83e624889a806de46d7.zip/node_modules/klaw/",
+              "packageDependencies": [
+                [
+                  "klaw",
+                  "npm:1.3.1"
+                ],
+                [
+                  "graceful-fs",
+                  "npm:4.1.15"
+                ]
+              ]
+            }
+          ],
           [
             "npm:2.1.1",
             {
@@ -37779,6 +40127,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "lodash.debounce",
                   "npm:4.0.8"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "lodash.defaultsdeep",
+        [
+          [
+            "npm:4.6.0",
+            {
+              "packageLocation": "./.yarn/cache/lodash.defaultsdeep-npm-4.6.0-31ffc2b5181ac6da6b6c1d61e0f6155b3e18907fb6b036cb3eac9280ca047668.zip/node_modules/lodash.defaultsdeep/",
+              "packageDependencies": [
+                [
+                  "lodash.defaultsdeep",
+                  "npm:4.6.0"
                 ]
               ]
             }
@@ -41539,6 +43904,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "omggif",
+        [
+          [
+            "npm:1.0.9",
+            {
+              "packageLocation": "./.yarn/cache/omggif-npm-1.0.9-f1ef35f273fc3cf377dae31400391fd4de347f2894953f0b3c9d4c6444c8f07d.zip/node_modules/omggif/",
+              "packageDependencies": [
+                [
+                  "omggif",
+                  "npm:1.0.9"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "on-finished",
         [
           [
@@ -41882,6 +44264,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       [
         "os-locale",
         [
+          [
+            "npm:1.4.0",
+            {
+              "packageLocation": "./.yarn/cache/os-locale-npm-1.4.0-ea5bb9a8650d101d4ec6703fd61f6d9a92075e2fdfce0cb0ae562aaddb213806.zip/node_modules/os-locale/",
+              "packageDependencies": [
+                [
+                  "os-locale",
+                  "npm:1.4.0"
+                ],
+                [
+                  "lcid",
+                  "npm:1.0.0"
+                ]
+              ]
+            }
+          ],
           [
             "npm:2.1.0",
             {
@@ -42810,6 +45208,27 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "parse-png",
+        [
+          [
+            "npm:1.1.2",
+            {
+              "packageLocation": "./.yarn/cache/parse-png-npm-1.1.2-a54832b7e818768e2ce8f713409457528c819d73a4a53c6421a010ab524d934e.zip/node_modules/parse-png/",
+              "packageDependencies": [
+                [
+                  "parse-png",
+                  "npm:1.1.2"
+                ],
+                [
+                  "pngjs",
+                  "npm:3.3.3"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "parse-semver",
         [
           [
@@ -43309,6 +45728,59 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "performance-now",
                   "npm:2.1.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "phantomjs-prebuilt",
+        [
+          [
+            "npm:2.1.16",
+            {
+              "packageLocation": "./.yarn/unplugged/phantomjs-prebuilt-npm-2.1.16-a75d52b1511878dcde94303401270efe1fd5c599f7fb6eb0a53815b167d98a01/node_modules/phantomjs-prebuilt/",
+              "packageDependencies": [
+                [
+                  "phantomjs-prebuilt",
+                  "npm:2.1.16"
+                ],
+                [
+                  "es6-promise",
+                  "npm:4.2.6"
+                ],
+                [
+                  "extract-zip",
+                  "npm:1.6.7"
+                ],
+                [
+                  "fs-extra",
+                  "npm:1.0.0"
+                ],
+                [
+                  "hasha",
+                  "npm:2.2.0"
+                ],
+                [
+                  "kew",
+                  "npm:0.7.0"
+                ],
+                [
+                  "progress",
+                  "npm:1.1.8"
+                ],
+                [
+                  "request",
+                  "npm:2.88.0"
+                ],
+                [
+                  "request-progress",
+                  "npm:2.0.1"
+                ],
+                [
+                  "which",
+                  "npm:1.3.1"
                 ]
               ]
             }
@@ -46102,6 +48574,38 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "react",
         [
           [
+            "npm:15.6.2",
+            {
+              "packageLocation": "./.yarn/cache/react-npm-15.6.2-632658bad37323d41add04e258c16593427c948945feeb172f702f94fd900424.zip/node_modules/react/",
+              "packageDependencies": [
+                [
+                  "react",
+                  "npm:15.6.2"
+                ],
+                [
+                  "create-react-class",
+                  "npm:15.6.3"
+                ],
+                [
+                  "fbjs",
+                  "npm:0.8.17"
+                ],
+                [
+                  "loose-envify",
+                  "npm:1.4.0"
+                ],
+                [
+                  "object-assign",
+                  "npm:4.1.1"
+                ],
+                [
+                  "prop-types",
+                  "npm:15.7.2"
+                ]
+              ]
+            }
+          ],
+          [
             "npm:16.8.3",
             {
               "packageLocation": "./.yarn/cache/react-npm-16.8.3-bc9a60d1f52b95ad92edc569aeddc16bcfeaf6bd43d11f603c7a698db7fa87dc.zip/node_modules/react/",
@@ -46307,6 +48811,59 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "scheduler",
                   "npm:0.13.4"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "react-dom-core",
+        [
+          [
+            "npm:0.0.3",
+            {
+              "packageLocation": "./.yarn/cache/react-dom-core-npm-0.0.3-5f84fbc81c083473a27f45a447e1951143774a188b44ab692cfc6184830acd9f.zip/node_modules/react-dom-core/",
+              "packageDependencies": [
+                [
+                  "react-dom-core",
+                  "npm:0.0.3"
+                ],
+                [
+                  "fbjs",
+                  "npm:1.0.0"
+                ],
+                [
+                  "object-assign",
+                  "npm:4.1.1"
+                ],
+                [
+                  "react",
+                  "npm:15.6.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:eb984aafa4809c536767e60d24b7bd923578a3333b3da246798b062a7744d91f6e12c455abcc9a9551da1dbbe8b3b7d12f4e0f00dffcc2bd1a0c60e2e9dd4eff#npm:0.0.3",
+            {
+              "packageLocation": "./.yarn/virtual/react-dom-core-virtual-90c0e105bcb3d8cb552077e25407290d04e96169c0f97cdb14b2f9cfd85a5430/node_modules/react-dom-core/",
+              "packageDependencies": [
+                [
+                  "react-dom-core",
+                  "virtual:eb984aafa4809c536767e60d24b7bd923578a3333b3da246798b062a7744d91f6e12c455abcc9a9551da1dbbe8b3b7d12f4e0f00dffcc2bd1a0c60e2e9dd4eff#npm:0.0.3"
+                ],
+                [
+                  "fbjs",
+                  "npm:1.0.0"
+                ],
+                [
+                  "object-assign",
+                  "npm:4.1.1"
+                ],
+                [
+                  "react",
+                  "npm:15.6.2"
                 ]
               ]
             }
@@ -48099,6 +50656,27 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "request-progress",
+        [
+          [
+            "npm:2.0.1",
+            {
+              "packageLocation": "./.yarn/cache/request-progress-npm-2.0.1-0dbe3b72d5ed28e238fbce0a9246feeec88eca0a7691a196dd349913003a5e60.zip/node_modules/request-progress/",
+              "packageDependencies": [
+                [
+                  "request-progress",
+                  "npm:2.0.1"
+                ],
+                [
+                  "throttleit",
+                  "npm:1.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "request-promise-core",
         [
           [
@@ -48258,6 +50836,47 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "requires-port",
                   "npm:1.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "resize-img",
+        [
+          [
+            "npm:1.1.2",
+            {
+              "packageLocation": "./.yarn/cache/resize-img-npm-1.1.2-816200aa49526ed3e052f7412f236eaa9ea536a9d8d69454325aaed96b5624cc.zip/node_modules/resize-img/",
+              "packageDependencies": [
+                [
+                  "resize-img",
+                  "npm:1.1.2"
+                ],
+                [
+                  "bmp-js",
+                  "npm:0.0.1"
+                ],
+                [
+                  "file-type",
+                  "npm:3.9.0"
+                ],
+                [
+                  "get-stream",
+                  "npm:2.3.1"
+                ],
+                [
+                  "jimp",
+                  "npm:0.2.28"
+                ],
+                [
+                  "jpeg-js",
+                  "npm:0.1.2"
+                ],
+                [
+                  "parse-png",
+                  "npm:1.1.2"
                 ]
               ]
             }
@@ -52052,6 +54671,39 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "svg2png",
+        [
+          [
+            "npm:4.1.1",
+            {
+              "packageLocation": "./.yarn/unplugged/svg2png-npm-4.1.1-c291491b6027dff2bad2c10a23c13d18543f5427f9b37aff13eb985ada7e45c2/node_modules/svg2png/",
+              "packageDependencies": [
+                [
+                  "svg2png",
+                  "npm:4.1.1"
+                ],
+                [
+                  "file-url",
+                  "npm:2.0.2"
+                ],
+                [
+                  "phantomjs-prebuilt",
+                  "npm:2.1.16"
+                ],
+                [
+                  "pn",
+                  "npm:1.1.0"
+                ],
+                [
+                  "yargs",
+                  "npm:6.6.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "svgo",
         [
           [
@@ -52817,6 +55469,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "throttleit",
+        [
+          [
+            "npm:1.0.0",
+            {
+              "packageLocation": "./.yarn/cache/throttleit-npm-1.0.0-b58ca0deeeff6edd036562980686f4f1c33f837d96ca64d20b710fe053fb4bad.zip/node_modules/throttleit/",
+              "packageDependencies": [
+                [
+                  "throttleit",
+                  "npm:1.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "through",
         [
           [
@@ -52852,6 +55521,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "xtend",
                   "npm:4.0.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:3.0.1",
+            {
+              "packageLocation": "./.yarn/cache/through2-npm-3.0.1-d99aabd8cf8651ded37ce1c45bf500d0892d4dbd4d4e2b31815cc7565df0d362.zip/node_modules/through2/",
+              "packageDependencies": [
+                [
+                  "through2",
+                  "npm:3.0.1"
+                ],
+                [
+                  "readable-stream",
+                  "npm:3.2.0"
                 ]
               ]
             }
@@ -52907,6 +55592,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "setimmediate",
                   "npm:1.0.5"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "timm",
+        [
+          [
+            "npm:1.6.1",
+            {
+              "packageLocation": "./.yarn/cache/timm-npm-1.6.1-8fef59f5ade9333eee9eded6c0c4e78ead7783a1ef8e4e574078209658129179.zip/node_modules/timm/",
+              "packageDependencies": [
+                [
+                  "timm",
+                  "npm:1.6.1"
                 ]
               ]
             }
@@ -53108,6 +55810,43 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "to-fast-properties",
                   "npm:2.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "to-ico",
+        [
+          [
+            "npm:1.1.5",
+            {
+              "packageLocation": "./.yarn/cache/to-ico-npm-1.1.5-a080293fe00ab23edaa75e55cb8d150393329e9d48b722b408ba3322c1717dac.zip/node_modules/to-ico/",
+              "packageDependencies": [
+                [
+                  "to-ico",
+                  "npm:1.1.5"
+                ],
+                [
+                  "arrify",
+                  "npm:1.0.1"
+                ],
+                [
+                  "buffer-alloc",
+                  "npm:1.2.0"
+                ],
+                [
+                  "image-size",
+                  "npm:0.5.5"
+                ],
+                [
+                  "parse-png",
+                  "npm:1.1.2"
+                ],
+                [
+                  "resize-img",
+                  "npm:1.1.2"
                 ]
               ]
             }
@@ -55130,6 +57869,27 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "utif",
+        [
+          [
+            "npm:2.0.1",
+            {
+              "packageLocation": "./.yarn/cache/utif-npm-2.0.1-0c29c16a70eef0ca0563e925fb2db27c53f6f2e5fde66ebbfd883620214d8bed.zip/node_modules/utif/",
+              "packageDependencies": [
+                [
+                  "utif",
+                  "npm:2.0.1"
+                ],
+                [
+                  "pako",
+                  "npm:1.0.8"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "util",
         [
           [
@@ -55523,6 +58283,47 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "unist-util-stringify-position",
                   "npm:1.1.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "vinyl",
+        [
+          [
+            "npm:2.2.0",
+            {
+              "packageLocation": "./.yarn/cache/vinyl-npm-2.2.0-c3521c2085e8d79100c614b94eec8cb258d120e192ed73f837643482c6d0b047.zip/node_modules/vinyl/",
+              "packageDependencies": [
+                [
+                  "vinyl",
+                  "npm:2.2.0"
+                ],
+                [
+                  "clone",
+                  "npm:2.1.2"
+                ],
+                [
+                  "clone-buffer",
+                  "npm:1.0.0"
+                ],
+                [
+                  "clone-stats",
+                  "npm:1.0.0"
+                ],
+                [
+                  "cloneable-readable",
+                  "npm:1.1.2"
+                ],
+                [
+                  "remove-trailing-separator",
+                  "npm:1.1.0"
+                ],
+                [
+                  "replace-ext",
+                  "npm:1.0.0"
                 ]
               ]
             }
@@ -56936,6 +59737,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "which-module",
         [
           [
+            "npm:1.0.0",
+            {
+              "packageLocation": "./.yarn/cache/which-module-npm-1.0.0-da5bc61d9c5da893b968e71965d48024992373a2d8bea70c7b969cf57d6bdea6.zip/node_modules/which-module/",
+              "packageDependencies": [
+                [
+                  "which-module",
+                  "npm:1.0.0"
+                ]
+              ]
+            }
+          ],
+          [
             "npm:2.0.0",
             {
               "packageLocation": "./.yarn/cache/which-module-npm-2.0.0-9af7bd1ba11284dd5bbb62453562ae5d3a459631cda2cf388d01cc9fcf17123e.zip/node_modules/which-module/",
@@ -58053,6 +60866,70 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             }
           ],
           [
+            "npm:6.6.0",
+            {
+              "packageLocation": "./.yarn/cache/yargs-npm-6.6.0-44cb914e48494cab1a1a312c8e1c8b7cae3b1f4e600381e974a0a187a3b49af1.zip/node_modules/yargs/",
+              "packageDependencies": [
+                [
+                  "yargs",
+                  "npm:6.6.0"
+                ],
+                [
+                  "camelcase",
+                  "npm:3.0.0"
+                ],
+                [
+                  "cliui",
+                  "npm:3.2.0"
+                ],
+                [
+                  "decamelize",
+                  "npm:1.2.0"
+                ],
+                [
+                  "get-caller-file",
+                  "npm:1.0.3"
+                ],
+                [
+                  "os-locale",
+                  "npm:1.4.0"
+                ],
+                [
+                  "read-pkg-up",
+                  "npm:1.0.1"
+                ],
+                [
+                  "require-directory",
+                  "npm:2.1.1"
+                ],
+                [
+                  "require-main-filename",
+                  "npm:1.0.1"
+                ],
+                [
+                  "set-blocking",
+                  "npm:2.0.0"
+                ],
+                [
+                  "string-width",
+                  "npm:1.0.2"
+                ],
+                [
+                  "which-module",
+                  "npm:1.0.0"
+                ],
+                [
+                  "y18n",
+                  "npm:3.2.1"
+                ],
+                [
+                  "yargs-parser",
+                  "npm:4.2.1"
+                ]
+              ]
+            }
+          ],
+          [
             "npm:9.0.1",
             {
               "packageLocation": "./.yarn/cache/yargs-npm-9.0.1-843da06b3c9c51d97f861e94a9dff2bb2ccd64db5e812c7fe9c6b2aa7bd08753.zip/node_modules/yargs/",
@@ -58158,6 +61035,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             }
           ],
           [
+            "npm:4.2.1",
+            {
+              "packageLocation": "./.yarn/cache/yargs-parser-npm-4.2.1-e69e42ee94f03b7ec33ac0d9c7e941f68ecfec2224c64d83f5c17c95fe48fb66.zip/node_modules/yargs-parser/",
+              "packageDependencies": [
+                [
+                  "yargs-parser",
+                  "npm:4.2.1"
+                ],
+                [
+                  "camelcase",
+                  "npm:3.0.0"
+                ]
+              ]
+            }
+          ],
+          [
             "npm:7.0.0",
             {
               "packageLocation": "./.yarn/cache/yargs-parser-npm-7.0.0-7ca7f238c2d84faf9b6b9df325532c252146b8f874c6efa4c371fde9dab876af.zip/node_modules/yargs-parser/",
@@ -58194,6 +61087,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "fd-slicer",
                   "npm:1.1.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:2.4.1",
+            {
+              "packageLocation": "./.yarn/cache/yauzl-npm-2.4.1-0f0324b3a45a6e6134429d3e5b5ecb2ee82d10049cf0de65123bf3598d5511c2.zip/node_modules/yauzl/",
+              "packageDependencies": [
+                [
+                  "yauzl",
+                  "npm:2.4.1"
+                ],
+                [
+                  "fd-slicer",
+                  "npm:1.0.1"
                 ]
               ]
             }

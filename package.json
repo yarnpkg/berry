@@ -49,6 +49,9 @@
     "fsevents": {
       "built": false
     },
+    "svg2png": {
+      "unplugged": true
+    },
     "webpack-cli": {
       "built": false
     }
