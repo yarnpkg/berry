@@ -1,5 +1,5 @@
 import {Configuration}         from '@berry/core';
-import {xfs}                   from '@berry/fslib';
+import {xfs, NodeFS}                   from '@berry/fslib';
 import {UsageError, Concierge} from '@manaflair/concierge';
 import {execFileSync}          from 'child_process';
 import Joi                     from 'joi';
@@ -54,7 +54,9 @@ async function run() {
       for (const command of plugin.commands || [])
         command(concierge, pluginConfiguration);
 
-    concierge.runExit(`yarn`, process.argv.slice(2));
+    concierge.runExit(`yarn`, process.argv.slice(2), {
+      cwd: NodeFS.toPortablePath(process.cwd())
+    });
   }
 }
 

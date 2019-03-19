@@ -1,4 +1,4 @@
-import {xfs}                                                              from '@berry/fslib';
+import {xfs, NodeFS}                                                              from '@berry/fslib';
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
 import {spawn}                                                            from 'child_process';
 import {delimiter, posix}                                                 from 'path';
@@ -139,7 +139,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
       normalizedEnv.PATH = normalizedEnv.PATH.replace(new RegExp(posix.delimiter, `g`), delimiter);
 
     const subprocess = spawn(ident, rest, {
-      cwd: state.cwd,
+      cwd: NodeFS.fromPortablePath(state.cwd),
       env: normalizedEnv,
       stdio,
     });
@@ -311,7 +311,7 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
 /**
  * Executes a command chain. A command chain is a list of commands linked
  * together thanks to the use of either of the `|` or `|&` operators:
- * 
+ *
  * $ cat hello | grep world | grep -v foobar
  */
 

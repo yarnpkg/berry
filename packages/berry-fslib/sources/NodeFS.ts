@@ -1,7 +1,11 @@
 import fs, {Stats}                                         from 'fs';
+import path                                                from 'path';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {FakeFS, WriteFileOptions}                          from './FakeFS';
+
+
+const PORTABLE_PATH_PREFIX = `/mnt/`;
 
 export class NodeFS extends FakeFS {
   private readonly realFs: typeof fs;
@@ -37,11 +41,11 @@ export class NodeFS extends FakeFS {
   }
 
   createReadStream(p: string, opts?: CreateReadStreamOptions) {
-    return this.realFs.createReadStream(this.fromPortablePath(p), opts);
+    return this.realFs.createReadStream(NodeFS.fromPortablePath(p), opts);
   }
 
   createWriteStream(p: string, opts?: CreateWriteStreamOptions) {
-    return this.realFs.createWriteStream(this.fromPortablePath(p), opts);
+    return this.realFs.createWriteStream(NodeFS.fromPortablePath(p), opts);
   }
 
   async realpathPromise(p: string) {
@@ -51,17 +55,17 @@ export class NodeFS extends FakeFS {
   }
 
   realpathSync(p: string) {
-    return this.toPortablePath(this.realFs.realpathSync(this.fromPortablePath(p), {}));
+    return NodeFS.toPortablePath(this.realFs.realpathSync(NodeFS.fromPortablePath(p), {}));
   }
 
   async existsPromise(p: string) {
     return await new Promise<boolean>(resolve => {
-      this.realFs.exists(this.fromPortablePath(p), resolve);
+      this.realFs.exists(NodeFS.fromPortablePath(p), resolve);
     });
   }
 
   existsSync(p: string) {
-    return this.realFs.existsSync(this.fromPortablePath(p));
+    return this.realFs.existsSync(NodeFS.fromPortablePath(p));
   }
 
   async statPromise(p: string) {
@@ -71,7 +75,7 @@ export class NodeFS extends FakeFS {
   }
 
   statSync(p: string) {
-    return this.realFs.statSync(this.fromPortablePath(p));
+    return this.realFs.statSync(NodeFS.fromPortablePath(p));
   }
 
   async lstatPromise(p: string) {
@@ -81,37 +85,37 @@ export class NodeFS extends FakeFS {
   }
 
   lstatSync(p: string) {
-    return this.realFs.lstatSync(this.fromPortablePath(p));
+    return this.realFs.lstatSync(NodeFS.fromPortablePath(p));
   }
 
   async chmodPromise(p: string, mask: number) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.chmod(this.fromPortablePath(p), mask, this.makeCallback(resolve, reject));
+      this.realFs.chmod(NodeFS.fromPortablePath(p), mask, this.makeCallback(resolve, reject));
     });
   }
 
   chmodSync(p: string, mask: number) {
-    return this.realFs.chmodSync(this.fromPortablePath(p), mask);
+    return this.realFs.chmodSync(NodeFS.fromPortablePath(p), mask);
   }
 
   async renamePromise(oldP: string, newP: string) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.rename(this.fromPortablePath(oldP), this.fromPortablePath(newP), this.makeCallback(resolve, reject));
+      this.realFs.rename(NodeFS.fromPortablePath(oldP), NodeFS.fromPortablePath(newP), this.makeCallback(resolve, reject));
     });
   }
 
   renameSync(oldP: string, newP: string) {
-    return this.realFs.renameSync(this.fromPortablePath(oldP), this.fromPortablePath(newP));
+    return this.realFs.renameSync(NodeFS.fromPortablePath(oldP), NodeFS.fromPortablePath(newP));
   }
 
   async copyFilePromise(sourceP: string, destP: string, flags: number = 0) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.copyFile(this.fromPortablePath(sourceP), this.fromPortablePath(destP), flags, this.makeCallback(resolve, reject));
+      this.realFs.copyFile(NodeFS.fromPortablePath(sourceP), NodeFS.fromPortablePath(destP), flags, this.makeCallback(resolve, reject));
     });
   }
 
   copyFileSync(sourceP: string, destP: string, flags: number = 0) {
-    return this.realFs.copyFileSync(this.fromPortablePath(sourceP), this.fromPortablePath(destP), flags);
+    return this.realFs.copyFileSync(NodeFS.fromPortablePath(sourceP), NodeFS.fromPortablePath(destP), flags);
   }
 
   async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
@@ -126,9 +130,9 @@ export class NodeFS extends FakeFS {
 
   writeFileSync(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     if (opts) {
-      this.realFs.writeFileSync(this.fromPortablePath(p), content, opts);
+      this.realFs.writeFileSync(NodeFS.fromPortablePath(p), content, opts);
     } else {
-      this.realFs.writeFileSync(this.fromPortablePath(p), content);
+      this.realFs.writeFileSync(NodeFS.fromPortablePath(p), content);
     }
   }
 
@@ -139,7 +143,7 @@ export class NodeFS extends FakeFS {
   }
 
   unlinkSync(p: string) {
-    return this.realFs.unlinkSync(this.fromPortablePath(p));
+    return this.realFs.unlinkSync(NodeFS.fromPortablePath(p));
   }
 
   async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
@@ -159,7 +163,7 @@ export class NodeFS extends FakeFS {
   }
 
   mkdirSync(p: string) {
-    return this.realFs.mkdirSync(this.fromPortablePath(p));
+    return this.realFs.mkdirSync(NodeFS.fromPortablePath(p));
   }
 
   async rmdirPromise(p: string) {
@@ -169,31 +173,31 @@ export class NodeFS extends FakeFS {
   }
 
   rmdirSync(p: string) {
-    return this.realFs.rmdirSync(this.fromPortablePath(p));
+    return this.realFs.rmdirSync(NodeFS.fromPortablePath(p));
   }
 
   async symlinkPromise(target: string, p: string) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.symlink(target, this.fromPortablePath(p), this.makeCallback(resolve, reject));
+      this.realFs.symlink(target, NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
     });
   }
 
   symlinkSync(target: string, p: string) {
-    return this.realFs.symlinkSync(target, this.fromPortablePath(p));
+    return this.realFs.symlinkSync(target, NodeFS.fromPortablePath(p));
   }
 
   readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
   readFilePromise(p: string, encoding?: string): Promise<Buffer>;
   async readFilePromise(p: string, encoding?: string) {
     return await new Promise<any>((resolve, reject) => {
-      this.realFs.readFile(this.fromPortablePath(p), encoding, this.makeCallback(resolve, reject));
+      this.realFs.readFile(NodeFS.fromPortablePath(p), encoding, this.makeCallback(resolve, reject));
     });
   }
 
   readFileSync(p: string, encoding: 'utf8'): string;
   readFileSync(p: string, encoding?: string): Buffer;
   readFileSync(p: string, encoding?: string) {
-    return this.realFs.readFileSync(this.fromPortablePath(p), encoding);
+    return this.realFs.readFileSync(NodeFS.fromPortablePath(p), encoding);
   }
 
   async readdirPromise(p: string) {
@@ -203,7 +207,7 @@ export class NodeFS extends FakeFS {
   }
 
   readdirSync(p: string) {
-    return this.realFs.readdirSync(this.fromPortablePath(p));
+    return this.realFs.readdirSync(NodeFS.fromPortablePath(p));
   }
 
   async readlinkPromise(p: string) {
@@ -213,7 +217,7 @@ export class NodeFS extends FakeFS {
   }
 
   readlinkSync(p: string) {
-    return this.realFs.readlinkSync(this.fromPortablePath(p));
+    return this.realFs.readlinkSync(NodeFS.fromPortablePath(p));
   }
 
   private makeCallback<T>(resolve: (value?: T) => void, reject: (reject: Error) => void) {
@@ -226,11 +230,30 @@ export class NodeFS extends FakeFS {
     };
   }
 
-  private fromPortablePath(p: string) {
-    return p;
+  static fromPortablePath(p: string) {
+    if (process.platform !== `win32`) return p;
+
+    // Path should look like "/mnt/n/berry/scripts/plugin-pack.js"
+    // And transform to "N:\berry/scripts/plugin-pack.js"
+
+    const driveLetter = path[PORTABLE_PATH_PREFIX.length + 1].toUpperCase();
+    const pathWithoutPrefix = p.substr(PORTABLE_PATH_PREFIX.length + 1);
+    const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
+
+    return `${driveLetter}:\\${windowsPath}`;
   }
 
-  private toPortablePath(p: string) {
-    return p;
+  static toPortablePath(p: string) {
+    if (process.platform !== `win32`) return p;
+
+    // Path should look like "N:\berry/scripts/plugin-pack.js"
+    // And transform to "/mnt/n/berry/scripts/plugin-pack.js"
+
+    const {root} = path.win32.parse(p);
+    const driveLetter = root[0].toLowerCase();
+    const pathWithoutRoot = p.substr(root.length);
+    const posixPath = pathWithoutRoot.replace(/\\/g, '/');
+
+    return `${PORTABLE_PATH_PREFIX}${driveLetter}/${posixPath}`;
   }
 }
