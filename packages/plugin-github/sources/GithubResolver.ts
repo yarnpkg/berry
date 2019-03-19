@@ -1,7 +1,7 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
-import {httpUtils, structUtils}                          from '@berry/core';
+import {httpUtils, miscUtils, structUtils}               from '@berry/core';
 import {LinkType}                                        from '@berry/core';
-import {Ident, Descriptor, Locator, Package}             from '@berry/core';
+import {Ident, Descriptor, Locator, Manifest, Package}   from '@berry/core';
 
 import * as githubUtils                                  from './githubUtils';
 
@@ -27,19 +27,25 @@ export class GithubResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
+    const packageFetch = await opts.fetcher.fetch(locator, opts);
+
+    const manifest = await miscUtils.releaseAfterUseAsync(async () => {
+      return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
+    }, packageFetch.releaseFs);
+
     return {
       ... locator,
 
-      version: `0.0.0`,
-
+      version: manifest.version || `0.0.0`,
+      
       languageName: opts.project.configuration.get(`defaultLanguageName`),
       linkType: LinkType.HARD,
+      
+      dependencies: manifest.dependencies,
+      peerDependencies: manifest.peerDependencies,
 
-      dependencies: new Map(),
-      peerDependencies: new Map(),
-
-      dependenciesMeta: new Map(),
-      peerDependenciesMeta: new Map(),
+      dependenciesMeta: manifest.dependenciesMeta,
+      peerDependenciesMeta: manifest.peerDependenciesMeta,
     };
   }
 }
