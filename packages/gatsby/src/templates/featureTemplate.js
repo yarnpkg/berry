@@ -41,7 +41,10 @@ export default function Template({data}) {
 
 export const pageQuery = graphql`
   query($path: String!) {
-    allMarkdownRemark(filter: {frontmatter: {category: {eq: "features"}}}) {
+    allMarkdownRemark(
+      filter: {frontmatter: {category: {eq: "features"}}}
+      sort: {order: ASC, fields: [frontmatter___title]}
+    ) {
       edges {
         node {
           frontmatter {

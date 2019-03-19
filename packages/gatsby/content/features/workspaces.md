@@ -4,40 +4,37 @@ path: /features/workspaces
 title: "Workspaces"
 ---
 
-Workspaces are a feature designed to make monorepos easy to use, and solve most of the use cases for `yarn link` in a safer fashion. They allow multiple of your projects to live together in the same repository AND to cross-reference each others.
+Initially designed to solve part of what [Lerna](https://github.com/lerna/lerna) used to do, Yarn's workspaces are a feature designed to make monorepos easy to use, solving one of the main use cases for `yarn link` in a more declarative way. In short, they allow multiple of your projects to live together in the same repository AND to cross-reference each others.
 
-First, some vocabulary: in the context of the workspace feature, a *project* is the whole directory tree making up your workspaces (often the repository itself). A *workspace* is a specific named package inside the monorepo. Finally, a *worktree* is the name given to private packages that define new workspaces.
+First, some vocabulary: in the context of the workspace feature, a *project* is the whole directory tree making up your workspaces (often the repository itself). A *workspace* is a specific named package inside the project. Finally, a *worktree* is the name given to private packages that define new workspaces. A project may contains multiple worktrees, which may contain multiple workspaces.
 
 ## How to declare a worktree?
 
-> Reminder: the worktree is a package that defines workspaces.
+Worktrees are defined via the use of a traditional `package.json` file. What makes them special is that they have the following properties:
 
-Worktrees are defined via the use of a traditional `package.json` file. What make them worktrees are the following properties:
+- They have to be marked `private: true`. We've designed this requirement because workspaces are a client-only feature. The remote registries (such as the npm registry) have no idea what a workspace is (nor should they do). In order to prevent accidental pushes and information leaks workspaces must have their private flag set.
 
-- Firstly, they have to be marked `private: true`. We've designed this requirement because workspaces are a client-only feature. The remote registries (such as the npm registry) have no idea what a workspace is, nor should they do. In order to prevent accidental pushes and information leaks, we've decided that workspaces always had to be private.
+- On top of being private, worktrees must declare a `workspaces` field which is an array of glob patterns that should be used to locate the workspaces that make up the worktree (for example if you want all folders within the `packages` folder to be workspaces, just add `workspaces/*` to this array).
 
-- Secondly, they have to contain a `workspaces: Array<string>` property. This array must be an array of glob patterns that should be used to locate the workspaces that make up the worktree.
+- Finally, worktrees must be connected to the project-level `package.json` file. This doesn't matter in the typical workspace setup because there's usually a single worktree defined in the project-level `package.json`, but if you try to setup nested workspaces then you must make sure that the nested worktree is defined as a valid workspace of its parent worktree (otherwise Yarn won't find its correct parent folder).
 
-Note that because worktrees are defined with a `package.json` file, they also are valid workspaces. This becomes useful in the following section.
-
-## How to make a worktree elsewhere than the repository root?
-
-Starting from the v2, Yarn now supports nested worktrees! You can now declare multiple levels of worktrees, which might be useful especially when using git features such as [submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
-
-Nested worktrees have one important limitation: they must be linked to the project root. In practice, it means that the nested worktree must itself be defined as a workspace of the project root (or a workspace of a worktree that itself is a workspace of the project root, etc).
+Note that because worktrees are defined with an otherwise regular `package.json` file, they also are valid workspaces themselves. If they're named, other workspaces will be able to properly cross-reference them.
 
 ## What does it mean to be a workspace?
 
-Workspaces have two important characteristics:
+Workspaces have two important properties:
 
-- Only the dependencies depended upon by a workspace can be accessed. Said another way, we strictly enforce your workspaces dependencies.
+- Only the dependencies depended upon by a workspace can be accessed. Said another way, we strictly enforce your workspaces dependencies. Doing this allows to cleanly decouple projects from one another, since you don't have to merge all their dependencies in one huge unmaintainable list. We still provide tools to manage dependencies from multiple workspaces at once, but they need to be explicitly used and offer a better integration (for example `yarn add` can make suggestions for your new dependencies based on what other workspaces use, but you can override them).
 
-- If the package manager was to resolve a range that a workspace could satisfy, it will prefer the workspace over the remote resolution if possible.
+- If the package manager was to resolve a range that a workspace could satisfy, it will prefer the workspace resolution over the remote resolution if possible. This is the pillar of the monorepo approach: rather than using the remote packages from the registry, your project packages will be interconnected and will use the code stored within your repository.
 
-When a workspace is used as a resolution target, its dependents becomes able to directly require files from its true location on the disk (you can think of them as pseudo-symlinks, even though we don't actually need symlinks anymore).
+## Workspace ranges (`workspace:`)
 
-## Workspace ranges
+While Yarn automatically picks workspace resolutions when they match, there are times where you absolutely don't want to risk using a package from the remote registry even if the versions don't match (for example if your project isn't actually meant to be published and you just want to use the workspaces to better compartiment your code).
 
-Starting from Berry, Yarn now supports a new resolution protocol: `workspace:`. When this protocol is used Yarn will always resolve to the local workspace regardless of the provided range (unless multiple workspaces of the same name exist in the same project, in which case the range will be used to disambiguate them).
+For those use cases, Yarn now supports a new resolution protocol starting from the v2: `workspace:`. When this protocol is used Yarn will refuse to resolve to anything else than a local workspace. This range protocol has two flavors:
 
-Using the workspace protocol is advised when depending upon packages that aren't meant to be published since it will prevent the packages that depend on them from accidentally using a version from the npm registry if the ranges aren't properly kept in sync.
+  - If a semver range, it will select the workspace matching the specified version.
+  - If a project-relative path, it will select the workspace that match this path **(experimental)**.
+
+Note that the second flavor is experimental and we advise against using it for now, as some details might change in the future. Our current recommendation is to use `workspace:*`, which will almost always do what you expect.

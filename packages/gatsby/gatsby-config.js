@@ -60,6 +60,12 @@ module.exports = {
       },
     },
     {
+      resolve: `gatsby-plugin-favicon`,
+      options: {
+        logo: `${__dirname}/src/images/yarn-kitten.svg`,
+      },
+    },
+    {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/content`,

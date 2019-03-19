@@ -38,16 +38,16 @@ This approach as various benefits:
 
 ## Caveats and work-in-progress
 
-During the years that led to Plug'n'Play being designed and adopted as main install strategy, various projects came up with their own implementation of the Node Resolution Algorithm - usually to circumvent shortcomings of the `require.resolve` API. Such projects can be Webpack (enhanced-resolve), Babel (resolve), Jest (jest-resolve), Metro (metro-resolver), ...
+During the years that led to Plug'n'Play being designed and adopted as main install strategy, various projects came up with their own implementation of the Node Resolution Algorithm - usually to circumvent shortcomings of the `require.resolve` API. Such projects can be Webpack (`enhanced-resolve`), Babel (`resolve`), Jest (`jest-resolve`), Metro (`metro-resolver`), ...
 
 The following compatibility table gives you an idea of the integration status with various tools from the community. Note that only CLI tools are listed there, as frontend libraries (such as `react`, `vue`, `lodash`, ...) don't reimplement the Node resolution and as such don't need any special logic to take advantage from Plug'n'Play:
 
 | Project name | Status | Note |
 | ------------ | ------ | ---- |
 | Webpack           | Plugin  | Via [pnp-webpack-plugin](https://github.com/arcanis/pnp-webpack-plugin) |
-| Babel             | Native  | Starting from |
+| Babel             | Native  | Starting from `resolve` 1.9+ |
 | Jest              | Native  | Starting from 24.1+ |
-| Gatsby            | Native  | Starting from |
 | Create-React-App  | Native  | Starting from 2.0+ |
-| ESLint            | Partial | Check [the investigation thread]() for more info |
-| React Native      | Partial | Doesn't support native modules |
+| Gatsby            | Partial | Check [the investigation thread](https://github.com/yarnpkg/berry/issues/9) for more info |
+| ESLint            | Partial | Check [the investigation thread](https://github.com/yarnpkg/berry/issues/8) for more info |
+| React Native      | Has blockers | Work in progress |

@@ -23,6 +23,20 @@ const Content = styled.div`
       color: #62b0ca;
     }
   }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  th {
+    color: #007aa2;
+  }
+
+  th, td {
+    border: 1px solid #007aa2;
+
+    padding: .5em 1em;
+  }
 `;
 
 export const PrerenderedMarkdown = ({title, children}) => <>
