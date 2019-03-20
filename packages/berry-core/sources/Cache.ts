@@ -1,6 +1,6 @@
 import {NodeFS, ZipFS, xfs}       from '@berry/fslib';
 import {lock, unlock}             from 'lockfile';
-import posix                      from 'path';
+import {posix}                    from 'path';
 import {promisify}                from 'util';
 
 import {Configuration}            from './Configuration';
@@ -115,7 +115,7 @@ export class Cache {
   }
 
   async writeFileIntoCache<T>(file: string, generator: (file: string) => Promise<T>) {
-    const lock = `${NodeFS.fromPortablePath(file)}.lock`;
+    const lock = NodeFS.fromPortablePath(`${file}.lock`);
 
     try {
       await lockP(lock);

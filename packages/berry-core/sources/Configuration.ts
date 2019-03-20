@@ -3,7 +3,7 @@ import {parseSyml, stringifySyml}        from '@berry/parsers';
 import {UsageError}                      from '@manaflair/concierge';
 import chalk                             from 'chalk';
 import {homedir}                         from 'os';
-import {posix}                           from 'path';
+import {posix, win32}                    from 'path';
 import supportsColor                     from 'supports-color';
 
 import {MultiFetcher}                    from './MultiFetcher';
@@ -241,7 +241,8 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
 
 function getDefaultGlobalFolder() {
   if (process.platform === `win32`) {
-    return posix.resolve(process.env.LOCALAPPDATA || posix.join(homedir(), 'AppData', 'Local'));
+    const folder = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
+    return posix.resolve(folder);
   } else if (process.env.XDG_DATA_HOME) {
     return posix.resolve(process.env.XDG_DATA_HOME, 'yarn/modern');
   } else {

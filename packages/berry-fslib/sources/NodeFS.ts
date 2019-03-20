@@ -6,7 +6,7 @@ import {FakeFS, WriteFileOptions}                          from './FakeFS';
 
 
 const PORTABLE_PATH_PREFIX = `/mnt/`;
-const PORTABLE_PREFIX_REGEXP = /^\/mnt\/[a-z]\//;
+const PORTABLE_PREFIX_REGEXP = /^\/mnt\/([a-z])(?:\/(.*))?$/;
 
 export class NodeFS extends FakeFS {
   private readonly realFs: typeof fs;
@@ -52,6 +52,8 @@ export class NodeFS extends FakeFS {
   async realpathPromise(p: string) {
     return await new Promise<string>((resolve, reject) => {
       this.realFs.realpath(NodeFS.fromPortablePath(p), {}, this.makeCallback(resolve, reject));
+    }).then(path => {
+      return NodeFS.toPortablePath(path);
     });
   }
 
@@ -214,11 +216,13 @@ export class NodeFS extends FakeFS {
   async readlinkPromise(p: string) {
     return await new Promise<string>((resolve, reject) => {
       this.realFs.readlink(NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
+    }).then(path => {
+      return NodeFS.toPortablePath(path);
     });
   }
 
   readlinkSync(p: string) {
-    return this.realFs.readlinkSync(NodeFS.fromPortablePath(p));
+    return NodeFS.toPortablePath(this.realFs.readlinkSync(NodeFS.fromPortablePath(p)));
   }
 
   private makeCallback<T>(resolve: (value?: T) => void, reject: (reject: Error) => void) {
@@ -237,17 +241,13 @@ export class NodeFS extends FakeFS {
     // Path should look like "/mnt/n/berry/scripts/plugin-pack.js"
     // And transform to "N:\berry/scripts/plugin-pack.js"
 
-    if (!PORTABLE_PREFIX_REGEXP.test(p)) return p;
+    const match = p.match(PORTABLE_PREFIX_REGEXP);
+    if (!match) return p;
 
-    const driveLetter = p[PORTABLE_PATH_PREFIX.length].toUpperCase();
-    const pathWithoutPrefix = p.substr(PORTABLE_PATH_PREFIX.length + 1);
-    const windowsPath = pathWithoutPrefix.replace(/\//g, '\\\\');
+    const [, drive, pathWithoutPrefix = ''] = match;
+    const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
 
-    let res = `${driveLetter}:${windowsPath}`;
-
-    const e = new Error();
-    console.log("fromPortablePath: ", p, res, e.stack);
-    return res;
+    return `${drive.toUpperCase()}:\\${windowsPath}`;
   }
 
   static toPortablePath(p: string) {
@@ -261,8 +261,6 @@ export class NodeFS extends FakeFS {
     const pathWithoutRoot = p.substr(root.length);
     const posixPath = pathWithoutRoot.replace(/\\/g, '/');
 
-    let res = `${PORTABLE_PATH_PREFIX}${driveLetter}/${posixPath}`;
-    console.log('toPortablePath: ', p, res);
-    return res;
+    return `${PORTABLE_PATH_PREFIX}${driveLetter}/${posixPath}`;
   }
 }
