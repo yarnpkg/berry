@@ -1,4 +1,5 @@
-import {posix} from 'path';
+import {posix}  from 'path';
+import {NodeFS} from '@berry/fslib';
 
 export default (concierge: any) => concierge
 
@@ -7,8 +8,6 @@ export default (concierge: any) => concierge
   .flags({proxyArguments: true, defaultCommand: true, hiddenCommand: true})
 
   .action(async ({cwd, version, args, stdout, ... env}: any) => {
-    let newCwd;
-
     // berry --version
     if (args.length === 1 && args[0] === `--version`) {
       stdout.write(`v2.0.0\n`);
@@ -23,8 +22,8 @@ export default (concierge: any) => concierge
 
     // berry ~/projects/foo install
     } else if (args.length !== 0 && args[0].match(/[\\\/]/)) {
-      // TODO Call NodeFS.fromPortablePath
-      return await concierge.run(null, args.slice(1), {cwd: posix.resolve(cwd, args[0]), stdout, ... env});
+      const newCwd = posix.resolve(cwd, NodeFS.toPortablePath(args[0]));
+      return await concierge.run(null, args.slice(1), {cwd: newCwd, stdout, ... env});
 
     // berry start
     } else {
