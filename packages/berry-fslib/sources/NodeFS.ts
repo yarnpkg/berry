@@ -257,6 +257,10 @@ export class NodeFS extends FakeFS {
     // And transform to "/mnt/n/berry/scripts/plugin-pack.js"
 
     const {root} = win32.parse(p);
+
+    // If relative path, just replace win32 slashes by posix slashes
+    if (!root) return p.replace(/\\/g, '/');
+
     const driveLetter = root[0].toLowerCase();
     const pathWithoutRoot = p.substr(root.length);
     const posixPath = pathWithoutRoot.replace(/\\/g, '/');

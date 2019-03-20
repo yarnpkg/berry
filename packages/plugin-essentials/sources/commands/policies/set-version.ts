@@ -2,7 +2,7 @@ import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {httpUtils}                                   from '@berry/core';
 import {xfs}                                         from '@berry/fslib';
 import Joi                                           from 'joi';
-import {dirname, resolve}                            from 'path';
+import {posix}                                       from 'path';
 import semver, {SemVer}                              from 'semver';
 import {Readable, Writable}                          from 'stream';
 
@@ -166,10 +166,10 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     const bundle = await httpUtils.get(bundleUrl, configuration);
 
     const executablePath = `.berry/releases/berry-${bundleVersion}.js`;
-    const absoluteExecutablePath = resolve(project.cwd, executablePath);
+    const absoluteExecutablePath = posix.resolve(project.cwd, executablePath);
 
     stdout.write(`Saving it into ${configuration.format(executablePath, `magenta`)}...\n`);
-    await xfs.mkdirpPromise(dirname(absoluteExecutablePath));
+    await xfs.mkdirpPromise(posix.dirname(absoluteExecutablePath));
     await xfs.writeFilePromise(absoluteExecutablePath, bundle);
     await xfs.chmodPromise(absoluteExecutablePath, 0o755);
 

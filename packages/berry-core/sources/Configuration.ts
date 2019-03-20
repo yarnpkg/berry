@@ -229,7 +229,7 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
     throw new Error(`Expected value to be a string`);
 
   if (type === SettingsType.ABSOLUTE_PATH) {
-    return posix.resolve(folder, value);
+    return posix.resolve(folder, NodeFS.toPortablePath(value));
   } else if (type === SettingsType.LOCATOR_LOOSE) {
     return structUtils.parseLocator(value, false);
   } else if (type === SettingsType.LOCATOR) {

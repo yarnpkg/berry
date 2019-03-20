@@ -1,4 +1,4 @@
-import {basename}      from 'path';
+import {posix}         from 'path';
 import * as vscode     from 'vscode';
 
 import {ZipFSProvider} from './ZipFSProvider';
@@ -8,7 +8,7 @@ function mount(uri: vscode.Uri) {
 
   if (vscode.workspace.getWorkspaceFolder(zipUri) === undefined) {
     vscode.workspace.updateWorkspaceFolders(vscode.workspace.workspaceFolders!.length, 0, {
-      name: basename(zipUri.path),
+      name: posix.basename(zipUri.path),
       uri: zipUri,
     });
   }
