@@ -9064,6 +9064,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/json-proxy",
                   "workspace:packages/berry-json-proxy"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
                 ]
               ]
             }

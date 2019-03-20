@@ -1,7 +1,7 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName, DependencyMeta} from '@berry/core';
 import {FetchResult, Ident, Locator, Package}                                                                from '@berry/core';
 import {miscUtils, structUtils}                                                                              from '@berry/core';
-import {CwdFS, FakeFS, xfs}                                                                                  from '@berry/fslib';
+import {CwdFS, FakeFS, NodeFS, xfs}                                                                          from '@berry/fslib';
 import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@berry/pnp';
 import {posix}                                                                                               from 'path';
 
@@ -22,7 +22,7 @@ export class PnpLinker implements Linker {
     if (!xfs.existsSync(pnpPath))
       throw new Error(`Couldn't find the PnP package map at the root of the project - run an install to generate it`);
 
-    const pnpFile = miscUtils.dynamicRequire(pnpPath);
+    const pnpFile = miscUtils.dynamicRequire(NodeFS.fromPortablePath(pnpPath));
     delete require.cache[pnpPath];
 
     const packageLocator = {name: structUtils.requirableIdent(locator), reference: locator.reference};
@@ -79,7 +79,7 @@ class PnpInstaller implements Installer {
       this.opts.report.reportWarning(MessageName.SOFT_LINK_BUILD, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
       buildScripts.length = 0;
     }
-    
+
     const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
 
     if (buildScripts.length > 0 && dependencyMeta && dependencyMeta.built === false) {
@@ -188,7 +188,7 @@ class PnpInstaller implements Installer {
     const packageInformation = packageInformationStore.get(key2);
     if (!packageInformation)
       throw new Error(`Assertion failed: The package information should have been available (for ${structUtils.prettyLocator(this.opts.project.configuration, locator)})`);
-    
+
     return packageInformation;
   }
 
@@ -224,7 +224,7 @@ class PnpInstaller implements Installer {
     for (const scriptName of [`preinstall`, `install`, `postinstall`])
       if (scripts.has(scriptName))
         buildScripts.push(scriptName);
-    
+
     return buildScripts;
   }
 
