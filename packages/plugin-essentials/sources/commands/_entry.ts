@@ -16,15 +16,16 @@ export default (concierge: any) => concierge
     // berry --help
     } else if (args.length === 1 && (args[0] === `--help` || args[0] === `-h`)) {
       concierge.usage(env.argv0, {stream: stdout});
-    
+
     // berry --frozen-lockfile
     } else if (args.length === 0 || args[0].charAt(0) === `-`) {
       return await concierge.run(null, [`install`, ... args], {cwd, stdout, ... env});
-    
+
     // berry ~/projects/foo install
     } else if (args.length !== 0 && args[0].match(/[\\\/]/)) {
+      // TODO Call NodeFS.fromPortablePath
       return await concierge.run(null, args.slice(1), {cwd: posix.resolve(cwd, args[0]), stdout, ... env});
-    
+
     // berry start
     } else {
       return await concierge.run(null, [`run`, ... args], {cwd, stdout, ... env});

@@ -1,11 +1,12 @@
 import fs, {Stats}                                         from 'fs';
-import path                                                from 'path';
+import {win32}                                             from 'path';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {FakeFS, WriteFileOptions}                          from './FakeFS';
 
 
 const PORTABLE_PATH_PREFIX = `/mnt/`;
+const PORTABLE_PREFIX_REGEXP = /^\/mnt\/[a-z]\//;
 
 export class NodeFS extends FakeFS {
   private readonly realFs: typeof fs;
@@ -22,12 +23,12 @@ export class NodeFS extends FakeFS {
 
   async openPromise(p: string, flags: string, mode?: number) {
     return await new Promise<number>((resolve, reject) => {
-      this.realFs.open(p, flags, mode, this.makeCallback(resolve, reject));
+      this.realFs.open(NodeFS.fromPortablePath(p), flags, mode, this.makeCallback(resolve, reject));
     });
   }
 
   openSync(p: string, flags: string, mode?: number) {
-    return this.realFs.openSync(p, flags, mode);
+    return this.realFs.openSync(NodeFS.fromPortablePath(p), flags, mode);
   }
 
   async closePromise(fd: number) {
@@ -50,7 +51,7 @@ export class NodeFS extends FakeFS {
 
   async realpathPromise(p: string) {
     return await new Promise<string>((resolve, reject) => {
-      this.realFs.realpath(p, {}, this.makeCallback(resolve, reject));
+      this.realFs.realpath(NodeFS.fromPortablePath(p), {}, this.makeCallback(resolve, reject));
     });
   }
 
@@ -70,7 +71,7 @@ export class NodeFS extends FakeFS {
 
   async statPromise(p: string) {
     return await new Promise<Stats>((resolve, reject) => {
-      this.realFs.stat(p, this.makeCallback(resolve, reject));
+      this.realFs.stat(NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
     });
   }
 
@@ -80,7 +81,7 @@ export class NodeFS extends FakeFS {
 
   async lstatPromise(p: string) {
     return await new Promise<Stats>((resolve, reject) => {
-      this.realFs.lstat(p, this.makeCallback(resolve, reject));
+      this.realFs.lstat(NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
     });
   }
 
@@ -121,9 +122,9 @@ export class NodeFS extends FakeFS {
   async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return await new Promise<void>((resolve, reject) => {
       if (opts) {
-        this.realFs.writeFile(p, content, opts, this.makeCallback(resolve, reject));
+        this.realFs.writeFile(NodeFS.fromPortablePath(p), content, opts, this.makeCallback(resolve, reject));
       } else {
-        this.realFs.writeFile(p, content, this.makeCallback(resolve, reject));
+        this.realFs.writeFile(NodeFS.fromPortablePath(p), content, this.makeCallback(resolve, reject));
       }
     });
   }
@@ -138,7 +139,7 @@ export class NodeFS extends FakeFS {
 
   async unlinkPromise(p: string) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.unlink(p, this.makeCallback(resolve, reject));
+      this.realFs.unlink(NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
     });
   }
 
@@ -148,17 +149,17 @@ export class NodeFS extends FakeFS {
 
   async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.utimes(p, atime, mtime, this.makeCallback(resolve, reject));
+      this.realFs.utimes(NodeFS.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
     });
   }
 
   utimesSync(p: string, atime: Date | string | number, mtime: Date | string | number) {
-    this.realFs.utimesSync(p, atime, mtime);
+    this.realFs.utimesSync(NodeFS.fromPortablePath(p), atime, mtime);
   }
 
   async mkdirPromise(p: string) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.mkdir(p, this.makeCallback(resolve, reject));
+      this.realFs.mkdir(NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
     });
   }
 
@@ -168,7 +169,7 @@ export class NodeFS extends FakeFS {
 
   async rmdirPromise(p: string) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.rmdir(p, this.makeCallback(resolve, reject));
+      this.realFs.rmdir(NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
     });
   }
 
@@ -178,12 +179,12 @@ export class NodeFS extends FakeFS {
 
   async symlinkPromise(target: string, p: string) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.symlink(target, NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
+      this.realFs.symlink(NodeFS.fromPortablePath(target), NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
     });
   }
 
   symlinkSync(target: string, p: string) {
-    return this.realFs.symlinkSync(target, NodeFS.fromPortablePath(p));
+    return this.realFs.symlinkSync(NodeFS.fromPortablePath(target), NodeFS.fromPortablePath(p));
   }
 
   readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
@@ -202,7 +203,7 @@ export class NodeFS extends FakeFS {
 
   async readdirPromise(p: string) {
     return await new Promise<Array<string>>((resolve, reject) => {
-      this.realFs.readdir(p, this.makeCallback(resolve, reject));
+      this.realFs.readdir(NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
     });
   }
 
@@ -212,7 +213,7 @@ export class NodeFS extends FakeFS {
 
   async readlinkPromise(p: string) {
     return await new Promise<string>((resolve, reject) => {
-      this.realFs.readlink(p, this.makeCallback(resolve, reject));
+      this.realFs.readlink(NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
     });
   }
 
@@ -236,11 +237,17 @@ export class NodeFS extends FakeFS {
     // Path should look like "/mnt/n/berry/scripts/plugin-pack.js"
     // And transform to "N:\berry/scripts/plugin-pack.js"
 
-    const driveLetter = path[PORTABLE_PATH_PREFIX.length + 1].toUpperCase();
-    const pathWithoutPrefix = p.substr(PORTABLE_PATH_PREFIX.length + 1);
-    const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
+    if (!PORTABLE_PREFIX_REGEXP.test(p)) return p;
 
-    return `${driveLetter}:\\${windowsPath}`;
+    const driveLetter = p[PORTABLE_PATH_PREFIX.length].toUpperCase();
+    const pathWithoutPrefix = p.substr(PORTABLE_PATH_PREFIX.length + 1);
+    const windowsPath = pathWithoutPrefix.replace(/\//g, '\\\\');
+
+    let res = `${driveLetter}:${windowsPath}`;
+
+    const e = new Error();
+    console.log("fromPortablePath: ", p, res, e.stack);
+    return res;
   }
 
   static toPortablePath(p: string) {
@@ -249,11 +256,13 @@ export class NodeFS extends FakeFS {
     // Path should look like "N:\berry/scripts/plugin-pack.js"
     // And transform to "/mnt/n/berry/scripts/plugin-pack.js"
 
-    const {root} = path.win32.parse(p);
+    const {root} = win32.parse(p);
     const driveLetter = root[0].toLowerCase();
     const pathWithoutRoot = p.substr(root.length);
     const posixPath = pathWithoutRoot.replace(/\\/g, '/');
 
-    return `${PORTABLE_PATH_PREFIX}${driveLetter}/${posixPath}`;
+    let res = `${PORTABLE_PATH_PREFIX}${driveLetter}/${posixPath}`;
+    console.log('toPortablePath: ', p, res);
+    return res;
   }
 }

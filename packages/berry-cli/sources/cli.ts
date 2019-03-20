@@ -33,7 +33,7 @@ function runBinary(path: string) {
 }
 
 async function run() {
-  const configuration = await Configuration.find(process.cwd(), pluginConfiguration);
+  const configuration = await Configuration.find(NodeFS.toPortablePath(process.cwd()), pluginConfiguration);
 
   const yarnPath = configuration.get(`yarnPath`);
   const ignorePath = configuration.get(`ignorePath`);

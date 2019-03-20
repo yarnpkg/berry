@@ -1,4 +1,4 @@
-import {xfs}                             from '@berry/fslib';
+import {xfs, NodeFS}                     from '@berry/fslib';
 import {parseSyml, stringifySyml}        from '@berry/parsers';
 import {UsageError}                      from '@manaflair/concierge';
 import chalk                             from 'chalk';
@@ -355,7 +355,7 @@ export class Configuration {
           continue;
 
         for (const pluginPath of data.plugins) {
-          const {factory, name} = nodeUtils.dynamicRequire(posix.resolve(cwd, pluginPath));
+          const {factory, name} = nodeUtils.dynamicRequire(NodeFS.fromPortablePath(posix.resolve(cwd, pluginPath)));
 
           // Prevent plugin redefinition so that the ones declared deeper in the
           // filesystem always have precedence over the ones below.

@@ -59,7 +59,7 @@ export class Cache {
 
       if (expectedChecksum !== null && actualChecksum !== expectedChecksum)
         throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `${structUtils.prettyLocator(this.configuration, locator)} doesn't resolve to an archive that matches the expected checksum`);
-      
+
       return actualChecksum;
     };
 
@@ -115,7 +115,7 @@ export class Cache {
   }
 
   async writeFileIntoCache<T>(file: string, generator: (file: string) => Promise<T>) {
-    const lock = `${file}.lock`;
+    const lock = `${NodeFS.fromPortablePath(file)}.lock`;
 
     try {
       await lockP(lock);
