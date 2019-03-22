@@ -355,8 +355,9 @@ export class Configuration {
         if (!Array.isArray(data.plugins))
           continue;
 
-        for (const pluginPath of data.plugins) {
-          const {factory, name} = nodeUtils.dynamicRequire(NodeFS.fromPortablePath(posix.resolve(cwd, pluginPath)));
+        for (const userProvidedPath of data.plugins) {
+          const pluginPath = posix.resolve(cwd, NodeFS.toPortablePath(userProvidedPath));
+          const {factory, name} = nodeUtils.dynamicRequire(NodeFS.fromPortablePath(pluginPath));
 
           // Prevent plugin redefinition so that the ones declared deeper in the
           // filesystem always have precedence over the ones below.
