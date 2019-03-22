@@ -1,21 +1,21 @@
 jobs:
 
- - job: Windows
-     pool:
-       vmImage: 'vs2017-win2016'
+- job: Windows
+  pool:
+    vmImage: 'vs2017-win2016'
 
-   variables:
-     os_name: Windows
+  variables:
+    os_name: Windows
 
-   strategy:
-     matrix:
-       node_8_x:
-         node_version: 8.x
-       node_10_x:
-         node_version: 10.x
+  strategy:
+    matrix:
+      node_8_x:
+        node_version: 8.x
+      node_10_x:
+        node_version: 10.x
 
-   steps:
-   - template: scripts/azure-run-tests.yml
+  steps:
+  - template: scripts/azure-run-tests.yml
 
 - job: Linux
   pool:
