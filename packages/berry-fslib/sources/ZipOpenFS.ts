@@ -498,6 +498,8 @@ export class ZipOpenFS extends FakeFS {
   }
 
   private findZip(p: string) {
+    console.log(`initial`, {p});
+
     if (this.filter && !this.filter.test(p))
       return null;
 
@@ -515,12 +517,18 @@ export class ZipOpenFS extends FakeFS {
       let realArchivePath = archivePath;
       let stat;
 
+      console.log(`archivePath`, {archivePath});
+
       while (true) {
+        console.log(`realArchivePath`, {realArchivePath});
+
         try {
           stat = this.baseFs.lstatSync(realArchivePath);
         } catch (error) {
           return null;
         }
+
+        console.log(`stat`, {isFile: stat.isFile(), isDir: stat.isDirectory(), isSymlink: stat.isSymbolicLink()});
 
         if (stat.isSymbolicLink()) {
           realArchivePath = posix.resolve(posix.dirname(realArchivePath), this.baseFs.readlinkSync(realArchivePath));
