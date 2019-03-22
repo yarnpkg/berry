@@ -13,8 +13,10 @@ concierge.topLevel(`[--cwd PATH]`).validate(Joi.object().unknown().keys({
 }));
 
 function runBinary(path: string) {
-  if (path.endsWith(`.js`)) {
-    execFileSync(process.execPath, [path, ...process.argv.slice(2)], {
+  const physicalPath = NodeFS.fromPortablePath(path);
+
+  if (physicalPath) {
+    execFileSync(process.execPath, [physicalPath, ...process.argv.slice(2)], {
       stdio: `inherit`,
       env: {
         ... process.env,
@@ -22,7 +24,7 @@ function runBinary(path: string) {
       }
     });
   } else {
-    execFileSync(path, process.argv.slice(2), {
+    execFileSync(physicalPath, process.argv.slice(2), {
       stdio: `inherit`,
       env: {
         ... process.env,
