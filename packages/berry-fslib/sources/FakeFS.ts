@@ -97,8 +97,21 @@ export abstract class FakeFS {
     if (stat.isDirectory()) {
       for (const entry of await this.readdirPromise(p))
         await this.removePromise(posix.resolve(p, entry));
-      
-      await this.rmdirPromise(p);
+
+      // 5 gives 1s worth of retries at worst
+      for (let t = 0; t < 5; ++t) {
+        try {
+          await this.rmdirPromise(p);
+          break;
+        } catch (error) {
+          if (error.code === `EBUSY` || error.code === `ENOTEMPTY`) {
+            await new Promise(resolve => setTimeout(resolve, t * 100));
+            continue;
+          } else {
+            throw error;
+          }
+        }
+      }
     } else {
       await this.unlinkPromise(p);
     }
