@@ -1,4 +1,4 @@
-import {xfs, NodeFS}                                                              from '@berry/fslib';
+import {xfs, NodeFS}                                                      from '@berry/fslib';
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
 import {spawn}                                                            from 'child_process';
 import {delimiter, posix}                                                 from 'path';
@@ -133,13 +133,10 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     for (const key of Object.keys(state.environment))
       normalizedEnv[key.toUpperCase()] = state.environment[key] as string;
 
-    // We must make sure the PATH is properly converted into the
-    // system-specific format
-    if (normalizedEnv.PATH && posix.delimiter !== delimiter)
-      normalizedEnv.PATH = normalizedEnv.PATH.replace(new RegExp(posix.delimiter, `g`), delimiter);
 
     const subprocess = spawn(ident, rest, {
       cwd: NodeFS.fromPortablePath(state.cwd),
+      shell: process.platform === `win32`, // Needed to execute .cmd files
       env: normalizedEnv,
       stdio,
     });
@@ -566,11 +563,8 @@ export async function execute(command: string, args: Array<string> = [], {
 
   if (paths.length > 0)
     normalizedEnv.PATH = normalizedEnv.PATH
-      ? `${paths.join(posix.delimiter)}${posix.delimiter}${env.PATH}`
-      : `${paths.join(posix.delimiter)}`;
-
-  if (normalizedEnv.PATH && delimiter !== posix.delimiter)
-    normalizedEnv.PATH = normalizedEnv.PATH.replace(new RegExp(delimiter, `g`), posix.delimiter);
+      ? `${paths.join(delimiter)}${delimiter}${env.PATH}`
+      : `${paths.join(delimiter)}`;
 
   const normalizedBuiltins = new Map(BUILTINS);
   for (const [key, action] of Object.entries(builtins))
