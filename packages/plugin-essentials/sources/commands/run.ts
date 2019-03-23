@@ -76,8 +76,12 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     }
 
     if (topLevel) {
-      throw new UsageError(`Couldn't find a script name "${name}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)})`);
+      if (name === `node-gyp`) {
+        throw new UsageError(`Couldn't find a script name "${name}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}). This typically happens because some package depends on "node-gyp" to build itself, but didn't list it in their dependencies. To fix that, please run "yarn add node-gyp" into your top-level workspace. You also can open an issue on the repository of the specified package to suggest them to use an optional peer dependency.`);
+      } else {
+        throw new UsageError(`Couldn't find a script name "${name}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}).`);
+      }
     } else {
-      throw new UsageError(`Couldn't find a script named "${name}"`);
+      throw new UsageError(`Couldn't find a script named "${name}".`);
     }
   });

@@ -32,7 +32,7 @@ export async function makeScriptEnv(project: Project) {
   await makePathWrapper(binFolder, `yarn`, process.execPath, [process.argv[1]]);
   await makePathWrapper(binFolder, `yarnpkg`, process.execPath, [process.argv[1]]);
   await makePathWrapper(binFolder, `node`, process.execPath);
-  await makePathWrapper(binFolder, `node-gyp`, process.execPath, [process.argv[1], `--top-level`, `run`, `node-gyp`]);
+  await makePathWrapper(binFolder, `node-gyp`, process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]);
 
   scriptEnv.PATH = scriptEnv.PATH
     ? `${binFolder}${delimiter}${scriptEnv.PATH}`
