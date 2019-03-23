@@ -1,5 +1,5 @@
 const {
-  fs: {writeFile, writeJson},
+  fs: {readFile, writeFile, writeJson},
 } = require('pkg-tests-core');
 
 describe(`Workspaces tests`, () => {
@@ -149,6 +149,39 @@ describe(`Workspaces tests`, () => {
             cwd: `${path}/packages/workspace`,
           }),
         ).resolves.toMatchObject({stdout: `foo\n`});
+      },
+    ),
+  );
+
+  test(
+    `it should run the postinstall script when running an install`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`packages/*`],
+      },
+      async ({path, run, source}) => {
+        await writeFile(`${path}/write.js`, `
+          require('fs').appendFileSync(process.argv[2], process.argv[3] + '\\n');
+        `);
+
+        await writeJson(`${path}/packages/workspace/package.json`, {
+          name: `workspace`,
+          version: `1.0.0`,
+          scripts: {
+            [`preinstall`]: `node "${path}"/write.js "${path}"/workspace.dat "Preinstall"`,
+            [`install`]: `node "${path}"/write.js "${path}"/workspace.dat "Install"`,
+            [`postinstall`]: `node "${path}"/write.js "${path}"/workspace.dat "Postinstall"`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(readFile(`${path}/workspace.dat`, `utf8`)).resolves.toEqual([
+          `Preinstall\n`,
+          `Install\n`,
+          `Postinstall\n`,
+        ].join(``));
       },
     ),
   );

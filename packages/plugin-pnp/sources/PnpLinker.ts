@@ -75,7 +75,7 @@ class PnpInstaller implements Installer {
       buildScripts.length = 0;
     }
 
-    if (buildScripts.length > 0 && pkg.linkType !== LinkType.HARD) {
+    if (buildScripts.length > 0 && pkg.linkType !== LinkType.HARD && !this.opts.project.tryWorkspaceByLocator(pkg)) {
       this.opts.report.reportWarning(MessageName.SOFT_LINK_BUILD, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
       buildScripts.length = 0;
     }
