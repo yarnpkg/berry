@@ -9,7 +9,7 @@
     "@berry/parsers": "workspace:*",
     "@berry/pnp": "workspace:*",
     "@berry/shell": "workspace:*",
-    "@manaflair/concierge": "^0.12.1",
+    "@manaflair/concierge": "^0.12.3",
     "chalk": "^2.4.1",
     "execa": "^1.0.0",
     "globby": "^8.0.1",

@@ -6,7 +6,7 @@
     "@berry/core": "workspace:*",
     "@berry/json-proxy": "workspace:*",
     "@berry/ui": "workspace:*",
-    "@manaflair/concierge": "^0.12.1",
+    "@manaflair/concierge": "^0.12.3",
     "dateformat": "^3.0.3",
     "immer": "^1.7.2",
     "joi": "^13.6.0",

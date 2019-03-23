@@ -1,12 +1,12 @@
-import {Configuration, PluginConfiguration, Project, Workspace, Manifest, Cache} from '@berry/core';
-import {LightReport, ThrowReport}                                                from '@berry/core';
-import {scriptUtils}                                                             from '@berry/core';
-import {UsageError}                                                              from '@manaflair/concierge';
-import {Readable, Writable}                                                      from 'stream';
+import {Configuration, PluginConfiguration, Project, Workspace, Cache} from '@berry/core';
+import {LightReport}                                                   from '@berry/core';
+import {scriptUtils, structUtils}                                      from '@berry/core';
+import {UsageError}                                                    from '@manaflair/concierge';
+import {Readable, Writable}                                            from 'stream';
 
 export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
-  .command(`run <name> [... args]`)
+  .command(`run <name> [... args] [-T,--top-level]`)
   .describe(`run a script defined in the package.json`)
   .flags({proxyArguments: true})
 
@@ -22,7 +22,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     Whatever happens, the cwd of the spawned process will be the workspace that declares the script (which makes it possible to call commands cross-workspaces using the third syntax).
   `)
 
-  .action(async ({cwd, stdin, stdout, stderr, name, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, name: string, args: Array<string>}) => {
+  .action(async ({cwd, stdin, stdout, stderr, name, topLevel, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, name: string, topLevel: boolean, args: Array<string>}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace, locator} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -31,23 +31,27 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
       await project.resolveEverything({lockfileOnly: true, cache, report});
     });
 
+    const effectiveLocator = topLevel
+      ? project.topLevelWorkspace.anchoredLocator
+      : locator;
+
     if (report.hasErrors())
       return report.exitCode();
 
-    // First we check to see whether a script exist inside the current workspace
+    // First we check to see whether a script exist inside the current package
     // for the given name
 
-    if (await scriptUtils.hasPackageScript(locator, name, {project}))
-      return await scriptUtils.executePackageScript(locator, name, args, {project, stdin, stdout, stderr});
+    if (await scriptUtils.hasPackageScript(effectiveLocator, name, {project}))
+      return await scriptUtils.executePackageScript(effectiveLocator, name, args, {project, stdin, stdout, stderr});
 
     // If we can't find it, we then check whether one of the dependencies of the
-    // current workspace exports a binary with the requested name
+    // current package exports a binary with the requested name
 
-    const binaries = await scriptUtils.getPackageAccessibleBinaries(locator, {project});
+    const binaries = await scriptUtils.getPackageAccessibleBinaries(effectiveLocator, {project});
     const binary = binaries.get(name);
 
     if (binary)
-      return await scriptUtils.executePackageAccessibleBinary(locator, name, args, {cwd, project, stdin, stdout, stderr});
+      return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, name, args, {cwd, project, stdin, stdout, stderr});
 
     // When it fails, we try to check whether it's a global script (ie we look
     // into all the workspaces to find one that exports this script). We only do
@@ -57,7 +61,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     // We also disable this logic for packages coming from third-parties (ie
     // not workspaces). Not particular reason except maybe security concerns.
 
-    if (workspace && name.includes(`:`)) {
+    if (!topLevel && workspace && name.includes(`:`)) {
       let candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
         return workspace.manifest.scripts.has(name) ? workspace : null;
       }));
@@ -71,5 +75,13 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
       }
     }
 
-    throw new UsageError(`Couldn't find a script named "${name}"`);
+    if (topLevel) {
+      if (name === `node-gyp`) {
+        throw new UsageError(`Couldn't find a script name "${name}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}). This typically happens because some package depends on "node-gyp" to build itself, but didn't list it in their dependencies. To fix that, please run "yarn add node-gyp" into your top-level workspace. You also can open an issue on the repository of the specified package to suggest them to use an optional peer dependency.`);
+      } else {
+        throw new UsageError(`Couldn't find a script name "${name}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}).`);
+      }
+    } else {
+      throw new UsageError(`Couldn't find a script named "${name}".`);
+    }
   });

@@ -26,12 +26,13 @@ export async function makeScriptEnv(project: Project) {
   const binFolder = scriptEnv.BERRY_BIN_FOLDER = dirSync().name;
 
   // Register some binaries that must be made available in all subprocesses
-  // spawned by Berry
+  // spawned by Yarn
 
-  await makePathWrapper(binFolder, `run`, process.execPath, [process.argv[1], `run`]),
-  await makePathWrapper(binFolder, `yarn`, process.execPath, [process.argv[1]]),
-  await makePathWrapper(binFolder, `yarnpkg`, process.execPath, [process.argv[1]]),
-  await makePathWrapper(binFolder, `node`, process.execPath),
+  await makePathWrapper(binFolder, `run`, process.execPath, [process.argv[1], `run`]);
+  await makePathWrapper(binFolder, `yarn`, process.execPath, [process.argv[1]]);
+  await makePathWrapper(binFolder, `yarnpkg`, process.execPath, [process.argv[1]]);
+  await makePathWrapper(binFolder, `node`, process.execPath);
+  await makePathWrapper(binFolder, `node-gyp`, process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]);
 
   scriptEnv.PATH = scriptEnv.PATH
     ? `${binFolder}${delimiter}${scriptEnv.PATH}`
