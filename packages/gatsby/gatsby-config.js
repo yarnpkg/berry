@@ -16,7 +16,14 @@ module.exports = {
     }, {
       name: `Features`,
       link: `/features`,
-    }]
+    }],
+    algolia: {
+      // Note that the appId and appKey are specific to Yarn's website - please
+      // don't use them anywhere else without asking Algolia's permission
+      appId: `OFCNCOG2CU`,
+      apiKey: `f54e21fa3a2a0160595bb058179bfb1e`,
+      indexName: `npm-search`,
+    },
   },
   plugins: [
     `gatsby-plugin-emotion`,

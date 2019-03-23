@@ -1,5 +1,10 @@
-import styled from '@emotion/styled';
-import React  from 'react';
+import styled   from '@emotion/styled';
+import React    from 'react';
+import markdown from 'remark-parse';
+import html     from 'remark-html';
+import unified  from 'unified';
+
+import useCache from '../utils/useCache';
 
 const Container = styled.article`
 `;
@@ -12,6 +17,18 @@ const Title = styled.h1`
 `;
 
 const Content = styled.div`
+  blockquote {
+    margin-left: 0;
+
+    border-left: 3px solid #859daf;
+
+    padding-left: 1em;
+
+    font-style: italic;
+
+    color: #859daf;
+  }
+
   a {
     border-bottom: 1px solid;
 
@@ -37,6 +54,10 @@ const Content = styled.div`
 
     padding: .5em 1em;
   }
+
+  > * {
+    margin-top: 0;
+  }
 `;
 
 export const PrerenderedMarkdown = ({title, children}) => <>
@@ -47,3 +68,19 @@ export const PrerenderedMarkdown = ({title, children}) => <>
     <Content dangerouslySetInnerHTML={{__html: children}} />
   </Container>
 </>;
+
+export const Markdown = ({title, children}) => {
+  const document = useCache(() => {
+    return unified().use(markdown).use(html, {
+      sanitize: true,
+    }).process(children);
+  }, [
+    children,
+  ]);
+
+  return document ? <>
+    <PrerenderedMarkdown title={title}>
+      {String(document)}
+    </PrerenderedMarkdown>
+  </> : null;
+}

@@ -8181,6 +8181,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:10.0.7"
                 ],
                 [
+                  "@types/algoliasearch",
+                  "npm:3.30.7"
+                ],
+                [
                   "@types/minimatch",
                   "npm:3.0.3"
                 ],
@@ -8191,6 +8195,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/pify",
                   "npm:3.0.2"
+                ],
+                [
+                  "algoliasearch",
+                  "npm:3.32.1"
                 ],
                 [
                   "gatsby",
@@ -8271,6 +8279,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "react-helmet",
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:5.2.0"
+                ],
+                [
+                  "remark-html",
+                  "npm:9.0.0"
+                ],
+                [
+                  "remark-parse",
+                  "npm:6.0.3"
+                ],
+                [
+                  "unified",
+                  "npm:7.1.0"
                 ]
               ]
             }
@@ -11663,6 +11683,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "@types/algoliasearch",
+        [
+          [
+            "npm:3.30.7",
+            {
+              "packageLocation": "./.yarn/cache/@types-algoliasearch-npm-3.30.7-f6b373aafd0d23ed0386d29c7211b7a7e013a58a1b43f4152cdc9eadacd1d9d4.zip/node_modules/@types/algoliasearch/",
+              "packageDependencies": [
+                [
+                  "@types/algoliasearch",
+                  "npm:3.30.7"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "@types/caseless",
         [
           [
@@ -12874,6 +12911,77 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "@types/unist",
+        [
+          [
+            "npm:2.0.3",
+            {
+              "packageLocation": "./.yarn/cache/@types-unist-npm-2.0.3-0fd06c1f671f616639b9125989530309e56a4148191f9e12d7aa09700db693c3.zip/node_modules/@types/unist/",
+              "packageDependencies": [
+                [
+                  "@types/unist",
+                  "npm:2.0.3"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/vfile",
+        [
+          [
+            "npm:3.0.2",
+            {
+              "packageLocation": "./.yarn/cache/@types-vfile-npm-3.0.2-cfb2f1367f0eed8c8da68fa2e01863ad6debb371febfb1bf2ab45bc91ce0302f.zip/node_modules/@types/vfile/",
+              "packageDependencies": [
+                [
+                  "@types/vfile",
+                  "npm:3.0.2"
+                ],
+                [
+                  "@types/node",
+                  "npm:10.12.18"
+                ],
+                [
+                  "@types/unist",
+                  "npm:2.0.3"
+                ],
+                [
+                  "@types/vfile-message",
+                  "npm:1.0.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/vfile-message",
+        [
+          [
+            "npm:1.0.1",
+            {
+              "packageLocation": "./.yarn/cache/@types-vfile-message-npm-1.0.1-39fe6abfc424427c07c28b508d633a549473e16f49da6d52da5314ea8b8e562d.zip/node_modules/@types/vfile-message/",
+              "packageDependencies": [
+                [
+                  "@types/vfile-message",
+                  "npm:1.0.1"
+                ],
+                [
+                  "@types/node",
+                  "npm:10.12.18"
+                ],
+                [
+                  "@types/unist",
+                  "npm:2.0.3"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "@types/webassembly-js-api",
         [
           [
@@ -13711,6 +13819,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "agentkeepalive",
+        [
+          [
+            "npm:2.2.0",
+            {
+              "packageLocation": "./.yarn/cache/agentkeepalive-npm-2.2.0-ad953aaaff980f82379ad756e2905e384b83036a4e26e15348b99e6baa125233.zip/node_modules/agentkeepalive/",
+              "packageDependencies": [
+                [
+                  "agentkeepalive",
+                  "npm:2.2.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "ajv",
         [
           [
@@ -13863,6 +13988,83 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "ajv",
                   "npm:6.7.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "algoliasearch",
+        [
+          [
+            "npm:3.32.1",
+            {
+              "packageLocation": "./.yarn/cache/algoliasearch-npm-3.32.1-58991bc31c36e7cbe8e5532724a497cfdff9b31dd910474e5ab9b666ddd9fbf0.zip/node_modules/algoliasearch/",
+              "packageDependencies": [
+                [
+                  "algoliasearch",
+                  "npm:3.32.1"
+                ],
+                [
+                  "agentkeepalive",
+                  "npm:2.2.0"
+                ],
+                [
+                  "debug",
+                  "npm:2.6.9"
+                ],
+                [
+                  "envify",
+                  "npm:4.1.0"
+                ],
+                [
+                  "es6-promise",
+                  "npm:4.2.6"
+                ],
+                [
+                  "events",
+                  "npm:1.1.1"
+                ],
+                [
+                  "foreach",
+                  "npm:2.0.5"
+                ],
+                [
+                  "global",
+                  "npm:4.3.2"
+                ],
+                [
+                  "inherits",
+                  "npm:2.0.3"
+                ],
+                [
+                  "isarray",
+                  "npm:2.0.4"
+                ],
+                [
+                  "load-script",
+                  "npm:1.0.0"
+                ],
+                [
+                  "object-keys",
+                  "npm:1.0.12"
+                ],
+                [
+                  "querystring-es3",
+                  "npm:0.2.1"
+                ],
+                [
+                  "reduce",
+                  "npm:1.0.2"
+                ],
+                [
+                  "semver",
+                  "npm:5.6.0"
+                ],
+                [
+                  "tunnel-agent",
+                  "npm:0.6.0"
                 ]
               ]
             }
@@ -24050,6 +24252,31 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "envify",
+        [
+          [
+            "npm:4.1.0",
+            {
+              "packageLocation": "./.yarn/cache/envify-npm-4.1.0-5b8136f1b5c2ffead8e68a0e3e42b38212aea42607ac5d3eb00643f505f38249.zip/node_modules/envify/",
+              "packageDependencies": [
+                [
+                  "envify",
+                  "npm:4.1.0"
+                ],
+                [
+                  "esprima",
+                  "npm:4.0.1"
+                ],
+                [
+                  "through",
+                  "npm:2.3.8"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "envinfo",
         [
           [
@@ -25573,6 +25800,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       [
         "events",
         [
+          [
+            "npm:1.1.1",
+            {
+              "packageLocation": "./.yarn/cache/events-npm-1.1.1-a0b98276291a785891a7940bd167c4b5879d33c4f0dc38f3e462a99f21c6223d.zip/node_modules/events/",
+              "packageDependencies": [
+                [
+                  "events",
+                  "npm:1.1.1"
+                ]
+              ]
+            }
+          ],
           [
             "npm:3.0.0",
             {
@@ -27921,6 +28160,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "for-in",
                   "npm:1.0.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "foreach",
+        [
+          [
+            "npm:2.0.5",
+            {
+              "packageLocation": "./.yarn/cache/foreach-npm-2.0.5-a6f31edd35bfbbebd9bad538b38997ed9341d0425be15f04b7bf116ff250097b.zip/node_modules/foreach/",
+              "packageDependencies": [
+                [
+                  "foreach",
+                  "npm:2.0.5"
                 ]
               ]
             }
@@ -32934,6 +33190,27 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "hast-util-sanitize",
+        [
+          [
+            "npm:1.3.0",
+            {
+              "packageLocation": "./.yarn/cache/hast-util-sanitize-npm-1.3.0-88edc3dc54b0760a15fd758295d980752f12d226ddc52ce88ae42e13d9781d0e.zip/node_modules/hast-util-sanitize/",
+              "packageDependencies": [
+                [
+                  "hast-util-sanitize",
+                  "npm:1.3.0"
+                ],
+                [
+                  "xtend",
+                  "npm:4.0.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "hast-util-to-html",
         [
           [
@@ -32968,6 +33245,58 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "property-information",
                   "npm:4.2.0"
+                ],
+                [
+                  "space-separated-tokens",
+                  "npm:1.1.2"
+                ],
+                [
+                  "stringify-entities",
+                  "npm:1.3.2"
+                ],
+                [
+                  "unist-util-is",
+                  "npm:2.1.2"
+                ],
+                [
+                  "xtend",
+                  "npm:4.0.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:5.0.0",
+            {
+              "packageLocation": "./.yarn/cache/hast-util-to-html-npm-5.0.0-cad022e53daf17dbe86b014ac1c310614eb87e62dfa60339775ce0a4de21d441.zip/node_modules/hast-util-to-html/",
+              "packageDependencies": [
+                [
+                  "hast-util-to-html",
+                  "npm:5.0.0"
+                ],
+                [
+                  "ccount",
+                  "npm:1.0.3"
+                ],
+                [
+                  "comma-separated-tokens",
+                  "npm:1.0.5"
+                ],
+                [
+                  "hast-util-is-element",
+                  "npm:1.0.2"
+                ],
+                [
+                  "hast-util-whitespace",
+                  "npm:1.0.2"
+                ],
+                [
+                  "html-void-elements",
+                  "npm:1.0.3"
+                ],
+                [
+                  "property-information",
+                  "npm:5.0.1"
                 ],
                 [
                   "space-separated-tokens",
@@ -36398,6 +36727,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "isarray",
                   "npm:2.0.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:2.0.4",
+            {
+              "packageLocation": "./.yarn/cache/isarray-npm-2.0.4-8976495ea1c235c2e620a17f3f78732399d9f7e1f7915a190c0dfda5a393158a.zip/node_modules/isarray/",
+              "packageDependencies": [
+                [
+                  "isarray",
+                  "npm:2.0.4"
                 ]
               ]
             }
@@ -39929,6 +40270,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "load-script",
+        [
+          [
+            "npm:1.0.0",
+            {
+              "packageLocation": "./.yarn/cache/load-script-npm-1.0.0-09731e438d22ae45f5593191abfa7f0df704cb2d2047d65a9f308a9ae1789223.zip/node_modules/load-script/",
+              "packageDependencies": [
+                [
+                  "load-script",
+                  "npm:1.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "loader-fs-cache",
         [
           [
@@ -41127,6 +41485,62 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "mdast-util-to-hast",
                   "npm:3.0.4"
+                ],
+                [
+                  "collapse-white-space",
+                  "npm:1.0.4"
+                ],
+                [
+                  "detab",
+                  "npm:2.0.1"
+                ],
+                [
+                  "mdast-util-definitions",
+                  "npm:1.2.3"
+                ],
+                [
+                  "mdurl",
+                  "npm:1.0.1"
+                ],
+                [
+                  "trim",
+                  "npm:0.0.1"
+                ],
+                [
+                  "trim-lines",
+                  "npm:1.1.1"
+                ],
+                [
+                  "unist-builder",
+                  "npm:1.0.3"
+                ],
+                [
+                  "unist-util-generated",
+                  "npm:1.1.3"
+                ],
+                [
+                  "unist-util-position",
+                  "npm:3.0.2"
+                ],
+                [
+                  "unist-util-visit",
+                  "npm:1.4.0"
+                ],
+                [
+                  "xtend",
+                  "npm:4.0.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:4.0.0",
+            {
+              "packageLocation": "./.yarn/cache/mdast-util-to-hast-npm-4.0.0-b0b3a14aec7cc563d3726ea1c3bd5cddcf45a30e6525cc482ed077a5091ca38b.zip/node_modules/mdast-util-to-hast/",
+              "packageDependencies": [
+                [
+                  "mdast-util-to-hast",
+                  "npm:4.0.0"
                 ],
                 [
                   "collapse-white-space",
@@ -43672,6 +44086,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "object-keys",
                   "npm:1.0.12"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:1.1.0",
+            {
+              "packageLocation": "./.yarn/cache/object-keys-npm-1.1.0-c8898ba05f7668ccbeb6f7eef361176b012396aa9fb7c8fc2e058fb8aec461eb.zip/node_modules/object-keys/",
+              "packageDependencies": [
+                [
+                  "object-keys",
+                  "npm:1.1.0"
                 ]
               ]
             }
@@ -47980,6 +48406,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
+          ],
+          [
+            "npm:5.0.1",
+            {
+              "packageLocation": "./.yarn/cache/property-information-npm-5.0.1-23c68c79daa80549d3e5bebee3a0548b9ce410204371f582296cf20b30a7982c.zip/node_modules/property-information/",
+              "packageDependencies": [
+                [
+                  "property-information",
+                  "npm:5.0.1"
+                ],
+                [
+                  "xtend",
+                  "npm:4.0.1"
+                ]
+              ]
+            }
           ]
         ]
       ],
@@ -49760,6 +50202,27 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "reduce",
+        [
+          [
+            "npm:1.0.2",
+            {
+              "packageLocation": "./.yarn/cache/reduce-npm-1.0.2-4e1677cef3616d76b97f4af3691083fea8318fa74b5de647a40a22658a2031c1.zip/node_modules/reduce/",
+              "packageDependencies": [
+                [
+                  "reduce",
+                  "npm:1.0.2"
+                ],
+                [
+                  "object-keys",
+                  "npm:1.1.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "redux",
         [
           [
@@ -50245,6 +50708,39 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "remark-html",
+        [
+          [
+            "npm:9.0.0",
+            {
+              "packageLocation": "./.yarn/cache/remark-html-npm-9.0.0-0784bea2f58f15db0cd1dbddfa079be88d11a4d1eedad2f33332773e5d724631.zip/node_modules/remark-html/",
+              "packageDependencies": [
+                [
+                  "remark-html",
+                  "npm:9.0.0"
+                ],
+                [
+                  "hast-util-sanitize",
+                  "npm:1.3.0"
+                ],
+                [
+                  "hast-util-to-html",
+                  "npm:5.0.0"
+                ],
+                [
+                  "mdast-util-to-hast",
+                  "npm:4.0.0"
+                ],
+                [
+                  "xtend",
+                  "npm:4.0.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "remark-parse",
         [
           [
@@ -50255,6 +50751,78 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "remark-parse",
                   "npm:5.0.0"
+                ],
+                [
+                  "collapse-white-space",
+                  "npm:1.0.4"
+                ],
+                [
+                  "is-alphabetical",
+                  "npm:1.0.2"
+                ],
+                [
+                  "is-decimal",
+                  "npm:1.0.2"
+                ],
+                [
+                  "is-whitespace-character",
+                  "npm:1.0.2"
+                ],
+                [
+                  "is-word-character",
+                  "npm:1.0.2"
+                ],
+                [
+                  "markdown-escapes",
+                  "npm:1.0.2"
+                ],
+                [
+                  "parse-entities",
+                  "npm:1.2.1"
+                ],
+                [
+                  "repeat-string",
+                  "npm:1.6.1"
+                ],
+                [
+                  "state-toggle",
+                  "npm:1.0.1"
+                ],
+                [
+                  "trim",
+                  "npm:0.0.1"
+                ],
+                [
+                  "trim-trailing-lines",
+                  "npm:1.1.1"
+                ],
+                [
+                  "unherit",
+                  "npm:1.1.1"
+                ],
+                [
+                  "unist-util-remove-position",
+                  "npm:1.1.2"
+                ],
+                [
+                  "vfile-location",
+                  "npm:2.0.4"
+                ],
+                [
+                  "xtend",
+                  "npm:4.0.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:6.0.3",
+            {
+              "packageLocation": "./.yarn/cache/remark-parse-npm-6.0.3-49c501d3aa32f70cb879f5476657ae70e0972bcca44925004864afe6c9c89082.zip/node_modules/remark-parse/",
+              "packageDependencies": [
+                [
+                  "remark-parse",
+                  "npm:6.0.3"
                 ],
                 [
                   "collapse-white-space",
@@ -57075,6 +57643,50 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
+          ],
+          [
+            "npm:7.1.0",
+            {
+              "packageLocation": "./.yarn/cache/unified-npm-7.1.0-8c3b7f2f45f592951eabbf494e4eed8e2281760e4a2ee9549dc6b365178636d6.zip/node_modules/unified/",
+              "packageDependencies": [
+                [
+                  "unified",
+                  "npm:7.1.0"
+                ],
+                [
+                  "@types/unist",
+                  "npm:2.0.3"
+                ],
+                [
+                  "@types/vfile",
+                  "npm:3.0.2"
+                ],
+                [
+                  "bail",
+                  "npm:1.0.3"
+                ],
+                [
+                  "extend",
+                  "npm:3.0.2"
+                ],
+                [
+                  "is-plain-obj",
+                  "npm:1.1.0"
+                ],
+                [
+                  "trough",
+                  "npm:1.0.3"
+                ],
+                [
+                  "vfile",
+                  "npm:3.0.1"
+                ],
+                [
+                  "x-is-string",
+                  "npm:0.1.0"
+                ]
+              ]
+            }
           ]
         ]
       ],
@@ -58233,6 +58845,34 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "is-buffer",
                   "npm:1.1.6"
+                ],
+                [
+                  "replace-ext",
+                  "npm:1.0.0"
+                ],
+                [
+                  "unist-util-stringify-position",
+                  "npm:1.1.2"
+                ],
+                [
+                  "vfile-message",
+                  "npm:1.1.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:3.0.1",
+            {
+              "packageLocation": "./.yarn/cache/vfile-npm-3.0.1-501603a09b0f608ec1c58614c539ce5e480804dc7b706b6ea83d01174145bb59.zip/node_modules/vfile/",
+              "packageDependencies": [
+                [
+                  "vfile",
+                  "npm:3.0.1"
+                ],
+                [
+                  "is-buffer",
+                  "npm:2.0.3"
                 ],
                 [
                   "replace-ext",

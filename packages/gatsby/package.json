@@ -5,9 +5,11 @@
     "@emotion/core": "^10.0.7",
     "@emotion/styled": "^10.0.7",
     "@emotion/styled-base": "^10.0.7",
+    "@types/algoliasearch": "3.30.7",
     "@types/minimatch": "3.0.3",
     "@types/minimist": "1.2.0",
     "@types/pify": "3.0.2",
+    "algoliasearch": "^3.32.1",
     "gatsby": "^2.1.31",
     "gatsby-image": "^2.0.31",
     "gatsby-plugin-emotion": "^4.0.6",
@@ -27,7 +29,10 @@
     "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
-    "react-helmet": "^5.2.0"
+    "react-helmet": "^5.2.0",
+    "remark-html": "^9.0.0",
+    "remark-parse": "^6.0.3",
+    "unified": "^7.1.0"
   },
   "scripts": {
     "build": "gatsby build --prefix-paths",
