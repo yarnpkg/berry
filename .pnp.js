@@ -8181,24 +8181,12 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:10.0.7"
                 ],
                 [
-                  "@types/algoliasearch",
-                  "npm:3.30.7"
-                ],
-                [
-                  "@types/minimatch",
-                  "npm:3.0.3"
-                ],
-                [
-                  "@types/minimist",
-                  "npm:1.2.0"
-                ],
-                [
-                  "@types/pify",
-                  "npm:3.0.2"
-                ],
-                [
                   "algoliasearch",
                   "npm:3.32.1"
+                ],
+                [
+                  "es6-promise",
+                  "npm:4.2.6"
                 ],
                 [
                   "gatsby",
@@ -11683,23 +11671,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
-        "@types/algoliasearch",
-        [
-          [
-            "npm:3.30.7",
-            {
-              "packageLocation": "./.yarn/cache/@types-algoliasearch-npm-3.30.7-f6b373aafd0d23ed0386d29c7211b7a7e013a58a1b43f4152cdc9eadacd1d9d4.zip/node_modules/@types/algoliasearch/",
-              "packageDependencies": [
-                [
-                  "@types/algoliasearch",
-                  "npm:3.30.7"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
         "@types/caseless",
         [
           [
@@ -12116,23 +12087,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
-        "@types/minimist",
-        [
-          [
-            "npm:1.2.0",
-            {
-              "packageLocation": "./.yarn/cache/@types-minimist-npm-1.2.0-0b3007e2e89a473e14ce12da060b3d4c356a37d22627bd166d32451922d3b9d1.zip/node_modules/@types/minimist/",
-              "packageDependencies": [
-                [
-                  "@types/minimist",
-                  "npm:1.2.0"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
         "@types/mkdirp",
         [
           [
@@ -12226,23 +12180,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/node",
                   "npm:10.12.18"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
-        "@types/pify",
-        [
-          [
-            "npm:3.0.2",
-            {
-              "packageLocation": "./.yarn/cache/@types-pify-npm-3.0.2-9fc2d67d05bf07f51cf2d78844827f42e4c5892c1a521e0a4f15542fdcaff55d.zip/node_modules/@types/pify/",
-              "packageDependencies": [
-                [
-                  "@types/pify",
-                  "npm:3.0.2"
                 ]
               ]
             }

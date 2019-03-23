@@ -1338,11 +1338,8 @@ __metadata:
     "@emotion/core": "npm:^10.0.7"
     "@emotion/styled": "npm:^10.0.7"
     "@emotion/styled-base": "npm:^10.0.7"
-    "@types/algoliasearch": "npm:3.30.7"
-    "@types/minimatch": "npm:3.0.3"
-    "@types/minimist": "npm:1.2.0"
-    "@types/pify": "npm:3.0.2"
     algoliasearch: "npm:^3.32.1"
+    es6-promise: "npm:^4.2.6"
     gatsby: "npm:^2.1.31"
     gatsby-image: "npm:^2.0.31"
     gatsby-plugin-emotion: "npm:^4.0.6"
@@ -2301,13 +2298,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/algoliasearch@npm:3.30.7":
-  version: 3.30.7
-  resolution: "@types/algoliasearch@npm:3.30.7"
-  checksum: 14b6d0bec05795c3ade30237fdb33388eb1f91792a61a1191cf7b1871c0f33a636a2f715bea0a4952b789efd5cd28a56075be3bedb3fe77df8c388482cf10b46
-  languageName: node
-  linkType: hard
-
 "@types/caseless@npm:*":
   version: 0.12.1
   resolution: "@types/caseless@npm:0.12.1"
@@ -2474,17 +2464,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/minimatch@npm:*, @types/minimatch@npm:3.0.3":
+"@types/minimatch@npm:*":
   version: 3.0.3
   resolution: "@types/minimatch@npm:3.0.3"
   checksum: 6454142840437d901a4a348b6c27a5974cbfae22e42776a6180cbdecc3393598fa70678dc7dcaf720a257658f13ee572ae427b870a5bb511bda6dd1013b65d8b
-  languageName: node
-  linkType: hard
-
-"@types/minimist@npm:1.2.0":
-  version: 1.2.0
-  resolution: "@types/minimist@npm:1.2.0"
-  checksum: 6bca1ae722e8c249e7aad251e5d3d0a8a8ab515640314e201e37223ba61afeea4e78edc5bd0251d79daf94385a550394ea6f6d67a8239a9a011f8f61fdfd9883
   languageName: node
   linkType: hard
 
@@ -2531,13 +2514,6 @@ __metadata:
   version: 7.10.5
   resolution: "@types/node@npm:7.10.5"
   checksum: 21f6a896ab32513cc04329ffaf735d995c7ab7fa3f1eeea60f6acef436a83d9b5ae71af9f27eae9459ef7ab4927e47eb312a94afaf8be0bdea4234e12c3b3bf7
-  languageName: node
-  linkType: hard
-
-"@types/pify@npm:3.0.2":
-  version: 3.0.2
-  resolution: "@types/pify@npm:3.0.2"
-  checksum: eb9efb05a3a9998832656a49e8e4494df657fe9a138620493b6a8de5ea1df6ad17df4ecdae7356e817a0162fbc63400fa5e26a44cdf50200ce0e074cae6f6a43
   languageName: node
   linkType: hard
 
@@ -7213,7 +7189,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es6-promise@npm:^4.0.3, es6-promise@npm:^4.1.0":
+"es6-promise@npm:^4.0.3, es6-promise@npm:^4.1.0, es6-promise@npm:^4.2.6":
   version: 4.2.6
   resolution: "es6-promise@npm:4.2.6"
   checksum: bd04680619debffe903f119720422597b55875d95aa75587006d06baa5c158db972c364b41e25c9dcad981f71c6c52eeb3ec5b4eaf0e4c8d59bbd006bbc83c3c
