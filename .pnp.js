@@ -2726,6 +2726,46 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             }
           ],
           [
+            "virtual:b1a2f859799d58d25a6605d607e40bd2a98b36cb2b317318bc0fc8dd6b2ca86570ae88e96124325d291610049f6bf86b0e3a4a8c49fe4767b3172260fdc5ddb3#npm:7.2.0",
+            {
+              "packageLocation": "./.yarn/virtual/@babel-plugin-syntax-jsx-virtual-f2b7ce8a7d27f24eb5d8a1e0ab446186e4e1be31b592a6e3ecd63f74357b88dc/node_modules/@babel/plugin-syntax-jsx/",
+              "packageDependencies": [
+                [
+                  "@babel/plugin-syntax-jsx",
+                  "virtual:b1a2f859799d58d25a6605d607e40bd2a98b36cb2b317318bc0fc8dd6b2ca86570ae88e96124325d291610049f6bf86b0e3a4a8c49fe4767b3172260fdc5ddb3#npm:7.2.0"
+                ],
+                [
+                  "@babel/core",
+                  "npm:7.3.3"
+                ],
+                [
+                  "@babel/helper-plugin-utils",
+                  "npm:7.0.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:ba1567c0cabe7b7f1bc54ea5d9c66c9f9786a6311699fb2fe1fa6a155ce164475bb90a1936c481ea46cc4eed94455226f1a858f9b0dc70e844cb9ec237345176#npm:7.2.0",
+            {
+              "packageLocation": "./.yarn/virtual/@babel-plugin-syntax-jsx-virtual-4b45c8dee5622759f57af11a8d5acb7cec43841b032a4185707691e11cecedc5/node_modules/@babel/plugin-syntax-jsx/",
+              "packageDependencies": [
+                [
+                  "@babel/plugin-syntax-jsx",
+                  "virtual:ba1567c0cabe7b7f1bc54ea5d9c66c9f9786a6311699fb2fe1fa6a155ce164475bb90a1936c481ea46cc4eed94455226f1a858f9b0dc70e844cb9ec237345176#npm:7.2.0"
+                ],
+                [
+                  "@babel/core",
+                  "npm:7.3.3"
+                ],
+                [
+                  "@babel/helper-plugin-utils",
+                  "npm:7.0.0"
+                ]
+              ]
+            }
+          ],
+          [
             "virtual:c9c1ba09f67c02263076d6fb19d184fb605924f1b073b763e8100bd2b358db31d6f25b2fa1f9b85a77e08893ba4b7cd934debaaf57dad26fd955c8ab717059b7#npm:7.2.0",
             {
               "packageLocation": "./.yarn/virtual/@babel-plugin-syntax-jsx-virtual-0e6351384d193ea799bebe67dc035d079ed448fb9cd36bb15fd03063f51e44d9/node_modules/@babel/plugin-syntax-jsx/",
@@ -5958,6 +5998,34 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@babel/plugin-syntax-jsx",
                   "virtual:665fe93dd039c8ad585ecf528ab782c3213ea3c5384cfca02e7317d76894df1d196ed34bef8251568c0853b0571347eb39f9e94baec3c431982a9c889644b3c6#npm:7.2.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:ce0c013973697127b2c00abc2ad3d9f12f871ef848c9dfa06f0dac2e766362e81b2d17e745f09a009b0252fc10d4c7c754a96684dfd7d97ee73b4c0001a71410#npm:7.3.0",
+            {
+              "packageLocation": "./.yarn/virtual/@babel-plugin-transform-react-jsx-virtual-b1a2f859799d58d25a6605d607e40bd2a98b36cb2b317318bc0fc8dd6b2ca865/node_modules/@babel/plugin-transform-react-jsx/",
+              "packageDependencies": [
+                [
+                  "@babel/plugin-transform-react-jsx",
+                  "virtual:ce0c013973697127b2c00abc2ad3d9f12f871ef848c9dfa06f0dac2e766362e81b2d17e745f09a009b0252fc10d4c7c754a96684dfd7d97ee73b4c0001a71410#npm:7.3.0"
+                ],
+                [
+                  "@babel/core",
+                  "npm:7.3.3"
+                ],
+                [
+                  "@babel/helper-builder-react-jsx",
+                  "npm:7.3.0"
+                ],
+                [
+                  "@babel/helper-plugin-utils",
+                  "npm:7.0.0"
+                ],
+                [
+                  "@babel/plugin-syntax-jsx",
+                  "virtual:b1a2f859799d58d25a6605d607e40bd2a98b36cb2b317318bc0fc8dd6b2ca86570ae88e96124325d291610049f6bf86b0e3a4a8c49fe4767b3172260fdc5ddb3#npm:7.2.0"
                 ]
               ]
             }
@@ -9855,6 +9923,42 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
+          ],
+          [
+            "npm:0.1.2",
+            {
+              "packageLocation": "./.yarn/cache/@emotion-babel-plugin-jsx-pragmatic-npm-0.1.2-690839861347fbaf90e1f52fb53ea2f4b8731e96575a3ed43ac532f2c52c1ba4.zip/node_modules/@emotion/babel-plugin-jsx-pragmatic/",
+              "packageDependencies": [
+                [
+                  "@emotion/babel-plugin-jsx-pragmatic",
+                  "npm:0.1.2"
+                ],
+                [
+                  "@babel/plugin-syntax-jsx",
+                  "npm:7.2.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:ce0c013973697127b2c00abc2ad3d9f12f871ef848c9dfa06f0dac2e766362e81b2d17e745f09a009b0252fc10d4c7c754a96684dfd7d97ee73b4c0001a71410#npm:0.1.2",
+            {
+              "packageLocation": "./.yarn/virtual/@emotion-babel-plugin-jsx-pragmatic-virtual-ba1567c0cabe7b7f1bc54ea5d9c66c9f9786a6311699fb2fe1fa6a155ce16447/node_modules/@emotion/babel-plugin-jsx-pragmatic/",
+              "packageDependencies": [
+                [
+                  "@emotion/babel-plugin-jsx-pragmatic",
+                  "virtual:ce0c013973697127b2c00abc2ad3d9f12f871ef848c9dfa06f0dac2e766362e81b2d17e745f09a009b0252fc10d4c7c754a96684dfd7d97ee73b4c0001a71410#npm:0.1.2"
+                ],
+                [
+                  "@babel/core",
+                  "npm:7.3.3"
+                ],
+                [
+                  "@babel/plugin-syntax-jsx",
+                  "virtual:ba1567c0cabe7b7f1bc54ea5d9c66c9f9786a6311699fb2fe1fa6a155ce164475bb90a1936c481ea46cc4eed94455226f1a858f9b0dc70e844cb9ec237345176#npm:7.2.0"
+                ]
+              ]
+            }
           ]
         ]
       ],
@@ -9881,6 +9985,66 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "babel-plugin-emotion",
                   "npm:10.0.7"
+                ],
+                [
+                  "object-assign",
+                  "npm:4.1.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:10.0.9",
+            {
+              "packageLocation": "./.yarn/cache/@emotion-babel-preset-css-prop-npm-10.0.9-146e7e8b703ab727d18b88679aeb70c257e1b0b70802d4aadb7a94a8317b4eba.zip/node_modules/@emotion/babel-preset-css-prop/",
+              "packageDependencies": [
+                [
+                  "@emotion/babel-preset-css-prop",
+                  "npm:10.0.9"
+                ],
+                [
+                  "@babel/plugin-transform-react-jsx",
+                  "npm:7.3.0"
+                ],
+                [
+                  "@emotion/babel-plugin-jsx-pragmatic",
+                  "npm:0.1.2"
+                ],
+                [
+                  "babel-plugin-emotion",
+                  "npm:10.0.9"
+                ],
+                [
+                  "object-assign",
+                  "npm:4.1.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:340b63b3e77f431ef6ea4512a4b03cd665e11db975a52f488a2618ef5675bf76b731b132485843b4c5efe33558622d0c102425ae629f7459132c5a3b46c7ea1e#npm:10.0.9",
+            {
+              "packageLocation": "./.yarn/virtual/@emotion-babel-preset-css-prop-virtual-ce0c013973697127b2c00abc2ad3d9f12f871ef848c9dfa06f0dac2e766362e8/node_modules/@emotion/babel-preset-css-prop/",
+              "packageDependencies": [
+                [
+                  "@emotion/babel-preset-css-prop",
+                  "virtual:340b63b3e77f431ef6ea4512a4b03cd665e11db975a52f488a2618ef5675bf76b731b132485843b4c5efe33558622d0c102425ae629f7459132c5a3b46c7ea1e#npm:10.0.9"
+                ],
+                [
+                  "@babel/core",
+                  "npm:7.3.3"
+                ],
+                [
+                  "@babel/plugin-transform-react-jsx",
+                  "virtual:ce0c013973697127b2c00abc2ad3d9f12f871ef848c9dfa06f0dac2e766362e81b2d17e745f09a009b0252fc10d4c7c754a96684dfd7d97ee73b4c0001a71410#npm:7.3.0"
+                ],
+                [
+                  "@emotion/babel-plugin-jsx-pragmatic",
+                  "virtual:ce0c013973697127b2c00abc2ad3d9f12f871ef848c9dfa06f0dac2e766362e81b2d17e745f09a009b0252fc10d4c7c754a96684dfd7d97ee73b4c0001a71410#npm:0.1.2"
+                ],
+                [
+                  "babel-plugin-emotion",
+                  "npm:10.0.9"
                 ],
                 [
                   "object-assign",
@@ -10092,6 +10256,38 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@emotion/serialize",
                   "npm:0.11.4"
+                ],
+                [
+                  "@emotion/hash",
+                  "npm:0.7.1"
+                ],
+                [
+                  "@emotion/memoize",
+                  "npm:0.7.1"
+                ],
+                [
+                  "@emotion/unitless",
+                  "npm:0.7.3"
+                ],
+                [
+                  "@emotion/utils",
+                  "npm:0.11.1"
+                ],
+                [
+                  "csstype",
+                  "npm:2.6.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:0.11.6",
+            {
+              "packageLocation": "./.yarn/cache/@emotion-serialize-npm-0.11.6-d6057f22e330ed785cab1bc6e634ce15b7dc8c3cfb1060f1b39ae83c6a6f4ba8.zip/node_modules/@emotion/serialize/",
+              "packageDependencies": [
+                [
+                  "@emotion/serialize",
+                  "npm:0.11.6"
                 ],
                 [
                   "@emotion/hash",
@@ -16666,6 +16862,58 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@emotion/serialize",
                   "npm:0.11.4"
+                ],
+                [
+                  "babel-plugin-macros",
+                  "npm:2.5.0"
+                ],
+                [
+                  "babel-plugin-syntax-jsx",
+                  "npm:6.18.0"
+                ],
+                [
+                  "convert-source-map",
+                  "npm:1.6.0"
+                ],
+                [
+                  "escape-string-regexp",
+                  "npm:1.0.5"
+                ],
+                [
+                  "find-root",
+                  "npm:1.1.0"
+                ],
+                [
+                  "source-map",
+                  "npm:0.5.7"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:10.0.9",
+            {
+              "packageLocation": "./.yarn/cache/babel-plugin-emotion-npm-10.0.9-63373b68b0a28165a4bd4f61867016017f8ec091f37e69896110cee9bd1c9f0a.zip/node_modules/babel-plugin-emotion/",
+              "packageDependencies": [
+                [
+                  "babel-plugin-emotion",
+                  "npm:10.0.9"
+                ],
+                [
+                  "@babel/helper-module-imports",
+                  "npm:7.0.0"
+                ],
+                [
+                  "@emotion/hash",
+                  "npm:0.7.1"
+                ],
+                [
+                  "@emotion/memoize",
+                  "npm:0.7.1"
+                ],
+                [
+                  "@emotion/serialize",
+                  "npm:0.11.6"
                 ],
                 [
                   "babel-plugin-macros",
@@ -29514,6 +29762,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:7.2.3"
                 ],
                 [
+                  "@emotion/babel-preset-css-prop",
+                  "npm:10.0.9"
+                ],
+                [
                   "@gatsbyjs/relay-compiler",
                   "npm:2.0.0-printer-fix.2"
                 ],
@@ -30012,6 +30264,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@babel/traverse",
                   "npm:7.2.3"
+                ],
+                [
+                  "@emotion/babel-preset-css-prop",
+                  "virtual:340b63b3e77f431ef6ea4512a4b03cd665e11db975a52f488a2618ef5675bf76b731b132485843b4c5efe33558622d0c102425ae629f7459132c5a3b46c7ea1e#npm:10.0.9"
                 ],
                 [
                   "@gatsbyjs/relay-compiler",
