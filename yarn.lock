@@ -1246,7 +1246,7 @@ __metadata:
     "@babel/preset-typescript": "npm:^7.1.0"
     "@babel/register": "npm:^7.0.0"
     "@berry/cli": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.1"
+    "@manaflair/concierge": "npm:^0.12.2"
     brfs: "npm:^2.0.1"
     buffer-loader: "npm:^0.1.0"
     joi: "npm:^13.6.0"
@@ -1284,7 +1284,7 @@ __metadata:
     "@berry/plugin-typescript": "workspace:*"
     "@berry/pnp": "workspace:*"
     "@berry/shell": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.1"
+    "@manaflair/concierge": "npm:^0.12.2"
     chalk: "npm:^2.4.1"
     execa: "npm:^1.0.0"
     joi: "npm:^13.6.0"
@@ -1302,7 +1302,7 @@ __metadata:
     "@berry/parsers": "workspace:*"
     "@berry/pnp": "workspace:*"
     "@berry/shell": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.1"
+    "@manaflair/concierge": "npm:^0.12.2"
     chalk: "npm:^2.4.1"
     execa: "npm:^1.0.0"
     globby: "npm:^8.0.1"
@@ -1458,7 +1458,7 @@ __metadata:
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/parsers": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.1"
+    "@manaflair/concierge": "npm:^0.12.2"
     execa: "npm:^1.0.0"
     inquirer: "npm:^6.2.0"
     joi: "npm:^13.6.0"
@@ -1499,7 +1499,7 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/ui": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.1"
+    "@manaflair/concierge": "npm:^0.12.2"
     dateformat: "npm:^3.0.3"
     immer: "npm:^1.7.2"
     joi: "npm:^13.6.0"
@@ -1518,7 +1518,7 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.1"
+    "@manaflair/concierge": "npm:^0.12.2"
   languageName: unknown
   linkType: soft
 
@@ -1548,7 +1548,7 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.1"
+    "@manaflair/concierge": "npm:^0.12.2"
   languageName: unknown
   linkType: soft
 
@@ -1571,7 +1571,7 @@ __metadata:
     "@berry/builder": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.1"
+    "@manaflair/concierge": "npm:^0.12.2"
   languageName: unknown
   linkType: soft
 
@@ -2173,13 +2173,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@manaflair/concierge@npm:^0.12.1":
-  version: 0.12.1
-  resolution: "@manaflair/concierge@npm:0.12.1"
+"@manaflair/concierge@npm:^0.12.2":
+  version: 0.12.2
+  resolution: "@manaflair/concierge@npm:0.12.2"
   dependencies:
     chalk: "npm:^1.1.3"
     lodash: "npm:^4.17.4"
-  checksum: 163178b7d5d77643734d365c52e9868025dd4220f737f41c92dc304c27f4a430501a13ac6f4d5aea447cbe9e16888bf87668f16da44c5afba777319778ff71a1
+  checksum: a6afcfb289db181b830fb7c6c7449431b0d7615c915e7d0b0be100ad994eadb64274b0fee83835fe1d043e7b6b7d41dc4d9d1d57077e5e0dd260af56bdc28ea3
   languageName: node
   linkType: hard
 
