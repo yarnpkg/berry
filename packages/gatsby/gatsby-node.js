@@ -4,8 +4,6 @@
  * See: https://www.gatsbyjs.org/docs/node-apis/
  */
 
-const PnpWebpackPlugin = require(`pnp-webpack-plugin`);
-
 module.exports = {
   onCreateWebpackConfig: ({actions}) => {
     actions.setWebpackConfig({

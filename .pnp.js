@@ -9021,10 +9021,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:4.0.1"
                 ],
                 [
-                  "pnp-webpack-plugin",
-                  "npm:1.4.1"
-                ],
-                [
                   "prop-types",
                   "npm:15.7.2"
                 ],

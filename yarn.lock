@@ -1671,7 +1671,6 @@ __metadata:
     gatsby-transformer-sharp: "npm:^2.1.15"
     minimatch: "npm:^3.0.4"
     pify: "npm:^4.0.1"
-    pnp-webpack-plugin: "npm:^1.4.1"
     prop-types: "npm:^15.7.2"
     react: "npm:^16.8.4"
     react-dom: "npm:^16.8.4"

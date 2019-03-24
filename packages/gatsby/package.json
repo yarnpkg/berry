@@ -22,7 +22,6 @@
     "gatsby-transformer-sharp": "^2.1.15",
     "minimatch": "^3.0.4",
     "pify": "^4.0.1",
-    "pnp-webpack-plugin": "^1.4.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
