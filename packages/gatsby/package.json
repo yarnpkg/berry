@@ -7,7 +7,7 @@
     "@emotion/styled-base": "^10.0.7",
     "algoliasearch": "^3.32.1",
     "es6-promise": "^4.2.6",
-    "gatsby": "^2.1.31",
+    "gatsby": "^2.2.9",
     "gatsby-image": "^2.0.31",
     "gatsby-plugin-emotion": "^4.0.6",
     "gatsby-plugin-favicon": "^3.1.5",
@@ -22,7 +22,6 @@
     "gatsby-transformer-sharp": "^2.1.15",
     "minimatch": "^3.0.4",
     "pify": "^4.0.1",
-    "pnp-webpack-plugin": "^1.4.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
@@ -32,7 +31,7 @@
     "unified": "^7.1.0"
   },
   "scripts": {
-    "build": "gatsby build --prefix-paths",
+    "build": "rm -rf .cache public && gatsby build --prefix-paths && rsync -rtuc --delete public/ ../../docs/",
     "develop": "gatsby develop",
     "serve": "gatsby serve",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\""
