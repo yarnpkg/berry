@@ -1,6 +1,7 @@
 import fs                                                         from 'fs';
 import Module                                                     from 'module';
-import path                                                       from 'path';
+import path, {posix}                                              from 'path';
+import {NodeFS}                                                   from '@berry/fslib';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types';
 
@@ -113,7 +114,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         // ancestors.
 
         if (fs.lstatSync(unqualifiedPath).isSymbolicLink())
-          unqualifiedPath = path.normalize(path.resolve(path.dirname(unqualifiedPath), fs.readlinkSync(unqualifiedPath)));
+          unqualifiedPath = posix.normalize(posix.resolve(posix.dirname(unqualifiedPath), fs.readlinkSync(unqualifiedPath)));
 
         return unqualifiedPath;
       }
@@ -130,7 +131,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         let nextUnqualifiedPath;
 
         if (pkgJson && pkgJson.main)
-          nextUnqualifiedPath = path.resolve(unqualifiedPath, pkgJson.main);
+          nextUnqualifiedPath = posix.resolve(unqualifiedPath, pkgJson.main);
 
         // If the "main" field changed the path, we start again from this new location
 
@@ -202,7 +203,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function normalizePath(p: string) {
-    p = path.normalize(p);
+    p = posix.normalize(p);
 
     if (process.platform === 'win32')
       p = p.replace(backwardSlashRegExp, '/');
@@ -258,14 +259,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       return null;
 
     return packageInformation;
-  };
+  }
 
   /**
    * Finds the package locator that owns the specified path. If none is found, returns null instead.
    */
 
   function findPackageLocator(location: string): PackageLocator | null {
-    let relativeLocation = normalizePath(path.relative(runtimeState.basePath, location));
+    let relativeLocation = normalizePath(posix.relative(runtimeState.basePath, location));
 
     if (!relativeLocation.match(isStrictRegExp))
       relativeLocation = `./${relativeLocation}`;
@@ -340,12 +341,18 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (considerBuiltins && builtinModules.has(request))
       return null;
 
+    request = NodeFS.toPortablePath(request);
+    if (issuer) issuer = NodeFS.toPortablePath(issuer);
+
     // We allow disabling the pnp resolution for some subpaths. This is because some projects, often legacy,
     // contain multiple levels of dependencies (ie. a yarn.lock inside a subfolder of a yarn.lock). This is
     // typically solved using workspaces, but not all of them have been converted already.
 
     if (ignorePattern && issuer && ignorePattern.test(normalizePath(issuer))) {
-      const result = callNativeResolution(request, issuer);
+      const result = callNativeResolution(
+        NodeFS.fromPortablePath(request),
+        NodeFS.fromPortablePath(issuer)
+      );
 
       if (result === false) {
         throw makeError(
@@ -355,7 +362,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         );
       }
 
-      return result;
+      return NodeFS.toPortablePath(result);
     }
 
     let unqualifiedPath;
@@ -365,8 +372,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     const dependencyNameMatch = request.match(pathRegExp);
 
     if (!dependencyNameMatch) {
-      if (path.isAbsolute(request)) {
-        unqualifiedPath = path.normalize(request);
+      if (posix.isAbsolute(request)) {
+        unqualifiedPath = posix.normalize(request);
       } else {
         if (!issuer) {
           throw makeError(
@@ -377,9 +384,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         }
 
         if (issuer.match(isDirRegExp)) {
-          unqualifiedPath = path.normalize(path.resolve(issuer, request));
+          unqualifiedPath = posix.normalize(posix.resolve(issuer, request));
         } else {
-          unqualifiedPath = path.normalize(path.resolve(path.dirname(issuer), request));
+          unqualifiedPath = posix.normalize(posix.resolve(posix.dirname(issuer), request));
         }
       }
     }
@@ -404,7 +411,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       // resolution algorithm in the chain, usually the native Node resolution one
 
       if (!issuerLocator) {
-        const result = callNativeResolution(request, issuer);
+        const result = callNativeResolution(
+          NodeFS.fromPortablePath(request),
+          NodeFS.fromPortablePath(issuer)
+        );
 
         if (result === false) {
           throw makeError(
@@ -414,7 +424,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           );
         }
 
-        return result;
+        return NodeFS.toPortablePath(result);
       }
 
       const issuerInformation = getPackageInformationSafe(issuerLocator);
@@ -484,16 +494,16 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       // Now that we know which package we should resolve to, we only have to find out the file location
 
-      const dependencyLocation = path.resolve(runtimeState.basePath, dependencyInformation.packageLocation);
+      const dependencyLocation = posix.resolve(runtimeState.basePath, dependencyInformation.packageLocation);
 
       if (subPath) {
-        unqualifiedPath = path.resolve(dependencyLocation, subPath);
+        unqualifiedPath = posix.resolve(dependencyLocation, subPath);
       } else {
         unqualifiedPath = dependencyLocation;
       }
     }
 
-    return path.normalize(unqualifiedPath);
+    return posix.normalize(unqualifiedPath);
   };
 
   /**
@@ -509,7 +519,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, {extensions});
 
     if (qualifiedPath) {
-      return path.normalize(qualifiedPath);
+      return posix.normalize(qualifiedPath);
     } else {
       throw makeError(
         `QUALIFIED_PATH_RESOLUTION_FAILED`,

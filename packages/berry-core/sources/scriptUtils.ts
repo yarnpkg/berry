@@ -191,7 +191,8 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
       const manifest = await Manifest.find(`.`, {baseFs: packageFs});
 
       for (const [binName, file] of manifest.bin.entries()) {
-        binaries.set(binName, [pkg, posix.resolve(packageLocation, file)]);
+        const physicalPath = NodeFS.fromPortablePath(posix.resolve(packageLocation, file));
+        binaries.set(binName, [pkg, physicalPath]);
       }
     }
 

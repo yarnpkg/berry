@@ -256,6 +256,9 @@ export class NodeFS extends FakeFS {
     // Path should look like "N:\berry/scripts/plugin-pack.js"
     // And transform to "/mnt/n/berry/scripts/plugin-pack.js"
 
+    // Skip if the path is already portable
+    if (p.startsWith(PORTABLE_PATH_PREFIX)) return p;
+
     const {root} = win32.parse(p);
 
     // If relative path, just replace win32 slashes by posix slashes

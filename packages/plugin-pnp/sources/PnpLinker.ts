@@ -39,7 +39,7 @@ export class PnpLinker implements Linker {
     if (!xfs.existsSync(pnpPath))
       throw new Error(`Couldn't find the PnP package map at the root of the project - run an install to generate it`);
 
-    const pnpFile = miscUtils.dynamicRequire(pnpPath);
+    const pnpFile = miscUtils.dynamicRequire(NodeFS.fromPortablePath(pnpPath));
     delete require.cache[pnpPath];
 
     const locator = pnpFile.findPackageLocator(location);
