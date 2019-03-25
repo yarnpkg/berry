@@ -1766,6 +1766,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@berry/plugin-dlx@workspace:packages/plugin-dlx":
+  version: 0.0.0
+  resolution: "@berry/plugin-dlx@workspace:packages/plugin-dlx"
+  dependencies:
+    "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
+    "@berry/json-proxy": "workspace:*"
+    "@manaflair/concierge": "npm:^0.12.3"
+    tmp: "npm:^0.0.33"
+  languageName: unknown
+  linkType: soft
+
 "@berry/plugin-essentials@workspace:*, @berry/plugin-essentials@workspace:packages/plugin-essentials":
   version: 0.0.0
   resolution: "@berry/plugin-essentials@workspace:packages/plugin-essentials"

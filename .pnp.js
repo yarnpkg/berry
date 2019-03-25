@@ -9319,6 +9319,43 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "@berry/plugin-dlx",
+        [
+          [
+            "workspace:packages/plugin-dlx",
+            {
+              "packageLocation": "./packages/plugin-dlx/",
+              "packageDependencies": [
+                [
+                  "@berry/plugin-dlx",
+                  "workspace:packages/plugin-dlx"
+                ],
+                [
+                  "@berry/core",
+                  "workspace:packages/berry-core"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@berry/json-proxy",
+                  "workspace:packages/berry-json-proxy"
+                ],
+                [
+                  "@manaflair/concierge",
+                  "npm:0.12.3"
+                ],
+                [
+                  "tmp",
+                  "npm:0.0.33"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "@berry/plugin-essentials",
         [
           [
