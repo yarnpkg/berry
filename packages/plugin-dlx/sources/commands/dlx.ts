@@ -19,7 +19,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
   `)
 
   .example(
-    `Use create-react-native to create a new React app`,
+    `Use create-react-app to create a new React app`,
     `yarn dlx create-react-app ./my-app`,
   )
 
