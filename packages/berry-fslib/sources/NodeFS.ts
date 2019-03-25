@@ -236,13 +236,15 @@ export class NodeFS extends FakeFS {
   }
 
   static fromPortablePath(p: string) {
-    if (process.platform !== `win32`) return p;
+    if (process.platform !== `win32`)
+      return p;
 
     // Path should look like "/mnt/n/berry/scripts/plugin-pack.js"
     // And transform to "N:\berry/scripts/plugin-pack.js"
 
     const match = p.match(PORTABLE_PREFIX_REGEXP);
-    if (!match) return p;
+    if (!match)
+      return p;
 
     const [, drive, pathWithoutPrefix = ''] = match;
     const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
@@ -251,18 +253,21 @@ export class NodeFS extends FakeFS {
   }
 
   static toPortablePath(p: string) {
-    if (process.platform !== `win32`) return p;
+    if (process.platform !== `win32`)
+      return p;
 
     // Path should look like "N:\berry/scripts/plugin-pack.js"
     // And transform to "/mnt/n/berry/scripts/plugin-pack.js"
 
     // Skip if the path is already portable
-    if (p.startsWith(PORTABLE_PATH_PREFIX)) return p;
+    if (p.startsWith(PORTABLE_PATH_PREFIX))
+      return p;
 
     const {root} = win32.parse(p);
 
     // If relative path, just replace win32 slashes by posix slashes
-    if (!root) return p.replace(/\\/g, '/');
+    if (!root)
+      return p.replace(/\\/g, '/');
 
     const driveLetter = root[0].toLowerCase();
     const pathWithoutRoot = p.substr(root.length);

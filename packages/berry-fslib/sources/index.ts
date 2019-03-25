@@ -4,10 +4,11 @@ import {FakeFS}    from './FakeFS';
 import {NodeFS}    from './NodeFS';
 
 export {AliasFS}   from './AliasFS';
+export {FakeFS}    from './FakeFS';
 export {CwdFS}     from './CwdFS';
 export {JailFS}    from './JailFS';
 export {NodeFS}    from './NodeFS';
-export {FakeFS}    from './FakeFS';
+export {PosixFS}   from './PosixFS';
 export {ZipFS}     from './ZipFS';
 export {ZipOpenFS} from './ZipOpenFS';
 

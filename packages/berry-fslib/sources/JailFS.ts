@@ -122,11 +122,11 @@ export class JailFS extends FakeFS {
   }
 
   async unlinkPromise(p: string) {
-    return await this.baseFs.rmdirPromise(this.fromJailedPath(p));
+    return await this.baseFs.unlinkPromise(this.fromJailedPath(p));
   }
 
   unlinkSync(p: string) {
-    return this.baseFs.rmdirSync(this.fromJailedPath(p));
+    return this.baseFs.unlinkSync(this.fromJailedPath(p));
   }
 
   async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {

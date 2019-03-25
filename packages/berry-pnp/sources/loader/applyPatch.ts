@@ -1,11 +1,11 @@
-import {FakeFS, NodeFS, patchFs}    from '@berry/fslib';
-import fs                           from 'fs';
-import Module                       from 'module';
-import path                         from 'path';
+import {FakeFS, NodeFS, PosixFS, patchFs} from '@berry/fslib';
+import fs                                 from 'fs';
+import Module                             from 'module';
+import path                               from 'path';
 
-import {PackageLocator, PnpApi}     from '../types';
+import {PackageLocator, PnpApi}           from '../types';
 
-import {makeError, getIssuerModule} from './internalTools';
+import {makeError, getIssuerModule}       from './internalTools';
 
 export type ApplyPatchOptions = {
   compatibilityMode?: boolean,
@@ -261,5 +261,5 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return false;
   };
 
-  patchFs(fs, opts.fakeFs);
+  patchFs(fs, new PosixFS(opts.fakeFs));
 };
