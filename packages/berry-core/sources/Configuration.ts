@@ -143,6 +143,11 @@ export const coreDefinitions = {
     type: SettingsType.STRING,
     default: getRcFilename(),
   },
+  enableGlobalCache: {
+    description: `If true, the system-wide cache folder will be used regardless of \`cache-folder\``,
+    type: SettingsType.BOOLEAN,
+    default: false,
+  },
 
   // Settings related to the output style
   enableColors: {
@@ -391,6 +396,11 @@ export class Configuration {
     for (const {path, cwd, data} of rcFiles)
       configuration.useWithSource(path, data, cwd);
 
+    if (configuration.get(`enableGlobalCache`)) {
+      configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
+      configuration.sources.set(`cacheFolder`, `<internal>`);
+    }
+
     return configuration;
   }
 
@@ -531,7 +541,7 @@ export class Configuration {
       if (Array.isArray(value)) {
         if (!definition.isArray && !Array.isArray(definition.default)) {
           throw new Error(`Non-array configuration settings "${name}" cannot be an array`);
-        } else {
+        } else {  
           value = value.map(sub => parseValue(sub, definition.type, folder));
         }
       } else {
