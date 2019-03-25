@@ -19,7 +19,7 @@ declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState) => RuntimeState;
 const localFs: typeof fs = {...fs};
 const nodeFs = new NodeFS(localFs);
 
-const zipOpenFs = new ZipOpenFS();
+const zipOpenFs = new ZipOpenFS({baseFs: nodeFs});
 
 module.exports = makeApi($$SETUP_STATE(hydrateRuntimeState), {
   compatibilityMode: true,
