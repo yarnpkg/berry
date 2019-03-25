@@ -81,7 +81,7 @@ function cloneState(state: ShellState, mergeWith: Partial<ShellState> = {}) {
 
 const BUILTINS = new Map<string, ShellBuiltin>([
   [`cd`, makeBuiltin(async ([target, ... rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
-    const resolvedTarget = posix.resolve(state.cwd, target);
+    const resolvedTarget = posix.resolve(state.cwd, NodeFS.toPortablePath(target));
     const stat = await xfs.statPromise(resolvedTarget);
 
     if (!stat.isDirectory()) {
@@ -94,7 +94,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
   })],
 
   [`pwd`, makeBuiltin(async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
-    state.stdout.write(`${state.cwd}\n`);
+    state.stdout.write(`${NodeFS.fromPortablePath(state.cwd)}\n`);
     return 0;
   })],
 
