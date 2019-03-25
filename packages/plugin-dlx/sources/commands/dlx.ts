@@ -9,7 +9,7 @@ import tmp                                                  from 'tmp';
 
 export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
-  .command(`dlx <pkg> [... args]`)
+  .command(`dlx <command> [... args] [-p,--package NAME]`)
   .describe(`run a package in a temporary environment`)
 
   .detail(`
@@ -23,9 +23,15 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     `yarn dlx create-react-app ./my-app`,
   )
 
-  .action(async ({cwd, stdin, stdout, stderr, pkg, args, ... rest}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, pkg: string, args: Array<string>}) => {
+  .action(async ({cwd, stdin, stdout, stderr, command, package: pkg, args, ... rest}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, command: string, package: string | undefined, args: Array<string>}) => {
     const tmpDir = await createTemporaryDirectory(`dlx-${process.pid}`);
     await xfs.writeFilePromise(`${tmpDir}/package.json`, `{}\n`);
+    await xfs.writeFilePromise(`${tmpDir}/.yarnrc`, `enable-global-cache true\n`);
+
+    if (!pkg) {
+      pkg = command;
+      command = structUtils.parseDescriptor(pkg).name;
+    }
 
     // We could reimplement `add` in `dlx`, but at least for now it makes more
     // sense to simply defer to the implementation provided by the `essentials`
@@ -50,13 +56,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     if (report.hasErrors())
       return report.exitCode();
 
-    const binaries = Array.from(await scriptUtils.getWorkspaceAccessibleBinaries(workspace));
-    if (binaries.length < 0)
-      throw new Error(`The installed package doesn't expose any binary.`);
-    if (binaries.length > 1)
-      throw new UsageError(`The install package exposes multiple binaries, it's not clear which one should be used.`);
-
-    return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, binaries[0][0], args, {cwd, stdin, stdout, stderr});
+    return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, args, {cwd, stdin, stdout, stderr});
   });
 
 function createTemporaryDirectory(name?: string) {
