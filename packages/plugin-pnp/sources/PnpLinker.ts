@@ -32,7 +32,7 @@ export class PnpLinker implements Linker {
     if (!packageInformation)
       throw new Error(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed pnp map`);
 
-    return packageInformation.packageLocation;
+    return NodeFS.toPortablePath(packageInformation.packageLocation);
   }
 
   async findPackageLocator(location: string, opts: LinkOptions) {
@@ -44,7 +44,7 @@ export class PnpLinker implements Linker {
     const pnpFile = miscUtils.dynamicRequire(physicalPath);
     delete require.cache[physicalPath];
 
-    const locator = pnpFile.findPackageLocator(location);
+    const locator = pnpFile.findPackageLocator(NodeFS.fromPortablePath(location));
     if (!locator)
       return null;
 
