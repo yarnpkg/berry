@@ -12,11 +12,15 @@ function fromEntries(iterable: Iterable<[any, any] | {0: any, 1: any}>): {[key: 
 
 export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
-  .command(`config [-v,--verbose] [--json]`)
+  .command(`config [-v,--verbose] [--why] [--json]`)
   .describe(`display the current configuration`)
 
   .detail(`
-    This command prints the current active configuration settings. When used together with the \`-v,--verbose\` option, the output will contain the settings description on top of the regular key/value information.
+    This command prints the current active configuration settings.
+    
+    When used together with the \`-v,--verbose\` option, the output will contain the settings description on top of the regular key/value information.
+
+    When used together with the \`--why\` flag, the output will also contain the reason why a settings is set a particular way.
   `)
 
   .example(
@@ -24,7 +28,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     `yarn config`,
   )
 
-  .action(async ({cwd, stdout, verbose, json}: {cwd: string, stdout: Writable, verbose: boolean, json: boolean}) => {
+  .action(async ({cwd, stdout, verbose, why, json}: {cwd: string, stdout: Writable, verbose: boolean, why: boolean, json: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
@@ -33,8 +37,10 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     if (json) {
       const data = fromEntries(configuration.settings.entries());
 
-      for (const key of Object.keys(data))
-        data[key].effective = configuration.get(key);
+      for (const key of Object.keys(data)) {
+        data[key].effective = configuration.values.get(key);
+        data[key].source = configuration.sources.get(key);
+      }
 
       return JsonReport.send({stdout}, data);
     } else {
@@ -43,15 +49,19 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
         colors: configuration.get(`enableColors`),
         maxArrayLength: 2,
       };
-  
-      if (verbose) {
+
+      if (why || verbose) {
         const keysAndDescriptions = keys.map(key => {
           const settings = configuration.settings.get(key);
 
           if (!settings)
             throw new Error(`Assertion failed: This settings ("${key}") should have been registered`);
 
-          return [key, settings.description] as [string, string];
+          const description = why
+            ? configuration.sources.get(key) || `<default>`
+            : settings.description;
+
+          return [key, description] as [string, string];
         });
 
         const maxDescriptionLength = keysAndDescriptions.reduce((max, [, description]) => {
