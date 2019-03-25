@@ -12,6 +12,18 @@ export type MakeApiOptions = {
   pnpapiResolution: string,
 };
 
+export type ResolveToUnqualifiedOptions = {
+  considerBuiltins?: boolean,
+};
+
+export type ResolveUnqualifiedOptions = {
+  extensions?: Array<string>,
+};
+
+export type ResolveRequestOptions =
+  ResolveToUnqualifiedOptions &
+  ResolveUnqualifiedOptions;
+
 export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpApi {
   // @ts-ignore
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding('natives')));
@@ -219,6 +231,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (issuer.endsWith('/'))
       issuer += 'internal.js';
 
+    request = NodeFS.fromPortablePath(request);
+    issuer = NodeFS.fromPortablePath(issuer);
+
     // Since we would need to create a fake module anyway (to call _resolveLookupPath that
     // would give us the paths to give to _resolveFilename), we can as well not use
     // the {paths} option at all, since it internally makes _resolveFilename create another
@@ -330,7 +345,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveToUnqualified(request: string, issuer: string | null, {considerBuiltins = true}: {considerBuiltins?: boolean} = {}): string | null {
+  function resolveToUnqualified(request: string, issuer: string | null, {considerBuiltins = true}: ResolveToUnqualifiedOptions = {}): string | null {
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
 
     if (request === `pnpapi`)
@@ -341,14 +356,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (considerBuiltins && builtinModules.has(request))
       return null;
 
-    if (issuer) issuer = NodeFS.toPortablePath(issuer);
-
     // We allow disabling the pnp resolution for some subpaths. This is because some projects, often legacy,
     // contain multiple levels of dependencies (ie. a yarn.lock inside a subfolder of a yarn.lock). This is
     // typically solved using workspaces, but not all of them have been converted already.
 
     if (ignorePattern && issuer && ignorePattern.test(normalizePath(issuer))) {
-      const result = callNativeResolution(request, NodeFS.fromPortablePath(issuer));
+      const result = callNativeResolution(request, issuer);
 
       if (result === false) {
         throw makeError(
@@ -358,7 +371,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         );
       }
 
-      return NodeFS.toPortablePath(result);
+      return result;
     }
 
     let unqualifiedPath;
@@ -407,7 +420,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       // resolution algorithm in the chain, usually the native Node resolution one
 
       if (!issuerLocator) {
-        const result = callNativeResolution(request, NodeFS.fromPortablePath(issuer));
+        const result = callNativeResolution(request, issuer);
 
         if (result === false) {
           throw makeError(
@@ -417,7 +430,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           );
         }
 
-        return NodeFS.toPortablePath(result);
+        return result;
       }
 
       const issuerInformation = getPackageInformationSafe(issuerLocator);
@@ -504,10 +517,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * appends ".js" / ".json", and transforms directory accesses into "index.js").
    */
 
-  function resolveUnqualified(
-    unqualifiedPath: string,
-    {extensions = Object.keys(Module._extensions)}: {extensions?: Array<string>} = {},
-  ): string {
+  function resolveUnqualified(unqualifiedPath: string, {extensions = Object.keys(Module._extensions)}: ResolveUnqualifiedOptions = {}): string {
     const candidates: Array<string> = [];
     const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, {extensions});
 
@@ -530,7 +540,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveRequest(request: string, issuer: string | null, {considerBuiltins, extensions}: {considerBuiltins?: boolean, extensions?: Array<string>} = {}): string | null {
+  function resolveRequest(request: string, issuer: string | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): string | null {
     let unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
     if (unqualifiedPath === null) {
@@ -551,11 +561,54 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     VERSIONS,
     topLevel,
 
-    getPackageInformation,
-    findPackageLocator,
+    getPackageInformation: (locator: PackageLocator) => {
+      const info = getPackageInformation(locator);
 
-    resolveToUnqualified,
-    resolveUnqualified,
-    resolveRequest,
+      if (info === null)
+        return null;
+      
+      const packageLocation = NodeFS.fromPortablePath(info.packageLocation);
+      const nativeInfo = {... info, packageLocation};
+
+      return nativeInfo;
+    },
+
+    findPackageLocator: (path: string) => {
+      path = NodeFS.toPortablePath(path);
+
+      return findPackageLocator(path);
+    },
+
+    resolveToUnqualified: (request: string, issuer: string | null, opts?: ResolveToUnqualifiedOptions) => {
+      request = NodeFS.toPortablePath(request);
+
+      if (issuer !== null)
+        issuer = NodeFS.toPortablePath(issuer);
+
+      const resolution = resolveToUnqualified(request, issuer, opts);
+      if (resolution === null)
+        return null;
+
+      return NodeFS.fromPortablePath(resolution);
+    },
+
+    resolveUnqualified: (unqualifiedPath: string, opts?: ResolveUnqualifiedOptions) => {
+      unqualifiedPath = NodeFS.fromPortablePath(unqualifiedPath);
+
+      return NodeFS.fromPortablePath(resolveUnqualified(unqualifiedPath, opts));
+    },
+
+    resolveRequest: (request: string, issuer: string | null, opts?: ResolveRequestOptions) => {
+      request = NodeFS.toPortablePath(request);
+
+      if (issuer !== null)
+        issuer = NodeFS.toPortablePath(issuer);
+
+      const resolution = resolveRequest(request, issuer, opts);
+      if (resolution === null)
+        return null;
+
+      return NodeFS.fromPortablePath(resolution);
+    },
   };
 }
