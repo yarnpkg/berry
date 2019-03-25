@@ -1,5 +1,5 @@
 import {Configuration}         from '@berry/core';
-import {xfs, NodeFS}                   from '@berry/fslib';
+import {xfs, NodeFS}           from '@berry/fslib';
 import {UsageError, Concierge} from '@manaflair/concierge';
 import {execFileSync}          from 'child_process';
 import Joi                     from 'joi';

@@ -41,7 +41,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
   const packageLocationLengths = data.locationLengthData;
 
   return {
-    basePath,
+    basePath: portablePath,
     ignorePattern,
     packageRegistry,
     packageLocatorsByLocations,

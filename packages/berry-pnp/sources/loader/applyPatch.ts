@@ -114,11 +114,10 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us which file we should load
 
     const modulePath = Module._resolveFilename(request, parent, isMain);
-    const physicalPath = NodeFS.fromPortablePath(modulePath);
 
     // Check if the module has already been created for the given file
 
-    const cacheEntry = Module._cache[physicalPath];
+    const cacheEntry = Module._cache[modulePath];
 
     if (cacheEntry)
       return cacheEntry.exports;
@@ -126,8 +125,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     // Create a new module and store it into the cache
 
     // @ts-ignore
-    const module = new Module(physicalPath, parent);
-    Module._cache[physicalPath] = module;
+    const module = new Module(modulePath, parent);
+    Module._cache[modulePath] = module;
 
     // The main module is exposed as global variable
 
@@ -142,11 +141,11 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     let hasThrown = true;
 
     try {
-      module.load(physicalPath);
+      module.load(modulePath);
       hasThrown = false;
     } finally {
       if (hasThrown) {
-        delete Module._cache[physicalPath];
+        delete Module._cache[modulePath];
       }
     }
 
@@ -154,9 +153,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     for (const [filter, patchFn] of patchedModules) {
       if (filter.test(request)) {
-        const issuer = parent && parent.filename
-          ? pnpapi.findPackageLocator(NodeFS.toPortablePath(parent.filename))
-          : null;
+        const issuer = parent && parent.filename ? pnpapi.findPackageLocator(parent.filename): null;
         module.exports = patchFn(issuer, module.exports);
       }
     }
@@ -205,9 +202,17 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     if (!issuers) {
       const issuerModule = getIssuerModule(parent);
-      const issuer = issuerModule ? issuerModule.filename : `${process.cwd()}/`;
+      const issuer = issuerModule ? issuerModule.filename : `${NodeFS.toPortablePath(process.cwd())}/`;
 
-      issuers = [NodeFS.toPortablePath(issuer)];
+      issuers = [issuer];
+    }
+
+    // When Node is called, it tries to require the main script but can't
+    // because PnP already patched 'Module'
+    // We test it for an absolute Windows path and convert it to a portable path.
+    // We should probably always call toPortablePath and check for this directly
+    if (/^[A-Z]:.*/.test(request)) {
+      request = NodeFS.toPortablePath(request);
     }
 
     let firstError;
