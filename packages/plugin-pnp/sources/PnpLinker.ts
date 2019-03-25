@@ -22,8 +22,9 @@ export class PnpLinker implements Linker {
     if (!xfs.existsSync(pnpPath))
       throw new Error(`Couldn't find the PnP package map at the root of the project - run an install to generate it`);
 
-    const pnpFile = miscUtils.dynamicRequire(NodeFS.fromPortablePath(pnpPath));
-    delete require.cache[pnpPath];
+    const physicalPath = NodeFS.fromPortablePath(pnpPath);
+    const pnpFile = miscUtils.dynamicRequire(physicalPath);
+    delete require.cache[physicalPath];
 
     const packageLocator = {name: structUtils.requirableIdent(locator), reference: locator.reference};
     const packageInformation = pnpFile.getPackageInformation(packageLocator);
@@ -31,7 +32,7 @@ export class PnpLinker implements Linker {
     if (!packageInformation)
       throw new Error(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed pnp map`);
 
-    return NodeFS.toPortablePath(packageInformation.packageLocation);
+    return packageInformation.packageLocation;
   }
 
   async findPackageLocator(location: string, opts: LinkOptions) {
@@ -39,8 +40,9 @@ export class PnpLinker implements Linker {
     if (!xfs.existsSync(pnpPath))
       throw new Error(`Couldn't find the PnP package map at the root of the project - run an install to generate it`);
 
-    const pnpFile = miscUtils.dynamicRequire(NodeFS.fromPortablePath(pnpPath));
-    delete require.cache[pnpPath];
+    const physicalPath = NodeFS.fromPortablePath(pnpPath);
+    const pnpFile = miscUtils.dynamicRequire(physicalPath);
+    delete require.cache[physicalPath];
 
     const locator = pnpFile.findPackageLocator(location);
     if (!locator)

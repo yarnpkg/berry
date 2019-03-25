@@ -341,7 +341,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (considerBuiltins && builtinModules.has(request))
       return null;
 
-    request = NodeFS.toPortablePath(request);
     if (issuer) issuer = NodeFS.toPortablePath(issuer);
 
     // We allow disabling the pnp resolution for some subpaths. This is because some projects, often legacy,
@@ -349,10 +348,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // typically solved using workspaces, but not all of them have been converted already.
 
     if (ignorePattern && issuer && ignorePattern.test(normalizePath(issuer))) {
-      const result = callNativeResolution(
-        NodeFS.fromPortablePath(request),
-        NodeFS.fromPortablePath(issuer)
-      );
+      const result = callNativeResolution(request, NodeFS.fromPortablePath(issuer));
 
       if (result === false) {
         throw makeError(
@@ -411,10 +407,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       // resolution algorithm in the chain, usually the native Node resolution one
 
       if (!issuerLocator) {
-        const result = callNativeResolution(
-          NodeFS.fromPortablePath(request),
-          NodeFS.fromPortablePath(issuer)
-        );
+        const result = callNativeResolution(request, NodeFS.fromPortablePath(issuer));
 
         if (result === false) {
           throw makeError(

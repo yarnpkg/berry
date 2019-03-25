@@ -47,6 +47,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
             if (basedir.charAt(basedir.length - 1) !== '/')
               basedir = path.join(basedir, '/');
 
+            // TODO Handle portable paths
             // This is guaranteed to return the path to the "package.json" file from the given package
             const manifestPath = pnpapi.resolveToUnqualified(`${parts[1]}/package.json`, basedir, {
               considerBuiltins: false,
@@ -113,10 +114,11 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us which file we should load
 
     const modulePath = Module._resolveFilename(request, parent, isMain);
+    const physicalPath = NodeFS.fromPortablePath(modulePath);
 
     // Check if the module has already been created for the given file
 
-    const cacheEntry = Module._cache[modulePath];
+    const cacheEntry = Module._cache[physicalPath];
 
     if (cacheEntry)
       return cacheEntry.exports;
@@ -124,8 +126,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     // Create a new module and store it into the cache
 
     // @ts-ignore
-    const module = new Module(modulePath, parent);
-    Module._cache[modulePath] = module;
+    const module = new Module(physicalPath, parent);
+    Module._cache[physicalPath] = module;
 
     // The main module is exposed as global variable
 
@@ -140,19 +142,24 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     let hasThrown = true;
 
     try {
-      module.load(modulePath);
+      module.load(physicalPath);
       hasThrown = false;
     } finally {
       if (hasThrown) {
-        delete Module._cache[modulePath];
+        delete Module._cache[physicalPath];
       }
     }
 
     // Some modules might have to be patched for compatibility purposes
 
-    for (const [filter, patchFn] of patchedModules)
-      if (filter.test(request))
-        module.exports = patchFn(parent && parent.filename ? pnpapi.findPackageLocator(parent.filename) : null, module.exports);
+    for (const [filter, patchFn] of patchedModules) {
+      if (filter.test(request)) {
+        const issuer = parent && parent.filename
+          ? pnpapi.findPackageLocator(NodeFS.toPortablePath(parent.filename))
+          : null;
+        module.exports = patchFn(issuer, module.exports);
+      }
+    }
 
     return module.exports;
   };
@@ -200,14 +207,14 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       const issuerModule = getIssuerModule(parent);
       const issuer = issuerModule ? issuerModule.filename : `${process.cwd()}/`;
 
-      issuers = [issuer];
+      issuers = [NodeFS.toPortablePath(issuer)];
     }
 
     let firstError;
 
     for (const issuer of issuers) {
       let resolution;
-  
+
       try {
         resolution = pnpapi.resolveRequest(request, issuer);
       } catch (error) {
@@ -217,7 +224,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
       return resolution !== null ? resolution : request;
     }
-  
+
     throw firstError;
   };
 
@@ -234,6 +241,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       let resolution;
 
       try {
+        // TODO Convert path to portable path?
         resolution = pnpapi.resolveRequest(request, path);
       } catch (error) {
         continue;
