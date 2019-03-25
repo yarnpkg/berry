@@ -1,7 +1,6 @@
-import fs                                                         from 'fs';
+import {FakeFS, NodeFS}                                           from '@berry/fslib';
 import Module                                                     from 'module';
 import path, {posix}                                              from 'path';
-import {NodeFS}                                                   from '@berry/fslib';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types';
 
@@ -9,6 +8,7 @@ import {makeError}                                                from './intern
 
 export type MakeApiOptions = {
   compatibilityMode?: boolean,
+  fakeFs: FakeFS,
   pnpapiResolution: string,
 };
 
@@ -107,7 +107,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       try {
         candidates.push(unqualifiedPath);
-        stat = fs.statSync(unqualifiedPath);
+        stat = opts.fakeFs.statSync(unqualifiedPath);
       } catch (error) {}
 
       // If the file exists and is a file, we can stop right there
@@ -125,8 +125,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         // we would lose the information that would tell us what are the dependencies of pkg-with-peers relative to its
         // ancestors.
 
-        if (fs.lstatSync(unqualifiedPath).isSymbolicLink())
-          unqualifiedPath = posix.normalize(posix.resolve(posix.dirname(unqualifiedPath), fs.readlinkSync(unqualifiedPath)));
+        if (opts.fakeFs.lstatSync(unqualifiedPath).isSymbolicLink())
+          unqualifiedPath = posix.normalize(posix.resolve(posix.dirname(unqualifiedPath), opts.fakeFs.readlinkSync(unqualifiedPath)));
 
         return unqualifiedPath;
       }
@@ -137,7 +137,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         let pkgJson;
 
         try {
-          pkgJson = JSON.parse(fs.readFileSync(`${unqualifiedPath}/package.json`, 'utf-8'));
+          pkgJson = JSON.parse(opts.fakeFs.readFileSync(`${unqualifiedPath}/package.json`, `utf8`));
         } catch (error) {}
 
         let nextUnqualifiedPath;
@@ -164,7 +164,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         })
         .find(candidateFile => {
           candidates.push(candidateFile);
-          return fs.existsSync(candidateFile);
+          return opts.fakeFs.existsSync(candidateFile);
         });
 
       if (qualifiedPath)
@@ -179,7 +179,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           })
           .find(candidateFile => {
             candidates.push(candidateFile);
-            return fs.existsSync(candidateFile);
+            return opts.fakeFs.existsSync(candidateFile);
           });
 
         if (indexPath) {

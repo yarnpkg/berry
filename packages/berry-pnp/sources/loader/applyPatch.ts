@@ -1,4 +1,4 @@
-import {NodeFS, ZipOpenFS, patchFs} from '@berry/fslib';
+import {FakeFS, NodeFS, patchFs}    from '@berry/fslib';
 import fs                           from 'fs';
 import Module                       from 'module';
 import path                         from 'path';
@@ -9,6 +9,7 @@ import {makeError, getIssuerModule} from './internalTools';
 
 export type ApplyPatchOptions = {
   compatibilityMode?: boolean,
+  fakeFs: FakeFS,
 };
 
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
@@ -260,11 +261,5 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return false;
   };
 
-  // We must copy the fs into a local, because otherwise
-  // 1. we would make the NodeFS instance use the function that we patched (infinite loop)
-  // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
-  const localFs: typeof fs = {...fs};
-  const nodeFs = new NodeFS(localFs);
-
-  patchFs(fs, new ZipOpenFS({baseFs: nodeFs}));
+  patchFs(fs, opts.fakeFs);
 };
