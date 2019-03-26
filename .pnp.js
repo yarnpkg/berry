@@ -8742,6 +8742,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/plugin-constraints"
                 ],
                 [
+                  "@berry/plugin-dlx",
+                  "workspace:packages/plugin-dlx"
+                ],
+                [
                   "@berry/plugin-essentials",
                   "workspace:packages/plugin-essentials"
                 ],
@@ -9332,6 +9336,51 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "tau-prolog",
                   "npm:0.2.49"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@berry/plugin-dlx",
+        [
+          [
+            "workspace:packages/plugin-dlx",
+            {
+              "packageLocation": "./packages/plugin-dlx/",
+              "packageDependencies": [
+                [
+                  "@berry/plugin-dlx",
+                  "workspace:packages/plugin-dlx"
+                ],
+                [
+                  "@berry/cli",
+                  "workspace:packages/berry-cli"
+                ],
+                [
+                  "@berry/core",
+                  "workspace:packages/berry-core"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@berry/json-proxy",
+                  "workspace:packages/berry-json-proxy"
+                ],
+                [
+                  "@berry/plugin-essentials",
+                  "workspace:packages/plugin-essentials"
+                ],
+                [
+                  "@manaflair/concierge",
+                  "npm:0.12.3"
+                ],
+                [
+                  "tmp",
+                  "npm:0.0.33"
                 ]
               ]
             }

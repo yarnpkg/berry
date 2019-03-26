@@ -1588,6 +1588,7 @@ __metadata:
     "@berry/fslib": "workspace:*"
     "@berry/parsers": "workspace:*"
     "@berry/plugin-constraints": "workspace:*"
+    "@berry/plugin-dlx": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
     "@berry/plugin-file": "workspace:*"
     "@berry/plugin-github": "workspace:*"
@@ -1764,6 +1765,20 @@ __metadata:
     inquirer: "npm:^6.2.0"
     node-emoji: "npm:^1.8.1"
     tau-prolog: "npm:^0.2.38"
+  languageName: unknown
+  linkType: soft
+
+"@berry/plugin-dlx@workspace:*, @berry/plugin-dlx@workspace:packages/plugin-dlx":
+  version: 0.0.0
+  resolution: "@berry/plugin-dlx@workspace:packages/plugin-dlx"
+  dependencies:
+    "@berry/cli": "workspace:*"
+    "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
+    "@berry/json-proxy": "workspace:*"
+    "@berry/plugin-essentials": "workspace:*"
+    "@manaflair/concierge": "npm:^0.12.3"
+    tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
 

@@ -87,13 +87,14 @@ export async function hasPackageScript(locator: Locator, scriptName: string, {pr
 }
 
 type ExecutePackageScriptOptions = {
+  cwd?: string | undefined,
   project: Project,
   stdin: Readable,
   stdout: Writable,
   stderr: Writable,
 };
 
-export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
+export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
     throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
@@ -118,7 +119,8 @@ export async function executePackageScript(locator: Locator, scriptName: string,
     const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
     const manifest = await Manifest.find(`.`, {baseFs: packageFs});
 
-    const cwd = packageLocation;
+    if (typeof cwd === `undefined`)
+      cwd = packageLocation;
 
     const script = manifest.scripts.get(scriptName);
     if (!script)
@@ -133,13 +135,14 @@ export async function executePackageScript(locator: Locator, scriptName: string,
 }
 
 type ExecuteWorkspaceScriptOptions = {
+  cwd?: string | undefined,
   stdin: Readable,
   stdout: Writable,
   stderr: Writable,
 };
 
-export async function executeWorkspaceScript(workspace: Workspace, scriptName: string, args: Array<string>, {stdin, stdout, stderr}: ExecuteWorkspaceScriptOptions) {
-  return await executePackageScript(workspace.anchoredLocator, scriptName, args, {project: workspace.project, stdin, stdout, stderr});
+export async function executeWorkspaceScript(workspace: Workspace, scriptName: string, args: Array<string>, {cwd, stdin, stdout, stderr}: ExecuteWorkspaceScriptOptions) {
+  return await executePackageScript(workspace.anchoredLocator, scriptName, args, {cwd, project: workspace.project, stdin, stdout, stderr});
 }
 
 type GetPackageAccessibleBinariesOptions = {

@@ -1,0 +1,14 @@
+{
+  "name": "@berry/plugin-dlx",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/cli": "workspace:*",
+    "@berry/core": "workspace:*",
+    "@berry/fslib": "workspace:*",
+    "@berry/json-proxy": "workspace:*",
+    "@berry/plugin-essentials": "workspace:*",
+    "@manaflair/concierge": "^0.12.3",
+    "tmp": "^0.0.33"
+  }
+}

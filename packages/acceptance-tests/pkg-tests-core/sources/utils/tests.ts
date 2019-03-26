@@ -29,8 +29,11 @@ exports.setPackageWhitelist = async function whitelistPackages(
   fn: () => Promise<void>,
 ) {
   whitelist = packages;
-  await fn();
-  whitelist = new Map();
+  try {
+    await fn();
+  } finally {
+    whitelist = new Map();
+  }
 };
 
 let packageRegistryPromise = null;

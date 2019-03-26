@@ -20,6 +20,7 @@
   "devDependencies": {
     "@berry/builder": "workspace:*",
     "@berry/plugin-constraints": "workspace:*",
+    "@berry/plugin-dlx": "workspace:*",
     "@berry/plugin-essentials": "workspace:*",
     "@berry/plugin-file": "workspace:*",
     "@berry/plugin-github": "workspace:*",
@@ -39,6 +40,7 @@
   "@berry/builder": {
     "bundles": {
       "standard": [
+        "@berry/plugin-dlx",
         "@berry/plugin-essentials",
         "@berry/plugin-init",
         "@berry/plugin-constraints",
