@@ -123,7 +123,7 @@ export class ZipFS extends FakeFS {
       if (readOnly)
         flags |= libzip.ZIP_RDONLY;
 
-      this.zip = libzip.open(p, flags, errPtr);
+      this.zip = libzip.open(NodeFS.fromPortablePath(p), flags, errPtr);
 
       if (this.zip === 0) {
         const error = libzip.struct.errorS();

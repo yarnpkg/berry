@@ -3,7 +3,7 @@ import {structUtils}                                  from '@berry/core';
 import {xfs}                                          from '@berry/fslib';
 import {updateAndSave}                                from '@berry/json-proxy';
 import {UsageError}                                   from '@manaflair/concierge';
-import {basename}                                     from 'path';
+import {posix}                                        from 'path';
 
 export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
@@ -42,7 +42,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     const manifest = new Manifest();
-    manifest.name = structUtils.makeIdent(configuration.get(`initScope`), basename(cwd));
+    manifest.name = structUtils.makeIdent(configuration.get(`initScope`), posix.basename(cwd));
     manifest.version = configuration.get(`initVersion`);
     manifest.private = notPublic;
     manifest.license = configuration.get(`initLicense`);

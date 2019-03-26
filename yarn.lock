@@ -1684,6 +1684,8 @@ __metadata:
 "@berry/json-proxy@workspace:*, @berry/json-proxy@workspace:packages/berry-json-proxy":
   version: 0.0.0
   resolution: "@berry/json-proxy@workspace:packages/berry-json-proxy"
+  dependencies:
+    "@berry/fslib": "workspace:*"
   languageName: unknown
   linkType: soft
 

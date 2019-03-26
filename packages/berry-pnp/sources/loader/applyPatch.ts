@@ -1,14 +1,15 @@
-import {NodeFS, ZipOpenFS, patchFs} from '@berry/fslib';
-import fs                           from 'fs';
-import Module                       from 'module';
-import path                         from 'path';
+import {FakeFS, NodeFS, PosixFS, patchFs} from '@berry/fslib';
+import fs                                 from 'fs';
+import Module                             from 'module';
+import path                               from 'path';
 
-import {PackageLocator, PnpApi}     from '../types';
+import {PackageLocator, PnpApi}           from '../types';
 
-import {makeError, getIssuerModule} from './internalTools';
+import {makeError, getIssuerModule}       from './internalTools';
 
 export type ApplyPatchOptions = {
   compatibilityMode?: boolean,
+  fakeFs: FakeFS,
 };
 
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
@@ -47,6 +48,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
             if (basedir.charAt(basedir.length - 1) !== '/')
               basedir = path.join(basedir, '/');
 
+            // TODO Handle portable paths
             // This is guaranteed to return the path to the "package.json" file from the given package
             const manifestPath = pnpapi.resolveToUnqualified(`${parts[1]}/package.json`, basedir, {
               considerBuiltins: false,
@@ -150,9 +152,12 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     // Some modules might have to be patched for compatibility purposes
 
-    for (const [filter, patchFn] of patchedModules)
-      if (filter.test(request))
-        module.exports = patchFn(parent && parent.filename ? pnpapi.findPackageLocator(parent.filename) : null, module.exports);
+    for (const [filter, patchFn] of patchedModules) {
+      if (filter.test(request)) {
+        const issuer = parent && parent.filename ? pnpapi.findPackageLocator(parent.filename): null;
+        module.exports = patchFn(issuer, module.exports);
+      }
+    }
 
     return module.exports;
   };
@@ -198,16 +203,24 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     if (!issuers) {
       const issuerModule = getIssuerModule(parent);
-      const issuer = issuerModule ? issuerModule.filename : `${process.cwd()}/`;
+      const issuer = issuerModule ? issuerModule.filename : `${NodeFS.toPortablePath(process.cwd())}/`;
 
       issuers = [issuer];
+    }
+
+    // When Node is called, it tries to require the main script but can't
+    // because PnP already patched 'Module'
+    // We test it for an absolute Windows path and convert it to a portable path.
+    // We should probably always call toPortablePath and check for this directly
+    if (/^[A-Z]:.*/.test(request)) {
+      request = NodeFS.toPortablePath(request);
     }
 
     let firstError;
 
     for (const issuer of issuers) {
       let resolution;
-  
+
       try {
         resolution = pnpapi.resolveRequest(request, issuer);
       } catch (error) {
@@ -217,7 +230,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
       return resolution !== null ? resolution : request;
     }
-  
+
     throw firstError;
   };
 
@@ -234,6 +247,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       let resolution;
 
       try {
+        // TODO Convert path to portable path?
         resolution = pnpapi.resolveRequest(request, path);
       } catch (error) {
         continue;
@@ -247,11 +261,5 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return false;
   };
 
-  // We must copy the fs into a local, because otherwise
-  // 1. we would make the NodeFS instance use the function that we patched (infinite loop)
-  // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
-  const localFs: typeof fs = {...fs};
-  const nodeFs = new NodeFS(localFs);
-
-  patchFs(fs, new ZipOpenFS({baseFs: nodeFs}));
+  patchFs(fs, new PosixFS(opts.fakeFs));
 };

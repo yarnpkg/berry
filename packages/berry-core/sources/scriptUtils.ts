@@ -1,4 +1,4 @@
-import {CwdFS, ZipOpenFS, xfs}           from '@berry/fslib';
+import {CwdFS, ZipOpenFS, xfs, NodeFS}   from '@berry/fslib';
 import {execute}                         from '@berry/shell';
 import {delimiter, posix}                from 'path';
 import {PassThrough, Readable, Writable} from 'stream';
@@ -14,15 +14,18 @@ import {Locator}                         from './types';
 
 async function makePathWrapper(location: string, name: string, argv0: string, args: Array<string> = []) {
   if (process.platform === `win32`) {
-    await xfs.writeFilePromise(`${location}/${name}.cmd`, `@"${location}\\${name}.cmd" ${args.join(` `)} %*\n`);
+    await xfs.writeFilePromise(`${location}/${name}.cmd`, `"${argv0}" ${args.join(` `)} %*\n`);
   } else {
-    await xfs.writeFilePromise(`${location}/${name}`, `#!/usr/bin/env bash\n"${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
+    await xfs.writeFilePromise(`${location}/${name}`, `#!/usr/bin/env bash\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
     await xfs.chmodPromise(`${location}/${name}`, 0o755);
   }
 }
 
 export async function makeScriptEnv(project: Project) {
-  const scriptEnv = {... process.env};
+  const scriptEnv: {[key: string]: string} = {};
+  for (const key of Object.keys(process.env))
+    scriptEnv[key.toUpperCase()] = process.env[key] as string;
+
   const binFolder = scriptEnv.BERRY_BIN_FOLDER = dirSync().name;
 
   // Register some binaries that must be made available in all subprocesses
@@ -41,7 +44,7 @@ export async function makeScriptEnv(project: Project) {
   // Add the .pnp.js file to the Node options, so that we're sure that PnP will
   // be correctly setup
 
-  const pnpPath = `${project.cwd}/.pnp.js`;
+  const pnpPath = NodeFS.fromPortablePath(`${project.cwd}/.pnp.js`);
   const pnpRequire = `--require ${pnpPath}`;
 
   if (xfs.existsSync(pnpPath)) {
@@ -145,7 +148,7 @@ type GetPackageAccessibleBinariesOptions = {
 
 /**
  * Return the binaries that can be accessed by the specified package
- * 
+ *
  * @param locator The queried package
  * @param project The project owning the package
  */
@@ -162,43 +165,44 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
 
     const linkers = project.configuration.getLinkers();
     const linkerOptions = {project, report: new StreamReport({ configuration, stdout })};
-  
+
     const binaries: Map<string, [Locator, string]> = new Map();
-  
+
     const descriptors = [
       ... pkg.dependencies.values(),
       ... pkg.peerDependencies.values(),
     ];
-  
+
     for (const descriptor of descriptors) {
       const resolution = project.storedResolutions.get(descriptor.descriptorHash);
       if (!resolution)
         continue;
-  
+
       const pkg = project.storedPackages.get(resolution);
       if (!pkg)
         continue;
-      
+
       const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
       if (!linker)
         continue;
-      
+
       const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
       const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
       const manifest = await Manifest.find(`.`, {baseFs: packageFs});
-  
+
       for (const [binName, file] of manifest.bin.entries()) {
-        binaries.set(binName, [pkg, posix.resolve(packageLocation, file)]);
+        const physicalPath = NodeFS.fromPortablePath(posix.resolve(packageLocation, file));
+        binaries.set(binName, [pkg, physicalPath]);
       }
     }
-  
+
     return binaries;
   });
 }
 
 /**
  * Return the binaries that can be accessed by the specified workspace
- * 
+ *
  * @param workspace The queried workspace
  */
 
@@ -216,11 +220,11 @@ type ExecutePackageAccessibleBinaryOptions = {
 
 /**
  * Execute a binary from the specified package.
- * 
+ *
  * Note that "binary" in this sense means "a Javascript file". Actual native
  * binaries cannot be executed this way, because we use Node in order to
  * transparently read from the archives.
- * 
+ *
  * @param locator The queried package
  * @param binaryName The name of the binary file to execute
  * @param args The arguments to pass to the file
@@ -255,7 +259,7 @@ type ExecuteWorkspaceAccessibleBinaryOptions = {
 
 /**
  * Execute a binary from the specified workspace
- * 
+ *
  * @param workspace The queried package
  * @param binaryName The name of the binary file to execute
  * @param args The arguments to pass to the file

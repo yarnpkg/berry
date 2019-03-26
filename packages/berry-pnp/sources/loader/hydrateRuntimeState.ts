@@ -1,4 +1,5 @@
-import path                                                                              from 'path';
+import {NodeFS}                                                                          from '@berry/fslib';
+import {posix}                                                                           from 'path';
 
 import {PackageInformation, PackageLocator, PackageStore, RuntimeState, SerializedState} from '../types';
 
@@ -7,6 +8,7 @@ export type HydrateRuntimeStateOptions = {
 };
 
 export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRuntimeStateOptions): RuntimeState {
+  const portablePath = NodeFS.toPortablePath(basePath);
   const ignorePattern = data.ignorePatternData
     ? new RegExp(data.ignorePatternData)
     : null;
@@ -14,7 +16,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
   const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
     return [packageName, new Map(packageStoreData.map(([packageReference, packageInformationData]) => {
       return [packageReference, {
-        packageLocation: path.resolve(basePath, packageInformationData.packageLocation),
+        packageLocation: posix.resolve(portablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
       }] as [string | null, PackageInformation];
     }))] as [string | null, PackageStore];
@@ -39,7 +41,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
   const packageLocationLengths = data.locationLengthData;
 
   return {
-    basePath,
+    basePath: portablePath,
     ignorePattern,
     packageRegistry,
     packageLocatorsByLocations,

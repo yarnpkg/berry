@@ -1,3 +1,4 @@
+import {NodeFS}             from '@berry/fslib';
 import execa                from 'execa';
 import {Readable, Writable} from 'stream';
 
@@ -20,7 +21,15 @@ export async function execFile(fileName: string, args: Array<string>, {cwd, env 
   if (stderr === process.stderr)
     stdio[2] = stderr;
 
-  const subprocess = execa(fileName, args, {cwd, env, stdio});
+  const effectiveFilename = process.platform !== `win32`
+    ? fileName
+    : `"${fileName}"`; // ?!
+
+  const subprocess = execa(effectiveFilename, args, {
+    cwd: NodeFS.fromPortablePath(cwd),
+    env,
+    stdio,
+  });
 
   if (stdin !== process.stdin)
     stdin.pipe(subprocess.stdin);

@@ -1,9 +1,9 @@
-import {xfs}                             from '@berry/fslib';
+import {xfs, NodeFS}                     from '@berry/fslib';
 import {parseSyml, stringifySyml}        from '@berry/parsers';
 import {UsageError}                      from '@manaflair/concierge';
 import chalk                             from 'chalk';
 import {homedir}                         from 'os';
-import {posix}                           from 'path';
+import {posix, win32}                    from 'path';
 import supportsColor                     from 'supports-color';
 
 import {MultiFetcher}                    from './MultiFetcher';
@@ -234,7 +234,7 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
     throw new Error(`Expected value to be a string`);
 
   if (type === SettingsType.ABSOLUTE_PATH) {
-    return posix.resolve(folder, value);
+    return posix.resolve(folder, NodeFS.toPortablePath(value));
   } else if (type === SettingsType.LOCATOR_LOOSE) {
     return structUtils.parseLocator(value, false);
   } else if (type === SettingsType.LOCATOR) {
@@ -246,7 +246,8 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
 
 function getDefaultGlobalFolder() {
   if (process.platform === `win32`) {
-    return posix.resolve(process.env.LOCALAPPDATA || posix.join(homedir(), 'AppData', 'Local'));
+    const folder = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
+    return posix.resolve(folder);
   } else if (process.env.XDG_DATA_HOME) {
     return posix.resolve(process.env.XDG_DATA_HOME, 'yarn/modern');
   } else {
@@ -359,8 +360,9 @@ export class Configuration {
         if (!Array.isArray(data.plugins))
           continue;
 
-        for (const pluginPath of data.plugins) {
-          const {factory, name} = nodeUtils.dynamicRequire(posix.resolve(cwd, pluginPath));
+        for (const userProvidedPath of data.plugins) {
+          const pluginPath = posix.resolve(cwd, NodeFS.toPortablePath(userProvidedPath));
+          const {factory, name} = nodeUtils.dynamicRequire(NodeFS.fromPortablePath(pluginPath));
 
           // Prevent plugin redefinition so that the ones declared deeper in the
           // filesystem always have precedence over the ones below.

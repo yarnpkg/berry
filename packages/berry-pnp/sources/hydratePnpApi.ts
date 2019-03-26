@@ -1,3 +1,4 @@
+import {FakeFS}              from '@berry/fslib';
 import {readFile}            from 'fs';
 import {dirname}             from 'path';
 import {promisify}           from 'util';
@@ -27,16 +28,17 @@ const readFileP = promisify(readFile);
 // real use case is to access the PnP API without running the risk of executing
 // third-party Javascript code.
 
-export async function hydratePnpFile(location: string, {pnpapiResolution}: {pnpapiResolution: string}) {
+export async function hydratePnpFile(location: string, {fakeFs, pnpapiResolution}: {fakeFs: FakeFS, pnpapiResolution: string}) {
   const source = await readFileP(location, `utf8`);
 
   return hydratePnpSource(source, {
     basePath: dirname(location),
+    fakeFs,
     pnpapiResolution,
   });
 }
 
-export function hydratePnpSource(source: string, {basePath, pnpapiResolution}: {basePath: string, pnpapiResolution: string}) {
+export function hydratePnpSource(source: string, {basePath, fakeFs, pnpapiResolution}: {basePath: string, fakeFs: FakeFS, pnpapiResolution: string}) {
   const data = JSON.parse(source) as SerializedState;
 
   const runtimeState = hydrateRuntimeState(data, {
@@ -45,6 +47,7 @@ export function hydratePnpSource(source: string, {basePath, pnpapiResolution}: {
 
   return makeApi(runtimeState, {
     compatibilityMode: true,
+    fakeFs,
     pnpapiResolution,
   });
 }

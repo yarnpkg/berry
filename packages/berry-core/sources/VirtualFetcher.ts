@@ -1,5 +1,5 @@
 import {AliasFS, xfs}                                            from '@berry/fslib';
-import {dirname, relative, resolve}                              from 'path';
+import {posix}                                                   from 'path';
 
 import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from './Fetcher';
 import * as structUtils                                          from './structUtils';
@@ -45,17 +45,17 @@ export class VirtualFetcher implements Fetcher {
 
   getLocatorPath(locator: Locator, opts: MinimalFetchOptions) {
     const virtualFolder = opts.project.configuration.get(`virtualFolder`);
-    const virtualPath = resolve(virtualFolder, this.getLocatorFilename(locator));
+    const virtualPath = posix.resolve(virtualFolder, this.getLocatorFilename(locator));
 
     return virtualPath;
   }
 
   private async ensureVirtualLink(locator: Locator, sourceFetch: FetchResult, opts: FetchOptions) {
     const virtualPath = this.getLocatorPath(locator, opts);
-    const relativeTarget = relative(dirname(virtualPath), sourceFetch.packageFs.getRealPath());
+    const relativeTarget = posix.relative(posix.dirname(virtualPath), sourceFetch.packageFs.getRealPath());
 
     // Doesn't need locking, and the folder must exist for the lock to succeed
-    await xfs.mkdirpPromise(dirname(virtualPath));
+    await xfs.mkdirpPromise(posix.dirname(virtualPath));
 
     await xfs.lockPromise(virtualPath, async () => {
       let currentLink;

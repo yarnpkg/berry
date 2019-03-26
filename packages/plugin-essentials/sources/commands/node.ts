@@ -1,5 +1,6 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {scriptUtils}                                 from '@berry/core';
+import {NodeFS}                                      from '@berry/fslib';
 import execa                                         from 'execa';
 import {Readable, Writable}                          from 'stream';
 
@@ -27,7 +28,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     const env = await scriptUtils.makeScriptEnv(project);
 
     try {
-      await execa(`node`, args, {cwd, stdin, stdout, stderr, env});
+      await execa(`node`, args, {cwd: NodeFS.fromPortablePath(cwd), stdin, stdout, stderr, env});
     } catch (error) {
       if (error.cmd) {
         return error.code;

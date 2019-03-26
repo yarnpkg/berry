@@ -1,3 +1,5 @@
+import {NodeFS, ZipOpenFS}             from '@berry/fslib';
+import fs                              from 'fs';
 import Module                          from 'module';
 import path                            from 'path';
 import StringDecoder                   from 'string_decoder';
@@ -11,14 +13,24 @@ import {makeApi}                       from './makeApi';
 declare var __non_webpack_module__: NodeModule;
 declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState) => RuntimeState;
 
+// We must copy the fs into a local, because otherwise
+// 1. we would make the NodeFS instance use the function that we patched (infinite loop)
+// 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
+const localFs: typeof fs = {...fs};
+const nodeFs = new NodeFS(localFs);
+
+const zipOpenFs = new ZipOpenFS({baseFs: nodeFs});
+
 module.exports = makeApi($$SETUP_STATE(hydrateRuntimeState), {
   compatibilityMode: true,
   pnpapiResolution: path.resolve(__dirname, __filename),
+  fakeFs: zipOpenFs,
 });
 
 if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
   applyPatch(module.exports, {
     compatibilityMode: true,
+    fakeFs: zipOpenFs,
   });
 
   if (__non_webpack_module__.filename) {

@@ -1,6 +1,6 @@
-import fs                                                         from 'fs';
+import {FakeFS, NodeFS}                                           from '@berry/fslib';
 import Module                                                     from 'module';
-import path                                                       from 'path';
+import path, {posix}                                              from 'path';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types';
 
@@ -8,8 +8,21 @@ import {makeError}                                                from './intern
 
 export type MakeApiOptions = {
   compatibilityMode?: boolean,
+  fakeFs: FakeFS,
   pnpapiResolution: string,
 };
+
+export type ResolveToUnqualifiedOptions = {
+  considerBuiltins?: boolean,
+};
+
+export type ResolveUnqualifiedOptions = {
+  extensions?: Array<string>,
+};
+
+export type ResolveRequestOptions =
+  ResolveToUnqualifiedOptions &
+  ResolveUnqualifiedOptions;
 
 export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpApi {
   // @ts-ignore
@@ -94,7 +107,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       try {
         candidates.push(unqualifiedPath);
-        stat = fs.statSync(unqualifiedPath);
+        stat = opts.fakeFs.statSync(unqualifiedPath);
       } catch (error) {}
 
       // If the file exists and is a file, we can stop right there
@@ -112,8 +125,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         // we would lose the information that would tell us what are the dependencies of pkg-with-peers relative to its
         // ancestors.
 
-        if (fs.lstatSync(unqualifiedPath).isSymbolicLink())
-          unqualifiedPath = path.normalize(path.resolve(path.dirname(unqualifiedPath), fs.readlinkSync(unqualifiedPath)));
+        if (opts.fakeFs.lstatSync(unqualifiedPath).isSymbolicLink())
+          unqualifiedPath = posix.normalize(posix.resolve(posix.dirname(unqualifiedPath), opts.fakeFs.readlinkSync(unqualifiedPath)));
 
         return unqualifiedPath;
       }
@@ -124,13 +137,13 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         let pkgJson;
 
         try {
-          pkgJson = JSON.parse(fs.readFileSync(`${unqualifiedPath}/package.json`, 'utf-8'));
+          pkgJson = JSON.parse(opts.fakeFs.readFileSync(`${unqualifiedPath}/package.json`, `utf8`));
         } catch (error) {}
 
         let nextUnqualifiedPath;
 
         if (pkgJson && pkgJson.main)
-          nextUnqualifiedPath = path.resolve(unqualifiedPath, pkgJson.main);
+          nextUnqualifiedPath = posix.resolve(unqualifiedPath, pkgJson.main);
 
         // If the "main" field changed the path, we start again from this new location
 
@@ -151,7 +164,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         })
         .find(candidateFile => {
           candidates.push(candidateFile);
-          return fs.existsSync(candidateFile);
+          return opts.fakeFs.existsSync(candidateFile);
         });
 
       if (qualifiedPath)
@@ -166,7 +179,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           })
           .find(candidateFile => {
             candidates.push(candidateFile);
-            return fs.existsSync(candidateFile);
+            return opts.fakeFs.existsSync(candidateFile);
           });
 
         if (indexPath) {
@@ -202,7 +215,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function normalizePath(p: string) {
-    p = path.normalize(p);
+    p = posix.normalize(p);
 
     if (process.platform === 'win32')
       p = p.replace(backwardSlashRegExp, '/');
@@ -217,6 +230,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   function callNativeResolution(request: string, issuer: string): string | false {
     if (issuer.endsWith('/'))
       issuer += 'internal.js';
+
+    request = NodeFS.fromPortablePath(request);
+    issuer = NodeFS.fromPortablePath(issuer);
 
     // Since we would need to create a fake module anyway (to call _resolveLookupPath that
     // would give us the paths to give to _resolveFilename), we can as well not use
@@ -258,14 +274,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       return null;
 
     return packageInformation;
-  };
+  }
 
   /**
    * Finds the package locator that owns the specified path. If none is found, returns null instead.
    */
 
   function findPackageLocator(location: string): PackageLocator | null {
-    let relativeLocation = normalizePath(path.relative(runtimeState.basePath, location));
+    let relativeLocation = normalizePath(posix.relative(runtimeState.basePath, location));
 
     if (!relativeLocation.match(isStrictRegExp))
       relativeLocation = `./${relativeLocation}`;
@@ -329,7 +345,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveToUnqualified(request: string, issuer: string | null, {considerBuiltins = true}: {considerBuiltins?: boolean} = {}): string | null {
+  function resolveToUnqualified(request: string, issuer: string | null, {considerBuiltins = true}: ResolveToUnqualifiedOptions = {}): string | null {
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
 
     if (request === `pnpapi`)
@@ -365,8 +381,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     const dependencyNameMatch = request.match(pathRegExp);
 
     if (!dependencyNameMatch) {
-      if (path.isAbsolute(request)) {
-        unqualifiedPath = path.normalize(request);
+      if (posix.isAbsolute(request)) {
+        unqualifiedPath = posix.normalize(request);
       } else {
         if (!issuer) {
           throw makeError(
@@ -377,9 +393,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         }
 
         if (issuer.match(isDirRegExp)) {
-          unqualifiedPath = path.normalize(path.resolve(issuer, request));
+          unqualifiedPath = posix.normalize(posix.resolve(issuer, request));
         } else {
-          unqualifiedPath = path.normalize(path.resolve(path.dirname(issuer), request));
+          unqualifiedPath = posix.normalize(posix.resolve(posix.dirname(issuer), request));
         }
       }
     }
@@ -484,16 +500,16 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       // Now that we know which package we should resolve to, we only have to find out the file location
 
-      const dependencyLocation = path.resolve(runtimeState.basePath, dependencyInformation.packageLocation);
+      const dependencyLocation = posix.resolve(runtimeState.basePath, dependencyInformation.packageLocation);
 
       if (subPath) {
-        unqualifiedPath = path.resolve(dependencyLocation, subPath);
+        unqualifiedPath = posix.resolve(dependencyLocation, subPath);
       } else {
         unqualifiedPath = dependencyLocation;
       }
     }
 
-    return path.normalize(unqualifiedPath);
+    return posix.normalize(unqualifiedPath);
   };
 
   /**
@@ -501,15 +517,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * appends ".js" / ".json", and transforms directory accesses into "index.js").
    */
 
-  function resolveUnqualified(
-    unqualifiedPath: string,
-    {extensions = Object.keys(Module._extensions)}: {extensions?: Array<string>} = {},
-  ): string {
+  function resolveUnqualified(unqualifiedPath: string, {extensions = Object.keys(Module._extensions)}: ResolveUnqualifiedOptions = {}): string {
     const candidates: Array<string> = [];
     const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, {extensions});
 
     if (qualifiedPath) {
-      return path.normalize(qualifiedPath);
+      return posix.normalize(qualifiedPath);
     } else {
       throw makeError(
         `QUALIFIED_PATH_RESOLUTION_FAILED`,
@@ -527,7 +540,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveRequest(request: string, issuer: string | null, {considerBuiltins, extensions}: {considerBuiltins?: boolean, extensions?: Array<string>} = {}): string | null {
+  function resolveRequest(request: string, issuer: string | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): string | null {
     let unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
     if (unqualifiedPath === null) {
@@ -548,11 +561,54 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     VERSIONS,
     topLevel,
 
-    getPackageInformation,
-    findPackageLocator,
+    getPackageInformation: (locator: PackageLocator) => {
+      const info = getPackageInformation(locator);
 
-    resolveToUnqualified,
-    resolveUnqualified,
-    resolveRequest,
+      if (info === null)
+        return null;
+      
+      const packageLocation = NodeFS.fromPortablePath(info.packageLocation);
+      const nativeInfo = {... info, packageLocation};
+
+      return nativeInfo;
+    },
+
+    findPackageLocator: (path: string) => {
+      path = NodeFS.toPortablePath(path);
+
+      return findPackageLocator(path);
+    },
+
+    resolveToUnqualified: (request: string, issuer: string | null, opts?: ResolveToUnqualifiedOptions) => {
+      request = NodeFS.toPortablePath(request);
+
+      if (issuer !== null)
+        issuer = NodeFS.toPortablePath(issuer);
+
+      const resolution = resolveToUnqualified(request, issuer, opts);
+      if (resolution === null)
+        return null;
+
+      return NodeFS.fromPortablePath(resolution);
+    },
+
+    resolveUnqualified: (unqualifiedPath: string, opts?: ResolveUnqualifiedOptions) => {
+      unqualifiedPath = NodeFS.fromPortablePath(unqualifiedPath);
+
+      return NodeFS.fromPortablePath(resolveUnqualified(unqualifiedPath, opts));
+    },
+
+    resolveRequest: (request: string, issuer: string | null, opts?: ResolveRequestOptions) => {
+      request = NodeFS.toPortablePath(request);
+
+      if (issuer !== null)
+        issuer = NodeFS.toPortablePath(issuer);
+
+      const resolution = resolveRequest(request, issuer, opts);
+      if (resolution === null)
+        return null;
+
+      return NodeFS.fromPortablePath(resolution);
+    },
   };
 }

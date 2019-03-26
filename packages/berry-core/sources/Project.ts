@@ -3,7 +3,7 @@ import {parseSyml, stringifySyml}               from '@berry/parsers';
 import {createHmac}                             from 'crypto';
 // @ts-ignore
 import Logic                                    from 'logic-solver';
-import {dirname, posix}                         from 'path';
+import {posix}                                  from 'path';
 // @ts-ignore
 import pLimit                                   from 'p-limit';
 import semver                                   from 'semver';
@@ -80,7 +80,7 @@ export class Project {
           packageCwd = currentCwd;
         }
       }
-      nextCwd = dirname(currentCwd);
+      nextCwd = posix.dirname(currentCwd);
     }
 
     if (!projectCwd || !packageCwd)
@@ -307,7 +307,7 @@ export class Project {
 
     if (!dependencyMetaSet)
       return dependencyMeta;
-    
+
     const defaultMeta = dependencyMetaSet.get(null);
     if (defaultMeta)
       Object.assign(dependencyMeta, defaultMeta);
@@ -366,7 +366,7 @@ export class Project {
     const fetcher = this.configuration.makeFetcher();
 
     const resolverOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, resolver};
-    
+
     const allDescriptors = new Map<DescriptorHash, Descriptor>();
     const allPackages = new Map<LocatorHash, Package>();
     const allResolutions = new Map<DescriptorHash, LocatorHash>();
@@ -560,79 +560,79 @@ export class Project {
           allDescriptors.set(descriptor.descriptorHash, descriptor);
           mustBeResolved.add(descriptor.descriptorHash);
 
-          // We must check and make sure that the descriptor didn't get aliased	
-          // to something else	
+          // We must check and make sure that the descriptor didn't get aliased
+          // to something else
           const aliasHash = this.resolutionAliases.get(descriptor.descriptorHash);
-          if (aliasHash === undefined)	
-            continue;	
+          if (aliasHash === undefined)
+            continue;
 
-           // It doesn't cost us much to support the case where a descriptor is	
-          // equal to its own alias (which should mean "no alias")	
-          if (descriptor.descriptorHash === aliasHash)	
-            continue;	
+           // It doesn't cost us much to support the case where a descriptor is
+          // equal to its own alias (which should mean "no alias")
+          if (descriptor.descriptorHash === aliasHash)
+            continue;
 
-           const alias = this.storedDescriptors.get(aliasHash);	
-          if (!alias)	
-            throw new Error(`Assertion failed: The alias should have been registered`);	
+           const alias = this.storedDescriptors.get(aliasHash);
+          if (!alias)
+            throw new Error(`Assertion failed: The alias should have been registered`);
 
-           // If it's already been "resolved" (in reality it will be the temporary	
-          // resolution we've set in the next few lines) we simply must skip it	
-          if (allResolutions.has(descriptor.descriptorHash))	
-            continue;	
+           // If it's already been "resolved" (in reality it will be the temporary
+          // resolution we've set in the next few lines) we simply must skip it
+          if (allResolutions.has(descriptor.descriptorHash))
+            continue;
 
-           // Temporarily set an invalid resolution so that it won't be resolved	
-          // multiple times if it is found multiple times in the dependency	
-          // tree (this is only temporary, we will replace it by the actual	
-          // resolution after we've finished resolving everything)	
-          allResolutions.set(descriptor.descriptorHash, `temporary` as LocatorHash);	
+           // Temporarily set an invalid resolution so that it won't be resolved
+          // multiple times if it is found multiple times in the dependency
+          // tree (this is only temporary, we will replace it by the actual
+          // resolution after we've finished resolving everything)
+          allResolutions.set(descriptor.descriptorHash, `temporary` as LocatorHash);
 
-           // We can now replace the descriptor by its alias in the list of	
-          // descriptors that must be resolved	
-          mustBeResolved.delete(descriptor.descriptorHash);	
-          mustBeResolved.add(aliasHash);	
+           // We can now replace the descriptor by its alias in the list of
+          // descriptors that must be resolved
+          mustBeResolved.delete(descriptor.descriptorHash);
+          mustBeResolved.add(aliasHash);
 
-          allDescriptors.set(aliasHash, alias);	
+          allDescriptors.set(aliasHash, alias);
 
           haveBeenAliased.add(descriptor.descriptorHash);
         }
       }
     }
 
-    // Each package that should have been resolved but was skipped because it	
-    // was aliased will now see the resolution for its alias propagated to it	
+    // Each package that should have been resolved but was skipped because it
+    // was aliased will now see the resolution for its alias propagated to it
 
-     while (haveBeenAliased.size > 0) {	
-      let hasChanged = false;	
+     while (haveBeenAliased.size > 0) {
+      let hasChanged = false;
 
-       for (const descriptorHash of haveBeenAliased) {	
-        const descriptor = allDescriptors.get(descriptorHash);	
-        if (!descriptor)	
-          throw new Error(`Assertion failed: The descriptor should have been registered`);	
+       for (const descriptorHash of haveBeenAliased) {
+        const descriptor = allDescriptors.get(descriptorHash);
+        if (!descriptor)
+          throw new Error(`Assertion failed: The descriptor should have been registered`);
 
-         const aliasHash = this.resolutionAliases.get(descriptorHash);	
-        if (aliasHash === undefined)	
-          throw new Error(`Assertion failed: The descriptor should have an alias`);	
+         const aliasHash = this.resolutionAliases.get(descriptorHash);
+        if (aliasHash === undefined)
+          throw new Error(`Assertion failed: The descriptor should have an alias`);
 
-         const resolution = allResolutions.get(aliasHash);	
-        if (resolution === undefined)	
-          throw new Error(`Assertion failed: The resolution should have been registered`);	
+         const resolution = allResolutions.get(aliasHash);
+        if (resolution === undefined)
+          throw new Error(`Assertion failed: The resolution should have been registered`);
 
-         // The following can happen if a package gets aliased to another package	
-        // that's itself aliased - in this case we just process all those we can	
-        // do, then make new passes until everything is resolved	
-        if (resolution === `temporary`)	
-          continue;	
+         // The following can happen if a package gets aliased to another package
+        // that's itself aliased - in this case we just process all those we can
+        // do, then make new passes until everything is resolved
+        if (resolution === `temporary`)
+          continue;
 
-         haveBeenAliased.delete(descriptorHash);	
+         haveBeenAliased.delete(descriptorHash);
 
-         allResolutions.set(descriptorHash, resolution);	
+         allResolutions.set(descriptorHash, resolution);
 
-         hasChanged = true;	
-      }	
+         hasChanged = true;
+      }
 
-       if (!hasChanged) {	
-        throw new Error(`Alias loop detected`);	
-      }	
+       if (!hasChanged) {
+        throw new Error(`Alias loop detected`);
+      }
     }
 
     // In this step we now create virtual packages for each package with at
@@ -846,7 +846,7 @@ export class Project {
       const installer = installers.get(linker);
       if (!installer)
         throw new Error(`Assertion failed: The installer should have been registered`);
-      
+
       const fetchResult = await fetcher.fetch(pkg, fetcherOptions);
 
       let installStatus;
@@ -878,7 +878,7 @@ export class Project {
       const installer = installers.get(packageLinker);
       if (!installer)
         throw new Error(`Assertion failed: The installer should have been registered`);
-      
+
       const packageLocation = packageLocations.get(pkg.locatorHash);
       if (!packageLocation)
         throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, pkg)}) should have been registered`);
@@ -889,22 +889,22 @@ export class Project {
         const resolution = this.storedResolutions.get(descriptor.descriptorHash);
         if (!resolution)
           throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
-        
+
         const dependency = this.storedPackages.get(resolution);
         if (!dependency)
           throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
-        
+
         const dependencyLinker = packageLinkers.get(resolution);
         if (!dependencyLinker)
           throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
-        
+
         if (dependencyLinker === packageLinker) {
           internalDependencies.push(dependency);
         } else {
           let externalEntry = externalDependents.get(resolution);
           if (!externalEntry)
             externalDependents.set(resolution, externalEntry = []);
-          
+
           externalEntry.push(packageLocation);
         }
       }
@@ -924,7 +924,7 @@ export class Project {
       const installer = installers.get(packageLinker);
       if (!installer)
         throw new Error(`Assertion failed: The installer should have been registered`);
-      
+
       await installer.attachExternalDependents(pkg, dependentPaths);
     }
 
@@ -940,16 +940,16 @@ export class Project {
 
     for (const locatorHash of buildablePackages)
       readyPackages.delete(locatorHash);
-    
+
     // We'll use this function is order to compute a hash for each package
     // that exposes a build directive. If the hash changes compared to the
     // previous run, the package is rebuilt. This has the advantage of making
     // the rebuilds much more predictable than before, and to give us the tools
     // later to improve this further by explaining *why* a rebuild happened.
-    
+
     const getBuildHash = (locator: Locator) => {
       const hash = createHmac(`sha512`, `berry`);
-      
+
       const traverse = (locatorHash: LocatorHash, seenPackages: Set<string> = new Set()) => {
         hash.update(locatorHash);
 
@@ -990,13 +990,13 @@ export class Project {
         const pkg = this.storedPackages.get(locatorHash);
         if (!pkg)
           throw new Error(`Assertion failed: The package should have been registered`);
-  
+
         let isBuildable = true;
         for (const dependency of pkg.dependencies.values()) {
           const resolution = this.storedResolutions.get(dependency.descriptorHash);
           if (!resolution)
             throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, dependency)}) should have been registered`);
-          
+
           if (buildablePackages.has(resolution)) {
             isBuildable = false;
             break;
@@ -1007,7 +1007,7 @@ export class Project {
         // before trying to build it (since it might need them to build itself)
         if (!isBuildable)
           continue;
-        
+
         buildablePackages.delete(locatorHash);
 
         const buildHash = getBuildHash(pkg);
@@ -1020,7 +1020,7 @@ export class Project {
           report.reportInfo(MessageName.MUST_REBUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be rebuilt because its dependency tree changed`);
         else
           report.reportInfo(MessageName.MUST_BUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be built because it never did before or the last one failed`);
-        
+
         const buildDirective = packageBuildDirectives.get(pkg.locatorHash);
         if (!buildDirective)
           throw new Error(`Assertion failed: The build directive should have been registered`);
@@ -1064,7 +1064,7 @@ export class Project {
           const pkg = this.storedPackages.get(locatorHash);
           if (!pkg)
             throw new Error(`Assertion failed: The package should have been registered`);
-  
+
           return structUtils.prettyLocator(this.configuration, pkg);
         }).join(`, `);
 

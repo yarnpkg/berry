@@ -1,28 +1,24 @@
-import {existsSync, readFile, writeFile} from 'fs';
-import {promisify}                       from 'util';
+import {xfs}         from '@berry/fslib';
 
-import {makeTracker}                     from './makeTracker';
-
-const readFileP = promisify(readFile);
-const writeFileP = promisify(writeFile);
+import {makeTracker} from './makeTracker';
 
 export async function makeUpdater(filename: string) {
   let indent = `  `;
   let obj;
 
-  if (existsSync(filename)) {
-    const content = await readFileP(filename, `utf8`);
+  if (xfs.existsSync(filename)) {
+    const content = await xfs.readFilePromise(filename, `utf8`);
     const indentMatch = content.match(/^[ \t]+/m);
-    
+
     if (indentMatch)
       indent = indentMatch[0];
 
     obj = JSON.parse(content || `{}`);
   }
-  
+
   if (!obj)
     obj = {};
-  
+
   const tracker = makeTracker(obj);
   const initial = tracker.immutable;
 
@@ -35,7 +31,7 @@ export async function makeUpdater(filename: string) {
         return;
 
       const data = JSON.stringify(tracker.immutable, null, indent) + `\n`;
-      await writeFileP(filename, data);
+      await xfs.writeFilePromise(filename, data);
     }
   };
 }

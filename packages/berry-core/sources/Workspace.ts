@@ -1,4 +1,4 @@
-import {xfs}                   from '@berry/fslib';
+import {xfs, NodeFS}           from '@berry/fslib';
 import {makeUpdater}           from '@berry/json-proxy';
 import {createHmac}            from 'crypto';
 import globby                  from 'globby';
@@ -69,7 +69,7 @@ export class Workspace {
     for (const definition of this.manifest.workspaceDefinitions) {
       const relativeCwds = await globby(definition.pattern, {
         absolute: true,
-        cwd: this.cwd,
+        cwd: NodeFS.fromPortablePath(this.cwd),
         expandDirectories: false,
         onlyDirectories: true,
         onlyFiles: false,
@@ -79,7 +79,7 @@ export class Workspace {
       relativeCwds.sort();
 
       for (const relativeCwd of relativeCwds) {
-        const candidateCwd = posix.resolve(this.cwd, relativeCwd);
+        const candidateCwd = posix.resolve(this.cwd, NodeFS.toPortablePath(relativeCwd));
 
         if (xfs.existsSync(`${candidateCwd}/package.json`)) {
           this.workspacesCwds.add(candidateCwd);
@@ -101,13 +101,13 @@ export class Workspace {
 
     if (protocol === WorkspaceResolver.protocol && pathname === this.relativeCwd)
       return true;
-    
+
     if (!semver.validRange(pathname))
       return false;
 
     if (protocol === WorkspaceResolver.protocol)
       return semver.satisfies(this.manifest.version !== null ? this.manifest.version : `0.0.0`, pathname);
-    
+
     if (this.manifest.version !== null)
       return semver.satisfies(this.manifest.version, pathname);
 

@@ -1,5 +1,5 @@
 import {Configuration}         from '@berry/core';
-import {xfs}                   from '@berry/fslib';
+import {xfs, NodeFS}           from '@berry/fslib';
 import {UsageError, Concierge} from '@manaflair/concierge';
 import {execFileSync}          from 'child_process';
 import Joi                     from 'joi';
@@ -13,8 +13,10 @@ concierge.topLevel(`[--cwd PATH]`).validate(Joi.object().unknown().keys({
 }));
 
 function runBinary(path: string) {
-  if (path.endsWith(`.js`)) {
-    execFileSync(process.execPath, [path, ...process.argv.slice(2)], {
+  const physicalPath = NodeFS.fromPortablePath(path);
+
+  if (physicalPath) {
+    execFileSync(process.execPath, [physicalPath, ...process.argv.slice(2)], {
       stdio: `inherit`,
       env: {
         ... process.env,
@@ -22,7 +24,7 @@ function runBinary(path: string) {
       }
     });
   } else {
-    execFileSync(path, process.argv.slice(2), {
+    execFileSync(physicalPath, process.argv.slice(2), {
       stdio: `inherit`,
       env: {
         ... process.env,
@@ -33,7 +35,7 @@ function runBinary(path: string) {
 }
 
 async function run() {
-  const configuration = await Configuration.find(process.cwd(), pluginConfiguration);
+  const configuration = await Configuration.find(NodeFS.toPortablePath(process.cwd()), pluginConfiguration);
 
   const yarnPath = configuration.get(`yarnPath`);
   const ignorePath = configuration.get(`ignorePath`);
@@ -54,7 +56,9 @@ async function run() {
       for (const command of plugin.commands || [])
         command(concierge, pluginConfiguration);
 
-    concierge.runExit(`yarn`, process.argv.slice(2));
+    concierge.runExit(`yarn`, process.argv.slice(2), {
+      cwd: NodeFS.toPortablePath(process.cwd())
+    });
   }
 }
 

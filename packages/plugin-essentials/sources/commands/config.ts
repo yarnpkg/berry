@@ -21,6 +21,8 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     When used together with the \`-v,--verbose\` option, the output will contain the settings description on top of the regular key/value information.
 
     When used together with the \`--why\` flag, the output will also contain the reason why a settings is set a particular way.
+
+    Note that the paths settings will be normalized - especially on Windows. It means that paths such as \`C:\\project\` will be transparently shown as \`/mnt/c/project\`.
   `)
 
   .example(
