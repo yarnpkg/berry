@@ -1,7 +1,9 @@
+import {WorkspaceRequiredError}                             from '@berry/cli';
 import {Cache, Configuration, PluginConfiguration, Project} from '@berry/core';
 import {LightReport}                                        from '@berry/core';
 import {scriptUtils, structUtils}                           from '@berry/core';
 import {xfs}                                                from '@berry/fslib';
+import {suggestUtils}                                       from '@berry/plugin-essentials';
 import {UsageError}                                         from '@manaflair/concierge';
 import {posix}                                              from 'path';
 import {Readable, Writable}                                 from 'stream';
@@ -9,11 +11,14 @@ import tmp                                                  from 'tmp';
 
 export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
 
-  .command(`dlx <command> [... args] [-p,--package NAME]`)
+  .command(`dlx <command> [... args] [-p,--package NAME ...] [-q,--quiet]`)
   .describe(`run a package in a temporary environment`)
+  .flags({proxyArguments: true})
 
   .detail(`
     This command will install a package within a temporary environment, and run its binary script if it contains any. The binary will run within the current cwd.
+
+    By default Yarn will print the full logs for the given package install process. This behavior can be silenced by using the \`-q,--quiet\` flag which will instruct Yarn to only report critical errors.
 
     Using \`yarn dlx\` as a replacement of \`yarn add\` isn't recommended, as it makes your project non-deterministic (since Yarn doesn't register that your project depends on packages installed via \`dlx\`).
   `)
@@ -23,20 +28,21 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     `yarn dlx create-react-app ./my-app`,
   )
 
-  .action(async ({cwd, stdin, stdout, stderr, command, package: pkg, args, ... rest}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, command: string, package: string | undefined, args: Array<string>}) => {
+  .action(async ({cwd, stdin, stdout, stderr, command, package: packages, args, quiet, ... rest}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, command: string, package: Array<string>, args: Array<string>, quiet: boolean}) => {
     const tmpDir = await createTemporaryDirectory(`dlx-${process.pid}`);
     await xfs.writeFilePromise(`${tmpDir}/package.json`, `{}\n`);
     await xfs.writeFilePromise(`${tmpDir}/.yarnrc`, `enable-global-cache true\n`);
 
-    if (!pkg) {
-      pkg = command;
-      command = structUtils.parseDescriptor(pkg).name;
+    if (packages.length === 0) {
+      packages = [command];
+      command = structUtils.parseDescriptor(command).name;
     }
 
-    // We could reimplement `add` in `dlx`, but at least for now it makes more
-    // sense to simply defer to the implementation provided by the `essentials`
-    // plugin, since we get to inherit all its features for free.
-    const addExitCode = await concierge.run(null, [`add`, pkg], {cwd: tmpDir, stdin, stdout, stderr, pkg, ... rest});
+    const addOptions = [];
+    if (quiet)
+      addOptions.push(`--quiet`);
+
+    const addExitCode = await concierge.run(null, [`add`, ... addOptions, `--`, ... packages], {cwd: tmpDir, stdin, stdout, stderr, ... rest});
     if (addExitCode !== 0)
       return addExitCode;
 
@@ -45,9 +51,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     const cache = await Cache.find(configuration);
 
     if (workspace === null)
-      throw new Error(`Assertion failed: The command should have been running within a workspace`);
-    if (workspace !== project.topLevelWorkspace)
-      throw new Error(`Assertion failed: The command should have been running within the top-level workspace`);
+      throw new WorkspaceRequiredError(cwd);
 
     const report = await LightReport.start({configuration, stdout}, async (report: LightReport) => {
       await project.resolveEverything({lockfileOnly: true, cache, report});

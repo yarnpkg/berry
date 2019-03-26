@@ -11,7 +11,7 @@ import {Hooks}                                                      from '..';
 
 export default (concierge: Concierge, pluginConfiguration: PluginConfiguration) => concierge
 
-  .command(`add [... packages] [-E,--exact] [-T,--tilde] [-D,--dev] [-P,--peer] [-i,--interactive]`)
+  .command(`add [... packages] [-E,--exact] [-T,--tilde] [-D,--dev] [-P,--peer] [-i,--interactive] [-q,--quiet]`)
   .describe(`add dependencies to the project`)
 
   .detail(`
@@ -38,7 +38,7 @@ export default (concierge: Concierge, pluginConfiguration: PluginConfiguration) 
     `yarn add lodash@1.2.3`,
   )
 
-  .action(async ({cwd, stdin, stdout, packages, exact, tilde, dev, peer, interactive}: {cwd: string, stdin: Readable, stdout: Writable, packages: Array<string>, exact: boolean, tilde: boolean, dev: boolean, peer: boolean, interactive: boolean}) => {
+  .action(async ({cwd, stdin, stdout, packages, exact, tilde, dev, peer, interactive, quiet}: {cwd: string, stdin: Readable, stdout: Writable, packages: Array<string>, exact: boolean, tilde: boolean, dev: boolean, peer: boolean, interactive: boolean, quiet: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -186,9 +186,17 @@ export default (concierge: Concierge, pluginConfiguration: PluginConfiguration) 
       if (askedQuestions)
         stdout.write(`\n`);
 
-      const installReport = await StreamReport.start({configuration, stdout}, async report => {
-        await project.install({cache, report});
-      });
+      let installReport;
+      
+      if (quiet) {
+        installReport = await LightReport.start({configuration, stdout}, async report => {
+          await project.install({cache, report});
+        });
+      } else {
+        installReport = await StreamReport.start({configuration, stdout}, async report => {
+          await project.install({cache, report});
+        });
+      }
 
       return installReport.exitCode();
     }

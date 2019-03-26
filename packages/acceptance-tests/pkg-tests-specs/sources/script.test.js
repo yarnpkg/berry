@@ -159,7 +159,7 @@ describe(`Scripts tests`, () => {
       await run(`install`);
 
       await expect(run(`run`, `has-bin-entries-with-relative-require`)).resolves.toMatchObject({
-        stdout: `42\n`,
+        stdout: `1.0.0\n`,
       });
     }),
   );
