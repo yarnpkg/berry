@@ -2,6 +2,7 @@ import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
 import {Descriptor, Locator}                             from '@berry/core';
 import {LinkType}                                        from '@berry/core';
 import {structUtils}                                     from '@berry/core';
+import {NodeFS}                                          from '@berry/fslib';
 import querystring                                       from 'querystring';
 
 import {RAW_LINK_PROTOCOL}                               from './constants';
@@ -35,7 +36,9 @@ export class RawLinkResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
-    return [structUtils.convertDescriptorToLocator(descriptor)];
+    const path = descriptor.range.slice(RAW_LINK_PROTOCOL.length);
+
+    return [structUtils.makeLocator(descriptor, `${RAW_LINK_PROTOCOL}${NodeFS.toPortablePath(path)}`)];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
