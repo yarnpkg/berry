@@ -1588,6 +1588,7 @@ __metadata:
     "@berry/fslib": "workspace:*"
     "@berry/parsers": "workspace:*"
     "@berry/plugin-constraints": "workspace:*"
+    "@berry/plugin-dlx": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
     "@berry/plugin-file": "workspace:*"
     "@berry/plugin-github": "workspace:*"
@@ -1766,7 +1767,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-dlx@workspace:packages/plugin-dlx":
+"@berry/plugin-dlx@workspace:*, @berry/plugin-dlx@workspace:packages/plugin-dlx":
   version: 0.0.0
   resolution: "@berry/plugin-dlx@workspace:packages/plugin-dlx"
   dependencies:
