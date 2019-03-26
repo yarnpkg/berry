@@ -9,7 +9,7 @@ describe(`Commands`, () => {
       `it should stage the initial files`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await execFile(`git`, [`init`], {cwd: path});
-        await writeFile(`${path}/.yarnrc`, `plugins:\n  - "${require.resolve(`@berry/monorepo/scripts/plugin-stage.js`)}"\n`);
+        await writeFile(`${path}/.yarnrc`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-stage.js`))}\n`);
 
         await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
           stdout: `${path}/.yarnrc\n${path}/package.json\n`,
@@ -21,7 +21,7 @@ describe(`Commands`, () => {
       `it should not stage non-yarn files`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await execFile(`git`, [`init`], {cwd: path});
-        await writeFile(`${path}/.yarnrc`, `plugins:\n  - "${require.resolve(`@berry/monorepo/scripts/plugin-stage.js`)}"\n`);
+        await writeFile(`${path}/.yarnrc`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-stage.js`))}\n`);
 
         await writeFile(`${path}/index.js`, `module.exports = 42;\n`);
 
@@ -41,7 +41,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         await execFile(`git`, [`init`], {cwd: path});
-        await writeFile(`${path}/.yarnrc`, `plugins:\n  - "${require.resolve(`@berry/monorepo/scripts/plugin-stage.js`)}"\n`);
+        await writeFile(`${path}/.yarnrc`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-stage.js`))}\n`);
 
         await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
           stdout: [
