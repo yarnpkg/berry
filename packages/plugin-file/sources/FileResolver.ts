@@ -9,7 +9,7 @@ import {FILE_REGEXP, PROTOCOL}                           from './constants';
 
 export class FileResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (FILE_REGEXP.test(descriptor.range))
+    if (descriptor.range.match(FILE_REGEXP))
       return true;
 
     if (!descriptor.range.startsWith(PROTOCOL))

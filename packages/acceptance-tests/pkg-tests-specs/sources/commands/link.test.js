@@ -1,3 +1,5 @@
+import {NodeFS} from '@berry/fslib';
+
 const {
   fs: {createTemporaryFolder, mkdirp, readJson},
 } = require('pkg-tests-core');
@@ -22,7 +24,7 @@ describe(`Commands`, () => {
 
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
           dependencies: {
-            [`my-package`]: `portal:${tmp}/my-package`
+            [`my-package`]: `portal:${NodeFS.toPortablePath(`${tmp}/my-package`)}`,
           },
         });
       }),
