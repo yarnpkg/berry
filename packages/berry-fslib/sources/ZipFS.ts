@@ -148,6 +148,12 @@ export class ZipFS extends FakeFS {
       const p = posix.resolve(`/`, raw);
 
       this.registerEntry(p, t);
+
+      // If the raw path is a directory, register it
+      // to prevent empty folder being skipped
+      if (raw.endsWith('/')) {
+        this.registerListing(p);
+      }
     }
 
     this.ready = true;
