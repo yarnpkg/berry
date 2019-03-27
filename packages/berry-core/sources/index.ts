@@ -21,6 +21,9 @@ export {LinkType}                                                             fr
 import * as httpUtils from './httpUtils';
 export {httpUtils};
 
+import * as execUtils from './execUtils';
+export {execUtils};
+
 import * as miscUtils from './miscUtils';
 export {miscUtils};
 

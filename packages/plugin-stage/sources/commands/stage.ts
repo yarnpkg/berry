@@ -37,7 +37,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
 
-    let {driver, root} = findDriver(project.cwd);
+    let {driver, root} = await findDriver(project.cwd);
 
     const basePaths: Array<string | null> = [
       configuration.get(`bstatePath`),
@@ -67,7 +67,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
       `package.json`,
     ]);
 
-    const changeList = driver.filterChanges(root, yarnPaths, yarnNames);
+    const changeList = await driver.filterChanges(root, yarnPaths, yarnNames);
 
     if (dryRun) {
       for (const file of changeList) {
@@ -77,19 +77,19 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
       if (changeList.length === 0) {
         stdout.write(`No changes found!`);
       } else if (commit) {
-        driver.makeCommit(root, changeList);
+        await driver.makeCommit(root, changeList);
       } else if (reset) {
-        driver.makeReset(root, changeList);
+        await driver.makeReset(root, changeList);
       }
     }
   });
 
-function findDriver(cwd: string) {
+async function findDriver(cwd: string) {
   let driver = null;
   let root: string | null = null;
-  
+
   for (const candidate of ALL_DRIVERS) {
-    if ((root = candidate.findRoot(cwd)) !== null) {
+    if ((root = await candidate.findRoot(cwd)) !== null) {
       driver = candidate;
       break;
     }
