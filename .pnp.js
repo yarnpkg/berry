@@ -51,6 +51,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:7.1.0"
                 ],
                 [
+                  "@types/cross-spawn",
+                  "npm:6.0.0"
+                ],
+                [
                   "@types/dateformat",
                   "npm:1.0.2"
                 ],
@@ -8867,6 +8871,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:2.4.2"
                 ],
                 [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
                   "execa",
                   "npm:1.0.0"
                 ],
@@ -9154,6 +9162,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@babel/preset-typescript",
                   "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:7.1.0"
+                ],
+                [
+                  "@types/cross-spawn",
+                  "npm:6.0.0"
                 ],
                 [
                   "@types/dateformat",
@@ -13367,6 +13379,27 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/configstore",
                   "npm:2.1.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/cross-spawn",
+        [
+          [
+            "npm:6.0.0",
+            {
+              "packageLocation": "./.yarn/cache/@types-cross-spawn-npm-6.0.0-ac0917e4f56743a2809d07a05b3c47617b6aaa9c1fa45db48f0c56051f0ace06.zip/node_modules/@types/cross-spawn/",
+              "packageDependencies": [
+                [
+                  "@types/cross-spawn",
+                  "npm:6.0.0"
+                ],
+                [
+                  "@types/node",
+                  "npm:10.12.18"
                 ]
               ]
             }

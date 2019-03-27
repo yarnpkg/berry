@@ -7,7 +7,10 @@ steps:
 
 - bash: |
     node ./scripts/run-yarn.js build:cli
-  displayName: 'Build the standard bundle'
+    node ./scripts/run-yarn.js build:plugin-pack
+    node ./scripts/run-yarn.js build:plugin-stage
+    node ./scripts/run-yarn.js build:plugin-typescript
+  displayName: 'Build the standard bundle & plugins'
 
 - script: |
     node ./scripts/run-yarn.js test:integration

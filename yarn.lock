@@ -1622,6 +1622,7 @@ __metadata:
     "@berry/shell": "workspace:*"
     "@manaflair/concierge": "npm:^0.12.3"
     chalk: "npm:^2.4.1"
+    cross-spawn: "npm:^6.0.5"
     execa: "npm:^1.0.0"
     globby: "npm:^8.0.1"
     got: "npm:^9.2.2"
@@ -1707,6 +1708,7 @@ __metadata:
     "@babel/plugin-transform-modules-commonjs": "npm:^7.2.0"
     "@babel/preset-env": "npm:^7.3.1"
     "@babel/preset-typescript": "npm:^7.1.0"
+    "@types/cross-spawn": "npm:6.0.0"
     "@types/dateformat": "npm:^1.0.1"
     "@types/emscripten": "npm:^0.0.31"
     "@types/eventemitter3": "npm:^2.0.2"
@@ -2907,6 +2909,15 @@ __metadata:
   version: 2.1.1
   resolution: "@types/configstore@npm:2.1.1"
   checksum: fb8c6ec841250f142da48ba3f90fbf04a539eac0e267cb3234997f971c6c6cdbd32e4fd1b5c3210f25cb33c719c81188d97e1d4bea82f808e9021588c5c34fda
+  languageName: node
+  linkType: hard
+
+"@types/cross-spawn@npm:6.0.0":
+  version: 6.0.0
+  resolution: "@types/cross-spawn@npm:6.0.0"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: d544c23dda462aa6547bead77bdcefe8eaf34ebfc9380577cb97a91dab4c09533af8328f91a519eed84205db736404e109f7309e61a7eba986c061ccc292916d
   languageName: node
   linkType: hard
 

@@ -241,7 +241,7 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
     await makePathWrapper(env.BERRY_BIN_FOLDER, binaryName, process.execPath, [binaryPath]);
 
   try {
-    await execUtils.execFile(process.execPath, [binaryPath, ... args], {cwd, env, stdin, stdout, stderr});
+    await execUtils.pipevp(process.execPath, [binaryPath, ... args], {cwd, env, stdin, stdout, stderr});
   } finally {
     await xfs.removePromise(env.BERRY_BIN_FOLDER);
   }

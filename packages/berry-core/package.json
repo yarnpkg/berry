@@ -11,6 +11,7 @@
     "@berry/shell": "workspace:*",
     "@manaflair/concierge": "^0.12.3",
     "chalk": "^2.4.1",
+    "cross-spawn": "^6.0.5",
     "execa": "^1.0.0",
     "globby": "^8.0.1",
     "got": "^9.2.2",
