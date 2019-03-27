@@ -8774,6 +8774,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/plugin-link"
                 ],
                 [
+                  "@berry/plugin-node-gyp",
+                  "workspace:packages/plugin-node-gyp"
+                ],
+                [
                   "@berry/plugin-npm",
                   "workspace:packages/plugin-npm"
                 ],
@@ -9632,6 +9636,27 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/fslib",
                   "workspace:packages/berry-fslib"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@berry/plugin-node-gyp",
+        [
+          [
+            "workspace:packages/plugin-node-gyp",
+            {
+              "packageLocation": "./packages/plugin-node-gyp/",
+              "packageDependencies": [
+                [
+                  "@berry/plugin-node-gyp",
+                  "workspace:packages/plugin-node-gyp"
+                ],
+                [
+                  "@berry/core",
+                  "workspace:packages/berry-core"
                 ]
               ]
             }
@@ -64846,6 +64871,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       30,
       29,
       28,
+      27,
       25,
       24,
       23,
@@ -65321,12 +65347,14 @@ class NodeFS extends FakeFS_1.FakeFS {
         return this.realFs.rmdirSync(NodeFS.fromPortablePath(p));
     }
     async symlinkPromise(target, p) {
+        const type = target.endsWith(`/`) ? `dir` : `file`;
         return await new Promise((resolve, reject) => {
-            this.realFs.symlink(NodeFS.fromPortablePath(target), NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
+            this.realFs.symlink(NodeFS.fromPortablePath(path_1.posix.normalize(target)), NodeFS.fromPortablePath(p), type, this.makeCallback(resolve, reject));
         });
     }
     symlinkSync(target, p) {
-        return this.realFs.symlinkSync(NodeFS.fromPortablePath(target), NodeFS.fromPortablePath(p));
+        const type = target.endsWith(`/`) ? `dir` : `file`;
+        return this.realFs.symlinkSync(NodeFS.fromPortablePath(path_1.posix.normalize(target)), NodeFS.fromPortablePath(p), type);
     }
     async readFilePromise(p, encoding) {
         return await new Promise((resolve, reject) => {
@@ -66409,6 +66437,11 @@ class ZipFS extends FakeFS_1.FakeFS {
                 continue;
             const p = path_1.posix.resolve(`/`, raw);
             this.registerEntry(p, t);
+            // If the raw path is a directory, register it
+            // to prevent empty folder being skipped
+            if (raw.endsWith('/')) {
+                this.registerListing(p);
+            }
         }
         this.ready = true;
     }
@@ -66692,14 +66725,9 @@ class ZipFS extends FakeFS_1.FakeFS {
     }
     chmodSync(p, mask) {
         const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
-        if (this.listings.has(resolvedP)) {
-            if ((mask & 0o755) === 0o755) {
-                return;
-            }
-            else {
-                throw Object.assign(new Error(`EISDIR: illegal operation on a directory, chmod '${p}'`), { code: `EISDIR` });
-            }
-        }
+        // We silently ignore chmod requests for directories
+        if (this.listings.has(resolvedP))
+            return;
         const entry = this.entries.get(resolvedP);
         if (entry === undefined)
             throw new Error(`Unreachable`);
