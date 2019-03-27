@@ -1,5 +1,5 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
-import {xfs}                                         from '@berry/fslib';
+import {NodeFS, xfs}                                 from '@berry/fslib';
 import {UsageError}                                  from '@manaflair/concierge';
 import {posix}                                       from 'path';
 import {Writable}                                    from 'stream';
@@ -71,7 +71,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
 
     if (dryRun) {
       for (const file of changeList) {
-        stdout.write(`${file}\n`);
+        stdout.write(`${NodeFS.fromPortablePath(file)}\n`);
       }
     } else {
       if (changeList.length === 0) {
