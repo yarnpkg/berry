@@ -56,7 +56,6 @@
     }
   },
   "scripts": {
-    "foo": "node-gyp --version",
     "test:unit": "jest"
   }
 }
