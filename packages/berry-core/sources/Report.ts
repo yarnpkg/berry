@@ -33,6 +33,8 @@ export enum MessageName {
   CONSTRAINTS_INVALID_DEPENDENCY = 26,
   CANT_SUGGEST_RESOLUTIONS = 27,
   FROZEN_LOCKFILE_EXCEPTION = 28,
+  CROSS_DRIVE_VIRTUAL_LOCAL = 29,
+  FETCH_FAILED = 30,
 }
 
 export class ReportError extends Error {

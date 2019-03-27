@@ -1,7 +1,8 @@
-import {AliasFS, xfs}                                            from '@berry/fslib';
-import {posix}                                                   from 'path';
+import {AliasFS, NodeFS, xfs}                                    from '@berry/fslib';
+import {posix, win32}                                            from 'path';
 
 import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from './Fetcher';
+import {MessageName, ReportError}                                from './Report';
 import * as structUtils                                          from './structUtils';
 import {Locator}                                                 from './types';
 
@@ -52,7 +53,24 @@ export class VirtualFetcher implements Fetcher {
 
   private async ensureVirtualLink(locator: Locator, sourceFetch: FetchResult, opts: FetchOptions) {
     const virtualPath = this.getLocatorPath(locator, opts);
-    const relativeTarget = posix.relative(posix.dirname(virtualPath), sourceFetch.packageFs.getRealPath());
+
+    const from = posix.dirname(virtualPath);
+    const to = sourceFetch.packageFs.getRealPath();
+
+    let target = posix.relative(from, to);
+
+    if (process.platform === `win32`) {
+      const fromParse = win32.parse(NodeFS.fromPortablePath(from));
+      const toParse = win32.parse(NodeFS.fromPortablePath(to));
+
+      if (fromParse.root !== toParse.root) {
+        if (opts.project.configuration.get(`enableAbsoluteVirtuals`)) {
+          target = to;
+        } else {
+          throw new ReportError(MessageName.CROSS_DRIVE_VIRTUAL_LOCAL, `The virtual folder (${fromParse.root}) must be on the same drive as the local package it references (${toParse.root})`);
+        }
+      }
+    }
 
     // Doesn't need locking, and the folder must exist for the lock to succeed
     await xfs.mkdirpPromise(posix.dirname(virtualPath));
@@ -67,11 +85,11 @@ export class VirtualFetcher implements Fetcher {
         }
       }
 
-      if (currentLink !== undefined && currentLink !== relativeTarget)
-        throw new Error(`Conflicting virtual paths (current ${currentLink} != new ${relativeTarget})`);
+      if (currentLink !== undefined && currentLink !== target)
+        throw new Error(`Conflicting virtual paths (current ${currentLink} != new ${target})`);
 
       if (currentLink === undefined) {
-        await xfs.symlinkPromise(relativeTarget, virtualPath);
+        await xfs.symlinkPromise(`${target}/`, virtualPath);
       }
     });
 
