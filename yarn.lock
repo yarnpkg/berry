@@ -1596,6 +1596,7 @@ __metadata:
     "@berry/plugin-hub": "workspace:*"
     "@berry/plugin-init": "workspace:*"
     "@berry/plugin-link": "workspace:*"
+    "@berry/plugin-node-gyp": "workspace:*"
     "@berry/plugin-npm": "workspace:*"
     "@berry/plugin-pnp": "workspace:*"
     "@berry/plugin-typescript": "workspace:*"
@@ -1861,6 +1862,14 @@ __metadata:
   dependencies:
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@berry/plugin-node-gyp@workspace:*, @berry/plugin-node-gyp@workspace:packages/plugin-node-gyp":
+  version: 0.0.0
+  resolution: "@berry/plugin-node-gyp@workspace:packages/plugin-node-gyp"
+  dependencies:
+    "@berry/core": "workspace:*"
   languageName: unknown
   linkType: soft
 

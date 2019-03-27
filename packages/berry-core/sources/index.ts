@@ -6,7 +6,7 @@ export {JsonReport}                                                           fr
 export {LightReport}                                                          from './LightReport';
 export {Linker, LinkOptions, MinimalLinkOptions}                              from './Linker';
 export {Manifest, DependencyMeta, PeerDependencyMeta}                         from './Manifest';
-export {Plugin}                                                               from './Plugin';
+export {Hooks, Plugin}                                                        from './Plugin';
 export {Project}                                                              from './Project';
 export {ReportError, Report, MessageName}                                     from './Report';
 export {Resolver, ResolveOptions, MinimalResolveOptions}                      from './Resolver';

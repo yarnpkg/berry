@@ -16,10 +16,26 @@ export interface ResolverPlugin {
   new(): Resolver;
 };
 
-// We keep this one an interface because we allow other plugins to extend it
-// with new hooks, cf TypeScript documentation on declaration merging
-export interface Hooks {
-  afterAllInstalled?: (project: Project) => void,
+export type Hooks = {
+  // Called before a script is executed. The hooks are allowed to modify the
+  // `env` object as they see fit, and any call to `makePathWrapper` will cause
+  // a binary of the given name to be injected somewhere within the PATH (we
+  // recommend you don't alter the PATH yourself unless required).
+  //
+  // The keys you get in the env are guaranteed to be uppercase. We strongly
+  // suggest you adopt this convention for any new key added to the env (we
+  // might enforce it later on).
+  setupScriptEnvironment?: (
+    project: Project,
+    env: {[key: string]: string},
+    makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>,
+  ) => Promise<void>,
+
+  // Called after the `install` method from the `Project` class successfully
+  // completed.
+  afterAllInstalled?: (
+    project: Project,
+  ) => void,
 };
 
 export type Plugin = {

@@ -1,7 +1,22 @@
-import {Plugin, Project, SettingsType} from '@berry/core';
-import {Hooks as StageHooks}           from '@berry/plugin-stage';
+import {Hooks as CoreHooks, Plugin, Project, SettingsType} from '@berry/core';
+import {NodeFS, xfs}                                       from '@berry/fslib';
+import {Hooks as StageHooks}                               from '@berry/plugin-stage';
 
-import {PnpLinker}                     from './PnpLinker';
+import {PnpLinker}                                         from './PnpLinker';
+
+async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
+  const pnpPath = NodeFS.fromPortablePath(project.configuration.get(`pnpPath`));
+  const pnpRequire = `--require ${pnpPath}`;
+
+  if (xfs.existsSync(pnpPath)) {
+    let nodeOptions = env.NODE_OPTIONS || ``;
+
+    nodeOptions = nodeOptions.replace(/\s*--require\s+\S*\.pnp\.js\s*/g, ` `).trim();
+    nodeOptions = nodeOptions ? `${pnpRequire} ${nodeOptions}` : pnpRequire;
+
+    env.NODE_OPTIONS = nodeOptions;
+  }
+}
 
 function populateYarnPaths(project: Project, definePath: (path: string | null) => void) {
   definePath(project.configuration.get(`pnpDataPath`));
@@ -12,7 +27,9 @@ function populateYarnPaths(project: Project, definePath: (path: string | null) =
 const plugin: Plugin = {
   hooks: {
     populateYarnPaths,
+    setupScriptEnvironment,
   } as (
+    CoreHooks &
     StageHooks
   ),
   configuration: {

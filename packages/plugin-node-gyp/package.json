@@ -1,0 +1,8 @@
+{
+  "name": "@berry/plugin-node-gyp",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/core": "workspace:*"
+  }
+}

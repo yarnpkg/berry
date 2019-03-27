@@ -41,20 +41,14 @@ export async function makeScriptEnv(project: Project) {
     ? `${binFolder}${delimiter}${scriptEnv.PATH}`
     : `${binFolder}`;
 
-  // Add the .pnp.js file to the Node options, so that we're sure that PnP will
-  // be correctly setup
-
-  const pnpPath = NodeFS.fromPortablePath(`${project.cwd}/.pnp.js`);
-  const pnpRequire = `--require ${pnpPath}`;
-
-  if (xfs.existsSync(pnpPath)) {
-    let nodeOptions = scriptEnv.NODE_OPTIONS || ``;
-
-    nodeOptions = nodeOptions.replace(/\s*--require\s+\S*\.pnp\.js\s*/g, ` `).trim();
-    nodeOptions = nodeOptions ? `${pnpRequire} ${nodeOptions}` : pnpRequire;
-
-    scriptEnv.NODE_OPTIONS = nodeOptions;
-  }
+  await project.configuration.triggerHook(
+    hook => hook.setupScriptEnvironment,
+    project,
+    scriptEnv,
+    async (name: string, argv0: string, args: Array<string>) => {
+      return await makePathWrapper(binFolder, name, argv0, args);
+    },
+  );
 
   return scriptEnv as (typeof scriptEnv) & {BERRY_BIN_FOLDER: string};
 }
