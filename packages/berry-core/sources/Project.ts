@@ -802,13 +802,23 @@ export class Project {
     }]);
 
     const limit = pLimit(5);
+    let firstError = false;
 
     await Promise.all(locatorHashes.map(locatorHash => limit(async () => {
       const pkg = this.storedPackages.get(locatorHash);
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
-
-      const fetchResult = await fetcher.fetch(pkg, fetcherOptions);
+      
+      let fetchResult;
+      
+      try {
+        fetchResult = await fetcher.fetch(pkg, fetcherOptions);
+      } catch (error) {
+        error.message = `${structUtils.prettyLocator(this.configuration, pkg)}: ${error.message}`;
+        report.reportExceptionOnce(error);
+        firstError = error;
+        return;
+      }
 
       if (fetchResult.checksum)
         this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
@@ -819,6 +829,10 @@ export class Project {
         fetchResult.releaseFs();
       }
     })));
+
+    if (firstError) {
+      throw firstError;
+    }
   }
 
   async linkEverything({cache, report}: InstallOptions) {
@@ -1048,6 +1062,7 @@ export class Project {
             } else {
               report.reportError(MessageName.BUILD_FAILED, `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${exitCode}, logs can be found here: ${logFile})`);
               delete bstate[pkg.locatorHash];
+              break;
             }
           }
         })());

@@ -531,13 +531,9 @@ export class ZipFS extends FakeFS {
   chmodSync(p: string, mask: number) {
     const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
 
-    if (this.listings.has(resolvedP)) {
-      if ((mask & 0o755) === 0o755) {
-        return;
-      } else {
-        throw Object.assign(new Error(`EISDIR: illegal operation on a directory, chmod '${p}'`), {code: `EISDIR`});
-      }
-    }
+    // We silently ignore chmod requests for directories
+    if (this.listings.has(resolvedP))
+      return;
 
     const entry = this.entries.get(resolvedP);
     if (entry === undefined)

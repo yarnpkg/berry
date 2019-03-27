@@ -148,6 +148,11 @@ export const coreDefinitions = {
     type: SettingsType.BOOLEAN,
     default: false,
   },
+  enableAbsoluteVirtuals: {
+    description: `If true, the virtual symlinks will use absolute paths if required [non portable!!]`,
+    type: SettingsType.BOOLEAN,
+    default: false,
+  },
 
   // Settings related to the output style
   enableColors: {

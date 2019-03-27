@@ -1,5 +1,5 @@
 import fs, {Stats}                                         from 'fs';
-import {win32}                                             from 'path';
+import {posix, win32}                                      from 'path';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {FakeFS, WriteFileOptions}                          from './FakeFS';
@@ -180,13 +180,17 @@ export class NodeFS extends FakeFS {
   }
 
   async symlinkPromise(target: string, p: string) {
+    const type: 'dir' | 'file' = target.endsWith(`/`) ? `dir` : `file`;
+
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.symlink(NodeFS.fromPortablePath(target), NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
+      this.realFs.symlink(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type, this.makeCallback(resolve, reject));
     });
   }
 
   symlinkSync(target: string, p: string) {
-    return this.realFs.symlinkSync(NodeFS.fromPortablePath(target), NodeFS.fromPortablePath(p));
+    const type: 'dir' | 'file' = target.endsWith(`/`) ? `dir` : `file`;
+
+    return this.realFs.symlinkSync(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type);
   }
 
   readFilePromise(p: string, encoding: 'utf8'): Promise<string>;

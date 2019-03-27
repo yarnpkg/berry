@@ -30,6 +30,7 @@ global.makeTemporaryEnv = generatePkgDriver({
       env: Object.assign(
         {
           [`PATH`]: `${path}/bin${delimiter}${process.env.PATH}`,
+          [`YARN_ENABLE_ABSOLUTE_VIRTUALS`]: `true`,
           [`YARN_ENABLE_TIMERS`]: `false`,
           [`YARN_GLOBAL_FOLDER`]: `${path}/.berry/global`,
           [`YARN_NPM_REGISTRY_SERVER`]: registryUrl,

@@ -68,7 +68,6 @@ describe(`Plug'n'Play`, () => {
         },
       },
       async ({path, run, source}) => {
-        console.log(path);
         await run(`install`);
 
         await expect(

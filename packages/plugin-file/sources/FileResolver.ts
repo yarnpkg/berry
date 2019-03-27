@@ -2,13 +2,14 @@ import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
 import {Descriptor, Locator, Manifest}                   from '@berry/core';
 import {LinkType}                                        from '@berry/core';
 import {miscUtils, structUtils}                          from '@berry/core';
+import {NodeFS}                                          from '@berry/fslib';
 import querystring                                       from 'querystring';
 
 import {FILE_REGEXP, PROTOCOL}                           from './constants';
 
 export class FileResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (FILE_REGEXP.test(descriptor.range))
+    if (descriptor.range.match(FILE_REGEXP))
       return true;
 
     if (!descriptor.range.startsWith(PROTOCOL))
@@ -41,7 +42,12 @@ export class FileResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
-    return [structUtils.makeLocator(descriptor, descriptor.range)];
+    let path = descriptor.range;
+
+    if (path.startsWith(PROTOCOL))
+      path = path.slice(PROTOCOL.length);
+
+    return [structUtils.makeLocator(descriptor, `${PROTOCOL}${NodeFS.toPortablePath(path)}`)];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
