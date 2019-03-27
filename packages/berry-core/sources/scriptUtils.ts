@@ -14,7 +14,7 @@ import {Locator}                         from './types';
 
 async function makePathWrapper(location: string, name: string, argv0: string, args: Array<string> = []) {
   if (process.platform === `win32`) {
-    await xfs.writeFilePromise(`${location}/${name}.cmd`, `"${argv0}" ${args.join(` `)} %*\n`);
+    await xfs.writeFilePromise(`${location}/${name}.cmd`, `@"${argv0}" ${args.join(` `)} %*\n`);
   } else {
     await xfs.writeFilePromise(`${location}/${name}`, `#!/usr/bin/env bash\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
     await xfs.chmodPromise(`${location}/${name}`, 0o755);
