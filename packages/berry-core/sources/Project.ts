@@ -1062,6 +1062,7 @@ export class Project {
             } else {
               report.reportError(MessageName.BUILD_FAILED, `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${exitCode}, logs can be found here: ${logFile})`);
               delete bstate[pkg.locatorHash];
+              break;
             }
           }
         })());

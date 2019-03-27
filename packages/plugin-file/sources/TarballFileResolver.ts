@@ -2,6 +2,7 @@ import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
 import {Descriptor, Locator, Manifest}                   from '@berry/core';
 import {LinkType}                                        from '@berry/core';
 import {miscUtils, structUtils}                          from '@berry/core';
+import {NodeFS}                                          from '@berry/fslib';
 import querystring                                       from 'querystring';
 
 import {FILE_REGEXP, TARBALL_REGEXP, PROTOCOL}           from './constants';
@@ -47,7 +48,12 @@ export class TarballFileResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
-    return [structUtils.convertDescriptorToLocator(descriptor)];
+    let path = descriptor.range;
+
+    if (path.startsWith(PROTOCOL))
+      path = path.slice(PROTOCOL.length);
+
+    return [structUtils.makeLocator(descriptor, `${PROTOCOL}${NodeFS.toPortablePath(path)}`)];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

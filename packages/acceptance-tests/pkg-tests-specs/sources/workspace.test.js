@@ -169,9 +169,9 @@ describe(`Workspaces tests`, () => {
           name: `workspace`,
           version: `1.0.0`,
           scripts: {
-            [`preinstall`]: `node "${path}"/write.js "${path}"/workspace.dat "Preinstall"`,
-            [`install`]: `node "${path}"/write.js "${path}"/workspace.dat "Install"`,
-            [`postinstall`]: `node "${path}"/write.js "${path}"/workspace.dat "Postinstall"`,
+            [`preinstall`]: `node ${JSON.stringify(`${path}/write.js`)} ${JSON.stringify(`${path}/workspace.dat`)} "Preinstall"`,
+            [`install`]: `node ${JSON.stringify(`${path}/write.js`)} ${JSON.stringify(`${path}/workspace.dat`)} "Install"`,
+            [`postinstall`]: `node ${JSON.stringify(`${path}/write.js`)} ${JSON.stringify(`${path}/workspace.dat`)} "Postinstall"`,
           },
         });
 
