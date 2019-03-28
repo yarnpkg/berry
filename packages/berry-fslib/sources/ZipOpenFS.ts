@@ -147,6 +147,22 @@ export class ZipOpenFS extends FakeFS {
     });
   }
 
+  async accessPromise(p: string, mode?: number) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.accessPromise(p, mode);
+    }, async (zipFs, {archivePath, subPath}) => {
+      return await zipFs.accessPromise(subPath, mode);
+    });
+  }
+
+  accessSync(p: string, mode?: number) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.accessSync(p, mode);
+    }, (zipFs, {subPath}) => {
+      return zipFs.accessSync(subPath, mode);
+    });
+  }
+
   async statPromise(p: string) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.statPromise(p);

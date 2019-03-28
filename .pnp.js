@@ -65288,6 +65288,7 @@ function wrapAsync(fn) {
 }
 function patchFs(patchedFs, fakeFs) {
     const SYNC_IMPLEMENTATIONS = new Set([
+        `accessSync`,
         `createReadStream`,
         `chmodSync`,
         `copyFileSync`,
@@ -65306,6 +65307,7 @@ function patchFs(patchedFs, fakeFs) {
         `writeFileSync`,
     ]);
     const ASYNC_IMPLEMENTATIONS = new Set([
+        `accessPromise`,
         `chmodPromise`,
         `copyFilePromise`,
         `lstatPromise`,
@@ -65432,6 +65434,14 @@ class NodeFS extends FakeFS_1.FakeFS {
             this.realFs.exists(NodeFS.fromPortablePath(p), resolve);
         });
     }
+    accessSync(p, mode) {
+        return this.realFs.accessSync(NodeFS.fromPortablePath(p), mode);
+    }
+    async accessPromise(p, mode) {
+        return await new Promise((resolve, reject) => {
+            this.realFs.access(NodeFS.fromPortablePath(p), mode, this.makeCallback(resolve, reject));
+        });
+    }
     existsSync(p) {
         return this.realFs.existsSync(NodeFS.fromPortablePath(p));
     }
@@ -65528,12 +65538,12 @@ class NodeFS extends FakeFS_1.FakeFS {
     async symlinkPromise(target, p) {
         const type = target.endsWith(`/`) ? `dir` : `file`;
         return await new Promise((resolve, reject) => {
-            this.realFs.symlink(NodeFS.fromPortablePath(path_1.posix.normalize(target)), NodeFS.fromPortablePath(p), type, this.makeCallback(resolve, reject));
+            this.realFs.symlink(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type, this.makeCallback(resolve, reject));
         });
     }
     symlinkSync(target, p) {
         const type = target.endsWith(`/`) ? `dir` : `file`;
-        return this.realFs.symlinkSync(NodeFS.fromPortablePath(path_1.posix.normalize(target)), NodeFS.fromPortablePath(p), type);
+        return this.realFs.symlinkSync(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type);
     }
     async readFilePromise(p, encoding) {
         return await new Promise((resolve, reject) => {
@@ -65921,6 +65931,12 @@ class AliasFS extends FakeFS_1.FakeFS {
     existsSync(p) {
         return this.baseFs.existsSync(p);
     }
+    async accessPromise(p, mode) {
+        return await this.baseFs.accessPromise(p, mode);
+    }
+    accessSync(p, mode) {
+        return this.baseFs.accessSync(p, mode);
+    }
     async statPromise(p) {
         return await this.baseFs.statPromise(p);
     }
@@ -66078,6 +66094,12 @@ class CwdFS extends FakeFS_1.FakeFS {
     }
     existsSync(p) {
         return this.baseFs.existsSync(this.fromCwdPath(p));
+    }
+    async accessPromise(p, mode) {
+        return await this.baseFs.accessPromise(this.fromCwdPath(p), mode);
+    }
+    accessSync(p, mode) {
+        return this.baseFs.accessSync(this.fromCwdPath(p), mode);
     }
     async statPromise(p) {
         return await this.baseFs.statPromise(this.fromCwdPath(p));
@@ -66237,6 +66259,12 @@ class JailFS extends FakeFS_1.FakeFS {
     existsSync(p) {
         return this.baseFs.existsSync(this.fromJailedPath(p));
     }
+    async accessPromise(p, mode) {
+        return await this.baseFs.accessPromise(this.fromJailedPath(p), mode);
+    }
+    accessSync(p, mode) {
+        return this.baseFs.accessSync(this.fromJailedPath(p), mode);
+    }
     async statPromise(p) {
         return await this.baseFs.statPromise(this.fromJailedPath(p));
     }
@@ -66394,6 +66422,12 @@ class PosixFS extends FakeFS_1.FakeFS {
     }
     existsSync(p) {
         return this.baseFs.existsSync(NodeFS_1.NodeFS.toPortablePath(p));
+    }
+    async accessPromise(p, mode) {
+        return await this.baseFs.accessPromise(NodeFS_1.NodeFS.toPortablePath(p), mode);
+    }
+    accessSync(p, mode) {
+        return this.baseFs.accessSync(NodeFS_1.NodeFS.toPortablePath(p), mode);
     }
     async statPromise(p) {
         return await this.baseFs.statPromise(NodeFS_1.NodeFS.toPortablePath(p));
@@ -66723,6 +66757,15 @@ class ZipFS extends FakeFS_1.FakeFS {
             return false;
         }
         return this.entries.has(resolvedP) || this.listings.has(resolvedP);
+    }
+    async accessPromise(p, mode) {
+        return this.accessSync(p, mode);
+    }
+    accessSync(p, mode) {
+        const resolvedP = this.resolveFilename(`access '${p}'`, p);
+        if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) {
+            throw Object.assign(new Error(`ENOENT: no such file or directory, access '${p}'`), { code: `ENOENT` });
+        }
     }
     async statPromise(p) {
         return this.statSync(p);
@@ -67353,6 +67396,20 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
             return this.baseFs.existsSync(p);
         }, (zipFs, { subPath }) => {
             return zipFs.existsSync(subPath);
+        });
+    }
+    async accessPromise(p, mode) {
+        return await this.makeCallPromise(p, async () => {
+            return await this.baseFs.accessPromise(p, mode);
+        }, async (zipFs, { archivePath, subPath }) => {
+            return await zipFs.accessPromise(subPath, mode);
+        });
+    }
+    accessSync(p, mode) {
+        return this.makeCallSync(p, () => {
+            return this.baseFs.accessSync(p, mode);
+        }, (zipFs, { subPath }) => {
+            return zipFs.accessSync(subPath, mode);
         });
     }
     async statPromise(p) {

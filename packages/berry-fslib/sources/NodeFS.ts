@@ -67,6 +67,16 @@ export class NodeFS extends FakeFS {
     });
   }
 
+  accessSync(p: string, mode?: number) {
+    return this.realFs.accessSync(NodeFS.fromPortablePath(p), mode);
+  }
+
+  async accessPromise(p: string, mode?: number) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.access(NodeFS.fromPortablePath(p), mode, this.makeCallback(resolve, reject));
+    });
+  }
+
   existsSync(p: string) {
     return this.realFs.existsSync(NodeFS.fromPortablePath(p));
   }
