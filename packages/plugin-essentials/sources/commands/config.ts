@@ -10,7 +10,7 @@ function fromEntries(iterable: Iterable<[any, any] | {0: any, 1: any}>): {[key: 
 }
 
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`config [-v,--verbose] [--why] [--json]`)
   .describe(`display the current configuration`)

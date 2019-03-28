@@ -1,6 +1,6 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {NodeFS, xfs}                                 from '@berry/fslib';
-import {UsageError}                                  from '@manaflair/concierge';
+import {UsageError}                                  from 'clipanion';
 import {posix}                                       from 'path';
 import {Writable}                                    from 'stream';
 
@@ -13,7 +13,7 @@ const ALL_DRIVERS = [
   MercurialDriver,
 ];
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`stage [-c,--commit] [-r,--reset] [-u,--update] [-n,--dry-run]`)
 

@@ -9,7 +9,7 @@ const PRESERVED_FILES = new Set([
   `.gitignore`,
 ]);
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`cache clean [--dry-run] [--json]`)
   .describe(`remove the unused packages from the cache`)

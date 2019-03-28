@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const {concierge} = require(`@manaflair/concierge`);
+const {clipanion} = require(`clipanion`);
 const path = require(`path`);
 const {RawSource} = require(`webpack-sources`);
 const webpack = require(`webpack`);
@@ -25,7 +25,7 @@ const getNormalizedName = name => {
   return `@berry/${parsing[1]}`;
 };
 
-concierge
+clipanion
   .command(`[plugin-dir]`)
   .action(async ({stdout, stderr, pluginDir = `.`}) => {
     const pluginPath = path.resolve(process.cwd(), pluginDir);
@@ -103,5 +103,5 @@ concierge
     }
   });
 
-concierge
+clipanion
   .runExit(process.argv0, process.argv.slice(2));

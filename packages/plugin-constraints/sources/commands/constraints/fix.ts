@@ -6,7 +6,7 @@ import {Readable, Writable}                                             from 'st
 
 import {Constraints}                                                    from '../../Constraints';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`constraints fix`)
 

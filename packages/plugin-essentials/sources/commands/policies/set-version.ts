@@ -1,10 +1,10 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {httpUtils}                                   from '@berry/core';
 import {xfs}                                         from '@berry/fslib';
-import Joi                                           from 'joi';
 import {posix}                                       from 'path';
 import semver, {SemVer}                              from 'semver';
 import {Readable, Writable}                          from 'stream';
+import * as yup                                      from 'yup';
 
 type ReleaseAsset = {
   id: any,
@@ -72,15 +72,15 @@ async function fetchReleases(configuration: Configuration, {includePrereleases =
   return releases;
 }
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`policies set-version [range]`)
 
   .categorize(`Policies-related commands`)
   .describe(`lock the version of Berry used in the project`)
 
-  .validate(Joi.object().unknown().keys({
-    range: Joi.string().default(`latest`),
+  .validate(yup.object().shape({
+    range: yup.string().default(`latest`),
   }))
 
   .detail(`

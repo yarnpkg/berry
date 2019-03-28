@@ -1,6 +1,6 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`workspaces foreach [... args]`)
   .flags({proxyArguments: true})
@@ -13,7 +13,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     const {project} = await Project.find(configuration, cwd);
 
     for (const cwd of project.workspacesByCwd.keys())
-      await concierge.run(null, args, {... env, cwd});
+      await clipanion.run(null, args, {... env, cwd});
 
     return 0;
   });

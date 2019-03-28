@@ -6,7 +6,7 @@
     "@berry/core": "workspace:*",
     "@berry/fslib": "workspace:*",
     "@berry/json-proxy": "workspace:*",
-    "@manaflair/concierge": "^0.12.3"
+    "clipanion": "^0.13.1"
   },
   "devDependencies": {
     "@berry/builder": "workspace:packages/berry-builder"

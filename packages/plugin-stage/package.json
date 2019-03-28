@@ -6,7 +6,7 @@
     "@berry/builder": "workspace:*",
     "@berry/core": "workspace:*",
     "@berry/fslib": "workspace:*",
-    "@manaflair/concierge": "^0.12.3"
+    "clipanion": "^0.13.1"
   },
   "scripts": {
     "build:plugin-stage": "run @berry-build-plugin"

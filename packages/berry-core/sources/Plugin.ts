@@ -40,7 +40,7 @@ export type Hooks = {
 
 export type Plugin = {
   configuration?: {[key: string]: SettingsDefinition},
-  commands?: Array<(concierge: any, pluginConfiguration: PluginConfiguration) => any>,
+  commands?: Array<(clipanion: any, pluginConfiguration: PluginConfiguration) => any>,
   fetchers?: Array<FetcherPlugin>,
   linkers?: Array<LinkerPlugin>,
   resolvers?: Array<ResolverPlugin>,

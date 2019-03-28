@@ -4,12 +4,12 @@ import {LightReport}                                        from '@berry/core';
 import {scriptUtils, structUtils}                           from '@berry/core';
 import {xfs}                                                from '@berry/fslib';
 import {suggestUtils}                                       from '@berry/plugin-essentials';
-import {UsageError}                                         from '@manaflair/concierge';
+import {UsageError}                                         from 'clipanion';
 import {posix}                                              from 'path';
 import {Readable, Writable}                                 from 'stream';
 import tmp                                                  from 'tmp';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`dlx <command> [... args] [-p,--package NAME ...] [-q,--quiet]`)
   .describe(`run a package in a temporary environment`)
@@ -42,7 +42,7 @@ export default (concierge: any, pluginConfiguration: PluginConfiguration) => con
     if (quiet)
       addOptions.push(`--quiet`);
 
-    const addExitCode = await concierge.run(null, [`add`, ... addOptions, `--`, ... packages], {cwd: tmpDir, stdin, stdout, stderr, ... rest});
+    const addExitCode = await clipanion.run(null, [`add`, ... addOptions, `--`, ... packages], {cwd: tmpDir, stdin, stdout, stderr, ... rest});
     if (addExitCode !== 0)
       return addExitCode;
 

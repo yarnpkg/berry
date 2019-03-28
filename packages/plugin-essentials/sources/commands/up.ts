@@ -8,7 +8,7 @@ import {Readable, Writable}                                         from 'stream
 import * as suggestUtils                                            from '../suggestUtils';
 import {Hooks}                                                      from '..';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`up [... packages] [-i,--interactive] [-v,--verbose] [-E,--exact] [-T,--tilde]`)
   .describe(`upgrade dependencies accross the project`)

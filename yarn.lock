@@ -1562,9 +1562,9 @@ __metadata:
     "@babel/preset-typescript": "npm:^7.1.0"
     "@babel/register": "npm:^7.0.0"
     "@berry/cli": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.3"
     brfs: "npm:^2.0.1"
     buffer-loader: "npm:^0.1.0"
+    clipanion: "npm:^0.13.1"
     joi: "npm:^13.6.0"
     pnp-webpack-plugin: "npm:^1.3.1"
     raw-loader: "npm:^0.5.1"
@@ -1602,12 +1602,12 @@ __metadata:
     "@berry/plugin-typescript": "workspace:*"
     "@berry/pnp": "workspace:*"
     "@berry/shell": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.3"
     chalk: "npm:^2.4.1"
+    clipanion: "npm:^0.13.1"
     execa: "npm:^1.0.0"
-    joi: "npm:^13.6.0"
     semver: "npm:^5.6.0"
     tmp: "npm:^0.0.33"
+    yup: "npm:^0.27.0"
   languageName: unknown
   linkType: soft
 
@@ -1620,8 +1620,8 @@ __metadata:
     "@berry/parsers": "workspace:*"
     "@berry/pnp": "workspace:*"
     "@berry/shell": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.3"
     chalk: "npm:^2.4.1"
+    clipanion: "npm:^0.13.1"
     cross-spawn: "npm:^6.0.5"
     execa: "npm:^1.0.0"
     globby: "npm:^8.0.1"
@@ -1735,6 +1735,7 @@ __metadata:
     "@types/tmp": "npm:^0.0.33"
     "@types/treeify": "npm:^1.0.0"
     "@types/tunnel": "npm:^0.0.0"
+    "@types/yup": "npm:0.26.12"
     babel-jest: "npm:^24.5.0"
     jest: "npm:^24.5.0"
     jest-environment-node: "npm:^24.5.0"
@@ -1780,7 +1781,7 @@ __metadata:
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.3"
+    clipanion: "npm:^0.13.1"
     tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
@@ -1794,12 +1795,12 @@ __metadata:
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/parsers": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.3"
+    clipanion: "npm:^0.13.1"
     execa: "npm:^1.0.0"
     inquirer: "npm:^6.2.0"
-    joi: "npm:^13.6.0"
     semver: "npm:^5.6.0"
     treeify: "npm:^1.1.0"
+    yup: "npm:^0.27.0"
   languageName: unknown
   linkType: soft
 
@@ -1835,7 +1836,7 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/ui": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.3"
+    clipanion: "npm:^0.13.1"
     dateformat: "npm:^3.0.3"
     immer: "npm:^1.7.2"
     joi: "npm:^13.6.0"
@@ -1854,7 +1855,7 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.3"
+    clipanion: "npm:^0.13.1"
   languageName: unknown
   linkType: soft
 
@@ -1892,7 +1893,7 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.3"
+    clipanion: "npm:^0.13.1"
   languageName: unknown
   linkType: soft
 
@@ -1915,7 +1916,7 @@ __metadata:
     "@berry/builder": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
-    "@manaflair/concierge": "npm:^0.12.3"
+    clipanion: "npm:^0.13.1"
   languageName: unknown
   linkType: soft
 
@@ -2720,16 +2721,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@manaflair/concierge@npm:^0.12.3":
-  version: 0.12.3
-  resolution: "@manaflair/concierge@npm:0.12.3"
-  dependencies:
-    chalk: "npm:^1.1.3"
-    lodash: "npm:^4.17.4"
-  checksum: de63d1eda831e577a3c942df56a729440d2d21c29bd8f6a50d432a5013b0622f100e8af17edce621a7af73cb70298d3d5278e7e5dce950d19c713007bd5b746c
-  languageName: node
-  linkType: hard
-
 "@manaflair/term-strings@npm:^0.10.1":
   version: 0.10.1
   resolution: "@manaflair/term-strings@npm:0.10.1"
@@ -3449,6 +3440,13 @@ __metadata:
   version: 12.0.10
   resolution: "@types/yargs@npm:12.0.10"
   checksum: c1a929db92bf02f9d3e2ad3ad721a0eee897e1b2aa0de6c2d5aa28f5a24f04d6bde9bc3e1d75aa596c18fdb6ed4a1a02fce1805b3de655b85ff39af81facd269
+  languageName: node
+  linkType: hard
+
+"@types/yup@npm:0.26.12":
+  version: 0.26.12
+  resolution: "@types/yup@npm:0.26.12"
+  checksum: ff3f485e17d9314772162bb99bd4b11d57ced52efdaf542881eeb0ed97f13d36272ff483f33b13a69445beea05e28e56c6337422ac48eed4f692773b1b764a14
   languageName: node
   linkType: hard
 
@@ -5611,6 +5609,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"camelcase@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "camelcase@npm:5.2.0"
+  checksum: 8f5ff1ed4e54ce78ab5eb6c2979d7a1352151c2f62d7dcaede5114b6355130823554a008f54e68ce28e5bf9ef915c63d613793860e8f9399336aaae115a15868
+  languageName: node
+  linkType: hard
+
 "caniuse-api@npm:^3.0.0":
   version: 3.0.0
   resolution: "caniuse-api@npm:3.0.0"
@@ -5915,6 +5920,16 @@ __metadata:
   version: 2.2.0
   resolution: "cli-width@npm:2.2.0"
   checksum: f927ecdf030bfbec3099dd9bf97a5c072e69dd8ae5ae2287f0689735912d5e8ba5c75b44b038b5f537a6dfca046c0a03a3f33aa7ab311d53181387b374dba6b6
+  languageName: node
+  linkType: hard
+
+"clipanion@npm:^0.13.1":
+  version: 0.13.1
+  resolution: "clipanion@npm:0.13.1"
+  dependencies:
+    camelcase: "npm:^5.2.0"
+    chalk: "npm:^1.1.3"
+  checksum: 6c9f5eb2f98cddcf8c27a1df79251ccc17682779301ebc9d6e05d54c614fe6b118f400fd515a667bcf1e804eca3f447798b28f4830feee1d1eed29bf57d0214e
   languageName: node
   linkType: hard
 
@@ -9157,6 +9172,13 @@ __metadata:
     inherits: "npm:^2.0.1"
     readable-stream: "npm:^2.0.4"
   checksum: 1e50c67a6f7846752642c012916436de078f19ca823a8faf3730d911a28290b229491cca19df6b2073a41391e786ed96141f1d165559da96cd213f0f79557ce7
+  languageName: node
+  linkType: hard
+
+"fn-name@npm:~2.0.1":
+  version: 2.0.1
+  resolution: "fn-name@npm:2.0.1"
+  checksum: 86be47a0a75f3a05be3a654fa63828738920c2423226ed880d5684f52b18564e55c245efd5fd0ba67b42825a2e63395315f041b6f13e5d017f26ebce220fc394
   languageName: node
   linkType: hard
 
@@ -16761,6 +16783,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"property-expr@npm:^1.5.0":
+  version: 1.5.1
+  resolution: "property-expr@npm:1.5.1"
+  checksum: 9be55c32ca345186ede70d7464db0f7d3beb0ffa096a79922a04e4efbc06d306d7bc73b39d64499ce265fc41a26f7257d3460501eb693c274a8762155e3d7997
+  languageName: node
+  linkType: hard
+
 "property-information@npm:^4.0.0":
   version: 4.2.0
   resolution: "property-information@npm:4.2.0"
@@ -19477,6 +19506,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"synchronous-promise@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "synchronous-promise@npm:2.0.6"
+  checksum: deffc2c10b7cf19a06c46311610e57568714042463f7875846d8826295ae3d132803dc558f2f18010b53f89728872c0140f29b34ae00e81b4474c24ce3b9c91e
+  languageName: node
+  linkType: hard
+
 "table@npm:^5.2.3":
   version: 5.2.3
   resolution: "table@npm:5.2.3"
@@ -19905,6 +19941,13 @@ __metadata:
   dependencies:
     hoek: "npm:6.x.x"
   checksum: e39d40dff7165382af914f879f94cdf49ca7c836b68270b955eee100440764aa78a00447e7f5be08d50f213ecb92bf2b1a0dd36e7d29a35fbd2a57aa05ce1e85
+  languageName: node
+  linkType: hard
+
+"toposort@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "toposort@npm:2.0.2"
+  checksum: 49fbfa199e8b6806cf36d8fd9e16394991688444063c5fb942f6a0435b6a4d6304d586380b30239ecc9740e91e3557daa24640ea35ce049fdf709a8ce95bae5d
   languageName: node
   linkType: hard
 
@@ -21811,6 +21854,20 @@ __metadata:
   version: 0.0.14
   resolution: "yoga-dom@npm:0.0.14"
   checksum: 34937889da4f9ce976f3fbcac91f166ad3556df5c74371706a087618fb35cfed101620e23c1d9e11a1e51f27ff63f5e0ad99ce0ab72a3fb03c213d5159a5d20c
+  languageName: node
+  linkType: hard
+
+"yup@npm:^0.27.0":
+  version: 0.27.0
+  resolution: "yup@npm:0.27.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.0.0"
+    fn-name: "npm:~2.0.1"
+    lodash: "npm:^4.17.11"
+    property-expr: "npm:^1.5.0"
+    synchronous-promise: "npm:^2.0.6"
+    toposort: "npm:^2.0.2"
+  checksum: 9d8da2fc52519375f9cd0f09f55ef0c93787514d656e0b2204b8acf0fc7a4b2f2c1d6e7bf5ac0aafc8579bfa40f0b7f0e586c00f53e1a4d491c279a430fc0749
   languageName: node
   linkType: hard
 

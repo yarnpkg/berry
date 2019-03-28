@@ -5,7 +5,7 @@ import {miscUtils, structUtils}                                  from '@berry/co
 import {Writable}                                                from 'stream';
 import {asTree}                                                  from 'treeify';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`why <package> [--peers]`)
   .describe(`display the reason why a package is needed`)

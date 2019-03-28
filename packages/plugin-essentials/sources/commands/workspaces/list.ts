@@ -1,7 +1,7 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {Writable}                                    from 'stream';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`workspaces list`)
 

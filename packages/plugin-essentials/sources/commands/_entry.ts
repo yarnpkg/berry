@@ -1,7 +1,7 @@
 import {posix}  from 'path';
 import {NodeFS} from '@berry/fslib';
 
-export default (concierge: any) => concierge
+export default (clipanion: any) => clipanion
 
   .command(`entry [... args]`)
   .describe(`select whether to use install or run`)
@@ -14,19 +14,19 @@ export default (concierge: any) => concierge
 
     // berry --help
     } else if (args.length === 1 && (args[0] === `--help` || args[0] === `-h`)) {
-      concierge.usage(env.argv0, {stream: stdout});
+      clipanion.usage(env.argv0, {stream: stdout});
 
     // berry --frozen-lockfile
     } else if (args.length === 0 || args[0].charAt(0) === `-`) {
-      return await concierge.run(null, [`install`, ... args], {cwd, stdout, ... env});
+      return await clipanion.run(null, [`install`, ... args], {cwd, stdout, ... env});
 
     // berry ~/projects/foo install
     } else if (args.length !== 0 && args[0].match(/[\\\/]/)) {
       const newCwd = posix.resolve(cwd, NodeFS.toPortablePath(args[0]));
-      return await concierge.run(null, args.slice(1), {cwd: newCwd, stdout, ... env});
+      return await clipanion.run(null, args.slice(1), {cwd: newCwd, stdout, ... env});
 
     // berry start
     } else {
-      return await concierge.run(null, [`run`, ... args], {cwd, stdout, ... env});
+      return await clipanion.run(null, [`run`, ... args], {cwd, stdout, ... env});
     }
   });

@@ -1,4 +1,4 @@
-const {UsageError} = require(`@manaflair/concierge`);
+const {UsageError} = require(`clipanion`);
 
 module.exports = function ({basedir, profile, plugin}) {
   const pkgJson = require(`${basedir}/package.json`);
