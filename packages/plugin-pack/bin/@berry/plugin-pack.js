@@ -115,7 +115,7 @@ exports.default = plugin;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = (concierge, pluginConfiguration) => concierge
+exports.default = (clipanion, pluginConfiguration) => clipanion
     .command(`pack [--filename]`)
     .describe(`Creates a compressed gzip archive of package dependencies.`)
     .detail(`
