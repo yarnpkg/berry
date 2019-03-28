@@ -2,6 +2,7 @@ import {Configuration}         from '@berry/core';
 import {xfs, NodeFS}           from '@berry/fslib';
 import {execFileSync}          from 'child_process';
 import {UsageError, Clipanion} from 'clipanion';
+import {posix}                 from 'path';
 import * as yup                from 'yup';
 
 import {pluginConfiguration}   from './pluginConfiguration';
@@ -10,7 +11,10 @@ const clipanion = new Clipanion({configKey: null});
 
 clipanion.topLevel(`[--cwd PATH]`)
   .validate(yup.object().shape({
-    cwd: yup.string().default(process.cwd()),
+    cwd: yup.string().transform((cwd = process.cwd()) => {
+      // Note that the `--cwd` option might be a relative path that we need to resolve
+      return posix.resolve(NodeFS.toPortablePath(process.cwd()), NodeFS.toPortablePath(cwd));
+    }),
   }));
 
 function runBinary(path: string) {
