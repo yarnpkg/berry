@@ -68153,6 +68153,52 @@ function makeApi(runtimeState, opts) {
      */
     const { ignorePattern, packageRegistry, packageLocatorsByLocations, packageLocationLengths, } = runtimeState;
     /**
+     * Allows to print useful logs just be setting a value in the environment
+     */
+    function makeLogEntry(name, args) {
+        return {
+            fn: name,
+            args: args,
+            error: null,
+            result: null,
+        };
+    }
+    function maybeLog(name, fn) {
+        if (opts.allowDebug === false)
+            return fn;
+        const level = Number(process.env.PNP_DEBUG_LEVEL);
+        if (Number.isFinite(level)) {
+            if (level >= 2) {
+                return (...args) => {
+                    const logEntry = makeLogEntry(name, args);
+                    try {
+                        return logEntry.result = fn(...args);
+                    }
+                    catch (error) {
+                        throw logEntry.error = error;
+                    }
+                    finally {
+                        console.error(logEntry);
+                    }
+                };
+            }
+            else if (level >= 1) {
+                return (...args) => {
+                    try {
+                        return fn(...args);
+                    }
+                    catch (error) {
+                        const logEntry = makeLogEntry(name, args);
+                        logEntry.error = error;
+                        console.error(logEntry);
+                        throw error;
+                    }
+                };
+            }
+        }
+        return fn;
+    }
+    /**
      * Returns information about a package in a safe way (will throw if they cannot be retrieved)
      */
     function getPackageInformationSafe(packageLocator) {
@@ -68511,7 +68557,7 @@ function makeApi(runtimeState, opts) {
             path = fslib_1.NodeFS.toPortablePath(path);
             return findPackageLocator(path);
         },
-        resolveToUnqualified: (request, issuer, opts) => {
+        resolveToUnqualified: maybeLog(`resolveToUnqualified`, (request, issuer, opts) => {
             request = fslib_1.NodeFS.toPortablePath(request);
             if (issuer !== null)
                 issuer = fslib_1.NodeFS.toPortablePath(issuer);
@@ -68519,12 +68565,12 @@ function makeApi(runtimeState, opts) {
             if (resolution === null)
                 return null;
             return fslib_1.NodeFS.fromPortablePath(resolution);
-        },
-        resolveUnqualified: (unqualifiedPath, opts) => {
+        }),
+        resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath, opts) => {
             unqualifiedPath = fslib_1.NodeFS.fromPortablePath(unqualifiedPath);
             return fslib_1.NodeFS.fromPortablePath(resolveUnqualified(unqualifiedPath, opts));
-        },
-        resolveRequest: (request, issuer, opts) => {
+        }),
+        resolveRequest: maybeLog(`resolveRequest`, (request, issuer, opts) => {
             request = fslib_1.NodeFS.toPortablePath(request);
             if (issuer !== null)
                 issuer = fslib_1.NodeFS.toPortablePath(issuer);
@@ -68532,7 +68578,7 @@ function makeApi(runtimeState, opts) {
             if (resolution === null)
                 return null;
             return fslib_1.NodeFS.fromPortablePath(resolution);
-        },
+        }),
     };
 }
 exports.makeApi = makeApi;
