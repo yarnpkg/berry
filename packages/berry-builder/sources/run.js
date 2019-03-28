@@ -1,4 +1,4 @@
-const {concierge} = require(`@manaflair/concierge`);
+const {clipanion} = require(`clipanion`);
 const {readFileSync} = require(`fs`);
 const Module = require(`module`);
 
@@ -12,7 +12,7 @@ const babelConfiguration = {
   plugins: [require.resolve(`@babel/plugin-proposal-class-properties`)],
 };
 
-concierge
+clipanion
   .command(`[... rest] [--profile TYPE] [--plugin PLUGIN ...]`)
   .action(async ({profile, plugin, rest}) => {
     process.argv = [`berry`, ... rest];
@@ -33,5 +33,5 @@ concierge
     require(require.resolve(`@berry/cli/sources/index.ts`));
   });
 
-concierge
+clipanion
   .runExit(process.argv0, process.argv.slice(2));

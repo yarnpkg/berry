@@ -4,7 +4,7 @@ import {xfs}                                                              from '
 import {parseSyml, stringifySyml}                                         from '@berry/parsers';
 import {Writable}                                                         from 'stream';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`install [--frozen-lockfile?]`)
   .describe(`install the project dependencies`)

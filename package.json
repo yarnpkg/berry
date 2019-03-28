@@ -38,6 +38,7 @@
     "@types/tmp": "^0.0.33",
     "@types/treeify": "^1.0.0",
     "@types/tunnel": "^0.0.0",
+    "@types/yup": "0.26.12",
     "babel-jest": "^24.5.0",
     "jest": "^24.5.0",
     "jest-environment-node": "^24.5.0",

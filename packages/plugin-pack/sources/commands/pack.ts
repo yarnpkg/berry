@@ -1,5 +1,5 @@
 import {PluginConfiguration} from '@berry/core';
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`pack [--filename]`)
   .describe(`Creates a compressed gzip archive of package dependencies.`)

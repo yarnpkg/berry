@@ -2,10 +2,10 @@ import {Configuration, Manifest, PluginConfiguration} from '@berry/core';
 import {structUtils}                                  from '@berry/core';
 import {xfs}                                          from '@berry/fslib';
 import {updateAndSave}                                from '@berry/json-proxy';
-import {UsageError}                                   from '@manaflair/concierge';
+import {UsageError}                                   from 'clipanion';
 import {posix}                                        from 'path';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`init [-p,--private]`)
   .describe(`create a new package`)

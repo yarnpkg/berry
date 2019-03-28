@@ -1,9 +1,9 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {scriptUtils, structUtils}                    from '@berry/core';
-import {UsageError}                                  from '@manaflair/concierge';
+import {UsageError}                                  from 'clipanion';
 import {Writable}                                    from 'stream';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`bin [name] [-v,--verbose]`)
   .describe(`get the path to a binary script`)

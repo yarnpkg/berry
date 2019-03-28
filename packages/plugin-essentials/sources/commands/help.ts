@@ -1,12 +1,12 @@
-export default (concierge: any) => concierge
+export default (clipanion: any) => clipanion
 
   .command(`help [command]`)
   .describe(`print the program usage`)
 
   .action(async ({command, ... rest}: {command: string | null, rest: {[key: string]: any}}) => {
     if (command) {
-      return await concierge.run(null, [command, `-h`], rest);
+      return await clipanion.run(null, [command, `-h`], rest);
     } else {
-      return await concierge.run(null, [`-h`], rest);
+      return await clipanion.run(null, [`-h`], rest);
     }
   });

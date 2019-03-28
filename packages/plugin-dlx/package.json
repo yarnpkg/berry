@@ -8,7 +8,7 @@
     "@berry/fslib": "workspace:*",
     "@berry/json-proxy": "workspace:*",
     "@berry/plugin-essentials": "workspace:*",
-    "@manaflair/concierge": "^0.12.3",
+    "clipanion": "^0.13.1",
     "tmp": "^0.0.33"
   }
 }

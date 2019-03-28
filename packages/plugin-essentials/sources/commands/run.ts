@@ -1,10 +1,10 @@
 import {Configuration, PluginConfiguration, Project, Workspace, Cache} from '@berry/core';
 import {LightReport}                                                   from '@berry/core';
 import {scriptUtils, structUtils}                                      from '@berry/core';
-import {UsageError}                                                    from '@manaflair/concierge';
+import {UsageError}                                                    from 'clipanion';
 import {Readable, Writable}                                            from 'stream';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`run <name> [... args] [-T,--top-level]`)
   .describe(`run a script defined in the package.json`)

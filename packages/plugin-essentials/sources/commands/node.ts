@@ -4,7 +4,7 @@ import {NodeFS}                                      from '@berry/fslib';
 import execa                                         from 'execa';
 import {Readable, Writable}                          from 'stream';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`node [... args]`)
   .describe(`run node with the hook already setup`)

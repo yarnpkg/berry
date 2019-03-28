@@ -7,7 +7,7 @@ import {Writable}                                                       from 'st
 import * as suggestUtils                                                from '../suggestUtils';
 import {Hooks}                                                          from '..';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`remove [... names] [-A,--all]`)
   .describe(`remove dependencies from the project`)

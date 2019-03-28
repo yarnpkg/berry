@@ -1,6 +1,6 @@
 import {xfs, NodeFS}                     from '@berry/fslib';
 import {parseSyml, stringifySyml}        from '@berry/parsers';
-import {UsageError}                      from '@manaflair/concierge';
+import {UsageError}                      from 'clipanion';
 import chalk                             from 'chalk';
 import {homedir}                         from 'os';
 import {posix, win32}                    from 'path';

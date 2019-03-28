@@ -10,12 +10,12 @@
     "@berry/fslib": "workspace:*",
     "@berry/parsers": "workspace:*",
     "@berry/shell": "workspace:*",
-    "@manaflair/concierge": "^0.12.3",
     "chalk": "^2.4.1",
+    "clipanion": "^0.13.1",
     "execa": "^1.0.0",
-    "joi": "^13.6.0",
     "semver": "^5.6.0",
-    "tmp": "^0.0.33"
+    "tmp": "^0.0.33",
+    "yup": "^0.27.0"
   },
   "devDependencies": {
     "@berry/builder": "workspace:*",

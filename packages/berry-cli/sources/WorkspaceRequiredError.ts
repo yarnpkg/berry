@@ -1,4 +1,4 @@
-import {UsageError} from '@manaflair/concierge';
+import {UsageError} from 'clipanion';
 
 export class WorkspaceRequiredError extends UsageError {
   constructor(cwd: string) {

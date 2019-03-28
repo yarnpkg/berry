@@ -11,6 +11,7 @@
         "typeRoots": [
             "./packages/berry-pnp/types",
             "./.yarn/cache/@types-cross-spawn-npm-6.0.0-ac0917e4f56743a2809d07a05b3c47617b6aaa9c1fa45db48f0c56051f0ace06.zip/node_modules/@types",
+            "./.yarn/cache/@types-yup-npm-0.26.12-1aea08e4aabab3166ce596f0de76b21e24bd49f8e8a5536f2fba743abf140a94.zip/node_modules/@types",
             "./.yarn/cache/@types-react-redux-npm-6.0.13-ddd59f0426a54cef191d9d551e4f40deb0a957389f987f104433bb135a44c82d.zip/node_modules/@types",
             "./.yarn/cache/@types-minimatch-npm-3.0.3-24dabc9f39e217574c429ee38f9f25d8c38ca0e121194f89a9b3101ab3b7e9f6.zip/node_modules/@types",
             "./.yarn/cache/@types-mkdirp-npm-0.5.2-95df724ec443b3f54a0ba71f52e002fcd8c9d06ad6eacb87c2974b25fd6b39ae.zip/node_modules/@types",

@@ -1,7 +1,7 @@
 import {Configuration, PluginConfiguration} from '@berry/core';
-import {UsageError}                         from '@manaflair/concierge';
+import {UsageError}                         from 'clipanion';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`config set <name> <value>`)
   .describe(`change a configuration settings`)

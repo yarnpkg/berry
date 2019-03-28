@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const {concierge} = require(`@manaflair/concierge`);
+const {clipanion} = require(`clipanion`);
 const path = require(`path`);
 const webpack = require(`webpack`);
 
@@ -9,7 +9,7 @@ const dynamicLibs = require(`./dynamic-libs`);
 const findPlugins = require(`./find-plugins`);
 const makeConfig = require(`./make-config`);
 
-concierge
+clipanion
   .command(`[-w,--watch] [--profile TYPE] [--plugin PLUGIN ...]`)
   .action(async ({watch, profile, plugin, stdout, stderr}) => {
     const plugins = findPlugins({basedir, profile, plugin});
@@ -99,5 +99,5 @@ concierge
     }
   });
 
-concierge
+clipanion
   .runExit(process.argv0, process.argv.slice(2));

@@ -3,7 +3,7 @@ import {Configuration, Cache, PluginConfiguration, Project, StreamReport} from '
 import {structUtils}                                                      from '@berry/core';
 import {Writable}                                                         from 'stream';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`policies set-resolution <descriptor> <resolution> [-s,--save]`)
   .describe(`enforce a package resolution`)

@@ -2,11 +2,11 @@ import {WorkspaceRequiredError}                                           from '
 import {Configuration, Cache, PluginConfiguration, Project, StreamReport} from '@berry/core';
 import {structUtils}                                                      from '@berry/core';
 import {xfs}                                                              from '@berry/fslib';
-import {UsageError}                                                       from '@manaflair/concierge';
+import {UsageError}                                                       from 'clipanion';
 import {posix}                                                            from 'path';
 import {Writable}                                                         from 'stream';
 
-export default (concierge: any, pluginConfiguration: PluginConfiguration) => concierge
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`link [... packages]`)
   .describe(`connect local packages together`)
