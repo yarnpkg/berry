@@ -286,6 +286,18 @@ export class ZipFS extends FakeFS {
     return this.entries.has(resolvedP) || this.listings.has(resolvedP);
   }
 
+  async accessPromise(p: string, mode?: number) {
+    return this.accessSync(p, mode);
+  }
+
+  accessSync(p: string, mode?: number) {
+    const resolvedP = this.resolveFilename(`access '${p}'`, p);
+
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) {
+      throw Object.assign(new Error(`ENOENT: no such file or directory, access '${p}'`), {code: `ENOENT`});
+    }
+  }
+
   async statPromise(p: string) {
     return this.statSync(p);
   }

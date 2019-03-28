@@ -2,6 +2,7 @@ const githubPatterns = [
   /^github:([^\/#]+)\/([^\/#]+)(?:#(.+))?$/,
   /^git@github.com:([^\/#]+)\/([^\/#]+)(?:#(.+))?$/,
   /^git\+https:\/\/github.com\/([^\/#]+)\/([^\/#]+)\.git?(?:#(.+))?$/,
+  /^https:\/\/github.com\/([^\/#]+)\/([^\/#]+)\/tarball\/([^\/#]+)(?:#|$)/,
 ];
 
 export function isGithubUrl(string: string) {

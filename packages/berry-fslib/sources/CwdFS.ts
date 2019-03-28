@@ -77,6 +77,14 @@ export class CwdFS extends FakeFS {
     return this.baseFs.existsSync(this.fromCwdPath(p));
   }
 
+  async accessPromise(p: string, mode?: number) {
+    return await this.baseFs.accessPromise(this.fromCwdPath(p), mode);
+  }
+
+  accessSync(p: string, mode?: number) {
+    return this.baseFs.accessSync(this.fromCwdPath(p), mode);
+  }
+
   async statPromise(p: string) {
     return await this.baseFs.statPromise(this.fromCwdPath(p));
   }

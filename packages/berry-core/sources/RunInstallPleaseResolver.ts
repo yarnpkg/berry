@@ -1,5 +1,6 @@
 import {MessageName, ReportError}                        from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator}                             from './types';
 
 export class RunInstallPleaseResolver implements Resolver {
@@ -22,7 +23,7 @@ export class RunInstallPleaseResolver implements Resolver {
   }
 
   bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions): never {
-    throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `A dependency cannot be retrieved from the lockfile; try to make an install to update your resolutions`);
+    throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `A dependency (${structUtils.prettyDescriptor(opts.project.configuration, descriptor)}) cannot be retrieved from the lockfile; try to make an install to update your resolutions`);
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<never> {

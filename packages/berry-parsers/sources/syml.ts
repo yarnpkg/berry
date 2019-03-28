@@ -1,6 +1,6 @@
 import {parse} from './grammars/syml';
 
-const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@`]).([ \t]*(?![ \t\r\n])(?![,\][{}:#]).)*$/;
+const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{}:# \t\r\n]).)*$/;
 
 // The following keys will always be stored at the top of the object, in the
 // specified order. It's not fair but life isn't fair either.

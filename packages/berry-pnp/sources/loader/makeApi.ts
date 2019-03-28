@@ -7,6 +7,7 @@ import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types
 import {makeError}                                                from './internalTools';
 
 export type MakeApiOptions = {
+  allowDebug?: boolean,
   compatibilityMode?: boolean,
   fakeFs: FakeFS,
   pnpapiResolution: string,
@@ -78,6 +79,59 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     packageLocatorsByLocations,
     packageLocationLengths,
   } = runtimeState as RuntimeState;
+
+  /**
+   * Allows to print useful logs just be setting a value in the environment
+   */
+
+  function makeLogEntry(name: string, args: Array<any>) {
+    return {
+      fn: name,
+      args: args,
+      error: null as Error | null,
+      result: null as any,
+    };
+  }
+
+  function maybeLog(name: string, fn: any): any {
+    if (opts.allowDebug === false)
+      return fn;
+
+    const level = Number(process.env.PNP_DEBUG_LEVEL);
+
+    if (Number.isFinite(level)) {
+      if (level >= 2) {
+
+        return (... args: Array<any>) => {
+          const logEntry = makeLogEntry(name, args);
+
+          try {
+            return logEntry.result = fn(... args);
+          } catch (error) {
+            throw logEntry.error = error;
+          } finally {
+            console.error(logEntry);
+          }
+        };
+
+      } else if (level >= 1) {
+
+        return (... args: Array<any>) => {
+          try {
+            return fn(... args);
+          } catch (error) {
+            const logEntry = makeLogEntry(name, args);
+            logEntry.error = error;
+            console.error(logEntry);
+            throw error;
+          }
+        };
+
+      }
+    }
+
+    return fn;
+  }
 
   /**
    * Returns information about a package in a safe way (will throw if they cannot be retrieved)
@@ -579,7 +633,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       return findPackageLocator(path);
     },
 
-    resolveToUnqualified: (request: string, issuer: string | null, opts?: ResolveToUnqualifiedOptions) => {
+    resolveToUnqualified: maybeLog(`resolveToUnqualified`, (request: string, issuer: string | null, opts?: ResolveToUnqualifiedOptions) => {
       request = NodeFS.toPortablePath(request);
 
       if (issuer !== null)
@@ -590,15 +644,15 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         return null;
 
       return NodeFS.fromPortablePath(resolution);
-    },
+    }),
 
-    resolveUnqualified: (unqualifiedPath: string, opts?: ResolveUnqualifiedOptions) => {
+    resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath: string, opts?: ResolveUnqualifiedOptions) => {
       unqualifiedPath = NodeFS.fromPortablePath(unqualifiedPath);
 
       return NodeFS.fromPortablePath(resolveUnqualified(unqualifiedPath, opts));
-    },
+    }),
 
-    resolveRequest: (request: string, issuer: string | null, opts?: ResolveRequestOptions) => {
+    resolveRequest: maybeLog(`resolveRequest`, (request: string, issuer: string | null, opts?: ResolveRequestOptions) => {
       request = NodeFS.toPortablePath(request);
 
       if (issuer !== null)
@@ -609,6 +663,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         return null;
 
       return NodeFS.fromPortablePath(resolution);
-    },
+    }),
   };
 }

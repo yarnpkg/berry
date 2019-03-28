@@ -40,6 +40,9 @@ export abstract class FakeFS {
   abstract existsPromise(p: string): Promise<boolean>;
   abstract existsSync(p: string): boolean;
 
+  abstract accessPromise(p: string, mode?: number): Promise<void>;
+  abstract accessSync(p: string, mode?: number): void;
+
   abstract statPromise(p: string): Promise<Stats>;
   abstract statSync(p: string): Stats;
 

@@ -57,6 +57,14 @@ export class PosixFS extends FakeFS {
     return this.baseFs.existsSync(NodeFS.toPortablePath(p));
   }
 
+  async accessPromise(p: string, mode?: number) {
+    return await this.baseFs.accessPromise(NodeFS.toPortablePath(p), mode);
+  }
+
+  accessSync(p: string, mode?: number) {
+    return this.baseFs.accessSync(NodeFS.toPortablePath(p), mode);
+  }
+
   async statPromise(p: string) {
     return await this.baseFs.statPromise(NodeFS.toPortablePath(p));
   }

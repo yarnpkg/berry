@@ -67,6 +67,14 @@ export class AliasFS extends FakeFS {
     return this.baseFs.existsSync(p);
   }
 
+  async accessPromise(p: string, mode?: number) {
+    return await this.baseFs.accessPromise(p, mode);
+  }
+
+  accessSync(p: string, mode?: number) {
+    return this.baseFs.accessSync(p, mode);
+  }
+
   async statPromise(p: string) {
     return await this.baseFs.statPromise(p);
   }

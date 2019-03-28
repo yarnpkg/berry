@@ -38,6 +38,7 @@ function wrapAsync(fn: Function) {
 
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
   const SYNC_IMPLEMENTATIONS = new Set([
+    `accessSync`,
     `createReadStream`,
     `chmodSync`,
     `copyFileSync`,
@@ -57,6 +58,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
   ]);
 
   const ASYNC_IMPLEMENTATIONS = new Set([
+    `accessPromise`,
     `chmodPromise`,
     `copyFilePromise`,
     `lstatPromise`,
