@@ -658,46 +658,20 @@ export class Project {
         (() => void) | null
       ]> = [];
 
+      const firstPass = [];
+      const secondPass = [];
+      const thirdPass = [];
+      const fourthPass = [];
+
       // During this first pass we virtualize the descriptors. This allows us
       // to reference them from their sibling without being order-dependent,
       // which is required to solve cases where packages with peer dependencies
       // have peer dependencies themselves.
 
       for (const descriptor of Array.from(parentPackage.dependencies.values())) {
-        if (descriptor.range === `missing:`)
+        if (parentPackage.peerDependencies.has(descriptor.identHash))
           continue;
 
-        const resolution = allResolutions.get(descriptor.descriptorHash);
-        if (!resolution)
-          throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
-
-        let pkg = allPackages.get(resolution);
-        if (!pkg)
-          throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
-
-        // Note that we must protect against against infinite recursion by
-        // preventing virtual locators from being re-resolved again (cf the
-        // Dragon Test 3)
-        if (pkg.peerDependencies.size > 0 && !parentPackage.peerDependencies.has(pkg.identHash)) {
-          const virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
-          const virtualizedPackage = structUtils.virtualizePackage(pkg, parentLocator.locatorHash);
-
-          parentPackage.dependencies.delete(descriptor.identHash);
-          parentPackage.dependencies.set(virtualizedDescriptor.identHash, virtualizedDescriptor);
-
-          allResolutions.set(virtualizedDescriptor.descriptorHash, virtualizedPackage.locatorHash);
-          allDescriptors.set(virtualizedDescriptor.descriptorHash, virtualizedDescriptor);
-
-          allPackages.set(virtualizedPackage.locatorHash, virtualizedPackage);
-        }
-      }
-
-      // During this second pass we now modify the dependencies of our new
-      // virtual packages (since all our siblings have been updated we don't
-      // risk anymore setting the reference to something that will later be
-      // modified)
-
-      for (const descriptor of Array.from(parentPackage.dependencies.values())) {
         volatileDescriptors.delete(descriptor.descriptorHash);
 
         if (descriptor.range === `missing:`)
@@ -707,14 +681,35 @@ export class Project {
         if (!resolution)
           throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
-        let pkg = allPackages.get(resolution);
+        const pkg = allPackages.get(resolution);
         if (!pkg)
           throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
-        if (pkg.peerDependencies.size > 0 && !parentPackage.peerDependencies.has(pkg.identHash)) {
-          const missingPeerDependencies = new Set();
+        if (pkg.peerDependencies.size === 0) {
+          resolvePeerDependencies(pkg);
+          continue;
+        }
 
-          for (const peerRequest of pkg.peerDependencies.values()) {
+        let virtualizedDescriptor: Descriptor;
+        let virtualizedPackage: Package;
+
+        const missingPeerDependencies = new Set();
+
+        firstPass.push(() => {
+          virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
+          virtualizedPackage = structUtils.virtualizePackage(pkg, parentLocator.locatorHash);
+
+          parentPackage.dependencies.delete(descriptor.identHash);
+          parentPackage.dependencies.set(virtualizedDescriptor.identHash, virtualizedDescriptor);
+
+          allResolutions.set(virtualizedDescriptor.descriptorHash, virtualizedPackage.locatorHash);
+          allDescriptors.set(virtualizedDescriptor.descriptorHash, virtualizedDescriptor);
+
+          allPackages.set(virtualizedPackage.locatorHash, virtualizedPackage);
+        });
+
+        secondPass.push(() => {
+          for (const peerRequest of virtualizedPackage.peerDependencies.values()) {
             let peerDescriptor = parentPackage.dependencies.get(peerRequest.identHash);
 
             if (!peerDescriptor && structUtils.areIdentsEqual(parentLocator, peerRequest)) {
@@ -726,7 +721,7 @@ export class Project {
 
             if (!peerDescriptor) {
               if (!parentPackage.peerDependencies.has(peerRequest.identHash)) {
-                const peerDependencyMeta = pkg.peerDependenciesMeta.get(structUtils.stringifyIdent(peerRequest));
+                const peerDependencyMeta = virtualizedPackage.peerDependenciesMeta.get(structUtils.stringifyIdent(peerRequest));
 
                 if (!peerDependencyMeta || !peerDependencyMeta.optional) {
                   report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide ${structUtils.prettyDescriptor(this.configuration, peerRequest)} requested by ${structUtils.prettyLocator(this.configuration, pkg)}`);
@@ -739,23 +734,36 @@ export class Project {
             if (peerDescriptor.range === `missing:`) {
               missingPeerDependencies.add(peerDescriptor.descriptorHash);
             } else {
-              pkg.dependencies.set(peerDescriptor.identHash, peerDescriptor);
+              virtualizedPackage.dependencies.set(peerDescriptor.identHash, peerDescriptor);
             }
           }
 
           // Since we've had to add new dependencies we need to sort them all over again
-          pkg.dependencies = new Map(miscUtils.sortMap(pkg.dependencies, ([identHash, descriptor]) => {
+          virtualizedPackage.dependencies = new Map(miscUtils.sortMap(virtualizedPackage.dependencies, ([identHash, descriptor]) => {
             return structUtils.stringifyIdent(descriptor);
           }));
+        });
 
-          resolvePeerDependencies(pkg);
+        thirdPass.push(() => {
+          resolvePeerDependencies(virtualizedPackage);
+        });
 
+        fourthPass.push(() => {
           for (const missingPeerDependency of missingPeerDependencies) {
-            pkg.dependencies.delete(missingPeerDependency);
+            virtualizedPackage.dependencies.delete(missingPeerDependency);
           }
-        } else {
-          resolvePeerDependencies(pkg);
-        }
+        });
+      }
+
+      const allPasses = [
+        ... firstPass,
+        ... secondPass,
+        ... thirdPass,
+        ... fourthPass
+      ];
+
+      for (const fn of allPasses) {
+        fn();
       }
     };
 
