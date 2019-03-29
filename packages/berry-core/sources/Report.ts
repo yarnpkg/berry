@@ -35,6 +35,7 @@ export enum MessageName {
   FROZEN_LOCKFILE_EXCEPTION = 28,
   CROSS_DRIVE_VIRTUAL_LOCAL = 29,
   FETCH_FAILED = 30,
+  DANGEROUS_NODE_MODULES = 31,
 }
 
 export class ReportError extends Error {
