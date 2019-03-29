@@ -129,15 +129,10 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     if (isUserStream(state.stderr))
       stdio[2] = `pipe`;
 
-    const normalizedEnv: {[key: string]: string} = {};
-    for (const key of Object.keys(state.environment))
-      normalizedEnv[key.toUpperCase()] = state.environment[key] as string;
-
-
     const subprocess = spawn(ident, rest, {
       cwd: NodeFS.fromPortablePath(state.cwd),
       shell: process.platform === `win32`, // Needed to execute .cmd files
-      env: normalizedEnv,
+      env: state.environment,
       stdio,
     });
 
@@ -557,9 +552,9 @@ export async function execute(command: string, args: Array<string> = [], {
   variables = {},
 }: Partial<UserOptions> = {}) {
   const normalizedEnv: {[key: string]: string} = {};
-  for (const key of Object.keys(env))
-    if (typeof env[key] !== `undefined`)
-      normalizedEnv[key.toUpperCase()] = env[key] as string;
+  for (const [key, value] of Object.entries(env))
+    if (typeof value !== `undefined`)
+      normalizedEnv[key] = value;
 
   if (paths.length > 0)
     normalizedEnv.PATH = normalizedEnv.PATH
