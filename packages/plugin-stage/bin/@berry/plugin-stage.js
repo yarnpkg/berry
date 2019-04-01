@@ -119,8 +119,8 @@ const core_1 = __webpack_require__(2);
 const fslib_1 = __webpack_require__(3);
 const clipanion_1 = __webpack_require__(4);
 const path_1 = __webpack_require__(17);
-const GitDriver_1 = __webpack_require__(20);
-const MercurialDriver_1 = __webpack_require__(22);
+const GitDriver_1 = __webpack_require__(21);
+const MercurialDriver_1 = __webpack_require__(23);
 const ALL_DRIVERS = [
     GitDriver_1.Driver,
     MercurialDriver_1.Driver,
@@ -273,78 +273,29 @@ exports.UsageError = class UsageError extends Error {
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const chalk          = __webpack_require__(7);
-const fs             = __webpack_require__(15);
-const camelCase      = __webpack_require__(16);
-const path           = __webpack_require__(17);
+const chalk                                = __webpack_require__(7);
+const fs                                   = __webpack_require__(15);
+const camelCase                            = __webpack_require__(16);
+const path                                 = __webpack_require__(17);
 
-const { Command }    = __webpack_require__(18);
-const { UsageError } = __webpack_require__(5);
-const { parse }      = __webpack_require__(19);
+const { Command }                          = __webpack_require__(18);
+const { UsageError }                       = __webpack_require__(5);
+const { getOptionComponent, getUsageLine } = __webpack_require__(19);
+const { parse }                            = __webpack_require__(20);
 
 let standardOptions = [ {
 
     shortName: `h`,
     longName: `help`,
 
-    argumentName: null,
+}, {
+
+    shortName: null,
+    longName: `clipanion-definitions`,
+
+    hidden: true,
 
 } ];
-
-function getOptionString(options) {
-
-    let basicOptions = [];
-    let complexOptions = [];
-
-    for (let option of options) {
-
-        if (option.shortName && !option.longName && !option.argumentName) {
-            basicOptions.push(option);
-        } else {
-            complexOptions.push(option);
-        }
-
-    }
-
-    let basicString = basicOptions.length > 0 ? `[-${basicOptions.map(option => {
-
-        return option.shortName;
-
-    }).join(``)}]` : null;
-
-    let complexString = complexOptions.map(option => {
-
-        let names = [];
-
-        if (option.shortName)
-            names.push(`-${option.shortName}`);
-
-        if (option.longName) {
-            if (option.initialValue !== true) {
-                names.push(`--${option.longName}`);
-            } else if (option.longName.startsWith(`with-`)) {
-                names.push(`--without-${option.longName.replace(/^with-/, ``)}`);
-            } else {
-                names.push(`--no-${option.longName}`);
-            }
-        }
-
-        if (option.argumentName) {
-            return `[${names.join(`,`)} ${option.argumentName}]`;
-        } else {
-            return `[${names.join(`,`)}]`;
-        }
-
-    }).join(` `);
-
-    return [
-
-        basicString,
-        complexString
-
-    ].join(` `);
-
-}
 
 exports.Clipanion = class Clipanion {
 
@@ -486,21 +437,7 @@ exports.Clipanion = class Clipanion {
         if (command) {
 
             let commandPath = command.path.join(` `);
-
-            let requiredArguments = command.requiredArguments.map(name => `<${name}>`).join(` `);
-            let optionalArguments = command.optionalArguments.map(name => `[${name}]`).join(` `);
-
-            if (command.spread) {
-
-                if (optionalArguments !== ``) {
-                    optionalArguments += ` [... ${command.spread}]`;
-                } else {
-                    optionalArguments += `[... ${command.spread}]`;
-                }
-
-            }
-
-            let commandOptions = getOptionString(command.options);
+            let usageLine = getUsageLine(command);
 
             if (!error) {
 
@@ -517,11 +454,11 @@ exports.Clipanion = class Clipanion {
 
                     stream.write(`${chalk.bold(`Usage:`)}\n`);
                     stream.write(`\n`);
-                    stream.write(`${argv0 || ``} ${commandPath} ${requiredArguments} ${optionalArguments} ${commandOptions}\n`.replace(/ +/g, ` `).replace(/^ +| +$/g, ``));
+                    stream.write(`${argv0 || ``} ${commandPath} ${usageLine}\n`.replace(/ +/g, ` `).replace(/^ +| +$/g, ``));
 
                 } else {
 
-                    stream.write(`${chalk.bold(`Usage:`)} ${argv0 || ``} ${commandPath} ${requiredArguments} ${optionalArguments} ${commandOptions}\n`.replace(/ +/g, ` `).replace(/^ +| +$/g, ``));
+                    stream.write(`${chalk.bold(`Usage:`)} ${argv0 || ``} ${commandPath} ${usageLine}\n`.replace(/ +/g, ` `).replace(/^ +| +$/g, ``));
 
                 }
 
@@ -551,13 +488,13 @@ exports.Clipanion = class Clipanion {
 
             } else {
 
-                stream.write(`${chalk.bold(`Usage:`)} ${argv0 || ``} ${commandPath} ${requiredArguments} ${optionalArguments} ${commandOptions}\n`.replace(/ +/g, ` `).replace(/^ +| +$/g, ``));
+                stream.write(`${chalk.bold(`Usage:`)} ${argv0 || ``} ${commandPath} ${usageLine}\n`.replace(/ +/g, ` `).replace(/^ +| +$/g, ``));
 
             }
 
         } else {
 
-            let globalOptions = getOptionString(this.options);
+            let globalOptions = getOptionComponent(this.options);
 
             stream.write(`${chalk.bold(`Usage:`)} ${argv0 || `<binary>`} ${globalOptions} <command>\n`.replace(/ +/g, ` `).replace(/ +$/, ``));
 
@@ -623,6 +560,29 @@ exports.Clipanion = class Clipanion {
             }
 
         }
+
+    }
+
+    definitions({ stream = process.stderr } = {}) {
+
+        let commands = [];
+
+        for (const command of this.commands) {
+            if (!command.hiddenCommand) {
+                commands.push({
+                    path: command.path,
+                    category: command.category,
+                    usage: getUsageLine(command),
+                    description: command.description,
+                    details: command.details,
+                    examples: command.examples,
+                });
+            }
+        }
+
+        stream.write(JSON.stringify({
+            commands,
+        }, null, 2));
 
     }
 
@@ -998,6 +958,14 @@ exports.Clipanion = class Clipanion {
                     this.usage(argv0, { command: selectedCommand, stream: stdout });
                 else
                     this.usage(argv0, { stream: stdout });
+
+                return 0;
+
+            }
+
+            if (env.clipanionDefinitions) {
+
+                this.definitions({ stream: stdout });
 
                 return 0;
 
@@ -1797,6 +1765,69 @@ exports.Command = class Command {
 
 /***/ }),
 /* 19 */
+/***/ (function(module, exports) {
+
+exports.getOptionComponent = function getOptionString(options) {
+
+    let components = [];
+
+    for (let option of options) {
+
+        if (option.hidden)
+            continue;
+
+        let names = [];
+
+        if (option.shortName)
+            names.push(`-${option.shortName}`);
+
+        if (option.longName) {
+            if (option.initialValue !== true) {
+                names.push(`--${option.longName}`);
+            } else if (option.longName.startsWith(`with-`)) {
+                names.push(`--without-${option.longName.replace(/^with-/, ``)}`);
+            } else {
+                names.push(`--no-${option.longName}`);
+            }
+        }
+
+        if (option.argumentName) {
+            components.push(`[${names.join(`,`)} ${option.argumentName}]`);
+        } else {
+            components.push(`[${names.join(`,`)}]`);
+        }
+
+    }
+
+    return components.join(` `);
+
+};
+
+exports.getUsageLine = function getUsageLine(command) {
+
+    let components = [];
+
+    for (const name of command.requiredArguments)
+        components.push(`<${name}>`);
+
+    for (const name of command.optionalArguments)
+        components.push(`[${name}]`);
+
+    if (command.spread)
+        components.push(`[... ${command.spread}]`);
+
+    let optionComponent = exports.getOptionComponent(command.options);
+
+    if (optionComponent.length !== 0)
+        components.push(optionComponent);
+
+    return components.join(` `);
+
+};
+
+
+/***/ }),
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3730,7 +3761,7 @@ module.exports = {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3746,7 +3777,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(2);
 const fslib_1 = __webpack_require__(3);
 const path_1 = __webpack_require__(17);
-const stageUtils = __importStar(__webpack_require__(21));
+const stageUtils = __importStar(__webpack_require__(22));
 const MESSAGE_MARKER = `Commit generated via \`yarn stage\``;
 const COMMIT_DEPTH = 11;
 async function genCommitMessage(cwd) {
@@ -3793,7 +3824,7 @@ exports.Driver = {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3889,7 +3920,7 @@ exports.genCommitMessage = genCommitMessage;
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3902,7 +3933,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const stageUtils = __importStar(__webpack_require__(21));
+const stageUtils = __importStar(__webpack_require__(22));
 exports.Driver = {
     async findRoot(cwd) {
         return await stageUtils.findVcsRoot(cwd, { marker: `.hg` });
