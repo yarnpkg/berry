@@ -8666,7 +8666,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.13.1"
+                  "npm:0.14.0"
                 ],
                 [
                   "joi",
@@ -8811,7 +8811,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.13.1"
+                  "npm:0.14.0"
                 ],
                 [
                   "execa",
@@ -8872,7 +8872,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.13.1"
+                  "npm:0.14.0"
                 ],
                 [
                   "cross-spawn",
@@ -8993,6 +8993,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:10.0.7"
                 ],
                 [
+                  "@reach/router",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:1.2.1"
+                ],
+                [
                   "algoliasearch",
                   "npm:3.32.1"
                 ],
@@ -9007,6 +9011,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "gatsby-image",
                   "npm:2.0.31"
+                ],
+                [
+                  "gatsby-plugin-clipanion-cli",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#portal:./gatsby-plugin-clipanion-cli?locator=%40berry%2Fgatsby%40workspace%3Apackages%2Fgatsby"
                 ],
                 [
                   "gatsby-plugin-emotion",
@@ -9400,7 +9408,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.13.1"
+                  "npm:0.14.0"
                 ],
                 [
                   "tmp",
@@ -9445,7 +9453,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.13.1"
+                  "npm:0.14.0"
                 ],
                 [
                   "execa",
@@ -9565,7 +9573,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.13.1"
+                  "npm:0.14.0"
                 ],
                 [
                   "dateformat",
@@ -9630,7 +9638,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.13.1"
+                  "npm:0.14.0"
                 ]
               ]
             }
@@ -9738,7 +9746,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.13.1"
+                  "npm:0.14.0"
                 ]
               ]
             }
@@ -9808,7 +9816,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.13.1"
+                  "npm:0.14.0"
                 ]
               ]
             }
@@ -13029,6 +13037,46 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "prop-types",
                   "npm:15.6.2"
+                ],
+                [
+                  "react-lifecycles-compat",
+                  "npm:3.0.4"
+                ],
+                [
+                  "warning",
+                  "npm:3.0.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:1.2.1",
+            {
+              "packageLocation": "./.yarn/virtual/@reach-router-virtual-7efb1e8ff7f665684722ec588437e3ad7f9d7a32e7db956ec537e4581290bcd4/node_modules/@reach/router/",
+              "packageDependencies": [
+                [
+                  "@reach/router",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:1.2.1"
+                ],
+                [
+                  "create-react-context",
+                  "virtual:7efb1e8ff7f665684722ec588437e3ad7f9d7a32e7db956ec537e4581290bcd42ad603d878ac22d15446fff1232671a02b3f40ca36fa146808f7b0f9349a0d9c#npm:0.2.3"
+                ],
+                [
+                  "invariant",
+                  "npm:2.2.4"
+                ],
+                [
+                  "prop-types",
+                  "npm:15.6.2"
+                ],
+                [
+                  "react",
+                  "npm:16.8.4"
+                ],
+                [
+                  "react-dom",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:16.8.4"
                 ],
                 [
                   "react-lifecycles-compat",
@@ -21472,13 +21520,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "clipanion",
         [
           [
-            "npm:0.13.1",
+            "npm:0.14.0",
             {
-              "packageLocation": "./.yarn/cache/clipanion-npm-0.13.1-91e0d45642016a6e821f19409249a72be1ed3942a62741c0776248014c059bb3.zip/node_modules/clipanion/",
+              "packageLocation": "./.yarn/cache/clipanion-npm-0.14.0-ea2736aeb41c01b1013699d548c90f98dbbc8ed701b686e5f6f9b8f4e57aee79.zip/node_modules/clipanion/",
               "packageDependencies": [
                 [
                   "clipanion",
-                  "npm:0.13.1"
+                  "npm:0.14.0"
                 ],
                 [
                   "camelcase",
@@ -22975,6 +23023,34 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "create-react-context",
                   "virtual:321ed2640da29d2098ab0b63a7de07da6847f0f479f6726e76a3ab7925ab738180e045d53f2e29cb95fdef2fcb3dd4da180598f721183e79082e51c6195d8015#npm:0.2.3"
+                ],
+                [
+                  "fbjs",
+                  "npm:0.8.17"
+                ],
+                [
+                  "gud",
+                  "npm:1.0.0"
+                ],
+                [
+                  "prop-types",
+                  "npm:15.6.2"
+                ],
+                [
+                  "react",
+                  "npm:16.8.4"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:7efb1e8ff7f665684722ec588437e3ad7f9d7a32e7db956ec537e4581290bcd42ad603d878ac22d15446fff1232671a02b3f40ca36fa146808f7b0f9349a0d9c#npm:0.2.3",
+            {
+              "packageLocation": "./.yarn/virtual/create-react-context-virtual-e933e083d26545f40b1ecb2141e582db54c519bfe2ef0aff8e60bc692d6a1e0c/node_modules/create-react-context/",
+              "packageDependencies": [
+                [
+                  "create-react-context",
+                  "virtual:7efb1e8ff7f665684722ec588437e3ad7f9d7a32e7db956ec537e4581290bcd42ad603d878ac22d15446fff1232671a02b3f40ca36fa146808f7b0f9349a0d9c#npm:0.2.3"
                 ],
                 [
                   "fbjs",
@@ -31865,6 +31941,39 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "react-dom",
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:16.8.4"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "gatsby-plugin-clipanion-cli",
+        [
+          [
+            "portal:./gatsby-plugin-clipanion-cli?locator=%40berry%2Fgatsby%40workspace%3Apackages%2Fgatsby",
+            {
+              "packageLocation": "./packages/gatsby/gatsby-plugin-clipanion-cli/",
+              "packageDependencies": [
+                [
+                  "gatsby-plugin-clipanion-cli",
+                  "portal:./gatsby-plugin-clipanion-cli?locator=%40berry%2Fgatsby%40workspace%3Apackages%2Fgatsby"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#portal:./gatsby-plugin-clipanion-cli?locator=%40berry%2Fgatsby%40workspace%3Apackages%2Fgatsby",
+            {
+              "packageLocation": "./.yarn/virtual/gatsby-plugin-clipanion-cli-virtual-b73c25549f49d936005537e7283c7fa6005478d038772f4e8feb59c77e6830f1/",
+              "packageDependencies": [
+                [
+                  "gatsby-plugin-clipanion-cli",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#portal:./gatsby-plugin-clipanion-cli?locator=%40berry%2Fgatsby%40workspace%3Apackages%2Fgatsby"
+                ],
+                [
+                  "gatsby",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.2.9"
                 ]
               ]
             }
@@ -52613,6 +52722,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:1.2.2"
                 ],
                 [
+                  "react",
+                  "npm:16.8.4"
+                ],
+                [
                   "shallowequal",
                   "npm:1.1.0"
                 ]
@@ -65045,6 +65158,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       110,
       99,
       47,
+      46,
       44,
       43,
       30,
@@ -68129,11 +68243,17 @@ function makeApi(runtimeState, opts) {
     // Used for compatibility purposes - cf setupCompatibilityLayer
     const fallbackLocators = [topLevelLocator];
     if (opts.compatibilityMode) {
-        // ESLint currently doesn't have any portable way for shared configs to specify their own
-        // plugins that should be used (https://github.com/eslint/eslint/issues/10125). This will
-        // likely get fixed at some point, but it'll take time and in the meantime we'll just add
-        // additional fallback entries for common shared configs.
-        for (const name of [`react-scripts`]) {
+        // ESLint currently doesn't have any portable way for shared configs to
+        // specify their own plugins that should be used (cf issue #10125). This
+        // will likely get fixed at some point but it'll take time, so in the
+        // meantime we'll just add additional fallback entries for common shared
+        // configs.
+        // Similarly, Gatsby generates files within the `public` folder located
+        // within the project, but doesn't pre-resolve the `require` calls to use
+        // its own dependencies. Meaning that when PnP see a file from the `public`
+        // folder making a require, it thinks that your project forgot to list one
+        // of your dependencies.
+        for (const name of [`react-scripts`, `gatsby`]) {
             const packageStore = runtimeState.packageRegistry.get(name);
             if (packageStore) {
                 for (const reference of packageStore.keys()) {
