@@ -16,10 +16,6 @@ export const JsonContainer = styled.div`
     color: #639db1;
   }
 
-  > * {
-    margin-top: 0;
-  }
-
   &, span {
     white-space: nowrap;
   }
@@ -53,6 +49,10 @@ export const JsonDescription = styled.div`
 
   font-family: "Open Sans";
   white-space: normal;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
 `;
 
 export const JsonDescribe = ({description, children}) => <>

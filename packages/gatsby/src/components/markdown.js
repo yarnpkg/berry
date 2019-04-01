@@ -41,7 +41,13 @@ const Content = styled.div`
     }
   }
 
+  p, table {
+    margin-bottom: 1em;
+  }
+
   table {
+    width: 100%;
+
     border-collapse: collapse;
   }
 
@@ -55,8 +61,19 @@ const Content = styled.div`
     padding: .5em 1em;
   }
 
-  > * {
+  h1 {
     margin-top: 0;
+  }
+
+  pre {
+    padding: 1em;
+
+    overflow-x: auto;
+
+    font-family: "PT Mono";
+
+    background: #242424;
+    color: #ddddcc;
   }
 `;
 

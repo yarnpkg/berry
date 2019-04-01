@@ -49,12 +49,19 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   const fallbackLocators: Array<PackageLocator> = [topLevelLocator];
 
   if (opts.compatibilityMode) {
-    // ESLint currently doesn't have any portable way for shared configs to specify their own
-    // plugins that should be used (https://github.com/eslint/eslint/issues/10125). This will
-    // likely get fixed at some point, but it'll take time and in the meantime we'll just add
-    // additional fallback entries for common shared configs.
+    // ESLint currently doesn't have any portable way for shared configs to
+    // specify their own plugins that should be used (cf issue #10125). This
+    // will likely get fixed at some point but it'll take time, so in the
+    // meantime we'll just add additional fallback entries for common shared
+    // configs.
 
-    for (const name of [`react-scripts`]) {
+    // Similarly, Gatsby generates files within the `public` folder located
+    // within the project, but doesn't pre-resolve the `require` calls to use
+    // its own dependencies. Meaning that when PnP see a file from the `public`
+    // folder making a require, it thinks that your project forgot to list one
+    // of your dependencies.
+
+    for (const name of [`react-scripts`, `gatsby`]) {
       const packageStore = runtimeState.packageRegistry.get(name);
       if (packageStore) {
         for (const reference of packageStore.keys()) {

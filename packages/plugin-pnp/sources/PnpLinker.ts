@@ -125,6 +125,9 @@ class PnpInstaller implements Installer {
   }
 
   async finalizeInstall() {
+    if (await this.shouldWarnNodeModules())
+      this.opts.report.reportWarning(MessageName.DANGEROUS_NODE_MODULES, `One or more node_modules have been detected; they risk hiding legitimate problems until your application reaches production.`);
+
     this.packageRegistry.set(null, new Map([
       [null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)],
     ]));
@@ -208,6 +211,22 @@ class PnpInstaller implements Installer {
     }
 
     return diskInformation;
+  }
+
+  private async shouldWarnNodeModules() {
+    for (const workspace of this.opts.project.workspaces) {
+      const nodeModulesPath = `${workspace.cwd}/node_modules`;
+      if (!xfs.existsSync(nodeModulesPath))
+        continue;
+
+      const directoryListing = await xfs.readdirPromise(nodeModulesPath);
+      if (directoryListing.every(entry => entry.startsWith(`.`)))
+        continue;
+
+      return true;
+    }
+
+    return false;
   }
 
   private normalizeDirectoryPath(folder: string) {

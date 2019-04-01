@@ -23,14 +23,14 @@ async function makePathWrapper(location: string, name: string, argv0: string, ar
 
 export async function makeScriptEnv(project: Project) {
   const scriptEnv: {[key: string]: string} = {};
-  for (const key of Object.keys(process.env))
-    scriptEnv[key.toUpperCase()] = process.env[key] as string;
+  for (const [key, value] of Object.entries(process.env))
+    if (typeof value !== `undefined`)
+      scriptEnv[key.toLowerCase() !== `path` ? key : `PATH`] = value;
 
   const binFolder = scriptEnv.BERRY_BIN_FOLDER = dirSync().name;
 
   // Register some binaries that must be made available in all subprocesses
-  // spawned by Yarn
-
+  // spawned by Yarn (we thus ensure that they always use the right version)
   await makePathWrapper(binFolder, `run`, process.execPath, [process.argv[1], `run`]);
   await makePathWrapper(binFolder, `yarn`, process.execPath, [process.argv[1]]);
   await makePathWrapper(binFolder, `yarnpkg`, process.execPath, [process.argv[1]]);
@@ -40,6 +40,9 @@ export async function makeScriptEnv(project: Project) {
   scriptEnv.PATH = scriptEnv.PATH
     ? `${binFolder}${delimiter}${scriptEnv.PATH}`
     : `${binFolder}`;
+
+  scriptEnv.npm_execpath = `${binFolder}/yarn`;
+  scriptEnv.npm_node_execpath = `${binFolder}/node`;
 
   await project.configuration.triggerHook(
     hook => hook.setupScriptEnvironment,

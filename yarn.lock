@@ -1564,7 +1564,7 @@ __metadata:
     "@berry/cli": "workspace:*"
     brfs: "npm:^2.0.1"
     buffer-loader: "npm:^0.1.0"
-    clipanion: "npm:^0.13.1"
+    clipanion: "npm:^0.14.0"
     joi: "npm:^13.6.0"
     pnp-webpack-plugin: "npm:^1.3.1"
     raw-loader: "npm:^0.5.1"
@@ -1603,7 +1603,7 @@ __metadata:
     "@berry/pnp": "workspace:*"
     "@berry/shell": "workspace:*"
     chalk: "npm:^2.4.1"
-    clipanion: "npm:^0.13.1"
+    clipanion: "npm:^0.14.0"
     execa: "npm:^1.0.0"
     semver: "npm:^5.6.0"
     tmp: "npm:^0.0.33"
@@ -1621,7 +1621,7 @@ __metadata:
     "@berry/pnp": "workspace:*"
     "@berry/shell": "workspace:*"
     chalk: "npm:^2.4.1"
-    clipanion: "npm:^0.13.1"
+    clipanion: "npm:^0.14.0"
     cross-spawn: "npm:^6.0.5"
     execa: "npm:^1.0.0"
     globby: "npm:^8.0.1"
@@ -1657,10 +1657,12 @@ __metadata:
     "@emotion/core": "npm:^10.0.7"
     "@emotion/styled": "npm:^10.0.7"
     "@emotion/styled-base": "npm:^10.0.7"
+    "@reach/router": "npm:^1.1.1"
     algoliasearch: "npm:^3.32.1"
     es6-promise: "npm:^4.2.6"
     gatsby: "npm:^2.2.9"
     gatsby-image: "npm:^2.0.31"
+    gatsby-plugin-clipanion-cli: "portal:./gatsby-plugin-clipanion-cli?locator=%40berry%2Fgatsby%40workspace%3Apackages%2Fgatsby"
     gatsby-plugin-emotion: "npm:^4.0.6"
     gatsby-plugin-favicon: "npm:^3.1.5"
     gatsby-plugin-manifest: "npm:^2.0.22"
@@ -1781,7 +1783,7 @@ __metadata:
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
-    clipanion: "npm:^0.13.1"
+    clipanion: "npm:^0.14.0"
     tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
@@ -1795,7 +1797,7 @@ __metadata:
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/parsers": "workspace:*"
-    clipanion: "npm:^0.13.1"
+    clipanion: "npm:^0.14.0"
     execa: "npm:^1.0.0"
     inquirer: "npm:^6.2.0"
     semver: "npm:^5.6.0"
@@ -1836,7 +1838,7 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/ui": "workspace:*"
-    clipanion: "npm:^0.13.1"
+    clipanion: "npm:^0.14.0"
     dateformat: "npm:^3.0.3"
     immer: "npm:^1.7.2"
     joi: "npm:^13.6.0"
@@ -1855,7 +1857,7 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
-    clipanion: "npm:^0.13.1"
+    clipanion: "npm:^0.14.0"
   languageName: unknown
   linkType: soft
 
@@ -1893,7 +1895,7 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
-    clipanion: "npm:^0.13.1"
+    clipanion: "npm:^0.14.0"
   languageName: unknown
   linkType: soft
 
@@ -1916,7 +1918,7 @@ __metadata:
     "@berry/builder": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
-    clipanion: "npm:^0.13.1"
+    clipanion: "npm:^0.14.0"
   languageName: unknown
   linkType: soft
 
@@ -5923,13 +5925,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipanion@npm:^0.13.1":
-  version: 0.13.1
-  resolution: "clipanion@npm:0.13.1"
+"clipanion@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "clipanion@npm:0.14.0"
   dependencies:
     camelcase: "npm:^5.2.0"
     chalk: "npm:^1.1.3"
-  checksum: 6c9f5eb2f98cddcf8c27a1df79251ccc17682779301ebc9d6e05d54c614fe6b118f400fd515a667bcf1e804eca3f447798b28f4830feee1d1eed29bf57d0214e
+  checksum: b08de0f7a6cbcca35099dd3431a78c157a50582b91fa52f392f9d8657fe7ea39d87d48d0bdaaaae531908479f7609f2a92f0cd15b1f6aadde72f8f61ca5ce2b1
   languageName: node
   linkType: hard
 
@@ -9474,6 +9476,14 @@ __metadata:
   checksum: 5b1c4937951490db47390257bb1a8de4bb1da830978fcf03c529abb7703ba9fd8835a8103ae5923f068882b12ffb2cf18986a58d9f4191378c61e392c6b19bf3
   languageName: node
   linkType: hard
+
+"gatsby-plugin-clipanion-cli@portal:./gatsby-plugin-clipanion-cli?locator=%40berry%2Fgatsby%40workspace%3Apackages%2Fgatsby":
+  version: 0.0.0
+  resolution: "gatsby-plugin-clipanion-cli@portal:./gatsby-plugin-clipanion-cli?locator=%40berry%2Fgatsby%40workspace%3Apackages%2Fgatsby"
+  peerDependencies:
+    gatsby: ^2.2.9
+  languageName: node
+  linkType: soft
 
 "gatsby-plugin-emotion@npm:^4.0.6":
   version: 4.0.6

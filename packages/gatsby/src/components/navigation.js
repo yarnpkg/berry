@@ -19,6 +19,7 @@ const Menu = styled.div`
 
     width: 300px;
     height: calc(100vh - 4em);
+    overflow-y: auto;
 
     background: #d1dee8;
   }
