@@ -24,6 +24,7 @@ export enum Strategy {
   REUSE = 'reuse',
   PROJECT = 'project',
   LATEST = 'latest',
+  CACHE = 'cache',
 };
 
 export function applyModifier(descriptor: Descriptor, modifier: Modifier) {
@@ -104,8 +105,22 @@ export async function getSuggestedDescriptors(request: Descriptor, previous: Des
 
       case Strategy.REUSE: {
         for (const {descriptor, locators} of (await findProjectDescriptors(request, {project, target})).values()) {
-          const reason = `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)} (originally used by ${locators.map(locator => structUtils.prettyLocator(project.configuration, locator)).join(`, `)})`;
+          let reason = `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)} (originally used by ${structUtils.prettyLocator(project.configuration, locators[0])}`
+
+          reason += locators.length > 1
+            ? ` and ${locators.length - 1} other${locators.length > 2 ? `s` : ``})`
+            : `)`;
+
           suggested.push({descriptor, reason});
+        }
+      } break;
+
+      case Strategy.CACHE: {
+        for (const descriptor of project.storedDescriptors.values()) {
+          if (descriptor.identHash === request.identHash) {
+            const reason = `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)} (already used somewhere in the lockfile)`;
+            suggested.push({descriptor, reason});
+          }
         }
       } break;
 
