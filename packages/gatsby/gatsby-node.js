@@ -14,12 +14,14 @@ module.exports = {
       },
     });
   },
+
   createPages: async ({actions: {createPage, createRedirect}, graphql}) => {
-    const result = await graphql(`{
+    const everything = await graphql(`{
       allMarkdownRemark {
         edges {
           node {
             frontmatter {
+              category
               path
             }
           }
@@ -27,13 +29,13 @@ module.exports = {
       }
     }`);
 
-    result.data.allMarkdownRemark.edges.forEach(({node}) => {
+    for (const {node} of everything.data.allMarkdownRemark.edges) {
       createPage({
         path: node.frontmatter.path,
-        component: `${__dirname}/src/templates/featureTemplate.js`,
-        context: {},
+        component: `${__dirname}/src/templates/article.js`,
+        context: {category: node.frontmatter.category},
       });
-    });
+    }
 
     createRedirect({
       fromPath: `/configuration`,

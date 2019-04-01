@@ -73,6 +73,13 @@ module.exports = {
         name: `markdown-pages`,
       },
     },
+    {
+      resolve: `gatsby-plugin-clipanion-cli`,
+      options: {
+        argv0: `yarn`,
+        binary: `${__dirname}/../../scripts/run-yarn.js`,
+      },
+    },
     `gatsby-transformer-remark`,
     `gatsby-plugin-remove-trailing-slashes`,
     // this (optional) plugin enables Progressive Web App + Offline functionality

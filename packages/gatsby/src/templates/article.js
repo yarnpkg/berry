@@ -4,7 +4,7 @@ import React                 from 'react';
 import {LayoutContentNav}    from '../components/layout-content-nav';
 import {PrerenderedMarkdown} from '../components/markdown';
 
-export default function Template({data}) {
+export default function Template({data, pageContext: {category}}) {
   const {allMarkdownRemark, markdownRemark} = data;
   const {frontmatter, html} = markdownRemark;
 
@@ -21,9 +21,9 @@ export default function Template({data}) {
 }
 
 export const pageQuery = graphql`
-  query($path: String!) {
+  query($path: String!, $category: String!) {
     allMarkdownRemark(
-      filter: {frontmatter: {category: {eq: "features"}}}
+      filter: {frontmatter: {category: {eq: $category}}}
       sort: {order: ASC, fields: [frontmatter___title]}
     ) {
       edges {
@@ -35,7 +35,7 @@ export const pageQuery = graphql`
         }
       }
     }
-    markdownRemark(frontmatter: {category: {eq: "features"}, path: {eq: $path}}) {
+    markdownRemark(frontmatter: {category: {eq: $category}, path: {eq: $path}}) {
       html
       frontmatter {
         path
