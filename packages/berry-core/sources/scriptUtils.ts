@@ -25,7 +25,7 @@ export async function makeScriptEnv(project: Project) {
   const scriptEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(process.env))
     if (typeof value !== `undefined`)
-      scriptEnv[key] = value;
+      scriptEnv[key.toLowerCase() !== `path` ? key : `PATH`] = value;
 
   const binFolder = scriptEnv.BERRY_BIN_FOLDER = dirSync().name;
 

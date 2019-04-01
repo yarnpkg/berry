@@ -9,7 +9,6 @@ export type UserOptions = {
   builtins: {[key: string]: UserBuiltin},
   cwd: string,
   env: {[key: string]: string | undefined},
-  paths: Array<string>,
   stdin: Readable,
   stdout: Writable,
   stderr: Writable,
@@ -545,7 +544,6 @@ export async function execute(command: string, args: Array<string> = [], {
   builtins = {},
   cwd = process.cwd(),
   env = process.env,
-  paths = [],
   stdin = process.stdin,
   stdout = process.stdout,
   stderr = process.stderr,
@@ -555,11 +553,6 @@ export async function execute(command: string, args: Array<string> = [], {
   for (const [key, value] of Object.entries(env))
     if (typeof value !== `undefined`)
       normalizedEnv[key] = value;
-
-  if (paths.length > 0)
-    normalizedEnv.PATH = normalizedEnv.PATH
-      ? `${paths.join(delimiter)}${delimiter}${env.PATH}`
-      : `${paths.join(delimiter)}`;
 
   const normalizedBuiltins = new Map(BUILTINS);
   for (const [key, action] of Object.entries(builtins))
