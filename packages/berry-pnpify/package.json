@@ -1,0 +1,15 @@
+{
+  "name": "@berry/pnpify",
+  "private": true,
+  "main": "./sources/index.js",
+  "dependencies": {
+    "pnpapi": "^0.0.0"
+  },
+  "scripts": {
+    "start": "node -r ./sources -r typescript/bin/tsc -- tsc --module amd --out sources/test.js sources/test.ts",
+    "test:pnpify": "run test:unit packages/berry-pnpify"
+  },
+  "devDependencies": {
+    "typescript": "^3.3.3333"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "module": "commonjs",
+    "strict": true,
+    "target": "es2017",
+    "outDir": "lib",
+    "declaration": true
+  },
+  "include": [
+    "sources/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "bundles"
+  ]
+}

@@ -8961,6 +8961,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "tunnel",
                   "npm:0.0.6"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
                 ]
               ]
             }
@@ -9919,6 +9923,31 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "webpack-sources",
                   "npm:1.3.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@berry/pnpify",
+        [
+          [
+            "workspace:packages/berry-pnpify",
+            {
+              "packageLocation": "./packages/berry-pnpify/",
+              "packageDependencies": [
+                [
+                  "@berry/pnpify",
+                  "workspace:packages/berry-pnpify"
+                ],
+                [
+                  "pnpapi",
+                  "npm:0.0.0"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
                 ]
               ]
             }
@@ -50067,6 +50096,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "pnpapi",
+        [
+          [
+            "npm:0.0.0",
+            {
+              "packageLocation": "./.yarn/cache/pnpapi-npm-0.0.0-07b296830c01021a272e7e4fc061c113b34fa75a073f1b6dfeaddf898c8c9c9f.zip/node_modules/pnpapi/",
+              "packageDependencies": [
+                [
+                  "pnpapi",
+                  "npm:0.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "portfinder",
         [
           [
@@ -65919,7 +65965,6 @@ function wrapAsync(fn) {
 }
 function patchFs(patchedFs, fakeFs) {
     const SYNC_IMPLEMENTATIONS = new Set([
-        `accessSync`,
         `createReadStream`,
         `chmodSync`,
         `copyFileSync`,
@@ -65938,7 +65983,6 @@ function patchFs(patchedFs, fakeFs) {
         `writeFileSync`,
     ]);
     const ASYNC_IMPLEMENTATIONS = new Set([
-        `accessPromise`,
         `chmodPromise`,
         `copyFilePromise`,
         `lstatPromise`,
@@ -66065,14 +66109,6 @@ class NodeFS extends FakeFS_1.FakeFS {
             this.realFs.exists(NodeFS.fromPortablePath(p), resolve);
         });
     }
-    accessSync(p, mode) {
-        return this.realFs.accessSync(NodeFS.fromPortablePath(p), mode);
-    }
-    async accessPromise(p, mode) {
-        return await new Promise((resolve, reject) => {
-            this.realFs.access(NodeFS.fromPortablePath(p), mode, this.makeCallback(resolve, reject));
-        });
-    }
     existsSync(p) {
         return this.realFs.existsSync(NodeFS.fromPortablePath(p));
     }
@@ -66169,12 +66205,12 @@ class NodeFS extends FakeFS_1.FakeFS {
     async symlinkPromise(target, p) {
         const type = target.endsWith(`/`) ? `dir` : `file`;
         return await new Promise((resolve, reject) => {
-            this.realFs.symlink(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type, this.makeCallback(resolve, reject));
+            this.realFs.symlink(NodeFS.fromPortablePath(path_1.posix.normalize(target)), NodeFS.fromPortablePath(p), type, this.makeCallback(resolve, reject));
         });
     }
     symlinkSync(target, p) {
         const type = target.endsWith(`/`) ? `dir` : `file`;
-        return this.realFs.symlinkSync(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type);
+        return this.realFs.symlinkSync(NodeFS.fromPortablePath(path_1.posix.normalize(target)), NodeFS.fromPortablePath(p), type);
     }
     async readFilePromise(p, encoding) {
         return await new Promise((resolve, reject) => {
@@ -66562,12 +66598,6 @@ class AliasFS extends FakeFS_1.FakeFS {
     existsSync(p) {
         return this.baseFs.existsSync(p);
     }
-    async accessPromise(p, mode) {
-        return await this.baseFs.accessPromise(p, mode);
-    }
-    accessSync(p, mode) {
-        return this.baseFs.accessSync(p, mode);
-    }
     async statPromise(p) {
         return await this.baseFs.statPromise(p);
     }
@@ -66725,12 +66755,6 @@ class CwdFS extends FakeFS_1.FakeFS {
     }
     existsSync(p) {
         return this.baseFs.existsSync(this.fromCwdPath(p));
-    }
-    async accessPromise(p, mode) {
-        return await this.baseFs.accessPromise(this.fromCwdPath(p), mode);
-    }
-    accessSync(p, mode) {
-        return this.baseFs.accessSync(this.fromCwdPath(p), mode);
     }
     async statPromise(p) {
         return await this.baseFs.statPromise(this.fromCwdPath(p));
@@ -66890,12 +66914,6 @@ class JailFS extends FakeFS_1.FakeFS {
     existsSync(p) {
         return this.baseFs.existsSync(this.fromJailedPath(p));
     }
-    async accessPromise(p, mode) {
-        return await this.baseFs.accessPromise(this.fromJailedPath(p), mode);
-    }
-    accessSync(p, mode) {
-        return this.baseFs.accessSync(this.fromJailedPath(p), mode);
-    }
     async statPromise(p) {
         return await this.baseFs.statPromise(this.fromJailedPath(p));
     }
@@ -67053,12 +67071,6 @@ class PosixFS extends FakeFS_1.FakeFS {
     }
     existsSync(p) {
         return this.baseFs.existsSync(NodeFS_1.NodeFS.toPortablePath(p));
-    }
-    async accessPromise(p, mode) {
-        return await this.baseFs.accessPromise(NodeFS_1.NodeFS.toPortablePath(p), mode);
-    }
-    accessSync(p, mode) {
-        return this.baseFs.accessSync(NodeFS_1.NodeFS.toPortablePath(p), mode);
     }
     async statPromise(p) {
         return await this.baseFs.statPromise(NodeFS_1.NodeFS.toPortablePath(p));
@@ -67388,15 +67400,6 @@ class ZipFS extends FakeFS_1.FakeFS {
             return false;
         }
         return this.entries.has(resolvedP) || this.listings.has(resolvedP);
-    }
-    async accessPromise(p, mode) {
-        return this.accessSync(p, mode);
-    }
-    accessSync(p, mode) {
-        const resolvedP = this.resolveFilename(`access '${p}'`, p);
-        if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) {
-            throw Object.assign(new Error(`ENOENT: no such file or directory, access '${p}'`), { code: `ENOENT` });
-        }
     }
     async statPromise(p) {
         return this.statSync(p);
@@ -68027,20 +68030,6 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
             return this.baseFs.existsSync(p);
         }, (zipFs, { subPath }) => {
             return zipFs.existsSync(subPath);
-        });
-    }
-    async accessPromise(p, mode) {
-        return await this.makeCallPromise(p, async () => {
-            return await this.baseFs.accessPromise(p, mode);
-        }, async (zipFs, { archivePath, subPath }) => {
-            return await zipFs.accessPromise(subPath, mode);
-        });
-    }
-    accessSync(p, mode) {
-        return this.makeCallSync(p, () => {
-            return this.baseFs.accessSync(p, mode);
-        }, (zipFs, { subPath }) => {
-            return zipFs.accessSync(subPath, mode);
         });
     }
     async statPromise(p) {
@@ -68784,52 +68773,6 @@ function makeApi(runtimeState, opts) {
      */
     const { ignorePattern, packageRegistry, packageLocatorsByLocations, packageLocationLengths, } = runtimeState;
     /**
-     * Allows to print useful logs just be setting a value in the environment
-     */
-    function makeLogEntry(name, args) {
-        return {
-            fn: name,
-            args: args,
-            error: null,
-            result: null,
-        };
-    }
-    function maybeLog(name, fn) {
-        if (opts.allowDebug === false)
-            return fn;
-        const level = Number(process.env.PNP_DEBUG_LEVEL);
-        if (Number.isFinite(level)) {
-            if (level >= 2) {
-                return (...args) => {
-                    const logEntry = makeLogEntry(name, args);
-                    try {
-                        return logEntry.result = fn(...args);
-                    }
-                    catch (error) {
-                        throw logEntry.error = error;
-                    }
-                    finally {
-                        console.error(logEntry);
-                    }
-                };
-            }
-            else if (level >= 1) {
-                return (...args) => {
-                    try {
-                        return fn(...args);
-                    }
-                    catch (error) {
-                        const logEntry = makeLogEntry(name, args);
-                        logEntry.error = error;
-                        console.error(logEntry);
-                        throw error;
-                    }
-                };
-            }
-        }
-        return fn;
-    }
-    /**
      * Returns information about a package in a safe way (will throw if they cannot be retrieved)
      */
     function getPackageInformationSafe(packageLocator) {
@@ -69188,7 +69131,7 @@ function makeApi(runtimeState, opts) {
             path = fslib_1.NodeFS.toPortablePath(path);
             return findPackageLocator(path);
         },
-        resolveToUnqualified: maybeLog(`resolveToUnqualified`, (request, issuer, opts) => {
+        resolveToUnqualified: (request, issuer, opts) => {
             request = fslib_1.NodeFS.toPortablePath(request);
             if (issuer !== null)
                 issuer = fslib_1.NodeFS.toPortablePath(issuer);
@@ -69196,12 +69139,12 @@ function makeApi(runtimeState, opts) {
             if (resolution === null)
                 return null;
             return fslib_1.NodeFS.fromPortablePath(resolution);
-        }),
-        resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath, opts) => {
+        },
+        resolveUnqualified: (unqualifiedPath, opts) => {
             unqualifiedPath = fslib_1.NodeFS.fromPortablePath(unqualifiedPath);
             return fslib_1.NodeFS.fromPortablePath(resolveUnqualified(unqualifiedPath, opts));
-        }),
-        resolveRequest: maybeLog(`resolveRequest`, (request, issuer, opts) => {
+        },
+        resolveRequest: (request, issuer, opts) => {
             request = fslib_1.NodeFS.toPortablePath(request);
             if (issuer !== null)
                 issuer = fslib_1.NodeFS.toPortablePath(issuer);
@@ -69209,7 +69152,7 @@ function makeApi(runtimeState, opts) {
             if (resolution === null)
                 return null;
             return fslib_1.NodeFS.fromPortablePath(resolution);
-        }),
+        },
     };
 }
 exports.makeApi = makeApi;

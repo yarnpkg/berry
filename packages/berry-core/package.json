@@ -3,6 +3,9 @@
   "private": true,
   "main": "./sources/index.ts",
   "sideEffects": false,
+  "scripts": {
+    "build": "node -r ../berry-pnpify/sources -r typescript/bin/tsc -- tsc"
+  },
   "dependencies": {
     "@berry/fslib": "workspace:*",
     "@berry/json-proxy": "workspace:*",
@@ -28,6 +31,7 @@
     "supports-color": "^5.5.0",
     "tar": "^4.4.6",
     "tmp": "^0.0.33",
-    "tunnel": "^0.0.6"
+    "tunnel": "^0.0.6",
+    "typescript": "^3.3.3333"
   }
 }

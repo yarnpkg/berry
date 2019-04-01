@@ -1640,6 +1640,7 @@ __metadata:
     tar: "npm:^4.4.6"
     tmp: "npm:^0.0.33"
     tunnel: "npm:^0.0.6"
+    typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
 
@@ -1946,6 +1947,15 @@ __metadata:
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:3.2.1"
     webpack-sources: "npm:^1.3.0"
+  languageName: unknown
+  linkType: soft
+
+"@berry/pnpify@workspace:packages/berry-pnpify":
+  version: 0.0.0
+  resolution: "@berry/pnpify@workspace:packages/berry-pnpify"
+  dependencies:
+    pnpapi: "npm:^0.0.0"
+    typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
 
@@ -16261,6 +16271,13 @@ __metadata:
   dependencies:
     ts-pnp: "npm:^1.0.0"
   checksum: d0fdaa3185500b0cca42b6f2c58bf063951dfd98fd764730d71aeb9d8148ce000e6a3b82f8655513e7f65305dfa4710c3645a7a1093ec52fe2a9646c38dc3eda
+  languageName: node
+  linkType: hard
+
+"pnpapi@npm:^0.0.0":
+  version: 0.0.0
+  resolution: "pnpapi@npm:0.0.0"
+  checksum: 1508b4feef73ebbde8343cd641c253f04efd60eda4e5fec4d3033d7e08d896114852579614d967f0cb634194abc982fab179a69c766e316c742a42730ea5ed46
   languageName: node
   linkType: hard
 
