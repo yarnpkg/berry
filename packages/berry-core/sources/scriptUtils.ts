@@ -131,6 +131,47 @@ export async function executePackageScript(locator: Locator, scriptName: string,
   });
 }
 
+export async function executePackageShellcode(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
+  // TODO Adapt this to run something like 'node-gyp rebuild'
+  const pkg = project.storedPackages.get(locator.locatorHash);
+  if (!pkg)
+    throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
+
+  return await ZipOpenFS.openPromise(async (zipOpenFs: ZipOpenFS) => {
+    const configuration = project.configuration;
+
+    const linkers = project.configuration.getLinkers();
+    const linkerOptions = {project, report: new StreamReport({stdout: new PassThrough(), configuration})};
+
+    const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
+    if (!linker)
+      throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
+
+    const env = await makeScriptEnv(project);
+    const binFolder = env.BERRY_BIN_FOLDER;
+
+    for (const [binaryName, [pkg, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
+      await makePathWrapper(binFolder, binaryName, process.execPath, [binaryPath]);
+
+    const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
+    const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
+    const manifest = await Manifest.find(`.`, {baseFs: packageFs});
+
+    if (typeof cwd === `undefined`)
+      cwd = packageLocation;
+
+    const script = manifest.scripts.get(scriptName);
+    if (!script)
+      return;
+
+    try {
+      return await execute(script, args, {cwd, env, stdin, stdout, stderr});
+    } finally {
+      await xfs.removePromise(binFolder);
+    }
+  });
+}
+
 type ExecuteWorkspaceScriptOptions = {
   cwd?: string | undefined,
   stdin: Readable | null,

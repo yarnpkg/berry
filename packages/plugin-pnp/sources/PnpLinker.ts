@@ -1,5 +1,5 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName, DependencyMeta} from '@berry/core';
-import {FetchResult, Ident, Locator, Package}                                                                from '@berry/core';
+import {FetchResult, Ident, Locator, Package, BuildDirective}                                                from '@berry/core';
 import {miscUtils, structUtils}                                                                              from '@berry/core';
 import {CwdFS, FakeFS, NodeFS, xfs}                                                                          from '@berry/fslib';
 import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@berry/pnp';
@@ -103,9 +103,7 @@ class PnpInstaller implements Installer {
 
     return {
       packageLocation,
-      buildDirective: buildScripts.length > 0 ? {
-        scriptNames: buildScripts,
-      } : null,
+      buildDirective: buildScripts.length > 0 ? buildScripts : null,
     };
   }
 
@@ -244,7 +242,11 @@ class PnpInstaller implements Installer {
 
     for (const scriptName of [`preinstall`, `install`, `postinstall`])
       if (scripts.has(scriptName))
-        buildScripts.push(scriptName);
+        buildScripts.push([BuildDirective.SCRIPT, scriptName]);
+
+    const bindingFilePath = posix.resolve(fetchResult.prefixPath, `binding.gyp`);
+    if (!scripts.has(`install`) && fetchResult.packageFs.existsSync(bindingFilePath))
+      buildScripts.push([BuildDirective.SHELLCODE, `node-gyp rebuild`]);
 
     return buildScripts;
   }
