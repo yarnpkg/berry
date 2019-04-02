@@ -23,6 +23,8 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
     }
 
     sections.push([
+      `## Usage\n`,
+      `\n`,
       `\`\`\`\n`,
       `$> ${[opts.argv0].concat(command.path).join(` `)} ${command.usage}\n`,
       `\`\`\`\n`,

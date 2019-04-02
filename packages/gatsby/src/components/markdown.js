@@ -14,6 +14,10 @@ const Title = styled.h1`
   font-size: 2em;
 
   margin: 0;
+
+  + div > blockquote {
+    font-style: normal;
+  }
 `;
 
 const Content = styled.div`
@@ -22,7 +26,7 @@ const Content = styled.div`
 
     border-left: 3px solid #859daf;
 
-    padding-left: 1em;
+    padding-left: .5em;
 
     font-style: italic;
 
@@ -70,9 +74,16 @@ const Content = styled.div`
 
     overflow-x: auto;
 
+    background: #242424;
+  }
+
+  code {
     font-family: "PT Mono";
 
-    background: #242424;
+    color: #007aa2;
+  }
+
+  pre code {
     color: #ddddcc;
   }
 `;

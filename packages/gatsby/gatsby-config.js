@@ -16,6 +16,12 @@ module.exports = {
     }, {
       name: `Features`,
       link: `/features`,
+    }, {
+      name: `CLI`,
+      link: `/cli/install`,
+    }, {
+      name: `Advanced`,
+      link: `/advanced/architecture`,
     }],
     algolia: {
       // Note that the appId and appKey are specific to Yarn's website - please
