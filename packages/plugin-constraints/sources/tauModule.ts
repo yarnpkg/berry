@@ -17,7 +17,7 @@ function getProject(thread: pl.type.Thread): Project {
   const project = projects.get(thread.session);
 
   if (project == null) {
-    throw new Error(`No project registered for the active session`);
+    throw new Error(`Assertion failed: A project should have been registered for the active session`);
   }
 
   return project;
