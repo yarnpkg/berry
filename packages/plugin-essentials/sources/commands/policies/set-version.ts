@@ -1,6 +1,7 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {httpUtils}                                   from '@berry/core';
 import {xfs}                                         from '@berry/fslib';
+import {UsageError}                                  from 'clipanion';
 import {posix}                                       from 'path';
 import semver, {SemVer}                              from 'semver';
 import {Readable, Writable}                          from 'stream';
@@ -37,50 +38,50 @@ type FetchReleasesOptions = {
   includePrereleases: boolean,
 };
 
-async function fetchReleases(configuration: Configuration, {includePrereleases = false}: Partial<FetchReleasesOptions> = {}): Promise<Array<Release>> {
+async function fetchReleases(configuration: Configuration, {includePrereleases = false}: Partial<FetchReleasesOptions> = {}): Promise<{releases: Array<Release>, prereleases: Array<Release>}> {
   const request = await httpUtils.get(`https://api.github.com/repos/yarnpkg/yarn/releases`, configuration);
   const apiData = (JSON.parse(request.toString()) as Array<Release>);
 
-  const releases = apiData.filter(release => {
-    if (release.draft) {
+  const allReleases = apiData.filter(release => {
+    if (release.draft)
       return false;
-    }
-
-    if (release.prerelease && !includePrereleases) {
-      return false;
-    }
 
     const coercedVersion = semver.coerce(release.tag_name);
-
-    if (!coercedVersion) {
+    if (!coercedVersion)
       return false;
-    }
 
     release.version = coercedVersion;
 
-    if (!getBundleAsset(release)) {
+    if (!getBundleAsset(release))
       return false;
-    }
 
     return true;
   });
 
-  releases.sort((a, b) => {
+  allReleases.sort((a, b) => {
     return -semver.compare(a.version, b.version);
   });
 
-  return releases;
+  const prereleases = allReleases.filter(release => {
+    return release.prerelease;
+  });
+
+  const releases = includePrereleases ? allReleases : allReleases.filter(release => {
+    return !release.prerelease;
+  });
+
+  return {releases, prereleases};
 }
 
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`policies set-version [range]`)
+  .command(`policies set-version [range] [--rc] [--list]`)
 
   .categorize(`Policies-related commands`)
   .describe(`lock the version of Berry used in the project`)
 
   .validate(yup.object().shape({
-    range: yup.string().default(`latest`),
+    range: yup.string().default(`berry`),
   }))
 
   .detail(`
@@ -88,7 +89,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     A very good use case for this command is to enforce the version of Yarn used by the any single member of your team inside a same project - by doing this you ensure that you have control on Yarn upgrades and downgrades (including on your deployment servers), and get rid of most of the headaches related to someone using a slightly different version and getting a different behavior than you.
 
-    Important: because you're currently using Yarn v2 (which is still in developer preview stage), running this command will by default download the latest nightly from the Github repository. Once the v2 will have stabilized running this command will instead fetch the latest stable release. Regardless of this, using the \`nightly\` range will always fetch the latest nightlies from the repository.
+    The command will by default only consider stable releases as valid candidates, but releases candidates can be downloaded as well provided you add the \`--rc\` flag. Note that because you're on the v2 alpha trunk, running the command without parameter will always download the latest build straight from the repository. This behavior will be tweaked near the release to only download stable releases once more.
+
+    Adding the \`--list\` will simply cause Yarn to print the builds that would have been valid candidates for the given range.
   `)
 
   .example(
@@ -116,11 +119,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn policies set-version 1.14.0`,
   )
 
-  .action(async ({cwd, stdout, range, rc}: {cwd: string, stdin: Readable, stdout: Writable, range: string, rc: boolean}) => {
+  .action(async ({cwd, stdout, range, rc, list}: {cwd: string, stdin: Readable, stdout: Writable, range: string, rc: boolean, list: boolean }) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
-
-    stdout.write(`Resolving ${configuration.format(range, `yellow`)} to a url...\n`);
 
     if (range === `rc`) {
       range = `latest`;
@@ -133,30 +134,39 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     let bundleUrl;
     let bundleVersion;
 
-    if (range === `nightly` || range === `nightlies`) {
-      bundleUrl = `https://nightly.yarnpkg.com/latest.js`;
-      bundleVersion = `nightly`;
-    } else if (range === `berry` || range === `v2` || range === `2`) {
+    if (range === `berry` || range === `v2` || range === `2` || range === `nightly` || range === `nightlies`) {
       bundleUrl = `https://github.com/yarnpkg/berry/raw/master/packages/berry-cli/bin/berry.js`;
       bundleVersion = `berry`;
+
+      if (list) {
+        stdout.write(`${bundleUrl}\n`);
+        return 0;
+      }
     } else {
-      const releases = await fetchReleases(configuration, {
+      const {releases, prereleases} = await fetchReleases(configuration, {
         includePrereleases: rc,
       });
 
-      const release = releases.find(release => {
-        return semver.satisfies(release.version, range);
-      });
+      if (list) {
+        for (const release of releases)
+          if (semver.satisfies(release.version, range))
+            stdout.write(`${release.version.version}\n`);
+  
+        return 0;
+      }
 
+      const release = releases.find(release => semver.satisfies(release.version, range));
       if (!release) {
-        throw new Error(`Release not found: ${range}`);
+        if (prereleases.find(release => semver.satisfies(release.version, range))) {
+          throw new UsageError(`No matching release found for range ${range}, but a prerelease was found - run with --rc to use it.`);
+        } else {
+          throw new UsageError(`No matching release found for range ${range}.`);
+        }
       }
-
+  
       const asset = getBundleAsset(release);
-
-      if (!asset) {
+      if (!asset)
         throw new Error(`The bundle asset should exist`);
-      }
 
       bundleUrl = asset.browser_download_url;
       bundleVersion = release.version.version;
@@ -165,15 +175,15 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     stdout.write(`Downloading ${configuration.format(bundleUrl, `green`)}...\n`);
     const bundle = await httpUtils.get(bundleUrl, configuration);
 
-    const executablePath = `.berry/releases/berry-${bundleVersion}.js`;
-    const absoluteExecutablePath = posix.resolve(project.cwd, executablePath);
+    const yarnPath = `.yarn/releases/yarn-${bundleVersion}.js`;
+    const absoluteYarn = posix.resolve(project.cwd, yarnPath);
 
-    stdout.write(`Saving it into ${configuration.format(executablePath, `magenta`)}...\n`);
-    await xfs.mkdirpPromise(posix.dirname(absoluteExecutablePath));
-    await xfs.writeFilePromise(absoluteExecutablePath, bundle);
-    await xfs.chmodPromise(absoluteExecutablePath, 0o755);
+    stdout.write(`Saving it into ${configuration.format(yarnPath, `magenta`)}...\n`);
+    await xfs.mkdirpPromise(posix.dirname(absoluteYarn));
+    await xfs.writeFilePromise(absoluteYarn, bundle);
+    await xfs.chmodPromise(absoluteYarn, 0o755);
 
     await Configuration.updateConfiguration(project.cwd, {
-      executablePath,
+      yarnPath,
     });
   });
