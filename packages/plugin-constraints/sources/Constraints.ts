@@ -37,7 +37,7 @@ export class Constraints {
     for (const workspace of this.project.workspacesByCwd.values()) {
       database += `workspace(${escape(workspace.cwd)}).\n`;
       database += `workspace_ident(${escape(workspace.cwd)}, ${escape(structUtils.stringifyIdent(workspace.locator))}).\n`
-      database += `workspace_version(${escape(workspace.manifest.version)}).\n`
+      database += `workspace_version(${escape(workspace.cwd)}, ${escape(workspace.manifest.version)}).\n`
 
       for (const dependency of workspace.manifest.dependencies.values()) {
         database += `workspace_has_dependency(${escape(workspace.cwd)}, ${escape(structUtils.stringifyIdent(dependency))}, ${escape(dependency.range)}).\n`;
