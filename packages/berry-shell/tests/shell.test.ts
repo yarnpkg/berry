@@ -1,6 +1,10 @@
 import {execute}     from '@berry/shell';
 import {PassThrough} from 'stream';
 
+const ifNotWin32It = process.platform !== `win32`
+  ? it
+  : it.skip;
+
 const bufferResult = async (command: string, args: Array<string> = []) => {
   const stdout = new PassThrough();
   const stderr = new PassThrough();
@@ -53,7 +57,7 @@ describe(`Simple shell features`, () => {
     });
   });
 
-  it(`should throw an error when a command doesn't exist`, async () => {
+  ifNotWin32It(`should throw an error when a command doesn't exist`, async () => {
     await expect(bufferResult(`this-command-doesnt-exist-sorry`)).resolves.toMatchObject({
       exitCode: 127,
       stderr: `command not found: this-command-doesnt-exist-sorry\n`,
