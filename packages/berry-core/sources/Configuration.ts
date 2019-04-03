@@ -207,6 +207,11 @@ export const coreDefinitions = {
     type: SettingsType.BOOLEAN,
     default: true,
   },
+  checksumBehavior: {
+    description: `Enumeration defining what to do when a checksum doesn't match expectations`,
+    type: SettingsType.STRING,
+    default: `throw`,
+  },
 };
 
 function parseBoolean(value: unknown) {
