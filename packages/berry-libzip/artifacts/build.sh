@@ -35,6 +35,9 @@ LIBZIP_VERSION=1.5.1
 
     if ! [[ -e libzip-"$LIBZIP_VERSION" ]]; then
         tar xvf ./libzip-"$LIBZIP_VERSION".tar.gz
+        sed s/localtime/gmtime/g \
+            <<< "$(cat ./libzip-"$LIBZIP_VERSION"/lib/zip_dirent.c)" \
+            > ./libzip-"$LIBZIP_VERSION"/lib/zip_dirent.c
     fi
 
     cd "$THIS_DIR"/libzip-"$LIBZIP_VERSION"
