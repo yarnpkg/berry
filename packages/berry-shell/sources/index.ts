@@ -25,7 +25,8 @@ export type ShellBuiltin = (
   args: Array<string>,
   opts: ShellOptions,
   state: ShellState,
-  mustPipe: boolean,
+  leftMost: boolean,
+  rightMost: boolean,
 ) => Promise<{
   stdin: Writable | null,
   promise: Promise<number>,
@@ -47,25 +48,33 @@ export type ShellState = {
 };
 
 function makeBuiltin(builtin: (args: Array<string>, opts: ShellOptions, state: ShellState) => Promise<number>): ShellBuiltin {
-  return async (args: Array<string>, opts: ShellOptions, state: ShellState, mustPipe: boolean) => {
-    if (!mustPipe) {
-      return {
-        stdin: null,
-        promise: builtin(args, opts, state),
-      };
-    } else {
-      const stdin = new PassThrough();
-      return {
-        stdin,
-        promise: builtin(args, opts, {... state, stdin}).then(result => {
-          stdin.end();
-          return result;
-        }, error => {
-          stdin.end();
-          throw error;
-        }),
+  return async (args: Array<string>, opts: ShellOptions, state: ShellState, leftMost: boolean, rightMost: boolean) => {
+    const copy = {... state};
+
+    const stdin = !leftMost
+      ? copy.stdin = new PassThrough()
+      : null;
+
+    const close = () => {
+      if (!leftMost)
+        state.stdin.end();
+
+      if (!rightMost) {
+        state.stdout.end();
+        state.stderr.end();
       }
-    }
+    };
+
+    return {
+      stdin,
+      promise: builtin(args, opts, state).then(result => {
+        close();
+        return result;
+      }, error => {
+        close();
+        throw error;
+      }),
+    };
   };
 }
 
@@ -114,14 +123,14 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     return 0;
   })],
 
-  [`command`, async ([ident, ... rest]: Array<string>, opts: ShellOptions, state: ShellState, mustPipe: boolean) => {
+  [`command`, async ([ident, ... rest]: Array<string>, opts: ShellOptions, state: ShellState, leftMost: boolean, rightMost: boolean) => {
     if (typeof ident === `undefined`)
-      return makeBuiltin(async () => 0)([], opts, state, mustPipe);
+      return makeBuiltin(async () => 0)([], opts, state, leftMost, rightMost);
 
     const stdio: Array<any> = [state.stdin, state.stdout, state.stderr];
     const isUserStream = (stream: Stream) => stream instanceof PassThrough;
 
-    if (isUserStream(state.stdin) || mustPipe)
+    if (isUserStream(state.stdin) || !leftMost)
       stdio[0] = `pipe`;
     if (isUserStream(state.stdout))
       stdio[1] = `pipe`;
@@ -135,7 +144,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
       stdio,
     });
 
-    if (isUserStream(state.stdin) && !mustPipe)
+    if (isUserStream(state.stdin) && !leftMost)
       state.stdin.pipe(subprocess.stdin);
     if (isUserStream(state.stdout))
       subprocess.stdout.pipe(state.stdout);
@@ -173,19 +182,6 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     };
   }],
 ]);
-
-// Keep this function is sync with its implementation in:
-// @berry/core/sources/miscUtils.ts
-async function releaseAfterUseAsync<T>(fn: () => Promise<T>, cleanup?: () => any) {
-  if (!cleanup)
-    return await fn();
-
-  try {
-    return await fn();
-  } finally {
-    await cleanup();
-  }
-}
 
 async function executeBufferedSubshell(ast: ShellLine, opts: ShellOptions, state: ShellState) {
   const chunks: Array<Buffer> = [];
@@ -316,8 +312,8 @@ function makeCommandAction(args: Array<string>, opts: ShellOptions) {
   if (typeof builtin === `undefined`)
     throw new Error(`Assertion failed: A builtin should exist for "${name}"`)
 
-  return async (state: ShellState, mustPipe: boolean) => {
-    const {stdin, promise} = await builtin(rest, opts, state, mustPipe);
+  return async (state: ShellState, leftMost: boolean, rightMost: boolean) => {
+    const {stdin, promise} = await builtin(rest, opts, state, leftMost, rightMost);
     return {stdin, promise};
   };
 }
@@ -334,7 +330,7 @@ function makeSubshellAction(ast: ShellLine, opts: ShellOptions) {
 async function executeCommandChain(node: CommandChain, opts: ShellOptions, state: ShellState) {
   const parts = [];
 
-  // First we interpolate all the commands (we don't interpolate subshells
+  // leftMost we interpolate all the commands (we don't interpolate subshells
   // because they operate in their own contexts and are allowed to define
   // new internal variables)
 
@@ -381,22 +377,7 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
 
   for (let t = parts.length - 1; t >= 0; --t) {
     const {action, pipeType} = parts[t];
-    const {stdin, promise} = await action(Object.assign(state, {stdout, stderr}), pipeType !== null);
-
-    // If stdout has been piped (ie if the command we're execting isn't the
-    // right-most one), then we must close the pipe after our process has
-    // finished writing into it. We don't need to do this for the last command
-    // because this responsibility goes to the caller (otherwise we would risk
-    // closing the real stdout, which isn't meant to happen).
-    if (t !== parts.length - 1) {
-      const thisStdout = stdout;
-
-      promise.then(() => {
-        thisStdout.end();
-      }, () => {
-        thisStdout.end();
-      });
-    }
+    const {stdin, promise} = await action(Object.assign(state, {stdout, stderr}), t === 0, t === parts.length - 1);
 
     promises.push(promise);
 
@@ -441,7 +422,8 @@ async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: 
   if (state.exitCode !== null)
     return state.exitCode;
 
-  // We must update $?, which always contains the exit code from the last command
+  // We must update $?, which always contains the exit code from
+  // the right-most command
   state.variables[`?`] = String(code);
 
   switch (node.then.type) {
@@ -468,20 +450,21 @@ async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: 
 }
 
 async function executeShellLine(node: ShellLine, opts: ShellOptions, state: ShellState) {
-  let lastExitCode = 0;
+  let rightMostExitCode = 0;
 
   for (const command of node) {
-    lastExitCode = await executeCommandLine(command, opts, state);
+    rightMostExitCode = await executeCommandLine(command, opts, state);
 
     // If the execution aborted (usually through "exit"), we must bailout
     if (state.exitCode !== null)
       return state.exitCode;
 
-    // We must update $?, which always contains the exit code from the last command
-    state.variables[`?`] = String(lastExitCode);
+    // We must update $?, which always contains the exit code from
+    // the right-most command
+    state.variables[`?`] = String(rightMostExitCode);
   }
 
-  return lastExitCode;
+  return rightMostExitCode;
 }
 
 function locateArgsVariable(node: ShellLine): boolean {
@@ -560,7 +543,8 @@ export async function execute(command: string, args: Array<string> = [], {
 
   const ast = parseShell(command);
 
-  // If the shell line doesn't use the args, inject it at the end of the last command
+  // If the shell line doesn't use the args, inject it at the end of the
+  // right-most command
   if (!locateArgsVariable(ast) && ast.length > 0) {
     let command = ast[ast.length - 1];
     while (command.then)
