@@ -9,6 +9,7 @@
     "@berry/parsers": "workspace:*",
     "@berry/pnp": "workspace:*",
     "@berry/shell": "workspace:*",
+    "agentkeepalive": "^4.0.2",
     "chalk": "^2.4.1",
     "clipanion": "^0.14.0",
     "cross-spawn": "^6.0.5",
