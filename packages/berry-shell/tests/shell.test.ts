@@ -91,12 +91,21 @@ describe(`Simple shell features`, () => {
     });
   });
 
-  it(`should pipe the result of a command into another (two commands)`, async () => {
+  it(`should pipe the result of a command into another (two commands, builtin into native)`, async () => {
     await expect(bufferResult([
       `echo hello world`,
       `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
     ].join(` | `))).resolves.toMatchObject({
       stdout: `HELLO WORLD\n`,
+    });
+  });
+
+  it(`should pipe the result of a command into another (two commands, native into pipe)`, async () => {
+    await expect(bufferResult([
+      `node -e 'process.stdout.write("abcdefgh\\\\n");'`,
+      `test-builtin`,
+    ].join(` | `))).resolves.toMatchObject({
+      stdout: `aceg\n`,
     });
   });
 
