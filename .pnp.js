@@ -9914,6 +9914,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-parsers"
                 ],
                 [
+                  "@types/cross-spawn",
+                  "npm:6.0.0"
+                ],
+                [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
                   "execa",
                   "npm:1.0.0"
                 ],

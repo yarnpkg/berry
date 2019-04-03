@@ -1,9 +1,8 @@
 import {xfs, NodeFS}                                                      from '@berry/fslib';
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
-import {spawn}                                                            from 'child_process';
-import {delimiter, posix}                                                 from 'path';
+import crossSpawn                                                         from 'cross-spawn';
+import {posix}                                                            from 'path';
 import {PassThrough, Readable, Stream, Writable}                          from 'stream';
-import {StringDecoder}                                                    from 'string_decoder';
 
 export type UserOptions = {
   builtins: {[key: string]: UserBuiltin},
@@ -59,12 +58,13 @@ function makeBuiltin(builtin: (args: Array<string>, opts: ShellOptions, state: S
       state = {... state, stdin};
 
     const close = () => {
-      if (state.stdin !== opts.initialStdin)
+      if (state.stdin !== opts.initialStdin) {
+        // @ts-ignore
         state.stdin.end();
+      }
 
       if (state.stdout !== opts.initialStdout)
         state.stdout.end();
-
       if (state.stderr !== opts.initialStderr) {
         state.stderr.end();
       }
@@ -142,9 +142,8 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     if (isUserStream(state.stderr))
       stdio[2] = `pipe`;
 
-    const subprocess = spawn(ident, rest, {
+    const subprocess = crossSpawn(ident, rest, {
       cwd: NodeFS.fromPortablePath(state.cwd),
-      shell: process.platform === `win32`, // Needed to execute .cmd files
       env: state.environment,
       stdio,
     });

@@ -5,6 +5,8 @@
   "dependencies": {
     "@berry/fslib": "workspace:*",
     "@berry/parsers": "workspace:*",
+    "@types/cross-spawn": "6.0.0",
+    "cross-spawn": "^6.0.5",
     "execa": "^1.0.0",
     "stream-buffers": "^3.0.2"
   },
