@@ -25,7 +25,7 @@ jobs:
   - bash: |
       rm -rf ./.yarn/cache
       node ./scripts/run-yarn.js
-    displayName: 'Validating the cache files'
+    displayName: 'Validate the cache files'
 
 - job: Windows
   pool:
@@ -36,9 +36,9 @@ jobs:
 
   strategy:
     matrix:
-      node_8_x:
+      "Node 8.x":
         node_version: 8.x
-      node_10_x:
+      "Node 10.x":
         node_version: 10.x
 
   steps:
@@ -56,9 +56,9 @@ jobs:
 
   strategy:
     matrix:
-      node_8_x:
+      "Node 8.x":
         node_version: 8.x
-      node_10_x:
+      "Node 10.x":
         node_version: 10.x
 
   steps:
@@ -73,9 +73,9 @@ jobs:
 
   strategy:
     matrix:
-      node_8_x:
+      "Node 8.x":
         node_version: 8.x
-      node_10_x:
+      "Node 10.x":
         node_version: 10.x
 
   steps:
