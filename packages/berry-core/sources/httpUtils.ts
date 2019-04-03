@@ -1,10 +1,14 @@
-import got                    from 'got';
-import tunnel, {ProxyOptions} from 'tunnel';
-import {URL}                  from 'url';
+import HttpAgent, {HttpsAgent} from 'agentkeepalive';
+import got                     from 'got';
+import tunnel, {ProxyOptions}  from 'tunnel';
+import {URL}                   from 'url';
 
-import {Configuration}        from './Configuration';
+import {Configuration}         from './Configuration';
 
 const cache = new Map<string, Promise<Buffer>>();
+
+const globalHttpAgent = new HttpAgent();
+const globalHttpsAgent = new HttpsAgent();
 
 function parseProxy(specifier: string) {
   const url = new URL(specifier);
@@ -26,11 +30,15 @@ async function getNoCache(target: string, configuration: Configuration): Promise
   const httpProxy = configuration.get(`httpProxy`);
   const httpsProxy = configuration.get(`httpsProxy`);
 
-  if (httpProxy && url.protocol === `http:`)
-    agent = tunnel.httpOverHttp(parseProxy(httpProxy));
+  if (url.protocol === `http:`)
+    agent = httpProxy
+      ? tunnel.httpOverHttp(parseProxy(httpProxy))
+      : globalHttpAgent;
 
-  if (httpsProxy && url.protocol === `https:`)
-    agent = tunnel.httpsOverHttp(parseProxy(httpsProxy));
+  if (url.protocol === `https:`)
+    agent = httpsProxy
+      ? tunnel.httpsOverHttp(parseProxy(httpsProxy))
+      : globalHttpsAgent;
 
   const res = await got(target, {agent, encoding: null});
 

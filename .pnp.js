@@ -8867,6 +8867,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-shell"
                 ],
                 [
+                  "agentkeepalive",
+                  "npm:4.0.2"
+                ],
+                [
                   "chalk",
                   "npm:2.4.2"
                 ],
@@ -15567,6 +15571,30 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "agentkeepalive",
                   "npm:2.2.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:4.0.2",
+            {
+              "packageLocation": "./.yarn/cache/agentkeepalive-npm-4.0.2-c5bedb0b538e82a72f3ae966d086310cccf12727d21b6909396af41a1a83784b.zip/node_modules/agentkeepalive/",
+              "packageDependencies": [
+                [
+                  "agentkeepalive",
+                  "npm:4.0.2"
+                ],
+                [
+                  "debug",
+                  "npm:4.1.1"
+                ],
+                [
+                  "depd",
+                  "npm:1.1.2"
+                ],
+                [
+                  "humanize-ms",
+                  "npm:1.2.1"
                 ]
               ]
             }
@@ -36231,6 +36259,27 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "https-browserify",
                   "npm:1.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "humanize-ms",
+        [
+          [
+            "npm:1.2.1",
+            {
+              "packageLocation": "./.yarn/cache/humanize-ms-npm-1.2.1-9cedb0eda456a507e0c4596c1a673f52075a835ed07acbf94e9027a6e10924fe.zip/node_modules/humanize-ms/",
+              "packageDependencies": [
+                [
+                  "humanize-ms",
+                  "npm:1.2.1"
+                ],
+                [
+                  "ms",
+                  "npm:2.1.1"
                 ]
               ]
             }

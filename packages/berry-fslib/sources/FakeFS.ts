@@ -316,7 +316,7 @@ export abstract class FakeFS {
           if (Date.now() < timeout) {
             await new Promise(resolve => setTimeout(resolve, interval));
           } else {
-            throw new Error(`Couldn't acquire a lock in a reasonable time (${timeout / 1000}s)`);
+            throw new Error(`Couldn't acquire a lock in a reasonable time (via ${lockPath})`);
           }
         } else {
           throw error;

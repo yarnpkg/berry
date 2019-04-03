@@ -57,8 +57,20 @@ export class Cache {
     const validateFile = async (path: string) => {
       const actualChecksum = await hashUtils.checksumFile(path);
 
-      if (expectedChecksum !== null && actualChecksum !== expectedChecksum)
-        throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `${structUtils.prettyLocator(this.configuration, locator)} doesn't resolve to an archive that matches the expected checksum`);
+      if (expectedChecksum !== null && actualChecksum !== expectedChecksum) {
+        switch (this.configuration.get(`checksumBehavior`)) {
+          case `ignore`:
+            return expectedChecksum;
+
+          case `update`:
+            return actualChecksum;
+
+          default:
+          case `throw`: {
+            throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `${structUtils.prettyLocator(this.configuration, locator)} doesn't resolve to an archive that matches the expected checksum`);
+          } break;
+        }
+      }
 
       return actualChecksum;
     };

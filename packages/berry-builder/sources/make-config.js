@@ -19,7 +19,10 @@ module.exports = config => merge({
   },
 
   resolve: {
-    alias: {[`supports-color`]: `supports-color/index`},
+    alias: {
+      [`supports-color`]: `supports-color/index`,
+      [`agentkeepalive`]: `agentkeepalive/index`,
+    },
     extensions: [`.js`, `.ts`, `.tsx`, `.json`],
     mainFields: [`browser`, `module`, `main`],
     plugins: [PnpWebpackPlugin],
