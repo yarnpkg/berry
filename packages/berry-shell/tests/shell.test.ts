@@ -90,6 +90,16 @@ describe(`Simple shell features`, () => {
     });
   });
 
+  it(`should pipe the result of a command into another (no builtins)`, async () => {
+    await expect(bufferResult([
+      `node -e 'process.stdout.write("hello world\\\\n")'`,
+      `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
+      `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().replace(/./g, $0 => \`{\${$0}}\`)))'`
+    ].join(` | `))).resolves.toMatchObject({
+      stdout: `{H}{E}{L}{L}{O}{ }{W}{O}{R}{L}{D}\n`,
+    });
+  });
+
   it(`should shortcut the right branch of a '||' when the left branch succeeds`, async () => {
     await expect(bufferResult(`true || echo failed`)).resolves.toMatchObject({
       stdout: ``,
