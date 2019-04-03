@@ -8311,7 +8311,7 @@ __metadata:
 "events@npm:^1.1.0":
   version: 1.1.1
   resolution: "events@npm:1.1.1"
-  checksum: 3806c06004ffea1995072e18af5ed997414e6895f5c286301f3b442135f85f89837760e6d9cc442c0c76b11580ddb81b57bde6d6c84413529fe5efb294d29e16
+  checksum: aec020066dbec8435243383741664e963fc5dad125ad75c012b25d513a2775459f8f5be0b9a47f2f6877561beaaa9cad97a2560c296db6ee94e82a36ebe1a363
   languageName: node
   linkType: hard
 
