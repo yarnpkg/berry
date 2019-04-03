@@ -70,9 +70,19 @@ describe(`Simple shell features`, () => {
     });
   });
 
-  it(`should pipe the result of a command into another`, async () => {
-    await expect(bufferResult(`echo hello world | wc -w | tr -d ' '`)).resolves.toMatchObject({
-      stdout: `2\n`,
+  it(`should pipe the result of a command into another (two commands)`, async () => {
+    await expect(bufferResult(`echo hello world | node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`)).resolves.toMatchObject({
+      stdout: `HELLO WORLD\n`,
+    });
+  });
+
+  it(`should pipe the result of a command into another (three commands)`, async () => {
+    await expect(bufferResult([
+      `echo hello world`,
+      `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
+      `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().replace(/./g, $0 => \`{\${$0}}\`)))'`
+    ].join(` | `))).resolves.toMatchObject({
+      stdout: `{H}{E}{L}{L}{O}{ }{W}{O}{R}{L}{D}\n`,
     });
   });
 
