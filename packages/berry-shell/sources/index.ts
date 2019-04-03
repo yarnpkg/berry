@@ -26,7 +26,6 @@ export type ShellBuiltin = (
   opts: ShellOptions,
   state: ShellState,
   leftMost: boolean,
-  rightMost: boolean,
 ) => Promise<{
   stdin: Writable | null,
   promise: Promise<number>,
@@ -35,6 +34,9 @@ export type ShellBuiltin = (
 export type ShellOptions = {
   args: Array<string>,
   builtins: Map<string, ShellBuiltin>,
+  initialStdin: Readable,
+  initialStdout: Writable,
+  initialStderr: Writable,
 };
 
 export type ShellState = {
@@ -48,19 +50,22 @@ export type ShellState = {
 };
 
 function makeBuiltin(builtin: (args: Array<string>, opts: ShellOptions, state: ShellState) => Promise<number>): ShellBuiltin {
-  return async (args: Array<string>, opts: ShellOptions, state: ShellState, leftMost: boolean, rightMost: boolean) => {
-    const copy = {... state};
-
+  return async (args: Array<string>, opts: ShellOptions, state: ShellState, leftMost: boolean) => {
     const stdin = !leftMost
-      ? copy.stdin = new PassThrough()
+      ? new PassThrough()
       : null;
 
+    if (stdin !== null)
+      state = {... state, stdin};
+
     const close = () => {
-      if (!leftMost)
+      if (state.stdin !== opts.initialStdin)
         state.stdin.end();
 
-      if (!rightMost) {
+      if (state.stdout !== opts.initialStdout)
         state.stdout.end();
+
+      if (state.stderr !== opts.initialStderr) {
         state.stderr.end();
       }
     };
@@ -123,9 +128,9 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     return 0;
   })],
 
-  [`command`, async ([ident, ... rest]: Array<string>, opts: ShellOptions, state: ShellState, leftMost: boolean, rightMost: boolean) => {
+  [`command`, async ([ident, ... rest]: Array<string>, opts: ShellOptions, state: ShellState, leftMost: boolean) => {
     if (typeof ident === `undefined`)
-      return makeBuiltin(async () => 0)([], opts, state, leftMost, rightMost);
+      return makeBuiltin(async () => 0)([], opts, state, leftMost);
 
     const stdio: Array<any> = [state.stdin, state.stdout, state.stderr];
     const isUserStream = (stream: Stream) => stream instanceof PassThrough;
@@ -312,8 +317,8 @@ function makeCommandAction(args: Array<string>, opts: ShellOptions) {
   if (typeof builtin === `undefined`)
     throw new Error(`Assertion failed: A builtin should exist for "${name}"`)
 
-  return async (state: ShellState, leftMost: boolean, rightMost: boolean) => {
-    const {stdin, promise} = await builtin(rest, opts, state, leftMost, rightMost);
+  return async (state: ShellState, leftMost: boolean) => {
+    const {stdin, promise} = await builtin(rest, opts, state, leftMost);
     return {stdin, promise};
   };
 }
@@ -377,7 +382,7 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
 
   for (let t = parts.length - 1; t >= 0; --t) {
     const {action, pipeType} = parts[t];
-    const {stdin, promise} = await action(Object.assign(state, {stdout, stderr}), t === 0, t === parts.length - 1);
+    const {stdin, promise} = await action(Object.assign(state, {stdout, stderr}), t === 0);
 
     promises.push(promise);
 
@@ -564,6 +569,9 @@ export async function execute(command: string, args: Array<string> = [], {
   return await executeShellLine(ast, {
     args,
     builtins: normalizedBuiltins,
+    initialStdin: stdin,
+    initialStdout: stdout,
+    initialStderr: stderr,
   }, {
     cwd,
     environment: normalizedEnv,

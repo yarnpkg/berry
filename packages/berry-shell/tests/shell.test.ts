@@ -20,7 +20,24 @@ const bufferResult = async (command: string, args: Array<string> = []) => {
     stderrChunks.push(chunk);
   });
 
-  const exitCode = await execute(command, args, {stdout, stderr});
+  const exitCode = await execute(command, args, {stdout, stderr, builtins: {
+    [`test-builtin`]: async (args, opts, state) => {
+      const stdinChunks = [];
+
+      state.stdin.on(`data`, chunk => {
+        stdinChunks.push(chunk);
+      });
+
+      return await new Promise (resolve => {
+        state.stdin.on(`end`, () => {
+          const content = Buffer.concat(stdinChunks).toString().trim();
+          state.stdout.write(`${content.replace(/(.)./g, `$1`)}\n`);
+
+          resolve(0);
+        });
+      });
+    },
+  }});
 
   return {
     exitCode,
@@ -75,7 +92,10 @@ describe(`Simple shell features`, () => {
   });
 
   it(`should pipe the result of a command into another (two commands)`, async () => {
-    await expect(bufferResult(`echo hello world | node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`)).resolves.toMatchObject({
+    await expect(bufferResult([
+      `echo hello world`,
+      `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
+    ].join(` | `))).resolves.toMatchObject({
       stdout: `HELLO WORLD\n`,
     });
   });
@@ -84,7 +104,7 @@ describe(`Simple shell features`, () => {
     await expect(bufferResult([
       `echo hello world`,
       `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
-      `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().replace(/./g, $0 => \`{\${$0}}\`)))'`
+      `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().replace(/./g, $0 => \`{\${$0}}\`)))'`,
     ].join(` | `))).resolves.toMatchObject({
       stdout: `{H}{E}{L}{L}{O}{ }{W}{O}{R}{L}{D}\n`,
     });
@@ -94,9 +114,19 @@ describe(`Simple shell features`, () => {
     await expect(bufferResult([
       `node -e 'process.stdout.write("hello world\\\\n")'`,
       `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
-      `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().replace(/./g, $0 => \`{\${$0}}\`)))'`
+      `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().replace(/./g, $0 => \`{\${$0}}\`)))'`,
     ].join(` | `))).resolves.toMatchObject({
       stdout: `{H}{E}{L}{L}{O}{ }{W}{O}{R}{L}{D}\n`,
+    });
+  });
+
+  it(`should pipe the result of a command into another (only builtins)`, async () => {
+    await expect(bufferResult([
+      `echo abcdefghijkl`,
+      `test-builtin`,
+      `test-builtin`,
+    ].join(` | `))).resolves.toMatchObject({
+      stdout: `aei\n`,
     });
   });
 
