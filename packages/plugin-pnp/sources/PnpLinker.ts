@@ -103,7 +103,7 @@ class PnpInstaller implements Installer {
 
     return {
       packageLocation,
-      buildDirective: buildScripts.length > 0 ? buildScripts : null,
+      buildDirective: buildScripts.length > 0 ? buildScripts as [BuildDirective, string][] : null,
     };
   }
 
@@ -244,6 +244,7 @@ class PnpInstaller implements Installer {
       if (scripts.has(scriptName))
         buildScripts.push([BuildDirective.SCRIPT, scriptName]);
 
+    // Detect cases where a package has a binding.gyp but no install script
     const bindingFilePath = posix.resolve(fetchResult.prefixPath, `binding.gyp`);
     if (!scripts.has(`install`) && fetchResult.packageFs.existsSync(bindingFilePath))
       buildScripts.push([BuildDirective.SHELLCODE, `node-gyp rebuild`]);

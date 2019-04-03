@@ -68,6 +68,7 @@ const legacyNames = new Set([
   `force`,
   `disableSelfUpdateCheck`,
   `username`,
+  `email`,
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
