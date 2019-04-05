@@ -8959,6 +8959,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:0.0.33"
                 ],
                 [
+                  "tslint",
+                  "virtual:e2ecac46318b7293d10abbd3204f2d38fd4ddb0e57cbf70b5c3ca33b80040651674a508ab9c6a680ec7bb9a42bd8030d40fb48b320b774f4c6d9e1e1d36aa0c8#npm:5.15.0"
+                ],
+                [
                   "tunnel",
                   "npm:0.0.6"
                 ],
@@ -22298,6 +22302,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "commander",
                   "npm:2.19.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:2.20.0",
+            {
+              "packageLocation": "./.yarn/cache/commander-npm-2.20.0-60544dd3a7859f6e3da5d7ab7559561db9ffd2550c1326d24da3bcaa05ae07d0.zip/node_modules/commander/",
+              "packageDependencies": [
+                [
+                  "commander",
+                  "npm:2.20.0"
                 ]
               ]
             }
@@ -53260,6 +53276,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:1.2.2"
                 ],
                 [
+                  "react",
+                  "npm:16.8.4"
+                ],
+                [
                   "shallowequal",
                   "npm:1.1.0"
                 ]
@@ -60700,6 +60720,184 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "tslint",
+        [
+          [
+            "npm:5.15.0",
+            {
+              "packageLocation": "./.yarn/cache/tslint-npm-5.15.0-6fc63493d02169cbffed47c7593f144ce765e86d1571cffa97c5af07e926c758.zip/node_modules/tslint/",
+              "packageDependencies": [
+                [
+                  "tslint",
+                  "npm:5.15.0"
+                ],
+                [
+                  "babel-code-frame",
+                  "npm:6.26.0"
+                ],
+                [
+                  "builtin-modules",
+                  "npm:1.1.1"
+                ],
+                [
+                  "chalk",
+                  "npm:2.4.2"
+                ],
+                [
+                  "commander",
+                  "npm:2.20.0"
+                ],
+                [
+                  "diff",
+                  "npm:3.5.0"
+                ],
+                [
+                  "glob",
+                  "npm:7.1.3"
+                ],
+                [
+                  "js-yaml",
+                  "npm:3.13.1"
+                ],
+                [
+                  "minimatch",
+                  "npm:3.0.4"
+                ],
+                [
+                  "mkdirp",
+                  "npm:0.5.1"
+                ],
+                [
+                  "resolve",
+                  "npm:1.9.0"
+                ],
+                [
+                  "semver",
+                  "npm:5.6.0"
+                ],
+                [
+                  "tslib",
+                  "npm:1.9.3"
+                ],
+                [
+                  "tsutils",
+                  "npm:2.29.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:e2ecac46318b7293d10abbd3204f2d38fd4ddb0e57cbf70b5c3ca33b80040651674a508ab9c6a680ec7bb9a42bd8030d40fb48b320b774f4c6d9e1e1d36aa0c8#npm:5.15.0",
+            {
+              "packageLocation": "./.yarn/virtual/tslint-virtual-978f2feca6060ee57a2dc54a2cb06d8420b04610f0133122db7171752b20833e/node_modules/tslint/",
+              "packageDependencies": [
+                [
+                  "tslint",
+                  "virtual:e2ecac46318b7293d10abbd3204f2d38fd4ddb0e57cbf70b5c3ca33b80040651674a508ab9c6a680ec7bb9a42bd8030d40fb48b320b774f4c6d9e1e1d36aa0c8#npm:5.15.0"
+                ],
+                [
+                  "babel-code-frame",
+                  "npm:6.26.0"
+                ],
+                [
+                  "builtin-modules",
+                  "npm:1.1.1"
+                ],
+                [
+                  "chalk",
+                  "npm:2.4.2"
+                ],
+                [
+                  "commander",
+                  "npm:2.20.0"
+                ],
+                [
+                  "diff",
+                  "npm:3.5.0"
+                ],
+                [
+                  "glob",
+                  "npm:7.1.3"
+                ],
+                [
+                  "js-yaml",
+                  "npm:3.13.1"
+                ],
+                [
+                  "minimatch",
+                  "npm:3.0.4"
+                ],
+                [
+                  "mkdirp",
+                  "npm:0.5.1"
+                ],
+                [
+                  "resolve",
+                  "npm:1.9.0"
+                ],
+                [
+                  "semver",
+                  "npm:5.6.0"
+                ],
+                [
+                  "tslib",
+                  "npm:1.9.3"
+                ],
+                [
+                  "tsutils",
+                  "virtual:978f2feca6060ee57a2dc54a2cb06d8420b04610f0133122db7171752b20833ec4e32688eb36f491f5677990eeaba15e492870a2b3e4c38b8a664e6f39193b6e#npm:2.29.0"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "tsutils",
+        [
+          [
+            "npm:2.29.0",
+            {
+              "packageLocation": "./.yarn/cache/tsutils-npm-2.29.0-0102bfe01135c8a3eaa093ff23e83c00512973ce8560902176f2011e0e3d50ea.zip/node_modules/tsutils/",
+              "packageDependencies": [
+                [
+                  "tsutils",
+                  "npm:2.29.0"
+                ],
+                [
+                  "tslib",
+                  "npm:1.9.3"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:978f2feca6060ee57a2dc54a2cb06d8420b04610f0133122db7171752b20833ec4e32688eb36f491f5677990eeaba15e492870a2b3e4c38b8a664e6f39193b6e#npm:2.29.0",
+            {
+              "packageLocation": "./.yarn/virtual/tsutils-virtual-338ba7f4e55bf19e5c5fa06c42b6479becbe04db8526ab702b14b39c09586fcc/node_modules/tsutils/",
+              "packageDependencies": [
+                [
+                  "tsutils",
+                  "virtual:978f2feca6060ee57a2dc54a2cb06d8420b04610f0133122db7171752b20833ec4e32688eb36f491f5677990eeaba15e492870a2b3e4c38b8a664e6f39193b6e#npm:2.29.0"
+                ],
+                [
+                  "tslib",
+                  "npm:1.9.3"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "tty-browserify",
         [
           [
@@ -65965,6 +66163,7 @@ function wrapAsync(fn) {
 }
 function patchFs(patchedFs, fakeFs) {
     const SYNC_IMPLEMENTATIONS = new Set([
+        `accessSync`,
         `createReadStream`,
         `chmodSync`,
         `copyFileSync`,
@@ -65983,6 +66182,7 @@ function patchFs(patchedFs, fakeFs) {
         `writeFileSync`,
     ]);
     const ASYNC_IMPLEMENTATIONS = new Set([
+        `accessPromise`,
         `chmodPromise`,
         `copyFilePromise`,
         `lstatPromise`,
@@ -66109,6 +66309,14 @@ class NodeFS extends FakeFS_1.FakeFS {
             this.realFs.exists(NodeFS.fromPortablePath(p), resolve);
         });
     }
+    accessSync(p, mode) {
+        return this.realFs.accessSync(NodeFS.fromPortablePath(p), mode);
+    }
+    async accessPromise(p, mode) {
+        return await new Promise((resolve, reject) => {
+            this.realFs.access(NodeFS.fromPortablePath(p), mode, this.makeCallback(resolve, reject));
+        });
+    }
     existsSync(p) {
         return this.realFs.existsSync(NodeFS.fromPortablePath(p));
     }
@@ -66205,12 +66413,12 @@ class NodeFS extends FakeFS_1.FakeFS {
     async symlinkPromise(target, p) {
         const type = target.endsWith(`/`) ? `dir` : `file`;
         return await new Promise((resolve, reject) => {
-            this.realFs.symlink(NodeFS.fromPortablePath(path_1.posix.normalize(target)), NodeFS.fromPortablePath(p), type, this.makeCallback(resolve, reject));
+            this.realFs.symlink(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type, this.makeCallback(resolve, reject));
         });
     }
     symlinkSync(target, p) {
         const type = target.endsWith(`/`) ? `dir` : `file`;
-        return this.realFs.symlinkSync(NodeFS.fromPortablePath(path_1.posix.normalize(target)), NodeFS.fromPortablePath(p), type);
+        return this.realFs.symlinkSync(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type);
     }
     async readFilePromise(p, encoding) {
         return await new Promise((resolve, reject) => {
@@ -66598,6 +66806,12 @@ class AliasFS extends FakeFS_1.FakeFS {
     existsSync(p) {
         return this.baseFs.existsSync(p);
     }
+    async accessPromise(p, mode) {
+        return await this.baseFs.accessPromise(p, mode);
+    }
+    accessSync(p, mode) {
+        return this.baseFs.accessSync(p, mode);
+    }
     async statPromise(p) {
         return await this.baseFs.statPromise(p);
     }
@@ -66755,6 +66969,12 @@ class CwdFS extends FakeFS_1.FakeFS {
     }
     existsSync(p) {
         return this.baseFs.existsSync(this.fromCwdPath(p));
+    }
+    async accessPromise(p, mode) {
+        return await this.baseFs.accessPromise(this.fromCwdPath(p), mode);
+    }
+    accessSync(p, mode) {
+        return this.baseFs.accessSync(this.fromCwdPath(p), mode);
     }
     async statPromise(p) {
         return await this.baseFs.statPromise(this.fromCwdPath(p));
@@ -66914,6 +67134,12 @@ class JailFS extends FakeFS_1.FakeFS {
     existsSync(p) {
         return this.baseFs.existsSync(this.fromJailedPath(p));
     }
+    async accessPromise(p, mode) {
+        return await this.baseFs.accessPromise(this.fromJailedPath(p), mode);
+    }
+    accessSync(p, mode) {
+        return this.baseFs.accessSync(this.fromJailedPath(p), mode);
+    }
     async statPromise(p) {
         return await this.baseFs.statPromise(this.fromJailedPath(p));
     }
@@ -67071,6 +67297,12 @@ class PosixFS extends FakeFS_1.FakeFS {
     }
     existsSync(p) {
         return this.baseFs.existsSync(NodeFS_1.NodeFS.toPortablePath(p));
+    }
+    async accessPromise(p, mode) {
+        return await this.baseFs.accessPromise(NodeFS_1.NodeFS.toPortablePath(p), mode);
+    }
+    accessSync(p, mode) {
+        return this.baseFs.accessSync(NodeFS_1.NodeFS.toPortablePath(p), mode);
     }
     async statPromise(p) {
         return await this.baseFs.statPromise(NodeFS_1.NodeFS.toPortablePath(p));
@@ -67400,6 +67632,15 @@ class ZipFS extends FakeFS_1.FakeFS {
             return false;
         }
         return this.entries.has(resolvedP) || this.listings.has(resolvedP);
+    }
+    async accessPromise(p, mode) {
+        return this.accessSync(p, mode);
+    }
+    accessSync(p, mode) {
+        const resolvedP = this.resolveFilename(`access '${p}'`, p);
+        if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) {
+            throw Object.assign(new Error(`ENOENT: no such file or directory, access '${p}'`), { code: `ENOENT` });
+        }
     }
     async statPromise(p) {
         return this.statSync(p);
@@ -68030,6 +68271,20 @@ class ZipOpenFS extends FakeFS_1.FakeFS {
             return this.baseFs.existsSync(p);
         }, (zipFs, { subPath }) => {
             return zipFs.existsSync(subPath);
+        });
+    }
+    async accessPromise(p, mode) {
+        return await this.makeCallPromise(p, async () => {
+            return await this.baseFs.accessPromise(p, mode);
+        }, async (zipFs, { archivePath, subPath }) => {
+            return await zipFs.accessPromise(subPath, mode);
+        });
+    }
+    accessSync(p, mode) {
+        return this.makeCallSync(p, () => {
+            return this.baseFs.accessSync(p, mode);
+        }, (zipFs, { subPath }) => {
+            return zipFs.accessSync(subPath, mode);
         });
     }
     async statPromise(p) {
@@ -68749,11 +69004,17 @@ function makeApi(runtimeState, opts) {
     // Used for compatibility purposes - cf setupCompatibilityLayer
     const fallbackLocators = [topLevelLocator];
     if (opts.compatibilityMode) {
-        // ESLint currently doesn't have any portable way for shared configs to specify their own
-        // plugins that should be used (https://github.com/eslint/eslint/issues/10125). This will
-        // likely get fixed at some point, but it'll take time and in the meantime we'll just add
-        // additional fallback entries for common shared configs.
-        for (const name of [`react-scripts`]) {
+        // ESLint currently doesn't have any portable way for shared configs to
+        // specify their own plugins that should be used (cf issue #10125). This
+        // will likely get fixed at some point but it'll take time, so in the
+        // meantime we'll just add additional fallback entries for common shared
+        // configs.
+        // Similarly, Gatsby generates files within the `public` folder located
+        // within the project, but doesn't pre-resolve the `require` calls to use
+        // its own dependencies. Meaning that when PnP see a file from the `public`
+        // folder making a require, it thinks that your project forgot to list one
+        // of your dependencies.
+        for (const name of [`react-scripts`, `gatsby`]) {
             const packageStore = runtimeState.packageRegistry.get(name);
             if (packageStore) {
                 for (const reference of packageStore.keys()) {
@@ -68772,6 +69033,52 @@ function makeApi(runtimeState, opts) {
      * the $$DYNAMICALLY_GENERATED_CODE function.
      */
     const { ignorePattern, packageRegistry, packageLocatorsByLocations, packageLocationLengths, } = runtimeState;
+    /**
+     * Allows to print useful logs just be setting a value in the environment
+     */
+    function makeLogEntry(name, args) {
+        return {
+            fn: name,
+            args: args,
+            error: null,
+            result: null,
+        };
+    }
+    function maybeLog(name, fn) {
+        if (opts.allowDebug === false)
+            return fn;
+        const level = Number(process.env.PNP_DEBUG_LEVEL);
+        if (Number.isFinite(level)) {
+            if (level >= 2) {
+                return (...args) => {
+                    const logEntry = makeLogEntry(name, args);
+                    try {
+                        return logEntry.result = fn(...args);
+                    }
+                    catch (error) {
+                        throw logEntry.error = error;
+                    }
+                    finally {
+                        console.error(logEntry);
+                    }
+                };
+            }
+            else if (level >= 1) {
+                return (...args) => {
+                    try {
+                        return fn(...args);
+                    }
+                    catch (error) {
+                        const logEntry = makeLogEntry(name, args);
+                        logEntry.error = error;
+                        console.error(logEntry);
+                        throw error;
+                    }
+                };
+            }
+        }
+        return fn;
+    }
     /**
      * Returns information about a package in a safe way (will throw if they cannot be retrieved)
      */
@@ -69131,7 +69438,7 @@ function makeApi(runtimeState, opts) {
             path = fslib_1.NodeFS.toPortablePath(path);
             return findPackageLocator(path);
         },
-        resolveToUnqualified: (request, issuer, opts) => {
+        resolveToUnqualified: maybeLog(`resolveToUnqualified`, (request, issuer, opts) => {
             request = fslib_1.NodeFS.toPortablePath(request);
             if (issuer !== null)
                 issuer = fslib_1.NodeFS.toPortablePath(issuer);
@@ -69139,12 +69446,12 @@ function makeApi(runtimeState, opts) {
             if (resolution === null)
                 return null;
             return fslib_1.NodeFS.fromPortablePath(resolution);
-        },
-        resolveUnqualified: (unqualifiedPath, opts) => {
+        }),
+        resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath, opts) => {
             unqualifiedPath = fslib_1.NodeFS.fromPortablePath(unqualifiedPath);
             return fslib_1.NodeFS.fromPortablePath(resolveUnqualified(unqualifiedPath, opts));
-        },
-        resolveRequest: (request, issuer, opts) => {
+        }),
+        resolveRequest: maybeLog(`resolveRequest`, (request, issuer, opts) => {
             request = fslib_1.NodeFS.toPortablePath(request);
             if (issuer !== null)
                 issuer = fslib_1.NodeFS.toPortablePath(issuer);
@@ -69152,7 +69459,7 @@ function makeApi(runtimeState, opts) {
             if (resolution === null)
                 return null;
             return fslib_1.NodeFS.fromPortablePath(resolution);
-        },
+        }),
     };
 }
 exports.makeApi = makeApi;

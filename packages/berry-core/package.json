@@ -4,7 +4,8 @@
   "main": "./sources/index.ts",
   "sideEffects": false,
   "scripts": {
-    "build": "node -r ../berry-pnpify/sources -r typescript/bin/tsc -- tsc"
+    "build": "node -r ../berry-pnpify/sources -r typescript/bin/tsc -- tsc",
+    "lint": "node -r ../berry-pnpify/sources -r tslint/bin/tslint -- tslint -p tsconfig.json -c tslint.json"
   },
   "dependencies": {
     "@berry/fslib": "workspace:*",
@@ -33,5 +34,8 @@
     "tmp": "^0.0.33",
     "tunnel": "^0.0.6",
     "typescript": "^3.3.3333"
+  },
+  "devDependencies": {
+    "tslint": "^5.15.0"
   }
 }

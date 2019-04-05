@@ -1,12 +1,17 @@
 const pnp = require('pnpapi');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const Module = require('module');
 
 function readdirNodeModules(dir, issuer) {
   const dirs = {};
-  const info = pnp.getPackageInformation(pnp.findPackageLocator(issuer));
-  if (!info || (info.packageLocation + '/') !== issuer) {
+  const locator = pnp.findPackageLocator(issuer);
+  if (!locator) {
+    return undefined;
+  }
+  const info = pnp.getPackageInformation(locator);
+  if (info.packageLocation + '/' !== issuer) {
     return undefined;
   }
   const packages = Array.from(info.packageDependencies.keys());
@@ -27,17 +32,31 @@ function readdirNodeModules(dir, issuer) {
 };
 
 function getIssuerForNodeModulesPath(pathname) {
-  const issuers = pathname.split(/\/node_modules/);
+  const locator = pnp.findPackageLocator(pathname);
+  if (!locator) {
+    return undefined;
+  }
+  let issuer = pnp.getPackageInformation(locator).packageLocation;
+  const remainder = pathname.substring(issuer.length);
+  const issuers = [issuer].concat(remainder.split(/\/node_modules/));
 
   issuers[0] += '/';
+  issuer = issuers[0];
   for (let issuerIdx = 1; issuerIdx < issuers.length; issuerIdx++) {
     issuers[issuerIdx] = issuers[issuerIdx].substring(1);
   }
 
-  let issuer = issuers[0];
   try {
     for (let issuerIdx = 1; issuerIdx < issuers.length; issuerIdx++) {
-      issuer = pnp.resolveToUnqualified(issuers[issuerIdx], issuer) + '/';
+      if (issuers[issuerIdx] === '') continue;
+      if (issuers[issuerIdx] === '@types') {
+        return issuer;
+      }
+      const nextIssuer = pnp.resolveToUnqualified(issuers[issuerIdx], issuer);
+      if (!nextIssuer) {
+        return undefined;
+      }
+      issuer = nextIssuer + '/';
     }
     return issuer;
   } catch (e) {
@@ -48,15 +67,16 @@ function resolvePath(pathname) {
   let targetPath = pathname;
   const idx = pathname.lastIndexOf('node_modules');
   if (idx >= 0) {
-    const issuer = getIssuerForNodeModulesPath(pathname.substring(0, idx - 1));
+    const issuer = getIssuerForNodeModulesPath(pathname);
     if (issuer) {
-      const request = pathname.substring(idx + 13);
+      let request = pathname.substring(idx + 13);
       if (readdirNodeModules(request, issuer)) {
         targetPath = '.';
       } else if (request.length > 0) {
         try {
           targetPath = pnp.resolveToUnqualified(request, issuer, {considerBuiltins: false});
         } catch (e) {
+          return undefined;
         }
       }
     }
@@ -70,31 +90,48 @@ function mountVirtualNodeModulesFs() {
     return key[0] === key[0].toLowerCase() && typeof fs[key] === 'function'
   });
   function fsProxy() {
-    if (this.method === 'statSync') {
-      const targetPath = resolvePath(arguments[0].replace(/\\/g, '/'));
-      const args = Array.prototype.slice.call(arguments);
-      args[0] = targetPath;
-      return realFs[this.method].apply(fs, args);
-    } else if (this.method === 'readFileSync') {
-      const targetPath = resolvePath(arguments[0].replace(/\\/g, '/'));
-      const args = Array.prototype.slice.call(arguments);
-      args[0] = targetPath;
-      return realFs[this.method].apply(fs, args);
-    } else if (this.method === 'readdirSync') {
-      const pathname = arguments[0].replace(/\\/g, '/');
-      const idx = pathname.lastIndexOf('node_modules');
-      if (idx >= 0) {
-        const issuer = getIssuerForNodeModulesPath(pathname.substring(0, idx - 1));
-        if (issuer) {
-          const request = pathname.substring(idx + 13);
-          const dirs = readdirNodeModules(request, issuer);
-          if (dirs) {
-            return dirs;
+    const args = Array.prototype.slice.call(arguments);
+    try {
+      if (['realpath', 'realpathSync'].indexOf(this.method) >= 0) {
+        const targetPath = resolvePath(args[0].replace(/\\/g, '/'));
+        if (!targetPath) {
+          throw new Error(`ENOENT: no such file or directory, lstat '${args[0]}'`);
+        }
+        return targetPath;
+      } else if (['access', 'accessSync', 'exists', 'existsSync', 'stat', 'statSync'].indexOf(this.method) >= 0) {
+        const targetPath = resolvePath(args[0].replace(/\\/g, '/'));
+        if (!targetPath) {
+          throw new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
+        }
+        args[0] = targetPath;
+      } else if (['readFile', 'readFileSync'].indexOf(this.method) >= 0) {
+        const targetPath = resolvePath(args[0].replace(/\\/g, '/'));
+        if (!targetPath) {
+          throw new Error(`ENOENT: no such file or directory, open '${args[0]}'`);
+        }
+        args[0] = targetPath;
+      } else if (['readdir', 'readdirSync'].indexOf(this.method) >= 0) {
+        const pathname = args[0].replace(/\\/g, '/');
+        const idx = pathname.lastIndexOf('node_modules');
+        if (idx >= 0) {
+          const issuer = getIssuerForNodeModulesPath(pathname);
+          if (issuer) {
+            const request = pathname.substring(idx + 13);
+            const dirs = readdirNodeModules(request, issuer);
+            if (dirs) {
+              return dirs;
+            }
           }
         }
       }
+    } catch (e) {
+      if (e.message.indexOf('ENOENT') < 0) {
+        fs.appendFileSync(path.join(os.tmpdir(), 'pnpify.log'), e.stack);
+      } else {
+        throw e;
+      }
     }
-    return realFs[this.method].apply(fs, arguments);
+    return realFs[this.method].apply(fs, args);
   }
 
   fsMethods.forEach(function (method) {
