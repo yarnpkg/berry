@@ -1,0 +1,264 @@
+import crossSpawn                        from 'cross-spawn';
+import EventEmitter                      from 'events';
+import {PassThrough, Readable, Writable} from 'stream';
+
+enum Pipe {
+  STDOUT = 0b01,
+  STDERR = 0b10,
+};
+
+export type Stdio = [
+  any,
+  any,
+  any
+];
+
+type ProcessImplementation = (
+  stdio: Stdio,
+) => {
+  stdin: Writable,
+  promise: Promise<number>,
+};
+
+function nextTick() {
+  return new Promise(resolve => {
+    process.nextTick(resolve);
+  });
+}
+
+export function makeProcess(name: string, args: Array<string>, opts: any): ProcessImplementation {
+  return (stdio: Stdio) => {
+    const stdin = stdio[0] instanceof PassThrough
+      ? `pipe`
+      : stdio[0];
+
+    const stdout = stdio[1] instanceof PassThrough
+      ? `pipe`
+      : stdio[1];
+
+    const stderr = stdio[2] instanceof PassThrough
+      ? `pipe`
+      : stdio[2];
+
+    const child = crossSpawn(name, args, {... opts, stdio: [
+      stdin,
+      stdout,
+      stderr,
+    ]});
+
+    if (stdio[0] instanceof PassThrough)
+      stdio[0].pipe(child.stdin);
+    if (stdio[1] instanceof PassThrough)
+      child.stdout.pipe(stdio[1]);
+    if (stdio[2] instanceof PassThrough)
+      child.stderr.pipe(stdio[2]);
+
+    return {
+      stdin: child.stdin,
+      promise: new Promise(resolve => {
+        child.on(`error`, error => {
+          // @ts-ignore
+          switch (error.code) {
+            case `ENOENT`: {
+              stdio[2].write(`command not found: ${name}\n`);
+              resolve(127);
+            } break;
+            case `EACCESS`: {
+              stdio[2].write(`permission denied: ${name}\n`);
+              resolve(128);
+            } break;
+            default: {
+              stdio[2].write(`uncaught error: ${error.message}\n`);
+              resolve(1);
+            } break;
+          }
+        });
+    
+        child.on(`exit`, code => {
+          if (code !== null) {
+            resolve(code);
+          } else {
+            resolve(129);
+          }
+        });
+      }),
+    };
+  };
+}
+
+export function makeBuiltin(builtin: (opts: any) => Promise<number>): ProcessImplementation {
+  return (stdio: Stdio) => {
+    const stdin = stdio[0] === `pipe`
+      ? new PassThrough()
+      : stdio[0];
+
+    return {
+      stdin,
+      promise: nextTick().then(() => builtin({
+        stdin,
+        stdout: stdio[1],
+        stderr: stdio[2],
+      })),
+    };
+  };
+}
+
+interface StreamLock<StreamType> {
+  close(): void;
+  get(): StreamType;
+}
+
+export class ProtectedStream<StreamType> implements StreamLock<StreamType> {
+  private stream: StreamType;
+
+  constructor(stream: StreamType) {
+    this.stream = stream;
+  }
+
+  close() {
+    // Ignore close request
+  }
+
+  get() {
+    return this.stream;
+  }
+}
+
+class PipeStream implements StreamLock<Writable> {
+  private stream: Writable | null = null;
+
+  close() {
+    if (this.stream === null) {
+      throw new Error(`Assertion failed: No stream attached`);
+    } else {
+      this.stream.end();
+    }
+  }
+
+  attach(stream: Writable) {
+    this.stream = stream;
+  }
+
+  get() {
+    if (this.stream === null) {
+      throw new Error(`Assertion failed: No stream attached`);
+    } else {
+      return this.stream;
+    }
+  }
+}
+
+type StartOptions = {
+  stdin: StreamLock<Readable>,
+  stdout: StreamLock<Writable>,
+  stderr: StreamLock<Writable>,
+};
+
+export class Handle {
+  private ancestor: Handle | null;
+  private implementation: ProcessImplementation;
+
+  private stdin: StreamLock<Readable> | null = null;
+  private stdout: StreamLock<Writable> | null = null;
+  private stderr: StreamLock<Writable> | null = null;
+
+  private pipe: PipeStream | null = null;
+
+  static start(implementation: ProcessImplementation, {stdin, stdout, stderr}: StartOptions) {
+    const chain = new Handle(null, implementation);
+
+    chain.stdin = stdin;
+    chain.stdout = stdout;
+    chain.stderr = stderr;
+  
+    return chain;  
+  }
+
+  constructor(ancestor: Handle | null, implementation: ProcessImplementation) {
+    this.ancestor = ancestor;
+    this.implementation = implementation;
+  }
+
+  pipeTo(implementation: ProcessImplementation, source = Pipe.STDOUT) {
+    const next = new Handle(this, implementation);
+
+    const pipe = new PipeStream();
+    next.pipe = pipe;
+
+    next.stdout = this.stdout;
+    next.stderr = this.stderr;
+
+    if ((source & Pipe.STDOUT) === Pipe.STDOUT) {
+      this.stdout = pipe;
+    } else if (this.ancestor !== null) {
+      this.stderr = this.ancestor.stdout;
+    }
+
+    if ((source & Pipe.STDERR) === Pipe.STDERR) {
+      this.stderr = pipe;
+    } else if (this.ancestor !== null) {
+      this.stderr = this.ancestor.stderr;
+    }
+
+    return next;
+  }
+
+  async exec() {
+    const stdio: Stdio = [
+      `ignore`,
+      `ignore`,
+      `ignore`,
+    ];
+
+    if (this.pipe) {
+      stdio[0] = `pipe`;
+    } else {
+      if (this.stdin === null) {
+        throw new Error(`Assertion failed: No input stream registered`);
+      } else {
+        stdio[0] = this.stdin.get();
+      }
+    }
+
+    let stdoutLock: StreamLock<Writable>;
+    if (this.stdout === null) {
+      throw new Error(`Assertion failed: No output stream registered`);
+    } else {
+      stdoutLock = this.stdout;
+      stdio[1] = stdoutLock.get();
+    }
+
+    let stderrLock: StreamLock<Writable>;
+    if (this.stderr === null) {
+      throw new Error(`Assertion failed: No error stream registered`);
+    } else {
+      stderrLock = this.stderr;
+      stdio[2] = stderrLock.get();
+    }
+
+    const child = this.implementation(stdio);
+
+    if (this.pipe)
+      this.pipe.attach(child.stdin);
+
+    return await child.promise.then(code => {
+      stdoutLock.close();
+      stderrLock.close();
+
+      return code;
+    });
+  }
+
+  async run() {
+    const promises = [];
+    for (let handle: Handle | null = this; handle; handle = handle.ancestor)
+      promises.push(handle.exec());
+
+    const exitCodes = await Promise.all(promises);
+    return exitCodes[0];
+  }
+}
+
+export function start(p: ProcessImplementation, opts: StartOptions) {
+  return Handle.start(p, opts);
+}
