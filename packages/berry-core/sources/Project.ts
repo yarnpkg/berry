@@ -3,9 +3,9 @@ import {parseSyml, stringifySyml}               from '@berry/parsers';
 import {createHmac}                             from 'crypto';
 // @ts-ignore
 import Logic                                    from 'logic-solver';
-import {posix}                                  from 'path';
 // @ts-ignore
 import pLimit                                   from 'p-limit';
+import {posix}                                  from 'path';
 import semver                                   from 'semver';
 import {PassThrough}                            from 'stream';
 import {tmpNameSync}                            from 'tmp';
@@ -975,11 +975,10 @@ export class Project {
       const traverse = (locatorHash: LocatorHash, seenPackages: Set<string> = new Set()) => {
         hash.update(locatorHash);
 
-        if (!seenPackages.has(locatorHash)) {
+        if (!seenPackages.has(locatorHash))
           seenPackages.add(locatorHash);
-        } else {
+        else
           return;
-        }
 
         const pkg = this.storedPackages.get(locatorHash);
         if (!pkg)

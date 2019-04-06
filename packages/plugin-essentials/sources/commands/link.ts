@@ -6,6 +6,7 @@ import {UsageError}                                                       from '
 import {posix}                                                            from 'path';
 import {Writable}                                                         from 'stream';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`link [... packages]`)

@@ -13,6 +13,7 @@ const ALL_DRIVERS = [
   MercurialDriver,
 ];
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`stage [-c,--commit] [-r,--reset] [-u,--update] [-n,--dry-run]`)

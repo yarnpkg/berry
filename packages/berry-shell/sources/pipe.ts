@@ -188,17 +188,15 @@ export class Handle {
     next.stdout = this.stdout;
     next.stderr = this.stderr;
 
-    if ((source & Pipe.STDOUT) === Pipe.STDOUT) {
+    if ((source & Pipe.STDOUT) === Pipe.STDOUT)
       this.stdout = pipe;
-    } else if (this.ancestor !== null) {
+    else if (this.ancestor !== null)
       this.stderr = this.ancestor.stdout;
-    }
 
-    if ((source & Pipe.STDERR) === Pipe.STDERR) {
+    if ((source & Pipe.STDERR) === Pipe.STDERR)
       this.stderr = pipe;
-    } else if (this.ancestor !== null) {
+    else if (this.ancestor !== null)
       this.stderr = this.ancestor.stderr;
-    }
 
     return next;
   }

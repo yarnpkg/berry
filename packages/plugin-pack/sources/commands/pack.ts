@@ -1,4 +1,6 @@
 import {PluginConfiguration} from '@berry/core';
+
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`pack [--filename]`)

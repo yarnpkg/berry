@@ -9,6 +9,7 @@ const PRESERVED_FILES = new Set([
   `.gitignore`,
 ]);
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`cache clean [--dry-run] [--json]`)

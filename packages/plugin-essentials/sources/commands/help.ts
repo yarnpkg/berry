@@ -1,3 +1,4 @@
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any) => clipanion
 
   .command(`help [command]`)

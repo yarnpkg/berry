@@ -5,6 +5,7 @@ import {updateAndSave}                                from '@berry/json-proxy';
 import {UsageError}                                   from 'clipanion';
 import {posix}                                        from 'path';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`init [-p,--private]`)

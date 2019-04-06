@@ -1,7 +1,7 @@
 import {xfs, NodeFS}                     from '@berry/fslib';
 import {parseSyml, stringifySyml}        from '@berry/parsers';
-import {UsageError}                      from 'clipanion';
 import chalk                             from 'chalk';
+import {UsageError}                      from 'clipanion';
 import {homedir}                         from 'os';
 import {posix, win32}                    from 'path';
 import supportsColor                     from 'supports-color';
@@ -553,7 +553,7 @@ export class Configuration {
       if (Array.isArray(value)) {
         if (!definition.isArray && !Array.isArray(definition.default)) {
           throw new Error(`Non-array configuration settings "${name}" cannot be an array`);
-        } else {  
+        } else {
           value = value.map(sub => parseValue(sub, definition.type, folder));
         }
       } else {

@@ -3,6 +3,7 @@ import {Configuration, Cache, PluginConfiguration, Project, StreamReport} from '
 import {structUtils}                                                      from '@berry/core';
 import {Writable}                                                         from 'stream';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`policies set-resolution <descriptor> <resolution> [-s,--save]`)

@@ -92,9 +92,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   const originalModuleLoad = Module._load;
 
   Module._load = function(request: string, parent: NodeModule | null, isMain: boolean) {
-    if (!enableNativeHooks) {
+    if (!enableNativeHooks)
       return originalModuleLoad.call(Module, request, parent, isMain);
-    }
 
     // Builtins are managed by the regular Node loader
 
@@ -212,9 +211,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     // because PnP already patched 'Module'
     // We test it for an absolute Windows path and convert it to a portable path.
     // We should probably always call toPortablePath and check for this directly
-    if (/^[A-Z]:.*/.test(request)) {
+    if (/^[A-Z]:.*/.test(request))
       request = NodeFS.toPortablePath(request);
-    }
 
     let firstError;
 

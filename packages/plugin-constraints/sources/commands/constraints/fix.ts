@@ -6,6 +6,7 @@ import {Readable, Writable}                                             from 'st
 
 import {Constraints}                                                    from '../../Constraints';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`constraints fix`)

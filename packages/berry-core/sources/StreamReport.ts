@@ -127,21 +127,19 @@ export class StreamReport extends Report {
   async finalize() {
     let installStatus = ``;
 
-    if (this.errorCount > 0) {
+    if (this.errorCount > 0)
       installStatus = `Failed with errors`;
-    } else if (this.warningCount > 0) {
+    else if (this.warningCount > 0)
       installStatus = `Done with warnings`;
-    } else {
+    else
       installStatus = `Done`;
-    }
 
     let fetchStatus = ``;
 
-    if (this.cacheHitCount > 1) {
+    if (this.cacheHitCount > 1)
       fetchStatus += ` - ${this.cacheHitCount} packages were already cached`;
-    } else if (this.cacheHitCount === 1) {
+    else if (this.cacheHitCount === 1)
       fetchStatus += ` - one package was already cached`;
-    }
 
     if (this.cacheHitCount > 0) {
       if (this.cacheMissCount > 1) {

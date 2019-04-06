@@ -3,6 +3,7 @@ import {scriptUtils, structUtils}                    from '@berry/core';
 import {UsageError}                                  from 'clipanion';
 import {Writable}                                    from 'stream';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`bin [name] [-v,--verbose]`)

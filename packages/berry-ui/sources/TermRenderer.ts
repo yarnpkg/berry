@@ -99,9 +99,8 @@ export class TermRenderer {
       this.termOutput.writeMeta(screen.noWrap.out);
 
       // Exit the alternate screen
-      if (!this.termOutput.isInline) {
+      if (!this.termOutput.isInline)
         this.termOutput.writeMeta(screen.alternateScreen.out);
-      }
 
       if (this.termOutput.isInline) {
         this.termOutput.write(cursor.moveTo({x: 0, y: this.inlineTop}));
@@ -187,11 +186,10 @@ export class TermRenderer {
         });
 
         // Detects which parts of the segment won't be covered by the node
-        if (!overlap) {
+        if (!overlap)
           nextSegments.push(segment);
-        } else {
+        else
           nextSegments = nextSegments.concat(removeSegment(overlap, segment));
-        }
 
         // Generates the rendering code by asking the node
         if (overlap) {

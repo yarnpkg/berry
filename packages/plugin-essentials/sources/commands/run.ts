@@ -4,6 +4,7 @@ import {scriptUtils, structUtils}                                      from '@be
 import {UsageError}                                                    from 'clipanion';
 import {Readable, Writable}                                            from 'stream';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`run <name> [... args] [-T,--top-level]`)

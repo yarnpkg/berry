@@ -133,8 +133,10 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
             const raw = await executeBufferedSubshell(segment.shell, opts, state);
             if (segment.quoted) {
               push(raw);
-            } else for (const part of split(raw)) {
-              pushAndClose(part);
+            } else {
+              for (const part of split(raw)) {
+                pushAndClose(part);
+              }
             }
           } break;
 
@@ -150,9 +152,11 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
                   for (const raw of opts.args) {
                     pushAndClose(raw);
                   }
-                } else for (const raw of opts.args) {
-                  for (const part of split(raw)) {
-                    pushAndClose(part);
+                } else {
+                  for (const raw of opts.args) {
+                    for (const part of split(raw)) {
+                      pushAndClose(part);
+                    }
                   }
                 }
               } break;
@@ -161,8 +165,10 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
                 const raw = opts.args.join(` `);
                 if (segment.quoted) {
                   push(raw);
-                } else for (const part of split(raw)) {
-                  pushAndClose(part);
+                } else {
+                  for (const part of split(raw)) {
+                    pushAndClose(part);
+                  }
                 }
               } break;
 

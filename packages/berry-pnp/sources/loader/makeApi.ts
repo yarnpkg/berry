@@ -604,16 +604,15 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   function resolveRequest(request: string, issuer: string | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): string | null {
     let unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
-    if (unqualifiedPath === null) {
+    if (unqualifiedPath === null)
       return null;
-    }
 
     try {
       return resolveUnqualified(unqualifiedPath, {extensions});
     } catch (resolutionError) {
-      if (resolutionError.code === 'QUALIFIED_PATH_RESOLUTION_FAILED') {
+      if (resolutionError.code === 'QUALIFIED_PATH_RESOLUTION_FAILED')
         Object.assign(resolutionError.data, {request, issuer});
-      }
+
       throw resolutionError;
     }
   };

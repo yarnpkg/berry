@@ -8,12 +8,19 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
     stat(uri: vscode.Uri): vscode.FileStat {
         const stat: any = this.zipFs.statSync(uri.path);
 
-        if (stat.isDirectory())
-            stat.type = vscode.FileType.Directory;
-        else if (stat.isFile())
-            stat.type = vscode.FileType.File;
-        else
-            stat.type = vscode.FileType.Unknown;
+        switch (true) {
+            case stat.isDirectory(): {
+                stat.type = vscode.FileType.Directory;
+            } break;
+
+            case stat.isFile(): {
+                stat.type = vscode.FileType.File;
+            } break;
+
+            default: {
+                stat.type = vscode.FileType.Unknown;
+            } break;
+        }
 
         return stat;
     }

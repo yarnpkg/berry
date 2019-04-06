@@ -5,6 +5,7 @@ const number64 = [
   `number`, // high
 ];
 
+// eslint-disable-next-line arca/no-default-export
 export default {
   // Those are getters because they can change after memory growth
   get HEAP8() { return libzip.HEAP8 },
