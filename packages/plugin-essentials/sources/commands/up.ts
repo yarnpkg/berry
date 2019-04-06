@@ -8,6 +8,7 @@ import {Readable, Writable}                                         from 'stream
 import * as suggestUtils                                            from '../suggestUtils';
 import {Hooks}                                                      from '..';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`up [... packages] [-i,--interactive] [-v,--verbose] [-E,--exact] [-T,--tilde]`)

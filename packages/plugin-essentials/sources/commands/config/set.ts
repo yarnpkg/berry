@@ -1,6 +1,7 @@
 import {Configuration, PluginConfiguration} from '@berry/core';
 import {UsageError}                         from 'clipanion';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`config set <name> <value>`)

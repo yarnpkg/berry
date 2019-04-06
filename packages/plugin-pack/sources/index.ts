@@ -1,5 +1,6 @@
 import {Plugin} from '@berry/core';
-import pack from './commands/pack';
+
+import pack     from './commands/pack';
 
 const plugin: Plugin = {
   commands: [
@@ -7,4 +8,5 @@ const plugin: Plugin = {
   ],
 };
 
+// eslint-disable-next-line arca/no-default-export
 export default plugin;

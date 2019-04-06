@@ -4,6 +4,7 @@ import {xfs}                                                              from '
 import {parseSyml, stringifySyml}                                         from '@berry/parsers';
 import {Writable}                                                         from 'stream';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`install [--frozen-lockfile?]`)

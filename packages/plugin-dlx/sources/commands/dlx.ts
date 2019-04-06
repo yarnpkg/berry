@@ -9,6 +9,7 @@ import {posix}                                              from 'path';
 import {Readable, Writable}                                 from 'stream';
 import tmp                                                  from 'tmp';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`dlx <command> [... args] [-p,--package NAME ...] [-q,--quiet]`)

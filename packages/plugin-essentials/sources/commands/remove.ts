@@ -7,6 +7,7 @@ import {Writable}                                                       from 'st
 import * as suggestUtils                                                from '../suggestUtils';
 import {Hooks}                                                          from '..';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`remove [... names] [-A,--all]`)

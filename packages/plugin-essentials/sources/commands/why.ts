@@ -5,6 +5,7 @@ import {miscUtils, structUtils}                                  from '@berry/co
 import {Writable}                                                from 'stream';
 import {asTree}                                                  from 'treeify';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`why <package> [--peers]`)

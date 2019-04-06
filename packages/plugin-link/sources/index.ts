@@ -1,9 +1,9 @@
 import {Plugin}          from '@berry/core';
 
-import {RawLinkFetcher}  from './RawLinkFetcher';
-import {RawLinkResolver} from './RawLinkResolver';
 import {LinkFetcher}     from './LinkFetcher';
 import {LinkResolver}    from './LinkResolver';
+import {RawLinkFetcher}  from './RawLinkFetcher';
+import {RawLinkResolver} from './RawLinkResolver';
 
 const plugin: Plugin = {
   fetchers: [
@@ -16,4 +16,5 @@ const plugin: Plugin = {
   ],
 };
 
+// eslint-disable-next-line arca/no-default-export
 export default plugin;

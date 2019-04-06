@@ -14,6 +14,7 @@
     "@types/cross-spawn": "6.0.0",
     "@types/dateformat": "^1.0.1",
     "@types/emscripten": "^0.0.31",
+    "@types/eslint": "4.16.6",
     "@types/eventemitter3": "^2.0.2",
     "@types/execa": "^0.9.0",
     "@types/faker": "^4.1.4",
@@ -39,7 +40,10 @@
     "@types/treeify": "^1.0.0",
     "@types/tunnel": "^0.0.0",
     "@types/yup": "0.26.12",
+    "@typescript-eslint/parser": "^1.6.0",
     "babel-jest": "^24.5.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-arca": "^0.8.1",
     "jest": "^24.5.0",
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
@@ -58,6 +62,7 @@
     }
   },
   "scripts": {
+    "test:lint": "run eslint packages/*/sources/**.ts",
     "test:unit": "jest"
   }
 }

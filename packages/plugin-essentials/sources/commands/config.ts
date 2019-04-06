@@ -9,7 +9,7 @@ function fromEntries(iterable: Iterable<[any, any] | {0: any, 1: any}>): {[key: 
   }), {});
 }
 
-
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`config [-v,--verbose] [--why] [--json]`)

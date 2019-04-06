@@ -16,9 +16,8 @@ export function makeError(code: string, message: string, data: Object = {}): Err
 export function getIssuerModule(parent: NodeModule | null): NodeModule | null {
   let issuer = parent;
 
-  while (issuer && (issuer.id === '[eval]' || issuer.id === '<repl>' || !issuer.filename)) {
+  while (issuer && (issuer.id === '[eval]' || issuer.id === '<repl>' || !issuer.filename))
     issuer = issuer.parent;
-  }
 
   return issuer;
 }

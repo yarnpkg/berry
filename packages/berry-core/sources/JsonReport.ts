@@ -11,6 +11,8 @@ export type JsonReportOptions = {
 export class JsonReport extends Report {
   private stdout: Writable;
 
+  private errorCount: number = 0;
+
   static async start(opts: JsonReportOptions, cb: (report: JsonReport) => Promise<void>) {
     const report = new this(opts);
 
@@ -40,6 +42,14 @@ export class JsonReport extends Report {
     this.stdout = stdout;
   }
 
+  hasErrors() {
+    return this.errorCount > 0;
+  }
+
+  exitCode() {
+    return this.hasErrors() ? 1 : 0;
+  }
+
   reportCacheHit(locator: Locator) {
   }
 
@@ -55,16 +65,20 @@ export class JsonReport extends Report {
   }
 
   reportInfo(name: MessageName, text: string) {
+    this.stdout.write(`${JSON.stringify({$message: {type: `info`, name, text}})}\n`);
   }
 
   reportWarning(name: MessageName, text: string) {
+    this.stdout.write(`${JSON.stringify({$message: {type: `warning`, name, text}})}\n`);
   }
 
   reportError(name: MessageName, text: string) {
+    this.errorCount += 1;
+    this.stdout.write(`${JSON.stringify({$message: {type: `error`, name, text}})}\n`);
   }
 
   reportJson(data: any) {
-    this.stdout.write(`${JSON.stringify(data, null, `  `)}\n`);
+    this.stdout.write(`${JSON.stringify(data)}\n`);
   }
 
   async finalize() {

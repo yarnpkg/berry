@@ -1,6 +1,7 @@
-import {posix}  from 'path';
 import {NodeFS} from '@berry/fslib';
+import {posix}  from 'path';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any) => clipanion
 
   .command(`entry [... args]`)

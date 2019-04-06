@@ -73,6 +73,7 @@ async function fetchReleases(configuration: Configuration, {includePrereleases =
   return {releases, prereleases};
 }
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`policies set-version [range] [--rc] [--list]`)

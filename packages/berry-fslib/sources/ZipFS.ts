@@ -59,9 +59,9 @@ export type Options = {
 };
 
 function toUnixTimestamp(time: Date | string | number) {
-  if (typeof time === 'string' && String(+time) === time) {
+  if (typeof time === 'string' && String(+time) === time)
     return +time;
-  }
+
   // @ts-ignore
   if (Number.isFinite(time)) {
     if (time < 0) {
@@ -70,11 +70,11 @@ function toUnixTimestamp(time: Date | string | number) {
       return time;
     }
   }
-  if (isDate(time)) {
-    // convert to 123.456 UNIX timestamp
-    // @ts-ignore
-    return time.getTime() / 1000;
-  }
+
+  // convert to 123.456 UNIX timestamp
+  if (isDate(time))
+    return (time as Date).getTime() / 1000;
+
   throw new Error(`Invalid time`);
 }
 

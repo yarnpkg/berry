@@ -4,6 +4,7 @@ import {NodeFS}                                      from '@berry/fslib';
 import execa                                         from 'execa';
 import {Readable, Writable}                          from 'stream';
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`node [... args]`)

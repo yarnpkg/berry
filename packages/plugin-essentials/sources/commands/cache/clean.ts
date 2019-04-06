@@ -1,7 +1,7 @@
 import {Configuration, Cache, PluginConfiguration, Project} from '@berry/core';
 import {Locator, MessageName, StreamReport}                 from '@berry/core';
-import {LightReport, VirtualFetcher}                        from '@berry/core';
-import {ZipFS, xfs}                                         from '@berry/fslib';
+import {JsonReport, LightReport, VirtualFetcher}            from '@berry/core';
+import {NodeFS, ZipFS, xfs}                                 from '@berry/fslib';
 import {posix}                                              from 'path';
 import {Writable}                                           from 'stream';
 
@@ -9,6 +9,7 @@ const PRESERVED_FILES = new Set([
   `.gitignore`,
 ]);
 
+// eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`cache clean [--dry-run] [--json]`)
@@ -64,30 +65,47 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const cacheFolder = cache.cwd;
     const virtualFolder = configuration.get(`virtualFolder`);
 
-    const unlinkReport = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
-      const dirtyPaths = [
-        [cacheFolder, cacheEntries],
-        [virtualFolder, virtualEntries],
-      ];
+    const dirtyPaths: Array<string> = [];
+    const dirtySources = [
+      [cacheFolder, cacheEntries],
+      [virtualFolder, virtualEntries],
+    ];
 
-      for (const [folder, entries] of dirtyPaths) {
-        if (!xfs.existsSync(folder))
+    for (const [folder, entries] of dirtySources) {
+      if (!xfs.existsSync(folder))
+        continue;
+
+      for (const entry of await xfs.readdirPromise(folder)) {
+        if (PRESERVED_FILES.has(entry))
+          continue;
+        if (entries.has(entry))
           continue;
 
-        for (const entry of await xfs.readdirPromise(folder)) {
-          if (PRESERVED_FILES.has(entry))
-            continue;
-          if (entries.has(entry))
-            continue;
+        dirtyPaths.push(posix.resolve(folder, entry));
+      }
+    }
 
-          report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${entry} seems to be unused`);
+    let unlinkReport;
 
+    if (json) {
+      unlinkReport = await JsonReport.start({stdout}, async (report: JsonReport) => {
+        for (const path of dirtyPaths) {
+          report.reportJson({path: NodeFS.fromPortablePath(path)});
           if (!dryRun) {
-            await xfs.unlinkPromise(posix.resolve(folder, entry));
+            await xfs.unlinkPromise(path);
           }
         }
-      }
-    });
+      });
+    } else {
+      unlinkReport = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
+        for (const path of dirtyPaths) {
+          report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${posix.basename(path)} seems to be unused`);
+          if (!dryRun) {
+            await xfs.unlinkPromise(path);
+          }
+        }
+      });
+    }
 
     return unlinkReport.exitCode();
   });

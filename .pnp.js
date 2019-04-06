@@ -63,6 +63,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:0.0.31"
                 ],
                 [
+                  "@types/eslint",
+                  "npm:4.16.6"
+                ],
+                [
                   "@types/eventemitter3",
                   "npm:2.0.2"
                 ],
@@ -163,8 +167,20 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:0.26.12"
                 ],
                 [
+                  "@typescript-eslint/parser",
+                  "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:1.6.0"
+                ],
+                [
                   "babel-jest",
                   "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:24.5.0"
+                ],
+                [
+                  "eslint",
+                  "npm:5.16.0"
+                ],
+                [
+                  "eslint-plugin-arca",
+                  "npm:0.8.1"
                 ],
                 [
                   "jest",
@@ -9192,6 +9208,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:0.0.31"
                 ],
                 [
+                  "@types/eslint",
+                  "npm:4.16.6"
+                ],
+                [
                   "@types/eventemitter3",
                   "npm:2.0.2"
                 ],
@@ -9292,8 +9312,20 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:0.26.12"
                 ],
                 [
+                  "@typescript-eslint/parser",
+                  "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:1.6.0"
+                ],
+                [
                   "babel-jest",
                   "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:24.5.0"
+                ],
+                [
+                  "eslint",
+                  "npm:5.16.0"
+                ],
+                [
+                  "eslint-plugin-arca",
+                  "npm:0.8.1"
                 ],
                 [
                   "jest",
@@ -13505,6 +13537,48 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "@types/eslint",
+        [
+          [
+            "npm:4.16.6",
+            {
+              "packageLocation": "./.yarn/cache/@types-eslint-npm-4.16.6-b1a5a2c801c39769849c48813af7f323cbf61a1d8b6b05f43a8ef26af966a391.zip/node_modules/@types/eslint/",
+              "packageDependencies": [
+                [
+                  "@types/eslint",
+                  "npm:4.16.6"
+                ],
+                [
+                  "@types/estree",
+                  "npm:0.0.39"
+                ],
+                [
+                  "@types/json-schema",
+                  "npm:7.0.3"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/estree",
+        [
+          [
+            "npm:0.0.39",
+            {
+              "packageLocation": "./.yarn/cache/@types-estree-npm-0.0.39-1605ecc1de84849260de27398ff9931939399558278a2de88c090b68f42ce38e.zip/node_modules/@types/estree/",
+              "packageDependencies": [
+                [
+                  "@types/estree",
+                  "npm:0.0.39"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "@types/eventemitter3",
         [
           [
@@ -13808,6 +13882,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/joi",
                   "npm:13.6.3"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/json-schema",
+        [
+          [
+            "npm:7.0.3",
+            {
+              "packageLocation": "./.yarn/cache/@types-json-schema-npm-7.0.3-2bcfc9a0ee2eba90b5b7f025817291b0c76f5d701d1625f426d269a4a10272b5.zip/node_modules/@types/json-schema/",
+              "packageDependencies": [
+                [
+                  "@types/json-schema",
+                  "npm:7.0.3"
                 ]
               ]
             }
@@ -14742,6 +14833,116 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/yup",
                   "npm:0.26.12"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@typescript-eslint/parser",
+        [
+          [
+            "npm:1.6.0",
+            {
+              "packageLocation": "./.yarn/cache/@typescript-eslint-parser-npm-1.6.0-c6faab4659a53992ee83c08aea9a18a3638282fa4c561c330d08f8c4618b8efe.zip/node_modules/@typescript-eslint/parser/",
+              "packageDependencies": [
+                [
+                  "@typescript-eslint/parser",
+                  "npm:1.6.0"
+                ],
+                [
+                  "@typescript-eslint/typescript-estree",
+                  "npm:1.6.0"
+                ],
+                [
+                  "eslint-scope",
+                  "npm:4.0.0"
+                ],
+                [
+                  "eslint-visitor-keys",
+                  "npm:1.0.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:1.6.0",
+            {
+              "packageLocation": "./.yarn/virtual/@typescript-eslint-parser-virtual-74c86260b219af9d51018daa214d7dff808ed00a2f96f289e84c7c2f94c6a58c/node_modules/@typescript-eslint/parser/",
+              "packageDependencies": [
+                [
+                  "@typescript-eslint/parser",
+                  "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:1.6.0"
+                ],
+                [
+                  "@typescript-eslint/typescript-estree",
+                  "virtual:74c86260b219af9d51018daa214d7dff808ed00a2f96f289e84c7c2f94c6a58cd0cf0ce61b4e9026cdaaa36d66eb2114814734d4e0406c853ae69269966f7dc6#npm:1.6.0"
+                ],
+                [
+                  "eslint",
+                  "npm:5.16.0"
+                ],
+                [
+                  "eslint-scope",
+                  "npm:4.0.0"
+                ],
+                [
+                  "eslint-visitor-keys",
+                  "npm:1.0.0"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@typescript-eslint/typescript-estree",
+        [
+          [
+            "npm:1.6.0",
+            {
+              "packageLocation": "./.yarn/cache/@typescript-eslint-typescript-estree-npm-1.6.0-ba49a4774f91da4e2ade95cfe5747776622295eb4e73e0542c765196a9d8c43b.zip/node_modules/@typescript-eslint/typescript-estree/",
+              "packageDependencies": [
+                [
+                  "@typescript-eslint/typescript-estree",
+                  "npm:1.6.0"
+                ],
+                [
+                  "lodash.unescape",
+                  "npm:4.0.1"
+                ],
+                [
+                  "semver",
+                  "npm:5.5.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:74c86260b219af9d51018daa214d7dff808ed00a2f96f289e84c7c2f94c6a58cd0cf0ce61b4e9026cdaaa36d66eb2114814734d4e0406c853ae69269966f7dc6#npm:1.6.0",
+            {
+              "packageLocation": "./.yarn/virtual/@typescript-eslint-typescript-estree-virtual-e5742562a9ab6cf66de9211fad358f4d6047eb299874741b3d699daf88ad4e2f/node_modules/@typescript-eslint/typescript-estree/",
+              "packageDependencies": [
+                [
+                  "@typescript-eslint/typescript-estree",
+                  "virtual:74c86260b219af9d51018daa214d7dff808ed00a2f96f289e84c7c2f94c6a58cd0cf0ce61b4e9026cdaaa36d66eb2114814734d4e0406c853ae69269966f7dc6#npm:1.6.0"
+                ],
+                [
+                  "lodash.unescape",
+                  "npm:4.0.1"
+                ],
+                [
+                  "semver",
+                  "npm:5.5.0"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
                 ]
               ]
             }
@@ -26968,6 +27169,162 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
+          ],
+          [
+            "npm:5.16.0",
+            {
+              "packageLocation": "./.yarn/cache/eslint-npm-5.16.0-9cc47644fe4e3c1b0efdd763cf77e30f777853520c1b0b7e3bcad2b27992bc18.zip/node_modules/eslint/",
+              "packageDependencies": [
+                [
+                  "eslint",
+                  "npm:5.16.0"
+                ],
+                [
+                  "@babel/code-frame",
+                  "npm:7.0.0"
+                ],
+                [
+                  "ajv",
+                  "npm:6.10.0"
+                ],
+                [
+                  "chalk",
+                  "npm:2.4.2"
+                ],
+                [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
+                  "debug",
+                  "npm:4.1.1"
+                ],
+                [
+                  "doctrine",
+                  "npm:3.0.0"
+                ],
+                [
+                  "eslint-scope",
+                  "npm:4.0.3"
+                ],
+                [
+                  "eslint-utils",
+                  "npm:1.3.1"
+                ],
+                [
+                  "eslint-visitor-keys",
+                  "npm:1.0.0"
+                ],
+                [
+                  "espree",
+                  "npm:5.0.1"
+                ],
+                [
+                  "esquery",
+                  "npm:1.0.1"
+                ],
+                [
+                  "esutils",
+                  "npm:2.0.2"
+                ],
+                [
+                  "file-entry-cache",
+                  "npm:5.0.1"
+                ],
+                [
+                  "functional-red-black-tree",
+                  "npm:1.0.1"
+                ],
+                [
+                  "glob",
+                  "npm:7.1.3"
+                ],
+                [
+                  "globals",
+                  "npm:11.11.0"
+                ],
+                [
+                  "ignore",
+                  "npm:4.0.6"
+                ],
+                [
+                  "import-fresh",
+                  "npm:3.0.0"
+                ],
+                [
+                  "imurmurhash",
+                  "npm:0.1.4"
+                ],
+                [
+                  "inquirer",
+                  "npm:6.2.2"
+                ],
+                [
+                  "js-yaml",
+                  "npm:3.13.1"
+                ],
+                [
+                  "json-stable-stringify-without-jsonify",
+                  "npm:1.0.1"
+                ],
+                [
+                  "levn",
+                  "npm:0.3.0"
+                ],
+                [
+                  "lodash",
+                  "npm:4.17.11"
+                ],
+                [
+                  "minimatch",
+                  "npm:3.0.4"
+                ],
+                [
+                  "mkdirp",
+                  "npm:0.5.1"
+                ],
+                [
+                  "natural-compare",
+                  "npm:1.4.0"
+                ],
+                [
+                  "optionator",
+                  "npm:0.8.2"
+                ],
+                [
+                  "path-is-inside",
+                  "npm:1.0.2"
+                ],
+                [
+                  "progress",
+                  "npm:2.0.3"
+                ],
+                [
+                  "regexpp",
+                  "npm:2.0.1"
+                ],
+                [
+                  "semver",
+                  "npm:5.6.0"
+                ],
+                [
+                  "strip-ansi",
+                  "npm:4.0.0"
+                ],
+                [
+                  "strip-json-comments",
+                  "npm:2.0.1"
+                ],
+                [
+                  "table",
+                  "npm:5.2.3"
+                ],
+                [
+                  "text-table",
+                  "npm:0.2.0"
+                ]
+              ]
+            }
           ]
         ]
       ],
@@ -27153,6 +27510,27 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "pkg-dir",
                   "npm:2.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "eslint-plugin-arca",
+        [
+          [
+            "npm:0.8.1",
+            {
+              "packageLocation": "./.yarn/cache/eslint-plugin-arca-npm-0.8.1-0334b926a3e7fd567b7dd513a05827a4382fc808c1cbb8cf1269b45a60bdb4a7.zip/node_modules/eslint-plugin-arca/",
+              "packageDependencies": [
+                [
+                  "eslint-plugin-arca",
+                  "npm:0.8.1"
+                ],
+                [
+                  "requireindex",
+                  "npm:1.1.0"
                 ]
               ]
             }
@@ -27599,6 +27977,26 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "eslint-scope",
                   "npm:4.0.2"
+                ],
+                [
+                  "esrecurse",
+                  "npm:4.2.1"
+                ],
+                [
+                  "estraverse",
+                  "npm:4.2.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:4.0.3",
+            {
+              "packageLocation": "./.yarn/cache/eslint-scope-npm-4.0.3-c4e24d3415a8c7aee6f1d8be044bed76d424c8cf997eabdb700ec75ed2be84c5.zip/node_modules/eslint-scope/",
+              "packageDependencies": [
+                [
+                  "eslint-scope",
+                  "npm:4.0.3"
                 ],
                 [
                   "esrecurse",
@@ -42136,6 +42534,26 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             }
           ],
           [
+            "npm:3.13.1",
+            {
+              "packageLocation": "./.yarn/cache/js-yaml-npm-3.13.1-f9085ba01c1dd9ce28042daf05dff0b9ad739afa8db0fdecef62ed0888feac34.zip/node_modules/js-yaml/",
+              "packageDependencies": [
+                [
+                  "js-yaml",
+                  "npm:3.13.1"
+                ],
+                [
+                  "argparse",
+                  "npm:1.0.10"
+                ],
+                [
+                  "esprima",
+                  "npm:4.0.1"
+                ]
+              ]
+            }
+          ],
+          [
             "npm:3.7.0",
             {
               "packageLocation": "./.yarn/cache/js-yaml-npm-3.7.0-bbec58ed7240fd9123e0f60e678f3bfd4efe8a4d90ac13ebdaa7e4acdfbda2d5.zip/node_modules/js-yaml/",
@@ -43729,6 +44147,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "lodash.toarray",
                   "npm:4.4.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "lodash.unescape",
+        [
+          [
+            "npm:4.0.1",
+            {
+              "packageLocation": "./.yarn/cache/lodash.unescape-npm-4.0.1-4325ea52782e560bbd36bbcdd93908429840833bbc176aa05f135057750b7058.zip/node_modules/lodash.unescape/",
+              "packageDependencies": [
+                [
+                  "lodash.unescape",
+                  "npm:4.0.1"
                 ]
               ]
             }
@@ -52779,10 +53214,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:1.2.2"
                 ],
                 [
-                  "react",
-                  "npm:16.8.4"
-                ],
-                [
                   "shallowequal",
                   "npm:1.1.0"
                 ]
@@ -54485,6 +54916,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "requireindex",
+        [
+          [
+            "npm:1.1.0",
+            {
+              "packageLocation": "./.yarn/cache/requireindex-npm-1.1.0-6c7d8968bd2889f75ef81b05539101827fd49719dcb5f386cf9c632a589d7687.zip/node_modules/requireindex/",
+              "packageDependencies": [
+                [
+                  "requireindex",
+                  "npm:1.1.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "requires-port",
         [
           [
@@ -55427,6 +55875,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "semver",
                   "npm:5.3.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:5.5.0",
+            {
+              "packageLocation": "./.yarn/cache/semver-npm-5.5.0-18944522566aec71e48d57422e055043508cc6b877c4dafd579e80b1dfe24601.zip/node_modules/semver/",
+              "packageDependencies": [
+                [
+                  "semver",
+                  "npm:5.5.0"
                 ]
               ]
             }
@@ -68300,17 +68760,11 @@ function makeApi(runtimeState, opts) {
     // Used for compatibility purposes - cf setupCompatibilityLayer
     const fallbackLocators = [topLevelLocator];
     if (opts.compatibilityMode) {
-        // ESLint currently doesn't have any portable way for shared configs to
-        // specify their own plugins that should be used (cf issue #10125). This
-        // will likely get fixed at some point but it'll take time, so in the
-        // meantime we'll just add additional fallback entries for common shared
-        // configs.
-        // Similarly, Gatsby generates files within the `public` folder located
-        // within the project, but doesn't pre-resolve the `require` calls to use
-        // its own dependencies. Meaning that when PnP see a file from the `public`
-        // folder making a require, it thinks that your project forgot to list one
-        // of your dependencies.
-        for (const name of [`react-scripts`, `gatsby`]) {
+        // ESLint currently doesn't have any portable way for shared configs to specify their own
+        // plugins that should be used (https://github.com/eslint/eslint/issues/10125). This will
+        // likely get fixed at some point, but it'll take time and in the meantime we'll just add
+        // additional fallback entries for common shared configs.
+        for (const name of [`react-scripts`]) {
             const packageStore = runtimeState.packageRegistry.get(name);
             if (packageStore) {
                 for (const reference of packageStore.keys()) {

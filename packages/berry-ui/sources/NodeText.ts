@@ -1,7 +1,8 @@
+import {TextLayout}     from '@manaflair/text-layout';
+
 import {Environment}    from './Environment';
 import {NodeTree}       from './NodeTree';
 import {Node, NodeType} from './Node';
-import { TextLayout } from '@manaflair/text-layout';
 
 export class NodeText extends Node {
   public textContent: string = ``;
