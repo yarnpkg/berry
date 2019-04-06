@@ -26,7 +26,7 @@ jobs:
     condition: eq(variables['Build.Reason'], 'PullRequest')
 
   - bash: |
-      [[ $(node ./scripts/run-yarn.js cache clean --dry-run | wc -l) -eq 0 ]]
+      [[ $(node ./scripts/run-yarn.js cache clean --dry-run --json | jq -c 'select(.path)' | wc -l) -eq 0 ]]
     displayName: "Check that the cache doesn't contain obsolete packages"
 
   - bash: |
