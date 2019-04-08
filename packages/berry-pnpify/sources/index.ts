@@ -1,11 +1,9 @@
-const pnp = require('pnpapi');
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const Module = require('module');
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 
-function readdirNodeModules(dir, issuer) {
-  const dirs = {};
+function readdirNodeModules(pnp: any, dir: string, issuer: string): string[] | undefined {
+  const dirs: { [dir: string]: string[] } = {};
   const locator = pnp.findPackageLocator(issuer);
   if (!locator) {
     return undefined;
@@ -14,8 +12,8 @@ function readdirNodeModules(dir, issuer) {
   if (info.packageLocation + '/' !== issuer) {
     return undefined;
   }
-  const packages = Array.from(info.packageDependencies.keys());
-  packages.forEach(function (pkg) {
+  const packages: string[] = Array.from(info.packageDependencies.keys());
+  packages.forEach((pkg: string) => {
     dirs[''] = dirs[''] || [];
     if (pkg[0] === '@') {
       const [ scopeName, packageName ] = pkg.split('/');
@@ -31,7 +29,7 @@ function readdirNodeModules(dir, issuer) {
   return dirs[dir];
 };
 
-function getIssuerForNodeModulesPath(pathname) {
+function getIssuerForNodeModulesPath(pnp: any, pathname: string) {
   const locator = pnp.findPackageLocator(pathname);
   if (!locator) {
     return undefined;
@@ -63,14 +61,48 @@ function getIssuerForNodeModulesPath(pathname) {
   }
 }
 
-function resolvePath(pathname) {
+const pnpApiRoots: { [pnpRootDir: string]: any } = {};
+const nonPnpPaths: { [pnpRootDir: string]: boolean } = {};
+
+function getPnpApiForPath(pathname: string) {
+  const basePath = pathname.substring(0, pathname.indexOf('node_modules') - 1);
+  if (nonPnpPaths[basePath]) {
+    return undefined;
+  }
+  for (let knownPnpRootDir of Object.keys(pnpApiRoots)) {
+    if (basePath.startsWith(knownPnpRootDir)) {
+      return pnpApiRoots[knownPnpRootDir];
+    }
+  }
+
+  let remainderPath = basePath;
+  while (true) {
+    const pnpApiPath = path.join(remainderPath + '/', '.pnp.js');
+    try {
+      if (fs.existsSync(pnpApiPath)) {
+        pnpApiRoots[remainderPath] = require(pnpApiPath);
+        return pnpApiRoots[remainderPath];
+      }
+    } catch (e) {}
+    const idx = remainderPath.lastIndexOf('/');
+    if (idx < 0) {
+      break;
+    }
+    remainderPath = remainderPath.substring(0, idx);
+  }
+  nonPnpPaths[basePath] = true;
+  return undefined;
+}
+
+function resolvePath(pathname: string) {
   let targetPath = pathname;
   const idx = pathname.lastIndexOf('node_modules');
-  if (idx >= 0) {
-    const issuer = getIssuerForNodeModulesPath(pathname);
+  const pnp = idx >= 0 && getPnpApiForPath(pathname);
+  if (pnp) {
+    const issuer = getIssuerForNodeModulesPath(pnp, pathname);
     if (issuer) {
       let request = pathname.substring(idx + 13);
-      if (readdirNodeModules(request, issuer)) {
+      if (readdirNodeModules(pnp, request, issuer)) {
         targetPath = '.';
       } else if (request.length > 0) {
         try {
@@ -85,11 +117,11 @@ function resolvePath(pathname) {
 }
 
 function mountVirtualNodeModulesFs() {
-  const realFs = {};
+  const realFs: { [method: string]: Function } = {};
   const fsMethods = Object.keys(fs).filter(function (key) {
-    return key[0] === key[0].toLowerCase() && typeof fs[key] === 'function'
+    return key[0] === key[0].toLowerCase() && typeof (fs as any)[key] === 'function'
   });
-  function fsProxy() {
+  function fsProxy(this: { method: string }) {
     const args = Array.prototype.slice.call(arguments);
     try {
       if (['realpath', 'realpathSync'].indexOf(this.method) >= 0) {
@@ -113,11 +145,12 @@ function mountVirtualNodeModulesFs() {
       } else if (['readdir', 'readdirSync'].indexOf(this.method) >= 0) {
         const pathname = args[0].replace(/\\/g, '/');
         const idx = pathname.lastIndexOf('node_modules');
-        if (idx >= 0) {
-          const issuer = getIssuerForNodeModulesPath(pathname);
+        const pnp = idx >= 0 && getPnpApiForPath(pathname);
+        if (pnp) {
+          const issuer = getIssuerForNodeModulesPath(pnp, pathname);
           if (issuer) {
             const request = pathname.substring(idx + 13);
-            const dirs = readdirNodeModules(request, issuer);
+            const dirs = readdirNodeModules(pnp, request, issuer);
             if (dirs) {
               return dirs;
             }
@@ -135,8 +168,8 @@ function mountVirtualNodeModulesFs() {
   }
 
   fsMethods.forEach(function (method) {
-    realFs[method] = fs[method];
-    fs[method] = fsProxy.bind({ method: method });
+    realFs[method] = (fs as any)[method];
+    (fs as any)[method] = fsProxy.bind({ method: method });
   });
 }
 

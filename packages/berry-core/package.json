@@ -4,7 +4,7 @@
   "main": "./sources/index.ts",
   "sideEffects": false,
   "scripts": {
-    "build": "node -r ../berry-pnpify/sources -r typescript/bin/tsc -- tsc"
+    "build:core": "node -r ../berry-pnpify/lib -r typescript/bin/tsc -- tsc"
   },
   "dependencies": {
     "@berry/fslib": "workspace:*",

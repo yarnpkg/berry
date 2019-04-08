@@ -2,14 +2,16 @@
   "name": "@berry/pnpify",
   "private": true,
   "main": "./sources/index.js",
-  "dependencies": {
+  "peerDependencies": {
     "pnpapi": "^0.0.0"
   },
   "scripts": {
-    "start": "node -r ./sources -r typescript/bin/tsc -- tsc --module amd --out sources/test.js sources/test.ts",
+    "build:pnpify": "babel --root-mode upward sources --out-dir lib --extensions .ts",
+    "watch:pnpify": "babel --watch --root-mode upward sources --out-dir lib --extensions .ts",
     "test:pnpify": "run test:unit packages/berry-pnpify"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
     "typescript": "^3.3.3333"
   }
 }
