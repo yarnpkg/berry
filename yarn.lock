@@ -1639,7 +1639,6 @@ __metadata:
     supports-color: "npm:^5.5.0"
     tar: "npm:^4.4.6"
     tmp: "npm:^0.0.33"
-    tslint: "npm:^5.15.0"
     tunnel: "npm:^0.0.6"
     typescript: "npm:^3.3.3333"
   languageName: unknown
@@ -1955,8 +1954,10 @@ __metadata:
   version: 0.0.0
   resolution: "@berry/pnpify@workspace:packages/berry-pnpify"
   dependencies:
-    pnpapi: "npm:^0.0.0"
+    "@babel/cli": "npm:^7.2.3"
     typescript: "npm:^3.3.3333"
+  peerDependencies:
+    pnpapi: ^0.0.0
   languageName: unknown
   linkType: soft
 
@@ -4444,7 +4445,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-code-frame@npm:6.26.0, babel-code-frame@npm:^6.22.0, babel-code-frame@npm:^6.26.0":
+"babel-code-frame@npm:6.26.0, babel-code-frame@npm:^6.26.0":
   version: 6.26.0
   resolution: "babel-code-frame@npm:6.26.0"
   dependencies:
@@ -5489,7 +5490,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"builtin-modules@npm:^1.0.0, builtin-modules@npm:^1.1.1":
+"builtin-modules@npm:^1.0.0":
   version: 1.1.1
   resolution: "builtin-modules@npm:1.1.1"
   checksum: c8e987deabb45cf841a21f392ad612d2285b121ca86f5a58f59b0bbb69ab1eb4caa44c45b7e08793f2453c9db101522bd1bcb64f56a36c33e6ca04bee6cdb45b
@@ -6214,13 +6215,6 @@ __metadata:
   version: 2.19.0
   resolution: "commander@npm:2.19.0"
   checksum: 6bc55841ff5ab6a5aafcfc0401a7ad45668946b73f01491e569df2178d5759985f47955d6fca049981e97e3a479a47199dac228679ceb7a5c1672ee259771742
-  languageName: node
-  linkType: hard
-
-"commander@npm:^2.12.1":
-  version: 2.20.0
-  resolution: "commander@npm:2.20.0"
-  checksum: a3808338fd071ab9f790216bf2ed92238901ad15dab8f28bc99bc4032e61b6f70dc1368590b159c7f50dd8a14d03fe604232b7048641bd792b92256e79baa581
   languageName: node
   linkType: hard
 
@@ -16282,13 +16276,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pnpapi@npm:^0.0.0":
-  version: 0.0.0
-  resolution: "pnpapi@npm:0.0.0"
-  checksum: 1508b4feef73ebbde8343cd641c253f04efd60eda4e5fec4d3033d7e08d896114852579614d967f0cb634194abc982fab179a69c766e316c742a42730ea5ed46
-  languageName: node
-  linkType: hard
-
 "portfinder@npm:^1.0.9":
   version: 1.0.20
   resolution: "portfinder@npm:1.0.20"
@@ -20323,44 +20310,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^1.6.0, tslib@npm:^1.8.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
+"tslib@npm:^1.6.0, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
   version: 1.9.3
   resolution: "tslib@npm:1.9.3"
   checksum: 788014d94782885f1df31f53644819172f460c708755d78ba5577d516eda025365a0382ccd64ec9b967af26970be5faf6e6b04d69055aa3d6a7c2acbe2520983
-  languageName: node
-  linkType: hard
-
-"tslint@npm:^5.15.0":
-  version: 5.15.0
-  resolution: "tslint@npm:5.15.0"
-  dependencies:
-    babel-code-frame: "npm:^6.22.0"
-    builtin-modules: "npm:^1.1.1"
-    chalk: "npm:^2.3.0"
-    commander: "npm:^2.12.1"
-    diff: "npm:^3.2.0"
-    glob: "npm:^7.1.1"
-    js-yaml: "npm:^3.13.0"
-    minimatch: "npm:^3.0.4"
-    mkdirp: "npm:^0.5.1"
-    resolve: "npm:^1.3.2"
-    semver: "npm:^5.3.0"
-    tslib: "npm:^1.8.0"
-    tsutils: "npm:^2.29.0"
-  peerDependencies:
-    typescript: ">=2.1.0 || >=2.1.0-dev || >=2.2.0-dev || >=2.3.0-dev || >=2.4.0-dev || >=2.5.0-dev || >=2.6.0-dev || >=2.7.0-dev || >=2.8.0-dev || >=2.9.0-dev || >=3.0.0-dev || >= 3.1.0-dev || >= 3.2.0-dev"
-  checksum: fff8f3c3461d1749cf23dd1f3d322d1ccde8e014acb8f5191ea6bba21d4ef0e71a9f07c46a437bdd9dabc3163927bee46a89c6db312ab51f066ca89af3c28757
-  languageName: node
-  linkType: hard
-
-"tsutils@npm:^2.29.0":
-  version: 2.29.0
-  resolution: "tsutils@npm:2.29.0"
-  dependencies:
-    tslib: "npm:^1.8.1"
-  peerDependencies:
-    typescript: ">=2.1.0 || >=2.1.0-dev || >=2.2.0-dev || >=2.3.0-dev || >=2.4.0-dev || >=2.5.0-dev || >=2.6.0-dev || >=2.7.0-dev || >=2.8.0-dev || >=2.9.0-dev || >= 3.0.0-dev || >= 3.1.0-dev"
-  checksum: 7b24014c4f2d49b0944cd8f8fe9ed54155cead64535f76ee9298e340b3e5e150a28970474eb7be28b5922013a9403a6b43b7ce72a4d593a3e9c41a21118e17d0
   languageName: node
   linkType: hard
 
