@@ -4,9 +4,9 @@ path: /advanced/peer-dependencies
 title: "Peer Dependencies"
 ---
 
-The PnP linker guarantees that each combination of package name / version will only be instantiated once, except in one documented case: if a package has peer dependencies, then it will be instantiated once for each time a hard dependency is found in the dependency tree.
+The PnP linker guarantees that each combination of package name / version will only be instantiated once, except in one documented case: if a package has peer dependencies. Such ones will be instantiated once *for each time a hard dependency is found in the dependency tree*.
 
-For example, let's say you have `react` and `react-dom` - since the `react` package doesn't list peer dependencies, a same version of `react` will only ever be instantiated once, regardless how many dependent packages list it in their `dependencies` field. However, because `react-dom` lists `react` within its `peerDependencies` field, Yarn will need to install it in such a way that it will be instantiated exactly once for each package that list it in their `dependencies` field.
+For example, let's say you have `react` and `react-dom`. Since the `react` package doesn't list any peer dependencies, a same version of `react` will only ever be instantiated once regardless how many dependent packages list it in their `dependencies` field. However, because `react-dom` lists `react` within its `peerDependencies` field, Yarn will need to install it in such a way that it will be instantiated exactly once for each package that list it in their `dependencies` field.
 
 ## Why does it work this way?
 
@@ -22,13 +22,13 @@ The solution to this issue is to say that the unique identifier for a package wi
 
 ## How to prevent multiple instantiation?
 
-In some cases, you really don't want a package to be instantiated twice. It can be because you're using `instanceof` on user-provided objects (which would break for similar objects from different instances), or because your code has side effects (for example by having a singleton).
+In some cases you really don't want a package to be instantiated twice. It can be because you're using `instanceof` on user-provided objects (which would break for similar objects from different instances), or because your code has side effects (for example by having a singleton).
 
-In general we discourage the use of these patterns - they are quite dangerous, and it's hard to know for sure that your package will only be instantiated once. Still, it might also be difficult to change immediatly, so fortunately you have a few options:
+In general we simply discourage the use of these patterns. They are quite dangerous, and it's hard to know for sure whether your package will really be instantiated once (while Yarn can make such guarantees, other package managers might not). Still, it might also be difficult to change immediatly, so you have a few tools at your disposal:
 
-- You can move the code managing your singleton inside its own package. So for example in the case of `relay-runtime` (which has a singleton and a peer dependency on `relay-compiler`) the solution is to move the singleton into a dedicated package without the peer dependency on `relay-compiler`.
+- You can move the code managing your singleton inside its own package. So for example in the case of `relay-runtime` (which has a singleton and a peer dependency on `relay-compiler`) one solution would to move the singleton into a dedicated package that wouldn't have any peer dependency. Since Yarn guarantees that a single package name / version is always instantiated once in such cases, your singleton would be safe.
 
-- Maybe simpler, your singleton can also be stored within the global context, using an identifier unique to your application. This would even be safer than what you can currently do, because you'd be able to properly check for multiple conflicting versions being used:
+- Maybe simpler, your singleton can also be stored within the global context, using an identifier unique to your application. This might actually be even safer than what you currently do, because you'd then be able to properly check for multiple conflicting versions being used:
 
   ```
   const myVersion = require('./package.json').version;
@@ -41,6 +41,8 @@ In general we discourage the use of these patterns - they are quite dangerous, a
   }
 
   export function getSingleton() {
+      // Note that symbols cannot be used, as each package instance would have
+      // a different symbol instance
       if (!global.singleton)
         global.singleton = makeSingleton();
 

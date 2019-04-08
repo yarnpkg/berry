@@ -4,7 +4,7 @@ path: /features/protocols
 title: "Protocols"
 ---
 
-The following protocols are supported in dependencies range. We recommend you to only use semver ranges on published packages as they are the only common brick that share the same semantics accross all package managers, but you're free to do as you please based on your needs.
+The following protocols can be used by any dependency entry listed in the `dependencies` or `devDependencies` fields. While they work regardless of the context we strongly recommend you to only use semver ranges on published packages as they are the one common protocol whose semantic is clearly defined across all package managers.
 
 | Name | Example | Description |
 | --- | --- | --- |
@@ -18,6 +18,8 @@ The following protocols are supported in dependencies range. We recommend you to
 
 ## What's the difference between `link:` and `portal:`?
 
-The `link:` protocol is meant to open links to any folder - for example you can use it to "map" a folder such as `src` to a clearer name that you can then use within your require calls (such as `my-app`). Because such destination folders typically don't contain `package.json`, the `link:` protocol doesn't use them at all. It can cause issues when you want to link to a different *package* on the disk (similar to what `yarn link` does), because then the transitive dependencies aren't resolved.
+The `link:` protocol is meant to link a package name to a folder on the disk - any folder. For example one perfect use case for the `link:` protocol is to map your `src` folder to a clearer name that you can then use from your Node applications without having to use relative paths (for example you could link `my-app` to `link:./src` so that you can call `require('my-app')` from any file within your application).
 
-In order to solve this use case, we designed the `portal:` protocol which opens a portal to a package located on your disk. Because portals know that they only target packages, they're able to properly resolve transitive dependencies. And thanks to PnP, they even work as you would expect with peer dependencies!
+Because such destination folders typically don't contain `package.json`, the `link:` protocol doesn't even try to read them. It can cause problems when you want to link an identifier to a different *package* on the disk (similar to what `yarn link` does), because then the transitive dependencies aren't resolved.
+
+In order to solve this use case, the new `portal:` protocol available in the v2 opens a portal to any package located on your disk. Because portals are meant to only target packages they can leverage the information from the `package.json` files listed within their targets to properly resolve transitive dependencies.

@@ -134,14 +134,14 @@ const PackageJsonDoc = () => <>
             name={`built`}
             placeholder={`false`}
             description={<>
-              If false, the package will never be built. When the global settings <code>enableScripts</code> is toggled off, setting this additional flag will also downgrade the warning into a simple notice for this specific package.
+              If false, the package will never be built. When the global settings <code>enableScripts</code> is toggled off, setting this additional flag will also downgrade the warning into a simple notice for this specific package. This settings can only be listed from within the root manifest and will be ignored anywhere else.
             </>}
           />
           <JsonBooleanProperty
             name={`unplugged`}
             placeholder={`true`}
             description={<>
-              If true, the specified package will be automatically unplugged at install time. This should only be needed for packages that contain scripts in other languages than Javascript (for example <code>nan</code> contains C++ headers).
+              If true, the specified package will be automatically unplugged at install time. This should only be needed for packages that contain scripts in other languages than Javascript (for example <code>nan</code> contains C++ headers and would need to be unplugged to be used). This settings can only be listed from within the root manifest and will be ignored anywhere else.
             </>}
           />
         </JsonObjectProperty>
@@ -166,7 +166,7 @@ const PackageJsonDoc = () => <>
         </JsonObjectProperty>
       </JsonObjectProperty>
       <JsonObjectProperty
-        name={`dependenciesMeta`}
+        name={`resolutions`}
         description={<>
           This field allows you to instruct Yarn to use a specific resolution instead of anything the resolver would normally pick. This is useful to enforce all your packages to use a single version of a dependency, or backport a fix. The syntax for the resolution key accepts one level of specificity, so all the following examples are correct.
         </>}

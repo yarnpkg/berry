@@ -4,37 +4,39 @@ path: /features/pnp
 title: "Plug'n'Play"
 ---
 
-Unveiled in September 2018, Plug'n'Play is an alternative installation strategy for Node. Based on prior works from other languages, it presents interesting characteristics that build upon the regular commonjs `require` workflow in a completely backward-compatible way.
+Unveiled in September 2018, Plug'n'Play is a new innovative installation strategy for Node. Based on prior works from other languages (for example [autoload](https://getcomposer.org/doc/04-schema.md#autoload) from PHP), it presents interesting characteristics that build upon the regular commonjs `require` workflow in an almost completely backward-compatible way.
 
 ## The node_modules problem
 
-The way installs used to work was simple: Yarn generated a `node_modules` directory that Node was then able to consume thanks to its builtin Node Resolution Algorithm. In this context, Node didn't had to know the first thing about what being a package was: it only reasoned in terms of files. "Does this file exists here? No? Let's look in the parent `node_modules` then. Does it exists here? Still no? Too bad... let's keep going until we find the right one!". This process was vastly inefficient for a lot of reasons:
+The way installs used to work was simple: when running `yarn install` Yarn would generate a `node_modules` directory that Node was then able to consume thanks to its builtin [Node Resolution Algorithm](https://nodejs.org/api/modules.html#modules_all_together). In this context, Node didn't have to know the first thing about what a "package" was: it only reasoned in terms of files. "Does this file exists here? No? Let's look in the parent `node_modules` then. Does it exists here? Still no? Too bad...", and it kept going until it found the right one. This process was vastly inefficient, and for a lot of reasons:
 
-- The `node_modules` directories typically contained gargantuan amounts of files. Generating them could make up for more than 70% of the time needed to run `yarn install` - the effects being amplified when operating with warm caches.
+- The `node_modules` directories typically contained gargantuan amounts of files. Generating them could make up for more than 70% of the time needed to run `yarn install`. Even having preexisting installations wouldn't save you, as package managers still had to diff the existing `node_modules` with what it should have beeen.
 
-- Because the `node_modules` generation was I/O bound, package managers couldn't really optimize it a lot either - we could use hardlinks or copy-on-write, but even then we still needed to make a bunch of syscalls that slowed us down dramatically.
+- Because the `node_modules` generation was an I/O-heavy operation, package managers didn't have a lot of leeway to optimize it much further than just doing a simple file copy - and even though we could have used hardlinks or copy-on-write when possible, we would still have needed to diff the current state of the filesystem before making a bunch of syscalls to manipulate the disk.
 
-- Because Node had no concept of "package", it didn't know whether a file was _meant_ to be accessed (rather than simply being available through hoisting). It was entirely possible that the code you wrote worked one day in development but broke in production because you forgot to list one of your dependencies in your `package.json`.
+- Because Node had no concept of package, it didn't know either whether a file was _meant_ to be accessed (versus being available by the sheer virtue of hoisting). It was entirely possible that the code you wrote worked one day in development but broke later in production because you forgot to list one of your dependencies in your `package.json`.
 
 - Even at runtime, the Node resolution had to make a bunch of `stat` and `readdir` calls in order to figure out from where to load every single required file. It was extremely wasteful, and was part of why booting Node applications took so much time.
 
-- Finally, the very design of the `node_modules` folder was impractical in that it didn't allow package managers to properly dedupe packages. Even though we designed algorithms allowing us to optimize parts of the tree, we still ended up unable to optimize some particular patterns - causing not only the disk to take more space than needed, but also some packages to be instantiated multiple times in memory.
+- Finally, the very design of the `node_modules` folder was impractical in that it didn't allow package managers to properly dedupe packages. Even though some algorithms could be employed to optimize the tree layout (hoisting), we still ended up unable to optimize some particular patterns - causing not only the disk usage to be higher than needed, but also some packages to be instantiated multiple times in memory.
 
 ## Fixing node_modules
 
-When you think about it, Yarn knows everything about your dependency tree - you even ask it to install it for you! So why did we let Node locate our packages on the disk? Why didn't we simply tell Node where to find the Yarn package, and inform it that any require call to X by Y was meant to read files from a specific location? This is from this postulate that Plug'n'Play was created.
+When you think about it, Yarn already knows everything about your dependency tree - after all it even installs it on the disk for you. So the question becomes: why do we let it to Node to locate the packages? Why didn't we simply tell Node where to find them, and inform it that any require call to X by Y was meant to access the files from a specific set of dependencies? This is from this postulate that Plug'n'Play was created.
 
 In this install mode (now the default starting from Yarn v2), Yarn generates a single `.pnp.js` file instead of the usual `node_modules`. Instead of containing the source code of the installed packages, the `.pnp.js` file contains a map linking a package name and version to a location on the disk, and another map linking a package name and version to its set of dependencies. Thanks to this efficient system, Node can directly know where to look for files being required - regardless who asks for them!
 
 This approach as various benefits:
 
-- Since we only need to generate a single text file instead of tens of thousands, installs are now pretty much instantaneous - their only bottleneck now is the number of dependencies in your project.
+- Since we only need to generate a single text file instead of tens of thousands, installs are now pretty much instantaneous - the main bottleneck becomes the number of dependencies in your project rather than your disk performances.
 
-- Since we aren't supported by a filesystem hierarchy anymore, we can both guarantee a perfect optimization and predictable package instantiations.
+- Our installs are made stabler, as I/O operations are prone to fail (like on Windows, where writing and removing files in batch may trigger various unintended interactions with Windows Defender and similar tools).
 
-- The generated file can be checked into the repository as part of the [Zero-Installs](/features/zero-installs) effort, making your production systems stabler than ever.
+- Since we aren't supported by a filesystem hierarchy anymore we can guarantee not only a perfect optimization of the dependency tree (aka perfect hoisting), but also predictable package instantiations.
 
-- Programs start faster, because the Node resolution doesn't have to iterate over the filesystem hierarchy nearly as much as before (and soon won't have to do it at all!).
+- The generated file can be checked within your repository as part of the [Zero-Installs](/features/zero-installs) effort, removing the need to run `yarn install` in the first place.
+
+- Your applications start faster, because the Node resolution doesn't have to iterate over the filesystem hierarchy nearly as much as before (and soon won't have to do it at all!).
 
 ## Caveats and work-in-progress
 
@@ -44,10 +46,13 @@ The following compatibility table gives you an idea of the integration status wi
 
 | Project name | Status | Note |
 | ------------ | ------ | ---- |
-| Webpack           | Plugin  | Via [pnp-webpack-plugin](https://github.com/arcanis/pnp-webpack-plugin) |
 | Babel             | Native  | Starting from `resolve` 1.9+ |
-| Jest              | Native  | Starting from 24.1+ |
 | Create-React-App  | Native  | Starting from 2.0+ |
-| Gatsby            | Partial | Check [the investigation thread](https://github.com/yarnpkg/berry/issues/9) for more info |
-| ESLint            | Partial | Check [the investigation thread](https://github.com/yarnpkg/berry/issues/8) for more info |
-| React Native      | Has blockers | Work in progress |
+| ESLint            | Native  | Some compatibility issues when used w/ shared configs |
+| Gatsby            | Native  | Currently  |
+| Jest              | Native  | Starting from 24.1+ |
+pnp-webpack-plugin#ts-loader-integration) |
+| Rollup            | Plugin  | Via [`rollup-plugin-pnp-resolve`](https://github.com/arcanis/rollup-plugin-pnp-resolve) |
+| TypeScript        | Plugin  | Via Webpack and [`ts-loader`](https://github.com/arcanis/| Webpack           | Plugin  | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) |
+
+This list is kept up-to-date based on the latest release we've published starting from the v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to an issue. And maybe a PR? 😊
