@@ -18,7 +18,14 @@ const YarnrcDoc = () => <>
         name={`cacheFolder`}
         placeholder={`./.yarn/cache`}
         description={<>
-          The path where the downloaded packages are stored on your system. They'll be normalized, compressed, and saved under the form of zip archives with standardized names. The cache is deemed safe to be shared by multiple projects, even when multiple Yarn instances run at the same time on different projects.
+          The path where the downloaded packages are stored on your system. They'll be normalized, compressed, and saved under the form of zip archives with standardized names. The cache is deemed to be relatively safe to be shared by multiple projects, even when multiple Yarn instances run at the same time on different projects.
+        </>}
+      />
+      <SymlStringProperty
+        name={`checksumBehavior`}
+        placeholder={`throw`}
+        description={<>
+          If <code>throw</code> (the default), Yarn will throw an exception on <code>yarn install</code> if it detects that a package doesn't match the checksum stored within the lockfile. If <code>update</code>, the lockfile checksum will be updated to match the new value. If <code>ignore</code>, the checksum check will not happen.
         </>}
       />
       <SymlStringProperty
@@ -33,6 +40,13 @@ const YarnrcDoc = () => <>
         placeholder={`true`}
         description={<>
           If true, Yarn will format its pretty-print its output by using colors to differentiate important parts of its messages.
+        </>}
+      />
+      <SymlBooleanProperty
+        name={`enableGlobalCache`}
+        placeholder={`false`}
+        description={<>
+          If true, Yarn will disregard the <code>cacheFolder</code> settings and will store the cache files into a folder shared by all local projects sharing the same configuration.
         </>}
       />
       <SymlBooleanProperty
