@@ -105,6 +105,7 @@ const plugin = {
         pack_1.default,
     ],
 };
+// eslint-disable-next-line arca/no-default-export
 exports.default = plugin;
 
 
@@ -115,6 +116,7 @@ exports.default = plugin;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+// eslint-disable-next-line arca/no-default-export
 exports.default = (clipanion, pluginConfiguration) => clipanion
     .command(`pack [--filename]`)
     .describe(`Creates a compressed gzip archive of package dependencies.`)
