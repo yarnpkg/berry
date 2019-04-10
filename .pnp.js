@@ -53214,6 +53214,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:1.2.2"
                 ],
                 [
+                  "react",
+                  "npm:16.8.4"
+                ],
+                [
                   "shallowequal",
                   "npm:1.1.0"
                 ]
@@ -68760,11 +68764,17 @@ function makeApi(runtimeState, opts) {
     // Used for compatibility purposes - cf setupCompatibilityLayer
     const fallbackLocators = [topLevelLocator];
     if (opts.compatibilityMode) {
-        // ESLint currently doesn't have any portable way for shared configs to specify their own
-        // plugins that should be used (https://github.com/eslint/eslint/issues/10125). This will
-        // likely get fixed at some point, but it'll take time and in the meantime we'll just add
-        // additional fallback entries for common shared configs.
-        for (const name of [`react-scripts`]) {
+        // ESLint currently doesn't have any portable way for shared configs to
+        // specify their own plugins that should be used (cf issue #10125). This
+        // will likely get fixed at some point but it'll take time, so in the
+        // meantime we'll just add additional fallback entries for common shared
+        // configs.
+        // Similarly, Gatsby generates files within the `public` folder located
+        // within the project, but doesn't pre-resolve the `require` calls to use
+        // its own dependencies. Meaning that when PnP see a file from the `public`
+        // folder making a require, it thinks that your project forgot to list one
+        // of your dependencies.
+        for (const name of [`react-scripts`, `gatsby`]) {
             const packageStore = runtimeState.packageRegistry.get(name);
             if (packageStore) {
                 for (const reference of packageStore.keys()) {
