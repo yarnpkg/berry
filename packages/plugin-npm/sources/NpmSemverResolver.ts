@@ -70,6 +70,17 @@ export class NpmSemverResolver implements Resolver {
     const manifest = new Manifest();
     manifest.load(registryData.versions[version]);
 
+    // Manually add node-gyp dependency if there is a script using it and not already set
+    const ident = structUtils.parseIdent(`node-gyp`);
+    if (!manifest.dependencies.has(ident.identHash) || !manifest.peerDependencies.has(ident.identHash)) {
+      for (const value of manifest.scripts.values()) {
+        if (value.includes(`node-gyp`)) {
+          manifest.dependencies.set(ident.identHash,  structUtils.makeDescriptor(ident, `*`));
+          break;
+        }
+      }
+    }
+
     return {
       ... locator,
 
