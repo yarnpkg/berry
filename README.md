@@ -36,6 +36,10 @@ Because this repository is about the modern but experimental version of Yarn (ak
 - And voilà! Just run any command, such as `yarn config -v` - they will use the v2
 - To revert, just remove the local change to your `.yarnrc` file
 
+## Documentation
+
+The documentation is being reworked to contain an updated content and a refreshed design, and the most up-to-date version can be found on the repository GitHub pages: [yarnpkg.github.io/berry](http://yarnpkg.github.io/berry/)
+
 ## Generic packages
 
 The following packages are generic and can be used in a variety of purposes (including to implement other package managers, but not only):
