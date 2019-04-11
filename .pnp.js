@@ -8738,7 +8738,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "pnp-webpack-plugin",
-                  "npm:1.3.1"
+                  "npm:1.4.1"
                 ],
                 [
                   "raw-loader",
@@ -9992,6 +9992,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@babel/cli",
                   "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:7.2.3"
+                ],
+                [
+                  "@types/jest",
+                  "npm:24.0.11"
                 ],
                 [
                   "typescript",
@@ -13942,6 +13946,44 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/istanbul-lib-coverage",
                   "npm:1.1.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/jest",
+        [
+          [
+            "npm:24.0.11",
+            {
+              "packageLocation": "./.yarn/cache/@types-jest-npm-24.0.11-0204fe3ee4b723379f130da15da7281f42601b92a45318ed330cb2b46a340f4b.zip/node_modules/@types/jest/",
+              "packageDependencies": [
+                [
+                  "@types/jest",
+                  "npm:24.0.11"
+                ],
+                [
+                  "@types/jest-diff",
+                  "npm:20.0.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/jest-diff",
+        [
+          [
+            "npm:20.0.1",
+            {
+              "packageLocation": "./.yarn/cache/@types-jest-diff-npm-20.0.1-1610c1f387c35e804eb85552b329fd03aaf85caa86589866838f0fb518619409.zip/node_modules/@types/jest-diff/",
+              "packageDependencies": [
+                [
+                  "@types/jest-diff",
+                  "npm:20.0.1"
                 ]
               ]
             }
@@ -50110,22 +50152,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "pnp-webpack-plugin",
         [
           [
-            "npm:1.3.1",
-            {
-              "packageLocation": "./.yarn/cache/pnp-webpack-plugin-npm-1.3.1-caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035.zip/node_modules/pnp-webpack-plugin/",
-              "packageDependencies": [
-                [
-                  "pnp-webpack-plugin",
-                  "npm:1.3.1"
-                ],
-                [
-                  "ts-pnp",
-                  "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.1"
-                ]
-              ]
-            }
-          ],
-          [
             "npm:1.4.1",
             {
               "packageLocation": "./.yarn/cache/pnp-webpack-plugin-npm-1.4.1-becb792142202a9ff19b5aebe32823be393acf0858bb9bb8f595a2f6282b7ed7.zip/node_modules/pnp-webpack-plugin/",
@@ -60702,18 +60728,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
-          ],
-          [
-            "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.1",
-            {
-              "packageLocation": "./.yarn/virtual/ts-pnp-virtual-7cd9bee15ff909de4cc54f7ac9e970e8662e395f5b60f0e3183e882dd6c4beaa/node_modules/ts-pnp/",
-              "packageDependencies": [
-                [
-                  "ts-pnp",
-                  "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.1"
-                ]
-              ]
-            }
           ]
         ]
       ],
@@ -62785,7 +62799,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "pnp-webpack-plugin",
-                  "npm:1.3.1"
+                  "npm:1.4.1"
                 ],
                 [
                   "ts-loader",

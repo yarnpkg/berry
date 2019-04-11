@@ -1,17 +1,19 @@
 {
   "name": "@berry/pnpify",
   "private": true,
-  "main": "./sources/index.js",
+  "main": "./lib/index.js",
   "peerDependencies": {
     "pnpapi": "^0.0.0"
   },
   "scripts": {
     "build:pnpify": "babel --root-mode upward sources --out-dir lib --extensions .ts",
-    "watch:pnpify": "babel --watch --root-mode upward sources --out-dir lib --extensions .ts",
-    "test:pnpify": "run test:unit packages/berry-pnpify"
+    "build:watch:pnpify": "babel --watch --root-mode upward sources --out-dir lib --extensions .ts",
+    "test:pnpify": "run test:unit packages/berry-pnpify",
+    "test:watch:pnpify": "run test:unit --watch packages/berry-pnpify"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
+    "@types/jest": "^24.0.11",
     "typescript": "^3.3.3333"
   }
 }
