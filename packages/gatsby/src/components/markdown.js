@@ -69,6 +69,12 @@ const Content = styled.div`
     margin-top: 0;
   }
 
+  h2 {
+    border: 1px solid #d1dee8;
+
+    padding-bottom: 0.2em;
+  }
+
   pre {
     padding: 1em;
 

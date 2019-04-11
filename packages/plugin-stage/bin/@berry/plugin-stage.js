@@ -105,6 +105,7 @@ const plugin = {
         stage_1.default,
     ],
 };
+// eslint-disable-next-line arca/no-default-export
 exports.default = plugin;
 
 
@@ -125,6 +126,7 @@ const ALL_DRIVERS = [
     GitDriver_1.Driver,
     MercurialDriver_1.Driver,
 ];
+// eslint-disable-next-line arca/no-default-export
 exports.default = (clipanion, pluginConfiguration) => clipanion
     .command(`stage [-c,--commit] [-r,--reset] [-u,--update] [-n,--dry-run]`)
     .detail(`

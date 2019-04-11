@@ -126,6 +126,7 @@ const plugin = {
         afterWorkspaceDependencyAddition,
     },
 };
+// eslint-disable-next-line arca/no-default-export
 exports.default = plugin;
 
 
