@@ -29,7 +29,7 @@ const tauModule = new pl.type.Module(
         const [workspaceCwd, fieldName, fieldValue] = atom.args;
 
         if (!is_atom(workspaceCwd) || !is_atom(fieldName)) {
-          thread.throw_error(pl.error.instantiation(atom.indicator));
+          thread.throwError(pl.error.instantiation(atom.indicator));
           return;
         }
 

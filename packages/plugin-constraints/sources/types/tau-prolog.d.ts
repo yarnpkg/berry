@@ -201,7 +201,7 @@ declare module 'tau-prolog' {
 
         public prepend(states: State[]): void;
 
-        public throw_error(error: Term<1, 'error'>): void;
+        public throwError(error: Term<1, 'error'>): void;
 
         public success(state: State, parent?: State): void;
       }
