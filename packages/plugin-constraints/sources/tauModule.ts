@@ -16,9 +16,8 @@ const projects = new WeakMap<pl.type.Session, Project>();
 function getProject(thread: pl.type.Thread): Project {
   const project = projects.get(thread.session);
 
-  if (project == null) {
+  if (project == null)
     throw new Error(`Assertion failed: A project should have been registered for the active session`);
-  }
 
   return project;
 }
@@ -36,19 +35,17 @@ const tauModule = new pl.type.Module(
         const workspace =
             getProject(thread).tryWorkspaceByCwd(workspaceCwd.id);
 
-        if (workspace == null) {
+        if (workspace == null)
           // Workspace not found => this predicate can never match
           // We might want to throw here? We can be pretty sure the user did
           // something wrong at this point
           return;
-        }
 
         const manifest: {[key: string]: any} = workspace.manifest.raw!;
 
-        if (!(fieldName.id in manifest)) {
+        if (!(fieldName.id in manifest))
           // Field is not present => this predicate can never match
           return;
-        }
 
         prependGoals(thread, point, [new pl.type.Term('=', [
                        fieldValue,
