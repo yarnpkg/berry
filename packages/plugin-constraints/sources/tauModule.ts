@@ -43,8 +43,7 @@ const tauModule = new pl.type.Module(
           return;
         }
 
-        const manifest: {[key: string]: any} = {};
-        workspace.manifest.exportTo(manifest);
+        const manifest: {[key: string]: any} = workspace.manifest.raw!;
 
         if (!(fieldName.id in manifest)) {
           // Field is not present => this predicate can never match
