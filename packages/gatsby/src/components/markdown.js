@@ -70,7 +70,7 @@ const Content = styled.div`
   }
 
   h2 {
-    border: 1px solid #d1dee8;
+    border-bottom: 1px solid #d1dee8;
 
     padding-bottom: 0.2em;
   }
