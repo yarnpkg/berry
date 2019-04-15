@@ -33,7 +33,7 @@ const Content = styled.div`
     color: #859daf;
   }
 
-  a {
+  a:not(.anchor) {
     border-bottom: 1px solid;
 
     text-decoration: none;
