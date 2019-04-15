@@ -1672,6 +1672,7 @@ __metadata:
     gatsby-plugin-react-helmet: "npm:^3.0.8"
     gatsby-plugin-remove-trailing-slashes: "npm:^2.0.10"
     gatsby-plugin-sharp: "npm:^2.0.25"
+    gatsby-remark-autolink-headers: "npm:^2.0.16"
     gatsby-source-filesystem: "npm:^2.0.23"
     gatsby-transformer-remark: "npm:^2.3.2"
     gatsby-transformer-sharp: "npm:^2.1.15"
@@ -9768,6 +9769,21 @@ __metadata:
     react: ^0.14.0 || ^15.0.0 || ^16.0.0
     react-dom: ^0.14.0 || ^15.0.0 || ^16.0.0
   checksum: ab893b6b03aaacc8fab1d07e619d694726b9f97b59267f3b2f6a18dead3dd7d2232756ef2284e8873c078020fad21e379c5e1d9fe41f88ba974feabbe903ef59
+  languageName: node
+  linkType: hard
+
+"gatsby-remark-autolink-headers@npm:^2.0.16":
+  version: 2.0.16
+  resolution: "gatsby-remark-autolink-headers@npm:2.0.16"
+  dependencies:
+    "@babel/runtime": "npm:^7.0.0"
+    github-slugger: "npm:^1.1.1"
+    lodash: "npm:^4.17.11"
+    mdast-util-to-string: "npm:^1.0.2"
+    unist-util-visit: "npm:^1.3.0"
+  peerDependencies:
+    gatsby: ^2.0.0
+  checksum: 724ef91c04448e7586cd450662452b0d908049f9f1487d54ac51b0d915f2651930f7c044bd9323b8e470a17c8de3aad4161faa7b8dad41d1adc142a6744c76f3
   languageName: node
   linkType: hard
 
