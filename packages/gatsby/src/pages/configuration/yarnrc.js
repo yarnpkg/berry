@@ -100,7 +100,7 @@ const YarnrcDoc = () => <>
       />
       <SymlStringProperty
         name={`pnpDataPath`}
-        placeholder={`#!/usr/bin/env node`}
+        placeholder={`./.pnp.meta.json`}
         description={<>
           The location where Yarn will read and write the <code>.pnp.meta.json</code> file.
         </>}
@@ -121,7 +121,7 @@ const YarnrcDoc = () => <>
       />
       <SymlStringProperty
         name={`pnpPath`}
-        placeholder={`#!/usr/bin/env node`}
+        placeholder={`./.pnp.js`}
         description={<>
           The location where Yarn will read and write the <code>.pnp.js</code> file.
         </>}
@@ -135,7 +135,7 @@ const YarnrcDoc = () => <>
       />
       <SymlStringProperty
         name={`pnpUnpluggedFolder`}
-        placeholder={`#!/usr/bin/env node`}
+        placeholder={`./yarn/unplugged`}
         description={<>
           The path where unplugged packages will be stored on the disk.
         </>}
