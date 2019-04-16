@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import { xfs } from '@berry/fslib';
 
 /**
  * PnP root locator options
@@ -7,7 +7,7 @@ export interface PnPLocatorOptions {
   /**
    * Function that checks if file exists at given path.
    *
-   * Default: `fs.existsSync`
+   * Default: `xfs.existsSync`
    *
    * @param filePath file path
    */
@@ -60,13 +60,36 @@ type PnPRootCheckTree = Map<string, any | true>;
  *  - PnP root cannot be inside `node_modules`
  *  - PnP root cannot be inside other PnP root
  */
-export interface PnPRootLocator {
+export class PnPRootLocator {
+  private readonly options: DefinedPnPLocatorOptions;
+  private checkTree: PnPRootCheckTree;
+
   /**
    * Constructs new instance of PnP root locator
    *
    * @param options optional locator options
    */
-  new(options?: PnPLocatorOptions): PnPRootLocator;
+  constructor(options?: PnPLocatorOptions) {
+    const opts = options || {};
+    this.options = {
+      existsSync: opts.existsSync || xfs.existsSync.bind(xfs),
+      pnpFileName: opts.pnpFileName || '.pnp.js'
+    };
+    this.checkTree = new Map();
+  }
+
+  /**
+   * Returns all the path components for given path.
+   *
+   * @param sourcePath path
+   *
+   * @returns path components
+   */
+  private getPathComponents(sourcePath: string): string[] {
+    const normalizedPath = sourcePath.replace(/\\/g, '/').replace(/\/+$/, '');
+    const idx = normalizedPath.indexOf('\/node_modules');
+    return (idx >= 0 ? normalizedPath.substring(0, idx) : normalizedPath).split('/');
+  }
 
   /**
    * Finds PnP root directory for given `sourcePath`.
@@ -75,47 +98,18 @@ export interface PnPRootLocator {
    *
    * @returns null if `sourcePath` is not inside PnP project, or root directory of PnP project otherwise
    */
-  findApiRoot(sourcePath: string): string | null;
-
-  /**
-   * Tell locator that the given path and all child paths should be rechecked
-   *
-   * @param sourcePath path to invalidate, empty string invalidates all the paths
-   */
-  invalidatePath(sourcePath: string): void;
-}
-
-export class PnPRootLocator {
-  private readonly options: DefinedPnPLocatorOptions;
-  private checkTree: PnPRootCheckTree;
-
-  constructor(options?: PnPLocatorOptions) {
-    const opts = options || {};
-    this.options = {
-      existsSync: opts.existsSync || fs.existsSync.bind(fs),
-      pnpFileName: opts.pnpFileName || '.pnp.js'
-    };
-    this.checkTree = new Map();
-  }
-
-  private getPathSubdirs(sourcePath: string): string[] {
-    const normalizedPath = sourcePath.replace(/\\/g, '/').replace(/\/+$/, '');
-    const idx = normalizedPath.indexOf('\/node_modules');
-    return (idx >= 0 ? normalizedPath.substring(0, idx) : normalizedPath).split('/');
-  }
-
   public findApiRoot(sourcePath: string): string | null {
     let apiPath = null;
-    const subdirs = this.getPathSubdirs(sourcePath);
+    const pathComponentList = this.getPathComponents(sourcePath);
 
     let currentPath;
     let node = this.checkTree;
-    for (const subdir of subdirs) {
-      currentPath = typeof currentPath === 'undefined' ? subdir : currentPath + '/' + subdir;
-      let val = node.get(subdir);
+    for (const pathComponent of pathComponentList) {
+      currentPath = typeof currentPath === 'undefined' ? pathComponent : currentPath + '/' + pathComponent;
+      let val = node.get(pathComponent);
       if (typeof val === 'undefined') {
         val = this.options.existsSync(currentPath + '/' + this.options.pnpFileName) ? true : new Map();
-        node.set(subdir, val);
+        node.set(pathComponent, val);
       }
       if (val === true) {
         apiPath = currentPath;
@@ -127,17 +121,22 @@ export class PnPRootLocator {
     return apiPath;
   }
 
+  /**
+   * Tell locator that the given path and all child paths should be rechecked
+   *
+   * @param sourcePath path to invalidate, empty string invalidates all the paths
+   */
   invalidatePath(sourcePath: string) {
-    const subdirs = this.getPathSubdirs(sourcePath);
+    const pathComponentList = this.getPathComponents(sourcePath);
     let node = this.checkTree;
-    for (const subdir of subdirs.slice(0, -1)) {
-      node = node.get(subdir);
+    for (const pathComponent of pathComponentList.slice(0, -1)) {
+      node = node.get(pathComponent);
       if (typeof node === 'undefined') {
         break;
       }
     }
     if (typeof node !== 'undefined') {
-      node.delete(subdirs[subdirs.length - 1]);
+      node.delete(pathComponentList[pathComponentList.length - 1]);
     }
   }
 }

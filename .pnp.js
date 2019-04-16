@@ -9994,6 +9994,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:7.2.3"
                 ],
                 [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
                   "@types/jest",
                   "npm:24.0.11"
                 ],

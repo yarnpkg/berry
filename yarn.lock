@@ -1955,6 +1955,7 @@ __metadata:
   resolution: "@berry/pnpify@workspace:packages/berry-pnpify"
   dependencies:
     "@babel/cli": "npm:^7.2.3"
+    "@berry/fslib": "workspace:*"
     "@types/jest": "npm:^24.0.11"
     typescript: "npm:^3.3.3333"
   peerDependencies:
