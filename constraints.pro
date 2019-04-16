@@ -26,7 +26,7 @@ workspace_allowed_dependency(WorkspaceCwd, 'typescript'):-
 gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, null, DependencyType) :-
   workspace_has_dependency(WorkspaceCwd, DependencyIdent, _, DependencyType),
   workspace_allowed_dependency(_, DependencyIdent),
-  \+(workspace_allowed_dependency(WorkspaceIdent, DependencyIdent)).
+  \+(workspace_allowed_dependency(WorkspaceCwd, DependencyIdent)).
 
 % This rule will prevent all workspaces from depending on tslib
 gen_enforced_dependency_range(WorkspaceCwd, 'tslib', null, DependencyType) :-
