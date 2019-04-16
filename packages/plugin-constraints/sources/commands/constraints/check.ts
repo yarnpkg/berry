@@ -32,36 +32,29 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const report = await StreamReport.start({configuration, stdout}, async report => {
       const result = await constraints.process();
     
-      for (const {workspace, dependencyIdent, dependencyRange} of result.enforcedDependencyRanges) {
-        const dependencyDescriptor = workspace.manifest.dependencies.get(dependencyIdent.identHash);
-        const devDependencyDescriptor = workspace.manifest.devDependencies.get(dependencyIdent.identHash);
+      for (const {workspace, dependencyIdent, dependencyRange, dependencyType} of result.enforcedDependencyRanges) {
+        const dependencyDescriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
 
         if (dependencyRange !== null) {
           const constraintDescriptor = structUtils.makeDescriptor(dependencyIdent, dependencyRange);
 
-          if (!dependencyDescriptor && !devDependencyDescriptor) {
-            report.reportError(MessageName.CONSTRAINTS_MISSING_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} (via ${structUtils.prettyRange(configuration, dependencyRange)}), but doesn't`);
-          } else {
-            if (dependencyDescriptor && dependencyDescriptor.range !== dependencyRange)
-              report.reportError(MessageName.CONSTRAINTS_INCOMPATIBLE_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} via ${structUtils.prettyRange(configuration, dependencyRange)}, but uses ${structUtils.prettyRange(configuration, dependencyDescriptor.range)} instead`);
-
-            if (devDependencyDescriptor && devDependencyDescriptor.range !== dependencyRange) {
-              report.reportError(MessageName.CONSTRAINTS_INCOMPATIBLE_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} via ${structUtils.prettyRange(configuration, dependencyRange)}, but uses ${structUtils.prettyRange(configuration, devDependencyDescriptor.range)} instead`);
-            }
+          if (!dependencyDescriptor) {
+            report.reportError(MessageName.CONSTRAINTS_MISSING_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} (via ${structUtils.prettyRange(configuration, dependencyRange)}) in ${dependencyType}, but doesn't`);
+          } else if (dependencyDescriptor.range !== dependencyRange) {
+            report.reportError(MessageName.CONSTRAINTS_INCOMPATIBLE_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} via ${structUtils.prettyRange(configuration, dependencyRange)} in ${dependencyType}, but uses ${structUtils.prettyRange(configuration, dependencyDescriptor.range)} instead`);
           }
         } else {
-          if (dependencyDescriptor || devDependencyDescriptor) {
-            report.reportError(MessageName.CONSTRAINTS_EXTRANEOUS_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} has an extraneous dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)}`);
+          if (dependencyDescriptor) {
+            report.reportError(MessageName.CONSTRAINTS_EXTRANEOUS_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} has an extraneous dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)} in ${dependencyType}`);
           }
         }
       }
   
-      for (const {workspace, dependencyIdent, reason} of result.invalidDependencies) {
-        const dependencyDescriptor = workspace.manifest.dependencies.get(dependencyIdent.identHash);
-        const devDependencyDescriptor = workspace.manifest.devDependencies.get(dependencyIdent.identHash);
+      for (const {workspace, dependencyIdent, dependencyType, reason} of result.invalidDependencies) {
+        const dependencyDescriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
 
-        if (dependencyDescriptor || devDependencyDescriptor) {
-          report.reportError(MessageName.CONSTRAINTS_INVALID_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} has an invalid dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)} (invalid because ${reason})`);
+        if (dependencyDescriptor) {
+          report.reportError(MessageName.CONSTRAINTS_INVALID_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} has an invalid dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)} in ${dependencyType} (invalid because ${reason})`);
         }
       }
     });
