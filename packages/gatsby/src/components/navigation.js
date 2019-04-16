@@ -73,7 +73,7 @@ const Navigation = ({items, children}) => <>
     <Menu>
       {items.map(({to, name}) => <React.Fragment key={name}>
         <MenuEntry to={to} activeClassName={`active`}>
-          {name}
+          {name.match(/^`.*`$/) ? <code>{name.slice(1, -1)}</code> : name}
         </MenuEntry>
       </React.Fragment>)}
     </Menu>
