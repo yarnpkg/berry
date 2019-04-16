@@ -1663,6 +1663,7 @@ __metadata:
     es6-promise: "npm:^4.2.6"
     gatsby: "npm:^2.2.9"
     gatsby-image: "npm:^2.0.31"
+    gatsby-plugin-catch-links: "npm:^2.0.13"
     gatsby-plugin-clipanion-cli: "portal:./gatsby-plugin-clipanion-cli?locator=%40berry%2Fgatsby%40workspace%3Apackages%2Fgatsby"
     gatsby-plugin-emotion: "npm:^4.0.6"
     gatsby-plugin-favicon: "npm:^3.1.5"
@@ -9606,6 +9607,18 @@ __metadata:
     react: ^16.4.2
     react-dom: ^16.4.2
   checksum: 5b1c4937951490db47390257bb1a8de4bb1da830978fcf03c529abb7703ba9fd8835a8103ae5923f068882b12ffb2cf18986a58d9f4191378c61e392c6b19bf3
+  languageName: node
+  linkType: hard
+
+"gatsby-plugin-catch-links@npm:^2.0.13":
+  version: 2.0.13
+  resolution: "gatsby-plugin-catch-links@npm:2.0.13"
+  dependencies:
+    "@babel/runtime": "npm:^7.0.0"
+    escape-string-regexp: "npm:^1.0.5"
+  peerDependencies:
+    gatsby: ^2.0.0
+  checksum: 9b53a4de9bbbf6e784b058a593fb364760e1dbed7d7c04ba69560d0707c2bb5e6fc71ee3ae03cdd6f7d8ef9f2446f1b07c14be72786644aa42d87f17fda60049
   languageName: node
   linkType: hard
 
