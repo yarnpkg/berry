@@ -7,6 +7,7 @@ export {AliasFS}   from './AliasFS';
 export {FakeFS}    from './FakeFS';
 export {CwdFS}     from './CwdFS';
 export {JailFS}    from './JailFS';
+export {LazyFS}    from './LazyFS';
 export {NodeFS}    from './NodeFS';
 export {PosixFS}   from './PosixFS';
 export {ZipFS}     from './ZipFS';
