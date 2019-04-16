@@ -8,23 +8,23 @@ export type Suggestion = {
 };
 
 export enum Target {
-  REGULAR = 'dependencies',
-  DEVELOPMENT = 'devDependencies',
-  PEER = 'peerDependencies',
+  REGULAR = `dependencies`,
+  DEVELOPMENT = `devDependencies`,
+  PEER = `peerDependencies`,
 };
 
 export enum Modifier {
-  CARET = '^',
-  TILDE = '~',
-  EXACT = '',
+  CARET = `^`,
+  TILDE = `~`,
+  EXACT = ``,
 };
 
 export enum Strategy {
-  KEEP = 'keep',
-  REUSE = 'reuse',
-  PROJECT = 'project',
-  LATEST = 'latest',
-  CACHE = 'cache',
+  KEEP = `keep`,
+  REUSE = `reuse`,
+  PROJECT = `project`,
+  LATEST = `latest`,
+  CACHE = `cache`,
 };
 
 export function applyModifier(descriptor: Descriptor, modifier: Modifier) {

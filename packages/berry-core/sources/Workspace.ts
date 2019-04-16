@@ -13,7 +13,7 @@ import {IdentHash}             from './types';
 import {Descriptor, Locator}   from './types';
 
 function hashWorkspaceCwd(cwd: string) {
-  return createHmac('sha256', 'berry').update(cwd).digest('hex').substr(0, 6);
+  return createHmac(`sha256`, `berry`).update(cwd).digest(`hex`).substr(0, 6);
 }
 
 export class Workspace {

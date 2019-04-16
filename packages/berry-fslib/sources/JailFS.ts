@@ -169,7 +169,7 @@ export class JailFS extends FakeFS {
     return this.baseFs.symlinkSync(target, this.fromJailedPath(p));
   }
 
-  readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
+  readFilePromise(p: string, encoding: `utf8`): Promise<string>;
   readFilePromise(p: string, encoding?: string): Promise<Buffer>;
   async readFilePromise(p: string, encoding?: string) {
     // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
@@ -181,7 +181,7 @@ export class JailFS extends FakeFS {
     }
   }
 
-  readFileSync(p: string, encoding: 'utf8'): string;
+  readFileSync(p: string, encoding: `utf8`): string;
   readFileSync(p: string, encoding?: string): Buffer;
   readFileSync(p: string, encoding?: string) {
     // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)

@@ -76,10 +76,10 @@ export abstract class FakeFS {
   abstract utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
   abstract utimesSync(p: string, atime: Date | string | number, mtime: Date | string | number): void;
 
-  abstract readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
+  abstract readFilePromise(p: string, encoding: `utf8`): Promise<string>;
   abstract readFilePromise(p: string, encoding?: string): Promise<Buffer>;
 
-  abstract readFileSync(p: string, encoding: 'utf8'): string;
+  abstract readFileSync(p: string, encoding: `utf8`): string;
   abstract readFileSync(p: string, encoding?: string): Buffer;
 
   abstract readlinkPromise(p: string): Promise<string>;

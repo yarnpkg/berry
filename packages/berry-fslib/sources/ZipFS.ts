@@ -59,7 +59,7 @@ export type Options = {
 };
 
 function toUnixTimestamp(time: Date | string | number) {
-  if (typeof time === 'string' && String(+time) === time)
+  if (typeof time === `string` && String(+time) === time)
     return +time;
 
   // @ts-ignore
@@ -151,7 +151,7 @@ export class ZipFS extends FakeFS {
 
       // If the raw path is a directory, register it
       // to prevent empty folder being skipped
-      if (raw.endsWith('/')) {
+      if (raw.endsWith(`/`)) {
         this.registerListing(p);
       }
     }
@@ -726,7 +726,7 @@ export class ZipFS extends FakeFS {
     }
   }
 
-  readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
+  readFilePromise(p: string, encoding: `utf8`): Promise<string>;
   readFilePromise(p: string, encoding?: string): Promise<Buffer>;
   async readFilePromise(p: string, encoding?: string) {
     // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
@@ -738,7 +738,7 @@ export class ZipFS extends FakeFS {
     }
   }
 
-  readFileSync(p: string, encoding: 'utf8'): string;
+  readFileSync(p: string, encoding: `utf8`): string;
   readFileSync(p: string, encoding?: string): Buffer;
   readFileSync(p: string, encoding?: string) {
     // This is messed up regarding the TS signatures

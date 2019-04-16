@@ -72,11 +72,11 @@ export const ENVIRONMENT_PREFIX = `yarn_`;
 export const DEFAULT_RC_FILENAME = `.yarnrc`;
 
 export enum SettingsType {
-  BOOLEAN = 'BOOLEAN',
-  ABSOLUTE_PATH = 'ABSOLUTE_PATH',
-  LOCATOR = 'LOCATOR',
-  LOCATOR_LOOSE = 'LOCATOR_LOOSE',
-  STRING = 'STRING',
+  BOOLEAN = `BOOLEAN`,
+  ABSOLUTE_PATH = `ABSOLUTE_PATH`,
+  LOCATOR = `LOCATOR`,
+  LOCATOR_LOOSE = `LOCATOR_LOOSE`,
+  STRING = `STRING`,
 };
 
 export type SettingsDefinition = {
@@ -256,10 +256,10 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
 
 function getDefaultGlobalFolder() {
   if (process.platform === `win32`) {
-    const folder = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
+    const folder = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), `AppData`, `Local`));
     return posix.resolve(folder);
   } else if (process.env.XDG_DATA_HOME) {
-    return posix.resolve(process.env.XDG_DATA_HOME, 'yarn/modern');
+    return posix.resolve(process.env.XDG_DATA_HOME, `yarn/modern`);
   } else {
     return posix.resolve(homedir(), `.local/share/yarn/modern`);
   }

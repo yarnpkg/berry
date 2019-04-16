@@ -190,7 +190,7 @@ export class NodeFS extends FakeFS {
   }
 
   async symlinkPromise(target: string, p: string) {
-    const type: 'dir' | 'file' = target.endsWith(`/`) ? `dir` : `file`;
+    const type: `dir` | `file` = target.endsWith(`/`) ? `dir` : `file`;
 
     return await new Promise<void>((resolve, reject) => {
       this.realFs.symlink(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type, this.makeCallback(resolve, reject));
@@ -198,12 +198,12 @@ export class NodeFS extends FakeFS {
   }
 
   symlinkSync(target: string, p: string) {
-    const type: 'dir' | 'file' = target.endsWith(`/`) ? `dir` : `file`;
+    const type: `dir` | `file` = target.endsWith(`/`) ? `dir` : `file`;
 
     return this.realFs.symlinkSync(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type);
   }
 
-  readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
+  readFilePromise(p: string, encoding: `utf8`): Promise<string>;
   readFilePromise(p: string, encoding?: string): Promise<Buffer>;
   async readFilePromise(p: string, encoding?: string) {
     return await new Promise<any>((resolve, reject) => {
@@ -211,7 +211,7 @@ export class NodeFS extends FakeFS {
     });
   }
 
-  readFileSync(p: string, encoding: 'utf8'): string;
+  readFileSync(p: string, encoding: `utf8`): string;
   readFileSync(p: string, encoding?: string): Buffer;
   readFileSync(p: string, encoding?: string) {
     return this.realFs.readFileSync(NodeFS.fromPortablePath(p), encoding);
@@ -260,8 +260,8 @@ export class NodeFS extends FakeFS {
     if (!match)
       return p;
 
-    const [, drive, pathWithoutPrefix = ''] = match;
-    const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
+    const [, drive, pathWithoutPrefix = ``] = match;
+    const windowsPath = pathWithoutPrefix.replace(/\//g, `\\`);
 
     return `${drive.toUpperCase()}:\\${windowsPath}`;
   }
@@ -281,11 +281,11 @@ export class NodeFS extends FakeFS {
 
     // If relative path, just replace win32 slashes by posix slashes
     if (!root)
-      return p.replace(/\\/g, '/');
+      return p.replace(/\\/g, `/`);
 
     const driveLetter = root[0].toLowerCase();
     const pathWithoutRoot = p.substr(root.length);
-    const posixPath = pathWithoutRoot.replace(/\\/g, '/');
+    const posixPath = pathWithoutRoot.replace(/\\/g, `/`);
 
     return `${PORTABLE_PATH_PREFIX}${driveLetter}/${posixPath}`;
   }

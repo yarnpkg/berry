@@ -41,7 +41,7 @@ export function prettifySyncErrors<T>(fn: () => T, update: (message: string) => 
 
 export function dynamicRequire(path: string) {
   // @ts-ignore
-  if (typeof __webpack_require__ !== 'undefined') {
+  if (typeof __webpack_require__ !== `undefined`) {
     // @ts-ignore
     return __non_webpack_require__(path);
   } else {

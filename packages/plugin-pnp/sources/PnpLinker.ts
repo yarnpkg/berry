@@ -235,7 +235,7 @@ class PnpInstaller implements Installer {
     if (!relativeFolder.match(/^\.{0,2}\//))
       relativeFolder = `./${relativeFolder}`;
 
-    return relativeFolder.replace(/\/?$/, '/');
+    return relativeFolder.replace(/\/?$/, `/`);
   }
 
   private async getBuildScripts(fetchResult: FetchResult) {

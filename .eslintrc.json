@@ -15,6 +15,7 @@
     "arca/import-align": 2,
     "arca/import-ordering": 2,
     "arca/newline-after-import-section": 2,
-    "arca/no-default-export": 2
+    "arca/no-default-export": 2,
+    "quotes": [2, "backtick"]
   }
 }

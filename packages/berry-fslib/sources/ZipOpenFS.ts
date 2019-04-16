@@ -419,7 +419,7 @@ export class ZipOpenFS extends FakeFS {
     });
   }
 
-  readFilePromise(p: string, encoding?: 'utf8'): Promise<string>;
+  readFilePromise(p: string, encoding?: `utf8`): Promise<string>;
   readFilePromise(p: string, encoding?: string): Promise<Buffer>;
   async readFilePromise(p: string, encoding?: string) {
     return this.makeCallPromise(p, async () => {
@@ -435,7 +435,7 @@ export class ZipOpenFS extends FakeFS {
     });
   }
 
-  readFileSync(p: string, encoding?: 'utf8'): string;
+  readFileSync(p: string, encoding?: `utf8`): string;
   readFileSync(p: string, encoding?: string): Buffer;
   readFileSync(p: string, encoding?: string) {
     return this.makeCallSync(p, () => {

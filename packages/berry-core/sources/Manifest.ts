@@ -25,7 +25,7 @@ export class Manifest {
   public name: Ident | null = null;
   public version: string | null = null;
 
-  public ["private"]: boolean = false;
+  public [`private`]: boolean = false;
   public license: string | null = null;
 
   public languageName: string | null = null;
@@ -120,7 +120,7 @@ export class Manifest {
 
     if (typeof data.dependencies === `object` && data.dependencies !== null) {
       for (const [name, range] of Object.entries(data.dependencies)) {
-        if (typeof range !== 'string') {
+        if (typeof range !== `string`) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           continue;
         }
@@ -140,7 +140,7 @@ export class Manifest {
 
     if (typeof data.devDependencies === `object` && data.devDependencies !== null) {
       for (const [name, range] of Object.entries(data.devDependencies)) {
-        if (typeof range !== 'string') {
+        if (typeof range !== `string`) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           continue;
         }
@@ -160,7 +160,7 @@ export class Manifest {
 
     if (typeof data.peerDependencies === `object` && data.peerDependencies !== null) {
       for (const [name, range] of Object.entries(data.peerDependencies)) {
-        if (typeof range !== 'string') {
+        if (typeof range !== `string`) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           continue;
         }

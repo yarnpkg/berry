@@ -121,7 +121,7 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
   for (const commandArg of commandArgs) {
     for (const segment of commandArg) {
 
-      if (typeof segment === 'string') {
+      if (typeof segment === `string`) {
 
         push(segment);
 
@@ -389,7 +389,7 @@ function locateArgsVariable(node: ShellLine): boolean {
           case `command`: {
             hasArgs = chain.args.some(arg => {
               return arg.some(segment => {
-                if (typeof segment === 'string')
+                if (typeof segment === `string`)
                   return false;
 
                 switch (segment.type) {

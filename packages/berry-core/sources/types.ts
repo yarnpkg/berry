@@ -22,7 +22,7 @@ export interface Locator extends Ident {
   reference: string,
 };
 
-export enum LinkType { HARD = 'hard', SOFT = 'soft' };
+export enum LinkType { HARD = `hard`, SOFT = `soft` };
 
 export interface Package extends Locator {
   version: string | null,

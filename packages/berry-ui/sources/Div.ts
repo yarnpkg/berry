@@ -3,12 +3,12 @@ import React         from 'react';
 import {NodeElement} from './NodeElement';
 
 export enum StylePositionEnum {
-  Absolute = 'absolute',
+  Absolute = `absolute`,
 }
 
 export enum StyleFlexDirectionEnum {
-  Column = 'column',
-  Row = 'row',
+  Column = `column`,
+  Row = `row`,
 }
 
 export type StyleProp = Partial<{
