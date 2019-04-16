@@ -1,8 +1,9 @@
 import {Ident, Locator, Project, Workspace} from '@berry/core';
 import {miscUtils, structUtils}             from '@berry/core';
 import {xfs}                                from '@berry/fslib';
-// @ts-ignore
 import pl                                   from 'tau-prolog';
+
+import {linkProjectToSession}               from './tauModule';
 
 export type DependencyMismatch = {
   packageLocator: Locator,
@@ -65,6 +66,8 @@ export class Constraints {
 
   async process() {
     const session = pl.create();
+    linkProjectToSession(session, this.project);
+
     session.consult(this.fullSource);
 
     let enforcedDependencyRanges: Array<{
