@@ -22,7 +22,7 @@ export class TarballHttpFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 
-    const [packageFs, checksum] = await opts.cache.fetchPackageFromCache(
+    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(
       locator,
       expectedChecksum,
       async () => {
@@ -33,7 +33,7 @@ export class TarballHttpFetcher implements Fetcher {
 
     return {
       packageFs,
-      releaseFs: () => packageFs.discardAndClose(),
+      releaseFs,
       prefixPath: `/sources`,
       checksum,
     };
