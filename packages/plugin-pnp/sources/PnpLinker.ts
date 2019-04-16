@@ -10,6 +10,7 @@ const FORCED_UNPLUG_PACKAGES = new Set([
   structUtils.makeIdent(null, `nan`).identHash,
   structUtils.makeIdent(null, `node-gyp`).identHash,
   structUtils.makeIdent(null, `node-pre-gyp`).identHash,
+  structUtils.makeIdent(null, `node-addon-api`).identHash,
 ]);
 
 export class PnpLinker implements Linker {
