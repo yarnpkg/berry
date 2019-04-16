@@ -46,7 +46,7 @@ const PackageJsonDoc = () => <>
       <JsonObjectProperty
         name={`bin`}
         description={<>
-          A field used to expose some executable Javascript files to the parent package. Any entry listed here will be made available through the <code>$PATH</code>. Note that it is very advised to only expose Javascript files for portability reasons (shell scripts require the user to have a specific shell, and are incompatibles with zip access).
+          A field used to expose some executable Javascript files to the parent package. Any entry listed here will be made available through the <code>$PATH</code>. Note that it is very advised to only expose Javascript files for portability reasons (shellscripts and non-js binaries require the user to have a specific shell, and are incompatible with zip access).
         </>}
       >
         <JsonStringProperty
@@ -134,14 +134,14 @@ const PackageJsonDoc = () => <>
             name={`built`}
             placeholder={`false`}
             description={<>
-              If false, the package will never be built. When the global settings <code>enableScripts</code> is toggled off, setting this additional flag will also downgrade the warning into a simple notice for this specific package. This settings can only be listed from within the root manifest and will be ignored anywhere else.
+              If false, the package will never be built. When the global settings <code>enableScripts</code> is toggled off, setting this additional flag will also downgrade the warning into a simple notice for this specific package.
             </>}
           />
           <JsonBooleanProperty
             name={`unplugged`}
             placeholder={`true`}
             description={<>
-              If true, the specified package will be automatically unplugged at install time. This should only be needed for packages that contain scripts in other languages than Javascript (for example <code>nan</code> contains C++ headers and would need to be unplugged to be used). This settings can only be listed from within the root manifest and will be ignored anywhere else.
+              If true, the specified package will be automatically unplugged at install time. This should only be needed for packages that contain scripts in other languages than Javascript (for example <code>nan</code> contains C++ headers).
             </>}
           />
         </JsonObjectProperty>

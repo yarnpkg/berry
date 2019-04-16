@@ -39,7 +39,7 @@ module.exports = {
       options: {
         fonts: [{
           family: `Open Sans`,
-          variants: [`300`, `400`],
+          variants: [`300`, `400`, `700`],
         }, {
           family: `Abel`,
           variants: [`300`, `400`],
@@ -86,8 +86,20 @@ module.exports = {
         binary: `${__dirname}/../../scripts/run-yarn.js`,
       },
     },
-    `gatsby-transformer-remark`,
-    `gatsby-plugin-remove-trailing-slashes`,
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [
+          `gatsby-remark-autolink-headers`,
+        ],
+      },
+    },
+    {
+      resolve: `gatsby-plugin-catch-links`,
+    },
+    {
+      resolve: `gatsby-plugin-remove-trailing-slashes`,
+    },
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // 'gatsby-plugin-offline',

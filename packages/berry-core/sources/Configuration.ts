@@ -485,7 +485,9 @@ export class Configuration {
 
         if (definition.type === SettingsType.ABSOLUTE_PATH && definition.default !== null) {
           if (this.projectCwd === null) {
-            if (definition.isNullable || definition.default === null) {
+            if (posix.isAbsolute(definition.default)) {
+              this.values.set(name, posix.normalize(definition.default));
+            } else if (definition.isNullable || definition.default === null) {
               this.values.set(name, null);
             }
           } else {

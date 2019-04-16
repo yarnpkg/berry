@@ -10,10 +10,17 @@ const Container = styled.article`
 `;
 
 const Title = styled.h1`
-  font-family: "Baumans";
-  font-size: 2em;
+  box-sizing: border-box;
 
   margin: 0;
+
+  height: 4rem;
+
+  border-bottom: 1px solid;
+
+  font-weight: 300;
+  font-size: 2rem;
+  line-height: 4rem;
 
   + div > blockquote {
     font-style: normal;
@@ -33,7 +40,7 @@ const Content = styled.div`
     color: #859daf;
   }
 
-  a {
+  a:not(.anchor) {
     border-bottom: 1px solid;
 
     text-decoration: none;
@@ -69,10 +76,12 @@ const Content = styled.div`
     margin-top: 0;
   }
 
-  h2 {
-    border: 1px solid #d1dee8;
+  h2, h3, h4 {
+    border-bottom: 1px solid #d1dee8;
 
     padding-bottom: 0.2em;
+
+    font-weight: 300;
   }
 
   pre {
@@ -84,8 +93,6 @@ const Content = styled.div`
   }
 
   code {
-    font-family: "PT Mono";
-
     color: #007aa2;
   }
 
@@ -97,7 +104,7 @@ const Content = styled.div`
 export const PrerenderedMarkdown = ({title, children}) => <>
   <Container>
     <Title>
-      {title}
+      {title.match(/^`.*`$/) ? <code>{title.slice(1, -1)}</code> : title}
     </Title>
     <Content dangerouslySetInnerHTML={{__html: children}} />
   </Container>

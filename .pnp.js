@@ -9033,6 +9033,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:2.0.31"
                 ],
                 [
+                  "gatsby-plugin-catch-links",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.0.13"
+                ],
+                [
                   "gatsby-plugin-clipanion-cli",
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#portal:./gatsby-plugin-clipanion-cli?locator=%40berry%2Fgatsby%40workspace%3Apackages%2Fgatsby"
                 ],
@@ -9067,6 +9071,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "gatsby-plugin-sharp",
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.0.25"
+                ],
+                [
+                  "gatsby-remark-autolink-headers",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.0.16"
                 ],
                 [
                   "gatsby-source-filesystem",
@@ -32382,6 +32390,55 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "gatsby-plugin-catch-links",
+        [
+          [
+            "npm:2.0.13",
+            {
+              "packageLocation": "./.yarn/cache/gatsby-plugin-catch-links-npm-2.0.13-7d9aaf36148158d3615545c7133fa3c70f515843eaa38be225adb9811b2f0851.zip/node_modules/gatsby-plugin-catch-links/",
+              "packageDependencies": [
+                [
+                  "gatsby-plugin-catch-links",
+                  "npm:2.0.13"
+                ],
+                [
+                  "@babel/runtime",
+                  "npm:7.2.0"
+                ],
+                [
+                  "escape-string-regexp",
+                  "npm:1.0.5"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.0.13",
+            {
+              "packageLocation": "./.yarn/virtual/gatsby-plugin-catch-links-virtual-3c8ce8d0351080f8b71ba369985d5a84ff3db7ca3740096b4444ca8c3e081782/node_modules/gatsby-plugin-catch-links/",
+              "packageDependencies": [
+                [
+                  "gatsby-plugin-catch-links",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.0.13"
+                ],
+                [
+                  "@babel/runtime",
+                  "npm:7.2.0"
+                ],
+                [
+                  "escape-string-regexp",
+                  "npm:1.0.5"
+                ],
+                [
+                  "gatsby",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.2.9"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "gatsby-plugin-clipanion-cli",
         [
           [
@@ -33122,6 +33179,79 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "warning",
                   "npm:3.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "gatsby-remark-autolink-headers",
+        [
+          [
+            "npm:2.0.16",
+            {
+              "packageLocation": "./.yarn/cache/gatsby-remark-autolink-headers-npm-2.0.16-986e8151a1943146441cacbc133ec5ee56abfc420bf4c4cb8276ec5dc3c85a46.zip/node_modules/gatsby-remark-autolink-headers/",
+              "packageDependencies": [
+                [
+                  "gatsby-remark-autolink-headers",
+                  "npm:2.0.16"
+                ],
+                [
+                  "@babel/runtime",
+                  "npm:7.2.0"
+                ],
+                [
+                  "github-slugger",
+                  "npm:1.2.1"
+                ],
+                [
+                  "lodash",
+                  "npm:4.17.11"
+                ],
+                [
+                  "mdast-util-to-string",
+                  "npm:1.0.5"
+                ],
+                [
+                  "unist-util-visit",
+                  "npm:1.4.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.0.16",
+            {
+              "packageLocation": "./.yarn/virtual/gatsby-remark-autolink-headers-virtual-0e7e621a2047112634db42f0df5d63843c475a26763cf5e4a428a6532b37eeb4/node_modules/gatsby-remark-autolink-headers/",
+              "packageDependencies": [
+                [
+                  "gatsby-remark-autolink-headers",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.0.16"
+                ],
+                [
+                  "@babel/runtime",
+                  "npm:7.2.0"
+                ],
+                [
+                  "gatsby",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.2.9"
+                ],
+                [
+                  "github-slugger",
+                  "npm:1.2.1"
+                ],
+                [
+                  "lodash",
+                  "npm:4.17.11"
+                ],
+                [
+                  "mdast-util-to-string",
+                  "npm:1.0.5"
+                ],
+                [
+                  "unist-util-visit",
+                  "npm:1.4.0"
                 ]
               ]
             }

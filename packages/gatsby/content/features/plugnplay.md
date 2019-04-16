@@ -51,8 +51,8 @@ The following compatibility table gives you an idea of the integration status wi
 | ESLint            | Native  | Some compatibility issues when used w/ shared configs |
 | Gatsby            | Native  | Currently  |
 | Jest              | Native  | Starting from 24.1+ |
-pnp-webpack-plugin#ts-loader-integration) |
 | Rollup            | Plugin  | Via [`rollup-plugin-pnp-resolve`](https://github.com/arcanis/rollup-plugin-pnp-resolve) |
-| TypeScript        | Plugin  | Via Webpack and [`ts-loader`](https://github.com/arcanis/| Webpack           | Plugin  | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) |
+| TypeScript        | Plugin  | Via Webpack and [`ts-loader`](https://github.com/arcanis/pnp-webpack-plugin#ts-loader-integration) |
+| Webpack           | Plugin  | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) |
 
 This list is kept up-to-date based on the latest release we've published starting from the v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to an issue. And maybe a PR? 😊
