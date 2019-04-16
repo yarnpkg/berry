@@ -8,6 +8,7 @@
   "scripts": {
     "grammar:shell": "run pegjs -o sources/grammars/shell.js sources/grammars/shell.pegjs",
     "grammar:resolution": "run pegjs -o sources/grammars/resolution.js sources/grammars/resolution.pegjs",
-    "grammar:syml": "run pegjs -o sources/grammars/syml.js sources/grammars/syml.pegjs"
+    "grammar:syml": "run pegjs -o sources/grammars/syml.js sources/grammars/syml.pegjs",
+    "test:parsers": "run test:unit packages/berry-parsers"
   }
 }
