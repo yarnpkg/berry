@@ -1650,6 +1650,7 @@ __metadata:
     "@types/inquirer": "npm:^0.0.43"
     "@types/joi": "npm:^13.6.0"
     "@types/lockfile": "npm:^1.0.0"
+    "@types/lodash.get": "npm:^4.4.6"
     "@types/mkdirp": "npm:^0.5.2"
     "@types/node": "npm:^10.12.0"
     "@types/node-emoji": "npm:^1.8.0"
@@ -1700,6 +1701,7 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
     inquirer: "npm:^6.2.0"
+    lodash.get: "npm:^4.4.2"
     node-emoji: "npm:^1.8.1"
     tau-prolog: "npm:^0.2.38"
   languageName: unknown
@@ -3045,6 +3047,22 @@ __metadata:
   version: 1.0.0
   resolution: "@types/lockfile@npm:1.0.0"
   checksum: e7beb41eee0afd5d485aece71f9cceca0562828371e161d8bce0e356e20ee292710a72dd7716560ad4e68d7928bd6d3da921d1edbc8aa2c634d63e6a9929e7dc
+  languageName: node
+  linkType: hard
+
+"@types/lodash.get@npm:^4.4.6":
+  version: 4.4.6
+  resolution: "@types/lodash.get@npm:4.4.6"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: f680af4124cc180fdd3157e99f806633ac17f51ce7da8c6b26b95f96ef60229d45886063ad89cd7dddca0a9051c91e24c9211635bf3d839179a033a35bb6140d
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*":
+  version: 4.14.123
+  resolution: "@types/lodash@npm:4.14.123"
+  checksum: 897f9528c22b972874096c3d1e923e6c0cf62f0bc8969d4cd3850328e15b20e75486034b3a341a746a52354cbdefb07dbe03d9f0ebe4c170a71de97718428abd
   languageName: node
   linkType: hard
 

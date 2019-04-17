@@ -60,7 +60,8 @@
             "./.yarn/cache/@types-webassembly-js-api-npm-0.0.2-34b91f83db3de874c1dcf0068c60ffc7f7c3cd99b0b5d14a378ee471eabe8243.zip/node_modules/@types",
             "./.yarn/cache/@types-lockfile-npm-1.0.0-387a9d830f9cab332bc2599b97171f05e344ca97c96c0f9ed69d969972152ca1.zip/node_modules/@types",
             "./.yarn/cache/@types-faker-npm-4.1.4-b57898d70da524b60488238cda60835e91c6690d80114a4443e088872f9b3a34.zip/node_modules/@types",
-            "./.yarn/cache/@types-treeify-npm-1.0.0-e2b628e676f3c152cf50527014992ca8e6964cafeeac3704f11e5b83320f3979.zip/node_modules/@types"
+            "./.yarn/cache/@types-treeify-npm-1.0.0-e2b628e676f3c152cf50527014992ca8e6964cafeeac3704f11e5b83320f3979.zip/node_modules/@types",
+            "./.yarn/cache/@types-lodash.get-npm-4.4.6-6d10cfdb339bcfa15c1b34009448ad172d832deb03038988e7a7df7cef333575.zip/node_modules/@types"
         ]
     },
     "include": [

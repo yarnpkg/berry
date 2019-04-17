@@ -103,6 +103,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:1.0.0"
                 ],
                 [
+                  "@types/lodash.get",
+                  "npm:4.4.6"
+                ],
+                [
                   "@types/mkdirp",
                   "npm:0.5.2"
                 ],
@@ -9097,6 +9101,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:1.0.0"
                 ],
                 [
+                  "@types/lodash.get",
+                  "npm:4.4.6"
+                ],
+                [
                   "@types/mkdirp",
                   "npm:0.5.2"
                 ],
@@ -9245,6 +9253,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "inquirer",
                   "npm:6.2.1"
+                ],
+                [
+                  "lodash.get",
+                  "npm:4.4.2"
                 ],
                 [
                   "node-emoji",
@@ -13807,6 +13819,44 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/lockfile",
                   "npm:1.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/lodash",
+        [
+          [
+            "npm:4.14.123",
+            {
+              "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.123-c9d4ccb992ade10a2c0cbf33ab5f8dec69f7a6b1857c74e761b2d02eecf6355d.zip/node_modules/@types/lodash/",
+              "packageDependencies": [
+                [
+                  "@types/lodash",
+                  "npm:4.14.123"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/lodash.get",
+        [
+          [
+            "npm:4.4.6",
+            {
+              "packageLocation": "./.yarn/cache/@types-lodash.get-npm-4.4.6-6d10cfdb339bcfa15c1b34009448ad172d832deb03038988e7a7df7cef333575.zip/node_modules/@types/lodash.get/",
+              "packageDependencies": [
+                [
+                  "@types/lodash.get",
+                  "npm:4.4.6"
+                ],
+                [
+                  "@types/lodash",
+                  "npm:4.14.123"
                 ]
               ]
             }

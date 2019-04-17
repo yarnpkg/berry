@@ -1,4 +1,5 @@
 import {Project} from '@berry/core';
+import getPath   from 'lodash.get';
 import pl        from 'tau-prolog';
 
 const {is_atom} = pl.type;
@@ -42,15 +43,15 @@ const tauModule = new pl.type.Module(`constraints`, {
     if (workspace == null)
       return;
 
-    const manifest: {[key: string]: any} = workspace.manifest.raw!;
+    const value = getPath(workspace.manifest.raw!, fieldName.id);
 
     // Field is not present => this predicate can never match
-    if (!(fieldName.id in manifest))
+    if (typeof value === `undefined`)
       return;
 
-    prependGoals(thread, point, [new pl.type.Term('=', [
+    prependGoals(thread, point, [new pl.type.Term(`=`, [
       fieldValue,
-      new pl.type.Term(String((manifest)[fieldName.id])),
+      new pl.type.Term(String(value)),
     ])]);
   },
 }, [
