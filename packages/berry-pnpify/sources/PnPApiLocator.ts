@@ -1,9 +1,9 @@
 import { xfs } from '@berry/fslib';
 
 /**
- * PnP root locator options
+ * PnP API locator options
  */
-export interface PnPLocatorOptions {
+export interface PnPApiLocatorOptions {
   /**
    * Function that checks if file exists at given path.
    *
@@ -21,7 +21,7 @@ export interface PnPLocatorOptions {
   pnpFileName?: string;
 }
 
-interface DefinedPnPLocatorOptions {
+interface DefinedPnPApiLocatorOptions {
   existsSync: (filePath: string) => boolean;
   pnpFileName: string;
 }
@@ -51,25 +51,25 @@ interface DefinedPnPLocatorOptions {
 type PnPRootCheckTree = Map<string, any | true>;
 
 /**
- * PnP root locator given arbitrary path answer the question is this path inside PnP project,
- * and if yes what is the root directory of this PnP project. If no - it returns null.
+ * PnP API locator given arbitrary path answers the question is this path inside PnP project,
+ * and if yes what is the path to PnP API file of this PnP project. If no - it returns null.
  *
- * PnP root locator tries to answer this question with minimal possible number of fs calls.
+ * PnP API locator tries to answer this question with minimal possible number of fs calls.
  *
  * Assumptions:
- *  - PnP root cannot be inside `node_modules`
- *  - PnP root cannot be inside other PnP root
+ *  - PnP project cannot be inside `node_modules`
+ *  - PnP project cannot be inside other PnP project
  */
-export class PnPRootLocator {
-  private readonly options: DefinedPnPLocatorOptions;
+export class PnPApiLocator {
+  private readonly options: DefinedPnPApiLocatorOptions;
   private checkTree: PnPRootCheckTree;
 
   /**
-   * Constructs new instance of PnP root locator
+   * Constructs new instance of PnP API locator
    *
    * @param options optional locator options
    */
-  constructor(options?: PnPLocatorOptions) {
+  constructor(options?: PnPApiLocatorOptions) {
     const opts = options || {};
     this.options = {
       existsSync: opts.existsSync || xfs.existsSync.bind(xfs),
@@ -92,23 +92,24 @@ export class PnPRootLocator {
   }
 
   /**
-   * Finds PnP root directory for given `sourcePath`.
+   * Finds PnP API file path for the given `sourcePath`.
    *
    * @param sourcePath some directory that might be inside or outside PnP project
    *
-   * @returns null if `sourcePath` is not inside PnP project, or root directory of PnP project otherwise
+   * @returns null if `sourcePath` is not inside PnP project, or PnP API file path otherwise
    */
-  public findApiRoot(sourcePath: string): string | null {
+  public findApi(sourcePath: string): string | null {
     let apiPath = null;
     const pathComponentList = this.getPathComponents(sourcePath);
 
-    let currentPath;
+    let currentDir;
     let node = this.checkTree;
     for (const pathComponent of pathComponentList) {
-      currentPath = typeof currentPath === 'undefined' ? pathComponent : currentPath + '/' + pathComponent;
+      currentDir = typeof currentDir === 'undefined' ? pathComponent : currentDir + '/' + pathComponent;
+      const currentPath = currentDir + '/' + this.options.pnpFileName;
       let val = node.get(pathComponent);
       if (typeof val === 'undefined') {
-        val = this.options.existsSync(currentPath + '/' + this.options.pnpFileName) ? true : new Map();
+        val = this.options.existsSync(currentPath) ? true : new Map();
         node.set(pathComponent, val);
       }
       if (val === true) {
@@ -122,7 +123,7 @@ export class PnPRootLocator {
   }
 
   /**
-   * Tell locator that the given path and all child paths should be rechecked
+   * Tells the locator that the given path and all child paths should be rechecked
    *
    * @param sourcePath path to invalidate, empty string invalidates all the paths
    */
