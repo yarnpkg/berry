@@ -17,11 +17,21 @@ but rather to show you why we chose it and the value it brings.
 
 As we mentioned, Prolog is a fact-based engine. It starts with a list of *facts* that are always true, and a list of *predicates* that basically read as "predicate `f(X)` is true if `u(X)` and `v(X)` are both true". By computing for which values of `X` are `u(X)` and `v(X)` true, Prolog is able to automatically compute the list of values for which `f(X)` would be true. This is particularly useful for contraints, because it allows you to write very simple but powerful rules that have the ability to affect all your workspaces in very few lines.
 
-Going back to the constraint engine, the *facts* are the definitions created by the package manager (such as "fact: the root workspace depends on Lodash"), and the *predicates* are the set of rules that you want to enforce accross your project (check below for some recipes).
+Going back to the constraint engine, the *facts* are the definitions created by the package manager (such as "fact: the root workspace depends on Lodash version 4.4.2 in devDependencies"), and the *predicates* are the set of rules that you want to enforce accross your project (check below for some recipes).
 
 ### Query predicate
 
 The following predicates provide information about the current state of your project and are meant to be used in the dependencies of your own rules (check the recipes for examples how to use them in practice). Note that the `/<number>` syntax listed at the end simply is the predicate arity (number of arguments it takes).
+
+#### `dependency_type/1
+
+```prolog
+dependency_type(
+  DependencyType
+).
+```
+
+True for only three values: `dependencies`, `devDependencies` and `peerDependencies`.
 
 #### `workspace/1`
 
@@ -55,47 +65,50 @@ workspace_version(
 
 True if the workspace described by the specified `WorkspacedCwd` exists and if it has the specified `WorkspaceVersion`.
 
-#### `workspace_has_dependency/3`
+#### `workspace_has_dependency/4`
 
 ```prolog
 workspace_has_dependency(
   WorkspaceCwd,
   DependencyIdent,
-  DependencyRange
+  DependencyRange,
+  DependencyType
 ).
 ```
 
-True if the workspace described by the specified `WorkspaceCwd` depends on the dependency described by the specified `DependencyIdent` and `DependencyRange` combination.
+True if the workspace described by the specified `WorkspaceCwd` depends on the dependency described by the specified `DependencyIdent` and `DependencyRange` combination in the dependencies block of the given `DependencyType`.
 
 ### Constraint predicates
 
 The following predicates will affect the behavior of the `yarn constraints check` and `yarn constraints fix` commands.
 
-#### `gen_enforced_dependency_range/3`
+#### `gen_enforced_dependency_range/4`
 
 ```prolog
 gen_enforced_dependency_range(
   WorkspaceCwd,
   DependencyIdent,
-  DependencyRange
+  DependencyRange,
+  DependencyType
 ).
 ```
 
-The `gen_enforced_dependency_range` rule offers a neat way to inform the package manager that a specific workspace MUST either depend on a specific range of a specific dependency (if `DependencyRange` is non-null) or not depend at all on the dependency (if `DependencyRange` is null).
+The `gen_enforced_dependency_range` rule offers a neat way to inform the package manager that a specific workspace MUST either depend on a specific range of a specific dependency (if `DependencyRange` is non-null) or not depend at all on the dependency (if `DependencyRange` is null) in the `DependencyType` dependencies block.
 
 - **This predicate allows the package manager to autofix the problems.**
 
-#### `gen_invalid_dependency/3`
+#### `gen_invalid_dependency/4`
 
 ```prolog
 gen_invalid_dependency(
   WorkspaceCwd,
   DependencyIdent,
+  DependencyType,
   Reason
 ).
 ```
 
-The `gen_invalid_dependency` predicate is used to inform the package manager that a specific workspace cannot depend on its current version of the package defined by `DependencyIdent`, the `Reason` parameter being offered as a way to express why the dependency is invalid.
+The `gen_invalid_dependency` predicate is used to inform the package manager that a specific workspace cannot depend on its current version of the package defined by `DependencyIdent` in the `DependencyType` dependencies, the `Reason` parameter being offered as a way to express why the dependency is invalid.
 
 Contrary to `gen_enforced_dependency_range`, `gen_invalid_dependency` doesn't allow the package manager to autofix the problem. This makes `gen_invalid_dependency` suitable in case where the right fix would be ambiguous, and where the intervention of a human operator would be required (for example when two workspaces depend on two different versions of a same package).
 
@@ -108,13 +121,13 @@ The following constraints are a good starting point to figure out how to write y
 
 > **Quick note about the Prolog syntax**
 >
-> Be aware that in prolog `X :- Y` basically means "X is true for each Y that's true". Similarly, know that UpperCamelCase names are variables that get "replaced" by every compatible value possible. Finally, the special variable name `_` simply discard the parameter value.
+> Be aware that in prolog `X :- Y` basically means "X is true for each Y that's true". Similarly, know that UpperCamelCase names are variables that get "replaced" by every compatible value possible. Finally, the special variable name `_` simply discards the parameter value.
 
 ### Prevent all workspaces from depending on a specific package
 
 ```prolog
-gen_enforced_dependency_range(WorkspaceCwd, 'tslib', null) :-
-  workspace_has_dependency(WorkspaceCwd, 'tslib', _).
+gen_enforced_dependency_range(WorkspaceCwd, 'tslib', null, DependencyType) :-
+  workspace_has_dependency(WorkspaceCwd, 'tslib', _, DependencyType).
 ```
 
 We define a rule that says that for each dependency of each workspace in our project, if this dependency name is `tslib`, then it exists a similar rule of the `gen_enforced_dependency_range` type that forbids the workspace from depending on `tslib`. This will cause the package manager to see that the rule isn't met, and autofix it when requested by removing the dependency from the workspace.
@@ -122,9 +135,9 @@ We define a rule that says that for each dependency of each workspace in our pro
 ### Prevent two workspaces from depending on conflicting versions of a same dependency
 
 ```prolog
-gen_invalid_dependency(WorkspaceCwd, DependencyIdent, 'This dependency conflicts with another one from another workspace') :-
-  workspace_has_dependency(WorkspaceCwd, DependencyIdent, DependencyRange),
-  workspace_has_dependency(_, DependencyIdent, DependencyRange2),
+gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, 'This dependency conflicts with another one from another workspace') :-
+  workspace_has_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType),
+  workspace_has_dependency(_, DependencyIdent, DependencyRange2, _),
   DependencyRange \= DependencyRange2.
 ```
 
@@ -133,9 +146,9 @@ We define a `gen_invalid_dependency` rule that is true for each dependency of ea
 ### Force all workspace dependencies to be made explicit
 
 ```prolog
-gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, 'workspace:*') :-
-  workspace(WorkspaceCwd),
-  workspace_has_dependency(WorkspaceCwd, DependencyIdent, _).
+gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, 'workspace:*', DependencyType) :-
+  workspace_ident(_, DependencyIdent),
+  workspace_has_dependency(WorkspaceCwd, DependencyIdent, _, DependencyType).
 ```
 
 We define a `gen_enforced_dependency_range` that requires the dependency range `workspace:*` to be used if the dependency name is also the name of a valid workspace. The final `workspace_has_dependency` check is there to ensure that this rule is only applied on workspace that currently depend on the specified workspace in the first place (if it wasn't there, the rule would instead force all workspaces to depend on one another).
