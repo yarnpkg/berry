@@ -38,6 +38,15 @@ Object {
 }
 `;
 
+exports[`Commands constraints check test (empty project / gen_invalid_dependency (deep field path)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: Done
+",
+}
+`;
+
 exports[`Commands constraints check test (multiple workspaces / empty constraints) 1`] = `
 Object {
   "code": 0,
@@ -84,6 +93,17 @@ Object {
 }
 `;
 
+exports[`Commands constraints check test (multiple workspaces / gen_invalid_dependency (deep field path)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0026: workspace-a-01beb5 has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ BR0026: workspace-a-01beb5 has an invalid dependency on no-deps in devDependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ BR0000: Failed with errors
+",
+}
+`;
+
 exports[`Commands constraints check test (one regular dependency / empty constraints) 1`] = `
 Object {
   "code": 0,
@@ -118,6 +138,16 @@ Object {
   "code": 1,
   "stderr": "",
   "stdout": "➤ BR0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (one regular dependency / gen_invalid_dependency (deep field path)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0026: root-workspace-988eec has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
 ➤ BR0000: Failed with errors
 ",
 }
@@ -162,6 +192,16 @@ Object {
 }
 `;
 
+exports[`Commands constraints check test (two development dependencies / gen_invalid_dependency (deep field path)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0026: root-workspace-988eec has an invalid dependency on no-deps in devDependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ BR0000: Failed with errors
+",
+}
+`;
+
 exports[`Commands constraints check test (two regular dependencies / empty constraints) 1`] = `
 Object {
   "code": 0,
@@ -196,6 +236,16 @@ Object {
   "code": 1,
   "stderr": "",
   "stdout": "➤ BR0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies / gen_invalid_dependency (deep field path)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0026: root-workspace-988eec has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
 ➤ BR0000: Failed with errors
 ",
 }
@@ -236,6 +286,17 @@ Object {
   "code": 1,
   "stderr": "",
   "stdout": "➤ BR0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
+➤ BR0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_invalid_dependency (deep field path)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ BR0026: root-workspace-988eec has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ BR0026: root-workspace-988eec has an invalid dependency on no-deps in devDependencies (invalid because no-deps is not allowed unless built is set to false)
 ➤ BR0000: Failed with errors
 ",
 }

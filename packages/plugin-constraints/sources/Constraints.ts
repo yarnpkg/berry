@@ -62,6 +62,16 @@ export class Constraints {
       }
     }
 
+    // Add default never matching predicates to prevent prolog instantiation errors
+    // when constraints run in an empty workspace
+    database += `workspace(_) :- false.\n`;
+    database += `workspace_ident(_, _) :- false.\n`;
+    database += `workspace_version(_, _) :- false.\n`;
+
+    // Add a default never matching predicate to prevent prolog instantiation errors
+    // when constraints run in a workspace without dependencies
+    database += `workspace_has_dependency(_, _, _, _) :- false.\n`;
+
     return database;
   }
 
