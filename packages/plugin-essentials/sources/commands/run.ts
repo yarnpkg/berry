@@ -23,6 +23,16 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     Whatever happens, the cwd of the spawned process will be the workspace that declares the script (which makes it possible to call commands cross-workspaces using the third syntax).
   `)
 
+  .example(
+    `Run the tests from the local workspace`,
+    `yarn run test`,
+  )
+
+  .example(
+    `Same thing, but without the "run" keyword`,
+    `yarn test`,
+  )
+
   .action(async ({cwd, stdin, stdout, stderr, name, topLevel, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, name: string, topLevel: boolean, args: Array<string>}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace, locator} = await Project.find(configuration, cwd);

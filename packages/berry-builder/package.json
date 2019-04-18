@@ -7,9 +7,9 @@
     "@berry-run": "./sources/run.js"
   },
   "dependencies": {
-    "@babel/core": "^7.2.2",
-    "@babel/plugin-proposal-class-properties": "^7.2.3",
-    "@babel/preset-env": "^7.2.3",
+    "@babel/core": "^7.3.3",
+    "@babel/plugin-proposal-class-properties": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.1.0",
     "@babel/register": "^7.0.0",
     "@berry/cli": "workspace:*",
@@ -21,7 +21,7 @@
     "raw-loader": "^0.5.1",
     "transform-loader": "^0.2.4",
     "ts-loader": "^5.3.0",
-    "typescript": "^3.2.4",
+    "typescript": "^3.3.3333",
     "val-loader": "^1.1.1",
     "webpack": "^4.28.4",
     "webpack-merge": "^4.2.1",

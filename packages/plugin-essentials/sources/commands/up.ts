@@ -23,12 +23,17 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   `)
 
   .example(
-    `Upgrades all instances of lodash to the latest release`,
+    `Upgrade all instances of lodash to the latest release`,
     `yarn up lodash`,
   )
 
   .example(
-    `Upgrades all instances of lodash to 1.2.3`,
+    `Upgrade all instances of lodash to the latest release, but ask confirmation for each`,
+    `yarn up lodash -i`,
+  )
+
+  .example(
+    `Upgrade all instances of lodash to 1.2.3`,
     `yarn up lodash@1.2.3`,
   )
 

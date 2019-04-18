@@ -16,12 +16,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   `)
 
   .example(
-    `Lists all the available binaries`,
+    `List all the available binaries`,
     `yarn bin`,
   )
 
   .example(
-    `Prints the path to a specific binary`,
+    `Print the path to a specific binary`,
     `yarn bin eslint`,
   )
 

@@ -20,7 +20,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   `)
 
   .example(
-    `Checks that all constraints are satisfied`,
+    `Check that all constraints are satisfied`,
     `yarn constraints check`,
   )
 

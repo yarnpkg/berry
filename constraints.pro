@@ -5,11 +5,12 @@ constraints_min_version(1).
 % In order to see them in action, run `berry constraints detail`
 
 % This rule will prevent two of our workspaces from depending on different versions of a same dependency
-gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, 'This dependency conflicts with another one from another workspace') :-
-  workspace_has_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType),
-  workspace_has_dependency(_, DependencyIdent, DependencyRange2, _),
+gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, Reason) :-
+  workspace_has_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, _),
+  workspace_has_dependency(OtherWorkspaceCwd, DependencyIdent, DependencyRange2, _),
   DependencyRange \= DependencyRange2,
-  \+(gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, _, DependencyType)).
+  \+(gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, _, DependencyType)),
+  atom_concat('this dependency range conflicts with the one used in ', OtherWorkspaceCwd, Reason).
 
 % This rule will prevent workspaces from depending on non-workspace versions of available workspaces
 gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, 'workspace:*', DependencyType) :-

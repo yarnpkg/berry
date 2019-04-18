@@ -21,7 +21,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   `)
 
   .example(
-    `Automatically fixes as many things as possible in your project`,
+    `Automatically fix as many things as possible in your project`,
     `yarn constraints fix`,
   )
 
@@ -84,6 +84,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           }
         }
       }
+
+      await workspace.persistManifest();
     }
 
     if (result.invalidDependencies) {

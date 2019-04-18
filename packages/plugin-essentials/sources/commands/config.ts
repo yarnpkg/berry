@@ -26,7 +26,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   `)
 
   .example(
-    `Prints the active configuration settings`,
+    `Print the active configuration settings`,
     `yarn config`,
   )
 

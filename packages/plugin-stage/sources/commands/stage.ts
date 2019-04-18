@@ -17,11 +17,14 @@ const ALL_DRIVERS = [
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`stage [-c,--commit] [-r,--reset] [-u,--update] [-n,--dry-run]`)
+  .describe(`add all yarn files to your vcs`)
 
   .detail(`
-    This command will add to your staging area the files belonging to Yarn (typically any modified package.json, yarnrc files, pnp files, cache data, etc). Running \`--reset\` will instead remove them from the staging area (the changes will still be there, but won't be committed until you stage them back).
+    This command will add to your staging area the files belonging to Yarn (typically any modified \`package.json\` and \`.yarnrc\` files, but also linker-generated files, cache data, etc). It will take your ignore list into account, so the cache files won't be added if the cache is ignored in a \`.gitignore\` file (assuming you use Git).
+    
+    Running \`--reset\` will instead remove them from the staging area (the changes will still be there, but won't be committed until you stage them back).
 
-    Since the staging area is a non-existent concept in Mercurial, Yarn will always create a new commit when running this command. You can force this behavior when using Git by using the \`--commit\` flag.
+    Since the staging area is a non-existent concept in Mercurial, Yarn will always create a new commit when running this command on Mercurial repositories. You can get this behavior when using Git by using the \`--commit\` flag which will directly create a commit.
   `)
 
   .example(

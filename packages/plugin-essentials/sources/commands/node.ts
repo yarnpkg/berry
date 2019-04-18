@@ -18,7 +18,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   `)
 
   .example(
-    `Runs a Node script`,
+    `Run a Node script`,
     `yarn node ./my-script.js`,
   )
 
