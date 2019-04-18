@@ -18,12 +18,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   `)
 
   .example(
-    `Removes a dependency from the current project`,
+    `Remove a dependency from the current project`,
     `yarn remove lodash`,
   )
 
   .example(
-    `Removes a dependency from all workspaces at once`,
+    `Remove a dependency from all workspaces at once`,
     `yarn remove lodash --all`,
   )
 

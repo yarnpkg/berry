@@ -18,10 +18,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
   .detail(`
     This command will install a package within a temporary environment, and run its binary script if it contains any. The binary will run within the current cwd.
+    
+    By default Yarn will download the package named \`command\`, but this can be changed through the use of the \`-p,--package\` flag which will instruct Yarn to still run the same command but from a different package.
 
-    By default Yarn will print the full logs for the given package install process. This behavior can be silenced by using the \`-q,--quiet\` flag which will instruct Yarn to only report critical errors.
+    Also by default Yarn will print the full install logs when installing the given package. This behavior can be disabled by using the \`-q,--quiet\` flag which will instruct Yarn to only report critical errors.
 
-    Using \`yarn dlx\` as a replacement of \`yarn add\` isn't recommended, as it makes your project non-deterministic (since Yarn doesn't register that your project depends on packages installed via \`dlx\`).
+    Using \`yarn dlx\` as a replacement of \`yarn add\` isn't recommended, as it makes your project non-deterministic (Yarn doesn't keep track of the packages installed through \`dlx\` - neither their name, nor their version).
   `)
 
   .example(

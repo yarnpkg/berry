@@ -21,7 +21,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   )
 
   .example(
-    `Prints the source code and the fact database`,
+    `Print the source code and the fact database`,
     `yarn constraints source -v`,
   )
 

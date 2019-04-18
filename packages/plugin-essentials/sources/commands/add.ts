@@ -32,12 +32,12 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
   `)
 
   .example(
-    `Adds a regular package to the current workspace`,
+    `Add a regular package to the current workspace`,
     `yarn add lodash`,
   )
 
   .example(
-    `Adds a specific version for a package to the current workspace`,
+    `Add a specific version for a package to the current workspace`,
     `yarn add lodash@1.2.3`,
   )
 

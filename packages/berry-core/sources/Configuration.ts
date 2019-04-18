@@ -1,7 +1,9 @@
 import {xfs, NodeFS}                     from '@berry/fslib';
 import {parseSyml, stringifySyml}        from '@berry/parsers';
+import camelcase                         from 'camelcase';
 import chalk                             from 'chalk';
 import {UsageError}                      from 'clipanion';
+import decamelize                        from 'decamelize';
 import {homedir}                         from 'os';
 import {posix, win32}                    from 'path';
 import supportsColor                     from 'supports-color';
@@ -450,17 +452,35 @@ export class Configuration {
     const rcFilename = getRcFilename();
     const configurationPath = `${cwd}/${rcFilename}`;
 
-    const current = xfs.existsSync(configurationPath)
-      ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any
-      : {};
+    const current = xfs.existsSync(configurationPath) ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any : {};
+    const currentKeys = Object.keys(current);
+
+    // If some keys already use kebab-case then we keep using this style 
+    const preferKebabCase = currentKeys.some(key => key.includes(`-`));
 
     let patched = false;
 
     for (const key of Object.keys(patch)) {
-      if (current[key] === patch[key])
+      let currentKey;
+      
+      if (currentKeys.includes(key)) {
+        currentKey = key;
+      } else {
+        currentKey = currentKeys.find(currentKey => camelcase(currentKey) === key);
+
+        if (typeof currentKey === `undefined`) {
+          if (preferKebabCase) {
+            currentKey = decamelize(key, `-`);
+          } else {
+            currentKey = key;
+          }
+        }
+      }
+
+      if (current[currentKey] === patch[key])
         continue;
 
-      current[key] = patch[key];
+      current[currentKey] = patch[key];
       patched = true;
     }
 

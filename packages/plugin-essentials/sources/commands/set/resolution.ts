@@ -18,8 +18,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   `)
 
   .example(
-    `Forces all instances of lodash@^1.2.3 to resolve to 1.5.0`,
-    `yarn policies set-resolution lodash@^1.2.3 1.5.0`,
+    `Force all instances of lodash@^1.2.3 to resolve to 1.5.0`,
+    `yarn set resolution lodash@^1.2.3 1.5.0`,
   )
 
   .action(async ({cwd, stdout, descriptor: fromDescriptorRaw, resolution: toRange, save}: {cwd: string, stdout: Writable, descriptor: string, resolution: string, save: boolean}) => {
