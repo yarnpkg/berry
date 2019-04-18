@@ -40,11 +40,9 @@ Object {
 
 exports[`Commands constraints check test (empty project / gen_invalid_dependency (deep field path)) 1`] = `
 Object {
-  "code": 1,
+  "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0001: Error: uncaught exception: error(existence_error(procedure, '/'(workspace_has_dependency, 4)), '/'(gen_invalid_dependency, 4))
-    at Constraints.process (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:111078:23)
-➤ BR0000: Failed with errors
+  "stdout": "➤ BR0000: Done
 ",
 }
 `;
