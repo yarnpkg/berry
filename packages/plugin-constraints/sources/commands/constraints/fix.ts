@@ -84,6 +84,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           }
         }
       }
+
+      await workspace.persistManifest();
     }
 
     if (result.invalidDependencies) {
