@@ -18,7 +18,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   `)
 
   .example(
-    `Explains why lodash is used in your project`,
+    `Explain why lodash is used in your project`,
     `yarn why lodash`,
   )
 

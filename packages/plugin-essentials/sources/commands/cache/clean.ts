@@ -24,13 +24,13 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   `)
 
     .example(
-    `Removes all the unused cache files from the current project`,
+    `Remove all the unused cache files from the current project`,
     `yarn cache clean`,
   )
 
   .example(
-    `Obtains the list of unused zip files`,
-    `yarn cache clean --zip-only --dry-run --json`
+    `Obtain the list of unused files from the current project`,
+    `yarn cache clean --dry-run --json`
   )
 
   .action(async ({cwd, stdout, dryRun, json}: {cwd: string, stdout: Writable, dryRun: boolean, json: boolean}) => {

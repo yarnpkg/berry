@@ -21,12 +21,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   `)
 
   .example(
-    `Registers a local workspace for use in another application`,
+    `Register a local workspace for use in another application`,
     `yarn link`,
   )
 
   .example(
-    `Configures the project to always use the local version of my-package`,
+    `Configure the project to always use the local version of my-package`,
     `yarn link my-package`,
   )
 

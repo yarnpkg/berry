@@ -18,9 +18,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     The following settings can be used in order to affect what the generated package.json will look like:
 
-      - \`initLicense\`
-      - \`initScope\`
-      - \`initVersion\`
+    - \`initLicense\`
+    - \`initScope\`
+    - \`initVersion\`
   `)
 
   .example(
