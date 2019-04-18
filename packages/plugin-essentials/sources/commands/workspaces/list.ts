@@ -3,14 +3,6 @@ import {Writable}                                                               
 
 const DEPENDENCY_TYPES = ['devDependencies', 'dependencies'];
 
-interface JsonOutput {
-  [key: string]: {
-    location: string,
-    workspaceDependencies: string [],
-    mismatchedWorkspaceDependencies: string []
-  }
-};
-
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
