@@ -1,4 +1,4 @@
-import {Configuration, PluginConfiguration, Project, Workspace, Descriptor, structUtils} from '@berry/core';
+import {Configuration, PluginConfiguration, Project, JsonReport, structUtils}            from '@berry/core';
 import {Writable}                                                                        from 'stream';
 
 const DEPENDENCY_TYPES = ['devDependencies', 'dependencies'];
@@ -24,43 +24,46 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const {project} = await Project.find(configuration, cwd);
 
     if (verbose && json) {
-      for (const workspace of project.workspaces) {
-        if (!manifest.name)
-          continue;
+      await JsonReport.start({stdout}, async (report: JsonReport) => {
+        for (const workspace of project.workspaces) {
+          const {manifest} = workspace;
 
-        const {manifest} = workspace;
+          if (!manifest.name)
+            continue;
 
-        const workspaceDependencies = new Set();
-        const mismatchedWorkspaceDependencies = new Set();
+          const workspaceDependencies = new Set();
+          const mismatchedWorkspaceDependencies = new Set();
 
-        for (const dependencyType of DEPENDENCY_TYPES) {
-          for (const descriptor of manifest.getForScope(dependencyType)) {
-            const matchingWorkspaces = project.findWorkspacesByDescriptor(descriptor);
+          for (const dependencyType of DEPENDENCY_TYPES) {
+            for (const [identHash, descriptor]  of manifest.getForScope(dependencyType)) {
+              const matchingWorkspaces = project.findWorkspacesByDescriptor(descriptor);
 
-            if (matchingWorkspaces.length === 0) {
-              if (project.workspacesByIdent.has(descriptor)) {
-                mismatchedWorkspaceDependencies.add(descriptor);
-              }
-            } else {
-              for (const workspaceDependency of matchingWorkspaces) {
-                workspaceDependencies.add(workspaceDependency)
+              if (matchingWorkspaces.length === 0) {
+                if (project.workspacesByIdent.has(identHash)) {
+                  mismatchedWorkspaceDependencies.add(descriptor);
+                }
+              } else {
+                for (const workspaceDependency of matchingWorkspaces) {
+                  workspaceDependencies.add(workspaceDependency)
+                }
               }
             }
           }
-        }
 
-        stdout.write(JSON.stringify({
-          location: workspace.relativeCwd,
-          name: structUtils.stringifyIdent(manifest.name),
           
-          workspaceDependencies: Array.from(workspaceDependencies).map(workspace => {
-            return workspace.relativeCwd;
-          }),
-          mismatchedWorkspaceDependencies: Array.from(mismatchedWorkspaceDependencies).map(descriptor => {
-            return structUtils.stringifyDescriptor(descriptor);
-          }),
-        }) + `\n`);
-      }
+          report.reportJson({
+            location: workspace.relativeCwd,
+            name: structUtils.stringifyIdent(manifest.name),
+            
+            workspaceDependencies: Array.from(workspaceDependencies).map(workspace => {
+              return workspace.relativeCwd;
+            }),
+            mismatchedWorkspaceDependencies: Array.from(mismatchedWorkspaceDependencies).map(descriptor => {
+              return structUtils.stringifyDescriptor(descriptor);
+            })
+          });
+        }
+      });
     } else {
       for (const cwd of project.workspacesByCwd.keys()) {
         stdout.write(`${cwd}\n`);
