@@ -41,9 +41,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     let modified = false;
 
-    for (const {workspace, dependencyIdent, dependencyRange} of result.enforcedDependencyRanges) {
+    for (const {workspace, dependencyIdent, dependencyRange, dependencyType} of result.enforcedDependencyRanges) {
       if (dependencyRange !== null) {
-        const invalidDependencies = Array.from(workspace.manifest.dependencies.values()).filter((dependency: Descriptor) => {
+        const invalidDependencies = Array.from(workspace.manifest[dependencyType].values()).filter((dependency: Descriptor) => {
           return structUtils.areIdentsEqual(dependency, dependencyIdent) && dependency.range !== dependencyRange;
         });
 
@@ -51,21 +51,21 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           const result = await prompt({
             type: `confirm`,
             name: `confirmed`,
-            message: `${structUtils.prettyLocator(configuration, workspace.locator)}: Change ${structUtils.prettyIdent(configuration, invalid)} into ${structUtils.prettyRange(configuration, dependencyRange)}?`,
+            message: `${structUtils.prettyLocator(configuration, workspace.locator)}: Change ${structUtils.prettyIdent(configuration, invalid)} in ${dependencyType} into ${structUtils.prettyRange(configuration, dependencyRange)}?`,
           });
 
           // @ts-ignore
           if (result.confirmed) {
             const newDescriptor = structUtils.makeDescriptor(invalid, dependencyRange);
 
-            workspace.manifest.dependencies.delete(invalid.identHash);
-            workspace.manifest.dependencies.set(newDescriptor.identHash, newDescriptor);
+            workspace.manifest[dependencyType].delete(invalid.identHash);
+            workspace.manifest[dependencyType].set(newDescriptor.identHash, newDescriptor);
 
             modified = true;
           }
         }
       } else {
-        const invalidDependencies = Array.from(workspace.manifest.dependencies.values()).filter((dependency: Descriptor) => {
+        const invalidDependencies = Array.from(workspace.manifest[dependencyType].values()).filter((dependency: Descriptor) => {
           return structUtils.areIdentsEqual(dependency, dependencyIdent);
         });
 
@@ -73,12 +73,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           const result = await prompt({
             type: `confirm`,
             name: `confirmed`,
-            message: `${structUtils.prettyLocator(configuration, workspace.locator)}: Remove ${structUtils.prettyDescriptor(configuration, invalid)} from the dependencies?`,
+            message: `${structUtils.prettyLocator(configuration, workspace.locator)}: Remove ${structUtils.prettyDescriptor(configuration, invalid)} from the ${dependencyType}?`,
           });
 
           // @ts-ignore
           if (result.confirmed) {
-            workspace.manifest.dependencies.delete(invalid.identHash);
+            workspace.manifest[dependencyType].delete(invalid.identHash);
 
             modified = true;
           }
@@ -93,12 +93,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         stdout.write(`\n`);
 
       const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
-        for (const {workspace, dependencyIdent, reason} of result.invalidDependencies) {
-          const dependencyDescriptor = workspace.manifest.dependencies.get(dependencyIdent.identHash);
-          const devDependencyDescriptor = workspace.manifest.devDependencies.get(dependencyIdent.identHash);
+        for (const {workspace, dependencyIdent, dependencyType, reason} of result.invalidDependencies) {
+          const dependencyDescriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
   
-          if (dependencyDescriptor || devDependencyDescriptor) {
-            report.reportError(MessageName.CONSTRAINTS_INVALID_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} has an unfixable invalid dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)} (invalid because ${reason})`);
+          if (dependencyDescriptor) {
+            report.reportError(MessageName.CONSTRAINTS_INVALID_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} has an unfixable invalid dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)} in ${dependencyType} (invalid because ${reason})`);
           }
         }
       });

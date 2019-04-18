@@ -15,6 +15,18 @@ export type ConstraintReport = {
   mismatchingDependencies: Array<DependencyMismatch>,
 };
 
+export const enum DependencyType {
+  Dependencies = 'dependencies',
+  DevDependencies = 'devDependencies',
+  PeerDependencies = 'peerDependencies',
+}
+
+const DEPENDENCY_TYPES = [
+  DependencyType.Dependencies,
+  DependencyType.DevDependencies,
+  DependencyType.PeerDependencies,
+];
+
 export class Constraints {
   public readonly project: Project;
 
@@ -35,13 +47,18 @@ export class Constraints {
   getProjectDatabase() {
     let database = ``;
 
+    for (const dependencyType of DEPENDENCY_TYPES)
+      database += `dependency_type(${dependencyType}).\n`
+
     for (const workspace of this.project.workspacesByCwd.values()) {
       database += `workspace(${escape(workspace.cwd)}).\n`;
       database += `workspace_ident(${escape(workspace.cwd)}, ${escape(structUtils.stringifyIdent(workspace.locator))}).\n`
       database += `workspace_version(${escape(workspace.cwd)}, ${escape(workspace.manifest.version)}).\n`
 
-      for (const dependency of workspace.manifest.dependencies.values()) {
-        database += `workspace_has_dependency(${escape(workspace.cwd)}, ${escape(structUtils.stringifyIdent(dependency))}, ${escape(dependency.range)}).\n`;
+      for (const dependencyType of DEPENDENCY_TYPES) {
+        for (const dependency of workspace.manifest[dependencyType].values()) {
+          database += `workspace_has_dependency(${escape(workspace.cwd)}, ${escape(structUtils.stringifyIdent(dependency))}, ${escape(dependency.range)}, ${dependencyType}).\n`;
+        }
       }
     }
 
@@ -51,11 +68,11 @@ export class Constraints {
   getDeclarations() {
     let declarations = ``;
 
-    // (Cwd, DependencyIdent, DependencyRange)
-    declarations += `gen_enforced_dependency_range(_, _, _) :- false.\n`;
+    // (Cwd, DependencyIdent, DependencyRange, DependencyType)
+    declarations += `gen_enforced_dependency_range(_, _, _, _) :- false.\n`;
 
-    // (Cwd, DependencyIdent, Reason)
-    declarations += `gen_invalid_dependency(_, _, _) :- false.\n`;
+    // (Cwd, DependencyIdent, DependencyType, Reason)
+    declarations += `gen_invalid_dependency(_, _, _, _) :- false.\n`;
 
     return declarations;
   }
@@ -74,15 +91,17 @@ export class Constraints {
       workspace: Workspace,
       dependencyIdent: Ident,
       dependencyRange: string | null,
+      dependencyType: DependencyType,
     }> = [];
 
-    for (const answer of await makeQuery(`workspace(WorkspaceCwd), gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, DependencyRange).`)) {
+    for (const answer of await makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
       if (answer.id === `throw`)
         throw new Error(pl.format_answer(answer));
 
       const workspaceCwd = parseLink(answer.links.WorkspaceCwd);
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyRange = parseLink(answer.links.DependencyRange);
+      const dependencyType = parseLink(answer.links.DependencyType) as DependencyType;
 
       if (workspaceCwd === null || dependencyRawIdent === null)
         throw new Error(`Invalid rule`);
@@ -90,7 +109,7 @@ export class Constraints {
       const workspace = this.project.getWorkspaceByCwd(workspaceCwd);
       const dependencyIdent = structUtils.parseIdent(dependencyRawIdent);
       
-      enforcedDependencyRanges.push({workspace, dependencyIdent, dependencyRange});
+      enforcedDependencyRanges.push({workspace, dependencyIdent, dependencyRange, dependencyType});
     }
 
     enforcedDependencyRanges = miscUtils.sortMap(enforcedDependencyRanges, [
@@ -102,15 +121,17 @@ export class Constraints {
     let invalidDependencies: Array<{
       workspace: Workspace,
       dependencyIdent: Ident,
+      dependencyType: DependencyType,
       reason: string | null,
     }> = [];
 
-    for (const answer of await makeQuery(`workspace(WorkspaceCwd), gen_invalid_dependency(WorkspaceCwd, DependencyIdent, Reason).`)) {
+    for (const answer of await makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, Reason).`)) {
       if (answer.id === `throw`)
         throw new Error(pl.format_answer(answer));
 
       const workspaceCwd = parseLink(answer.links.WorkspaceCwd);
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
+      const dependencyType = parseLink(answer.links.DependencyType);
       const reason = parseLink(answer.links.Reason);
 
       if (workspaceCwd === null || dependencyRawIdent === null)
@@ -119,7 +140,7 @@ export class Constraints {
       const workspace = this.project.getWorkspaceByCwd(workspaceCwd);
       const dependencyIdent = structUtils.parseIdent(dependencyRawIdent);
 
-      invalidDependencies.push({workspace, dependencyIdent, reason});
+      invalidDependencies.push({workspace, dependencyIdent, dependencyType, reason});
     }
 
     invalidDependencies = miscUtils.sortMap(invalidDependencies, [

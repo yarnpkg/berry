@@ -76,9 +76,9 @@ const environments = {
 
 const constraints = {
   [`empty constraints`]: ``,
-  [`gen_enforced_dependency_range (missing)`]: `gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0').`,
-  [`gen_enforced_dependency_range (incompatible)`]: `gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0').`,
-  [`gen_enforced_dependency_range (extraneous)`]: `gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null).`,
+  [`gen_enforced_dependency_range (missing)`]: `gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).`,
+  [`gen_enforced_dependency_range (incompatible)`]: `gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).`,
+  [`gen_enforced_dependency_range (extraneous)`]: `gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).`,
 };
 
 describe(`Commands`, () => {
