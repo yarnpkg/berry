@@ -1,13 +1,13 @@
-import {NodeFS, ZipFS, xfs}       from '@berry/fslib';
-import {lock, unlock}             from 'lockfile';
-import {posix}                    from 'path';
-import {promisify}                from 'util';
+import {FakeFS, LazyFS, NodeFS, ZipFS, xfs} from '@berry/fslib';
+import {lock, unlock}                       from 'lockfile';
+import {posix}                              from 'path';
+import {promisify}                          from 'util';
 
-import {Configuration}            from './Configuration';
-import {MessageName, ReportError} from './Report';
-import * as hashUtils             from './hashUtils';
-import * as structUtils           from './structUtils';
-import {LocatorHash, Locator}     from './types';
+import {Configuration}                      from './Configuration';
+import {MessageName, ReportError}           from './Report';
+import * as hashUtils                       from './hashUtils';
+import * as structUtils                     from './structUtils';
+import {LocatorHash, Locator}               from './types';
 
 const lockP = promisify(lock);
 const unlockP = promisify(unlock);
@@ -50,7 +50,7 @@ export class Cache {
     });
   }
 
-  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, loader?: () => Promise<ZipFS>): Promise<[ZipFS, string]> {
+  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, loader?: () => Promise<ZipFS>): Promise<[FakeFS, () => void, string]> {
     const cachePath = this.getLocatorPath(locator);
     const baseFs = new NodeFS();
 
@@ -115,15 +115,24 @@ export class Cache {
       ? await validateFile(cachePath)
       : await loadPackageThroughMutex();
 
-    let zipFs: ZipFS;
-    try {
-      zipFs = new ZipFS(cachePath, {readOnly: true, baseFs});
-    } catch (error) {
-      error.message = `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
-      throw error;
-    }
+    let zipFs: ZipFS | null = null;
 
-    return [zipFs, checksum];
+    const lazyFs: LazyFS = new LazyFS(() => {
+      try {
+        return zipFs = new ZipFS(cachePath, {readOnly: true, baseFs});
+      } catch (error) {
+        error.message = `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
+        throw error;
+      }
+    });
+
+    const releaseFs = () => {
+      if (zipFs !== null) {
+        zipFs.discardAndClose();
+      }
+    };
+
+    return [lazyFs, releaseFs, checksum];
   }
 
   async writeFileIntoCache<T>(file: string, generator: (file: string) => Promise<T>) {

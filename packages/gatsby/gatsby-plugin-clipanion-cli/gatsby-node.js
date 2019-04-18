@@ -12,13 +12,13 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       `---\n`,
       `category: cli\n`,
       `path: /cli/${command.path.join(`/`)}\n`,
-      `title: "${opts.argv0} ${command.path.join(` `)}"\n`,
+      `title: "\`${opts.argv0} ${command.path.join(` `)}\`"\n`,
       `---\n`,
     ].join(``));
 
     if (command.description) {
       sections.push([
-        `> ${command.description}\n`
+        `${command.description[0].toUpperCase()}${command.description.slice(1, -1)}.\n`
       ].join(``));
     }
 

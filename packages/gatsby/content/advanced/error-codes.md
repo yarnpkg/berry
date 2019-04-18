@@ -6,7 +6,9 @@ title: "Error Codes"
 
 <!-- Never remove the entries in this file, as we want to support older releases -->
 
-> *Are you a plugin author and want to declare your own error codes that don't match the ones provided here? Please relinquish one character and use the `BRX+3` prefix instead of `BR+4`! it will make it clear to our users which error codes can be found on this documentation and which ones should instead be checked against the documentation of the plugins they use.*
+> *Are you a plugin author and want to declare your own error codes that don't match the semantic of the ones provided here? Please relinquish one character and use the `BRX` prefix (ex `BRX001`) instead of `BR0`!*
+>
+> *Keeping this convention will help our users to figure out which error codes can be found on this documentation and which ones should instead be checked against the individual documentation of the plugins they use.*
 
 ## BR0000 - `UNNAMED`
 
@@ -24,15 +26,15 @@ A package requests a peer dependency, but its parent in the dependency tree does
 
 This error occurs when a package peer dependencies cannot be satisfied. If the peer dependency is optional and shouldn't trigger such warnings, then mark it as such using the [optional peer dependencies]() feature.
 
-Note that Yarn enforces peer dependencies at every level of the dependency tree - meaning that if `A` depends on `(B,X)` and `B` depends on `C` and `C` has a peer dependency on `X`, then a warning will be emitted (because `B` doesn't fulfill the peer dependendy request). The best way to solve this is to explicitly list the transitive peer dependency on `X` in `B` has well.
+Note that Yarn enforces peer dependencies at every level of the dependency tree - meaning that if `A` depends on `B+X`, and `B` depends on `C`, and `C` has a peer dependency on `X`, then a warning will be emitted (because `B` doesn't fulfill the peer dependendy request). The best way to solve this is to explicitly list the transitive peer dependency on `X` in `B` has well.
 
 ## BR0003 - `CYCLIC_DEPENDENCIES`
 
 Two packages with build scripts have cyclic dependencies.
 
-Cyclic dependencies are a can of worm. They happen when a package `A` depends on a package `B` and vice-versa (they sometime can be spread across multiple packages - for example `A` depends on `B` which depends on `C` which depends on `A`).
+Cyclic dependencies are a can of worm. They happen when a package `A` depends on a package `B` and vice-versa Sometime can arise through a chain of multiple packages - for example when `A` depends on `B`, which depends on `C`, which depends on `A`.
 
-While they may work fine in the general case (and in fact Berry won't warn you about it in most cases), they cause issues as soon as build scripts are involved. Indeed, in order to build a package, we first must make sure that its own dependencies have been properly built. How can we do that when two packages reference each other? Since it cannot be deduced, such patterns will cause the build scripts of every affected packages to simply be ignored.
+While cyclic dependencies may work fine in the general Javascript case (and in fact Yarn won't warn you about it in most cases), they can cause issues as soon as build scripts are involved. Indeed, in order to build a package, we first must make sure that its own dependencies have been properly built. How can we do that when two packages reference each other? Since the first one to build cannot be deduced, such patterns will cause the build scripts of every affected packages to simply be ignored (and a warning emitted).
 
 There's already good documentation online explaining how to get rid of cyclic dependencies, the simplest one being to extract the shared part of your program into a third package without dependencies. So the first case we described would become `A` depends on `C`, `B` depends on `C`, `C` doesn't depend on anything.
 

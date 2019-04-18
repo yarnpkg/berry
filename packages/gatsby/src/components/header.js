@@ -14,17 +14,20 @@ const HeaderContainer = styled.div`
   }
 `;
 
-const NewsContainer = styled.header`
+const NewsContainer = styled.a`
+  display: block;
+
   padding: 0.8em 1em;
 
   font-weight: light;
+  text-decoration: none;
 
   background: #2188b6;
   color: rgba(255, 255, 255, 0.8);
 `;
 
 const Highlight = styled.span`
-  text-decoration: underline;
+  font-weight: bold;
 
   color: #ffffff;
 `;
@@ -145,8 +148,8 @@ const Header = () => {
 
   return <>
     <HeaderContainer>
-      <NewsContainer>
-        <Highlight>Latest article:</Highlight> "Journey to the v2"
+      <NewsContainer href={`https://github.com/yarnpkg/berry`}>
+        <Highlight>Important:</Highlight> This documentation covers the v2 onwards and is actively being worked on. Come help us!
       </NewsContainer>
 
       <MenuContainer>

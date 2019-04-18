@@ -46,6 +46,8 @@ export class Manifest {
 
   public files: Set<String> = new Set();
 
+  public raw: object | null = null;
+
   static async find(path: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS} = {}) {
     return await Manifest.fromFile(posix.join(path, `package.json`), {baseFs});
   }
@@ -68,6 +70,7 @@ export class Manifest {
     if (typeof data !== `object` || data === null)
       throw new Error(`Utterly invalid manifest data (${data})`);
 
+    this.raw = data;
     const errors: Array<Error> = [];
 
     if (typeof data.name === `string`) {
