@@ -70,6 +70,10 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         bundleUrl = `https://github.com/yarnpkg/berry/raw/master/packages/berry-cli/bin/berry.js`;
         bundleVersion = `berry`;
         candidates = [bundleVersion];
+      } else if (range === `nightly-v1`) {
+        bundleUrl = `https://nightly.yarnpkg.com/latest.js`;
+        bundleVersion = `nightly`;
+        candidates = [bundleVersion];
       } else if (semver.valid(range)) {
         const {releases} = await fetchReleases(configuration, {
           includePrereleases: true,

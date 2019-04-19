@@ -28,7 +28,7 @@ export class ExecResolver implements Resolver {
 
   bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     if (descriptor.range.includes(`?`))
-      throw new Error(`File-type dependencies cannot contain the character "?"`);
+      return descriptor;
 
     return structUtils.makeDescriptor(descriptor, `${descriptor.range}?${querystring.stringify({
       locator: structUtils.stringifyLocator(fromLocator),

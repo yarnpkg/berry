@@ -31,9 +31,10 @@ export class AliasResolver implements Resolver {
 
   async resolve(locator: Locator, opts: ResolveOptions) {
     const pkg = await this.next.resolve(locator, opts);
+    const topLevelWorkspace = opts.project.topLevelWorkspace;
 
     for (const descriptor of Array.from(pkg.dependencies.values())) {
-      for (const {pattern, reference} of opts.project.topLevelWorkspace.manifest.resolutions) {
+      for (const {pattern, reference} of topLevelWorkspace.manifest.resolutions) {
         if (pattern.from && pattern.from.fullName !== structUtils.requirableIdent(locator))
           continue;
         if (pattern.from && pattern.from.description && pattern.from.description !== locator.reference)
@@ -43,8 +44,12 @@ export class AliasResolver implements Resolver {
           continue;        
         if (pattern.descriptor.description && pattern.descriptor.description !== descriptor.range)
           continue;
-        
-        const alias = structUtils.makeDescriptor(descriptor, reference);
+
+        const alias = opts.resolver.bindDescriptor(
+          structUtils.makeDescriptor(descriptor, reference),
+          topLevelWorkspace.anchoredLocator,
+          opts,
+        );
         
         pkg.dependencies.delete(descriptor.identHash);
         pkg.dependencies.set(alias.identHash, alias);

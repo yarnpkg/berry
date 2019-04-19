@@ -1048,18 +1048,16 @@ export class Project {
 
         buildPromises.push((async () => {
           for (const scriptName of buildDirective.scriptNames) {
-            const stdin = new PassThrough();
-            stdin.end();
-
             const logFile = tmpNameSync({
               prefix: `buildfile-`,
               postfix: `.log`,
             });
 
+            const stdin = null;
             const stdout = xfs.createWriteStream(logFile);
             const stderr = stdout;
 
-            stdout.write(`# This file contains the result of Berry building a package (${structUtils.stringifyLocator(pkg)})\n`);
+            stdout.write(`# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`);
             stdout.write(`\n`);
 
             const exitCode = await scriptUtils.executePackageScript(pkg, scriptName, [], {project: this, stdin, stdout, stderr});

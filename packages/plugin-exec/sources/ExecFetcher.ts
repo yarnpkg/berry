@@ -4,7 +4,7 @@ import {execUtils, miscUtils, scriptUtils, structUtils, tgzUtils} from '@berry/c
 import {NodeFS, xfs}                                              from '@berry/fslib';
 import {posix}                                                    from 'path';
 import querystring                                                from 'querystring';
-import {dirSync}                                                  from 'tmp';
+import {dirSync, tmpNameSync}                                     from 'tmp';
 
 import {PROTOCOL}                                                 from './constants';
 
@@ -17,15 +17,15 @@ export class ExecFetcher implements Fetcher {
   }
 
   getLocalPath(locator: Locator, opts: FetchOptions) {
-    const {parentLocator, filePath} = this.parseLocator(locator);
+    const {parentLocator, execPath} = this.parseLocator(locator);
 
-    if (posix.isAbsolute(filePath))
-      return filePath;
+    if (posix.isAbsolute(execPath))
+      return execPath;
 
     const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
 
     if (parentLocalPath !== null) {
-      return posix.resolve(parentLocalPath, filePath);
+      return posix.resolve(parentLocalPath, execPath);
     } else {
       return null;
     }
@@ -53,11 +53,11 @@ export class ExecFetcher implements Fetcher {
   }
 
   private async fetchFromDisk(locator: Locator, opts: FetchOptions) {
-    const {parentLocator, filePath} = this.parseLocator(locator);
+    const {parentLocator, execPath} = this.parseLocator(locator);
 
     // If the file target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
-    const parentFetch = posix.isAbsolute(filePath)
+    const parentFetch = posix.isAbsolute(execPath)
       ? {packageFs: new NodeFS(), prefixPath: `/`, localPath: `/`}
       : await opts.fetcher.fetch(parentLocator, opts);
 
@@ -71,15 +71,13 @@ export class ExecFetcher implements Fetcher {
     if (parentFetch !== effectiveParentFetch && parentFetch.releaseFs)
       parentFetch.releaseFs();
 
-    const sourceFs = effectiveParentFetch.packageFs;
-    const sourcePath = posix.resolve(effectiveParentFetch.prefixPath, filePath);
-
-    const cwd = NodeFS.toPortablePath(dirSync().name);
-    const env = await scriptUtils.makeScriptEnv(opts.project);
+    const generatorFs = effectiveParentFetch.packageFs;
+    const generatorPath = posix.resolve(posix.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), execPath);
 
     // Execute the specified script in the temporary directory
-    await execUtils.execvp(process.execPath, [sourcePath], {cwd, env});
+    const cwd = await this.generatePackage(locator, generatorPath, opts);
 
+    // Make sure the script generated the package
     if (!xfs.existsSync(`${cwd}/build`))
       throw new Error(`The script should have generated a build directory`);
 
@@ -88,13 +86,36 @@ export class ExecFetcher implements Fetcher {
     });
   }
 
+  private async generatePackage(locator: Locator, generatorPath: string, opts: FetchOptions) {
+    const cwd = NodeFS.toPortablePath(dirSync().name);
+    const env = await scriptUtils.makeScriptEnv(opts.project);
+
+    const logFile = tmpNameSync({
+      prefix: `buildfile-`,
+      postfix: `.log`,
+    });
+
+    const stdin = null;
+    const stdout = xfs.createWriteStream(logFile);
+    const stderr = stdout;
+
+    stdout.write(`# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`);
+    stdout.write(`\n`);
+
+    const {code} = await execUtils.pipevp(process.execPath, [generatorPath, structUtils.stringifyIdent(locator)], {cwd, env, stdin, stdout, stderr});
+    if (code !== 0)
+      throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${logFile})`);
+
+    return cwd;
+  }
+
   private parseLocator(locator: Locator) {
     const qsIndex = locator.reference.indexOf(`?`);
 
     if (qsIndex === -1)
       throw new Error(`Invalid file-type locator`);
 
-    const filePath = posix.normalize(locator.reference.slice(PROTOCOL.length, qsIndex));
+    const execPath = posix.normalize(locator.reference.slice(PROTOCOL.length, qsIndex));
     const queryString = querystring.parse(locator.reference.slice(qsIndex + 1));
 
     if (typeof queryString.locator !== `string`)
@@ -102,6 +123,6 @@ export class ExecFetcher implements Fetcher {
 
     const parentLocator = structUtils.parseLocator(queryString.locator, true);
 
-    return {parentLocator, filePath};
+    return {parentLocator, execPath};
   }
 }
