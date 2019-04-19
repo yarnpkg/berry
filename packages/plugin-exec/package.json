@@ -1,0 +1,15 @@
+{
+  "name": "@berry/plugin-exec",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/builder": "workspace:*",
+    "@berry/core": "workspace:*",
+    "@berry/fslib": "workspace:*",
+    "@types/tmp": "0.1.0",
+    "tmp": "^0.0.33"
+  },
+  "scripts": {
+    "build:plugin-exec": "run @berry-build-plugin"
+  }
+}
