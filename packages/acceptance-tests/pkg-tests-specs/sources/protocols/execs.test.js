@@ -16,7 +16,7 @@ describe(`Protocols`, () => {
         },
       }, async ({path, run, source}) => {
         await xfs.writeFilePromise(`${path}/.yarnrc`, stringifySyml({
-          plugins: [require.resolve(`@berry/plugin-exec/bundles/@berry/plugin-exec.js`)],
+          plugins: [require.resolve(`@berry/plugin-exec/bin/@berry/plugin-exec.js`)],
         }));
   
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
