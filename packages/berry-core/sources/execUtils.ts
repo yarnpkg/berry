@@ -5,16 +5,20 @@ import {Readable, Writable} from 'stream';
 export type PipevpOptions = {
   cwd: string,
   env?: {[key: string]: string | undefined},
-  stdin: Readable,
+  strict?: boolean,
+  stdin: Readable | null,
   stdout: Writable,
   stderr: Writable,
 };
 
-export async function pipevp(fileName: string, args: Array<string>, {cwd, env = process.env, stdin, stdout, stderr}: PipevpOptions) {
+export async function pipevp(fileName: string, args: Array<string>, {cwd, env = process.env, strict = false, stdin = null, stdout, stderr}: PipevpOptions): Promise<{code: number}> {
   const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
 
-  if (stdin === process.stdin)
+  if (stdin === null)
+    stdio[0] = `ignore`;
+  else if (stdin === process.stdin)
     stdio[0] = stdin;
+
   if (stdout === process.stdout)
     stdio[1] = stdout;
   if (stderr === process.stderr)
@@ -26,27 +30,37 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
     stdio,
   });
 
-  if (stdin !== process.stdin)
+  if (stdin !== process.stdin && stdin !== null)
     stdin.pipe(subprocess.stdin);
+
   if (stdout !== process.stdout)
     subprocess.stdout.pipe(stdout);
   if (stderr !== process.stderr)
     subprocess.stderr.pipe(stderr);
 
-  await subprocess;
+  return new Promise((resolve, reject) => {
+    subprocess.on(`close`, (code: number) => {
+      if (code === 0 || !strict) {
+        resolve({code});
+      } else {
+        reject(new Error(`Child "${fileName}" exited with exit code ${code}`));
+      }
+    });
+  });
 }
 
 export type ExecvpOptions = {
   cwd: string,
   env?: {[key: string]: string | undefined},
   encoding?: string,
+  strict?: boolean,
 };
 
 export async function execvp(fileName: string, args: Array<string>, opts: ExecvpOptions & {encoding: `buffer`}): Promise<{code: number, stdout: Buffer, stderr: Buffer}>;
 export async function execvp(fileName: string, args: Array<string>, opts: ExecvpOptions & {encoding: string}): Promise<{code: number, stdout: string, stderr: string}>;
 export async function execvp(fileName: string, args: Array<string>, opts: ExecvpOptions): Promise<{code: number, stdout: string, stderr: string}>;
 
-export async function execvp(fileName: string, args: Array<string>, {cwd, env = process.env, encoding = `utf8`}: ExecvpOptions) {
+export async function execvp(fileName: string, args: Array<string>, {cwd, env = process.env, encoding = `utf8`, strict = false}: ExecvpOptions) {
   const stdio: any = [`ignore`, `pipe`, `pipe`];
 
   const stdoutChunks: Array<Buffer> = [];
@@ -76,10 +90,10 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
         ? Buffer.concat(stderrChunks)
         : Buffer.concat(stderrChunks).toString(encoding);
 
-      if (code === 0) {
+      if (code === 0 || !strict) {
         resolve({code, stdout, stderr});
       } else {
-        reject({code, stdout, stderr});
+        reject(new Error(`Child "${fileName}" exited with exit code ${code}`));
       }
     });
   });

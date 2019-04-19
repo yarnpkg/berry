@@ -9378,6 +9378,43 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "@berry/plugin-exec",
+        [
+          [
+            "workspace:packages/plugin-exec",
+            {
+              "packageLocation": "./packages/plugin-exec/",
+              "packageDependencies": [
+                [
+                  "@berry/plugin-exec",
+                  "workspace:packages/plugin-exec"
+                ],
+                [
+                  "@berry/builder",
+                  "workspace:packages/berry-builder"
+                ],
+                [
+                  "@berry/core",
+                  "workspace:packages/berry-core"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@types/tmp",
+                  "npm:0.1.0"
+                ],
+                [
+                  "tmp",
+                  "npm:0.0.33"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "@berry/plugin-file",
         [
           [
@@ -14597,6 +14634,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/tmp",
                   "npm:0.0.33"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:0.1.0",
+            {
+              "packageLocation": "./.yarn/cache/@types-tmp-npm-0.1.0-1a3e4dadd4c2326666cf9e0083ca4c150d7c3c19dbf3055de73bff70167d5ca0.zip/node_modules/@types/tmp/",
+              "packageDependencies": [
+                [
+                  "@types/tmp",
+                  "npm:0.1.0"
                 ]
               ]
             }

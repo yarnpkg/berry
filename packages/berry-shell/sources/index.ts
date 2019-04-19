@@ -9,7 +9,7 @@ export type UserOptions = {
   builtins: {[key: string]: ShellBuiltin},
   cwd: string,
   env: {[key: string]: string | undefined},
-  stdin: Readable,
+  stdin: Readable | null,
   stdout: Writable,
   stderr: Writable,
   variables: {[key: string]: string},
@@ -446,6 +446,12 @@ export async function execute(command: string, args: Array<string> = [], {
   const normalizedBuiltins = new Map(BUILTINS);
   for (const [key, builtin] of Object.entries(builtins))
     normalizedBuiltins.set(key, builtin);
+
+  // This is meant to be the equivalent of /dev/null
+  if (stdin === null) {
+    stdin = new PassThrough();
+    (stdin as PassThrough).end();
+  }
 
   const ast = parseShell(command);
 

@@ -86,7 +86,7 @@ export async function hasPackageScript(locator: Locator, scriptName: string, {pr
 type ExecutePackageScriptOptions = {
   cwd?: string | undefined,
   project: Project,
-  stdin: Readable,
+  stdin: Readable | null,
   stdout: Writable,
   stderr: Writable,
 };
@@ -133,7 +133,7 @@ export async function executePackageScript(locator: Locator, scriptName: string,
 
 type ExecuteWorkspaceScriptOptions = {
   cwd?: string | undefined,
-  stdin: Readable,
+  stdin: Readable | null,
   stdout: Writable,
   stderr: Writable,
 };
@@ -155,7 +155,6 @@ type GetPackageAccessibleBinariesOptions = {
 
 export async function getPackageAccessibleBinaries(locator: Locator, {project}: GetPackageAccessibleBinariesOptions) {
   const pkg = project.storedPackages.get(locator.locatorHash);
-
   if (!pkg)
     throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
 
@@ -213,7 +212,7 @@ export async function getWorkspaceAccessibleBinaries(workspace: Workspace) {
 type ExecutePackageAccessibleBinaryOptions = {
   cwd: string,
   project: Project,
-  stdin: Readable,
+  stdin: Readable | null,
   stdout: Writable,
   stderr: Writable,
 };
@@ -243,16 +242,19 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
   for (const [binaryName, [pkg, binaryPath]] of packageAccessibleBinaries)
     await makePathWrapper(env.BERRY_BIN_FOLDER, binaryName, process.execPath, [binaryPath]);
 
+  let result;
   try {
-    await execUtils.pipevp(process.execPath, [binaryPath, ... args], {cwd, env, stdin, stdout, stderr});
+    result = await execUtils.pipevp(process.execPath, [binaryPath, ... args], {cwd, env, stdin, stdout, stderr});
   } finally {
     await xfs.removePromise(env.BERRY_BIN_FOLDER);
   }
+
+  return result.code;
 }
 
 type ExecuteWorkspaceAccessibleBinaryOptions = {
   cwd: string,
-  stdin: Readable,
+  stdin: Readable | null,
   stdout: Writable,
   stderr: Writable,
 };
