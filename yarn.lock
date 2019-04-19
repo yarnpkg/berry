@@ -1739,7 +1739,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-exec@workspace:*, @berry/plugin-exec@workspace:packages/plugin-exec":
+"@berry/plugin-exec@workspace:packages/plugin-exec":
   version: 0.0.0
   resolution: "@berry/plugin-exec@workspace:packages/plugin-exec"
   dependencies:
@@ -16238,7 +16238,6 @@ __metadata:
     "@berry/fslib": "workspace:*"
     "@berry/monorepo": "workspace:*"
     "@berry/parsers": "workspace:*"
-    "@berry/plugin-exec": "workspace:*"
     fs-extra: "npm:^7.0.1"
     pkg-tests-core: "workspace:*"
     semver: "npm:^5.6.0"

@@ -102,7 +102,7 @@ export class ExecFetcher implements Fetcher {
     stdout.write(`# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`);
     stdout.write(`\n`);
 
-    const {code} = await execUtils.pipevp(process.execPath, [generatorPath, structUtils.stringifyIdent(locator)], {cwd, env, stdin, stdout, stderr});
+    const {code} = await execUtils.pipevp(process.execPath, [NodeFS.fromPortablePath(generatorPath), structUtils.stringifyIdent(locator)], {cwd, env, stdin, stdout, stderr});
     if (code !== 0)
       throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${logFile})`);
 

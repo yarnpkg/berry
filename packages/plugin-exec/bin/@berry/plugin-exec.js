@@ -197,7 +197,7 @@ class ExecFetcher {
         const stderr = stdout;
         stdout.write(`# This file contains the result of Yarn generating a package (${core_2.structUtils.stringifyLocator(locator)})\n`);
         stdout.write(`\n`);
-        const { code } = await core_2.execUtils.pipevp(process.execPath, [generatorPath, core_2.structUtils.stringifyIdent(locator)], { cwd, env, stdin, stdout, stderr });
+        const { code } = await core_2.execUtils.pipevp(process.execPath, [fslib_1.NodeFS.fromPortablePath(generatorPath), core_2.structUtils.stringifyIdent(locator)], { cwd, env, stdin, stdout, stderr });
         if (code !== 0)
             throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${logFile})`);
         return cwd;

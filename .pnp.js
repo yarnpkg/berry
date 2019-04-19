@@ -50081,10 +50081,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-parsers"
                 ],
                 [
-                  "@berry/plugin-exec",
-                  "workspace:packages/plugin-exec"
-                ],
-                [
                   "fs-extra",
                   "npm:7.0.1"
                 ],
