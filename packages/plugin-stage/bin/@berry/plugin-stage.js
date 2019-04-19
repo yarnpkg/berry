@@ -129,10 +129,13 @@ const ALL_DRIVERS = [
 // eslint-disable-next-line arca/no-default-export
 exports.default = (clipanion, pluginConfiguration) => clipanion
     .command(`stage [-c,--commit] [-r,--reset] [-u,--update] [-n,--dry-run]`)
+    .describe(`add all yarn files to your vcs`)
     .detail(`
-    This command will add to your staging area the files belonging to Yarn (typically any modified package.json, yarnrc files, pnp files, cache data, etc). Running \`--reset\` will instead remove them from the staging area (the changes will still be there, but won't be committed until you stage them back).
+    This command will add to your staging area the files belonging to Yarn (typically any modified \`package.json\` and \`.yarnrc\` files, but also linker-generated files, cache data, etc). It will take your ignore list into account, so the cache files won't be added if the cache is ignored in a \`.gitignore\` file (assuming you use Git).
+    
+    Running \`--reset\` will instead remove them from the staging area (the changes will still be there, but won't be committed until you stage them back).
 
-    Since the staging area is a non-existent concept in Mercurial, Yarn will always create a new commit when running this command. You can force this behavior when using Git by using the \`--commit\` flag.
+    Since the staging area is a non-existent concept in Mercurial, Yarn will always create a new commit when running this command on Mercurial repositories. You can get this behavior when using Git by using the \`--commit\` flag which will directly create a commit.
   `)
     .example(`Adds all modified project files to the staging area`, `yarn stage`)
     .example(`Creates a new commit containing all modified project files`, `yarn stage --commit`)
@@ -3783,7 +3786,7 @@ const stageUtils = __importStar(__webpack_require__(22));
 const MESSAGE_MARKER = `Commit generated via \`yarn stage\``;
 const COMMIT_DEPTH = 11;
 async function genCommitMessage(cwd) {
-    const { stdout } = await core_1.execUtils.execvp(`git`, [`log`, `-${COMMIT_DEPTH}`, `--pretty=format:%s`], { cwd });
+    const { stdout } = await core_1.execUtils.execvp(`git`, [`log`, `-${COMMIT_DEPTH}`, `--pretty=format:%s`], { cwd, strict: true });
     const lines = stdout.split(/\n/g).filter(line => line !== ``);
     return stageUtils.genCommitMessage(lines);
 }
@@ -3792,7 +3795,7 @@ exports.Driver = {
         return await stageUtils.findVcsRoot(cwd, { marker: `.git` });
     },
     async filterChanges(cwd, yarnRoots, yarnNames) {
-        const { stdout } = await core_1.execUtils.execvp(`git`, [`status`, `-s`], { cwd });
+        const { stdout } = await core_1.execUtils.execvp(`git`, [`status`, `-s`], { cwd, strict: true });
         const lines = stdout.toString().split(/\n/g);
         const changes = [].concat(...lines.map(line => {
             if (line === ``)
@@ -3815,12 +3818,12 @@ exports.Driver = {
     },
     async makeCommit(cwd, changeList) {
         const localPaths = changeList.map(path => fslib_1.NodeFS.fromPortablePath(path));
-        await core_1.execUtils.execvp(`git`, [`add`, `-N`, `--`, ...localPaths], { cwd });
-        await core_1.execUtils.execvp(`git`, [`commit`, `-m`, `${await genCommitMessage(cwd)}\n\n${MESSAGE_MARKER}\n`, `--`, ...localPaths], { cwd });
+        await core_1.execUtils.execvp(`git`, [`add`, `-N`, `--`, ...localPaths], { cwd, strict: true });
+        await core_1.execUtils.execvp(`git`, [`commit`, `-m`, `${await genCommitMessage(cwd)}\n\n${MESSAGE_MARKER}\n`, `--`, ...localPaths], { cwd, strict: true });
     },
     async makeReset(cwd, changeList) {
         const localPaths = changeList.map(path => fslib_1.NodeFS.fromPortablePath(path));
-        await core_1.execUtils.execvp(`git`, [`reset`, `HEAD`, `--`, ...localPaths], { cwd });
+        await core_1.execUtils.execvp(`git`, [`reset`, `HEAD`, `--`, ...localPaths], { cwd, strict: true });
     },
 };
 
