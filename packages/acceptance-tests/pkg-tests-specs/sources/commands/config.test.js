@@ -8,7 +8,9 @@ const FAKE_REGISTRY_URL = `http://yarn.test.registry`;
 const FAKE_WORKSPACE_ROOT = `WORKSPACE_ROOT`;
 
 const environments = {
-  [`folder without rcfile in ancestry`]: async () => {},
+  [`folder without rcfile in ancestry`]: async () => {
+    // Nothing to do
+  },
   [`folder with rcfile`]: async path => {
     await writeFile(`${path}/${SUBFOLDER}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope berry-test\n`);
   },
@@ -26,16 +28,17 @@ const environments = {
 };
 
 function cleanupPlainOutput(output, path) {
-  return output
-      // replace the generated workspace root with a constant
-      .replace(new RegExp(path, `g`), FAKE_WORKSPACE_ROOT)
-      // replace the generated registry server URL with a constant
-      .replace(/^(\s*npmRegistryServer.*?)(['"]?)http:\/\/localhost:\d+\2\s*$/mg, `$1$2${FAKE_REGISTRY_URL}$2`);
+  // replace the generated workspace root with a constant
+  output = output.replace(new RegExp(path, `g`), FAKE_WORKSPACE_ROOT)
+
+  // replace the generated registry server URL with a constant
+  output = output.replace(/^(\s*npmRegistryServer.*?)(['"]?)http:\/\/localhost:\d+\2\s*$/mg, `$1$2${FAKE_REGISTRY_URL}$2`);
+
+  return output;
 }
 
 function cleanupJsonOutput(output, path) {
   let outputObject;
-
   try {
     outputObject = JSON.parse(output);
   } catch {
@@ -57,8 +60,9 @@ function cleanupJsonOutput(output, path) {
     if (typeof setting.default === 'string')
       setting.default = setting.default.replace(pathRegExp, FAKE_WORKSPACE_ROOT);
 
-    if (typeof setting.effective === 'string')
+    if (typeof setting.effective === 'string') {
       setting.effective = setting.effective.replace(pathRegExp, FAKE_WORKSPACE_ROOT);
+    }
   }
 
   return JSON.stringify(outputObject);
