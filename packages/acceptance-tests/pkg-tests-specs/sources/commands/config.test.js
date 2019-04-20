@@ -41,7 +41,7 @@ function cleanupJsonOutput(output, path) {
   let outputObject;
   try {
     outputObject = JSON.parse(output);
-  } catch {
+  } catch (e) {
     return cleanupPlainOutput(output, path);
   }
 
