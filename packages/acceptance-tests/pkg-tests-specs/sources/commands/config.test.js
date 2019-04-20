@@ -1,6 +1,7 @@
 const {
   fs: {mkdirp, writeFile},
 } = require('pkg-tests-core');
+const {NodeFS} = require('@berry/fslib');
 
 const RC_FILENAME = `.spec-yarnrc`;
 const SUBFOLDER = `subfolder`;
@@ -105,8 +106,10 @@ describe(`Commands`, () => {
             ({code, stdout, stderr} = error);
           }
 
-          stdout = cleanupStdout(stdout, path);
-          stderr = cleanupPlainOutput(stderr, path);
+          const portablePath = NodeFS.toPortablePath(path);
+
+          stdout = cleanupStdout(stdout, portablePath);
+          stderr = cleanupPlainOutput(stderr, portablePath);
 
           expect({code, stdout, stderr}).toMatchSnapshot();
         }));
