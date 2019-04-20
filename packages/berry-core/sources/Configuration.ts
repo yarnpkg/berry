@@ -79,6 +79,7 @@ export enum SettingsType {
   LOCATOR = 'LOCATOR',
   LOCATOR_LOOSE = 'LOCATOR_LOOSE',
   STRING = 'STRING',
+  SECRET = 'SECRET',
 };
 
 export type SettingsDefinition = {
