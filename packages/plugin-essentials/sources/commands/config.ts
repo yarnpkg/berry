@@ -35,7 +35,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     const getValue = (key: string) => {
       const isSecret = configuration.settings.get(key)!.type === SettingsType.SECRET;
-      const rawValue = configuration.values.get(key)!
+      const rawValue = configuration.values.get(key)!;
 
       if (isSecret && typeof rawValue === `string`) {
         return `********`;
