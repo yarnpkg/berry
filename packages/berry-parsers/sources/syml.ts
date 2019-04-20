@@ -86,7 +86,7 @@ export function stringifySyml(value: any) {
 
 export function parseSyml(source: string) {
   try {
-    return parse(source);
+    return parse(source.endsWith(`\n`) ? source : `${source}\n`);
   } catch (error) {
     if (error.location)
       error.message = error.message.replace(/(\.)?$/, ` (line ${error.location.start.line}, column ${error.location.start.column})$1`);

@@ -1,5 +1,5 @@
 import {Configuration, JsonReport, PluginConfiguration} from '@berry/core';
-import {miscUtils}                                      from '@berry/core';
+import {miscUtils, SettingsType}                        from '@berry/core';
 import {Writable}                                       from 'stream';
 import {inspect}                                        from 'util';
 
@@ -33,6 +33,17 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   .action(async ({cwd, stdout, verbose, why, json}: {cwd: string, stdout: Writable, verbose: boolean, why: boolean, json: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
+    const getValue = (key: string) => {
+      const isSecret = configuration.settings.get(key)!.type === SettingsType.SECRET;
+      const rawValue = configuration.values.get(key)!;
+
+      if (isSecret && typeof rawValue === `string`) {
+        return `********`;
+      } else {
+        return rawValue;
+      }
+    };
+
     const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
     const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
 
@@ -40,7 +51,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       const data = fromEntries(configuration.settings.entries());
 
       for (const key of Object.keys(data)) {
-        data[key].effective = configuration.values.get(key);
+        data[key].effective = getValue(key);
         data[key].source = configuration.sources.get(key);
       }
 
@@ -54,14 +65,14 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
       if (why || verbose) {
         const keysAndDescriptions = keys.map(key => {
-          const settings = configuration.settings.get(key);
+          const setting = configuration.settings.get(key);
 
-          if (!settings)
+          if (!setting)
             throw new Error(`Assertion failed: This settings ("${key}") should have been registered`);
 
           const description = why
             ? configuration.sources.get(key) || `<default>`
-            : settings.description;
+            : setting.description;
 
           return [key, description] as [string, string];
         });
@@ -71,11 +82,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         }, 0);
 
         for (const [key, description] of keysAndDescriptions) {
-          stdout.write(`${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(configuration.values.get(key), inspectConfig)}\n`);
+          stdout.write(`${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(getValue(key), inspectConfig)}\n`);
         }
       } else {
         for (const key of keys) {
-          stdout.write(`${key.padEnd(maxKeyLength, ` `)}   ${inspect(configuration.values.get(key), inspectConfig)}\n`);
+          stdout.write(`${key.padEnd(maxKeyLength, ` `)}   ${inspect(getValue(key), inspectConfig)}\n`);
         }
       }
     }
