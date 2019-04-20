@@ -93,7 +93,6 @@ describe(`Commands`, () => {
   describe(`constraints check`, () => {
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [scriptDescription, script] of Object.entries(constraints)) {
-        // Note: Don't use concurrent testing w/ snapshots, they don't work together
         test(`test (${environmentDescription} / ${scriptDescription})`, makeTemporaryEnv({}, async ({path, run, source}) => {
           await environment(path);
           await writeFile(`${path}/constraints.pro`, script);

@@ -75,7 +75,6 @@ describe(`Commands`, () => {
   describe(`config`, () => {
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [optionDescription, {flags, cleanupStdout}] of Object.entries(options)) {
-        // Note: Don't use concurrent testing w/ snapshots, they don't work together
         test(`test (${environmentDescription} / ${optionDescription})`, makeTemporaryEnv({}, async ({path, run, source}) => {
           const cwd = `${path}/${SUBFOLDER}/${SUBFOLDER}`;
           
