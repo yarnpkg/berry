@@ -393,6 +393,58 @@ yarnPath                 null
 }
 `;
 
+exports[`Commands config test (folder with rcfile without trailing newline / as json) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Error: Expected \\":\\", \\"\\\\n\\", \\"\\\\r\\", \\"\\\\r\\\\n\\", [^\\\\r\\\\n\\\\t :,], or blank space but end of input found (line 1, column 22).
+    at peg$buildStructuredError (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:14002:12)
+    at Object.peg$parse [as parse] (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:15529:11)
+    at Object.parseSyml (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:13616:23)
+    at Function.getRcData (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:23947:40)
+",
+}
+`;
+
+exports[`Commands config test (folder with rcfile without trailing newline / showing explanation) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Error: Expected \\":\\", \\"\\\\n\\", \\"\\\\r\\", \\"\\\\r\\\\n\\", [^\\\\r\\\\n\\\\t :,], or blank space but end of input found (line 1, column 22).
+    at peg$buildStructuredError (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:14002:12)
+    at Object.peg$parse [as parse] (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:15529:11)
+    at Object.parseSyml (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:13616:23)
+    at Function.getRcData (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:23947:40)
+",
+}
+`;
+
+exports[`Commands config test (folder with rcfile without trailing newline / showing the source) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Error: Expected \\":\\", \\"\\\\n\\", \\"\\\\r\\", \\"\\\\r\\\\n\\", [^\\\\r\\\\n\\\\t :,], or blank space but end of input found (line 1, column 22).
+    at peg$buildStructuredError (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:14002:12)
+    at Object.peg$parse [as parse] (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:15529:11)
+    at Object.parseSyml (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:13616:23)
+    at Function.getRcData (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:23947:40)
+",
+}
+`;
+
+exports[`Commands config test (folder with rcfile without trailing newline / without flags) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Error: Expected \\":\\", \\"\\\\n\\", \\"\\\\r\\", \\"\\\\r\\\\n\\", [^\\\\r\\\\n\\\\t :,], or blank space but end of input found (line 1, column 22).
+    at peg$buildStructuredError (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:14002:12)
+    at Object.peg$parse [as parse] (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:15529:11)
+    at Object.parseSyml (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:13616:23)
+    at Function.getRcData (/Users/bram/Workspaces/Private/berry/packages/berry-cli/bundles/berry.js:23947:40)
+",
+}
+`;
+
 exports[`Commands config test (folder without rcfile in ancestry / as json) 1`] = `
 Object {
   "code": 0,

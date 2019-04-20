@@ -12,6 +12,9 @@ const environments = {
   [`folder with rcfile`]: async path => {
     await writeFile(`${path}/${SUBFOLDER}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope berry-test\n`);
   },
+  [`folder with rcfile without trailing newline`]: async path => {
+    await writeFile(`${path}/${SUBFOLDER}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope berry-test`);
+  },
   [`folder with rcfile and rc in parent`]: async path => {
     await writeFile(`${path}/${SUBFOLDER}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope berry-test\n`);
     await writeFile(`${path}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope berry-test\nlastUpdateCheck 1555784893958\n`);
