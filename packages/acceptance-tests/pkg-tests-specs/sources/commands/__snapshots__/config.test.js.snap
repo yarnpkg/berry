@@ -12,39 +12,39 @@ exports[`Commands config test (folder with rcfile / showing explanation) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               Path of the file where the current state of the built packages must be stored         'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              Folder where the cache files must be written                                          'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         Enumeration defining what to do when a checksum doesn't match expectations            'throw'
-defaultLanguageName      Default language mode that should be used when a package doesn't offer any insight    'node'
-defaultProtocol          Default resolution protocol used when resolving pure semver and tag ranges            'npm:'
-enableAbsoluteVirtuals   If true, the virtual symlinks will use absolute paths if required [non portable!!]    true
-enableColors             If true, the CLI is allowed to use colors in its output                               false
-enableGlobalCache        If true, the system-wide cache folder will be used regardless of \`cache-folder\`       false
-enableNetwork            If false, the package manager will refuse to use the network if required to           true
-enableScripts            If true, packages are allowed to have install scripts by default                      true
-enableTimers             If true, the CLI is allowed to print the time spent executing commands                false
-frozenInstalls           If true, prevents the install command from modifying the lockfile                     false
-globalFolder             Folder where are stored the system-wide settings                                      'WORKSPACE_ROOT/.berry/global'
-httpProxy                URL of the http proxy that must be used for outgoing http requests                    null
-httpsProxy               URL of the http proxy that must be used for outgoing https requests                   null
-ignorePath               If true, the local executable will be ignored when using the global one               false
-initLicense              License used when creating packages via the init command                              null
-initScope                Scope used when creating packages via the init command                                'berry-test'
-initVersion              Version used when creating packages via the init command                              null
-lastUpdateCheck          Last timestamp we checked whether new Yarn versions were available                    null
-lockfilePath             Path of the file where the dependency tree must be stored                             'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      Package to use when node-gyp is omitted from the dependencies                         'node-gyp'
-npmRegistryServer        URL of the selected npm registry (note: npm enterprise isn't supported)               'http://yarn.test.registry'
-pnpDataPath              Path of the file where the PnP data (used by the loader) must be written              'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        If true, the PnP data will be inlined along with the generated loader                 true
-pnpIgnorePattern         Regex defining a pattern of files that should use the classic resolution              null
-pnpPath                  Path of the file where the PnP loader must be written                                 'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               String to prepend to the generated PnP script                                         '#!/usr/bin/env node'
-pnpUnpluggedFolder       Folder where the unplugged packages must be stored                                    'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        If true, the CLI will automatically use the interactive mode when called from a TTY   false
-rcFilename               Name of the files where the configuration can be found                                '.spec-yarnrc'
-virtualFolder            Folder where the symlinks generated for virtual packages must be written              'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 Path to the local executable that must be used over the global one                    null
+  "stdout": "bstatePath - Path of the file where the current state of the built packages must be stored - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - Folder where the cache files must be written - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
+defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
+defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
+enableColors - If true, the CLI is allowed to use colors in its output - false
+enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+enableNetwork - If false, the package manager will refuse to use the network if required to - true
+enableScripts - If true, packages are allowed to have install scripts by default - true
+enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
+frozenInstalls - If true, prevents the install command from modifying the lockfile - false
+globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - URL of the http proxy that must be used for outgoing http requests - null
+httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
+ignorePath - If true, the local executable will be ignored when using the global one - false
+initLicense - License used when creating packages via the init command - null
+initScope - Scope used when creating packages via the init command - 'berry-test'
+initVersion - Version used when creating packages via the init command - null
+lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null
+lockfilePath - Path of the file where the dependency tree must be stored - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
+npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
+pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
+pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
+pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
+pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
+virtualFolder - Folder where the symlinks generated for virtual packages must be written - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - Path to the local executable that must be used over the global one - null
 ",
 }
 `;
@@ -53,39 +53,39 @@ exports[`Commands config test (folder with rcfile / showing the source) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               <default>                                                                                                         'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              <default>                                                                                                         'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         <default>                                                                                                         'throw'
-defaultLanguageName      <default>                                                                                                         'node'
-defaultProtocol          <default>                                                                                                         'npm:'
-enableAbsoluteVirtuals   <environment>                                                                                                     true
-enableColors             <default>                                                                                                         false
-enableGlobalCache        <default>                                                                                                         false
-enableNetwork            <default>                                                                                                         true
-enableScripts            <default>                                                                                                         true
-enableTimers             <environment>                                                                                                     false
-frozenInstalls           <default>                                                                                                         false
-globalFolder             <environment>                                                                                                     'WORKSPACE_ROOT/.berry/global'
-httpProxy                <default>                                                                                                         null
-httpsProxy               <default>                                                                                                         null
-ignorePath               <default>                                                                                                         false
-initLicense              <default>                                                                                                         null
-initScope                WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc   'berry-test'
-initVersion              <default>                                                                                                         null
-lastUpdateCheck          <default>                                                                                                         null
-lockfilePath             <default>                                                                                                         'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      <default>                                                                                                         'node-gyp'
-npmRegistryServer        <environment>                                                                                                     'http://yarn.test.registry'
-pnpDataPath              <default>                                                                                                         'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        <default>                                                                                                         true
-pnpIgnorePattern         <default>                                                                                                         null
-pnpPath                  <default>                                                                                                         'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               <default>                                                                                                         '#!/usr/bin/env node'
-pnpUnpluggedFolder       <default>                                                                                                         'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        <default>                                                                                                         false
-rcFilename               <default>                                                                                                         '.spec-yarnrc'
-virtualFolder            <default>                                                                                                         'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 <default>                                                                                                         null
+  "stdout": "bstatePath - <default> - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - <default> - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - <default> - 'throw'
+defaultLanguageName - <default> - 'node'
+defaultProtocol - <default> - 'npm:'
+enableAbsoluteVirtuals - <environment> - true
+enableColors - <default> - false
+enableGlobalCache - <default> - false
+enableNetwork - <default> - true
+enableScripts - <default> - true
+enableTimers - <environment> - false
+frozenInstalls - <default> - false
+globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - <default> - null
+httpsProxy - <default> - null
+ignorePath - <default> - false
+initLicense - <default> - null
+initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'berry-test'
+initVersion - <default> - null
+lastUpdateCheck - <default> - null
+lockfilePath - <default> - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - <default> - 'node-gyp'
+npmRegistryServer - <environment> - 'http://yarn.test.registry'
+pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - <default> - true
+pnpIgnorePattern - <default> - null
+pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - <default> - '#!/usr/bin/env node'
+pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - <default> - false
+rcFilename - <default> - '.spec-yarnrc'
+virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - <default> - null
 ",
 }
 `;
@@ -94,39 +94,39 @@ exports[`Commands config test (folder with rcfile / without flags) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         'throw'
-defaultLanguageName      'node'
-defaultProtocol          'npm:'
-enableAbsoluteVirtuals   true
-enableColors             false
-enableGlobalCache        false
-enableNetwork            true
-enableScripts            true
-enableTimers             false
-frozenInstalls           false
-globalFolder             'WORKSPACE_ROOT/.berry/global'
-httpProxy                null
-httpsProxy               null
-ignorePath               false
-initLicense              null
-initScope                'berry-test'
-initVersion              null
-lastUpdateCheck          null
-lockfilePath             'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      'node-gyp'
-npmRegistryServer        'http://yarn.test.registry'
-pnpDataPath              'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        true
-pnpIgnorePattern         null
-pnpPath                  'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               '#!/usr/bin/env node'
-pnpUnpluggedFolder       'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        false
-rcFilename               '.spec-yarnrc'
-virtualFolder            'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 null
+  "stdout": "bstatePath - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - 'throw'
+defaultLanguageName - 'node'
+defaultProtocol - 'npm:'
+enableAbsoluteVirtuals - true
+enableColors - false
+enableGlobalCache - false
+enableNetwork - true
+enableScripts - true
+enableTimers - false
+frozenInstalls - false
+globalFolder - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - null
+httpsProxy - null
+ignorePath - false
+initLicense - null
+initScope - 'berry-test'
+initVersion - null
+lastUpdateCheck - null
+lockfilePath - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - 'node-gyp'
+npmRegistryServer - 'http://yarn.test.registry'
+pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - true
+pnpIgnorePattern - null
+pnpPath - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - '#!/usr/bin/env node'
+pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - false
+rcFilename - '.spec-yarnrc'
+virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - null
 ",
 }
 `;
@@ -143,39 +143,39 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / sh
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               Path of the file where the current state of the built packages must be stored         'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              Folder where the cache files must be written                                          'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         Enumeration defining what to do when a checksum doesn't match expectations            'throw'
-defaultLanguageName      Default language mode that should be used when a package doesn't offer any insight    'node'
-defaultProtocol          Default resolution protocol used when resolving pure semver and tag ranges            'npm:'
-enableAbsoluteVirtuals   If true, the virtual symlinks will use absolute paths if required [non portable!!]    true
-enableColors             If true, the CLI is allowed to use colors in its output                               false
-enableGlobalCache        If true, the system-wide cache folder will be used regardless of \`cache-folder\`       false
-enableNetwork            If false, the package manager will refuse to use the network if required to           true
-enableScripts            If true, packages are allowed to have install scripts by default                      true
-enableTimers             If true, the CLI is allowed to print the time spent executing commands                false
-frozenInstalls           If true, prevents the install command from modifying the lockfile                     false
-globalFolder             Folder where are stored the system-wide settings                                      'WORKSPACE_ROOT/.berry/global'
-httpProxy                URL of the http proxy that must be used for outgoing http requests                    null
-httpsProxy               URL of the http proxy that must be used for outgoing https requests                   null
-ignorePath               If true, the local executable will be ignored when using the global one               false
-initLicense              License used when creating packages via the init command                              null
-initScope                Scope used when creating packages via the init command                                'berry-test'
-initVersion              Version used when creating packages via the init command                              null
-lastUpdateCheck          Last timestamp we checked whether new Yarn versions were available                    '1555784893958'
-lockfilePath             Path of the file where the dependency tree must be stored                             'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      Package to use when node-gyp is omitted from the dependencies                         'node-gyp'
-npmRegistryServer        URL of the selected npm registry (note: npm enterprise isn't supported)               'http://yarn.test.registry'
-pnpDataPath              Path of the file where the PnP data (used by the loader) must be written              'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        If true, the PnP data will be inlined along with the generated loader                 true
-pnpIgnorePattern         Regex defining a pattern of files that should use the classic resolution              null
-pnpPath                  Path of the file where the PnP loader must be written                                 'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               String to prepend to the generated PnP script                                         '#!/usr/bin/env node'
-pnpUnpluggedFolder       Folder where the unplugged packages must be stored                                    'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        If true, the CLI will automatically use the interactive mode when called from a TTY   false
-rcFilename               Name of the files where the configuration can be found                                '.spec-yarnrc'
-virtualFolder            Folder where the symlinks generated for virtual packages must be written              'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 Path to the local executable that must be used over the global one                    null
+  "stdout": "bstatePath - Path of the file where the current state of the built packages must be stored - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - Folder where the cache files must be written - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
+defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
+defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
+enableColors - If true, the CLI is allowed to use colors in its output - false
+enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+enableNetwork - If false, the package manager will refuse to use the network if required to - true
+enableScripts - If true, packages are allowed to have install scripts by default - true
+enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
+frozenInstalls - If true, prevents the install command from modifying the lockfile - false
+globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - URL of the http proxy that must be used for outgoing http requests - null
+httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
+ignorePath - If true, the local executable will be ignored when using the global one - false
+initLicense - License used when creating packages via the init command - null
+initScope - Scope used when creating packages via the init command - 'berry-test'
+initVersion - Version used when creating packages via the init command - null
+lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - '1555784893958'
+lockfilePath - Path of the file where the dependency tree must be stored - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
+npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
+pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
+pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
+pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
+pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
+virtualFolder - Folder where the symlinks generated for virtual packages must be written - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - Path to the local executable that must be used over the global one - null
 ",
 }
 `;
@@ -184,39 +184,39 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / sh
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               <default>                                                                                                         'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              <default>                                                                                                         'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         <default>                                                                                                         'throw'
-defaultLanguageName      <default>                                                                                                         'node'
-defaultProtocol          <default>                                                                                                         'npm:'
-enableAbsoluteVirtuals   <environment>                                                                                                     true
-enableColors             <default>                                                                                                         false
-enableGlobalCache        <default>                                                                                                         false
-enableNetwork            <default>                                                                                                         true
-enableScripts            <default>                                                                                                         true
-enableTimers             <environment>                                                                                                     false
-frozenInstalls           <default>                                                                                                         false
-globalFolder             <environment>                                                                                                     'WORKSPACE_ROOT/.berry/global'
-httpProxy                <default>                                                                                                         null
-httpsProxy               <default>                                                                                                         null
-ignorePath               <default>                                                                                                         false
-initLicense              <default>                                                                                                         null
-initScope                WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc   'berry-test'
-initVersion              <default>                                                                                                         null
-lastUpdateCheck          WORKSPACE_ROOT/.spec-yarnrc                       '1555784893958'
-lockfilePath             <default>                                                                                                         'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      <default>                                                                                                         'node-gyp'
-npmRegistryServer        <environment>                                                                                                     'http://yarn.test.registry'
-pnpDataPath              <default>                                                                                                         'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        <default>                                                                                                         true
-pnpIgnorePattern         <default>                                                                                                         null
-pnpPath                  <default>                                                                                                         'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               <default>                                                                                                         '#!/usr/bin/env node'
-pnpUnpluggedFolder       <default>                                                                                                         'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        <default>                                                                                                         false
-rcFilename               <default>                                                                                                         '.spec-yarnrc'
-virtualFolder            <default>                                                                                                         'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 <default>                                                                                                         null
+  "stdout": "bstatePath - <default> - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - <default> - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - <default> - 'throw'
+defaultLanguageName - <default> - 'node'
+defaultProtocol - <default> - 'npm:'
+enableAbsoluteVirtuals - <environment> - true
+enableColors - <default> - false
+enableGlobalCache - <default> - false
+enableNetwork - <default> - true
+enableScripts - <default> - true
+enableTimers - <environment> - false
+frozenInstalls - <default> - false
+globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - <default> - null
+httpsProxy - <default> - null
+ignorePath - <default> - false
+initLicense - <default> - null
+initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'berry-test'
+initVersion - <default> - null
+lastUpdateCheck - WORKSPACE_ROOT/.spec-yarnrc - '1555784893958'
+lockfilePath - <default> - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - <default> - 'node-gyp'
+npmRegistryServer - <environment> - 'http://yarn.test.registry'
+pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - <default> - true
+pnpIgnorePattern - <default> - null
+pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - <default> - '#!/usr/bin/env node'
+pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - <default> - false
+rcFilename - <default> - '.spec-yarnrc'
+virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - <default> - null
 ",
 }
 `;
@@ -225,39 +225,39 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / wi
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         'throw'
-defaultLanguageName      'node'
-defaultProtocol          'npm:'
-enableAbsoluteVirtuals   true
-enableColors             false
-enableGlobalCache        false
-enableNetwork            true
-enableScripts            true
-enableTimers             false
-frozenInstalls           false
-globalFolder             'WORKSPACE_ROOT/.berry/global'
-httpProxy                null
-httpsProxy               null
-ignorePath               false
-initLicense              null
-initScope                'berry-test'
-initVersion              null
-lastUpdateCheck          '1555784893958'
-lockfilePath             'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      'node-gyp'
-npmRegistryServer        'http://yarn.test.registry'
-pnpDataPath              'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        true
-pnpIgnorePattern         null
-pnpPath                  'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               '#!/usr/bin/env node'
-pnpUnpluggedFolder       'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        false
-rcFilename               '.spec-yarnrc'
-virtualFolder            'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 null
+  "stdout": "bstatePath - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - 'throw'
+defaultLanguageName - 'node'
+defaultProtocol - 'npm:'
+enableAbsoluteVirtuals - true
+enableColors - false
+enableGlobalCache - false
+enableNetwork - true
+enableScripts - true
+enableTimers - false
+frozenInstalls - false
+globalFolder - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - null
+httpsProxy - null
+ignorePath - false
+initLicense - null
+initScope - 'berry-test'
+initVersion - null
+lastUpdateCheck - '1555784893958'
+lockfilePath - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - 'node-gyp'
+npmRegistryServer - 'http://yarn.test.registry'
+pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - true
+pnpIgnorePattern - null
+pnpPath - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - '#!/usr/bin/env node'
+pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - false
+rcFilename - '.spec-yarnrc'
+virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - null
 ",
 }
 `;
@@ -274,39 +274,39 @@ exports[`Commands config test (folder with rcfile and rc in parent / showing exp
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               Path of the file where the current state of the built packages must be stored         'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              Folder where the cache files must be written                                          'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         Enumeration defining what to do when a checksum doesn't match expectations            'throw'
-defaultLanguageName      Default language mode that should be used when a package doesn't offer any insight    'node'
-defaultProtocol          Default resolution protocol used when resolving pure semver and tag ranges            'npm:'
-enableAbsoluteVirtuals   If true, the virtual symlinks will use absolute paths if required [non portable!!]    true
-enableColors             If true, the CLI is allowed to use colors in its output                               false
-enableGlobalCache        If true, the system-wide cache folder will be used regardless of \`cache-folder\`       false
-enableNetwork            If false, the package manager will refuse to use the network if required to           true
-enableScripts            If true, packages are allowed to have install scripts by default                      true
-enableTimers             If true, the CLI is allowed to print the time spent executing commands                false
-frozenInstalls           If true, prevents the install command from modifying the lockfile                     false
-globalFolder             Folder where are stored the system-wide settings                                      'WORKSPACE_ROOT/.berry/global'
-httpProxy                URL of the http proxy that must be used for outgoing http requests                    null
-httpsProxy               URL of the http proxy that must be used for outgoing https requests                   null
-ignorePath               If true, the local executable will be ignored when using the global one               false
-initLicense              License used when creating packages via the init command                              null
-initScope                Scope used when creating packages via the init command                                'berry-test'
-initVersion              Version used when creating packages via the init command                              null
-lastUpdateCheck          Last timestamp we checked whether new Yarn versions were available                    '1555784893958'
-lockfilePath             Path of the file where the dependency tree must be stored                             'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      Package to use when node-gyp is omitted from the dependencies                         'node-gyp'
-npmRegistryServer        URL of the selected npm registry (note: npm enterprise isn't supported)               'http://yarn.test.registry'
-pnpDataPath              Path of the file where the PnP data (used by the loader) must be written              'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        If true, the PnP data will be inlined along with the generated loader                 true
-pnpIgnorePattern         Regex defining a pattern of files that should use the classic resolution              null
-pnpPath                  Path of the file where the PnP loader must be written                                 'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               String to prepend to the generated PnP script                                         '#!/usr/bin/env node'
-pnpUnpluggedFolder       Folder where the unplugged packages must be stored                                    'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        If true, the CLI will automatically use the interactive mode when called from a TTY   false
-rcFilename               Name of the files where the configuration can be found                                '.spec-yarnrc'
-virtualFolder            Folder where the symlinks generated for virtual packages must be written              'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 Path to the local executable that must be used over the global one                    null
+  "stdout": "bstatePath - Path of the file where the current state of the built packages must be stored - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - Folder where the cache files must be written - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
+defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
+defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
+enableColors - If true, the CLI is allowed to use colors in its output - false
+enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+enableNetwork - If false, the package manager will refuse to use the network if required to - true
+enableScripts - If true, packages are allowed to have install scripts by default - true
+enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
+frozenInstalls - If true, prevents the install command from modifying the lockfile - false
+globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - URL of the http proxy that must be used for outgoing http requests - null
+httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
+ignorePath - If true, the local executable will be ignored when using the global one - false
+initLicense - License used when creating packages via the init command - null
+initScope - Scope used when creating packages via the init command - 'berry-test'
+initVersion - Version used when creating packages via the init command - null
+lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - '1555784893958'
+lockfilePath - Path of the file where the dependency tree must be stored - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
+npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
+pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
+pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
+pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
+pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
+virtualFolder - Folder where the symlinks generated for virtual packages must be written - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - Path to the local executable that must be used over the global one - null
 ",
 }
 `;
@@ -315,39 +315,39 @@ exports[`Commands config test (folder with rcfile and rc in parent / showing the
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               <default>                                                                                                         'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              <default>                                                                                                         'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         <default>                                                                                                         'throw'
-defaultLanguageName      <default>                                                                                                         'node'
-defaultProtocol          <default>                                                                                                         'npm:'
-enableAbsoluteVirtuals   <environment>                                                                                                     true
-enableColors             <default>                                                                                                         false
-enableGlobalCache        <default>                                                                                                         false
-enableNetwork            <default>                                                                                                         true
-enableScripts            <default>                                                                                                         true
-enableTimers             <environment>                                                                                                     false
-frozenInstalls           <default>                                                                                                         false
-globalFolder             <environment>                                                                                                     'WORKSPACE_ROOT/.berry/global'
-httpProxy                <default>                                                                                                         null
-httpsProxy               <default>                                                                                                         null
-ignorePath               <default>                                                                                                         false
-initLicense              <default>                                                                                                         null
-initScope                WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc   'berry-test'
-initVersion              <default>                                                                                                         null
-lastUpdateCheck          WORKSPACE_ROOT/subfolder/.spec-yarnrc             '1555784893958'
-lockfilePath             <default>                                                                                                         'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      <default>                                                                                                         'node-gyp'
-npmRegistryServer        <environment>                                                                                                     'http://yarn.test.registry'
-pnpDataPath              <default>                                                                                                         'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        <default>                                                                                                         true
-pnpIgnorePattern         <default>                                                                                                         null
-pnpPath                  <default>                                                                                                         'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               <default>                                                                                                         '#!/usr/bin/env node'
-pnpUnpluggedFolder       <default>                                                                                                         'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        <default>                                                                                                         false
-rcFilename               <default>                                                                                                         '.spec-yarnrc'
-virtualFolder            <default>                                                                                                         'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 <default>                                                                                                         null
+  "stdout": "bstatePath - <default> - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - <default> - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - <default> - 'throw'
+defaultLanguageName - <default> - 'node'
+defaultProtocol - <default> - 'npm:'
+enableAbsoluteVirtuals - <environment> - true
+enableColors - <default> - false
+enableGlobalCache - <default> - false
+enableNetwork - <default> - true
+enableScripts - <default> - true
+enableTimers - <environment> - false
+frozenInstalls - <default> - false
+globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - <default> - null
+httpsProxy - <default> - null
+ignorePath - <default> - false
+initLicense - <default> - null
+initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'berry-test'
+initVersion - <default> - null
+lastUpdateCheck - WORKSPACE_ROOT/subfolder/.spec-yarnrc - '1555784893958'
+lockfilePath - <default> - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - <default> - 'node-gyp'
+npmRegistryServer - <environment> - 'http://yarn.test.registry'
+pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - <default> - true
+pnpIgnorePattern - <default> - null
+pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - <default> - '#!/usr/bin/env node'
+pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - <default> - false
+rcFilename - <default> - '.spec-yarnrc'
+virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - <default> - null
 ",
 }
 `;
@@ -356,39 +356,39 @@ exports[`Commands config test (folder with rcfile and rc in parent / without fla
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         'throw'
-defaultLanguageName      'node'
-defaultProtocol          'npm:'
-enableAbsoluteVirtuals   true
-enableColors             false
-enableGlobalCache        false
-enableNetwork            true
-enableScripts            true
-enableTimers             false
-frozenInstalls           false
-globalFolder             'WORKSPACE_ROOT/.berry/global'
-httpProxy                null
-httpsProxy               null
-ignorePath               false
-initLicense              null
-initScope                'berry-test'
-initVersion              null
-lastUpdateCheck          '1555784893958'
-lockfilePath             'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      'node-gyp'
-npmRegistryServer        'http://yarn.test.registry'
-pnpDataPath              'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        true
-pnpIgnorePattern         null
-pnpPath                  'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               '#!/usr/bin/env node'
-pnpUnpluggedFolder       'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        false
-rcFilename               '.spec-yarnrc'
-virtualFolder            'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 null
+  "stdout": "bstatePath - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - 'throw'
+defaultLanguageName - 'node'
+defaultProtocol - 'npm:'
+enableAbsoluteVirtuals - true
+enableColors - false
+enableGlobalCache - false
+enableNetwork - true
+enableScripts - true
+enableTimers - false
+frozenInstalls - false
+globalFolder - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - null
+httpsProxy - null
+ignorePath - false
+initLicense - null
+initScope - 'berry-test'
+initVersion - null
+lastUpdateCheck - '1555784893958'
+lockfilePath - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - 'node-gyp'
+npmRegistryServer - 'http://yarn.test.registry'
+pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - true
+pnpIgnorePattern - null
+pnpPath - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - '#!/usr/bin/env node'
+pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - false
+rcFilename - '.spec-yarnrc'
+virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - null
 ",
 }
 `;
@@ -405,39 +405,39 @@ exports[`Commands config test (folder with rcfile without trailing newline / sho
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               Path of the file where the current state of the built packages must be stored         'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              Folder where the cache files must be written                                          'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         Enumeration defining what to do when a checksum doesn't match expectations            'throw'
-defaultLanguageName      Default language mode that should be used when a package doesn't offer any insight    'node'
-defaultProtocol          Default resolution protocol used when resolving pure semver and tag ranges            'npm:'
-enableAbsoluteVirtuals   If true, the virtual symlinks will use absolute paths if required [non portable!!]    true
-enableColors             If true, the CLI is allowed to use colors in its output                               false
-enableGlobalCache        If true, the system-wide cache folder will be used regardless of \`cache-folder\`       false
-enableNetwork            If false, the package manager will refuse to use the network if required to           true
-enableScripts            If true, packages are allowed to have install scripts by default                      true
-enableTimers             If true, the CLI is allowed to print the time spent executing commands                false
-frozenInstalls           If true, prevents the install command from modifying the lockfile                     false
-globalFolder             Folder where are stored the system-wide settings                                      'WORKSPACE_ROOT/.berry/global'
-httpProxy                URL of the http proxy that must be used for outgoing http requests                    null
-httpsProxy               URL of the http proxy that must be used for outgoing https requests                   null
-ignorePath               If true, the local executable will be ignored when using the global one               false
-initLicense              License used when creating packages via the init command                              null
-initScope                Scope used when creating packages via the init command                                'berry-test'
-initVersion              Version used when creating packages via the init command                              null
-lastUpdateCheck          Last timestamp we checked whether new Yarn versions were available                    null
-lockfilePath             Path of the file where the dependency tree must be stored                             'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      Package to use when node-gyp is omitted from the dependencies                         'node-gyp'
-npmRegistryServer        URL of the selected npm registry (note: npm enterprise isn't supported)               'http://yarn.test.registry'
-pnpDataPath              Path of the file where the PnP data (used by the loader) must be written              'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        If true, the PnP data will be inlined along with the generated loader                 true
-pnpIgnorePattern         Regex defining a pattern of files that should use the classic resolution              null
-pnpPath                  Path of the file where the PnP loader must be written                                 'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               String to prepend to the generated PnP script                                         '#!/usr/bin/env node'
-pnpUnpluggedFolder       Folder where the unplugged packages must be stored                                    'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        If true, the CLI will automatically use the interactive mode when called from a TTY   false
-rcFilename               Name of the files where the configuration can be found                                '.spec-yarnrc'
-virtualFolder            Folder where the symlinks generated for virtual packages must be written              'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 Path to the local executable that must be used over the global one                    null
+  "stdout": "bstatePath - Path of the file where the current state of the built packages must be stored - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - Folder where the cache files must be written - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
+defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
+defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
+enableColors - If true, the CLI is allowed to use colors in its output - false
+enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+enableNetwork - If false, the package manager will refuse to use the network if required to - true
+enableScripts - If true, packages are allowed to have install scripts by default - true
+enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
+frozenInstalls - If true, prevents the install command from modifying the lockfile - false
+globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - URL of the http proxy that must be used for outgoing http requests - null
+httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
+ignorePath - If true, the local executable will be ignored when using the global one - false
+initLicense - License used when creating packages via the init command - null
+initScope - Scope used when creating packages via the init command - 'berry-test'
+initVersion - Version used when creating packages via the init command - null
+lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null
+lockfilePath - Path of the file where the dependency tree must be stored - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
+npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
+pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
+pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
+pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
+pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
+virtualFolder - Folder where the symlinks generated for virtual packages must be written - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - Path to the local executable that must be used over the global one - null
 ",
 }
 `;
@@ -446,39 +446,39 @@ exports[`Commands config test (folder with rcfile without trailing newline / sho
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               <default>                                                                                                         'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              <default>                                                                                                         'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         <default>                                                                                                         'throw'
-defaultLanguageName      <default>                                                                                                         'node'
-defaultProtocol          <default>                                                                                                         'npm:'
-enableAbsoluteVirtuals   <environment>                                                                                                     true
-enableColors             <default>                                                                                                         false
-enableGlobalCache        <default>                                                                                                         false
-enableNetwork            <default>                                                                                                         true
-enableScripts            <default>                                                                                                         true
-enableTimers             <environment>                                                                                                     false
-frozenInstalls           <default>                                                                                                         false
-globalFolder             <environment>                                                                                                     'WORKSPACE_ROOT/.berry/global'
-httpProxy                <default>                                                                                                         null
-httpsProxy               <default>                                                                                                         null
-ignorePath               <default>                                                                                                         false
-initLicense              <default>                                                                                                         null
-initScope                WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc   'berry-test'
-initVersion              <default>                                                                                                         null
-lastUpdateCheck          <default>                                                                                                         null
-lockfilePath             <default>                                                                                                         'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      <default>                                                                                                         'node-gyp'
-npmRegistryServer        <environment>                                                                                                     'http://yarn.test.registry'
-pnpDataPath              <default>                                                                                                         'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        <default>                                                                                                         true
-pnpIgnorePattern         <default>                                                                                                         null
-pnpPath                  <default>                                                                                                         'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               <default>                                                                                                         '#!/usr/bin/env node'
-pnpUnpluggedFolder       <default>                                                                                                         'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        <default>                                                                                                         false
-rcFilename               <default>                                                                                                         '.spec-yarnrc'
-virtualFolder            <default>                                                                                                         'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 <default>                                                                                                         null
+  "stdout": "bstatePath - <default> - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - <default> - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - <default> - 'throw'
+defaultLanguageName - <default> - 'node'
+defaultProtocol - <default> - 'npm:'
+enableAbsoluteVirtuals - <environment> - true
+enableColors - <default> - false
+enableGlobalCache - <default> - false
+enableNetwork - <default> - true
+enableScripts - <default> - true
+enableTimers - <environment> - false
+frozenInstalls - <default> - false
+globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - <default> - null
+httpsProxy - <default> - null
+ignorePath - <default> - false
+initLicense - <default> - null
+initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'berry-test'
+initVersion - <default> - null
+lastUpdateCheck - <default> - null
+lockfilePath - <default> - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - <default> - 'node-gyp'
+npmRegistryServer - <environment> - 'http://yarn.test.registry'
+pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - <default> - true
+pnpIgnorePattern - <default> - null
+pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - <default> - '#!/usr/bin/env node'
+pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - <default> - false
+rcFilename - <default> - '.spec-yarnrc'
+virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - <default> - null
 ",
 }
 `;
@@ -487,39 +487,39 @@ exports[`Commands config test (folder with rcfile without trailing newline / wit
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         'throw'
-defaultLanguageName      'node'
-defaultProtocol          'npm:'
-enableAbsoluteVirtuals   true
-enableColors             false
-enableGlobalCache        false
-enableNetwork            true
-enableScripts            true
-enableTimers             false
-frozenInstalls           false
-globalFolder             'WORKSPACE_ROOT/.berry/global'
-httpProxy                null
-httpsProxy               null
-ignorePath               false
-initLicense              null
-initScope                'berry-test'
-initVersion              null
-lastUpdateCheck          null
-lockfilePath             'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      'node-gyp'
-npmRegistryServer        'http://yarn.test.registry'
-pnpDataPath              'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        true
-pnpIgnorePattern         null
-pnpPath                  'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               '#!/usr/bin/env node'
-pnpUnpluggedFolder       'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        false
-rcFilename               '.spec-yarnrc'
-virtualFolder            'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 null
+  "stdout": "bstatePath - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - 'throw'
+defaultLanguageName - 'node'
+defaultProtocol - 'npm:'
+enableAbsoluteVirtuals - true
+enableColors - false
+enableGlobalCache - false
+enableNetwork - true
+enableScripts - true
+enableTimers - false
+frozenInstalls - false
+globalFolder - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - null
+httpsProxy - null
+ignorePath - false
+initLicense - null
+initScope - 'berry-test'
+initVersion - null
+lastUpdateCheck - null
+lockfilePath - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - 'node-gyp'
+npmRegistryServer - 'http://yarn.test.registry'
+pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - true
+pnpIgnorePattern - null
+pnpPath - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - '#!/usr/bin/env node'
+pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - false
+rcFilename - '.spec-yarnrc'
+virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - null
 ",
 }
 `;
@@ -536,39 +536,39 @@ exports[`Commands config test (folder without rcfile in ancestry / showing expla
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               Path of the file where the current state of the built packages must be stored         'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              Folder where the cache files must be written                                          'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         Enumeration defining what to do when a checksum doesn't match expectations            'throw'
-defaultLanguageName      Default language mode that should be used when a package doesn't offer any insight    'node'
-defaultProtocol          Default resolution protocol used when resolving pure semver and tag ranges            'npm:'
-enableAbsoluteVirtuals   If true, the virtual symlinks will use absolute paths if required [non portable!!]    true
-enableColors             If true, the CLI is allowed to use colors in its output                               false
-enableGlobalCache        If true, the system-wide cache folder will be used regardless of \`cache-folder\`       false
-enableNetwork            If false, the package manager will refuse to use the network if required to           true
-enableScripts            If true, packages are allowed to have install scripts by default                      true
-enableTimers             If true, the CLI is allowed to print the time spent executing commands                false
-frozenInstalls           If true, prevents the install command from modifying the lockfile                     false
-globalFolder             Folder where are stored the system-wide settings                                      'WORKSPACE_ROOT/.berry/global'
-httpProxy                URL of the http proxy that must be used for outgoing http requests                    null
-httpsProxy               URL of the http proxy that must be used for outgoing https requests                   null
-ignorePath               If true, the local executable will be ignored when using the global one               false
-initLicense              License used when creating packages via the init command                              null
-initScope                Scope used when creating packages via the init command                                null
-initVersion              Version used when creating packages via the init command                              null
-lastUpdateCheck          Last timestamp we checked whether new Yarn versions were available                    null
-lockfilePath             Path of the file where the dependency tree must be stored                             'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      Package to use when node-gyp is omitted from the dependencies                         'node-gyp'
-npmRegistryServer        URL of the selected npm registry (note: npm enterprise isn't supported)               'http://yarn.test.registry'
-pnpDataPath              Path of the file where the PnP data (used by the loader) must be written              'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        If true, the PnP data will be inlined along with the generated loader                 true
-pnpIgnorePattern         Regex defining a pattern of files that should use the classic resolution              null
-pnpPath                  Path of the file where the PnP loader must be written                                 'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               String to prepend to the generated PnP script                                         '#!/usr/bin/env node'
-pnpUnpluggedFolder       Folder where the unplugged packages must be stored                                    'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        If true, the CLI will automatically use the interactive mode when called from a TTY   false
-rcFilename               Name of the files where the configuration can be found                                '.spec-yarnrc'
-virtualFolder            Folder where the symlinks generated for virtual packages must be written              'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 Path to the local executable that must be used over the global one                    null
+  "stdout": "bstatePath - Path of the file where the current state of the built packages must be stored - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - Folder where the cache files must be written - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
+defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
+defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
+enableColors - If true, the CLI is allowed to use colors in its output - false
+enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+enableNetwork - If false, the package manager will refuse to use the network if required to - true
+enableScripts - If true, packages are allowed to have install scripts by default - true
+enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
+frozenInstalls - If true, prevents the install command from modifying the lockfile - false
+globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - URL of the http proxy that must be used for outgoing http requests - null
+httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
+ignorePath - If true, the local executable will be ignored when using the global one - false
+initLicense - License used when creating packages via the init command - null
+initScope - Scope used when creating packages via the init command - null
+initVersion - Version used when creating packages via the init command - null
+lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null
+lockfilePath - Path of the file where the dependency tree must be stored - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
+npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
+pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
+pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
+pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
+pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
+virtualFolder - Folder where the symlinks generated for virtual packages must be written - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - Path to the local executable that must be used over the global one - null
 ",
 }
 `;
@@ -577,39 +577,39 @@ exports[`Commands config test (folder without rcfile in ancestry / showing the s
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               <default>       'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              <default>       'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         <default>       'throw'
-defaultLanguageName      <default>       'node'
-defaultProtocol          <default>       'npm:'
-enableAbsoluteVirtuals   <environment>   true
-enableColors             <default>       false
-enableGlobalCache        <default>       false
-enableNetwork            <default>       true
-enableScripts            <default>       true
-enableTimers             <environment>   false
-frozenInstalls           <default>       false
-globalFolder             <environment>   'WORKSPACE_ROOT/.berry/global'
-httpProxy                <default>       null
-httpsProxy               <default>       null
-ignorePath               <default>       false
-initLicense              <default>       null
-initScope                <default>       null
-initVersion              <default>       null
-lastUpdateCheck          <default>       null
-lockfilePath             <default>       'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      <default>       'node-gyp'
-npmRegistryServer        <environment>   'http://yarn.test.registry'
-pnpDataPath              <default>       'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        <default>       true
-pnpIgnorePattern         <default>       null
-pnpPath                  <default>       'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               <default>       '#!/usr/bin/env node'
-pnpUnpluggedFolder       <default>       'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        <default>       false
-rcFilename               <default>       '.spec-yarnrc'
-virtualFolder            <default>       'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 <default>       null
+  "stdout": "bstatePath - <default> - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - <default> - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - <default> - 'throw'
+defaultLanguageName - <default> - 'node'
+defaultProtocol - <default> - 'npm:'
+enableAbsoluteVirtuals - <environment> - true
+enableColors - <default> - false
+enableGlobalCache - <default> - false
+enableNetwork - <default> - true
+enableScripts - <default> - true
+enableTimers - <environment> - false
+frozenInstalls - <default> - false
+globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - <default> - null
+httpsProxy - <default> - null
+ignorePath - <default> - false
+initLicense - <default> - null
+initScope - <default> - null
+initVersion - <default> - null
+lastUpdateCheck - <default> - null
+lockfilePath - <default> - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - <default> - 'node-gyp'
+npmRegistryServer - <environment> - 'http://yarn.test.registry'
+pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - <default> - true
+pnpIgnorePattern - <default> - null
+pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - <default> - '#!/usr/bin/env node'
+pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - <default> - false
+rcFilename - <default> - '.spec-yarnrc'
+virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - <default> - null
 ",
 }
 `;
@@ -618,39 +618,39 @@ exports[`Commands config test (folder without rcfile in ancestry / without flags
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "bstatePath               'WORKSPACE_ROOT/.yarn/build-state.yml'
-cacheFolder              'WORKSPACE_ROOT/.yarn/cache'
-checksumBehavior         'throw'
-defaultLanguageName      'node'
-defaultProtocol          'npm:'
-enableAbsoluteVirtuals   true
-enableColors             false
-enableGlobalCache        false
-enableNetwork            true
-enableScripts            true
-enableTimers             false
-frozenInstalls           false
-globalFolder             'WORKSPACE_ROOT/.berry/global'
-httpProxy                null
-httpsProxy               null
-ignorePath               false
-initLicense              null
-initScope                null
-initVersion              null
-lastUpdateCheck          null
-lockfilePath             'WORKSPACE_ROOT/yarn.lock'
-nodeGypMagicLocator      'node-gyp'
-npmRegistryServer        'http://yarn.test.registry'
-pnpDataPath              'WORKSPACE_ROOT/.pnp.data.json'
-pnpEnableInlining        true
-pnpIgnorePattern         null
-pnpPath                  'WORKSPACE_ROOT/.pnp.js'
-pnpShebang               '#!/usr/bin/env node'
-pnpUnpluggedFolder       'WORKSPACE_ROOT/.yarn/unplugged'
-preferInteractive        false
-rcFilename               '.spec-yarnrc'
-virtualFolder            'WORKSPACE_ROOT/.yarn/virtual'
-yarnPath                 null
+  "stdout": "bstatePath - 'WORKSPACE_ROOT/.yarn/build-state.yml'
+cacheFolder - 'WORKSPACE_ROOT/.yarn/cache'
+checksumBehavior - 'throw'
+defaultLanguageName - 'node'
+defaultProtocol - 'npm:'
+enableAbsoluteVirtuals - true
+enableColors - false
+enableGlobalCache - false
+enableNetwork - true
+enableScripts - true
+enableTimers - false
+frozenInstalls - false
+globalFolder - 'WORKSPACE_ROOT/.berry/global'
+httpProxy - null
+httpsProxy - null
+ignorePath - false
+initLicense - null
+initScope - null
+initVersion - null
+lastUpdateCheck - null
+lockfilePath - 'WORKSPACE_ROOT/yarn.lock'
+nodeGypMagicLocator - 'node-gyp'
+npmRegistryServer - 'http://yarn.test.registry'
+pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
+pnpEnableInlining - true
+pnpIgnorePattern - null
+pnpPath - 'WORKSPACE_ROOT/.pnp.js'
+pnpShebang - '#!/usr/bin/env node'
+pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
+preferInteractive - false
+rcFilename - '.spec-yarnrc'
+virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
+yarnPath - null
 ",
 }
 `;

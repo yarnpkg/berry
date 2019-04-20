@@ -28,8 +28,13 @@ const environments = {
 };
 
 function cleanupPlainOutput(output, path) {
+  // Replace multiple consecutive spaces with one space.
+  // The output of the config command is aligned according to the longest value, which probably
+  // contains `path`. In other words, the formatting depends on the lengt of `path`.
+  output = output.replace(/  +/g, ` - `);
+
   // replace the generated workspace root with a constant
-  output = output.replace(new RegExp(path, `g`), FAKE_WORKSPACE_ROOT)
+  output = output.replace(new RegExp(path, `g`), FAKE_WORKSPACE_ROOT);
 
   // replace the generated registry server URL with a constant
   output = output.replace(/^(\s*npmRegistryServer.*?)(['"]?)http:\/\/localhost:\d+\2\s*$/mg, `$1$2${FAKE_REGISTRY_URL}$2`);
