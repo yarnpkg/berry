@@ -24,7 +24,7 @@ exports.walk = function walk(
           return true;
         }
 
-        itemPath = NodeFS.toPortablePath(itemPath)
+        itemPath = NodeFS.toPortablePath(itemPath);
         const stat = xfs.statSync(itemPath);
 
         if (stat.isDirectory()) {
@@ -73,8 +73,10 @@ exports.packToStream = function packToStream(
 
   const zipperStream = zlib.createGzip();
 
-  const packStream = tarFs.pack(source, {
+  const packStream = tarFs.pack(NodeFS.fromPortablePath(source), {
     map: header => {
+      header.name = NodeFS.toPortablePath(header.name);
+
       if (true) {
         header.name = posix.resolve('/', header.name);
         header.name = posix.relative('/', header.name);
