@@ -260,13 +260,12 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
 function getDefaultGlobalFolder() {
   let base;
 
-  if (process.platform === `win32`) {
+  if (process.platform === `win32`) 
     base = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
-  } else if (process.env.XDG_DATA_HOME) {
+   else if (process.env.XDG_DATA_HOME) 
     base = NodeFS.toPortablePath(process.env.XDG_DATA_HOME);
-  } else {
+   else 
     base = NodeFS.toPortablePath(homedir());
-  }
 
   return posix.resolve(base, `yarn/modern`);
 }
