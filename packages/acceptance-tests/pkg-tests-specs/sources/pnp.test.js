@@ -1,5 +1,6 @@
+const {NodeFS, xfs} = require(`@berry/fslib`);
 const cp = require(`child_process`);
-const {existsSync, statSync, stat, rename, readdir, remove} = require(`fs-extra`);
+const {rename} = require(`fs-extra`);
 const {relative, isAbsolute} = require(`path`);
 const {satisfies} = require(`semver`);
 
@@ -16,14 +17,14 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const beforeTime = (await stat(`${path}/.pnp.js`)).mtimeMs;
+        const beforeTime = (await xfs.statPromise(`${path}/.pnp.js`)).mtimeMs;
 
         // Need to wait two seconds to be sure that the mtime will change
         await new Promise(resolve => setTimeout(resolve, 2000));
 
         await run(`install`);
 
-        const afterTime = (await stat(`${path}/.pnp.js`)).mtimeMs;
+        const afterTime = (await xfs.statPromise(`${path}/.pnp.js`)).mtimeMs;
 
         expect(afterTime).toEqual(beforeTime);
       },
@@ -37,7 +38,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const beforeTime = (await stat(`${path}/.pnp.js`)).mtimeMs;
+        const beforeTime = (await xfs.statPromise(`${path}/.pnp.js`)).mtimeMs;
 
         await writeJson(`${path}/package.json`, {
           dependencies: {
@@ -50,7 +51,7 @@ describe(`Plug'n'Play`, () => {
 
         await run(`install`);
 
-        const afterTime = (await stat(`${path}/.pnp.js`)).mtimeMs;
+        const afterTime = (await xfs.statPromise(`${path}/.pnp.js`)).mtimeMs;
 
         expect(afterTime).not.toEqual(beforeTime);
       },
@@ -314,8 +315,8 @@ describe(`Plug'n'Play`, () => {
         await expect(
           source(
             `require(require.resolve('no-deps', {paths: ${JSON.stringify([
-              `${path}/workspace-a`,
-              `${path}/workspace-b`,
+              `${NodeFS.fromPortablePath(path)}/workspace-a`,
+              `${NodeFS.fromPortablePath(path)}/workspace-b`,
             ])}}))`,
           ),
         ).resolves.toMatchObject({
@@ -409,7 +410,7 @@ describe(`Plug'n'Play`, () => {
         await writeFile(`${tmp}/index.js`, `require(process.argv[2])`);
         await writeFile(`${path}/index.js`, `require('no-deps')`);
 
-        await run(`node`, `${tmp}/index.js`, `${path}/index.js`);
+        await run(`node`, `${NodeFS.fromPortablePath(tmp)}/index.js`, `${path}/index.js`);
       },
     ),
   );
@@ -451,7 +452,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        expect(statSync(`${path}/.pnp.js`).mode & 0o111).toEqual(0o111);
+        expect((await xfs.statPromise(`${path}/.pnp.js`)).mode & 0o111).toEqual(0o111);
 
         const result = JSON.parse(cp.execFileSync(`${path}/.pnp.js`, [`no-deps`, `${path}/`], {encoding: `utf-8`}));
 
@@ -478,7 +479,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        expect(statSync(`${path}/.pnp.js`).mode & 0o111).toEqual(0o111);
+        expect((await xfs.statPromise(`${path}/.pnp.js`)).mode & 0o111).toEqual(0o111);
 
         const result = JSON.parse(cp.execFileSync(`${path}/.pnp.js`, [`fs`, `${path}/`], {encoding: `utf-8`}));
 
@@ -500,7 +501,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        expect(statSync(`${path}/.pnp.js`).mode & 0o111).toEqual(0o111);
+        expect((await xfs.statPromise(`${path}/.pnp.js`)).mode & 0o111).toEqual(0o111);
 
         const result = JSON.parse(
           cp.execFileSync(`${path}/.pnp.js`, [`doesnt-exists`, `${path}/`], {encoding: `utf-8`}),
@@ -632,8 +633,8 @@ describe(`Plug'n'Play`, () => {
           async ({path: path2, run: run2, source: source2}) => {
             // Move the install artifacts into a new location
             // If the .pnp.js file references absolute paths, they will stop working
-            await rename(`${path}/.yarn`, `${path2}/.yarn`);
-            await rename(`${path}/.pnp.js`, `${path2}/.pnp.js`);
+            await xfs.renamePromise(`${path}/.yarn`, `${path2}/.yarn`);
+            await xfs.renamePromise(`${path}/.pnp.js`, `${path2}/.pnp.js`);
 
             await expect(source2(`require('no-deps')`)).resolves.toMatchObject({
               name: `no-deps`,
@@ -690,7 +691,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await readdir(`${path}/.yarn/unplugged`);
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
         expect(listing).toHaveLength(1);
 
         await writeFile(
@@ -719,7 +720,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await readdir(`${path}/.yarn/unplugged`);
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
         expect(listing).toHaveLength(1);
 
         await writeFile(
@@ -753,7 +754,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await readdir(`${path}/.yarn/unplugged`);
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
         expect(listing).toHaveLength(2);
       },
     ),
@@ -776,7 +777,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await readdir(`${path}/.yarn/unplugged`);
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
         expect(listing).toHaveLength(1);
 
         expect(listing[0]).toMatch(/1.0.0/);
@@ -869,7 +870,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await readdir(`${path}/.yarn/unplugged`);
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
         expect(listing).toHaveLength(1);
 
         await writeFile(
@@ -895,7 +896,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        expect(existsSync(`${path}/.yarn/unplugged`)).toEqual(false);
+        expect(xfs.existsSync(`${path}/.yarn/unplugged`)).toEqual(false);
       },
     ),
   );
@@ -909,7 +910,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await readdir(`${path}/.yarn/unplugged`);
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
         expect(listing).toHaveLength(1);
       },
     ),
@@ -926,8 +927,8 @@ describe(`Plug'n'Play`, () => {
 
         const rndBefore = await source(`require('no-deps-scripted/rnd.js')`);
 
-        await remove(`${path}/.yarn`);
-        await remove(`${path}/.pnp.js`);
+        await xfs.removePromise(`${path}/.yarn`);
+        await xfs.removePromise(`${path}/.pnp.js`);
 
         await run(`install`);
 
@@ -954,7 +955,7 @@ describe(`Plug'n'Play`, () => {
         await expect(
           source(
             `JSON.parse(require('child_process').execFileSync(process.execPath, [${JSON.stringify(
-              `${path}/script.js`,
+              `${NodeFS.fromPortablePath(path)}/script.js`,
             )}]).toString())`,
           ),
         ).resolves.toMatchObject({
@@ -979,7 +980,7 @@ describe(`Plug'n'Play`, () => {
         await writeFile(
           `${path}/main.js`,
           `console.log(require('child_process').execFileSync(process.execPath, [${JSON.stringify(
-            `${path}/sub.js`,
+            `${NodeFS.fromPortablePath(path)}/sub.js`,
           )}]).toString())`,
         );
 
@@ -999,7 +1000,7 @@ describe(`Plug'n'Play`, () => {
       await writeFile(`${path}/foo.js`, `console.log(42);`);
 
       await expect(
-        run(`node`, `-e`, `console.log(21);`, {env: {NODE_OPTIONS: `--require ${path}/foo`}}),
+        run(`node`, `-e`, `console.log(21);`, {env: {NODE_OPTIONS: `--require ${NodeFS.fromPortablePath(path)}/foo`}}),
       ).resolves.toMatchObject({
         // Note that '42' is present twice: the first one because Node executes Yarn, and the second one because Yarn spawns Node
         stdout: `42\n42\n21\n`,

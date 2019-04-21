@@ -1,8 +1,8 @@
+const {xfs} = require(`@berry/fslib`);
 const {
   fs: {readJson, writeJson},
   tests: {getPackageDirectoryPath},
 } = require('pkg-tests-core');
-const {copy} = require('fs-extra');
 
 describe(`Protocols`, () => {
   describe(`portal:`, () => {
@@ -75,8 +75,8 @@ describe(`Protocols`, () => {
           [`provides-peer-deps-2-0-0`]: `file:./provides-peer-deps-2-0-0`,
         },
       }, async ({path, run, source}) => {
-        await copy(await getPackageDirectoryPath(`provides-peer-deps-1-0-0`, `1.0.0`), `${path}/provides-peer-deps-1-0-0`);
-        await copy(await getPackageDirectoryPath(`provides-peer-deps-2-0-0`, `1.0.0`), `${path}/provides-peer-deps-2-0-0`);
+        await xfs.copyPromise(`${path}/provides-peer-deps-1-0-0`, await getPackageDirectoryPath(`provides-peer-deps-1-0-0`, `1.0.0`));
+        await xfs.copyPromise(`${path}/provides-peer-deps-2-0-0`, await getPackageDirectoryPath(`provides-peer-deps-2-0-0`, `1.0.0`));
 
         const providesPeerDeps100 = await readJson(`${path}/provides-peer-deps-1-0-0/package.json`);
         providesPeerDeps100.dependencies[`peer-deps`] = `portal:${await getPackageDirectoryPath(`peer-deps`, `1.0.0`)}`;

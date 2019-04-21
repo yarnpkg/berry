@@ -1,8 +1,7 @@
-import {normalize} from 'path';
-
+const {NodeFS} = require(`@berry/fslib`);
 const {
   exec: {execFile},
-  fs: {createTemporaryFolder, mkdirp, readJson, writeFile},
+  fs: {writeFile},
 } = require('pkg-tests-core');
 
 describe(`Commands`, () => {
@@ -14,7 +13,10 @@ describe(`Commands`, () => {
         await writeFile(`${path}/.yarnrc`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-stage.js`))}\n`);
 
         await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
-          stdout: `${normalize(`${path}/.yarnrc`)}\n${normalize(`${path}/package.json`)}\n`,
+          stdout: [
+            `${NodeFS.fromPortablePath(`${path}/.yarnrc`)}\n`,
+            `${NodeFS.fromPortablePath(`${path}/package.json`)}\n`,
+          ].join(``),
         });
       }),
     );
@@ -28,7 +30,10 @@ describe(`Commands`, () => {
         await writeFile(`${path}/index.js`, `module.exports = 42;\n`);
 
         await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
-          stdout: `${normalize(`${path}/.yarnrc`)}\n${normalize(`${path}/package.json`)}\n`,
+          stdout: [
+            `${NodeFS.fromPortablePath(`${path}/.yarnrc`)}\n`,
+            `${NodeFS.fromPortablePath(`${path}/package.json`)}\n`,
+          ].join(``),
         });
       }),
     );
@@ -47,13 +52,13 @@ describe(`Commands`, () => {
 
         await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
           stdout: [
-            normalize(`${path}/.pnp.js\n`),
-            normalize(`${path}/.yarn/build-state.yml\n`),
-            normalize(`${path}/.yarn/cache/.gitignore\n`),
-            normalize(`${path}/.yarn/cache/no-deps-npm-1.0.0-7b98016e4791f26dcb7dcf593c5483002916726a04cbeec6eb2ab72d35ed3c1e.zip\n`),
-            normalize(`${path}/.yarnrc\n`),
-            normalize(`${path}/package.json\n`),
-            normalize(`${path}/yarn.lock\n`),
+            `${NodeFS.fromPortablePath(`${path}/.pnp.js`)}\n`,
+            `${NodeFS.fromPortablePath(`${path}/.yarn/build-state.yml`)}\n`,
+            `${NodeFS.fromPortablePath(`${path}/.yarn/cache/.gitignore`)}\n`,
+            `${NodeFS.fromPortablePath(`${path}/.yarn/cache/no-deps-npm-1.0.0-7b98016e4791f26dcb7dcf593c5483002916726a04cbeec6eb2ab72d35ed3c1e.zip`)}\n`,
+            `${NodeFS.fromPortablePath(`${path}/.yarnrc`)}\n`,
+            `${NodeFS.fromPortablePath(`${path}/package.json`)}\n`,
+            `${NodeFS.fromPortablePath(`${path}/yarn.lock`)}\n`,
           ].join(``),
         });
       }),

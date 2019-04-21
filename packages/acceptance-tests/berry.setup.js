@@ -17,31 +17,26 @@ global.makeTemporaryEnv = generatePkgDriver({
     [command, ...args],
     {cwd, projectFolder, registryUrl, env, ...config},
   ) {
-    if (projectFolder) {
+    if (projectFolder)
       args = [...args, `--cwd`, projectFolder];
-    }
-
-    path = NodeFS.fromPortablePath(path);
 
     const rcEnv = {};
-
-    for (const [key, value] of Object.entries(config)) {
+    for (const [key, value] of Object.entries(config))
       rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = value;
-    }
+
+    const nativePath = NodeFS.fromPortablePath(path);
 
     const res = await execFile(process.execPath, [`${__dirname}/../../scripts/run-yarn.js`, command, ...args], {
-      env: Object.assign(
-        {
-          [`PATH`]: `${path}/bin${delimiter}${process.env.PATH}`,
-          [`YARN_ENABLE_ABSOLUTE_VIRTUALS`]: `true`,
-          [`YARN_ENABLE_TIMERS`]: `false`,
-          [`YARN_GLOBAL_FOLDER`]: `${path}/.berry/global`,
-          [`YARN_NPM_REGISTRY_SERVER`]: registryUrl,
-          ...rcEnv,
-        },
-        env,
-      ),
-      cwd: cwd ? NodeFS.fromPortablePath(cwd) : path,
+      cwd: cwd || path,
+      env: {
+        [`PATH`]: `${nativePath}/bin${delimiter}${process.env.PATH}`,
+        [`YARN_ENABLE_ABSOLUTE_VIRTUALS`]: `true`,
+        [`YARN_ENABLE_TIMERS`]: `false`,
+        [`YARN_GLOBAL_FOLDER`]: `${nativePath}/.berry/global`,
+        [`YARN_NPM_REGISTRY_SERVER`]: registryUrl,
+        ... rcEnv,
+        ... env,
+      },
     });
 
     if (process.env.JEST_LOG_SPAWNS) {

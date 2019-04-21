@@ -1,4 +1,4 @@
-const {existsSync, mkdirp} = require('fs-extra');
+const {NodeFS, xfs} = require(`@berry/fslib`);
 const {isAbsolute, resolve} = require('path');
 
 const {
@@ -59,7 +59,7 @@ describe(`Scripts tests`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        await mkdirp(`${path}/foo/bar`);
+        await xfs.mkdirpPromise(`${path}/foo/bar`);
 
         await expect(
           run(`run`, `has-bin-entries`, `success`, {
