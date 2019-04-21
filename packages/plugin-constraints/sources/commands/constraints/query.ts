@@ -35,7 +35,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const {project} = await Project.find(configuration, cwd);
     const constraints = await Constraints.find(project);
     
-    for (const result of await constraints.query(query)) {
+    for await (const result of constraints.query(query)) {
       const stringifiedResult = Array.from(Object.entries(result), ([variable, value]) => `${variable} = ${valueToString(value)}`).join(`,\n`);
 
       stdout.write(`${stringifiedResult} ;\n`);

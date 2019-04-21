@@ -8,6 +8,7 @@
         "module": "commonjs",
         "strict": true,
         "target": "es2017",
+        "lib": ["es2017", "esnext.asynciterable"],
         "typeRoots": [
             "./packages/berry-pnp/types",
             "./.yarn/cache/@types-cross-spawn-npm-6.0.0-ac0917e4f56743a2809d07a05b3c47617b6aaa9c1fa45db48f0c56051f0ace06.zip/node_modules/@types",

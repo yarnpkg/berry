@@ -27,6 +27,11 @@ const DEPENDENCY_TYPES = [
   DependencyType.PeerDependencies,
 ];
 
+// Node 8 doesn't have Symbol.asyncIterator
+// https://github.com/Microsoft/TypeScript/issues/14151#issuecomment-280812617
+if (Symbol.asyncIterator == null)
+  (Symbol as any).asyncIterator = Symbol.for('Symbol.asyncIterator');
+
 class Session {
   private readonly session: pl.type.Session;
 
@@ -45,8 +50,8 @@ class Session {
     });
   }
 
-  private async accumulateAnswers() {
-    const answers = [];
+  public async *makeQuery(query: string) {
+    this.session.query(query);
 
     while (true) {
       const answer = await this.fetchNextAnswer();
@@ -54,16 +59,8 @@ class Session {
       if (!answer)
         break;
 
-      answers.push(answer);
+      yield answer;
     }
-
-    return answers;
-  }
-
-  public async makeQuery(query: string) {
-    this.session.query(query);
-
-    return this.accumulateAnswers();
   }
 }
 
@@ -153,7 +150,7 @@ export class Constraints {
       dependencyType: DependencyType,
     }> = [];
 
-    for (const answer of await session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
+    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
       if (answer.id === `throw`)
         throw new Error(pl.format_answer(answer));
 
@@ -184,7 +181,7 @@ export class Constraints {
       reason: string | null,
     }> = [];
 
-    for (const answer of await session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, Reason).`)) {
+    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, Reason).`)) {
       if (answer.id === `throw`)
         throw new Error(pl.format_answer(answer));
 
@@ -210,24 +207,21 @@ export class Constraints {
     return {enforcedDependencyRanges, invalidDependencies};
   }
 
-  async query(query: string) {
+  async *query(query: string) {
     const session = this.createSession();
 
-    const result: Record<string, string|null>[] = [];
-
-    for (const answer of await session.makeQuery(query)) {
+    for await (const answer of session.makeQuery(query)) {
       if (answer.id === `throw`)
         throw new Error(pl.format_answer(answer));
 
       const parsedLinks: Record<string, string|null> = {};
 
-      for (const [variable, value] of Object.entries(answer.links))
+      for (const [variable, value] of Object.entries(answer.links)) {
         parsedLinks[variable] = parseLink(value);
+      }
 
-      result.push(parsedLinks);
+      yield parsedLinks;
     }
-
-    return result;
   }
 }
 
