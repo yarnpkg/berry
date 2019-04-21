@@ -62,7 +62,7 @@ exports.getPackageRegistry = function getPackageRegistry(): Promise<PackageRegis
       }
 
       packageEntry.set(version, {
-        path: require('path').dirname(packageFile),
+        path: require('path').posix.dirname(packageFile),
         packageJson,
       });
     }
