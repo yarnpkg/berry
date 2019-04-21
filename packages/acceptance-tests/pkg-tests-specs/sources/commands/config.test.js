@@ -1,7 +1,6 @@
 const {
   fs: {mkdirp, writeFile},
 } = require('pkg-tests-core');
-const {posix} = require('path');
 
 const RC_FILENAME = `.spec-yarnrc`;
 const SUBFOLDER = `subfolder`;
@@ -86,7 +85,7 @@ describe(`Commands`, () => {
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [optionDescription, {flags, cleanupStdout}] of Object.entries(options)) {
         test(`test (${environmentDescription} / ${optionDescription})`, makeTemporaryEnv({}, async ({path, run, source}) => {
-          const cwd = posix.join(path, SUBFOLDER, SUBFOLDER);
+          const cwd = `${path}/${SUBFOLDER}/${SUBFOLDER}`;
 
           await mkdirp(cwd);
           await environment(path);
