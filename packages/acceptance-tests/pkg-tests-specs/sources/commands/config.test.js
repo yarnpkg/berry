@@ -6,6 +6,7 @@ const {NodeFS} = require('@berry/fslib');
 const RC_FILENAME = `.spec-yarnrc`;
 const SUBFOLDER = `subfolder`;
 const FAKE_REGISTRY_URL = `http://yarn.test.registry`;
+const FAKE_LOCAL_APP_DATA = `LOCAL_APP_DATA`;
 const FAKE_WORKSPACE_ROOT = `WORKSPACE_ROOT`;
 
 const environments = {
@@ -38,7 +39,10 @@ function cleanupPlainOutput(output, path) {
   output = output.replace(new RegExp(path, `g`), FAKE_WORKSPACE_ROOT);
 
   // replace the generated registry server URL with a constant
-  output = output.replace(/^(\s*npmRegistryServer.*?)(['"]?)http:\/\/localhost:\d+\2\s*$/mg, `$1$2${FAKE_REGISTRY_URL}$2`);
+  output = output.replace(/http:\/\/localhost:\d+/g, FAKE_REGISTRY_URL);
+
+  // replace the default global folder with a constant
+  output = output.replace(/[^"]+(\/yarn\/modern)/g, `${FAKE_LOCAL_APP_DATA}$1`);
 
   return output;
 }
@@ -96,12 +100,7 @@ describe(`Commands`, () => {
           let stderr;
 
           try {
-            ({code, stdout, stderr} = await run(`config`, ...flags, {
-              env: {
-                yarn_rc_filename: RC_FILENAME,
-              },
-              cwd,
-            }));
+            ({code, stdout, stderr} = await run(`config`, ...flags, {cwd, env: {YARN_RC_FILENAME: RC_FILENAME}}));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }

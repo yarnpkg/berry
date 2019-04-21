@@ -1,5 +1,5 @@
-import {Configuration, PluginConfiguration, Project, JsonReport, structUtils}            from '@berry/core';
-import {Writable}                                                                        from 'stream';
+import {Configuration, MessageName, PluginConfiguration, Project, StreamReport, structUtils} from '@berry/core';
+import {Writable}                                                                            from 'stream';
 
 const DEPENDENCY_TYPES = ['devDependencies', 'dependencies'];
 
@@ -15,14 +15,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
 
-    if (verbose && json) {
-      await JsonReport.start({stdout}, async (report: JsonReport) => {
-        for (const workspace of project.workspaces) {
-          const {manifest} = workspace;
+    const report = await StreamReport.start({configuration, json, stdout}, async report => {
+      for (const workspace of project.workspaces) {
+        const {manifest} = workspace;
 
-          if (!manifest.name)
-            continue;
-
+        let extra;
+        if (verbose) {
           const workspaceDependencies = new Set();
           const mismatchedWorkspaceDependencies = new Set();
 
@@ -42,24 +40,29 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
             }
           }
 
-          
-          report.reportJson({
-            location: workspace.relativeCwd,
-            name: structUtils.stringifyIdent(manifest.name),
-            
+          extra = {
             workspaceDependencies: Array.from(workspaceDependencies).map(workspace => {
               return workspace.relativeCwd;
             }),
+
             mismatchedWorkspaceDependencies: Array.from(mismatchedWorkspaceDependencies).map(descriptor => {
               return structUtils.stringifyDescriptor(descriptor);
-            })
-          });
+            }),
+          };
         }
-      });
-    } else {
-      for (const cwd of project.workspacesByCwd.keys()) {
-        stdout.write(`${cwd}\n`);
+
+        report.reportInfo(MessageName.UNNAMED, `${workspace.relativeCwd}`);
+        report.reportJson({
+          location: workspace.relativeCwd,
+
+          name: manifest.name
+            ? structUtils.stringifyIdent(manifest.name)
+            : null,
+
+          ... extra,
+        });
       }
-    }
-    return 0;
+    });
+
+    return report.exitCode();
   });

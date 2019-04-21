@@ -258,14 +258,16 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
 }
 
 function getDefaultGlobalFolder() {
-  if (process.platform === `win32`) {
-    const folder = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
-    return posix.resolve(folder);
-  } else if (process.env.XDG_DATA_HOME) {
-    return posix.resolve(process.env.XDG_DATA_HOME, 'yarn/modern');
-  } else {
-    return posix.resolve(homedir(), `.local/share/yarn/modern`);
-  }
+  let base;
+
+  if (process.platform === `win32`) 
+    base = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
+   else if (process.env.XDG_DATA_HOME) 
+    base = NodeFS.toPortablePath(process.env.XDG_DATA_HOME);
+   else 
+    base = NodeFS.toPortablePath(homedir());
+
+  return posix.resolve(base, `yarn/modern`);
 }
 
 function getEnvironmentSettings() {

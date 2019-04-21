@@ -1,5 +1,6 @@
 const {
   fs: {writeFile},
+  misc: {parseJsonStream},
 } = require('pkg-tests-core');
 
 describe(`Features`, () => {
@@ -11,9 +12,10 @@ describe(`Features`, () => {
         async ({path, run, source}) => {
           await writeFile(`${path}/.yarnrc`, `pnp-shebang "Hello World!"\n`);
 
-          const config = JSON.parse((await run(`config`, `--json`)).stdout);
-
-          expect(config).toMatchObject({
+          expect(parseJsonStream(
+            (await run(`config`, `--json`)).stdout,
+            `key`,
+          )).toMatchObject({
             [`pnpShebang`]: {
               effective: `Hello World!`,
             },
@@ -29,9 +31,10 @@ describe(`Features`, () => {
         async ({path, run, source}) => {
           await writeFile(`${path}/.foobarrc`, `pnp-shebang "Hello World!"\n`);
 
-          const config = JSON.parse((await run(`config`, `--json`, {rcFilename: `.foobarrc`})).stdout);
-
-          expect(config).toMatchObject({
+          expect(parseJsonStream(
+            (await run(`config`, `--json`, {rcFilename: `.foobarrc`})).stdout,
+            `key`,
+          )).toMatchObject({
             [`pnpShebang`]: {
               effective: `Hello World!`,
             },

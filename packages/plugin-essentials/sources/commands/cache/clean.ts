@@ -1,9 +1,8 @@
-import {Configuration, Cache, PluginConfiguration, Project} from '@berry/core';
-import {Locator, MessageName, StreamReport}                 from '@berry/core';
-import {JsonReport, LightReport, VirtualFetcher}            from '@berry/core';
-import {NodeFS, ZipFS, xfs}                                 from '@berry/fslib';
-import {posix}                                              from 'path';
-import {Writable}                                           from 'stream';
+import {Configuration, Cache, PluginConfiguration, Project}     from '@berry/core';
+import {LightReport, MessageName, StreamReport, VirtualFetcher} from '@berry/core';
+import {NodeFS, ZipFS, xfs}                                     from '@berry/fslib';
+import {posix}                                                  from 'path';
+import {Writable}                                               from 'stream';
 
 const PRESERVED_FILES = new Set([
   `.gitignore`,
@@ -46,7 +45,6 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       return resolutionReport.exitCode();
 
     const virtualFetcher = new VirtualFetcher();
-    const virtualFetcherOptions = {fetcher: virtualFetcher, project};
 
     const cacheEntries = new Set();
     const virtualEntries = new Set();
@@ -85,27 +83,16 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       }
     }
 
-    let unlinkReport;
+    const unlinkReport = await StreamReport.start({configuration, json, stdout}, async report => {
+      for (const path of dirtyPaths) {
+        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${posix.basename(path)} seems to be unused`);
+        report.reportJson({path: NodeFS.fromPortablePath(path)});
 
-    if (json) {
-      unlinkReport = await JsonReport.start({stdout}, async (report: JsonReport) => {
-        for (const path of dirtyPaths) {
-          report.reportJson({path: NodeFS.fromPortablePath(path)});
-          if (!dryRun) {
-            await xfs.unlinkPromise(path);
-          }
+        if (!dryRun) {
+          await xfs.unlinkPromise(path);
         }
-      });
-    } else {
-      unlinkReport = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
-        for (const path of dirtyPaths) {
-          report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${posix.basename(path)} seems to be unused`);
-          if (!dryRun) {
-            await xfs.unlinkPromise(path);
-          }
-        }
-      });
-    }
+      }
+    });
 
     return unlinkReport.exitCode();
   });
