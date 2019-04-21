@@ -217,7 +217,9 @@ export class Constraints {
       const parsedLinks: Record<string, string|null> = {};
 
       for (const [variable, value] of Object.entries(answer.links)) {
-        parsedLinks[variable] = parseLink(value);
+        if (variable !== `_`) {
+          parsedLinks[variable] = parseLink(value);
+        }
       }
 
       yield parsedLinks;
