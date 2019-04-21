@@ -15,7 +15,7 @@ const constraints = {
 };
 
 describe(`Commands`, () => {
-  describe(`constraints check`, () => {
+  describe(`constraints source`, () => {
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [scriptDescription, script] of Object.entries(constraints)) {
         test(`test (${environmentDescription} / ${scriptDescription})`, makeTemporaryEnv({}, async ({path, run, source}) => {
@@ -27,7 +27,15 @@ describe(`Commands`, () => {
           let stderr;
 
           try {
-            ({code, stdout, stderr} = await run(`constraints`, `check`));
+            ({code, stdout, stderr} = await run(`constraints`, `source`));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          expect({code, stdout, stderr}).toMatchSnapshot();
+          
+          try {
+            ({code, stdout, stderr} = await run(`constraints`, `source`, `--verbose`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }

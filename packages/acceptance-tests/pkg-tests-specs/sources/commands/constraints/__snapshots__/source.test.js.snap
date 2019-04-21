@@ -1,0 +1,1064 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Commands constraints source test (empty project / empty constraints) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints source test (empty project / empty constraints) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701418Jl8i2f4zQg1').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701418Jl8i2f4zQg1', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701418Jl8i2f4zQg1', []).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (empty project / gen_enforced_dependency_range (extraneous)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (empty project / gen_enforced_dependency_range (extraneous)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141xPp645xgMnGR').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141xPp645xgMnGR', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141xPp645xgMnGR', []).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (empty project / gen_enforced_dependency_range (incompatible)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (empty project / gen_enforced_dependency_range (incompatible)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141uk8FVtpvTN3y').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141uk8FVtpvTN3y', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141uk8FVtpvTN3y', []).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (empty project / gen_enforced_dependency_range (missing)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (empty project / gen_enforced_dependency_range (missing)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141b3MUgwYkgB0v').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141b3MUgwYkgB0v', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141b3MUgwYkgB0v', []).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (empty project / gen_invalid_dependency (deep field path)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
+      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
+      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (empty project / gen_invalid_dependency (deep field path)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141l3TovTvZDycw').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141l3TovTvZDycw', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141l3TovTvZDycw', []).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
+      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
+      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (multiple workspaces / empty constraints) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints source test (multiple workspaces / empty constraints) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9', []).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-a').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-a', 'workspace-a-01beb5').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-a', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-a', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-b').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-b', 'workspace-b-d95f30').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-b', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-b', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410cJMaGD59IC9/packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency_range (extraneous)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency_range (extraneous)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs', []).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-a').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-a', 'workspace-a-01beb5').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-a', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-a', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-b').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-b', 'workspace-b-d95f30').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-b', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-b', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141FgKYvAAOCNZs/packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency_range (incompatible)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency_range (incompatible)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl', []).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-a').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-a', 'workspace-a-01beb5').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-a', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-a', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-b').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-b', 'workspace-b-d95f30').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-b', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-b', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141j8UsRdV6iiGl/packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency_range (missing)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency_range (missing)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ', []).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-a').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-a', 'workspace-a-01beb5').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-a', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-a', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-b').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-b', 'workspace-b-d95f30').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-b', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-b', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CU8ozs2GstaZ/packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (multiple workspaces / gen_invalid_dependency (deep field path)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
+      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
+      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (multiple workspaces / gen_invalid_dependency (deep field path)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67', []).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-a').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-a', 'workspace-a-01beb5').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-a', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-a', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-b').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-b', 'workspace-b-d95f30').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-b', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-b', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141dUe1Ry5Zbz67/packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
+      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
+      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (one regular dependency / empty constraints) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints source test (one regular dependency / empty constraints) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701414a6l0FA4ZBTT').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701414a6l0FA4ZBTT', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701414a6l0FA4ZBTT', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701414a6l0FA4ZBTT', 'no-deps', '1.0.0', dependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency_range (extraneous)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency_range (extraneous)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141IqW43llDsshl').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141IqW43llDsshl', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141IqW43llDsshl', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141IqW43llDsshl', 'no-deps', '1.0.0', dependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency_range (incompatible)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency_range (incompatible)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141SlmdBl44qLR7').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141SlmdBl44qLR7', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141SlmdBl44qLR7', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141SlmdBl44qLR7', 'no-deps', '1.0.0', dependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency_range (missing)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency_range (missing)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141qm6t2AvSF3ci').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141qm6t2AvSF3ci', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141qm6t2AvSF3ci', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141qm6t2AvSF3ci', 'no-deps', '1.0.0', dependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (one regular dependency / gen_invalid_dependency (deep field path)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
+      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
+      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (one regular dependency / gen_invalid_dependency (deep field path)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CWJBYhKnSRf0').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CWJBYhKnSRf0', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CWJBYhKnSRf0', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141CWJBYhKnSRf0', 'no-deps', '1.0.0', dependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
+      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
+      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two development dependencies / empty constraints) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints source test (two development dependencies / empty constraints) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410kxUlaB7PiN3').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410kxUlaB7PiN3', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410kxUlaB7PiN3', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410kxUlaB7PiN3', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701410kxUlaB7PiN3', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency_range (extraneous)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency_range (extraneous)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141RwWz6qEadWTW').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141RwWz6qEadWTW', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141RwWz6qEadWTW', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141RwWz6qEadWTW', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141RwWz6qEadWTW', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency_range (incompatible)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency_range (incompatible)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141bv6fotl4l5u1').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141bv6fotl4l5u1', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141bv6fotl4l5u1', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141bv6fotl4l5u1', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141bv6fotl4l5u1', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency_range (missing)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency_range (missing)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141IPIBZ2VxL4K0').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141IPIBZ2VxL4K0', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141IPIBZ2VxL4K0', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141IPIBZ2VxL4K0', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141IPIBZ2VxL4K0', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two development dependencies / gen_invalid_dependency (deep field path)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
+      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
+      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (two development dependencies / gen_invalid_dependency (deep field path)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411v9T6z7lRNdm').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411v9T6z7lRNdm', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411v9T6z7lRNdm', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411v9T6z7lRNdm', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411v9T6z7lRNdm', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
+      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
+      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies / empty constraints) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies / empty constraints) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141hrA8kWOKhqAN').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141hrA8kWOKhqAN', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141hrA8kWOKhqAN', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141hrA8kWOKhqAN', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141hrA8kWOKhqAN', 'no-deps-bin', '1.0.0', dependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency_range (extraneous)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency_range (extraneous)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141T9vJzV4IlaUN').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141T9vJzV4IlaUN', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141T9vJzV4IlaUN', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141T9vJzV4IlaUN', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141T9vJzV4IlaUN', 'no-deps-bin', '1.0.0', dependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency_range (incompatible)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency_range (incompatible)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411JyBisomx0dn').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411JyBisomx0dn', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411JyBisomx0dn', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411JyBisomx0dn', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411JyBisomx0dn', 'no-deps-bin', '1.0.0', dependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency_range (missing)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency_range (missing)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141bwp2gOF9UMS6').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141bwp2gOF9UMS6', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141bwp2gOF9UMS6', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141bwp2gOF9UMS6', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141bwp2gOF9UMS6', 'no-deps-bin', '1.0.0', dependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies / gen_invalid_dependency (deep field path)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
+      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
+      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies / gen_invalid_dependency (deep field path)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141d231GsDtea2X').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141d231GsDtea2X', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141d231GsDtea2X', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141d231GsDtea2X', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141d231GsDtea2X', 'no-deps-bin', '1.0.0', dependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
+      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
+      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / empty constraints) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / empty constraints) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411iOpjMEsCUsD').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411iOpjMEsCUsD', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411iOpjMEsCUsD', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411iOpjMEsCUsD', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411iOpjMEsCUsD', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411iOpjMEsCUsD', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-701411iOpjMEsCUsD', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (extraneous)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (extraneous)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141SiQSKittWJY0').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141SiQSKittWJY0', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141SiQSKittWJY0', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141SiQSKittWJY0', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141SiQSKittWJY0', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141SiQSKittWJY0', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141SiQSKittWJY0', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (incompatible)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (incompatible)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141iG2mj1Os2gNA').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141iG2mj1Os2gNA', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141iG2mj1Os2gNA', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141iG2mj1Os2gNA', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141iG2mj1Os2gNA', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141iG2mj1Os2gNA', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141iG2mj1Os2gNA', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (missing)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (missing)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141YJaPrFJUx1mF').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141YJaPrFJUx1mF', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141YJaPrFJUx1mF', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141YJaPrFJUx1mF', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141YJaPrFJUx1mF', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141YJaPrFJUx1mF', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141YJaPrFJUx1mF', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_invalid_dependency (deep field path)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
+      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
+      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).<no line return>
+",
+}
+`;
+
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_invalid_dependency (deep field path)) 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "dependency_type(dependencies).
+dependency_type(devDependencies).
+dependency_type(peerDependencies).
+workspace('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141VZygW8254Thp').
+workspace_ident('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141VZygW8254Thp', 'root-workspace-988eec').
+workspace_version('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141VZygW8254Thp', []).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141VZygW8254Thp', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141VZygW8254Thp', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141VZygW8254Thp', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('/private/var/folders/l6/vfs9p0z15mb_r53cvdpxh8l00000gn/T/tmp-70141VZygW8254Thp', 'no-deps-bin', '1.0.0', devDependencies).
+workspace(_) :- false.
+workspace_ident(_, _) :- false.
+workspace_version(_, _) :- false.
+workspace_has_dependency(_, _, _, _) :- false.
+
+gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
+      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
+      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
+gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_invalid_dependency(_, _, _, _) :- false.
+",
+}
+`;
