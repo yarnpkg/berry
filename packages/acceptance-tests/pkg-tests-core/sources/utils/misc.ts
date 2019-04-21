@@ -39,3 +39,21 @@ exports.filePatternMatch = function filePatternMatch(
 ): boolean {
   return exports.stringPatternMatch(path.resolve('/', filePath), patterns, {matchBase, dot});
 };
+
+exports.parseJsonStream = function parseJsonStream(
+  stream: string,
+  key?: string,
+): any {
+  const lines = stream.match(/.+\n/g);
+  const entries = lines.map(line => JSON.parse(line));
+
+  if (typeof key === `undefined`)
+    return entries;
+
+  const data = {};
+
+  for (const entry of entries)
+    data[entry[key]] = entry;
+
+  return data;
+}
