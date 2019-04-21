@@ -21,6 +21,8 @@ global.makeTemporaryEnv = generatePkgDriver({
       args = [...args, `--cwd`, projectFolder];
     }
 
+    path = NodeFS.fromPortablePath(path);
+
     const rcEnv = {};
 
     for (const [key, value] of Object.entries(config)) {
