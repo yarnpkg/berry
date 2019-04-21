@@ -40,6 +40,8 @@ describe(`Commands`, () => {
             ({code, stdout, stderr} = error);
           }
 
+          stdout = stdout.replace(new RegExp(path, 'g'), 'WORKSPACE_ROOT');
+
           expect({code, stdout, stderr}).toMatchSnapshot();
         }));
       }
