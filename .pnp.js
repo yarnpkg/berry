@@ -50003,10 +50003,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-fslib"
                 ],
                 [
-                  "fs-extra",
-                  "npm:7.0.1"
-                ],
-                [
                   "invariant",
                   "npm:2.2.4"
                 ],

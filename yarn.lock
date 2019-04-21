@@ -16214,7 +16214,6 @@ __metadata:
   resolution: "pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core"
   dependencies:
     "@berry/fslib": "workspace:*"
-    fs-extra: "npm:^7.0.1"
     invariant: "npm:^2.2.4"
     klaw: "npm:^2.1.1"
     minimatch: "npm:^3.0.4"
