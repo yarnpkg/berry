@@ -49999,6 +49999,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/acceptance-tests/pkg-tests-core"
                 ],
                 [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
                   "fs-extra",
                   "npm:7.0.1"
                 ],
