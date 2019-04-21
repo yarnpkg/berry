@@ -26,8 +26,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   `)
 
   .example(
-    `Find all fixable invalid dependencies`,
-    `yarn constraints query 'workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency_range(WorkspaceCwd, DependencyName, DependencyRange, DependencyType).'`,
+    `List all dependencies throughout the workspace`,
+    `yarn constraints query 'workspace_has_dependency(_, DependencyName, _, _).'`,
   )
 
   .action(async ({cwd, stdout, query}: {cwd: string, stdout: Writable, query: string}) => {
