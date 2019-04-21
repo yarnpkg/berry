@@ -221,9 +221,8 @@ export class Constraints {
 
       const parsedLinks: Record<string, string|null> = {};
 
-      for (const [variable, value] of Object.entries(answer.links)) {
+      for (const [variable, value] of Object.entries(answer.links))
         parsedLinks[variable] = parseLink(value);
-      }
 
       result.push(parsedLinks);
     }
