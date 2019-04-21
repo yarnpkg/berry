@@ -13,6 +13,21 @@ function valueToString(value: string|null): string {
   return `'${value}'`;
 }
 
+function getLinePrefix(index: number, count: number): string {
+  const isFirst = index === 0;
+  const isLast = index === count - 1;
+
+  if (isFirst && isLast)
+    return ``;
+
+  if (isFirst)
+    return `┌ `;
+  if (isLast)
+    return `└ `;
+
+  return `│ `;
+}
+
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
@@ -34,12 +49,16 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
     const constraints = await Constraints.find(project);
-    
+
     for await (const result of constraints.query(query)) {
-      const stringifiedResult = Array.from(Object.entries(result), ([variable, value]) => `${variable} = ${valueToString(value)}`).join(`,\n`);
+      const lines = Array.from(Object.entries(result));
+      const lineCount = lines.length;
 
-      stdout.write(`${stringifiedResult} ;\n`);
+      const maxVariableNameLength = lines.reduce((max, [variableName]) => Math.max(max, variableName.length), 0);
+
+      for (let i = 0; i < lineCount; i++) {
+        const [variableName, value] = lines[i];
+        stdout.write(`${getLinePrefix(i, lineCount)}${variableName.padEnd(maxVariableNameLength, ` `)} = ${valueToString(value)}\n`);
+      }
     }
-
-    stdout.write(`false.\n`);
   });
