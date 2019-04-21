@@ -1,3 +1,3 @@
-/* @flow */
+const {NodeFS} = require('@berry/fslib');
 
-module.exports = __dirname;
+module.exports = NodeFS.toPortablePath(__dirname);

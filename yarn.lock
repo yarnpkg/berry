@@ -16229,6 +16229,8 @@ __metadata:
 "pkg-tests-fixtures@workspace:*, pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures":
   version: 0.0.0
   resolution: "pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures"
+  dependencies:
+    "@berry/fslib": "workspace:*"
   languageName: unknown
   linkType: soft
 

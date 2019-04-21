@@ -50054,6 +50054,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "pkg-tests-fixtures",
                   "workspace:packages/acceptance-tests/pkg-tests-fixtures"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
                 ]
               ]
             }
