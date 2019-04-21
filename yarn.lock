@@ -3701,6 +3701,7 @@ __metadata:
   version: 0.0.0
   resolution: "acceptance-tests-06d141@workspace:packages/acceptance-tests"
   dependencies:
+    "@berry/fslib": "workspace:*"
     "@berry/monorepo": "workspace:*"
   languageName: unknown
   linkType: soft

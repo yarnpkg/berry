@@ -15494,6 +15494,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/acceptance-tests"
                 ],
                 [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
                   "@berry/monorepo",
                   "workspace:."
                 ]

@@ -6,6 +6,7 @@ const {
   tests: {generatePkgDriver, startPackageServer, getPackageRegistry},
   exec: {execFile},
 } = require(`pkg-tests-core`);
+const {NodeFS} = require('@berry/fslib');
 
 global.makeTemporaryEnv = generatePkgDriver({
   getName() {
@@ -38,7 +39,7 @@ global.makeTemporaryEnv = generatePkgDriver({
         },
         env,
       ),
-      cwd: cwd || path,
+      cwd: cwd ? NodeFS.fromPortablePath(cwd) : path,
     });
 
     if (process.env.JEST_LOG_SPAWNS) {
