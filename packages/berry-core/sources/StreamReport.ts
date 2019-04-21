@@ -6,6 +6,7 @@ import {Locator}             from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
+  json?: boolean,
   stdout: Writable,
 };
 
@@ -25,6 +26,7 @@ export class StreamReport extends Report {
   }
 
   private configuration: Configuration;
+  private json: boolean;  
   private stdout: Writable;
 
   private cacheHitCount: number = 0;
@@ -37,10 +39,11 @@ export class StreamReport extends Report {
 
   private indent: number = 0;
 
-  constructor({configuration, stdout}: StreamReportOptions) {
+  constructor({configuration, stdout, json = false}: StreamReportOptions) {
     super();
 
     this.configuration = configuration;
+    this.json = json;
     this.stdout = stdout;
   }
 
@@ -107,21 +110,29 @@ export class StreamReport extends Report {
   }
 
   reportInfo(name: MessageName, text: string) {
-    this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    if (!this.json) {
+      this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    }
   }
 
   reportWarning(name: MessageName, text: string) {
     this.warningCount += 1;
-    this.stdout.write(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+
+    if (!this.json) {
+      this.stdout.write(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    }
   }
 
   reportError(name: MessageName, text: string) {
     this.errorCount += 1;
+
     this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
   }
 
   reportJson(data: any) {
-    // Just ignore the json output
+    if (this.json) {
+      this.stdout.write(`${JSON.stringify(data)}\n`);
+    }
   }
 
   async finalize() {

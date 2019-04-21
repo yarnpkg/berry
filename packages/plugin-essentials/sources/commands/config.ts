@@ -1,7 +1,7 @@
-import {Configuration, JsonReport, PluginConfiguration} from '@berry/core';
-import {miscUtils, SettingsType}                        from '@berry/core';
-import {Writable}                                       from 'stream';
-import {inspect}                                        from 'util';
+import {Configuration, MessageName, PluginConfiguration, SettingsType, StreamReport} from '@berry/core';
+import {miscUtils}                                                                   from '@berry/core';
+import {Writable}                                                                    from 'stream';
+import {inspect}                                                                     from 'util';
 
 function fromEntries(iterable: Iterable<[any, any] | {0: any, 1: any}>): {[key: string]: any} {
   return [... iterable].reduce((obj, { 0:key, 1: val}) => Object.assign(obj, {
@@ -44,50 +44,56 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       }
     };
 
-    const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
-    const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
+    const report = await StreamReport.start({configuration, json, stdout}, async report => {
+      if (json) {
+        for (const [key, data] of configuration.settings.entries()) {
+          const effective = getValue(key);
+          const source = configuration.sources.get(key);
 
-    if (json) {
-      const data = fromEntries(configuration.settings.entries());
-
-      for (const key of Object.keys(data)) {
-        data[key].effective = getValue(key);
-        data[key].source = configuration.sources.get(key);
-      }
-
-      return JsonReport.send({stdout}, data);
-    } else {
-      const inspectConfig = {
-        breakLength: Infinity,
-        colors: configuration.get(`enableColors`),
-        maxArrayLength: 2,
-      };
-
-      if (why || verbose) {
-        const keysAndDescriptions = keys.map(key => {
-          const setting = configuration.settings.get(key);
-
-          if (!setting)
-            throw new Error(`Assertion failed: This settings ("${key}") should have been registered`);
-
-          const description = why
-            ? configuration.sources.get(key) || `<default>`
-            : setting.description;
-
-          return [key, description] as [string, string];
-        });
-
-        const maxDescriptionLength = keysAndDescriptions.reduce((max, [, description]) => {
-          return Math.max(max, description.length);
-        }, 0);
-
-        for (const [key, description] of keysAndDescriptions) {
-          stdout.write(`${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(getValue(key), inspectConfig)}\n`);
+          if (verbose) {
+            report.reportJson({key, effective, source});
+          } else {
+            report.reportJson({key, effective, source, ... data});
+          }
         }
       } else {
-        for (const key of keys) {
-          stdout.write(`${key.padEnd(maxKeyLength, ` `)}   ${inspect(getValue(key), inspectConfig)}\n`);
+        const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
+        const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
+    
+        const inspectConfig = {
+          breakLength: Infinity,
+          colors: configuration.get(`enableColors`),
+          maxArrayLength: 2,
+        };
+
+        if (why || verbose) {
+          const keysAndDescriptions = keys.map(key => {
+            const setting = configuration.settings.get(key);
+
+            if (!setting)
+              throw new Error(`Assertion failed: This settings ("${key}") should have been registered`);
+
+            const description = why
+              ? configuration.sources.get(key) || `<default>`
+              : setting.description;
+
+            return [key, description] as [string, string];
+          });
+
+          const maxDescriptionLength = keysAndDescriptions.reduce((max, [, description]) => {
+            return Math.max(max, description.length);
+          }, 0);
+
+          for (const [key, description] of keysAndDescriptions) {
+            report.reportInfo(MessageName.UNNAMED, `${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(getValue(key), inspectConfig)}`);
+          }
+        } else {
+          for (const key of keys) {
+            report.reportInfo(MessageName.UNNAMED, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(getValue(key), inspectConfig)}`);
+          }
         }
       }
-    }
+    });
+
+    return report.exitCode();
   });
