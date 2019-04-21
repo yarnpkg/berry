@@ -1,4 +1,5 @@
 import {Configuration, Project, PluginConfiguration} from '@berry/core';
+import {MessageName, StreamReport}                   from '@berry/core';
 import {Writable}                                    from 'stream';
 
 import {Constraints}                                 from '../../Constraints';
@@ -50,15 +51,19 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const {project} = await Project.find(configuration, cwd);
     const constraints = await Constraints.find(project);
 
-    for await (const result of constraints.query(query)) {
-      const lines = Array.from(Object.entries(result));
-      const lineCount = lines.length;
+    const report = await StreamReport.start({configuration, stdout}, async report => {
+      for await (const result of constraints.query(query)) {
+        const lines = Array.from(Object.entries(result));
+        const lineCount = lines.length;
 
-      const maxVariableNameLength = lines.reduce((max, [variableName]) => Math.max(max, variableName.length), 0);
+        const maxVariableNameLength = lines.reduce((max, [variableName]) => Math.max(max, variableName.length), 0);
 
-      for (let i = 0; i < lineCount; i++) {
-        const [variableName, value] = lines[i];
-        stdout.write(`${getLinePrefix(i, lineCount)}${variableName.padEnd(maxVariableNameLength, ` `)} = ${valueToString(value)}\n`);
+        for (let i = 0; i < lineCount; i++) {
+          const [variableName, value] = lines[i];
+          report.reportInfo(MessageName.UNNAMED, `${getLinePrefix(i, lineCount)}${variableName.padEnd(maxVariableNameLength, ` `)} = ${valueToString(value)}`);
+        }
       }
-    }
+    });
+
+    return report.exitCode();
   });
