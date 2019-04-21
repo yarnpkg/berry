@@ -27,6 +27,54 @@ const DEPENDENCY_TYPES = [
   DependencyType.PeerDependencies,
 ];
 
+class Session {
+  private readonly session: pl.type.Session;
+
+  public constructor(project: Project, source: string) {
+    this.session = pl.create();
+    linkProjectToSession(this.session, project);
+
+    this.session.consult(source);
+  }
+
+  private fetchNextAnswer() {
+    return new Promise<pl.Answer>(resolve => {
+      this.session.answer((result: any) => {
+        resolve(result);
+      });
+    });
+  }
+
+  private async accumulateAnswers() {
+    const answers = [];
+
+    while (true) {
+      const answer = await this.fetchNextAnswer();
+
+      if (!answer)
+        break;
+
+      answers.push(answer);
+    }
+
+    return answers;
+  }
+
+  public async makeQuery(query: string) {
+    this.session.query(query);
+
+    return this.accumulateAnswers();
+  }
+}
+
+function parseLink(link: pl.Link): string|null {
+  if (link.id === `null`) {
+    return null;
+  } else {
+    return `${link.toJavaScript()}`;
+  }
+}
+
 export class Constraints {
   public readonly project: Project;
 
@@ -91,11 +139,12 @@ export class Constraints {
     return this.getProjectDatabase() + `\n` + this.source + `\n` + this.getDeclarations();
   }
 
-  async process() {
-    const session = pl.create();
-    linkProjectToSession(session, this.project);
+  private createSession() {
+    return new Session(this.project, this.fullSource);
+  }
 
-    session.consult(this.fullSource);
+  async process() {
+    const session = this.createSession();
 
     let enforcedDependencyRanges: Array<{
       workspace: Workspace,
@@ -104,7 +153,7 @@ export class Constraints {
       dependencyType: DependencyType,
     }> = [];
 
-    for (const answer of await makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
+    for (const answer of await session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
       if (answer.id === `throw`)
         throw new Error(pl.format_answer(answer));
 
@@ -135,13 +184,13 @@ export class Constraints {
       reason: string | null,
     }> = [];
 
-    for (const answer of await makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, Reason).`)) {
+    for (const answer of await session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, Reason).`)) {
       if (answer.id === `throw`)
         throw new Error(pl.format_answer(answer));
 
       const workspaceCwd = parseLink(answer.links.WorkspaceCwd);
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
-      const dependencyType = parseLink(answer.links.DependencyType);
+      const dependencyType = parseLink(answer.links.DependencyType) as DependencyType;
       const reason = parseLink(answer.links.Reason);
 
       if (workspaceCwd === null || dependencyRawIdent === null)
@@ -159,43 +208,27 @@ export class Constraints {
     ]);
 
     return {enforcedDependencyRanges, invalidDependencies};
+  }
 
-    function parseLink(link: any) {
-      if (link.id === `null`) {
-        return null;
-      } else {
-        return link.toJavaScript();
-      }
-    }
+  async query(query: string) {
+    const session = this.createSession();
 
-    function fetchNextAnswer() {
-      return new Promise<any>(resolve => {
-        session.answer((result: any) => {
-          resolve(result);
-        });
-      });
-    }
+    const result: Record<string, string|null>[] = [];
 
-    async function accumulateAnswers() {
-      const answers = [];
+    for (const answer of await session.makeQuery(query)) {
+      if (answer.id === `throw`)
+        throw new Error(pl.format_answer(answer));
 
-      while (true) {
-        const answer = await fetchNextAnswer();
+      const parsedLinks: Record<string, string|null> = {};
 
-        if (!answer)
-          break;
-
-        answers.push(answer);
+      for (const [variable, value] of Object.entries(answer.links)) {
+        parsedLinks[variable] = parseLink(value);
       }
 
-      return answers;
+      result.push(parsedLinks);
     }
 
-    function makeQuery(query: string) {
-      session.query(query);
-
-      return accumulateAnswers();
-    }
+    return result;
   }
 }
 
