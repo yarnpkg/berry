@@ -61,7 +61,14 @@ export class Manifest {
 
   async loadFile(path: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS}) {
     const content = await baseFs.readFilePromise(path, `utf8`);
-    const data = JSON.parse(content);
+
+    let data;
+    try {
+      data = JSON.parse(content || `{}`);
+    } catch (error) {
+      error.message += ` (when parsing ${path})`;
+      throw error;
+    }
 
     this.load(data);
   }

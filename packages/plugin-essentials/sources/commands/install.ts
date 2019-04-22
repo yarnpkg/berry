@@ -65,7 +65,10 @@ const MERGE_CONFLICT_SEP = `=======`;
 const MERGE_CONFLICT_START = `<<<<<<<`;
 
 async function autofixMergeConflicts(configuration: Configuration, frozenLockfile: boolean) {
-  const lockfilePath = configuration.get(`lockfilePath`);
+  if (!configuration.projectCwd)
+    return;
+
+  const lockfilePath = `${configuration.projectCwd}/${configuration.get(`lockfileFilename`)}`;
   if (!await xfs.existsPromise(lockfilePath))
     return;
 

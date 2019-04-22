@@ -48,7 +48,6 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       configuration.get(`cacheFolder`),
       configuration.get(`globalFolder`),
       configuration.get(`virtualFolder`),
-      configuration.get(`lockfilePath`),
       configuration.get(`yarnPath`),
     ];
 
@@ -68,6 +67,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     const yarnNames: Set<string> = new Set([
       configuration.get(`rcFilename`) as string,
+      configuration.get(`lockfileFilename`) as string,
       `package.json`,
     ]);
 

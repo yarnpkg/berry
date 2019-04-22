@@ -95,6 +95,23 @@ export type PluginConfiguration = {
   plugins: Set<string>,
 };
 
+// General rules:
+//
+// - filenames that don't accept actual paths must end with the "Filename" suffix
+//   prefer to use absolute paths instead, since they are automatically resolved
+//   ex: lockfileFilename
+//
+// - folders must end with the "Folder" suffix
+//   ex: cacheFolder, pnpVirtualFolder
+//
+// - actual paths to a file must end with the "Path" suffix
+//   ex: pnpPath
+//
+// - options that tweaks the strictness must begin with the "allow" prefix
+//   ex: allowInvalidChecksums
+//
+// - options that enable a feature must begin with the "enable" prefix
+//   ex: enableEmojis, enableColors
 export const coreDefinitions = {
   // Not implemented for now, but since it's part of all Yarn installs we want to declare it in order to improve drop-in compatibility
   lastUpdateCheck: {
@@ -121,11 +138,6 @@ export const coreDefinitions = {
     type: SettingsType.ABSOLUTE_PATH,
     default: getDefaultGlobalFolder(),
   },
-  lockfilePath: {
-    description: `Path of the file where the dependency tree must be stored`,
-    type: SettingsType.ABSOLUTE_PATH,
-    default: `./yarn.lock`,
-  },
   cacheFolder: {
     description: `Folder where the cache files must be written`,
     type: SettingsType.ABSOLUTE_PATH,
@@ -140,6 +152,11 @@ export const coreDefinitions = {
     description: `Path of the file where the current state of the built packages must be stored`,
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.yarn/build-state.yml`,
+  },
+  lockfileFilename: {
+    description: `Name of the files where the Yarn dependency tree entries must be stored`,
+    type: SettingsType.STRING,
+    default: `yarn.lock`,
   },
   rcFilename: {
     description: `Name of the files where the configuration can be found`,
@@ -299,24 +316,6 @@ function getRcFilename() {
 }
 
 export class Configuration {
-  // General rules:
-  //
-  // - filenames that don't accept actual paths must end with the "Name" suffix
-  //   prefer to use absolute paths instead, since they are automatically resolved
-  //   ex: lockfileName (doesn't actually exist)
-  //
-  // - folders must end with the "Folder" suffix
-  //   ex: cacheFolder, pnpVirtualFolder
-  //
-  // - actual paths to a file must end with the "Path" suffix
-  //   ex: lockfilePath, pnpPath
-  //
-  // - options that tweaks the strictness must begin with the "allow" prefix
-  //   ex: allowInvalidChecksums
-  //
-  // - options that enable a feature must begin with the "enable" prefix
-  //   ex: enableEmojis, enableColors
-
   public projectCwd: string | null;
 
   public plugins: Map<string, Plugin> = new Map();
@@ -356,7 +355,7 @@ export class Configuration {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
-    const {projectCwd, rcFiles} = await Configuration.getRcData(startingCwd);
+    const rcFiles = await Configuration.findRcFiles(startingCwd);
     const plugins = new Map();
 
     if (pluginConfiguration !== null) {
@@ -407,6 +406,23 @@ export class Configuration {
       }
     }
 
+    let lockfileFilename = coreDefinitions.lockfileFilename.default;
+
+    // We need to know the project root before being able to truly instantiate
+    // our configuration, and to know that we need to know the lockfile name
+    if (environmentSettings.lockfileFilename) {
+      lockfileFilename = environmentSettings.lockfileFilename;
+    } else {
+      for (const {data} of rcFiles) {
+        if (data.lockfileFilename) {
+          lockfileFilename = data.lockfileFilename;
+          break;
+        }
+      }
+    }
+
+    const projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
+
     const configuration = new Configuration(projectCwd, plugins);
     configuration.useWithSource(`<environment>`, environmentSettings, startingCwd);
 
@@ -421,10 +437,8 @@ export class Configuration {
     return configuration;
   }
 
-  static async getRcData(startingCwd: string) {
+  static async findRcFiles(startingCwd: string) {
     const rcFilename = getRcFilename();
-
-    let projectCwd = null;
     const rcFiles = [];
 
     let nextCwd = startingCwd;
@@ -432,9 +446,6 @@ export class Configuration {
 
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
-
-      if (xfs.existsSync(`${currentCwd}/package.json`))
-        projectCwd = currentCwd;
 
       const rcPath = `${currentCwd}/${rcFilename}`;
 
@@ -447,8 +458,29 @@ export class Configuration {
 
       nextCwd = posix.dirname(currentCwd);
     }
+    
+    return rcFiles;
+  }
 
-    return {projectCwd, rcFiles};
+  static async findProjectCwd(startingCwd: string, lockfileFilename: string) {
+    let projectCwd = null;
+
+    let nextCwd = startingCwd;
+    let currentCwd = null;
+
+    while (nextCwd !== currentCwd) {
+      currentCwd = nextCwd;
+
+      if (xfs.existsSync(`${currentCwd}/package.json`))
+        projectCwd = currentCwd;
+
+      if (xfs.existsSync(`${currentCwd}/${lockfileFilename}`))
+        break;
+
+      nextCwd = posix.dirname(currentCwd);
+    }
+
+    return projectCwd;
   }
 
   static async updateConfiguration(cwd: string, patch: any) {

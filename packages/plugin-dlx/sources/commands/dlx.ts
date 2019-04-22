@@ -2,7 +2,7 @@ import {WorkspaceRequiredError}                             from '@berry/cli';
 import {Cache, Configuration, PluginConfiguration, Project} from '@berry/core';
 import {LightReport}                                        from '@berry/core';
 import {scriptUtils, structUtils}                           from '@berry/core';
-import {xfs}                                                from '@berry/fslib';
+import {NodeFS, xfs}                                        from '@berry/fslib';
 import {suggestUtils}                                       from '@berry/plugin-essentials';
 import {UsageError}                                         from 'clipanion';
 import {posix}                                              from 'path';
@@ -32,38 +32,44 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   )
 
   .action(async ({cwd, stdin, stdout, stderr, command, package: packages, args, quiet, ... rest}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, command: string, package: Array<string>, args: Array<string>, quiet: boolean}) => {
-    const tmpDir = await createTemporaryDirectory(`dlx-${process.pid}`);
-    await xfs.writeFilePromise(`${tmpDir}/package.json`, `{}\n`);
-    await xfs.writeFilePromise(`${tmpDir}/.yarnrc`, `enable-global-cache true\n`);
+    const tmpDir = NodeFS.toPortablePath(await createTemporaryDirectory(`dlx-${process.pid}`));
 
-    if (packages.length === 0) {
-      packages = [command];
-      command = structUtils.parseDescriptor(command).name;
+    try {
+      await xfs.writeFilePromise(`${tmpDir}/package.json`, `{}\n`);
+      await xfs.writeFilePromise(`${tmpDir}/yarn.lock`, ``);
+      await xfs.writeFilePromise(`${tmpDir}/.yarnrc`, `enable-global-cache true\n`);
+
+      if (packages.length === 0) {
+        packages = [command];
+        command = structUtils.parseDescriptor(command).name;
+      }
+
+      const addOptions = [];
+      if (quiet)
+        addOptions.push(`--quiet`);
+
+      const addExitCode = await clipanion.run(null, [`add`, ... addOptions, `--`, ... packages], {cwd: tmpDir, stdin, stdout, stderr, ... rest});
+      if (addExitCode !== 0)
+        return addExitCode;
+
+      const configuration = await Configuration.find(tmpDir, pluginConfiguration);
+      const {project, workspace} = await Project.find(configuration, tmpDir);
+      const cache = await Cache.find(configuration);
+
+      if (workspace === null)
+        throw new WorkspaceRequiredError(cwd);
+
+      const report = await LightReport.start({configuration, stdout}, async (report: LightReport) => {
+        await project.resolveEverything({lockfileOnly: true, cache, report});
+      });
+
+      if (report.hasErrors())
+        return report.exitCode();
+
+      return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, args, {cwd, stdin, stdout, stderr});
+    } finally {
+      await xfs.removePromise(tmpDir);
     }
-
-    const addOptions = [];
-    if (quiet)
-      addOptions.push(`--quiet`);
-
-    const addExitCode = await clipanion.run(null, [`add`, ... addOptions, `--`, ... packages], {cwd: tmpDir, stdin, stdout, stderr, ... rest});
-    if (addExitCode !== 0)
-      return addExitCode;
-
-    const configuration = await Configuration.find(tmpDir, pluginConfiguration);
-    const {project, workspace} = await Project.find(configuration, tmpDir);
-    const cache = await Cache.find(configuration);
-
-    if (workspace === null)
-      throw new WorkspaceRequiredError(cwd);
-
-    const report = await LightReport.start({configuration, stdout}, async (report: LightReport) => {
-      await project.resolveEverything({lockfileOnly: true, cache, report});
-    });
-
-    if (report.hasErrors())
-      return report.exitCode();
-
-    return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, args, {cwd, stdin, stdout, stderr});
   });
 
 function createTemporaryDirectory(name?: string) {

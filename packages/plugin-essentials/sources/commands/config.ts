@@ -46,7 +46,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     const report = await StreamReport.start({configuration, json, stdout}, async report => {
       if (json) {
-        for (const [key, data] of configuration.settings.entries()) {
+        const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
+
+        for (const key of keys) {
+          const data = configuration.settings.get(key);
+
           const effective = getValue(key);
           const source = configuration.sources.get(key);
 
