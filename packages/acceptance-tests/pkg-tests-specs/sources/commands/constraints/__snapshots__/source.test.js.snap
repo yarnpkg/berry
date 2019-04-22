@@ -15,9 +15,9 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -46,9 +46,9 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -77,9 +77,9 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -108,9 +108,9 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -141,9 +141,9 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -173,23 +173,23 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace('WORKSPACE_ROOT/packages/workspace-a').
-workspace_ident('WORKSPACE_ROOT/packages/workspace-a', 'workspace-a-01beb5').
-workspace_version('WORKSPACE_ROOT/packages/workspace-a', []).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
-workspace('WORKSPACE_ROOT/packages/workspace-b').
-workspace_ident('WORKSPACE_ROOT/packages/workspace-b', 'workspace-b-d95f30').
-workspace_version('WORKSPACE_ROOT/packages/workspace-b', []).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace('packages/workspace-a').
+workspace_ident('packages/workspace-a', 'workspace-a-01beb5').
+workspace_version('packages/workspace-a', []).
+workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('packages/workspace-b').
+workspace_ident('packages/workspace-b', 'workspace-b-d95f30').
+workspace_version('packages/workspace-b', []).
+workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -218,23 +218,23 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace('WORKSPACE_ROOT/packages/workspace-a').
-workspace_ident('WORKSPACE_ROOT/packages/workspace-a', 'workspace-a-01beb5').
-workspace_version('WORKSPACE_ROOT/packages/workspace-a', []).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
-workspace('WORKSPACE_ROOT/packages/workspace-b').
-workspace_ident('WORKSPACE_ROOT/packages/workspace-b', 'workspace-b-d95f30').
-workspace_version('WORKSPACE_ROOT/packages/workspace-b', []).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace('packages/workspace-a').
+workspace_ident('packages/workspace-a', 'workspace-a-01beb5').
+workspace_version('packages/workspace-a', []).
+workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('packages/workspace-b').
+workspace_ident('packages/workspace-b', 'workspace-b-d95f30').
+workspace_version('packages/workspace-b', []).
+workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -263,23 +263,23 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace('WORKSPACE_ROOT/packages/workspace-a').
-workspace_ident('WORKSPACE_ROOT/packages/workspace-a', 'workspace-a-01beb5').
-workspace_version('WORKSPACE_ROOT/packages/workspace-a', []).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
-workspace('WORKSPACE_ROOT/packages/workspace-b').
-workspace_ident('WORKSPACE_ROOT/packages/workspace-b', 'workspace-b-d95f30').
-workspace_version('WORKSPACE_ROOT/packages/workspace-b', []).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace('packages/workspace-a').
+workspace_ident('packages/workspace-a', 'workspace-a-01beb5').
+workspace_version('packages/workspace-a', []).
+workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('packages/workspace-b').
+workspace_ident('packages/workspace-b', 'workspace-b-d95f30').
+workspace_version('packages/workspace-b', []).
+workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -308,23 +308,23 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace('WORKSPACE_ROOT/packages/workspace-a').
-workspace_ident('WORKSPACE_ROOT/packages/workspace-a', 'workspace-a-01beb5').
-workspace_version('WORKSPACE_ROOT/packages/workspace-a', []).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
-workspace('WORKSPACE_ROOT/packages/workspace-b').
-workspace_ident('WORKSPACE_ROOT/packages/workspace-b', 'workspace-b-d95f30').
-workspace_version('WORKSPACE_ROOT/packages/workspace-b', []).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace('packages/workspace-a').
+workspace_ident('packages/workspace-a', 'workspace-a-01beb5').
+workspace_version('packages/workspace-a', []).
+workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('packages/workspace-b').
+workspace_ident('packages/workspace-b', 'workspace-b-d95f30').
+workspace_version('packages/workspace-b', []).
+workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -355,23 +355,23 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace('WORKSPACE_ROOT/packages/workspace-a').
-workspace_ident('WORKSPACE_ROOT/packages/workspace-a', 'workspace-a-01beb5').
-workspace_version('WORKSPACE_ROOT/packages/workspace-a', []).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
-workspace('WORKSPACE_ROOT/packages/workspace-b').
-workspace_ident('WORKSPACE_ROOT/packages/workspace-b', 'workspace-b-d95f30').
-workspace_version('WORKSPACE_ROOT/packages/workspace-b', []).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT/packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace('packages/workspace-a').
+workspace_ident('packages/workspace-a', 'workspace-a-01beb5').
+workspace_version('packages/workspace-a', []).
+workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('packages/workspace-b').
+workspace_ident('packages/workspace-b', 'workspace-b-d95f30').
+workspace_version('packages/workspace-b', []).
+workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -401,10 +401,10 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -433,10 +433,10 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -465,10 +465,10 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -497,10 +497,10 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -531,10 +531,10 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -564,11 +564,11 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -597,11 +597,11 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -630,11 +630,11 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -663,11 +663,11 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -698,11 +698,11 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -732,11 +732,11 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', dependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -765,11 +765,11 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', dependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -798,11 +798,11 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', dependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -831,11 +831,11 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', dependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -866,11 +866,11 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', dependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -900,13 +900,13 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -935,13 +935,13 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -970,13 +970,13 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -1005,13 +1005,13 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -1042,13 +1042,13 @@ Object {
   "stdout": "dependency_type(dependencies).
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
-workspace('WORKSPACE_ROOT').
-workspace_ident('WORKSPACE_ROOT', 'root-workspace-988eec').
-workspace_version('WORKSPACE_ROOT', []).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('WORKSPACE_ROOT', 'no-deps-bin', '1.0.0', devDependencies).
+workspace('.').
+workspace_ident('.', 'root-workspace-988eec').
+workspace_version('.', []).
+workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
