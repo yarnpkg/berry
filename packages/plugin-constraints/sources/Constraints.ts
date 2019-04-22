@@ -1,6 +1,7 @@
 import {Ident, Locator, Project, Workspace} from '@berry/core';
 import {miscUtils, structUtils}             from '@berry/core';
 import {xfs}                                from '@berry/fslib';
+import {posix}                              from 'path';
 import pl                                   from 'tau-prolog';
 
 import {linkProjectToSession}               from './tauModule';
@@ -96,13 +97,15 @@ export class Constraints {
       database += `dependency_type(${dependencyType}).\n`
 
     for (const workspace of this.project.workspacesByCwd.values()) {
-      database += `workspace(${escape(workspace.cwd)}).\n`;
-      database += `workspace_ident(${escape(workspace.cwd)}, ${escape(structUtils.stringifyIdent(workspace.locator))}).\n`
-      database += `workspace_version(${escape(workspace.cwd)}, ${escape(workspace.manifest.version)}).\n`
+      const relativeCwd = workspace.relativeCwd;
+
+      database += `workspace(${escape(relativeCwd)}).\n`;
+      database += `workspace_ident(${escape(relativeCwd)}, ${escape(structUtils.stringifyIdent(workspace.locator))}).\n`
+      database += `workspace_version(${escape(relativeCwd)}, ${escape(workspace.manifest.version)}).\n`
 
       for (const dependencyType of DEPENDENCY_TYPES) {
         for (const dependency of workspace.manifest[dependencyType].values()) {
-          database += `workspace_has_dependency(${escape(workspace.cwd)}, ${escape(structUtils.stringifyIdent(dependency))}, ${escape(dependency.range)}, ${dependencyType}).\n`;
+          database += `workspace_has_dependency(${escape(relativeCwd)}, ${escape(structUtils.stringifyIdent(dependency))}, ${escape(dependency.range)}, ${dependencyType}).\n`;
         }
       }
     }
@@ -154,7 +157,7 @@ export class Constraints {
       if (answer.id === `throw`)
         throw new Error(pl.format_answer(answer));
 
-      const workspaceCwd = parseLink(answer.links.WorkspaceCwd);
+      const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyRange = parseLink(answer.links.DependencyRange);
       const dependencyType = parseLink(answer.links.DependencyType) as DependencyType;
@@ -185,7 +188,7 @@ export class Constraints {
       if (answer.id === `throw`)
         throw new Error(pl.format_answer(answer));
 
-      const workspaceCwd = parseLink(answer.links.WorkspaceCwd);
+      const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyType = parseLink(answer.links.DependencyType) as DependencyType;
       const reason = parseLink(answer.links.Reason);
