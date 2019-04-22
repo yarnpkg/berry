@@ -213,19 +213,9 @@ export class Manifest {
         }
 
         const descriptor = structUtils.parseDescriptor(pattern);
-        if (descriptor.range !== `unknown` && !semver.valid(descriptor.range)) {
-          errors.push(new Error(`Invalid meta field range for '${pattern}'`));
-          continue;
-        }
+        const dependencyMeta = this.ensureDependencyMeta(descriptor);
 
-        const identString = structUtils.stringifyIdent(descriptor);
-        const range = descriptor.range !== `unknown` ? descriptor.range : null;
-
-        let dependencyMetaSet = this.dependenciesMeta.get(identString);
-        if (!dependencyMetaSet)
-          this.dependenciesMeta.set(identString, dependencyMetaSet = new Map());
-        
-        dependencyMetaSet.set(range, meta);
+        Object.assign(dependencyMeta, meta);
       }
     }
 
@@ -237,13 +227,9 @@ export class Manifest {
         }
 
         const descriptor = structUtils.parseDescriptor(pattern);
-        if (descriptor.range !== `unknown`) {
-          errors.push(new Error(`Invalid meta field range for '${pattern}'`));
-          continue;
-        }
+        const peerDependencyMeta = this.ensurePeerDependencyMeta(descriptor);
 
-        const identString = structUtils.stringifyIdent(descriptor);
-        this.peerDependenciesMeta.set(identString, meta);
+        Object.assign(peerDependencyMeta, meta);
       }
     }
 
@@ -291,6 +277,37 @@ export class Manifest {
         throw new Error(`Unsupported value ("${type}")`);
       }
     }
+  }
+
+  ensureDependencyMeta(descriptor: Descriptor) {
+    if (descriptor.range !== `unknown` && !semver.valid(descriptor.range))
+      throw new Error(`Invalid meta field range for '${structUtils.stringifyDescriptor(descriptor)}'`);
+
+    const identString = structUtils.stringifyIdent(descriptor);
+    const range = descriptor.range !== `unknown` ? descriptor.range : null;
+
+    let dependencyMetaSet = this.dependenciesMeta.get(identString);
+    if (!dependencyMetaSet)
+      this.dependenciesMeta.set(identString, dependencyMetaSet = new Map());
+
+    let dependencyMeta = dependencyMetaSet.get(range);
+    if (!dependencyMeta)
+      dependencyMetaSet.set(range, dependencyMeta = {});
+
+    return dependencyMeta;
+  }
+
+  ensurePeerDependencyMeta(descriptor: Descriptor) {
+    if (descriptor.range !== `unknown`)
+      throw new Error(`Invalid meta field range for '${structUtils.stringifyDescriptor(descriptor)}'`);
+
+    const identString = structUtils.stringifyIdent(descriptor);
+
+    let peerDependencyMeta = this.peerDependenciesMeta.get(identString);
+    if (!peerDependencyMeta)
+      this.peerDependenciesMeta.set(identString, peerDependencyMeta = {});
+
+    return peerDependencyMeta;
   }
 
   exportTo(data: {[key: string]: any}) {
