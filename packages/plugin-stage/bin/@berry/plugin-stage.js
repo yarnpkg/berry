@@ -148,7 +148,6 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
         configuration.get(`cacheFolder`),
         configuration.get(`globalFolder`),
         configuration.get(`virtualFolder`),
-        configuration.get(`lockfilePath`),
         configuration.get(`yarnPath`),
     ];
     await configuration.triggerHook((hooks) => {
@@ -164,6 +163,7 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
             yarnPaths.add(path);
     const yarnNames = new Set([
         configuration.get(`rcFilename`),
+        configuration.get(`lockfileFilename`),
         `package.json`,
     ]);
     const changeList = await driver.filterChanges(root, yarnPaths, yarnNames);
