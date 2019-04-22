@@ -4,28 +4,30 @@ import {delimiter, posix}                from 'path';
 import {PassThrough, Readable, Writable} from 'stream';
 import {dirSync}                         from 'tmp';
 
-import {Manifest}                        from './Manifest';
-import {Project}                         from './Project';
-import {StreamReport}                    from './StreamReport';
-import {Workspace}                       from './Workspace';
-import * as execUtils                    from './execUtils';
-import * as structUtils                  from './structUtils';
-import {Locator}                         from './types';
+import {Manifest}       from './Manifest';
+import {Project}        from './Project';
+import {StreamReport}   from './StreamReport';
+import {Workspace}      from './Workspace';
+import * as execUtils   from './execUtils';
+import * as structUtils from './structUtils';
+import {Locator}        from './types';
 
 async function makePathWrapper(location: string, name: string, argv0: string, args: Array<string> = []) {
   if (process.platform === `win32`) {
     await xfs.writeFilePromise(`${location}/${name}.cmd`, `@"${argv0}" ${args.join(` `)} %*\n`);
   } else {
-    await xfs.writeFilePromise(`${location}/${name}`, `#!/usr/bin/env bash\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
+    await xfs.writeFilePromise(`${location}/${name}`, `#!/usr/bin/env bash\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`)
+      .join(` `)} "$@"\n`);
     await xfs.chmodPromise(`${location}/${name}`, 0o755);
   }
 }
 
 export async function makeScriptEnv(project: Project) {
   const scriptEnv: {[key: string]: string} = {};
-  for (const [key, value] of Object.entries(process.env))
+  for (const [key, value] of Object.entries(process.env)) {
     if (typeof value !== `undefined`)
       scriptEnv[key.toLowerCase() !== `path` ? key : `PATH`] = value;
+  }
 
   const binFolder = scriptEnv.BERRY_BIN_FOLDER = dirSync().name;
 
@@ -92,24 +94,24 @@ type ExecutePackageScriptOptions = {
 };
 
 export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
-  const { manifest, binFolder, env, cwd: realCwd } = await initializePackageEnvironment(locator, project, cwd);
+  const {manifest, binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, project, cwd);
 
   const script = manifest.scripts.get(scriptName);
   if (!script)
     return;
 
   try {
-    return await execute(script, args, { cwd: realCwd, env, stdin, stdout, stderr });
+    return await execute(script, args, {cwd: realCwd, env, stdin, stdout, stderr});
   } finally {
     await xfs.removePromise(binFolder);
   }
 }
 
-export async function executePackageShellcode(locator: Locator, command: string, args: Array<string>, { cwd, project, stdin, stdout, stderr }: ExecutePackageScriptOptions) {
-  const { binFolder, env, cwd: realCwd } = await initializePackageEnvironment(locator, project, cwd);
+export async function executePackageShellcode(locator: Locator, command: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
+  const {binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, project, cwd);
 
   try {
-    return await execute(command, args, { cwd: realCwd, env, stdin, stdout, stderr });
+    return await execute(command, args, {cwd: realCwd, env, stdin, stdout, stderr});
   } finally {
     await xfs.removePromise(binFolder);
   }
@@ -124,7 +126,7 @@ export async function initializePackageEnvironment(locator: Locator, project: Pr
     const configuration = project.configuration;
 
     const linkers = project.configuration.getLinkers();
-    const linkerOptions = { project, report: new StreamReport({ stdout: new PassThrough(), configuration }) };
+    const linkerOptions = {project, report: new StreamReport({stdout: new PassThrough(), configuration})};
 
     const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
     if (!linker)
@@ -133,12 +135,13 @@ export async function initializePackageEnvironment(locator: Locator, project: Pr
     const env = await makeScriptEnv(project);
     const binFolder = env.BERRY_BIN_FOLDER;
 
-    for (const [binaryName, [pkg, binaryPath]] of await getPackageAccessibleBinaries(locator, { project }))
+    for (const [binaryName, [pkg, binaryPath]] of await getPackageAccessibleBinaries(locator, {project})) {
       await makePathWrapper(binFolder, binaryName, process.execPath, [binaryPath]);
+    }
 
     const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
-    const packageFs = new CwdFS(packageLocation, { baseFs: zipOpenFs });
-    const manifest = await Manifest.find(`.`, { baseFs: packageFs });
+    const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
+    const manifest = await Manifest.find(`.`, {baseFs: packageFs});
 
     if (typeof cwd === `undefined`)
       cwd = packageLocation;
@@ -179,7 +182,7 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
     const stdout = new Writable();
 
     const linkers = project.configuration.getLinkers();
-    const linkerOptions = {project, report: new StreamReport({ configuration, stdout })};
+    const linkerOptions = {project, report: new StreamReport({configuration, stdout})};
 
     const binaries: Map<string, [Locator, string]> = new Map();
 
