@@ -1,7 +1,6 @@
 const {
   fs: {mkdirp, writeFile},
 } = require('pkg-tests-core');
-const {NodeFS} = require('@berry/fslib');
 
 const RC_FILENAME = `.spec-yarnrc`;
 const SUBFOLDER = `subfolder`;
@@ -91,7 +90,7 @@ describe(`Commands`, () => {
       for (const [optionDescription, {flags, cleanupStdout}] of Object.entries(options)) {
         test(`test (${environmentDescription} / ${optionDescription})`, makeTemporaryEnv({}, async ({path, run, source}) => {
           const cwd = `${path}/${SUBFOLDER}/${SUBFOLDER}`;
-          
+
           await mkdirp(cwd);
           await environment(path);
 
@@ -105,10 +104,8 @@ describe(`Commands`, () => {
             ({code, stdout, stderr} = error);
           }
 
-          const portablePath = NodeFS.toPortablePath(path);
-
-          stdout = cleanupStdout(stdout, portablePath);
-          stderr = cleanupPlainOutput(stderr, portablePath);
+          stdout = cleanupStdout(stdout, path);
+          stderr = cleanupPlainOutput(stderr, path);
 
           expect({code, stdout, stderr}).toMatchSnapshot();
         }));

@@ -1,3 +1,4 @@
+const {NodeFS} = require(`@berry/fslib`);
 const {satisfies} = require(`semver`);
 
 const {
@@ -136,7 +137,7 @@ describe(`Require tests`, () => {
 
       await writeFile(`${tmp}/file.js`, `module.exports = 42;`);
 
-      await expect(source(`require(${JSON.stringify(tmp)} + "/file")`)).resolves.toEqual(42);
+      await expect(source(`require(${JSON.stringify(NodeFS.fromPortablePath(tmp))} + "/file")`)).resolves.toEqual(42);
     }),
   );
 
@@ -215,8 +216,8 @@ describe(`Require tests`, () => {
         await expect(
           source(
             `require(require.resolve('no-deps', {paths: ${JSON.stringify([
-              `${path}/workspace-a`,
-              `${path}/workspace-b`,
+              `${NodeFS.fromPortablePath(path)}/workspace-a`,
+              `${NodeFS.fromPortablePath(path)}/workspace-b`,
             ])}}))`,
           ),
         ).resolves.toMatchObject({

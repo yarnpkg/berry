@@ -3701,6 +3701,7 @@ __metadata:
   version: 0.0.0
   resolution: "acceptance-tests-06d141@workspace:packages/acceptance-tests"
   dependencies:
+    "@berry/fslib": "workspace:*"
     "@berry/monorepo": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -16213,7 +16214,7 @@ __metadata:
   version: 0.0.0
   resolution: "pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core"
   dependencies:
-    fs-extra: "npm:^7.0.1"
+    "@berry/fslib": "workspace:*"
     invariant: "npm:^2.2.4"
     klaw: "npm:^2.1.1"
     minimatch: "npm:^3.0.4"
@@ -16228,6 +16229,8 @@ __metadata:
 "pkg-tests-fixtures@workspace:*, pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures":
   version: 0.0.0
   resolution: "pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures"
+  dependencies:
+    "@berry/fslib": "workspace:*"
   languageName: unknown
   linkType: soft
 

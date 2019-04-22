@@ -49,20 +49,17 @@ exports.getPackageRegistry = function getPackageRegistry(): Promise<PackageRegis
       filter: ['package.json'],
     })) {
       const packageJson = await fsUtils.readJson(packageFile);
-      const {name, version} = packageJson;
 
-      if (name.startsWith('git-')) {
+      const {name, version} = packageJson;
+      if (name.startsWith('git-'))
         continue;
-      }
 
       let packageEntry = packageRegistry.get(name);
-
-      if (!packageEntry) {
+      if (!packageEntry)
         packageRegistry.set(name, (packageEntry = new Map()));
-      }
 
       packageEntry.set(version, {
-        path: require('path').dirname(packageFile),
+        path: require('path').posix.dirname(packageFile),
         packageJson,
       });
     }
@@ -79,16 +76,12 @@ exports.getPackageEntry = async function getPackageEntry(name: string): Promise<
 
 exports.getPackageArchiveStream = async function getPackageArchiveStream(name: string, version: string): Promise<Gzip> {
   const packageEntry = await exports.getPackageEntry(name);
-
-  if (!packageEntry) {
+  if (!packageEntry)
     throw new Error(`Unknown package "${name}"`);
-  }
 
   const packageVersionEntry = packageEntry.get(version);
-
-  if (!packageVersionEntry) {
+  if (!packageVersionEntry)
     throw new Error(`Unknown version "${version}" for package "${name}"`);
-  }
 
   return fsUtils.packToStream(packageVersionEntry.path, {
     virtualPath: '/package',
@@ -97,16 +90,12 @@ exports.getPackageArchiveStream = async function getPackageArchiveStream(name: s
 
 exports.getPackageArchivePath = async function getPackageArchivePath(name: string, version: string): Promise<string> {
   const packageEntry = await exports.getPackageEntry(name);
-
-  if (!packageEntry) {
+  if (!packageEntry)
     throw new Error(`Unknown package "${name}"`);
-  }
 
   const packageVersionEntry = packageEntry.get(version);
-
-  if (!packageVersionEntry) {
+  if (!packageVersionEntry)
     throw new Error(`Unknown version "${version}" for package "${name}"`);
-  }
 
   const archivePath = await fsUtils.createTemporaryFile(`${name}-${version}.tar.gz`);
 
@@ -143,16 +132,12 @@ exports.getPackageHttpArchivePath = async function getPackageHttpArchivePath(
   version: string,
 ): Promise<string> {
   const packageEntry = await exports.getPackageEntry(name);
-
-  if (!packageEntry) {
+  if (!packageEntry)
     throw new Error(`Unknown package "${name}"`);
-  }
 
   const packageVersionEntry = packageEntry.get(version);
-
-  if (!packageVersionEntry) {
+  if (!packageVersionEntry)
     throw new Error(`Unknown version "${version}" for package "${name}"`);
-  }
 
   const serverUrl = await exports.startPackageServer();
   const archiveUrl = `${serverUrl}/${name}/-/${name}-${version}.tgz`;
@@ -165,16 +150,12 @@ exports.getPackageDirectoryPath = async function getPackageDirectoryPath(
   version: string,
 ): Promise<string> {
   const packageEntry = await exports.getPackageEntry(name);
-
-  if (!packageEntry) {
+  if (!packageEntry)
     throw new Error(`Unknown package "${name}"`);
-  }
 
   const packageVersionEntry = packageEntry.get(version);
-
-  if (!packageVersionEntry) {
+  if (!packageVersionEntry)
     throw new Error(`Unknown version "${version}" for package "${name}"`);
-  }
 
   return packageVersionEntry.path;
 };
@@ -182,30 +163,25 @@ exports.getPackageDirectoryPath = async function getPackageDirectoryPath(
 let packageServerUrl = null;
 
 exports.startPackageServer = function startPackageServer(): Promise<string> {
-  if (packageServerUrl !== null) {
+  if (packageServerUrl !== null)
     return packageServerUrl;
-  }
 
   async function processPackageInfo(params: Array<string> | null, res: ServerResponse): Promise<boolean> {
-    if (params === null) {
+    if (params === null)
       return false;
-    }
 
     const [, scope, localName] = params;
     const name = scope ? `${scope}/${localName}` : localName;
 
     const packageEntry = await exports.getPackageEntry(name);
-
-    if (!packageEntry) {
+    if (!packageEntry)
       return processError(res, 404, `Package not found: ${name}`);
-    }
 
     let versions = Array.from(packageEntry.keys());
 
     const whitelistedVersions = whitelist.get(name);
-    if (whitelistedVersions) {
+    if (whitelistedVersions)
       versions = versions.filter(version => whitelistedVersions.has(version));
-    }
 
     const data = JSON.stringify({
       name,
@@ -237,24 +213,19 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
   }
 
   async function processPackageTarball(params: Array<string> | null, res: ServerResponse): Promise<boolean> {
-    if (!params) {
+    if (!params)
       return false;
-    }
 
     const [, scope, localName, version] = params;
     const name = scope ? `${scope}/${localName}` : localName;
 
     const packageEntry = await exports.getPackageEntry(name);
-
-    if (!packageEntry) {
+    if (!packageEntry)
       return processError(res, 404, `Package not found: ${name}`);
-    }
 
     const packageVersionEntry = packageEntry.get(version);
-
-    if (!packageVersionEntry) {
+    if (!packageVersionEntry)
       return processError(res, 404, `Package not found: ${name}@${version}`);
-    }
 
     res.writeHead(200, {
       ['Content-Type']: 'application/octet-stream',
@@ -281,15 +252,11 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
       (req, res) =>
         void (async () => {
           try {
-            if (await processPackageInfo(req.url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)$/), res)) {
+            if (await processPackageInfo(req.url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)$/), res))
               return;
-            }
 
-            if (
-              await processPackageTarball(req.url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)\/-\/\2-(.*)\.tgz$/), res)
-            ) {
+            if (await processPackageTarball(req.url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)\/-\/\2-(.*)\.tgz$/), res))
               return;
-            }
 
             processError(res, 404, `Invalid route: ${req.url}`);
           } catch (error) {
@@ -339,9 +306,8 @@ exports.generatePkgDriver = function generatePkgDriver({
         const run = (...args) => {
           let callDefinition = {};
 
-          if (args.length > 0 && typeof args[args.length - 1] === 'object') {
+          if (args.length > 0 && typeof args[args.length - 1] === 'object')
             callDefinition = args.pop();
-          }
 
           return runDriver(path, args, {
             registryUrl,

@@ -1,8 +1,8 @@
-import {Gzip} from 'zlib';
+import {Gzip}          from 'zlib';
+import {posix}         from 'path';
+import {xfs, NodeFS}   from '@berry/fslib';
 
-const fs = require('fs-extra');
 const klaw = require('klaw');
-const path = require('path');
 const tarFs = require('tar-fs');
 const tmp = require('tmp');
 const zlib = require('zlib');
@@ -18,19 +18,20 @@ exports.walk = function walk(
   return new Promise((resolve, reject) => {
     const paths = [];
 
-    const walker = klaw(source, {
+    const walker = klaw(NodeFS.fromPortablePath(source), {
       filter: itemPath => {
         if (!filter) {
           return true;
         }
 
-        const stat = fs.statSync(itemPath);
+        itemPath = NodeFS.toPortablePath(itemPath);
+        const stat = xfs.statSync(itemPath);
 
         if (stat.isDirectory()) {
           return true;
         }
 
-        const relativePath = path.relative(source, itemPath);
+        const relativePath = posix.relative(source, itemPath);
 
         if (miscUtils.filePatternMatch(relativePath, filter)) {
           return true;
@@ -41,7 +42,8 @@ exports.walk = function walk(
     });
 
     walker.on('data', ({path: itemPath}) => {
-      const relativePath = path.relative(source, itemPath);
+      itemPath = NodeFS.toPortablePath(itemPath);
+      const relativePath = posix.relative(source, itemPath);
 
       if (!filter || miscUtils.filePatternMatch(relativePath, filter)) {
         paths.push(relative ? relativePath : itemPath);
@@ -62,25 +64,27 @@ exports.packToStream = function packToStream(
   {virtualPath = null}: {virtualPath?: string | null} = {},
 ): Gzip {
   if (virtualPath) {
-    if (!path.isAbsolute(virtualPath)) {
+    if (!posix.isAbsolute(virtualPath)) {
       throw new Error('The virtual path has to be an absolute path');
     } else {
-      virtualPath = path.resolve(virtualPath);
+      virtualPath = posix.resolve(virtualPath);
     }
   }
 
   const zipperStream = zlib.createGzip();
 
-  const packStream = tarFs.pack(source, {
+  const packStream = tarFs.pack(NodeFS.fromPortablePath(source), {
     map: header => {
+      header.name = NodeFS.toPortablePath(header.name);
+
       if (true) {
-        header.name = path.posix.resolve('/', header.name);
-        header.name = path.posix.relative('/', header.name);
+        header.name = posix.resolve('/', header.name);
+        header.name = posix.relative('/', header.name);
       }
 
       if (virtualPath) {
-        header.name = path.posix.resolve('/', virtualPath, header.name);
-        header.name = path.posix.relative('/', header.name);
+        header.name = posix.resolve('/', virtualPath, header.name);
+        header.name = posix.relative('/', header.name);
       }
 
       return header;
@@ -97,7 +101,7 @@ exports.packToStream = function packToStream(
 };
 
 exports.packToFile = function packToFile(target: string, source: string, options: any): Promise<void> {
-  const tarballStream = fs.createWriteStream(target);
+  const tarballStream = xfs.createWriteStream(target);
 
   const packStream = exports.packToStream(source, options);
   packStream.pipe(tarballStream);
@@ -127,10 +131,10 @@ exports.createTemporaryFolder = function createTemporaryFolder(name?: string): P
       }
     });
   }).then(async dirPath => {
-    dirPath = fs.realpathSync(dirPath);
+    dirPath = await xfs.realpathPromise(NodeFS.toPortablePath(dirPath));
 
     if (name) {
-      dirPath = path.join(dirPath, name);
+      dirPath = posix.join(dirPath, name);
       await exports.mkdirp(dirPath);
     }
     
@@ -140,19 +144,19 @@ exports.createTemporaryFolder = function createTemporaryFolder(name?: string): P
 
 exports.createTemporaryFile = async function createTemporaryFile(filePath: string): Promise<string> {
   if (filePath) {
-    if (path.normalize(filePath).match(/^(\.\.)?\//)) {
+    if (posix.normalize(filePath).match(/^(\.\.)?\//)) {
       throw new Error('A temporary file path must be a forward path');
     }
 
     const folderPath = await exports.createTemporaryFolder();
-    return path.resolve(folderPath, filePath);
+    return posix.resolve(folderPath, filePath);
   } else {
     return new Promise((resolve, reject) => {
       tmp.file({discardDescriptor: true}, (error, filePath) => {
         if (error) {
           reject(error);
         } else {
-          resolve(filePath);
+          resolve(NodeFS.toPortablePath(filePath));
         }
       });
     });
@@ -160,16 +164,16 @@ exports.createTemporaryFile = async function createTemporaryFile(filePath: strin
 };
 
 exports.mkdirp = async function mkdirp(target: string): Promise<void> {
-  await fs.mkdirp(target);
+  await xfs.mkdirpPromise(target);
 };
 
 exports.writeFile = async function writeFile(target: string, body: string | Buffer): Promise<void> {
-  await fs.mkdirp(path.dirname(target));
-  await fs.writeFile(target, body);
+  await xfs.mkdirpPromise(posix.dirname(target));
+  await xfs.writeFilePromise(target, body);
 };
 
 exports.readFile = function readFile(source: string, encoding?: string): Promise<any> {
-  return fs.readFile(source, encoding);
+  return xfs.readFilePromise(source, encoding);
 };
 
 exports.writeJson = function writeJson(target: string, object: any): Promise<void> {
@@ -187,11 +191,11 @@ exports.readJson = async function readJson(source: string): Promise<any> {
 };
 
 exports.chmod = async function chmod(target: string, mod: number): Promise<void> {
-  await fs.chmod(target, mod);
+  await xfs.chmodPromise(target, mod);
 };
 
 exports.realpath = function realpath(source: string): Promise<string> {
-  return fs.realpath(source);
+  return xfs.realpathPromise(source);
 };
 
 exports.makeFakeBinary = async function(

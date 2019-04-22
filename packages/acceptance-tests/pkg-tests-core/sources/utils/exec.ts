@@ -1,3 +1,4 @@
+const {NodeFS} = require(`@berry/fslib`);
 const cp = require('child_process');
 
 exports.execFile = function(
@@ -6,7 +7,10 @@ exports.execFile = function(
   options: Object,
 ): Promise<{stdout: Buffer, stderr: Buffer}> {
   return new Promise((resolve, reject) => {
-    cp.execFile(path, args, options, (error, stdout, stderr) => {
+    cp.execFile(path, args, {
+      ... options,
+      cwd: options.cwd ? NodeFS.fromPortablePath(options.cwd) : undefined,
+    }, (error, stdout, stderr) => {
       stdout = stdout.replace(/\r\n?/g, `\n`);
       stderr = stderr.replace(/\r\n?/g, `\n`);
 

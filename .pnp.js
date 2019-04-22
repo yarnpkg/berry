@@ -15494,6 +15494,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/acceptance-tests"
                 ],
                 [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
                   "@berry/monorepo",
                   "workspace:."
                 ]
@@ -49999,8 +50003,8 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/acceptance-tests/pkg-tests-core"
                 ],
                 [
-                  "fs-extra",
-                  "npm:7.0.1"
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
                 ],
                 [
                   "invariant",
@@ -50050,6 +50054,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "pkg-tests-fixtures",
                   "workspace:packages/acceptance-tests/pkg-tests-fixtures"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
                 ]
               ]
             }

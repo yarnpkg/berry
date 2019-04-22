@@ -1,0 +1,315 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Commands constraints query test (empty project / combined predicates) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (empty project / custom predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: DependencyType = devDependencies
+➤ BR0000: DependencyType = peerDependencies
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (empty project / single predicate with ignored variable) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: WorkspaceName = 'root-workspace-988eec'
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (empty project / single predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: DependencyType = dependencies
+➤ BR0000: DependencyType = devDependencies
+➤ BR0000: DependencyType = peerDependencies
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (multiple workspaces / combined predicates) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: ┌ DependencyType  = dependencies
+➤ BR0000: │ DependencIdent  = 'no-deps'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: ┌ DependencyType  = dependencies
+➤ BR0000: │ DependencIdent  = 'no-deps-bin'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: ┌ DependencyType  = dependencies
+➤ BR0000: │ DependencIdent  = 'no-deps'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: ┌ DependencyType  = dependencies
+➤ BR0000: │ DependencIdent  = 'no-deps-bin'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: ┌ DependencyType  = devDependencies
+➤ BR0000: │ DependencIdent  = 'no-deps'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: ┌ DependencyType  = devDependencies
+➤ BR0000: │ DependencIdent  = 'no-deps-bin'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: ┌ DependencyType  = devDependencies
+➤ BR0000: │ DependencIdent  = 'no-deps'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: ┌ DependencyType  = devDependencies
+➤ BR0000: │ DependencIdent  = 'no-deps-bin'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (multiple workspaces / custom predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: DependencyType = devDependencies
+➤ BR0000: DependencyType = peerDependencies
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (multiple workspaces / single predicate with ignored variable) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: WorkspaceName = 'root-workspace-988eec'
+➤ BR0000: WorkspaceName = 'workspace-a-01beb5'
+➤ BR0000: WorkspaceName = 'workspace-b-d95f30'
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (multiple workspaces / single predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: DependencyType = dependencies
+➤ BR0000: DependencyType = devDependencies
+➤ BR0000: DependencyType = peerDependencies
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (one regular dependency / combined predicates) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: ┌ DependencyType  = dependencies
+➤ BR0000: │ DependencIdent  = 'no-deps'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (one regular dependency / custom predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: DependencyType = devDependencies
+➤ BR0000: DependencyType = peerDependencies
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (one regular dependency / single predicate with ignored variable) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: WorkspaceName = 'root-workspace-988eec'
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (one regular dependency / single predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: DependencyType = dependencies
+➤ BR0000: DependencyType = devDependencies
+➤ BR0000: DependencyType = peerDependencies
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two development dependencies / combined predicates) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: ┌ DependencyType  = devDependencies
+➤ BR0000: │ DependencIdent  = 'no-deps'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: ┌ DependencyType  = devDependencies
+➤ BR0000: │ DependencIdent  = 'no-deps-bin'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two development dependencies / custom predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: DependencyType = devDependencies
+➤ BR0000: DependencyType = peerDependencies
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two development dependencies / single predicate with ignored variable) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: WorkspaceName = 'root-workspace-988eec'
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two development dependencies / single predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: DependencyType = dependencies
+➤ BR0000: DependencyType = devDependencies
+➤ BR0000: DependencyType = peerDependencies
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies / combined predicates) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: ┌ DependencyType  = dependencies
+➤ BR0000: │ DependencIdent  = 'no-deps'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: ┌ DependencyType  = dependencies
+➤ BR0000: │ DependencIdent  = 'no-deps-bin'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies / custom predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: DependencyType = devDependencies
+➤ BR0000: DependencyType = peerDependencies
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies / single predicate with ignored variable) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: WorkspaceName = 'root-workspace-988eec'
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies / single predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: DependencyType = dependencies
+➤ BR0000: DependencyType = devDependencies
+➤ BR0000: DependencyType = peerDependencies
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies, two development dependencies / combined predicates) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: ┌ DependencyType  = dependencies
+➤ BR0000: │ DependencIdent  = 'no-deps'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: ┌ DependencyType  = dependencies
+➤ BR0000: │ DependencIdent  = 'no-deps-bin'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: ┌ DependencyType  = devDependencies
+➤ BR0000: │ DependencIdent  = 'no-deps'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: ┌ DependencyType  = devDependencies
+➤ BR0000: │ DependencIdent  = 'no-deps-bin'
+➤ BR0000: └ DependencyRange = '1.0.0'
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies, two development dependencies / custom predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: DependencyType = devDependencies
+➤ BR0000: DependencyType = peerDependencies
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies, two development dependencies / single predicate with ignored variable) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: WorkspaceName = 'root-workspace-988eec'
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies, two development dependencies / single predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: DependencyType = dependencies
+➤ BR0000: DependencyType = devDependencies
+➤ BR0000: DependencyType = peerDependencies
+➤ BR0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test without trailing . 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ BR0000: Done
+",
+}
+`;

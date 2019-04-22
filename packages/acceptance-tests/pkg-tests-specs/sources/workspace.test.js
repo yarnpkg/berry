@@ -161,23 +161,23 @@ describe(`Workspaces tests`, () => {
         workspaces: [`packages/*`],
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/write.js`, `
-          require('fs').appendFileSync(process.argv[2], process.argv[3] + '\\n');
-        `);
-
         await writeJson(`${path}/packages/workspace/package.json`, {
           name: `workspace`,
           version: `1.0.0`,
           scripts: {
-            [`preinstall`]: `node ${JSON.stringify(`${path}/write.js`)} ${JSON.stringify(`${path}/workspace.dat`)} "Preinstall"`,
-            [`install`]: `node ${JSON.stringify(`${path}/write.js`)} ${JSON.stringify(`${path}/workspace.dat`)} "Install"`,
-            [`postinstall`]: `node ${JSON.stringify(`${path}/write.js`)} ${JSON.stringify(`${path}/workspace.dat`)} "Postinstall"`,
+            [`preinstall`]: `node ./write.js ./workspace.dat "Preinstall"`,
+            [`install`]: `node ./write.js ./workspace.dat "Install"`,
+            [`postinstall`]: `node ./write.js ./workspace.dat "Postinstall"`,
           },
         });
 
+        await writeFile(`${path}/packages/workspace/write.js`, `
+          require('fs').appendFileSync(process.argv[2], process.argv[3] + '\\n');
+        `);
+
         await run(`install`);
 
-        await expect(readFile(`${path}/workspace.dat`, `utf8`)).resolves.toEqual([
+        await expect(readFile(`${path}/packages/workspace/workspace.dat`, `utf8`)).resolves.toEqual([
           `Preinstall\n`,
           `Install\n`,
           `Postinstall\n`,

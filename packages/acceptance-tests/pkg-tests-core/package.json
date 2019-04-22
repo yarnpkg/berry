@@ -4,7 +4,7 @@
     "private": true,
     "main": "./sources/index.js",
     "dependencies": {
-        "fs-extra": "^7.0.1",
+        "@berry/fslib": "workspace:*",
         "invariant": "^2.2.4",
         "klaw": "^2.1.1",
         "minimatch": "^3.0.4",

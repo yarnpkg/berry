@@ -1,4 +1,4 @@
-const {normalize} = require('path');
+const {NodeFS} = require(`@berry/fslib`);
 const {
   fs: {writeFile, writeJson},
 } = require('pkg-tests-core');
@@ -47,8 +47,10 @@ describe(`Plug'n'Play API (v1)`, () => {
         await run(`install`);
 
         await expect(
-          source(`require('pnpapi').resolveRequest('pnpapi', ${JSON.stringify(path + '/')})`),
-        ).resolves.toEqual(normalize(`${path}/.pnp.js`));
+          source(`require('pnpapi').resolveRequest('pnpapi', ${JSON.stringify(`${NodeFS.fromPortablePath(path)}/`)})`),
+        ).resolves.toEqual(
+          NodeFS.fromPortablePath(`${path}/.pnp.js`),
+        );
       }),
     );
 
@@ -57,7 +59,9 @@ describe(`Plug'n'Play API (v1)`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(source(`require('pnpapi').resolveRequest('fs', ${JSON.stringify(path)} + '/')`)).resolves.toEqual(
+        await expect(
+          source(`require('pnpapi').resolveRequest('fs', ${JSON.stringify(`${NodeFS.fromPortablePath(path)}/`)})`)
+        ).resolves.toEqual(
           null,
         );
       }),
@@ -70,7 +74,10 @@ describe(`Plug'n'Play API (v1)`, () => {
           dependencies: {[`fs`]: `link:./fs`},
         },
         async ({path, run, source}) => {
-          await writeFile(`${path}/fs/index.js`, `module.exports = 'Hello world';`);
+          await writeFile(`${path}/fs/index.js`, `
+            module.exports = 'Hello world';
+          `);
+
           await writeJson(`${path}/fs/package.json`, {
             name: `fs`,
             version: `1.0.0`,
@@ -79,8 +86,10 @@ describe(`Plug'n'Play API (v1)`, () => {
           await run(`install`);
 
           await expect(
-            source(`require('pnpapi').resolveRequest('fs', ${JSON.stringify(path)} + '/', {considerBuiltins: false})`),
-          ).resolves.toEqual(normalize(`${path}/fs/index.js`));
+            source(`require('pnpapi').resolveRequest('fs', ${JSON.stringify(`${NodeFS.fromPortablePath(path)}/`)}, {considerBuiltins: false})`),
+          ).resolves.toEqual(
+            NodeFS.fromPortablePath(`${path}/fs/index.js`),
+          );
         },
       ),
     );
@@ -88,13 +97,17 @@ describe(`Plug'n'Play API (v1)`, () => {
     test(
       `it should support the 'extensions' option`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        await writeFile(`${path}/foo.bar`, `hello world`);
+        await writeFile(`${path}/foo.bar`, `
+          hello world
+        `);
 
         await run(`install`);
 
         await expect(
-          source(`require('pnpapi').resolveRequest('./foo', ${JSON.stringify(path)} + '/', {extensions: ['.bar']})`),
-        ).resolves.toEqual(normalize(`${path}/foo.bar`));
+          source(`require('pnpapi').resolveRequest('./foo', ${JSON.stringify(`${NodeFS.fromPortablePath(path)}/`)}, {extensions: ['.bar']})`),
+        ).resolves.toEqual(
+          NodeFS.fromPortablePath(`${path}/foo.bar`),
+        );
       }),
     );
   });
