@@ -74,12 +74,16 @@ export class Project {
 
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
+
       if (xfs.existsSync(`${currentCwd}/package.json`)) {
         projectCwd = currentCwd;
         if (!packageCwd) {
           packageCwd = currentCwd;
         }
       }
+
+      if (xfs.existsSync(`${currentCwd}/yarn.lock`))
+
       nextCwd = posix.dirname(currentCwd);
     }
 
@@ -111,14 +115,12 @@ export class Project {
   }
 
   private async setupResolutions() {
-    const resolver = this.configuration.makeResolver();
-
     this.storedResolutions = new Map();
 
     this.storedDescriptors = new Map();
     this.storedPackages = new Map();
 
-    const lockfilePath = this.configuration.get(`lockfilePath`);
+    const lockfilePath = `${this.cwd}/${this.configuration.get(`lockfileFilename`)}`;
 
     if (xfs.existsSync(lockfilePath)) {
       const content = await xfs.readFilePromise(lockfilePath, `utf8`);
@@ -1222,7 +1224,7 @@ export class Project {
   }
 
   async persistLockfile() {
-    const lockfilePath = this.configuration.get(`lockfilePath`);
+    const lockfilePath = `${this.cwd}/${this.configuration.get(`lockfileFilename`)}`;
     const lockfileContent = this.generateLockfile();
 
     await xfs.changeFilePromise(lockfilePath, lockfileContent);
