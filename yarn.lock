@@ -3694,6 +3694,7 @@ __metadata:
   dependencies:
     "@berry/fslib": "workspace:*"
     "@berry/monorepo": "workspace:*"
+    is-wsl: "npm:^1.1.0"
   languageName: unknown
   linkType: soft
 

@@ -15475,6 +15475,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/monorepo",
                   "workspace:."
+                ],
+                [
+                  "is-wsl",
+                  "npm:1.1.0"
                 ]
               ]
             }

@@ -25,7 +25,6 @@ Object {
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
-{\\"key\\":\\"nodeGypMagicLocator\\",\\"effective\\":\\"node-gyp\\",\\"description\\":\\"Package to use when node-gyp is omitted from the dependencies\\",\\"type\\":\\"LOCATOR_LOOSE\\",\\"default\\":\\"node-gyp\\"}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -66,7 +65,6 @@ Object {
 ➤ BR0000: initVersion - Version used when creating packages via the init command - null
 ➤ BR0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null
 ➤ BR0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
 ➤ BR0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
@@ -108,7 +106,6 @@ Object {
 ➤ BR0000: initVersion - <default> - null
 ➤ BR0000: lastUpdateCheck - <default> - null
 ➤ BR0000: lockfileFilename - <default> - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - <default> - 'node-gyp'
 ➤ BR0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - <default> - true
@@ -150,7 +147,6 @@ Object {
 ➤ BR0000: initVersion - null
 ➤ BR0000: lastUpdateCheck - null
 ➤ BR0000: lockfileFilename - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - 'node-gyp'
 ➤ BR0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - true
@@ -192,7 +188,6 @@ Object {
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":\\"1555784893958\\",\\"source\\":\\"WORKSPACE_ROOT/.spec-yarnrc\\",\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
-{\\"key\\":\\"nodeGypMagicLocator\\",\\"effective\\":\\"node-gyp\\",\\"description\\":\\"Package to use when node-gyp is omitted from the dependencies\\",\\"type\\":\\"LOCATOR_LOOSE\\",\\"default\\":\\"node-gyp\\"}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -233,7 +228,6 @@ Object {
 ➤ BR0000: initVersion - Version used when creating packages via the init command - null
 ➤ BR0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - '1555784893958'
 ➤ BR0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
 ➤ BR0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
@@ -275,7 +269,6 @@ Object {
 ➤ BR0000: initVersion - <default> - null
 ➤ BR0000: lastUpdateCheck - WORKSPACE_ROOT/.spec-yarnrc - '1555784893958'
 ➤ BR0000: lockfileFilename - <default> - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - <default> - 'node-gyp'
 ➤ BR0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - <default> - true
@@ -317,7 +310,6 @@ Object {
 ➤ BR0000: initVersion - null
 ➤ BR0000: lastUpdateCheck - '1555784893958'
 ➤ BR0000: lockfileFilename - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - 'node-gyp'
 ➤ BR0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - true
@@ -359,7 +351,6 @@ Object {
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":\\"1555784893958\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/.spec-yarnrc\\",\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
-{\\"key\\":\\"nodeGypMagicLocator\\",\\"effective\\":\\"node-gyp\\",\\"description\\":\\"Package to use when node-gyp is omitted from the dependencies\\",\\"type\\":\\"LOCATOR_LOOSE\\",\\"default\\":\\"node-gyp\\"}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -400,7 +391,6 @@ Object {
 ➤ BR0000: initVersion - Version used when creating packages via the init command - null
 ➤ BR0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - '1555784893958'
 ➤ BR0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
 ➤ BR0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
@@ -442,7 +432,6 @@ Object {
 ➤ BR0000: initVersion - <default> - null
 ➤ BR0000: lastUpdateCheck - WORKSPACE_ROOT/subfolder/.spec-yarnrc - '1555784893958'
 ➤ BR0000: lockfileFilename - <default> - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - <default> - 'node-gyp'
 ➤ BR0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - <default> - true
@@ -484,7 +473,6 @@ Object {
 ➤ BR0000: initVersion - null
 ➤ BR0000: lastUpdateCheck - '1555784893958'
 ➤ BR0000: lockfileFilename - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - 'node-gyp'
 ➤ BR0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - true
@@ -526,7 +514,6 @@ Object {
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
-{\\"key\\":\\"nodeGypMagicLocator\\",\\"effective\\":\\"node-gyp\\",\\"description\\":\\"Package to use when node-gyp is omitted from the dependencies\\",\\"type\\":\\"LOCATOR_LOOSE\\",\\"default\\":\\"node-gyp\\"}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -567,7 +554,6 @@ Object {
 ➤ BR0000: initVersion - Version used when creating packages via the init command - null
 ➤ BR0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null
 ➤ BR0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
 ➤ BR0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
@@ -609,7 +595,6 @@ Object {
 ➤ BR0000: initVersion - <default> - null
 ➤ BR0000: lastUpdateCheck - <default> - null
 ➤ BR0000: lockfileFilename - <default> - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - <default> - 'node-gyp'
 ➤ BR0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - <default> - true
@@ -651,7 +636,6 @@ Object {
 ➤ BR0000: initVersion - null
 ➤ BR0000: lastUpdateCheck - null
 ➤ BR0000: lockfileFilename - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - 'node-gyp'
 ➤ BR0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - true
@@ -693,7 +677,6 @@ Object {
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
-{\\"key\\":\\"nodeGypMagicLocator\\",\\"effective\\":\\"node-gyp\\",\\"description\\":\\"Package to use when node-gyp is omitted from the dependencies\\",\\"type\\":\\"LOCATOR_LOOSE\\",\\"default\\":\\"node-gyp\\"}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -734,7 +717,6 @@ Object {
 ➤ BR0000: initVersion - Version used when creating packages via the init command - null
 ➤ BR0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null
 ➤ BR0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
 ➤ BR0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
@@ -776,7 +758,6 @@ Object {
 ➤ BR0000: initVersion - <default> - null
 ➤ BR0000: lastUpdateCheck - <default> - null
 ➤ BR0000: lockfileFilename - <default> - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - <default> - 'node-gyp'
 ➤ BR0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - <default> - true
@@ -818,7 +799,6 @@ Object {
 ➤ BR0000: initVersion - null
 ➤ BR0000: lastUpdateCheck - null
 ➤ BR0000: lockfileFilename - 'yarn.lock'
-➤ BR0000: nodeGypMagicLocator - 'node-gyp'
 ➤ BR0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ BR0000: pnpEnableInlining - true

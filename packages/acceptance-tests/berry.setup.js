@@ -1,6 +1,7 @@
 /* @flow */
 
 const {delimiter} = require(`path`);
+const isWsl = require(`is-wsl`);
 
 const {
   tests: {generatePkgDriver, startPackageServer, getPackageRegistry},
@@ -50,7 +51,7 @@ global.makeTemporaryEnv = generatePkgDriver({
   },
 });
 
-if (process.platform === `win32`) {
+if (process.platform === `win32` || isWsl) {
   jest.setTimeout(10000);
 }
 
