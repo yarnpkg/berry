@@ -1,5 +1,5 @@
 const {
-  fs: {readJson},
+  fs: {readJson, readFile},
 } = require('pkg-tests-core');
 
 describe(`Commands`, () => {
@@ -79,6 +79,15 @@ describe(`Commands`, () => {
             [`no-deps`]: `*`,
           },
         });
+      }),
+    );
+
+    test(
+      `it should add node-gyp dependency to yarn.lock if a script uses it`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `inject-node-gyp`);
+
+        await expect(readFile(`${path}/yarn.lock`, 'utf8')).resolves.toEqual(expect.stringContaining(`node-gyp: "npm:*"`));
       }),
     );
   });
