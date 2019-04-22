@@ -34,6 +34,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   .action(async ({cwd, stdin, stdout, stderr, command, package: packages, args, quiet, ... rest}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, command: string, package: Array<string>, args: Array<string>, quiet: boolean}) => {
     const tmpDir = await createTemporaryDirectory(`dlx-${process.pid}`);
     await xfs.writeFilePromise(`${tmpDir}/package.json`, `{}\n`);
+    await xfs.writeFilePromise(`${tmpDir}/yarn.lock`, ``);
     await xfs.writeFilePromise(`${tmpDir}/.yarnrc`, `enable-global-cache true\n`);
 
     if (packages.length === 0) {
