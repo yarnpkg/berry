@@ -42,8 +42,8 @@ jobs:
 
   strategy:
     matrix:
-      "Node 8.x":
-        node_version: 8.x
+#      "Node 8.x":
+#        node_version: 8.x
       "Node 10.x":
         node_version: 10.x
 
