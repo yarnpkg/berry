@@ -109,7 +109,6 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
       return checkReport.exitCode();
 
     let askedQuestions = false;
-    let hasChanged = false;
 
     const afterWorkspaceDependencyAdditionList: Array<[
       Workspace,
@@ -172,37 +171,33 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
             selected,
           ]);
         }
-
-        hasChanged = true;
       }
     }
 
-    if (hasChanged) {
-      await configuration.triggerMultipleHooks(
-        (hooks: Hooks) => hooks.afterWorkspaceDependencyAddition,
-        afterWorkspaceDependencyAdditionList,
-      );
+    await configuration.triggerMultipleHooks(
+      (hooks: Hooks) => hooks.afterWorkspaceDependencyAddition,
+      afterWorkspaceDependencyAdditionList,
+    );
 
-      await configuration.triggerMultipleHooks(
-        (hooks: Hooks) => hooks.afterWorkspaceDependencyReplacement,
-        afterWorkspaceDependencyReplacementList,
-      );
+    await configuration.triggerMultipleHooks(
+      (hooks: Hooks) => hooks.afterWorkspaceDependencyReplacement,
+      afterWorkspaceDependencyReplacementList,
+    );
 
-      if (askedQuestions)
-        stdout.write(`\n`);
+    if (askedQuestions)
+      stdout.write(`\n`);
 
-      let installReport;
-      
-      if (quiet) {
-        installReport = await LightReport.start({configuration, stdout}, async report => {
-          await project.install({cache, report});
-        });
-      } else {
-        installReport = await StreamReport.start({configuration, stdout}, async report => {
-          await project.install({cache, report});
-        });
-      }
-
-      return installReport.exitCode();
+    let installReport;
+    
+    if (quiet) {
+      installReport = await LightReport.start({configuration, stdout}, async report => {
+        await project.install({cache, report});
+      });
+    } else {
+      installReport = await StreamReport.start({configuration, stdout}, async report => {
+        await project.install({cache, report});
+      });
     }
+
+    return installReport.exitCode();
   });

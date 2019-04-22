@@ -3,6 +3,7 @@ import {NodeFS, xfs}                                       from '@berry/fslib';
 import {Hooks as StageHooks}                               from '@berry/plugin-stage';
 
 import {PnpLinker}                                         from './PnpLinker';
+import unplug                                              from './commands/unplug';
 
 async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
   const pnpPath = NodeFS.fromPortablePath(project.configuration.get(`pnpPath`));
@@ -66,6 +67,9 @@ const plugin: Plugin = {
   },
   linkers: [
     PnpLinker,
+  ],
+  commands: [
+    unplug,
   ],
 };
 
