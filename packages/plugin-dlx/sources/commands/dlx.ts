@@ -32,7 +32,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   )
 
   .action(async ({cwd, stdin, stdout, stderr, command, package: packages, args, quiet, ... rest}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, command: string, package: Array<string>, args: Array<string>, quiet: boolean}) => {
-    const tmpDir = NodeFS.fromPortablePath(await createTemporaryDirectory(`dlx-${process.pid}`));
+    const tmpDir = NodeFS.toPortablePath(await createTemporaryDirectory(`dlx-${process.pid}`));
 
     try {
       await xfs.writeFilePromise(`${tmpDir}/package.json`, `{}\n`);
