@@ -4,39 +4,39 @@ exports[`Commands config test (folder with rcfile / as json) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "{\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
-{\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
-{\\"key\\":\\"lockfilePath\\",\\"effective\\":\\"WORKSPACE_ROOT/yarn.lock\\",\\"description\\":\\"Path of the file where the dependency tree must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./yarn.lock\\"}
+  "stdout": "{\\"key\\":\\"bstatePath\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/build-state.yml\\",\\"description\\":\\"Path of the file where the current state of the built packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/build-state.yml\\"}
 {\\"key\\":\\"cacheFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/cache\\",\\"description\\":\\"Folder where the cache files must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/cache\\"}
-{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the symlinks generated for virtual packages must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
-{\\"key\\":\\"bstatePath\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/build-state.yml\\",\\"description\\":\\"Path of the file where the current state of the built packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/build-state.yml\\"}
-{\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
-{\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
-{\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
-{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"initLicense\\",\\"effective\\":null,\\"description\\":\\"License used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initScope\\",\\"effective\\":\\"berry-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
 {\\"key\\":\\"nodeGypMagicLocator\\",\\"effective\\":\\"node-gyp\\",\\"description\\":\\"Package to use when node-gyp is omitted from the dependencies\\",\\"type\\":\\"LOCATOR_LOOSE\\",\\"default\\":\\"node-gyp\\"}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
-{\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
-{\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
+{\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
+{\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
+{\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
+{\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
+{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the symlinks generated for virtual packages must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
+{\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
 }
 `;
@@ -65,7 +65,7 @@ Object {
 ➤ BR0000: initScope - Scope used when creating packages via the init command - 'berry-test'
 ➤ BR0000: initVersion - Version used when creating packages via the init command - null
 ➤ BR0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null
-➤ BR0000: lockfilePath - Path of the file where the dependency tree must be stored - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
 ➤ BR0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -107,7 +107,7 @@ Object {
 ➤ BR0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'berry-test'
 ➤ BR0000: initVersion - <default> - null
 ➤ BR0000: lastUpdateCheck - <default> - null
-➤ BR0000: lockfilePath - <default> - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - <default> - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - <default> - 'node-gyp'
 ➤ BR0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -149,7 +149,7 @@ Object {
 ➤ BR0000: initScope - 'berry-test'
 ➤ BR0000: initVersion - null
 ➤ BR0000: lastUpdateCheck - null
-➤ BR0000: lockfilePath - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - 'node-gyp'
 ➤ BR0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -171,39 +171,39 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / as
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "{\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":\\"1555784893958\\",\\"source\\":\\"WORKSPACE_ROOT/.spec-yarnrc\\",\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
-{\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
-{\\"key\\":\\"lockfilePath\\",\\"effective\\":\\"WORKSPACE_ROOT/yarn.lock\\",\\"description\\":\\"Path of the file where the dependency tree must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./yarn.lock\\"}
+  "stdout": "{\\"key\\":\\"bstatePath\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/build-state.yml\\",\\"description\\":\\"Path of the file where the current state of the built packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/build-state.yml\\"}
 {\\"key\\":\\"cacheFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/cache\\",\\"description\\":\\"Folder where the cache files must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/cache\\"}
-{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the symlinks generated for virtual packages must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
-{\\"key\\":\\"bstatePath\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/build-state.yml\\",\\"description\\":\\"Path of the file where the current state of the built packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/build-state.yml\\"}
-{\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
-{\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
-{\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
-{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"initLicense\\",\\"effective\\":null,\\"description\\":\\"License used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initScope\\",\\"effective\\":\\"berry-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":\\"1555784893958\\",\\"source\\":\\"WORKSPACE_ROOT/.spec-yarnrc\\",\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
 {\\"key\\":\\"nodeGypMagicLocator\\",\\"effective\\":\\"node-gyp\\",\\"description\\":\\"Package to use when node-gyp is omitted from the dependencies\\",\\"type\\":\\"LOCATOR_LOOSE\\",\\"default\\":\\"node-gyp\\"}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
-{\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
-{\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
+{\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
+{\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
+{\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
+{\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
+{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the symlinks generated for virtual packages must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
+{\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
 }
 `;
@@ -232,7 +232,7 @@ Object {
 ➤ BR0000: initScope - Scope used when creating packages via the init command - 'berry-test'
 ➤ BR0000: initVersion - Version used when creating packages via the init command - null
 ➤ BR0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - '1555784893958'
-➤ BR0000: lockfilePath - Path of the file where the dependency tree must be stored - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
 ➤ BR0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -274,7 +274,7 @@ Object {
 ➤ BR0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'berry-test'
 ➤ BR0000: initVersion - <default> - null
 ➤ BR0000: lastUpdateCheck - WORKSPACE_ROOT/.spec-yarnrc - '1555784893958'
-➤ BR0000: lockfilePath - <default> - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - <default> - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - <default> - 'node-gyp'
 ➤ BR0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -316,7 +316,7 @@ Object {
 ➤ BR0000: initScope - 'berry-test'
 ➤ BR0000: initVersion - null
 ➤ BR0000: lastUpdateCheck - '1555784893958'
-➤ BR0000: lockfilePath - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - 'node-gyp'
 ➤ BR0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -338,39 +338,39 @@ exports[`Commands config test (folder with rcfile and rc in parent / as json) 1`
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "{\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":\\"1555784893958\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/.spec-yarnrc\\",\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
-{\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
-{\\"key\\":\\"lockfilePath\\",\\"effective\\":\\"WORKSPACE_ROOT/yarn.lock\\",\\"description\\":\\"Path of the file where the dependency tree must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./yarn.lock\\"}
+  "stdout": "{\\"key\\":\\"bstatePath\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/build-state.yml\\",\\"description\\":\\"Path of the file where the current state of the built packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/build-state.yml\\"}
 {\\"key\\":\\"cacheFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/cache\\",\\"description\\":\\"Folder where the cache files must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/cache\\"}
-{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the symlinks generated for virtual packages must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
-{\\"key\\":\\"bstatePath\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/build-state.yml\\",\\"description\\":\\"Path of the file where the current state of the built packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/build-state.yml\\"}
-{\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
-{\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
-{\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
-{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"initLicense\\",\\"effective\\":null,\\"description\\":\\"License used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initScope\\",\\"effective\\":\\"berry-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":\\"1555784893958\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/.spec-yarnrc\\",\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
 {\\"key\\":\\"nodeGypMagicLocator\\",\\"effective\\":\\"node-gyp\\",\\"description\\":\\"Package to use when node-gyp is omitted from the dependencies\\",\\"type\\":\\"LOCATOR_LOOSE\\",\\"default\\":\\"node-gyp\\"}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
-{\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
-{\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
+{\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
+{\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
+{\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
+{\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
+{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the symlinks generated for virtual packages must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
+{\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
 }
 `;
@@ -399,7 +399,7 @@ Object {
 ➤ BR0000: initScope - Scope used when creating packages via the init command - 'berry-test'
 ➤ BR0000: initVersion - Version used when creating packages via the init command - null
 ➤ BR0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - '1555784893958'
-➤ BR0000: lockfilePath - Path of the file where the dependency tree must be stored - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
 ➤ BR0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -441,7 +441,7 @@ Object {
 ➤ BR0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'berry-test'
 ➤ BR0000: initVersion - <default> - null
 ➤ BR0000: lastUpdateCheck - WORKSPACE_ROOT/subfolder/.spec-yarnrc - '1555784893958'
-➤ BR0000: lockfilePath - <default> - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - <default> - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - <default> - 'node-gyp'
 ➤ BR0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -483,7 +483,7 @@ Object {
 ➤ BR0000: initScope - 'berry-test'
 ➤ BR0000: initVersion - null
 ➤ BR0000: lastUpdateCheck - '1555784893958'
-➤ BR0000: lockfilePath - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - 'node-gyp'
 ➤ BR0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -505,39 +505,39 @@ exports[`Commands config test (folder with rcfile without trailing newline / as 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "{\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
-{\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
-{\\"key\\":\\"lockfilePath\\",\\"effective\\":\\"WORKSPACE_ROOT/yarn.lock\\",\\"description\\":\\"Path of the file where the dependency tree must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./yarn.lock\\"}
+  "stdout": "{\\"key\\":\\"bstatePath\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/build-state.yml\\",\\"description\\":\\"Path of the file where the current state of the built packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/build-state.yml\\"}
 {\\"key\\":\\"cacheFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/cache\\",\\"description\\":\\"Folder where the cache files must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/cache\\"}
-{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the symlinks generated for virtual packages must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
-{\\"key\\":\\"bstatePath\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/build-state.yml\\",\\"description\\":\\"Path of the file where the current state of the built packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/build-state.yml\\"}
-{\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
-{\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
-{\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
-{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"initLicense\\",\\"effective\\":null,\\"description\\":\\"License used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initScope\\",\\"effective\\":\\"berry-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
 {\\"key\\":\\"nodeGypMagicLocator\\",\\"effective\\":\\"node-gyp\\",\\"description\\":\\"Package to use when node-gyp is omitted from the dependencies\\",\\"type\\":\\"LOCATOR_LOOSE\\",\\"default\\":\\"node-gyp\\"}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
-{\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
-{\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
+{\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
+{\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
+{\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
+{\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
+{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the symlinks generated for virtual packages must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
+{\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
 }
 `;
@@ -566,7 +566,7 @@ Object {
 ➤ BR0000: initScope - Scope used when creating packages via the init command - 'berry-test'
 ➤ BR0000: initVersion - Version used when creating packages via the init command - null
 ➤ BR0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null
-➤ BR0000: lockfilePath - Path of the file where the dependency tree must be stored - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
 ➤ BR0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -608,7 +608,7 @@ Object {
 ➤ BR0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'berry-test'
 ➤ BR0000: initVersion - <default> - null
 ➤ BR0000: lastUpdateCheck - <default> - null
-➤ BR0000: lockfilePath - <default> - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - <default> - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - <default> - 'node-gyp'
 ➤ BR0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -650,7 +650,7 @@ Object {
 ➤ BR0000: initScope - 'berry-test'
 ➤ BR0000: initVersion - null
 ➤ BR0000: lastUpdateCheck - null
-➤ BR0000: lockfilePath - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - 'node-gyp'
 ➤ BR0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -672,39 +672,39 @@ exports[`Commands config test (folder without rcfile in ancestry / as json) 1`] 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "{\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
-{\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
-{\\"key\\":\\"lockfilePath\\",\\"effective\\":\\"WORKSPACE_ROOT/yarn.lock\\",\\"description\\":\\"Path of the file where the dependency tree must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./yarn.lock\\"}
+  "stdout": "{\\"key\\":\\"bstatePath\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/build-state.yml\\",\\"description\\":\\"Path of the file where the current state of the built packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/build-state.yml\\"}
 {\\"key\\":\\"cacheFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/cache\\",\\"description\\":\\"Folder where the cache files must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/cache\\"}
-{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the symlinks generated for virtual packages must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
-{\\"key\\":\\"bstatePath\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/build-state.yml\\",\\"description\\":\\"Path of the file where the current state of the built packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/build-state.yml\\"}
-{\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
-{\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
-{\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
-{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"initLicense\\",\\"effective\\":null,\\"description\\":\\"License used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initScope\\",\\"effective\\":null,\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
 {\\"key\\":\\"nodeGypMagicLocator\\",\\"effective\\":\\"node-gyp\\",\\"description\\":\\"Package to use when node-gyp is omitted from the dependencies\\",\\"type\\":\\"LOCATOR_LOOSE\\",\\"default\\":\\"node-gyp\\"}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
-{\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
-{\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
+{\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
+{\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
+{\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
+{\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
+{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the symlinks generated for virtual packages must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
+{\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
 }
 `;
@@ -733,7 +733,7 @@ Object {
 ➤ BR0000: initScope - Scope used when creating packages via the init command - null
 ➤ BR0000: initVersion - Version used when creating packages via the init command - null
 ➤ BR0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null
-➤ BR0000: lockfilePath - Path of the file where the dependency tree must be stored - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - Package to use when node-gyp is omitted from the dependencies - 'node-gyp'
 ➤ BR0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -775,7 +775,7 @@ Object {
 ➤ BR0000: initScope - <default> - null
 ➤ BR0000: initVersion - <default> - null
 ➤ BR0000: lastUpdateCheck - <default> - null
-➤ BR0000: lockfilePath - <default> - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - <default> - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - <default> - 'node-gyp'
 ➤ BR0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
@@ -817,7 +817,7 @@ Object {
 ➤ BR0000: initScope - null
 ➤ BR0000: initVersion - null
 ➤ BR0000: lastUpdateCheck - null
-➤ BR0000: lockfilePath - 'WORKSPACE_ROOT/yarn.lock'
+➤ BR0000: lockfileFilename - 'yarn.lock'
 ➤ BR0000: nodeGypMagicLocator - 'node-gyp'
 ➤ BR0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ BR0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
