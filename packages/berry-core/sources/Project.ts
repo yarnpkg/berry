@@ -66,31 +66,28 @@ export class Project {
   public storedChecksums: Map<LocatorHash, string> = new Map();
 
   static async find(configuration: Configuration, startingCwd: string): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
-    let projectCwd = null;
+    if (!configuration.projectCwd)
+      throw new Error(`No project found in the initial directory`);
+
     let packageCwd = null;
 
     let nextCwd = startingCwd;
     let currentCwd = null;
 
-    while (nextCwd !== currentCwd) {
+    while (currentCwd !== configuration.projectCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(`${currentCwd}/package.json`)) {
-        projectCwd = currentCwd;
-        if (!packageCwd) {
+      if (xfs.existsSync(`${currentCwd}/package.json`))
+        if (!packageCwd)
           packageCwd = currentCwd;
-        }
-      }
-
-      if (xfs.existsSync(`${currentCwd}/yarn.lock`))
 
       nextCwd = posix.dirname(currentCwd);
     }
 
-    if (!projectCwd || !packageCwd)
-      throw new Error(`Project not found`);
+    if (!packageCwd)
+      throw new Error(`Assertion failed: No manifest found in the project`);
 
-    const project = new Project(projectCwd, {configuration});
+    const project = new Project(configuration.projectCwd, {configuration});
 
     await project.setupResolutions();
     await project.setupWorkspaces();
@@ -106,7 +103,7 @@ export class Project {
     if (locator)
       return {project, locator, workspace: null};
 
-    throw new Error(`Current cwd (${packageCwd}) doesn't seem to be A) a workspace, or B) a package that belongs to ${projectCwd}'s dependency tree`);
+    throw new Error(`Assertion failed: The package should have been detected as part of the project`);
   }
 
   constructor(projectCwd: string, {configuration}: {configuration: Configuration}) {
