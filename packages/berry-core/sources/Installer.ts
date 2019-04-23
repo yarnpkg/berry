@@ -1,16 +1,16 @@
 import {FetchResult}                from './Fetcher';
 import {LinkType, Locator, Package} from './types';
 
-export enum BuildDirective {
+export enum BuildType {
   SCRIPT = 0,
   SHELLCODE = 1,
 };
 
-export type BuildDirectiveTuple = [BuildDirective, string];
+export type BuildDirective = [BuildType, string];
 
 export type InstallStatus = {
   packageLocation: string,
-  buildDirective?: Array<BuildDirectiveTuple> | null,
+  buildDirective?: Array<BuildDirective> | null,
 };
 
 export interface Installer {

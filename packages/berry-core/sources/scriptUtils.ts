@@ -16,8 +16,7 @@ async function makePathWrapper(location: string, name: string, argv0: string, ar
   if (process.platform === `win32`) {
     await xfs.writeFilePromise(`${location}/${name}.cmd`, `@"${argv0}" ${args.join(` `)} %*\n`);
   } else {
-    await xfs.writeFilePromise(`${location}/${name}`, `#!/usr/bin/env bash\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`)
-      .join(` `)} "$@"\n`);
+    await xfs.writeFilePromise(`${location}/${name}`, `#!/usr/bin/env bash\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
     await xfs.chmodPromise(`${location}/${name}`, 0o755);
   }
 }
@@ -93,7 +92,7 @@ type ExecutePackageScriptOptions = {
 };
 
 export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
-  const {manifest, binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, project, cwd);
+  const {manifest, binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, cwd});
 
   const script = manifest.scripts.get(scriptName);
   if (!script)
@@ -107,7 +106,7 @@ export async function executePackageScript(locator: Locator, scriptName: string,
 }
 
 export async function executePackageShellcode(locator: Locator, command: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
-  const {binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, project, cwd);
+  const {binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, cwd});
 
   try {
     return await execute(command, args, {cwd: realCwd, env, stdin, stdout, stderr});
@@ -116,7 +115,7 @@ export async function executePackageShellcode(locator: Locator, command: string,
   }
 }
 
-export async function initializePackageEnvironment(locator: Locator, project: Project, cwd?: string | undefined) {
+async function initializePackageEnvironment(locator: Locator, {project, cwd}: {project: Project, cwd?: string | undefined}) {
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
     throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);

@@ -6,6 +6,8 @@ import semver                                                                   
 
 import {PROTOCOL}                                                                            from './constants';
 
+const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
+
 export class NpmSemverResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     if (!descriptor.range.startsWith(PROTOCOL))
@@ -71,11 +73,13 @@ export class NpmSemverResolver implements Resolver {
     manifest.load(registryData.versions[version]);
 
     // Manually add node-gyp dependency if there is a script using it and not already set
-    const ident = structUtils.parseIdent(`node-gyp`);
-    if (!manifest.dependencies.has(ident.identHash) || !manifest.peerDependencies.has(ident.identHash)) {
+    // This is because the npm registry will automatically add a `node-gyp rebuild` install script
+    // in the metadata if there is not already an install script and a binding.gyp file exists.
+    // Also, node-gyp is not always set as a dependency in packages, so it will also be added if used in scripts.
+    if (!manifest.dependencies.has(NODE_GYP_IDENT.identHash) || !manifest.peerDependencies.has(NODE_GYP_IDENT.identHash)) {
       for (const value of manifest.scripts.values()) {
         if (value.includes(`node-gyp`)) {
-          manifest.dependencies.set(ident.identHash,  structUtils.makeDescriptor(ident, `*`));
+          manifest.dependencies.set(NODE_GYP_IDENT.identHash,  structUtils.makeDescriptor(NODE_GYP_IDENT, `*`));
           break;
         }
       }
