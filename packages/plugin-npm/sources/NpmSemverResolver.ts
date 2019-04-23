@@ -76,10 +76,11 @@ export class NpmSemverResolver implements Resolver {
     // This is because the npm registry will automatically add a `node-gyp rebuild` install script
     // in the metadata if there is not already an install script and a binding.gyp file exists.
     // Also, node-gyp is not always set as a dependency in packages, so it will also be added if used in scripts.
-    if (!manifest.dependencies.has(NODE_GYP_IDENT.identHash) || !manifest.peerDependencies.has(NODE_GYP_IDENT.identHash)) {
+    if (!manifest.dependencies.has(NODE_GYP_IDENT.identHash) && !manifest.peerDependencies.has(NODE_GYP_IDENT.identHash)) {
       for (const value of manifest.scripts.values()) {
         if (value.includes(`node-gyp`)) {
           manifest.dependencies.set(NODE_GYP_IDENT.identHash,  structUtils.makeDescriptor(NODE_GYP_IDENT, `*`));
+          opts.report.reportWarning(MessageName.NODE_GYP_INJECTED, `The dependency ${structUtils.prettyLocator(opts.project.configuration, locator)} needs node-gyp but didn't declare it.`);
           break;
         }
       }
