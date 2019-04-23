@@ -1,6 +1,7 @@
 const {
   fs: {readJson, readFile},
 } = require('pkg-tests-core');
+const {parseSyml} = require('@berry/parsers');
 
 describe(`Commands`, () => {
   describe(`add`, () => {
@@ -87,7 +88,16 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `inject-node-gyp`);
 
-        await expect(readFile(`${path}/yarn.lock`, 'utf8')).resolves.toEqual(expect.stringContaining(`node-gyp: "npm:*"`));
+        const content = await readFile(`${path}/yarn.lock`, `utf8`);
+        const lock = parseSyml(content);
+
+        await expect(lock).toMatchObject({
+          [`inject-node-gyp@npm:^1.0.0`]: {
+            dependencies: {
+              "node-gyp": "npm:*"
+            }
+          }
+        });
       }),
     );
   });
