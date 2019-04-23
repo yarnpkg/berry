@@ -1,5 +1,3 @@
-import { xfs } from '@berry/fslib';
-
 /**
  * PnP API locator options
  */
@@ -7,11 +5,9 @@ export interface PnPApiLocatorOptions {
   /**
    * Function that checks if file exists at given path.
    *
-   * Default: `xfs.existsSync`
-   *
    * @param filePath file path
    */
-  existsSync?: (filePath: string) => boolean;
+  existsSync: (filePath: string) => boolean;
 
   /**
    * PnP api filename.
@@ -70,9 +66,9 @@ export class PnPApiLocator {
    * @param options optional locator options
    */
   constructor(options?: PnPApiLocatorOptions) {
-    const opts = options || {};
+    const opts: any = options || {};
     this.options = {
-      existsSync: opts.existsSync || xfs.existsSync.bind(xfs),
+      existsSync: opts.existsSync,
       pnpFileName: opts.pnpFileName || '.pnp.js'
     };
     this.checkTree = new Map();

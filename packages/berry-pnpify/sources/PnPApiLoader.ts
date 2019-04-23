@@ -1,5 +1,4 @@
 import EventEmitter from 'events';
-import fs from 'fs';
 
 import { PnpApi } from '@berry/pnp';
 
@@ -18,10 +17,8 @@ export interface PnPApiLoaderOptions {
 
   /**
    * Watch for PnP API file changes
-   *
-   * Default: `fs.watch`
    */
-  watch?: (filePath: string, listener: (event: string, filename: string) => any) => any;
+  watch: (filePath: string, listener: (event: string, filename: string) => any) => any;
 }
 
 interface DefinedPnPApiLoaderOptions {
@@ -48,15 +45,15 @@ export class PnPApiLoader extends EventEmitter {
    *
    * @param options optional loader options
    */
-  constructor(options?: PnPApiLoaderOptions) {
+  constructor(options: PnPApiLoaderOptions) {
     super();
-    const opts = options || {};
+    const opts: any = options || {};
     this.options = {
       uncachedRequire: opts.uncachedRequire || ((modulePath: string): any => {
         delete require.cache[require.resolve(modulePath)];
         return require(modulePath);
       }),
-      watch: opts.watch || fs.watch.bind(fs)
+      watch: opts.watch
     };
   }
 
@@ -77,7 +74,7 @@ export class PnPApiLoader extends EventEmitter {
     const cacheEntry = this.cachedApis[pnpApiPath] || {};
     if (!cacheEntry.pnpApi) {
       cacheEntry.pnpApi = this.options.uncachedRequire(pnpApiPath);
-      if (!cacheEntry.watched) {
+      if (cacheEntry.pnpApi && !cacheEntry.watched) {
         this.options.watch(pnpApiPath, (event: string, filename: string) => {
           delete cacheEntry.pnpApi;
           this.emit(event, filename);

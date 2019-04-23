@@ -1,11 +1,14 @@
 import { NodePathResolver } from '../sources/NodePathResolver';
 import { PnPApiLoader } from '../sources/PnPApiLoader';
+import { PnPApiLocator } from '../sources/PnPApiLocator';
 
 describe('NodePathResolver should', () => {
   let resolver: NodePathResolver;
 
   beforeEach(() => {
-    const apiLoader = new PnPApiLoader();
+    const apiLoader = new PnPApiLoader({
+      watch: jest.fn()
+    });
     const pkgMap = {
       monorepo: { packageLocation: '/home/user/proj' },
       foo: { packageLocation: '/home/user/proj/.cache/foo/node_modules/foo' },
@@ -34,12 +37,21 @@ describe('NodePathResolver should', () => {
         }
       }
     }))});
-    resolver = new NodePathResolver({ apiLoader });
+    const apiLocator = new PnPApiLocator({
+      existsSync: path => path === '/home/user/proj/.pnp.js'
+    });
+    resolver = new NodePathResolver({ apiLoader, apiLocator });
   });
 
-  it('do not change paths outside of pnp project', () => {
+  it('not change paths outside of pnp project', () => {
     const pnpPath = resolver.resolvePath('/home/user');
     expect(pnpPath.resolvedPath).toEqual('/home/user');
+  });
+
+  it('not try to alter paths without node_modules inside pnp project', () => {
+    const nodePath = '/home/user/proj/.cache/foo';
+    const pnpPath = resolver.resolvePath(nodePath);
+    expect(pnpPath).toEqual({ resolvedPath: nodePath });
   });
 
   it('partially resolve /home/user/proj/node_modules path', () => {

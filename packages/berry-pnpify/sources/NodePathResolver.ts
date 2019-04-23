@@ -1,6 +1,7 @@
-import { PnPApiLoader } from './PnPApiLoader';
-import { NodeFS } from '@berry/fslib';
 import { PnpApi, PackageInformation } from '@berry/pnp';
+
+import { PnPApiLoader } from './PnPApiLoader';
+import { PnPApiLocator } from './PnPApiLocator';
 
 /**
  * Node path resolver options
@@ -8,14 +9,13 @@ import { PnpApi, PackageInformation } from '@berry/pnp';
 export interface NodePathResolverOptions {
   /**
    * PnP API loader
-   *
-   * Default: new instance of PnPApiLoader
    */
-  apiLoader?: PnPApiLoader
-}
-
-interface DefinedNodePathResolverOptions {
   apiLoader: PnPApiLoader
+
+  /**
+   * PnP API locator
+   */
+  apiLocator: PnPApiLocator
 }
 
 /**
@@ -32,7 +32,7 @@ const NODE_MODULES_REGEXP = /(\/node_modules(?:(\/[^@][^\/]+|\/@[^\/]+\/[^\/]+)|
 /**
  * Resolved `/node_modules` path inside PnP project info
  */
-interface ResolvedPath {
+export interface ResolvedPath {
   /**
    * Fully resolved path, `null` if path is within PnP project, but does not exist,
    * `undefined` if path is within PnP project but is a container dir that
@@ -41,8 +41,10 @@ interface ResolvedPath {
    */
   resolvedPath?: string | null;
 
+  // Final PnP issuer path (without trailing /), present if `resolvedPath` undefined
+  issuer?: string;
   // Final PnP issuer package info, present if `resolvedPath` undefined
-  issuer?: PackageInformation;
+  issuerInfo?: PackageInformation;
   // Request inside issuer path, present if `resolvedPath` undefined
   request?: string;
 }
@@ -54,18 +56,15 @@ interface ResolvedPath {
  * and resolve `bar` for this issuer using `pnpapi`.
  */
 export class NodePathResolver {
-  private options: DefinedNodePathResolverOptions;
+  private options: NodePathResolverOptions;
 
   /**
    * Constructs new instance of Node path resolver
    *
    * @param options optional Node path resolver options
    */
-  constructor(options?: NodePathResolverOptions) {
-    const opts = options || {};
-    this.options = {
-      apiLoader: opts.apiLoader || new PnPApiLoader()
-    };
+  constructor(options: NodePathResolverOptions) {
+    this.options = options;
   }
 
   private getIssuer(pnp: PnpApi, pathname: string): string | undefined {
@@ -93,8 +92,13 @@ export class NodePathResolver {
    */
   public resolvePath(nodePath: string): ResolvedPath {
     const result: ResolvedPath = { resolvedPath: nodePath };
-    const pathname = NodeFS.toPortablePath(nodePath);
-    const pnp = this.options.apiLoader.getApi(nodePath);
+    if (nodePath.indexOf('node_modules') < 0) {
+      // Non-node_modules paths should not be processed
+      return result;
+    }
+    const pathname = nodePath.replace('\\', '/');
+    const pnpApiPath = this.options.apiLocator.findApi(nodePath);
+    const pnp = pnpApiPath && this.options.apiLoader.getApi(pnpApiPath);
     if (pnp) {
       // Extract first issuer from the path using PnP API
       let issuer = this.getIssuer(pnp, pathname);
@@ -132,10 +136,11 @@ export class NodePathResolver {
         if (issuer) {
           if (partialPkgName !== undefined) {
             delete result.resolvedPath;
+            result.issuer = issuer;
             result.request = partialPkgName;
             const locator = pnp.findPackageLocator(issuer + '/');
             const pkgInfo = locator ? pnp.getPackageInformation(locator) : undefined;
-            result.issuer = pkgInfo === null ? undefined : pkgInfo;
+            result.issuerInfo = pkgInfo === null ? undefined : pkgInfo;
           } else {
             result.resolvedPath = issuer + request;
           }
