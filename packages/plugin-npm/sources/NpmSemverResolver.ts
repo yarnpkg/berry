@@ -80,7 +80,7 @@ export class NpmSemverResolver implements Resolver {
       for (const value of manifest.scripts.values()) {
         if (value.includes(`node-gyp`)) {
           manifest.dependencies.set(NODE_GYP_IDENT.identHash,  structUtils.makeDescriptor(NODE_GYP_IDENT, `*`));
-          opts.report.reportWarning(MessageName.NODE_GYP_INJECTED, `The dependency ${structUtils.prettyLocator(opts.project.configuration, locator)} needs node-gyp but didn't declare it.`);
+          opts.report.reportWarning(MessageName.NODE_GYP_INJECTED, `Implicit dependencies on node-gyp are discouraged`);
           break;
         }
       }
