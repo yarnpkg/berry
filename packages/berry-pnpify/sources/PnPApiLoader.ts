@@ -1,6 +1,8 @@
 import EventEmitter from 'events';
 import fs from 'fs';
 
+import { PnpApi } from '@berry/pnp';
+
 /**
  * PnP API locator options
  */
@@ -12,7 +14,7 @@ export interface PnPApiLoaderOptions {
    *
    * @param modulePath modulePath
    */
-  uncachedRequire?: (modulePath: string) => boolean;
+  uncachedRequire?: (modulePath: string) => any;
 
   /**
    * Watch for PnP API file changes
@@ -23,12 +25,12 @@ export interface PnPApiLoaderOptions {
 }
 
 interface DefinedPnPApiLoaderOptions {
-  uncachedRequire: (modulePath: string) => boolean;
+  uncachedRequire: (modulePath: string) => PnpApi;
   watch: (filePath: string, listener: (event: string, filename: string) => any) => any;
 }
 
 interface CacheEntry {
-  pnpApi: any;
+  pnpApi: PnpApi;
   watched: boolean;
 }
 
@@ -71,7 +73,7 @@ export class PnPApiLoader extends EventEmitter {
    *
    * @returns `pnpapi` instance for the given PnP API file
    */
-  getApi(pnpApiPath: string) {
+  getApi(pnpApiPath: string): PnpApi {
     const cacheEntry = this.cachedApis[pnpApiPath] || {};
     if (!cacheEntry.pnpApi) {
       cacheEntry.pnpApi = this.options.uncachedRequire(pnpApiPath);

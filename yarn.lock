@@ -1956,6 +1956,7 @@ __metadata:
   dependencies:
     "@babel/cli": "npm:^7.2.3"
     "@berry/fslib": "workspace:*"
+    "@berry/pnp": "workspace:*"
     "@types/jest": "npm:^24.0.11"
     typescript: "npm:^3.3.3333"
   peerDependencies:

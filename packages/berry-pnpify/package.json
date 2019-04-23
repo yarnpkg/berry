@@ -17,6 +17,7 @@
     "typescript": "^3.3.3333"
   },
   "dependencies": {
-    "@berry/fslib": "workspace:*"
+    "@berry/fslib": "workspace:*",
+    "@berry/pnp": "workspace:*"
   }
 }

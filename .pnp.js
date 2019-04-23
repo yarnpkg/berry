@@ -9998,6 +9998,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-fslib"
                 ],
                 [
+                  "@berry/pnp",
+                  "workspace:packages/berry-pnp"
+                ],
+                [
                   "@types/jest",
                   "npm:24.0.11"
                 ],
