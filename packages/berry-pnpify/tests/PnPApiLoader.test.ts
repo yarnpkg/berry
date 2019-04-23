@@ -3,7 +3,7 @@ import { PnPApiLoader } from '../sources/PnPApiLoader';
 describe('PnPApiLoader should', () => {
   let mockWatch: jest.Mock;
   let mockUncachedRequire: jest.Mock;
-  let loader;
+  let loader: PnPApiLoader;
 
   beforeEach(() => {
     mockWatch = jest.fn();

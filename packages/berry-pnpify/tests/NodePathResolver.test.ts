@@ -9,13 +9,13 @@ describe('NodePathResolver should', () => {
     const apiLoader = new PnPApiLoader({
       watch: jest.fn()
     });
-    const pkgMap = {
+    const pkgMap: { [pkg: string]: { packageLocation: string } } = {
       monorepo: { packageLocation: '/home/user/proj' },
       foo: { packageLocation: '/home/user/proj/.cache/foo/node_modules/foo' },
       bar: { packageLocation: '/home/user/proj/.cache/bar/node_modules/bar' }
     };
     Object.defineProperty(apiLoader, 'getApi', { value: jest.fn().mockImplementation((pathname) => pathname.indexOf('/home/user/proj') !== 0 ? null : ({
-      findPackageLocator: pathname => {
+      findPackageLocator: (pathname: string) => {
         if (pathname.indexOf('/home/user/proj/.cache/foo/node_modules/foo/') === 0) {
           return { package: 'foo' };
         } else if (pathname.indexOf('/home/user/proj/.cache/bar/node_modules/bar/') === 0) {
@@ -26,8 +26,8 @@ describe('NodePathResolver should', () => {
           return null;
         }
       },
-      getPackageInformation: info => pkgMap[info.package],
-      resolveToUnqualified: (request, issuer) => {
+      getPackageInformation: (info: { package: string }) => pkgMap[info.package],
+      resolveToUnqualified: (request: string, issuer: string) => {
         if (issuer === pkgMap.monorepo.packageLocation + '/' && request === 'foo') {
           return pkgMap.foo.packageLocation;
         } else if (issuer === pkgMap.foo.packageLocation + '/' && request === 'bar') {

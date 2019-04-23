@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build:pnpify": "babel --root-mode upward sources --out-dir lib --extensions .ts",
-    "build:watch:pnpify": "babel --watch --root-mode upward sources --out-dir lib --extensions .ts",
+    "build:pnpify:tsc": "node -r ./lib -r typescript/bin/tsc -- tsc",
     "test:pnpify": "run test:unit packages/berry-pnpify",
     "test:watch:pnpify": "run test:unit --watch packages/berry-pnpify"
   },

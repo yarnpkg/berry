@@ -92,11 +92,11 @@ export class NodePathResolver {
    */
   public resolvePath(nodePath: string): ResolvedPath {
     const result: ResolvedPath = { resolvedPath: nodePath };
-    if (nodePath.indexOf('node_modules') < 0) {
+    const pathname = nodePath.replace('\\', '/');
+    if (pathname.indexOf('/node_modules') < 0) {
       // Non-node_modules paths should not be processed
       return result;
     }
-    const pathname = nodePath.replace('\\', '/');
     const pnpApiPath = this.options.apiLocator.findApi(nodePath);
     const pnp = pnpApiPath && this.options.apiLoader.getApi(pnpApiPath);
     if (pnp) {

@@ -2,7 +2,7 @@ import { PnPApiLocator } from '../sources/PnPApiLocator';
 
 describe('PnPApiLocator should', () => {
   let mockExistsSync: jest.Mock;
-  let locator;
+  let locator: PnPApiLocator;
   beforeEach(() => {
     mockExistsSync = jest.fn((pathname) => {
       const result = '/home/user/pnp_project/.pnp.js'.indexOf(pathname) === 0 || '/home/user/some_dir/pnp_project/.pnp.js'.indexOf(pathname) === 0;
