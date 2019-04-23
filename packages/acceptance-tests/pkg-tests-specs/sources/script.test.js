@@ -2,7 +2,7 @@ const {NodeFS, xfs} = require(`@berry/fslib`);
 const {isAbsolute, resolve} = require('path');
 
 const {
-  fs: {createTemporaryFolder, makeFakeBinary},
+  fs: {createTemporaryFolder, makeFakeBinary, walk, readFile},
 } = require(`pkg-tests-core`);
 
 const globalName = makeTemporaryEnv.getPackageManagerName();
@@ -197,6 +197,25 @@ describe(`Scripts tests`, () => {
       },
       async ({path, run, source}) => {
         await run(`install`);
+      },
+    ),
+  );
+
+  test(
+    `it should add node-gyp rebuild script if there isn't an install script and there is a binding.gyp file`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`binding-gyp-scripts`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await run(`install`, {env: {}});
+
+        const [itemPath] = await walk(`${path}/.yarn/unplugged/`, {filter: `/binding-gyp-scripts-*/node_modules/binding-gyp-scripts/build.node`});
+
+        expect(itemPath).toBeDefined();
+
+        const content = await readFile(itemPath, 'utf8');
+        await expect(content).toEqual(NodeFS.fromPortablePath(itemPath));
       },
     ),
   );

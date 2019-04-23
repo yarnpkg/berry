@@ -1,5 +1,5 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName, DependencyMeta} from '@berry/core';
-import {FetchResult, Ident, Locator, Package}                                                                from '@berry/core';
+import {FetchResult, Ident, Locator, Package, BuildDirective, BuildType}                                     from '@berry/core';
 import {miscUtils, structUtils}                                                                              from '@berry/core';
 import {CwdFS, FakeFS, NodeFS, xfs}                                                                          from '@berry/fslib';
 import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@berry/pnp';
@@ -10,6 +10,7 @@ const FORCED_UNPLUG_PACKAGES = new Set([
   structUtils.makeIdent(null, `nan`).identHash,
   structUtils.makeIdent(null, `node-gyp`).identHash,
   structUtils.makeIdent(null, `node-pre-gyp`).identHash,
+  structUtils.makeIdent(null, `node-addon-api`).identHash,
 ]);
 
 export class PnpLinker implements Linker {
@@ -103,9 +104,7 @@ class PnpInstaller implements Installer {
 
     return {
       packageLocation,
-      buildDirective: buildScripts.length > 0 ? {
-        scriptNames: buildScripts,
-      } : null,
+      buildDirective: buildScripts.length > 0 ? buildScripts as BuildDirective[] : null,
     };
   }
 
@@ -244,7 +243,12 @@ class PnpInstaller implements Installer {
 
     for (const scriptName of [`preinstall`, `install`, `postinstall`])
       if (scripts.has(scriptName))
-        buildScripts.push(scriptName);
+        buildScripts.push([BuildType.SCRIPT, scriptName]);
+
+    // Detect cases where a package has a binding.gyp but no install script
+    const bindingFilePath = posix.resolve(fetchResult.prefixPath, `binding.gyp`);
+    if (!scripts.has(`install`) && fetchResult.packageFs.existsSync(bindingFilePath))
+      buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
 
     return buildScripts;
   }

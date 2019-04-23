@@ -8627,10 +8627,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/plugin-link"
                 ],
                 [
-                  "@berry/plugin-node-gyp",
-                  "workspace:packages/plugin-node-gyp"
-                ],
-                [
                   "@berry/plugin-npm",
                   "workspace:packages/plugin-npm"
                 ],
@@ -9598,27 +9594,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/fslib",
                   "workspace:packages/berry-fslib"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
-        "@berry/plugin-node-gyp",
-        [
-          [
-            "workspace:packages/plugin-node-gyp",
-            {
-              "packageLocation": "./packages/plugin-node-gyp/",
-              "packageDependencies": [
-                [
-                  "@berry/plugin-node-gyp",
-                  "workspace:packages/plugin-node-gyp"
-                ],
-                [
-                  "@berry/core",
-                  "workspace:packages/berry-core"
                 ]
               ]
             }
@@ -15500,6 +15475,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/monorepo",
                   "workspace:."
+                ],
+                [
+                  "is-wsl",
+                  "npm:1.1.0"
                 ]
               ]
             }
@@ -65825,7 +65804,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       30,
       29,
       28,
-      27,
       25,
       24,
       23,

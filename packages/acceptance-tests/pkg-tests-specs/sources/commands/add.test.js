@@ -1,6 +1,7 @@
 const {
-  fs: {readJson},
+  fs: {readJson, readFile},
 } = require('pkg-tests-core');
+const {parseSyml} = require('@berry/parsers');
 
 describe(`Commands`, () => {
   describe(`add`, () => {
@@ -78,6 +79,24 @@ describe(`Commands`, () => {
           peerDependencies: {
             [`no-deps`]: `*`,
           },
+        });
+      }),
+    );
+
+    test(
+      `it should add node-gyp dependency to yarn.lock if a script uses it`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `inject-node-gyp`);
+
+        const content = await readFile(`${path}/yarn.lock`, `utf8`);
+        const lock = parseSyml(content);
+
+        await expect(lock).toMatchObject({
+          [`inject-node-gyp@npm:^1.0.0`]: {
+            dependencies: {
+              "node-gyp": "npm:*"
+            }
+          }
         });
       }),
     );

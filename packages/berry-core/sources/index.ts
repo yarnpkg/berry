@@ -8,7 +8,7 @@ import * as tgzUtils    from './tgzUtils';
 export {Cache}                                                                from './Cache';
 export {Configuration, PluginConfiguration, SettingsDefinition, SettingsType} from './Configuration';
 export {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions}              from './Fetcher';
-export {Installer}                                                            from './Installer';
+export {Installer, BuildDirective, BuildType}                                 from './Installer';
 export {LightReport}                                                          from './LightReport';
 export {Linker, LinkOptions, MinimalLinkOptions}                              from './Linker';
 export {Manifest, DependencyMeta, PeerDependencyMeta}                         from './Manifest';

@@ -8,7 +8,8 @@
     ],
     "dependencies": {
         "@berry/fslib": "workspace:*",
-        "@berry/monorepo": "workspace:*"
+        "@berry/monorepo": "workspace:*",
+        "is-wsl": "^1.1.0"
     },
     "scripts": {
         "test:integration": "run test:unit --config \"$(pwd)/jest.config.js\""

@@ -137,7 +137,7 @@ exports.createTemporaryFolder = function createTemporaryFolder(name?: string): P
       dirPath = posix.join(dirPath, name);
       await exports.mkdirp(dirPath);
     }
-    
+
     return dirPath;
   });
 };

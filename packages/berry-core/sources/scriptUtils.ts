@@ -92,6 +92,30 @@ type ExecutePackageScriptOptions = {
 };
 
 export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
+  const {manifest, binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, cwd});
+
+  const script = manifest.scripts.get(scriptName);
+  if (!script)
+    return;
+
+  try {
+    return await execute(script, args, {cwd: realCwd, env, stdin, stdout, stderr});
+  } finally {
+    await xfs.removePromise(binFolder);
+  }
+}
+
+export async function executePackageShellcode(locator: Locator, command: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
+  const {binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, cwd});
+
+  try {
+    return await execute(command, args, {cwd: realCwd, env, stdin, stdout, stderr});
+  } finally {
+    await xfs.removePromise(binFolder);
+  }
+}
+
+async function initializePackageEnvironment(locator: Locator, {project, cwd}: {project: Project, cwd?: string | undefined}) {
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
     throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
@@ -119,15 +143,7 @@ export async function executePackageScript(locator: Locator, scriptName: string,
     if (typeof cwd === `undefined`)
       cwd = packageLocation;
 
-    const script = manifest.scripts.get(scriptName);
-    if (!script)
-      return;
-
-    try {
-      return await execute(script, args, {cwd, env, stdin, stdout, stderr});
-    } finally {
-      await xfs.removePromise(binFolder);
-    }
+    return {manifest, binFolder, env, cwd};
   });
 }
 
@@ -163,7 +179,7 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
     const stdout = new Writable();
 
     const linkers = project.configuration.getLinkers();
-    const linkerOptions = {project, report: new StreamReport({ configuration, stdout })};
+    const linkerOptions = {project, report: new StreamReport({configuration, stdout})};
 
     const binaries: Map<string, [Locator, string]> = new Map();
 

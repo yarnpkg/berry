@@ -36,6 +36,7 @@ export enum MessageName {
   CROSS_DRIVE_VIRTUAL_LOCAL = 29,
   FETCH_FAILED = 30,
   DANGEROUS_NODE_MODULES = 31,
+  NODE_GYP_INJECTED = 32,
 }
 
 export class ReportError extends Error {

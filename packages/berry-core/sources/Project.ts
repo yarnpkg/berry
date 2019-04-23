@@ -14,7 +14,7 @@ import {AliasResolver}                          from './AliasResolver';
 import {Cache}                                  from './Cache';
 import {Configuration}                          from './Configuration';
 import {Fetcher}                                from './Fetcher';
-import {Installer, BuildDirective}              from './Installer';
+import {Installer, BuildDirective, BuildType}   from './Installer';
 import {Linker}                                 from './Linker';
 import {LockfileResolver}                       from './LockfileResolver';
 import {DependencyMeta, Manifest}               from './Manifest';
@@ -815,9 +815,9 @@ export class Project {
       const pkg = this.storedPackages.get(locatorHash);
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
-      
+
       let fetchResult;
-      
+
       try {
         fetchResult = await fetcher.fetch(pkg, fetcherOptions);
       } catch (error) {
@@ -855,7 +855,7 @@ export class Project {
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
     const packageLocations: Map<LocatorHash, string> = new Map();
-    const packageBuildDirectives: Map<LocatorHash, BuildDirective> = new Map();
+    const packageBuildDirectives: Map<LocatorHash, BuildDirective[]> = new Map();
 
     // Step 1: Installing the packages on the disk
 
@@ -1046,7 +1046,7 @@ export class Project {
           throw new Error(`Assertion failed: The build directive should have been registered`);
 
         buildPromises.push((async () => {
-          for (const scriptName of buildDirective.scriptNames) {
+          for (const [buildType, scriptName] of buildDirective) {
             const logFile = tmpNameSync({
               prefix: `buildfile-`,
               postfix: `.log`,
@@ -1059,7 +1059,12 @@ export class Project {
             stdout.write(`# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`);
             stdout.write(`\n`);
 
-            const exitCode = await scriptUtils.executePackageScript(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
+            let exitCode;
+
+            if (buildType === BuildType.SCRIPT)
+              exitCode = await scriptUtils.executePackageScript(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
+            else if (buildType === BuildType.SHELLCODE)
+              exitCode = await scriptUtils.executePackageShellcode(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
 
             if (exitCode === 0) {
               bstate[pkg.locatorHash] = buildHash;
