@@ -4,13 +4,13 @@ import {delimiter, posix}                from 'path';
 import {PassThrough, Readable, Writable} from 'stream';
 import {dirSync}                         from 'tmp';
 
-import {Manifest}       from './Manifest';
-import {Project}        from './Project';
-import {StreamReport}   from './StreamReport';
-import {Workspace}      from './Workspace';
-import * as execUtils   from './execUtils';
-import * as structUtils from './structUtils';
-import {Locator}        from './types';
+import {Manifest}                        from './Manifest';
+import {Project}                         from './Project';
+import {StreamReport}                    from './StreamReport';
+import {Workspace}                       from './Workspace';
+import * as execUtils                    from './execUtils';
+import * as structUtils                  from './structUtils';
+import {Locator}                         from './types';
 
 async function makePathWrapper(location: string, name: string, argv0: string, args: Array<string> = []) {
   if (process.platform === `win32`) {
@@ -24,10 +24,9 @@ async function makePathWrapper(location: string, name: string, argv0: string, ar
 
 export async function makeScriptEnv(project: Project) {
   const scriptEnv: {[key: string]: string} = {};
-  for (const [key, value] of Object.entries(process.env)) {
+  for (const [key, value] of Object.entries(process.env))
     if (typeof value !== `undefined`)
       scriptEnv[key.toLowerCase() !== `path` ? key : `PATH`] = value;
-  }
 
   const binFolder = scriptEnv.BERRY_BIN_FOLDER = dirSync().name;
 
@@ -135,9 +134,8 @@ export async function initializePackageEnvironment(locator: Locator, project: Pr
     const env = await makeScriptEnv(project);
     const binFolder = env.BERRY_BIN_FOLDER;
 
-    for (const [binaryName, [pkg, binaryPath]] of await getPackageAccessibleBinaries(locator, {project})) {
+    for (const [binaryName, [pkg, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
       await makePathWrapper(binFolder, binaryName, process.execPath, [binaryPath]);
-    }
 
     const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
     const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});

@@ -210,13 +210,12 @@ describe(`Scripts tests`, () => {
       async ({path, run, source}) => {
         await run(`install`, {env: {}});
 
-        const files = await walk(`${path}/.yarn/unplugged/`, {filter: `/binding-gyp-scripts-*/node_modules/binding-gyp-scripts/build.node`});
-        const filePath = files.find(f => f.endsWith('build.node'));
+        const [itemPath] = await walk(`${path}/.yarn/unplugged/`, {filter: `/binding-gyp-scripts-*/node_modules/binding-gyp-scripts/build.node`});
 
-        expect(filePath).toBeDefined();
+        expect(itemPath).toBeDefined();
 
-        const content = await readFile(filePath, 'utf8');
-        await expect(filePath).toEqual(content);
+        const content = await readFile(itemPath, 'utf8');
+        await expect(content).toEqual(NodeFS.fromPortablePath(itemPath));
       },
     ),
   );

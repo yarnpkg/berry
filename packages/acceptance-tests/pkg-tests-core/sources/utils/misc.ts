@@ -1,5 +1,5 @@
 const {Minimatch} = require('minimatch');
-const path = require('path');
+const {posix} = require('path');
 
 exports.stringPatternMatch = function stringPatternMatch(
   string: string,
@@ -37,7 +37,7 @@ exports.filePatternMatch = function filePatternMatch(
   patterns: Array<string>,
   {matchBase = true, dot = true}: {matchBase?: boolean, dot?: boolean} = {},
 ): boolean {
-  return exports.stringPatternMatch(path.resolve('/', filePath), patterns, {matchBase, dot});
+  return exports.stringPatternMatch(posix.resolve('/', filePath), patterns, {matchBase, dot});
 };
 
 exports.parseJsonStream = function parseJsonStream(
