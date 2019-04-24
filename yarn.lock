@@ -1640,6 +1640,7 @@ __metadata:
     "@types/dateformat": "npm:^1.0.1"
     "@types/emscripten": "npm:^0.0.31"
     "@types/eslint": "npm:4.16.6"
+    "@types/eslint-plugin-prettier": "npm:2.2.0"
     "@types/eventemitter3": "npm:^2.0.2"
     "@types/execa": "npm:^0.9.0"
     "@types/faker": "npm:^4.1.4"
@@ -1654,6 +1655,7 @@ __metadata:
     "@types/node": "npm:^10.12.0"
     "@types/node-emoji": "npm:^1.8.0"
     "@types/node-fetch": "npm:^2.1.2"
+    "@types/prettier": "npm:1.16.3"
     "@types/react": "npm:^16.4.14"
     "@types/react-redux": "npm:^6.0.9"
     "@types/redux-saga": "npm:^0.10.5"
@@ -1670,9 +1672,11 @@ __metadata:
     babel-jest: "npm:^24.5.0"
     eslint: "npm:^5.16.0"
     eslint-plugin-arca: "npm:^0.8.1"
+    eslint-plugin-prettier: "npm:^3.0.1"
     jest: "npm:^24.5.0"
     jest-environment-node: "npm:^24.5.0"
     jest-junit: "npm:^5.2.0"
+    prettier: "npm:^1.17.0"
     ts-node: "npm:^7.0.1"
     typescript: "npm:^3.3.3333"
   dependenciesMeta:
@@ -2893,6 +2897,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/eslint-plugin-prettier@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@types/eslint-plugin-prettier@npm:2.2.0"
+  checksum: 5a79264fb324af83ffd411cc1fd2509eb9f344f9b2dfa76710b464044d838eaed134081c4eedd2f729cabbdce8c0d29a4d4a70fca73d0a28f8835ccb04965dc9
+  languageName: node
+  linkType: hard
+
 "@types/eslint@npm:4.16.6":
   version: 4.16.6
   resolution: "@types/eslint@npm:4.16.6"
@@ -3119,6 +3130,13 @@ __metadata:
   version: 7.10.5
   resolution: "@types/node@npm:7.10.5"
   checksum: 21f6a896ab32513cc04329ffaf735d995c7ab7fa3f1eeea60f6acef436a83d9b5ae71af9f27eae9459ef7ab4927e47eb312a94afaf8be0bdea4234e12c3b3bf7
+  languageName: node
+  linkType: hard
+
+"@types/prettier@npm:1.16.3":
+  version: 1.16.3
+  resolution: "@types/prettier@npm:1.16.3"
+  checksum: 54c9c8db2c20cf81da1177d1a40c692fe7b442d124828fffd63221533f724b02cf18330e2111066a083b5d60dbd8f35142cd9b1d7fddad023430fc70477a2cb7
   languageName: node
   linkType: hard
 
@@ -8163,6 +8181,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-prettier@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "eslint-plugin-prettier@npm:3.0.1"
+  dependencies:
+    prettier-linter-helpers: "npm:^1.0.0"
+  peerDependencies:
+    eslint: ">= 5.0.0"
+    prettier: ">= 1.13.0"
+  checksum: bf958f3fbb1ff5a55c7bd811c79c102345e83c9b7f42e19742d669202a2f84170eefa89f0bf704eba8eb693638a1def864de0ffc7980332213e968893744a288
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-react@npm:^7.8.2":
   version: 7.12.4
   resolution: "eslint-plugin-react@npm:7.12.4"
@@ -8827,6 +8857,13 @@ __metadata:
   version: 2.0.1
   resolution: "fast-deep-equal@npm:2.0.1"
   checksum: 9bd5fa3e3782b6e6269e9139ab2aca367ccdb737aa9a455cf02210be03e4085be44f834cab4bdaf73c7dc45ded0030c2b215edb1d61d773144472199b8a62093
+  languageName: node
+  linkType: hard
+
+"fast-diff@npm:^1.1.2":
+  version: 1.2.0
+  resolution: "fast-diff@npm:1.2.0"
+  checksum: d8332a974440fa82f20d87c91df8140865bb43f8e462d0c7c7ce1167e342ff4e1922dd2fd509d4e2d9f6ae8c23c9aa664b5f9fc799e27517a2eef02fdbed6445
   languageName: node
   linkType: hard
 
@@ -16792,10 +16829,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier-linter-helpers@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "prettier-linter-helpers@npm:1.0.0"
+  dependencies:
+    fast-diff: "npm:^1.1.2"
+  checksum: 40f6522372d74398a1e71b6809988545e499825401d04035fd09f8c54ce184e7c7f2e4e2da267a974d3e24e4ece1f937870797d6cd6716225b9ddc7136bf61f6
+  languageName: node
+  linkType: hard
+
 "prettier@npm:^1.16.0":
   version: 1.16.4
   resolution: "prettier@npm:1.16.4"
   checksum: f695fef06439818604c67bd2fd84d33fb79c48b4ea493be130e13c19a62a9181272bde1d73a04f9edecedfbd39e810f70f926e35b2c8d3aa7cf5e2fd7d73f45e
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^1.17.0":
+  version: 1.17.0
+  resolution: "prettier@npm:1.17.0"
+  checksum: 00fb1a7cd03427a816ca3ba2c80417a402be75da8b56f0d87f22bbabc0469bdb87cf5cc7800c119758a05df3ffc4f3879610c83f2e3adbf3a1fe221424c9c2df
   languageName: node
   linkType: hard
 
