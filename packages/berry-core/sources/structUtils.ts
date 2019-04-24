@@ -185,7 +185,7 @@ export function makeRange({protocol, source, selector}: {protocol: string | null
   let range = ``;
 
   if (protocol !== null)
-    range += `${protocol}:`;
+    range += `${protocol}`;
   if (source !== null)
     range += `${source}#`;
   
