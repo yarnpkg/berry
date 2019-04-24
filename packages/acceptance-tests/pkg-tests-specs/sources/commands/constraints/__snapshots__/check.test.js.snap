@@ -4,7 +4,7 @@ exports[`Commands constraints check test (empty project / empty constraints) 1`]
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: Done
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -13,7 +13,7 @@ exports[`Commands constraints check test (empty project / gen_enforced_dependenc
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: Done
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -22,8 +22,8 @@ exports[`Commands constraints check test (empty project / gen_enforced_dependenc
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0023: root-workspace-988eec must depend on no-deps (via 2.0.0) in dependencies, but doesn't
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0023: root-workspace-988eec must depend on no-deps (via 2.0.0) in dependencies, but doesn't
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -32,8 +32,8 @@ exports[`Commands constraints check test (empty project / gen_enforced_dependenc
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -42,7 +42,7 @@ exports[`Commands constraints check test (empty project / gen_invalid_dependency
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: Done
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -51,7 +51,7 @@ exports[`Commands constraints check test (multiple workspaces / empty constraint
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: Done
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -60,11 +60,11 @@ exports[`Commands constraints check test (multiple workspaces / gen_enforced_dep
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0025: workspace-a-01beb5 has an extraneous dependency on no-deps in dependencies
-➤ BR0025: workspace-a-01beb5 has an extraneous dependency on no-deps in devDependencies
-➤ BR0025: workspace-b-d95f30 has an extraneous dependency on no-deps in dependencies
-➤ BR0025: workspace-b-d95f30 has an extraneous dependency on no-deps in devDependencies
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0025: workspace-a-01beb5 has an extraneous dependency on no-deps in dependencies
+➤ YN0025: workspace-a-01beb5 has an extraneous dependency on no-deps in devDependencies
+➤ YN0025: workspace-b-d95f30 has an extraneous dependency on no-deps in dependencies
+➤ YN0025: workspace-b-d95f30 has an extraneous dependency on no-deps in devDependencies
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -73,10 +73,10 @@ exports[`Commands constraints check test (multiple workspaces / gen_enforced_dep
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0023: root-workspace-988eec must depend on no-deps (via 2.0.0) in dependencies, but doesn't
-➤ BR0024: workspace-a-01beb5 must depend on no-deps via 2.0.0 in dependencies, but uses 1.0.0 instead
-➤ BR0024: workspace-b-d95f30 must depend on no-deps via 2.0.0 in dependencies, but uses 1.0.0 instead
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0023: root-workspace-988eec must depend on no-deps (via 2.0.0) in dependencies, but doesn't
+➤ YN0024: workspace-a-01beb5 must depend on no-deps via 2.0.0 in dependencies, but uses 1.0.0 instead
+➤ YN0024: workspace-b-d95f30 must depend on no-deps via 2.0.0 in dependencies, but uses 1.0.0 instead
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -85,10 +85,10 @@ exports[`Commands constraints check test (multiple workspaces / gen_enforced_dep
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
-➤ BR0023: workspace-a-01beb5 must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
-➤ BR0023: workspace-b-d95f30 must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
+➤ YN0023: workspace-a-01beb5 must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
+➤ YN0023: workspace-b-d95f30 must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -97,9 +97,9 @@ exports[`Commands constraints check test (multiple workspaces / gen_invalid_depe
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0026: workspace-a-01beb5 has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
-➤ BR0026: workspace-a-01beb5 has an invalid dependency on no-deps in devDependencies (invalid because no-deps is not allowed unless built is set to false)
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0026: workspace-a-01beb5 has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ YN0026: workspace-a-01beb5 has an invalid dependency on no-deps in devDependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -108,7 +108,7 @@ exports[`Commands constraints check test (one regular dependency / empty constra
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: Done
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -117,8 +117,8 @@ exports[`Commands constraints check test (one regular dependency / gen_enforced_
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0025: root-workspace-988eec has an extraneous dependency on no-deps in dependencies
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0025: root-workspace-988eec has an extraneous dependency on no-deps in dependencies
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -127,8 +127,8 @@ exports[`Commands constraints check test (one regular dependency / gen_enforced_
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0024: root-workspace-988eec must depend on no-deps via 2.0.0 in dependencies, but uses 1.0.0 instead
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0024: root-workspace-988eec must depend on no-deps via 2.0.0 in dependencies, but uses 1.0.0 instead
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -137,8 +137,8 @@ exports[`Commands constraints check test (one regular dependency / gen_enforced_
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -147,8 +147,8 @@ exports[`Commands constraints check test (one regular dependency / gen_invalid_d
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0026: root-workspace-988eec has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0026: root-workspace-988eec has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -157,7 +157,7 @@ exports[`Commands constraints check test (two development dependencies / empty c
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: Done
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -166,8 +166,8 @@ exports[`Commands constraints check test (two development dependencies / gen_enf
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0025: root-workspace-988eec has an extraneous dependency on no-deps in devDependencies
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0025: root-workspace-988eec has an extraneous dependency on no-deps in devDependencies
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -176,8 +176,8 @@ exports[`Commands constraints check test (two development dependencies / gen_enf
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0023: root-workspace-988eec must depend on no-deps (via 2.0.0) in dependencies, but doesn't
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0023: root-workspace-988eec must depend on no-deps (via 2.0.0) in dependencies, but doesn't
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -186,8 +186,8 @@ exports[`Commands constraints check test (two development dependencies / gen_enf
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -196,8 +196,8 @@ exports[`Commands constraints check test (two development dependencies / gen_inv
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0026: root-workspace-988eec has an invalid dependency on no-deps in devDependencies (invalid because no-deps is not allowed unless built is set to false)
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0026: root-workspace-988eec has an invalid dependency on no-deps in devDependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -206,7 +206,7 @@ exports[`Commands constraints check test (two regular dependencies / empty const
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: Done
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -215,8 +215,8 @@ exports[`Commands constraints check test (two regular dependencies / gen_enforce
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0025: root-workspace-988eec has an extraneous dependency on no-deps in dependencies
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0025: root-workspace-988eec has an extraneous dependency on no-deps in dependencies
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -225,8 +225,8 @@ exports[`Commands constraints check test (two regular dependencies / gen_enforce
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0024: root-workspace-988eec must depend on no-deps via 2.0.0 in dependencies, but uses 1.0.0 instead
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0024: root-workspace-988eec must depend on no-deps via 2.0.0 in dependencies, but uses 1.0.0 instead
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -235,8 +235,8 @@ exports[`Commands constraints check test (two regular dependencies / gen_enforce
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -245,8 +245,8 @@ exports[`Commands constraints check test (two regular dependencies / gen_invalid
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0026: root-workspace-988eec has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0026: root-workspace-988eec has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -255,7 +255,7 @@ exports[`Commands constraints check test (two regular dependencies, two developm
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: Done
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -264,9 +264,9 @@ exports[`Commands constraints check test (two regular dependencies, two developm
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0025: root-workspace-988eec has an extraneous dependency on no-deps in dependencies
-➤ BR0025: root-workspace-988eec has an extraneous dependency on no-deps in devDependencies
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0025: root-workspace-988eec has an extraneous dependency on no-deps in dependencies
+➤ YN0025: root-workspace-988eec has an extraneous dependency on no-deps in devDependencies
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -275,8 +275,8 @@ exports[`Commands constraints check test (two regular dependencies, two developm
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0024: root-workspace-988eec must depend on no-deps via 2.0.0 in dependencies, but uses 1.0.0 instead
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0024: root-workspace-988eec must depend on no-deps via 2.0.0 in dependencies, but uses 1.0.0 instead
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -285,8 +285,8 @@ exports[`Commands constraints check test (two regular dependencies, two developm
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0023: root-workspace-988eec must depend on one-fixed-dep (via 1.0.0) in peerDependencies, but doesn't
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -295,9 +295,9 @@ exports[`Commands constraints check test (two regular dependencies, two developm
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ BR0026: root-workspace-988eec has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
-➤ BR0026: root-workspace-988eec has an invalid dependency on no-deps in devDependencies (invalid because no-deps is not allowed unless built is set to false)
-➤ BR0000: Failed with errors
+  "stdout": "➤ YN0026: root-workspace-988eec has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ YN0026: root-workspace-988eec has an invalid dependency on no-deps in devDependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ YN0000: Failed with errors
 ",
 }
 `;

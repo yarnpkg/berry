@@ -4,7 +4,7 @@ exports[`Commands constraints query test (empty project / combined predicates) 1
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: Done
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -13,9 +13,9 @@ exports[`Commands constraints query test (empty project / custom predicate) 1`] 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: DependencyType = devDependencies
-➤ BR0000: DependencyType = peerDependencies
-➤ BR0000: Done
+  "stdout": "➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
 ",
 }
 `;
@@ -24,8 +24,8 @@ exports[`Commands constraints query test (empty project / single predicate with 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: WorkspaceName = 'root-workspace-988eec'
-➤ BR0000: Done
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+➤ YN0000: Done
 ",
 }
 `;
@@ -34,10 +34,10 @@ exports[`Commands constraints query test (empty project / single predicate) 1`] 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: DependencyType = dependencies
-➤ BR0000: DependencyType = devDependencies
-➤ BR0000: DependencyType = peerDependencies
-➤ BR0000: Done
+  "stdout": "➤ YN0000: DependencyType = dependencies
+➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
 ",
 }
 `;
@@ -46,31 +46,31 @@ exports[`Commands constraints query test (multiple workspaces / combined predica
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: ┌ DependencyType  = dependencies
-➤ BR0000: │ DependencIdent  = 'no-deps'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: ┌ DependencyType  = dependencies
-➤ BR0000: │ DependencIdent  = 'no-deps-bin'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: ┌ DependencyType  = dependencies
-➤ BR0000: │ DependencIdent  = 'no-deps'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: ┌ DependencyType  = dependencies
-➤ BR0000: │ DependencIdent  = 'no-deps-bin'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: ┌ DependencyType  = devDependencies
-➤ BR0000: │ DependencIdent  = 'no-deps'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: ┌ DependencyType  = devDependencies
-➤ BR0000: │ DependencIdent  = 'no-deps-bin'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: ┌ DependencyType  = devDependencies
-➤ BR0000: │ DependencIdent  = 'no-deps'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: ┌ DependencyType  = devDependencies
-➤ BR0000: │ DependencIdent  = 'no-deps-bin'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: Done
+  "stdout": "➤ YN0000: ┌ DependencyType  = dependencies
+➤ YN0000: │ DependencIdent  = 'no-deps'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: ┌ DependencyType  = dependencies
+➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: ┌ DependencyType  = dependencies
+➤ YN0000: │ DependencIdent  = 'no-deps'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: ┌ DependencyType  = dependencies
+➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: ┌ DependencyType  = devDependencies
+➤ YN0000: │ DependencIdent  = 'no-deps'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: ┌ DependencyType  = devDependencies
+➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: ┌ DependencyType  = devDependencies
+➤ YN0000: │ DependencIdent  = 'no-deps'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: ┌ DependencyType  = devDependencies
+➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: Done
 ",
 }
 `;
@@ -79,9 +79,9 @@ exports[`Commands constraints query test (multiple workspaces / custom predicate
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: DependencyType = devDependencies
-➤ BR0000: DependencyType = peerDependencies
-➤ BR0000: Done
+  "stdout": "➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
 ",
 }
 `;
@@ -90,10 +90,10 @@ exports[`Commands constraints query test (multiple workspaces / single predicate
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: WorkspaceName = 'root-workspace-988eec'
-➤ BR0000: WorkspaceName = 'workspace-a-01beb5'
-➤ BR0000: WorkspaceName = 'workspace-b-d95f30'
-➤ BR0000: Done
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+➤ YN0000: WorkspaceName = 'workspace-a-01beb5'
+➤ YN0000: WorkspaceName = 'workspace-b-d95f30'
+➤ YN0000: Done
 ",
 }
 `;
@@ -102,10 +102,10 @@ exports[`Commands constraints query test (multiple workspaces / single predicate
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: DependencyType = dependencies
-➤ BR0000: DependencyType = devDependencies
-➤ BR0000: DependencyType = peerDependencies
-➤ BR0000: Done
+  "stdout": "➤ YN0000: DependencyType = dependencies
+➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
 ",
 }
 `;
@@ -114,10 +114,10 @@ exports[`Commands constraints query test (one regular dependency / combined pred
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: ┌ DependencyType  = dependencies
-➤ BR0000: │ DependencIdent  = 'no-deps'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: Done
+  "stdout": "➤ YN0000: ┌ DependencyType  = dependencies
+➤ YN0000: │ DependencIdent  = 'no-deps'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: Done
 ",
 }
 `;
@@ -126,9 +126,9 @@ exports[`Commands constraints query test (one regular dependency / custom predic
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: DependencyType = devDependencies
-➤ BR0000: DependencyType = peerDependencies
-➤ BR0000: Done
+  "stdout": "➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
 ",
 }
 `;
@@ -137,8 +137,8 @@ exports[`Commands constraints query test (one regular dependency / single predic
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: WorkspaceName = 'root-workspace-988eec'
-➤ BR0000: Done
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+➤ YN0000: Done
 ",
 }
 `;
@@ -147,10 +147,10 @@ exports[`Commands constraints query test (one regular dependency / single predic
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: DependencyType = dependencies
-➤ BR0000: DependencyType = devDependencies
-➤ BR0000: DependencyType = peerDependencies
-➤ BR0000: Done
+  "stdout": "➤ YN0000: DependencyType = dependencies
+➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
 ",
 }
 `;
@@ -159,13 +159,13 @@ exports[`Commands constraints query test (two development dependencies / combine
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: ┌ DependencyType  = devDependencies
-➤ BR0000: │ DependencIdent  = 'no-deps'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: ┌ DependencyType  = devDependencies
-➤ BR0000: │ DependencIdent  = 'no-deps-bin'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: Done
+  "stdout": "➤ YN0000: ┌ DependencyType  = devDependencies
+➤ YN0000: │ DependencIdent  = 'no-deps'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: ┌ DependencyType  = devDependencies
+➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: Done
 ",
 }
 `;
@@ -174,9 +174,9 @@ exports[`Commands constraints query test (two development dependencies / custom 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: DependencyType = devDependencies
-➤ BR0000: DependencyType = peerDependencies
-➤ BR0000: Done
+  "stdout": "➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
 ",
 }
 `;
@@ -185,8 +185,8 @@ exports[`Commands constraints query test (two development dependencies / single 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: WorkspaceName = 'root-workspace-988eec'
-➤ BR0000: Done
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+➤ YN0000: Done
 ",
 }
 `;
@@ -195,10 +195,10 @@ exports[`Commands constraints query test (two development dependencies / single 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: DependencyType = dependencies
-➤ BR0000: DependencyType = devDependencies
-➤ BR0000: DependencyType = peerDependencies
-➤ BR0000: Done
+  "stdout": "➤ YN0000: DependencyType = dependencies
+➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
 ",
 }
 `;
@@ -207,13 +207,13 @@ exports[`Commands constraints query test (two regular dependencies / combined pr
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: ┌ DependencyType  = dependencies
-➤ BR0000: │ DependencIdent  = 'no-deps'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: ┌ DependencyType  = dependencies
-➤ BR0000: │ DependencIdent  = 'no-deps-bin'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: Done
+  "stdout": "➤ YN0000: ┌ DependencyType  = dependencies
+➤ YN0000: │ DependencIdent  = 'no-deps'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: ┌ DependencyType  = dependencies
+➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: Done
 ",
 }
 `;
@@ -222,9 +222,9 @@ exports[`Commands constraints query test (two regular dependencies / custom pred
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: DependencyType = devDependencies
-➤ BR0000: DependencyType = peerDependencies
-➤ BR0000: Done
+  "stdout": "➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
 ",
 }
 `;
@@ -233,8 +233,8 @@ exports[`Commands constraints query test (two regular dependencies / single pred
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: WorkspaceName = 'root-workspace-988eec'
-➤ BR0000: Done
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+➤ YN0000: Done
 ",
 }
 `;
@@ -243,10 +243,10 @@ exports[`Commands constraints query test (two regular dependencies / single pred
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: DependencyType = dependencies
-➤ BR0000: DependencyType = devDependencies
-➤ BR0000: DependencyType = peerDependencies
-➤ BR0000: Done
+  "stdout": "➤ YN0000: DependencyType = dependencies
+➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
 ",
 }
 `;
@@ -255,19 +255,19 @@ exports[`Commands constraints query test (two regular dependencies, two developm
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: ┌ DependencyType  = dependencies
-➤ BR0000: │ DependencIdent  = 'no-deps'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: ┌ DependencyType  = dependencies
-➤ BR0000: │ DependencIdent  = 'no-deps-bin'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: ┌ DependencyType  = devDependencies
-➤ BR0000: │ DependencIdent  = 'no-deps'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: ┌ DependencyType  = devDependencies
-➤ BR0000: │ DependencIdent  = 'no-deps-bin'
-➤ BR0000: └ DependencyRange = '1.0.0'
-➤ BR0000: Done
+  "stdout": "➤ YN0000: ┌ DependencyType  = dependencies
+➤ YN0000: │ DependencIdent  = 'no-deps'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: ┌ DependencyType  = dependencies
+➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: ┌ DependencyType  = devDependencies
+➤ YN0000: │ DependencIdent  = 'no-deps'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: ┌ DependencyType  = devDependencies
+➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: └ DependencyRange = '1.0.0'
+➤ YN0000: Done
 ",
 }
 `;
@@ -276,9 +276,9 @@ exports[`Commands constraints query test (two regular dependencies, two developm
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: DependencyType = devDependencies
-➤ BR0000: DependencyType = peerDependencies
-➤ BR0000: Done
+  "stdout": "➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
 ",
 }
 `;
@@ -287,8 +287,8 @@ exports[`Commands constraints query test (two regular dependencies, two developm
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: WorkspaceName = 'root-workspace-988eec'
-➤ BR0000: Done
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+➤ YN0000: Done
 ",
 }
 `;
@@ -297,10 +297,10 @@ exports[`Commands constraints query test (two regular dependencies, two developm
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: DependencyType = dependencies
-➤ BR0000: DependencyType = devDependencies
-➤ BR0000: DependencyType = peerDependencies
-➤ BR0000: Done
+  "stdout": "➤ YN0000: DependencyType = dependencies
+➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
 ",
 }
 `;
@@ -309,7 +309,7 @@ exports[`Commands constraints query test without trailing . 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ BR0000: Done
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
