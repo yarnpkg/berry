@@ -1,5 +1,6 @@
 const {
   fs: {readJson, readFile},
+  tests: {getPackageDirectoryPath},
 } = require('pkg-tests-core');
 const {parseSyml} = require('@berry/parsers');
 
@@ -52,6 +53,21 @@ describe(`Commands`, () => {
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should add a new regular dependency to the current project (unnamed path)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const packagePath = await getPackageDirectoryPath(`no-deps`, `1.0.0`);
+
+        await run(`add`, packagePath);
+
+        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: packagePath,
           },
         });
       }),
