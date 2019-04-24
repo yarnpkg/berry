@@ -227,3 +227,13 @@ This error code isn't used at the moment; we ideally want to explain **why** did
 Yarn is installing packages using [Plug'n'Play](/features/pnp), but a `node_modules` folder has been found.
 
 This warning is emitted when your project is detected as containing `node_modules` folders that actually seem to contain packages. This is not advised as they're likely relicates of whatever package manager you used before, and might confuse your tools and lead you into "works on my machine" situations.
+
+## YN0032 - `NODE_GYP_INJECTED`
+
+In some situation Yarn might detect that `node-gyp` is required by a package without this package explicitly listing the dependency. This behavior is there for legacy reason and should not be relied upon for the following reasons:
+
+- The main way to detect whether `node-gyp` is implicitly required is to check whether the package contains a `bindings.gyp` file. However, doing this check implies that the package listing is known at the time Yarn resolves the dependency tree. This would require to fetch all npm archives as part of the resolution step (rather than wait until the dedicated fetch step), and all that just for the sake of this problematic feature.
+
+- Implicit dependencies on `node-gyp` don't provide any hint to the package manager as to which versions of `node-gyp` are compatible with the package being built. Yarn does its best by adding an implicit dependency on `npm:*`, but it might be wrong and we'll have no way to know it - your installs will just crash unexpectedly when compiled with incompatible versions.
+
+Packages omitting `node-gyp` usually do so in order to decrease the amount of packages in the final dependency tree when building the package isn't required (prebuilt binaries). While a reasonable wish, doing this goes against the package manager rules and we would prefer to solve this through a dedicated feature rather than through such hacks. In the meantime we strongly recommend to consider prebuilding native dependencies via WebAssembly if possible - then the `node-gyp` problem completely disappears.

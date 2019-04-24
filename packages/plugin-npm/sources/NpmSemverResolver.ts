@@ -7,6 +7,7 @@ import semver                                                                   
 import {PROTOCOL}                                                                            from './constants';
 
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
+const NODE_GYP_MATCH = /\b(node-gyp|prebuild-install)\b/;
 
 export class NpmSemverResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -78,9 +79,9 @@ export class NpmSemverResolver implements Resolver {
     // Also, node-gyp is not always set as a dependency in packages, so it will also be added if used in scripts.
     if (!manifest.dependencies.has(NODE_GYP_IDENT.identHash) && !manifest.peerDependencies.has(NODE_GYP_IDENT.identHash)) {
       for (const value of manifest.scripts.values()) {
-        if (value.includes(`node-gyp`)) {
+        if (value.match(NODE_GYP_MATCH)) {
           manifest.dependencies.set(NODE_GYP_IDENT.identHash,  structUtils.makeDescriptor(NODE_GYP_IDENT, `*`));
-          opts.report.reportWarning(MessageName.NODE_GYP_INJECTED, `Implicit dependencies on node-gyp are discouraged`);
+          opts.report.reportWarning(MessageName.NODE_GYP_INJECTED, `${structUtils.prettyLocator(opts.project.configuration, locator)}: Implicit dependencies on node-gyp are discouraged`);
           break;
         }
       }
