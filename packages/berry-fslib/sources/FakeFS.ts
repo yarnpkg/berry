@@ -206,6 +206,7 @@ export abstract class FakeFS {
 
   async copyPromise(destination: string, source: string, {baseFs = this, overwrite = true}: {baseFs?: FakeFS, overwrite?: boolean} = {}) {
     const stat = await baseFs.lstatPromise(source);
+    const exists = await this.existsSync(destination);
 
     if (stat.isDirectory()) {
       await this.mkdirpPromise(destination);
@@ -214,10 +215,17 @@ export abstract class FakeFS {
         return this.copyPromise(posix.join(destination, entry), posix.join(source, entry), {baseFs, overwrite});
       }));
     } else if (stat.isFile()) {
-      if (!await this.existsPromise(destination) || overwrite) {
-        const content = await baseFs.readFilePromise(source);
-        await this.writeFilePromise(destination, content);
-      }
+      if (exists && overwrite)
+        await this.removePromise(destination);
+
+      const content = await baseFs.readFilePromise(source);
+      await this.writeFilePromise(destination, content);
+    } else if (stat.isSymbolicLink()) {
+      if (exists && overwrite)
+        await this.removePromise(destination);
+
+      const target = await baseFs.readlinkPromise(source);
+      await this.symlinkPromise(target, destination);
     } else {
       throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
     }
@@ -228,6 +236,7 @@ export abstract class FakeFS {
 
   copySync(destination: string, source: string, {baseFs = this, overwrite = true}: {baseFs?: FakeFS, overwrite?: boolean} = {}) {
     const stat = baseFs.lstatSync(source);
+    const exists = this.existsSync(destination);
 
     if (stat.isDirectory()) {
       this.mkdirpSync(destination);
@@ -236,10 +245,17 @@ export abstract class FakeFS {
         this.copySync(posix.join(destination, entry), posix.join(source, entry), {baseFs, overwrite});
       }
     } else if (stat.isFile()) {
-      if (!this.existsSync(destination) || overwrite) {
-        const content = baseFs.readFileSync(source);
-        this.writeFileSync(destination, content);
-      }
+      if (exists && overwrite)
+        this.removeSync(destination);
+
+      const content = baseFs.readFileSync(source);
+      this.writeFileSync(destination, content);
+    } else if (stat.isSymbolicLink()) {
+      if (exists && overwrite)
+        this.removeSync(destination);
+
+      const target = baseFs.readlinkSync(source);
+      this.symlinkSync(target, destination);
     } else {
       throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
     }

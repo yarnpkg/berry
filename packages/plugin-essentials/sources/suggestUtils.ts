@@ -1,6 +1,7 @@
-import {Cache, DescriptorHash, Descriptor, Ident, Locator, Project, ThrowReport} from '@berry/core';
-import {structUtils}                                                             from '@berry/core';
-import semver                                                                    from 'semver';
+import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace} from '@berry/core';
+import {structUtils}                                                                                  from '@berry/core';
+import {posix}                                                                                        from 'path';
+import semver                                                                                         from 'semver';
 
 export type Suggestion = {
   descriptor: Descriptor,
@@ -85,6 +86,38 @@ export async function findProjectDescriptors(ident: Ident, {project, target}: {p
   return matches;
 }
 
+export async function extractDescriptorFromPath(path: string, {cache, cwd, workspace}: {cache: Cache, cwd: string, workspace: Workspace}) {
+  if (!posix.isAbsolute(path))
+    path = posix.resolve(cwd, path);
+
+  const project = workspace.project;
+
+  const descriptor = await fetchDescriptorFrom(structUtils.makeIdent(null, `archive`), path, {project: workspace.project, cache});
+  if (!descriptor)
+    throw new Error(`Assertion failed: The descriptor should have been found`);
+
+  const report = new ThrowReport();
+
+  const resolver = project.configuration.makeResolver();
+  const fetcher = project.configuration.makeFetcher();
+
+  const resolverOptions = {checksums: project.storedChecksums, project, cache, fetcher, report, resolver};
+
+  // While not useful since it's an absolute path, descriptor always have to be bound before being sent to the fetchers
+  const boundDescriptor = resolver.bindDescriptor(descriptor, workspace.anchoredLocator, resolverOptions);
+
+  // Since it's a file, we assume the returned descriptor is a valid locator
+  const locator = structUtils.convertDescriptorToLocator(boundDescriptor);
+
+  const fetchResult = await fetcher.fetch(locator, resolverOptions);
+  const manifest = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
+
+  if (!manifest.name)
+    throw new Error(`Target path doesn't have a name`);
+
+  return structUtils.makeDescriptor(manifest.name, path);
+}
+
 export async function getSuggestedDescriptors(request: Descriptor, previous: Descriptor | null, {project, cache, target, modifier, strategies, maxResults = Infinity}: {project: Project, cache: Cache, target: Target, modifier: Modifier, strategies: Array<Strategy>, maxResults?: number}) {
   if (!(maxResults >= 0))
     throw new Error(`Invalid maxResults (${maxResults})`);
@@ -149,7 +182,7 @@ export async function getSuggestedDescriptors(request: Descriptor, previous: Des
         } else {
           let latest;
           try {
-            latest = await fetchDescriptorFromLatest(request, {project, cache});
+            latest = await fetchDescriptorFrom(request, `latest`, {project, cache});
           } catch (error) {
             // Just ignore errors
           }
@@ -168,8 +201,8 @@ export async function getSuggestedDescriptors(request: Descriptor, previous: Des
   return suggested.slice(0, maxResults);
 }
 
-export async function fetchDescriptorFromLatest(ident: Ident, {project, cache}: {project: Project, cache: Cache}) {
-  const latestDescriptor = structUtils.makeDescriptor(ident, `latest`);
+export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache}: {project: Project, cache: Cache}) {
+  const latestDescriptor = structUtils.makeDescriptor(ident, range);
 
   const report = new ThrowReport();
 

@@ -83,7 +83,10 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
       : 1;
 
     const allSuggestions = await Promise.all(packages.map(async pseudoDescriptor => {
-      const request = structUtils.parseDescriptor(pseudoDescriptor);
+      const request = pseudoDescriptor.match(/^\.{0,2}\//)
+        ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor, {cache, cwd, workspace})
+        : structUtils.parseDescriptor(pseudoDescriptor);
+
       const suggestions = await suggestUtils.getSuggestedDescriptors(request, null, {project, cache, target, modifier, strategies, maxResults});
 
       return [request, suggestions] as [Descriptor, Array<suggestUtils.Suggestion>];
