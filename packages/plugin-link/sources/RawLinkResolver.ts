@@ -1,23 +1,21 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
-import {Descriptor, Locator}                             from '@berry/core';
-import {LinkType}                                        from '@berry/core';
-import {structUtils}                                     from '@berry/core';
-import {NodeFS}                                          from '@berry/fslib';
-import querystring                                       from 'querystring';
+import {Descriptor, Locator} from '@berry/core';
+import {LinkType} from '@berry/core';
+import {structUtils} from '@berry/core';
+import {NodeFS} from '@berry/fslib';
+import querystring from 'querystring';
 
-import {RAW_LINK_PROTOCOL}                               from './constants';
+import {RAW_LINK_PROTOCOL} from './constants';
 
 export class RawLinkResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!descriptor.range.startsWith(RAW_LINK_PROTOCOL))
-      return false;
+    if (!descriptor.range.startsWith(RAW_LINK_PROTOCOL)) return false;
 
     return true;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!locator.reference.startsWith(RAW_LINK_PROTOCOL))
-      return false;
+    if (!locator.reference.startsWith(RAW_LINK_PROTOCOL)) return false;
 
     return true;
   }
@@ -27,12 +25,14 @@ export class RawLinkResolver implements Resolver {
   }
 
   bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
-    if (descriptor.range.includes(`?`))
-      throw new Error(`Link-type dependencies cannot contain the character "?"`);
+    if (descriptor.range.includes(`?`)) throw new Error(`Link-type dependencies cannot contain the character "?"`);
 
-    return structUtils.makeDescriptor(descriptor, `${descriptor.range}?${querystring.stringify({
-      locator: structUtils.stringifyLocator(fromLocator),
-    })}`);
+    return structUtils.makeDescriptor(
+      descriptor,
+      `${descriptor.range}?${querystring.stringify({
+        locator: structUtils.stringifyLocator(fromLocator),
+      })}`,
+    );
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
@@ -43,7 +43,7 @@ export class RawLinkResolver implements Resolver {
 
   async resolve(locator: Locator, opts: ResolveOptions) {
     return {
-      ... locator,
+      ...locator,
 
       version: `0.0.0`,
 

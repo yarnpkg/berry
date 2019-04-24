@@ -1,29 +1,28 @@
-import TextLayout                                              from '@manaflair/text-layout';
+import TextLayout from '@manaflair/text-layout';
 // @ts-ignore
-import makeReconciler                                          from 'react-reconciler';
-import React                                                   from 'react';
+import makeReconciler from 'react-reconciler';
+import React from 'react';
 // @ts-ignore
-import reopenTty                                               from 'reopen-tty';
-import {Readable, Writable}                                    from 'stream';
+import reopenTty from 'reopen-tty';
+import {Readable, Writable} from 'stream';
 import {ReadStream as ReadableTTY, WriteStream as WritableTTY} from 'tty';
 // @ts-ignore
-import YogaDom                                                 from 'yoga-dom';
+import YogaDom from 'yoga-dom';
 
-import {Div}                                                   from './Div';
-import {NodeElement}                                           from './NodeElement';
-import {NodeText}                                              from './NodeText';
-import {NodeTree}                                              from './NodeTree';
-import {Node}                                                  from './Node';
-import {TermInput}                                             from './TermInput';
-import {TermOutput}                                            from './TermOutput';
-import {TermRenderer}                                          from './TermRenderer';
-import {Props}                                                 from './types';
+import {Div} from './Div';
+import {NodeElement} from './NodeElement';
+import {NodeText} from './NodeText';
+import {NodeTree} from './NodeTree';
+import {Node} from './Node';
+import {TermInput} from './TermInput';
+import {TermOutput} from './TermOutput';
+import {TermRenderer} from './TermRenderer';
+import {Props} from './types';
 
 // Reexport the Div component
 export * from './Div';
 
-type HostContext = {
-};
+type HostContext = {};
 
 const Reconciler = makeReconciler({
   useSyncScheduling: true,
@@ -87,8 +86,7 @@ const Reconciler = makeReconciler({
   supportsMutation: true,
   supportsPersistence: false,
 
-  commitMount(element: NodeElement, type: string, newProps: Props) {
-  },
+  commitMount(element: NodeElement, type: string, newProps: Props) {},
 
   commitUpdate(element: NodeElement, updatePayload: any, type: string, oldProps: Props, newProps: Props) {
     element.setProps(newProps);
@@ -152,16 +150,14 @@ function openStdout() {
 }
 
 export type Options = {
-  stdin?: Readable | ReadableTTY | null,
-  stdout?: Writable | WritableTTY | null,
-  inline?: boolean,
+  stdin?: Readable | ReadableTTY | null;
+  stdout?: Writable | WritableTTY | null;
+  inline?: boolean;
 };
 
 export async function render(app: any, {stdin = null, stdout = null, inline = false}: Options = {}) {
-  if (stdin === null)
-    stdin = await openStdin();
-  if (stdout === null)
-    stdout = await openStdout();
+  if (stdin === null) stdin = await openStdin();
+  if (stdout === null) stdout = await openStdout();
 
   // Not sure why we have to do this, but the ".default" is needed when adding "browser" field support
   const realYogaDom = YogaDom.default || YogaDom;
@@ -169,11 +165,9 @@ export async function render(app: any, {stdin = null, stdout = null, inline = fa
   const env = {yoga: await realYogaDom, textLayout: await TextLayout};
 
   return new Promise((resolve, reject) => {
-    if (!stdin)
-      throw new Error(`Assertion failed: missing stdin`);
-    if (!stdout)
-      throw new Error(`Assertion failed: missing stdout`);
-  
+    if (!stdin) throw new Error(`Assertion failed: missing stdin`);
+    if (!stdout) throw new Error(`Assertion failed: missing stdout`);
+
     const termInput = new TermInput(stdin);
     const termOutput = new TermOutput(stdout, {isInline: inline, isDebug: false});
 
@@ -208,8 +202,7 @@ export async function render(app: any, {stdin = null, stdout = null, inline = fa
         nodeTree.resize(columns, rows);
       });
 
-      if (termOutput.isDebug)
-        console.log(`Debug`);
+      if (termOutput.isDebug) console.log(`Debug`);
 
       termRenderer.open();
 
@@ -230,7 +223,7 @@ export async function render(app: any, {stdin = null, stdout = null, inline = fa
       Reconciler.unbatchedUpdates(() => {
         Reconciler.updateContainer(React.createElement(Div), container, null, null);
       });
-      
+
       resolve();
     }
 

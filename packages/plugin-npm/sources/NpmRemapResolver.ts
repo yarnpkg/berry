@@ -1,15 +1,13 @@
 import {Descriptor, Locator, MinimalResolveOptions, ResolveOptions, Resolver} from '@berry/core';
-import {structUtils}                                                          from '@berry/core';
+import {structUtils} from '@berry/core';
 
-import {PROTOCOL}                                                             from './constants';
+import {PROTOCOL} from './constants';
 
 export class NpmRemapResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!descriptor.range.startsWith(PROTOCOL))
-      return false;
-    
-    if (!structUtils.tryParseDescriptor(descriptor.range.slice(PROTOCOL.length), true))
-      return false;
+    if (!descriptor.range.startsWith(PROTOCOL)) return false;
+
+    if (!structUtils.tryParseDescriptor(descriptor.range.slice(PROTOCOL.length), true)) return false;
 
     return true;
   }

@@ -1,4 +1,4 @@
-import {Rect}    from './Rect';
+import {Rect} from './Rect';
 import {Segment} from './Segment';
 
 /**
@@ -21,8 +21,7 @@ export function findOverlapingSegment(a: Segment, b: Segment) {
   const left = Math.max(a.left, b.left);
   const width = Math.min(a.left + a.width, b.left + b.width) - left;
 
-  if (width <= 0)
-    return null;
+  if (width <= 0) return null;
 
   return {left, width};
 }
@@ -33,16 +32,14 @@ export function findOverlapingSegment(a: Segment, b: Segment) {
 export function removeSegment(a: Segment, b: Segment) {
   const overlap = findOverlapingSegment(a, b);
 
-  if (!overlap)
-    return [b];
+  if (!overlap) return [b];
 
   const remains = [];
 
-  if (overlap.left > b.left)
-    remains.push({ left: b.left, width: overlap.left - b.left });
+  if (overlap.left > b.left) remains.push({left: b.left, width: overlap.left - b.left});
 
   if (overlap.left + overlap.width < b.left + b.width)
-    remains.push({ left: overlap.left + overlap.width, width: b.left + b.width - overlap.left - overlap.width });
+    remains.push({left: overlap.left + overlap.width, width: b.left + b.width - overlap.left - overlap.width});
 
   return remains;
 }

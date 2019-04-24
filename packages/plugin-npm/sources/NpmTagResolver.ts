@@ -1,18 +1,16 @@
 import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
-import {httpUtils, structUtils}                                                    from '@berry/core';
-import {Ident, Descriptor, Locator, Package}                                       from '@berry/core';
+import {httpUtils, structUtils} from '@berry/core';
+import {Ident, Descriptor, Locator, Package} from '@berry/core';
 
-import {PROTOCOL}                                                                  from './constants';
+import {PROTOCOL} from './constants';
 
 export const TAG_REGEXP = /^[a-z]+$/;
 
 export class NpmTagResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!descriptor.range.startsWith(PROTOCOL))
-      return false;
+    if (!descriptor.range.startsWith(PROTOCOL)) return false;
 
-    if (!TAG_REGEXP.test(descriptor.range.slice(PROTOCOL.length)))
-      return false;
+    if (!TAG_REGEXP.test(descriptor.range.slice(PROTOCOL.length))) return false;
 
     return true;
   }
@@ -41,7 +39,7 @@ export class NpmTagResolver implements Resolver {
       throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data - missing "dist-tags" field`);
 
     const distTags = registryData[`dist-tags`];
-      
+
     if (!Object.prototype.hasOwnProperty.call(distTags, tag))
       throw new ReportError(MessageName.REMOTE_NOT_FOUND, `Registry failed to return tag "${tag}"`);
 

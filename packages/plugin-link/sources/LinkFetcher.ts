@@ -1,16 +1,15 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {Locator}                                    from '@berry/core';
-import {structUtils}                                from '@berry/core';
-import {JailFS, NodeFS}                             from '@berry/fslib';
-import {posix}                                      from 'path';
-import querystring                                  from 'querystring';
+import {Locator} from '@berry/core';
+import {structUtils} from '@berry/core';
+import {JailFS, NodeFS} from '@berry/fslib';
+import {posix} from 'path';
+import querystring from 'querystring';
 
-import {LINK_PROTOCOL}                              from './constants';
+import {LINK_PROTOCOL} from './constants';
 
 export class LinkFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (!locator.reference.startsWith(LINK_PROTOCOL))
-      return false;
+    if (!locator.reference.startsWith(LINK_PROTOCOL)) return false;
 
     return true;
   }
@@ -18,9 +17,8 @@ export class LinkFetcher implements Fetcher {
   getLocalPath(locator: Locator, opts: FetchOptions) {
     const {parentLocator, linkPath} = this.parseLocator(locator);
 
-    if (posix.isAbsolute(linkPath))
-      return linkPath;
-    
+    if (posix.isAbsolute(linkPath)) return linkPath;
+
     const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
 
     if (parentLocalPath !== null) {
@@ -44,32 +42,38 @@ export class LinkFetcher implements Fetcher {
     const effectiveParentFetch = parentFetch.localPath
       ? {packageFs: new NodeFS(), prefixPath: parentFetch.localPath}
       : parentFetch;
-    
+
     // Discard the parent fs unless we really need it to access the files
-    if (parentFetch !== effectiveParentFetch && parentFetch.releaseFs)
-      parentFetch.releaseFs();
+    if (parentFetch !== effectiveParentFetch && parentFetch.releaseFs) parentFetch.releaseFs();
 
     const sourceFs = effectiveParentFetch.packageFs;
     const sourcePath = posix.resolve(effectiveParentFetch.prefixPath, linkPath);
 
     if (parentFetch.localPath) {
-      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: `/`, localPath: sourcePath};
+      return {
+        packageFs: new JailFS(sourcePath, {baseFs: sourceFs}),
+        releaseFs: effectiveParentFetch.releaseFs,
+        prefixPath: `/`,
+        localPath: sourcePath,
+      };
     } else {
-      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: `/`};
+      return {
+        packageFs: new JailFS(sourcePath, {baseFs: sourceFs}),
+        releaseFs: effectiveParentFetch.releaseFs,
+        prefixPath: `/`,
+      };
     }
   }
 
   private parseLocator(locator: Locator) {
     const qsIndex = locator.reference.indexOf(`?`);
 
-    if (qsIndex === -1)
-      throw new Error(`Invalid link-type locator`);
+    if (qsIndex === -1) throw new Error(`Invalid link-type locator`);
 
     const linkPath = posix.normalize(locator.reference.slice(LINK_PROTOCOL.length, qsIndex));
     const queryString = querystring.parse(locator.reference.slice(qsIndex + 1));
 
-    if (typeof queryString.locator !== `string`)
-      throw new Error(`Invalid link-type locator`);
+    if (typeof queryString.locator !== `string`) throw new Error(`Invalid link-type locator`);
 
     const parentLocator = structUtils.parseLocator(queryString.locator, true);
 

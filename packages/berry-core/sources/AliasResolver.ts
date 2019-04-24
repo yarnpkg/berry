@@ -1,6 +1,6 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator}                             from './types';
+import * as structUtils from './structUtils';
+import {Descriptor, Locator} from './types';
 
 export class AliasResolver implements Resolver {
   private next: Resolver;
@@ -35,22 +35,18 @@ export class AliasResolver implements Resolver {
 
     for (const descriptor of Array.from(pkg.dependencies.values())) {
       for (const {pattern, reference} of topLevelWorkspace.manifest.resolutions) {
-        if (pattern.from && pattern.from.fullName !== structUtils.requirableIdent(locator))
-          continue;
-        if (pattern.from && pattern.from.description && pattern.from.description !== locator.reference)
-          continue;
+        if (pattern.from && pattern.from.fullName !== structUtils.requirableIdent(locator)) continue;
+        if (pattern.from && pattern.from.description && pattern.from.description !== locator.reference) continue;
 
-        if (pattern.descriptor.fullName !== structUtils.requirableIdent(descriptor))
-          continue;        
-        if (pattern.descriptor.description && pattern.descriptor.description !== descriptor.range)
-          continue;
+        if (pattern.descriptor.fullName !== structUtils.requirableIdent(descriptor)) continue;
+        if (pattern.descriptor.description && pattern.descriptor.description !== descriptor.range) continue;
 
         const alias = opts.resolver.bindDescriptor(
           structUtils.makeDescriptor(descriptor, reference),
           topLevelWorkspace.anchoredLocator,
           opts,
         );
-        
+
         pkg.dependencies.delete(descriptor.identHash);
         pkg.dependencies.set(alias.identHash, alias);
       }

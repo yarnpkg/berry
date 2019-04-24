@@ -1,6 +1,6 @@
 import {NodeElement} from './NodeElement';
-import {NodeText}    from './NodeText';
-import {Node}        from './Node';
+import {NodeText} from './NodeText';
+import {Node} from './Node';
 
 /**
  * This symbol is meant to be used when a property must be inherited from its parent node styles.
@@ -15,13 +15,16 @@ export const INHERITED_STYLE_PROPERTY = Symbol(`INHERITED_STYLE_PROPERTY`);
 export type StyleConverter = (value: any) => any;
 
 export const STYLE_CONVERTERS: Map<string, StyleConverter> = new Map([
-  [ `zIndex`, (value: any) => {
-    if (value === null) {
-      return null;
-    } else {
-      return Number(value);
-    }
-  }],
+  [
+    `zIndex`,
+    (value: any) => {
+      if (value === null) {
+        return null;
+      } else {
+        return Number(value);
+      }
+    },
+  ],
 ]);
 
 /**
@@ -119,198 +122,318 @@ export const DEFAULT_COMPUTED_STYLES: Map<string, any> = new Map([
 export type StyleTrigger = (node: Node, value: any) => void;
 
 export const STYLE_TRIGGERS: Map<string, StyleTrigger> = new Map([
-  [`display`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.display = getYogaEnum(element.env.yoga, `display`, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `display`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.display = getYogaEnum(element.env.yoga, `display`, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`position`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.position = getYogaEnum(element.env.yoga, `position`, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `position`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.position = getYogaEnum(element.env.yoga, `position`, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`left`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.left = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `left`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.left = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`right`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.right = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `right`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.right = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`top`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.top = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `top`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.top = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`bottom`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.bottom = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `bottom`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.bottom = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`zIndex`, elementsOnly((element: NodeElement, value: any) => {
-    element.markDirtyRender();
-  })],
+  [
+    `zIndex`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.markDirtyRender();
+    }),
+  ],
 
-  [`flexDirection`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.flexDirection = getYogaEnum(element.env.yoga, `flexDirection`, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `flexDirection`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.flexDirection = getYogaEnum(element.env.yoga, `flexDirection`, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`flexWrap`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.flexWrap = getYogaEnum(element.env.yoga, `wrap`, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `flexWrap`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.flexWrap = getYogaEnum(element.env.yoga, `wrap`, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`alignContent`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.alignContent = getYogaEnum(element.env.yoga, `align`, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `alignContent`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.alignContent = getYogaEnum(element.env.yoga, `align`, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`alignSelf`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.alignSelf = getYogaEnum(element.env.yoga, `align`, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `alignSelf`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.alignSelf = getYogaEnum(element.env.yoga, `align`, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`alignItems`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.alignItems = getYogaEnum(element.env.yoga, `align`, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `alignItems`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.alignItems = getYogaEnum(element.env.yoga, `align`, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`justifyContent`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.justifyContent = getYogaEnum(element.env.yoga, `justify`, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `justifyContent`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.justifyContent = getYogaEnum(element.env.yoga, `justify`, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`flexGrow`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.flexGrow = value;
-    element.markDirtyLayout();
-  })],
+  [
+    `flexGrow`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.flexGrow = value;
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`flexShrink`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.flexShrink = value;
-    element.markDirtyLayout();
-  })],
+  [
+    `flexShrink`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.flexShrink = value;
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`flexBasis`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.flexBasis = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `flexBasis`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.flexBasis = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`width`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.width = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `width`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.width = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`height`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.height = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `height`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.height = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`minWidth`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.minWidth = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `minWidth`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.minWidth = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`minHeight`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.minHeight = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `minHeight`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.minHeight = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`maxWidth`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.maxWidth = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `maxWidth`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.maxWidth = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`maxHeight`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.maxHeight = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `maxHeight`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.maxHeight = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`marginLeft`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.marginLeft = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `marginLeft`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.marginLeft = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`marginRight`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.marginRight = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `marginRight`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.marginRight = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`marginTop`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.marginTop = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `marginTop`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.marginTop = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`marginBottom`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.marginBottom = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `marginBottom`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.marginBottom = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`borderLeft`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.borderLeft = value ? 1 : 0;
-    element.markDirtyLayout();
-  })],
+  [
+    `borderLeft`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.borderLeft = value ? 1 : 0;
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`borderRight`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.borderRight = value ? 1 : 0;
-    element.markDirtyLayout();
-  })],
+  [
+    `borderRight`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.borderRight = value ? 1 : 0;
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`borderTop`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.borderTop = value ? 1 : 0;
-    element.markDirtyLayout();
-  })],
+  [
+    `borderTop`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.borderTop = value ? 1 : 0;
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`borderBottom`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.borderBottom = value ? 1 : 0;
-    element.markDirtyLayout();
-  })],
+  [
+    `borderBottom`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.borderBottom = value ? 1 : 0;
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`paddingLeft`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.paddingLeft = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `paddingLeft`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.paddingLeft = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`paddingRight`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.paddingRight = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `paddingRight`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.paddingRight = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`paddingTop`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.paddingTop = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `paddingTop`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.paddingTop = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`paddingBottom`, elementsOnly((element: NodeElement, value: any) => {
-    element.yoga.paddingBottom = getYogaUnit(element.env.yoga, value);
-    element.markDirtyLayout();
-  })],
+  [
+    `paddingBottom`,
+    elementsOnly((element: NodeElement, value: any) => {
+      element.yoga.paddingBottom = getYogaUnit(element.env.yoga, value);
+      element.markDirtyLayout();
+    }),
+  ],
 
-  [`borderBackColor`, (node: Node, value: any) => {
-    node.markDirtyRender();
-  }],
+  [
+    `borderBackColor`,
+    (node: Node, value: any) => {
+      node.markDirtyRender();
+    },
+  ],
 
-  [`borderFrontColor`, (node: Node, value: any) => {
-    node.markDirtyRender();
-  }],
+  [
+    `borderFrontColor`,
+    (node: Node, value: any) => {
+      node.markDirtyRender();
+    },
+  ],
 
-  [`backgroundBackColor`, (node: Node, value: any) => {
-    node.markDirtyRender();
-  }],
+  [
+    `backgroundBackColor`,
+    (node: Node, value: any) => {
+      node.markDirtyRender();
+    },
+  ],
 
-  [`backgroundFrontColor`, (node: Node, value: any) => {
-    node.markDirtyRender();
-  }],
+  [
+    `backgroundFrontColor`,
+    (node: Node, value: any) => {
+      node.markDirtyRender();
+    },
+  ],
 
-  [`contentBackColor`, (node: Node, value: any) => {
-    node.markDirtyRender();
-  }],
+  [
+    `contentBackColor`,
+    (node: Node, value: any) => {
+      node.markDirtyRender();
+    },
+  ],
 
-  [`contentFrontColor`, (node: Node, value: any) => {
-    node.markDirtyRender();
-  }],
+  [
+    `contentFrontColor`,
+    (node: Node, value: any) => {
+      node.markDirtyRender();
+    },
+  ],
 ]);
 
 function elementsOnly(trigger: (element: NodeElement, value: any) => void) {
@@ -322,8 +445,7 @@ function elementsOnly(trigger: (element: NodeElement, value: any) => void) {
 }
 
 function getYogaEnum(yoga: any, type: string, value: any) {
-  if (typeof value !== `string`)
-    throw new Error(`Invalid value type (${typeof value})`);
+  if (typeof value !== `string`) throw new Error(`Invalid value type (${typeof value})`);
   if (!Object.prototype.hasOwnProperty.call(yoga.Constants, type))
     throw new Error(`Invalid enumeration type ("${type}")`);
   if (!Object.prototype.hasOwnProperty.call(yoga.Constants[type], value))
@@ -351,57 +473,87 @@ function getYogaUnit(yoga: any, value: any) {
  */
 
 const FLEX_SHORTHANDS: Map<string, any> = new Map([
-  [`initial`, {
-    flexGrow: 0,
-    flexShrink: 1,
-  }],
+  [
+    `initial`,
+    {
+      flexGrow: 0,
+      flexShrink: 1,
+    },
+  ],
 
-  [`none`, {
-    flexGrow: 0,
-    flexShrink: 0,
-  }],
+  [
+    `none`,
+    {
+      flexGrow: 0,
+      flexShrink: 0,
+    },
+  ],
 
-  [`auto`, {
-    flexGrow: 1,
-    flexShrink: 1,
-  }],
+  [
+    `auto`,
+    {
+      flexGrow: 1,
+      flexShrink: 1,
+    },
+  ],
 ]);
 
 export type CompositeStyle = (value: any) => {[key: string]: any};
 
 export const COMPOSITE_STYLES: Map<string, CompositeStyle> = new Map([
-  [`borderColor`, (value: any) => {
-    return { borderFrontColor: value };
-  }],
+  [
+    `borderColor`,
+    (value: any) => {
+      return {borderFrontColor: value};
+    },
+  ],
 
-  [`backgroundColor`, (value: any) => {
-    return { backgroundBackColor: value };
-  }],
+  [
+    `backgroundColor`,
+    (value: any) => {
+      return {backgroundBackColor: value};
+    },
+  ],
 
-  [`color`, (value: any) => {
-    return { contentFrontColor: value };
-  }],
+  [
+    `color`,
+    (value: any) => {
+      return {contentFrontColor: value};
+    },
+  ],
 
-  [`margin`, (value: any) => {
-    return handleEdgeShorthand(`margin`, value);
-  }],
+  [
+    `margin`,
+    (value: any) => {
+      return handleEdgeShorthand(`margin`, value);
+    },
+  ],
 
-  [`padding`, (value: any) => {
-    return handleEdgeShorthand(`padding`, value);
-  }],
+  [
+    `padding`,
+    (value: any) => {
+      return handleEdgeShorthand(`padding`, value);
+    },
+  ],
 
-  [`border`, (value: any) => {
-    return handleBorderShorthand(value);
-  }],
+  [
+    `border`,
+    (value: any) => {
+      return handleBorderShorthand(value);
+    },
+  ],
 
-  [`flex`, (value: any) => {
-    const shorthand = FLEX_SHORTHANDS.get(value);
-    if (shorthand) {
-      return shorthand;
-    } else {
-      return { flexGrow: value, flexShrink: 1, flexBasis: 0 };
-    }
-  }],
+  [
+    `flex`,
+    (value: any) => {
+      const shorthand = FLEX_SHORTHANDS.get(value);
+      if (shorthand) {
+        return shorthand;
+      } else {
+        return {flexGrow: value, flexShrink: 1, flexBasis: 0};
+      }
+    },
+  ],
 ]);
 
 /**
@@ -409,10 +561,8 @@ export const COMPOSITE_STYLES: Map<string, CompositeStyle> = new Map([
  */
 
 function handleEdgeShorthand(base: string, n: any) {
-  if (typeof n === `number` || typeof n === `string`)
-    n = [n, n];
-  if (n.length === 2)
-    n = [n[0], n[1], n[0], n[1]];
+  if (typeof n === `number` || typeof n === `string`) n = [n, n];
+  if (n.length === 2) n = [n[0], n[1], n[0], n[1]];
 
   return {
     [`${base}Top`]: n[0],
@@ -436,17 +586,12 @@ const BUILTIN_BORDERS = new Map([
 
 function handleBorderShorthand(n: any) {
   const builtin = BUILTIN_BORDERS.get(n);
-  if (builtin)
-    n = builtin;
+  if (builtin) n = builtin;
 
-  if (typeof n === `string`)
-    n = [n];
-  if (n.length === 1)
-    n = [n[0], n[0]];
-  if (n.length === 2)
-    n = [n[0], n[1], n[0], n[1]];
-  if (n.length === 6)
-    n = [n[0], n[1], n[0], n[1], n[2], n[3], n[4], n[5]];
+  if (typeof n === `string`) n = [n];
+  if (n.length === 1) n = [n[0], n[0]];
+  if (n.length === 2) n = [n[0], n[1], n[0], n[1]];
+  if (n.length === 6) n = [n[0], n[1], n[0], n[1], n[2], n[3], n[4], n[5]];
 
   return {
     borderTop: n[0],

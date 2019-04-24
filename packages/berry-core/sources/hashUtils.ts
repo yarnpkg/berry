@@ -1,13 +1,12 @@
-import {NodeFS}     from '@berry/fslib';
+import {NodeFS} from '@berry/fslib';
 import {createHmac} from 'crypto';
 
-export function makeHash<T>(... args: Array<string | null>): T {
+export function makeHash<T>(...args: Array<string | null>): T {
   const hmac = createHmac(`sha512`, `berry`);
 
-  for (const arg of args)
-    hmac.update(arg ? arg : ``);
+  for (const arg of args) hmac.update(arg ? arg : ``);
 
-  return hmac.digest(`hex`) as unknown as T;
+  return (hmac.digest(`hex`) as unknown) as T;
 }
 
 export function checksumFile(path: string) {
@@ -19,7 +18,7 @@ export function checksumFile(path: string) {
 
     stream.on(`data`, chunk => {
       hmac.update(chunk);
-    })
+    });
 
     stream.on(`error`, error => {
       reject(error);

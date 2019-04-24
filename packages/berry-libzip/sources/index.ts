@@ -8,8 +8,12 @@ const number64 = [
 // eslint-disable-next-line arca/no-default-export
 export default {
   // Those are getters because they can change after memory growth
-  get HEAP8() { return libzip.HEAP8 },
-  get HEAPU8() { return libzip.HEAPU8 },
+  get HEAP8() {
+    return libzip.HEAP8;
+  },
+  get HEAPU8() {
+    return libzip.HEAPU8;
+  },
 
   ZIP_CHECKCONS: 4,
   ZIP_CREATE: 1,
@@ -74,8 +78,20 @@ export default {
   file: {
     add: libzip.cwrap(`zip_file_add`, `number`, [`number`, `string`, `number`, `number`]),
     getError: libzip.cwrap(`zip_file_get_error`, `number`, [`number`]),
-    getExternalAttributes: libzip.cwrap(`zip_file_get_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
-    setExternalAttributes: libzip.cwrap(`zip_file_set_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
+    getExternalAttributes: libzip.cwrap(`zip_file_get_external_attributes`, `number`, [
+      `number`,
+      ...number64,
+      `number`,
+      `number`,
+      `number`,
+    ]),
+    setExternalAttributes: libzip.cwrap(`zip_file_set_external_attributes`, `number`, [
+      `number`,
+      ...number64,
+      `number`,
+      `number`,
+      `number`,
+    ]),
     setMtime: libzip.cwrap(`zip_file_set_mtime`, `number`, [`number`, ...number64, `number`, `number`]),
   },
 

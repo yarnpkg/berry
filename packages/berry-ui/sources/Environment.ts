@@ -1,4 +1,4 @@
 export type Environment = {
-  textLayout: any,
-  yoga: any,
+  textLayout: any;
+  yoga: any;
 };

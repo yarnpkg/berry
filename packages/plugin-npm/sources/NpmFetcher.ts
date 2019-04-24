@@ -1,17 +1,15 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
-import {Locator, MessageName}                       from '@berry/core';
-import semver                                       from 'semver';
+import {httpUtils, structUtils, tgzUtils} from '@berry/core';
+import {Locator, MessageName} from '@berry/core';
+import semver from 'semver';
 
-import {PROTOCOL}                                   from './constants';
+import {PROTOCOL} from './constants';
 
 export class NpmFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (!locator.reference.startsWith(PROTOCOL))
-      return false;
+    if (!locator.reference.startsWith(PROTOCOL)) return false;
 
-    if (!semver.valid(locator.reference.slice(PROTOCOL.length)))
-      return false;
+    if (!semver.valid(locator.reference.slice(PROTOCOL.length))) return false;
 
     return true;
   }
@@ -27,7 +25,13 @@ export class NpmFetcher implements Fetcher {
       locator,
       expectedChecksum,
       async () => {
-        opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote registry`);
+        opts.report.reportInfoOnce(
+          MessageName.FETCH_NOT_CACHED,
+          `${structUtils.prettyLocator(
+            opts.project.configuration,
+            locator,
+          )} can't be found in the cache and will be fetched from the remote registry`,
+        );
         return await this.fetchFromNetwork(locator, opts);
       },
     );

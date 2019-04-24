@@ -1,30 +1,26 @@
 import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest} from '@berry/core';
-import {Ident, Descriptor, Locator}                                                          from '@berry/core';
-import {LinkType}                                                                            from '@berry/core';
-import {httpUtils, structUtils}                                                              from '@berry/core';
-import semver                                                                                from 'semver';
+import {Ident, Descriptor, Locator} from '@berry/core';
+import {LinkType} from '@berry/core';
+import {httpUtils, structUtils} from '@berry/core';
+import semver from 'semver';
 
-import {PROTOCOL}                                                                            from './constants';
+import {PROTOCOL} from './constants';
 
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
 
 export class NpmSemverResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!descriptor.range.startsWith(PROTOCOL))
-      return false;
+    if (!descriptor.range.startsWith(PROTOCOL)) return false;
 
-    if (!semver.validRange(descriptor.range.slice(PROTOCOL.length)))
-      return false;
+    if (!semver.validRange(descriptor.range.slice(PROTOCOL.length))) return false;
 
     return true;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!locator.reference.startsWith(PROTOCOL))
-      return false;
+    if (!locator.reference.startsWith(PROTOCOL)) return false;
 
-    if (!semver.valid(locator.reference.slice(PROTOCOL.length)))
-      return false;
+    if (!semver.valid(locator.reference.slice(PROTOCOL.length))) return false;
 
     return true;
   }
@@ -40,8 +36,7 @@ export class NpmSemverResolver implements Resolver {
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
     const range = descriptor.range.slice(PROTOCOL.length);
 
-    if (semver.valid(range))
-      return [structUtils.convertDescriptorToLocator(descriptor)];
+    if (semver.valid(range)) return [structUtils.convertDescriptorToLocator(descriptor)];
 
     const httpResponse = await httpUtils.get(this.getIdentUrl(descriptor, opts), opts.project.configuration);
 
@@ -64,7 +59,10 @@ export class NpmSemverResolver implements Resolver {
     const registryData = JSON.parse(httpResponse.toString());
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
-      throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
+      throw new ReportError(
+        MessageName.REMOTE_INVALID,
+        `Registry returned invalid data for - missing "versions" field`,
+      );
 
     if (!Object.prototype.hasOwnProperty.call(registryData.versions, version))
       throw new ReportError(MessageName.REMOTE_NOT_FOUND, `Registry failed to return reference "${version}"`);
@@ -76,10 +74,13 @@ export class NpmSemverResolver implements Resolver {
     // This is because the npm registry will automatically add a `node-gyp rebuild` install script
     // in the metadata if there is not already an install script and a binding.gyp file exists.
     // Also, node-gyp is not always set as a dependency in packages, so it will also be added if used in scripts.
-    if (!manifest.dependencies.has(NODE_GYP_IDENT.identHash) && !manifest.peerDependencies.has(NODE_GYP_IDENT.identHash)) {
+    if (
+      !manifest.dependencies.has(NODE_GYP_IDENT.identHash) &&
+      !manifest.peerDependencies.has(NODE_GYP_IDENT.identHash)
+    ) {
       for (const value of manifest.scripts.values()) {
         if (value.includes(`node-gyp`)) {
-          manifest.dependencies.set(NODE_GYP_IDENT.identHash,  structUtils.makeDescriptor(NODE_GYP_IDENT, `*`));
+          manifest.dependencies.set(NODE_GYP_IDENT.identHash, structUtils.makeDescriptor(NODE_GYP_IDENT, `*`));
           opts.report.reportWarning(MessageName.NODE_GYP_INJECTED, `Implicit dependencies on node-gyp are discouraged`);
           break;
         }
@@ -87,7 +88,7 @@ export class NpmSemverResolver implements Resolver {
     }
 
     return {
-      ... locator,
+      ...locator,
 
       version,
 

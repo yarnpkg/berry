@@ -1,19 +1,21 @@
 import {ReadStream, Stats, WriteStream} from 'fs';
-import {posix}                          from 'path';
+import {posix} from 'path';
 
 export type CreateReadStreamOptions = Partial<{
-  encoding: string,
+  encoding: string;
 }>;
 
 export type CreateWriteStreamOptions = Partial<{
-  encoding: string,
+  encoding: string;
 }>;
 
-export type WriteFileOptions = Partial<{
-  encoding: string,
-  mode: number,
-  flag: string,
-}> | string;
+export type WriteFileOptions =
+  | Partial<{
+      encoding: string;
+      mode: number;
+      flag: string;
+    }>
+  | string;
 
 export abstract class FakeFS {
   abstract getRealPath(): string;
@@ -67,7 +69,11 @@ export abstract class FakeFS {
   abstract copyFilePromise(sourceP: string, destP: string, flags?: number): Promise<void>;
   abstract copyFileSync(sourceP: string, destP: string, flags?: number): void;
 
-  abstract writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
+  abstract writeFilePromise(
+    p: string,
+    content: string | Buffer | ArrayBuffer | DataView,
+    opts?: WriteFileOptions,
+  ): void;
   abstract writeFileSync(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
 
   abstract unlinkPromise(p: string): Promise<void>;
@@ -98,8 +104,7 @@ export abstract class FakeFS {
     }
 
     if (stat.isDirectory()) {
-      for (const entry of await this.readdirPromise(p))
-        await this.removePromise(posix.resolve(p, entry));
+      for (const entry of await this.readdirPromise(p)) await this.removePromise(posix.resolve(p, entry));
 
       // 5 gives 1s worth of retries at worst
       for (let t = 0; t < 5; ++t) {
@@ -133,19 +138,20 @@ export abstract class FakeFS {
     }
 
     if (stat.isDirectory()) {
-      for (const entry of this.readdirSync(p))
-        this.removeSync(posix.resolve(p, entry));
-      
+      for (const entry of this.readdirSync(p)) this.removeSync(posix.resolve(p, entry));
+
       this.rmdirSync(p);
     } else {
       this.unlinkSync(p);
     }
   }
 
-  async mkdirpPromise(p: string, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
+  async mkdirpPromise(
+    p: string,
+    {chmod, utimes}: {chmod?: number; utimes?: [Date | string | number, Date | string | number]} = {},
+  ) {
     p = this.resolve(p);
-    if (p === `/`)
-      return;
+    if (p === `/`) return;
 
     const parts = p.split(`/`);
 
@@ -163,8 +169,7 @@ export abstract class FakeFS {
           }
         }
 
-        if (chmod != null)
-          await this.chmodPromise(subPath, chmod);
+        if (chmod != null) await this.chmodPromise(subPath, chmod);
 
         if (utimes != null) {
           await this.utimesPromise(subPath, utimes[0], utimes[1]);
@@ -173,10 +178,12 @@ export abstract class FakeFS {
     }
   }
 
-  mkdirpSync(p: string, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
+  mkdirpSync(
+    p: string,
+    {chmod, utimes}: {chmod?: number; utimes?: [Date | string | number, Date | string | number]} = {},
+  ) {
     p = this.resolve(p);
-    if (p === `/`)
-      return;
+    if (p === `/`) return;
 
     const parts = p.split(`/`);
 
@@ -194,8 +201,7 @@ export abstract class FakeFS {
           }
         }
 
-        if (chmod != null)
-          this.chmodSync(subPath, chmod);
+        if (chmod != null) this.chmodSync(subPath, chmod);
 
         if (utimes != null) {
           this.utimesSync(subPath, utimes[0], utimes[1]);
@@ -204,28 +210,32 @@ export abstract class FakeFS {
     }
   }
 
-  async copyPromise(destination: string, source: string, {baseFs = this, overwrite = true}: {baseFs?: FakeFS, overwrite?: boolean} = {}) {
+  async copyPromise(
+    destination: string,
+    source: string,
+    {baseFs = this, overwrite = true}: {baseFs?: FakeFS; overwrite?: boolean} = {},
+  ) {
     const stat = await baseFs.lstatPromise(source);
     const exists = await this.existsSync(destination);
 
     if (stat.isDirectory()) {
       await this.mkdirpPromise(destination);
       const directoryListing = await baseFs.readdirPromise(source);
-      await Promise.all(directoryListing.map(entry => {
-        return this.copyPromise(posix.join(destination, entry), posix.join(source, entry), {baseFs, overwrite});
-      }));
+      await Promise.all(
+        directoryListing.map(entry => {
+          return this.copyPromise(posix.join(destination, entry), posix.join(source, entry), {baseFs, overwrite});
+        }),
+      );
     } else if (stat.isFile()) {
       if (!exists || overwrite) {
-        if (exists)
-          await this.removePromise(destination);
+        if (exists) await this.removePromise(destination);
 
         const content = await baseFs.readFilePromise(source);
         await this.writeFilePromise(destination, content);
       }
     } else if (stat.isSymbolicLink()) {
       if (!exists || overwrite) {
-        if (exists)
-          await this.removePromise(destination);
+        if (exists) await this.removePromise(destination);
 
         const target = await baseFs.readlinkPromise(source);
         await this.symlinkPromise(target, destination);
@@ -238,7 +248,11 @@ export abstract class FakeFS {
     await this.chmodPromise(destination, mode);
   }
 
-  copySync(destination: string, source: string, {baseFs = this, overwrite = true}: {baseFs?: FakeFS, overwrite?: boolean} = {}) {
+  copySync(
+    destination: string,
+    source: string,
+    {baseFs = this, overwrite = true}: {baseFs?: FakeFS; overwrite?: boolean} = {},
+  ) {
     const stat = baseFs.lstatSync(source);
     const exists = this.existsSync(destination);
 
@@ -250,16 +264,14 @@ export abstract class FakeFS {
       }
     } else if (stat.isFile()) {
       if (!exists || overwrite) {
-        if (exists)
-          this.removeSync(destination);
+        if (exists) this.removeSync(destination);
 
         const content = baseFs.readFileSync(source);
         this.writeFileSync(destination, content);
       }
     } else if (stat.isSymbolicLink()) {
       if (!exists || overwrite) {
-        if (exists)
-          this.removeSync(destination);
+        if (exists) this.removeSync(destination);
 
         const target = baseFs.readlinkSync(source);
         this.symlinkSync(target, destination);
@@ -355,4 +367,4 @@ export abstract class FakeFS {
       await this.unlinkPromise(lockPath);
     }
   }
-};
+}

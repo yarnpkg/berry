@@ -1,7 +1,7 @@
-import {TextLayout}     from '@manaflair/text-layout';
+import {TextLayout} from '@manaflair/text-layout';
 
-import {Environment}    from './Environment';
-import {NodeTree}       from './NodeTree';
+import {Environment} from './Environment';
+import {NodeTree} from './NodeTree';
 import {Node, NodeType} from './Node';
 
 export class NodeText extends Node {
@@ -18,8 +18,7 @@ export class NodeText extends Node {
     this.textLayout.setSoftWrap(true);
 
     this.yoga.setMeasureFunc((widthHint: number, widthMode: any, heightHint: number, heightMode: any) => {
-      if (this.textLayout.setColumns(widthHint))
-        this.textLayout.clearSource();
+      if (this.textLayout.setColumns(widthHint)) this.textLayout.clearSource();
 
       const width = this.textLayout.getColumnCount();
       const height = this.textLayout.getRowCount();
@@ -40,9 +39,8 @@ export class NodeText extends Node {
 
       let leftMostTextNode = this.previousSibling;
 
-      while (leftMostTextNode.previousSibling instanceof NodeText)
-        leftMostTextNode = leftMostTextNode.previousSibling;
-      
+      while (leftMostTextNode.previousSibling instanceof NodeText) leftMostTextNode = leftMostTextNode.previousSibling;
+
       leftMostTextNode.clearTextLayout();
     }
   }
@@ -56,12 +54,11 @@ export class NodeText extends Node {
       }
     } else {
       this.activate();
-      
+
       let leftMostTextNode = this.previousSibling;
 
-      while (leftMostTextNode.previousSibling instanceof NodeText)
-        leftMostTextNode = leftMostTextNode.previousSibling;
-      
+      while (leftMostTextNode.previousSibling instanceof NodeText) leftMostTextNode = leftMostTextNode.previousSibling;
+
       leftMostTextNode.clearTextLayout();
     }
   }
@@ -71,8 +68,7 @@ export class NodeText extends Node {
 
     let activeTextNode: NodeText = this;
 
-    while (activeTextNode.previousSibling instanceof NodeText)
-      activeTextNode = activeTextNode.previousSibling;
+    while (activeTextNode.previousSibling instanceof NodeText) activeTextNode = activeTextNode.previousSibling;
 
     activeTextNode.clearTextLayout();
   }
@@ -106,7 +102,12 @@ export class NodeText extends Node {
     const pad = background.repeat(Math.ceil((width - line.length) / background.length)).substr(0, width - line.length);
 
     const formattedLine = this.applyTextStyle(line);
-    const formattedPad = pad ? this.applyTextStyle(pad, {backColor: this.style.get(`backgroundBackColor`), frontColor: this.style.get(`backgroundFrontColor`)}) : ``;
+    const formattedPad = pad
+      ? this.applyTextStyle(pad, {
+          backColor: this.style.get(`backgroundBackColor`),
+          frontColor: this.style.get(`backgroundFrontColor`),
+        })
+      : ``;
 
     return formattedLine + formattedPad;
   }

@@ -1,6 +1,6 @@
 import {Plugin, SettingsType} from '@berry/core';
 
-import init                   from './commands/init';
+import init from './commands/init';
 
 const plugin: Plugin = {
   configuration: {
@@ -20,9 +20,7 @@ const plugin: Plugin = {
       default: null,
     },
   },
-  commands: [
-    init,
-  ],
+  commands: [init],
 };
 
 // eslint-disable-next-line arca/no-default-export

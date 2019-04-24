@@ -1,12 +1,11 @@
-import {Node}                                                                from './Node';
+import {Node} from './Node';
 import {DEFAULT_COMPUTED_STYLES, DEFAULT_INHERITED_STYLES, COMPOSITE_STYLES} from './StyleConfiguration';
-import {STYLE_CONVERTERS, STYLE_TRIGGERS}                                    from './StyleConfiguration';
-import {INHERITED_STYLE_PROPERTY}                                            from './StyleConfiguration';
+import {STYLE_CONVERTERS, STYLE_TRIGGERS} from './StyleConfiguration';
+import {INHERITED_STYLE_PROPERTY} from './StyleConfiguration';
 
 export type StyleMap = Map<string, any>;
 
 export class StyleManager {
-
   private readonly node: Node;
 
   private readonly computed: Map<string, any> = new Map();
@@ -29,8 +28,7 @@ export class StyleManager {
   refreshInheritedProperties() {
     const inheritedProperties: StyleMap = new Map();
 
-    for (const inherited of this.inherited)
-      inheritedProperties.set(inherited, INHERITED_STYLE_PROPERTY);
+    for (const inherited of this.inherited) inheritedProperties.set(inherited, INHERITED_STYLE_PROPERTY);
 
     this.applyProperties(inheritedProperties);
   }
@@ -55,12 +53,9 @@ export class StyleManager {
       }
     };
 
-    for (let [key, value] of mappedSource.entries())
-      traverseStyleProperty(key, value);
+    for (let [key, value] of mappedSource.entries()) traverseStyleProperty(key, value);
 
-    for (let key of this.computed.keys())
-      if (!comprehensiveSource.has(key))
-        comprehensiveSource.set(key, undefined);
+    for (let key of this.computed.keys()) if (!comprehensiveSource.has(key)) comprehensiveSource.set(key, undefined);
 
     this.applyProperties(comprehensiveSource);
   }
@@ -93,8 +88,7 @@ export class StyleManager {
       }
     };
 
-    for (const [key, value] of source.entries())
-      applyStyleProperty(key, value);
+    for (const [key, value] of source.entries()) applyStyleProperty(key, value);
 
     this.applyComputedProperties(computedProperties);
   }
@@ -105,19 +99,15 @@ export class StyleManager {
     for (let [key, value] of source.entries()) {
       const defaultValue: any = DEFAULT_COMPUTED_STYLES.get(key);
 
-      if (value === undefined)
-        value = DEFAULT_INHERITED_STYLES.has(key) ? INHERITED_STYLE_PROPERTY : defaultValue;
+      if (value === undefined) value = DEFAULT_INHERITED_STYLES.has(key) ? INHERITED_STYLE_PROPERTY : defaultValue;
 
-      if (value === INHERITED_STYLE_PROPERTY)
-        this.inherited.add(key);
-      else
-        this.inherited.delete(key);
+      if (value === INHERITED_STYLE_PROPERTY) this.inherited.add(key);
+      else this.inherited.delete(key);
 
       if (value === INHERITED_STYLE_PROPERTY)
         value = this.node.parentNode ? this.node.parentNode.style.get(key) : defaultValue;
 
-      if (value === this.get(key))
-        continue;
+      if (value === this.get(key)) continue;
 
       dirtyKeys.add(key);
 
@@ -140,8 +130,7 @@ export class StyleManager {
       const inheritedComputedProperties: StyleMap = new Map();
 
       for (let key of child.style.inherited)
-        if (dirtyKeys.has(key))
-          inheritedComputedProperties.set(key, INHERITED_STYLE_PROPERTY);
+        if (dirtyKeys.has(key)) inheritedComputedProperties.set(key, INHERITED_STYLE_PROPERTY);
 
       child.style.applyComputedProperties(inheritedComputedProperties);
     }

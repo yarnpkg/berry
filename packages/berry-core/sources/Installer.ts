@@ -1,16 +1,16 @@
-import {FetchResult}                from './Fetcher';
+import {FetchResult} from './Fetcher';
 import {LinkType, Locator, Package} from './types';
 
 export enum BuildType {
   SCRIPT = 0,
   SHELLCODE = 1,
-};
+}
 
 export type BuildDirective = [BuildType, string];
 
 export type InstallStatus = {
-  packageLocation: string,
-  buildDirective?: Array<BuildDirective> | null,
+  packageLocation: string;
+  buildDirective?: Array<BuildDirective> | null;
 };
 
 export interface Installer {
@@ -63,4 +63,4 @@ export interface Installer {
    * Finalize the install by writing miscellaneous files to the disk.
    */
   finalizeInstall(): Promise<void>;
-};
+}

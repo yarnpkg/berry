@@ -1,12 +1,12 @@
-import libzip                                              from '@berry/libzip';
-import {ReadStream, Stats, WriteStream, constants}         from 'fs';
-import {posix}                                             from 'path';
-import {PassThrough}                                       from 'stream';
-import {isDate}                                            from 'util';
+import libzip from '@berry/libzip';
+import {ReadStream, Stats, WriteStream, constants} from 'fs';
+import {posix} from 'path';
+import {PassThrough} from 'stream';
+import {isDate} from 'util';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
-import {FakeFS, WriteFileOptions}                          from './FakeFS';
-import {NodeFS}                                            from './NodeFS';
+import {FakeFS, WriteFileOptions} from './FakeFS';
+import {NodeFS} from './NodeFS';
 
 const S_IFMT = 0o170000;
 
@@ -52,15 +52,14 @@ class StatEntry {
 }
 
 export type Options = {
-  baseFs?: FakeFS,
-  create?: boolean,
-  readOnly?: boolean,
-  stats?: Stats,
+  baseFs?: FakeFS;
+  create?: boolean;
+  readOnly?: boolean;
+  stats?: Stats;
 };
 
 function toUnixTimestamp(time: Date | string | number) {
-  if (typeof time === 'string' && String(+time) === time)
-    return +time;
+  if (typeof time === 'string' && String(+time) === time) return +time;
 
   // @ts-ignore
   if (Number.isFinite(time)) {
@@ -72,8 +71,7 @@ function toUnixTimestamp(time: Date | string | number) {
   }
 
   // convert to 123.456 UNIX timestamp
-  if (isDate(time))
-    return (time as Date).getTime() / 1000;
+  if (isDate(time)) return (time as Date).getTime() / 1000;
 
   throw new Error(`Invalid time`);
 }
@@ -105,7 +103,21 @@ export class ZipFS extends FakeFS {
         this.stats = this.baseFs.statSync(p);
       } catch (error) {
         if (error.code === `ENOENT` && create) {
-          this.stats = Object.assign(new StatEntry(), {uid: 0, gid: 0, size: 0, blksize: 0, atimeMs: 0, mtimeMs: 0, ctimeMs: 0, birthtimeMs: 0, atime: new Date(0), mtime: new Date(0), ctime: new Date(0), birthtime: new Date(0), mode: S_IFREG | 0o644});
+          this.stats = Object.assign(new StatEntry(), {
+            uid: 0,
+            gid: 0,
+            size: 0,
+            blksize: 0,
+            atimeMs: 0,
+            mtimeMs: 0,
+            ctimeMs: 0,
+            birthtimeMs: 0,
+            atime: new Date(0),
+            mtime: new Date(0),
+            ctime: new Date(0),
+            birthtime: new Date(0),
+            mode: S_IFREG | 0o644,
+          });
         } else {
           throw error;
         }
@@ -117,11 +129,9 @@ export class ZipFS extends FakeFS {
     try {
       let flags = 0;
 
-      if (create)
-        flags |= libzip.ZIP_CREATE | libzip.ZIP_TRUNCATE;
+      if (create) flags |= libzip.ZIP_CREATE | libzip.ZIP_TRUNCATE;
 
-      if (readOnly)
-        flags |= libzip.ZIP_RDONLY;
+      if (readOnly) flags |= libzip.ZIP_RDONLY;
 
       this.zip = libzip.open(NodeFS.fromPortablePath(p), flags, errPtr);
 
@@ -142,8 +152,7 @@ export class ZipFS extends FakeFS {
     for (let t = 0; t < entryCount; ++t) {
       const raw = libzip.getName(this.zip, t, 0);
 
-      if (posix.isAbsolute(raw))
-        continue;
+      if (posix.isAbsolute(raw)) continue;
 
       const p = posix.resolve(`/`, raw);
 
@@ -164,16 +173,12 @@ export class ZipFS extends FakeFS {
   }
 
   saveAndClose() {
-    if (!this.ready)
-      throw Object.assign(new Error(`EBUSY: archive closed, close`), {code: `EBUSY`});
+    if (!this.ready) throw Object.assign(new Error(`EBUSY: archive closed, close`), {code: `EBUSY`});
 
-    const previousMod = this.baseFs.existsSync(this.path)
-      ? this.baseFs.statSync(this.path).mode & 0o777
-      : null;
+    const previousMod = this.baseFs.existsSync(this.path) ? this.baseFs.statSync(this.path).mode & 0o777 : null;
 
     const rc = libzip.close(this.zip);
-    if (rc === -1)
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+    if (rc === -1) throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
     // Libzip overrides the chmod when writing the archive, which is a weird
     // behavior I don't totally understand (plus the umask seems bogus in some
@@ -214,7 +219,7 @@ export class ZipFS extends FakeFS {
       path: p,
       close: () => {
         clearImmediate(immediate);
-      }
+      },
     });
 
     const immediate = setImmediate(() => {
@@ -351,7 +356,22 @@ export class ZipFS extends FakeFS {
 
       const mode = S_IFDIR | 0o755;
 
-      return Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
+      return Object.assign(new StatEntry(), {
+        uid,
+        gid,
+        size,
+        blksize,
+        blocks,
+        atime,
+        birthtime,
+        ctime,
+        mtime,
+        atimeMs,
+        birthtimeMs,
+        ctimeMs,
+        mtimeMs,
+        mode,
+      });
     }
 
     const entry = this.entries.get(p);
@@ -360,13 +380,12 @@ export class ZipFS extends FakeFS {
       const stat = libzip.struct.statS();
 
       const rc = libzip.statIndex(this.zip, entry, 0, 0, stat);
-      if (rc === -1)
-        throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+      if (rc === -1) throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
       const uid = this.stats.uid;
       const gid = this.stats.gid;
 
-      const size = (libzip.struct.statSize(stat) >>> 0);
+      const size = libzip.struct.statSize(stat) >>> 0;
       const blksize = 512;
       const blocks = Math.ceil(size / blksize);
 
@@ -382,7 +401,22 @@ export class ZipFS extends FakeFS {
 
       const mode = this.getUnixMode(entry, S_IFREG | 0o644);
 
-      return Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
+      return Object.assign(new StatEntry(), {
+        uid,
+        gid,
+        size,
+        blksize,
+        blocks,
+        atime,
+        birthtime,
+        ctime,
+        mtime,
+        atimeMs,
+        birthtimeMs,
+        ctimeMs,
+        mtimeMs,
+        mode,
+      });
     }
 
     throw new Error(`Unreachable`);
@@ -390,12 +424,10 @@ export class ZipFS extends FakeFS {
 
   private getUnixMode(index: number, defaultMode: number) {
     const rc = libzip.file.getExternalAttributes(this.zip, index, 0, 0, libzip.uint08S, libzip.uint32S);
-    if (rc === -1)
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+    if (rc === -1) throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
     const opsys = libzip.getValue(libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== libzip.ZIP_OPSYS_UNIX)
-      return defaultMode;
+    if (opsys !== libzip.ZIP_OPSYS_UNIX) return defaultMode;
 
     return libzip.getValue(libzip.uint32S, `i32`) >>> 16;
   }
@@ -403,8 +435,7 @@ export class ZipFS extends FakeFS {
   private registerListing(p: string) {
     let listing = this.listings.get(p);
 
-    if (listing)
-      return listing;
+    if (listing) return listing;
 
     const parentListing = this.registerListing(posix.dirname(p));
     listing = new Set();
@@ -423,13 +454,11 @@ export class ZipFS extends FakeFS {
   }
 
   private resolveFilename(reason: string, p: string, resolveLastComponent: boolean = true) {
-    if (!this.ready)
-      throw Object.assign(new Error(`EBUSY: archive closed, ${reason}`), {code: `EBUSY`});
+    if (!this.ready) throw Object.assign(new Error(`EBUSY: archive closed, ${reason}`), {code: `EBUSY`});
 
     let resolvedP = posix.resolve(`/`, p);
 
-    if (resolvedP === `/`)
-      return `/`;
+    if (resolvedP === `/`) return `/`;
 
     while (true) {
       const parentP = this.resolveFilename(reason, posix.dirname(resolvedP), true);
@@ -440,17 +469,14 @@ export class ZipFS extends FakeFS {
       if (!isDir && !doesExist)
         throw Object.assign(new Error(`ENOENT: no such file or directory, ${reason}`), {code: `ENOENT`});
 
-      if (!isDir)
-        throw Object.assign(new Error(`ENOTDIR: not a directory, ${reason}`), {code: `ENOTDIR`});
+      if (!isDir) throw Object.assign(new Error(`ENOTDIR: not a directory, ${reason}`), {code: `ENOTDIR`});
 
       resolvedP = posix.resolve(parentP, posix.basename(resolvedP));
 
-      if (!resolveLastComponent)
-        break;
+      if (!resolveLastComponent) break;
 
       const index = libzip.name.locate(this.zip, resolvedP);
-      if (index === -1)
-        break;
+      if (index === -1) break;
 
       if (this.isSymbolicLink(index)) {
         const target = this.getFileSource(index).toString();
@@ -464,13 +490,11 @@ export class ZipFS extends FakeFS {
   }
 
   private setFileSource(p: string, content: string | Buffer | ArrayBuffer | DataView) {
-    if (!Buffer.isBuffer(content))
-      content = Buffer.from(content as any);
+    if (!Buffer.isBuffer(content)) content = Buffer.from(content as any);
 
     const buffer = libzip.malloc(content.byteLength);
 
-    if (!buffer)
-      throw new Error(`Couldn't allocate enough memory`);
+    if (!buffer) throw new Error(`Couldn't allocate enough memory`);
 
     // Copy the file into the Emscripten heap
     const heap = new Uint8Array(libzip.HEAPU8.buffer, buffer, content.byteLength);
@@ -488,12 +512,10 @@ export class ZipFS extends FakeFS {
 
   private isSymbolicLink(index: number) {
     const attrs = libzip.file.getExternalAttributes(this.zip, index, 0, 0, libzip.uint08S, libzip.uint32S);
-    if (attrs === -1)
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+    if (attrs === -1) throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
     const opsys = libzip.getValue(libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== libzip.ZIP_OPSYS_UNIX)
-      return false;
+    if (opsys !== libzip.ZIP_OPSYS_UNIX) return false;
 
     const attributes = libzip.getValue(libzip.uint32S, `i32`) >>> 16;
     return (attributes & S_IFMT) === S_IFLNK;
@@ -503,26 +525,21 @@ export class ZipFS extends FakeFS {
     const stat = libzip.struct.statS();
 
     const rc = libzip.statIndex(this.zip, index, 0, 0, stat);
-    if (rc === -1)
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+    if (rc === -1) throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
     const size = libzip.struct.statSize(stat);
     const buffer = libzip.malloc(size);
 
     try {
       const file = libzip.fopenIndex(this.zip, index, 0, 0);
-      if (file === 0)
-        throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+      if (file === 0) throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
       try {
         const rc = libzip.fread(file, buffer, size, 0);
 
-        if (rc === -1)
-          throw new Error(libzip.error.strerror(libzip.file.getError(file)));
-        else if (rc < size)
-          throw new Error(`Incomplete read`);
-        else if (rc > size)
-          throw new Error(`Overread`);
+        if (rc === -1) throw new Error(libzip.error.strerror(libzip.file.getError(file)));
+        else if (rc < size) throw new Error(`Incomplete read`);
+        else if (rc > size) throw new Error(`Overread`);
 
         const memory = libzip.HEAPU8.subarray(buffer, buffer + size);
         const data = Buffer.from(memory);
@@ -544,15 +561,13 @@ export class ZipFS extends FakeFS {
     const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
 
     // We silently ignore chmod requests for directories
-    if (this.listings.has(resolvedP))
-      return;
+    if (this.listings.has(resolvedP)) return;
 
     const entry = this.entries.get(resolvedP);
-    if (entry === undefined)
-      throw new Error(`Unreachable`);
+    if (entry === undefined) throw new Error(`Unreachable`);
 
     const oldMod = this.getUnixMode(entry, S_IFREG | 0o000);
-    const newMod = oldMod & (~0o777) | mask;
+    const newMod = (oldMod & ~0o777) | mask;
 
     const rc = libzip.file.setExternalAttributes(this.zip, entry, 0, 0, libzip.ZIP_OPSYS_UNIX, newMod << 16);
     if (rc === -1) {
@@ -574,7 +589,9 @@ export class ZipFS extends FakeFS {
 
   copyFileSync(sourceP: string, destP: string, flags: number = 0) {
     if ((flags & constants.COPYFILE_FICLONE_FORCE) !== 0)
-      throw Object.assign(new Error(`ENOSYS: unsupported clone operation, copyfile '${sourceP}' -> ${destP}'`), {code: `ENOSYS`});
+      throw Object.assign(new Error(`ENOSYS: unsupported clone operation, copyfile '${sourceP}' -> ${destP}'`), {
+        code: `ENOSYS`,
+      });
 
     const resolvedSourceP = this.resolveFilename(`copyfile '${sourceP} -> ${destP}'`, sourceP);
     const indexSource = this.entries.get(resolvedSourceP);
@@ -585,8 +602,13 @@ export class ZipFS extends FakeFS {
     const resolvedDestP = this.resolveFilename(`copyfile '${sourceP}' -> ${destP}'`, destP);
     const indexDest = this.entries.get(resolvedDestP);
 
-    if ((flags & (constants.COPYFILE_EXCL | constants.COPYFILE_FICLONE_FORCE)) !== 0 && typeof indexDest !== `undefined`)
-      throw Object.assign(new Error(`EEXIST: file already exists, copyfile '${sourceP}' -> '${destP}'`), {code: `EEXIST`});
+    if (
+      (flags & (constants.COPYFILE_EXCL | constants.COPYFILE_FICLONE_FORCE)) !== 0 &&
+      typeof indexDest !== `undefined`
+    )
+      throw Object.assign(new Error(`EEXIST: file already exists, copyfile '${sourceP}' -> '${destP}'`), {
+        code: `EEXIST`,
+      });
 
     const source = this.getFileSource(indexSource);
     const newIndex = this.setFileSource(resolvedDestP, source);
@@ -613,13 +635,10 @@ export class ZipFS extends FakeFS {
 
     let encoding = null;
 
-    if (typeof opts === `string`)
-      encoding = opts;
-    else if (typeof opts === `object` && opts.encoding)
-      encoding = opts.encoding;
+    if (typeof opts === `string`) encoding = opts;
+    else if (typeof opts === `object` && opts.encoding) encoding = opts.encoding;
 
-    if (encoding !== null)
-      content = content.toString(encoding);
+    if (encoding !== null) content = content.toString(encoding);
 
     const newIndex = this.setFileSource(resolvedP, content);
 
@@ -657,13 +676,10 @@ export class ZipFS extends FakeFS {
   }
 
   private utimesImpl(resolvedP: string, mtime: Date | string | number) {
-    if (this.listings.has(resolvedP))
-      if (!this.entries.has(resolvedP))
-        this.hydrateDirectory(resolvedP);
+    if (this.listings.has(resolvedP)) if (!this.entries.has(resolvedP)) this.hydrateDirectory(resolvedP);
 
     const entry = this.entries.get(resolvedP);
-    if (entry === undefined)
-      throw new Error(`Unreachable`);
+    if (entry === undefined) throw new Error(`Unreachable`);
 
     const rc = libzip.file.setMtime(this.zip, entry, 0, toUnixTimestamp(mtime), 0);
     if (rc === -1) {
@@ -694,8 +710,7 @@ export class ZipFS extends FakeFS {
 
   private hydrateDirectory(resolvedP: string) {
     const index = libzip.dir.add(this.zip, posix.relative(`/`, resolvedP));
-    if (index === -1)
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+    if (index === -1) throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
     this.registerListing(resolvedP);
     this.registerEntry(resolvedP, index);
@@ -711,7 +726,9 @@ export class ZipFS extends FakeFS {
     const resolvedP = this.resolveFilename(`symlink '${target}' -> '${p}'`, p);
 
     if (this.listings.has(resolvedP))
-      throw Object.assign(new Error(`EISDIR: illegal operation on a directory, symlink '${target}' -> '${p}'`), {code: `EISDIR`});
+      throw Object.assign(new Error(`EISDIR: illegal operation on a directory, symlink '${target}' -> '${p}'`), {
+        code: `EISDIR`,
+      });
 
     if (this.entries.has(resolvedP))
       throw Object.assign(new Error(`EEXIST: file already exists, symlink '${target}' -> '${p}'`), {code: `EEXIST`});
@@ -720,7 +737,14 @@ export class ZipFS extends FakeFS {
 
     this.registerEntry(resolvedP, index);
 
-    const rc = libzip.file.setExternalAttributes(this.zip, index, 0, 0, libzip.ZIP_OPSYS_UNIX, (0o120000 | 0o777) << 16);
+    const rc = libzip.file.setExternalAttributes(
+      this.zip,
+      index,
+      0,
+      0,
+      libzip.ZIP_OPSYS_UNIX,
+      (0o120000 | 0o777) << 16,
+    );
     if (rc === -1) {
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
     }
@@ -759,8 +783,7 @@ export class ZipFS extends FakeFS {
       throw Object.assign(new Error(`EISDIR: illegal operation on a directory, read`), {code: `EISDIR`});
 
     const entry = this.entries.get(resolvedP);
-    if (entry === undefined)
-      throw new Error(`Unreachable`);
+    if (entry === undefined) throw new Error(`Unreachable`);
 
     const data = this.getFileSource(entry);
 
@@ -804,12 +827,10 @@ export class ZipFS extends FakeFS {
 
     const entry = this.entries.get(resolvedP);
 
-    if (entry === undefined)
-      throw new Error(`Unreachable`);
+    if (entry === undefined) throw new Error(`Unreachable`);
 
     const rc = libzip.file.getExternalAttributes(this.zip, entry, 0, 0, libzip.uint08S, libzip.uint32S);
-    if (rc === -1)
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+    if (rc === -1) throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
     const opsys = libzip.getValue(libzip.uint08S, `i8`) >>> 0;
     if (opsys !== libzip.ZIP_OPSYS_UNIX)
@@ -821,4 +842,4 @@ export class ZipFS extends FakeFS {
 
     return this.getFileSource(entry).toString();
   }
-};
+}

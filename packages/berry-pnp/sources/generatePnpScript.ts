@@ -1,15 +1,15 @@
 // @ts-ignore
-import template                  from '@berry/pnp/bundles/hook';
-import {readFileSync}            from 'fs';
+import template from '@berry/pnp/bundles/hook';
+import {readFileSync} from 'fs';
 
 import {generateSerializedState} from './generateSerializedState';
-import {SerializedState}         from './types';
-import {PnpSettings}             from './types';
+import {SerializedState} from './types';
+import {PnpSettings} from './types';
 
 function generateLoader(shebang: string | null | undefined, loader: string) {
   return [
     shebang ? `${shebang}\n\n` : ``,
-    `try {\n`, 
+    `try {\n`,
     `  Object.freeze({}).detectStrictMode = true;\n`,
     `} catch (error) {\n`,
     `  throw new Error(\`The whole PnP file got strict-mode-ified, which is known to break (Emscripten libraries aren't strict mode). This usually happens when the file goes through Babel.\`);\n`,
@@ -30,9 +30,7 @@ function generateJsonString(data: SerializedState) {
 }
 
 function generateInlinedSetup(data: SerializedState) {
-  return [
-    `return hydrateRuntimeState(${generateJsonString(data)}, {basePath: __dirname});\n`,
-  ].join(``);
+  return [`return hydrateRuntimeState(${generateJsonString(data)}, {basePath: __dirname});\n`].join(``);
 }
 
 function generateSplitSetup(dataLocation: string) {
@@ -51,11 +49,13 @@ export function generateInlinedScript(settings: PnpSettings): string {
   return loaderFile;
 }
 
-export function generateSplitScript(settings: PnpSettings & {dataLocation: string}): {dataFile: string, loaderFile: string} {
+export function generateSplitScript(
+  settings: PnpSettings & {dataLocation: string},
+): {dataFile: string; loaderFile: string} {
   const data = generateSerializedState(settings);
 
   const setup = generateSplitSetup(settings.dataLocation);
   const loaderFile = generateLoader(settings.shebang, setup);
-  
+
   return {dataFile: generateJsonString(data), loaderFile};
 }

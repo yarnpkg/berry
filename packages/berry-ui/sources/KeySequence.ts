@@ -1,8 +1,8 @@
 type KeySequenceOptions = {
-  ctrl: boolean,
-  alt: boolean,
-  shift: boolean,
-  meta: boolean,
+  ctrl: boolean;
+  alt: boolean;
+  shift: boolean;
+  meta: boolean;
 };
 
 class KeySequenceEntry {
@@ -30,31 +30,41 @@ class KeySequenceEntry {
       if (t !== parts.length - 1) {
         switch (part.toLowerCase()) {
           case `ctrl`:
-          case `c`: {
-            ctrl = true;
-          } break;
+          case `c`:
+            {
+              ctrl = true;
+            }
+            break;
 
           case `alt`:
-          case `a`: {
-            alt = true;
-          } break;
+          case `a`:
+            {
+              alt = true;
+            }
+            break;
 
           case `shift`:
-          case `s`: {
-            shift = true;
-          } break;
+          case `s`:
+            {
+              shift = true;
+            }
+            break;
 
           case `meta`:
-          case `m`: {
-            meta = true;
-          } break;
+          case `m`:
+            {
+              meta = true;
+            }
+            break;
 
-          default: {
-            throw new Error(`Failed to parse shortcut descriptor: Invalid modifier "${part}".`);
-          } break;
+          default:
+            {
+              throw new Error(`Failed to parse shortcut descriptor: Invalid modifier "${part}".`);
+            }
+            break;
         }
       } else {
-          key = part.toLowerCase();
+        key = part.toLowerCase();
       }
     }
 
@@ -69,33 +79,24 @@ class KeySequenceEntry {
 
     this.key = key;
 
-    if (ctrl)
-      this.name += `ctrl-`;
-    if (alt)
-      this.name += `alt-`;
-    if (shift)
-      this.name += `shift-`;
-    if (meta)
-      this.name += `meta-`;
+    if (ctrl) this.name += `ctrl-`;
+    if (alt) this.name += `alt-`;
+    if (shift) this.name += `shift-`;
+    if (meta) this.name += `meta-`;
 
     this.name += key;
   }
 
   check(key: any) {
-    if (this.shift !== key.shift)
-      return false;
+    if (this.shift !== key.shift) return false;
 
-    if (this.alt !== key.alt)
-      return false;
+    if (this.alt !== key.alt) return false;
 
-    if (this.ctrl !== key.ctrl)
-      return false;
+    if (this.ctrl !== key.ctrl) return false;
 
-    if (this.meta !== key.meta)
-      return false;
+    if (this.meta !== key.meta) return false;
 
-    if (this.key !== key.name)
-      return false;
+    if (this.key !== key.name) return false;
 
     return true;
   }
@@ -115,10 +116,13 @@ export class KeySequence {
 
   constructor(descriptor: string) {
     this.descriptor = descriptor;
-    this.entries = String(this.descriptor).trim().toLowerCase().split(/\s+/g).map(descriptor => KeySequenceEntry.parse(descriptor.trim()));
+    this.entries = String(this.descriptor)
+      .trim()
+      .toLowerCase()
+      .split(/\s+/g)
+      .map(descriptor => KeySequenceEntry.parse(descriptor.trim()));
 
-    for (const entry of this.entries)
-      this.name += entry.name.charAt(0).toUpperCase() + entry.name.slice(1);
+    for (const entry of this.entries) this.name += entry.name.charAt(0).toUpperCase() + entry.name.slice(1);
 
     this.name = this.name.charAt(0).toLowerCase() + this.name.slice(1);
   }
@@ -131,15 +135,11 @@ export class KeySequence {
       this.keyBuffer.splice(0, this.keyBuffer.length - this.entries.length);
 
     // Early return if we haven't bufferized enough keys to match anyway
-    if (this.keyBuffer.length < this.entries.length)
-      return false;
+    if (this.keyBuffer.length < this.entries.length) return false;
 
     // Check that every buffered key match its corresponding entry
-    for (let t = 0, T = this.entries.length; t < T; ++t)
-      if (!this.entries[t].check(this.keyBuffer[t]))
-        return false;
+    for (let t = 0, T = this.entries.length; t < T; ++t) if (!this.entries[t].check(this.keyBuffer[t])) return false;
 
     return true;
   }
-
 }

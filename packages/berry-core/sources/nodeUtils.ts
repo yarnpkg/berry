@@ -3,9 +3,7 @@ import Module from 'module';
 declare var __non_webpack_require__: any;
 
 export function dynamicRequire(request: string): any {
-  const req = typeof __non_webpack_require__ !== `undefined`
-    ? __non_webpack_require__
-    : require;
+  const req = typeof __non_webpack_require__ !== `undefined` ? __non_webpack_require__ : require;
 
   return req(request);
 }

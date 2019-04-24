@@ -1,4 +1,4 @@
-import {xfs}   from '@berry/fslib';
+import {xfs} from '@berry/fslib';
 import {posix} from 'path';
 
 export async function findVcsRoot(cwd: string, {marker}: {marker: string}) {
@@ -13,9 +13,8 @@ export async function findVcsRoot(cwd: string, {marker}: {marker: string}) {
   return null;
 }
 
-export function isYarnFile(path: string, {roots, names}: {roots: Set<string>, names: Set<string>}) {
-  if (names.has(posix.basename(path)))
-    return true;
+export function isYarnFile(path: string, {roots, names}: {roots: Set<string>; names: Set<string>}) {
+  if (names.has(posix.basename(path))) return true;
 
   do {
     if (!roots.has(path)) {
@@ -52,7 +51,8 @@ export function expandDirectory(initialCwd: string) {
 }
 
 export function checkConsensus(lines: Array<string>, regex: RegExp) {
-  let yes = 0, no = 0;
+  let yes = 0,
+    no = 0;
 
   for (const line of lines) {
     if (regex.test(line)) {
@@ -78,23 +78,11 @@ export function findConsensus(lines: Array<string>) {
 }
 
 export function genCommitMessage(lines: Array<string>) {
-  const {
-    useThirdPerson,
-    useUpperCase,
-    useComponent,
-  } = findConsensus(lines);
+  const {useThirdPerson, useUpperCase, useComponent} = findConsensus(lines);
 
-  const prefix = useComponent
-    ? `chore(yarn): `
-    : ``;
+  const prefix = useComponent ? `chore(yarn): ` : ``;
 
-  const verb = useThirdPerson
-    ? useUpperCase
-      ? `Updates`
-      : `updates`
-    : useUpperCase
-      ? `Update`
-      : `update`;
+  const verb = useThirdPerson ? (useUpperCase ? `Updates` : `updates`) : useUpperCase ? `Update` : `update`;
 
   return `${prefix}${verb} the project settings`;
 }

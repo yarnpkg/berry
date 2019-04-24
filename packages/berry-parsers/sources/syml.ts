@@ -4,7 +4,15 @@ const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{
 
 // The following keys will always be stored at the top of the object, in the
 // specified order. It's not fair but life isn't fair either.
-const specialObjectKeys = [`__metadata`, `version`, `resolution`, `dependencies`, `peerDependencies`, `dependenciesMeta`, `peerDependenciesMeta`];
+const specialObjectKeys = [
+  `__metadata`,
+  `version`,
+  `resolution`,
+  `dependencies`,
+  `peerDependencies`,
+  `dependenciesMeta`,
+  `peerDependenciesMeta`,
+];
 
 function stringifyString(value: string): string {
   if (value.match(simpleStringPattern)) {
@@ -42,9 +50,11 @@ function stringifyValue(value: any, indentLevel: number): string {
   if (Array.isArray(value)) {
     const indent = `  `.repeat(indentLevel);
 
-    return value.map(sub => {
-      return `\n${indent}-${stringifyValue(sub, indentLevel + 1)}`;
-    }).join(``);
+    return value
+      .map(sub => {
+        return `\n${indent}-${stringifyValue(sub, indentLevel + 1)}`;
+      })
+      .join(``);
   }
 
   if (typeof value === `object` && value) {
@@ -54,21 +64,21 @@ function stringifyValue(value: any, indentLevel: number): string {
       const aIndex = specialObjectKeys.indexOf(a);
       const bIndex = specialObjectKeys.indexOf(b);
 
-      if (aIndex === -1 && bIndex === -1)
-        return a < b ? -1 : a > b ? +1 : 0;
-      if (aIndex !== -1 && bIndex === -1)
-        return -1;
-      if (aIndex === -1 && bIndex !== -1)
-        return +1;
-      
+      if (aIndex === -1 && bIndex === -1) return a < b ? -1 : a > b ? +1 : 0;
+      if (aIndex !== -1 && bIndex === -1) return -1;
+      if (aIndex === -1 && bIndex !== -1) return +1;
+
       return aIndex - bIndex;
     });
 
-    const fields = keys.filter(key => {
-      return value[key] !== undefined;
-    }).map(key => {
-      return `${indent}${stringifyString(key)}:${stringifyValue(value[key], indentLevel + 1)}`;
-    }).join(indentLevel === 0 ? `\n\n` : `\n`);
+    const fields = keys
+      .filter(key => {
+        return value[key] !== undefined;
+      })
+      .map(key => {
+        return `${indent}${stringifyString(key)}:${stringifyValue(value[key], indentLevel + 1)}`;
+      })
+      .join(indentLevel === 0 ? `\n\n` : `\n`);
 
     if (indentLevel === 0) {
       return fields ? `${fields}\n` : ``;
@@ -89,7 +99,10 @@ export function parseSyml(source: string) {
     return parse(source.endsWith(`\n`) ? source : `${source}\n`);
   } catch (error) {
     if (error.location)
-      error.message = error.message.replace(/(\.)?$/, ` (line ${error.location.start.line}, column ${error.location.start.column})$1`);
+      error.message = error.message.replace(
+        /(\.)?$/,
+        ` (line ${error.location.start.line}, column ${error.location.start.column})$1`,
+      );
     throw error;
   }
 }

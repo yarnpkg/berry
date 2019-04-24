@@ -1,9 +1,9 @@
-import {Environment}             from './Environment';
-import {KeySequence}             from './KeySequence';
-import {NodeTree}                from './NodeTree';
-import {Node, NodeType}          from './Node';
+import {Environment} from './Environment';
+import {KeySequence} from './KeySequence';
+import {NodeTree} from './NodeTree';
+import {Node, NodeType} from './Node';
 import {DEFAULT_COMPUTED_STYLES} from './StyleConfiguration';
-import {Props}                   from './types';
+import {Props} from './types';
 
 export class NodeElement extends Node {
   public props: Props = {};
@@ -31,8 +31,7 @@ export class NodeElement extends Node {
     this.setShortcuts(null, props.shortcuts || {});
 
     // Attach all the global shortcuts to the root node, under our namespace
-    if (this.rootNode)
-      this.rootNode.setShortcuts(this, props.globalShortcuts);
+    if (this.rootNode) this.rootNode.setShortcuts(this, props.globalShortcuts);
 
     // Updates the node style properties
     this.style.setProperties(new Map(Object.entries(props.style || {})));
@@ -58,14 +57,11 @@ export class NodeElement extends Node {
     // We need a second copy because the first one will get mutated
     const tempShortcuts = new Set(shortcuts.keys());
 
-    for (const shortcut of oldShortcuts)
-      newShortcuts.delete(shortcut);
-    for (const shortcut of tempShortcuts)
-      oldShortcuts.delete(shortcut);
+    for (const shortcut of oldShortcuts) newShortcuts.delete(shortcut);
+    for (const shortcut of tempShortcuts) oldShortcuts.delete(shortcut);
 
     if (this.rootNode) {
-      for (const shortcut of newShortcuts)
-        this.rootNode.addShortcutReference(shortcut);
+      for (const shortcut of newShortcuts) this.rootNode.addShortcutReference(shortcut);
       for (const shortcut of oldShortcuts) {
         this.rootNode.removeShortcutReference(shortcut);
       }
@@ -75,8 +71,7 @@ export class NodeElement extends Node {
   }
 
   linkSelf(rootNode: NodeTree, parentNode: Node) {
-    if (this.rootNode)
-      this.rootNode.setShortcuts(this, this.props.globalShortcuts);
+    if (this.rootNode) this.rootNode.setShortcuts(this, this.props.globalShortcuts);
 
     for (const shortcuts of this.shortcutStores.values()) {
       for (const shortcut of shortcuts.keys()) {
@@ -102,31 +97,28 @@ export class NodeElement extends Node {
     const style: {[key: string]: any} = {};
 
     for (const key of DEFAULT_COMPUTED_STYLES.keys())
-      if (DEFAULT_COMPUTED_STYLES.get(key) !== this.style.get(key))
-        style[key] = this.style.get(key);
+      if (DEFAULT_COMPUTED_STYLES.get(key) !== this.style.get(key)) style[key] = this.style.get(key);
 
     console.log(indent + `<div layout={${JSON.stringify(layout)}}${style ? ` style={${JSON.stringify(style)}}` : ``}>`);
 
-    for (const child of this.childNodes)
-      child.dumpNode(depth + 1);
+    for (const child of this.childNodes) child.dumpNode(depth + 1);
 
     console.log(indent + `</div>`);
   }
 
   getLine(row: number, left: number, width: number) {
-    if (!(left >= 0 && left < this.elementWorldRect.width))
-      throw new Error(`Out-of-bound segment start`);
-    if (!(width >= 0 && width <= this.elementWorldRect.width - left))
-      throw new Error(`Invalid segment width`);
-    
-    if (!width)
-      return ``;
+    if (!(left >= 0 && left < this.elementWorldRect.width)) throw new Error(`Out-of-bound segment start`);
+    if (!(width >= 0 && width <= this.elementWorldRect.width - left)) throw new Error(`Invalid segment width`);
+
+    if (!width) return ``;
 
     if (row === 0) {
       const borderTop = this.style.get(`borderTop`);
 
       if (borderTop) {
-        let prefix = ``, center = ``, suffix = ``;
+        let prefix = ``,
+          center = ``,
+          suffix = ``;
 
         if (this.elementWorldRect.width >= 2) {
           if (left === 0) {
@@ -160,7 +152,9 @@ export class NodeElement extends Node {
       const borderBottom = this.style.get(`borderBottom`);
 
       if (borderBottom) {
-        let prefix = ``, center = ``, suffix = ``;
+        let prefix = ``,
+          center = ``,
+          suffix = ``;
 
         if (this.elementWorldRect.width >= 2) {
           if (left === 0) {
@@ -190,7 +184,8 @@ export class NodeElement extends Node {
       }
     }
 
-    let prefix = ``, suffix = ``;
+    let prefix = ``,
+      suffix = ``;
 
     if (left === 0) {
       const borderLeft = this.style.get(`borderLeft`);

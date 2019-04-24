@@ -10,8 +10,7 @@ export function iterate(source: any, cb: (value: any, index: number, virtualInde
     }
   }
 
-  if (elements.length === 0)
-    return ifEmpty;
-  
+  if (elements.length === 0) return ifEmpty;
+
   return elements;
 }

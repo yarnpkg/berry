@@ -1,13 +1,13 @@
-import {Writable}            from 'stream';
+import {Writable} from 'stream';
 
-import {Configuration}       from './Configuration';
+import {Configuration} from './Configuration';
 import {Report, MessageName} from './Report';
-import {Locator}             from './types';
+import {Locator} from './types';
 
 export type StreamReportOptions = {
-  configuration: Configuration,
-  json?: boolean,
-  stdout: Writable,
+  configuration: Configuration;
+  json?: boolean;
+  stdout: Writable;
 };
 
 export class StreamReport extends Report {
@@ -26,7 +26,7 @@ export class StreamReport extends Report {
   }
 
   private configuration: Configuration;
-  private json: boolean;  
+  private json: boolean;
   private stdout: Writable;
 
   private cacheHitCount: number = 0;
@@ -111,7 +111,9 @@ export class StreamReport extends Report {
 
   reportInfo(name: MessageName, text: string) {
     if (!this.json) {
-      this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+      this.stdout.write(
+        `${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`,
+      );
     }
   }
 
@@ -119,14 +121,18 @@ export class StreamReport extends Report {
     this.warningCount += 1;
 
     if (!this.json) {
-      this.stdout.write(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+      this.stdout.write(
+        `${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`,
+      );
     }
   }
 
   reportError(name: MessageName, text: string) {
     this.errorCount += 1;
 
-    this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    this.stdout.write(
+      `${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`,
+    );
   }
 
   reportJson(data: any) {
@@ -138,19 +144,14 @@ export class StreamReport extends Report {
   async finalize() {
     let installStatus = ``;
 
-    if (this.errorCount > 0)
-      installStatus = `Failed with errors`;
-    else if (this.warningCount > 0)
-      installStatus = `Done with warnings`;
-    else
-      installStatus = `Done`;
+    if (this.errorCount > 0) installStatus = `Failed with errors`;
+    else if (this.warningCount > 0) installStatus = `Done with warnings`;
+    else installStatus = `Done`;
 
     let fetchStatus = ``;
 
-    if (this.cacheHitCount > 1)
-      fetchStatus += ` - ${this.cacheHitCount} packages were already cached`;
-    else if (this.cacheHitCount === 1)
-      fetchStatus += ` - one package was already cached`;
+    if (this.cacheHitCount > 1) fetchStatus += ` - ${this.cacheHitCount} packages were already cached`;
+    else if (this.cacheHitCount === 1) fetchStatus += ` - one package was already cached`;
 
     if (this.cacheHitCount > 0) {
       if (this.cacheMissCount > 1) {
@@ -181,9 +182,7 @@ export class StreamReport extends Report {
   }
 
   private formatTiming(timing: number) {
-    return timing < 60 * 1000
-      ? `${Math.round(timing / 10) / 100}s`
-      : `${Math.round(timing / 600) / 100}m`;
+    return timing < 60 * 1000 ? `${Math.round(timing / 10) / 100}s` : `${Math.round(timing / 600) / 100}m`;
   }
 
   private formatName(name: MessageName) {

@@ -1,16 +1,16 @@
-import fs          from 'fs';
+import fs from 'fs';
 
-import {FakeFS}    from './FakeFS';
-import {NodeFS}    from './NodeFS';
+import {FakeFS} from './FakeFS';
+import {NodeFS} from './NodeFS';
 
-export {AliasFS}   from './AliasFS';
-export {FakeFS}    from './FakeFS';
-export {CwdFS}     from './CwdFS';
-export {JailFS}    from './JailFS';
-export {LazyFS}    from './LazyFS';
-export {NodeFS}    from './NodeFS';
-export {PosixFS}   from './PosixFS';
-export {ZipFS}     from './ZipFS';
+export {AliasFS} from './AliasFS';
+export {FakeFS} from './FakeFS';
+export {CwdFS} from './CwdFS';
+export {JailFS} from './JailFS';
+export {LazyFS} from './LazyFS';
+export {NodeFS} from './NodeFS';
+export {PosixFS} from './PosixFS';
+export {ZipFS} from './ZipFS';
 export {ZipOpenFS} from './ZipOpenFS';
 
 function wrapSync(fn: Function) {
@@ -18,16 +18,14 @@ function wrapSync(fn: Function) {
 }
 
 function wrapAsync(fn: Function) {
-  return function (... args: Array<any>) {
-    const cb = typeof args[args.length - 1] === `function`
-      ? args.pop()
-      : null;
+  return function(...args: Array<any>) {
+    const cb = typeof args[args.length - 1] === `function` ? args.pop() : null;
 
     setImmediate(() => {
       let error, result;
 
       try {
-        result = fn(... args);
+        result = fn(...args);
       } catch (caught) {
         error = caught;
       }
@@ -86,30 +84,36 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
   };
 
   (patchedFs as any).exists = (p: string, callback?: (result: boolean) => any) => {
-    fakeFs.existsPromise(p).then(result => {
-      if (callback) {
-        callback(result);
-      }
-    }, () => {
-      if (callback) {
-        callback(false);
-      }
-    });
+    fakeFs.existsPromise(p).then(
+      result => {
+        if (callback) {
+          callback(result);
+        }
+      },
+      () => {
+        if (callback) {
+          callback(false);
+        }
+      },
+    );
   };
 
   for (const fnName of ASYNC_IMPLEMENTATIONS) {
     const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
     const origName = fnName.replace(/Promise$/, ``);
 
-    (patchedFs as any)[origName] = (... args: Array<any>) => {
+    (patchedFs as any)[origName] = (...args: Array<any>) => {
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
 
-      fakeImpl(... args).then((result: any) => {
-        callback(undefined, result);
-      }, (error: Error) => {
-        callback(error);
-      });
+      fakeImpl(...args).then(
+        (result: any) => {
+          callback(undefined, result);
+        },
+        (error: Error) => {
+          callback(error);
+        },
+      );
     };
   }
 

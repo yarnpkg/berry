@@ -1,15 +1,11 @@
-import {Plugin}              from '@berry/core';
+import {Plugin} from '@berry/core';
 
-import {TarballHttpFetcher}  from './TarballHttpFetcher';
+import {TarballHttpFetcher} from './TarballHttpFetcher';
 import {TarballHttpResolver} from './TarballHttpResolver';
 
 const plugin: Plugin = {
-  fetchers: [
-    TarballHttpFetcher,
-  ],
-  resolvers: [
-    TarballHttpResolver,
-  ],
+  fetchers: [TarballHttpFetcher],
+  resolvers: [TarballHttpResolver],
 };
 
 // eslint-disable-next-line arca/no-default-export

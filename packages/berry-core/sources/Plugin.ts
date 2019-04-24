@@ -1,20 +1,20 @@
 import {SettingsDefinition, PluginConfiguration} from './Configuration';
-import {Fetcher}                                 from './Fetcher';
-import {Linker}                                  from './Linker';
-import {Project}                                 from './Project';
-import {Resolver}                                from './Resolver';
+import {Fetcher} from './Fetcher';
+import {Linker} from './Linker';
+import {Project} from './Project';
+import {Resolver} from './Resolver';
 
 export interface FetcherPlugin {
-  new(): Fetcher;
-};
+  new (): Fetcher;
+}
 
 export interface LinkerPlugin {
-  new(): Linker;
-};
+  new (): Linker;
+}
 
 export interface ResolverPlugin {
-  new(): Resolver;
-};
+  new (): Resolver;
+}
 
 export type Hooks = {
   // Called before a script is executed. The hooks are allowed to modify the
@@ -29,20 +29,18 @@ export type Hooks = {
     project: Project,
     env: {[key: string]: string},
     makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>,
-  ) => Promise<void>,
+  ) => Promise<void>;
 
   // Called after the `install` method from the `Project` class successfully
   // completed.
-  afterAllInstalled?: (
-    project: Project,
-  ) => void,
+  afterAllInstalled?: (project: Project) => void;
 };
 
 export type Plugin = {
-  configuration?: {[key: string]: SettingsDefinition},
-  commands?: Array<(clipanion: any, pluginConfiguration: PluginConfiguration) => any>,
-  fetchers?: Array<FetcherPlugin>,
-  linkers?: Array<LinkerPlugin>,
-  resolvers?: Array<ResolverPlugin>,
-  hooks?: {[key: string]: any},
+  configuration?: {[key: string]: SettingsDefinition};
+  commands?: Array<(clipanion: any, pluginConfiguration: PluginConfiguration) => any>;
+  fetchers?: Array<FetcherPlugin>;
+  linkers?: Array<LinkerPlugin>;
+  resolvers?: Array<ResolverPlugin>;
+  hooks?: {[key: string]: any};
 };

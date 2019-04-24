@@ -1,16 +1,14 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {Locator, MessageName}                       from '@berry/core';
-import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
+import {Locator, MessageName} from '@berry/core';
+import {httpUtils, structUtils, tgzUtils} from '@berry/core';
 
-import {TARBALL_REGEXP, PROTOCOL_REGEXP}            from './constants';
+import {TARBALL_REGEXP, PROTOCOL_REGEXP} from './constants';
 
 export class TarballHttpFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (!TARBALL_REGEXP.test(locator.reference))
-      return false;
+    if (!TARBALL_REGEXP.test(locator.reference)) return false;
 
-    if (PROTOCOL_REGEXP.test(locator.reference))
-      return true;
+    if (PROTOCOL_REGEXP.test(locator.reference)) return true;
 
     return false;
   }
@@ -26,7 +24,13 @@ export class TarballHttpFetcher implements Fetcher {
       locator,
       expectedChecksum,
       async () => {
-        opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote server`);
+        opts.report.reportInfoOnce(
+          MessageName.FETCH_NOT_CACHED,
+          `${structUtils.prettyLocator(
+            opts.project.configuration,
+            locator,
+          )} can't be found in the cache and will be fetched from the remote server`,
+        );
         return await this.fetchFromNetwork(locator, opts);
       },
     );

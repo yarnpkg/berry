@@ -1,13 +1,12 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {Locator, MessageName}                       from '@berry/core';
-import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
+import {Locator, MessageName} from '@berry/core';
+import {httpUtils, structUtils, tgzUtils} from '@berry/core';
 
-import * as githubUtils                             from './githubUtils';
+import * as githubUtils from './githubUtils';
 
 export class GithubFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (!githubUtils.isGithubUrl(locator.reference))
-      return false;
+    if (!githubUtils.isGithubUrl(locator.reference)) return false;
 
     return true;
   }
@@ -23,7 +22,13 @@ export class GithubFetcher implements Fetcher {
       locator,
       expectedChecksum,
       async () => {
-        opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote repository`);
+        opts.report.reportInfoOnce(
+          MessageName.FETCH_NOT_CACHED,
+          `${structUtils.prettyLocator(
+            opts.project.configuration,
+            locator,
+          )} can't be found in the cache and will be fetched from the remote repository`,
+        );
         return await this.fetchFromNetwork(locator, opts);
       },
     );

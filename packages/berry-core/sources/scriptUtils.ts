@@ -1,22 +1,25 @@
-import {CwdFS, ZipOpenFS, xfs, NodeFS}   from '@berry/fslib';
-import {execute}                         from '@berry/shell';
-import {delimiter, posix}                from 'path';
+import {CwdFS, ZipOpenFS, xfs, NodeFS} from '@berry/fslib';
+import {execute} from '@berry/shell';
+import {delimiter, posix} from 'path';
 import {PassThrough, Readable, Writable} from 'stream';
-import {dirSync}                         from 'tmp';
+import {dirSync} from 'tmp';
 
-import {Manifest}                        from './Manifest';
-import {Project}                         from './Project';
-import {StreamReport}                    from './StreamReport';
-import {Workspace}                       from './Workspace';
-import * as execUtils                    from './execUtils';
-import * as structUtils                  from './structUtils';
-import {Locator}                         from './types';
+import {Manifest} from './Manifest';
+import {Project} from './Project';
+import {StreamReport} from './StreamReport';
+import {Workspace} from './Workspace';
+import * as execUtils from './execUtils';
+import * as structUtils from './structUtils';
+import {Locator} from './types';
 
 async function makePathWrapper(location: string, name: string, argv0: string, args: Array<string> = []) {
   if (process.platform === `win32`) {
     await xfs.writeFilePromise(`${location}/${name}.cmd`, `@"${argv0}" ${args.join(` `)} %*\n`);
   } else {
-    await xfs.writeFilePromise(`${location}/${name}`, `#!/usr/bin/env bash\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
+    await xfs.writeFilePromise(
+      `${location}/${name}`,
+      `#!/usr/bin/env bash\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`,
+    );
     await xfs.chmodPromise(`${location}/${name}`, 0o755);
   }
 }
@@ -24,10 +27,9 @@ async function makePathWrapper(location: string, name: string, argv0: string, ar
 export async function makeScriptEnv(project: Project) {
   const scriptEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(process.env))
-    if (typeof value !== `undefined`)
-      scriptEnv[key.toLowerCase() !== `path` ? key : `PATH`] = value;
+    if (typeof value !== `undefined`) scriptEnv[key.toLowerCase() !== `path` ? key : `PATH`] = value;
 
-  const binFolder = scriptEnv.BERRY_BIN_FOLDER = dirSync().name;
+  const binFolder = (scriptEnv.BERRY_BIN_FOLDER = dirSync().name);
 
   // Register some binaries that must be made available in all subprocesses
   // spawned by Yarn (we thus ensure that they always use the right version)
@@ -37,9 +39,7 @@ export async function makeScriptEnv(project: Project) {
   await makePathWrapper(binFolder, `node`, process.execPath);
   await makePathWrapper(binFolder, `node-gyp`, process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]);
 
-  scriptEnv.PATH = scriptEnv.PATH
-    ? `${binFolder}${delimiter}${scriptEnv.PATH}`
-    : `${binFolder}`;
+  scriptEnv.PATH = scriptEnv.PATH ? `${binFolder}${delimiter}${scriptEnv.PATH}` : `${binFolder}`;
 
   scriptEnv.npm_execpath = `${binFolder}/yarn`;
   scriptEnv.npm_node_execpath = `${binFolder}/node`;
@@ -57,13 +57,15 @@ export async function makeScriptEnv(project: Project) {
 }
 
 type HasPackageScriptOption = {
-  project: Project,
+  project: Project;
 };
 
 export async function hasPackageScript(locator: Locator, scriptName: string, {project}: HasPackageScriptOption) {
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
-    throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
+    throw new Error(
+      `Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`,
+    );
 
   return await ZipOpenFS.openPromise(async (zipOpenFs: ZipOpenFS) => {
     const configuration = project.configuration;
@@ -73,7 +75,12 @@ export async function hasPackageScript(locator: Locator, scriptName: string, {pr
 
     const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
     if (!linker)
-      throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
+      throw new Error(
+        `The package ${structUtils.prettyLocator(
+          project.configuration,
+          pkg,
+        )} isn't supported by any of the available linkers`,
+      );
 
     const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
     const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
@@ -84,19 +91,23 @@ export async function hasPackageScript(locator: Locator, scriptName: string, {pr
 }
 
 type ExecutePackageScriptOptions = {
-  cwd?: string | undefined,
-  project: Project,
-  stdin: Readable | null,
-  stdout: Writable,
-  stderr: Writable,
+  cwd?: string | undefined;
+  project: Project;
+  stdin: Readable | null;
+  stdout: Writable;
+  stderr: Writable;
 };
 
-export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
+export async function executePackageScript(
+  locator: Locator,
+  scriptName: string,
+  args: Array<string>,
+  {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions,
+) {
   const {manifest, binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, cwd});
 
   const script = manifest.scripts.get(scriptName);
-  if (!script)
-    return;
+  if (!script) return;
 
   try {
     return await execute(script, args, {cwd: realCwd, env, stdin, stdout, stderr});
@@ -105,7 +116,12 @@ export async function executePackageScript(locator: Locator, scriptName: string,
   }
 }
 
-export async function executePackageShellcode(locator: Locator, command: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
+export async function executePackageShellcode(
+  locator: Locator,
+  command: string,
+  args: Array<string>,
+  {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions,
+) {
   const {binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, cwd});
 
   try {
@@ -115,10 +131,15 @@ export async function executePackageShellcode(locator: Locator, command: string,
   }
 }
 
-async function initializePackageEnvironment(locator: Locator, {project, cwd}: {project: Project, cwd?: string | undefined}) {
+async function initializePackageEnvironment(
+  locator: Locator,
+  {project, cwd}: {project: Project; cwd?: string | undefined},
+) {
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
-    throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
+    throw new Error(
+      `Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`,
+    );
 
   return await ZipOpenFS.openPromise(async (zipOpenFs: ZipOpenFS) => {
     const configuration = project.configuration;
@@ -128,7 +149,12 @@ async function initializePackageEnvironment(locator: Locator, {project, cwd}: {p
 
     const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
     if (!linker)
-      throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
+      throw new Error(
+        `The package ${structUtils.prettyLocator(
+          project.configuration,
+          pkg,
+        )} isn't supported by any of the available linkers`,
+      );
 
     const env = await makeScriptEnv(project);
     const binFolder = env.BERRY_BIN_FOLDER;
@@ -140,26 +166,36 @@ async function initializePackageEnvironment(locator: Locator, {project, cwd}: {p
     const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
     const manifest = await Manifest.find(`.`, {baseFs: packageFs});
 
-    if (typeof cwd === `undefined`)
-      cwd = packageLocation;
+    if (typeof cwd === `undefined`) cwd = packageLocation;
 
     return {manifest, binFolder, env, cwd};
   });
 }
 
 type ExecuteWorkspaceScriptOptions = {
-  cwd?: string | undefined,
-  stdin: Readable | null,
-  stdout: Writable,
-  stderr: Writable,
+  cwd?: string | undefined;
+  stdin: Readable | null;
+  stdout: Writable;
+  stderr: Writable;
 };
 
-export async function executeWorkspaceScript(workspace: Workspace, scriptName: string, args: Array<string>, {cwd, stdin, stdout, stderr}: ExecuteWorkspaceScriptOptions) {
-  return await executePackageScript(workspace.anchoredLocator, scriptName, args, {cwd, project: workspace.project, stdin, stdout, stderr});
+export async function executeWorkspaceScript(
+  workspace: Workspace,
+  scriptName: string,
+  args: Array<string>,
+  {cwd, stdin, stdout, stderr}: ExecuteWorkspaceScriptOptions,
+) {
+  return await executePackageScript(workspace.anchoredLocator, scriptName, args, {
+    cwd,
+    project: workspace.project,
+    stdin,
+    stdout,
+    stderr,
+  });
 }
 
 type GetPackageAccessibleBinariesOptions = {
-  project: Project,
+  project: Project;
 };
 
 /**
@@ -172,7 +208,9 @@ type GetPackageAccessibleBinariesOptions = {
 export async function getPackageAccessibleBinaries(locator: Locator, {project}: GetPackageAccessibleBinariesOptions) {
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
-    throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
+    throw new Error(
+      `Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`,
+    );
 
   return await ZipOpenFS.openPromise(async (zipOpenFs: ZipOpenFS) => {
     const configuration = project.configuration;
@@ -183,23 +221,17 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
 
     const binaries: Map<string, [Locator, string]> = new Map();
 
-    const descriptors = [
-      ... pkg.dependencies.values(),
-      ... pkg.peerDependencies.values(),
-    ];
+    const descriptors = [...pkg.dependencies.values(), ...pkg.peerDependencies.values()];
 
     for (const descriptor of descriptors) {
       const resolution = project.storedResolutions.get(descriptor.descriptorHash);
-      if (!resolution)
-        continue;
+      if (!resolution) continue;
 
       const pkg = project.storedPackages.get(resolution);
-      if (!pkg)
-        continue;
+      if (!pkg) continue;
 
       const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
-      if (!linker)
-        continue;
+      if (!linker) continue;
 
       const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
       const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
@@ -226,11 +258,11 @@ export async function getWorkspaceAccessibleBinaries(workspace: Workspace) {
 }
 
 type ExecutePackageAccessibleBinaryOptions = {
-  cwd: string,
-  project: Project,
-  stdin: Readable | null,
-  stdout: Writable,
-  stderr: Writable,
+  cwd: string;
+  project: Project;
+  stdin: Readable | null;
+  stdout: Writable;
+  stderr: Writable;
 };
 
 /**
@@ -245,12 +277,19 @@ type ExecutePackageAccessibleBinaryOptions = {
  * @param args The arguments to pass to the file
  */
 
-export async function executePackageAccessibleBinary(locator: Locator, binaryName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageAccessibleBinaryOptions) {
+export async function executePackageAccessibleBinary(
+  locator: Locator,
+  binaryName: string,
+  args: Array<string>,
+  {cwd, project, stdin, stdout, stderr}: ExecutePackageAccessibleBinaryOptions,
+) {
   const packageAccessibleBinaries = await getPackageAccessibleBinaries(locator, {project});
 
   const binary = packageAccessibleBinaries.get(binaryName);
   if (!binary)
-    throw new Error(`Binary not found (${binaryName}) for ${structUtils.prettyLocator(project.configuration, locator)}`);
+    throw new Error(
+      `Binary not found (${binaryName}) for ${structUtils.prettyLocator(project.configuration, locator)}`,
+    );
 
   const [pkg, binaryPath] = binary;
   const env = await makeScriptEnv(project);
@@ -260,7 +299,7 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
 
   let result;
   try {
-    result = await execUtils.pipevp(process.execPath, [binaryPath, ... args], {cwd, env, stdin, stdout, stderr});
+    result = await execUtils.pipevp(process.execPath, [binaryPath, ...args], {cwd, env, stdin, stdout, stderr});
   } finally {
     await xfs.removePromise(env.BERRY_BIN_FOLDER);
   }
@@ -269,10 +308,10 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
 }
 
 type ExecuteWorkspaceAccessibleBinaryOptions = {
-  cwd: string,
-  stdin: Readable | null,
-  stdout: Writable,
-  stderr: Writable,
+  cwd: string;
+  stdin: Readable | null;
+  stdout: Writable;
+  stderr: Writable;
 };
 
 /**
@@ -283,6 +322,17 @@ type ExecuteWorkspaceAccessibleBinaryOptions = {
  * @param args The arguments to pass to the file
  */
 
-export async function executeWorkspaceAccessibleBinary(workspace: Workspace, binaryName: string, args: Array<string>, {cwd, stdin, stdout, stderr}: ExecuteWorkspaceAccessibleBinaryOptions) {
-  return await executePackageAccessibleBinary(workspace.anchoredLocator, binaryName, args, {project: workspace.project, cwd, stdin, stdout, stderr});
+export async function executeWorkspaceAccessibleBinary(
+  workspace: Workspace,
+  binaryName: string,
+  args: Array<string>,
+  {cwd, stdin, stdout, stderr}: ExecuteWorkspaceAccessibleBinaryOptions,
+) {
+  return await executePackageAccessibleBinary(workspace.anchoredLocator, binaryName, args, {
+    project: workspace.project,
+    cwd,
+    stdin,
+    stdout,
+    stderr,
+  });
 }

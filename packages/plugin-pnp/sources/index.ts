@@ -1,11 +1,15 @@
 import {Hooks as CoreHooks, Plugin, Project, SettingsType} from '@berry/core';
-import {NodeFS, xfs}                                       from '@berry/fslib';
-import {Hooks as StageHooks}                               from '@berry/plugin-stage';
+import {NodeFS, xfs} from '@berry/fslib';
+import {Hooks as StageHooks} from '@berry/plugin-stage';
 
-import {PnpLinker}                                         from './PnpLinker';
-import unplug                                              from './commands/unplug';
+import {PnpLinker} from './PnpLinker';
+import unplug from './commands/unplug';
 
-async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
+async function setupScriptEnvironment(
+  project: Project,
+  env: {[key: string]: string},
+  makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>,
+) {
   const pnpPath = NodeFS.fromPortablePath(project.configuration.get(`pnpPath`));
   const pnpRequire = `--require ${pnpPath}`;
 
@@ -29,10 +33,7 @@ const plugin: Plugin = {
   hooks: {
     populateYarnPaths,
     setupScriptEnvironment,
-  } as (
-    CoreHooks &
-    StageHooks
-  ),
+  } as CoreHooks & StageHooks,
   configuration: {
     pnpShebang: {
       description: `String to prepend to the generated PnP script`,
@@ -65,12 +66,8 @@ const plugin: Plugin = {
       default: `./.pnp.js`,
     },
   },
-  linkers: [
-    PnpLinker,
-  ],
-  commands: [
-    unplug,
-  ],
+  linkers: [PnpLinker],
+  commands: [unplug],
 };
 
 // eslint-disable-next-line arca/no-default-export

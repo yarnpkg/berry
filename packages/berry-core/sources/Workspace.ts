@@ -1,19 +1,22 @@
-import {xfs, NodeFS}           from '@berry/fslib';
-import {makeUpdater}           from '@berry/json-proxy';
-import {createHmac}            from 'crypto';
-import globby                  from 'globby';
-import {posix}                 from 'path';
-import semver                  from 'semver';
+import {xfs, NodeFS} from '@berry/fslib';
+import {makeUpdater} from '@berry/json-proxy';
+import {createHmac} from 'crypto';
+import globby from 'globby';
+import {posix} from 'path';
+import semver from 'semver';
 
-import {Manifest}              from './Manifest';
-import {Project}               from './Project';
-import {WorkspaceResolver}     from './WorkspaceResolver';
-import * as structUtils        from './structUtils';
-import {IdentHash}             from './types';
-import {Descriptor, Locator}   from './types';
+import {Manifest} from './Manifest';
+import {Project} from './Project';
+import {WorkspaceResolver} from './WorkspaceResolver';
+import * as structUtils from './structUtils';
+import {IdentHash} from './types';
+import {Descriptor, Locator} from './types';
 
 function hashWorkspaceCwd(cwd: string) {
-  return createHmac('sha256', 'berry').update(cwd).digest('hex').substr(0, 6);
+  return createHmac('sha256', 'berry')
+    .update(cwd)
+    .digest('hex')
+    .substr(0, 6);
 }
 
 export class Workspace {
@@ -54,14 +57,19 @@ export class Workspace {
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.relativeCwd = posix.relative(this.project.cwd, this.cwd) || `.`;
 
-    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashWorkspaceCwd(this.relativeCwd)}`);
+    const ident = this.manifest.name
+      ? this.manifest.name
+      : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashWorkspaceCwd(this.relativeCwd)}`);
     const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
 
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.locator = structUtils.makeLocator(ident, reference);
 
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
-    this.anchoredDescriptor = structUtils.makeDescriptor(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
+    this.anchoredDescriptor = structUtils.makeDescriptor(
+      this.locator,
+      `${WorkspaceResolver.protocol}${this.relativeCwd}`,
+    );
 
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.anchoredLocator = structUtils.makeLocator(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
@@ -91,25 +99,18 @@ export class Workspace {
   accepts(range: string) {
     const protocolIndex = range.indexOf(`:`);
 
-    const protocol = protocolIndex !== -1
-      ? range.slice(0, protocolIndex + 1)
-      : null;
+    const protocol = protocolIndex !== -1 ? range.slice(0, protocolIndex + 1) : null;
 
-    const pathname = protocolIndex !== -1
-      ? range.slice(protocolIndex + 1)
-      : range;
+    const pathname = protocolIndex !== -1 ? range.slice(protocolIndex + 1) : range;
 
-    if (protocol === WorkspaceResolver.protocol && pathname === this.relativeCwd)
-      return true;
+    if (protocol === WorkspaceResolver.protocol && pathname === this.relativeCwd) return true;
 
-    if (!semver.validRange(pathname))
-      return false;
+    if (!semver.validRange(pathname)) return false;
 
     if (protocol === WorkspaceResolver.protocol)
       return semver.satisfies(this.manifest.version !== null ? this.manifest.version : `0.0.0`, pathname);
 
-    if (this.manifest.version !== null)
-      return semver.satisfies(this.manifest.version, pathname);
+    if (this.manifest.version !== null) return semver.satisfies(this.manifest.version, pathname);
 
     return false;
   }

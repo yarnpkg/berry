@@ -1,8 +1,8 @@
-import {posix}                                             from 'path';
+import {posix} from 'path';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
-import {FakeFS, WriteFileOptions}                          from './FakeFS';
-import {NodeFS}                                            from './NodeFS';
+import {FakeFS, WriteFileOptions} from './FakeFS';
+import {NodeFS} from './NodeFS';
 
 export class PosixFS extends FakeFS {
   private readonly baseFs: FakeFS;

@@ -5,7 +5,10 @@ export function parseResolution(source: string) {
     return parse(source);
   } catch (error) {
     if (error.location)
-      error.message = error.message.replace(/(\.)?$/, ` (line ${error.location.start.line}, column ${error.location.start.column})$1`);
+      error.message = error.message.replace(
+        /(\.)?$/,
+        ` (line ${error.location.start.line}, column ${error.location.start.column})$1`,
+      );
     throw error;
   }
 }

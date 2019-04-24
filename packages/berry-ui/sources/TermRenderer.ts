@@ -1,12 +1,12 @@
 // @ts-ignore
-import {feature, screen, cursor, style}       from '@manaflair/term-strings';
+import {feature, screen, cursor, style} from '@manaflair/term-strings';
 
-import {DirtyScreen}                          from './DirtyScreen';
-import {NodeTree}                             from './NodeTree';
-import {Node}                                 from './Node';
-import {Segment}                              from './Segment';
-import {TermInput}                            from './TermInput';
-import {TermOutput}                           from './TermOutput';
+import {DirtyScreen} from './DirtyScreen';
+import {NodeTree} from './NodeTree';
+import {Node} from './Node';
+import {Segment} from './Segment';
+import {TermInput} from './TermInput';
+import {TermOutput} from './TermOutput';
 import {findOverlapingSegment, removeSegment} from './geometryUtils';
 
 function getCaretX(caret: any) {
@@ -18,7 +18,6 @@ function getCaretY(caret: any) {
 }
 
 export class TermRenderer {
-
   private readonly termInput: TermInput;
   private readonly termOutput: TermOutput;
 
@@ -32,8 +31,7 @@ export class TermRenderer {
   }
 
   open() {
-    if (this.opened)
-      return;
+    if (this.opened) return;
 
     this.termInput.open();
     this.termOutput.open();
@@ -46,8 +44,7 @@ export class TermRenderer {
 
     this.termOutput.buffer(() => {
       // Enter the alternate screen
-      if (!this.termOutput.isInline)
-        this.termOutput.writeMeta(screen.alternateScreen.in);
+      if (!this.termOutput.isInline) this.termOutput.writeMeta(screen.alternateScreen.in);
 
       // Disable the terminal soft wrapping
       this.termOutput.writeMeta(screen.noWrap.in);
@@ -61,8 +58,7 @@ export class TermRenderer {
       this.termOutput.writeMeta(feature.enableExtendedCoordinates.in);
 
       // Clear the current font style so that we aren't polluted by previous applications
-      if (!this.termOutput.isInline)
-        this.termOutput.writeMeta(style.clear);
+      if (!this.termOutput.isInline) this.termOutput.writeMeta(style.clear);
 
       // Ensure we capture as much things as possible from the keyboard (like ^C)
       this.termInput.setRawMode(true);
@@ -72,8 +68,7 @@ export class TermRenderer {
   }
 
   close() {
-    if (!this.opened)
-      return;
+    if (!this.opened) return;
 
     process.removeListener(`uncaughtException`, this.handleException);
     process.removeListener(`exit`, this.handleExit);
@@ -99,8 +94,7 @@ export class TermRenderer {
       this.termOutput.writeMeta(screen.noWrap.out);
 
       // Exit the alternate screen
-      if (!this.termOutput.isInline)
-        this.termOutput.writeMeta(screen.alternateScreen.out);
+      if (!this.termOutput.isInline) this.termOutput.writeMeta(screen.alternateScreen.out);
 
       if (this.termOutput.isInline) {
         this.termOutput.write(cursor.moveTo({x: 0, y: this.inlineTop}));
@@ -115,12 +109,10 @@ export class TermRenderer {
   }
 
   render(tree: NodeTree) {
-    if (!this.opened)
-      return;
+    if (!this.opened) return;
 
     this.termOutput.buffer(() => {
-      if (!this.opened)
-        this.open();
+      if (!this.opened) this.open();
 
       const oldHeight = tree.elementRect.height;
 
@@ -139,14 +131,14 @@ export class TermRenderer {
 
       // If we detect that we haven't enough space to print the interface, we reserve a few more lines by outputting line returns
       if (this.termOutput.rows - this.inlineTop < tree.elementRect.height) {
-        this.termOutput.write(cursor.moveTo({ x: 0, y: this.inlineTop }));
+        this.termOutput.write(cursor.moveTo({x: 0, y: this.inlineTop}));
         this.termOutput.write(`\n`.repeat(tree.elementRect.height - 1));
         this.inlineTop = this.termOutput.rows - tree.elementRect.height;
       }
 
       // If the display shrinked, we must clear the lines below
       if (oldHeight > tree.elementRect.height) {
-        this.termOutput.write(cursor.moveTo({x: 0, y: this.inlineTop + tree.elementRect.height }));
+        this.termOutput.write(cursor.moveTo({x: 0, y: this.inlineTop + tree.elementRect.height}));
         this.termOutput.write(screen.clearBelow);
       }
 
@@ -161,8 +153,7 @@ export class TermRenderer {
         left += getCaretX(tree.activeElement.props.caret);
         top += getCaretY(tree.activeElement.props.caret);
 
-        if (this.termOutput.isInline)
-          top += this.inlineTop;
+        if (this.termOutput.isInline) top += this.inlineTop;
 
         this.termOutput.write(cursor.moveTo({x: left, y: top}));
         this.termOutput.write(cursor.normal);
@@ -175,31 +166,35 @@ export class TermRenderer {
 
     for (const node of renderList) {
       // We can skip the node entirely if it is not on the same line than the one we're processing
-      if (node.elementClipRect.top > y || node.elementClipRect.top + node.elementClipRect.height <= y)
-        continue;
+      if (node.elementClipRect.top > y || node.elementClipRect.top + node.elementClipRect.height <= y) continue;
 
       let nextSegments: Array<Segment> = [];
 
       for (const segment of segments) {
         const overlap = findOverlapingSegment(segment, {
-          left: node.elementClipRect.left, width: node.elementClipRect.width,
+          left: node.elementClipRect.left,
+          width: node.elementClipRect.width,
         });
 
         // Detects which parts of the segment won't be covered by the node
-        if (!overlap)
-          nextSegments.push(segment);
-        else
-          nextSegments = nextSegments.concat(removeSegment(overlap, segment));
+        if (!overlap) nextSegments.push(segment);
+        else nextSegments = nextSegments.concat(removeSegment(overlap, segment));
 
         // Generates the rendering code by asking the node
         if (overlap) {
           let top = y;
 
-          if (this.termOutput.isInline)
-            top += this.inlineTop;
+          if (this.termOutput.isInline) top += this.inlineTop;
 
-          const prefix = (``/*/+Date.now()/**/).substr(0, overlap.width);
-          const line = prefix + node.getLine(y - node.elementWorldRect.top, overlap.left - node.elementWorldRect.left, Math.max(0, overlap.width - prefix.length));
+          const prefix = `` /*/+Date.now()/**/
+            .substr(0, overlap.width);
+          const line =
+            prefix +
+            node.getLine(
+              y - node.elementWorldRect.top,
+              overlap.left - node.elementWorldRect.left,
+              Math.max(0, overlap.width - prefix.length),
+            );
 
           this.termOutput.write(cursor.moveTo({x: overlap.left, y: top}));
           this.termOutput.write(line);
@@ -211,7 +206,9 @@ export class TermRenderer {
 
     if (segments.length > 0) {
       // We can only reach this code if there's no element located over some part of the scanline, not even the root. This doesn't happen under normal circumstances
-      throw new Error(`Expected all segments to have been covered (not covered on line ${y}: ${JSON.stringify(segments)})`);
+      throw new Error(
+        `Expected all segments to have been covered (not covered on line ${y}: ${JSON.stringify(segments)})`,
+      );
     }
   }
 
@@ -222,15 +219,15 @@ export class TermRenderer {
     process.stdout.write(exception.stack || exception.message || exception);
 
     process.exitCode = 1;
-  }
+  };
 
   handleExitSignal = () => {
     this.close();
 
     process.exitCode = 1;
-  }
+  };
 
   handleExit = () => {
     this.close();
-  }
+  };
 }

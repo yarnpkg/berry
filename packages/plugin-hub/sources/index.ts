@@ -1,11 +1,9 @@
-import {Plugin}   from '@berry/core';
+import {Plugin} from '@berry/core';
 
 import hubCommand from './commands/hub';
 
 const plugin: Plugin = {
-  commands: [
-    hubCommand,
-  ],
+  commands: [hubCommand],
 };
 
 // eslint-disable-next-line arca/no-default-export

@@ -2,8 +2,7 @@
 // if it throws an exception)
 
 export async function releaseAfterUseAsync<T>(fn: () => Promise<T>, cleanup?: () => any) {
-  if (!cleanup)
-    return await fn();
+  if (!cleanup) return await fn();
 
   try {
     return await fn();
@@ -61,13 +60,11 @@ export function dynamicRequire(path: string) {
 export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) | Array<(value: T) => string>) {
   const asArray = Array.from(values);
 
-  if (!Array.isArray(mappers))
-    mappers = [mappers];
+  if (!Array.isArray(mappers)) mappers = [mappers];
 
   const stringified: Array<Array<string>> = [];
-  
-  for (const mapper of mappers)
-    stringified.push(asArray.map(value => mapper(value)));
+
+  for (const mapper of mappers) stringified.push(asArray.map(value => mapper(value)));
 
   const indices = asArray.map((_, index) => index);
 

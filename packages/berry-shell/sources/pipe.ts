@@ -1,23 +1,19 @@
-import crossSpawn                        from 'cross-spawn';
-import EventEmitter                      from 'events';
+import crossSpawn from 'cross-spawn';
+import EventEmitter from 'events';
 import {PassThrough, Readable, Writable} from 'stream';
 
 enum Pipe {
   STDOUT = 0b01,
   STDERR = 0b10,
-};
+}
 
-export type Stdio = [
-  any,
-  any,
-  any
-];
+export type Stdio = [any, any, any];
 
 type ProcessImplementation = (
   stdio: Stdio,
 ) => {
-  stdin: Writable,
-  promise: Promise<number>,
+  stdin: Writable;
+  promise: Promise<number>;
 };
 
 function nextTick() {
@@ -28,30 +24,17 @@ function nextTick() {
 
 export function makeProcess(name: string, args: Array<string>, opts: any): ProcessImplementation {
   return (stdio: Stdio) => {
-    const stdin = stdio[0] instanceof PassThrough
-      ? `pipe`
-      : stdio[0];
+    const stdin = stdio[0] instanceof PassThrough ? `pipe` : stdio[0];
 
-    const stdout = stdio[1] instanceof PassThrough
-      ? `pipe`
-      : stdio[1];
+    const stdout = stdio[1] instanceof PassThrough ? `pipe` : stdio[1];
 
-    const stderr = stdio[2] instanceof PassThrough
-      ? `pipe`
-      : stdio[2];
+    const stderr = stdio[2] instanceof PassThrough ? `pipe` : stdio[2];
 
-    const child = crossSpawn(name, args, {... opts, stdio: [
-      stdin,
-      stdout,
-      stderr,
-    ]});
+    const child = crossSpawn(name, args, {...opts, stdio: [stdin, stdout, stderr]});
 
-    if (stdio[0] instanceof PassThrough)
-      stdio[0].pipe(child.stdin);
-    if (stdio[1] instanceof PassThrough)
-      child.stdout.pipe(stdio[1]);
-    if (stdio[2] instanceof PassThrough)
-      child.stderr.pipe(stdio[2]);
+    if (stdio[0] instanceof PassThrough) stdio[0].pipe(child.stdin);
+    if (stdio[1] instanceof PassThrough) child.stdout.pipe(stdio[1]);
+    if (stdio[2] instanceof PassThrough) child.stderr.pipe(stdio[2]);
 
     return {
       stdin: child.stdin,
@@ -59,21 +42,27 @@ export function makeProcess(name: string, args: Array<string>, opts: any): Proce
         child.on(`error`, error => {
           // @ts-ignore
           switch (error.code) {
-            case `ENOENT`: {
-              stdio[2].write(`command not found: ${name}\n`);
-              resolve(127);
-            } break;
-            case `EACCESS`: {
-              stdio[2].write(`permission denied: ${name}\n`);
-              resolve(128);
-            } break;
-            default: {
-              stdio[2].write(`uncaught error: ${error.message}\n`);
-              resolve(1);
-            } break;
+            case `ENOENT`:
+              {
+                stdio[2].write(`command not found: ${name}\n`);
+                resolve(127);
+              }
+              break;
+            case `EACCESS`:
+              {
+                stdio[2].write(`permission denied: ${name}\n`);
+                resolve(128);
+              }
+              break;
+            default:
+              {
+                stdio[2].write(`uncaught error: ${error.message}\n`);
+                resolve(1);
+              }
+              break;
           }
         });
-    
+
         child.on(`exit`, code => {
           if (code !== null) {
             resolve(code);
@@ -88,17 +77,17 @@ export function makeProcess(name: string, args: Array<string>, opts: any): Proce
 
 export function makeBuiltin(builtin: (opts: any) => Promise<number>): ProcessImplementation {
   return (stdio: Stdio) => {
-    const stdin = stdio[0] === `pipe`
-      ? new PassThrough()
-      : stdio[0];
+    const stdin = stdio[0] === `pipe` ? new PassThrough() : stdio[0];
 
     return {
       stdin,
-      promise: nextTick().then(() => builtin({
-        stdin,
-        stdout: stdio[1],
-        stderr: stdio[2],
-      })),
+      promise: nextTick().then(() =>
+        builtin({
+          stdin,
+          stdout: stdio[1],
+          stderr: stdio[2],
+        }),
+      ),
     };
   };
 }
@@ -149,9 +138,9 @@ class PipeStream implements StreamLock<Writable> {
 }
 
 type StartOptions = {
-  stdin: StreamLock<Readable>,
-  stdout: StreamLock<Writable>,
-  stderr: StreamLock<Writable>,
+  stdin: StreamLock<Readable>;
+  stdout: StreamLock<Writable>;
+  stderr: StreamLock<Writable>;
 };
 
 export class Handle {
@@ -170,8 +159,8 @@ export class Handle {
     chain.stdin = stdin;
     chain.stdout = stdout;
     chain.stderr = stderr;
-  
-    return chain;  
+
+    return chain;
   }
 
   constructor(ancestor: Handle | null, implementation: ProcessImplementation) {
@@ -188,25 +177,17 @@ export class Handle {
     next.stdout = this.stdout;
     next.stderr = this.stderr;
 
-    if ((source & Pipe.STDOUT) === Pipe.STDOUT)
-      this.stdout = pipe;
-    else if (this.ancestor !== null)
-      this.stderr = this.ancestor.stdout;
+    if ((source & Pipe.STDOUT) === Pipe.STDOUT) this.stdout = pipe;
+    else if (this.ancestor !== null) this.stderr = this.ancestor.stdout;
 
-    if ((source & Pipe.STDERR) === Pipe.STDERR)
-      this.stderr = pipe;
-    else if (this.ancestor !== null)
-      this.stderr = this.ancestor.stderr;
+    if ((source & Pipe.STDERR) === Pipe.STDERR) this.stderr = pipe;
+    else if (this.ancestor !== null) this.stderr = this.ancestor.stderr;
 
     return next;
   }
 
   async exec() {
-    const stdio: Stdio = [
-      `ignore`,
-      `ignore`,
-      `ignore`,
-    ];
+    const stdio: Stdio = [`ignore`, `ignore`, `ignore`];
 
     if (this.pipe) {
       stdio[0] = `pipe`;
@@ -236,8 +217,7 @@ export class Handle {
 
     const child = this.implementation(stdio);
 
-    if (this.pipe)
-      this.pipe.attach(child.stdin);
+    if (this.pipe) this.pipe.attach(child.stdin);
 
     return await child.promise.then(code => {
       stdoutLock.close();
@@ -249,8 +229,7 @@ export class Handle {
 
   async run() {
     const promises = [];
-    for (let handle: Handle | null = this; handle; handle = handle.ancestor)
-      promises.push(handle.exec());
+    for (let handle: Handle | null = this; handle; handle = handle.ancestor) promises.push(handle.exec());
 
     const exitCodes = await Promise.all(promises);
     return exitCodes[0];

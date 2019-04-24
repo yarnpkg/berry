@@ -1,13 +1,13 @@
-import {Writable}            from 'stream';
+import {Writable} from 'stream';
 
-import {Configuration}       from './Configuration';
+import {Configuration} from './Configuration';
 import {Report, MessageName} from './Report';
-import {Locator}             from './types';
+import {Locator} from './types';
 
 export type LightReportOptions = {
-  configuration: Configuration,
-  stdout: Writable,
-  suggestInstall?: boolean,
+  configuration: Configuration;
+  stdout: Writable;
+  suggestInstall?: boolean;
 };
 
 export class LightReport extends Report {
@@ -47,11 +47,9 @@ export class LightReport extends Report {
     return this.hasErrors() ? 1 : 0;
   }
 
-  reportCacheHit(locator: Locator) {
-  }
+  reportCacheHit(locator: Locator) {}
 
-  reportCacheMiss(locator: Locator) {
-  }
+  reportCacheMiss(locator: Locator) {}
 
   startTimerSync<T>(what: string, cb: () => T) {
     return cb();
@@ -61,11 +59,9 @@ export class LightReport extends Report {
     return await cb();
   }
 
-  reportInfo(name: MessageName, text: string) {
-  }
+  reportInfo(name: MessageName, text: string) {}
 
-  reportWarning(name: MessageName, text: string) {
-  }
+  reportWarning(name: MessageName, text: string) {}
 
   reportError(name: MessageName, text: string) {
     this.errorCount += 1;
@@ -78,10 +74,20 @@ export class LightReport extends Report {
 
   async finalize() {
     if (this.errorCount > 0) {
-      this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} Errors happened when preparing the environment required to run this command.\n`);
+      this.stdout.write(
+        `${this.configuration.format(
+          `➤`,
+          `redBright`,
+        )} Errors happened when preparing the environment required to run this command.\n`,
+      );
 
       if (this.suggestInstall) {
-        this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} This might be caused by packages being missing from the lockfile, in which case running "berry install" might help.\n`);
+        this.stdout.write(
+          `${this.configuration.format(
+            `➤`,
+            `redBright`,
+          )} This might be caused by packages being missing from the lockfile, in which case running "berry install" might help.\n`,
+        );
       }
     }
   }

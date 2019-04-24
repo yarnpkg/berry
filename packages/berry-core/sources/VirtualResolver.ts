@@ -1,20 +1,18 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator}                             from './types';
+import * as structUtils from './structUtils';
+import {Descriptor, Locator} from './types';
 
 export class VirtualResolver implements Resolver {
   static protocol = `virtual:`;
 
   static isVirtualDescriptor(descriptor: Descriptor) {
-    if (!descriptor.range.startsWith(VirtualResolver.protocol))
-      return false;
+    if (!descriptor.range.startsWith(VirtualResolver.protocol)) return false;
 
     return true;
   }
 
   static isVirtualLocator(locator: Locator) {
-    if (!locator.reference.startsWith(VirtualResolver.protocol))
-      return false;
+    if (!locator.reference.startsWith(VirtualResolver.protocol)) return false;
 
     return true;
   }

@@ -1,25 +1,22 @@
-import {ReportError, MessageName}                        from './Report';
+import {ReportError, MessageName} from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import {Descriptor, Locator}                             from './types';
-import {LinkType}                                        from './types';
+import {Descriptor, Locator} from './types';
+import {LinkType} from './types';
 
 export class WorkspaceResolver implements Resolver {
   static protocol = `workspace:`;
 
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (descriptor.range.startsWith(WorkspaceResolver.protocol))
-      return true;
+    if (descriptor.range.startsWith(WorkspaceResolver.protocol)) return true;
 
     const matchingWorkspaces = opts.project.findWorkspacesByDescriptor(descriptor);
-    if (matchingWorkspaces.length > 0)
-      return true;
+    if (matchingWorkspaces.length > 0) return true;
 
     return false;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!locator.reference.startsWith(WorkspaceResolver.protocol))
-      return false;
+    if (!locator.reference.startsWith(WorkspaceResolver.protocol)) return false;
 
     return true;
   }
@@ -42,9 +39,12 @@ export class WorkspaceResolver implements Resolver {
         throw new ReportError(MessageName.WORKSPACE_NOT_FOUND, `No local workspace found for this range`);
       }
     }
-    
+
     if (candidateWorkspaces.length > 1)
-      throw new ReportError(MessageName.TOO_MANY_MATCHING_WORKSPACES, `Too many workspaces match this range, please disambiguate`);
+      throw new ReportError(
+        MessageName.TOO_MANY_MATCHING_WORKSPACES,
+        `Too many workspaces match this range, please disambiguate`,
+      );
 
     return [candidateWorkspaces[0].anchoredLocator];
   }
@@ -53,15 +53,15 @@ export class WorkspaceResolver implements Resolver {
     const workspace = opts.project.getWorkspaceByCwd(locator.reference.slice(WorkspaceResolver.protocol.length));
 
     return {
-      ... locator,
+      ...locator,
 
       version: workspace.manifest.version || `0.0.0`,
 
       languageName: `unknown`,
       linkType: LinkType.SOFT,
 
-      dependencies: new Map([... workspace.manifest.dependencies, ... workspace.manifest.devDependencies]),
-      peerDependencies: new Map([... workspace.manifest.peerDependencies]),
+      dependencies: new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]),
+      peerDependencies: new Map([...workspace.manifest.peerDependencies]),
 
       dependenciesMeta: workspace.manifest.dependenciesMeta,
       peerDependenciesMeta: workspace.manifest.peerDependenciesMeta,

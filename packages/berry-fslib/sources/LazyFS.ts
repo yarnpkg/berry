@@ -1,5 +1,5 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
-import {FakeFS, WriteFileOptions}                          from './FakeFS';
+import {FakeFS, WriteFileOptions} from './FakeFS';
 
 export type LazyFSFactory = () => FakeFS;
 
@@ -197,8 +197,7 @@ export class LazyFS extends FakeFS {
   private prepareFs() {
     let baseFs = this.baseFs;
 
-    if (baseFs === null)
-      baseFs = this.baseFs = this.factory();
+    if (baseFs === null) baseFs = this.baseFs = this.factory();
 
     return baseFs;
   }

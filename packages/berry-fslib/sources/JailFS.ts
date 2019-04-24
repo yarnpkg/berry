@@ -1,11 +1,11 @@
-import {posix}                                             from 'path';
+import {posix} from 'path';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
-import {FakeFS, WriteFileOptions}                          from './FakeFS';
-import {NodeFS}                                            from './NodeFS';
+import {FakeFS, WriteFileOptions} from './FakeFS';
+import {NodeFS} from './NodeFS';
 
 export type JailFSOptions = {
-  baseFs?: FakeFS,
+  baseFs?: FakeFS;
 };
 
 export class JailFS extends FakeFS {
@@ -212,11 +212,9 @@ export class JailFS extends FakeFS {
   private fromJailedPath(p: string) {
     const normalized = posix.normalize(p);
 
-    if (posix.isAbsolute(p))
-      return posix.resolve(this.target, posix.relative(`/`, p));
+    if (posix.isAbsolute(p)) return posix.resolve(this.target, posix.relative(`/`, p));
 
-    if (normalized.match(/^\.\.\//))
-      throw new Error(`Resolving this path (${p}) would escape the jail`);
+    if (normalized.match(/^\.\.\//)) throw new Error(`Resolving this path (${p}) would escape the jail`);
 
     return posix.resolve(this.target, p);
   }

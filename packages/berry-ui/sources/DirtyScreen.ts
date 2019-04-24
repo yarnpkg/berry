@@ -1,32 +1,30 @@
 import {Rect} from './Rect';
 
 type DirtySegment = {
-  start: number,
-  end: number,
+  start: number;
+  end: number;
 };
 
 class DirtyRow {
   private segments: Array<DirtySegment> = [];
 
   add(start: number, end: number) {
-    if (end <= start)
-      return;
+    if (end <= start) return;
 
     let startIndex = 0;
 
     // Find the index of the first segment that doesn't end before our starting point
-    while (startIndex < this.segments.length && start > this.segments[startIndex].end)
-      startIndex += 1;
+    while (startIndex < this.segments.length && start > this.segments[startIndex].end) startIndex += 1;
 
     // If all segments end before we even start, we can just push the new segment at the end of the list
     if (startIndex === this.segments.length) {
-      this.segments.push({ start, end });
+      this.segments.push({start, end});
     } else {
       const startSegment = this.segments[startIndex];
 
       // If the segment we found starts only after we even end, we just have to insert ourselves before it (we've already proven that the previous segment ends before we start, so no merge)
       if (startSegment.start > end) {
-        this.segments.splice(startIndex, 0, { start, end });
+        this.segments.splice(startIndex, 0, {start, end});
       } else {
         startSegment.start = Math.min(startSegment.start, start);
         startSegment.end = Math.max(startSegment.end, end);
@@ -35,7 +33,10 @@ class DirtyRow {
         let spliceSize = 0;
 
         // Find the number of segments that are fully covered by our new segment ...
-        while (spliceIndex + spliceSize < this.segments.length && this.segments[spliceIndex + spliceSize].end <= startSegment.end)
+        while (
+          spliceIndex + spliceSize < this.segments.length &&
+          this.segments[spliceIndex + spliceSize].end <= startSegment.end
+        )
           spliceSize += 1;
 
         // ... and remove them (since they have been merged)
@@ -59,12 +60,11 @@ export class DirtyScreen {
   private rows: Map<number, DirtyRow> = new Map();
 
   addCoordinates(left: number, top: number, width: number, height: number) {
-    if (width === 0 || height === 0)
-      return;
+    if (width === 0 || height === 0) return;
 
     for (let y = top; y < top + height; ++y) {
       let row = this.rows.get(y);
-      if (!row) this.rows.set(y, row = new DirtyRow());
+      if (!row) this.rows.set(y, (row = new DirtyRow()));
 
       row.add(left, left + width);
     }
@@ -84,18 +84,14 @@ export class DirtyScreen {
 
   *viewport(rect: Rect) {
     for (const [y, row] of this.rows.entries()) {
-      if (y < rect.top || y >= rect.top + rect.height)
-        continue;
+      if (y < rect.top || y >= rect.top + rect.height) continue;
 
       for (let {start, end} of row) {
-        if (start < rect.left)
-          start = rect.left;
+        if (start < rect.left) start = rect.left;
 
-        if (end > rect.left + rect.width)
-          end = rect.left + rect.width;
+        if (end > rect.left + rect.width) end = rect.left + rect.width;
 
-        if (start === end)
-          continue;
+        if (start === end) continue;
 
         yield {left: start, top: y, width: end - start, height: 1};
       }

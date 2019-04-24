@@ -1,27 +1,23 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
-import {Descriptor, Locator, Manifest}                   from '@berry/core';
-import {LinkType}                                        from '@berry/core';
-import {miscUtils, structUtils}                          from '@berry/core';
+import {Descriptor, Locator, Manifest} from '@berry/core';
+import {LinkType} from '@berry/core';
+import {miscUtils, structUtils} from '@berry/core';
 
-import {PROTOCOL_REGEXP, TARBALL_REGEXP}                 from './constants';
+import {PROTOCOL_REGEXP, TARBALL_REGEXP} from './constants';
 
 export class TarballHttpResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!TARBALL_REGEXP.test(descriptor.range))
-      return false;
+    if (!TARBALL_REGEXP.test(descriptor.range)) return false;
 
-    if (PROTOCOL_REGEXP.test(descriptor.range))
-      return true;
+    if (PROTOCOL_REGEXP.test(descriptor.range)) return true;
 
     return false;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!TARBALL_REGEXP.test(locator.reference))
-      return false;
+    if (!TARBALL_REGEXP.test(locator.reference)) return false;
 
-    if (PROTOCOL_REGEXP.test(locator.reference))
-      return true;
+    if (PROTOCOL_REGEXP.test(locator.reference)) return true;
 
     return false;
   }
@@ -46,7 +42,7 @@ export class TarballHttpResolver implements Resolver {
     }, packageFetch.releaseFs);
 
     return {
-      ... locator,
+      ...locator,
 
       version: manifest.version || `0.0.0`,
 

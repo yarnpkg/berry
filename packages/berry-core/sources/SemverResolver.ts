@@ -1,20 +1,18 @@
-import semver                                            from 'semver';
+import semver from 'semver';
 
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator}                             from './types';
+import * as structUtils from './structUtils';
+import {Descriptor, Locator} from './types';
 
 export class SemverResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!semver.validRange(descriptor.range))
-      return false;
+    if (!semver.validRange(descriptor.range)) return false;
 
     return true;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!semver.valid(locator.reference))
-      return false;
+    if (!semver.valid(locator.reference)) return false;
 
     return true;
   }
@@ -38,7 +36,10 @@ export class SemverResolver implements Resolver {
   }
 
   private forwardDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return structUtils.makeDescriptor(descriptor, `${opts.project.configuration.get(`defaultProtocol`)}${descriptor.range}`);
+    return structUtils.makeDescriptor(
+      descriptor,
+      `${opts.project.configuration.get(`defaultProtocol`)}${descriptor.range}`,
+    );
   }
 
   private forwardLocator(locator: Locator, opts: MinimalResolveOptions) {

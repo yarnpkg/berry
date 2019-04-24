@@ -1,10 +1,10 @@
-import EventEmitter                 from 'eventemitter3';
-import {Writable}                   from 'stream';
+import EventEmitter from 'eventemitter3';
+import {Writable} from 'stream';
 import {WriteStream as WritableTTY} from 'tty';
 
 export type OutputOptions = {
-  isDebug: boolean,
-  isInline: boolean,
+  isDebug: boolean;
+  isInline: boolean;
 };
 
 export class TermOutput extends EventEmitter {
@@ -44,8 +44,7 @@ export class TermOutput extends EventEmitter {
   }
 
   open() {
-    if (this.opened)
-      throw new Error(`Instance already open`);
+    if (this.opened) throw new Error(`Instance already open`);
 
     // @ts-ignore: `resize` is a valid event
     this.stdout.addListener(`resize`, this.handleResize);
@@ -54,8 +53,7 @@ export class TermOutput extends EventEmitter {
   }
 
   close() {
-    if (!this.opened)
-      throw new Error(`Instance isn't open`);
+    if (!this.opened) throw new Error(`Instance isn't open`);
 
     // @ts-ignore: `resize` is a valid event
     this.stdout.removeListener(`resize`, this.handleResize);
@@ -64,8 +62,7 @@ export class TermOutput extends EventEmitter {
   }
 
   buffer(fn: () => void) {
-    if (!this.opened)
-      throw new Error(`Instance isn't open`);
+    if (!this.opened) throw new Error(`Instance isn't open`);
 
     this.bufferDepth += 1;
     let result;
@@ -86,11 +83,9 @@ export class TermOutput extends EventEmitter {
   }
 
   writeMeta(data: any) {
-    if (!this.opened)
-      throw new Error(`Instance isn't open`);
+    if (!this.opened) throw new Error(`Instance isn't open`);
 
-    if (this.isDebug)
-      return;
+    if (this.isDebug) return;
 
     if (this.bufferDepth > 0) {
       this.bufferData += String(data);
@@ -101,11 +96,9 @@ export class TermOutput extends EventEmitter {
   }
 
   write(data: any) {
-    if (!this.opened)
-      throw new Error(`Instance isn't open`);
+    if (!this.opened) throw new Error(`Instance isn't open`);
 
-    if (this.isDebug)
-      return;
+    if (this.isDebug) return;
 
     if (this.bufferDepth > 0) {
       this.bufferData += String(data);
@@ -116,11 +109,9 @@ export class TermOutput extends EventEmitter {
   }
 
   writeDebug(data: any) {
-    if (!this.opened)
-      throw new Error(`Instance isn't open`);
+    if (!this.opened) throw new Error(`Instance isn't open`);
 
-    if (!this.isDebug)
-      return;
+    if (!this.isDebug) return;
 
     if (this.bufferDepth > 0) {
       this.bufferData += String(data);
@@ -135,5 +126,5 @@ export class TermOutput extends EventEmitter {
       columns: this.columns,
       rows: this.rows,
     });
-  }
+  };
 }

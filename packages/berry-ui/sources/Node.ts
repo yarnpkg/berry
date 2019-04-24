@@ -1,10 +1,10 @@
-import {DirtyScreen}                    from './DirtyScreen';
-import {Environment}                    from './Environment';
-import {NodeElement}                    from './NodeElement';
-import {NodeTree}                       from './NodeTree';
-import {Rect}                           from './Rect';
-import {StyleManager}                   from './StyleManager';
-import {getColorEntry}                  from './colors';
+import {DirtyScreen} from './DirtyScreen';
+import {Environment} from './Environment';
+import {NodeElement} from './NodeElement';
+import {NodeTree} from './NodeTree';
+import {Rect} from './Rect';
+import {StyleManager} from './StyleManager';
+import {getColorEntry} from './colors';
 import {computeInPlaceIntersectingRect} from './geometryUtils';
 
 enum Flags {
@@ -78,8 +78,7 @@ export abstract class Node {
   }
 
   prependChild(node: Node) {
-    if (node.parentNode)
-      throw new Error(`Assertion failed: A node cannot be reparented`);
+    if (node.parentNode) throw new Error(`Assertion failed: A node cannot be reparented`);
 
     node.parentNode = this;
 
@@ -99,15 +98,13 @@ export abstract class Node {
       this.childNodes.unshift(node);
     }
 
-    if (this.rootNode)
-      node.linkRecursive();
+    if (this.rootNode) node.linkRecursive();
 
     node.markDirtyLayout();
   }
 
   appendChild(node: Node) {
-    if (node.parentNode)
-      throw new Error(`Assertion failed: A node cannot be reparented`);
+    if (node.parentNode) throw new Error(`Assertion failed: A node cannot be reparented`);
 
     node.parentNode = this;
 
@@ -129,31 +126,26 @@ export abstract class Node {
 
     node.style.refreshInheritedProperties();
 
-    if (this.rootNode)
-      node.linkRecursive();
+    if (this.rootNode) node.linkRecursive();
 
     node.markDirtyLayout();
   }
 
   insertBefore(node: Node, before: Node | null) {
-    if (before === null)
-      return this.appendChild(node);
+    if (before === null) return this.appendChild(node);
 
-    if (before.parentNode !== this)
-      throw new Error(`Assertion failed: Cannot locate a node that isn't owned`);
+    if (before.parentNode !== this) throw new Error(`Assertion failed: Cannot locate a node that isn't owned`);
 
     const index = this.childNodes.indexOf(before);
 
-    if (index === -1)
-      throw new Error(`Assertion failed: Cannot locate a node that's been removed`);
+    if (index === -1) throw new Error(`Assertion failed: Cannot locate a node that's been removed`);
 
-    if (index === 0)
-      return this.prependChild(node);
+    if (index === 0) return this.prependChild(node);
 
-    if (node.parentNode)
-      throw new Error(`Assertion failed: A node cannot be reparented`);
+    if (node.parentNode) throw new Error(`Assertion failed: A node cannot be reparented`);
 
-    if (!before.previousSibling) // required to help typescript figure out this is true
+    if (!before.previousSibling)
+      // required to help typescript figure out this is true
       throw new Error(`Assertion failed: There should be a previous sibling`);
 
     node.parentNode = this;
@@ -169,41 +161,33 @@ export abstract class Node {
 
     node.style.refreshInheritedProperties();
 
-    if (this.rootNode)
-      node.linkRecursive();
+    if (this.rootNode) node.linkRecursive();
 
     this.markDirtyLayout();
   }
 
   removeChild(node: Node) {
-    if (node.parentNode !== this)
-      throw new Error(`Assertion failed: Cannot remove a node that isn't owned`);
+    if (node.parentNode !== this) throw new Error(`Assertion failed: Cannot remove a node that isn't owned`);
 
     const index = this.childNodes.indexOf(node);
 
-    if (index === -1)
-      throw new Error(`Assertion failed: Cannot remove a node twice`);
+    if (index === -1) throw new Error(`Assertion failed: Cannot remove a node twice`);
 
     const previousSibling = node.previousSibling;
     const nextSibling = node.nextSibling;
-    
+
     this.yoga.removeChild(node.yoga);
     this.childNodes.splice(index, 1);
 
-    if (previousSibling)
-      previousSibling.nextSibling = nextSibling;
+    if (previousSibling) previousSibling.nextSibling = nextSibling;
 
-    if (nextSibling)
-      nextSibling.previousSibling = previousSibling;
+    if (nextSibling) nextSibling.previousSibling = previousSibling;
 
-    if (this.firstChild === node)
-      this.firstChild = nextSibling;
+    if (this.firstChild === node) this.firstChild = nextSibling;
 
-    if (this.lastChild === node)
-      this.lastChild = previousSibling;
+    if (this.lastChild === node) this.lastChild = previousSibling;
 
-    if (node.rootNode)
-      node.unlinkRecursive();
+    if (node.rootNode) node.unlinkRecursive();
 
     this.markDirtyLayout();
   }
@@ -212,22 +196,19 @@ export abstract class Node {
     const eventSources: Array<NodeElement> = [];
 
     for (let eventSource: Node | null = this; eventSource; eventSource = eventSource.parentNode)
-      if (eventSource instanceof NodeElement)
-        eventSources.push(eventSource);
+      if (eventSource instanceof NodeElement) eventSources.push(eventSource);
 
     event.target = this;
 
     for (let t = eventSources.length - 1; t >= 0; --t) {
       const eventSource = eventSources[t];
 
-      if (event.propagationStopped)
-        break;
+      if (event.propagationStopped) break;
 
       const handlerName = `on${event.name.charAt(0).toUpperCase()}${event.name.slice(1)}Capture`;
       const handler = eventSource.props[handlerName];
 
-      if (!handler)
-        continue;
+      if (!handler) continue;
 
       event.currentTarget = eventSource;
       handler.call(null, event);
@@ -236,14 +217,12 @@ export abstract class Node {
     for (let t = 0, T = eventSources.length; t < T; ++t) {
       const eventSource = eventSources[t];
 
-      if (event.propagationStopped)
-        break;
+      if (event.propagationStopped) break;
 
       let handlerName = `on${event.name.charAt(0).toUpperCase()}${event.name.slice(1)}`;
       let handler = eventSource.props[handlerName];
 
-      if (!handler)
-        continue;
+      if (!handler) continue;
 
       event.currentTarget = eventSource;
       handler.call(null, event);
@@ -269,14 +248,12 @@ export abstract class Node {
     this.flags |= Flags.NODE_HAS_DIRTY_LAYOUT | Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN;
 
     for (let parent = this.parentNode; parent; parent = parent.parentNode) {
-      if (parent.flags & Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN)
-        break;
+      if (parent.flags & Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN) break;
       parent.flags |= Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN;
     }
 
-    for (const child of this.childNodes)
-      child.flags |= Flags.NODE_HAS_DIRTY_LAYOUT;
-    
+    for (const child of this.childNodes) child.flags |= Flags.NODE_HAS_DIRTY_LAYOUT;
+
     if (this.rootNode) {
       this.rootNode.markDirtyRenderList();
     }
@@ -286,11 +263,10 @@ export abstract class Node {
     this.flags |= Flags.NODE_HAS_DIRTY_LAYOUT;
 
     for (let parent = this.parentNode; parent; parent = parent.parentNode) {
-      if (parent.flags & Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN)
-        break;
+      if (parent.flags & Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN) break;
       parent.flags |= Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN;
     }
-    
+
     if (this.rootNode) {
       this.rootNode.markDirtyRenderList();
     }
@@ -300,8 +276,7 @@ export abstract class Node {
     this.flags |= Flags.NODE_HAS_DIRTY_CLIPPING;
 
     for (let parent = this.parentNode; parent; parent = parent.parentNode) {
-      if (parent.flags & Flags.NODE_HAS_DIRTY_CLIPPING_CHILDREN)
-        break;
+      if (parent.flags & Flags.NODE_HAS_DIRTY_CLIPPING_CHILDREN) break;
       parent.flags |= Flags.NODE_HAS_DIRTY_CLIPPING_CHILDREN;
     }
   }
@@ -310,46 +285,43 @@ export abstract class Node {
     this.flags |= Flags.NODE_HAS_DIRTY_RENDER;
 
     for (let parent = this.parentNode; parent; parent = parent.parentNode) {
-      if (parent.flags & Flags.NODE_HAS_DIRTY_RENDER_CHILDREN)
-        break;
+      if (parent.flags & Flags.NODE_HAS_DIRTY_RENDER_CHILDREN) break;
       parent.flags |= Flags.NODE_HAS_DIRTY_RENDER_CHILDREN;
     }
   }
 
-  applyTextStyle(text: string, { backColor = this.style.get(`contentBackColor`) || this.style.get(`backgroundBackColor`), frontColor = this.style.get(`contentFrontColor`) }: {backColor?: string, frontColor?: string} = {}) {
-    const backColorEntry = backColor
-      ? getColorEntry(backColor)
-      : null;
+  applyTextStyle(
+    text: string,
+    {
+      backColor = this.style.get(`contentBackColor`) || this.style.get(`backgroundBackColor`),
+      frontColor = this.style.get(`contentFrontColor`),
+    }: {backColor?: string; frontColor?: string} = {},
+  ) {
+    const backColorEntry = backColor ? getColorEntry(backColor) : null;
 
-    if (backColorEntry)
-      text = backColorEntry.back.in + text + backColorEntry.back.out;
+    if (backColorEntry) text = backColorEntry.back.in + text + backColorEntry.back.out;
 
-    const frontColorEntry = frontColor
-      ? getColorEntry(frontColor)
-      : null;
+    const frontColorEntry = frontColor ? getColorEntry(frontColor) : null;
 
-    if (frontColorEntry)
-      text = frontColorEntry.front.in + text + frontColorEntry.front.out;
+    if (frontColorEntry) text = frontColorEntry.front.in + text + frontColorEntry.front.out;
 
     return text;
   }
 
   propagateLayout(dirtyRects: DirtyScreen) {
-    if (this.parentNode)
+    if (this.parentNode) throw new Error(`Assertion failed: Cannot call propagateLayout from a non-tree node`);
+
+    if (this.rootNode !== (this as Node))
       throw new Error(`Assertion failed: Cannot call propagateLayout from a non-tree node`);
-    
-    if (this.rootNode !== this as Node)
-      throw new Error(`Assertion failed: Cannot call propagateLayout from a non-tree node`);
-    
+
     const thisRoot = this.rootNode;
 
     const removedRects = thisRoot.removedRects;
     thisRoot.removedRects = [];
-    
+
     // Don't forget to redraw the parts of the screen where something has disappeared
-    for (const rect of removedRects)
-      dirtyRects.addRect(rect);
-    
+    for (const rect of removedRects) dirtyRects.addRect(rect);
+
     this.yoga.calculateLayout();
 
     //console.group(`layout`);
@@ -378,8 +350,7 @@ export abstract class Node {
       this.elementRect.height = layout.height;
     }
 
-    for (const child of this.childNodes)
-      child.cascadeLayout(dirtyScreen, true);
+    for (const child of this.childNodes) child.cascadeLayout(dirtyScreen, true);
 
     if (true || this.yoga.hasNewLayout) {
       const preferredScrollSize = this.getPreferredScrollSize();
@@ -392,27 +363,24 @@ export abstract class Node {
         this.scrollRect.height = Math.max(this.scrollRect.height, child.elementRect.top + child.elementRect.height);
       }
 
-      this.contentRect.left = 0;//this.yoga.getComputedBorder(this.env.yoga.EDGE_LEFT) + this.yoga.getComputedPadding(this.env.yoga.EDGE_LEFT);
-      this.contentRect.top = 0;//this.yoga.getComputedBorder(this.env.yoga.EDGE_TOP) + this.yoga.getComputedPadding(this.env.yoga.EDGE_TOP);
+      this.contentRect.left = 0; //this.yoga.getComputedBorder(this.env.yoga.EDGE_LEFT) + this.yoga.getComputedPadding(this.env.yoga.EDGE_LEFT);
+      this.contentRect.top = 0; //this.yoga.getComputedBorder(this.env.yoga.EDGE_TOP) + this.yoga.getComputedPadding(this.env.yoga.EDGE_TOP);
 
-      this.contentRect.width = this.scrollRect.width;// - this.contentRect.left - this.yoga.getComputedBorder(this.env.yoga.EDGE_RIGHT) - this.yoga.getComputedPadding(this.env.yoga.EDGE_RIGHT);
-      this.contentRect.height = this.scrollRect.height;// - this.contentRect.top - this.yoga.getComputedBorder(this.env.yoga.EDGE_BOTTOM) - this.yoga.getComputedPadding(this.env.yoga.EDGE_BOTTOM);
+      this.contentRect.width = this.scrollRect.width; // - this.contentRect.left - this.yoga.getComputedBorder(this.env.yoga.EDGE_RIGHT) - this.yoga.getComputedPadding(this.env.yoga.EDGE_RIGHT);
+      this.contentRect.height = this.scrollRect.height; // - this.contentRect.top - this.yoga.getComputedBorder(this.env.yoga.EDGE_BOTTOM) - this.yoga.getComputedPadding(this.env.yoga.EDGE_BOTTOM);
     }
 
-    if (true || this.yoga.hasNewLayout)
-      this.markDirtyClipping();
+    if (true || this.yoga.hasNewLayout) this.markDirtyClipping();
 
     this.yoga.hasNewLayout = false;
-    
+
     //console.groupEnd();
   }
 
   private cascadeClipping(dirtyScreen: DirtyScreen, force: boolean, relativeClipRect: Rect | null) {
     //console.group();
 
-    force = this.trackChanges(`relativeClipRect`, [
-      relativeClipRect,
-    ]) || force;
+    force = this.trackChanges(`relativeClipRect`, [relativeClipRect]) || force;
 
     if (force || this.flags & (Flags.NODE_HAS_DIRTY_CLIPPING | Flags.NODE_HAS_DIRTY_CLIPPING_CHILDREN)) {
       if (force || this.flags & Flags.NODE_HAS_DIRTY_CLIPPING) {
@@ -422,8 +390,12 @@ export abstract class Node {
         const parentScrollLeft = this.parentNode ? this.parentNode.scrollRect.left : 0;
         const parentScrollTop = this.parentNode ? this.parentNode.scrollRect.top : 0;
 
-        this.elementWorldRect.left = this.parentNode ? this.parentNode.elementWorldRect.left + this.elementRect.left - parentScrollLeft : 0;
-        this.elementWorldRect.top = this.parentNode ? this.parentNode.elementWorldRect.top + this.elementRect.top - parentScrollTop : 0;
+        this.elementWorldRect.left = this.parentNode
+          ? this.parentNode.elementWorldRect.left + this.elementRect.left - parentScrollLeft
+          : 0;
+        this.elementWorldRect.top = this.parentNode
+          ? this.parentNode.elementWorldRect.top + this.elementRect.top - parentScrollTop
+          : 0;
 
         this.elementWorldRect.width = this.elementRect.width;
         this.elementWorldRect.height = this.elementRect.height;
@@ -480,23 +452,23 @@ export abstract class Node {
 
         if (doesClippingChange) {
           // If the clipping changes, we must redraw the previous location where the node was, since it doesn't cover it anymore
-          dirtyScreen.addCoordinates(prevElementClipLeft, prevElementClipTop, prevElementClipWidth, prevElementClipHeight);
+          dirtyScreen.addCoordinates(
+            prevElementClipLeft,
+            prevElementClipTop,
+            prevElementClipWidth,
+            prevElementClipHeight,
+          );
 
           // We also have to redraw the new location where the node can be found, which be batch as a rendering (so that we don't perform the calculations twice if the node is dirty clipping + dirty rendering)
           this.markDirtyRender();
         }
       }
 
-      if (!relativeClipRect)
-        relativeClipRect = this.elementClipRect;
+      if (!relativeClipRect) relativeClipRect = this.elementClipRect;
 
-      for (const child of this.childNodes)
-        child.cascadeClipping(dirtyScreen, force, relativeClipRect);
+      for (const child of this.childNodes) child.cascadeClipping(dirtyScreen, force, relativeClipRect);
 
-      this.flags &= ~(
-        Flags.NODE_HAS_DIRTY_CLIPPING |
-        Flags.NODE_HAS_DIRTY_CLIPPING_CHILDREN
-      );
+      this.flags &= ~(Flags.NODE_HAS_DIRTY_CLIPPING | Flags.NODE_HAS_DIRTY_CLIPPING_CHILDREN);
     }
 
     //console.groupEnd();
@@ -506,16 +478,12 @@ export abstract class Node {
     //console.group();
 
     if (force || this.flags & (Flags.NODE_HAS_DIRTY_RENDER | Flags.NODE_HAS_DIRTY_RENDER_CHILDREN)) {
-      if (force || (this.flags & Flags.NODE_HAS_DIRTY_RENDER))
-        dirtyScreen.addRect(this.elementClipRect);
+      if (force || this.flags & Flags.NODE_HAS_DIRTY_RENDER) dirtyScreen.addRect(this.elementClipRect);
 
       for (const child of this.childNodes)
         child.cascadeRendering(dirtyScreen, force || Boolean(this.flags & Flags.NODE_HAS_DIRTY_RENDER));
 
-      this.flags &= ~(
-        Flags.NODE_HAS_DIRTY_RENDER |
-        Flags.NODE_HAS_DIRTY_RENDER_CHILDREN
-      );
+      this.flags &= ~(Flags.NODE_HAS_DIRTY_RENDER | Flags.NODE_HAS_DIRTY_RENDER_CHILDREN);
     }
 
     //console.groupEnd();
@@ -525,15 +493,11 @@ export abstract class Node {
     const previous = this.trackers.get(trackerName);
     this.trackers.set(trackerName, data);
 
-    if (!previous)
-      return true;
+    if (!previous) return true;
 
-    if (previous.length !== data.length)
-      return true;
+    if (previous.length !== data.length) return true;
 
-    for (let t = 0; t < data.length; ++t)
-      if (data[t] !== previous[t])
-        return true;
+    for (let t = 0; t < data.length; ++t) if (data[t] !== previous[t]) return true;
 
     return false;
   }
@@ -542,8 +506,7 @@ export abstract class Node {
     if (!this.parentNode || !this.parentNode.rootNode)
       throw new Error(`Assertion failed: linkRecursive called on a node that hasn't been correctly setup`);
 
-    if (this.rootNode)
-      throw new Error(`Assertion failed: linkRecursive called on a node that's already been linked`);
+    if (this.rootNode) throw new Error(`Assertion failed: linkRecursive called on a node that's already been linked`);
 
     this.rootNode = this.parentNode.rootNode;
     this.linkSelf(this.rootNode, this.parentNode);
@@ -558,15 +521,12 @@ export abstract class Node {
       throw new Error(`Assertion failed: unlinkRecursive called on a node that hasn't been correctly setup`);
 
     // If the node is focused, we need to unfocus it
-    if (this.rootNode && this.rootNode.activeElement === this as Node)
-      this.rootNode.focus(null);
+    if (this.rootNode && this.rootNode.activeElement === (this as Node)) this.rootNode.focus(null);
 
     // We'll need to refresh this part of the screen no matter what
-    if (this.rootNode)
-      this.rootNode.removedRects.push(this.elementClipRect);
+    if (this.rootNode) this.rootNode.removedRects.push(this.elementClipRect);
 
-    for (const child of this.childNodes)
-      child.unlinkRecursive();
+    for (const child of this.childNodes) child.unlinkRecursive();
 
     this.unlinkSelf(this.rootNode, this.parentNode);
     this.rootNode = null;

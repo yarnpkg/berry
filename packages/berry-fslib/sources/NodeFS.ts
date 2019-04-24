@@ -1,9 +1,8 @@
-import fs, {Stats}                                         from 'fs';
-import {posix, win32}                                      from 'path';
+import fs, {Stats} from 'fs';
+import {posix, win32} from 'path';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
-import {FakeFS, WriteFileOptions}                          from './FakeFS';
-
+import {FakeFS, WriteFileOptions} from './FakeFS';
 
 const PORTABLE_PATH_PREFIX = `/mnt/`;
 const PORTABLE_PREFIX_REGEXP = /^\/mnt\/([a-z])(?:\/(.*))?$/;
@@ -113,7 +112,11 @@ export class NodeFS extends FakeFS {
 
   async renamePromise(oldP: string, newP: string) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.rename(NodeFS.fromPortablePath(oldP), NodeFS.fromPortablePath(newP), this.makeCallback(resolve, reject));
+      this.realFs.rename(
+        NodeFS.fromPortablePath(oldP),
+        NodeFS.fromPortablePath(newP),
+        this.makeCallback(resolve, reject),
+      );
     });
   }
 
@@ -123,7 +126,12 @@ export class NodeFS extends FakeFS {
 
   async copyFilePromise(sourceP: string, destP: string, flags: number = 0) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.copyFile(NodeFS.fromPortablePath(sourceP), NodeFS.fromPortablePath(destP), flags, this.makeCallback(resolve, reject));
+      this.realFs.copyFile(
+        NodeFS.fromPortablePath(sourceP),
+        NodeFS.fromPortablePath(destP),
+        flags,
+        this.makeCallback(resolve, reject),
+      );
     });
   }
 
@@ -193,14 +201,23 @@ export class NodeFS extends FakeFS {
     const type: 'dir' | 'file' = target.endsWith(`/`) ? `dir` : `file`;
 
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.symlink(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type, this.makeCallback(resolve, reject));
+      this.realFs.symlink(
+        NodeFS.fromPortablePath(target.replace(/\/+$/, ``)),
+        NodeFS.fromPortablePath(p),
+        type,
+        this.makeCallback(resolve, reject),
+      );
     });
   }
 
   symlinkSync(target: string, p: string) {
     const type: 'dir' | 'file' = target.endsWith(`/`) ? `dir` : `file`;
 
-    return this.realFs.symlinkSync(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type);
+    return this.realFs.symlinkSync(
+      NodeFS.fromPortablePath(target.replace(/\/+$/, ``)),
+      NodeFS.fromPortablePath(p),
+      type,
+    );
   }
 
   readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
@@ -250,15 +267,13 @@ export class NodeFS extends FakeFS {
   }
 
   static fromPortablePath(p: string) {
-    if (process.platform !== `win32`)
-      return p;
+    if (process.platform !== `win32`) return p;
 
     // Path should look like "/mnt/n/berry/scripts/plugin-pack.js"
     // And transform to "N:\berry/scripts/plugin-pack.js"
 
     const match = p.match(PORTABLE_PREFIX_REGEXP);
-    if (!match)
-      return p;
+    if (!match) return p;
 
     const [, drive, pathWithoutPrefix = ''] = match;
     const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
@@ -267,21 +282,18 @@ export class NodeFS extends FakeFS {
   }
 
   static toPortablePath(p: string) {
-    if (process.platform !== `win32`)
-      return p;
+    if (process.platform !== `win32`) return p;
 
     // Path should look like "N:\berry/scripts/plugin-pack.js"
     // And transform to "/mnt/n/berry/scripts/plugin-pack.js"
 
     // Skip if the path is already portable
-    if (p.startsWith(PORTABLE_PATH_PREFIX))
-      return p;
+    if (p.startsWith(PORTABLE_PATH_PREFIX)) return p;
 
     const {root} = win32.parse(p);
 
     // If relative path, just replace win32 slashes by posix slashes
-    if (!root)
-      return p.replace(/\\/g, '/');
+    if (!root) return p.replace(/\\/g, '/');
 
     const driveLetter = root[0].toLowerCase();
     const pathWithoutRoot = p.substr(root.length);

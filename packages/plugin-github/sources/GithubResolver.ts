@@ -1,9 +1,9 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
-import {httpUtils, miscUtils, structUtils}               from '@berry/core';
-import {LinkType}                                        from '@berry/core';
-import {Ident, Descriptor, Locator, Manifest, Package}   from '@berry/core';
+import {httpUtils, miscUtils, structUtils} from '@berry/core';
+import {LinkType} from '@berry/core';
+import {Ident, Descriptor, Locator, Manifest, Package} from '@berry/core';
 
-import * as githubUtils                                  from './githubUtils';
+import * as githubUtils from './githubUtils';
 
 export class GithubResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -34,13 +34,13 @@ export class GithubResolver implements Resolver {
     }, packageFetch.releaseFs);
 
     return {
-      ... locator,
+      ...locator,
 
       version: manifest.version || `0.0.0`,
-      
+
       languageName: opts.project.configuration.get(`defaultLanguageName`),
       linkType: LinkType.HARD,
-      
+
       dependencies: manifest.dependencies,
       peerDependencies: manifest.peerDependencies,
 

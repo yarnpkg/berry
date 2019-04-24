@@ -1,11 +1,11 @@
-import {posix}                                             from 'path';
+import {posix} from 'path';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
-import {FakeFS, WriteFileOptions}                          from './FakeFS';
-import {NodeFS}                                            from './NodeFS';
+import {FakeFS, WriteFileOptions} from './FakeFS';
+import {NodeFS} from './NodeFS';
 
 export type CwdFSOptions = {
-  baseFs?: FakeFS,
+  baseFs?: FakeFS;
 };
 
 export class CwdFS extends FakeFS {

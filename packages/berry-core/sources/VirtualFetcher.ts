@@ -1,15 +1,14 @@
-import {AliasFS, NodeFS, xfs}                                    from '@berry/fslib';
-import {posix, win32}                                            from 'path';
+import {AliasFS, NodeFS, xfs} from '@berry/fslib';
+import {posix, win32} from 'path';
 
 import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from './Fetcher';
-import {MessageName, ReportError}                                from './Report';
-import * as structUtils                                          from './structUtils';
-import {Locator}                                                 from './types';
+import {MessageName, ReportError} from './Report';
+import * as structUtils from './structUtils';
+import {Locator} from './types';
 
 export class VirtualFetcher implements Fetcher {
   supports(locator: Locator) {
-    if (!locator.reference.startsWith(`virtual:`))
-      return false;
+    if (!locator.reference.startsWith(`virtual:`)) return false;
 
     return true;
   }
@@ -17,8 +16,7 @@ export class VirtualFetcher implements Fetcher {
   getLocalPath(locator: Locator, opts: FetchOptions) {
     const splitPoint = locator.reference.indexOf(`#`);
 
-    if (splitPoint === -1)
-      throw new Error(`Invalid virtual package reference`);
+    if (splitPoint === -1) throw new Error(`Invalid virtual package reference`);
 
     const nextReference = locator.reference.slice(splitPoint + 1);
     const nextLocator = structUtils.makeLocator(locator, nextReference);
@@ -29,8 +27,7 @@ export class VirtualFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const splitPoint = locator.reference.indexOf(`#`);
 
-    if (splitPoint === -1)
-      throw new Error(`Invalid virtual package reference`);
+    if (splitPoint === -1) throw new Error(`Invalid virtual package reference`);
 
     const nextReference = locator.reference.slice(splitPoint + 1);
     const nextLocator = structUtils.makeLocator(locator, nextReference);
@@ -67,7 +64,12 @@ export class VirtualFetcher implements Fetcher {
         if (opts.project.configuration.get(`enableAbsoluteVirtuals`)) {
           target = to;
         } else {
-          throw new ReportError(MessageName.CROSS_DRIVE_VIRTUAL_LOCAL, `The virtual folder (${fromParse.root}) must be on the same drive as the local package it references (${toParse.root})`);
+          throw new ReportError(
+            MessageName.CROSS_DRIVE_VIRTUAL_LOCAL,
+            `The virtual folder (${fromParse.root}) must be on the same drive as the local package it references (${
+              toParse.root
+            })`,
+          );
         }
       }
     }
@@ -94,8 +96,8 @@ export class VirtualFetcher implements Fetcher {
     });
 
     return {
-      ... sourceFetch,
-      packageFs: new AliasFS(virtualPath, {baseFs: sourceFetch.packageFs})
+      ...sourceFetch,
+      packageFs: new AliasFS(virtualPath, {baseFs: sourceFetch.packageFs}),
     };
   }
 }

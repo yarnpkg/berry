@@ -1,4 +1,4 @@
-import {xfs}         from '@berry/fslib';
+import {xfs} from '@berry/fslib';
 
 import {makeTracker} from './makeTracker';
 
@@ -10,14 +10,12 @@ export async function makeUpdater(filename: string) {
     const content = await xfs.readFilePromise(filename, `utf8`);
     const indentMatch = content.match(/^[ \t]+/m);
 
-    if (indentMatch)
-      indent = indentMatch[0];
+    if (indentMatch) indent = indentMatch[0];
 
     obj = JSON.parse(content || `{}`);
   }
 
-  if (!obj)
-    obj = {};
+  if (!obj) obj = {};
 
   const tracker = makeTracker(obj);
   const initial = tracker.immutable;
@@ -27,12 +25,11 @@ export async function makeUpdater(filename: string) {
       tracker.open(cb);
     },
     async save() {
-      if (tracker.immutable === initial)
-        return;
+      if (tracker.immutable === initial) return;
 
       const data = JSON.stringify(tracker.immutable, null, indent) + `\n`;
       await xfs.writeFilePromise(filename, data);
-    }
+    },
   };
 }
 

@@ -1,20 +1,18 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator}                             from './types';
+import * as structUtils from './structUtils';
+import {Descriptor, Locator} from './types';
 
 export const TAG_REGEXP = /^[a-z]+$/;
 
 export class TagResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!TAG_REGEXP.test(descriptor.range))
-      return false;
+    if (!TAG_REGEXP.test(descriptor.range)) return false;
 
     return true;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!TAG_REGEXP.test(locator.reference))
-      return false;
+    if (!TAG_REGEXP.test(locator.reference)) return false;
 
     return true;
   }
@@ -38,7 +36,10 @@ export class TagResolver implements Resolver {
   }
 
   private forwardDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return structUtils.makeDescriptor(descriptor, `${opts.project.configuration.get(`defaultProtocol`)}${descriptor.range}`);
+    return structUtils.makeDescriptor(
+      descriptor,
+      `${opts.project.configuration.get(`defaultProtocol`)}${descriptor.range}`,
+    );
   }
 
   private forwardLocator(locator: Locator, opts: MinimalResolveOptions) {

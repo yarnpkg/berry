@@ -1,10 +1,10 @@
-import {posix}                                             from 'path';
+import {posix} from 'path';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
-import {FakeFS, WriteFileOptions}                          from './FakeFS';
+import {FakeFS, WriteFileOptions} from './FakeFS';
 
 export type AliasFSOptions = {
-  baseFs: FakeFS,
+  baseFs: FakeFS;
 };
 
 export class AliasFS extends FakeFS {

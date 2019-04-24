@@ -1,15 +1,11 @@
-import {Plugin}         from '@berry/core';
+import {Plugin} from '@berry/core';
 
-import {GithubFetcher}  from './GithubFetcher';
+import {GithubFetcher} from './GithubFetcher';
 import {GithubResolver} from './GithubResolver';
 
 const plugin: Plugin = {
-  fetchers: [
-    GithubFetcher,
-  ],
-  resolvers: [
-    GithubResolver,
-  ],
+  fetchers: [GithubFetcher],
+  resolvers: [GithubResolver],
 };
 
 // eslint-disable-next-line arca/no-default-export

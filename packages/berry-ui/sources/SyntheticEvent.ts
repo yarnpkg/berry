@@ -3,12 +3,12 @@ import {Node} from './Node';
 export type EventDefault = () => void;
 
 export type EventOptions = {
-  bubbles: boolean,
-  cancelable: boolean,
+  bubbles: boolean;
+  cancelable: boolean;
 };
 
 export type EventData = {
-  [key: string]: any,
+  [key: string]: any;
 };
 
 export class SyntheticEvent {
@@ -62,8 +62,7 @@ export class SyntheticEvent {
   }
 
   preventDefault() {
-    if (!this.cancelable)
-      throw new Error(`Failed to execute 'preventDefault': Event is not cancelable.`);
+    if (!this.cancelable) throw new Error(`Failed to execute 'preventDefault': Event is not cancelable.`);
 
     this.defaultPrevented = true;
   }

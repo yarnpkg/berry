@@ -1,24 +1,24 @@
-import {xfs, NodeFS}                     from '@berry/fslib';
-import {parseSyml, stringifySyml}        from '@berry/parsers';
-import camelcase                         from 'camelcase';
-import chalk                             from 'chalk';
-import {UsageError}                      from 'clipanion';
-import decamelize                        from 'decamelize';
-import {homedir}                         from 'os';
-import {posix, win32}                    from 'path';
-import supportsColor                     from 'supports-color';
+import {xfs, NodeFS} from '@berry/fslib';
+import {parseSyml, stringifySyml} from '@berry/parsers';
+import camelcase from 'camelcase';
+import chalk from 'chalk';
+import {UsageError} from 'clipanion';
+import decamelize from 'decamelize';
+import {homedir} from 'os';
+import {posix, win32} from 'path';
+import supportsColor from 'supports-color';
 
-import {MultiFetcher}                    from './MultiFetcher';
-import {MultiResolver}                   from './MultiResolver';
-import {Plugin, Hooks}                   from './Plugin';
-import {SemverResolver}                  from './SemverResolver';
-import {TagResolver}                     from './TagResolver';
-import {VirtualFetcher}                  from './VirtualFetcher';
-import {WorkspaceFetcher}                from './WorkspaceFetcher';
-import {WorkspaceResolver}               from './WorkspaceResolver';
-import * as miscUtils                    from './miscUtils';
-import * as nodeUtils                    from './nodeUtils';
-import * as structUtils                  from './structUtils';
+import {MultiFetcher} from './MultiFetcher';
+import {MultiResolver} from './MultiResolver';
+import {Plugin, Hooks} from './Plugin';
+import {SemverResolver} from './SemverResolver';
+import {TagResolver} from './TagResolver';
+import {VirtualFetcher} from './VirtualFetcher';
+import {WorkspaceFetcher} from './WorkspaceFetcher';
+import {WorkspaceResolver} from './WorkspaceResolver';
+import * as miscUtils from './miscUtils';
+import * as nodeUtils from './nodeUtils';
+import * as structUtils from './structUtils';
 
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});
@@ -81,19 +81,19 @@ export enum SettingsType {
   LOCATOR_LOOSE = 'LOCATOR_LOOSE',
   STRING = 'STRING',
   SECRET = 'SECRET',
-};
+}
 
 export type SettingsDefinition = {
-  description: string,
-  type: SettingsType,
-  default: any,
-  isArray?: boolean,
-  isNullable?: boolean,
+  description: string;
+  type: SettingsType;
+  default: any;
+  isArray?: boolean;
+  isNullable?: boolean;
 };
 
 export type PluginConfiguration = {
-  modules: Map<string, any>,
-  plugins: Set<string>,
+  modules: Map<string, any>;
+  plugins: Set<string>;
 };
 
 // General rules:
@@ -240,29 +240,33 @@ function parseBoolean(value: unknown) {
     case `true`:
     case `1`:
     case 1:
-    case true: {
-      return true;
-    } break;
+    case true:
+      {
+        return true;
+      }
+      break;
 
     case `false`:
     case `0`:
     case 0:
-    case false: {
-      return false;
-    } break;
+    case false:
+      {
+        return false;
+      }
+      break;
 
-    default: {
-      throw new Error(`Couldn't parse "${value}" as a boolean`);
-    } break;
+    default:
+      {
+        throw new Error(`Couldn't parse "${value}" as a boolean`);
+      }
+      break;
   }
 }
 
 function parseValue(value: unknown, type: SettingsType, folder: string) {
-  if (type === SettingsType.BOOLEAN)
-    return parseBoolean(value);
+  if (type === SettingsType.BOOLEAN) return parseBoolean(value);
 
-  if (typeof value !== `string`)
-    throw new Error(`Expected value to be a string`);
+  if (typeof value !== `string`) throw new Error(`Expected value to be a string`);
 
   if (type === SettingsType.ABSOLUTE_PATH) {
     return posix.resolve(folder, NodeFS.toPortablePath(value));
@@ -278,12 +282,10 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
 function getDefaultGlobalFolder() {
   let base;
 
-  if (process.platform === `win32`) 
+  if (process.platform === `win32`)
     base = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
-   else if (process.env.XDG_DATA_HOME) 
-    base = NodeFS.toPortablePath(process.env.XDG_DATA_HOME);
-   else 
-    base = NodeFS.toPortablePath(homedir());
+  else if (process.env.XDG_DATA_HOME) base = NodeFS.toPortablePath(process.env.XDG_DATA_HOME);
+  else base = NodeFS.toPortablePath(homedir());
 
   return posix.resolve(base, `yarn/modern`);
 }
@@ -294,8 +296,7 @@ function getEnvironmentSettings() {
   for (let [key, value] of Object.entries(process.env)) {
     key = key.toLowerCase();
 
-    if (!key.startsWith(ENVIRONMENT_PREFIX))
-      continue;
+    if (!key.startsWith(ENVIRONMENT_PREFIX)) continue;
 
     key = key.slice(ENVIRONMENT_PREFIX.length);
     key = key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
@@ -309,9 +310,7 @@ function getEnvironmentSettings() {
 function getRcFilename() {
   const rcKey = `${ENVIRONMENT_PREFIX}rc_filename`;
 
-  for (const [key, value] of Object.entries(process.env))
-    if (key.toLowerCase() === rcKey)
-      return value;
+  for (const [key, value] of Object.entries(process.env)) if (key.toLowerCase() === rcKey) return value;
 
   return DEFAULT_RC_FILENAME;
 }
@@ -366,14 +365,12 @@ export class Configuration {
       const requireEntries = new Map();
       for (const request of nodeUtils.builtinModules())
         requireEntries.set(request, () => nodeUtils.dynamicRequire(request));
-      for (const [request, embedModule] of pluginConfiguration.modules)
-        requireEntries.set(request, () => embedModule);
+      for (const [request, embedModule] of pluginConfiguration.modules) requireEntries.set(request, () => embedModule);
 
       const dynamicPlugins = new Set();
 
       for (const {path, cwd, data} of rcFiles) {
-        if (!Array.isArray(data.plugins))
-          continue;
+        if (!Array.isArray(data.plugins)) continue;
 
         for (const userProvidedPath of data.plugins) {
           const pluginPath = posix.resolve(cwd, NodeFS.toPortablePath(userProvidedPath));
@@ -381,23 +378,27 @@ export class Configuration {
 
           // Prevent plugin redefinition so that the ones declared deeper in the
           // filesystem always have precedence over the ones below.
-          if (dynamicPlugins.has(name))
-            continue;
+          if (dynamicPlugins.has(name)) continue;
 
           const pluginRequireEntries = new Map(requireEntries);
           const pluginRequire = (request: string) => {
             if (pluginRequireEntries.has(request)) {
               return pluginRequireEntries.get(request)();
             } else {
-              throw new UsageError(`This plugin cannot access the package referenced via ${request} which is neither a builtin, nor an exposed entry`);
+              throw new UsageError(
+                `This plugin cannot access the package referenced via ${request} which is neither a builtin, nor an exposed entry`,
+              );
             }
           };
 
-          const plugin = miscUtils.prettifySyncErrors(() => {
-            return factory(pluginRequire).default;
-          }, message => {
-            return `${message} (when initializing ${name}, defined in ${path})`;
-          });
+          const plugin = miscUtils.prettifySyncErrors(
+            () => {
+              return factory(pluginRequire).default;
+            },
+            message => {
+              return `${message} (when initializing ${name}, defined in ${path})`;
+            },
+          );
 
           requireEntries.set(name, () => plugin);
 
@@ -427,8 +428,7 @@ export class Configuration {
     const configuration = new Configuration(projectCwd, plugins);
     configuration.useWithSource(`<environment>`, environmentSettings, startingCwd);
 
-    for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, data, cwd);
+    for (const {path, cwd, data} of rcFiles) configuration.useWithSource(path, data, cwd);
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
@@ -459,7 +459,7 @@ export class Configuration {
 
       nextCwd = posix.dirname(currentCwd);
     }
-    
+
     return rcFiles;
   }
 
@@ -472,11 +472,9 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(`${currentCwd}/package.json`))
-        projectCwd = currentCwd;
+      if (xfs.existsSync(`${currentCwd}/package.json`)) projectCwd = currentCwd;
 
-      if (xfs.existsSync(`${currentCwd}/${lockfileFilename}`))
-        break;
+      if (xfs.existsSync(`${currentCwd}/${lockfileFilename}`)) break;
 
       nextCwd = posix.dirname(currentCwd);
     }
@@ -488,17 +486,19 @@ export class Configuration {
     const rcFilename = getRcFilename();
     const configurationPath = `${cwd}/${rcFilename}`;
 
-    const current = xfs.existsSync(configurationPath) ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any : {};
+    const current = xfs.existsSync(configurationPath)
+      ? (parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any)
+      : {};
     const currentKeys = Object.keys(current);
 
-    // If some keys already use kebab-case then we keep using this style 
+    // If some keys already use kebab-case then we keep using this style
     const preferKebabCase = currentKeys.some(key => key.includes(`-`));
 
     let patched = false;
 
     for (const key of Object.keys(patch)) {
       let currentKey;
-      
+
       if (currentKeys.includes(key)) {
         currentKey = key;
       } else {
@@ -513,15 +513,13 @@ export class Configuration {
         }
       }
 
-      if (current[currentKey] === patch[key])
-        continue;
+      if (current[currentKey] === patch[key]) continue;
 
       current[currentKey] = patch[key];
       patched = true;
     }
 
-    if (!patched)
-      return;
+    if (!patched) return;
 
     await xfs.writeFilePromise(configurationPath, stringifySyml(current));
   }
@@ -532,10 +530,8 @@ export class Configuration {
 
     const importSettings = (definitions: {[name: string]: SettingsDefinition}) => {
       for (const [name, definition] of Object.entries(definitions)) {
-        if (this.settings.has(name))
-          throw new Error(`Cannot redefine settings "${name}"`);
-        else if (name in this)
-          throw new Error(`Settings named "${name}" conflicts with an actual property`);
+        if (this.settings.has(name)) throw new Error(`Cannot redefine settings "${name}"`);
+        else if (name in this) throw new Error(`Settings named "${name}" conflicts with an actual property`);
 
         this.settings.set(name, definition);
 
@@ -579,30 +575,32 @@ export class Configuration {
   }
 
   use(source: string, data: {[key: string]: unknown}, folder: string) {
-    if (typeof data.berry === `object` && data.berry !== null)
-      data = data.berry;
+    if (typeof data.berry === `object` && data.berry !== null) data = data.berry;
 
     for (const key of Object.keys(data)) {
       const name = key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
 
       // The plugins have already been loaded at this point
-      if (name === `plugins`)
-        continue;
+      if (name === `plugins`) continue;
 
       // binFolder is the magic location where the parent process stored the current binaries; not an actual configuration settings
-      if (name === `binFolder`)
-        continue;
+      if (name === `binFolder`) continue;
 
       // It wouldn't make much sense, would it?
       if (name === `rcFilename`)
-        throw new UsageError(`The rcFilename settings can only be set via ${`${ENVIRONMENT_PREFIX}RC_FILENAME`.toUpperCase()}, not via a rc file`);
+        throw new UsageError(
+          `The rcFilename settings can only be set via ${`${ENVIRONMENT_PREFIX}RC_FILENAME`.toUpperCase()}, not via a rc file`,
+        );
 
       const definition = this.settings.get(name);
       if (!definition)
-        throw new UsageError(`${legacyNames.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
+        throw new UsageError(
+          `${
+            legacyNames.has(key) ? `Legacy` : `Unrecognized`
+          } configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`,
+        );
 
-      if (this.sources.has(name))
-        continue;
+      if (this.sources.has(name)) continue;
 
       let value = data[key];
       if (value === null && !definition.isNullable && definition.default !== null)
@@ -625,8 +623,7 @@ export class Configuration {
   }
 
   get(key: string) {
-    if (!this.values.has(key))
-      throw new Error(`Invalid configuration key "${key}"`);
+    if (!this.values.has(key)) throw new Error(`Invalid configuration key "${key}"`);
 
     return this.values.get(key);
   }
@@ -635,60 +632,49 @@ export class Configuration {
     const pluginResolvers = [];
 
     for (const plugin of this.plugins.values())
-      for (const resolver of plugin.resolvers || [])
-        pluginResolvers.push(new resolver());
+      for (const resolver of plugin.resolvers || []) pluginResolvers.push(new resolver());
 
-    return new MultiResolver([
-      new WorkspaceResolver(),
-      new SemverResolver(),
-      new TagResolver(),
-
-      ... pluginResolvers,
-    ]);
+    return new MultiResolver([new WorkspaceResolver(), new SemverResolver(), new TagResolver(), ...pluginResolvers]);
   }
 
   makeFetcher() {
     const pluginFetchers = [];
 
     for (const plugin of this.plugins.values())
-      for (const fetcher of plugin.fetchers || [])
-        pluginFetchers.push(new fetcher());
+      for (const fetcher of plugin.fetchers || []) pluginFetchers.push(new fetcher());
 
-    return new MultiFetcher([
-      new VirtualFetcher(),
-      new WorkspaceFetcher(),
-
-      ... pluginFetchers,
-    ]);
+    return new MultiFetcher([new VirtualFetcher(), new WorkspaceFetcher(), ...pluginFetchers]);
   }
 
   getLinkers() {
     const linkers = [];
 
-    for (const plugin of this.plugins.values())
-      for (const linker of plugin.linkers || [])
-        linkers.push(new linker());
+    for (const plugin of this.plugins.values()) for (const linker of plugin.linkers || []) linkers.push(new linker());
 
     return linkers;
   }
 
-  async triggerHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((... args: U) => V) | undefined, ... args: U): Promise<void> {
+  async triggerHook<U extends any[], V, HooksDefinition = Hooks>(
+    get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined,
+    ...args: U
+  ): Promise<void> {
     for (const plugin of this.plugins.values()) {
       const hooks = plugin.hooks as HooksDefinition;
-      if (!hooks)
-        continue;
+      if (!hooks) continue;
 
       const hook = get(hooks);
-      if (!hook)
-        continue;
+      if (!hook) continue;
 
-      await hook(... args);
+      await hook(...args);
     }
   }
 
-  async triggerMultipleHooks<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((... args: U) => V) | undefined, argsList: Array<U>): Promise<void> {
+  async triggerMultipleHooks<U extends any[], V, HooksDefinition = Hooks>(
+    get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined,
+    argsList: Array<U>,
+  ): Promise<void> {
     for (const args of argsList) {
-      await this.triggerHook(get, ... args);
+      await this.triggerHook(get, ...args);
     }
   }
 

@@ -1,19 +1,19 @@
 import {FakeFS, LazyFS, NodeFS, ZipFS, xfs} from '@berry/fslib';
-import {lock, unlock}                       from 'lockfile';
-import {posix}                              from 'path';
-import {promisify}                          from 'util';
+import {lock, unlock} from 'lockfile';
+import {posix} from 'path';
+import {promisify} from 'util';
 
-import {Configuration}                      from './Configuration';
-import {MessageName, ReportError}           from './Report';
-import * as hashUtils                       from './hashUtils';
-import * as structUtils                     from './structUtils';
-import {LocatorHash, Locator}               from './types';
+import {Configuration} from './Configuration';
+import {MessageName, ReportError} from './Report';
+import * as hashUtils from './hashUtils';
+import * as structUtils from './structUtils';
+import {LocatorHash, Locator} from './types';
 
 const lockP = promisify(lock);
 const unlockP = promisify(unlock);
 
 export type FetchFromCacheOptions = {
-  checksums: Map<LocatorHash, Locator>,
+  checksums: Map<LocatorHash, Locator>;
 };
 
 export class Cache {
@@ -50,7 +50,11 @@ export class Cache {
     });
   }
 
-  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, loader?: () => Promise<ZipFS>): Promise<[FakeFS, () => void, string]> {
+  async fetchPackageFromCache(
+    locator: Locator,
+    expectedChecksum: string | null,
+    loader?: () => Promise<ZipFS>,
+  ): Promise<[FakeFS, () => void, string]> {
     const cachePath = this.getLocatorPath(locator);
     const baseFs = new NodeFS();
 
@@ -66,9 +70,17 @@ export class Cache {
             return actualChecksum;
 
           default:
-          case `throw`: {
-            throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `${structUtils.prettyLocator(this.configuration, locator)} doesn't resolve to an archive that matches the expected checksum`);
-          } break;
+          case `throw`:
+            {
+              throw new ReportError(
+                MessageName.CACHE_CHECKSUM_MISMATCH,
+                `${structUtils.prettyLocator(
+                  this.configuration,
+                  locator,
+                )} doesn't resolve to an archive that matches the expected checksum`,
+              );
+            }
+            break;
         }
       }
 
@@ -77,7 +89,9 @@ export class Cache {
 
     const loadPackage = async () => {
       if (!loader)
-        throw new Error(`Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
+        throw new Error(
+          `Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`,
+        );
 
       return await this.writeFileIntoCache(cachePath, async () => {
         const zipFs = await loader();
@@ -108,20 +122,20 @@ export class Cache {
       }
     };
 
-    for (let mutex; mutex = this.mutexes.get(locator.locatorHash);)
-      await mutex;
+    for (let mutex; (mutex = this.mutexes.get(locator.locatorHash)); ) await mutex;
 
-    const checksum = baseFs.existsSync(cachePath)
-      ? await validateFile(cachePath)
-      : await loadPackageThroughMutex();
+    const checksum = baseFs.existsSync(cachePath) ? await validateFile(cachePath) : await loadPackageThroughMutex();
 
     let zipFs: ZipFS | null = null;
 
     const lazyFs: LazyFS = new LazyFS(() => {
       try {
-        return zipFs = new ZipFS(cachePath, {readOnly: true, baseFs});
+        return (zipFs = new ZipFS(cachePath, {readOnly: true, baseFs}));
       } catch (error) {
-        error.message = `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
+        error.message = `Failed to open the cache entry for ${structUtils.prettyLocator(
+          this.configuration,
+          locator,
+        )}: ${error.message}`;
         throw error;
       }
     });

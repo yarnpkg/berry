@@ -1,19 +1,19 @@
 import {Ident, Locator, Project, Workspace} from '@berry/core';
-import {miscUtils, structUtils}             from '@berry/core';
-import {xfs}                                from '@berry/fslib';
-import {posix}                              from 'path';
-import pl                                   from 'tau-prolog';
+import {miscUtils, structUtils} from '@berry/core';
+import {xfs} from '@berry/fslib';
+import {posix} from 'path';
+import pl from 'tau-prolog';
 
-import {linkProjectToSession}               from './tauModule';
+import {linkProjectToSession} from './tauModule';
 
 export type DependencyMismatch = {
-  packageLocator: Locator,
-  dependencyIdent: Ident,
-  expectedResolution: string,
+  packageLocator: Locator;
+  dependencyIdent: Ident;
+  expectedResolution: string;
 };
 
 export type ConstraintReport = {
-  mismatchingDependencies: Array<DependencyMismatch>,
+  mismatchingDependencies: Array<DependencyMismatch>;
 };
 
 export const enum DependencyType {
@@ -22,16 +22,11 @@ export const enum DependencyType {
   PeerDependencies = 'peerDependencies',
 }
 
-const DEPENDENCY_TYPES = [
-  DependencyType.Dependencies,
-  DependencyType.DevDependencies,
-  DependencyType.PeerDependencies,
-];
+const DEPENDENCY_TYPES = [DependencyType.Dependencies, DependencyType.DevDependencies, DependencyType.PeerDependencies];
 
 // Node 8 doesn't have Symbol.asyncIterator
 // https://github.com/Microsoft/TypeScript/issues/14151#issuecomment-280812617
-if (Symbol.asyncIterator == null)
-  (Symbol as any).asyncIterator = Symbol.for('Symbol.asyncIterator');
+if (Symbol.asyncIterator == null) (Symbol as any).asyncIterator = Symbol.for('Symbol.asyncIterator');
 
 class Session {
   private readonly session: pl.type.Session;
@@ -57,15 +52,14 @@ class Session {
     while (true) {
       const answer = await this.fetchNextAnswer();
 
-      if (!answer)
-        break;
+      if (!answer) break;
 
       yield answer;
     }
   }
 }
 
-function parseLink(link: pl.Link): string|null {
+function parseLink(link: pl.Link): string | null {
   if (link.id === `null`) {
     return null;
   } else {
@@ -93,19 +87,22 @@ export class Constraints {
   getProjectDatabase() {
     let database = ``;
 
-    for (const dependencyType of DEPENDENCY_TYPES)
-      database += `dependency_type(${dependencyType}).\n`
+    for (const dependencyType of DEPENDENCY_TYPES) database += `dependency_type(${dependencyType}).\n`;
 
     for (const workspace of this.project.workspacesByCwd.values()) {
       const relativeCwd = workspace.relativeCwd;
 
       database += `workspace(${escape(relativeCwd)}).\n`;
-      database += `workspace_ident(${escape(relativeCwd)}, ${escape(structUtils.stringifyIdent(workspace.locator))}).\n`
-      database += `workspace_version(${escape(relativeCwd)}, ${escape(workspace.manifest.version)}).\n`
+      database += `workspace_ident(${escape(relativeCwd)}, ${escape(
+        structUtils.stringifyIdent(workspace.locator),
+      )}).\n`;
+      database += `workspace_version(${escape(relativeCwd)}, ${escape(workspace.manifest.version)}).\n`;
 
       for (const dependencyType of DEPENDENCY_TYPES) {
         for (const dependency of workspace.manifest[dependencyType].values()) {
-          database += `workspace_has_dependency(${escape(relativeCwd)}, ${escape(structUtils.stringifyIdent(dependency))}, ${escape(dependency.range)}, ${dependencyType}).\n`;
+          database += `workspace_has_dependency(${escape(relativeCwd)}, ${escape(
+            structUtils.stringifyIdent(dependency),
+          )}, ${escape(dependency.range)}, ${dependencyType}).\n`;
         }
       }
     }
@@ -147,54 +144,54 @@ export class Constraints {
     const session = this.createSession();
 
     let enforcedDependencyRanges: Array<{
-      workspace: Workspace,
-      dependencyIdent: Ident,
-      dependencyRange: string | null,
-      dependencyType: DependencyType,
+      workspace: Workspace;
+      dependencyIdent: Ident;
+      dependencyRange: string | null;
+      dependencyType: DependencyType;
     }> = [];
 
-    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
-      if (answer.id === `throw`)
-        throw new Error(pl.format_answer(answer));
+    for await (const answer of session.makeQuery(
+      `workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`,
+    )) {
+      if (answer.id === `throw`) throw new Error(pl.format_answer(answer));
 
       const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyRange = parseLink(answer.links.DependencyRange);
       const dependencyType = parseLink(answer.links.DependencyType) as DependencyType;
 
-      if (workspaceCwd === null || dependencyRawIdent === null)
-        throw new Error(`Invalid rule`);
+      if (workspaceCwd === null || dependencyRawIdent === null) throw new Error(`Invalid rule`);
 
       const workspace = this.project.getWorkspaceByCwd(workspaceCwd);
       const dependencyIdent = structUtils.parseIdent(dependencyRawIdent);
-      
+
       enforcedDependencyRanges.push({workspace, dependencyIdent, dependencyRange, dependencyType});
     }
 
     enforcedDependencyRanges = miscUtils.sortMap(enforcedDependencyRanges, [
-      ({dependencyRange}) => dependencyRange !== null ? `0` : `1`,
+      ({dependencyRange}) => (dependencyRange !== null ? `0` : `1`),
       ({workspace}) => structUtils.stringifyIdent(workspace.locator),
       ({dependencyIdent}) => structUtils.stringifyIdent(dependencyIdent),
     ]);
 
     let invalidDependencies: Array<{
-      workspace: Workspace,
-      dependencyIdent: Ident,
-      dependencyType: DependencyType,
-      reason: string | null,
+      workspace: Workspace;
+      dependencyIdent: Ident;
+      dependencyType: DependencyType;
+      reason: string | null;
     }> = [];
 
-    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, Reason).`)) {
-      if (answer.id === `throw`)
-        throw new Error(pl.format_answer(answer));
+    for await (const answer of session.makeQuery(
+      `workspace(WorkspaceCwd), dependency_type(DependencyType), gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, Reason).`,
+    )) {
+      if (answer.id === `throw`) throw new Error(pl.format_answer(answer));
 
       const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyType = parseLink(answer.links.DependencyType) as DependencyType;
       const reason = parseLink(answer.links.Reason);
 
-      if (workspaceCwd === null || dependencyRawIdent === null)
-        throw new Error(`Invalid rule`);
+      if (workspaceCwd === null || dependencyRawIdent === null) throw new Error(`Invalid rule`);
 
       const workspace = this.project.getWorkspaceByCwd(workspaceCwd);
       const dependencyIdent = structUtils.parseIdent(dependencyRawIdent);
@@ -214,10 +211,9 @@ export class Constraints {
     const session = this.createSession();
 
     for await (const answer of session.makeQuery(query)) {
-      if (answer.id === `throw`)
-        throw new Error(pl.format_answer(answer));
+      if (answer.id === `throw`) throw new Error(pl.format_answer(answer));
 
-      const parsedLinks: Record<string, string|null> = {};
+      const parsedLinks: Record<string, string | null> = {};
 
       for (const [variable, value] of Object.entries(answer.links)) {
         if (variable !== `_`) {
