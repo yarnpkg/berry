@@ -187,7 +187,13 @@ export class StreamReport extends Report {
   }
 
   private formatName(name: MessageName) {
-    return `BR` + name.toString(10).padStart(4, `0`);
+    const label = `YN` + name.toString(10).padStart(4, `0`);
+
+    if (name === MessageName.UNNAMED) {
+      return this.configuration.format(label, `grey`);
+    } else {
+      return label;
+    }
   }
 
   private formatIndent() {
