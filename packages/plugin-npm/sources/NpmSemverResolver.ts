@@ -1,10 +1,11 @@
 import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest} from '@berry/core';
 import {Ident, Descriptor, Locator}                                                          from '@berry/core';
 import {LinkType}                                                                            from '@berry/core';
-import {httpUtils, structUtils}                                                              from '@berry/core';
+import {structUtils}                                                                         from '@berry/core';
 import semver                                                                                from 'semver';
 
 import {PROTOCOL}                                                                            from './constants';
+import * as npmHttpUtils                                                                     from './npmHttpUtils';
 
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
 const NODE_GYP_MATCH = /\b(node-gyp|prebuild-install)\b/;
@@ -44,7 +45,7 @@ export class NpmSemverResolver implements Resolver {
     if (semver.valid(range))
       return [structUtils.convertDescriptorToLocator(descriptor)];
 
-    const httpResponse = await httpUtils.get(this.getIdentUrl(descriptor, opts), opts.project.configuration);
+    const httpResponse = await npmHttpUtils.get(this.getIdentUrl(descriptor, opts), descriptor, opts.project.configuration);
 
     const versions = Object.keys(JSON.parse(httpResponse.toString()).versions);
     const candidates = versions.filter(version => semver.satisfies(version, range));
@@ -61,7 +62,7 @@ export class NpmSemverResolver implements Resolver {
   async resolve(locator: Locator, opts: ResolveOptions) {
     const version = locator.reference.slice(PROTOCOL.length);
 
-    const httpResponse = await httpUtils.get(this.getIdentUrl(locator, opts), opts.project.configuration);
+    const httpResponse = await npmHttpUtils.get(this.getIdentUrl(locator, opts), locator, opts.project.configuration);
     const registryData = JSON.parse(httpResponse.toString());
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))

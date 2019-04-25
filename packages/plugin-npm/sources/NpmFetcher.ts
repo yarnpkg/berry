@@ -1,9 +1,10 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
+import {structUtils, tgzUtils}                      from '@berry/core';
 import {Locator, MessageName}                       from '@berry/core';
 import semver                                       from 'semver';
 
 import {PROTOCOL}                                   from './constants';
+import * as npmHttpUtils                            from './npmHttpUtils';
 
 export class NpmFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -41,7 +42,11 @@ export class NpmFetcher implements Fetcher {
   }
 
   private async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
-    const sourceBuffer = await httpUtils.get(this.getLocatorUrl(locator, opts), opts.project.configuration);
+    const sourceBuffer = await npmHttpUtils.get(
+      this.getLocatorUrl(locator, opts),
+      locator,
+      opts.project.configuration,
+    );
 
     return await tgzUtils.makeArchive(sourceBuffer, {
       stripComponents: 1,
