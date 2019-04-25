@@ -20,7 +20,11 @@ function parseProxy(specifier: string) {
   return {proxy};
 }
 
-async function getNoCache(target: string, configuration: Configuration): Promise<Buffer> {
+export interface Options {
+  headers?: {[headerName: string]: string};
+}
+
+async function getNoCache(target: string, configuration: Configuration, options: Options = {}): Promise<Buffer> {
   if (!configuration.get(`enableNetwork`))
     throw new Error(`Network access have been disabled by configuration (when querying ${target})`);
 
@@ -40,7 +44,7 @@ async function getNoCache(target: string, configuration: Configuration): Promise
       ? tunnel.httpsOverHttp(parseProxy(httpsProxy))
       : globalHttpsAgent;
 
-  const res = await got(target, {agent, encoding: null});
+  const res = await got(target, {...options, agent, encoding: null});
 
   if (res.statusCode !== 200)
     throw new Error(`The remote server answered with an HTTP ${res.statusCode} (when querying ${target})`);
@@ -48,11 +52,11 @@ async function getNoCache(target: string, configuration: Configuration): Promise
   return await res.body;
 }
 
-export function get(target: string, configuration: Configuration): Promise<Buffer> {
+export function get(target: string, configuration: Configuration, options?: Options): Promise<Buffer> {
   let entry = cache.get(target);
 
   if (!entry) {
-    entry = getNoCache(target, configuration);
+    entry = getNoCache(target, configuration, options);
     cache.set(target, entry);
   }
 
