@@ -2,6 +2,8 @@ import EventEmitter from 'events';
 
 import { PnpApi } from '@berry/pnp';
 
+import { dynamicRequire } from './dynamicRequire';
+
 /**
  * PnP API locator options
  */
@@ -50,8 +52,8 @@ export class PnPApiLoader extends EventEmitter {
     const opts: any = options || {};
     this.options = {
       uncachedRequire: opts.uncachedRequire || ((modulePath: string): any => {
-        delete require.cache[require.resolve(modulePath)];
-        return require(modulePath);
+        delete require.cache[dynamicRequire.resolve(modulePath)];
+        return dynamicRequire(modulePath);
       }),
       watch: opts.watch
     };

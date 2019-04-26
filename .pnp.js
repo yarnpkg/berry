@@ -9994,6 +9994,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:7.2.3"
                 ],
                 [
+                  "@berry/builder",
+                  "workspace:packages/berry-builder"
+                ],
+                [
                   "@berry/fslib",
                   "workspace:packages/berry-fslib"
                 ],
@@ -10008,6 +10012,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "typescript",
                   "npm:3.3.3333"
+                ],
+                [
+                  "webpack",
+                  "npm:4.28.4"
+                ],
+                [
+                  "webpack-cli",
+                  "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:3.2.1"
                 ]
               ]
             }
@@ -63202,6 +63214,74 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "webpack-cli",
                   "virtual:4bd66d78d6f2a01856119217f243ce59d8bcf964e11ca85388b70ec98bb2769b81ea9ed41f57dceb8c20587a07ed5497ecd2676962b483f238e320ef833ccd13#npm:3.2.1"
+                ],
+                [
+                  "chalk",
+                  "npm:2.4.2"
+                ],
+                [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
+                  "enhanced-resolve",
+                  "npm:4.1.0"
+                ],
+                [
+                  "findup-sync",
+                  "npm:2.0.0"
+                ],
+                [
+                  "global-modules",
+                  "npm:1.0.0"
+                ],
+                [
+                  "global-modules-path",
+                  "npm:2.3.1"
+                ],
+                [
+                  "import-local",
+                  "npm:2.0.0"
+                ],
+                [
+                  "interpret",
+                  "npm:1.2.0"
+                ],
+                [
+                  "lightercollective",
+                  "npm:0.1.0"
+                ],
+                [
+                  "loader-utils",
+                  "npm:1.2.3"
+                ],
+                [
+                  "supports-color",
+                  "npm:5.5.0"
+                ],
+                [
+                  "v8-compile-cache",
+                  "npm:2.0.2"
+                ],
+                [
+                  "webpack",
+                  "npm:4.28.4"
+                ],
+                [
+                  "yargs",
+                  "npm:12.0.5"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:3.2.1",
+            {
+              "packageLocation": "./.yarn/virtual/webpack-cli-virtual-a3c975fc7ee621e540d97886b8d2cb2ecbb313ba08478c95224d81d439b8c37a/node_modules/webpack-cli/",
+              "packageDependencies": [
+                [
+                  "webpack-cli",
+                  "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:3.2.1"
                 ],
                 [
                   "chalk",
