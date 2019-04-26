@@ -75,16 +75,28 @@ export class PnPApiLoader extends EventEmitter {
     if (!cacheEntry.pnpApi) {
       cacheEntry.pnpApi = this.options.uncachedRequire(pnpApiPath);
       if (cacheEntry.pnpApi && !cacheEntry.watched) {
-        this.options.watch(pnpApiPath, (event: string, filename: string) => {
-          delete cacheEntry.pnpApi;
-          this.emit(event, filename);
-        });
         cacheEntry.watched = true;
+        this.cachedApis[pnpApiPath] = cacheEntry;
+        this.options.watch(pnpApiPath, () => {
+          let newApi;
+          try {
+            newApi = this.options.uncachedRequire(pnpApiPath);
+          } catch (e) {
+          }
+          /**
+           * Sometimes we receive empty API object here,
+           * we will ignore this event
+           */
+          if (newApi === undefined || (newApi && Object.keys(newApi).length > 0)) {
+            if (newApi !== undefined) {
+              cacheEntry.pnpApi = newApi;
+            } else {
+              delete cacheEntry.pnpApi;
+            }
+            this.emit('change', pnpApiPath);
+          }
+        });
       }
-    }
-
-    if (cacheEntry.watched) {
-      this.cachedApis[pnpApiPath] = cacheEntry;
     }
 
     return cacheEntry.pnpApi;

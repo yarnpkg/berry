@@ -2,6 +2,8 @@ import { NodePathResolver } from '../sources/NodePathResolver';
 import { PnPApiLoader } from '../sources/PnPApiLoader';
 import { PnPApiLocator } from '../sources/PnPApiLocator';
 
+const API_PATH = '/home/user/proj/.pnp.js';
+
 describe('NodePathResolver should', () => {
   let resolver: NodePathResolver;
 
@@ -38,7 +40,7 @@ describe('NodePathResolver should', () => {
       }
     }))});
     const apiLocator = new PnPApiLocator({
-      existsSync: path => path === '/home/user/proj/.pnp.js'
+      existsSync: path => path === API_PATH
     });
     resolver = new NodePathResolver({ apiLoader, apiLocator });
   });
@@ -54,49 +56,51 @@ describe('NodePathResolver should', () => {
     expect(pnpPath).toEqual({ resolvedPath: nodePath });
   });
 
-  it('partially resolve /home/user/proj/node_modules path', () => {
+  it('resolve /home/user/proj/node_modules path', () => {
     const nodePath = '/home/user/proj/node_modules';
     const pnpPath = resolver.resolvePath(nodePath);
-    expect(pnpPath.resolvedPath).toBeUndefined();
-    expect(pnpPath.request).toEqual('');
-    expect(pnpPath.issuer).toBeDefined();
+    expect(pnpPath).toEqual({ apiPath: API_PATH, resolvedPath: '/home/user/proj' });
   });
 
   it('partially resolve /home/user/proj/node_modules/@scope path', () => {
     const nodePath = '/home/user/proj/node_modules/@scope';
     const pnpPath = resolver.resolvePath(nodePath);
-    expect(pnpPath.resolvedPath).toBeUndefined();
-    expect(pnpPath.request).toEqual('@scope');
-    expect(pnpPath.issuer).toBeDefined();
+    expect(pnpPath).toEqual({ apiPath: API_PATH, issuer: '/home/user/proj', issuerInfo: { packageLocation: '/home/user/proj' }, request: '@scope' });
   });
 
   it('not change path inside pnp dependency', () => {
     const nodePath = '/home/user/proj/.cache/foo/node_modules/foo';
     const pnpPath = resolver.resolvePath(nodePath);
-    expect(pnpPath).toEqual({ resolvedPath: nodePath });
+    expect(pnpPath).toEqual({ apiPath: API_PATH, resolvedPath: nodePath });
   });
 
-  it('enter into package in a path', () => {
+  it('resolve /home/user/proj/node_modules/foo path', () => {
     const nodePath = '/home/user/proj/node_modules/foo';
     const pnpPath = resolver.resolvePath(nodePath);
-    expect(pnpPath).toEqual({ resolvedPath: '/home/user/proj/.cache/foo/node_modules/foo'});
+    expect(pnpPath).toEqual({ apiPath: API_PATH, resolvedPath: '/home/user/proj/.cache/foo/node_modules/foo' });
   });
 
-  it('enter into package in a path and leave request intact', () => {
+  it('enter resolve package and leave request intact in /home/user/proj/node_modules/foo/a/b/c/index.js', () => {
     const nodePath = '/home/user/proj/node_modules/foo/a/b/c/index.js';
     const pnpPath = resolver.resolvePath(nodePath);
-    expect(pnpPath).toEqual({ resolvedPath: '/home/user/proj/.cache/foo/node_modules/foo/a/b/c/index.js' });
+    expect(pnpPath).toEqual({ apiPath: API_PATH, resolvedPath: '/home/user/proj/.cache/foo/node_modules/foo/a/b/c/index.js' });
   });
 
   it('enter into two packages in a path and leave request intact', () => {
     const nodePath = '/home/user/proj/node_modules/foo/node_modules/bar/a/b/c/index.js';
     const pnpPath = resolver.resolvePath(nodePath);
-    expect(pnpPath).toEqual({ resolvedPath: '/home/user/proj/.cache/bar/node_modules/bar/a/b/c/index.js' });
+    expect(pnpPath).toEqual({ apiPath: API_PATH, resolvedPath: '/home/user/proj/.cache/bar/node_modules/bar/a/b/c/index.js' });
   });
 
   it('return null if issuer has no given dependency', () => {
     const nodePath = '/home/user/proj/node_modules/bar';
     const pnpPath = resolver.resolvePath(nodePath);
-    expect(pnpPath).toEqual({ resolvedPath: null });
+    expect(pnpPath).toEqual({ apiPath: API_PATH, resolvedPath: null });
   })
+
+  it('return null if packages dependends on itself', () => {
+    const nodePath = '/home/user/proj/node_modules/foo/node_modules/foo';
+    const pnpPath = resolver.resolvePath(nodePath);
+    expect(pnpPath).toEqual({ apiPath: API_PATH, resolvedPath: null });
+  });
 });

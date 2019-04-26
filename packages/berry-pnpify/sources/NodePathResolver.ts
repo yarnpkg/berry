@@ -22,30 +22,41 @@ export interface NodePathResolverOptions {
  * Regexp for pathname that catches the following paths:
  *
  * 1. A path without `/node_modules` in the beginning. We don't process these, since they cannot be inside any of PnP package roots
- * 2. A path with complete package name inside, e.g. `/node_modules/pkg-name` or `/node_modules/@scope/pkg-name`
- * 3. A path with incomplete package name inside, e.g. `/node_modules` or `/node_modules/@scope`
+ * 2. A path with incomplete or complete package name inside, e.g. `/node_modules[/@scope][/foo]`
  *
  * And everything at the end of the pathname
  */
-const NODE_MODULES_REGEXP = /(\/node_modules(?:(\/[^@][^\/]+|\/@[^\/]+\/[^\/]+)|(\/@[^\/]+|$)))?(.*)/;
+const NODE_MODULES_REGEXP = /(?:\/node_modules((?:\/@[^\/]+)?(?:\/[^@][^\/]+)?))?(.*)/;
 
 /**
  * Resolved `/node_modules` path inside PnP project info
  */
 export interface ResolvedPath {
   /**
-   * Fully resolved path, `null` if path is within PnP project, but does not exist,
-   * `undefined` if path is within PnP project but is a container dir that
-   * cannot be fully resolved, i.e. `../node_modules` or `.../node_modules/@scope`
-   * in this case `PartiallyResolvedPath` fields will be returned
+   * Fully resolved path `/node_modules/...` path within PnP project,
+   * `null` if path does not exist, `undefined` if path cannot be fully resolved, .e.g. has
+   * the form `/node_modules[/@foo]`, in this case `request` will contain '' or '@foo'
    */
   resolvedPath?: string | null;
 
-  // Final PnP issuer path (without trailing /), present if `resolvedPath` undefined
+  /**
+   * Path to PnP API filename, present if path is inside PnP project and contains `/node_modules`
+   */
+  apiPath?: string | null;
+
+  /**
+   * Final PnP issuer path (without trailing /)
+   */
   issuer?: string;
-  // Final PnP issuer package info, present if `resolvedPath` undefined
+
+  /**
+   * Final PnP issuer package info
+   */
   issuerInfo?: PackageInformation;
-  // Request inside issuer path, present if `resolvedPath` undefined
+
+  /**
+   * Unresolved request inside issuer path, either '' or '@foo'
+   */
   request?: string;
 }
 
@@ -74,32 +85,27 @@ export class NodePathResolver {
   }
 
   /**
-   * Resolves paths containing `node_modules` inside PnP projects.
+   * Resolves paths containing `/node_modules` inside PnP projects. If path is outside PnP
+   * project it is not changed.
    *
    * This method extracts `.../node_modules/pkgName/...` from the path
    * and uses previous package as an issuer for the next package.
-   * It detects whether partial package name was specified, e.g. `/node_modules/@scope`
-   * or `/node_modules` (it is considered partial package too, because it points to a directory,
-   * not to a concrete package). Partial package can be specified only at the end of the path,
-   * so if this is the case, the method stops and returns issuer info and partial package name
-   * in `request` field of the result. If only full package names were specified the method
-   * returns only `resolvedPath` field in a result, which points to a real path within some
-   * PnP dependency.
    *
    * @param nodePath path containing `node_modules`
    *
    * @returns resolved path
    */
   public resolvePath(nodePath: string): ResolvedPath {
-    const result: ResolvedPath = { resolvedPath: nodePath };
     const pathname = nodePath.replace('\\', '/');
+    const result: ResolvedPath = { resolvedPath: nodePath };
     if (pathname.indexOf('/node_modules') < 0) {
       // Non-node_modules paths should not be processed
       return result;
     }
     const pnpApiPath = this.options.apiLocator.findApi(nodePath);
+    result.apiPath = pnpApiPath;
     const pnp = pnpApiPath && this.options.apiLoader.getApi(pnpApiPath);
-    if (pnp) {
+    if (pnpApiPath && pnp) {
       // Extract first issuer from the path using PnP API
       let issuer = this.getIssuer(pnp, pathname);
       let request: string | undefined;
@@ -110,34 +116,40 @@ export class NodePathResolver {
 
         let m;
         let pkgName;
-        let partialPkgName;
+        let partialPackageName = false;
         do {
             m = request.match(NODE_MODULES_REGEXP);
             if (m) {
-              [,,pkgName, partialPkgName, request] = m;
+              [,pkgName, request] = m;
               // Strip starting /
               pkgName = pkgName ? pkgName.substring(1) : pkgName;
-              // Strip starting /
-              partialPkgName = partialPkgName ? partialPkgName.substring(1) : partialPkgName;
+              // Check if full package name was provided
               if (pkgName) {
-                try {
-                  const res = pnp.resolveToUnqualified(pkgName, issuer + '/');
-                  issuer = res === null ? undefined : res;
-                } catch (e) {
-                  issuer = undefined;
-                  break;
+                if (pkgName[0] !== '@' || pkgName.indexOf('/') > 0) {
+                  try {
+                    const res = pnp.resolveToUnqualified(pkgName, issuer + '/');
+                    issuer = res === null || res === issuer ? undefined : res;
+                  } catch (e) {
+                    issuer = undefined;
+                    break;
+                  }
+                } else {
+                  request = pkgName;
+                  pkgName = undefined;
+                  partialPackageName = true;
                 }
               }
             }
-          // Continue parsing path remainder until we have something left in a `request` and
-          // we have received full package name
-        } while (pkgName && request);
+          // Continue parsing path remainder until we have something left in a `request`
+          // and we still have not lost the issuer
+        } while (request && pkgName);
 
         if (issuer) {
-          if (partialPkgName !== undefined) {
+          if (partialPackageName) {
             delete result.resolvedPath;
             result.issuer = issuer;
-            result.request = partialPkgName;
+            result.apiPath = pnpApiPath;
+            result.request = request;
             const locator = pnp.findPackageLocator(issuer + '/');
             const pkgInfo = locator ? pnp.getPackageInformation(locator) : undefined;
             result.issuerInfo = pkgInfo === null ? undefined : pkgInfo;
