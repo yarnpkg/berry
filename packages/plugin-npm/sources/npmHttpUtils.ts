@@ -15,8 +15,10 @@ export function get(url: string, ident: Ident, configuration: Configuration) {
 }
 
 function getAuthenticationHeader(ident: Ident, configuration: Configuration) {
-  if (!configuration.get(`npmAlwaysAuth`) && !ident.scope)
-    return undefined;
+  const mustAuthenticate = configuration.get(`npmAlwaysAuth`);
+
+  if (!mustAuthenticate && !ident.scope)
+    return null;
 
   if (configuration.get(`npmAuthToken`))
     return `Bearer ${configuration.get(`npmAuthToken`)}`;
@@ -24,5 +26,9 @@ function getAuthenticationHeader(ident: Ident, configuration: Configuration) {
   if (configuration.get(`npmAuthIdent`))
     return `Basic ${configuration.get(`npmAuthIdent`)}`;
 
-  throw new Error(`No authentication configured for request`);
+  if (mustAuthenticate) {
+    throw new Error(`No authentication configured for request`);
+  } else {
+    return null;
+  }
 }
