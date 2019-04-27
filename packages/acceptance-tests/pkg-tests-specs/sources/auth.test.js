@@ -6,6 +6,9 @@ const {
 const AUTH_TOKEN = `686159dc-64b3-413e-a244-2de2b8d1c36f`;
 const AUTH_IDENT = `dXNlcm5hbWU6YSB2ZXJ5IHNlY3VyZSBwYXNzd29yZA==`; // username:a very secure password
 
+const INVALID_AUTH_TOKEN = `a24cb960-e6a5-45fc-b9ab-0f9fe0aaae57`;
+const INVALID_AUTH_IDENT = `dXNlcm5hbWU6bm90IHRoZSByaWdodCBwYXNzd29yZA==`; // username:not the right password
+
 describe(`Auth tests`, () => {
   test(
     `it should fail to install unscoped packages which require authentication if no authentication is configured`,
@@ -149,6 +152,34 @@ describe(`Auth tests`, () => {
           name: `private-package`,
           version: `1.0.0`,
         });
+      },
+    ),
+  );
+
+  test(
+    `it should fail when an invalid authenticaation token is used`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`private-package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc`, `npmAuthToken "${INVALID_AUTH_TOKEN}"\nnpmAlwaysAuth true\n`);
+
+        await expect(run(`install`)).rejects.toThrow();
+      },
+    ),
+  );
+
+  test(
+    `it should fail when an invalid authentication ident is used`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`private-package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc`, `npmAuthIdent "${INVALID_AUTH_IDENT}"\nnpmAlwaysAuth true\n`);
+
+        await expect(run(`install`)).rejects.toThrow();
       },
     ),
   );
