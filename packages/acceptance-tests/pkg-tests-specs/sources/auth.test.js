@@ -1,0 +1,155 @@
+const {
+  fs: {writeFile},
+  tests: {getPackageArchivePath, getPackageHttpArchivePath, getPackageDirectoryPath},
+} = require('pkg-tests-core');
+
+const AUTH_TOKEN = `686159dc-64b3-413e-a244-2de2b8d1c36f`;
+const AUTH_IDENT = `dXNlcm5hbWU6YSB2ZXJ5IHNlY3VyZSBwYXNzd29yZA==`; // username:a very secure password
+
+describe(`Auth tests`, () => {
+  test(
+    `it should fail to install unscoped packages which require authentication if no authentication is configured`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`private-package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        // Rejected by 401 error from registry so no validation on the error message
+        await expect(run(`install`)).rejects.toThrow();
+      },
+    ),
+  );
+
+  test(
+    `it should fail to install scoped packages which require authentication if no authentication is configured`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        // Rejected by 401 error from registry so no validation on the error message
+        await expect(run(`install`)).rejects.toThrow();
+      },
+    ),
+  );
+
+  test(
+    `it should fail to install packages which if npmAlwaysAuth is set to true without auth present`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`no-deps`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc`, `npmAlwaysAuth true\n`);
+
+        await expect(run(`install`)).rejects.toThrowError(/No authentication configured for request/);
+      },
+    ),
+  );
+
+  test(
+    `it should fail to install unscoped packages which require authentication if an authentication token is configured but always-auth is false`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`private-package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc`, `npmAuthToken "${AUTH_TOKEN}"\n`);
+
+        // Rejected by 401 error from registry so no validation on the error message
+        await expect(run(`install`)).rejects.toThrow();
+      },
+    ),
+  );
+
+  test(
+    `it should install scoped packages which require authentication if an authentication token is configured`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc`, `npmAuthToken "${AUTH_TOKEN}"\n`);
+
+        await run(`install`);
+
+        await expect(source(`require('@private/package')`)).resolves.toMatchObject({
+          name: `@private/package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should install unscoped packages which require authentication if npmAlwaysAuth is set to true and an authentication token is present`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`private-package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc`, `npmAuthToken "${AUTH_TOKEN}"\nnpmAlwaysAuth true\n`);
+
+        await run(`install`);
+
+        await expect(source(`require('private-package')`)).resolves.toMatchObject({
+          name: `private-package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should fail to install unscoped packages which require authentication if an authentication ident is configured but always-auth is false`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`private-package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc`, `npmAuthIdent "${AUTH_IDENT}"\n`);
+
+        // Rejected by 401 error from registry so no validation on the error message
+        await expect(run(`install`)).rejects.toThrow();
+      },
+    ),
+  );
+
+  test(
+    `it should install scoped packages which require authentication if an authentication ident is configured`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc`, `npmAuthIdent "${AUTH_IDENT}"\n`);
+
+        await run(`install`);
+
+        await expect(source(`require('@private/package')`)).resolves.toMatchObject({
+          name: `@private/package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should install unscoped packages which require authentication if npmAlwaysAuth is set to true and an authentication ident is present`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`private-package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc`, `npmAuthIdent "${AUTH_IDENT}"\nnpmAlwaysAuth true\n`);
+
+        await run(`install`);
+
+        await expect(source(`require('private-package')`)).resolves.toMatchObject({
+          name: `private-package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+});

@@ -247,15 +247,20 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
     },
   };
 
-  function processError(res: ServerResponse, statusCode: number, errorMessage: string): void {
-    console.error(errorMessage);
-
+  function sendError(res: ServerResponse, statusCode: number, errorMessage: string): void {
     res.writeHead(statusCode);
     res.end(errorMessage);
   }
 
+  function processError(res: ServerResponse, statusCode: number, errorMessage: string): void {
+    console.error(errorMessage);
+    sendError(res, statusCode, errorMessage);
+  }
+
   function parseRequest(url: string): Request|null {
     let match: RegExpMatchArray|null;
+
+    url = url.replace(/%2f/g, '/');
 
     if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)$/)) {
       const [_, scope, localName] = match;
@@ -303,11 +308,11 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
             const {authorization} = req.headers;
             if (authorization != null) {
               if (!validAuthorizations.includes(authorization)) {
-                processError(res, 403, `Forbidden`);
+                sendError(res, 403, `Forbidden`);
                 return;
               }
             } else if (needsAuth(parsedRequest)) {
-              processError(res, 401, `Authentication required`);
+              sendError(res, 401, `Authentication required`);
               return;
             }
 
