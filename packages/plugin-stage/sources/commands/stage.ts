@@ -72,6 +72,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     ]);
 
     const changeList = await driver.filterChanges(root, yarnPaths, yarnNames);
+    const typeOfChanges = await driver.findChanges(root, changeList);
 
     if (dryRun) {
       for (const file of changeList) {

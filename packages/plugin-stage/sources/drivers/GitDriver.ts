@@ -45,6 +45,59 @@ export const Driver = {
     });
   },
 
+  setKeyValue(map: Map<string, number>, key: string) {
+    if(map.has(key)) {
+      const count = map.get(key);
+      map.set(key, count ? count + 1 : 1);
+    }
+    else {
+      map.set(key, 1);
+    }
+    return map;
+  },
+
+  async findChanges(cwd: string, changes: Array<string>) {
+
+    const updates = new Map();
+    const removes = new Map();
+    const adds = new Map();
+    for(const change of changes) {
+      const {stdout:prevStdout} = await execUtils.execvp(`git`, [`show`, `HEAD~1:${change.substring(cwd.length+1)}`], {cwd, strict: true});
+      const {stdout:currStdout} = await execUtils.execvp(`cat`, [`${change}`], {cwd, strict: true});
+      try {
+        const {dependencies: prevDeps, devDependencies: prevDevDeps} = JSON.parse(prevStdout.toString());
+        const {dependencies: currDeps, devDependencies: currDevDeps} = JSON.parse(currStdout.toString());
+        const totalPrevDeps = {...prevDeps, ...prevDevDeps};
+        const totalCurrDeps = {...currDeps, ...currDevDeps};
+        //Find all the  updates/adds/removes on the package.json compare to prev one
+        for(const prevPkg of Object.entries(totalPrevDeps)) {
+          const [name, version] = prevPkg;
+          if(totalCurrDeps[name]) {
+            if (version !== totalCurrDeps[name]) {
+              const key = `Updates ${name} to ${totalCurrDeps[name]}`;
+              this.setKeyValue(updates, key);
+            }
+          }
+          else {
+            const key = `Remove ${name}`;
+            this.setKeyValue(removes, key);
+          }
+        }
+
+        for(const currPkg of Object.entries(totalCurrDeps)) {
+          const [name] = currPkg;
+          if (!totalPrevDeps[name]) {
+            const key = `Adds ${name}`;
+            this.setKeyValue(adds, key);
+          }
+        }
+      }
+      catch(e) {
+        console.log("Error", prevStdout, currStdout);
+      }
+    }
+  },
+
   async makeCommit(cwd: string, changeList: Array<string>) {
     const localPaths = changeList.map(path => NodeFS.fromPortablePath(path));
 

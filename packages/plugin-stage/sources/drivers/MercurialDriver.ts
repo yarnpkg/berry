@@ -8,6 +8,10 @@ export const Driver = {
   async filterChanges(cwd: string, paths: Set<string>, filenames: Set<string>) {
     return [];
   },
+
+  async findChanges(cwd: string, change: Array<string>) {
+    return [];
+  },
   
   async makeCommit(cwd: string, changeList: Array<string>) {
   },
