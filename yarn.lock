@@ -1484,7 +1484,7 @@ __metadata:
     "@berry/cli": "workspace:*"
     brfs: "npm:^2.0.1"
     buffer-loader: "npm:^0.1.0"
-    clipanion: "npm:^0.14.0"
+    clipanion: "npm:^0.14.1"
     joi: "npm:^13.6.0"
     pnp-webpack-plugin: "npm:^1.3.1"
     raw-loader: "npm:^0.5.1"
@@ -1522,7 +1522,7 @@ __metadata:
     "@berry/pnp": "workspace:*"
     "@berry/shell": "workspace:*"
     chalk: "npm:^2.4.1"
-    clipanion: "npm:^0.14.0"
+    clipanion: "npm:^0.14.1"
     execa: "npm:^1.0.0"
     semver: "npm:^5.6.0"
     tmp: "npm:^0.0.33"
@@ -1544,7 +1544,7 @@ __metadata:
     agentkeepalive: "npm:^4.0.2"
     camelcase: "npm:^5.3.1"
     chalk: "npm:^2.4.1"
-    clipanion: "npm:^0.14.0"
+    clipanion: "npm:^0.14.1"
     cross-spawn: "npm:^6.0.5"
     decamelize: "npm:^3.2.0"
     execa: "npm:^1.0.0"
@@ -1716,7 +1716,7 @@ __metadata:
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
-    clipanion: "npm:^0.14.0"
+    clipanion: "npm:^0.14.1"
     tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
@@ -1730,7 +1730,7 @@ __metadata:
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/parsers": "workspace:*"
-    clipanion: "npm:^0.14.0"
+    clipanion: "npm:^0.14.1"
     execa: "npm:^1.0.0"
     inquirer: "npm:^6.2.0"
     semver: "npm:^5.6.0"
@@ -1783,7 +1783,7 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/ui": "workspace:*"
-    clipanion: "npm:^0.14.0"
+    clipanion: "npm:^0.14.1"
     dateformat: "npm:^3.0.3"
     immer: "npm:^1.7.2"
     joi: "npm:^13.6.0"
@@ -1802,7 +1802,7 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
-    clipanion: "npm:^0.14.0"
+    clipanion: "npm:^0.14.1"
   languageName: unknown
   linkType: soft
 
@@ -1832,7 +1832,7 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
-    clipanion: "npm:^0.14.0"
+    clipanion: "npm:^0.14.1"
   languageName: unknown
   linkType: soft
 
@@ -1855,7 +1855,7 @@ __metadata:
     "@berry/builder": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
-    clipanion: "npm:^0.14.0"
+    clipanion: "npm:^0.14.1"
   languageName: unknown
   linkType: soft
 
@@ -6008,13 +6008,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipanion@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "clipanion@npm:0.14.0"
+"clipanion@npm:^0.14.1":
+  version: 0.14.1
+  resolution: "clipanion@npm:0.14.1"
   dependencies:
     camelcase: "npm:^5.2.0"
     chalk: "npm:^1.1.3"
-  checksum: b08de0f7a6cbcca35099dd3431a78c157a50582b91fa52f392f9d8657fe7ea39d87d48d0bdaaaae531908479f7609f2a92f0cd15b1f6aadde72f8f61ca5ce2b1
+  checksum: 49460fa7c2fbd469bf611075d438c98e83bbe85b217a7bd7105fd427c42573f7c3070465dcb462342096e2b3cfd8bbbb63e0b7b7be53c09907b86a352d8b646e
   languageName: node
   linkType: hard
 

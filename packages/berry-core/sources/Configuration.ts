@@ -278,11 +278,11 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
 function getDefaultGlobalFolder() {
   let base;
 
-  if (process.platform === `win32`) 
+  if (process.platform === `win32`)
     base = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
-   else if (process.env.XDG_DATA_HOME) 
+   else if (process.env.XDG_DATA_HOME)
     base = NodeFS.toPortablePath(process.env.XDG_DATA_HOME);
-   else 
+   else
     base = NodeFS.toPortablePath(homedir());
 
   return posix.resolve(base, `yarn/modern`);
@@ -459,7 +459,7 @@ export class Configuration {
 
       nextCwd = posix.dirname(currentCwd);
     }
-    
+
     return rcFiles;
   }
 
@@ -491,14 +491,17 @@ export class Configuration {
     const current = xfs.existsSync(configurationPath) ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any : {};
     const currentKeys = Object.keys(current);
 
-    // If some keys already use kebab-case then we keep using this style 
+    // If some keys already use kebab-case then we keep using this style
     const preferKebabCase = currentKeys.some(key => key.includes(`-`));
 
     let patched = false;
 
+    if (typeof patch === `function`)
+      patch = patch(current);
+
     for (const key of Object.keys(patch)) {
       let currentKey;
-      
+
       if (currentKeys.includes(key)) {
         currentKey = key;
       } else {

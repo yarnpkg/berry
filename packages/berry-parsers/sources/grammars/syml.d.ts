@@ -1,1 +1,1 @@
-export declare const parse: (code: string) => Object;
+export declare const parse: (code: string) => {[key: string]: any};

@@ -8559,7 +8559,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.14.0"
+                  "npm:0.14.1"
                 ],
                 [
                   "joi",
@@ -8700,7 +8700,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.14.0"
+                  "npm:0.14.1"
                 ],
                 [
                   "execa",
@@ -8777,7 +8777,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.14.0"
+                  "npm:0.14.1"
                 ],
                 [
                   "cross-spawn",
@@ -9353,7 +9353,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.14.0"
+                  "npm:0.14.1"
                 ],
                 [
                   "tmp",
@@ -9398,7 +9398,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.14.0"
+                  "npm:0.14.1"
                 ],
                 [
                   "execa",
@@ -9555,7 +9555,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.14.0"
+                  "npm:0.14.1"
                 ],
                 [
                   "dateformat",
@@ -9620,7 +9620,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.14.0"
+                  "npm:0.14.1"
                 ]
               ]
             }
@@ -9707,7 +9707,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.14.0"
+                  "npm:0.14.1"
                 ]
               ]
             }
@@ -9777,7 +9777,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.14.0"
+                  "npm:0.14.1"
                 ]
               ]
             }
@@ -21881,13 +21881,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "clipanion",
         [
           [
-            "npm:0.14.0",
+            "npm:0.14.1",
             {
-              "packageLocation": "./.yarn/cache/clipanion-npm-0.14.0-ea2736aeb41c01b1013699d548c90f98dbbc8ed701b686e5f6f9b8f4e57aee79.zip/node_modules/clipanion/",
+              "packageLocation": "./.yarn/cache/clipanion-npm-0.14.1-1bcf38d79cfa1cdd1714c62545f3762efbffa21336da32a9f08f438fe9d4c5cd.zip/node_modules/clipanion/",
               "packageDependencies": [
                 [
                   "clipanion",
-                  "npm:0.14.0"
+                  "npm:0.14.1"
                 ],
                 [
                   "camelcase",
