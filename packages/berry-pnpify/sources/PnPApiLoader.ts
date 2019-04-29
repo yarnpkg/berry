@@ -1,6 +1,6 @@
-import EventEmitter from 'events';
+import { PnpApi }         from '@berry/pnp';
 
-import { PnpApi } from '@berry/pnp';
+import EventEmitter       from 'events';
 
 import { dynamicRequire } from './dynamicRequire';
 
@@ -90,11 +90,11 @@ export class PnPApiLoader extends EventEmitter {
            * we will ignore this event
            */
           if (newApi === undefined || (newApi && Object.keys(newApi).length > 0)) {
-            if (newApi !== undefined) {
+            if (newApi !== undefined)
               cacheEntry.pnpApi = newApi;
-            } else {
+             else
               delete cacheEntry.pnpApi;
-            }
+
             this.emit('change', pnpApiPath);
           }
         });

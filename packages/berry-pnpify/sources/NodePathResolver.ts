@@ -1,7 +1,7 @@
 import { PnpApi, PackageInformation } from '@berry/pnp';
 
-import { PnPApiLoader } from './PnPApiLoader';
-import { PnPApiLocator } from './PnPApiLocator';
+import { PnPApiLoader }               from './PnPApiLoader';
+import { PnPApiLocator }              from './PnPApiLocator';
 
 /**
  * Node path resolver options
@@ -98,10 +98,10 @@ export class NodePathResolver {
   public resolvePath(nodePath: string): ResolvedPath {
     const pathname = nodePath.replace('\\', '/');
     const result: ResolvedPath = { resolvedPath: nodePath };
-    if (pathname.indexOf('/node_modules') < 0) {
+    if (pathname.indexOf('/node_modules') < 0) 
       // Non-node_modules paths should not be processed
       return result;
-    }
+    
     const pnpApiPath = this.options.apiLocator.findApi(nodePath);
     result.apiPath = pnpApiPath;
     const pnp = pnpApiPath && this.options.apiLoader.getApi(pnpApiPath);

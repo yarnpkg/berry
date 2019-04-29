@@ -1,10 +1,10 @@
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
+import fs                   from 'fs';
+import os                   from 'os';
+import path                 from 'path';
 
-import { PnPApiLoader } from './PnPApiLoader';
-import { PnPApiLocator } from './PnPApiLocator';
 import { NodePathResolver } from './NodePathResolver';
+import { PnPApiLoader }     from './PnPApiLoader';
+import { PnPApiLocator }    from './PnPApiLocator';
 import { VirtualDirReader } from './VirtualDirReader';
 
 function mountVirtualNodeModulesFs() {
@@ -44,11 +44,11 @@ function mountVirtualNodeModulesFs() {
           args[0] = pnpPath.resolvedPath;
         }
         if (!fileMightExist) {
-          if (['existsSync'].indexOf(this.method) >= 0) {
+          if (['existsSync'].indexOf(this.method) >= 0)
             result = false;
-          } else if (['stat'].indexOf(this.method) < 0) {
+           else if (['stat'].indexOf(this.method) < 0)
             result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
-          }
+
           hasResult = true;
         }
       } else if (['realpathSync'].indexOf(this.method) >= 0) {
@@ -61,11 +61,11 @@ function mountVirtualNodeModulesFs() {
             realPath = args[0];
           }
         }
-        if (realPath) {
+        if (realPath)
           result = realPath;
-        } else {
+         else
           result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
-        }
+
         hasResult = true;
       } else if (['readFileSync'].indexOf(this.method) >= 0) {
         const pnpPath = pathResolver.resolvePath(args[0]);
@@ -97,9 +97,9 @@ function mountVirtualNodeModulesFs() {
       realFs.appendFileSync.apply(fs, [path.join(os.tmpdir(), 'pnpify.log'), e.stack + '\n']);
     }
     try {
-      if (hasResult && result instanceof Error) {
+      if (hasResult && result instanceof Error)
         throw result;
-      }
+
       const finalResult = hasResult ? result : realFs[this.method].apply(fs, args);
       if (process.env.PNPIFY_TRACE && arguments.length > 0 && typeof arguments[0] === 'string' && arguments[0].indexOf(process.env.PNPIFY_TRACE) >= 0 && arguments[0].indexOf('pnpify.log') < 0) {
         const dumpedResult = this.method === 'watch' || finalResult === undefined ? '' : ' = ' + JSON.stringify(finalResult instanceof Buffer ? finalResult.toString() : finalResult);
@@ -107,9 +107,9 @@ function mountVirtualNodeModulesFs() {
       }
       return finalResult;
     } catch (e) {
-      if (process.env.PNPIFY_TRACE && arguments.length > 0 && typeof arguments[0] === 'string' && arguments[0].indexOf(process.env.PNPIFY_TRACE) >= 0 && arguments[0].indexOf('pnpify.log') < 0) {
+      if (process.env.PNPIFY_TRACE && arguments.length > 0 && typeof arguments[0] === 'string' && arguments[0].indexOf(process.env.PNPIFY_TRACE) >= 0 && arguments[0].indexOf('pnpify.log') < 0)
         realFs.appendFileSync.apply(fs, [path.join(os.tmpdir(), 'pnpify.log'), this.method + ' ' + arguments[0] + ' -> ' + args[0] + ' = ' + ((e.message.indexOf('ENOENT') >= 0 || e.message.indexOf('ENOTDIR') >= 0) ? e.message : e.stack) + '\n']);
-      }
+
       throw e;
     }
   }
