@@ -7,7 +7,6 @@
   },
   "scripts": {
     "build:pnpify": "run webpack-cli --config webpack.config.pkg.js",
-    "build:pnpify:babel": "babel --root-mode upward sources --out-dir lib --extensions .ts",
     "test:pnpify": "run test:unit packages/berry-pnpify",
     "test:watch:pnpify": "run test:unit --watch packages/berry-pnpify"
   },
