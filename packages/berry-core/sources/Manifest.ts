@@ -1,12 +1,12 @@
-import {FakeFS, NodeFS}    from '@berry/fslib';
-import {parseResolution}   from '@berry/parsers';
-import {posix}             from 'path';
-import semver              from 'semver';
+import {FakeFS, NodeFS}                                   from '@berry/fslib';
+import {Resolution, parseResolution, stringifyResolution} from '@berry/parsers';
+import {posix}                                            from 'path';
+import semver                                             from 'semver';
 
-import * as miscUtils      from './miscUtils';
-import * as structUtils    from './structUtils';
-import {IdentHash}         from './types';
-import {Ident, Descriptor} from './types';
+import * as miscUtils                                     from './miscUtils';
+import * as structUtils                                   from './structUtils';
+import {IdentHash}                                        from './types';
+import {Ident, Descriptor}                                from './types';
 
 export interface WorkspaceDefinition {
   pattern: string;
@@ -42,7 +42,7 @@ export class Manifest {
   public dependenciesMeta: Map<string, Map<string | null, DependencyMeta>> = new Map();
   public peerDependenciesMeta: Map<string, PeerDependencyMeta> = new Map();
 
-  public resolutions: Array<{pattern: any, reference: string}> = [];
+  public resolutions: Array<{pattern: Resolution, reference: string}> = [];
 
   public files: Set<String> = new Set();
 
@@ -366,7 +366,11 @@ export class Manifest {
     data.peerDependenciesMeta = this.peerDependenciesMeta.size === 0 ? undefined : Object.assign({}, ... miscUtils.sortMap(this.peerDependenciesMeta.entries(), ([identString, meta]) => identString).map(([identString, meta]) => {
       return {[identString]: meta};
     }));
-    
+
+    data.resolutions = this.resolutions.length === 0 ? undefined : Object.assign({}, ... this.resolutions.map(({pattern, reference}) => {
+      return {[stringifyResolution(pattern)]: reference};
+    }));
+
     if(this.files.size === 0) {
       data.files = undefined;
     } else {

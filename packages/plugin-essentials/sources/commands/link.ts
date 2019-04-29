@@ -1,84 +1,86 @@
-import {WorkspaceRequiredError}                                           from '@berry/cli';
-import {Configuration, Cache, PluginConfiguration, Project, StreamReport} from '@berry/core';
-import {structUtils}                                                      from '@berry/core';
-import {xfs}                                                              from '@berry/fslib';
-import {UsageError}                                                       from 'clipanion';
-import {posix}                                                            from 'path';
-import {Writable}                                                         from 'stream';
+import {WorkspaceRequiredError}                                                        from '@berry/cli';
+import {Cache, Configuration, PluginConfiguration, Project, StreamReport, structUtils} from '@berry/core';
+import {NodeFS}                                                                        from '@berry/fslib';
+import {UsageError}                                                                    from 'clipanion';
+import {posix}                                                                         from 'path';
+import {Writable}                                                                      from 'stream';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`link [... packages]`)
-  .describe(`connect local packages together`)
+  .command(`link <destination> [--all] [-p,--private] [-r,--relative]`)
+  .describe(`connect the local project to another one`)
 
   .detail(`
-    When used without arguments, this command will register the current workspace into a global store. This will have no effect on the workspace itself.
+    This command will set a new \`resolutions\` field in the project-level manifest and point it to the workspace at the specified location (even if part of another project).
 
-    When used with arguments, Yarn will add entries in the \`resolutions\` field from the project package.json for each package name passed in argument that can be matched with a workspace previously registered into the global store.
+    If the \`--all\` option is set, all workspaces belonging to the target project will be linked to the current one.
 
-    This workflow makes it simpler to work with a local version of your libraries.
+    There is no \`yarn unlink\` command. To unlink the workspaces from the current project one must revert the changes made to the \`resolutions\` field.
   `)
 
   .example(
-    `Register a local workspace for use in another application`,
-    `yarn link`,
+    `Register a remote workspace for use in the current project`,
+    `yarn link ~/ts-loader`,
   )
 
   .example(
-    `Configure the project to always use the local version of my-package`,
-    `yarn link my-package`,
+    `Register all workspaces from a remote project for use in the current project`,
+    `yarn link ~/jest --all`,
   )
 
-  .action(async ({cwd, stdout, packages}: {cwd: string, stdout: Writable, packages: Array<string>}) => {
+  .action(async ({cwd, stdout, destination, all, private: priv, relative}: {cwd: string, stdout: Writable, destination: string, all: boolean, private: boolean, relative: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
+    const cache = await Cache.find(configuration);
 
     if (!workspace)
       throw new WorkspaceRequiredError(cwd);
 
-    const globalFolder = configuration.get(`globalFolder`);
+    const absoluteDestination = posix.resolve(cwd, NodeFS.toPortablePath(destination));
 
-    const lstatePath = posix.resolve(globalFolder, `link-state.json`);
-    const lstate = xfs.existsSync(lstatePath)
-      ? JSON.parse(await xfs.readFilePromise(lstatePath, `utf8`))
-      : {};
+    const configuration2 = await Configuration.find(absoluteDestination, pluginConfiguration);
+    const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);
 
-    if (packages.length === 0) {
-      if (!workspace.manifest.name)
-        throw new UsageError(`This command can only be run within a local package with a name`);
+    if (!workspace2)
+      throw new WorkspaceRequiredError(absoluteDestination);
+
+    const topLevelWorkspace = project.topLevelWorkspace;
+    const linkedWorkspaces = [];
+
+    if (all) {
+      for (const workspace of project2.workspaces)
+        if (workspace.manifest.name && (!workspace.manifest.private || priv))
+          linkedWorkspaces.push(workspace);
       
-      for (const [key, path] of Object.entries(lstate))
-        if (path === workspace.cwd)
-          delete lstate[key];
-
-      lstate[structUtils.stringifyIdent(workspace.manifest.name)] = workspace.cwd;
-
-      await xfs.mkdirpPromise(posix.dirname(lstatePath));
-      await xfs.changeFilePromise(lstatePath, JSON.stringify(lstate, Object.keys(lstate).sort(), 2));
-    } else {
-      const descriptors = packages.map(packageName => {
-        if (!Object.prototype.hasOwnProperty.call(lstate, packageName)) {
-          throw new UsageError(`Couldn't find a link registration for "${packageName}" (${lstate})`);
-        } else {
-          return structUtils.makeDescriptor(structUtils.parseIdent(packageName), `portal:${lstate[packageName]}`);
-        }
-      });
-
-      const cache = await Cache.find(configuration);
-
-      for (const descriptor of descriptors) {
-        if (workspace.manifest.devDependencies.has(descriptor.identHash)) {
-          workspace.manifest.devDependencies.set(descriptor.identHash, descriptor);
-        } else {
-          workspace.manifest.dependencies.set(descriptor.identHash, descriptor);
-        }
+      if (linkedWorkspaces.length === 0) {
+        throw new UsageError(`No workspace found to be linked in the target project`);
       }
+    } else {
+      if (!workspace2.manifest.name)
+        throw new UsageError(`The target workspace doesn't have a name and thus cannot be linked`);
 
-      const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
-        await project.install({cache, report});
-      });
+      if (workspace2.manifest.private && !priv)
+        throw new UsageError(`The target workspace is marked private - use the --private flag to link it anyway`);
 
-      return report.exitCode();
+      linkedWorkspaces.push(workspace2);
     }
+
+    for (const workspace of linkedWorkspaces) {
+      const fullName = structUtils.stringifyIdent(workspace.locator);
+      const target = relative
+        ? posix.relative(project.cwd, workspace.cwd)
+        : workspace.cwd;
+
+      topLevelWorkspace.manifest.resolutions.push({
+        pattern: {descriptor: {fullName}},
+        reference: `portal:${target}`,
+      });
+    }
+
+    const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
+      await project.install({cache, report});
+    });
+
+    return report.exitCode();
   });
