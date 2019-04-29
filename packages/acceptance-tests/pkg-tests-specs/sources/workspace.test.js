@@ -46,7 +46,7 @@ describe(`Workspaces tests`, () => {
           name: `workspace-a`,
           version: `1.0.0`,
           dependencies: {
-            [`workspace-a`]: `1.0.0`,
+            [`workspace-b`]: `1.0.0`,
           },
         });
 
@@ -61,7 +61,7 @@ describe(`Workspaces tests`, () => {
           name: `workspace-b`,
           version: `1.0.0`,
           dependencies: {
-            [`workspace-b`]: `1.0.0`,
+            [`workspace-a`]: `1.0.0`,
           },
         });
 
