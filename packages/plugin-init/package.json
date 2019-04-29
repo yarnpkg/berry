@@ -6,6 +6,6 @@
     "@berry/core": "workspace:*",
     "@berry/fslib": "workspace:*",
     "@berry/json-proxy": "workspace:*",
-    "clipanion": "^0.14.0"
+    "clipanion": "^0.14.1"
   }
 }

@@ -6,7 +6,7 @@
     "@berry/core": "workspace:*",
     "@berry/json-proxy": "workspace:*",
     "@berry/ui": "workspace:*",
-    "clipanion": "^0.14.0",
+    "clipanion": "^0.14.1",
     "dateformat": "^3.0.3",
     "immer": "^1.7.2",
     "joi": "^13.6.0",

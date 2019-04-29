@@ -6,7 +6,7 @@
     "@berry/builder": "workspace:*",
     "@berry/core": "workspace:*",
     "@berry/fslib": "workspace:*",
-    "clipanion": "^0.14.0"
+    "clipanion": "^0.14.1"
   },
   "scripts": {
     "build:plugin-stage": "run @berry-build-plugin"
