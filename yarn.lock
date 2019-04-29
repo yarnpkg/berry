@@ -1866,6 +1866,8 @@ __metadata:
     "@berry/builder": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
+    "@types/inquirer": "npm:6.0.1"
+    inquirer: "npm:^6.3.1"
   languageName: unknown
   linkType: soft
 
@@ -3033,6 +3035,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/inquirer@npm:6.0.1":
+  version: 6.0.1
+  resolution: "@types/inquirer@npm:6.0.1"
+  dependencies:
+    "@types/through": "npm:*"
+    rxjs: "npm:>=6.4.0"
+  checksum: 169940ff89186d96a83c118c4a39293f5b83896902850040ee540fd540430e24ad6d2512c9e541802065e17280805b47835c22329498f0168b65af7a99ff5a62
+  languageName: node
+  linkType: hard
+
 "@types/inquirer@npm:^0.0.43":
   version: 0.0.43
   resolution: "@types/inquirer@npm:0.0.43"
@@ -3978,6 +3990,13 @@ __metadata:
   version: 4.0.0
   resolution: "ansi-regex@npm:4.0.0"
   checksum: b4d339abc6f68b8133050fdbf6821db8102f5687cb7cdbfb607bf5e175ca164bd1c2dd311adc91b52d1c810003a0e85e5669edb86411f8c19a4ad12b3a9abd93
+  languageName: node
+  linkType: hard
+
+"ansi-regex@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "ansi-regex@npm:4.1.0"
+  checksum: 81d6694a109fc59673447e2e5c8f2866fc2d9bba73901a53542663f6b085ab05726a831ea0f1a6c66496c7c4fb3b3c9bebef12d73e08601aad3d80bd60c4d2f0
   languageName: node
   linkType: hard
 
@@ -11541,6 +11560,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"inquirer@npm:^6.3.1":
+  version: 6.3.1
+  resolution: "inquirer@npm:6.3.1"
+  dependencies:
+    ansi-escapes: "npm:^3.2.0"
+    chalk: "npm:^2.4.2"
+    cli-cursor: "npm:^2.1.0"
+    cli-width: "npm:^2.0.0"
+    external-editor: "npm:^3.0.3"
+    figures: "npm:^2.0.0"
+    lodash: "npm:^4.17.11"
+    mute-stream: "npm:0.0.7"
+    run-async: "npm:^2.2.0"
+    rxjs: "npm:^6.4.0"
+    string-width: "npm:^2.1.0"
+    strip-ansi: "npm:^5.1.0"
+    through: "npm:^2.3.6"
+  checksum: efd4937af4a59b157a23c4391f6b66d19c7889365258be8329b0995ba2e5e61dee6c3caf0a765e64d88280caa1d9a6f645b04c054b9f96ab1b14cf40d9270e01
+  languageName: node
+  linkType: hard
+
 "internal-ip@npm:^4.2.0":
   version: 4.2.0
   resolution: "internal-ip@npm:4.2.0"
@@ -18308,6 +18348,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rxjs@npm:>=6.4.0":
+  version: 6.5.1
+  resolution: "rxjs@npm:6.5.1"
+  dependencies:
+    tslib: "npm:^1.9.0"
+  checksum: 38703e2307f16166b42095d8b0e3f698204e9c5a1c698178e9a38e93cf1e44104400929e826f4ca5647005d685662eeb761f3498373be76e265f52b7a7845ec9
+  languageName: node
+  linkType: hard
+
 "rxjs@npm:^6.1.0":
   version: 6.3.3
   resolution: "rxjs@npm:6.3.3"
@@ -19516,6 +19565,15 @@ __metadata:
   dependencies:
     ansi-regex: "npm:^4.0.0"
   checksum: e5d81a48b96aede7e7c7fd0617a0a222da6a83cac59491d2201e34cb24cbad3c2ae3e29d6c8d99f71bd02429cedba996b42170e5ea5dce6445423daf0173ad12
+  languageName: node
+  linkType: hard
+
+"strip-ansi@npm:^5.1.0":
+  version: 5.2.0
+  resolution: "strip-ansi@npm:5.2.0"
+  dependencies:
+    ansi-regex: "npm:^4.1.0"
+  checksum: b93319d43bf59c92af47808057b05b576147f4501127a1d9138ca16fe1793cd6dd2a31eb8ab317ae59357cb89ea33835e37ab38693debcf10f25a03672232689
   languageName: node
   linkType: hard
 

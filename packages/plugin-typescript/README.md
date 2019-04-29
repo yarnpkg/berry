@@ -9,7 +9,7 @@ This is a crude implementation so far (an ideal implementation should use `prefe
 Since Yarn doesn't support dynamic linking yet, you must clone this repository and generate a bundle manually:
 
 ```
-$ yarn build:cli --plugin @berry/typescript
+$ yarn build:cli --plugin @berry/plugin-typescript
 ```
 
 Then put the generated file (`packages/berry-cli/bin/berry.js`) into your project. You can easily try it out by running `yarn add lodash` somewhere:

@@ -1,7 +1,8 @@
 import {Cache, Descriptor, Plugin, Workspace} from '@berry/core';
-import {httpUtils, structUtils}               from '@berry/core';
+import {structUtils}                          from '@berry/core';
 import {Hooks as EssentialsHooks}             from '@berry/plugin-essentials';
 import {suggestUtils}                         from '@berry/plugin-essentials';
+import inquirer                               from 'inquirer';
 
 const afterWorkspaceDependencyAddition = async (
   workspace: Workspace,
@@ -32,12 +33,26 @@ const afterWorkspaceDependencyAddition = async (
 
   const selected = nonNullSuggestions[0].descriptor;
   if (selected === null)
-    return;
+   return;
 
-  workspace.manifest[target].set(
-    selected.identHash,
-    selected,
-  );
+  const prompt = inquirer.createPromptModule();
+  const dependencyName = descriptor.scope
+    ? `@${descriptor.scope}/${descriptor.name}`
+    : descriptor.name;
+
+  const result = await prompt({
+    type: `confirm`,
+    name: `confirmed`,
+    message: `Do you want to install @types for ${dependencyName}?`,
+  });
+
+  // @ts-ignore
+  if (result.confirmed) {
+    workspace.manifest[target].set(
+      selected.identHash,
+      selected,
+    );
+  }
 };
 
 const plugin: Plugin = {
