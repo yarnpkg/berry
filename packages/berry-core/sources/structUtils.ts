@@ -43,7 +43,7 @@ export function renamePackage(pkg: Package, locator: Locator) {
     ... locator,
 
     version: pkg.version,
-    
+
     languageName: pkg.languageName,
     linkType: pkg.linkType,
 
@@ -104,10 +104,19 @@ export function areLocatorsEqual(a: Locator, b: Locator) {
 }
 
 export function parseIdent(string: string): Ident {
+  const ident = tryParseIdent(string);
+
+  if (!ident)
+    throw new Error(`Invalid ident (${string})`);
+
+  return ident;
+}
+
+export function tryParseIdent(string: string): Ident | null {
   const match = string.match(/^(?:@([^\/]+?)\/)?([^\/]+)$/);
 
   if (!match)
-    throw new Error(`Invalid ident (${string})`);
+    return null;
 
   const [, scope, name] = match;
   return makeIdent(scope, name);
@@ -129,7 +138,7 @@ export function tryParseDescriptor(string: string, strict: boolean = false): Des
 
   if (!match)
     return null;
-  
+
   let [, scope, name, range] = match;
 
   if (range === `unknown`)
@@ -146,7 +155,7 @@ export function parseLocator(string: string, strict: boolean = false): Locator {
 
   if (!locator)
     throw new Error(`Invalid locator (${string})`);
-  
+
   return locator;
 }
 
@@ -188,7 +197,7 @@ export function makeRange({protocol, source, selector}: {protocol: string | null
     range += `${protocol}`;
   if (source !== null)
     range += `${source}#`;
-  
+
   return range + selector;
 }
 
@@ -234,7 +243,7 @@ export function slugifyLocator(locator: Locator) {
   const version = protocolIndex !== -1
     ? semver.valid(locator.reference.slice(protocolIndex + 1))
     : null;
-  
+
   const humanReference = version !== null
     ? `${protocol}-${version}`
     : protocol;

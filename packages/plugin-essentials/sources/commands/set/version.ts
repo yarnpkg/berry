@@ -82,7 +82,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const release = releases.find(release => semver.eq(release.version, range));
         if (!release)
           throw new Error(`No matching release found for version ${range}.`);
-    
+
         const asset = getBundleAsset(release);
         if (!asset)
           throw new Error(`Assertion failed: The bundle asset should exist`);
@@ -125,18 +125,18 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
       if (!dryRun) {
         report.reportInfo(MessageName.UNNAMED, `Downloading ${configuration.format(bundleUrl, `green`)}`);
-        const bundle = await httpUtils.get(bundleUrl, configuration);
+        const releaseBuffer = await httpUtils.get(bundleUrl, configuration);
 
-        const yarnPath = `.yarn/releases/yarn-${bundleVersion}.js`;
-        const absoluteYarn = posix.resolve(project.cwd, yarnPath);
+        const relativePath = `.yarn/releases/yarn-${bundleVersion}.js`;
+        const absolutePath = posix.resolve(project.cwd, relativePath);
 
-        report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${configuration.format(yarnPath, `magenta`)}`);
-        await xfs.mkdirpPromise(posix.dirname(absoluteYarn));
-        await xfs.writeFilePromise(absoluteYarn, bundle);
-        await xfs.chmodPromise(absoluteYarn, 0o755);
+        report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${configuration.format(relativePath, `magenta`)}`);
+        await xfs.mkdirpPromise(posix.dirname(absolutePath));
+        await xfs.writeFilePromise(absolutePath, releaseBuffer);
+        await xfs.chmodPromise(absolutePath, 0o755);
 
         await Configuration.updateConfiguration(project.cwd, {
-          yarnPath,
+          yarnPath: relativePath,
         });
       }
     });
@@ -207,4 +207,3 @@ async function fetchReleases(configuration: Configuration, {includePrereleases =
 
   return {releases, prereleases};
 }
-  

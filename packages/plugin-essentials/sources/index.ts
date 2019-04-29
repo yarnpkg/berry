@@ -11,6 +11,8 @@ import help                               from './commands/help';
 import install                            from './commands/install';
 import link                               from './commands/link';
 import node                               from './commands/node';
+import pluginDl                           from './commands/plugin/dl';
+import pluginList                         from './commands/plugin/list';
 import remove                             from './commands/remove';
 import run                                from './commands/run';
 import setResolutionPolicy                from './commands/set/resolution';
@@ -67,6 +69,8 @@ const plugin: Plugin = {
     install,
     link,
     node,
+    pluginDl,
+    pluginList,
     remove,
     run,
     up,
