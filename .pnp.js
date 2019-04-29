@@ -263,6 +263,54 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             }
           ],
           [
+            "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:7.2.3",
+            {
+              "packageLocation": "./.yarn/virtual/@babel-cli-virtual-777e56071c0c928bd9f30cdb095ce683138e145f88212ca46a3b0241548eca05/node_modules/@babel/cli/",
+              "packageDependencies": [
+                [
+                  "@babel/cli",
+                  "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:7.2.3"
+                ],
+                [
+                  "commander",
+                  "npm:2.19.0"
+                ],
+                [
+                  "convert-source-map",
+                  "npm:1.6.0"
+                ],
+                [
+                  "fs-readdir-recursive",
+                  "npm:1.1.0"
+                ],
+                [
+                  "glob",
+                  "npm:7.1.3"
+                ],
+                [
+                  "lodash",
+                  "npm:4.17.11"
+                ],
+                [
+                  "mkdirp",
+                  "npm:0.5.1"
+                ],
+                [
+                  "output-file-sync",
+                  "npm:2.0.1"
+                ],
+                [
+                  "slash",
+                  "npm:2.0.0"
+                ],
+                [
+                  "source-map",
+                  "npm:0.5.7"
+                ]
+              ]
+            }
+          ],
+          [
             "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:7.2.3",
             {
               "packageLocation": "./.yarn/virtual/@babel-cli-virtual-d10f4f3334a43d2e0d02cbd0751c6eb087e6ca7cca5d5f05ea03e64051cef75c/node_modules/@babel/cli/",
@@ -8519,7 +8567,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "pnp-webpack-plugin",
-                  "npm:1.3.1"
+                  "npm:1.4.1"
                 ],
                 [
                   "raw-loader",
@@ -8802,6 +8850,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "tunnel",
                   "npm:0.0.6"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
                 ]
               ]
             }
@@ -9792,6 +9844,55 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "webpack-sources",
                   "npm:1.3.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@berry/pnpify",
+        [
+          [
+            "workspace:packages/berry-pnpify",
+            {
+              "packageLocation": "./packages/berry-pnpify/",
+              "packageDependencies": [
+                [
+                  "@berry/pnpify",
+                  "workspace:packages/berry-pnpify"
+                ],
+                [
+                  "@babel/cli",
+                  "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:7.2.3"
+                ],
+                [
+                  "@berry/builder",
+                  "workspace:packages/berry-builder"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@berry/pnp",
+                  "workspace:packages/berry-pnp"
+                ],
+                [
+                  "@types/jest",
+                  "npm:24.0.11"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
+                ],
+                [
+                  "webpack",
+                  "npm:4.28.4"
+                ],
+                [
+                  "webpack-cli",
+                  "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:3.2.1"
                 ]
               ]
             }
@@ -13780,6 +13881,44 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/istanbul-lib-coverage",
                   "npm:1.1.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/jest",
+        [
+          [
+            "npm:24.0.11",
+            {
+              "packageLocation": "./.yarn/cache/@types-jest-npm-24.0.11-0204fe3ee4b723379f130da15da7281f42601b92a45318ed330cb2b46a340f4b.zip/node_modules/@types/jest/",
+              "packageDependencies": [
+                [
+                  "@types/jest",
+                  "npm:24.0.11"
+                ],
+                [
+                  "@types/jest-diff",
+                  "npm:20.0.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/jest-diff",
+        [
+          [
+            "npm:20.0.1",
+            {
+              "packageLocation": "./.yarn/cache/@types-jest-diff-npm-20.0.1-1610c1f387c35e804eb85552b329fd03aaf85caa86589866838f0fb518619409.zip/node_modules/@types/jest-diff/",
+              "packageDependencies": [
+                [
+                  "@types/jest-diff",
+                  "npm:20.0.1"
                 ]
               ]
             }
@@ -50172,22 +50311,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "pnp-webpack-plugin",
         [
           [
-            "npm:1.3.1",
-            {
-              "packageLocation": "./.yarn/cache/pnp-webpack-plugin-npm-1.3.1-caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035.zip/node_modules/pnp-webpack-plugin/",
-              "packageDependencies": [
-                [
-                  "pnp-webpack-plugin",
-                  "npm:1.3.1"
-                ],
-                [
-                  "ts-pnp",
-                  "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.1"
-                ]
-              ]
-            }
-          ],
-          [
             "npm:1.4.1",
             {
               "packageLocation": "./.yarn/cache/pnp-webpack-plugin-npm-1.4.1-becb792142202a9ff19b5aebe32823be393acf0858bb9bb8f595a2f6282b7ed7.zip/node_modules/pnp-webpack-plugin/",
@@ -60728,18 +60851,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
-          ],
-          [
-            "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.1",
-            {
-              "packageLocation": "./.yarn/virtual/ts-pnp-virtual-7cd9bee15ff909de4cc54f7ac9e970e8662e395f5b60f0e3183e882dd6c4beaa/node_modules/ts-pnp/",
-              "packageDependencies": [
-                [
-                  "ts-pnp",
-                  "virtual:caa137bc0d7b96e0448a92f328c6ec6fde25db96f0bf279dd777499865053035410e0d10b6d1042b91870014f8b4d7aeafd6bcde84fe95c3d4596e0800547da2#npm:1.0.1"
-                ]
-              ]
-            }
           ]
         ]
       ],
@@ -62811,7 +62922,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "pnp-webpack-plugin",
-                  "npm:1.3.1"
+                  "npm:1.4.1"
                 ],
                 [
                   "ts-loader",
@@ -63206,6 +63317,74 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "webpack-cli",
                   "virtual:4bd66d78d6f2a01856119217f243ce59d8bcf964e11ca85388b70ec98bb2769b81ea9ed41f57dceb8c20587a07ed5497ecd2676962b483f238e320ef833ccd13#npm:3.2.1"
+                ],
+                [
+                  "chalk",
+                  "npm:2.4.2"
+                ],
+                [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
+                  "enhanced-resolve",
+                  "npm:4.1.0"
+                ],
+                [
+                  "findup-sync",
+                  "npm:2.0.0"
+                ],
+                [
+                  "global-modules",
+                  "npm:1.0.0"
+                ],
+                [
+                  "global-modules-path",
+                  "npm:2.3.1"
+                ],
+                [
+                  "import-local",
+                  "npm:2.0.0"
+                ],
+                [
+                  "interpret",
+                  "npm:1.2.0"
+                ],
+                [
+                  "lightercollective",
+                  "npm:0.1.0"
+                ],
+                [
+                  "loader-utils",
+                  "npm:1.2.3"
+                ],
+                [
+                  "supports-color",
+                  "npm:5.5.0"
+                ],
+                [
+                  "v8-compile-cache",
+                  "npm:2.0.2"
+                ],
+                [
+                  "webpack",
+                  "npm:4.28.4"
+                ],
+                [
+                  "yargs",
+                  "npm:12.0.5"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:3.2.1",
+            {
+              "packageLocation": "./.yarn/virtual/webpack-cli-virtual-a3c975fc7ee621e540d97886b8d2cb2ecbb313ba08478c95224d81d439b8c37a/node_modules/webpack-cli/",
+              "packageDependencies": [
+                [
+                  "webpack-cli",
+                  "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:3.2.1"
                 ],
                 [
                   "chalk",

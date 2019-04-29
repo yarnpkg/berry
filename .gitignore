@@ -1,9 +1,13 @@
 node_modules
 yarn-error.log
 
+.vscode
+.history
+
 junit.xml
 
 /.yarn/build-state.yml
 
+lib
 /packages/*/bundles/*
 !/packages/berry-pnp/bundles/hook.js

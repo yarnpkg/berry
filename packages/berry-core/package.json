@@ -3,6 +3,9 @@
   "private": true,
   "main": "./sources/index.ts",
   "sideEffects": false,
+  "scripts": {
+    "build:core": "node -r ../berry-pnpify/lib -r typescript/bin/tsc -- tsc"
+  },
   "dependencies": {
     "@berry/fslib": "workspace:*",
     "@berry/json-proxy": "workspace:*",
@@ -33,5 +36,8 @@
     "tar": "^4.4.6",
     "tmp": "^0.0.33",
     "tunnel": "^0.0.6"
+  },
+  "devDependencies": {
+    "typescript": "^3.3.3333"
   }
 }

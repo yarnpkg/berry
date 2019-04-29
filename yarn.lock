@@ -1563,6 +1563,7 @@ __metadata:
     tar: "npm:^4.4.6"
     tmp: "npm:^0.0.33"
     tunnel: "npm:^0.0.6"
+    typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
 
@@ -1877,6 +1878,23 @@ __metadata:
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:3.2.1"
     webpack-sources: "npm:^1.3.0"
+  languageName: unknown
+  linkType: soft
+
+"@berry/pnpify@workspace:packages/berry-pnpify":
+  version: 0.0.0
+  resolution: "@berry/pnpify@workspace:packages/berry-pnpify"
+  dependencies:
+    "@babel/cli": "npm:^7.2.3"
+    "@berry/builder": "workspace:*"
+    "@berry/fslib": "workspace:*"
+    "@berry/pnp": "workspace:*"
+    "@types/jest": "npm:^24.0.11"
+    typescript: "npm:^3.3.3333"
+    webpack: "npm:^4.28.4"
+    webpack-cli: "npm:3.2.1"
+  peerDependencies:
+    pnpapi: ^0.0.0
   languageName: unknown
   linkType: soft
 
@@ -3029,6 +3047,22 @@ __metadata:
   version: 1.1.0
   resolution: "@types/istanbul-lib-coverage@npm:1.1.0"
   checksum: 7d438cacef535af7b1c514c6878136a0bc6a4759b162f4dbcd771e6ca245b5d0df7fcace885ef4fd63c1610ed6f38a026416e0458ebaf3c5bea009cfe500d6cc
+  languageName: node
+  linkType: hard
+
+"@types/jest-diff@npm:*":
+  version: 20.0.1
+  resolution: "@types/jest-diff@npm:20.0.1"
+  checksum: c193d901556c7c2240b0190fc9ef902f2f9713100a1b3833214e5109b6985a14b769c39577215ce41ad41d0c38b4b5d41cb0e8ecbebc5eafbab889e7f5de344f
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:^24.0.11":
+  version: 24.0.11
+  resolution: "@types/jest@npm:24.0.11"
+  dependencies:
+    "@types/jest-diff": "npm:*"
+  checksum: 98d4c9fbdbfba2c3a967a3e15a197facd3dc36a0db560807e299b2b38cdbfbe8de7cdb09b9995288a711d767432d55d321b523b0d822be99d15f26a984bd8e59
   languageName: node
   linkType: hard
 
@@ -16272,16 +16306,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pnp-webpack-plugin@npm:^1.3.1":
-  version: 1.3.1
-  resolution: "pnp-webpack-plugin@npm:1.3.1"
-  dependencies:
-    ts-pnp: "npm:^1.0.0"
-  checksum: 56de874d0618ee23653ab184f805f9abba413ce9a0eefee0888e00393abdb4eb8e67110da09afada61e8f59d0b66b74161975f5b087b75766d01b142138be48a
-  languageName: node
-  linkType: hard
-
-"pnp-webpack-plugin@npm:^1.4.1":
+"pnp-webpack-plugin@npm:^1.3.1, pnp-webpack-plugin@npm:^1.4.1":
   version: 1.4.1
   resolution: "pnp-webpack-plugin@npm:1.4.1"
   dependencies:

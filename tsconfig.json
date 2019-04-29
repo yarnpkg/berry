@@ -4,7 +4,7 @@
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
-        "jsx": "React",
+        "jsx": "react",
         "module": "commonjs",
         "strict": true,
         "target": "es2017",
