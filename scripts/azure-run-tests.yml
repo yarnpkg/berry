@@ -14,7 +14,7 @@ steps:
   displayName: 'Build the standard bundle & plugins'
 
 - script: |
-    node ./scripts/run-yarn.js test:integration
+    node ./scripts/run-yarn.js test:integration --runInBand
   displayName: 'Run the integration tests'
 
 - script: |
