@@ -20,12 +20,12 @@ export interface PnPApiLoaderOptions {
   /**
    * Watch for PnP API file changes
    */
-  watch: (filePath: string, listener: (event: string, filename: string) => any) => any;
+  watch: (filePath: string, options?: { persistent?: boolean, recursive?: boolean, encoding?: string }, listener?: (event: string, filename: string) => any) => any;
 }
 
 interface DefinedPnPApiLoaderOptions {
   uncachedRequire: (modulePath: string) => PnpApi;
-  watch: (filePath: string, listener: (event: string, filename: string) => any) => any;
+  watch: (filePath: string, options?: { persistent?: boolean, recursive?: boolean, encoding?: string }, listener?: (event: string, filename: string) => any) => any;
 }
 
 interface CacheEntry {
@@ -79,7 +79,7 @@ export class PnPApiLoader extends EventEmitter {
       if (cacheEntry.pnpApi && !cacheEntry.watched) {
         cacheEntry.watched = true;
         this.cachedApis[pnpApiPath] = cacheEntry;
-        this.options.watch(pnpApiPath, () => {
+        this.options.watch(pnpApiPath, { persistent: false }, () => {
           let newApi;
           try {
             newApi = this.options.uncachedRequire(pnpApiPath);
