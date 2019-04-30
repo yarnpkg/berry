@@ -152,20 +152,20 @@ function mountVirtualNodeModulesFs() {
             else if (['realpathSync'].indexOf(this.method) >= 0) {
                 const pnpPath = pathResolver.resolvePath(args[0]);
                 if (pnpPath.apiPath) {
-                    let realPath;
                     if (pnpPath.resolvedPath) {
-                        realPath = pnpPath.resolvedPath;
+                        args[0] = pnpPath.resolvedPath;
                     }
                     else if (pnpPath.resolvedPath === undefined) {
-                        if (dirReader.readDir(pnpPath) !== null) {
-                            realPath = args[0];
-                        }
+                        if (dirReader.readDir(pnpPath) !== null)
+                            result = args[0];
+                        else
+                            result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
+                        hasResult = true;
                     }
-                    if (realPath)
-                        result = realPath;
-                    else
+                    else if (pnpPath.resolvedPath === null) {
                         result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
-                    hasResult = true;
+                        hasResult = true;
+                    }
                 }
             }
             else if (['readFileSync'].indexOf(this.method) >= 0) {
