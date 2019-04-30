@@ -41,7 +41,7 @@ const afterWorkspaceDependencyAddition = async (
 
   const selected = nonNullSuggestions[0].descriptor;
   if (selected === null)
-   return;
+    return;
 
   workspace.manifest[target].set(
     selected.identHash,
