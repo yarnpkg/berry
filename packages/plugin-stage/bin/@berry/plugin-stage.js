@@ -1670,12 +1670,14 @@ exports.Command = class Command {
 
             })
 
-            .action(args => this.clipanion.run(args.argv0, [
+            .action(context => this.clipanion.run(null, [
                 ... this.path,
-                ... args.rest,
-            ]))
+                ... context.rest,
+            ], context))
 
         ;
+
+        return this;
 
     }
 
