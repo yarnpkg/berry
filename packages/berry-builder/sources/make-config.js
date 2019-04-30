@@ -3,6 +3,11 @@ const webpack = require(`webpack`);
 const merge = require(`webpack-merge`);
 const PnpWebpackPlugin = require(`pnp-webpack-plugin`);
 
+if (module.parent.filename.indexOf('berry-pnpify') < 0) {
+  // Required for ts-loader for now to find type roots itself by scaning node_modules
+  require('../../berry-pnpify');
+}
+
 module.exports = config => merge({
   mode: `none`,
   devtool: false,
