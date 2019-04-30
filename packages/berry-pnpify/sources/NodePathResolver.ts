@@ -118,28 +118,28 @@ export class NodePathResolver {
         let pkgName;
         let partialPackageName = false;
         do {
-            m = request.match(NODE_MODULES_REGEXP);
-            if (m) {
-              [,pkgName, request] = m;
-              // Strip starting /
-              pkgName = pkgName ? pkgName.substring(1) : pkgName;
-              // Check if full package name was provided
-              if (pkgName) {
-                if (pkgName[0] !== '@' || pkgName.indexOf('/') > 0) {
-                  try {
-                    const res = pnp.resolveToUnqualified(pkgName, issuer + '/');
-                    issuer = res === null || res === issuer ? undefined : res;
-                  } catch (e) {
-                    issuer = undefined;
-                    break;
-                  }
-                } else {
-                  request = pkgName;
-                  pkgName = undefined;
-                  partialPackageName = true;
+          m = request.match(NODE_MODULES_REGEXP);
+          if (m) {
+            [,pkgName, request] = m;
+            // Strip starting /
+            pkgName = pkgName ? pkgName.substring(1) : pkgName;
+            // Check if full package name was provided
+            if (pkgName) {
+              if (pkgName[0] !== '@' || pkgName.indexOf('/') > 0) {
+                try {
+                  const res = pnp.resolveToUnqualified(pkgName, issuer + '/');
+                  issuer = res === null || res === issuer ? undefined : res;
+                } catch (e) {
+                  issuer = undefined;
+                  break;
                 }
+              } else {
+                request = pkgName;
+                pkgName = undefined;
+                partialPackageName = true;
               }
             }
+          }
           // Continue parsing path remainder until we have something left in a `request`
           // and we still have not lost the issuer
         } while (request && pkgName);

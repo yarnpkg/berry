@@ -92,7 +92,7 @@ export class PnPApiLoader extends EventEmitter {
           if (newApi === undefined || (newApi && Object.keys(newApi).length > 0)) {
             if (newApi !== undefined)
               cacheEntry.pnpApi = newApi;
-             else
+            else
               delete cacheEntry.pnpApi;
 
             this.emit('change', pnpApiPath);
