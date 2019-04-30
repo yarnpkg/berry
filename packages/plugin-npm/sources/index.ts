@@ -12,6 +12,21 @@ const plugin: Plugin = {
       type: SettingsType.STRING,
       default: `https://registry.yarnpkg.com`,
     },
+    npmAlwaysAuth: {
+      description: `URL of the selected npm registry (note: npm enterprise isn't supported)`,
+      type: SettingsType.BOOLEAN,
+      default: false,
+    },
+    npmAuthIdent: {
+      description: `Authentication identity for the npm registry (_auth in npm and yarn v1)`,
+      type: SettingsType.SECRET,
+      default: null,
+    },
+    npmAuthToken: {
+      description: `Authentication token for the npm registry (_authToken in npm and yarn v1)`,
+      type: SettingsType.SECRET,
+      default: null,
+    },
   },
   fetchers: [
     NpmFetcher,

@@ -1,8 +1,9 @@
 import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
-import {httpUtils, structUtils}                                                    from '@berry/core';
+import {structUtils}                                                               from '@berry/core';
 import {Ident, Descriptor, Locator, Package}                                       from '@berry/core';
 
 import {PROTOCOL}                                                                  from './constants';
+import * as npmHttpUtils                                                           from './npmHttpUtils';
 
 export const TAG_REGEXP = /^[a-z]+$/;
 
@@ -34,7 +35,7 @@ export class NpmTagResolver implements Resolver {
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
     const tag = descriptor.range.slice(PROTOCOL.length);
 
-    const httpResponse = await httpUtils.get(this.getIdentUrl(descriptor, opts), opts.project.configuration);
+    const httpResponse = await npmHttpUtils.get(this.getIdentUrl(descriptor, opts), descriptor, opts.project.configuration);
     const registryData = JSON.parse(httpResponse.toString());
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `dist-tags`))

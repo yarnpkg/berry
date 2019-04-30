@@ -166,99 +166,157 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
   if (packageServerUrl !== null)
     return packageServerUrl;
 
-  async function processPackageInfo(params: Array<string> | null, res: ServerResponse): Promise<boolean> {
-    if (params === null)
-      return false;
-
-    const [, scope, localName] = params;
-    const name = scope ? `${scope}/${localName}` : localName;
-
-    const packageEntry = await exports.getPackageEntry(name);
-    if (!packageEntry)
-      return processError(res, 404, `Package not found: ${name}`);
-
-    let versions = Array.from(packageEntry.keys());
-
-    const whitelistedVersions = whitelist.get(name);
-    if (whitelistedVersions)
-      versions = versions.filter(version => whitelistedVersions.has(version));
-
-    const data = JSON.stringify({
-      name,
-      versions: Object.assign(
-        {},
-        ...(await Promise.all(
-          versions.map(async version => {
-            const packageVersionEntry = packageEntry.get(version);
-            invariant(packageVersionEntry, 'This can only exist');
-
-            return {
-              [version as string]: Object.assign({}, packageVersionEntry.packageJson, {
-                dist: {
-                  shasum: await exports.getPackageArchiveHash(name, version),
-                  tarball: await exports.getPackageHttpArchivePath(name, version),
-                },
-              }),
-            };
-          }),
-        )),
-      ),
-      ['dist-tags']: {latest: semver.maxSatisfying(versions, '*')},
-    });
-
-    res.writeHead(200, {['Content-Type']: 'application/json'});
-    res.end(data);
-
-    return true;
+  enum RequestType {
+    PackageInfo = 'packageInfo',
+    PackageTarball = 'packageTarball',
   }
 
-  async function processPackageTarball(params: Array<string> | null, res: ServerResponse): Promise<boolean> {
-    if (!params)
-      return false;
+  interface Request {
+    type: RequestType;
 
-    const [, scope, localName, version] = params;
-    const name = scope ? `${scope}/${localName}` : localName;
-
-    const packageEntry = await exports.getPackageEntry(name);
-    if (!packageEntry)
-      return processError(res, 404, `Package not found: ${name}`);
-
-    const packageVersionEntry = packageEntry.get(version);
-    if (!packageVersionEntry)
-      return processError(res, 404, `Package not found: ${name}@${version}`);
-
-    res.writeHead(200, {
-      ['Content-Type']: 'application/octet-stream',
-      ['Transfer-Encoding']: 'chunked',
-    });
-
-    const packStream = fsUtils.packToStream(packageVersionEntry.path, {virtualPath: '/package'});
-    packStream.pipe(res);
-
-    return true;
+    scope?: string;
+    localName: string;
+    version?: string;
   }
 
-  function processError(res: ServerResponse, statusCode: number, errorMessage: string): boolean {
-    console.error(errorMessage);
+  const processors: {[requestType in RequestType]:(request: Request, response: ServerResponse) => Promise<void>} = {
+    async [RequestType.PackageInfo](request, response) {
+      const {scope, localName} = request;
+      const name = scope ? `${scope}/${localName}` : localName;
 
+      const packageEntry = await exports.getPackageEntry(name);
+      if (!packageEntry)
+        return processError(response, 404, `Package not found: ${name}`);
+
+      let versions = Array.from(packageEntry.keys());
+
+      const whitelistedVersions = whitelist.get(name);
+      if (whitelistedVersions)
+        versions = versions.filter(version => whitelistedVersions.has(version));
+
+      const data = JSON.stringify({
+        name,
+        versions: Object.assign(
+          {},
+          ...(await Promise.all(
+            versions.map(async version => {
+              const packageVersionEntry = packageEntry.get(version);
+              invariant(packageVersionEntry, 'This can only exist');
+
+              return {
+                [version as string]: Object.assign({}, packageVersionEntry.packageJson, {
+                  dist: {
+                    shasum: await exports.getPackageArchiveHash(name, version),
+                    tarball: await exports.getPackageHttpArchivePath(name, version),
+                  },
+                }),
+              };
+            }),
+          )),
+        ),
+        ['dist-tags']: {latest: semver.maxSatisfying(versions, '*')},
+      });
+
+      response.writeHead(200, {['Content-Type']: 'application/json'});
+      response.end(data);
+    },
+
+    async [RequestType.PackageTarball](request, response) {
+      const {scope, localName, version} = request;
+      const name = scope ? `${scope}/${localName}` : localName;
+
+      const packageEntry = await exports.getPackageEntry(name);
+      if (!packageEntry) {
+        processError(response, 404, `Package not found: ${name}`);
+        return;
+      }
+
+      const packageVersionEntry = packageEntry.get(version);
+      if (!packageVersionEntry) {
+        processError(response, 404, `Package not found: ${name}@${version}`);
+        return;
+      }
+
+      response.writeHead(200, {
+        ['Content-Type']: 'application/octet-stream',
+        ['Transfer-Encoding']: 'chunked',
+      });
+
+      const packStream = fsUtils.packToStream(packageVersionEntry.path, {virtualPath: '/package'});
+      packStream.pipe(response);
+    },
+  };
+
+  function sendError(res: ServerResponse, statusCode: number, errorMessage: string): void {
     res.writeHead(statusCode);
     res.end(errorMessage);
-
-    return true;
   }
+
+  function processError(res: ServerResponse, statusCode: number, errorMessage: string): void {
+    console.error(errorMessage);
+    sendError(res, statusCode, errorMessage);
+  }
+
+  function parseRequest(url: string): Request|null {
+    let match: RegExpMatchArray|null;
+
+    url = url.replace(/%2f/g, '/');
+
+    if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)$/)) {
+      const [_, scope, localName] = match;
+
+      return {
+        type: RequestType.PackageInfo,
+        scope,
+        localName,
+      };
+    } else if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)\/-\/\2-(.*)\.tgz$/)) {
+      const [_, scope, localName, version] = match;
+
+      return {
+        type: RequestType.PackageTarball,
+        scope,
+        localName,
+        version,
+      };
+    }
+
+    return null;
+  }
+
+  function needsAuth({scope, localName}: Request): boolean {
+    return (scope != null && scope.startsWith('@private')) || localName.startsWith('private');
+  }
+
+  const validAuthorizations = [
+    `Bearer 686159dc-64b3-413e-a244-2de2b8d1c36f`,
+    `Basic dXNlcm5hbWU6YSB2ZXJ5IHNlY3VyZSBwYXNzd29yZA==` // username:a very secure password
+  ];
 
   return new Promise((resolve, reject) => {
     const server = http.createServer(
       (req, res) =>
         void (async () => {
           try {
-            if (await processPackageInfo(req.url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)$/), res))
-              return;
+            const parsedRequest = parseRequest(req.url);
 
-            if (await processPackageTarball(req.url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)\/-\/\2-(.*)\.tgz$/), res))
+            if (parsedRequest == null) {
+              processError(res, 404, `Invalid route: ${req.url}`);
               return;
+            }
 
-            processError(res, 404, `Invalid route: ${req.url}`);
+            const {authorization} = req.headers;
+            if (authorization != null) {
+              if (!validAuthorizations.includes(authorization)) {
+                sendError(res, 403, `Forbidden`);
+                return;
+              }
+            } else if (needsAuth(parsedRequest)) {
+              sendError(res, 401, `Authentication required`);
+              return;
+            }
+
+            await processors[parsedRequest.type](parsedRequest, res);
           } catch (error) {
             processError(res, 500, error.stack);
           }
