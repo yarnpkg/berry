@@ -2,8 +2,6 @@
 
 This plugin automatically adds `@types/` packages into your dependencies when you add a package that's covered by one.
 
-This is a crude implementation so far (an ideal implementation should use `preferInteractive` in order to ask the user for confirmation), but it gives an idea of how hooks work. Help appreciated!
-
 ## Usage
 
 Since Yarn doesn't support dynamic linking yet, you must clone this repository and generate a bundle manually:

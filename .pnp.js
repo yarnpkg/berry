@@ -9807,10 +9807,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/plugin-essentials",
                   "workspace:packages/plugin-essentials"
-                ],
-                [
-                  "inquirer",
-                  "npm:6.3.1"
                 ]
               ]
             }
@@ -16298,18 +16294,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "ansi-regex",
                   "npm:4.0.0"
-                ]
-              ]
-            }
-          ],
-          [
-            "npm:4.1.0",
-            {
-              "packageLocation": "./.yarn/cache/ansi-regex-npm-4.1.0-cbde39a155aafbab33d1bf8d3ecca231867778436da1fd5860d7745eb13b4b78.zip/node_modules/ansi-regex/",
-              "packageDependencies": [
-                [
-                  "ansi-regex",
-                  "npm:4.1.0"
                 ]
               ]
             }
@@ -37835,70 +37819,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
-          ],
-          [
-            "npm:6.3.1",
-            {
-              "packageLocation": "./.yarn/cache/inquirer-npm-6.3.1-258ec7ab4b0d5254bbd3ed67667bf2e8d636cb6d7ba23b19a7e86e5d08cd5e7a.zip/node_modules/inquirer/",
-              "packageDependencies": [
-                [
-                  "inquirer",
-                  "npm:6.3.1"
-                ],
-                [
-                  "ansi-escapes",
-                  "npm:3.2.0"
-                ],
-                [
-                  "chalk",
-                  "npm:2.4.2"
-                ],
-                [
-                  "cli-cursor",
-                  "npm:2.1.0"
-                ],
-                [
-                  "cli-width",
-                  "npm:2.2.0"
-                ],
-                [
-                  "external-editor",
-                  "npm:3.0.3"
-                ],
-                [
-                  "figures",
-                  "npm:2.0.0"
-                ],
-                [
-                  "lodash",
-                  "npm:4.17.11"
-                ],
-                [
-                  "mute-stream",
-                  "npm:0.0.7"
-                ],
-                [
-                  "run-async",
-                  "npm:2.3.0"
-                ],
-                [
-                  "rxjs",
-                  "npm:6.4.0"
-                ],
-                [
-                  "string-width",
-                  "npm:2.1.1"
-                ],
-                [
-                  "strip-ansi",
-                  "npm:5.2.0"
-                ],
-                [
-                  "through",
-                  "npm:2.3.8"
-                ]
-              ]
-            }
           ]
         ]
       ],
@@ -58760,22 +58680,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "ansi-regex",
                   "npm:4.0.0"
-                ]
-              ]
-            }
-          ],
-          [
-            "npm:5.2.0",
-            {
-              "packageLocation": "./.yarn/cache/strip-ansi-npm-5.2.0-6ae14885df2c0e3a79afb4bc1c3dfe06ca489de1e14cca8a045bfacb9703cf72.zip/node_modules/strip-ansi/",
-              "packageDependencies": [
-                [
-                  "strip-ansi",
-                  "npm:5.2.0"
-                ],
-                [
-                  "ansi-regex",
-                  "npm:4.1.0"
                 ]
               ]
             }

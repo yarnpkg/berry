@@ -2,7 +2,6 @@ import {Cache, Descriptor, Plugin, Workspace} from '@berry/core';
 import {structUtils}                          from '@berry/core';
 import {Hooks as EssentialsHooks}             from '@berry/plugin-essentials';
 import {suggestUtils}                         from '@berry/plugin-essentials';
-import inquirer                               from 'inquirer';
 
 const getDependencyName = (descriptor: Descriptor) => {
   return descriptor.scope
@@ -27,7 +26,6 @@ const afterWorkspaceDependencyAddition = async (
   const project = workspace.project;
   const configuration = project.configuration;
   const cache = await Cache.find(configuration);
-  const preferInteractive = configuration.get(`preferInteractive`);
   const typesName = getTypesName(descriptor);
 
   const target = suggestUtils.Target.DEVELOPMENT;
@@ -45,22 +43,6 @@ const afterWorkspaceDependencyAddition = async (
   if (selected === null)
    return;
 
-  if (preferInteractive) {
-    const prompt = inquirer.createPromptModule();
-    const dependencyName = getDependencyName(descriptor);
-
-    const result = await prompt({
-      type: `confirm`,
-      name: `confirmed`,
-      message: `Do you want to install @types for ${dependencyName}?`,
-    });
-
-    // @ts-ignore
-    if (!result.confirmed) {
-      return;
-    }
-  }
-
   workspace.manifest[target].set(
     selected.identHash,
     selected,
@@ -75,9 +57,6 @@ const afterWorkspaceDependencyRemoval = async (
   if (descriptor.scope === `types`)
     return;
 
-  const project = workspace.project;
-  const configuration = project.configuration;
-  const preferInteractive = configuration.get(`preferInteractive`);
   const target = suggestUtils.Target.DEVELOPMENT;
   const typesName = getTypesName(descriptor);
 
@@ -86,22 +65,6 @@ const afterWorkspaceDependencyRemoval = async (
 
   if (typeof current === `undefined`)
     return;
-
-  if (preferInteractive) {
-    const prompt = inquirer.createPromptModule();
-    const dependencyName = getDependencyName(descriptor);
-
-    const result = await prompt({
-      type: `confirm`,
-      name: `confirmed`,
-      message: `Do you want to also remove the @types for ${dependencyName}?`,
-    });
-
-    // @ts-ignore
-    if (!result.confirmed) {
-      return;
-    }
-  }
 
   workspace.manifest[target].delete(ident.identHash);
 };

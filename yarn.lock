@@ -1866,7 +1866,6 @@ __metadata:
     "@berry/builder": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
-    inquirer: "npm:^6.3.1"
   languageName: unknown
   linkType: soft
 
@@ -3979,13 +3978,6 @@ __metadata:
   version: 4.0.0
   resolution: "ansi-regex@npm:4.0.0"
   checksum: b4d339abc6f68b8133050fdbf6821db8102f5687cb7cdbfb607bf5e175ca164bd1c2dd311adc91b52d1c810003a0e85e5669edb86411f8c19a4ad12b3a9abd93
-  languageName: node
-  linkType: hard
-
-"ansi-regex@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "ansi-regex@npm:4.1.0"
-  checksum: 81d6694a109fc59673447e2e5c8f2866fc2d9bba73901a53542663f6b085ab05726a831ea0f1a6c66496c7c4fb3b3c9bebef12d73e08601aad3d80bd60c4d2f0
   languageName: node
   linkType: hard
 
@@ -11546,27 +11538,6 @@ __metadata:
     strip-ansi: "npm:^5.0.0"
     through: "npm:^2.3.6"
   checksum: 02d4672c1dc6cee519f0001eb61a2b52b976e8fae84a4010fb7ed7959702c11b35b7a5ac815cbb09317709f9ca3fdb71c472bb97a9875adc8d8d9a1f962664a9
-  languageName: node
-  linkType: hard
-
-"inquirer@npm:^6.3.1":
-  version: 6.3.1
-  resolution: "inquirer@npm:6.3.1"
-  dependencies:
-    ansi-escapes: "npm:^3.2.0"
-    chalk: "npm:^2.4.2"
-    cli-cursor: "npm:^2.1.0"
-    cli-width: "npm:^2.0.0"
-    external-editor: "npm:^3.0.3"
-    figures: "npm:^2.0.0"
-    lodash: "npm:^4.17.11"
-    mute-stream: "npm:0.0.7"
-    run-async: "npm:^2.2.0"
-    rxjs: "npm:^6.4.0"
-    string-width: "npm:^2.1.0"
-    strip-ansi: "npm:^5.1.0"
-    through: "npm:^2.3.6"
-  checksum: efd4937af4a59b157a23c4391f6b66d19c7889365258be8329b0995ba2e5e61dee6c3caf0a765e64d88280caa1d9a6f645b04c054b9f96ab1b14cf40d9270e01
   languageName: node
   linkType: hard
 
@@ -19545,15 +19516,6 @@ __metadata:
   dependencies:
     ansi-regex: "npm:^4.0.0"
   checksum: e5d81a48b96aede7e7c7fd0617a0a222da6a83cac59491d2201e34cb24cbad3c2ae3e29d6c8d99f71bd02429cedba996b42170e5ea5dce6445423daf0173ad12
-  languageName: node
-  linkType: hard
-
-"strip-ansi@npm:^5.1.0":
-  version: 5.2.0
-  resolution: "strip-ansi@npm:5.2.0"
-  dependencies:
-    ansi-regex: "npm:^4.1.0"
-  checksum: b93319d43bf59c92af47808057b05b576147f4501127a1d9138ca16fe1793cd6dd2a31eb8ab317ae59357cb89ea33835e37ab38693debcf10f25a03672232689
   languageName: node
   linkType: hard
 
