@@ -81,14 +81,14 @@ export function devirtualizeDescriptor(descriptor: Descriptor): Descriptor {
   if (!isVirtualDescriptor(descriptor))
     throw new Error(`Not a virtual descriptor`);
 
-  return makeDescriptor(descriptor, descriptor.range.replace(/^.*#/, ``));
+  return makeDescriptor(descriptor, descriptor.range.replace(/^[^#]*#/, ``));
 }
 
 export function devirtualizeLocator(locator: Locator): Locator {
   if (!isVirtualLocator(locator))
     throw new Error(`Not a virtual descriptor`);
 
-  return makeLocator(locator, locator.reference.replace(/^.*#/, ``));
+  return makeLocator(locator, locator.reference.replace(/^[^#]*#/, ``));
 }
 
 export function areIdentsEqual(a: Ident, b: Ident) {
