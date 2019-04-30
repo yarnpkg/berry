@@ -9,9 +9,9 @@ export function get(url: string, ident: Ident, configuration: Configuration) {
     headers.authorization = auth;
 
   return httpUtils.get(
-      url,
-      configuration,
-      {headers},
+    url,
+    configuration,
+    {headers},
   );
 }
 
