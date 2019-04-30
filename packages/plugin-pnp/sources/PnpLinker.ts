@@ -1,5 +1,5 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName, DependencyMeta} from '@berry/core';
-import {FetchResult, Ident, Locator, Package, BuildDirective, BuildType}                                     from '@berry/core';
+import {FetchResult, Descriptor, Ident, Locator, Package, BuildDirective, BuildType}                         from '@berry/core';
 import {miscUtils, structUtils}                                                                              from '@berry/core';
 import {CwdFS, FakeFS, NodeFS, xfs}                                                                          from '@berry/fslib';
 import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@berry/pnp';
@@ -108,11 +108,15 @@ class PnpInstaller implements Installer {
     };
   }
 
-  async attachInternalDependencies(locator: Locator, dependencies: Array<Locator>) {
+  async attachInternalDependencies(locator: Locator, dependencies: Array<[Descriptor, Locator]>) {
     const packageInformation = this.getPackageInformation(locator);
 
-    packageInformation.packageDependencies = new Map(dependencies.map(dependency => {
-      return [structUtils.requirableIdent(dependency), dependency.reference];
+    packageInformation.packageDependencies = new Map(dependencies.map(([descriptor, locator]) => {
+      const target = !structUtils.areIdentsEqual(descriptor, locator)
+        ? [structUtils.requirableIdent(locator), locator.reference] as [string, string]
+        : locator.reference;
+
+      return [structUtils.requirableIdent(descriptor), target];
     }) as Array<[string, string]>);
   }
 

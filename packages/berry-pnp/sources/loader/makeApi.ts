@@ -513,42 +513,43 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       // If we can't find the path, and if the package making the request is the top-level, we can offer nicer error messages
 
-      if (!dependencyReference) {
-        if (dependencyReference === null) {
-          if (issuerLocator.name === null) {
-            throw makeError(
-              `MISSING_PEER_DEPENDENCY`,
-              `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
-              {request, issuer, dependencyName},
-            );
-          } else {
-            throw makeError(
-              `MISSING_PEER_DEPENDENCY`,
-              `A package is trying to access a peer dependency that should be provided by its direct ancestor but isn't\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
-              {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
-            );
-          }
+      if (dependencyReference === null) {
+        if (issuerLocator.name === null) {
+          throw makeError(
+            `MISSING_PEER_DEPENDENCY`,
+            `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
+            {request, issuer, dependencyName},
+          );
         } else {
-          if (issuerLocator.name === null) {
-            throw makeError(
-              `UNDECLARED_DEPENDENCY`,
-              `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
-              {request, issuer, dependencyName},
-            );
-          } else {
-            const candidates = Array.from(issuerInformation.packageDependencies.keys());
-            throw makeError(
-              `UNDECLARED_DEPENDENCY`,
-              `A package is trying to access another package without the second one being listed as a dependency of the first one\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
-              {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName, candidates},
-            );
-          }
+          throw makeError(
+            `MISSING_PEER_DEPENDENCY`,
+            `A package is trying to access a peer dependency that should be provided by its direct ancestor but isn't\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
+            {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
+          );
+        }
+      } else if (dependencyReference === undefined) {
+        if (issuerLocator.name === null) {
+          throw makeError(
+            `UNDECLARED_DEPENDENCY`,
+            `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
+            {request, issuer, dependencyName},
+          );
+        } else {
+          const candidates = Array.from(issuerInformation.packageDependencies.keys());
+          throw makeError(
+            `UNDECLARED_DEPENDENCY`,
+            `A package is trying to access another package without the second one being listed as a dependency of the first one\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
+            {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName, candidates},
+          );
         }
       }
 
       // We need to check that the package exists on the filesystem, because it might not have been installed
 
-      const dependencyLocator = {name: dependencyName, reference: dependencyReference};
+      const dependencyLocator = Array.isArray(dependencyReference)
+        ? {name: dependencyReference[0], reference: dependencyReference[1]}
+        : {name: dependencyName, reference: dependencyReference};
+
       const dependencyInformation = getPackageInformationSafe(dependencyLocator);
 
       if (!dependencyInformation.packageLocation) {
