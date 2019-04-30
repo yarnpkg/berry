@@ -11,3 +11,4 @@ junit.xml
 lib
 /packages/*/bundles/*
 !/packages/berry-pnp/bundles/hook.js
+!/packages/berry-pnpify/lib
