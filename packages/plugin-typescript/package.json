@@ -6,7 +6,6 @@
     "@berry/builder": "workspace:*",
     "@berry/core": "workspace:*",
     "@berry/plugin-essentials": "workspace:*",
-    "@types/inquirer": "6.0.1",
     "inquirer": "^6.3.1"
   },
   "scripts": {

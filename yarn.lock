@@ -1866,7 +1866,6 @@ __metadata:
     "@berry/builder": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
-    "@types/inquirer": "npm:6.0.1"
     inquirer: "npm:^6.3.1"
   languageName: unknown
   linkType: soft
@@ -3032,16 +3031,6 @@ __metadata:
   version: 4.7.2
   resolution: "@types/history@npm:4.7.2"
   checksum: ffdef7b977a44568ab053052b1f638d7a6eaa0c2116fd74b66c10de4f5c101395d343c7110d671ebfe1a062ffbd38a9790b0cc4192dd20c2a97d2ad4525be42d
-  languageName: node
-  linkType: hard
-
-"@types/inquirer@npm:6.0.1":
-  version: 6.0.1
-  resolution: "@types/inquirer@npm:6.0.1"
-  dependencies:
-    "@types/through": "npm:*"
-    rxjs: "npm:>=6.4.0"
-  checksum: 169940ff89186d96a83c118c4a39293f5b83896902850040ee540fd540430e24ad6d2512c9e541802065e17280805b47835c22329498f0168b65af7a99ff5a62
   languageName: node
   linkType: hard
 
@@ -18345,15 +18334,6 @@ __metadata:
   version: 4.0.8
   resolution: "rx-lite@npm:4.0.8"
   checksum: a25192acadd3031684835fadabd707044efd6b8da43e8eae2bd5db90e3f68837472126b3c7350f9c76c2dc8804726fbc8bc7a66ede99afd65482d1fd830d86dc
-  languageName: node
-  linkType: hard
-
-"rxjs@npm:>=6.4.0":
-  version: 6.5.1
-  resolution: "rxjs@npm:6.5.1"
-  dependencies:
-    tslib: "npm:^1.9.0"
-  checksum: 38703e2307f16166b42095d8b0e3f698204e9c5a1c698178e9a38e93cf1e44104400929e826f4ca5647005d685662eeb761f3498373be76e265f52b7a7845ec9
   languageName: node
   linkType: hard
 

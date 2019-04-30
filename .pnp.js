@@ -9809,10 +9809,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/plugin-essentials"
                 ],
                 [
-                  "@types/inquirer",
-                  "npm:6.0.1"
-                ],
-                [
                   "inquirer",
                   "npm:6.3.1"
                 ]
@@ -13872,26 +13868,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/through",
                   "npm:0.0.29"
-                ]
-              ]
-            }
-          ],
-          [
-            "npm:6.0.1",
-            {
-              "packageLocation": "./.yarn/cache/@types-inquirer-npm-6.0.1-20ca9c26dc0668ca107a27284a361db55326707b0345562daa5e589216e7b52f.zip/node_modules/@types/inquirer/",
-              "packageDependencies": [
-                [
-                  "@types/inquirer",
-                  "npm:6.0.1"
-                ],
-                [
-                  "@types/through",
-                  "npm:0.0.29"
-                ],
-                [
-                  "rxjs",
-                  "npm:6.5.1"
                 ]
               ]
             }
@@ -55761,22 +55737,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "rxjs",
                   "npm:6.4.0"
-                ],
-                [
-                  "tslib",
-                  "npm:1.9.3"
-                ]
-              ]
-            }
-          ],
-          [
-            "npm:6.5.1",
-            {
-              "packageLocation": "./.yarn/cache/rxjs-npm-6.5.1-d778d2b5d3bafea06f728f430abfa7053fee18c4a9fe99ed7605c997247d49d8.zip/node_modules/rxjs/",
-              "packageDependencies": [
-                [
-                  "rxjs",
-                  "npm:6.5.1"
                 ],
                 [
                   "tslib",
