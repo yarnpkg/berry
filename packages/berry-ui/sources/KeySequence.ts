@@ -54,7 +54,7 @@ class KeySequenceEntry {
           } break;
         }
       } else {
-          key = part.toLowerCase();
+        key = part.toLowerCase();
       }
     }
 

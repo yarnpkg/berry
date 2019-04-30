@@ -565,27 +565,27 @@ export class Project {
           if (aliasHash === undefined)
             continue;
 
-           // It doesn't cost us much to support the case where a descriptor is
+          // It doesn't cost us much to support the case where a descriptor is
           // equal to its own alias (which should mean "no alias")
           if (descriptor.descriptorHash === aliasHash)
             continue;
 
-           const alias = this.storedDescriptors.get(aliasHash);
+          const alias = this.storedDescriptors.get(aliasHash);
           if (!alias)
             throw new Error(`Assertion failed: The alias should have been registered`);
 
-           // If it's already been "resolved" (in reality it will be the temporary
+          // If it's already been "resolved" (in reality it will be the temporary
           // resolution we've set in the next few lines) we simply must skip it
           if (allResolutions.has(descriptor.descriptorHash))
             continue;
 
-           // Temporarily set an invalid resolution so that it won't be resolved
+          // Temporarily set an invalid resolution so that it won't be resolved
           // multiple times if it is found multiple times in the dependency
           // tree (this is only temporary, we will replace it by the actual
           // resolution after we've finished resolving everything)
           allResolutions.set(descriptor.descriptorHash, `temporary` as LocatorHash);
 
-           // We can now replace the descriptor by its alias in the list of
+          // We can now replace the descriptor by its alias in the list of
           // descriptors that must be resolved
           mustBeResolved.delete(descriptor.descriptorHash);
           mustBeResolved.add(aliasHash);
@@ -600,36 +600,36 @@ export class Project {
     // Each package that should have been resolved but was skipped because it
     // was aliased will now see the resolution for its alias propagated to it
 
-     while (haveBeenAliased.size > 0) {
+    while (haveBeenAliased.size > 0) {
       let hasChanged = false;
 
-       for (const descriptorHash of haveBeenAliased) {
+      for (const descriptorHash of haveBeenAliased) {
         const descriptor = allDescriptors.get(descriptorHash);
         if (!descriptor)
           throw new Error(`Assertion failed: The descriptor should have been registered`);
 
-         const aliasHash = this.resolutionAliases.get(descriptorHash);
+        const aliasHash = this.resolutionAliases.get(descriptorHash);
         if (aliasHash === undefined)
           throw new Error(`Assertion failed: The descriptor should have an alias`);
 
-         const resolution = allResolutions.get(aliasHash);
+        const resolution = allResolutions.get(aliasHash);
         if (resolution === undefined)
           throw new Error(`Assertion failed: The resolution should have been registered`);
 
-         // The following can happen if a package gets aliased to another package
+        // The following can happen if a package gets aliased to another package
         // that's itself aliased - in this case we just process all those we can
         // do, then make new passes until everything is resolved
         if (resolution === `temporary`)
           continue;
 
-         haveBeenAliased.delete(descriptorHash);
+        haveBeenAliased.delete(descriptorHash);
 
-         allResolutions.set(descriptorHash, resolution);
+        allResolutions.set(descriptorHash, resolution);
 
-         hasChanged = true;
+        hasChanged = true;
       }
 
-       if (!hasChanged) {
+      if (!hasChanged) {
         throw new Error(`Alias loop detected`);
       }
     }

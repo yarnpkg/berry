@@ -184,7 +184,7 @@ export async function getSuggestedDescriptors(request: Descriptor, previous: Des
           try {
             latest = await fetchDescriptorFrom(request, `latest`, {project, cache});
           } catch (error) {
-            // Just ignore errors
+          // Just ignore errors
           }
 
           if (latest) {

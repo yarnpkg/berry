@@ -46,7 +46,7 @@ function mountVirtualNodeModulesFs() {
         if (!fileMightExist) {
           if (['existsSync'].indexOf(this.method) >= 0)
             result = false;
-           else if (['stat'].indexOf(this.method) < 0)
+          else if (['stat'].indexOf(this.method) < 0)
             result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
 
           hasResult = true;
@@ -63,7 +63,7 @@ function mountVirtualNodeModulesFs() {
         }
         if (realPath)
           result = realPath;
-         else
+        else
           result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
 
         hasResult = true;

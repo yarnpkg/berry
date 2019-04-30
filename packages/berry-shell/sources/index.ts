@@ -266,8 +266,8 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
       } break;
 
       case `subshell`: {
-        // We don't interpolate the subshell because it will be recursively
-        // interpolated within its own context
+      // We don't interpolate the subshell because it will be recursively
+      // interpolated within its own context
         action = makeSubshellAction(current.subshell, opts, activeState);
       } break;
     }
