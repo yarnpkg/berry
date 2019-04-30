@@ -37,6 +37,7 @@ export enum MessageName {
   FETCH_FAILED = 30,
   DANGEROUS_NODE_MODULES = 31,
   NODE_GYP_INJECTED = 32,
+  AUTHENTICATION_NOT_FOUND = 33,
 }
 
 export class ReportError extends Error {

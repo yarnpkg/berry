@@ -1,4 +1,5 @@
 import {Configuration, httpUtils, Ident} from '@berry/core';
+import {MessageName, ReportError}        from '@berry/core';
 
 export function get(url: string, ident: Ident, configuration: Configuration) {
   const headers: {[headerName: string]: string} = {};
@@ -27,7 +28,7 @@ function getAuthenticationHeader(ident: Ident, configuration: Configuration) {
     return `Basic ${configuration.get(`npmAuthIdent`)}`;
 
   if (mustAuthenticate) {
-    throw new Error(`No authentication configured for request`);
+    throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND ,`No authentication configured for request`);
   } else {
     return null;
   }
