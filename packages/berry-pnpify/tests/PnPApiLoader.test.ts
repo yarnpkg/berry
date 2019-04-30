@@ -29,7 +29,7 @@ describe('PnPApiLoader should', () => {
 
   it('emits watch event on file change', () => {
     let pnpFileChangeCallback: any;
-    mockWatch = jest.fn().mockImplementation((_, cb) => {
+    mockWatch = jest.fn().mockImplementation((arg1, arg2, cb) => {
       pnpFileChangeCallback = cb;
     });
     loader = new PnPApiLoader({
@@ -50,7 +50,7 @@ describe('PnPApiLoader should', () => {
 
   it('requires api again on file change', () => {
     let pnpFileChangeCallback: any;
-    mockWatch = jest.fn().mockImplementation((_, cb) => {
+    mockWatch = jest.fn().mockImplementation((arg1, arg2, cb) => {
       pnpFileChangeCallback = cb;
     });
     mockUncachedRequire = jest.fn()
@@ -77,7 +77,7 @@ describe('PnPApiLoader should', () => {
 
   it('does not emit event when API object is empty', () => {
     mockUncachedRequire = jest.fn().mockReturnValue({});
-    mockWatch = jest.fn().mockImplementation((filename, callback) => {
+    mockWatch = jest.fn().mockImplementation((filename, options, callback) => {
       callback('change', filename);
     });
     loader = new PnPApiLoader({
