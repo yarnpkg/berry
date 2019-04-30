@@ -81,15 +81,25 @@ export enum SettingsType {
   LOCATOR_LOOSE = 'LOCATOR_LOOSE',
   STRING = 'STRING',
   SECRET = 'SECRET',
+  OBJECT = 'OBJECT',
 };
 
-export type SettingsDefinition = {
+export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   description: string,
-  type: SettingsType,
+  type: T,
   default: any,
+  defaultText?: any,
   isArray?: boolean,
   isNullable?: boolean,
 };
+
+export type ObjectSettingsDefinition = BaseSettingsDefinition<SettingsType.OBJECT> & {
+  properties: {[propertyName: string]: SettingsDefinition},
+};
+
+export type NonObjectSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.OBJECT>>;
+
+export type SettingsDefinition = ObjectSettingsDefinition|NonObjectSettingsDefinition;
 
 export type PluginConfiguration = {
   modules: Map<string, any>,
@@ -113,7 +123,7 @@ export type PluginConfiguration = {
 //
 // - options that enable a feature must begin with the "enable" prefix
 //   ex: enableEmojis, enableColors
-export const coreDefinitions = {
+export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = {
   // Not implemented for now, but since it's part of all Yarn installs we want to declare it in order to improve drop-in compatibility
   lastUpdateCheck: {
     description: `Last timestamp we checked whether new Yarn versions were available`,
@@ -257,22 +267,66 @@ function parseBoolean(value: unknown) {
   }
 }
 
-function parseValue(value: unknown, type: SettingsType, folder: string) {
-  if (type === SettingsType.BOOLEAN)
+function parseValue(path: string, value: unknown, definition: SettingsDefinition, folder: string) {
+  if (value === null && !definition.isNullable && definition.default !== null)
+    throw new Error(`Non-nullable configuration settings "${path}" cannot be set to null`);
+
+  if (Array.isArray(value)) {
+    if (!definition.isArray && !Array.isArray(definition.default)) {
+      throw new Error(`Non-array configuration settings "${path}" cannot be an array`);
+    } else {
+      return value.map((sub, i) => parseSingleValue(`${path}[${i}]`, sub, definition, folder));
+    }
+  } else {
+    return parseSingleValue(path, value, definition, folder);
+  }
+}
+
+function parseSingleValue(path: string, value: unknown, definition: SettingsDefinition, folder: string) {
+  if (definition.type === SettingsType.BOOLEAN)
     return parseBoolean(value);
+
+  if (definition.type === SettingsType.OBJECT) {
+    return parseObject(path, value, definition, folder);
+  }
 
   if (typeof value !== `string`)
     throw new Error(`Expected value to be a string`);
 
-  if (type === SettingsType.ABSOLUTE_PATH) {
-    return posix.resolve(folder, NodeFS.toPortablePath(value));
-  } else if (type === SettingsType.LOCATOR_LOOSE) {
-    return structUtils.parseLocator(value, false);
-  } else if (type === SettingsType.LOCATOR) {
-    return structUtils.parseLocator(value);
-  } else {
-    return value;
+  switch(definition.type) {
+    case SettingsType.ABSOLUTE_PATH:
+      return posix.resolve(folder, NodeFS.toPortablePath(value));
+    case SettingsType.LOCATOR_LOOSE:
+      return structUtils.parseLocator(value, false);
+    case SettingsType.LOCATOR:
+      return structUtils.parseLocator(value);
+    default:
+      return value;
   }
+}
+
+function parseObject(path: string, value: unknown, definition: ObjectSettingsDefinition, folder: string) {
+  const result = {} as {[key: string]: any};
+
+  if (typeof value !== `object` || Array.isArray(value))
+    throw new Error(`Object configuration settings "${path}" must be an object`);
+
+  for (const [propKey, propValue] of Object.entries(value!)) {
+    const name = normalizeKey(propKey);
+    const subPath = `${path}.${name}`;
+    const subDefinition = definition.properties[name];
+
+    if (!subDefinition)
+      throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`);
+
+    result[name] = parseValue(subPath, propValue, definition.properties[name], folder);
+  }
+
+  return result;
+}
+
+function normalizeKey(key: string) {
+  return key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
 }
 
 function getDefaultGlobalFolder() {
@@ -299,8 +353,7 @@ function getEnvironmentSettings() {
     if (!key.startsWith(ENVIRONMENT_PREFIX))
       continue;
 
-    key = key.slice(ENVIRONMENT_PREFIX.length);
-    key = key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
+    key = normalizeKey(key.slice(ENVIRONMENT_PREFIX.length));
 
     environmentSettings[key] = value;
   }
@@ -611,7 +664,7 @@ export class Configuration {
       data = data.berry;
 
     for (const key of Object.keys(data)) {
-      const name = key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
+      const name = normalizeKey(key);
 
       // The plugins have already been loaded at this point
       if (name === `plugins`)
@@ -638,22 +691,7 @@ export class Configuration {
       if (this.sources.has(name) && !overwrite)
         continue;
 
-      let value = data[key];
-      if (value === null && !definition.isNullable && definition.default !== null)
-        throw new Error(`Non-nullable configuration settings "${name}" cannot be set to null`);
-
-      if (Array.isArray(value)) {
-        if (!definition.isArray && !Array.isArray(definition.default)) {
-          throw new Error(`Non-array configuration settings "${name}" cannot be an array`);
-        } else {
-          value = value.map(sub => parseValue(sub, definition.type, folder));
-        }
-      } else {
-        value = parseValue(value, definition.type, folder);
-      }
-
-      // @ts-ignore
-      this.values.set(name, value);
+      this.values.set(name, parseValue(name, data[key], definition, folder));
       this.sources.set(name, source);
     }
   }
