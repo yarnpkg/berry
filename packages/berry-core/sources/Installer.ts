@@ -1,5 +1,5 @@
-import {FetchResult}                from './Fetcher';
-import {LinkType, Locator, Package} from './types';
+import {FetchResult}                            from './Fetcher';
+import {LinkType, Descriptor, Locator, Package} from './types';
 
 export enum BuildType {
   SCRIPT = 0,
@@ -41,7 +41,7 @@ export interface Installer {
    * @param locator The package itself
    * @param dependencies The package dependencies
    */
-  attachInternalDependencies(locator: Locator, dependencies: Array<Locator>): Promise<void>;
+  attachInternalDependencies(locator: Locator, dependencies: Array<[Descriptor, Locator]>): Promise<void>;
 
   /**
    * Link a package to the location of the external packages that depend on

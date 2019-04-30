@@ -41,7 +41,7 @@ function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData
     packageRegistryData.push([packageName, packageStoreData]);
 
     for (const [packageReference, {packageLocation, packageDependencies}] of sortMap(packageStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
-      const normalizedDependencies: Array<[string, string]> = [];
+      const normalizedDependencies: Array<[string, string | [string, string]]> = [];
 
       if (packageName !== null && packageReference !== null && !packageDependencies.has(packageName))
         normalizedDependencies.push([packageName, packageReference]);

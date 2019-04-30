@@ -920,7 +920,7 @@ export class Project {
           throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
         if (dependencyLinker === packageLinker) {
-          internalDependencies.push(dependency);
+          internalDependencies.push([descriptor, dependency] as [Descriptor, Locator]);
         } else {
           let externalEntry = externalDependents.get(resolution);
           if (!externalEntry)
