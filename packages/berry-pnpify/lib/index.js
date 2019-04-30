@@ -124,75 +124,83 @@ function mountVirtualNodeModulesFs() {
         try {
             if (['accessSync', 'existsSync', 'stat', 'statSync'].indexOf(this.method) >= 0) {
                 const pnpPath = pathResolver.resolvePath(args[0]);
-                let fileMightExist = true;
-                if (pnpPath.resolvedPath === null) {
-                    fileMightExist = false;
-                }
-                else if (pnpPath.resolvedPath === undefined) {
-                    if (dirReader.readDir(pnpPath) === null) {
+                if (pnpPath.apiPath) {
+                    let fileMightExist = true;
+                    if (pnpPath.resolvedPath === null) {
                         fileMightExist = false;
                     }
-                    else {
-                        args[0] = pnpPath.issuer;
+                    else if (pnpPath.resolvedPath === undefined) {
+                        if (dirReader.readDir(pnpPath) === null) {
+                            fileMightExist = false;
+                        }
+                        else {
+                            args[0] = pnpPath.issuer;
+                        }
                     }
-                }
-                else {
-                    args[0] = pnpPath.resolvedPath;
-                }
-                if (!fileMightExist) {
-                    if (['existsSync'].indexOf(this.method) >= 0)
-                        result = false;
-                    else if (['stat'].indexOf(this.method) < 0)
-                        result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
-                    hasResult = true;
+                    else {
+                        args[0] = pnpPath.resolvedPath;
+                    }
+                    if (!fileMightExist) {
+                        if (['existsSync'].indexOf(this.method) >= 0)
+                            result = false;
+                        else if (['stat'].indexOf(this.method) < 0)
+                            result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
+                        hasResult = true;
+                    }
                 }
             }
             else if (['realpathSync'].indexOf(this.method) >= 0) {
                 const pnpPath = pathResolver.resolvePath(args[0]);
-                let realPath;
-                if (pnpPath.resolvedPath) {
-                    realPath = pnpPath.resolvedPath;
-                }
-                else if (pnpPath.resolvedPath === undefined) {
-                    if (dirReader.readDir(pnpPath) !== null) {
-                        realPath = args[0];
+                if (pnpPath.apiPath) {
+                    if (pnpPath.resolvedPath) {
+                        args[0] = pnpPath.resolvedPath;
+                    }
+                    else if (pnpPath.resolvedPath === undefined) {
+                        if (dirReader.readDir(pnpPath) !== null)
+                            result = args[0];
+                        else
+                            result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
+                        hasResult = true;
+                    }
+                    else if (pnpPath.resolvedPath === null) {
+                        result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
+                        hasResult = true;
                     }
                 }
-                if (realPath)
-                    result = realPath;
-                else
-                    result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
-                hasResult = true;
             }
             else if (['readFileSync'].indexOf(this.method) >= 0) {
                 const pnpPath = pathResolver.resolvePath(args[0]);
-                if (!pnpPath.resolvedPath) {
-                    result = new Error(`ENOENT: no such file or directory, open '${args[0]}'`);
-                    hasResult = true;
-                }
-                else {
-                    args[0] = pnpPath.resolvedPath;
+                if (pnpPath.apiPath) {
+                    if (!pnpPath.resolvedPath) {
+                        result = new Error(`ENOENT: no such file or directory, open '${args[0]}'`);
+                        hasResult = true;
+                    }
+                    else {
+                        args[0] = pnpPath.resolvedPath;
+                    }
                 }
             }
             else if (['readdirSync'].indexOf(this.method) >= 0) {
                 const pnpPath = pathResolver.resolvePath(args[0]);
-                if (pnpPath.resolvedPath === null) {
-                    result = new Error(`ENOENT: no such file or directory, scandir '${args[0]}'`);
-                    hasResult = true;
-                }
-                else if (pnpPath.resolvedPath === undefined) {
-                    const dirList = dirReader.readDir(pnpPath);
-                    if (dirList === null) {
+                if (pnpPath.apiPath) {
+                    if (pnpPath.resolvedPath === null) {
                         result = new Error(`ENOENT: no such file or directory, scandir '${args[0]}'`);
                         hasResult = true;
                     }
-                    else {
-                        result = dirList;
-                        hasResult = true;
+                    else if (pnpPath.resolvedPath === undefined) {
+                        const dirList = dirReader.readDir(pnpPath);
+                        if (dirList === null) {
+                            result = new Error(`ENOENT: no such file or directory, scandir '${args[0]}'`);
+                            hasResult = true;
+                        }
+                        else {
+                            result = dirList;
+                            hasResult = true;
+                        }
                     }
-                }
-                else {
-                    args[0] = pnpPath.resolvedPath;
+                    else {
+                        args[0] = pnpPath.resolvedPath;
+                    }
                 }
             }
         }
