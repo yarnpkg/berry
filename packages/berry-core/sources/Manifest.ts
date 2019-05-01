@@ -44,7 +44,7 @@ export class Manifest {
 
   public resolutions: Array<{pattern: Resolution, reference: string}> = [];
 
-  public files: Set<String> = new Set();
+  public files: Set<String> | null = null;
 
   public raw: object | null = null;
 
@@ -250,11 +250,14 @@ export class Manifest {
     }
 
     if (Array.isArray(data.files) && data.files.length !== 0) {
+      this.files = new Set();
+
       for (const filename of data.files) {
         if (typeof filename !== `string`) {
           errors.push(new Error(`Invalid files entry for '${filename}'`));
           continue;
         }
+
         this.files.add(filename);
       }
     }
@@ -371,7 +374,7 @@ export class Manifest {
       return {[stringifyResolution(pattern)]: reference};
     }));
 
-    if(this.files.size === 0) {
+    if(this.files === null) {
       data.files = undefined;
     } else {
       data.files = Array.from(this.files);

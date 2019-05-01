@@ -8,7 +8,7 @@ const {
   exec: {execFile},
 } = require(`pkg-tests-core`);
 const {NodeFS} = require('@berry/fslib');
-
+require(`fs`).appendFileSync(`D:\\pids`, `${process.pid}\n`);
 global.makeTemporaryEnv = generatePkgDriver({
   getName() {
     return `yarn`;

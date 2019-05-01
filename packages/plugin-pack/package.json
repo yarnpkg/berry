@@ -3,10 +3,10 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
+    "@berry/cli": "workspace:*",
     "@berry/core": "workspace:*",
     "@berry/fslib": "workspace:*",
-    "@berry/json-proxy": "workspace:*",
-    "clipanion": "^0.14.1"
+    "micromatch": "^4.0.2"
   },
   "devDependencies": {
     "@berry/builder": "workspace:packages/berry-builder"
