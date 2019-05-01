@@ -1,26 +1,47 @@
-import {PluginConfiguration} from '@berry/core';
+import {WorkspaceRequiredError}                                                 from '@berry/cli';
+import {Configuration, MessageName, PluginConfiguration, Project, StreamReport} from '@berry/core';
+import {Writable}                                                               from 'stream';
+
+import * as packUtils                                                           from '../packUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`pack [--filename]`)
-  .describe(`Creates a compressed gzip archive of package dependencies.`)
+  .command(`pack [--list]`)
+  .describe(`bundle local packages for publishing`)
 
   .detail(`
-    This command will create a new compressed gzip archive of package dependencies in your local directory.
+    This command will turn the local workspace into a compressed archive suitable for publishing.
 
-    \`--filename\` parameter names the archive of package as given filename.
+    Adding the \`--list\` parameter will cause the command to simply print the path of the files that would be included within the archive before exiting. No archive will be emitted.
   `)
 
   .example(
-    `Creates a compressed gzip archive of the package dependencies.`,
+    `Create an archive from the active workspace`,
     `yarn pack`,
   )
 
   .example(
-    `Creates a compressed gzip archive of package dependencies with the given filename.`,
-    `yarn pack --filename`,
+    `List the files that would be made part of the workspace's archive`,
+    `yarn pack --list`,
   )
 
-  .action(() => {
-  })
+  .action(async ({cwd, stdout, list}: {cwd: string, stdout: Writable, list: boolean}) => {
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
+    const {project, workspace} = await Project.find(configuration, cwd);
+
+    if (!workspace)
+      throw new WorkspaceRequiredError(cwd);
+
+    const report = await StreamReport.start({configuration, stdout}, async report => {
+      const files = await packUtils.genPackList(workspace);
+
+      if (list) {
+        for (const file of files) {
+          report.reportInfo(MessageName.UNNAMED, file);
+        }
+      }
+    });
+
+    return report.exitCode();
+  });
