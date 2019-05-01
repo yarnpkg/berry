@@ -82,26 +82,10 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 10);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ({
-
-/***/ 10:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const dynamicRequire_1 = __webpack_require__(7);
-process.env.NODE_OPTIONS = `-r ${dynamicRequire_1.dynamicRequire.resolve('.')} -r ${dynamicRequire_1.dynamicRequire.resolve('../../../.pnp')}`;
-process.mainModule.id = 'internal/preload';
-dynamicRequire_1.dynamicRequire('../../../.pnp');
-dynamicRequire_1.dynamicRequire('.');
-dynamicRequire_1.dynamicRequire('typescript/lib/tsserver');
-
-
-/***/ }),
 
 /***/ 7:
 /***/ (function(module, exports, __webpack_require__) {
@@ -113,6 +97,22 @@ const dynamicRequire =  true
     ? require
     : undefined;
 exports.dynamicRequire = dynamicRequire;
+
+
+/***/ }),
+
+/***/ 9:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const dynamicRequire_1 = __webpack_require__(7);
+process.env.NODE_OPTIONS = `-r ${dynamicRequire_1.dynamicRequire.resolve('.')} -r ${dynamicRequire_1.dynamicRequire.resolve('../../../.pnp')}`;
+process.mainModule.id = 'internal/preload';
+dynamicRequire_1.dynamicRequire('../../../.pnp');
+dynamicRequire_1.dynamicRequire('.');
+dynamicRequire_1.dynamicRequire('typescript/lib/tsserver');
 
 
 /***/ })

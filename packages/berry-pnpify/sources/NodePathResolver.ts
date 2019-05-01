@@ -34,30 +34,20 @@ const NODE_MODULES_REGEXP = /(?:\/node_modules((?:\/@[^\/]+)?(?:\/[^@][^\/]+)?))
 export interface ResolvedPath {
   /**
    * Fully resolved path `/node_modules/...` path within PnP project,
-   * `null` if path does not exist, `undefined` if path cannot be fully resolved, .e.g. has
-   * the form `/node_modules[/@foo]`, in this case `request` will contain '' or '@foo'
+   * `null` if path does not exist.
    */
-  resolvedPath?: string | null;
+  resolvedPath: string | null;
 
   /**
-   * Path to PnP API filename, present if path is inside PnP project and contains `/node_modules`
+   * The path that should be used for stats, returned for pathes ending with `/node_modules[/@scope]`,
+   * corresponds to last PnP package path retrievied from original pathname
    */
-  apiPath?: string | null;
+  statPath?: string;
 
   /**
-   * Final PnP issuer path (without trailing /)
+   * Directory entries list, returned for pathes ending with `/node_modules[/@scope]`
    */
-  issuer?: string;
-
-  /**
-   * Final PnP issuer package info
-   */
-  issuerInfo?: PackageInformation;
-
-  /**
-   * Unresolved request inside issuer path, either '' or '@foo'
-   */
-  request?: string;
+  dirList?: string[]
 }
 
 /**
@@ -76,6 +66,30 @@ export class NodePathResolver {
    */
   constructor(options: NodePathResolverOptions) {
     this.options = options;
+  }
+
+  /**
+   * Returns `readdir`-like result for partially resolved pnp path
+   *
+   * @param issuerInfo issuer package information
+   * @param request either '' or '@scope'
+   *
+   * @returns `undefined` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
+   */
+  public readDir(issuerInfo: PackageInformation, request: string): string[] | undefined {
+    const result = [];
+    for (const key of issuerInfo.packageDependencies.keys()) {
+      const [ scope, pkgName ] = key.split('/');
+      if (!request) {
+        if (result.indexOf(scope) < 0) {
+          result.push(scope);
+        }
+      } else if (request === scope) {
+        result.push(pkgName);
+      }
+    }
+
+    return result.length === 0 ? undefined : result;
   }
 
   private getIssuer(pnp: PnpApi, pathname: string): string | undefined {
@@ -98,12 +112,11 @@ export class NodePathResolver {
   public resolvePath(nodePath: string): ResolvedPath {
     const pathname = nodePath.replace('\\', '/');
     const result: ResolvedPath = { resolvedPath: nodePath };
-    if (pathname.indexOf('/node_modules') < 0) 
+    if (pathname.indexOf('/node_modules') < 0)
       // Non-node_modules paths should not be processed
       return result;
-    
+
     const pnpApiPath = this.options.apiLocator.findApi(nodePath);
-    result.apiPath = pnpApiPath;
     const pnp = pnpApiPath && this.options.apiLoader.getApi(pnpApiPath);
     if (pnpApiPath && pnp) {
       // Extract first issuer from the path using PnP API
@@ -124,8 +137,8 @@ export class NodePathResolver {
             // Strip starting /
             pkgName = pkgName ? pkgName.substring(1) : pkgName;
             // Check if full package name was provided
-            if (pkgName) {
-              if (pkgName[0] !== '@' || pkgName.indexOf('/') > 0) {
+            if (pkgName !== undefined) {
+              if (pkgName.length > 0 && (pkgName[0] !== '@' || pkgName.indexOf('/') > 0)) {
                 try {
                   const res = pnp.resolveToUnqualified(pkgName, issuer + '/');
                   issuer = res === null || res === issuer ? undefined : res;
@@ -146,13 +159,17 @@ export class NodePathResolver {
 
         if (issuer) {
           if (partialPackageName) {
-            delete result.resolvedPath;
-            result.issuer = issuer;
-            result.apiPath = pnpApiPath;
-            result.request = request;
             const locator = pnp.findPackageLocator(issuer + '/');
-            const pkgInfo = locator ? pnp.getPackageInformation(locator) : undefined;
-            result.issuerInfo = pkgInfo === null ? undefined : pkgInfo;
+            const issuerInfo = locator ? pnp.getPackageInformation(locator) : undefined;
+            if (issuerInfo) {
+              result.dirList = this.readDir(issuerInfo, request);
+            }
+
+            if (result.dirList) {
+              result.statPath = issuer;
+            } else {
+              result.resolvedPath = null;
+            }
           } else {
             result.resolvedPath = issuer + request;
           }

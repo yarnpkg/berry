@@ -101,7 +101,6 @@ const path_1 = __importDefault(__webpack_require__(3));
 const NodePathResolver_1 = __webpack_require__(4);
 const PnPApiLoader_1 = __webpack_require__(5);
 const PnPApiLocator_1 = __webpack_require__(8);
-const VirtualDirReader_1 = __webpack_require__(9);
 function mountVirtualNodeModulesFs() {
     const realFs = {};
     const fsMethods = Object.keys(fs_1.default).filter(function (key) {
@@ -116,91 +115,47 @@ function mountVirtualNodeModulesFs() {
         apiLoader,
         apiLocator: new PnPApiLocator_1.PnPApiLocator({ existsSync: fs_1.default.existsSync.bind(fs_1.default) })
     });
-    const dirReader = new VirtualDirReader_1.VirtualDirReader();
     function fsProxy() {
         const args = Array.prototype.slice.call(arguments);
-        let hasResult = false;
-        let result;
+        let result = undefined;
         try {
             if (['accessSync', 'existsSync', 'stat', 'statSync'].indexOf(this.method) >= 0) {
                 const pnpPath = pathResolver.resolvePath(args[0]);
-                if (pnpPath.apiPath) {
-                    let fileMightExist = true;
-                    if (pnpPath.resolvedPath === null) {
-                        fileMightExist = false;
-                    }
-                    else if (pnpPath.resolvedPath === undefined) {
-                        if (dirReader.readDir(pnpPath) === null) {
-                            fileMightExist = false;
-                        }
-                        else {
-                            args[0] = pnpPath.issuer;
-                        }
-                    }
-                    else {
-                        args[0] = pnpPath.resolvedPath;
-                    }
-                    if (!fileMightExist) {
-                        if (['existsSync'].indexOf(this.method) >= 0)
-                            result = false;
-                        else if (['stat'].indexOf(this.method) < 0)
-                            result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
-                        hasResult = true;
-                    }
+                if (['stat'].indexOf(this.method) < 0 && !pnpPath.resolvedPath) {
+                    result = ['existsSync'].indexOf(this.method) >= 0 ? false : new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
+                }
+                else if (pnpPath.resolvedPath) {
+                    args[0] = pnpPath.statPath || pnpPath.resolvedPath;
                 }
             }
             else if (['realpathSync'].indexOf(this.method) >= 0) {
                 const pnpPath = pathResolver.resolvePath(args[0]);
-                if (pnpPath.apiPath) {
-                    if (pnpPath.resolvedPath) {
-                        args[0] = pnpPath.resolvedPath;
-                    }
-                    else if (pnpPath.resolvedPath === undefined) {
-                        if (dirReader.readDir(pnpPath) !== null)
-                            result = args[0];
-                        else
-                            result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
-                        hasResult = true;
-                    }
-                    else if (pnpPath.resolvedPath === null) {
-                        result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
-                        hasResult = true;
-                    }
+                if (!pnpPath.resolvedPath) {
+                    result = new Error(`ENOENT: no such file or directory, stat '${args[0]}'`);
+                }
+                else {
+                    args[0] = pnpPath.resolvedPath;
                 }
             }
             else if (['readFileSync'].indexOf(this.method) >= 0) {
                 const pnpPath = pathResolver.resolvePath(args[0]);
-                if (pnpPath.apiPath) {
-                    if (!pnpPath.resolvedPath) {
-                        result = new Error(`ENOENT: no such file or directory, open '${args[0]}'`);
-                        hasResult = true;
-                    }
-                    else {
-                        args[0] = pnpPath.resolvedPath;
-                    }
+                if (!pnpPath.resolvedPath) {
+                    result = new Error(`ENOENT: no such file or directory, open '${args[0]}'`);
+                }
+                else {
+                    args[0] = pnpPath.resolvedPath;
                 }
             }
             else if (['readdirSync'].indexOf(this.method) >= 0) {
                 const pnpPath = pathResolver.resolvePath(args[0]);
-                if (pnpPath.apiPath) {
-                    if (pnpPath.resolvedPath === null) {
-                        result = new Error(`ENOENT: no such file or directory, scandir '${args[0]}'`);
-                        hasResult = true;
-                    }
-                    else if (pnpPath.resolvedPath === undefined) {
-                        const dirList = dirReader.readDir(pnpPath);
-                        if (dirList === null) {
-                            result = new Error(`ENOENT: no such file or directory, scandir '${args[0]}'`);
-                            hasResult = true;
-                        }
-                        else {
-                            result = dirList;
-                            hasResult = true;
-                        }
-                    }
-                    else {
-                        args[0] = pnpPath.resolvedPath;
-                    }
+                if (!pnpPath.resolvedPath) {
+                    result = new Error(`ENOENT: no such file or directory, scandir '${args[0]}'`);
+                }
+                else if (pnpPath.dirList) {
+                    result = pnpPath.dirList;
+                }
+                else {
+                    args[0] = pnpPath.resolvedPath;
                 }
             }
         }
@@ -208,9 +163,9 @@ function mountVirtualNodeModulesFs() {
             realFs.appendFileSync.apply(fs_1.default, [path_1.default.join(os_1.default.tmpdir(), 'pnpify.log'), e.stack + '\n']);
         }
         try {
-            if (hasResult && result instanceof Error)
+            if (result instanceof Error)
                 throw result;
-            const finalResult = hasResult ? result : realFs[this.method].apply(fs_1.default, args);
+            const finalResult = result || realFs[this.method].apply(fs_1.default, args);
             if (process.env.PNPIFY_TRACE && arguments.length > 0 && typeof arguments[0] === 'string' && arguments[0].indexOf(process.env.PNPIFY_TRACE) >= 0 && arguments[0].indexOf('pnpify.log') < 0) {
                 const dumpedResult = this.method === 'watch' || finalResult === undefined ? '' : ' = ' + JSON.stringify(finalResult instanceof Buffer ? finalResult.toString() : finalResult);
                 realFs.appendFileSync.apply(fs_1.default, [path_1.default.join(os_1.default.tmpdir(), 'pnpify.log'), this.method + ' ' + arguments[0] + ' -> ' + args[0] + dumpedResult + '\n']);
@@ -276,6 +231,29 @@ class NodePathResolver {
     constructor(options) {
         this.options = options;
     }
+    /**
+     * Returns `readdir`-like result for partially resolved pnp path
+     *
+     * @param issuerInfo issuer package information
+     * @param request either '' or '@scope'
+     *
+     * @returns `undefined` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
+     */
+    readDir(issuerInfo, request) {
+        const result = [];
+        for (const key of issuerInfo.packageDependencies.keys()) {
+            const [scope, pkgName] = key.split('/');
+            if (!request) {
+                if (result.indexOf(scope) < 0) {
+                    result.push(scope);
+                }
+            }
+            else if (request === scope) {
+                result.push(pkgName);
+            }
+        }
+        return result.length === 0 ? undefined : result;
+    }
     getIssuer(pnp, pathname) {
         const locator = pnp.findPackageLocator(pathname + '/');
         const info = locator && pnp.getPackageInformation(locator);
@@ -299,7 +277,6 @@ class NodePathResolver {
             // Non-node_modules paths should not be processed
             return result;
         const pnpApiPath = this.options.apiLocator.findApi(nodePath);
-        result.apiPath = pnpApiPath;
         const pnp = pnpApiPath && this.options.apiLoader.getApi(pnpApiPath);
         if (pnpApiPath && pnp) {
             // Extract first issuer from the path using PnP API
@@ -318,8 +295,8 @@ class NodePathResolver {
                         // Strip starting /
                         pkgName = pkgName ? pkgName.substring(1) : pkgName;
                         // Check if full package name was provided
-                        if (pkgName) {
-                            if (pkgName[0] !== '@' || pkgName.indexOf('/') > 0) {
+                        if (pkgName !== undefined) {
+                            if (pkgName.length > 0 && (pkgName[0] !== '@' || pkgName.indexOf('/') > 0)) {
                                 try {
                                     const res = pnp.resolveToUnqualified(pkgName, issuer + '/');
                                     issuer = res === null || res === issuer ? undefined : res;
@@ -341,13 +318,17 @@ class NodePathResolver {
                 } while (request && pkgName);
                 if (issuer) {
                     if (partialPackageName) {
-                        delete result.resolvedPath;
-                        result.issuer = issuer;
-                        result.apiPath = pnpApiPath;
-                        result.request = request;
                         const locator = pnp.findPackageLocator(issuer + '/');
-                        const pkgInfo = locator ? pnp.getPackageInformation(locator) : undefined;
-                        result.issuerInfo = pkgInfo === null ? undefined : pkgInfo;
+                        const issuerInfo = locator ? pnp.getPackageInformation(locator) : undefined;
+                        if (issuerInfo) {
+                            result.dirList = this.readDir(issuerInfo, request);
+                        }
+                        if (result.dirList) {
+                            result.statPath = issuer;
+                        }
+                        else {
+                            result.resolvedPath = null;
+                        }
                     }
                     else {
                         result.resolvedPath = issuer + request;
@@ -557,51 +538,6 @@ class PnPApiLocator {
     }
 }
 exports.PnPApiLocator = PnPApiLocator;
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Virtual dirs reader for the dirs `/node_modules[/@foo][/bar]`.
- *
- * These dirs are special for emulation of `node_modules` dependencies on the filesystem,
- * because they either do not exist or even whey they exist, they should have modification
- * >= time of PnP API file.
- */
-class VirtualDirReader {
-    /**
-     * Returns `readdir`-like result for partially resolved pnp path
-     *
-     * @param pnpPath partially resolved PnP path
-     *
-     * @returns `null` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
-     */
-    readDir(pnpPath) {
-        if (pnpPath.issuer === undefined || pnpPath.request === undefined)
-            return null;
-        const result = [];
-        if (pnpPath.issuerInfo) {
-            for (const key of pnpPath.issuerInfo.packageDependencies.keys()) {
-                const [scope, pkgName] = key.split('/');
-                if (!pnpPath.request) {
-                    if (result.indexOf(scope) < 0) {
-                        result.push(scope);
-                    }
-                }
-                else if (pnpPath.request === scope) {
-                    result.push(pkgName);
-                }
-            }
-        }
-        return result.length === 0 ? null : result;
-    }
-}
-exports.VirtualDirReader = VirtualDirReader;
 
 
 /***/ })
