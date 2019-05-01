@@ -2,6 +2,7 @@
   "name": "@berry/fslib",
   "private": true,
   "main": "./sources/index.ts",
+  "sideEffects": false,
   "dependencies": {
     "@berry/libzip": "workspace:*"
   }

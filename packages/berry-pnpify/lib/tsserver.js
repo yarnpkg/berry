@@ -82,37 +82,36 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 9);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 7:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ 12:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _dynamicRequire__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 
-Object.defineProperty(exports, "__esModule", { value: true });
-const dynamicRequire =  true
-    ? require
-    : undefined;
-exports.dynamicRequire = dynamicRequire;
+process.env.NODE_OPTIONS = `-r ${_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"].resolve('.')} -r ${_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"].resolve('../../../.pnp')}`;
+process.mainModule.id = 'internal/preload';
+Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"])('../../../.pnp');
+Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"])('.');
+Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"])('typescript/lib/tsserver');
 
 
 /***/ }),
 
-/***/ 9:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ 2:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return dynamicRequire; });
+const dynamicRequire =  true
+    ? require
+    : undefined;
 
-Object.defineProperty(exports, "__esModule", { value: true });
-const dynamicRequire_1 = __webpack_require__(7);
-process.env.NODE_OPTIONS = `-r ${dynamicRequire_1.dynamicRequire.resolve('.')} -r ${dynamicRequire_1.dynamicRequire.resolve('../../../.pnp')}`;
-process.mainModule.id = 'internal/preload';
-dynamicRequire_1.dynamicRequire('../../../.pnp');
-dynamicRequire_1.dynamicRequire('.');
-dynamicRequire_1.dynamicRequire('typescript/lib/tsserver');
 
 
 /***/ })

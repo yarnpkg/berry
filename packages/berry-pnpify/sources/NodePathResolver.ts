@@ -1,3 +1,4 @@
+import { NodeFS }                     from '@berry/fslib';
 import { PnpApi, PackageInformation } from '@berry/pnp';
 
 import { PnPApiLoader }               from './PnPApiLoader';
@@ -92,8 +93,8 @@ export class NodePathResolver {
     return result.length === 0 ? undefined : result;
   }
 
-  private getIssuer(pnp: PnpApi, pathname: string): string | undefined {
-    const locator = pnp.findPackageLocator(pathname + '/');
+  private getIssuer(pnp: PnpApi, portablePath: string): string | undefined {
+    const locator = pnp.findPackageLocator(portablePath + '/');
     const info = locator && pnp.getPackageInformation(locator);
     return !info ? undefined : info.packageLocation;
   }
@@ -110,22 +111,22 @@ export class NodePathResolver {
    * @returns resolved path
    */
   public resolvePath(nodePath: string): ResolvedPath {
-    const pathname = nodePath.replace('\\', '/');
     const result: ResolvedPath = { resolvedPath: nodePath };
-    if (pathname.indexOf('/node_modules') < 0)
+    if (nodePath.indexOf('/node_modules') < 0)
       // Non-node_modules paths should not be processed
       return result;
+    const portablePath = NodeFS.toPortablePath(nodePath);
 
-    const pnpApiPath = this.options.apiLocator.findApi(nodePath);
+    const pnpApiPath = this.options.apiLocator.findApi(portablePath);
     const pnp = pnpApiPath && this.options.apiLoader.getApi(pnpApiPath);
     if (pnpApiPath && pnp) {
       // Extract first issuer from the path using PnP API
-      let issuer = this.getIssuer(pnp, pathname);
+      let issuer = this.getIssuer(pnp, portablePath);
       let request: string | undefined;
 
       // If we have something left in a path to parse, do that
-      if (issuer && pathname.length > issuer.length) {
-        request = pathname.substring(issuer.length);
+      if (issuer && portablePath.length > issuer.length) {
+        request = portablePath.substring(issuer.length);
 
         let m;
         let pkgName;
@@ -161,17 +162,17 @@ export class NodePathResolver {
           if (partialPackageName) {
             const locator = pnp.findPackageLocator(issuer + '/');
             const issuerInfo = locator ? pnp.getPackageInformation(locator) : undefined;
-            if (issuerInfo) {
+            if (issuerInfo)
               result.dirList = this.readDir(issuerInfo, request);
-            }
+
 
             if (result.dirList) {
-              result.statPath = issuer;
+              result.statPath = NodeFS.fromPortablePath(issuer);
             } else {
               result.resolvedPath = null;
             }
           } else {
-            result.resolvedPath = issuer + request;
+            result.resolvedPath = NodeFS.fromPortablePath(issuer + request);
           }
         }
       }
