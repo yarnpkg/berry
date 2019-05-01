@@ -1,7 +1,19 @@
 import {Cache, Descriptor, Plugin, Workspace} from '@berry/core';
-import {httpUtils, structUtils}               from '@berry/core';
+import {structUtils}                          from '@berry/core';
 import {Hooks as EssentialsHooks}             from '@berry/plugin-essentials';
 import {suggestUtils}                         from '@berry/plugin-essentials';
+
+const getDependencyName = (descriptor: Descriptor) => {
+  return descriptor.scope
+    ? `@${descriptor.scope}/${descriptor.name}`
+    : descriptor.name;
+};
+
+const getTypesName = (descriptor: Descriptor) => {
+  return descriptor.scope
+    ? `${descriptor.scope}__${descriptor.name}`
+    : `${descriptor.name}`;
+};
 
 const afterWorkspaceDependencyAddition = async (
   workspace: Workspace,
@@ -14,12 +26,9 @@ const afterWorkspaceDependencyAddition = async (
   const project = workspace.project;
   const configuration = project.configuration;
   const cache = await Cache.find(configuration);
+  const typesName = getTypesName(descriptor);
 
-  const typesName = descriptor.scope
-    ? `${descriptor.scope}__${descriptor.name}`
-    : `${descriptor.name}`;
-
-  const target = suggestUtils.Target.REGULAR;
+  const target = suggestUtils.Target.DEVELOPMENT;
   const modifier = suggestUtils.Modifier.EXACT;
   const strategies = [suggestUtils.Strategy.LATEST];
 
@@ -40,9 +49,30 @@ const afterWorkspaceDependencyAddition = async (
   );
 };
 
+const afterWorkspaceDependencyRemoval = async (
+  workspace: Workspace,
+  dependencyTarget: suggestUtils.Target,
+  descriptor: Descriptor,
+) => {
+  if (descriptor.scope === `types`)
+    return;
+
+  const target = suggestUtils.Target.DEVELOPMENT;
+  const typesName = getTypesName(descriptor);
+
+  const ident = structUtils.makeIdent(`types`, typesName);
+  const current = workspace.manifest[target].get(ident.identHash);
+
+  if (typeof current === `undefined`)
+    return;
+
+  workspace.manifest[target].delete(ident.identHash);
+};
+
 const plugin: Plugin = {
   hooks: {
     afterWorkspaceDependencyAddition,
+    afterWorkspaceDependencyRemoval,
   } as (
     EssentialsHooks
   ),
