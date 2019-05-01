@@ -42,6 +42,7 @@
     "@types/treeify": "^1.0.0",
     "@types/tunnel": "^0.0.0",
     "@types/yup": "0.26.12",
+    "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^1.6.0",
     "babel-jest": "^24.5.0",
     "eslint": "^5.16.0",

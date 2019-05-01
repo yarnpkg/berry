@@ -1,5 +1,5 @@
-import {FetchResult}                            from './Fetcher';
-import {LinkType, Descriptor, Locator, Package} from './types';
+import {FetchResult}                  from './Fetcher';
+import {Descriptor, Locator, Package} from './types';
 
 export enum BuildType {
   SCRIPT = 0,

@@ -1,5 +1,4 @@
 import crossSpawn                        from 'cross-spawn';
-import EventEmitter                      from 'events';
 import {PassThrough, Readable, Writable} from 'stream';
 
 enum Pipe {
@@ -73,7 +72,7 @@ export function makeProcess(name: string, args: Array<string>, opts: any): Proce
             } break;
           }
         });
-    
+
         child.on(`exit`, code => {
           if (code !== null) {
             resolve(code);
@@ -170,8 +169,8 @@ export class Handle {
     chain.stdin = stdin;
     chain.stdout = stdout;
     chain.stderr = stderr;
-  
-    return chain;  
+
+    return chain;
   }
 
   constructor(ancestor: Handle | null, implementation: ProcessImplementation) {

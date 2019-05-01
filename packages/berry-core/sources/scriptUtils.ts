@@ -133,7 +133,7 @@ async function initializePackageEnvironment(locator: Locator, {project, cwd}: {p
     const env = await makeScriptEnv(project);
     const binFolder = env.BERRY_BIN_FOLDER;
 
-    for (const [binaryName, [pkg, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
+    for (const [binaryName, [, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
       await makePathWrapper(binFolder, binaryName, process.execPath, [binaryPath]);
 
     const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
@@ -252,10 +252,10 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
   if (!binary)
     throw new Error(`Binary not found (${binaryName}) for ${structUtils.prettyLocator(project.configuration, locator)}`);
 
-  const [pkg, binaryPath] = binary;
+  const [, binaryPath] = binary;
   const env = await makeScriptEnv(project);
 
-  for (const [binaryName, [pkg, binaryPath]] of packageAccessibleBinaries)
+  for (const [binaryName, [, binaryPath]] of packageAccessibleBinaries)
     await makePathWrapper(env.BERRY_BIN_FOLDER, binaryName, process.execPath, [binaryPath]);
 
   let result;

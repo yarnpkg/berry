@@ -1,5 +1,5 @@
 import fs, {Stats}                                         from 'fs';
-import {posix, win32}                                      from 'path';
+import {win32}                                             from 'path';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {FakeFS, WriteFileOptions}                          from './FakeFS';

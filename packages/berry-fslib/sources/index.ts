@@ -13,30 +13,6 @@ export {PosixFS}   from './PosixFS';
 export {ZipFS}     from './ZipFS';
 export {ZipOpenFS} from './ZipOpenFS';
 
-function wrapSync(fn: Function) {
-  return fn;
-}
-
-function wrapAsync(fn: Function) {
-  return function (... args: Array<any>) {
-    const cb = typeof args[args.length - 1] === `function`
-      ? args.pop()
-      : null;
-
-    setImmediate(() => {
-      let error, result;
-
-      try {
-        result = fn(... args);
-      } catch (caught) {
-        error = caught;
-      }
-
-      cb(error, result);
-    });
-  };
-}
-
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
   const SYNC_IMPLEMENTATIONS = new Set([
     `accessSync`,

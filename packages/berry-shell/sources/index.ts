@@ -1,7 +1,7 @@
 import {xfs, NodeFS}                                                      from '@berry/fslib';
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
 import {posix}                                                            from 'path';
-import {PassThrough, Readable, Stream, Writable}                          from 'stream';
+import {PassThrough, Readable, Writable}                                  from 'stream';
 
 import {Handle, ProtectedStream, Stdio, start, makeBuiltin, makeProcess}  from './pipe';
 
@@ -245,8 +245,6 @@ function makeSubshellAction(ast: ShellLine, opts: ShellOptions, state: ShellStat
 }
 
 async function executeCommandChain(node: CommandChain, opts: ShellOptions, state: ShellState) {
-  const parts = [];
-
   let current: CommandChain | null = node;
   let pipeType = null;
 

@@ -1,5 +1,4 @@
 import {NodeElement} from './NodeElement';
-import {NodeText}    from './NodeText';
 import {Node}        from './Node';
 
 /**

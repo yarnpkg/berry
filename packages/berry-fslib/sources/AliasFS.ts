@@ -1,5 +1,3 @@
-import {posix}                                             from 'path';
-
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {FakeFS, WriteFileOptions}                          from './FakeFS';
 

@@ -1,7 +1,7 @@
 import {MessageName, ReportError}                        from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator, Package}                    from './types';
+import {Descriptor, Locator}                             from './types';
 
 export class MultiResolver implements Resolver {
   private readonly resolvers: Array<Resolver>;
