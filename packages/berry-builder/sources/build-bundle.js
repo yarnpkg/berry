@@ -23,6 +23,8 @@ clipanion
     const compiler = webpack(makeConfig({
       context: basedir,
 
+      bail: true,
+
       entry: `./sources/cli.ts`,
 
       output: {
