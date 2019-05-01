@@ -1,7 +1,6 @@
 // @ts-ignore
 import {Key}            from '@manaflair/term-strings/parse';
 
-import {DirtyScreen}    from './DirtyScreen';
 import {Environment}    from './Environment';
 import {KeySequence}    from './KeySequence';
 import {NodeElement}    from './NodeElement';
@@ -79,13 +78,13 @@ export class NodeTree extends NodeElement {
   focus(element: NodeElement | null) {
     if (element && element.props.tabIndex === null)
       element = null;
-    
+
     if (!element) {
       if (!this.activeElement)
         return;
 
       const previousElement = this.activeElement;
-      this.activeElement = null;        
+      this.activeElement = null;
       previousElement.dispatchEvent(new SyntheticEvent(`blur`));
     } else {
       if (this.activeElement === element)
@@ -94,7 +93,7 @@ export class NodeTree extends NodeElement {
       // Don't forget to trigger the blur event on the currently active node
       if (this.activeElement)
         this.focus(null);
-      
+
       // If the blur event caused something else to get the focus, we
       // effectively cancel the focus action we were about to execute
       if (!this.activeElement) {
@@ -265,7 +264,7 @@ export class NodeTree extends NodeElement {
 
       for (let event of shortcutEvents)
         targetElement.dispatchEvent(event);
-      
+
       if (shortcutEvents.some(event => event.defaultPrevented)) {
         return;
       }

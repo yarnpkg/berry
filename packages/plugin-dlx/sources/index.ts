@@ -1,4 +1,4 @@
-import {Plugin, SettingsType} from '@berry/core';
+import {Plugin}               from '@berry/core';
 
 import dlx                    from './commands/dlx';
 

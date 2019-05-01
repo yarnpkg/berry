@@ -1,7 +1,7 @@
 import {Configuration}         from '@berry/core';
 import {xfs, NodeFS}           from '@berry/fslib';
 import {execFileSync}          from 'child_process';
-import {UsageError, Clipanion} from 'clipanion';
+import {Clipanion}             from 'clipanion';
 import {posix}                 from 'path';
 import * as yup                from 'yup';
 

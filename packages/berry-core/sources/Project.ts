@@ -7,7 +7,6 @@ import Logic                                    from 'logic-solver';
 import pLimit                                   from 'p-limit';
 import {posix}                                  from 'path';
 import semver                                   from 'semver';
-import {PassThrough}                            from 'stream';
 import {tmpNameSync}                            from 'tmp';
 
 import {AliasResolver}                          from './AliasResolver';
@@ -651,11 +650,6 @@ export class Project {
       const parentPackage = allPackages.get(parentLocator.locatorHash);
       if (!parentPackage)
         throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, parentLocator)}) should have been registered`);
-
-      const subResolutions: Array<[
-        Locator,
-        (() => void) | null
-      ]> = [];
 
       const firstPass = [];
       const secondPass = [];

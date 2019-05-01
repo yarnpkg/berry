@@ -1,6 +1,5 @@
 // @ts-ignore
 import template                  from '@berry/pnp/bundles/hook';
-import {readFileSync}            from 'fs';
 
 import {generateSerializedState} from './generateSerializedState';
 import {SerializedState}         from './types';
@@ -9,7 +8,7 @@ import {PnpSettings}             from './types';
 function generateLoader(shebang: string | null | undefined, loader: string) {
   return [
     shebang ? `${shebang}\n\n` : ``,
-    `try {\n`, 
+    `try {\n`,
     `  Object.freeze({}).detectStrictMode = true;\n`,
     `} catch (error) {\n`,
     `  throw new Error(\`The whole PnP file got strict-mode-ified, which is known to break (Emscripten libraries aren't strict mode). This usually happens when the file goes through Babel.\`);\n`,
@@ -56,6 +55,6 @@ export function generateSplitScript(settings: PnpSettings & {dataLocation: strin
 
   const setup = generateSplitSetup(settings.dataLocation);
   const loaderFile = generateLoader(settings.shebang, setup);
-  
+
   return {dataFile: generateJsonString(data), loaderFile};
 }

@@ -118,7 +118,7 @@ export class NodeElement extends Node {
       throw new Error(`Out-of-bound segment start`);
     if (!(width >= 0 && width <= this.elementWorldRect.width - left))
       throw new Error(`Invalid segment width`);
-    
+
     if (!width)
       return ``;
 
@@ -126,7 +126,7 @@ export class NodeElement extends Node {
       const borderTop = this.style.get(`borderTop`);
 
       if (borderTop) {
-        let prefix = ``, center = ``, suffix = ``;
+        let prefix = ``, suffix = ``;
 
         if (this.elementWorldRect.width >= 2) {
           if (left === 0) {
@@ -160,7 +160,7 @@ export class NodeElement extends Node {
       const borderBottom = this.style.get(`borderBottom`);
 
       if (borderBottom) {
-        let prefix = ``, center = ``, suffix = ``;
+        let prefix = ``, suffix = ``;
 
         if (this.elementWorldRect.width >= 2) {
           if (left === 0) {
