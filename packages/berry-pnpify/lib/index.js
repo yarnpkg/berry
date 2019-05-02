@@ -814,7 +814,7 @@ class NodePathResolver_NodePathResolver {
     getIssuer(pnp, portablePath) {
         const locator = pnp.findPackageLocator(portablePath + '/');
         const info = locator && pnp.getPackageInformation(locator);
-        return !info ? undefined : info.packageLocation;
+        return !info ? undefined : NodeFS_NodeFS.toPortablePath(info.packageLocation);
     }
     /**
      * Resolves paths containing `/node_modules` inside PnP projects. If path is outside PnP
@@ -829,10 +829,10 @@ class NodePathResolver_NodePathResolver {
      */
     resolvePath(nodePath) {
         const result = { resolvedPath: nodePath };
-        if (nodePath.indexOf('/node_modules') < 0)
+        const portablePath = NodeFS_NodeFS.toPortablePath(nodePath);
+        if (portablePath.indexOf('/node_modules') < 0)
             // Non-node_modules paths should not be processed
             return result;
-        const portablePath = NodeFS_NodeFS.toPortablePath(nodePath);
         const pnpApiPath = this.options.apiLocator.findApi(portablePath);
         const pnp = pnpApiPath && this.options.apiLoader.getApi(pnpApiPath);
         if (pnpApiPath && pnp) {
@@ -855,7 +855,10 @@ class NodePathResolver_NodePathResolver {
                         if (pkgName !== undefined) {
                             if (pkgName.length > 0 && (pkgName[0] !== '@' || pkgName.indexOf('/') > 0)) {
                                 try {
-                                    const res = pnp.resolveToUnqualified(pkgName, issuer + '/');
+                                    let res = pnp.resolveToUnqualified(pkgName, issuer + '/');
+                                    if (res) {
+                                        res = NodeFS_NodeFS.toPortablePath(res);
+                                    }
                                     issuer = res === null || res === issuer ? undefined : res;
                                 }
                                 catch (e) {
