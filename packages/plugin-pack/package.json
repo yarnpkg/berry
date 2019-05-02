@@ -6,7 +6,9 @@
     "@berry/cli": "workspace:*",
     "@berry/core": "workspace:*",
     "@berry/fslib": "workspace:*",
-    "micromatch": "^4.0.2"
+    "@types/tar-stream": "1.6.0",
+    "micromatch": "^4.0.2",
+    "tar-stream": "^2.0.1"
   },
   "devDependencies": {
     "@berry/builder": "workspace:packages/berry-builder"
