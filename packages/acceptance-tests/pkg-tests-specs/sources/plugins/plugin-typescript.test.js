@@ -39,6 +39,34 @@ describe(`Plugins`, () => {
     );
 
     test(
+      `it should not generate a @types dependency if @types package doesn't exist`,
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        await writeFile(`${path}/.yarnrc`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-typescript.js`))}\n`);
+        await run(`add`, `resolve`);
+
+        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+          dependencies: {
+            [`resolve`]: `^1.9.0`
+          }
+        });
+      })
+    );
+
+    test(
+      `it should not add @types for transient dependencies`,
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        await writeFile(`${path}/.yarnrc`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-typescript.js`))}\n`);
+        await run(`add`, `one-fixed-dep`);
+
+        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+          dependencies: {
+            [`one-fixed-dep`]: `^1.0.0`
+          }
+        });
+      })
+    );
+
+    test(
       `it should automatically remove @types from development`,
       makeTemporaryEnv({
         dependencies: {

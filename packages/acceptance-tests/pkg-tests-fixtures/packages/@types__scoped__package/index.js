@@ -1,6 +1,6 @@
 /* @flow */
 
-module.exports = require(`./package.json.js.js`);
+module.exports = require(`./package.json`);
 
 for (const key of [`dependencies`, `devDependencies`, `peerDependencies`]) {
   for (const dep of Object.keys(module.exports[key] || {})) {

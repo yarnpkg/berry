@@ -253,7 +253,9 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
   }
 
   function processError(res: ServerResponse, statusCode: number, errorMessage: string): void {
-    console.error(errorMessage);
+    if (statusCode !== 404)
+      console.error(errorMessage);
+
     sendError(res, statusCode, errorMessage);
   }
 
