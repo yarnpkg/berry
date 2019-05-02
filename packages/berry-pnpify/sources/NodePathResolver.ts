@@ -30,7 +30,17 @@ export interface NodePathResolverOptions {
 const NODE_MODULES_REGEXP = /(?:\/node_modules((?:\/@[^\/]+)?(?:\/[^@][^\/]+)?))?(.*)/;
 
 /**
- * Resolved `/node_modules` path inside PnP project info
+ * Resolved `/node_modules` path inside PnP project info.
+ *
+ * Dirs ending with '/node_modules/foo/node_modules' or '.../node_modules/foo/node_modules/@scope'
+ * do not physically exist, but we must pretend they do exist if package `foo` has dependencies
+ * and there is some package `@scope/bar` inside these dependencies. We need two things to emulate
+ * these dirs existence:
+ *
+ * 1. List of entries in these dirs. We retrieve them by calling PnP API and getting dependencies
+ *    for the issuer `.../foo/` and store into `dirList` field
+ * 2. And we need either fake stats or we can forward underlying fs to stat the issuer dir.
+ *    The issuer dir exists on fs. We store issuer dir into `statPath` field
  */
 export interface ResolvedPath {
   /**
@@ -40,8 +50,11 @@ export interface ResolvedPath {
   resolvedPath: string | null;
 
   /**
-   * The path that should be used for stats, returned for pathes ending with `/node_modules[/@scope]`,
-   * corresponds to last PnP package path retrievied from original pathname
+   * The path that should be used for stats. This field is returned for pathes ending
+   * with `/node_modules[/@scope]`.
+   *
+   * These pathes are special in the sense they do not exists as physical dirs in PnP projects.
+   * We emulate these pathes by forwarding issuer path to underlying fs.
    */
   statPath?: string;
 
