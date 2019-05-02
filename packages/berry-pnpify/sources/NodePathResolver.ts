@@ -106,8 +106,8 @@ export class NodePathResolver {
     return result.length === 0 ? undefined : result;
   }
 
-  private getIssuer(pnp: PnpApi, portablePath: string): string | undefined {
-    const locator = pnp.findPackageLocator(portablePath + '/');
+  private getIssuer(pnp: PnpApi, pathname: string): string | undefined {
+    const locator = pnp.findPackageLocator(pathname + '/');
     const info = locator && pnp.getPackageInformation(locator);
     return !info ? undefined : NodeFS.toPortablePath(info.packageLocation);
   }
@@ -125,21 +125,20 @@ export class NodePathResolver {
    */
   public resolvePath(nodePath: string): ResolvedPath {
     const result: ResolvedPath = { resolvedPath: nodePath };
-    const portablePath = NodeFS.toPortablePath(nodePath);
-    if (portablePath.indexOf('/node_modules') < 0)
+    if (nodePath.indexOf('/node_modules') < 0)
       // Non-node_modules paths should not be processed
       return result;
 
-    const pnpApiPath = this.options.apiLocator.findApi(portablePath);
+    const pnpApiPath = this.options.apiLocator.findApi(nodePath);
     const pnp = pnpApiPath && this.options.apiLoader.getApi(pnpApiPath);
     if (pnpApiPath && pnp) {
       // Extract first issuer from the path using PnP API
-      let issuer = this.getIssuer(pnp, portablePath);
+      let issuer = this.getIssuer(pnp, nodePath);
       let request: string | undefined;
 
       // If we have something left in a path to parse, do that
-      if (issuer && portablePath.length > issuer.length) {
-        request = portablePath.substring(issuer.length);
+      if (issuer && nodePath.length > issuer.length) {
+        request = nodePath.substring(issuer.length);
 
         let m;
         let pkgName;
@@ -183,12 +182,12 @@ export class NodePathResolver {
 
 
             if (result.dirList) {
-              result.statPath = NodeFS.fromPortablePath(issuer);
+              result.statPath = issuer;
             } else {
               result.resolvedPath = null;
             }
           } else {
-            result.resolvedPath = NodeFS.fromPortablePath(issuer + request);
+            result.resolvedPath = issuer + request;
           }
         }
       }

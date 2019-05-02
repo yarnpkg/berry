@@ -1,3 +1,4 @@
+import { NodeFS }         from '@berry/fslib';
 import { PnpApi }         from '@berry/pnp';
 
 import EventEmitter       from 'events';
@@ -79,7 +80,7 @@ export class PnPApiLoader extends EventEmitter {
       if (cacheEntry.pnpApi && !cacheEntry.watched) {
         cacheEntry.watched = true;
         this.cachedApis[pnpApiPath] = cacheEntry;
-        this.options.watch(pnpApiPath, { persistent: false }, () => {
+        this.options.watch(NodeFS.fromPortablePath(pnpApiPath), { persistent: false }, () => {
           let newApi;
           try {
             newApi = this.options.uncachedRequire(pnpApiPath);

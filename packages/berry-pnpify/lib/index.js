@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 13);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -129,16 +129,11 @@ module.exports = require("events");
 /* 9 */,
 /* 10 */,
 /* 11 */,
-/* 12 */,
-/* 13 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: external "fs"
-var external_fs_ = __webpack_require__(0);
-var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
 
 // EXTERNAL MODULE: external "path"
 var external_path_ = __webpack_require__(1);
@@ -413,6 +408,10 @@ class FakeFS_FakeFS {
 }
 ;
 
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __webpack_require__(0);
+var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
+
 // CONCATENATED MODULE: ../berry-fslib/sources/NodeFS.ts
 
 
@@ -642,6 +641,151 @@ class NodeFS_NodeFS extends FakeFS_FakeFS {
     }
 }
 
+// CONCATENATED MODULE: ../berry-fslib/sources/PosixFS.ts
+
+
+class PosixFS_PosixFS extends FakeFS_FakeFS {
+    constructor(baseFs) {
+        super();
+        this.baseFs = baseFs;
+    }
+    getRealPath() {
+        return NodeFS_NodeFS.fromPortablePath(this.baseFs.getRealPath());
+    }
+    async openPromise(p, flags, mode) {
+        return await this.baseFs.openPromise(NodeFS_NodeFS.toPortablePath(p), flags, mode);
+    }
+    openSync(p, flags, mode) {
+        return this.baseFs.openSync(NodeFS_NodeFS.toPortablePath(p), flags, mode);
+    }
+    async closePromise(fd) {
+        await this.baseFs.closePromise(fd);
+    }
+    closeSync(fd) {
+        this.baseFs.closeSync(fd);
+    }
+    createReadStream(p, opts) {
+        return this.baseFs.createReadStream(NodeFS_NodeFS.toPortablePath(p), opts);
+    }
+    createWriteStream(p, opts) {
+        return this.baseFs.createWriteStream(NodeFS_NodeFS.toPortablePath(p), opts);
+    }
+    async realpathPromise(p) {
+        return NodeFS_NodeFS.fromPortablePath(await this.baseFs.realpathPromise(NodeFS_NodeFS.toPortablePath(p)));
+    }
+    realpathSync(p) {
+        return NodeFS_NodeFS.fromPortablePath(this.baseFs.realpathSync(NodeFS_NodeFS.toPortablePath(p)));
+    }
+    async existsPromise(p) {
+        return await this.baseFs.existsPromise(NodeFS_NodeFS.toPortablePath(p));
+    }
+    existsSync(p) {
+        return this.baseFs.existsSync(NodeFS_NodeFS.toPortablePath(p));
+    }
+    async accessPromise(p, mode) {
+        return await this.baseFs.accessPromise(NodeFS_NodeFS.toPortablePath(p), mode);
+    }
+    accessSync(p, mode) {
+        return this.baseFs.accessSync(NodeFS_NodeFS.toPortablePath(p), mode);
+    }
+    async statPromise(p) {
+        return await this.baseFs.statPromise(NodeFS_NodeFS.toPortablePath(p));
+    }
+    statSync(p) {
+        return this.baseFs.statSync(NodeFS_NodeFS.toPortablePath(p));
+    }
+    async lstatPromise(p) {
+        return await this.baseFs.lstatPromise(NodeFS_NodeFS.toPortablePath(p));
+    }
+    lstatSync(p) {
+        return this.baseFs.lstatSync(NodeFS_NodeFS.toPortablePath(p));
+    }
+    async chmodPromise(p, mask) {
+        return await this.baseFs.chmodPromise(NodeFS_NodeFS.toPortablePath(p), mask);
+    }
+    chmodSync(p, mask) {
+        return this.baseFs.chmodSync(NodeFS_NodeFS.toPortablePath(p), mask);
+    }
+    async renamePromise(oldP, newP) {
+        return await this.baseFs.renamePromise(NodeFS_NodeFS.toPortablePath(oldP), NodeFS_NodeFS.toPortablePath(newP));
+    }
+    renameSync(oldP, newP) {
+        return this.baseFs.renameSync(NodeFS_NodeFS.toPortablePath(oldP), NodeFS_NodeFS.toPortablePath(newP));
+    }
+    async copyFilePromise(sourceP, destP, flags) {
+        return await this.baseFs.copyFilePromise(NodeFS_NodeFS.toPortablePath(sourceP), NodeFS_NodeFS.toPortablePath(destP), flags);
+    }
+    copyFileSync(sourceP, destP, flags) {
+        return this.baseFs.copyFileSync(NodeFS_NodeFS.toPortablePath(sourceP), NodeFS_NodeFS.toPortablePath(destP), flags);
+    }
+    async writeFilePromise(p, content, opts) {
+        return await this.baseFs.writeFilePromise(NodeFS_NodeFS.toPortablePath(p), content, opts);
+    }
+    writeFileSync(p, content, opts) {
+        return this.baseFs.writeFileSync(NodeFS_NodeFS.toPortablePath(p), content, opts);
+    }
+    async unlinkPromise(p) {
+        return await this.baseFs.unlinkPromise(NodeFS_NodeFS.toPortablePath(p));
+    }
+    unlinkSync(p) {
+        return this.baseFs.unlinkSync(NodeFS_NodeFS.toPortablePath(p));
+    }
+    async utimesPromise(p, atime, mtime) {
+        return await this.baseFs.utimesPromise(NodeFS_NodeFS.toPortablePath(p), atime, mtime);
+    }
+    utimesSync(p, atime, mtime) {
+        return this.baseFs.utimesSync(NodeFS_NodeFS.toPortablePath(p), atime, mtime);
+    }
+    async mkdirPromise(p) {
+        return await this.baseFs.mkdirPromise(NodeFS_NodeFS.toPortablePath(p));
+    }
+    mkdirSync(p) {
+        return this.baseFs.mkdirSync(NodeFS_NodeFS.toPortablePath(p));
+    }
+    async rmdirPromise(p) {
+        return await this.baseFs.rmdirPromise(NodeFS_NodeFS.toPortablePath(p));
+    }
+    rmdirSync(p) {
+        return this.baseFs.rmdirSync(NodeFS_NodeFS.toPortablePath(p));
+    }
+    async symlinkPromise(target, p) {
+        return await this.baseFs.symlinkPromise(target, NodeFS_NodeFS.toPortablePath(p));
+    }
+    symlinkSync(target, p) {
+        return this.baseFs.symlinkSync(target, NodeFS_NodeFS.toPortablePath(p));
+    }
+    async readFilePromise(p, encoding) {
+        // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
+        switch (encoding) {
+            case `utf8`:
+                return await this.baseFs.readFilePromise(NodeFS_NodeFS.toPortablePath(p), encoding);
+            default:
+                return await this.baseFs.readFilePromise(NodeFS_NodeFS.toPortablePath(p), encoding);
+        }
+    }
+    readFileSync(p, encoding) {
+        // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
+        switch (encoding) {
+            case `utf8`:
+                return this.baseFs.readFileSync(NodeFS_NodeFS.toPortablePath(p), encoding);
+            default:
+                return this.baseFs.readFileSync(NodeFS_NodeFS.toPortablePath(p), encoding);
+        }
+    }
+    async readdirPromise(p) {
+        return await this.baseFs.readdirPromise(NodeFS_NodeFS.toPortablePath(p));
+    }
+    readdirSync(p) {
+        return this.baseFs.readdirSync(NodeFS_NodeFS.toPortablePath(p));
+    }
+    async readlinkPromise(p) {
+        return NodeFS_NodeFS.fromPortablePath(await this.baseFs.readlinkPromise(NodeFS_NodeFS.toPortablePath(p)));
+    }
+    readlinkSync(p) {
+        return NodeFS_NodeFS.fromPortablePath(this.baseFs.readlinkSync(NodeFS_NodeFS.toPortablePath(p)));
+    }
+}
+
 // CONCATENATED MODULE: ../berry-fslib/sources/index.ts
 
 
@@ -811,8 +955,8 @@ class NodePathResolver_NodePathResolver {
         }
         return result.length === 0 ? undefined : result;
     }
-    getIssuer(pnp, portablePath) {
-        const locator = pnp.findPackageLocator(portablePath + '/');
+    getIssuer(pnp, pathname) {
+        const locator = pnp.findPackageLocator(pathname + '/');
         const info = locator && pnp.getPackageInformation(locator);
         return !info ? undefined : NodeFS_NodeFS.toPortablePath(info.packageLocation);
     }
@@ -829,19 +973,18 @@ class NodePathResolver_NodePathResolver {
      */
     resolvePath(nodePath) {
         const result = { resolvedPath: nodePath };
-        const portablePath = NodeFS_NodeFS.toPortablePath(nodePath);
-        if (portablePath.indexOf('/node_modules') < 0)
+        if (nodePath.indexOf('/node_modules') < 0)
             // Non-node_modules paths should not be processed
             return result;
-        const pnpApiPath = this.options.apiLocator.findApi(portablePath);
+        const pnpApiPath = this.options.apiLocator.findApi(nodePath);
         const pnp = pnpApiPath && this.options.apiLoader.getApi(pnpApiPath);
         if (pnpApiPath && pnp) {
             // Extract first issuer from the path using PnP API
-            let issuer = this.getIssuer(pnp, portablePath);
+            let issuer = this.getIssuer(pnp, nodePath);
             let request;
             // If we have something left in a path to parse, do that
-            if (issuer && portablePath.length > issuer.length) {
-                request = portablePath.substring(issuer.length);
+            if (issuer && nodePath.length > issuer.length) {
+                request = nodePath.substring(issuer.length);
                 let m;
                 let pkgName;
                 let partialPackageName = false;
@@ -883,14 +1026,14 @@ class NodePathResolver_NodePathResolver {
                         if (issuerInfo)
                             result.dirList = this.readDir(issuerInfo, request);
                         if (result.dirList) {
-                            result.statPath = NodeFS_NodeFS.fromPortablePath(issuer);
+                            result.statPath = issuer;
                         }
                         else {
                             result.resolvedPath = null;
                         }
                     }
                     else {
-                        result.resolvedPath = NodeFS_NodeFS.fromPortablePath(issuer + request);
+                        result.resolvedPath = issuer + request;
                     }
                 }
             }
@@ -911,6 +1054,7 @@ var external_events_default = /*#__PURE__*/__webpack_require__.n(external_events
 var dynamicRequire = __webpack_require__(2);
 
 // CONCATENATED MODULE: ./sources/PnPApiLoader.ts
+
 
 
 /**
@@ -956,7 +1100,7 @@ class PnPApiLoader_PnPApiLoader extends external_events_default.a {
             if (cacheEntry.pnpApi && !cacheEntry.watched) {
                 cacheEntry.watched = true;
                 this.cachedApis[pnpApiPath] = cacheEntry;
-                this.options.watch(pnpApiPath, { persistent: false }, () => {
+                this.options.watch(NodeFS_NodeFS.fromPortablePath(pnpApiPath), { persistent: false }, () => {
                     let newApi;
                     try {
                         newApi = this.options.uncachedRequire(pnpApiPath);
@@ -982,7 +1126,6 @@ class PnPApiLoader_PnPApiLoader extends external_events_default.a {
 }
 
 // CONCATENATED MODULE: ./sources/PnPApiLocator.ts
-
 /**
  * PnP API locator given arbitrary path answers the question is this path inside PnP project,
  * and if yes what is the path to PnP API file of this PnP project. If no - it returns null.
@@ -993,7 +1136,7 @@ class PnPApiLoader_PnPApiLoader extends external_events_default.a {
  *  - PnP project cannot be inside `node_modules`
  *  - PnP project cannot be inside other PnP project
  */
-class PnPApiLocator_PnPApiLocator {
+class PnPApiLocator {
     /**
      * Constructs new instance of PnP API locator
      *
@@ -1028,12 +1171,12 @@ class PnPApiLocator_PnPApiLocator {
      */
     findApi(sourcePath) {
         let apiPath = null;
-        const pathComponentList = this.getPathComponents(NodeFS_NodeFS.toPortablePath(sourcePath));
+        const pathComponentList = this.getPathComponents(sourcePath);
         let currentDir;
         let node = this.checkTree;
         for (const pathComponent of pathComponentList) {
             currentDir = typeof currentDir === 'undefined' ? pathComponent : currentDir + '/' + pathComponent;
-            const currentPath = NodeFS_NodeFS.fromPortablePath(currentDir + '/' + this.options.pnpFileName);
+            const currentPath = currentDir + '/' + this.options.pnpFileName;
             let val = node.get(pathComponent);
             if (typeof val === 'undefined') {
                 val = this.options.existsSync(currentPath) ? true : new Map();
@@ -1074,12 +1217,12 @@ class PnPApiLocator_PnPApiLocator {
 
 
 class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
-    constructor({ baseFs = new NodeFS_NodeFS() } = {}) {
+    constructor({ baseFs = new PosixFS_PosixFS(new NodeFS_NodeFS()) } = {}) {
         super();
         this.baseFs = baseFs;
         this.pathResolver = new NodePathResolver_NodePathResolver({
             apiLoader: new PnPApiLoader_PnPApiLoader({ watch: external_fs_default.a.watch.bind(external_fs_default.a) }),
-            apiLocator: new PnPApiLocator_PnPApiLocator({ existsSync: baseFs.existsSync.bind(baseFs) })
+            apiLocator: new PnPApiLocator({ existsSync: baseFs.existsSync.bind(baseFs) })
         });
     }
     getRealPath() {
@@ -1089,7 +1232,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         return this.baseFs;
     }
     resolveFilePath(p) {
-        const pnpPath = this.pathResolver.resolvePath(p);
+        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
         if (!pnpPath.resolvedPath) {
             throw new Error(`ENOENT: no such file or directory, stat '${p}'`);
         }
@@ -1098,7 +1241,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
     }
     resolveStatPath(p) {
-        const pnpPath = this.pathResolver.resolvePath(p);
+        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
         if (!pnpPath.resolvedPath) {
             throw new Error(`ENOENT: no such file or directory, stat '${p}'`);
         }
@@ -1131,18 +1274,24 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         return this.baseFs.realpathSync(this.resolveFilePath(p));
     }
     async existsPromise(p) {
-        const pnpPath = this.pathResolver.resolvePath(p);
+        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
         if (!pnpPath.resolvedPath) {
             return false;
+        }
+        else if (pnpPath.statPath) {
+            return true;
         }
         else {
             return await this.baseFs.existsPromise(pnpPath.resolvedPath);
         }
     }
     existsSync(p) {
-        const pnpPath = this.pathResolver.resolvePath(p);
+        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
         if (!pnpPath.resolvedPath) {
             return false;
+        }
+        else if (pnpPath.statPath) {
+            return true;
         }
         else {
             return this.baseFs.existsSync(pnpPath.resolvedPath);
@@ -1239,7 +1388,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
     }
     async readdirPromise(p) {
-        const pnpPath = this.pathResolver.resolvePath(p);
+        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
         if (!pnpPath.resolvedPath) {
             throw new Error(`ENOENT: no such file or directory, scandir '${p}'`);
         }
@@ -1251,7 +1400,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
     }
     readdirSync(p) {
-        const pnpPath = this.pathResolver.resolvePath(p);
+        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
         if (!pnpPath.resolvedPath) {
             throw new Error(`ENOENT: no such file or directory, scandir '${p}'`);
         }
@@ -1302,7 +1451,7 @@ function traceFsCalls() {
     }
 }
 const localFs = Object.assign({}, external_fs_default.a);
-const sources_baseFs = new NodeFS_NodeFS(localFs);
+const sources_baseFs = new PosixFS_PosixFS(new NodeFS_NodeFS(localFs));
 const nodeModulesFS = new NodeModulesFS_NodeModulesFS({ baseFs: sources_baseFs });
 patchFs(external_fs_default.a, nodeModulesFS);
 if (process.env.PNPIFY_TRACE)

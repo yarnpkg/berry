@@ -1,4 +1,4 @@
-import { patchFs, NodeFS }          from '@berry/fslib';
+import { patchFs, NodeFS, PosixFS } from '@berry/fslib';
 
 import fs                           from 'fs';
 import os                           from 'os';
@@ -34,7 +34,7 @@ function traceFsCalls() {
 }
 
 const localFs: typeof fs = {...fs};
-const baseFs = new NodeFS(localFs);
+const baseFs = new PosixFS(new NodeFS(localFs));
 const nodeModulesFS = new NodeModulesFS({ baseFs });
 patchFs(fs, nodeModulesFS);
 

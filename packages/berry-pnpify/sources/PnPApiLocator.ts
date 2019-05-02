@@ -1,5 +1,3 @@
-import { NodeFS } from '@berry/fslib';
-
 /**
  * PnP API locator options
  */
@@ -98,13 +96,13 @@ export class PnPApiLocator {
    */
   public findApi(sourcePath: string): string | null {
     let apiPath = null;
-    const pathComponentList = this.getPathComponents(NodeFS.toPortablePath(sourcePath));
+    const pathComponentList = this.getPathComponents(sourcePath);
 
     let currentDir;
     let node = this.checkTree;
     for (const pathComponent of pathComponentList) {
       currentDir = typeof currentDir === 'undefined' ? pathComponent : currentDir + '/' + pathComponent;
-      const currentPath = NodeFS.fromPortablePath(currentDir + '/' + this.options.pnpFileName);
+      const currentPath = currentDir + '/' + this.options.pnpFileName;
       let val = node.get(pathComponent);
       if (typeof val === 'undefined') {
         val = this.options.existsSync(currentPath) ? true : new Map();
