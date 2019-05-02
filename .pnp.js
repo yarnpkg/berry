@@ -159,6 +159,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:4.0.0"
                 ],
                 [
+                  "@types/tar-stream",
+                  "npm:1.6.0"
+                ],
+                [
                   "@types/tmp",
                   "npm:0.0.33"
                 ],
@@ -9217,6 +9221,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:4.0.0"
                 ],
                 [
+                  "@types/tar-stream",
+                  "npm:1.6.0"
+                ],
+                [
                   "@types/tmp",
                   "npm:0.0.33"
                 ],
@@ -9726,8 +9734,16 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-fslib"
                 ],
                 [
+                  "@types/tar-stream",
+                  "npm:1.6.0"
+                ],
+                [
                   "micromatch",
                   "npm:4.0.2"
+                ],
+                [
+                  "tar-stream",
+                  "npm:2.0.1"
                 ]
               ]
             }
@@ -14752,6 +14768,27 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/tar",
                   "npm:4.0.0"
+                ],
+                [
+                  "@types/node",
+                  "npm:10.12.18"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/tar-stream",
+        [
+          [
+            "npm:1.6.0",
+            {
+              "packageLocation": "./.yarn/cache/@types-tar-stream-npm-1.6.0-ebde773fd7f8680f29160aea6840a15a1b779c4b0c813cb7bc8a495e590fbeab.zip/node_modules/@types/tar-stream/",
+              "packageDependencies": [
+                [
+                  "@types/tar-stream",
+                  "npm:1.6.0"
                 ],
                 [
                   "@types/node",
@@ -19843,6 +19880,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "safe-buffer",
                   "npm:5.1.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:3.0.0",
+            {
+              "packageLocation": "./.yarn/cache/bl-npm-3.0.0-5b85d810af19d3fe7fa941fe7d8eabb775ca891ab58f83488dd2ddcb9274ea3c.zip/node_modules/bl/",
+              "packageDependencies": [
+                [
+                  "bl",
+                  "npm:3.0.0"
+                ],
+                [
+                  "readable-stream",
+                  "npm:3.2.0"
                 ]
               ]
             }
@@ -26785,6 +26838,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "once",
                   "npm:1.3.3"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:1.4.1",
+            {
+              "packageLocation": "./.yarn/cache/end-of-stream-npm-1.4.1-63c41e5276864ed9c7860551b12c296d81e69ccc2f196b92073c373d714b013d.zip/node_modules/end-of-stream/",
+              "packageDependencies": [
+                [
+                  "end-of-stream",
+                  "npm:1.4.1"
+                ],
+                [
+                  "once",
+                  "npm:1.4.0"
                 ]
               ]
             }
@@ -59763,6 +59832,38 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "xtend",
                   "npm:4.0.1"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:2.0.1",
+            {
+              "packageLocation": "./.yarn/cache/tar-stream-npm-2.0.1-32ff647639f80f3f89ac81f879ad07523efbcadca07f4bdc12c9244c37445d4e.zip/node_modules/tar-stream/",
+              "packageDependencies": [
+                [
+                  "tar-stream",
+                  "npm:2.0.1"
+                ],
+                [
+                  "bl",
+                  "npm:3.0.0"
+                ],
+                [
+                  "end-of-stream",
+                  "npm:1.4.1"
+                ],
+                [
+                  "fs-constants",
+                  "npm:1.0.0"
+                ],
+                [
+                  "inherits",
+                  "npm:2.0.3"
+                ],
+                [
+                  "readable-stream",
+                  "npm:3.2.0"
                 ]
               ]
             }

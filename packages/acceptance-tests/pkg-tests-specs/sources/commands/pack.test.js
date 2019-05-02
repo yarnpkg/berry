@@ -10,7 +10,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--list`);
-        await expect(stdout).toMatch(/\/index\.js/);
+        await expect(stdout).toMatch(/index\.js/);
       }),
     );
 
@@ -22,7 +22,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--list`);
-        await expect(stdout).not.toMatch(/\/\.gitignore/);
+        await expect(stdout).not.toMatch(/\.gitignore/);
       }),
     );
 
@@ -34,7 +34,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--list`);
-        await expect(stdout).not.toMatch(/\/\.npmignore/);
+        await expect(stdout).not.toMatch(/\.npmignore/);
       }),
     );
 
@@ -44,7 +44,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--list`);
-        await expect(stdout).not.toMatch(/\/\.yarn\/cache/);
+        await expect(stdout).not.toMatch(/\.yarn\/cache/);
       }),
     );
 
@@ -54,7 +54,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--list`);
-        await expect(stdout).not.toMatch(/\/yarn\.lock/);
+        await expect(stdout).not.toMatch(/yarn\.lock/);
       }),
     );
 
@@ -67,7 +67,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--list`);
-        await expect(stdout).not.toMatch(/\/index\.js/);
+        await expect(stdout).not.toMatch(/index\.js/);
       }),
     );
 
@@ -80,7 +80,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--list`);
-        await expect(stdout).not.toMatch(/\/index\.js/);
+        await expect(stdout).not.toMatch(/index\.js/);
       }),
     );
 
@@ -95,8 +95,8 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--list`);
-        await expect(stdout).not.toMatch(/\/a\.js/);
-        await expect(stdout).toMatch(/\/b\.js/);
+        await expect(stdout).not.toMatch(/a\.js/);
+        await expect(stdout).toMatch(/b\.js/);
       }),
     );
   });
