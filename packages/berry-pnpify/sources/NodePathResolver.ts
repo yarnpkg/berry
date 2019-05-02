@@ -154,9 +154,9 @@ export class NodePathResolver {
               if (pkgName.length > 0 && (pkgName[0] !== '@' || pkgName.indexOf('/') > 0)) {
                 try {
                   let res = pnp.resolveToUnqualified(pkgName, issuer + '/');
-                  if (res) {
+                  if (res) 
                     res = NodeFS.toPortablePath(res);
-                  }
+                  
                   issuer = res === null || res === issuer ? undefined : res;
                 } catch (e) {
                   issuer = undefined;

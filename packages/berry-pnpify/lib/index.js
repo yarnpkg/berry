@@ -82,23 +82,11 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 11);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-module.exports = require("fs");
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-module.exports = require("path");
-
-/***/ }),
-/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -110,26 +98,32 @@ const dynamicRequire =  true
 
 
 /***/ }),
-/* 3 */
+/* 1 */
 /***/ (function(module, exports) {
 
-module.exports = require("os");
+module.exports = require("path");
 
 /***/ }),
-/* 4 */
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = require("fs");
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = require("events");
 
 /***/ }),
+/* 4 */,
 /* 5 */,
 /* 6 */,
 /* 7 */,
 /* 8 */,
 /* 9 */,
 /* 10 */,
-/* 11 */,
-/* 12 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -137,7 +131,6 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: external "path"
 var external_path_ = __webpack_require__(1);
-var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 
 // CONCATENATED MODULE: ../berry-fslib/sources/FakeFS.ts
 
@@ -409,7 +402,7 @@ class FakeFS_FakeFS {
 ;
 
 // EXTERNAL MODULE: external "fs"
-var external_fs_ = __webpack_require__(0);
+var external_fs_ = __webpack_require__(2);
 var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
 
 // CONCATENATED MODULE: ../berry-fslib/sources/NodeFS.ts
@@ -902,10 +895,6 @@ function extendFs(realFs, fakeFs) {
 }
 const xfs = new NodeFS_NodeFS();
 
-// EXTERNAL MODULE: external "os"
-var external_os_ = __webpack_require__(3);
-var external_os_default = /*#__PURE__*/__webpack_require__.n(external_os_);
-
 // CONCATENATED MODULE: ./sources/NodePathResolver.ts
 
 /**
@@ -999,9 +988,8 @@ class NodePathResolver_NodePathResolver {
                             if (pkgName.length > 0 && (pkgName[0] !== '@' || pkgName.indexOf('/') > 0)) {
                                 try {
                                     let res = pnp.resolveToUnqualified(pkgName, issuer + '/');
-                                    if (res) {
+                                    if (res)
                                         res = NodeFS_NodeFS.toPortablePath(res);
-                                    }
                                     issuer = res === null || res === issuer ? undefined : res;
                                 }
                                 catch (e) {
@@ -1047,11 +1035,11 @@ class NodePathResolver_NodePathResolver {
 }
 
 // EXTERNAL MODULE: external "events"
-var external_events_ = __webpack_require__(4);
+var external_events_ = __webpack_require__(3);
 var external_events_default = /*#__PURE__*/__webpack_require__.n(external_events_);
 
 // EXTERNAL MODULE: ./sources/dynamicRequire.ts
-var dynamicRequire = __webpack_require__(2);
+var dynamicRequire = __webpack_require__(0);
 
 // CONCATENATED MODULE: ./sources/PnPApiLoader.ts
 
@@ -1240,6 +1228,16 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
             return pnpPath.resolvedPath;
         }
     }
+    throwIfPathReadonly(p) {
+        const portablePath = NodeFS_NodeFS.toPortablePath(p);
+        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
+        if (pnpPath.resolvedPath !== portablePath) {
+            throw new Error(`Writing to ${p} is forbidden`);
+        }
+        else {
+            return p;
+        }
+    }
     resolveStatPath(p) {
         const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
         if (!pnpPath.resolvedPath) {
@@ -1265,7 +1263,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         return this.baseFs.createReadStream(this.resolveFilePath(p), opts);
     }
     createWriteStream(p, opts) {
-        return this.baseFs.createWriteStream(this.resolveFilePath(p), opts);
+        return this.baseFs.createWriteStream(this.throwIfPathReadonly(p), opts);
     }
     async realpathPromise(p) {
         return await this.baseFs.realpathPromise(this.resolveFilePath(p));
@@ -1316,34 +1314,34 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         return this.baseFs.lstatSync(this.resolveStatPath(p));
     }
     async chmodPromise(p, mask) {
-        return await this.baseFs.chmodPromise(p, mask);
+        return await this.baseFs.chmodPromise(this.throwIfPathReadonly(p), mask);
     }
     chmodSync(p, mask) {
-        return this.baseFs.chmodSync(p, mask);
+        return this.baseFs.chmodSync(this.throwIfPathReadonly(p), mask);
     }
     async renamePromise(oldP, newP) {
-        return await this.baseFs.renamePromise(oldP, newP);
+        return await this.baseFs.renamePromise(this.throwIfPathReadonly(oldP), this.throwIfPathReadonly(newP));
     }
     renameSync(oldP, newP) {
-        return this.baseFs.renameSync(oldP, newP);
+        return this.baseFs.renameSync(this.throwIfPathReadonly(oldP), this.throwIfPathReadonly(newP));
     }
     async copyFilePromise(sourceP, destP, flags) {
-        return await this.baseFs.copyFilePromise(sourceP, destP, flags);
+        return await this.baseFs.copyFilePromise(sourceP, this.throwIfPathReadonly(destP), flags);
     }
     copyFileSync(sourceP, destP, flags) {
-        return this.baseFs.copyFileSync(sourceP, destP, flags);
+        return this.baseFs.copyFileSync(sourceP, this.throwIfPathReadonly(destP), flags);
     }
     async writeFilePromise(p, content, opts) {
-        return await this.baseFs.writeFilePromise(this.resolveFilePath(p), content, opts);
+        return await this.baseFs.writeFilePromise(this.throwIfPathReadonly(p), content, opts);
     }
     writeFileSync(p, content, opts) {
-        return this.baseFs.writeFileSync(this.resolveFilePath(p), content, opts);
+        return this.baseFs.writeFileSync(this.throwIfPathReadonly(p), content, opts);
     }
     async unlinkPromise(p) {
-        return await this.baseFs.unlinkPromise(this.resolveFilePath(p));
+        return await this.baseFs.unlinkPromise(this.throwIfPathReadonly(p));
     }
     unlinkSync(p) {
-        return this.baseFs.unlinkSync(this.resolveFilePath(p));
+        return this.baseFs.unlinkSync(this.throwIfPathReadonly(p));
     }
     async utimesPromise(p, atime, mtime) {
         return await this.baseFs.utimesPromise(this.resolveStatPath(p), atime, mtime);
@@ -1352,22 +1350,22 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         return this.baseFs.utimesSync(this.resolveStatPath(p), atime, mtime);
     }
     async mkdirPromise(p) {
-        return await this.baseFs.mkdirPromise(p);
+        return await this.baseFs.mkdirPromise(this.throwIfPathReadonly(p));
     }
     mkdirSync(p) {
-        return this.baseFs.mkdirSync(p);
+        return this.baseFs.mkdirSync(this.throwIfPathReadonly(p));
     }
     async rmdirPromise(p) {
-        return await this.baseFs.rmdirPromise(p);
+        return await this.baseFs.rmdirPromise(this.throwIfPathReadonly(p));
     }
     rmdirSync(p) {
-        return this.baseFs.rmdirSync(p);
+        return this.baseFs.rmdirSync(this.throwIfPathReadonly(p));
     }
     async symlinkPromise(target, p) {
-        return await this.baseFs.symlinkPromise(target, p);
+        return await this.baseFs.symlinkPromise(this.throwIfPathReadonly(target), p);
     }
     symlinkSync(target, p) {
-        return this.baseFs.symlinkSync(target, p);
+        return this.baseFs.symlinkSync(this.throwIfPathReadonly(target), p);
     }
     async readFilePromise(p, encoding) {
         // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
@@ -1423,39 +1421,10 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
 
 
 
-
-
-function traceFsCalls() {
-    const realFs = {};
-    const fsMethods = Object.keys(external_fs_default.a).filter(function (key) {
-        return key[0] === key[0].toLowerCase() && typeof external_fs_default.a[key] === 'function';
-    });
-    fsMethods.forEach(function (method) {
-        realFs[method] = external_fs_default.a[method];
-        external_fs_default.a[method] = traceFsProxy.bind({ method: method });
-    });
-    function traceFsProxy() {
-        try {
-            const result = realFs[this.method].apply(external_fs_default.a, arguments);
-            if (arguments.length > 0 && typeof arguments[0] === 'string' && arguments[0].indexOf(process.env.PNPIFY_TRACE) >= 0 && arguments[0].indexOf('pnpify.log') < 0) {
-                const dumpedResult = this.method === 'watch' || result === undefined ? '' : ' = ' + JSON.stringify(result instanceof Buffer ? result.toString() : result);
-                realFs.appendFileSync.apply(external_fs_default.a, [external_path_default.a.join(external_os_default.a.tmpdir(), 'pnpify.log'), this.method + ' ' + arguments[0] + dumpedResult + '\n']);
-            }
-            return result;
-        }
-        catch (e) {
-            if (arguments.length > 0 && typeof arguments[0] === 'string' && arguments[0].indexOf(process.env.PNPIFY_TRACE) >= 0 && arguments[0].indexOf('pnpify.log') < 0)
-                realFs.appendFileSync.apply(external_fs_default.a, [external_path_default.a.join(external_os_default.a.tmpdir(), 'pnpify.log'), this.method + ' ' + arguments[0] + ' = ' + ((e.message.indexOf('ENOENT') >= 0 || e.message.indexOf('ENOTDIR') >= 0) ? e.message : e.stack) + '\n']);
-            throw e;
-        }
-    }
-}
 const localFs = Object.assign({}, external_fs_default.a);
 const sources_baseFs = new PosixFS_PosixFS(new NodeFS_NodeFS(localFs));
 const nodeModulesFS = new NodeModulesFS_NodeModulesFS({ baseFs: sources_baseFs });
 patchFs(external_fs_default.a, nodeModulesFS);
-if (process.env.PNPIFY_TRACE)
-    traceFsCalls();
 
 
 /***/ })

@@ -82,28 +82,12 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 11:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _dynamicRequire__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-
-process.env.NODE_OPTIONS = `-r ${_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"].resolve('.')} -r ${_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"].resolve('../../../.pnp')}`;
-process.mainModule.id = 'internal/preload';
-Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"])('../../../.pnp');
-Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"])('.');
-Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"])('typescript/lib/tsserver');
-
-
-/***/ }),
-
-/***/ 2:
+/***/ 0:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -112,6 +96,22 @@ const dynamicRequire =  true
     ? require
     : undefined;
 
+
+
+/***/ }),
+
+/***/ 10:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _dynamicRequire__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+
+process.env.NODE_OPTIONS = `-r ${_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"].resolve('.')} -r ${_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"].resolve('../../../.pnp')}`;
+process.mainModule.id = 'internal/preload';
+Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"])('../../../.pnp');
+Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"])('.');
+Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"])('typescript/lib/tsserver');
 
 
 /***/ })
