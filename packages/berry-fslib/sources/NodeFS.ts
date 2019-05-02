@@ -1,5 +1,5 @@
 import fs, {Stats}                                         from 'fs';
-import {posix, win32}                                      from 'path';
+import {win32}                                             from 'path';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {FakeFS, WriteFileOptions}                          from './FakeFS';
@@ -194,13 +194,29 @@ export class NodeFS extends FakeFS {
 
     return await new Promise<void>((resolve, reject) => {
       this.realFs.symlink(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type, this.makeCallback(resolve, reject));
+    }).catch((e: any) => {
+      // Pre Win 10 support
+      if (process.platform === `win32` && e.code === 'EPERM') {
+        this.writeFilePromise(p, target.replace(/[\\\/]$/, ''));
+      } else {
+        throw e;
+      }
     });
   }
 
   symlinkSync(target: string, p: string) {
     const type: 'dir' | 'file' = target.endsWith(`/`) ? `dir` : `file`;
 
-    return this.realFs.symlinkSync(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type);
+    try {
+      return this.realFs.symlinkSync(NodeFS.fromPortablePath(target.replace(/\/+$/, ``)), NodeFS.fromPortablePath(p), type);
+    } catch (e) {
+      // Pre Win 10 support
+      if (process.platform === `win32` && e.code === 'EPERM') {
+        this.writeFileSync(p, target.replace(/[\\\/]$/, ''));
+      } else {
+        throw e;
+      }
+    }
   }
 
   readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
@@ -230,13 +246,29 @@ export class NodeFS extends FakeFS {
   async readlinkPromise(p: string) {
     return await new Promise<string>((resolve, reject) => {
       this.realFs.readlink(NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
+    }).catch((e: any) => {
+      // Pre Win 10 support
+      if (process.platform === `win32` && e.code === 'UNKNOWN') {
+        return this.readFilePromise(p, 'utf8');
+      } else {
+        throw e;
+      }
     }).then(path => {
       return NodeFS.toPortablePath(path);
     });
   }
 
   readlinkSync(p: string) {
-    return NodeFS.toPortablePath(this.realFs.readlinkSync(NodeFS.fromPortablePath(p)));
+    try {
+      return NodeFS.toPortablePath(this.realFs.readlinkSync(NodeFS.fromPortablePath(p)));
+    } catch (e) {
+      // Pre Win 10 support
+      if (process.platform === `win32` && e.code === 'UNKNOWN') {
+        return this.readFileSync(p, 'utf8');
+      } else {
+        throw e;
+      }
+    }
   }
 
   private makeCallback<T>(resolve: (value?: T) => void, reject: (reject: Error) => void) {
