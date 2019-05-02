@@ -1,5 +1,7 @@
 import {WorkspaceRequiredError}                                                 from '@berry/cli';
 import {Configuration, MessageName, PluginConfiguration, Project, StreamReport} from '@berry/core';
+import {xfs}                                                                    from '@berry/fslib';
+import {posix}                                                                  from 'path';
 import {Writable}                                                               from 'stream';
 
 import * as packUtils                                                           from '../packUtils';
@@ -28,7 +30,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
   .action(async ({cwd, stdout, list}: {cwd: string, stdout: Writable, list: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
-    const {project, workspace} = await Project.find(configuration, cwd);
+    const {workspace} = await Project.find(configuration, cwd);
 
     if (!workspace)
       throw new WorkspaceRequiredError(cwd);
@@ -36,10 +38,14 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const report = await StreamReport.start({configuration, stdout}, async report => {
       const files = await packUtils.genPackList(workspace);
 
+      for (const file of files)
+        report.reportInfo(MessageName.UNNAMED, file);
+
       if (list) {
-        for (const file of files) {
-          report.reportInfo(MessageName.UNNAMED, file);
-        }
+        const pack = await packUtils.genPackStream(workspace, files);
+
+        const target = posix.resolve(workspace.cwd, `package.tgz`);
+        pack.pipe(xfs.createWriteStream(target));
       }
     });
 

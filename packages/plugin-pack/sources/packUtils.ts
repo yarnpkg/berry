@@ -1,15 +1,43 @@
-import {Workspace}      from '@berry/core';
-import {FakeFS, JailFS} from '@berry/fslib';
-import mm               from 'micromatch';
-import {posix}          from 'path';
+import {Workspace}           from '@berry/core';
+import {FakeFS, JailFS, xfs} from '@berry/fslib';
+import mm                    from 'micromatch';
+import {posix}               from 'path';
+import tar                   from 'tar-stream';
 
-import {Hooks}          from './';
+import {Hooks}               from './';
+
+export async function genPackStream(workspace: Workspace, files?: Array<string>) {
+  if (typeof files === `undefined`)
+    files = await genPackList(workspace);
+
+  const pack = tar.pack();
+
+  for (const file of files) {
+    const source = posix.resolve(workspace.cwd, file);
+    const dest = posix.join(`package`, file);
+
+    const stat = await xfs.lstatPromise(source);
+    const opts = {name: dest, mtime: new Date(315532800)};
+
+    if (stat.isFile()) {
+      pack.entry(opts, await xfs.readFilePromise(source));
+    } else if (stat.isSymbolicLink()) {
+      pack.entry({... opts, linkname: await xfs.readlinkPromise(source)});
+    }
+  }
+
+  pack.finalize();
+
+  return pack;
+}
 
 export async function genPackList(workspace: Workspace) {
   const project = workspace.project;
   const configuration = project.configuration;
 
   const forceReject: Array<string> = [
+    `/package.tgz`,
+
     `node_modules`,
 
     `.npmignore`,
@@ -103,7 +131,7 @@ async function walk(initialCwd: string, {forceAccept, forceReject}: {forceAccept
         cwdList.push([posix.resolve(cwd, entry), nextIgnoreList]);
       }
     } else {
-      list.push(cwd);
+      list.push(posix.relative(`/`, cwd));
     }
   }
 
