@@ -18,7 +18,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
   .detail(`
     This command will install a package within a temporary environment, and run its binary script if it contains any. The binary will run within the current cwd.
-    
+
     By default Yarn will download the package named \`command\`, but this can be changed through the use of the \`-p,--package\` flag which will instruct Yarn to still run the same command but from a different package.
 
     Also by default Yarn will print the full install logs when installing the given package. This behavior can be disabled by using the \`-q,--quiet\` flag which will instruct Yarn to only report critical errors.
@@ -51,6 +51,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       const addExitCode = await clipanion.run(null, [`add`, ... addOptions, `--`, ... packages], {cwd: tmpDir, stdin, stdout, stderr, ... rest});
       if (addExitCode !== 0)
         return addExitCode;
+
+      if (!quiet)
+        stdout.write(`\n`);
 
       const configuration = await Configuration.find(tmpDir, pluginConfiguration);
       const {project, workspace} = await Project.find(configuration, tmpDir);
@@ -88,7 +91,7 @@ function createTemporaryDirectory(name?: string) {
       dirPath = posix.join(dirPath, name);
       await xfs.mkdirpPromise(dirPath);
     }
-    
+
     return dirPath;
   });
 }
