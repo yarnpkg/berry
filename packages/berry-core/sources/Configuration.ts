@@ -82,6 +82,7 @@ export enum SettingsType {
   STRING = 'STRING',
   SECRET = 'SECRET',
   OBJECT = 'OBJECT',
+  MAP = 'MAP',
 };
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
@@ -97,9 +98,13 @@ export type ObjectSettingsDefinition = BaseSettingsDefinition<SettingsType.OBJEC
   properties: {[propertyName: string]: SettingsDefinition},
 };
 
-export type NonObjectSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.OBJECT>>;
+export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
+  valueDefinition: SettingsDefinition,
+};
 
-export type SettingsDefinition = ObjectSettingsDefinition|NonObjectSettingsDefinition;
+export type NonObjectSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.OBJECT | SettingsType.MAP>>;
+
+export type SettingsDefinition = MapSettingsDefinition|ObjectSettingsDefinition|NonObjectSettingsDefinition;
 
 export type PluginConfiguration = {
   modules: Map<string, any>,
@@ -283,11 +288,13 @@ function parseValue(path: string, value: unknown, definition: SettingsDefinition
 }
 
 function parseSingleValue(path: string, value: unknown, definition: SettingsDefinition, folder: string) {
-  if (definition.type === SettingsType.BOOLEAN)
-    return parseBoolean(value);
-
-  if (definition.type === SettingsType.OBJECT) {
-    return parseObject(path, value, definition, folder);
+  switch(definition.type) {
+    case SettingsType.BOOLEAN:
+      return parseBoolean(value);
+    case SettingsType.OBJECT:
+      return parseObject(path, value, definition, folder);
+      case SettingsType.MAP:
+      return parseMap(path, value, definition, folder);
   }
 
   if (typeof value !== `string`)
@@ -306,7 +313,7 @@ function parseSingleValue(path: string, value: unknown, definition: SettingsDefi
 }
 
 function parseObject(path: string, value: unknown, definition: ObjectSettingsDefinition, folder: string) {
-  const result = {} as {[key: string]: any};
+  const result = new Map<string, any>();
 
   if (typeof value !== `object` || Array.isArray(value))
     throw new Error(`Object configuration settings "${path}" must be an object`);
@@ -319,7 +326,22 @@ function parseObject(path: string, value: unknown, definition: ObjectSettingsDef
     if (!subDefinition)
       throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`);
 
-    result[name] = parseValue(subPath, propValue, definition.properties[name], folder);
+    result.set(name, parseValue(subPath, propValue, definition.properties[name], folder));
+  }
+
+  return result;
+}
+
+function parseMap(path: string, value: unknown, definition: MapSettingsDefinition, folder: string) {
+  const result = new Map<string, any>();
+
+  if (typeof value !== 'object' || Array.isArray(value))
+    throw new Error(`Map configuration settings "${path}" must be an object`);
+
+  for (const [propKey, propValue] of Object.entries(value!)) {
+    const subPath = `${path}['${propKey}']`;
+
+    result.set(propKey, parseValue(subPath, propValue, definition.valueDefinition, folder));
   }
 
   return result;
