@@ -1,6 +1,7 @@
 import {Configuration, Descriptor, Project, PluginConfiguration} from '@berry/core';
 import {MessageName, StreamReport}                               from '@berry/core';
 import {structUtils}                                             from '@berry/core';
+import getPath                                                   from 'lodash.get';
 import {Writable}                                                from 'stream';
 
 import {Constraints}                                             from '../../Constraints';
@@ -31,7 +32,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     const report = await StreamReport.start({configuration, stdout}, async report => {
       const result = await constraints.process();
-    
+
       for (const {workspace, dependencyIdent, dependencyRange, dependencyType} of result.enforcedDependencyRanges) {
         const dependencyDescriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
 
@@ -49,12 +50,28 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           }
         }
       }
-  
+
       for (const {workspace, dependencyIdent, dependencyType, reason} of result.invalidDependencies) {
         const dependencyDescriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
 
         if (dependencyDescriptor) {
           report.reportError(MessageName.CONSTRAINTS_INVALID_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} has an invalid dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)} in ${dependencyType} (invalid because ${reason})`);
+        }
+      }
+
+      for (const {workspace, fieldPath, fieldValue} of result.workspaceFieldRequirements) {
+        const actualValue = getPath(workspace.manifest.raw, fieldPath);
+
+        if (fieldValue !== null) {
+          if (actualValue === undefined) {
+            report.reportError(MessageName.CONSTRAINTS_MISSING_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} must have field "${fieldPath}" value ${JSON.stringify(fieldValue)}, but doesn't`);
+          } else if (actualValue !== fieldValue && `${actualValue}` !== fieldValue) {
+            report.reportError(MessageName.CONSTRAINTS_INCOMPATIBLE_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} must have field "${fieldPath}" with value ${JSON.stringify(fieldValue)} but it has value ${JSON.stringify(actualValue)}`);
+          }
+        } else {
+          if (actualValue !== undefined && actualValue !== null) {
+            report.reportError(MessageName.CONSTRAINTS_EXTRANEOUS_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} has an extraneous field "${fieldPath}" with value ${JSON.stringify(actualValue)}`);
+          }
         }
       }
     });

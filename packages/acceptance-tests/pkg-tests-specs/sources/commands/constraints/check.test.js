@@ -12,6 +12,9 @@ const constraints = {
   [`gen_invalid_dependency (deep field path)`]: `gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
       workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
       \\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).`,
+  [`gen_workspace_field_requirement (missing)`]: `gen_workspace_field_requirement(WorkspaceCwd, 'dependencies["a-new-dep"]', '1.0.0').`,
+  [`gen_workspace_field_requirement (incompatible)`]: `gen_workspace_field_requirement(WorkspaceCwd, 'dependencies["no-deps"]', '2.0.0').`,
+  [`gen_workspace_field_requirement (extraneous)`]: `gen_workspace_field_requirement(WorkspaceCwd, 'dependencies', null).`,
 };
 
 describe(`Commands`, () => {
