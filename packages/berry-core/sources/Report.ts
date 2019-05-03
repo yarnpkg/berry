@@ -38,6 +38,7 @@ export enum MessageName {
   DANGEROUS_NODE_MODULES = 31,
   NODE_GYP_INJECTED = 32,
   AUTHENTICATION_NOT_FOUND = 33,
+  INVALID_CONFIGURATION_KEY = 34,
 }
 
 export class ReportError extends Error {
