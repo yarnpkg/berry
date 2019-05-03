@@ -71,10 +71,10 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
       ... interactive ? [
         suggestUtils.Strategy.REUSE,
       ] : [],
+      suggestUtils.Strategy.PROJECT,
       ... cached ? [
         suggestUtils.Strategy.CACHE,
       ] : [],
-      suggestUtils.Strategy.PROJECT,
       suggestUtils.Strategy.LATEST,
     ];
 
@@ -87,7 +87,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
         ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor, {cache, cwd, workspace})
         : structUtils.parseDescriptor(pseudoDescriptor);
 
-      const suggestions = await suggestUtils.getSuggestedDescriptors(request, null, {project, cache, target, modifier, strategies, maxResults});
+      const suggestions = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies, maxResults});
 
       return [request, suggestions] as [Descriptor, Array<suggestUtils.Suggestion>];
     }));
