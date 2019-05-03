@@ -35,16 +35,6 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       strict: false,
     });
 
-    if (configuration.invalid.size > 0 && !json) {
-      await StreamReport.start({configuration, stdout, footer: false}, async report => {
-        for (const key of configuration.invalid) {
-          report.reportError(MessageName.INVALID_CONFIGURATION_KEY, `Invalid configuration key "${key}"`);
-        }
-      });
-
-      stdout.write(`\n`);
-    }
-
     const getValue = (key: string) => {
       const isSecret = configuration.settings.get(key)!.type === SettingsType.SECRET;
       const rawValue = configuration.values.get(key)!;
@@ -57,6 +47,13 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     };
 
     const report = await StreamReport.start({configuration, json, stdout}, async report => {
+      if (configuration.invalid.size > 0 && !json) {
+        for (const key of configuration.invalid)
+          report.reportError(MessageName.INVALID_CONFIGURATION_KEY, `Invalid configuration key "${key}"`);
+
+        report.reportSeparator();
+      }
+
       if (json) {
         const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
 

@@ -112,6 +112,14 @@ export class StreamReport extends Report {
     }
   }
 
+  reportSeparator() {
+    if (this.indent === 0) {
+      this.stdout.write(`\n`);
+    } else {
+      this.reportInfo(MessageName.UNNAMED, ``);
+    }
+  }
+
   reportInfo(name: MessageName, text: string) {
     if (!this.json) {
       this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);

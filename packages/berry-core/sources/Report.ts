@@ -66,6 +66,7 @@ export abstract class Report {
   abstract startTimerPromise<T>(what: string, cb: () => Promise<T>): Promise<T>;
   abstract startTimerSync<T>(what: string, cb: () => T): T;
 
+  abstract reportSeparator(): void;
   abstract reportInfo(name: MessageName, text: string): void;
   abstract reportWarning(name: MessageName, text: string): void;
   abstract reportError(name: MessageName, text: string): void;
