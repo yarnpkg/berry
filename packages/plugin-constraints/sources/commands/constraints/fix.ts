@@ -1,7 +1,6 @@
 import {Cache, Configuration, Descriptor, Project, PluginConfiguration} from '@berry/core';
 import {MessageName, StreamReport}                                      from '@berry/core';
 import {structUtils}                                                    from '@berry/core';
-import inquirer                                                         from 'inquirer';
 import {Readable, Writable}                                             from 'stream';
 
 import {Constraints}                                                    from '../../Constraints';
@@ -33,66 +32,34 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     const result = await constraints.process();
 
-    // @ts-ignore
-    const prompt = inquirer.createPromptModule({
-      input: stdin,
-      output: stdout,
-    });
-
     let modified = false;
 
     for (const {workspace, dependencyIdent, dependencyRange, dependencyType} of result.enforcedDependencyRanges) {
       if (dependencyRange !== null) {
-        const invalidDependencies = Array.from(workspace.manifest[dependencyType].values()).filter((dependency: Descriptor) => {
-          return structUtils.areIdentsEqual(dependency, dependencyIdent) && dependency.range !== dependencyRange;
-        });
+        const newDescriptor = structUtils.makeDescriptor(dependencyIdent, dependencyRange);
 
-        for (const invalid of invalidDependencies) {
-          const result = await prompt({
-            type: `confirm`,
-            name: `confirmed`,
-            message: `${structUtils.prettyLocator(configuration, workspace.locator)}: Change ${structUtils.prettyIdent(configuration, invalid)} in ${dependencyType} into ${structUtils.prettyRange(configuration, dependencyRange)}?`,
-          });
+        const descriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
+        if (typeof descriptor !== `undefined` && descriptor.range !== dependencyRange)
+          continue;
 
-          // @ts-ignore
-          if (result.confirmed) {
-            const newDescriptor = structUtils.makeDescriptor(invalid, dependencyRange);
-
-            workspace.manifest[dependencyType].delete(invalid.identHash);
-            workspace.manifest[dependencyType].set(newDescriptor.identHash, newDescriptor);
-
-            modified = true;
-          }
-        }
+        workspace.manifest[dependencyType].set(dependencyIdent.identHash, newDescriptor);
+        modified = true;
       } else {
-        const invalidDependencies = Array.from(workspace.manifest[dependencyType].values()).filter((dependency: Descriptor) => {
-          return structUtils.areIdentsEqual(dependency, dependencyIdent);
-        });
+        const descriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
+        if (typeof descriptor === `undefined`)
+          continue;
 
-        for (const invalid of invalidDependencies) {
-          const result = await prompt({
-            type: `confirm`,
-            name: `confirmed`,
-            message: `${structUtils.prettyLocator(configuration, workspace.locator)}: Remove ${structUtils.prettyDescriptor(configuration, invalid)} from the ${dependencyType}?`,
-          });
-
-          // @ts-ignore
-          if (result.confirmed) {
-            workspace.manifest[dependencyType].delete(invalid.identHash);
-
-            modified = true;
-          }
-        }
+        workspace.manifest[dependencyType].delete(dependencyIdent.identHash);
+        modified = true;
       }
 
       await workspace.persistManifest();
     }
 
-    if (result.invalidDependencies) {
-      if (modified)
-        stdout.write(`\n`);
+    let globalExitCode;
 
-      const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
+    if (result.invalidDependencies) {
+      const report = await StreamReport.start({configuration, stdout}, async report => {
         for (const {workspace, dependencyIdent, dependencyType, reason} of result.invalidDependencies) {
           const dependencyDescriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
   
@@ -102,16 +69,25 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         }
       });
 
-      return report.exitCode();
+      const exitCode = report.exitCode();
+      if (typeof globalExitCode === `undefined` && exitCode !== 0) {
+        globalExitCode = exitCode;
+      }
     }
 
     if (modified) {
-      stdout.write(`\n`);
+      if (result.invalidDependencies)
+        stdout.write(`\n`);
 
-      const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
+      const report = await StreamReport.start({configuration, stdout}, async report => {
         await project.install({cache, report});
       });
 
-      return report.exitCode();
+      const exitCode = report.exitCode();
+      if (typeof globalExitCode === `undefined` && exitCode !== 0) {
+        globalExitCode = exitCode;
+      }
     }
+
+    return globalExitCode;
   });
