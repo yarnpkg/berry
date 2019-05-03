@@ -276,16 +276,18 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
 }
 
 function getDefaultGlobalFolder() {
-  let base;
+  if (process.platform === `win32`) {
+    const base = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
+    return posix.resolve(base, `Yarn/Berry`);
+  }
 
-  if (process.platform === `win32`)
-    base = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
-  else if (process.env.XDG_DATA_HOME)
-    base = NodeFS.toPortablePath(process.env.XDG_DATA_HOME);
-  else
-    base = NodeFS.toPortablePath(homedir());
+  if (process.env.XDG_DATA_HOME) {
+    const base = NodeFS.toPortablePath(process.env.XDG_DATA_HOME);
+    return posix.resolve(base, `yarn/berry`);
+  }
 
-  return posix.resolve(base, `yarn/modern`);
+  const base = NodeFS.toPortablePath(homedir());
+  return posix.resolve(base, `.yarn/berry`);
 }
 
 function getEnvironmentSettings() {
