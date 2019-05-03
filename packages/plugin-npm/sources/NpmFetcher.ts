@@ -4,6 +4,7 @@ import {Locator, MessageName}                       from '@berry/core';
 import semver                                       from 'semver';
 
 import {PROTOCOL}                                   from './constants';
+import * as npmConfigUtils                          from './npmConfigUtils';
 import * as npmHttpUtils                            from './npmHttpUtils';
 
 export class NpmFetcher implements Fetcher {
@@ -55,7 +56,7 @@ export class NpmFetcher implements Fetcher {
 
   private getLocatorUrl(locator: Locator, opts: FetchOptions) {
     const version = locator.reference.slice(PROTOCOL.length);
-    const registry = opts.project.configuration.get(`npmRegistryServer`);
+    const registry = npmConfigUtils.getRegistry(locator, opts.project.configuration);
 
     return `${registry}/${structUtils.requirableIdent(locator)}/-/${locator.name}-${version}.tgz`;
   }

@@ -1,6 +1,8 @@
 import {Configuration, Ident, httpUtils} from '@berry/core';
 import {MessageName, ReportError}        from '@berry/core';
 
+import * as npmConfigUtils               from './npmConfigUtils';
+
 export type Options = httpUtils.Options & {
   ident: Ident,
 };
@@ -25,16 +27,16 @@ export async function put(url: string, body: httpUtils.Body, {configuration, hea
 }
 
 function getAuthenticationHeader(ident: Ident, {configuration}: {configuration: Configuration}) {
-  const mustAuthenticate = configuration.get(`npmAlwaysAuth`);
+  const authConfiguration = npmConfigUtils.getAuthenticationConfiguration(ident, configuration);
+  const mustAuthenticate = authConfiguration.get(`npmAlwaysAuth`);
 
   if (!mustAuthenticate && !ident.scope)
     return null;
 
-  if (configuration.get(`npmAuthToken`))
-    return `Bearer ${configuration.get(`npmAuthToken`)}`;
-
-  if (configuration.get(`npmAuthIdent`))
-    return `Basic ${configuration.get(`npmAuthIdent`)}`;
+  if (authConfiguration.get(`npmAuthToken`))
+    return `Bearer ${authConfiguration.get(`npmAuthToken`)}`;
+  if (authConfiguration.get(`npmAuthIdent`))
+    return `Basic ${authConfiguration.get(`npmAuthIdent`)}`;
 
   if (mustAuthenticate) {
     throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND ,`No authentication configured for request`);

@@ -1,7 +1,7 @@
 import {WorkspaceRequiredError}                                                       from '@berry/cli';
 import {Configuration, Ident,MessageName, PluginConfiguration, Project, StreamReport} from '@berry/core';
 import {miscUtils, structUtils}                                                       from '@berry/core';
-import {npmHttpUtils}                                                                 from '@berry/plugin-npm';
+import {npmConfigUtils, npmHttpUtils}                                                 from '@berry/plugin-npm';
 import {packUtils}                                                                    from '@berry/plugin-pack';
 import {UsageError}                                                                   from 'clipanion';
 import {createHash}                                                                   from 'crypto';
@@ -53,7 +53,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       const body = makePublishBody(ident, version, buffer, {tag});
 
       try {
-        const packageRegistryPath = `https://registry.npmjs.org/${structUtils.stringifyIdent(ident)}`;
+        const registry = npmConfigUtils.getRegistry(ident, configuration);
+        const packageRegistryPath = `${registry}/${structUtils.stringifyIdent(ident)}`;
 
         await npmHttpUtils.put(packageRegistryPath, body, {
           configuration,

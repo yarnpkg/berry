@@ -3,6 +3,7 @@ import {structUtils}                                                            
 import {Ident, Descriptor, Locator, Package}                                       from '@berry/core';
 
 import {PROTOCOL}                                                                  from './constants';
+import * as npmConfigUtils                                                         from './npmConfigUtils';
 import * as npmHttpUtils                                                           from './npmHttpUtils';
 
 export const TAG_REGEXP = /^[a-z]+$/;
@@ -45,7 +46,7 @@ export class NpmTagResolver implements Resolver {
       throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data - missing "dist-tags" field`);
 
     const distTags = registryData[`dist-tags`];
-      
+
     if (!Object.prototype.hasOwnProperty.call(distTags, tag))
       throw new ReportError(MessageName.REMOTE_NOT_FOUND, `Registry failed to return tag "${tag}"`);
 
@@ -58,7 +59,7 @@ export class NpmTagResolver implements Resolver {
   }
 
   private getIdentUrl(ident: Ident, opts: MinimalResolveOptions) {
-    const registry = opts.project.configuration.get(`npmRegistryServer`);
+    const registry = npmConfigUtils.getRegistry(ident, opts.project.configuration);
 
     if (ident.scope) {
       return `${registry}/@${ident.scope}%2f${ident.name}`;
