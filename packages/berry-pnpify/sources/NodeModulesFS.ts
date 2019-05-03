@@ -34,7 +34,7 @@ export class NodeModulesFS extends FakeFS {
   }
 
   private resolveFilePath(p: string): string {
-    const pnpPath = this.pathResolver.resolvePath(NodeFS.toPortablePath(p));
+    const pnpPath = this.pathResolver.resolvePath(p);
     if (!pnpPath.resolvedPath) {
       throw new Error(`ENOENT: no such file or directory, stat '${p}'`)
     } else {
@@ -43,9 +43,8 @@ export class NodeModulesFS extends FakeFS {
   }
 
   private throwIfPathReadonly(p: string): string {
-    const portablePath = NodeFS.toPortablePath(p);
-    const pnpPath = this.pathResolver.resolvePath(NodeFS.toPortablePath(p));
-    if (pnpPath.resolvedPath !== portablePath) {
+    const pnpPath = this.pathResolver.resolvePath(p);
+    if (pnpPath.resolvedPath !== p) {
       throw new Error(`Writing to ${p} is forbidden`);
     } else {
       return p;
@@ -53,7 +52,7 @@ export class NodeModulesFS extends FakeFS {
   }
 
   private resolveStatPath(p: string): string {
-    const pnpPath = this.pathResolver.resolvePath(NodeFS.toPortablePath(p));
+    const pnpPath = this.pathResolver.resolvePath(p);
     if (!pnpPath.resolvedPath) {
       throw new Error(`ENOENT: no such file or directory, stat '${p}'`)
     } else {
@@ -94,7 +93,7 @@ export class NodeModulesFS extends FakeFS {
   }
 
   async existsPromise(p: string) {
-    const pnpPath = this.pathResolver.resolvePath(NodeFS.toPortablePath(p));
+    const pnpPath = this.pathResolver.resolvePath(p);
     if (!pnpPath.resolvedPath) {
       return false;
     } else if (pnpPath.statPath) {
@@ -105,7 +104,7 @@ export class NodeModulesFS extends FakeFS {
   }
 
   existsSync(p: string) {
-    const pnpPath = this.pathResolver.resolvePath(NodeFS.toPortablePath(p));
+    const pnpPath = this.pathResolver.resolvePath(p);
     if (!pnpPath.resolvedPath) {
       return false;
     } else if (pnpPath.statPath) {
@@ -236,7 +235,7 @@ export class NodeModulesFS extends FakeFS {
   }
 
   async readdirPromise(p: string) {
-    const pnpPath = this.pathResolver.resolvePath(NodeFS.toPortablePath(p));
+    const pnpPath = this.pathResolver.resolvePath(p);
     if (!pnpPath.resolvedPath) {
       throw new Error(`ENOENT: no such file or directory, scandir '${p}'`);
     } else if (pnpPath.dirList) {
@@ -247,7 +246,7 @@ export class NodeModulesFS extends FakeFS {
   }
 
   readdirSync(p: string) {
-    const pnpPath = this.pathResolver.resolvePath(NodeFS.toPortablePath(p));
+    const pnpPath = this.pathResolver.resolvePath(p);
     if (!pnpPath.resolvedPath) {
       throw new Error(`ENOENT: no such file or directory, scandir '${p}'`);
     } else if (pnpPath.dirList) {

@@ -896,7 +896,6 @@ function extendFs(realFs, fakeFs) {
 const xfs = new NodeFS_NodeFS();
 
 // CONCATENATED MODULE: ./sources/NodePathResolver.ts
-
 /**
  * Regexp for pathname that catches the following paths:
  *
@@ -905,14 +904,14 @@ const xfs = new NodeFS_NodeFS();
  *
  * And everything at the end of the pathname
  */
-const NODE_MODULES_REGEXP = /(?:\/node_modules((?:\/@[^\/]+)?(?:\/[^@][^\/]+)?))?(.*)/;
+const NODE_MODULES_REGEXP = /(?:[\\\/]node_modules((?:[\\\/]@[^\\\/]+)?(?:[\\\/][^@][^\\\/]+)?))?(.*)/;
 /**
  * Resolves `node_modules` paths inside PnP projects.
  *
  * The idea: for path like `node_modules/foo/node_modules/bar` we use `foo` as an issuer
  * and resolve `bar` for this issuer using `pnpapi`.
  */
-class NodePathResolver_NodePathResolver {
+class NodePathResolver {
     /**
      * Constructs new instance of Node path resolver
      *
@@ -947,7 +946,7 @@ class NodePathResolver_NodePathResolver {
     getIssuer(pnp, pathname) {
         const locator = pnp.findPackageLocator(pathname + '/');
         const info = locator && pnp.getPackageInformation(locator);
-        return !info ? undefined : NodeFS_NodeFS.toPortablePath(info.packageLocation);
+        return !info ? undefined : info.packageLocation;
     }
     /**
      * Resolves paths containing `/node_modules` inside PnP projects. If path is outside PnP
@@ -962,7 +961,9 @@ class NodePathResolver_NodePathResolver {
      */
     resolvePath(nodePath) {
         const result = { resolvedPath: nodePath };
-        if (nodePath.indexOf('/node_modules') < 0)
+        const isWindowsPath = nodePath.indexOf('\\') > 0;
+        const pathSep = isWindowsPath ? '\\' : '/';
+        if (nodePath.indexOf(pathSep + 'node_modules') < 0)
             // Non-node_modules paths should not be processed
             return result;
         const pnpApiPath = this.options.apiLocator.findApi(nodePath);
@@ -985,11 +986,9 @@ class NodePathResolver_NodePathResolver {
                         pkgName = pkgName ? pkgName.substring(1) : pkgName;
                         // Check if full package name was provided
                         if (pkgName !== undefined) {
-                            if (pkgName.length > 0 && (pkgName[0] !== '@' || pkgName.indexOf('/') > 0)) {
+                            if (pkgName.length > 0 && (pkgName[0] !== '@' || pkgName.indexOf(pathSep) > 0)) {
                                 try {
-                                    let res = pnp.resolveToUnqualified(pkgName, issuer + '/');
-                                    if (res)
-                                        res = NodeFS_NodeFS.toPortablePath(res);
+                                    let res = pnp.resolveToUnqualified(pkgName, issuer + pathSep);
                                     issuer = res === null || res === issuer ? undefined : res;
                                 }
                                 catch (e) {
@@ -1009,19 +1008,19 @@ class NodePathResolver_NodePathResolver {
                 } while (request && pkgName);
                 if (issuer) {
                     if (partialPackageName) {
-                        const locator = pnp.findPackageLocator(issuer + '/');
+                        const locator = pnp.findPackageLocator(issuer + pathSep);
                         const issuerInfo = locator ? pnp.getPackageInformation(locator) : undefined;
                         if (issuerInfo)
                             result.dirList = this.readDir(issuerInfo, request);
                         if (result.dirList) {
-                            result.statPath = issuer;
+                            result.statPath = isWindowsPath ? issuer.replace(/\//g, '\\') : issuer;
                         }
                         else {
                             result.resolvedPath = null;
                         }
                     }
                     else {
-                        result.resolvedPath = issuer + request;
+                        result.resolvedPath = isWindowsPath ? (issuer + request).replace(/\//g, '\\') : (issuer + request);
                     }
                 }
             }
@@ -1042,7 +1041,6 @@ var external_events_default = /*#__PURE__*/__webpack_require__.n(external_events
 var dynamicRequire = __webpack_require__(0);
 
 // CONCATENATED MODULE: ./sources/PnPApiLoader.ts
-
 
 
 /**
@@ -1088,7 +1086,7 @@ class PnPApiLoader_PnPApiLoader extends external_events_default.a {
             if (cacheEntry.pnpApi && !cacheEntry.watched) {
                 cacheEntry.watched = true;
                 this.cachedApis[pnpApiPath] = cacheEntry;
-                this.options.watch(NodeFS_NodeFS.fromPortablePath(pnpApiPath), { persistent: false }, () => {
+                this.options.watch(pnpApiPath, { persistent: false }, () => {
                     let newApi;
                     try {
                         newApi = this.options.uncachedRequire(pnpApiPath);
@@ -1146,7 +1144,7 @@ class PnPApiLocator {
      * @returns path components
      */
     getPathComponents(sourcePath) {
-        const normalizedPath = sourcePath.replace(/\/+$/, '');
+        const normalizedPath = sourcePath.replace(/\\/g, '/').replace(/[\\\/]+$/, '');
         const idx = normalizedPath.indexOf('\/node_modules');
         return (idx >= 0 ? normalizedPath.substring(0, idx) : normalizedPath).split('/');
     }
@@ -1159,12 +1157,16 @@ class PnPApiLocator {
      */
     findApi(sourcePath) {
         let apiPath = null;
+        const isWindowsPath = sourcePath.indexOf('\\') >= 0;
         const pathComponentList = this.getPathComponents(sourcePath);
         let currentDir;
         let node = this.checkTree;
         for (const pathComponent of pathComponentList) {
             currentDir = typeof currentDir === 'undefined' ? pathComponent : currentDir + '/' + pathComponent;
-            const currentPath = currentDir + '/' + this.options.pnpFileName;
+            let currentPath = currentDir + '/' + this.options.pnpFileName;
+            if (isWindowsPath) {
+                currentPath = currentPath.replace(/\//g, '\\');
+            }
             let val = node.get(pathComponent);
             if (typeof val === 'undefined') {
                 val = this.options.existsSync(currentPath) ? true : new Map();
@@ -1208,7 +1210,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
     constructor({ baseFs = new PosixFS_PosixFS(new NodeFS_NodeFS()) } = {}) {
         super();
         this.baseFs = baseFs;
-        this.pathResolver = new NodePathResolver_NodePathResolver({
+        this.pathResolver = new NodePathResolver({
             apiLoader: new PnPApiLoader_PnPApiLoader({ watch: external_fs_default.a.watch.bind(external_fs_default.a) }),
             apiLocator: new PnPApiLocator({ existsSync: baseFs.existsSync.bind(baseFs) })
         });
@@ -1220,7 +1222,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         return this.baseFs;
     }
     resolveFilePath(p) {
-        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
+        const pnpPath = this.pathResolver.resolvePath(p);
         if (!pnpPath.resolvedPath) {
             throw new Error(`ENOENT: no such file or directory, stat '${p}'`);
         }
@@ -1229,9 +1231,8 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
     }
     throwIfPathReadonly(p) {
-        const portablePath = NodeFS_NodeFS.toPortablePath(p);
-        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
-        if (pnpPath.resolvedPath !== portablePath) {
+        const pnpPath = this.pathResolver.resolvePath(p);
+        if (pnpPath.resolvedPath !== p) {
             throw new Error(`Writing to ${p} is forbidden`);
         }
         else {
@@ -1239,7 +1240,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
     }
     resolveStatPath(p) {
-        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
+        const pnpPath = this.pathResolver.resolvePath(p);
         if (!pnpPath.resolvedPath) {
             throw new Error(`ENOENT: no such file or directory, stat '${p}'`);
         }
@@ -1272,7 +1273,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         return this.baseFs.realpathSync(this.resolveFilePath(p));
     }
     async existsPromise(p) {
-        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
+        const pnpPath = this.pathResolver.resolvePath(p);
         if (!pnpPath.resolvedPath) {
             return false;
         }
@@ -1284,7 +1285,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
     }
     existsSync(p) {
-        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
+        const pnpPath = this.pathResolver.resolvePath(p);
         if (!pnpPath.resolvedPath) {
             return false;
         }
@@ -1386,7 +1387,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
     }
     async readdirPromise(p) {
-        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
+        const pnpPath = this.pathResolver.resolvePath(p);
         if (!pnpPath.resolvedPath) {
             throw new Error(`ENOENT: no such file or directory, scandir '${p}'`);
         }
@@ -1398,7 +1399,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
     }
     readdirSync(p) {
-        const pnpPath = this.pathResolver.resolvePath(NodeFS_NodeFS.toPortablePath(p));
+        const pnpPath = this.pathResolver.resolvePath(p);
         if (!pnpPath.resolvedPath) {
             throw new Error(`ENOENT: no such file or directory, scandir '${p}'`);
         }

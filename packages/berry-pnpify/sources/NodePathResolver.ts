@@ -1,4 +1,3 @@
-import { NodeFS }                     from '@berry/fslib';
 import { PnpApi, PackageInformation } from '@berry/pnp';
 
 import { PnPApiLoader }               from './PnPApiLoader';
@@ -27,7 +26,7 @@ export interface NodePathResolverOptions {
  *
  * And everything at the end of the pathname
  */
-const NODE_MODULES_REGEXP = /(?:\/node_modules((?:\/@[^\/]+)?(?:\/[^@][^\/]+)?))?(.*)/;
+const NODE_MODULES_REGEXP = /(?:[\\\/]node_modules((?:[\\\/]@[^\\\/]+)?(?:[\\\/][^@][^\\\/]+)?))?(.*)/;
 
 /**
  * Resolved `/node_modules` path inside PnP project info.
@@ -109,7 +108,7 @@ export class NodePathResolver {
   private getIssuer(pnp: PnpApi, pathname: string): string | undefined {
     const locator = pnp.findPackageLocator(pathname + '/');
     const info = locator && pnp.getPackageInformation(locator);
-    return !info ? undefined : NodeFS.toPortablePath(info.packageLocation);
+    return !info ? undefined : info.packageLocation;
   }
 
   /**
@@ -125,7 +124,9 @@ export class NodePathResolver {
    */
   public resolvePath(nodePath: string): ResolvedPath {
     const result: ResolvedPath = { resolvedPath: nodePath };
-    if (nodePath.indexOf('/node_modules') < 0)
+    const isWindowsPath = nodePath.indexOf('\\') > 0;
+    const pathSep = isWindowsPath ? '\\' : '/';
+    if (nodePath.indexOf(pathSep + 'node_modules') < 0)
       // Non-node_modules paths should not be processed
       return result;
 
@@ -151,12 +152,9 @@ export class NodePathResolver {
             pkgName = pkgName ? pkgName.substring(1) : pkgName;
             // Check if full package name was provided
             if (pkgName !== undefined) {
-              if (pkgName.length > 0 && (pkgName[0] !== '@' || pkgName.indexOf('/') > 0)) {
+              if (pkgName.length > 0 && (pkgName[0] !== '@' || pkgName.indexOf(pathSep) > 0)) {
                 try {
-                  let res = pnp.resolveToUnqualified(pkgName, issuer + '/');
-                  if (res) 
-                    res = NodeFS.toPortablePath(res);
-                  
+                  let res = pnp.resolveToUnqualified(pkgName, issuer + pathSep);
                   issuer = res === null || res === issuer ? undefined : res;
                 } catch (e) {
                   issuer = undefined;
@@ -175,19 +173,18 @@ export class NodePathResolver {
 
         if (issuer) {
           if (partialPackageName) {
-            const locator = pnp.findPackageLocator(issuer + '/');
+            const locator = pnp.findPackageLocator(issuer + pathSep);
             const issuerInfo = locator ? pnp.getPackageInformation(locator) : undefined;
             if (issuerInfo)
               result.dirList = this.readDir(issuerInfo, request);
 
-
             if (result.dirList) {
-              result.statPath = issuer;
+              result.statPath = isWindowsPath ? issuer.replace(/\//g, '\\') : issuer;
             } else {
               result.resolvedPath = null;
             }
           } else {
-            result.resolvedPath = issuer + request;
+            result.resolvedPath = isWindowsPath ? (issuer + request).replace(/\//g, '\\') : (issuer + request);
           }
         }
       }
