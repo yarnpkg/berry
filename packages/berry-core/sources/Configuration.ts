@@ -328,7 +328,7 @@ export class Configuration {
   public values: Map<string, any> = new Map();
   public sources: Map<string, string> = new Map();
 
-  public invalid: Set<string> = new Set();
+  public invalid: Map<string, string> = new Map();
 
   /**
    * Instantiate a new configuration object exposing the configuration obtained
@@ -609,7 +609,7 @@ export class Configuration {
         if (strict) {
           throw new UsageError(`${legacyNames.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
         } else {
-          this.invalid.add(key);
+          this.invalid.set(key, source);
           continue;
         }
       }

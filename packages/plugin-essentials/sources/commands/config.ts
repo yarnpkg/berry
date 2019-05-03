@@ -48,8 +48,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     const report = await StreamReport.start({configuration, json, stdout}, async report => {
       if (configuration.invalid.size > 0 && !json) {
-        for (const key of configuration.invalid)
-          report.reportError(MessageName.INVALID_CONFIGURATION_KEY, `Invalid configuration key "${key}"`);
+        for (const [key, source] of configuration.invalid)
+          report.reportError(MessageName.INVALID_CONFIGURATION_KEY, `Invalid configuration key "${key}" in ${source}`);
 
         report.reportSeparator();
       }
