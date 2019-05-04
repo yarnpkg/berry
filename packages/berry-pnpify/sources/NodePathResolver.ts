@@ -105,8 +105,8 @@ export class NodePathResolver {
     return result.length === 0 ? undefined : result;
   }
 
-  private getIssuer(pnp: PnpApi, pathname: string): string | undefined {
-    const locator = pnp.findPackageLocator(pathname + '/');
+  private getIssuer(pnp: PnpApi, pathname: string, pathSep: string): string | undefined {
+    const locator = pnp.findPackageLocator(pathname + pathSep);
     const info = locator && pnp.getPackageInformation(locator);
     return !info ? undefined : info.packageLocation;
   }
@@ -134,7 +134,7 @@ export class NodePathResolver {
     const pnp = pnpApiPath && this.options.apiLoader.getApi(pnpApiPath);
     if (pnpApiPath && pnp) {
       // Extract first issuer from the path using PnP API
-      let issuer = this.getIssuer(pnp, nodePath);
+      let issuer = this.getIssuer(pnp, nodePath, pathSep);
       let request: string | undefined;
 
       // If we have something left in a path to parse, do that

@@ -82,7 +82,7 @@ export class PnPApiLocator {
    * @returns path components
    */
   private getPathComponents(sourcePath: string): string[] {
-    const normalizedPath = sourcePath.replace(/\\/g, '/').replace(/[\\\/]+$/, '');
+    const normalizedPath = sourcePath.replace(/\\/g, '/').replace(/\/+$/, '');
     const idx = normalizedPath.indexOf('\/node_modules');
     return (idx >= 0 ? normalizedPath.substring(0, idx) : normalizedPath).split('/');
   }
@@ -96,16 +96,14 @@ export class PnPApiLocator {
    */
   public findApi(sourcePath: string): string | null {
     let apiPath = null;
-    const isWindowsPath = sourcePath.indexOf('\\') >= 0;
+    const pathSep = sourcePath.indexOf('\\') >= 0 ? '\\' : '/';
     const pathComponentList = this.getPathComponents(sourcePath);
 
     let currentDir;
     let node = this.checkTree;
     for (const pathComponent of pathComponentList) {
-      currentDir = typeof currentDir === 'undefined' ? pathComponent : currentDir + '/' + pathComponent;
-      let currentPath = currentDir + '/' + this.options.pnpFileName;
-      if (isWindowsPath)
-        currentPath = currentPath.replace(/\//g, '\\');
+      currentDir = typeof currentDir === 'undefined' ? pathComponent : currentDir + pathSep + pathComponent;
+      let currentPath = currentDir + pathSep + this.options.pnpFileName;
 
       let val = node.get(pathComponent);
       if (typeof val === 'undefined') {

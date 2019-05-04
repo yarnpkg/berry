@@ -943,8 +943,8 @@ class NodePathResolver {
         }
         return result.length === 0 ? undefined : result;
     }
-    getIssuer(pnp, pathname) {
-        const locator = pnp.findPackageLocator(pathname + '/');
+    getIssuer(pnp, pathname, pathSep) {
+        const locator = pnp.findPackageLocator(pathname + pathSep);
         const info = locator && pnp.getPackageInformation(locator);
         return !info ? undefined : info.packageLocation;
     }
@@ -970,7 +970,7 @@ class NodePathResolver {
         const pnp = pnpApiPath && this.options.apiLoader.getApi(pnpApiPath);
         if (pnpApiPath && pnp) {
             // Extract first issuer from the path using PnP API
-            let issuer = this.getIssuer(pnp, nodePath);
+            let issuer = this.getIssuer(pnp, nodePath, pathSep);
             let request;
             // If we have something left in a path to parse, do that
             if (issuer && nodePath.length > issuer.length) {
@@ -1144,7 +1144,7 @@ class PnPApiLocator {
      * @returns path components
      */
     getPathComponents(sourcePath) {
-        const normalizedPath = sourcePath.replace(/\\/g, '/').replace(/[\\\/]+$/, '');
+        const normalizedPath = sourcePath.replace(/\\/g, '/').replace(/\/+$/, '');
         const idx = normalizedPath.indexOf('\/node_modules');
         return (idx >= 0 ? normalizedPath.substring(0, idx) : normalizedPath).split('/');
     }
@@ -1157,16 +1157,13 @@ class PnPApiLocator {
      */
     findApi(sourcePath) {
         let apiPath = null;
-        const isWindowsPath = sourcePath.indexOf('\\') >= 0;
+        const pathSep = sourcePath.indexOf('\\') >= 0 ? '\\' : '/';
         const pathComponentList = this.getPathComponents(sourcePath);
         let currentDir;
         let node = this.checkTree;
         for (const pathComponent of pathComponentList) {
-            currentDir = typeof currentDir === 'undefined' ? pathComponent : currentDir + '/' + pathComponent;
-            let currentPath = currentDir + '/' + this.options.pnpFileName;
-            if (isWindowsPath) {
-                currentPath = currentPath.replace(/\//g, '\\');
-            }
+            currentDir = typeof currentDir === 'undefined' ? pathComponent : currentDir + pathSep + pathComponent;
+            let currentPath = currentDir + pathSep + this.options.pnpFileName;
             let val = node.get(pathComponent);
             if (typeof val === 'undefined') {
                 val = this.options.existsSync(currentPath) ? true : new Map();
