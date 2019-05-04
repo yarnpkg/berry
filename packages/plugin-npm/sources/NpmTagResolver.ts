@@ -59,12 +59,10 @@ export class NpmTagResolver implements Resolver {
   }
 
   private getIdentUrl(ident: Ident, opts: MinimalResolveOptions) {
-    const registry = npmConfigUtils.getRegistry(ident, opts.project.configuration);
-
     if (ident.scope) {
-      return `${registry}/@${ident.scope}%2f${ident.name}`;
+      return `/@${ident.scope}%2f${ident.name}`;
     } else {
-      return `${registry}/${ident.name}`;
+      return `/${ident.name}`;
     }
   }
 }

@@ -7,27 +7,31 @@ export type Options = httpUtils.Options & {
   ident: Ident,
 };
 
-export async function get(url: string, {configuration, headers, ident, ... rest}: Options) {
+export async function get(path: string, {configuration, headers, ident, ... rest}: Options) {
+  const registry = npmConfigUtils.getRegistry(ident, {configuration});
   const auth = getAuthenticationHeader(ident, {configuration});
+
   if (auth)
     headers = {... headers, authorization: auth};
 
-  return await httpUtils.get(url, {configuration, headers, ... rest});
+  return await httpUtils.get(`${registry}${path}`, {configuration, headers, ... rest});
 }
 
-export async function put(url: string, body: httpUtils.Body, {configuration, headers, ident, ... rest}: Options) {
+export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, ... rest}: Options) {
   // We always must authenticate our PUT requests
   configuration = configuration.extend({npmAlwaysAuth: true});
 
+  const registry = npmConfigUtils.getRegistry(ident, {configuration});
   const auth = getAuthenticationHeader(ident, {configuration});
+
   if (auth)
     headers = {... headers, authorization: auth};
 
-  return await httpUtils.put(url, body, {configuration, headers, ... rest});
+  return await httpUtils.put(`${registry}${path}`, body, {configuration, headers, ... rest});
 }
 
 function getAuthenticationHeader(ident: Ident, {configuration}: {configuration: Configuration}) {
-  const authConfiguration = npmConfigUtils.getAuthenticationConfiguration(ident, configuration);
+  const authConfiguration = npmConfigUtils.getAuthenticationConfiguration(ident, {configuration});
   const mustAuthenticate = authConfiguration.get(`npmAlwaysAuth`);
 
   if (!mustAuthenticate && !ident.scope)

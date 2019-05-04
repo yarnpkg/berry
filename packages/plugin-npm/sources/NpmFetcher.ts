@@ -56,9 +56,8 @@ export class NpmFetcher implements Fetcher {
 
   private getLocatorUrl(locator: Locator, opts: FetchOptions) {
     const version = locator.reference.slice(PROTOCOL.length);
-    const registry = npmConfigUtils.getRegistry(locator, opts.project.configuration);
 
-    return `${registry}/${structUtils.requirableIdent(locator)}/-/${locator.name}-${version}.tgz`;
+    return `/${structUtils.requirableIdent(locator)}/-/${locator.name}-${version}.tgz`;
   }
 
   private getPrefixPath(locator: Locator) {

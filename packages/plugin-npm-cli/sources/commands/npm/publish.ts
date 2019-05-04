@@ -53,10 +53,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       const body = makePublishBody(ident, version, buffer, {tag});
 
       try {
-        const registry = npmConfigUtils.getRegistry(ident, configuration);
-        const packageRegistryPath = `${registry}/${structUtils.stringifyIdent(ident)}`;
-
-        await npmHttpUtils.put(packageRegistryPath, body, {
+        await npmHttpUtils.put(`/${structUtils.stringifyIdent(ident)}`, body, {
           configuration,
           ident,
           json: true,

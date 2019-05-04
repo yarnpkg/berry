@@ -1,6 +1,31 @@
 import {Configuration, Ident} from '@berry/core';
 
-function getScopedConfiguration(ident: Ident, configuration: Configuration): Configuration|Map<string, any> {
+interface MapLike {
+  get(key: string): any;
+}
+
+export function getRegistry(ident: Ident, {configuration}: {configuration: Configuration}): string {
+  return getScopedConfiguration(ident, {configuration}).get(`npmRegistryServer`);
+}
+
+export function getAuthenticationConfiguration(ident: Ident, {configuration}: {configuration: Configuration}): MapLike {
+  const registryConfigurations: Map<string, Map<string, any>> | null = configuration.get(`npmRegistries`);
+
+  if (registryConfigurations) {
+    const registry = getRegistry(ident, {configuration});
+    if (registryConfigurations.has(registry))
+      return registryConfigurations.get(registry)!;
+
+    const registryWithoutProtocol = registry.replace(/^[a-z]+:/, '');
+    if (registryConfigurations.has(registryWithoutProtocol)) {
+      return registryConfigurations.get(registryWithoutProtocol)!;
+    }
+  }
+
+  return getScopedConfiguration(ident, {configuration});
+}
+
+function getScopedConfiguration(ident: Ident, {configuration}: {configuration: Configuration}): MapLike {
   if (ident.scope) {
     const scopeConfigurations: Map<string, Map<string, any>> | null = configuration.get(`npmScopes`);
     if (scopeConfigurations && scopeConfigurations.has(ident.scope))
@@ -13,25 +38,4 @@ function getScopedConfiguration(ident: Ident, configuration: Configuration): Con
   }
 
   return configuration;
-}
-
-export function getRegistry(ident: Ident, configuration: Configuration): string {
-  return getScopedConfiguration(ident, configuration).get(`npmRegistryServer`);
-}
-
-export function getAuthenticationConfiguration(ident: Ident, configuration: Configuration): Configuration | Map<string, any> {
-  const registryConfigurations: Map<string, Map<string, any>> | null = configuration.get(`npmRegistries`);
-
-  if (registryConfigurations) {
-    const registry = getRegistry(ident, configuration);
-    if (registryConfigurations.has(registry))
-      return registryConfigurations.get(registry)!;
-
-    const registryWithoutProtocol = registry.replace(/^[a-z]+:/, '');
-    if (registryConfigurations.has(registryWithoutProtocol)) {
-      return registryConfigurations.get(registryWithoutProtocol)!;
-    }
-  }
-
-  return getScopedConfiguration(ident, configuration);
 }
