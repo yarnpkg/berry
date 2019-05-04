@@ -6,7 +6,7 @@ import {Readable, Writable}                                            from 'str
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`whoami`)
+  .command(`npm whoami`)
   .describe(`display username`)
 
   .detail(`
@@ -37,7 +37,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
         report.reportInfo(MessageName.UNNAMED, jsonResponse.username);
       } catch (err) {
         if (err.statusCode === 401)
-          report.reportWarning(MessageName.UNNAMED, `Unauthorized`);
+          report.reportError(MessageName.AUTHENTICATION_INVALID, `Authentication failed - your credentials may have expired`);
       }
     });
 

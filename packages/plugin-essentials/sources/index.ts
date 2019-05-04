@@ -18,7 +18,6 @@ import run                                from './commands/run';
 import setResolutionPolicy                from './commands/set/resolution';
 import setVersionPolicy                   from './commands/set/version';
 import up                                 from './commands/up';
-import whoami                             from './commands/whoami';
 import why                                from './commands/why';
 import foreachWorkspaces                  from './commands/workspaces/foreach';
 import listWorkspaces                     from './commands/workspaces/list';
@@ -75,7 +74,6 @@ const plugin: Plugin = {
     remove,
     run,
     up,
-    whoami,
     why,
   ],
 };

@@ -45,6 +45,7 @@ export enum MessageName {
   CONSTRAINTS_INCOMPATIBLE_FIELD = 38,
   CONSTRAINTS_EXTRANEOUS_FIELD = 39,
   CONSTRAINTS_INVALID_FIELD = 40,
+  AUTHENTICATION_INVALID = 41,
 }
 
 export class ReportError extends Error {
