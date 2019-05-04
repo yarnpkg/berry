@@ -4,7 +4,6 @@ import {Locator, MessageName}                       from '@berry/core';
 import semver                                       from 'semver';
 
 import {PROTOCOL}                                   from './constants';
-import * as npmConfigUtils                          from './npmConfigUtils';
 import * as npmHttpUtils                            from './npmHttpUtils';
 
 export class NpmFetcher implements Fetcher {

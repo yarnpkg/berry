@@ -5,7 +5,6 @@ import {structUtils}                                                            
 import semver                                                                                from 'semver';
 
 import {PROTOCOL}                                                                            from './constants';
-import * as npmConfigUtils                                                                   from './npmConfigUtils';
 import * as npmHttpUtils                                                                     from './npmHttpUtils';
 
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);

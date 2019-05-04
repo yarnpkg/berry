@@ -3,7 +3,6 @@ import {structUtils}                                                            
 import {Ident, Descriptor, Locator, Package}                                       from '@berry/core';
 
 import {PROTOCOL}                                                                  from './constants';
-import * as npmConfigUtils                                                         from './npmConfigUtils';
 import * as npmHttpUtils                                                           from './npmHttpUtils';
 
 export const TAG_REGEXP = /^[a-z]+$/;
