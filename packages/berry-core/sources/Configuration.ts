@@ -319,7 +319,7 @@ function parseObject(path: string, value: unknown, definition: ObjectSettingsDef
     throw new Error(`Object configuration settings "${path}" must be an object`);
 
   for (const [propKey, propValue] of Object.entries(value!)) {
-    const name = normalizeKey(propKey);
+    const name = camelcase(propKey);
     const subPath = `${path}.${name}`;
     const subDefinition = definition.properties[name];
 
@@ -347,10 +347,6 @@ function parseMap(path: string, value: unknown, definition: MapSettingsDefinitio
   return result;
 }
 
-function normalizeKey(key: string) {
-  return key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
-}
-
 function getDefaultGlobalFolder() {
   if (process.platform === `win32`) {
     const base = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
@@ -375,7 +371,7 @@ function getEnvironmentSettings() {
     if (!key.startsWith(ENVIRONMENT_PREFIX))
       continue;
 
-    key = normalizeKey(key.slice(ENVIRONMENT_PREFIX.length));
+    key = camelcase(key.slice(ENVIRONMENT_PREFIX.length));
 
     environmentSettings[key] = value;
   }
@@ -686,7 +682,7 @@ export class Configuration {
       data = data.berry;
 
     for (const key of Object.keys(data)) {
-      const name = normalizeKey(key);
+      const name = camelcase(key);
 
       // The plugins have already been loaded at this point
       if (name === `plugins`)
