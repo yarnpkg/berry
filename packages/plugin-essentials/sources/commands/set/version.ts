@@ -125,7 +125,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
       if (!dryRun) {
         report.reportInfo(MessageName.UNNAMED, `Downloading ${configuration.format(bundleUrl, `green`)}`);
-        const releaseBuffer = await httpUtils.get(bundleUrl, configuration);
+        const releaseBuffer = await httpUtils.get(bundleUrl, {configuration});
 
         const relativePath = `.yarn/releases/yarn-${bundleVersion}.js`;
         const absolutePath = posix.resolve(project.cwd, relativePath);
@@ -174,7 +174,7 @@ type FetchReleasesOptions = {
 };
 
 async function fetchReleases(configuration: Configuration, {includePrereleases = false}: Partial<FetchReleasesOptions> = {}): Promise<{releases: Array<Release>, prereleases: Array<Release>}> {
-  const request = await httpUtils.get(`https://api.github.com/repos/yarnpkg/yarn/releases`, configuration);
+  const request = await httpUtils.get(`https://api.github.com/repos/yarnpkg/yarn/releases`, {configuration});
   const apiData = (JSON.parse(request.toString()) as Array<Release>);
 
   const allReleases = apiData.filter(release => {

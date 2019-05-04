@@ -8,7 +8,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
   .command(`workspaces list [-v,--verbose] [--json]`)
 
-  .categorize(`Workspace commands`)
+  .categorize(`Workspace-related commands`)
   .describe(`list all available workspaces`)
 
   .action(async ({cwd, stdout, verbose, json}: {cwd: string, stdout: Writable, verbose: boolean, json: boolean}) => {

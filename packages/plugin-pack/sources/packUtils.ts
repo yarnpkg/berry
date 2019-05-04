@@ -3,6 +3,7 @@ import {FakeFS, JailFS, xfs} from '@berry/fslib';
 import mm                    from 'micromatch';
 import {posix}               from 'path';
 import tar                   from 'tar-stream';
+import {createGzip}          from 'zlib';
 
 import {Hooks}               from './';
 
@@ -28,7 +29,10 @@ export async function genPackStream(workspace: Workspace, files?: Array<string>)
 
   pack.finalize();
 
-  return pack;
+  const tgz = createGzip();
+  pack.pipe(tgz);
+
+  return tgz;
 }
 
 export async function genPackList(workspace: Workspace) {

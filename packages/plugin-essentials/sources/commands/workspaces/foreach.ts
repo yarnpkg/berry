@@ -6,7 +6,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   .command(`workspaces foreach [... args]`)
   .flags({proxyArguments: true})
 
-  .categorize(`Workspace commands`)
+  .categorize(`Workspace-related commands`)
   .describe(`run a command on all workspaces`)
 
   .action(async ({cwd, args, ... env}: {cwd: string, args: Array<string>}) => {

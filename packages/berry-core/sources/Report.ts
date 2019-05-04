@@ -39,6 +39,7 @@ export enum MessageName {
   NODE_GYP_INJECTED = 32,
   AUTHENTICATION_NOT_FOUND = 33,
   INVALID_CONFIGURATION_KEY = 34,
+  NETWORK_ERROR = 35,
 }
 
 export class ReportError extends Error {

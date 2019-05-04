@@ -45,9 +45,13 @@ export class NpmSemverResolver implements Resolver {
     if (semver.valid(range))
       return [structUtils.convertDescriptorToLocator(descriptor)];
 
-    const httpResponse = await npmHttpUtils.get(this.getIdentUrl(descriptor, opts), descriptor, opts.project.configuration);
+    const registryData = await npmHttpUtils.get(this.getIdentUrl(descriptor, opts), {
+      configuration: opts.project.configuration,
+      ident: descriptor,
+      json: true,
+    });
 
-    const versions = Object.keys(JSON.parse(httpResponse.toString()).versions);
+    const versions = Object.keys(registryData.versions);
     const candidates = versions.filter(version => semver.satisfies(version, range));
 
     candidates.sort((a, b) => {
@@ -62,8 +66,11 @@ export class NpmSemverResolver implements Resolver {
   async resolve(locator: Locator, opts: ResolveOptions) {
     const version = locator.reference.slice(PROTOCOL.length);
 
-    const httpResponse = await npmHttpUtils.get(this.getIdentUrl(locator, opts), locator, opts.project.configuration);
-    const registryData = JSON.parse(httpResponse.toString());
+    const registryData = await npmHttpUtils.get(this.getIdentUrl(locator, opts), {
+      configuration: opts.project.configuration,
+      ident: locator,
+      json: true,
+    });
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
       throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);

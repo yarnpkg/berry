@@ -42,11 +42,10 @@ export class NpmFetcher implements Fetcher {
   }
 
   private async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
-    const sourceBuffer = await npmHttpUtils.get(
-      this.getLocatorUrl(locator, opts),
-      locator,
-      opts.project.configuration,
-    );
+    const sourceBuffer = await npmHttpUtils.get(this.getLocatorUrl(locator, opts), {
+      configuration: opts.project.configuration,
+      ident: locator,
+    });
 
     return await tgzUtils.makeArchive(sourceBuffer, {
       stripComponents: 1,

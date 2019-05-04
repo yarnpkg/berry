@@ -1663,6 +1663,7 @@ __metadata:
     "@types/redux-saga": "npm:^0.10.5"
     "@types/request": "npm:^2.47.1"
     "@types/semver": "npm:^5.5.0"
+    "@types/ssri": "npm:^6.0.1"
     "@types/stream-to-promise": "npm:^2.2.0"
     "@types/supports-color": "npm:^5.3.0"
     "@types/tar": "npm:^4.0.0"
@@ -1827,6 +1828,10 @@ __metadata:
     "@berry/cli": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/plugin-npm": "workspace:*"
+    "@berry/plugin-pack": "workspace:*"
+    clipanion: "npm:^0.14.1"
+    ssri: "npm:^6.0.1"
+    yup: "npm:^0.27.0"
   languageName: unknown
   linkType: soft
 
@@ -3385,6 +3390,13 @@ __metadata:
   version: 5.5.0
   resolution: "@types/semver@npm:5.5.0"
   checksum: 9d37c7fa2048fa6102813c17d406bc6b7fff837fac7a051c73e7f88fd21a75d2f555334057a707685a048299853b64e464354d60eb7b54f1a7c31b3a84af6a01
+  languageName: node
+  linkType: hard
+
+"@types/ssri@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "@types/ssri@npm:6.0.1"
+  checksum: f4051a77d83d5e5e77f4393b7db9fba8e7648fe95f695bf4074f39e8d8301fd0cb42bf12adf06675aec17f8baa2effe29676e0db21182a66861148f1450faaef
   languageName: node
   linkType: hard
 
