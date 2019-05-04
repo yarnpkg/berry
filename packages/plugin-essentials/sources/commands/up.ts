@@ -83,7 +83,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
               workspace,
               target,
               existing,
-              await suggestUtils.getSuggestedDescriptors(descriptor, existing, {project, cache, target, modifier, strategies})
+              await suggestUtils.getSuggestedDescriptors(descriptor, {project, workspace, cache, target, modifier, strategies})
             ] as [
               Workspace,
               suggestUtils.Target,

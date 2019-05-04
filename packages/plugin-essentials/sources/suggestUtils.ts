@@ -118,9 +118,13 @@ export async function extractDescriptorFromPath(path: string, {cache, cwd, works
   return structUtils.makeDescriptor(manifest.name, path);
 }
 
-export async function getSuggestedDescriptors(request: Descriptor, previous: Descriptor | null, {project, cache, target, modifier, strategies, maxResults = Infinity}: {project: Project, cache: Cache, target: Target, modifier: Modifier, strategies: Array<Strategy>, maxResults?: number}) {
+export async function getSuggestedDescriptors(request: Descriptor, {project, workspace, cache, target, modifier, strategies, maxResults = Infinity}: {project: Project, workspace: Workspace, cache: Cache, target: Target, modifier: Modifier, strategies: Array<Strategy>, maxResults?: number}) {
   if (!(maxResults >= 0))
     throw new Error(`Invalid maxResults (${maxResults})`);
+
+  const existing = typeof workspace !== `undefined` && workspace !== null
+    ? workspace.manifest[target].get(request.identHash) || null
+    : null;
 
   const suggested = [];
 
@@ -130,14 +134,19 @@ export async function getSuggestedDescriptors(request: Descriptor, previous: Des
 
     switch (strategy) {
       case Strategy.KEEP: {
-        if (previous) {
-          const reason = `Keep ${structUtils.prettyDescriptor(project.configuration, previous)} (no changes)`;
-          suggested.push({descriptor: previous, reason});
+        if (existing) {
+          const reason = `Keep ${structUtils.prettyDescriptor(project.configuration, existing)} (no changes)`;
+          suggested.push({descriptor: existing, reason});
         }
       } break;
 
       case Strategy.REUSE: {
         for (const {descriptor, locators} of (await findProjectDescriptors(request, {project, target})).values()) {
+          // We don't print the "reuse" key for the current workspace if the KEEP strategy is set since that would be redundant
+          if (locators.length === 1 && locators[0].locatorHash === workspace.anchoredLocator.locatorHash)
+            if (strategies.includes(Strategy.KEEP))
+              continue;
+
           let reason = `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)} (originally used by ${structUtils.prettyLocator(project.configuration, locators[0])}`
 
           reason += locators.length > 1

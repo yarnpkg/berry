@@ -38,6 +38,7 @@ export enum MessageName {
   DANGEROUS_NODE_MODULES = 31,
   NODE_GYP_INJECTED = 32,
   AUTHENTICATION_NOT_FOUND = 33,
+  INVALID_CONFIGURATION_KEY = 34,
 }
 
 export class ReportError extends Error {
@@ -65,6 +66,7 @@ export abstract class Report {
   abstract startTimerPromise<T>(what: string, cb: () => Promise<T>): Promise<T>;
   abstract startTimerSync<T>(what: string, cb: () => T): T;
 
+  abstract reportSeparator(): void;
   abstract reportInfo(name: MessageName, text: string): void;
   abstract reportWarning(name: MessageName, text: string): void;
   abstract reportError(name: MessageName, text: string): void;

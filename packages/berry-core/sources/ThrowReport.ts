@@ -16,6 +16,9 @@ export class ThrowReport extends Report {
     return await cb();
   }
 
+  reportSeparator() {
+  }
+
   reportInfo(name: MessageName, text: string) {
   }
 

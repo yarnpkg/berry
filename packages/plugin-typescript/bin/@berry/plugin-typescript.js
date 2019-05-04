@@ -99,20 +99,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(1);
 const core_2 = __webpack_require__(1);
 const plugin_essentials_1 = __webpack_require__(2);
+const getTypesName = (descriptor) => {
+    return descriptor.scope
+        ? `${descriptor.scope}__${descriptor.name}`
+        : `${descriptor.name}`;
+};
 const afterWorkspaceDependencyAddition = async (workspace, dependencyTarget, descriptor) => {
     if (descriptor.scope === `types`)
         return;
     const project = workspace.project;
     const configuration = project.configuration;
     const cache = await core_1.Cache.find(configuration);
-    const typesName = descriptor.scope
-        ? `${descriptor.scope}__${descriptor.name}`
-        : `${descriptor.name}`;
-    const target = plugin_essentials_1.suggestUtils.Target.REGULAR;
+    const typesName = getTypesName(descriptor);
+    const target = plugin_essentials_1.suggestUtils.Target.DEVELOPMENT;
     const modifier = plugin_essentials_1.suggestUtils.Modifier.EXACT;
     const strategies = [plugin_essentials_1.suggestUtils.Strategy.LATEST];
     const request = core_2.structUtils.makeDescriptor(core_2.structUtils.makeIdent(`types`, typesName), `unknown`);
-    const suggestions = await plugin_essentials_1.suggestUtils.getSuggestedDescriptors(request, null, { project, cache, target, modifier, strategies });
+    const suggestions = await plugin_essentials_1.suggestUtils.getSuggestedDescriptors(request, { workspace, project, cache, target, modifier, strategies });
     const nonNullSuggestions = suggestions.filter(suggestion => suggestion.descriptor !== null);
     if (nonNullSuggestions.length === 0)
         return;
@@ -121,9 +124,21 @@ const afterWorkspaceDependencyAddition = async (workspace, dependencyTarget, des
         return;
     workspace.manifest[target].set(selected.identHash, selected);
 };
+const afterWorkspaceDependencyRemoval = async (workspace, dependencyTarget, descriptor) => {
+    if (descriptor.scope === `types`)
+        return;
+    const target = plugin_essentials_1.suggestUtils.Target.DEVELOPMENT;
+    const typesName = getTypesName(descriptor);
+    const ident = core_2.structUtils.makeIdent(`types`, typesName);
+    const current = workspace.manifest[target].get(ident.identHash);
+    if (typeof current === `undefined`)
+        return;
+    workspace.manifest[target].delete(ident.identHash);
+};
 const plugin = {
     hooks: {
         afterWorkspaceDependencyAddition,
+        afterWorkspaceDependencyRemoval,
     },
 };
 // eslint-disable-next-line arca/no-default-export

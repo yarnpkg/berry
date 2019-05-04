@@ -6,6 +6,7 @@ import {Locator}             from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
+  footer?: boolean,
   json?: boolean,
   stdout: Writable,
 };
@@ -26,6 +27,7 @@ export class StreamReport extends Report {
   }
 
   private configuration: Configuration;
+  private footer: boolean;
   private json: boolean;  
   private stdout: Writable;
 
@@ -39,10 +41,11 @@ export class StreamReport extends Report {
 
   private indent: number = 0;
 
-  constructor({configuration, stdout, json = false}: StreamReportOptions) {
+  constructor({configuration, stdout, footer = true, json = false}: StreamReportOptions) {
     super();
 
     this.configuration = configuration;
+    this.footer = footer;
     this.json = json;
     this.stdout = stdout;
   }
@@ -109,6 +112,14 @@ export class StreamReport extends Report {
     }
   }
 
+  reportSeparator() {
+    if (this.indent === 0) {
+      this.stdout.write(`\n`);
+    } else {
+      this.reportInfo(MessageName.UNNAMED, ``);
+    }
+  }
+
   reportInfo(name: MessageName, text: string) {
     if (!this.json) {
       this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
@@ -136,6 +147,9 @@ export class StreamReport extends Report {
   }
 
   async finalize() {
+    if (!this.footer)
+      return;
+
     let installStatus = ``;
 
     if (this.errorCount > 0)

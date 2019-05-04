@@ -16,7 +16,7 @@ Object {
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -191,7 +191,7 @@ Object {
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -366,7 +366,7 @@ Object {
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -541,7 +541,7 @@ Object {
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -716,7 +716,7 @@ Object {
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA/yarn/modern\\"}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}

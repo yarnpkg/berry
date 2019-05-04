@@ -276,16 +276,18 @@ function parseValue(value: unknown, type: SettingsType, folder: string) {
 }
 
 function getDefaultGlobalFolder() {
-  let base;
+  if (process.platform === `win32`) {
+    const base = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
+    return posix.resolve(base, `Yarn/Berry`);
+  }
 
-  if (process.platform === `win32`)
-    base = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
-  else if (process.env.XDG_DATA_HOME)
-    base = NodeFS.toPortablePath(process.env.XDG_DATA_HOME);
-  else
-    base = NodeFS.toPortablePath(homedir());
+  if (process.env.XDG_DATA_HOME) {
+    const base = NodeFS.toPortablePath(process.env.XDG_DATA_HOME);
+    return posix.resolve(base, `yarn/berry`);
+  }
 
-  return posix.resolve(base, `yarn/modern`);
+  const base = NodeFS.toPortablePath(homedir());
+  return posix.resolve(base, `.yarn/berry`);
 }
 
 function getEnvironmentSettings() {
@@ -326,6 +328,8 @@ export class Configuration {
   public values: Map<string, any> = new Map();
   public sources: Map<string, string> = new Map();
 
+  public invalid: Map<string, string> = new Map();
+
   /**
    * Instantiate a new configuration object exposing the configuration obtained
    * from reading the various rc files and the environment settings.
@@ -352,7 +356,7 @@ export class Configuration {
    * one listed on /foo/bar/.yarnrc, but not the other way around).
    */
 
-  static async find(startingCwd: string, pluginConfiguration: PluginConfiguration | null) {
+  static async find(startingCwd: string, pluginConfiguration: PluginConfiguration | null, {strict = true}: {strict?: boolean} = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
@@ -425,10 +429,10 @@ export class Configuration {
     const projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
 
     const configuration = new Configuration(projectCwd, plugins);
-    configuration.useWithSource(`<environment>`, environmentSettings, startingCwd);
+    configuration.useWithSource(`<environment>`, environmentSettings, startingCwd, {strict});
 
     for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, data, cwd);
+      configuration.useWithSource(path, data, cwd, {strict});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
@@ -572,16 +576,16 @@ export class Configuration {
     }
   }
 
-  useWithSource(source: string, data: {[key: string]: unknown}, folder: string) {
+  useWithSource(source: string, data: {[key: string]: unknown}, folder: string, {strict}: {strict: boolean}) {
     try {
-      this.use(source, data, folder);
+      this.use(source, data, folder, {strict});
     } catch (error) {
       error.message += ` (in ${source})`;
       throw error;
     }
   }
 
-  use(source: string, data: {[key: string]: unknown}, folder: string) {
+  use(source: string, data: {[key: string]: unknown}, folder: string, {strict}: {strict: boolean}) {
     if (typeof data.berry === `object` && data.berry !== null)
       data = data.berry;
 
@@ -601,8 +605,14 @@ export class Configuration {
         throw new UsageError(`The rcFilename settings can only be set via ${`${ENVIRONMENT_PREFIX}RC_FILENAME`.toUpperCase()}, not via a rc file`);
 
       const definition = this.settings.get(name);
-      if (!definition)
-        throw new UsageError(`${legacyNames.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
+      if (!definition) {
+        if (strict) {
+          throw new UsageError(`${legacyNames.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
+        } else {
+          this.invalid.set(key, source);
+          continue;
+        }
+      }
 
       if (this.sources.has(name))
         continue;
