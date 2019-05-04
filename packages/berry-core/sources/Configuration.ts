@@ -293,7 +293,7 @@ function parseSingleValue(path: string, value: unknown, definition: SettingsDefi
       return parseBoolean(value);
     case SettingsType.OBJECT:
       return parseObject(path, value, definition, folder);
-      case SettingsType.MAP:
+    case SettingsType.MAP:
       return parseMap(path, value, definition, folder);
   }
 
