@@ -8691,6 +8691,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/plugin-npm"
                 ],
                 [
+                  "@berry/plugin-npm-cli",
+                  "workspace:packages/plugin-npm-cli"
+                ],
+                [
                   "@berry/plugin-pack",
                   "workspace:packages/plugin-pack"
                 ],
@@ -9699,6 +9703,35 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "semver",
                   "npm:5.6.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@berry/plugin-npm-cli",
+        [
+          [
+            "workspace:packages/plugin-npm-cli",
+            {
+              "packageLocation": "./packages/plugin-npm-cli/",
+              "packageDependencies": [
+                [
+                  "@berry/plugin-npm-cli",
+                  "workspace:packages/plugin-npm-cli"
+                ],
+                [
+                  "@berry/cli",
+                  "workspace:packages/berry-cli"
+                ],
+                [
+                  "@berry/core",
+                  "workspace:packages/berry-core"
+                ],
+                [
+                  "@berry/plugin-npm",
+                  "workspace:packages/plugin-npm"
                 ]
               ]
             }
@@ -66501,6 +66534,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       30,
       29,
       28,
+      26,
       25,
       24,
       23,

@@ -1,0 +1,10 @@
+{
+  "name": "@berry/plugin-npm-cli",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/cli": "workspace:*",
+    "@berry/core": "workspace:*",
+    "@berry/plugin-npm": "workspace:*"
+  }
+}
