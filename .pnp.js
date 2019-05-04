@@ -147,6 +147,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:5.5.0"
                 ],
                 [
+                  "@types/ssri",
+                  "npm:6.0.1"
+                ],
+                [
                   "@types/stream-to-promise",
                   "npm:2.2.0"
                 ],
@@ -9213,6 +9217,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:5.5.0"
                 ],
                 [
+                  "@types/ssri",
+                  "npm:6.0.1"
+                ],
+                [
                   "@types/stream-to-promise",
                   "npm:2.2.0"
                 ],
@@ -9732,6 +9740,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/plugin-npm",
                   "workspace:packages/plugin-npm"
+                ],
+                [
+                  "@berry/plugin-pack",
+                  "workspace:packages/plugin-pack"
+                ],
+                [
+                  "clipanion",
+                  "npm:0.14.1"
+                ],
+                [
+                  "ssri",
+                  "npm:6.0.1"
+                ],
+                [
+                  "yup",
+                  "npm:0.27.0"
                 ]
               ]
             }
@@ -14729,6 +14753,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/semver",
                   "npm:5.5.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/ssri",
+        [
+          [
+            "npm:6.0.1",
+            {
+              "packageLocation": "./.yarn/cache/@types-ssri-npm-6.0.1-c6ea543c264a6fe96facee3ef7565f9b036330151237d36bb356d83ac4fd145a.zip/node_modules/@types/ssri/",
+              "packageDependencies": [
+                [
+                  "@types/ssri",
+                  "npm:6.0.1"
                 ]
               ]
             }

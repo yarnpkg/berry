@@ -1,21 +1,30 @@
-import {Configuration, httpUtils, Ident} from '@berry/core';
+import {Configuration, Ident, httpUtils} from '@berry/core';
 import {MessageName, ReportError}        from '@berry/core';
 
-export function get(url: string, ident: Ident, configuration: Configuration) {
-  const headers: {[headerName: string]: string} = {};
+export type Options = httpUtils.Options & {
+  ident: Ident,
+};
 
-  const auth = getAuthenticationHeader(ident, configuration);
+export async function get(url: string, {configuration, headers, ident, ... rest}: Options) {
+  const auth = getAuthenticationHeader(ident, {configuration});
   if (auth)
-    headers.authorization = auth;
+    headers = {... headers, authorization: auth};
 
-  return httpUtils.get(
-    url,
-    configuration,
-    {headers},
-  );
+  return await httpUtils.get(url, {configuration, headers, ... rest});
 }
 
-function getAuthenticationHeader(ident: Ident, configuration: Configuration) {
+export async function put(url: string, body: httpUtils.Body, {configuration, headers, ident, ... rest}: Options) {
+  // We always must authenticate our PUT requests
+  configuration = configuration.extend({npmAlwaysAuth: true});
+
+  const auth = getAuthenticationHeader(ident, {configuration});
+  if (auth)
+    headers = {... headers, authorization: auth};
+
+  return await httpUtils.put(url, body, {configuration, headers, ... rest});
+}
+
+function getAuthenticationHeader(ident: Ident, {configuration}: {configuration: Configuration}) {
   const mustAuthenticate = configuration.get(`npmAlwaysAuth`);
 
   if (!mustAuthenticate && !ident.scope)

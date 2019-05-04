@@ -41,7 +41,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
 
     const report = await StreamReport.start({configuration, stdout}, async report => {
       if (list) {
-        const raw = await httpUtils.get(REMOTE_REGISTRY, configuration);
+        const raw = await httpUtils.get(REMOTE_REGISTRY, {configuration});
         const data = parseSyml(raw.toString());
 
         for (const [name, {experimental, description}] of Object.entries(data)) {
@@ -60,7 +60,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
         if (ident) {
           const key = structUtils.stringifyIdent(ident);
 
-          const raw = await httpUtils.get(REMOTE_REGISTRY, configuration);
+          const raw = await httpUtils.get(REMOTE_REGISTRY, {configuration});
           const data = parseSyml(raw.toString()) as any;
 
           if (!Object.prototype.hasOwnProperty.call(data, key))
@@ -79,7 +79,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
         }
 
         report.reportInfo(MessageName.UNNAMED, `Downloading ${configuration.format(pluginUrl, `green`)}`);
-        const pluginBuffer = await httpUtils.get(pluginUrl, configuration);
+        const pluginBuffer = await httpUtils.get(pluginUrl, {configuration});
 
         const vmExports = {} as any;
         const vmModule = {exports: vmExports};

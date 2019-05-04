@@ -35,8 +35,11 @@ export class NpmTagResolver implements Resolver {
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
     const tag = descriptor.range.slice(PROTOCOL.length);
 
-    const httpResponse = await npmHttpUtils.get(this.getIdentUrl(descriptor, opts), descriptor, opts.project.configuration);
-    const registryData = JSON.parse(httpResponse.toString());
+    const registryData = await npmHttpUtils.get(this.getIdentUrl(descriptor, opts), {
+      configuration: opts.project.configuration,
+      ident: descriptor,
+      json: true,
+    });
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `dist-tags`))
       throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data - missing "dist-tags" field`);

@@ -41,7 +41,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       for (const file of files)
         report.reportInfo(MessageName.UNNAMED, file);
 
-      if (list) {
+      if (!list) {
         const pack = await packUtils.genPackStream(workspace, files);
 
         const target = posix.resolve(workspace.cwd, `package.tgz`);

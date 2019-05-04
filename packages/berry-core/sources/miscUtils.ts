@@ -1,3 +1,5 @@
+import {Readable} from 'stream';
+
 // Executes a chunk of code and calls a cleanup function once it returns (even
 // if it throws an exception)
 
@@ -33,6 +35,26 @@ export function prettifySyncErrors<T>(fn: () => T, update: (message: string) => 
     error.message = update(error.message);
     throw error;
   }
+}
+
+// Converts a Node stream into a Buffer instance
+
+export async function bufferStream(stream: Readable) {
+  return await new Promise<Buffer>((resolve, reject) => {
+    const chunks: Array<Buffer> = [];
+
+    stream.on(`error`, error => {
+      reject(error);
+    });
+
+    stream.on(`data`, chunk => {
+      chunks.push(chunk);
+    });
+
+    stream.on(`end`, () => {
+      resolve(Buffer.concat(chunks));
+    });
+  });
 }
 
 // Webpack has this annoying tendency to replace dynamic requires by a stub

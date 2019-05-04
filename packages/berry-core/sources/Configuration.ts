@@ -319,12 +319,12 @@ function getRcFilename() {
 }
 
 export class Configuration {
+  public startingCwd: string;
   public projectCwd: string | null;
 
   public plugins: Map<string, Plugin> = new Map();
 
   public settings: Map<string, SettingsDefinition> = new Map();
-
   public values: Map<string, any> = new Map();
   public sources: Map<string, string> = new Map();
 
@@ -428,7 +428,7 @@ export class Configuration {
 
     const projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
 
-    const configuration = new Configuration(projectCwd, plugins);
+    const configuration = new Configuration(startingCwd, projectCwd, plugins);
     configuration.useWithSource(`<environment>`, environmentSettings, startingCwd, {strict});
 
     for (const {path, cwd, data} of rcFiles)
@@ -533,8 +533,10 @@ export class Configuration {
     await xfs.writeFilePromise(configurationPath, stringifySyml(current));
   }
 
-  constructor(projectCwd: string | null, plugins: Map<string, Plugin>) {
+  constructor(startingCwd: string, projectCwd: string | null, plugins: Map<string, Plugin>) {
+    this.startingCwd = startingCwd;
     this.projectCwd = projectCwd;
+
     this.plugins = plugins;
 
     const importSettings = (definitions: {[name: string]: SettingsDefinition}) => {
@@ -576,16 +578,35 @@ export class Configuration {
     }
   }
 
-  useWithSource(source: string, data: {[key: string]: unknown}, folder: string, {strict}: {strict: boolean}) {
+  extend(data: {[key: string]: unknown}) {
+    const newConfiguration = Object.create(Configuration.prototype);
+
+    newConfiguration.startingCwd = this.startingCwd;
+    newConfiguration.projectCwd = this.projectCwd;
+
+    newConfiguration.plugins = new Map(this.plugins);
+  
+    newConfiguration.settings = new Map(this.settings);
+    newConfiguration.values = new Map(this.values);
+    newConfiguration.sources = new Map(this.sources);
+  
+    newConfiguration.invalid = new Map(this.invalid);
+
+    newConfiguration.useWithSource(`<internal override>`, data, this.startingCwd, {override: true});
+
+    return newConfiguration;
+  }
+
+  useWithSource(source: string, data: {[key: string]: unknown}, folder: string, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
     try {
-      this.use(source, data, folder, {strict});
+      this.use(source, data, folder, {strict, overwrite});
     } catch (error) {
       error.message += ` (in ${source})`;
       throw error;
     }
   }
 
-  use(source: string, data: {[key: string]: unknown}, folder: string, {strict}: {strict: boolean}) {
+  use(source: string, data: {[key: string]: unknown}, folder: string, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
     if (typeof data.berry === `object` && data.berry !== null)
       data = data.berry;
 
@@ -614,7 +635,7 @@ export class Configuration {
         }
       }
 
-      if (this.sources.has(name))
+      if (this.sources.has(name) && !overwrite)
         continue;
 
       let value = data[key];

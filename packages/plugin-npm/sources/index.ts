@@ -4,6 +4,9 @@ import {NpmFetcher}           from './NpmFetcher';
 import {NpmRemapResolver}     from './NpmRemapResolver';
 import {NpmSemverResolver}    from './NpmSemverResolver';
 import {NpmTagResolver}       from './NpmTagResolver';
+import * as npmHttpUtils      from './npmHttpUtils';
+
+export {npmHttpUtils};
 
 const plugin: Plugin = {
   configuration: {
