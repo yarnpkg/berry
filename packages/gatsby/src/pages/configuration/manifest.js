@@ -37,6 +37,20 @@ const PackageJsonDoc = () => <>
         </>}
       />
       <JsonStringProperty
+        name={`main`}
+        placeholder={`./sources/index.js`}
+        description={<>
+          The path that will be used to resolve the qualified path to use when accessing the package by its name. This field can be modified at publish-time through the use of the <code>publishConfig.main</code> field.
+        </>}
+      />
+      <JsonStringProperty
+        name={`module`}
+        placeholder={`./sources/index.mjs`}
+        description={<>
+          The path that will be used when an ES6-compatible environment will try to access the package by its name. Doesn't have any direct effect on Yarn itself.
+        </>}
+      />
+      <JsonStringProperty
         name={`languageName`}
         placeholder={`node`}
         description={<>
@@ -194,6 +208,24 @@ const PackageJsonDoc = () => <>
         <JsonStringProperty
           name={`@babel/core/@npm:babel/generator@npm:^7.0.0`}
           placeholder={`7.3.4`}
+        />
+      </JsonObjectProperty>
+      <JsonObjectProperty
+        name={`publishConfig`}
+      >
+        <JsonStringProperty
+          name={`main`}
+          placeholder={`./build/index.js`}
+          description={<>
+            If present, the top-level <code>main</code> field from the manifest will be set to this new value before the package is packed to be shipped to remote registries. This won't modified the actual file, just the one in the tarball.
+          </>}
+        />
+        <JsonStringProperty
+          name={`module`}
+          placeholder={`./build/index.mjs`}
+          description={<>
+            Same principle as the <code>publishConfig.main</code> property; this value will be used instead of the top-level <code>module</code> field when generating the workspace tarball.
+          </>}
         />
       </JsonObjectProperty>
     </JsonContainer>

@@ -37,10 +37,29 @@ export async function genPackStream(workspace: Workspace, files?: Array<string>)
         }
       };
 
-      if (stat.isFile()) 
-        pack.entry({... opts, type: `file`}, await xfs.readFilePromise(source), cb);
-      else if (stat.isSymbolicLink()) 
+      if (stat.isFile()) {
+        let content = await xfs.readFilePromise(source);
+
+        // The root package.json supports replacement fields in publishConfig
+        if (file === `package.json`) {
+          const data = JSON.parse(content.toString());
+
+          if (data.publishConfig) {
+            if (data.publishConfig.main)
+              data.main = data.publishConfig.main;
+            
+            if (data.publishConfig.module) {
+              data.module = data.publishConfig.module;
+            }
+          }
+
+          content = Buffer.from(JSON.stringify(data, null, 2));
+        }
+
+        pack.entry({... opts, type: `file`}, content, cb);
+      } else if (stat.isSymbolicLink()) {
         pack.entry({... opts, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
+      }
 
       await awaitTarget;
     }
