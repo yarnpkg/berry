@@ -75,8 +75,8 @@ LIBZIP_VERSION=1.5.1
         ./zlib-"$ZLIB_VERSION"/libz.a
 
     cat > ../sources/libzip.js \
-        "../sources/shell.pre.js" \
+        "./shell.pre.js" \
         <(sed 's/require("fs")/frozenFs/g' ./build.js | sed 's/process\["on"\]/(function(){})/g') \
-        "../sources/shell.post.js"
+        "./shell.post.js"
 
 )
