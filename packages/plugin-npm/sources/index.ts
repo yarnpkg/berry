@@ -49,7 +49,7 @@ const plugin: Plugin = {
       default: null,
       valueDefinition: {
         description: ``,
-        type: SettingsType.OBJECT,
+        type: SettingsType.SHAPE,
         isNullable: false,
         default: null,
         properties: {
@@ -64,7 +64,7 @@ const plugin: Plugin = {
       default: null,
       valueDefinition: {
         description: ``,
-        type: SettingsType.OBJECT,
+        type: SettingsType.SHAPE,
         isNullable: false,
         default: null,
         properties: {

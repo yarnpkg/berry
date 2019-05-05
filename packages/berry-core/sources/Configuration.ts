@@ -81,7 +81,7 @@ export enum SettingsType {
   LOCATOR_LOOSE = 'LOCATOR_LOOSE',
   STRING = 'STRING',
   SECRET = 'SECRET',
-  OBJECT = 'OBJECT',
+  SHAPE = 'SHAPE',
   MAP = 'MAP',
 };
 
@@ -94,7 +94,7 @@ export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   isNullable?: boolean,
 };
 
-export type ObjectSettingsDefinition = BaseSettingsDefinition<SettingsType.OBJECT> & {
+export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE> & {
   properties: {[propertyName: string]: SettingsDefinition},
 };
 
@@ -102,9 +102,9 @@ export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
   valueDefinition: SettingsDefinition,
 };
 
-export type NonObjectSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.OBJECT | SettingsType.MAP>>;
+export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>>;
 
-export type SettingsDefinition = MapSettingsDefinition|ObjectSettingsDefinition|NonObjectSettingsDefinition;
+export type SettingsDefinition = MapSettingsDefinition|ShapeSettingsDefinition|SimpleSettingsDefinition;
 
 export type PluginConfiguration = {
   modules: Map<string, any>,
@@ -291,8 +291,8 @@ function parseSingleValue(path: string, value: unknown, definition: SettingsDefi
   switch(definition.type) {
     case SettingsType.BOOLEAN:
       return parseBoolean(value);
-    case SettingsType.OBJECT:
-      return parseObject(path, value, definition, folder);
+    case SettingsType.SHAPE:
+      return parseShape(path, value, definition, folder);
     case SettingsType.MAP:
       return parseMap(path, value, definition, folder);
   }
@@ -312,11 +312,11 @@ function parseSingleValue(path: string, value: unknown, definition: SettingsDefi
   }
 }
 
-function parseObject(path: string, value: unknown, definition: ObjectSettingsDefinition, folder: string) {
+function parseShape(path: string, value: unknown, definition: ShapeSettingsDefinition, folder: string) {
   const result = new Map<string, any>();
 
   if (typeof value !== `object` || Array.isArray(value))
-    throw new Error(`Object configuration settings "${path}" must be an object`);
+    throw new UsageError(`Object configuration settings "${path}" must be an object`);
 
   for (const [propKey, propValue] of Object.entries(value!)) {
     const name = camelcase(propKey);
@@ -336,7 +336,7 @@ function parseMap(path: string, value: unknown, definition: MapSettingsDefinitio
   const result = new Map<string, any>();
 
   if (typeof value !== 'object' || Array.isArray(value))
-    throw new Error(`Map configuration settings "${path}" must be an object`);
+    throw new UsageError(`Map configuration settings "${path}" must be an object`);
 
   for (const [propKey, propValue] of Object.entries(value!)) {
     const subPath = `${path}['${propKey}']`;
@@ -656,11 +656,11 @@ export class Configuration {
     newConfiguration.projectCwd = this.projectCwd;
 
     newConfiguration.plugins = new Map(this.plugins);
-  
+
     newConfiguration.settings = new Map(this.settings);
     newConfiguration.values = new Map(this.values);
     newConfiguration.sources = new Map(this.sources);
-  
+
     newConfiguration.invalid = new Map(this.invalid);
 
     newConfiguration.useWithSource(`<internal override>`, data, this.startingCwd, {override: true});
