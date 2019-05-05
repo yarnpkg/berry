@@ -15,7 +15,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
 
   .example(
     `Print username for the default registry`,
-    `yarn whoami`,
+    `yarn npm whoami`,
   )
 
   .action(async ({cwd, stdin, stdout}: {cwd: string, stdin: Readable, stdout: Writable, registry: string}) => {
