@@ -28,12 +28,8 @@ export function getAuthenticationConfiguration(ident: Ident, {configuration}: {c
 function getScopedConfiguration(ident: Ident, {configuration}: {configuration: Configuration}): MapLike {
   if (ident.scope) {
     const scopeConfigurations: Map<string, Map<string, any>> | null = configuration.get(`npmScopes`);
-    if (scopeConfigurations && scopeConfigurations.has(ident.scope))
+    if (scopeConfigurations && scopeConfigurations.has(ident.scope)) {
       return scopeConfigurations.get(ident.scope)!;
-
-    const scopeWithAt = `@${ident.scope}`;
-    if (scopeConfigurations && scopeConfigurations.has(scopeWithAt)) {
-      return scopeConfigurations.get(scopeWithAt)!;
     }
   }
 
