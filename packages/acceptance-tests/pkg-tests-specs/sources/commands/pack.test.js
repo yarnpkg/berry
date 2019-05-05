@@ -15,6 +15,29 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should only keep the files covered by the "files" field`,
+      makeTemporaryEnv({
+        files: [
+          `*.js`,
+          `/b.ts`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/a.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/b.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/a.ts`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/b.ts`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--list`);
+        await expect(stdout).toMatch(/a\.js/);
+        await expect(stdout).toMatch(/b\.js/);
+        await expect(stdout).not.toMatch(/a\.ts/);
+        await expect(stdout).toMatch(/b\.ts/);
+      }),
+    );
+
+    test(
       `it shouldn't add .gitignore files to the package files`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await fsUtils.writeFile(`${path}/.gitignore`, ``);

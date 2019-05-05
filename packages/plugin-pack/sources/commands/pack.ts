@@ -45,7 +45,17 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const pack = await packUtils.genPackStream(workspace, files);
 
         const target = posix.resolve(workspace.cwd, `package.tgz`);
-        pack.pipe(xfs.createWriteStream(target));
+        const write = xfs.createWriteStream(target);
+
+        pack.pipe(write);
+
+        await new Promise(resolve => {
+          write.on(`finish`, () => {
+            resolve();
+          });
+        });
+
+        report.reportInfo(MessageName.UNNAMED, `Package archive generated in ${configuration.format(target, `magenta`)}`);
       }
     });
 
