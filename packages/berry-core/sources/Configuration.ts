@@ -73,6 +73,7 @@ const legacyNames = new Set([
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
 export const DEFAULT_RC_FILENAME = `.yarnrc`;
+export const DEFAULT_LOCK_FILENAME = `yarn.lock`;
 
 export enum SettingsType {
   BOOLEAN = 'BOOLEAN',
@@ -88,10 +89,7 @@ export enum SettingsType {
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   description: string,
   type: T,
-  default: any,
-  defaultText?: any,
   isArray?: boolean,
-  isNullable?: boolean,
 };
 
 export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE> & {
@@ -102,7 +100,11 @@ export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
   valueDefinition: SettingsDefinition,
 };
 
-export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>>;
+export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>> & {
+  default: any,
+  defaultText?: any,
+  isNullable?: boolean,
+};
 
 export type SettingsDefinition = MapSettingsDefinition|ShapeSettingsDefinition|SimpleSettingsDefinition;
 
@@ -172,7 +174,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   lockfileFilename: {
     description: `Name of the files where the Yarn dependency tree entries must be stored`,
     type: SettingsType.STRING,
-    default: `yarn.lock`,
+    default: DEFAULT_LOCK_FILENAME,
   },
   rcFilename: {
     description: `Name of the files where the configuration can be found`,
@@ -272,30 +274,35 @@ function parseBoolean(value: unknown) {
   }
 }
 
-function parseValue(path: string, value: unknown, definition: SettingsDefinition, folder: string) {
-  if (value === null && !definition.isNullable && definition.default !== null)
-    throw new Error(`Non-nullable configuration settings "${path}" cannot be set to null`);
-
-  if (Array.isArray(value)) {
-    if (!definition.isArray && !Array.isArray(definition.default)) {
-      throw new Error(`Non-array configuration settings "${path}" cannot be an array`);
+function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: string) {
+  if (definition.isArray) {
+    if (!Array.isArray(value)) {
+      return [parseSingleValue(configuration, path, value, definition, folder)];
     } else {
-      return value.map((sub, i) => parseSingleValue(`${path}[${i}]`, sub, definition, folder));
+      return value.map((sub, i) => parseSingleValue(configuration, `${path}[${i}]`, sub, definition, folder));
     }
   } else {
-    return parseSingleValue(path, value, definition, folder);
+    if (Array.isArray(value)) {
+      throw new Error(`Non-array configuration settings "${path}" cannot be an array`);
+    } else {
+      return parseSingleValue(configuration, path, value, definition, folder);
+    }
   }
 }
 
-function parseSingleValue(path: string, value: unknown, definition: SettingsDefinition, folder: string) {
+function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: string) {
   switch(definition.type) {
-    case SettingsType.BOOLEAN:
-      return parseBoolean(value);
     case SettingsType.SHAPE:
-      return parseShape(path, value, definition, folder);
+      return parseShape(configuration, path, value, definition, folder);
     case SettingsType.MAP:
-      return parseMap(path, value, definition, folder);
+      return parseMap(configuration, path, value, definition, folder);
   }
+
+  if (value === null && !definition.isNullable && definition.default !== null)
+    throw new Error(`Non-nullable configuration settings "${path}" cannot be set to null`);
+
+  if (definition.type === SettingsType.BOOLEAN)
+    return parseBoolean(value);
 
   if (typeof value !== `string`)
     throw new Error(`Expected value to be a string`);
@@ -312,13 +319,16 @@ function parseSingleValue(path: string, value: unknown, definition: SettingsDefi
   }
 }
 
-function parseShape(path: string, value: unknown, definition: ShapeSettingsDefinition, folder: string) {
-  const result = new Map<string, any>();
-
+function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: string) {
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Object configuration settings "${path}" must be an object`);
 
-  for (const [propKey, propValue] of Object.entries(value!)) {
+  const result: Map<string, any> = getDefaultValue(configuration, definition);
+
+  if (value === null)
+    return result;
+
+  for (const [propKey, propValue] of Object.entries(value)) {
     const name = camelcase(propKey);
     const subPath = `${path}.${name}`;
     const subDefinition = definition.properties[name];
@@ -326,25 +336,63 @@ function parseShape(path: string, value: unknown, definition: ShapeSettingsDefin
     if (!subDefinition)
       throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`);
 
-    result.set(name, parseValue(subPath, propValue, definition.properties[name], folder));
+    result.set(name, parseValue(configuration, subPath, propValue, definition.properties[name], folder));
   }
 
   return result;
 }
 
-function parseMap(path: string, value: unknown, definition: MapSettingsDefinition, folder: string) {
+function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: string) {
   const result = new Map<string, any>();
 
   if (typeof value !== 'object' || Array.isArray(value))
     throw new UsageError(`Map configuration settings "${path}" must be an object`);
 
-  for (const [propKey, propValue] of Object.entries(value!)) {
+  if (value === null)
+    return result;
+
+  for (const [propKey, propValue] of Object.entries(value)) {
     const subPath = `${path}['${propKey}']`;
 
-    result.set(propKey, parseValue(subPath, propValue, definition.valueDefinition, folder));
+    result.set(propKey, parseValue(configuration, subPath, propValue, definition.valueDefinition, folder));
   }
 
   return result;
+}
+
+function getDefaultValue(configuration: Configuration, definition: SettingsDefinition) {
+  switch (definition.type) {
+    case SettingsType.SHAPE: {
+      const result = new Map<string, any>();
+
+      for (const [propKey, propDefinition] of Object.entries(definition.properties))
+        result.set(propKey, getDefaultValue(configuration, propDefinition));
+
+      return result;
+    }
+    case SettingsType.MAP:
+      return new Map<string, any>();
+    case SettingsType.ABSOLUTE_PATH: {
+      if (definition.default === null)
+        return null;
+
+      if (configuration.projectCwd === null) {
+        if (posix.isAbsolute(definition.default)) {
+          return posix.normalize(definition.default);
+        } else if (definition.isNullable || definition.default === null) {
+          return null;
+        }
+      } else {
+        if (Array.isArray(definition.default)) {
+          return definition.default.map((entry: string) => posix.resolve(configuration.projectCwd, entry));
+        } else {
+          return posix.resolve(configuration.projectCwd, definition.default);
+        }
+      }
+    }
+    default:
+      return definition.default;
+  }
 }
 
 function getDefaultGlobalFolder() {
@@ -482,7 +530,7 @@ export class Configuration {
       }
     }
 
-    let lockfileFilename = coreDefinitions.lockfileFilename.default;
+    let lockfileFilename = DEFAULT_LOCK_FILENAME;
 
     // We need to know the project root before being able to truly instantiate
     // our configuration, and to know that we need to know the lockfile name
@@ -618,25 +666,7 @@ export class Configuration {
           throw new Error(`Settings named "${name}" conflicts with an actual property`);
 
         this.settings.set(name, definition);
-
-        if (definition.type === SettingsType.ABSOLUTE_PATH && definition.default !== null) {
-          if (this.projectCwd === null) {
-            if (posix.isAbsolute(definition.default)) {
-              this.values.set(name, posix.normalize(definition.default));
-            } else if (definition.isNullable || definition.default === null) {
-              this.values.set(name, null);
-            }
-          } else {
-            const projectCwd = this.projectCwd;
-            if (Array.isArray(definition.default)) {
-              this.values.set(name, definition.default.map((entry: string) => posix.resolve(projectCwd, entry)));
-            } else {
-              this.values.set(name, posix.resolve(projectCwd, definition.default));
-            }
-          }
-        } else {
-          this.values.set(name, definition.default);
-        }
+        this.values.set(name, getDefaultValue(this, definition));
       }
     };
 
@@ -709,7 +739,7 @@ export class Configuration {
       if (this.sources.has(name) && !overwrite)
         continue;
 
-      this.values.set(name, parseValue(name, data[key], definition, folder));
+      this.values.set(name, parseValue(this, name, data[key], definition, folder));
       this.sources.set(name, source);
     }
   }

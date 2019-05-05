@@ -46,12 +46,9 @@ const plugin: Plugin = {
     npmScopes: {
       description: `Settings per package scope`,
       type: SettingsType.MAP,
-      default: null,
       valueDefinition: {
         description: ``,
         type: SettingsType.SHAPE,
-        isNullable: false,
-        default: null,
         properties: {
           ...registrySettings,
         },
@@ -61,12 +58,9 @@ const plugin: Plugin = {
     npmRegistries: {
       description: `Settings per registry`,
       type: SettingsType.MAP,
-      default: null,
       valueDefinition: {
         description: ``,
         type: SettingsType.SHAPE,
-        isNullable: false,
-        default: null,
         properties: {
           ...authSettings,
         },
