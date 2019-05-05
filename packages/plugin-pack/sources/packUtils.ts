@@ -73,6 +73,14 @@ export async function genPackList(workspace: Workspace) {
     configuration.get(`rcFilename`),
   ];
 
+  for (const otherWorkspace of project.workspaces) {
+    const rel = posix.relative(workspace.cwd, otherWorkspace.cwd);
+    if (rel === `` || rel.match(/^(\.\.)?\//))
+      continue;
+
+    forceReject.push(`/${rel}`);
+  }
+
   const forceAccept: Array<string> = [
     `/package.json`,
 
