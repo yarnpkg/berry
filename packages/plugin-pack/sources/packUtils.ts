@@ -53,7 +53,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<string>)
             }
           }
 
-          content = JSON.stringify(data, null, 2);
+          content = Buffer.from(JSON.stringify(data, null, 2));
         }
 
         pack.entry({... opts, type: `file`}, content, cb);
