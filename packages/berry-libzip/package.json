@@ -4,5 +4,8 @@
   "main": "./sources/index.ts",
   "scripts": {
     "build:libzip": "cd ./artifacts && ./build.sh"
+  },
+  "publishConfig": {
+    "main": "./lib"
   }
 }

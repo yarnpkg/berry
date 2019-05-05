@@ -22,7 +22,9 @@
 
 ### Package manifests (`package.json`)
 
-  - Two new fields are now supported: `dependenciesMeta` and `peerDependenciesMeta` (`peerDependenciesMeta` actually was supported in Yarn 1 as well, but `dependenciesMeta` is a new addition). These fields are meant to store dependency settings unique to each package.
+  - Two new fields are now supported in the `publishConfig` key of your manifests: the `main` and `module` fields will be used to replace the value of their respective top-level counterparts in the manifest shipped along with the generated file.
+
+  - Two new fields are now supported at the root of the manifest: `dependenciesMeta` and `peerDependenciesMeta` (`peerDependenciesMeta` actually was supported in Yarn 1 as well, but `dependenciesMeta` is a new addition). These fields are meant to store dependency settings unique to each package.
 
     - Both of these new fields, and all settings the support, are entirely optional. Yarn will keep doing what you expect if they're not there - they're just a mechanism to expose more fine-grained settings.
 
