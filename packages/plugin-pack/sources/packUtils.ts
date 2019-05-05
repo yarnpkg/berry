@@ -37,11 +37,10 @@ export async function genPackStream(workspace: Workspace, files?: Array<string>)
         }
       };
 
-      if (stat.isFile()) {
+      if (stat.isFile()) 
         pack.entry({... opts, type: `file`}, await xfs.readFilePromise(source), cb);
-      } else if (stat.isSymbolicLink()) {
+      else if (stat.isSymbolicLink()) 
         pack.entry({... opts, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
-      }
 
       await awaitTarget;
     }
