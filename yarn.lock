@@ -1626,6 +1626,9 @@ __metadata:
 "@berry/libzip@workspace:*, @berry/libzip@workspace:packages/berry-libzip":
   version: 0.0.0
   resolution: "@berry/libzip@workspace:packages/berry-libzip"
+  dependencies:
+    "@berry/pnpify": "workspace:*"
+    typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
 
@@ -1902,7 +1905,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/pnpify@workspace:packages/berry-pnpify":
+"@berry/pnpify@workspace:*, @berry/pnpify@workspace:packages/berry-pnpify":
   version: 0.0.0
   resolution: "@berry/pnpify@workspace:packages/berry-pnpify"
   dependencies:

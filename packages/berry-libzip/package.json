@@ -2,6 +2,10 @@
   "name": "@berry/libzip",
   "private": true,
   "main": "./sources/index.ts",
+  "devDependencies": {
+    "@berry/pnpify": "workspace:*",
+    "typescript": "^3.3.3333"
+  },
   "scripts": {
     "build:libzip": "cd ./artifacts && ./build.sh"
   },

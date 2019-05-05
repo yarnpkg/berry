@@ -377,6 +377,54 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
+          ],
+          [
+            "virtual:e473704238ca9e94dd23c55c23a35f3d933b0f3951240c94324158f62f085b4c7733cee7b3c465f41bcc42c3b713fec98822abf9f8a861f5191053979320ae98#npm:7.2.3",
+            {
+              "packageLocation": "./.yarn/virtual/@babel-cli-virtual-9e89112d527ab26fbe56a3f619ed2041091cf50a09563d6e1117e4b79fa95517/node_modules/@babel/cli/",
+              "packageDependencies": [
+                [
+                  "@babel/cli",
+                  "virtual:e473704238ca9e94dd23c55c23a35f3d933b0f3951240c94324158f62f085b4c7733cee7b3c465f41bcc42c3b713fec98822abf9f8a861f5191053979320ae98#npm:7.2.3"
+                ],
+                [
+                  "commander",
+                  "npm:2.19.0"
+                ],
+                [
+                  "convert-source-map",
+                  "npm:1.6.0"
+                ],
+                [
+                  "fs-readdir-recursive",
+                  "npm:1.1.0"
+                ],
+                [
+                  "glob",
+                  "npm:7.1.3"
+                ],
+                [
+                  "lodash",
+                  "npm:4.17.11"
+                ],
+                [
+                  "mkdirp",
+                  "npm:0.5.1"
+                ],
+                [
+                  "output-file-sync",
+                  "npm:2.0.1"
+                ],
+                [
+                  "slash",
+                  "npm:2.0.0"
+                ],
+                [
+                  "source-map",
+                  "npm:0.5.7"
+                ]
+              ]
+            }
           ]
         ]
       ],
@@ -9078,6 +9126,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/libzip",
                   "workspace:packages/berry-libzip"
+                ],
+                [
+                  "@berry/pnpify",
+                  "virtual:6b4c2d71edc6d1de3be6a0b3e2bfffddf38aa1e4798904c560b430a76c6a0c56c261126836947828f04b83c91cf3915dd74c65d422fb04bf5d06f27be91c61d6#workspace:packages/berry-pnpify"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
                 ]
               ]
             }
@@ -9942,6 +9998,50 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       [
         "@berry/pnpify",
         [
+          [
+            "virtual:6b4c2d71edc6d1de3be6a0b3e2bfffddf38aa1e4798904c560b430a76c6a0c56c261126836947828f04b83c91cf3915dd74c65d422fb04bf5d06f27be91c61d6#workspace:packages/berry-pnpify",
+            {
+              "packageLocation": "./.yarn/virtual/@berry-pnpify-virtual-e473704238ca9e94dd23c55c23a35f3d933b0f3951240c94324158f62f085b4c/",
+              "packageDependencies": [
+                [
+                  "@berry/pnpify",
+                  "virtual:6b4c2d71edc6d1de3be6a0b3e2bfffddf38aa1e4798904c560b430a76c6a0c56c261126836947828f04b83c91cf3915dd74c65d422fb04bf5d06f27be91c61d6#workspace:packages/berry-pnpify"
+                ],
+                [
+                  "@babel/cli",
+                  "virtual:e473704238ca9e94dd23c55c23a35f3d933b0f3951240c94324158f62f085b4c7733cee7b3c465f41bcc42c3b713fec98822abf9f8a861f5191053979320ae98#npm:7.2.3"
+                ],
+                [
+                  "@berry/builder",
+                  "workspace:packages/berry-builder"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@berry/pnp",
+                  "workspace:packages/berry-pnp"
+                ],
+                [
+                  "@types/jest",
+                  "npm:24.0.11"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
+                ],
+                [
+                  "webpack",
+                  "npm:4.28.4"
+                ],
+                [
+                  "webpack-cli",
+                  "virtual:e473704238ca9e94dd23c55c23a35f3d933b0f3951240c94324158f62f085b4c7733cee7b3c465f41bcc42c3b713fec98822abf9f8a861f5191053979320ae98#npm:3.2.1"
+                ]
+              ]
+            }
+          ],
           [
             "workspace:packages/berry-pnpify",
             {
@@ -64034,6 +64134,74 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             }
           ],
           [
+            "virtual:e473704238ca9e94dd23c55c23a35f3d933b0f3951240c94324158f62f085b4c7733cee7b3c465f41bcc42c3b713fec98822abf9f8a861f5191053979320ae98#npm:3.2.1",
+            {
+              "packageLocation": "./.yarn/virtual/webpack-cli-virtual-e8a5800c6cd8c1e93f0fd3a768e18c67c90e31cda0248779e99a83480e6acc63/node_modules/webpack-cli/",
+              "packageDependencies": [
+                [
+                  "webpack-cli",
+                  "virtual:e473704238ca9e94dd23c55c23a35f3d933b0f3951240c94324158f62f085b4c7733cee7b3c465f41bcc42c3b713fec98822abf9f8a861f5191053979320ae98#npm:3.2.1"
+                ],
+                [
+                  "chalk",
+                  "npm:2.4.2"
+                ],
+                [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
+                  "enhanced-resolve",
+                  "npm:4.1.0"
+                ],
+                [
+                  "findup-sync",
+                  "npm:2.0.0"
+                ],
+                [
+                  "global-modules",
+                  "npm:1.0.0"
+                ],
+                [
+                  "global-modules-path",
+                  "npm:2.3.1"
+                ],
+                [
+                  "import-local",
+                  "npm:2.0.0"
+                ],
+                [
+                  "interpret",
+                  "npm:1.2.0"
+                ],
+                [
+                  "lightercollective",
+                  "npm:0.1.0"
+                ],
+                [
+                  "loader-utils",
+                  "npm:1.2.3"
+                ],
+                [
+                  "supports-color",
+                  "npm:5.5.0"
+                ],
+                [
+                  "v8-compile-cache",
+                  "npm:2.0.2"
+                ],
+                [
+                  "webpack",
+                  "npm:4.28.4"
+                ],
+                [
+                  "yargs",
+                  "npm:12.0.5"
+                ]
+              ]
+            }
+          ],
+          [
             "virtual:f4d240d432c09c02b448fe8953b87497dc932bb8eef14c1f96e15d30a2f7c83203b9729fac558ad596ce07305a22905ae5155625d64068386e0e0423b324acf2#npm:3.2.1",
             {
               "packageLocation": "./.yarn/virtual/webpack-cli-virtual-87aabb2e01614e929269a297bce1d856333750a0b1bc8a405d573b1cdd330690/node_modules/webpack-cli/",
@@ -66563,6 +66731,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       114,
       112,
       110,
+      103,
       99,
       47,
       46,
