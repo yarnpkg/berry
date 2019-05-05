@@ -13,21 +13,40 @@ export async function genPackStream(workspace: Workspace, files?: Array<string>)
 
   const pack = tar.pack();
 
-  for (const file of files) {
-    const source = posix.resolve(workspace.cwd, file);
-    const dest = posix.join(`package`, file);
+  process.nextTick(async () => {
+    for (const file of files!) {
+      const source = posix.resolve(workspace.cwd, file);
+      const dest = posix.join(`package`, file);
 
-    const stat = await xfs.lstatPromise(source);
-    const opts = {name: dest, mtime: new Date(315532800)};
+      const stat = await xfs.lstatPromise(source);
+      const opts = {name: dest, mtime: new Date(315532800)};
 
-    if (stat.isFile()) {
-      pack.entry(opts, await xfs.readFilePromise(source));
-    } else if (stat.isSymbolicLink()) {
-      pack.entry({... opts, linkname: await xfs.readlinkPromise(source)});
+      let resolveFn: Function;
+      let rejectFn: Function;
+
+      let awaitTarget = new Promise((resolve, reject) => {
+        resolveFn = resolve;
+        rejectFn = reject;
+      });
+
+      const cb = (error: any) => {
+        if (error) {
+          rejectFn(error);
+        } else {
+          resolveFn();
+        }
+      };
+
+      if (stat.isFile()) 
+        pack.entry({... opts, type: `file`}, await xfs.readFilePromise(source), cb);
+      else if (stat.isSymbolicLink()) 
+        pack.entry({... opts, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
+
+      await awaitTarget;
     }
-  }
 
-  pack.finalize();
+    pack.finalize();
+  });
 
   const tgz = createGzip();
   pack.pipe(tgz);
@@ -52,6 +71,14 @@ export async function genPackList(workspace: Workspace) {
 
     configuration.get(`rcFilename`),
   ];
+
+  for (const otherWorkspace of project.workspaces) {
+    const rel = posix.relative(workspace.cwd, otherWorkspace.cwd);
+    if (rel === `` || rel.match(/^(\.\.)?\//))
+      continue;
+
+    forceReject.push(`/${rel}`);
+  }
 
   const forceAccept: Array<string> = [
     `/package.json`,
@@ -84,6 +111,10 @@ export async function genPackList(workspace: Workspace) {
   maybeRejectPath(configuration.get(`virtualFolder`));
   maybeRejectPath(configuration.get(`yarnPath`));
 
+  const filters = workspace.manifest.files
+    ? Array.from(workspace.manifest.files) as Array<string>
+    : null;
+  
   await configuration.triggerHook((hooks: Hooks) => {
     return hooks.populateYarnPaths;
   }, project, (path: string | null) => {
@@ -93,10 +124,11 @@ export async function genPackList(workspace: Workspace) {
   return await walk(workspace.cwd, {
     forceAccept,
     forceReject,
+    filters,
   });
 }
 
-async function walk(initialCwd: string, {forceAccept, forceReject}: {forceAccept: Array<string>, forceReject: Array<string>}) {
+async function walk(initialCwd: string, {forceAccept, forceReject, filters}: {forceAccept: Array<string>, forceReject: Array<string>, filters: Array<string> | null}) {
   const list = [];
 
   const cwdFs = new JailFS(initialCwd);
@@ -104,11 +136,10 @@ async function walk(initialCwd: string, {forceAccept, forceReject}: {forceAccept
 
   while (cwdList.length > 0) {
     const [cwd, ignoreList] = cwdList.pop()!;
-
-    if (isIgnored(cwd, ignoreList, {forceAccept, forceReject}))
-      continue;
-
     const stat = await cwdFs.lstatPromise(cwd);
+
+    if (isIgnored(cwd, ignoreList, {forceAccept, forceReject, filters: stat.isDirectory() ? null : filters}))
+      continue;
 
     if (stat.isDirectory()) {
       const entries = await cwdFs.readdirPromise(cwd);
@@ -158,14 +189,20 @@ async function loadIgnoreList(fs: FakeFS, cwd: string, filename: string) {
   }) as Array<string>;
 }
 
-function isIgnored(cwd: string, ignoreList: Array<string>, {forceAccept, forceReject}: {forceAccept: Array<string>, forceReject: Array<string>}) {
+function isIgnored(cwd: string, ignoreList: Array<string>, {forceAccept, forceReject, filters}: {forceAccept: Array<string>, forceReject: Array<string>, filters: Array<string> | null}) {
   const opts = {basename: true};
 
-  if (mm.some([cwd], forceAccept, opts))
+  if (mm.some(cwd, forceAccept, opts))
     return false;
   
-  if (mm.some([cwd], forceReject, opts))
+  if (mm.some(cwd, forceReject, opts))
     return true;
 
-  return mm.some([cwd], ignoreList, opts);
+  if (filters !== null && !mm.some(cwd, filters, opts))
+    return true;
+
+  if (mm.some(cwd, ignoreList, opts))
+    return true;
+
+  return false;
 }

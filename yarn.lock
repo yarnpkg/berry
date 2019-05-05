@@ -1848,7 +1848,6 @@ __metadata:
   version: 0.0.0
   resolution: "@berry/plugin-pack@workspace:packages/plugin-pack"
   dependencies:
-    "@berry/builder": "workspace:packages/berry-builder"
     "@berry/cli": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
