@@ -16,8 +16,8 @@ export const patchFs = () => {
   }
 }
 
-export { NodeModulesFS };
-
-if (!process.mainModule) 
+if (!process.mainModule)
   patchFs();
 
+export { PnPApiLocator } from './PnPApiLocator';
+export { NodeModulesFS };

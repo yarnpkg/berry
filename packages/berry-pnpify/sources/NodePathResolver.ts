@@ -85,24 +85,24 @@ export class NodePathResolver {
    * Returns `readdir`-like result for partially resolved pnp path
    *
    * @param issuerInfo issuer package information
-   * @param request either '' or '@scope'
+   * @param scope null - for `/node_modules` dir list or '@scope' - for `/node_modules/@scope` dir list
    *
    * @returns `undefined` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
    */
-  public readDir(issuerInfo: PackageInformation, request: string): string[] | undefined {
-    const result = [];
+  public readDir(issuerInfo: PackageInformation, scope: string | null): string[] | undefined {
+    const result = new Set();
     for (const key of issuerInfo.packageDependencies.keys()) {
-      const [ scope, pkgName ] = key.split('/');
-      if (!request) {
-        if (result.indexOf(scope) < 0) {
-          result.push(scope);
+      const [ pkgNameOrScope, pkgName ] = key.split('/');
+      if (!scope) {
+        if (!result.has(pkgNameOrScope)) {
+          result.add(pkgNameOrScope);
         }
-      } else if (request === scope) {
-        result.push(pkgName);
+      } else if (scope === pkgNameOrScope) {
+        result.add(pkgName);
       }
     }
 
-    return result.length === 0 ? undefined : result;
+    return result.size === 0 ? undefined : Array.from(result);
   }
 
   private getIssuer(pnp: PnpApi, pathname: string, pathSep: string): string | undefined {
@@ -135,7 +135,7 @@ export class NodePathResolver {
     if (pnpApiPath && pnp) {
       // Extract first issuer from the path using PnP API
       let issuer = this.getIssuer(pnp, nodePath, pathSep);
-      let request: string | undefined;
+      let request: string | null;
 
       // If we have something left in a path to parse, do that
       if (issuer && nodePath.length > issuer.length) {
@@ -175,8 +175,10 @@ export class NodePathResolver {
           if (partialPackageName) {
             const locator = pnp.findPackageLocator(issuer + pathSep);
             const issuerInfo = locator ? pnp.getPackageInformation(locator) : undefined;
-            if (issuerInfo)
-              result.dirList = this.readDir(issuerInfo, request);
+            if (issuerInfo) {
+              const scope = request || null;
+              result.dirList = this.readDir(issuerInfo, scope);
+            }
 
             if (result.dirList) {
               result.statPath = isWindowsPath ? issuer.replace(/\//g, '\\') : issuer;

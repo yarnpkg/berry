@@ -7,7 +7,7 @@ export interface PnPApiLocatorOptions {
      *
      * @param filePath file path
      */
-    existsSync: (filePath: string) => boolean;
+    existsSync?: (filePath: string) => boolean;
     /**
      * PnP api filename.
      *

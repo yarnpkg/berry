@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 /**
  * PnP API locator options
  */
@@ -7,7 +9,7 @@ export interface PnPApiLocatorOptions {
    *
    * @param filePath file path
    */
-  existsSync: (filePath: string) => boolean;
+  existsSync?: (filePath: string) => boolean;
 
   /**
    * PnP api filename.
@@ -68,7 +70,7 @@ export class PnPApiLocator {
   constructor(options?: PnPApiLocatorOptions) {
     const opts: any = options || {};
     this.options = {
-      existsSync: opts.existsSync,
+      existsSync: opts.existsSync || fs.existsSync.bind(fs),
       pnpFileName: opts.pnpFileName || '.pnp.js'
     };
     this.checkTree = new Map();
