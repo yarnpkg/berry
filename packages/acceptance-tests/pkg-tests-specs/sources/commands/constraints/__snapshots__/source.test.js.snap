@@ -24,23 +24,23 @@ workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
 
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (empty project / gen_enforced_dependency_range (extraneous)) 1`] = `
+exports[`Commands constraints source test (empty project / gen_enforced_dependency (extraneous)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (empty project / gen_enforced_dependency_range (extraneous)) 2`] = `
+exports[`Commands constraints source test (empty project / gen_enforced_dependency (extraneous)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -55,24 +55,24 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (empty project / gen_enforced_dependency_range (incompatible)) 1`] = `
+exports[`Commands constraints source test (empty project / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (empty project / gen_enforced_dependency_range (incompatible)) 2`] = `
+exports[`Commands constraints source test (empty project / gen_enforced_dependency (incompatible)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -87,24 +87,24 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (empty project / gen_enforced_dependency_range (missing)) 1`] = `
+exports[`Commands constraints source test (empty project / gen_enforced_dependency (missing)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (empty project / gen_enforced_dependency_range (missing)) 2`] = `
+exports[`Commands constraints source test (empty project / gen_enforced_dependency (missing)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -119,10 +119,10 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
@@ -156,9 +156,9 @@ workspace_has_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
       workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
       \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
@@ -201,23 +201,23 @@ workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
 
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency_range (extraneous)) 1`] = `
+exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency (extraneous)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency_range (extraneous)) 2`] = `
+exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency (extraneous)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -246,24 +246,24 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency_range (incompatible)) 1`] = `
+exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency_range (incompatible)) 2`] = `
+exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency (incompatible)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -292,24 +292,24 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency_range (missing)) 1`] = `
+exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency (missing)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency_range (missing)) 2`] = `
+exports[`Commands constraints source test (multiple workspaces / gen_enforced_dependency (missing)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -338,10 +338,10 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
@@ -389,9 +389,9 @@ workspace_has_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
       workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
       \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
@@ -421,23 +421,23 @@ workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
 
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency_range (extraneous)) 1`] = `
+exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency (extraneous)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency_range (extraneous)) 2`] = `
+exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency (extraneous)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -453,24 +453,24 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency_range (incompatible)) 1`] = `
+exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency_range (incompatible)) 2`] = `
+exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency (incompatible)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -486,24 +486,24 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency_range (missing)) 1`] = `
+exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency (missing)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency_range (missing)) 2`] = `
+exports[`Commands constraints source test (one regular dependency / gen_enforced_dependency (missing)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -519,10 +519,10 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
@@ -557,9 +557,9 @@ workspace_has_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
       workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
       \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
@@ -590,23 +590,23 @@ workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
 
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency_range (extraneous)) 1`] = `
+exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency (extraneous)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency_range (extraneous)) 2`] = `
+exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency (extraneous)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -623,24 +623,24 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency_range (incompatible)) 1`] = `
+exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency_range (incompatible)) 2`] = `
+exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency (incompatible)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -657,24 +657,24 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency_range (missing)) 1`] = `
+exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency (missing)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency_range (missing)) 2`] = `
+exports[`Commands constraints source test (two development dependencies / gen_enforced_dependency (missing)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -691,10 +691,10 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
@@ -730,9 +730,9 @@ workspace_has_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
       workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
       \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
@@ -763,23 +763,23 @@ workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
 
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency_range (extraneous)) 1`] = `
+exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency (extraneous)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency_range (extraneous)) 2`] = `
+exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency (extraneous)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -796,24 +796,24 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency_range (incompatible)) 1`] = `
+exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency_range (incompatible)) 2`] = `
+exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency (incompatible)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -830,24 +830,24 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency_range (missing)) 1`] = `
+exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency (missing)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency_range (missing)) 2`] = `
+exports[`Commands constraints source test (two regular dependencies / gen_enforced_dependency (missing)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -864,10 +864,10 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
@@ -903,9 +903,9 @@ workspace_has_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
       workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
       \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
@@ -938,23 +938,23 @@ workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
 
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (extraneous)) 1`] = `
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency (extraneous)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (extraneous)) 2`] = `
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency (extraneous)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -973,24 +973,24 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', null, _).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (incompatible)) 1`] = `
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (incompatible)) 2`] = `
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency (incompatible)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -1009,24 +1009,24 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
 
-exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (missing)) 1`] = `
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency (missing)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
+  "stdout": "gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).<no line return>
 ",
 }
 `;
 
-exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (missing)) 2`] = `
+exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_enforced_dependency (missing)) 2`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -1045,10 +1045,10 @@ workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
 workspace_has_dependency(_, _, _, _) :- false.
 
-gen_enforced_dependency_range(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;
@@ -1086,9 +1086,9 @@ workspace_has_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
       workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
       \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
-gen_enforced_dependency_range(_, _, _, _) :- false.
+gen_enforced_dependency(_, _, _, _) :- false.
 gen_invalid_dependency(_, _, _, _) :- false.
-gen_workspace_field_requirement(_, _, _) :- false.
+gen_enforced_field(_, _, _) :- false.
 ",
 }
 `;

@@ -9,7 +9,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (empty project / gen_enforced_dependency_range (extraneous)) 1`] = `
+exports[`Commands constraints check test (empty project / gen_enforced_dependency (extraneous)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -18,7 +18,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (empty project / gen_enforced_dependency_range (incompatible)) 1`] = `
+exports[`Commands constraints check test (empty project / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -28,7 +28,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (empty project / gen_enforced_dependency_range (missing)) 1`] = `
+exports[`Commands constraints check test (empty project / gen_enforced_dependency (missing)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -47,7 +47,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (empty project / gen_workspace_field_requirement (extraneous)) 1`] = `
+exports[`Commands constraints check test (empty project / gen_enforced_field (extraneous)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -56,7 +56,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (empty project / gen_workspace_field_requirement (incompatible)) 1`] = `
+exports[`Commands constraints check test (empty project / gen_enforced_field (incompatible)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -66,7 +66,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (empty project / gen_workspace_field_requirement (missing)) 1`] = `
+exports[`Commands constraints check test (empty project / gen_enforced_field (missing)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -85,7 +85,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (multiple workspaces / gen_enforced_dependency_range (extraneous)) 1`] = `
+exports[`Commands constraints check test (multiple workspaces / gen_enforced_dependency (extraneous)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -98,7 +98,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (multiple workspaces / gen_enforced_dependency_range (incompatible)) 1`] = `
+exports[`Commands constraints check test (multiple workspaces / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -110,7 +110,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (multiple workspaces / gen_enforced_dependency_range (missing)) 1`] = `
+exports[`Commands constraints check test (multiple workspaces / gen_enforced_dependency (missing)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -133,7 +133,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (multiple workspaces / gen_workspace_field_requirement (extraneous)) 1`] = `
+exports[`Commands constraints check test (multiple workspaces / gen_enforced_field (extraneous)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -144,7 +144,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (multiple workspaces / gen_workspace_field_requirement (incompatible)) 1`] = `
+exports[`Commands constraints check test (multiple workspaces / gen_enforced_field (incompatible)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -156,7 +156,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (multiple workspaces / gen_workspace_field_requirement (missing)) 1`] = `
+exports[`Commands constraints check test (multiple workspaces / gen_enforced_field (missing)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -177,7 +177,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (one regular dependency / gen_enforced_dependency_range (extraneous)) 1`] = `
+exports[`Commands constraints check test (one regular dependency / gen_enforced_dependency (extraneous)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -187,7 +187,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (one regular dependency / gen_enforced_dependency_range (incompatible)) 1`] = `
+exports[`Commands constraints check test (one regular dependency / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -197,7 +197,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (one regular dependency / gen_enforced_dependency_range (missing)) 1`] = `
+exports[`Commands constraints check test (one regular dependency / gen_enforced_dependency (missing)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -217,7 +217,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (one regular dependency / gen_workspace_field_requirement (extraneous)) 1`] = `
+exports[`Commands constraints check test (one regular dependency / gen_enforced_field (extraneous)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -227,7 +227,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (one regular dependency / gen_workspace_field_requirement (incompatible)) 1`] = `
+exports[`Commands constraints check test (one regular dependency / gen_enforced_field (incompatible)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -237,7 +237,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (one regular dependency / gen_workspace_field_requirement (missing)) 1`] = `
+exports[`Commands constraints check test (one regular dependency / gen_enforced_field (missing)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -256,7 +256,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two development dependencies / gen_enforced_dependency_range (extraneous)) 1`] = `
+exports[`Commands constraints check test (two development dependencies / gen_enforced_dependency (extraneous)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -266,7 +266,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two development dependencies / gen_enforced_dependency_range (incompatible)) 1`] = `
+exports[`Commands constraints check test (two development dependencies / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -276,7 +276,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two development dependencies / gen_enforced_dependency_range (missing)) 1`] = `
+exports[`Commands constraints check test (two development dependencies / gen_enforced_dependency (missing)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -296,7 +296,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two development dependencies / gen_workspace_field_requirement (extraneous)) 1`] = `
+exports[`Commands constraints check test (two development dependencies / gen_enforced_field (extraneous)) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -305,7 +305,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two development dependencies / gen_workspace_field_requirement (incompatible)) 1`] = `
+exports[`Commands constraints check test (two development dependencies / gen_enforced_field (incompatible)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -315,7 +315,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two development dependencies / gen_workspace_field_requirement (missing)) 1`] = `
+exports[`Commands constraints check test (two development dependencies / gen_enforced_field (missing)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -334,7 +334,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two regular dependencies / gen_enforced_dependency_range (extraneous)) 1`] = `
+exports[`Commands constraints check test (two regular dependencies / gen_enforced_dependency (extraneous)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -344,7 +344,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two regular dependencies / gen_enforced_dependency_range (incompatible)) 1`] = `
+exports[`Commands constraints check test (two regular dependencies / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -354,7 +354,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two regular dependencies / gen_enforced_dependency_range (missing)) 1`] = `
+exports[`Commands constraints check test (two regular dependencies / gen_enforced_dependency (missing)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -374,7 +374,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two regular dependencies / gen_workspace_field_requirement (extraneous)) 1`] = `
+exports[`Commands constraints check test (two regular dependencies / gen_enforced_field (extraneous)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -384,7 +384,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two regular dependencies / gen_workspace_field_requirement (incompatible)) 1`] = `
+exports[`Commands constraints check test (two regular dependencies / gen_enforced_field (incompatible)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -394,7 +394,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two regular dependencies / gen_workspace_field_requirement (missing)) 1`] = `
+exports[`Commands constraints check test (two regular dependencies / gen_enforced_field (missing)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -413,7 +413,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (extraneous)) 1`] = `
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_enforced_dependency (extraneous)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -424,7 +424,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (incompatible)) 1`] = `
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -434,7 +434,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_enforced_dependency_range (missing)) 1`] = `
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_enforced_dependency (missing)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -455,7 +455,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_workspace_field_requirement (extraneous)) 1`] = `
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_enforced_field (extraneous)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -465,7 +465,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_workspace_field_requirement (incompatible)) 1`] = `
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_enforced_field (incompatible)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",
@@ -475,7 +475,7 @@ Object {
 }
 `;
 
-exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_workspace_field_requirement (missing)) 1`] = `
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_enforced_field (missing)) 1`] = `
 Object {
   "code": 1,
   "stderr": "",

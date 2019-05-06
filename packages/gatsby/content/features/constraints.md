@@ -82,10 +82,10 @@ True if the workspace described by the specified `WorkspaceCwd` depends on the d
 
 The following predicates will affect the behavior of the `yarn constraints check` and `yarn constraints fix` commands.
 
-#### `gen_enforced_dependency_range/4`
+#### `gen_enforced_dependency/4`
 
 ```prolog
-gen_enforced_dependency_range(
+gen_enforced_dependency(
   WorkspaceCwd,
   DependencyIdent,
   DependencyRange,
@@ -93,7 +93,7 @@ gen_enforced_dependency_range(
 ).
 ```
 
-The `gen_enforced_dependency_range` rule offers a neat way to inform the package manager that a specific workspace MUST either depend on a specific range of a specific dependency (if `DependencyRange` is non-null) or not depend at all on the dependency (if `DependencyRange` is null) in the `DependencyType` dependencies block.
+The `gen_enforced_dependency` rule offers a neat way to inform the package manager that a specific workspace MUST either depend on a specific range of a specific dependency (if `DependencyRange` is non-null) or not depend at all on the dependency (if `DependencyRange` is null) in the `DependencyType` dependencies block.
 
 - **This predicate allows the package manager to autofix the problems.**
 
@@ -110,7 +110,7 @@ gen_invalid_dependency(
 
 The `gen_invalid_dependency` predicate is used to inform the package manager that a specific workspace cannot depend on its current version of the package defined by `DependencyIdent` in the `DependencyType` dependencies, the `Reason` parameter being offered as a way to express why the dependency is invalid.
 
-Contrary to `gen_enforced_dependency_range`, `gen_invalid_dependency` doesn't allow the package manager to autofix the problem. This makes `gen_invalid_dependency` suitable in case where the right fix would be ambiguous, and where the intervention of a human operator would be required (for example when two workspaces depend on two different versions of a same package).
+Contrary to `gen_enforced_dependency`, `gen_invalid_dependency` doesn't allow the package manager to autofix the problem. This makes `gen_invalid_dependency` suitable in case where the right fix would be ambiguous, and where the intervention of a human operator would be required (for example when two workspaces depend on two different versions of a same package).
 
 - The errors reported by this predicate **cannot** be auto-fixed
 - The reason parameter can be any string of your liking
@@ -126,11 +126,11 @@ The following constraints are a good starting point to figure out how to write y
 ### Prevent all workspaces from depending on a specific package
 
 ```prolog
-gen_enforced_dependency_range(WorkspaceCwd, 'tslib', null, DependencyType) :-
+gen_enforced_dependency(WorkspaceCwd, 'tslib', null, DependencyType) :-
   workspace_has_dependency(WorkspaceCwd, 'tslib', _, DependencyType).
 ```
 
-We define a rule that says that for each dependency of each workspace in our project, if this dependency name is `tslib`, then it exists a similar rule of the `gen_enforced_dependency_range` type that forbids the workspace from depending on `tslib`. This will cause the package manager to see that the rule isn't met, and autofix it when requested by removing the dependency from the workspace.
+We define a rule that says that for each dependency of each workspace in our project, if this dependency name is `tslib`, then it exists a similar rule of the `gen_enforced_dependency` type that forbids the workspace from depending on `tslib`. This will cause the package manager to see that the rule isn't met, and autofix it when requested by removing the dependency from the workspace.
 
 ### Prevent two workspaces from depending on conflicting versions of a same dependency
 
@@ -146,9 +146,9 @@ We define a `gen_invalid_dependency` rule that is true for each dependency of ea
 ### Force all workspace dependencies to be made explicit
 
 ```prolog
-gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, 'workspace:*', DependencyType) :-
+gen_enforced_dependency(WorkspaceCwd, DependencyIdent, 'workspace:*', DependencyType) :-
   workspace_ident(_, DependencyIdent),
   workspace_has_dependency(WorkspaceCwd, DependencyIdent, _, DependencyType).
 ```
 
-We define a `gen_enforced_dependency_range` that requires the dependency range `workspace:*` to be used if the dependency name is also the name of a valid workspace. The final `workspace_has_dependency` check is there to ensure that this rule is only applied on workspace that currently depend on the specified workspace in the first place (if it wasn't there, the rule would instead force all workspaces to depend on one another).
+We define a `gen_enforced_dependency` that requires the dependency range `workspace:*` to be used if the dependency name is also the name of a valid workspace. The final `workspace_has_dependency` check is there to ensure that this rule is only applied on workspace that currently depend on the specified workspace in the first place (if it wasn't there, the rule would instead force all workspaces to depend on one another).
