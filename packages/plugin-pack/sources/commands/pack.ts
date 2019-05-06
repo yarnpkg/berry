@@ -46,7 +46,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const files = await packUtils.genPackList(workspace);
   
         for (const file of files) {
-          report.reportInfo(MessageName.UNNAMED, file);
+          report.reportInfo(null, file);
           report.reportJson({location: file});
         }
   

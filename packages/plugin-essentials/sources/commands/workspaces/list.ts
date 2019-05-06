@@ -51,7 +51,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           };
         }
 
-        report.reportInfo(MessageName.UNNAMED, `${workspace.relativeCwd}`);
+        report.reportInfo(null, `${workspace.relativeCwd}`);
         report.reportJson({
           location: workspace.relativeCwd,
 

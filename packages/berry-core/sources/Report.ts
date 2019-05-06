@@ -69,7 +69,7 @@ export abstract class Report {
   abstract startTimerSync<T>(what: string, cb: () => T): T;
 
   abstract reportSeparator(): void;
-  abstract reportInfo(name: MessageName, text: string): void;
+  abstract reportInfo(name: MessageName | null, text: string): void;
   abstract reportWarning(name: MessageName, text: string): void;
   abstract reportError(name: MessageName, text: string): void;
   abstract reportJson(data: any): void;

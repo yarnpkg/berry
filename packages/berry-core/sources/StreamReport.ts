@@ -67,7 +67,7 @@ export class StreamReport extends Report {
   }
 
   startTimerSync<T>(what: string, cb: () => T) {
-    this.reportInfo(MessageName.UNNAMED, `┌ ${what}`);
+    this.reportInfo(null, `┌ ${what}`);
 
     const before = Date.now();
     this.indent += 1;
@@ -82,15 +82,15 @@ export class StreamReport extends Report {
       this.indent -= 1;
 
       if (this.configuration.get(`enableTimers`)) {
-        this.reportInfo(MessageName.UNNAMED, `└ Completed in ${this.formatTiming(after - before)}`);
+        this.reportInfo(null, `└ Completed in ${this.formatTiming(after - before)}`);
       } else {
-        this.reportInfo(MessageName.UNNAMED, `└ Completed`);
+        this.reportInfo(null, `└ Completed`);
       }
     }
   }
 
   async startTimerPromise<T>(what: string, cb: () => Promise<T>) {
-    this.reportInfo(MessageName.UNNAMED, `┌ ${what}`);
+    this.reportInfo(null, `┌ ${what}`);
 
     const before = Date.now();
     this.indent += 1;
@@ -105,9 +105,9 @@ export class StreamReport extends Report {
       this.indent -= 1;
 
       if (this.configuration.get(`enableTimers`)) {
-        this.reportInfo(MessageName.UNNAMED, `└ Completed in ${this.formatTiming(after - before)}`);
+        this.reportInfo(null, `└ Completed in ${this.formatTiming(after - before)}`);
       } else {
-        this.reportInfo(MessageName.UNNAMED, `└ Completed`);
+        this.reportInfo(null, `└ Completed`);
       }
     }
   }
@@ -116,11 +116,11 @@ export class StreamReport extends Report {
     if (this.indent === 0) {
       this.stdout.write(`\n`);
     } else {
-      this.reportInfo(MessageName.UNNAMED, ``);
+      this.reportInfo(null, ``);
     }
   }
 
-  reportInfo(name: MessageName, text: string) {
+  reportInfo(name: MessageName | null, text: string) {
     if (!this.json) {
       this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
     }
@@ -200,10 +200,11 @@ export class StreamReport extends Report {
       : `${Math.round(timing / 600) / 100}m`;
   }
 
-  private formatName(name: MessageName) {
-    const label = `YN` + name.toString(10).padStart(4, `0`);
+  private formatName(name: MessageName | null) {
+    const num = name === null ? 0 : name;
+    const label = `YN` + num.toString(10).padStart(4, `0`);
 
-    if (name === MessageName.UNNAMED) {
+    if (name === null) {
       return this.configuration.format(label, `grey`);
     } else {
       return label;
