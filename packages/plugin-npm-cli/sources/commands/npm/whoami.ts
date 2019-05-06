@@ -2,6 +2,7 @@ import {Configuration, MessageName, PluginConfiguration, StreamReport} from '@be
 import {npmHttpUtils}                                                  from '@berry/plugin-npm';
 import {Clipanion}                                                     from 'clipanion';
 import {Readable, Writable}                                            from 'stream';
+import {URL}                                                           from 'url';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) => clipanion
