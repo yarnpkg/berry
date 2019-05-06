@@ -1570,10 +1570,12 @@ __metadata:
   linkType: soft
 
 "@berry/fslib@workspace:*, @berry/fslib@workspace:packages/berry-fslib":
-  version: 0.0.0
+  version: 0.0.2
   resolution: "@berry/fslib@workspace:packages/berry-fslib"
   dependencies:
-    "@berry/libzip": "workspace:*"
+    "@berry/libzip": ^0.0.2
+    "@berry/pnpify": "workspace:*"
+    typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
 
@@ -1623,7 +1625,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/libzip@workspace:*, @berry/libzip@workspace:packages/berry-libzip":
+"@berry/libzip@^0.0.2, @berry/libzip@workspace:packages/berry-libzip":
   version: 0.0.2
   resolution: "@berry/libzip@workspace:packages/berry-libzip"
   dependencies:

@@ -159,6 +159,10 @@ export class ZipFS extends FakeFS {
     this.ready = true;
   }
 
+  getAllFiles() {
+    return Array.from(this.entries.keys());
+  }
+
   getRealPath() {
     return this.path;
   }
