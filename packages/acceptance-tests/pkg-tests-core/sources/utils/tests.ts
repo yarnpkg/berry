@@ -249,10 +249,10 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
 
     async [RequestType.Whoami](request, response) {
       const data = JSON.stringify({
-        username: 'username',
+        username: `username`,
       });
 
-      response.writeHead(200, {['Content-Type']: 'application/json'});
+      response.writeHead(200, {[`Content-Type`]: `application/json`});
       response.end(data);
     },
   };
@@ -274,10 +274,10 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
 
     url = url.replace(/%2f/g, '/');
 
-    if (url === '/-/whoami') {
+    if (url === `/-/whoami`) {
       return {
         type: RequestType.Whoami,
-        localName: '',
+        localName: ``,
       };
     } else if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)$/)) {
       const [_, scope, localName] = match;

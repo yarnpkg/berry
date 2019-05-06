@@ -51,7 +51,7 @@ describe(`Plugins`, () => {
     test(
       `should throw an error when no auth config is found`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
-        await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Authentication not found/);
+        await expect(run(`npm`, `whoami`)).rejects.toThrowError(/No authentication configured/);
       })
     );
 
