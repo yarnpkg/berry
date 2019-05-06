@@ -172,12 +172,17 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
     Whoami = 'whoami',
   }
 
-  interface Request {
-    type: RequestType;
-
+  type Request = {
+    type: RequestType.PackageInfo;
+    scope?: string;
+    localName: string;
+  } | {
+    type: RequestType.PackageTarball;
     scope?: string;
     localName: string;
     version?: string;
+  } | {
+    type: RequestType.Whoami;
   }
 
   const processors: {[requestType in RequestType]:(request: Request, response: ServerResponse) => Promise<void>} = {
@@ -277,7 +282,6 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
     if (url === `/-/whoami`) {
       return {
         type: RequestType.Whoami,
-        localName: ``,
       };
     } else if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)$/)) {
       const [_, scope, localName] = match;
