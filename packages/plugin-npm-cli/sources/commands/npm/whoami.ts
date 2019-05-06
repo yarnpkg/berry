@@ -31,12 +31,12 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
 
       try {
         const registryUrl = getRegistryUrl(configuration);
-        const responseBuffer = await httpUtils.get(`${registryUrl}-/whoami`, configuration, { headers });
+        const responseBuffer = await httpUtils.get(`${registryUrl}-/whoami`, { configuration, headers });
         const jsonResponse = JSON.parse(responseBuffer.toString());
 
         report.reportInfo(MessageName.UNNAMED, jsonResponse.username);
       } catch (err) {
-        if (err.statusCode === 401)
+        if (err.statusCode === 401 || err.statusCode === 403)
           report.reportError(MessageName.AUTHENTICATION_INVALID, `Authentication failed - your credentials may have expired`);
       }
     });
