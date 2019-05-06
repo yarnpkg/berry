@@ -1,6 +1,6 @@
 {
   "name": "@berry/libzip",
-  "private": true,
+  "version": "0.0.1",
   "main": "./sources/index.ts",
   "devDependencies": {
     "@berry/pnpify": "workspace:*",
@@ -10,6 +10,9 @@
     "build:libzip": "cd ./artifacts && ./build.sh"
   },
   "publishConfig": {
-    "main": "./lib"
-  }
+    "main": "./lib/index.js"
+  },
+  "files": [
+    "/lib/*"
+  ]
 }
