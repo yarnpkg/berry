@@ -37,7 +37,7 @@ function getAuthenticationHeader({configuration}: {configuration: Configuration}
   const authConfiguration = npmConfigUtils.getAuthenticationConfiguration(ident, {configuration});
   const mustAuthenticate = configuration.get(`npmAlwaysAuth`) || forceAuth;
 
-  if (!mustAuthenticate && ident && !ident.scope)
+  if (!mustAuthenticate && (!ident || !ident.scope))
     return null;
 
   if (authConfiguration.get(`npmAuthToken`))
