@@ -1624,7 +1624,7 @@ __metadata:
   linkType: soft
 
 "@berry/libzip@workspace:*, @berry/libzip@workspace:packages/berry-libzip":
-  version: 0.0.0
+  version: 0.0.2
   resolution: "@berry/libzip@workspace:packages/berry-libzip"
   dependencies:
     "@berry/pnpify": "workspace:*"

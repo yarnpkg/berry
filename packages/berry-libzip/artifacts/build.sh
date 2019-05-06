@@ -3,13 +3,12 @@
 set -e
 
 THIS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+cd "$THIS_DIR"
 
 ZLIB_VERSION=1.2.11
 LIBZIP_VERSION=1.5.1
 
 [[ -f ./zlib-"$ZLIB_VERSION"/libz.a ]] || (
-    cd "$THIS_DIR"
-
     if ! [[ -e zlib-"$ZLIB_VERSION".tar.gz ]]; then
         wget -O ./zlib-"$ZLIB_VERSION".tar.gz "http://zlib.net/zlib-$ZLIB_VERSION.tar.gz"
     fi
@@ -27,14 +26,13 @@ LIBZIP_VERSION=1.5.1
 )
 
 (
-    cd "$THIS_DIR"
-
     if ! [[ -e libzip-"$LIBZIP_VERSION".tar.gz ]]; then
         wget -O ./libzip-"$LIBZIP_VERSION".tar.gz "https://libzip.org/download/libzip-$LIBZIP_VERSION.tar.gz"
     fi
 
     if ! [[ -e libzip-"$LIBZIP_VERSION" ]]; then
         tar xvf ./libzip-"$LIBZIP_VERSION".tar.gz
+        # https://github.com/nih-at/libzip/issues/89
         sed s/localtime/gmtime/g \
             <<< "$(cat ./libzip-"$LIBZIP_VERSION"/lib/zip_dirent.c)" \
             > ./libzip-"$LIBZIP_VERSION"/lib/zip_dirent.c
@@ -51,8 +49,6 @@ LIBZIP_VERSION=1.5.1
 )
 
 (
-    cd "$THIS_DIR"
-
     source ~/emsdk-portable/emsdk_env.sh
 
     emcc \
@@ -79,4 +75,5 @@ LIBZIP_VERSION=1.5.1
         <(sed 's/require("fs")/frozenFs/g' ./build.js | sed 's/process\["on"\]/(function(){})/g') \
         "./shell.post.js"
 
+    echo Built wasm
 )
