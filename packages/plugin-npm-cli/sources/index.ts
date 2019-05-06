@@ -1,8 +1,15 @@
-import {Plugin}   from '@berry/core';
+import {Plugin, SettingsType} from '@berry/core';
 
-import npmPublish from './commands/npm/publish';
+import npmPublish             from './commands/npm/publish';
 
 const plugin: Plugin = {
+  configuration: {
+    npmPublishAccess: {
+      description: `Default access of the published packages`,
+      type: SettingsType.STRING,
+      default: null,
+    },
+  },
   commands: [
     npmPublish,
   ],

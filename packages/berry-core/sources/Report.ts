@@ -40,6 +40,7 @@ export enum MessageName {
   AUTHENTICATION_NOT_FOUND = 33,
   INVALID_CONFIGURATION_KEY = 34,
   NETWORK_ERROR = 35,
+  LIFECYCLE_SCRIPT = 36,
 }
 
 export class ReportError extends Error {

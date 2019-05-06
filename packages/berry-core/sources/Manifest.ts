@@ -22,6 +22,7 @@ export interface PeerDependencyMeta {
 };
 
 export interface PublishConfig {
+  access?: string;
   main?: string;
   module?: string;
 };
@@ -273,6 +274,9 @@ export class Manifest {
 
     if (typeof data.publishConfig === `object` && data.publishConfig !== null) {
       this.publishConfig = {};
+
+      if (typeof data.publishConfig.access === `string`)
+        this.publishConfig.access = data.publishConfig.access;
 
       if (typeof data.publishConfig.main === `string`)
         this.publishConfig.main = data.publishConfig.main;

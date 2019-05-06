@@ -158,6 +158,10 @@ export async function executeWorkspaceScript(workspace: Workspace, scriptName: s
   return await executePackageScript(workspace.anchoredLocator, scriptName, args, {cwd, project: workspace.project, stdin, stdout, stderr});
 }
 
+export async function hasWorkspaceScript(workspace: Workspace, scriptName: string) {
+  return await hasPackageScript(workspace.anchoredLocator, scriptName, {project: workspace.project});
+}
+
 type GetPackageAccessibleBinariesOptions = {
   project: Project,
 };

@@ -1,11 +1,12 @@
-import {Workspace}           from '@berry/core';
-import {FakeFS, JailFS, xfs} from '@berry/fslib';
-import mm                    from 'micromatch';
-import {posix}               from 'path';
-import tar                   from 'tar-stream';
-import {createGzip}          from 'zlib';
+import {MessageName, Report, Workspace, scriptUtils} from '@berry/core';
+import {FakeFS, JailFS, xfs}                         from '@berry/fslib';
+import mm                                            from 'micromatch';
+import {posix}                                       from 'path';
+import {PassThrough}                                 from 'stream';
+import tar                                           from 'tar-stream';
+import {createGzip}                                  from 'zlib';
 
-import {Hooks}               from './';
+import {Hooks}                                       from './';
 
 const NEVER_IGNORE = [
   `/package.json`,
@@ -39,6 +40,26 @@ type IgnoreList = {
   accept: Array<string>;
   reject: Array<string>;
 };
+
+export async function prepareForPack(workspace: Workspace, {report}: {report: Report}, cb: () => Promise<void>) {
+  const stdin = null;
+  const stdout = new PassThrough();
+  const stderr = new PassThrough();
+
+  if (scriptUtils.hasWorkspaceScript(workspace, `prepack`)) {
+    report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "prepack" lifecycle script`);
+    await scriptUtils.executeWorkspaceScript(workspace, `prepack`, [], {stdin, stdout, stderr});
+  }
+
+  try {
+    await cb();
+  } finally {
+    if (scriptUtils.hasWorkspaceScript(workspace, `postpack`)) {
+      report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "postpack" lifecycle script`);
+      await scriptUtils.executeWorkspaceScript(workspace, `postpack`, [], {stdin, stdout, stderr});
+    }
+  }
+}
 
 export async function genPackStream(workspace: Workspace, files?: Array<string>) {
   if (typeof files === `undefined`)
