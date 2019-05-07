@@ -381,7 +381,7 @@ Object {
   "stdout": "{\\"key\\":\\"bstatePath\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/build-state.yml\\",\\"description\\":\\"Path of the file where the current state of the built packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/build-state.yml\\"}
 {\\"key\\":\\"cacheFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/cache\\",\\"description\\":\\"Folder where the cache files must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/cache\\"}
 {\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
-{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
+{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"python\\",\\"source\\":\\"HOME/.spec-yarnrc\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
@@ -427,7 +427,7 @@ Object {
   "stdout": "➤ YN0000: bstatePath - Path of the file where the current state of the built packages must be stored - 'WORKSPACE_ROOT/.yarn/build-state.yml'
 ➤ YN0000: cacheFolder - Folder where the cache files must be written - 'WORKSPACE_ROOT/.yarn/cache'
 ➤ YN0000: checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
-➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
+➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'python'
 ➤ YN0000: defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
@@ -474,7 +474,7 @@ Object {
   "stdout": "➤ YN0000: bstatePath - <default> - 'WORKSPACE_ROOT/.yarn/build-state.yml'
 ➤ YN0000: cacheFolder - <default> - 'WORKSPACE_ROOT/.yarn/cache'
 ➤ YN0000: checksumBehavior - <default> - 'throw'
-➤ YN0000: defaultLanguageName - <default> - 'node'
+➤ YN0000: defaultLanguageName - HOME/.spec-yarnrc - 'python'
 ➤ YN0000: defaultProtocol - <default> - 'npm:'
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
@@ -521,7 +521,7 @@ Object {
   "stdout": "➤ YN0000: bstatePath - 'WORKSPACE_ROOT/.yarn/build-state.yml'
 ➤ YN0000: cacheFolder - 'WORKSPACE_ROOT/.yarn/cache'
 ➤ YN0000: checksumBehavior - 'throw'
-➤ YN0000: defaultLanguageName - 'node'
+➤ YN0000: defaultLanguageName - 'python'
 ➤ YN0000: defaultProtocol - 'npm:'
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
