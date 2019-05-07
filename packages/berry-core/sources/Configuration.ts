@@ -4,8 +4,7 @@ import camelcase                         from 'camelcase';
 import chalk                             from 'chalk';
 import {UsageError}                      from 'clipanion';
 import decamelize                        from 'decamelize';
-import {homedir}                         from 'os';
-import {posix, win32}                    from 'path';
+import {posix}                           from 'path';
 import supportsColor                     from 'supports-color';
 
 import {MultiFetcher}                    from './MultiFetcher';
@@ -16,6 +15,7 @@ import {TagResolver}                     from './TagResolver';
 import {VirtualFetcher}                  from './VirtualFetcher';
 import {WorkspaceFetcher}                from './WorkspaceFetcher';
 import {WorkspaceResolver}               from './WorkspaceResolver';
+import * as folderUtils                  from './folderUtils';
 import * as miscUtils                    from './miscUtils';
 import * as nodeUtils                    from './nodeUtils';
 import * as structUtils                  from './structUtils';
@@ -154,7 +154,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   globalFolder: {
     description: `Folder where are stored the system-wide settings`,
     type: SettingsType.ABSOLUTE_PATH,
-    default: getDefaultGlobalFolder(),
+    default: folderUtils.getDefaultGlobalFolder(),
   },
   cacheFolder: {
     description: `Folder where the cache files must be written`,
@@ -395,21 +395,6 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
   }
 }
 
-function getDefaultGlobalFolder() {
-  if (process.platform === `win32`) {
-    const base = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
-    return posix.resolve(base, `Yarn/Berry`);
-  }
-
-  if (process.env.XDG_DATA_HOME) {
-    const base = NodeFS.toPortablePath(process.env.XDG_DATA_HOME);
-    return posix.resolve(base, `yarn/berry`);
-  }
-
-  const base = NodeFS.toPortablePath(homedir());
-  return posix.resolve(base, `.yarn/berry`);
-}
-
 function getEnvironmentSettings() {
   const environmentSettings: {[key: string]: any} = {};
 
@@ -553,6 +538,12 @@ export class Configuration {
     for (const {path, cwd, data} of rcFiles)
       configuration.useWithSource(path, data, cwd, {strict});
 
+    const rcFilename = configuration.get(`rcFilename`);
+    const homeRcFile = await Configuration.findHomeRcFile(rcFilename);
+
+    if (homeRcFile)
+      configuration.useWithSource(homeRcFile.path, homeRcFile.data, homeRcFile.cwd, {strict});
+
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
       configuration.sources.set(`cacheFolder`, `<internal>`);
@@ -584,6 +575,20 @@ export class Configuration {
     }
 
     return rcFiles;
+  }
+
+  static async findHomeRcFile(rcFilename: string) {
+    const homeFolder = folderUtils.getHomeFolder();
+    const homeRcFilePath = `${homeFolder}/${rcFilename}`;
+
+    if (xfs.existsSync(homeRcFilePath)) {
+      const content = await xfs.readFilePromise(homeRcFilePath, `utf8`);
+      const data = parseSyml(content) as any;
+
+      return {path: homeRcFilePath, cwd: homeFolder, data};
+    }
+
+    return null;
   }
 
   static async findProjectCwd(startingCwd: string, lockfileFilename: string) {
