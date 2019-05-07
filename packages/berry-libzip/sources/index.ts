@@ -51,6 +51,7 @@ export default {
   getValue: libzip.getValue,
 
   open: libzip.cwrap(`zip_open`, `number`, [`string`, `number`, `number`]),
+  openFromSource: libzip.cwrap(`zip_open_from_source`, `number`, [`number`, `number`, `number`]),
   close: libzip.cwrap(`zip_close`, `number`, [`number`]),
   discard: libzip.cwrap(`zip_discard`, `void`, [`number`]),
 
@@ -89,7 +90,9 @@ export default {
   },
 
   source: {
+    fromUnattachedBuffer: libzip.cwrap(`zip_source_buffer_create`, `number`, [`number`, `number`, `number`, `number`]),
     fromBuffer: libzip.cwrap(`zip_source_buffer`, `number`, [`number`, `number`, ...number64, `number`]),
+    free: libzip.cwrap(`zip_source_free`, `void`, [`number`]),
   },
 
   struct: {

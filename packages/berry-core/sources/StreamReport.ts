@@ -6,6 +6,7 @@ import {Locator}             from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
+  footer?: boolean,
   json?: boolean,
   stdout: Writable,
 };
@@ -26,6 +27,7 @@ export class StreamReport extends Report {
   }
 
   private configuration: Configuration;
+  private footer: boolean;
   private json: boolean;  
   private stdout: Writable;
 
@@ -39,10 +41,11 @@ export class StreamReport extends Report {
 
   private indent: number = 0;
 
-  constructor({configuration, stdout, json = false}: StreamReportOptions) {
+  constructor({configuration, stdout, footer = true, json = false}: StreamReportOptions) {
     super();
 
     this.configuration = configuration;
+    this.footer = footer;
     this.json = json;
     this.stdout = stdout;
   }
@@ -64,7 +67,7 @@ export class StreamReport extends Report {
   }
 
   startTimerSync<T>(what: string, cb: () => T) {
-    this.reportInfo(MessageName.UNNAMED, `┌ ${what}`);
+    this.reportInfo(null, `┌ ${what}`);
 
     const before = Date.now();
     this.indent += 1;
@@ -79,15 +82,15 @@ export class StreamReport extends Report {
       this.indent -= 1;
 
       if (this.configuration.get(`enableTimers`)) {
-        this.reportInfo(MessageName.UNNAMED, `└ Completed in ${this.formatTiming(after - before)}`);
+        this.reportInfo(null, `└ Completed in ${this.formatTiming(after - before)}`);
       } else {
-        this.reportInfo(MessageName.UNNAMED, `└ Completed`);
+        this.reportInfo(null, `└ Completed`);
       }
     }
   }
 
   async startTimerPromise<T>(what: string, cb: () => Promise<T>) {
-    this.reportInfo(MessageName.UNNAMED, `┌ ${what}`);
+    this.reportInfo(null, `┌ ${what}`);
 
     const before = Date.now();
     this.indent += 1;
@@ -102,14 +105,22 @@ export class StreamReport extends Report {
       this.indent -= 1;
 
       if (this.configuration.get(`enableTimers`)) {
-        this.reportInfo(MessageName.UNNAMED, `└ Completed in ${this.formatTiming(after - before)}`);
+        this.reportInfo(null, `└ Completed in ${this.formatTiming(after - before)}`);
       } else {
-        this.reportInfo(MessageName.UNNAMED, `└ Completed`);
+        this.reportInfo(null, `└ Completed`);
       }
     }
   }
 
-  reportInfo(name: MessageName, text: string) {
+  reportSeparator() {
+    if (this.indent === 0) {
+      this.stdout.write(`\n`);
+    } else {
+      this.reportInfo(null, ``);
+    }
+  }
+
+  reportInfo(name: MessageName | null, text: string) {
     if (!this.json) {
       this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
     }
@@ -136,6 +147,9 @@ export class StreamReport extends Report {
   }
 
   async finalize() {
+    if (!this.footer)
+      return;
+
     let installStatus = ``;
 
     if (this.errorCount > 0)
@@ -186,10 +200,11 @@ export class StreamReport extends Report {
       : `${Math.round(timing / 600) / 100}m`;
   }
 
-  private formatName(name: MessageName) {
-    const label = `YN` + name.toString(10).padStart(4, `0`);
+  private formatName(name: MessageName | null) {
+    const num = name === null ? 0 : name;
+    const label = `YN` + num.toString(10).padStart(4, `0`);
 
-    if (name === MessageName.UNNAMED) {
+    if (name === null) {
       return this.configuration.format(label, `grey`);
     } else {
       return label;

@@ -51,11 +51,36 @@ class StatEntry {
   }
 }
 
-export type Options = {
-  baseFs?: FakeFS,
-  create?: boolean,
+function makeDefaultStats() {
+  return Object.assign(new StatEntry(), {
+    uid: 0,
+    gid: 0,
+    
+    size: 0,
+    blksize: 0,
+    
+    atimeMs: 0,
+    mtimeMs: 0,
+    ctimeMs: 0,
+    birthtimeMs: 0,
+    
+    atime: new Date(0),
+    mtime: new Date(0),
+    ctime: new Date(0),
+    birthtime: new Date(0),
+    
+    mode: S_IFREG | 0o644,
+  });  
+}
+
+export type BufferOptions = {
   readOnly?: boolean,
   stats?: Stats,
+};
+
+export type PathOptions = BufferOptions & {
+  baseFs?: FakeFS,
+  create?: boolean,
 };
 
 function toUnixTimestamp(time: Date | string | number) {
@@ -79,9 +104,8 @@ function toUnixTimestamp(time: Date | string | number) {
 }
 
 export class ZipFS extends FakeFS {
-  private readonly path: string;
-
-  private readonly baseFs: FakeFS;
+  private readonly baseFs: FakeFS | null;
+  private readonly path: string | null;
 
   private readonly stats: Stats;
   private readonly zip: number;
@@ -91,24 +115,38 @@ export class ZipFS extends FakeFS {
 
   private ready = false;
 
-  constructor(p: string, {baseFs = new NodeFS(), create = false, readOnly = false, stats}: Options = {}) {
+  constructor(p: string, opts: PathOptions);
+  constructor(data: Buffer, opts: BufferOptions);
+
+  constructor(source: string | Buffer, opts: PathOptions | BufferOptions) {
     super();
 
-    this.path = p;
+    const pathOptions = opts as PathOptions;
 
-    this.baseFs = baseFs;
-
-    if (stats) {
-      this.stats = stats;
+    if (typeof source === `string`) {
+      const {baseFs = new NodeFS()} = pathOptions;
+      this.baseFs = baseFs;
+      this.path = source;
     } else {
-      try {
-        this.stats = this.baseFs.statSync(p);
-      } catch (error) {
-        if (error.code === `ENOENT` && create) {
-          this.stats = Object.assign(new StatEntry(), {uid: 0, gid: 0, size: 0, blksize: 0, atimeMs: 0, mtimeMs: 0, ctimeMs: 0, birthtimeMs: 0, atime: new Date(0), mtime: new Date(0), ctime: new Date(0), birthtime: new Date(0), mode: S_IFREG | 0o644});
-        } else {
-          throw error;
+      this.path = null;
+      this.baseFs = null;
+    }
+
+    if (opts.stats) {
+      this.stats = opts.stats;
+    } else {
+      if (typeof source === `string`) {
+        try {
+          this.stats = this.baseFs!.statSync(source);
+        } catch (error) {
+          if (error.code === `ENOENT` && pathOptions.create) {
+            this.stats = makeDefaultStats();
+          } else {
+            throw error;
+          }
         }
+      } else {
+        this.stats = makeDefaultStats();
       }
     }
 
@@ -117,13 +155,24 @@ export class ZipFS extends FakeFS {
     try {
       let flags = 0;
 
-      if (create)
+      if (typeof source === `string` && pathOptions.create)
         flags |= libzip.ZIP_CREATE | libzip.ZIP_TRUNCATE;
 
-      if (readOnly)
+      if (opts.readOnly)
         flags |= libzip.ZIP_RDONLY;
 
-      this.zip = libzip.open(NodeFS.fromPortablePath(p), flags, errPtr);
+      if (typeof source === `string`) {
+        this.zip = libzip.open(NodeFS.fromPortablePath(source), flags, errPtr);
+      } else {
+        const lzSource = this.allocateUnattachedSource(source);
+
+        try {
+          this.zip = libzip.openFromSource(lzSource, flags, errPtr);
+        } catch (error) {
+          libzip.source.free(lzSource);
+          throw error;
+        }
+      }
 
       if (this.zip === 0) {
         const error = libzip.struct.errorS();
@@ -135,18 +184,15 @@ export class ZipFS extends FakeFS {
       libzip.free(errPtr);
     }
 
-    const entryCount = libzip.getNumEntries(this.zip, 0);
-
     this.listings.set(`/`, new Set());
 
+    const entryCount = libzip.getNumEntries(this.zip, 0);
     for (let t = 0; t < entryCount; ++t) {
       const raw = libzip.getName(this.zip, t, 0);
-
       if (posix.isAbsolute(raw))
         continue;
 
       const p = posix.resolve(`/`, raw);
-
       this.registerEntry(p, t);
 
       // If the raw path is a directory, register it
@@ -159,11 +205,21 @@ export class ZipFS extends FakeFS {
     this.ready = true;
   }
 
+  getAllFiles() {
+    return Array.from(this.entries.keys());
+  }
+
   getRealPath() {
+    if (!this.path)
+      throw new Error(`ZipFS don't have real paths when loaded from a buffer`);
+
     return this.path;
   }
 
   saveAndClose() {
+    if (!this.path || !this.baseFs)
+      throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
+
     if (!this.ready)
       throw Object.assign(new Error(`EBUSY: archive closed, close`), {code: `EBUSY`});
 
@@ -463,12 +519,11 @@ export class ZipFS extends FakeFS {
     return resolvedP;
   }
 
-  private setFileSource(p: string, content: string | Buffer | ArrayBuffer | DataView) {
+  private allocateBuffer(content: string | Buffer | ArrayBuffer | DataView) {
     if (!Buffer.isBuffer(content))
       content = Buffer.from(content as any);
 
     const buffer = libzip.malloc(content.byteLength);
-
     if (!buffer)
       throw new Error(`Couldn't allocate enough memory`);
 
@@ -476,14 +531,45 @@ export class ZipFS extends FakeFS {
     const heap = new Uint8Array(libzip.HEAPU8.buffer, buffer, content.byteLength);
     heap.set(content as any);
 
-    const source = libzip.source.fromBuffer(this.zip, buffer, content.byteLength, 0, true);
+    return {buffer, byteLength: content.byteLength};
+  }
+
+  private allocateUnattachedSource(content: string | Buffer | ArrayBuffer | DataView) {
+    const error = libzip.struct.errorS();
+
+    const {buffer, byteLength} = this.allocateBuffer(content);
+    const source = libzip.source.fromUnattachedBuffer(buffer, byteLength, 0, true, error);
+
+    if (source === 0) {
+      libzip.free(error);
+      throw new Error(libzip.error.strerror(error));
+    }
+
+    return source;
+  }
+
+  private allocateSource(content: string | Buffer | ArrayBuffer | DataView) {
+    const {buffer, byteLength} = this.allocateBuffer(content);
+    const source = libzip.source.fromBuffer(this.zip, buffer, byteLength, 0, true);
 
     if (source === 0) {
       libzip.free(buffer);
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
     }
 
-    return libzip.file.add(this.zip, posix.relative(`/`, p), source, libzip.ZIP_FL_OVERWRITE);
+    return source;
+  }
+
+  private setFileSource(p: string, content: string | Buffer | ArrayBuffer | DataView) {
+    const target = posix.relative(`/`, p);
+    const lzSource = this.allocateSource(content);
+
+    try {
+      return libzip.file.add(this.zip, target, lzSource, libzip.ZIP_FL_OVERWRITE);
+    } catch (error) {
+      libzip.source.free(lzSource);
+      throw error;
+    }
   }
 
   private isSymbolicLink(index: number) {

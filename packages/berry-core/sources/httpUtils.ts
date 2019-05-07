@@ -20,13 +20,28 @@ function parseProxy(specifier: string) {
   return {proxy};
 }
 
-export interface Options {
-  headers?: {[headerName: string]: string};
-}
+export type Body = (
+  {[key: string]: any} |
+  string |
+  Buffer |
+  null
+);
 
-async function getNoCache(target: string, configuration: Configuration, options: Options = {}): Promise<Buffer> {
+export enum Method {
+  GET = 'GET',
+  PUT = 'PUT',
+};
+
+export type Options = {
+  configuration: Configuration,
+  headers?: {[headerName: string]: string};
+  json?: boolean,
+  method?: Method,
+};
+
+async function request(target: string, body: Body, {configuration, headers, json, method = Method.GET}: Options) {
   if (!configuration.get(`enableNetwork`))
-    throw new Error(`Network access have been disabled by configuration (when querying ${target})`);
+    throw new Error(`Network access have been disabled by configuration (${method} ${target})`);
 
   const url = new URL(target);
   let agent;
@@ -44,21 +59,27 @@ async function getNoCache(target: string, configuration: Configuration, options:
       ? tunnel.httpsOverHttp(parseProxy(httpsProxy))
       : globalHttpsAgent;
 
-  const res = await got(target, {...options, agent, encoding: null});
-
-  if (res.statusCode !== 200)
-    throw new Error(`The remote server answered with an HTTP ${res.statusCode} (when querying ${target})`);
+  // @ts-ignore
+  const res = await got(target, {agent, body, headers, json, method, encoding: null});
 
   return await res.body;
 }
 
-export function get(target: string, configuration: Configuration, options?: Options): Promise<Buffer> {
+export function get(target: string, {configuration, json, ... rest}: Options) {
   let entry = cache.get(target);
 
   if (!entry) {
-    entry = getNoCache(target, configuration, options);
+    entry = request(target, null, {configuration, ... rest});
     cache.set(target, entry);
   }
 
-  return entry;
+  if (json) {
+    return entry.then(buffer => JSON.parse(buffer.toString()));
+  } else {
+    return entry;
+  }
+}
+
+export async function put(target: string, body: Body, options: Options): Promise<Buffer> {
+  return await request(target, body, {... options, method: Method.PUT});
 }

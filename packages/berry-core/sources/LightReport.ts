@@ -61,7 +61,10 @@ export class LightReport extends Report {
     return await cb();
   }
 
-  reportInfo(name: MessageName, text: string) {
+  reportSeparator() {
+  }
+
+  reportInfo(name: MessageName | null, text: string) {
   }
 
   reportWarning(name: MessageName, text: string) {

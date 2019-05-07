@@ -41,7 +41,7 @@ function cleanupPlainOutput(output, path) {
   output = output.replace(/http:\/\/localhost:\d+/g, FAKE_REGISTRY_URL);
 
   // replace the default global folder with a constant
-  output = output.replace(/[^"]+(\/yarn\/modern)/g, `${FAKE_LOCAL_APP_DATA}$1`);
+  output = output.replace(/[^"]+\/\.?yarn\/berry/ig, FAKE_LOCAL_APP_DATA);
 
   return output;
 }

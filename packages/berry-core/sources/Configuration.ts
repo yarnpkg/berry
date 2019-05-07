@@ -73,6 +73,7 @@ const legacyNames = new Set([
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
 export const DEFAULT_RC_FILENAME = `.yarnrc`;
+export const DEFAULT_LOCK_FILENAME = `yarn.lock`;
 
 export enum SettingsType {
   BOOLEAN = 'BOOLEAN',
@@ -81,15 +82,31 @@ export enum SettingsType {
   LOCATOR_LOOSE = 'LOCATOR_LOOSE',
   STRING = 'STRING',
   SECRET = 'SECRET',
+  SHAPE = 'SHAPE',
+  MAP = 'MAP',
 };
 
-export type SettingsDefinition = {
+export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   description: string,
-  type: SettingsType,
-  default: any,
+  type: T,
   isArray?: boolean,
+};
+
+export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE> & {
+  properties: {[propertyName: string]: SettingsDefinition},
+};
+
+export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
+  valueDefinition: SettingsDefinition,
+};
+
+export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>> & {
+  default: any,
+  defaultText?: any,
   isNullable?: boolean,
 };
+
+export type SettingsDefinition = MapSettingsDefinition|ShapeSettingsDefinition|SimpleSettingsDefinition;
 
 export type PluginConfiguration = {
   modules: Map<string, any>,
@@ -113,7 +130,7 @@ export type PluginConfiguration = {
 //
 // - options that enable a feature must begin with the "enable" prefix
 //   ex: enableEmojis, enableColors
-export const coreDefinitions = {
+export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = {
   // Not implemented for now, but since it's part of all Yarn installs we want to declare it in order to improve drop-in compatibility
   lastUpdateCheck: {
     description: `Last timestamp we checked whether new Yarn versions were available`,
@@ -157,7 +174,7 @@ export const coreDefinitions = {
   lockfileFilename: {
     description: `Name of the files where the Yarn dependency tree entries must be stored`,
     type: SettingsType.STRING,
-    default: `yarn.lock`,
+    default: DEFAULT_LOCK_FILENAME,
   },
   rcFilename: {
     description: `Name of the files where the configuration can be found`,
@@ -257,35 +274,140 @@ function parseBoolean(value: unknown) {
   }
 }
 
-function parseValue(value: unknown, type: SettingsType, folder: string) {
-  if (type === SettingsType.BOOLEAN)
+function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: string) {
+  if (definition.isArray) {
+    if (!Array.isArray(value)) {
+      return [parseSingleValue(configuration, path, value, definition, folder)];
+    } else {
+      return value.map((sub, i) => parseSingleValue(configuration, `${path}[${i}]`, sub, definition, folder));
+    }
+  } else {
+    if (Array.isArray(value)) {
+      throw new Error(`Non-array configuration settings "${path}" cannot be an array`);
+    } else {
+      return parseSingleValue(configuration, path, value, definition, folder);
+    }
+  }
+}
+
+function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: string) {
+  switch(definition.type) {
+    case SettingsType.SHAPE:
+      return parseShape(configuration, path, value, definition, folder);
+    case SettingsType.MAP:
+      return parseMap(configuration, path, value, definition, folder);
+  }
+
+  if (value === null && !definition.isNullable && definition.default !== null)
+    throw new Error(`Non-nullable configuration settings "${path}" cannot be set to null`);
+
+  if (definition.type === SettingsType.BOOLEAN)
     return parseBoolean(value);
 
   if (typeof value !== `string`)
     throw new Error(`Expected value to be a string`);
 
-  if (type === SettingsType.ABSOLUTE_PATH) {
-    return posix.resolve(folder, NodeFS.toPortablePath(value));
-  } else if (type === SettingsType.LOCATOR_LOOSE) {
-    return structUtils.parseLocator(value, false);
-  } else if (type === SettingsType.LOCATOR) {
-    return structUtils.parseLocator(value);
-  } else {
-    return value;
+  switch(definition.type) {
+    case SettingsType.ABSOLUTE_PATH:
+      return posix.resolve(folder, NodeFS.toPortablePath(value));
+    case SettingsType.LOCATOR_LOOSE:
+      return structUtils.parseLocator(value, false);
+    case SettingsType.LOCATOR:
+      return structUtils.parseLocator(value);
+    default:
+      return value;
+  }
+}
+
+function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: string) {
+  if (typeof value !== `object` || Array.isArray(value))
+    throw new UsageError(`Object configuration settings "${path}" must be an object`);
+
+  const result: Map<string, any> = getDefaultValue(configuration, definition);
+
+  if (value === null)
+    return result;
+
+  for (const [propKey, propValue] of Object.entries(value)) {
+    const name = camelcase(propKey);
+    const subPath = `${path}.${name}`;
+    const subDefinition = definition.properties[name];
+
+    if (!subDefinition)
+      throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`);
+
+    result.set(name, parseValue(configuration, subPath, propValue, definition.properties[name], folder));
+  }
+
+  return result;
+}
+
+function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: string) {
+  const result = new Map<string, any>();
+
+  if (typeof value !== 'object' || Array.isArray(value))
+    throw new UsageError(`Map configuration settings "${path}" must be an object`);
+
+  if (value === null)
+    return result;
+
+  for (const [propKey, propValue] of Object.entries(value)) {
+    const subPath = `${path}['${propKey}']`;
+
+    result.set(propKey, parseValue(configuration, subPath, propValue, definition.valueDefinition, folder));
+  }
+
+  return result;
+}
+
+function getDefaultValue(configuration: Configuration, definition: SettingsDefinition) {
+  switch (definition.type) {
+    case SettingsType.SHAPE: {
+      const result = new Map<string, any>();
+
+      for (const [propKey, propDefinition] of Object.entries(definition.properties))
+        result.set(propKey, getDefaultValue(configuration, propDefinition));
+
+      return result;
+    }
+    case SettingsType.MAP:
+      return new Map<string, any>();
+    case SettingsType.ABSOLUTE_PATH: {
+      if (definition.default === null)
+        return null;
+
+      if (configuration.projectCwd === null) {
+        if (posix.isAbsolute(definition.default)) {
+          return posix.normalize(definition.default);
+        } else if (definition.isNullable || definition.default === null) {
+          return null;
+        }
+      } else {
+        if (Array.isArray(definition.default)) {
+          return definition.default.map((entry: string) => posix.resolve(configuration.projectCwd, entry));
+        } else {
+          return posix.resolve(configuration.projectCwd, definition.default);
+        }
+      }
+    }
+    default:
+      return definition.default;
   }
 }
 
 function getDefaultGlobalFolder() {
-  let base;
+  if (process.platform === `win32`) {
+    const base = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
+    return posix.resolve(base, `Yarn/Berry`);
+  }
 
-  if (process.platform === `win32`)
-    base = NodeFS.toPortablePath(process.env.LOCALAPPDATA || win32.join(homedir(), 'AppData', 'Local'));
-  else if (process.env.XDG_DATA_HOME)
-    base = NodeFS.toPortablePath(process.env.XDG_DATA_HOME);
-  else
-    base = NodeFS.toPortablePath(homedir());
+  if (process.env.XDG_DATA_HOME) {
+    const base = NodeFS.toPortablePath(process.env.XDG_DATA_HOME);
+    return posix.resolve(base, `yarn/berry`);
+  }
 
-  return posix.resolve(base, `yarn/modern`);
+  const base = NodeFS.toPortablePath(homedir());
+  return posix.resolve(base, `.yarn/berry`);
 }
 
 function getEnvironmentSettings() {
@@ -297,8 +419,7 @@ function getEnvironmentSettings() {
     if (!key.startsWith(ENVIRONMENT_PREFIX))
       continue;
 
-    key = key.slice(ENVIRONMENT_PREFIX.length);
-    key = key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
+    key = camelcase(key.slice(ENVIRONMENT_PREFIX.length));
 
     environmentSettings[key] = value;
   }
@@ -317,14 +438,16 @@ function getRcFilename() {
 }
 
 export class Configuration {
+  public startingCwd: string;
   public projectCwd: string | null;
 
   public plugins: Map<string, Plugin> = new Map();
 
   public settings: Map<string, SettingsDefinition> = new Map();
-
   public values: Map<string, any> = new Map();
   public sources: Map<string, string> = new Map();
+
+  public invalid: Map<string, string> = new Map();
 
   /**
    * Instantiate a new configuration object exposing the configuration obtained
@@ -352,7 +475,7 @@ export class Configuration {
    * one listed on /foo/bar/.yarnrc, but not the other way around).
    */
 
-  static async find(startingCwd: string, pluginConfiguration: PluginConfiguration | null) {
+  static async find(startingCwd: string, pluginConfiguration: PluginConfiguration | null, {strict = true}: {strict?: boolean} = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
@@ -407,7 +530,7 @@ export class Configuration {
       }
     }
 
-    let lockfileFilename = coreDefinitions.lockfileFilename.default;
+    let lockfileFilename = DEFAULT_LOCK_FILENAME;
 
     // We need to know the project root before being able to truly instantiate
     // our configuration, and to know that we need to know the lockfile name
@@ -424,11 +547,11 @@ export class Configuration {
 
     const projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
 
-    const configuration = new Configuration(projectCwd, plugins);
-    configuration.useWithSource(`<environment>`, environmentSettings, startingCwd);
+    const configuration = new Configuration(startingCwd, projectCwd, plugins);
+    configuration.useWithSource(`<environment>`, environmentSettings, startingCwd, {strict});
 
     for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, data, cwd);
+      configuration.useWithSource(path, data, cwd, {strict});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
@@ -529,8 +652,10 @@ export class Configuration {
     await xfs.writeFilePromise(configurationPath, stringifySyml(current));
   }
 
-  constructor(projectCwd: string | null, plugins: Map<string, Plugin>) {
+  constructor(startingCwd: string, projectCwd: string | null, plugins: Map<string, Plugin>) {
+    this.startingCwd = startingCwd;
     this.projectCwd = projectCwd;
+
     this.plugins = plugins;
 
     const importSettings = (definitions: {[name: string]: SettingsDefinition}) => {
@@ -541,25 +666,7 @@ export class Configuration {
           throw new Error(`Settings named "${name}" conflicts with an actual property`);
 
         this.settings.set(name, definition);
-
-        if (definition.type === SettingsType.ABSOLUTE_PATH && definition.default !== null) {
-          if (this.projectCwd === null) {
-            if (posix.isAbsolute(definition.default)) {
-              this.values.set(name, posix.normalize(definition.default));
-            } else if (definition.isNullable || definition.default === null) {
-              this.values.set(name, null);
-            }
-          } else {
-            const projectCwd = this.projectCwd;
-            if (Array.isArray(definition.default)) {
-              this.values.set(name, definition.default.map((entry: string) => posix.resolve(projectCwd, entry)));
-            } else {
-              this.values.set(name, posix.resolve(projectCwd, definition.default));
-            }
-          }
-        } else {
-          this.values.set(name, definition.default);
-        }
+        this.values.set(name, getDefaultValue(this, definition));
       }
     };
 
@@ -572,21 +679,40 @@ export class Configuration {
     }
   }
 
-  useWithSource(source: string, data: {[key: string]: unknown}, folder: string) {
+  extend(data: {[key: string]: unknown}) {
+    const newConfiguration = Object.create(Configuration.prototype);
+
+    newConfiguration.startingCwd = this.startingCwd;
+    newConfiguration.projectCwd = this.projectCwd;
+
+    newConfiguration.plugins = new Map(this.plugins);
+
+    newConfiguration.settings = new Map(this.settings);
+    newConfiguration.values = new Map(this.values);
+    newConfiguration.sources = new Map(this.sources);
+
+    newConfiguration.invalid = new Map(this.invalid);
+
+    newConfiguration.useWithSource(`<internal override>`, data, this.startingCwd, {override: true});
+
+    return newConfiguration;
+  }
+
+  useWithSource(source: string, data: {[key: string]: unknown}, folder: string, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
     try {
-      this.use(source, data, folder);
+      this.use(source, data, folder, {strict, overwrite});
     } catch (error) {
       error.message += ` (in ${source})`;
       throw error;
     }
   }
 
-  use(source: string, data: {[key: string]: unknown}, folder: string) {
+  use(source: string, data: {[key: string]: unknown}, folder: string, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
     if (typeof data.berry === `object` && data.berry !== null)
       data = data.berry;
 
     for (const key of Object.keys(data)) {
-      const name = key.replace(/[_-]([a-z])/g, ($0, $1) => $1.toUpperCase());
+      const name = camelcase(key);
 
       // The plugins have already been loaded at this point
       if (name === `plugins`)
@@ -601,28 +727,19 @@ export class Configuration {
         throw new UsageError(`The rcFilename settings can only be set via ${`${ENVIRONMENT_PREFIX}RC_FILENAME`.toUpperCase()}, not via a rc file`);
 
       const definition = this.settings.get(name);
-      if (!definition)
-        throw new UsageError(`${legacyNames.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
-
-      if (this.sources.has(name))
-        continue;
-
-      let value = data[key];
-      if (value === null && !definition.isNullable && definition.default !== null)
-        throw new Error(`Non-nullable configuration settings "${name}" cannot be set to null`);
-
-      if (Array.isArray(value)) {
-        if (!definition.isArray && !Array.isArray(definition.default)) {
-          throw new Error(`Non-array configuration settings "${name}" cannot be an array`);
+      if (!definition) {
+        if (strict) {
+          throw new UsageError(`${legacyNames.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
         } else {
-          value = value.map(sub => parseValue(sub, definition.type, folder));
+          this.invalid.set(key, source);
+          continue;
         }
-      } else {
-        value = parseValue(value, definition.type, folder);
       }
 
-      // @ts-ignore
-      this.values.set(name, value);
+      if (this.sources.has(name) && !overwrite)
+        continue;
+
+      this.values.set(name, parseValue(this, name, data[key], definition, folder));
       this.sources.set(name, source);
     }
   }

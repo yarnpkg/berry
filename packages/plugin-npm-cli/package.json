@@ -1,0 +1,14 @@
+{
+  "name": "@berry/plugin-npm-cli",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/cli": "workspace:*",
+    "@berry/core": "workspace:*",
+    "@berry/plugin-npm": "workspace:*",
+    "@berry/plugin-pack": "workspace:*",
+    "clipanion": "^0.14.1",
+    "ssri": "^6.0.1",
+    "yup": "^0.27.0"
+  }
+}

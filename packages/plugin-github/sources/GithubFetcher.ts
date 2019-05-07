@@ -37,7 +37,9 @@ export class GithubFetcher implements Fetcher {
   }
 
   async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
-    const sourceBuffer = await httpUtils.get(this.getLocatorUrl(locator, opts), opts.project.configuration);
+    const sourceBuffer = await httpUtils.get(this.getLocatorUrl(locator, opts), {
+      configuration: opts.project.configuration,
+    });
 
     return await tgzUtils.makeArchive(sourceBuffer, {
       stripComponents: 1,

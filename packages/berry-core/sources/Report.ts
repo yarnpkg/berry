@@ -38,10 +38,13 @@ export enum MessageName {
   DANGEROUS_NODE_MODULES = 31,
   NODE_GYP_INJECTED = 32,
   AUTHENTICATION_NOT_FOUND = 33,
-  CONSTRAINTS_MISSING_FIELD = 34,
-  CONSTRAINTS_INCOMPATIBLE_FIELD = 35,
-  CONSTRAINTS_EXTRANEOUS_FIELD = 36,
-  CONSTRAINTS_INVALID_FIELD = 37,
+  INVALID_CONFIGURATION_KEY = 34,
+  NETWORK_ERROR = 35,
+  LIFECYCLE_SCRIPT = 36,
+  CONSTRAINTS_MISSING_FIELD = 37,
+  CONSTRAINTS_INCOMPATIBLE_FIELD = 38,
+  CONSTRAINTS_EXTRANEOUS_FIELD = 39,
+  CONSTRAINTS_INVALID_FIELD = 40,
 }
 
 export class ReportError extends Error {
@@ -69,7 +72,8 @@ export abstract class Report {
   abstract startTimerPromise<T>(what: string, cb: () => Promise<T>): Promise<T>;
   abstract startTimerSync<T>(what: string, cb: () => T): T;
 
-  abstract reportInfo(name: MessageName, text: string): void;
+  abstract reportSeparator(): void;
+  abstract reportInfo(name: MessageName | null, text: string): void;
   abstract reportWarning(name: MessageName, text: string): void;
   abstract reportError(name: MessageName, text: string): void;
   abstract reportJson(data: any): void;

@@ -27,7 +27,7 @@ const afterWorkspaceDependencyAddition = async (
   const strategies = [suggestUtils.Strategy.LATEST];
 
   const request = structUtils.makeDescriptor(structUtils.makeIdent(`types`, typesName), `unknown`);
-  const suggestions = await suggestUtils.getSuggestedDescriptors(request, null, {project, cache, target, modifier, strategies});
+  const suggestions = await suggestUtils.getSuggestedDescriptors(request, {workspace, project, cache, target, modifier, strategies});
 
   const nonNullSuggestions = suggestions.filter(suggestion => suggestion.descriptor !== null);
   if (nonNullSuggestions.length === 0)

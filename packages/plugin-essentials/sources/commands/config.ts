@@ -3,12 +3,6 @@ import {miscUtils}                                                              
 import {Writable}                                                                    from 'stream';
 import {inspect}                                                                     from 'util';
 
-function fromEntries(iterable: Iterable<[any, any] | {0: any, 1: any}>): {[key: string]: any} {
-  return [... iterable].reduce((obj, { 0:key, 1: val}) => Object.assign(obj, {
-    [key]: val,
-  }), {});
-}
-
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
@@ -31,7 +25,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   )
 
   .action(async ({cwd, stdout, verbose, why, json}: {cwd: string, stdout: Writable, verbose: boolean, why: boolean, json: boolean}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
+    const configuration = await Configuration.find(cwd, pluginConfiguration, {
+      strict: false,
+    });
 
     const getValue = (key: string) => {
       const isSecret = configuration.settings.get(key)!.type === SettingsType.SECRET;
@@ -45,6 +41,13 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     };
 
     const report = await StreamReport.start({configuration, json, stdout}, async report => {
+      if (configuration.invalid.size > 0 && !json) {
+        for (const [key, source] of configuration.invalid)
+          report.reportError(MessageName.INVALID_CONFIGURATION_KEY, `Invalid configuration key "${key}" in ${source}`);
+
+        report.reportSeparator();
+      }
+
       if (json) {
         const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
 
@@ -89,11 +92,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           }, 0);
 
           for (const [key, description] of keysAndDescriptions) {
-            report.reportInfo(MessageName.UNNAMED, `${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(getValue(key), inspectConfig)}`);
+            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(getValue(key), inspectConfig)}`);
           }
         } else {
           for (const key of keys) {
-            report.reportInfo(MessageName.UNNAMED, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(getValue(key), inspectConfig)}`);
+            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(getValue(key), inspectConfig)}`);
           }
         }
       }

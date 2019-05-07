@@ -42,11 +42,10 @@ export class NpmFetcher implements Fetcher {
   }
 
   private async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
-    const sourceBuffer = await npmHttpUtils.get(
-      this.getLocatorUrl(locator, opts),
-      locator,
-      opts.project.configuration,
-    );
+    const sourceBuffer = await npmHttpUtils.get(this.getLocatorUrl(locator, opts), {
+      configuration: opts.project.configuration,
+      ident: locator,
+    });
 
     return await tgzUtils.makeArchive(sourceBuffer, {
       stripComponents: 1,
@@ -56,9 +55,8 @@ export class NpmFetcher implements Fetcher {
 
   private getLocatorUrl(locator: Locator, opts: FetchOptions) {
     const version = locator.reference.slice(PROTOCOL.length);
-    const registry = opts.project.configuration.get(`npmRegistryServer`);
 
-    return `${registry}/${structUtils.requirableIdent(locator)}/-/${locator.name}-${version}.tgz`;
+    return `/${structUtils.requirableIdent(locator)}/-/${locator.name}-${version}.tgz`;
   }
 
   private getPrefixPath(locator: Locator) {

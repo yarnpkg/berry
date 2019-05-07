@@ -40,7 +40,11 @@ function runBinary(path: string) {
 }
 
 async function run() {
-  const configuration = await Configuration.find(NodeFS.toPortablePath(process.cwd()), pluginConfiguration);
+  // Since we only care about a few very specific settings (yarn-path and ignore-path) we tolerate extra configuration key.
+  // If we didn't, we wouldn't even be able to run `yarn config` (which is recommended in the invalid config error message)
+  const configuration = await Configuration.find(NodeFS.toPortablePath(process.cwd()), pluginConfiguration, {
+    strict: false,
+  });
 
   const yarnPath = configuration.get(`yarnPath`);
   const ignorePath = configuration.get(`ignorePath`);
