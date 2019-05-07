@@ -23,11 +23,17 @@ Going back to the constraint engine, the *facts* are the definitions created by 
 
 The following predicates provide information about the current state of your project and are meant to be used in the dependencies of your own rules (check the recipes for examples how to use them in practice). Note that the `/<number>` syntax listed at the end simply is the predicate arity (number of arguments it takes).
 
+The notation on this page uses `-`, `+` and `?` as prefix for the predicate parameters. These values are used commonly in prolog documentation and mean
+
+- `+`: this value is considered input and must be instantiated
+- `-`: this value is considered output and will be instantiated by the predicate, though you can provide a value to verify that the value matches the predicate
+- `?`: this value can be instantiated or not, both will work
+
 #### `dependency_type/1
 
 ```prolog
 dependency_type(
-  DependencyType
+  -DependencyType
 ).
 ```
 
@@ -37,7 +43,7 @@ True for only three values: `dependencies`, `devDependencies` and `peerDependenc
 
 ```prolog
 workspace(
-  WorkspaceCwd
+  -WorkspaceCwd
 ).
 ```
 
@@ -47,8 +53,8 @@ True if the workspace described by the specified `WorkspaceCwd` exists.
 
 ```prolog
 workspace_ident(
-  WorkspaceCwd,
-  WorkspaceIdent
+  ?WorkspaceCwd,
+  ?WorkspaceIdent
 ).
 ```
 
@@ -58,8 +64,8 @@ True if the workspace described by the specified `WorkspaceCwd` exists and if it
 
 ```prolog
 workspace_version(
-  WorkspaceCwd,
-  WorkspaceVersion
+  ?WorkspaceCwd,
+  ?WorkspaceVersion
 ).
 ```
 
@@ -69,10 +75,10 @@ True if the workspace described by the specified `WorkspacedCwd` exists and if i
 
 ```prolog
 workspace_has_dependency(
-  WorkspaceCwd,
-  DependencyIdent,
-  DependencyRange,
-  DependencyType
+  ?WorkspaceCwd,
+  ?DependencyIdent,
+  ?DependencyRange,
+  ?DependencyType
 ).
 ```
 
@@ -82,9 +88,9 @@ True if the workspace described by the specified `WorkspaceCwd` depends on the d
 
 ```prolog
 workspace_field(
-  WorkspaceCwd,
-  FieldPath,
-  FieldValue
+  +WorkspaceCwd,
+  +FieldPath,
+  -FieldValue
 ).
 ```
 
@@ -96,14 +102,19 @@ The `FieldPath` can target properties of properties via `.` notation, e.g. a `Fi
 
 The following predicates will affect the behavior of the `yarn constraints check` and `yarn constraints fix` commands.
 
+The parameters to the predicates are prefixed with `+` and `-`. These have the same meaning as in the query predicates. In this context they mean
+
+- `-` These are the output, they will not have a value when the predicate is invoked and the predicate must ensure a value is set
+- `+` These are the input, they will already have a value when the predicate is invoked
+
 #### `gen_enforced_dependency/4`
 
 ```prolog
 gen_enforced_dependency(
-  WorkspaceCwd,
-  DependencyIdent,
-  DependencyRange,
-  DependencyType
+  +WorkspaceCwd,
+  -DependencyIdent,
+  -DependencyRange,
+  +DependencyType
 ).
 ```
 
@@ -115,10 +126,10 @@ The `gen_enforced_dependency` rule offers a neat way to inform the package manag
 
 ```prolog
 gen_invalid_dependency(
-  WorkspaceCwd,
-  DependencyIdent,
-  DependencyType,
-  Reason
+  +WorkspaceCwd,
+  -DependencyIdent,
+  +DependencyType,
+  -Reason
 ).
 ```
 
@@ -133,9 +144,9 @@ Contrary to `gen_enforced_dependency`, `gen_invalid_dependency` doesn't allow th
 
 ```prolog
 gen_enforced_field(
-  WorkspaceCwd,
-  FieldPath,
-  FieldValue
+  +WorkspaceCwd,
+  -FieldPath,
+  -FieldValue
 ).
 ```
 
