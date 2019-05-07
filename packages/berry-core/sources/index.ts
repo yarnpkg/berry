@@ -1,4 +1,5 @@
 import * as execUtils   from './execUtils';
+import * as folderUtils from './folderUtils';
 import * as httpUtils   from './httpUtils';
 import * as miscUtils   from './miscUtils';
 import * as scriptUtils from './scriptUtils';
@@ -26,6 +27,7 @@ export {LinkType}                                                             fr
 
 export {httpUtils};
 export {execUtils};
+export {folderUtils};
 export {miscUtils};
 export {scriptUtils};
 export {structUtils};
