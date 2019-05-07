@@ -1,20 +1,10 @@
-import {Ident, Locator, Project, Workspace} from '@berry/core';
-import {miscUtils, structUtils}             from '@berry/core';
-import {xfs}                                from '@berry/fslib';
-import {posix}                              from 'path';
-import pl                                   from 'tau-prolog';
+import {Ident, Project, Workspace} from '@berry/core';
+import {miscUtils, structUtils}    from '@berry/core';
+import {xfs}                       from '@berry/fslib';
+import {posix}                     from 'path';
+import pl                          from 'tau-prolog';
 
-import {linkProjectToSession}               from './tauModule';
-
-export type DependencyMismatch = {
-  packageLocator: Locator,
-  dependencyIdent: Ident,
-  expectedResolution: string,
-};
-
-export type ConstraintReport = {
-  mismatchingDependencies: Array<DependencyMismatch>,
-};
+import {linkProjectToSession}      from './tauModule';
 
 export const enum DependencyType {
   Dependencies = 'dependencies',
@@ -132,6 +122,9 @@ export class Constraints {
     // (Cwd, DependencyIdent, DependencyType, Reason)
     declarations += `gen_invalid_dependency(_, _, _, _) :- false.\n`;
 
+    // (Cwd, Path, Value)
+    declarations += `gen_workspace_field_requirement(_, _, _) :- false.\n`;
+
     return declarations;
   }
 
@@ -167,7 +160,7 @@ export class Constraints {
 
       const workspace = this.project.getWorkspaceByCwd(workspaceCwd);
       const dependencyIdent = structUtils.parseIdent(dependencyRawIdent);
-      
+
       enforcedDependencyRanges.push({workspace, dependencyIdent, dependencyRange, dependencyType});
     }
 
@@ -207,7 +200,34 @@ export class Constraints {
       ({dependencyIdent}) => structUtils.stringifyIdent(dependencyIdent),
     ]);
 
-    return {enforcedDependencyRanges, invalidDependencies};
+    let workspaceFieldRequirements: Array<{
+      workspace: Workspace,
+      fieldPath: string,
+      fieldValue: string|null,
+    }> = [];
+
+    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), gen_workspace_field_requirement(WorkspaceCwd, FieldPath, FieldValue).`)) {
+      if (answer.id === `throw`)
+        throw new Error(pl.format_answer(answer));
+
+      const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
+      const fieldPath = parseLink(answer.links.FieldPath);
+      const fieldValue = parseLink(answer.links.FieldValue);
+
+      if (workspaceCwd === null || fieldPath === null)
+        throw new Error(`Invalid rule`);
+
+      const workspace = this.project.getWorkspaceByCwd(workspaceCwd);
+
+      workspaceFieldRequirements.push({workspace, fieldPath, fieldValue});
+    }
+
+    workspaceFieldRequirements = miscUtils.sortMap(workspaceFieldRequirements, [
+      ({workspace}) => structUtils.stringifyIdent(workspace.locator),
+      ({fieldPath}) => fieldPath,
+    ]);
+
+    return {enforcedDependencyRanges, invalidDependencies, workspaceFieldRequirements};
   }
 
   async *query(query: string) {

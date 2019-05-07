@@ -47,6 +47,35 @@ Object {
 }
 `;
 
+exports[`Commands constraints check test (empty project / gen_workspace_field_requirement (extraneous)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints check test (empty project / gen_workspace_field_requirement (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: root-workspace-988eec must have field \\"dependencies[\\"no-deps\\"]\\" value \\"2.0.0\\", but doesn't
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (empty project / gen_workspace_field_requirement (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: root-workspace-988eec must have field \\"dependencies[\\"a-new-dep\\"]\\" value \\"1.0.0\\", but doesn't
+➤ YN0000: Failed with errors
+",
+}
+`;
+
 exports[`Commands constraints check test (multiple workspaces / empty constraints) 1`] = `
 Object {
   "code": 0,
@@ -104,6 +133,41 @@ Object {
 }
 `;
 
+exports[`Commands constraints check test (multiple workspaces / gen_workspace_field_requirement (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0039: workspace-a-01beb5 has an extraneous field \\"dependencies\\" with value {\\"no-deps\\":\\"1.0.0\\",\\"no-deps-bin\\":\\"1.0.0\\"}
+➤ YN0039: workspace-b-d95f30 has an extraneous field \\"dependencies\\" with value {\\"no-deps\\":\\"1.0.0\\",\\"no-deps-bin\\":\\"1.0.0\\"}
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (multiple workspaces / gen_workspace_field_requirement (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: root-workspace-988eec must have field \\"dependencies[\\"no-deps\\"]\\" value \\"2.0.0\\", but doesn't
+➤ YN0038: workspace-a-01beb5 must have field \\"dependencies[\\"no-deps\\"]\\" with value \\"2.0.0\\" but it has value \\"1.0.0\\"
+➤ YN0038: workspace-b-d95f30 must have field \\"dependencies[\\"no-deps\\"]\\" with value \\"2.0.0\\" but it has value \\"1.0.0\\"
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (multiple workspaces / gen_workspace_field_requirement (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: root-workspace-988eec must have field \\"dependencies[\\"a-new-dep\\"]\\" value \\"1.0.0\\", but doesn't
+➤ YN0037: workspace-a-01beb5 must have field \\"dependencies[\\"a-new-dep\\"]\\" value \\"1.0.0\\", but doesn't
+➤ YN0037: workspace-b-d95f30 must have field \\"dependencies[\\"a-new-dep\\"]\\" value \\"1.0.0\\", but doesn't
+➤ YN0000: Failed with errors
+",
+}
+`;
+
 exports[`Commands constraints check test (one regular dependency / empty constraints) 1`] = `
 Object {
   "code": 0,
@@ -148,6 +212,36 @@ Object {
   "code": 1,
   "stderr": "",
   "stdout": "➤ YN0026: root-workspace-988eec has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (one regular dependency / gen_workspace_field_requirement (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0039: root-workspace-988eec has an extraneous field \\"dependencies\\" with value {\\"no-deps\\":\\"1.0.0\\"}
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (one regular dependency / gen_workspace_field_requirement (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0038: root-workspace-988eec must have field \\"dependencies[\\"no-deps\\"]\\" with value \\"2.0.0\\" but it has value \\"1.0.0\\"
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (one regular dependency / gen_workspace_field_requirement (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: root-workspace-988eec must have field \\"dependencies[\\"a-new-dep\\"]\\" value \\"1.0.0\\", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -202,6 +296,35 @@ Object {
 }
 `;
 
+exports[`Commands constraints check test (two development dependencies / gen_workspace_field_requirement (extraneous)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints check test (two development dependencies / gen_workspace_field_requirement (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: root-workspace-988eec must have field \\"dependencies[\\"no-deps\\"]\\" value \\"2.0.0\\", but doesn't
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two development dependencies / gen_workspace_field_requirement (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: root-workspace-988eec must have field \\"dependencies[\\"a-new-dep\\"]\\" value \\"1.0.0\\", but doesn't
+➤ YN0000: Failed with errors
+",
+}
+`;
+
 exports[`Commands constraints check test (two regular dependencies / empty constraints) 1`] = `
 Object {
   "code": 0,
@@ -246,6 +369,36 @@ Object {
   "code": 1,
   "stderr": "",
   "stdout": "➤ YN0026: root-workspace-988eec has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies / gen_workspace_field_requirement (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0039: root-workspace-988eec has an extraneous field \\"dependencies\\" with value {\\"no-deps\\":\\"1.0.0\\",\\"no-deps-bin\\":\\"1.0.0\\"}
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies / gen_workspace_field_requirement (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0038: root-workspace-988eec must have field \\"dependencies[\\"no-deps\\"]\\" with value \\"2.0.0\\" but it has value \\"1.0.0\\"
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies / gen_workspace_field_requirement (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: root-workspace-988eec must have field \\"dependencies[\\"a-new-dep\\"]\\" value \\"1.0.0\\", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -297,6 +450,36 @@ Object {
   "stderr": "",
   "stdout": "➤ YN0026: root-workspace-988eec has an invalid dependency on no-deps in dependencies (invalid because no-deps is not allowed unless built is set to false)
 ➤ YN0026: root-workspace-988eec has an invalid dependency on no-deps in devDependencies (invalid because no-deps is not allowed unless built is set to false)
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_workspace_field_requirement (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0039: root-workspace-988eec has an extraneous field \\"dependencies\\" with value {\\"no-deps\\":\\"1.0.0\\",\\"no-deps-bin\\":\\"1.0.0\\"}
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_workspace_field_requirement (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0038: root-workspace-988eec must have field \\"dependencies[\\"no-deps\\"]\\" with value \\"2.0.0\\" but it has value \\"1.0.0\\"
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints check test (two regular dependencies, two development dependencies / gen_workspace_field_requirement (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: root-workspace-988eec must have field \\"dependencies[\\"a-new-dep\\"]\\" value \\"1.0.0\\", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
