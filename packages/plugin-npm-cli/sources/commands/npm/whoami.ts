@@ -2,7 +2,6 @@ import {Configuration, MessageName, PluginConfiguration, StreamReport} from '@be
 import {npmHttpUtils}                                                  from '@berry/plugin-npm';
 import {Clipanion}                                                     from 'clipanion';
 import {Readable, Writable}                                            from 'stream';
-import {URL}                                                           from 'url';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) => clipanion
@@ -25,8 +24,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
     const report = await StreamReport.start({configuration, stdout}, async report => {
 
       try {
-        const registryUrl = getRegistryUrl(configuration);
-        const responseBuffer = await npmHttpUtils.get(`${registryUrl}-/whoami`, { configuration, forceAuth: true });
+        const responseBuffer = await npmHttpUtils.get(`/-/whoami`, { configuration, ident: null, forceAuth: true });
         const jsonResponse = JSON.parse(responseBuffer.toString());
 
         report.reportInfo(MessageName.UNNAMED, jsonResponse.username);
@@ -40,9 +38,3 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
 
     return report.exitCode();
   });
-
-function getRegistryUrl(configuration: Configuration) {
-  const url = configuration.get('npmRegistryServer');
-
-  return new URL(url);
-}
