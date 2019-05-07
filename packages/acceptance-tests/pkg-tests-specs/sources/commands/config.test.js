@@ -1,3 +1,4 @@
+const {NodeFS} = require(`@berry/fslib`);
 const {
   fs: {mkdirp, writeFile, createTemporaryFolder},
 } = require('pkg-tests-core');
@@ -104,7 +105,7 @@ describe(`Commands`, () => {
       for (const [optionDescription, {flags, cleanupStdout}] of Object.entries(options)) {
         test(`test (${environmentDescription} / ${optionDescription})`, makeTemporaryEnv({}, async ({path, run, source}) => {
           const cwd = `${path}/${SUBFOLDER}/${SUBFOLDER}`;
-          const homePath = await createTemporaryFolder();
+          const homePath = NodeFS.toPortablePath(await createTemporaryFolder());
 
           await mkdirp(cwd);
           await environment({path, homePath});
