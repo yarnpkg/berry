@@ -20,14 +20,27 @@ As you can guess, this philosophy (coupled with the high number of external cont
 
 ## How to use plugins?
 
-Plugins are single-file JS scripts built via the `@berry/builder` tools. They are relatively easy to use (we plan to improve it even more by wrapping the process within a CLI command):
+Plugins are single-file JS scripts built via the `@berry/builder` tools. They are easy to use:
 
-  - Download the plugin you want to use and put it somewhere within your project
+### Automatic setup
+
+The official plugins (the ones whose development happen on the Yarn repository) can be installed using the following commands:
+
+  - `yarn plugins dl --list` will print the name of the available official plugins. Some of them might be marked experimental, in which case they might be subject to breaking changes between releases (they should be mostly stable in general, though).
+
+  - `yarn plugins dl <plugin-name>` will download one of the plugins from the list, store it within `.yarn/plugins`, and modify your local `.yarnrc` file to reference it.
+
+  - If the plugin you're looking for is hosted on a different server (or is a non-official plugin), just run `yarn plugins dl <url>` and the same process will happen.
+
+### Manual setup
+
+The `yarn plugins dl` command is useful, but in case you prefer to setup your project yourself:
+
+  - Download the plugin you want to use and put it somewhere
+
   - Update your project-level `.yarnrc` file by adding the following property:
 
     ```
     plugins:
       - "./my-plugin.js"
     ```
-
-And that's it! The next time you'll start Yarn, your plugin will be injected into the environment.
