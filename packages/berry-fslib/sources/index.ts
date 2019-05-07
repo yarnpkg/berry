@@ -1,17 +1,21 @@
-import fs          from 'fs';
+import fs                         from 'fs';
 
-import {FakeFS}    from './FakeFS';
-import {NodeFS}    from './NodeFS';
+import {FakeFS}                   from './FakeFS';
+import {NodeFS}                   from './NodeFS';
 
-export {AliasFS}   from './AliasFS';
-export {FakeFS}    from './FakeFS';
-export {CwdFS}     from './CwdFS';
-export {JailFS}    from './JailFS';
-export {LazyFS}    from './LazyFS';
-export {NodeFS}    from './NodeFS';
-export {PosixFS}   from './PosixFS';
-export {ZipFS}     from './ZipFS';
-export {ZipOpenFS} from './ZipOpenFS';
+export {CreateReadStreamOptions}  from './FakeFS';
+export {CreateWriteStreamOptions} from './FakeFS';
+export {WriteFileOptions}         from './FakeFS';
+
+export {AliasFS}                  from './AliasFS';
+export {FakeFS}                   from './FakeFS';
+export {CwdFS}                    from './CwdFS';
+export {JailFS}                   from './JailFS';
+export {LazyFS}                   from './LazyFS';
+export {NodeFS}                   from './NodeFS';
+export {PosixFS}                  from './PosixFS';
+export {ZipFS}                    from './ZipFS';
+export {ZipOpenFS}                from './ZipOpenFS';
 
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
   const SYNC_IMPLEMENTATIONS = new Set([

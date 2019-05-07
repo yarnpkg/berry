@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 /**
  * PnP API locator options
  */
@@ -7,7 +9,7 @@ export interface PnPApiLocatorOptions {
    *
    * @param filePath file path
    */
-  existsSync: (filePath: string) => boolean;
+  existsSync?: (filePath: string) => boolean;
 
   /**
    * PnP api filename.
@@ -68,7 +70,7 @@ export class PnPApiLocator {
   constructor(options?: PnPApiLocatorOptions) {
     const opts: any = options || {};
     this.options = {
-      existsSync: opts.existsSync,
+      existsSync: opts.existsSync || fs.existsSync.bind(fs),
       pnpFileName: opts.pnpFileName || '.pnp.js'
     };
     this.checkTree = new Map();
@@ -96,13 +98,15 @@ export class PnPApiLocator {
    */
   public findApi(sourcePath: string): string | null {
     let apiPath = null;
+    const pathSep = sourcePath.indexOf('\\') >= 0 ? '\\' : '/';
     const pathComponentList = this.getPathComponents(sourcePath);
 
     let currentDir;
     let node = this.checkTree;
     for (const pathComponent of pathComponentList) {
-      currentDir = typeof currentDir === 'undefined' ? pathComponent : currentDir + '/' + pathComponent;
-      const currentPath = currentDir + '/' + this.options.pnpFileName;
+      currentDir = typeof currentDir === 'undefined' ? pathComponent : currentDir + pathSep + pathComponent;
+      let currentPath = currentDir + pathSep + this.options.pnpFileName;
+
       let val = node.get(pathComponent);
       if (typeof val === 'undefined') {
         val = this.options.existsSync(currentPath) ? true : new Map();

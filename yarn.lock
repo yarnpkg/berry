@@ -1906,12 +1906,9 @@ __metadata:
   version: 0.0.0
   resolution: "@berry/pnpify@workspace:packages/berry-pnpify"
   dependencies:
-    "@babel/cli": "npm:^7.2.3"
     "@berry/builder": "workspace:*"
     "@berry/fslib": "workspace:*"
     "@berry/pnp": "workspace:*"
-    "@types/jest": "npm:^24.0.11"
-    typescript: "npm:^3.3.3333"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:3.2.1"
   peerDependencies:
@@ -3075,22 +3072,6 @@ __metadata:
   version: 1.1.0
   resolution: "@types/istanbul-lib-coverage@npm:1.1.0"
   checksum: 7d438cacef535af7b1c514c6878136a0bc6a4759b162f4dbcd771e6ca245b5d0df7fcace885ef4fd63c1610ed6f38a026416e0458ebaf3c5bea009cfe500d6cc
-  languageName: node
-  linkType: hard
-
-"@types/jest-diff@npm:*":
-  version: 20.0.1
-  resolution: "@types/jest-diff@npm:20.0.1"
-  checksum: c193d901556c7c2240b0190fc9ef902f2f9713100a1b3833214e5109b6985a14b769c39577215ce41ad41d0c38b4b5d41cb0e8ecbebc5eafbab889e7f5de344f
-  languageName: node
-  linkType: hard
-
-"@types/jest@npm:^24.0.11":
-  version: 24.0.11
-  resolution: "@types/jest@npm:24.0.11"
-  dependencies:
-    "@types/jest-diff": "npm:*"
-  checksum: 98d4c9fbdbfba2c3a967a3e15a197facd3dc36a0db560807e299b2b38cdbfbe8de7cdb09b9995288a711d767432d55d321b523b0d822be99d15f26a984bd8e59
   languageName: node
   linkType: hard
 

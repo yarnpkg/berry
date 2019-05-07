@@ -279,54 +279,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             }
           ],
           [
-            "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:7.2.3",
-            {
-              "packageLocation": "./.yarn/virtual/@babel-cli-virtual-777e56071c0c928bd9f30cdb095ce683138e145f88212ca46a3b0241548eca05/node_modules/@babel/cli/",
-              "packageDependencies": [
-                [
-                  "@babel/cli",
-                  "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:7.2.3"
-                ],
-                [
-                  "commander",
-                  "npm:2.19.0"
-                ],
-                [
-                  "convert-source-map",
-                  "npm:1.6.0"
-                ],
-                [
-                  "fs-readdir-recursive",
-                  "npm:1.1.0"
-                ],
-                [
-                  "glob",
-                  "npm:7.1.3"
-                ],
-                [
-                  "lodash",
-                  "npm:4.17.11"
-                ],
-                [
-                  "mkdirp",
-                  "npm:0.5.1"
-                ],
-                [
-                  "output-file-sync",
-                  "npm:2.0.1"
-                ],
-                [
-                  "slash",
-                  "npm:2.0.0"
-                ],
-                [
-                  "source-map",
-                  "npm:0.5.7"
-                ]
-              ]
-            }
-          ],
-          [
             "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:7.2.3",
             {
               "packageLocation": "./.yarn/virtual/@babel-cli-virtual-d10f4f3334a43d2e0d02cbd0751c6eb087e6ca7cca5d5f05ea03e64051cef75c/node_modules/@babel/cli/",
@@ -9952,10 +9904,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-pnpify"
                 ],
                 [
-                  "@babel/cli",
-                  "virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:7.2.3"
-                ],
-                [
                   "@berry/builder",
                   "workspace:packages/berry-builder"
                 ],
@@ -9966,14 +9914,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/pnp",
                   "workspace:packages/berry-pnp"
-                ],
-                [
-                  "@types/jest",
-                  "npm:24.0.11"
-                ],
-                [
-                  "typescript",
-                  "npm:3.3.3333"
                 ],
                 [
                   "webpack",
@@ -13987,44 +13927,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/istanbul-lib-coverage",
                   "npm:1.1.0"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
-        "@types/jest",
-        [
-          [
-            "npm:24.0.11",
-            {
-              "packageLocation": "./.yarn/cache/@types-jest-npm-24.0.11-0204fe3ee4b723379f130da15da7281f42601b92a45318ed330cb2b46a340f4b.zip/node_modules/@types/jest/",
-              "packageDependencies": [
-                [
-                  "@types/jest",
-                  "npm:24.0.11"
-                ],
-                [
-                  "@types/jest-diff",
-                  "npm:20.0.1"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
-        "@types/jest-diff",
-        [
-          [
-            "npm:20.0.1",
-            {
-              "packageLocation": "./.yarn/cache/@types-jest-diff-npm-20.0.1-1610c1f387c35e804eb85552b329fd03aaf85caa86589866838f0fb518619409.zip/node_modules/@types/jest-diff/",
-              "packageDependencies": [
-                [
-                  "@types/jest-diff",
-                  "npm:20.0.1"
                 ]
               ]
             }

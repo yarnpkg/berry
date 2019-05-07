@@ -2,6 +2,8 @@
   "name": "@berry/pnpify",
   "private": true,
   "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "sideEffects": false,
   "peerDependencies": {
     "pnpapi": "^0.0.0"
   },
@@ -11,15 +13,12 @@
     "test:watch:pnpify": "run test:unit --watch packages/berry-pnpify"
   },
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
     "@berry/builder": "workspace:*",
-    "@types/jest": "^24.0.11",
-    "typescript": "^3.3.3333",
+    "@berry/pnp": "workspace:*",
     "webpack": "^4.28.4",
     "webpack-cli": "npm:3.2.1"
   },
   "dependencies": {
-    "@berry/fslib": "workspace:*",
-    "@berry/pnp": "workspace:*"
+    "@berry/fslib": "workspace:*"
   }
 }
