@@ -137,12 +137,12 @@ function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag}: {a
 
     versions: {
       [version]: {
+        ... raw,
+
         _id: `${name}@${version}`,
 
         name,
         version,
-
-        ... raw,
 
         dist: {
           shasum,
