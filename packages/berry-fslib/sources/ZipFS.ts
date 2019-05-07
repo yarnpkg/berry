@@ -534,14 +534,14 @@ export class ZipFS extends FakeFS {
     const heap = new Uint8Array(libzip.HEAPU8.buffer, buffer, content.byteLength);
     heap.set(content as any);
 
-    return buffer;
+    return {buffer, byteLength: content.byteLength};
   }
 
   private allocateUnattachedSource(content: string | Buffer | ArrayBuffer | DataView) {
     const error = libzip.struct.errorS();
 
-    const buffer = this.allocateBuffer(content);
-    const source = libzip.source.fromUnattachedBuffer(buffer, content.byteLength, 0, true, error);
+    const {buffer, byteLength} = this.allocateBuffer(content);
+    const source = libzip.source.fromUnattachedBuffer(buffer, byteLength, 0, true, error);
 
     if (source === 0) {
       libzip.free(error);
@@ -552,8 +552,8 @@ export class ZipFS extends FakeFS {
   }
 
   private allocateSource(content: string | Buffer | ArrayBuffer | DataView) {
-    const buffer = this.allocateBuffer(content);
-    const source = libzip.source.fromBuffer(this.zip, buffer, content.byteLength, 0, true);
+    const {buffer, byteLength} = this.allocateBuffer(content);
+    const source = libzip.source.fromBuffer(this.zip, buffer, byteLength, 0, true);
 
     if (source === 0) {
       libzip.free(buffer);
