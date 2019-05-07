@@ -3,13 +3,16 @@ import {MessageName, ReportError}        from '@berry/core';
 
 import * as npmConfigUtils               from './npmConfigUtils';
 
-export type Options = httpUtils.Options & {
-  ident: Ident,
-};
+type AuthOptions = {
+  forceAuth?: boolean,
+  ident: Ident | null,
+}
 
-export async function get(path: string, {configuration, headers, ident, ... rest}: Options) {
+export type Options = httpUtils.Options & AuthOptions;
+
+export async function get(path: string, {configuration, headers, ident, forceAuth, ... rest}: Options) {
   const registry = npmConfigUtils.getRegistry(ident, {configuration});
-  const auth = getAuthenticationHeader(ident, {configuration});
+  const auth = getAuthenticationHeader({configuration}, {ident, forceAuth});
 
   if (auth)
     headers = {... headers, authorization: auth};
@@ -17,12 +20,10 @@ export async function get(path: string, {configuration, headers, ident, ... rest
   return await httpUtils.get(`${registry}${path}`, {configuration, headers, ... rest});
 }
 
-export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, ... rest}: Options) {
+export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, forceAuth, ... rest}: Options) {
   // We always must authenticate our PUT requests
-  configuration = configuration.extend({npmAlwaysAuth: true});
-
   const registry = npmConfigUtils.getRegistry(ident, {configuration});
-  const auth = getAuthenticationHeader(ident, {configuration});
+  const auth = getAuthenticationHeader({configuration}, {ident, forceAuth: true});
 
   if (auth)
     headers = {... headers, authorization: auth};
@@ -30,11 +31,11 @@ export async function put(path: string, body: httpUtils.Body, {configuration, he
   return await httpUtils.put(`${registry}${path}`, body, {configuration, headers, ... rest});
 }
 
-function getAuthenticationHeader(ident: Ident, {configuration}: {configuration: Configuration}) {
+function getAuthenticationHeader({configuration}: {configuration: Configuration}, {ident, forceAuth}: AuthOptions) {
   const authConfiguration = npmConfigUtils.getAuthenticationConfiguration(ident, {configuration});
-  const mustAuthenticate = authConfiguration.get(`npmAlwaysAuth`);
+  const mustAuthenticate = configuration.get(`npmAlwaysAuth`) || forceAuth;
 
-  if (!mustAuthenticate && !ident.scope)
+  if (!mustAuthenticate && (!ident || !ident.scope))
     return null;
 
   if (authConfiguration.get(`npmAuthToken`))

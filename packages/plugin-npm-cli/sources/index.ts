@@ -1,6 +1,7 @@
 import {Plugin, SettingsType} from '@berry/core';
 
 import npmPublish             from './commands/npm/publish';
+import whoami                 from './commands/npm/whoami';
 
 const plugin: Plugin = {
   configuration: {
@@ -12,6 +13,7 @@ const plugin: Plugin = {
   },
   commands: [
     npmPublish,
+    whoami,
   ],
 };
 

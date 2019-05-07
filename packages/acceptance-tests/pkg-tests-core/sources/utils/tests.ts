@@ -169,14 +169,20 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
   enum RequestType {
     PackageInfo = 'packageInfo',
     PackageTarball = 'packageTarball',
+    Whoami = 'whoami',
   }
 
-  interface Request {
-    type: RequestType;
-
+  type Request = {
+    type: RequestType.PackageInfo;
+    scope?: string;
+    localName: string;
+  } | {
+    type: RequestType.PackageTarball;
     scope?: string;
     localName: string;
     version?: string;
+  } | {
+    type: RequestType.Whoami;
   }
 
   const processors: {[requestType in RequestType]:(request: Request, response: ServerResponse) => Promise<void>} = {
@@ -245,6 +251,15 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
       const packStream = fsUtils.packToStream(packageVersionEntry.path, {virtualPath: '/package'});
       packStream.pipe(response);
     },
+
+    async [RequestType.Whoami](request, response) {
+      const data = JSON.stringify({
+        username: `username`,
+      });
+
+      response.writeHead(200, {[`Content-Type`]: `application/json`});
+      response.end(data);
+    },
   };
 
   function sendError(res: ServerResponse, statusCode: number, errorMessage: string): void {
@@ -264,7 +279,11 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
 
     url = url.replace(/%2f/g, '/');
 
-    if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)$/)) {
+    if (url === `/-/whoami`) {
+      return {
+        type: RequestType.Whoami,
+      };
+    } else if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)$/)) {
       const [_, scope, localName] = match;
 
       return {
@@ -286,8 +305,10 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
     return null;
   }
 
-  function needsAuth({scope, localName}: Request): boolean {
-    return (scope != null && scope.startsWith('@private')) || localName.startsWith('private');
+  function needsAuth({scope, localName, type}: Request): boolean {
+    return (scope != null && scope.startsWith('@private'))
+      || localName.startsWith('private')
+      || type === RequestType.Whoami;
   }
 
   const validAuthorizations = [
