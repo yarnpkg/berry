@@ -1,5 +1,6 @@
 const {
-  fs: {readJson, writeFile}
+  fs: {writeFile},
+  tests: {startPackageServer}
 } = require('pkg-tests-core');
 
 const AUTH_TOKEN = `686159dc-64b3-413e-a244-2de2b8d1c36f`;
@@ -49,6 +50,36 @@ describe(`Plugins`, () => {
     );
 
     test(
+      `should print the npm registry username for a given scope`,
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        const url = startPackageServer();
+        const rcFileContent = `
+npmScopes:
+  testScope:
+    npmRegistryServer: "${url}"
+
+npmRegistries:
+  "${url}":
+    npmAuthToken: ${AUTH_TOKEN}
+        `;
+
+        await writeFile(`${path}/.yarnrc`, rcFileContent);
+
+        let code;
+        let stdout;
+        let stderr;
+
+        try {
+          ({code, stdout, stderr} = await run(`npm`, `whoami`, `--scope`, `testScope`));
+        } catch (error) {
+          ({code, stdout, stderr} = error);
+        }
+
+        expect({code, stdout, stderr}).toMatchSnapshot();
+      })
+    );
+
+    test(
       `should throw an error when no auth config is found`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
         await expect(run(`npm`, `whoami`)).rejects.toThrowError(/No authentication configured/);
@@ -67,6 +98,26 @@ describe(`Plugins`, () => {
       `should throw an error when config has an invalid npmAuthIdent`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
         await writeFile(`${path}/.yarnrc`, `npmAuthIdent "${INVALID_AUTH_IDENT}"\n`);
+        await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Authentication failed/);
+      })
+    );
+
+    test(
+      `should thow an error when invalid auth config is found for a scope`,
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        const url = startPackageServer();
+        const rcFileContent = `
+npmScopes:
+  testScope:
+    npmRegistryServer: "${url}"
+
+npmRegistries:
+  "${url}":
+    npmAuthToken: ${INVALID_AUTH_TOKEN}
+        `;
+
+        await writeFile(`${path}/.yarnrc`, rcFileContent);
+        await expect(run(`npm`, `whoami`, `--scope`, `testScope`)).rejects.toThrowError(/Authentication failed/);
         await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Authentication failed/);
       })
     );

@@ -1,12 +1,13 @@
-import {Configuration, MessageName, PluginConfiguration, StreamReport} from '@berry/core';
-import {npmHttpUtils}                                                  from '@berry/plugin-npm';
-import {Clipanion}                                                     from 'clipanion';
-import {Readable, Writable}                                            from 'stream';
+import {Configuration, Ident, MessageName}              from '@berry/core';
+import {PluginConfiguration, StreamReport, structUtils} from '@berry/core';
+import {npmHttpUtils}                                   from '@berry/plugin-npm';
+import {Clipanion}                                      from 'clipanion';
+import {Readable, Writable}                             from 'stream';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`npm whoami`)
+  .command(`npm whoami [-s,--scope SCOPE]`)
   .describe(`display username`)
 
   .detail(`
@@ -18,13 +19,23 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
     `yarn npm whoami`,
   )
 
-  .action(async ({cwd, stdin, stdout}: {cwd: string, stdin: Readable, stdout: Writable, registry: string}) => {
+  .example(
+    `Print username for the registry on a given scope`,
+    `yarn npm whoami --scope company`,
+  )
+
+  .action(async ({cwd, stdin, stdout, scope}: {cwd: string, stdin: Readable, stdout: Writable, scope: string}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     const report = await StreamReport.start({configuration, stdout}, async report => {
+      let ident: Ident | null = null;
+
+      if (scope) {
+        ident = structUtils.makeIdent(scope, ``);
+      }
 
       try {
-        const responseBuffer = await npmHttpUtils.get(`/-/whoami`, { configuration, ident: null, forceAuth: true });
+        const responseBuffer = await npmHttpUtils.get(`/-/whoami`, { configuration, ident, forceAuth: true });
         const jsonResponse = JSON.parse(responseBuffer.toString());
 
         report.reportInfo(MessageName.UNNAMED, jsonResponse.username);
