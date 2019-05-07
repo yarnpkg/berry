@@ -21,7 +21,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
 
 - Yarn supports plugins; adding a plugin is as simple as adding it into your repository
 - Yarn supports Node by default but isn't limited to it - plugins can add support for other languages
-- Yarn supports [workspaces]() natively, and its CLI takes advantage of that
+- Yarn supports [workspaces](https://yarnpkg.github.io/berry/features/workspaces) natively, and its CLI takes advantage of that
 - Yarn uses a portable shell to execute package scripts, guaranteeing they work the same way on Windows and Linux
 - Yarn is first and foremost a Node API that can be used programmatically (via [berry-core](packages/berry-core))
 - Yarn is written in TypeScript, and fully typechecked
@@ -44,38 +44,43 @@ The documentation is being reworked to contain an updated content and a refreshe
 
 The following packages are generic and can be used in a variety of purposes (including to implement other package managers, but not only):
 
-- [berry-core](packages/berry-core) allows any application to manipulate a project programmatically.
-- [berry-json-proxy](packages/berry-json-proxy) allows to temporarily convert any POD object to an immutable object.
-- [berry-libzip](packages/berry-libzip) contains zlib+libzip bindings compiled to WebAssembly.
-- [berry-parsers](packages/berry-parsers) can be used to parse [Syml]() and the language used by [berry-shell](packages/berry-shell).
-- [berry-pnp](packages/berry-pnp) can be used to generate [Plug'n'Play-compatible]() hooks.
-- [berry-shell](packages/berry-shell) is a portable bash-like shell interpreter.
-- [berry-ui](packages/berry-ui) is a React renderer targeting terminals.
-- [berry-zipfs](packages/berry-zipfs) is a `fs` implementation that can read files from zip archives.
+- [@berry/core](packages/berry-core) allows any application to manipulate a project programmatically.
+- [@berry/fslib](packages/berry-fslib) is a set of tools to efficiently abstract filesystem accesses.
+- [@berry/json-proxy](packages/berry-json-proxy) allows to temporarily convert any POD object to an immutable object.
+- [@berry/libzip](packages/berry-libzip) contains zlib+libzip bindings compiled to WebAssembly.
+- [@berry/parsers](packages/berry-parsers) can be used to parse [Syml]() and the language used by [berry-shell](packages/berry-shell).
+- [@berry/pnp](packages/berry-pnp) can be used to generate [Plug'n'Play](https://yarnpkg.github.io/berry/features/pnp)-compatible hooks.
+- [@berry/pnpify](packages/berry-pnpify) is a CLI tool to transparently add PnP support to various tools.
+- [@berry/shell](packages/berry-shell) is a portable bash-like shell interpreter.
 
 ## Yarn plugins
 
 The following packages are plugins for Berry and can be installed through `berry add plugin <plugin-name>`. Note that some of them are typically already shipped with the regular Yarn bundles. Such plugins are marked with a star (★).
 
-- [plugin-constraints](packages/plugin-constraints) adds support for `yarn constraints check` and `yarn constraints fix`.
+- [plugin-constraints★](packages/plugin-constraints) adds support for `yarn constraints check` and `yarn constraints fix`.
+- [plugin-dlx★](packages/plugin-dlx) adds support for the [`yarn dlx`](https://yarnpkg.github.io/berry/cli/dlx) command.
 - [plugin-essentials★](packages/plugin-essentials) adds various commands deemed necessary for a package manager (add, remove, ...).
+- [plugin-exec](packages/plugin-exec) adds support for using `exec:` references as dependencies.
 - [plugin-file★](packages/plugin-file) adds support for using `file:` references as dependencies.
 - [plugin-github★](packages/plugin-github) adds support for using Github references as dependencies. [This plugin doesn't use git.](https://stackoverflow.com/a/13636954/880703)
 - [plugin-http★](packages/plugin-http) adds support for using straight URL references as dependencies (tgz archives only).
-- [plugin-hub](packages/plugin-hub) contains a UI designed to efficiently manage large-scale projects with multiple workspaces.
-- [plugin-init★](packages/plugin-init) adds support for the `yarn init` command.
+- [plugin-init★](packages/plugin-init) adds support for the [`yarn init`](https://yarnpkg.github.io/berry/cli/init) command.
 - [plugin-link★](packages/plugin-link) adds support for using `link:` and `portal:` references as dependencies.
 - [plugin-npm★](packages/plugin-npm) adds support for using [semver ranges]() as dependencies, resolving them to an NPM-like registry.
-- [plugin-pnp★](packages/plugin-pnp) adds support for installing Javascript dependencies through the [Plug'n'Play]() specification.
+- [plugin-npm-cli★](packages/plugin-npm-cli) adds support for the NPM-specific commands (`yarn npm login`, [`yarn npm publish`](https://yarnpkg.github.io/berry/cli/npm/publish), ...).
+- [plugin-pack★](packages/plugin-pack) adds support for the [`yarn pack`](https://yarnpkg.github.io/berry/cli/pack) command.
+- [plugin-stage](packages/plugin-pack) adds support for the [`yarn stage`](https://yarnpkg.github.io/berry/cli/stage) command.
+- [plugin-pnp★](packages/plugin-pnp) adds support for installing Javascript dependencies through the [Plug'n'Play](https://yarnpkg.github.io/berry/features/pnp) specification.
+- [plugin-typescript★](packages/plugin-typescript) improves the user experience when working with TypeScript.
 
-To create your own plugin, please refer to the [documentation]().
+To create your own plugin, please refer to the [documentation](https://yarnpkg.github.io/berry/features/plugins).
 
 ## Yarn packages
 
 The following packages are meant to be used by Yarn itself, and probably won't be useful to other applications:
 
-- [berry-builder](packages/berry-builder) contains a CLI tool to package berry and its plugins.
-- [berry-cli](packages/berry-cli) is a CLI entry point built on top of [berry-core](packages/berry-core).
+- [@berry/builder](packages/berry-builder) contains a CLI tool to package berry and its plugins.
+- [@berry/cli](packages/berry-cli) is a CLI entry point built on top of [@berry/core](packages/berry-core).
 
 ## Build your own bundle
 
