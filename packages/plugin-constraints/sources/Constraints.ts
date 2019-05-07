@@ -1,10 +1,10 @@
-import {Ident, Locator, Project, Workspace} from '@berry/core';
-import {miscUtils, structUtils}             from '@berry/core';
-import {xfs}                                from '@berry/fslib';
-import {posix}                              from 'path';
-import pl                                   from 'tau-prolog';
+import {Ident, Project, Workspace} from '@berry/core';
+import {miscUtils, structUtils}    from '@berry/core';
+import {xfs}                       from '@berry/fslib';
+import {posix}                     from 'path';
+import pl                          from 'tau-prolog';
 
-import {linkProjectToSession}               from './tauModule';
+import {linkProjectToSession}      from './tauModule';
 
 export const enum DependencyType {
   Dependencies = 'dependencies',
