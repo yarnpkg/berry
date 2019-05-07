@@ -1,4 +1,3 @@
-const {NodeFS} = require(`@berry/fslib`);
 const {
   fs: {mkdirp, writeFile, createTemporaryFolder},
 } = require('pkg-tests-core');
@@ -37,7 +36,7 @@ const environments = {
 function cleanupPlainOutput(output, path, homePath) {
   // Replace multiple consecutive spaces with one space.
   // The output of the config command is aligned according to the longest value, which probably
-  // contains `path`. In other words, the formatting depends on the lengt of `path`.
+  // contains `path`. In other words, the formatting depends on the length of `path`.
   output = output.replace(/  +/g, ` - `);
 
   // replace the generated workspace root with a constant
@@ -105,7 +104,7 @@ describe(`Commands`, () => {
       for (const [optionDescription, {flags, cleanupStdout}] of Object.entries(options)) {
         test(`test (${environmentDescription} / ${optionDescription})`, makeTemporaryEnv({}, async ({path, run, source}) => {
           const cwd = `${path}/${SUBFOLDER}/${SUBFOLDER}`;
-          const homePath = NodeFS.toPortablePath(await createTemporaryFolder());
+          const homePath = await createTemporaryFolder();
 
           await mkdirp(cwd);
           await environment({path, homePath});
@@ -115,7 +114,7 @@ describe(`Commands`, () => {
           let stderr;
 
           try {
-            ({code, stdout, stderr} = await run(`config`, ...flags, {cwd, env: {YARN_RC_FILENAME: RC_FILENAME, HOME: homePath}}));
+            ({code, stdout, stderr} = await run(`config`, ...flags, {cwd, env: {YARN_RC_FILENAME: RC_FILENAME, HOME: homePath, USERPROFILE: homePath}}));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
