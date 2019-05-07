@@ -78,6 +78,20 @@ workspace_has_dependency(
 
 True if the workspace described by the specified `WorkspaceCwd` depends on the dependency described by the specified `DependencyIdent` and `DependencyRange` combination in the dependencies block of the given `DependencyType`.
 
+#### `workspace_field/3`
+
+```prolog
+workspace_field(
+  WorkspaceCwd,
+  FieldPath,
+  FieldValue
+).
+```
+
+True if the workspace described by the `WorkspaceCwd` has the given `FieldValue` in the manifest at `FieldPath`.
+
+The `FieldPath` can target properties of properties via `.` notation, e.g. a `FieldPath` of `'publishConfig.registry'` will set `FieldValue` to the value of the `registry` inside `publishConfig`.
+
 ### Constraint predicates
 
 The following predicates will affect the behavior of the `yarn constraints check` and `yarn constraints fix` commands.
@@ -114,6 +128,18 @@ Contrary to `gen_enforced_dependency`, `gen_invalid_dependency` doesn't allow th
 
 - The errors reported by this predicate **cannot** be auto-fixed
 - The reason parameter can be any string of your liking
+
+#### `gen_enforced_field/3`
+
+```prolog
+gen_enforced_field(
+  WorkspaceCwd,
+  FieldPath,
+  FieldValue
+).
+```
+
+The `gen_enforced_field` predicate tells the package manager that a specific workspace must have the given `FieldValue` in the manifest via the `FieldPath`. A `FieldValue` of `null` means the field has to be absent.
 
 ## Constraint recipes
 
