@@ -73,16 +73,14 @@ function makeDefaultStats() {
   });  
 }
 
-export type PathOptions = {
-  baseFs?: FakeFS,
-  create?: boolean,
+export type BufferOptions = {
   readOnly?: boolean,
   stats?: Stats,
 };
 
-export type BufferOptions = {
-  readOnly?: boolean,
-  stats?: Stats,
+export type PathOptions = BufferOptions & {
+  baseFs?: FakeFS,
+  create?: boolean,
 };
 
 function toUnixTimestamp(time: Date | string | number) {
@@ -124,7 +122,6 @@ export class ZipFS extends FakeFS {
     super();
 
     const pathOptions = opts as PathOptions;
-    const bufferOptions = opts as BufferOptions;
 
     if (typeof source === `string`) {
       const {baseFs = new NodeFS()} = pathOptions;
