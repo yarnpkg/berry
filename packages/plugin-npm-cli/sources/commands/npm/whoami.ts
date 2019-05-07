@@ -11,7 +11,9 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
   .describe(`display username`)
 
   .detail(`
-    Print the registry username to standard output.
+    Print the username associated with the current authentication settings to the standard output.
+    
+    When using \`-s,--scope\`, the username printed will be the one that matches the authentication for the specific scope (they can be overriden using the \`npmScopes\` settings).
   `)
 
   .example(
