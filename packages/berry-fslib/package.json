@@ -1,9 +1,23 @@
 {
   "name": "@berry/fslib",
-  "private": true,
+  "version": "0.0.4",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@berry/libzip": "workspace:*"
-  }
+    "@berry/libzip": "^0.0.3"
+  },
+  "devDependencies": {
+    "@berry/pnpify": "workspace:*",
+    "typescript": "^3.3.3333"
+  },
+  "scripts": {
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "postpack": "rm -rf lib"
+  },
+  "publishConfig": {
+    "main": "./lib/index.js"
+  },
+  "files": [
+    "/lib/*"
+  ]
 }

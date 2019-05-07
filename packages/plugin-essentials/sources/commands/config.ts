@@ -3,12 +3,6 @@ import {miscUtils}                                                              
 import {Writable}                                                                    from 'stream';
 import {inspect}                                                                     from 'util';
 
-function fromEntries(iterable: Iterable<[any, any] | {0: any, 1: any}>): {[key: string]: any} {
-  return [... iterable].reduce((obj, { 0:key, 1: val}) => Object.assign(obj, {
-    [key]: val,
-  }), {});
-}
-
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
@@ -98,11 +92,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           }, 0);
 
           for (const [key, description] of keysAndDescriptions) {
-            report.reportInfo(MessageName.UNNAMED, `${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(getValue(key), inspectConfig)}`);
+            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(getValue(key), inspectConfig)}`);
           }
         } else {
           for (const key of keys) {
-            report.reportInfo(MessageName.UNNAMED, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(getValue(key), inspectConfig)}`);
+            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(getValue(key), inspectConfig)}`);
           }
         }
       }

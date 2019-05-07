@@ -37,28 +37,32 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     if (!workspace)
       throw new WorkspaceRequiredError(cwd);
 
+    const target = posix.resolve(workspace.cwd, `package.tgz`);
+
     const report = await StreamReport.start({configuration, stdout, json}, async report => {
-      report.reportJson({base: workspace.cwd});
+      await packUtils.prepareForPack(workspace, {report}, async () => {
+        report.reportJson({base: workspace.cwd});
 
-      const files = await packUtils.genPackList(workspace);
-
-      for (const file of files) {
-        report.reportInfo(MessageName.UNNAMED, file);
-        report.reportJson({location: file});
-      }
+        const files = await packUtils.genPackList(workspace);
+  
+        for (const file of files) {
+          report.reportInfo(null, file);
+          report.reportJson({location: file});
+        }
+  
+        if (!dryRun) {
+          const pack = await packUtils.genPackStream(workspace, files);
+          const write = xfs.createWriteStream(target);
+  
+          pack.pipe(write);
+  
+          await new Promise(resolve => {
+            write.on(`finish`, resolve);
+          });
+        }
+      });
 
       if (!dryRun) {
-        const pack = await packUtils.genPackStream(workspace, files);
-
-        const target = posix.resolve(workspace.cwd, `package.tgz`);
-        const write = xfs.createWriteStream(target);
-
-        pack.pipe(write);
-
-        await new Promise(resolve => {
-          write.on(`finish`, resolve);
-        });
-
         report.reportInfo(MessageName.UNNAMED, `Package archive generated in ${configuration.format(target, `magenta`)}`);
         report.reportJson({output: target});
       }

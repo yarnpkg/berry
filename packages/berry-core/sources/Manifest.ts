@@ -21,12 +21,21 @@ export interface PeerDependencyMeta {
   optional?: boolean;
 };
 
+export interface PublishConfig {
+  access?: string;
+  main?: string;
+  module?: string;
+};
+
 export class Manifest {
   public name: Ident | null = null;
   public version: string | null = null;
 
   public ["private"]: boolean = false;
   public license: string | null = null;
+
+  public main: string | null = null;
+  public module: string | null = null;
 
   public languageName: string | null = null;
 
@@ -44,7 +53,8 @@ export class Manifest {
 
   public resolutions: Array<{pattern: Resolution, reference: string}> = [];
 
-  public files: Set<String> | null = null;
+  public files: Set<string> | null = null;
+  public publishConfig: PublishConfig | null = null;
 
   public raw: object | null = null;
 
@@ -259,6 +269,20 @@ export class Manifest {
         }
 
         this.files.add(filename);
+      }
+    }
+
+    if (typeof data.publishConfig === `object` && data.publishConfig !== null) {
+      this.publishConfig = {};
+
+      if (typeof data.publishConfig.access === `string`)
+        this.publishConfig.access = data.publishConfig.access;
+
+      if (typeof data.publishConfig.main === `string`)
+        this.publishConfig.main = data.publishConfig.main;
+
+      if (typeof data.publishConfig.module === `string`) {
+        this.publishConfig.module = data.publishConfig.module;
       }
     }
 

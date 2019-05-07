@@ -24,9 +24,9 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
     const report = await StreamReport.start({configuration, stdout}, async report => {
       for (const name of configuration.plugins.keys()) {
         if (pluginConfiguration.plugins.has(name)) {
-          report.reportInfo(MessageName.UNNAMED, `${name} [builtin]`);
+          report.reportInfo(null, `${name} [builtin]`);
         } else {
-          report.reportInfo(MessageName.UNNAMED, `${name}`);
+          report.reportInfo(null, `${name}`);
         }
       }
     });

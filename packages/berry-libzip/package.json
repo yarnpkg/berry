@@ -1,11 +1,20 @@
 {
   "name": "@berry/libzip",
-  "private": true,
+  "version": "0.0.3",
   "main": "./sources/index.ts",
+  "devDependencies": {
+    "@berry/pnpify": "workspace:*",
+    "typescript": "^3.3.3333"
+  },
   "scripts": {
-    "build:libzip": "cd ./artifacts && ./build.sh"
+    "build:libzip:wasm": "cd ./artifacts && ./build.sh",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "postpack": "rm -rf lib"
   },
   "publishConfig": {
-    "main": "./lib"
-  }
+    "main": "./lib/index.js"
+  },
+  "files": [
+    "/lib/*"
+  ]
 }

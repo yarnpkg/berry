@@ -18,22 +18,60 @@ describe(`Commands`, () => {
       `it should only keep the files covered by the "files" field`,
       makeTemporaryEnv({
         files: [
-          `*.js`,
-          `/b.ts`,
+          `/lib/*.js`,
+          `/src/b.ts`,
         ],
       }, async ({path, run, source}) => {
-        await fsUtils.writeFile(`${path}/a.js`, `module.exports = 42;\n`);
-        await fsUtils.writeFile(`${path}/b.js`, `module.exports = 42;\n`);
-        await fsUtils.writeFile(`${path}/a.ts`, `module.exports = 42;\n`);
-        await fsUtils.writeFile(`${path}/b.ts`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/lib/a.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/lib/b.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/src/a.ts`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/src/b.ts`, `module.exports = 42;\n`);
 
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).toMatch(/a\.js/);
-        await expect(stdout).toMatch(/b\.js/);
-        await expect(stdout).not.toMatch(/a\.ts/);
-        await expect(stdout).toMatch(/b\.ts/);
+        await expect(stdout).toMatch(/lib\/a\.js/);
+        await expect(stdout).toMatch(/lib\/b\.js/);
+        await expect(stdout).not.toMatch(/src\/a\.ts/);
+        await expect(stdout).toMatch(/src\/b\.ts/);
+      }),
+    );
+
+    test(
+      `it should always include the manifest, even with a "files" field`,
+      makeTemporaryEnv({
+        files: [
+          `/lib/*.js`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/lib/a.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/lib/b.js`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        await expect(stdout).toMatch(/lib\/a\.js/);
+        await expect(stdout).toMatch(/lib\/b\.js/);
+        await expect(stdout).toMatch(/package\.json/);
+      }),
+    );
+
+    test(
+      `it should support excluding patterns from the "files" field`,
+      makeTemporaryEnv({
+        files: [
+          `/lib/*.js`,
+          `!/lib/b.js`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/lib/a.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/lib/b.js`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        await expect(stdout).toMatch(/lib\/a\.js/);
+        await expect(stdout).not.toMatch(/lib\/b\.js/);
       }),
     );
 

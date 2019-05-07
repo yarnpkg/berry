@@ -20,8 +20,11 @@
     "_zip_get_name",
     "_zip_get_num_entries",
     "_zip_name_locate",
+    "_zip_open_from_source",
     "_zip_open",
+    "_zip_source_buffer_create",
     "_zip_source_buffer",
+    "_zip_source_free",
     "_zip_stat",
     "_zip_stat_index",
 

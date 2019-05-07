@@ -1179,7 +1179,9 @@ export class Project {
 
       const manifest = new Manifest();
 
-      manifest.version = pkg.version;
+      manifest.version = pkg.linkType === LinkType.HARD
+        ? pkg.version
+        : `0.0.0-use.local`;
 
       manifest.languageName = pkg.languageName;
 

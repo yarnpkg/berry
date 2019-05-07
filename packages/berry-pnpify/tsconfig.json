@@ -61,5 +61,7 @@
       "../../.yarn/cache/@types-lodash.get-npm-4.4.6-6d10cfdb339bcfa15c1b34009448ad172d832deb03038988e7a7df7cef333575.zip/node_modules/@types"
     ]
   },
-  "include": ["sources/**/*"]
+  "include": [
+    "sources/**/*"
+  ]
 }

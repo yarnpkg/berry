@@ -2,6 +2,9 @@
   "name": "@berry/pnpify",
   "private": true,
   "main": "./lib/index.js",
+  "bin": {
+    "pnpify": "./bin.js"
+  },
   "types": "./lib/index.d.ts",
   "sideEffects": false,
   "peerDependencies": {

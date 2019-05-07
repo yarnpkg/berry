@@ -19,7 +19,7 @@ export class ThrowReport extends Report {
   reportSeparator() {
   }
 
-  reportInfo(name: MessageName, text: string) {
+  reportInfo(name: MessageName | null, text: string) {
   }
 
   reportWarning(name: MessageName, text: string) {
