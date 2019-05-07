@@ -28,7 +28,9 @@ Object {
 {\\"key\\":\\"npmAlwaysAuth\\",\\"effective\\":false,\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"npmAuthIdent\\",\\"effective\\":null,\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmAuthToken\\",\\"effective\\":null,\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
+{\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
+{\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"},\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -71,7 +73,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - URL of the selected npm registry (note: npm enterprise isn't supported) - false
 ➤ YN0000: npmAuthIdent - Authentication identity for the npm registry (_auth in npm and yarn v1) - null
 ➤ YN0000: npmAuthToken - Authentication token for the npm registry (_authToken in npm and yarn v1) - null
+➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - Settings per package scope - Map {}
 ➤ YN0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
@@ -115,7 +119,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - <default> - false
 ➤ YN0000: npmAuthIdent - <default> - null
 ➤ YN0000: npmAuthToken - <default> - null
+➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - <default> - Map {}
 ➤ YN0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpIgnorePattern - <default> - null
@@ -159,7 +165,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - false
 ➤ YN0000: npmAuthIdent - null
 ➤ YN0000: npmAuthToken - null
+➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - Map {}
 ➤ YN0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpIgnorePattern - null
@@ -203,7 +211,9 @@ Object {
 {\\"key\\":\\"npmAlwaysAuth\\",\\"effective\\":false,\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"npmAuthIdent\\",\\"effective\\":null,\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmAuthToken\\",\\"effective\\":null,\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
+{\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
+{\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"},\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -246,7 +256,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - URL of the selected npm registry (note: npm enterprise isn't supported) - false
 ➤ YN0000: npmAuthIdent - Authentication identity for the npm registry (_auth in npm and yarn v1) - null
 ➤ YN0000: npmAuthToken - Authentication token for the npm registry (_authToken in npm and yarn v1) - null
+➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - Settings per package scope - Map {}
 ➤ YN0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
@@ -290,7 +302,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - <default> - false
 ➤ YN0000: npmAuthIdent - <default> - null
 ➤ YN0000: npmAuthToken - <default> - null
+➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - <default> - Map {}
 ➤ YN0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpIgnorePattern - <default> - null
@@ -334,7 +348,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - false
 ➤ YN0000: npmAuthIdent - null
 ➤ YN0000: npmAuthToken - null
+➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - Map {}
 ➤ YN0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpIgnorePattern - null
@@ -378,7 +394,9 @@ Object {
 {\\"key\\":\\"npmAlwaysAuth\\",\\"effective\\":false,\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"npmAuthIdent\\",\\"effective\\":null,\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmAuthToken\\",\\"effective\\":null,\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
+{\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
+{\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"},\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -421,7 +439,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - URL of the selected npm registry (note: npm enterprise isn't supported) - false
 ➤ YN0000: npmAuthIdent - Authentication identity for the npm registry (_auth in npm and yarn v1) - null
 ➤ YN0000: npmAuthToken - Authentication token for the npm registry (_authToken in npm and yarn v1) - null
+➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - Settings per package scope - Map {}
 ➤ YN0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
@@ -465,7 +485,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - <default> - false
 ➤ YN0000: npmAuthIdent - <default> - null
 ➤ YN0000: npmAuthToken - <default> - null
+➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - <default> - Map {}
 ➤ YN0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpIgnorePattern - <default> - null
@@ -509,7 +531,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - false
 ➤ YN0000: npmAuthIdent - null
 ➤ YN0000: npmAuthToken - null
+➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - Map {}
 ➤ YN0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpIgnorePattern - null
@@ -553,7 +577,9 @@ Object {
 {\\"key\\":\\"npmAlwaysAuth\\",\\"effective\\":false,\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"npmAuthIdent\\",\\"effective\\":null,\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmAuthToken\\",\\"effective\\":null,\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
+{\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
+{\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"},\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -596,7 +622,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - URL of the selected npm registry (note: npm enterprise isn't supported) - false
 ➤ YN0000: npmAuthIdent - Authentication identity for the npm registry (_auth in npm and yarn v1) - null
 ➤ YN0000: npmAuthToken - Authentication token for the npm registry (_authToken in npm and yarn v1) - null
+➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - Settings per package scope - Map {}
 ➤ YN0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
@@ -640,7 +668,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - <default> - false
 ➤ YN0000: npmAuthIdent - <default> - null
 ➤ YN0000: npmAuthToken - <default> - null
+➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - <default> - Map {}
 ➤ YN0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpIgnorePattern - <default> - null
@@ -684,7 +714,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - false
 ➤ YN0000: npmAuthIdent - null
 ➤ YN0000: npmAuthToken - null
+➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - Map {}
 ➤ YN0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpIgnorePattern - null
@@ -728,7 +760,9 @@ Object {
 {\\"key\\":\\"npmAlwaysAuth\\",\\"effective\\":false,\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"npmAuthIdent\\",\\"effective\\":null,\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmAuthToken\\",\\"effective\\":null,\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
+{\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
+{\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"},\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -771,7 +805,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - URL of the selected npm registry (note: npm enterprise isn't supported) - false
 ➤ YN0000: npmAuthIdent - Authentication identity for the npm registry (_auth in npm and yarn v1) - null
 ➤ YN0000: npmAuthToken - Authentication token for the npm registry (_authToken in npm and yarn v1) - null
+➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - Settings per package scope - Map {}
 ➤ YN0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
@@ -815,7 +851,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - <default> - false
 ➤ YN0000: npmAuthIdent - <default> - null
 ➤ YN0000: npmAuthToken - <default> - null
+➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - <default> - Map {}
 ➤ YN0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpIgnorePattern - <default> - null
@@ -859,7 +897,9 @@ Object {
 ➤ YN0000: npmAlwaysAuth - false
 ➤ YN0000: npmAuthIdent - null
 ➤ YN0000: npmAuthToken - null
+➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
+➤ YN0000: npmScopes - Map {}
 ➤ YN0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpIgnorePattern - null

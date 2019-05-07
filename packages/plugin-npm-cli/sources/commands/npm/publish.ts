@@ -1,13 +1,13 @@
-import {WorkspaceRequiredError}                                                                  from '@berry/cli';
-import {Configuration, Ident,MessageName, PluginConfiguration, Project, StreamReport, Workspace} from '@berry/core';
-import {miscUtils, structUtils}                                                                  from '@berry/core';
-import {npmHttpUtils}                                                                            from '@berry/plugin-npm';
-import {packUtils}                                                                               from '@berry/plugin-pack';
-import {UsageError}                                                                              from 'clipanion';
-import {createHash}                                                                              from 'crypto';
-import ssri                                                                                      from 'ssri';
-import {Writable}                                                                                from 'stream';
-import * as yup                                                                                  from 'yup';
+import {WorkspaceRequiredError}                                                            from '@berry/cli';
+import {Configuration, MessageName, PluginConfiguration, Project, StreamReport, Workspace} from '@berry/core';
+import {miscUtils, structUtils}                                                            from '@berry/core';
+import {npmHttpUtils}                                                                      from '@berry/plugin-npm';
+import {packUtils}                                                                         from '@berry/plugin-pack';
+import {UsageError}                                                                        from 'clipanion';
+import {createHash}                                                                        from 'crypto';
+import ssri                                                                                from 'ssri';
+import {Writable}                                                                          from 'stream';
+import * as yup                                                                            from 'yup';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -61,9 +61,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const body = makePublishBody(workspace, buffer, {access, tag});
   
         try {
-          const packageRegistryPath = `https://registry.npmjs.org/${structUtils.stringifyIdent(ident).replace(/\//g, `%2f`)}`;
-  
-          await npmHttpUtils.put(packageRegistryPath, body, {
+          await npmHttpUtils.put(`/${structUtils.stringifyIdent(ident)}`, body, {
             configuration,
             ident,
             json: true,

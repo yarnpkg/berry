@@ -2,6 +2,7 @@
   "name": "@berry/fslib",
   "version": "0.0.4",
   "main": "./sources/index.ts",
+  "sideEffects": false,
   "dependencies": {
     "@berry/libzip": "^0.0.3"
   },

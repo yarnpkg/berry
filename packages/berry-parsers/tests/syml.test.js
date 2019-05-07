@@ -6,4 +6,10 @@ describe(`Syml parser`, () => {
       foo: `C:\\foobar`,
     });
   });
+
+  it(`should parse objects`, () => {
+    expect(parseSyml(`foo:\n  bar true\n  baz "quux"\n`)).toEqual({
+      foo: {bar: `true`, baz: `quux`},
+    })
+  });
 });
