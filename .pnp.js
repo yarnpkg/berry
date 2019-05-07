@@ -9718,6 +9718,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:0.14.1"
                 ],
                 [
+                  "inquirer",
+                  "npm:6.2.1"
+                ],
+                [
                   "ssri",
                   "npm:6.0.1"
                 ],

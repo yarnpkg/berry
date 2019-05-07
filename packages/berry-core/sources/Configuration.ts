@@ -657,6 +657,12 @@ export class Configuration {
     await xfs.writeFilePromise(configurationPath, stringifySyml(current));
   }
 
+  static async updateHomeConfiguration(patch: any) {
+    const homeFolder = folderUtils.getHomeFolder();
+
+    return await Configuration.updateConfiguration(homeFolder, patch);
+  }
+
   constructor(startingCwd: string, projectCwd: string | null, plugins: Map<string, Plugin>) {
     this.startingCwd = startingCwd;
     this.projectCwd = projectCwd;
