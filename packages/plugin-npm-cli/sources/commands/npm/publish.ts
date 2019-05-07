@@ -1,13 +1,13 @@
-import {WorkspaceRequiredError}                                                       from '@berry/cli';
-import {Configuration, Ident,MessageName, PluginConfiguration, Project, StreamReport} from '@berry/core';
-import {miscUtils, structUtils}                                                       from '@berry/core';
-import {npmHttpUtils}                                                                 from '@berry/plugin-npm';
-import {packUtils}                                                                    from '@berry/plugin-pack';
-import {UsageError}                                                                   from 'clipanion';
-import {createHash}                                                                   from 'crypto';
-import ssri                                                                           from 'ssri';
-import {Writable}                                                                     from 'stream';
-import * as yup                                                                       from 'yup';
+import {WorkspaceRequiredError}                                                                  from '@berry/cli';
+import {Configuration, Ident,MessageName, PluginConfiguration, Project, StreamReport, Workspace} from '@berry/core';
+import {miscUtils, structUtils}                                                                  from '@berry/core';
+import {npmHttpUtils}                                                                            from '@berry/plugin-npm';
+import {packUtils}                                                                               from '@berry/plugin-pack';
+import {UsageError}                                                                              from 'clipanion';
+import {createHash}                                                                              from 'crypto';
+import ssri                                                                                      from 'ssri';
+import {Writable}                                                                                from 'stream';
+import * as yup                                                                                  from 'yup';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -45,20 +45,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     if (workspace.manifest.name === null || workspace.manifest.version === null)
       throw new UsageError(`Workspaces must have valid names and versions to be published on an external registry`);
 
+    // We store it so that TS knows that it's non-null
     const ident = workspace.manifest.name;
-    const version = workspace.manifest.version;
-
-    if (typeof access === `undefined`) {
-      if (workspace.manifest.publishConfig && typeof workspace.manifest.publishConfig.access === `string`) {
-        access = workspace.manifest.publishConfig.access;
-      } else if (configuration.get(`npmPublishAccess`) !== null) {
-        access = configuration.get(`npmPublishAccess`);
-      } else if (ident.scope) {
-        access = `restricted`;
-      } else {
-        access = `public`;
-      }
-    }
 
     const report = await StreamReport.start({configuration, stdout}, async report => {
       await packUtils.prepareForPack(workspace, {report}, async () => {
@@ -70,7 +58,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const pack = await packUtils.genPackStream(workspace, files);
         const buffer = await miscUtils.bufferStream(pack);
   
-        const body = makePublishBody(ident, version, buffer, {access: access!, tag});
+        const body = makePublishBody(workspace, buffer, {access, tag});
   
         try {
           const packageRegistryPath = `https://registry.npmjs.org/${structUtils.stringifyIdent(ident).replace(/\//g, `%2f`)}`;
@@ -99,11 +87,38 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     return report.exitCode();
   });
 
-function makePublishBody(ident: Ident, version: string, buffer: Buffer, {access, tag}: {access: string, tag: string}) {
+function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag}: {access: string | undefined, tag: string}) {
+  const configuration = workspace.project.configuration;
+
+  const ident = workspace.manifest.name!;
+  const version = workspace.manifest.version!;
+
   const name = structUtils.stringifyIdent(ident);
 
   const shasum = createHash('sha1').update(buffer).digest('hex');
   const integrity = ssri.fromData(buffer).toString();
+
+  if (typeof access === `undefined`) {
+    if (workspace.manifest.publishConfig && typeof workspace.manifest.publishConfig.access === `string`) {
+      access = workspace.manifest.publishConfig.access;
+    } else if (configuration.get(`npmPublishAccess`) !== null) {
+      access = configuration.get(`npmPublishAccess`);
+    } else if (ident.scope) {
+      access = `restricted`;
+    } else {
+      access = `public`;
+    }
+  }
+
+  const raw = JSON.parse(JSON.stringify(workspace.manifest.raw));
+
+  if (workspace.manifest.publishConfig) {
+    if (workspace.manifest.publishConfig.main)
+      raw.main = workspace.manifest.publishConfig.main;
+    if (workspace.manifest.publishConfig.module) {
+      raw.module = workspace.manifest.publishConfig.module;
+    }
+  }
 
   return {
     _id: name,
@@ -126,8 +141,10 @@ function makePublishBody(ident: Ident, version: string, buffer: Buffer, {access,
       [version]: {
         _id: `${name}@${version}`,
 
-        name: name,
-        version: version,
+        name,
+        version,
+
+        ... raw,
 
         dist: {
           shasum,
