@@ -8,11 +8,12 @@ import {Readable, Writable}                             from 'stream';
 export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`npm whoami [-s,--scope SCOPE]`)
+  .categorize(`Npm-related commands`)
   .describe(`display username`)
 
   .detail(`
     Print the username associated with the current authentication settings to the standard output.
-    
+
     When using \`-s,--scope\`, the username printed will be the one that matches the authentication for the specific scope (they can be overriden using the \`npmScopes\` settings).
   `)
 
@@ -37,15 +38,15 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
       }
 
       try {
-        const responseBuffer = await npmHttpUtils.get(`/-/whoami`, { configuration, ident, forceAuth: true });
-        const jsonResponse = JSON.parse(responseBuffer.toString());
+        const response = await npmHttpUtils.get(`/-/whoami`, { configuration, ident, forceAuth: true, json: true });
 
-        report.reportInfo(MessageName.UNNAMED, jsonResponse.username);
+        report.reportInfo(MessageName.UNNAMED, response.username);
       } catch (err) {
-        if (err.statusCode === 401 || err.statusCode === 403)
+        if (err.statusCode === 401 || err.statusCode === 403) {
           report.reportError(MessageName.AUTHENTICATION_INVALID, `Authentication failed - your credentials may have expired`);
-
-        report.reportError(MessageName.AUTHENTICATION_INVALID, err.toString());
+        } else {
+          report.reportError(MessageName.AUTHENTICATION_INVALID, err.toString());
+        }
       }
     });
 

@@ -53,15 +53,14 @@ describe(`Plugins`, () => {
       `should print the npm registry username for a given scope`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
         const url = startPackageServer();
-        const rcFileContent = `
-npmScopes:
-  testScope:
-    npmRegistryServer: "${url}"
-
-npmRegistries:
-  "${url}":
-    npmAuthToken: ${AUTH_TOKEN}
-        `;
+        const rcFileContent = [
+          `npmScopes:\n`,
+          `  testScope:\n`,
+          `    npmRegistryServer: "${url}"\n`,
+          `npmRegistries:\n`,
+          `  "${url}":\n`,
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+        ].join(``);
 
         await writeFile(`${path}/.yarnrc`, rcFileContent);
 
@@ -106,15 +105,14 @@ npmRegistries:
       `should thow an error when invalid auth config is found for a scope`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
         const url = startPackageServer();
-        const rcFileContent = `
-npmScopes:
-  testScope:
-    npmRegistryServer: "${url}"
-
-npmRegistries:
-  "${url}":
-    npmAuthToken: ${INVALID_AUTH_TOKEN}
-        `;
+        const rcFileContent = [
+          `npmScopes:\n`,
+          `  testScope:\n`,
+          `    npmRegistryServer: "${url}"\n`,
+          `npmRegistries:\n`,
+          `  "${url}":\n`,
+          `    npmAuthToken: ${INVALID_AUTH_TOKEN}`,
+        ].join(``);
 
         await writeFile(`${path}/.yarnrc`, rcFileContent);
         await expect(run(`npm`, `whoami`, `--scope`, `testScope`)).rejects.toThrowError(/Authentication failed/);
