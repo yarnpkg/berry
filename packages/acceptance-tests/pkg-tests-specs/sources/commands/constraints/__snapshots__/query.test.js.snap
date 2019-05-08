@@ -305,11 +305,42 @@ Object {
 }
 `;
 
+exports[`Commands constraints query test with a syntax error 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0043: Syntax error: . or operator expected at line 1, column 3
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints query test with an empty predicate 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0043: Syntax error: argument expected at line 1, column 11
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints query test with an unknown predicate 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0044: Existence error: procedure hello_word/1 not found
+➤ YN0000: Failed with errors
+",
+}
+`;
+
 exports[`Commands constraints query test without trailing . 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: Done
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+➤ YN0000: Done
 ",
 }
 `;

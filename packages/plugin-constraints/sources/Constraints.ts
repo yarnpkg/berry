@@ -1,10 +1,10 @@
-import {Ident, Project, Workspace} from '@berry/core';
-import {miscUtils, structUtils}    from '@berry/core';
-import {xfs}                       from '@berry/fslib';
-import {posix}                     from 'path';
-import pl                          from 'tau-prolog';
+import {Ident, MessageName, Project, ReportError, Workspace} from '@berry/core';
+import {miscUtils, structUtils}                              from '@berry/core';
+import {xfs}                                                 from '@berry/fslib';
+import {posix}                                               from 'path';
+import pl                                                    from 'tau-prolog';
 
-import {linkProjectToSession}      from './tauModule';
+import {linkProjectToSession}                                from './tauModule';
 
 export const enum DependencyType {
   Dependencies = 'dependencies',
@@ -17,6 +17,59 @@ const DEPENDENCY_TYPES = [
   DependencyType.DevDependencies,
   DependencyType.PeerDependencies,
 ];
+
+function extractErrorImpl(value: any): any {
+  if (value instanceof pl.type.Num)
+    return value.value;
+
+  if (value instanceof pl.type.Term) {
+    if (value.args.length === 0)
+      return value.id;
+
+    switch (value.indicator) {
+      case `throw/1`:
+        return extractErrorImpl(value.args[0]);
+      case `error/1`:
+        return extractErrorImpl(value.args[0]);
+      case `error/2`:
+        return Object.assign(extractErrorImpl(value.args[0]), ... extractErrorImpl(value.args[1]));
+      case `syntax_error/1`:
+        return new ReportError(MessageName.PROLOG_SYNTAX_ERROR, `Syntax error: ${extractErrorImpl(value.args[0])}`);
+      case `existence_error/2`:
+        return new ReportError(MessageName.PROLOG_EXISTENCE_ERROR, `Existence error: ${extractErrorImpl(value.args[0])} ${extractErrorImpl(value.args[1])} not found`)
+      case `line/1`:
+        return {line: extractErrorImpl(value.args[0])};
+      case `column/1`:
+        return {column: extractErrorImpl(value.args[0])};
+      case `found/1`:
+        return {found: extractErrorImpl(value.args[0])};
+      case `./2`:
+        return [extractErrorImpl(value.args[0])].concat(extractErrorImpl(value.args[1]));
+      case `//2`:
+        return `${extractErrorImpl(value.args[0])}/${extractErrorImpl(value.args[1])}`
+    }
+  }
+
+  throw `couldn't pretty print because of unsupported node ${value}`;
+}
+
+function extractError(val: any) {
+  let err;
+  try {
+    err = extractErrorImpl(val);
+  } catch (caught) {
+    if (typeof caught === `string`) {
+      throw new ReportError(MessageName.PROLOG_UNKNOWN_ERROR, `Unknown error: ${val} (note: ${caught})`);
+    } else {
+      throw caught;
+    }
+  }
+
+  if (typeof err.line !== `undefined` && typeof err.column !== `undefined`)
+    err.message += ` at line ${err.line}, column ${err.column}`;
+
+  return err;
+}
 
 // Node 8 doesn't have Symbol.asyncIterator
 // https://github.com/Microsoft/TypeScript/issues/14151#issuecomment-280812617
@@ -42,13 +95,19 @@ class Session {
   }
 
   public async *makeQuery(query: string) {
-    this.session.query(query);
+    const parsed = this.session.query(query);
+
+    if (parsed !== true)
+      throw extractError(parsed);
 
     while (true) {
       const answer = await this.fetchNextAnswer();
 
       if (!answer)
         break;
+
+      if (answer.id === `throw`)
+        throw extractError(answer);
 
       yield answer;
     }
@@ -147,9 +206,6 @@ export class Constraints {
     }> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
-      if (answer.id === `throw`)
-        throw new Error(pl.format_answer(answer));
-
       const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyRange = parseLink(answer.links.DependencyRange);
@@ -178,9 +234,6 @@ export class Constraints {
     }> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, Reason).`)) {
-      if (answer.id === `throw`)
-        throw new Error(pl.format_answer(answer));
-
       const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyType = parseLink(answer.links.DependencyType) as DependencyType;
@@ -207,9 +260,6 @@ export class Constraints {
     }> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), gen_enforced_field(WorkspaceCwd, FieldPath, FieldValue).`)) {
-      if (answer.id === `throw`)
-        throw new Error(pl.format_answer(answer));
-
       const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
       const fieldPath = parseLink(answer.links.FieldPath);
       const fieldValue = parseLink(answer.links.FieldValue);
@@ -234,9 +284,6 @@ export class Constraints {
     const session = this.createSession();
 
     for await (const answer of session.makeQuery(query)) {
-      if (answer.id === `throw`)
-        throw new Error(pl.format_answer(answer));
-
       const parsedLinks: Record<string, string|null> = {};
 
       for (const [variable, value] of Object.entries(answer.links)) {

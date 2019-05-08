@@ -157,7 +157,7 @@ declare module 'tau-prolog' {
 
         public consult(program: string): void;
 
-        public query(query: string): void;
+        public query(query: string): true | Term<1, 'throw'>;
 
         public answer(callback: (answer: Answer) => void): void;
 
