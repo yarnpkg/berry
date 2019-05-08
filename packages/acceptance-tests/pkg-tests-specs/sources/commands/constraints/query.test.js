@@ -35,6 +35,54 @@ describe(`Commands`, () => {
       expect({code, stdout, stderr}).toMatchSnapshot();
     }));
 
+    test(`test with a syntax error`, makeTemporaryEnv({}, async({path, run, source}) => {
+      await environments[`one regular dependency`](path);
+
+      let code;
+      let stdout;
+      let stderr;
+
+      try {
+        ({code, stdout, stderr} = await run(`constraints`, `query`, `*&%@$#$#!$@)`));
+      } catch (error) {
+        ({code, stdout, stderr} = error);
+      }
+
+      expect({code, stdout, stderr}).toMatchSnapshot();
+    }));
+
+    test(`test with an unknown predicate`, makeTemporaryEnv({}, async({path, run, source}) => {
+      await environments[`one regular dependency`](path);
+
+      let code;
+      let stdout;
+      let stderr;
+
+      try {
+        ({code, stdout, stderr} = await run(`constraints`, `query`, `hello_word(X)`));
+      } catch (error) {
+        ({code, stdout, stderr} = error);
+      }
+
+      expect({code, stdout, stderr}).toMatchSnapshot();
+    }));
+
+    test(`test with an empty predicate`, makeTemporaryEnv({}, async({path, run, source}) => {
+      await environments[`one regular dependency`](path);
+
+      let code;
+      let stdout;
+      let stderr;
+
+      try {
+        ({code, stdout, stderr} = await run(`constraints`, `query`, `workspace()`));
+      } catch (error) {
+        ({code, stdout, stderr} = error);
+      }
+
+      expect({code, stdout, stderr}).toMatchSnapshot();
+    }));
+
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [queryDescription, query] of Object.entries(queries)) {
         test(`test (${environmentDescription} / ${queryDescription})`, makeTemporaryEnv({}, async ({path, run, source}) => {
