@@ -28,9 +28,9 @@ The official plugins (the ones whose development happen on the Yarn repository) 
 
   - `yarn plugins dl --list` will print the name of the available official plugins. Some of them might be marked experimental, in which case they might be subject to breaking changes between releases (they should be mostly stable in general, though).
 
-  - `yarn plugins dl <plugin-name>` will download one of the plugins from the list, store it within `.yarn/plugins`, and modify your local `.yarnrc` file to reference it.
+  - `yarn plugins dl <plugin-name>` will download one of the plugins from the list, store it within the `.yarn/plugins` directory, and modify your local `.yarnrc` file to reference it.
 
-  - If the plugin you're looking for is hosted on a different server (or is a non-official plugin), just run `yarn plugins dl <url>` and the same process will happen.
+  - `yarn plugins dl <url>` will do the same thing, but because it uses a URL it will work with any plugin regardless of where the plugin is actually hosted.
 
 ### Manual setup
 
