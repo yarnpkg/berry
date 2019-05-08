@@ -309,7 +309,8 @@ exports[`Commands constraints query test without trailing . 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: Done
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+➤ YN0000: Done
 ",
 }
 `;
