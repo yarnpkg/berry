@@ -16,7 +16,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   .describe(`login to registry`)
 
   .detail(`
-    This command will ask you for your registry username, email, password, and One-time password (when it applies).
+    This command will ask you for your username, email, password, and 2FA One-Time Password (when it applies). It will then modify your local configuration (in your home folder) to reference the new tokens thus generated.
+
+    Adding the \`-s,--scope\` flag will cause the authentication to be done against whatever registry is configured for the associated scope (see also \`npmScopes\`).
   `)
 
   .example(
