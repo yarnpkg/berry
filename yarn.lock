@@ -1835,6 +1835,7 @@ __metadata:
     "@berry/plugin-npm": "workspace:*"
     "@berry/plugin-pack": "workspace:*"
     clipanion: "npm:^0.14.1"
+    inquirer: "npm:^6.2.0"
     ssri: "npm:^6.0.1"
     yup: "npm:^0.27.0"
   languageName: unknown
@@ -1845,6 +1846,7 @@ __metadata:
   resolution: "@berry/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
     "@berry/core": "workspace:*"
+    inquirer: "npm:^6.2.0"
     semver: "npm:^5.6.0"
   languageName: unknown
   linkType: soft

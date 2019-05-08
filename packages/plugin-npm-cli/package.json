@@ -8,6 +8,7 @@
     "@berry/plugin-npm": "workspace:*",
     "@berry/plugin-pack": "workspace:*",
     "clipanion": "^0.14.1",
+    "inquirer": "^6.2.0",
     "ssri": "^6.0.1",
     "yup": "^0.27.0"
   }

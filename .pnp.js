@@ -9677,6 +9677,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-core"
                 ],
                 [
+                  "inquirer",
+                  "npm:6.2.1"
+                ],
+                [
                   "semver",
                   "npm:5.6.0"
                 ]
@@ -9716,6 +9720,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "clipanion",
                   "npm:0.14.1"
+                ],
+                [
+                  "inquirer",
+                  "npm:6.2.1"
                 ],
                 [
                   "ssri",

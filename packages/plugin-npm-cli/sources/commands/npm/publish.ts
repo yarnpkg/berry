@@ -54,12 +54,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
         for (const file of files)
           report.reportInfo(null, file);
-  
+
         const pack = await packUtils.genPackStream(workspace, files);
         const buffer = await miscUtils.bufferStream(pack);
-  
+
         const body = makePublishBody(workspace, buffer, {access, tag});
-  
+
         try {
           const path = ident.scope
             ? `/@${ident.scope}%2f${ident.name}`
@@ -75,12 +75,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
             const message = error.body && error.body.error
               ? error.body.error
               : `The remote server answered with HTTP ${error.statusCode} ${error.statusMessage}`;
-  
+
             report.reportError(MessageName.NETWORK_ERROR, message);
           } else {
             throw error;
           }
-        }  
+        }
       });
 
       report.reportInfo(MessageName.UNNAMED, `Package archive published`);

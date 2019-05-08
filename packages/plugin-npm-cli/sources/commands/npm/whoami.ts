@@ -38,7 +38,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
       }
 
       try {
-        const response = await npmHttpUtils.get(`/-/whoami`, { configuration, ident, forceAuth: true, json: true });
+        const response = await npmHttpUtils.get(`/-/whoami`, { configuration, ident, authType: npmHttpUtils.AuthType.ALWAYS_AUTH, json: true });
 
         report.reportInfo(MessageName.UNNAMED, response.username);
       } catch (err) {

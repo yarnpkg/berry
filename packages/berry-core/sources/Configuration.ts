@@ -644,10 +644,15 @@ export class Configuration {
         }
       }
 
-      if (current[currentKey] === patch[key])
+      const currentValue = current[currentKey];
+
+      if (currentValue === patch[key])
         continue;
 
-      current[currentKey] = patch[key];
+      current[currentKey] = typeof patch[key] === 'function'
+        ? patch[key](currentValue)
+        : patch[key]
+
       patched = true;
     }
 
@@ -655,6 +660,12 @@ export class Configuration {
       return;
 
     await xfs.writeFilePromise(configurationPath, stringifySyml(current));
+  }
+
+  static async updateHomeConfiguration(patch: any) {
+    const homeFolder = folderUtils.getHomeFolder();
+
+    return await Configuration.updateConfiguration(homeFolder, patch);
   }
 
   constructor(startingCwd: string, projectCwd: string | null, plugins: Map<string, Plugin>) {

@@ -1,6 +1,6 @@
 /* @flow */
 
-import {ServerResponse} from 'http';
+import {IncomingMessage, ServerResponse} from 'http';
 import {Gzip}           from 'zlib';
 
 const crypto = require('crypto');
@@ -167,12 +167,16 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
     return packageServerUrl;
 
   enum RequestType {
+    Login = 'login',
     PackageInfo = 'packageInfo',
     PackageTarball = 'packageTarball',
     Whoami = 'whoami',
   }
 
   type Request = {
+    type: RequestType.Login;
+    username: string,
+  } | {
     type: RequestType.PackageInfo;
     scope?: string;
     localName: string;
@@ -185,9 +189,9 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
     type: RequestType.Whoami;
   }
 
-  const processors: {[requestType in RequestType]:(request: Request, response: ServerResponse) => Promise<void>} = {
-    async [RequestType.PackageInfo](request, response) {
-      const {scope, localName} = request;
+  const processors: {[requestType in RequestType]:(parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
+    async [RequestType.PackageInfo](parsedRequest, request, response) {
+      const {scope, localName} = parsedRequest;
       const name = scope ? `${scope}/${localName}` : localName;
 
       const packageEntry = await exports.getPackageEntry(name);
@@ -227,8 +231,8 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
       response.end(data);
     },
 
-    async [RequestType.PackageTarball](request, response) {
-      const {scope, localName, version} = request;
+    async [RequestType.PackageTarball](parsedRequest, request, response) {
+      const {scope, localName, version} = parsedRequest;
       const name = scope ? `${scope}/${localName}` : localName;
 
       const packageEntry = await exports.getPackageEntry(name);
@@ -252,13 +256,55 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
       packStream.pipe(response);
     },
 
-    async [RequestType.Whoami](request, response) {
+    async [RequestType.Whoami](parsedRequest, request, response) {
       const data = JSON.stringify({
         username: `username`,
       });
 
       response.writeHead(200, {[`Content-Type`]: `application/json`});
       response.end(data);
+    },
+
+    async [RequestType.Login](parsedRequest, request, response) {
+      const {username} = parsedRequest;
+      const otp = request.headers['npm-otp'];
+      const user = validLogins[username];
+
+      if (!user) {
+        return processError(response, 401, `Unauthorized`);
+      }
+
+      if (user.requiresOtp && user.otp !== otp) {
+        response.writeHead(401, {
+          [`Content-Type`]: `application/json`,
+          [`www-authenticate`]: `OTP`
+        });
+
+        return response.end();
+      }
+
+      let rawData = '';
+
+      request.on('data', chunk => rawData += chunk);
+      request.on('end', () => {
+        let body;
+
+        try {
+          body = JSON.parse(rawData);
+        } catch (e) {
+          return processError(response, 401, `Unauthorized`);
+        }
+
+        if (body.username !== user.username || body.password !== user.password) {
+          return processError(response, 401, `Unauthorized`);
+        }
+
+        const data = JSON.stringify({token: user.npmAuthToken});
+
+        response.writeHead(200, { [`Content-Type`]: `application/json` });
+
+        return response.end(data);
+      });
     },
   };
 
@@ -268,7 +314,7 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
   }
 
   function processError(res: ServerResponse, statusCode: number, errorMessage: string): void {
-    if (statusCode !== 404)
+    if (statusCode !== 404 && statusCode !== 401)
       console.error(errorMessage);
 
     sendError(res, statusCode, errorMessage);
@@ -279,7 +325,14 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
 
     url = url.replace(/%2f/g, '/');
 
-    if (url === `/-/whoami`) {
+    if (match = url.match(/^\/-\/user\/org\.couchdb\.user:(.+)/)) {
+      const [_, username] = match;
+
+      return {
+        type: RequestType.Login,
+        username,
+      };
+    } else if (url === `/-/whoami`) {
       return {
         type: RequestType.Whoami,
       };
@@ -307,9 +360,23 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
 
   function needsAuth({scope, localName, type}: Request): boolean {
     return (scope != null && scope.startsWith('@private'))
-      || localName.startsWith('private')
+      || localName && localName.startsWith('private')
       || type === RequestType.Whoami;
   }
+
+  const validLogins = {
+    testUser: {
+      password: `password`,
+      requiresOtp: true,
+      otp: `1234`,
+      npmAuthToken: `686159dc-64b3-413e-a244-2de2b8d1c36f`
+    },
+    anotherTestUser: {
+      password: `password123`,
+      requiresOtp: false,
+      npmAuthToken: `316158de-64b3-413e-a244-2de2b8d1c80f`
+    },
+  };
 
   const validAuthorizations = [
     `Bearer 686159dc-64b3-413e-a244-2de2b8d1c36f`,
@@ -339,7 +406,7 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
               return;
             }
 
-            await processors[parsedRequest.type](parsedRequest, res);
+            await processors[parsedRequest.type](parsedRequest, req, res);
           } catch (error) {
             processError(res, 500, error.stack);
           }

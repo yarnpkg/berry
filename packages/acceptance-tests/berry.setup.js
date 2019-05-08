@@ -6,6 +6,7 @@ const isWsl = require(`is-wsl`);
 const {
   tests: {generatePkgDriver, startPackageServer, getPackageRegistry},
   exec: {execFile},
+  fs: {createTemporaryFolder},
 } = require(`pkg-tests-core`);
 const {NodeFS} = require('@berry/fslib');
 
@@ -26,11 +27,15 @@ global.makeTemporaryEnv = generatePkgDriver({
       rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = value;
 
     const nativePath = NodeFS.fromPortablePath(path);
+    const tempHomeFolder = await createTemporaryFolder();
 
     const res = await execFile(process.execPath, [`${__dirname}/../../scripts/run-yarn.js`, command, ...args], {
       cwd: cwd || path,
       env: {
+        [`HOME`]: tempHomeFolder,
+        [`USERPROFILE`]: tempHomeFolder,
         [`PATH`]: `${nativePath}/bin${delimiter}${process.env.PATH}`,
+        [`TEST_ENV`]: `true`,
         [`YARN_ENABLE_ABSOLUTE_VIRTUALS`]: `true`,
         [`YARN_ENABLE_TIMERS`]: `false`,
         [`YARN_GLOBAL_FOLDER`]: `${nativePath}/.berry/global`,

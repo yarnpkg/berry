@@ -1,4 +1,5 @@
 {
     "editor.tabSize": 2,
-    "files.eol": "\n"
+    "files.eol": "\n",
+    "typescript.tsdk": "packages/berry-pnpify/lib"
 }

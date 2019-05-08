@@ -1,6 +1,6 @@
 import {Configuration, Ident} from '@berry/core';
 
-interface MapLike {
+export interface MapLike {
   get(key: string): any;
 }
 
