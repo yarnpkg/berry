@@ -72,10 +72,16 @@ function getAuthenticationHeader({configuration}: {configuration: Configuration}
 }
 
 function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
-  if (authType === AuthType.CONFIGURATION)
-    return authConfiguration.get(`npmAlwaysAuth`);
+  switch (authType) {
+    case AuthType.CONFIGURATION:
+      return authConfiguration.get(`npmAlwaysAuth`);
 
-  return authType === AuthType.ALWAYS_AUTH ? true : false;
+    case AuthType.ALWAYS_AUTH:
+      return true;
+
+    case AuthType.NO_AUTH:
+      return false;
+  }
 }
 
 async function askForOtp() {

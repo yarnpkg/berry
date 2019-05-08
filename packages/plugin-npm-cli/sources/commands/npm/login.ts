@@ -4,9 +4,6 @@ import {npmHttpUtils}                                   from '@berry/plugin-npm'
 import inquirer                                         from 'inquirer';
 import {Readable, Writable}                             from 'stream';
 
-const SUCCESS_MESSAGE = `Successfully logged in`;
-const ERROR_MESSAGE = `Invalid Authentication`;
-
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
@@ -27,7 +24,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
   .example(
     `Login to a scoped registry`,
-    `yarn npm login --scope private`,
+    `yarn npm login --scope my-scope`,
   )
 
   .action(async ({cwd, stdin, stdout, scope}: {cwd: string, stdin: Readable, stdout: Writable, scope: string}) => {
@@ -61,9 +58,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         // @ts-ignore
         await setAuthToken(ident, response.token);
 
-        return report.reportInfo(MessageName.UNNAMED, SUCCESS_MESSAGE);
+        return report.reportInfo(MessageName.UNNAMED, `Successfully logged in`);
       } catch (error) {
-        return report.reportError(MessageName.AUTHENTICATION_INVALID, ERROR_MESSAGE);
+        return report.reportError(MessageName.AUTHENTICATION_INVALID, `Invalid Authentication`);
       }
     });
 
