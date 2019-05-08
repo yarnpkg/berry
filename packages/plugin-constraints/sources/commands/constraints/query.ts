@@ -51,6 +51,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const {project} = await Project.find(configuration, cwd);
     const constraints = await Constraints.find(project);
 
+    if (!query.endsWith(`.`))
+      query = `${query}.`;
+
     const report = await StreamReport.start({configuration, stdout}, async report => {
       for await (const result of constraints.query(query)) {
         const lines = Array.from(Object.entries(result));
@@ -60,7 +63,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
         for (let i = 0; i < lineCount; i++) {
           const [variableName, value] = lines[i];
-          report.reportInfo(MessageName.UNNAMED, `${getLinePrefix(i, lineCount)}${variableName.padEnd(maxVariableNameLength, ` `)} = ${valueToString(value)}`);
+          report.reportInfo(null, `${getLinePrefix(i, lineCount)}${variableName.padEnd(maxVariableNameLength, ` `)} = ${valueToString(value)}`);
         }
       }
     });

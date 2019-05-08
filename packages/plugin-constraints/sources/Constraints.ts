@@ -1,10 +1,11 @@
-import {Ident, Project, Workspace} from '@berry/core';
-import {miscUtils, structUtils}    from '@berry/core';
-import {xfs}                       from '@berry/fslib';
-import {posix}                     from 'path';
-import pl                          from 'tau-prolog';
+import {Ident, MessageName, Project, ReportError, Workspace} from '@berry/core';
+import {miscUtils, structUtils}                              from '@berry/core';
+import {xfs}                                                 from '@berry/fslib';
+import {posix}                                               from 'path';
+import pl                                                    from 'tau-prolog';
+import {runInNewContext}                                     from 'vm';
 
-import {linkProjectToSession}      from './tauModule';
+import {linkProjectToSession}                                from './tauModule';
 
 export const enum DependencyType {
   Dependencies = 'dependencies',
@@ -17,6 +18,34 @@ const DEPENDENCY_TYPES = [
   DependencyType.DevDependencies,
   DependencyType.PeerDependencies,
 ];
+
+function clearerError(tauErr: any) {
+  let prologCode = String(tauErr);
+  prologCode = prologCode.replace(/^throw\(/g, `_throw(`);
+  prologCode = prologCode.replace(/'\/'\(([^,]+)/g, `slashfn('$1'`);
+
+  const clearerErr = runInNewContext(prologCode, {
+    [`_throw`]: (err: Error) => err,
+    [`error`]: (err: Error, args: Array<any>) => Object.assign(err, ... args),
+    [`syntax_error`]: (reason: string) => new ReportError(MessageName.PROLOG_SYNTAX_ERROR, `Syntax error: ${reason}`),
+    [`existence_error`]: (type: string, description: string) => new ReportError(MessageName.PROLOG_EXISTENCE_ERROR, `Existence error: ${type} ${description} doesn't exist`),
+    [`slashfn`]:  (name: string, arity: number) => `${name}/${arity}`,
+    [`line`]: (line: number) => ({line}),
+    [`column`]: (column: number) => ({column}),
+    [`procedure`]: `procedure`,
+    [`top_level`]: `top level`,
+    [`found`]: () => ({}),
+    [`token_not_found`]: ({}),
+  });
+
+  if (typeof clearerErr === `undefined`)
+    return new ReportError(MessageName.PROLOG_UNKNOWN_ERROR, prologCode);
+
+  if (typeof clearerErr.line !== `undefined` && typeof clearerErr.column !== `undefined`)
+    clearerErr.message += ` at line ${clearerErr.line}, column ${clearerErr.column}`;
+
+  return clearerErr;
+}
 
 // Node 8 doesn't have Symbol.asyncIterator
 // https://github.com/Microsoft/TypeScript/issues/14151#issuecomment-280812617
@@ -42,13 +71,19 @@ class Session {
   }
 
   public async *makeQuery(query: string) {
-    this.session.query(query);
+    const parsed = this.session.query(query) as any;
+
+    if (parsed !== true)
+      throw clearerError(parsed);
 
     while (true) {
       const answer = await this.fetchNextAnswer();
 
       if (!answer)
         break;
+
+      if (answer.id === `throw`)
+        throw clearerError(answer);
 
       yield answer;
     }
@@ -147,9 +182,6 @@ export class Constraints {
     }> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
-      if (answer.id === `throw`)
-        throw new Error(pl.format_answer(answer));
-
       const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyRange = parseLink(answer.links.DependencyRange);
@@ -178,9 +210,6 @@ export class Constraints {
     }> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, Reason).`)) {
-      if (answer.id === `throw`)
-        throw new Error(pl.format_answer(answer));
-
       const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyType = parseLink(answer.links.DependencyType) as DependencyType;
@@ -207,9 +236,6 @@ export class Constraints {
     }> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), gen_workspace_field_requirement(WorkspaceCwd, FieldPath, FieldValue).`)) {
-      if (answer.id === `throw`)
-        throw new Error(pl.format_answer(answer));
-
       const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
       const fieldPath = parseLink(answer.links.FieldPath);
       const fieldValue = parseLink(answer.links.FieldValue);
@@ -234,9 +260,6 @@ export class Constraints {
     const session = this.createSession();
 
     for await (const answer of session.makeQuery(query)) {
-      if (answer.id === `throw`)
-        throw new Error(pl.format_answer(answer));
-
       const parsedLinks: Record<string, string|null> = {};
 
       for (const [variable, value] of Object.entries(answer.links)) {
