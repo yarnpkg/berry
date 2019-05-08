@@ -226,7 +226,7 @@ This error code isn't used at the moment; we ideally want to explain **why** did
 
 Yarn is installing packages using [Plug'n'Play](/features/pnp), but a `node_modules` folder has been found.
 
-This warning is emitted when your project is detected as containing `node_modules` folders that actually seem to contain packages. This is not advised as they're likely relicates of whatever package manager you used before, and might confuse your tools and lead you into "works on my machine" situations.
+This warning is emitted when your project is detected as containing `node_modules` folders that actually seem to contain packages. This is not advised as they're likely relicts of whatever package manager you used before, and might confuse your tools and lead you into "works on my machine" situations.
 
 ## YN0032 - `NODE_GYP_INJECTED`
 
