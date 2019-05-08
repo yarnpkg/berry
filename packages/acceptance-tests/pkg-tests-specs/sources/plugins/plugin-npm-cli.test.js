@@ -139,6 +139,7 @@ describe(`Plugins`, () => {
           ({ code, stdout, stderr } = await run(`npm`, `login`, {
             env: {
               HOME: homePath,
+              USERPROFILE: homePath,
               TEST_NPM_USER: `anotherTestUser`,
               TEST_NPM_PASSWORD: `password123`,
               YARN_RC_FILENAME: RC_FILENAME
@@ -169,6 +170,7 @@ describe(`Plugins`, () => {
           ({ code, stdout, stderr } = await run(`npm`, `login`, {
             env: {
               HOME: homePath,
+              USERPROFILE: homePath,
               TEST_NPM_USER: `testUser`,
               TEST_NPM_PASSWORD: `password`,
               TEST_NPM_2FA_TOKEN: `1234`,
@@ -238,6 +240,7 @@ describe(`Plugins`, () => {
           ({ code, stdout, stderr } = await run(`npm`, `login`, `--scope`, `testScope`, {
             env: {
               HOME: homePath,
+              USERPROFILE: homePath,
               TEST_NPM_USER: `anotherTestUser`,
               TEST_NPM_PASSWORD: `password123`,
               YARN_RC_FILENAME: RC_FILENAME
@@ -278,6 +281,7 @@ describe(`Plugins`, () => {
           ({ code, stdout, stderr } = await run(`npm`, `login`, `--scope`, `testScope`, {
             env: {
               HOME: homePath,
+              USERPROFILE: homePath,
               TEST_NPM_USER: `testUser`,
               TEST_NPM_PASSWORD: `password`,
               TEST_NPM_2FA_TOKEN: `1234`,
