@@ -93,6 +93,10 @@ const Content = styled.div`
   }
 
   code {
+    display: inline-block;
+
+    text-align: left;
+
     color: #007aa2;
   }
 
