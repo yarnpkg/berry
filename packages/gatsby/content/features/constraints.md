@@ -23,7 +23,7 @@ Going back to the constraint engine, the *facts* are the definitions created by 
 
 The following predicates provide information about the current state of your project and are meant to be used in the dependencies of your own rules (check the recipes for examples how to use them in practice). Note that the `/<number>` syntax listed at the end simply is the predicate arity (number of arguments it takes).
 
-#### `dependency_type/1
+#### `dependency_type/1`
 
 ```prolog
 dependency_type(
