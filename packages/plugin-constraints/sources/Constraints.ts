@@ -95,7 +95,7 @@ class Session {
   }
 
   public async *makeQuery(query: string) {
-    const parsed = this.session.query(query) as any;
+    const parsed = this.session.query(query);
 
     if (parsed !== true)
       throw extractError(parsed);
