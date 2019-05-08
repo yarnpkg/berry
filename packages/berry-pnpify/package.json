@@ -1,14 +1,11 @@
 {
   "name": "@berry/pnpify",
-  "private": true,
+  "version": "0.0.1",
+  "sideEffects": false,
+  "types": "./lib/index.d.ts",
   "main": "./lib/index.js",
   "bin": {
     "pnpify": "./bin.js"
-  },
-  "types": "./lib/index.d.ts",
-  "sideEffects": false,
-  "peerDependencies": {
-    "pnpapi": "^0.0.0"
   },
   "scripts": {
     "build:pnpify": "run webpack-cli --config webpack.config.pkg.js",
@@ -22,6 +19,10 @@
     "webpack-cli": "npm:3.2.1"
   },
   "dependencies": {
-    "@berry/fslib": "workspace:*"
-  }
+    "@berry/fslib": "^0.0.4"
+  },
+  "files": [
+    "/lib/*",
+    "/bin.js"
+  ]
 }

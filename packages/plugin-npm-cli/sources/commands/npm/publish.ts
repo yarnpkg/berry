@@ -61,7 +61,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const body = makePublishBody(workspace, buffer, {access, tag});
   
         try {
-          await npmHttpUtils.put(`/${structUtils.stringifyIdent(ident)}`, body, {
+          const path = ident.scope
+            ? `/@${ident.scope}%2f${ident.name}`
+            : `/${ident.name}`;
+
+          await npmHttpUtils.put(path, body, {
             configuration,
             ident,
             json: true,
