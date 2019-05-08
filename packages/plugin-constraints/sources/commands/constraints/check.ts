@@ -33,7 +33,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const report = await StreamReport.start({configuration, stdout}, async report => {
       const result = await constraints.process();
 
-      for (const {workspace, dependencyIdent, dependencyRange, dependencyType} of result.enforcedDependencyRanges) {
+      for (const {workspace, dependencyIdent, dependencyRange, dependencyType} of result.enforcedDependencies) {
         const dependencyDescriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
 
         if (dependencyRange !== null) {
@@ -59,7 +59,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         }
       }
 
-      for (const {workspace, fieldPath, fieldValue} of result.workspaceFieldRequirements) {
+      for (const {workspace, fieldPath, fieldValue} of result.enforcedFields) {
         const actualValue = getPath(workspace.manifest.raw, fieldPath);
 
         if (fieldValue !== null) {
