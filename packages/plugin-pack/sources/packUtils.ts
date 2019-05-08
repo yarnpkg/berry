@@ -46,7 +46,7 @@ export async function prepareForPack(workspace: Workspace, {report}: {report: Re
   const stdout = new PassThrough();
   const stderr = new PassThrough();
 
-  if (scriptUtils.hasWorkspaceScript(workspace, `prepack`)) {
+  if (await scriptUtils.hasWorkspaceScript(workspace, `prepack`)) {
     report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "prepack" lifecycle script`);
     await scriptUtils.executeWorkspaceScript(workspace, `prepack`, [], {stdin, stdout, stderr});
   }
@@ -54,7 +54,7 @@ export async function prepareForPack(workspace: Workspace, {report}: {report: Re
   try {
     await cb();
   } finally {
-    if (scriptUtils.hasWorkspaceScript(workspace, `postpack`)) {
+    if (await scriptUtils.hasWorkspaceScript(workspace, `postpack`)) {
       report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "postpack" lifecycle script`);
       await scriptUtils.executeWorkspaceScript(workspace, `postpack`, [], {stdin, stdout, stderr});
     }

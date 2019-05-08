@@ -34,7 +34,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     let modified = false;
 
-    for (const {workspace, dependencyIdent, dependencyRange, dependencyType} of result.enforcedDependencyRanges) {
+    for (const {workspace, dependencyIdent, dependencyRange, dependencyType} of result.enforcedDependencies) {
       if (dependencyRange !== null) {
         const newDescriptor = structUtils.makeDescriptor(dependencyIdent, dependencyRange);
 

@@ -176,13 +176,13 @@ export class Constraints {
     let declarations = ``;
 
     // (Cwd, DependencyIdent, DependencyRange, DependencyType)
-    declarations += `gen_enforced_dependency_range(_, _, _, _) :- false.\n`;
+    declarations += `gen_enforced_dependency(_, _, _, _) :- false.\n`;
 
     // (Cwd, DependencyIdent, DependencyType, Reason)
     declarations += `gen_invalid_dependency(_, _, _, _) :- false.\n`;
 
     // (Cwd, Path, Value)
-    declarations += `gen_workspace_field_requirement(_, _, _) :- false.\n`;
+    declarations += `gen_enforced_field(_, _, _) :- false.\n`;
 
     return declarations;
   }
@@ -198,14 +198,14 @@ export class Constraints {
   async process() {
     const session = this.createSession();
 
-    let enforcedDependencyRanges: Array<{
+    let enforcedDependencies: Array<{
       workspace: Workspace,
       dependencyIdent: Ident,
       dependencyRange: string | null,
       dependencyType: DependencyType,
     }> = [];
 
-    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency_range(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
+    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
       const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyRange = parseLink(answer.links.DependencyRange);
@@ -217,10 +217,10 @@ export class Constraints {
       const workspace = this.project.getWorkspaceByCwd(workspaceCwd);
       const dependencyIdent = structUtils.parseIdent(dependencyRawIdent);
 
-      enforcedDependencyRanges.push({workspace, dependencyIdent, dependencyRange, dependencyType});
+      enforcedDependencies.push({workspace, dependencyIdent, dependencyRange, dependencyType});
     }
 
-    enforcedDependencyRanges = miscUtils.sortMap(enforcedDependencyRanges, [
+    enforcedDependencies = miscUtils.sortMap(enforcedDependencies, [
       ({dependencyRange}) => dependencyRange !== null ? `0` : `1`,
       ({workspace}) => structUtils.stringifyIdent(workspace.locator),
       ({dependencyIdent}) => structUtils.stringifyIdent(dependencyIdent),
@@ -253,13 +253,13 @@ export class Constraints {
       ({dependencyIdent}) => structUtils.stringifyIdent(dependencyIdent),
     ]);
 
-    let workspaceFieldRequirements: Array<{
+    let enforcedFields: Array<{
       workspace: Workspace,
       fieldPath: string,
       fieldValue: string|null,
     }> = [];
 
-    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), gen_workspace_field_requirement(WorkspaceCwd, FieldPath, FieldValue).`)) {
+    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), gen_enforced_field(WorkspaceCwd, FieldPath, FieldValue).`)) {
       const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
       const fieldPath = parseLink(answer.links.FieldPath);
       const fieldValue = parseLink(answer.links.FieldValue);
@@ -269,15 +269,15 @@ export class Constraints {
 
       const workspace = this.project.getWorkspaceByCwd(workspaceCwd);
 
-      workspaceFieldRequirements.push({workspace, fieldPath, fieldValue});
+      enforcedFields.push({workspace, fieldPath, fieldValue});
     }
 
-    workspaceFieldRequirements = miscUtils.sortMap(workspaceFieldRequirements, [
+    enforcedFields = miscUtils.sortMap(enforcedFields, [
       ({workspace}) => structUtils.stringifyIdent(workspace.locator),
       ({fieldPath}) => fieldPath,
     ]);
 
-    return {enforcedDependencyRanges, invalidDependencies, workspaceFieldRequirements};
+    return {enforcedDependencies, invalidDependencies, enforcedFields};
   }
 
   async *query(query: string) {
