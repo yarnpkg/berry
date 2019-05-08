@@ -9677,6 +9677,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-core"
                 ],
                 [
+                  "inquirer",
+                  "npm:6.2.1"
+                ],
+                [
                   "semver",
                   "npm:5.6.0"
                 ]

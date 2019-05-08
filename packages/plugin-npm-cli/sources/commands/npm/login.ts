@@ -1,9 +1,8 @@
-import {Configuration, MessageName}                     from '@berry/core';
-import {PluginConfiguration, StreamReport}              from '@berry/core';
-import {npmConfigUtils, npmHttpUtils}                   from '@berry/plugin-npm';
+import {Configuration, Ident, MessageName}              from '@berry/core';
+import {PluginConfiguration, StreamReport, structUtils} from '@berry/core';
+import {npmHttpUtils}                                   from '@berry/plugin-npm';
 import inquirer                                         from 'inquirer';
 import {Readable, Writable}                             from 'stream';
-import {URL}                                            from 'url';
 
 const SUCCESS_MESSAGE = `Successfully logged in`;
 const ERROR_MESSAGE = `Invalid Authentication`;
@@ -11,12 +10,12 @@ const ERROR_MESSAGE = `Invalid Authentication`;
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`npm login [-r,--registry REGISTRY]`)
+  .command(`npm login [-s,--scope SCOPE]`)
   .categorize(`Npm-related commands`)
   .describe(`login to registry`)
 
   .detail(`
-    This command will ask you for your username, email, password, and 2FA One-Time Password (when it applies). It will then modify your local configuration (in your home folder) to reference the new tokens thus generated.
+    This command will ask you for your username, password, and 2FA One-Time Password (when it applies). It will then modify your local configuration (in your home folder) to reference the new tokens thus generated.
 
     Adding the \`-s,--scope\` flag will cause the authentication to be done against whatever registry is configured for the associated scope (see also \`npmScopes\`).
   `)
@@ -27,11 +26,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   )
 
   .example(
-    `Login to a custom registry`,
-    `yarn npm login --registry http://localhost:4873`,
+    `Login to a scoped registry`,
+    `yarn npm login --scope private`,
   )
 
-  .action(async ({cwd, stdin, stdout, registry}: {cwd: string, stdin: Readable, stdout: Writable, registry: string}) => {
+  .action(async ({cwd, stdin, stdout, scope}: {cwd: string, stdin: Readable, stdout: Writable, scope: string}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     // @ts-ignore
@@ -41,47 +40,29 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     });
 
     const report = await StreamReport.start({configuration, stdout}, async report => {
-      const registryUrl = registry ? new URL(registry).toString() : null;
+      let ident: Ident | null = null;
+
+      if (scope) {
+        ident = structUtils.makeIdent(scope, ``);
+      }
+
       const credentials = await getCredentials(prompt);
       const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
       const requestOptions = {
         configuration,
-        ident: null,
+        ident,
         json: true,
-        forceAuth: false,
-        registryUrl,
+        authType: npmHttpUtils.AuthType.NO_AUTH,
       };
 
-      // First we try to login only using the credentials (no otp)
       try {
         const response = await npmHttpUtils.put(url, credentials, requestOptions);
 
-        // If login succeeds here, go ahead and save the token to the home config, report and exit
         // @ts-ignore
-        await setAuthToken(configuration, response.token);
+        await setAuthToken(ident, response.token);
 
         return report.reportInfo(MessageName.UNNAMED, SUCCESS_MESSAGE);
-      } catch(error) {
-        // If our first try is an error could be one of two options:
-        // - An actual error (such as invalid credentials)
-        // - Missing OTP
-        if (!authRequiresOtp(error))
-          return report.reportError(MessageName.AUTHENTICATION_INVALID, ERROR_MESSAGE);
-      }
-
-      // If missing OTP was the issue, ask the user for the OTP and try again
-      // setting the according otp header
-      const otp = await getOtp(prompt);
-
-      try {
-        const headers = getOtpHeaders(otp);
-        const response = await npmHttpUtils.put(url, credentials, {...requestOptions, headers});
-
-        // @ts-ignore
-        await setAuthToken(configuration, response.token);
-
-        return report.reportInfo(MessageName.UNNAMED, SUCCESS_MESSAGE);
-      } catch(error) {
+      } catch (error) {
         return report.reportError(MessageName.AUTHENTICATION_INVALID, ERROR_MESSAGE);
       }
     });
@@ -89,20 +70,33 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     return report.exitCode();
   });
 
-async function setAuthToken(configuration: Configuration, npmAuthToken: string) {
-  const registry = npmConfigUtils.getRegistry(null, {configuration});
+async function setAuthToken(ident: Ident | null, npmAuthToken: string) {
+  const scope = ident && ident.scope;
 
-  await Configuration.updateHomeConfiguration({
-    npmRegistries: {
-      [registry]: {
-        npmAuthToken,
-      },
-    },
-  });
+  if (scope) {
+    return await Configuration.updateHomeConfiguration({
+      npmScopes: (scopes: {[key: string]: any} = {}) => ({
+        ... scopes,
+        [scope]: {
+          ... scopes[scope],
+          npmAuthToken,
+        },
+      }),
+    });
+  }
+
+  return await Configuration.updateHomeConfiguration({npmAuthToken});
 }
 
 async function getCredentials(prompt: any) {
-  const { username, password, email } = await prompt([
+  if (process.env.TEST_ENV) {
+    return {
+      name: process.env.TEST_NPM_USER || '',
+      password: process.env.TEST_NPM_PASSWORD || '',
+    };
+  }
+
+  const {username, password} = await prompt([
     {
       type: `input`,
       name: `username`,
@@ -115,50 +109,16 @@ async function getCredentials(prompt: any) {
       message: `Password:`,
       validate: (input: string) => validateRequiredInput(input, `Password`)
     },
-    {
-      type: `input`,
-      name: `email`,
-      message: `Email:`,
-      validate: (input: string) => validateRequiredInput(input, `Email`)
-    }
   ]);
 
   return {
     name: username,
     password,
-    email,
   }
-}
-
-async function getOtp(prompt: any) {
-  const { otp } = await prompt({
-    type: `input`,
-    name: `otp`,
-    message: `One-time password:`,
-    validate: (input: string) => validateRequiredInput(input, `One-time password`)
-  });
-
-  return otp;
 }
 
 function validateRequiredInput(input: string, message: string) {
   return input.length > 0
     ? true
     : `${message} is required`
-}
-
-function authRequiresOtp(error: any) {
-  try {
-    const authMethods = error.headers['www-authenticate'].split(/,\s*/).map((s: string) => s.toLowerCase());
-
-    return authMethods.includes('otp');
-  } catch(e) {
-    return false;
-  }
-}
-
-function getOtpHeaders(otp: string) {
-  return {
-    [`npm-otp`]: otp,
-  };
 }

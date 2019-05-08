@@ -4,6 +4,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/core": "workspace:*",
+    "inquirer": "^6.2.0",
     "semver": "^5.6.0"
   }
 }

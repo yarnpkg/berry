@@ -644,10 +644,15 @@ export class Configuration {
         }
       }
 
-      if (current[currentKey] === patch[key])
+      const currentValue = current[currentKey];
+
+      if (currentValue === patch[key])
         continue;
 
-      current[currentKey] = patch[key];
+      current[currentKey] = typeof patch[key] === 'function'
+        ? patch[key](currentValue)
+        : patch[key]
+
       patched = true;
     }
 

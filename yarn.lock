@@ -1846,6 +1846,7 @@ __metadata:
   resolution: "@berry/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
     "@berry/core": "workspace:*"
+    inquirer: "npm:^6.2.0"
     semver: "npm:^5.6.0"
   languageName: unknown
   linkType: soft
