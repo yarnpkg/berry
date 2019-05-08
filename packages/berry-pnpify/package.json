@@ -1,6 +1,6 @@
 {
   "name": "@berry/pnpify",
-  "private": true,
+  "version": "0.0.1",
   "sideEffects": false,
   "types": "./lib/index.d.ts",
   "main": "./lib/index.js",
