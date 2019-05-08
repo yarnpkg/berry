@@ -3,7 +3,6 @@ import {miscUtils, structUtils}                              from '@berry/core';
 import {xfs}                                                 from '@berry/fslib';
 import {posix}                                               from 'path';
 import pl                                                    from 'tau-prolog';
-import {runInNewContext}                                     from 'vm';
 
 import {linkProjectToSession}                                from './tauModule';
 
@@ -19,32 +18,57 @@ const DEPENDENCY_TYPES = [
   DependencyType.PeerDependencies,
 ];
 
-function clearerError(tauErr: any) {
-  let prologCode = String(tauErr);
-  prologCode = prologCode.replace(/^throw\(/g, `_throw(`);
-  prologCode = prologCode.replace(/'\/'\(([^,]+)/g, `slashfn('$1'`);
+function extractErrorImpl(value: any): any {
+  if (value instanceof pl.type.Num)
+    return value.value;
 
-  const clearerErr = runInNewContext(prologCode, {
-    [`_throw`]: (err: Error) => err,
-    [`error`]: (err: Error, args: Array<any>) => Object.assign(err, ... args),
-    [`syntax_error`]: (reason: string) => new ReportError(MessageName.PROLOG_SYNTAX_ERROR, `Syntax error: ${reason}`),
-    [`existence_error`]: (type: string, description: string) => new ReportError(MessageName.PROLOG_EXISTENCE_ERROR, `Existence error: ${type} ${description} doesn't exist`),
-    [`slashfn`]:  (name: string, arity: number) => `${name}/${arity}`,
-    [`line`]: (line: number) => ({line}),
-    [`column`]: (column: number) => ({column}),
-    [`procedure`]: `procedure`,
-    [`top_level`]: `top level`,
-    [`found`]: () => ({}),
-    [`token_not_found`]: ({}),
-  });
+  if (value instanceof pl.type.Term) {
+    if (value.args.length === 0)
+      return value.id;
 
-  if (typeof clearerErr === `undefined`)
-    return new ReportError(MessageName.PROLOG_UNKNOWN_ERROR, prologCode);
+    switch (value.indicator) {
+      case `throw/1`:
+        return extractErrorImpl(value.args[0]);
+      case `error/1`:
+        return extractErrorImpl(value.args[0]);
+      case `error/2`:
+        return Object.assign(extractErrorImpl(value.args[0]), ... extractErrorImpl(value.args[1]));
+      case `syntax_error/1`:
+        return new ReportError(MessageName.PROLOG_SYNTAX_ERROR, `Syntax error: ${extractErrorImpl(value.args[0])}`);
+      case `existence_error/2`:
+        return new ReportError(MessageName.PROLOG_EXISTENCE_ERROR, `Existence error: ${extractErrorImpl(value.args[0])} ${extractErrorImpl(value.args[1])} not found`)
+      case `line/1`:
+        return {line: extractErrorImpl(value.args[0])};
+      case `column/1`:
+        return {column: extractErrorImpl(value.args[0])};
+      case `found/1`:
+        return {found: extractErrorImpl(value.args[0])};
+      case `./2`:
+        return [extractErrorImpl(value.args[0])].concat(extractErrorImpl(value.args[1]));
+      case `//2`:
+        return `${extractErrorImpl(value.args[0])}/${extractErrorImpl(value.args[1])}`
+    }
+  }
 
-  if (typeof clearerErr.line !== `undefined` && typeof clearerErr.column !== `undefined`)
-    clearerErr.message += ` at line ${clearerErr.line}, column ${clearerErr.column}`;
+  throw `couldn't pretty print because of unsupported node ${value}`;
+}
 
-  return clearerErr;
+function extractError(val: any) {
+  let err;
+  try {
+    err = extractErrorImpl(val);
+  } catch (caught) {
+    if (typeof caught === `string`) {
+      throw new ReportError(MessageName.PROLOG_UNKNOWN_ERROR, `Unknown error: ${val} (note: ${caught})`);
+    } else {
+      throw caught;
+    }
+  }
+
+  if (typeof err.line !== `undefined` && typeof err.column !== `undefined`)
+    err.message += ` at line ${err.line}, column ${err.column}`;
+
+  return err;
 }
 
 // Node 8 doesn't have Symbol.asyncIterator
@@ -74,7 +98,7 @@ class Session {
     const parsed = this.session.query(query) as any;
 
     if (parsed !== true)
-      throw clearerError(parsed);
+      throw extractError(parsed);
 
     while (true) {
       const answer = await this.fetchNextAnswer();
@@ -83,7 +107,7 @@ class Session {
         break;
 
       if (answer.id === `throw`)
-        throw clearerError(answer);
+        throw extractError(answer);
 
       yield answer;
     }
