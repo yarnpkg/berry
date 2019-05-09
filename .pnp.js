@@ -66860,7 +66860,6 @@ const path_1 = __webpack_require__(4);
 const FakeFS_1 = __webpack_require__(5);
 const PORTABLE_PATH_PREFIX = `/mnt/`;
 const PORTABLE_PREFIX_REGEXP = /^\/mnt\/([a-zA-Z])(?:\/(.*))?$/;
-const WINDOWS_ABS_PATH = /^[a-zA-Z]:.*$/;
 class NodeFS extends FakeFS_1.FakeFS {
     constructor(realFs = fs_1.default) {
         super();
@@ -67053,32 +67052,34 @@ class NodeFS extends FakeFS_1.FakeFS {
             }
         };
     }
+    // Path should look like "/mnt/N/berry/scripts/plugin-pack.js"
+    // And transform to "N:\berry\scripts\plugin-pack.js"
     static fromPortablePath(p) {
-        // Path should look like "/mnt/N/berry/scripts/plugin-pack.js"
-        // And transform to "N:\berry/scripts/plugin-pack.js"
-        const match = p.match(PORTABLE_PREFIX_REGEXP);
-        if (!match)
+        if (path_1.win32.isAbsolute(p) && !path_1.posix.isAbsolute(p)) {
+            return p.replace(/\//g, `\\`);
+        }
+        else if (process.platform === `win32`) {
+            const match = p.match(PORTABLE_PREFIX_REGEXP);
+            if (!match)
+                return p;
+            const [, drive, pathWithoutPrefix = ''] = match;
+            const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
+            return `${drive}:\\${windowsPath}`;
+        }
+        else {
             return p;
-        const [, drive, pathWithoutPrefix = ''] = match;
-        const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
-        return `${drive}:\\${windowsPath}`;
+        }
     }
+    // Path should look like "N:/berry/scripts/plugin-pack.js"
+    // And transform to "/mnt/N/berry/scripts/plugin-pack.js"
     static toPortablePath(p) {
-        if (p.indexOf('\\') < 0 && !p.match(WINDOWS_ABS_PATH))
-            return p;
-        // Path should look like "N:\berry/scripts/plugin-pack.js"
-        // And transform to "/mnt/N/berry/scripts/plugin-pack.js"
-        // Skip if the path is already portable
-        if (p.startsWith(PORTABLE_PATH_PREFIX))
+        p = p.replace(/\\/g, `/`);
+        if (!path_1.win32.isAbsolute(p) || path_1.posix.isAbsolute(p))
             return p;
         const { root } = path_1.win32.parse(p);
-        // If relative path, just replace win32 slashes by posix slashes
-        if (!root)
-            return p.replace(/\\/g, '/');
         const driveLetter = root[0];
         const pathWithoutRoot = p.substr(root.length);
-        const posixPath = pathWithoutRoot.replace(/\\/g, '/');
-        return `${PORTABLE_PATH_PREFIX}${driveLetter}/${posixPath}`;
+        return `${PORTABLE_PATH_PREFIX}${driveLetter}/${pathWithoutRoot}`;
     }
 }
 exports.NodeFS = NodeFS;
@@ -68398,7 +68399,7 @@ class ZipFS extends FakeFS_1.FakeFS {
             path: p,
             close: () => {
                 clearImmediate(immediate);
-            }
+            },
         });
         const immediate = setImmediate(() => {
             try {
