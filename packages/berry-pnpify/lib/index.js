@@ -506,7 +506,8 @@ var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
 
 
 const PORTABLE_PATH_PREFIX = `/mnt/`;
-const PORTABLE_PREFIX_REGEXP = /^\/mnt\/([a-z])(?:\/(.*))?$/;
+const PORTABLE_PREFIX_REGEXP = /^\/mnt\/([a-zA-Z])(?:\/(.*))?$/;
+const WINDOWS_ABS_PATH = /^[a-zA-Z]:.*$/;
 class NodeFS_NodeFS extends FakeFS_FakeFS {
     constructor(realFs = external_fs_default.a) {
         super();
@@ -700,22 +701,20 @@ class NodeFS_NodeFS extends FakeFS_FakeFS {
         };
     }
     static fromPortablePath(p) {
-        if (process.platform !== `win32`)
-            return p;
-        // Path should look like "/mnt/n/berry/scripts/plugin-pack.js"
+        // Path should look like "/mnt/N/berry/scripts/plugin-pack.js"
         // And transform to "N:\berry/scripts/plugin-pack.js"
         const match = p.match(PORTABLE_PREFIX_REGEXP);
         if (!match)
             return p;
         const [, drive, pathWithoutPrefix = ''] = match;
         const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
-        return `${drive.toUpperCase()}:\\${windowsPath}`;
+        return `${drive}:\\${windowsPath}`;
     }
     static toPortablePath(p) {
-        if (process.platform !== `win32`)
+        if (p.indexOf('\\') < 0 && !p.match(WINDOWS_ABS_PATH))
             return p;
         // Path should look like "N:\berry/scripts/plugin-pack.js"
-        // And transform to "/mnt/n/berry/scripts/plugin-pack.js"
+        // And transform to "/mnt/N/berry/scripts/plugin-pack.js"
         // Skip if the path is already portable
         if (p.startsWith(PORTABLE_PATH_PREFIX))
             return p;
@@ -723,7 +722,7 @@ class NodeFS_NodeFS extends FakeFS_FakeFS {
         // If relative path, just replace win32 slashes by posix slashes
         if (!root)
             return p.replace(/\\/g, '/');
-        const driveLetter = root[0].toLowerCase();
+        const driveLetter = root[0];
         const pathWithoutRoot = p.substr(root.length);
         const posixPath = pathWithoutRoot.replace(/\\/g, '/');
         return `${PORTABLE_PATH_PREFIX}${driveLetter}/${posixPath}`;
