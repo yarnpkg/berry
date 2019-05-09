@@ -2,6 +2,7 @@ import {Cache, Descriptor, Plugin, Workspace} from '@berry/core';
 import {structUtils}                          from '@berry/core';
 import {Hooks as EssentialsHooks}             from '@berry/plugin-essentials';
 import {suggestUtils}                         from '@berry/plugin-essentials';
+import {Hooks as PackHooks}                   from '@berry/plugin-pack';
 
 const getTypesName = (descriptor: Descriptor) => {
   return descriptor.scope
@@ -63,12 +64,19 @@ const afterWorkspaceDependencyRemoval = async (
   workspace.manifest[target].delete(ident.identHash);
 };
 
+const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
+  if (rawManifest.publishConfig && rawManifest.publishConfig.typings) {
+    rawManifest.typings = rawManifest.publishConfig.typings;
+  }
+};
+
 const plugin: Plugin = {
   hooks: {
     afterWorkspaceDependencyAddition,
     afterWorkspaceDependencyRemoval,
+    beforeWorkspacePacking,
   } as (
-    EssentialsHooks
+    EssentialsHooks & PackHooks
   ),
 };
 

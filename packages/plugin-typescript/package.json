@@ -5,7 +5,8 @@
   "dependencies": {
     "@berry/builder": "workspace:*",
     "@berry/core": "workspace:*",
-    "@berry/plugin-essentials": "workspace:*"
+    "@berry/plugin-essentials": "workspace:*",
+    "@berry/plugin-pack": "workspace:*"
   },
   "scripts": {
     "build:plugin-typescript": "run @berry-build-plugin"
