@@ -1249,6 +1249,13 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
         return onRealPath();
     }
+    static makeSymlinkStats(stats) {
+        return Object.assign(stats, {
+            isFile: () => false,
+            isDirectory: () => false,
+            isSymbolicLink: () => true
+        });
+    }
     static createFsError(code, message) {
         return Object.assign(new Error(code + ': ' + message), { code });
     }
@@ -1331,10 +1338,10 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         return this.baseFs.statSync(this.resolveDirOrFilePath(p));
     }
     async lstatPromise(p) {
-        return this.resolveLink(p, 'lstat', (stats) => Object.assign(stats, { isSymbolicLink: () => true }), async () => await this.baseFs.lstatPromise(p));
+        return this.resolveLink(p, 'lstat', (stats) => NodeModulesFS_NodeModulesFS.makeSymlinkStats(stats), async () => await this.baseFs.lstatPromise(p));
     }
     lstatSync(p) {
-        return this.resolveLink(p, 'lstat', (stats) => Object.assign(stats, { isSymbolicLink: () => true }), () => this.baseFs.lstatSync(p));
+        return this.resolveLink(p, 'lstat', (stats) => NodeModulesFS_NodeModulesFS.makeSymlinkStats(stats), () => this.baseFs.lstatSync(p));
     }
     async chmodPromise(p, mask) {
         return await this.baseFs.chmodPromise(this.throwIfPathReadonly('chmod', p), mask);

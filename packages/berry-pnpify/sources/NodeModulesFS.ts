@@ -68,6 +68,14 @@ export class NodeModulesFS extends FakeFS {
     return onRealPath();
   }
 
+  private static makeSymlinkStats(stats: fs.Stats): fs.Stats {
+    return Object.assign(stats, {
+      isFile: () => false,
+      isDirectory: () => false,
+      isSymbolicLink: () => true
+    });
+  }
+
   private static createFsError(code: string, message: string) {
     return Object.assign(new Error(code + ': ' + message), { code });
   }
@@ -162,14 +170,14 @@ export class NodeModulesFS extends FakeFS {
 
   async lstatPromise(p: string) {
     return this.resolveLink(p, 'lstat',
-      (stats) => Object.assign(stats, { isSymbolicLink: () => true }),
+      (stats) => NodeModulesFS.makeSymlinkStats(stats),
       async () => await this.baseFs.lstatPromise(p)
     );
   }
 
   lstatSync(p: string) {
     return this.resolveLink(p, 'lstat',
-      (stats) => Object.assign(stats, { isSymbolicLink: () => true }),
+      (stats) => NodeModulesFS.makeSymlinkStats(stats),
       () => this.baseFs.lstatSync(p)
     );
   }
