@@ -92,23 +92,14 @@ export async function genPackStream(workspace: Workspace, files?: Array<string>)
       };
 
       if (stat.isFile()) {
-        let content = await xfs.readFilePromise(source);
+        let content: Buffer;
 
         // The root package.json supports replacement fields in publishConfig
-        if (file === `package.json`) {
-          const data = JSON.parse(content.toString());
+        if (file === `package.json`)
+          content = Buffer.from(JSON.stringify(await genPackageManifest(workspace), null, 2));
+        else
+          content = await xfs.readFilePromise(source);
 
-          if (data.publishConfig) {
-            if (data.publishConfig.main)
-              data.main = data.publishConfig.main;
-
-            if (data.publishConfig.module) {
-              data.module = data.publishConfig.module;
-            }
-          }
-
-          content = Buffer.from(JSON.stringify(data, null, 2));
-        }
 
         pack.entry({...opts, type: `file`}, content, cb);
       } else if (stat.isSymbolicLink()) {
@@ -125,6 +116,18 @@ export async function genPackStream(workspace: Workspace, files?: Array<string>)
   pack.pipe(tgz);
 
   return tgz;
+}
+
+export async function genPackageManifest(workspace: Workspace): Promise<object> {
+  const data = JSON.parse(JSON.stringify(workspace.manifest.raw));
+
+  await workspace.project.configuration.triggerHook(
+    (hooks: Hooks) => hooks.beforeWorkspacePacking,
+    workspace,
+    data,
+  );
+
+  return data;
 }
 
 export async function genPackList(workspace: Workspace) {
