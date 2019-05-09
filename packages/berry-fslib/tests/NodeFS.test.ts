@@ -1,65 +1,108 @@
 import { NodeFS } from '../sources/NodeFS';
 
-describe('NodeFS fromPortable/toPortablePath should', () => {
-  it('not change abs Posix path when producing portable path', () => {
-    const inputPath = '/home/user/proj';
-    expect(NodeFS.toPortablePath(inputPath)).toEqual(inputPath);
-  })
+describe(`Portable paths`, () => {
+  for (const platform of [`darwin`, `win32`]) {
+    let realPlatform;
 
-  it('not change non-portable abs Posix path when producing native path', () => {
-    const inputPath = '/home/user/proj';
-    expect(NodeFS.fromPortablePath(inputPath)).toEqual(inputPath);
-  });
+    describe(`Platform ${platform}`, () => {
+      beforeAll(() => {
+        realPlatform = process.platform;
+        Object.defineProperty(process, `platform`, {
+          configurable: true,
+          value: platform,
+        });
+      });
 
-  it('properly translate abs Windows path', () => {
-    const inputPath = 'C:\\Users\\user\\proj';
-    const outputPath = '/mnt/C/Users/user/proj';
-    expect(NodeFS.toPortablePath(inputPath)).toEqual(outputPath);
-    expect(NodeFS.fromPortablePath(outputPath)).toEqual(inputPath);
-  })
+      afterAll(() => {
+        Object.defineProperty(process, `platform`, {
+          configurable: true,
+          value: realPlatform,
+        });
+      });
 
-  it('properly translate abs Windows path with forward slashes', () => {
-    const inputPath = 'C:/Users/user/proj';
-    const outputPath = '/mnt/C/Users/user/proj';
-    expect(NodeFS.toPortablePath(inputPath)).toEqual(outputPath);
-    expect(NodeFS.fromPortablePath(outputPath)).toEqual('C:\\Users\\user\\proj');
-  })
+      describe(`toPortablePath`, () => {
+        it(`shouldn't change absolute posix paths when producing portable path`, () => {
+          const inputPath = '/home/user/proj';
+          const outputPath = inputPath;
+          expect(NodeFS.toPortablePath(inputPath)).toEqual(outputPath);
+        });
 
-  it('properly translate abs Windows path with drive letter in lower case', () => {
-    const inputPath = 'c:\\Users\\user\\proj';
-    const outputPath = '/mnt/c/Users/user/proj';
-    expect(NodeFS.toPortablePath(inputPath)).toEqual(outputPath);
-    expect(NodeFS.fromPortablePath(outputPath)).toEqual(inputPath);
-  })
+        it(`shouldn't change absolute paths that are already portable`, () => {
+          const inputPath = '/mnt/c/Users/user/proj';
+          const outputPath = '/mnt/c/Users/user/proj';
+          expect(NodeFS.toPortablePath(inputPath)).toEqual(outputPath);
+        });
 
-  it('treat mixed abs path as Windows path', () => {
-    const inputPath = 'C:/Users\\user\\proj/foo/bar';
-    const outputPath = '/mnt/C/Users/user/proj/foo/bar';
-    expect(NodeFS.toPortablePath(inputPath)).toEqual(outputPath);
-    expect(NodeFS.fromPortablePath(outputPath)).toEqual('C:\\Users\\user\\proj\\foo\\bar');
-  });
+        it(`should normalize the slashes in relative Windows paths`, () => {
+          const inputPath = '..\\Users\\user/proj';
+          const outputPath = '../Users/user/proj';
+          expect(NodeFS.toPortablePath(inputPath)).toEqual(outputPath);
+        });
 
-  it('not change abs path when it is already portable', () => {
-    const inputPath = '/mnt/c/Users/user/proj';
-    const outputPath = '/mnt/c/Users/user/proj';
-    expect(NodeFS.toPortablePath(inputPath)).toEqual(outputPath);
-  });
+        it(`should transform Windows paths into their posix counterparts (uppercase drive)`, () => {
+          const inputPath = 'C:\\Users\\user\\proj';
+          const outputPath = `/mnt/C/Users/user/proj`;
+          expect(NodeFS.toPortablePath(inputPath)).toEqual(outputPath);
+        });
 
-  it('not change abs path when it is already Windows', () => {
-    const inputPath = 'c:\\Users\\user\\proj';
-    expect(NodeFS.fromPortablePath(inputPath)).toEqual(inputPath);
-  });
+        it(`should transform Windows paths into their posix counterparts (lowercase drive)`, () => {
+          const inputPath = 'c:\\Users\\user\\proj';
+          const outputPath = `/mnt/c/Users/user/proj`;
+          expect(NodeFS.toPortablePath(inputPath)).toEqual(outputPath);
+        });
 
-  it('normalize mixed rel Windows path and leaves it in Posix format', () => {
-    const inputPath = '..\\Users\\user/proj';
-    const outputPath = '../Users/user/proj';
-    expect(NodeFS.toPortablePath(inputPath)).toEqual(outputPath);
-    expect(NodeFS.fromPortablePath(outputPath)).toEqual(outputPath);
-  });
+        it(`should transform Windows paths into their posix counterparts (forward slashes)`, () => {
+          const inputPath = 'C:/Users/user/proj';
+          const outputPath = `/mnt/C/Users/user/proj`;
+          expect(NodeFS.toPortablePath(inputPath)).toEqual(outputPath);
+        });
 
-  it('not change rel pathes in Posix format', () => {
-    const inputPath = './user/proj';
-    expect(NodeFS.toPortablePath(inputPath)).toEqual(inputPath);
-    expect(NodeFS.fromPortablePath(inputPath)).toEqual(inputPath);
-  });
+        it(`should support Windows paths that contain both backslashes and forward slashes`, () => {
+          const inputPath = 'C:/Users\\user/proj';
+          const outputPath = `/mnt/C/Users/user/proj`;
+          expect(NodeFS.toPortablePath(inputPath)).toEqual(outputPath);
+        });
+      });
+
+      describe(`fromPortablePath`, () => {
+        it(`shouldn't change absolute posix paths when producing native path`, () => {
+          const inputPath = '/home/user/proj';
+          const outputPath = '/home/user/proj';
+          expect(NodeFS.fromPortablePath(inputPath)).toEqual(outputPath);
+        });
+
+        it(`shouldn't change relative posix paths when producing native paths`, () => {
+          const inputPath = '../Users/user/proj';
+          const outputPath = inputPath;
+          expect(NodeFS.fromPortablePath(inputPath)).toEqual(outputPath);
+        });
+      
+        it(`shouldn't change absolute path when it is already Windows`, () => {
+          const inputPath = `c:\\Users\\user\\proj`;
+          const outputPath = inputPath;
+          expect(NodeFS.fromPortablePath(inputPath)).toEqual(outputPath);
+        });
+
+        if (platform !== `win32`) {
+          it(`shouldn't change portable paths on non-Windows platforms`, () => {
+            const inputPath = '/mnt/c/Users/user/proj';
+            const outputPath = inputPath;
+            expect(NodeFS.fromPortablePath(inputPath)).toEqual(outputPath);
+          });
+        } else {
+          it(`should transform back Windows paths on Windows platforms (lowercase drive)`, () => {
+            const inputPath = `/mnt/c/Users/user/proj`;
+            const outputPath = `c:\\Users\\user\\proj`;
+            expect(NodeFS.fromPortablePath(inputPath)).toEqual(outputPath);
+          });
+
+          it(`should transform back Windows paths on Windows platforms (uppercase drive)`, () => {
+            const inputPath = `/mnt/C/Users/user/proj`;
+            const outputPath = `C:\\Users\\user\\proj`;
+            expect(NodeFS.fromPortablePath(inputPath)).toEqual(outputPath);
+          });
+        }
+      });
+    });
+  }
 });
