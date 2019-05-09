@@ -1892,7 +1892,9 @@ __metadata:
   resolution: "@berry/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
     "@berry/builder": "workspace:*"
+    "@berry/cli": "workspace:*"
     "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
   languageName: unknown
   linkType: soft

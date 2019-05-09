@@ -3,9 +3,13 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/builder": "workspace:*",
+    "@berry/cli": "workspace:*",
     "@berry/core": "workspace:*",
+    "@berry/fslib": "workspace:*",
     "@berry/plugin-essentials": "workspace:*"
+  },
+  "devDependencies": {
+    "@berry/builder": "workspace:*"
   },
   "scripts": {
     "build:plugin-typescript": "run @berry-build-plugin"
