@@ -52,7 +52,7 @@ export class LockfileResolver implements Resolver {
 
     if (!pkg)
       throw new Error(`The lockfile resolver isn't meant to resolve packages - they should already have been stored into a cache`);
-    
+
     return pkg;
   }
 }

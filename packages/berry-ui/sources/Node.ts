@@ -186,7 +186,7 @@ export abstract class Node {
 
     const previousSibling = node.previousSibling;
     const nextSibling = node.nextSibling;
-    
+
     this.yoga.removeChild(node.yoga);
     this.childNodes.splice(index, 1);
 
@@ -276,7 +276,7 @@ export abstract class Node {
 
     for (const child of this.childNodes)
       child.flags |= Flags.NODE_HAS_DIRTY_LAYOUT;
-    
+
     if (this.rootNode) {
       this.rootNode.markDirtyRenderList();
     }
@@ -290,7 +290,7 @@ export abstract class Node {
         break;
       parent.flags |= Flags.NODE_HAS_DIRTY_LAYOUT_CHILDREN;
     }
-    
+
     if (this.rootNode) {
       this.rootNode.markDirtyRenderList();
     }
@@ -316,7 +316,7 @@ export abstract class Node {
     }
   }
 
-  applyTextStyle(text: string, { backColor = this.style.get(`contentBackColor`) || this.style.get(`backgroundBackColor`), frontColor = this.style.get(`contentFrontColor`) }: {backColor?: string, frontColor?: string} = {}) {
+  applyTextStyle(text: string, {backColor = this.style.get(`contentBackColor`) || this.style.get(`backgroundBackColor`), frontColor = this.style.get(`contentFrontColor`)}: {backColor?: string, frontColor?: string} = {}) {
     const backColorEntry = backColor
       ? getColorEntry(backColor)
       : null;
@@ -337,19 +337,19 @@ export abstract class Node {
   propagateLayout(dirtyRects: DirtyScreen) {
     if (this.parentNode)
       throw new Error(`Assertion failed: Cannot call propagateLayout from a non-tree node`);
-    
+
     if (this.rootNode !== this as Node)
       throw new Error(`Assertion failed: Cannot call propagateLayout from a non-tree node`);
-    
+
     const thisRoot = this.rootNode;
 
     const removedRects = thisRoot.removedRects;
     thisRoot.removedRects = [];
-    
+
     // Don't forget to redraw the parts of the screen where something has disappeared
     for (const rect of removedRects)
       dirtyRects.addRect(rect);
-    
+
     this.yoga.calculateLayout();
 
     //console.group(`layout`);
@@ -403,7 +403,7 @@ export abstract class Node {
       this.markDirtyClipping();
 
     this.yoga.hasNewLayout = false;
-    
+
     //console.groupEnd();
   }
 

@@ -291,7 +291,7 @@ function parseValue(configuration: Configuration, path: string, value: unknown, 
 }
 
 function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: string) {
-  switch(definition.type) {
+  switch (definition.type) {
     case SettingsType.SHAPE:
       return parseShape(configuration, path, value, definition, folder);
     case SettingsType.MAP:
@@ -307,7 +307,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
   if (typeof value !== `string`)
     throw new Error(`Expected value to be a string`);
 
-  switch(definition.type) {
+  switch (definition.type) {
     case SettingsType.ABSOLUTE_PATH:
       return posix.resolve(folder, NodeFS.toPortablePath(value));
     case SettingsType.LOCATOR_LOOSE:
@@ -779,7 +779,7 @@ export class Configuration {
       new SemverResolver(),
       new TagResolver(),
 
-      ... pluginResolvers,
+      ...pluginResolvers,
     ]);
   }
 
@@ -794,7 +794,7 @@ export class Configuration {
       new VirtualFetcher(),
       new WorkspaceFetcher(),
 
-      ... pluginFetchers,
+      ...pluginFetchers,
     ]);
   }
 
@@ -808,7 +808,7 @@ export class Configuration {
     return linkers;
   }
 
-  async triggerHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((... args: U) => V) | undefined, ... args: U): Promise<void> {
+  async triggerHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, ...args: U): Promise<void> {
     for (const plugin of this.plugins.values()) {
       const hooks = plugin.hooks as HooksDefinition;
       if (!hooks)
@@ -818,13 +818,13 @@ export class Configuration {
       if (!hook)
         continue;
 
-      await hook(... args);
+      await hook(...args);
     }
   }
 
-  async triggerMultipleHooks<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((... args: U) => V) | undefined, argsList: Array<U>): Promise<void> {
+  async triggerMultipleHooks<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, argsList: Array<U>): Promise<void> {
     for (const args of argsList) {
-      await this.triggerHook(get, ... args);
+      await this.triggerHook(get, ...args);
     }
   }
 

@@ -24,17 +24,17 @@ function runBinary(path: string) {
     execFileSync(process.execPath, [physicalPath, ...process.argv.slice(2)], {
       stdio: `inherit`,
       env: {
-        ... process.env,
+        ...process.env,
         YARN_IGNORE_PATH: `1`,
-      }
+      },
     });
   } else {
     execFileSync(physicalPath, process.argv.slice(2), {
       stdio: `inherit`,
       env: {
-        ... process.env,
+        ...process.env,
         YARN_IGNORE_PATH: `1`,
-      }
+      },
     });
   }
 }
@@ -66,7 +66,7 @@ async function run() {
         command(clipanion, pluginConfiguration);
 
     clipanion.runExit(`yarn`, process.argv.slice(2), {
-      cwd: NodeFS.toPortablePath(process.cwd())
+      cwd: NodeFS.toPortablePath(process.cwd()),
     });
   }
 }

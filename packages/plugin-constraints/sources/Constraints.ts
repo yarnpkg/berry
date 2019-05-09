@@ -32,7 +32,7 @@ function extractErrorImpl(value: any): any {
       case `error/1`:
         return extractErrorImpl(value.args[0]);
       case `error/2`:
-        return Object.assign(extractErrorImpl(value.args[0]), ... extractErrorImpl(value.args[1]));
+        return Object.assign(extractErrorImpl(value.args[0]), ...extractErrorImpl(value.args[1]));
       case `syntax_error/1`:
         return new ReportError(MessageName.PROLOG_SYNTAX_ERROR, `Syntax error: ${extractErrorImpl(value.args[0])}`);
       case `existence_error/2`:
@@ -94,7 +94,7 @@ class Session {
     });
   }
 
-  public async *makeQuery(query: string) {
+  public async * makeQuery(query: string) {
     const parsed = this.session.query(query);
 
     if (parsed !== true)
@@ -188,7 +188,7 @@ export class Constraints {
   }
 
   get fullSource() {
-    return this.getProjectDatabase() + `\n` + this.source + `\n` + this.getDeclarations();
+    return `${this.getProjectDatabase()}\n${this.source}\n${this.getDeclarations()}`;
   }
 
   private createSession() {
@@ -280,7 +280,7 @@ export class Constraints {
     return {enforcedDependencies, invalidDependencies, enforcedFields};
   }
 
-  async *query(query: string) {
+  async * query(query: string) {
     const session = this.createSession();
 
     for await (const answer of session.makeQuery(query)) {

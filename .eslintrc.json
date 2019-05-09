@@ -12,23 +12,29 @@
     "arca"
   ],
   "rules": {
+    "@typescript-eslint/camelcase": ["error", {"allow": ["__non_webpack_require__", "^npm(_[a-z]+)+$"]}],
+    "@typescript-eslint/class-name-casing": 2,
+    "@typescript-eslint/indent": ["error", 2, {"SwitchCase": 1}],
+    "@typescript-eslint/no-unused-vars": [2, {"args": "none", "ignoreRestSiblings": true}],
     "arca/curly": 2,
     "arca/import-align": 2,
     "arca/import-ordering": 2,
     "arca/newline-after-import-section": 2,
     "arca/no-default-export": 2,
-    "indent": [
-      "error",
-      2,
-      { "SwitchCase": 1 }
-    ],
+    "array-bracket-spacing": 2,
+    "arrow-spacing": 2,
+    "comma-dangle": ["error", "always-multiline"],
+    "computed-property-spacing": 2,
+    "generator-star-spacing": ["error", {"before": true, "after": true}],
+    "keyword-spacing": 2,
+    "no-multiple-empty-lines": 2,
+    "no-tabs": 2,
+    "no-trailing-spaces": 2,
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": [
-      2,
-      {
-        "args": "none",
-        "ignoreRestSiblings": true
-      }
-    ]
+    "object-curly-spacing": 2,
+    "padded-blocks": ["error", "never"],
+    "prefer-template": 2,
+    "rest-spread-spacing": 2,
+    "template-curly-spacing": 2
   }
 }

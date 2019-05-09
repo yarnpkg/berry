@@ -81,11 +81,11 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
     const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
     const origName = fnName.replace(/Promise$/, ``);
 
-    (patchedFs as any)[origName] = (... args: Array<any>) => {
+    (patchedFs as any)[origName] = (...args: Array<any>) => {
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
 
-      fakeImpl(... args).then((result: any) => {
+      fakeImpl(...args).then((result: any) => {
         callback(undefined, result);
       }, (error: Error) => {
         callback(error);

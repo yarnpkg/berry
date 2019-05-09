@@ -20,7 +20,7 @@ export class RawLinkFetcher implements Fetcher {
 
     if (posix.isAbsolute(linkPath))
       return linkPath;
-    
+
     const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
 
     if (parentLocalPath !== null) {

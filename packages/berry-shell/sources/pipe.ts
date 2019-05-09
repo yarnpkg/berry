@@ -39,7 +39,7 @@ export function makeProcess(name: string, args: Array<string>, opts: any): Proce
       ? `pipe`
       : stdio[2];
 
-    const child = crossSpawn(name, args, {... opts, stdio: [
+    const child = crossSpawn(name, args, {...opts, stdio: [
       stdin,
       stdout,
       stderr,

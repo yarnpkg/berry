@@ -154,7 +154,7 @@ class PnpInstaller implements Installer {
       await xfs.removePromise(pnpDataPath);
     } else {
       const dataLocation = posix.relative(posix.dirname(pnpPath), pnpDataPath);
-      const {dataFile, loaderFile} = generateSplitScript({... pnpSettings, dataLocation});
+      const {dataFile, loaderFile} = generateSplitScript({...pnpSettings, dataLocation});
 
       await xfs.changeFilePromise(pnpPath, loaderFile);
       await xfs.chmodPromise(pnpPath, 0o755);

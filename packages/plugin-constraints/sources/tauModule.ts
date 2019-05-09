@@ -2,7 +2,8 @@ import {Project} from '@berry/core';
 import getPath   from 'lodash.get';
 import pl        from 'tau-prolog';
 
-const {is_atom} = pl.type;
+// eslint-disable-next-line @typescript-eslint/camelcase
+const {is_atom: isAtom} = pl.type;
 
 function prependGoals(thread: pl.type.Thread, point: pl.type.State, goals: pl.type.Term<number, string>[]): void {
   thread.prepend(goals.map(
@@ -29,7 +30,7 @@ const tauModule = new pl.type.Module(`constraints`, {
   [`workspace_field/3`]: (thread, point, atom) => {
     const [workspaceCwd, fieldName, fieldValue] = atom.args;
 
-    if (!is_atom(workspaceCwd) || !is_atom(fieldName)) {
+    if (!isAtom(workspaceCwd) || !isAtom(fieldName)) {
       thread.throwError(pl.error.instantiation(atom.indicator));
       return;
     }

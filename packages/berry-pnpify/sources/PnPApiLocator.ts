@@ -71,7 +71,7 @@ export class PnPApiLocator {
     const opts: any = options || {};
     this.options = {
       existsSync: opts.existsSync || fs.existsSync.bind(fs),
-      pnpFileName: opts.pnpFileName || '.pnp.js'
+      pnpFileName: opts.pnpFileName || '.pnp.js',
     };
     this.checkTree = new Map();
   }

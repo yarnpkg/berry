@@ -26,13 +26,13 @@ export class TermInput extends EventEmitter {
     }).subscribe({
       next: (input: any) => {
         if (input instanceof Key) {
-          this.emit(`key`, { key: input });
+          this.emit(`key`, {key: input});
         } else if (input instanceof Mouse) {
-          this.emit(`mouse`, { mouse: input });
+          this.emit(`mouse`, {mouse: input});
         } else {
-          this.emit(`data`, { buffer: input });
+          this.emit(`data`, {buffer: input});
         }
-      }
+      },
     });
 
     this.opened = true;

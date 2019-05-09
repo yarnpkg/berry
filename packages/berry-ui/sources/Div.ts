@@ -84,14 +84,14 @@ export class Div extends React.Component<DivProps, any> {
   markDirtyRender() {
     if (!this.mainRef)
       return;
-    
+
     this.mainRef.markDirtyRender();
   }
 
   triggerFocus() {
     if (!this.mainRef)
       return;
-    
+
     if (!this.mainRef.rootNode)
       throw new Error(`Assertion failed: This element should belong to a tree`);
 
@@ -103,6 +103,6 @@ export class Div extends React.Component<DivProps, any> {
   };
 
   render() {
-    return React.createElement(`div`, {ref: this.handleRef, ... this.props});
+    return React.createElement(`div`, {ref: this.handleRef, ...this.props});
   }
 };

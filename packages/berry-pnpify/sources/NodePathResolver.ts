@@ -1,7 +1,7 @@
-import { PnpApi, PackageInformation } from '@berry/pnp';
+import {PnpApi, PackageInformation} from '@berry/pnp';
 
-import { PnPApiLoader }               from './PnPApiLoader';
-import { PnPApiLocator }              from './PnPApiLocator';
+import {PnPApiLoader}               from './PnPApiLoader';
+import {PnPApiLocator}              from './PnPApiLocator';
 
 /**
  * Node path resolver options
@@ -92,7 +92,7 @@ export class NodePathResolver {
   public readDir(issuerInfo: PackageInformation, scope: string | null): string[] | undefined {
     const result = new Set();
     for (const key of issuerInfo.packageDependencies.keys()) {
-      const [ pkgNameOrScope, pkgName ] = key.split('/');
+      const [pkgNameOrScope, pkgName] = key.split('/');
       if (!scope) {
         if (!result.has(pkgNameOrScope)) {
           result.add(pkgNameOrScope);
@@ -123,10 +123,10 @@ export class NodePathResolver {
    * @returns resolved path
    */
   public resolvePath(nodePath: string): ResolvedPath {
-    const result: ResolvedPath = { resolvedPath: nodePath };
+    const result: ResolvedPath = {resolvedPath: nodePath};
     const isWindowsPath = nodePath.indexOf('\\') > 0;
     const pathSep = isWindowsPath ? '\\' : '/';
-    if (nodePath.indexOf(pathSep + 'node_modules') < 0)
+    if (nodePath.indexOf(`${pathSep}node_modules`) < 0)
       // Non-node_modules paths should not be processed
       return result;
 

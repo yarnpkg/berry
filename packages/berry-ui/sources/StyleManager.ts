@@ -6,7 +6,6 @@ import {INHERITED_STYLE_PROPERTY}                                            fro
 export type StyleMap = Map<string, any>;
 
 export class StyleManager {
-
   private readonly node: Node;
 
   private readonly computed: Map<string, any> = new Map();

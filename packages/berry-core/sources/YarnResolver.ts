@@ -7,7 +7,7 @@ import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
 import {DescriptorHash, Descriptor, Locator}             from './types';
 
-const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ... args: Array<string>) => string]> = [
+const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [
   // This one come from Git urls
   [/^git\+https:\/\/.*\.git#.*$/, (version, $0) => $0],
   // These ones come from the npm registry
@@ -18,7 +18,7 @@ const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ... args: Array<string
 
 export class YarnResolver implements Resolver {
   private resolutions: Map<DescriptorHash, Locator> | null = null;
-  
+
   async setup(project: Project, {report}: {report: Report}) {
     const lockfilePath = `${project.cwd}/${project.configuration.get(`lockfileFilename`)}`;
 
@@ -37,12 +37,12 @@ export class YarnResolver implements Resolver {
 
     for (const key of Object.keys(parsed)) {
       const descriptor = structUtils.tryParseDescriptor(key);
-  
+
       if (!descriptor) {
         report.reportWarning(MessageName.YARN_IMPORT_FAILED, `Failed to parse the string "${key}" into a proper descriptor`);
         continue;
       }
-      
+
       const {version, resolved} = (parsed as any)[key];
       let reference;
 
@@ -50,21 +50,21 @@ export class YarnResolver implements Resolver {
         const match = resolved.match(pattern);
 
         if (match) {
-          reference = matcher(version, ... match);
+          reference = matcher(version, ...match);
           break;
         }
       }
-      
+
       if (!reference) {
         report.reportWarning(MessageName.YARN_IMPORT_FAILED, `${structUtils.prettyDescriptor(project.configuration, descriptor)}: Only some patterns can be imported from legacy lockfiles (not "${resolved}")`);
         continue;
       }
-      
+
       const resolution = structUtils.makeLocator(descriptor, reference);
       resolutions.set(descriptor.descriptorHash, resolution);
     }
   }
-  
+
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     if (!this.resolutions)
       return false;

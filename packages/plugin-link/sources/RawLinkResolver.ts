@@ -43,7 +43,7 @@ export class RawLinkResolver implements Resolver {
 
   async resolve(locator: Locator, opts: ResolveOptions) {
     return {
-      ... locator,
+      ...locator,
 
       version: `0.0.0`,
 
