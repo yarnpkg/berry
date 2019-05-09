@@ -212,19 +212,19 @@ class PnPApiLocator {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _dynamicRequire__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _PnPApiLocator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+/* harmony import */ var _PnPApiLocator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _dynamicRequire__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 
 
-process.env.NODE_OPTIONS = (process.env.NODE_OPTIONS || '') + `-r ${_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"].resolve('.')}`;
-const pnpApiPath = new _PnPApiLocator__WEBPACK_IMPORTED_MODULE_1__[/* PnPApiLocator */ "a"]().findApi(__dirname);
+process.env.NODE_OPTIONS = (process.env.NODE_OPTIONS || '') + `-r ${_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"].resolve('.')}`;
+const pnpApiPath = new _PnPApiLocator__WEBPACK_IMPORTED_MODULE_0__[/* PnPApiLocator */ "a"]().findApi(__dirname);
 if (pnpApiPath) {
     process.mainModule.id = 'internal/preload';
-    Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"])(pnpApiPath);
+    Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"])(pnpApiPath);
     process.env.NODE_OPTIONS += ` -r ${pnpApiPath}`;
 }
-Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"])('.').patchFs();
-Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_0__[/* dynamicRequire */ "a"])('typescript/lib/tsserver');
+Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"])('.').patchFs();
+Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"])('typescript/lib/tsserver');
 
 
 /***/ })

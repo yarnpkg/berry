@@ -1575,6 +1575,7 @@ __metadata:
   dependencies:
     "@berry/libzip": ^0.0.3
     "@berry/pnpify": "workspace:*"
+    "@types/jest": "npm:^24.0.12"
     typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
@@ -3077,6 +3078,22 @@ __metadata:
   version: 1.1.0
   resolution: "@types/istanbul-lib-coverage@npm:1.1.0"
   checksum: 7d438cacef535af7b1c514c6878136a0bc6a4759b162f4dbcd771e6ca245b5d0df7fcace885ef4fd63c1610ed6f38a026416e0458ebaf3c5bea009cfe500d6cc
+  languageName: node
+  linkType: hard
+
+"@types/jest-diff@npm:*":
+  version: 20.0.1
+  resolution: "@types/jest-diff@npm:20.0.1"
+  checksum: c193d901556c7c2240b0190fc9ef902f2f9713100a1b3833214e5109b6985a14b769c39577215ce41ad41d0c38b4b5d41cb0e8ecbebc5eafbab889e7f5de344f
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:^24.0.12":
+  version: 24.0.12
+  resolution: "@types/jest@npm:24.0.12"
+  dependencies:
+    "@types/jest-diff": "npm:*"
+  checksum: 53920fdf3e9dfce1a005aa93ee0d145180a791a4ed7391d9332f281da91f74825157eaf2a859a40a7d32bc92c520253d0b1e0936aea0c221f515dee45c43a60a
   languageName: node
   linkType: hard
 

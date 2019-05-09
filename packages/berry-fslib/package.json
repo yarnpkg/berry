@@ -8,11 +8,14 @@
   },
   "devDependencies": {
     "@berry/pnpify": "workspace:*",
+    "@types/jest": "^24.0.12",
     "typescript": "^3.3.3333"
   },
   "scripts": {
     "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
-    "postpack": "rm -rf lib"
+    "postpack": "rm -rf lib",
+    "test:fslib": "run test:unit packages/berry-fslib",
+    "test:watch:fslib": "run test:unit --watch packages/berry-fslib"
   },
   "publishConfig": {
     "main": "./lib/index.js"
