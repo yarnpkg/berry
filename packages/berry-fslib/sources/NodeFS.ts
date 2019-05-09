@@ -251,6 +251,9 @@ export class NodeFS extends FakeFS {
   }
 
   static fromPortablePath(p: string) {
+    if (process.platform !== `win32`)
+      return p;
+
     // Path should look like "/mnt/N/berry/scripts/plugin-pack.js"
     // And transform to "N:\berry/scripts/plugin-pack.js"
 
@@ -265,7 +268,7 @@ export class NodeFS extends FakeFS {
   }
 
   static toPortablePath(p: string) {
-    if (p.indexOf('\\') < 0 && !p.match(WINDOWS_ABS_PATH))
+    if (process.platform !== `win32`)
       return p;
 
     // Path should look like "N:\berry/scripts/plugin-pack.js"
