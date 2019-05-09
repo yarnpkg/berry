@@ -4,10 +4,8 @@ import {win32}                                             from 'path';
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {FakeFS, WriteFileOptions}                          from './FakeFS';
 
-
 const PORTABLE_PATH_PREFIX = `/mnt/`;
 const PORTABLE_PREFIX_REGEXP = /^\/mnt\/([a-zA-Z])(?:\/(.*))?$/;
-const WINDOWS_ABS_PATH = /^[a-zA-Z]:.*$/;
 
 export class NodeFS extends FakeFS {
   private readonly realFs: typeof fs;
