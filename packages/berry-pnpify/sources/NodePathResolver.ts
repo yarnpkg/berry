@@ -118,7 +118,7 @@ export class NodePathResolver {
    * This method extracts `.../node_modules/pkgName/...` from the path
    * and uses previous package as an issuer for the next package.
    *
-   * @param nodePath path containing `node_modules`
+   * @param nodePath full path containing `node_modules`
    *
    * @returns resolved path
    */
