@@ -86,13 +86,13 @@ module.exports =
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */
+/* 0 */,
+/* 1 */
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
 
 /***/ }),
-/* 1 */,
 /* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -110,7 +110,7 @@ const dynamicRequire =  true
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PnPApiLocator; });
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_0__);
 
 /**
@@ -133,7 +133,7 @@ class PnPApiLocator {
         const opts = options || {};
         this.options = {
             existsSync: opts.existsSync || fs__WEBPACK_IMPORTED_MODULE_0__["existsSync"].bind(fs__WEBPACK_IMPORTED_MODULE_0__),
-            pnpFileName: opts.pnpFileName || '.pnp.js'
+            pnpFileName: opts.pnpFileName || '.pnp.js',
         };
         this.checkTree = new Map();
     }
@@ -216,7 +216,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dynamicRequire__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 
 
-process.env.NODE_OPTIONS = (process.env.NODE_OPTIONS || '') + `-r ${_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"].resolve('.')}`;
+process.env.NODE_OPTIONS = `${process.env.NODE_OPTIONS || ''}-r ${_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"].resolve('.')}`;
 const pnpApiPath = new _PnPApiLocator__WEBPACK_IMPORTED_MODULE_0__[/* PnPApiLocator */ "a"]().findApi(__dirname);
 if (pnpApiPath) {
     process.mainModule.id = 'internal/preload';

@@ -89,13 +89,13 @@ module.exports =
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = require("fs");
+module.exports = require("path");
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports) {
 
-module.exports = require("path");
+module.exports = require("fs");
 
 /***/ }),
 /* 2 */
@@ -115,7 +115,7 @@ const dynamicRequire =  true
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PnPApiLocator; });
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_0__);
 
 /**
@@ -138,7 +138,7 @@ class PnPApiLocator {
         const opts = options || {};
         this.options = {
             existsSync: opts.existsSync || fs__WEBPACK_IMPORTED_MODULE_0__["existsSync"].bind(fs__WEBPACK_IMPORTED_MODULE_0__),
-            pnpFileName: opts.pnpFileName || '.pnp.js'
+            pnpFileName: opts.pnpFileName || '.pnp.js',
         };
         this.checkTree = new Map();
     }
@@ -225,7 +225,7 @@ module.exports = require("events");
 __webpack_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: external "path"
-var external_path_ = __webpack_require__(1);
+var external_path_ = __webpack_require__(0);
 var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 
 // CONCATENATED MODULE: ../berry-fslib/sources/FakeFS.ts
@@ -498,7 +498,7 @@ class FakeFS_FakeFS {
 ;
 
 // EXTERNAL MODULE: external "fs"
-var external_fs_ = __webpack_require__(0);
+var external_fs_ = __webpack_require__(1);
 var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
 
 // CONCATENATED MODULE: ../berry-fslib/sources/NodeFS.ts
@@ -507,7 +507,6 @@ var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
 
 const PORTABLE_PATH_PREFIX = `/mnt/`;
 const PORTABLE_PREFIX_REGEXP = /^\/mnt\/([a-zA-Z])(?:\/(.*))?$/;
-const WINDOWS_ABS_PATH = /^[a-zA-Z]:.*$/;
 class NodeFS_NodeFS extends FakeFS_FakeFS {
     constructor(realFs = external_fs_default.a) {
         super();
@@ -700,32 +699,34 @@ class NodeFS_NodeFS extends FakeFS_FakeFS {
             }
         };
     }
+    // Path should look like "/mnt/N/berry/scripts/plugin-pack.js"
+    // And transform to "N:\berry\scripts\plugin-pack.js"
     static fromPortablePath(p) {
-        // Path should look like "/mnt/N/berry/scripts/plugin-pack.js"
-        // And transform to "N:\berry/scripts/plugin-pack.js"
-        const match = p.match(PORTABLE_PREFIX_REGEXP);
-        if (!match)
+        if (external_path_["win32"].isAbsolute(p) && !external_path_["posix"].isAbsolute(p)) {
+            return p.replace(/\//g, `\\`);
+        }
+        else if (process.platform === `win32`) {
+            const match = p.match(PORTABLE_PREFIX_REGEXP);
+            if (!match)
+                return p;
+            const [, drive, pathWithoutPrefix = ''] = match;
+            const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
+            return `${drive}:\\${windowsPath}`;
+        }
+        else {
             return p;
-        const [, drive, pathWithoutPrefix = ''] = match;
-        const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
-        return `${drive}:\\${windowsPath}`;
+        }
     }
+    // Path should look like "N:/berry/scripts/plugin-pack.js"
+    // And transform to "/mnt/N/berry/scripts/plugin-pack.js"
     static toPortablePath(p) {
-        if (p.indexOf('\\') < 0 && !p.match(WINDOWS_ABS_PATH))
-            return p;
-        // Path should look like "N:\berry/scripts/plugin-pack.js"
-        // And transform to "/mnt/N/berry/scripts/plugin-pack.js"
-        // Skip if the path is already portable
-        if (p.startsWith(PORTABLE_PATH_PREFIX))
+        p = p.replace(/\\/g, `/`);
+        if (!external_path_["win32"].isAbsolute(p) || external_path_["posix"].isAbsolute(p))
             return p;
         const { root } = external_path_["win32"].parse(p);
-        // If relative path, just replace win32 slashes by posix slashes
-        if (!root)
-            return p.replace(/\\/g, '/');
         const driveLetter = root[0];
         const pathWithoutRoot = p.substr(root.length);
-        const posixPath = pathWithoutRoot.replace(/\\/g, '/');
-        return `${PORTABLE_PATH_PREFIX}${driveLetter}/${posixPath}`;
+        return `${PORTABLE_PATH_PREFIX}${driveLetter}/${pathWithoutRoot}`;
     }
 }
 
@@ -1038,7 +1039,7 @@ class NodePathResolver {
         const result = { resolvedPath: nodePath };
         const isWindowsPath = nodePath.indexOf('\\') > 0;
         const pathSep = isWindowsPath ? '\\' : '/';
-        if (nodePath.indexOf(pathSep + 'node_modules') < 0)
+        if (nodePath.indexOf(`${pathSep}node_modules`) < 0)
             // Non-node_modules paths should not be processed
             return result;
         const pnpApiPath = this.options.apiLocator.findApi(nodePath);
@@ -1140,7 +1141,7 @@ class PnPApiLoader_PnPApiLoader extends external_events_default.a {
                 delete __webpack_require__.c[dynamicRequire["a" /* dynamicRequire */].resolve(modulePath)];
                 return Object(dynamicRequire["a" /* dynamicRequire */])(modulePath);
             }),
-            watch: opts.watch
+            watch: opts.watch,
         };
     }
     /**
@@ -1204,7 +1205,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         this.baseFs = baseFs;
         this.pathResolver = new NodePathResolver({
             apiLoader: new PnPApiLoader_PnPApiLoader({ watch: external_fs_default.a.watch.bind(external_fs_default.a) }),
-            apiLocator: new PnPApiLocator["a" /* PnPApiLocator */]({ existsSync: baseFs.existsSync.bind(baseFs) })
+            apiLocator: new PnPApiLocator["a" /* PnPApiLocator */]({ existsSync: baseFs.existsSync.bind(baseFs) }),
         });
     }
     getRealPath() {
@@ -1252,11 +1253,11 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         return Object.assign(stats, {
             isFile: () => false,
             isDirectory: () => false,
-            isSymbolicLink: () => true
+            isSymbolicLink: () => true,
         });
     }
     static createFsError(code, message) {
-        return Object.assign(new Error(code + ': ' + message), { code });
+        return Object.assign(new Error(`${code}: ${message}`), { code });
     }
     throwIfPathReadonly(op, p) {
         const pnpPath = this.resolvePath(p);
