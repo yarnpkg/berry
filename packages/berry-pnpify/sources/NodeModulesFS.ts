@@ -1,12 +1,12 @@
-import { CreateReadStreamOptions, CreateWriteStreamOptions } from '@berry/fslib';
-import { NodeFS, PosixFS, FakeFS, WriteFileOptions }         from '@berry/fslib';
+import {CreateReadStreamOptions, CreateWriteStreamOptions}   from '@berry/fslib';
+import {NodeFS, PosixFS, FakeFS, WriteFileOptions}           from '@berry/fslib';
 
 import fs                                                    from 'fs';
 import path                                                  from 'path';
 
-import { NodePathResolver, ResolvedPath }                    from './NodePathResolver';
-import { PnPApiLoader }                                      from './PnPApiLoader';
-import { PnPApiLocator }                                     from './PnPApiLocator';
+import {NodePathResolver, ResolvedPath}                      from './NodePathResolver';
+import {PnPApiLoader}                                        from './PnPApiLoader';
+import {PnPApiLocator}                                       from './PnPApiLocator';
 
 export type NodeModulesFSOptions = {
   baseFs?: FakeFS
@@ -21,8 +21,8 @@ export class NodeModulesFS extends FakeFS {
 
     this.baseFs = baseFs;
     this.pathResolver = new NodePathResolver({
-      apiLoader: new PnPApiLoader({ watch: (fs as any).watch.bind(fs) }),
-      apiLocator: new PnPApiLocator({ existsSync: baseFs.existsSync.bind(baseFs) })
+      apiLoader: new PnPApiLoader({watch: (fs as any).watch.bind(fs)}),
+      apiLocator: new PnPApiLocator({existsSync: baseFs.existsSync.bind(baseFs)}),
     });
   }
 
@@ -36,7 +36,7 @@ export class NodeModulesFS extends FakeFS {
 
   private resolvePath(p: string): ResolvedPath & { fullOriginalPath: string } {
     const fullOriginalPath = path.resolve(p);
-    return { ...this.pathResolver.resolvePath(fullOriginalPath), fullOriginalPath };
+    return {...this.pathResolver.resolvePath(fullOriginalPath), fullOriginalPath};
   }
 
   private resolveFilePath(p: string): string {
@@ -72,12 +72,12 @@ export class NodeModulesFS extends FakeFS {
     return Object.assign(stats, {
       isFile: () => false,
       isDirectory: () => false,
-      isSymbolicLink: () => true
+      isSymbolicLink: () => true,
     });
   }
 
   private static createFsError(code: string, message: string) {
-    return Object.assign(new Error(code + ': ' + message), { code });
+    return Object.assign(new Error(`${code}: ${message}`), {code});
   }
 
   private throwIfPathReadonly(op: string, p: string): string {

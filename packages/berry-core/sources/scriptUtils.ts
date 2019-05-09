@@ -188,8 +188,8 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
     const binaries: Map<string, [Locator, string]> = new Map();
 
     const descriptors = [
-      ... pkg.dependencies.values(),
-      ... pkg.peerDependencies.values(),
+      ...pkg.dependencies.values(),
+      ...pkg.peerDependencies.values(),
     ];
 
     for (const descriptor of descriptors) {
@@ -264,7 +264,7 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
 
   let result;
   try {
-    result = await execUtils.pipevp(process.execPath, [binaryPath, ... args], {cwd, env, stdin, stdout, stderr});
+    result = await execUtils.pipevp(process.execPath, [binaryPath, ...args], {cwd, env, stdin, stdout, stderr});
   } finally {
     await xfs.removePromise(env.BERRY_BIN_FOLDER);
   }

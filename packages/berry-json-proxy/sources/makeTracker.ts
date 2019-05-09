@@ -26,7 +26,7 @@ function cloneValueChecked(value: any, version: Object) {
   if (typeof value === `object` && value !== null) {
     if (value[VERSION] === version)
       return value;
-    
+
     const clone = cloneValue(value);
     clone[VERSION] = version;
 
@@ -62,15 +62,15 @@ function cloneValueDeep(value: any, filter: TrackingFilter): any {
       for (const key of Object.keys(clone)) {
         if (filter !== true && !filter[key])
           continue;
-        
+
         const nextFilter = filter !== true
           ? filter[key]
           : true;
-        
+
         // @ts-ignore
         clone[key] = cloneValueDeep(clone[key], nextFilter);
       }
-  
+
       return clone;
     }
   } else {
@@ -88,48 +88,48 @@ function compareValuesDeep(a: any, b: any): boolean {
       return false;
     if (a.length !== b.length)
       return false;
-    
+
     for (let t = 0, T = a.length; t < T; ++t)
       if (!compareValuesDeep(a[t], b[t]))
         return false;
-    
+
     return true;
   } else if (a instanceof Set) {
     if (!(b instanceof Set))
       return false;
     if (a.size !== b.size)
       return false;
-    
+
     for (const key of a.entries())
       if (!b.has(key))
         return false;
-    
+
     return true;
   } else if (a instanceof Map) {
     if (!(b instanceof Map))
       return false;
     if (a.size !== b.size)
       return false;
-    
+
     for (const [key, value] of a.entries())
       if (!compareValuesDeep(value, b.get(key)))
         return false;
-    
+
     return true;
   } else if (a.constructor === Object) {
     if (b.constructor !== Object)
       return false;
-    
+
     const aKeys = Object.keys(a);
     const bKeys = Object.keys(b);
-    
+
     if (aKeys.length !== bKeys.length)
       return false;
 
     for (let t = 0, T = aKeys.length; t < T; ++t)
       if (aKeys[t] !== bKeys[t])
         return false;
-    
+
     for (let t = 0, T = aKeys.length; t < T; ++t)
       if (!compareValuesDeep(a[aKeys[t]], b[bKeys[t]]))
         return false;
@@ -167,7 +167,7 @@ const proxyHandlerSet = (version: TrackingVersion, filter: TrackingFilter, ensur
       // @ts-ignore
       default: return source[prop];
     }
-  }
+  },
 });
 
 const proxyHandlerMap = (version: TrackingVersion, filter: TrackingFilter, ensureCloning: () => Map<any, any>) => ({
@@ -260,7 +260,7 @@ const proxyHandlerObject = (version: TrackingVersion, filter: TrackingFilter, en
     source[prop] = value;
 
     return true;
-  }
+  },
 });
 
 function makeValueObservable(value: any, version: TrackingVersion, filter: TrackingFilter, ensureCloning: () => any): any {
@@ -297,7 +297,7 @@ export function makeTracker<T>(value: T, filter: TrackingFilter = true) {
       }));
 
       return tracker.immutable;
-    }
+    },
   };
 
   return tracker;

@@ -46,7 +46,7 @@ export class TarballHttpResolver implements Resolver {
     }, packageFetch.releaseFs);
 
     return {
-      ... locator,
+      ...locator,
 
       version: manifest.version || `0.0.0`,
 

@@ -55,22 +55,22 @@ function makeDefaultStats() {
   return Object.assign(new StatEntry(), {
     uid: 0,
     gid: 0,
-    
+
     size: 0,
     blksize: 0,
-    
+
     atimeMs: 0,
     mtimeMs: 0,
     ctimeMs: 0,
     birthtimeMs: 0,
-    
+
     atime: new Date(0),
     mtime: new Date(0),
     ctime: new Date(0),
     birthtime: new Date(0),
-    
+
     mode: S_IFREG | 0o644,
-  });  
+  });
 }
 
 export type BufferOptions = {
@@ -270,7 +270,7 @@ export class ZipFS extends FakeFS {
       path: p,
       close: () => {
         clearImmediate(immediate);
-      }
+      },
     });
 
     const immediate = setImmediate(() => {

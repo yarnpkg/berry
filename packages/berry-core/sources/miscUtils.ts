@@ -63,7 +63,7 @@ export async function bufferStream(stream: Readable) {
 
 export function dynamicRequire(path: string) {
   // @ts-ignore
-  if (typeof __webpack_require__ !== 'undefined') {
+  if (typeof __non_webpack_require__ !== 'undefined') {
     // @ts-ignore
     return __non_webpack_require__(path);
   } else {
@@ -87,7 +87,7 @@ export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) 
     mappers = [mappers];
 
   const stringified: Array<Array<string>> = [];
-  
+
   for (const mapper of mappers)
     stringified.push(asArray.map(value => mapper(value)));
 

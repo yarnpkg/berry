@@ -40,7 +40,7 @@ export function convertPackageToLocator(pkg: Package): Locator {
 
 export function renamePackage(pkg: Package, locator: Locator) {
   return {
-    ... locator,
+    ...locator,
 
     version: pkg.version,
 

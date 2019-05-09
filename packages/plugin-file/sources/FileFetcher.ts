@@ -20,7 +20,7 @@ export class FileFetcher implements Fetcher {
 
     if (posix.isAbsolute(filePath))
       return filePath;
-    
+
     const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
 
     if (parentLocalPath !== null) {

@@ -101,7 +101,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<string>)
           if (data.publishConfig) {
             if (data.publishConfig.main)
               data.main = data.publishConfig.main;
-            
+
             if (data.publishConfig.module) {
               data.module = data.publishConfig.module;
             }
@@ -110,9 +110,9 @@ export async function genPackStream(workspace: Workspace, files?: Array<string>)
           content = Buffer.from(JSON.stringify(data, null, 2));
         }
 
-        pack.entry({... opts, type: `file`}, content, cb);
+        pack.entry({...opts, type: `file`}, content, cb);
       } else if (stat.isSymbolicLink()) {
-        pack.entry({... opts, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
+        pack.entry({...opts, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
       }
 
       await awaitTarget;

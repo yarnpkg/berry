@@ -65,11 +65,11 @@ async function request(target: string, body: Body, {configuration, headers, json
   return await res.body;
 }
 
-export function get(target: string, {configuration, json, ... rest}: Options) {
+export function get(target: string, {configuration, json, ...rest}: Options) {
   let entry = cache.get(target);
 
   if (!entry) {
-    entry = request(target, null, {configuration, ... rest});
+    entry = request(target, null, {configuration, ...rest});
     cache.set(target, entry);
   }
 
@@ -81,5 +81,5 @@ export function get(target: string, {configuration, json, ... rest}: Options) {
 }
 
 export async function put(target: string, body: Body, options: Options): Promise<Buffer> {
-  return await request(target, body, {... options, method: Method.PUT});
+  return await request(target, body, {...options, method: Method.PUT});
 }

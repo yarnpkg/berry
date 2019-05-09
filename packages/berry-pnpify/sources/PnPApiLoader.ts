@@ -1,8 +1,8 @@
-import { PnpApi }         from '@berry/pnp';
+import {PnpApi}           from '@berry/pnp';
 
 import EventEmitter       from 'events';
 
-import { dynamicRequire } from './dynamicRequire';
+import {dynamicRequire}   from './dynamicRequire';
 
 /**
  * PnP API locator options
@@ -55,7 +55,7 @@ export class PnPApiLoader extends EventEmitter {
         delete require.cache[dynamicRequire.resolve(modulePath)];
         return dynamicRequire(modulePath);
       }),
-      watch: opts.watch
+      watch: opts.watch,
     };
   }
 
@@ -79,7 +79,7 @@ export class PnPApiLoader extends EventEmitter {
       if (cacheEntry.pnpApi && !cacheEntry.watched) {
         cacheEntry.watched = true;
         this.cachedApis[pnpApiPath] = cacheEntry;
-        this.options.watch(pnpApiPath, { persistent: false }, () => {
+        this.options.watch(pnpApiPath, {persistent: false}, () => {
           let newApi;
           try {
             newApi = this.options.uncachedRequire(pnpApiPath);

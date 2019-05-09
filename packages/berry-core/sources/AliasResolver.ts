@@ -41,7 +41,7 @@ export class AliasResolver implements Resolver {
           continue;
 
         if (pattern.descriptor.fullName !== structUtils.requirableIdent(descriptor))
-          continue;        
+          continue;
         if (pattern.descriptor.description && pattern.descriptor.description !== descriptor.range)
           continue;
 
@@ -50,7 +50,7 @@ export class AliasResolver implements Resolver {
           topLevelWorkspace.anchoredLocator,
           opts,
         );
-        
+
         pkg.dependencies.delete(descriptor.identHash);
         pkg.dependencies.set(alias.identHash, alias);
       }

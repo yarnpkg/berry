@@ -141,5 +141,4 @@ export class KeySequence {
 
     return true;
   }
-
 }

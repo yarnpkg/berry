@@ -14,7 +14,7 @@ export const INHERITED_STYLE_PROPERTY = Symbol(`INHERITED_STYLE_PROPERTY`);
 export type StyleConverter = (value: any) => any;
 
 export const STYLE_CONVERTERS: Map<string, StyleConverter> = new Map([
-  [ `zIndex`, (value: any) => {
+  [`zIndex`, (value: any) => {
     if (value === null) {
       return null;
     } else {
@@ -370,15 +370,15 @@ export type CompositeStyle = (value: any) => {[key: string]: any};
 
 export const COMPOSITE_STYLES: Map<string, CompositeStyle> = new Map([
   [`borderColor`, (value: any) => {
-    return { borderFrontColor: value };
+    return {borderFrontColor: value};
   }],
 
   [`backgroundColor`, (value: any) => {
-    return { backgroundBackColor: value };
+    return {backgroundBackColor: value};
   }],
 
   [`color`, (value: any) => {
-    return { contentFrontColor: value };
+    return {contentFrontColor: value};
   }],
 
   [`margin`, (value: any) => {
@@ -398,7 +398,7 @@ export const COMPOSITE_STYLES: Map<string, CompositeStyle> = new Map([
     if (shorthand) {
       return shorthand;
     } else {
-      return { flexGrow: value, flexShrink: 1, flexBasis: 0 };
+      return {flexGrow: value, flexShrink: 1, flexBasis: 0};
     }
   }],
 ]);

@@ -135,7 +135,7 @@ export abstract class FakeFS {
     if (stat.isDirectory()) {
       for (const entry of this.readdirSync(p))
         this.removeSync(posix.resolve(p, entry));
-      
+
       this.rmdirSync(p);
     } else {
       this.unlinkSync(p);

@@ -18,34 +18,34 @@ type AuthOptions = {
 
 export type Options = httpUtils.Options & AuthOptions;
 
-export async function get(path: string, {configuration, headers, ident, authType, ... rest}: Options) {
+export async function get(path: string, {configuration, headers, ident, authType, ...rest}: Options) {
   const registry = npmConfigUtils.getRegistry(ident, {configuration});
   const auth = getAuthenticationHeader({configuration}, {ident, authType});
 
   if (auth)
-    headers = {... headers, authorization: auth};
+    headers = {...headers, authorization: auth};
 
-  return await httpUtils.get(`${registry}${path}`, {configuration, headers, ... rest});
+  return await httpUtils.get(`${registry}${path}`, {configuration, headers, ...rest});
 }
 
-export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, ... rest}: Options) {
+export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, ...rest}: Options) {
   const registry = npmConfigUtils.getRegistry(ident, {configuration});
   const auth = getAuthenticationHeader({configuration}, {ident, authType});
 
   if (auth)
-    headers = {... headers, authorization: auth};
+    headers = {...headers, authorization: auth};
 
   try {
-    const response = await httpUtils.put(`${registry}${path}`, body, {configuration, headers, ... rest});
+    const response = await httpUtils.put(`${registry}${path}`, body, {configuration, headers, ...rest});
 
     return response;
-  } catch(error) {
+  } catch (error) {
     if (requestRequiresOtp(error)) {
       const otp = await askForOtp();
-      const headersWithOtp = {... headers, ... getOtpHeaders(otp)};
+      const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
 
       // Retrying request with OTP
-      return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ... rest});
+      return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
     }
 
     throw error;
@@ -90,7 +90,7 @@ async function askForOtp() {
 
   const prompt = inquirer.createPromptModule();
 
-  const { otp } = await prompt({
+  const {otp} = await prompt({
     type: `input`,
     name: `otp`,
     message: `One-time password:`,
@@ -105,7 +105,7 @@ function requestRequiresOtp(error: any) {
     const authMethods = error.headers['www-authenticate'].split(/,\s*/).map((s: string) => s.toLowerCase());
 
     return authMethods.includes('otp');
-  } catch(e) {
+  } catch (e) {
     return false;
   }
 }

@@ -493,7 +493,7 @@ export class ZipOpenFS extends FakeFS {
     const zipInfo = this.findZip(p);
     if (!zipInfo)
       return await discard();
-    
+
     if (requireSubpath && zipInfo.subPath === `/`)
       return await discard();
 

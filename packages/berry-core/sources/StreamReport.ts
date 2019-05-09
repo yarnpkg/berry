@@ -28,7 +28,7 @@ export class StreamReport extends Report {
 
   private configuration: Configuration;
   private footer: boolean;
-  private json: boolean;  
+  private json: boolean;
   private stdout: Writable;
 
   private cacheHitCount: number = 0;
@@ -202,7 +202,7 @@ export class StreamReport extends Report {
 
   private formatName(name: MessageName | null) {
     const num = name === null ? 0 : name;
-    const label = `YN` + num.toString(10).padStart(4, `0`);
+    const label = `YN${num.toString(10).padStart(4, `0`)}`;
 
     if (name === null) {
       return this.configuration.format(label, `grey`);

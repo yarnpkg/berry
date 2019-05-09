@@ -20,13 +20,13 @@ class DirtyRow {
 
     // If all segments end before we even start, we can just push the new segment at the end of the list
     if (startIndex === this.segments.length) {
-      this.segments.push({ start, end });
+      this.segments.push({start, end});
     } else {
       const startSegment = this.segments[startIndex];
 
       // If the segment we found starts only after we even end, we just have to insert ourselves before it (we've already proven that the previous segment ends before we start, so no merge)
       if (startSegment.start > end) {
-        this.segments.splice(startIndex, 0, { start, end });
+        this.segments.splice(startIndex, 0, {start, end});
       } else {
         startSegment.start = Math.min(startSegment.start, start);
         startSegment.end = Math.max(startSegment.end, end);
@@ -74,7 +74,7 @@ export class DirtyScreen {
     this.addCoordinates(rect.left, rect.top, rect.width, rect.height);
   }
 
-  *[Symbol.iterator]() {
+  * [Symbol.iterator]() {
     for (const [y, row] of this.rows.entries()) {
       for (const {start, end} of row) {
         yield {left: start, top: y, width: end - start, height: 1};
@@ -82,7 +82,7 @@ export class DirtyScreen {
     }
   }
 
-  *viewport(rect: Rect) {
+  * viewport(rect: Rect) {
     for (const [y, row] of this.rows.entries()) {
       if (y < rect.top || y >= rect.top + rect.height)
         continue;

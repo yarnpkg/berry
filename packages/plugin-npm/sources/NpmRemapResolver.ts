@@ -7,7 +7,7 @@ export class NpmRemapResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     if (!descriptor.range.startsWith(PROTOCOL))
       return false;
-    
+
     if (!structUtils.tryParseDescriptor(descriptor.range.slice(PROTOCOL.length), true))
       return false;
 

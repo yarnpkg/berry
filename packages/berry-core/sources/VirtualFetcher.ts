@@ -94,8 +94,8 @@ export class VirtualFetcher implements Fetcher {
     });
 
     return {
-      ... sourceFetch,
-      packageFs: new AliasFS(virtualPath, {baseFs: sourceFetch.packageFs})
+      ...sourceFetch,
+      packageFs: new AliasFS(virtualPath, {baseFs: sourceFetch.packageFs}),
     };
   }
 }

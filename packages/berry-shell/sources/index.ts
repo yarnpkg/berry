@@ -40,16 +40,16 @@ export type ShellState = {
 };
 
 function cloneState(state: ShellState, mergeWith: Partial<ShellState> = {}) {
-  const newState = {... state, ... mergeWith};
+  const newState = {...state, ...mergeWith};
 
-  newState.environment = {... state.environment, ... mergeWith.environment };
-  newState.variables = {... state.variables, ... mergeWith.variables };
+  newState.environment = {...state.environment, ...mergeWith.environment};
+  newState.variables = {...state.variables, ...mergeWith.variables};
 
   return newState;
 }
 
 const BUILTINS = new Map<string, ShellBuiltin>([
-  [`cd`, async ([target, ... rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
+  [`cd`, async ([target, ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
     const resolvedTarget = posix.resolve(state.cwd, NodeFS.toPortablePath(target));
     const stat = await xfs.statPromise(resolvedTarget);
 
@@ -75,7 +75,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     return 1;
   }],
 
-  [`exit`, async ([code, ... rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
+  [`exit`, async ([code, ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
     return state.exitCode = parseInt(code, 10);
   }],
 
@@ -120,15 +120,10 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
 
   for (const commandArg of commandArgs) {
     for (const segment of commandArg) {
-
       if (typeof segment === 'string') {
-
         push(segment);
-
       } else {
-
         switch (segment.type) {
-
           case `shell`: {
             const raw = await executeBufferedSubshell(segment.shell, opts, state);
             if (segment.quoted) {
@@ -142,7 +137,6 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
 
           case `variable`: {
             switch (segment.name) {
-
               case `#`: {
                 push(String(opts.args.length));
               } break;
@@ -189,12 +183,10 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
                   }
                 }
               } break;
-
             }
           } break;
         }
       }
-
     }
 
     close();
@@ -212,9 +204,9 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
 
 function makeCommandAction(args: Array<string>, opts: ShellOptions, state: ShellState) {
   if (!opts.builtins.has(args[0]))
-    args = [`command`, ... args];
+    args = [`command`, ...args];
 
-  const [name, ... rest] = args;
+  const [name, ...rest] = args;
   if (name === `command`) {
     return makeProcess(rest[0], rest.slice(1), {
       cwd: NodeFS.fromPortablePath(state.cwd),
@@ -254,7 +246,7 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
     // Only the final segment is allowed to modify the shell state; all the
     // other ones are isolated
     const activeState = current.then
-      ? {... state}
+      ? {...state}
       : state;
 
     let action;

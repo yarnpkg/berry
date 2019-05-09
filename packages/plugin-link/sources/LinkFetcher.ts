@@ -20,7 +20,7 @@ export class LinkFetcher implements Fetcher {
 
     if (posix.isAbsolute(linkPath))
       return linkPath;
-    
+
     const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
 
     if (parentLocalPath !== null) {
@@ -44,7 +44,7 @@ export class LinkFetcher implements Fetcher {
     const effectiveParentFetch = parentFetch.localPath
       ? {packageFs: new NodeFS(), prefixPath: parentFetch.localPath}
       : parentFetch;
-    
+
     // Discard the parent fs unless we really need it to access the files
     if (parentFetch !== effectiveParentFetch && parentFetch.releaseFs)
       parentFetch.releaseFs();

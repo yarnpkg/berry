@@ -90,6 +90,6 @@ export class LightReport extends Report {
   }
 
   private formatName(name: MessageName) {
-    return `BR` + name.toString(10).padStart(4, `0`);
+    return `BR${name.toString(10).padStart(4, `0`)}`;
   }
 }

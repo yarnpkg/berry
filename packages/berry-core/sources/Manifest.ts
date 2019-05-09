@@ -255,7 +255,7 @@ export class Manifest {
         } catch (error) {
           errors.push(error);
           continue;
-        } 
+        }
       }
     }
 
@@ -363,15 +363,15 @@ export class Manifest {
     else
       delete data.languageName;
 
-    data.dependencies = this.dependencies.size === 0 ? undefined : Object.assign({}, ... structUtils.sortDescriptors(this.dependencies.values()).map(dependency => {
+    data.dependencies = this.dependencies.size === 0 ? undefined : Object.assign({}, ...structUtils.sortDescriptors(this.dependencies.values()).map(dependency => {
       return {[structUtils.stringifyIdent(dependency)]: dependency.range};
     }));
 
-    data.devDependencies = this.devDependencies.size === 0 ? undefined : Object.assign({}, ... structUtils.sortDescriptors(this.devDependencies.values()).map(dependency => {
+    data.devDependencies = this.devDependencies.size === 0 ? undefined : Object.assign({}, ...structUtils.sortDescriptors(this.devDependencies.values()).map(dependency => {
       return {[structUtils.stringifyIdent(dependency)]: dependency.range};
     }));
 
-    data.peerDependencies = this.peerDependencies.size === 0 ? undefined : Object.assign({}, ... structUtils.sortDescriptors(this.peerDependencies.values()).map(dependency => {
+    data.peerDependencies = this.peerDependencies.size === 0 ? undefined : Object.assign({}, ...structUtils.sortDescriptors(this.peerDependencies.values()).map(dependency => {
       return {[structUtils.stringifyIdent(dependency)]: dependency.range};
     }));
 
@@ -390,15 +390,15 @@ export class Manifest {
     if (Object.keys(data.dependenciesMeta).length === 0)
       data.dependenciesMeta = undefined;
 
-    data.peerDependenciesMeta = this.peerDependenciesMeta.size === 0 ? undefined : Object.assign({}, ... miscUtils.sortMap(this.peerDependenciesMeta.entries(), ([identString, meta]) => identString).map(([identString, meta]) => {
+    data.peerDependenciesMeta = this.peerDependenciesMeta.size === 0 ? undefined : Object.assign({}, ...miscUtils.sortMap(this.peerDependenciesMeta.entries(), ([identString, meta]) => identString).map(([identString, meta]) => {
       return {[identString]: meta};
     }));
 
-    data.resolutions = this.resolutions.length === 0 ? undefined : Object.assign({}, ... this.resolutions.map(({pattern, reference}) => {
+    data.resolutions = this.resolutions.length === 0 ? undefined : Object.assign({}, ...this.resolutions.map(({pattern, reference}) => {
       return {[stringifyResolution(pattern)]: reference};
     }));
 
-    if(this.files === null) {
+    if (this.files === null) {
       data.files = undefined;
     } else {
       data.files = Array.from(this.files);

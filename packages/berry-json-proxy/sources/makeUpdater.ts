@@ -30,9 +30,9 @@ export async function makeUpdater(filename: string) {
       if (tracker.immutable === initial)
         return;
 
-      const data = JSON.stringify(tracker.immutable, null, indent) + `\n`;
+      const data = `${JSON.stringify(tracker.immutable, null, indent)}\n`;
       await xfs.writeFilePromise(filename, data);
-    }
+    },
   };
 }
 

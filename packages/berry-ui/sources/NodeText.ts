@@ -42,7 +42,7 @@ export class NodeText extends Node {
 
       while (leftMostTextNode.previousSibling instanceof NodeText)
         leftMostTextNode = leftMostTextNode.previousSibling;
-      
+
       leftMostTextNode.clearTextLayout();
     }
   }
@@ -56,12 +56,12 @@ export class NodeText extends Node {
       }
     } else {
       this.activate();
-      
+
       let leftMostTextNode = this.previousSibling;
 
       while (leftMostTextNode.previousSibling instanceof NodeText)
         leftMostTextNode = leftMostTextNode.previousSibling;
-      
+
       leftMostTextNode.clearTextLayout();
     }
   }
@@ -96,7 +96,7 @@ export class NodeText extends Node {
   dumpNode(depth: number = 0) {
     const indent = `  `.repeat(depth);
 
-    console.log(indent + `{... text node ...}`);
+    console.log(`${indent}{... text node ...}`);
   }
 
   getLine(y: number, left: number, width: number) {
