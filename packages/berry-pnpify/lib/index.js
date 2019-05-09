@@ -226,6 +226,7 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: external "path"
 var external_path_ = __webpack_require__(1);
+var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 
 // CONCATENATED MODULE: ../berry-fslib/sources/FakeFS.ts
 
@@ -885,26 +886,6 @@ class PosixFS_PosixFS extends FakeFS_FakeFS {
 
 
 
-function wrapSync(fn) {
-    return fn;
-}
-function wrapAsync(fn) {
-    return function (...args) {
-        const cb = typeof args[args.length - 1] === `function`
-            ? args.pop()
-            : null;
-        setImmediate(() => {
-            let error, result;
-            try {
-                result = fn(...args);
-            }
-            catch (caught) {
-                error = caught;
-            }
-            cb(error, result);
-        });
-    };
-}
 function patchFs(patchedFs, fakeFs) {
     const SYNC_IMPLEMENTATIONS = new Set([
         `accessSync`,
@@ -1050,7 +1031,7 @@ class NodePathResolver {
      * This method extracts `.../node_modules/pkgName/...` from the path
      * and uses previous package as an issuer for the next package.
      *
-     * @param nodePath path containing `node_modules`
+     * @param nodePath full path containing `node_modules`
      *
      * @returns resolved path
      */
@@ -1217,6 +1198,7 @@ var PnPApiLocator = __webpack_require__(3);
 
 
 
+
 class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
     constructor({ baseFs = new PosixFS_PosixFS(new NodeFS_NodeFS()) } = {}) {
         super();
@@ -1232,8 +1214,12 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
     getBaseFs() {
         return this.baseFs;
     }
+    resolvePath(p) {
+        const fullOriginalPath = external_path_default.a.resolve(p);
+        return Object.assign({}, this.pathResolver.resolvePath(fullOriginalPath), { fullOriginalPath });
+    }
     resolveFilePath(p) {
-        const pnpPath = this.pathResolver.resolvePath(p);
+        const pnpPath = this.resolvePath(p);
         if (!pnpPath.resolvedPath) {
             throw NodeModulesFS_NodeModulesFS.createFsError('ENOENT', `no such file or directory, stat '${p}'`);
         }
@@ -1241,12 +1227,41 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
             return pnpPath.resolvedPath;
         }
     }
+    resolveLink(p, op, onSymlink, onRealPath) {
+        const pnpPath = this.resolvePath(p);
+        if (!pnpPath.resolvedPath) {
+            throw NodeModulesFS_NodeModulesFS.createFsError('ENOENT', `no such file or directory, ${op} '${p}'`);
+        }
+        else {
+            if (pnpPath.resolvedPath !== pnpPath.fullOriginalPath) {
+                try {
+                    const stats = this.baseFs.lstatSync(pnpPath.statPath || pnpPath.resolvedPath);
+                    if (stats.isDirectory()) {
+                        throw NodeModulesFS_NodeModulesFS.createFsError('EINVAL', `invalid argument, ${op} '${p}'`);
+                    }
+                    else {
+                        return onSymlink(stats, external_path_default.a.relative(external_path_default.a.dirname(pnpPath.fullOriginalPath), pnpPath.statPath || pnpPath.resolvedPath));
+                    }
+                }
+                catch (e) {
+                }
+            }
+        }
+        return onRealPath();
+    }
+    static makeSymlinkStats(stats) {
+        return Object.assign(stats, {
+            isFile: () => false,
+            isDirectory: () => false,
+            isSymbolicLink: () => true
+        });
+    }
     static createFsError(code, message) {
         return Object.assign(new Error(code + ': ' + message), { code });
     }
     throwIfPathReadonly(op, p) {
-        const pnpPath = this.pathResolver.resolvePath(p);
-        if (pnpPath.resolvedPath !== p) {
+        const pnpPath = this.resolvePath(p);
+        if (pnpPath.resolvedPath !== pnpPath.fullOriginalPath) {
             throw NodeModulesFS_NodeModulesFS.createFsError('EPERM', `operation not permitted, ${op} '${p}'`);
         }
         else {
@@ -1254,7 +1269,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
     }
     resolveDirOrFilePath(p) {
-        const pnpPath = this.pathResolver.resolvePath(p);
+        const pnpPath = this.resolvePath(p);
         if (!pnpPath.resolvedPath) {
             throw NodeModulesFS_NodeModulesFS.createFsError('ENOENT', `no such file or directory, stat '${p}'`);
         }
@@ -1287,7 +1302,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         return this.baseFs.realpathSync(this.resolveFilePath(p));
     }
     async existsPromise(p) {
-        const pnpPath = this.pathResolver.resolvePath(p);
+        const pnpPath = this.resolvePath(p);
         if (!pnpPath.resolvedPath) {
             return false;
         }
@@ -1299,7 +1314,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
     }
     existsSync(p) {
-        const pnpPath = this.pathResolver.resolvePath(p);
+        const pnpPath = this.resolvePath(p);
         if (!pnpPath.resolvedPath) {
             return false;
         }
@@ -1323,10 +1338,10 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         return this.baseFs.statSync(this.resolveDirOrFilePath(p));
     }
     async lstatPromise(p) {
-        return await this.baseFs.lstatPromise(this.resolveDirOrFilePath(p));
+        return this.resolveLink(p, 'lstat', (stats) => NodeModulesFS_NodeModulesFS.makeSymlinkStats(stats), async () => await this.baseFs.lstatPromise(p));
     }
     lstatSync(p) {
-        return this.baseFs.lstatSync(this.resolveDirOrFilePath(p));
+        return this.resolveLink(p, 'lstat', (stats) => NodeModulesFS_NodeModulesFS.makeSymlinkStats(stats), () => this.baseFs.lstatSync(p));
     }
     async chmodPromise(p, mask) {
         return await this.baseFs.chmodPromise(this.throwIfPathReadonly('chmod', p), mask);
@@ -1401,7 +1416,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
     }
     async readdirPromise(p) {
-        const pnpPath = this.pathResolver.resolvePath(p);
+        const pnpPath = this.resolvePath(p);
         if (!pnpPath.resolvedPath) {
             throw NodeModulesFS_NodeModulesFS.createFsError('ENOENT', `no such file or directory, scandir '${p}'`);
         }
@@ -1413,7 +1428,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
     }
     readdirSync(p) {
-        const pnpPath = this.pathResolver.resolvePath(p);
+        const pnpPath = this.resolvePath(p);
         if (!pnpPath.resolvedPath) {
             throw NodeModulesFS_NodeModulesFS.createFsError('ENOENT', `no such file or directory, scandir '${p}'`);
         }
@@ -1425,10 +1440,10 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         }
     }
     async readlinkPromise(p) {
-        return await this.baseFs.readlinkPromise(this.resolveDirOrFilePath(p));
+        return this.resolveLink(p, 'readlink', (_stats, targetPath) => targetPath, async () => await this.baseFs.readlinkPromise(p));
     }
     readlinkSync(p) {
-        return this.baseFs.readlinkSync(this.resolveDirOrFilePath(p));
+        return this.resolveLink(p, 'readlink', (_stats, targetPath) => targetPath, () => this.baseFs.readlinkSync(p));
     }
 }
 
@@ -1436,7 +1451,6 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "patchFs", function() { return sources_patchFs; });
 /* concated harmony reexport PnPApiLocator */__webpack_require__.d(__webpack_exports__, "PnPApiLocator", function() { return PnPApiLocator["a" /* PnPApiLocator */]; });
 /* concated harmony reexport NodeModulesFS */__webpack_require__.d(__webpack_exports__, "NodeModulesFS", function() { return NodeModulesFS_NodeModulesFS; });
-
 
 
 
@@ -1450,9 +1464,10 @@ const sources_patchFs = () => {
         fsPatched = true;
     }
 };
-
 if (!process.mainModule)
     sources_patchFs();
+
+
 
 
 /***/ })
