@@ -1,5 +1,5 @@
 import fs, {Stats}                                         from 'fs';
-import {win32}                                             from 'path';
+import {posix, win32}                                      from 'path';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {FakeFS, WriteFileOptions}                          from './FakeFS';
@@ -266,7 +266,7 @@ export class NodeFS extends FakeFS {
   }
 
   static toPortablePath(p: string) {
-    if (process.platform !== `win32`)
+    if (process.platform !== `win32` || posix.isAbsolute(p))
       return p;
 
     // Path should look like "N:\berry/scripts/plugin-pack.js"
