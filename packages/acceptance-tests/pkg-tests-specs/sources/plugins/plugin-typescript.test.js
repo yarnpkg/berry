@@ -1,5 +1,5 @@
 const {
-  fs: {readJson, writeFile}
+  fs: {readJson, unpackToDirectory, writeFile}
 } = require('pkg-tests-core');
 
 describe(`Plugins`, () => {
@@ -98,6 +98,35 @@ describe(`Plugins`, () => {
 
         await expect(readJson(`${path}/package.json`)).resolves.not.toHaveProperty(`devDependencies.@types/scoped__package`);
       })
+    );
+
+    test(
+      `it should override types and typings in the packed manifest`,
+      makeTemporaryEnv({
+        types: `./types.d.ts`,
+        typings: `./typings.d.ts`,
+        publishConfig: {
+          types: `./published-types.d.ts`,
+          typings: `./published-typings.d.ts`,
+        },
+      }, async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-typescript.js`))}\n`);
+
+        await run(`install`);
+        await run(`pack`);
+
+        await unpackToDirectory(path, `${path}/package.tgz`);
+
+        const packedManifest = await readJson(`${path}/package/package.json`);
+
+        expect(packedManifest.types).toBe(`./published-types.d.ts`);
+        expect(packedManifest.typings).toBe(`./published-typings.d.ts`);
+
+        const originalManifest = await readJson(`${path}/package.json`);
+
+        expect(originalManifest.types).toBe(`./types.d.ts`);
+        expect(originalManifest.typings).toBe(`./typings.d.ts`);
+      }),
     );
   });
 });
