@@ -37,7 +37,7 @@
     "unified": "^7.1.0"
   },
   "scripts": {
-    "build": "rm -rf .cache public && gatsby build --prefix-paths && rsync -rtuc --delete public/ ../../docs/",
+    "build:doc": "rm -rf .cache public && gatsby build --prefix-paths \"$@\" && rsync -rtuc --delete public/ ../../docs/",
     "develop": "gatsby develop",
     "serve": "gatsby serve",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\""
