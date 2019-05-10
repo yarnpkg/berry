@@ -65,8 +65,11 @@ const afterWorkspaceDependencyRemoval = async (
 };
 
 const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
-  if (rawManifest.publishConfig && rawManifest.publishConfig.typings) {
+  if (rawManifest.publishConfig && rawManifest.publishConfig.typings)
     rawManifest.typings = rawManifest.publishConfig.typings;
+
+  if (rawManifest.publishConfig && rawManifest.publishConfig.types) {
+    rawManifest.types = rawManifest.publishConfig.types;
   }
 };
 
