@@ -1,0 +1,11 @@
+{
+  "name": "@berry/plugin-workspaces-tools",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/core": "workspace:*",
+    "chalk": "^2.4.1",
+    "clipanion": "^0.14.1",
+    "p-limit": "^2.1.0"
+  }
+}

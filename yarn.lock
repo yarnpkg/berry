@@ -1522,6 +1522,7 @@ __metadata:
     "@berry/plugin-pack": "workspace:*"
     "@berry/plugin-pnp": "workspace:*"
     "@berry/plugin-typescript": "workspace:*"
+    "@berry/plugin-workspaces-tools": "workspace:*"
     "@berry/pnp": "workspace:*"
     "@berry/shell": "workspace:*"
     chalk: "npm:^2.4.1"
@@ -1907,6 +1908,17 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
     "@berry/plugin-pack": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@berry/plugin-workspaces-tools@workspace:*, @berry/plugin-workspaces-tools@workspace:packages/plugin-workspaces-tools":
+  version: 0.0.0-use.local
+  resolution: "@berry/plugin-workspaces-tools@workspace:packages/plugin-workspaces-tools"
+  dependencies:
+    "@berry/core": "workspace:*"
+    chalk: "npm:^2.4.1"
+    clipanion: "npm:^0.14.1"
+    p-limit: "npm:^2.1.0"
   languageName: unknown
   linkType: soft
 
