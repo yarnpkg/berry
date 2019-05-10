@@ -1,7 +1,6 @@
 import {Plugin, Project, Workspace}   from '@berry/core';
 
 import pack                           from './commands/pack';
-import {writePublishConfigToManifest} from './hook';
 import * as packUtils                 from './packUtils';
 
 export {packUtils};
@@ -18,10 +17,21 @@ export interface Hooks {
   ) => Promise<void>|void;
 }
 
+const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
+  if (rawManifest.publishConfig) {
+    if (rawManifest.publishConfig.main)
+      rawManifest.main = rawManifest.publishConfig.main;
+
+    if (rawManifest.publishConfig.module) {
+      rawManifest.module = rawManifest.publishConfig.module;
+    }
+  }
+}
+
 const plugin: Plugin = {
   hooks: {
-    beforeWorkspacePacking: writePublishConfigToManifest,
-  },
+    beforeWorkspacePacking,
+  } as Hooks,
   commands: [
     pack,
   ],
