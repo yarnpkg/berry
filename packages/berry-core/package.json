@@ -11,6 +11,7 @@
     "@berry/json-proxy": "workspace:*",
     "@berry/parsers": "workspace:*",
     "@berry/pnp": "workspace:*",
+    "@berry/pnpify": "workspace:packages/berry-pnpify",
     "@berry/shell": "workspace:*",
     "@types/camelcase": "5.2.0",
     "@types/decamelize": "3.0.3",

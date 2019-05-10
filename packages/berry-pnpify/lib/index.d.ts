@@ -1,4 +1,4 @@
 import { NodeModulesFS } from './NodeModulesFS';
-export { PnPApiLocator } from './PnPApiLocator';
 export declare const patchFs: () => void;
+export { PnPApiLocator } from './PnPApiLocator';
 export { NodeModulesFS };

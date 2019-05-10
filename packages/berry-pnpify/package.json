@@ -8,13 +8,14 @@
     "pnpify": "./bin.js"
   },
   "scripts": {
-    "build:pnpify": "run webpack-cli --config webpack.config.pkg.js",
+    "build:pnpify": "run webpack-cli --config webpack.config.pkg.js && node -r ./lib -r typescript/bin/tsc -- tsc --emitDeclarationOnly --declaration",
     "test:pnpify": "run test:unit packages/berry-pnpify",
     "test:watch:pnpify": "run test:unit --watch packages/berry-pnpify"
   },
   "devDependencies": {
     "@berry/builder": "workspace:*",
     "@berry/pnp": "workspace:*",
+    "@berry/pnpify": "workspace:packages/berry-pnpify",
     "webpack": "^4.28.4",
     "webpack-cli": "npm:3.2.1"
   },
