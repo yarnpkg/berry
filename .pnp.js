@@ -8728,6 +8728,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-pnp"
                 ],
                 [
+                  "@berry/pnpify",
+                  "workspace:packages/berry-pnpify"
+                ],
+                [
                   "@berry/shell",
                   "workspace:packages/berry-shell"
                 ],
@@ -9928,10 +9932,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
               "packageLocation": "./packages/berry-pnpify/",
               "packageDependencies": [
                 [
-                  "@berry/pnpify",
-                  "workspace:packages/berry-pnpify"
-                ],
-                [
                   "@berry/builder",
                   "workspace:packages/berry-builder"
                 ],
@@ -9942,6 +9942,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/pnp",
                   "workspace:packages/berry-pnp"
+                ],
+                [
+                  "@berry/pnpify",
+                  "workspace:packages/berry-pnpify"
                 ],
                 [
                   "webpack",

@@ -1540,6 +1540,7 @@ __metadata:
     "@berry/json-proxy": "workspace:*"
     "@berry/parsers": "workspace:*"
     "@berry/pnp": "workspace:*"
+    "@berry/pnpify": "workspace:*"
     "@berry/shell": "workspace:*"
     "@types/camelcase": "npm:5.2.0"
     "@types/decamelize": "npm:3.0.3"
@@ -1917,6 +1918,7 @@ __metadata:
     "@berry/builder": "workspace:*"
     "@berry/fslib": ^0.0.4
     "@berry/pnp": "workspace:*"
+    "@berry/pnpify": "workspace:packages/berry-pnpify"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:3.2.1"
   languageName: unknown
