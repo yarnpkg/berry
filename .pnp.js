@@ -8518,6 +8518,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-cli"
                 ],
                 [
+                  "@berry/pnpify",
+                  "workspace:packages/berry-pnpify"
+                ],
+                [
                   "brfs",
                   "npm:2.0.1"
                 ],

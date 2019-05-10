@@ -13,6 +13,7 @@
     "@babel/preset-typescript": "^7.1.0",
     "@babel/register": "^7.0.0",
     "@berry/cli": "workspace:*",
+    "@berry/pnpify": "workspace:packages/berry-pnpify",
     "brfs": "^2.0.1",
     "buffer-loader": "^0.1.0",
     "clipanion": "^0.14.1",
