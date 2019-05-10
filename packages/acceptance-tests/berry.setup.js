@@ -27,7 +27,7 @@ global.makeTemporaryEnv = generatePkgDriver({
       rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = value;
 
     const nativePath = NodeFS.fromPortablePath(path);
-    const tempHomeFolder = await createTemporaryFolder();
+    const tempHomeFolder = NodeFS.fromPortablePath(await createTemporaryFolder());
 
     const res = await execFile(process.execPath, [`${__dirname}/../../scripts/run-yarn.js`, command, ...args], {
       cwd: cwd || path,
