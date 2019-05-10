@@ -4,7 +4,8 @@
   "main": "./sources/index.ts",
   "sideEffects": false,
   "scripts": {
-    "build:core": "pnpify tsc"
+    "prepack": "pnpify tsc",
+    "postpack": "rm -rf lib"
   },
   "dependencies": {
     "@berry/fslib": "workspace:*",
@@ -40,5 +41,12 @@
   },
   "devDependencies": {
     "typescript": "^3.3.3333"
-  }
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "types": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/*"
+  ]
 }
