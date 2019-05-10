@@ -124,7 +124,7 @@ exports.packToFile = function packToFile(target: string, source: string, options
 exports.unpackToDirectory = function unpackToDirectory(target: string, source: string): Promise<void> {
   const tarballStream = xfs.createReadStream(source);
   const gunzipStream =  zlib.createUnzip();
-  const extractStream = tarFs.extract(target);
+  const extractStream = tarFs.extract(NodeFS.fromPortablePath(target));
 
   tarballStream.pipe(gunzipStream).pipe(extractStream);
 
