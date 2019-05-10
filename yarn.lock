@@ -1895,6 +1895,7 @@ __metadata:
     "@berry/builder": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
+    "@berry/plugin-pack": "workspace:*"
   languageName: unknown
   linkType: soft
 

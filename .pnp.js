@@ -9876,6 +9876,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/plugin-essentials",
                   "workspace:packages/plugin-essentials"
+                ],
+                [
+                  "@berry/plugin-pack",
+                  "workspace:packages/plugin-pack"
                 ]
               ]
             }

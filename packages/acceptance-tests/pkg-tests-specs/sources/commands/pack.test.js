@@ -160,5 +160,32 @@ describe(`Commands`, () => {
         await expect(stdout).toMatch(/b\.js/);
       }),
     );
+
+    test(
+      `it should override main and module in the packed manifest`,
+      makeTemporaryEnv({
+        main: `./index.js`,
+        module: `./index.mjs`,
+        publishConfig: {
+          main: `./published.js`,
+          module: `./published.mjs`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+        await run(`pack`);
+
+        await fsUtils.unpackToDirectory(path, `${path}/package.tgz`);
+
+        const packedManifest = await fsUtils.readJson(`${path}/package/package.json`);
+
+        expect(packedManifest.main).toBe(`./published.js`);
+        expect(packedManifest.module).toBe(`./published.mjs`);
+
+        const originalManifest = await fsUtils.readJson(`${path}/package.json`);
+
+        expect(originalManifest.main).toBe(`./index.js`);
+        expect(originalManifest.module).toBe(`./index.mjs`);
+      }),
+    );
   });
 });

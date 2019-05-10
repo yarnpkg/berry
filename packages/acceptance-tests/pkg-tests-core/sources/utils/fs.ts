@@ -121,6 +121,32 @@ exports.packToFile = function packToFile(target: string, source: string, options
   });
 };
 
+exports.unpackToDirectory = function unpackToDirectory(target: string, source: string): Promise<void> {
+  const tarballStream = xfs.createReadStream(source);
+  const gunzipStream =  zlib.createUnzip();
+  const extractStream = tarFs.extract(NodeFS.fromPortablePath(target));
+
+  tarballStream.pipe(gunzipStream).pipe(extractStream);
+
+  return new Promise((resolve, reject) => {
+    tarballStream.on('error', error => {
+      reject(error);
+    });
+
+    gunzipStream.on('error', error => {
+      reject(error);
+    });
+
+    extractStream.on('error', error => {
+      reject(error);
+    });
+
+    extractStream.on('finish', () => {
+      resolve();
+    });
+  });
+};
+
 exports.createTemporaryFolder = function createTemporaryFolder(name?: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     tmp.dir({unsafeCleanup: true}, (error, dirPath) => {
