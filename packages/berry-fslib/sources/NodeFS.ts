@@ -1,11 +1,10 @@
 import fs, {Stats}                                         from 'fs';
-import {posix, win32}                                      from 'path';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {FakeFS, WriteFileOptions}                          from './FakeFS';
 
-const PORTABLE_PATH_PREFIX = `/mnt/`;
-const PORTABLE_PREFIX_REGEXP = /^\/mnt\/([a-zA-Z])(?:\/(.*))?$/;
+const WINDOWS_PATH_REGEXP = /^[a-zA-Z]:.*$/;
+const PORTABLE_PATH_REGEXP = /^\/[a-zA-Z]:.*$/;
 
 export class NodeFS extends FakeFS {
   private readonly realFs: typeof fs;
@@ -248,37 +247,21 @@ export class NodeFS extends FakeFS {
     };
   }
 
-  // Path should look like "/mnt/N/berry/scripts/plugin-pack.js"
+  // Path should look like "/N:/berry/scripts/plugin-pack.js"
   // And transform to "N:\berry\scripts\plugin-pack.js"
   static fromPortablePath(p: string) {
-    if (win32.isAbsolute(p) && !posix.isAbsolute(p)) {
-      return p.replace(/\//g, `\\`);
-    } else if (process.platform === `win32`) {
-      const match = p.match(PORTABLE_PREFIX_REGEXP);
-      if (!match)
-        return p;
-
-      const [, drive, pathWithoutPrefix = ''] = match;
-      const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
-
-      return `${drive}:\\${windowsPath}`;
-    } else {
+    if (process.platform !== 'win32')
       return p;
-    }
+
+    return p.match(PORTABLE_PATH_REGEXP) ? p.substring(1).replace(/\//g, `\\`) : p;
   }
 
   // Path should look like "N:/berry/scripts/plugin-pack.js"
-  // And transform to "/mnt/N/berry/scripts/plugin-pack.js"
+  // And transform to "/N:/berry/scripts/plugin-pack.js"
   static toPortablePath(p: string) {
-    p = p.replace(/\\/g, `/`);
-
-    if (!win32.isAbsolute(p) || posix.isAbsolute(p))
+    if (process.platform !== 'win32')
       return p;
 
-    const {root} = win32.parse(p);
-    const driveLetter = root[0];
-    const pathWithoutRoot = p.substr(root.length);
-
-    return `${PORTABLE_PATH_PREFIX}${driveLetter}/${pathWithoutRoot}`;
+    return (p.match(WINDOWS_PATH_REGEXP) ? `/${p}` : p).replace(/\\/g, `/`);
   }
 }
