@@ -89,13 +89,13 @@ module.exports =
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = require("path");
+module.exports = require("fs");
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports) {
 
-module.exports = require("fs");
+module.exports = require("path");
 
 /***/ }),
 /* 2 */
@@ -115,7 +115,7 @@ const dynamicRequire =  true
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PnPApiLocator; });
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_0__);
 
 /**
@@ -225,7 +225,7 @@ module.exports = require("events");
 __webpack_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: external "path"
-var external_path_ = __webpack_require__(0);
+var external_path_ = __webpack_require__(1);
 var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 
 // CONCATENATED MODULE: ../berry-fslib/sources/FakeFS.ts
@@ -498,15 +498,14 @@ class FakeFS_FakeFS {
 ;
 
 // EXTERNAL MODULE: external "fs"
-var external_fs_ = __webpack_require__(1);
+var external_fs_ = __webpack_require__(0);
 var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
 
 // CONCATENATED MODULE: ../berry-fslib/sources/NodeFS.ts
 
 
-
-const PORTABLE_PATH_PREFIX = `/mnt/`;
-const PORTABLE_PREFIX_REGEXP = /^\/mnt\/([a-zA-Z])(?:\/(.*))?$/;
+const WINDOWS_PATH_REGEXP = /^[a-zA-Z]:.*$/;
+const PORTABLE_PATH_REGEXP = /^\/[a-zA-Z]:.*$/;
 class NodeFS_NodeFS extends FakeFS_FakeFS {
     constructor(realFs = external_fs_default.a) {
         super();
@@ -699,34 +698,19 @@ class NodeFS_NodeFS extends FakeFS_FakeFS {
             }
         };
     }
-    // Path should look like "/mnt/N/berry/scripts/plugin-pack.js"
+    // Path should look like "/N:/berry/scripts/plugin-pack.js"
     // And transform to "N:\berry\scripts\plugin-pack.js"
     static fromPortablePath(p) {
-        if (external_path_["win32"].isAbsolute(p) && !external_path_["posix"].isAbsolute(p)) {
-            return p.replace(/\//g, `\\`);
-        }
-        else if (process.platform === `win32`) {
-            const match = p.match(PORTABLE_PREFIX_REGEXP);
-            if (!match)
-                return p;
-            const [, drive, pathWithoutPrefix = ''] = match;
-            const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
-            return `${drive}:\\${windowsPath}`;
-        }
-        else {
+        if (process.platform !== 'win32')
             return p;
-        }
+        return p.match(PORTABLE_PATH_REGEXP) ? p.substring(1).replace(/\//g, `\\`) : p;
     }
     // Path should look like "N:/berry/scripts/plugin-pack.js"
-    // And transform to "/mnt/N/berry/scripts/plugin-pack.js"
+    // And transform to "/N:/berry/scripts/plugin-pack.js"
     static toPortablePath(p) {
-        p = p.replace(/\\/g, `/`);
-        if (!external_path_["win32"].isAbsolute(p) || external_path_["posix"].isAbsolute(p))
+        if (process.platform !== 'win32')
             return p;
-        const { root } = external_path_["win32"].parse(p);
-        const driveLetter = root[0];
-        const pathWithoutRoot = p.substr(root.length);
-        return `${PORTABLE_PATH_PREFIX}${driveLetter}/${pathWithoutRoot}`;
+        return (p.match(WINDOWS_PATH_REGEXP) ? `/${p}` : p).replace(/\\/g, `/`);
     }
 }
 
