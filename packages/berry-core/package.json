@@ -4,13 +4,15 @@
   "main": "./sources/index.ts",
   "sideEffects": false,
   "scripts": {
-    "build:core": "node -r ../berry-pnpify/lib -r typescript/bin/tsc -- tsc"
+    "prepack": "pnpify tsc",
+    "postpack": "rm -rf lib"
   },
   "dependencies": {
     "@berry/fslib": "workspace:*",
     "@berry/json-proxy": "workspace:*",
     "@berry/parsers": "workspace:*",
     "@berry/pnp": "workspace:*",
+    "@berry/pnpify": "workspace:*",
     "@berry/shell": "workspace:*",
     "@types/camelcase": "5.2.0",
     "@types/decamelize": "3.0.3",
@@ -39,5 +41,12 @@
   },
   "devDependencies": {
     "typescript": "^3.3.3333"
-  }
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "types": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/*"
+  ]
 }

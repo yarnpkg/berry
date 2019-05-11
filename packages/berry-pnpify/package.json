@@ -2,24 +2,29 @@
   "name": "@berry/pnpify",
   "version": "0.0.1",
   "sideEffects": false,
-  "types": "./lib/index.d.ts",
-  "main": "./lib/index.js",
+  "main": "./sources/index.ts",
   "bin": {
     "pnpify": "./bin.js"
   },
   "scripts": {
-    "build:pnpify": "run webpack-cli --config webpack.config.pkg.js",
+    "prepack": "build:pnpify",
+    "build:pnpify": "run webpack-cli --config webpack.config.pkg.js && node -r ./lib -r typescript/bin/tsc -- tsc --emitDeclarationOnly --declaration",
     "test:pnpify": "run test:unit packages/berry-pnpify",
     "test:watch:pnpify": "run test:unit --watch packages/berry-pnpify"
   },
   "devDependencies": {
     "@berry/builder": "workspace:*",
     "@berry/pnp": "workspace:*",
+    "@berry/pnpify": "workspace:packages/berry-pnpify",
     "webpack": "^4.28.4",
     "webpack-cli": "npm:3.2.1"
   },
   "dependencies": {
     "@berry/fslib": "^0.0.4"
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "types": "./lib/index.d.ts"
   },
   "files": [
     "/lib/*",

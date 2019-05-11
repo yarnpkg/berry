@@ -1482,6 +1482,7 @@ __metadata:
     "@babel/preset-typescript": "npm:^7.1.0"
     "@babel/register": "npm:^7.0.0"
     "@berry/cli": "workspace:*"
+    "@berry/pnpify": "workspace:packages/berry-pnpify"
     brfs: "npm:^2.0.1"
     buffer-loader: "npm:^0.1.0"
     clipanion: "npm:^0.14.1"
@@ -1540,6 +1541,7 @@ __metadata:
     "@berry/json-proxy": "workspace:*"
     "@berry/parsers": "workspace:*"
     "@berry/pnp": "workspace:*"
+    "@berry/pnpify": "workspace:*"
     "@berry/shell": "workspace:*"
     "@types/camelcase": "npm:5.2.0"
     "@types/decamelize": "npm:3.0.3"
@@ -1918,6 +1920,7 @@ __metadata:
     "@berry/builder": "workspace:*"
     "@berry/fslib": ^0.0.4
     "@berry/pnp": "workspace:*"
+    "@berry/pnpify": "workspace:packages/berry-pnpify"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:3.2.1"
   languageName: unknown

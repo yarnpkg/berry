@@ -11,9 +11,13 @@ export declare class NodeModulesFS extends FakeFS {
     constructor({ baseFs }?: NodeModulesFSOptions);
     getRealPath(): string;
     getBaseFs(): FakeFS;
+    private resolvePath;
     private resolveFilePath;
+    private resolveLink;
+    private static makeSymlinkStats;
+    private static createFsError;
     private throwIfPathReadonly;
-    private resolveStatPath;
+    private resolveDirOrFilePath;
     openPromise(p: string, flags: string, mode?: number): Promise<number>;
     openSync(p: string, flags: string, mode?: number): number;
     closePromise(fd: number): Promise<void>;
@@ -28,8 +32,8 @@ export declare class NodeModulesFS extends FakeFS {
     accessSync(p: string, mode?: number): void;
     statPromise(p: string): Promise<fs.Stats>;
     statSync(p: string): fs.Stats;
-    lstatPromise(p: string): Promise<fs.Stats>;
-    lstatSync(p: string): fs.Stats;
+    lstatPromise(p: string): Promise<any>;
+    lstatSync(p: string): any;
     chmodPromise(p: string, mask: number): Promise<void>;
     chmodSync(p: string, mask: number): void;
     renamePromise(oldP: string, newP: string): Promise<void>;
@@ -54,6 +58,6 @@ export declare class NodeModulesFS extends FakeFS {
     readFileSync(p: string, encoding?: string): Buffer;
     readdirPromise(p: string): Promise<string[]>;
     readdirSync(p: string): string[];
-    readlinkPromise(p: string): Promise<string>;
-    readlinkSync(p: string): string;
+    readlinkPromise(p: string): Promise<any>;
+    readlinkSync(p: string): any;
 }
