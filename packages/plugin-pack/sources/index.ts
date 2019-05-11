@@ -43,10 +43,10 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
 
       if (matchingWorkspaces.length === 0) {
         if (project.workspacesByIdent.has(identHash)) {
-          throw new ReportError(MessageName.WORKSPACE_NOT_FOUND, `No local workspace found for this range`);
+          throw new ReportError(MessageName.WORKSPACE_NOT_FOUND, `${structUtils.prettyDescriptor(project.configuration, descriptor)}: No local workspace found for this range`);
         }
       } else if (matchingWorkspaces.length > 1) {
-          throw new ReportError(MessageName.TOO_MANY_MATCHING_WORKSPACES, `Too many workspaces match this range, please disambiguate`);
+          throw new ReportError(MessageName.TOO_MANY_MATCHING_WORKSPACES, `${structUtils.prettyDescriptor(project.configuration, descriptor)}: Too many workspaces match this range, please disambiguate`);
       } else {
         const [matchingWorkspace] = matchingWorkspaces;
         let versionToWrite: string;
