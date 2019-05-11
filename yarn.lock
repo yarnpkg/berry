@@ -1571,7 +1571,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/fslib@^0.0.4, @berry/fslib@workspace:*, @berry/fslib@workspace:packages/berry-fslib":
+"@berry/fslib@^0.0.5, @berry/fslib@workspace:*, @berry/fslib@workspace:packages/berry-fslib":
   version: 0.0.0-use.local
   resolution: "@berry/fslib@workspace:packages/berry-fslib"
   dependencies:
@@ -1908,7 +1908,7 @@ __metadata:
   resolution: "@berry/pnp@workspace:packages/berry-pnp"
   dependencies:
     "@berry/builder": "workspace:packages/berry-builder"
-    "@berry/fslib": "workspace:*"
+    "@berry/fslib": ^0.0.5
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:3.2.1"
     webpack-sources: "npm:^1.3.0"
@@ -1920,7 +1920,7 @@ __metadata:
   resolution: "@berry/pnpify@workspace:packages/berry-pnpify"
   dependencies:
     "@berry/builder": "workspace:*"
-    "@berry/fslib": ^0.0.4
+    "@berry/fslib": ^0.0.5
     "@berry/pnp": "workspace:*"
     "@berry/pnpify": "workspace:packages/berry-pnpify"
     webpack: "npm:^4.28.4"

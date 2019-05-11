@@ -41,6 +41,7 @@ export type InstallOptions = {
   report: Report,
   frozenLockfile?: boolean,
   lockfileOnly?: boolean,
+  inlineBuilds?: boolean,
 };
 
 export class Project {
@@ -836,7 +837,7 @@ export class Project {
     }
   }
 
-  async linkEverything({cache, report}: InstallOptions) {
+  async linkEverything({cache, report, inlineBuilds = false}: InstallOptions) {
     const fetcher = this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
 
@@ -1047,11 +1048,20 @@ export class Project {
             });
 
             const stdin = null;
-            const stdout = xfs.createWriteStream(logFile);
-            const stderr = stdout;
+            let stdout;
+            let stderr;
 
-            stdout.write(`# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`);
-            stdout.write(`\n`);
+            console.log(scriptName);
+            if (inlineBuilds) {
+              stdout = report.createStreamReporter(`${structUtils.prettyLocator(this.configuration, pkg)} ${this.configuration.format(`STDOUT`, `green`)}`);
+              stderr = report.createStreamReporter(`${structUtils.prettyLocator(this.configuration, pkg)} ${this.configuration.format(`STDERR`, `red`)}`);
+            } else {
+              stdout = xfs.createWriteStream(logFile);
+              stderr = stdout;
+
+              stdout.write(`# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`);
+              stdout.write(`\n`);
+            }
 
             let exitCode;
 

@@ -1,6 +1,8 @@
 import crossSpawn                        from 'cross-spawn';
 import {PassThrough, Readable, Writable} from 'stream';
 
+import {ShellOptions}                    from './index';
+
 enum Pipe {
   STDOUT = 0b01,
   STDERR = 0b10,
@@ -25,7 +27,7 @@ function nextTick() {
   });
 }
 
-export function makeProcess(name: string, args: Array<string>, opts: any): ProcessImplementation {
+export function makeProcess(name: string, args: Array<string>, opts: ShellOptions, spawnOpts: any): ProcessImplementation {
   return (stdio: Stdio) => {
     const stdin = stdio[0] instanceof PassThrough
       ? `pipe`
@@ -39,7 +41,7 @@ export function makeProcess(name: string, args: Array<string>, opts: any): Proce
       ? `pipe`
       : stdio[2];
 
-    const child = crossSpawn(name, args, {...opts, stdio: [
+    const child = crossSpawn(name, args, {...spawnOpts, stdio: [
       stdin,
       stdout,
       stderr,
@@ -48,9 +50,9 @@ export function makeProcess(name: string, args: Array<string>, opts: any): Proce
     if (stdio[0] instanceof PassThrough)
       stdio[0].pipe(child.stdin);
     if (stdio[1] instanceof PassThrough)
-      child.stdout.pipe(stdio[1]);
+      child.stdout.pipe(stdio[1], {end: stdio[1] !== opts.initialStdout});
     if (stdio[2] instanceof PassThrough)
-      child.stderr.pipe(stdio[2]);
+      child.stderr.pipe(stdio[2], {end: stdio[2] !== opts.initialStderr});
 
     return {
       stdin: child.stdin,

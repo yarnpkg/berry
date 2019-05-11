@@ -7,7 +7,7 @@ import {Writable}                                                         from '
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`install [--frozen-lockfile?]`)
+  .command(`install [--frozen-lockfile?] [--inline-builds?]`)
   .describe(`install the project dependencies`)
 
   .detail(`
@@ -22,6 +22,10 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     - **Build:** Once the dependency tree has been written on the disk, the package manager will now be free to run the build scripts for all packages that might need it, in a topological order compatible with the way they depend on one another.
 
     Note that running this command is not part of the recommended workflow. Yarn supports zero-installs, which means that as long as you store your cache and your .pnp.js file inside your repository, everything will work without requiring any install right after cloning your repository or switching branches.
+
+    If the \`--frozen-lockfile\` option is used, Yarn will abort with an error exit code if anything in the install artifacts (\`yarn.lock\`, \`.pnp.js\`, ...) was to be modified.
+
+    If the \`--inline-builds\` option is used, Yarn will verbosely print the output of the build steps of your dependencies (instead of writing them into individual files). This is likely useful mostly for debug purposes only when using Docker-like environments.
   `)
 
   .example(
@@ -29,7 +33,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn install`,
   )
 
-  .action(async ({cwd, stdout, frozenLockfile}: {cwd: string, stdout: Writable, frozenLockfile: boolean}) => {
+  .action(async ({cwd, stdout, frozenLockfile, inlineBuilds}: {cwd: string, stdout: Writable, frozenLockfile: boolean, inlineBuilds: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     if (frozenLockfile === null)
@@ -53,7 +57,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     // in order to ask for design feedback before writing features.
 
     const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
-      await project.install({cache, report, frozenLockfile});
+      await project.install({cache, report, frozenLockfile, inlineBuilds});
     });
 
     return report.exitCode();
