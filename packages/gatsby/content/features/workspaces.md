@@ -39,6 +39,39 @@ For those use cases, Yarn now supports a new resolution protocol starting from t
 
 Note that the second flavor is experimental and we advise against using it for now, as some details might change in the future. Our current recommendation is to use `workspace:*`, which will almost always do what you expect.
 
+## Publishing workspaces
+
+When a workspace is packed into an archive (whether it's through `yarn pack` or one of the publish commands like `yarn npm publish`), we dynamically replace any `workspace:` dependency by:
+
+  - The corresponding version in the target workspace (if you use `*` or a project-relative path)
+  - The associated semver range (for any other range type)
+
+So for example, if we assume we have three workspaces whose current version is `1.5.0`, the following:
+
+```json
+{
+  "dependencies": {
+    "foo": "workspace:*",
+    "bar": "workspace:^1.2.3",
+    "baz": "workspace:path/to/baz"
+  }
+}
+```
+
+Will be transformed into:
+
+```json
+{
+  "dependencies": {
+    "foo": "1.5.0",
+    "bar": "^1.2.3",
+    "baz": "1.5.0"
+  }
+}
+```
+
+This feature allows you to not have to depend on something else than your local workspaces, while still being able to publish the resulting packages to the remote registry without having to run intermediary publish steps - your consumers will be able to use your published workspaces as any other package, still benefiting from the guarantees semver offers.
+
 ## Yarn Workspaces vs Lerna
 
 Despite the appearances, the Yarn workspaces and Lerna don't compete. In fact, Lerna will uses Yarn's workspaces if possible. In a sense, you can see Lerna as a high-level layer on top of the low-level Yarn implementation.
