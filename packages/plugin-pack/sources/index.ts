@@ -46,18 +46,18 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
           throw new ReportError(MessageName.WORKSPACE_NOT_FOUND, `${structUtils.prettyDescriptor(project.configuration, descriptor)}: No local workspace found for this range`);
         }
       } else if (matchingWorkspaces.length > 1) {
-          throw new ReportError(MessageName.TOO_MANY_MATCHING_WORKSPACES, `${structUtils.prettyDescriptor(project.configuration, descriptor)}: Too many workspaces match this range, please disambiguate`);
+        throw new ReportError(MessageName.TOO_MANY_MATCHING_WORKSPACES, `${structUtils.prettyDescriptor(project.configuration, descriptor)}: Too many workspaces match this range, please disambiguate`);
       } else {
         const [matchingWorkspace] = matchingWorkspaces;
         let versionToWrite: string;
 
         // For workspace:path/to/workspace and workspace:* we look up the workspace version
-        if (structUtils.areDescriptorsEqual(descriptor, matchingWorkspace.anchoredDescriptor) || range.selector === `*`) {
+        if (structUtils.areDescriptorsEqual(descriptor, matchingWorkspace.anchoredDescriptor) || range.selector === `*`)
           versionToWrite = matchingWorkspace.manifest.version!;
-        } else {
+        else
           // for workspace:version we simply strip the protocol
           versionToWrite = range.selector;
-        }
+
 
         rawManifest[dependencyType][structUtils.stringifyIdent(descriptor)] = versionToWrite;
       }
