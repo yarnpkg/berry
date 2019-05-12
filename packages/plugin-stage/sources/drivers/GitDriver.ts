@@ -20,7 +20,8 @@ async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileActio
     const localPath = NodeFS.fromPortablePath(path);
     const relativePath = posix.relative(cwd, localPath);
     if (action === stageUtils.ActionType.MODIFY) {
-      const prevManifest = await Manifest.fromText(`git`, [`show`, `HEAD~1:${relativePath}`], {cwd, strict: true});
+      const {stdout: prevSource} = await execUtils.execvp(`git`, [`show`, `HEAD~1:${relativePath}`], {cwd, strict: true});
+      const prevManifest = await Manifest.fromText(prevSource);
       const currManifest = await Manifest.fromFile(localPath);
       const allCurrDeps: Map<IdentHash, Descriptor> = new Map([...currManifest.dependencies, ...currManifest.devDependencies]);
       const allPrevDeps: Map<IdentHash, Descriptor> = new Map([...prevManifest.dependencies, ...prevManifest.devDependencies]);
@@ -58,7 +59,8 @@ async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileActio
     }
     else {
       //remove package.json
-      const manifest = await Manifest.fromText(`git`, [`show`, `HEAD~1:${relativePath}`], {cwd, strict: true});
+      const {stdout: prevSource} = await execUtils.execvp(`git`, [`show`, `HEAD~1:${relativePath}`], {cwd, strict: true});
+      const manifest = await Manifest.fromText(prevSource);
       if (manifest.name){
         const packageName = structUtils.stringifyIdent(manifest.name);
         removedPackages.push(`Deletes ${packageName}`);

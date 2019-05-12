@@ -70,19 +70,17 @@ export class Manifest {
     return manifest;
   }
 
-  static async fromText(text: string, args: Array<string>, opts: execUtils.ExecvpOptions) {
+  static async fromText(text: string) {
     const manifest = new Manifest();
-    await manifest.loadFromText(text, args, opts);
+    await manifest.loadFromText(text);
 
     return manifest;
   }
 
-  async loadFromText(text: string, args: Array<string>, opts: execUtils.ExecvpOptions) {
-    const {stdout:content} = await execUtils.execvp(text, args, opts);
-
+  async loadFromText(text: string) {
     let data;
     try {
-      data = JSON.parse(content || `{}`);
+      data = JSON.parse(text || `{}`);
     } catch (error) {
       error.message += ` (when parsing ${text})`;
       throw error;
