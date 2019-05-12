@@ -35,7 +35,7 @@ export class LinkFetcher implements Fetcher {
     // If the link target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
     const parentFetch = portablePathUtils.isAbsolute(linkPath)
-      ? {packageFs: new NodeFS(), prefixPath: `/` as PortablePath, localPath: `/` as PortablePath}
+      ? {packageFs: new NodeFS(), prefixPath: PortablePath.root, localPath: PortablePath.root}
       : await opts.fetcher.fetch(parentLocator, opts);
 
     // If the package fs publicized its "original location" (for example like
@@ -52,9 +52,9 @@ export class LinkFetcher implements Fetcher {
     const sourcePath = portablePathUtils.resolve(effectiveParentFetch.prefixPath, linkPath);
 
     if (parentFetch.localPath) {
-      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: `/` as PortablePath, localPath: sourcePath};
+      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root, localPath: sourcePath};
     } else {
-      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: `/` as PortablePath};
+      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root};
     }
   }
 

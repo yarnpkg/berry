@@ -1,5 +1,4 @@
-import {AliasFS, NodeFS, PortablePath, xfs, portablePathUtils}                                    from '@berry/fslib';
-import {posix, win32}                                            from 'path';
+import {AliasFS, NodeFS, PortablePath, xfs, portablePathUtils, nativePathUtils}                                    from '@berry/fslib';
 
 import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from './Fetcher';
 import {MessageName, ReportError}                                from './Report';
@@ -41,12 +40,12 @@ export class VirtualFetcher implements Fetcher {
   }
 
   getLocatorFilename(locator: Locator) {
-    return structUtils.slugifyLocator(locator);
+    return structUtils.slugifyLocator(locator) as PortablePath
   }
 
   getLocatorPath(locator: Locator, opts: MinimalFetchOptions) {
     const virtualFolder = opts.project.configuration.get(`virtualFolder`);
-    const virtualPath = posix.resolve(virtualFolder, this.getLocatorFilename(locator)) as PortablePath;
+    const virtualPath = portablePathUtils.resolve(virtualFolder, this.getLocatorFilename(locator)) as PortablePath;
 
     return virtualPath;
   }
@@ -54,26 +53,24 @@ export class VirtualFetcher implements Fetcher {
   private async ensureVirtualLink(locator: Locator, sourceFetch: FetchResult, opts: FetchOptions) {
     const virtualPath = this.getLocatorPath(locator, opts);
 
-    const from = posix.dirname(virtualPath) as PortablePath;
+    const from = portablePathUtils.dirname(virtualPath);
     const to = sourceFetch.packageFs.getRealPath();
 
-    let target = posix.relative(from, to);
+    let target = portablePathUtils.relative(from, to);
 
-    if (process.platform === `win32`) {
-      const fromParse = win32.parse(NodeFS.fromPortablePath(from));
-      const toParse = win32.parse(NodeFS.fromPortablePath(to));
+    const fromParse = nativePathUtils.parse(NodeFS.fromPortablePath(from));
+    const toParse = nativePathUtils.parse(NodeFS.fromPortablePath(to));
 
-      if (fromParse.root !== toParse.root) {
-        if (opts.project.configuration.get(`enableAbsoluteVirtuals`)) {
-          target = to;
-        } else {
-          throw new ReportError(MessageName.CROSS_DRIVE_VIRTUAL_LOCAL, `The virtual folder (${fromParse.root}) must be on the same drive as the local package it references (${toParse.root})`);
-        }
+    if (fromParse.root !== toParse.root) {
+      if (opts.project.configuration.get(`enableAbsoluteVirtuals`)) {
+        target = to;
+      } else {
+        throw new ReportError(MessageName.CROSS_DRIVE_VIRTUAL_LOCAL, `The virtual folder (${fromParse.root}) must be on the same drive as the local package it references (${toParse.root})`);
       }
     }
 
     // Doesn't need locking, and the folder must exist for the lock to succeed
-    await xfs.mkdirpPromise(posix.dirname(virtualPath) as PortablePath);
+    await xfs.mkdirpPromise(portablePathUtils.dirname(virtualPath));
 
     await xfs.lockPromise(virtualPath, async () => {
       let currentLink;

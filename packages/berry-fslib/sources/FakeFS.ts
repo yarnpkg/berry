@@ -192,7 +192,7 @@ export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
   }
 
   resolve(p: PortablePath) {
-    return this.pathUtils.resolve(`/` as PortablePath, p);
+    return this.pathUtils.resolve(PortablePath.root, p);
   }
 
   async removePromise(p: PortablePath) {

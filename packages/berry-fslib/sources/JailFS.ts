@@ -7,7 +7,7 @@ export type JailFSOptions = {
   baseFs?: FakeFS<PortablePath>,
 };
 
-const JAIL_ROOT = `/` as PortablePath;
+const JAIL_ROOT = PortablePath.root;
 
 export class JailFS extends ProxiedFS<PortablePath, PortablePath> {
   private readonly target: PortablePath;
@@ -17,13 +17,13 @@ export class JailFS extends ProxiedFS<PortablePath, PortablePath> {
   constructor(target: PortablePath, {baseFs = new NodeFS()}: JailFSOptions = {}) {
     super(portablePathUtils);
 
-    this.target = this.pathUtils.resolve(`/` as PortablePath, target);
+    this.target = this.pathUtils.resolve(PortablePath.root, target);
 
     this.baseFs = baseFs;
   }
 
   getRealPath() {
-    return this.pathUtils.resolve(this.baseFs.getRealPath(), this.pathUtils.relative(`/` as PortablePath, this.target));
+    return this.pathUtils.resolve(this.baseFs.getRealPath(), this.pathUtils.relative(PortablePath.root, this.target));
   }
 
   getTarget() {

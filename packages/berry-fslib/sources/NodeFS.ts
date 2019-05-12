@@ -17,7 +17,7 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   getRealPath() {
-    return `/` as PortablePath;
+    return PortablePath.root;
   }
 
   async openPromise(p: PortablePath, flags: string, mode?: number) {

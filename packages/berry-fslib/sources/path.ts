@@ -2,6 +2,12 @@ import path from 'path';
 
 export type PortablePath = string & { _portable_path: true };
 
+export namespace PortablePath {
+  export const root = `/` as PortablePath;
+
+  export const dot = `.` as PortablePath;
+}
+
 export type NativePath = string & { _portable_path?: false };
 
 export type Path = PortablePath | NativePath;

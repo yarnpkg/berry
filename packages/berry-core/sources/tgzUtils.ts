@@ -1,4 +1,4 @@
-import {FakeFS, PortablePath, ZipFS, NodeFS} from '@berry/fslib';
+import {FakeFS, PortablePath, ZipFS, NodeFS, portablePathUtils} from '@berry/fslib';
 import {posix}                 from 'path';
 import {Parse}                 from 'tar';
 import {tmpNameSync}           from 'tmp';
@@ -8,9 +8,9 @@ interface MakeArchiveFromDirectoryOptions {
   prefixPath?: PortablePath | null,
 };
 
-export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = `/` as PortablePath}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
+export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
   const zipFs = new ZipFS(NodeFS.toPortablePath(tmpNameSync()), {create: true});
-  const target = posix.resolve(`/`, prefixPath) as PortablePath;
+  const target = portablePathUtils.resolve(PortablePath.root, prefixPath!);
 
   await zipFs.copyPromise(target, source, {baseFs});
 
@@ -22,7 +22,7 @@ interface MakeArchiveOptions {
   stripComponents?: number,
 };
 
-export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath = `.` as PortablePath}: MakeArchiveOptions = {}): Promise<ZipFS> {
+export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath = PortablePath.dot}: MakeArchiveOptions = {}): Promise<ZipFS> {
   const zipFs = new ZipFS(NodeFS.toPortablePath(tmpNameSync()), {create: true});
 
   // 1980-01-01, like Fedora

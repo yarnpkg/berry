@@ -119,7 +119,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.realpathPromise(p);
     }, async (zipFs, {archivePath, subPath}) => {
-      return this.pathUtils.resolve(archivePath, this.pathUtils.relative(`/` as PortablePath, await zipFs.realpathPromise(subPath)));
+      return this.pathUtils.resolve(archivePath, this.pathUtils.relative(PortablePath.root, await zipFs.realpathPromise(subPath)));
     });
   }
 
@@ -127,7 +127,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.realpathSync(p);
     }, (zipFs, {archivePath, subPath}) => {
-      return this.pathUtils.resolve(archivePath, this.pathUtils.relative(`/` as PortablePath, zipFs.realpathSync(subPath)));
+      return this.pathUtils.resolve(archivePath, this.pathUtils.relative(PortablePath.root, zipFs.realpathSync(subPath)));
     });
   }
 
@@ -488,7 +488,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   }
 
   private async makeCallPromise<T>(p: PortablePath, discard: () => Promise<T>, accept: (zipFS: ZipFS, zipInfo: {archivePath: PortablePath, subPath: PortablePath}) => Promise<T>, {requireSubpath = true}: {requireSubpath?: boolean} = {}): Promise<T> {
-    p = this.pathUtils.normalize(this.pathUtils.resolve(`/` as PortablePath, p));
+    p = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
 
     const zipInfo = this.findZip(p);
     if (!zipInfo)
@@ -501,7 +501,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   }
 
   private makeCallSync<T>(p: PortablePath, discard: () => T, accept: (zipFS: ZipFS, zipInfo: {archivePath: PortablePath, subPath: PortablePath}) => T, {requireSubpath = true}: {requireSubpath?: boolean} = {}): T {
-    p = this.pathUtils.normalize(this.pathUtils.resolve(`/` as PortablePath, p));
+    p = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
 
     const zipInfo = this.findZip(p);
     if (!zipInfo)
@@ -526,7 +526,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
         continue;
 
       if (this.isZip.has(archivePath))
-        return {archivePath, subPath: this.pathUtils.resolve(`/` as PortablePath, parts.slice(t).join(`/`) as PortablePath)};
+        return {archivePath, subPath: this.pathUtils.resolve(PortablePath.root, parts.slice(t).join(`/`) as PortablePath)};
 
       let realArchivePath = archivePath;
       let stat;
@@ -549,7 +549,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
       if (isZip) {
         this.isZip.add(archivePath);
-        return {archivePath, subPath: this.pathUtils.resolve(`/` as PortablePath, parts.slice(t).join(`/`) as PortablePath)};
+        return {archivePath, subPath: this.pathUtils.resolve(PortablePath.root, parts.slice(t).join(`/`) as PortablePath)};
       } else {
         this.notZip.add(archivePath);
         if (stat.isFile()) {

@@ -93,7 +93,7 @@ class PnpInstaller implements Installer {
       ? await this.unplugPackage(pkg, fetchResult.packageFs)
       : fetchResult.packageFs;
 
-    const packageRawLocation = portablePathUtils.resolve(packageFs.getRealPath(), portablePathUtils.relative(`/` as PortablePath, fetchResult.prefixPath));
+    const packageRawLocation = portablePathUtils.resolve(packageFs.getRealPath(), portablePathUtils.relative(PortablePath.root, fetchResult.prefixPath));
 
     const packageLocation = this.normalizeDirectoryPath(packageRawLocation);
     const packageDependencies = new Map();
@@ -266,7 +266,7 @@ class PnpInstaller implements Installer {
     this.unpluggedPaths.add(unplugPath);
 
     await xfs.mkdirpPromise(unplugPath);
-    await xfs.copyPromise(unplugPath, `.` as PortablePath, {baseFs: packageFs, overwrite: false});
+    await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: packageFs, overwrite: false});
 
     return new CwdFS(unplugPath);
   }

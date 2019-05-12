@@ -1,10 +1,9 @@
-import {xfs, NodeFS, PortablePath}                     from '@berry/fslib';
+import {xfs, NodeFS, PortablePath, portablePathUtils}                     from '@berry/fslib';
 import {parseSyml, stringifySyml}        from '@berry/parsers';
 import camelcase                         from 'camelcase';
 import chalk                             from 'chalk';
 import {UsageError}                      from 'clipanion';
 import decamelize                        from 'decamelize';
-import {posix}                           from 'path';
 import supportsColor                     from 'supports-color';
 
 import {MultiFetcher}                    from './MultiFetcher';
@@ -274,7 +273,7 @@ function parseBoolean(value: unknown) {
   }
 }
 
-function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: string) {
+function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
   if (definition.isArray) {
     if (!Array.isArray(value)) {
       return [parseSingleValue(configuration, path, value, definition, folder)];
@@ -290,7 +289,7 @@ function parseValue(configuration: Configuration, path: string, value: unknown, 
   }
 }
 
-function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: string) {
+function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
   switch (definition.type) {
     case SettingsType.SHAPE:
       return parseShape(configuration, path, value, definition, folder);
@@ -309,7 +308,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
 
   switch (definition.type) {
     case SettingsType.ABSOLUTE_PATH:
-      return posix.resolve(folder, NodeFS.toPortablePath(value));
+      return portablePathUtils.resolve(folder, NodeFS.toPortablePath(value));
     case SettingsType.LOCATOR_LOOSE:
       return structUtils.parseLocator(value, false);
     case SettingsType.LOCATOR:
@@ -319,7 +318,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
   }
 }
 
-function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: string) {
+function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: PortablePath) {
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Object configuration settings "${path}" must be an object`);
 
@@ -342,7 +341,7 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
   return result;
 }
 
-function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: string) {
+function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath) {
   const result = new Map<string, any>();
 
   if (typeof value !== 'object' || Array.isArray(value))
@@ -377,16 +376,16 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         return null;
 
       if (configuration.projectCwd === null) {
-        if (posix.isAbsolute(definition.default)) {
-          return posix.normalize(definition.default);
+        if (portablePathUtils.isAbsolute(definition.default)) {
+          return portablePathUtils.normalize(definition.default);
         } else if (definition.isNullable || definition.default === null) {
           return null;
         }
       } else {
         if (Array.isArray(definition.default)) {
-          return definition.default.map((entry: string) => posix.resolve(configuration.projectCwd, entry));
+          return definition.default.map((entry: string) => portablePathUtils.resolve(configuration.projectCwd!, entry as PortablePath));
         } else {
-          return posix.resolve(configuration.projectCwd, definition.default);
+          return portablePathUtils.resolve(configuration.projectCwd, definition.default);
         }
       }
     }
@@ -484,7 +483,7 @@ export class Configuration {
           continue;
 
         for (const userProvidedPath of data.plugins) {
-          const pluginPath = posix.resolve(cwd, NodeFS.toPortablePath(userProvidedPath)) as PortablePath;
+          const pluginPath = portablePathUtils.resolve(cwd, NodeFS.toPortablePath(userProvidedPath));
           const {factory, name} = nodeUtils.dynamicRequire(NodeFS.fromPortablePath(pluginPath));
 
           // Prevent plugin redefinition so that the ones declared deeper in the
@@ -552,7 +551,7 @@ export class Configuration {
     return configuration;
   }
 
-  static async findRcFiles(startingCwd: string) {
+  static async findRcFiles(startingCwd: PortablePath) {
     const rcFilename = getRcFilename();
     const rcFiles = [];
 
@@ -562,7 +561,7 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      const rcPath = `${currentCwd}/${rcFilename}` as PortablePath;
+      const rcPath = portablePathUtils.join(currentCwd, rcFilename as PortablePath);
 
       if (xfs.existsSync(rcPath)) {
         const content = await xfs.readFilePromise(rcPath, `utf8`);
@@ -571,7 +570,7 @@ export class Configuration {
         rcFiles.push({path: rcPath, cwd: currentCwd, data});
       }
 
-      nextCwd = posix.dirname(currentCwd);
+      nextCwd = portablePathUtils.dirname(currentCwd);
     }
 
     return rcFiles;
@@ -579,7 +578,7 @@ export class Configuration {
 
   static async findHomeRcFile(rcFilename: string) {
     const homeFolder = folderUtils.getHomeFolder();
-    const homeRcFilePath = `${homeFolder}/${rcFilename}` as PortablePath;
+    const homeRcFilePath = portablePathUtils.join(homeFolder, rcFilename as PortablePath);
 
     if (xfs.existsSync(homeRcFilePath)) {
       const content = await xfs.readFilePromise(homeRcFilePath, `utf8`);
@@ -600,13 +599,13 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(`${currentCwd}/package.json` as PortablePath))
+      if (xfs.existsSync(portablePathUtils.join(currentCwd, `package.json` as PortablePath)))
         projectCwd = currentCwd;
 
-      if (xfs.existsSync(`${currentCwd}/${lockfileFilename}` as PortablePath))
+      if (xfs.existsSync(portablePathUtils.join(currentCwd, lockfileFilename as PortablePath)))
         break;
 
-      nextCwd = posix.dirname(currentCwd) as PortablePath;
+      nextCwd = portablePathUtils.dirname(currentCwd);
     }
 
     return projectCwd;
@@ -614,7 +613,7 @@ export class Configuration {
 
   static async updateConfiguration(cwd: PortablePath, patch: any) {
     const rcFilename = getRcFilename();
-    const configurationPath = `${cwd}/${rcFilename}` as PortablePath;
+    const configurationPath =  portablePathUtils.join(cwd, rcFilename as PortablePath);
 
     const current = xfs.existsSync(configurationPath) ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any : {};
     const currentKeys = Object.keys(current);
@@ -714,7 +713,7 @@ export class Configuration {
     return newConfiguration;
   }
 
-  useWithSource(source: string, data: {[key: string]: unknown}, folder: string, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
+  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
     try {
       this.use(source, data, folder, {strict, overwrite});
     } catch (error) {
@@ -723,7 +722,7 @@ export class Configuration {
     }
   }
 
-  use(source: string, data: {[key: string]: unknown}, folder: string, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
+  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
     if (typeof data.berry === `object` && data.berry !== null)
       data = data.berry;
 

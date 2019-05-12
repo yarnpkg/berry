@@ -51,7 +51,7 @@ export class Workspace {
 
     // We use portablePathUtils.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
-    this.relativeCwd = portablePathUtils.relative(this.project.cwd, this.cwd) || `.` as PortablePath;
+    this.relativeCwd = portablePathUtils.relative(this.project.cwd, this.cwd) || PortablePath.dot;
 
     const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashWorkspaceCwd(this.relativeCwd)}`);
     const reference = this.manifest.version ? this.manifest.version : `0.0.0`;

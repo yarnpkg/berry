@@ -50,7 +50,7 @@ export class TarballFileFetcher implements Fetcher {
     // If the file target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
     const parentFetch = posix.isAbsolute(filePath)
-      ? {packageFs: new NodeFS(), prefixPath: `/` as PortablePath, localPath: `/` as PortablePath}
+      ? {packageFs: new NodeFS(), prefixPath: PortablePath.root, localPath: PortablePath.root}
       : await opts.fetcher.fetch(parentLocator, opts);
 
     // If the package fs publicized its "original location" (for example like

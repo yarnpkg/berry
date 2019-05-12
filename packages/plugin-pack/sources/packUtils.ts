@@ -212,7 +212,7 @@ async function walk(initialCwd: PortablePath, {globalList, ignoreList}: {globalL
   const list: PortablePath[] = [];
 
   const cwdFs = new JailFS(initialCwd);
-  const cwdList: Array<[PortablePath, Array<IgnoreList>]> = [[`/` as PortablePath, [ignoreList]]];
+  const cwdList: Array<[PortablePath, Array<IgnoreList>]> = [[PortablePath.root, [ignoreList]]];
 
   while (cwdList.length > 0) {
     const [cwd, ignoreLists] = cwdList.pop()!;
@@ -246,7 +246,7 @@ async function walk(initialCwd: PortablePath, {globalList, ignoreList}: {globalL
         cwdList.push([portablePathUtils.resolve(cwd, entry), nextIgnoreLists]);
       }
     } else {
-      list.push(portablePathUtils.relative(`/` as PortablePath, cwd));
+      list.push(portablePathUtils.relative(PortablePath.root, cwd));
     }
   }
 

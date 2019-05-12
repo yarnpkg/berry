@@ -77,7 +77,7 @@ export async function hasPackageScript(locator: Locator, scriptName: string, {pr
 
     const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
     const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
-    const manifest = await Manifest.find(`.` as PortablePath, {baseFs: packageFs});
+    const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
 
     return manifest.scripts.has(scriptName);
   });
@@ -138,7 +138,7 @@ async function initializePackageEnvironment(locator: Locator, {project, cwd}: {p
 
     const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
     const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
-    const manifest = await Manifest.find(`.` as PortablePath, {baseFs: packageFs});
+    const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
 
     if (typeof cwd === `undefined`)
       cwd = packageLocation;
@@ -207,7 +207,7 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
 
       const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
       const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
-      const manifest = await Manifest.find(`.` as PortablePath, {baseFs: packageFs});
+      const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
 
       for (const [binName, file] of manifest.bin.entries()) {
         const physicalPath = NodeFS.fromPortablePath(posix.resolve(packageLocation, file) as PortablePath);
