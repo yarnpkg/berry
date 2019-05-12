@@ -1,6 +1,6 @@
 import {ZipOpenFS, PortablePath} from '@berry/fslib';
-import {posix}     from 'path';
-import * as vscode from 'vscode';
+import {posix}                   from 'path';
+import * as vscode               from 'vscode';
 
 export class ZipFSProvider implements vscode.FileSystemProvider {
   private readonly zipFs = new ZipOpenFS({useCache: false});

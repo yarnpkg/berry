@@ -1,7 +1,7 @@
-import {FakeFS}            from './FakeFS';
-import {PortablePath, portablePathUtils} from './path';
+import {FakeFS}                                            from './FakeFS';
 import {NodeFS}                                            from './NodeFS';
-import { ProxiedFS } from './ProxiedFS';
+import {ProxiedFS}                                         from './ProxiedFS';
+import {PortablePath, portablePathUtils}                   from './path';
 
 export type CwdFSOptions = {
   baseFs?: FakeFS<PortablePath>,

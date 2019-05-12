@@ -1,4 +1,4 @@
-import { NativePath, PortablePath, Path } from '@berry/fslib';
+import {NativePath, PortablePath, Path} from '@berry/fslib';
 
 // Note: most of those types are useless for most users. Just check the
 // PnpSettings and PnpApi types at the end and you'll be fine.

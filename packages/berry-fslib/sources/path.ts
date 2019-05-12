@@ -17,19 +17,19 @@ export const nativePathUtils: PathUtils<NativePath> = path;
 export const portablePathUtils: PathUtils<PortablePath> = path.posix as any;
 
 export interface ParsedPath<P extends Path> {
-    root: P;
-    dir: P;
-    base: string;
-    ext: string;
-    name: string;
+  root: P;
+  dir: P;
+  base: string;
+  ext: string;
+  name: string;
 }
 
 export interface FormatInputPathObject<P extends Path> {
-    root?: P;
-    dir?: P;
-    base?: string;
-    ext?: string;
-    name?: string;
+  root?: P;
+  dir?: P;
+  base?: string;
+  ext?: string;
+  name?: string;
 }
 
 export interface PathUtils<P extends Path> {

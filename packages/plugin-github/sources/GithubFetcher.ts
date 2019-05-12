@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
 import {Locator, MessageName}                       from '@berry/core';
 import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
-import { PortablePath } from '@berry/fslib';
+import {PortablePath}                               from '@berry/fslib';
 
 import * as githubUtils                             from './githubUtils';
 

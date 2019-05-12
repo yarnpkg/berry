@@ -1,11 +1,11 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
 import {structUtils, tgzUtils}                      from '@berry/core';
 import {Locator, MessageName}                       from '@berry/core';
+import {PortablePath}                               from '@berry/fslib';
 import semver                                       from 'semver';
 
 import {PROTOCOL}                                   from './constants';
 import * as npmHttpUtils                            from './npmHttpUtils';
-import { PortablePath } from '@berry/fslib';
 
 export class NpmFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {

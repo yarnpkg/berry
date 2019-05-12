@@ -1,15 +1,15 @@
 import {xfs, NodeFS, PortablePath, portablePathUtils}           from '@berry/fslib';
-import {makeUpdater}           from '@berry/json-proxy';
-import {createHmac}            from 'crypto';
-import globby                  from 'globby';
-import semver                  from 'semver';
+import {makeUpdater}                                            from '@berry/json-proxy';
+import {createHmac}                                             from 'crypto';
+import globby                                                   from 'globby';
+import semver                                                   from 'semver';
 
-import {Manifest}              from './Manifest';
-import {Project}               from './Project';
-import {WorkspaceResolver}     from './WorkspaceResolver';
-import * as structUtils        from './structUtils';
-import {IdentHash}             from './types';
-import {Descriptor, Locator}   from './types';
+import {Manifest}                                               from './Manifest';
+import {Project}                                                from './Project';
+import {WorkspaceResolver}                                      from './WorkspaceResolver';
+import * as structUtils                                         from './structUtils';
+import {IdentHash}                                              from './types';
+import {Descriptor, Locator}                                    from './types';
 
 function hashWorkspaceCwd(cwd: string) {
   return createHmac('sha256', 'berry').update(cwd).digest('hex').substr(0, 6);

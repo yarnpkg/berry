@@ -1,10 +1,10 @@
-import {constants}                                         from 'fs';
+import {constants}                                                             from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
-import {FakeFS, WriteFileOptions}            from './FakeFS';
-import {NodeFS}                                            from './NodeFS';
-import {ZipFS}                                             from './ZipFS';
-import {PortablePath} from './path';
+import {FakeFS, WriteFileOptions}                                              from './FakeFS';
+import {NodeFS}                                                                from './NodeFS';
+import {ZipFS}                                                                 from './ZipFS';
+import {PortablePath}                                                          from './path';
 
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>,

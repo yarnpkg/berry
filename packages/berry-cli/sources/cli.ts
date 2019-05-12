@@ -1,10 +1,10 @@
-import {Configuration}         from '@berry/core';
+import {Configuration}                                          from '@berry/core';
 import {xfs, NodeFS, portablePathUtils, PortablePath}           from '@berry/fslib';
-import {execFileSync}          from 'child_process';
-import {Clipanion}             from 'clipanion';
-import * as yup                from 'yup';
+import {execFileSync}                                           from 'child_process';
+import {Clipanion}                                              from 'clipanion';
+import * as yup                                                 from 'yup';
 
-import {pluginConfiguration}   from './pluginConfiguration';
+import {pluginConfiguration}                                    from './pluginConfiguration';
 
 const clipanion = new Clipanion({configKey: null});
 

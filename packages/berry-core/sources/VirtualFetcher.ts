@@ -1,9 +1,9 @@
 import {AliasFS, NodeFS, PortablePath, xfs, portablePathUtils, nativePathUtils}                                    from '@berry/fslib';
 
-import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from './Fetcher';
-import {MessageName, ReportError}                                from './Report';
-import * as structUtils                                          from './structUtils';
-import {Locator}                                                 from './types';
+import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions}                                                   from './Fetcher';
+import {MessageName, ReportError}                                                                                  from './Report';
+import * as structUtils                                                                                            from './structUtils';
+import {Locator}                                                                                                   from './types';
 
 export class VirtualFetcher implements Fetcher {
   supports(locator: Locator) {

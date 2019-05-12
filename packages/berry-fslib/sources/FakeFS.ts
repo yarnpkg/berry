@@ -1,4 +1,4 @@
-import {ReadStream, Stats, WriteStream} from 'fs';
+import {ReadStream, Stats, WriteStream}                   from 'fs';
 
 import {Path, PortablePath, portablePathUtils, PathUtils} from './path';
 

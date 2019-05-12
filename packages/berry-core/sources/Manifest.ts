@@ -1,12 +1,12 @@
 import {FakeFS, NodeFS, PortablePath}                                   from '@berry/fslib';
-import {Resolution, parseResolution, stringifyResolution} from '@berry/parsers';
-import {posix}                                            from 'path';
-import semver                                             from 'semver';
+import {Resolution, parseResolution, stringifyResolution}               from '@berry/parsers';
+import {posix}                                                          from 'path';
+import semver                                                           from 'semver';
 
-import * as miscUtils                                     from './miscUtils';
-import * as structUtils                                   from './structUtils';
-import {IdentHash}                                        from './types';
-import {Ident, Descriptor}                                from './types';
+import * as miscUtils                                                   from './miscUtils';
+import * as structUtils                                                 from './structUtils';
+import {IdentHash}                                                      from './types';
+import {Ident, Descriptor}                                              from './types';
 
 export interface WorkspaceDefinition {
   pattern: string;

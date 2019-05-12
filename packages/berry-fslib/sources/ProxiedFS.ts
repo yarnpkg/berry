@@ -1,6 +1,6 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS} from './FakeFS';
-import {WriteFileOptions} from './FakeFS';
-import {Path} from './path';
+import {WriteFileOptions}                                          from './FakeFS';
+import {Path}                                                      from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
   protected abstract readonly baseFs: FakeFS<IP>;

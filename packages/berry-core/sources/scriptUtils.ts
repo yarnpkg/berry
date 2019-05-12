@@ -1,16 +1,16 @@
 import {CwdFS, ZipOpenFS, xfs, NodeFS, PortablePath}   from '@berry/fslib';
-import {execute}                         from '@berry/shell';
-import {delimiter, posix}                from 'path';
-import {PassThrough, Readable, Writable} from 'stream';
-import {dirSync}                         from 'tmp';
+import {execute}                                       from '@berry/shell';
+import {delimiter, posix}                              from 'path';
+import {PassThrough, Readable, Writable}               from 'stream';
+import {dirSync}                                       from 'tmp';
 
-import {Manifest}                        from './Manifest';
-import {Project}                         from './Project';
-import {StreamReport}                    from './StreamReport';
-import {Workspace}                       from './Workspace';
-import * as execUtils                    from './execUtils';
-import * as structUtils                  from './structUtils';
-import {Locator}                         from './types';
+import {Manifest}                                      from './Manifest';
+import {Project}                                       from './Project';
+import {StreamReport}                                  from './StreamReport';
+import {Workspace}                                     from './Workspace';
+import * as execUtils                                  from './execUtils';
+import * as structUtils                                from './structUtils';
+import {Locator}                                       from './types';
 
 async function makePathWrapper(location: PortablePath, name: string, argv0: string, args: Array<string> = []) {
   if (process.platform === `win32`) {

@@ -1,6 +1,6 @@
 import {NodeFS, PortablePath}                          from '@berry/fslib';
-import {homedir}                         from 'os';
-import {posix, win32}                    from 'path';
+import {homedir}                                       from 'os';
+import {posix, win32}                                  from 'path';
 
 export function getDefaultGlobalFolder() {
   if (process.platform === `win32`) {

@@ -1,8 +1,8 @@
 import {xfs, NodeFS, portablePathUtils, PortablePath}                                                      from '@berry/fslib';
-import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
-import {PassThrough, Readable, Writable}                                  from 'stream';
+import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell}                                  from '@berry/parsers';
+import {PassThrough, Readable, Writable}                                                                   from 'stream';
 
-import {Handle, ProtectedStream, Stdio, start, makeBuiltin, makeProcess}  from './pipe';
+import {Handle, ProtectedStream, Stdio, start, makeBuiltin, makeProcess}                                   from './pipe';
 
 export type UserOptions = {
   builtins: {[key: string]: ShellBuiltin},

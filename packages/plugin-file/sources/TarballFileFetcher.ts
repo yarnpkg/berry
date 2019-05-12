@@ -1,11 +1,11 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {Locator, MessageName}                       from '@berry/core';
-import {miscUtils, structUtils, tgzUtils}           from '@berry/core';
+import {Fetcher, FetchOptions, MinimalFetchOptions}                                  from '@berry/core';
+import {Locator, MessageName}                                                        from '@berry/core';
+import {miscUtils, structUtils, tgzUtils}                                            from '@berry/core';
 import {NodeFS, PortablePath, portablePathUtils}                                     from '@berry/fslib';
-import {posix}                                      from 'path';
-import querystring                                  from 'querystring';
+import {posix}                                                                       from 'path';
+import querystring                                                                   from 'querystring';
 
-import {TARBALL_REGEXP, PROTOCOL}                   from './constants';
+import {TARBALL_REGEXP, PROTOCOL}                                                    from './constants';
 
 export class TarballFileFetcher implements Fetcher {
   static mountPoint: string = `cached-fetchers`;

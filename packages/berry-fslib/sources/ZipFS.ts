@@ -1,12 +1,12 @@
-import libzip                                              from '@berry/libzip';
-import {ReadStream, Stats, WriteStream, constants}         from 'fs';
-import {PassThrough}                                       from 'stream';
-import {isDate}                                            from 'util';
+import libzip                                                                  from '@berry/libzip';
+import {ReadStream, Stats, WriteStream, constants}                             from 'fs';
+import {PassThrough}                                                           from 'stream';
+import {isDate}                                                                from 'util';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
-import {FakeFS, WriteFileOptions}            from './FakeFS';
-import {NodeFS}                                            from './NodeFS';
-import {PortablePath, portablePathUtils} from './path';
+import {FakeFS, WriteFileOptions}                                              from './FakeFS';
+import {NodeFS}                                                                from './NodeFS';
+import {PortablePath, portablePathUtils}                                       from './path';
 
 const S_IFMT = 0o170000;
 

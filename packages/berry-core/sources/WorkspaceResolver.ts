@@ -1,4 +1,4 @@
-import {PortablePath} from '@berry/fslib';
+import {PortablePath}                                    from '@berry/fslib';
 
 import {ReportError, MessageName}                        from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';

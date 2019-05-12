@@ -1,11 +1,11 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {Locator, MessageName}                       from '@berry/core';
-import {miscUtils, structUtils, tgzUtils}           from '@berry/core';
+import {Fetcher, FetchOptions, MinimalFetchOptions}                                  from '@berry/core';
+import {Locator, MessageName}                                                        from '@berry/core';
+import {miscUtils, structUtils, tgzUtils}                                            from '@berry/core';
 import {NodeFS, PortablePath, portablePathUtils}                                     from '@berry/fslib';
-import {posix}                                      from 'path';
-import querystring                                  from 'querystring';
+import {posix}                                                                       from 'path';
+import querystring                                                                   from 'querystring';
 
-import {PROTOCOL}                                   from './constants';
+import {PROTOCOL}                                                                    from './constants';
 
 export class FileFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {

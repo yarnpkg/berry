@@ -1,11 +1,11 @@
 import {xfs, PortablePath}                                             from '@berry/fslib';
-import {parseSyml}                                       from '@berry/parsers';
+import {parseSyml}                                                     from '@berry/parsers';
 
-import {Project}                                         from './Project';
-import {MessageName, Report}                             from './Report';
-import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import * as structUtils                                  from './structUtils';
-import {DescriptorHash, Descriptor, Locator}             from './types';
+import {Project}                                                       from './Project';
+import {MessageName, Report}                                           from './Report';
+import {Resolver, ResolveOptions, MinimalResolveOptions}               from './Resolver';
+import * as structUtils                                                from './structUtils';
+import {DescriptorHash, Descriptor, Locator}                           from './types';
 
 const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [
   // This one come from Git urls

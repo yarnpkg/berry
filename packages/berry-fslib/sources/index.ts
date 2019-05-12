@@ -1,8 +1,8 @@
 import fs                         from 'fs';
 
-import {FakeFS}       from './FakeFS';
+import {FakeFS}                   from './FakeFS';
 import {NodeFS}                   from './NodeFS';
-import {NativePath} from './path';
+import {NativePath}               from './path';
 
 export {CreateReadStreamOptions}  from './FakeFS';
 export {CreateWriteStreamOptions} from './FakeFS';

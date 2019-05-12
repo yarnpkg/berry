@@ -1,7 +1,7 @@
 import {FakeFS, PortablePath, ZipFS, NodeFS, portablePathUtils} from '@berry/fslib';
-import {posix}                 from 'path';
-import {Parse}                 from 'tar';
-import {tmpNameSync}           from 'tmp';
+import {posix}                                                  from 'path';
+import {Parse}                                                  from 'tar';
+import {tmpNameSync}                                            from 'tmp';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>,

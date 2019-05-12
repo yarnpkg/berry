@@ -1,6 +1,7 @@
+import {PortablePath}                                                   from '@berry/fslib';
+
 import {LocationBlacklistData, LocationLengthData, PackageRegistryData} from './types';
 import {PackageStoreData, PnpSettings, SerializedState}                 from './types';
-import { PortablePath } from '@berry/fslib';
 
 // Keep this function is sync with its implementation in:
 // @berry/core/sources/miscUtils.ts

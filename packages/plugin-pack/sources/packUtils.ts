@@ -1,12 +1,12 @@
-import {MessageName, Report, Workspace, scriptUtils} from '@berry/core';
+import {MessageName, Report, Workspace, scriptUtils}                                  from '@berry/core';
 import {FakeFS, JailFS, xfs, PortablePath, portablePathUtils}                         from '@berry/fslib';
-import mm                                            from 'micromatch';
-import {posix}                                       from 'path';
-import {PassThrough}                                 from 'stream';
-import tar                                           from 'tar-stream';
-import {createGzip}                                  from 'zlib';
+import mm                                                                             from 'micromatch';
+import {posix}                                                                        from 'path';
+import {PassThrough}                                                                  from 'stream';
+import tar                                                                            from 'tar-stream';
+import {createGzip}                                                                   from 'zlib';
 
-import {Hooks}                                       from './';
+import {Hooks}                                                                        from './';
 
 const NEVER_IGNORE = [
   `/package.json`,

@@ -1,7 +1,7 @@
-import {FakeFS}            from './FakeFS';
+import {FakeFS}                                            from './FakeFS';
 import {NodeFS}                                            from './NodeFS';
-import { portablePathUtils, PortablePath } from './path';
-import { ProxiedFS } from './ProxiedFS';
+import {ProxiedFS}                                         from './ProxiedFS';
+import {portablePathUtils, PortablePath}                   from './path';
 
 export type JailFSOptions = {
   baseFs?: FakeFS<PortablePath>,

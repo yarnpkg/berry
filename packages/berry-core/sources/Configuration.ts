@@ -1,23 +1,23 @@
 import {xfs, NodeFS, PortablePath, portablePathUtils}                     from '@berry/fslib';
-import {parseSyml, stringifySyml}        from '@berry/parsers';
-import camelcase                         from 'camelcase';
-import chalk                             from 'chalk';
-import {UsageError}                      from 'clipanion';
-import decamelize                        from 'decamelize';
-import supportsColor                     from 'supports-color';
+import {parseSyml, stringifySyml}                                         from '@berry/parsers';
+import camelcase                                                          from 'camelcase';
+import chalk                                                              from 'chalk';
+import {UsageError}                                                       from 'clipanion';
+import decamelize                                                         from 'decamelize';
+import supportsColor                                                      from 'supports-color';
 
-import {MultiFetcher}                    from './MultiFetcher';
-import {MultiResolver}                   from './MultiResolver';
-import {Plugin, Hooks}                   from './Plugin';
-import {SemverResolver}                  from './SemverResolver';
-import {TagResolver}                     from './TagResolver';
-import {VirtualFetcher}                  from './VirtualFetcher';
-import {WorkspaceFetcher}                from './WorkspaceFetcher';
-import {WorkspaceResolver}               from './WorkspaceResolver';
-import * as folderUtils                  from './folderUtils';
-import * as miscUtils                    from './miscUtils';
-import * as nodeUtils                    from './nodeUtils';
-import * as structUtils                  from './structUtils';
+import {MultiFetcher}                                                     from './MultiFetcher';
+import {MultiResolver}                                                    from './MultiResolver';
+import {Plugin, Hooks}                                                    from './Plugin';
+import {SemverResolver}                                                   from './SemverResolver';
+import {TagResolver}                                                      from './TagResolver';
+import {VirtualFetcher}                                                   from './VirtualFetcher';
+import {WorkspaceFetcher}                                                 from './WorkspaceFetcher';
+import {WorkspaceResolver}                                                from './WorkspaceResolver';
+import * as folderUtils                                                   from './folderUtils';
+import * as miscUtils                                                     from './miscUtils';
+import * as nodeUtils                                                     from './nodeUtils';
+import * as structUtils                                                   from './structUtils';
 
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});

@@ -1,4 +1,4 @@
-import {PortablePath} from '@berry/fslib';
+import {PortablePath}     from '@berry/fslib';
 
 import {Installer}        from './Installer';
 import {Project}          from './Project';

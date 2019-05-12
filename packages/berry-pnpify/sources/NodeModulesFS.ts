@@ -1,6 +1,6 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions}   from '@berry/fslib';
 import {NodeFS, PosixFS, FakeFS, WriteFileOptions}           from '@berry/fslib';
-import {NativePath, Path, nativePathUtils} from '@berry/fslib';
+import {NativePath, Path, nativePathUtils}                   from '@berry/fslib';
 
 import fs                                                    from 'fs';
 

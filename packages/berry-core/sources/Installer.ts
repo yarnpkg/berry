@@ -1,4 +1,4 @@
-import {PortablePath} from '@berry/fslib';
+import {PortablePath}                 from '@berry/fslib';
 
 import {FetchResult}                  from './Fetcher';
 import {Descriptor, Locator, Package} from './types';
