@@ -3,6 +3,7 @@ import {Resolution, parseResolution, stringifyResolution} from '@berry/parsers';
 import {posix}                                            from 'path';
 import semver                                             from 'semver';
 
+import * as execUtils                                     from './execUtils';
 import * as miscUtils                                     from './miscUtils';
 import * as structUtils                                   from './structUtils';
 import {IdentHash}                                        from './types';
@@ -67,6 +68,27 @@ export class Manifest {
     await manifest.loadFile(path, {baseFs});
 
     return manifest;
+  }
+
+  static async fromText(text: string, args: Array<string>, opts: execUtils.ExecvpOptions) {
+    const manifest = new Manifest();
+    await manifest.loadFromText(text, args, opts);
+
+    return manifest;
+  }
+
+  async loadFromText(text: string, args: Array<string>, opts: execUtils.ExecvpOptions) {
+    const {stdout:content} = await execUtils.execvp(text, args, opts);
+
+    let data;
+    try {
+      data = JSON.parse(content || `{}`);
+    } catch (error) {
+      error.message += ` (when parsing ${text})`;
+      throw error;
+    }
+
+    this.load(data);
   }
 
   async loadFile(path: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS}) {

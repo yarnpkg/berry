@@ -1,4 +1,4 @@
-import {execUtils}     from '@berry/core';
+import {execUtils, Manifest, structUtils, IdentHash, Descriptor}     from '@berry/core';
 import {NodeFS}        from '@berry/fslib';
 import {posix}         from 'path';
 
@@ -9,64 +9,60 @@ const COMMIT_DEPTH = 11;
 
 
 async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileAction>) {
-
   const updates = new Map();
   const removes = new Map();
   const adds = new Map();
   const createdPackages = [];
   const removedPackages = [];
 
-
   for(const change of changes) {
     const { action, path } = change;
     const localPath = NodeFS.fromPortablePath(path);
     const relativePath = posix.relative(cwd, localPath);
     if (action === stageUtils.ActionType.MODIFY) {
-      const {stdout:prevStdout} = await execUtils.execvp(`git`, [`show`, `HEAD~1:${relativePath}`], {cwd, strict: true});
-      const {stdout:currStdout} = await execUtils.execvp(`cat`, [`${localPath}`], {cwd, strict: true});
-      try {
-        const {dependencies: prevDeps, devDependencies: prevDevDeps} = JSON.parse(prevStdout.toString());
-        const {dependencies: currDeps, devDependencies: currDevDeps} = JSON.parse(currStdout.toString());
-        const totalPrevDeps = {...prevDeps, ...prevDevDeps};
-        const totalCurrDeps = {...currDeps, ...currDevDeps};
-        //Find all the  updates/adds/removes on the package.json compare to prev one
-        for(const prevPkg of Object.entries(totalPrevDeps)) {
-          const [name, version] = prevPkg;
-          if(totalCurrDeps[name]) {
-            if (version !== totalCurrDeps[name]) {
-              const key = `Updates ${name} to ${totalCurrDeps[name]}`;
-              setKeyValue(updates, key);
-            }
-          }
-          else {
-            const key = `Removes ${name}`;
-            setKeyValue(removes, key);
+      const prevManifest = await Manifest.fromText(`git`, [`show`, `HEAD~1:${relativePath}`], {cwd, strict: true});
+      const currManifest = await Manifest.fromFile(localPath);
+      const allCurrDeps: Map<IdentHash, Descriptor> = new Map([...currManifest.dependencies, ...currManifest.devDependencies]);
+      const allPrevDeps: Map<IdentHash, Descriptor> = new Map([...prevManifest.dependencies, ...prevManifest.devDependencies]);
+
+      for(const [indentHash, value] of allPrevDeps) {
+        const pkgName = structUtils.stringifyIdent(value);
+        const currDep = allCurrDeps.get(indentHash);
+        if (currDep) {
+          if(currDep.range !== value.range) {
+            const key = `Updates ${pkgName} to ${value.range}`;
+            setKeyValue(updates, key);
           }
         }
-
-        for(const currPkg of Object.entries(totalCurrDeps)) {
-          const [name] = currPkg;
-          if (!totalPrevDeps[name]) {
-            const key = `Adds ${name}`;
-            setKeyValue(adds, key);
-          }
+        else {
+          const key = `Removes ${pkgName}`;
+          setKeyValue(removes, key);
         }
       }
-      catch(e) {
-        console.log("Error GitDriver", prevStdout, currStdout);
+
+      for(const [indentHash, value] of allCurrDeps) {
+        if (!allPrevDeps.has(indentHash)) {
+          const pkgName = structUtils.stringifyIdent(value);
+          const key = `Adds ${pkgName}`;
+          setKeyValue(adds, key);
+        }
       }
     }
     else if (action === stageUtils.ActionType.ADD) {
       //created package.json
-      const {stdout:currStdout} = await execUtils.execvp(`cat`, [`${localPath}`], {cwd, strict: true});
-      const {name: packageName} = JSON.parse(currStdout.toString());
-      createdPackages.push(`Creates ${packageName}`);
+      const manifest = await Manifest.fromFile(localPath)
+      if (manifest.name){
+        const packageName = structUtils.stringifyIdent(manifest.name);
+        createdPackages.push(`Creates ${packageName}`);
+      }
     }
     else {
       //remove package.json
-      const {stdout:prevStdout} = await execUtils.execvp(`git`, [`show`, `HEAD~1:${relativePath}`], {cwd, strict: true});
-      const {name: packageName} = JSON.parse(prevStdout.toString());
-      removedPackages.push(`Deletes ${packageName}`);
+      const manifest = await Manifest.fromText(`git`, [`show`, `HEAD~1:${relativePath}`], {cwd, strict: true});
+      if (manifest.name){
+        const packageName = structUtils.stringifyIdent(manifest.name);
+        removedPackages.push(`Deletes ${packageName}`);
+      }
     }
   }
 
@@ -163,7 +159,6 @@ export const Driver = {
 
   async makeCommit(cwd: string, changeList: Array<stageUtils.FileAction>) {
     const localPaths = changeList.map(file => NodeFS.fromPortablePath(file.path));
-
     await execUtils.execvp(`git`, [`add`, `-N`, `--`, ... localPaths], {cwd, strict: true});
     await execUtils.execvp(`git`, [`commit`, `-m`, `${await genCommitMessage(cwd, changeList)}\n\n${MESSAGE_MARKER}\n`, `--`, ... localPaths], {cwd, strict: true});
   },
