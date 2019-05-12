@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Commands add it should print the logs to the standard output when using --inline-builds 1`] = `
+"➤ YN0000: ┌ Resolution step
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ no-deps-scripted@npm:1.0.0 can't be found in the cache and will be fetched from the remote registry
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Link step
+➤ YN0007: │ no-deps-scripted@npm:1.0.0 must be built because it never did before or the last one failed
+preinstall
+➤ YN0000: │ no-deps-scripted@npm:1.0.0 STDOUT preinstall out
+➤ YN0000: │ no-deps-scripted@npm:1.0.0 STDERR preinstall err
+install
+➤ YN0000: │ no-deps-scripted@npm:1.0.0 STDOUT install out
+➤ YN0000: │ no-deps-scripted@npm:1.0.0 STDERR install err
+postinstall
+➤ YN0000: │ no-deps-scripted@npm:1.0.0 STDOUT postinstall out
+➤ YN0000: │ no-deps-scripted@npm:1.0.0 STDERR postinstall err
+➤ YN0000: └ Completed
+➤ YN0000: Done
+"
+`;
