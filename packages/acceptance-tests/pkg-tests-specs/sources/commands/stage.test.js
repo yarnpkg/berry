@@ -63,5 +63,18 @@ describe(`Commands`, () => {
         });
       }),
     );
+
+    test(
+      `it should commit with the right message`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+
+        await execFile(`git`, [`init`], {cwd: path});
+        await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({});
+      }),
+    );
   });
 });

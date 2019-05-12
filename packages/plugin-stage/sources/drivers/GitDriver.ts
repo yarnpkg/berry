@@ -159,7 +159,10 @@ export const Driver = {
     });
   },
 
-  async makeCommit(cwd: string, changeList: Array<stageUtils.FileAction>) {
+  async makeCommit(cwd: string, changeList: Array<stageUtils.FileAction>, dryRun: boolean) {
+    if (dryRun) {
+      return await genCommitMessage(cwd, changeList);
+    }
     const localPaths = changeList.map(file => NodeFS.fromPortablePath(file.path));
     await execUtils.execvp(`git`, [`add`, `-N`, `--`, ... localPaths], {cwd, strict: true});
     await execUtils.execvp(`git`, [`commit`, `-m`, `${await genCommitMessage(cwd, changeList)}\n\n${MESSAGE_MARKER}\n`, `--`, ... localPaths], {cwd, strict: true});

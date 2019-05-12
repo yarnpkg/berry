@@ -73,14 +73,19 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     const changeList = await driver.filterChanges(root, yarnPaths, yarnNames);
     if (dryRun) {
-      for (const file of changeList) {
-        stdout.write(`${NodeFS.fromPortablePath(file.path)}\n`);
+      if (commit) {
+        const commitMessages = await driver.makeCommit(root, changeList, dryRun);
+        stdout.write(commitMessages);
+      } else {
+        for (const file of changeList) {
+          stdout.write(`${NodeFS.fromPortablePath(file.path)}\n`);
+        }
       }
     } else {
       if (changeList.length === 0) {
         stdout.write(`No changes found!`);
       } else if (commit) {
-        await driver.makeCommit(root, changeList);
+        await driver.makeCommit(root, changeList, dryRun);
       } else if (reset) {
         await driver.makeReset(root, changeList);
       }
