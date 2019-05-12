@@ -98,3 +98,11 @@ export function genCommitMessage(lines: Array<string>) {
 
   return `${prefix}${verb} the project settings`;
 }
+
+export enum ActionType {
+  ADD,
+  REMOVE,
+  MODIFY
+};
+export type FileAction = {action: ActionType, path: string}
+
