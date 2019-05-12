@@ -8966,6 +8966,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.0.16"
                 ],
                 [
+                  "gatsby-remark-prismjs",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:3.2.9"
+                ],
+                [
                   "gatsby-source-filesystem",
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.0.23"
                 ],
@@ -8984,6 +8988,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "pify",
                   "npm:4.0.1"
+                ],
+                [
+                  "prismjs",
+                  "npm:1.16.0"
                 ],
                 [
                   "prop-types",
@@ -22289,6 +22297,35 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "clipboard",
+        [
+          [
+            "npm:2.0.4",
+            {
+              "packageLocation": "./.yarn/cache/clipboard-npm-2.0.4-766d9a42ac8c52931c084534715a676ea48c85690799022e4c0f9e53f7dfa21a.zip/node_modules/clipboard/",
+              "packageDependencies": [
+                [
+                  "clipboard",
+                  "npm:2.0.4"
+                ],
+                [
+                  "good-listener",
+                  "npm:1.2.2"
+                ],
+                [
+                  "select",
+                  "npm:1.1.2"
+                ],
+                [
+                  "tiny-emitter",
+                  "npm:2.1.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "cliui",
         [
           [
@@ -25587,6 +25624,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "delayed-stream",
                   "npm:1.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "delegate",
+        [
+          [
+            "npm:3.2.0",
+            {
+              "packageLocation": "./.yarn/cache/delegate-npm-3.2.0-dfc07f22cee4bc8753dafe1c4528c7a2106bce38b282479725c5b8182b65abc1.zip/node_modules/delegate/",
+              "packageDependencies": [
+                [
+                  "delegate",
+                  "npm:3.2.0"
                 ]
               ]
             }
@@ -33821,6 +33875,67 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "gatsby-remark-prismjs",
+        [
+          [
+            "npm:3.2.9",
+            {
+              "packageLocation": "./.yarn/cache/gatsby-remark-prismjs-npm-3.2.9-102433ba369aebfa369205d9b6c9e76cbacc7a09ead648b6c0be3e61438d3bb3.zip/node_modules/gatsby-remark-prismjs/",
+              "packageDependencies": [
+                [
+                  "gatsby-remark-prismjs",
+                  "npm:3.2.9"
+                ],
+                [
+                  "@babel/runtime",
+                  "npm:7.2.0"
+                ],
+                [
+                  "parse-numeric-range",
+                  "npm:0.0.2"
+                ],
+                [
+                  "unist-util-visit",
+                  "npm:1.4.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:3.2.9",
+            {
+              "packageLocation": "./.yarn/virtual/gatsby-remark-prismjs-virtual-a09c83b39331fbb4759ae7f66822fe17b872c80f64062d8acb991935185c6466/node_modules/gatsby-remark-prismjs/",
+              "packageDependencies": [
+                [
+                  "gatsby-remark-prismjs",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:3.2.9"
+                ],
+                [
+                  "@babel/runtime",
+                  "npm:7.2.0"
+                ],
+                [
+                  "gatsby",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.2.9"
+                ],
+                [
+                  "parse-numeric-range",
+                  "npm:0.0.2"
+                ],
+                [
+                  "prismjs",
+                  "npm:1.16.0"
+                ],
+                [
+                  "unist-util-visit",
+                  "npm:1.4.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "gatsby-source-filesystem",
         [
           [
@@ -34925,6 +35040,27 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "slash",
                   "npm:1.0.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "good-listener",
+        [
+          [
+            "npm:1.2.2",
+            {
+              "packageLocation": "./.yarn/cache/good-listener-npm-1.2.2-3355e9a821e346a0a143edb9d9b0805f6438864127ca22621a6570f4fa36dd67.zip/node_modules/good-listener/",
+              "packageDependencies": [
+                [
+                  "good-listener",
+                  "npm:1.2.2"
+                ],
+                [
+                  "delegate",
+                  "npm:3.2.0"
                 ]
               ]
             }
@@ -49738,6 +49874,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "parse-numeric-range",
+        [
+          [
+            "npm:0.0.2",
+            {
+              "packageLocation": "./.yarn/cache/parse-numeric-range-npm-0.0.2-7a6c33053d558a01740089162e0102f22dda5d073d11aaa80c012af7de71f7ae.zip/node_modules/parse-numeric-range/",
+              "packageDependencies": [
+                [
+                  "parse-numeric-range",
+                  "npm:0.0.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "parse-passwd",
         [
           [
@@ -52225,6 +52378,27 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "react-is",
                   "npm:16.8.4"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "prismjs",
+        [
+          [
+            "npm:1.16.0",
+            {
+              "packageLocation": "./.yarn/cache/prismjs-npm-1.16.0-cb3567ecfa0912e4a0d49a297f0117ddedb1e73c832e1180378b26942df94981.zip/node_modules/prismjs/",
+              "packageDependencies": [
+                [
+                  "prismjs",
+                  "npm:1.16.0"
+                ],
+                [
+                  "clipboard",
+                  "npm:2.0.4"
                 ]
               ]
             }
@@ -56536,6 +56710,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "select",
+        [
+          [
+            "npm:1.1.2",
+            {
+              "packageLocation": "./.yarn/cache/select-npm-1.1.2-d36edc063d95540a680efcc3cb7d864e6fd908194712552a8bdb010fdb898ef7.zip/node_modules/select/",
+              "packageDependencies": [
+                [
+                  "select",
+                  "npm:1.1.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "select-hose",
         [
           [
@@ -60499,6 +60690,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "timsort",
                   "npm:0.3.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "tiny-emitter",
+        [
+          [
+            "npm:2.1.0",
+            {
+              "packageLocation": "./.yarn/cache/tiny-emitter-npm-2.1.0-423407ec7a005bcbdfb31d355e95d29e3dbb932ba187d58d7a006e94b7e03c7b.zip/node_modules/tiny-emitter/",
+              "packageDependencies": [
+                [
+                  "tiny-emitter",
+                  "npm:2.1.0"
                 ]
               ]
             }

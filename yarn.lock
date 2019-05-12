@@ -1605,11 +1605,13 @@ __metadata:
     gatsby-plugin-remove-trailing-slashes: "npm:^2.0.10"
     gatsby-plugin-sharp: "npm:^2.0.25"
     gatsby-remark-autolink-headers: "npm:^2.0.16"
+    gatsby-remark-prismjs: "npm:^3.2.9"
     gatsby-source-filesystem: "npm:^2.0.23"
     gatsby-transformer-remark: "npm:^2.3.2"
     gatsby-transformer-sharp: "npm:^2.1.15"
     minimatch: "npm:^3.0.4"
     pify: "npm:^4.0.1"
+    prismjs: "npm:^1.16.0"
     prop-types: "npm:^15.7.2"
     react: "npm:^16.8.4"
     react-dom: "npm:^16.8.4"
@@ -6139,6 +6141,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clipboard@npm:^2.0.0":
+  version: 2.0.4
+  resolution: "clipboard@npm:2.0.4"
+  dependencies:
+    good-listener: "npm:^1.2.2"
+    select: "npm:^1.1.2"
+    tiny-emitter: "npm:^2.0.0"
+  checksum: b1c11baa2e1baaf07d78dcd27cb04c9108edd7dcd48639da27e04f9eb5d3e993b3f926d0940b4013d6a3548ac6f200bcdb1cd727555fda638d28a286437613c0
+  languageName: node
+  linkType: hard
+
 "cliui@npm:^3.2.0":
   version: 3.2.0
   resolution: "cliui@npm:3.2.0"
@@ -7416,6 +7429,13 @@ __metadata:
   version: 1.0.0
   resolution: "delayed-stream@npm:1.0.0"
   checksum: de5bb7cb26074affe37769e08769ede2383cc29dfa64184a7cbb185c52a323c629818cfa0d708526d28e3ad62ece16d018f3bfc5ee07581e127bf5f04de269ec
+  languageName: node
+  linkType: hard
+
+"delegate@npm:^3.1.2":
+  version: 3.2.0
+  resolution: "delegate@npm:3.2.0"
+  checksum: b474fef20fbea90cf5bc1d6ba401e9a6de073f4f44bac79d286d10a8c2db048cbc7b5efaeabac195a4f85a5b8d9fe490f58d5e1d871ff746f913106715e0d263
   languageName: node
   linkType: hard
 
@@ -9968,6 +9988,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gatsby-remark-prismjs@npm:^3.2.9":
+  version: 3.2.9
+  resolution: "gatsby-remark-prismjs@npm:3.2.9"
+  dependencies:
+    "@babel/runtime": "npm:^7.0.0"
+    parse-numeric-range: "npm:^0.0.2"
+    unist-util-visit: "npm:^1.3.0"
+  peerDependencies:
+    gatsby: ^2.0.0
+    prismjs: ^1.15.0
+  checksum: 28e1c14d7a78a35905748b3b1bf80d73a0e4b72145a2f456fb03fbfe50733c8bac7fe70b4b311c27f7e61827c4e6864041b16c755ae82c9e8e2ce13fb7ead8bd
+  languageName: node
+  linkType: hard
+
 "gatsby-source-filesystem@npm:^2.0.23":
   version: 2.0.23
   resolution: "gatsby-source-filesystem@npm:2.0.23"
@@ -10448,6 +10482,15 @@ __metadata:
     pify: "npm:^3.0.0"
     slash: "npm:^1.0.0"
   checksum: 61a4ee7aa8f48c7aa8cc8bd99302b5d4d2b446b416e50503557c57b9d768abd38126bb80c449160d4fe70bd7700f1e599fb38e12b5494a421be46ad8239061ae
+  languageName: node
+  linkType: hard
+
+"good-listener@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "good-listener@npm:1.2.2"
+  dependencies:
+    delegate: "npm:^3.1.2"
+  checksum: 7beb9a33138860408ba7c6bcab91a8139306a06969c2759246987ecea638419f3ae56ca6c847f82c48bda64c451c0721cc5dbfbdeb9744a14c17486321d7daa9
   languageName: node
   linkType: hard
 
@@ -16036,6 +16079,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"parse-numeric-range@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "parse-numeric-range@npm:0.0.2"
+  checksum: 29216b4740f546e896e22c4ca2f2169988fa5869c62bad6d06526f4cfbaa2b55d93b77d98ac73409e2204c2dba68d24fe33adeffa4766393ed943b660c1bc84e
+  languageName: node
+  linkType: hard
+
 "parse-passwd@npm:^1.0.0":
   version: 1.0.0
   resolution: "parse-passwd@npm:1.0.0"
@@ -17030,6 +17080,15 @@ __metadata:
     ansi-styles: "npm:^3.2.0"
     react-is: "npm:^16.8.4"
   checksum: 3be9029ecaadcd9089be123c138e4138b4cab0447ee092e625dd654d54cfba244824218c69526daf1485638b1886173b8adb07373fbe99bd5083b2996231710f
+  languageName: node
+  linkType: hard
+
+"prismjs@npm:^1.16.0":
+  version: 1.16.0
+  resolution: "prismjs@npm:1.16.0"
+  dependencies:
+    clipboard: "npm:^2.0.0"
+  checksum: 838d3d99cece03c79c042f0e852ab6f992107a6f49deeae0493f689b47aac716ab097250c6ffb35c967d078e270a1162c8b7c4e1352d2a36320c8a6bdf46ed6f
   languageName: node
   linkType: hard
 
@@ -18651,6 +18710,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"select@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "select@npm:1.1.2"
+  checksum: e9f1c0b83d7311145ad6da75f6b2c32421bb8030ee7e752976b0dad43cf44a32e49d4e1ca28ae476395a6969f308c40c5aa046d358c30e00ccf57df57e7d5c08
+  languageName: node
+  linkType: hard
+
 "selfsigned@npm:^1.9.1":
   version: 1.10.4
   resolution: "selfsigned@npm:1.10.4"
@@ -20182,6 +20248,13 @@ __metadata:
   version: 0.3.0
   resolution: "timsort@npm:0.3.0"
   checksum: 91e325075aa21f6ebbff7bd64c583ff4f3e070070f689b27076f66bfed69d8b6d75431a3bc127a8a3043f1afd6d5d1f6fa199e510c612a44bfade493481a4aab
+  languageName: node
+  linkType: hard
+
+"tiny-emitter@npm:^2.0.0":
+  version: 2.1.0
+  resolution: "tiny-emitter@npm:2.1.0"
+  checksum: cf6454c6524a680c02ed9d60f069a512ed8bb55b21c4f976d338975f143f8bfd3e1cf19b9bc495990d2ad10f50397ec173ead0428dee1a89789dbdc270b7a696
   languageName: node
   linkType: hard
 
