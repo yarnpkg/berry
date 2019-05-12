@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
 import {Locator, MessageName}                       from '@berry/core';
 import {miscUtils, structUtils, tgzUtils}           from '@berry/core';
-import {NodeFS}                                     from '@berry/fslib';
+import {NodeFS, PortablePath, portablePathUtils}                                     from '@berry/fslib';
 import {posix}                                      from 'path';
 import querystring                                  from 'querystring';
 
@@ -39,7 +39,7 @@ export class TarballFileFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: `/sources`,
+      prefixPath: `/sources` as PortablePath,
       checksum,
     };
   }
@@ -50,7 +50,7 @@ export class TarballFileFetcher implements Fetcher {
     // If the file target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
     const parentFetch = posix.isAbsolute(filePath)
-      ? {packageFs: new NodeFS(), prefixPath: `/`, localPath: `/`}
+      ? {packageFs: new NodeFS(), prefixPath: `/` as PortablePath, localPath: `/` as PortablePath}
       : await opts.fetcher.fetch(parentLocator, opts);
 
     // If the package fs publicized its "original location" (for example like
@@ -64,13 +64,13 @@ export class TarballFileFetcher implements Fetcher {
       parentFetch.releaseFs();
 
     const sourceFs = effectiveParentFetch.packageFs;
-    const sourcePath = posix.resolve(effectiveParentFetch.prefixPath, filePath);
+    const sourcePath = portablePathUtils.resolve(effectiveParentFetch.prefixPath, filePath);
     const sourceBuffer = await sourceFs.readFilePromise(sourcePath);
 
     return await miscUtils.releaseAfterUseAsync(async () => {
       return await tgzUtils.makeArchive(sourceBuffer, {
         stripComponents: 1,
-        prefixPath: `/sources`,
+        prefixPath: `/sources` as PortablePath,
       });
     }, effectiveParentFetch.releaseFs);
   }
@@ -81,7 +81,7 @@ export class TarballFileFetcher implements Fetcher {
     if (qsIndex === -1)
       throw new Error(`Invalid file-type locator`);
 
-    const filePath = locator.reference.slice(PROTOCOL.length, qsIndex);
+    const filePath = locator.reference.slice(PROTOCOL.length, qsIndex) as PortablePath;
     const queryString = querystring.parse(locator.reference.slice(qsIndex + 1));
 
     if (typeof queryString.locator !== `string`)

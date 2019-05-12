@@ -1,10 +1,10 @@
-import {xfs}   from '@berry/fslib';
+import {xfs, PortablePath}   from '@berry/fslib';
 import {posix} from 'path';
 
-export async function findVcsRoot(cwd: string, {marker}: {marker: string}) {
+export async function findVcsRoot(cwd: PortablePath, {marker}: {marker: string}) {
   do {
-    if (!xfs.existsSync(`${cwd}/${marker}`)) {
-      cwd = posix.dirname(cwd);
+    if (!xfs.existsSync(`${cwd}/${marker}` as PortablePath)) {
+      cwd = posix.dirname(cwd) as PortablePath;
     } else {
       return cwd;
     }
@@ -13,13 +13,13 @@ export async function findVcsRoot(cwd: string, {marker}: {marker: string}) {
   return null;
 }
 
-export function isYarnFile(path: string, {roots, names}: {roots: Set<string>, names: Set<string>}) {
+export function isYarnFile(path: PortablePath, {roots, names}: {roots: Set<string>, names: Set<string>}) {
   if (names.has(posix.basename(path)))
     return true;
 
   do {
     if (!roots.has(path)) {
-      path = posix.dirname(path);
+      path = posix.dirname(path) as PortablePath;
     } else {
       return true;
     }
@@ -28,16 +28,16 @@ export function isYarnFile(path: string, {roots, names}: {roots: Set<string>, na
   return false;
 }
 
-export function expandDirectory(initialCwd: string) {
+export function expandDirectory(initialCwd: PortablePath) {
   const paths = [];
   const cwds = [initialCwd];
 
   while (cwds.length > 0) {
-    const cwd = cwds.pop() as string;
+    const cwd = cwds.pop() as PortablePath;
     const listing = xfs.readdirSync(cwd);
 
     for (const entry of listing) {
-      const path = posix.resolve(cwd, entry);
+      const path = posix.resolve(cwd, entry) as PortablePath;
       const stat = xfs.lstatSync(path);
 
       if (stat.isDirectory()) {

@@ -1,4 +1,4 @@
-import {xfs, NodeFS}                     from '@berry/fslib';
+import {xfs, NodeFS, PortablePath}                     from '@berry/fslib';
 import {parseSyml, stringifySyml}        from '@berry/parsers';
 import camelcase                         from 'camelcase';
 import chalk                             from 'chalk';
@@ -423,8 +423,8 @@ function getRcFilename() {
 }
 
 export class Configuration {
-  public startingCwd: string;
-  public projectCwd: string | null;
+  public startingCwd: PortablePath;
+  public projectCwd: PortablePath | null;
 
   public plugins: Map<string, Plugin> = new Map();
 
@@ -460,7 +460,7 @@ export class Configuration {
    * one listed on /foo/bar/.yarnrc, but not the other way around).
    */
 
-  static async find(startingCwd: string, pluginConfiguration: PluginConfiguration | null, {strict = true}: {strict?: boolean} = {}) {
+  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {strict = true}: {strict?: boolean} = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
@@ -484,7 +484,7 @@ export class Configuration {
           continue;
 
         for (const userProvidedPath of data.plugins) {
-          const pluginPath = posix.resolve(cwd, NodeFS.toPortablePath(userProvidedPath));
+          const pluginPath = posix.resolve(cwd, NodeFS.toPortablePath(userProvidedPath)) as PortablePath;
           const {factory, name} = nodeUtils.dynamicRequire(NodeFS.fromPortablePath(pluginPath));
 
           // Prevent plugin redefinition so that the ones declared deeper in the
@@ -562,7 +562,7 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      const rcPath = `${currentCwd}/${rcFilename}`;
+      const rcPath = `${currentCwd}/${rcFilename}` as PortablePath;
 
       if (xfs.existsSync(rcPath)) {
         const content = await xfs.readFilePromise(rcPath, `utf8`);
@@ -579,7 +579,7 @@ export class Configuration {
 
   static async findHomeRcFile(rcFilename: string) {
     const homeFolder = folderUtils.getHomeFolder();
-    const homeRcFilePath = `${homeFolder}/${rcFilename}`;
+    const homeRcFilePath = `${homeFolder}/${rcFilename}` as PortablePath;
 
     if (xfs.existsSync(homeRcFilePath)) {
       const content = await xfs.readFilePromise(homeRcFilePath, `utf8`);
@@ -591,7 +591,7 @@ export class Configuration {
     return null;
   }
 
-  static async findProjectCwd(startingCwd: string, lockfileFilename: string) {
+  static async findProjectCwd(startingCwd: PortablePath, lockfileFilename: string) {
     let projectCwd = null;
 
     let nextCwd = startingCwd;
@@ -600,21 +600,21 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(`${currentCwd}/package.json`))
+      if (xfs.existsSync(`${currentCwd}/package.json` as PortablePath))
         projectCwd = currentCwd;
 
-      if (xfs.existsSync(`${currentCwd}/${lockfileFilename}`))
+      if (xfs.existsSync(`${currentCwd}/${lockfileFilename}` as PortablePath))
         break;
 
-      nextCwd = posix.dirname(currentCwd);
+      nextCwd = posix.dirname(currentCwd) as PortablePath;
     }
 
     return projectCwd;
   }
 
-  static async updateConfiguration(cwd: string, patch: any) {
+  static async updateConfiguration(cwd: PortablePath, patch: any) {
     const rcFilename = getRcFilename();
-    const configurationPath = `${cwd}/${rcFilename}`;
+    const configurationPath = `${cwd}/${rcFilename}` as PortablePath;
 
     const current = xfs.existsSync(configurationPath) ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any : {};
     const currentKeys = Object.keys(current);
@@ -668,7 +668,7 @@ export class Configuration {
     return await Configuration.updateConfiguration(homeFolder, patch);
   }
 
-  constructor(startingCwd: string, projectCwd: string | null, plugins: Map<string, Plugin>) {
+  constructor(startingCwd: PortablePath, projectCwd: PortablePath | null, plugins: Map<string, Plugin>) {
     this.startingCwd = startingCwd;
     this.projectCwd = projectCwd;
 

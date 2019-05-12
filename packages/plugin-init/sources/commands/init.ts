@@ -1,6 +1,6 @@
 import {Configuration, Manifest, PluginConfiguration} from '@berry/core';
 import {structUtils}                                  from '@berry/core';
-import {xfs}                                          from '@berry/fslib';
+import {xfs, PortablePath, portablePathUtils}                                          from '@berry/fslib';
 import {updateAndSave}                                from '@berry/json-proxy';
 import {UsageError}                                   from 'clipanion';
 import {posix}                                        from 'path';
@@ -33,8 +33,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn init -p`,
   )
 
-  .action(async ({cwd, private: notPublic}: {cwd: string, private: boolean}) => {
-    if (xfs.existsSync(`${cwd}/package.json`))
+  .action(async ({cwd, private: notPublic}: {cwd: PortablePath, private: boolean}) => {
+    if (xfs.existsSync(portablePathUtils.join(cwd, `package.json` as PortablePath)))
       throw new UsageError(`A package.json already exists in the specified directory`);
 
     if (!xfs.existsSync(cwd))
@@ -48,7 +48,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     manifest.private = notPublic;
     manifest.license = configuration.get(`initLicense`);
 
-    await updateAndSave(`${cwd}/package.json`, (tracker: Object) => {
+    await updateAndSave(portablePathUtils.join(cwd, `package.json` as PortablePath), (tracker: Object) => {
       manifest.exportTo(tracker);
     });
   });

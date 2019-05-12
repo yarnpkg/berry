@@ -1,4 +1,4 @@
-import {xfs}                                    from '@berry/fslib';
+import {xfs, NodeFS, PortablePath}                                    from '@berry/fslib';
 import {parseSyml, stringifySyml}               from '@berry/parsers';
 import {createHmac}                             from 'crypto';
 // @ts-ignore
@@ -45,7 +45,7 @@ export type InstallOptions = {
 
 export class Project {
   public readonly configuration: Configuration;
-  public readonly cwd: string;
+  public readonly cwd: PortablePath;
 
   // Is meant to be populated by the consumer. When the descriptor referenced by
   // the key should be resolved, the second one is resolved instead and its
@@ -54,7 +54,7 @@ export class Project {
 
   public workspaces: Array<Workspace> = [];
 
-  public workspacesByCwd: Map<string, Workspace> = new Map();
+  public workspacesByCwd: Map<PortablePath, Workspace> = new Map();
   public workspacesByLocator: Map<LocatorHash, Workspace> = new Map();
   public workspacesByIdent: Map<IdentHash, Array<Workspace>> = new Map();
 
@@ -64,7 +64,7 @@ export class Project {
   public storedPackages: Map<LocatorHash, Package> = new Map();
   public storedChecksums: Map<LocatorHash, string> = new Map();
 
-  static async find(configuration: Configuration, startingCwd: string): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
+  static async find(configuration: Configuration, startingCwd: PortablePath): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
     if (!configuration.projectCwd)
       throw new Error(`No project found in the initial directory`);
 
@@ -76,11 +76,11 @@ export class Project {
     while (currentCwd !== configuration.projectCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(`${currentCwd}/package.json`))
+      if (xfs.existsSync(`${currentCwd}/package.json` as PortablePath))
         if (!packageCwd)
           packageCwd = currentCwd;
 
-      nextCwd = posix.dirname(currentCwd);
+      nextCwd = posix.dirname(currentCwd) as PortablePath;
     }
 
     if (!packageCwd)
@@ -98,14 +98,14 @@ export class Project {
 
     // Otherwise, we need to ask the project (which will in turn ask the linkers for help)
     // Note: the trailing slash is caused by a quirk in the PnP implementation that requires folders to end with a trailing slash to disambiguate them from regular files
-    const locator = await project.findLocatorForLocation(`${packageCwd}/`);
+    const locator = await project.findLocatorForLocation(`${packageCwd}/` as PortablePath);
     if (locator)
       return {project, locator, workspace: null};
 
     throw new Error(`Assertion failed: The package should have been detected as part of the project`);
   }
 
-  constructor(projectCwd: string, {configuration}: {configuration: Configuration}) {
+  constructor(projectCwd: PortablePath, {configuration}: {configuration: Configuration}) {
     this.configuration = configuration;
     this.cwd = projectCwd;
   }
@@ -116,7 +116,7 @@ export class Project {
     this.storedDescriptors = new Map();
     this.storedPackages = new Map();
 
-    const lockfilePath = `${this.cwd}/${this.configuration.get(`lockfileFilename`)}`;
+    const lockfilePath = `${this.cwd}/${this.configuration.get(`lockfileFilename`)}` as PortablePath;
 
     if (xfs.existsSync(lockfilePath)) {
       const content = await xfs.readFilePromise(lockfilePath, `utf8`);
@@ -208,7 +208,7 @@ export class Project {
     }
   }
 
-  async addWorkspace(workspaceCwd: string) {
+  async addWorkspace(workspaceCwd: PortablePath) {
     const workspace = new Workspace(workspaceCwd, {project: this});
     await workspace.setup();
 
@@ -229,9 +229,9 @@ export class Project {
     return this.getWorkspaceByCwd(this.cwd);
   }
 
-  tryWorkspaceByCwd(workspaceCwd: string) {
+  tryWorkspaceByCwd(workspaceCwd: PortablePath) {
     if (!posix.isAbsolute(workspaceCwd))
-      workspaceCwd = posix.resolve(this.cwd, workspaceCwd);
+      workspaceCwd = posix.resolve(this.cwd, workspaceCwd) as PortablePath;
 
     const workspace = this.workspacesByCwd.get(workspaceCwd);
     if (!workspace)
@@ -240,7 +240,7 @@ export class Project {
     return workspace;
   }
 
-  getWorkspaceByCwd(workspaceCwd: string) {
+  getWorkspaceByCwd(workspaceCwd: PortablePath) {
     const workspace = this.tryWorkspaceByCwd(workspaceCwd);
     if (!workspace)
       throw new Error(`Workspace not found (${workspaceCwd})`);
@@ -320,7 +320,7 @@ export class Project {
     return dependencyMeta;
   }
 
-  async findLocatorForLocation(cwd: string) {
+  async findLocatorForLocation(cwd: PortablePath) {
     const report = new ThrowReport();
 
     const linkers = this.configuration.getLinkers();
@@ -848,7 +848,7 @@ export class Project {
     }));
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
-    const packageLocations: Map<LocatorHash, string> = new Map();
+    const packageLocations: Map<LocatorHash, PortablePath> = new Map();
     const packageBuildDirectives: Map<LocatorHash, BuildDirective[]> = new Map();
 
     // Step 1: Installing the packages on the disk
@@ -883,7 +883,7 @@ export class Project {
 
     // Step 2: Link packages together
 
-    const externalDependents: Map<LocatorHash, Array<string>> = new Map();
+    const externalDependents: Map<LocatorHash, Array<PortablePath>> = new Map();
 
     for (const pkg of this.storedPackages.values()) {
       const packageLinker = packageLinkers.get(pkg.locatorHash);
@@ -991,7 +991,7 @@ export class Project {
       return hash.digest(`hex`);
     };
 
-    const bstatePath = this.configuration.get(`bstatePath`);
+    const bstatePath = this.configuration.get(`bstatePath`) as PortablePath;
     const bstate = xfs.existsSync(bstatePath)
       ? parseSyml(await xfs.readFilePromise(bstatePath, `utf8`)) as {[key: string]: string}
       : {};
@@ -1047,7 +1047,7 @@ export class Project {
             });
 
             const stdin = null;
-            const stdout = xfs.createWriteStream(logFile);
+            const stdout = xfs.createWriteStream(NodeFS.toPortablePath(logFile));
             const stderr = stdout;
 
             stdout.write(`# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`);
@@ -1093,7 +1093,7 @@ export class Project {
 
     const bstateHeader = `# Warning: This file is automatically generated. Removing it is fine, but will\n# cause all your builds to become invalidated.\n\n`;
 
-    await xfs.mkdirpPromise(posix.dirname(bstatePath));
+    await xfs.mkdirpPromise(posix.dirname(bstatePath) as PortablePath);
     await xfs.changeFilePromise(bstatePath, bstateHeader + stringifySyml(bstate));
   }
 
@@ -1222,7 +1222,7 @@ export class Project {
   }
 
   async persistLockfile() {
-    const lockfilePath = `${this.cwd}/${this.configuration.get(`lockfileFilename`)}`;
+    const lockfilePath = `${this.cwd}/${this.configuration.get(`lockfileFilename`)}` as PortablePath;
     const lockfileContent = this.generateLockfile();
 
     await xfs.changeFilePromise(lockfilePath, lockfileContent);

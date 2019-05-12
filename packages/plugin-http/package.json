@@ -3,6 +3,7 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/core": "workspace:*"
+    "@berry/core": "workspace:*",
+    "@berry/fslib": "workspace:*"
   }
 }

@@ -1,4 +1,5 @@
 import {Project} from '@berry/core';
+import { PortablePath } from '@berry/fslib';
 import getPath   from 'lodash.get';
 import pl        from 'tau-prolog';
 
@@ -36,7 +37,7 @@ const tauModule = new pl.type.Module(`constraints`, {
     }
 
     const project = getProject(thread);
-    const workspace = project.tryWorkspaceByCwd(workspaceCwd.id);
+    const workspace = project.tryWorkspaceByCwd(workspaceCwd.id as PortablePath);
 
     // Workspace not found => this predicate can never match
     // We might want to throw here? We can be pretty sure the user did

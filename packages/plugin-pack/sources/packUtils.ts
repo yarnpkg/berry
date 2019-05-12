@@ -1,5 +1,5 @@
 import {MessageName, Report, Workspace, scriptUtils} from '@berry/core';
-import {FakeFS, JailFS, xfs}                         from '@berry/fslib';
+import {FakeFS, JailFS, xfs, PortablePath, portablePathUtils}                         from '@berry/fslib';
 import mm                                            from 'micromatch';
 import {posix}                                       from 'path';
 import {PassThrough}                                 from 'stream';
@@ -61,7 +61,7 @@ export async function prepareForPack(workspace: Workspace, {report}: {report: Re
   }
 }
 
-export async function genPackStream(workspace: Workspace, files?: Array<string>) {
+export async function genPackStream(workspace: Workspace, files?: Array<PortablePath>) {
   if (typeof files === `undefined`)
     files = await genPackList(workspace);
 
@@ -69,8 +69,8 @@ export async function genPackStream(workspace: Workspace, files?: Array<string>)
 
   process.nextTick(async () => {
     for (const file of files!) {
-      const source = posix.resolve(workspace.cwd, file);
-      const dest = posix.join(`package`, file);
+      const source = portablePathUtils.resolve(workspace.cwd, file);
+      const dest = portablePathUtils.join(`package` as PortablePath, file);
 
       const stat = await xfs.lstatPromise(source);
       const opts = {name: dest, mtime: new Date(315532800)};
@@ -208,11 +208,11 @@ export async function genPackList(workspace: Workspace) {
   });
 }
 
-async function walk(initialCwd: string, {globalList, ignoreList}: {globalList: IgnoreList, ignoreList: IgnoreList}) {
-  const list = [];
+async function walk(initialCwd: PortablePath, {globalList, ignoreList}: {globalList: IgnoreList, ignoreList: IgnoreList}) {
+  const list: PortablePath[] = [];
 
   const cwdFs = new JailFS(initialCwd);
-  const cwdList: Array<[string, Array<IgnoreList>]> = [[`/`, [ignoreList]]];
+  const cwdList: Array<[PortablePath, Array<IgnoreList>]> = [[`/` as PortablePath, [ignoreList]]];
 
   while (cwdList.length > 0) {
     const [cwd, ignoreLists] = cwdList.pop()!;
@@ -233,9 +233,9 @@ async function walk(initialCwd: string, {globalList, ignoreList}: {globalList: I
       }
 
       const localIgnoreList = hasNpmIgnore
-        ? await loadIgnoreList(cwdFs, cwd, `.npmignore`)
+        ? await loadIgnoreList(cwdFs, cwd, `.npmignore` as PortablePath)
         : hasGitIgnore
-          ? await loadIgnoreList(cwdFs, cwd, `.gitignore`)
+          ? await loadIgnoreList(cwdFs, cwd, `.gitignore` as PortablePath)
           : null;
 
       const nextIgnoreLists = localIgnoreList !== null
@@ -243,23 +243,23 @@ async function walk(initialCwd: string, {globalList, ignoreList}: {globalList: I
         : ignoreLists;
 
       for (const entry of entries) {
-        cwdList.push([posix.resolve(cwd, entry), nextIgnoreLists]);
+        cwdList.push([portablePathUtils.resolve(cwd, entry), nextIgnoreLists]);
       }
     } else {
-      list.push(posix.relative(`/`, cwd));
+      list.push(portablePathUtils.relative(`/` as PortablePath, cwd));
     }
   }
 
   return list.sort();
 }
 
-async function loadIgnoreList(fs: FakeFS, cwd: string, filename: string) {
+async function loadIgnoreList(fs: FakeFS<PortablePath>, cwd: PortablePath, filename: PortablePath) {
   const ignoreList: IgnoreList = {
     accept: [],
     reject: [],
   };
 
-  const data = await fs.readFilePromise(`${cwd}/${filename}`, `utf8`);
+  const data = await fs.readFilePromise(portablePathUtils.join(cwd, filename), `utf8`);
 
   for (const pattern of data.split(/\n/g))
     addIgnorePattern(ignoreList.reject, pattern, {cwd});

@@ -1,8 +1,7 @@
 import {Configuration}         from '@berry/core';
-import {xfs, NodeFS}           from '@berry/fslib';
+import {xfs, NodeFS, portablePathUtils, PortablePath}           from '@berry/fslib';
 import {execFileSync}          from 'child_process';
 import {Clipanion}             from 'clipanion';
-import {posix}                 from 'path';
 import * as yup                from 'yup';
 
 import {pluginConfiguration}   from './pluginConfiguration';
@@ -13,11 +12,11 @@ clipanion.topLevel(`[--cwd PATH]`)
   .validate(yup.object().shape({
     cwd: yup.string().transform((cwd = process.cwd()) => {
       // Note that the `--cwd` option might be a relative path that we need to resolve
-      return posix.resolve(NodeFS.toPortablePath(process.cwd()), NodeFS.toPortablePath(cwd));
+      return portablePathUtils.resolve(NodeFS.toPortablePath(process.cwd()), NodeFS.toPortablePath(cwd));
     }),
   }));
 
-function runBinary(path: string) {
+function runBinary(path: PortablePath) {
   const physicalPath = NodeFS.fromPortablePath(path);
 
   if (physicalPath) {
@@ -46,7 +45,7 @@ async function run() {
     strict: false,
   });
 
-  const yarnPath = configuration.get(`yarnPath`);
+  const yarnPath: PortablePath = configuration.get(`yarnPath`);
   const ignorePath = configuration.get(`ignorePath`);
 
   if (yarnPath !== null && !ignorePath) {

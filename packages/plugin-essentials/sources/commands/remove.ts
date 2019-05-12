@@ -2,6 +2,7 @@ import {WorkspaceRequiredError}                                         from '@b
 import {Configuration, Cache, Descriptor, PluginConfiguration, Project} from '@berry/core';
 import {StreamReport, Workspace}                                        from '@berry/core';
 import {structUtils}                                                    from '@berry/core';
+import { PortablePath } from '@berry/fslib';
 import {Writable}                                                       from 'stream';
 
 import * as suggestUtils                                                from '../suggestUtils';
@@ -27,7 +28,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn remove lodash --all`,
   )
 
-  .action(async ({cwd, stdout, names, all}: {cwd: string, stdout: Writable, names: Array<string>, all: boolean}) => {
+  .action(async ({cwd, stdout, names, all}: {cwd: PortablePath, stdout: Writable, names: Array<string>, all: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);

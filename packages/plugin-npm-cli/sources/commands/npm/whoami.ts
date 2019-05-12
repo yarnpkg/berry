@@ -3,6 +3,7 @@ import {PluginConfiguration, StreamReport, structUtils} from '@berry/core';
 import {npmHttpUtils}                                   from '@berry/plugin-npm';
 import {Clipanion}                                      from 'clipanion';
 import {Readable, Writable}                             from 'stream';
+import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) => clipanion
@@ -27,7 +28,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
     `yarn npm whoami --scope company`,
   )
 
-  .action(async ({cwd, stdin, stdout, scope}: {cwd: string, stdin: Readable, stdout: Writable, scope: string}) => {
+  .action(async ({cwd, stdin, stdout, scope}: {cwd: PortablePath, stdin: Readable, stdout: Writable, scope: string}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     const report = await StreamReport.start({configuration, stdout}, async report => {

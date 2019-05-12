@@ -1,11 +1,12 @@
 import {Plugin, Project} from '@berry/core';
 
 import stage             from './commands/stage';
+import { PortablePath } from '@berry/fslib';
 
 export interface Hooks {
   populateYarnPaths?: (
     project: Project,
-    definePath: (path: string | null) => void,
+    definePath: (path: PortablePath | null) => void,
   ) => Promise<void>,
 }
 

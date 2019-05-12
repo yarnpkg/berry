@@ -1,4 +1,4 @@
-import {FakeFS, NodeFS}                                   from '@berry/fslib';
+import {FakeFS, NodeFS, PortablePath}                                   from '@berry/fslib';
 import {Resolution, parseResolution, stringifyResolution} from '@berry/parsers';
 import {posix}                                            from 'path';
 import semver                                             from 'semver';
@@ -58,18 +58,18 @@ export class Manifest {
 
   public raw: object | null = null;
 
-  static async find(path: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS} = {}) {
-    return await Manifest.fromFile(posix.join(path, `package.json`), {baseFs});
+  static async find(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
+    return await Manifest.fromFile(posix.join(path, `package.json`) as PortablePath, {baseFs});
   }
 
-  static async fromFile(path: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS} = {}) {
+  static async fromFile(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
     const manifest = new Manifest();
     await manifest.loadFile(path, {baseFs});
 
     return manifest;
   }
 
-  async loadFile(path: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS}) {
+  async loadFile(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>}) {
     const content = await baseFs.readFilePromise(path, `utf8`);
 
     let data;

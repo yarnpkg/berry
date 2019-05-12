@@ -1,8 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@berry/core';
 import {Locator, MessageName}                          from '@berry/core';
 import {execUtils, scriptUtils, structUtils, tgzUtils} from '@berry/core';
-import {NodeFS, xfs}                                   from '@berry/fslib';
-import {posix}                                         from 'path';
+import {NodeFS, xfs, portablePathUtils, PortablePath}                                   from '@berry/fslib';
 import querystring                                     from 'querystring';
 import {dirSync, tmpNameSync}                          from 'tmp';
 
@@ -19,13 +18,13 @@ export class ExecFetcher implements Fetcher {
   getLocalPath(locator: Locator, opts: FetchOptions) {
     const {parentLocator, execPath} = this.parseLocator(locator);
 
-    if (posix.isAbsolute(execPath))
+    if (portablePathUtils.isAbsolute(execPath))
       return execPath;
 
     const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
 
     if (parentLocalPath !== null) {
-      return posix.resolve(parentLocalPath, execPath);
+      return portablePathUtils.resolve(parentLocalPath, execPath);
     } else {
       return null;
     }
@@ -46,7 +45,7 @@ export class ExecFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: `/sources`,
+      prefixPath: `/sources` as PortablePath,
       localPath: this.getLocalPath(locator, opts),
       checksum,
     };
@@ -57,8 +56,8 @@ export class ExecFetcher implements Fetcher {
 
     // If the file target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
-    const parentFetch = posix.isAbsolute(execPath)
-      ? {packageFs: new NodeFS(), prefixPath: `/`, localPath: `/`}
+    const parentFetch = portablePathUtils.isAbsolute(execPath)
+      ? {packageFs: new NodeFS(), prefixPath: `/` as PortablePath, localPath: `/` as PortablePath}
       : await opts.fetcher.fetch(parentLocator, opts);
 
     // If the package fs publicized its "original location" (for example like
@@ -72,28 +71,28 @@ export class ExecFetcher implements Fetcher {
       parentFetch.releaseFs();
 
     const generatorFs = effectiveParentFetch.packageFs;
-    const generatorPath = posix.resolve(posix.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), execPath);
+    const generatorPath = portablePathUtils.resolve(portablePathUtils.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), execPath);
 
     // Execute the specified script in the temporary directory
     const cwd = await this.generatePackage(locator, generatorPath, opts);
 
     // Make sure the script generated the package
-    if (!xfs.existsSync(`${cwd}/build`))
+    if (!xfs.existsSync(portablePathUtils.join(cwd, `build` as PortablePath)))
       throw new Error(`The script should have generated a build directory`);
 
-    return await tgzUtils.makeArchiveFromDirectory(`${cwd}/build`, {
-      prefixPath: `/sources`,
+    return await tgzUtils.makeArchiveFromDirectory(portablePathUtils.join(cwd, `build` as PortablePath), {
+      prefixPath: `/sources` as PortablePath,
     });
   }
 
-  private async generatePackage(locator: Locator, generatorPath: string, opts: FetchOptions) {
+  private async generatePackage(locator: Locator, generatorPath: PortablePath, opts: FetchOptions) {
     const cwd = NodeFS.toPortablePath(dirSync().name);
     const env = await scriptUtils.makeScriptEnv(opts.project);
 
-    const logFile = tmpNameSync({
+    const logFile = NodeFS.toPortablePath(tmpNameSync({
       prefix: `buildfile-`,
       postfix: `.log`,
-    });
+    }));
 
     const stdin = null;
     const stdout = xfs.createWriteStream(logFile);
@@ -115,7 +114,7 @@ export class ExecFetcher implements Fetcher {
     if (qsIndex === -1)
       throw new Error(`Invalid file-type locator`);
 
-    const execPath = posix.normalize(locator.reference.slice(PROTOCOL.length, qsIndex));
+    const execPath = portablePathUtils.normalize(locator.reference.slice(PROTOCOL.length, qsIndex) as PortablePath);
     const queryString = querystring.parse(locator.reference.slice(qsIndex + 1));
 
     if (typeof queryString.locator !== `string`)

@@ -5,6 +5,7 @@ import semver                                       from 'semver';
 
 import {PROTOCOL}                                   from './constants';
 import * as npmHttpUtils                            from './npmHttpUtils';
+import { PortablePath } from '@berry/fslib';
 
 export class NpmFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -60,6 +61,6 @@ export class NpmFetcher implements Fetcher {
   }
 
   private getPrefixPath(locator: Locator) {
-    return `/node_modules/${structUtils.requirableIdent(locator)}`;
+    return `/node_modules/${structUtils.requirableIdent(locator)}` as PortablePath;
   }
 }

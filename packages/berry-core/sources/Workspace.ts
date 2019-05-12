@@ -1,8 +1,7 @@
-import {xfs, NodeFS}           from '@berry/fslib';
+import {xfs, NodeFS, PortablePath, portablePathUtils}           from '@berry/fslib';
 import {makeUpdater}           from '@berry/json-proxy';
 import {createHmac}            from 'crypto';
 import globby                  from 'globby';
-import {posix}                 from 'path';
 import semver                  from 'semver';
 
 import {Manifest}              from './Manifest';
@@ -18,10 +17,10 @@ function hashWorkspaceCwd(cwd: string) {
 
 export class Workspace {
   public readonly project: Project;
-  public readonly cwd: string;
+  public readonly cwd: PortablePath;
 
   // @ts-ignore: This variable is set during the setup process
-  public readonly relativeCwd: string;
+  public readonly relativeCwd: PortablePath;
 
   // @ts-ignore: This variable is set during the setup process
   public readonly anchoredDescriptor: Descriptor;
@@ -36,12 +35,12 @@ export class Workspace {
   public readonly manifest: Manifest;
 
   // @ts-ignore: This variable is set during the setup process
-  public readonly workspacesCwds: Set<string> = new Set();
+  public readonly workspacesCwds: Set<PortablePath> = new Set();
 
   // Generated at resolution; basically dependencies + devDependencies + child workspaces
   public dependencies: Map<IdentHash, Descriptor> = new Map();
 
-  constructor(workspaceCwd: string, {project}: {project: Project}) {
+  constructor(workspaceCwd: PortablePath, {project}: {project: Project}) {
     this.project = project;
     this.cwd = workspaceCwd;
   }
@@ -50,9 +49,9 @@ export class Workspace {
     // @ts-ignore: It's ok to initialize it now
     this.manifest = await Manifest.find(this.cwd);
 
-    // We use posix.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path
+    // We use portablePathUtils.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
-    this.relativeCwd = posix.relative(this.project.cwd, this.cwd) || `.`;
+    this.relativeCwd = portablePathUtils.relative(this.project.cwd, this.cwd) || `.` as PortablePath;
 
     const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashWorkspaceCwd(this.relativeCwd)}`);
     const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
@@ -79,9 +78,9 @@ export class Workspace {
       relativeCwds.sort();
 
       for (const relativeCwd of relativeCwds) {
-        const candidateCwd = posix.resolve(this.cwd, NodeFS.toPortablePath(relativeCwd));
+        const candidateCwd = portablePathUtils.resolve(this.cwd, NodeFS.toPortablePath(relativeCwd));
 
-        if (xfs.existsSync(`${candidateCwd}/package.json`)) {
+        if (xfs.existsSync(portablePathUtils.join(candidateCwd, `package.json` as PortablePath))) {
           this.workspacesCwds.add(candidateCwd);
         }
       }
@@ -118,12 +117,12 @@ export class Workspace {
     if (this.cwd === this.project.cwd) {
       return `root-workspace`;
     } else {
-      return `${posix.basename(this.cwd)}` || `unnamed-workspace`;
+      return `${portablePathUtils.basename(this.cwd)}` || `unnamed-workspace`;
     }
   }
 
   async persistManifest() {
-    const updater = await makeUpdater(`${this.cwd}/package.json`);
+    const updater = await makeUpdater(portablePathUtils.join(this.cwd, `package.json` as PortablePath));
 
     updater.open((tracker: Object) => {
       this.manifest.exportTo(tracker);

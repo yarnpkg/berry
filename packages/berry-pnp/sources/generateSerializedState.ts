@@ -1,5 +1,6 @@
 import {LocationBlacklistData, LocationLengthData, PackageRegistryData} from './types';
 import {PackageStoreData, PnpSettings, SerializedState}                 from './types';
+import { PortablePath } from '@berry/fslib';
 
 // Keep this function is sync with its implementation in:
 // @berry/core/sources/miscUtils.ts
@@ -33,11 +34,11 @@ export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) 
   });
 }
 
-function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData {
-  const packageRegistryData: PackageRegistryData = [];
+function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData<PortablePath> {
+  const packageRegistryData: PackageRegistryData<PortablePath> = [];
 
   for (const [packageName, packageStore] of sortMap(settings.packageRegistry, ([packageName]) => packageName === null ? `0` : `1${packageName}`)) {
-    const packageStoreData: PackageStoreData = [];
+    const packageStoreData: PackageStoreData<PortablePath> = [];
     packageRegistryData.push([packageName, packageStoreData]);
 
     for (const [packageReference, {packageLocation, packageDependencies}] of sortMap(packageStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {

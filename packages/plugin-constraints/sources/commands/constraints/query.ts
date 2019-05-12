@@ -1,5 +1,6 @@
 import {Configuration, Project, PluginConfiguration} from '@berry/core';
 import {MessageName, StreamReport}                   from '@berry/core';
+import { PortablePath } from '@berry/fslib';
 import {Writable}                                    from 'stream';
 
 import {Constraints}                                 from '../../Constraints';
@@ -46,7 +47,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn constraints query 'workspace_has_dependency(_, DependencyName, _, _).'`,
   )
 
-  .action(async ({cwd, stdout, query}: {cwd: string, stdout: Writable, query: string}) => {
+  .action(async ({cwd, stdout, query}: {cwd: PortablePath, stdout: Writable, query: string}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
     const constraints = await Constraints.find(project);

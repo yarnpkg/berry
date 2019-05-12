@@ -1,5 +1,5 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
-import {NodeFS, xfs}                                 from '@berry/fslib';
+import {NodeFS, xfs, PortablePath}                                 from '@berry/fslib';
 import {UsageError}                                  from 'clipanion';
 import {posix}                                       from 'path';
 import {Writable}                                    from 'stream';
@@ -21,7 +21,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
   .detail(`
     This command will add to your staging area the files belonging to Yarn (typically any modified \`package.json\` and \`.yarnrc\` files, but also linker-generated files, cache data, etc). It will take your ignore list into account, so the cache files won't be added if the cache is ignored in a \`.gitignore\` file (assuming you use Git).
-    
+
     Running \`--reset\` will instead remove them from the staging area (the changes will still be there, but won't be committed until you stage them back).
 
     Since the staging area is a non-existent concept in Mercurial, Yarn will always create a new commit when running this command on Mercurial repositories. You can get this behavior when using Git by using the \`--commit\` flag which will directly create a commit.
@@ -37,13 +37,13 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn stage --commit`,
   )
 
-  .action(async ({cwd, stdout, commit, reset, update, dryRun}: {cwd: string, stdout: Writable, commit: boolean, reset: boolean, update: boolean, dryRun: boolean}) => {
+  .action(async ({cwd, stdout, commit, reset, update, dryRun}: {cwd: PortablePath, stdout: Writable, commit: boolean, reset: boolean, update: boolean, dryRun: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
 
     let {driver, root} = await findDriver(project.cwd);
 
-    const basePaths: Array<string | null> = [
+    const basePaths: Array<PortablePath | null> = [
       configuration.get(`bstatePath`),
       configuration.get(`cacheFolder`),
       configuration.get(`globalFolder`),
@@ -53,7 +53,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     await configuration.triggerHook((hooks: Hooks) => {
       return hooks.populateYarnPaths;
-    }, project, (path: string | null) => {
+    }, project, (path: PortablePath | null) => {
       basePaths.push(path);
     });
 
@@ -88,9 +88,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     }
   });
 
-async function findDriver(cwd: string) {
+async function findDriver(cwd: PortablePath) {
   let driver = null;
-  let root: string | null = null;
+  let root: PortablePath | null = null;
 
   for (const candidate of ALL_DRIVERS) {
     if ((root = await candidate.findRoot(cwd)) !== null) {
@@ -109,13 +109,13 @@ async function findDriver(cwd: string) {
  * Given two directories, this function will return the location of the second
  * one in the first one after properly resolving symlinks (kind of like a
  * realpath, except that we only resolve the last component of the original
- * path). 
+ * path).
  *
  * If the second directory isn't in the first one, this function returns null.
  */
 
-function resolveToVcs(cwd: string, path: string | null) {
-  const resolved: Array<string> = [];
+function resolveToVcs(cwd: PortablePath, path: PortablePath | null) {
+  const resolved: Array<PortablePath> = [];
 
   if (path === null)
     return resolved;
@@ -137,7 +137,7 @@ function resolveToVcs(cwd: string, path: string | null) {
     // If it's a symbolic link then we also need to also consider its target as
     // part of the Yarn installation (unless it's outside of the repo)
     if (stat.isSymbolicLink()) {
-      path = posix.resolve(posix.dirname(path), xfs.readlinkSync(path));
+      path = posix.resolve(posix.dirname(path), xfs.readlinkSync(path)) as PortablePath;
     } else {
       break;
     }

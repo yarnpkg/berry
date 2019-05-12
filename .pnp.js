@@ -9522,6 +9522,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/core",
                   "workspace:packages/berry-core"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
                 ]
               ]
             }
@@ -9543,6 +9547,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/core",
                   "workspace:packages/berry-core"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
                 ]
               ]
             }
@@ -9564,6 +9572,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/core",
                   "workspace:packages/berry-core"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
                 ],
                 [
                   "@berry/json-proxy",
@@ -9689,6 +9701,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-core"
                 ],
                 [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
                   "inquirer",
                   "npm:6.2.1"
                 ],
@@ -9720,6 +9736,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/core",
                   "workspace:packages/berry-core"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
                 ],
                 [
                   "@berry/plugin-npm",

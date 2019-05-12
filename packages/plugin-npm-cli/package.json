@@ -5,6 +5,7 @@
   "dependencies": {
     "@berry/cli": "workspace:*",
     "@berry/core": "workspace:*",
+    "@berry/fslib": "workspace:*",
     "@berry/plugin-npm": "workspace:*",
     "@berry/plugin-pack": "workspace:*",
     "clipanion": "^0.14.1",

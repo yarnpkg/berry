@@ -1,4 +1,4 @@
-import {NodeFS}     from '@berry/fslib';
+import {NodeFS, PortablePath}     from '@berry/fslib';
 import {createHmac} from 'crypto';
 
 export function makeHash<T>(...args: Array<string | null>): T {
@@ -10,7 +10,7 @@ export function makeHash<T>(...args: Array<string | null>): T {
   return hmac.digest(`hex`) as unknown as T;
 }
 
-export function checksumFile(path: string) {
+export function checksumFile(path: PortablePath) {
   return new Promise<string>((resolve, reject) => {
     const fs = new NodeFS();
 
