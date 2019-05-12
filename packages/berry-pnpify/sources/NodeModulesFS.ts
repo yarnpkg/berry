@@ -27,11 +27,7 @@ export class NodeModulesFS extends FakeFS<NativePath> {
   }
 
   resolve(path: NativePath) {
-    return path; // FIXME(BRAM)
-  }
-
-  getRealPath() {
-    return '/' as NativePath; // FIXME(BRAM)
+    return this.baseFs.resolve(this.resolvePath(p).resolvedPath);
   }
 
   getBaseFs() {
