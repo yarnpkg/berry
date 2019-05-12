@@ -14,7 +14,7 @@ Worktrees are defined through the traditional `package.json` files. What makes t
 
 - They have to be marked `private: true`. This requirement exists because workspaces are a client-only feature. The remote registries (such as the npm registry) have no idea what a workspace is, and neither should they. In order to prevent accidental pushes and information leaks workspaces must have their private flag set.
 
-- They must declare a `workspaces` field which is expected to be an array of glob patterns that should be used to locate the workspaces that make up the worktree. For example, if you want all folders within the `packages` folder to be workspaces, just add `workspaces/*` to this array.
+- They must declare a `workspaces` field which is expected to be an array of glob patterns that should be used to locate the workspaces that make up the worktree. For example, if you want all folders within the `packages` folder to be workspaces, just add `packages/*` to this array.
 
 - They must be connected in some way to the project-level `package.json` file. This doesn't matter in the typical workspace setup because there's usually a single worktree defined in the project-level `package.json`, but if you try to setup nested workspaces then you must make sure that the nested worktree is defined as a valid workspace of its parent worktree (otherwise Yarn won't find its correct parent folder).
 
