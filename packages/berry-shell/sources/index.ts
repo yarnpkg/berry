@@ -208,7 +208,7 @@ function makeCommandAction(args: Array<string>, opts: ShellOptions, state: Shell
 
   const [name, ...rest] = args;
   if (name === `command`) {
-    return makeProcess(rest[0], rest.slice(1), {
+    return makeProcess(rest[0], rest.slice(1), opts, {
       cwd: NodeFS.fromPortablePath(state.cwd),
       env: state.environment,
     });
