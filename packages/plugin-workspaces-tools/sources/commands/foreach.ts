@@ -9,14 +9,14 @@ import pLimit                                                                fro
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-    .command(`workspaces foreach <command> [...args] [-p,--parallel] [--with-dependencies] [-I,--interlaced] [-P,--prefixed]`)
+    .command(`workspaces foreach <command> [...args] [-p,--parallel] [--with-dependencies] [-I,--interlaced] [-P,--prefixed] [-i,--include WORKSPACES...] [-e,--exclude WORKSPACES...]`)
     .flags({proxyArguments: true})
 
     .categorize(`Workspace-related commands`)
     .describe(`run a command on all workspaces`)
 
     .action(
-      async ({cwd, args, stdout, command, parallel, withDependencies, interlaced, prefixed, ...env}: {cwd: string; args: Array<string>, stdout: Writable, command: string, parallel: boolean, withDependencies: boolean, interlaced: boolean, prefixed: boolean}) => {
+      async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, withDependencies, prefixed, ...env}: {cwd: string; args: Array<string>, stdout: Writable, command: string, exclude: string[], include: string[], parallel: boolean, withDependencies: boolean, interlaced: boolean, prefixed: boolean}) => {
         const configuration = await Configuration.find(cwd, pluginConfiguration);
         const { project } = await Project.find(configuration, cwd);
         const cache = await Cache.find(configuration);
@@ -30,9 +30,17 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const report = await StreamReport.start({configuration, stdout}, async report => {
           await project.resolveEverything({lockfileOnly: true, cache, report});
 
-          const workspaces = command.toLocaleLowerCase() === `run`
+          let workspaces = command.toLocaleLowerCase() === `run`
             ? project.workspaces.filter(workspace => workspace.manifest.scripts.has(args[0]))
             : project.workspaces;
+
+          if (include.length > 0) {
+            workspaces = workspaces.filter(workspace => include.includes(workspace.locator.name))
+          }
+
+          if (exclude.length > 0) {
+            workspaces = workspaces.filter(workspace => !exclude.includes(workspace.locator.name))
+          }
 
           for (const workspace of workspaces) {
             const ident = structUtils.convertToIdent(workspace.locator);
