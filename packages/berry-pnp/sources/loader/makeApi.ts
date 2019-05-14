@@ -263,7 +263,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * lot of them.
    */
 
-  function makeFakeModule(path: string): NodeModule {
+  function makeFakeModule(path: NativePath): NodeModule {
     // @ts-ignore
     const fakeModule = new Module(path, null);
     fakeModule.filename = path;
