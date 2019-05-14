@@ -1,4 +1,4 @@
-import {xfs, NodeFS, PortablePath, ppath}                     from '@berry/fslib';
+import {xfs, NodeFS, PortablePath, ppath, Filename, toFilename}                     from '@berry/fslib';
 import {parseSyml, stringifySyml}                                         from '@berry/parsers';
 import camelcase                                                          from 'camelcase';
 import chalk                                                              from 'chalk';
@@ -71,8 +71,8 @@ const legacyNames = new Set([
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
-export const DEFAULT_RC_FILENAME = `.yarnrc`;
-export const DEFAULT_LOCK_FILENAME = `yarn.lock`;
+export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc`);
+export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
 
 export enum SettingsType {
   BOOLEAN = 'BOOLEAN',
@@ -590,7 +590,7 @@ export class Configuration {
     return null;
   }
 
-  static async findProjectCwd(startingCwd: PortablePath, lockfileFilename: string) {
+  static async findProjectCwd(startingCwd: PortablePath, lockfileFilename: Filename) {
     let projectCwd = null;
 
     let nextCwd = startingCwd;
@@ -599,10 +599,10 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, `package.json` as PortablePath)))
+      if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`))))
         projectCwd = currentCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, lockfileFilename as PortablePath)))
+      if (xfs.existsSync(ppath.join(currentCwd, lockfileFilename)))
         break;
 
       nextCwd = ppath.dirname(currentCwd);
