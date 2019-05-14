@@ -2,9 +2,23 @@ import { Configuration, IdentHash, PluginConfiguration, Project, Workspace } fro
 import { structUtils, Cache, DescriptorHash, StreamReport }                  from '@berry/core';
 import { Writable }                                                          from 'stream';
 import { cpus }                                                              from 'os';
-import chalk                                                                 from 'chalk';
 // @ts-ignore
 import pLimit                                                                from 'p-limit';
+
+import * as workspaceUtils                                                   from '../workspaceUtils';
+
+type ForeachOptions = {
+  args: Array<string>;
+  command: string;
+  cwd: string;
+  exclude: string[];
+  include: string[];
+  interlaced: boolean;
+  parallel: boolean;
+  prefixed: boolean;
+  stdout: Writable;
+  withDependencies: boolean;
+}
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -16,7 +30,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     .describe(`run a command on all workspaces`)
 
     .action(
-      async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, withDependencies, prefixed, ...env}: {cwd: string; args: Array<string>, stdout: Writable, command: string, exclude: string[], include: string[], parallel: boolean, withDependencies: boolean, interlaced: boolean, prefixed: boolean}) => {
+      async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, withDependencies, prefixed, ...env}: ForeachOptions) => {
         const configuration = await Configuration.find(cwd, pluginConfiguration);
         const { project } = await Project.find(configuration, cwd);
         const cache = await Cache.find(configuration);
@@ -86,24 +100,26 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           }
 
           async function runCommand(workspace: Workspace) {
-            const colors = [`cyan`, `green`, `yellow`, `blue`, `magenta`];
-            const colorsEnabled = configuration.get(`enableColors`);
-            const ident = structUtils.convertToIdent(workspace.locator);
-            const name = structUtils.stringifyIdent(ident);
-            const colorName = colors[commandCount % colors.length];
+            const prefix = workspaceUtils.getPrefix({ configuration, workspace, prefixed, commandCount});
+            const stdout = workspaceUtils.createStream({prefix, report, interlaced});
+            const stderr = workspaceUtils.createStream({prefix, report, interlaced});
 
-            let prefixString = prefixed ? `[${name}]:` : null;
-
-            if (prefixString && colorsEnabled) {
-              prefixString = (chalk as any)[colorName](prefixString);
+            try {
+              await clipanion.run(null, args, {
+                ...env,
+                cwd: workspace.cwd,
+                stdout: stdout.stream,
+                stderr: stderr.stream,
+              });
+            } finally {
+              stdout.stream.end();
+              stderr.stream.end();
             }
 
-            return await clipanion.run(null, args, {
-              ...env,
-              cwd: workspace.cwd,
-              stdout: report.createStreamReporter(prefixString),
-              stderr: report.createStreamReporter(prefixString),
-            });
+            // We wait so that report doesn't log the Finished message until its
+            // really done.
+            await stdout.promise;
+            await stderr.promise;
           }
         });
 
