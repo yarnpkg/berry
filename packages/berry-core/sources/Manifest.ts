@@ -3,7 +3,6 @@ import {Resolution, parseResolution, stringifyResolution} from '@berry/parsers';
 import {posix}                                            from 'path';
 import semver                                             from 'semver';
 
-import * as execUtils                                     from './execUtils';
 import * as miscUtils                                     from './miscUtils';
 import * as structUtils                                   from './structUtils';
 import {IdentHash}                                        from './types';

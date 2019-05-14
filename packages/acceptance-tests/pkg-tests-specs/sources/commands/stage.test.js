@@ -1,7 +1,7 @@
-const {NodeFS} = require(`@berry/fslib`);
+const {NodeFS, xfs} = require(`@berry/fslib`);
 const {
   exec: {execFile},
-  fs: {writeFile, mkdirp},
+  fs: {writeFile, writeJson, mkdirp},
 } = require('pkg-tests-core');
 
 describe(`Commands`, () => {
@@ -80,24 +80,23 @@ describe(`Commands`, () => {
         await run(`${path}/new-package`, `init`);
 
         await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({
-          stdout: `Creates new-package, Creates my-commit-package\n`
+          stdout: `chore(yarn): Creates my-commit-package (and one other)\n`
         });
 
         await execFile(`git`, [`add`, `.`], {cwd: path});
-        await execFile(`git`, [`commit`, `-m`, `'did this'`], {cwd: path});
-        await writeFile(`${path}/package.json`, `${
-          JSON.stringify({
-            name: `my-commit-package`,
-            dependencies: {
-              [`deps1`]: `2.0.0`,
-              [`deps3`]: `2.0.0`
-            },
-          })
-        }\n`);
-        await execFile(`rm`, [`${path}/new-package/package.json`], {cwd: path})
+        await execFile(`git`, [`commit`, `-m`, `wip`], {cwd: path});
+
+        await xfs.removePromise(`${path}/new-package/package.json`);
+        await writeJson(`${path}/package.json`, {
+          name: `my-commit-package`,
+          dependencies: {
+            [`deps1`]: `2.0.0`,
+            [`deps3`]: `2.0.0`
+          },
+        });
 
         await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({
-          stdout: `Adds deps3, Removes deps2, Updates deps1 to 2.0.0, Deletes new-package\n`
+          stdout: `chore(yarn): Deletes new-package, adds deps3, removes deps2, updates deps1 to 2.0.0\n`
         });
       }),
     );

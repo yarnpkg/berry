@@ -8,113 +8,88 @@ const MESSAGE_MARKER = `Commit generated via \`yarn stage\``;
 const COMMIT_DEPTH = 11;
 
 async function getLastCommitHash(cwd: string) {
-  const {stdout: lastCommitStdout} = await execUtils.execvp(`git`, [`log`, `-1`, `--pretty=format:%H`], {cwd, strict: true});
-  return lastCommitStdout;
+  const {code, stdout} = await execUtils.execvp(`git`, [`log`, `-1`, `--pretty=format:%H`], {cwd});
+
+  if (code === 0) {
+    return stdout.trim();
+  } else {
+    return null;
+  }
 }
 
 async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileAction>) {
-  const updates = new Map();
-  const removes = new Map();
-  const adds = new Map();
-  const createdPackages = [];
-  const removedPackages = [];
+  const actions: Array<[stageUtils.ActionType, string]> = [];
 
-  const jsonChanges = changes.filter(change => posix.basename(change.path) === "package.json");
-  for(const change of jsonChanges) {
-    const { action, path } = change;
+  const modifiedPkgJsonFiles = changes.filter(change => {
+    return posix.basename(change.path) === `package.json`;
+  });
+
+  for (const {action, path} of modifiedPkgJsonFiles) {
     const localPath = NodeFS.fromPortablePath(path);
     const relativePath = posix.relative(cwd, localPath);
+
     if (action === stageUtils.ActionType.MODIFY) {
       const commitHash = await getLastCommitHash(cwd)
       const {stdout: prevSource} = await execUtils.execvp(`git`, [`show`, `${commitHash}:${relativePath}`], {cwd, strict: true});
+
       const prevManifest = await Manifest.fromText(prevSource);
       const currManifest = await Manifest.fromFile(localPath);
+
       const allCurrDeps: Map<IdentHash, Descriptor> = new Map([...currManifest.dependencies, ...currManifest.devDependencies]);
       const allPrevDeps: Map<IdentHash, Descriptor> = new Map([...prevManifest.dependencies, ...prevManifest.devDependencies]);
 
-      for(const [indentHash, value] of allPrevDeps) {
+      for (const [indentHash, value] of allPrevDeps) {
         const pkgName = structUtils.stringifyIdent(value);
         const currDep = allCurrDeps.get(indentHash);
-        if (currDep) {
-          if(currDep.range !== value.range) {
-            const key = `Updates ${pkgName} to ${currDep.range}`;
-            setKeyValue(updates, key);
-          }
-        }
-        else {
-          const key = `Removes ${pkgName}`;
-          setKeyValue(removes, key);
+
+        if (currDep && currDep.range !== value.range) {
+          actions.push([stageUtils.ActionType.MODIFY, `${pkgName} to ${currDep.range}`]);
+        } else {
+          actions.push([stageUtils.ActionType.REMOVE, pkgName])
         }
       }
 
-      for(const [indentHash, value] of allCurrDeps) {
+      for (const [indentHash, value] of allCurrDeps) {
         if (!allPrevDeps.has(indentHash)) {
-          const pkgName = structUtils.stringifyIdent(value);
-          const key = `Adds ${pkgName}`;
-          setKeyValue(adds, key);
+          actions.push([stageUtils.ActionType.ADD, structUtils.stringifyIdent(value)]);
         }
       }
-    }
-    else if (action === stageUtils.ActionType.ADD) {
-      //created package.json
+    } else if (action === stageUtils.ActionType.CREATE) {
+      // New package.json
       const manifest = await Manifest.fromFile(localPath)
-      if (manifest.name){
-        const packageName = structUtils.stringifyIdent(manifest.name);
-        createdPackages.push(`Creates ${packageName}`);
+
+      if (manifest.name) {
+        actions.push([stageUtils.ActionType.CREATE, structUtils.stringifyIdent(manifest.name)])
+      } else {
+        actions.push([stageUtils.ActionType.CREATE, `a package`])
       }
-    }
-    else {
-      //remove package.json
-      const commitHash = await getLastCommitHash(cwd)
+    } else if (action === stageUtils.ActionType.DELETE) {
+      const commitHash = await getLastCommitHash(cwd);
       const {stdout: prevSource} = await execUtils.execvp(`git`, [`show`, `${commitHash}:${relativePath}`], {cwd, strict: true});
+
+      // Deleted package.json; we need to load it from its past sources
       const manifest = await Manifest.fromText(prevSource);
-      if (manifest.name){
-        const packageName = structUtils.stringifyIdent(manifest.name);
-        removedPackages.push(`Deletes ${packageName}`);
+
+      if (manifest.name) {
+        actions.push([stageUtils.ActionType.DELETE, structUtils.stringifyIdent(manifest.name)]);
+      } else {
+        actions.push([stageUtils.ActionType.DELETE, `a package`]);
       }
+    } else {
+      throw new Error(`Assertion failed: Unsupported action type`);
     }
   }
 
-  if(adds.size || removes.size || updates.size || createdPackages.length || removedPackages.length) {
-    const commitMessages: string[] = [
-      ...genPackagesCommitMessage(adds),
-      ...genPackagesCommitMessage(removes),
-      ...genPackagesCommitMessage(updates),
-      ...createdPackages,
-      ...removedPackages
-    ];
+  const {code, stdout} = await execUtils.execvp(`git`, [`log`, `-${COMMIT_DEPTH}`, `--pretty=format:%s`], {cwd});
 
-    return commitMessages.join(", ");
-  }
+  const lines = code === 0
+    ? stdout.split(/\n/g).filter((line: string) => line !== ``)
+    : [];
 
-  const {stdout} = await execUtils.execvp(`git`, [`log`, `-${COMMIT_DEPTH}`, `--pretty=format:%s`], {cwd, strict: true});
-  const lines = stdout.split(/\n/g).filter((line: string) => line !== ``);
+  const consensus = stageUtils.findConsensus(lines);
+  const message = stageUtils.genCommitMessage(consensus, actions);
 
-  return stageUtils.genCommitMessage(lines);
-}
-
-function setKeyValue(map: Map<string, number>, key: string) {
-  if(map.has(key)) {
-    const count = map.get(key);
-    map.set(key, count ? count + 1 : 1);
-  }
-  else {
-    map.set(key, 1);
-  }
-  return map;
-}
-
-function genPackagesCommitMessage(actions:Map<string, number>): Array<string> {
-  const messages = [];
-  for(const action of actions) {
-    if (action[1] === 1) {
-      messages.push(`${action[0]}`);
-    }
-    else {
-      messages.push(`${action[0]} (+${action[1]})`);
-    }
-  }
-  return messages;
+  return message;
 }
 
 export const Driver = {
@@ -130,26 +105,28 @@ export const Driver = {
       if (line === ``)
         return [];
 
+      const prefix = line.slice(0, 3);
       const path = posix.resolve(cwd, line.slice(3));
+
       // New directories need to be expanded to their content
-      if (line.startsWith(`?? `) && line.endsWith(`/`)) {
+      if (prefix === `?? ` && line.endsWith(`/`)) {
         return stageUtils.expandDirectory(path).map(path => ({
-          action: stageUtils.ActionType.ADD,
+          action: stageUtils.ActionType.CREATE,
           path
         }));
-      } else if (line.startsWith(` A `) || line.startsWith(`?? `)) {
+      } else if (prefix === ` A ` || prefix === `?? `) {
         return [{
-          action: stageUtils.ActionType.ADD,
+          action: stageUtils.ActionType.CREATE,
           path
         }];
-      } else if (line.startsWith(` M `)) {
+      } else if (prefix === ` M `) {
         return [{
           action: stageUtils.ActionType.MODIFY,
           path
         }];
-      } else if (line.startsWith(` D `)) {
+      } else if (prefix === ` D `) {
         return [{
-          action: stageUtils.ActionType.REMOVE,
+          action: stageUtils.ActionType.DELETE,
           path
         }];
       }
@@ -166,13 +143,14 @@ export const Driver = {
     });
   },
 
-  async makeCommit(cwd: string, changeList: Array<stageUtils.FileAction>, dryRun: boolean) {
-    if (dryRun) {
-      return await genCommitMessage(cwd, changeList);
-    }
+  async genCommitMessage(cwd: string, changeList: Array<stageUtils.FileAction>) {
+    return await genCommitMessage(cwd, changeList);
+  },
+
+  async makeCommit(cwd: string, changeList: Array<stageUtils.FileAction>, commitMessage: string) {
     const localPaths = changeList.map(file => NodeFS.fromPortablePath(file.path));
     await execUtils.execvp(`git`, [`add`, `-N`, `--`, ... localPaths], {cwd, strict: true});
-    await execUtils.execvp(`git`, [`commit`, `-m`, `${await genCommitMessage(cwd, changeList)}\n\n${MESSAGE_MARKER}\n`, `--`, ... localPaths], {cwd, strict: true});
+    await execUtils.execvp(`git`, [`commit`, `-m`, `${commitMessage}\n\n${MESSAGE_MARKER}\n`, `--`, ... localPaths], {cwd, strict: true});
   },
 
   async makeReset(cwd: string, changeList: Array<stageUtils.FileAction>) {

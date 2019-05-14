@@ -9,7 +9,11 @@ export const Driver = {
     return [];
   },
 
-  async makeCommit(cwd: string, changeList: Array<stageUtils.FileAction>, dryRun: boolean) {
+  async genCommitMessage(cwd: string, changeList: Array<stageUtils.FileAction>) {
+    return ``;
+  },
+
+  async makeCommit(cwd: string, changeList: Array<stageUtils.FileAction>, commitMessage: string) {
   },
 
   async makeReset(cwd: string, changeList: Array<stageUtils.FileAction>) {
