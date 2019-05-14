@@ -25,15 +25,14 @@ async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileActio
   });
 
   for (const {action, path} of modifiedPkgJsonFiles) {
-    const localPath = NodeFS.fromPortablePath(path);
-    const relativePath = posix.relative(cwd, localPath);
+    const relativePath = posix.relative(cwd, path);
 
     if (action === stageUtils.ActionType.MODIFY) {
       const commitHash = await getLastCommitHash(cwd)
       const {stdout: prevSource} = await execUtils.execvp(`git`, [`show`, `${commitHash}:${relativePath}`], {cwd, strict: true});
 
       const prevManifest = await Manifest.fromText(prevSource);
-      const currManifest = await Manifest.fromFile(localPath);
+      const currManifest = await Manifest.fromFile(path);
 
       const allCurrDeps: Map<IdentHash, Descriptor> = new Map([...currManifest.dependencies, ...currManifest.devDependencies]);
       const allPrevDeps: Map<IdentHash, Descriptor> = new Map([...prevManifest.dependencies, ...prevManifest.devDependencies]);
@@ -56,7 +55,7 @@ async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileActio
       }
     } else if (action === stageUtils.ActionType.CREATE) {
       // New package.json
-      const manifest = await Manifest.fromFile(localPath)
+      const manifest = await Manifest.fromFile(path)
 
       if (manifest.name) {
         actions.push([stageUtils.ActionType.CREATE, structUtils.stringifyIdent(manifest.name)])
