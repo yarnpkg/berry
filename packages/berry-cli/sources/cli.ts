@@ -1,5 +1,5 @@
 import {Configuration}                                          from '@berry/core';
-import {xfs, NodeFS, ppath, PortablePath}           from '@berry/fslib';
+import {xfs, NodeFS, ppath, PortablePath}                       from '@berry/fslib';
 import {execFileSync}                                           from 'child_process';
 import {Clipanion}                                              from 'clipanion';
 import * as yup                                                 from 'yup';

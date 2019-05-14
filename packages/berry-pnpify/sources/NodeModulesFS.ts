@@ -1,12 +1,12 @@
-import {CreateReadStreamOptions, CreateWriteStreamOptions}   from '@berry/fslib';
-import {NodeFS, PosixFS, FakeFS, WriteFileOptions}           from '@berry/fslib';
-import {NativePath, Path, npath}                   from '@berry/fslib';
+import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@berry/fslib';
+import {NodeFS, PosixFS, FakeFS, WriteFileOptions}         from '@berry/fslib';
+import {NativePath, Path, npath}                           from '@berry/fslib';
 
-import fs                                                    from 'fs';
+import fs                                                  from 'fs';
 
-import {NodePathResolver, ResolvedPath}                      from './NodePathResolver';
-import {PnPApiLoader}                                        from './PnPApiLoader';
-import {PnPApiLocator}                                       from './PnPApiLocator';
+import {NodePathResolver, ResolvedPath}                    from './NodePathResolver';
+import {PnPApiLoader}                                      from './PnPApiLoader';
+import {PnPApiLocator}                                     from './PnPApiLocator';
 
 export type NodeModulesFSOptions = {
   baseFs?: FakeFS<NativePath>

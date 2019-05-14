@@ -1,10 +1,10 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions}                                  from '@berry/core';
-import {Locator}                                                                     from '@berry/core';
-import {structUtils}                                                                 from '@berry/core';
-import {JailFS, NodeFS, ppath, PortablePath}                             from '@berry/fslib';
-import querystring                                                                   from 'querystring';
+import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
+import {Locator}                                    from '@berry/core';
+import {structUtils}                                from '@berry/core';
+import {JailFS, NodeFS, ppath, PortablePath}        from '@berry/fslib';
+import querystring                                  from 'querystring';
 
-import {LINK_PROTOCOL}                                                               from './constants';
+import {LINK_PROTOCOL}                              from './constants';
 
 export class LinkFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {

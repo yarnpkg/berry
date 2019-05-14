@@ -1,12 +1,13 @@
-import {FakeFS, LazyFS, NodeFS, ZipFS, xfs, PortablePath, ppath, Filename, toFilename} from '@berry/fslib';
-import {lock, unlock}                                                        from 'lockfile';
-import {promisify}                                                           from 'util';
+import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename} from '@berry/fslib';
+import {xfs, ppath, toFilename}                                from '@berry/fslib';
+import {lock, unlock}                                          from 'lockfile';
+import {promisify}                                             from 'util';
 
-import {Configuration}                                                       from './Configuration';
-import {MessageName, ReportError}                                            from './Report';
-import * as hashUtils                                                        from './hashUtils';
-import * as structUtils                                                      from './structUtils';
-import {LocatorHash, Locator}                                                from './types';
+import {Configuration}                                         from './Configuration';
+import {MessageName, ReportError}                              from './Report';
+import * as hashUtils                                          from './hashUtils';
+import * as structUtils                                        from './structUtils';
+import {LocatorHash, Locator}                                  from './types';
 
 const lockP = promisify(lock);
 const unlockP = promisify(unlock);

@@ -1,8 +1,8 @@
-import {NativePath, Filename, toFilename}                 from '@berry/fslib';
-import {PnpApi, PackageInformation} from '@berry/pnp';
+import {NativePath, Filename, toFilename} from '@berry/fslib';
+import {PnpApi, PackageInformation}       from '@berry/pnp';
 
-import {PnPApiLoader}               from './PnPApiLoader';
-import {PnPApiLocator}              from './PnPApiLocator';
+import {PnPApiLoader}                     from './PnPApiLoader';
+import {PnPApiLocator}                    from './PnPApiLocator';
 
 /**
  * Node path resolver options

@@ -2,7 +2,7 @@ import fs, {Stats}                                         from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}              from './FakeFS';
-import {PortablePath, NativePath, Filename, toFilename, Path}                          from './path';
+import {PortablePath, NativePath, Filename, Path}          from './path';
 
 const WINDOWS_PATH_REGEXP = /^[a-zA-Z]:.*$/;
 const PORTABLE_PATH_REGEXP = /^\/[a-zA-Z]:.*$/;

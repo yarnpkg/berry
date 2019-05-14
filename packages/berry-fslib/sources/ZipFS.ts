@@ -6,7 +6,7 @@ import {isDate}                                                                f
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
 import {FakeFS, WriteFileOptions}                                              from './FakeFS';
 import {NodeFS}                                                                from './NodeFS';
-import {PortablePath, ppath, Filename}                                       from './path';
+import {PortablePath, ppath, Filename}                                         from './path';
 
 const S_IFMT = 0o170000;
 

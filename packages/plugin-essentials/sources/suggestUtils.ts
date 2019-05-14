@@ -1,7 +1,7 @@
 import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace} from '@berry/core';
 import {structUtils}                                                                                  from '@berry/core';
+import {ppath, PortablePath}                                                                          from '@berry/fslib';
 import semver                                                                                         from 'semver';
-import { ppath, PortablePath } from '@berry/fslib';
 
 export type Suggestion = {
   descriptor: Descriptor,
