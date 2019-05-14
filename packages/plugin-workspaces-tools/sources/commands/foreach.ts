@@ -44,7 +44,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const report = await StreamReport.start({configuration, stdout}, async report => {
           await project.resolveEverything({lockfileOnly: true, cache, report});
 
-          let workspaces = command.toLocaleLowerCase() === `run`
+          let workspaces = command.toLowerCase() === `run`
             ? project.workspaces.filter(workspace => workspace.manifest.scripts.has(args[0]))
             : project.workspaces;
 
