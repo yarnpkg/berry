@@ -1,7 +1,7 @@
 const {NodeFS} = require(`@berry/fslib`);
 const {
   exec: {execFile},
-  fs: {writeFile},
+  fs: {writeFile, mkdirp},
 } = require('pkg-tests-core');
 
 describe(`Commands`, () => {
@@ -65,15 +65,40 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should commit with the right message`,
+      `it should commit with right messages`,
       makeTemporaryEnv({
+        name: `my-commit-package`,
         dependencies: {
-          [`no-deps`]: `1.0.0`,
+          [`deps1`]: `1.0.0`,
+          [`deps2`]: `2.0.0`
         },
       }, async ({path, run, source}) => {
-
         await execFile(`git`, [`init`], {cwd: path});
-        await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({});
+        await writeFile(`${path}/.yarnrc`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-stage.js`))}\n`);
+
+        await mkdirp(`${path}/new-package`);
+        await run(`${path}/new-package`, `init`);
+
+        await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({
+          stdout: `Creates new-package, Creates my-commit-package\n`
+        });
+
+        await execFile(`git`, [`add`, `.`], {cwd: path});
+        await execFile(`git`, [`commit`, `-m`, `'did this'`], {cwd: path});
+        await writeFile(`${path}/package.json`, `${
+          JSON.stringify({
+            name: `my-commit-package`,
+            dependencies: {
+              [`deps1`]: `2.0.0`,
+              [`deps3`]: `2.0.0`
+            },
+          })
+        }\n`);
+        await execFile(`rm`, [`${path}/new-package/package.json`], {cwd: path})
+
+        await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({
+          stdout: `Adds deps3, Removes deps2, Updates deps1 to 2.0.0, Deletes new-package\n`
+        });
       }),
     );
   });

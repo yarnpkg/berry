@@ -75,7 +75,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     if (dryRun) {
       if (commit) {
         const commitMessages = await driver.makeCommit(root, changeList, dryRun);
-        stdout.write(commitMessages);
+        stdout.write(`${commitMessages}\n`);
       } else {
         for (const file of changeList) {
           stdout.write(`${NodeFS.fromPortablePath(file.path)}\n`);

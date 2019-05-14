@@ -7,6 +7,10 @@ import * as stageUtils from '../stageUtils';
 const MESSAGE_MARKER = `Commit generated via \`yarn stage\``;
 const COMMIT_DEPTH = 11;
 
+async function getLastCommitHash(cwd: string) {
+  const {stdout: lastCommitStdout} = await execUtils.execvp(`git`, [`log`, `-1`, `--pretty=format:%H`], {cwd, strict: true});
+  return lastCommitStdout;
+}
 
 async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileAction>) {
   const updates = new Map();
@@ -15,12 +19,14 @@ async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileActio
   const createdPackages = [];
   const removedPackages = [];
 
-  for(const change of changes) {
+  const jsonChanges = changes.filter(change => posix.basename(change.path) === "package.json");
+  for(const change of jsonChanges) {
     const { action, path } = change;
     const localPath = NodeFS.fromPortablePath(path);
     const relativePath = posix.relative(cwd, localPath);
     if (action === stageUtils.ActionType.MODIFY) {
-      const {stdout: prevSource} = await execUtils.execvp(`git`, [`show`, `HEAD~1:${relativePath}`], {cwd, strict: true});
+      const commitHash = await getLastCommitHash(cwd)
+      const {stdout: prevSource} = await execUtils.execvp(`git`, [`show`, `${commitHash}:${relativePath}`], {cwd, strict: true});
       const prevManifest = await Manifest.fromText(prevSource);
       const currManifest = await Manifest.fromFile(localPath);
       const allCurrDeps: Map<IdentHash, Descriptor> = new Map([...currManifest.dependencies, ...currManifest.devDependencies]);
@@ -31,7 +37,7 @@ async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileActio
         const currDep = allCurrDeps.get(indentHash);
         if (currDep) {
           if(currDep.range !== value.range) {
-            const key = `Updates ${pkgName} to ${value.range}`;
+            const key = `Updates ${pkgName} to ${currDep.range}`;
             setKeyValue(updates, key);
           }
         }
@@ -59,7 +65,8 @@ async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileActio
     }
     else {
       //remove package.json
-      const {stdout: prevSource} = await execUtils.execvp(`git`, [`show`, `HEAD~1:${relativePath}`], {cwd, strict: true});
+      const commitHash = await getLastCommitHash(cwd)
+      const {stdout: prevSource} = await execUtils.execvp(`git`, [`show`, `${commitHash}:${relativePath}`], {cwd, strict: true});
       const manifest = await Manifest.fromText(prevSource);
       if (manifest.name){
         const packageName = structUtils.stringifyIdent(manifest.name);
@@ -68,7 +75,7 @@ async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileActio
     }
   }
 
-  if(adds.size || removes.size || updates.size || createdPackages.length || removedPackages) {
+  if(adds.size || removes.size || updates.size || createdPackages.length || removedPackages.length) {
     const commitMessages: string[] = [
       ...genPackagesCommitMessage(adds),
       ...genPackagesCommitMessage(removes),
@@ -130,7 +137,7 @@ export const Driver = {
           action: stageUtils.ActionType.ADD,
           path
         }));
-      } else if (line.startsWith(` A `)) {
+      } else if (line.startsWith(` A `) || line.startsWith(`?? `)) {
         return [{
           action: stageUtils.ActionType.ADD,
           path
