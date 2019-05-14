@@ -51,9 +51,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
               let isRunnable = true;
 
-              // If --withDependencies is set check if any of the dependencies are part of
-              // the workspaces that still need to be processed
-              if (withDependencies) {
+              // By default we do topological, however we don't care of the order when running
+              // in --parallel unless also given the --with-dependencies flag
+              if (!parallel || withDependencies) {
                 for (const dep of workspace.dependencies.keys()) {
                   if (needsProcessing.has(dep))
                     isRunnable = false;
