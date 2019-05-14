@@ -1,11 +1,11 @@
-import { Configuration, IdentHash, PluginConfiguration, Project, Workspace } from '@berry/core';
-import { structUtils, Cache, DescriptorHash, StreamReport }                  from '@berry/core';
-import { Writable }                                                          from 'stream';
-import { cpus }                                                              from 'os';
+import { Configuration, LocatorHash, PluginConfiguration, Project, Workspace } from '@berry/core';
+import { structUtils, Cache, DescriptorHash, StreamReport }                    from '@berry/core';
+import { PassThrough, Writable }                                               from 'stream';
+import { cpus }                                                                from 'os';
+import chalk                                                                   from 'chalk';
 // @ts-ignore
-import pLimit                                                                from 'p-limit';
+import pLimit                                                                  from 'p-limit';
 
-import * as workspaceUtils                                                   from '../workspaceUtils';
 
 type ForeachOptions = {
   args: Array<string>;
@@ -35,7 +35,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const { project } = await Project.find(configuration, cwd);
         const cache = await Cache.find(configuration);
 
-        const needsProcessing = new Map<IdentHash, Workspace>();
+        const needsProcessing = new Map<LocatorHash, Workspace>();
         const processing = new Set<DescriptorHash>();
         const concurrency = parallel ? Math.max(1, cpus().length / 2) : 1;
         const limit = pLimit(concurrency);
@@ -57,9 +57,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           }
 
           for (const workspace of workspaces) {
-            const ident = structUtils.convertToIdent(workspace.locator);
-
-            needsProcessing.set(ident.identHash, workspace);
+            needsProcessing.set(workspace.locator.locatorHash, workspace);
           }
 
           while (needsProcessing.size > 0) {
@@ -76,8 +74,10 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
               // By default we do topological, however we don't care of the order when running
               // in --parallel unless also given the --with-dependencies flag
               if (!parallel || withDependencies) {
-                for (const dep of workspace.dependencies.keys()) {
-                  if (needsProcessing.has(dep))
+                for (const [identHash, descriptor] of workspace.dependencies) {
+                  const depLocator = structUtils.convertDescriptorToLocator(descriptor);
+
+                  if (needsProcessing.has(depLocator.locatorHash))
                     isRunnable = false;
                 }
               }
@@ -100,29 +100,88 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           }
 
           async function runCommand(workspace: Workspace) {
-            const prefix = workspaceUtils.getPrefix({ configuration, workspace, prefixed, commandCount});
-            const stdout = workspaceUtils.createStream({prefix, report, interlaced});
-            const stderr = workspaceUtils.createStream({prefix, report, interlaced});
+            const prefix = getPrefix({configuration, workspace, prefixed, commandCount});
+            const stdout = createStream({prefix, report, interlaced});
+            const stderr = createStream({prefix, report, interlaced});
 
             try {
               await clipanion.run(null, args, {
                 ...env,
                 cwd: workspace.cwd,
-                stdout: stdout.stream,
-                stderr: stderr.stream,
+                stdout: stdout,
+                stderr: stderr,
               });
             } finally {
-              stdout.stream.end();
-              stderr.stream.end();
+              stdout.end();
+              stderr.end();
             }
 
-            // We wait so that report doesn't log the Finished message until its
-            // really done.
-            await stdout.promise;
-            await stderr.promise;
+            // If we don't wait for the `end` event, there is a race condition
+            // between this function (`runCommand`) completing and report.exitCode()
+            // being called which will trigger StreamReport finalize and we would get
+            // something like `➤ YN0000: Done in Ns` before all the commands complete.
+            await Promise.all([
+              new Promise(resolve => stdout.on(`end`, resolve)),
+              new Promise(resolve => stderr.on(`end`, resolve)),
+            ]);
           }
         });
 
         return report.exitCode();
       }
     );
+
+
+function createStream({prefix, report, interlaced}: {prefix: string | null, report: StreamReport, interlaced: boolean}) {
+  if (interlaced) {
+    const stream = report.createStreamReporter(prefix);
+
+    // We remove all `end` listeners because createStreamReporter adds a line break
+    stream.removeAllListeners('end');
+
+    return stream;
+  }
+
+  return createBufferStream(prefix, report);
+}
+
+function createBufferStream(prefix: string | null, report: StreamReport) {
+  const stream = new PassThrough();
+  const chunks: any[] = [];
+  const streamReporter = report.createStreamReporter(prefix);
+
+  stream.on('data', chunk => {
+    chunks.push(chunk);
+  });
+
+  stream.on('end', () => {
+    streamReporter.write(Buffer.concat(chunks));
+  });
+
+  return stream;
+}
+
+type GetPrefixOptions = {
+  configuration: Configuration;
+  workspace: Workspace;
+  commandCount: number;
+  prefixed: boolean;
+};
+
+function getPrefix({configuration, workspace, commandCount, prefixed}: GetPrefixOptions) {
+  if (!prefixed)
+    return null;
+
+  const colorsEnabled = configuration.get(`enableColors`);
+  const ident = structUtils.convertToIdent(workspace.locator);
+  const name = structUtils.stringifyIdent(ident);
+  let prefix = `[${name}]:`;
+
+  if (!colorsEnabled)
+    return prefix;
+
+  const colors = [`cyan`, `green`, `yellow`, `blue`, `magenta`];
+  const colorName = colors[commandCount % colors.length];
+
+  return (chalk as any)[colorName](prefix);
+}
