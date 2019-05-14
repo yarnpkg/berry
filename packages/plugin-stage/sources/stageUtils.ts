@@ -116,7 +116,7 @@ const VERBS = new Map([
   // File actions
   [ActionType.ADD, `add`],
   [ActionType.REMOVE, `remove`],
-  [ActionType.MODIFY, `update`]
+  [ActionType.MODIFY, `update`],
 ]);
 
 export function genCommitMessage(consensus: Consensus, actions: Array<[ActionType, string]>) {
@@ -148,11 +148,10 @@ export function genCommitMessage(consensus: Consensus, actions: Array<[ActionTyp
 
     let description = subjects.shift()!;
 
-    if (subjects.length === 1) {
+    if (subjects.length === 1)
       description += ` (and one other)`;
-    } else if (subjects.length > 1) {
+    else if (subjects.length > 1)
       description += ` (and ${subjects.length} others)`;
-    }
 
     all.push(`${verb} ${description}`);
   }
