@@ -1,12 +1,11 @@
-import {FakeFS, NodeFS, PortablePath}                                   from '@berry/fslib';
-import {Resolution, parseResolution, stringifyResolution}               from '@berry/parsers';
-import {posix}                                                          from 'path';
-import semver                                                           from 'semver';
+import {FakeFS, NodeFS, PortablePath, ppath, toFilename}  from '@berry/fslib';
+import {Resolution, parseResolution, stringifyResolution} from '@berry/parsers';
+import semver                                             from 'semver';
 
-import * as miscUtils                                                   from './miscUtils';
-import * as structUtils                                                 from './structUtils';
-import {IdentHash}                                                      from './types';
-import {Ident, Descriptor}                                              from './types';
+import * as miscUtils                                     from './miscUtils';
+import * as structUtils                                   from './structUtils';
+import {IdentHash}                                        from './types';
+import {Ident, Descriptor}                                from './types';
 
 export interface WorkspaceDefinition {
   pattern: string;
@@ -23,8 +22,8 @@ export interface PeerDependencyMeta {
 
 export interface PublishConfig {
   access?: string;
-  main?: string;
-  module?: string;
+  main?: PortablePath;
+  module?: PortablePath;
 };
 
 export class Manifest {
@@ -34,12 +33,12 @@ export class Manifest {
   public ["private"]: boolean = false;
   public license: string | null = null;
 
-  public main: string | null = null;
-  public module: string | null = null;
+  public main: PortablePath | null = null;
+  public module: PortablePath | null = null;
 
   public languageName: string | null = null;
 
-  public bin: Map<string, string> = new Map();
+  public bin: Map<string, PortablePath> = new Map();
   public scripts: Map<string, string> = new Map();
 
   public dependencies: Map<IdentHash, Descriptor> = new Map();
@@ -53,13 +52,13 @@ export class Manifest {
 
   public resolutions: Array<{pattern: Resolution, reference: string}> = [];
 
-  public files: Set<string> | null = null;
+  public files: Set<PortablePath> | null = null;
   public publishConfig: PublishConfig | null = null;
 
   public raw: object | null = null;
 
   static async find(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
-    return await Manifest.fromFile(posix.join(path, `package.json`) as PortablePath, {baseFs});
+    return await Manifest.fromFile(ppath.join(path, toFilename(`package.json`)), {baseFs});
   }
 
   static async fromFile(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
@@ -123,7 +122,7 @@ export class Manifest {
           continue;
         }
 
-        this.bin.set(key, value);
+        this.bin.set(key, value as PortablePath);
       }
     }
 
@@ -268,7 +267,7 @@ export class Manifest {
           continue;
         }
 
-        this.files.add(filename);
+        this.files.add(filename as PortablePath);
       }
     }
 

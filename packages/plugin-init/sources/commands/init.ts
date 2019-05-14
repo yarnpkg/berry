@@ -1,9 +1,8 @@
 import {Configuration, Manifest, PluginConfiguration} from '@berry/core';
 import {structUtils}                                  from '@berry/core';
-import {xfs, PortablePath, ppath, toFilename}                                          from '@berry/fslib';
+import {xfs, PortablePath, ppath, toFilename}         from '@berry/fslib';
 import {updateAndSave}                                from '@berry/json-proxy';
 import {UsageError}                                   from 'clipanion';
-import {posix}                                        from 'path';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -43,7 +42,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     const manifest = new Manifest();
-    manifest.name = structUtils.makeIdent(configuration.get(`initScope`), posix.basename(cwd));
+    manifest.name = structUtils.makeIdent(configuration.get(`initScope`), ppath.basename(cwd));
     manifest.version = configuration.get(`initVersion`);
     manifest.private = notPublic;
     manifest.license = configuration.get(`initLicense`);

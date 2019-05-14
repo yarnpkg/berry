@@ -1,7 +1,7 @@
 import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace} from '@berry/core';
 import {structUtils}                                                                                  from '@berry/core';
-import {posix}                                                                                        from 'path';
 import semver                                                                                         from 'semver';
+import { ppath, PortablePath } from '@berry/fslib';
 
 export type Suggestion = {
   descriptor: Descriptor,
@@ -86,9 +86,9 @@ export async function findProjectDescriptors(ident: Ident, {project, target}: {p
   return matches;
 }
 
-export async function extractDescriptorFromPath(path: string, {cache, cwd, workspace}: {cache: Cache, cwd: string, workspace: Workspace}) {
-  if (!posix.isAbsolute(path))
-    path = posix.resolve(cwd, path);
+export async function extractDescriptorFromPath(path: PortablePath, {cache, cwd, workspace}: {cache: Cache, cwd: PortablePath, workspace: Workspace}) {
+  if (!ppath.isAbsolute(path))
+    path = ppath.resolve(cwd, path);
 
   const project = workspace.project;
 

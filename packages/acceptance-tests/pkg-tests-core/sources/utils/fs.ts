@@ -1,6 +1,5 @@
 import {Gzip}          from 'zlib';
-import {posix}         from 'path';
-import {xfs, NodeFS, PortablePath, ppath}   from '@berry/fslib';
+import {xfs, NodeFS, PortablePath, ppath, Filename}   from '@berry/fslib';
 
 const klaw = require('klaw');
 const tarFs = require('tar-fs');
@@ -31,7 +30,7 @@ exports.walk = function walk(
           return true;
         }
 
-        const relativePath = posix.relative(source, itemPath);
+        const relativePath = ppath.relative(source, itemPath);
 
         if (miscUtils.filePatternMatch(relativePath, filter)) {
           return true;
@@ -43,7 +42,7 @@ exports.walk = function walk(
 
     walker.on('data', ({path: itemPath}) => {
       itemPath = NodeFS.toPortablePath(itemPath);
-      const relativePath = posix.relative(source, itemPath);
+      const relativePath = ppath.relative(source, itemPath);
 
       if (!filter || miscUtils.filePatternMatch(relativePath, filter)) {
         paths.push(relative ? relativePath : itemPath);
@@ -78,13 +77,13 @@ exports.packToStream = function packToStream(
       header.name = NodeFS.toPortablePath(header.name);
 
       if (true) {
-        header.name = posix.resolve('/', header.name);
-        header.name = posix.relative('/', header.name);
+        header.name = ppath.resolve(PortablePath.root, header.name);
+        header.name = ppath.relative(PortablePath.root, header.name);
       }
 
       if (virtualPath) {
-        header.name = posix.resolve('/', virtualPath, header.name);
-        header.name = posix.relative('/', header.name);
+        header.name = ppath.resolve(PortablePath.root, virtualPath, header.name);
+        header.name = ppath.relative(PortablePath.root, header.name);
       }
 
       return header;
@@ -168,9 +167,9 @@ exports.createTemporaryFolder = function createTemporaryFolder(name?: Filename):
   });
 };
 
-exports.createTemporaryFile = async function createTemporaryFile(filePath: string): Promise<PortablePath> {
+exports.createTemporaryFile = async function createTemporaryFile(filePath: PortablePath): Promise<PortablePath> {
   if (filePath) {
-    if (posix.normalize(filePath).match(/^(\.\.)?\//)) {
+    if (ppath.normalize(filePath).match(/^(\.\.)?\//)) {
       throw new Error('A temporary file path must be a forward path');
     }
 

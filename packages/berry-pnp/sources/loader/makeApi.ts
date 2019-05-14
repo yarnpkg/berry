@@ -1,6 +1,6 @@
-import {FakeFS, NodeFS, PortablePath, NativePath, ppath, toFilename}                                           from '@berry/fslib';
+import {FakeFS, NodeFS, PortablePath, NativePath, Path}           from '@berry/fslib';
+import {ppath, toFilename}                                        from '@berry/fslib';
 import Module                                                     from 'module';
-import path, {posix}                                              from 'path';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types';
 
@@ -275,13 +275,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Normalize path to posix format.
    */
 
-  function normalizePath(p: string) {
-    p = posix.normalize(p);
-
-    if (process.platform === 'win32')
-      p = p.replace(backwardSlashRegExp, '/');
-
-    return p;
+  function normalizePath(p: Path) {
+    return NodeFS.toPortablePath(p);
   }
 
   /**
@@ -338,14 +333,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Finds the package locator that owns the specified path. If none is found, returns null instead.
    */
 
-  function findPackageLocator(location: string): PackageLocator | null {
-    let relativeLocation = normalizePath(posix.relative(runtimeState.basePath, location));
+  function findPackageLocator(location: PortablePath): PackageLocator | null {
+    let relativeLocation = normalizePath(ppath.relative(runtimeState.basePath, location));
 
     if (!relativeLocation.match(isStrictRegExp))
-      relativeLocation = `./${relativeLocation}`;
+      relativeLocation = `./${relativeLocation}` as PortablePath;
 
     if (location.match(isDirRegExp) && !relativeLocation.endsWith(`/`))
-      relativeLocation = `${relativeLocation}/`;
+      relativeLocation = `${relativeLocation}/` as PortablePath;
 
     let from = 0;
 
@@ -439,7 +434,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     const dependencyNameMatch = request.match(pathRegExp);
 
     if (!dependencyNameMatch) {
-      if (posix.isAbsolute(request)) {
+      if (ppath.isAbsolute(request)) {
         unqualifiedPath = ppath.normalize(request);
       } else {
         if (!issuer) {
@@ -632,9 +627,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     },
 
     findPackageLocator: (path: string) => {
-      path = NodeFS.toPortablePath(path);
-
-      return findPackageLocator(path);
+      return findPackageLocator(NodeFS.toPortablePath(path));
     },
 
     resolveToUnqualified: maybeLog(`resolveToUnqualified`, (request: NativePath, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => {

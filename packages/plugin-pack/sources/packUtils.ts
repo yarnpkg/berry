@@ -1,7 +1,6 @@
 import {MessageName, Report, Workspace, scriptUtils}                                  from '@berry/core';
 import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename}                         from '@berry/fslib';
 import mm                                                                             from 'micromatch';
-import {posix}                                                                        from 'path';
 import {PassThrough}                                                                  from 'stream';
 import tar                                                                            from 'tar-stream';
 import {createGzip}                                                                   from 'zlib';
@@ -147,17 +146,17 @@ export async function genPackList(workspace: Workspace) {
 
   globalList.reject.push(configuration.get(`rcFilename`));
 
-  const maybeRejectPath = (path: string | null) => {
+  const maybeRejectPath = (path: PortablePath | null) => {
     if (path === null || !path.startsWith(`${workspace.cwd}/`))
       return;
 
-    const workspaceRelativePath = posix.relative(workspace.cwd, path);
-    const workspaceAbsolutePath = posix.resolve(`/`, workspaceRelativePath);
+    const workspaceRelativePath = ppath.relative(workspace.cwd, path);
+    const workspaceAbsolutePath = ppath.resolve(PortablePath.root, workspaceRelativePath);
 
     globalList.reject.push(workspaceAbsolutePath);
   };
 
-  maybeRejectPath(posix.resolve(project.cwd, configuration.get(`lockfileFilename`)));
+  maybeRejectPath(ppath.resolve(project.cwd, configuration.get(`lockfileFilename`)));
 
   maybeRejectPath(configuration.get(`bstatePath`));
   maybeRejectPath(configuration.get(`cacheFolder`));
@@ -167,13 +166,13 @@ export async function genPackList(workspace: Workspace) {
 
   await configuration.triggerHook((hooks: Hooks) => {
     return hooks.populateYarnPaths;
-  }, project, (path: string | null) => {
+  }, project, (path: PortablePath | null) => {
     maybeRejectPath(path);
   });
 
   // All child workspaces are ignored
   for (const otherWorkspace of project.workspaces) {
-    const rel = posix.relative(workspace.cwd, otherWorkspace.cwd);
+    const rel = ppath.relative(workspace.cwd, otherWorkspace.cwd);
     if (rel !== `` && !rel.match(/^(\.\.)?\//)) {
       globalList.reject.push(`/${rel}`);
     }
@@ -185,20 +184,20 @@ export async function genPackList(workspace: Workspace) {
   };
 
   if (workspace.manifest.publishConfig && workspace.manifest.publishConfig.main)
-    ignoreList.accept.push(posix.resolve(`/`, workspace.manifest.publishConfig.main));
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.publishConfig.main));
   else if (workspace.manifest.main)
-    ignoreList.accept.push(posix.resolve(`/`, workspace.manifest.main));
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.main));
 
   if (workspace.manifest.publishConfig && workspace.manifest.publishConfig.module)
-    ignoreList.accept.push(posix.resolve(`/`, workspace.manifest.publishConfig.module));
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.publishConfig.module));
   else if (workspace.manifest.module)
-    ignoreList.accept.push(posix.resolve(`/`, workspace.manifest.module));
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.module));
 
   if (workspace.manifest.files !== null) {
     ignoreList.reject.push(`*`);
 
     for (const pattern of workspace.manifest.files) {
-      addIgnorePattern(ignoreList.accept, pattern, {cwd: `/`});
+      addIgnorePattern(ignoreList.accept, pattern, {cwd: PortablePath.root});
     }
   }
 
@@ -267,14 +266,14 @@ async function loadIgnoreList(fs: FakeFS<PortablePath>, cwd: PortablePath, filen
   return ignoreList;
 }
 
-function normalizePattern(pattern: string, {cwd}: {cwd: string}) {
+function normalizePattern(pattern: string, {cwd}: {cwd: PortablePath}) {
   const negated = pattern[0] === `!`;
 
   if (negated)
     pattern = pattern.slice(1);
 
   if (pattern.match(/\.{0,1}\//))
-    pattern = posix.resolve(cwd, pattern);
+    pattern = ppath.resolve(cwd, pattern as PortablePath);
 
   if (negated)
     pattern = `!${pattern}`;
@@ -282,7 +281,7 @@ function normalizePattern(pattern: string, {cwd}: {cwd: string}) {
   return pattern;
 };
 
-function addIgnorePattern(target: Array<string>, pattern: string, {cwd}: {cwd: string}) {
+function addIgnorePattern(target: Array<string>, pattern: string, {cwd}: {cwd: PortablePath}) {
   let trimed = pattern.trim();
 
   if (trimed === `` || trimed[0] === `#`)

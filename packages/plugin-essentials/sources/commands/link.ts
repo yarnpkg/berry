@@ -1,8 +1,7 @@
 import {WorkspaceRequiredError}                                                        from '@berry/cli';
 import {Cache, Configuration, PluginConfiguration, Project, StreamReport, structUtils} from '@berry/core';
-import {NodeFS, PortablePath, ppath}                                                                        from '@berry/fslib';
+import {NodeFS, PortablePath, ppath}                                                   from '@berry/fslib';
 import {UsageError}                                                                    from 'clipanion';
-import {posix}                                                                         from 'path';
 import {Writable}                                                                      from 'stream';
 
 // eslint-disable-next-line arca/no-default-export
@@ -69,7 +68,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     for (const workspace of linkedWorkspaces) {
       const fullName = structUtils.stringifyIdent(workspace.locator);
       const target = relative
-        ? posix.relative(project.cwd, workspace.cwd)
+        ? ppath.relative(project.cwd, workspace.cwd)
         : workspace.cwd;
 
       topLevelWorkspace.manifest.resolutions.push({

@@ -1,6 +1,5 @@
-import {FakeFS, LazyFS, NodeFS, ZipFS, xfs, PortablePath, ppath} from '@berry/fslib';
+import {FakeFS, LazyFS, NodeFS, ZipFS, xfs, PortablePath, ppath, Filename, toFilename} from '@berry/fslib';
 import {lock, unlock}                                                        from 'lockfile';
-import {posix}                                                               from 'path';
 import {promisify}                                                           from 'util';
 
 import {Configuration}                                                       from './Configuration';
@@ -35,17 +34,17 @@ export class Cache {
   }
 
   getLocatorFilename(locator: Locator) {
-    return `${structUtils.slugifyLocator(locator)}.zip`;
+    return `${structUtils.slugifyLocator(locator)}.zip` as Filename;
   }
 
   getLocatorPath(locator: Locator) {
-    return posix.resolve(this.cwd, this.getLocatorFilename(locator)) as PortablePath;
+    return ppath.resolve(this.cwd, this.getLocatorFilename(locator));
   }
 
   async setup() {
     await xfs.mkdirpPromise(this.cwd);
 
-    await this.writeFileIntoCache(posix.resolve(this.cwd, `.gitignore`) as PortablePath, async (file: PortablePath) => {
+    await this.writeFileIntoCache(ppath.resolve(this.cwd, toFilename(`.gitignore`)), async (file: PortablePath) => {
       await xfs.writeFilePromise(file, `/.gitignore\n*.lock\n`);
     });
   }

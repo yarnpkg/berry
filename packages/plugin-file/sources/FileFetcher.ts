@@ -2,7 +2,6 @@ import {Fetcher, FetchOptions, MinimalFetchOptions}                             
 import {Locator, MessageName}                                                        from '@berry/core';
 import {miscUtils, structUtils, tgzUtils}                                            from '@berry/core';
 import {NodeFS, PortablePath, ppath}                                     from '@berry/fslib';
-import {posix}                                                                       from 'path';
 import querystring                                                                   from 'querystring';
 
 import {PROTOCOL}                                                                    from './constants';
@@ -18,7 +17,7 @@ export class FileFetcher implements Fetcher {
   getLocalPath(locator: Locator, opts: FetchOptions) {
     const {parentLocator, filePath} = this.parseLocator(locator);
 
-    if (posix.isAbsolute(filePath))
+    if (ppath.isAbsolute(filePath))
       return filePath;
 
     const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
@@ -56,7 +55,7 @@ export class FileFetcher implements Fetcher {
 
     // If the file target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
-    const parentFetch = posix.isAbsolute(filePath)
+    const parentFetch = ppath.isAbsolute(filePath)
       ? {packageFs: new NodeFS(), prefixPath: PortablePath.root, localPath: PortablePath.root}
       : await opts.fetcher.fetch(parentLocator, opts);
 
