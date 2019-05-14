@@ -21,7 +21,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
   .detail(`
     This command will add to your staging area the files belonging to Yarn (typically any modified \`package.json\` and \`.yarnrc\` files, but also linker-generated files, cache data, etc). It will take your ignore list into account, so the cache files won't be added if the cache is ignored in a \`.gitignore\` file (assuming you use Git).
-    
+
     Running \`--reset\` will instead remove them from the staging area (the changes will still be there, but won't be committed until you stage them back).
 
     Since the staging area is a non-existent concept in Mercurial, Yarn will always create a new commit when running this command on Mercurial repositories. You can get this behavior when using Git by using the \`--commit\` flag which will directly create a commit.
@@ -72,16 +72,21 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     ]);
 
     const changeList = await driver.filterChanges(root, yarnPaths, yarnNames);
+    const commitMessage = await driver.genCommitMessage(root, changeList);
 
     if (dryRun) {
-      for (const file of changeList) {
-        stdout.write(`${NodeFS.fromPortablePath(file)}\n`);
+      if (commit) {
+        stdout.write(`${commitMessage}\n`);
+      } else {
+        for (const file of changeList) {
+          stdout.write(`${NodeFS.fromPortablePath(file.path)}\n`);
+        }
       }
     } else {
       if (changeList.length === 0) {
         stdout.write(`No changes found!`);
       } else if (commit) {
-        await driver.makeCommit(root, changeList);
+        await driver.makeCommit(root, changeList, commitMessage);
       } else if (reset) {
         await driver.makeReset(root, changeList);
       }
@@ -109,7 +114,7 @@ async function findDriver(cwd: string) {
  * Given two directories, this function will return the location of the second
  * one in the first one after properly resolving symlinks (kind of like a
  * realpath, except that we only resolve the last component of the original
- * path). 
+ * path).
  *
  * If the second directory isn't in the first one, this function returns null.
  */

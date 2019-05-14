@@ -93,7 +93,7 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
       if (code === 0 || !strict) {
         resolve({code, stdout, stderr});
       } else {
-        reject(new Error(`Child "${fileName}" exited with exit code ${code}`));
+        reject(new Error(`Child "${fileName}" exited with exit code ${code}\n\n${stderr}`));
       }
     });
   });

@@ -69,6 +69,25 @@ export class Manifest {
     return manifest;
   }
 
+  static async fromText(text: string) {
+    const manifest = new Manifest();
+    await manifest.loadFromText(text);
+
+    return manifest;
+  }
+
+  async loadFromText(text: string) {
+    let data;
+    try {
+      data = JSON.parse(text || `{}`);
+    } catch (error) {
+      error.message += ` (when parsing ${text})`;
+      throw error;
+    }
+
+    this.load(data);
+  }
+
   async loadFile(path: string, {baseFs = new NodeFS()}: {baseFs?: FakeFS}) {
     const content = await baseFs.readFilePromise(path, `utf8`);
 

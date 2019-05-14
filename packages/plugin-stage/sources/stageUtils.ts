@@ -1,6 +1,26 @@
 import {xfs}   from '@berry/fslib';
 import {posix} from 'path';
 
+export enum ActionType {
+  CREATE,
+  DELETE,
+
+  ADD,
+  REMOVE,
+  MODIFY,
+};
+
+export type FileAction = {
+  action: ActionType,
+  path: string,
+};
+
+export type Consensus = {
+  useThirdPerson: boolean,
+  useUpperCase: boolean,
+  useComponent: boolean,
+};
+
 export async function findVcsRoot(cwd: string, {marker}: {marker: string}) {
   do {
     if (!xfs.existsSync(`${cwd}/${marker}`)) {
@@ -55,6 +75,9 @@ export function checkConsensus(lines: Array<string>, regex: RegExp) {
   let yes = 0, no = 0;
 
   for (const line of lines) {
+    if (line === `wip`)
+      continue;
+
     if (regex.test(line)) {
       yes += 1;
     } else {
@@ -65,7 +88,7 @@ export function checkConsensus(lines: Array<string>, regex: RegExp) {
   return yes >= no;
 }
 
-export function findConsensus(lines: Array<string>) {
+export function findConsensus(lines: Array<string>): Consensus {
   const useThirdPerson = checkConsensus(lines, /^(\w\(\w+\):\s*)?\w+s/);
   const useUpperCase = checkConsensus(lines, /^(\w\(\w+\):\s*)?[A-Z]/);
   const useComponent = checkConsensus(lines, /^\w\(\w+\):/);
@@ -77,24 +100,62 @@ export function findConsensus(lines: Array<string>) {
   };
 }
 
-export function genCommitMessage(lines: Array<string>) {
-  const {
-    useThirdPerson,
-    useUpperCase,
-    useComponent,
-  } = findConsensus(lines);
-
-  const prefix = useComponent
-    ? `chore(yarn): `
-    : ``;
-
-  const verb = useThirdPerson
-    ? useUpperCase
-      ? `Updates`
-      : `updates`
-    : useUpperCase
-      ? `Update`
-      : `update`;
-
-  return `${prefix}${verb} the project settings`;
+export function getCommitPrefix(consensus: Consensus) {
+  if (consensus.useComponent) {
+    return `chore(yarn): `;
+  } else {
+    return ``;
+  }
 }
+
+const VERBS = new Map([
+  // Package actions
+  [ActionType.CREATE, `create`],
+  [ActionType.DELETE, `delete`],
+
+  // File actions
+  [ActionType.ADD, `add`],
+  [ActionType.REMOVE, `remove`],
+  [ActionType.MODIFY, `update`],
+]);
+
+export function genCommitMessage(consensus: Consensus, actions: Array<[ActionType, string]>) {
+  const prefix = getCommitPrefix(consensus);
+  const all = [];
+
+  const sorted = actions.slice().sort((a, b) => {
+    return a[0] - b[0];
+  });
+
+  while (sorted.length > 0) {
+    const [type, what] = sorted.shift()!;
+
+    let verb = VERBS.get(type)!;
+
+    if (consensus.useUpperCase && all.length === 0)
+      verb = `${verb[0].toUpperCase()}${verb.slice(1)}`;
+    if (consensus.useThirdPerson)
+      verb += `s`;
+
+    let subjects = [what];
+
+    while (sorted.length > 0 && sorted[0][0] === type) {
+      const [, what] = sorted.shift()!;
+      subjects.push(what);
+    }
+
+    subjects.sort();
+
+    let description = subjects.shift()!;
+
+    if (subjects.length === 1)
+      description += ` (and one other)`;
+    else if (subjects.length > 1)
+      description += ` (and ${subjects.length} others)`;
+
+    all.push(`${verb} ${description}`);
+  }
+
+  return `${prefix}${all.join(`, `)}`;
+}
+
