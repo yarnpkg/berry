@@ -1,6 +1,6 @@
 import {Configuration, PluginConfiguration, Project, StreamReport, MessageName} from '@berry/core';
 import {httpUtils}                                                              from '@berry/core';
-import {xfs, PortablePath, portablePathUtils}                                                                    from '@berry/fslib';
+import {xfs, PortablePath, ppath}                                                                    from '@berry/fslib';
 import semver, {SemVer}                                                         from 'semver';
 import {Readable, Writable}                                                     from 'stream';
 import * as yup                                                                 from 'yup';
@@ -127,10 +127,10 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const releaseBuffer = await httpUtils.get(bundleUrl, {configuration});
 
         const relativePath = `.yarn/releases/yarn-${bundleVersion}.js` as PortablePath;
-        const absolutePath = portablePathUtils.resolve(project.cwd, relativePath);
+        const absolutePath = ppath.resolve(project.cwd, relativePath);
 
         report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${configuration.format(relativePath, `magenta`)}`);
-        await xfs.mkdirpPromise(portablePathUtils.dirname(absolutePath));
+        await xfs.mkdirpPromise(ppath.dirname(absolutePath));
         await xfs.writeFilePromise(absolutePath, releaseBuffer);
         await xfs.chmodPromise(absolutePath, 0o755);
 

@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions}                                  from '@berry/core';
 import {Locator}                                                                     from '@berry/core';
 import {structUtils}                                                                 from '@berry/core';
-import {JailFS, NodeFS, portablePathUtils, PortablePath}                             from '@berry/fslib';
+import {JailFS, NodeFS, ppath, PortablePath}                             from '@berry/fslib';
 import querystring                                                                   from 'querystring';
 
 import {RAW_LINK_PROTOCOL}                                                           from './constants';
@@ -17,13 +17,13 @@ export class RawLinkFetcher implements Fetcher {
   getLocalPath(locator: Locator, opts: FetchOptions) {
     const {parentLocator, linkPath} = this.parseLocator(locator);
 
-    if (portablePathUtils.isAbsolute(linkPath))
+    if (ppath.isAbsolute(linkPath))
       return linkPath;
 
     const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
 
     if (parentLocalPath !== null) {
-      return portablePathUtils.resolve(parentLocalPath, linkPath);
+      return ppath.resolve(parentLocalPath, linkPath);
     } else {
       return null;
     }
@@ -34,7 +34,7 @@ export class RawLinkFetcher implements Fetcher {
 
     // If the link target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
-    const parentFetch = portablePathUtils.isAbsolute(linkPath)
+    const parentFetch = ppath.isAbsolute(linkPath)
       ? {packageFs: new NodeFS(), prefixPath: PortablePath.root, localPath: PortablePath.root}
       : await opts.fetcher.fetch(parentLocator, opts);
 
@@ -49,7 +49,7 @@ export class RawLinkFetcher implements Fetcher {
       parentFetch.releaseFs();
 
     const sourceFs = effectiveParentFetch.packageFs;
-    const sourcePath = portablePathUtils.resolve(effectiveParentFetch.prefixPath, linkPath);
+    const sourcePath = ppath.resolve(effectiveParentFetch.prefixPath, linkPath);
 
     if (parentFetch.localPath) {
       return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root, localPath: sourcePath};

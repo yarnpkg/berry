@@ -6,7 +6,7 @@ import {isDate}                                                                f
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
 import {FakeFS, WriteFileOptions}                                              from './FakeFS';
 import {NodeFS}                                                                from './NodeFS';
-import {PortablePath, portablePathUtils}                                       from './path';
+import {PortablePath, ppath}                                       from './path';
 
 const S_IFMT = 0o170000;
 
@@ -189,10 +189,10 @@ export class ZipFS extends BasePortableFakeFS {
     const entryCount = libzip.getNumEntries(this.zip, 0);
     for (let t = 0; t < entryCount; ++t) {
       const raw = libzip.getName(this.zip, t, 0);
-      if (portablePathUtils.isAbsolute(raw))
+      if (ppath.isAbsolute(raw))
         continue;
 
-      const p = portablePathUtils.resolve(PortablePath.root, raw);
+      const p = ppath.resolve(PortablePath.root, raw);
       this.registerEntry(p, t);
 
       // If the raw path is a directory, register it
@@ -462,18 +462,18 @@ export class ZipFS extends BasePortableFakeFS {
     if (listing)
       return listing;
 
-    const parentListing = this.registerListing(portablePathUtils.dirname(p));
+    const parentListing = this.registerListing(ppath.dirname(p));
     listing = new Set();
 
-    parentListing.add(portablePathUtils.basename(p) as PortablePath);
+    parentListing.add(ppath.basename(p) as PortablePath);
     this.listings.set(p, listing);
 
     return listing;
   }
 
   private registerEntry(p: PortablePath, index: number) {
-    const parentListing = this.registerListing(portablePathUtils.dirname(p));
-    parentListing.add(portablePathUtils.basename(p) as PortablePath);
+    const parentListing = this.registerListing(ppath.dirname(p));
+    parentListing.add(ppath.basename(p) as PortablePath);
 
     this.entries.set(p, index);
   }
@@ -482,13 +482,13 @@ export class ZipFS extends BasePortableFakeFS {
     if (!this.ready)
       throw Object.assign(new Error(`EBUSY: archive closed, ${reason}`), {code: `EBUSY`});
 
-    let resolvedP = portablePathUtils.resolve(PortablePath.root, p);
+    let resolvedP = ppath.resolve(PortablePath.root, p);
 
     if (resolvedP === `/`)
       return PortablePath.root;
 
     while (true) {
-      const parentP = this.resolveFilename(reason, portablePathUtils.dirname(resolvedP), true);
+      const parentP = this.resolveFilename(reason, ppath.dirname(resolvedP), true);
 
       const isDir = this.listings.has(parentP);
       const doesExist = this.entries.has(parentP);
@@ -499,7 +499,7 @@ export class ZipFS extends BasePortableFakeFS {
       if (!isDir)
         throw Object.assign(new Error(`ENOTDIR: not a directory, ${reason}`), {code: `ENOTDIR`});
 
-      resolvedP = portablePathUtils.resolve(parentP, portablePathUtils.basename(resolvedP) as PortablePath);
+      resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP) as PortablePath);
 
       if (!resolveLastComponent)
         break;
@@ -510,7 +510,7 @@ export class ZipFS extends BasePortableFakeFS {
 
       if (this.isSymbolicLink(index)) {
         const target = this.getFileSource(index).toString() as PortablePath;
-        resolvedP = portablePathUtils.resolve(portablePathUtils.dirname(resolvedP), target) as PortablePath;
+        resolvedP = ppath.resolve(ppath.dirname(resolvedP), target) as PortablePath;
       } else {
         break;
       }
@@ -561,7 +561,7 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private setFileSource(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView) {
-    const target = portablePathUtils.relative(PortablePath.root, p);
+    const target = ppath.relative(PortablePath.root, p);
     const lzSource = this.allocateSource(content);
 
     try {
@@ -779,7 +779,7 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private hydrateDirectory(resolvedP: PortablePath) {
-    const index = libzip.dir.add(this.zip, portablePathUtils.relative(PortablePath.root, resolvedP));
+    const index = libzip.dir.add(this.zip, ppath.relative(PortablePath.root, resolvedP));
     if (index === -1)
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 

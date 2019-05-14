@@ -1,4 +1,4 @@
-import {FakeFS, LazyFS, NodeFS, ZipFS, xfs, PortablePath, portablePathUtils} from '@berry/fslib';
+import {FakeFS, LazyFS, NodeFS, ZipFS, xfs, PortablePath, ppath} from '@berry/fslib';
 import {lock, unlock}                                                        from 'lockfile';
 import {posix}                                                               from 'path';
 import {promisify}                                                           from 'util';
@@ -124,7 +124,7 @@ export class Cache {
         error.message = `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
         throw error;
       }
-    }, portablePathUtils);
+    }, ppath);
 
     const releaseFs = () => {
       if (zipFs !== null) {

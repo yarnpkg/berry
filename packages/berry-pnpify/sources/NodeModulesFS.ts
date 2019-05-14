@@ -1,6 +1,6 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions}   from '@berry/fslib';
 import {NodeFS, PosixFS, FakeFS, WriteFileOptions}           from '@berry/fslib';
-import {NativePath, Path, nativePathUtils}                   from '@berry/fslib';
+import {NativePath, Path, npath}                   from '@berry/fslib';
 
 import fs                                                    from 'fs';
 
@@ -17,7 +17,7 @@ export class NodeModulesFS extends FakeFS<NativePath> {
   private readonly pathResolver: NodePathResolver;
 
   constructor({baseFs = new PosixFS(new NodeFS())}: NodeModulesFSOptions = {}) {
-    super(nativePathUtils);
+    super(npath);
 
     this.baseFs = baseFs;
     this.pathResolver = new NodePathResolver({
@@ -27,7 +27,7 @@ export class NodeModulesFS extends FakeFS<NativePath> {
   }
 
   resolve(path: NativePath) {
-    return this.baseFs.resolve(this.resolvePath(p).resolvedPath);
+    return this.baseFs.resolve(this.resolvePath(path).resolvedPath!);
   }
 
   getBaseFs() {
@@ -35,7 +35,7 @@ export class NodeModulesFS extends FakeFS<NativePath> {
   }
 
   private resolvePath(p: NativePath): ResolvedPath & { fullOriginalPath: NativePath } {
-    const fullOriginalPath = nativePathUtils.resolve(p);
+    const fullOriginalPath = npath.resolve(p);
     return {...this.pathResolver.resolvePath(fullOriginalPath), fullOriginalPath};
   }
 
@@ -59,7 +59,7 @@ export class NodeModulesFS extends FakeFS<NativePath> {
           if (stats.isDirectory()) {
             throw NodeModulesFS.createFsError('EINVAL', `invalid argument, ${op} '${p}'`);
           } else {
-            return onSymlink(stats, nativePathUtils.relative(nativePathUtils.dirname(pnpPath.fullOriginalPath), pnpPath.statPath || pnpPath.resolvedPath));
+            return onSymlink(stats, npath.relative(npath.dirname(pnpPath.fullOriginalPath), pnpPath.statPath || pnpPath.resolvedPath));
           }
         } catch (e) {
         }
@@ -96,6 +96,10 @@ export class NodeModulesFS extends FakeFS<NativePath> {
     } else {
       return pnpPath.statPath || pnpPath.resolvedPath;
     }
+  }
+
+  getRealPath() {
+    return this.baseFs.getRealPath();
   }
 
   async openPromise(p: NativePath, flags: string, mode?: number) {

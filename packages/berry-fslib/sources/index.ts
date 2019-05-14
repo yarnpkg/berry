@@ -10,7 +10,7 @@ export {WriteFileOptions}         from './FakeFS';
 
 export {Path, PortablePath, NativePath} from './path';
 export {ParsedPath, PathUtils, FormatInputPathObject} from './path';
-export {nativePathUtils, portablePathUtils} from './path';
+export {npath, ppath} from './path';
 
 export {AliasFS}                  from './AliasFS';
 export {FakeFS}                   from './FakeFS';

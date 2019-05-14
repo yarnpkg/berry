@@ -1,3 +1,4 @@
+import {NativePath}                 from '@berry/fslib';
 import {PnpApi, PackageInformation} from '@berry/pnp';
 
 import {PnPApiLoader}               from './PnPApiLoader';
@@ -46,7 +47,7 @@ export interface ResolvedPath {
    * Fully resolved path `/node_modules/...` path within PnP project,
    * `null` if path does not exist.
    */
-  resolvedPath: string | null;
+  resolvedPath: NativePath | null;
 
   /**
    * The path that should be used for stats. This field is returned for pathes ending

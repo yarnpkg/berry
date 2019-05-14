@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions}                                  from '@berry/core';
 import {Locator, MessageName}                                                        from '@berry/core';
 import {miscUtils, structUtils, tgzUtils}                                            from '@berry/core';
-import {NodeFS, PortablePath, portablePathUtils}                                     from '@berry/fslib';
+import {NodeFS, PortablePath, ppath}                                     from '@berry/fslib';
 import {posix}                                                                       from 'path';
 import querystring                                                                   from 'querystring';
 
@@ -24,7 +24,7 @@ export class FileFetcher implements Fetcher {
     const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
 
     if (parentLocalPath !== null) {
-      return portablePathUtils.resolve(parentLocalPath, filePath);
+      return ppath.resolve(parentLocalPath, filePath);
     } else {
       return null;
     }
@@ -71,7 +71,7 @@ export class FileFetcher implements Fetcher {
       parentFetch.releaseFs();
 
     const sourceFs = effectiveParentFetch.packageFs;
-    const sourcePath = portablePathUtils.resolve(effectiveParentFetch.prefixPath, filePath);
+    const sourcePath = ppath.resolve(effectiveParentFetch.prefixPath, filePath);
 
     return await miscUtils.releaseAfterUseAsync(async () => {
       return await tgzUtils.makeArchiveFromDirectory(sourcePath, {
@@ -87,7 +87,7 @@ export class FileFetcher implements Fetcher {
     if (qsIndex === -1)
       throw new Error(`Invalid file-type locator`);
 
-    const filePath = portablePathUtils.normalize(locator.reference.slice(PROTOCOL.length, qsIndex) as PortablePath);
+    const filePath = ppath.normalize(locator.reference.slice(PROTOCOL.length, qsIndex) as PortablePath);
     const queryString = querystring.parse(locator.reference.slice(qsIndex + 1));
 
     if (typeof queryString.locator !== `string`)

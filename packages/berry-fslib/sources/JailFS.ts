@@ -1,7 +1,7 @@
 import {FakeFS}                                            from './FakeFS';
 import {NodeFS}                                            from './NodeFS';
 import {ProxiedFS}                                         from './ProxiedFS';
-import {portablePathUtils, PortablePath}                   from './path';
+import {ppath, PortablePath}                   from './path';
 
 export type JailFSOptions = {
   baseFs?: FakeFS<PortablePath>,
@@ -15,7 +15,7 @@ export class JailFS extends ProxiedFS<PortablePath, PortablePath> {
   protected readonly baseFs: FakeFS<PortablePath>;
 
   constructor(target: PortablePath, {baseFs = new NodeFS()}: JailFSOptions = {}) {
-    super(portablePathUtils);
+    super(ppath);
 
     this.target = this.pathUtils.resolve(PortablePath.root, target);
 

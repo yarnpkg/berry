@@ -1,6 +1,6 @@
 import {Gzip}          from 'zlib';
 import {posix}         from 'path';
-import {xfs, NodeFS, PortablePath, portablePathUtils}   from '@berry/fslib';
+import {xfs, NodeFS, PortablePath, ppath}   from '@berry/fslib';
 
 const klaw = require('klaw');
 const tarFs = require('tar-fs');
@@ -64,10 +64,10 @@ exports.packToStream = function packToStream(
   {virtualPath = null}: {virtualPath?: PortablePath | null} = {},
 ): Gzip {
   if (virtualPath) {
-    if (!portablePathUtils.isAbsolute(virtualPath)) {
+    if (!ppath.isAbsolute(virtualPath)) {
       throw new Error('The virtual path has to be an absolute path');
     } else {
-      virtualPath = portablePathUtils.resolve(virtualPath);
+      virtualPath = ppath.resolve(virtualPath);
     }
   }
 
@@ -160,7 +160,7 @@ exports.createTemporaryFolder = function createTemporaryFolder(name?: string): P
     dirPath = await xfs.realpathPromise(NodeFS.toPortablePath(dirPath));
 
     if (name) {
-      dirPath = portablePathUtils.join(dirPath, name as PortablePath);
+      dirPath = ppath.join(dirPath, name as PortablePath);
       await exports.mkdirp(dirPath);
     }
 
@@ -175,7 +175,7 @@ exports.createTemporaryFile = async function createTemporaryFile(filePath: strin
     }
 
     const folderPath = await exports.createTemporaryFolder();
-    return portablePathUtils.resolve(folderPath, filePath as PortablePath);
+    return ppath.resolve(folderPath, filePath as PortablePath);
   } else {
     return new Promise((resolve, reject) => {
       tmp.file({discardDescriptor: true}, (error, filePath) => {
@@ -194,7 +194,7 @@ exports.mkdirp = async function mkdirp(target: PortablePath): Promise<void> {
 };
 
 exports.writeFile = async function writeFile(target: PortablePath, body: string | Buffer): Promise<void> {
-  await xfs.mkdirpPromise(portablePathUtils.dirname(target));
+  await xfs.mkdirpPromise(ppath.dirname(target));
   await xfs.writeFilePromise(target, body);
 };
 

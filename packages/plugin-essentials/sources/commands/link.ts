@@ -1,6 +1,6 @@
 import {WorkspaceRequiredError}                                                        from '@berry/cli';
 import {Cache, Configuration, PluginConfiguration, Project, StreamReport, structUtils} from '@berry/core';
-import {NodeFS, PortablePath, portablePathUtils}                                                                        from '@berry/fslib';
+import {NodeFS, PortablePath, ppath}                                                                        from '@berry/fslib';
 import {UsageError}                                                                    from 'clipanion';
 import {posix}                                                                         from 'path';
 import {Writable}                                                                      from 'stream';
@@ -37,7 +37,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     if (!workspace)
       throw new WorkspaceRequiredError(cwd);
 
-    const absoluteDestination = portablePathUtils.resolve(cwd, NodeFS.toPortablePath(destination));
+    const absoluteDestination = ppath.resolve(cwd, NodeFS.toPortablePath(destination));
 
     const configuration2 = await Configuration.find(absoluteDestination, pluginConfiguration);
     const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);

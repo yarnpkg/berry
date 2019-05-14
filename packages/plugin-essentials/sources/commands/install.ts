@@ -1,6 +1,6 @@
 import {WorkspaceRequiredError}                                           from '@berry/cli';
 import {Configuration, Cache, PluginConfiguration, Project, StreamReport} from '@berry/core';
-import {xfs, PortablePath, portablePathUtils}                                                              from '@berry/fslib';
+import {xfs, PortablePath, ppath}                                                              from '@berry/fslib';
 import {parseSyml, stringifySyml}                                         from '@berry/parsers';
 import {Writable}                                                         from 'stream';
 
@@ -68,7 +68,7 @@ async function autofixMergeConflicts(configuration: Configuration, frozenLockfil
   if (!configuration.projectCwd)
     return;
 
-  const lockfilePath = portablePathUtils.join(configuration.projectCwd, configuration.get(`lockfileFilename`));
+  const lockfilePath = ppath.join(configuration.projectCwd, configuration.get(`lockfileFilename`));
   if (!await xfs.existsPromise(lockfilePath))
     return;
 

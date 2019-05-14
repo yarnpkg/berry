@@ -2,7 +2,7 @@ import {WorkspaceRequiredError}                             from '@berry/cli';
 import {Cache, Configuration, PluginConfiguration, Project} from '@berry/core';
 import {LightReport}                                        from '@berry/core';
 import {scriptUtils, structUtils}                           from '@berry/core';
-import {NodeFS, xfs, PortablePath, portablePathUtils}                                        from '@berry/fslib';
+import {NodeFS, xfs, PortablePath, ppath}                                        from '@berry/fslib';
 import {Readable, Writable}                                 from 'stream';
 import tmp                                                  from 'tmp';
 
@@ -32,9 +32,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const tmpDir = await createTemporaryDirectory(`dlx-${process.pid}`);
 
     try {
-      await xfs.writeFilePromise(portablePathUtils.join(tmpDir, `package.json` as PortablePath), `{}\n`);
-      await xfs.writeFilePromise(portablePathUtils.join(tmpDir, `yarn.lock` as PortablePath), ``);
-      await xfs.writeFilePromise(portablePathUtils.join(tmpDir, `.yarnrc` as PortablePath), `enable-global-cache true\n`);
+      await xfs.writeFilePromise(ppath.join(tmpDir, `package.json` as PortablePath), `{}\n`);
+      await xfs.writeFilePromise(ppath.join(tmpDir, `yarn.lock` as PortablePath), ``);
+      await xfs.writeFilePromise(ppath.join(tmpDir, `.yarnrc` as PortablePath), `enable-global-cache true\n`);
 
       if (packages.length === 0) {
         packages = [command];
@@ -85,7 +85,7 @@ function createTemporaryDirectory(name?: string) {
     dirPath = await xfs.realpathPromise(dirPath);
 
     if (name) {
-      dirPath = portablePathUtils.join(dirPath, name as PortablePath);
+      dirPath = ppath.join(dirPath, name as PortablePath);
       await xfs.mkdirpPromise(dirPath);
     }
 

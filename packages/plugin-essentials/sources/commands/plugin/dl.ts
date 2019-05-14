@@ -1,5 +1,5 @@
 import {Configuration, MessageName, PluginConfiguration, Project, StreamReport, httpUtils, structUtils} from '@berry/core';
-import {xfs, PortablePath, portablePathUtils}                                                                                            from '@berry/fslib';
+import {xfs, PortablePath, ppath}                                                                                            from '@berry/fslib';
 import {parseSyml}                                                                                      from '@berry/parsers';
 import {Clipanion}                                                                                      from 'clipanion';
 import {Writable}                                                                                       from 'stream';
@@ -89,10 +89,10 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
         });
 
         const relativePath = `.yarn/plugins/${vmModule.exports.name}.js` as PortablePath;
-        const absolutePath = portablePathUtils.resolve(project.cwd, relativePath);
+        const absolutePath = ppath.resolve(project.cwd, relativePath);
 
         report.reportInfo(MessageName.UNNAMED, `Saving the new plugin in ${configuration.format(relativePath, `magenta`)}`);
-        await xfs.mkdirpPromise(portablePathUtils.dirname(absolutePath));
+        await xfs.mkdirpPromise(ppath.dirname(absolutePath));
         await xfs.writeFilePromise(absolutePath, pluginBuffer);
 
         await Configuration.updateConfiguration(project.cwd, (current: any) => ({

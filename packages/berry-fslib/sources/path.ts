@@ -12,9 +12,9 @@ export type NativePath = string & { _portable_path?: false };
 
 export type Path = PortablePath | NativePath;
 
-export const nativePathUtils: PathUtils<NativePath> = path;
+export const npath: PathUtils<NativePath> = path;
 
-export const portablePathUtils: PathUtils<PortablePath> = path.posix as any;
+export const ppath: PathUtils<PortablePath> = path.posix as any;
 
 export interface ParsedPath<P extends Path> {
   root: P;

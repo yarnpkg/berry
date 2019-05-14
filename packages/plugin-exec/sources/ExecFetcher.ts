@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions}                                     from '@berry/core';
 import {Locator, MessageName}                                                           from '@berry/core';
 import {execUtils, scriptUtils, structUtils, tgzUtils}                                  from '@berry/core';
-import {NodeFS, xfs, portablePathUtils, PortablePath}                                   from '@berry/fslib';
+import {NodeFS, xfs, ppath, PortablePath}                                   from '@berry/fslib';
 import querystring                                                                      from 'querystring';
 import {dirSync, tmpNameSync}                                                           from 'tmp';
 
@@ -18,13 +18,13 @@ export class ExecFetcher implements Fetcher {
   getLocalPath(locator: Locator, opts: FetchOptions) {
     const {parentLocator, execPath} = this.parseLocator(locator);
 
-    if (portablePathUtils.isAbsolute(execPath))
+    if (ppath.isAbsolute(execPath))
       return execPath;
 
     const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
 
     if (parentLocalPath !== null) {
-      return portablePathUtils.resolve(parentLocalPath, execPath);
+      return ppath.resolve(parentLocalPath, execPath);
     } else {
       return null;
     }
@@ -56,7 +56,7 @@ export class ExecFetcher implements Fetcher {
 
     // If the file target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
-    const parentFetch = portablePathUtils.isAbsolute(execPath)
+    const parentFetch = ppath.isAbsolute(execPath)
       ? {packageFs: new NodeFS(), prefixPath: PortablePath.root, localPath: PortablePath.root}
       : await opts.fetcher.fetch(parentLocator, opts);
 
@@ -71,16 +71,16 @@ export class ExecFetcher implements Fetcher {
       parentFetch.releaseFs();
 
     const generatorFs = effectiveParentFetch.packageFs;
-    const generatorPath = portablePathUtils.resolve(portablePathUtils.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), execPath);
+    const generatorPath = ppath.resolve(ppath.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), execPath);
 
     // Execute the specified script in the temporary directory
     const cwd = await this.generatePackage(locator, generatorPath, opts);
 
     // Make sure the script generated the package
-    if (!xfs.existsSync(portablePathUtils.join(cwd, `build` as PortablePath)))
+    if (!xfs.existsSync(ppath.join(cwd, `build` as PortablePath)))
       throw new Error(`The script should have generated a build directory`);
 
-    return await tgzUtils.makeArchiveFromDirectory(portablePathUtils.join(cwd, `build` as PortablePath), {
+    return await tgzUtils.makeArchiveFromDirectory(ppath.join(cwd, `build` as PortablePath), {
       prefixPath: `/sources` as PortablePath,
     });
   }
@@ -114,7 +114,7 @@ export class ExecFetcher implements Fetcher {
     if (qsIndex === -1)
       throw new Error(`Invalid file-type locator`);
 
-    const execPath = portablePathUtils.normalize(locator.reference.slice(PROTOCOL.length, qsIndex) as PortablePath);
+    const execPath = ppath.normalize(locator.reference.slice(PROTOCOL.length, qsIndex) as PortablePath);
     const queryString = querystring.parse(locator.reference.slice(qsIndex + 1));
 
     if (typeof queryString.locator !== `string`)

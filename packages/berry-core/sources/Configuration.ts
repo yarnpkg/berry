@@ -1,4 +1,4 @@
-import {xfs, NodeFS, PortablePath, portablePathUtils}                     from '@berry/fslib';
+import {xfs, NodeFS, PortablePath, ppath}                     from '@berry/fslib';
 import {parseSyml, stringifySyml}                                         from '@berry/parsers';
 import camelcase                                                          from 'camelcase';
 import chalk                                                              from 'chalk';
@@ -308,7 +308,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
 
   switch (definition.type) {
     case SettingsType.ABSOLUTE_PATH:
-      return portablePathUtils.resolve(folder, NodeFS.toPortablePath(value));
+      return ppath.resolve(folder, NodeFS.toPortablePath(value));
     case SettingsType.LOCATOR_LOOSE:
       return structUtils.parseLocator(value, false);
     case SettingsType.LOCATOR:
@@ -376,16 +376,16 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         return null;
 
       if (configuration.projectCwd === null) {
-        if (portablePathUtils.isAbsolute(definition.default)) {
-          return portablePathUtils.normalize(definition.default);
+        if (ppath.isAbsolute(definition.default)) {
+          return ppath.normalize(definition.default);
         } else if (definition.isNullable || definition.default === null) {
           return null;
         }
       } else {
         if (Array.isArray(definition.default)) {
-          return definition.default.map((entry: string) => portablePathUtils.resolve(configuration.projectCwd!, entry as PortablePath));
+          return definition.default.map((entry: string) => ppath.resolve(configuration.projectCwd!, entry as PortablePath));
         } else {
-          return portablePathUtils.resolve(configuration.projectCwd, definition.default);
+          return ppath.resolve(configuration.projectCwd, definition.default);
         }
       }
     }
@@ -483,7 +483,7 @@ export class Configuration {
           continue;
 
         for (const userProvidedPath of data.plugins) {
-          const pluginPath = portablePathUtils.resolve(cwd, NodeFS.toPortablePath(userProvidedPath));
+          const pluginPath = ppath.resolve(cwd, NodeFS.toPortablePath(userProvidedPath));
           const {factory, name} = nodeUtils.dynamicRequire(NodeFS.fromPortablePath(pluginPath));
 
           // Prevent plugin redefinition so that the ones declared deeper in the
@@ -561,7 +561,7 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      const rcPath = portablePathUtils.join(currentCwd, rcFilename as PortablePath);
+      const rcPath = ppath.join(currentCwd, rcFilename as PortablePath);
 
       if (xfs.existsSync(rcPath)) {
         const content = await xfs.readFilePromise(rcPath, `utf8`);
@@ -570,7 +570,7 @@ export class Configuration {
         rcFiles.push({path: rcPath, cwd: currentCwd, data});
       }
 
-      nextCwd = portablePathUtils.dirname(currentCwd);
+      nextCwd = ppath.dirname(currentCwd);
     }
 
     return rcFiles;
@@ -578,7 +578,7 @@ export class Configuration {
 
   static async findHomeRcFile(rcFilename: string) {
     const homeFolder = folderUtils.getHomeFolder();
-    const homeRcFilePath = portablePathUtils.join(homeFolder, rcFilename as PortablePath);
+    const homeRcFilePath = ppath.join(homeFolder, rcFilename as PortablePath);
 
     if (xfs.existsSync(homeRcFilePath)) {
       const content = await xfs.readFilePromise(homeRcFilePath, `utf8`);
@@ -599,13 +599,13 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(portablePathUtils.join(currentCwd, `package.json` as PortablePath)))
+      if (xfs.existsSync(ppath.join(currentCwd, `package.json` as PortablePath)))
         projectCwd = currentCwd;
 
-      if (xfs.existsSync(portablePathUtils.join(currentCwd, lockfileFilename as PortablePath)))
+      if (xfs.existsSync(ppath.join(currentCwd, lockfileFilename as PortablePath)))
         break;
 
-      nextCwd = portablePathUtils.dirname(currentCwd);
+      nextCwd = ppath.dirname(currentCwd);
     }
 
     return projectCwd;
@@ -613,7 +613,7 @@ export class Configuration {
 
   static async updateConfiguration(cwd: PortablePath, patch: any) {
     const rcFilename = getRcFilename();
-    const configurationPath =  portablePathUtils.join(cwd, rcFilename as PortablePath);
+    const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
 
     const current = xfs.existsSync(configurationPath) ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any : {};
     const currentKeys = Object.keys(current);

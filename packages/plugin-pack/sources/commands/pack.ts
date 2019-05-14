@@ -1,6 +1,6 @@
 import {WorkspaceRequiredError}                                                 from '@berry/cli';
 import {Configuration, MessageName, PluginConfiguration, Project, StreamReport} from '@berry/core';
-import {xfs, portablePathUtils, PortablePath}                                                                    from '@berry/fslib';
+import {xfs, ppath, PortablePath}                                                                    from '@berry/fslib';
 import {Writable}                                                               from 'stream';
 
 import * as packUtils                                                           from '../packUtils';
@@ -36,7 +36,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     if (!workspace)
       throw new WorkspaceRequiredError(cwd);
 
-    const target = portablePathUtils.resolve(workspace.cwd, `package.tgz` as PortablePath);
+    const target = ppath.resolve(workspace.cwd, `package.tgz` as PortablePath);
 
     const report = await StreamReport.start({configuration, stdout, json}, async report => {
       await packUtils.prepareForPack(workspace, {report}, async () => {

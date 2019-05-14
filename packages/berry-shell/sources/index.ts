@@ -1,4 +1,4 @@
-import {xfs, NodeFS, portablePathUtils, PortablePath}                                                      from '@berry/fslib';
+import {xfs, NodeFS, ppath, PortablePath}                                                      from '@berry/fslib';
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell}                                  from '@berry/parsers';
 import {PassThrough, Readable, Writable}                                                                   from 'stream';
 
@@ -49,7 +49,7 @@ function cloneState(state: ShellState, mergeWith: Partial<ShellState> = {}) {
 
 const BUILTINS = new Map<string, ShellBuiltin>([
   [`cd`, async ([target, ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
-    const resolvedTarget = portablePathUtils.resolve(state.cwd, NodeFS.toPortablePath(target));
+    const resolvedTarget = ppath.resolve(state.cwd, NodeFS.toPortablePath(target));
     const stat = await xfs.statPromise(resolvedTarget);
 
     if (!stat.isDirectory()) {

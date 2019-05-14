@@ -1,4 +1,4 @@
-import {FakeFS, PortablePath, ZipFS, NodeFS, portablePathUtils} from '@berry/fslib';
+import {FakeFS, PortablePath, ZipFS, NodeFS, ppath} from '@berry/fslib';
 import {posix}                                                  from 'path';
 import {Parse}                                                  from 'tar';
 import {tmpNameSync}                                            from 'tmp';
@@ -10,7 +10,7 @@ interface MakeArchiveFromDirectoryOptions {
 
 export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
   const zipFs = new ZipFS(NodeFS.toPortablePath(tmpNameSync()), {create: true});
-  const target = portablePathUtils.resolve(PortablePath.root, prefixPath!);
+  const target = ppath.resolve(PortablePath.root, prefixPath!);
 
   await zipFs.copyPromise(target, source, {baseFs});
 

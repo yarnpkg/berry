@@ -1,5 +1,5 @@
 import {Configuration}                                          from '@berry/core';
-import {xfs, NodeFS, portablePathUtils, PortablePath}           from '@berry/fslib';
+import {xfs, NodeFS, ppath, PortablePath}           from '@berry/fslib';
 import {execFileSync}                                           from 'child_process';
 import {Clipanion}                                              from 'clipanion';
 import * as yup                                                 from 'yup';
@@ -12,7 +12,7 @@ clipanion.topLevel(`[--cwd PATH]`)
   .validate(yup.object().shape({
     cwd: yup.string().transform((cwd = process.cwd()) => {
       // Note that the `--cwd` option might be a relative path that we need to resolve
-      return portablePathUtils.resolve(NodeFS.toPortablePath(process.cwd()), NodeFS.toPortablePath(cwd));
+      return ppath.resolve(NodeFS.toPortablePath(process.cwd()), NodeFS.toPortablePath(cwd));
     }),
   }));
 

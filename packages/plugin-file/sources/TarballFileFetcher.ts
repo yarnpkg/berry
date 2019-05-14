@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions}                                  from '@berry/core';
 import {Locator, MessageName}                                                        from '@berry/core';
 import {miscUtils, structUtils, tgzUtils}                                            from '@berry/core';
-import {NodeFS, PortablePath, portablePathUtils}                                     from '@berry/fslib';
+import {NodeFS, PortablePath, ppath}                                     from '@berry/fslib';
 import {posix}                                                                       from 'path';
 import querystring                                                                   from 'querystring';
 
@@ -64,7 +64,7 @@ export class TarballFileFetcher implements Fetcher {
       parentFetch.releaseFs();
 
     const sourceFs = effectiveParentFetch.packageFs;
-    const sourcePath = portablePathUtils.resolve(effectiveParentFetch.prefixPath, filePath);
+    const sourcePath = ppath.resolve(effectiveParentFetch.prefixPath, filePath);
     const sourceBuffer = await sourceFs.readFilePromise(sourcePath);
 
     return await miscUtils.releaseAfterUseAsync(async () => {

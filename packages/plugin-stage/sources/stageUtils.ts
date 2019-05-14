@@ -1,9 +1,9 @@
-import {xfs, PortablePath, portablePathUtils}   from '@berry/fslib';
+import {xfs, PortablePath, ppath}   from '@berry/fslib';
 
 export async function findVcsRoot(cwd: PortablePath, {marker}: {marker: string}) {
   do {
-    if (!xfs.existsSync(portablePathUtils.join(cwd, marker as PortablePath))) {
-      cwd = portablePathUtils.dirname(cwd);
+    if (!xfs.existsSync(ppath.join(cwd, marker as PortablePath))) {
+      cwd = ppath.dirname(cwd);
     } else {
       return cwd;
     }
@@ -13,12 +13,12 @@ export async function findVcsRoot(cwd: PortablePath, {marker}: {marker: string})
 }
 
 export function isYarnFile(path: PortablePath, {roots, names}: {roots: Set<string>, names: Set<string>}) {
-  if (names.has(portablePathUtils.basename(path)))
+  if (names.has(ppath.basename(path)))
     return true;
 
   do {
     if (!roots.has(path)) {
-      path = portablePathUtils.dirname(path);
+      path = ppath.dirname(path);
     } else {
       return true;
     }
@@ -36,7 +36,7 @@ export function expandDirectory(initialCwd: PortablePath) {
     const listing = xfs.readdirSync(cwd!);
 
     for (const entry of listing) {
-      const path = portablePathUtils.resolve(cwd!, entry);
+      const path = ppath.resolve(cwd!, entry);
       const stat = xfs.lstatSync(path);
 
       if (stat.isDirectory()) {

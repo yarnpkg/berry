@@ -1,6 +1,6 @@
 import {ReadStream, Stats, WriteStream}                   from 'fs';
 
-import {Path, PortablePath, portablePathUtils, PathUtils} from './path';
+import {Path, PortablePath, ppath, PathUtils} from './path';
 
 export type CreateReadStreamOptions = Partial<{
   encoding: string,
@@ -188,7 +188,7 @@ export abstract class FakeFS<P extends Path> {
 
 export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
   protected constructor() {
-    super(portablePathUtils);
+    super(ppath);
   }
 
   resolve(p: PortablePath) {
@@ -324,7 +324,7 @@ export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
       await this.mkdirpPromise(destination);
       const directoryListing = await baseFs.readdirPromise(source);
       await Promise.all(directoryListing.map(entry => {
-        return this.copyPromise(portablePathUtils.join(destination, entry as PortablePath), baseFs.pathUtils.join(source, entry), {baseFs, overwrite});
+        return this.copyPromise(ppath.join(destination, entry as PortablePath), baseFs.pathUtils.join(source, entry), {baseFs, overwrite});
       }));
     } else if (stat.isFile()) {
       if (!exists || overwrite) {

@@ -1,4 +1,4 @@
-import {NodeFS, portablePathUtils, PortablePath}                                                                          from '@berry/fslib';
+import {NodeFS, ppath, PortablePath}                                                                          from '@berry/fslib';
 
 import {PackageInformation, PackageLocator, PackageStore, RuntimeState, SerializedState} from '../types';
 
@@ -15,7 +15,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
   const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
     return [packageName, new Map(packageStoreData.map(([packageReference, packageInformationData]) => {
       return [packageReference, {
-        packageLocation: portablePathUtils.resolve(portablePath, packageInformationData.packageLocation),
+        packageLocation: ppath.resolve(portablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
       }] as [string | null, PackageInformation<PortablePath>];
     }))] as [string | null, PackageStore<PortablePath>];

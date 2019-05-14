@@ -1,5 +1,5 @@
 import {MessageName, Report, Workspace, scriptUtils}                                  from '@berry/core';
-import {FakeFS, JailFS, xfs, PortablePath, portablePathUtils}                         from '@berry/fslib';
+import {FakeFS, JailFS, xfs, PortablePath, ppath}                         from '@berry/fslib';
 import mm                                                                             from 'micromatch';
 import {posix}                                                                        from 'path';
 import {PassThrough}                                                                  from 'stream';
@@ -69,8 +69,8 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
 
   process.nextTick(async () => {
     for (const file of files!) {
-      const source = portablePathUtils.resolve(workspace.cwd, file);
-      const dest = portablePathUtils.join(`package` as PortablePath, file);
+      const source = ppath.resolve(workspace.cwd, file);
+      const dest = ppath.join(`package` as PortablePath, file);
 
       const stat = await xfs.lstatPromise(source);
       const opts = {name: dest, mtime: new Date(315532800)};
@@ -243,10 +243,10 @@ async function walk(initialCwd: PortablePath, {globalList, ignoreList}: {globalL
         : ignoreLists;
 
       for (const entry of entries) {
-        cwdList.push([portablePathUtils.resolve(cwd, entry), nextIgnoreLists]);
+        cwdList.push([ppath.resolve(cwd, entry), nextIgnoreLists]);
       }
     } else {
-      list.push(portablePathUtils.relative(PortablePath.root, cwd));
+      list.push(ppath.relative(PortablePath.root, cwd));
     }
   }
 
@@ -259,7 +259,7 @@ async function loadIgnoreList(fs: FakeFS<PortablePath>, cwd: PortablePath, filen
     reject: [],
   };
 
-  const data = await fs.readFilePromise(portablePathUtils.join(cwd, filename), `utf8`);
+  const data = await fs.readFilePromise(ppath.join(cwd, filename), `utf8`);
 
   for (const pattern of data.split(/\n/g))
     addIgnorePattern(ignoreList.reject, pattern, {cwd});

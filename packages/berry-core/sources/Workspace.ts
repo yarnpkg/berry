@@ -1,4 +1,4 @@
-import {xfs, NodeFS, PortablePath, portablePathUtils}           from '@berry/fslib';
+import {xfs, NodeFS, PortablePath, ppath}           from '@berry/fslib';
 import {makeUpdater}                                            from '@berry/json-proxy';
 import {createHmac}                                             from 'crypto';
 import globby                                                   from 'globby';
@@ -49,9 +49,9 @@ export class Workspace {
     // @ts-ignore: It's ok to initialize it now
     this.manifest = await Manifest.find(this.cwd);
 
-    // We use portablePathUtils.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path
+    // We use ppath.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
-    this.relativeCwd = portablePathUtils.relative(this.project.cwd, this.cwd) || PortablePath.dot;
+    this.relativeCwd = ppath.relative(this.project.cwd, this.cwd) || PortablePath.dot;
 
     const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashWorkspaceCwd(this.relativeCwd)}`);
     const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
@@ -78,9 +78,9 @@ export class Workspace {
       relativeCwds.sort();
 
       for (const relativeCwd of relativeCwds) {
-        const candidateCwd = portablePathUtils.resolve(this.cwd, NodeFS.toPortablePath(relativeCwd));
+        const candidateCwd = ppath.resolve(this.cwd, NodeFS.toPortablePath(relativeCwd));
 
-        if (xfs.existsSync(portablePathUtils.join(candidateCwd, `package.json` as PortablePath))) {
+        if (xfs.existsSync(ppath.join(candidateCwd, `package.json` as PortablePath))) {
           this.workspacesCwds.add(candidateCwd);
         }
       }
@@ -117,12 +117,12 @@ export class Workspace {
     if (this.cwd === this.project.cwd) {
       return `root-workspace`;
     } else {
-      return `${portablePathUtils.basename(this.cwd)}` || `unnamed-workspace`;
+      return `${ppath.basename(this.cwd)}` || `unnamed-workspace`;
     }
   }
 
   async persistManifest() {
-    const updater = await makeUpdater(portablePathUtils.join(this.cwd, `package.json` as PortablePath));
+    const updater = await makeUpdater(ppath.join(this.cwd, `package.json` as PortablePath));
 
     updater.open((tracker: Object) => {
       this.manifest.exportTo(tracker);

@@ -1,6 +1,6 @@
 import {Configuration, Cache, PluginConfiguration, Project}     from '@berry/core';
 import {LightReport, MessageName, StreamReport, VirtualFetcher} from '@berry/core';
-import {NodeFS, xfs, PortablePath, portablePathUtils}                                     from '@berry/fslib';
+import {NodeFS, xfs, PortablePath, ppath}                                     from '@berry/fslib';
 import {Writable}                                               from 'stream';
 
 const PRESERVED_FILES = new Set([
@@ -78,13 +78,13 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         if (entries.has(entry))
           continue;
 
-        dirtyPaths.push(portablePathUtils.resolve(folder, entry));
+        dirtyPaths.push(ppath.resolve(folder, entry));
       }
     }
 
     const unlinkReport = await StreamReport.start({configuration, json, stdout}, async report => {
       for (const path of dirtyPaths) {
-        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${portablePathUtils.basename(path)} seems to be unused`);
+        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${ppath.basename(path)} seems to be unused`);
         report.reportJson({path: NodeFS.fromPortablePath(path)});
 
         if (!dryRun) {
