@@ -76,6 +76,10 @@ describe(`Commands`, () => {
         await execFile(`git`, [`init`], {cwd: path});
         await writeFile(`${path}/.yarnrc`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-stage.js`))}\n`);
 
+        // Otherwise we can't always commit
+        await execFile(`git`, [`config`, `user.name`, `John Doe`], {cwd: path});
+        await execFile(`git`, [`config`, `user.email`, `john.doe@example.org`], {cwd: path});
+
         await mkdirp(`${path}/new-package`);
         await run(`${path}/new-package`, `init`);
 
