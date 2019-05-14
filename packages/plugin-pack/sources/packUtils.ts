@@ -1,5 +1,5 @@
 import {MessageName, Report, Workspace, scriptUtils}                                  from '@berry/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath}                         from '@berry/fslib';
+import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename}                         from '@berry/fslib';
 import mm                                                                             from 'micromatch';
 import {posix}                                                                        from 'path';
 import {PassThrough}                                                                  from 'stream';
@@ -70,7 +70,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
   process.nextTick(async () => {
     for (const file of files!) {
       const source = ppath.resolve(workspace.cwd, file);
-      const dest = ppath.join(`package` as PortablePath, file);
+      const dest = ppath.join(toFilename(`package`), file);
 
       const stat = await xfs.lstatPromise(source);
       const opts = {name: dest, mtime: new Date(315532800)};
@@ -233,9 +233,9 @@ async function walk(initialCwd: PortablePath, {globalList, ignoreList}: {globalL
       }
 
       const localIgnoreList = hasNpmIgnore
-        ? await loadIgnoreList(cwdFs, cwd, `.npmignore` as PortablePath)
+        ? await loadIgnoreList(cwdFs, cwd, toFilename(`.npmignore`))
         : hasGitIgnore
-          ? await loadIgnoreList(cwdFs, cwd, `.gitignore` as PortablePath)
+          ? await loadIgnoreList(cwdFs, cwd, toFilename(`.gitignore`))
           : null;
 
       const nextIgnoreLists = localIgnoreList !== null

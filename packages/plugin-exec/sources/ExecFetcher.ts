@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions}                                     from '@berry/core';
 import {Locator, MessageName}                                                           from '@berry/core';
 import {execUtils, scriptUtils, structUtils, tgzUtils}                                  from '@berry/core';
-import {NodeFS, xfs, ppath, PortablePath}                                   from '@berry/fslib';
+import {NodeFS, xfs, ppath, PortablePath, toFilename}                                   from '@berry/fslib';
 import querystring                                                                      from 'querystring';
 import {dirSync, tmpNameSync}                                                           from 'tmp';
 
@@ -77,10 +77,10 @@ export class ExecFetcher implements Fetcher {
     const cwd = await this.generatePackage(locator, generatorPath, opts);
 
     // Make sure the script generated the package
-    if (!xfs.existsSync(ppath.join(cwd, `build` as PortablePath)))
+    if (!xfs.existsSync(ppath.join(cwd, toFilename(`build`))))
       throw new Error(`The script should have generated a build directory`);
 
-    return await tgzUtils.makeArchiveFromDirectory(ppath.join(cwd, `build` as PortablePath), {
+    return await tgzUtils.makeArchiveFromDirectory(ppath.join(cwd, toFilename(`build`)), {
       prefixPath: `/sources` as PortablePath,
     });
   }

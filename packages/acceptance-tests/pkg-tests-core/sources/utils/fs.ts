@@ -147,7 +147,7 @@ exports.unpackToDirectory = function unpackToDirectory(target: PortablePath, sou
   });
 };
 
-exports.createTemporaryFolder = function createTemporaryFolder(name?: string): Promise<PortablePath> {
+exports.createTemporaryFolder = function createTemporaryFolder(name?: Filename): Promise<PortablePath> {
   return new Promise<string>((resolve, reject) => {
     tmp.dir({unsafeCleanup: true}, (error, dirPath) => {
       if (error) {

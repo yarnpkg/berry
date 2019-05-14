@@ -1,7 +1,6 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
-import {NodeFS, xfs, PortablePath}                                 from '@berry/fslib';
+import {NodeFS, xfs, PortablePath, ppath}                                 from '@berry/fslib';
 import {UsageError}                                  from 'clipanion';
-import {posix}                                       from 'path';
 import {Writable}                                    from 'stream';
 
 import {Driver as GitDriver}                         from '../drivers/GitDriver';
@@ -137,7 +136,7 @@ function resolveToVcs(cwd: PortablePath, path: PortablePath | null) {
     // If it's a symbolic link then we also need to also consider its target as
     // part of the Yarn installation (unless it's outside of the repo)
     if (stat.isSymbolicLink()) {
-      path = posix.resolve(posix.dirname(path), xfs.readlinkSync(path)) as PortablePath;
+      path = ppath.resolve(ppath.dirname(path), xfs.readlinkSync(path));
     } else {
       break;
     }

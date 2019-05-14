@@ -40,12 +40,12 @@ export class VirtualFetcher implements Fetcher {
   }
 
   getLocatorFilename(locator: Locator) {
-    return structUtils.slugifyLocator(locator) as PortablePath
+    return structUtils.slugifyLocator(locator)
   }
 
   getLocatorPath(locator: Locator, opts: MinimalFetchOptions) {
     const virtualFolder = opts.project.configuration.get(`virtualFolder`);
-    const virtualPath = ppath.resolve(virtualFolder, this.getLocatorFilename(locator)) as PortablePath;
+    const virtualPath = ppath.resolve(virtualFolder, this.getLocatorFilename(locator));
 
     return virtualPath;
   }

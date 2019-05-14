@@ -6,7 +6,7 @@ import {PnpLinker}                                                       from '.
 import unplug                                                            from './commands/unplug';
 
 async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
-  const pnpPath = project.configuration.get(`pnpPath`) as PortablePath;
+  const pnpPath: PortablePath = project.configuration.get(`pnpPath`);
   const pnpRequire = `--require ${NodeFS.fromPortablePath(pnpPath)}`;
 
   if (xfs.existsSync(pnpPath)) {

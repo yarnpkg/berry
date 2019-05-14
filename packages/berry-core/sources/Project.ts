@@ -1,4 +1,4 @@
-import {xfs, NodeFS, PortablePath, ppath}                                    from '@berry/fslib';
+import {xfs, NodeFS, PortablePath, ppath, toFilename}                                    from '@berry/fslib';
 import {parseSyml, stringifySyml}                                                        from '@berry/parsers';
 import {createHmac}                                                                      from 'crypto';
 // @ts-ignore
@@ -75,7 +75,7 @@ export class Project {
     while (currentCwd !== configuration.projectCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, `package.json` as PortablePath)))
+      if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`))))
         if (!packageCwd)
           packageCwd = currentCwd;
 
@@ -990,7 +990,7 @@ export class Project {
       return hash.digest(`hex`);
     };
 
-    const bstatePath = this.configuration.get(`bstatePath`) as PortablePath;
+    const bstatePath: PortablePath = this.configuration.get(`bstatePath`);
     const bstate = xfs.existsSync(bstatePath)
       ? parseSyml(await xfs.readFilePromise(bstatePath, `utf8`)) as {[key: string]: string}
       : {};

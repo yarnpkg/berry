@@ -175,14 +175,12 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     }
   }
 
-  readdirPromise(p: P): Promise<P[]> {
-    // readdir returns filenames, which are valid as NativePath and PortablePath so it's safe to just cast
-    return this.baseFs.readdirPromise(this.mapToBase(p)) as Promise<any[]>;
+  readdirPromise(p: P) {
+    return this.baseFs.readdirPromise(this.mapToBase(p));
   }
 
-  readdirSync(p: P): P[] {
-    // readdir returns filenames, which are valid as NativePath and PortablePath so it's safe to just cast
-    return this.baseFs.readdirSync(this.mapToBase(p)) as any[];
+  readdirSync(p: P) {
+    return this.baseFs.readdirSync(this.mapToBase(p));
   }
 
   async readlinkPromise(p: P) {

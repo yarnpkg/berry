@@ -1,4 +1,4 @@
-import {FakeFS, NodeFS, PortablePath, NativePath, ppath}                                           from '@berry/fslib';
+import {FakeFS, NodeFS, PortablePath, NativePath, ppath, toFilename}                                           from '@berry/fslib';
 import Module                                                     from 'module';
 import path, {posix}                                              from 'path';
 
@@ -198,7 +198,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         let pkgJson;
 
         try {
-          pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, `package.json` as PortablePath), `utf8`));
+          pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, toFilename(`package.json`)), `utf8`));
         } catch (error) {}
 
         let nextUnqualifiedPath;
@@ -236,7 +236,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       if (stat && stat.isDirectory()) {
         const indexPath = extensions
           .map(extension => {
-            return ppath.join(unqualifiedPath, `index${extension}` as PortablePath);
+            return ppath.format({dir: unqualifiedPath, base: toFilename(`index`), ext: extension});
           })
           .find(candidateFile => {
             candidates.push(candidateFile);
@@ -290,7 +290,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   function callNativeResolution(request: PortablePath, issuer: PortablePath): NativePath | false {
     if (issuer.endsWith(`/`))
-      issuer = `${issuer}internal.js` as PortablePath;
+      issuer = ppath.join(issuer, toFilename(`internal.js`));
 
     // Since we would need to create a fake module anyway (to call _resolveLookupPath that
     // would give us the paths to give to _resolveFilename), we can as well not use

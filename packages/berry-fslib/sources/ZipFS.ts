@@ -6,7 +6,7 @@ import {isDate}                                                                f
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
 import {FakeFS, WriteFileOptions}                                              from './FakeFS';
 import {NodeFS}                                                                from './NodeFS';
-import {PortablePath, ppath}                                       from './path';
+import {PortablePath, ppath, Filename}                                       from './path';
 
 const S_IFMT = 0o170000;
 
@@ -110,7 +110,7 @@ export class ZipFS extends BasePortableFakeFS {
   private readonly stats: Stats;
   private readonly zip: number;
 
-  private readonly listings: Map<PortablePath, Set<PortablePath>> = new Map();
+  private readonly listings: Map<PortablePath, Set<Filename>> = new Map();
   private readonly entries: Map<PortablePath, number> = new Map();
 
   private ready = false;
@@ -465,7 +465,7 @@ export class ZipFS extends BasePortableFakeFS {
     const parentListing = this.registerListing(ppath.dirname(p));
     listing = new Set();
 
-    parentListing.add(ppath.basename(p) as PortablePath);
+    parentListing.add(ppath.basename(p));
     this.listings.set(p, listing);
 
     return listing;
@@ -473,7 +473,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   private registerEntry(p: PortablePath, index: number) {
     const parentListing = this.registerListing(ppath.dirname(p));
-    parentListing.add(ppath.basename(p) as PortablePath);
+    parentListing.add(ppath.basename(p));
 
     this.entries.set(p, index);
   }
@@ -499,7 +499,7 @@ export class ZipFS extends BasePortableFakeFS {
       if (!isDir)
         throw Object.assign(new Error(`ENOTDIR: not a directory, ${reason}`), {code: `ENOTDIR`});
 
-      resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP) as PortablePath);
+      resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP));
 
       if (!resolveLastComponent)
         break;
@@ -510,7 +510,7 @@ export class ZipFS extends BasePortableFakeFS {
 
       if (this.isSymbolicLink(index)) {
         const target = this.getFileSource(index).toString() as PortablePath;
-        resolvedP = ppath.resolve(ppath.dirname(resolvedP), target) as PortablePath;
+        resolvedP = ppath.resolve(ppath.dirname(resolvedP), target);
       } else {
         break;
       }
@@ -857,7 +857,7 @@ export class ZipFS extends BasePortableFakeFS {
     return this.readdirSync(p);
   }
 
-  readdirSync(p: PortablePath): Array<PortablePath> {
+  readdirSync(p: PortablePath): Array<Filename> {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))

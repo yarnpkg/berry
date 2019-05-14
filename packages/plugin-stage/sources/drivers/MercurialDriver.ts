@@ -1,9 +1,9 @@
 import * as stageUtils from '../stageUtils';
-import { PortablePath } from '@berry/fslib';
+import { PortablePath, toFilename } from '@berry/fslib';
 
 export const Driver = {
   async findRoot(cwd: PortablePath) {
-    return await stageUtils.findVcsRoot(cwd, {marker: `.hg`});
+    return await stageUtils.findVcsRoot(cwd, {marker: toFilename(`.hg`)});
   },
 
   async filterChanges(cwd: string, paths: Set<string>, filenames: Set<string>) {

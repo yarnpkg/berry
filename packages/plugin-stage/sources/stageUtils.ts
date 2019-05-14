@@ -1,8 +1,8 @@
 import {xfs, PortablePath, ppath}   from '@berry/fslib';
 
-export async function findVcsRoot(cwd: PortablePath, {marker}: {marker: string}) {
+export async function findVcsRoot(cwd: PortablePath, {marker}: {marker: PortablePath}) {
   do {
-    if (!xfs.existsSync(ppath.join(cwd, marker as PortablePath))) {
+    if (!xfs.existsSync(ppath.join(cwd, marker))) {
       cwd = ppath.dirname(cwd);
     } else {
       return cwd;

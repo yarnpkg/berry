@@ -1,4 +1,4 @@
-import {NativePath}                 from '@berry/fslib';
+import {NativePath, Filename, toFilename}                 from '@berry/fslib';
 import {PnpApi, PackageInformation} from '@berry/pnp';
 
 import {PnPApiLoader}               from './PnPApiLoader';
@@ -61,7 +61,7 @@ export interface ResolvedPath {
   /**
    * Directory entries list, returned for pathes ending with `/node_modules[/@scope]`
    */
-  dirList?: string[]
+  dirList?: Filename[]
 }
 
 /**
@@ -90,16 +90,16 @@ export class NodePathResolver {
    *
    * @returns `undefined` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
    */
-  public readDir(issuerInfo: PackageInformation, scope: string | null): string[] | undefined {
-    const result = new Set();
+  public readDir(issuerInfo: PackageInformation, scope: string | null): Filename[] | undefined {
+    const result = new Set<Filename>();
     for (const key of issuerInfo.packageDependencies.keys()) {
       const [pkgNameOrScope, pkgName] = key.split('/');
       if (!scope) {
-        if (!result.has(pkgNameOrScope)) {
-          result.add(pkgNameOrScope);
+        if (!result.has(toFilename(pkgNameOrScope))) {
+          result.add(toFilename(pkgNameOrScope));
         }
       } else if (scope === pkgNameOrScope) {
-        result.add(pkgName);
+        result.add(toFilename(pkgName));
       }
     }
 

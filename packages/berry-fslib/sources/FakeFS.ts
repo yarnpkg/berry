@@ -1,6 +1,6 @@
 import {ReadStream, Stats, WriteStream}                   from 'fs';
 
-import {Path, PortablePath, ppath, PathUtils} from './path';
+import {Path, PortablePath, ppath, PathUtils, Filename} from './path';
 
 export type CreateReadStreamOptions = Partial<{
   encoding: string,
@@ -39,8 +39,8 @@ export abstract class FakeFS<P extends Path> {
   abstract realpathPromise(p: P): Promise<P>;
   abstract realpathSync(p: P): P;
 
-  abstract readdirPromise(p: P): Promise<Array<P>>;
-  abstract readdirSync(p: P): Array<P>;
+  abstract readdirPromise(p: P): Promise<Array<Filename>>;
+  abstract readdirSync(p: P): Array<Filename>;
 
   abstract existsPromise(p: P): Promise<boolean>;
   abstract existsSync(p: P): boolean;
@@ -324,7 +324,7 @@ export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
       await this.mkdirpPromise(destination);
       const directoryListing = await baseFs.readdirPromise(source);
       await Promise.all(directoryListing.map(entry => {
-        return this.copyPromise(ppath.join(destination, entry as PortablePath), baseFs.pathUtils.join(source, entry), {baseFs, overwrite});
+        return this.copyPromise(ppath.join(destination, entry), baseFs.pathUtils.join(source, entry), {baseFs, overwrite});
       }));
     } else if (stat.isFile()) {
       if (!exists || overwrite) {
@@ -360,7 +360,7 @@ export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
       this.mkdirpSync(destination);
       const directoryListing = baseFs.readdirSync(source);
       for (const entry of directoryListing) {
-        this.copySync(this.pathUtils.join(destination, entry as PortablePath), baseFs.pathUtils.join(source, entry), {baseFs, overwrite});
+        this.copySync(this.pathUtils.join(destination, entry), baseFs.pathUtils.join(source, entry), {baseFs, overwrite});
       }
     } else if (stat.isFile()) {
       if (!exists || overwrite) {

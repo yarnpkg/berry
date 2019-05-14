@@ -18,7 +18,7 @@ export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = n
 }
 
 interface MakeArchiveOptions {
-  prefixPath?: PortablePath | null,
+  prefixPath?: PortablePath,
   stripComponents?: number,
 };
 
@@ -55,7 +55,7 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
     }
 
     const parts = entry.path.split(/\//g);
-    const mappedPath = posix.join(prefixPath, parts.slice(stripComponents).join(`/`)) as PortablePath;
+    const mappedPath = ppath.join(prefixPath, parts.slice(stripComponents).join(`/`));
 
     const chunks: Array<Buffer> = [];
 
@@ -72,7 +72,7 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
     entry.on(`end`, () => {
       switch (entry.type) {
         case `Directory`: {
-          zipFs.mkdirpSync(posix.dirname(mappedPath) as PortablePath, {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+          zipFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
           zipFs.mkdirSync(mappedPath);
           zipFs.chmodSync(mappedPath, mode);
@@ -81,7 +81,7 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
 
         case `OldFile`:
         case `File`: {
-          zipFs.mkdirpSync(posix.dirname(mappedPath) as PortablePath, {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+          zipFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
           zipFs.writeFileSync(mappedPath, Buffer.concat(chunks));
           zipFs.chmodSync(mappedPath, mode);
@@ -89,7 +89,7 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
         } break;
 
         case `SymbolicLink`: {
-          zipFs.mkdirpSync(posix.dirname(mappedPath) as PortablePath, {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+          zipFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
           zipFs.symlinkSync(entry.linkpath, mappedPath);
           zipFs.lutimesSync(mappedPath, defaultTime, defaultTime);

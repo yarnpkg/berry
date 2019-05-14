@@ -8,9 +8,9 @@ export {CreateReadStreamOptions}  from './FakeFS';
 export {CreateWriteStreamOptions} from './FakeFS';
 export {WriteFileOptions}         from './FakeFS';
 
-export {Path, PortablePath, NativePath} from './path';
+export {Path, PortablePath, NativePath, Filename} from './path';
 export {ParsedPath, PathUtils, FormatInputPathObject} from './path';
-export {npath, ppath} from './path';
+export {npath, ppath, toFilename} from './path';
 
 export {AliasFS}                  from './AliasFS';
 export {FakeFS}                   from './FakeFS';

@@ -1,7 +1,7 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName, DependencyMeta} from '@berry/core';
 import {FetchResult, Descriptor, Ident, Locator, Package, BuildDirective, BuildType}                         from '@berry/core';
 import {miscUtils, structUtils}                                                                              from '@berry/core';
-import {CwdFS, FakeFS, NodeFS, xfs, PortablePath, ppath}                                         from '@berry/fslib';
+import {CwdFS, FakeFS, NodeFS, xfs, PortablePath, ppath, toFilename}                                         from '@berry/fslib';
 import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@berry/pnp';
 
 // Some packages do weird stuff and MUST be unplugged. I don't like them.
@@ -217,7 +217,7 @@ class PnpInstaller implements Installer {
 
   private async shouldWarnNodeModules() {
     for (const workspace of this.opts.project.workspaces) {
-      const nodeModulesPath = ppath.join(workspace.cwd, `node_modules` as PortablePath);
+      const nodeModulesPath = ppath.join(workspace.cwd, toFilename(`node_modules`));
       if (!xfs.existsSync(nodeModulesPath))
         continue;
 
@@ -250,7 +250,7 @@ class PnpInstaller implements Installer {
         buildScripts.push([BuildType.SCRIPT, scriptName]);
 
     // Detect cases where a package has a binding.gyp but no install script
-    const bindingFilePath = ppath.resolve(fetchResult.prefixPath, `binding.gyp` as PortablePath);
+    const bindingFilePath = ppath.resolve(fetchResult.prefixPath, toFilename(`binding.gyp`));
     if (!scripts.has(`install`) && fetchResult.packageFs.existsSync(bindingFilePath))
       buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
 
@@ -258,7 +258,7 @@ class PnpInstaller implements Installer {
   }
 
   private getUnpluggedPath(locator: Locator) {
-    return ppath.resolve(this.opts.project.configuration.get(`pnpUnpluggedFolder`), structUtils.slugifyLocator(locator) as PortablePath);
+    return ppath.resolve(this.opts.project.configuration.get(`pnpUnpluggedFolder`), structUtils.slugifyLocator(locator));
   }
 
   private async unplugPackage(locator: Locator, packageFs: FakeFS<PortablePath>) {

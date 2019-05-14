@@ -1,4 +1,4 @@
-import {xfs, NodeFS, PortablePath, ppath}           from '@berry/fslib';
+import {xfs, NodeFS, PortablePath, ppath, toFilename}           from '@berry/fslib';
 import {makeUpdater}                                            from '@berry/json-proxy';
 import {createHmac}                                             from 'crypto';
 import globby                                                   from 'globby';
@@ -80,7 +80,7 @@ export class Workspace {
       for (const relativeCwd of relativeCwds) {
         const candidateCwd = ppath.resolve(this.cwd, NodeFS.toPortablePath(relativeCwd));
 
-        if (xfs.existsSync(ppath.join(candidateCwd, `package.json` as PortablePath))) {
+        if (xfs.existsSync(ppath.join(candidateCwd, toFilename(`package.json`)))) {
           this.workspacesCwds.add(candidateCwd);
         }
       }
@@ -122,7 +122,7 @@ export class Workspace {
   }
 
   async persistManifest() {
-    const updater = await makeUpdater(ppath.join(this.cwd, `package.json` as PortablePath));
+    const updater = await makeUpdater(ppath.join(this.cwd, toFilename(`package.json`)));
 
     updater.open((tracker: Object) => {
       this.manifest.exportTo(tracker);

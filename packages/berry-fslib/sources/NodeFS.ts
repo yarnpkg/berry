@@ -2,7 +2,7 @@ import fs, {Stats}                                         from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}              from './FakeFS';
-import {PortablePath, NativePath}                          from './path';
+import {PortablePath, NativePath, Filename, toFilename}                          from './path';
 
 const WINDOWS_PATH_REGEXP = /^[a-zA-Z]:.*$/;
 const PORTABLE_PATH_REGEXP = /^\/[a-zA-Z]:.*$/;
@@ -217,13 +217,13 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   async readdirPromise(p: PortablePath) {
-    return await new Promise<Array<string>>((resolve, reject) => {
+    return await new Promise<Array<String>>((resolve, reject) => {
       this.realFs.readdir(NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
-    }) as PortablePath[];
+    }) as Filename[];
   }
 
   readdirSync(p: PortablePath) {
-    return this.realFs.readdirSync(NodeFS.fromPortablePath(p)) as PortablePath[];
+    return this.realFs.readdirSync(NodeFS.fromPortablePath(p)) as Filename[];
   }
 
   async readlinkPromise(p: PortablePath) {

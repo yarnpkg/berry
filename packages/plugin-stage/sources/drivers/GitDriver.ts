@@ -1,6 +1,5 @@
 import {execUtils}     from '@berry/core';
-import {NodeFS, PortablePath}        from '@berry/fslib';
-import {posix}         from 'path';
+import {NodeFS, PortablePath, ppath, toFilename}        from '@berry/fslib';
 
 import * as stageUtils from '../stageUtils';
 
@@ -16,7 +15,7 @@ async function genCommitMessage(cwd: PortablePath) {
 
 export const Driver = {
   async findRoot(cwd: PortablePath) {
-    return await stageUtils.findVcsRoot(cwd, {marker: `.git`});
+    return await stageUtils.findVcsRoot(cwd, {marker: toFilename(`.git`)});
   },
 
   async filterChanges(cwd: PortablePath, yarnRoots: Set<PortablePath>, yarnNames: Set<string>) {
@@ -27,7 +26,7 @@ export const Driver = {
       if (line === ``)
         return [];
 
-      const path = posix.resolve(cwd, line.slice(3)) as PortablePath;
+      const path = ppath.resolve(cwd, line.slice(3) as PortablePath);
 
       // New directories need to be expanded to their content
       if (line.startsWith(`?? `) && line.endsWith(`/`)) {

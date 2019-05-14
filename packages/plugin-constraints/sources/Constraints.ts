@@ -1,6 +1,6 @@
 import {Ident, MessageName, Project, ReportError, Workspace}                                  from '@berry/core';
 import {miscUtils, structUtils}                                                               from '@berry/core';
-import {xfs, ppath, PortablePath}                                                 from '@berry/fslib';
+import {xfs, ppath, PortablePath, toFilename}                                                 from '@berry/fslib';
 import pl                                                                                     from 'tau-prolog';
 
 import {linkProjectToSession}                                                                 from './tauModule';
@@ -133,8 +133,8 @@ export class Constraints {
   constructor(project: Project) {
     this.project = project;
 
-    if (xfs.existsSync(ppath.join(project.cwd, `constraints.pro` as PortablePath))) {
-      this.source = xfs.readFileSync(ppath.join(project.cwd, `constraints.pro` as PortablePath), `utf8`);
+    if (xfs.existsSync(ppath.join(project.cwd, toFilename(`constraints.pro`)))) {
+      this.source = xfs.readFileSync(ppath.join(project.cwd, toFilename(`constraints.pro`)), `utf8`);
     }
   }
 

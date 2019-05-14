@@ -2,7 +2,7 @@ import {WorkspaceRequiredError}                             from '@berry/cli';
 import {Cache, Configuration, PluginConfiguration, Project} from '@berry/core';
 import {LightReport}                                        from '@berry/core';
 import {scriptUtils, structUtils}                           from '@berry/core';
-import {NodeFS, xfs, PortablePath, ppath}                                        from '@berry/fslib';
+import {NodeFS, xfs, PortablePath, ppath, Filename, toFilename}                                        from '@berry/fslib';
 import {Readable, Writable}                                 from 'stream';
 import tmp                                                  from 'tmp';
 
@@ -29,12 +29,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   )
 
   .action(async ({cwd, stdin, stdout, stderr, command, package: packages, args, quiet, ... rest}: {cwd: PortablePath, stdin: Readable, stdout: Writable, stderr: Writable, command: string, package: Array<string>, args: Array<string>, quiet: boolean}) => {
-    const tmpDir = await createTemporaryDirectory(`dlx-${process.pid}`);
+    const tmpDir = await createTemporaryDirectory(toFilename(`dlx-${process.pid}`));
 
     try {
-      await xfs.writeFilePromise(ppath.join(tmpDir, `package.json` as PortablePath), `{}\n`);
-      await xfs.writeFilePromise(ppath.join(tmpDir, `yarn.lock` as PortablePath), ``);
-      await xfs.writeFilePromise(ppath.join(tmpDir, `.yarnrc` as PortablePath), `enable-global-cache true\n`);
+      await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`package.json`)), `{}\n`);
+      await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`yarn.lock`)), ``);
+      await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`.yarnrc`)), `enable-global-cache true\n`);
 
       if (packages.length === 0) {
         packages = [command];
@@ -72,7 +72,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     }
   });
 
-function createTemporaryDirectory(name?: string) {
+function createTemporaryDirectory(name?: Filename) {
   return new Promise<PortablePath>((resolve, reject) => {
     tmp.dir({unsafeCleanup: true}, (error, dirPath) => {
       if (error) {
@@ -85,7 +85,7 @@ function createTemporaryDirectory(name?: string) {
     dirPath = await xfs.realpathPromise(dirPath);
 
     if (name) {
-      dirPath = ppath.join(dirPath, name as PortablePath);
+      dirPath = ppath.join(dirPath, name);
       await xfs.mkdirpPromise(dirPath);
     }
 

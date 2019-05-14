@@ -539,7 +539,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
         }
 
         if (stat.isSymbolicLink()) {
-          realArchivePath = this.pathUtils.resolve(this.pathUtils.dirname(realArchivePath), this.baseFs.readlinkSync(realArchivePath)) as PortablePath;
+          realArchivePath = this.pathUtils.resolve(this.pathUtils.dirname(realArchivePath), this.baseFs.readlinkSync(realArchivePath));
         } else {
           break;
         }
