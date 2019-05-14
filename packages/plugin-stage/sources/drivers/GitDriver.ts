@@ -42,10 +42,10 @@ async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileActio
         const pkgName = structUtils.stringifyIdent(value);
         const currDep = allCurrDeps.get(indentHash);
 
-        if (currDep && currDep.range !== value.range) {
-          actions.push([stageUtils.ActionType.MODIFY, `${pkgName} to ${currDep.range}`]);
-        } else {
+        if (!currDep) {
           actions.push([stageUtils.ActionType.REMOVE, pkgName])
+        } else if (currDep.range !== value.range) {
+          actions.push([stageUtils.ActionType.MODIFY, `${pkgName} to ${currDep.range}`]);
         }
       }
 
