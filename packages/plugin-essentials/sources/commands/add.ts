@@ -8,6 +8,7 @@ import {Readable, Writable}                                         from 'stream
 
 import * as suggestUtils                                            from '../suggestUtils';
 import {Hooks}                                                      from '..';
+import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) => clipanion
@@ -41,7 +42,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
     `yarn add lodash@1.2.3`,
   )
 
-  .action(async ({cwd, stdin, stdout, packages, exact, tilde, dev, peer, cached, interactive, quiet}: {cwd: string, stdin: Readable, stdout: Writable, packages: Array<string>, exact: boolean, tilde: boolean, dev: boolean, peer: boolean, cached: boolean, interactive: boolean, quiet: boolean}) => {
+  .action(async ({cwd, stdin, stdout, packages, exact, tilde, dev, peer, cached, interactive, quiet}: {cwd: PortablePath, stdin: Readable, stdout: Writable, packages: Array<string>, exact: boolean, tilde: boolean, dev: boolean, peer: boolean, cached: boolean, interactive: boolean, quiet: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -84,7 +85,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
 
     const allSuggestions = await Promise.all(packages.map(async pseudoDescriptor => {
       const request = pseudoDescriptor.match(/^\.{0,2}\//)
-        ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor, {cache, cwd, workspace})
+        ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor as PortablePath, {cache, cwd, workspace})
         : structUtils.parseDescriptor(pseudoDescriptor);
 
       const suggestions = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies, maxResults});

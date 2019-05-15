@@ -5,8 +5,8 @@
   "dependencies": {
     "@berry/cli": "workspace:*",
     "@berry/core": "workspace:*",
-    "@berry/fslib": "workspace:*",
-    "@berry/plugin-essentials": "workspace:*"
+    "@berry/plugin-essentials": "workspace:*",
+    "@berry/plugin-pack": "workspace:*"
   },
   "devDependencies": {
     "@berry/builder": "workspace:*"

@@ -139,6 +139,13 @@ const afterWorkspaceDependencyRemoval = async (workspace, dependencyTarget, desc
         return;
     workspace.manifest[target].delete(ident.identHash);
 };
+const beforeWorkspacePacking = (workspace, rawManifest) => {
+    if (rawManifest.publishConfig && rawManifest.publishConfig.typings)
+        rawManifest.typings = rawManifest.publishConfig.typings;
+    if (rawManifest.publishConfig && rawManifest.publishConfig.types) {
+        rawManifest.types = rawManifest.publishConfig.types;
+    }
+};
 const plugin = {
     commands: [
         gen_sdk_1.default,
@@ -146,6 +153,7 @@ const plugin = {
     hooks: {
         afterWorkspaceDependencyAddition,
         afterWorkspaceDependencyRemoval,
+        beforeWorkspacePacking,
     },
 };
 // eslint-disable-next-line arca/no-default-export

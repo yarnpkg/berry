@@ -1,6 +1,7 @@
 import {Cache, Configuration, Descriptor, Project, PluginConfiguration} from '@berry/core';
 import {MessageName, StreamReport}                                      from '@berry/core';
 import {structUtils}                                                    from '@berry/core';
+import { PortablePath } from '@berry/fslib';
 import {Readable, Writable}                                             from 'stream';
 
 import {Constraints}                                                    from '../../Constraints';
@@ -24,7 +25,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn constraints fix`,
   )
 
-  .action(async ({cwd, stdin, stdout}: {cwd: string, stdin: Readable, stdout: Writable}) => {
+  .action(async ({cwd, stdin, stdout}: {cwd: PortablePath, stdin: Readable, stdout: Writable}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -62,7 +63,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       const report = await StreamReport.start({configuration, stdout}, async report => {
         for (const {workspace, dependencyIdent, dependencyType, reason} of result.invalidDependencies) {
           const dependencyDescriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
-  
+
           if (dependencyDescriptor) {
             report.reportError(MessageName.CONSTRAINTS_INVALID_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} has an unfixable invalid dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)} in ${dependencyType} (invalid because ${reason})`);
           }

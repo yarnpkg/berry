@@ -1,8 +1,7 @@
 import {WorkspaceRequiredError}                                                        from '@berry/cli';
 import {Cache, Configuration, PluginConfiguration, Project, StreamReport, structUtils} from '@berry/core';
-import {NodeFS}                                                                        from '@berry/fslib';
+import {NodeFS, PortablePath, ppath}                                                   from '@berry/fslib';
 import {UsageError}                                                                    from 'clipanion';
-import {posix}                                                                         from 'path';
 import {Writable}                                                                      from 'stream';
 
 // eslint-disable-next-line arca/no-default-export
@@ -29,7 +28,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn link ~/jest --all`,
   )
 
-  .action(async ({cwd, stdout, destination, all, private: priv, relative}: {cwd: string, stdout: Writable, destination: string, all: boolean, private: boolean, relative: boolean}) => {
+  .action(async ({cwd, stdout, destination, all, private: priv, relative}: {cwd: PortablePath, stdout: Writable, destination: string, all: boolean, private: boolean, relative: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -37,7 +36,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     if (!workspace)
       throw new WorkspaceRequiredError(cwd);
 
-    const absoluteDestination = posix.resolve(cwd, NodeFS.toPortablePath(destination));
+    const absoluteDestination = ppath.resolve(cwd, NodeFS.toPortablePath(destination));
 
     const configuration2 = await Configuration.find(absoluteDestination, pluginConfiguration);
     const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);
@@ -52,7 +51,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       for (const workspace of project2.workspaces)
         if (workspace.manifest.name && (!workspace.manifest.private || priv))
           linkedWorkspaces.push(workspace);
-      
+
       if (linkedWorkspaces.length === 0) {
         throw new UsageError(`No workspace found to be linked in the target project`);
       }
@@ -69,7 +68,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     for (const workspace of linkedWorkspaces) {
       const fullName = structUtils.stringifyIdent(workspace.locator);
       const target = relative
-        ? posix.relative(project.cwd, workspace.cwd)
+        ? ppath.relative(project.cwd, workspace.cwd)
         : workspace.cwd;
 
       topLevelWorkspace.manifest.resolutions.push({

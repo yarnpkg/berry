@@ -1,6 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
 import {Locator, MessageName}                       from '@berry/core';
 import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
+import {PortablePath}                               from '@berry/fslib';
 
 import * as githubUtils                             from './githubUtils';
 
@@ -31,7 +32,7 @@ export class GithubFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: `/sources`,
+      prefixPath: `/sources` as PortablePath,
       checksum,
     };
   }
@@ -43,7 +44,7 @@ export class GithubFetcher implements Fetcher {
 
     return await tgzUtils.makeArchive(sourceBuffer, {
       stripComponents: 1,
-      prefixPath: `/sources`,
+      prefixPath: `/sources` as PortablePath,
     });
   }
 

@@ -1,8 +1,7 @@
 import {Configuration, MessageName, PluginConfiguration, Project, StreamReport, httpUtils, structUtils} from '@berry/core';
-import {xfs}                                                                                            from '@berry/fslib';
+import {xfs, PortablePath, ppath}                                                                                            from '@berry/fslib';
 import {parseSyml}                                                                                      from '@berry/parsers';
 import {Clipanion}                                                                                      from 'clipanion';
-import {posix}                                                                                          from 'path';
 import {Writable}                                                                                       from 'stream';
 import {runInNewContext}                                                                                from 'vm';
 
@@ -36,7 +35,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
     `yarn plugin dl --list`,
   )
 
-  .action(async ({cwd, stdout, list, name}: {cwd: string, stdout: Writable, list: boolean, name: string}) => {
+  .action(async ({cwd, stdout, list, name}: {cwd: PortablePath, stdout: Writable, list: boolean, name: string}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     const report = await StreamReport.start({configuration, stdout}, async report => {
@@ -89,11 +88,11 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
           exports: vmExports,
         });
 
-        const relativePath = `.yarn/plugins/${vmModule.exports.name}.js`;
-        const absolutePath = posix.resolve(project.cwd, relativePath);
+        const relativePath = `.yarn/plugins/${vmModule.exports.name}.js` as PortablePath;
+        const absolutePath = ppath.resolve(project.cwd, relativePath);
 
         report.reportInfo(MessageName.UNNAMED, `Saving the new plugin in ${configuration.format(relativePath, `magenta`)}`);
-        await xfs.mkdirpPromise(posix.dirname(absolutePath));
+        await xfs.mkdirpPromise(ppath.dirname(absolutePath));
         await xfs.writeFilePromise(absolutePath, pluginBuffer);
 
         await Configuration.updateConfiguration(project.cwd, (current: any) => ({

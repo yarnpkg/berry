@@ -96,7 +96,7 @@ export class NpmSemverResolver implements Resolver {
     }
 
     return {
-      ... locator,
+      ...locator,
 
       version,
 

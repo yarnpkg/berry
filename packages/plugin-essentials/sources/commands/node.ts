@@ -1,6 +1,6 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {scriptUtils}                                 from '@berry/core';
-import {NodeFS}                                      from '@berry/fslib';
+import {NodeFS, PortablePath}                                      from '@berry/fslib';
 import execa                                         from 'execa';
 import {Readable, Writable}                          from 'stream';
 
@@ -22,7 +22,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn node ./my-script.js`,
   )
 
-  .action(async ({cwd, stdin, stdout, stderr, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, args: Array<string>}) => {
+  .action(async ({cwd, stdin, stdout, stderr, args}: {cwd: PortablePath, stdin: Readable, stdout: Writable, stderr: Writable, args: Array<string>}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
 

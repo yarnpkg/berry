@@ -2,6 +2,7 @@ import {WorkspaceRequiredError}                                  from '@berry/cl
 import {Cache, Configuration, LightReport, LocatorHash, Package} from '@berry/core';
 import {PluginConfiguration, Project, Workspace}                 from '@berry/core';
 import {miscUtils, structUtils}                                  from '@berry/core';
+import { PortablePath } from '@berry/fslib';
 import {Writable}                                                from 'stream';
 import {asTree}                                                  from 'treeify';
 
@@ -22,7 +23,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn why lodash`,
   )
 
-  .action(async ({cwd, stdout, package: packageName, peers}: {cwd: string, stdout: Writable, package: string, peers: boolean}) => {
+  .action(async ({cwd, stdout, package: packageName, peers}: {cwd: PortablePath, stdout: Writable, package: string, peers: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -78,7 +79,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const traversePackage = (builder: () => TreeNode, pkg: Package, seen: Set<LocatorHash>) => {
       if (seen.has(pkg.locatorHash))
         return;
-      
+
       if (structUtils.stringifyIdent(pkg) === packageName)
         builder();
 

@@ -1,3 +1,4 @@
+import {toFilename}                             from '@berry/fslib';
 import semver                                   from 'semver';
 
 import {Configuration}                          from './Configuration';
@@ -40,7 +41,7 @@ export function convertPackageToLocator(pkg: Package): Locator {
 
 export function renamePackage(pkg: Package, locator: Locator) {
   return {
-    ... locator,
+    ...locator,
 
     version: pkg.version,
 
@@ -256,7 +257,7 @@ export function slugifyLocator(locator: Locator) {
     ? `@${locator.scope}-${locator.name}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`
     : `${locator.name}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`;
 
-  return slug;
+  return toFilename(slug);
 }
 
 export function prettyIdent(configuration: Configuration, ident: Ident) {

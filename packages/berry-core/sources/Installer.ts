@@ -1,3 +1,5 @@
+import {PortablePath}                 from '@berry/fslib';
+
 import {FetchResult}                  from './Fetcher';
 import {Descriptor, Locator, Package} from './types';
 
@@ -9,7 +11,7 @@ export enum BuildType {
 export type BuildDirective = [BuildType, string];
 
 export type InstallStatus = {
-  packageLocation: string,
+  packageLocation: PortablePath,
   buildDirective?: Array<BuildDirective> | null,
 };
 
@@ -57,7 +59,7 @@ export interface Installer {
    * @param locator
    * @param locations
    */
-  attachExternalDependents(locator: Locator, dependentPaths: Array<string>): Promise<void>;
+  attachExternalDependents(locator: Locator, dependentPaths: Array<PortablePath>): Promise<void>;
 
   /**
    * Finalize the install by writing miscellaneous files to the disk.

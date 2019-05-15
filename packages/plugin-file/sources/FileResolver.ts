@@ -58,13 +58,13 @@ export class FileResolver implements Resolver {
     }, packageFetch.releaseFs);
 
     return {
-      ... locator,
+      ...locator,
 
       version: manifest.version || `0.0.0`,
-      
+
       languageName: opts.project.configuration.get(`defaultLanguageName`),
       linkType: LinkType.HARD,
-      
+
       dependencies: manifest.dependencies,
       peerDependencies: manifest.peerDependencies,
 

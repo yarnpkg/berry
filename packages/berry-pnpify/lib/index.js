@@ -138,7 +138,7 @@ class PnPApiLocator {
         const opts = options || {};
         this.options = {
             existsSync: opts.existsSync || fs__WEBPACK_IMPORTED_MODULE_0__["existsSync"].bind(fs__WEBPACK_IMPORTED_MODULE_0__),
-            pnpFileName: opts.pnpFileName || '.pnp.js'
+            pnpFileName: opts.pnpFileName || '.pnp.js',
         };
         this.checkTree = new Map();
     }
@@ -504,9 +504,8 @@ var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
 // CONCATENATED MODULE: ../berry-fslib/sources/NodeFS.ts
 
 
-
-const PORTABLE_PATH_PREFIX = `/mnt/`;
-const PORTABLE_PREFIX_REGEXP = /^\/mnt\/([a-z])(?:\/(.*))?$/;
+const WINDOWS_PATH_REGEXP = /^[a-zA-Z]:.*$/;
+const PORTABLE_PATH_REGEXP = /^\/[a-zA-Z]:.*$/;
 class NodeFS_NodeFS extends FakeFS_FakeFS {
     constructor(realFs = external_fs_default.a) {
         super();
@@ -699,34 +698,19 @@ class NodeFS_NodeFS extends FakeFS_FakeFS {
             }
         };
     }
+    // Path should look like "/N:/berry/scripts/plugin-pack.js"
+    // And transform to "N:\berry\scripts\plugin-pack.js"
     static fromPortablePath(p) {
-        if (process.platform !== `win32`)
+        if (process.platform !== 'win32')
             return p;
-        // Path should look like "/mnt/n/berry/scripts/plugin-pack.js"
-        // And transform to "N:\berry/scripts/plugin-pack.js"
-        const match = p.match(PORTABLE_PREFIX_REGEXP);
-        if (!match)
-            return p;
-        const [, drive, pathWithoutPrefix = ''] = match;
-        const windowsPath = pathWithoutPrefix.replace(/\//g, '\\');
-        return `${drive.toUpperCase()}:\\${windowsPath}`;
+        return p.match(PORTABLE_PATH_REGEXP) ? p.substring(1).replace(/\//g, `\\`) : p;
     }
+    // Path should look like "N:/berry/scripts/plugin-pack.js"
+    // And transform to "/N:/berry/scripts/plugin-pack.js"
     static toPortablePath(p) {
-        if (process.platform !== `win32`)
+        if (process.platform !== 'win32')
             return p;
-        // Path should look like "N:\berry/scripts/plugin-pack.js"
-        // And transform to "/mnt/n/berry/scripts/plugin-pack.js"
-        // Skip if the path is already portable
-        if (p.startsWith(PORTABLE_PATH_PREFIX))
-            return p;
-        const { root } = external_path_["win32"].parse(p);
-        // If relative path, just replace win32 slashes by posix slashes
-        if (!root)
-            return p.replace(/\\/g, '/');
-        const driveLetter = root[0].toLowerCase();
-        const pathWithoutRoot = p.substr(root.length);
-        const posixPath = pathWithoutRoot.replace(/\\/g, '/');
-        return `${PORTABLE_PATH_PREFIX}${driveLetter}/${posixPath}`;
+        return (p.match(WINDOWS_PATH_REGEXP) ? `/${p}` : p).replace(/\\/g, `/`);
     }
 }
 
@@ -1039,7 +1023,7 @@ class NodePathResolver {
         const result = { resolvedPath: nodePath };
         const isWindowsPath = nodePath.indexOf('\\') > 0;
         const pathSep = isWindowsPath ? '\\' : '/';
-        if (nodePath.indexOf(pathSep + 'node_modules') < 0)
+        if (nodePath.indexOf(`${pathSep}node_modules`) < 0)
             // Non-node_modules paths should not be processed
             return result;
         const pnpApiPath = this.options.apiLocator.findApi(nodePath);
@@ -1141,7 +1125,7 @@ class PnPApiLoader_PnPApiLoader extends external_events_default.a {
                 delete __webpack_require__.c[dynamicRequire["a" /* dynamicRequire */].resolve(modulePath)];
                 return Object(dynamicRequire["a" /* dynamicRequire */])(modulePath);
             }),
-            watch: opts.watch
+            watch: opts.watch,
         };
     }
     /**
@@ -1205,7 +1189,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         this.baseFs = baseFs;
         this.pathResolver = new NodePathResolver({
             apiLoader: new PnPApiLoader_PnPApiLoader({ watch: external_fs_default.a.watch.bind(external_fs_default.a) }),
-            apiLocator: new PnPApiLocator["a" /* PnPApiLocator */]({ existsSync: baseFs.existsSync.bind(baseFs) })
+            apiLocator: new PnPApiLocator["a" /* PnPApiLocator */]({ existsSync: baseFs.existsSync.bind(baseFs) }),
         });
     }
     getRealPath() {
@@ -1253,11 +1237,11 @@ class NodeModulesFS_NodeModulesFS extends FakeFS_FakeFS {
         return Object.assign(stats, {
             isFile: () => false,
             isDirectory: () => false,
-            isSymbolicLink: () => true
+            isSymbolicLink: () => true,
         });
     }
     static createFsError(code, message) {
-        return Object.assign(new Error(code + ': ' + message), { code });
+        return Object.assign(new Error(`${code}: ${message}`), { code });
     }
     throwIfPathReadonly(op, p) {
         const pnpPath = this.resolvePath(p);

@@ -18,7 +18,6 @@ function getCaretY(caret: any) {
 }
 
 export class TermRenderer {
-
   private readonly termInput: TermInput;
   private readonly termOutput: TermOutput;
 
@@ -139,14 +138,14 @@ export class TermRenderer {
 
       // If we detect that we haven't enough space to print the interface, we reserve a few more lines by outputting line returns
       if (this.termOutput.rows - this.inlineTop < tree.elementRect.height) {
-        this.termOutput.write(cursor.moveTo({ x: 0, y: this.inlineTop }));
+        this.termOutput.write(cursor.moveTo({x: 0, y: this.inlineTop}));
         this.termOutput.write(`\n`.repeat(tree.elementRect.height - 1));
         this.inlineTop = this.termOutput.rows - tree.elementRect.height;
       }
 
       // If the display shrinked, we must clear the lines below
       if (oldHeight > tree.elementRect.height) {
-        this.termOutput.write(cursor.moveTo({x: 0, y: this.inlineTop + tree.elementRect.height }));
+        this.termOutput.write(cursor.moveTo({x: 0, y: this.inlineTop + tree.elementRect.height}));
         this.termOutput.write(screen.clearBelow);
       }
 

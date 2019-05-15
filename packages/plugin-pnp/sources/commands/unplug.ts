@@ -2,6 +2,7 @@ import {WorkspaceRequiredError}                                           from '
 import {Cache, Configuration, PluginConfiguration, Project, StreamReport} from '@berry/core';
 import {structUtils}                                                      from '@berry/core';
 import {Writable}                                                         from 'stream';
+import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -29,7 +30,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn unplug lodash@1.2.3`,
   )
 
-  .action(async ({cwd, patterns, stdout}: {cwd: string, patterns: string, stdout: Writable}) => {
+  .action(async ({cwd, patterns, stdout}: {cwd: PortablePath, patterns: string, stdout: Writable}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);

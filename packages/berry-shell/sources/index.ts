@@ -1,13 +1,12 @@
-import {xfs, NodeFS}                                                      from '@berry/fslib';
+import {xfs, NodeFS, ppath, PortablePath}                                 from '@berry/fslib';
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
-import {posix}                                                            from 'path';
 import {PassThrough, Readable, Writable}                                  from 'stream';
 
 import {Handle, ProtectedStream, Stdio, start, makeBuiltin, makeProcess}  from './pipe';
 
 export type UserOptions = {
   builtins: {[key: string]: ShellBuiltin},
-  cwd: string,
+  cwd: PortablePath,
   env: {[key: string]: string | undefined},
   stdin: Readable | null,
   stdout: Writable,
@@ -30,7 +29,7 @@ export type ShellOptions = {
 };
 
 export type ShellState = {
-  cwd: string,
+  cwd: PortablePath,
   environment: {[key: string]: string},
   exitCode: number | null,
   stdin: Readable,
@@ -40,24 +39,24 @@ export type ShellState = {
 };
 
 function cloneState(state: ShellState, mergeWith: Partial<ShellState> = {}) {
-  const newState = {... state, ... mergeWith};
+  const newState = {...state, ...mergeWith};
 
-  newState.environment = {... state.environment, ... mergeWith.environment };
-  newState.variables = {... state.variables, ... mergeWith.variables };
+  newState.environment = {...state.environment, ...mergeWith.environment};
+  newState.variables = {...state.variables, ...mergeWith.variables};
 
   return newState;
 }
 
 const BUILTINS = new Map<string, ShellBuiltin>([
-  [`cd`, async ([target, ... rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
-    const resolvedTarget = posix.resolve(state.cwd, NodeFS.toPortablePath(target));
+  [`cd`, async ([target, ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
+    const resolvedTarget = ppath.resolve(state.cwd, NodeFS.toPortablePath(target));
     const stat = await xfs.statPromise(resolvedTarget);
 
     if (!stat.isDirectory()) {
       state.stderr.write(`cd: not a directory\n`);
       return 1;
     } else {
-      state.cwd = target;
+      state.cwd = resolvedTarget;
       return 0;
     }
   }],
@@ -75,7 +74,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     return 1;
   }],
 
-  [`exit`, async ([code, ... rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
+  [`exit`, async ([code, ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
     return state.exitCode = parseInt(code, 10);
   }],
 
@@ -120,15 +119,10 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
 
   for (const commandArg of commandArgs) {
     for (const segment of commandArg) {
-
       if (typeof segment === 'string') {
-
         push(segment);
-
       } else {
-
         switch (segment.type) {
-
           case `shell`: {
             const raw = await executeBufferedSubshell(segment.shell, opts, state);
             if (segment.quoted) {
@@ -142,7 +136,6 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
 
           case `variable`: {
             switch (segment.name) {
-
               case `#`: {
                 push(String(opts.args.length));
               } break;
@@ -189,12 +182,10 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
                   }
                 }
               } break;
-
             }
           } break;
         }
       }
-
     }
 
     close();
@@ -212,11 +203,11 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
 
 function makeCommandAction(args: Array<string>, opts: ShellOptions, state: ShellState) {
   if (!opts.builtins.has(args[0]))
-    args = [`command`, ... args];
+    args = [`command`, ...args];
 
-  const [name, ... rest] = args;
+  const [name, ...rest] = args;
   if (name === `command`) {
-    return makeProcess(rest[0], rest.slice(1), {
+    return makeProcess(rest[0], rest.slice(1), opts, {
       cwd: NodeFS.fromPortablePath(state.cwd),
       env: state.environment,
     });
@@ -254,7 +245,7 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
     // Only the final segment is allowed to modify the shell state; all the
     // other ones are isolated
     const activeState = current.then
-      ? {... state}
+      ? {...state}
       : state;
 
     let action;
@@ -429,7 +420,7 @@ function locateArgsVariable(node: ShellLine): boolean {
 
 export async function execute(command: string, args: Array<string> = [], {
   builtins = {},
-  cwd = process.cwd(),
+  cwd = NodeFS.toPortablePath(process.cwd()),
   env = process.env,
   stdin = process.stdin,
   stdout = process.stdout,

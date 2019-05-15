@@ -1,6 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
 import {structUtils, tgzUtils}                      from '@berry/core';
 import {Locator, MessageName}                       from '@berry/core';
+import {PortablePath}                               from '@berry/fslib';
 import semver                                       from 'semver';
 
 import {PROTOCOL}                                   from './constants';
@@ -60,6 +61,6 @@ export class NpmFetcher implements Fetcher {
   }
 
   private getPrefixPath(locator: Locator) {
-    return `/node_modules/${structUtils.requirableIdent(locator)}`;
+    return `/node_modules/${structUtils.requirableIdent(locator)}` as PortablePath;
   }
 }

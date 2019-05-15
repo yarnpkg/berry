@@ -1,13 +1,13 @@
-import {FakeFS, LazyFS, NodeFS, ZipFS, xfs} from '@berry/fslib';
-import {lock, unlock}                       from 'lockfile';
-import {posix}                              from 'path';
-import {promisify}                          from 'util';
+import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename} from '@berry/fslib';
+import {xfs, ppath, toFilename}                                from '@berry/fslib';
+import {lock, unlock}                                          from 'lockfile';
+import {promisify}                                             from 'util';
 
-import {Configuration}                      from './Configuration';
-import {MessageName, ReportError}           from './Report';
-import * as hashUtils                       from './hashUtils';
-import * as structUtils                     from './structUtils';
-import {LocatorHash, Locator}               from './types';
+import {Configuration}                                         from './Configuration';
+import {MessageName, ReportError}                              from './Report';
+import * as hashUtils                                          from './hashUtils';
+import * as structUtils                                        from './structUtils';
+import {LocatorHash, Locator}                                  from './types';
 
 const lockP = promisify(lock);
 const unlockP = promisify(unlock);
@@ -18,7 +18,7 @@ export type FetchFromCacheOptions = {
 
 export class Cache {
   public readonly configuration: Configuration;
-  public readonly cwd: string;
+  public readonly cwd: PortablePath;
 
   private mutexes: Map<LocatorHash, Promise<string>> = new Map();
 
@@ -29,32 +29,32 @@ export class Cache {
     return cache;
   }
 
-  constructor(cacheCwd: string, {configuration}: {configuration: Configuration}) {
+  constructor(cacheCwd: PortablePath, {configuration}: {configuration: Configuration}) {
     this.configuration = configuration;
     this.cwd = cacheCwd;
   }
 
   getLocatorFilename(locator: Locator) {
-    return `${structUtils.slugifyLocator(locator)}.zip`;
+    return `${structUtils.slugifyLocator(locator)}.zip` as Filename;
   }
 
   getLocatorPath(locator: Locator) {
-    return posix.resolve(this.cwd, this.getLocatorFilename(locator));
+    return ppath.resolve(this.cwd, this.getLocatorFilename(locator));
   }
 
   async setup() {
     await xfs.mkdirpPromise(this.cwd);
 
-    await this.writeFileIntoCache(posix.resolve(this.cwd, `.gitignore`), async (file: string) => {
+    await this.writeFileIntoCache(ppath.resolve(this.cwd, toFilename(`.gitignore`)), async (file: PortablePath) => {
       await xfs.writeFilePromise(file, `/.gitignore\n*.lock\n`);
     });
   }
 
-  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, loader?: () => Promise<ZipFS>): Promise<[FakeFS, () => void, string]> {
+  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, loader?: () => Promise<ZipFS>): Promise<[FakeFS<PortablePath>, () => void, string]> {
     const cachePath = this.getLocatorPath(locator);
     const baseFs = new NodeFS();
 
-    const validateFile = async (path: string) => {
+    const validateFile = async (path: PortablePath) => {
       const actualChecksum = await hashUtils.checksumFile(path);
 
       if (expectedChecksum !== null && actualChecksum !== expectedChecksum) {
@@ -117,14 +117,14 @@ export class Cache {
 
     let zipFs: ZipFS | null = null;
 
-    const lazyFs: LazyFS = new LazyFS(() => {
+    const lazyFs: LazyFS<PortablePath> = new LazyFS<PortablePath>(() => {
       try {
         return zipFs = new ZipFS(cachePath, {readOnly: true, baseFs});
       } catch (error) {
         error.message = `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
         throw error;
       }
-    });
+    }, ppath);
 
     const releaseFs = () => {
       if (zipFs !== null) {
@@ -135,8 +135,8 @@ export class Cache {
     return [lazyFs, releaseFs, checksum];
   }
 
-  async writeFileIntoCache<T>(file: string, generator: (file: string) => Promise<T>) {
-    const lock = NodeFS.fromPortablePath(`${file}.lock`);
+  async writeFileIntoCache<T>(file: PortablePath, generator: (file: PortablePath) => Promise<T>) {
+    const lock = NodeFS.fromPortablePath(`${file}.lock` as PortablePath);
 
     try {
       await lockP(lock);

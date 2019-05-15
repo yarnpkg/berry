@@ -105,12 +105,12 @@ export class NodeElement extends Node {
       if (DEFAULT_COMPUTED_STYLES.get(key) !== this.style.get(key))
         style[key] = this.style.get(key);
 
-    console.log(indent + `<div layout={${JSON.stringify(layout)}}${style ? ` style={${JSON.stringify(style)}}` : ``}>`);
+    console.log(`${indent}<div layout={${JSON.stringify(layout)}}${style ? ` style={${JSON.stringify(style)}}` : ``}>`);
 
     for (const child of this.childNodes)
       child.dumpNode(depth + 1);
 
-    console.log(indent + `</div>`);
+    console.log(`${indent}</div>`);
   }
 
   getLine(row: number, left: number, width: number) {

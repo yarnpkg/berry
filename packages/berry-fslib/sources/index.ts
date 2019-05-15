@@ -2,10 +2,15 @@ import fs                         from 'fs';
 
 import {FakeFS}                   from './FakeFS';
 import {NodeFS}                   from './NodeFS';
+import {NativePath}               from './path';
 
 export {CreateReadStreamOptions}  from './FakeFS';
 export {CreateWriteStreamOptions} from './FakeFS';
 export {WriteFileOptions}         from './FakeFS';
+
+export {Path, PortablePath, NativePath, Filename} from './path';
+export {ParsedPath, PathUtils, FormatInputPathObject} from './path';
+export {npath, ppath, toFilename} from './path';
 
 export {AliasFS}                  from './AliasFS';
 export {FakeFS}                   from './FakeFS';
@@ -17,7 +22,7 @@ export {PosixFS}                  from './PosixFS';
 export {ZipFS}                    from './ZipFS';
 export {ZipOpenFS}                from './ZipOpenFS';
 
-export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
+export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void {
   const SYNC_IMPLEMENTATIONS = new Set([
     `accessSync`,
     `createReadStream`,
@@ -81,11 +86,11 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
     const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
     const origName = fnName.replace(/Promise$/, ``);
 
-    (patchedFs as any)[origName] = (... args: Array<any>) => {
+    (patchedFs as any)[origName] = (...args: Array<any>) => {
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
 
-      fakeImpl(... args).then((result: any) => {
+      fakeImpl(...args).then((result: any) => {
         callback(undefined, result);
       }, (error: Error) => {
         callback(error);
@@ -104,7 +109,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS): void {
   patchedFs.realpath.native = patchedFs.realpath;
 }
 
-export function extendFs(realFs: typeof fs, fakeFs: FakeFS): typeof fs {
+export function extendFs(realFs: typeof fs, fakeFs: FakeFS<NativePath>): typeof fs {
   const patchedFs = Object.create(realFs);
 
   patchFs(patchedFs, fakeFs);

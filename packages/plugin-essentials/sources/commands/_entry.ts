@@ -1,5 +1,4 @@
-import {NodeFS} from '@berry/fslib';
-import {posix}  from 'path';
+import {NodeFS, ppath} from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any) => clipanion
@@ -23,7 +22,7 @@ export default (clipanion: any) => clipanion
 
     // berry ~/projects/foo install
     } else if (args.length !== 0 && args[0].match(/[\\\/]/)) {
-      const newCwd = posix.resolve(cwd, NodeFS.toPortablePath(args[0]));
+      const newCwd = ppath.resolve(cwd, NodeFS.toPortablePath(args[0]));
       return await clipanion.run(null, args.slice(1), {cwd: newCwd, stdout, ... env});
 
     // berry start

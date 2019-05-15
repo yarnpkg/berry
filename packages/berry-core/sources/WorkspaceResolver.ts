@@ -1,3 +1,5 @@
+import {PortablePath}                                    from '@berry/fslib';
+
 import {ReportError, MessageName}                        from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import {Descriptor, Locator}                             from './types';
@@ -42,7 +44,7 @@ export class WorkspaceResolver implements Resolver {
         throw new ReportError(MessageName.WORKSPACE_NOT_FOUND, `No local workspace found for this range`);
       }
     }
-    
+
     if (candidateWorkspaces.length > 1)
       throw new ReportError(MessageName.TOO_MANY_MATCHING_WORKSPACES, `Too many workspaces match this range, please disambiguate`);
 
@@ -50,18 +52,18 @@ export class WorkspaceResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const workspace = opts.project.getWorkspaceByCwd(locator.reference.slice(WorkspaceResolver.protocol.length));
+    const workspace = opts.project.getWorkspaceByCwd(locator.reference.slice(WorkspaceResolver.protocol.length) as PortablePath);
 
     return {
-      ... locator,
+      ...locator,
 
       version: workspace.manifest.version || `0.0.0`,
 
       languageName: `unknown`,
       linkType: LinkType.SOFT,
 
-      dependencies: new Map([... workspace.manifest.dependencies, ... workspace.manifest.devDependencies]),
-      peerDependencies: new Map([... workspace.manifest.peerDependencies]),
+      dependencies: new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]),
+      peerDependencies: new Map([...workspace.manifest.peerDependencies]),
 
       dependenciesMeta: workspace.manifest.dependenciesMeta,
       peerDependenciesMeta: workspace.manifest.peerDependenciesMeta,

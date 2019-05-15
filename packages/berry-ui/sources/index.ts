@@ -173,7 +173,7 @@ export async function render(app: any, {stdin = null, stdout = null, inline = fa
       throw new Error(`Assertion failed: missing stdin`);
     if (!stdout)
       throw new Error(`Assertion failed: missing stdout`);
-  
+
     const termInput = new TermInput(stdin);
     const termOutput = new TermOutput(stdout, {isInline: inline, isDebug: false});
 
@@ -230,7 +230,7 @@ export async function render(app: any, {stdin = null, stdout = null, inline = fa
       Reconciler.unbatchedUpdates(() => {
         Reconciler.updateContainer(React.createElement(Div), container, null, null);
       });
-      
+
       resolve();
     }
 

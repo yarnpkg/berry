@@ -64,11 +64,11 @@ export declare class NodePathResolver {
      * Returns `readdir`-like result for partially resolved pnp path
      *
      * @param issuerInfo issuer package information
-     * @param request either '' or '@scope'
+     * @param scope null - for `/node_modules` dir list or '@scope' - for `/node_modules/@scope` dir list
      *
      * @returns `undefined` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
      */
-    readDir(issuerInfo: PackageInformation, request: string): string[] | undefined;
+    readDir(issuerInfo: PackageInformation, scope: string | null): string[] | undefined;
     private getIssuer;
     /**
      * Resolves paths containing `/node_modules` inside PnP projects. If path is outside PnP
@@ -77,7 +77,7 @@ export declare class NodePathResolver {
      * This method extracts `.../node_modules/pkgName/...` from the path
      * and uses previous package as an issuer for the next package.
      *
-     * @param nodePath path containing `node_modules`
+     * @param nodePath full path containing `node_modules`
      *
      * @returns resolved path
      */

@@ -8,6 +8,7 @@ import {createHash}                                                             
 import ssri                                                                                from 'ssri';
 import {Writable}                                                                          from 'stream';
 import * as yup                                                                            from 'yup';
+import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -33,7 +34,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn npm publish`,
   )
 
-  .action(async ({cwd, stdout, access, tag}: {cwd: string, stdout: Writable, access: string | undefined, tag: string}) => {
+  .action(async ({cwd, stdout, access, tag}: {cwd: PortablePath, stdout: Writable, access: string | undefined, tag: string}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {workspace} = await Project.find(configuration, cwd);
 
@@ -58,7 +59,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const pack = await packUtils.genPackStream(workspace, files);
         const buffer = await miscUtils.bufferStream(pack);
 
-        const body = makePublishBody(workspace, buffer, {access, tag});
+        const body = await makePublishBody(workspace, buffer, {access, tag});
 
         try {
           const path = ident.scope
@@ -89,7 +90,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     return report.exitCode();
   });
 
-function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag}: {access: string | undefined, tag: string}) {
+async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag}: {access: string | undefined, tag: string}) {
   const configuration = workspace.project.configuration;
 
   const ident = workspace.manifest.name!;
@@ -112,15 +113,7 @@ function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag}: {a
     }
   }
 
-  const raw = JSON.parse(JSON.stringify(workspace.manifest.raw));
-
-  if (workspace.manifest.publishConfig) {
-    if (workspace.manifest.publishConfig.main)
-      raw.main = workspace.manifest.publishConfig.main;
-    if (workspace.manifest.publishConfig.module) {
-      raw.module = workspace.manifest.publishConfig.module;
-    }
-  }
+  const raw = await packUtils.genPackageManifest(workspace);
 
   return {
     _id: name,

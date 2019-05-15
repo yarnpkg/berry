@@ -1,6 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
 import {Locator, MessageName}                       from '@berry/core';
 import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
+import {PortablePath}                               from '@berry/fslib';
 
 import {TARBALL_REGEXP, PROTOCOL_REGEXP}            from './constants';
 
@@ -34,7 +35,7 @@ export class TarballHttpFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: `/sources`,
+      prefixPath: `/sources` as PortablePath,
       checksum,
     };
   }
@@ -46,7 +47,7 @@ export class TarballHttpFetcher implements Fetcher {
 
     return await tgzUtils.makeArchive(sourceBuffer, {
       stripComponents: 1,
-      prefixPath: `/sources`,
+      prefixPath: `/sources` as PortablePath,
     });
   }
 }

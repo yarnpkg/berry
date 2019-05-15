@@ -2,6 +2,7 @@ import {Configuration, MessageName, PluginConfiguration, SettingsType, StreamRep
 import {miscUtils}                                                                   from '@berry/core';
 import {Writable}                                                                    from 'stream';
 import {inspect}                                                                     from 'util';
+import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -11,7 +12,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
   .detail(`
     This command prints the current active configuration settings.
-    
+
     When used together with the \`-v,--verbose\` option, the output will contain the settings description on top of the regular key/value information.
 
     When used together with the \`--why\` flag, the output will also contain the reason why a settings is set a particular way.
@@ -24,7 +25,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn config`,
   )
 
-  .action(async ({cwd, stdout, verbose, why, json}: {cwd: string, stdout: Writable, verbose: boolean, why: boolean, json: boolean}) => {
+  .action(async ({cwd, stdout, verbose, why, json}: {cwd: PortablePath, stdout: Writable, verbose: boolean, why: boolean, json: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration, {
       strict: false,
     });
@@ -66,7 +67,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       } else {
         const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
         const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
-    
+
         const inspectConfig = {
           breakLength: Infinity,
           colors: configuration.get(`enableColors`),

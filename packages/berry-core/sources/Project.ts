@@ -1,34 +1,33 @@
-import {xfs}                                    from '@berry/fslib';
-import {parseSyml, stringifySyml}               from '@berry/parsers';
-import {createHmac}                             from 'crypto';
+import {xfs, NodeFS, PortablePath, ppath, toFilename}                                    from '@berry/fslib';
+import {parseSyml, stringifySyml}                                                        from '@berry/parsers';
+import {createHmac}                                                                      from 'crypto';
 // @ts-ignore
-import Logic                                    from 'logic-solver';
+import Logic                                                                             from 'logic-solver';
 // @ts-ignore
-import pLimit                                   from 'p-limit';
-import {posix}                                  from 'path';
-import semver                                   from 'semver';
-import {tmpNameSync}                            from 'tmp';
+import pLimit                                                                            from 'p-limit';
+import semver                                                                            from 'semver';
+import {tmpNameSync}                                                                     from 'tmp';
 
-import {AliasResolver}                          from './AliasResolver';
-import {Cache}                                  from './Cache';
-import {Configuration}                          from './Configuration';
-import {Fetcher}                                from './Fetcher';
-import {Installer, BuildDirective, BuildType}   from './Installer';
-import {Linker}                                 from './Linker';
-import {LockfileResolver}                       from './LockfileResolver';
-import {DependencyMeta, Manifest}               from './Manifest';
-import {MultiResolver}                          from './MultiResolver';
-import {Report, ReportError, MessageName}       from './Report';
-import {RunInstallPleaseResolver}               from './RunInstallPleaseResolver';
-import {ThrowReport}                            from './ThrowReport';
-import {Workspace}                              from './Workspace';
-import {YarnResolver}                           from './YarnResolver';
-import * as miscUtils                           from './miscUtils';
-import * as scriptUtils                         from './scriptUtils';
-import * as structUtils                         from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash} from './types';
-import {Descriptor, Ident, Locator, Package}    from './types';
-import {LinkType}                               from './types';
+import {AliasResolver}                                                                   from './AliasResolver';
+import {Cache}                                                                           from './Cache';
+import {Configuration}                                                                   from './Configuration';
+import {Fetcher}                                                                         from './Fetcher';
+import {Installer, BuildDirective, BuildType}                                            from './Installer';
+import {Linker}                                                                          from './Linker';
+import {LockfileResolver}                                                                from './LockfileResolver';
+import {DependencyMeta, Manifest}                                                        from './Manifest';
+import {MultiResolver}                                                                   from './MultiResolver';
+import {Report, ReportError, MessageName}                                                from './Report';
+import {RunInstallPleaseResolver}                                                        from './RunInstallPleaseResolver';
+import {ThrowReport}                                                                     from './ThrowReport';
+import {Workspace}                                                                       from './Workspace';
+import {YarnResolver}                                                                    from './YarnResolver';
+import * as miscUtils                                                                    from './miscUtils';
+import * as scriptUtils                                                                  from './scriptUtils';
+import * as structUtils                                                                  from './structUtils';
+import {IdentHash, DescriptorHash, LocatorHash}                                          from './types';
+import {Descriptor, Ident, Locator, Package}                                             from './types';
+import {LinkType}                                                                        from './types';
 
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
@@ -41,11 +40,12 @@ export type InstallOptions = {
   report: Report,
   frozenLockfile?: boolean,
   lockfileOnly?: boolean,
+  inlineBuilds?: boolean,
 };
 
 export class Project {
   public readonly configuration: Configuration;
-  public readonly cwd: string;
+  public readonly cwd: PortablePath;
 
   // Is meant to be populated by the consumer. When the descriptor referenced by
   // the key should be resolved, the second one is resolved instead and its
@@ -54,7 +54,7 @@ export class Project {
 
   public workspaces: Array<Workspace> = [];
 
-  public workspacesByCwd: Map<string, Workspace> = new Map();
+  public workspacesByCwd: Map<PortablePath, Workspace> = new Map();
   public workspacesByLocator: Map<LocatorHash, Workspace> = new Map();
   public workspacesByIdent: Map<IdentHash, Array<Workspace>> = new Map();
 
@@ -64,7 +64,7 @@ export class Project {
   public storedPackages: Map<LocatorHash, Package> = new Map();
   public storedChecksums: Map<LocatorHash, string> = new Map();
 
-  static async find(configuration: Configuration, startingCwd: string): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
+  static async find(configuration: Configuration, startingCwd: PortablePath): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
     if (!configuration.projectCwd)
       throw new Error(`No project found in the initial directory`);
 
@@ -76,11 +76,11 @@ export class Project {
     while (currentCwd !== configuration.projectCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(`${currentCwd}/package.json`))
+      if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`))))
         if (!packageCwd)
           packageCwd = currentCwd;
 
-      nextCwd = posix.dirname(currentCwd);
+      nextCwd = ppath.dirname(currentCwd);
     }
 
     if (!packageCwd)
@@ -98,14 +98,14 @@ export class Project {
 
     // Otherwise, we need to ask the project (which will in turn ask the linkers for help)
     // Note: the trailing slash is caused by a quirk in the PnP implementation that requires folders to end with a trailing slash to disambiguate them from regular files
-    const locator = await project.findLocatorForLocation(`${packageCwd}/`);
+    const locator = await project.findLocatorForLocation(`${packageCwd}/` as PortablePath);
     if (locator)
       return {project, locator, workspace: null};
 
     throw new Error(`Assertion failed: The package should have been detected as part of the project`);
   }
 
-  constructor(projectCwd: string, {configuration}: {configuration: Configuration}) {
+  constructor(projectCwd: PortablePath, {configuration}: {configuration: Configuration}) {
     this.configuration = configuration;
     this.cwd = projectCwd;
   }
@@ -116,7 +116,7 @@ export class Project {
     this.storedDescriptors = new Map();
     this.storedPackages = new Map();
 
-    const lockfilePath = `${this.cwd}/${this.configuration.get(`lockfileFilename`)}`;
+    const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
 
     if (xfs.existsSync(lockfilePath)) {
       const content = await xfs.readFilePromise(lockfilePath, `utf8`);
@@ -208,7 +208,7 @@ export class Project {
     }
   }
 
-  async addWorkspace(workspaceCwd: string) {
+  async addWorkspace(workspaceCwd: PortablePath) {
     const workspace = new Workspace(workspaceCwd, {project: this});
     await workspace.setup();
 
@@ -229,9 +229,9 @@ export class Project {
     return this.getWorkspaceByCwd(this.cwd);
   }
 
-  tryWorkspaceByCwd(workspaceCwd: string) {
-    if (!posix.isAbsolute(workspaceCwd))
-      workspaceCwd = posix.resolve(this.cwd, workspaceCwd);
+  tryWorkspaceByCwd(workspaceCwd: PortablePath) {
+    if (!ppath.isAbsolute(workspaceCwd))
+      workspaceCwd = ppath.resolve(this.cwd, workspaceCwd);
 
     const workspace = this.workspacesByCwd.get(workspaceCwd);
     if (!workspace)
@@ -240,7 +240,7 @@ export class Project {
     return workspace;
   }
 
-  getWorkspaceByCwd(workspaceCwd: string) {
+  getWorkspaceByCwd(workspaceCwd: PortablePath) {
     const workspace = this.tryWorkspaceByCwd(workspaceCwd);
     if (!workspace)
       throw new Error(`Workspace not found (${workspaceCwd})`);
@@ -320,7 +320,7 @@ export class Project {
     return dependencyMeta;
   }
 
-  async findLocatorForLocation(cwd: string) {
+  async findLocatorForLocation(cwd: PortablePath) {
     const report = new ThrowReport();
 
     const linkers = this.configuration.getLinkers();
@@ -462,7 +462,7 @@ export class Project {
         const solver = new Logic.Solver();
 
         for (const candidateLocators of passCandidates.values())
-          solver.require(Logic.or(... candidateLocators.map(locator => locator.locatorHash)));
+          solver.require(Logic.or(...candidateLocators.map(locator => locator.locatorHash)));
 
         let remainingSolutions = 100;
         let solution;
@@ -749,10 +749,10 @@ export class Project {
       }
 
       const allPasses = [
-        ... firstPass,
-        ... secondPass,
-        ... thirdPass,
-        ... fourthPass
+        ...firstPass,
+        ...secondPass,
+        ...thirdPass,
+        ...fourthPass,
       ];
 
       for (const fn of allPasses) {
@@ -836,7 +836,7 @@ export class Project {
     }
   }
 
-  async linkEverything({cache, report}: InstallOptions) {
+  async linkEverything({cache, report, inlineBuilds = false}: InstallOptions) {
     const fetcher = this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
 
@@ -848,7 +848,7 @@ export class Project {
     }));
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
-    const packageLocations: Map<LocatorHash, string> = new Map();
+    const packageLocations: Map<LocatorHash, PortablePath> = new Map();
     const packageBuildDirectives: Map<LocatorHash, BuildDirective[]> = new Map();
 
     // Step 1: Installing the packages on the disk
@@ -883,7 +883,7 @@ export class Project {
 
     // Step 2: Link packages together
 
-    const externalDependents: Map<LocatorHash, Array<string>> = new Map();
+    const externalDependents: Map<LocatorHash, Array<PortablePath>> = new Map();
 
     for (const pkg of this.storedPackages.values()) {
       const packageLinker = packageLinkers.get(pkg.locatorHash);
@@ -991,7 +991,7 @@ export class Project {
       return hash.digest(`hex`);
     };
 
-    const bstatePath = this.configuration.get(`bstatePath`);
+    const bstatePath: PortablePath = this.configuration.get(`bstatePath`);
     const bstate = xfs.existsSync(bstatePath)
       ? parseSyml(await xfs.readFilePromise(bstatePath, `utf8`)) as {[key: string]: string}
       : {};
@@ -1041,17 +1041,28 @@ export class Project {
 
         buildPromises.push((async () => {
           for (const [buildType, scriptName] of buildDirective) {
-            const logFile = tmpNameSync({
-              prefix: `buildfile-`,
-              postfix: `.log`,
-            });
+            const logFile = NodeFS.toPortablePath(
+              tmpNameSync({
+                prefix: `buildfile-`,
+                postfix: `.log`,
+              }),
+            );
 
             const stdin = null;
-            const stdout = xfs.createWriteStream(logFile);
-            const stderr = stdout;
 
-            stdout.write(`# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`);
-            stdout.write(`\n`);
+            let stdout;
+            let stderr;
+
+            if (inlineBuilds) {
+              stdout = report.createStreamReporter(`${structUtils.prettyLocator(this.configuration, pkg)} ${this.configuration.format(`STDOUT`, `green`)}`);
+              stderr = report.createStreamReporter(`${structUtils.prettyLocator(this.configuration, pkg)} ${this.configuration.format(`STDERR`, `red`)}`);
+            } else {
+              stdout = xfs.createWriteStream(logFile);
+              stderr = stdout;
+
+              stdout.write(`# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`);
+              stdout.write(`\n`);
+            }
 
             let exitCode;
 
@@ -1093,7 +1104,7 @@ export class Project {
 
     const bstateHeader = `# Warning: This file is automatically generated. Removing it is fine, but will\n# cause all your builds to become invalidated.\n\n`;
 
-    await xfs.mkdirpPromise(posix.dirname(bstatePath));
+    await xfs.mkdirpPromise(ppath.dirname(bstatePath));
     await xfs.changeFilePromise(bstatePath, bstateHeader + stringifySyml(bstate));
   }
 
@@ -1199,30 +1210,30 @@ export class Project {
 
       const serialized = (() => {
         // Remove the fields we're not interested in to only keep the ones we want
-        const {identHash, scope, name, locatorHash, reference, dependencies, peerDependencies, ... rest} = pkg;
+        const {identHash, scope, name, locatorHash, reference, dependencies, peerDependencies, ...rest} = pkg;
         return rest;
       })();
 
       manifest.exportTo(serialized);
 
       optimizedLockfile[key] = {
-        ... serialized,
+        ...serialized,
 
         resolution: structUtils.stringifyLocator(pkg),
         checksum: this.storedChecksums.get(pkg.locatorHash),
       };
     }
 
-    const header = [
+    const header = `${[
       `# This file is generated by running "berry install" inside your project.\n`,
-      `# Manual changes might be lost - proceed with caution!\n`
-    ].join(``) + `\n`;
+      `# Manual changes might be lost - proceed with caution!\n`,
+    ].join(``)}\n`;
 
     return header + stringifySyml(optimizedLockfile);
   }
 
   async persistLockfile() {
-    const lockfilePath = `${this.cwd}/${this.configuration.get(`lockfileFilename`)}`;
+    const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
     const lockfileContent = this.generateLockfile();
 
     await xfs.changeFilePromise(lockfilePath, lockfileContent);

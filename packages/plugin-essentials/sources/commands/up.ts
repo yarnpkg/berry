@@ -2,6 +2,7 @@ import {WorkspaceRequiredError}                                     from '@berry
 import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@berry/core';
 import {PluginConfiguration, Project, StreamReport, Workspace}      from '@berry/core';
 import {structUtils}                                                from '@berry/core';
+import { PortablePath } from '@berry/fslib';
 import inquirer                                                     from 'inquirer';
 import {Readable, Writable}                                         from 'stream';
 
@@ -37,26 +38,26 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn up lodash@1.2.3`,
   )
 
-  .action(async ({cwd, stdin, stdout, packages, exact, tilde, interactive}: {cwd: string, stdin: Readable, stdout: Writable, packages: Array<string>, exact: boolean, tilde: boolean, dev: boolean, peer: boolean, interactive: boolean}) => {
+  .action(async ({cwd, stdin, stdout, packages, exact, tilde, interactive}: {cwd: PortablePath, stdin: Readable, stdout: Writable, packages: Array<string>, exact: boolean, tilde: boolean, dev: boolean, peer: boolean, interactive: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
-  
+
     if (!workspace)
       throw new WorkspaceRequiredError(cwd);
-  
+
     // @ts-ignore
     const prompt = inquirer.createPromptModule({
       input: stdin,
       output: stdout,
     });
-  
+
     const modifier = exact
     ? suggestUtils.Modifier.EXACT
     : tilde
       ? suggestUtils.Modifier.TILDE
       : suggestUtils.Modifier.CARET;
-  
+
     const strategies = interactive ? [
       suggestUtils.Strategy.KEEP,
       suggestUtils.Strategy.REUSE,
@@ -66,18 +67,18 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       suggestUtils.Strategy.PROJECT,
       suggestUtils.Strategy.LATEST,
     ];
-  
+
     const allSuggestionsPromises = [];
-  
+
     for (const pseudoDescriptor of packages) {
       const descriptor = structUtils.parseDescriptor(pseudoDescriptor);
-  
+
       for (const workspace of project.workspaces) {
         for (const target of [suggestUtils.Target.REGULAR, suggestUtils.Target.DEVELOPMENT]) {
           const existing = workspace.manifest[target].get(descriptor.identHash);
           if (!existing)
             continue;
-  
+
           allSuggestionsPromises.push(Promise.resolve().then(async () => {
             return [
               workspace,
@@ -94,9 +95,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         }
       }
     }
-  
+
     const allSuggestions = await Promise.all(allSuggestionsPromises);
-  
+
     const checkReport = await LightReport.start({configuration, stdout, suggestInstall: false}, async report => {
       for (const [workspace, target, existing, suggestions] of allSuggestions) {
         const nonNullSuggestions = suggestions.filter(suggestion => {
@@ -114,13 +115,13 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         }
       }
     });
-  
+
     if (checkReport.hasErrors())
       return checkReport.exitCode();
-  
+
     let askedQuestions = false;
     let hasChanged = false;
-  
+
     const afterWorkspaceDependencyReplacementList: Array<[
       Workspace,
       suggestUtils.Target,
@@ -130,7 +131,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     for (const [workspace, target, existing, suggestions] of allSuggestions) {
       let selected;
-  
+
       const nonNullSuggestions = suggestions.filter(suggestion => {
         return suggestion.descriptor !== null;
       });
@@ -153,7 +154,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           }),
         }));
       }
-  
+
       const current = workspace.manifest[target].get(selected.identHash);
 
       if (typeof current === `undefined`)
@@ -175,7 +176,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         hasChanged = true;
       }
     }
-  
+
     if (hasChanged) {
       await configuration.triggerMultipleHooks(
         (hooks: Hooks) => hooks.afterWorkspaceDependencyReplacement,
@@ -184,11 +185,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
       if (askedQuestions)
         stdout.write(`\n`);
-    
+
       const installReport = await StreamReport.start({configuration, stdout}, async report => {
           await project.install({cache, report});
-      });  
-    
+      });
+
       return installReport.exitCode();
     }
   });

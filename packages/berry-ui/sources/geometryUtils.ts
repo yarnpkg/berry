@@ -39,10 +39,10 @@ export function removeSegment(a: Segment, b: Segment) {
   const remains = [];
 
   if (overlap.left > b.left)
-    remains.push({ left: b.left, width: overlap.left - b.left });
+    remains.push({left: b.left, width: overlap.left - b.left});
 
   if (overlap.left + overlap.width < b.left + b.width)
-    remains.push({ left: overlap.left + overlap.width, width: b.left + b.width - overlap.left - overlap.width });
+    remains.push({left: overlap.left + overlap.width, width: b.left + b.width - overlap.left - overlap.width});
 
   return remains;
 }

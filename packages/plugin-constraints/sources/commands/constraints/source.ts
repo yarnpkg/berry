@@ -1,4 +1,5 @@
 import {Configuration, Project, PluginConfiguration} from '@berry/core';
+import { PortablePath } from '@berry/fslib';
 import {Writable}                                    from 'stream';
 
 import {Constraints}                                 from '../../Constraints';
@@ -25,7 +26,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn constraints source -v`,
   )
 
-  .action(async ({cwd, stdout, verbose}: {cwd: string, stdout: Writable, verbose: boolean}) => {
+  .action(async ({cwd, stdout, verbose}: {cwd: PortablePath, stdout: Writable, verbose: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
     const constraints = await Constraints.find(project);
