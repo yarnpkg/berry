@@ -215,7 +215,7 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   async readdirPromise(p: PortablePath) {
-    return await new Promise<Array<String>>((resolve, reject) => {
+    return await new Promise<Array<string>>((resolve, reject) => {
       this.realFs.readdir(NodeFS.fromPortablePath(p), this.makeCallback(resolve, reject));
     }) as Filename[];
   }
