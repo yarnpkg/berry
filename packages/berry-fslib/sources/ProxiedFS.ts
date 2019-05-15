@@ -190,41 +190,4 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
   readlinkSync(p: P) {
     return this.mapFromBase(this.baseFs.readlinkSync(this.mapToBase(p)));
   }
-
-  removePromise(p: P) {
-    return this.baseFs.removePromise(this.mapToBase(p));
-  }
-
-  removeSync(p: P) {
-    return this.baseFs.removeSync(this.mapToBase(p));
-  }
-
-  mkdirpPromise(p: P, options?: {chmod?: number, utimes?: [Date | string | number, Date | string | number]}) {
-    return this.baseFs.mkdirpPromise(this.mapToBase(p), options);
-  }
-  mkdirpSync(p: P, options?: {chmod?: number, utimes?: [Date | string | number, Date | string | number]}) {
-    return this.baseFs.mkdirpSync(this.mapToBase(p), options);
-  }
-
-  copyPromise(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean}): Promise<void>;
-  copyPromise<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean}): Promise<void>;
-  copyPromise<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite}: {baseFs?: FakeFS<P2>, overwrite?: boolean} = {}) {
-    // any casts are necessary because typescript doesn't understand that P2 might be P
-    if (baseFs === this as any) {
-      return this.baseFs.copyPromise(this.mapToBase(destination), this.mapToBase(source as any), {baseFs: this.baseFs, overwrite});
-    } else {
-      return this.baseFs.copyPromise(this.mapToBase(destination), source, {baseFs, overwrite});
-    }
-  }
-
-  copySync(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean}): void;
-  copySync<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean}): void;
-  copySync<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite}: {baseFs?: FakeFS<P2>, overwrite?: boolean} = {}) {
-    // any casts are necessary because typescript doesn't understand that P2 might be P
-    if (baseFs === this as any) {
-      return this.baseFs.copySync(this.mapToBase(destination), this.mapToBase(source as any), {baseFs: this.baseFs, overwrite});
-    } else {
-      return this.baseFs.copySync(this.mapToBase(destination), source, {baseFs, overwrite});
-    }
-  }
 }

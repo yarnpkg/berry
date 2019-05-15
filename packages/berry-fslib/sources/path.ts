@@ -14,13 +14,6 @@ export type Path = PortablePath | NativePath;
 export const npath: PathUtils<NativePath> = path as any;
 export const ppath: PathUtils<PortablePath> = path.posix as any;
 
-export function toFilename(filename: string): Filename {
-  if (npath.parse(filename as NativePath).dir !== '' || ppath.parse(filename as PortablePath).dir !== '')
-    throw new Error(`Invalid filename: "${filename}"`);
-
-  return filename as any;
-}
-
 export interface ParsedPath<P extends Path> {
   root: P;
   dir: P;
@@ -73,4 +66,15 @@ export function toPortablePath(p: Path): PortablePath {
     return p as PortablePath;
 
   return (p.match(WINDOWS_PATH_REGEXP) ? `/${p}` : p).replace(/\\/g, `/`) as PortablePath;
+}
+
+export function convertPath<P extends Path>(targetPathUtils: PathUtils<P>, sourcePath: Path): P {
+  return (targetPathUtils === npath ? fromPortablePath(sourcePath) : toPortablePath(sourcePath)) as P;
+}
+
+export function toFilename(filename: string): Filename {
+  if (npath.parse(filename as NativePath).dir !== '' || ppath.parse(filename as PortablePath).dir !== '')
+    throw new Error(`Invalid filename: "${filename}"`);
+
+  return filename as any;
 }
