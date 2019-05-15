@@ -1,9 +1,9 @@
-import {FakeFS}               from '@berry/fslib';
+import {FakeFS, PortablePath}               from '@berry/fslib';
 
-import {Cache}                from './Cache';
-import {Project}              from './Project';
-import {Report}               from './Report';
-import {LocatorHash, Locator} from './types';
+import {Cache}                              from './Cache';
+import {Project}                            from './Project';
+import {Report}                             from './Report';
+import {LocatorHash, Locator}               from './types';
 
 export type MinimalFetchOptions = {
   project: Project,
@@ -17,10 +17,10 @@ export type FetchOptions = MinimalFetchOptions & {
 };
 
 export type FetchResult = {
-  packageFs: FakeFS,
+  packageFs: FakeFS<PortablePath>,
   releaseFs?: () => void,
-  prefixPath: string,
-  localPath?: string | null
+  prefixPath: PortablePath,
+  localPath?: PortablePath | null
   checksum?: string,
 };
 
@@ -50,7 +50,7 @@ export interface Fetcher {
    * @param locator The source locator.
    * @param opts The fetch options.
    */
-  getLocalPath(locator: Locator, opts: FetchOptions): string | null;
+  getLocalPath(locator: Locator, opts: FetchOptions): PortablePath | null;
 
   /**
    * This function must return a object describing where the package manager

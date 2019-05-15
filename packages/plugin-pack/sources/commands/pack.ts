@@ -1,7 +1,6 @@
 import {WorkspaceRequiredError}                                                 from '@berry/cli';
 import {Configuration, MessageName, PluginConfiguration, Project, StreamReport} from '@berry/core';
-import {xfs}                                                                    from '@berry/fslib';
-import {posix}                                                                  from 'path';
+import {xfs, ppath, PortablePath, toFilename}                                   from '@berry/fslib';
 import {Writable}                                                               from 'stream';
 
 import * as packUtils                                                           from '../packUtils';
@@ -30,32 +29,32 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn pack --dry-run`,
   )
 
-  .action(async ({cwd, stdout, dryRun, json}: {cwd: string, stdout: Writable, dryRun: boolean, json: boolean}) => {
+  .action(async ({cwd, stdout, dryRun, json}: {cwd: PortablePath, stdout: Writable, dryRun: boolean, json: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {workspace} = await Project.find(configuration, cwd);
 
     if (!workspace)
       throw new WorkspaceRequiredError(cwd);
 
-    const target = posix.resolve(workspace.cwd, `package.tgz`);
+    const target = ppath.resolve(workspace.cwd, toFilename(`package.tgz`));
 
     const report = await StreamReport.start({configuration, stdout, json}, async report => {
       await packUtils.prepareForPack(workspace, {report}, async () => {
         report.reportJson({base: workspace.cwd});
 
         const files = await packUtils.genPackList(workspace);
-  
+
         for (const file of files) {
           report.reportInfo(null, file);
           report.reportJson({location: file});
         }
-  
+
         if (!dryRun) {
           const pack = await packUtils.genPackStream(workspace, files);
           const write = xfs.createWriteStream(target);
-  
+
           pack.pipe(write);
-  
+
           await new Promise(resolve => {
             write.on(`finish`, resolve);
           });

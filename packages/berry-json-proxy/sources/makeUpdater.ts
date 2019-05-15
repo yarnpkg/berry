@@ -1,8 +1,8 @@
-import {xfs}         from '@berry/fslib';
+import {xfs, PortablePath}         from '@berry/fslib';
 
-import {makeTracker} from './makeTracker';
+import {makeTracker}               from './makeTracker';
 
-export async function makeUpdater(filename: string) {
+export async function makeUpdater(filename: PortablePath) {
   let indent = `  `;
   let obj;
 
@@ -36,7 +36,7 @@ export async function makeUpdater(filename: string) {
   };
 }
 
-export async function updateAndSave(filename: string, cb: (value: Object) => void) {
+export async function updateAndSave(filename: PortablePath, cb: (value: Object) => void) {
   const updater = await makeUpdater(filename);
   updater.open(cb);
   await updater.save();

@@ -2,6 +2,7 @@ import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {scriptUtils, structUtils}                    from '@berry/core';
 import {UsageError}                                  from 'clipanion';
 import {Writable}                                    from 'stream';
+import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -25,7 +26,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn bin eslint`,
   )
 
-  .action(async ({cwd, stdout, name, verbose}: {cwd: string, stdout: Writable, name: string, verbose: boolean}) => {
+  .action(async ({cwd, stdout, name, verbose}: {cwd: PortablePath, stdout: Writable, name: string, verbose: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, locator} = await Project.find(configuration, cwd);
 

@@ -2,10 +2,7 @@ import {WorkspaceRequiredError}                             from '@berry/cli';
 import {Cache, Configuration, PluginConfiguration, Project} from '@berry/core';
 import {LightReport}                                        from '@berry/core';
 import {scriptUtils, structUtils}                           from '@berry/core';
-import {NodeFS, xfs}                                        from '@berry/fslib';
-import {suggestUtils}                                       from '@berry/plugin-essentials';
-import {UsageError}                                         from 'clipanion';
-import {posix}                                              from 'path';
+import {NodeFS, xfs, PortablePath, ppath, Filename, toFilename}                                        from '@berry/fslib';
 import {Readable, Writable}                                 from 'stream';
 import tmp                                                  from 'tmp';
 
@@ -31,13 +28,13 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn dlx create-react-app ./my-app`,
   )
 
-  .action(async ({cwd, stdin, stdout, stderr, command, package: packages, args, quiet, ... rest}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, command: string, package: Array<string>, args: Array<string>, quiet: boolean}) => {
-    const tmpDir = NodeFS.toPortablePath(await createTemporaryDirectory(`dlx-${process.pid}`));
+  .action(async ({cwd, stdin, stdout, stderr, command, package: packages, args, quiet, ... rest}: {cwd: PortablePath, stdin: Readable, stdout: Writable, stderr: Writable, command: string, package: Array<string>, args: Array<string>, quiet: boolean}) => {
+    const tmpDir = await createTemporaryDirectory(toFilename(`dlx-${process.pid}`));
 
     try {
-      await xfs.writeFilePromise(`${tmpDir}/package.json`, `{}\n`);
-      await xfs.writeFilePromise(`${tmpDir}/yarn.lock`, ``);
-      await xfs.writeFilePromise(`${tmpDir}/.yarnrc`, `enable-global-cache true\n`);
+      await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`package.json`)), `{}\n`);
+      await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`yarn.lock`)), ``);
+      await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`.yarnrc`)), `enable-global-cache true\n`);
 
       if (packages.length === 0) {
         packages = [command];
@@ -75,20 +72,20 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     }
   });
 
-function createTemporaryDirectory(name?: string) {
-  return new Promise<string>((resolve, reject) => {
+function createTemporaryDirectory(name?: Filename) {
+  return new Promise<PortablePath>((resolve, reject) => {
     tmp.dir({unsafeCleanup: true}, (error, dirPath) => {
       if (error) {
         reject(error);
       } else {
-        resolve(dirPath);
+        resolve(NodeFS.toPortablePath(dirPath));
       }
     });
   }).then(async dirPath => {
     dirPath = await xfs.realpathPromise(dirPath);
 
     if (name) {
-      dirPath = posix.join(dirPath, name);
+      dirPath = ppath.join(dirPath, name);
       await xfs.mkdirpPromise(dirPath);
     }
 

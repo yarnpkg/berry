@@ -1,4 +1,5 @@
-import {Configuration, MessageName, PluginConfiguration, StreamReport} from '@berry/core';
+import {Configuration, PluginConfiguration, StreamReport} from '@berry/core';
+import { PortablePath } from '@berry/fslib';
 import {Clipanion}                                                     from 'clipanion';
 import {Writable}                                                      from 'stream';
 
@@ -18,7 +19,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
     `yarn plugin list`,
   )
 
-  .action(async ({cwd, stdout}: {cwd: string, stdout: Writable}) => {
+  .action(async ({cwd, stdout}: {cwd: PortablePath, stdout: Writable}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     const report = await StreamReport.start({configuration, stdout}, async report => {

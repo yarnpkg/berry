@@ -1,9 +1,8 @@
 import {Configuration, Manifest, PluginConfiguration} from '@berry/core';
 import {structUtils}                                  from '@berry/core';
-import {xfs}                                          from '@berry/fslib';
+import {xfs, PortablePath, ppath, toFilename}         from '@berry/fslib';
 import {updateAndSave}                                from '@berry/json-proxy';
 import {UsageError}                                   from 'clipanion';
-import {posix}                                        from 'path';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -33,8 +32,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn init -p`,
   )
 
-  .action(async ({cwd, private: notPublic}: {cwd: string, private: boolean}) => {
-    if (xfs.existsSync(`${cwd}/package.json`))
+  .action(async ({cwd, private: notPublic}: {cwd: PortablePath, private: boolean}) => {
+    if (xfs.existsSync(ppath.join(cwd, toFilename(`package.json`))))
       throw new UsageError(`A package.json already exists in the specified directory`);
 
     if (!xfs.existsSync(cwd))
@@ -43,12 +42,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     const manifest = new Manifest();
-    manifest.name = structUtils.makeIdent(configuration.get(`initScope`), posix.basename(cwd));
+    manifest.name = structUtils.makeIdent(configuration.get(`initScope`), ppath.basename(cwd));
     manifest.version = configuration.get(`initVersion`);
     manifest.private = notPublic;
     manifest.license = configuration.get(`initLicense`);
 
-    await updateAndSave(`${cwd}/package.json`, (tracker: Object) => {
+    await updateAndSave(ppath.join(cwd, toFilename(`package.json`)), (tracker: Object) => {
       manifest.exportTo(tracker);
     });
   });

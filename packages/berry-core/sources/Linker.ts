@@ -1,3 +1,5 @@
+import {PortablePath}     from '@berry/fslib';
+
 import {Installer}        from './Installer';
 import {Project}          from './Project';
 import {Report}           from './Report';
@@ -49,7 +51,7 @@ export interface Linker {
    * @param locator The queried package.
    * @param opts The link options.
    */
-  findPackageLocation(locator: Locator, opts: LinkOptions): Promise<string>;
+  findPackageLocation(locator: Locator, opts: LinkOptions): Promise<PortablePath>;
 
   /**
    * This function must, given a specified location on the disk, find the
@@ -65,7 +67,7 @@ export interface Linker {
    * @param location The queried location on the disk.
    * @param opts The link options.
    */
-  findPackageLocator(location: string, opts: LinkOptions): Promise<Locator | null>;
+  findPackageLocator(location: PortablePath, opts: LinkOptions): Promise<Locator | null>;
 
   /**
    * This function must instantiate an Installer object that describes how to

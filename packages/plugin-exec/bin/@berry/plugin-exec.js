@@ -123,9 +123,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(2);
 const core_2 = __webpack_require__(2);
 const fslib_1 = __webpack_require__(3);
-const path_1 = __webpack_require__(4);
-const querystring_1 = __importDefault(__webpack_require__(5));
-const tmp_1 = __webpack_require__(6);
+const querystring_1 = __importDefault(__webpack_require__(4));
+const tmp_1 = __webpack_require__(5);
 const constants_1 = __webpack_require__(10);
 class ExecFetcher {
     supports(locator, opts) {
@@ -135,11 +134,11 @@ class ExecFetcher {
     }
     getLocalPath(locator, opts) {
         const { parentLocator, execPath } = this.parseLocator(locator);
-        if (path_1.posix.isAbsolute(execPath))
+        if (fslib_1.ppath.isAbsolute(execPath))
             return execPath;
         const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
         if (parentLocalPath !== null) {
-            return path_1.posix.resolve(parentLocalPath, execPath);
+            return fslib_1.ppath.resolve(parentLocalPath, execPath);
         }
         else {
             return null;
@@ -163,8 +162,8 @@ class ExecFetcher {
         const { parentLocator, execPath } = this.parseLocator(locator);
         // If the file target is an absolute path we can directly access it via its
         // location on the disk. Otherwise we must go through the package fs.
-        const parentFetch = path_1.posix.isAbsolute(execPath)
-            ? { packageFs: new fslib_1.NodeFS(), prefixPath: `/`, localPath: `/` }
+        const parentFetch = fslib_1.ppath.isAbsolute(execPath)
+            ? { packageFs: new fslib_1.NodeFS(), prefixPath: fslib_1.PortablePath.root, localPath: fslib_1.PortablePath.root }
             : await opts.fetcher.fetch(parentLocator, opts);
         // If the package fs publicized its "original location" (for example like
         // in the case of "file:" packages), we use it to derive the real location.
@@ -175,23 +174,23 @@ class ExecFetcher {
         if (parentFetch !== effectiveParentFetch && parentFetch.releaseFs)
             parentFetch.releaseFs();
         const generatorFs = effectiveParentFetch.packageFs;
-        const generatorPath = path_1.posix.resolve(path_1.posix.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), execPath);
+        const generatorPath = fslib_1.ppath.resolve(fslib_1.ppath.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), execPath);
         // Execute the specified script in the temporary directory
         const cwd = await this.generatePackage(locator, generatorPath, opts);
         // Make sure the script generated the package
-        if (!fslib_1.xfs.existsSync(`${cwd}/build`))
+        if (!fslib_1.xfs.existsSync(fslib_1.ppath.join(cwd, fslib_1.toFilename(`build`))))
             throw new Error(`The script should have generated a build directory`);
-        return await core_2.tgzUtils.makeArchiveFromDirectory(`${cwd}/build`, {
+        return await core_2.tgzUtils.makeArchiveFromDirectory(fslib_1.ppath.join(cwd, fslib_1.toFilename(`build`)), {
             prefixPath: `/sources`,
         });
     }
     async generatePackage(locator, generatorPath, opts) {
         const cwd = fslib_1.NodeFS.toPortablePath(tmp_1.dirSync().name);
         const env = await core_2.scriptUtils.makeScriptEnv(opts.project);
-        const logFile = tmp_1.tmpNameSync({
+        const logFile = fslib_1.NodeFS.toPortablePath(tmp_1.tmpNameSync({
             prefix: `buildfile-`,
             postfix: `.log`,
-        });
+        }));
         const stdin = null;
         const stdout = fslib_1.xfs.createWriteStream(logFile);
         const stderr = stdout;
@@ -206,7 +205,7 @@ class ExecFetcher {
         const qsIndex = locator.reference.indexOf(`?`);
         if (qsIndex === -1)
             throw new Error(`Invalid file-type locator`);
-        const execPath = path_1.posix.normalize(locator.reference.slice(constants_1.PROTOCOL.length, qsIndex));
+        const execPath = fslib_1.ppath.normalize(locator.reference.slice(constants_1.PROTOCOL.length, qsIndex));
         const queryString = querystring_1.default.parse(locator.reference.slice(qsIndex + 1));
         if (typeof queryString.locator !== `string`)
             throw new Error(`Invalid file-type locator`);
@@ -233,16 +232,10 @@ module.exports = require("@berry/fslib");
 /* 4 */
 /***/ (function(module, exports) {
 
-module.exports = require("path");
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
 module.exports = require("querystring");
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -256,8 +249,8 @@ module.exports = require("querystring");
 /*
  * Module dependencies.
  */
-const fs = __webpack_require__(7);
-const path = __webpack_require__(4);
+const fs = __webpack_require__(6);
+const path = __webpack_require__(7);
 const crypto = __webpack_require__(8);
 const osTmpDir = __webpack_require__(9);
 const _c = process.binding('constants');
@@ -859,10 +852,16 @@ module.exports.setGracefulCleanup = setGracefulCleanup;
 
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
 
 /***/ }),
 /* 8 */
@@ -926,7 +925,7 @@ const core_1 = __webpack_require__(2);
 const core_2 = __webpack_require__(2);
 const core_3 = __webpack_require__(2);
 const fslib_1 = __webpack_require__(3);
-const querystring_1 = __importDefault(__webpack_require__(5));
+const querystring_1 = __importDefault(__webpack_require__(4));
 const constants_1 = __webpack_require__(10);
 class ExecResolver {
     supportsDescriptor(descriptor, opts) {

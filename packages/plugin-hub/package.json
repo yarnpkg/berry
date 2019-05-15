@@ -4,6 +4,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/core": "workspace:*",
+    "@berry/fslib": "workspace:*",
     "@berry/json-proxy": "workspace:*",
     "@berry/ui": "workspace:*",
     "clipanion": "^0.14.1",

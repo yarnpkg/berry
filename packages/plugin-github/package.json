@@ -6,7 +6,8 @@
     "/lib"
   ],
   "dependencies": {
-    "@berry/core": "workspace:*"
+    "@berry/core": "workspace:*",
+    "@berry/fslib": "workspace:*"
   },
   "scripts": {
     "build": "tsc"

@@ -4,6 +4,7 @@ import {iterate}                                              from '@berry/ui/so
 import {FocusGroup}                                           from '@berry/ui/sources/widgets/FocusGroup';
 import {Div, StyleFlexDirectionEnum}                          from '@berry/ui';
 import {Project, Workspace, Descriptor, Package, structUtils} from '@berry/core';
+import { PortablePath } from '@berry/fslib';
 import {connect}                                              from 'react-redux';
 
 import {EditModeItem}                                         from '../../components/EditModeItem'
@@ -72,7 +73,7 @@ class WorkspaceView extends React.PureComponent<WorkspaceViewProps, WorkspaceVie
 
     if (this.props.filterRegexp.test(structUtils.stringifyIdent(descriptor)))
       return false;
-    
+
     return true;
   }
 
@@ -100,7 +101,7 @@ class WorkspaceView extends React.PureComponent<WorkspaceViewProps, WorkspaceVie
           </Div>
         </Div>
 
-        <FocusGroup>{FocusEntry => 
+        <FocusGroup>{FocusEntry =>
           <Div style={contentStyle}>
             <Div style={columnNameStyle}>
               <Div style={headerStyle}>
@@ -197,7 +198,7 @@ class WorkspaceView extends React.PureComponent<WorkspaceViewProps, WorkspaceVie
 }
 
 const ConnectedWorkspaceView = connect(
-  ({project}: {project: Project}, {cwd}: {cwd: string}) => ({
+  ({project}: {project: Project}, {cwd}: {cwd: PortablePath}) => ({
     storedResolutions: project.storedResolutions,
     storedPackages: project.storedPackages,
     workspace: project.workspacesByCwd.get(cwd) as Workspace,

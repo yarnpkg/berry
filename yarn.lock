@@ -1781,6 +1781,7 @@ __metadata:
   resolution: "@berry/plugin-github@workspace:packages/plugin-github"
   dependencies:
     "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1789,6 +1790,7 @@ __metadata:
   resolution: "@berry/plugin-http@workspace:packages/plugin-http"
   dependencies:
     "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1797,6 +1799,7 @@ __metadata:
   resolution: "@berry/plugin-hub@workspace:packages/plugin-hub"
   dependencies:
     "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
     "@berry/json-proxy": "workspace:*"
     "@berry/ui": "workspace:*"
     clipanion: "npm:^0.14.1"
@@ -1837,6 +1840,7 @@ __metadata:
   dependencies:
     "@berry/cli": "workspace:*"
     "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
     "@berry/plugin-npm": "workspace:*"
     "@berry/plugin-pack": "workspace:*"
     clipanion: "npm:^0.14.1"
@@ -1851,6 +1855,7 @@ __metadata:
   resolution: "@berry/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
     "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
     inquirer: "npm:^6.2.0"
     semver: "npm:^5.6.0"
   languageName: unknown

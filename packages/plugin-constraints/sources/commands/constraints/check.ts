@@ -1,6 +1,7 @@
 import {Configuration, Descriptor, Project, PluginConfiguration} from '@berry/core';
 import {MessageName, StreamReport}                               from '@berry/core';
 import {structUtils}                                             from '@berry/core';
+import { PortablePath } from '@berry/fslib';
 import getPath                                                   from 'lodash.get';
 import {Writable}                                                from 'stream';
 
@@ -25,7 +26,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn constraints check`,
   )
 
-  .action(async ({cwd, stdout}: {cwd: string, stdout: Writable}) => {
+  .action(async ({cwd, stdout}: {cwd: PortablePath, stdout: Writable}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
     const constraints = await Constraints.find(project);

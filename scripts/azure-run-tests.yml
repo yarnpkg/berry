@@ -8,7 +8,6 @@ steps:
 - bash: |
     node --version
     node ./scripts/run-yarn.js build:cli
-    node ./scripts/run-yarn.js build:plugin-pack
     node ./scripts/run-yarn.js build:plugin-stage
     node ./scripts/run-yarn.js build:plugin-typescript
   displayName: 'Build the standard bundle & plugins'

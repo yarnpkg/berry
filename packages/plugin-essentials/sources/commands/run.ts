@@ -1,6 +1,7 @@
 import {Configuration, PluginConfiguration, Project, Workspace, Cache} from '@berry/core';
 import {LightReport}                                                   from '@berry/core';
 import {scriptUtils, structUtils}                                      from '@berry/core';
+import { PortablePath } from '@berry/fslib';
 import {UsageError}                                                    from 'clipanion';
 import {Readable, Writable}                                            from 'stream';
 
@@ -33,7 +34,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn test`,
   )
 
-  .action(async ({cwd, stdin, stdout, stderr, name, topLevel, args}: {cwd: string, stdin: Readable, stdout: Writable, stderr: Writable, name: string, topLevel: boolean, args: Array<string>}) => {
+  .action(async ({cwd, stdin, stdout, stderr, name, topLevel, args}: {cwd: PortablePath, stdin: Readable, stdout: Writable, stderr: Writable, name: string, topLevel: boolean, args: Array<string>}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace, locator} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -68,7 +69,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     // into all the workspaces to find one that exports this script). We only do
     // this if the script name contains a colon character (":"), and we skip
     // this logic if multiple workspaces share the same script name.
-    // 
+    //
     // We also disable this logic for packages coming from third-parties (ie
     // not workspaces). Not particular reason except maybe security concerns.
 

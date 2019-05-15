@@ -1,6 +1,6 @@
 import {WorkspaceRequiredError}                                           from '@berry/cli';
 import {Configuration, Cache, PluginConfiguration, Project, StreamReport} from '@berry/core';
-import {xfs}                                                              from '@berry/fslib';
+import {xfs, PortablePath, ppath}                                                              from '@berry/fslib';
 import {parseSyml, stringifySyml}                                         from '@berry/parsers';
 import {Writable}                                                         from 'stream';
 
@@ -33,7 +33,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn install`,
   )
 
-  .action(async ({cwd, stdout, frozenLockfile, inlineBuilds}: {cwd: string, stdout: Writable, frozenLockfile: boolean, inlineBuilds: boolean}) => {
+  .action(async ({cwd, stdout, frozenLockfile, inlineBuilds}: {cwd: PortablePath, stdout: Writable, frozenLockfile: boolean, inlineBuilds: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     if (frozenLockfile === null)
@@ -72,7 +72,7 @@ async function autofixMergeConflicts(configuration: Configuration, frozenLockfil
   if (!configuration.projectCwd)
     return;
 
-  const lockfilePath = `${configuration.projectCwd}/${configuration.get(`lockfileFilename`)}`;
+  const lockfilePath = ppath.join(configuration.projectCwd, configuration.get(`lockfileFilename`));
   if (!await xfs.existsPromise(lockfilePath))
     return;
 

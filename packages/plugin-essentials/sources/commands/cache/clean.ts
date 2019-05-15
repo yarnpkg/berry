@@ -1,7 +1,6 @@
 import {Configuration, Cache, PluginConfiguration, Project}     from '@berry/core';
 import {LightReport, MessageName, StreamReport, VirtualFetcher} from '@berry/core';
-import {NodeFS, ZipFS, xfs}                                     from '@berry/fslib';
-import {posix}                                                  from 'path';
+import {NodeFS, xfs, PortablePath, ppath}                                     from '@berry/fslib';
 import {Writable}                                               from 'stream';
 
 const PRESERVED_FILES = new Set([
@@ -18,7 +17,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     This command will locate the files that aren't used in the current project, and remove them (unless \`--dry-run\` is set).
 
     In order to detect whether a file is used or not the command will run a partial install where it will paint the "fetched" packages on top of actually downloading them. Each package in the cache that hasn't been painted during the install will be reported as unused.
-    
+
     One quirk of this system is that \`yarn cache clean\` cannot be used directly if your cache is used by multiple projects, as it won't be able to detect the files being used by other projects than the current one. The best way to support multiple projects with a single mirror is to use the \`--dry-run\` and \`--json\` flags in order to get the list of files that aren't used by one unique project. After running this command on all your projects, you'll just have to remove the intersection of all those file sets as they'll be guaranteed not to be used by any project.
   `)
 
@@ -32,7 +31,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn cache clean --dry-run --json`
   )
 
-  .action(async ({cwd, stdout, dryRun, json}: {cwd: string, stdout: Writable, dryRun: boolean, json: boolean}) => {
+  .action(async ({cwd, stdout, dryRun, json}: {cwd: PortablePath, stdout: Writable, dryRun: boolean, json: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -63,7 +62,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const cacheFolder = cache.cwd;
     const virtualFolder = configuration.get(`virtualFolder`);
 
-    const dirtyPaths: Array<string> = [];
+    const dirtyPaths: Array<PortablePath> = [];
     const dirtySources = [
       [cacheFolder, cacheEntries],
       [virtualFolder, virtualEntries],
@@ -79,13 +78,13 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         if (entries.has(entry))
           continue;
 
-        dirtyPaths.push(posix.resolve(folder, entry));
+        dirtyPaths.push(ppath.resolve(folder, entry));
       }
     }
 
     const unlinkReport = await StreamReport.start({configuration, json, stdout}, async report => {
       for (const path of dirtyPaths) {
-        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${posix.basename(path)} seems to be unused`);
+        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${ppath.basename(path)} seems to be unused`);
         report.reportJson({path: NodeFS.fromPortablePath(path)});
 
         if (!dryRun) {

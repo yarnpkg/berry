@@ -1,13 +1,12 @@
-import {xfs, NodeFS}                                                      from '@berry/fslib';
+import {xfs, NodeFS, ppath, PortablePath}                                 from '@berry/fslib';
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
-import {posix}                                                            from 'path';
 import {PassThrough, Readable, Writable}                                  from 'stream';
 
 import {Handle, ProtectedStream, Stdio, start, makeBuiltin, makeProcess}  from './pipe';
 
 export type UserOptions = {
   builtins: {[key: string]: ShellBuiltin},
-  cwd: string,
+  cwd: PortablePath,
   env: {[key: string]: string | undefined},
   stdin: Readable | null,
   stdout: Writable,
@@ -30,7 +29,7 @@ export type ShellOptions = {
 };
 
 export type ShellState = {
-  cwd: string,
+  cwd: PortablePath,
   environment: {[key: string]: string},
   exitCode: number | null,
   stdin: Readable,
@@ -50,14 +49,14 @@ function cloneState(state: ShellState, mergeWith: Partial<ShellState> = {}) {
 
 const BUILTINS = new Map<string, ShellBuiltin>([
   [`cd`, async ([target, ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
-    const resolvedTarget = posix.resolve(state.cwd, NodeFS.toPortablePath(target));
+    const resolvedTarget = ppath.resolve(state.cwd, NodeFS.toPortablePath(target));
     const stat = await xfs.statPromise(resolvedTarget);
 
     if (!stat.isDirectory()) {
       state.stderr.write(`cd: not a directory\n`);
       return 1;
     } else {
-      state.cwd = target;
+      state.cwd = resolvedTarget;
       return 0;
     }
   }],
@@ -421,7 +420,7 @@ function locateArgsVariable(node: ShellLine): boolean {
 
 export async function execute(command: string, args: Array<string> = [], {
   builtins = {},
-  cwd = process.cwd(),
+  cwd = NodeFS.toPortablePath(process.cwd()),
   env = process.env,
   stdin = process.stdin,
   stdout = process.stdout,

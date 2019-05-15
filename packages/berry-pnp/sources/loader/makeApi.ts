@@ -1,6 +1,6 @@
-import {FakeFS, NodeFS}                                           from '@berry/fslib';
+import {FakeFS, NodeFS, PortablePath, NativePath, Path}           from '@berry/fslib';
+import {ppath, toFilename}                                        from '@berry/fslib';
 import Module                                                     from 'module';
-import path, {posix}                                              from 'path';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types';
 
@@ -9,8 +9,8 @@ import {makeError}                                                from './intern
 export type MakeApiOptions = {
   allowDebug?: boolean,
   compatibilityMode?: boolean,
-  fakeFs: FakeFS,
-  pnpapiResolution: string,
+  fakeFs: FakeFS<PortablePath>,
+  pnpapiResolution: NativePath,
 };
 
 export type ResolveToUnqualifiedOptions = {
@@ -144,7 +144,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Returns information about a package in a safe way (will throw if they cannot be retrieved)
    */
 
-  function getPackageInformationSafe(packageLocator: PackageLocator): PackageInformation {
+  function getPackageInformationSafe(packageLocator: PackageLocator): PackageInformation<PortablePath> {
     const packageInformation = getPackageInformation(packageLocator);
 
     if (!packageInformation) {
@@ -161,7 +161,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Implements the node resolution for folder access and extension selection
    */
 
-  function applyNodeExtensionResolution(unqualifiedPath: string, candidates: Array<string>, {extensions}: {extensions: Array<string>}): string | null {
+  function applyNodeExtensionResolution(unqualifiedPath: PortablePath, candidates: Array<PortablePath>, {extensions}: {extensions: Array<string>}): PortablePath | null {
     // We use this "infinite while" so that we can restart the process as long as we hit package folders
     while (true) {
       let stat;
@@ -187,7 +187,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         // ancestors.
 
         if (opts.fakeFs.lstatSync(unqualifiedPath).isSymbolicLink())
-          unqualifiedPath = posix.normalize(posix.resolve(posix.dirname(unqualifiedPath), opts.fakeFs.readlinkSync(unqualifiedPath)));
+          unqualifiedPath = ppath.normalize(ppath.resolve(ppath.dirname(unqualifiedPath), opts.fakeFs.readlinkSync(unqualifiedPath)));
 
         return unqualifiedPath;
       }
@@ -198,13 +198,13 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         let pkgJson;
 
         try {
-          pkgJson = JSON.parse(opts.fakeFs.readFileSync(`${unqualifiedPath}/package.json`, `utf8`));
+          pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, toFilename(`package.json`)), `utf8`));
         } catch (error) {}
 
         let nextUnqualifiedPath;
 
         if (pkgJson && pkgJson.main)
-          nextUnqualifiedPath = posix.resolve(unqualifiedPath, pkgJson.main);
+          nextUnqualifiedPath = ppath.resolve(unqualifiedPath, pkgJson.main);
 
         // If the "main" field changed the path, we start again from this new location
 
@@ -221,7 +221,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       const qualifiedPath = extensions
         .map(extension => {
-          return `${unqualifiedPath}${extension}`;
+          return `${unqualifiedPath}${extension}` as PortablePath;
         })
         .find(candidateFile => {
           candidates.push(candidateFile);
@@ -236,7 +236,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       if (stat && stat.isDirectory()) {
         const indexPath = extensions
           .map(extension => {
-            return `${unqualifiedPath}/index${extension}`;
+            return ppath.format({dir: unqualifiedPath, name: toFilename(`index`), ext: extension});
           })
           .find(candidateFile => {
             candidates.push(candidateFile);
@@ -263,7 +263,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * lot of them.
    */
 
-  function makeFakeModule(path: string): NodeModule {
+  function makeFakeModule(path: NativePath): NodeModule {
     // @ts-ignore
     const fakeModule = new Module(path, null);
     fakeModule.filename = path;
@@ -275,31 +275,23 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Normalize path to posix format.
    */
 
-  function normalizePath(p: string) {
-    p = posix.normalize(p);
-
-    if (process.platform === 'win32')
-      p = p.replace(backwardSlashRegExp, '/');
-
-    return p;
+  function normalizePath(p: Path) {
+    return NodeFS.toPortablePath(p);
   }
 
   /**
    * Forward the resolution to the next resolver (usually the native one)
    */
 
-  function callNativeResolution(request: string, issuer: string): string | false {
-    if (issuer.endsWith('/'))
-      issuer += 'internal.js';
-
-    request = NodeFS.fromPortablePath(request);
-    issuer = NodeFS.fromPortablePath(issuer);
+  function callNativeResolution(request: PortablePath, issuer: PortablePath): NativePath | false {
+    if (issuer.endsWith(`/`))
+      issuer = ppath.join(issuer, toFilename(`internal.js`));
 
     // Since we would need to create a fake module anyway (to call _resolveLookupPath that
     // would give us the paths to give to _resolveFilename), we can as well not use
     // the {paths} option at all, since it internally makes _resolveFilename create another
     // fake module anyway.
-    return Module._resolveFilename(request, makeFakeModule(issuer), false, {plugnplay: false});
+    return Module._resolveFilename(request, makeFakeModule(NodeFS.fromPortablePath(issuer)), false, {plugnplay: false});
   }
 
   /**
@@ -323,7 +315,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Gets the package information for a given locator. Returns null if they cannot be retrieved.
    */
 
-  function getPackageInformation({name, reference}: PackageLocator): PackageInformation | null {
+  function getPackageInformation({name, reference}: PackageLocator): PackageInformation<PortablePath> | null {
     const packageInformationStore = packageRegistry.get(name);
 
     if (!packageInformationStore)
@@ -341,14 +333,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Finds the package locator that owns the specified path. If none is found, returns null instead.
    */
 
-  function findPackageLocator(location: string): PackageLocator | null {
-    let relativeLocation = normalizePath(posix.relative(runtimeState.basePath, location));
+  function findPackageLocator(location: PortablePath): PackageLocator | null {
+    let relativeLocation = normalizePath(ppath.relative(runtimeState.basePath, location));
 
     if (!relativeLocation.match(isStrictRegExp))
-      relativeLocation = `./${relativeLocation}`;
+      relativeLocation = `./${relativeLocation}` as PortablePath;
 
     if (location.match(isDirRegExp) && !relativeLocation.endsWith(`/`))
-      relativeLocation = `${relativeLocation}/`;
+      relativeLocation = `${relativeLocation}/` as PortablePath;
 
     let from = 0;
 
@@ -357,7 +349,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       from += 1;
 
     for (let t = from; t < packageLocationLengths.length; ++t) {
-      const locator = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]));
+      const locator = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]) as PortablePath);
       if (!locator)
         continue;
 
@@ -406,11 +398,11 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveToUnqualified(request: string, issuer: string | null, {considerBuiltins = true}: ResolveToUnqualifiedOptions = {}): string | null {
+  function resolveToUnqualified(request: PortablePath, issuer: PortablePath | null, {considerBuiltins = true}: ResolveToUnqualifiedOptions = {}): PortablePath | null {
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
 
     if (request === `pnpapi`)
-      return opts.pnpapiResolution;
+      return NodeFS.toPortablePath(opts.pnpapiResolution);
 
     // Bailout if the request is a native module
 
@@ -432,18 +424,18 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         );
       }
 
-      return result;
+      return NodeFS.toPortablePath(result);
     }
 
-    let unqualifiedPath;
+    let unqualifiedPath: PortablePath;
 
     // If the request is a relative or absolute path, we just return it normalized
 
     const dependencyNameMatch = request.match(pathRegExp);
 
     if (!dependencyNameMatch) {
-      if (posix.isAbsolute(request)) {
-        unqualifiedPath = posix.normalize(request);
+      if (ppath.isAbsolute(request)) {
+        unqualifiedPath = ppath.normalize(request);
       } else {
         if (!issuer) {
           throw makeError(
@@ -454,9 +446,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         }
 
         if (issuer.match(isDirRegExp)) {
-          unqualifiedPath = posix.normalize(posix.resolve(issuer, request));
+          unqualifiedPath = ppath.normalize(ppath.resolve(issuer, request));
         } else {
-          unqualifiedPath = posix.normalize(posix.resolve(posix.dirname(issuer), request));
+          unqualifiedPath = ppath.normalize(ppath.resolve(ppath.dirname(issuer), request));
         }
       }
     }
@@ -473,7 +465,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         );
       }
 
-      const [, dependencyName, subPath] = dependencyNameMatch;
+      const [, dependencyName, subPath] = dependencyNameMatch as [unknown, string, PortablePath];
 
       const issuerLocator = findPackageLocator(issuer);
 
@@ -491,7 +483,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           );
         }
 
-        return result;
+        return NodeFS.toPortablePath(result);
       }
 
       const issuerInformation = getPackageInformationSafe(issuerLocator);
@@ -562,16 +554,16 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       // Now that we know which package we should resolve to, we only have to find out the file location
 
-      const dependencyLocation = posix.resolve(runtimeState.basePath, dependencyInformation.packageLocation);
+      const dependencyLocation = ppath.resolve(runtimeState.basePath, dependencyInformation.packageLocation);
 
       if (subPath) {
-        unqualifiedPath = posix.resolve(dependencyLocation, subPath);
+        unqualifiedPath = ppath.resolve(dependencyLocation, subPath);
       } else {
         unqualifiedPath = dependencyLocation;
       }
     }
 
-    return posix.normalize(unqualifiedPath);
+    return ppath.normalize(unqualifiedPath);
   };
 
   /**
@@ -579,12 +571,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * appends ".js" / ".json", and transforms directory accesses into "index.js").
    */
 
-  function resolveUnqualified(unqualifiedPath: string, {extensions = Object.keys(Module._extensions)}: ResolveUnqualifiedOptions = {}): string {
-    const candidates: Array<string> = [];
+  function resolveUnqualified(unqualifiedPath: PortablePath, {extensions = Object.keys(Module._extensions)}: ResolveUnqualifiedOptions = {}): PortablePath {
+    const candidates: Array<PortablePath> = [];
     const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, {extensions});
 
     if (qualifiedPath) {
-      return posix.normalize(qualifiedPath);
+      return ppath.normalize(qualifiedPath);
     } else {
       throw makeError(
         `QUALIFIED_PATH_RESOLUTION_FAILED`,
@@ -602,7 +594,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveRequest(request: string, issuer: string | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): string | null {
+  function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): PortablePath | null {
     let unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
     if (unqualifiedPath === null)
@@ -627,7 +619,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       if (info === null)
         return null;
-      
+
       const packageLocation = NodeFS.fromPortablePath(info.packageLocation);
       const nativeInfo = {... info, packageLocation};
 
@@ -635,37 +627,27 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     },
 
     findPackageLocator: (path: string) => {
-      path = NodeFS.toPortablePath(path);
-
-      return findPackageLocator(path);
+      return findPackageLocator(NodeFS.toPortablePath(path));
     },
 
-    resolveToUnqualified: maybeLog(`resolveToUnqualified`, (request: string, issuer: string | null, opts?: ResolveToUnqualifiedOptions) => {
-      request = NodeFS.toPortablePath(request);
+    resolveToUnqualified: maybeLog(`resolveToUnqualified`, (request: NativePath, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => {
+      const portableIssuer = issuer !== null ?  NodeFS.toPortablePath(issuer) : null;
 
-      if (issuer !== null)
-        issuer = NodeFS.toPortablePath(issuer);
-
-      const resolution = resolveToUnqualified(request, issuer, opts);
+      const resolution = resolveToUnqualified(NodeFS.toPortablePath(request), portableIssuer, opts);
       if (resolution === null)
         return null;
 
       return NodeFS.fromPortablePath(resolution);
     }),
 
-    resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath: string, opts?: ResolveUnqualifiedOptions) => {
-      unqualifiedPath = NodeFS.fromPortablePath(unqualifiedPath);
-
-      return NodeFS.fromPortablePath(resolveUnqualified(unqualifiedPath, opts));
+    resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath: NativePath, opts?: ResolveUnqualifiedOptions) => {
+      return NodeFS.fromPortablePath(resolveUnqualified(NodeFS.toPortablePath(unqualifiedPath), opts));
     }),
 
-    resolveRequest: maybeLog(`resolveRequest`, (request: string, issuer: string | null, opts?: ResolveRequestOptions) => {
-      request = NodeFS.toPortablePath(request);
+    resolveRequest: maybeLog(`resolveRequest`, (request: NativePath, issuer: NativePath | null, opts?: ResolveRequestOptions) => {
+      const portableIssuer = issuer !== null ? NodeFS.toPortablePath(issuer) : null;
 
-      if (issuer !== null)
-        issuer = NodeFS.toPortablePath(issuer);
-
-      const resolution = resolveRequest(request, issuer, opts);
+      const resolution = resolveRequest(NodeFS.toPortablePath(request), portableIssuer, opts);
       if (resolution === null)
         return null;
 

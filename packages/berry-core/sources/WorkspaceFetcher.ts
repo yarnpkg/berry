@@ -1,8 +1,8 @@
-import {JailFS}                from '@berry/fslib';
+import {JailFS, PortablePath}                from '@berry/fslib';
 
-import {Fetcher, FetchOptions} from './Fetcher';
-import {WorkspaceResolver}     from './WorkspaceResolver';
-import {Locator}               from './types';
+import {Fetcher, FetchOptions}               from './Fetcher';
+import {WorkspaceResolver}                   from './WorkspaceResolver';
+import {Locator}                             from './types';
 
 export class WorkspaceFetcher implements Fetcher {
   supports(locator: Locator) {
@@ -19,10 +19,10 @@ export class WorkspaceFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const sourcePath = this.getWorkspace(locator, opts).cwd;
 
-    return {packageFs: new JailFS(sourcePath), prefixPath: `/`, localPath: sourcePath};
+    return {packageFs: new JailFS(sourcePath), prefixPath: PortablePath.root, localPath: sourcePath};
   }
 
   getWorkspace(locator: Locator, opts: FetchOptions) {
-    return opts.project.getWorkspaceByCwd(locator.reference.slice(WorkspaceResolver.protocol.length));
+    return opts.project.getWorkspaceByCwd(locator.reference.slice(WorkspaceResolver.protocol.length) as PortablePath);
   }
 }

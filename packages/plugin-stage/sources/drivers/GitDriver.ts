@@ -1,13 +1,12 @@
-import {execUtils, Manifest, structUtils, IdentHash, Descriptor}     from '@berry/core';
-import {NodeFS}        from '@berry/fslib';
-import {posix}         from 'path';
+import {execUtils, Manifest, structUtils, IdentHash, Descriptor} from '@berry/core';
+import {NodeFS, PortablePath, ppath, toFilename}                 from '@berry/fslib';
 
-import * as stageUtils from '../stageUtils';
+import * as stageUtils                                           from '../stageUtils';
 
 const MESSAGE_MARKER = `Commit generated via \`yarn stage\``;
 const COMMIT_DEPTH = 11;
 
-async function getLastCommitHash(cwd: string) {
+async function getLastCommitHash(cwd: PortablePath) {
   const {code, stdout} = await execUtils.execvp(`git`, [`log`, `-1`, `--pretty=format:%H`], {cwd});
 
   if (code === 0) {
@@ -17,15 +16,15 @@ async function getLastCommitHash(cwd: string) {
   }
 }
 
-async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileAction>) {
+async function genCommitMessage(cwd: PortablePath, changes: Array<stageUtils.FileAction>) {
   const actions: Array<[stageUtils.ActionType, string]> = [];
 
   const modifiedPkgJsonFiles = changes.filter(change => {
-    return posix.basename(change.path) === `package.json`;
+    return ppath.basename(change.path) === `package.json`;
   });
 
   for (const {action, path} of modifiedPkgJsonFiles) {
-    const relativePath = posix.relative(cwd, path);
+    const relativePath = ppath.relative(cwd, path);
 
     if (action === stageUtils.ActionType.MODIFY) {
       const commitHash = await getLastCommitHash(cwd)
@@ -92,11 +91,11 @@ async function genCommitMessage(cwd: string, changes: Array<stageUtils.FileActio
 }
 
 export const Driver = {
-  async findRoot(cwd: string) {
-    return await stageUtils.findVcsRoot(cwd, {marker: `.git`});
+  async findRoot(cwd: PortablePath) {
+    return await stageUtils.findVcsRoot(cwd, {marker: toFilename(`.git`)});
   },
 
-  async filterChanges(cwd: string, yarnRoots: Set<string>, yarnNames: Set<string>) {
+  async filterChanges(cwd: PortablePath, yarnRoots: Set<PortablePath>, yarnNames: Set<string>) {
     const {stdout} = await execUtils.execvp(`git`, [`status`, `-s`], {cwd, strict: true});
     const lines = stdout.toString().split(/\n/g);
 
@@ -105,7 +104,7 @@ export const Driver = {
         return [];
 
       const prefix = line.slice(0, 3);
-      const path = posix.resolve(cwd, line.slice(3));
+      const path = ppath.resolve(cwd, line.slice(3) as PortablePath);
 
       // New directories need to be expanded to their content
       if (prefix === `?? ` && line.endsWith(`/`)) {
@@ -142,17 +141,18 @@ export const Driver = {
     });
   },
 
-  async genCommitMessage(cwd: string, changeList: Array<stageUtils.FileAction>) {
+  async genCommitMessage(cwd: PortablePath, changeList: Array<stageUtils.FileAction>) {
     return await genCommitMessage(cwd, changeList);
   },
 
-  async makeCommit(cwd: string, changeList: Array<stageUtils.FileAction>, commitMessage: string) {
+  async makeCommit(cwd: PortablePath, changeList: Array<stageUtils.FileAction>, commitMessage: string) {
     const localPaths = changeList.map(file => NodeFS.fromPortablePath(file.path));
+
     await execUtils.execvp(`git`, [`add`, `-N`, `--`, ... localPaths], {cwd, strict: true});
     await execUtils.execvp(`git`, [`commit`, `-m`, `${commitMessage}\n\n${MESSAGE_MARKER}\n`, `--`, ... localPaths], {cwd, strict: true});
   },
 
-  async makeReset(cwd: string, changeList: Array<stageUtils.FileAction>) {
+  async makeReset(cwd: PortablePath, changeList: Array<stageUtils.FileAction>) {
     const localPaths = changeList.map(path => NodeFS.fromPortablePath(path.path));
 
     await execUtils.execvp(`git`, [`reset`, `HEAD`, `--`, ... localPaths], {cwd, strict: true});

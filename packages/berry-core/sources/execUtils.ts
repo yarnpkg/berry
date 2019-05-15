@@ -1,9 +1,9 @@
-import {NodeFS}             from '@berry/fslib';
-import crossSpawn           from 'cross-spawn';
-import {Readable, Writable} from 'stream';
+import {NodeFS, PortablePath}             from '@berry/fslib';
+import crossSpawn                         from 'cross-spawn';
+import {Readable, Writable}               from 'stream';
 
 export type PipevpOptions = {
-  cwd: string,
+  cwd: PortablePath,
   env?: {[key: string]: string | undefined},
   strict?: boolean,
   stdin: Readable | null,
@@ -50,7 +50,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
 }
 
 export type ExecvpOptions = {
-  cwd: string,
+  cwd: PortablePath,
   env?: {[key: string]: string | undefined},
   encoding?: string,
   strict?: boolean,

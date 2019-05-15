@@ -1,5 +1,4 @@
-import {xfs}   from '@berry/fslib';
-import {posix} from 'path';
+import {xfs, Filename, PortablePath, ppath}   from '@berry/fslib';
 
 export enum ActionType {
   CREATE,
@@ -12,7 +11,7 @@ export enum ActionType {
 
 export type FileAction = {
   action: ActionType,
-  path: string,
+  path: PortablePath,
 };
 
 export type Consensus = {
@@ -21,10 +20,10 @@ export type Consensus = {
   useComponent: boolean,
 };
 
-export async function findVcsRoot(cwd: string, {marker}: {marker: string}) {
+export async function findVcsRoot(cwd: PortablePath, {marker}: {marker: Filename}) {
   do {
-    if (!xfs.existsSync(`${cwd}/${marker}`)) {
-      cwd = posix.dirname(cwd);
+    if (!xfs.existsSync(ppath.join(cwd, marker))) {
+      cwd = ppath.dirname(cwd);
     } else {
       return cwd;
     }
@@ -33,13 +32,13 @@ export async function findVcsRoot(cwd: string, {marker}: {marker: string}) {
   return null;
 }
 
-export function isYarnFile(path: string, {roots, names}: {roots: Set<string>, names: Set<string>}) {
-  if (names.has(posix.basename(path)))
+export function isYarnFile(path: PortablePath, {roots, names}: {roots: Set<string>, names: Set<string>}) {
+  if (names.has(ppath.basename(path)))
     return true;
 
   do {
     if (!roots.has(path)) {
-      path = posix.dirname(path);
+      path = ppath.dirname(path);
     } else {
       return true;
     }
@@ -48,16 +47,16 @@ export function isYarnFile(path: string, {roots, names}: {roots: Set<string>, na
   return false;
 }
 
-export function expandDirectory(initialCwd: string) {
+export function expandDirectory(initialCwd: PortablePath) {
   const paths = [];
   const cwds = [initialCwd];
 
   while (cwds.length > 0) {
-    const cwd = cwds.pop() as string;
-    const listing = xfs.readdirSync(cwd);
+    const cwd = cwds.pop();
+    const listing = xfs.readdirSync(cwd!);
 
     for (const entry of listing) {
-      const path = posix.resolve(cwd, entry);
+      const path = ppath.resolve(cwd!, entry);
       const stat = xfs.lstatSync(path);
 
       if (stat.isDirectory()) {

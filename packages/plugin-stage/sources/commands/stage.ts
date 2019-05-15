@@ -1,7 +1,6 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
-import {NodeFS, xfs}                                 from '@berry/fslib';
+import {NodeFS, xfs, PortablePath, ppath}                                 from '@berry/fslib';
 import {UsageError}                                  from 'clipanion';
-import {posix}                                       from 'path';
 import {Writable}                                    from 'stream';
 
 import {Driver as GitDriver}                         from '../drivers/GitDriver';
@@ -37,13 +36,13 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn stage --commit`,
   )
 
-  .action(async ({cwd, stdout, commit, reset, update, dryRun}: {cwd: string, stdout: Writable, commit: boolean, reset: boolean, update: boolean, dryRun: boolean}) => {
+  .action(async ({cwd, stdout, commit, reset, update, dryRun}: {cwd: PortablePath, stdout: Writable, commit: boolean, reset: boolean, update: boolean, dryRun: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
 
     let {driver, root} = await findDriver(project.cwd);
 
-    const basePaths: Array<string | null> = [
+    const basePaths: Array<PortablePath | null> = [
       configuration.get(`bstatePath`),
       configuration.get(`cacheFolder`),
       configuration.get(`globalFolder`),
@@ -53,7 +52,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     await configuration.triggerHook((hooks: Hooks) => {
       return hooks.populateYarnPaths;
-    }, project, (path: string | null) => {
+    }, project, (path: PortablePath | null) => {
       basePaths.push(path);
     });
 
@@ -93,9 +92,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     }
   });
 
-async function findDriver(cwd: string) {
+async function findDriver(cwd: PortablePath) {
   let driver = null;
-  let root: string | null = null;
+  let root: PortablePath | null = null;
 
   for (const candidate of ALL_DRIVERS) {
     if ((root = await candidate.findRoot(cwd)) !== null) {
@@ -119,8 +118,8 @@ async function findDriver(cwd: string) {
  * If the second directory isn't in the first one, this function returns null.
  */
 
-function resolveToVcs(cwd: string, path: string | null) {
-  const resolved: Array<string> = [];
+function resolveToVcs(cwd: PortablePath, path: PortablePath | null) {
+  const resolved: Array<PortablePath> = [];
 
   if (path === null)
     return resolved;
@@ -142,7 +141,7 @@ function resolveToVcs(cwd: string, path: string | null) {
     // If it's a symbolic link then we also need to also consider its target as
     // part of the Yarn installation (unless it's outside of the repo)
     if (stat.isSymbolicLink()) {
-      path = posix.resolve(posix.dirname(path), xfs.readlinkSync(path));
+      path = ppath.resolve(ppath.dirname(path), xfs.readlinkSync(path));
     } else {
       break;
     }

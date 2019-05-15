@@ -1,10 +1,9 @@
-import {Ident, MessageName, Project, ReportError, Workspace} from '@berry/core';
-import {miscUtils, structUtils}                              from '@berry/core';
-import {xfs}                                                 from '@berry/fslib';
-import {posix}                                               from 'path';
-import pl                                                    from 'tau-prolog';
+import {Ident, MessageName, Project, ReportError, Workspace}                                  from '@berry/core';
+import {miscUtils, structUtils}                                                               from '@berry/core';
+import {xfs, ppath, PortablePath, toFilename}                                                 from '@berry/fslib';
+import pl                                                                                     from 'tau-prolog';
 
-import {linkProjectToSession}                                from './tauModule';
+import {linkProjectToSession}                                                                 from './tauModule';
 
 export const enum DependencyType {
   Dependencies = 'dependencies',
@@ -134,8 +133,8 @@ export class Constraints {
   constructor(project: Project) {
     this.project = project;
 
-    if (xfs.existsSync(`${project.cwd}/constraints.pro`)) {
-      this.source = xfs.readFileSync(`${project.cwd}/constraints.pro`, `utf8`);
+    if (xfs.existsSync(ppath.join(project.cwd, toFilename(`constraints.pro`)))) {
+      this.source = xfs.readFileSync(ppath.join(project.cwd, toFilename(`constraints.pro`)), `utf8`);
     }
   }
 
@@ -206,7 +205,7 @@ export class Constraints {
     }> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
-      const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
+      const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyRange = parseLink(answer.links.DependencyRange);
       const dependencyType = parseLink(answer.links.DependencyType) as DependencyType;
@@ -234,7 +233,7 @@ export class Constraints {
     }> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, Reason).`)) {
-      const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
+      const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyType = parseLink(answer.links.DependencyType) as DependencyType;
       const reason = parseLink(answer.links.Reason);
@@ -260,7 +259,7 @@ export class Constraints {
     }> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), gen_enforced_field(WorkspaceCwd, FieldPath, FieldValue).`)) {
-      const workspaceCwd = posix.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd));
+      const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
       const fieldPath = parseLink(answer.links.FieldPath);
       const fieldValue = parseLink(answer.links.FieldValue);
 

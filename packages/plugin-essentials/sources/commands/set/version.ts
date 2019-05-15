@@ -1,7 +1,6 @@
 import {Configuration, PluginConfiguration, Project, StreamReport, MessageName} from '@berry/core';
 import {httpUtils}                                                              from '@berry/core';
-import {xfs}                                                                    from '@berry/fslib';
-import {posix}                                                                  from 'path';
+import {xfs, PortablePath, ppath}                                                                    from '@berry/fslib';
 import semver, {SemVer}                                                         from 'semver';
 import {Readable, Writable}                                                     from 'stream';
 import * as yup                                                                 from 'yup';
@@ -53,7 +52,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn set version 1.14.0`,
   )
 
-  .action(async ({cwd, stdout, range, allowRc, dryRun}: {cwd: string, stdin: Readable, stdout: Writable, range: string, allowRc: boolean, dryRun: boolean}) => {
+  .action(async ({cwd, stdout, range, allowRc, dryRun}: {cwd: PortablePath, stdin: Readable, stdout: Writable, range: string, allowRc: boolean, dryRun: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
 
@@ -127,11 +126,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         report.reportInfo(MessageName.UNNAMED, `Downloading ${configuration.format(bundleUrl, `green`)}`);
         const releaseBuffer = await httpUtils.get(bundleUrl, {configuration});
 
-        const relativePath = `.yarn/releases/yarn-${bundleVersion}.js`;
-        const absolutePath = posix.resolve(project.cwd, relativePath);
+        const relativePath = `.yarn/releases/yarn-${bundleVersion}.js` as PortablePath;
+        const absolutePath = ppath.resolve(project.cwd, relativePath);
 
         report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${configuration.format(relativePath, `magenta`)}`);
-        await xfs.mkdirpPromise(posix.dirname(absolutePath));
+        await xfs.mkdirpPromise(ppath.dirname(absolutePath));
         await xfs.writeFilePromise(absolutePath, releaseBuffer);
         await xfs.chmodPromise(absolutePath, 0o755);
 

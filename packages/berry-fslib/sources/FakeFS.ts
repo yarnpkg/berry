@@ -1,5 +1,8 @@
-import {ReadStream, Stats, WriteStream} from 'fs';
-import {posix}                          from 'path';
+import {ReadStream, Stats, WriteStream}                 from 'fs';
+
+import {Path, PortablePath, ppath, PathUtils, Filename} from './path';
+import {toPortablePath}                                 from './path';
+
 
 export type CreateReadStreamOptions = Partial<{
   encoding: string,
@@ -15,264 +18,92 @@ export type WriteFileOptions = Partial<{
   flag: string,
 }> | string;
 
-export abstract class FakeFS {
-  abstract getRealPath(): string;
+export abstract class FakeFS<P extends Path> {
+  public readonly pathUtils: PathUtils<P>;
 
-  resolve(p: string): string {
-    return posix.resolve(`/`, p);
+  protected constructor(pathUtils: PathUtils<P>) {
+    this.pathUtils =  pathUtils;
   }
 
-  abstract openPromise(p: string, flags: string, mode?: number): Promise<number>;
-  abstract openSync(p: string, flags: string, mode?: number): number;
+  abstract getRealPath(): P;
+
+  abstract resolve(p: P): P;
+
+  abstract openPromise(p: P, flags: string, mode?: number): Promise<number>;
+  abstract openSync(p: P, flags: string, mode?: number): number;
 
   abstract closePromise(fd: number): void;
   abstract closeSync(fd: number): void;
 
-  abstract createWriteStream(p: string, opts?: CreateWriteStreamOptions): WriteStream;
-  abstract createReadStream(p: string, opts?: CreateReadStreamOptions): ReadStream;
+  abstract createWriteStream(p: P, opts?: CreateWriteStreamOptions): WriteStream;
+  abstract createReadStream(p: P, opts?: CreateReadStreamOptions): ReadStream;
 
-  abstract realpathPromise(p: string): Promise<string>;
-  abstract realpathSync(p: string): string;
+  abstract realpathPromise(p: P): Promise<P>;
+  abstract realpathSync(p: P): P;
 
-  abstract readdirPromise(p: string): Promise<Array<string>>;
-  abstract readdirSync(p: string): Array<string>;
+  abstract readdirPromise(p: P): Promise<Array<Filename>>;
+  abstract readdirSync(p: P): Array<Filename>;
 
-  abstract existsPromise(p: string): Promise<boolean>;
-  abstract existsSync(p: string): boolean;
+  abstract existsPromise(p: P): Promise<boolean>;
+  abstract existsSync(p: P): boolean;
 
-  abstract accessPromise(p: string, mode?: number): Promise<void>;
-  abstract accessSync(p: string, mode?: number): void;
+  abstract accessPromise(p: P, mode?: number): Promise<void>;
+  abstract accessSync(p: P, mode?: number): void;
 
-  abstract statPromise(p: string): Promise<Stats>;
-  abstract statSync(p: string): Stats;
+  abstract statPromise(p: P): Promise<Stats>;
+  abstract statSync(p: P): Stats;
 
-  abstract lstatPromise(p: string): Promise<Stats>;
-  abstract lstatSync(p: string): Stats;
+  abstract lstatPromise(p: P): Promise<Stats>;
+  abstract lstatSync(p: P): Stats;
 
-  abstract chmodPromise(p: string, mask: number): Promise<void>;
-  abstract chmodSync(p: string, mask: number): void;
+  abstract chmodPromise(p: P, mask: number): Promise<void>;
+  abstract chmodSync(p: P, mask: number): void;
 
-  abstract mkdirPromise(p: string): Promise<void>;
-  abstract mkdirSync(p: string): void;
+  abstract mkdirPromise(p: P): Promise<void>;
+  abstract mkdirSync(p: P): void;
 
-  abstract rmdirPromise(p: string): Promise<void>;
-  abstract rmdirSync(p: string): void;
+  abstract rmdirPromise(p: P): Promise<void>;
+  abstract rmdirSync(p: P): void;
 
-  abstract symlinkPromise(target: string, p: string): Promise<void>;
-  abstract symlinkSync(target: string, p: string): void;
+  abstract symlinkPromise(target: P, p: P): Promise<void>;
+  abstract symlinkSync(target: P, p: P): void;
 
-  abstract renamePromise(oldP: string, newP: string): Promise<void>;
-  abstract renameSync(oldP: string, newP: string): void;
+  abstract renamePromise(oldP: P, newP: P): Promise<void>;
+  abstract renameSync(oldP: P, newP: P): void;
 
-  abstract copyFilePromise(sourceP: string, destP: string, flags?: number): Promise<void>;
-  abstract copyFileSync(sourceP: string, destP: string, flags?: number): void;
+  abstract copyFilePromise(sourceP: P, destP: P, flags?: number): Promise<void>;
+  abstract copyFileSync(sourceP: P, destP: P, flags?: number): void;
 
-  abstract writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
-  abstract writeFileSync(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
+  abstract writeFilePromise(p: P, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
+  abstract writeFileSync(p: P, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
 
-  abstract unlinkPromise(p: string): Promise<void>;
-  abstract unlinkSync(p: string): void;
+  abstract unlinkPromise(p: P): Promise<void>;
+  abstract unlinkSync(p: P): void;
 
-  abstract utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
-  abstract utimesSync(p: string, atime: Date | string | number, mtime: Date | string | number): void;
+  abstract utimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
+  abstract utimesSync(p: P, atime: Date | string | number, mtime: Date | string | number): void;
 
-  abstract readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
-  abstract readFilePromise(p: string, encoding?: string): Promise<Buffer>;
+  abstract readFilePromise(p: P, encoding: 'utf8'): Promise<string>;
+  abstract readFilePromise(p: P, encoding?: string): Promise<Buffer>;
 
-  abstract readFileSync(p: string, encoding: 'utf8'): string;
-  abstract readFileSync(p: string, encoding?: string): Buffer;
+  abstract readFileSync(p: P, encoding: 'utf8'): string;
+  abstract readFileSync(p: P, encoding?: string): Buffer;
 
-  abstract readlinkPromise(p: string): Promise<string>;
-  abstract readlinkSync(p: string): string;
+  abstract readlinkPromise(p: P): Promise<P>;
+  abstract readlinkSync(p: P): P;
 
-  async removePromise(p: string) {
-    let stat;
-    try {
-      stat = await this.lstatPromise(p);
-    } catch (error) {
-      if (error.code === `ENOENT`) {
-        return;
-      } else {
-        throw error;
-      }
-    }
+  abstract removePromise(p: P): Promise<void>;
+  abstract removeSync(p: P): void;
 
-    if (stat.isDirectory()) {
-      for (const entry of await this.readdirPromise(p))
-        await this.removePromise(posix.resolve(p, entry));
+  abstract mkdirpPromise(p: P, options?: {chmod?: number, utimes?: [Date | string | number, Date | string | number]}): Promise<void>;
+  abstract mkdirpSync(p: P, options?: {chmod?: number, utimes?: [Date | string | number, Date | string | number]}): void;
 
-      // 5 gives 1s worth of retries at worst
-      for (let t = 0; t < 5; ++t) {
-        try {
-          await this.rmdirPromise(p);
-          break;
-        } catch (error) {
-          if (error.code === `EBUSY` || error.code === `ENOTEMPTY`) {
-            await new Promise(resolve => setTimeout(resolve, t * 100));
-            continue;
-          } else {
-            throw error;
-          }
-        }
-      }
-    } else {
-      await this.unlinkPromise(p);
-    }
-  }
+  abstract copyPromise(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean}): Promise<void>;
+  abstract copyPromise<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean}): Promise<void>;
+  abstract copySync(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean}): void;
+  abstract copySync<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean}): void;
 
-  removeSync(p: string) {
-    let stat;
-    try {
-      stat = this.lstatSync(p);
-    } catch (error) {
-      if (error.code === `ENOENT`) {
-        return;
-      } else {
-        throw error;
-      }
-    }
-
-    if (stat.isDirectory()) {
-      for (const entry of this.readdirSync(p))
-        this.removeSync(posix.resolve(p, entry));
-
-      this.rmdirSync(p);
-    } else {
-      this.unlinkSync(p);
-    }
-  }
-
-  async mkdirpPromise(p: string, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
-    p = this.resolve(p);
-    if (p === `/`)
-      return;
-
-    const parts = p.split(`/`);
-
-    for (let u = 2; u <= parts.length; ++u) {
-      const subPath = parts.slice(0, u).join(`/`);
-
-      if (!this.existsSync(subPath)) {
-        try {
-          await this.mkdirPromise(subPath);
-        } catch (error) {
-          if (error.code === `EEXIST`) {
-            continue;
-          } else {
-            throw error;
-          }
-        }
-
-        if (chmod != null)
-          await this.chmodPromise(subPath, chmod);
-
-        if (utimes != null) {
-          await this.utimesPromise(subPath, utimes[0], utimes[1]);
-        }
-      }
-    }
-  }
-
-  mkdirpSync(p: string, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
-    p = this.resolve(p);
-    if (p === `/`)
-      return;
-
-    const parts = p.split(`/`);
-
-    for (let u = 2; u <= parts.length; ++u) {
-      const subPath = parts.slice(0, u).join(`/`);
-
-      if (!this.existsSync(subPath)) {
-        try {
-          this.mkdirSync(subPath);
-        } catch (error) {
-          if (error.code === `EEXIST`) {
-            continue;
-          } else {
-            throw error;
-          }
-        }
-
-        if (chmod != null)
-          this.chmodSync(subPath, chmod);
-
-        if (utimes != null) {
-          this.utimesSync(subPath, utimes[0], utimes[1]);
-        }
-      }
-    }
-  }
-
-  async copyPromise(destination: string, source: string, {baseFs = this, overwrite = true}: {baseFs?: FakeFS, overwrite?: boolean} = {}) {
-    const stat = await baseFs.lstatPromise(source);
-    const exists = await this.existsSync(destination);
-
-    if (stat.isDirectory()) {
-      await this.mkdirpPromise(destination);
-      const directoryListing = await baseFs.readdirPromise(source);
-      await Promise.all(directoryListing.map(entry => {
-        return this.copyPromise(posix.join(destination, entry), posix.join(source, entry), {baseFs, overwrite});
-      }));
-    } else if (stat.isFile()) {
-      if (!exists || overwrite) {
-        if (exists)
-          await this.removePromise(destination);
-
-        const content = await baseFs.readFilePromise(source);
-        await this.writeFilePromise(destination, content);
-      }
-    } else if (stat.isSymbolicLink()) {
-      if (!exists || overwrite) {
-        if (exists)
-          await this.removePromise(destination);
-
-        const target = await baseFs.readlinkPromise(source);
-        await this.symlinkPromise(target, destination);
-      }
-    } else {
-      throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
-    }
-
-    const mode = stat.mode & 0o777;
-    await this.chmodPromise(destination, mode);
-  }
-
-  copySync(destination: string, source: string, {baseFs = this, overwrite = true}: {baseFs?: FakeFS, overwrite?: boolean} = {}) {
-    const stat = baseFs.lstatSync(source);
-    const exists = this.existsSync(destination);
-
-    if (stat.isDirectory()) {
-      this.mkdirpSync(destination);
-      const directoryListing = baseFs.readdirSync(source);
-      for (const entry of directoryListing) {
-        this.copySync(posix.join(destination, entry), posix.join(source, entry), {baseFs, overwrite});
-      }
-    } else if (stat.isFile()) {
-      if (!exists || overwrite) {
-        if (exists)
-          this.removeSync(destination);
-
-        const content = baseFs.readFileSync(source);
-        this.writeFileSync(destination, content);
-      }
-    } else if (stat.isSymbolicLink()) {
-      if (!exists || overwrite) {
-        if (exists)
-          this.removeSync(destination);
-
-        const target = baseFs.readlinkSync(source);
-        this.symlinkSync(target, destination);
-      }
-    } else {
-      throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
-    }
-
-    const mode = stat.mode & 0o777;
-    this.chmodSync(destination, mode);
-  }
-
-  async changeFilePromise(p: string, content: string) {
+  async changeFilePromise(p: P, content: string) {
     try {
       const current = await this.readFilePromise(p, `utf8`);
       if (current === content) {
@@ -285,7 +116,7 @@ export abstract class FakeFS {
     await this.writeFilePromise(p, content);
   }
 
-  changeFileSync(p: string, content: string) {
+  changeFileSync(p: P, content: string) {
     try {
       const current = this.readFileSync(p, `utf8`);
       if (current === content) {
@@ -298,7 +129,7 @@ export abstract class FakeFS {
     this.writeFileSync(p, content);
   }
 
-  async movePromise(fromP: string, toP: string) {
+  async movePromise(fromP: P, toP: P) {
     try {
       await this.renamePromise(fromP, toP);
     } catch (error) {
@@ -311,7 +142,7 @@ export abstract class FakeFS {
     }
   }
 
-  moveSync(fromP: string, toP: string) {
+  moveSync(fromP: P, toP: P) {
     try {
       this.renameSync(fromP, toP);
     } catch (error) {
@@ -324,8 +155,8 @@ export abstract class FakeFS {
     }
   }
 
-  async lockPromise(affectedPath: string, callback: () => Promise<void>) {
-    const lockPath = `${affectedPath}.lock`;
+  async lockPromise(affectedPath: P, callback: () => Promise<void>) {
+    const lockPath = `${affectedPath}.lock` as P;
 
     const interval = 1000 / 60;
     const timeout = Date.now() + 60 * 1000;
@@ -356,3 +187,204 @@ export abstract class FakeFS {
     }
   }
 };
+
+export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
+  protected constructor() {
+    super(ppath);
+  }
+
+  resolve(p: PortablePath) {
+    return this.pathUtils.resolve(PortablePath.root, p);
+  }
+
+  async removePromise(p: PortablePath) {
+    let stat;
+    try {
+      stat = await this.lstatPromise(p);
+    } catch (error) {
+      if (error.code === `ENOENT`) {
+        return;
+      } else {
+        throw error;
+      }
+    }
+
+    if (stat.isDirectory()) {
+      for (const entry of await this.readdirPromise(p))
+        await this.removePromise(this.pathUtils.resolve(p, entry));
+
+      // 5 gives 1s worth of retries at worst
+      for (let t = 0; t < 5; ++t) {
+        try {
+          await this.rmdirPromise(p);
+          break;
+        } catch (error) {
+          if (error.code === `EBUSY` || error.code === `ENOTEMPTY`) {
+            await new Promise(resolve => setTimeout(resolve, t * 100));
+            continue;
+          } else {
+            throw error;
+          }
+        }
+      }
+    } else {
+      await this.unlinkPromise(p);
+    }
+  }
+
+  removeSync(p: PortablePath) {
+    let stat;
+    try {
+      stat = this.lstatSync(p);
+    } catch (error) {
+      if (error.code === `ENOENT`) {
+        return;
+      } else {
+        throw error;
+      }
+    }
+
+    if (stat.isDirectory()) {
+      for (const entry of this.readdirSync(p))
+        this.removeSync(this.pathUtils.resolve(p, entry));
+
+      this.rmdirSync(p);
+    } else {
+      this.unlinkSync(p);
+    }
+  }
+
+  async mkdirpPromise(p: PortablePath, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
+    p = this.resolve(p);
+    if (p === this.pathUtils.dirname(p))
+      return;
+
+    const parts = p.split(this.pathUtils.sep);
+
+    for (let u = 2; u <= parts.length; ++u) {
+      const subPath = parts.slice(0, u).join(this.pathUtils.sep) as PortablePath;
+
+      if (!this.existsSync(subPath)) {
+        try {
+          await this.mkdirPromise(subPath);
+        } catch (error) {
+          if (error.code === `EEXIST`) {
+            continue;
+          } else {
+            throw error;
+          }
+        }
+
+        if (chmod != null)
+          await this.chmodPromise(subPath, chmod);
+
+        if (utimes != null) {
+          await this.utimesPromise(subPath, utimes[0], utimes[1]);
+        }
+      }
+    }
+  }
+
+  mkdirpSync(p: PortablePath, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
+    p = this.resolve(p);
+    if (p === this.pathUtils.dirname(p))
+      return;
+
+    const parts = p.split(this.pathUtils.sep);
+
+    for (let u = 2; u <= parts.length; ++u) {
+      const subPath = parts.slice(0, u).join(this.pathUtils.sep) as PortablePath;
+
+      if (!this.existsSync(subPath)) {
+        try {
+          this.mkdirSync(subPath);
+        } catch (error) {
+          if (error.code === `EEXIST`) {
+            continue;
+          } else {
+            throw error;
+          }
+        }
+
+        if (chmod != null)
+          this.chmodSync(subPath, chmod);
+
+        if (utimes != null) {
+          this.utimesSync(subPath, utimes[0], utimes[1]);
+        }
+      }
+    }
+  }
+
+  copyPromise(destination: PortablePath, source: PortablePath, options?: {baseFs?: undefined, overwrite?: boolean}): Promise<void>;
+  copyPromise<P extends Path>(destination: PortablePath, source: P, options: {baseFs: FakeFS<P>, overwrite?: boolean}): Promise<void>;
+  async copyPromise<P extends Path>(destination: PortablePath, source: P, {baseFs = this as any, overwrite = true}: {baseFs?: FakeFS<P>, overwrite?: boolean} = {}) {
+    const stat = await baseFs.lstatPromise(source);
+    const exists = await this.existsSync(destination);
+
+    if (stat.isDirectory()) {
+      await this.mkdirpPromise(destination);
+      const directoryListing = await baseFs.readdirPromise(source);
+      await Promise.all(directoryListing.map(entry => {
+        return this.copyPromise(ppath.join(destination, entry), baseFs.pathUtils.join(source, entry), {baseFs, overwrite});
+      }));
+    } else if (stat.isFile()) {
+      if (!exists || overwrite) {
+        if (exists)
+          await this.removePromise(destination);
+
+        const content = await baseFs.readFilePromise(source);
+        await this.writeFilePromise(destination, content);
+      }
+    } else if (stat.isSymbolicLink()) {
+      if (!exists || overwrite) {
+        if (exists)
+          await this.removePromise(destination);
+
+        const target = await baseFs.readlinkPromise(source);
+        await this.symlinkPromise(toPortablePath(target), destination);
+      }
+    } else {
+      throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
+    }
+
+    const mode = stat.mode & 0o777;
+    await this.chmodPromise(destination, mode);
+  }
+
+  copySync(destination: PortablePath, source: PortablePath, options?: {baseFs?: undefined, overwrite?: boolean}): void;
+  copySync<P extends Path>(destination: PortablePath, source: P, options: {baseFs: FakeFS<P>, overwrite?: boolean}): void;
+  copySync<P extends Path>(destination: PortablePath, source: P, {baseFs = this as any, overwrite = true}: {baseFs?: FakeFS<P>, overwrite?: boolean} = {}) {
+    const stat = baseFs.lstatSync(source);
+    const exists = this.existsSync(destination);
+
+    if (stat.isDirectory()) {
+      this.mkdirpSync(destination);
+      const directoryListing = baseFs.readdirSync(source);
+      for (const entry of directoryListing) {
+        this.copySync(this.pathUtils.join(destination, entry), baseFs.pathUtils.join(source, entry), {baseFs, overwrite});
+      }
+    } else if (stat.isFile()) {
+      if (!exists || overwrite) {
+        if (exists)
+          this.removeSync(destination);
+
+        const content = baseFs.readFileSync(source);
+        this.writeFileSync(destination, content);
+      }
+    } else if (stat.isSymbolicLink()) {
+      if (!exists || overwrite) {
+        if (exists)
+          this.removeSync(destination);
+
+        const target = baseFs.readlinkSync(source);
+        this.symlinkSync(toPortablePath(target), destination);
+      }
+    } else {
+      throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
+    }
+
+    const mode = stat.mode & 0o777;
+    this.chmodSync(destination, mode);
+  }
+}

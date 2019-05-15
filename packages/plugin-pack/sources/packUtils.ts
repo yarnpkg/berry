@@ -1,12 +1,11 @@
-import {MessageName, Report, Workspace, scriptUtils} from '@berry/core';
-import {FakeFS, JailFS, xfs}                         from '@berry/fslib';
-import mm                                            from 'micromatch';
-import {posix}                                       from 'path';
-import {PassThrough}                                 from 'stream';
-import tar                                           from 'tar-stream';
-import {createGzip}                                  from 'zlib';
+import {MessageName, Report, Workspace, scriptUtils}                                  from '@berry/core';
+import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename}                         from '@berry/fslib';
+import mm                                                                             from 'micromatch';
+import {PassThrough}                                                                  from 'stream';
+import tar                                                                            from 'tar-stream';
+import {createGzip}                                                                   from 'zlib';
 
-import {Hooks}                                       from './';
+import {Hooks}                                                                        from './';
 
 const NEVER_IGNORE = [
   `/package.json`,
@@ -61,7 +60,7 @@ export async function prepareForPack(workspace: Workspace, {report}: {report: Re
   }
 }
 
-export async function genPackStream(workspace: Workspace, files?: Array<string>) {
+export async function genPackStream(workspace: Workspace, files?: Array<PortablePath>) {
   if (typeof files === `undefined`)
     files = await genPackList(workspace);
 
@@ -69,8 +68,8 @@ export async function genPackStream(workspace: Workspace, files?: Array<string>)
 
   process.nextTick(async () => {
     for (const file of files!) {
-      const source = posix.resolve(workspace.cwd, file);
-      const dest = posix.join(`package`, file);
+      const source = ppath.resolve(workspace.cwd, file);
+      const dest = ppath.join(toFilename(`package`), file);
 
       const stat = await xfs.lstatPromise(source);
       const opts = {name: dest, mtime: new Date(315532800)};
@@ -147,17 +146,17 @@ export async function genPackList(workspace: Workspace) {
 
   globalList.reject.push(configuration.get(`rcFilename`));
 
-  const maybeRejectPath = (path: string | null) => {
+  const maybeRejectPath = (path: PortablePath | null) => {
     if (path === null || !path.startsWith(`${workspace.cwd}/`))
       return;
 
-    const workspaceRelativePath = posix.relative(workspace.cwd, path);
-    const workspaceAbsolutePath = posix.resolve(`/`, workspaceRelativePath);
+    const workspaceRelativePath = ppath.relative(workspace.cwd, path);
+    const workspaceAbsolutePath = ppath.resolve(PortablePath.root, workspaceRelativePath);
 
     globalList.reject.push(workspaceAbsolutePath);
   };
 
-  maybeRejectPath(posix.resolve(project.cwd, configuration.get(`lockfileFilename`)));
+  maybeRejectPath(ppath.resolve(project.cwd, configuration.get(`lockfileFilename`)));
 
   maybeRejectPath(configuration.get(`bstatePath`));
   maybeRejectPath(configuration.get(`cacheFolder`));
@@ -167,13 +166,13 @@ export async function genPackList(workspace: Workspace) {
 
   await configuration.triggerHook((hooks: Hooks) => {
     return hooks.populateYarnPaths;
-  }, project, (path: string | null) => {
+  }, project, (path: PortablePath | null) => {
     maybeRejectPath(path);
   });
 
   // All child workspaces are ignored
   for (const otherWorkspace of project.workspaces) {
-    const rel = posix.relative(workspace.cwd, otherWorkspace.cwd);
+    const rel = ppath.relative(workspace.cwd, otherWorkspace.cwd);
     if (rel !== `` && !rel.match(/^(\.\.)?\//)) {
       globalList.reject.push(`/${rel}`);
     }
@@ -185,20 +184,20 @@ export async function genPackList(workspace: Workspace) {
   };
 
   if (workspace.manifest.publishConfig && workspace.manifest.publishConfig.main)
-    ignoreList.accept.push(posix.resolve(`/`, workspace.manifest.publishConfig.main));
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.publishConfig.main));
   else if (workspace.manifest.main)
-    ignoreList.accept.push(posix.resolve(`/`, workspace.manifest.main));
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.main));
 
   if (workspace.manifest.publishConfig && workspace.manifest.publishConfig.module)
-    ignoreList.accept.push(posix.resolve(`/`, workspace.manifest.publishConfig.module));
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.publishConfig.module));
   else if (workspace.manifest.module)
-    ignoreList.accept.push(posix.resolve(`/`, workspace.manifest.module));
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.module));
 
   if (workspace.manifest.files !== null) {
     ignoreList.reject.push(`*`);
 
     for (const pattern of workspace.manifest.files) {
-      addIgnorePattern(ignoreList.accept, pattern, {cwd: `/`});
+      addIgnorePattern(ignoreList.accept, pattern, {cwd: PortablePath.root});
     }
   }
 
@@ -208,11 +207,11 @@ export async function genPackList(workspace: Workspace) {
   });
 }
 
-async function walk(initialCwd: string, {globalList, ignoreList}: {globalList: IgnoreList, ignoreList: IgnoreList}) {
-  const list = [];
+async function walk(initialCwd: PortablePath, {globalList, ignoreList}: {globalList: IgnoreList, ignoreList: IgnoreList}) {
+  const list: PortablePath[] = [];
 
   const cwdFs = new JailFS(initialCwd);
-  const cwdList: Array<[string, Array<IgnoreList>]> = [[`/`, [ignoreList]]];
+  const cwdList: Array<[PortablePath, Array<IgnoreList>]> = [[PortablePath.root, [ignoreList]]];
 
   while (cwdList.length > 0) {
     const [cwd, ignoreLists] = cwdList.pop()!;
@@ -233,9 +232,9 @@ async function walk(initialCwd: string, {globalList, ignoreList}: {globalList: I
       }
 
       const localIgnoreList = hasNpmIgnore
-        ? await loadIgnoreList(cwdFs, cwd, `.npmignore`)
+        ? await loadIgnoreList(cwdFs, cwd, toFilename(`.npmignore`))
         : hasGitIgnore
-          ? await loadIgnoreList(cwdFs, cwd, `.gitignore`)
+          ? await loadIgnoreList(cwdFs, cwd, toFilename(`.gitignore`))
           : null;
 
       const nextIgnoreLists = localIgnoreList !== null
@@ -243,23 +242,23 @@ async function walk(initialCwd: string, {globalList, ignoreList}: {globalList: I
         : ignoreLists;
 
       for (const entry of entries) {
-        cwdList.push([posix.resolve(cwd, entry), nextIgnoreLists]);
+        cwdList.push([ppath.resolve(cwd, entry), nextIgnoreLists]);
       }
     } else {
-      list.push(posix.relative(`/`, cwd));
+      list.push(ppath.relative(PortablePath.root, cwd));
     }
   }
 
   return list.sort();
 }
 
-async function loadIgnoreList(fs: FakeFS, cwd: string, filename: string) {
+async function loadIgnoreList(fs: FakeFS<PortablePath>, cwd: PortablePath, filename: PortablePath) {
   const ignoreList: IgnoreList = {
     accept: [],
     reject: [],
   };
 
-  const data = await fs.readFilePromise(`${cwd}/${filename}`, `utf8`);
+  const data = await fs.readFilePromise(ppath.join(cwd, filename), `utf8`);
 
   for (const pattern of data.split(/\n/g))
     addIgnorePattern(ignoreList.reject, pattern, {cwd});
@@ -267,14 +266,14 @@ async function loadIgnoreList(fs: FakeFS, cwd: string, filename: string) {
   return ignoreList;
 }
 
-function normalizePattern(pattern: string, {cwd}: {cwd: string}) {
+function normalizePattern(pattern: string, {cwd}: {cwd: PortablePath}) {
   const negated = pattern[0] === `!`;
 
   if (negated)
     pattern = pattern.slice(1);
 
   if (pattern.match(/\.{0,1}\//))
-    pattern = posix.resolve(cwd, pattern);
+    pattern = ppath.resolve(cwd, pattern as PortablePath);
 
   if (negated)
     pattern = `!${pattern}`;
@@ -282,7 +281,7 @@ function normalizePattern(pattern: string, {cwd}: {cwd: string}) {
   return pattern;
 };
 
-function addIgnorePattern(target: Array<string>, pattern: string, {cwd}: {cwd: string}) {
+function addIgnorePattern(target: Array<string>, pattern: string, {cwd}: {cwd: PortablePath}) {
   let trimed = pattern.trim();
 
   if (trimed === `` || trimed[0] === `#`)

@@ -1,16 +1,15 @@
-import {FakeFS, ZipFS, NodeFS} from '@berry/fslib';
-import {posix}                 from 'path';
-import {Parse}                 from 'tar';
-import {tmpNameSync}           from 'tmp';
+import {FakeFS, PortablePath, ZipFS, NodeFS, ppath} from '@berry/fslib';
+import {Parse}                                      from 'tar';
+import {tmpNameSync}                                from 'tmp';
 
 interface MakeArchiveFromDirectoryOptions {
-  baseFs?: FakeFS,
-  prefixPath?: string | null,
+  baseFs?: FakeFS<PortablePath>,
+  prefixPath?: PortablePath | null,
 };
 
-export async function makeArchiveFromDirectory(source: string, {baseFs = new NodeFS(), prefixPath = `/`}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
-  const zipFs = new ZipFS(tmpNameSync(), {create: true});
-  const target = posix.resolve(`/`, prefixPath);
+export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
+  const zipFs = new ZipFS(NodeFS.toPortablePath(tmpNameSync()), {create: true});
+  const target = ppath.resolve(PortablePath.root, prefixPath!);
 
   await zipFs.copyPromise(target, source, {baseFs});
 
@@ -18,12 +17,12 @@ export async function makeArchiveFromDirectory(source: string, {baseFs = new Nod
 }
 
 interface MakeArchiveOptions {
-  prefixPath?: string | null,
+  prefixPath?: PortablePath,
   stripComponents?: number,
 };
 
-export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath = `.`}: MakeArchiveOptions = {}): Promise<ZipFS> {
-  const zipFs = new ZipFS(tmpNameSync(), {create: true});
+export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath = PortablePath.dot}: MakeArchiveOptions = {}): Promise<ZipFS> {
+  const zipFs = new ZipFS(NodeFS.toPortablePath(tmpNameSync()), {create: true});
 
   // 1980-01-01, like Fedora
   const defaultTime = 315532800;
@@ -55,7 +54,7 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
     }
 
     const parts = entry.path.split(/\//g);
-    const mappedPath = posix.join(prefixPath, parts.slice(stripComponents).join(`/`));
+    const mappedPath = ppath.join(prefixPath, parts.slice(stripComponents).join(`/`));
 
     const chunks: Array<Buffer> = [];
 
@@ -72,7 +71,7 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
     entry.on(`end`, () => {
       switch (entry.type) {
         case `Directory`: {
-          zipFs.mkdirpSync(posix.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+          zipFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
           zipFs.mkdirSync(mappedPath);
           zipFs.chmodSync(mappedPath, mode);
@@ -81,7 +80,7 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
 
         case `OldFile`:
         case `File`: {
-          zipFs.mkdirpSync(posix.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+          zipFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
           zipFs.writeFileSync(mappedPath, Buffer.concat(chunks));
           zipFs.chmodSync(mappedPath, mode);
@@ -89,7 +88,7 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
         } break;
 
         case `SymbolicLink`: {
-          zipFs.mkdirpSync(posix.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+          zipFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
           zipFs.symlinkSync(entry.linkpath, mappedPath);
           zipFs.lutimesSync(mappedPath, defaultTime, defaultTime);

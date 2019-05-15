@@ -1,24 +1,23 @@
-import {xfs, NodeFS}                     from '@berry/fslib';
-import {parseSyml, stringifySyml}        from '@berry/parsers';
-import camelcase                         from 'camelcase';
-import chalk                             from 'chalk';
-import {UsageError}                      from 'clipanion';
-import decamelize                        from 'decamelize';
-import {posix}                           from 'path';
-import supportsColor                     from 'supports-color';
+import {xfs, NodeFS, PortablePath, ppath, Filename, toFilename} from '@berry/fslib';
+import {parseSyml, stringifySyml}                               from '@berry/parsers';
+import camelcase                                                from 'camelcase';
+import chalk                                                    from 'chalk';
+import {UsageError}                                             from 'clipanion';
+import decamelize                                               from 'decamelize';
+import supportsColor                                            from 'supports-color';
 
-import {MultiFetcher}                    from './MultiFetcher';
-import {MultiResolver}                   from './MultiResolver';
-import {Plugin, Hooks}                   from './Plugin';
-import {SemverResolver}                  from './SemverResolver';
-import {TagResolver}                     from './TagResolver';
-import {VirtualFetcher}                  from './VirtualFetcher';
-import {WorkspaceFetcher}                from './WorkspaceFetcher';
-import {WorkspaceResolver}               from './WorkspaceResolver';
-import * as folderUtils                  from './folderUtils';
-import * as miscUtils                    from './miscUtils';
-import * as nodeUtils                    from './nodeUtils';
-import * as structUtils                  from './structUtils';
+import {MultiFetcher}                                           from './MultiFetcher';
+import {MultiResolver}                                          from './MultiResolver';
+import {Plugin, Hooks}                                          from './Plugin';
+import {SemverResolver}                                         from './SemverResolver';
+import {TagResolver}                                            from './TagResolver';
+import {VirtualFetcher}                                         from './VirtualFetcher';
+import {WorkspaceFetcher}                                       from './WorkspaceFetcher';
+import {WorkspaceResolver}                                      from './WorkspaceResolver';
+import * as folderUtils                                         from './folderUtils';
+import * as miscUtils                                           from './miscUtils';
+import * as nodeUtils                                           from './nodeUtils';
+import * as structUtils                                         from './structUtils';
 
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});
@@ -72,8 +71,8 @@ const legacyNames = new Set([
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
-export const DEFAULT_RC_FILENAME = `.yarnrc`;
-export const DEFAULT_LOCK_FILENAME = `yarn.lock`;
+export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc`);
+export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
 
 export enum SettingsType {
   BOOLEAN = 'BOOLEAN',
@@ -274,7 +273,7 @@ function parseBoolean(value: unknown) {
   }
 }
 
-function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: string) {
+function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
   if (definition.isArray) {
     if (!Array.isArray(value)) {
       return [parseSingleValue(configuration, path, value, definition, folder)];
@@ -290,7 +289,7 @@ function parseValue(configuration: Configuration, path: string, value: unknown, 
   }
 }
 
-function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: string) {
+function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
   switch (definition.type) {
     case SettingsType.SHAPE:
       return parseShape(configuration, path, value, definition, folder);
@@ -309,7 +308,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
 
   switch (definition.type) {
     case SettingsType.ABSOLUTE_PATH:
-      return posix.resolve(folder, NodeFS.toPortablePath(value));
+      return ppath.resolve(folder, NodeFS.toPortablePath(value));
     case SettingsType.LOCATOR_LOOSE:
       return structUtils.parseLocator(value, false);
     case SettingsType.LOCATOR:
@@ -319,7 +318,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
   }
 }
 
-function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: string) {
+function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: PortablePath) {
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Object configuration settings "${path}" must be an object`);
 
@@ -342,7 +341,7 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
   return result;
 }
 
-function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: string) {
+function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath) {
   const result = new Map<string, any>();
 
   if (typeof value !== 'object' || Array.isArray(value))
@@ -377,16 +376,16 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         return null;
 
       if (configuration.projectCwd === null) {
-        if (posix.isAbsolute(definition.default)) {
-          return posix.normalize(definition.default);
+        if (ppath.isAbsolute(definition.default)) {
+          return ppath.normalize(definition.default);
         } else if (definition.isNullable || definition.default === null) {
           return null;
         }
       } else {
         if (Array.isArray(definition.default)) {
-          return definition.default.map((entry: string) => posix.resolve(configuration.projectCwd, entry));
+          return definition.default.map((entry: string) => ppath.resolve(configuration.projectCwd!, entry as PortablePath));
         } else {
-          return posix.resolve(configuration.projectCwd, definition.default);
+          return ppath.resolve(configuration.projectCwd, definition.default);
         }
       }
     }
@@ -423,8 +422,8 @@ function getRcFilename() {
 }
 
 export class Configuration {
-  public startingCwd: string;
-  public projectCwd: string | null;
+  public startingCwd: PortablePath;
+  public projectCwd: PortablePath | null;
 
   public plugins: Map<string, Plugin> = new Map();
 
@@ -460,7 +459,7 @@ export class Configuration {
    * one listed on /foo/bar/.yarnrc, but not the other way around).
    */
 
-  static async find(startingCwd: string, pluginConfiguration: PluginConfiguration | null, {strict = true}: {strict?: boolean} = {}) {
+  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {strict = true}: {strict?: boolean} = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
@@ -484,7 +483,7 @@ export class Configuration {
           continue;
 
         for (const userProvidedPath of data.plugins) {
-          const pluginPath = posix.resolve(cwd, NodeFS.toPortablePath(userProvidedPath));
+          const pluginPath = ppath.resolve(cwd, NodeFS.toPortablePath(userProvidedPath));
           const {factory, name} = nodeUtils.dynamicRequire(NodeFS.fromPortablePath(pluginPath));
 
           // Prevent plugin redefinition so that the ones declared deeper in the
@@ -552,7 +551,7 @@ export class Configuration {
     return configuration;
   }
 
-  static async findRcFiles(startingCwd: string) {
+  static async findRcFiles(startingCwd: PortablePath) {
     const rcFilename = getRcFilename();
     const rcFiles = [];
 
@@ -562,7 +561,7 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      const rcPath = `${currentCwd}/${rcFilename}`;
+      const rcPath = ppath.join(currentCwd, rcFilename as PortablePath);
 
       if (xfs.existsSync(rcPath)) {
         const content = await xfs.readFilePromise(rcPath, `utf8`);
@@ -571,7 +570,7 @@ export class Configuration {
         rcFiles.push({path: rcPath, cwd: currentCwd, data});
       }
 
-      nextCwd = posix.dirname(currentCwd);
+      nextCwd = ppath.dirname(currentCwd);
     }
 
     return rcFiles;
@@ -579,7 +578,7 @@ export class Configuration {
 
   static async findHomeRcFile(rcFilename: string) {
     const homeFolder = folderUtils.getHomeFolder();
-    const homeRcFilePath = `${homeFolder}/${rcFilename}`;
+    const homeRcFilePath = ppath.join(homeFolder, rcFilename as PortablePath);
 
     if (xfs.existsSync(homeRcFilePath)) {
       const content = await xfs.readFilePromise(homeRcFilePath, `utf8`);
@@ -591,7 +590,7 @@ export class Configuration {
     return null;
   }
 
-  static async findProjectCwd(startingCwd: string, lockfileFilename: string) {
+  static async findProjectCwd(startingCwd: PortablePath, lockfileFilename: Filename) {
     let projectCwd = null;
 
     let nextCwd = startingCwd;
@@ -600,21 +599,21 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(`${currentCwd}/package.json`))
+      if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`))))
         projectCwd = currentCwd;
 
-      if (xfs.existsSync(`${currentCwd}/${lockfileFilename}`))
+      if (xfs.existsSync(ppath.join(currentCwd, lockfileFilename)))
         break;
 
-      nextCwd = posix.dirname(currentCwd);
+      nextCwd = ppath.dirname(currentCwd);
     }
 
     return projectCwd;
   }
 
-  static async updateConfiguration(cwd: string, patch: any) {
+  static async updateConfiguration(cwd: PortablePath, patch: any) {
     const rcFilename = getRcFilename();
-    const configurationPath = `${cwd}/${rcFilename}`;
+    const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
 
     const current = xfs.existsSync(configurationPath) ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any : {};
     const currentKeys = Object.keys(current);
@@ -668,7 +667,7 @@ export class Configuration {
     return await Configuration.updateConfiguration(homeFolder, patch);
   }
 
-  constructor(startingCwd: string, projectCwd: string | null, plugins: Map<string, Plugin>) {
+  constructor(startingCwd: PortablePath, projectCwd: PortablePath | null, plugins: Map<string, Plugin>) {
     this.startingCwd = startingCwd;
     this.projectCwd = projectCwd;
 
@@ -714,7 +713,7 @@ export class Configuration {
     return newConfiguration;
   }
 
-  useWithSource(source: string, data: {[key: string]: unknown}, folder: string, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
+  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
     try {
       this.use(source, data, folder, {strict, overwrite});
     } catch (error) {
@@ -723,7 +722,7 @@ export class Configuration {
     }
   }
 
-  use(source: string, data: {[key: string]: unknown}, folder: string, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
+  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
     if (typeof data.berry === `object` && data.berry !== null)
       data = data.berry;
 

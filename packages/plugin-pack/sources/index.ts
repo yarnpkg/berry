@@ -1,5 +1,6 @@
 import {Plugin, Project, Workspace, structUtils}   from '@berry/core';
 import {MessageName, ReportError}                  from '@berry/core';
+import {PortablePath}                              from '@berry/fslib';
 
 import pack                                        from './commands/pack';
 import * as packUtils                              from './packUtils';
@@ -9,7 +10,7 @@ export {packUtils};
 export interface Hooks {
   populateYarnPaths?: (
     project: Project,
-    definePath: (path: string | null) => void,
+    definePath: (path: PortablePath | null) => void,
   ) => Promise<void>,
 
   beforeWorkspacePacking?: (

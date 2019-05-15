@@ -1,12 +1,12 @@
-import libzip                                              from '@berry/libzip';
-import {ReadStream, Stats, WriteStream, constants}         from 'fs';
-import {posix}                                             from 'path';
-import {PassThrough}                                       from 'stream';
-import {isDate}                                            from 'util';
+import libzip                                                                  from '@berry/libzip';
+import {ReadStream, Stats, WriteStream, constants}                             from 'fs';
+import {PassThrough}                                                           from 'stream';
+import {isDate}                                                                from 'util';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
-import {FakeFS, WriteFileOptions}                          from './FakeFS';
-import {NodeFS}                                            from './NodeFS';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
+import {FakeFS, WriteFileOptions}                                              from './FakeFS';
+import {NodeFS}                                                                from './NodeFS';
+import {PortablePath, ppath, Filename}                                         from './path';
 
 const S_IFMT = 0o170000;
 
@@ -79,7 +79,7 @@ export type BufferOptions = {
 };
 
 export type PathOptions = BufferOptions & {
-  baseFs?: FakeFS,
+  baseFs?: FakeFS<PortablePath>,
   create?: boolean,
 };
 
@@ -103,22 +103,22 @@ function toUnixTimestamp(time: Date | string | number) {
   throw new Error(`Invalid time`);
 }
 
-export class ZipFS extends FakeFS {
-  private readonly baseFs: FakeFS | null;
-  private readonly path: string | null;
+export class ZipFS extends BasePortableFakeFS {
+  private readonly baseFs: FakeFS<PortablePath> | null;
+  private readonly path: PortablePath | null;
 
   private readonly stats: Stats;
   private readonly zip: number;
 
-  private readonly listings: Map<string, Set<string>> = new Map();
-  private readonly entries: Map<string, number> = new Map();
+  private readonly listings: Map<PortablePath, Set<Filename>> = new Map();
+  private readonly entries: Map<PortablePath, number> = new Map();
 
   private ready = false;
 
-  constructor(p: string, opts: PathOptions);
+  constructor(p: PortablePath,opts: PathOptions);
   constructor(data: Buffer, opts: BufferOptions);
 
-  constructor(source: string | Buffer, opts: PathOptions | BufferOptions) {
+  constructor(source: PortablePath | Buffer, opts: PathOptions | BufferOptions) {
     super();
 
     const pathOptions = opts as PathOptions;
@@ -184,15 +184,15 @@ export class ZipFS extends FakeFS {
       libzip.free(errPtr);
     }
 
-    this.listings.set(`/`, new Set());
+    this.listings.set(PortablePath.root, new Set());
 
     const entryCount = libzip.getNumEntries(this.zip, 0);
     for (let t = 0; t < entryCount; ++t) {
       const raw = libzip.getName(this.zip, t, 0);
-      if (posix.isAbsolute(raw))
+      if (ppath.isAbsolute(raw))
         continue;
 
-      const p = posix.resolve(`/`, raw);
+      const p = ppath.resolve(PortablePath.root, raw);
       this.registerEntry(p, t);
 
       // If the raw path is a directory, register it
@@ -264,7 +264,7 @@ export class ZipFS extends FakeFS {
     throw new Error(`Unimplemented`);
   }
 
-  createReadStream(p: string, {encoding}: CreateReadStreamOptions = {}): ReadStream {
+  createReadStream(p: PortablePath, {encoding}: CreateReadStreamOptions = {}): ReadStream {
     const stream = Object.assign(new PassThrough(), {
       bytesRead: 0,
       path: p,
@@ -289,7 +289,7 @@ export class ZipFS extends FakeFS {
     return stream;
   }
 
-  createWriteStream(p: string, {encoding}: CreateWriteStreamOptions = {}): WriteStream {
+  createWriteStream(p: PortablePath, {encoding}: CreateWriteStreamOptions = {}): WriteStream {
     const stream = Object.assign(new PassThrough(), {
       bytesWritten: 0,
       path: p,
@@ -313,11 +313,11 @@ export class ZipFS extends FakeFS {
     return stream;
   }
 
-  async realpathPromise(p: string) {
+  async realpathPromise(p: PortablePath) {
     return this.realpathSync(p);
   }
 
-  realpathSync(p: string): string {
+  realpathSync(p: PortablePath): PortablePath {
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -326,11 +326,11 @@ export class ZipFS extends FakeFS {
     return resolvedP;
   }
 
-  async existsPromise(p: string) {
+  async existsPromise(p: PortablePath) {
     return this.existsSync(p);
   }
 
-  existsSync(p: string): boolean {
+  existsSync(p: PortablePath): boolean {
     let resolvedP;
 
     try {
@@ -342,11 +342,11 @@ export class ZipFS extends FakeFS {
     return this.entries.has(resolvedP) || this.listings.has(resolvedP);
   }
 
-  async accessPromise(p: string, mode?: number) {
+  async accessPromise(p: PortablePath, mode?: number) {
     return this.accessSync(p, mode);
   }
 
-  accessSync(p: string, mode?: number) {
+  accessSync(p: PortablePath, mode?: number) {
     const resolvedP = this.resolveFilename(`access '${p}'`, p);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) {
@@ -354,11 +354,11 @@ export class ZipFS extends FakeFS {
     }
   }
 
-  async statPromise(p: string) {
+  async statPromise(p: PortablePath) {
     return this.statSync(p);
   }
 
-  statSync(p: string) {
+  statSync(p: PortablePath) {
     const resolvedP = this.resolveFilename(`stat '${p}'`, p);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -370,11 +370,11 @@ export class ZipFS extends FakeFS {
     return this.statImpl(`stat '${p}'`, resolvedP);
   }
 
-  async lstatPromise(p: string) {
+  async lstatPromise(p: PortablePath) {
     return this.lstatSync(p);
   }
 
-  lstatSync(p: string) {
+  lstatSync(p: PortablePath) {
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -386,7 +386,7 @@ export class ZipFS extends FakeFS {
     return this.statImpl(`lstat '${p}'`, resolvedP);
   }
 
-  private statImpl(reason: string, p: string): Stats {
+  private statImpl(reason: string, p: PortablePath): Stats {
     if (this.listings.has(p)) {
       const uid = this.stats.uid;
       const gid = this.stats.gid;
@@ -456,39 +456,39 @@ export class ZipFS extends FakeFS {
     return libzip.getValue(libzip.uint32S, `i32`) >>> 16;
   }
 
-  private registerListing(p: string) {
+  private registerListing(p: PortablePath) {
     let listing = this.listings.get(p);
 
     if (listing)
       return listing;
 
-    const parentListing = this.registerListing(posix.dirname(p));
+    const parentListing = this.registerListing(ppath.dirname(p));
     listing = new Set();
 
-    parentListing.add(posix.basename(p));
+    parentListing.add(ppath.basename(p));
     this.listings.set(p, listing);
 
     return listing;
   }
 
-  private registerEntry(p: string, index: number) {
-    const parentListing = this.registerListing(posix.dirname(p));
-    parentListing.add(posix.basename(p));
+  private registerEntry(p: PortablePath, index: number) {
+    const parentListing = this.registerListing(ppath.dirname(p));
+    parentListing.add(ppath.basename(p));
 
     this.entries.set(p, index);
   }
 
-  private resolveFilename(reason: string, p: string, resolveLastComponent: boolean = true) {
+  private resolveFilename(reason: string, p: PortablePath, resolveLastComponent: boolean = true): PortablePath {
     if (!this.ready)
       throw Object.assign(new Error(`EBUSY: archive closed, ${reason}`), {code: `EBUSY`});
 
-    let resolvedP = posix.resolve(`/`, p);
+    let resolvedP = ppath.resolve(PortablePath.root, p);
 
     if (resolvedP === `/`)
-      return `/`;
+      return PortablePath.root;
 
     while (true) {
-      const parentP = this.resolveFilename(reason, posix.dirname(resolvedP), true);
+      const parentP = this.resolveFilename(reason, ppath.dirname(resolvedP), true);
 
       const isDir = this.listings.has(parentP);
       const doesExist = this.entries.has(parentP);
@@ -499,7 +499,7 @@ export class ZipFS extends FakeFS {
       if (!isDir)
         throw Object.assign(new Error(`ENOTDIR: not a directory, ${reason}`), {code: `ENOTDIR`});
 
-      resolvedP = posix.resolve(parentP, posix.basename(resolvedP));
+      resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP));
 
       if (!resolveLastComponent)
         break;
@@ -509,8 +509,8 @@ export class ZipFS extends FakeFS {
         break;
 
       if (this.isSymbolicLink(index)) {
-        const target = this.getFileSource(index).toString();
-        resolvedP = posix.resolve(posix.dirname(resolvedP), target);
+        const target = this.getFileSource(index).toString() as PortablePath;
+        resolvedP = ppath.resolve(ppath.dirname(resolvedP), target);
       } else {
         break;
       }
@@ -560,8 +560,8 @@ export class ZipFS extends FakeFS {
     return source;
   }
 
-  private setFileSource(p: string, content: string | Buffer | ArrayBuffer | DataView) {
-    const target = posix.relative(`/`, p);
+  private setFileSource(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView) {
+    const target = ppath.relative(PortablePath.root, p);
     const lzSource = this.allocateSource(content);
 
     try {
@@ -622,11 +622,11 @@ export class ZipFS extends FakeFS {
     }
   }
 
-  async chmodPromise(p: string, mask: number) {
+  async chmodPromise(p: PortablePath, mask: number) {
     return this.chmodSync(p, mask);
   }
 
-  chmodSync(p: string, mask: number) {
+  chmodSync(p: PortablePath, mask: number) {
     const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
 
     // We silently ignore chmod requests for directories
@@ -646,19 +646,19 @@ export class ZipFS extends FakeFS {
     }
   }
 
-  async renamePromise(oldP: string, newP: string) {
+  async renamePromise(oldP: PortablePath, newP: PortablePath) {
     return this.renameSync(oldP, newP);
   }
 
-  renameSync(oldP: string, newP: string): never {
+  renameSync(oldP: PortablePath, newP: PortablePath): never {
     throw new Error(`Unimplemented`);
   }
 
-  async copyFilePromise(sourceP: string, destP: string, flags?: number) {
+  async copyFilePromise(sourceP: PortablePath, destP: PortablePath, flags?: number) {
     return this.copyFileSync(sourceP, destP, flags);
   }
 
-  copyFileSync(sourceP: string, destP: string, flags: number = 0) {
+  copyFileSync(sourceP: PortablePath, destP: PortablePath, flags: number = 0) {
     if ((flags & constants.COPYFILE_FICLONE_FORCE) !== 0)
       throw Object.assign(new Error(`ENOSYS: unsupported clone operation, copyfile '${sourceP}' -> ${destP}'`), {code: `ENOSYS`});
 
@@ -682,11 +682,11 @@ export class ZipFS extends FakeFS {
     }
   }
 
-  async writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async writeFilePromise(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return this.writeFileSync(p, content, opts);
   }
 
-  writeFileSync(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  writeFileSync(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
 
     if (this.listings.has(resolvedP))
@@ -714,35 +714,35 @@ export class ZipFS extends FakeFS {
     }
   }
 
-  async unlinkPromise(p: string) {
+  async unlinkPromise(p: PortablePath) {
     return this.unlinkSync(p);
   }
 
-  unlinkSync(p: string) {
+  unlinkSync(p: PortablePath) {
     throw new Error(`Unimplemented`);
   }
 
-  async utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
+  async utimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
     return this.utimesSync(p, atime, mtime);
   }
 
-  utimesSync(p: string, atime: Date | string | number, mtime: Date | string | number) {
+  utimesSync(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
     const resolvedP = this.resolveFilename(`chmod '${p}'`, p);
 
     return this.utimesImpl(resolvedP, mtime);
   }
 
-  async lutimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number) {
+  async lutimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
     return this.lutimesSync(p, atime, mtime);
   }
 
-  lutimesSync(p: string, atime: Date | string | number, mtime: Date | string | number) {
+  lutimesSync(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
     const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
 
     return this.utimesImpl(resolvedP, mtime);
   }
 
-  private utimesImpl(resolvedP: string, mtime: Date | string | number) {
+  private utimesImpl(resolvedP: PortablePath, mtime: Date | string | number) {
     if (this.listings.has(resolvedP))
       if (!this.entries.has(resolvedP))
         this.hydrateDirectory(resolvedP);
@@ -757,11 +757,11 @@ export class ZipFS extends FakeFS {
     }
   }
 
-  async mkdirPromise(p: string) {
+  async mkdirPromise(p: PortablePath) {
     return this.mkdirSync(p);
   }
 
-  mkdirSync(p: string) {
+  mkdirSync(p: PortablePath) {
     const resolvedP = this.resolveFilename(`mkdir '${p}'`, p);
 
     if (this.entries.has(resolvedP) || this.listings.has(resolvedP))
@@ -770,16 +770,16 @@ export class ZipFS extends FakeFS {
     this.hydrateDirectory(resolvedP);
   }
 
-  async rmdirPromise(p: string) {
+  async rmdirPromise(p: PortablePath) {
     return this.rmdirSync(p);
   }
 
-  rmdirSync(p: string) {
+  rmdirSync(p: PortablePath) {
     throw new Error(`Unimplemented`);
   }
 
-  private hydrateDirectory(resolvedP: string) {
-    const index = libzip.dir.add(this.zip, posix.relative(`/`, resolvedP));
+  private hydrateDirectory(resolvedP: PortablePath) {
+    const index = libzip.dir.add(this.zip, ppath.relative(PortablePath.root, resolvedP));
     if (index === -1)
       throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
 
@@ -789,11 +789,11 @@ export class ZipFS extends FakeFS {
     return index;
   }
 
-  async symlinkPromise(target: string, p: string) {
+  async symlinkPromise(target: PortablePath, p: PortablePath) {
     return this.symlinkSync(target, p);
   }
 
-  symlinkSync(target: string, p: string) {
+  symlinkSync(target: PortablePath, p: PortablePath) {
     const resolvedP = this.resolveFilename(`symlink '${target}' -> '${p}'`, p);
 
     if (this.listings.has(resolvedP))
@@ -812,9 +812,9 @@ export class ZipFS extends FakeFS {
     }
   }
 
-  readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
-  readFilePromise(p: string, encoding?: string): Promise<Buffer>;
-  async readFilePromise(p: string, encoding?: string) {
+  readFilePromise(p: PortablePath, encoding: 'utf8'): Promise<string>;
+  readFilePromise(p: PortablePath, encoding?: string): Promise<Buffer>;
+  async readFilePromise(p: PortablePath, encoding?: string) {
     // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
     switch (encoding) {
       case `utf8`:
@@ -824,9 +824,9 @@ export class ZipFS extends FakeFS {
     }
   }
 
-  readFileSync(p: string, encoding: 'utf8'): string;
-  readFileSync(p: string, encoding?: string): Buffer;
-  readFileSync(p: string, encoding?: string) {
+  readFileSync(p: PortablePath, encoding: 'utf8'): string;
+  readFileSync(p: PortablePath, encoding?: string): Buffer;
+  readFileSync(p: PortablePath, encoding?: string) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
       // @ts-ignore
@@ -853,11 +853,11 @@ export class ZipFS extends FakeFS {
     return encoding ? data.toString(encoding) : data;
   }
 
-  async readdirPromise(p: string) {
+  async readdirPromise(p: PortablePath) {
     return this.readdirSync(p);
   }
 
-  readdirSync(p: string): Array<string> {
+  readdirSync(p: PortablePath): Array<Filename> {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -871,11 +871,11 @@ export class ZipFS extends FakeFS {
     return Array.from(directoryListing);
   }
 
-  async readlinkPromise(p: string) {
+  async readlinkPromise(p: PortablePath) {
     return this.readlinkSync(p);
   }
 
-  readlinkSync(p: string): string {
+  readlinkSync(p: PortablePath): PortablePath {
     const resolvedP = this.resolveFilename(`readlink '${p}'`, p, false);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -905,6 +905,6 @@ export class ZipFS extends FakeFS {
     if ((attributes & 0o170000) !== 0o120000)
       throw Object.assign(new Error(`EINVAL: invalid argument, readlink '${p}'`), {code: `EINVAL`});
 
-    return this.getFileSource(entry).toString();
+    return this.getFileSource(entry).toString() as PortablePath;
   }
 };

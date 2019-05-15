@@ -1,4 +1,4 @@
-import {xfs}                                             from '@berry/fslib';
+import {xfs, ppath}                                      from '@berry/fslib';
 import {parseSyml}                                       from '@berry/parsers';
 
 import {Project}                                         from './Project';
@@ -20,7 +20,7 @@ export class YarnResolver implements Resolver {
   private resolutions: Map<DescriptorHash, Locator> | null = null;
 
   async setup(project: Project, {report}: {report: Report}) {
-    const lockfilePath = `${project.cwd}/${project.configuration.get(`lockfileFilename`)}`;
+    const lockfilePath = ppath.join(project.cwd, project.configuration.get(`lockfileFilename`));
 
     // No need to enable it if the lockfile doesn't exist
     if (!xfs.existsSync(lockfilePath))

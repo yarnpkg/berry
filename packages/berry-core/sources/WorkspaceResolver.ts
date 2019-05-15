@@ -1,3 +1,5 @@
+import {PortablePath}                                    from '@berry/fslib';
+
 import {ReportError, MessageName}                        from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import {Descriptor, Locator}                             from './types';
@@ -50,7 +52,7 @@ export class WorkspaceResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const workspace = opts.project.getWorkspaceByCwd(locator.reference.slice(WorkspaceResolver.protocol.length));
+    const workspace = opts.project.getWorkspaceByCwd(locator.reference.slice(WorkspaceResolver.protocol.length) as PortablePath);
 
     return {
       ...locator,

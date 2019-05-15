@@ -1,4 +1,5 @@
 import {Configuration, MessageName, PluginConfiguration, Project, StreamReport, structUtils} from '@berry/core';
+import { PortablePath } from '@berry/fslib';
 import {Writable}                                                                            from 'stream';
 
 const DEPENDENCY_TYPES = ['devDependencies', 'dependencies'];
@@ -11,7 +12,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   .categorize(`Workspace-related commands`)
   .describe(`list all available workspaces`)
 
-  .action(async ({cwd, stdout, verbose, json}: {cwd: string, stdout: Writable, verbose: boolean, json: boolean}) => {
+  .action(async ({cwd, stdout, verbose, json}: {cwd: PortablePath, stdout: Writable, verbose: boolean, json: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project} = await Project.find(configuration, cwd);
 

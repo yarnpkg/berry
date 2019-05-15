@@ -8,6 +8,7 @@ import {createHash}                                                             
 import ssri                                                                                from 'ssri';
 import {Writable}                                                                          from 'stream';
 import * as yup                                                                            from 'yup';
+import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -33,7 +34,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn npm publish`,
   )
 
-  .action(async ({cwd, stdout, access, tag}: {cwd: string, stdout: Writable, access: string | undefined, tag: string}) => {
+  .action(async ({cwd, stdout, access, tag}: {cwd: PortablePath, stdout: Writable, access: string | undefined, tag: string}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {workspace} = await Project.find(configuration, cwd);
 

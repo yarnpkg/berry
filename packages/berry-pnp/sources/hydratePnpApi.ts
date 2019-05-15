@@ -1,11 +1,11 @@
-import {FakeFS}              from '@berry/fslib';
-import {readFile}            from 'fs';
-import {dirname}             from 'path';
-import {promisify}           from 'util';
+import {FakeFS, PortablePath}              from '@berry/fslib';
+import {readFile}                          from 'fs';
+import {dirname}                           from 'path';
+import {promisify}                         from 'util';
 
-import {hydrateRuntimeState} from './loader/hydrateRuntimeState';
-import {makeApi}             from './loader/makeApi';
-import {SerializedState}     from './types';
+import {hydrateRuntimeState}               from './loader/hydrateRuntimeState';
+import {makeApi}                           from './loader/makeApi';
+import {SerializedState}                   from './types';
 
 const readFileP = promisify(readFile);
 
@@ -28,7 +28,7 @@ const readFileP = promisify(readFile);
 // real use case is to access the PnP API without running the risk of executing
 // third-party Javascript code.
 
-export async function hydratePnpFile(location: string, {fakeFs, pnpapiResolution}: {fakeFs: FakeFS, pnpapiResolution: string}) {
+export async function hydratePnpFile(location: string, {fakeFs, pnpapiResolution}: {fakeFs: FakeFS<PortablePath>, pnpapiResolution: string}) {
   const source = await readFileP(location, `utf8`);
 
   return hydratePnpSource(source, {
@@ -38,7 +38,7 @@ export async function hydratePnpFile(location: string, {fakeFs, pnpapiResolution
   });
 }
 
-export function hydratePnpSource(source: string, {basePath, fakeFs, pnpapiResolution}: {basePath: string, fakeFs: FakeFS, pnpapiResolution: string}) {
+export function hydratePnpSource(source: string, {basePath, fakeFs, pnpapiResolution}: {basePath: string, fakeFs: FakeFS<PortablePath>, pnpapiResolution: string}) {
   const data = JSON.parse(source) as SerializedState;
 
   const runtimeState = hydrateRuntimeState(data, {
