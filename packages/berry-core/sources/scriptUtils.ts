@@ -1,5 +1,5 @@
 import {CwdFS, ZipOpenFS, NodeFS, PortablePath, Filename} from '@berry/fslib';
-import {xfs, ppath, toFilename}                           from '@berry/fslib';
+import {xfs, npath, ppath, toFilename}                    from '@berry/fslib';
 import {execute}                                          from '@berry/shell';
 import {PassThrough, Readable, Writable}                  from 'stream';
 import {dirSync}                                          from 'tmp';
@@ -38,7 +38,7 @@ export async function makeScriptEnv(project: Project) {
   await makePathWrapper(binFolder, toFilename(`node-gyp`), process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]);
 
   scriptEnv.PATH = scriptEnv.PATH
-    ? `${binFolder}${ppath.delimiter}${scriptEnv.PATH}`
+    ? `${binFolder}${npath.delimiter}${scriptEnv.PATH}`
     : `${binFolder}`;
 
   scriptEnv.npm_execpath = `${binFolder}/yarn`;
