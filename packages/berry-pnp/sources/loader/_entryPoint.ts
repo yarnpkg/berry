@@ -27,11 +27,15 @@ module.exports = makeApi($$SETUP_STATE(hydrateRuntimeState), {
   fakeFs: zipOpenFs,
 });
 
-if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
+module.exports.setup = () => {
   applyPatch(module.exports, {
     compatibilityMode: true,
     fakeFs: zipOpenFs,
   });
+};
+
+if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
+  module.exports.setup();
 
   if (__non_webpack_module__.filename) {
     // We delete it from the cache in order to support the case where the CLI resolver is invoked from "yarn run"

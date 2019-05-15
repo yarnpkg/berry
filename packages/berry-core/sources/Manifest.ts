@@ -324,6 +324,16 @@ export class Manifest {
     }
   }
 
+  hasHardDependency(ident: Ident) {
+    if (this.dependencies.has(ident.identHash))
+      return true;
+
+    if (this.devDependencies.has(ident.identHash))
+      return true;
+
+    return false;
+  }
+
   ensureDependencyMeta(descriptor: Descriptor) {
     if (descriptor.range !== `unknown` && !semver.valid(descriptor.range))
       throw new Error(`Invalid meta field range for '${structUtils.stringifyDescriptor(descriptor)}'`);

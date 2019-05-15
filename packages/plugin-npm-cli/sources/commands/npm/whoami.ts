@@ -10,7 +10,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
 
   .command(`npm whoami [-s,--scope SCOPE]`)
   .categorize(`Npm-related commands`)
-  .describe(`display username`)
+  .describe(`display the name of the authenticated user`)
 
   .detail(`
     Print the username associated with the current authentication settings to the standard output.

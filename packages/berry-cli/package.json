@@ -36,7 +36,7 @@
     "@berry/pnp": "workspace:*"
   },
   "scripts": {
-    "build:cli+hook": "run build:pnp:hook && run build:cli",
+    "build:cli+hook": "run build:pnp:hook && run @berry-build-bundle",
     "build:cli": "run @berry-build-bundle",
     "run:cli": "run @berry-run"
   },

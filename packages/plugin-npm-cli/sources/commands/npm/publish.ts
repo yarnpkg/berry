@@ -15,7 +15,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
   .command(`npm publish [--access ACCESS] [--tag TAG] [-i,--interactive]`)
   .categorize(`Npm-related commands`)
-  .describe(`send the workspace package to the npm registry`)
+  .describe(`publish the active workspace to the npm registry`)
 
   .validate(yup.object().shape({
     tag: yup.string().default(`latest`),

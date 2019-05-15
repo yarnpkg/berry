@@ -10,7 +10,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
   .command(`npm login [-s,--scope SCOPE]`)
   .categorize(`Npm-related commands`)
-  .describe(`login to registry`)
+  .describe(`store new login info to access the npm registry`)
 
   .detail(`
     This command will ask you for your username, password, and 2FA One-Time Password (when it applies). It will then modify your local configuration (in your home folder) to reference the new tokens thus generated.

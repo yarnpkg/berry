@@ -4,7 +4,7 @@
   "sideEffects": false,
   "main": "./sources/index.ts",
   "bin": {
-    "pnpify": "./bin.js"
+    "pnpify": "./lib/bin.js"
   },
   "scripts": {
     "prepack": "build:pnpify",

@@ -9906,6 +9906,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-builder"
                 ],
                 [
+                  "@berry/cli",
+                  "workspace:packages/berry-cli"
+                ],
+                [
                   "@berry/core",
                   "workspace:packages/berry-core"
                 ],
@@ -66908,11 +66912,14 @@ module.exports = makeApi_1.makeApi($$SETUP_STATE(hydrateRuntimeState_1.hydrateRu
     pnpapiResolution: path_1.default.resolve(__dirname, __filename),
     fakeFs: zipOpenFs,
 });
-if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
+module.exports.setup = () => {
     applyPatch_1.applyPatch(module.exports, {
         compatibilityMode: true,
         fakeFs: zipOpenFs,
     });
+};
+if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
+    module.exports.setup();
     if (__non_webpack_module__.filename) {
         // We delete it from the cache in order to support the case where the CLI resolver is invoked from "yarn run"
         // It's annoying because it might cause some issues when the file is multiple times in NODE_OPTIONS, but it shouldn't happen anyway.

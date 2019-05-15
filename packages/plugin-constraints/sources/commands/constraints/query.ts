@@ -36,7 +36,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   .command(`constraints query <query>`)
 
   .categorize(`Constraints-related commands`)
-  .describe(`query the constraints`)
+  .describe(`query the constraints fact database`)
 
   .detail(`
     This command will output all matches to the given prolog query

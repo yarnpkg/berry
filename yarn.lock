@@ -1902,6 +1902,7 @@ __metadata:
   resolution: "@berry/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
     "@berry/builder": "workspace:*"
+    "@berry/cli": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
     "@berry/plugin-pack": "workspace:*"
