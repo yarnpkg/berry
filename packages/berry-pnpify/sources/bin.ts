@@ -3,19 +3,19 @@ import {spawn}                       from 'child_process';
 
 import {generateSdk}                 from './generateSdk';
 
-const [node, script, name, ... rest] = process.argv;
+const [,, name, ...rest] = process.argv;
 
-if (name === `--help` || name === `-h`) {
+if (name === `--help` || name === `-h`)
   help(false);
-} else if (name === `--sdk` && rest.length === 0) {
+else if (name === `--sdk` && rest.length === 0)
   sdk(null);
-} else if (name === `--sdk` && rest.length === 1) {
+else if (name === `--sdk` && rest.length === 1)
   sdk(ppath.resolve(NodeFS.toPortablePath(rest[1])));
-} else if (typeof name !== `undefined` && name[0] !== `-`) {
+else if (typeof name !== `undefined` && name[0] !== `-`)
   run(name, rest);
-} else {
+else
   help(true);
-}
+
 
 function help(error: boolean) {
   const logFn = error ? console.error : console.log;
@@ -45,7 +45,7 @@ function run(name: string, argv: Array<string>) {
   NODE_OPTIONS = `${NODE_OPTIONS || ``} --require ${require.resolve(`@berry/pnpify`)}`.trim();
 
   const child = spawn(name, argv, {
-    env: {... process.env, NODE_OPTIONS},
+    env: {...process.env, NODE_OPTIONS},
     stdio: `inherit`,
   });
 
