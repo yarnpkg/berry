@@ -10,12 +10,16 @@ export const Driver = {
     return [];
   },
 
-  async makeCommit(cwd: string, changeList: Array<string>) {
+  async genCommitMessage(cwd: PortablePath, changeList: Array<stageUtils.FileAction>) {
+    return ``;
   },
 
-  async makeReset(cwd: string, changeList: Array<string>) {
+  async makeCommit(cwd: PortablePath, changeList: Array<stageUtils.FileAction>, commitMessage: string) {
   },
 
-  async makeUpdate(cwd: string, changeList: Array<string>) {
+  async makeReset(cwd: PortablePath, changeList: Array<stageUtils.FileAction>) {
+  },
+
+  async makeUpdate(cwd: string, changeList: Array<stageUtils.FileAction>) {
   },
 };

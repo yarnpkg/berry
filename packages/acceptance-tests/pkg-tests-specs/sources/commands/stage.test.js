@@ -1,7 +1,7 @@
-const {NodeFS} = require(`@berry/fslib`);
+const {NodeFS, xfs} = require(`@berry/fslib`);
 const {
   exec: {execFile},
-  fs: {writeFile},
+  fs: {writeFile, writeJson, mkdirp},
 } = require('pkg-tests-core');
 
 describe(`Commands`, () => {
@@ -60,6 +60,47 @@ describe(`Commands`, () => {
             `${NodeFS.fromPortablePath(`${path}/package.json`)}\n`,
             `${NodeFS.fromPortablePath(`${path}/yarn.lock`)}\n`,
           ].join(``),
+        });
+      }),
+    );
+
+    test(
+      `it should commit with right messages`,
+      makeTemporaryEnv({
+        name: `my-commit-package`,
+        dependencies: {
+          [`deps1`]: `1.0.0`,
+          [`deps2`]: `2.0.0`
+        },
+      }, async ({path, run, source}) => {
+        await execFile(`git`, [`init`], {cwd: path});
+        await writeFile(`${path}/.yarnrc`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-stage.js`))}\n`);
+
+        // Otherwise we can't always commit
+        await execFile(`git`, [`config`, `user.name`, `John Doe`], {cwd: path});
+        await execFile(`git`, [`config`, `user.email`, `john.doe@example.org`], {cwd: path});
+
+        await mkdirp(`${path}/new-package`);
+        await run(`${path}/new-package`, `init`);
+
+        await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({
+          stdout: `chore(yarn): Creates my-commit-package (and one other)\n`
+        });
+
+        await execFile(`git`, [`add`, `.`], {cwd: path});
+        await execFile(`git`, [`commit`, `-m`, `wip`], {cwd: path});
+
+        await xfs.removePromise(`${path}/new-package/package.json`);
+        await writeJson(`${path}/package.json`, {
+          name: `my-commit-package`,
+          dependencies: {
+            [`deps1`]: `2.0.0`,
+            [`deps3`]: `2.0.0`
+          },
+        });
+
+        await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({
+          stdout: `chore(yarn): Deletes new-package, adds deps3, removes deps2, updates deps1 to 2.0.0\n`
         });
       }),
     );

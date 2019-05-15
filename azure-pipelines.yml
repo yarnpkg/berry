@@ -5,6 +5,7 @@ jobs:
     vmImage: 'Ubuntu 16.04'
 
   variables:
+    TERM: screen-256color
     os_name: Linux
 
   steps:
@@ -38,6 +39,7 @@ jobs:
     vmImage: 'vs2017-win2016'
 
   variables:
+    TERM: screen-256color
     os_name: Windows
 
   strategy:
@@ -58,6 +60,7 @@ jobs:
     vmImage: 'Ubuntu 16.04'
 
   variables:
+    TERM: screen-256color
     os_name: Linux
 
   strategy:
@@ -75,6 +78,7 @@ jobs:
     vmImage: 'macOS 10.13'
 
   variables:
+    TERM: screen-256color
     os_name: OSX
 
   strategy:

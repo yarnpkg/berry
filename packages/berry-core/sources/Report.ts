@@ -1,4 +1,7 @@
-import {Locator} from './types';
+import {PassThrough}   from 'stream';
+import {StringDecoder} from 'string_decoder';
+
+import {Locator}       from './types';
 
 // The values in this enum should never be reassigned, even if some are removed
 // over time (it would mess up the search results, which are the whole point of
@@ -117,5 +120,46 @@ export abstract class Report {
     } else {
       this.reportErrorOnce(MessageName.EXCEPTION, error.stack || error.message, {key: error});
     }
+  }
+
+  createStreamReporter(prefix: string | null = null) {
+    const stream = new PassThrough();
+    const decoder = new StringDecoder();
+
+    let buffer = ``;
+
+    stream.on(`data`, chunk => {
+      let chunkStr = decoder.write(chunk);
+      let lineIndex;
+
+      do {
+        lineIndex = chunkStr.indexOf(`\n`);
+
+        if (lineIndex !== -1) {
+          const line = buffer + chunkStr.substr(0, lineIndex);
+
+          chunkStr = chunkStr.substr(lineIndex + 1);
+          buffer = ``;
+
+          if (prefix !== null) {
+            this.reportInfo(null, `${prefix} ${line}`);
+          } else {
+            this.reportInfo(null, line);
+          }
+        }
+      } while (lineIndex !== -1);
+
+      buffer += chunkStr;
+    });
+
+    stream.on(`end`, () => {
+      if (prefix !== null) {
+        this.reportInfo(null, `${prefix} ${decoder.end()}`);
+      } else {
+        this.reportInfo(null, decoder.end());
+      }
+    });
+
+    return stream;
   }
 }

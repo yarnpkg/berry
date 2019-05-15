@@ -187,5 +187,53 @@ describe(`Commands`, () => {
         expect(originalManifest.module).toBe(`./index.mjs`);
       }),
     );
+
+    test(
+      `it should replace the workspace: protocol correctly`,
+      makeTemporaryEnv({
+        workspaces: ['./dependency', './dependant']
+      }, async({path, run, source}) => {
+        const dependency = `@test/dependency`;
+        const dependant = `@test/dependant`;
+
+        await fsUtils.writeJson(`${path}/dependency/package.json`, {
+          name: dependency,
+          version: '1.0.0'
+        });
+
+        await fsUtils.writeJson(`${path}/dependant/package.json`, {
+          name: dependant,
+          version: '1.0.0',
+          dependencies: {
+            [dependency]: `workspace:*`,
+          },
+          devDependencies: {
+            [dependency]: `workspace:^1.0.0`,
+          },
+          peerDependencies: {
+            [dependency]: `workspace:dependency`,
+          },
+        });
+
+        await run(`install`);
+        await run(`pack`, {
+          cwd: `${path}/dependant`
+        });
+
+        await fsUtils.unpackToDirectory(path, `${path}/dependant/package.tgz`);
+
+        const packedManifest = await fsUtils.readJson(`${path}/package/package.json`);
+
+        expect(packedManifest.dependencies[dependency]).toBe(`1.0.0`);
+        expect(packedManifest.devDependencies[dependency]).toBe(`^1.0.0`);
+        expect(packedManifest.peerDependencies[dependency]).toBe(`1.0.0`);
+
+        const originalManifest = await fsUtils.readJson(`${path}/dependant/package.json`);
+
+        expect(originalManifest.dependencies[dependency]).toBe(`workspace:*`);
+        expect(originalManifest.devDependencies[dependency]).toBe(`workspace:^1.0.0`);
+        expect(originalManifest.peerDependencies[dependency]).toBe(`workspace:dependency`);
+      }),
+    )
   });
 });
