@@ -1050,6 +1050,9 @@ export class Project {
 
             const stdin = null;
 
+            let stdout;
+            let stderr;
+
             if (inlineBuilds) {
               stdout = report.createStreamReporter(`${structUtils.prettyLocator(this.configuration, pkg)} ${this.configuration.format(`STDOUT`, `green`)}`);
               stderr = report.createStreamReporter(`${structUtils.prettyLocator(this.configuration, pkg)} ${this.configuration.format(`STDERR`, `red`)}`);

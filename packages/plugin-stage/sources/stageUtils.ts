@@ -1,4 +1,4 @@
-import {xfs, PortablePath, ppath}   from '@berry/fslib';
+import {xfs, Filename, PortablePath, ppath}   from '@berry/fslib';
 
 export enum ActionType {
   CREATE,
@@ -20,7 +20,7 @@ export type Consensus = {
   useComponent: boolean,
 };
 
-export async function findVcsRoot(cwd: PortablePath, {marker}: {marker: string}) {
+export async function findVcsRoot(cwd: PortablePath, {marker}: {marker: Filename}) {
   do {
     if (!xfs.existsSync(ppath.join(cwd, marker))) {
       cwd = ppath.dirname(cwd);

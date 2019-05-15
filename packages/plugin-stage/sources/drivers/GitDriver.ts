@@ -104,7 +104,7 @@ export const Driver = {
         return [];
 
       const prefix = line.slice(0, 3);
-      const path = posix.resolve(cwd, line.slice(3) as PortablePath);
+      const path = ppath.resolve(cwd, line.slice(3) as PortablePath);
 
       // New directories need to be expanded to their content
       if (prefix === `?? ` && line.endsWith(`/`)) {
