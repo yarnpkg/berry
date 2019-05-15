@@ -27,7 +27,12 @@ export async function makeScriptEnv(project: Project) {
     if (typeof value !== `undefined`)
       scriptEnv[key.toLowerCase() !== `path` ? key : `PATH`] = value;
 
-  const binFolder = scriptEnv.BERRY_BIN_FOLDER = NodeFS.toPortablePath(dirSync().name);
+  const nativeBinFolder = dirSync().name;
+  const binFolder = NodeFS.toPortablePath(nativeBinFolder);
+
+  // We expose the base folder in the environment so that we can later add the
+  // binaries for the dependencies of the active package
+  scriptEnv.BERRY_BIN_FOLDER = nativeBinFolder;
 
   // Register some binaries that must be made available in all subprocesses
   // spawned by Yarn (we thus ensure that they always use the right version)
@@ -38,11 +43,11 @@ export async function makeScriptEnv(project: Project) {
   await makePathWrapper(binFolder, toFilename(`node-gyp`), process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]);
 
   scriptEnv.PATH = scriptEnv.PATH
-    ? `${binFolder}${npath.delimiter}${scriptEnv.PATH}`
-    : `${binFolder}`;
+    ? `${nativeBinFolder}${npath.delimiter}${scriptEnv.PATH}`
+    : `${nativeBinFolder}`;
 
-  scriptEnv.npm_execpath = `${binFolder}/yarn`;
-  scriptEnv.npm_node_execpath = `${binFolder}/node`;
+  scriptEnv.npm_execpath = `${nativeBinFolder}${npath.sep}yarn`;
+  scriptEnv.npm_node_execpath = `${nativeBinFolder}${npath.sep}node`;
 
   await project.configuration.triggerHook(
     hook => hook.setupScriptEnvironment,
@@ -131,7 +136,7 @@ async function initializePackageEnvironment(locator: Locator, {project, cwd}: {p
       throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
 
     const env = await makeScriptEnv(project);
-    const binFolder = env.BERRY_BIN_FOLDER as PortablePath;
+    const binFolder = NodeFS.toPortablePath(env.BERRY_BIN_FOLDER);
 
     for (const [binaryName, [, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
       await makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]);
