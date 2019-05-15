@@ -1,6 +1,6 @@
 import {ReadStream, Stats, WriteStream}                 from 'fs';
 
-import {NodeFS} from './NodeFS';
+import {NodeFS}                                         from './NodeFS';
 import {Path, PortablePath, ppath, PathUtils, Filename} from './path';
 
 export type CreateReadStreamOptions = Partial<{
