@@ -1,7 +1,7 @@
 import {ReadStream, Stats, WriteStream}                 from 'fs';
 
 import {Path, PortablePath, ppath, PathUtils, Filename} from './path';
-import {fromPortablePath, toPortablePath}               from './path';
+import {toPortablePath}                                 from './path';
 
 
 export type CreateReadStreamOptions = Partial<{
