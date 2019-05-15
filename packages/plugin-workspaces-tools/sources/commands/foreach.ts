@@ -75,9 +75,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
               // in --parallel unless also given the --with-dependencies flag
               if (!parallel || withDependencies) {
                 for (const [identHash, descriptor] of workspace.dependencies) {
-                  const depLocator = structUtils.convertDescriptorToLocator(descriptor);
+                  const locatorHash = project.storedResolutions.get(descriptor.descriptorHash);
 
-                  if (needsProcessing.has(depLocator.locatorHash))
+                  if (needsProcessing.has(locatorHash!))
                     isRunnable = false;
                 }
               }
