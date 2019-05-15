@@ -3,9 +3,7 @@ import fs, {Stats}                                         from 'fs';
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}              from './FakeFS';
 import {PortablePath, NativePath, Filename, Path}          from './path';
-
-const WINDOWS_PATH_REGEXP = /^[a-zA-Z]:.*$/;
-const PORTABLE_PATH_REGEXP = /^\/[a-zA-Z]:.*$/;
+import {fromPortablePath, toPortablePath}                  from './path';
 
 export class NodeFS extends BasePortableFakeFS {
   private readonly realFs: typeof fs;
@@ -248,21 +246,11 @@ export class NodeFS extends BasePortableFakeFS {
     };
   }
 
-  // Path should look like "/N:/berry/scripts/plugin-pack.js"
-  // And transform to "N:\berry\scripts\plugin-pack.js"
   static fromPortablePath(p: Path): NativePath {
-    if (process.platform !== 'win32')
-      return p as NativePath;
-
-    return p.match(PORTABLE_PATH_REGEXP) ? p.substring(1).replace(/\//g, `\\`) : p;
+    return fromPortablePath(p);
   }
 
-  // Path should look like "N:/berry/scripts/plugin-pack.js"
-  // And transform to "/N:/berry/scripts/plugin-pack.js"
   static toPortablePath(p: Path): PortablePath {
-    if (process.platform !== 'win32')
-      return p as PortablePath;
-
-    return (p.match(WINDOWS_PATH_REGEXP) ? `/${p}` : p).replace(/\\/g, `/`) as PortablePath;
+    return toPortablePath(p);
   }
 }

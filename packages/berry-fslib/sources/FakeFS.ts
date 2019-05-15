@@ -1,7 +1,8 @@
 import {ReadStream, Stats, WriteStream}                 from 'fs';
 
-import {NodeFS}                                         from './NodeFS';
 import {Path, PortablePath, ppath, PathUtils, Filename} from './path';
+import {fromPortablePath, toPortablePath}               from './path';
+
 
 export type CreateReadStreamOptions = Partial<{
   encoding: string,
@@ -341,7 +342,7 @@ export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
           await this.removePromise(destination);
 
         const target = await baseFs.readlinkPromise(source);
-        await this.symlinkPromise(NodeFS.toPortablePath(target), destination);
+        await this.symlinkPromise(toPortablePath(target), destination);
       }
     } else {
       throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
@@ -377,7 +378,7 @@ export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
           this.removeSync(destination);
 
         const target = baseFs.readlinkSync(source);
-        this.symlinkSync(NodeFS.toPortablePath(target), destination);
+        this.symlinkSync(toPortablePath(target), destination);
       }
     } else {
       throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
