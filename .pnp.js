@@ -69801,7 +69801,7 @@ function makeApi(runtimeState, opts) {
             if (stat && stat.isDirectory()) {
                 const indexPath = extensions
                     .map(extension => {
-                    return fslib_2.ppath.format({ dir: unqualifiedPath, base: fslib_2.toFilename(`index`), ext: extension });
+                    return fslib_2.ppath.format({ dir: unqualifiedPath, name: fslib_2.toFilename(`index`), ext: extension });
                 })
                     .find(candidateFile => {
                     candidates.push(candidateFile);

@@ -236,7 +236,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       if (stat && stat.isDirectory()) {
         const indexPath = extensions
           .map(extension => {
-            return ppath.format({dir: unqualifiedPath, base: toFilename(`index`), ext: extension});
+            return ppath.format({dir: unqualifiedPath, name: toFilename(`index`), ext: extension});
           })
           .find(candidateFile => {
             candidates.push(candidateFile);
