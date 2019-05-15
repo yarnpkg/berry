@@ -95,14 +95,10 @@
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(1);
 const core_2 = __webpack_require__(1);
 const plugin_essentials_1 = __webpack_require__(2);
-const gen_sdk_1 = __importDefault(__webpack_require__(3));
 const getTypesName = (descriptor) => {
     return descriptor.scope
         ? `${descriptor.scope}__${descriptor.name}`
@@ -147,9 +143,6 @@ const beforeWorkspacePacking = (workspace, rawManifest) => {
     }
 };
 const plugin = {
-    commands: [
-        gen_sdk_1.default,
-    ],
     hooks: {
         afterWorkspaceDependencyAddition,
         afterWorkspaceDependencyRemoval,
@@ -171,88 +164,6 @@ module.exports = require("@berry/core");
 /***/ (function(module, exports) {
 
 module.exports = require("@berry/plugin-essentials");
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const cli_1 = __webpack_require__(4);
-const core_1 = __webpack_require__(1);
-const fslib_1 = __webpack_require__(5);
-const PNPIFY_IDENT = core_1.structUtils.makeIdent(`berry`, `pnpify`);
-const TEMPLATE = [
-    `// Locate the top-level PnP api\n`,
-    `const {PnPApiLocator} = require('@berry/pnpify');\n`,
-    `const pnpApiPath = new PnPApiLocator().findApi(__dirname);\n`,
-    `\n`,
-    `// If we don't find one, something is off\n`,
-    `if (!pnpApiPath)\n`,
-    `  throw new Error(\`Couldn't locate the PnP API to use with the SDK\`);\n`,
-    `\n`,
-    `// Setup the environment to be able to require @berry/pnpify\n`,
-    `require(pnpApiPath).setup();\n`,
-    `\n`,
-    `// Prepare the environment (to be ready in case of child_process.spawn etc)\n`,
-    `process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
-    `process.env.NODE_OPTIONS += \` -r \${pnpApiPath}\`;\n`,
-    `process.env.NODE_OPTIONS += \` -r \${require.resolve(\`@berry/pnpify\`)}\`;\n`,
-    `\n`,
-    `// Apply PnPify to the current process\n`,
-    `require(\`@berry/pnpify\`).patchFs();\n`,
-    `\n`,
-    `// Defer to the real typescript your application uses\n`,
-    `require(\`typescript/lib/tsserver\`);\n`,
-].join(``);
-// eslint-disable-next-line arca/no-default-export
-exports.default = (clipanion, pluginConfiguration) => clipanion
-    .command(`ts gen-sdk [path]`)
-    .categorize(`TypeScript-related commands`)
-    .describe(`generate a TS sdk compatible with vscode`)
-    .detail(`
-    This command generates a TypeScript SDK folder compatible with what VSCode expects to find in its \`typescript.sdk\` settings.
-
-    The SDK folder (called \`tssdk\`) will by default be generated in the top-level folder of your project, but you can change this by specifying any other path as first and unique positional argument.
-  `)
-    .example(`Generate a \`tssdk\` folder in the default location`, `yarn ts gen-sdk`)
-    .example(`Generate a \`tssdk\` folder in the \`scripts\` directory`, `yarn ts gen-sdk scripts`)
-    .action(async ({ cwd, stdin, stdout, stderr, path }) => {
-    const configuration = await core_1.Configuration.find(cwd, pluginConfiguration);
-    const { project, workspace } = await core_1.Project.find(configuration, cwd);
-    if (!workspace)
-        throw new cli_1.WorkspaceRequiredError(cwd);
-    const destination = path
-        ? `${path}/tssdk`
-        : `${project.cwd}/tssdk`;
-    if (!project.topLevelWorkspace.manifest.hasHardDependency(PNPIFY_IDENT)) {
-        const addExitCode = await clipanion.run(null, [`add`, `-D`, `--`, core_1.structUtils.stringifyIdent(PNPIFY_IDENT)], { cwd: project.cwd, stdin, stdout, stderr });
-        if (addExitCode !== 0)
-            return addExitCode;
-        stdout.write(`\n`);
-    }
-    const report = await core_1.StreamReport.start({ configuration, stdout }, async (report) => {
-        await fslib_1.xfs.removePromise(`${destination}`);
-        await fslib_1.xfs.mkdirpPromise(`${destination}/lib`);
-        await fslib_1.xfs.writeFilePromise(`${destination}/lib/tsserver.js`, TEMPLATE);
-        report.reportInfo(core_1.MessageName.UNNAMED, `Generated the SDK in ${destination}`);
-    });
-    return report.exitCode();
-});
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports = require("@berry/cli");
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-module.exports = require("@berry/fslib");
 
 /***/ })
 /******/ ]);
