@@ -119,7 +119,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(2);
 const fslib_1 = __webpack_require__(3);
 const clipanion_1 = __webpack_require__(4);
-const path_1 = __webpack_require__(17);
 const GitDriver_1 = __webpack_require__(21);
 const MercurialDriver_1 = __webpack_require__(23);
 const ALL_DRIVERS = [
@@ -132,7 +131,7 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
     .describe(`add all yarn files to your vcs`)
     .detail(`
     This command will add to your staging area the files belonging to Yarn (typically any modified \`package.json\` and \`.yarnrc\` files, but also linker-generated files, cache data, etc). It will take your ignore list into account, so the cache files won't be added if the cache is ignored in a \`.gitignore\` file (assuming you use Git).
-    
+
     Running \`--reset\` will instead remove them from the staging area (the changes will still be there, but won't be committed until you stage them back).
 
     Since the staging area is a non-existent concept in Mercurial, Yarn will always create a new commit when running this command on Mercurial repositories. You can get this behavior when using Git by using the \`--commit\` flag which will directly create a commit.
@@ -167,9 +166,15 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
         `package.json`,
     ]);
     const changeList = await driver.filterChanges(root, yarnPaths, yarnNames);
+    const commitMessage = await driver.genCommitMessage(root, changeList);
     if (dryRun) {
-        for (const file of changeList) {
-            stdout.write(`${fslib_1.NodeFS.fromPortablePath(file)}\n`);
+        if (commit) {
+            stdout.write(`${commitMessage}\n`);
+        }
+        else {
+            for (const file of changeList) {
+                stdout.write(`${fslib_1.NodeFS.fromPortablePath(file.path)}\n`);
+            }
         }
     }
     else {
@@ -177,7 +182,7 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
             stdout.write(`No changes found!`);
         }
         else if (commit) {
-            await driver.makeCommit(root, changeList);
+            await driver.makeCommit(root, changeList, commitMessage);
         }
         else if (reset) {
             await driver.makeReset(root, changeList);
@@ -225,7 +230,7 @@ function resolveToVcs(cwd, path) {
         // If it's a symbolic link then we also need to also consider its target as
         // part of the Yarn installation (unless it's outside of the repo)
         if (stat.isSymbolicLink()) {
-            path = path_1.posix.resolve(path_1.posix.dirname(path), fslib_1.xfs.readlinkSync(path));
+            path = fslib_1.ppath.resolve(fslib_1.ppath.dirname(path), fslib_1.xfs.readlinkSync(path));
         }
         else {
             break;
@@ -3783,48 +3788,140 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(2);
 const fslib_1 = __webpack_require__(3);
-const path_1 = __webpack_require__(17);
 const stageUtils = __importStar(__webpack_require__(22));
 const MESSAGE_MARKER = `Commit generated via \`yarn stage\``;
 const COMMIT_DEPTH = 11;
-async function genCommitMessage(cwd) {
-    const { stdout } = await core_1.execUtils.execvp(`git`, [`log`, `-${COMMIT_DEPTH}`, `--pretty=format:%s`], { cwd, strict: true });
-    const lines = stdout.split(/\n/g).filter(line => line !== ``);
-    return stageUtils.genCommitMessage(lines);
+async function getLastCommitHash(cwd) {
+    const { code, stdout } = await core_1.execUtils.execvp(`git`, [`log`, `-1`, `--pretty=format:%H`], { cwd });
+    if (code === 0) {
+        return stdout.trim();
+    }
+    else {
+        return null;
+    }
+}
+async function genCommitMessage(cwd, changes) {
+    const actions = [];
+    const modifiedPkgJsonFiles = changes.filter(change => {
+        return fslib_1.ppath.basename(change.path) === `package.json`;
+    });
+    for (const { action, path } of modifiedPkgJsonFiles) {
+        const relativePath = fslib_1.ppath.relative(cwd, path);
+        if (action === stageUtils.ActionType.MODIFY) {
+            const commitHash = await getLastCommitHash(cwd);
+            const { stdout: prevSource } = await core_1.execUtils.execvp(`git`, [`show`, `${commitHash}:${relativePath}`], { cwd, strict: true });
+            const prevManifest = await core_1.Manifest.fromText(prevSource);
+            const currManifest = await core_1.Manifest.fromFile(path);
+            const allCurrDeps = new Map([...currManifest.dependencies, ...currManifest.devDependencies]);
+            const allPrevDeps = new Map([...prevManifest.dependencies, ...prevManifest.devDependencies]);
+            for (const [indentHash, value] of allPrevDeps) {
+                const pkgName = core_1.structUtils.stringifyIdent(value);
+                const currDep = allCurrDeps.get(indentHash);
+                if (!currDep) {
+                    actions.push([stageUtils.ActionType.REMOVE, pkgName]);
+                }
+                else if (currDep.range !== value.range) {
+                    actions.push([stageUtils.ActionType.MODIFY, `${pkgName} to ${currDep.range}`]);
+                }
+            }
+            for (const [indentHash, value] of allCurrDeps) {
+                if (!allPrevDeps.has(indentHash)) {
+                    actions.push([stageUtils.ActionType.ADD, core_1.structUtils.stringifyIdent(value)]);
+                }
+            }
+        }
+        else if (action === stageUtils.ActionType.CREATE) {
+            // New package.json
+            const manifest = await core_1.Manifest.fromFile(path);
+            if (manifest.name) {
+                actions.push([stageUtils.ActionType.CREATE, core_1.structUtils.stringifyIdent(manifest.name)]);
+            }
+            else {
+                actions.push([stageUtils.ActionType.CREATE, `a package`]);
+            }
+        }
+        else if (action === stageUtils.ActionType.DELETE) {
+            const commitHash = await getLastCommitHash(cwd);
+            const { stdout: prevSource } = await core_1.execUtils.execvp(`git`, [`show`, `${commitHash}:${relativePath}`], { cwd, strict: true });
+            // Deleted package.json; we need to load it from its past sources
+            const manifest = await core_1.Manifest.fromText(prevSource);
+            if (manifest.name) {
+                actions.push([stageUtils.ActionType.DELETE, core_1.structUtils.stringifyIdent(manifest.name)]);
+            }
+            else {
+                actions.push([stageUtils.ActionType.DELETE, `a package`]);
+            }
+        }
+        else {
+            throw new Error(`Assertion failed: Unsupported action type`);
+        }
+    }
+    const { code, stdout } = await core_1.execUtils.execvp(`git`, [`log`, `-${COMMIT_DEPTH}`, `--pretty=format:%s`], { cwd });
+    const lines = code === 0
+        ? stdout.split(/\n/g).filter((line) => line !== ``)
+        : [];
+    const consensus = stageUtils.findConsensus(lines);
+    const message = stageUtils.genCommitMessage(consensus, actions);
+    return message;
 }
 exports.Driver = {
     async findRoot(cwd) {
-        return await stageUtils.findVcsRoot(cwd, { marker: `.git` });
+        return await stageUtils.findVcsRoot(cwd, { marker: fslib_1.toFilename(`.git`) });
     },
     async filterChanges(cwd, yarnRoots, yarnNames) {
         const { stdout } = await core_1.execUtils.execvp(`git`, [`status`, `-s`], { cwd, strict: true });
         const lines = stdout.toString().split(/\n/g);
-        const changes = [].concat(...lines.map(line => {
+        const changes = [].concat(...lines.map((line) => {
             if (line === ``)
                 return [];
-            const path = path_1.posix.resolve(cwd, line.slice(3));
+            const prefix = line.slice(0, 3);
+            const path = fslib_1.ppath.resolve(cwd, line.slice(3));
             // New directories need to be expanded to their content
-            if (line.startsWith(`?? `) && line.endsWith(`/`)) {
-                return stageUtils.expandDirectory(path);
+            if (prefix === `?? ` && line.endsWith(`/`)) {
+                return stageUtils.expandDirectory(path).map(path => ({
+                    action: stageUtils.ActionType.CREATE,
+                    path
+                }));
+            }
+            else if (prefix === ` A ` || prefix === `?? `) {
+                return [{
+                        action: stageUtils.ActionType.CREATE,
+                        path
+                    }];
+            }
+            else if (prefix === ` M `) {
+                return [{
+                        action: stageUtils.ActionType.MODIFY,
+                        path
+                    }];
+            }
+            else if (prefix === ` D `) {
+                return [{
+                        action: stageUtils.ActionType.DELETE,
+                        path
+                    }];
             }
             else {
-                return [path];
+                return [];
             }
         }));
-        return changes.filter(path => {
-            return stageUtils.isYarnFile(path, {
+        return changes.filter(change => {
+            return stageUtils.isYarnFile(change.path, {
                 roots: yarnRoots,
                 names: yarnNames,
             });
         });
     },
-    async makeCommit(cwd, changeList) {
-        const localPaths = changeList.map(path => fslib_1.NodeFS.fromPortablePath(path));
+    async genCommitMessage(cwd, changeList) {
+        return await genCommitMessage(cwd, changeList);
+    },
+    async makeCommit(cwd, changeList, commitMessage) {
+        const localPaths = changeList.map(file => fslib_1.NodeFS.fromPortablePath(file.path));
         await core_1.execUtils.execvp(`git`, [`add`, `-N`, `--`, ...localPaths], { cwd, strict: true });
-        await core_1.execUtils.execvp(`git`, [`commit`, `-m`, `${await genCommitMessage(cwd)}\n\n${MESSAGE_MARKER}\n`, `--`, ...localPaths], { cwd, strict: true });
+        await core_1.execUtils.execvp(`git`, [`commit`, `-m`, `${commitMessage}\n\n${MESSAGE_MARKER}\n`, `--`, ...localPaths], { cwd, strict: true });
     },
     async makeReset(cwd, changeList) {
-        const localPaths = changeList.map(path => fslib_1.NodeFS.fromPortablePath(path));
+        const localPaths = changeList.map(path => fslib_1.NodeFS.fromPortablePath(path.path));
         await core_1.execUtils.execvp(`git`, [`reset`, `HEAD`, `--`, ...localPaths], { cwd, strict: true });
     },
 };
@@ -3838,11 +3935,19 @@ exports.Driver = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const fslib_1 = __webpack_require__(3);
-const path_1 = __webpack_require__(17);
+var ActionType;
+(function (ActionType) {
+    ActionType[ActionType["CREATE"] = 0] = "CREATE";
+    ActionType[ActionType["DELETE"] = 1] = "DELETE";
+    ActionType[ActionType["ADD"] = 2] = "ADD";
+    ActionType[ActionType["REMOVE"] = 3] = "REMOVE";
+    ActionType[ActionType["MODIFY"] = 4] = "MODIFY";
+})(ActionType = exports.ActionType || (exports.ActionType = {}));
+;
 async function findVcsRoot(cwd, { marker }) {
     do {
-        if (!fslib_1.xfs.existsSync(`${cwd}/${marker}`)) {
-            cwd = path_1.posix.dirname(cwd);
+        if (!fslib_1.xfs.existsSync(fslib_1.ppath.join(cwd, marker))) {
+            cwd = fslib_1.ppath.dirname(cwd);
         }
         else {
             return cwd;
@@ -3852,11 +3957,11 @@ async function findVcsRoot(cwd, { marker }) {
 }
 exports.findVcsRoot = findVcsRoot;
 function isYarnFile(path, { roots, names }) {
-    if (names.has(path_1.posix.basename(path)))
+    if (names.has(fslib_1.ppath.basename(path)))
         return true;
     do {
         if (!roots.has(path)) {
-            path = path_1.posix.dirname(path);
+            path = fslib_1.ppath.dirname(path);
         }
         else {
             return true;
@@ -3872,7 +3977,7 @@ function expandDirectory(initialCwd) {
         const cwd = cwds.pop();
         const listing = fslib_1.xfs.readdirSync(cwd);
         for (const entry of listing) {
-            const path = path_1.posix.resolve(cwd, entry);
+            const path = fslib_1.ppath.resolve(cwd, entry);
             const stat = fslib_1.xfs.lstatSync(path);
             if (stat.isDirectory()) {
                 cwds.push(path);
@@ -3888,6 +3993,8 @@ exports.expandDirectory = expandDirectory;
 function checkConsensus(lines, regex) {
     let yes = 0, no = 0;
     for (const line of lines) {
+        if (line === `wip`)
+            continue;
         if (regex.test(line)) {
             yes += 1;
         }
@@ -3909,19 +4016,51 @@ function findConsensus(lines) {
     };
 }
 exports.findConsensus = findConsensus;
-function genCommitMessage(lines) {
-    const { useThirdPerson, useUpperCase, useComponent, } = findConsensus(lines);
-    const prefix = useComponent
-        ? `chore(yarn): `
-        : ``;
-    const verb = useThirdPerson
-        ? useUpperCase
-            ? `Updates`
-            : `updates`
-        : useUpperCase
-            ? `Update`
-            : `update`;
-    return `${prefix}${verb} the project settings`;
+function getCommitPrefix(consensus) {
+    if (consensus.useComponent) {
+        return `chore(yarn): `;
+    }
+    else {
+        return ``;
+    }
+}
+exports.getCommitPrefix = getCommitPrefix;
+const VERBS = new Map([
+    // Package actions
+    [ActionType.CREATE, `create`],
+    [ActionType.DELETE, `delete`],
+    // File actions
+    [ActionType.ADD, `add`],
+    [ActionType.REMOVE, `remove`],
+    [ActionType.MODIFY, `update`],
+]);
+function genCommitMessage(consensus, actions) {
+    const prefix = getCommitPrefix(consensus);
+    const all = [];
+    const sorted = actions.slice().sort((a, b) => {
+        return a[0] - b[0];
+    });
+    while (sorted.length > 0) {
+        const [type, what] = sorted.shift();
+        let verb = VERBS.get(type);
+        if (consensus.useUpperCase && all.length === 0)
+            verb = `${verb[0].toUpperCase()}${verb.slice(1)}`;
+        if (consensus.useThirdPerson)
+            verb += `s`;
+        let subjects = [what];
+        while (sorted.length > 0 && sorted[0][0] === type) {
+            const [, what] = sorted.shift();
+            subjects.push(what);
+        }
+        subjects.sort();
+        let description = subjects.shift();
+        if (subjects.length === 1)
+            description += ` (and one other)`;
+        else if (subjects.length > 1)
+            description += ` (and ${subjects.length} others)`;
+        all.push(`${verb} ${description}`);
+    }
+    return `${prefix}${all.join(`, `)}`;
 }
 exports.genCommitMessage = genCommitMessage;
 
@@ -3941,14 +4080,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const stageUtils = __importStar(__webpack_require__(22));
+const fslib_1 = __webpack_require__(3);
 exports.Driver = {
     async findRoot(cwd) {
-        return await stageUtils.findVcsRoot(cwd, { marker: `.hg` });
+        return await stageUtils.findVcsRoot(cwd, { marker: fslib_1.toFilename(`.hg`) });
     },
     async filterChanges(cwd, paths, filenames) {
         return [];
     },
-    async makeCommit(cwd, changeList) {
+    async genCommitMessage(cwd, changeList) {
+        return ``;
+    },
+    async makeCommit(cwd, changeList, commitMessage) {
     },
     async makeReset(cwd, changeList) {
     },
