@@ -57,7 +57,7 @@ export class PnpLinker implements Linker {
 }
 
 class PnpInstaller implements Installer {
-  private readonly packageRegistry: PackageRegistry<PortablePath> = new Map();
+  private readonly packageRegistry: PackageRegistry = new Map();
   private readonly unpluggedPaths: Set<string> = new Set();
 
   private readonly opts: LinkOptions;
