@@ -41,7 +41,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     const report = await LightReport.start({configuration, stdout}, async (report: LightReport) => {
       await project.resolveEverything({lockfileOnly: true, cache, report});
-    })
+    });
 
     const effectiveLocator = topLevel
       ? project.topLevelWorkspace.anchoredLocator

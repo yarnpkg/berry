@@ -1,16 +1,16 @@
 import { Configuration, LocatorHash, PluginConfiguration, Project, Workspace } from '@berry/core';
-import { structUtils, Cache, DescriptorHash, StreamReport }                    from '@berry/core';
+import { structUtils, Cache, DescriptorHash, MessageName, StreamReport }       from '@berry/core';
+import { PortablePath }                                                        from '@berry/fslib';
 import { PassThrough, Writable }                                               from 'stream';
 import { cpus }                                                                from 'os';
 import chalk                                                                   from 'chalk';
-// @ts-ignore
 import pLimit                                                                  from 'p-limit';
 
 
 type ForeachOptions = {
   args: Array<string>;
   command: string;
-  cwd: string;
+  cwd: PortablePath;
   exclude: string[];
   include: string[];
   interlaced: boolean;
@@ -57,7 +57,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           }
 
           for (const workspace of workspaces) {
-            needsProcessing.set(workspace.locator.locatorHash, workspace);
+            needsProcessing.set(workspace.anchoredLocator.locatorHash, workspace);
           }
 
           while (needsProcessing.size > 0) {
@@ -95,6 +95,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
                 processing.delete(workspace.anchoredDescriptor.descriptorHash);
               }));
             }
+
+            if (commandPromises.length === 0)
+              return report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected`);
 
             await Promise.all(commandPromises);
           }

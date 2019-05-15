@@ -4,8 +4,9 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/core": "workspace:*",
+    "@berry/fslib": "workspace:*",
     "chalk": "^2.4.1",
     "clipanion": "^0.14.1",
-    "p-limit": "^2.1.0"
+    "p-limit": "^2.2.0"
   }
 }

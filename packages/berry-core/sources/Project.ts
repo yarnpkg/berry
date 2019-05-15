@@ -3,7 +3,6 @@ import {parseSyml, stringifySyml}                                               
 import {createHmac}                                                                      from 'crypto';
 // @ts-ignore
 import Logic                                                                             from 'logic-solver';
-// @ts-ignore
 import pLimit                                                                            from 'p-limit';
 import semver                                                                            from 'semver';
 import {tmpNameSync}                                                                     from 'tmp';
