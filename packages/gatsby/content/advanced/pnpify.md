@@ -32,27 +32,19 @@ How it works is simple: when a non-PnP-compliant project tries to access the `no
 
 PnPify also is compatible with VSCode! Follow those steps to enable it:
 
-1. First install the TypeScript plugin from the official repository:
+1. Add PnPify to your dependencies:
 
    ```
-   $> yarn plugin dl @berry/plugin-typescript
+   $> yarn add @berry/pnpify
    ```
 
 2. Run the following command, which will generate a new directory called `tssdk`:
 
    ```
-   $> yarn ts gen-sdk
+   $> yarn pnpify --sdk
    ```
 
-3. Update your `.vscode/settings.json` file to add the following settings:
-
-   ```
-   {
-     "typescript.tsdk": "tssdk"
-   }
-   ```
-
-4. For safety reason VSCode requires you to explicitly activate the custom TS settings:
+3. For safety reason VSCode requires you to explicitly activate the custom TS settings:
 
     1. Press <kbd>ctrl+shift+p</kbd> in a TypeScript file
     2. Choose "Select TypeScript Version"
@@ -66,7 +58,7 @@ Note that VSCode might ask you to do Step 4 again from time to time, but apart f
 
 - Due to how PnPify emulates the `node_modules` directory, some problems are to be expected with packages listing peer dependencies.
 
-- Since the files don't actually exist on the disk, it will mess with watch mechanisms. We're considering adding support for `fs.watchFile`, but it will require significant work.
+- Since the files don't actually exist on the disk, it will mess with watch mechanisms (modifications in files from your project will be properly picked up, but dependencies being added or removed might not be picked up by the engine). We're considering adding support for `fs.watchFile` even for dependencies, but it will require significant work.
 
 ## Alternatives
 

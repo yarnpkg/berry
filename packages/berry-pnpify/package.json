@@ -5,7 +5,7 @@
   "types": "./lib/index.d.ts",
   "main": "./lib/index.js",
   "bin": {
-    "pnpify": "./bin.js"
+    "pnpify": "./lib/bin.js"
   },
   "scripts": {
     "build:pnpify": "run webpack-cli --config webpack.config.pkg.js",

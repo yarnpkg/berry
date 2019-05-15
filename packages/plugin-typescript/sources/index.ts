@@ -3,8 +3,6 @@ import {structUtils}                          from '@berry/core';
 import {Hooks as EssentialsHooks}             from '@berry/plugin-essentials';
 import {suggestUtils}                         from '@berry/plugin-essentials';
 
-import tsGenSdk                               from './commands/ts/gen-sdk';
-
 const getTypesName = (descriptor: Descriptor) => {
   return descriptor.scope
     ? `${descriptor.scope}__${descriptor.name}`
@@ -66,9 +64,6 @@ const afterWorkspaceDependencyRemoval = async (
 };
 
 const plugin: Plugin = {
-  commands: [
-    tsGenSdk,
-  ],
   hooks: {
     afterWorkspaceDependencyAddition,
     afterWorkspaceDependencyRemoval,
