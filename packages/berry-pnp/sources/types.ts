@@ -6,7 +6,10 @@ import {NativePath, PortablePath, Path} from '@berry/fslib';
 // Apart from that, note that the "Data"-suffixed types are the ones stored
 // within the state files (hence why they only use JSON datatypes).
 
-export type PackageLocator = {name: string, reference: string} | {name: null, reference: null};
+export type PhysicalPackageLocator = {name: string, reference: string};
+export type TopLevelPackageLocator = {name: null, reference: null};
+
+export type PackageLocator = PhysicalPackageLocator | TopLevelPackageLocator;
 
 export type PackageInformation<P extends Path = NativePath> = {packageLocation: P, packageDependencies: Map<string, string | [string, string]>};
 export type PackageInformationData<P extends Path = NativePath> = {packageLocation: P, packageDependencies: Array<[string, string | [string, string]]>};
@@ -20,26 +23,51 @@ export type PackageRegistryData<P extends Path = NativePath> = Array<[string | n
 export type LocationBlacklistData = Array<string>;
 export type LocationLengthData = Array<number>;
 
+// This is what is stored within the .pnp.meta.json file
 export type SerializedState = {
+  enableTopLevelFallback: boolean,
+  fallbackExclusionList: Array<[string, Array<string>]>,
   ignorePatternData: string | null,
-  packageRegistryData: PackageRegistryData<PortablePath>,
   locationBlacklistData: LocationBlacklistData,
   locationLengthData: LocationLengthData,
+  packageRegistryData: PackageRegistryData<PortablePath>,
 };
 
+// This is what `makeApi` actually consumes
 export type RuntimeState = {
   basePath: PortablePath,
+  enableTopLevelFallback: boolean,
+  fallbackExclusionList: Map<string, Set<string>>,
   ignorePattern: RegExp | null,
-  packageRegistry: PackageRegistry<PortablePath>,
-  packageLocatorsByLocations: Map<PortablePath, PackageLocator | null>;
   packageLocationLengths: Array<number>,
+  packageLocatorsByLocations: Map<PortablePath, PackageLocator | null>;
+  packageRegistry: PackageRegistry<PortablePath>,
 };
 
+// This is what the generation functions take as parameter
 export type PnpSettings = {
-  shebang?: string | null,
-  ignorePattern?: string | null,
+  // Some locations that are not allowed to make a require call, period
+  // (usually the realpath of virtual packages)
   blacklistedLocations?: Iterable<string>,
+
+  // Whether the top-level dependencies should be made available to all the
+  // dependency tree as a fallback (default is true)
+  enableTopLevelFallback?: boolean,
+
+  // Which packages should never be allowed to use fallbacks, no matter what
+  fallbackExclusionList?: Array<PhysicalPackageLocator>,
+
+  // Which paths shouldn't use PnP, even if they would otherwise be detected
+  // as being owned by a package (legacy settings used to help people migrate
+  // to PnP + workspaces when they weren't using either)
+  ignorePattern?: string | null,
+
+  // The set of packages to store within the PnP map
   packageRegistry: PackageRegistry<PortablePath>,
+
+  // The shebang to add at the top of the file, can be any string you want (the
+  // default value should be enough most of the time)
+  shebang?: string | null,
 };
 
 export type PnpApi = {

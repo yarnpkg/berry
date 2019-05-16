@@ -123,11 +123,84 @@ describe(`Plug'n'Play`, () => {
   test(
     `it should fallback to the top-level dependencies when it cannot require a transitive dependency require`,
     makeTemporaryEnv(
-      {dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`}},
+      {
+        dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`}
+      },
+      {
+        // By default tests are executed with the fallback disabled; this
+        // setting forces this test to execute in the default mode instead
+        pnpFallbackMode: undefined,
+      },
       async ({path, run, source}) => {
         await run(`install`);
 
         await expect(source(`require('various-requires/invalid-require')`)).resolves.toMatchObject({
+          name: `no-deps`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should not fallback workspaces by default to the top-level dependencies when they require an undeclared package`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`packages/*`],
+        dependencies: {[`no-deps`]: `1.0.0`},
+      },
+      {
+        // By default tests are executed with the fallback disabled; this
+        // setting forces this test to execute in the default mode instead
+        pnpFallbackMode: undefined,
+      },
+      async ({path, run, source}) => {
+        await writeJson(`${path}/packages/workspace-a/package.json`, {
+          name: `workspace-a`,
+          version: `1.0.0`,
+        });
+
+        await writeFile(
+          `${path}/packages/workspace-a/index.js`,
+          `module.exports = require('no-deps');`,
+        );
+
+        await run(`install`);
+
+        await expect(source(`require('workspace-a')`)).rejects.toBeTruthy();
+      },
+    ),
+  );
+
+  test(
+    `it should fallback workspaces to the top-level dependencies when they require an undeclared package and the fallback mode is 'all'`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`packages/*`],
+        dependencies: {
+          [`workspace-a`]: `1.0.0`,
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      {
+        pnpFallbackMode: `all`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(`${path}/packages/workspace-a/package.json`, {
+          name: `workspace-a`,
+          version: `1.0.0`,
+        });
+
+        await writeFile(
+          `${path}/packages/workspace-a/index.js`,
+          `module.exports = require('no-deps');`,
+        );
+
+        await run(`install`);
+
+        await expect(source(`require('workspace-a')`)).resolves.toMatchObject({
           name: `no-deps`,
           version: `1.0.0`,
         });

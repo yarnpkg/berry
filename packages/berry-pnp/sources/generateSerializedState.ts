@@ -35,6 +35,28 @@ export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) 
   });
 }
 
+function generateFallbackExclusionList(settings: PnpSettings): Array<[string, Array<string>]> {
+  const fallbackExclusionList = new Map();
+
+  const sortedData = sortMap(settings.fallbackExclusionList || [], [
+    ({name, reference}) => name,
+    ({name, reference}) => reference,
+  ]);
+
+  for (const {name, reference} of sortedData) {
+    let references = fallbackExclusionList.get(name);
+
+    if (typeof references === `undefined`)
+      fallbackExclusionList.set(name, references = new Set());
+
+    references.add(reference);
+  }
+
+  return Array.from(fallbackExclusionList).map(([name, references]) => {
+    return [name, Array.from(references)] as [string, Array<string>];
+  });
+}
+
 function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData<PortablePath> {
   const packageRegistryData: PackageRegistryData<PortablePath> = [];
 
@@ -86,10 +108,13 @@ export function generateSerializedState(settings: PnpSettings): SerializedState 
     `is entirely unspecified and WILL change from a version to another.`,
   ];
 
+  data.enableTopLevelFallback = settings.enableTopLevelFallback || null;
   data.ignorePatternData = settings.ignorePattern || null;
-  data.packageRegistryData = generatePackageRegistryData(settings);
+
+  data.fallbackExclusionList = generateFallbackExclusionList(settings);
   data.locationBlacklistData = generateLocationBlacklistData(settings);
   data.locationLengthData = generateLocationLengthData(settings);
+  data.packageRegistryData = generatePackageRegistryData(settings);
 
   return data;
 }
