@@ -46,7 +46,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   const topLevelLocator = {name: null, reference: null};
 
   // Used for compatibility purposes - cf setupCompatibilityLayer
-  const fallbackLocators: Array<PackageLocator> = [topLevelLocator];
+  const fallbackLocators: Array<PackageLocator> = [];
+
+  if (runtimeState.topLevelFallback === true)
+    fallbackLocators.push(topLevelLocator);
 
   if (opts.compatibilityMode) {
     // ESLint currently doesn't have any portable way for shared configs to

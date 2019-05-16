@@ -136,13 +136,14 @@ class PnpInstaller implements Installer {
 
     const shebang = this.opts.project.configuration.get(`pnpShebang`);
     const ignorePattern = this.opts.project.configuration.get(`pnpIgnorePattern`);
+    const topLevelFallback = this.opts.project.configuration.get(`pnpEnableTopLevelFallback`);
     const blacklistedLocations = new Set<string>();
     const packageRegistry = this.packageRegistry;
 
     const pnpPath = this.opts.project.configuration.get(`pnpPath`);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
 
-    const pnpSettings = {shebang, ignorePattern, blacklistedLocations, packageRegistry};
+    const pnpSettings = {blacklistedLocations, ignorePattern, packageRegistry, shebang, topLevelFallback};
 
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
       const loaderFile = generateInlinedScript(pnpSettings);

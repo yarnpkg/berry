@@ -87,6 +87,8 @@ export function generateSerializedState(settings: PnpSettings): SerializedState 
   ];
 
   data.ignorePatternData = settings.ignorePattern || null;
+  data.topLevelFallback = settings.topLevelFallback || null;
+
   data.packageRegistryData = generatePackageRegistryData(settings);
   data.locationBlacklistData = generateLocationBlacklistData(settings);
   data.locationLengthData = generateLocationLengthData(settings);

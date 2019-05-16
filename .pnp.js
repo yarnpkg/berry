@@ -17,6 +17,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       "is entirely unspecified and WILL change from a version to another."
     ],
     "ignorePatternData": null,
+    "topLevelFallback": true,
     "packageRegistryData": [
       [
         null,
@@ -69595,7 +69596,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fslib_1 = __webpack_require__(1);
 function hydrateRuntimeState(data, { basePath }) {
     const portablePath = fslib_1.NodeFS.toPortablePath(basePath);
-    const ignorePattern = data.ignorePatternData
+    const ignorePattern = data.ignorePatternData !== null
         ? new RegExp(data.ignorePatternData)
         : null;
     const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
@@ -69619,12 +69620,14 @@ function hydrateRuntimeState(data, { basePath }) {
         }
     }
     const packageLocationLengths = data.locationLengthData;
+    const topLevelFallback = data.topLevelFallback;
     return {
         basePath: portablePath,
         ignorePattern,
         packageRegistry,
         packageLocatorsByLocations,
         packageLocationLengths,
+        topLevelFallback,
     };
 }
 exports.hydrateRuntimeState = hydrateRuntimeState;
@@ -69659,7 +69662,9 @@ function makeApi(runtimeState, opts) {
     // We only instantiate one of those so that we can use strict-equal comparisons
     const topLevelLocator = { name: null, reference: null };
     // Used for compatibility purposes - cf setupCompatibilityLayer
-    const fallbackLocators = [topLevelLocator];
+    const fallbackLocators = [];
+    if (runtimeState.topLevelFallback === true)
+        fallbackLocators.push(topLevelLocator);
     if (opts.compatibilityMode) {
         // ESLint currently doesn't have any portable way for shared configs to
         // specify their own plugins that should be used (cf issue #10125). This

@@ -119,6 +119,13 @@ const YarnrcDoc = () => <>
           If true (the default), Yarn will generate a single <code>.pnp.js</code> file that contains all the required data for your project to work properly. If toggled off, Yarn will also generate a <code>.pnp.data.json</code> file meant to be consumed by the <code>@berry/pnp</code> package.
         </>}
       />
+      <SymlBooleanProperty
+        name={`pnpEnableTopLevelFallback`}
+        placeholder={`true`}
+        description={<>
+          If true (the default), the generated <code>.pnp.js</code> file will include a special fallback rule: any undeclared dependency will still be allowed to be required if listed in the top-level manifest. Given that this option doesn't impair your project safety (because there are no ambiguities as to what is the project root) and is commonly required for various tools to work (for example plugin systems), disabling it should be typically avoided.
+        </>}
+      />
       <SymlStringProperty
         name={`pnpIgnorePattern`}
         placeholder={`^\\./subdir/.*`}

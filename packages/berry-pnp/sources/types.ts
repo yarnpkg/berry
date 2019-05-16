@@ -25,6 +25,7 @@ export type SerializedState = {
   packageRegistryData: PackageRegistryData<PortablePath>,
   locationBlacklistData: LocationBlacklistData,
   locationLengthData: LocationLengthData,
+  topLevelFallback: boolean,
 };
 
 export type RuntimeState = {
@@ -33,6 +34,7 @@ export type RuntimeState = {
   packageRegistry: PackageRegistry<PortablePath>,
   packageLocatorsByLocations: Map<PortablePath, PackageLocator | null>;
   packageLocationLengths: Array<number>,
+  topLevelFallback: boolean,
 };
 
 export type PnpSettings = {
@@ -40,6 +42,7 @@ export type PnpSettings = {
   ignorePattern?: string | null,
   blacklistedLocations?: Iterable<string>,
   packageRegistry: PackageRegistry<PortablePath>,
+  topLevelFallback?: boolean,
 };
 
 export type PnpApi = {

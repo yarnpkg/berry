@@ -8,7 +8,8 @@ export type HydrateRuntimeStateOptions = {
 
 export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRuntimeStateOptions): RuntimeState {
   const portablePath = NodeFS.toPortablePath(basePath);
-  const ignorePattern = data.ignorePatternData
+
+  const ignorePattern = data.ignorePatternData !== null
     ? new RegExp(data.ignorePatternData)
     : null;
 
@@ -38,6 +39,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
   }
 
   const packageLocationLengths = data.locationLengthData;
+  const topLevelFallback = data.topLevelFallback;
 
   return {
     basePath: portablePath,
@@ -45,5 +47,6 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     packageRegistry,
     packageLocatorsByLocations,
     packageLocationLengths,
+    topLevelFallback,
   };
 }
