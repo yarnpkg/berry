@@ -1649,6 +1649,7 @@ __metadata:
     "@babel/plugin-transform-modules-commonjs": "npm:^7.2.0"
     "@babel/preset-env": "npm:^7.3.1"
     "@babel/preset-typescript": "npm:^7.1.0"
+    "@berry/pnpify": "workspace:*"
     "@types/cross-spawn": "npm:6.0.0"
     "@types/dateformat": "npm:^1.0.1"
     "@types/emscripten": "npm:^0.0.31"
@@ -1929,6 +1930,7 @@ __metadata:
     "@berry/fslib": ^0.0.4
     "@berry/pnp": "workspace:*"
     "@berry/pnpify": "workspace:packages/berry-pnpify"
+    typescript: "npm:^3.3.3333"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:3.2.1"
   languageName: unknown

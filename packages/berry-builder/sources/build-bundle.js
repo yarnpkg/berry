@@ -9,6 +9,11 @@ const dynamicLibs = require(`./dynamic-libs`);
 const findPlugins = require(`./find-plugins`);
 const makeConfig = require(`./make-config`);
 
+const pkgJsonVersion = () => {
+  const pkgJson = require(`${basedir}/package.json`);
+  return JSON.stringify(pkgJson["version"]);
+}
+
 clipanion
   .command(`[-w,--watch] [--profile TYPE] [--plugin PLUGIN ...]`)
   .action(async ({watch, profile, plugin, stdout, stderr}) => {
@@ -50,6 +55,7 @@ clipanion
           banner: `#!/usr/bin/env node`,
           raw: true,
         }),
+        new webpack.DefinePlugin({[`BERRY_VERSION`]: pkgJsonVersion() }),
       ],
     }));
 
@@ -81,7 +87,6 @@ clipanion
           reject(err);
         } else {
           const erroredStats = [];
-
           for (const stats of allStats)
             if (stats.compilation.errors.length > 0)
               erroredStats.push(stats.toString(`errors-only`));

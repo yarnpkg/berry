@@ -9,8 +9,9 @@ export default (clipanion: any) => clipanion
 
   .action(async ({cwd, version, args, stdout, ... env}: any) => {
     // berry --version
-    if (args.length === 1 && args[0] === `--version`) {
-      stdout.write(`v2.0.0\n`);
+    if (args.length === 1 && (args[0] === `--version` || args[0] === `-v`)) {
+      // Injected via webpack DefinePlugin
+      stdout.write(`v${BERRY_VERSION}\n`);
 
     // berry --help
     } else if (args.length === 1 && (args[0] === `--help` || args[0] === `-h`)) {

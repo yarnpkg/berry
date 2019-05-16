@@ -119,6 +119,13 @@ const YarnrcDoc = () => <>
           If true (the default), Yarn will generate a single <code>.pnp.js</code> file that contains all the required data for your project to work properly. If toggled off, Yarn will also generate a <code>.pnp.data.json</code> file meant to be consumed by the <code>@berry/pnp</code> package.
         </>}
       />
+      <SymlBooleanProperty
+        name={`pnpFallbackMode`}
+        placeholder={`dependencies-only`}
+        description={<>
+          Enumeration whose values (<code>none</code>, <code>dependencies-only</code>, <code>all</code>) defines in which capacity should the PnP hook allow packages to rely on the builtin fallback mechanism. In <code>dependencies-only</code> mode (the default), your workspaces aren't allowed to use it.
+        </>}
+      />
       <SymlStringProperty
         name={`pnpIgnorePattern`}
         placeholder={`^\\./subdir/.*`}

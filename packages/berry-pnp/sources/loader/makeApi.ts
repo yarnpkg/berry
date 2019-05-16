@@ -46,7 +46,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   const topLevelLocator = {name: null, reference: null};
 
   // Used for compatibility purposes - cf setupCompatibilityLayer
-  const fallbackLocators: Array<PackageLocator> = [topLevelLocator];
+  const fallbackLocators: Array<PackageLocator> = [];
+
+  if (runtimeState.enableTopLevelFallback === true)
+    fallbackLocators.push(topLevelLocator);
 
   if (opts.compatibilityMode) {
     // ESLint currently doesn't have any portable way for shared configs to
@@ -497,9 +500,16 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       // to kill this logic and become stricter once pnp gets enough traction and the affected packages fix themselves.
 
       if (issuerLocator.name !== null) {
-        for (let t = 0, T = fallbackLocators.length; dependencyReference === undefined && t < T; ++t) {
-          const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
-          dependencyReference = fallbackInformation.packageDependencies.get(dependencyName);
+        // To allow programs to become gradually stricter, starting from the v2 we enforce that workspaces cannot depend on fallbacks.
+        // This works by having a list containing all their locators, and checking when a fallback is required whether it's one of them.
+        const exclusionEntry = runtimeState.fallbackExclusionList.get(issuerLocator.name);
+        const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
+
+        if (canUseFallbacks) {
+          for (let t = 0, T = fallbackLocators.length; dependencyReference === undefined && t < T; ++t) {
+            const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
+            dependencyReference = fallbackInformation.packageDependencies.get(dependencyName);
+          }
         }
       }
 

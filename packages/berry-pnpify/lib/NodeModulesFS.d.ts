@@ -1,16 +1,17 @@
 /// <reference types="node" />
 import { CreateReadStreamOptions, CreateWriteStreamOptions } from '@berry/fslib';
 import { FakeFS, WriteFileOptions } from '@berry/fslib';
+import { NativePath, Path } from '@berry/fslib';
 import fs from 'fs';
 export declare type NodeModulesFSOptions = {
-    baseFs?: FakeFS;
+    baseFs?: FakeFS<NativePath>;
 };
-export declare class NodeModulesFS extends FakeFS {
+export declare class NodeModulesFS extends FakeFS<NativePath> {
     private readonly baseFs;
     private readonly pathResolver;
     constructor({ baseFs }?: NodeModulesFSOptions);
-    getRealPath(): string;
-    getBaseFs(): FakeFS;
+    resolve(path: NativePath): NativePath;
+    getBaseFs(): FakeFS<NativePath>;
     private resolvePath;
     private resolveFilePath;
     private resolveLink;
@@ -18,46 +19,73 @@ export declare class NodeModulesFS extends FakeFS {
     private static createFsError;
     private throwIfPathReadonly;
     private resolveDirOrFilePath;
-    openPromise(p: string, flags: string, mode?: number): Promise<number>;
-    openSync(p: string, flags: string, mode?: number): number;
+    getRealPath(): NativePath;
+    openPromise(p: NativePath, flags: string, mode?: number): Promise<number>;
+    openSync(p: NativePath, flags: string, mode?: number): number;
     closePromise(fd: number): Promise<void>;
     closeSync(fd: number): void;
-    createReadStream(p: string, opts?: CreateReadStreamOptions): fs.ReadStream;
-    createWriteStream(p: string, opts?: CreateWriteStreamOptions): fs.WriteStream;
-    realpathPromise(p: string): Promise<string>;
-    realpathSync(p: string): string;
-    existsPromise(p: string): Promise<boolean>;
-    existsSync(p: string): boolean;
-    accessPromise(p: string, mode?: number): Promise<void>;
-    accessSync(p: string, mode?: number): void;
-    statPromise(p: string): Promise<fs.Stats>;
-    statSync(p: string): fs.Stats;
-    lstatPromise(p: string): Promise<any>;
-    lstatSync(p: string): any;
-    chmodPromise(p: string, mask: number): Promise<void>;
-    chmodSync(p: string, mask: number): void;
-    renamePromise(oldP: string, newP: string): Promise<void>;
-    renameSync(oldP: string, newP: string): void;
-    copyFilePromise(sourceP: string, destP: string, flags?: number): Promise<void>;
-    copyFileSync(sourceP: string, destP: string, flags?: number): void;
-    writeFilePromise(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): Promise<void>;
-    writeFileSync(p: string, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
-    unlinkPromise(p: string): Promise<void>;
-    unlinkSync(p: string): void;
-    utimesPromise(p: string, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
-    utimesSync(p: string, atime: Date | string | number, mtime: Date | string | number): void;
-    mkdirPromise(p: string): Promise<void>;
-    mkdirSync(p: string): void;
-    rmdirPromise(p: string): Promise<void>;
-    rmdirSync(p: string): void;
-    symlinkPromise(target: string, p: string): Promise<void>;
-    symlinkSync(target: string, p: string): void;
-    readFilePromise(p: string, encoding: 'utf8'): Promise<string>;
-    readFilePromise(p: string, encoding?: string): Promise<Buffer>;
-    readFileSync(p: string, encoding: 'utf8'): string;
-    readFileSync(p: string, encoding?: string): Buffer;
-    readdirPromise(p: string): Promise<string[]>;
-    readdirSync(p: string): string[];
-    readlinkPromise(p: string): Promise<any>;
-    readlinkSync(p: string): any;
+    createReadStream(p: NativePath, opts?: CreateReadStreamOptions): fs.ReadStream;
+    createWriteStream(p: NativePath, opts?: CreateWriteStreamOptions): fs.WriteStream;
+    realpathPromise(p: NativePath): Promise<NativePath>;
+    realpathSync(p: NativePath): NativePath;
+    existsPromise(p: NativePath): Promise<boolean>;
+    existsSync(p: NativePath): boolean;
+    accessPromise(p: NativePath, mode?: number): Promise<void>;
+    accessSync(p: NativePath, mode?: number): void;
+    statPromise(p: NativePath): Promise<fs.Stats>;
+    statSync(p: NativePath): fs.Stats;
+    lstatPromise(p: NativePath): Promise<any>;
+    lstatSync(p: NativePath): any;
+    chmodPromise(p: NativePath, mask: number): Promise<void>;
+    chmodSync(p: NativePath, mask: number): void;
+    renamePromise(oldP: NativePath, newP: NativePath): Promise<void>;
+    renameSync(oldP: NativePath, newP: NativePath): void;
+    copyFilePromise(sourceP: NativePath, destP: NativePath, flags?: number): Promise<void>;
+    copyFileSync(sourceP: NativePath, destP: NativePath, flags?: number): void;
+    writeFilePromise(p: NativePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): Promise<void>;
+    writeFileSync(p: NativePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
+    unlinkPromise(p: NativePath): Promise<void>;
+    unlinkSync(p: NativePath): void;
+    utimesPromise(p: NativePath, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
+    utimesSync(p: NativePath, atime: Date | string | number, mtime: Date | string | number): void;
+    mkdirPromise(p: NativePath): Promise<void>;
+    mkdirSync(p: NativePath): void;
+    rmdirPromise(p: NativePath): Promise<void>;
+    rmdirSync(p: NativePath): void;
+    symlinkPromise(target: NativePath, p: NativePath): Promise<void>;
+    symlinkSync(target: NativePath, p: string): void;
+    readFilePromise(p: NativePath, encoding: 'utf8'): Promise<string>;
+    readFilePromise(p: NativePath, encoding?: string): Promise<Buffer>;
+    readFileSync(p: NativePath, encoding: 'utf8'): string;
+    readFileSync(p: NativePath, encoding?: string): Buffer;
+    readdirPromise(p: NativePath): Promise<import("@berry/fslib").Filename[]>;
+    readdirSync(p: NativePath): import("@berry/fslib").Filename[];
+    readlinkPromise(p: NativePath): Promise<any>;
+    readlinkSync(p: NativePath): any;
+    removePromise(p: NativePath): Promise<void>;
+    removeSync(p: NativePath): void;
+    mkdirpPromise(p: NativePath, options?: {
+        chmod?: number;
+        utimes?: [Date | string | number, Date | string | number];
+    }): Promise<void>;
+    mkdirpSync(p: NativePath, options?: {
+        chmod?: number;
+        utimes?: [Date | string | number, Date | string | number];
+    }): void;
+    copyPromise(destination: NativePath, source: NativePath, options?: {
+        baseFs?: undefined;
+        overwrite?: boolean;
+    }): Promise<void>;
+    copyPromise<P2 extends Path>(destination: NativePath, source: P2, options: {
+        baseFs: FakeFS<P2>;
+        overwrite?: boolean;
+    }): Promise<void>;
+    copySync(destination: NativePath, source: NativePath, options?: {
+        baseFs?: undefined;
+        overwrite?: boolean;
+    }): void;
+    copySync<P2 extends Path>(destination: NativePath, source: P2, options: {
+        baseFs: FakeFS<P2>;
+        overwrite?: boolean;
+    }): void;
 }

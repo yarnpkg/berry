@@ -8,7 +8,8 @@ export type HydrateRuntimeStateOptions = {
 
 export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRuntimeStateOptions): RuntimeState {
   const portablePath = NodeFS.toPortablePath(basePath);
-  const ignorePattern = data.ignorePatternData
+
+  const ignorePattern = data.ignorePatternData !== null
     ? new RegExp(data.ignorePatternData)
     : null;
 
@@ -37,13 +38,20 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     }
   }
 
+  const fallbackExclusionList = new Map(data.fallbackExclusionList.map(([packageName, packageReferences]) => {
+    return [packageName, new Set(packageReferences)] as [string, Set<string>];
+  }));
+
+  const enableTopLevelFallback = data.enableTopLevelFallback;
   const packageLocationLengths = data.locationLengthData;
 
   return {
     basePath: portablePath,
+    enableTopLevelFallback,
+    fallbackExclusionList,
     ignorePattern,
-    packageRegistry,
-    packageLocatorsByLocations,
     packageLocationLengths,
+    packageLocatorsByLocations,
+    packageRegistry,
   };
 }
