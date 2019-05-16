@@ -48,7 +48,7 @@ function generateFallbackExclusionList(settings: PnpSettings): Array<[string, Ar
 
     if (typeof references === `undefined`)
       fallbackExclusionList.set(name, references = new Set());
- 
+
     references.add(reference);
   }
 
