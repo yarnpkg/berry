@@ -120,10 +120,10 @@ const YarnrcDoc = () => <>
         </>}
       />
       <SymlBooleanProperty
-        name={`pnpEnableTopLevelFallback`}
-        placeholder={`true`}
+        name={`pnpFallbackMode`}
+        placeholder={`dependencies-only`}
         description={<>
-          If true (the default), the generated <code>.pnp.js</code> file will include a special fallback rule: any undeclared dependency will still be allowed to be required if listed in the top-level manifest. Given that this option doesn't impair your project safety (because there are no ambiguities as to what is the project root) and is commonly required for various tools to work (for example plugin systems), disabling it should be typically avoided.
+          Enumeration whose values (<code>none</code>, <code>dependencies-only</code>, <code>all</code>) defines in which capacity should the PnP hook allow packages to rely on the builtin fallback mechanism. In <code>dependencies-only</code> mode (the default), your workspaces aren't allowed to use it.
         </>}
       />
       <SymlStringProperty

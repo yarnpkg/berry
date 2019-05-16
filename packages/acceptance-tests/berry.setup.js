@@ -43,7 +43,7 @@ global.makeTemporaryEnv = generatePkgDriver({
         // Otherwise the output isn't stable between runs
         [`YARN_ENABLE_TIMERS`]: `false`,
         // Otherwise we would more often test the fallback rather than the real logic
-        [`YARN_PNP_ENABLE_TOP_LEVEL_FALLBACK`]: `false`,
+        [`YARN_PNP_FALLBACK_MODE`]: `none`,
         ... rcEnv,
         ... env,
       },

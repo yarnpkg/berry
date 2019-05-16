@@ -49,10 +49,10 @@ const plugin: Plugin = {
       type: SettingsType.BOOLEAN,
       default: true,
     },
-    pnpEnableTopLevelFallback: {
+    pnpFallbackMode: {
       description: `If true, the generated PnP loader will follow the top-level fallback rule`,
-      type: SettingsType.BOOLEAN,
-      default: true,
+      type: SettingsType.STRING,
+      default: `dependencies-only`,
     },
     pnpUnpluggedFolder: {
       description: `Folder where the unplugged packages must be stored`,

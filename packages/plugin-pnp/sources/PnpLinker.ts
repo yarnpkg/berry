@@ -134,16 +134,24 @@ class PnpInstaller implements Installer {
       [null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)],
     ]));
 
-    const shebang = this.opts.project.configuration.get(`pnpShebang`);
-    const ignorePattern = this.opts.project.configuration.get(`pnpIgnorePattern`);
-    const topLevelFallback = this.opts.project.configuration.get(`pnpEnableTopLevelFallback`);
+    const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
+
     const blacklistedLocations = new Set<string>();
+    const enableTopLevelFallback = pnpFallbackMode !== `none`;
+    const fallbackExclusionList = [];
+    const ignorePattern = this.opts.project.configuration.get(`pnpIgnorePattern`);
     const packageRegistry = this.packageRegistry;
+    const shebang = this.opts.project.configuration.get(`pnpShebang`);
+
+    if (pnpFallbackMode === `dependencies-only`)
+      for (const pkg of this.opts.project.storedPackages.values())
+        if (this.opts.project.tryWorkspaceByLocator(pkg))
+          fallbackExclusionList.push({name: structUtils.requirableIdent(pkg), reference: pkg.reference});
 
     const pnpPath = this.opts.project.configuration.get(`pnpPath`);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
 
-    const pnpSettings = {blacklistedLocations, ignorePattern, packageRegistry, shebang, topLevelFallback};
+    const pnpSettings = {blacklistedLocations, enableTopLevelFallback, fallbackExclusionList, ignorePattern, packageRegistry, shebang};
 
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
       const loaderFile = generateInlinedScript(pnpSettings);
