@@ -89,9 +89,11 @@ Clone this repository, then run the following commands:
 ```
 $> yarn build:cli
 ```
-**How it works**  
-After building the CLI your global version of yarn should reflect your latest changes. This is 
-done by yarn picking up the `yarn-path` in this repository's `.yarnrc` which then runs a start script for the newly built CLI.
 
-**Works out of the box**  
-Note that no other command is needed! Since our dependencies are checked-in within the repository (within the [`.yarn/cache`](.yarn/cache) directory), you don't need to run any install. Everything just works right after cloning the project, and is guaranteed to continue to work ten years from now 🙂
+**How it works**  
+
+After building the CLI your global `yarn` will immediatly start to reflect your local changes. This is because Yarn will pick up the `yarn-path` settings in this repository's `.yarnrc`, which is configured to use the newly built CLI if available.
+
+**Works out of the box!**
+
+Note that no other command is needed! Given that our dependencies are checked-in within the repository (within the [`.yarn/cache`](.yarn/cache) directory), you don't even need to run `yarn install`. Everything just works right after cloning the project, and is guaranteed to continue to work ten years from now 🙂
