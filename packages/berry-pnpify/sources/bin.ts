@@ -1,6 +1,7 @@
 import {NodeFS, PortablePath, ppath} from '@berry/fslib';
 import {spawn}                       from 'child_process';
 
+import {dynamicRequire}              from './dynamicRequire';
 import {generateSdk}                 from './generateSdk';
 
 const [,, name, ...rest] = process.argv;
@@ -10,7 +11,7 @@ if (name === `--help` || name === `-h`)
 else if (name === `--sdk` && rest.length === 0)
   sdk(null);
 else if (name === `--sdk` && rest.length === 1)
-  sdk(ppath.resolve(NodeFS.toPortablePath(rest[1])));
+  sdk(ppath.resolve(NodeFS.toPortablePath(rest[0])));
 else if (typeof name !== `undefined` && name[0] !== `-`)
   run(name, rest);
 else
@@ -29,7 +30,7 @@ function help(error: boolean) {
 }
 
 function sdk(targetFolder: PortablePath | null) {
-  const {getPackageInformation, topLevel} = require(`pnpapi`);
+  const {getPackageInformation, topLevel} = dynamicRequire(`pnpapi`);
   const {packageLocation} = getPackageInformation(topLevel);
 
   const projectRoot = NodeFS.toPortablePath(packageLocation);
@@ -42,7 +43,7 @@ function sdk(targetFolder: PortablePath | null) {
 
 function run(name: string, argv: Array<string>) {
   let {NODE_OPTIONS} = process.env;
-  NODE_OPTIONS = `${NODE_OPTIONS || ``} --require ${require.resolve(`@berry/pnpify`)}`.trim();
+  NODE_OPTIONS = `${NODE_OPTIONS || ``} --require ${dynamicRequire.resolve(`@berry/pnpify`)}`.trim();
 
   const child = spawn(name, argv, {
     env: {...process.env, NODE_OPTIONS},

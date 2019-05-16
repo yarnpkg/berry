@@ -1,3 +1,4 @@
+import { NativePath, Filename } from '@berry/fslib';
 import { PackageInformation } from '@berry/pnp';
 import { PnPApiLoader } from './PnPApiLoader';
 import { PnPApiLocator } from './PnPApiLocator';
@@ -32,7 +33,7 @@ export interface ResolvedPath {
      * Fully resolved path `/node_modules/...` path within PnP project,
      * `null` if path does not exist.
      */
-    resolvedPath: string | null;
+    resolvedPath: NativePath | null;
     /**
      * The path that should be used for stats. This field is returned for pathes ending
      * with `/node_modules[/@scope]`.
@@ -44,7 +45,7 @@ export interface ResolvedPath {
     /**
      * Directory entries list, returned for pathes ending with `/node_modules[/@scope]`
      */
-    dirList?: string[];
+    dirList?: Filename[];
 }
 /**
  * Resolves `node_modules` paths inside PnP projects.
@@ -68,7 +69,7 @@ export declare class NodePathResolver {
      *
      * @returns `undefined` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
      */
-    readDir(issuerInfo: PackageInformation, scope: string | null): string[] | undefined;
+    readDir(issuerInfo: PackageInformation, scope: string | null): Filename[] | undefined;
     private getIssuer;
     /**
      * Resolves paths containing `/node_modules` inside PnP projects. If path is outside PnP

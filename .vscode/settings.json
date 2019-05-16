@@ -1,7 +1,5 @@
 {
-    "editor.tabSize": 2,
-    "files.eol": "\n",
-    "typescript.tsdk": "tssdk/lib",
-    "typescript.tsserver.log": "verbose",
-    "typescript.tsserver.trace": "verbose"
+  "editor.tabSize": 2,
+  "files.eol": "\n",
+  "typescript.tsdk": "scripts/tssdk/lib"
 }

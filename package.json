@@ -11,6 +11,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.2.0",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.1.0",
+    "@berry/pnpify": "workspace:*",
     "@types/cross-spawn": "6.0.0",
     "@types/dateformat": "^1.0.1",
     "@types/emscripten": "^0.0.31",
@@ -67,7 +68,8 @@
     }
   },
   "scripts": {
-    "test:lint": "run eslint packages/*/sources/**.ts",
+    "gen-tssdk": "pnpify --sdk scripts",
+    "test:lint": "eslint packages/*/sources/**.ts",
     "test:unit": "jest"
   }
 }

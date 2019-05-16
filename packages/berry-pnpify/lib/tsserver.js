@@ -82,18 +82,41 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 17);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 1:
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
 
 /***/ }),
-/* 1 */,
-/* 2 */
+
+/***/ 17:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PnPApiLocator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
+/* harmony import */ var _dynamicRequire__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+
+
+process.env.NODE_OPTIONS = `${process.env.NODE_OPTIONS || ''}-r ${_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"].resolve('.')}`;
+const pnpApiPath = new _PnPApiLocator__WEBPACK_IMPORTED_MODULE_0__[/* PnPApiLocator */ "a"]().findApi(__dirname);
+if (pnpApiPath) {
+    process.mainModule.id = 'internal/preload';
+    Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"])(pnpApiPath);
+    process.env.NODE_OPTIONS += ` -r ${pnpApiPath}`;
+}
+Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"])('.').patchFs();
+Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"])('typescript/lib/tsserver');
+
+
+/***/ }),
+
+/***/ 3:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -105,12 +128,13 @@ const dynamicRequire =  true
 
 
 /***/ }),
-/* 3 */
+
+/***/ 6:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PnPApiLocator; });
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_0__);
 
 /**
@@ -199,33 +223,6 @@ class PnPApiLocator {
 }
 
 
-/***/ }),
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _PnPApiLocator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _dynamicRequire__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
-
-
-process.env.NODE_OPTIONS = `${process.env.NODE_OPTIONS || ''}-r ${_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"].resolve('.')}`;
-const pnpApiPath = new _PnPApiLocator__WEBPACK_IMPORTED_MODULE_0__[/* PnPApiLocator */ "a"]().findApi(__dirname);
-if (pnpApiPath) {
-    process.mainModule.id = 'internal/preload';
-    Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"])(pnpApiPath);
-    process.env.NODE_OPTIONS += ` -r ${pnpApiPath}`;
-}
-Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"])('.').patchFs();
-Object(_dynamicRequire__WEBPACK_IMPORTED_MODULE_1__[/* dynamicRequire */ "a"])('typescript/lib/tsserver');
-
-
 /***/ })
-/******/ ]);
+
+/******/ });
