@@ -1915,6 +1915,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@berry/plugin-workspaces-tools@workspace:packages/plugin-workspaces-tools"
   dependencies:
+    "@berry/builder": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
     chalk: "npm:^2.4.1"

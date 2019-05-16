@@ -3,10 +3,14 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
+    "@berry/builder": "workspace:*",
     "@berry/core": "workspace:*",
     "@berry/fslib": "workspace:*",
     "chalk": "^2.4.1",
     "clipanion": "^0.14.1",
     "p-limit": "^2.2.0"
+  },
+  "scripts": {
+    "build:plugin-workspaces-tools": "run @berry-build-plugin"
   }
 }
