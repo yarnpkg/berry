@@ -123,7 +123,14 @@ describe(`Plug'n'Play`, () => {
   test(
     `it should fallback to the top-level dependencies when it cannot require a transitive dependency require`,
     makeTemporaryEnv(
-      {dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`}},
+      {
+        dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`}
+      },
+      {
+        // By default tests are executed with the fallback disabled; this
+        // setting forces this test to execute in the default mode instead
+        pnpEnableTopLevelFallback: undefined,
+      },
       async ({path, run, source}) => {
         await run(`install`);
 
