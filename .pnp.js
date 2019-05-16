@@ -51,6 +51,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:7.1.0"
                 ],
                 [
+                  "@berry/pnpify",
+                  "workspace:packages/berry-pnpify"
+                ],
+                [
                   "@types/cross-spawn",
                   "npm:6.0.0"
                 ],
@@ -9109,6 +9113,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:7.1.0"
                 ],
                 [
+                  "@berry/pnpify",
+                  "workspace:packages/berry-pnpify"
+                ],
+                [
                   "@types/cross-spawn",
                   "npm:6.0.0"
                 ],
@@ -9986,6 +9994,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/pnpify",
                   "workspace:packages/berry-pnpify"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
                 ],
                 [
                   "webpack",

@@ -16,6 +16,7 @@
     "@berry/builder": "workspace:*",
     "@berry/pnp": "workspace:*",
     "@berry/pnpify": "workspace:packages/berry-pnpify",
+    "typescript": "^3.3.3333",
     "webpack": "^4.28.4",
     "webpack-cli": "npm:3.2.1"
   },
