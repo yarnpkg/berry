@@ -1,5 +1,3 @@
-import {PortablePath}                                                   from '@berry/fslib';
-
 import {LocationBlacklistData, LocationLengthData, PackageRegistryData} from './types';
 import {PackageStoreData, PnpSettings, SerializedState}                 from './types';
 
