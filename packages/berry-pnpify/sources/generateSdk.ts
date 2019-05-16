@@ -37,7 +37,7 @@ export async function generateSdk(projectRoot: PortablePath, targetFolder: Porta
 
   const data = JSON.parse(content);
   data[`typescript.tsdk`] = NodeFS.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(tsserver)));
-  const patched = JSON.stringify(data, null, 2) + `\n`;
+  const patched = `${JSON.stringify(data, null, 2)}\n`;
 
   await xfs.mkdirpPromise(ppath.dirname(settings));
   await xfs.changeFilePromise(settings, patched);
