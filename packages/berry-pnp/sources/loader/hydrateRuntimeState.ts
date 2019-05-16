@@ -38,15 +38,20 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     }
   }
 
+  const fallbackExclusionList = new Map(data.fallbackExclusionList.map(([packageName, packageReferences]) => {
+    return [packageName, new Set(packageReferences)] as [string, Set<string>];
+  }));
+
+  const enableTopLevelFallback = data.enableTopLevelFallback;
   const packageLocationLengths = data.locationLengthData;
-  const topLevelFallback = data.topLevelFallback;
 
   return {
     basePath: portablePath,
+    enableTopLevelFallback,
+    fallbackExclusionList,
     ignorePattern,
-    packageRegistry,
-    packageLocatorsByLocations,
     packageLocationLengths,
-    topLevelFallback,
+    packageLocatorsByLocations,
+    packageRegistry,
   };
 }
