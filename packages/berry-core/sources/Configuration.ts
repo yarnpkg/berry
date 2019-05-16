@@ -22,7 +22,14 @@ import * as structUtils                                         from './structUt
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});
 
-const legacyNames = new Set([
+const IGNORED_ENV_VARIABLES = new Set([
+  // "binFolder" is the magic location where the parent process stored the current binaries; not an actual configuration settings
+  `binFolder`,
+  // "version" is set by Docker: https://github.com/nodejs/docker-node/blob/5a6a5e91999358c5b04fddd6c22a9a4eb0bf3fbf/10/alpine/Dockerfile#L51
+  `version`,
+]);
+
+const LEGACY_NAMES = new Set([
   `networkConcurrency`,
   `childConcurrency`,
   `networkTimeout`,
@@ -733,8 +740,8 @@ export class Configuration {
       if (name === `plugins`)
         continue;
 
-      // binFolder is the magic location where the parent process stored the current binaries; not an actual configuration settings
-      if (name === `binFolder`)
+      // Some environment variables should be ignored when applying the configuration
+      if (source === `<environment>` && IGNORED_ENV_VARIABLES.has(key))
         continue;
 
       // It wouldn't make much sense, would it?
@@ -744,7 +751,7 @@ export class Configuration {
       const definition = this.settings.get(name);
       if (!definition) {
         if (strict) {
-          throw new UsageError(`${legacyNames.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
+          throw new UsageError(`${LEGACY_NAMES.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
         } else {
           this.invalid.set(key, source);
           continue;
