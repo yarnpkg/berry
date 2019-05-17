@@ -16,323 +16,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       "it either without using the @berry/pnp package, as the data layout",
       "is entirely unspecified and WILL change from a version to another."
     ],
-    "enableTopLevelFallback": true,
     "ignorePatternData": null,
-    "fallbackExclusionList": [
-      [
-        "@berry/builder",
-        [
-          "workspace:packages/berry-builder"
-        ]
-      ],
-      [
-        "@berry/cli",
-        [
-          "workspace:packages/berry-cli"
-        ]
-      ],
-      [
-        "@berry/core",
-        [
-          "workspace:packages/berry-core"
-        ]
-      ],
-      [
-        "@berry/fslib",
-        [
-          "workspace:packages/berry-fslib"
-        ]
-      ],
-      [
-        "@berry/gatsby",
-        [
-          "workspace:packages/gatsby"
-        ]
-      ],
-      [
-        "@berry/json-proxy",
-        [
-          "workspace:packages/berry-json-proxy"
-        ]
-      ],
-      [
-        "@berry/libzip",
-        [
-          "workspace:packages/berry-libzip"
-        ]
-      ],
-      [
-        "@berry/monorepo",
-        [
-          "workspace:."
-        ]
-      ],
-      [
-        "@berry/parsers",
-        [
-          "workspace:packages/berry-parsers"
-        ]
-      ],
-      [
-        "@berry/plugin-constraints",
-        [
-          "workspace:packages/plugin-constraints"
-        ]
-      ],
-      [
-        "@berry/plugin-dlx",
-        [
-          "workspace:packages/plugin-dlx"
-        ]
-      ],
-      [
-        "@berry/plugin-essentials",
-        [
-          "workspace:packages/plugin-essentials"
-        ]
-      ],
-      [
-        "@berry/plugin-exec",
-        [
-          "workspace:packages/plugin-exec"
-        ]
-      ],
-      [
-        "@berry/plugin-file",
-        [
-          "workspace:packages/plugin-file"
-        ]
-      ],
-      [
-        "@berry/plugin-github",
-        [
-          "workspace:packages/plugin-github"
-        ]
-      ],
-      [
-        "@berry/plugin-http",
-        [
-          "workspace:packages/plugin-http"
-        ]
-      ],
-      [
-        "@berry/plugin-hub",
-        [
-          "workspace:packages/plugin-hub"
-        ]
-      ],
-      [
-        "@berry/plugin-init",
-        [
-          "workspace:packages/plugin-init"
-        ]
-      ],
-      [
-        "@berry/plugin-link",
-        [
-          "workspace:packages/plugin-link"
-        ]
-      ],
-      [
-        "@berry/plugin-npm",
-        [
-          "workspace:packages/plugin-npm"
-        ]
-      ],
-      [
-        "@berry/plugin-npm-cli",
-        [
-          "workspace:packages/plugin-npm-cli"
-        ]
-      ],
-      [
-        "@berry/plugin-pack",
-        [
-          "workspace:packages/plugin-pack"
-        ]
-      ],
-      [
-        "@berry/plugin-pnp",
-        [
-          "workspace:packages/plugin-pnp"
-        ]
-      ],
-      [
-        "@berry/plugin-stage",
-        [
-          "workspace:packages/plugin-stage"
-        ]
-      ],
-      [
-        "@berry/plugin-typescript",
-        [
-          "workspace:packages/plugin-typescript"
-        ]
-      ],
-      [
-        "@berry/pnp",
-        [
-          "workspace:packages/berry-pnp"
-        ]
-      ],
-      [
-        "@berry/pnpify",
-        [
-          "workspace:packages/berry-pnpify"
-        ]
-      ],
-      [
-        "@berry/shell",
-        [
-          "workspace:packages/berry-shell"
-        ]
-      ],
-      [
-        "@berry/ui",
-        [
-          "virtual:451e10e454d9fda3e395127fd945a02bbebfed7b1b93118275b1395dffb60092b0a4b3230b0dbc75becfcc013b274d1a9d0b596fabc2999a7307a6d9f626120f#workspace:packages/berry-ui",
-          "workspace:packages/berry-ui"
-        ]
-      ],
-      [
-        "acceptance-tests-06d141",
-        [
-          "workspace:packages/acceptance-tests"
-        ]
-      ],
-      [
-        "pkg-tests-core",
-        [
-          "workspace:packages/acceptance-tests/pkg-tests-core"
-        ]
-      ],
-      [
-        "pkg-tests-fixtures",
-        [
-          "workspace:packages/acceptance-tests/pkg-tests-fixtures"
-        ]
-      ],
-      [
-        "pkg-tests-specs",
-        [
-          "workspace:packages/acceptance-tests/pkg-tests-specs"
-        ]
-      ],
-      [
-        "vscode-zipfs",
-        [
-          "workspace:packages/vscode-zipfs"
-        ]
-      ]
-    ],
-    "locationBlacklistData": [],
-    "locationLengthData": [
-      220,
-      212,
-      208,
-      204,
-      203,
-      202,
-      200,
-      198,
-      196,
-      194,
-      192,
-      191,
-      190,
-      189,
-      188,
-      186,
-      185,
-      184,
-      183,
-      182,
-      181,
-      180,
-      179,
-      178,
-      177,
-      176,
-      174,
-      173,
-      172,
-      171,
-      170,
-      169,
-      168,
-      166,
-      165,
-      164,
-      163,
-      162,
-      161,
-      160,
-      159,
-      158,
-      157,
-      156,
-      155,
-      154,
-      153,
-      152,
-      151,
-      150,
-      149,
-      148,
-      147,
-      146,
-      145,
-      144,
-      143,
-      142,
-      141,
-      140,
-      139,
-      138,
-      137,
-      136,
-      135,
-      134,
-      133,
-      132,
-      131,
-      130,
-      129,
-      128,
-      127,
-      126,
-      125,
-      124,
-      123,
-      122,
-      121,
-      120,
-      119,
-      118,
-      117,
-      116,
-      115,
-      114,
-      112,
-      110,
-      99,
-      47,
-      46,
-      44,
-      43,
-      30,
-      29,
-      28,
-      26,
-      25,
-      24,
-      23,
-      22,
-      21,
-      20,
-      18,
-      2
-    ],
     "packageRegistryData": [
       [
         null,
@@ -9620,6 +9304,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/parsers",
                   "workspace:packages/berry-parsers"
+                ],
+                [
+                  "js-yaml",
+                  "npm:3.12.2"
                 ],
                 [
                   "pegjs",
@@ -67020,6 +66708,114 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           ]
         ]
       ]
+    ],
+    "locationBlacklistData": [],
+    "locationLengthData": [
+      220,
+      212,
+      208,
+      204,
+      203,
+      202,
+      200,
+      198,
+      196,
+      194,
+      192,
+      191,
+      190,
+      189,
+      188,
+      186,
+      185,
+      184,
+      183,
+      182,
+      181,
+      180,
+      179,
+      178,
+      177,
+      176,
+      174,
+      173,
+      172,
+      171,
+      170,
+      169,
+      168,
+      166,
+      165,
+      164,
+      163,
+      162,
+      161,
+      160,
+      159,
+      158,
+      157,
+      156,
+      155,
+      154,
+      153,
+      152,
+      151,
+      150,
+      149,
+      148,
+      147,
+      146,
+      145,
+      144,
+      143,
+      142,
+      141,
+      140,
+      139,
+      138,
+      137,
+      136,
+      135,
+      134,
+      133,
+      132,
+      131,
+      130,
+      129,
+      128,
+      127,
+      126,
+      125,
+      124,
+      123,
+      122,
+      121,
+      120,
+      119,
+      118,
+      117,
+      116,
+      115,
+      114,
+      112,
+      110,
+      99,
+      47,
+      46,
+      44,
+      43,
+      30,
+      29,
+      28,
+      26,
+      25,
+      24,
+      23,
+      22,
+      21,
+      20,
+      18,
+      2
     ]
   }, {basePath: __dirname});
   }
@@ -69823,7 +69619,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fslib_1 = __webpack_require__(1);
 function hydrateRuntimeState(data, { basePath }) {
     const portablePath = fslib_1.NodeFS.toPortablePath(basePath);
-    const ignorePattern = data.ignorePatternData !== null
+    const ignorePattern = data.ignorePatternData
         ? new RegExp(data.ignorePatternData)
         : null;
     const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
@@ -69846,19 +69642,13 @@ function hydrateRuntimeState(data, { basePath }) {
             packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
         }
     }
-    const fallbackExclusionList = new Map(data.fallbackExclusionList.map(([packageName, packageReferences]) => {
-        return [packageName, new Set(packageReferences)];
-    }));
-    const enableTopLevelFallback = data.enableTopLevelFallback;
     const packageLocationLengths = data.locationLengthData;
     return {
         basePath: portablePath,
-        enableTopLevelFallback,
-        fallbackExclusionList,
         ignorePattern,
-        packageLocationLengths,
-        packageLocatorsByLocations,
         packageRegistry,
+        packageLocatorsByLocations,
+        packageLocationLengths,
     };
 }
 exports.hydrateRuntimeState = hydrateRuntimeState;
@@ -69893,9 +69683,7 @@ function makeApi(runtimeState, opts) {
     // We only instantiate one of those so that we can use strict-equal comparisons
     const topLevelLocator = { name: null, reference: null };
     // Used for compatibility purposes - cf setupCompatibilityLayer
-    const fallbackLocators = [];
-    if (runtimeState.enableTopLevelFallback === true)
-        fallbackLocators.push(topLevelLocator);
+    const fallbackLocators = [topLevelLocator];
     if (opts.compatibilityMode) {
         // ESLint currently doesn't have any portable way for shared configs to
         // specify their own plugins that should be used (cf issue #10125). This
@@ -70230,15 +70018,9 @@ function makeApi(runtimeState, opts) {
             // It's a bit of a hack, but it improves compatibility with the existing Node ecosystem. Hopefully we should eventually be able
             // to kill this logic and become stricter once pnp gets enough traction and the affected packages fix themselves.
             if (issuerLocator.name !== null) {
-                // To allow programs to become gradually stricter, starting from the v2 we enforce that workspaces cannot depend on fallbacks.
-                // This works by having a list containing all their locators, and checking when a fallback is required whether it's one of them.
-                const exclusionEntry = runtimeState.fallbackExclusionList.get(issuerLocator.name);
-                const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
-                if (canUseFallbacks) {
-                    for (let t = 0, T = fallbackLocators.length; dependencyReference === undefined && t < T; ++t) {
-                        const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
-                        dependencyReference = fallbackInformation.packageDependencies.get(dependencyName);
-                    }
+                for (let t = 0, T = fallbackLocators.length; dependencyReference === undefined && t < T; ++t) {
+                    const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
+                    dependencyReference = fallbackInformation.packageDependencies.get(dependencyName);
                 }
             }
             // If we can't find the path, and if the package making the request is the top-level, we can offer nicer error messages

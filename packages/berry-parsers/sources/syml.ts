@@ -1,3 +1,6 @@
+// @ts-ignore
+import {load}  from 'js-yaml';
+
 import {parse} from './grammars/syml';
 
 const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{}:# \t\r\n]).)*$/;
@@ -86,7 +89,11 @@ export function stringifySyml(value: any) {
 
 export function parseSyml(source: string) {
   try {
-    return parse(source.endsWith(`\n`) ? source : `${source}\n`);
+    try {
+      return load(source) as {[key: string]: any};
+    } catch (error) {
+      return parse(source.endsWith(`\n`) ? source : `${source}\n`);
+    }
   } catch (error) {
     if (error.location)
       error.message = error.message.replace(/(\.)?$/, ` (line ${error.location.start.line}, column ${error.location.start.column})$1`);

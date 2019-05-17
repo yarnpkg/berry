@@ -1722,6 +1722,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@berry/parsers@workspace:packages/berry-parsers"
   dependencies:
+    js-yaml: "npm:^3.10.0"
     pegjs: "npm:^0.10.0"
   languageName: unknown
   linkType: soft
