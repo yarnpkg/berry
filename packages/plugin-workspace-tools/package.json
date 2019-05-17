@@ -1,5 +1,5 @@
 {
-  "name": "@berry/plugin-workspaces-tools",
+  "name": "@berry/plugin-workspace-tools",
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {

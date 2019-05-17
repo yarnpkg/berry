@@ -34,7 +34,7 @@
     "@berry/plugin-pack": "workspace:*",
     "@berry/plugin-pnp": "workspace:*",
     "@berry/plugin-typescript": "workspace:*",
-    "@berry/plugin-workspaces-tools": "workspace:*",
+    "@berry/plugin-workspace-tools": "workspace:*",
     "@berry/pnp": "workspace:*"
   },
   "scripts": {
@@ -57,7 +57,7 @@
         "@berry/plugin-npm-cli",
         "@berry/plugin-pack",
         "@berry/plugin-pnp",
-        "@berry/plugin-workspaces-tools"
+        "@berry/plugin-workspace-tools"
       ]
     }
   }

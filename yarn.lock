@@ -1522,7 +1522,7 @@ __metadata:
     "@berry/plugin-pack": "workspace:*"
     "@berry/plugin-pnp": "workspace:*"
     "@berry/plugin-typescript": "workspace:*"
-    "@berry/plugin-workspaces-tools": "workspace:*"
+    "@berry/plugin-workspace-tools": "workspace:*"
     "@berry/pnp": "workspace:*"
     "@berry/shell": "workspace:*"
     chalk: "npm:^2.4.1"
@@ -1911,9 +1911,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-workspaces-tools@workspace:*, @berry/plugin-workspaces-tools@workspace:packages/plugin-workspaces-tools":
+"@berry/plugin-workspace-tools@workspace:*, @berry/plugin-workspace-tools@workspace:packages/plugin-workspace-tools":
   version: 0.0.0-use.local
-  resolution: "@berry/plugin-workspaces-tools@workspace:packages/plugin-workspaces-tools"
+  resolution: "@berry/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
   dependencies:
     "@berry/builder": "workspace:*"
     "@berry/core": "workspace:*"

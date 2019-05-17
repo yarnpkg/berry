@@ -170,9 +170,9 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
-        "@berry/plugin-workspaces-tools",
+        "@berry/plugin-workspace-tools",
         [
-          "workspace:packages/plugin-workspaces-tools"
+          "workspace:packages/plugin-workspace-tools"
         ]
       ],
       [
@@ -326,7 +326,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       46,
       44,
       43,
-      35,
+      34,
       30,
       29,
       28,
@@ -8994,8 +8994,8 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/plugin-typescript"
                 ],
                 [
-                  "@berry/plugin-workspaces-tools",
-                  "workspace:packages/plugin-workspaces-tools"
+                  "@berry/plugin-workspace-tools",
+                  "workspace:packages/plugin-workspace-tools"
                 ],
                 [
                   "@berry/pnp",
@@ -10262,16 +10262,16 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
-        "@berry/plugin-workspaces-tools",
+        "@berry/plugin-workspace-tools",
         [
           [
-            "workspace:packages/plugin-workspaces-tools",
+            "workspace:packages/plugin-workspace-tools",
             {
-              "packageLocation": "./packages/plugin-workspaces-tools/",
+              "packageLocation": "./packages/plugin-workspace-tools/",
               "packageDependencies": [
                 [
-                  "@berry/plugin-workspaces-tools",
-                  "workspace:packages/plugin-workspaces-tools"
+                  "@berry/plugin-workspace-tools",
+                  "workspace:packages/plugin-workspace-tools"
                 ],
                 [
                   "@berry/builder",
