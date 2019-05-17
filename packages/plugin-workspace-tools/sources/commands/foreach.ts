@@ -35,6 +35,20 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const { project } = await Project.find(configuration, cwd);
         const cache = await Cache.find(configuration);
 
+        let workspaces = command.toLowerCase() === `run`
+          ? project.workspaces.filter(workspace => workspace.manifest.scripts.has(args[0]))
+          : project.workspaces;
+
+        if (include.length > 0)
+          workspaces = workspaces.filter(workspace => include.includes(workspace.locator.name))
+
+        if (exclude.length > 0)
+          workspaces = workspaces.filter(workspace => !exclude.includes(workspace.locator.name))
+
+        // No need to buffer the output if we're executing the commands sequentially
+        if (!parallel)
+          interlaced = true;
+
         const needsProcessing = new Map<LocatorHash, Workspace>();
         const processing = new Set<DescriptorHash>();
 
@@ -51,16 +65,6 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           return resolutionReport.exitCode();
     
         const runReport = await StreamReport.start({configuration, stdout}, async report => {
-          let workspaces = command.toLowerCase() === `run`
-            ? project.workspaces.filter(workspace => workspace.manifest.scripts.has(args[0]))
-            : project.workspaces;
-
-          if (include.length > 0)
-            workspaces = workspaces.filter(workspace => include.includes(workspace.locator.name))
-
-          if (exclude.length > 0)
-            workspaces = workspaces.filter(workspace => !exclude.includes(workspace.locator.name))
-
           for (const workspace of workspaces)
             needsProcessing.set(workspace.anchoredLocator.locatorHash, workspace);
 
@@ -127,7 +131,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
               stdout.end();
               stderr.end();
             }
-
+/*
             // If we don't wait for the `end` event, there is a race condition
             // between this function (`runCommand`) completing and report.exitCode()
             // being called which will trigger StreamReport finalize and we would get
@@ -136,6 +140,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
               new Promise(resolve => stdout.on(`end`, resolve)),
               new Promise(resolve => stderr.on(`end`, resolve)),
             ]);
+*/
           }
         });
 
