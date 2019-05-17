@@ -1,10 +1,10 @@
-import { Configuration, LocatorHash, PluginConfiguration, Project, Workspace } from '@berry/core';
-import { Cache, DescriptorHash, LightReport, MessageName, StreamReport }       from '@berry/core';
-import { miscUtils, structUtils }                                              from '@berry/core';
-import { PortablePath }                                                        from '@berry/fslib';
-import { Writable }                                                            from 'stream';
-import { cpus }                                                                from 'os';
-import pLimit                                                                  from 'p-limit';
+import { Configuration, LocatorHash, PluginConfiguration, Project, Workspace }   from '@berry/core';
+import { Cache, DescriptorHash, LightReport, MessageName, Report, StreamReport } from '@berry/core';
+import { miscUtils, structUtils }                                                from '@berry/core';
+import { PortablePath }                                                          from '@berry/fslib';
+import { cpus }                                                                  from 'os';
+import pLimit                                                                    from 'p-limit';
+import { Writable }                                                              from 'stream';
 
 
 type ForeachOptions = {
@@ -172,7 +172,7 @@ function getPrefix(workspace: Workspace, {configuration, commandIndex, prefixed}
   let prefix = `[${name}]:`;
 
   const colors = [`cyan`, `green`, `yellow`, `blue`, `magenta`];
-  const colorName = colors[commandCount % colors.length];
+  const colorName = colors[commandIndex % colors.length];
 
   return configuration.format(prefix, colorName);
 }
