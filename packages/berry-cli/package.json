@@ -56,8 +56,7 @@
         "@berry/plugin-npm",
         "@berry/plugin-npm-cli",
         "@berry/plugin-pack",
-        "@berry/plugin-pnp",
-        "@berry/plugin-workspace-tools"
+        "@berry/plugin-pnp"
       ]
     }
   }

@@ -10,6 +10,7 @@ steps:
     node ./scripts/run-yarn.js build:cli
     node ./scripts/run-yarn.js build:plugin-stage
     node ./scripts/run-yarn.js build:plugin-typescript
+    node ./scripts/run-yarn.js build:plugin-workspace-tools
   displayName: 'Build the standard bundle & plugins'
 
 - script: |

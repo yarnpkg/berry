@@ -10,6 +10,6 @@
     "p-limit": "^2.2.0"
   },
   "scripts": {
-    "build:plugin-workspaces-tools": "run @berry-build-plugin"
+    "build:plugin-workspace-tools": "run @berry-build-plugin"
   }
 }

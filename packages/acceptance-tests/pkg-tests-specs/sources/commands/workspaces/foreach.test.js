@@ -3,7 +3,8 @@ const {
 } = require('pkg-tests-core');
 
 async function setupWorkspaces(path) {
-  await writeFile(`${path}/.yarnrc`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-workspaces-tools.js`))}\n`);
+  await writeFile(`${path}/.yarnrc`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-workspace-tools.js`))}\n`);
+
   await writeFile(`${path}/packages/workspace-a/server.js`, getServerContent());
   await writeJson(`${path}/packages/workspace-a/package.json`, {
     name: `workspace-a`,
