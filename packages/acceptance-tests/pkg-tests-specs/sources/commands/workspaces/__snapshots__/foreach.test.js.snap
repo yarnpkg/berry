@@ -33,35 +33,6 @@ Object {
 }
 `;
 
-exports[`Commands workspace foreach runs scripts in parallel with interlaced report 1`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "➤ YN0000: PING
-➤ YN0000: PONG
-➤ YN0000: PING
-➤ YN0000: PONG
-➤ YN0000: PING
-➤ YN0000: PONG
-➤ YN0000: PING
-➤ YN0000: PONG
-➤ YN0000: PING
-➤ YN0000: PONG
-➤ YN0000: PING
-➤ YN0000: PONG
-➤ YN0000: PING
-➤ YN0000: PONG
-➤ YN0000: PING
-➤ YN0000: PONG
-➤ YN0000: PING
-➤ YN0000: PONG
-➤ YN0000: PING
-➤ YN0000: PONG
-➤ YN0000: Done
-",
-}
-`;
-
 exports[`Commands workspace foreach runs scripts topological order by default 1`] = `
 Object {
   "code": 0,

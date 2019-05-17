@@ -23,7 +23,7 @@ type ForeachOptions = {
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-    .command(`workspaces foreach <command> [...args] [-p,--parallel] [--with-dependencies] [-I,--interlaced] [-P,--prefixed] [-i,--include WORKSPACES...] [-x,--exclude WORKSPACES...]`)
+    .command(`workspaces foreach run <command> [...args] [-p,--parallel] [--with-dependencies] [-I,--interlaced] [-P,--prefixed] [-i,--include WORKSPACES...] [-x,--exclude WORKSPACES...]`)
     .flags({proxyArguments: true})
 
     .categorize(`Workspace-related commands`)
@@ -35,9 +35,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const { project } = await Project.find(configuration, cwd);
         const cache = await Cache.find(configuration);
 
-        let workspaces = command.toLowerCase() === `run`
-          ? project.workspaces.filter(workspace => workspace.manifest.scripts.has(args[0]))
-          : project.workspaces;
+        let workspaces = project.workspaces.filter(workspace => workspace.manifest.scripts.has(command));
 
         if (include.length > 0)
           workspaces = workspaces.filter(workspace => include.includes(workspace.locator.name))
@@ -63,7 +61,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
         if (resolutionReport.hasErrors())
           return resolutionReport.exitCode();
-    
+
         const runReport = await StreamReport.start({configuration, stdout}, async report => {
           for (const workspace of workspaces)
             needsProcessing.set(workspace.anchoredLocator.locatorHash, workspace);
@@ -121,7 +119,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
             const stderr = createStream(report, {prefix, interlaced});
 
             try {
-              await clipanion.run(null, args, {
+              await clipanion.run(null, [`run`, command, ...args], {
                 ...env,
                 cwd: workspace.cwd,
                 stdout: stdout,
@@ -131,16 +129,6 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
               stdout.end();
               stderr.end();
             }
-/*
-            // If we don't wait for the `end` event, there is a race condition
-            // between this function (`runCommand`) completing and report.exitCode()
-            // being called which will trigger StreamReport finalize and we would get
-            // something like `➤ YN0000: Done in Ns` before all the commands complete.
-            await Promise.all([
-              new Promise(resolve => stdout.on(`end`, resolve)),
-              new Promise(resolve => stderr.on(`end`, resolve)),
-            ]);
-*/
           }
         });
 

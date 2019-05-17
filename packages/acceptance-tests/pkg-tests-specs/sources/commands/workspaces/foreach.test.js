@@ -64,7 +64,22 @@ describe(`Commands`, () => {
             ({code, stdout, stderr} = error);
           }
 
-          await expect({code, stdout, stderr}).toMatchSnapshot();
+          const lines = stdout.trim().split(`\n`);
+          const firstLine = lines[0];
+          let isInterlaced = false;
+
+          // Expect Done on the last line
+          expect(lines.pop()).toContain(`Done`);
+          expect(code).toBe(0);
+          expect(stderr).toBe(``);
+
+          for (let i = 1; i < lines.length / 2; i++) {
+            if (firstLine !== lines[i])
+              isInterlaced = true;
+          }
+
+          expect(isInterlaced).toBe(true);
+
         }
       )
     );
@@ -217,13 +232,10 @@ function getServerContent() {
       }
 
       console.log('PING');
-      setTimeout(() => {
-        socket.write('ping');
-      });
+      socket.write('ping');
     });
   });
 
-  // server.on('error', () => server.close());
   server.on('error', (e) => {
     console.error(e);
     server.close()
