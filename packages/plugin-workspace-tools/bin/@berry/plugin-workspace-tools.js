@@ -135,7 +135,7 @@ const os_1 = __webpack_require__(3);
 const p_limit_1 = __importDefault(__webpack_require__(4));
 // eslint-disable-next-line arca/no-default-export
 exports.default = (clipanion, pluginConfiguration) => clipanion
-    .command(`workspaces foreach <command> [...args] [-p,--parallel] [--with-dependencies] [-I,--interlaced] [-P,--prefixed] [-i,--include WORKSPACES...] [-x,--exclude WORKSPACES...]`)
+    .command(`workspaces foreach run <command> [...args] [-p,--parallel] [--with-dependencies] [-I,--interlaced] [-P,--prefixed] [-i,--include WORKSPACES...] [-x,--exclude WORKSPACES...]`)
     .flags({ proxyArguments: true })
     .categorize(`Workspace-related commands`)
     .describe(`run a command on all workspaces`)
@@ -144,6 +144,14 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
     const configuration = await core_1.Configuration.find(cwd, pluginConfiguration);
     const { project } = await core_1.Project.find(configuration, cwd);
     const cache = await core_2.Cache.find(configuration);
+    let workspaces = project.workspaces.filter(workspace => workspace.manifest.scripts.has(command));
+    if (include.length > 0)
+        workspaces = workspaces.filter(workspace => include.includes(workspace.locator.name));
+    if (exclude.length > 0)
+        workspaces = workspaces.filter(workspace => !exclude.includes(workspace.locator.name));
+    // No need to buffer the output if we're executing the commands sequentially
+    if (!parallel)
+        interlaced = true;
     const needsProcessing = new Map();
     const processing = new Set();
     const concurrency = parallel ? Math.max(1, os_1.cpus().length / 2) : 1;
@@ -155,13 +163,6 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
     if (resolutionReport.hasErrors())
         return resolutionReport.exitCode();
     const runReport = await core_2.StreamReport.start({ configuration, stdout }, async (report) => {
-        let workspaces = command.toLowerCase() === `run`
-            ? project.workspaces.filter(workspace => workspace.manifest.scripts.has(args[0]))
-            : project.workspaces;
-        if (include.length > 0)
-            workspaces = workspaces.filter(workspace => include.includes(workspace.locator.name));
-        if (exclude.length > 0)
-            workspaces = workspaces.filter(workspace => !exclude.includes(workspace.locator.name));
         for (const workspace of workspaces)
             needsProcessing.set(workspace.anchoredLocator.locatorHash, workspace);
         while (needsProcessing.size > 0) {
@@ -204,20 +205,12 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
             const stdout = createStream(report, { prefix, interlaced });
             const stderr = createStream(report, { prefix, interlaced });
             try {
-                await clipanion.run(null, args, Object.assign({}, env, { cwd: workspace.cwd, stdout: stdout, stderr: stderr }));
+                await clipanion.run(null, [`run`, command, ...args], Object.assign({}, env, { cwd: workspace.cwd, stdout: stdout, stderr: stderr }));
             }
             finally {
                 stdout.end();
                 stderr.end();
             }
-            // If we don't wait for the `end` event, there is a race condition
-            // between this function (`runCommand`) completing and report.exitCode()
-            // being called which will trigger StreamReport finalize and we would get
-            // something like `➤ YN0000: Done in Ns` before all the commands complete.
-            await Promise.all([
-                new Promise(resolve => stdout.on(`end`, resolve)),
-                new Promise(resolve => stderr.on(`end`, resolve)),
-            ]);
         }
     });
     return runReport.exitCode();

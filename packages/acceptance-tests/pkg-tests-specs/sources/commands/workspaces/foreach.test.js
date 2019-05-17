@@ -59,7 +59,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--interlaced`, `run`, `start`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--parallel`, `--interlaced`, `start`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -100,7 +100,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--with-dependencies`, `run`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--parallel`, `--with-dependencies`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -152,7 +152,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--prefixed`, `run`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--prefixed`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -178,7 +178,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--prefixed`, `--include`, `workspace-a`, `-i`, `workspace-b`, `run`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--prefixed`, `--include`, `workspace-a`, `-i`, `workspace-b`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -204,7 +204,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--prefixed`, `--exclude`, `workspace-a`, `-x`, `workspace-b`, `run`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--prefixed`, `--exclude`, `workspace-a`, `-x`, `workspace-b`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
