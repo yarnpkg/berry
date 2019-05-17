@@ -153,10 +153,14 @@ export abstract class Report {
     });
 
     stream.on(`end`, () => {
-      if (prefix !== null) {
-        this.reportInfo(null, `${prefix} ${decoder.end()}`);
-      } else {
-        this.reportInfo(null, decoder.end());
+      const last = decoder.end();
+
+      if (last !== ``) {
+        if (prefix !== null) {
+          this.reportInfo(null, `${prefix} ${last}`);
+        } else {
+          this.reportInfo(null, last);
+        }
       }
     });
 

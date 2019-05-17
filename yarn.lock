@@ -1918,7 +1918,6 @@ __metadata:
     "@berry/builder": "workspace:*"
     "@berry/core": "workspace:*"
     "@berry/fslib": "workspace:*"
-    chalk: "npm:^2.4.1"
     clipanion: "npm:^0.14.1"
     p-limit: "npm:^2.2.0"
   languageName: unknown

@@ -1,9 +1,9 @@
 import { Configuration, LocatorHash, PluginConfiguration, Project, Workspace } from '@berry/core';
-import { structUtils, Cache, DescriptorHash, MessageName, StreamReport }       from '@berry/core';
+import { Cache, DescriptorHash, LightReport, MessageName, StreamReport }       from '@berry/core';
+import { miscUtils, structUtils }                                              from '@berry/core';
 import { PortablePath }                                                        from '@berry/fslib';
-import { PassThrough, Writable }                                               from 'stream';
+import { Writable }                                                            from 'stream';
 import { cpus }                                                                from 'os';
-import chalk                                                                   from 'chalk';
 import pLimit                                                                  from 'p-limit';
 
 
@@ -37,37 +37,40 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
         const needsProcessing = new Map<LocatorHash, Workspace>();
         const processing = new Set<DescriptorHash>();
+
         const concurrency = parallel ? Math.max(1, cpus().length / 2) : 1;
         const limit = pLimit(concurrency);
+
         let commandCount = 0;
 
-        const report = await StreamReport.start({configuration, stdout}, async report => {
+        const resolutionReport = await LightReport.start({configuration, stdout}, async (report: LightReport) => {
           await project.resolveEverything({lockfileOnly: true, cache, report});
+        });
 
+        if (resolutionReport.hasErrors())
+          return resolutionReport.exitCode();
+    
+        const runReport = await StreamReport.start({configuration, stdout}, async report => {
           let workspaces = command.toLowerCase() === `run`
             ? project.workspaces.filter(workspace => workspace.manifest.scripts.has(args[0]))
             : project.workspaces;
 
-          if (include.length > 0) {
+          if (include.length > 0)
             workspaces = workspaces.filter(workspace => include.includes(workspace.locator.name))
-          }
 
-          if (exclude.length > 0) {
+          if (exclude.length > 0)
             workspaces = workspaces.filter(workspace => !exclude.includes(workspace.locator.name))
-          }
 
-          for (const workspace of workspaces) {
+          for (const workspace of workspaces)
             needsProcessing.set(workspace.anchoredLocator.locatorHash, workspace);
-          }
 
           while (needsProcessing.size > 0) {
             const commandPromises = [];
 
             for (const [identHash, workspace] of needsProcessing) {
               // If we are already running the command on that workspace, skip
-              if (processing.has(workspace.anchoredDescriptor.descriptorHash)) {
+              if (processing.has(workspace.anchoredDescriptor.descriptorHash))
                 continue;
-              }
 
               let isRunnable = true;
 
@@ -76,21 +79,26 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
               if (!parallel || withDependencies) {
                 for (const [identHash, descriptor] of workspace.dependencies) {
                   const locatorHash = project.storedResolutions.get(descriptor.descriptorHash);
+                  if (typeof locatorHash === `undefined`)
+                    throw new Error(`Assertion failed: The resolution should have been registered`);
 
-                  if (needsProcessing.has(locatorHash!))
+                  if (needsProcessing.has(locatorHash)) {
                     isRunnable = false;
+                    break;
+                  }
                 }
               }
 
-              if (!isRunnable) {
+              if (!isRunnable)
                 continue;
-              }
 
               processing.add(workspace.anchoredDescriptor.descriptorHash);
 
               commandPromises.push(limit(async () => {
-                commandCount += 1;
-                await runCommand(workspace);
+                await runCommand(workspace, {
+                  commandIndex: ++commandCount,
+                });
+
                 needsProcessing.delete(identHash);
                 processing.delete(workspace.anchoredDescriptor.descriptorHash);
               }));
@@ -102,10 +110,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
             await Promise.all(commandPromises);
           }
 
-          async function runCommand(workspace: Workspace) {
-            const prefix = getPrefix({configuration, workspace, prefixed, commandCount});
-            const stdout = createStream({prefix, report, interlaced});
-            const stderr = createStream({prefix, report, interlaced});
+          async function runCommand(workspace: Workspace, {commandIndex}: {commandIndex: number}) {
+            const prefix = getPrefix(workspace, {configuration, prefixed, commandIndex});
+
+            const stdout = createStream(report, {prefix, interlaced});
+            const stderr = createStream(report, {prefix, interlaced});
 
             try {
               await clipanion.run(null, args, {
@@ -130,61 +139,40 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           }
         });
 
-        return report.exitCode();
+        return runReport.exitCode();
       }
     );
 
 
-function createStream({prefix, report, interlaced}: {prefix: string | null, report: StreamReport, interlaced: boolean}) {
-  if (interlaced) {
-    const stream = report.createStreamReporter(prefix);
-
-    // We remove all `end` listeners because createStreamReporter adds a line break
-    stream.removeAllListeners('end');
-
-    return stream;
-  }
-
-  return createBufferStream(prefix, report);
-}
-
-function createBufferStream(prefix: string | null, report: StreamReport) {
-  const stream = new PassThrough();
-  const chunks: any[] = [];
+function createStream(report: Report, {prefix, interlaced}: {prefix: string | null, interlaced: boolean}) {
   const streamReporter = report.createStreamReporter(prefix);
 
-  stream.on('data', chunk => {
-    chunks.push(chunk);
-  });
+  if (interlaced)
+    return streamReporter;
 
-  stream.on('end', () => {
-    streamReporter.write(Buffer.concat(chunks));
-  });
+  const streamBuffer = new miscUtils.BufferStream();
+  streamBuffer.pipe(streamReporter);
 
-  return stream;
+  return streamBuffer;
 }
 
 type GetPrefixOptions = {
   configuration: Configuration;
-  workspace: Workspace;
-  commandCount: number;
+  commandIndex: number;
   prefixed: boolean;
 };
 
-function getPrefix({configuration, workspace, commandCount, prefixed}: GetPrefixOptions) {
+function getPrefix(workspace: Workspace, {configuration, commandIndex, prefixed}: GetPrefixOptions) {
   if (!prefixed)
     return null;
 
-  const colorsEnabled = configuration.get(`enableColors`);
   const ident = structUtils.convertToIdent(workspace.locator);
   const name = structUtils.stringifyIdent(ident);
-  let prefix = `[${name}]:`;
 
-  if (!colorsEnabled)
-    return prefix;
+  let prefix = `[${name}]:`;
 
   const colors = [`cyan`, `green`, `yellow`, `blue`, `magenta`];
   const colorName = colors[commandCount % colors.length];
 
-  return (chalk as any)[colorName](prefix);
+  return configuration.format(prefix, colorName);
 }
