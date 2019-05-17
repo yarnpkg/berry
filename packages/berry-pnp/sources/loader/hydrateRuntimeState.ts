@@ -19,7 +19,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
         packageLocation: ppath.resolve(portablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
       }] as [string | null, PackageInformation<PortablePath>];
-    }))] as [string | null, PackageStore<PortablePath>];
+    }))] as [string | null, PackageStore];
   }));
 
   const packageLocatorsByLocations = new Map(data.locationBlacklistData.map(location => {

@@ -11,14 +11,14 @@ export type TopLevelPackageLocator = {name: null, reference: null};
 
 export type PackageLocator = PhysicalPackageLocator | TopLevelPackageLocator;
 
-export type PackageInformation<P extends Path = NativePath> = {packageLocation: P, packageDependencies: Map<string, string | [string, string]>};
-export type PackageInformationData<P extends Path = NativePath> = {packageLocation: P, packageDependencies: Array<[string, string | [string, string]]>};
+export type PackageInformation<P extends Path> = {packageLocation: P, packageDependencies: Map<string, string | [string, string]>};
+export type PackageInformationData<P extends Path> = {packageLocation: P, packageDependencies: Array<[string, string | [string, string]]>};
 
-export type PackageStore<P extends Path = NativePath> = Map<string | null, PackageInformation<P>>;
-export type PackageStoreData<P extends Path = NativePath> = Array<[string | null, PackageInformationData<P>]>;
+export type PackageStore = Map<string | null, PackageInformation<PortablePath>>;
+export type PackageStoreData = Array<[string | null, PackageInformationData<PortablePath>]>;
 
-export type PackageRegistry<P extends Path = NativePath> = Map<string | null, PackageStore<P>>;
-export type PackageRegistryData<P extends Path = NativePath> = Array<[string | null, PackageStoreData<P>]>;
+export type PackageRegistry = Map<string | null, PackageStore>;
+export type PackageRegistryData = Array<[string | null, PackageStoreData]>;
 
 export type LocationBlacklistData = Array<string>;
 export type LocationLengthData = Array<number>;
@@ -30,7 +30,7 @@ export type SerializedState = {
   ignorePatternData: string | null,
   locationBlacklistData: LocationBlacklistData,
   locationLengthData: LocationLengthData,
-  packageRegistryData: PackageRegistryData<PortablePath>,
+  packageRegistryData: PackageRegistryData,
 };
 
 // This is what `makeApi` actually consumes
@@ -41,7 +41,7 @@ export type RuntimeState = {
   ignorePattern: RegExp | null,
   packageLocationLengths: Array<number>,
   packageLocatorsByLocations: Map<PortablePath, PackageLocator | null>;
-  packageRegistry: PackageRegistry<PortablePath>,
+  packageRegistry: PackageRegistry,
 };
 
 // This is what the generation functions take as parameter
@@ -63,7 +63,7 @@ export type PnpSettings = {
   ignorePattern?: string | null,
 
   // The set of packages to store within the PnP map
-  packageRegistry: PackageRegistry<PortablePath>,
+  packageRegistry: PackageRegistry,
 
   // The shebang to add at the top of the file, can be any string you want (the
   // default value should be enough most of the time)
@@ -74,7 +74,7 @@ export type PnpApi = {
   VERSIONS: {std: number, [key: string]: number},
   topLevel: {name: null, reference: null},
 
-  getPackageInformation: (locator: PackageLocator) => PackageInformation | null,
+  getPackageInformation: (locator: PackageLocator) => PackageInformation<NativePath> | null,
   findPackageLocator: (location: NativePath) => PackageLocator | null,
 
   resolveToUnqualified: (request: string, issuer: NativePath | null, opts?: {considerBuiltins?: boolean}) => NativePath | null,

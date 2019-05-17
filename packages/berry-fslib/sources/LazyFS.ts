@@ -19,7 +19,6 @@ export class LazyFS<P extends Path> extends ProxiedFS<P, P> {
     if (!this.instance)
       this.instance = this.factory();
 
-
     return this.instance;
   }
 

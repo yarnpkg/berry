@@ -1,5 +1,3 @@
-import {PortablePath}                                                   from '@berry/fslib';
-
 import {LocationBlacklistData, LocationLengthData, PackageRegistryData} from './types';
 import {PackageStoreData, PnpSettings, SerializedState}                 from './types';
 
@@ -57,11 +55,11 @@ function generateFallbackExclusionList(settings: PnpSettings): Array<[string, Ar
   });
 }
 
-function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData<PortablePath> {
-  const packageRegistryData: PackageRegistryData<PortablePath> = [];
+function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData {
+  const packageRegistryData: PackageRegistryData = [];
 
   for (const [packageName, packageStore] of sortMap(settings.packageRegistry, ([packageName]) => packageName === null ? `0` : `1${packageName}`)) {
-    const packageStoreData: PackageStoreData<PortablePath> = [];
+    const packageStoreData: PackageStoreData = [];
     packageRegistryData.push([packageName, packageStoreData]);
 
     for (const [packageReference, {packageLocation, packageDependencies}] of sortMap(packageStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {

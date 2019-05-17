@@ -7,8 +7,6 @@ export type CwdFSOptions = {
   baseFs?: FakeFS<PortablePath>,
 };
 
-// FIXME: notable changes:
-// - symlink didn't transform the target path, it does now
 export class CwdFS extends ProxiedFS<PortablePath, PortablePath> {
   private readonly target: PortablePath;
 

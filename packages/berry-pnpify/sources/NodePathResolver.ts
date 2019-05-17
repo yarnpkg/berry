@@ -90,7 +90,7 @@ export class NodePathResolver {
    *
    * @returns `undefined` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
    */
-  public readDir(issuerInfo: PackageInformation, scope: string | null): Filename[] | undefined {
+  public readDir(issuerInfo: PackageInformation<NativePath>, scope: string | null): Filename[] | undefined {
     const result = new Set<Filename>();
     for (const key of issuerInfo.packageDependencies.keys()) {
       const [pkgNameOrScope, pkgName] = key.split('/');

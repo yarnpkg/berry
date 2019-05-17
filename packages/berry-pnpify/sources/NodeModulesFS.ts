@@ -1,6 +1,6 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@berry/fslib';
 import {NodeFS, PosixFS, FakeFS, WriteFileOptions}         from '@berry/fslib';
-import {NativePath, Path, npath}                           from '@berry/fslib';
+import {NativePath, npath}                                 from '@berry/fslib';
 
 import fs                                                  from 'fs';
 
@@ -316,42 +316,5 @@ export class NodeModulesFS extends FakeFS<NativePath> {
       (_stats, targetPath) => targetPath,
       () => this.baseFs.readlinkSync(p)
     );
-  }
-
-  removePromise(p: NativePath) {
-    return this.baseFs.removePromise(this.throwIfPathReadonly(`remove`, p));
-  }
-
-  removeSync(p: NativePath) {
-    return this.baseFs.removeSync(this.throwIfPathReadonly(`removeSync`, p));
-  }
-
-  mkdirpPromise(p: NativePath, options?: {chmod?: number, utimes?: [Date | string | number, Date | string | number]}) {
-    return this.baseFs.mkdirpPromise(this.throwIfPathReadonly(`mkdirp`, p), options);
-  }
-  mkdirpSync(p: NativePath, options?: {chmod?: number, utimes?: [Date | string | number, Date | string | number]}) {
-    return this.baseFs.mkdirpSync(this.throwIfPathReadonly(`mkdirpSync`, p), options);
-  }
-
-  copyPromise(destination: NativePath, source: NativePath, options?: {baseFs?: undefined, overwrite?: boolean}): Promise<void>;
-  copyPromise<P2 extends Path>(destination: NativePath, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean}): Promise<void>;
-  copyPromise<P2 extends Path>(destination: NativePath, source: P2, {baseFs = this as any, overwrite}: {baseFs?: FakeFS<P2>, overwrite?: boolean} = {}) {
-    // any casts are necessary because typescript doesn't understand that P2 might be P
-    if (baseFs === this as any) {
-      return this.baseFs.copyPromise(this.throwIfPathReadonly(`copy`, destination), source, {baseFs: this.baseFs as any, overwrite});
-    } else {
-      return this.baseFs.copyPromise(this.throwIfPathReadonly(`copy`, destination), source, {baseFs, overwrite});
-    }
-  }
-
-  copySync(destination: NativePath, source: NativePath, options?: {baseFs?: undefined, overwrite?: boolean}): void;
-  copySync<P2 extends Path>(destination: NativePath, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean}): void;
-  copySync<P2 extends Path>(destination: NativePath, source: P2, {baseFs = this as any, overwrite}: {baseFs?: FakeFS<P2>, overwrite?: boolean} = {}) {
-    // any casts are necessary because typescript doesn't understand that P2 might be P
-    if (baseFs === this as any) {
-      return this.baseFs.copySync(this.throwIfPathReadonly(`copySync`, destination), source, {baseFs: this.baseFs as any, overwrite});
-    } else {
-      return this.baseFs.copySync(this.throwIfPathReadonly(`copySync`, destination), source, {baseFs, overwrite});
-    }
   }
 }
