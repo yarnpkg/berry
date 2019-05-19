@@ -1947,7 +1947,7 @@ __metadata:
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:3.2.1"
   bin:
-    "@berry/pnpify": ./lib/bin.js
+    pnpify: ./lib/bin.js
   languageName: unknown
   linkType: soft
 

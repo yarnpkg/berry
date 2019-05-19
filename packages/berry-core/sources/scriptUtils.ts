@@ -1,18 +1,18 @@
-import {CwdFS, ZipOpenFS, NodeFS, PortablePath, Filename} from '@berry/fslib';
-import {xfs, npath, ppath, toFilename}                    from '@berry/fslib';
-import {execute}                                          from '@berry/shell';
-import {PassThrough, Readable, Writable}                  from 'stream';
-import {dirSync}                                          from 'tmp';
+import {CwdFS, ZipOpenFS, NodeFS, NativePath, PortablePath, Filename} from '@berry/fslib';
+import {xfs, npath, ppath, toFilename}                                from '@berry/fslib';
+import {execute}                                                      from '@berry/shell';
+import {PassThrough, Readable, Writable}                              from 'stream';
+import {dirSync}                                                      from 'tmp';
 
-import {Manifest}                                         from './Manifest';
-import {Project}                                          from './Project';
-import {StreamReport}                                     from './StreamReport';
-import {Workspace}                                        from './Workspace';
-import * as execUtils                                     from './execUtils';
-import * as structUtils                                   from './structUtils';
-import {Locator}                                          from './types';
+import {Manifest}                                                     from './Manifest';
+import {Project}                                                      from './Project';
+import {StreamReport}                                                 from './StreamReport';
+import {Workspace}                                                    from './Workspace';
+import * as execUtils                                                 from './execUtils';
+import * as structUtils                                               from './structUtils';
+import {Locator}                                                      from './types';
 
-async function makePathWrapper(location: PortablePath, name: Filename, argv0: string, args: Array<string> = []) {
+async function makePathWrapper(location: PortablePath, name: Filename, argv0: NativePath, args: Array<string> = []) {
   if (process.platform === `win32`) {
     await xfs.writeFilePromise(ppath.format({dir: location, name, ext: '.cmd'}), `@"${argv0}" ${args.join(` `)} %*\n`);
   } else {
@@ -180,7 +180,7 @@ type GetPackageAccessibleBinariesOptions = {
 
 export async function getPackageAccessibleBinaries(locator: Locator, {project}: GetPackageAccessibleBinariesOptions) {
   const configuration = project.configuration;
-  const binaries: Map<string, [Locator, PortablePath]> = new Map();
+  const binaries: Map<string, [Locator, NativePath]> = new Map();
 
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
@@ -210,7 +210,7 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
     const packageLocation = await linker.findPackageLocation(dependency, linkerOptions);
 
     for (const [name, target] of dependency.bin) {
-      binaries.set(name, [dependency, ppath.resolve(packageLocation, target)]);
+      binaries.set(name, [dependency, NodeFS.fromPortablePath(ppath.resolve(packageLocation, target))]);
     }
   }
 
@@ -258,7 +258,7 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
   const env = await makeScriptEnv(project);
 
   for (const [binaryName, [, binaryPath]] of packageAccessibleBinaries)
-    await makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [NodeFS.fromPortablePath(binaryPath)]);
+    await makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath]);
 
   let result;
   try {
