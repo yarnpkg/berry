@@ -959,7 +959,7 @@ class ExecResolver {
         const manifest = await core_3.miscUtils.releaseAfterUseAsync(async () => {
             return await core_1.Manifest.find(packageFetch.prefixPath, { baseFs: packageFetch.packageFs });
         }, packageFetch.releaseFs);
-        return Object.assign({}, locator, { version: manifest.version || `0.0.0`, languageName: opts.project.configuration.get(`defaultLanguageName`), linkType: core_2.LinkType.HARD, dependencies: manifest.dependencies, peerDependencies: manifest.peerDependencies, dependenciesMeta: manifest.dependenciesMeta, peerDependenciesMeta: manifest.peerDependenciesMeta });
+        return Object.assign({}, locator, { version: manifest.version || `0.0.0`, languageName: opts.project.configuration.get(`defaultLanguageName`), linkType: core_2.LinkType.HARD, dependencies: manifest.dependencies, peerDependencies: manifest.peerDependencies, dependenciesMeta: manifest.dependenciesMeta, peerDependenciesMeta: manifest.peerDependenciesMeta, bin: manifest.bin });
     }
 }
 exports.ExecResolver = ExecResolver;

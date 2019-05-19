@@ -55,6 +55,8 @@ export class RawLinkResolver implements Resolver {
 
       dependenciesMeta: new Map(),
       peerDependenciesMeta: new Map(),
+
+      bin: new Map(),
     };
   }
 }

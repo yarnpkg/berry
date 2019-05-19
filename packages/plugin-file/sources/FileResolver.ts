@@ -70,6 +70,8 @@ export class FileResolver implements Resolver {
 
       dependenciesMeta: manifest.dependenciesMeta,
       peerDependenciesMeta: manifest.peerDependenciesMeta,
+
+      bin: manifest.bin,
     };
   }
 }

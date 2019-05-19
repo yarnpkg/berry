@@ -1,5 +1,5 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
-import {Descriptor, Locator, Manifest}                   from '@berry/core';
+import {Descriptor, Locator, Manifest, Package}          from '@berry/core';
 import {LinkType}                                        from '@berry/core';
 import {miscUtils, structUtils}                          from '@berry/core';
 import {NodeFS}                                          from '@berry/fslib';
@@ -41,7 +41,7 @@ export class LinkResolver implements Resolver {
     return [structUtils.makeLocator(descriptor, `${LINK_PROTOCOL}${NodeFS.toPortablePath(path)}`)];
   }
 
-  async resolve(locator: Locator, opts: ResolveOptions) {
+  async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
     const packageFetch = await opts.fetcher.fetch(locator, opts);
 
     const manifest = await miscUtils.releaseAfterUseAsync(async () => {
@@ -61,6 +61,8 @@ export class LinkResolver implements Resolver {
 
       dependenciesMeta: manifest.dependenciesMeta,
       peerDependenciesMeta: manifest.peerDependenciesMeta,
+
+      bin: manifest.bin,
     };
   }
 }

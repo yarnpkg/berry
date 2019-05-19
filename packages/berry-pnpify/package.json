@@ -3,9 +3,7 @@
   "version": "0.0.1",
   "sideEffects": false,
   "main": "./sources/index.ts",
-  "bin": {
-    "pnpify": "./lib/bin.js"
-  },
+  "bin": "./lib/bin.js",
   "scripts": {
     "prepack": "build:pnpify",
     "build:pnpify": "run webpack-cli --config webpack.config.pkg.js && node -r ./lib -r typescript/bin/tsc -- tsc --emitDeclarationOnly --declaration",

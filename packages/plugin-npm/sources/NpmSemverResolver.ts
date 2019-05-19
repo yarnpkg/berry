@@ -108,6 +108,8 @@ export class NpmSemverResolver implements Resolver {
 
       dependenciesMeta: manifest.dependenciesMeta,
       peerDependenciesMeta: manifest.peerDependenciesMeta,
+
+      bin: manifest.bin,
     };
   }
 

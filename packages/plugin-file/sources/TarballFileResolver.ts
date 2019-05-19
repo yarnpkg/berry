@@ -76,6 +76,8 @@ export class TarballFileResolver implements Resolver {
 
       dependenciesMeta: manifest.dependenciesMeta,
       peerDependenciesMeta: manifest.peerDependenciesMeta,
+
+      bin: manifest.bin,
     };
   }
 }

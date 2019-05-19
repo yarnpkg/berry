@@ -29327,6 +29327,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:1.3.5"
                 ],
                 [
+                  "node-gyp",
+                  "npm:3.8.0"
+                ],
+                [
                   "safe-buffer",
                   "npm:5.1.2"
                 ]
@@ -47415,6 +47419,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "nan",
                   "npm:2.12.1"
+                ],
+                [
+                  "node-gyp",
+                  "npm:3.8.0"
                 ]
               ]
             }

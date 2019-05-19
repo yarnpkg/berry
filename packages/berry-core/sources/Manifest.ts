@@ -130,7 +130,7 @@ export class Manifest {
 
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
-        this.bin = new Map([[structUtils.stringifyIdent(this.name), data.bin]]);
+        this.bin = new Map([[this.name.name, data.bin]]);
       } else {
         errors.push(new Error(`String bin field, but no attached package name`));
       }
@@ -391,6 +391,16 @@ export class Manifest {
     else
       delete data.languageName;
 
+    if (this.bin.size === 0) {
+      data.bin = undefined;
+    } else if (this.bin.size === 1 && this.name !== null && this.bin.has(this.name.name)) {
+      data.bin = this.bin.get(this.name.name)!;
+    } else {
+      data.bin = Object.assign({}, ...Array.from(this.bin.keys()).sort().map(name => {
+        return {[name]: this.bin.get(name)};
+      }));
+    }
+
     data.dependencies = this.dependencies.size === 0 ? undefined : Object.assign({}, ...structUtils.sortDescriptors(this.dependencies.values()).map(dependency => {
       return {[structUtils.stringifyIdent(dependency)]: dependency.range};
     }));
@@ -426,10 +436,11 @@ export class Manifest {
       return {[stringifyResolution(pattern)]: reference};
     }));
 
-    if (this.files === null) {
+    if (this.files === null)
       data.files = undefined;
-    } else {
+    else
       data.files = Array.from(this.files);
-    }
+
+    return data;
   }
 };

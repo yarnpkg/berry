@@ -4,7 +4,7 @@ const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{
 
 // The following keys will always be stored at the top of the object, in the
 // specified order. It's not fair but life isn't fair either.
-const specialObjectKeys = [`__metadata`, `version`, `resolution`, `dependencies`, `peerDependencies`, `dependenciesMeta`, `peerDependenciesMeta`];
+const specialObjectKeys = [`__metadata`, `version`, `resolution`, `dependencies`, `peerDependencies`, `dependenciesMeta`, `peerDependenciesMeta`, `binaries`];
 
 function stringifyString(value: string): string {
   if (value.match(simpleStringPattern)) {
