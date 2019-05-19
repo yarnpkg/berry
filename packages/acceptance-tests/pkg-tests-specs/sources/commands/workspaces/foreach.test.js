@@ -79,7 +79,6 @@ describe(`Commands`, () => {
           }
 
           expect(isInterlaced).toBe(true);
-
         }
       )
     );
@@ -222,17 +221,10 @@ function getServerContent() {
   return `
   const net = require('net');
   let pingCount = 0;
-  let timeoutId;
 
   const server = net.createServer(socket => {
-    timeoutId = setTimeout(server.close, 500);
-
     socket.on('data', () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(server.close, 500);
-
       if (++pingCount > 10) {
-        clearTimeout(timeoutId);
         socket.end();
 
         return server.close();
@@ -247,6 +239,8 @@ function getServerContent() {
     console.error(e);
     server.close()
   });
+
+  server.unref();
   server.listen(${PORT});
   `;
 }
