@@ -180,7 +180,7 @@ type GetPackageAccessibleBinariesOptions = {
 
 export async function getPackageAccessibleBinaries(locator: Locator, {project}: GetPackageAccessibleBinariesOptions) {
   const configuration = project.configuration;
-  const binaries: Map<string, [Locator, string]> = new Map();
+  const binaries: Map<string, [Locator, PortablePath]> = new Map();
 
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
@@ -258,7 +258,7 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
   const env = await makeScriptEnv(project);
 
   for (const [binaryName, [, binaryPath]] of packageAccessibleBinaries)
-    await makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath]);
+    await makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [NodeFS.fromPortablePath(binaryPath)]);
 
   let result;
   try {
@@ -282,7 +282,7 @@ type ExecuteWorkspaceAccessibleBinaryOptions = {
  *
  * @param workspace The queried package
  * @param binaryName The name of the binary file to execute
-   * @param args The arguments to pass to the file
+ * @param args The arguments to pass to the file
  */
 
 export async function executeWorkspaceAccessibleBinary(workspace: Workspace, binaryName: string, args: Array<string>, {cwd, stdin, stdout, stderr}: ExecuteWorkspaceAccessibleBinaryOptions) {
