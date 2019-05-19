@@ -222,10 +222,17 @@ function getServerContent() {
   return `
   const net = require('net');
   let pingCount = 0;
+  let timeoutId;
 
   const server = net.createServer(socket => {
+    timeoutId = setTimeout(server.close, 500);
+
     socket.on('data', () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(server.close, 500);
+
       if (++pingCount > 10) {
+        clearTimeout(timeoutId);
         socket.end();
 
         return server.close();
@@ -264,7 +271,7 @@ function getClientContent() {
       setTimeout(connect, 5);
   });
 
-  client.on('close', () => client.destroy());
+  client.on('close', client.destroy);
   client.on('data', () => {
     console.log('PONG');
     client.write('pong');
