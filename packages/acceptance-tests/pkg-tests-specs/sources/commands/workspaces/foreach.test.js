@@ -220,12 +220,17 @@ const PORT = 8078;
 function getServerContent() {
   return `
   const net = require('net');
+
+  const sockets = new Set();
   let pingCount = 0;
 
   const server = net.createServer(socket => {
+    sockets.add(socket);
+
     socket.on('data', () => {
       if (++pingCount > 10) {
-        socket.end();
+        for (let soc of sockets)
+          soc.end();
 
         return server.close();
       }
@@ -240,7 +245,6 @@ function getServerContent() {
     server.close()
   });
 
-  server.unref();
   server.listen(${PORT});
   `;
 }
