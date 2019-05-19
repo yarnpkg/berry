@@ -179,49 +179,42 @@ type GetPackageAccessibleBinariesOptions = {
  */
 
 export async function getPackageAccessibleBinaries(locator: Locator, {project}: GetPackageAccessibleBinariesOptions) {
+  const configuration = project.configuration;
+  const binaries: Map<string, [Locator, string]> = new Map();
+
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
-    throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
+    throw new Error(`Package for ${structUtils.prettyLocator(configuration, locator)} not found in the project`);
 
-  return await ZipOpenFS.openPromise(async (zipOpenFs: ZipOpenFS) => {
-    const configuration = project.configuration;
-    const stdout = new Writable();
+  const stdout = new Writable();
 
-    const linkers = project.configuration.getLinkers();
-    const linkerOptions = {project, report: new StreamReport({configuration, stdout})};
+  const linkers = configuration.getLinkers();
+  const linkerOptions = {project, report: new StreamReport({configuration, stdout})};
 
-    const binaries: Map<string, [Locator, string]> = new Map();
+  for (const descriptor of pkg.dependencies.values()) {
+    const resolution = project.storedResolutions.get(descriptor.descriptorHash);
+    if (!resolution)
+      throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(configuration, descriptor)}) should have been registered`);
 
-    const descriptors = [
-      ...pkg.dependencies.values(),
-      ...pkg.peerDependencies.values(),
-    ];
+    const dependency = project.storedPackages.get(resolution);
+    if (!dependency)
+      throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(configuration, descriptor)}) should have been registered`);
 
-    for (const descriptor of descriptors) {
-      const resolution = project.storedResolutions.get(descriptor.descriptorHash);
-      if (!resolution)
-        continue;
+    if (dependency.bin.size === 0)
+      continue;
 
-      const pkg = project.storedPackages.get(resolution);
-      if (!pkg)
-        continue;
+    const linker = linkers.find(linker => linker.supportsPackage(dependency, linkerOptions));
+    if (!linker)
+      continue;
 
-      const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
-      if (!linker)
-        continue;
+    const packageLocation = await linker.findPackageLocation(dependency, linkerOptions);
 
-      const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
-      const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
-      const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
-
-      for (const [binName, file] of manifest.bin.entries()) {
-        const physicalPath = NodeFS.fromPortablePath(ppath.resolve(packageLocation, file as PortablePath));
-        binaries.set(binName, [pkg, physicalPath]);
-      }
+    for (const [name, target] of dependency.bin) {
+      binaries.set(name, [dependency, ppath.resolve(packageLocation, target)]);
     }
+  }
 
-    return binaries;
-  });
+  return binaries;
 }
 
 /**
@@ -289,7 +282,7 @@ type ExecuteWorkspaceAccessibleBinaryOptions = {
  *
  * @param workspace The queried package
  * @param binaryName The name of the binary file to execute
- * @param args The arguments to pass to the file
+   * @param args The arguments to pass to the file
  */
 
 export async function executeWorkspaceAccessibleBinary(workspace: Workspace, binaryName: string, args: Array<string>, {cwd, stdin, stdout, stderr}: ExecuteWorkspaceAccessibleBinaryOptions) {

@@ -32,7 +32,7 @@ import {LinkType}                                                               
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
 // the Package type; no more no less.
-const LOCKFILE_VERSION = 2;
+const LOCKFILE_VERSION = 3;
 
 export type InstallOptions = {
   cache: Cache,
@@ -147,11 +147,13 @@ export class Project {
           const dependenciesMeta = manifest.dependenciesMeta;
           const peerDependenciesMeta = manifest.peerDependenciesMeta;
 
+          const bin = manifest.bin;
+
           if (data.checksum != null)
             this.storedChecksums.set(locator.locatorHash, data.checksum);
 
           if (lockfileVersion >= LOCKFILE_VERSION) {
-            const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies, dependenciesMeta, peerDependenciesMeta};
+            const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies, dependenciesMeta, peerDependenciesMeta, bin};
             this.storedPackages.set(pkg.locatorHash, pkg);
           }
 
@@ -1202,22 +1204,18 @@ export class Project {
       manifest.dependenciesMeta = new Map(pkg.dependenciesMeta);
       manifest.peerDependenciesMeta = new Map(pkg.peerDependenciesMeta);
 
+      manifest.bin = new Map(pkg.bin);
+
       // Since we don't keep the virtual packages in the lockfile, we must make
       // sure we don't reference them within the dependencies of our packages
       for (const [identHash, descriptor] of manifest.dependencies)
         if (structUtils.isVirtualDescriptor(descriptor))
           manifest.dependencies.set(identHash, structUtils.devirtualizeDescriptor(descriptor));
 
-      const serialized = (() => {
-        // Remove the fields we're not interested in to only keep the ones we want
-        const {identHash, scope, name, locatorHash, reference, dependencies, peerDependencies, ...rest} = pkg;
-        return rest;
-      })();
-
-      manifest.exportTo(serialized);
-
       optimizedLockfile[key] = {
-        ...serialized,
+        ...manifest.exportTo({}),
+
+        linkType: pkg.linkType,
 
         resolution: structUtils.stringifyLocator(pkg),
         checksum: this.storedChecksums.get(pkg.locatorHash),

@@ -53,6 +53,8 @@ export function renamePackage(pkg: Package, locator: Locator) {
 
     dependenciesMeta: new Map(pkg.dependenciesMeta),
     peerDependenciesMeta: new Map(pkg.peerDependenciesMeta),
+
+    bin: new Map(pkg.bin),
   };
 }
 

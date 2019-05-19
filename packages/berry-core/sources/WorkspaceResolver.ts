@@ -67,6 +67,8 @@ export class WorkspaceResolver implements Resolver {
 
       dependenciesMeta: workspace.manifest.dependenciesMeta,
       peerDependenciesMeta: workspace.manifest.peerDependenciesMeta,
+
+      bin: workspace.manifest.bin,
     };
   }
 }

@@ -1,3 +1,5 @@
+import {PortablePath}                       from '@berry/fslib';
+
 import {DependencyMeta, PeerDependencyMeta} from './Manifest';
 
 export type IdentHash = string & { __ident_hash: string };
@@ -35,4 +37,11 @@ export interface Package extends Locator {
 
   dependenciesMeta: Map<string, Map<string | null, DependencyMeta>>,
   peerDependenciesMeta: Map<string, PeerDependencyMeta>,
+
+  // While we don't need the binaries during the resolution, keeping them
+  // within the lockfile is critical to make `yarn run` fast (otherwise we
+  // need to inspect the zip content of every dependency to figure out which
+  // binaries they export, which is too slow for a command that might be
+  // called at every keystroke)
+  bin: Map<string, PortablePath>,
 };
