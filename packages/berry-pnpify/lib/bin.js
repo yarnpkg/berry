@@ -838,7 +838,7 @@ async function generateSdk(projectRoot, targetFolder) {
     const relPnpApiPath = path["e" /* ppath */].relative(path["e" /* ppath */].dirname(tsserver), path["e" /* ppath */].join(projectRoot, `.pnp.js`));
     await sources["b" /* xfs */].removePromise(tssdk);
     await sources["b" /* xfs */].mkdirpPromise(path["e" /* ppath */].dirname(tsserver));
-    await sources["b" /* xfs */].writeFilePromise(tssdkManifest, JSON.stringify({ name: 'typescript', version: __webpack_require__(17).version + '-pnpify' }, null, 2));
+    await sources["b" /* xfs */].writeFilePromise(tssdkManifest, JSON.stringify({ name: 'typescript', version: `${__webpack_require__(17).version}-pnpify` }, null, 2));
     await sources["b" /* xfs */].writeFilePromise(tsserver, TEMPLATE(relPnpApiPath));
     const settings = path["e" /* ppath */].join(projectRoot, `.vscode/settings.json`);
     const content = await sources["b" /* xfs */].existsPromise(settings) ? await sources["b" /* xfs */].readFilePromise(settings, `utf8`) : ``;
