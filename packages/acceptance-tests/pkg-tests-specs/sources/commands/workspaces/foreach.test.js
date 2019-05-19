@@ -64,12 +64,15 @@ describe(`Commands`, () => {
             ({code, stdout, stderr} = error);
           }
 
+          console.log(stdout, stderr);
+
           const lines = stdout.trim().split(`\n`);
           const firstLine = lines[0];
           let isInterlaced = false;
 
           // Expect Done on the last line
           expect(lines.pop()).toContain(`Done`);
+          expect(lines.length).toBeGreaterThan(0);
           expect(code).toBe(0);
           expect(stderr).toBe(``);
 
@@ -221,27 +224,24 @@ function getServerContent() {
   return `
   const net = require('net');
 
-  const sockets = new Set();
   let pingCount = 0;
 
   const server = net.createServer(socket => {
-    sockets.add(socket);
-
     socket.on('data', () => {
       if (++pingCount > 10) {
-        for (let soc of sockets)
-          soc.end();
+        socket.destroy();
 
-        return server.close();
+        return server.close(server.unref);
       }
 
-      console.log('PING');
-      socket.write('ping');
+      console.log('PONG');
+      socket.write('PONG');
     });
   });
 
   server.on('error', (e) => {
     console.error(e);
+    socket.destroy();
     server.close()
   });
 
@@ -258,7 +258,7 @@ function getClientContent() {
   let retries = 5;
 
   const connect = () => {
-    client.connect(${PORT}, () => client.write('pong'));
+    client.connect(${PORT}, () => client.write('PING'));
   };
 
   client.on('error', error => {
@@ -266,13 +266,12 @@ function getClientContent() {
       throw new Error('Server not available');
 
     if (error.code === 'ECONNREFUSED')
-      setTimeout(connect, 5);
+      setTimeout(connect, 50);
   });
 
-  client.on('close', client.destroy);
   client.on('data', () => {
-    console.log('PONG');
-    client.write('pong');
+    console.log('PING');
+    client.write('PING');
   });
 
   connect();
