@@ -109,13 +109,17 @@ function parseViaJsYaml(source: string) {
     return parseViaPeg(source);
   }
 
-  // Empty files are parsed as `null` instead of an empty object
-  if (value === null)
+  // Empty files are parsed as `undefined` instead of an empty object
+  // Empty files with 2 newlines or more are `null` instead
+  if (value === undefined || value === null)
     return {} as {[key: string]: string};
 
   // Files that contain single invalid line are treated as a raw string
   if (typeof value === `string`)
     return parseViaPeg(source);
+
+  if (typeof value !== `object` || Array.isArray(value))
+    throw new Error(`Invalid content type: expected an indexed object`);
 
   return value as {[key: string]: string};
 }
