@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 18);
+/******/ 	return __webpack_require__(__webpack_require__.s = 19);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -91,11 +91,12 @@ module.exports =
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PortablePath; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return npath; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return ppath; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return toFilename; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return fromPortablePath; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return toPortablePath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return npath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return ppath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return fromPortablePath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return toPortablePath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return convertPath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return toFilename; });
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 
@@ -105,11 +106,6 @@ const PortablePath = {
 };
 const npath = path__WEBPACK_IMPORTED_MODULE_0___default.a;
 const ppath = path__WEBPACK_IMPORTED_MODULE_0___default.a.posix;
-function toFilename(filename) {
-    if (npath.parse(filename).dir !== '' || ppath.parse(filename).dir !== '')
-        throw new Error(`Invalid filename: "${filename}"`);
-    return filename;
-}
 const WINDOWS_PATH_REGEXP = /^[a-zA-Z]:.*$/;
 const PORTABLE_PATH_REGEXP = /^\/[a-zA-Z]:.*$/;
 // Path should look like "/N:/berry/scripts/plugin-pack.js"
@@ -125,6 +121,14 @@ function toPortablePath(p) {
     if (process.platform !== 'win32')
         return p;
     return (p.match(WINDOWS_PATH_REGEXP) ? `/${p}` : p).replace(/\\/g, `/`);
+}
+function convertPath(targetPathUtils, sourcePath) {
+    return (targetPathUtils === npath ? fromPortablePath(sourcePath) : toPortablePath(sourcePath));
+}
+function toFilename(filename) {
+    if (npath.parse(filename).dir !== '' || ppath.parse(filename).dir !== '')
+        throw new Error(`Invalid filename: "${filename}"`);
+    return filename;
 }
 
 
@@ -460,10 +464,10 @@ class NodeFS extends _FakeFS__WEBPACK_IMPORTED_MODULE_1__[/* BasePortableFakeFS 
         };
     }
     static fromPortablePath(p) {
-        return Object(_path__WEBPACK_IMPORTED_MODULE_2__[/* fromPortablePath */ "b"])(p);
+        return Object(_path__WEBPACK_IMPORTED_MODULE_2__[/* fromPortablePath */ "c"])(p);
     }
     static toPortablePath(p) {
-        return Object(_path__WEBPACK_IMPORTED_MODULE_2__[/* toPortablePath */ "f"])(p);
+        return Object(_path__WEBPACK_IMPORTED_MODULE_2__[/* toPortablePath */ "g"])(p);
     }
 }
 
@@ -481,98 +485,6 @@ class NodeFS extends _FakeFS__WEBPACK_IMPORTED_MODULE_1__[/* BasePortableFakeFS 
 class FakeFS {
     constructor(pathUtils) {
         this.pathUtils = pathUtils;
-    }
-    async changeFilePromise(p, content) {
-        try {
-            const current = await this.readFilePromise(p, `utf8`);
-            if (current === content) {
-                return;
-            }
-        }
-        catch (error) {
-            // ignore errors, no big deal
-        }
-        await this.writeFilePromise(p, content);
-    }
-    changeFileSync(p, content) {
-        try {
-            const current = this.readFileSync(p, `utf8`);
-            if (current === content) {
-                return;
-            }
-        }
-        catch (error) {
-            // ignore errors, no big deal
-        }
-        this.writeFileSync(p, content);
-    }
-    async movePromise(fromP, toP) {
-        try {
-            await this.renamePromise(fromP, toP);
-        }
-        catch (error) {
-            if (error.code === `EXDEV`) {
-                await this.copyPromise(toP, fromP);
-                await this.removePromise(fromP);
-            }
-            else {
-                throw error;
-            }
-        }
-    }
-    moveSync(fromP, toP) {
-        try {
-            this.renameSync(fromP, toP);
-        }
-        catch (error) {
-            if (error.code === `EXDEV`) {
-                this.copySync(toP, fromP);
-                this.removeSync(fromP);
-            }
-            else {
-                throw error;
-            }
-        }
-    }
-    async lockPromise(affectedPath, callback) {
-        const lockPath = `${affectedPath}.lock`;
-        const interval = 1000 / 60;
-        const timeout = Date.now() + 60 * 1000;
-        let fd = null;
-        while (fd === null) {
-            try {
-                fd = await this.openPromise(lockPath, `wx`);
-            }
-            catch (error) {
-                if (error.code === `EEXIST`) {
-                    if (Date.now() < timeout) {
-                        await new Promise(resolve => setTimeout(resolve, interval));
-                    }
-                    else {
-                        throw new Error(`Couldn't acquire a lock in a reasonable time (via ${lockPath})`);
-                    }
-                }
-                else {
-                    throw error;
-                }
-            }
-        }
-        try {
-            await callback();
-        }
-        finally {
-            await this.closePromise(fd);
-            await this.unlinkPromise(lockPath);
-        }
-    }
-}
-;
-class BasePortableFakeFS extends FakeFS {
-    constructor() {
-        super(_path__WEBPACK_IMPORTED_MODULE_0__[/* ppath */ "d"]);
-    }
-    resolve(p) {
-        return this.pathUtils.resolve(_path__WEBPACK_IMPORTED_MODULE_0__[/* PortablePath */ "a"].root, p);
     }
     async removePromise(p) {
         let stat;
@@ -694,7 +606,7 @@ class BasePortableFakeFS extends FakeFS {
             await this.mkdirpPromise(destination);
             const directoryListing = await baseFs.readdirPromise(source);
             await Promise.all(directoryListing.map(entry => {
-                return this.copyPromise(_path__WEBPACK_IMPORTED_MODULE_0__[/* ppath */ "d"].join(destination, entry), baseFs.pathUtils.join(source, entry), { baseFs, overwrite });
+                return this.copyPromise(this.pathUtils.join(destination, entry), baseFs.pathUtils.join(source, entry), { baseFs, overwrite });
             }));
         }
         else if (stat.isFile()) {
@@ -710,7 +622,7 @@ class BasePortableFakeFS extends FakeFS {
                 if (exists)
                     await this.removePromise(destination);
                 const target = await baseFs.readlinkPromise(source);
-                await this.symlinkPromise(Object(_path__WEBPACK_IMPORTED_MODULE_0__[/* toPortablePath */ "f"])(target), destination);
+                await this.symlinkPromise(Object(_path__WEBPACK_IMPORTED_MODULE_0__[/* convertPath */ "b"])(this.pathUtils, target), destination);
             }
         }
         else {
@@ -742,7 +654,7 @@ class BasePortableFakeFS extends FakeFS {
                 if (exists)
                     this.removeSync(destination);
                 const target = baseFs.readlinkSync(source);
-                this.symlinkSync(Object(_path__WEBPACK_IMPORTED_MODULE_0__[/* toPortablePath */ "f"])(target), destination);
+                this.symlinkSync(Object(_path__WEBPACK_IMPORTED_MODULE_0__[/* convertPath */ "b"])(this.pathUtils, target), destination);
             }
         }
         else {
@@ -750,6 +662,98 @@ class BasePortableFakeFS extends FakeFS {
         }
         const mode = stat.mode & 0o777;
         this.chmodSync(destination, mode);
+    }
+    async changeFilePromise(p, content) {
+        try {
+            const current = await this.readFilePromise(p, `utf8`);
+            if (current === content) {
+                return;
+            }
+        }
+        catch (error) {
+            // ignore errors, no big deal
+        }
+        await this.writeFilePromise(p, content);
+    }
+    changeFileSync(p, content) {
+        try {
+            const current = this.readFileSync(p, `utf8`);
+            if (current === content) {
+                return;
+            }
+        }
+        catch (error) {
+            // ignore errors, no big deal
+        }
+        this.writeFileSync(p, content);
+    }
+    async movePromise(fromP, toP) {
+        try {
+            await this.renamePromise(fromP, toP);
+        }
+        catch (error) {
+            if (error.code === `EXDEV`) {
+                await this.copyPromise(toP, fromP);
+                await this.removePromise(fromP);
+            }
+            else {
+                throw error;
+            }
+        }
+    }
+    moveSync(fromP, toP) {
+        try {
+            this.renameSync(fromP, toP);
+        }
+        catch (error) {
+            if (error.code === `EXDEV`) {
+                this.copySync(toP, fromP);
+                this.removeSync(fromP);
+            }
+            else {
+                throw error;
+            }
+        }
+    }
+    async lockPromise(affectedPath, callback) {
+        const lockPath = `${affectedPath}.lock`;
+        const interval = 1000 / 60;
+        const timeout = Date.now() + 60 * 1000;
+        let fd = null;
+        while (fd === null) {
+            try {
+                fd = await this.openPromise(lockPath, `wx`);
+            }
+            catch (error) {
+                if (error.code === `EEXIST`) {
+                    if (Date.now() < timeout) {
+                        await new Promise(resolve => setTimeout(resolve, interval));
+                    }
+                    else {
+                        throw new Error(`Couldn't acquire a lock in a reasonable time (via ${lockPath})`);
+                    }
+                }
+                else {
+                    throw error;
+                }
+            }
+        }
+        try {
+            await callback();
+        }
+        finally {
+            await this.closePromise(fd);
+            await this.unlinkPromise(lockPath);
+        }
+    }
+}
+;
+class BasePortableFakeFS extends FakeFS {
+    constructor() {
+        super(_path__WEBPACK_IMPORTED_MODULE_0__[/* ppath */ "e"]);
+    }
+    resolve(p) {
+        return this.pathUtils.resolve(_path__WEBPACK_IMPORTED_MODULE_0__[/* PortablePath */ "a"].root, p);
     }
 }
 
@@ -1008,36 +1012,6 @@ class ProxiedFS_ProxiedFS extends FakeFS["b" /* FakeFS */] {
     readlinkSync(p) {
         return this.mapFromBase(this.baseFs.readlinkSync(this.mapToBase(p)));
     }
-    removePromise(p) {
-        return this.baseFs.removePromise(this.mapToBase(p));
-    }
-    removeSync(p) {
-        return this.baseFs.removeSync(this.mapToBase(p));
-    }
-    mkdirpPromise(p, options) {
-        return this.baseFs.mkdirpPromise(this.mapToBase(p), options);
-    }
-    mkdirpSync(p, options) {
-        return this.baseFs.mkdirpSync(this.mapToBase(p), options);
-    }
-    copyPromise(destination, source, { baseFs = this, overwrite } = {}) {
-        // any casts are necessary because typescript doesn't understand that P2 might be P
-        if (baseFs === this) {
-            return this.baseFs.copyPromise(this.mapToBase(destination), this.mapToBase(source), { baseFs: this.baseFs, overwrite });
-        }
-        else {
-            return this.baseFs.copyPromise(this.mapToBase(destination), source, { baseFs, overwrite });
-        }
-    }
-    copySync(destination, source, { baseFs = this, overwrite } = {}) {
-        // any casts are necessary because typescript doesn't understand that P2 might be P
-        if (baseFs === this) {
-            return this.baseFs.copySync(this.mapToBase(destination), this.mapToBase(source), { baseFs: this.baseFs, overwrite });
-        }
-        else {
-            return this.baseFs.copySync(this.mapToBase(destination), source, { baseFs, overwrite });
-        }
-    }
 }
 
 // EXTERNAL MODULE: ../berry-fslib/sources/path.ts
@@ -1050,7 +1024,7 @@ var sources_path = __webpack_require__(0);
 
 class PosixFS_PosixFS extends ProxiedFS_ProxiedFS {
     constructor(baseFs) {
-        super(sources_path["c" /* npath */]);
+        super(sources_path["d" /* npath */]);
         this.baseFs = baseFs;
     }
     mapFromBase(path) {
@@ -1077,7 +1051,8 @@ module.exports = require("events");
 
 /***/ }),
 /* 17 */,
-/* 18 */
+/* 18 */,
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1141,12 +1116,12 @@ class NodePathResolver_NodePathResolver {
         for (const key of issuerInfo.packageDependencies.keys()) {
             const [pkgNameOrScope, pkgName] = key.split('/');
             if (!scope) {
-                if (!result.has(Object(path["e" /* toFilename */])(pkgNameOrScope))) {
-                    result.add(Object(path["e" /* toFilename */])(pkgNameOrScope));
+                if (!result.has(Object(path["f" /* toFilename */])(pkgNameOrScope))) {
+                    result.add(Object(path["f" /* toFilename */])(pkgNameOrScope));
                 }
             }
             else if (scope === pkgNameOrScope) {
-                result.add(Object(path["e" /* toFilename */])(pkgName));
+                result.add(Object(path["f" /* toFilename */])(pkgName));
             }
         }
         return result.size === 0 ? undefined : Array.from(result);
@@ -1333,7 +1308,7 @@ var PnPApiLocator = __webpack_require__(6);
 
 class NodeModulesFS_NodeModulesFS extends FakeFS["b" /* FakeFS */] {
     constructor({ baseFs = new PosixFS["a" /* PosixFS */](new NodeFS["a" /* NodeFS */]()) } = {}) {
-        super(path["c" /* npath */]);
+        super(path["d" /* npath */]);
         this.baseFs = baseFs;
         this.pathResolver = new NodePathResolver_NodePathResolver({
             apiLoader: new PnPApiLoader_PnPApiLoader({ watch: external_fs_default.a.watch.bind(external_fs_default.a) }),
@@ -1347,7 +1322,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS["b" /* FakeFS */] {
         return this.baseFs;
     }
     resolvePath(p) {
-        const fullOriginalPath = path["c" /* npath */].resolve(p);
+        const fullOriginalPath = path["d" /* npath */].resolve(p);
         return Object.assign({}, this.pathResolver.resolvePath(fullOriginalPath), { fullOriginalPath });
     }
     resolveFilePath(p) {
@@ -1372,7 +1347,7 @@ class NodeModulesFS_NodeModulesFS extends FakeFS["b" /* FakeFS */] {
                         throw NodeModulesFS_NodeModulesFS.createFsError('EINVAL', `invalid argument, ${op} '${p}'`);
                     }
                     else {
-                        return onSymlink(stats, path["c" /* npath */].relative(path["c" /* npath */].dirname(pnpPath.fullOriginalPath), pnpPath.statPath || pnpPath.resolvedPath));
+                        return onSymlink(stats, path["d" /* npath */].relative(path["d" /* npath */].dirname(pnpPath.fullOriginalPath), pnpPath.statPath || pnpPath.resolvedPath));
                     }
                 }
                 catch (e) {
@@ -1579,36 +1554,6 @@ class NodeModulesFS_NodeModulesFS extends FakeFS["b" /* FakeFS */] {
     }
     readlinkSync(p) {
         return this.resolveLink(p, 'readlink', (_stats, targetPath) => targetPath, () => this.baseFs.readlinkSync(p));
-    }
-    removePromise(p) {
-        return this.baseFs.removePromise(this.throwIfPathReadonly(`remove`, p));
-    }
-    removeSync(p) {
-        return this.baseFs.removeSync(this.throwIfPathReadonly(`removeSync`, p));
-    }
-    mkdirpPromise(p, options) {
-        return this.baseFs.mkdirpPromise(this.throwIfPathReadonly(`mkdirp`, p), options);
-    }
-    mkdirpSync(p, options) {
-        return this.baseFs.mkdirpSync(this.throwIfPathReadonly(`mkdirpSync`, p), options);
-    }
-    copyPromise(destination, source, { baseFs = this, overwrite } = {}) {
-        // any casts are necessary because typescript doesn't understand that P2 might be P
-        if (baseFs === this) {
-            return this.baseFs.copyPromise(this.throwIfPathReadonly(`copy`, destination), source, { baseFs: this.baseFs, overwrite });
-        }
-        else {
-            return this.baseFs.copyPromise(this.throwIfPathReadonly(`copy`, destination), source, { baseFs, overwrite });
-        }
-    }
-    copySync(destination, source, { baseFs = this, overwrite } = {}) {
-        // any casts are necessary because typescript doesn't understand that P2 might be P
-        if (baseFs === this) {
-            return this.baseFs.copySync(this.throwIfPathReadonly(`copySync`, destination), source, { baseFs: this.baseFs, overwrite });
-        }
-        else {
-            return this.baseFs.copySync(this.throwIfPathReadonly(`copySync`, destination), source, { baseFs, overwrite });
-        }
     }
 }
 
