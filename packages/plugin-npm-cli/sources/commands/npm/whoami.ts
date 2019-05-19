@@ -34,9 +34,8 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
     const report = await StreamReport.start({configuration, stdout}, async report => {
       let ident: Ident | null = null;
 
-      if (scope) {
+      if (scope)
         ident = structUtils.makeIdent(scope, ``);
-      }
 
       try {
         const response = await npmHttpUtils.get(`/-/whoami`, { configuration, ident, authType: npmHttpUtils.AuthType.ALWAYS_AUTH, json: true });

@@ -1,7 +1,7 @@
 // @ts-ignore
-import {load}  from 'js-yaml';
+import {safeLoad} from 'js-yaml';
 
-import {parse} from './grammars/syml';
+import {parse}    from './grammars/syml';
 
 const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{}:# \t\r\n]).)*$/;
 
@@ -84,19 +84,42 @@ function stringifyValue(value: any, indentLevel: number): string {
 }
 
 export function stringifySyml(value: any) {
-  return stringifyValue(value, 0);
-}
-
-export function parseSyml(source: string) {
   try {
-    try {
-      return load(source) as {[key: string]: any};
-    } catch (error) {
-      return parse(source.endsWith(`\n`) ? source : `${source}\n`);
-    }
+    return stringifyValue(value, 0);
   } catch (error) {
     if (error.location)
       error.message = error.message.replace(/(\.)?$/, ` (line ${error.location.start.line}, column ${error.location.start.column})$1`);
     throw error;
   }
+}
+
+function parseViaPeg(source: string) {
+  if (!source.endsWith(`\n`))
+    source += `\n`;
+
+  return parse(source);
+}
+
+function parseViaJsYaml(source: string) {
+  let value;
+
+  try {
+    value = safeLoad(source);
+  } catch (error) {
+    return parseViaPeg(source);
+  }
+
+  // Empty files are parsed as `null` instead of an empty object
+  if (value === null)
+    return {} as {[key: string]: string};
+
+  // Files that contain single invalid line are treated as a raw string
+  if (typeof value === `string`)
+    return parseViaPeg(source);
+
+  return value as {[key: string]: string};
+}
+
+export function parseSyml(source: string) {
+  return parseViaJsYaml(source);
 }
