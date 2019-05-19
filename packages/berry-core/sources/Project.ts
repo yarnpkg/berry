@@ -34,6 +34,8 @@ import {LinkType}                                                               
 // the Package type; no more no less.
 const LOCKFILE_VERSION = 3;
 
+const MULTIPLE_KEYS_REGEXP = / *, */g;
+
 export type InstallOptions = {
   cache: Cache,
   fetcher?: Fetcher,
@@ -117,6 +119,7 @@ export class Project {
     this.storedPackages = new Map();
 
     const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+    const defaultLanguageName = this.configuration.get(`defaultLanguageName`);
 
     if (xfs.existsSync(lockfilePath)) {
       const content = await xfs.readFilePromise(lockfilePath, `utf8`);
@@ -138,7 +141,7 @@ export class Project {
 
           const version = manifest.version;
 
-          const languageName = manifest.languageName || this.configuration.get(`defaultLanguageName`);
+          const languageName = manifest.languageName || defaultLanguageName;
           const linkType = data.linkType as LinkType;
 
           const dependencies = manifest.dependencies;
@@ -157,7 +160,7 @@ export class Project {
             this.storedPackages.set(pkg.locatorHash, pkg);
           }
 
-          for (const entry of key.split(/ *, */g)) {
+          for (const entry of key.split(MULTIPLE_KEYS_REGEXP)) {
             const descriptor = structUtils.parseDescriptor(entry);
 
             this.storedDescriptors.set(descriptor.descriptorHash, descriptor);
