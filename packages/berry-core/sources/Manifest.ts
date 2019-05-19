@@ -400,7 +400,7 @@ export class Manifest {
         return {[name]: this.bin.get(name)};
       }));
     }
-  
+
     data.dependencies = this.dependencies.size === 0 ? undefined : Object.assign({}, ...structUtils.sortDescriptors(this.dependencies.values()).map(dependency => {
       return {[structUtils.stringifyIdent(dependency)]: dependency.range};
     }));
@@ -440,7 +440,7 @@ export class Manifest {
       data.files = undefined;
     else
       data.files = Array.from(this.files);
-    
+
     return data;
   }
 };

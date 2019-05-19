@@ -46,7 +46,7 @@ export class GithubResolver implements Resolver {
 
       dependenciesMeta: manifest.dependenciesMeta,
       peerDependenciesMeta: manifest.peerDependenciesMeta,
-      
+
       bin: manifest.bin,
     };
   }
