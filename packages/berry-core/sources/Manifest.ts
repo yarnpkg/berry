@@ -130,7 +130,7 @@ export class Manifest {
 
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
-        this.bin = new Map([[structUtils.stringifyIdent(this.name), data.bin]]);
+        this.bin = new Map([[this.name.name, data.bin]]);
       } else {
         errors.push(new Error(`String bin field, but no attached package name`));
       }
