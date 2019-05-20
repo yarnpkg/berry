@@ -310,9 +310,6 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
   if (definition.type === SettingsType.BOOLEAN)
     return parseBoolean(value);
 
-  if (typeof value === `number`)
-    value = String(value);
-
   if (typeof value !== `string`)
     throw new Error(`Expected value to be a string`);
 

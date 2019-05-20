@@ -1,7 +1,7 @@
 // @ts-ignore
-import {safeLoad} from 'js-yaml';
+import {safeLoad, FAILSAFE_SCHEMA} from 'js-yaml';
 
-import {parse}    from './grammars/syml';
+import {parse}                     from './grammars/syml';
 
 const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{}:# \t\r\n]).)*$/;
 
@@ -106,7 +106,9 @@ function parseViaJsYaml(source: string) {
   if (LEGACY_REGEXP.test(source))
     return parseViaPeg(source);
 
-  let value = safeLoad(source);
+  let value = safeLoad(source, {
+    schema: FAILSAFE_SCHEMA,
+  });
 
   // Empty files are parsed as `undefined` instead of an empty object
   // Empty files with 2 newlines or more are `null` instead

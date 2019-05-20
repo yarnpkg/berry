@@ -16,6 +16,32 @@ The long term fix is of course to submit a pull request upstream to add the miss
 
 Note that the short-term fix isn't meant to be long-term: you'll need to reapply it each time the package version changes and its metadata are downloaded from the registry again.
 
+## Yarn & lockfile format
+
+> Parse error when loading {path}; please check it's proper Yaml (in particular, make sure you list the colons after each key name)
+
+Starting from the v2 Yarn expects proper Yaml files by default. We still can read old-style files, but they must start with a particular comment:
+
+```yaml
+# yarn lockfile v1
+```
+
+Old-style files are very similar to Yaml, but with one major distinction: keys don't contain colons when their value is on the same line. The following old-style file:
+
+```
+hello-world:
+  setting-a foo
+  setting-b bar
+```
+
+Would look like the following once converted into Yaml:
+
+```yaml
+hello-world:
+  settings-a: foo
+  settings-b: foo
+```
+
 ## Yarnrc file detection
 
 The Yarnrc files mechanisms have been changed and simplified. In particular:
