@@ -1061,10 +1061,9 @@ class NodePathResolver_NodePathResolver {
             return result;
         // Extract first issuer from the path using PnP API
         let issuer = this.getIssuer(this.pnp, nodePath);
-        let request;
         // If we have something left in a path to parse, do that
         if (issuer && nodePath.length > issuer.length) {
-            request = nodePath.substring(issuer.length);
+            let request = nodePath.substring(issuer.length);
             let m;
             let rest;
             let pkgName;
@@ -1117,10 +1116,11 @@ class NodePathResolver_NodePathResolver {
                     result.resolvedPath = sources_path["e" /* ppath */].join(issuer, request);
                 }
             }
+            else {
+                // If we don't have issuer here, it means the path cannot exist in PnP project
+                result.resolvedPath = null;
+            }
         }
-        // If we don't have issuer here, it means the path cannot exist in PnP project
-        if (!issuer)
-            result.resolvedPath = null;
         return result;
     }
 }
@@ -1187,7 +1187,7 @@ class NodeModulesFS_PortableNodeModulesFs extends FakeFS["b" /* FakeFS */] {
                 }
             }
         }
-        return onRealPath();
+        return onRealPath(pnpPath.statPath || pnpPath.resolvedPath);
     }
     static makeSymlinkStats(stats) {
         return Object.assign(stats, {
@@ -1241,11 +1241,13 @@ class NodeModulesFS_PortableNodeModulesFs extends FakeFS["b" /* FakeFS */] {
     async realpathPromise(p) {
         const targetPath = this.resolveFilePath(p);
         const stats = await this.baseFs.statPromise(targetPath);
+        // We return the symlink paths for folder to try to keep virtual paths alive as long as we can
         return stats.isDirectory() ? targetPath : await this.baseFs.realpathPromise(targetPath);
     }
     realpathSync(p) {
         const targetPath = this.resolveFilePath(p);
         const stats = this.baseFs.statSync(targetPath);
+        // We return the symlink paths for folder to try to keep virtual paths alive as long as we can
         return stats.isDirectory() ? targetPath : this.baseFs.realpathSync(targetPath);
     }
     async existsPromise(p) {
@@ -1285,10 +1287,10 @@ class NodeModulesFS_PortableNodeModulesFs extends FakeFS["b" /* FakeFS */] {
         return this.baseFs.statSync(this.resolveDirOrFilePath(p));
     }
     async lstatPromise(p) {
-        return this.resolveLink(p, 'lstat', (stats) => NodeModulesFS_PortableNodeModulesFs.makeSymlinkStats(stats), async () => await this.baseFs.lstatPromise(p));
+        return this.resolveLink(p, 'lstat', (stats) => NodeModulesFS_PortableNodeModulesFs.makeSymlinkStats(stats), async (resolvedPath) => await this.baseFs.lstatPromise(resolvedPath));
     }
     lstatSync(p) {
-        return this.resolveLink(p, 'lstat', (stats) => NodeModulesFS_PortableNodeModulesFs.makeSymlinkStats(stats), () => this.baseFs.lstatSync(p));
+        return this.resolveLink(p, 'lstat', (stats) => NodeModulesFS_PortableNodeModulesFs.makeSymlinkStats(stats), (resolvedPath) => this.baseFs.lstatSync(this.resolveDirOrFilePath(resolvedPath)));
     }
     async chmodPromise(p, mask) {
         return await this.baseFs.chmodPromise(this.throwIfPathReadonly('chmod', p), mask);
@@ -1387,10 +1389,10 @@ class NodeModulesFS_PortableNodeModulesFs extends FakeFS["b" /* FakeFS */] {
         }
     }
     async readlinkPromise(p) {
-        return this.resolveLink(p, 'readlink', (_stats, targetPath) => targetPath, async () => await this.baseFs.readlinkPromise(p));
+        return this.resolveLink(p, 'readlink', (_stats, targetPath) => targetPath, async (targetPath) => await this.baseFs.readlinkPromise(this.resolveDirOrFilePath(targetPath)));
     }
     readlinkSync(p) {
-        return this.resolveLink(p, 'readlink', (_stats, targetPath) => targetPath, () => this.baseFs.readlinkSync(p));
+        return this.resolveLink(p, 'readlink', (_stats, targetPath) => targetPath, (targetPath) => this.baseFs.readlinkSync(this.resolveDirOrFilePath(targetPath)));
     }
 }
 

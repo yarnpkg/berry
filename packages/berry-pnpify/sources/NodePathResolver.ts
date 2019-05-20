@@ -115,11 +115,10 @@ export class NodePathResolver {
 
     // Extract first issuer from the path using PnP API
     let issuer = this.getIssuer(this.pnp, nodePath);
-    let request: PortablePath;
 
     // If we have something left in a path to parse, do that
     if (issuer && nodePath.length > issuer.length) {
-      request = nodePath.substring(issuer.length) as PortablePath;
+      let request: PortablePath = nodePath.substring(issuer.length) as PortablePath;
 
       let m;
       let rest;
@@ -170,13 +169,11 @@ export class NodePathResolver {
         } else {
           result.resolvedPath = ppath.join(issuer, request);
         }
+      } else {
+        // If we don't have issuer here, it means the path cannot exist in PnP project
+        result.resolvedPath = null;
       }
     }
-
-    // If we don't have issuer here, it means the path cannot exist in PnP project
-    if (!issuer)
-      result.resolvedPath = null;
-
 
     return result;
   }
