@@ -36,6 +36,7 @@ describe(`githubUtils`, () => {
     it(`should respond false to invalid urls`, () => {
 
       const invalidUrls = [
+        'shttp://github.com/yarnpkg/berry.git#master',
         'got://github.com/yarnpkg/berry#ff786f9f',
         'git://github.com/yarnpkg/berry',
         'http://github.com/yarnpkg',
