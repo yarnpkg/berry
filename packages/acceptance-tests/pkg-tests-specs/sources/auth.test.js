@@ -144,7 +144,7 @@ describe(`Auth tests`, () => {
         dependencies: {[`private-package`]: `1.0.0`},
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthIdent: "${AUTH_IDENT}"\nnpmAlwaysAuth true\n`);
+        await writeFile(`${path}/.yarnrc`, `npmAuthIdent: "${AUTH_IDENT}"\nnpmAlwaysAuth: true\n`);
 
         await run(`install`);
 
@@ -163,7 +163,7 @@ describe(`Auth tests`, () => {
         dependencies: {[`private-package`]: `1.0.0`},
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthToken: "${INVALID_AUTH_TOKEN}"\nnpmAlwaysAuth true\n`);
+        await writeFile(`${path}/.yarnrc`, `npmAuthToken: "${INVALID_AUTH_TOKEN}"\nnpmAlwaysAuth: true\n`);
 
         await expect(run(`install`)).rejects.toThrow();
       },
@@ -177,7 +177,7 @@ describe(`Auth tests`, () => {
         dependencies: {[`private-package`]: `1.0.0`},
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthIdent: "${INVALID_AUTH_IDENT}"\nnpmAlwaysAuth true\n`);
+        await writeFile(`${path}/.yarnrc`, `npmAuthIdent: "${INVALID_AUTH_IDENT}"\nnpmAlwaysAuth: true\n`);
 
         await expect(run(`install`)).rejects.toThrow();
       },

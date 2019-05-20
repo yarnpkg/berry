@@ -114,10 +114,10 @@ function parseViaJsYaml(source: string) {
     return {} as {[key: string]: string};
 
   if (typeof value !== `object`)
-    throw new Error(`Invalid content type: expected an indexed object, got ${typeof value} instead`);
+    throw new Error(`Expected an indexed object, got a ${typeof value} instead. Does your file follow Yaml's rules?`);
 
   if (Array.isArray(value))
-    throw new Error(`Invalid content type: expected an indexed object, got array instead`);
+    throw new Error(`Expected an indexed object, got an array instead. Does your file follow Yaml's rules?`);
 
   return value as {[key: string]: string};
 }
