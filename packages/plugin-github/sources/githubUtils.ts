@@ -1,10 +1,10 @@
 
 const githubPatterns = [
   /^github:([^\/#]+)\/([^\/#]+)(?:#(.+))?$/,
-  /^[git@github.com:|git:\/\/github.com]+([^\/#]+)\/([^\/#]+)\.git(?:#(.+))?$/,
+  /^(?:git@github.com:|git:\/\/github\.com)\/?([^\/#]+)\/([^\/#]+)\.git(?:#(.+))?$/,
   /^git\+https:\/\/github.com\/([^\/#]+)\/([^\/#]+)\.git?(?:#(.+))?$/,
   /^https:\/\/github.com\/([^\/#]+)\/([^\/#]+)\/tarball\/([^\/#]+)(?:#|$)/,
-  /^[http|https]+:\/\/.*github.com\/([^\/#]+)\/([^\/#]+)\.git?(?:#(.+))?$/,
+  /^(?:http|https):\/\/.*github.com\/([^\/#]+)\/([^\/#]+)\.git?(?:#(.+))?$/,
 ];
 
 /**
@@ -46,10 +46,5 @@ export function parseGithubUrl(urlStr: string): ParsedGithubUrl {
 }
 
 export function invalidGithubUrlMessage(url: string): string {
-  const message = `Input cannot be parsed as a valid Github URL ('${url}').\n
-  Consider trying:\n
-  https://github.com/username/repo.git\n
-  `
-
-  return message;
+  return `Input cannot be parsed as a valid Github URL ('${url}').`
 }
