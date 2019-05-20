@@ -967,7 +967,7 @@ class PortablePnPApi_PortablePnPApi {
         if (nativeInfo) {
             portableInfo = {
                 packageLocation: NodeFS["a" /* NodeFS */].toPortablePath(nativeInfo.packageLocation),
-                packageDependencies: nativeInfo.packageDependencies
+                packageDependencies: nativeInfo.packageDependencies,
             };
         }
         return portableInfo;
@@ -1119,9 +1119,8 @@ class NodePathResolver_NodePathResolver {
             }
         }
         // If we don't have issuer here, it means the path cannot exist in PnP project
-        if (!issuer) {
+        if (!issuer)
             result.resolvedPath = null;
-        }
         return result;
     }
 }
@@ -1240,10 +1239,14 @@ class NodeModulesFS_PortableNodeModulesFs extends FakeFS["b" /* FakeFS */] {
         return this.baseFs.createWriteStream(this.throwIfPathReadonly('createWriteStream', p), opts);
     }
     async realpathPromise(p) {
-        return await this.baseFs.realpathPromise(this.resolveFilePath(p));
+        const targetPath = this.resolveFilePath(p);
+        const stats = await this.baseFs.statPromise(targetPath);
+        return stats.isDirectory() ? targetPath : await this.baseFs.realpathPromise(targetPath);
     }
     realpathSync(p) {
-        return this.baseFs.realpathSync(this.resolveFilePath(p));
+        const targetPath = this.resolveFilePath(p);
+        const stats = this.baseFs.statSync(targetPath);
+        return stats.isDirectory() ? targetPath : this.baseFs.realpathSync(targetPath);
     }
     async existsPromise(p) {
         const pnpPath = this.resolvePath(p);
