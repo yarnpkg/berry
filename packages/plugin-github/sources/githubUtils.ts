@@ -9,8 +9,8 @@ const githubPatterns = [
   /^git@github.com:([^\/#]+)\/([^\/#]+)\.git(?:#(.+))?$/,
   /^git:\/\/github\.com\/([^\/#]+)\/([^\/#]+)\.git(?:#(.+))?$/,
   /^git\+https:\/\/github.com\/([^\/#]+)\/([^\/#]+)\.git?(?:#(.+))?$/,
-  /^https?:\/\/(?:[^@]+@)?github.com\/([^\/#]+)\/([^\/#]+)\/tarball\/([^\/#]+)(?:#|$)/,
-  /^https?:\/\/(?:[^@]+@)?github.com\/([^\/#]+)\/([^\/#]+)(?:\.git)?(?:#(.+))?$/,
+  /^https?:\/\/(?:.+?@)?github.com\/([^\/#]+)\/([^\/#]+)\/tarball\/([^\/#]+)(?:#|$)/,
+  /^https?:\/\/(?:.+?@)?github.com\/([^\/#]+)\/([^\/#]+?)(?:\.git)?(?:#(.+))?$/,
 ];
 
 /**
@@ -25,9 +25,13 @@ export function isGithubUrl(url: string): boolean {
  * an object of type `ParsedGithubUrl`
  */
 export function parseGithubUrl(urlStr: string): ParsedGithubUrl {
-  let match = githubPatterns.find(pattern => {
-    return urlStr.match(pattern);
-  });
+  let match;
+  for (const pattern of githubPatterns) {
+    match = urlStr.match(pattern);
+    if (match) {
+      break;
+    }
+  }
 
   if (!match)
     throw new Error(invalidGithubUrlMessage(urlStr));
