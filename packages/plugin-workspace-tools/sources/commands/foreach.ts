@@ -5,6 +5,7 @@ import { PortablePath }                                                         
 import { cpus }                                                                  from 'os';
 import pLimit                                                                    from 'p-limit';
 import { Writable }                                                              from 'stream';
+import * as yup                                                                  from 'yup';
 
 
 type ForeachOptions = {
@@ -14,6 +15,7 @@ type ForeachOptions = {
   exclude: string[];
   include: string[];
   interlaced: boolean;
+  jobs: number;
   parallel: boolean;
   prefixed: boolean;
   stdout: Writable;
@@ -23,14 +25,23 @@ type ForeachOptions = {
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-    .command(`workspaces foreach run <command> [...args] [-p,--parallel] [--with-dependencies] [-I,--interlaced] [-P,--prefixed] [-i,--include WORKSPACES...] [-x,--exclude WORKSPACES...]`)
+    .command(`workspaces foreach run <command> [...args] [-p,--parallel] [--with-dependencies] [-I,--interlaced] [-P,--prefixed] [-j,--jobs JOBS] [-i,--include WORKSPACES...] [-x,--exclude WORKSPACES...]`)
     .flags({proxyArguments: true})
+
+    .validate(yup.object().shape({
+      jobs: yup.number().min(2),
+      parallel: yup.boolean().when('jobs', {
+        is: val => val > 1,
+        then: yup.boolean().oneOf([true], '--parallel must be set when using --jobs'),
+        otherwise: yup.boolean()
+      }),
+    }))
 
     .categorize(`Workspace-related commands`)
     .describe(`run a command on all workspaces`)
 
     .action(
-      async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, withDependencies, prefixed, ...env}: ForeachOptions) => {
+      async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, withDependencies, prefixed, jobs, ...env}: ForeachOptions) => {
         const configuration = await Configuration.find(cwd, pluginConfiguration);
         const { project } = await Project.find(configuration, cwd);
         const cache = await Cache.find(configuration);
@@ -50,9 +61,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const needsProcessing = new Map<LocatorHash, Workspace>();
         const processing = new Set<DescriptorHash>();
 
-        // const concurrency = parallel ? Math.max(1, cpus().length / 2) : 1;
-        const concurrency = 2;
-        const limit = pLimit(concurrency);
+        const concurrency = parallel ? Math.max(1, cpus().length / 2) : 1;
+        const limit = pLimit(jobs || concurrency);
 
         let commandCount = 0;
 

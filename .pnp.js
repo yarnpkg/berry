@@ -10292,6 +10292,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "p-limit",
                   "npm:2.2.0"
+                ],
+                [
+                  "yup",
+                  "npm:0.27.0"
                 ]
               ]
             }

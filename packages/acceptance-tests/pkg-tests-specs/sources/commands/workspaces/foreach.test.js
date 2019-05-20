@@ -62,7 +62,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--parallel`, `--interlaced`, `start`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--parallel`, `--interlaced`, `--jobs=2`, `start`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -104,7 +104,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--parallel`, `--with-dependencies`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--parallel`, `--with-dependencies`, `--jobs=2`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -214,6 +214,38 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
+        }
+      )
+    );
+
+    test(
+      `throws an error if using jobs without parallel`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`]
+        },
+        async ({ path, run }) => {
+          await setupWorkspaces(path);
+
+          await run(`install`);
+          await expect(run(`workspaces`, `foreach`, `run`, `--jobs=2`, `print`)).rejects.toThrowError(/parallel must be set/);
+        }
+      )
+    );
+
+    test(
+      `throws an error if jobs is lower than 2`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`]
+        },
+        async ({ path, run }) => {
+          await setupWorkspaces(path);
+
+          await run(`install`);
+          await expect(run(`workspaces`, `foreach`, `run`, `--parallel`, `--jobs=1`, `print`)).rejects.toThrowError(/jobs must be greater/);
         }
       )
     );

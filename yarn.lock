@@ -1920,6 +1920,7 @@ __metadata:
     "@berry/fslib": "workspace:*"
     clipanion: "npm:^0.14.1"
     p-limit: "npm:^2.2.0"
+    yup: "npm:^0.27.0"
   languageName: unknown
   linkType: soft
 
