@@ -3,9 +3,12 @@ const {
 } = require('pkg-tests-core');
 
 async function setupWorkspaces(path) {
+  await writeFile(`${path}/mutexes/workspace-a`, ``);
+  await writeFile(`${path}/mutexes/workspace-b`, ``);
+
   await writeFile(`${path}/.yarnrc`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-workspace-tools.js`))}\n`);
 
-  await writeFile(`${path}/packages/workspace-a/server.js`, getServerContent());
+  await writeFile(`${path}/packages/workspace-a/server.js`, getClientContent(`${path}/mutexes/workspace-a`, `PING`));
   await writeJson(`${path}/packages/workspace-a/package.json`, {
     name: `workspace-a`,
     version: `1.0.0`,
@@ -15,7 +18,7 @@ async function setupWorkspaces(path) {
     }
   });
 
-  await writeFile(`${path}/packages/workspace-b/client.js`, getClientContent());
+  await writeFile(`${path}/packages/workspace-b/client.js`, getClientContent(`${path}/mutexes/workspace-b`, `PONG`));
   await writeJson(`${path}/packages/workspace-b/package.json`, {
     name: `workspace-b`,
     version: `1.0.0`,
@@ -64,10 +67,9 @@ describe(`Commands`, () => {
             ({code, stdout, stderr} = error);
           }
 
-          console.log(stdout, stderr);
-
           const lines = stdout.trim().split(`\n`);
           const firstLine = lines[0];
+
           let isInterlaced = false;
 
           // Expect Done on the last line
@@ -218,62 +220,37 @@ describe(`Commands`, () => {
   });
 });
 
-const PORT = 8078;
-
-function getServerContent() {
+function getClientContent(mutex, name) {
   return `
-  const net = require('net');
+    const fs = require('fs');
+    const path = require('path');
 
-  let pingCount = 0;
+    const mutex = ${JSON.stringify(mutex)};
+    const mutexDir = path.dirname(mutex);
 
-  const server = net.createServer(socket => {
-    socket.on('data', () => {
-      if (++pingCount > 10) {
-        socket.destroy();
+    async function handshake() {
+      fs.unlinkSync(mutex);
 
-        return server.close(server.unref);
+      while (fs.readdirSync(mutexDir).length !== 0) {
+        await sleep();
       }
+    }
 
-      console.log('PONG');
-      socket.write('PONG');
-    });
-  });
+    async function sleep() {
+      await new Promise(resolve => {
+        setTimeout(resolve, 16);
+      });
+    }
 
-  server.on('error', (e) => {
-    console.error(e);
-    socket.destroy();
-    server.close()
-  });
+    async function main() {
+      await handshake();
 
-  server.listen(${PORT});
-  `;
-}
+      for (let t = 0; t < 60; ++t) {
+        process.stdout.write(${JSON.stringify(name)} + '\\n');
+        await sleep();
+      }
+    }
 
-
-function getClientContent() {
-  return `
-  const net = require('net');
-
-  const client = new net.Socket();
-  let retries = 5;
-
-  const connect = () => {
-    client.connect(${PORT}, () => client.write('PING'));
-  };
-
-  client.on('error', error => {
-    if (--retries < 0)
-      throw new Error('Server not available');
-
-    if (error.code === 'ECONNREFUSED')
-      setTimeout(connect, 50);
-  });
-
-  client.on('data', () => {
-    console.log('PING');
-    client.write('PING');
-  });
-
-  connect();
+    main();
   `;
 }
