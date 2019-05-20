@@ -10,8 +10,7 @@ module.exports = makeConfig({
 
   entry: {
     [`bin`]: `./sources/bin.ts`,
-    [`index`]: `./sources/index.ts`,
-    [`tsserver`]: `./sources/tsserver.ts`
+    [`index`]: `./sources/index.ts`
   },
 
   output: {

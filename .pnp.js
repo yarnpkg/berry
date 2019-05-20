@@ -67302,6 +67302,8 @@ var NodeFS_2 = __webpack_require__(2);
 exports.NodeFS = NodeFS_2.NodeFS;
 var PosixFS_1 = __webpack_require__(12);
 exports.PosixFS = PosixFS_1.PosixFS;
+var ProxiedFS_1 = __webpack_require__(8);
+exports.ProxiedFS = ProxiedFS_1.ProxiedFS;
 var ZipFS_1 = __webpack_require__(13);
 exports.ZipFS = ZipFS_1.ZipFS;
 var ZipOpenFS_1 = __webpack_require__(19);
@@ -67629,99 +67631,6 @@ class FakeFS {
     constructor(pathUtils) {
         this.pathUtils = pathUtils;
     }
-    async changeFilePromise(p, content) {
-        try {
-            const current = await this.readFilePromise(p, `utf8`);
-            if (current === content) {
-                return;
-            }
-        }
-        catch (error) {
-            // ignore errors, no big deal
-        }
-        await this.writeFilePromise(p, content);
-    }
-    changeFileSync(p, content) {
-        try {
-            const current = this.readFileSync(p, `utf8`);
-            if (current === content) {
-                return;
-            }
-        }
-        catch (error) {
-            // ignore errors, no big deal
-        }
-        this.writeFileSync(p, content);
-    }
-    async movePromise(fromP, toP) {
-        try {
-            await this.renamePromise(fromP, toP);
-        }
-        catch (error) {
-            if (error.code === `EXDEV`) {
-                await this.copyPromise(toP, fromP);
-                await this.removePromise(fromP);
-            }
-            else {
-                throw error;
-            }
-        }
-    }
-    moveSync(fromP, toP) {
-        try {
-            this.renameSync(fromP, toP);
-        }
-        catch (error) {
-            if (error.code === `EXDEV`) {
-                this.copySync(toP, fromP);
-                this.removeSync(fromP);
-            }
-            else {
-                throw error;
-            }
-        }
-    }
-    async lockPromise(affectedPath, callback) {
-        const lockPath = `${affectedPath}.lock`;
-        const interval = 1000 / 60;
-        const timeout = Date.now() + 60 * 1000;
-        let fd = null;
-        while (fd === null) {
-            try {
-                fd = await this.openPromise(lockPath, `wx`);
-            }
-            catch (error) {
-                if (error.code === `EEXIST`) {
-                    if (Date.now() < timeout) {
-                        await new Promise(resolve => setTimeout(resolve, interval));
-                    }
-                    else {
-                        throw new Error(`Couldn't acquire a lock in a reasonable time (via ${lockPath})`);
-                    }
-                }
-                else {
-                    throw error;
-                }
-            }
-        }
-        try {
-            await callback();
-        }
-        finally {
-            await this.closePromise(fd);
-            await this.unlinkPromise(lockPath);
-        }
-    }
-}
-exports.FakeFS = FakeFS;
-;
-class BasePortableFakeFS extends FakeFS {
-    constructor() {
-        super(path_1.ppath);
-    }
-    resolve(p) {
-        return this.pathUtils.resolve(path_1.PortablePath.root, p);
-    }
     async removePromise(p) {
         let stat;
         try {
@@ -67842,7 +67751,7 @@ class BasePortableFakeFS extends FakeFS {
             await this.mkdirpPromise(destination);
             const directoryListing = await baseFs.readdirPromise(source);
             await Promise.all(directoryListing.map(entry => {
-                return this.copyPromise(path_1.ppath.join(destination, entry), baseFs.pathUtils.join(source, entry), { baseFs, overwrite });
+                return this.copyPromise(this.pathUtils.join(destination, entry), baseFs.pathUtils.join(source, entry), { baseFs, overwrite });
             }));
         }
         else if (stat.isFile()) {
@@ -67858,7 +67767,7 @@ class BasePortableFakeFS extends FakeFS {
                 if (exists)
                     await this.removePromise(destination);
                 const target = await baseFs.readlinkPromise(source);
-                await this.symlinkPromise(path_2.toPortablePath(target), destination);
+                await this.symlinkPromise(path_2.convertPath(this.pathUtils, target), destination);
             }
         }
         else {
@@ -67890,7 +67799,7 @@ class BasePortableFakeFS extends FakeFS {
                 if (exists)
                     this.removeSync(destination);
                 const target = baseFs.readlinkSync(source);
-                this.symlinkSync(path_2.toPortablePath(target), destination);
+                this.symlinkSync(path_2.convertPath(this.pathUtils, target), destination);
             }
         }
         else {
@@ -67898,6 +67807,99 @@ class BasePortableFakeFS extends FakeFS {
         }
         const mode = stat.mode & 0o777;
         this.chmodSync(destination, mode);
+    }
+    async changeFilePromise(p, content) {
+        try {
+            const current = await this.readFilePromise(p, `utf8`);
+            if (current === content) {
+                return;
+            }
+        }
+        catch (error) {
+            // ignore errors, no big deal
+        }
+        await this.writeFilePromise(p, content);
+    }
+    changeFileSync(p, content) {
+        try {
+            const current = this.readFileSync(p, `utf8`);
+            if (current === content) {
+                return;
+            }
+        }
+        catch (error) {
+            // ignore errors, no big deal
+        }
+        this.writeFileSync(p, content);
+    }
+    async movePromise(fromP, toP) {
+        try {
+            await this.renamePromise(fromP, toP);
+        }
+        catch (error) {
+            if (error.code === `EXDEV`) {
+                await this.copyPromise(toP, fromP);
+                await this.removePromise(fromP);
+            }
+            else {
+                throw error;
+            }
+        }
+    }
+    moveSync(fromP, toP) {
+        try {
+            this.renameSync(fromP, toP);
+        }
+        catch (error) {
+            if (error.code === `EXDEV`) {
+                this.copySync(toP, fromP);
+                this.removeSync(fromP);
+            }
+            else {
+                throw error;
+            }
+        }
+    }
+    async lockPromise(affectedPath, callback) {
+        const lockPath = `${affectedPath}.lock`;
+        const interval = 1000 / 60;
+        const timeout = Date.now() + 60 * 1000;
+        let fd = null;
+        while (fd === null) {
+            try {
+                fd = await this.openPromise(lockPath, `wx`);
+            }
+            catch (error) {
+                if (error.code === `EEXIST`) {
+                    if (Date.now() < timeout) {
+                        await new Promise(resolve => setTimeout(resolve, interval));
+                    }
+                    else {
+                        throw new Error(`Couldn't acquire a lock in a reasonable time (via ${lockPath})`);
+                    }
+                }
+                else {
+                    throw error;
+                }
+            }
+        }
+        try {
+            await callback();
+        }
+        finally {
+            await this.closePromise(fd);
+            await this.unlinkPromise(lockPath);
+        }
+    }
+}
+exports.FakeFS = FakeFS;
+;
+class BasePortableFakeFS extends FakeFS {
+    constructor() {
+        super(path_2.ppath);
+    }
+    resolve(p) {
+        return this.pathUtils.resolve(path_1.PortablePath.root, p);
     }
 }
 exports.BasePortableFakeFS = BasePortableFakeFS;
@@ -67920,12 +67922,6 @@ exports.PortablePath = {
 };
 exports.npath = path_1.default;
 exports.ppath = path_1.default.posix;
-function toFilename(filename) {
-    if (exports.npath.parse(filename).dir !== '' || exports.ppath.parse(filename).dir !== '')
-        throw new Error(`Invalid filename: "${filename}"`);
-    return filename;
-}
-exports.toFilename = toFilename;
 const WINDOWS_PATH_REGEXP = /^[a-zA-Z]:.*$/;
 const PORTABLE_PATH_REGEXP = /^\/[a-zA-Z]:.*$/;
 // Path should look like "/N:/berry/scripts/plugin-pack.js"
@@ -67944,6 +67940,16 @@ function toPortablePath(p) {
     return (p.match(WINDOWS_PATH_REGEXP) ? `/${p}` : p).replace(/\\/g, `/`);
 }
 exports.toPortablePath = toPortablePath;
+function convertPath(targetPathUtils, sourcePath) {
+    return (targetPathUtils === exports.npath ? fromPortablePath(sourcePath) : toPortablePath(sourcePath));
+}
+exports.convertPath = convertPath;
+function toFilename(filename) {
+    if (exports.npath.parse(filename).dir !== '' || exports.ppath.parse(filename).dir !== '')
+        throw new Error(`Invalid filename: "${filename}"`);
+    return filename;
+}
+exports.toFilename = toFilename;
 
 
 /***/ }),
@@ -68129,36 +68135,6 @@ class ProxiedFS extends FakeFS_1.FakeFS {
     readlinkSync(p) {
         return this.mapFromBase(this.baseFs.readlinkSync(this.mapToBase(p)));
     }
-    removePromise(p) {
-        return this.baseFs.removePromise(this.mapToBase(p));
-    }
-    removeSync(p) {
-        return this.baseFs.removeSync(this.mapToBase(p));
-    }
-    mkdirpPromise(p, options) {
-        return this.baseFs.mkdirpPromise(this.mapToBase(p), options);
-    }
-    mkdirpSync(p, options) {
-        return this.baseFs.mkdirpSync(this.mapToBase(p), options);
-    }
-    copyPromise(destination, source, { baseFs = this, overwrite } = {}) {
-        // any casts are necessary because typescript doesn't understand that P2 might be P
-        if (baseFs === this) {
-            return this.baseFs.copyPromise(this.mapToBase(destination), this.mapToBase(source), { baseFs: this.baseFs, overwrite });
-        }
-        else {
-            return this.baseFs.copyPromise(this.mapToBase(destination), source, { baseFs, overwrite });
-        }
-    }
-    copySync(destination, source, { baseFs = this, overwrite } = {}) {
-        // any casts are necessary because typescript doesn't understand that P2 might be P
-        if (baseFs === this) {
-            return this.baseFs.copySync(this.mapToBase(destination), this.mapToBase(source), { baseFs: this.baseFs, overwrite });
-        }
-        else {
-            return this.baseFs.copySync(this.mapToBase(destination), source, { baseFs, overwrite });
-        }
-    }
 }
 exports.ProxiedFS = ProxiedFS;
 
@@ -68173,8 +68149,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const NodeFS_1 = __webpack_require__(2);
 const ProxiedFS_1 = __webpack_require__(8);
 const path_1 = __webpack_require__(5);
-// FIXME: notable changes:
-// - symlink didn't transform the target path, it does now
 class CwdFS extends ProxiedFS_1.ProxiedFS {
     constructor(target, { baseFs = new NodeFS_1.NodeFS() } = {}) {
         super(path_1.ppath);
@@ -69206,14 +69180,14 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.realpathPromise(p);
         }, async (zipFs, { archivePath, subPath }) => {
-            return this.pathUtils.resolve(archivePath, this.pathUtils.relative(path_1.PortablePath.root, await zipFs.realpathPromise(subPath)));
+            return this.pathUtils.resolve(await this.baseFs.realpathPromise(archivePath), this.pathUtils.relative(path_1.PortablePath.root, await zipFs.realpathPromise(subPath)));
         });
     }
     realpathSync(p) {
         return this.makeCallSync(p, () => {
             return this.baseFs.realpathSync(p);
         }, (zipFs, { archivePath, subPath }) => {
-            return this.pathUtils.resolve(archivePath, this.pathUtils.relative(path_1.PortablePath.root, zipFs.realpathSync(subPath)));
+            return this.pathUtils.resolve(this.baseFs.realpathSync(archivePath), this.pathUtils.relative(path_1.PortablePath.root, zipFs.realpathSync(subPath)));
         });
     }
     async existsPromise(p) {
