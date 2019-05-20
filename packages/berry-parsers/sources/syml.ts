@@ -100,26 +100,24 @@ function parseViaPeg(source: string) {
   return parse(source);
 }
 
-function parseViaJsYaml(source: string) {
-  let value;
+const LEGACY_REGEXP = /^(#.*\n)*?#\s+yarn\s+lockfile\s+v1\n/i;
 
-  try {
-    value = safeLoad(source);
-  } catch (error) {
+function parseViaJsYaml(source: string) {
+  if (LEGACY_REGEXP.test(source))
     return parseViaPeg(source);
-  }
+
+  let value = safeLoad(source);
 
   // Empty files are parsed as `undefined` instead of an empty object
   // Empty files with 2 newlines or more are `null` instead
   if (value === undefined || value === null)
     return {} as {[key: string]: string};
 
-  // Files that contain single invalid line are treated as a raw string
-  if (typeof value === `string`)
-    return parseViaPeg(source);
+  if (typeof value !== `object`)
+    throw new Error(`Invalid content type: expected an indexed object, got ${typeof value} instead`);
 
-  if (typeof value !== `object` || Array.isArray(value))
-    throw new Error(`Invalid content type: expected an indexed object`);
+  if (Array.isArray(value))
+    throw new Error(`Invalid content type: expected an indexed object, got array instead`);
 
   return value as {[key: string]: string};
 }
