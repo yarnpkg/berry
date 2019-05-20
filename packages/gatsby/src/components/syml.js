@@ -28,6 +28,16 @@ export const SymlContainer = styled.div`
   }
 `;
 
+export const marginContainer = css`
+  & > :first-child {
+    margin-top: 1em;
+  }
+
+  & > :last-child {
+    margin-bottom: 1em;
+  }
+`;
+
 export const symlKey = css`
   color: #dfc47d;
 `;
@@ -81,6 +91,21 @@ export const SymlDescribe = ({description, anchor, children}) => description ? <
   </SymlDescriptionContainer>
 </> : children;
 
+export const SymlObject = ({name, anchorTarget, children, margin}) => <div>
+  <div>{name && <><SymlKey name={name} anchorTarget={anchorTarget} />{`:`}</>}</div>
+  <div style={{paddingLeft: `2em`}} css={margin ? marginContainer : null}>
+    {children}
+  </div>
+</div>;
+
+export const SymlObjectProperty = ({name, margin, description, children}) => <>
+  <SymlDescribe description={description} anchor={name}>
+    <SymlObject name={name} margin={margin} anchorTarget={description ? name : null}>
+      {children}
+    </SymlObject>
+  </SymlDescribe>
+</>;
+
 export const SymlStringProperty = ({name, placeholder, description}) => <>
   <SymlDescribe description={description} anchor={name}>
     <div>
@@ -92,7 +117,7 @@ export const SymlStringProperty = ({name, placeholder, description}) => <>
 export const SymlBooleanProperty = ({name, placeholder, description}) => <>
   <SymlDescribe description={description} anchor={name}>
     <div>
-    <SymlKey name={name} anchorTarget={description ? name : null} />: <span css={booleanValue}>{placeholder}</span>
+      <SymlKey name={name} anchorTarget={description ? name : null} />: <span css={booleanValue}>{placeholder}</span>
     </div>
   </SymlDescribe>
 </>;

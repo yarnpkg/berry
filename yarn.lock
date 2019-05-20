@@ -1605,8 +1605,14 @@ __metadata:
     "@emotion/styled": "npm:^10.0.7"
     "@emotion/styled-base": "npm:^10.0.7"
     "@reach/router": "npm:^1.1.1"
+    "@types/core-js": "npm:2.5.0"
+    "@types/debug": "npm:4.1.4"
+    "@types/lodash": "npm:4.14.130"
     algoliasearch: "npm:^3.32.1"
+    core-js: "npm:^2.6.5"
+    debug: "npm:2.6.9"
     es6-promise: "npm:^4.2.6"
+    event-source-polyfill: "npm:^1.0.5"
     gatsby: "npm:^2.2.9"
     gatsby-image: "npm:^2.0.31"
     gatsby-plugin-catch-links: "npm:^2.0.13"
@@ -1624,6 +1630,7 @@ __metadata:
     gatsby-source-filesystem: "npm:^2.0.23"
     gatsby-transformer-remark: "npm:^2.3.2"
     gatsby-transformer-sharp: "npm:^2.1.15"
+    lodash: "npm:^4.11.1"
     minimatch: "npm:^3.0.4"
     pify: "npm:^4.0.1"
     prismjs: "npm:^1.16.0"
@@ -2939,6 +2946,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/core-js@npm:2.5.0":
+  version: 2.5.0
+  resolution: "@types/core-js@npm:2.5.0"
+  checksum: e4c6d34a790656d96e83a18832afb207cfa8e9527e8b2aa4bbdc230b7b1511831b891ff8241427c8971db785156ce033264b1c13f84a9d6b2087214b12abbc69
+  languageName: node
+  linkType: hard
+
 "@types/cross-spawn@npm:6.0.0":
   version: 6.0.0
   resolution: "@types/cross-spawn@npm:6.0.0"
@@ -2952,6 +2966,13 @@ __metadata:
   version: 1.0.2
   resolution: "@types/dateformat@npm:1.0.2"
   checksum: 7760c73270a4c18327c410486d9b48a0d509c26c7e0e169eb68949ec43fb554d8416c9656306527b4468f21dca990ba4bb1c50e4a9d6931782546dbadc603c77
+  languageName: node
+  linkType: hard
+
+"@types/debug@npm:4.1.4":
+  version: 4.1.4
+  resolution: "@types/debug@npm:4.1.4"
+  checksum: 253b61b715ca60fbb26e11360e4b9908dff97da389ddbb0fcc231587aee3ad7f4d13b1911b6a11235a910c91280e506393b61f8b082973d02560d3181eff7d90
   languageName: node
   linkType: hard
 
@@ -3169,6 +3190,13 @@ __metadata:
   version: 4.14.123
   resolution: "@types/lodash@npm:4.14.123"
   checksum: 897f9528c22b972874096c3d1e923e6c0cf62f0bc8969d4cd3850328e15b20e75486034b3a341a746a52354cbdefb07dbe03d9f0ebe4c170a71de97718428abd
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:4.14.130":
+  version: 4.14.130
+  resolution: "@types/lodash@npm:4.14.130"
+  checksum: b0f85526b740c3003e847d8c12ed7b8039d0539744a6eb83ebeb829c34028739a1f0f8eeb07492ba7ea10efe6b49d7a6722b8f587f4b9f478f2bfee0d9a91cbd
   languageName: node
   linkType: hard
 

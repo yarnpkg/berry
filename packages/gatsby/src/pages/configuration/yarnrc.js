@@ -1,8 +1,8 @@
-import React                                     from 'react';
+import React                                                         from 'react';
 
-import Layout                                    from '../../components/layout-configuration';
-import {SymlContainer}                           from '../../components/syml';
-import {SymlBooleanProperty, SymlStringProperty} from '../../components/syml';
+import Layout                                                        from '../../components/layout-configuration';
+import {SymlContainer}                                               from '../../components/syml';
+import {SymlBooleanProperty, SymlObjectProperty, SymlStringProperty} from '../../components/syml';
 
 const YarnrcDoc = () => <>
   <Layout>
@@ -98,6 +98,27 @@ const YarnrcDoc = () => <>
           Defines the hostname of the remote server from where Yarn should fetch the metadata and archives when querying the npm registry.
         </>}
       />
+      <SymlBooleanProperty
+        name={`npmAlwaysAuth`}
+        placeholder={`true`}
+        description={<>
+          If true, Yarn will always send the authentication credentials when making a request to the registries. This typically shouldn't be needed.
+        </>}
+      />
+      <SymlStringProperty
+        name={`npmAuthIdent`}
+        placeholder={`username:password`}
+        description={<>
+          Defines the authentication credentials to use for the default registry (equivalent to <code>_auth</code> in the v1). This settings is discouraged in favor of <code>npmAuthToken</code>.
+        </>}
+      />
+      <SymlStringProperty
+        name={`npmAuthToken`}
+        placeholder={`ffffffff-ffff-ffff-ffff-ffffffffffff`}
+        description={<>
+          Defines the authentication credentials to use for the default registry (equivalent to <code>_authToken</code> in the v1).
+        </>}
+      />
       <SymlStringProperty
         name={`npmPublishAccess`}
         placeholder={`public`}
@@ -105,6 +126,32 @@ const YarnrcDoc = () => <>
           Defines the default access to use when publishing packages to the npm registry. Valid values are <code>public</code> and <code>restricted</code>, but <code>restricted</code> usually requires to register for a paid plan (this is up to the registry you use).
         </>}
       />
+      <SymlObjectProperty
+        name={`npmScopes`}
+        description={<>
+          On top of the global configuration, registries can be configured on a per-scope basis (for example to instruct Yarn to use your private registry when accessing packages from a given scope). The following properties are supported:
+        </>}
+      >
+        <SymlObjectProperty
+          name={`my-company`}
+          description={<>
+            This key represent the scope that's covered by the settings defined in the nested object. Note that it mustn't start with the <code>@</code> character.
+          </>}
+        >
+          <SymlBooleanProperty
+            name={`npmAlwaysAuth`}
+            placeholder={`true`}
+          />
+          <SymlStringProperty
+            name={`npmAuthIdent`}
+            placeholder={`username:password`}
+          />
+          <SymlStringProperty
+            name={`npmAuthToken`}
+            placeholder={`ffffffff-ffff-ffff-ffff-ffffffffffff`}
+          />
+        </SymlObjectProperty>
+      </SymlObjectProperty>
       <SymlStringProperty
         name={`pnpDataPath`}
         placeholder={`./.pnp.meta.json`}
@@ -119,7 +166,7 @@ const YarnrcDoc = () => <>
           If true (the default), Yarn will generate a single <code>.pnp.js</code> file that contains all the required data for your project to work properly. If toggled off, Yarn will also generate a <code>.pnp.data.json</code> file meant to be consumed by the <code>@berry/pnp</code> package.
         </>}
       />
-      <SymlBooleanProperty
+      <SymlStringProperty
         name={`pnpFallbackMode`}
         placeholder={`dependencies-only`}
         description={<>

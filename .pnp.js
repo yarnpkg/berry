@@ -9226,12 +9226,36 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:1.2.1"
                 ],
                 [
+                  "@types/core-js",
+                  "npm:2.5.0"
+                ],
+                [
+                  "@types/debug",
+                  "npm:4.1.4"
+                ],
+                [
+                  "@types/lodash",
+                  "npm:4.14.130"
+                ],
+                [
                   "algoliasearch",
                   "npm:3.32.1"
                 ],
                 [
+                  "core-js",
+                  "npm:2.6.5"
+                ],
+                [
+                  "debug",
+                  "npm:2.6.9"
+                ],
+                [
                   "es6-promise",
                   "npm:4.2.6"
+                ],
+                [
+                  "event-source-polyfill",
+                  "npm:1.0.5"
                 ],
                 [
                   "gatsby",
@@ -9300,6 +9324,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "gatsby-transformer-sharp",
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.1.15"
+                ],
+                [
+                  "lodash",
+                  "npm:4.17.11"
                 ],
                 [
                   "minimatch",
@@ -13902,6 +13930,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "@types/core-js",
+        [
+          [
+            "npm:2.5.0",
+            {
+              "packageLocation": "./.yarn/cache/@types-core-js-npm-2.5.0-bbe590b801073dce04a06cdd74f6c9de9eacd51fe1313627b86698a796141bde.zip/node_modules/@types/core-js/",
+              "packageDependencies": [
+                [
+                  "@types/core-js",
+                  "npm:2.5.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
         "@types/cross-spawn",
         [
           [
@@ -13950,6 +13995,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/debug",
                   "npm:0.0.29"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:4.1.4",
+            {
+              "packageLocation": "./.yarn/cache/@types-debug-npm-4.1.4-c4d74df84a5120da719ae631ba4663dbf14e83c3a0e4ec45bae2f7a2f88fc980.zip/node_modules/@types/debug/",
+              "packageDependencies": [
+                [
+                  "@types/debug",
+                  "npm:4.1.4"
                 ]
               ]
             }
@@ -14433,6 +14490,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/lodash",
                   "npm:4.14.123"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:4.14.130",
+            {
+              "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.130-f54f124964a93da300e8c5f2e94526571e409fc528d953256979a8ddf1c5cf6d.zip/node_modules/@types/lodash/",
+              "packageDependencies": [
+                [
+                  "@types/lodash",
+                  "npm:4.14.130"
                 ]
               ]
             }
