@@ -14,22 +14,22 @@ const environments = {
     // Nothing to do
   },
   [`folder with rcfile`]: async ({path}) => {
-    await writeFile(`${path}/${SUBFOLDER}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope berry-test\n`);
+    await writeFile(`${path}/${SUBFOLDER}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope: berry-test\n`);
   },
   [`folder with rcfile without trailing newline`]: async ({path}) => {
-    await writeFile(`${path}/${SUBFOLDER}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope berry-test`);
+    await writeFile(`${path}/${SUBFOLDER}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope: berry-test`);
   },
   [`folder with rcfile and rc in parent`]: async ({path}) => {
-    await writeFile(`${path}/${SUBFOLDER}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope berry-test\n`);
-    await writeFile(`${path}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope value-to-override\nlastUpdateCheck 1555784893958\n`);
+    await writeFile(`${path}/${SUBFOLDER}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope: berry-test\n`);
+    await writeFile(`${path}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope: value-to-override\nlast-update-check: 1555784893958\n`);
   },
   [`folder with rcfile and rc in ancestor parent`]: async ({path}) => {
-    await writeFile(`${path}/${SUBFOLDER}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope berry-test\n`);
-    await writeFile(`${path}/${RC_FILENAME}`, `init-scope value-to-override\nlastUpdateCheck 1555784893958\n`);
+    await writeFile(`${path}/${SUBFOLDER}/${SUBFOLDER}/${RC_FILENAME}`, `init-scope: berry-test\n`);
+    await writeFile(`${path}/${RC_FILENAME}`, `init-scope: value-to-override\nlast-update-check: 1555784893958\n`);
   },
   [`folder with rcfile and rc in home folder`]: async ({path, homePath}) => {
-    await writeFile(`${homePath}/${RC_FILENAME}`, `init-scope value-to-override\ndefaultLanguageName python\n`);
-    await writeFile(`${path}/${RC_FILENAME}`, `init-scope berry-test\nlastUpdateCheck 1555784893958\n`);
+    await writeFile(`${homePath}/${RC_FILENAME}`, `init-scope: value-to-override\ndefault-language-name: python\n`);
+    await writeFile(`${path}/${RC_FILENAME}`, `init-scope: berry-test\nlast-update-check: 1555784893958\n`);
   },
 };
 
