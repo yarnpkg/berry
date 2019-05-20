@@ -243,7 +243,7 @@ function getClientContent(mutex, name) {
     }
 
     async function main() {
-      await handshake();
+      //await handshake();
 
       for (let t = 0; t < 60; ++t) {
         process.stdout.write(${JSON.stringify(name)} + '\\n');
