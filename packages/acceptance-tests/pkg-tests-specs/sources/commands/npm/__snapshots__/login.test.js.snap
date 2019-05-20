@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Commands npm login it should login a user with OTP setup 1`] = `
+"npmAuthToken: 686159dc-64b3-413e-a244-2de2b8d1c36f
+"
+`;
+
+exports[`Commands npm login it should login a user with OTP setup 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Successfully logged in
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands npm login it should login a user with OTP to a specific scope 1`] = `
+"init-scope: berry-test
+
+npmScopes:
+  testScope:
+    npmAuthToken: 686159dc-64b3-413e-a244-2de2b8d1c36f
+    npmRegistryServer: \\"http://yarn.test.registry\\"
+"
+`;
+
+exports[`Commands npm login it should login a user with OTP to a specific scope 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Successfully logged in
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands npm login it should login a user with no OTP setup 1`] = `
+"npmAuthToken: 316158de-64b3-413e-a244-2de2b8d1c80f
+"
+`;
+
+exports[`Commands npm login it should login a user with no OTP setup 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Successfully logged in
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands npm login it should login a user with no OTP setup to a specific scope 1`] = `
+"init-scope: berry-test
+
+npmScopes:
+  testScope:
+    npmAuthToken: 316158de-64b3-413e-a244-2de2b8d1c80f
+    npmRegistryServer: \\"http://yarn.test.registry\\"
+"
+`;
+
+exports[`Commands npm login it should login a user with no OTP setup to a specific scope 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Successfully logged in
+➤ YN0000: Done
+",
+}
+`;
