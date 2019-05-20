@@ -1535,6 +1535,7 @@ __metadata:
     "@berry/plugin-pack": "workspace:*"
     "@berry/plugin-pnp": "workspace:*"
     "@berry/plugin-typescript": "workspace:*"
+    "@berry/plugin-workspace-tools": "workspace:*"
     "@berry/pnp": "workspace:*"
     "@berry/shell": "workspace:*"
     chalk: "npm:^2.4.1"
@@ -1573,7 +1574,7 @@ __metadata:
     lockfile: "npm:^1.0.4"
     logic-solver: "npm:^2.0.1"
     mkdirp: "npm:^0.5.1"
-    p-limit: "npm:^2.1.0"
+    p-limit: "npm:^2.2.0"
     pluralize: "npm:^7.0.0"
     pretty-bytes: "npm:^5.1.0"
     semver: "npm:^5.6.0"
@@ -1922,6 +1923,19 @@ __metadata:
     "@berry/core": "workspace:*"
     "@berry/plugin-essentials": "workspace:*"
     "@berry/plugin-pack": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@berry/plugin-workspace-tools@workspace:*, @berry/plugin-workspace-tools@workspace:packages/plugin-workspace-tools":
+  version: 0.0.0-use.local
+  resolution: "@berry/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
+  dependencies:
+    "@berry/builder": "workspace:*"
+    "@berry/core": "workspace:*"
+    "@berry/fslib": "workspace:*"
+    clipanion: "npm:^0.14.1"
+    p-limit: "npm:^2.2.0"
+    yup: "npm:^0.27.0"
   languageName: unknown
   linkType: soft
 
@@ -16007,12 +16021,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-limit@npm:^2.0.0, p-limit@npm:^2.1.0":
+"p-limit@npm:^2.0.0":
   version: 2.1.0
   resolution: "p-limit@npm:2.1.0"
   dependencies:
     p-try: "npm:^2.0.0"
   checksum: fc9c950633e20f2282d471a4bc3af9bee0ceed4062a559211c710b19e4448fa32a54a80c7107268ae7590ded77cb05d0b75498f9b88063660d89a9a743145c0b
+  languageName: node
+  linkType: hard
+
+"p-limit@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "p-limit@npm:2.2.0"
+  dependencies:
+    p-try: "npm:^2.0.0"
+  checksum: 2c462ba89b2720368b6a784b2d4a6f6da131884a81c14fd8623ec7c3704af8999845f5b7e358fd8bddd75fdcdadaea009406fe03328ebad227e7fca02c5c41ae
   languageName: node
   linkType: hard
 

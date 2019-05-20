@@ -170,6 +170,12 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "@berry/plugin-workspace-tools",
+        [
+          "workspace:packages/plugin-workspace-tools"
+        ]
+      ],
+      [
         "@berry/pnp",
         [
           "workspace:packages/berry-pnp"
@@ -320,6 +326,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       46,
       44,
       43,
+      34,
       30,
       29,
       28,
@@ -8987,6 +8994,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/plugin-typescript"
                 ],
                 [
+                  "@berry/plugin-workspace-tools",
+                  "workspace:packages/plugin-workspace-tools"
+                ],
+                [
                   "@berry/pnp",
                   "workspace:packages/berry-pnp"
                 ],
@@ -9121,7 +9132,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "p-limit",
-                  "npm:2.1.0"
+                  "npm:2.2.0"
                 ],
                 [
                   "pluralize",
@@ -10244,6 +10255,47 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/plugin-pack",
                   "workspace:packages/plugin-pack"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@berry/plugin-workspace-tools",
+        [
+          [
+            "workspace:packages/plugin-workspace-tools",
+            {
+              "packageLocation": "./packages/plugin-workspace-tools/",
+              "packageDependencies": [
+                [
+                  "@berry/plugin-workspace-tools",
+                  "workspace:packages/plugin-workspace-tools"
+                ],
+                [
+                  "@berry/builder",
+                  "workspace:packages/berry-builder"
+                ],
+                [
+                  "@berry/core",
+                  "workspace:packages/berry-core"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
+                  "clipanion",
+                  "npm:0.14.1"
+                ],
+                [
+                  "p-limit",
+                  "npm:2.2.0"
+                ],
+                [
+                  "yup",
+                  "npm:0.27.0"
                 ]
               ]
             }
@@ -49621,6 +49673,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "p-limit",
                   "npm:2.1.0"
+                ],
+                [
+                  "p-try",
+                  "npm:2.0.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:2.2.0",
+            {
+              "packageLocation": "./.yarn/cache/p-limit-npm-2.2.0-4eb6e0565ae6803603ad40f299814555c12ffc13edd381d67ee926f1e7b1b38a.zip/node_modules/p-limit/",
+              "packageDependencies": [
+                [
+                  "p-limit",
+                  "npm:2.2.0"
                 ],
                 [
                   "p-try",

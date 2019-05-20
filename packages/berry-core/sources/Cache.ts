@@ -45,9 +45,14 @@ export class Cache {
   async setup() {
     await xfs.mkdirpPromise(this.cwd);
 
-    await this.writeFileIntoCache(ppath.resolve(this.cwd, toFilename(`.gitignore`)), async (file: PortablePath) => {
-      await xfs.writeFilePromise(file, `/.gitignore\n*.lock\n`);
-    });
+    const gitignorePath = ppath.resolve(this.cwd, toFilename(`.gitignore`));
+    const gitignoreExists = await xfs.existsPromise(gitignorePath);
+
+    if (!gitignoreExists) {
+      await this.writeFileIntoCache(gitignorePath, async (file: PortablePath) => {
+        await xfs.writeFilePromise(file, `/.gitignore\n*.lock\n`);
+      });
+    }
   }
 
   async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, loader?: () => Promise<ZipFS>): Promise<[FakeFS<PortablePath>, () => void, string]> {

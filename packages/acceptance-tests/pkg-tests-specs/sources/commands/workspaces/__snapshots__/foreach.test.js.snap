@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Commands workspace foreach excludes workspaces from running scripts using [-x,--exclude] 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: [workspace-c]: Test Workspace C
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach run script only on included workspaces using [-i,--include] 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: [workspace-a]: Test Workspace A
+➤ YN0000: [workspace-b]: Test Workspace B
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach runs scripts in parallel in topological order 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace A
+➤ YN0000: Test Workspace C
+➤ YN0000: Test Workspace B
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach runs scripts topological order by default 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace A
+➤ YN0000: Test Workspace C
+➤ YN0000: Test Workspace B
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach shows prefix with flag 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: [workspace-a]: Test Workspace A
+➤ YN0000: [workspace-c]: Test Workspace C
+➤ YN0000: [workspace-b]: Test Workspace B
+➤ YN0000: Done
+",
+}
+`;

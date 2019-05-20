@@ -1,4 +1,4 @@
-import {Readable} from 'stream';
+import {Readable, Transform} from 'stream';
 
 // Executes a chunk of code and calls a cleanup function once it returns (even
 // if it throws an exception)
@@ -55,6 +55,25 @@ export async function bufferStream(stream: Readable) {
       resolve(Buffer.concat(chunks));
     });
   });
+}
+
+// A stream implementation that buffers a stream to send it all at once
+
+export class BufferStream extends Transform {
+  private readonly chunks: Array<Buffer> = [];
+
+  _transform(chunk: Buffer, encoding: string, cb: any) {
+    if (encoding !== `buffer` || !Buffer.isBuffer(chunk))
+      throw new Error(`Assertion failed: BufferStream only accept buffers`);
+
+    this.chunks.push(chunk as Buffer);
+
+    cb(null, null);
+  }
+
+  _flush(cb: any) {
+    cb(null, Buffer.concat(this.chunks));
+  }
 }
 
 // Webpack has this annoying tendency to replace dynamic requires by a stub
