@@ -50,7 +50,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const needsProcessing = new Map<LocatorHash, Workspace>();
         const processing = new Set<DescriptorHash>();
 
-        const concurrency = parallel ? Math.max(1, cpus().length / 2) : 1;
+        // const concurrency = parallel ? Math.max(1, cpus().length / 2) : 1;
+        const concurrency = 2;
         const limit = pLimit(concurrency);
 
         let commandCount = 0;
