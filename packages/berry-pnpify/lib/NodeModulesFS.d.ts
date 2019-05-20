@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import { CreateReadStreamOptions, CreateWriteStreamOptions } from '@berry/fslib';
 import { FakeFS, WriteFileOptions } from '@berry/fslib';
-import { NativePath, Path } from '@berry/fslib';
+import { NativePath } from '@berry/fslib';
 import fs from 'fs';
 export declare type NodeModulesFSOptions = {
     baseFs?: FakeFS<NativePath>;
@@ -62,30 +62,4 @@ export declare class NodeModulesFS extends FakeFS<NativePath> {
     readdirSync(p: NativePath): import("@berry/fslib").Filename[];
     readlinkPromise(p: NativePath): Promise<any>;
     readlinkSync(p: NativePath): any;
-    removePromise(p: NativePath): Promise<void>;
-    removeSync(p: NativePath): void;
-    mkdirpPromise(p: NativePath, options?: {
-        chmod?: number;
-        utimes?: [Date | string | number, Date | string | number];
-    }): Promise<void>;
-    mkdirpSync(p: NativePath, options?: {
-        chmod?: number;
-        utimes?: [Date | string | number, Date | string | number];
-    }): void;
-    copyPromise(destination: NativePath, source: NativePath, options?: {
-        baseFs?: undefined;
-        overwrite?: boolean;
-    }): Promise<void>;
-    copyPromise<P2 extends Path>(destination: NativePath, source: P2, options: {
-        baseFs: FakeFS<P2>;
-        overwrite?: boolean;
-    }): Promise<void>;
-    copySync(destination: NativePath, source: NativePath, options?: {
-        baseFs?: undefined;
-        overwrite?: boolean;
-    }): void;
-    copySync<P2 extends Path>(destination: NativePath, source: P2, options: {
-        baseFs: FakeFS<P2>;
-        overwrite?: boolean;
-    }): void;
 }

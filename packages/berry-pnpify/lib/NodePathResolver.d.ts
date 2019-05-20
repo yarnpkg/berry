@@ -69,7 +69,7 @@ export declare class NodePathResolver {
      *
      * @returns `undefined` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
      */
-    readDir(issuerInfo: PackageInformation, scope: string | null): Filename[] | undefined;
+    readDir(issuerInfo: PackageInformation<NativePath>, scope: string | null): Filename[] | undefined;
     private getIssuer;
     /**
      * Resolves paths containing `/node_modules` inside PnP projects. If path is outside PnP

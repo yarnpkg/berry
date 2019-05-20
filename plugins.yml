@@ -14,3 +14,8 @@
   url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-typescript/bin/%40berry/plugin-typescript.js"
   experimental: true
   description: "Adds various utilities for a seamless TypeScript experience. Consult the plugin page for more details."
+
+"@berry/plugin-workspace-tools":
+  url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-workspace-tools/bin/%40berry/plugin-typescript.js"
+  experimental: true
+  description: "Adds various new commands that make working with workspaces a more pleasing experience. Consult the plugin page for more details."
