@@ -1,6 +1,5 @@
 {
   "name": "@berry/builder",
-  "private": true,
   "bin": {
     "@berry-build-bundle": "./sources/build-bundle.js",
     "@berry-build-plugin": "./sources/build-plugin.js",
@@ -12,8 +11,8 @@
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.1.0",
     "@babel/register": "^7.0.0",
-    "@berry/cli": "workspace:*",
-    "@berry/pnpify": "workspace:packages/berry-pnpify",
+    "@berry/cli": "workspace:0.0.0",
+    "@berry/pnpify": "workspace:0.0.0",
     "brfs": "^2.0.1",
     "buffer-loader": "^0.1.0",
     "clipanion": "^0.14.1",

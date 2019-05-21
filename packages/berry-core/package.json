@@ -1,19 +1,14 @@
 {
   "name": "@berry/core",
-  "private": true,
   "main": "./sources/index.ts",
   "sideEffects": false,
-  "scripts": {
-    "prepack": "pnpify tsc",
-    "postpack": "rm -rf lib"
-  },
   "dependencies": {
-    "@berry/fslib": "workspace:*",
-    "@berry/json-proxy": "workspace:*",
-    "@berry/parsers": "workspace:*",
-    "@berry/pnp": "workspace:*",
-    "@berry/pnpify": "workspace:*",
-    "@berry/shell": "workspace:*",
+    "@berry/fslib": "workspace:0.0.0",
+    "@berry/json-proxy": "workspace:0.0.0",
+    "@berry/parsers": "workspace:0.0.0",
+    "@berry/pnp": "workspace:0.0.0",
+    "@berry/pnpify": "workspace:0.0.0",
+    "@berry/shell": "workspace:0.0.0",
     "@types/camelcase": "5.2.0",
     "@types/decamelize": "3.0.3",
     "agentkeepalive": "^4.0.2",
@@ -41,6 +36,10 @@
   },
   "devDependencies": {
     "typescript": "^3.3.3333"
+  },
+  "scripts": {
+    "prepack": "pnpify tsc",
+    "postpack": "rm -rf lib"
   },
   "publishConfig": {
     "main": "./lib/index.js",

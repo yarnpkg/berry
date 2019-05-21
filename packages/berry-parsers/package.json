@@ -1,6 +1,5 @@
 {
   "name": "@berry/parsers",
-  "private": true,
   "main": "./sources/index.ts",
   "devDependencies": {
     "pegjs": "^0.10.0"
