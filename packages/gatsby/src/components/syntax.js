@@ -1,6 +1,15 @@
-import {css}  from '@emotion/core';
-import styled from '@emotion/styled';
-import React  from 'react';
+import {css}    from '@emotion/core';
+import styled   from '@emotion/styled';
+import {FaLink} from 'react-icons/fa';
+import React    from 'react';
+
+const getColorForScalar = (theme, scalar) => {
+  if (typeof scalar === `string`)
+    return theme.colors.string;
+  if (typeof scalar === `boolean`)
+    return theme.colors.boolean;
+  return null;
+};
 
 export const Container = styled.div`
   padding: 1.5em;
@@ -8,19 +17,17 @@ export const Container = styled.div`
   font-family: "PT Mono";
   line-height: 1.6em;
 
-  background: #242424;
-  color: #ddddcc;
+  background: ${props => props.theme.colors.background};
+  color: ${props => props.theme.colors.documentation};
 
   a[href^="#"] {
-    border-bottom: 1px dotted #ddddcc;
-
     text-decoration: none;
   }
 
   code {
     font-family: "PT Mono";
 
-    color: #639db1;
+    color: ${props => props.theme.colors.code};
   }
 
   &, span {
@@ -28,26 +35,41 @@ export const Container = styled.div`
   }
 `;
 
+export const Main = styled.div`
+  border: 1px solid;
+
+  padding: 1em;
+
+  font-family: "Open Sans";
+  white-space: normal;
+
+  & + * {
+    margin-top: 0 !important;
+  }
+`;
+
 const marginContainer = css`
   & > :first-child {
-    margin-top: 1em;
+    margin-top: -1.5em;
   }
 
   & > :last-child {
-    margin-bottom: 1em;
+    margin-bottom: -1.5em;
+  }
+
+  &[data-dictionaries-suffix=""] > :last-child {
+    margin-bottom: -2.5em;
   }
 `;
 
-const key = css`
-  color: #8ac6f2;
-`;
+const DescriptionAnchor = styled.div`
+  margin-top: -3em;
 
-const stringValue = css`
-  color: #95e454;
-`;
+  padding: 1.5em 0;
 
-const booleanValue = css`
-  color: #f08080;
+  &:target > div {
+    background: ${props => props.theme.colors.highlight};
+  }
 `;
 
 const DescriptionContainer = styled.div`
@@ -55,10 +77,6 @@ const DescriptionContainer = styled.div`
 
   &:first-of-type {
     margin-top: 0;
-  }
-
-  &:target {
-    background: #384973;
   }
 
   & + div {
@@ -73,67 +91,85 @@ const Description = styled.div`
   white-space: normal;
 `;
 
-const Describe = ({description, anchor, children}) => description ? <>
-  <DescriptionContainer id={`${anchor}`}>
-    {<Description>
-      {description}
-    </Description>}
-    {children}
-  </DescriptionContainer>
+const Describe = ({theme, description, anchor, children}) => description ? <>
+  <DescriptionAnchor id={`${anchor}`} theme={theme}>
+    <DescriptionContainer theme={theme}>
+      {<Description theme={theme}>
+        {description}
+      </Description>}
+      {children}
+    </DescriptionContainer>
+  </DescriptionAnchor>
 </> : children;
 
-const Key = ({name, anchorTarget}) => <>
-  <a css={key} href={anchorTarget ? `#${anchorTarget}` : null}>"{name}"</a>
+const Anchor = () => <>
+  <span style={{fontSize: `0.7em`}}>
+    <FaLink/>
+  </span>
 </>;
 
-export const Array = ({name, anchorTarget, children}) => <div>
-  <div>{name && <><Key name={name} anchorTarget={anchorTarget} />{`: `}</>}{`[`}</div>
+const Key = ({theme, name, anchorTarget}) => <>
+  <span style={{color: theme.colors.key}}>
+    {anchorTarget ? <>
+      <a style={{color: `inherit`}} href={`#${anchorTarget}`}>
+        <Anchor/> {theme.formatKey(name)}
+      </a>
+    </> : <>
+      {theme.formatKey(name)}
+    </>}
+  </span>
+  {theme.keys.suffix}
+</>;
+
+export const Array = ({theme, name, suffix, anchorTarget, children}) => <div>
+  <div>{name && <><Key theme={theme} name={name} anchorTarget={anchorTarget} /></>}{theme.arrays.leading}</div>
   <div style={{paddingLeft: `2em`}}>
-    {children}
+    {React.Children.map(children, child =>
+      <div style={{display: `flex`}}>
+        <div>{theme.arrays.prefix}</div>
+        <div>
+          {React.cloneElement(child, {suffix: theme.arrays.suffix})}
+        </div>
+      </div>
+    )}
   </div>
-  <div>{name ? `],` : `]`}</div>
+  <div>{theme.arrays.trailing}{suffix}</div>
 </div>;
 
-export const Object = ({name, anchorTarget, children, margin}) => <div>
-  <div>{name && <><Key name={name} anchorTarget={anchorTarget} />{`: `}</>}{`{`}</div>
-  <div style={{paddingLeft: `2em`}} css={margin ? marginContainer : null}>
-    {children}
+export const Dictionary = ({theme, name, suffix, anchorTarget, children, margin}) => <div>
+  <div>{name && <><Key theme={theme} name={name} anchorTarget={anchorTarget} /></>}{theme.dictionaries.leading}</div>
+  <div style={{paddingLeft: `2em`}} css={margin ? marginContainer : null} data-dictionaries-suffix={theme.dictionaries.suffix}>
+    {React.Children.map(children, child => <>
+      {React.cloneElement(child, {suffix: theme.dictionaries.suffix})}
+    </>)}
   </div>
-  <div>{name ? `},` : `}`}</div>
+  <div>{theme.dictionaries.trailing}{suffix}</div>
 </div>;
 
-export const String = ({placeholder}) => <div>
-  <span css={stringValue}>{JSON.stringify(placeholder)}</span>,
+export const Scalar = ({theme, suffix, placeholder}) => <div>
+  <span style={{color: getColorForScalar(theme, placeholder)}}>{theme.formatValue(placeholder)}</span>{suffix}
 </div>;
 
-export const ObjectProperty = ({name, margin, description, children}) => <>
-  <Describe description={description} anchor={name}>
-    <Object name={name} margin={margin} anchorTarget={description ? name : null}>
+export const DictionaryProperty = ({theme, name, anchor = name, margin, description, children}) => <>
+  <Describe theme={theme} description={description} anchor={description ? anchor : null}>
+    <Dictionary theme={theme} name={name} margin={margin} anchorTarget={description ? anchor : null}>
       {children}
-    </Object>
+    </Dictionary>
   </Describe>
 </>;
 
-export const ArrayProperty = ({name, description, children}) => <>
-  <Describe description={description} anchor={name}>
-    <Array name={name} anchorTarget={description ? name : null}>
+export const ArrayProperty = ({theme, name, anchor = name, description, children}) => <>
+  <Describe theme={theme} description={description} anchor={description ? anchor : null}>
+    <Array theme={theme} name={name} anchorTarget={description ? anchor : null}>
       {children}
     </Array>
   </Describe>
 </>;
 
-export const StringProperty = ({name, placeholder, description}) => <>
-  <Describe description={description} anchor={name}>
+export const ScalarProperty = ({theme, name, anchor = name, placeholder, description}) => <>
+  <Describe theme={theme} description={description} anchor={description ? anchor : null}>
     <div>
-      <Key name={name} anchorTarget={description ? name : null} />: <span css={stringValue}>{JSON.stringify(placeholder)}</span>,
-    </div>
-  </Describe>
-</>;
-
-export const BooleanProperty = ({name, placeholder, description}) => <>
-  <Describe description={description} anchor={name}>
-    <div>
-      <Key name={name} anchorTarget={description ? name : null} />: <span css={booleanValue}>{placeholder}</span>,
+      <Key theme={theme} name={name} anchorTarget={description ? anchor : null} /><span style={{color: getColorForScalar(theme, placeholder)}}>{theme.formatValue(placeholder)}</span>{theme.dictionaries.suffix}
     </div>
   </Describe>
 </>;
