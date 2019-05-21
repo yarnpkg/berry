@@ -84,7 +84,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         }
       });
 
-      report.reportInfo(MessageName.UNNAMED, `Package archive published`);
+      if (!report.hasErrors()) {
+        report.reportInfo(MessageName.UNNAMED, `Package archive published`);
+      }
     });
 
     return report.exitCode();
