@@ -1,9 +1,9 @@
 import {Configuration, Ident, MessageName}              from '@berry/core';
 import {PluginConfiguration, StreamReport, structUtils} from '@berry/core';
+import {PortablePath}                                   from '@berry/fslib';
 import {npmHttpUtils}                                   from '@berry/plugin-npm';
 import inquirer                                         from 'inquirer';
 import {Readable, Writable}                             from 'stream';
-import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -40,9 +40,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const report = await StreamReport.start({configuration, stdout}, async report => {
       let ident: Ident | null = null;
 
-      if (scope) {
+      if (scope)
         ident = structUtils.makeIdent(scope, ``);
-      }
+
 
       const credentials = await getCredentials(prompt);
       const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
@@ -74,9 +74,9 @@ async function setAuthToken(ident: Ident | null, npmAuthToken: string) {
   if (scope) {
     return await Configuration.updateHomeConfiguration({
       npmScopes: (scopes: {[key: string]: any} = {}) => ({
-        ... scopes,
+        ...scopes,
         [scope]: {
-          ... scopes[scope],
+          ...scopes[scope],
           npmAuthToken,
         },
       }),
@@ -99,13 +99,13 @@ async function getCredentials(prompt: any) {
       type: `input`,
       name: `username`,
       message: `Username:`,
-      validate: (input: string) => validateRequiredInput(input, `Username`)
+      validate: (input: string) => validateRequiredInput(input, `Username`),
     },
     {
       type: `password`,
       name: `password`,
       message: `Password:`,
-      validate: (input: string) => validateRequiredInput(input, `Password`)
+      validate: (input: string) => validateRequiredInput(input, `Password`),
     },
   ]);
 

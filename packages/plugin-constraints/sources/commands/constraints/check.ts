@@ -1,11 +1,11 @@
-import {Configuration, Descriptor, Project, PluginConfiguration} from '@berry/core';
-import {MessageName, StreamReport}                               from '@berry/core';
-import {structUtils}                                             from '@berry/core';
-import { PortablePath } from '@berry/fslib';
-import getPath                                                   from 'lodash.get';
-import {Writable}                                                from 'stream';
+import {Configuration, Project, PluginConfiguration} from '@berry/core';
+import {MessageName, StreamReport}                   from '@berry/core';
+import {structUtils}                                 from '@berry/core';
+import {PortablePath}                                from '@berry/fslib';
+import getPath                                       from 'lodash.get';
+import {Writable}                                    from 'stream';
 
-import {Constraints}                                             from '../../Constraints';
+import {Constraints}                                 from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -38,8 +38,6 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const dependencyDescriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
 
         if (dependencyRange !== null) {
-          const constraintDescriptor = structUtils.makeDescriptor(dependencyIdent, dependencyRange);
-
           if (!dependencyDescriptor) {
             report.reportError(MessageName.CONSTRAINTS_MISSING_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} (via ${structUtils.prettyRange(configuration, dependencyRange)}) in ${dependencyType}, but doesn't`);
           } else if (dependencyDescriptor.range !== dependencyRange) {

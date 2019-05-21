@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 declare module 'tau-prolog' {
   namespace tau {
     namespace type {
@@ -128,7 +130,7 @@ declare module 'tau-prolog' {
         public readonly dynamic: boolean;
 
         public constructor(
-            head: Term<number, string>, body: Term<number, string>|null, dynamic?: boolean);
+          head: Term<number, string>, body: Term<number, string>|null, dynamic?: boolean);
 
         public clone(): this;
 
@@ -162,7 +164,7 @@ declare module 'tau-prolog' {
         public answer(callback: (answer: Answer) => void): void;
 
         public answers(callback: (answer: Answer) => void, maxCount?: number, after?: () => void):
-            void;
+        void;
 
         public add_rule(rule: Rule, options?: {from?: string}): true;
 
@@ -195,7 +197,7 @@ declare module 'tau-prolog' {
         public answer(callback: (answer: Answer) => void): void;
 
         public answers(callback: (answer: Answer) => void, maxCount?: number, after?: () => void):
-            void;
+        void;
 
         public add_rule(rule: Rule, options?: {from?: string}): true;
 
@@ -235,22 +237,22 @@ declare module 'tau-prolog' {
 
     namespace error {
       function existence(type: string, object: type.Term<number, string>|string, indicator: string):
-          type.Term<1, 'error'>;
+      type.Term<1, 'error'>;
       function type(expected: string, found: type.Term<number, string>, indicator: string):
-          type.Term<1, 'error'>;
+      type.Term<1, 'error'>;
       function instantiation(indicator: string): type.Term<1, 'error'>;
       function domain(expected: string, found: type.Term<number, string>, indicator: string):
-          type.Term<1, 'error'>;
+      type.Term<1, 'error'>;
       function representation(flag: string, indicator: string): type.Term<1, 'error'>;
       function permission(
-          operation: string, type: string, found: type.Term<number, string>, indicator: string):
-          type.Term<1, 'error'>;
+        operation: string, type: string, found: type.Term<number, string>, indicator: string):
+      type.Term<1, 'error'>;
       function evaluation(error: string, indicator: string): type.Term<1, 'error'>;
       function syntax(
-          token: undefined|
-          {value: string, line: number, column: number, matches: string[], start: number},
-          expected: string,
-          last: boolean): type.Term<1, 'error'>;
+        token: undefined|
+        {value: string, line: number, column: number, matches: string[], start: number},
+        expected: string,
+        last: boolean): type.Term<1, 'error'>;
       function syntax_by_predicate(expected: string, indicator: string): type.Term<1, 'error'>;
     }
 

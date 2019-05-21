@@ -1,11 +1,11 @@
 import {FakeFS, NodeFS, PosixFS, patchFs, PortablePath} from '@berry/fslib';
-import fs                                 from 'fs';
-import Module                             from 'module';
-import path                               from 'path';
+import fs                                               from 'fs';
+import Module                                           from 'module';
+import path                                             from 'path';
 
-import {PackageLocator, PnpApi}           from '../types';
+import {PackageLocator, PnpApi}                         from '../types';
 
-import {makeError, getIssuerModule}       from './internalTools';
+import {makeError, getIssuerModule}                     from './internalTools';
 
 export type ApplyPatchOptions = {
   compatibilityMode?: boolean,

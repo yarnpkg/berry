@@ -1,9 +1,9 @@
-import {Configuration, PluginConfiguration, Project, StreamReport, MessageName} from '@berry/core';
-import {httpUtils}                                                              from '@berry/core';
+import {Configuration, PluginConfiguration, Project, StreamReport, MessageName}                      from '@berry/core';
+import {httpUtils}                                                                                   from '@berry/core';
 import {xfs, PortablePath, ppath}                                                                    from '@berry/fslib';
-import semver, {SemVer}                                                         from 'semver';
-import {Readable, Writable}                                                     from 'stream';
-import * as yup                                                                 from 'yup';
+import semver, {SemVer}                                                                              from 'semver';
+import {Readable, Writable}                                                                          from 'stream';
+import * as yup                                                                                      from 'yup';
 
 const BUNDLE_REGEXP = /^yarn-[0-9]+\.[0-9]+\.[0-9]+\.js$/;
 const BERRY_RANGES = new Set([`berry`, `v2`, `2`, `nightly`, `nightlies`, `rc`]);
@@ -116,11 +116,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         candidates = satisfying.map(release => release.version.version);
       }
 
-      if (candidates.length === 1) {
+      if (candidates.length === 1)
         report.reportInfo(MessageName.UNNAMED, `Found matching release with ${configuration.format(bundleVersion, `#87afff`)}`);
-      } else {
+      else
         report.reportInfo(MessageName.UNNAMED, `Selecting the highest release amongst ${configuration.format(bundleVersion, `#87afff`)} and ${candidates.length - 1} other${candidates.length === 2 ? `` : `s`}`);
-      }
+
 
       if (!dryRun) {
         report.reportInfo(MessageName.UNNAMED, `Downloading ${configuration.format(bundleUrl, `green`)}`);

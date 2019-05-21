@@ -1,6 +1,6 @@
-import {Configuration, MessageName, PluginConfiguration, Project, StreamReport, structUtils} from '@berry/core';
-import { PortablePath } from '@berry/fslib';
-import {Writable}                                                                            from 'stream';
+import {Configuration, PluginConfiguration, Project, StreamReport, structUtils} from '@berry/core';
+import {PortablePath}                                                           from '@berry/fslib';
+import {Writable}                                                               from 'stream';
 
 const DEPENDENCY_TYPES = ['devDependencies', 'dependencies'];
 
@@ -60,7 +60,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
             ? structUtils.stringifyIdent(manifest.name)
             : null,
 
-          ... extra,
+          ...extra,
         });
       }
     });
