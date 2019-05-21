@@ -18,6 +18,14 @@ type AuthOptions = {
 
 export type Options = httpUtils.Options & AuthOptions;
 
+export function getIdentUrl(ident: Ident) {
+  if (ident.scope) {
+    return `/@${ident.scope}%2f${ident.name}`;
+  } else {
+    return `/${ident.name}`;
+  }
+}
+
 export async function get(path: string, {configuration, headers, ident, authType, ...rest}: Options) {
   const registry = npmConfigUtils.getRegistry(ident, {configuration});
   const auth = getAuthenticationHeader({configuration}, {ident, authType});

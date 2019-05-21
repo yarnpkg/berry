@@ -1,5 +1,5 @@
 import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest} from '@berry/core';
-import {Ident, Descriptor, Locator}                                                          from '@berry/core';
+import {Descriptor, Locator}                                                                 from '@berry/core';
 import {LinkType}                                                                            from '@berry/core';
 import {structUtils}                                                                         from '@berry/core';
 import semver                                                                                from 'semver';
@@ -45,7 +45,7 @@ export class NpmSemverResolver implements Resolver {
     if (semver.valid(range))
       return [structUtils.convertDescriptorToLocator(descriptor)];
 
-    const registryData = await npmHttpUtils.get(this.getIdentUrl(descriptor, opts), {
+    const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {
       configuration: opts.project.configuration,
       ident: descriptor,
       json: true,
@@ -66,7 +66,7 @@ export class NpmSemverResolver implements Resolver {
   async resolve(locator: Locator, opts: ResolveOptions) {
     const version = locator.reference.slice(PROTOCOL.length);
 
-    const registryData = await npmHttpUtils.get(this.getIdentUrl(locator, opts), {
+    const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(locator), {
       configuration: opts.project.configuration,
       ident: locator,
       json: true,
@@ -111,13 +111,5 @@ export class NpmSemverResolver implements Resolver {
 
       bin: manifest.bin,
     };
-  }
-
-  private getIdentUrl(ident: Ident, opts: MinimalResolveOptions) {
-    if (ident.scope) {
-      return `/@${ident.scope}%2f${ident.name}`;
-    } else {
-      return `/${ident.name}`;
-    }
   }
 }
