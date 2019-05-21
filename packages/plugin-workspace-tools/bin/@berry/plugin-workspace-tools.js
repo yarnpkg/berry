@@ -150,7 +150,7 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
     parallel: yup.boolean().when('jobs', {
         is: val => val > 1,
         then: yup.boolean().oneOf([true], '--parallel must be set when using --jobs'),
-        otherwise: yup.boolean()
+        otherwise: yup.boolean(),
     }),
 }))
     .categorize(`Workspace-related commands`)
@@ -191,7 +191,7 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
                 // By default we do topological, however we don't care of the order when running
                 // in --parallel unless also given the --with-dependencies flag
                 if (!parallel || withDependencies) {
-                    for (const [identHash, descriptor] of workspace.dependencies) {
+                    for (const [/*identHash*/ , descriptor] of workspace.dependencies) {
                         const locatorHash = project.storedResolutions.get(descriptor.descriptorHash);
                         if (typeof locatorHash === `undefined`)
                             throw new Error(`Assertion failed: The resolution should have been registered`);
