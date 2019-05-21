@@ -2,9 +2,16 @@ export type CommandSegment = string |
 {type: `shell`, shell: ShellLine, quoted: boolean} |
 {type: `variable`, name: string, quoted: boolean};
 
+export type EnvSegment = {
+  type: `envVar`,
+  name: string,
+  args: Array<Array<CommandSegment>>,
+};
+
 export type Command = {
   type: `command`,
   args: Array<Array<CommandSegment>>,
+  env: Array<EnvSegment>,
 } | {
   type: `subshell`,
   subshell: ShellLine,

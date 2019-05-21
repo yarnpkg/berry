@@ -1,5 +1,6 @@
 import {xfs, NodeFS, ppath, PortablePath}                                 from '@berry/fslib';
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
+import {EnvSegment}                                                       from '@berry/parsers';
 import {PassThrough, Readable, Writable}                                  from 'stream';
 
 import {Handle, ProtectedStream, Stdio, start, makeBuiltin, makeProcess}  from './pipe';
@@ -92,6 +93,27 @@ async function executeBufferedSubshell(ast: ShellLine, opts: ShellOptions, state
   await executeShellLine(ast, opts, cloneState(state, {stdout}));
 
   return Buffer.concat(chunks).toString().replace(/[\r\n]+$/, ``);
+}
+
+async function applyEnvVariables(environmentSegments: Array<EnvSegment>, opts: ShellOptions, state: ShellState) {
+  const envSegmentsWithArgs = environmentSegments.filter(envSegment => envSegment.args);
+
+  const envPromises = envSegmentsWithArgs.map(async envSegment => {
+    const interpolatedArgs = await interpolateArguments(envSegment.args, opts, state);
+
+    return {
+      name: envSegment.name,
+      value: interpolatedArgs.join(``),
+    };
+  });
+
+  const interpolatedEnvs = await Promise.all(envPromises);
+
+  return interpolatedEnvs.reduce((envs, env) => {
+    envs[env.name] = env.value;
+
+    return envs;
+  }, {} as ShellState['environment']);
 }
 
 async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, opts: ShellOptions, state: ShellState) {
@@ -251,7 +273,12 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
     let action;
     switch (current.type) {
       case `command`: {
-        action = makeCommandAction(await interpolateArguments(current.args, opts, state), opts, activeState);
+        const args = await interpolateArguments(current.args, opts, state);
+        const environment = await applyEnvVariables(current.env, opts, state);
+
+        activeState.environment = {...activeState.environment, ...environment};
+
+        action = makeCommandAction(args, opts, activeState);
       } break;
 
       case `subshell`: {

@@ -144,7 +144,7 @@ describe(`Simple shell features`, () => {
       stdout: ``,
     });
   });
-  
+
   it(`should shortcut the right branch of a '&&' when the left branch fails`, async () => {
     await expect(bufferResult(`false && echo failed`)).resolves.toMatchObject({
       stdout: ``,
@@ -238,6 +238,39 @@ describe(`Simple shell features`, () => {
 
     await expect(bufferResult(`echo $1`, [`hello`, `world`])).resolves.toMatchObject({
       stdout: `world\n`,
+    });
+  });
+
+  it(`should set environment variables`, async () => {
+    await expect(bufferResult(
+      `PORT=1234 node -e 'process.stdout.write(process.env.PORT)'`
+    )).resolves.toMatchObject({
+      stdout: `1234`,
+    });
+  });
+
+  it(`should support setting multiple environment variables`, async () => {
+    await expect(bufferResult(
+      `HOST="localhost" PORT=1234 node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`
+    )).resolves.toMatchObject({
+      stdout: `localhost:1234`,
+    });
+  });
+
+  it(`should support setting environment variables with shell interpolation`, async () => {
+    await expect(bufferResult(
+      `HOST="local"$(echo $0) PORT=1234 node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`,
+      [`host`])).resolves.toMatchObject({
+      stdout: `localhost:1234`,
+    });
+  });
+
+  ifNotWin32It(`should not parse as env variables when value contains a leading space eg: FOO= bar`, async () => {
+    await expect(bufferResult(
+      `HOST= "localhost" PORT=1234 node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`
+    )).resolves.toMatchObject({
+      exitCode: 127,
+      stderr: `command not found: HOST=\n`,
     });
   });
 });

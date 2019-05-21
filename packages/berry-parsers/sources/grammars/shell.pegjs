@@ -27,9 +27,12 @@ CommandChainType
   = '|&'
   / '|'
 
+VariableAssignment
+  = name:EnvVariable '=' args:ArgumentSegment+ S* { return { type: `envVar`, name, args } }
+
 Command
   = S* "(" S* subshell:ShellLine S* ")" S* { return { type: `subshell`, subshell } }
-  / S* args:Argument+ S* { return { type: `command`, args } }
+  / S* env:VariableAssignment* S* args:Argument+ S* { return { type: `command`, args, env: env } }
 
 Argument
   = S* segments:ArgumentSegment+ { return [].concat(... segments) }
@@ -73,6 +76,9 @@ Subshell
 Variable
   = '${' name:Identifier '}' { return name }
   / '$' name:Identifier { return name }
+
+EnvVariable
+  = [a-zA-Z0-9_]+ { return text() }
 
 Identifier
   = [@*?#a-zA-Z0-9_-]+ { return text() }
