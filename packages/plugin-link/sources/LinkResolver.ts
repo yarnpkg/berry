@@ -27,12 +27,9 @@ export class LinkResolver implements Resolver {
   }
 
   bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
-    if (descriptor.range.includes(`?`))
-      throw new Error(`Link-type dependencies cannot contain the character "?"`);
-
-    return structUtils.makeDescriptor(descriptor, `${descriptor.range}?${querystring.stringify({
+    return structUtils.bindDescriptor(descriptor, {
       locator: structUtils.stringifyLocator(fromLocator),
-    })}`);
+    });
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {

@@ -94,6 +94,13 @@ export function devirtualizeLocator(locator: Locator): Locator {
   return makeLocator(locator, locator.reference.replace(/^[^#]*#/, ``));
 }
 
+export function bindDescriptor(descriptor: Descriptor, params: {[key: string]: string}) {
+  if (descriptor.range.includes(`?`))
+    return descriptor;
+
+  return makeDescriptor(descriptor, `${descriptor.range}?${querystring.stringify(params)}`);
+}
+
 export function areIdentsEqual(a: Ident, b: Ident) {
   return a.identHash === b.identHash;
 }
