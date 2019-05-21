@@ -1605,14 +1605,8 @@ __metadata:
     "@emotion/styled": "npm:^10.0.7"
     "@emotion/styled-base": "npm:^10.0.7"
     "@reach/router": "npm:^1.1.1"
-    "@types/core-js": "npm:2.5.0"
-    "@types/debug": "npm:4.1.4"
-    "@types/lodash": "npm:4.14.130"
     algoliasearch: "npm:^3.32.1"
-    core-js: "npm:^2.6.5"
-    debug: "npm:2.6.9"
     es6-promise: "npm:^4.2.6"
-    event-source-polyfill: "npm:^1.0.5"
     gatsby: "npm:^2.2.9"
     gatsby-image: "npm:^2.0.31"
     gatsby-plugin-catch-links: "npm:^2.0.13"
@@ -1630,7 +1624,6 @@ __metadata:
     gatsby-source-filesystem: "npm:^2.0.23"
     gatsby-transformer-remark: "npm:^2.3.2"
     gatsby-transformer-sharp: "npm:^2.1.15"
-    lodash: "npm:^4.11.1"
     minimatch: "npm:^3.0.4"
     pify: "npm:^4.0.1"
     prismjs: "npm:^1.16.0"
@@ -1638,6 +1631,7 @@ __metadata:
     react: "npm:^16.8.4"
     react-dom: "npm:^16.8.4"
     react-helmet: "npm:^5.2.0"
+    react-icons: "npm:^3.7.0"
     remark-html: "npm:^9.0.0"
     remark-parse: "npm:^6.0.3"
     unified: "npm:^7.1.0"
@@ -2946,13 +2940,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/core-js@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@types/core-js@npm:2.5.0"
-  checksum: e4c6d34a790656d96e83a18832afb207cfa8e9527e8b2aa4bbdc230b7b1511831b891ff8241427c8971db785156ce033264b1c13f84a9d6b2087214b12abbc69
-  languageName: node
-  linkType: hard
-
 "@types/cross-spawn@npm:6.0.0":
   version: 6.0.0
   resolution: "@types/cross-spawn@npm:6.0.0"
@@ -2966,13 +2953,6 @@ __metadata:
   version: 1.0.2
   resolution: "@types/dateformat@npm:1.0.2"
   checksum: 7760c73270a4c18327c410486d9b48a0d509c26c7e0e169eb68949ec43fb554d8416c9656306527b4468f21dca990ba4bb1c50e4a9d6931782546dbadc603c77
-  languageName: node
-  linkType: hard
-
-"@types/debug@npm:4.1.4":
-  version: 4.1.4
-  resolution: "@types/debug@npm:4.1.4"
-  checksum: 253b61b715ca60fbb26e11360e4b9908dff97da389ddbb0fcc231587aee3ad7f4d13b1911b6a11235a910c91280e506393b61f8b082973d02560d3181eff7d90
   languageName: node
   linkType: hard
 
@@ -3190,13 +3170,6 @@ __metadata:
   version: 4.14.123
   resolution: "@types/lodash@npm:4.14.123"
   checksum: 897f9528c22b972874096c3d1e923e6c0cf62f0bc8969d4cd3850328e15b20e75486034b3a341a746a52354cbdefb07dbe03d9f0ebe4c170a71de97718428abd
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:4.14.130":
-  version: 4.14.130
-  resolution: "@types/lodash@npm:4.14.130"
-  checksum: b0f85526b740c3003e847d8c12ed7b8039d0539744a6eb83ebeb829c34028739a1f0f8eeb07492ba7ea10efe6b49d7a6722b8f587f4b9f478f2bfee0d9a91cbd
   languageName: node
   linkType: hard
 
@@ -10338,7 +10311,7 @@ __metadata:
     react-dom: ^16.4.2
   bin:
     gatsby: ./dist/bin/gatsby.js
-  checksum: 34adf69edc9ef299fe6747a9e85aa09d37a571593e159d1716a8c9db9f2d7b57cadeca5e9d5910cd1f52d89904d9e1a462428723e0fa739a2a3999e5daae37b2
+  checksum: 5d72c48f33667ea08ca0be099d8c4e1f559dc57a99136fc2f99139279f50a32900fbfcb31e6e3a9021e9c9092f920f9a46d19cc570797e2d95b663fc271bb0a7
   languageName: node
   linkType: hard
 
@@ -17805,6 +17778,15 @@ __metadata:
     react: ^15.0.0 || ^16.0.0
     react-dom: ^15.0.0 || ^16.0.0
   checksum: 6be0e9aaab862b36577cc3dfb5ff78d56b8db83b48842d9c07c557c92fc715fd32577dc67aea75347ef8ef4a719843269ae267c41aa9a5d93174d28e1d6276ee
+  languageName: node
+  linkType: hard
+
+"react-icons@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "react-icons@npm:3.7.0"
+  dependencies:
+    camelcase: "npm:^5.0.0"
+  checksum: 56bc0f654216455ef9b83b65cdf39ef8649870780042fa7140b4c06711291f52761053a3e39815eda598d10e445d279d3f0230cb3867fec91a1d629515156efa
   languageName: node
   linkType: hard
 

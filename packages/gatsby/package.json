@@ -7,10 +7,7 @@
     "@emotion/styled-base": "^10.0.7",
     "@reach/router": "npm:^1.1.1",
     "algoliasearch": "^3.32.1",
-    "core-js": "npm:^2.6.5",
-    "debug": "npm:2.6.9",
     "es6-promise": "^4.2.6",
-    "event-source-polyfill": "npm:^1.0.5",
     "gatsby": "^2.2.9",
     "gatsby-image": "^2.0.31",
     "gatsby-plugin-catch-links": "^2.0.13",
@@ -28,7 +25,6 @@
     "gatsby-source-filesystem": "^2.0.23",
     "gatsby-transformer-remark": "^2.3.2",
     "gatsby-transformer-sharp": "^2.1.15",
-    "lodash": "npm:^4.11.1",
     "minimatch": "^3.0.4",
     "pify": "^4.0.1",
     "prismjs": "^1.16.0",
@@ -36,6 +32,7 @@
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-helmet": "^5.2.0",
+    "react-icons": "^3.7.0",
     "remark-html": "^9.0.0",
     "remark-parse": "^6.0.3",
     "unified": "^7.1.0"
@@ -45,10 +42,5 @@
     "develop": "gatsby develop",
     "serve": "gatsby serve",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\""
-  },
-  "devDependencies": {
-    "@types/core-js": "2.5.0",
-    "@types/debug": "4.1.4",
-    "@types/lodash": "4.14.130"
   }
 }
