@@ -1,8 +1,8 @@
-import {Configuration, PluginConfiguration, Project} from '@berry/core';
-import {scriptUtils}                                 from '@berry/core';
+import {Configuration, PluginConfiguration, Project}               from '@berry/core';
+import {scriptUtils}                                               from '@berry/core';
 import {NodeFS, PortablePath}                                      from '@berry/fslib';
-import execa                                         from 'execa';
-import {Readable, Writable}                          from 'stream';
+import execa                                                       from 'execa';
+import {Readable, Writable}                                        from 'stream';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion

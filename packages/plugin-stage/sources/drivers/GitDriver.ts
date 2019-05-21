@@ -99,7 +99,7 @@ export const Driver = {
     const {stdout} = await execUtils.execvp(`git`, [`status`, `-s`], {cwd, strict: true});
     const lines = stdout.toString().split(/\n/g);
 
-    const changes = ([] as Array<stageUtils.FileAction>).concat(... lines.map((line: string) => {
+    const changes = ([] as Array<stageUtils.FileAction>).concat(...lines.map((line: string) => {
       if (line === ``)
         return [];
 
@@ -110,22 +110,22 @@ export const Driver = {
       if (prefix === `?? ` && line.endsWith(`/`)) {
         return stageUtils.expandDirectory(path).map(path => ({
           action: stageUtils.ActionType.CREATE,
-          path
+          path,
         }));
       } else if (prefix === ` A ` || prefix === `?? `) {
         return [{
           action: stageUtils.ActionType.CREATE,
-          path
+          path,
         }];
       } else if (prefix === ` M `) {
         return [{
           action: stageUtils.ActionType.MODIFY,
-          path
+          path,
         }];
       } else if (prefix === ` D `) {
         return [{
           action: stageUtils.ActionType.DELETE,
-          path
+          path,
         }];
       }
       else {
@@ -148,13 +148,13 @@ export const Driver = {
   async makeCommit(cwd: PortablePath, changeList: Array<stageUtils.FileAction>, commitMessage: string) {
     const localPaths = changeList.map(file => NodeFS.fromPortablePath(file.path));
 
-    await execUtils.execvp(`git`, [`add`, `-N`, `--`, ... localPaths], {cwd, strict: true});
-    await execUtils.execvp(`git`, [`commit`, `-m`, `${commitMessage}\n\n${MESSAGE_MARKER}\n`, `--`, ... localPaths], {cwd, strict: true});
+    await execUtils.execvp(`git`, [`add`, `-N`, `--`, ...localPaths], {cwd, strict: true});
+    await execUtils.execvp(`git`, [`commit`, `-m`, `${commitMessage}\n\n${MESSAGE_MARKER}\n`, `--`, ...localPaths], {cwd, strict: true});
   },
 
   async makeReset(cwd: PortablePath, changeList: Array<stageUtils.FileAction>) {
     const localPaths = changeList.map(path => NodeFS.fromPortablePath(path.path));
 
-    await execUtils.execvp(`git`, [`reset`, `HEAD`, `--`, ... localPaths], {cwd, strict: true});
+    await execUtils.execvp(`git`, [`reset`, `HEAD`, `--`, ...localPaths], {cwd, strict: true});
   },
 };

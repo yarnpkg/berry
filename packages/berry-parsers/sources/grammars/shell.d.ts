@@ -1,6 +1,6 @@
 export type CommandSegment = string |
-  {type: `shell`, shell: ShellLine, quoted: boolean} |
-  {type: `variable`, name: string, quoted: boolean};
+{type: `shell`, shell: ShellLine, quoted: boolean} |
+{type: `variable`, name: string, quoted: boolean};
 
 export type Command = {
   type: `command`,

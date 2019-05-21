@@ -1,10 +1,10 @@
-import {Cache, Configuration, Descriptor, Project, PluginConfiguration} from '@berry/core';
-import {MessageName, StreamReport}                                      from '@berry/core';
-import {structUtils}                                                    from '@berry/core';
-import { PortablePath }                                                 from '@berry/fslib';
-import {Readable, Writable}                                             from 'stream';
+import {Cache, Configuration, Project, PluginConfiguration} from '@berry/core';
+import {MessageName, StreamReport}                          from '@berry/core';
+import {structUtils}                                        from '@berry/core';
+import {PortablePath}                                       from '@berry/fslib';
+import {Readable, Writable}                                 from 'stream';
 
-import {Constraints}                                                    from '../../Constraints';
+import {Constraints}                                        from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion

@@ -1,5 +1,5 @@
 import {Configuration, PluginConfiguration} from '@berry/core';
-import { PortablePath } from '@berry/fslib';
+import {PortablePath}                       from '@berry/fslib';
 import {UsageError}                         from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export

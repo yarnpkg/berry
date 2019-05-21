@@ -4,7 +4,7 @@ import Module                          from 'module';
 import path                            from 'path';
 import StringDecoder                   from 'string_decoder';
 
-import {RuntimeState} from '../types';
+import {RuntimeState}                  from '../types';
 
 import {applyPatch}                    from './applyPatch';
 import {hydrateRuntimeState}           from './hydrateRuntimeState';

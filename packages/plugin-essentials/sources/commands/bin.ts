@@ -1,8 +1,8 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {scriptUtils, structUtils}                    from '@berry/core';
+import {PortablePath}                                from '@berry/fslib';
 import {UsageError}                                  from 'clipanion';
 import {Writable}                                    from 'stream';
-import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -37,14 +37,14 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       if (!binary)
         throw new UsageError(`Couldn't find a binary named "${name}" for package "${structUtils.prettyLocator(configuration, locator)}"`);
 
-      const [pkg, binaryFile] = binary;
+      const [/*pkg*/, binaryFile] = binary;
       stdout.write(`${binaryFile}\n`);
     } else {
       const keys = Array.from(binaries.keys());
       const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
 
       if (verbose) {
-        for (const [name, [pkg, binaryFile]] of binaries) {
+        for (const [name, [pkg]] of binaries) {
           stdout.write(`${name.padEnd(maxKeyLength, ` `)}   ${structUtils.prettyLocator(configuration, pkg)}\n`);
         }
       } else {

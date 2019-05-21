@@ -1,5 +1,5 @@
 import {Configuration, Project, PluginConfiguration} from '@berry/core';
-import { PortablePath } from '@berry/fslib';
+import {PortablePath}                                from '@berry/fslib';
 import {Writable}                                    from 'stream';
 
 import {Constraints}                                 from '../../Constraints';
