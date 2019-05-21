@@ -1,4 +1,5 @@
 import {toFilename}                             from '@berry/fslib';
+import querystring                              from 'querystring';
 import semver                                   from 'semver';
 
 import {Configuration}                          from './Configuration';

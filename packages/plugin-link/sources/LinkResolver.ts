@@ -3,7 +3,6 @@ import {Descriptor, Locator, Manifest, Package}          from '@berry/core';
 import {LinkType}                                        from '@berry/core';
 import {miscUtils, structUtils}                          from '@berry/core';
 import {NodeFS}                                          from '@berry/fslib';
-import querystring                                       from 'querystring';
 
 import {LINK_PROTOCOL}                                   from './constants';
 
