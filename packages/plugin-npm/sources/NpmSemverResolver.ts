@@ -1,5 +1,5 @@
 import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest} from '@berry/core';
-import {Ident, Descriptor, Locator}                                                          from '@berry/core';
+import {Descriptor, Locator}                                                                 from '@berry/core';
 import {LinkType}                                                                            from '@berry/core';
 import {structUtils}                                                                         from '@berry/core';
 import semver                                                                                from 'semver';

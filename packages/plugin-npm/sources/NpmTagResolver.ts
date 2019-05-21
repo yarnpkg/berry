@@ -1,6 +1,6 @@
 import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
 import {structUtils}                                                               from '@berry/core';
-import {Ident, Descriptor, Locator, Package}                                       from '@berry/core';
+import {Descriptor, Locator, Package}                                              from '@berry/core';
 
 import {PROTOCOL}                                                                  from './constants';
 import * as npmHttpUtils                                                           from './npmHttpUtils';
