@@ -26,7 +26,6 @@
     "@berry/plugin-file": "workspace:*",
     "@berry/plugin-github": "workspace:*",
     "@berry/plugin-http": "workspace:*",
-    "@berry/plugin-hub": "workspace:*",
     "@berry/plugin-init": "workspace:*",
     "@berry/plugin-link": "workspace:*",
     "@berry/plugin-npm": "workspace:*",
