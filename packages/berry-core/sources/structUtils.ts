@@ -1,4 +1,5 @@
 import {toFilename}                             from '@berry/fslib';
+import querystring                              from 'querystring';
 import semver                                   from 'semver';
 
 import {Configuration}                          from './Configuration';
@@ -92,6 +93,13 @@ export function devirtualizeLocator(locator: Locator): Locator {
     throw new Error(`Not a virtual descriptor`);
 
   return makeLocator(locator, locator.reference.replace(/^[^#]*#/, ``));
+}
+
+export function bindDescriptor(descriptor: Descriptor, params: {[key: string]: string}) {
+  if (descriptor.range.includes(`?`))
+    return descriptor;
+
+  return makeDescriptor(descriptor, `${descriptor.range}?${querystring.stringify(params)}`);
 }
 
 export function areIdentsEqual(a: Ident, b: Ident) {
