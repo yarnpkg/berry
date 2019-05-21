@@ -35,7 +35,7 @@ export class NpmTagResolver implements Resolver {
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
     const tag = descriptor.range.slice(PROTOCOL.length);
 
-    const registryData = await npmHttpUtils.get(this.getIdentUrl(descriptor, opts), {
+    const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {
       configuration: opts.project.configuration,
       ident: descriptor,
       json: true,
@@ -55,13 +55,5 @@ export class NpmTagResolver implements Resolver {
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
     // Once transformed into locators, the tags are resolved by the NpmSemverResolver
     throw new Error(`Unreachable`);
-  }
-
-  private getIdentUrl(ident: Ident, opts: MinimalResolveOptions) {
-    if (ident.scope) {
-      return `/@${ident.scope}%2f${ident.name}`;
-    } else {
-      return `/${ident.name}`;
-    }
   }
 }
