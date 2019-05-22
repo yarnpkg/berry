@@ -13,7 +13,7 @@ import * as yup                                                                 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`npm publish [--access ACCESS] [--tag TAG] [-i,--interactive]`)
+  .command(`npm publish [--access ACCESS] [--tag TAG] [--tolerate-republish]`)
   .categorize(`Npm-related commands`)
   .describe(`publish the active workspace to the npm registry`)
 
@@ -34,7 +34,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn npm publish`,
   )
 
-  .action(async ({cwd, stdout, access, tag}: {cwd: PortablePath, stdout: Writable, access: string | undefined, tag: string}) => {
+  .action(async ({cwd, stdout, access, tag, tolerateRepublish}: {cwd: PortablePath, stdout: Writable, access: string | undefined, tag: string, tolerateRepublish: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {workspace} = await Project.find(configuration, cwd);
 
@@ -45,6 +45,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       throw new UsageError(`Private workspaces cannot be published`);
     if (workspace.manifest.name === null || workspace.manifest.version === null)
       throw new UsageError(`Workspaces must have valid names and versions to be published on an external registry`);
+
+    // Not an error if --tolerate-republish is set
+    let alreadyExisting = false;
 
     // We store it so that TS knows that it's non-null
     const ident = workspace.manifest.name;
@@ -73,6 +76,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           });
         } catch (error) {
           if (error.name === `HTTPError`) {
+            if (tolerateRepublish && error.body && error.body.error && error.body.error.match(/^You cannot publish over the previously published versions:/)) {
+              alreadyExisting = true;
+              return;
+            }
+
             const message = error.body && error.body.error
               ? error.body.error
               : `The remote server answered with HTTP ${error.statusCode} ${error.statusMessage}`;
@@ -85,7 +93,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       });
 
       if (!report.hasErrors()) {
-        report.reportInfo(MessageName.UNNAMED, `Package archive published`);
+        if (alreadyExisting) {
+          report.reportWarning(MessageName.UNNAMED, `Package archive already found on the remote registry`);
+        } else {
+          report.reportInfo(MessageName.UNNAMED, `Package archive published`);
+        }
       }
     });
 

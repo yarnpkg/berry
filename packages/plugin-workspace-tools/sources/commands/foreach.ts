@@ -17,32 +17,45 @@ type ForeachOptions = {
   interlaced: boolean;
   jobs: number;
   parallel: boolean;
-  prefixed: boolean;
-  resolveDependencies: boolean;
-  resolveDevDependencies: boolean;
   stdout: Writable;
+  topologicalDev: boolean;
+  topological: boolean;
+  verbose: boolean;
 }
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`workspaces foreach run <command> [...args] [-p,--parallel] [--resolve-dependencies] [--resolve-dev-dependencies] [-I,--interlaced] [-P,--prefixed] [-j,--jobs JOBS] [-i,--include WORKSPACES...] [-x,--exclude WORKSPACES...]`)
+  .command(`workspaces foreach run <command> [...args] [-v,--verbose] [-p,--parallel] [-i,--interlaced] [-j,--jobs JOBS] [--topological] [--topological-dev] [--include WORKSPACES...] [--exclude WORKSPACES...]`)
+  .categorize(`Workspace-related commands`)
+  .describe(`run a command on all workspaces`)
   .flags({proxyArguments: true})
+
+  .detail(`
+    This command will run a given sub-command on all workspaces that define it (any workspace that doesn't define it will be just skiped). Various flags can alter the exact behavior of the command:
+
+    - If \`-p,--parallel\` is set, the commands will run in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overriden via \`-j,--jobs\`.
+
+    - If \`-p,--parallel\` and \`-i,--interlaced\` are both set, Yarn will print the lines from the output as it receives them. If \`-i,--interlaced\` wasn't set, it would instead buffer the output from each process and print the resulting buffers only after their source processes have exited.
+
+    - If \`--topological\` is set, Yarn will only run a command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--tological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
+
+    - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that musn't execute the script.
+
+    Adding the \`-v,--verbose\` flag will cause Yarn to print more information; in particular the name of the workspace that generated the output will be printed at the front of each line.
+  `)
 
   .validate(yup.object().shape({
     jobs: yup.number().min(2),
-    parallel: yup.boolean().when('jobs', {
+    parallel: yup.boolean().when(`jobs`, {
       is: val => val > 1,
-      then: yup.boolean().oneOf([true], '--parallel must be set when using --jobs'),
+      then: yup.boolean().oneOf([true], `--parallel must be set when using --jobs`),
       otherwise: yup.boolean(),
     }),
   }))
 
-  .categorize(`Workspace-related commands`)
-  .describe(`run a command on all workspaces`)
-
   .action(
-    async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, resolveDependencies, resolveDevDependencies, prefixed, jobs, ...env}: ForeachOptions) => {
+    async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, topological, topologicalDev, verbose, jobs, ...env}: ForeachOptions) => {
       const configuration = await Configuration.find(cwd, pluginConfiguration);
       const {project} = await Project.find(configuration, cwd);
 
@@ -83,10 +96,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
             let isRunnable = true;
 
-            // By default we do topological, however we don't care of the order when running
-            // in --parallel unless also given the --with-dependencies flag
-            if (!parallel || resolveDependencies || resolveDevDependencies) {
-              const resolvedSet = resolveDevDependencies
+            if (topological || topologicalDev) {
+              const resolvedSet = topologicalDev
                 ? [...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]
                 : workspace.manifest.dependencies;
 
@@ -136,13 +147,16 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
           const exitCodes: Array<number> = await Promise.all(commandPromises);
 
-          if ((resolveDependencies || resolveDevDependencies) && exitCodes.some(exitCode => exitCode !== 0)) {
+          if ((topological || topologicalDev) && exitCodes.some(exitCode => exitCode !== 0)) {
             report.reportError(MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);
           }
         }
 
         async function runCommand(workspace: Workspace, {commandIndex}: {commandIndex: number}) {
-          const prefix = getPrefix(workspace, {configuration, prefixed, commandIndex});
+          if (!parallel && verbose && commandIndex > 1)
+            report.reportSeparator();
+
+          const prefix = getPrefix(workspace, {configuration, verbose, commandIndex});
 
           const [stdout, stdoutEnd] = createStream(report, {prefix, interlaced});
           const [stderr, stderrEnd] = createStream(report, {prefix, interlaced});
@@ -161,7 +175,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
             const emptyStdout = await stdoutEnd;
             const emptyStderr = await stderrEnd;
 
-            if (prefixed && emptyStdout && emptyStderr)
+            if (verbose && emptyStdout && emptyStderr)
               report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode || 0})`);
 
             return exitCode || 0;
@@ -212,11 +226,11 @@ function createStream(report: Report, {prefix, interlaced}: {prefix: string | nu
 type GetPrefixOptions = {
   configuration: Configuration;
   commandIndex: number;
-  prefixed: boolean;
+  verbose: boolean;
 };
 
-function getPrefix(workspace: Workspace, {configuration, commandIndex, prefixed}: GetPrefixOptions) {
-  if (!prefixed)
+function getPrefix(workspace: Workspace, {configuration, commandIndex, verbose}: GetPrefixOptions) {
+  if (!verbose)
     return null;
 
   const ident = structUtils.convertToIdent(workspace.locator);
@@ -224,7 +238,7 @@ function getPrefix(workspace: Workspace, {configuration, commandIndex, prefixed}
 
   let prefix = `[${name}]:`;
 
-  const colors = [`cyan`, `green`, `yellow`, `blue`, `magenta`];
+  const colors = [`#2E86AB`, `#A23B72`, `#F18F01`, `#C73E1D`, `#CCE2A3`];
   const colorName = colors[commandIndex % colors.length];
 
   return configuration.format(prefix, colorName);
