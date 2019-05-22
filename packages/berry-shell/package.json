@@ -4,7 +4,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/fslib": "workspace:0.0.6",
-    "@berry/parsers": "workspace:0.0.1",
+    "@berry/parsers": "workspace:0.0.2",
     "cross-spawn": "^6.0.5",
     "execa": "^1.0.0",
     "stream-buffers": "^3.0.2"
@@ -25,6 +25,6 @@
     "typings": "./lib/index.d.ts"
   },
   "files": [
-    "/lib/*"
+    "/lib/**/*"
   ]
 }

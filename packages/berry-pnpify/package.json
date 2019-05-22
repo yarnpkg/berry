@@ -27,7 +27,7 @@
     "types": "./lib/index.d.ts"
   },
   "files": [
-    "/lib/*",
+    "/lib/**/*",
     "/bin.js"
   ]
 }

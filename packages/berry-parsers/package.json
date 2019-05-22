@@ -1,6 +1,6 @@
 {
   "name": "@berry/parsers",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "./sources/index.ts",
   "devDependencies": {
     "@berry/pnpify": "workspace:0.0.3",
@@ -21,6 +21,6 @@
     "typings": "./lib/index.d.ts"
   },
   "files": [
-    "/lib/*"
+    "/lib/**/*"
   ]
 }

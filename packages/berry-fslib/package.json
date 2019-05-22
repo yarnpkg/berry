@@ -22,6 +22,6 @@
     "typings": "./lib/index.d.ts"
   },
   "files": [
-    "/lib/*"
+    "/lib/**/*"
   ]
 }
