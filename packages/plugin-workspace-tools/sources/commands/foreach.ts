@@ -78,6 +78,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           needsProcessing.set(workspace.anchoredLocator.locatorHash, workspace);
 
         while (needsProcessing.size > 0) {
+          if (report.hasErrors())
+            break;
+
           const commandPromises = [];
 
           for (const [identHash, workspace] of needsProcessing) {
