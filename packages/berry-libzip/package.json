@@ -1,10 +1,9 @@
 {
   "name": "@berry/libzip",
-  "version": "0.0.3",
-  "version:next": "0.0.4",
+  "version": "0.0.4",
   "main": "./sources/index.ts",
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.0.2",
+    "@berry/pnpify": "workspace:0.0.3",
     "typescript": "^3.3.3333"
   },
   "scripts": {

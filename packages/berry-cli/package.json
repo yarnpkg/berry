@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@berry/core": "workspace:0.0.0",
-    "@berry/fslib": "workspace:0.0.5",
+    "@berry/fslib": "workspace:0.0.6",
     "@berry/parsers": "workspace:0.0.0",
     "@berry/shell": "workspace:0.0.0",
     "chalk": "^2.4.1",
@@ -33,7 +33,7 @@
     "@berry/plugin-pnp": "workspace:0.0.0",
     "@berry/plugin-typescript": "workspace:0.0.0",
     "@berry/plugin-workspace-tools": "workspace:0.0.0",
-    "@berry/pnp": "workspace:0.0.2"
+    "@berry/pnp": "workspace:0.0.3"
   },
   "scripts": {
     "build:cli+hook": "run build:pnp:hook && run @berry-build-bundle",
