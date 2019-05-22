@@ -164,6 +164,12 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
+        "@berry/plugin-version",
+        [
+          "workspace:packages/plugin-version"
+        ]
+      ],
+      [
         "@berry/plugin-workspace-tools",
         [
           "workspace:packages/plugin-workspace-tools"
@@ -9170,7 +9176,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "@berry/libzip",
-                  "npm:0.0.3"
+                  "workspace:packages/berry-libzip"
                 ],
                 [
                   "@berry/pnpify",
@@ -9362,18 +9368,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       [
         "@berry/libzip",
         [
-          [
-            "npm:0.0.3",
-            {
-              "packageLocation": "./.yarn/cache/@berry-libzip-npm-0.0.3-7c99efe1f770aca5f204c8503bea889df0cf8551bad4a9c398dc31cdc9605ae7.zip/node_modules/@berry/libzip/",
-              "packageDependencies": [
-                [
-                  "@berry/libzip",
-                  "npm:0.0.3"
-                ]
-              ]
-            }
-          ],
           [
             "workspace:packages/berry-libzip",
             {
@@ -10179,6 +10173,55 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/plugin-pack",
                   "workspace:packages/plugin-pack"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@berry/plugin-version",
+        [
+          [
+            "workspace:packages/plugin-version",
+            {
+              "packageLocation": "./packages/plugin-version/",
+              "packageDependencies": [
+                [
+                  "@berry/plugin-version",
+                  "workspace:packages/plugin-version"
+                ],
+                [
+                  "@berry/builder",
+                  "workspace:packages/berry-builder"
+                ],
+                [
+                  "@berry/cli",
+                  "workspace:packages/berry-cli"
+                ],
+                [
+                  "@berry/core",
+                  "workspace:packages/berry-core"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@berry/plugin-pack",
+                  "workspace:packages/plugin-pack"
+                ],
+                [
+                  "@types/semver",
+                  "npm:6.0.0"
+                ],
+                [
+                  "clipanion",
+                  "npm:0.14.1"
+                ],
+                [
+                  "semver",
+                  "npm:5.6.0"
                 ]
               ]
             }
@@ -14825,6 +14868,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/semver",
                   "npm:5.5.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:6.0.0",
+            {
+              "packageLocation": "./.yarn/cache/@types-semver-npm-6.0.0-f4bf1269a26d90e1e44f9347ab692959879e892ace71b3ada267362950a2b3f2.zip/node_modules/@types/semver/",
+              "packageDependencies": [
+                [
+                  "@types/semver",
+                  "npm:6.0.0"
                 ]
               ]
             }

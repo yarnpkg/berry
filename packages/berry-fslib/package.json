@@ -1,9 +1,10 @@
 {
   "name": "@berry/fslib",
+  "version": "0.0.0",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@berry/libzip": "^0.0.3"
+    "@berry/libzip": "workspace:0.0.0"
   },
   "devDependencies": {
     "@berry/pnpify": "workspace:0.0.0",

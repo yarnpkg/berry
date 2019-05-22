@@ -4,4 +4,7 @@ module.exports = new Set([
   `@berry/fslib`,
   `@berry/parsers`,
   `@berry/shell`,
+  `clipanion`,
+  `semver`,
+  `yup`,
 ]);

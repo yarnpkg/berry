@@ -122,12 +122,10 @@ export class Workspace {
   }
 
   async persistManifest() {
-    const updater = await makeUpdater(ppath.join(this.cwd, toFilename(`package.json`)));
+    const data = {};
+    this.manifest.exportTo(data);
 
-    updater.open((tracker: Object) => {
-      this.manifest.exportTo(tracker);
-    });
-
-    await updater.save();
+    const content = `${JSON.stringify(data, null, this.manifest.indent)}\n`;
+    await xfs.changeFilePromise(ppath.join(this.cwd, toFilename(`package.json`)), content);
   }
 }

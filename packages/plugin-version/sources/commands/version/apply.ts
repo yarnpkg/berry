@@ -1,0 +1,147 @@
+import {WorkspaceRequiredError}                                                     from '@berry/cli';
+import {AllDependencies, Cache, Configuration, IdentHash, LightReport, Manifest}    from '@berry/core';
+import {MessageName, PluginConfiguration, Project, StreamReport, WorkspaceResolver} from '@berry/core';
+import {Workspace, structUtils}                                                     from '@berry/core';
+import {PortablePath}                                                               from '@berry/fslib';
+import {Writable}                                                                   from 'stream';
+
+import * as versionUtils                                                            from '../../versionUtils';
+
+const SUPPORTED_UPGRADE_REGEXP = /^([~^]?)[0-9]+\.[0-9]+\.[0-9]+$/;
+
+// eslint-disable-next-line arca/no-default-export
+export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+
+  .command(`version apply [--all]`)
+  .categorize(`Release-related commands`)
+  .describe(`apply all the deferred version bumps at once`)
+
+  .detail(`
+    This command will apply the deferred version changes (scheduled via \`yarn version major|minor|patch\`) on the current workspace (or all of them if \`--all\`) is specified.
+
+    It will also update the \`workspace:\` references across all your local workspaces so that they keep refering to the same workspace even after the version bump.
+  `)
+
+  .example(
+    `Apply the version change to the local workspace`,
+    `yarn version apply`,
+  )
+
+  .example(
+    `Apply the version change to all the workspaces in the local workspace`,
+    `yarn version apply --all`,
+  )
+
+  .action(async ({cwd, stdout, all}: {cwd: PortablePath, stdout: Writable, all: boolean}) => {
+    const configuration = await Configuration.find(cwd, pluginConfiguration);
+    const {project, workspace} = await Project.find(configuration, cwd);
+    const cache = await Cache.find(configuration);
+
+    if (!workspace)
+      throw new WorkspaceRequiredError(cwd);
+
+    const resolutionReport = await LightReport.start({configuration, stdout}, async report => {
+      await project.resolveEverything({lockfileOnly: true, cache, report});
+    });
+
+    if (resolutionReport.hasErrors())
+      return resolutionReport.exitCode();
+  
+    const applyReport = await StreamReport.start({configuration, stdout}, async report => {
+      const allDependents: Map<Workspace, Array<[
+        Workspace,
+        AllDependencies,
+        IdentHash,
+      ]>> = new Map();
+
+      // First we compute the reverse map to figure out which workspace is
+      // depended upon by which other.
+      // 
+      // Note that we need to do this before applying the new versions,
+      // otherwise the `findWorkspacesByDescriptor` calls won't be able to
+      // resolve the workspaces anymore (because the workspace versions will
+      // have changed and won't match the outdated dependencies).
+
+      for (const dependent of project.workspaces) {
+        for (const set of Manifest.allDependencies) {
+          for (const descriptor of dependent.manifest[set].values()) {
+            const workspaces = project.findWorkspacesByDescriptor(descriptor);
+            if (workspaces.length !== 1)
+              continue;
+
+            // When operating on a single workspace, we don't have to compute
+            // the dependencies for the other ones
+            const dependency = workspaces[0];
+            if (!all && dependency !== workspace)
+              continue;
+
+            let dependents = allDependents.get(dependency);
+            if (typeof dependents === `undefined`)
+              allDependents.set(dependency, dependents = []);
+
+            dependents.push([dependent, set, descriptor.identHash]);
+          }
+        }
+      }
+
+      // Now that we know which workspaces depend on which others, we can
+      // proceed to update everything at once using our accumulated knowledge.
+
+      const processWorkspace = (workspace: Workspace) => {
+        const newVersion = versionUtils.applyNextVersion(workspace);
+        if (newVersion === null)
+          return;
+
+        report.reportInfo(MessageName.UNNAMED, `${structUtils.prettyLocator(configuration, workspace.anchoredLocator)}: Bumped to ${newVersion}`);
+
+        const dependents = allDependents.get(workspace);
+        if (typeof dependents === `undefined`)
+          return;
+
+        for (const [dependent, set, identHash] of dependents) {
+          const descriptor = dependent.manifest[set].get(identHash);
+          if (typeof descriptor === `undefined`)
+            throw new Error(`Assertion failed: The dependency should have existed`);
+
+          let range = descriptor.range;
+          let useWorkspaceProtocol = false;
+
+          if (range.startsWith(WorkspaceResolver.protocol)) {
+            range = range.slice(WorkspaceResolver.protocol.length);
+            useWorkspaceProtocol = true;
+
+            // Workspaces referenced through their path never get upgraded ("workspace:packages/berry-core")
+            if (range === workspace.relativeCwd) {
+              continue;
+            }
+          }
+
+          // We can only auto-upgrade the basic semver ranges (we can't auto-upgrade ">=1.0.0 <2.0.0", for example)
+          const parsed = range.match(SUPPORTED_UPGRADE_REGEXP);
+          if (!parsed) {
+            report.reportWarning(MessageName.UNNAMED, `Couldn't auto-upgrade range ${range} (in ${structUtils.prettyLocator(configuration, workspace.anchoredLocator)})`);
+            continue;
+          }
+
+          let newRange = `${parsed[1]}${newVersion}`;
+          if (useWorkspaceProtocol)
+            newRange = `${WorkspaceResolver.protocol}${newRange}`;
+
+          const newDescriptor = structUtils.makeDescriptor(descriptor, newRange);
+          dependent.manifest[set].set(identHash, newDescriptor);
+        }
+      };
+
+      if (all) {
+        processWorkspace(workspace);
+      } else {
+        for (const workspace of project.workspaces) {
+          processWorkspace(workspace);
+        }
+      }
+
+      await project.persist();
+    });
+
+    return applyReport.exitCode();
+  });

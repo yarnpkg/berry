@@ -1590,7 +1590,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@berry/fslib@workspace:packages/berry-fslib"
   dependencies:
-    "@berry/libzip": "npm:^0.0.3"
+    "@berry/libzip": "workspace:0.0.0"
     "@berry/pnpify": "workspace:0.0.0"
     "@types/jest": "npm:^24.0.12"
     typescript: "npm:^3.3.3333"
@@ -1645,14 +1645,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/libzip@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "@berry/libzip@npm:0.0.3"
-  checksum: cfd707b157f24e7d17891cb9eb3fe4c67f7f7eb61273ed385f45e1f8ed4871bc70de7c79779faa5f8a9a4e0e7d24db9fe5a4d39a4bd7d9905174ab9b2ef7bc15
-  languageName: node
-  linkType: hard
-
-"@berry/libzip@workspace:packages/berry-libzip":
+"@berry/libzip@workspace:0.0.0, @berry/libzip@workspace:packages/berry-libzip":
   version: 0.0.0-use.local
   resolution: "@berry/libzip@workspace:packages/berry-libzip"
   dependencies:
@@ -1909,6 +1902,21 @@ __metadata:
     "@berry/core": "workspace:0.0.0"
     "@berry/plugin-essentials": "workspace:0.0.0"
     "@berry/plugin-pack": "workspace:0.0.0"
+  languageName: unknown
+  linkType: soft
+
+"@berry/plugin-version@workspace:packages/plugin-version":
+  version: 0.0.0-use.local
+  resolution: "@berry/plugin-version@workspace:packages/plugin-version"
+  dependencies:
+    "@berry/builder": "workspace:0.0.0"
+    "@berry/cli": "workspace:0.0.0"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.0"
+    "@berry/plugin-pack": "workspace:0.0.0"
+    "@types/semver": "npm:6.0.0"
+    clipanion: "npm:^0.14.1"
+    semver: "npm:^5.6.0"
   languageName: unknown
   linkType: soft
 
@@ -3344,6 +3352,13 @@ __metadata:
     "@types/rx-lite-time": "npm:*"
     "@types/rx-lite-virtualtime": "npm:*"
   checksum: 6abdd96eaaf8b3bf9643f6ad41cd97f3b914b677c866457e28b40bc61be70d3b2a9dc226d373f211eeea4d6e5313fd82bd6f2ed42e9d303d73fdd03072768145
+  languageName: node
+  linkType: hard
+
+"@types/semver@npm:6.0.0":
+  version: 6.0.0
+  resolution: "@types/semver@npm:6.0.0"
+  checksum: 327b8b8d8ec982c0eb234cce490447c812b0949774899afd2620d46a62fab28dfc34ddb6ab95f14b623414a3386a710a51dc24e6834c984b2466bed370bc13f3
   languageName: node
   linkType: hard
 
