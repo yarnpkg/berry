@@ -5,7 +5,7 @@
     "dependencies": {
         "@berry/fslib": "workspace:0.0.6",
         "@berry/monorepo": "workspace:0.0.0",
-        "@berry/parsers": "workspace:0.0.0",
+        "@berry/parsers": "workspace:0.0.1",
         "fs-extra": "^7.0.1",
         "pkg-tests-core": "workspace:0.0.0",
         "semver": "^5.6.0"

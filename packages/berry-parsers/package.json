@@ -1,7 +1,6 @@
 {
   "name": "@berry/parsers",
-  "version": "0.0.0",
-  "version:next": "0.0.1",
+  "version": "0.0.1",
   "main": "./sources/index.ts",
   "devDependencies": {
     "@berry/pnpify": "workspace:0.0.3",
