@@ -13,6 +13,7 @@
   },
   "scripts": {
     "build:pnp:hook": "run webpack-cli --config webpack.config.hook.js",
-    "prepare": "run webpack-cli --config webpack.config.pkg.js"
+    "build:pnp": "run webpack-cli --config webpack.config.pkg.js",
+    "release": "yarn npm publish"
   }
 }

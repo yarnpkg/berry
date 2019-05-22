@@ -9183,10 +9183,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-pnpify"
                 ],
                 [
-                  "@types/jest",
-                  "npm:24.0.12"
-                ],
-                [
                   "typescript",
                   "npm:3.3.3333"
                 ]
@@ -9359,6 +9355,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/fslib",
                   "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@berry/pnpify",
+                  "workspace:packages/berry-pnpify"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
                 ]
               ]
             }
@@ -9620,8 +9624,16 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-parsers"
                 ],
                 [
+                  "@berry/pnpify",
+                  "workspace:packages/berry-pnpify"
+                ],
+                [
                   "pegjs",
                   "npm:0.10.0"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
                 ]
               ]
             }
@@ -10368,6 +10380,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-parsers"
                 ],
                 [
+                  "@berry/pnpify",
+                  "workspace:packages/berry-pnpify"
+                ],
+                [
                   "@types/cross-spawn",
                   "npm:6.0.0"
                 ],
@@ -10382,6 +10398,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "stream-buffers",
                   "npm:3.0.2"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
                 ]
               ]
             }
@@ -14106,44 +14126,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/istanbul-lib-coverage",
                   "npm:1.1.0"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
-        "@types/jest",
-        [
-          [
-            "npm:24.0.12",
-            {
-              "packageLocation": "./.yarn/cache/@types-jest-npm-24.0.12-39e7a3a0f14f20e1755e6849e54640cabfbb0224617587f3567092e62d2000fa.zip/node_modules/@types/jest/",
-              "packageDependencies": [
-                [
-                  "@types/jest",
-                  "npm:24.0.12"
-                ],
-                [
-                  "@types/jest-diff",
-                  "npm:20.0.1"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
-        "@types/jest-diff",
-        [
-          [
-            "npm:20.0.1",
-            {
-              "packageLocation": "./.yarn/cache/@types-jest-diff-npm-20.0.1-1610c1f387c35e804eb85552b329fd03aaf85caa86589866838f0fb518619409.zip/node_modules/@types/jest-diff/",
-              "packageDependencies": [
-                [
-                  "@types/jest-diff",
-                  "npm:20.0.1"
                 ]
               ]
             }

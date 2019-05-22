@@ -8,8 +8,8 @@
   },
   "scripts": {
     "build:libzip:wasm": "cd ./artifacts && ./build.sh",
-    "prepack": "mkdir -p lib && rsync -a --include '*.d.ts' --exclude '*.ts' sources/ lib/ && pnpify tsc",
-    "postpack": "rm -rf lib"
+    "postpack": "rm -rf lib",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc"
   },
   "publishConfig": {
     "main": "./lib/index.js",

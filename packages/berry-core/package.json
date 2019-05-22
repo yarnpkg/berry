@@ -1,5 +1,6 @@
 {
   "name": "@berry/core",
+  "version": "0.0.0",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
@@ -35,11 +36,12 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
+    "@berry/pnpify": "workspace:0.0.2",
     "typescript": "^3.3.3333"
   },
   "scripts": {
-    "prepack": "pnpify tsc",
-    "postpack": "rm -rf lib"
+    "postpack": "rm -rf lib",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc"
   },
   "publishConfig": {
     "main": "./lib/index.js",
