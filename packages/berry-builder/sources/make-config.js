@@ -47,7 +47,11 @@ module.exports = config => merge({
       test: /\.tsx?$/,
       exclude: /\.d\.ts$/,
       loader: `ts-loader`,
-      options: PnpWebpackPlugin.tsLoaderOptions(),
+      options: PnpWebpackPlugin.tsLoaderOptions({
+        compilerOptions: {
+          declaration: false,
+        },
+      }),
     }],
   },
 

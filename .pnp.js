@@ -10298,6 +10298,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-fslib"
                 ],
                 [
+                  "@berry/pnpify",
+                  "workspace:packages/berry-pnpify"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
+                ],
+                [
                   "webpack",
                   "npm:4.28.4"
                 ],
