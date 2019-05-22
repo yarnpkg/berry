@@ -2,6 +2,6 @@
   "name": "@berry/json-proxy",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/fslib": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.5"
   }
 }

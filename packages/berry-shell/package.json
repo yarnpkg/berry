@@ -2,7 +2,7 @@
   "name": "@berry/shell",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/fslib": "workspace:0.0.0",
+    "@berry/fslib": "workspace:0.0.5",
     "@berry/parsers": "workspace:0.0.0",
     "cross-spawn": "^6.0.5",
     "execa": "^1.0.0",

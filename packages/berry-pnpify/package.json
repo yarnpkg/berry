@@ -1,16 +1,15 @@
 {
   "name": "@berry/pnpify",
-  "version": "0.0.0",
-  "version:next": "0.0.2",
+  "version": "0.0.2",
   "main": "./sources/index.ts",
   "bin": "./lib/bin.js",
   "sideEffects": false,
   "dependencies": {
-    "@berry/fslib": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.5"
   },
   "devDependencies": {
     "@berry/builder": "workspace:0.0.0",
-    "@berry/pnp": "workspace:0.0.0",
+    "@berry/pnp": "workspace:0.0.2",
     "typescript": "^3.3.3333",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1"
