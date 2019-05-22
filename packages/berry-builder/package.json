@@ -19,7 +19,7 @@
     "pnp-webpack-plugin": "^1.4.3",
     "raw-loader": "^0.5.1",
     "transform-loader": "^0.2.4",
-    "ts-loader": "^5.3.0",
+    "ts-loader": "^5.3.3",
     "typescript": "^3.3.3333",
     "val-loader": "^1.1.1",
     "webpack": "^4.28.4",

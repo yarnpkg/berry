@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@berry/builder": "workspace:0.0.0",
-    "@types/semver": "6.0.0"
+    "@types/semver": "^5.5.0"
   },
   "scripts": {
     "build:plugin-version": "run @berry-build-plugin"

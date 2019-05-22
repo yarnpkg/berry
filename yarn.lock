@@ -1498,7 +1498,7 @@ __metadata:
     pnp-webpack-plugin: "npm:^1.4.3"
     raw-loader: "npm:^0.5.1"
     transform-loader: "npm:^0.2.4"
-    ts-loader: "npm:^5.3.0"
+    ts-loader: "npm:^5.3.3"
     typescript: "npm:^3.3.3333"
     val-loader: "npm:^1.1.1"
     webpack: "npm:^4.28.4"
@@ -1519,7 +1519,7 @@ __metadata:
     "@berry/builder": "workspace:0.0.0"
     "@berry/core": "workspace:0.0.0"
     "@berry/fslib": "workspace:0.0.6"
-    "@berry/parsers": "workspace:0.0.0"
+    "@berry/parsers": "workspace:0.0.2"
     "@berry/plugin-constraints": "workspace:0.0.0"
     "@berry/plugin-dlx": "workspace:0.0.0"
     "@berry/plugin-essentials": "workspace:0.0.0"
@@ -1535,7 +1535,7 @@ __metadata:
     "@berry/plugin-typescript": "workspace:0.0.0"
     "@berry/plugin-workspace-tools": "workspace:0.0.0"
     "@berry/pnp": "workspace:0.0.3"
-    "@berry/shell": "workspace:0.0.0"
+    "@berry/shell": "workspace:0.0.1"
     chalk: "npm:^2.4.1"
     clipanion: "npm:^0.14.1"
     execa: "npm:^1.0.0"
@@ -1553,10 +1553,10 @@ __metadata:
   dependencies:
     "@berry/fslib": "workspace:0.0.6"
     "@berry/json-proxy": "workspace:0.0.0"
-    "@berry/parsers": "workspace:0.0.0"
+    "@berry/parsers": "workspace:0.0.2"
     "@berry/pnp": "workspace:0.0.3"
     "@berry/pnpify": "workspace:0.0.3"
-    "@berry/shell": "workspace:0.0.0"
+    "@berry/shell": "workspace:0.0.1"
     "@types/camelcase": "npm:5.2.0"
     "@types/decamelize": "npm:3.0.3"
     agentkeepalive: "npm:^4.0.2"
@@ -1718,7 +1718,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/parsers@workspace:0.0.0, @berry/parsers@workspace:packages/berry-parsers":
+"@berry/parsers@workspace:0.0.2, @berry/parsers@workspace:packages/berry-parsers":
   version: 0.0.0-use.local
   resolution: "@berry/parsers@workspace:packages/berry-parsers"
   dependencies:
@@ -1763,7 +1763,7 @@ __metadata:
     "@berry/core": "workspace:0.0.0"
     "@berry/fslib": "workspace:0.0.6"
     "@berry/json-proxy": "workspace:0.0.0"
-    "@berry/parsers": "workspace:0.0.0"
+    "@berry/parsers": "workspace:0.0.2"
     clipanion: "npm:^0.14.1"
     execa: "npm:^1.0.0"
     inquirer: "npm:^6.2.0"
@@ -1965,12 +1965,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/shell@workspace:0.0.0, @berry/shell@workspace:packages/berry-shell":
+"@berry/shell@workspace:0.0.1, @berry/shell@workspace:packages/berry-shell":
   version: 0.0.0-use.local
   resolution: "@berry/shell@workspace:packages/berry-shell"
   dependencies:
     "@berry/fslib": "workspace:0.0.6"
-    "@berry/parsers": "workspace:0.0.0"
+    "@berry/parsers": "workspace:0.0.2"
     "@berry/pnpify": "workspace:0.0.3"
     "@types/cross-spawn": "npm:6.0.0"
     cross-spawn: "npm:^6.0.5"
@@ -16633,7 +16633,7 @@ __metadata:
   dependencies:
     "@berry/fslib": "workspace:0.0.6"
     "@berry/monorepo": "workspace:0.0.0"
-    "@berry/parsers": "workspace:0.0.0"
+    "@berry/parsers": "workspace:0.0.2"
     fs-extra: "npm:^7.0.1"
     pkg-tests-core: "workspace:0.0.0"
     semver: "npm:^5.6.0"
@@ -16675,7 +16675,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pnp-webpack-plugin@npm:^1.3.1, pnp-webpack-plugin@npm:^1.4.1":
+"pnp-webpack-plugin@npm:^1.4.1":
   version: 1.4.1
   resolution: "pnp-webpack-plugin@npm:1.4.1"
   dependencies:
@@ -20713,7 +20713,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:^5.3.0, ts-loader@npm:^5.3.3":
+"ts-loader@npm:^5.3.3":
   version: 5.3.3
   resolution: "ts-loader@npm:5.3.3"
   dependencies:
@@ -20865,16 +20865,6 @@ __metadata:
   version: 0.0.6
   resolution: "typedarray@npm:0.0.6"
   checksum: c7b710687134c19b492bc0317d77b80886587e6fe60dc2dfc6835eeb39973723eece46e9f240f2a6633dd2bc1d26cc9ff71098e6911a2c61c3e529d95be3acfc
-  languageName: node
-  linkType: hard
-
-"typescript@npm:^3.2.4":
-  version: 3.2.4
-  resolution: "typescript@npm:3.2.4"
-  bin:
-    tsc: ./bin/tsc
-    tsserver: ./bin/tsserver
-  checksum: d0cfe849210682387019eb3fad4cc379a4b41370bb29c46767608f17dff037102d577bd36ef3fd2353a0a3a505615faef4ee8da1b9530ea39313d6184e5fb254
   languageName: node
   linkType: hard
 
@@ -21598,9 +21588,9 @@ __metadata:
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
     "@berry/fslib": "workspace:0.0.6"
-    pnp-webpack-plugin: "npm:^1.3.1"
+    pnp-webpack-plugin: "npm:^1.4.3"
     ts-loader: "npm:^5.3.3"
-    typescript: "npm:^3.2.4"
+    typescript: "npm:^3.3.3333"
     vsce: "npm:^1.54.0"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:^3.2.1"
