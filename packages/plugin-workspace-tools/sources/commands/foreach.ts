@@ -126,19 +126,32 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         async function runCommand(workspace: Workspace, {commandIndex}: {commandIndex: number}) {
           const prefix = getPrefix(workspace, {configuration, prefixed, commandIndex});
 
-          const stdout = createStream(report, {prefix, interlaced});
-          const stderr = createStream(report, {prefix, interlaced});
+          const [stdout, stdoutEnd] = createStream(report, {prefix, interlaced});
+          const [stderr, stderrEnd] = createStream(report, {prefix, interlaced});
 
           try {
-            await clipanion.run(null, [`run`, command, ...args], {
+            const exitCode = await clipanion.run(null, [`run`, command, ...args], {
               ...env,
               cwd: workspace.cwd,
               stdout: stdout,
               stderr: stderr,
             });
-          } finally {
+
             stdout.end();
             stderr.end();
+
+            const emptyStdout = await stdoutEnd;
+            const emptyStderr = await stderrEnd;
+
+            if (prefixed && emptyStdout && emptyStderr) {
+              report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode || 0})`);
+            }
+          } catch (err) {
+            stdout.end();
+            stderr.end();
+
+            await stdoutEnd;
+            await stderrEnd;
           }
         }
       });
@@ -148,16 +161,31 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   );
 
 
-function createStream(report: Report, {prefix, interlaced}: {prefix: string | null, interlaced: boolean}) {
+function createStream(report: Report, {prefix, interlaced}: {prefix: string | null, interlaced: boolean}): [Writable, Promise<boolean>] {
   const streamReporter = report.createStreamReporter(prefix);
 
+  const defaultStream = new miscUtils.DefaultStream();
+  defaultStream.pipe(streamReporter, {end: false});
+  defaultStream.on(`finish`, () => {
+    streamReporter.end();
+  });
+
+  const promise = new Promise<boolean>(resolve => {
+    streamReporter.on(`finish`, () => {
+      resolve(defaultStream.active);
+    });
+  });
+
   if (interlaced)
-    return streamReporter;
+    return [defaultStream, promise];
 
   const streamBuffer = new miscUtils.BufferStream();
-  streamBuffer.pipe(streamReporter);
+  streamBuffer.pipe(defaultStream, {end: false});
+  streamBuffer.on(`finish`, () => {
+    defaultStream.end();
+  });
 
-  return streamBuffer;
+  return [streamBuffer, promise];
 }
 
 type GetPrefixOptions = {
