@@ -18,14 +18,15 @@ type ForeachOptions = {
   jobs: number;
   parallel: boolean;
   prefixed: boolean;
+  resolveDependencies: boolean;
+  resolveDevDependencies: boolean;
   stdout: Writable;
-  withDependencies: boolean;
 }
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`workspaces foreach run <command> [...args] [-p,--parallel] [--with-dependencies] [-I,--interlaced] [-P,--prefixed] [-j,--jobs JOBS] [-i,--include WORKSPACES...] [-x,--exclude WORKSPACES...]`)
+  .command(`workspaces foreach run <command> [...args] [-p,--parallel] [--resolve-dependencies] [--resolve-dev-dependencies] [-I,--interlaced] [-P,--prefixed] [-j,--jobs JOBS] [-i,--include WORKSPACES...] [-x,--exclude WORKSPACES...]`)
   .flags({proxyArguments: true})
 
   .validate(yup.object().shape({
@@ -41,10 +42,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   .describe(`run a command on all workspaces`)
 
   .action(
-    async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, withDependencies, prefixed, jobs, ...env}: ForeachOptions) => {
+    async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, resolveDependencies, resolveDevDependencies, prefixed, jobs, ...env}: ForeachOptions) => {
       const configuration = await Configuration.find(cwd, pluginConfiguration);
       const {project} = await Project.find(configuration, cwd);
-      const cache = await Cache.find(configuration);
 
       let workspaces = project.workspaces.filter(workspace => workspace.manifest.scripts.has(command));
 
@@ -66,14 +66,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
       let commandCount = 0;
 
-      const resolutionReport = await LightReport.start({configuration, stdout}, async (report: LightReport) => {
-        await project.resolveEverything({lockfileOnly: true, cache, report});
-      });
-
-      if (resolutionReport.hasErrors())
-        return resolutionReport.exitCode();
-
-      const runReport = await StreamReport.start({configuration, stdout}, async report => {
+      const report = await StreamReport.start({configuration, stdout}, async report => {
         for (const workspace of workspaces)
           needsProcessing.set(workspace.anchoredLocator.locatorHash, workspace);
 
@@ -92,14 +85,19 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
             // By default we do topological, however we don't care of the order when running
             // in --parallel unless also given the --with-dependencies flag
-            if (!parallel || withDependencies) {
-              for (const [/*identHash*/, descriptor] of workspace.dependencies) {
-                const locatorHash = project.storedResolutions.get(descriptor.descriptorHash);
-                if (typeof locatorHash === `undefined`)
-                  throw new Error(`Assertion failed: The resolution should have been registered`);
+            if (!parallel || resolveDependencies || resolveDevDependencies) {
+              const resolvedSet = resolveDevDependencies
+                ? [...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]
+                : workspace.manifest.dependencies;
 
-                if (needsProcessing.has(locatorHash)) {
-                  isRunnable = false;
+              for (const [/*identHash*/, descriptor] of resolvedSet) {
+                const workspaces = project.findWorkspacesByDescriptor(descriptor);
+
+                isRunnable = !workspaces.some(workspace => {
+                  return needsProcessing.has(workspace.anchoredLocator.locatorHash);
+                });
+
+                if (!isRunnable) {
                   break;
                 }
               }
@@ -111,19 +109,36 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
             processing.add(workspace.anchoredDescriptor.descriptorHash);
 
             commandPromises.push(limit(async () => {
-              await runCommand(workspace, {
+              const exitCode = await runCommand(workspace, {
                 commandIndex: ++commandCount,
               });
 
               needsProcessing.delete(identHash);
               processing.delete(workspace.anchoredDescriptor.descriptorHash);
+
+              return exitCode;
             }));
+
+            // If we're not executing processes in parallel we can just wait for it
+            // to finish outside of this loop (it'll then reenter it anyway)
+            if (!parallel) {
+              break;
+            }
           }
 
-          if (commandPromises.length === 0)
-            return report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected`);
+          if (commandPromises.length === 0) {
+            const cycle = Array.from(needsProcessing.values()).map(workspace => {
+              return structUtils.prettyLocator(configuration, workspace.anchoredLocator);
+            }).join(`, `);
 
-          await Promise.all(commandPromises);
+            return report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
+          }
+
+          const exitCodes: Array<number> = await Promise.all(commandPromises);
+
+          if ((resolveDependencies || resolveDevDependencies) && exitCodes.some(exitCode => exitCode !== 0)) {
+            report.reportError(MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);
+          }
         }
 
         async function runCommand(workspace: Workspace, {commandIndex}: {commandIndex: number}) {
@@ -146,20 +161,23 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
             const emptyStdout = await stdoutEnd;
             const emptyStderr = await stderrEnd;
 
-            if (prefixed && emptyStdout && emptyStderr) {
+            if (prefixed && emptyStdout && emptyStderr)
               report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode || 0})`);
-            }
+
+            return exitCode || 0;
           } catch (err) {
             stdout.end();
             stderr.end();
 
             await stdoutEnd;
             await stderrEnd;
+
+            throw err;
           }
         }
       });
 
-      return runReport.exitCode();
+      return report.exitCode();
     }
   );
 

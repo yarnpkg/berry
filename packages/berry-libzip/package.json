@@ -9,7 +9,8 @@
   "scripts": {
     "build:libzip:wasm": "cd ./artifacts && ./build.sh",
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc"
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "release": "yarn npm publish"
   },
   "publishConfig": {
     "main": "./lib/index.js",
