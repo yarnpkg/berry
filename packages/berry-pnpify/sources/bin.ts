@@ -43,7 +43,7 @@ function sdk(targetFolder: PortablePath | null) {
 
 function run(name: string, argv: Array<string>) {
   let {NODE_OPTIONS} = process.env;
-  NODE_OPTIONS = `${NODE_OPTIONS || ``} --require ${dynamicRequire.resolve(`@berry/pnpify`)}`.trim();
+  NODE_OPTIONS = `${NODE_OPTIONS || ``} --require ${dynamicRequire.resolve(`@berry/pnpify/lib`)}`.trim();
 
   const child = spawn(name, argv, {
     env: {...process.env, NODE_OPTIONS},
