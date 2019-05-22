@@ -132,7 +132,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         }
       };
 
-      if (all) {
+      if (!all) {
         processWorkspace(workspace);
       } else {
         for (const workspace of project.workspaces) {
