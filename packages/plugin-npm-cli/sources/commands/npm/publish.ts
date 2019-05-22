@@ -1,14 +1,14 @@
-import {WorkspaceRequiredError}                                                            from '@berry/cli';
-import {Configuration, MessageName, PluginConfiguration, Project, StreamReport, Workspace} from '@berry/core';
-import {miscUtils, structUtils}                                                            from '@berry/core';
-import {PortablePath}                                                                      from '@berry/fslib';
-import {npmHttpUtils}                                                                      from '@berry/plugin-npm';
-import {packUtils}                                                                         from '@berry/plugin-pack';
-import {UsageError}                                                                        from 'clipanion';
-import {createHash}                                                                        from 'crypto';
-import ssri                                                                                from 'ssri';
-import {Writable}                                                                          from 'stream';
-import * as yup                                                                            from 'yup';
+import {WorkspaceRequiredError}                                                                         from '@berry/cli';
+import {Configuration, MessageName, PluginConfiguration, Project, ReportError, StreamReport, Workspace} from '@berry/core';
+import {miscUtils, structUtils}                                                                         from '@berry/core';
+import {PortablePath}                                                                                   from '@berry/fslib';
+import {npmHttpUtils}                                                                                   from '@berry/plugin-npm';
+import {packUtils}                                                                                      from '@berry/plugin-pack';
+import {UsageError}                                                                                     from 'clipanion';
+import {createHash}                                                                                     from 'crypto';
+import ssri                                                                                             from 'ssri';
+import {Writable}                                                                                       from 'stream';
+import * as yup                                                                                         from 'yup';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -46,13 +46,28 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     if (workspace.manifest.name === null || workspace.manifest.version === null)
       throw new UsageError(`Workspaces must have valid names and versions to be published on an external registry`);
 
-    // Not an error if --tolerate-republish is set
-    let alreadyExisting = false;
-
     // We store it so that TS knows that it's non-null
     const ident = workspace.manifest.name;
+    const version = workspace.manifest.version;
 
     const report = await StreamReport.start({configuration, stdout}, async report => {
+      // Not an error if --tolerate-republish is set
+      if (tolerateRepublish) {
+        const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
+          configuration,
+          ident,
+          json: true,
+        });
+
+        if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
+          throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
+  
+        if (Object.prototype.hasOwnProperty.call(registryData.versions, version)) {
+          report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
+          return;
+        }
+      }
+
       await packUtils.prepareForPack(workspace, {report}, async () => {
         const files = await packUtils.genPackList(workspace);
 
@@ -76,11 +91,6 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           });
         } catch (error) {
           if (error.name === `HTTPError`) {
-            if (tolerateRepublish && error.body && error.body.error && error.body.error.match(/^You cannot publish over the previously published versions:/)) {
-              alreadyExisting = true;
-              return;
-            }
-
             const message = error.body && error.body.error
               ? error.body.error
               : `The remote server answered with HTTP ${error.statusCode} ${error.statusMessage}`;
@@ -93,11 +103,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       });
 
       if (!report.hasErrors()) {
-        if (alreadyExisting) {
-          report.reportWarning(MessageName.UNNAMED, `Package archive already found on the remote registry`);
-        } else {
-          report.reportInfo(MessageName.UNNAMED, `Package archive published`);
-        }
+        report.reportInfo(MessageName.UNNAMED, `Package archive published`);
       }
     });
 
