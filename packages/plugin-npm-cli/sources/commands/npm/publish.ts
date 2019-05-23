@@ -53,18 +53,26 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const report = await StreamReport.start({configuration, stdout}, async report => {
       // Not an error if --tolerate-republish is set
       if (tolerateRepublish) {
-        const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
-          configuration,
-          ident,
-          json: true,
-        });
+        try {
+          const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
+            configuration,
+            ident,
+            json: true,
+          });
 
-        if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
-          throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
-  
-        if (Object.prototype.hasOwnProperty.call(registryData.versions, version)) {
-          report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
-          return;
+          if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
+            throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
+    
+          if (Object.prototype.hasOwnProperty.call(registryData.versions, version)) {
+            report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
+            return;
+          }
+        } catch (error) {
+          if (error.name !== `HTTPError`) {
+            throw error;
+          } else if (error.statusCode !== 404) {
+            throw new ReportError(MessageName.NETWORK_ERROR, `The remote server answered with HTTP ${error.statusCode} ${error.statusMessage}`);
+          }
         }
       }
 
@@ -80,11 +88,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const body = await makePublishBody(workspace, buffer, {access, tag});
 
         try {
-          const path = ident.scope
-            ? `/@${ident.scope}%2f${ident.name}`
-            : `/${ident.name}`;
-
-          await npmHttpUtils.put(path, body, {
+          await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
             configuration,
             ident,
             json: true,
@@ -105,7 +109,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       if (!report.hasErrors()) {
         report.reportInfo(MessageName.UNNAMED, `Package archive published`);
       }
-    });
+  });
 
     return report.exitCode();
   });
