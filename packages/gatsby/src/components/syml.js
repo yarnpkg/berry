@@ -1,98 +1,72 @@
-import {css}  from '@emotion/core';
-import styled from '@emotion/styled';
 import React  from 'react';
 
-export const SymlContainer = styled.div`
-  padding: 1.5em;
+import {
+  Container,
+  Main,
 
-  font-family: "PT Mono";
-  line-height: 1.6em;
+  ArrayProperty,
+  DictionaryProperty,
+  ScalarProperty,
 
-  background: #3f3f3f;
-  color: #ddddcc;
+  Scalar,
+} from './syntax';
 
-  a[href^="#"] {
-    border-bottom: 1px dotted #ddddcc;
+const theme = {
+  colors: {
+    background: `#3f3f3f`,
+    documentation: `#ddddcc`,
+    highlight: `#716f6f`,
+    code: `#639db1`,
+    key: `#dfc47d`,
+    string: `#cc9393`,
+    boolean: `#eddd3d`,
+  },
 
-    text-decoration: none;
-  }
+  formatKey: key => {
+    return key;
+  },
+  formatValue: value => {
+    return JSON.stringify(value);
+  },
 
-  code {
-    font-family: "PT Mono";
+  keys: {
+    suffix: `: `,
+  },
 
-    color: #639db1;
-  }
+  dictionaries: {
+    leading: ``,
+    trailing: ``,
+    suffix: ``,
+  },
 
-  &, span {
-    white-space: nowrap;
-  }
-`;
+  arrays: {
+    leading: ``,
+    trailing: ``,
+    prefix: `-\u00a0`,
+    suffix: ``,
+  },
+};
 
-export const symlKey = css`
-  color: #dfc47d;
-`;
+export const SymlContainer = props => {
+  return <Container {... props} theme={theme} />;
+};
 
-export const stringValue = css`
-  color: #cc9393;
-`;
+export const SymlMain = props => {
+  return <Main {... props} theme={theme} />;
+};
 
-export const booleanValue = css`
-  color: #eddd3d;
-`;
+export const SymlArrayProperty = props => {
+  return <ArrayProperty {... props} theme={theme} />;
+};
 
-export const SymlDescriptionContainer = styled.div`
-  padding: 1em;
+export const SymlObjectProperty = props => {
+  return <DictionaryProperty {... props} theme={theme} />;
+};
 
-  &:first-of-type {
-    margin-top: 0;
-  }
+export const SymlScalarProperty = props => {
+  return <ScalarProperty {... props} theme={theme} />;
+};
 
-  &:target {
-    background: #716f6f;
-  }
-
-  & + div {
-    margin-top: -0.5em;
-  }
-`;
-
-export const SymlDescription = styled.div`
-  margin-top: 1em;
-  margin-bottom: 0.5em;
-
-  font-family: "Open Sans";
-  white-space: normal;
-
-  &:first-of-type {
-    margin-top: 0;
-  }
-`;
-
-export const SymlKey = ({name, anchorTarget}) => <>
-  <a css={symlKey} href={anchorTarget ? `#${anchorTarget}` : null}>{name}</a>
-</>;
-
-export const SymlDescribe = ({description, anchor, children}) => description ? <>
-  <SymlDescriptionContainer id={`${anchor}`}>
-    {<SymlDescription>
-      {description}
-    </SymlDescription>}
-    {children}
-  </SymlDescriptionContainer>
-</> : children;
-
-export const SymlStringProperty = ({name, placeholder, description}) => <>
-  <SymlDescribe description={description} anchor={name}>
-    <div>
-      <SymlKey name={name} anchorTarget={description ? name : null} />: <span css={stringValue}>{JSON.stringify(placeholder)}</span>
-    </div>
-  </SymlDescribe>
-</>;
-
-export const SymlBooleanProperty = ({name, placeholder, description}) => <>
-  <SymlDescribe description={description} anchor={name}>
-    <div>
-    <SymlKey name={name} anchorTarget={description ? name : null} />: <span css={booleanValue}>{placeholder}</span>
-    </div>
-  </SymlDescribe>
-</>;
+export const SymlScalar = props => {
+  return <Scalar {... props} theme={theme} />;
+};
