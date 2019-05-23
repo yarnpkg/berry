@@ -156,7 +156,7 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
         const allDependents = new Map();
         // First we compute the reverse map to figure out which workspace is
         // depended upon by which other.
-        // 
+        //
         // Note that we need to do this before applying the new versions,
         // otherwise the `findWorkspacesByDescriptor` calls won't be able to
         // resolve the workspaces anymore (because the workspace versions will
