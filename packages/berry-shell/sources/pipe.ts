@@ -87,6 +87,21 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
   };
 }
 
+// TODO: This is probably not a good name
+export function makeNoop(): ProcessImplementation {
+  return (stdio: Stdio) => {
+    const stdin = stdio[0] === `pipe`
+      ? new PassThrough()
+      : stdio[0];
+
+    return {
+      stdin,
+      promise: nextTick().then(() => Promise.resolve(0)),
+    };
+  };
+}
+
+
 export function makeBuiltin(builtin: (opts: any) => Promise<number>): ProcessImplementation {
   return (stdio: Stdio) => {
     const stdin = stdio[0] === `pipe`

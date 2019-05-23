@@ -265,12 +265,27 @@ describe(`Simple shell features`, () => {
     });
   });
 
-  ifNotWin32It(`should not parse as env variables when value contains a leading space eg: FOO= bar`, async () => {
+  it(`should support setting env variable without command`, async () => {
     await expect(bufferResult(
-      `HOST= "localhost" PORT=1234 node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`
+      `FOO=1 ; FOO=2 ; node -e 'process.stdout.write(process.env.FOO)'`
     )).resolves.toMatchObject({
-      exitCode: 127,
-      stderr: `command not found: HOST=\n`,
+      stdout: `2`,
+    });
+  });
+
+  it(`should evaluate variables once before starting execution`, async () => {
+    await expect(bufferResult(
+      `FOO=1; FOO=2 echo $FOO`
+    )).resolves.toMatchObject({
+      stdout: `1\n`,
+    });
+  });
+
+  it(`should clear an env variable if value is omitted`, async () => {
+    await expect(bufferResult(
+      `HOST="localhost" PORT=1234 HOST= node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`
+    )).resolves.toMatchObject({
+      stdout: `:1234`,
     });
   });
 });
