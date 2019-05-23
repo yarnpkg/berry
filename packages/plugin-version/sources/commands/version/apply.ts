@@ -3,11 +3,12 @@ import {AllDependencies, Cache, Configuration, IdentHash, LightReport, Manifest}
 import {MessageName, PluginConfiguration, Project, StreamReport, WorkspaceResolver} from '@berry/core';
 import {Workspace, structUtils}                                                     from '@berry/core';
 import {PortablePath}                                                               from '@berry/fslib';
+import {UsageError}                                                                 from 'clipanion';
+import semver                                                                       from 'semver';
 import {Writable}                                                                   from 'stream';
 
-import * as versionUtils                                                            from '../../versionUtils';
-
-const SUPPORTED_UPGRADE_REGEXP = /^([~^]?)[0-9]+\.[0-9]+\.[0-9]+$/;
+// Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
+const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -84,14 +85,40 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         }
       }
 
+      // First a quick sanity check before we start modifying stuff
+
+      const validateWorkspace = (workspace: Workspace) => {
+        if (!workspace.manifest.raw || !workspace.manifest.raw[`version:next`])
+          return;
+    
+        const newVersion = workspace.manifest.raw[`version:next`];
+        if (typeof newVersion !== `string` || !semver.valid(newVersion)) {
+          throw new UsageError(`Can't apply the version bump if the resulting version (${newVersion}) isn't valid semver`);
+        }
+      };
+
+      if (!all) {
+        validateWorkspace(workspace);
+      } else {
+        for (const workspace of project.workspaces) {
+          validateWorkspace(workspace);
+        }
+      }
+
       // Now that we know which workspaces depend on which others, we can
       // proceed to update everything at once using our accumulated knowledge.
 
       const processWorkspace = (workspace: Workspace) => {
-        const newVersion = versionUtils.applyNextVersion(workspace);
-        if (newVersion === null)
+        if (!workspace.manifest.raw || !workspace.manifest.raw[`version:next`])
           return;
-
+    
+        const newVersion = workspace.manifest.raw[`version:next`];
+        if (typeof newVersion !== `string`)
+          throw new Error(`Assertion failed: The version should have been a string`);
+      
+        workspace.manifest.version = newVersion;
+        workspace.manifest.raw[`version:next`] = undefined;
+    
         report.reportInfo(MessageName.UNNAMED, `${structUtils.prettyLocator(configuration, workspace.anchoredLocator)}: Bumped to ${newVersion}`);
 
         const dependents = allDependents.get(workspace);
