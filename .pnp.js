@@ -9809,7 +9809,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "@types/tmp",
-                  "npm:0.1.0"
+                  "npm:0.0.33"
                 ],
                 [
                   "tmp",
@@ -10221,7 +10221,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "@types/semver",
-                  "npm:6.0.0"
+                  "npm:5.5.0"
                 ],
                 [
                   "clipanion",
@@ -14857,18 +14857,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
-          ],
-          [
-            "npm:6.0.0",
-            {
-              "packageLocation": "./.yarn/cache/@types-semver-npm-6.0.0-f4bf1269a26d90e1e44f9347ab692959879e892ace71b3ada267362950a2b3f2.zip/node_modules/@types/semver/",
-              "packageDependencies": [
-                [
-                  "@types/semver",
-                  "npm:6.0.0"
-                ]
-              ]
-            }
           ]
         ]
       ],
@@ -15030,18 +15018,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/tmp",
                   "npm:0.0.33"
-                ]
-              ]
-            }
-          ],
-          [
-            "npm:0.1.0",
-            {
-              "packageLocation": "./.yarn/cache/@types-tmp-npm-0.1.0-1a3e4dadd4c2326666cf9e0083ca4c150d7c3c19dbf3055de73bff70167d5ca0.zip/node_modules/@types/tmp/",
-              "packageDependencies": [
-                [
-                  "@types/tmp",
-                  "npm:0.1.0"
                 ]
               ]
             }

@@ -1780,7 +1780,7 @@ __metadata:
     "@berry/builder": "workspace:0.0.0"
     "@berry/core": "workspace:0.0.0"
     "@berry/fslib": "workspace:0.0.6"
-    "@types/tmp": "npm:^0.1.0"
+    "@types/tmp": "npm:^0.0.33"
     tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
@@ -1916,7 +1916,7 @@ __metadata:
     "@berry/core": "workspace:0.0.0"
     "@berry/fslib": "workspace:0.0.6"
     "@berry/plugin-pack": "workspace:0.0.0"
-    "@types/semver": "npm:6.0.0"
+    "@types/semver": "npm:^5.5.0"
     clipanion: "npm:^0.14.1"
     semver: "npm:^5.6.0"
   languageName: unknown
@@ -3346,13 +3346,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/semver@npm:6.0.0":
-  version: 6.0.0
-  resolution: "@types/semver@npm:6.0.0"
-  checksum: 327b8b8d8ec982c0eb234cce490447c812b0949774899afd2620d46a62fab28dfc34ddb6ab95f14b623414a3386a710a51dc24e6834c984b2466bed370bc13f3
-  languageName: node
-  linkType: hard
-
 "@types/semver@npm:^5.5.0":
   version: 5.5.0
   resolution: "@types/semver@npm:5.5.0"
@@ -3428,13 +3421,6 @@ __metadata:
   version: 0.0.33
   resolution: "@types/tmp@npm:0.0.33"
   checksum: f846a920c4657220fe181360892b4d138f5bb6f8ddec2e1228a666d93c70d521a680dd904b597751581307bf8a6d55263776c4839b1f755b42541f3b718e1eda
-  languageName: node
-  linkType: hard
-
-"@types/tmp@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@types/tmp@npm:0.1.0"
-  checksum: 8f5132c25ea5cf18e9694d807628fb6d654cca303de0a440197807ffabe7ed3edf2e95fbfe45d40e432f625fb2ae5ecc8e7d3f35c5be127bdcf375f46d037675
   languageName: node
   linkType: hard
 
