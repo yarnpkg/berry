@@ -1,11 +1,11 @@
-import {FakeFS, NodeFS, PortablePath, ppath, toFilename, xfs} from '@berry/fslib';
-import {Resolution, parseResolution, stringifyResolution}     from '@berry/parsers';
-import semver                                                 from 'semver';
+import {FakeFS, NodeFS, PortablePath, ppath, toFilename}  from '@berry/fslib';
+import {Resolution, parseResolution, stringifyResolution} from '@berry/parsers';
+import semver                                             from 'semver';
 
-import * as miscUtils                                         from './miscUtils';
-import * as structUtils                                       from './structUtils';
-import {IdentHash}                                            from './types';
-import {Ident, Descriptor}                                    from './types';
+import * as miscUtils                                     from './miscUtils';
+import * as structUtils                                   from './structUtils';
+import {IdentHash}                                        from './types';
+import {Ident, Descriptor}                                from './types';
 
 export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
 export type HardDependencies = 'dependencies' | 'devDependencies';

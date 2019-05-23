@@ -62,7 +62,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
           if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
             throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
-    
+
           if (Object.prototype.hasOwnProperty.call(registryData.versions, version)) {
             report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
             return;
@@ -109,7 +109,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       if (!report.hasErrors()) {
         report.reportInfo(MessageName.UNNAMED, `Package archive published`);
       }
-  });
+    });
 
     return report.exitCode();
   });

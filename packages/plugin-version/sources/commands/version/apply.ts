@@ -47,7 +47,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     if (resolutionReport.hasErrors())
       return resolutionReport.exitCode();
-  
+
     const applyReport = await StreamReport.start({configuration, stdout}, async report => {
       const allDependents: Map<Workspace, Array<[
         Workspace,
@@ -57,7 +57,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
       // First we compute the reverse map to figure out which workspace is
       // depended upon by which other.
-      // 
+      //
       // Note that we need to do this before applying the new versions,
       // otherwise the `findWorkspacesByDescriptor` calls won't be able to
       // resolve the workspaces anymore (because the workspace versions will
@@ -90,7 +90,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       const validateWorkspace = (workspace: Workspace) => {
         if (!workspace.manifest.raw || !workspace.manifest.raw[`version:next`])
           return;
-    
+
         const newVersion = workspace.manifest.raw[`version:next`];
         if (typeof newVersion !== `string` || !semver.valid(newVersion)) {
           throw new UsageError(`Can't apply the version bump if the resulting version (${newVersion}) isn't valid semver`);
@@ -111,14 +111,14 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       const processWorkspace = (workspace: Workspace) => {
         if (!workspace.manifest.raw || !workspace.manifest.raw[`version:next`])
           return;
-    
+
         const newVersion = workspace.manifest.raw[`version:next`];
         if (typeof newVersion !== `string`)
           throw new Error(`Assertion failed: The version should have been a string`);
-      
+
         workspace.manifest.version = newVersion;
         workspace.manifest.raw[`version:next`] = undefined;
-    
+
         report.reportInfo(MessageName.UNNAMED, `${structUtils.prettyLocator(configuration, workspace.anchoredLocator)}: Bumped to ${newVersion}`);
 
         const dependents = allDependents.get(workspace);

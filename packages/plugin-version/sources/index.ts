@@ -1,7 +1,7 @@
-import {Plugin, SettingsType} from '@berry/core';
+import {Plugin}     from '@berry/core';
 
-import versionApply           from './commands/version/apply';
-import version                from './commands/version';
+import versionApply from './commands/version/apply';
+import version      from './commands/version';
 
 const plugin: Plugin = {
   commands: [
