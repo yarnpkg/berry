@@ -100,15 +100,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const apply_1 = __importDefault(__webpack_require__(1));
-const major_1 = __importDefault(__webpack_require__(7));
-const minor_1 = __importDefault(__webpack_require__(8));
-const patch_1 = __importDefault(__webpack_require__(9));
+const version_1 = __importDefault(__webpack_require__(6));
 const plugin = {
     commands: [
         apply_1.default,
-        major_1.default,
-        minor_1.default,
-        patch_1.default,
+        version_1.default,
     ],
 };
 // eslint-disable-next-line arca/no-default-export
@@ -121,20 +117,18 @@ exports.default = plugin;
 
 "use strict";
 
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const cli_1 = __webpack_require__(2);
 const core_1 = __webpack_require__(3);
 const core_2 = __webpack_require__(3);
 const core_3 = __webpack_require__(3);
-const versionUtils = __importStar(__webpack_require__(4));
-const SUPPORTED_UPGRADE_REGEXP = /^([~^]?)[0-9]+\.[0-9]+\.[0-9]+$/;
+const clipanion_1 = __webpack_require__(4);
+const semver_1 = __importDefault(__webpack_require__(5));
+// Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
+const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
 // eslint-disable-next-line arca/no-default-export
 exports.default = (clipanion, pluginConfiguration) => clipanion
     .command(`version apply [--all]`)
@@ -185,12 +179,33 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
                 }
             }
         }
+        // First a quick sanity check before we start modifying stuff
+        const validateWorkspace = (workspace) => {
+            if (!workspace.manifest.raw || !workspace.manifest.raw[`version:next`])
+                return;
+            const newVersion = workspace.manifest.raw[`version:next`];
+            if (typeof newVersion !== `string` || !semver_1.default.valid(newVersion)) {
+                throw new clipanion_1.UsageError(`Can't apply the version bump if the resulting version (${newVersion}) isn't valid semver`);
+            }
+        };
+        if (!all) {
+            validateWorkspace(workspace);
+        }
+        else {
+            for (const workspace of project.workspaces) {
+                validateWorkspace(workspace);
+            }
+        }
         // Now that we know which workspaces depend on which others, we can
         // proceed to update everything at once using our accumulated knowledge.
         const processWorkspace = (workspace) => {
-            const newVersion = versionUtils.applyNextVersion(workspace);
-            if (newVersion === null)
+            if (!workspace.manifest.raw || !workspace.manifest.raw[`version:next`])
                 return;
+            const newVersion = workspace.manifest.raw[`version:next`];
+            if (typeof newVersion !== `string`)
+                throw new Error(`Assertion failed: The version should have been a string`);
+            workspace.manifest.version = newVersion;
+            workspace.manifest.raw[`version:next`] = undefined;
             report.reportInfo(core_2.MessageName.UNNAMED, `${core_3.structUtils.prettyLocator(configuration, workspace.anchoredLocator)}: Bumped to ${newVersion}`);
             const dependents = allDependents.get(workspace);
             if (typeof dependents === `undefined`)
@@ -250,171 +265,117 @@ module.exports = require("@berry/core");
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const clipanion_1 = __webpack_require__(5);
-const semver_1 = __importDefault(__webpack_require__(6));
-function registerNextVersion(workspace, level) {
-    if (workspace.manifest.version == null)
-        throw new clipanion_1.UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
-    const version = workspace.manifest.version;
-    if (typeof version !== `string` || !semver_1.default.valid(version))
-        throw new clipanion_1.UsageError(`Can't bump the version (${version}) if it's not valid semver`);
-    return workspace.manifest.setRawField(`version:next`, semver_1.default.inc(version, level), {
-        after: [`version`],
-    });
-}
-exports.registerNextVersion = registerNextVersion;
-function applyNextVersion(workspace) {
-    if (!workspace.manifest.raw || !workspace.manifest.raw[`version:next`])
-        return null;
-    const newVersion = workspace.manifest.raw[`version:next`];
-    if (typeof newVersion !== `string` || !semver_1.default.valid(newVersion))
-        throw new clipanion_1.UsageError(`Can't apply the version bump if the resulting version (${newVersion}) isn't valid semver`);
-    workspace.manifest.version = newVersion;
-    workspace.manifest.raw[`version:next`] = undefined;
-    return newVersion;
-}
-exports.applyNextVersion = applyNextVersion;
-
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports) {
 
 module.exports = require("clipanion");
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports) {
 
 module.exports = require("semver");
 
 /***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
+            t[p[i]] = s[p[i]];
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const cli_1 = __webpack_require__(2);
+const core_1 = __webpack_require__(3);
+const clipanion_1 = __webpack_require__(4);
+const semver_1 = __importDefault(__webpack_require__(5));
+const yup = __importStar(__webpack_require__(7));
+const STRATEGIES = new Set([
+    `major`,
+    `minor`,
+    `patch`,
+    `premajor`,
+    `preminor`,
+    `prepatch`,
+    `prerelease`,
+]);
+// eslint-disable-next-line arca/no-default-export
+exports.default = (clipanion, pluginConfiguration) => clipanion
+    .command(`version [strategy] [-d,--deferred]`)
+    .categorize(`Release-related commands`)
+    .describe(`apply a new version to the current package`)
+    .validate(yup.object().shape({
+    strategy: yup.string().test({
+        name: `strategy`,
+        message: '${strategy} must be a semver range or one of ${strategies}',
+        params: { strategies: Array.from(STRATEGIES).join(`, `) },
+        test: (range) => {
+            return semver_1.default.valid(range) !== null || STRATEGIES.has(range);
+        },
+    }),
+}))
+    .detail(`
+    This command will bump the version number for the given package, following the specified strategy:
+
+    - If \`major\`, the first number from the semver range will be increased (\`X.0.0\`).
+    - If \`minor\`, the second number from the semver range will be increased (\`0.X.0\`).
+    - If \`patch\`, the third number from the semver range will be increased (\`0.0.X\`).
+    - If prefixed by \`pre\` (\`premajor\`, ...), a \`-0\` suffix will be set (\`0.0.0-0\`).
+    - If \`prerelease\`, the suffix will be increased (\`0.0.0-X\`); the third number from the semver range will also be increased if there was no suffix in the previous version.
+    - If a valid semver range, it will be used as new version.
+    - If unspecified, Yarn will ask you for guidance.
+
+    Adding the \`--deferred\` flag will cause Yarn to "buffer" the version bump and only apply it during the next call to \`yarn version apply\`. This is recommended for monorepos that receive contributions from the open-source, as Yarn will remember multiple invocations to \`yarn version <strategy>\` and only apply the highest bump needed (so for example running \`yarn version major --deferred\` twice would only increase the first number of the semver range by a single increment).
+
+    Note that the deferred value is lost when you call \`yarn version\` without the \`--deferred\` flag.
+  `)
+    .example(`Immediatly bump the version to the next major`, `yarn version major`)
+    .example(`Prepare the version to be bumped to the next major`, `yarn version major --deferred`)
+    .action(async (_a) => {
+    var { cwd, strategy, deferred } = _a, env = __rest(_a, ["cwd", "strategy", "deferred"]);
+    const configuration = await core_1.Configuration.find(cwd, pluginConfiguration);
+    const { workspace } = await core_1.Project.find(configuration, cwd);
+    if (!workspace)
+        throw new cli_1.WorkspaceRequiredError(cwd);
+    if (workspace.manifest.version == null)
+        throw new clipanion_1.UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
+    const currentVersion = workspace.manifest.version;
+    if (typeof currentVersion !== `string` || !semver_1.default.valid(currentVersion))
+        throw new clipanion_1.UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
+    const nextVersion = semver_1.default.inc(currentVersion, strategy);
+    if (nextVersion === null)
+        throw new Error(`Assertion failed: Failed to increment the version number (${currentVersion})`);
+    const deferredVersion = workspace.manifest.raw[`version:next`];
+    if (deferred && deferredVersion && semver_1.default.gte(deferredVersion, nextVersion))
+        return;
+    workspace.manifest.setRawField(`version:next`, nextVersion, { after: [`version`] });
+    if (!deferred) {
+        await clipanion.run(null, [`version`, `apply`], Object.assign({ cwd }, env));
+    }
+});
+
+
+/***/ }),
 /* 7 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const cli_1 = __webpack_require__(2);
-const core_1 = __webpack_require__(3);
-const versionUtils = __importStar(__webpack_require__(4));
-// eslint-disable-next-line arca/no-default-export
-exports.default = (clipanion, pluginConfiguration) => clipanion
-    .command(`version major`)
-    .categorize(`Release-related commands`)
-    .describe(`bump the major number at the next release`)
-    .detail(`
-    This command will instruct Yarn to bump the major number (ie \`X.0.0\`) the next time you'll apply the version changes via \`yarn version apply\`.
-
-    Note that contrary to its effect in Yarn v1, the effect isn't actually applied until you explicitly say so. For this reason calling the command twice is safe and won't bump your package by two different major numbers.
-
-    Calling \`yarn version major\` will invalid any previous call to \`yarn version minor\` and \`yarn version patch\` (the highest bump takes precedence).
-  `)
-    .example(`Prepare the major number for a bump`, `yarn version major`)
-    .action(async ({ cwd }) => {
-    const configuration = await core_1.Configuration.find(cwd, pluginConfiguration);
-    const { workspace } = await core_1.Project.find(configuration, cwd);
-    if (!workspace)
-        throw new cli_1.WorkspaceRequiredError(cwd);
-    await versionUtils.registerNextVersion(workspace, `major`);
-    await workspace.persistManifest();
-});
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const cli_1 = __webpack_require__(2);
-const core_1 = __webpack_require__(3);
-const versionUtils = __importStar(__webpack_require__(4));
-// eslint-disable-next-line arca/no-default-export
-exports.default = (clipanion, pluginConfiguration) => clipanion
-    .command(`version minor`)
-    .categorize(`Release-related commands`)
-    .describe(`bump the minor number at the next release`)
-    .detail(`
-    This command will instruct Yarn to bump the minor release (ie \`0.X.0\`) the next time you'll apply the version changes via \`yarn version apply\`.
-
-    Note that contrary to its effect in Yarn v1, the effect isn't actually applied until you explicitly say so. For this reason calling the command twice is safe and won't bump your package by two different minor numbers.
-
-    Calling \`yarn version minor\` will invalid any previous call to \`yarn version patch\`, and won't have any effect if \`yarn version major\` was called before (the highest bump takes precedence).
-  `)
-    .example(`Prepare the major number for a bump`, `yarn version major`)
-    .action(async ({ cwd }) => {
-    const configuration = await core_1.Configuration.find(cwd, pluginConfiguration);
-    const { workspace } = await core_1.Project.find(configuration, cwd);
-    if (!workspace)
-        throw new cli_1.WorkspaceRequiredError(cwd);
-    await versionUtils.registerNextVersion(workspace, `minor`);
-    await workspace.persistManifest();
-});
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const cli_1 = __webpack_require__(2);
-const core_1 = __webpack_require__(3);
-const versionUtils = __importStar(__webpack_require__(4));
-// eslint-disable-next-line arca/no-default-export
-exports.default = (clipanion, pluginConfiguration) => clipanion
-    .command(`version patch`)
-    .categorize(`Release-related commands`)
-    .describe(`bump the patch number at the next release`)
-    .detail(`
-    This command will instruct Yarn to bump the patch number (ie \`0.0.X\`) the next time you'll apply the version changes via \`yarn version apply\`.
-
-    Note that contrary to its effect in Yarn v1, the effect isn't actually applied until you explicitly say so. For this reason calling the command twice is safe and won't bump your package by two different patch numbers.
-
-    Calling \`yarn version patch\` won't have any effect if \`yarn version major\` or \`yarn version minor\` were called before (the highest bump takes precedence).
-  `)
-    .example(`Prepare the major number for a bump`, `yarn version major`)
-    .action(async ({ cwd }) => {
-    const configuration = await core_1.Configuration.find(cwd, pluginConfiguration);
-    const { workspace } = await core_1.Project.find(configuration, cwd);
-    if (!workspace)
-        throw new cli_1.WorkspaceRequiredError(cwd);
-    await versionUtils.registerNextVersion(workspace, `patch`);
-    await workspace.persistManifest();
-});
-
+module.exports = require("yup");
 
 /***/ })
 /******/ ]);

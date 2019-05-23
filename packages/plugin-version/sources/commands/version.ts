@@ -3,7 +3,17 @@ import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {PortablePath}                                from '@berry/fslib';
 import {UsageError}                                  from 'clipanion';
 import semver                                        from 'semver';
-import yup                                           from 'yup';
+import * as yup                                      from 'yup';
+
+const STRATEGIES = new Set([
+  `major`,
+  `minor`,
+  `patch`,
+  `premajor`,
+  `preminor`,
+  `prepatch`,
+  `prerelease`,
+]);
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -14,18 +24,13 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
   .validate(
     yup.object().shape({
-      strategy: yup.string().when([`strategy`], {
-        is: range => semver.valid(range),
-        then: yup.string(),
-        else: yup.string().oneOf([
-          `major`,
-          `minor`,
-          `patch`,
-          `premajor`,
-          `preminor`,
-          `prepatch`,
-          `prerelease`,
-        ]),
+      strategy: yup.string().test({
+        name: `strategy`,
+        message: '${strategy} must be a semver range or one of ${strategies}',
+        params: {strategies: Array.from(STRATEGIES).join(`, `)},
+        test: (range: string) => {
+          return semver.valid(range) !== null || STRATEGIES.has(range);
+        },
       }),
     }),
   )

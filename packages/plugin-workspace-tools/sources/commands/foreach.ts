@@ -7,7 +7,6 @@ import pLimit                                                                   
 import {Writable}                                                                from 'stream';
 import * as yup                                                                  from 'yup';
 
-
 type ForeachOptions = {
   args: Array<string>;
   command: string;
