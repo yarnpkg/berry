@@ -288,4 +288,28 @@ describe(`Simple shell features`, () => {
       stdout: `:1234`,
     });
   });
+
+  it(`env assignment prefix syntax shouldn't persist it to the environment`, async () => {
+    await expect(bufferResult(
+      `FOO=1 ; FOO=2 echo hello ; echo $FOO`
+    )).resolves.toMatchObject({
+      stdout: `hello\n1\n`,
+    });
+
+    await expect(bufferResult(
+      `FOO=1 ; FOO=2 echo hello ; node -e 'process.stdout.write(process.env.FOO)'`
+    )).resolves.toMatchObject({
+      stdout: `hello\n1`,
+    });
+
+    await expect(bufferResult(`FOO=2 echo hello ; echo $FOO`)).rejects.toThrowError(/Unbound variable/);
+  });
+
+  it(`should support multiple env assignment without command`, async () => {
+    await expect(bufferResult(
+      `FOO=1 BAR=2; echo hello ; echo $BAR`
+    )).resolves.toMatchObject({
+      stdout: `hello\n2\n`,
+    });
+  });
 });

@@ -2,19 +2,16 @@ export type CommandSegment = string |
 {type: `shell`, shell: ShellLine, quoted: boolean} |
 {type: `variable`, name: string, quoted: boolean};
 
-export type EnvSegment = {
-  type: `envVar`,
-  name: string,
-  args: Array<Array<CommandSegment>>,
-};
-
 export type Command = {
   type: `command`,
   args: Array<Array<CommandSegment>>,
-  env: Array<EnvSegment>,
+  envs: Array<EnvSegment>,
 } | {
   type: `subshell`,
   subshell: ShellLine,
+} | {
+  type: `envs`,
+  envs: Array<EnvSegment>
 };
 
 export type CommandChain = Command & {
@@ -39,3 +36,9 @@ export type CommandLineThen = {
 export type ShellLine = Array<CommandLine>;
 
 export declare const parse: (code: string) => ShellLine;
+
+export type EnvSegment = {
+  name: string,
+  args: Array<Array<CommandSegment>>,
+};
+

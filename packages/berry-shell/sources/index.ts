@@ -4,7 +4,7 @@ import {EnvSegment}                                                       from '
 import {PassThrough, Readable, Writable}                                  from 'stream';
 
 import {Handle, ProtectedStream, Stdio, start}                            from './pipe';
-import {makeBuiltin, makeProcess, makeNoop}                               from './pipe';
+import {makeBuiltin, makeProcess}                                         from './pipe';
 
 export type UserOptions = {
   builtins: {[key: string]: ShellBuiltin},
@@ -225,9 +225,6 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
  */
 
 function makeCommandAction(args: Array<string>, opts: ShellOptions, state: ShellState) {
-  if (!args.length)
-    return makeNoop();
-
   if (!opts.builtins.has(args[0]))
     args = [`command`, ...args];
 
@@ -278,18 +275,26 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
     switch (current.type) {
       case `command`: {
         const args = await interpolateArguments(current.args, opts, state);
-        const environment = await applyEnvVariables(current.env, opts, state);
+        const environment = await applyEnvVariables(current.envs, opts, state);
 
-        activeState.environment = {...activeState.environment, ...environment};
-        activeState.variables = {...activeState.variables, ...environment};
-
-        action = makeCommandAction(args, opts, activeState);
+        action = current.envs.length
+          ? makeCommandAction(args, opts, cloneState(activeState, {environment}))
+          : makeCommandAction(args, opts, activeState);
       } break;
 
       case `subshell`: {
       // We don't interpolate the subshell because it will be recursively
       // interpolated within its own context
         action = makeSubshellAction(current.subshell, opts, activeState);
+      } break;
+
+      case `envs`: {
+        const environment = await applyEnvVariables(current.envs, opts, state);
+
+        activeState.variables = {...activeState.variables, ...environment};
+        activeState.environment = {...activeState.environment, ...environment};
+
+        action = makeCommandAction([`true`], opts, activeState);
       } break;
     }
 

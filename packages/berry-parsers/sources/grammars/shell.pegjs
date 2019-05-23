@@ -28,13 +28,13 @@ CommandChainType
   / '|'
 
 VariableAssignment
-  = name:EnvVariable '=' args:ArgumentSegment+ S* { return { type: `envVar`, name, args } }
-  / name:EnvVariable '=' S* { return { type: `envVar`, name, args : [] } }
+  = name:EnvVariable '=' args:ArgumentSegment+ S* { return { name, args } }
+  / name:EnvVariable '=' S* { return { name, args : [] } }
 
 Command
   = S* "(" S* subshell:ShellLine S* ")" S* { return { type: `subshell`, subshell } }
-  / S* env:VariableAssignment* S* args:Argument+ S* { return { type: `command`, args, env } }
-  / S* env:VariableAssignment+ S* { return { type: `command`, args: [], env } }
+  / S* envs:VariableAssignment* S* args:Argument+ S* { return { type: `command`, args, envs } }
+  / S* envs:VariableAssignment+ S* { return { type: `envs`, envs } }
 
 Argument
   = S* segments:ArgumentSegment+ { return [].concat(... segments) }
