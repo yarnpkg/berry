@@ -43,18 +43,16 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       if (scope)
         ident = structUtils.makeIdent(scope, ``);
 
-
       const credentials = await getCredentials(prompt);
       const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
-      const requestOptions = {
-        configuration,
-        ident,
-        json: true,
-        authType: npmHttpUtils.AuthType.NO_AUTH,
-      };
 
       try {
-        const response = await npmHttpUtils.put(url, credentials, requestOptions);
+        const response = await npmHttpUtils.put(url, credentials, {
+          configuration,
+          ident,
+          json: true,
+          authType: npmHttpUtils.AuthType.NO_AUTH,
+        });
 
         // @ts-ignore
         await setAuthToken(ident, response.token);

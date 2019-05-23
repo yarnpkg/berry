@@ -662,7 +662,7 @@ export class Configuration {
       if (currentValue === nextValue)
         continue;
 
-      current[key] = nextValue;
+      current[currentKey] = nextValue;
       patched = true;
     }
 
