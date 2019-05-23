@@ -884,7 +884,7 @@ function sdk(targetFolder) {
 }
 function run(name, argv) {
     let { NODE_OPTIONS } = process.env;
-    NODE_OPTIONS = `${NODE_OPTIONS || ``} --require ${dynamicRequire["a" /* dynamicRequire */].resolve(`@berry/pnpify`)}`.trim();
+    NODE_OPTIONS = `${NODE_OPTIONS || ``} --require ${dynamicRequire["a" /* dynamicRequire */].resolve(`@berry/pnpify/lib`)}`.trim();
     const child = Object(external_child_process_["spawn"])(name, argv, {
         env: Object.assign({}, process.env, { NODE_OPTIONS }),
         stdio: `inherit`,

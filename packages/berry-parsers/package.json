@@ -1,14 +1,26 @@
 {
   "name": "@berry/parsers",
-  "private": true,
+  "version": "0.0.2",
   "main": "./sources/index.ts",
   "devDependencies": {
-    "pegjs": "^0.10.0"
+    "@berry/pnpify": "workspace:0.0.3",
+    "pegjs": "^0.10.0",
+    "typescript": "^3.3.3333"
   },
   "scripts": {
     "grammar:shell": "run pegjs -o sources/grammars/shell.js sources/grammars/shell.pegjs",
     "grammar:resolution": "run pegjs -o sources/grammars/resolution.js sources/grammars/resolution.pegjs",
     "grammar:syml": "run pegjs -o sources/grammars/syml.js sources/grammars/syml.pegjs",
+    "postpack": "rm -rf lib",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "release": "yarn npm publish",
     "test:parsers": "run test:unit packages/berry-parsers"
-  }
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ]
 }

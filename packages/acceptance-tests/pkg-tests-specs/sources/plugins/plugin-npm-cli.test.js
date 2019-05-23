@@ -129,7 +129,7 @@ describe(`Plugins`, () => {
       `should login a user with no OTP setup`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
         const homePath = await createTemporaryFolder();
-        await writeFile(`${homePath}/${RC_FILENAME}`, `init-scope berry-test\n`);
+        await writeFile(`${homePath}/${RC_FILENAME}`, `init-scope: berry-test\n`);
 
         let code;
         let stdout;

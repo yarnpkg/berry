@@ -1,5 +1,5 @@
 // @ts-ignore
-import template                  from '@berry/pnp/bundles/hook';
+import template                  from '@berry/pnp/lib/hook';
 
 import {generateSerializedState} from './generateSerializedState';
 import {SerializedState}         from './types';

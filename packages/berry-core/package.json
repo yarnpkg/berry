@@ -1,19 +1,15 @@
 {
   "name": "@berry/core",
-  "private": true,
+  "version": "0.0.0",
   "main": "./sources/index.ts",
   "sideEffects": false,
-  "scripts": {
-    "prepack": "pnpify tsc",
-    "postpack": "rm -rf lib"
-  },
   "dependencies": {
-    "@berry/fslib": "workspace:*",
-    "@berry/json-proxy": "workspace:*",
-    "@berry/parsers": "workspace:*",
-    "@berry/pnp": "workspace:*",
-    "@berry/pnpify": "workspace:*",
-    "@berry/shell": "workspace:*",
+    "@berry/fslib": "workspace:0.0.6",
+    "@berry/json-proxy": "workspace:0.0.0",
+    "@berry/parsers": "workspace:0.0.2",
+    "@berry/pnp": "workspace:0.0.3",
+    "@berry/pnpify": "workspace:0.0.3",
+    "@berry/shell": "workspace:0.0.1",
     "@types/camelcase": "5.2.0",
     "@types/decamelize": "3.0.3",
     "agentkeepalive": "^4.0.2",
@@ -40,13 +36,18 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
+    "@berry/pnpify": "workspace:0.0.3",
     "typescript": "^3.3.3333"
+  },
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc"
   },
   "publishConfig": {
     "main": "./lib/index.js",
     "types": "./lib/index.d.ts"
   },
   "files": [
-    "/lib/*"
+    "/lib/**/*"
   ]
 }

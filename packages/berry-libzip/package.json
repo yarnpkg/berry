@@ -1,21 +1,22 @@
 {
   "name": "@berry/libzip",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "./sources/index.ts",
   "devDependencies": {
-    "@berry/pnpify": "workspace:*",
+    "@berry/pnpify": "workspace:0.0.3",
     "typescript": "^3.3.3333"
   },
   "scripts": {
     "build:libzip:wasm": "cd ./artifacts && ./build.sh",
-    "prepack": "mkdir -p lib && rsync -a --include '*.d.ts' --exclude '*.ts' sources/ lib/ && pnpify tsc",
-    "postpack": "rm -rf lib"
+    "postpack": "rm -rf lib",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "release": "yarn npm publish"
   },
   "publishConfig": {
     "main": "./lib/index.js",
     "typings": "./lib/index.d.ts"
   },
   "files": [
-    "/lib/*"
+    "/lib/**/*"
   ]
 }

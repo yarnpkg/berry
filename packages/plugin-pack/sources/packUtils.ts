@@ -1,11 +1,11 @@
-import {MessageName, Report, Workspace, scriptUtils}                                  from '@berry/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename}                         from '@berry/fslib';
-import mm                                                                             from 'micromatch';
-import {PassThrough}                                                                  from 'stream';
-import tar                                                                            from 'tar-stream';
-import {createGzip}                                                                   from 'zlib';
+import {MessageName, ReportError, Report, Workspace, scriptUtils} from '@berry/core';
+import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename}     from '@berry/fslib';
+import mm                                                         from 'micromatch';
+import {PassThrough}                                              from 'stream';
+import tar                                                        from 'tar-stream';
+import {createGzip}                                               from 'zlib';
 
-import {Hooks}                                                                        from './';
+import {Hooks}                                                    from './';
 
 const NEVER_IGNORE = [
   `/package.json`,
@@ -47,7 +47,11 @@ export async function prepareForPack(workspace: Workspace, {report}: {report: Re
 
   if (await scriptUtils.hasWorkspaceScript(workspace, `prepack`)) {
     report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "prepack" lifecycle script`);
-    await scriptUtils.executeWorkspaceScript(workspace, `prepack`, [], {stdin, stdout, stderr});
+    const exitCode = await scriptUtils.executeWorkspaceScript(workspace, `prepack`, [], {stdin, stdout, stderr});
+
+    if (exitCode !== 0) {
+      throw new ReportError(MessageName.LIFECYCLE_SCRIPT, `Prepack script failed; run "yarn prepack" to investigate`);
+    }
   }
 
   try {
@@ -55,7 +59,11 @@ export async function prepareForPack(workspace: Workspace, {report}: {report: Re
   } finally {
     if (await scriptUtils.hasWorkspaceScript(workspace, `postpack`)) {
       report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "postpack" lifecycle script`);
-      await scriptUtils.executeWorkspaceScript(workspace, `postpack`, [], {stdin, stdout, stderr});
+
+      const exitCode = await scriptUtils.executeWorkspaceScript(workspace, `postpack`, [], {stdin, stdout, stderr});
+      if (exitCode !== 0) {
+        report.reportWarning(MessageName.LIFECYCLE_SCRIPT, `Postpack script failed; run "yarn postpack" to investigate`);
+      }
     }
   }
 }

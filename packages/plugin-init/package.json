@@ -3,9 +3,9 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/core": "workspace:*",
-    "@berry/fslib": "workspace:*",
-    "@berry/json-proxy": "workspace:*",
+    "@berry/core": "workspace:0.0.0",
+    "@berry/fslib": "workspace:0.0.6",
+    "@berry/json-proxy": "workspace:0.0.0",
     "clipanion": "^0.14.1"
   }
 }

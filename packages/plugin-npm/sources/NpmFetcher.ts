@@ -43,10 +43,20 @@ export class NpmFetcher implements Fetcher {
   }
 
   private async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
-    const sourceBuffer = await npmHttpUtils.get(this.getLocatorUrl(locator, opts), {
-      configuration: opts.project.configuration,
-      ident: locator,
-    });
+    let sourceBuffer;
+    try {
+      sourceBuffer = await npmHttpUtils.get(this.getLocatorUrl(locator, opts), {
+        configuration: opts.project.configuration,
+        ident: locator,
+      });
+    } catch (error) {
+      // The npm registry doesn't always support %2f when fetching the package tarballs 🤡
+      // Ex: https://registry.yarnpkg.com/@emotion%2fbabel-preset-css-prop/-/babel-preset-css-prop-10.0.7.tgz0
+      sourceBuffer = await npmHttpUtils.get(this.getLocatorUrl(locator, opts).replace(/%2f/g, `/`), {
+        configuration: opts.project.configuration,
+        ident: locator,
+      });
+    }
 
     return await tgzUtils.makeArchive(sourceBuffer, {
       stripComponents: 1,

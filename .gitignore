@@ -9,9 +9,16 @@ junit.xml
 
 /.yarn/build-state.yml
 
-lib
 !/scripts/tssdk/lib
 
-/packages/*/bundles/*
-!/packages/berry-pnp/bundles/hook.js
+# Those files are meant to be local-only
+/packages/*/bundles
+
+# Those folders are meant to contain the prepack build artifacts; we don't commit them
+lib
+
+# We check-in pnpify because we need it in order to compile the rest of the code
 !/packages/berry-pnpify/lib
+
+# We check-in the PnP hook because it would be heavy to regenerate it before each bundle build
+!/packages/berry-pnp/lib/hook.js

@@ -47,7 +47,7 @@ async function setupWorkspaces(path) {
 describe(`Commands`, () => {
   describe(`workspace foreach`, () => {
     test(
-      `runs scripts in parallel with interlaced report`,
+      `should run scripts in parallel and interlace the output when run with --parallel --interlaced`,
       makeTemporaryEnv(
         {
           private: true,
@@ -89,7 +89,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `runs scripts in parallel in topological order`,
+      `should run scripts in parallel but following the topological order when run with --parallel --topological`,
       makeTemporaryEnv(
         {
           private: true,
@@ -104,7 +104,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--parallel`, `--with-dependencies`, `--jobs=2`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--parallel`, `--topological`, `--jobs=2`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -115,7 +115,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `runs scripts topological order by default`,
+      `should prefix the output with run with --verbose`,
       makeTemporaryEnv(
         {
           private: true,
@@ -130,7 +130,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--verbose`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -141,7 +141,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `shows prefix with flag`,
+      `should only run the scripts on workspaces that match the --include list`,
       makeTemporaryEnv(
         {
           private: true,
@@ -156,7 +156,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--prefixed`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--verbose`, `--include`, `workspace-a`, `--include`, `workspace-b`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -167,7 +167,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `run script only on included workspaces using [-i,--include]`,
+      `should never run the scripts on workspaces that match the --exclude list`,
       makeTemporaryEnv(
         {
           private: true,
@@ -182,7 +182,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--prefixed`, `--include`, `workspace-a`, `-i`, `workspace-b`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--verbose`, `--exclude`, `workspace-a`, `--exclude`, `workspace-b`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -193,33 +193,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `excludes workspaces from running scripts using [-x,--exclude]`,
-      makeTemporaryEnv(
-        {
-          private: true,
-          workspaces: [`packages/*`]
-        },
-        async ({ path, run }) => {
-          await setupWorkspaces(path);
-
-          let code;
-          let stdout;
-          let stderr;
-
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--prefixed`, `--exclude`, `workspace-a`, `-x`, `workspace-b`, `print`));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
-
-          await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
-    );
-
-    test(
-      `throws an error if using jobs without parallel`,
+      `should throw an error when using --jobs without --parallel`,
       makeTemporaryEnv(
         {
           private: true,
@@ -235,7 +209,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `throws an error if jobs is lower than 2`,
+      `should throw an error when using --jobs with a value lower than 2`,
       makeTemporaryEnv(
         {
           private: true,

@@ -1,14 +1,13 @@
 {
     "name": "pkg-tests-core",
-    "version": "0.0.0",
     "private": true,
     "main": "./sources/index.js",
     "dependencies": {
-        "@berry/fslib": "workspace:*",
+        "@berry/fslib": "workspace:0.0.6",
         "invariant": "^2.2.4",
         "klaw": "^2.1.1",
         "minimatch": "^3.0.4",
-        "pkg-tests-fixtures": "workspace:*",
+        "pkg-tests-fixtures": "workspace:0.0.0",
         "semver": "^5.6.0",
         "super-resolve": "^1.0.0",
         "tar-fs": "^1.16.0",

@@ -1481,7 +1481,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@berry/builder@workspace:*, @berry/builder@workspace:packages/berry-builder":
+"@berry/builder@workspace:0.0.0, @berry/builder@workspace:packages/berry-builder":
   version: 0.0.0-use.local
   resolution: "@berry/builder@workspace:packages/berry-builder"
   dependencies:
@@ -1490,16 +1490,15 @@ __metadata:
     "@babel/preset-env": "npm:^7.3.1"
     "@babel/preset-typescript": "npm:^7.1.0"
     "@babel/register": "npm:^7.0.0"
-    "@berry/cli": "workspace:*"
-    "@berry/pnpify": "workspace:packages/berry-pnpify"
+    "@berry/pnpify": "workspace:0.0.3"
     brfs: "npm:^2.0.1"
     buffer-loader: "npm:^0.1.0"
     clipanion: "npm:^0.14.1"
     joi: "npm:^13.6.0"
-    pnp-webpack-plugin: "npm:^1.3.1"
+    pnp-webpack-plugin: "npm:^1.4.3"
     raw-loader: "npm:^0.5.1"
     transform-loader: "npm:^0.2.4"
-    ts-loader: "npm:^5.3.0"
+    ts-loader: "npm:^5.3.3"
     typescript: "npm:^3.3.3333"
     val-loader: "npm:^1.1.1"
     webpack: "npm:^4.28.4"
@@ -1513,31 +1512,30 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/cli@workspace:*, @berry/cli@workspace:packages/berry-cli":
+"@berry/cli@workspace:2.0.0, @berry/cli@workspace:packages/berry-cli":
   version: 0.0.0-use.local
   resolution: "@berry/cli@workspace:packages/berry-cli"
   dependencies:
-    "@berry/builder": "workspace:*"
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
-    "@berry/parsers": "workspace:*"
-    "@berry/plugin-constraints": "workspace:*"
-    "@berry/plugin-dlx": "workspace:*"
-    "@berry/plugin-essentials": "workspace:*"
-    "@berry/plugin-file": "workspace:*"
-    "@berry/plugin-github": "workspace:*"
-    "@berry/plugin-http": "workspace:*"
-    "@berry/plugin-hub": "workspace:*"
-    "@berry/plugin-init": "workspace:*"
-    "@berry/plugin-link": "workspace:*"
-    "@berry/plugin-npm": "workspace:*"
-    "@berry/plugin-npm-cli": "workspace:*"
-    "@berry/plugin-pack": "workspace:*"
-    "@berry/plugin-pnp": "workspace:*"
-    "@berry/plugin-typescript": "workspace:*"
-    "@berry/plugin-workspace-tools": "workspace:*"
-    "@berry/pnp": "workspace:*"
-    "@berry/shell": "workspace:*"
+    "@berry/builder": "workspace:0.0.0"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/parsers": "workspace:0.0.2"
+    "@berry/plugin-constraints": "workspace:0.0.0"
+    "@berry/plugin-dlx": "workspace:0.0.0"
+    "@berry/plugin-essentials": "workspace:0.0.0"
+    "@berry/plugin-file": "workspace:0.0.0"
+    "@berry/plugin-github": "workspace:0.0.0"
+    "@berry/plugin-http": "workspace:0.0.0"
+    "@berry/plugin-init": "workspace:0.0.0"
+    "@berry/plugin-link": "workspace:0.0.0"
+    "@berry/plugin-npm": "workspace:0.0.0"
+    "@berry/plugin-npm-cli": "workspace:0.0.0"
+    "@berry/plugin-pack": "workspace:0.0.0"
+    "@berry/plugin-pnp": "workspace:0.0.0"
+    "@berry/plugin-typescript": "workspace:0.0.0"
+    "@berry/plugin-workspace-tools": "workspace:0.0.0"
+    "@berry/pnp": "workspace:0.0.3"
+    "@berry/shell": "workspace:0.0.1"
     chalk: "npm:^2.4.1"
     clipanion: "npm:^0.14.1"
     execa: "npm:^1.0.0"
@@ -1549,16 +1547,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/core@workspace:*, @berry/core@workspace:packages/berry-core":
+"@berry/core@workspace:0.0.0, @berry/core@workspace:packages/berry-core":
   version: 0.0.0-use.local
   resolution: "@berry/core@workspace:packages/berry-core"
   dependencies:
-    "@berry/fslib": "workspace:*"
-    "@berry/json-proxy": "workspace:*"
-    "@berry/parsers": "workspace:*"
-    "@berry/pnp": "workspace:*"
-    "@berry/pnpify": "workspace:*"
-    "@berry/shell": "workspace:*"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/json-proxy": "workspace:0.0.0"
+    "@berry/parsers": "workspace:0.0.2"
+    "@berry/pnp": "workspace:0.0.3"
+    "@berry/pnpify": "workspace:0.0.3"
+    "@berry/shell": "workspace:0.0.1"
     "@types/camelcase": "npm:5.2.0"
     "@types/decamelize": "npm:3.0.3"
     agentkeepalive: "npm:^4.0.2"
@@ -1587,13 +1585,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/fslib@^0.0.4, @berry/fslib@workspace:*, @berry/fslib@workspace:packages/berry-fslib":
+"@berry/fslib@workspace:0.0.6, @berry/fslib@workspace:packages/berry-fslib":
   version: 0.0.0-use.local
   resolution: "@berry/fslib@workspace:packages/berry-fslib"
   dependencies:
-    "@berry/libzip": ^0.0.3
-    "@berry/pnpify": "workspace:*"
-    "@types/jest": "npm:^24.0.12"
+    "@berry/libzip": "workspace:0.0.4"
+    "@berry/pnpify": "workspace:0.0.3"
     typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
@@ -1638,24 +1635,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/json-proxy@workspace:*, @berry/json-proxy@workspace:packages/berry-json-proxy":
+"@berry/json-proxy@workspace:0.0.0, @berry/json-proxy@workspace:packages/berry-json-proxy":
   version: 0.0.0-use.local
   resolution: "@berry/json-proxy@workspace:packages/berry-json-proxy"
   dependencies:
-    "@berry/fslib": "workspace:*"
-  languageName: unknown
-  linkType: soft
-
-"@berry/libzip@^0.0.3, @berry/libzip@workspace:packages/berry-libzip":
-  version: 0.0.0-use.local
-  resolution: "@berry/libzip@workspace:packages/berry-libzip"
-  dependencies:
-    "@berry/pnpify": "workspace:*"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/pnpify": "workspace:0.0.3"
     typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
 
-"@berry/monorepo@workspace:*, @berry/monorepo@workspace:.":
+"@berry/libzip@workspace:0.0.4, @berry/libzip@workspace:packages/berry-libzip":
+  version: 0.0.0-use.local
+  resolution: "@berry/libzip@workspace:packages/berry-libzip"
+  dependencies:
+    "@berry/pnpify": "workspace:0.0.3"
+    typescript: "npm:^3.3.3333"
+  languageName: unknown
+  linkType: soft
+
+"@berry/monorepo@workspace:., @berry/monorepo@workspace:0.0.0":
   version: 0.0.0-use.local
   resolution: "@berry/monorepo@workspace:."
   dependencies:
@@ -1665,7 +1664,7 @@ __metadata:
     "@babel/plugin-transform-modules-commonjs": "npm:^7.2.0"
     "@babel/preset-env": "npm:^7.3.1"
     "@babel/preset-typescript": "npm:^7.1.0"
-    "@berry/pnpify": "workspace:*"
+    "@berry/pnpify": "workspace:0.0.3"
     "@types/cross-spawn": "npm:6.0.0"
     "@types/dateformat": "npm:^1.0.1"
     "@types/emscripten": "npm:^0.0.31"
@@ -1719,20 +1718,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/parsers@workspace:*, @berry/parsers@workspace:packages/berry-parsers":
+"@berry/parsers@workspace:0.0.2, @berry/parsers@workspace:packages/berry-parsers":
   version: 0.0.0-use.local
   resolution: "@berry/parsers@workspace:packages/berry-parsers"
   dependencies:
+    "@berry/pnpify": "workspace:0.0.3"
     pegjs: "npm:^0.10.0"
+    typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-constraints@workspace:*, @berry/plugin-constraints@workspace:packages/plugin-constraints":
+"@berry/plugin-constraints@workspace:0.0.0, @berry/plugin-constraints@workspace:packages/plugin-constraints":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-constraints@workspace:packages/plugin-constraints"
   dependencies:
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
     inquirer: "npm:^6.2.0"
     lodash.get: "npm:^4.4.2"
     node-emoji: "npm:^1.8.1"
@@ -1740,29 +1741,29 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-dlx@workspace:*, @berry/plugin-dlx@workspace:packages/plugin-dlx":
+"@berry/plugin-dlx@workspace:0.0.0, @berry/plugin-dlx@workspace:packages/plugin-dlx":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-dlx@workspace:packages/plugin-dlx"
   dependencies:
-    "@berry/cli": "workspace:*"
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
-    "@berry/json-proxy": "workspace:*"
-    "@berry/plugin-essentials": "workspace:*"
+    "@berry/cli": "workspace:2.0.0"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/json-proxy": "workspace:0.0.0"
+    "@berry/plugin-essentials": "workspace:0.0.0"
     clipanion: "npm:^0.14.1"
     tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-essentials@workspace:*, @berry/plugin-essentials@workspace:packages/plugin-essentials":
+"@berry/plugin-essentials@workspace:0.0.0, @berry/plugin-essentials@workspace:packages/plugin-essentials":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
-    "@berry/cli": "workspace:*"
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
-    "@berry/json-proxy": "workspace:*"
-    "@berry/parsers": "workspace:*"
+    "@berry/cli": "workspace:2.0.0"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/json-proxy": "workspace:0.0.0"
+    "@berry/parsers": "workspace:0.0.2"
     clipanion: "npm:^0.14.1"
     execa: "npm:^1.0.0"
     inquirer: "npm:^6.2.0"
@@ -1776,90 +1777,70 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@berry/plugin-exec@workspace:packages/plugin-exec"
   dependencies:
-    "@berry/builder": "workspace:*"
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
-    "@types/tmp": "npm:0.1.0"
+    "@berry/builder": "workspace:0.0.0"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
+    "@types/tmp": "npm:^0.0.33"
     tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-file@workspace:*, @berry/plugin-file@workspace:packages/plugin-file":
+"@berry/plugin-file@workspace:0.0.0, @berry/plugin-file@workspace:packages/plugin-file":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-file@workspace:packages/plugin-file"
   dependencies:
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-github@workspace:*, @berry/plugin-github@workspace:packages/plugin-github":
+"@berry/plugin-github@workspace:0.0.0, @berry/plugin-github@workspace:packages/plugin-github":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-github@workspace:packages/plugin-github"
   dependencies:
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-http@workspace:*, @berry/plugin-http@workspace:packages/plugin-http":
+"@berry/plugin-http@workspace:0.0.0, @berry/plugin-http@workspace:packages/plugin-http":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-http@workspace:packages/plugin-http"
   dependencies:
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-hub@workspace:*, @berry/plugin-hub@workspace:packages/plugin-hub":
-  version: 0.0.0-use.local
-  resolution: "@berry/plugin-hub@workspace:packages/plugin-hub"
-  dependencies:
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
-    "@berry/json-proxy": "workspace:*"
-    "@berry/ui": "workspace:*"
-    clipanion: "npm:^0.14.1"
-    dateformat: "npm:^3.0.3"
-    immer: "npm:^1.7.2"
-    joi: "npm:^13.6.0"
-    pretty-bytes: "npm:^5.1.0"
-    react: "npm:^16.8.4"
-    react-redux: "npm:^5.0.7"
-    redux: "npm:^4.0.0"
-    redux-saga: "npm:^1.0.0-beta.3"
-  languageName: unknown
-  linkType: soft
-
-"@berry/plugin-init@workspace:*, @berry/plugin-init@workspace:packages/plugin-init":
+"@berry/plugin-init@workspace:0.0.0, @berry/plugin-init@workspace:packages/plugin-init":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-init@workspace:packages/plugin-init"
   dependencies:
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
-    "@berry/json-proxy": "workspace:*"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/json-proxy": "workspace:0.0.0"
     clipanion: "npm:^0.14.1"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-link@workspace:*, @berry/plugin-link@workspace:packages/plugin-link":
+"@berry/plugin-link@workspace:0.0.0, @berry/plugin-link@workspace:packages/plugin-link":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-link@workspace:packages/plugin-link"
   dependencies:
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-npm-cli@workspace:*, @berry/plugin-npm-cli@workspace:packages/plugin-npm-cli":
+"@berry/plugin-npm-cli@workspace:0.0.0, @berry/plugin-npm-cli@workspace:packages/plugin-npm-cli":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-npm-cli@workspace:packages/plugin-npm-cli"
   dependencies:
-    "@berry/cli": "workspace:*"
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
-    "@berry/plugin-npm": "workspace:*"
-    "@berry/plugin-pack": "workspace:*"
+    "@berry/cli": "workspace:2.0.0"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/plugin-npm": "workspace:0.0.0"
+    "@berry/plugin-pack": "workspace:0.0.0"
     clipanion: "npm:^0.14.1"
     inquirer: "npm:^6.2.0"
     ssri: "npm:^6.0.1"
@@ -1867,134 +1848,135 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-npm@workspace:*, @berry/plugin-npm@workspace:packages/plugin-npm":
+"@berry/plugin-npm@workspace:0.0.0, @berry/plugin-npm@workspace:packages/plugin-npm":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
     inquirer: "npm:^6.2.0"
     semver: "npm:^5.6.0"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-pack@workspace:*, @berry/plugin-pack@workspace:packages/plugin-pack":
+"@berry/plugin-pack@workspace:0.0.0, @berry/plugin-pack@workspace:packages/plugin-pack":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-pack@workspace:packages/plugin-pack"
   dependencies:
-    "@berry/cli": "workspace:*"
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
+    "@berry/cli": "workspace:2.0.0"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
     "@types/tar-stream": "npm:1.6.0"
     micromatch: "npm:^4.0.2"
     tar-stream: "npm:^2.0.1"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-pnp@workspace:*, @berry/plugin-pnp@workspace:packages/plugin-pnp":
+"@berry/plugin-pnp@workspace:0.0.0, @berry/plugin-pnp@workspace:packages/plugin-pnp":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
-    "@berry/cli": "workspace:*"
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
-    "@berry/plugin-stage": "workspace:packages/plugin-stage"
-    "@berry/pnp": "workspace:*"
+    "@berry/cli": "workspace:2.0.0"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/plugin-stage": "workspace:0.0.0"
+    "@berry/pnp": "workspace:0.0.3"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-stage@workspace:packages/plugin-stage":
+"@berry/plugin-stage@workspace:0.0.0, @berry/plugin-stage@workspace:packages/plugin-stage":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-stage@workspace:packages/plugin-stage"
   dependencies:
-    "@berry/builder": "workspace:*"
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
+    "@berry/builder": "workspace:0.0.0"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
     clipanion: "npm:^0.14.1"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-typescript@workspace:*, @berry/plugin-typescript@workspace:packages/plugin-typescript":
+"@berry/plugin-typescript@workspace:0.0.0, @berry/plugin-typescript@workspace:packages/plugin-typescript":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
-    "@berry/builder": "workspace:*"
-    "@berry/cli": "workspace:*"
-    "@berry/core": "workspace:*"
-    "@berry/plugin-essentials": "workspace:*"
-    "@berry/plugin-pack": "workspace:*"
+    "@berry/builder": "workspace:0.0.0"
+    "@berry/cli": "workspace:2.0.0"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/plugin-essentials": "workspace:0.0.0"
+    "@berry/plugin-pack": "workspace:0.0.0"
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-workspace-tools@workspace:*, @berry/plugin-workspace-tools@workspace:packages/plugin-workspace-tools":
+"@berry/plugin-version@workspace:packages/plugin-version":
+  version: 0.0.0-use.local
+  resolution: "@berry/plugin-version@workspace:packages/plugin-version"
+  dependencies:
+    "@berry/builder": "workspace:0.0.0"
+    "@berry/cli": "workspace:2.0.0"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/plugin-pack": "workspace:0.0.0"
+    "@types/semver": "npm:^5.5.0"
+    clipanion: "npm:^0.14.1"
+    semver: "npm:^5.6.0"
+  languageName: unknown
+  linkType: soft
+
+"@berry/plugin-workspace-tools@workspace:0.0.0, @berry/plugin-workspace-tools@workspace:packages/plugin-workspace-tools":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
   dependencies:
-    "@berry/builder": "workspace:*"
-    "@berry/core": "workspace:*"
-    "@berry/fslib": "workspace:*"
+    "@berry/builder": "workspace:0.0.0"
+    "@berry/core": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
     clipanion: "npm:^0.14.1"
     p-limit: "npm:^2.2.0"
     yup: "npm:^0.27.0"
   languageName: unknown
   linkType: soft
 
-"@berry/pnp@workspace:*, @berry/pnp@workspace:packages/berry-pnp":
+"@berry/pnp@workspace:0.0.3, @berry/pnp@workspace:packages/berry-pnp":
   version: 0.0.0-use.local
   resolution: "@berry/pnp@workspace:packages/berry-pnp"
   dependencies:
-    "@berry/builder": "workspace:packages/berry-builder"
-    "@berry/fslib": "workspace:*"
+    "@berry/builder": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/pnpify": "workspace:0.0.3"
+    typescript: "npm:^3.3.3333"
     webpack: "npm:^4.28.4"
-    webpack-cli: "npm:3.2.1"
+    webpack-cli: "npm:^3.2.1"
     webpack-sources: "npm:^1.3.0"
   languageName: unknown
   linkType: soft
 
-"@berry/pnpify@workspace:*, @berry/pnpify@workspace:packages/berry-pnpify":
+"@berry/pnpify@workspace:0.0.3, @berry/pnpify@workspace:packages/berry-pnpify":
   version: 0.0.0-use.local
   resolution: "@berry/pnpify@workspace:packages/berry-pnpify"
   dependencies:
-    "@berry/builder": "workspace:*"
-    "@berry/fslib": ^0.0.4
-    "@berry/pnp": "workspace:*"
-    "@berry/pnpify": "workspace:packages/berry-pnpify"
+    "@berry/builder": "workspace:0.0.0"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/pnp": "workspace:0.0.3"
+    "@berry/pnpify": "workspace:0.0.3"
     typescript: "npm:^3.3.3333"
     webpack: "npm:^4.28.4"
-    webpack-cli: "npm:3.2.1"
+    webpack-cli: "npm:^3.2.1"
   bin:
     pnpify: ./lib/bin.js
   languageName: unknown
   linkType: soft
 
-"@berry/shell@workspace:*, @berry/shell@workspace:packages/berry-shell":
+"@berry/shell@workspace:0.0.1, @berry/shell@workspace:packages/berry-shell":
   version: 0.0.0-use.local
   resolution: "@berry/shell@workspace:packages/berry-shell"
   dependencies:
-    "@berry/fslib": "workspace:*"
-    "@berry/parsers": "workspace:*"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/parsers": "workspace:0.0.2"
+    "@berry/pnpify": "workspace:0.0.3"
     "@types/cross-spawn": "npm:6.0.0"
     cross-spawn: "npm:^6.0.5"
     execa: "npm:^1.0.0"
     stream-buffers: "npm:^3.0.2"
-  languageName: unknown
-  linkType: soft
-
-"@berry/ui@workspace:*, @berry/ui@workspace:packages/berry-ui":
-  version: 0.0.0-use.local
-  resolution: "@berry/ui@workspace:packages/berry-ui"
-  dependencies:
-    "@manaflair/term-strings": "npm:^0.10.1"
-    "@manaflair/text-layout": "npm:^0.11.0"
-    eventemitter3: "npm:^3.1.0"
-    faker: "npm:^4.1.0"
-    react: "npm:^16.8.4"
-    react-reconciler: "npm:^0.14.0"
-    reopen-tty: "npm:^1.1.2"
-    ts-node: "npm:^7.0.1"
-    yoga-dom: "npm:^0.0.14"
-  peerDependencies:
-    react: "*"
+    typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
 
@@ -2752,26 +2734,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@manaflair/term-strings@npm:^0.10.1":
-  version: 0.10.1
-  resolution: "@manaflair/term-strings@npm:0.10.1"
-  dependencies:
-    babel-runtime: "npm:^6.23.0"
-    color-diff: "npm:^1.0.0"
-  bin:
-    term-strings: ./build/bin/term-strings.js
-    term-strings-seqdbg: ./build/bin/term-strings-seqdbg.js
-  checksum: 2d2e5d5d447214bd67faa43de9c4245403eaea99f847e1b25cb5d79176cca27be27268d5d7919cd7e2c2339545081302c583f5a19d1aa475f6c9f42ace51822f
-  languageName: node
-  linkType: hard
-
-"@manaflair/text-layout@npm:^0.11.0":
-  version: 0.11.0
-  resolution: "@manaflair/text-layout@npm:0.11.0"
-  checksum: aa939bdd775cc62c2229d7b9089b1f527f917a919420cef0d6625b1d8c931e6d8ba50b698309abf9070c9e78c8613633479e05bd4d3d311056d4ba785c339dbe
-  languageName: node
-  linkType: hard
-
 "@mrmlnc/readdir-enhanced@npm:^2.2.1":
   version: 2.2.1
   resolution: "@mrmlnc/readdir-enhanced@npm:2.2.1"
@@ -2816,46 +2778,6 @@ __metadata:
     react: 15.x || 16.x || 16.4.0-alpha.0911da3
     react-dom: 15.x || 16.x || 16.4.0-alpha.0911da3
   checksum: d9189f00552bfb300a2cb9bee511134185d22943ecc9d1fa2cb077d83c68ba078b011a2b1c58cbb05d64a3782c1fd5941eb0cb45f77fbf6e045da4ebe3587156
-  languageName: node
-  linkType: hard
-
-"@redux-saga/deferred@npm:^1.0.0-rc.0":
-  version: 1.0.0-rc.0
-  resolution: "@redux-saga/deferred@npm:1.0.0-rc.0"
-  checksum: f731396c8462dec0fe9971334ed18a845451ae81ec12d86eac522173cc360e27b0daa6e7ce75338fa939d9b7200e33f7eeb21955d37009f07053e0d4724bc350
-  languageName: node
-  linkType: hard
-
-"@redux-saga/delay-p@npm:^1.0.0-rc.0":
-  version: 1.0.0-rc.0
-  resolution: "@redux-saga/delay-p@npm:1.0.0-rc.0"
-  dependencies:
-    "@redux-saga/symbols": "npm:^1.0.0-rc.0"
-  checksum: c48654f5918e08ab887cfecb15d4d105ccc05b3a7db57ce6c6a62c08c444cdcf8ac5cebec92ad69a4e6ca51fdb87751a214bd7b010466f990156c375ece21cd8
-  languageName: node
-  linkType: hard
-
-"@redux-saga/is@npm:^1.0.0-rc.0":
-  version: 1.0.0-rc.0
-  resolution: "@redux-saga/is@npm:1.0.0-rc.0"
-  dependencies:
-    "@redux-saga/symbols": "npm:^1.0.0-rc.0"
-    "@redux-saga/types": "npm:^1.0.0-rc.0"
-  checksum: 72ec35714e9432a587a3517f642233e5e4926e2f3a0b72e08c781e6319a60550def567ef0614b3ab5a440bdd03033652868cd081305412f28189b41b07c45c90
-  languageName: node
-  linkType: hard
-
-"@redux-saga/symbols@npm:^1.0.0-rc.0":
-  version: 1.0.0-rc.0
-  resolution: "@redux-saga/symbols@npm:1.0.0-rc.0"
-  checksum: 893233116c1343a7dbb939daaa07d68bbfbbb97d33c315b975093bee44ca89d14daf8c1cdeb9a497efb7ea847a9de190cb0d267f2573899721e5e75f540dffa0
-  languageName: node
-  linkType: hard
-
-"@redux-saga/types@npm:^1.0.0-rc.0":
-  version: 1.0.0-rc.0
-  resolution: "@redux-saga/types@npm:1.0.0-rc.0"
-  checksum: 0a50b9af3477801c8f3eb03a690f7dd8b37fe7f3ea3f50b3e40a5e424835ea998e2dbde7820757d70788cf1e1ca9535396d6de1639e4fd58c4ad18a2f969921c
   languageName: node
   linkType: hard
 
@@ -3130,22 +3052,6 @@ __metadata:
   version: 1.1.0
   resolution: "@types/istanbul-lib-coverage@npm:1.1.0"
   checksum: 7d438cacef535af7b1c514c6878136a0bc6a4759b162f4dbcd771e6ca245b5d0df7fcace885ef4fd63c1610ed6f38a026416e0458ebaf3c5bea009cfe500d6cc
-  languageName: node
-  linkType: hard
-
-"@types/jest-diff@npm:*":
-  version: 20.0.1
-  resolution: "@types/jest-diff@npm:20.0.1"
-  checksum: c193d901556c7c2240b0190fc9ef902f2f9713100a1b3833214e5109b6985a14b769c39577215ce41ad41d0c38b4b5d41cb0e8ecbebc5eafbab889e7f5de344f
-  languageName: node
-  linkType: hard
-
-"@types/jest@npm:^24.0.12":
-  version: 24.0.12
-  resolution: "@types/jest@npm:24.0.12"
-  dependencies:
-    "@types/jest-diff": "npm:*"
-  checksum: 53920fdf3e9dfce1a005aa93ee0d145180a791a4ed7391d9332f281da91f74825157eaf2a859a40a7d32bc92c520253d0b1e0936aea0c221f515dee45c43a60a
   languageName: node
   linkType: hard
 
@@ -3501,13 +3407,6 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 59f95dde3333ff39fd7321105a406c274fcd1b0e2a8ef8124e9ba2ec806075481e1a95c3f520737e64c19eb851de75068748aa30412ccae0834396e453709bba
-  languageName: node
-  linkType: hard
-
-"@types/tmp@npm:0.1.0":
-  version: 0.1.0
-  resolution: "@types/tmp@npm:0.1.0"
-  checksum: 8f5132c25ea5cf18e9694d807628fb6d654cca303de0a440197807ffabe7ed3edf2e95fbfe45d40e432f625fb2ae5ecc8e7d3f35c5be127bdcf375f46d037675
   languageName: node
   linkType: hard
 
@@ -3877,8 +3776,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "acceptance-tests-06d141@workspace:packages/acceptance-tests"
   dependencies:
-    "@berry/fslib": "workspace:*"
-    "@berry/monorepo": "workspace:*"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/monorepo": "workspace:0.0.0"
     is-wsl: "npm:^1.1.0"
   languageName: unknown
   linkType: soft
@@ -4167,6 +4066,16 @@ __metadata:
   version: 1.3.0
   resolution: "any-promise@npm:1.3.0"
   checksum: e6f8767ea5a298f2098e49f448dc4efcc2965622fa8de56819c0a6b52f783fe43f2f0b990e8c55229a75f1ebbb5c3fe4f58549370b0e48017afb5602245c623e
+  languageName: node
+  linkType: hard
+
+"anymatch@npm:^1.3.0":
+  version: 1.3.2
+  resolution: "anymatch@npm:1.3.2"
+  dependencies:
+    micromatch: "npm:^2.1.5"
+    normalize-path: "npm:^2.0.0"
+  checksum: 54d446d5a689e061e6004bb53e58872e12505aa4d6bf6eee8130e05f96f99770cc265375cddf6faf6da511c46d0f7c0c1f2c7aa51ddada5f82328b7773b1c000
   languageName: node
   linkType: hard
 
@@ -4604,6 +4513,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"azure-devops-node-api@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "azure-devops-node-api@npm:7.2.0"
+  dependencies:
+    os: "npm:0.1.1"
+    tunnel: "npm:0.0.4"
+    typed-rest-client: "npm:1.2.0"
+    underscore: "npm:1.8.3"
+  checksum: 843cd2413b1cd238121850781adc7b8a6f09dbf39a1001fa598b173d8f5c66f0416ea943040712ee4046c024b6fe9f003478551634f96440ae54d9ecda8e7b42
+  languageName: node
+  linkType: hard
+
 "babel-code-frame@npm:6.26.0, babel-code-frame@npm:^6.26.0":
   version: 6.26.0
   resolution: "babel-code-frame@npm:6.26.0"
@@ -4992,7 +4913,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-runtime@npm:^6.22.0, babel-runtime@npm:^6.23.0, babel-runtime@npm:^6.26.0":
+"babel-runtime@npm:^6.22.0, babel-runtime@npm:^6.26.0, babel-runtime@npm:^6.9.2":
   version: 6.26.0
   resolution: "babel-runtime@npm:6.26.0"
   dependencies:
@@ -6076,6 +5997,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chokidar@npm:^1.6.0":
+  version: 1.7.0
+  resolution: "chokidar@npm:1.7.0"
+  dependencies:
+    anymatch: "npm:^1.3.0"
+    async-each: "npm:^1.0.0"
+    fsevents: "npm:^1.0.0"
+    glob-parent: "npm:^2.0.0"
+    inherits: "npm:^2.0.1"
+    is-binary-path: "npm:^1.0.0"
+    is-glob: "npm:^2.0.0"
+    path-is-absolute: "npm:^1.0.0"
+    readdirp: "npm:^2.0.0"
+  checksum: 566f64aa9fc511e0e94f0aab20bdd4e2601aadd748201c5da353b20e2d0bab2b84b394b884d6e8c64f3b62e5f2618ef2f9e5f19a792603c61b6435cc6ed97235
+  languageName: node
+  linkType: hard
+
 "chokidar@npm:^2.0.0, chokidar@npm:^2.0.2":
   version: 2.0.4
   resolution: "chokidar@npm:2.0.4"
@@ -6342,13 +6280,6 @@ __metadata:
   dependencies:
     color-name: "npm:1.1.3"
   checksum: 1fb8e3e23c865f4855149810c6d9de47b9192a6bc931cf79f265393439339f839d8e071c2d3abb23589a4cb5085887c60db7361f8baf94f0e67a398d6d35b5f9
-  languageName: node
-  linkType: hard
-
-"color-diff@npm:^1.0.0":
-  version: 1.1.0
-  resolution: "color-diff@npm:1.1.0"
-  checksum: bc0bbdb5e65e41194bf8e9316953201fe595d1f0baf931cbfdcb0a64b5837cb6e37cca1ddd4465ee6171b59a65df095443a81de01c456abdc2bc47023efe9993
   languageName: node
   linkType: hard
 
@@ -6759,6 +6690,27 @@ __metadata:
     lodash.get: "npm:^4.4.2"
     parse-json: "npm:^4.0.0"
   checksum: b353db86d78e9958645d3a5973c0bdbcaa5a86e33b1fbf15ca5117a294bd5f87ed247777601d1faab6d94cd54f22cc79471e83a952635a68d5c2ddac83fc2932
+  languageName: node
+  linkType: hard
+
+"cpx@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "cpx@npm:1.5.0"
+  dependencies:
+    babel-runtime: "npm:^6.9.2"
+    chokidar: "npm:^1.6.0"
+    duplexer: "npm:^0.1.1"
+    glob: "npm:^7.0.5"
+    glob2base: "npm:^0.0.12"
+    minimatch: "npm:^3.0.2"
+    mkdirp: "npm:^0.5.1"
+    resolve: "npm:^1.1.7"
+    safe-buffer: "npm:^5.0.1"
+    shell-quote: "npm:^1.6.1"
+    subarg: "npm:^1.0.0"
+  bin:
+    cpx: bin/index.js
+  checksum: 5f79d3afd2f9d2e45b3654f808b2bb83db8d1022aa252fa76f791d579207a941c10ced7a5a102ac3a70d6f3b28d3821d301b682ebea238c0bc91e34880118d10
   languageName: node
   linkType: hard
 
@@ -7251,13 +7203,6 @@ __metadata:
   version: 0.1.4
   resolution: "date-now@npm:0.1.4"
   checksum: f69c51639a4e0d03e74db9440de4a9d5340ee911e10833940450376a2d47de7709d4ddd326ca05ba6a187043f719e4715abb84f8aa10568e10479441d559be75
-  languageName: node
-  linkType: hard
-
-"dateformat@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "dateformat@npm:3.0.3"
-  checksum: 8abea978666cfa4ccd229c7c6101313a1c7eb134e720669d1989a6ff97ae1ccf16359fa8df4e8ccd098218907be7546dbf7db08feac2df4aac6734f9db06df28
   languageName: node
   linkType: hard
 
@@ -8712,7 +8657,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:*, eventemitter3@npm:^3.0.0, eventemitter3@npm:^3.1.0":
+"eventemitter3@npm:*, eventemitter3@npm:^3.0.0":
   version: 3.1.0
   resolution: "eventemitter3@npm:3.1.0"
   checksum: a1b52dd9fa1486a3bc2a88b85bac700756a7497e23a7d26e70130c8a9bc019d0c9b1f75b66ba87c64fe66a61b03f1bba14fd2adf4f749993a1044521ed5c44f0
@@ -9114,13 +9059,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"faker@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "faker@npm:4.1.0"
-  checksum: 1b8678e4968d76093ec56068593234a6b675547b088a2b78839106c81673f71dd216b19e397800ddb5f1f0ef21e47dc3cdc08ce25d9d3abc38b510882c49aa84
-  languageName: node
-  linkType: hard
-
 "fast-deep-equal@npm:^2.0.1":
   version: 2.0.1
   resolution: "fast-deep-equal@npm:2.0.1"
@@ -9518,6 +9456,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"find-index@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "find-index@npm:0.1.1"
+  checksum: 69f04e48f650d74bc675dfeef343452fad75804d2d14f6953b2751305968a48c4c3b3636b51141d7939a1c256d9cdd73492e7599be0524e16f6091a01a183aa2
+  languageName: node
+  linkType: hard
+
 "find-root@npm:^1.1.0":
   version: 1.1.0
   resolution: "find-root@npm:1.1.0"
@@ -9813,6 +9758,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fsevents@npm:^1.0.0, fsevents@npm:^1.2.7":
+  version: 1.2.7
+  resolution: "fsevents@npm:1.2.7"
+  dependencies:
+    nan: "npm:^2.9.2"
+    node-pre-gyp: "npm:^0.10.0"
+  checksum: dab52e0d31741df64aa6db523dc04df28bfa27790ff91e6f42ae6669c9cab12f276b141cef8a72e20c012fc241c9a5de1a11473c33b36758c4f7713dc99a6e7b
+  languageName: node
+  linkType: hard
+
 "fsevents@npm:^1.2.2":
   version: 1.2.6
   resolution: "fsevents@npm:1.2.6"
@@ -9820,16 +9775,6 @@ __metadata:
     nan: "npm:^2.9.2"
     node-pre-gyp: "npm:^0.10.0"
   checksum: 2070352bac1b82852b60b96de3c1616448920d624c2c4bdc84b92550ce93e6d6f668e60276f2be3084f82c4ea5e28dcb591ee5758424af3d1bf3500799df7358
-  languageName: node
-  linkType: hard
-
-"fsevents@npm:^1.2.7":
-  version: 1.2.7
-  resolution: "fsevents@npm:1.2.7"
-  dependencies:
-    nan: "npm:^2.9.2"
-    node-pre-gyp: "npm:^0.10.0"
-  checksum: dab52e0d31741df64aa6db523dc04df28bfa27790ff91e6f42ae6669c9cab12f276b141cef8a72e20c012fc241c9a5de1a11473c33b36758c4f7713dc99a6e7b
   languageName: node
   linkType: hard
 
@@ -10492,6 +10437,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"glob2base@npm:^0.0.12":
+  version: 0.0.12
+  resolution: "glob2base@npm:0.0.12"
+  dependencies:
+    find-index: "npm:^0.1.1"
+  checksum: ed1f3eab42a846db85b8c18fbba77d41869641bc96b1fb03414fb325fe760eeb13319e8f51154239d66f82ad5e610f222f54307da69266dbd380ac97d1f28ae3
+  languageName: node
+  linkType: hard
+
 "glob@npm:^7.0.0, glob@npm:^7.0.3, glob@npm:^7.0.5, glob@npm:^7.0.6, glob@npm:^7.1.1, glob@npm:^7.1.2, glob@npm:^7.1.3":
   version: 7.1.3
   resolution: "glob@npm:7.1.3"
@@ -10512,13 +10466,6 @@ __metadata:
   dependencies:
     ini: "npm:^1.3.4"
   checksum: 32249c6f0287c10ecd1f973bb616b9aa7a58363aaed4466f123d3c44dec61c6f408eba8897965c362b24e94f79bddad7aa03fbdfb385a71220e76b0806387cda
-  languageName: node
-  linkType: hard
-
-"global-modules-path@npm:^2.3.0":
-  version: 2.3.1
-  resolution: "global-modules-path@npm:2.3.1"
-  checksum: f427ae7b990b2317df34320037dab4263d392d49d65a576b2869f5ef6841c6eeb10e975201797bbcfadd077652608ffa3fd927801bd05635032dabc4fb134867
   languageName: node
   linkType: hard
 
@@ -11229,15 +11176,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.1.0":
-  version: 3.2.1
-  resolution: "hoist-non-react-statics@npm:3.2.1"
-  dependencies:
-    react-is: "npm:^16.3.2"
-  checksum: 3cae6c8d7555de7f7822122a27df03095febce2c738294340c79ab7e4f15941211a2cae6f2e223af3ea66c78ae1b06fe22e67d4280f044294a86b5eae00a83f1
-  languageName: node
-  linkType: hard
-
 "hoist-non-react-statics@npm:^3.3.0":
   version: 3.3.0
   resolution: "hoist-non-react-statics@npm:3.3.0"
@@ -11645,13 +11583,6 @@ __metadata:
     pify: "npm:^4.0.1"
     replace-ext: "npm:^1.0.0"
   checksum: 8270b061e2a3241199f0e82c2cf454c01ede98e7f9f7723d91c2dbc15d7476d79d9497ff338b129d1af9800c55375d791b28a2929b5beb9e3a2fff54de898353
-  languageName: node
-  linkType: hard
-
-"immer@npm:^1.7.2":
-  version: 1.10.5
-  resolution: "immer@npm:1.10.5"
-  checksum: bb3e9f83b53b655dfcb70cbd6f5d15f38538f4e69b48069a1ccfebb2df090d349aa234462c089e5cb996c759b55802a3a4aa9a41b5efb4b243d57f4c8e53b9e6
   languageName: node
   linkType: hard
 
@@ -13996,15 +13927,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lightercollective@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "lightercollective@npm:0.1.0"
-  bin:
-    lightercollective: ./index.js
-  checksum: d284fa57aa611c70d908d156ef86f968e6adcc5ab105d90bd800695006f4b0abf494f5ff8d04babb5d06cba7fbaf95180b69c037c0bcdc6ac683a7175091e5ca
-  languageName: node
-  linkType: hard
-
 "linkify-it@npm:^2.0.0":
   version: 2.1.0
   resolution: "linkify-it@npm:2.1.0"
@@ -14775,7 +14697,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"micromatch@npm:^2.3.11":
+"micromatch@npm:^2.1.5, micromatch@npm:^2.3.11":
   version: 2.3.11
   resolution: "micromatch@npm:2.3.11"
   dependencies:
@@ -14957,7 +14879,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^3.0.3, minimatch@npm:^3.0.4":
+"minimatch@npm:^3.0.2, minimatch@npm:^3.0.3, minimatch@npm:^3.0.4":
   version: 3.0.4
   resolution: "minimatch@npm:3.0.4"
   dependencies:
@@ -14973,7 +14895,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimist@npm:^1.1.1, minimist@npm:^1.1.3, minimist@npm:^1.2.0":
+"minimist@npm:^1.1.0, minimist@npm:^1.1.1, minimist@npm:^1.1.3, minimist@npm:^1.2.0":
   version: 1.2.0
   resolution: "minimist@npm:1.2.0"
   checksum: 5486abd5e7c3dca42a6edf68133968d964feac83f1498b3915a198dc47f0e12f73818425ffeeea3708f5a9d4cf176449481139ff39416a644d6c3fb134b1dc89
@@ -15460,7 +15382,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"normalize-path@npm:^2.0.1, normalize-path@npm:^2.1.1":
+"normalize-path@npm:^2.0.0, normalize-path@npm:^2.0.1, normalize-path@npm:^2.1.1":
   version: 2.1.1
   resolution: "normalize-path@npm:2.1.1"
   dependencies:
@@ -15919,6 +15841,13 @@ __metadata:
   version: 1.0.2
   resolution: "os-tmpdir@npm:1.0.2"
   checksum: aeca77aac823000ee7c6d9de78aefe9062f6349b8b3ca5967a60b6228abf4b18e75bb297cb3aa9eb214cdad686af1ba628cf58d0efe3adb4bf2ad750547d8b18
+  languageName: node
+  linkType: hard
+
+"os@npm:0.1.1":
+  version: 0.1.1
+  resolution: "os@npm:0.1.1"
+  checksum: c7e2798a14350cbe550901f0a25f6dbf5ee19717c13410adbfb5ee094301c27951256b02697316ed69f791840d513e2749552c6fa2afdafb6d8e9bdcbf14eea0
   languageName: node
   linkType: hard
 
@@ -16660,15 +16589,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pkg-tests-core@workspace:*, pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core":
+"pkg-tests-core@workspace:0.0.0, pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core":
   version: 0.0.0-use.local
   resolution: "pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core"
   dependencies:
-    "@berry/fslib": "workspace:*"
+    "@berry/fslib": "workspace:0.0.6"
     invariant: "npm:^2.2.4"
     klaw: "npm:^2.1.1"
     minimatch: "npm:^3.0.4"
-    pkg-tests-fixtures: "workspace:*"
+    pkg-tests-fixtures: "workspace:0.0.0"
     semver: "npm:^5.6.0"
     super-resolve: "npm:^1.0.0"
     tar-fs: "npm:^1.16.0"
@@ -16676,11 +16605,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"pkg-tests-fixtures@workspace:*, pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures":
+"pkg-tests-fixtures@workspace:0.0.0, pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures":
   version: 0.0.0-use.local
   resolution: "pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures"
   dependencies:
-    "@berry/fslib": "workspace:*"
+    "@berry/fslib": "workspace:0.0.6"
   languageName: unknown
   linkType: soft
 
@@ -16688,11 +16617,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "pkg-tests-specs@workspace:packages/acceptance-tests/pkg-tests-specs"
   dependencies:
-    "@berry/fslib": "workspace:*"
-    "@berry/monorepo": "workspace:*"
-    "@berry/parsers": "workspace:*"
+    "@berry/fslib": "workspace:0.0.6"
+    "@berry/monorepo": "workspace:0.0.0"
+    "@berry/parsers": "workspace:0.0.2"
     fs-extra: "npm:^7.0.1"
-    pkg-tests-core: "workspace:*"
+    pkg-tests-core: "workspace:0.0.0"
     semver: "npm:^5.6.0"
   languageName: unknown
   linkType: soft
@@ -16732,12 +16661,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pnp-webpack-plugin@npm:^1.3.1, pnp-webpack-plugin@npm:^1.4.1":
+"pnp-webpack-plugin@npm:^1.4.1":
   version: 1.4.1
   resolution: "pnp-webpack-plugin@npm:1.4.1"
   dependencies:
     ts-pnp: "npm:^1.0.0"
   checksum: d0fdaa3185500b0cca42b6f2c58bf063951dfd98fd764730d71aeb9d8148ce000e6a3b82f8655513e7f65305dfa4710c3645a7a1093ec52fe2a9646c38dc3eda
+  languageName: node
+  linkType: hard
+
+"pnp-webpack-plugin@npm:^1.4.3":
+  version: 1.4.3
+  resolution: "pnp-webpack-plugin@npm:1.4.3"
+  dependencies:
+    ts-pnp: "npm:^1.1.2"
+  checksum: 90253b2250032d290b3fc280c3611ea360a8aaa1f93ab9d2aa146da5e28269d32a5eeb4568ba80f3ebc0ca7974f43acdad3497f0225c55f87bb4a0e999c20a62
   languageName: node
   linkType: hard
 
@@ -17579,7 +17517,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"q@npm:^1.0.1, q@npm:^1.1.2":
+"q@npm:^1.1.2":
   version: 1.5.1
   resolution: "q@npm:1.5.1"
   checksum: f17d070d9b6fca511cc365c09aece4f6a203239475c194d86625fd34071bcd07026f85791d5cc34cf85eda8894938c69913bf0d0e52b5c1923b64cddf6397256
@@ -17803,7 +17741,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-is@npm:^16.3.2, react-is@npm:^16.6.0, react-is@npm:^16.7.0":
+"react-is@npm:^16.7.0":
   version: 16.7.0
   resolution: "react-is@npm:16.7.0"
   checksum: 2c44f1e255a6e0b94cb6c682a3d2905102019fd41e5f2f6105697c3d12cca03414af5259278572eee00181912cd161349281c4c6d26780a81c60f3ca078a0caa
@@ -17817,42 +17755,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-lifecycles-compat@npm:^3.0.0, react-lifecycles-compat@npm:^3.0.4":
+"react-lifecycles-compat@npm:^3.0.4":
   version: 3.0.4
   resolution: "react-lifecycles-compat@npm:3.0.4"
   checksum: 8adac92c72070a4125cc50e746e1653385f6655b3bc1eafd86d793d232952ef35257d318c80817ee803221479e8ceeb72c6668d4789d591644e9ae22d8da87b4
-  languageName: node
-  linkType: hard
-
-"react-reconciler@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "react-reconciler@npm:0.14.0"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-    object-assign: "npm:^4.1.1"
-    prop-types: "npm:^15.6.2"
-    schedule: "npm:^0.4.0"
-  peerDependencies:
-    react: ^16.0.0
-  checksum: 75aa46f08c9bcbbd34df78a5bbddcbb31a12d6a449138f8a61642eb1e5dd114325aadf7f4d2df4663d628ea0071d3962272900c45b159677cf69dbab13bca340
-  languageName: node
-  linkType: hard
-
-"react-redux@npm:^5.0.7":
-  version: 5.1.1
-  resolution: "react-redux@npm:5.1.1"
-  dependencies:
-    "@babel/runtime": "npm:^7.1.2"
-    hoist-non-react-statics: "npm:^3.1.0"
-    invariant: "npm:^2.2.4"
-    loose-envify: "npm:^1.1.0"
-    prop-types: "npm:^15.6.1"
-    react-is: "npm:^16.6.0"
-    react-lifecycles-compat: "npm:^3.0.0"
-  peerDependencies:
-    react: ^0.14.0 || ^15.0.0-0 || ^16.0.0-0
-    redux: ^2.0.0 || ^3.0.0 || ^4.0.0-0
-  checksum: a5bbc8ed96b90a18450f5103e45a8cf06f00184ba23c5afb43e19c15c748ef9ea4a13b4d5c025b21f9af1ad066b82fe1c6d1eb1ed00d88853b0968679c650aa3
   languageName: node
   linkType: hard
 
@@ -18095,23 +18001,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux-saga@npm:^1.0.0-beta.3":
-  version: 1.0.0-rc.0
-  resolution: "redux-saga@npm:1.0.0-rc.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.0.0"
-    "@redux-saga/deferred": "npm:^1.0.0-rc.0"
-    "@redux-saga/delay-p": "npm:^1.0.0-rc.0"
-    "@redux-saga/is": "npm:^1.0.0-rc.0"
-    "@redux-saga/symbols": "npm:^1.0.0-rc.0"
-    "@redux-saga/types": "npm:^1.0.0-rc.0"
-    redux: "npm:>=0.10 <5"
-    typescript-tuple: "npm:^2.1.0"
-  checksum: 7513a0f90fc77d783cc8ea64f326d8b6f71d216b91cd4bedbb0efbfdcfb115d459f75c03f07f3c4de69feedcda8f8ed755fea3296db6e1b2cfbf0af17189afa6
-  languageName: node
-  linkType: hard
-
-"redux@npm:>=0.10 <5, redux@npm:^4.0.0":
+"redux@npm:^4.0.0":
   version: 4.0.1
   resolution: "redux@npm:4.0.1"
   dependencies:
@@ -18444,13 +18334,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"reopen-tty@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "reopen-tty@npm:1.1.2"
-  checksum: d5cfa93f4723216cde43cb3b2d791cc81cffbaa99c5b15abdab937cb57b432550a196cd1be2dc2b7720a05effedfeb4c8c2574f32f9392f4d7265cec94cd7d1d
-  languageName: node
-  linkType: hard
-
 "repeat-element@npm:^1.1.2":
   version: 1.1.3
   resolution: "repeat-element@npm:1.1.3"
@@ -18645,7 +18528,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@npm:^1.1.5, resolve@npm:^1.3.2, resolve@npm:^1.5.0, resolve@npm:^1.8.1, resolve@npm:^1.9.0":
+"resolve@npm:^1.1.5, resolve@npm:^1.1.7, resolve@npm:^1.3.2, resolve@npm:^1.5.0, resolve@npm:^1.8.1, resolve@npm:^1.9.0":
   version: 1.9.0
   resolution: "resolve@npm:1.9.0"
   dependencies:
@@ -18848,15 +18731,6 @@ __metadata:
   version: 1.2.4
   resolution: "sax@npm:1.2.4"
   checksum: 1269baaf19fc09b704440c03b08f7879fdffbd0c745390bfeaa9ccbd180cb558fc42390c834a79c4f2c410124c053f61407a315bdb9769b3221797c16ee6c97e
-  languageName: node
-  linkType: hard
-
-"schedule@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "schedule@npm:0.4.0"
-  dependencies:
-    object-assign: "npm:^4.1.1"
-  checksum: 9f8de913e6ba8c3a8d06c53b02021fe6720a953a49143b01525018f70c404159bd414721f6fdec372fa4c2935a422e442fee6c73106220940f3e5fd657d89572
   languageName: node
   linkType: hard
 
@@ -19188,7 +19062,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shell-quote@npm:1.6.1":
+"shell-quote@npm:1.6.1, shell-quote@npm:^1.6.1":
   version: 1.6.1
   resolution: "shell-quote@npm:1.6.1"
   dependencies:
@@ -20107,6 +19981,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"subarg@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "subarg@npm:1.0.0"
+  dependencies:
+    minimist: "npm:^1.1.0"
+  checksum: 513e181674436dd524de98939958681842b96684ad86b918daaeec6e0c0d475d3a7536245ea4c3208456ad057c44dc35162afcae96b28c30cc1ebb76dd8ac27e
+  languageName: node
+  linkType: hard
+
 "super-resolve@npm:^1.0.0":
   version: 1.0.0
   resolution: "super-resolve@npm:1.0.0"
@@ -20816,7 +20699,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:^5.3.0, ts-loader@npm:^5.3.3":
+"ts-loader@npm:^5.3.3":
   version: 5.3.3
   resolution: "ts-loader@npm:5.3.3"
   dependencies:
@@ -20858,6 +20741,18 @@ __metadata:
     typescript:
       optional: true
   checksum: c96371e17300ee9ec30fb31ca6f9673aeeba0ce70e869a421c1ea88b2f00ff3591a6da2dcacd815834fdacbbfb3dccedc5bacf7822ca667207178502ec03303f
+  languageName: node
+  linkType: hard
+
+"ts-pnp@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "ts-pnp@npm:1.1.2"
+  peerDependencies:
+    typescript: "*"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: ff4d6b1f169001c079ccd753dd339d2946614af99c9a6d3ce07ce82c7ee705e1c63fb242a13b10e13931dea3754a43d8b15be546d00b98fbcf1d8c2ccf7036a9
   languageName: node
   linkType: hard
 
@@ -20942,13 +20837,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typed-rest-client@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "typed-rest-client@npm:0.9.0"
+"typed-rest-client@npm:1.2.0":
+  version: 1.2.0
+  resolution: "typed-rest-client@npm:1.2.0"
   dependencies:
     tunnel: "npm:0.0.4"
     underscore: "npm:1.8.3"
-  checksum: db3feb8623b1ad29062445fddff8e592b6c82539d27801dc674de1259b0b7b7ba4a6f062746ba09dea7453c5cedee3bad01c906ed7d3b5a8456e903ae3004704
+  checksum: 498517109a3c143b1ee44f374ed6b356c841471ba59706babe6652aae5f8df3c7d69ca852f17e38bb37dbf62c8f54dacd0a173138a03cfe9c22908ed2429d226
   languageName: node
   linkType: hard
 
@@ -20956,41 +20851,6 @@ __metadata:
   version: 0.0.6
   resolution: "typedarray@npm:0.0.6"
   checksum: c7b710687134c19b492bc0317d77b80886587e6fe60dc2dfc6835eeb39973723eece46e9f240f2a6633dd2bc1d26cc9ff71098e6911a2c61c3e529d95be3acfc
-  languageName: node
-  linkType: hard
-
-"typescript-compare@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "typescript-compare@npm:0.0.2"
-  dependencies:
-    typescript-logic: "npm:^0.0.0"
-  checksum: 92173417a32f0fae67d4b60ed644f1e5c1e347b935d9229e7facfa646a8609b5b7162adf1423d6666e989e9ada95b35cbf07b6fcdc33ebad36416a7d3d83e5c5
-  languageName: node
-  linkType: hard
-
-"typescript-logic@npm:^0.0.0":
-  version: 0.0.0
-  resolution: "typescript-logic@npm:0.0.0"
-  checksum: c8de2547a6663c7c9160bb03d89f7334920df43cca0ed52864b84ce942ed07d0674660d32e0c904f8d27999fd969310d3b7f7d0cff94e0af25c2d9b83a97af72
-  languageName: node
-  linkType: hard
-
-"typescript-tuple@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "typescript-tuple@npm:2.1.0"
-  dependencies:
-    typescript-compare: "npm:^0.0.2"
-  checksum: fae08942548e078f8f13cb52c1e40cf3d0773da4103a1d761e49e30f5acdc57eab6c3ec132384dd1c30788bd04965929018f04c84ce537a4b17b93d9d0244f77
-  languageName: node
-  linkType: hard
-
-"typescript@npm:^3.2.4":
-  version: 3.2.4
-  resolution: "typescript@npm:3.2.4"
-  bin:
-    tsc: ./bin/tsc
-    tsserver: ./bin/tsserver
-  checksum: d0cfe849210682387019eb3fad4cc379a4b41370bb29c46767608f17dff037102d577bd36ef3fd2353a0a3a505615faef4ee8da1b9530ea39313d6184e5fb254
   languageName: node
   linkType: hard
 
@@ -21064,7 +20924,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"underscore@npm:^1.7.0, underscore@npm:^1.8.3":
+"underscore@npm:^1.7.0":
   version: 1.9.1
   resolution: "underscore@npm:1.9.1"
   checksum: 08b437922580c3d5c03b483b80d50809afcbd0f158e7b74daaf8ea22efc02e17bb047e332e8bb9809433d0b7e78c6dc87d5590ece65fe03688c297e4f8226383
@@ -21679,12 +21539,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vsce@npm:1.54.0":
-  version: 1.54.0
-  resolution: "vsce@npm:1.54.0"
+"vsce@npm:^1.54.0":
+  version: 1.61.0
+  resolution: "vsce@npm:1.61.0"
   dependencies:
+    azure-devops-node-api: "npm:^7.2.0"
+    chalk: "npm:^2.4.2"
     cheerio: "npm:^1.0.0-rc.1"
     commander: "npm:^2.8.1"
+    cpx: "npm:^1.5.0"
     denodeify: "npm:^1.2.1"
     glob: "npm:^7.0.6"
     lodash: "npm:^4.17.10"
@@ -21696,13 +21559,13 @@ __metadata:
     read: "npm:^1.0.7"
     semver: "npm:^5.1.0"
     tmp: "npm:0.0.29"
+    typed-rest-client: "npm:1.2.0"
     url-join: "npm:^1.1.0"
-    vso-node-api: "npm:6.1.2-preview"
     yauzl: "npm:^2.3.1"
     yazl: "npm:^2.2.2"
   bin:
     vsce: out/vsce
-  checksum: 2650a3ff9a9566adbe0f6f019f23953fd968f26a9f94ff0b0693295c192b3b9bebb842d4b7cdaf40dd5b2d382e4c10f511fb5659680a8c744ce62ec919674a16
+  checksum: c4324e3ea74eccca99a7aea1d898e508edddece1e4a6efbd720b6f9c5be4b36fe2c97cf06acc2c3b76c56e6bc63bf3656c85e286024d65cfd85540dcffc85fcd
   languageName: node
   linkType: hard
 
@@ -21710,27 +21573,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
-    "@berry/fslib": "workspace:*"
-    pnp-webpack-plugin: "npm:^1.3.1"
+    "@berry/fslib": "workspace:0.0.6"
+    pnp-webpack-plugin: "npm:^1.4.3"
     ts-loader: "npm:^5.3.3"
-    typescript: "npm:^3.2.4"
-    vsce: "npm:1.54.0"
+    typescript: "npm:^3.3.3333"
+    vsce: "npm:^1.54.0"
     webpack: "npm:^4.28.4"
-    webpack-cli: "npm:3.2.1"
+    webpack-cli: "npm:^3.2.1"
   languageName: unknown
   linkType: soft
-
-"vso-node-api@npm:6.1.2-preview":
-  version: 6.1.2-preview
-  resolution: "vso-node-api@npm:6.1.2-preview"
-  dependencies:
-    q: "npm:^1.0.1"
-    tunnel: "npm:0.0.4"
-    typed-rest-client: "npm:^0.9.0"
-    underscore: "npm:^1.8.3"
-  checksum: b61cb2b8fdd7ae25f75af41808f5fbfee54c9e4171652fff26d43cd00945df8ead6a923b44188cee0be7235bae9735477aa68f7d4bbaa06170aaede6ee59e452
-  languageName: node
-  linkType: hard
 
 "w3c-hr-time@npm:^1.0.1":
   version: 1.0.1
@@ -21793,28 +21644,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:3.2.1":
-  version: 3.2.1
-  resolution: "webpack-cli@npm:3.2.1"
+"webpack-cli@npm:^3.2.1":
+  version: 3.3.2
+  resolution: "webpack-cli@npm:3.3.2"
   dependencies:
     chalk: "npm:^2.4.1"
     cross-spawn: "npm:^6.0.5"
     enhanced-resolve: "npm:^4.1.0"
     findup-sync: "npm:^2.0.0"
     global-modules: "npm:^1.0.0"
-    global-modules-path: "npm:^2.3.0"
     import-local: "npm:^2.0.0"
     interpret: "npm:^1.1.0"
-    lightercollective: "npm:^0.1.0"
     loader-utils: "npm:^1.1.0"
     supports-color: "npm:^5.5.0"
     v8-compile-cache: "npm:^2.0.2"
-    yargs: "npm:^12.0.4"
+    yargs: "npm:^12.0.5"
   peerDependencies:
     webpack: 4.x.x
   bin:
     webpack-cli: ./bin/cli.js
-  checksum: cbd9586fbc0b40c3d8b93fbd4afdfc193f399fe73c5f27df9aef4a88d2c876d483535df42523616b105948e06854a258ec02c6166ab2b633bad89e18b922d663
+  checksum: 76a9e48ea200c81f783f7cfb228893e63e913615556927db91fd76720ef48ad726593c6fae5ac9fe0bd10b358e2318bbe075654ddc615ae9c515ece2144fec70
   languageName: node
   linkType: hard
 
@@ -22532,7 +22381,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^12.0.2, yargs@npm:^12.0.4, yargs@npm:^12.0.5":
+"yargs@npm:^12.0.2, yargs@npm:^12.0.5":
   version: 12.0.5
   resolution: "yargs@npm:12.0.5"
   dependencies:
@@ -22633,13 +22482,6 @@ __metadata:
   version: 2.0.0
   resolution: "yn@npm:2.0.0"
   checksum: 2054c3d800788a39e76669080d8db589af6099c0883894926c215507671a958095b2d92f6fe8216ff6cd694f49011cf1901f1180c3d0067e5e99c365aabc3319
-  languageName: node
-  linkType: hard
-
-"yoga-dom@npm:^0.0.14":
-  version: 0.0.14
-  resolution: "yoga-dom@npm:0.0.14"
-  checksum: 34937889da4f9ce976f3fbcac91f166ad3556df5c74371706a087618fb35cfed101620e23c1d9e11a1e51f27ff63f5e0ad99ce0ab72a3fb03c213d5159a5d20c
   languageName: node
   linkType: hard
 
