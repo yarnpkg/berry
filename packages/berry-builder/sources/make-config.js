@@ -1,12 +1,16 @@
-const path = require(`path`);
 const webpack = require(`webpack`);
 const merge = require(`webpack-merge`);
 const PnpWebpackPlugin = require(`pnp-webpack-plugin`);
 
-if (module.parent.filename.indexOf('berry-pnpify') < 0) {
-  // Required for ts-loader for now to find type roots itself by scaning node_modules
-  require('@berry/pnpify/lib').patchFs();
-}
+// TypeScript (ts-loader) isn't able to find out the typeRoots when using zip
+// loading (because they're stored within the zip files). So we need to use
+// PnPify to help them find them.
+//
+// We don't need to do this for PnPify itself (hence the check) because we
+// explicitly list all the typeRoots within its tsconfig (otherwise it would
+// need to use itself to build itself 🤡).
+if (!module.parent.filename.includes(`berry-pnpify`))
+  require(`@berry/pnpify/lib`).patchFs();
 
 module.exports = config => merge({
   mode: `none`,
@@ -43,7 +47,11 @@ module.exports = config => merge({
       test: /\.tsx?$/,
       exclude: /\.d\.ts$/,
       loader: `ts-loader`,
-      options: PnpWebpackPlugin.tsLoaderOptions(),
+      options: PnpWebpackPlugin.tsLoaderOptions({
+        compilerOptions: {
+          declaration: false,
+        },
+      }),
     }],
   },
 

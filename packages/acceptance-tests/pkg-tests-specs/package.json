@@ -1,14 +1,13 @@
 {
     "name": "pkg-tests-specs",
-    "version": "0.0.0",
     "private": true,
     "main": "./sources/index.js",
     "dependencies": {
-        "@berry/fslib": "workspace:*",
-        "@berry/monorepo": "workspace:*",
-        "@berry/parsers": "workspace:*",
+        "@berry/fslib": "workspace:0.0.6",
+        "@berry/monorepo": "workspace:0.0.0",
+        "@berry/parsers": "workspace:0.0.2",
         "fs-extra": "^7.0.1",
-        "pkg-tests-core": "workspace:*",
+        "pkg-tests-core": "workspace:0.0.0",
         "semver": "^5.6.0"
     }
 }

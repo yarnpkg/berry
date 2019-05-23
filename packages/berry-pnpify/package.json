@@ -1,32 +1,33 @@
 {
   "name": "@berry/pnpify",
-  "version": "0.0.1",
-  "sideEffects": false,
+  "version": "0.0.3",
   "main": "./sources/index.ts",
   "bin": "./lib/bin.js",
-  "scripts": {
-    "prepack": "build:pnpify",
-    "build:pnpify": "run webpack-cli --config webpack.config.pkg.js && node -r ./lib -r typescript/bin/tsc -- tsc --emitDeclarationOnly --declaration",
-    "test:pnpify": "run test:unit packages/berry-pnpify",
-    "test:watch:pnpify": "run test:unit --watch packages/berry-pnpify"
+  "sideEffects": false,
+  "dependencies": {
+    "@berry/fslib": "workspace:0.0.6"
   },
   "devDependencies": {
-    "@berry/builder": "workspace:*",
-    "@berry/pnp": "workspace:*",
-    "@berry/pnpify": "workspace:packages/berry-pnpify",
+    "@berry/builder": "workspace:0.0.0",
+    "@berry/pnp": "workspace:0.0.3",
+    "@berry/pnpify": "workspace:0.0.3",
     "typescript": "^3.3.3333",
     "webpack": "^4.28.4",
-    "webpack-cli": "npm:3.2.1"
+    "webpack-cli": "^3.2.1"
   },
-  "dependencies": {
-    "@berry/fslib": "^0.0.4"
+  "scripts": {
+    "build:pnpify": "run webpack-cli --config webpack.config.pkg.js",
+    "prepack": "rm -rf lib && run build:pnpify && yarn pnpify tsc --emitDeclarationOnly --declaration",
+    "release": "yarn npm publish",
+    "test:pnpify:watch": "run test:pnpify --watch",
+    "test:pnpify": "run test:unit packages/berry-pnpify"
   },
   "publishConfig": {
     "main": "./lib/index.js",
     "types": "./lib/index.d.ts"
   },
   "files": [
-    "/lib/*",
+    "/lib/**/*",
     "/bin.js"
   ]
 }

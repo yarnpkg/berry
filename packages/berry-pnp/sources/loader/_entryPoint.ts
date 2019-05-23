@@ -40,6 +40,8 @@ if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'inter
   if (__non_webpack_module__.filename) {
     // We delete it from the cache in order to support the case where the CLI resolver is invoked from "yarn run"
     // It's annoying because it might cause some issues when the file is multiple times in NODE_OPTIONS, but it shouldn't happen anyway.
+
+    // @ts-ignore
     delete Module._cache[__non_webpack_module__.filename];
   }
 }

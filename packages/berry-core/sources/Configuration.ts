@@ -622,7 +622,10 @@ export class Configuration {
     const rcFilename = getRcFilename();
     const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
 
-    const current = xfs.existsSync(configurationPath) ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any : {};
+    const current = xfs.existsSync(configurationPath)
+      ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any
+      : {};
+
     const currentKeys = Object.keys(current);
 
     // If some keys already use kebab-case then we keep using this style
@@ -652,20 +655,21 @@ export class Configuration {
 
       const currentValue = current[currentKey];
 
-      if (currentValue === patch[key])
+      const nextValue = typeof patch[key] === `function`
+        ? patch[key](currentValue)
+        : patch[key];
+
+      if (currentValue === nextValue)
         continue;
 
-      current[currentKey] = typeof patch[key] === 'function'
-        ? patch[key](currentValue)
-        : patch[key]
-
+      current[currentKey] = nextValue;
       patched = true;
     }
 
     if (!patched)
       return;
 
-    await xfs.writeFilePromise(configurationPath, stringifySyml(current));
+    await xfs.changeFilePromise(configurationPath, stringifySyml(current));
   }
 
   static async updateHomeConfiguration(patch: any) {

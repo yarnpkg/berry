@@ -1,9 +1,8 @@
 {
     "name": "pkg-tests-fixtures",
-    "version": "0.0.0",
     "private": true,
     "dependencies": {
-        "@berry/fslib": "workspace:*"
+        "@berry/fslib": "workspace:0.0.6"
     },
     "scripts": {
         "copy-index": "find packages -type d -mindepth 1 -maxdepth 1 | while read pkg; do cp default-index.js \"$pkg/index.js\"; done"

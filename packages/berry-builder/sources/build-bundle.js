@@ -55,7 +55,9 @@ clipanion
           banner: `#!/usr/bin/env node`,
           raw: true,
         }),
-        new webpack.DefinePlugin({[`BERRY_VERSION`]: pkgJsonVersion() }),
+        new webpack.DefinePlugin({
+          [`BERRY_VERSION`]: pkgJsonVersion(),
+        }),
       ],
     }));
 

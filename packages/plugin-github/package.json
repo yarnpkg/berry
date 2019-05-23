@@ -2,15 +2,15 @@
   "name": "@berry/plugin-github",
   "private": true,
   "main": "./sources/index.ts",
-  "files": [
-    "/lib"
-  ],
   "dependencies": {
-    "@berry/core": "workspace:*",
-    "@berry/fslib": "workspace:*"
+    "@berry/core": "workspace:0.0.0",
+    "@berry/fslib": "workspace:0.0.6"
   },
   "scripts": {
     "build": "tsc",
     "test": "run test:unit packages/plugin-github"
-  }
+  },
+  "files": [
+    "/lib"
+  ]
 }

@@ -1,18 +1,29 @@
 {
   "name": "@berry/pnp",
-  "private": true,
+  "version": "0.0.3",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/fslib": "workspace:*"
+    "@berry/fslib": "workspace:0.0.6"
   },
   "devDependencies": {
-    "@berry/builder": "workspace:packages/berry-builder",
+    "@berry/builder": "workspace:0.0.0",
+    "@berry/pnpify": "workspace:0.0.3",
+    "typescript": "^3.3.3333",
     "webpack": "^4.28.4",
-    "webpack-cli": "npm:3.2.1",
+    "webpack-cli": "^3.2.1",
     "webpack-sources": "^1.3.0"
   },
   "scripts": {
     "build:pnp:hook": "run webpack-cli --config webpack.config.hook.js",
-    "prepare": "run webpack-cli --config webpack.config.pkg.js"
-  }
+    "build:pnp": "run webpack-cli --config webpack.config.pkg.js",
+    "prepack": "rm -rf lib && run build:pnp:hook && run build:pnp && yarn pnpify tsc --emitDeclarationOnly --declaration",
+    "release": "yarn npm publish"
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "types": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ]
 }

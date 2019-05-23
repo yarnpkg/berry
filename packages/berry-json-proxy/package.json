@@ -1,8 +1,24 @@
 {
   "name": "@berry/json-proxy",
-  "private": true,
+  "version": "0.0.0",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/fslib": "workspace:*"
-  }
+    "@berry/fslib": "workspace:0.0.6"
+  },
+  "devDependencies": {
+    "@berry/pnpify": "workspace:0.0.3",
+    "typescript": "^3.3.3333"
+  },
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "release": "yarn npm publish"
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ]
 }

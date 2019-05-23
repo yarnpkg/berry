@@ -76,6 +76,34 @@ export class BufferStream extends Transform {
   }
 }
 
+// A stream implementation that prints a message if nothing was output
+
+export class DefaultStream extends Transform {
+  private readonly ifEmpty: Buffer;
+
+  public active = true;
+
+  constructor(ifEmpty: Buffer = Buffer.alloc(0)) {
+    super();
+
+    this.ifEmpty = ifEmpty;
+  }
+
+  _transform(chunk: Buffer, encoding: string, cb: any) {
+    if (encoding !== `buffer` || !Buffer.isBuffer(chunk))
+      throw new Error(`Assertion failed: DefaultStream only accept buffers`);
+
+    this.active = false;
+    cb(null, chunk);
+  }
+
+  _flush(cb: any) {
+    if (this.active && this.ifEmpty.length > 0) {
+      cb(null, this.ifEmpty);
+    }
+  }
+}
+
 // Webpack has this annoying tendency to replace dynamic requires by a stub
 // code that simply throws when called. It's all fine and dandy in the context
 // of a web application, but is quite annoying when working with Node projects!
