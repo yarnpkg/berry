@@ -1,9 +1,9 @@
-import {Configuration, MessageName, PluginConfiguration, Project, StreamReport, httpUtils, structUtils} from '@berry/core';
+import {Configuration, MessageName, PluginConfiguration, Project, StreamReport, httpUtils, structUtils}                      from '@berry/core';
 import {xfs, PortablePath, ppath}                                                                                            from '@berry/fslib';
-import {parseSyml}                                                                                      from '@berry/parsers';
-import {Clipanion}                                                                                      from 'clipanion';
-import {Writable}                                                                                       from 'stream';
-import {runInNewContext}                                                                                from 'vm';
+import {parseSyml}                                                                                                           from '@berry/parsers';
+import {Clipanion}                                                                                                           from 'clipanion';
+import {Writable}                                                                                                            from 'stream';
+import {runInNewContext}                                                                                                     from 'vm';
 
 const REMOTE_REGISTRY = `https://raw.githubusercontent.com/yarnpkg/berry/master/plugins.yml`;
 
@@ -43,7 +43,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
         const raw = await httpUtils.get(REMOTE_REGISTRY, {configuration});
         const data = parseSyml(raw.toString());
 
-        for (const [name, {experimental, description}] of Object.entries(data)) {
+        for (const [name, {experimental}] of Object.entries(data)) {
           let label = name;
 
           if (experimental)

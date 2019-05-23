@@ -69,7 +69,7 @@
   },
   "scripts": {
     "gen-tssdk": "pnpify --sdk scripts",
-    "test:lint": "eslint packages/*/sources/**.ts",
+    "test:lint": "eslint packages/*/sources/**/*.ts",
     "test:unit": "jest"
   }
 }

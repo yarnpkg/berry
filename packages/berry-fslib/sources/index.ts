@@ -19,6 +19,7 @@ export {JailFS}                   from './JailFS';
 export {LazyFS}                   from './LazyFS';
 export {NodeFS}                   from './NodeFS';
 export {PosixFS}                  from './PosixFS';
+export {ProxiedFS}                from './ProxiedFS';
 export {ZipFS}                    from './ZipFS';
 export {ZipOpenFS}                from './ZipOpenFS';
 

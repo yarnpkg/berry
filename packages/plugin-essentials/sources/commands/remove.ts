@@ -2,7 +2,7 @@ import {WorkspaceRequiredError}                                         from '@b
 import {Configuration, Cache, Descriptor, PluginConfiguration, Project} from '@berry/core';
 import {StreamReport, Workspace}                                        from '@berry/core';
 import {structUtils}                                                    from '@berry/core';
-import { PortablePath } from '@berry/fslib';
+import {PortablePath}                                                   from '@berry/fslib';
 import {Writable}                                                       from 'stream';
 
 import * as suggestUtils                                                from '../suggestUtils';

@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ 	return __webpack_require__(__webpack_require__.s = 18);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -91,12 +91,13 @@ module.exports =
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PortablePath; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return npath; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return ppath; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return toFilename; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return fromPortablePath; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return toPortablePath; });
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return npath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return ppath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return fromPortablePath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return toPortablePath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return convertPath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return toFilename; });
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 
 const PortablePath = {
@@ -105,11 +106,6 @@ const PortablePath = {
 };
 const npath = path__WEBPACK_IMPORTED_MODULE_0___default.a;
 const ppath = path__WEBPACK_IMPORTED_MODULE_0___default.a.posix;
-function toFilename(filename) {
-    if (npath.parse(filename).dir !== '' || ppath.parse(filename).dir !== '')
-        throw new Error(`Invalid filename: "${filename}"`);
-    return filename;
-}
 const WINDOWS_PATH_REGEXP = /^[a-zA-Z]:.*$/;
 const PORTABLE_PATH_REGEXP = /^\/[a-zA-Z]:.*$/;
 // Path should look like "/N:/berry/scripts/plugin-pack.js"
@@ -126,16 +122,18 @@ function toPortablePath(p) {
         return p;
     return (p.match(WINDOWS_PATH_REGEXP) ? `/${p}` : p).replace(/\\/g, `/`);
 }
+function convertPath(targetPathUtils, sourcePath) {
+    return (targetPathUtils === npath ? fromPortablePath(sourcePath) : toPortablePath(sourcePath));
+}
+function toFilename(filename) {
+    if (npath.parse(filename).dir !== '' || ppath.parse(filename).dir !== '')
+        throw new Error(`Invalid filename: "${filename}"`);
+    return filename;
+}
 
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-module.exports = require("fs");
-
-/***/ }),
-/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -143,6 +141,7 @@ module.exports = require("fs");
 /* unused harmony export extendFs */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return xfs; });
 /* harmony import */ var _NodeFS__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
+
 
 
 
@@ -242,16 +241,296 @@ const xfs = new _NodeFS__WEBPACK_IMPORTED_MODULE_0__[/* NodeFS */ "a"]();
 
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return dynamicRequire; });
-const dynamicRequire =  true
-    ? require
-    : undefined;
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return FakeFS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return BasePortableFakeFS; });
+/* harmony import */ var _path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 
 
+class FakeFS {
+    constructor(pathUtils) {
+        this.pathUtils = pathUtils;
+    }
+    async removePromise(p) {
+        let stat;
+        try {
+            stat = await this.lstatPromise(p);
+        }
+        catch (error) {
+            if (error.code === `ENOENT`) {
+                return;
+            }
+            else {
+                throw error;
+            }
+        }
+        if (stat.isDirectory()) {
+            for (const entry of await this.readdirPromise(p))
+                await this.removePromise(this.pathUtils.resolve(p, entry));
+            // 5 gives 1s worth of retries at worst
+            for (let t = 0; t < 5; ++t) {
+                try {
+                    await this.rmdirPromise(p);
+                    break;
+                }
+                catch (error) {
+                    if (error.code === `EBUSY` || error.code === `ENOTEMPTY`) {
+                        await new Promise(resolve => setTimeout(resolve, t * 100));
+                        continue;
+                    }
+                    else {
+                        throw error;
+                    }
+                }
+            }
+        }
+        else {
+            await this.unlinkPromise(p);
+        }
+    }
+    removeSync(p) {
+        let stat;
+        try {
+            stat = this.lstatSync(p);
+        }
+        catch (error) {
+            if (error.code === `ENOENT`) {
+                return;
+            }
+            else {
+                throw error;
+            }
+        }
+        if (stat.isDirectory()) {
+            for (const entry of this.readdirSync(p))
+                this.removeSync(this.pathUtils.resolve(p, entry));
+            this.rmdirSync(p);
+        }
+        else {
+            this.unlinkSync(p);
+        }
+    }
+    async mkdirpPromise(p, { chmod, utimes } = {}) {
+        p = this.resolve(p);
+        if (p === this.pathUtils.dirname(p))
+            return;
+        const parts = p.split(this.pathUtils.sep);
+        for (let u = 2; u <= parts.length; ++u) {
+            const subPath = parts.slice(0, u).join(this.pathUtils.sep);
+            if (!this.existsSync(subPath)) {
+                try {
+                    await this.mkdirPromise(subPath);
+                }
+                catch (error) {
+                    if (error.code === `EEXIST`) {
+                        continue;
+                    }
+                    else {
+                        throw error;
+                    }
+                }
+                if (chmod != null)
+                    await this.chmodPromise(subPath, chmod);
+                if (utimes != null) {
+                    await this.utimesPromise(subPath, utimes[0], utimes[1]);
+                }
+            }
+        }
+    }
+    mkdirpSync(p, { chmod, utimes } = {}) {
+        p = this.resolve(p);
+        if (p === this.pathUtils.dirname(p))
+            return;
+        const parts = p.split(this.pathUtils.sep);
+        for (let u = 2; u <= parts.length; ++u) {
+            const subPath = parts.slice(0, u).join(this.pathUtils.sep);
+            if (!this.existsSync(subPath)) {
+                try {
+                    this.mkdirSync(subPath);
+                }
+                catch (error) {
+                    if (error.code === `EEXIST`) {
+                        continue;
+                    }
+                    else {
+                        throw error;
+                    }
+                }
+                if (chmod != null)
+                    this.chmodSync(subPath, chmod);
+                if (utimes != null) {
+                    this.utimesSync(subPath, utimes[0], utimes[1]);
+                }
+            }
+        }
+    }
+    async copyPromise(destination, source, { baseFs = this, overwrite = true } = {}) {
+        const stat = await baseFs.lstatPromise(source);
+        const exists = await this.existsSync(destination);
+        if (stat.isDirectory()) {
+            await this.mkdirpPromise(destination);
+            const directoryListing = await baseFs.readdirPromise(source);
+            await Promise.all(directoryListing.map(entry => {
+                return this.copyPromise(this.pathUtils.join(destination, entry), baseFs.pathUtils.join(source, entry), { baseFs, overwrite });
+            }));
+        }
+        else if (stat.isFile()) {
+            if (!exists || overwrite) {
+                if (exists)
+                    await this.removePromise(destination);
+                const content = await baseFs.readFilePromise(source);
+                await this.writeFilePromise(destination, content);
+            }
+        }
+        else if (stat.isSymbolicLink()) {
+            if (!exists || overwrite) {
+                if (exists)
+                    await this.removePromise(destination);
+                const target = await baseFs.readlinkPromise(source);
+                await this.symlinkPromise(Object(_path__WEBPACK_IMPORTED_MODULE_0__[/* convertPath */ "b"])(this.pathUtils, target), destination);
+            }
+        }
+        else {
+            throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
+        }
+        const mode = stat.mode & 0o777;
+        await this.chmodPromise(destination, mode);
+    }
+    copySync(destination, source, { baseFs = this, overwrite = true } = {}) {
+        const stat = baseFs.lstatSync(source);
+        const exists = this.existsSync(destination);
+        if (stat.isDirectory()) {
+            this.mkdirpSync(destination);
+            const directoryListing = baseFs.readdirSync(source);
+            for (const entry of directoryListing) {
+                this.copySync(this.pathUtils.join(destination, entry), baseFs.pathUtils.join(source, entry), { baseFs, overwrite });
+            }
+        }
+        else if (stat.isFile()) {
+            if (!exists || overwrite) {
+                if (exists)
+                    this.removeSync(destination);
+                const content = baseFs.readFileSync(source);
+                this.writeFileSync(destination, content);
+            }
+        }
+        else if (stat.isSymbolicLink()) {
+            if (!exists || overwrite) {
+                if (exists)
+                    this.removeSync(destination);
+                const target = baseFs.readlinkSync(source);
+                this.symlinkSync(Object(_path__WEBPACK_IMPORTED_MODULE_0__[/* convertPath */ "b"])(this.pathUtils, target), destination);
+            }
+        }
+        else {
+            throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
+        }
+        const mode = stat.mode & 0o777;
+        this.chmodSync(destination, mode);
+    }
+    async changeFilePromise(p, content) {
+        try {
+            const current = await this.readFilePromise(p, `utf8`);
+            if (current === content) {
+                return;
+            }
+        }
+        catch (error) {
+            // ignore errors, no big deal
+        }
+        await this.writeFilePromise(p, content);
+    }
+    changeFileSync(p, content) {
+        try {
+            const current = this.readFileSync(p, `utf8`);
+            if (current === content) {
+                return;
+            }
+        }
+        catch (error) {
+            // ignore errors, no big deal
+        }
+        this.writeFileSync(p, content);
+    }
+    async movePromise(fromP, toP) {
+        try {
+            await this.renamePromise(fromP, toP);
+        }
+        catch (error) {
+            if (error.code === `EXDEV`) {
+                await this.copyPromise(toP, fromP);
+                await this.removePromise(fromP);
+            }
+            else {
+                throw error;
+            }
+        }
+    }
+    moveSync(fromP, toP) {
+        try {
+            this.renameSync(fromP, toP);
+        }
+        catch (error) {
+            if (error.code === `EXDEV`) {
+                this.copySync(toP, fromP);
+                this.removeSync(fromP);
+            }
+            else {
+                throw error;
+            }
+        }
+    }
+    async lockPromise(affectedPath, callback) {
+        const lockPath = `${affectedPath}.lock`;
+        const interval = 1000 / 60;
+        const timeout = Date.now() + 60 * 1000;
+        let fd = null;
+        while (fd === null) {
+            try {
+                fd = await this.openPromise(lockPath, `wx`);
+            }
+            catch (error) {
+                if (error.code === `EEXIST`) {
+                    if (Date.now() < timeout) {
+                        await new Promise(resolve => setTimeout(resolve, interval));
+                    }
+                    else {
+                        throw new Error(`Couldn't acquire a lock in a reasonable time (via ${lockPath})`);
+                    }
+                }
+                else {
+                    throw error;
+                }
+            }
+        }
+        try {
+            await callback();
+        }
+        finally {
+            await this.closePromise(fd);
+            await this.unlinkPromise(lockPath);
+        }
+    }
+}
+;
+class BasePortableFakeFS extends FakeFS {
+    constructor() {
+        super(_path__WEBPACK_IMPORTED_MODULE_0__[/* ppath */ "e"]);
+    }
+    resolve(p) {
+        return this.pathUtils.resolve(_path__WEBPACK_IMPORTED_MODULE_0__[/* PortablePath */ "a"].root, p);
+    }
+}
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = require("fs");
 
 /***/ }),
 /* 4 */
@@ -259,9 +538,9 @@ const dynamicRequire =  true
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NodeFS; });
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _FakeFS__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
+/* harmony import */ var _FakeFS__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var _path__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(0);
 
 
@@ -460,308 +739,34 @@ class NodeFS extends _FakeFS__WEBPACK_IMPORTED_MODULE_1__[/* BasePortableFakeFS 
         };
     }
     static fromPortablePath(p) {
-        return Object(_path__WEBPACK_IMPORTED_MODULE_2__[/* fromPortablePath */ "b"])(p);
+        return Object(_path__WEBPACK_IMPORTED_MODULE_2__[/* fromPortablePath */ "c"])(p);
     }
     static toPortablePath(p) {
-        return Object(_path__WEBPACK_IMPORTED_MODULE_2__[/* toPortablePath */ "f"])(p);
+        return Object(_path__WEBPACK_IMPORTED_MODULE_2__[/* toPortablePath */ "g"])(p);
     }
 }
 
 
 /***/ }),
 /* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return FakeFS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return BasePortableFakeFS; });
-/* harmony import */ var _path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
-
-
-class FakeFS {
-    constructor(pathUtils) {
-        this.pathUtils = pathUtils;
-    }
-    async changeFilePromise(p, content) {
-        try {
-            const current = await this.readFilePromise(p, `utf8`);
-            if (current === content) {
-                return;
-            }
-        }
-        catch (error) {
-            // ignore errors, no big deal
-        }
-        await this.writeFilePromise(p, content);
-    }
-    changeFileSync(p, content) {
-        try {
-            const current = this.readFileSync(p, `utf8`);
-            if (current === content) {
-                return;
-            }
-        }
-        catch (error) {
-            // ignore errors, no big deal
-        }
-        this.writeFileSync(p, content);
-    }
-    async movePromise(fromP, toP) {
-        try {
-            await this.renamePromise(fromP, toP);
-        }
-        catch (error) {
-            if (error.code === `EXDEV`) {
-                await this.copyPromise(toP, fromP);
-                await this.removePromise(fromP);
-            }
-            else {
-                throw error;
-            }
-        }
-    }
-    moveSync(fromP, toP) {
-        try {
-            this.renameSync(fromP, toP);
-        }
-        catch (error) {
-            if (error.code === `EXDEV`) {
-                this.copySync(toP, fromP);
-                this.removeSync(fromP);
-            }
-            else {
-                throw error;
-            }
-        }
-    }
-    async lockPromise(affectedPath, callback) {
-        const lockPath = `${affectedPath}.lock`;
-        const interval = 1000 / 60;
-        const timeout = Date.now() + 60 * 1000;
-        let fd = null;
-        while (fd === null) {
-            try {
-                fd = await this.openPromise(lockPath, `wx`);
-            }
-            catch (error) {
-                if (error.code === `EEXIST`) {
-                    if (Date.now() < timeout) {
-                        await new Promise(resolve => setTimeout(resolve, interval));
-                    }
-                    else {
-                        throw new Error(`Couldn't acquire a lock in a reasonable time (via ${lockPath})`);
-                    }
-                }
-                else {
-                    throw error;
-                }
-            }
-        }
-        try {
-            await callback();
-        }
-        finally {
-            await this.closePromise(fd);
-            await this.unlinkPromise(lockPath);
-        }
-    }
-}
-;
-class BasePortableFakeFS extends FakeFS {
-    constructor() {
-        super(_path__WEBPACK_IMPORTED_MODULE_0__[/* ppath */ "d"]);
-    }
-    resolve(p) {
-        return this.pathUtils.resolve(_path__WEBPACK_IMPORTED_MODULE_0__[/* PortablePath */ "a"].root, p);
-    }
-    async removePromise(p) {
-        let stat;
-        try {
-            stat = await this.lstatPromise(p);
-        }
-        catch (error) {
-            if (error.code === `ENOENT`) {
-                return;
-            }
-            else {
-                throw error;
-            }
-        }
-        if (stat.isDirectory()) {
-            for (const entry of await this.readdirPromise(p))
-                await this.removePromise(this.pathUtils.resolve(p, entry));
-            // 5 gives 1s worth of retries at worst
-            for (let t = 0; t < 5; ++t) {
-                try {
-                    await this.rmdirPromise(p);
-                    break;
-                }
-                catch (error) {
-                    if (error.code === `EBUSY` || error.code === `ENOTEMPTY`) {
-                        await new Promise(resolve => setTimeout(resolve, t * 100));
-                        continue;
-                    }
-                    else {
-                        throw error;
-                    }
-                }
-            }
-        }
-        else {
-            await this.unlinkPromise(p);
-        }
-    }
-    removeSync(p) {
-        let stat;
-        try {
-            stat = this.lstatSync(p);
-        }
-        catch (error) {
-            if (error.code === `ENOENT`) {
-                return;
-            }
-            else {
-                throw error;
-            }
-        }
-        if (stat.isDirectory()) {
-            for (const entry of this.readdirSync(p))
-                this.removeSync(this.pathUtils.resolve(p, entry));
-            this.rmdirSync(p);
-        }
-        else {
-            this.unlinkSync(p);
-        }
-    }
-    async mkdirpPromise(p, { chmod, utimes } = {}) {
-        p = this.resolve(p);
-        if (p === this.pathUtils.dirname(p))
-            return;
-        const parts = p.split(this.pathUtils.sep);
-        for (let u = 2; u <= parts.length; ++u) {
-            const subPath = parts.slice(0, u).join(this.pathUtils.sep);
-            if (!this.existsSync(subPath)) {
-                try {
-                    await this.mkdirPromise(subPath);
-                }
-                catch (error) {
-                    if (error.code === `EEXIST`) {
-                        continue;
-                    }
-                    else {
-                        throw error;
-                    }
-                }
-                if (chmod != null)
-                    await this.chmodPromise(subPath, chmod);
-                if (utimes != null) {
-                    await this.utimesPromise(subPath, utimes[0], utimes[1]);
-                }
-            }
-        }
-    }
-    mkdirpSync(p, { chmod, utimes } = {}) {
-        p = this.resolve(p);
-        if (p === this.pathUtils.dirname(p))
-            return;
-        const parts = p.split(this.pathUtils.sep);
-        for (let u = 2; u <= parts.length; ++u) {
-            const subPath = parts.slice(0, u).join(this.pathUtils.sep);
-            if (!this.existsSync(subPath)) {
-                try {
-                    this.mkdirSync(subPath);
-                }
-                catch (error) {
-                    if (error.code === `EEXIST`) {
-                        continue;
-                    }
-                    else {
-                        throw error;
-                    }
-                }
-                if (chmod != null)
-                    this.chmodSync(subPath, chmod);
-                if (utimes != null) {
-                    this.utimesSync(subPath, utimes[0], utimes[1]);
-                }
-            }
-        }
-    }
-    async copyPromise(destination, source, { baseFs = this, overwrite = true } = {}) {
-        const stat = await baseFs.lstatPromise(source);
-        const exists = await this.existsSync(destination);
-        if (stat.isDirectory()) {
-            await this.mkdirpPromise(destination);
-            const directoryListing = await baseFs.readdirPromise(source);
-            await Promise.all(directoryListing.map(entry => {
-                return this.copyPromise(_path__WEBPACK_IMPORTED_MODULE_0__[/* ppath */ "d"].join(destination, entry), baseFs.pathUtils.join(source, entry), { baseFs, overwrite });
-            }));
-        }
-        else if (stat.isFile()) {
-            if (!exists || overwrite) {
-                if (exists)
-                    await this.removePromise(destination);
-                const content = await baseFs.readFilePromise(source);
-                await this.writeFilePromise(destination, content);
-            }
-        }
-        else if (stat.isSymbolicLink()) {
-            if (!exists || overwrite) {
-                if (exists)
-                    await this.removePromise(destination);
-                const target = await baseFs.readlinkPromise(source);
-                await this.symlinkPromise(Object(_path__WEBPACK_IMPORTED_MODULE_0__[/* toPortablePath */ "f"])(target), destination);
-            }
-        }
-        else {
-            throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
-        }
-        const mode = stat.mode & 0o777;
-        await this.chmodPromise(destination, mode);
-    }
-    copySync(destination, source, { baseFs = this, overwrite = true } = {}) {
-        const stat = baseFs.lstatSync(source);
-        const exists = this.existsSync(destination);
-        if (stat.isDirectory()) {
-            this.mkdirpSync(destination);
-            const directoryListing = baseFs.readdirSync(source);
-            for (const entry of directoryListing) {
-                this.copySync(this.pathUtils.join(destination, entry), baseFs.pathUtils.join(source, entry), { baseFs, overwrite });
-            }
-        }
-        else if (stat.isFile()) {
-            if (!exists || overwrite) {
-                if (exists)
-                    this.removeSync(destination);
-                const content = baseFs.readFileSync(source);
-                this.writeFileSync(destination, content);
-            }
-        }
-        else if (stat.isSymbolicLink()) {
-            if (!exists || overwrite) {
-                if (exists)
-                    this.removeSync(destination);
-                const target = baseFs.readlinkSync(source);
-                this.symlinkSync(Object(_path__WEBPACK_IMPORTED_MODULE_0__[/* toPortablePath */ "f"])(target), destination);
-            }
-        }
-        else {
-            throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
-        }
-        const mode = stat.mode & 0o777;
-        this.chmodSync(destination, mode);
-    }
-}
-
-
-/***/ }),
-/* 6 */,
-/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return dynamicRequire; });
+const dynamicRequire =  true
+    ? require
+    : undefined;
+
+
+
+/***/ }),
+/* 7 */,
 /* 8 */,
 /* 9 */,
 /* 10 */,
@@ -775,10 +780,14 @@ module.exports = require("path");
 module.exports = require("child_process");
 
 /***/ }),
-/* 16 */,
+/* 16 */
+/***/ (function(module) {
+
+module.exports = {"name":"typescript","author":"Microsoft Corp.","homepage":"https://www.typescriptlang.org/","version":"3.3.3333","license":"Apache-2.0","description":"TypeScript is a language for application scale JavaScript development","keywords":["TypeScript","Microsoft","compiler","language","javascript"],"bugs":{"url":"https://github.com/Microsoft/TypeScript/issues"},"repository":{"type":"git","url":"https://github.com/Microsoft/TypeScript.git"},"main":"./lib/typescript.js","typings":"./lib/typescript.d.ts","bin":{"tsc":"./bin/tsc","tsserver":"./bin/tsserver"},"engines":{"node":">=4.2.0"},"devDependencies":{"@octokit/rest":"latest","@types/browserify":"latest","@types/chai":"latest","@types/convert-source-map":"latest","@types/del":"latest","@types/glob":"latest","@types/gulp":"3.X","@types/gulp-concat":"latest","@types/gulp-help":"latest","@types/gulp-if":"0.0.33","@types/gulp-newer":"latest","@types/gulp-rename":"0.0.33","@types/gulp-sourcemaps":"0.0.32","@types/jake":"latest","@types/merge2":"latest","@types/minimatch":"latest","@types/minimist":"latest","@types/mkdirp":"latest","@types/mocha":"latest","@types/node":"8.5.5","@types/q":"latest","@types/run-sequence":"latest","@types/source-map-support":"latest","@types/through2":"latest","@types/travis-fold":"latest","@types/xml2js":"^0.4.0","browser-resolve":"^1.11.2","browserify":"latest","chai":"latest","chalk":"latest","convert-source-map":"latest","del":"latest","fancy-log":"latest","fs-extra":"^6.0.1","gulp":"3.X","gulp-clone":"latest","gulp-concat":"latest","gulp-help":"latest","gulp-if":"latest","gulp-insert":"latest","gulp-newer":"latest","gulp-rename":"latest","gulp-sourcemaps":"latest","gulp-typescript":"latest","istanbul":"latest","jake":"latest","lodash":"4.17.10","merge2":"latest","minimist":"latest","mkdirp":"latest","mocha":"latest","mocha-fivemat-progress-reporter":"latest","plugin-error":"latest","pretty-hrtime":"^1.0.3","prex":"^0.4.3","q":"latest","remove-internal":"^2.9.2","run-sequence":"latest","source-map-support":"latest","through2":"latest","travis-fold":"latest","tslint":"latest","typescript":"next","vinyl":"latest","vinyl-sourcemaps-apply":"latest","xml2js":"^0.4.19"},"scripts":{"pretest":"jake tests","test":"jake runtests-parallel light=false","build":"npm run build:compiler && npm run build:tests","build:compiler":"jake local","build:tests":"jake tests","start":"node lib/tsc","clean":"jake clean","gulp":"gulp","jake":"jake","lint":"jake lint","setup-hooks":"node scripts/link-hooks.js"},"browser":{"fs":false,"os":false,"path":false},"dependencies":{}};
+
+/***/ }),
 /* 17 */,
-/* 18 */,
-/* 19 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -794,10 +803,10 @@ var NodeFS = __webpack_require__(4);
 var external_child_process_ = __webpack_require__(15);
 
 // EXTERNAL MODULE: ./sources/dynamicRequire.ts
-var dynamicRequire = __webpack_require__(3);
+var dynamicRequire = __webpack_require__(6);
 
 // EXTERNAL MODULE: ../berry-fslib/sources/index.ts
-var sources = __webpack_require__(2);
+var sources = __webpack_require__(1);
 
 // CONCATENATED MODULE: ./sources/generateSdk.ts
 
@@ -822,18 +831,20 @@ const TEMPLATE = (relPnpApiPath) => [
 async function generateSdk(projectRoot, targetFolder) {
     if (targetFolder === null)
         targetFolder = projectRoot;
-    const tssdk = path["d" /* ppath */].join(targetFolder, `tssdk`);
-    const tsserver = path["d" /* ppath */].join(tssdk, `lib/tsserver.js`);
-    const relPnpApiPath = path["d" /* ppath */].relative(path["d" /* ppath */].dirname(tsserver), path["d" /* ppath */].join(projectRoot, `.pnp.js`));
+    const tssdk = path["e" /* ppath */].join(targetFolder, `tssdk`);
+    const tssdkManifest = path["e" /* ppath */].join(tssdk, `package.json`);
+    const tsserver = path["e" /* ppath */].join(tssdk, `lib/tsserver.js`);
+    const relPnpApiPath = path["e" /* ppath */].relative(path["e" /* ppath */].dirname(tsserver), path["e" /* ppath */].join(projectRoot, `.pnp.js`));
     await sources["b" /* xfs */].removePromise(tssdk);
-    await sources["b" /* xfs */].mkdirpPromise(path["d" /* ppath */].dirname(tsserver));
+    await sources["b" /* xfs */].mkdirpPromise(path["e" /* ppath */].dirname(tsserver));
+    await sources["b" /* xfs */].writeFilePromise(tssdkManifest, JSON.stringify({ name: 'typescript', version: `${__webpack_require__(16).version}-pnpify` }, null, 2));
     await sources["b" /* xfs */].writeFilePromise(tsserver, TEMPLATE(relPnpApiPath));
-    const settings = path["d" /* ppath */].join(projectRoot, `.vscode/settings.json`);
+    const settings = path["e" /* ppath */].join(projectRoot, `.vscode/settings.json`);
     const content = await sources["b" /* xfs */].existsPromise(settings) ? await sources["b" /* xfs */].readFilePromise(settings, `utf8`) : ``;
     const data = JSON.parse(content);
-    data[`typescript.tsdk`] = NodeFS["a" /* NodeFS */].fromPortablePath(path["d" /* ppath */].relative(projectRoot, path["d" /* ppath */].dirname(tsserver)));
-    const patched = JSON.stringify(data, null, 2) + `\n`;
-    await sources["b" /* xfs */].mkdirpPromise(path["d" /* ppath */].dirname(settings));
+    data[`typescript.tsdk`] = NodeFS["a" /* NodeFS */].fromPortablePath(path["e" /* ppath */].relative(projectRoot, path["e" /* ppath */].dirname(tsserver)));
+    const patched = `${JSON.stringify(data, null, 2)}\n`;
+    await sources["b" /* xfs */].mkdirpPromise(path["e" /* ppath */].dirname(settings));
     await sources["b" /* xfs */].changeFilePromise(settings, patched);
 }
 
@@ -848,7 +859,7 @@ if (bin_name === `--help` || bin_name === `-h`)
 else if (bin_name === `--sdk` && rest.length === 0)
     sdk(null);
 else if (bin_name === `--sdk` && rest.length === 1)
-    sdk(path["d" /* ppath */].resolve(NodeFS["a" /* NodeFS */].toPortablePath(rest[0])));
+    sdk(path["e" /* ppath */].resolve(NodeFS["a" /* NodeFS */].toPortablePath(rest[0])));
 else if (typeof bin_name !== `undefined` && bin_name[0] !== `-`)
     run(bin_name, rest);
 else

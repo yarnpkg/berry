@@ -34,6 +34,7 @@
     "@berry/plugin-pack": "workspace:*",
     "@berry/plugin-pnp": "workspace:*",
     "@berry/plugin-typescript": "workspace:*",
+    "@berry/plugin-workspace-tools": "workspace:*",
     "@berry/pnp": "workspace:*"
   },
   "scripts": {

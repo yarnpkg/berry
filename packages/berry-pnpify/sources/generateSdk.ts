@@ -24,12 +24,14 @@ export async function generateSdk(projectRoot: PortablePath, targetFolder: Porta
     targetFolder = projectRoot;
 
   const tssdk = ppath.join(targetFolder, `tssdk` as PortablePath);
+  const tssdkManifest = ppath.join(tssdk, `package.json` as PortablePath);
   const tsserver = ppath.join(tssdk, `lib/tsserver.js` as PortablePath);
 
   const relPnpApiPath = ppath.relative(ppath.dirname(tsserver), ppath.join(projectRoot, `.pnp.js` as Filename));
 
   await xfs.removePromise(tssdk);
   await xfs.mkdirpPromise(ppath.dirname(tsserver));
+  await xfs.writeFilePromise(tssdkManifest, JSON.stringify({name: 'typescript', version: `${require('typescript/package.json').version}-pnpify`}, null, 2));
   await xfs.writeFilePromise(tsserver, TEMPLATE(relPnpApiPath));
 
   const settings = ppath.join(projectRoot, `.vscode/settings.json` as PortablePath);

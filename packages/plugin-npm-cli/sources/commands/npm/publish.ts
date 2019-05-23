@@ -1,6 +1,7 @@
 import {WorkspaceRequiredError}                                                            from '@berry/cli';
 import {Configuration, MessageName, PluginConfiguration, Project, StreamReport, Workspace} from '@berry/core';
 import {miscUtils, structUtils}                                                            from '@berry/core';
+import {PortablePath}                                                                      from '@berry/fslib';
 import {npmHttpUtils}                                                                      from '@berry/plugin-npm';
 import {packUtils}                                                                         from '@berry/plugin-pack';
 import {UsageError}                                                                        from 'clipanion';
@@ -8,7 +9,6 @@ import {createHash}                                                             
 import ssri                                                                                from 'ssri';
 import {Writable}                                                                          from 'stream';
 import * as yup                                                                            from 'yup';
-import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -119,7 +119,7 @@ async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, ta
     _id: name,
     _attachments: {
       [`${name}-${version}.tgz`]: {
-        content_type: `application/octet-stream`,
+        [`content_type`]: `application/octet-stream`,
         data: buffer.toString(`base64`),
         length: buffer.length,
       },
@@ -134,7 +134,7 @@ async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, ta
 
     versions: {
       [version]: {
-        ... raw,
+        ...raw,
 
         _id: `${name}@${version}`,
 

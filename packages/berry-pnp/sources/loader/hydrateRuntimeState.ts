@@ -1,6 +1,6 @@
 import {NodeFS, ppath, PortablePath}                                                                          from '@berry/fslib';
 
-import {PackageInformation, PackageLocator, PackageStore, RuntimeState, SerializedState} from '../types';
+import {PackageInformation, PackageLocator, PackageStore, RuntimeState, SerializedState}                      from '../types';
 
 export type HydrateRuntimeStateOptions = {
   basePath: string,

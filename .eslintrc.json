@@ -12,7 +12,7 @@
     "arca"
   ],
   "rules": {
-    "@typescript-eslint/camelcase": ["error", {"allow": ["__non_webpack_require__", "^npm(_[a-z]+)+$"]}],
+    "@typescript-eslint/camelcase": ["error", {"allow": ["__non_webpack_module__", "__non_webpack_require__", "^npm(_[a-z]+)+$"]}],
     "@typescript-eslint/class-name-casing": 2,
     "@typescript-eslint/indent": ["error", 2, {"SwitchCase": 1}],
     "@typescript-eslint/no-unused-vars": [2, {"args": "none", "ignoreRestSiblings": true}],

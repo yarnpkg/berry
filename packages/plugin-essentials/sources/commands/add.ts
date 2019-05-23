@@ -2,13 +2,13 @@ import {WorkspaceRequiredError}                                     from '@berry
 import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@berry/core';
 import {PluginConfiguration, Project, StreamReport, Workspace}      from '@berry/core';
 import {structUtils}                                                from '@berry/core';
+import {PortablePath}                                               from '@berry/fslib';
 import {Clipanion}                                                  from 'clipanion';
 import inquirer                                                     from 'inquirer';
 import {Readable, Writable}                                         from 'stream';
 
 import * as suggestUtils                                            from '../suggestUtils';
 import {Hooks}                                                      from '..';
-import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) => clipanion
@@ -69,11 +69,11 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
         : suggestUtils.Modifier.CARET;
 
     const strategies = [
-      ... interactive ? [
+      ...interactive ? [
         suggestUtils.Strategy.REUSE,
       ] : [],
       suggestUtils.Strategy.PROJECT,
-      ... cached ? [
+      ...cached ? [
         suggestUtils.Strategy.CACHE,
       ] : [],
       suggestUtils.Strategy.LATEST,
@@ -127,7 +127,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
       Descriptor
     ]> = [];
 
-    for (const [request, suggestions] of allSuggestions) {
+    for (const [/*request*/, suggestions] of allSuggestions) {
       let selected;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {

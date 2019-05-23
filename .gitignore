@@ -3,12 +3,15 @@ yarn-error.log
 
 .vscode
 .history
+tssdk
 
 junit.xml
 
 /.yarn/build-state.yml
 
 lib
+!/scripts/tssdk/lib
+
 /packages/*/bundles/*
 !/packages/berry-pnp/bundles/hook.js
 !/packages/berry-pnpify/lib

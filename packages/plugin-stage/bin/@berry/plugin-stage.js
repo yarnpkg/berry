@@ -3880,25 +3880,25 @@ exports.Driver = {
             if (prefix === `?? ` && line.endsWith(`/`)) {
                 return stageUtils.expandDirectory(path).map(path => ({
                     action: stageUtils.ActionType.CREATE,
-                    path
+                    path,
                 }));
             }
             else if (prefix === ` A ` || prefix === `?? `) {
                 return [{
                         action: stageUtils.ActionType.CREATE,
-                        path
+                        path,
                     }];
             }
             else if (prefix === ` M `) {
                 return [{
                         action: stageUtils.ActionType.MODIFY,
-                        path
+                        path,
                     }];
             }
             else if (prefix === ` D `) {
                 return [{
                         action: stageUtils.ActionType.DELETE,
-                        path
+                        path,
                     }];
             }
             else {
@@ -4079,8 +4079,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const stageUtils = __importStar(__webpack_require__(22));
 const fslib_1 = __webpack_require__(3);
+const stageUtils = __importStar(__webpack_require__(22));
 exports.Driver = {
     async findRoot(cwd) {
         return await stageUtils.findVcsRoot(cwd, { marker: fslib_1.toFilename(`.hg`) });

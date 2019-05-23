@@ -60,7 +60,7 @@ global.makeTemporaryEnv = generatePkgDriver({
   },
 });
 
-if (process.platform === `win32` || isWsl) {
+if (process.platform === `win32` || isWsl || process.platform === `darwin`) {
   jest.setTimeout(10000);
 }
 

@@ -1,7 +1,7 @@
 import {Configuration, PluginConfiguration, Project, Workspace, Cache} from '@berry/core';
 import {LightReport}                                                   from '@berry/core';
 import {scriptUtils, structUtils}                                      from '@berry/core';
-import { PortablePath } from '@berry/fslib';
+import {PortablePath}                                                  from '@berry/fslib';
 import {UsageError}                                                    from 'clipanion';
 import {Readable, Writable}                                            from 'stream';
 
