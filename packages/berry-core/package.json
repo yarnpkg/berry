@@ -15,7 +15,7 @@
     "agentkeepalive": "^4.0.2",
     "camelcase": "^5.3.1",
     "chalk": "^2.4.1",
-    "clipanion": "^0.14.1",
+    "clipanion": "^0.15.0",
     "cross-spawn": "^6.0.5",
     "decamelize": "^3.2.0",
     "execa": "^1.0.0",

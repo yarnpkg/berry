@@ -7,7 +7,7 @@
     "@berry/core": "workspace:0.0.0",
     "@berry/fslib": "workspace:0.0.6",
     "@berry/plugin-pack": "workspace:0.0.0",
-    "clipanion": "^0.14.1",
+    "clipanion": "^0.15.0",
     "semver": "^5.6.0"
   },
   "devDependencies": {

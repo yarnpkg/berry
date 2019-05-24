@@ -8,7 +8,7 @@
     "@berry/fslib": "workspace:0.0.6",
     "@berry/plugin-npm": "workspace:0.0.0",
     "@berry/plugin-pack": "workspace:0.0.0",
-    "clipanion": "^0.14.1",
+    "clipanion": "^0.15.0",
     "inquirer": "^6.2.0",
     "ssri": "^6.0.1",
     "yup": "^0.27.0"

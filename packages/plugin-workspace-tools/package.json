@@ -6,7 +6,7 @@
     "@berry/builder": "workspace:0.0.0",
     "@berry/core": "workspace:0.0.0",
     "@berry/fslib": "workspace:0.0.6",
-    "clipanion": "^0.14.1",
+    "clipanion": "^0.15.0",
     "p-limit": "^2.2.0",
     "yup": "^0.27.0"
   },
