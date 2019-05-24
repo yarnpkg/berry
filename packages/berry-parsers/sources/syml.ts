@@ -1,4 +1,7 @@
-import {parse} from './grammars/syml';
+// @ts-ignore
+import {safeLoad, FAILSAFE_SCHEMA} from 'js-yaml';
+
+import {parse}                     from './grammars/syml';
 
 const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{}:# \t\r\n]).)*$/;
 
@@ -81,15 +84,46 @@ function stringifyValue(value: any, indentLevel: number): string {
 }
 
 export function stringifySyml(value: any) {
-  return stringifyValue(value, 0);
-}
-
-export function parseSyml(source: string) {
   try {
-    return parse(source.endsWith(`\n`) ? source : `${source}\n`);
+    return stringifyValue(value, 0);
   } catch (error) {
     if (error.location)
       error.message = error.message.replace(/(\.)?$/, ` (line ${error.location.start.line}, column ${error.location.start.column})$1`);
     throw error;
   }
+}
+
+function parseViaPeg(source: string) {
+  if (!source.endsWith(`\n`))
+    source += `\n`;
+
+  return parse(source);
+}
+
+const LEGACY_REGEXP = /^(#.*\n)*?#\s+yarn\s+lockfile\s+v1\n/i;
+
+function parseViaJsYaml(source: string) {
+  if (LEGACY_REGEXP.test(source))
+    return parseViaPeg(source);
+
+  let value = safeLoad(source, {
+    schema: FAILSAFE_SCHEMA,
+  });
+
+  // Empty files are parsed as `undefined` instead of an empty object
+  // Empty files with 2 newlines or more are `null` instead
+  if (value === undefined || value === null)
+    return {} as {[key: string]: string};
+
+  if (typeof value !== `object`)
+    throw new Error(`Expected an indexed object, got a ${typeof value} instead. Does your file follow Yaml's rules?`);
+
+  if (Array.isArray(value))
+    throw new Error(`Expected an indexed object, got an array instead. Does your file follow Yaml's rules?`);
+
+  return value as {[key: string]: string};
+}
+
+export function parseSyml(source: string) {
+  return parseViaJsYaml(source);
 }

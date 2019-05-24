@@ -9628,6 +9628,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-pnpify"
                 ],
                 [
+                  "js-yaml",
+                  "npm:3.12.2"
+                ],
+                [
                   "pegjs",
                   "npm:0.10.0"
                 ],

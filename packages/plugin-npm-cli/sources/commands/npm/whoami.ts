@@ -37,7 +37,6 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
       if (scope)
         ident = structUtils.makeIdent(scope, ``);
 
-
       try {
         const response = await npmHttpUtils.get(`/-/whoami`, {configuration, ident, authType: npmHttpUtils.AuthType.ALWAYS_AUTH, json: true});
 

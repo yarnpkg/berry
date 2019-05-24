@@ -1724,6 +1724,7 @@ __metadata:
   resolution: "@berry/parsers@workspace:packages/berry-parsers"
   dependencies:
     "@berry/pnpify": "workspace:0.0.3"
+    js-yaml: "npm:^3.10.0"
     pegjs: "npm:^0.10.0"
     typescript: "npm:^3.3.3333"
   languageName: unknown

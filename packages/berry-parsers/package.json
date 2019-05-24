@@ -16,6 +16,9 @@
     "release": "yarn npm publish",
     "test:parsers": "run test:unit packages/berry-parsers"
   },
+  "dependencies": {
+    "js-yaml": "npm:^3.10.0"
+  },
   "publishConfig": {
     "main": "./lib/index.js",
     "typings": "./lib/index.d.ts"
