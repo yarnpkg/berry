@@ -26,7 +26,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     yup.object().shape({
       strategy: yup.string().test({
         name: `strategy`,
-        message: '${strategy} must be a semver range or one of ${strategies}',
+        message: '${path} must be a semver range or one of ${strategies}',
         params: {strategies: Array.from(STRATEGIES).join(`, `)},
         test: (range: string) => {
           return semver.valid(range) !== null || STRATEGIES.has(range);
@@ -84,6 +84,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       return;
 
     workspace.manifest.setRawField(`version:next`, nextVersion, {after: [`version`]});
+    workspace.persistManifest();
 
     if (!deferred) {
       await clipanion.run(null, [`version`, `apply`], {cwd, ...env});
