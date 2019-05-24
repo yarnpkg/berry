@@ -3,7 +3,6 @@ import {Descriptor, Locator, Manifest}                   from '@berry/core';
 import {LinkType}                                        from '@berry/core';
 import {miscUtils, structUtils}                          from '@berry/core';
 import {NodeFS}                                          from '@berry/fslib';
-import querystring                                       from 'querystring';
 
 import {FILE_REGEXP, PROTOCOL}                           from './constants';
 
@@ -33,12 +32,9 @@ export class FileResolver implements Resolver {
     if (FILE_REGEXP.test(descriptor.range))
       descriptor = structUtils.makeDescriptor(descriptor, `file:${descriptor.range}`);
 
-    if (descriptor.range.includes(`?`))
-      throw new Error(`File-type dependencies cannot contain the character "?"`);
-
-    return structUtils.makeDescriptor(descriptor, `${descriptor.range}?${querystring.stringify({
+    return structUtils.bindDescriptor(descriptor, {
       locator: structUtils.stringifyLocator(fromLocator),
-    })}`);
+    });
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {

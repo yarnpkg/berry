@@ -1,8 +1,8 @@
 import {WorkspaceRequiredError}                                           from '@berry/cli';
 import {Configuration, Cache, PluginConfiguration, Project, StreamReport} from '@berry/core';
 import {structUtils}                                                      from '@berry/core';
+import {PortablePath}                                                     from '@berry/fslib';
 import {Writable}                                                         from 'stream';
-import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion

@@ -1,10 +1,10 @@
-import {WorkspaceRequiredError}                             from '@berry/cli';
-import {Cache, Configuration, PluginConfiguration, Project} from '@berry/core';
-import {LightReport}                                        from '@berry/core';
-import {scriptUtils, structUtils}                           from '@berry/core';
+import {WorkspaceRequiredError}                                                                        from '@berry/cli';
+import {Cache, Configuration, PluginConfiguration, Project}                                            from '@berry/core';
+import {LightReport}                                                                                   from '@berry/core';
+import {scriptUtils, structUtils}                                                                      from '@berry/core';
 import {NodeFS, xfs, PortablePath, ppath, Filename, toFilename}                                        from '@berry/fslib';
-import {Readable, Writable}                                 from 'stream';
-import tmp                                                  from 'tmp';
+import {Readable, Writable}                                                                            from 'stream';
+import tmp                                                                                             from 'tmp';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -28,7 +28,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn dlx create-react-app ./my-app`,
   )
 
-  .action(async ({cwd, stdin, stdout, stderr, command, package: packages, args, quiet, ... rest}: {cwd: PortablePath, stdin: Readable, stdout: Writable, stderr: Writable, command: string, package: Array<string>, args: Array<string>, quiet: boolean}) => {
+  .action(async ({cwd, stdin, stdout, stderr, command, package: packages, args, quiet, ...rest}: {cwd: PortablePath, stdin: Readable, stdout: Writable, stderr: Writable, command: string, package: Array<string>, args: Array<string>, quiet: boolean}) => {
     const tmpDir = await createTemporaryDirectory(toFilename(`dlx-${process.pid}`));
 
     try {
@@ -45,7 +45,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       if (quiet)
         addOptions.push(`--quiet`);
 
-      const addExitCode = await clipanion.run(null, [`add`, ... addOptions, `--`, ... packages], {cwd: tmpDir, stdin, stdout, stderr, ... rest});
+      const addExitCode = await clipanion.run(null, [`add`, ...addOptions, `--`, ...packages], {cwd: tmpDir, stdin, stdout, stderr, ...rest});
       if (addExitCode !== 0)
         return addExitCode;
 

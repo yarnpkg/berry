@@ -2,7 +2,7 @@ import {WorkspaceRequiredError}                                     from '@berry
 import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@berry/core';
 import {PluginConfiguration, Project, StreamReport, Workspace}      from '@berry/core';
 import {structUtils}                                                from '@berry/core';
-import { PortablePath } from '@berry/fslib';
+import {PortablePath}                                               from '@berry/fslib';
 import inquirer                                                     from 'inquirer';
 import {Readable, Writable}                                         from 'stream';
 
@@ -53,10 +53,10 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     });
 
     const modifier = exact
-    ? suggestUtils.Modifier.EXACT
-    : tilde
-      ? suggestUtils.Modifier.TILDE
-      : suggestUtils.Modifier.CARET;
+      ? suggestUtils.Modifier.EXACT
+      : tilde
+        ? suggestUtils.Modifier.TILDE
+        : suggestUtils.Modifier.CARET;
 
     const strategies = interactive ? [
       suggestUtils.Strategy.KEEP,
@@ -84,7 +84,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
               workspace,
               target,
               existing,
-              await suggestUtils.getSuggestedDescriptors(descriptor, {project, workspace, cache, target, modifier, strategies})
+              await suggestUtils.getSuggestedDescriptors(descriptor, {project, workspace, cache, target, modifier, strategies}),
             ] as [
               Workspace,
               suggestUtils.Target,
@@ -99,7 +99,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const allSuggestions = await Promise.all(allSuggestionsPromises);
 
     const checkReport = await LightReport.start({configuration, stdout, suggestInstall: false}, async report => {
-      for (const [workspace, target, existing, suggestions] of allSuggestions) {
+      for (const [/*workspace*/, /*target*/, existing, suggestions] of allSuggestions) {
         const nonNullSuggestions = suggestions.filter(suggestion => {
           return suggestion.descriptor !== null;
         });
@@ -129,7 +129,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       Descriptor
     ]> = [];
 
-    for (const [workspace, target, existing, suggestions] of allSuggestions) {
+    for (const [workspace, target, /*existing*/, suggestions] of allSuggestions) {
       let selected;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {
@@ -187,7 +187,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         stdout.write(`\n`);
 
       const installReport = await StreamReport.start({configuration, stdout}, async report => {
-          await project.install({cache, report});
+        await project.install({cache, report});
       });
 
       return installReport.exitCode();

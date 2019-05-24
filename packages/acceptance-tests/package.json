@@ -7,8 +7,8 @@
         "pkg-tests-specs"
     ],
     "dependencies": {
-        "@berry/fslib": "workspace:*",
-        "@berry/monorepo": "workspace:*",
+        "@berry/fslib": "workspace:0.0.6",
+        "@berry/monorepo": "workspace:0.0.0",
         "is-wsl": "^1.1.0"
     },
     "scripts": {

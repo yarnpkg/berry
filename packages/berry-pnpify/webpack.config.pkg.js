@@ -3,15 +3,14 @@ const makeConfig = require(`@berry/builder/sources/make-config.js`);
 module.exports = makeConfig({
   context: __dirname,
 
-  mode: 'production',
+  mode: `production`,
   optimization: {
     minimize: false
   },
 
   entry: {
     [`bin`]: `./sources/bin.ts`,
-    [`index`]: `./sources/index.ts`,
-    [`tsserver`]: `./sources/tsserver.ts`
+    [`index`]: `./sources/index.ts`
   },
 
   output: {

@@ -1,16 +1,30 @@
 {
   "name": "@berry/shell",
-  "private": true,
+  "version": "0.0.1",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/fslib": "workspace:*",
-    "@berry/parsers": "workspace:*",
-    "@types/cross-spawn": "6.0.0",
+    "@berry/fslib": "workspace:0.0.6",
+    "@berry/parsers": "workspace:0.0.2",
     "cross-spawn": "^6.0.5",
     "execa": "^1.0.0",
     "stream-buffers": "^3.0.2"
   },
+  "devDependencies": {
+    "@berry/pnpify": "workspace:0.0.3",
+    "@types/cross-spawn": "6.0.0",
+    "typescript": "^3.3.3333"
+  },
   "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "release": "yarn npm publish",
     "test:shell": "run test:unit packages/berry-shell"
-  }
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ]
 }

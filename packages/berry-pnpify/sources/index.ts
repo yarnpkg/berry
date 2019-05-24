@@ -1,16 +1,23 @@
-import {patchFs as fslibPatchFs, NodeFS, PosixFS}   from '@berry/fslib';
+import {patchFs as fslibPatchFs}                    from '@berry/fslib';
+import {PnpApi}                                     from '@berry/pnp';
 
 import fs                                           from 'fs';
 
 import {NodeModulesFS}                              from './NodeModulesFS';
+import {dynamicRequire}                             from './dynamicRequire';
 
 let fsPatched = false;
 
+let pnp: PnpApi;
+try {
+  pnp = dynamicRequire('pnpapi');
+} catch (e) {
+}
+
 export const patchFs = () => {
-  if (!fsPatched) {
-    const localFs: typeof fs = {...fs};
-    const baseFs = new PosixFS(new NodeFS(localFs));
-    const nodeModulesFS = new NodeModulesFS({baseFs});
+  if (pnp && !fsPatched) {
+    const realFs: typeof fs = {...fs};
+    const nodeModulesFS = new NodeModulesFS(pnp, {realFs});
     fslibPatchFs(fs, nodeModulesFS);
     fsPatched = true;
   }
@@ -19,5 +26,4 @@ export const patchFs = () => {
 if (!process.mainModule)
   patchFs();
 
-export {PnPApiLocator} from './PnPApiLocator';
 export {NodeModulesFS};

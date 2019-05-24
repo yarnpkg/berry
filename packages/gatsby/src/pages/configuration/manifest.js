@@ -1,56 +1,59 @@
-import React                                    from 'react';
+import React                                   from 'react';
 
-import {JsonContainer, JsonString}              from '../../components/json';
-import {JsonArrayProperty, JsonBooleanProperty} from '../../components/json';
-import {JsonObjectProperty, JsonStringProperty} from '../../components/json';
-import Layout                                   from '../../components/layout-configuration';
+import {JsonContainer, JsonMain, JsonScalar}   from '../../components/json';
+import {JsonArrayProperty, JsonObjectProperty} from '../../components/json';
+import {JsonScalarProperty}                    from '../../components/json';
+import Layout                                  from '../../components/layout-configuration';
 
 const PackageJsonDoc = () => <>
   <Layout>
     <JsonContainer>
-      <JsonStringProperty
+      <JsonMain>
+        Manifest files (also called <code>package.json</code> because of their name) contain everything needed to describe the settings unique to one particular package. Project will contain multiple such manifests if they use the workspace feature, as each workspace is described through its own manifest.
+      </JsonMain>
+      <JsonScalarProperty
         name={`name`}
         placeholder={`@scope/name`}
         description={<>
           The name of the package. Used to identify it accross the application, especially amongst multiple workspaces. The first part of the name (here <code>@scope/</code>) is optional and is used as a namespace).
         </>}
       />
-      <JsonStringProperty
+      <JsonScalarProperty
         name={`version`}
         placeholder={`1.2.3`}
         description={<>
           The version of the package. Usually doesn't have any impact on your project, except when it is a workspace - then its version must match the specified ranges for the workspace to be selected as resolution candidate.
         </>}
       />
-      <JsonBooleanProperty
+      <JsonScalarProperty
         name={`private`}
-        placeholder={`true`}
+        placeholder={true}
         description={<>
           If true, the package is considered private and Yarn will refuse to publish it regardless of the circumstances. Setting this flag also unlocks some features that wouldn't make sense in published packages, such as workspaces.
         </>}
       />
-      <JsonStringProperty
+      <JsonScalarProperty
         name={`license`}
         placeholder={`MIT`}
         description={<>
           An SPDX identifier that indicates under which license is your package distributed. Note that the default license can be set via the <code>initLicense</code> settings.
         </>}
       />
-      <JsonStringProperty
+      <JsonScalarProperty
         name={`main`}
         placeholder={`./sources/index.js`}
         description={<>
           The path that will be used to resolve the qualified path to use when accessing the package by its name. This field can be modified at publish-time through the use of the <code>publishConfig.main</code> field.
         </>}
       />
-      <JsonStringProperty
+      <JsonScalarProperty
         name={`module`}
         placeholder={`./sources/index.mjs`}
         description={<>
           The path that will be used when an ES6-compatible environment will try to access the package by its name. Doesn't have any direct effect on Yarn itself.
         </>}
       />
-      <JsonStringProperty
+      <JsonScalarProperty
         name={`languageName`}
         placeholder={`node`}
         description={<>
@@ -63,7 +66,7 @@ const PackageJsonDoc = () => <>
           A field used to expose some executable Javascript files to the parent package. Any entry listed here will be made available through the <code>$PATH</code>. Note that it is very advised to only expose Javascript files for portability reasons (shellscripts and non-js binaries require the user to have a specific shell, and are incompatible with zip access).
         </>}
       >
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`my-bin`}
           placeholder={`./dist/my-bin.js`}
         />
@@ -74,15 +77,15 @@ const PackageJsonDoc = () => <>
           A field used to list small shell scripts that will be executed when running <code>yarn run</code>. Scripts are by default executed by a miniature shell, so some advanced features might not be available (if you have more complex needs, we recommend you to just execute a Javascript file). Note that scripts containing <code>:</code> (the colon character) are globals to your project and can be called regardless of your current workspace. Finally, be aware that scripts are always executed relative to the closest workspace (never the cwd).
         </>}
       >
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`test`}
           placeholder={`jest`}
         />
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`build`}
           placeholder={`webpack-cli --config ./webpack.config.js`}
         />
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`count-words`}
           placeholder={`echo "$@" | wc -w`}
         />
@@ -93,7 +96,7 @@ const PackageJsonDoc = () => <>
           The set of dependencies that must be made available to the current package in order for it to work properly. Consult the list of supported ranges for more information.
         </>}
       >
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`webpack`}
           placeholder={`^5.0.0`}
         />
@@ -104,7 +107,7 @@ const PackageJsonDoc = () => <>
           Similar to the <code>dependencies</code> field, except that these dependencies are only installed on local installs and will never be installed by the consumers of your package. Note that because that would lead to different install trees depending on whether the install is made in "production" or "development" mode, Yarn doesn't offer a way to prevent the installation of dev dependencies at the moment.
         </>}
       >
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`webpack`}
           placeholder={`^5.0.0`}
         />
@@ -115,11 +118,11 @@ const PackageJsonDoc = () => <>
           Peer dependencies are inherited dependencies - the consumer of your package will be tasked to provide them. This is typically what you want when writting plugins, for example. Be careful: listing peer dependencies will have side effects on the way your package will be executed by your consumers. Check the documentation for more information.
         </>}
       >
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`react`}
           placeholder={`*`}
         />
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`react-dom`}
           placeholder={`*`}
         />
@@ -130,7 +133,7 @@ const PackageJsonDoc = () => <>
           Workspaces are an optional feature used by monorepos to split a large project into semi-independent subprojects, each one listing their own set of dependencies. The <code>workspaces</code> field is a list of glob pattern that match all directories that should become workspaces of your application.
         </>}
       >
-        <JsonString
+        <JsonScalar
           placeholder={`packages/*`}
         />
       </JsonArrayProperty>
@@ -144,16 +147,18 @@ const PackageJsonDoc = () => <>
           name={`fsevents`}
           margin={true}
         >
-          <JsonBooleanProperty
+          <JsonScalarProperty
             name={`built`}
-            placeholder={`false`}
+            anchor={`dependenciesMeta.built`}
+            placeholder={false}
             description={<>
               If false, the package will never be built. When the global settings <code>enableScripts</code> is toggled off, setting this additional flag will also downgrade the warning into a simple notice for this specific package.
             </>}
           />
-          <JsonBooleanProperty
+          <JsonScalarProperty
             name={`unplugged`}
-            placeholder={`true`}
+            anchor={`dependenciesMeta.unplugged`}
+            placeholder={true}
             description={<>
               If true, the specified package will be automatically unplugged at install time. This should only be needed for packages that contain scripts in other languages than Javascript (for example <code>nan</code> contains C++ headers).
             </>}
@@ -170,9 +175,10 @@ const PackageJsonDoc = () => <>
           name={`react-dom`}
           margin={true}
         >
-          <JsonBooleanProperty
+          <JsonScalarProperty
             name={`optional`}
-            placeholder={`true`}
+            anchor={`peerDependenciesMeta.optional`}
+            placeholder={true}
             description={<>
               If true, the selected peer dependency will be marked as optional by the package manager and the consumer omitting it won't be reported as an error.
             </>}
@@ -185,43 +191,49 @@ const PackageJsonDoc = () => <>
           This field allows you to instruct Yarn to use a specific resolution instead of anything the resolver would normally pick. This is useful to enforce all your packages to use a single version of a dependency, or backport a fix. The syntax for the resolution key accepts one level of specificity, so all the following examples are correct.
         </>}
       >
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`relay-compiler`}
           placeholder={`3.0.0`}
         />
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`webpack/memory-fs`}
           placeholder={`0.4.1`}
         />
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`@babel/core/json5`}
           placeholder={`2.1.0`}
         />
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`@babel/core/@babel/generator`}
           placeholder={`7.3.4`}
         />
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`@babel/core@npm:7.0.0/@babel/generator`}
           placeholder={`7.3.4`}
         />
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`@babel/core/@npm:babel/generator@npm:^7.0.0`}
           placeholder={`7.3.4`}
         />
       </JsonObjectProperty>
       <JsonObjectProperty
         name={`publishConfig`}
+        margin={true}
+        description={<>
+          This field contains various settings that are only taken into consideration when a package is generated from your local sources (either through <code>yarn pack</code> or one of the publish commands like <code>yarn npm publish</code>).
+        </>}
       >
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`main`}
+          anchor={`publishConfig.main`}
           placeholder={`./build/index.js`}
           description={<>
             If present, the top-level <code>main</code> field from the manifest will be set to this new value before the package is packed to be shipped to remote registries. This won't modified the actual file, just the one in the tarball.
           </>}
         />
-        <JsonStringProperty
+        <JsonScalarProperty
           name={`module`}
+          anchor={`publishConfig.module`}
           placeholder={`./build/index.mjs`}
           description={<>
             Same principle as the <code>publishConfig.main</code> property; this value will be used instead of the top-level <code>module</code> field when generating the workspace tarball.

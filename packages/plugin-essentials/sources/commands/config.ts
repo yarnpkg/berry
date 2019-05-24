@@ -1,8 +1,8 @@
 import {Configuration, MessageName, PluginConfiguration, SettingsType, StreamReport} from '@berry/core';
 import {miscUtils}                                                                   from '@berry/core';
+import {PortablePath}                                                                from '@berry/fslib';
 import {Writable}                                                                    from 'stream';
 import {inspect}                                                                     from 'util';
-import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -61,7 +61,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           if (verbose) {
             report.reportJson({key, effective, source});
           } else {
-            report.reportJson({key, effective, source, ... data});
+            report.reportJson({key, effective, source, ...data});
           }
         }
       } else {

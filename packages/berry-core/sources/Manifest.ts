@@ -7,6 +7,9 @@ import * as structUtils                                   from './structUtils';
 import {IdentHash}                                        from './types';
 import {Ident, Descriptor}                                from './types';
 
+export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
+export type HardDependencies = 'dependencies' | 'devDependencies';
+
 export interface WorkspaceDefinition {
   pattern: string;
 };
@@ -27,6 +30,8 @@ export interface PublishConfig {
 };
 
 export class Manifest {
+  public indent: string = `  `;
+
   public name: Ident | null = null;
   public version: string | null = null;
 
@@ -55,7 +60,10 @@ export class Manifest {
   public files: Set<PortablePath> | null = null;
   public publishConfig: PublishConfig | null = null;
 
-  public raw: object | null = null;
+  public raw: {[key: string]: any} = {};
+
+  static readonly allDependencies: Array<AllDependencies> = [`dependencies`, `devDependencies`, `peerDependencies`];
+  static readonly hardDependencies: Array<HardDependencies> = [`dependencies`, `devDependencies`];
 
   static async find(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
     return await Manifest.fromFile(ppath.join(path, toFilename(`package.json`)), {baseFs});
@@ -85,6 +93,7 @@ export class Manifest {
     }
 
     this.load(data);
+    this.indent = getIndent(text);
   }
 
   async loadFile(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>}) {
@@ -99,6 +108,7 @@ export class Manifest {
     }
 
     this.load(data);
+    this.indent = getIndent(content);
   }
 
   load(data: any) {
@@ -365,7 +375,39 @@ export class Manifest {
     return peerDependencyMeta;
   }
 
+  setRawField(name: string, value: any, {after = []}: {after?: Array<string>} = {}) {
+    const afterSet = new Set(after.filter(key => {
+      return Object.prototype.hasOwnProperty.call(this.raw, key);
+    }));
+
+    if (afterSet.size === 0 || Object.prototype.hasOwnProperty.call(this.raw, name)) {
+      this.raw[name] = value;
+    } else {
+      const oldRaw = this.raw;
+      const newRaw = this.raw = {} as {[key: string]: any};
+
+      let inserted = false;
+
+      for (const key of Object.keys(oldRaw)) {
+        newRaw[key] = oldRaw[key];
+
+        if (!inserted) {
+          afterSet.delete(key);
+
+          if (afterSet.size === 0) {
+            newRaw[name] = value;
+            inserted = true;
+          }
+        }
+      }
+    }
+  }
+
   exportTo(data: {[key: string]: any}) {
+    // Note that we even set the fields that we re-set later; it
+    // allows us to preserve the key ordering
+    Object.assign(data, this.raw);
+
     if (this.name !== null)
       data.name = structUtils.stringifyIdent(this.name);
     else
@@ -444,3 +486,13 @@ export class Manifest {
     return data;
   }
 };
+
+function getIndent(content: string) {
+  const indentMatch = content.match(/^[ \t]+/m);
+
+  if (indentMatch) {
+    return indentMatch[0];
+  } else {
+    return `  `;
+  }
+}

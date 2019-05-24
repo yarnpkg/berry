@@ -2,7 +2,7 @@ import {WorkspaceRequiredError}                                  from '@berry/cl
 import {Cache, Configuration, LightReport, LocatorHash, Package} from '@berry/core';
 import {PluginConfiguration, Project, Workspace}                 from '@berry/core';
 import {miscUtils, structUtils}                                  from '@berry/core';
-import { PortablePath } from '@berry/fslib';
+import {PortablePath}                                            from '@berry/fslib';
 import {Writable}                                                from 'stream';
 import {asTree}                                                  from 'treeify';
 

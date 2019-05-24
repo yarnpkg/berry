@@ -8,7 +8,7 @@
     "@reach/router": "npm:^1.1.1",
     "algoliasearch": "^3.32.1",
     "es6-promise": "^4.2.6",
-    "gatsby": "^2.2.9",
+    "gatsby": "^2.7.1",
     "gatsby-image": "^2.0.31",
     "gatsby-plugin-catch-links": "^2.0.13",
     "gatsby-plugin-clipanion-cli": "portal:./gatsby-plugin-clipanion-cli",
@@ -32,6 +32,7 @@
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-helmet": "^5.2.0",
+    "react-icons": "^3.7.0",
     "remark-html": "^9.0.0",
     "remark-parse": "^6.0.3",
     "unified": "^7.1.0"

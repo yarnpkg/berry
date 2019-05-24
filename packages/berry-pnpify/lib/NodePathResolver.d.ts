@@ -1,20 +1,5 @@
-import { NativePath, Filename } from '@berry/fslib';
-import { PackageInformation } from '@berry/pnp';
-import { PnPApiLoader } from './PnPApiLoader';
-import { PnPApiLocator } from './PnPApiLocator';
-/**
- * Node path resolver options
- */
-export interface NodePathResolverOptions {
-    /**
-     * PnP API loader
-     */
-    apiLoader: PnPApiLoader;
-    /**
-     * PnP API locator
-     */
-    apiLocator: PnPApiLocator;
-}
+import { PortablePath, Filename } from '@berry/fslib';
+import { PnpApi, PackageInformation } from '@berry/pnp';
 /**
  * Resolved `/node_modules` path inside PnP project info.
  *
@@ -33,7 +18,7 @@ export interface ResolvedPath {
      * Fully resolved path `/node_modules/...` path within PnP project,
      * `null` if path does not exist.
      */
-    resolvedPath: NativePath | null;
+    resolvedPath: PortablePath | null;
     /**
      * The path that should be used for stats. This field is returned for pathes ending
      * with `/node_modules[/@scope]`.
@@ -41,7 +26,7 @@ export interface ResolvedPath {
      * These pathes are special in the sense they do not exists as physical dirs in PnP projects.
      * We emulate these pathes by forwarding issuer path to underlying fs.
      */
-    statPath?: string;
+    statPath?: PortablePath;
     /**
      * Directory entries list, returned for pathes ending with `/node_modules[/@scope]`
      */
@@ -54,13 +39,13 @@ export interface ResolvedPath {
  * and resolve `bar` for this issuer using `pnpapi`.
  */
 export declare class NodePathResolver {
-    private options;
+    private pnp;
     /**
      * Constructs new instance of Node path resolver
      *
-     * @param options optional Node path resolver options
+     * @param pnp PnP API instance
      */
-    constructor(options: NodePathResolverOptions);
+    constructor(pnp: PnpApi);
     /**
      * Returns `readdir`-like result for partially resolved pnp path
      *
@@ -69,7 +54,7 @@ export declare class NodePathResolver {
      *
      * @returns `undefined` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
      */
-    readDir(issuerInfo: PackageInformation<NativePath>, scope: string | null): Filename[] | undefined;
+    readDir(issuerInfo: PackageInformation<PortablePath>, scope: string | null): Filename[] | undefined;
     private getIssuer;
     /**
      * Resolves paths containing `/node_modules` inside PnP projects. If path is outside PnP
@@ -82,5 +67,5 @@ export declare class NodePathResolver {
      *
      * @returns resolved path
      */
-    resolvePath(nodePath: string): ResolvedPath;
+    resolvePath(nodePath: PortablePath): ResolvedPath;
 }

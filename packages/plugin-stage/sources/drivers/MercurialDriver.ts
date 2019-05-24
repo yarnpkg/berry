@@ -1,5 +1,6 @@
-import * as stageUtils from '../stageUtils';
-import { PortablePath, toFilename } from '@berry/fslib';
+import {PortablePath, toFilename} from '@berry/fslib';
+
+import * as stageUtils            from '../stageUtils';
 
 export const Driver = {
   async findRoot(cwd: PortablePath) {

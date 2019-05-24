@@ -7,7 +7,7 @@ export default (clipanion: any) => clipanion
   .describe(`select whether to use install or run`)
   .flags({proxyArguments: true, defaultCommand: true, hiddenCommand: true})
 
-  .action(async ({cwd, version, args, stdout, ... env}: any) => {
+  .action(async ({cwd, version, args, stdout, ...env}: any) => {
     // berry --version
     if (args.length === 1 && (args[0] === `--version` || args[0] === `-v`)) {
       // Injected via webpack DefinePlugin
@@ -19,15 +19,15 @@ export default (clipanion: any) => clipanion
 
     // berry --frozen-lockfile
     } else if (args.length === 0 || args[0].charAt(0) === `-`) {
-      return await clipanion.run(null, [`install`, ... args], {cwd, stdout, ... env});
+      return await clipanion.run(null, [`install`, ...args], {cwd, stdout, ...env});
 
     // berry ~/projects/foo install
     } else if (args.length !== 0 && args[0].match(/[\\\/]/)) {
       const newCwd = ppath.resolve(cwd, NodeFS.toPortablePath(args[0]));
-      return await clipanion.run(null, args.slice(1), {cwd: newCwd, stdout, ... env});
+      return await clipanion.run(null, args.slice(1), {cwd: newCwd, stdout, ...env});
 
     // berry start
     } else {
-      return await clipanion.run(null, [`run`, ... args], {cwd, stdout, ... env});
+      return await clipanion.run(null, [`run`, ...args], {cwd, stdout, ...env});
     }
   });

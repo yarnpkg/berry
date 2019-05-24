@@ -1,5 +1,5 @@
-import {Configuration, PluginConfiguration, StreamReport} from '@berry/core';
-import { PortablePath } from '@berry/fslib';
+import {Configuration, PluginConfiguration, StreamReport}              from '@berry/core';
+import {PortablePath}                                                  from '@berry/fslib';
 import {Clipanion}                                                     from 'clipanion';
 import {Writable}                                                      from 'stream';
 

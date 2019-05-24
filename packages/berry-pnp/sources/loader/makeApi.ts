@@ -39,9 +39,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   // Matches if the path must point to a directory (ie ends with /)
   const isDirRegExp = /\/$/;
 
-  // Matches backslashes of Windows paths
-  const backwardSlashRegExp = /\\/g;
-
   // We only instantiate one of those so that we can use strict-equal comparisons
   const topLevelLocator = {name: null, reference: null};
 
@@ -111,24 +108,21 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
     if (Number.isFinite(level)) {
       if (level >= 2) {
-
-        return (... args: Array<any>) => {
+        return (...args: Array<any>) => {
           const logEntry = makeLogEntry(name, args);
 
           try {
-            return logEntry.result = fn(... args);
+            return logEntry.result = fn(...args);
           } catch (error) {
             throw logEntry.error = error;
           } finally {
             console.error(logEntry);
           }
         };
-
       } else if (level >= 1) {
-
-        return (... args: Array<any>) => {
+        return (...args: Array<any>) => {
           try {
-            return fn(... args);
+            return fn(...args);
           } catch (error) {
             const logEntry = makeLogEntry(name, args);
             logEntry.error = error;
@@ -136,7 +130,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
             throw error;
           }
         };
-
       }
     }
 
@@ -374,7 +367,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       if (locator === null) {
         throw makeError(
-        `BLACKLISTED`,
+          `BLACKLISTED`,
           [
             `A package has been resolved through a blacklisted path - this is usually caused by one of your tool`,
             `calling "realpath" on the return value of "require.resolve". Since the returned values use symlinks to`,
@@ -631,7 +624,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         return null;
 
       const packageLocation = NodeFS.fromPortablePath(info.packageLocation);
-      const nativeInfo = {... info, packageLocation};
+      const nativeInfo = {...info, packageLocation};
 
       return nativeInfo;
     },

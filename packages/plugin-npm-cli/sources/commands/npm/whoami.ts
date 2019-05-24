@@ -1,9 +1,9 @@
 import {Configuration, Ident, MessageName}              from '@berry/core';
 import {PluginConfiguration, StreamReport, structUtils} from '@berry/core';
+import {PortablePath}                                   from '@berry/fslib';
 import {npmHttpUtils}                                   from '@berry/plugin-npm';
 import {Clipanion}                                      from 'clipanion';
 import {Readable, Writable}                             from 'stream';
-import { PortablePath } from '@berry/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) => clipanion
@@ -38,7 +38,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
         ident = structUtils.makeIdent(scope, ``);
 
       try {
-        const response = await npmHttpUtils.get(`/-/whoami`, { configuration, ident, authType: npmHttpUtils.AuthType.ALWAYS_AUTH, json: true });
+        const response = await npmHttpUtils.get(`/-/whoami`, {configuration, ident, authType: npmHttpUtils.AuthType.ALWAYS_AUTH, json: true});
 
         report.reportInfo(MessageName.UNNAMED, response.username);
       } catch (err) {

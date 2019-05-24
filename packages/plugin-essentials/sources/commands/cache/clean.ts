@@ -1,7 +1,7 @@
-import {Configuration, Cache, PluginConfiguration, Project}     from '@berry/core';
-import {LightReport, MessageName, StreamReport, VirtualFetcher} from '@berry/core';
+import {Configuration, Cache, PluginConfiguration, Project}                   from '@berry/core';
+import {LightReport, MessageName, StreamReport, VirtualFetcher}               from '@berry/core';
 import {NodeFS, xfs, PortablePath, ppath}                                     from '@berry/fslib';
-import {Writable}                                               from 'stream';
+import {Writable}                                                             from 'stream';
 
 const PRESERVED_FILES = new Set([
   `.gitignore`,
@@ -21,7 +21,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     One quirk of this system is that \`yarn cache clean\` cannot be used directly if your cache is used by multiple projects, as it won't be able to detect the files being used by other projects than the current one. The best way to support multiple projects with a single mirror is to use the \`--dry-run\` and \`--json\` flags in order to get the list of files that aren't used by one unique project. After running this command on all your projects, you'll just have to remove the intersection of all those file sets as they'll be guaranteed not to be used by any project.
   `)
 
-    .example(
+  .example(
     `Remove all the unused cache files from the current project`,
     `yarn cache clean`,
   )

@@ -1,23 +1,7 @@
-import {NativePath, Filename, toFilename} from '@berry/fslib';
-import {PnpApi, PackageInformation}       from '@berry/pnp';
+import {PortablePath, Filename, toFilename, ppath} from '@berry/fslib';
+import {PnpApi, PackageInformation}                from '@berry/pnp';
 
-import {PnPApiLoader}                     from './PnPApiLoader';
-import {PnPApiLocator}                    from './PnPApiLocator';
-
-/**
- * Node path resolver options
- */
-export interface NodePathResolverOptions {
-  /**
-   * PnP API loader
-   */
-  apiLoader: PnPApiLoader
-
-  /**
-   * PnP API locator
-   */
-  apiLocator: PnPApiLocator
-}
+import {PortablePnPApi}                            from './PortablePnPApi';
 
 /**
  * Regexp for pathname that catches the following paths:
@@ -27,7 +11,7 @@ export interface NodePathResolverOptions {
  *
  * And everything at the end of the pathname
  */
-const NODE_MODULES_REGEXP = /(?:[\\\/]node_modules((?:[\\\/]@[^\\\/]+)?(?:[\\\/][^@][^\\\/]+)?))?(.*)/;
+const NODE_MODULES_REGEXP = /(?:\/node_modules((?:\/@[^\/]+)?(?:\/[^@][^\/]+)?))?(.*)/;
 
 /**
  * Resolved `/node_modules` path inside PnP project info.
@@ -47,7 +31,7 @@ export interface ResolvedPath {
    * Fully resolved path `/node_modules/...` path within PnP project,
    * `null` if path does not exist.
    */
-  resolvedPath: NativePath | null;
+  resolvedPath: PortablePath | null;
 
   /**
    * The path that should be used for stats. This field is returned for pathes ending
@@ -56,7 +40,7 @@ export interface ResolvedPath {
    * These pathes are special in the sense they do not exists as physical dirs in PnP projects.
    * We emulate these pathes by forwarding issuer path to underlying fs.
    */
-  statPath?: string;
+  statPath?: PortablePath;
 
   /**
    * Directory entries list, returned for pathes ending with `/node_modules[/@scope]`
@@ -71,15 +55,15 @@ export interface ResolvedPath {
  * and resolve `bar` for this issuer using `pnpapi`.
  */
 export class NodePathResolver {
-  private options: NodePathResolverOptions;
+  private pnp: PortablePnPApi;
 
   /**
    * Constructs new instance of Node path resolver
    *
-   * @param options optional Node path resolver options
+   * @param pnp PnP API instance
    */
-  constructor(options: NodePathResolverOptions) {
-    this.options = options;
+  constructor(pnp: PnpApi) {
+    this.pnp = new PortablePnPApi(pnp);
   }
 
   /**
@@ -90,7 +74,7 @@ export class NodePathResolver {
    *
    * @returns `undefined` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
    */
-  public readDir(issuerInfo: PackageInformation<NativePath>, scope: string | null): Filename[] | undefined {
+  public readDir(issuerInfo: PackageInformation<PortablePath>, scope: string | null): Filename[] | undefined {
     const result = new Set<Filename>();
     for (const key of issuerInfo.packageDependencies.keys()) {
       const [pkgNameOrScope, pkgName] = key.split('/');
@@ -106,8 +90,8 @@ export class NodePathResolver {
     return result.size === 0 ? undefined : Array.from(result);
   }
 
-  private getIssuer(pnp: PnpApi, pathname: string, pathSep: string): string | undefined {
-    const locator = pnp.findPackageLocator(pathname + pathSep);
+  private getIssuer(pnp: PortablePnPApi, pathname: PortablePath): PortablePath | undefined {
+    const locator = pnp.findPackageLocator(ppath.join(pathname, ppath.sep));
     const info = locator && pnp.getPackageInformation(locator);
     return !info ? undefined : info.packageLocation;
   }
@@ -123,77 +107,70 @@ export class NodePathResolver {
    *
    * @returns resolved path
    */
-  public resolvePath(nodePath: string): ResolvedPath {
+  public resolvePath(nodePath: PortablePath): ResolvedPath {
     const result: ResolvedPath = {resolvedPath: nodePath};
-    const isWindowsPath = nodePath.indexOf('\\') > 0;
-    const pathSep = isWindowsPath ? '\\' : '/';
-    if (nodePath.indexOf(`${pathSep}node_modules`) < 0)
+    if (nodePath.indexOf(`/node_modules`) < 0)
       // Non-node_modules paths should not be processed
       return result;
 
-    const pnpApiPath = this.options.apiLocator.findApi(nodePath);
-    const pnp = pnpApiPath && this.options.apiLoader.getApi(pnpApiPath);
-    if (pnpApiPath && pnp) {
-      // Extract first issuer from the path using PnP API
-      let issuer = this.getIssuer(pnp, nodePath, pathSep);
-      let request: string | null;
+    // Extract first issuer from the path using PnP API
+    let issuer = this.getIssuer(this.pnp, nodePath);
 
-      // If we have something left in a path to parse, do that
-      if (issuer && nodePath.length > issuer.length) {
-        request = nodePath.substring(issuer.length);
+    // If we have something left in a path to parse, do that
+    if (issuer && nodePath.length > issuer.length) {
+      let request: PortablePath = nodePath.substring(issuer.length) as PortablePath;
 
-        let m;
-        let pkgName;
-        let partialPackageName = false;
-        do {
-          m = request.match(NODE_MODULES_REGEXP);
-          if (m) {
-            [,pkgName, request] = m;
-            // Strip starting /
-            pkgName = pkgName ? pkgName.substring(1) : pkgName;
-            // Check if full package name was provided
-            if (pkgName !== undefined) {
-              if (pkgName.length > 0 && (pkgName[0] !== '@' || pkgName.indexOf(pathSep) > 0)) {
-                try {
-                  let res = pnp.resolveToUnqualified(pkgName, issuer + pathSep);
-                  issuer = res === null || res === issuer ? undefined : res;
-                } catch (e) {
-                  issuer = undefined;
-                  break;
-                }
-              } else {
-                request = pkgName;
-                pkgName = undefined;
-                partialPackageName = true;
+      let m;
+      let rest;
+      let pkgName;
+      let partialPackageName = false;
+      do {
+        m = request.match(NODE_MODULES_REGEXP);
+        if (m && issuer) {
+          [,pkgName, rest] = m;
+          request = rest as PortablePath;
+          // Strip starting /
+          pkgName = pkgName ? pkgName.substring(1) : pkgName;
+          // Check if full package name was provided
+          if (pkgName !== undefined) {
+            if (pkgName.length > 0 && (pkgName[0] !== '@' || pkgName.indexOf(ppath.sep) > 0)) {
+              try {
+                let res = this.pnp.resolveToUnqualified(pkgName, ppath.join(issuer, ppath.sep));
+                issuer = res === null || res === issuer ? undefined : res;
+              } catch (e) {
+                issuer = undefined;
+                break;
               }
-            }
-          }
-          // Continue parsing path remainder until we have something left in a `request`
-          // and we still have not lost the issuer
-        } while (request && pkgName);
-
-        if (issuer) {
-          if (partialPackageName) {
-            const locator = pnp.findPackageLocator(issuer + pathSep);
-            const issuerInfo = locator ? pnp.getPackageInformation(locator) : undefined;
-            if (issuerInfo) {
-              const scope = request || null;
-              result.dirList = this.readDir(issuerInfo, scope);
-            }
-
-            if (result.dirList) {
-              result.statPath = isWindowsPath ? issuer.replace(/\//g, '\\') : issuer;
             } else {
-              result.resolvedPath = null;
+              request = pkgName as PortablePath;
+              pkgName = undefined;
+              partialPackageName = true;
             }
-          } else {
-            result.resolvedPath = isWindowsPath ? (issuer + request).replace(/\//g, '\\') : (issuer + request);
           }
         }
-      }
+        // Continue parsing path remainder until we have something left in a `request`
+        // and we still have not lost the issuer
+      } while (request && pkgName && issuer);
 
-      // If we don't have issuer here, it means the path cannot exist in PnP project
-      if (!issuer) {
+      if (issuer) {
+        if (partialPackageName) {
+          const locator = this.pnp.findPackageLocator(ppath.join(issuer, ppath.sep));
+          const issuerInfo = locator ? this.pnp.getPackageInformation(locator) : undefined;
+          if (issuerInfo) {
+            const scope = request || null;
+            result.dirList = this.readDir(issuerInfo, scope);
+          }
+
+          if (result.dirList) {
+            result.statPath = issuer;
+          } else {
+            result.resolvedPath = null;
+          }
+        } else {
+          result.resolvedPath = ppath.join(issuer, request);
+        }
+      } else {
+        // If we don't have issuer here, it means the path cannot exist in PnP project
         result.resolvedPath = null;
       }
     }

@@ -3,8 +3,8 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/core": "workspace:*",
-    "@berry/fslib": "workspace:*",
+    "@berry/core": "workspace:0.0.0",
+    "@berry/fslib": "workspace:0.0.6",
     "inquirer": "^6.2.0",
     "lodash.get": "^4.4.2",
     "node-emoji": "^1.8.1",

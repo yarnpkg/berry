@@ -4,13 +4,18 @@ const {RawSource} = require(`webpack-sources`);
 module.exports = makeConfig({
   context: __dirname,
 
+  mode: 'production',
+  optimization: {
+    minimize: false
+  },
+
   entry: {
     [`hook`]: `./sources/loader/_entryPoint.ts`,
   },
 
   output: {
     filename: `[name].js`,
-    path: `${__dirname}/bundles`,
+    path: `${__dirname}/lib`,
   },
 
   plugins: [
