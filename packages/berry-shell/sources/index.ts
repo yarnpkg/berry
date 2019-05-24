@@ -97,9 +97,7 @@ async function executeBufferedSubshell(ast: ShellLine, opts: ShellOptions, state
 }
 
 async function applyEnvVariables(environmentSegments: Array<EnvSegment>, opts: ShellOptions, state: ShellState) {
-  const envSegmentsWithArgs = environmentSegments.filter(envSegment => envSegment.args);
-
-  const envPromises = envSegmentsWithArgs.map(async envSegment => {
+  const envPromises = environmentSegments.map(async envSegment => {
     const interpolatedArgs = await interpolateArguments(envSegment.args, opts, state);
 
     return {
