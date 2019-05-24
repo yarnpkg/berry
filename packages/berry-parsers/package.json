@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "main": "./sources/index.ts",
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.0.3",
+    "@berry/pnpify": "workspace:0.0.4",
     "pegjs": "^0.10.0",
     "typescript": "^3.3.3333"
   },

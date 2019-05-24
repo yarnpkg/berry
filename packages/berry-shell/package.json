@@ -10,7 +10,7 @@
     "stream-buffers": "^3.0.2"
   },
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.0.3",
+    "@berry/pnpify": "workspace:0.0.4",
     "@types/cross-spawn": "6.0.0",
     "typescript": "^3.3.3333"
   },

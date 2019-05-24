@@ -1,6 +1,6 @@
 {
   "name": "@berry/pnpify",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "./sources/index.ts",
   "bin": "./lib/bin.js",
   "sideEffects": false,
@@ -10,7 +10,7 @@
   "devDependencies": {
     "@berry/builder": "workspace:0.0.0",
     "@berry/pnp": "workspace:0.0.3",
-    "@berry/pnpify": "workspace:0.0.3",
+    "@berry/pnpify": "workspace:0.0.4",
     "typescript": "^3.3.3333",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1"
