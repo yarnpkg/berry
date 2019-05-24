@@ -19,6 +19,6 @@ code {
 
 /* unset styling from primsjs theme (set in gatsby-browser.js) */
 :not(pre) > code[class*="language-"] {
-  background: transparent;
-  padding: unset;
+  background: transparent !important;
+  padding: unset !important;
 }
