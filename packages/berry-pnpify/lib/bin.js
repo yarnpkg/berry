@@ -840,7 +840,7 @@ async function generateSdk(projectRoot, targetFolder) {
     await sources["b" /* xfs */].writeFilePromise(tssdkManifest, JSON.stringify({ name: 'typescript', version: `${__webpack_require__(16).version}-pnpify` }, null, 2));
     await sources["b" /* xfs */].writeFilePromise(tsserver, TEMPLATE(relPnpApiPath));
     const settings = path["e" /* ppath */].join(projectRoot, `.vscode/settings.json`);
-    const content = await sources["b" /* xfs */].existsPromise(settings) ? await sources["b" /* xfs */].readFilePromise(settings, `utf8`) : ``;
+    const content = await sources["b" /* xfs */].existsPromise(settings) ? await sources["b" /* xfs */].readFilePromise(settings, `utf8`) : `{}`;
     const data = JSON.parse(content);
     data[`typescript.tsdk`] = NodeFS["a" /* NodeFS */].fromPortablePath(path["e" /* ppath */].relative(projectRoot, path["e" /* ppath */].dirname(tsserver)));
     const patched = `${JSON.stringify(data, null, 2)}\n`;

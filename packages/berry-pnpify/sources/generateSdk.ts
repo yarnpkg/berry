@@ -35,7 +35,7 @@ export async function generateSdk(projectRoot: PortablePath, targetFolder: Porta
   await xfs.writeFilePromise(tsserver, TEMPLATE(relPnpApiPath));
 
   const settings = ppath.join(projectRoot, `.vscode/settings.json` as PortablePath);
-  const content = await xfs.existsPromise(settings) ? await xfs.readFilePromise(settings, `utf8`) : ``;
+  const content = await xfs.existsPromise(settings) ? await xfs.readFilePromise(settings, `utf8`) : `{}`;
 
   const data = JSON.parse(content);
   data[`typescript.tsdk`] = NodeFS.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(tsserver)));
