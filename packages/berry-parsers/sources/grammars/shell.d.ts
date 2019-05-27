@@ -5,9 +5,13 @@ export type CommandSegment = string |
 export type Command = {
   type: `command`,
   args: Array<Array<CommandSegment>>,
+  envs: Array<EnvSegment>,
 } | {
   type: `subshell`,
   subshell: ShellLine,
+} | {
+  type: `envs`,
+  envs: Array<EnvSegment>
 };
 
 export type CommandChain = Command & {
@@ -32,3 +36,9 @@ export type CommandLineThen = {
 export type ShellLine = Array<CommandLine>;
 
 export declare const parse: (code: string) => ShellLine;
+
+export type EnvSegment = {
+  name: string,
+  args: Array<Array<CommandSegment>>,
+};
+

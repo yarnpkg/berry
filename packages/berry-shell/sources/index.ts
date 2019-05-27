@@ -1,8 +1,10 @@
 import {xfs, NodeFS, ppath, PortablePath}                                 from '@berry/fslib';
 import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
+import {EnvSegment}                                                       from '@berry/parsers';
 import {PassThrough, Readable, Writable}                                  from 'stream';
 
-import {Handle, ProtectedStream, Stdio, start, makeBuiltin, makeProcess}  from './pipe';
+import {Handle, ProtectedStream, Stdio, start}                            from './pipe';
+import {makeBuiltin, makeProcess}                                         from './pipe';
 
 export type UserOptions = {
   builtins: {[key: string]: ShellBuiltin},
@@ -92,6 +94,25 @@ async function executeBufferedSubshell(ast: ShellLine, opts: ShellOptions, state
   await executeShellLine(ast, opts, cloneState(state, {stdout}));
 
   return Buffer.concat(chunks).toString().replace(/[\r\n]+$/, ``);
+}
+
+async function applyEnvVariables(environmentSegments: Array<EnvSegment>, opts: ShellOptions, state: ShellState) {
+  const envPromises = environmentSegments.map(async envSegment => {
+    const interpolatedArgs = await interpolateArguments(envSegment.args, opts, state);
+
+    return {
+      name: envSegment.name,
+      value: interpolatedArgs.join(``),
+    };
+  });
+
+  const interpolatedEnvs = await Promise.all(envPromises);
+
+  return interpolatedEnvs.reduce((envs, env) => {
+    envs[env.name] = env.value;
+
+    return envs;
+  }, {} as ShellState['environment']);
 }
 
 async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, opts: ShellOptions, state: ShellState) {
@@ -251,13 +272,27 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
     let action;
     switch (current.type) {
       case `command`: {
-        action = makeCommandAction(await interpolateArguments(current.args, opts, state), opts, activeState);
+        const args = await interpolateArguments(current.args, opts, state);
+        const environment = await applyEnvVariables(current.envs, opts, state);
+
+        action = current.envs.length
+          ? makeCommandAction(args, opts, cloneState(activeState, {environment}))
+          : makeCommandAction(args, opts, activeState);
       } break;
 
       case `subshell`: {
       // We don't interpolate the subshell because it will be recursively
       // interpolated within its own context
         action = makeSubshellAction(current.subshell, opts, activeState);
+      } break;
+
+      case `envs`: {
+        const environment = await applyEnvVariables(current.envs, opts, state);
+
+        activeState.variables = {...activeState.variables, ...environment};
+        activeState.environment = {...activeState.environment, ...environment};
+
+        action = makeCommandAction([`true`], opts, activeState);
       } break;
     }
 

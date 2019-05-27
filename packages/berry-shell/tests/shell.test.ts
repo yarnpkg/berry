@@ -144,7 +144,7 @@ describe(`Simple shell features`, () => {
       stdout: ``,
     });
   });
-  
+
   it(`should shortcut the right branch of a '&&' when the left branch fails`, async () => {
     await expect(bufferResult(`false && echo failed`)).resolves.toMatchObject({
       stdout: ``,
@@ -238,6 +238,78 @@ describe(`Simple shell features`, () => {
 
     await expect(bufferResult(`echo $1`, [`hello`, `world`])).resolves.toMatchObject({
       stdout: `world\n`,
+    });
+  });
+
+  it(`should set environment variables`, async () => {
+    await expect(bufferResult(
+      `PORT=1234 node -e 'process.stdout.write(process.env.PORT)'`
+    )).resolves.toMatchObject({
+      stdout: `1234`,
+    });
+  });
+
+  it(`should support setting multiple environment variables`, async () => {
+    await expect(bufferResult(
+      `HOST="localhost" PORT=1234 node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`
+    )).resolves.toMatchObject({
+      stdout: `localhost:1234`,
+    });
+  });
+
+  it(`should support setting environment variables with shell interpolation`, async () => {
+    await expect(bufferResult(
+      `HOST="local"$(echo $0) PORT=1234 node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`,
+      [`host`])).resolves.toMatchObject({
+      stdout: `localhost:1234`,
+    });
+  });
+
+  it(`should support setting env variable without command`, async () => {
+    await expect(bufferResult(
+      `FOO=1 ; FOO=2 ; node -e 'process.stdout.write(process.env.FOO)'`
+    )).resolves.toMatchObject({
+      stdout: `2`,
+    });
+  });
+
+  it(`should evaluate variables once before starting execution`, async () => {
+    await expect(bufferResult(
+      `FOO=1; FOO=2 echo $FOO`
+    )).resolves.toMatchObject({
+      stdout: `1\n`,
+    });
+  });
+
+  it(`should clear an env variable if value is omitted`, async () => {
+    await expect(bufferResult(
+      `HOST="localhost" PORT=1234 HOST= node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`
+    )).resolves.toMatchObject({
+      stdout: `:1234`,
+    });
+  });
+
+  it(`env assignment prefix syntax shouldn't persist it to the environment`, async () => {
+    await expect(bufferResult(
+      `FOO=1 ; FOO=2 echo hello ; echo $FOO`
+    )).resolves.toMatchObject({
+      stdout: `hello\n1\n`,
+    });
+
+    await expect(bufferResult(
+      `FOO=1 ; FOO=2 echo hello ; node -e 'process.stdout.write(process.env.FOO)'`
+    )).resolves.toMatchObject({
+      stdout: `hello\n1`,
+    });
+
+    await expect(bufferResult(`FOO=2 echo hello ; echo $FOO`)).rejects.toThrowError(/Unbound variable/);
+  });
+
+  it(`should support multiple env assignment without command`, async () => {
+    await expect(bufferResult(
+      `FOO=1 BAR=2; echo hello ; echo $BAR`
+    )).resolves.toMatchObject({
+      stdout: `hello\n2\n`,
     });
   });
 });
