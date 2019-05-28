@@ -50,5 +50,19 @@ module.exports = {
       redirectInBrowser: true,
       isPermanent: true,
     });
+
+    createRedirect({
+      fromPath: `/cli`,
+      toPath: `/cli/install`,
+      redirectInBrowser: true,
+      isPermanent: true,
+    });
+
+    createRedirect({
+      fromPath: `/advanced`,
+      toPath: `/advanced/architecture`,
+      redirectInBrowser: true,
+      isPermanent: true,
+    });
   },
 };
