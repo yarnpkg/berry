@@ -44,6 +44,12 @@ export class YarnResolver implements Resolver {
       }
 
       const {version, resolved} = (parsed as any)[key];
+
+      // Workspaces don't have the "resolved" key; we can skip them, as their
+      // resolution will be recomputed when needed anyway
+      if (!resolved)
+        continue;
+
       let reference;
 
       for (const [pattern, matcher] of IMPORTED_PATTERNS) {
