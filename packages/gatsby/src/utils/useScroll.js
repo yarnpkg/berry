@@ -15,15 +15,10 @@ const useScroll = id => {
     sessionStorage.setItem(`gatsby:navigation:${id}`, pos.toString());
   }
 
-  // initial render
   useLayoutEffect(() => {
     const initPos = readBrowserStorage(id);
     ref.current.scrollTop = initPos == null ? 0 : parseInt(initPos, 10);
-  }, []);
-
-  useLayoutEffect(() => {
-    ref.current.addEventListener("scroll", handleScroll);
-    return () => ref.current.removeEventListener("scroll", handleScroll);
+    return () => handleScroll();
   }, []);
 
   return ref;
