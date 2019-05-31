@@ -2,6 +2,8 @@ import styled      from '@emotion/styled';
 import {Link}      from 'gatsby';
 import React       from 'react';
 
+import useScroll   from '../utils/useScroll';
+
 import {ifDesktop} from './responsive';
 
 const Container = styled.div`
@@ -68,19 +70,24 @@ const Content = styled.div`
   }
 `;
 
-const Navigation = ({items, children}) => <>
-  <Container>
-    <Menu>
-      {items.map(({to, name}) => <React.Fragment key={name}>
-        <MenuEntry to={to} activeClassName={`active`}>
-          {name.match(/^`.*`$/) ? <code>{name.slice(1, -1)}</code> : name}
-        </MenuEntry>
-      </React.Fragment>)}
-    </Menu>
-    <Content>
-      {children}
-    </Content>
-  </Container>
-</>;
+const Navigation = ({items, children}) => {
+  const id = window.location.pathname.split(`/`)[1];
+  const scrollRef = useScroll(id);
+
+  return <>
+    <Container>
+      <Menu ref={scrollRef}>
+        {items.map(({to, name}) => <React.Fragment key={name}>
+          <MenuEntry to={to} activeClassName={`active`}>
+            {name.match(/^`.*`$/) ? <code>{name.slice(1, -1)}</code> : name}
+          </MenuEntry>
+        </React.Fragment>)}
+      </Menu>
+      <Content>
+        {children}
+      </Content>
+    </Container>
+  </>
+};
 
 export default Navigation;
