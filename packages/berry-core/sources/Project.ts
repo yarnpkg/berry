@@ -645,7 +645,36 @@ export class Project {
     const hasBeenTraversed = new Set();
     const volatileDescriptors = new Set(this.resolutionAliases.values());
 
+    const resolutionStack: Array<Locator> = [];
+
+    const reportStackOverflow = (): never => {
+      const logFile = NodeFS.toPortablePath(
+        tmpNameSync({
+          prefix: `stacktrace-`,
+          postfix: `.log`,
+        }),
+      );
+
+      const maxSize = String(resolutionStack.length + 1).length;
+      const content = resolutionStack.map((locator, index) => {
+        const prefix = `${index + 1}.`.padStart(maxSize, ` `);
+        return `${prefix} ${structUtils.stringifyLocator(locator)}\n`;
+      }).join(``);
+
+      xfs.writeFileSync(logFile, content);
+
+      throw new ReportError(MessageName.STACK_OVERFLOW_RESOLUTION, `Encountered a stack overflow when resolving peer dependencies; cf ${logFile}`);
+    };
+
     const resolvePeerDependencies = (parentLocator: Locator) => {
+      resolutionStack.push(parentLocator);
+      const result = resolvePeerDependenciesImpl(parentLocator);
+      resolutionStack.pop();
+
+      return result;
+    };
+
+    const resolvePeerDependenciesImpl = (parentLocator: Locator) => {
       if (hasBeenTraversed.has(parentLocator.locatorHash))
         return;
 
@@ -690,7 +719,7 @@ export class Project {
         let virtualizedDescriptor: Descriptor;
         let virtualizedPackage: Package;
 
-        const missingPeerDependencies = new Set();
+        const missingPeerDependencies = new Set<IdentHash>();
 
         firstPass.push(() => {
           virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
@@ -728,10 +757,10 @@ export class Project {
               peerDescriptor = structUtils.makeDescriptor(peerRequest, `missing:`);
             }
 
+            virtualizedPackage.dependencies.set(peerDescriptor.identHash, peerDescriptor);
+
             if (peerDescriptor.range === `missing:`) {
-              missingPeerDependencies.add(peerDescriptor.descriptorHash);
-            } else {
-              virtualizedPackage.dependencies.set(peerDescriptor.identHash, peerDescriptor);
+              missingPeerDependencies.add(peerDescriptor.identHash);
             }
           }
 
@@ -764,8 +793,17 @@ export class Project {
       }
     };
 
-    for (const workspace of this.workspaces)
-      resolvePeerDependencies(workspace.anchoredLocator);
+    try {
+      for (const workspace of this.workspaces) {
+        resolvePeerDependencies(workspace.anchoredLocator);
+      }
+    } catch (error) {
+      if (error.name === `RangeError` && error.message === `Maximum call stack size exceeded`) {
+        reportStackOverflow();
+      } else {
+        throw error;
+      }
+    }
 
     // All descriptors still referenced within the volatileDescriptors set are
     // descriptors that aren't depended upon by anything in the dependency tree.
