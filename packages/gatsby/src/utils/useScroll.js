@@ -8,11 +8,11 @@ const useScroll = id => {
   };
 
   const readBrowserStorage = id => {
-    return sessionStorage.getItem(`gatsby:sidebar:${id}`);
+    return sessionStorage.getItem(`gatsby:navigation:${id}`);
   }
 
   const setBrowserStorage = (id ,pos) => {
-    sessionStorage.setItem(`gatsby:sidebar:${id}`, pos.toString());
+    sessionStorage.setItem(`gatsby:navigation:${id}`, pos.toString());
   }
 
   // initial render
