@@ -52,6 +52,7 @@ export enum MessageName {
   PROLOG_UNKNOWN_ERROR = 42,
   PROLOG_SYNTAX_ERROR = 43,
   PROLOG_EXISTENCE_ERROR = 44,
+  STACK_OVERFLOW_RESOLUTION = 45,
 }
 
 export class ReportError extends Error {
