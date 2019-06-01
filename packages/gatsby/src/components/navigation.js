@@ -71,7 +71,8 @@ const Content = styled.div`
 `;
 
 const Navigation = ({items, children}) => {
-  const id = window.location.pathname.split(`/`)[1];
+  // eslint-disable-next-line no-restricted-globals
+  const id = location.pathname.split(`/`)[1];
   const scrollRef = useScroll(id);
 
   return <>

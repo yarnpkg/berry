@@ -11,7 +11,7 @@ const useScroll = id => {
     return sessionStorage.getItem(`gatsby:navigation:${id}`);
   }
 
-  const setBrowserStorage = (id ,pos) => {
+  const setBrowserStorage = (id, pos) => {
     sessionStorage.setItem(`gatsby:navigation:${id}`, pos.toString());
   }
 
