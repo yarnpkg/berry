@@ -1,5 +1,7 @@
 import {Filename, NodeFS, PortablePath, xfs, ppath} from '@berry/fslib';
 
+import {dynamicRequire}                             from './dynamicRequire';
+
 const TEMPLATE = (relPnpApiPath: string) => [
   `const relPnpApiPath = ${JSON.stringify(NodeFS.toPortablePath(relPnpApiPath))};\n`,
   `const absPnpApiPath = require(\`path\`).resolve(__dirname, relPnpApiPath);\n`,
@@ -31,7 +33,7 @@ export async function generateSdk(projectRoot: PortablePath, targetFolder: Porta
 
   await xfs.removePromise(tssdk);
   await xfs.mkdirpPromise(ppath.dirname(tsserver));
-  await xfs.writeFilePromise(tssdkManifest, JSON.stringify({name: 'typescript', version: `${require('typescript/package.json').version}-pnpify`}, null, 2));
+  await xfs.writeFilePromise(tssdkManifest, JSON.stringify({name: 'typescript', version: `${dynamicRequire('typescript/package.json').version}-pnpify`}, null, 2));
   await xfs.writeFilePromise(tsserver, TEMPLATE(relPnpApiPath));
 
   const settings = ppath.join(projectRoot, `.vscode/settings.json` as PortablePath);
