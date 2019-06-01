@@ -1961,6 +1961,11 @@ __metadata:
     typescript: "npm:^3.3.3333"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:^3.2.1"
+  peerDependencies:
+    typescript: "*"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
   bin:
     pnpify: ./lib/bin.js
   languageName: unknown
