@@ -10,6 +10,18 @@ Object {
 }
 `;
 
+exports[`Commands workspace foreach should not fall into endless loop if foreach run cmd is the same as lifecycle script name 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace A
+➤ YN0000: Test Workspace C
+➤ YN0000: Test Workspace B
+➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands workspace foreach should only run the scripts on workspaces that match the --include list 1`] = `
 Object {
   "code": 0,

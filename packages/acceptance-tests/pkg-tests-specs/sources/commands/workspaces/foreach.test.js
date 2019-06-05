@@ -193,6 +193,35 @@ describe(`Commands`, () => {
     );
 
     test(
+      `should not fall into endless loop if foreach run cmd is the same as lifecycle script name`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          scripts: {
+            print: `yarn workspaces foreach run --parallel --topological --jobs=2 print`
+          },
+          workspaces: [`packages/*`]
+        },
+        async ({ path, run }) => {
+          await setupWorkspaces(path);
+
+          let code;
+          let stdout;
+          let stderr;
+
+          try {
+            await run(`install`);
+            ({code, stdout, stderr} = await run(`print`));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          await expect({code, stdout, stderr}).toMatchSnapshot();
+        }
+      )
+    );
+
+    test(
       `should throw an error when using --jobs without --parallel`,
       makeTemporaryEnv(
         {

@@ -58,7 +58,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       const configuration = await Configuration.find(cwd, pluginConfiguration);
       const {project} = await Project.find(configuration, cwd);
 
-      let workspaces = project.workspaces.filter(workspace => workspace.manifest.scripts.has(command));
+      let workspaces = project.workspaces.filter(workspace => workspace.manifest.scripts.has(command) && (command !== process.env.npm_lifecycle_event || workspace.cwd !== cwd));
 
       if (include.length > 0)
         workspaces = workspaces.filter(workspace => include.includes(workspace.locator.name))
