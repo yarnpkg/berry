@@ -5,7 +5,7 @@ type ParsedGithubUrl = {
 };
 
 const githubPatterns = [
-  /^github:([^\/#]+)\/([^\/#]+)(?:#(.+))?$/,
+  /^(?:github:)?([^\/#]+)\/([^\/#]+)(?:#(.+))?$/,
   /^git@github.com:([^\/#]+)\/([^\/#]+)\.git(?:#(.+))?$/,
   /^git:\/\/github\.com\/([^\/#]+)\/([^\/#]+)\.git(?:#(.+))?$/,
   /^git\+https:\/\/github.com\/([^\/#]+)\/([^\/#]+)\.git?(?:#(.+))?$/,

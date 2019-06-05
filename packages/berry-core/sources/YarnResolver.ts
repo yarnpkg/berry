@@ -8,11 +8,14 @@ import * as structUtils                                  from './structUtils';
 import {DescriptorHash, Descriptor, Locator}             from './types';
 
 const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [
-  // This one come from Git urls
+  // These ones come from Git urls
   [/^git\+https:\/\/.*\.git#.*$/, (version, $0) => $0],
+  // These ones come from the GitHub HTTP endpoints
+  [/^https:\/\/codeload\.github\.com\/([^\/]+\/[^\/]+)\/tar\.gz\/([0-9a-f]+)$/, (version, $0, $1, $2) => `github:${$1}#${$2}`],
+  [/^https:\/\/github\.com\/([^\/]+\/[^\/]+)#([0-9a-f]+)$/, (version, $0, $1, $2) => `github:${$1}#${$2}`],
   // These ones come from the npm registry
   [/^https?:\/\/[^\/]+\/(?:@[^\/]+\/)?([^\/]+)\/-\/\1-[^\/]+\.tgz(?:#|$)/, version => `npm:${version}`],
-  // This one is from the old Yarn offline mirror - we assume they came from npm
+  // These ones come from the old Yarn offline mirror - we assume they came from npm
   [/^[^\/]+\.tgz#[0-9a-f]+$/, version => `npm:${version}`],
 ];
 
