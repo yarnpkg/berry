@@ -1,8 +1,8 @@
-import {WorkspaceRequiredError}                                                                from '@berry/cli';
-import {Configuration, Cache, PluginConfiguration, Project, StreamReport}                      from '@berry/core';
-import {xfs, PortablePath, ppath}                                                              from '@berry/fslib';
-import {parseSyml, stringifySyml}                                                              from '@berry/parsers';
-import {Writable}                                                                              from 'stream';
+import {WorkspaceRequiredError}                                                                     from '@berry/cli';
+import {Configuration, Cache, MessageName, PluginConfiguration, Project, ReportError, StreamReport} from '@berry/core';
+import {xfs, PortablePath, ppath}                                                                   from '@berry/fslib';
+import {parseSyml, stringifySyml}                                                                   from '@berry/parsers';
+import {Writable}                                                                                   from 'stream';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -81,7 +81,7 @@ async function autofixMergeConflicts(configuration: Configuration, frozenLockfil
     return;
 
   if (frozenLockfile)
-    throw new Error(`Cannot autofix a lockfile when operating with a frozen lockfile`);
+    throw new ReportError(MessageName.AUTOMERGE_IMMUTABLE, `Cannot autofix a lockfile when operating with a frozen lockfile`);
 
   const [left, right] = getVariants(file);
 
@@ -92,7 +92,7 @@ async function autofixMergeConflicts(configuration: Configuration, frozenLockfil
     parsedLeft = parseSyml(left);
     parsedRight = parseSyml(right);
   } catch (error) {
-    throw new Error(`The individual variants of the lockfile failed to parse`);
+    throw new ReportError(MessageName.AUTOMERGE_FAILED_TO_PARSE, `The individual variants of the lockfile failed to parse`);
   }
 
   const merged = Object.assign({}, parsedLeft, parsedRight);
