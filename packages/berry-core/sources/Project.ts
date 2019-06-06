@@ -1127,15 +1127,34 @@ export class Project {
               stderr = stdout;
 
               stdout.write(`# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`);
+
+              switch (buildType) {
+                case BuildType.SCRIPT: {
+                  stdout.write(`# Script name: ${scriptName}\n`);
+                } break;
+                case BuildType.SHELLCODE: {
+                  stdout.write(`# Script code: ${scriptName}\n`);
+                } break;
+              }
+
               stdout.write(`\n`);
             }
 
             let exitCode;
 
-            if (buildType === BuildType.SCRIPT)
-              exitCode = await scriptUtils.executePackageScript(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
-            else if (buildType === BuildType.SHELLCODE)
-              exitCode = await scriptUtils.executePackageShellcode(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
+            try {
+              switch (buildType) {
+                case BuildType.SCRIPT: {
+                  exitCode = await scriptUtils.executePackageScript(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
+                } break;
+                case BuildType.SHELLCODE: {
+                  exitCode = await scriptUtils.executePackageShellcode(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
+                } break;
+              }
+            } catch (error) {
+              stderr.write(error.stack);
+              exitCode = 1;
+            }
 
             if (exitCode === 0) {
               nextBState[pkg.locatorHash] = buildHash;
