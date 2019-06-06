@@ -23,6 +23,25 @@ type ForeachOptions = {
   verbose: boolean;
 }
 
+/**
+ * Retrieves all the child workspaces of a given root workspace recursively
+ *
+ * @param rootWorkspace root workspace
+ * @param project project
+ *
+ * @returns all the child workspaces
+ */
+const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Project): Workspace[] => {
+  const workspaceList = [];
+  for (const childWorkspaceCwd of rootWorkspace.workspacesCwds) {
+    const childWorkspace = project.workspacesByCwd.get(childWorkspaceCwd);
+    if (childWorkspace) {
+      workspaceList.push(childWorkspace, ...getWorkspaceChildrenRecursive(childWorkspace, project));
+    }
+  }
+  return workspaceList;
+};
+
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
@@ -61,11 +80,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       const configuration = await Configuration.find(cwd, pluginConfiguration);
       const {project, workspace} = await Project.find(configuration, cwd);
 
-      const targetCwds: Set<PortablePath> = new Set<PortablePath>(
-        all ? project.workspaces.map(workspace => workspace.cwd) : workspace ? workspace.workspacesCwds : []
-      );
+      const rootWorkspace: Workspace | null = all ? project.topLevelWorkspace : workspace;
 
-      const targetWorkspaces = project.workspaces.filter(workspace => targetCwds.has(workspace.cwd));
+      const targetWorkspaces = rootWorkspace ? getWorkspaceChildrenRecursive(rootWorkspace, project) : [];
 
       // Prevents infinite loop in the case of configuring a script as such:
       //     "lint": "yarn workspaces foreach --all lint"
