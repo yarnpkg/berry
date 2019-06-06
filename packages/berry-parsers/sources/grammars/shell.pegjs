@@ -30,7 +30,7 @@ CommandChainType
   / '>>'
   / '<'
   / '<<
-  / '>&
+  / '>&'
 
 VariableAssignment
   = name:EnvVariable '=' args:ArgumentSegment+ S* { return { name, args } }
