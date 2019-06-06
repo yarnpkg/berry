@@ -88,11 +88,17 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         ? project.topLevelWorkspace
         : workspace!;
 
-      const candidates = getWorkspaceChildrenRecursive(rootWorkspace, project);
+      const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
+
       const workspaces: Array<Workspace> = [];
 
       for (const workspace of candidates) {
         if (!workspace.manifest.scripts.has(command))
+          continue;
+
+        // Prevents infinite loop in the case of configuring a script as such:
+        //     "lint": "yarn workspaces foreach --all lint"
+        if (command === process.env.npm_lifecycle_event && workspace.cwd === cwd)
           continue;
 
         if (include.length > 0 && !include.includes(workspace.locator.name))
