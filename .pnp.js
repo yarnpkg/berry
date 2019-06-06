@@ -54807,6 +54807,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:eb984aafa4809c536767e60d24b7bd923578a3333b3da246798b062a7744d91f6e12c455abcc9a9551da1dbbe8b3b7d12f4e0f00dffcc2bd1a0c60e2e9dd4eff#npm:0.0.3"
                 ],
                 [
+                  "fbjs",
+                  "npm:1.0.0"
+                ],
+                [
+                  "object-assign",
+                  "npm:4.1.1"
+                ],
+                [
                   "react",
                   "npm:15.6.2"
                 ]
