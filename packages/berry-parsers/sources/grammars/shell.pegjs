@@ -29,7 +29,7 @@ CommandChainType
   / '>'
   / '>>'
   / '<'
-  / '<<
+  / '<<'
   / '>&'
 
 VariableAssignment
