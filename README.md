@@ -72,6 +72,7 @@ The following packages are plugins for Berry and can be installed through `berry
 - [plugin-stage](packages/plugin-pack) adds support for the [`yarn stage`](https://yarnpkg.github.io/berry/cli/stage) command.
 - [plugin-pnp★](packages/plugin-pnp) adds support for installing Javascript dependencies through the [Plug'n'Play](https://yarnpkg.github.io/berry/features/pnp) specification.
 - [plugin-typescript★](packages/plugin-typescript) improves the user experience when working with TypeScript.
+- [plugin-workspace-tools](packages/plugin-workspace-tools) adds support for the [`yarn workspaces foreach`](https://yarnpkg.github.io/berry/cli/workspaces/foreach) command.
 
 To create your own plugin, please refer to the [documentation](https://yarnpkg.github.io/berry/features/plugins).
 
@@ -90,7 +91,7 @@ Clone this repository, then run the following commands:
 $> yarn build:cli
 ```
 
-**How it works**  
+**How it works**
 
 After building the CLI your global `yarn` will immediatly start to reflect your local changes. This is because Yarn will pick up the `yarn-path` settings in this repository's `.yarnrc`, which is configured to use the newly built CLI if available.
 

@@ -13,6 +13,7 @@ type ForeachOptions = {
   cwd: PortablePath;
   exclude: string[];
   include: string[];
+  all: boolean;
   interlaced: boolean;
   jobs: number;
   parallel: boolean;
@@ -25,19 +26,21 @@ type ForeachOptions = {
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`workspaces foreach run <command> [...args] [-v,--verbose] [-p,--parallel] [-i,--interlaced] [-j,--jobs JOBS] [--topological] [--topological-dev] [--include WORKSPACES...] [--exclude WORKSPACES...]`)
+  .command(`workspaces foreach <command> [...args] [-v,--verbose] [-p,--parallel] [-i,--interlaced] [-j,--jobs JOBS] [--topological] [--topological-dev] [--all] [--include WORKSPACES...] [--exclude WORKSPACES...]`)
   .categorize(`Workspace-related commands`)
   .describe(`run a command on all workspaces`)
   .flags({proxyArguments: true})
 
   .detail(`
-    This command will run a given sub-command on all workspaces that define it (any workspace that doesn't define it will be just skiped). Various flags can alter the exact behavior of the command:
+    This command will run a given sub-command on all child workspaces that define it (any workspace that doesn't define it will be just skiped). Various flags can alter the exact behavior of the command:
 
     - If \`-p,--parallel\` is set, the commands will run in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overriden via \`-j,--jobs\`.
 
     - If \`-p,--parallel\` and \`-i,--interlaced\` are both set, Yarn will print the lines from the output as it receives them. If \`-i,--interlaced\` wasn't set, it would instead buffer the output from each process and print the resulting buffers only after their source processes have exited.
 
     - If \`--topological\` is set, Yarn will only run a command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--tological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
+
+    - If \`--all\` is set, Yarn will run it on all the workspaces of a project. By default it runs the command only on child workspaces.
 
     - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that musn't execute the script.
 
@@ -54,11 +57,20 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   }))
 
   .action(
-    async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, topological, topologicalDev, verbose, jobs, ...env}: ForeachOptions) => {
+    async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, topological, topologicalDev, all, verbose, jobs, ...env}: ForeachOptions) => {
       const configuration = await Configuration.find(cwd, pluginConfiguration);
-      const {project} = await Project.find(configuration, cwd);
+      const {project, workspace} = await Project.find(configuration, cwd);
 
-      let workspaces = project.workspaces.filter(workspace => workspace.manifest.scripts.has(command) && (command !== process.env.npm_lifecycle_event || workspace.cwd !== cwd));
+      const targetCwds: Set<PortablePath> = new Set<PortablePath>(
+        all ? project.workspaces.map(workspace => workspace.cwd) : workspace ? workspace.workspacesCwds : []
+      );
+
+      const targetWorkspaces = project.workspaces.filter(workspace => targetCwds.has(workspace.cwd));
+
+      // Prevents infinite loop in the case of configuring a script as such:
+      //     "lint": "yarn workspaces foreach --all lint"
+      const isRecursing = (workspace: Workspace) => command === process.env.npm_lifecycle_event && workspace.cwd === cwd;
+      let workspaces = targetWorkspaces.filter(workspace => workspace.manifest.scripts.has(command) && !isRecursing(workspace));
 
       if (include.length > 0)
         workspaces = workspaces.filter(workspace => include.includes(workspace.locator.name))
