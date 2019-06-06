@@ -1,3 +1,4 @@
+import {WorkspaceRequiredError}                                              from '@berry/cli';
 import {Configuration, LocatorHash, PluginConfiguration, Project, Workspace} from '@berry/core';
 import {DescriptorHash, MessageName, Report, StreamReport}                   from '@berry/core';
 import {miscUtils, structUtils}                                              from '@berry/core';
@@ -31,7 +32,7 @@ type ForeachOptions = {
  *
  * @returns all the child workspaces
  */
-const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Project): Workspace[] => {
+const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Project): Array<Workspace> => {
   const workspaceList = [];
   for (const childWorkspaceCwd of rootWorkspace.workspacesCwds) {
     const childWorkspace = project.workspacesByCwd.get(childWorkspaceCwd);
@@ -79,21 +80,29 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, topological, topologicalDev, all, verbose, jobs, ...env}: ForeachOptions) => {
       const configuration = await Configuration.find(cwd, pluginConfiguration);
       const {project, workspace} = await Project.find(configuration, cwd);
+      
+      if (!all && !workspace)
+        throw new WorkspaceRequiredError(cwd);
 
-      const rootWorkspace: Workspace | null = all ? project.topLevelWorkspace : workspace;
+      const rootWorkspace = all
+        ? project.topLevelWorkspace
+        : workspace;
 
-      const targetWorkspaces = rootWorkspace ? getWorkspaceChildrenRecursive(rootWorkspace, project) : [];
+      const candidates = getWorkspaceChildrenRecursive(rootWorkspace, project);
+      const workspaces = [];
 
-      // Prevents infinite loop in the case of configuring a script as such:
-      //     "lint": "yarn workspaces foreach --all lint"
-      const isRecursing = (workspace: Workspace) => command === process.env.npm_lifecycle_event && workspace.cwd === cwd;
-      let workspaces = targetWorkspaces.filter(workspace => workspace.manifest.scripts.has(command) && !isRecursing(workspace));
+      for (const workspace of candidates) {
+        if (!workspace.manifest.scripts.has(command))
+          continue;
+        
+        if (include.length > 0 && !include.includes(workspace.locator.name))
+          continue;
 
-      if (include.length > 0)
-        workspaces = workspaces.filter(workspace => include.includes(workspace.locator.name))
+        if (exclude.length > 0 && exclude.includes(workspace.locator.name))
+          continue;
 
-      if (exclude.length > 0)
-        workspaces = workspaces.filter(workspace => !exclude.includes(workspace.locator.name))
+        workspaces.push(workspace);
+      }
 
       // No need to buffer the output if we're executing the commands sequentially
       if (!parallel)
