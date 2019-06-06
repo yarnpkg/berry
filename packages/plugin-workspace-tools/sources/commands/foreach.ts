@@ -79,14 +79,14 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   .action(
     async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, topological, topologicalDev, all, verbose, jobs, ...env}: ForeachOptions) => {
       const configuration = await Configuration.find(cwd, pluginConfiguration);
-      const {project, workspace} = await Project.find(configuration, cwd);
+      const {project, workspace: cwdWorkspace} = await Project.find(configuration, cwd);
 
-      if (!all && !workspace)
+      if (!all && !cwdWorkspace)
         throw new WorkspaceRequiredError(cwd);
 
       const rootWorkspace = all
         ? project.topLevelWorkspace
-        : workspace!;
+        : cwdWorkspace!;
 
       const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
 
@@ -98,7 +98,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
         // Prevents infinite loop in the case of configuring a script as such:
         //     "lint": "yarn workspaces foreach --all lint"
-        if (command === process.env.npm_lifecycle_event && workspace.cwd === cwd)
+        if (command === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
           continue;
 
         if (include.length > 0 && !include.includes(workspace.locator.name))

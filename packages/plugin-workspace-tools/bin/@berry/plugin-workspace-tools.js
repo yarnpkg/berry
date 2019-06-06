@@ -192,12 +192,12 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
     .action(async (_a) => {
     var { cwd, args, stdout, command, exclude, include, interlaced, parallel, topological, topologicalDev, all, verbose, jobs } = _a, env = __rest(_a, ["cwd", "args", "stdout", "command", "exclude", "include", "interlaced", "parallel", "topological", "topologicalDev", "all", "verbose", "jobs"]);
     const configuration = await core_1.Configuration.find(cwd, pluginConfiguration);
-    const { project, workspace } = await core_1.Project.find(configuration, cwd);
-    if (!all && !workspace)
+    const { project, workspace: cwdWorkspace } = await core_1.Project.find(configuration, cwd);
+    if (!all && !cwdWorkspace)
         throw new cli_1.WorkspaceRequiredError(cwd);
     const rootWorkspace = all
         ? project.topLevelWorkspace
-        : workspace;
+        : cwdWorkspace;
     const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
     const workspaces = [];
     for (const workspace of candidates) {
@@ -205,7 +205,7 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
             continue;
         // Prevents infinite loop in the case of configuring a script as such:
         //     "lint": "yarn workspaces foreach --all lint"
-        if (command === process.env.npm_lifecycle_event && workspace.cwd === cwd)
+        if (command === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace.cwd)
             continue;
         if (include.length > 0 && !include.includes(workspace.locator.name))
             continue;
