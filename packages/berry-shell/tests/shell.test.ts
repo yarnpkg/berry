@@ -1,9 +1,15 @@
+import os            from 'os';
 import {execute}     from '@berry/shell';
 import {PassThrough} from 'stream';
+import { xfs, PortablePath, ppath } from '@berry/fslib';
+
 
 const ifNotWin32It = process.platform !== `win32`
   ? it
   : it.skip;
+
+const tmp = os.tmpdir();
+const getFile = () => `${tmp}/${Math.random() * 100}`;
 
 const bufferResult = async (command: string, args: Array<string> = []) => {
   const stdout = new PassThrough();
@@ -137,6 +143,58 @@ describe(`Simple shell features`, () => {
     ].join(` | `))).resolves.toMatchObject({
       stdout: `aei\n`,
     });
+  });
+
+  it.skip(`> should redirect to /dev/null`, async () => {
+    await expect(bufferResult(`echo hello > /dev/null`)).resolves.toMatchObject({
+      stdout: ``,
+    });
+  });
+
+  it.skip(`> should redirect to stderr to stdout`, async () => {
+    await expect(bufferResult(`ls does-not-exist > /dev/null 2>&1`)).resolves.toMatchObject({
+      stdout: ``,
+    });
+  });
+
+  it.skip(`> should redirect output into a file`, async () => {
+    const file = getFile();
+    await execute(`echo hello world > ${file}`);
+    await expect(xfs.readFilePromise(file, 'utf-8')).toEqual('hello world');
+  });
+
+  it.skip(`> should pass along the contents of file when chained`, async () => {
+    const file = getFile();
+    await execute(`echo hello > echo world > ${file}`);
+    await expect(xfs.readFilePromise(file, 'utf-8')).toEqual('hello world');
+  });
+
+  it.skip(`< should output the contents of the file`, async () => {
+    const file = getFile();
+    await xfs.writeFilePromise(file, 'hello world')
+    await execute(`echo < ${file}`);
+    await expect(xfs.readFilePromise(file, 'utf-8')).toEqual('hello world');
+  });
+
+  it.skip(`>> should append contents of the file`, async () => {
+    const file = getFile();
+    await xfs.writeFilePromise(file, 'hello world')
+    await execute(`echo hello world >> ${file}`);
+    await expect(xfs.readFilePromise(file, 'utf-8')).toEqual('hello world');
+  });
+
+  it.skip(`<< should append contents of the file`, async () => {
+    const file = getFile();
+    await xfs.writeFilePromise(file, 'hello world')
+    await execute(`echo hello world << ${file}`);
+    await expect(xfs.readFilePromise(file, 'utf-8')).toEqual('hello world');
+  });
+
+  it.skip(`<< should append contents of the file`, async () => {
+    const file = getFile();
+    await xfs.writeFilePromise(file, 'hello world')
+    await execute(`echo hello world << ${file}`);
+    await expect(xfs.readFilePromise(file, 'utf-8')).toEqual('hello world');
   });
 
   it(`should shortcut the right branch of a '||' when the left branch succeeds`, async () => {

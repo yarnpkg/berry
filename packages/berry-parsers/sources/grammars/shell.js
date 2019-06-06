@@ -210,6 +210,16 @@ function peg$parse(input, options) {
       peg$c66 = peg$classExpectation(["(", ")", "$", "|", "<", ">", "&", ";", " ", "\t", "\"", "'"], false, false),
       peg$c67 = /^[ \t]/,
       peg$c68 = peg$classExpectation([" ", "\t"], false, false),
+      peg$c69 = '>',
+      peg$c70 = peg$literalExpectation('>', false),
+      peg$c71 = '>>',
+      peg$c72 = peg$literalExpectation('>>', false),
+      peg$c73 = '<',
+      peg$c74 = peg$literalExpectation('<', false),
+      peg$c75 = '<<',
+      peg$c76 = peg$literalExpectation('<<', false),
+      peg$c77 = '>&',
+      peg$c78 = peg$literalExpectation('>&', false),
 
       peg$currPos          = 0,
       peg$savedPos         = 0,
@@ -639,26 +649,33 @@ function peg$parse(input, options) {
     return s0;
   }
 
-  function peg$parseCommandChainType() {
-    var s0;
+  const commandChainMap = {
+    [peg$c13]: {charCode: 124, fallback: peg$c14},
+    [peg$c15]: {charCode: 124, fallback: peg$c16},
+    [peg$c77]: {charCode: 62, fallback: peg$c78},
+    [peg$c71]: {charCode: 62, fallback: peg$c72},
+    [peg$c69]: {charCode: 62, fallback: peg$c70},
+    [peg$c75]: {charCode: 60, fallback: peg$c76},
+    [peg$c73]: {charCode: 60, fallback: peg$c74},
+  }
 
-    if (input.substr(peg$currPos, 2) === peg$c13) {
-      s0 = peg$c13;
-      peg$currPos += 2;
-    } else {
-      s0 = peg$FAILED;
-      if (peg$silentFails === 0) { peg$fail(peg$c14); }
-    }
-    if (s0 === peg$FAILED) {
-      if (input.charCodeAt(peg$currPos) === 124) {
-        s0 = peg$c15;
-        peg$currPos++;
-      } else {
-        s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c16); }
+  function peg$parseCommandChainType() {
+    var s0 = peg$FAILED;;
+
+    for (const [value, {charCode, fallback}] of Object.entries(commandChainMap)) {
+      if (s0 === peg$FAILED) {
+        if (input.substr(peg$currPos, value.length) === value) {
+          s0 = value;
+          peg$currPos += value.length;
+        } else if (value.length === 1 && input.charCodeAt(peg$currPos) === charCode) {
+          s0 = value;
+          peg$currPos++;
+        } else {
+          s0 = peg$FAILED;
+          if (peg$silentFails === 0) { peg$fail(fallback); }
+        }
       }
     }
-
     return s0;
   }
 
