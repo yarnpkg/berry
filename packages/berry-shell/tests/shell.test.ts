@@ -160,27 +160,27 @@ describe(`Simple shell features`, () => {
   it.skip(`> should redirect output into a file`, async () => {
     const file = getFile();
     await execute(`echo hello world > ${file}`);
-    await expect(xfs.readFilePromise(file, 'utf-8')).toEqual('hello world');
+    await expect(xfs.readFilePromise(file, 'utf-8')).resolves.toEqual('hello world');
   });
 
   it.skip(`> should pass along the contents of file when chained`, async () => {
     const file = getFile();
     await execute(`echo hello > echo world > ${file}`);
-    await expect(xfs.readFilePromise(file, 'utf-8')).toEqual('hello world');
+    await expect(xfs.readFilePromise(file, 'utf-8')).resolves.toEqual('hello world');
   });
 
   it.skip(`< should output the contents of the file`, async () => {
     const file = getFile();
     await xfs.writeFilePromise(file, 'hello world')
-    await execute(`echo < ${file}`);
-    await expect(xfs.readFilePromise(file, 'utf-8')).toEqual('hello world');
+    await execute(`cat < ${file}`);
+    await expect(xfs.readFilePromise(file, 'utf-8')).resolves.toEqual('hello world');
   });
 
   it.skip(`>> should append contents of the file`, async () => {
     const file = getFile();
     await xfs.writeFilePromise(file, 'hello world')
     await execute(`echo hello world >> ${file}`);
-    await expect(xfs.readFilePromise(file, 'utf-8')).toEqual('hello world');
+    await expect(xfs.readFilePromise(file, 'utf-8')).resolves.toEqual('hello world');
   });
 
   it.skip(`<< should append contents of the file`, async () => {
