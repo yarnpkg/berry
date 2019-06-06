@@ -246,14 +246,18 @@ This error is triggered when Git conflict tokens are found within the `yarn.lock
 
   - The easiest way to fix it is to use `git checkout --theirs yarn.lock`, and follow up with `yarn install` again (which can be followup by `yarn cache clean` to remove any file that wouldn't be needed anymore). This will cause the v1 lockfile to be re-imported. The v2 resolutions will be lost, but Yarn will detect it and resolve them all over again.
 
-- If you have multiple levels of conflicts. Yarn doesn't support such conflicts, and you'll have to figure out a way to only have two levels. This is typically done by resolving the conflicts between two branches, and resolving them again on the merge result of the previous step and the third parth.
+- If you have multiple levels of conflicts. Yarn doesn't support such conflicts, and you'll have to figure out a way to only have two levels. This is typically done by first resolving the conflicts between two branches, and then resolving them again on the merge result of the previous step and the third branch.
 
 ## YN0047 - `AUTOMERGE_IMMUTABLE`
 
-This error is triggered when Git conflict tokens are found with the `yarn.lock` file while Yarn is executing under the immutable mode.
+This error is triggered when Git conflict tokens are found within the `yarn.lock` file while Yarn is executing under the immutable mode (`--immutable` flag in `yarn install`).
 
-When under this mode, Yarn isn't allowed to edit any file. As such, conflict resolution is disabled. In order to solve this problem, run `yarn install` without the `--immutable` flag.
+When under this mode, Yarn isn't allowed to edit any file, not even for automatically resolving conflicts - which is usually something you want to check when running Yarn on CI systems anyway.
+
+In order to solve this problem, try running `yarn install` again without the `--immutable` flag.
 
 ## YN0048 - `AUTOMERGE_REQUIRED`
 
-This informational message is emitted when Git conflict tokens are found with the `yarn.lock` file. Yarn will then try to automatically resolve the conflict by following its internal heuristic (which is pretty simple: it will take the one from the pulled branch, modify it by adding the information from the local branch, and run `yarn install` again to fix anything that might have been lost in the process).
+This informational message is emitted when Git conflict tokens are found within the `yarn.lock` file.
+
+Yarn will then try to automatically resolve the conflict the best it can by following its internal heuristic. The algorithm itself is very simple: it will take the lockfile from the pulled branch, expand it by adding the information from the local branch, and proceed to run `yarn install` again to recompute anything that could have been lost in the process.
