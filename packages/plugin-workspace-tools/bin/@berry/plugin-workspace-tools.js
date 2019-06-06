@@ -135,12 +135,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = __webpack_require__(2);
-const core_2 = __webpack_require__(2);
-const core_3 = __webpack_require__(2);
-const os_1 = __webpack_require__(3);
-const p_limit_1 = __importDefault(__webpack_require__(4));
-const yup = __importStar(__webpack_require__(6));
+const cli_1 = __webpack_require__(2);
+const core_1 = __webpack_require__(3);
+const core_2 = __webpack_require__(3);
+const core_3 = __webpack_require__(3);
+const os_1 = __webpack_require__(4);
+const p_limit_1 = __importDefault(__webpack_require__(5));
+const yup = __importStar(__webpack_require__(7));
 /**
  * Retrieves all the child workspaces of a given root workspace recursively
  *
@@ -192,16 +193,26 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
     var { cwd, args, stdout, command, exclude, include, interlaced, parallel, topological, topologicalDev, all, verbose, jobs } = _a, env = __rest(_a, ["cwd", "args", "stdout", "command", "exclude", "include", "interlaced", "parallel", "topological", "topologicalDev", "all", "verbose", "jobs"]);
     const configuration = await core_1.Configuration.find(cwd, pluginConfiguration);
     const { project, workspace } = await core_1.Project.find(configuration, cwd);
-    const rootWorkspace = all ? project.topLevelWorkspace : workspace;
-    const targetWorkspaces = rootWorkspace ? getWorkspaceChildrenRecursive(rootWorkspace, project) : [];
-    // Prevents infinite loop in the case of configuring a script as such:
-    //     "lint": "yarn workspaces foreach --all lint"
-    const isRecursing = (workspace) => command === process.env.npm_lifecycle_event && workspace.cwd === cwd;
-    let workspaces = targetWorkspaces.filter(workspace => workspace.manifest.scripts.has(command) && !isRecursing(workspace));
-    if (include.length > 0)
-        workspaces = workspaces.filter(workspace => include.includes(workspace.locator.name));
-    if (exclude.length > 0)
-        workspaces = workspaces.filter(workspace => !exclude.includes(workspace.locator.name));
+    if (!all && !workspace)
+        throw new cli_1.WorkspaceRequiredError(cwd);
+    const rootWorkspace = all
+        ? project.topLevelWorkspace
+        : workspace;
+    const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
+    const workspaces = [];
+    for (const workspace of candidates) {
+        if (!workspace.manifest.scripts.has(command))
+            continue;
+        // Prevents infinite loop in the case of configuring a script as such:
+        //     "lint": "yarn workspaces foreach --all lint"
+        if (command === process.env.npm_lifecycle_event && workspace.cwd === cwd)
+            continue;
+        if (include.length > 0 && !include.includes(workspace.locator.name))
+            continue;
+        if (exclude.length > 0 && exclude.includes(workspace.locator.name))
+            continue;
+        workspaces.push(workspace);
+    }
     // No need to buffer the output if we're executing the commands sequentially
     if (!parallel)
         interlaced = true;
@@ -328,21 +339,27 @@ function getPrefix(workspace, { configuration, commandIndex, verbose }) {
 /* 2 */
 /***/ (function(module, exports) {
 
-module.exports = require("@berry/core");
+module.exports = require("@berry/cli");
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports) {
 
-module.exports = require("os");
+module.exports = require("@berry/core");
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports) {
+
+module.exports = require("os");
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-const pTry = __webpack_require__(5);
+const pTry = __webpack_require__(6);
 
 const pLimit = concurrency => {
 	if (concurrency < 1) {
@@ -396,7 +413,7 @@ module.exports.default = pLimit;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -408,7 +425,7 @@ module.exports = (callback, ...args) => new Promise(resolve => {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = require("yup");
