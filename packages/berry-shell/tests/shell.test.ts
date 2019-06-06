@@ -190,13 +190,6 @@ describe(`Simple shell features`, () => {
     await expect(xfs.readFilePromise(file, 'utf-8')).toEqual('hello world');
   });
 
-  it.skip(`<< should append contents of the file`, async () => {
-    const file = getFile();
-    await xfs.writeFilePromise(file, 'hello world')
-    await execute(`echo hello world << ${file}`);
-    await expect(xfs.readFilePromise(file, 'utf-8')).toEqual('hello world');
-  });
-
   it(`should shortcut the right branch of a '||' when the left branch succeeds`, async () => {
     await expect(bufferResult(`true || echo failed`)).resolves.toMatchObject({
       stdout: ``,
