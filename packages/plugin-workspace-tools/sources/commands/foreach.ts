@@ -80,21 +80,21 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, topological, topologicalDev, all, verbose, jobs, ...env}: ForeachOptions) => {
       const configuration = await Configuration.find(cwd, pluginConfiguration);
       const {project, workspace} = await Project.find(configuration, cwd);
-      
+
       if (!all && !workspace)
         throw new WorkspaceRequiredError(cwd);
 
       const rootWorkspace = all
         ? project.topLevelWorkspace
-        : workspace;
+        : workspace!;
 
       const candidates = getWorkspaceChildrenRecursive(rootWorkspace, project);
-      const workspaces = [];
+      const workspaces: Array<Workspace> = [];
 
       for (const workspace of candidates) {
         if (!workspace.manifest.scripts.has(command))
           continue;
-        
+
         if (include.length > 0 && !include.includes(workspace.locator.name))
           continue;
 

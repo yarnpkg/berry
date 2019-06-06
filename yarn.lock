@@ -1929,6 +1929,7 @@ __metadata:
   resolution: "@berry/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
   dependencies:
     "@berry/builder": "workspace:0.0.0"
+    "@berry/cli": "workspace:2.0.0"
     "@berry/core": "workspace:0.0.0"
     "@berry/fslib": "workspace:0.0.6"
     clipanion: "npm:^0.15.0"
