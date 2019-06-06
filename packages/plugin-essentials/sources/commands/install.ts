@@ -1,8 +1,8 @@
-import {WorkspaceRequiredError}                                                                from '@berry/cli';
-import {Configuration, Cache, PluginConfiguration, Project, StreamReport}                      from '@berry/core';
-import {xfs, PortablePath, ppath}                                                              from '@berry/fslib';
-import {parseSyml, stringifySyml}                                                              from '@berry/parsers';
-import {Writable}                                                                              from 'stream';
+import {WorkspaceRequiredError}                                                                     from '@berry/cli';
+import {Configuration, Cache, MessageName, PluginConfiguration, Project, ReportError, StreamReport} from '@berry/core';
+import {xfs, PortablePath, ppath}                                                                   from '@berry/fslib';
+import {parseSyml, stringifySyml}                                                                   from '@berry/parsers';
+import {Writable}                                                                                   from 'stream';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -39,8 +39,16 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     if (frozenLockfile === null)
       frozenLockfile = configuration.get(`frozenInstalls`);
 
-    if (configuration.projectCwd !== null)
-      await autofixMergeConflicts(configuration, frozenLockfile);
+    if (configuration.projectCwd !== null) {
+      const fixReport = await StreamReport.start({configuration, stdout, footer: false}, async (report: StreamReport) => {
+        await autofixMergeConflicts(configuration, frozenLockfile);
+        report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically fixed merge conflicts`);
+      });
+
+      if (fixReport.hasErrors()) {
+        return fixReport.exitCode();
+      }
+    }
 
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -81,7 +89,7 @@ async function autofixMergeConflicts(configuration: Configuration, frozenLockfil
     return;
 
   if (frozenLockfile)
-    throw new Error(`Cannot autofix a lockfile when operating with a frozen lockfile`);
+    throw new ReportError(MessageName.AUTOMERGE_IMMUTABLE, `Cannot autofix a lockfile when operating with a frozen lockfile`);
 
   const [left, right] = getVariants(file);
 
@@ -92,7 +100,7 @@ async function autofixMergeConflicts(configuration: Configuration, frozenLockfil
     parsedLeft = parseSyml(left);
     parsedRight = parseSyml(right);
   } catch (error) {
-    throw new Error(`The individual variants of the lockfile failed to parse`);
+    throw new ReportError(MessageName.AUTOMERGE_FAILED_TO_PARSE, `The individual variants of the lockfile failed to parse`);
   }
 
   const merged = Object.assign({}, parsedLeft, parsedRight);
