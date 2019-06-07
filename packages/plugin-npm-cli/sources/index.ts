@@ -11,6 +11,11 @@ const plugin: Plugin = {
       type: SettingsType.STRING,
       default: null,
     },
+    npmPublishRegistry: {
+      description: `Registry to push packages to`,
+      type: SettingsType.STRING,
+      default: null,
+    },
   },
   commands: [
     login,
