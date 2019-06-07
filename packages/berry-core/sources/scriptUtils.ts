@@ -21,7 +21,7 @@ async function makePathWrapper(location: PortablePath, name: Filename, argv0: Na
   }
 }
 
-export async function makeScriptEnv(project: Project) {
+export async function makeScriptEnv(project: Project, lifecycleScript?: string) {
   const scriptEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(process.env))
     if (typeof value !== `undefined`)
@@ -48,6 +48,8 @@ export async function makeScriptEnv(project: Project) {
 
   scriptEnv.npm_execpath = `${nativeBinFolder}${npath.sep}yarn`;
   scriptEnv.npm_node_execpath = `${nativeBinFolder}${npath.sep}node`;
+  if (lifecycleScript)
+    scriptEnv.npm_lifecycle_event = lifecycleScript;
 
   await project.configuration.triggerHook(
     hook => hook.setupScriptEnvironment,
@@ -97,7 +99,7 @@ type ExecutePackageScriptOptions = {
 };
 
 export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
-  const {manifest, binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, cwd});
+  const {manifest, binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, cwd, lifecycleScript: scriptName});
 
   const script = manifest.scripts.get(scriptName);
   if (!script)
@@ -120,7 +122,7 @@ export async function executePackageShellcode(locator: Locator, command: string,
   }
 }
 
-async function initializePackageEnvironment(locator: Locator, {project, cwd}: {project: Project, cwd?: PortablePath | undefined}) {
+async function initializePackageEnvironment(locator: Locator, {project, cwd, lifecycleScript}: {project: Project, cwd?: PortablePath | undefined, lifecycleScript?: string}) {
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
     throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
@@ -135,7 +137,7 @@ async function initializePackageEnvironment(locator: Locator, {project, cwd}: {p
     if (!linker)
       throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
 
-    const env = await makeScriptEnv(project);
+    const env = await makeScriptEnv(project, lifecycleScript);
     const binFolder = NodeFS.toPortablePath(env.BERRY_BIN_FOLDER);
 
     for (const [binaryName, [, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
