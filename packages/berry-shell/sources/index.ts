@@ -199,6 +199,8 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
                     push(state.variables[segment.name]);
                   } else if (Object.prototype.hasOwnProperty.call(state.environment, segment.name)) {
                     push(state.environment[segment.name]);
+                  } else if (segment.defaultValue) {
+                    push((await interpolateArguments(segment.defaultValue, opts, state)).join(` `));
                   } else {
                     throw new Error(`Unbound variable "${segment.name}"`);
                   }

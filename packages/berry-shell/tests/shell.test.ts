@@ -295,6 +295,15 @@ describe(`Simple shell features`, () => {
     });
   });
 
+  it(`should support argument spread via $@`, async () => {
+    await expect(bufferResult(
+      `node -p 'JSON.stringify(process.argv.slice(1))' "$@"`,
+      [`hello`, `world`],
+    )).resolves.toMatchObject({
+      stdout: `["hello","world"]\n`
+    });
+  });
+
   it(`should set environment variables`, async () => {
     await expect(bufferResult(
       `PORT=1234 node -e 'process.stdout.write(process.env.PORT)'`
@@ -384,6 +393,14 @@ describe(`Simple shell features`, () => {
       {env: {FOOBAR: `hello world`}}
     )).resolves.toMatchObject({
       stdout: `hello world\n`,
+    });
+  });
+
+  it(`should support default arguments via \${...:-...}`, async () => {
+    await expect(bufferResult(
+      `echo "\${DOESNT_EXIST:-hello world}"`,
+    )).resolves.toMatchObject({
+      stdout: `hello world\n`
     });
   });
 });
