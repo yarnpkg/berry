@@ -10271,6 +10271,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-builder"
                 ],
                 [
+                  "@berry/cli",
+                  "workspace:packages/berry-cli"
+                ],
+                [
                   "@berry/core",
                   "workspace:packages/berry-core"
                 ],

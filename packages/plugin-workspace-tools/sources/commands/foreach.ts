@@ -1,3 +1,4 @@
+import {WorkspaceRequiredError}                                              from '@berry/cli';
 import {Configuration, LocatorHash, PluginConfiguration, Project, Workspace} from '@berry/core';
 import {DescriptorHash, MessageName, Report, StreamReport}                   from '@berry/core';
 import {miscUtils, structUtils}                                              from '@berry/core';
@@ -13,6 +14,7 @@ type ForeachOptions = {
   cwd: PortablePath;
   exclude: string[];
   include: string[];
+  all: boolean;
   interlaced: boolean;
   jobs: number;
   parallel: boolean;
@@ -22,22 +24,43 @@ type ForeachOptions = {
   verbose: boolean;
 }
 
+/**
+ * Retrieves all the child workspaces of a given root workspace recursively
+ *
+ * @param rootWorkspace root workspace
+ * @param project project
+ *
+ * @returns all the child workspaces
+ */
+const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Project): Array<Workspace> => {
+  const workspaceList = [];
+  for (const childWorkspaceCwd of rootWorkspace.workspacesCwds) {
+    const childWorkspace = project.workspacesByCwd.get(childWorkspaceCwd);
+    if (childWorkspace) {
+      workspaceList.push(childWorkspace, ...getWorkspaceChildrenRecursive(childWorkspace, project));
+    }
+  }
+  return workspaceList;
+};
+
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`workspaces foreach run <command> [...args] [-v,--verbose] [-p,--parallel] [-i,--interlaced] [-j,--jobs JOBS] [--topological] [--topological-dev] [--include WORKSPACES...] [--exclude WORKSPACES...]`)
+  .command(`workspaces foreach <command> [...args] [-v,--verbose] [-p,--parallel] [-i,--interlaced] [-j,--jobs JOBS] [--topological] [--topological-dev] [--all] [--include WORKSPACES...] [--exclude WORKSPACES...]`)
   .categorize(`Workspace-related commands`)
   .describe(`run a command on all workspaces`)
   .flags({proxyArguments: true})
 
   .detail(`
-    This command will run a given sub-command on all workspaces that define it (any workspace that doesn't define it will be just skiped). Various flags can alter the exact behavior of the command:
+    This command will run a given sub-command on all child workspaces that define it (any workspace that doesn't define it will be just skiped). Various flags can alter the exact behavior of the command:
 
     - If \`-p,--parallel\` is set, the commands will run in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overriden via \`-j,--jobs\`.
 
     - If \`-p,--parallel\` and \`-i,--interlaced\` are both set, Yarn will print the lines from the output as it receives them. If \`-i,--interlaced\` wasn't set, it would instead buffer the output from each process and print the resulting buffers only after their source processes have exited.
 
     - If \`--topological\` is set, Yarn will only run a command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--tological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
+
+    - If \`--all\` is set, Yarn will run it on all the workspaces of a project. By default it runs the command only on child workspaces.
 
     - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that musn't execute the script.
 
@@ -54,17 +77,38 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   }))
 
   .action(
-    async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, topological, topologicalDev, verbose, jobs, ...env}: ForeachOptions) => {
+    async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, topological, topologicalDev, all, verbose, jobs, ...env}: ForeachOptions) => {
       const configuration = await Configuration.find(cwd, pluginConfiguration);
-      const {project} = await Project.find(configuration, cwd);
+      const {project, workspace: cwdWorkspace} = await Project.find(configuration, cwd);
 
-      let workspaces = project.workspaces.filter(workspace => workspace.manifest.scripts.has(command));
+      if (!all && !cwdWorkspace)
+        throw new WorkspaceRequiredError(cwd);
 
-      if (include.length > 0)
-        workspaces = workspaces.filter(workspace => include.includes(workspace.locator.name))
+      const rootWorkspace = all
+        ? project.topLevelWorkspace
+        : cwdWorkspace!;
 
-      if (exclude.length > 0)
-        workspaces = workspaces.filter(workspace => !exclude.includes(workspace.locator.name))
+      const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
+
+      const workspaces: Array<Workspace> = [];
+
+      for (const workspace of candidates) {
+        if (!workspace.manifest.scripts.has(command))
+          continue;
+
+        // Prevents infinite loop in the case of configuring a script as such:
+        //     "lint": "yarn workspaces foreach --all lint"
+        if (command === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
+          continue;
+
+        if (include.length > 0 && !include.includes(workspace.locator.name))
+          continue;
+
+        if (exclude.length > 0 && exclude.includes(workspace.locator.name))
+          continue;
+
+        workspaces.push(workspace);
+      }
 
       // No need to buffer the output if we're executing the commands sequentially
       if (!parallel)

@@ -36,16 +36,77 @@ async function setupWorkspaces(path) {
     name: `workspace-c`,
     version: `1.0.0`,
     scripts: {
-      print: `echo Test Workspace C`,
+      print: `echo Test Workspace C`
+    },
+    workspaces: [`packages/*`],
+    dependencies: {
+      [`workspace-a`]: `workspace:*`,
+    }
+  });
+
+  await writeJson(`${path}/packages/workspace-c/packages/workspace-d/package.json`, {
+    name: `workspace-d`,
+    version: `1.0.0`,
+    workspaces: [`packages/*`],
+    scripts: {
+      print: `echo Test Workspace D`
     },
     dependencies: {
-      [`workspace-a`]: `workspace:*`
+      [`workspace-b`]: `workspace:*`
+    }
+  });
+
+  await writeJson(`${path}/packages/workspace-c/packages/workspace-d/packages/workspace-e/package.json`, {
+    name: `workspace-e`,
+    version: `1.0.0`,
+    scripts: {
+      print: `echo Test Workspace E`
+    },
+    dependencies: {
+      [`workspace-d`]: `workspace:*`
+    }
+  });
+
+  await writeJson(`${path}/packages/workspace-c/packages/workspace-f/package.json`, {
+    name: `workspace-f`,
+    version: `1.0.0`,
+    scripts: {
+      print: `echo Test Workspace F`
+    },
+    dependencies: {
+      [`workspace-e`]: `workspace:*`
     }
   });
 }
 
 describe(`Commands`, () => {
   describe(`workspace foreach`, () => {
+    test(
+      `should run on child workspaces by default`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`]
+        },
+        async ({ path, run }) => {
+          await setupWorkspaces(path);
+
+          let code;
+          let stdout;
+          let stderr;
+
+          try {
+            await run(`install`);
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `print`, { cwd: `${path}/packages/workspace-c` }));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          await expect({code, stdout, stderr}).toMatchSnapshot();
+        }
+      )
+    );
+
     test(
       `should run scripts in parallel and interlace the output when run with --parallel --interlaced`,
       makeTemporaryEnv(
@@ -62,7 +123,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--parallel`, `--interlaced`, `--jobs=2`, `start`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--interlaced`, `--jobs=2`, `start`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -104,7 +165,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--parallel`, `--topological`, `--jobs=2`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `--jobs=2`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -130,7 +191,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--verbose`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--verbose`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -156,7 +217,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--verbose`, `--include`, `workspace-a`, `--include`, `workspace-b`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--verbose`, `--include`, `workspace-a`, `--include`, `workspace-b`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -182,7 +243,36 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `--verbose`, `--exclude`, `workspace-a`, `--exclude`, `workspace-b`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--verbose`, `--exclude`, `workspace-a`, `--exclude`, `workspace-b`, `print`));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          await expect({code, stdout, stderr}).toMatchSnapshot();
+        }
+      )
+    );
+
+    test(
+      `should not fall into endless loop if foreach cmd is the same as lifecycle script name`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          scripts: {
+            print: `yarn workspaces foreach --all print`
+          },
+          workspaces: [`packages/*`]
+        },
+        async ({ path, run }) => {
+          await setupWorkspaces(path);
+
+          let code;
+          let stdout;
+          let stderr;
+
+          try {
+            await run(`install`);
+            ({code, stdout, stderr} = await run(`print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -203,7 +293,7 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
 
           await run(`install`);
-          await expect(run(`workspaces`, `foreach`, `run`, `--jobs=2`, `print`)).rejects.toThrowError(/parallel must be set/);
+          await expect(run(`workspaces`, `foreach`, `--jobs=2`, `print`)).rejects.toThrowError(/parallel must be set/);
         }
       )
     );
@@ -219,7 +309,7 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
 
           await run(`install`);
-          await expect(run(`workspaces`, `foreach`, `run`, `--parallel`, `--jobs=1`, `print`)).rejects.toThrowError(/jobs must be greater/);
+          await expect(run(`workspaces`, `foreach`, `--parallel`, `--jobs=1`, `print`)).rejects.toThrowError(/jobs must be greater/);
         }
       )
     );

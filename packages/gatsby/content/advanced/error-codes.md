@@ -237,3 +237,27 @@ In some situation Yarn might detect that `node-gyp` is required by a package wit
 - Implicit dependencies on `node-gyp` don't provide any hint to the package manager as to which versions of `node-gyp` are compatible with the package being built. Yarn does its best by adding an implicit dependency on `npm:*`, but it might be wrong and we'll have no way to know it - your installs will just crash unexpectedly when compiled with incompatible versions.
 
 Packages omitting `node-gyp` usually do so in order to decrease the amount of packages in the final dependency tree when building the package isn't required (prebuilt binaries). While a reasonable wish, doing this goes against the package manager rules and we would prefer to solve this through a dedicated feature rather than through such hacks. In the meantime we strongly recommend to consider prebuilding native dependencies via WebAssembly if possible - then the `node-gyp` problem completely disappears.
+
+## YN0046 - `AUTOMERGE_FAILED_TO_PARSE`
+
+This error is triggered when Git conflict tokens are found within the `yarn.lock` file and one or both of the individual candidate lockfiles cannot be parsed. This typically happens because of one of those two situations:
+
+- If you're working on a branch with Yarn v2 and are trying to merge a branch using Yarn v1, this error will be triggered (the v1 lockfiles aren't Yaml, which prevents them from being parsed. Even if we could, they don't contain enough information compared to the v2 lockfiles).
+
+  - The easiest way to fix it is to use `git checkout --theirs yarn.lock`, and follow up with `yarn install` again (which can be followup by `yarn cache clean` to remove any file that wouldn't be needed anymore). This will cause the v1 lockfile to be re-imported. The v2 resolutions will be lost, but Yarn will detect it and resolve them all over again.
+
+- If you have multiple levels of conflicts. Yarn doesn't support such conflicts, and you'll have to figure out a way to only have two levels. This is typically done by first resolving the conflicts between two branches, and then resolving them again on the merge result of the previous step and the third branch.
+
+## YN0047 - `AUTOMERGE_IMMUTABLE`
+
+This error is triggered when Git conflict tokens are found within the `yarn.lock` file while Yarn is executing under the immutable mode (`--immutable` flag in `yarn install`).
+
+When under this mode, Yarn isn't allowed to edit any file, not even for automatically resolving conflicts - which is usually something you want to check when running Yarn on CI systems anyway.
+
+In order to solve this problem, try running `yarn install` again without the `--immutable` flag.
+
+## YN0048 - `AUTOMERGE_REQUIRED`
+
+This informational message is emitted when Git conflict tokens are found within the `yarn.lock` file.
+
+Yarn will then try to automatically resolve the conflict the best it can by following its internal heuristic. The algorithm itself is very simple: it will take the lockfile from the pulled branch, expand it by adding the information from the local branch, and proceed to run `yarn install` again to recompute anything that could have been lost in the process.

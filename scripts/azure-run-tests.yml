@@ -6,6 +6,7 @@ steps:
   displayName: 'Install Node.js'
 
 - bash: |
+    set -e
     node --version
     node ./scripts/run-yarn.js build:cli
     node ./scripts/run-yarn.js build:plugin-exec

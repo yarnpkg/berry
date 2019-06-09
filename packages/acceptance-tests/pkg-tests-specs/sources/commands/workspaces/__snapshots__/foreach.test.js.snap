@@ -5,6 +5,27 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: [workspace-c]: Test Workspace C
+
+➤ YN0000: [workspace-d]: Test Workspace D
+
+➤ YN0000: [workspace-e]: Test Workspace E
+
+➤ YN0000: [workspace-f]: Test Workspace F
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach should not fall into endless loop if foreach cmd is the same as lifecycle script name 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace A
+➤ YN0000: Test Workspace B
+➤ YN0000: Test Workspace C
+➤ YN0000: Test Workspace D
+➤ YN0000: Test Workspace E
+➤ YN0000: Test Workspace F
 ➤ YN0000: Done
 ",
 }
@@ -31,6 +52,25 @@ Object {
 ➤ YN0000: [workspace-b]: Test Workspace B
 
 ➤ YN0000: [workspace-c]: Test Workspace C
+
+➤ YN0000: [workspace-d]: Test Workspace D
+
+➤ YN0000: [workspace-e]: Test Workspace E
+
+➤ YN0000: [workspace-f]: Test Workspace F
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach should run on child workspaces by default 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace C
+➤ YN0000: Test Workspace D
+➤ YN0000: Test Workspace E
+➤ YN0000: Test Workspace F
 ➤ YN0000: Done
 ",
 }
@@ -43,6 +83,9 @@ Object {
   "stdout": "➤ YN0000: Test Workspace A
 ➤ YN0000: Test Workspace C
 ➤ YN0000: Test Workspace B
+➤ YN0000: Test Workspace D
+➤ YN0000: Test Workspace E
+➤ YN0000: Test Workspace F
 ➤ YN0000: Done
 ",
 }
