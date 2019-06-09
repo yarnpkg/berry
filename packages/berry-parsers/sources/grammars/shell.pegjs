@@ -55,12 +55,12 @@ PlainString
 
 DblQuoteStringSegment
   = shell:Subshell { return { type: `shell`, shell, quoted: true } }
-  / name:Variable { return { type: `variable`, name, quoted: true } }
+  / variable:Variable { return { type: `variable`, ...variable, quoted: true } }
   / DblQuoteStringText
 
 PlainStringSegment
   = shell:Subshell { return { type: `shell`, shell, quoted: false } }
-  / name:Variable { return { type: `variable`, name, quoted: false } }
+  / variable:Variable { return { type: `variable`, ...variable, quoted: false } }
   / PlainStringText
 
 SglQuoteStringText
@@ -76,8 +76,9 @@ Subshell
   = '$(' command:ShellLine ')' { return command }
 
 Variable
-  = '${' name:Identifier '}' { return name }
-  / '$' name:Identifier { return name }
+  = '${' name:Identifier ':-' defaultValue:Argument+ '}' { return { name, defaultValue } }
+  / '${' name:Identifier '}' { return { name } }
+  / '$' name:Identifier { return { name } }
 
 EnvVariable
   = [a-zA-Z0-9_]+ { return text() }
@@ -86,6 +87,6 @@ Identifier
   = [@*?#a-zA-Z0-9_-]+ { return text() }
 
 SpecialShellChars
-  = [()$|<>&; \t"']
+  = [(){}<>$|&; \t"']
 
 S = [ \t]+

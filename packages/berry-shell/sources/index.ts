@@ -110,7 +110,6 @@ async function applyEnvVariables(environmentSegments: Array<EnvSegment>, opts: S
 
   return interpolatedEnvs.reduce((envs, env) => {
     envs[env.name] = env.value;
-
     return envs;
   }, {} as ShellState['environment']);
 }
@@ -196,10 +195,14 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
                     push(opts.args[argIndex]);
                   }
                 } else {
-                  if (!(segment.name in state.variables)) {
-                    throw new Error(`Unbound variable "${segment.name}"`);
-                  } else {
+                  if (Object.prototype.hasOwnProperty.call(state.variables, segment.name)) {
                     push(state.variables[segment.name]);
+                  } else if (Object.prototype.hasOwnProperty.call(state.environment, segment.name)) {
+                    push(state.environment[segment.name]);
+                  } else if (segment.defaultValue) {
+                    push((await interpolateArguments(segment.defaultValue, opts, state)).join(` `));
+                  } else {
+                    throw new Error(`Unbound variable "${segment.name}"`);
                   }
                 }
               } break;
@@ -288,10 +291,7 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
 
       case `envs`: {
         const environment = await applyEnvVariables(current.envs, opts, state);
-
-        activeState.variables = {...activeState.variables, ...environment};
         activeState.environment = {...activeState.environment, ...environment};
-
         action = makeCommandAction([`true`], opts, activeState);
       } break;
     }
