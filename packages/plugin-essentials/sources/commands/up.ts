@@ -13,7 +13,7 @@ import {Hooks}                                                      from '..';
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
   .command(`up [... packages] [-i,--interactive] [-v,--verbose] [-E,--exact] [-T,--tilde]`)
-  .describe(`upgrade dependencies accross the project`)
+  .describe(`upgrade dependencies across the project`)
 
   .detail(`
     This command upgrades a list of packages to their latest available version across the whole project (regardless of whether they're part of \`dependencies\` or \`devDependencies\` - \`peerDependencies\` won't be affected). This is a project-wide command: all workspaces will be upgraded in the process. Note that because such dependencies are expected to be non-upgradable, dependencies relying on non-semver ranges won't be updated (this includes git dependencies that use a commit hash).
