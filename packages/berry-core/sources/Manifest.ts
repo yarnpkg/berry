@@ -27,6 +27,7 @@ export interface PublishConfig {
   access?: string;
   main?: PortablePath;
   module?: PortablePath;
+  registry?: string;
 };
 
 export class Manifest {
@@ -308,6 +309,9 @@ export class Manifest {
 
       if (typeof data.publishConfig.main === `string`)
         this.publishConfig.main = data.publishConfig.main;
+
+      if (typeof data.publishConfig.registry === `string`)
+        this.publishConfig.registry = data.publishConfig.registry;
 
       if (typeof data.publishConfig.module === `string`) {
         this.publishConfig.module = data.publishConfig.module;

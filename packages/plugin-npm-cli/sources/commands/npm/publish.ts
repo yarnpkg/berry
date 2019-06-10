@@ -50,6 +50,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const ident = workspace.manifest.name;
     const version = workspace.manifest.version;
 
+    const publishRegistry = workspace.manifest.publishConfig && workspace.manifest.publishConfig.registry || configuration.get('npmPublishRegistry') as string|undefined;
+
     const report = await StreamReport.start({configuration, stdout}, async report => {
       // Not an error if --tolerate-republish is set
       if (tolerateRepublish) {
@@ -57,6 +59,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
             configuration,
             ident,
+            registry: publishRegistry,
             json: true,
           });
 
@@ -91,6 +94,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
             configuration,
             ident,
+            registry: publishRegistry,
             json: true,
           });
         } catch (error) {
