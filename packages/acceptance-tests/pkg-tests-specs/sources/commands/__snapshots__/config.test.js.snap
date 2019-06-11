@@ -29,6 +29,7 @@ Object {
 {\\"key\\":\\"npmAuthIdent\\",\\"effective\\":null,\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmAuthToken\\",\\"effective\\":null,\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmPublishAccess\\",\\"effective\\":null,\\"description\\":\\"Default access of the published packages\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"npmPublishRegistry\\",\\"effective\\":null,\\"description\\":\\"Registry to push packages to\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"},\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
@@ -76,6 +77,7 @@ Object {
 ➤ YN0000: npmAuthIdent - Authentication identity for the npm registry (_auth in npm and yarn v1) - null
 ➤ YN0000: npmAuthToken - Authentication token for the npm registry (_authToken in npm and yarn v1) - null
 ➤ YN0000: npmPublishAccess - Default access of the published packages - null
+➤ YN0000: npmPublishRegistry - Registry to push packages to - null
 ➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Settings per package scope - Map {}
@@ -124,6 +126,7 @@ Object {
 ➤ YN0000: npmAuthIdent - <default> - null
 ➤ YN0000: npmAuthToken - <default> - null
 ➤ YN0000: npmPublishAccess - <default> - null
+➤ YN0000: npmPublishRegistry - <default> - null
 ➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - <default> - Map {}
@@ -172,6 +175,7 @@ Object {
 ➤ YN0000: npmAuthIdent - null
 ➤ YN0000: npmAuthToken - null
 ➤ YN0000: npmPublishAccess - null
+➤ YN0000: npmPublishRegistry - null
 ➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Map {}
@@ -220,6 +224,7 @@ Object {
 {\\"key\\":\\"npmAuthIdent\\",\\"effective\\":null,\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmAuthToken\\",\\"effective\\":null,\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmPublishAccess\\",\\"effective\\":null,\\"description\\":\\"Default access of the published packages\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"npmPublishRegistry\\",\\"effective\\":null,\\"description\\":\\"Registry to push packages to\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"},\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
@@ -267,6 +272,7 @@ Object {
 ➤ YN0000: npmAuthIdent - Authentication identity for the npm registry (_auth in npm and yarn v1) - null
 ➤ YN0000: npmAuthToken - Authentication token for the npm registry (_authToken in npm and yarn v1) - null
 ➤ YN0000: npmPublishAccess - Default access of the published packages - null
+➤ YN0000: npmPublishRegistry - Registry to push packages to - null
 ➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Settings per package scope - Map {}
@@ -315,6 +321,7 @@ Object {
 ➤ YN0000: npmAuthIdent - <default> - null
 ➤ YN0000: npmAuthToken - <default> - null
 ➤ YN0000: npmPublishAccess - <default> - null
+➤ YN0000: npmPublishRegistry - <default> - null
 ➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - <default> - Map {}
@@ -363,6 +370,7 @@ Object {
 ➤ YN0000: npmAuthIdent - null
 ➤ YN0000: npmAuthToken - null
 ➤ YN0000: npmPublishAccess - null
+➤ YN0000: npmPublishRegistry - null
 ➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Map {}
@@ -411,6 +419,7 @@ Object {
 {\\"key\\":\\"npmAuthIdent\\",\\"effective\\":null,\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmAuthToken\\",\\"effective\\":null,\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmPublishAccess\\",\\"effective\\":null,\\"description\\":\\"Default access of the published packages\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"npmPublishRegistry\\",\\"effective\\":null,\\"description\\":\\"Registry to push packages to\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"},\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
@@ -458,6 +467,7 @@ Object {
 ➤ YN0000: npmAuthIdent - Authentication identity for the npm registry (_auth in npm and yarn v1) - null
 ➤ YN0000: npmAuthToken - Authentication token for the npm registry (_authToken in npm and yarn v1) - null
 ➤ YN0000: npmPublishAccess - Default access of the published packages - null
+➤ YN0000: npmPublishRegistry - Registry to push packages to - null
 ➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Settings per package scope - Map {}
@@ -506,6 +516,7 @@ Object {
 ➤ YN0000: npmAuthIdent - <default> - null
 ➤ YN0000: npmAuthToken - <default> - null
 ➤ YN0000: npmPublishAccess - <default> - null
+➤ YN0000: npmPublishRegistry - <default> - null
 ➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - <default> - Map {}
@@ -554,6 +565,7 @@ Object {
 ➤ YN0000: npmAuthIdent - null
 ➤ YN0000: npmAuthToken - null
 ➤ YN0000: npmPublishAccess - null
+➤ YN0000: npmPublishRegistry - null
 ➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Map {}
@@ -602,6 +614,7 @@ Object {
 {\\"key\\":\\"npmAuthIdent\\",\\"effective\\":null,\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmAuthToken\\",\\"effective\\":null,\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmPublishAccess\\",\\"effective\\":null,\\"description\\":\\"Default access of the published packages\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"npmPublishRegistry\\",\\"effective\\":null,\\"description\\":\\"Registry to push packages to\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"},\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
@@ -649,6 +662,7 @@ Object {
 ➤ YN0000: npmAuthIdent - Authentication identity for the npm registry (_auth in npm and yarn v1) - null
 ➤ YN0000: npmAuthToken - Authentication token for the npm registry (_authToken in npm and yarn v1) - null
 ➤ YN0000: npmPublishAccess - Default access of the published packages - null
+➤ YN0000: npmPublishRegistry - Registry to push packages to - null
 ➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Settings per package scope - Map {}
@@ -697,6 +711,7 @@ Object {
 ➤ YN0000: npmAuthIdent - <default> - null
 ➤ YN0000: npmAuthToken - <default> - null
 ➤ YN0000: npmPublishAccess - <default> - null
+➤ YN0000: npmPublishRegistry - <default> - null
 ➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - <default> - Map {}
@@ -745,6 +760,7 @@ Object {
 ➤ YN0000: npmAuthIdent - null
 ➤ YN0000: npmAuthToken - null
 ➤ YN0000: npmPublishAccess - null
+➤ YN0000: npmPublishRegistry - null
 ➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Map {}
@@ -793,6 +809,7 @@ Object {
 {\\"key\\":\\"npmAuthIdent\\",\\"effective\\":null,\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmAuthToken\\",\\"effective\\":null,\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmPublishAccess\\",\\"effective\\":null,\\"description\\":\\"Default access of the published packages\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"npmPublishRegistry\\",\\"effective\\":null,\\"description\\":\\"Registry to push packages to\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"},\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
@@ -840,6 +857,7 @@ Object {
 ➤ YN0000: npmAuthIdent - Authentication identity for the npm registry (_auth in npm and yarn v1) - null
 ➤ YN0000: npmAuthToken - Authentication token for the npm registry (_authToken in npm and yarn v1) - null
 ➤ YN0000: npmPublishAccess - Default access of the published packages - null
+➤ YN0000: npmPublishRegistry - Registry to push packages to - null
 ➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Settings per package scope - Map {}
@@ -888,6 +906,7 @@ Object {
 ➤ YN0000: npmAuthIdent - <default> - null
 ➤ YN0000: npmAuthToken - <default> - null
 ➤ YN0000: npmPublishAccess - <default> - null
+➤ YN0000: npmPublishRegistry - <default> - null
 ➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - <default> - Map {}
@@ -936,6 +955,7 @@ Object {
 ➤ YN0000: npmAuthIdent - null
 ➤ YN0000: npmAuthToken - null
 ➤ YN0000: npmPublishAccess - null
+➤ YN0000: npmPublishRegistry - null
 ➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Map {}
@@ -984,6 +1004,7 @@ Object {
 {\\"key\\":\\"npmAuthIdent\\",\\"effective\\":null,\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmAuthToken\\",\\"effective\\":null,\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}
 {\\"key\\":\\"npmPublishAccess\\",\\"effective\\":null,\\"description\\":\\"Default access of the published packages\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"npmPublishRegistry\\",\\"effective\\":null,\\"description\\":\\"Registry to push packages to\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"},\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
@@ -1031,6 +1052,7 @@ Object {
 ➤ YN0000: npmAuthIdent - Authentication identity for the npm registry (_auth in npm and yarn v1) - null
 ➤ YN0000: npmAuthToken - Authentication token for the npm registry (_authToken in npm and yarn v1) - null
 ➤ YN0000: npmPublishAccess - Default access of the published packages - null
+➤ YN0000: npmPublishRegistry - Registry to push packages to - null
 ➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Settings per package scope - Map {}
@@ -1079,6 +1101,7 @@ Object {
 ➤ YN0000: npmAuthIdent - <default> - null
 ➤ YN0000: npmAuthToken - <default> - null
 ➤ YN0000: npmPublishAccess - <default> - null
+➤ YN0000: npmPublishRegistry - <default> - null
 ➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - <default> - Map {}
@@ -1127,6 +1150,7 @@ Object {
 ➤ YN0000: npmAuthIdent - null
 ➤ YN0000: npmAuthToken - null
 ➤ YN0000: npmPublishAccess - null
+➤ YN0000: npmPublishRegistry - null
 ➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Map {}

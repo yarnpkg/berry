@@ -16,7 +16,11 @@ type AuthOptions = {
   ident: Ident | null,
 }
 
-export type Options = httpUtils.Options & AuthOptions;
+type RegistryOptions = {
+  registry?: string;
+}
+
+export type Options = httpUtils.Options & AuthOptions & RegistryOptions;
 
 export function getIdentUrl(ident: Ident) {
   if (ident.scope) {
@@ -26,8 +30,10 @@ export function getIdentUrl(ident: Ident) {
   }
 }
 
-export async function get(path: string, {configuration, headers, ident, authType, ...rest}: Options) {
-  const registry = npmConfigUtils.getRegistry(ident, {configuration});
+export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
+  if (!registry)
+    registry = npmConfigUtils.getRegistry(ident, {configuration});
+
   const auth = getAuthenticationHeader({configuration}, {ident, authType});
 
   if (auth)
@@ -36,8 +42,10 @@ export async function get(path: string, {configuration, headers, ident, authType
   return await httpUtils.get(`${registry}${path}`, {configuration, headers, ...rest});
 }
 
-export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, ...rest}: Options) {
-  const registry = npmConfigUtils.getRegistry(ident, {configuration});
+export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options) {
+  if (!registry)
+    registry = npmConfigUtils.getRegistry(ident, {configuration});
+
   const auth = getAuthenticationHeader({configuration}, {ident, authType});
 
   if (auth)

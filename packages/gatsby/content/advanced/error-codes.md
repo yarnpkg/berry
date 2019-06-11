@@ -246,13 +246,15 @@ This error is triggered when Git conflict tokens are found within the `yarn.lock
 
   - The easiest way to fix it is to use `git checkout --theirs yarn.lock`, and follow up with `yarn install` again (which can be followup by `yarn cache clean` to remove any file that wouldn't be needed anymore). This will cause the v1 lockfile to be re-imported. The v2 resolutions will be lost, but Yarn will detect it and resolve them all over again.
 
-- If you have multiple levels of conflicts. Yarn doesn't support such conflicts, and you'll have to figure out a way to only have two levels. This is typically done by resolving the conflicts between two branches, and resolving them again on the merge result of the previous step and the third parth.
+- If you have multiple levels of conflicts. Yarn doesn't support such conflicts, and you'll have to figure out a way to only have two levels. This is typically done by first resolving the conflicts between two branches, and then resolving them again on the merge result of the previous step and the third branch.
 
 ## YN0047 - `AUTOMERGE_IMMUTABLE`
 
 This error is triggered when Git conflict tokens are found within the `yarn.lock` file while Yarn is executing under the immutable mode.
 
-When under this mode, Yarn isn't allowed to edit any file. As such, conflict resolution is disabled. In order to solve this problem, run `yarn install` without the `--immutable` flag.
+When under this mode, Yarn isn't allowed to edit any file, not even for automatically resolving conflicts. This mode is typically used on CI to ensure that your projects are always in a correct state before being merged into the trunk.
+
+In order to solve this problem, try running `yarn install` again on your computer without the `--immutable` flag, then commit the changes if the command succeeded.
 
 ## YN0048 - `AUTOMERGE_REQUIRED`
 
@@ -262,4 +264,4 @@ The automerge logic is pretty simple: it will take the lockfile from the pulled 
 
 ## YN0049 - `AUTOMERGE_SUCCESS`
 
-This informational message is emitted when Git conflict tokens were found within the `yarn.lock` file but were automatically fixed by Yarn.
+This informational message is emitted when Git conflict tokens were found within the `yarn.lock` file but were automatically fixed by Yarn. There's nothing else to do, everything should work out of the box!

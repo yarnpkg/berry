@@ -5,7 +5,7 @@ const ifNotWin32It = process.platform !== `win32`
   ? it
   : it.skip;
 
-const bufferResult = async (command: string, args: Array<string> = []) => {
+const bufferResult = async (command: string, args: Array<string> = [], options: any = {}) => {
   const stdout = new PassThrough();
   const stderr = new PassThrough();
 
@@ -20,7 +20,7 @@ const bufferResult = async (command: string, args: Array<string> = []) => {
     stderrChunks.push(chunk);
   });
 
-  const exitCode = await execute(command, args, {stdout, stderr, builtins: {
+  const exitCode = await execute(command, args, {... options, stdout, stderr, builtins: {
     [`test-builtin`]: async (args, opts, state) => {
       const stdinChunks = [];
 
@@ -49,44 +49,59 @@ const bufferResult = async (command: string, args: Array<string> = []) => {
 
 describe(`Simple shell features`, () => {
   it(`should support an empty string`, async () => {
-    await expect(bufferResult(``)).resolves.toMatchObject({
+    await expect(bufferResult(
+      ``,
+    )).resolves.toMatchObject({
       exitCode: 0,
       stdout: ``,
     });
   });
 
   it(`should support an empty string when passing arguments`, async () => {
-    await expect(bufferResult(``, [`hello`, `world`])).resolves.toMatchObject({
+    await expect(bufferResult(
+      ``,
+      [`hello`, `world`],
+    )).resolves.toMatchObject({
       exitCode: 0,
       stdout: ``,
     });
   });
 
   it(`should execute a regular command`, async () => {
-    await expect(bufferResult(`echo hello`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `echo hello`,
+    )).resolves.toMatchObject({
       stdout: `hello\n`,
     });
   });
 
   it(`should exit with an exit code 0 when everything looks fine`, async () => {
-    await expect(bufferResult(`echo hello`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `echo hello`,
+    )).resolves.toMatchObject({
       exitCode: 0,
     });
   });
 
   ifNotWin32It(`should throw an error when a command doesn't exist`, async () => {
-    await expect(bufferResult(`this-command-doesnt-exist-sorry`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `this-command-doesnt-exist-sorry`,
+    )).resolves.toMatchObject({
       exitCode: 127,
       stderr: `command not found: this-command-doesnt-exist-sorry\n`,
     });
   });
 
   it(`should forward the specified exit code when running exit`, async () => {
-    await expect(bufferResult(`exit 1`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `exit 1`,
+    )).resolves.toMatchObject({
       exitCode: 1,
     });
 
-    await expect(bufferResult(`exit 42`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `exit 42`,
+    )).resolves.toMatchObject({
       exitCode: 42,
     });
   });
@@ -140,104 +155,152 @@ describe(`Simple shell features`, () => {
   });
 
   it(`should shortcut the right branch of a '||' when the left branch succeeds`, async () => {
-    await expect(bufferResult(`true || echo failed`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `true || echo failed`,
+    )).resolves.toMatchObject({
       stdout: ``,
     });
   });
 
   it(`should shortcut the right branch of a '&&' when the left branch fails`, async () => {
-    await expect(bufferResult(`false && echo failed`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `false && echo failed`,
+    )).resolves.toMatchObject({
       stdout: ``,
     });
   });
 
   it(`should execute the right branch of a '||' when the left branch fails`, async () => {
-    await expect(bufferResult(`false || echo succeeds`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `false || echo succeeds`,
+    )).resolves.toMatchObject({
       stdout: `succeeds\n`,
     });
   });
 
   it(`should execute the right branch of a '&&' when the left branch succeeds`, async () => {
-    await expect(bufferResult(`true && echo succeeds`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `true && echo succeeds`,
+    )).resolves.toMatchObject({
       stdout: `succeeds\n`,
     });
   });
 
   it(`should execute both branches regardless of their exit status when using ';'`, async () => {
-    await expect(bufferResult(`echo foo; echo bar`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `echo foo; echo bar`,
+    )).resolves.toMatchObject({
       stdout: `foo\nbar\n`,
     });
   });
 
   it(`should immediatly stop the execution when calling 'exit'`, async () => {
-    await expect(bufferResult(`echo hello; exit 1; echo world`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `echo hello; exit 1; echo world`,
+    )).resolves.toMatchObject({
       exitCode: 1,
       stdout: `hello\n`,
     });
 
-    await expect(bufferResult(`echo hello && exit 0 && echo world`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `echo hello && exit 0 && echo world`,
+    )).resolves.toMatchObject({
       exitCode: 0,
       stdout: `hello\n`,
     });
   });
 
   it(`should execute a subshell when using grouping parentheses (within '||', shortcutted)`, async () => {
-    await expect(bufferResult(`true || (echo hello; echo world)`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `true || (echo hello; echo world)`,
+    )).resolves.toMatchObject({
       stdout: ``,
     });
   });
 
   it(`should execute a subshell when using grouping parentheses (within '||')`, async () => {
-    await expect(bufferResult(`false || (echo hello; echo world)`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `false || (echo hello; echo world)`,
+    )).resolves.toMatchObject({
       stdout: `hello\nworld\n`,
     });
   });
 
   it(`should execute a subshell when using grouping parentheses (within '&&', shortcutted)`, async () => {
-    await expect(bufferResult(`false && (echo hello; echo world)`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `false && (echo hello; echo world)`,
+    )).resolves.toMatchObject({
       stdout: ``,
     });
   });
 
   it(`should execute a subshell when using grouping parentheses (within '&&')`, async () => {
-    await expect(bufferResult(`true && (echo hello; echo world)`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `true && (echo hello; echo world)`,
+    )).resolves.toMatchObject({
       stdout: `hello\nworld\n`,
     });
   });
 
   it(`should allow subshells to access the $? from the parent shell`, async () => {
-    await expect(bufferResult(`false; (echo $?)`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `false; (echo $?)`,
+    )).resolves.toMatchObject({
       stdout: `1\n`,
     });
   });
 
   it(`should expose the previous exit code via $?`, async () => {
-    await expect(bufferResult(`true; echo $?`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `true; echo $?`,
+    )).resolves.toMatchObject({
       stdout: `0\n`,
     });
 
-    await expect(bufferResult(`false; echo $?`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `false; echo $?`,
+    )).resolves.toMatchObject({
       stdout: `1\n`,
     });
   });
 
   it(`should expose the number of arguments via $#`, async () => {
-    await expect(bufferResult(`echo $#`)).resolves.toMatchObject({
+    await expect(bufferResult(
+      `echo $#`,
+    )).resolves.toMatchObject({
       stdout: `0\n`,
     });
 
-    await expect(bufferResult(`echo $#`, [`hello`, `world`])).resolves.toMatchObject({
+    await expect(bufferResult(
+      `echo $#`,
+      [`hello`, `world`],
+    )).resolves.toMatchObject({
       stdout: `2\n`,
     });
   });
 
   it(`should expose individual arguments via $0, $1, ..., $n`, async () => {
-    await expect(bufferResult(`echo $0`, [`hello`, `world`])).resolves.toMatchObject({
+    await expect(bufferResult(
+      `echo $0`,
+      [`hello`, `world`],
+    )).resolves.toMatchObject({
       stdout: `hello\n`,
     });
 
-    await expect(bufferResult(`echo $1`, [`hello`, `world`])).resolves.toMatchObject({
+    await expect(bufferResult(
+      `echo $1`,
+      [`hello`, `world`],
+    )).resolves.toMatchObject({
       stdout: `world\n`,
+    });
+  });
+
+  it(`should support argument spread via $@`, async () => {
+    await expect(bufferResult(
+      `node -p 'JSON.stringify(process.argv.slice(1))' "$@"`,
+      [`hello`, `world`],
+    )).resolves.toMatchObject({
+      stdout: `["hello","world"]\n`
     });
   });
 
@@ -260,23 +323,27 @@ describe(`Simple shell features`, () => {
   it(`should support setting environment variables with shell interpolation`, async () => {
     await expect(bufferResult(
       `HOST="local"$(echo $0) PORT=1234 node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`,
-      [`host`])).resolves.toMatchObject({
+      [`host`]
+    )).resolves.toMatchObject({
       stdout: `localhost:1234`,
     });
   });
 
   it(`should support setting env variable without command`, async () => {
-    await expect(bufferResult(
-      `FOO=1 ; FOO=2 ; node -e 'process.stdout.write(process.env.FOO)'`
-    )).resolves.toMatchObject({
+    await expect(bufferResult([
+      `FOO=1`,
+      `FOO=2`,
+      `node -e 'process.stdout.write(process.env.FOO)'`,
+    ].join(` ; `))).resolves.toMatchObject({
       stdout: `2`,
     });
   });
 
   it(`should evaluate variables once before starting execution`, async () => {
-    await expect(bufferResult(
-      `FOO=1; FOO=2 echo $FOO`
-    )).resolves.toMatchObject({
+    await expect(bufferResult([
+      `FOO=1`,
+      `FOO=2 echo $FOO`,
+    ].join(` ; `))).resolves.toMatchObject({
       stdout: `1\n`,
     });
   });
@@ -290,15 +357,19 @@ describe(`Simple shell features`, () => {
   });
 
   it(`env assignment prefix syntax shouldn't persist it to the environment`, async () => {
-    await expect(bufferResult(
-      `FOO=1 ; FOO=2 echo hello ; echo $FOO`
-    )).resolves.toMatchObject({
+    await expect(bufferResult([
+      `FOO=1`,
+      `FOO=2 echo hello`,
+      `echo $FOO`,
+    ].join(` ; `))).resolves.toMatchObject({
       stdout: `hello\n1\n`,
     });
 
-    await expect(bufferResult(
-      `FOO=1 ; FOO=2 echo hello ; node -e 'process.stdout.write(process.env.FOO)'`
-    )).resolves.toMatchObject({
+    await expect(bufferResult([
+      `FOO=1`,
+      `FOO=2 echo hello`,
+      `node -e 'process.stdout.write(process.env.FOO)'`,
+    ].join(` ; `))).resolves.toMatchObject({
       stdout: `hello\n1`,
     });
 
@@ -306,10 +377,30 @@ describe(`Simple shell features`, () => {
   });
 
   it(`should support multiple env assignment without command`, async () => {
-    await expect(bufferResult(
-      `FOO=1 BAR=2; echo hello ; echo $BAR`
-    )).resolves.toMatchObject({
+    await expect(bufferResult([
+      `FOO=1 BAR=2`,
+      `echo hello`,
+      `echo $BAR`,
+    ].join(` ; `))).resolves.toMatchObject({
       stdout: `hello\n2\n`,
+    });
+  });
+
+  it(`should support using environment variables`, async () => {
+    await expect(bufferResult(
+      `echo $FOOBAR`,
+      [],
+      {env: {FOOBAR: `hello world`}}
+    )).resolves.toMatchObject({
+      stdout: `hello world\n`,
+    });
+  });
+
+  it(`should support default arguments via \${...:-...}`, async () => {
+    await expect(bufferResult(
+      `echo "\${DOESNT_EXIST:-hello world}"`,
+    )).resolves.toMatchObject({
+      stdout: `hello world\n`
     });
   });
 });
