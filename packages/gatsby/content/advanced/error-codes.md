@@ -250,7 +250,7 @@ This error is triggered when Git conflict tokens are found within the `yarn.lock
 
 ## YN0047 - `AUTOMERGE_IMMUTABLE`
 
-This error is triggered when Git conflict tokens are found within the `yarn.lock` file while Yarn is executing under the immutable mode.
+This error is triggered when Git conflict tokens are found within the `yarn.lock` file while Yarn is executing under the immutable mode  (`yarn install --immutable`).
 
 When under this mode, Yarn isn't allowed to edit any file, not even for automatically resolving conflicts. This mode is typically used on CI to ensure that your projects are always in a correct state before being merged into the trunk.
 
