@@ -852,7 +852,7 @@ export class Configuration {
 
   format(text: string, color: string) {
     if (this.get(`enableColors`)) {
-      return chalkPipe(color)(text);
+      return chalkPipe(color, ctx)(text);
     } else {
       return text;
     }
