@@ -1558,10 +1558,12 @@ __metadata:
     "@berry/pnpify": "workspace:0.0.4"
     "@berry/shell": "workspace:0.0.1"
     "@types/camelcase": "npm:5.2.0"
+    "@types/chalk-pipe": "npm:2.0.0"
     "@types/decamelize": "npm:3.0.3"
     agentkeepalive: "npm:^4.0.2"
     camelcase: "npm:^5.3.1"
     chalk: "npm:^2.4.1"
+    chalk-pipe: "npm:^2.0.0"
     clipanion: "npm:^0.15.0"
     cross-spawn: "npm:^6.0.5"
     decamelize: "npm:^3.2.0"
@@ -2886,6 +2888,15 @@ __metadata:
   version: 0.12.1
   resolution: "@types/caseless@npm:0.12.1"
   checksum: 6a77dc43a8d03c664fd5a66e769e7c55cdf8336374978280c927eeb80be71deed4c9631c20461a0677ffb5023729c6c226ae706647e2099af43489b96610303d
+  languageName: node
+  linkType: hard
+
+"@types/chalk-pipe@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@types/chalk-pipe@npm:2.0.0"
+  dependencies:
+    chalk: "npm:^2.4.1"
+  checksum: 8e91d3ac90a1069319ab54c48a636df411dc9498aa5cb1f365a3cfafdf60fe100fc5f5996dfc63a5a6c4737627ebba04cd518f70fcbebde25dfb3d38fc971070
   languageName: node
   linkType: hard
 
@@ -5949,6 +5960,16 @@ __metadata:
   version: 1.0.3
   resolution: "ccount@npm:1.0.3"
   checksum: f8337a6c7631ecec66bbe02db29d9ca965b9aa8596e2b9a66d825c27921fe01964064d24c3f93d1409738f00a623bde19a414f0ecfbc2d178c6508ce645f5005
+  languageName: node
+  linkType: hard
+
+"chalk-pipe@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "chalk-pipe@npm:2.0.0"
+  dependencies:
+    chalk: "npm:^2.4.1"
+    css-color-names: "npm:0.0.4"
+  checksum: 664e7c8ed6747d9bab0f665314532b583ddfe5d97ac1032aae035ca365011f44feeb342742e9e75507a0920f6b598701820f414a66c3729b7f48d931a85b0d33
   languageName: node
   linkType: hard
 

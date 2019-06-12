@@ -9068,6 +9068,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:5.2.0"
                 ],
                 [
+                  "@types/chalk-pipe",
+                  "npm:2.0.0"
+                ],
+                [
                   "@types/decamelize",
                   "npm:3.0.3"
                 ],
@@ -9082,6 +9086,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "chalk",
                   "npm:2.4.2"
+                ],
+                [
+                  "chalk-pipe",
+                  "npm:2.0.0"
                 ],
                 [
                   "clipanion",
@@ -14061,6 +14069,27 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/caseless",
                   "npm:0.12.1"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@types/chalk-pipe",
+        [
+          [
+            "npm:2.0.0",
+            {
+              "packageLocation": "./.yarn/cache/@types-chalk-pipe-npm-2.0.0-dc8f927cea790d3eb5a97a1ac29c58bd4d16e3fc6ce5397fda4dfe8f2c4dc48a.zip/node_modules/@types/chalk-pipe/",
+              "packageDependencies": [
+                [
+                  "@types/chalk-pipe",
+                  "npm:2.0.0"
+                ],
+                [
+                  "chalk",
+                  "npm:2.4.2"
                 ]
               ]
             }
@@ -22263,6 +22292,31 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "supports-color",
                   "npm:5.5.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "chalk-pipe",
+        [
+          [
+            "npm:2.0.0",
+            {
+              "packageLocation": "./.yarn/cache/chalk-pipe-npm-2.0.0-c060cca1be0433f9d4c5c9a2e891ba73c2fa5fb7251ab26f7f8ea3d85917f259.zip/node_modules/chalk-pipe/",
+              "packageDependencies": [
+                [
+                  "chalk-pipe",
+                  "npm:2.0.0"
+                ],
+                [
+                  "chalk",
+                  "npm:2.4.2"
+                ],
+                [
+                  "css-color-names",
+                  "npm:0.0.4"
                 ]
               ]
             }

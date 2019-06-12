@@ -15,6 +15,7 @@
     "agentkeepalive": "^4.0.2",
     "camelcase": "^5.3.1",
     "chalk": "^2.4.1",
+    "chalk-pipe": "^2.0.0",
     "clipanion": "^0.15.0",
     "cross-spawn": "^6.0.5",
     "decamelize": "^3.2.0",
@@ -37,6 +38,7 @@
   },
   "devDependencies": {
     "@berry/pnpify": "workspace:0.0.4",
+    "@types/chalk-pipe": "2.0.0",
     "typescript": "^3.3.3333"
   },
   "scripts": {
