@@ -7,7 +7,7 @@ import {Writable}                                                         from '
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`policies set-resolution <descriptor> <resolution> [-s,--save]`)
+  .command(`set resolution <descriptor> <resolution> [-s,--save]`)
   .describe(`enforce a package resolution`)
 
   .detail(`

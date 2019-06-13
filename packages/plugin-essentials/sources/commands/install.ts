@@ -39,8 +39,17 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     if (frozenLockfile === null)
       frozenLockfile = configuration.get(`frozenInstalls`);
 
-    if (configuration.projectCwd !== null)
-      await autofixMergeConflicts(configuration, frozenLockfile);
+    if (configuration.projectCwd !== null) {
+      const fixReport = await StreamReport.start({configuration, stdout, footer: false}, async (report: StreamReport) => {
+        if (await autofixMergeConflicts(configuration, frozenLockfile)) {
+          report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically fixed merge conflicts 👍`);
+        }
+      });
+
+      if (fixReport.hasErrors()) {
+        return fixReport.exitCode();
+      }
+    }
 
     const {project, workspace} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -70,15 +79,15 @@ const MERGE_CONFLICT_START = `<<<<<<<`;
 
 async function autofixMergeConflicts(configuration: Configuration, frozenLockfile: boolean) {
   if (!configuration.projectCwd)
-    return;
+    return false;
 
   const lockfilePath = ppath.join(configuration.projectCwd, configuration.get(`lockfileFilename`));
   if (!await xfs.existsPromise(lockfilePath))
-    return;
+    return false;
 
   const file = await xfs.readFilePromise(lockfilePath, `utf8`);
   if (!file.includes(MERGE_CONFLICT_START))
-    return;
+    return false;
 
   if (frozenLockfile)
     throw new ReportError(MessageName.AUTOMERGE_IMMUTABLE, `Cannot autofix a lockfile when operating with a frozen lockfile`);
@@ -99,6 +108,8 @@ async function autofixMergeConflicts(configuration: Configuration, frozenLockfil
   const serialized = stringifySyml(merged);
 
   await xfs.changeFilePromise(lockfilePath, serialized);
+
+  return true;
 }
 
 function getVariants(file: string) {

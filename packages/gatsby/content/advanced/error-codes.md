@@ -250,14 +250,18 @@ This error is triggered when Git conflict tokens are found within the `yarn.lock
 
 ## YN0047 - `AUTOMERGE_IMMUTABLE`
 
-This error is triggered when Git conflict tokens are found within the `yarn.lock` file while Yarn is executing under the immutable mode (`--immutable` flag in `yarn install`).
+This error is triggered when Git conflict tokens are found within the `yarn.lock` file while Yarn is executing under the immutable mode  (`yarn install --immutable`).
 
-When under this mode, Yarn isn't allowed to edit any file, not even for automatically resolving conflicts - which is usually something you want to check when running Yarn on CI systems anyway.
+When under this mode, Yarn isn't allowed to edit any file, not even for automatically resolving conflicts. This mode is typically used on CI to ensure that your projects are always in a correct state before being merged into the trunk.
 
-In order to solve this problem, try running `yarn install` again without the `--immutable` flag.
+In order to solve this problem, try running `yarn install` again on your computer without the `--immutable` flag, then commit the changes if the command succeeded.
 
 ## YN0048 - `AUTOMERGE_REQUIRED`
 
-This informational message is emitted when Git conflict tokens are found within the `yarn.lock` file.
+This informational message is emitted when Git conflict tokens are found within the `yarn.lock` file. Yarn will then try to automatically resolve the conflict by following its internal heuristic.
 
-Yarn will then try to automatically resolve the conflict the best it can by following its internal heuristic. The algorithm itself is very simple: it will take the lockfile from the pulled branch, expand it by adding the information from the local branch, and proceed to run `yarn install` again to recompute anything that could have been lost in the process.
+The automerge logic is pretty simple: it will take the lockfile from the pulled branch, modify it by adding the information from the local branch, and run `yarn install` again to fix anything that might have been lost in the process.
+
+## YN0049 - `AUTOMERGE_SUCCESS`
+
+This informational message is emitted when Git conflict tokens were found within the `yarn.lock` file but were automatically fixed by Yarn. There's nothing else to do, everything should work out of the box!

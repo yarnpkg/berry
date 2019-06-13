@@ -55,7 +55,7 @@ export enum MessageName {
   STACK_OVERFLOW_RESOLUTION = 45,
   AUTOMERGE_FAILED_TO_PARSE = 46,
   AUTOMERGE_IMMUTABLE = 47,
-  AUTOMERGE_REQUIRED = 48,
+  AUTOMERGE_SUCCESS = 48,
 }
 
 export class ReportError extends Error {
