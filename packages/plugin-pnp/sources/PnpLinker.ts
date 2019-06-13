@@ -251,6 +251,9 @@ class PnpInstaller implements Installer {
   }
 
   private async getBuildScripts(fetchResult: FetchResult) {
+    if (!await fetchResult.packageFs.existsPromise(ppath.resolve(fetchResult.prefixPath, toFilename(`package.json`))))
+      return [];
+
     const buildScripts = [];
     const {scripts} = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
 
