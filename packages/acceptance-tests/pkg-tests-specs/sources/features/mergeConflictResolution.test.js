@@ -37,7 +37,10 @@ describe(`Features`, () => {
 
           await expect(execFile(`git`, [`merge`, `2.0.0`], {cwd: path})).rejects.toThrow(/CONFLICT/);
 
-          await expect(readFile(`${path}/yarn.lock`, `utf8`)).resolves.toMatchSnapshot();
+          let lockfile = await readFile(`${path}/yarn.lock`, `utf8`);
+          lockfile = lockfile.replace(/(checksum: ).*/g, `$1<checksum stripped>`);
+
+          await expect(lockfile).toMatchSnapshot();
           await expect(run(`install`)).resolves.toMatchSnapshot();
         },
       ),

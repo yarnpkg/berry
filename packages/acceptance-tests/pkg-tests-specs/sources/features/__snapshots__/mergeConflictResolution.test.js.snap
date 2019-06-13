@@ -11,11 +11,11 @@ __metadata:
 <<<<<<< HEAD
   version: 1.0.0
   resolution: \\"no-deps@npm:1.0.0\\"
-  checksum: 25f16c3cf533d2bcee1aaeeb825bccee290dfb13e60442df735bb3521c95087f8b6a77accad79f79f3a51d60c6ed222b430a73edb4cf4306375e9329d9ba70f9
+  checksum: <checksum stripped>
 =======
   version: 2.0.0
   resolution: \\"no-deps@npm:2.0.0\\"
-  checksum: 8ed1476baacbd817a052b42c19b5662bd2335c7b1dfc17cbee2b0dcf026d534c12631a9484865d3e84c68cf5ac72c112f506f5d5e058b5c5e21307ec223927c7
+  checksum: <checksum stripped>
 >>>>>>> 2.0.0
   languageName: node
   linkType: hard
