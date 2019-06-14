@@ -8,6 +8,7 @@ import {MapLike}                         from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
+  BEST_EFFORT,
   CONFIGURATION,
   ALWAYS_AUTH,
 }
@@ -90,7 +91,7 @@ function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGUR
   if (effectiveConfiguration.get(`npmAuthIdent`))
     return `Basic ${effectiveConfiguration.get(`npmAuthIdent`)}`;
 
-  if (mustAuthenticate) {
+  if (mustAuthenticate && authType !== AuthType.BEST_EFFORT) {
     throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND ,`No authentication configured for request`);
   } else {
     return null;
@@ -102,6 +103,7 @@ function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
     case AuthType.CONFIGURATION:
       return authConfiguration.get(`npmAlwaysAuth`);
 
+    case AuthType.BEST_EFFORT:
     case AuthType.ALWAYS_AUTH:
       return true;
 
