@@ -44,6 +44,7 @@ const registrySettings: {[name: string]: SettingsDefinition} = {
 
 const plugin: Plugin = {
   configuration: {
+    ...authSettings,
     ...registrySettings,
 
     npmScopes: {
