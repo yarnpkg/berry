@@ -37,8 +37,8 @@ export function getIdentUrl(ident: Ident) {
 export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
   if (ident)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
-  if (ident && ident.scope)
-    authType = AuthType.ALWAYS_AUTH;
+  if (ident && ident.scope && typeof authType === `undefined`)
+    authType = AuthType.CONFIGURATION;
 
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
@@ -53,8 +53,8 @@ export async function get(path: string, {configuration, headers, ident, authType
 export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options) {
   if (ident)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
-  if (ident && ident.scope)
-    authType = AuthType.ALWAYS_AUTH;
+  if (ident && ident.scope && typeof authType === `undefined`)
+    authType = AuthType.CONFIGURATION;
 
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);

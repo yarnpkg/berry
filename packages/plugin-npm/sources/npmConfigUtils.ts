@@ -22,13 +22,13 @@ export function getPublishRegistry(manifest: Manifest, {configuration}: {configu
 export function getScopeRegistry(scope: string | null, {configuration, type = RegistryType.FETCH_REGISTRY}: {configuration: Configuration, type?: RegistryType}): string {
   const scopeConfiguration = getScopeConfiguration(scope, {configuration});
   if (scopeConfiguration === null)
-    return configuration.get(type);
+    return getDefaultRegistry({configuration, type});
 
   const scopeRegistry = scopeConfiguration.get(type);
-  if (scopeRegistry !== null)
-    return scopeRegistry;
+  if (scopeRegistry === null)
+    return getDefaultRegistry({configuration, type});
 
-  return getDefaultRegistry({configuration, type});
+  return scopeRegistry;
 }
 
 export function getDefaultRegistry({configuration, type = RegistryType.FETCH_REGISTRY}: {configuration: Configuration, type?: RegistryType}): string {
