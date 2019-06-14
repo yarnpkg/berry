@@ -30,6 +30,11 @@ const authSettings: {[name: string]: SettingsDefinition} = {
 };
 
 const registrySettings: {[name: string]: SettingsDefinition} = {
+  npmPublishRegistry: {
+    description: `Registry to push packages to`,
+    type: SettingsType.STRING,
+    default: null,
+  },
   npmRegistryServer: {
     description: `URL of the selected npm registry (note: npm enterprise isn't supported)`,
     type: SettingsType.STRING,

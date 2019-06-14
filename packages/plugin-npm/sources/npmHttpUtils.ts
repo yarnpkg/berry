@@ -9,16 +9,19 @@ export enum AuthType {
   NO_AUTH,
   CONFIGURATION,
   ALWAYS_AUTH,
-};
+}
 
 type AuthOptions = {
   authType?: AuthType,
-  ident: Ident | null,
-}
+};
 
 type RegistryOptions = {
-  registry?: string;
-}
+  ident: Ident,
+  registry?: void,
+} | {
+  ident?: void,
+  registry: string;
+};
 
 export type Options = httpUtils.Options & AuthOptions & RegistryOptions;
 
@@ -31,11 +34,12 @@ export function getIdentUrl(ident: Ident) {
 }
 
 export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
-  if (!registry)
-    registry = npmConfigUtils.getRegistry(ident, {configuration});
+  if (ident)
+    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
+  if (ident && ident.scope)
+    authType = AuthType.ALWAYS_AUTH;
 
-  const auth = getAuthenticationHeader({configuration}, {ident, authType});
-
+  const auth = getAuthenticationHeader(registry as string, {authType, configuration});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -43,42 +47,41 @@ export async function get(path: string, {configuration, headers, ident, authType
 }
 
 export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options) {
-  if (!registry)
-    registry = npmConfigUtils.getRegistry(ident, {configuration});
+  if (ident)
+    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
+  if (ident && ident.scope)
+    authType = AuthType.ALWAYS_AUTH;
 
-  const auth = getAuthenticationHeader({configuration}, {ident, authType});
-
+  const auth = getAuthenticationHeader(registry as string, {authType, configuration});
   if (auth)
     headers = {...headers, authorization: auth};
 
   try {
-    const response = await httpUtils.put(`${registry}${path}`, body, {configuration, headers, ...rest});
-
-    return response;
+    return await httpUtils.put(`${registry}${path}`, body, {configuration, headers, ...rest});
   } catch (error) {
-    if (requestRequiresOtp(error)) {
-      const otp = await askForOtp();
-      const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
+    if (!isOtpError(error))
+      throw error;
 
-      // Retrying request with OTP
-      return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
-    }
+    const otp = await askForOtp();
+    const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
 
-    throw error;
+    // Retrying request with OTP
+    return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
   }
 }
 
-function getAuthenticationHeader({configuration}: {configuration: Configuration}, {ident, authType = AuthType.CONFIGURATION}: AuthOptions) {
-  const authConfiguration = npmConfigUtils.getAuthenticationConfiguration(ident, {configuration});
-  const mustAuthenticate = shouldAuthenticate(authConfiguration, authType);
+function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration}: {authType?: AuthType, configuration: Configuration}) {
+  const registryConfiguration = npmConfigUtils.getRegistryConfiguration(registry, {configuration});
+  const effectiveConfiguration = registryConfiguration || configuration;
 
-  if (!mustAuthenticate && (!ident || !ident.scope))
+  const mustAuthenticate = shouldAuthenticate(effectiveConfiguration, authType);
+  if (!mustAuthenticate)
     return null;
 
-  if (authConfiguration.get(`npmAuthToken`))
-    return `Bearer ${authConfiguration.get(`npmAuthToken`)}`;
-  if (authConfiguration.get(`npmAuthIdent`))
-    return `Basic ${authConfiguration.get(`npmAuthIdent`)}`;
+  if (effectiveConfiguration.get(`npmAuthToken`))
+    return `Bearer ${effectiveConfiguration.get(`npmAuthToken`)}`;
+  if (effectiveConfiguration.get(`npmAuthIdent`))
+    return `Basic ${effectiveConfiguration.get(`npmAuthIdent`)}`;
 
   if (mustAuthenticate) {
     throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND ,`No authentication configured for request`);
@@ -116,7 +119,7 @@ async function askForOtp() {
   return otp as string;
 }
 
-function requestRequiresOtp(error: any) {
+function isOtpError(error: any) {
   try {
     const authMethods = error.headers['www-authenticate'].split(/,\s*/).map((s: string) => s.toLowerCase());
 

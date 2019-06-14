@@ -2,7 +2,7 @@ import {WorkspaceRequiredError}                                                 
 import {Configuration, MessageName, PluginConfiguration, Project, ReportError, StreamReport, Workspace} from '@berry/core';
 import {miscUtils, structUtils}                                                                         from '@berry/core';
 import {PortablePath}                                                                                   from '@berry/fslib';
-import {npmHttpUtils}                                                                                   from '@berry/plugin-npm';
+import {npmConfigUtils, npmHttpUtils}                                                                   from '@berry/plugin-npm';
 import {packUtils}                                                                                      from '@berry/plugin-pack';
 import {UsageError}                                                                                     from 'clipanion';
 import {createHash}                                                                                     from 'crypto';
@@ -50,7 +50,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const ident = workspace.manifest.name;
     const version = workspace.manifest.version;
 
-    const publishRegistry = workspace.manifest.publishConfig && workspace.manifest.publishConfig.registry || configuration.get('npmPublishRegistry') as string|undefined;
+    const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
 
     const report = await StreamReport.start({configuration, stdout}, async report => {
       // Not an error if --tolerate-republish is set
@@ -58,8 +58,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         try {
           const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
             configuration,
-            ident,
-            registry: publishRegistry,
+            registry,
             json: true,
           });
 
@@ -93,8 +92,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         try {
           await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
             configuration,
-            ident,
-            registry: publishRegistry,
+            registry,
             json: true,
           });
         } catch (error) {
