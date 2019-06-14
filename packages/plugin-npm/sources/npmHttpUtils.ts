@@ -1,6 +1,7 @@
 import {Configuration, Ident, httpUtils} from '@berry/core';
 import {MessageName, ReportError}        from '@berry/core';
 import inquirer                          from 'inquirer';
+import {resolve as resolveUrl}           from 'url';
 
 import * as npmConfigUtils               from './npmConfigUtils';
 import {MapLike}                         from './npmConfigUtils';
@@ -39,11 +40,14 @@ export async function get(path: string, {configuration, headers, ident, authType
   if (ident && ident.scope)
     authType = AuthType.ALWAYS_AUTH;
 
-  const auth = getAuthenticationHeader(registry as string, {authType, configuration});
+  if (typeof registry !== `string`)
+    throw new Error(`Assertion failed: The registry should be a string`);
+
+  const auth = getAuthenticationHeader(registry, {authType, configuration});
   if (auth)
     headers = {...headers, authorization: auth};
 
-  return await httpUtils.get(`${registry}${path}`, {configuration, headers, ...rest});
+  return await httpUtils.get(resolveUrl(registry, path), {configuration, headers, ...rest});
 }
 
 export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options) {
@@ -52,12 +56,15 @@ export async function put(path: string, body: httpUtils.Body, {configuration, he
   if (ident && ident.scope)
     authType = AuthType.ALWAYS_AUTH;
 
-  const auth = getAuthenticationHeader(registry as string, {authType, configuration});
+  if (typeof registry !== `string`)
+    throw new Error(`Assertion failed: The registry should be a string`);
+
+  const auth = getAuthenticationHeader(registry, {authType, configuration});
   if (auth)
     headers = {...headers, authorization: auth};
 
   try {
-    return await httpUtils.put(`${registry}${path}`, body, {configuration, headers, ...rest});
+    return await httpUtils.put(resolveUrl(registry, path), body, {configuration, headers, ...rest});
   } catch (error) {
     if (!isOtpError(error))
       throw error;
