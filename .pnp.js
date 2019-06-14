@@ -185,6 +185,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "@berry/pnpify",
         [
           "virtual:4618db608ddd5ff4b385ac4f8bba9302fe80be01f8be4f2c09326b6232f308ff5592ae5490aee3e37d21fb1703c6a7a0990d92b6e5f86a74e640f011f12da48b#workspace:packages/berry-pnpify",
+          "virtual:4bd66d78d6f2a01856119217f243ce59d8bcf964e11ca85388b70ec98bb2769b81ea9ed41f57dceb8c20587a07ed5497ecd2676962b483f238e320ef833ccd13#workspace:packages/berry-pnpify",
           "virtual:53316e3861a9cd75b9206b9fa56b1cf1f8a584283d70f2515b5ec65a9e6cacee0c37fbd3099eaa1da30185e4be6efe7ccc9759dc2e4955158da7ba11082fe75b#workspace:packages/berry-pnpify",
           "virtual:58bd316d2180c755c7333a7367995ecfb29eb79bd6aa6d12ef0ccc438df049ea0de191d7b3c41c65532e0080178087a033bdd2809f79ade3fd9767ae44ab5cbf#workspace:packages/berry-pnpify",
           "virtual:61683296557f6504402afc6ac8f11b468346aa7146fcee97ba707580f280f3707a7650c208edf27eb6b04aef21e131d320377a24aef0891626b9cdf7c27c2a07#workspace:packages/berry-pnpify",
@@ -10379,6 +10380,42 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "webpack-cli",
                   "virtual:ebda344aac3d4e2c5e1a7f09ca03a20b768b09c34c877988dc4728f1bbd588bc0781f345fc383448215cc1cf688c22707f0757da5361f31e9a446c4ff7d97a3c#npm:3.3.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:4bd66d78d6f2a01856119217f243ce59d8bcf964e11ca85388b70ec98bb2769b81ea9ed41f57dceb8c20587a07ed5497ecd2676962b483f238e320ef833ccd13#workspace:packages/berry-pnpify",
+            {
+              "packageLocation": "./.yarn/virtual/@berry-pnpify-virtual-3567f48dde412faeedd72867112ff7908dea950c4514f3acadbd741846d13a98/",
+              "packageDependencies": [
+                [
+                  "@berry/pnpify",
+                  "virtual:4bd66d78d6f2a01856119217f243ce59d8bcf964e11ca85388b70ec98bb2769b81ea9ed41f57dceb8c20587a07ed5497ecd2676962b483f238e320ef833ccd13#workspace:packages/berry-pnpify"
+                ],
+                [
+                  "@berry/builder",
+                  "workspace:packages/berry-builder"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@berry/pnp",
+                  "workspace:packages/berry-pnp"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
+                ],
+                [
+                  "webpack",
+                  "npm:4.28.4"
+                ],
+                [
+                  "webpack-cli",
+                  "virtual:3567f48dde412faeedd72867112ff7908dea950c4514f3acadbd741846d13a989856d71986b117878761e0a02e48fd285846f0bac350c9276c9f55ae393c1bb6#virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:3.3.2"
                 ]
               ]
             }
@@ -54811,14 +54848,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:eb984aafa4809c536767e60d24b7bd923578a3333b3da246798b062a7744d91f6e12c455abcc9a9551da1dbbe8b3b7d12f4e0f00dffcc2bd1a0c60e2e9dd4eff#npm:0.0.3"
                 ],
                 [
-                  "fbjs",
-                  "npm:1.0.0"
-                ],
-                [
-                  "object-assign",
-                  "npm:4.1.1"
-                ],
-                [
                   "react",
                   "npm:15.6.2"
                 ]
@@ -64760,6 +64789,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-fslib"
                 ],
                 [
+                  "@berry/pnpify",
+                  "virtual:4bd66d78d6f2a01856119217f243ce59d8bcf964e11ca85388b70ec98bb2769b81ea9ed41f57dceb8c20587a07ed5497ecd2676962b483f238e320ef833ccd13#workspace:packages/berry-pnpify"
+                ],
+                [
                   "pnp-webpack-plugin",
                   "npm:1.4.3"
                 ],
@@ -65099,6 +65132,66 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "v8-compile-cache",
                   "npm:2.0.2"
+                ],
+                [
+                  "yargs",
+                  "npm:12.0.5"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:3567f48dde412faeedd72867112ff7908dea950c4514f3acadbd741846d13a989856d71986b117878761e0a02e48fd285846f0bac350c9276c9f55ae393c1bb6#virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:3.3.2",
+            {
+              "packageLocation": "./.yarn/virtual/webpack-cli-virtual-06f987e5737e6bc92b61444ea062572f9cdc1c8d82f2204471eea51b9f3a7263/node_modules/webpack-cli/",
+              "packageDependencies": [
+                [
+                  "webpack-cli",
+                  "virtual:3567f48dde412faeedd72867112ff7908dea950c4514f3acadbd741846d13a989856d71986b117878761e0a02e48fd285846f0bac350c9276c9f55ae393c1bb6#virtual:88bf0fd813c3ba3cdff3158185976970b82deecf2d8542a02698a905f41bf70978521adb55bd6740da91a6efd87dada9b6c89dc11a76ac81e03171c97bf9e512#npm:3.3.2"
+                ],
+                [
+                  "chalk",
+                  "npm:2.4.2"
+                ],
+                [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
+                  "enhanced-resolve",
+                  "npm:4.1.0"
+                ],
+                [
+                  "findup-sync",
+                  "npm:2.0.0"
+                ],
+                [
+                  "global-modules",
+                  "npm:1.0.0"
+                ],
+                [
+                  "import-local",
+                  "npm:2.0.0"
+                ],
+                [
+                  "interpret",
+                  "npm:1.2.0"
+                ],
+                [
+                  "loader-utils",
+                  "npm:1.2.3"
+                ],
+                [
+                  "supports-color",
+                  "npm:5.5.0"
+                ],
+                [
+                  "v8-compile-cache",
+                  "npm:2.0.2"
+                ],
+                [
+                  "webpack",
+                  "npm:4.28.4"
                 ],
                 [
                   "yargs",
