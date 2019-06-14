@@ -4,10 +4,6 @@ import {Hooks as EssentialsHooks}             from '@berry/plugin-essentials';
 import {suggestUtils}                         from '@berry/plugin-essentials';
 import {Hooks as PackHooks}                   from '@berry/plugin-pack';
 
-const EXCLUDED_PACKAGES = new Set([
-  structUtils.makeIdent(null, `typescript`).identHash,
-]);
-
 const getTypesName = (descriptor: Descriptor) => {
   return descriptor.scope
     ? `${descriptor.scope}__${descriptor.name}`
