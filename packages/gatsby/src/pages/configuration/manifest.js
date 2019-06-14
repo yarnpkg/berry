@@ -224,6 +224,14 @@ const PackageJsonDoc = () => <>
         </>}
       >
         <JsonScalarProperty
+          name={`access`}
+          anchor={`publishConfig.main`}
+          placeholder={`./build/index.js`}
+          description={<>
+            Defines the package access level to use when publishing packages to the npm registry. Valid values are <code>public</code> and <code>restricted</code>, but <code>restricted</code> usually requires to register for a paid plan (this is up to the registry you use).
+          </>}
+        />
+        <JsonScalarProperty
           name={`main`}
           anchor={`publishConfig.main`}
           placeholder={`./build/index.js`}
@@ -237,6 +245,14 @@ const PackageJsonDoc = () => <>
           placeholder={`./build/index.mjs`}
           description={<>
             Same principle as the <code>publishConfig.main</code> property; this value will be used instead of the top-level <code>module</code> field when generating the workspace tarball.
+          </>}
+        />
+        <JsonScalarProperty
+          name={`module`}
+          anchor={`publishConfig.registry`}
+          placeholder={`https://npm.pkg.github.com`}
+          description={<>
+            If present, will replace whatever registry is defined in the configuration when the package is about to be pushed to a remote location.
           </>}
         />
       </JsonObjectProperty>

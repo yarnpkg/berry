@@ -1,21 +1,24 @@
-import {Configuration, Ident, MessageName}              from '@berry/core';
-import {PluginConfiguration, StreamReport, structUtils} from '@berry/core';
-import {PortablePath}                                   from '@berry/fslib';
-import {npmHttpUtils}                                   from '@berry/plugin-npm';
-import inquirer                                         from 'inquirer';
-import {Readable, Writable}                             from 'stream';
+import {openWorkspace}                     from '@berry/cli';
+import {Configuration, MessageName}        from '@berry/core';
+import {PluginConfiguration, StreamReport} from '@berry/core';
+import {PortablePath}                      from '@berry/fslib';
+import {npmConfigUtils, npmHttpUtils}      from '@berry/plugin-npm';
+import inquirer                            from 'inquirer';
+import {Readable, Writable}                from 'stream';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`npm login [-s,--scope SCOPE]`)
+  .command(`npm login [-s,--scope SCOPE] [--publish]`)
   .categorize(`Npm-related commands`)
   .describe(`store new login info to access the npm registry`)
 
   .detail(`
-    This command will ask you for your username, password, and 2FA One-Time Password (when it applies). It will then modify your local configuration (in your home folder) to reference the new tokens thus generated.
+    This command will ask you for your username, password, and 2FA One-Time-Password (when it applies). It will then modify your local configuration (in your home folder, never in the project itself) to reference the new tokens thus generated.
 
     Adding the \`-s,--scope\` flag will cause the authentication to be done against whatever registry is configured for the associated scope (see also \`npmScopes\`).
+
+    Adding the \`--publish\` flag will cause the authentication to be done against the registry used when publishing the package (see also \`publishConfig.registry\` and \`npmPublishRegistry\`).
   `)
 
   .example(
@@ -24,11 +27,16 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   )
 
   .example(
-    `Login to a scoped registry`,
+    `Login to the registry linked to the @my-scope registry`,
     `yarn npm login --scope my-scope`,
   )
 
-  .action(async ({cwd, stdin, stdout, scope}: {cwd: PortablePath, stdin: Readable, stdout: Writable, scope: string}) => {
+  .example(
+    `Login to the publish registry for the current package`,
+    `yarn npm login --publish`,
+  )
+
+  .action(async ({cwd, stdin, stdout, scope, publish}: {cwd: PortablePath, stdin: Readable, stdout: Writable, scope: string, publish: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     // @ts-ignore
@@ -37,25 +45,30 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       output: stdout,
     });
 
+    let registry: string;
+    if (scope && publish)
+      registry = npmConfigUtils.getScopeRegistry(scope, {configuration, type: npmConfigUtils.RegistryType.PUBLISH_REGISTRY});
+    else if (scope)
+      registry = npmConfigUtils.getScopeRegistry(scope, {configuration});
+    else if (publish)
+      registry = npmConfigUtils.getPublishRegistry((await openWorkspace(configuration, cwd)).manifest, {configuration});
+    else
+      registry = npmConfigUtils.getDefaultRegistry({configuration});
+
     const report = await StreamReport.start({configuration, stdout}, async report => {
-      let ident: Ident | null = null;
-
-      if (scope)
-        ident = structUtils.makeIdent(scope, ``);
-
       const credentials = await getCredentials(prompt);
       const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
 
       try {
         const response = await npmHttpUtils.put(url, credentials, {
           configuration,
-          ident,
+          registry,
           json: true,
           authType: npmHttpUtils.AuthType.NO_AUTH,
         });
 
         // @ts-ignore
-        await setAuthToken(ident, response.token);
+        await setAuthToken(registry, response.token, {configuration});
 
         return report.reportInfo(MessageName.UNNAMED, `Successfully logged in`);
       } catch (error) {
@@ -66,22 +79,16 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     return report.exitCode();
   });
 
-async function setAuthToken(ident: Ident | null, npmAuthToken: string) {
-  const scope = ident && ident.scope;
-
-  if (scope) {
-    return await Configuration.updateHomeConfiguration({
-      npmScopes: (scopes: {[key: string]: any} = {}) => ({
-        ...scopes,
-        [scope]: {
-          ...scopes[scope],
-          npmAuthToken,
-        },
-      }),
-    });
-  }
-
-  return await Configuration.updateHomeConfiguration({npmAuthToken});
+async function setAuthToken(registry: string, npmAuthToken: string, {configuration}: {configuration: Configuration}) {
+  return await Configuration.updateHomeConfiguration({
+    npmRegistries: (registries: {[key: string]: any} = {}) => ({
+      ...registries,
+      [registry]: {
+        ...registries[registry],
+        npmAuthToken,
+      },
+    }),
+  });
 }
 
 async function getCredentials(prompt: any) {

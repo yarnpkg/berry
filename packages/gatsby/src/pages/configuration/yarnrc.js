@@ -129,6 +129,53 @@ const YarnrcDoc = () => <>
           Defines the default access to use when publishing packages to the npm registry. Valid values are <code>public</code> and <code>restricted</code>, but <code>restricted</code> usually requires to register for a paid plan (this is up to the registry you use).
         </>}
       />
+      <SymlScalarProperty
+        name={`npmPublishRegistry`}
+        placeholder={`https://npm.pkg.github.com`}
+        description={<>
+          Defines the registry that must be used when pushing packages. Doesn't need to be defined, in which case the value of <code>npmRegistryServer</code> will be used. Overriden by <code>publishConfig.registry</code>.
+        </>}
+      />
+      <SymlObjectProperty
+        name={`npmRegistries`}
+        margin={true}
+        description={<>
+          On top of the global configuration, registries can be configured on a per-scope basis (for example to instruct Yarn to use your private registry when accessing packages from a given scope). The following properties are supported:
+        </>}
+      >
+        <SymlObjectProperty
+          name={`//npm.pkg.github.com`}
+          margin={true}
+          description={<>
+            This key represent the registry that's covered by the settings defined in the nested object. The protocol is optional (using <code>https://npm.pkg.github.com</code> would work just as well).
+          </>}
+        >
+          <SymlScalarProperty
+            name={`npmAlwaysAuth`}
+            anchor={`npmRegistries.npmAlwaysAuth`}
+            placeholder={true}
+            description={<>
+              See <a href={`#npmAlwaysAuth`}><code>npmAlwaysAuth</code></a>.
+            </>}
+          />
+          <SymlScalarProperty
+            name={`npmAuthIdent`}
+            anchor={`npmRegistries.npmAuthIdent`}
+            placeholder={`username:password`}
+            description={<>
+              See <a href={`#npmAuthIdent`}><code>npmAuthIdent</code></a>.
+            </>}
+          />
+          <SymlScalarProperty
+            name={`npmAuthToken`}
+            anchor={`npmRegistries.npmAuthToken`}
+            placeholder={`ffffffff-ffff-ffff-ffff-ffffffffffff`}
+            description={<>
+              See <a href={`#npmAuthToken`}><code>npmAuthToken</code></a>.
+            </>}
+          />
+        </SymlObjectProperty>
+      </SymlObjectProperty>
       <SymlObjectProperty
         name={`npmScopes`}
         margin={true}
@@ -144,27 +191,19 @@ const YarnrcDoc = () => <>
           </>}
         >
           <SymlScalarProperty
-            name={`npmAlwaysAuth`}
-            anchor={`npmScopes.npmAlwaysAuth`}
+            name={`npmPublishRegistry`}
+            anchor={`npmScopes.npmPublishRegistry`}
             placeholder={true}
             description={<>
-              See <a href={`#npmAlwaysAuth`}><code>npmAlwaysAuth</code></a>.
+              See <a href={`#npmPublishRegistry`}><code>npmPublishRegistry</code></a>.
             </>}
           />
           <SymlScalarProperty
-            name={`npmAuthIdent`}
-            anchor={`npmScopes.npmAuthIdent`}
-            placeholder={`username:password`}
+            name={`npmRegistryServer`}
+            anchor={`npmScopes.npmRegistryServer`}
+            placeholder={true}
             description={<>
-              See <a href={`#npmAuthIdent`}><code>npmAuthIdent</code></a>.
-            </>}
-          />
-          <SymlScalarProperty
-            name={`npmAuthToken`}
-            anchor={`npmScopes.npmAuthToken`}
-            placeholder={`ffffffff-ffff-ffff-ffff-ffffffffffff`}
-            description={<>
-              See <a href={`#npmAuthToken`}><code>npmAuthToken</code></a>.
+              See <a href={`#npmRegistryServer`}><code>npmRegistryServer</code></a>.
             </>}
           />
         </SymlObjectProperty>

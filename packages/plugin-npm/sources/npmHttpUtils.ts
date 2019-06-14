@@ -1,24 +1,29 @@
 import {Configuration, Ident, httpUtils} from '@berry/core';
 import {MessageName, ReportError}        from '@berry/core';
 import inquirer                          from 'inquirer';
+import {resolve as resolveUrl}           from 'url';
 
 import * as npmConfigUtils               from './npmConfigUtils';
 import {MapLike}                         from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
+  BEST_EFFORT,
   CONFIGURATION,
   ALWAYS_AUTH,
-};
+}
 
 type AuthOptions = {
   authType?: AuthType,
-  ident: Ident | null,
-}
+};
 
 type RegistryOptions = {
-  registry?: string;
-}
+  ident: Ident,
+  registry?: void,
+} | {
+  ident?: void,
+  registry: string;
+};
 
 export type Options = httpUtils.Options & AuthOptions & RegistryOptions;
 
@@ -31,56 +36,60 @@ export function getIdentUrl(ident: Ident) {
 }
 
 export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
-  if (!registry)
-    registry = npmConfigUtils.getRegistry(ident, {configuration});
+  if (ident)
+    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
+  if (ident && ident.scope && typeof authType === `undefined`)
+    authType = AuthType.BEST_EFFORT;
 
-  const auth = getAuthenticationHeader({configuration}, {ident, authType});
+  if (typeof registry !== `string`)
+    throw new Error(`Assertion failed: The registry should be a string`);
 
+  const auth = getAuthenticationHeader(registry, {authType, configuration});
   if (auth)
     headers = {...headers, authorization: auth};
 
-  return await httpUtils.get(`${registry}${path}`, {configuration, headers, ...rest});
+  return await httpUtils.get(resolveUrl(registry, path), {configuration, headers, ...rest});
 }
 
 export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options) {
-  if (!registry)
-    registry = npmConfigUtils.getRegistry(ident, {configuration});
+  if (ident)
+    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
 
-  const auth = getAuthenticationHeader({configuration}, {ident, authType});
+  if (typeof registry !== `string`)
+    throw new Error(`Assertion failed: The registry should be a string`);
 
+  const auth = getAuthenticationHeader(registry, {authType, configuration});
   if (auth)
     headers = {...headers, authorization: auth};
 
   try {
-    const response = await httpUtils.put(`${registry}${path}`, body, {configuration, headers, ...rest});
-
-    return response;
+    return await httpUtils.put(resolveUrl(registry, path), body, {configuration, headers, ...rest});
   } catch (error) {
-    if (requestRequiresOtp(error)) {
-      const otp = await askForOtp();
-      const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
+    if (!isOtpError(error))
+      throw error;
 
-      // Retrying request with OTP
-      return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
-    }
+    const otp = await askForOtp();
+    const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
 
-    throw error;
+    // Retrying request with OTP
+    return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
   }
 }
 
-function getAuthenticationHeader({configuration}: {configuration: Configuration}, {ident, authType = AuthType.CONFIGURATION}: AuthOptions) {
-  const authConfiguration = npmConfigUtils.getAuthenticationConfiguration(ident, {configuration});
-  const mustAuthenticate = shouldAuthenticate(authConfiguration, authType);
+function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration}: {authType?: AuthType, configuration: Configuration}) {
+  const registryConfiguration = npmConfigUtils.getRegistryConfiguration(registry, {configuration});
+  const effectiveConfiguration = registryConfiguration || configuration;
 
-  if (!mustAuthenticate && (!ident || !ident.scope))
+  const mustAuthenticate = shouldAuthenticate(effectiveConfiguration, authType);
+  if (!mustAuthenticate)
     return null;
 
-  if (authConfiguration.get(`npmAuthToken`))
-    return `Bearer ${authConfiguration.get(`npmAuthToken`)}`;
-  if (authConfiguration.get(`npmAuthIdent`))
-    return `Basic ${authConfiguration.get(`npmAuthIdent`)}`;
+  if (effectiveConfiguration.get(`npmAuthToken`))
+    return `Bearer ${effectiveConfiguration.get(`npmAuthToken`)}`;
+  if (effectiveConfiguration.get(`npmAuthIdent`))
+    return `Basic ${effectiveConfiguration.get(`npmAuthIdent`)}`;
 
-  if (mustAuthenticate) {
+  if (mustAuthenticate && authType !== AuthType.BEST_EFFORT) {
     throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND ,`No authentication configured for request`);
   } else {
     return null;
@@ -92,6 +101,7 @@ function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
     case AuthType.CONFIGURATION:
       return authConfiguration.get(`npmAlwaysAuth`);
 
+    case AuthType.BEST_EFFORT:
     case AuthType.ALWAYS_AUTH:
       return true;
 
@@ -116,7 +126,7 @@ async function askForOtp() {
   return otp as string;
 }
 
-function requestRequiresOtp(error: any) {
+function isOtpError(error: any) {
   try {
     const authMethods = error.headers['www-authenticate'].split(/,\s*/).map((s: string) => s.toLowerCase());
 
