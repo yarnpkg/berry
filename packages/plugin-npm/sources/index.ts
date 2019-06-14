@@ -40,9 +40,7 @@ const registrySettings: {[name: string]: SettingsDefinition} = {
     type: SettingsType.STRING,
     default: `https://registry.yarnpkg.com`,
   },
-
-  ...authSettings,
-}
+};
 
 const plugin: Plugin = {
   configuration: {
