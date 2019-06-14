@@ -1,10 +1,10 @@
-import {openWorkspace}                              from '@berry/cli';
-import {Configuration, Ident, MessageName}          from '@berry/core';
-import {PluginConfiguration, Project, StreamReport} from '@berry/core';
-import {PortablePath}                               from '@berry/fslib';
-import {npmConfigUtils, npmHttpUtils}               from '@berry/plugin-npm';
-import inquirer                                     from 'inquirer';
-import {Readable, Writable}                         from 'stream';
+import {openWorkspace}                     from '@berry/cli';
+import {Configuration, MessageName}        from '@berry/core';
+import {PluginConfiguration, StreamReport} from '@berry/core';
+import {PortablePath}                      from '@berry/fslib';
+import {npmConfigUtils, npmHttpUtils}      from '@berry/plugin-npm';
+import inquirer                            from 'inquirer';
+import {Readable, Writable}                from 'stream';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion

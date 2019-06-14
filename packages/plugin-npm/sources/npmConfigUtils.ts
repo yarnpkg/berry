@@ -1,4 +1,4 @@
-import {Configuration, Ident, Manifest} from '@berry/core';
+import {Configuration, Manifest} from '@berry/core';
 
 export enum RegistryType {
   FETCH_REGISTRY = 'npmRegistryServer',
@@ -57,7 +57,7 @@ export function getScopeConfiguration(scope: string | null, {configuration}: {co
   if (scope === null)
     return null;
 
-  const scopeConfigurations: Map<string, MapLike> = configuration.get(`npmScopes`);  
+  const scopeConfigurations: Map<string, MapLike> = configuration.get(`npmScopes`);
 
   const scopeConfiguration = scopeConfigurations.get(scope);
   if (!scopeConfiguration)
