@@ -2,6 +2,7 @@ import {xfs, NodeFS, PortablePath, ppath, Filename, toFilename} from '@berry/fsl
 import {parseSyml, stringifySyml}                               from '@berry/parsers';
 import camelcase                                                from 'camelcase';
 import chalk                                                    from 'chalk';
+import chalkPipe                                                from 'chalk-pipe';
 import {UsageError}                                             from 'clipanion';
 import decamelize                                               from 'decamelize';
 import supportsColor                                            from 'supports-color';
@@ -851,11 +852,7 @@ export class Configuration {
 
   format(text: string, color: string) {
     if (this.get(`enableColors`)) {
-      if (color.charAt(0) === `#`) {
-        return ctx.hex(color)(text);
-      } else {
-        return ctx[color](text);
-      }
+      return chalkPipe(color, ctx)(text);
     } else {
       return text;
     }
