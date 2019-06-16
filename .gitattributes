@@ -1,1 +1,19 @@
-/.pnp.js binary
+# This line does two things:
+# - enable git's CRLF -> LF modification
+# - tell git to guess whether files are text or binary
+*                       text=auto
+
+# Mark .pnp.js as binary to prevent git from trying to merge it
+/.pnp.js                binary linguist-generated
+
+# Set the language for these files to json5 to ensure GitHub doesn't show the comments as errors
+/.vscode/*.json         linguist-language=JSON5
+
+# Hide .yarn and docs from GitHub's language detection
+/.yarn/**               linguist-vendored
+/docs/**                linguist-documentation
+
+# Mark built javascript binaries as generated
+# Without this, the repo is marked as >90% javascript, while most code is actually typescript
+/packages/*/bin/**/*.js linguist-generated
+/packages/*/lib/*.js    linguist-generated
