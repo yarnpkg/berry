@@ -16,3 +16,4 @@
 # Mark built javascript binaries as generated
 # Without this, the repo is marked as >90% javascript, while most code is actually typescript
 /packages/*/bin/**/*.js linguist-generated
+/packages/*/lib/*.js    linguist-generated
