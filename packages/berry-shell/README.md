@@ -21,9 +21,16 @@ process.exitCode = await execute(`ls "$1" | wc -l`, [process.cwd()]);
 - Supports variables
 - Supports string manipulators
 - Supports argc/argv
-- Supports the most class builtins
+- Supports the most classic builtins
 - Doesn't necessarily need to access the fs
 
 ## Help Wanted
 
 - Stream redirections (`> foo`)
+- Glob support (`ls *.txt`)
+- More string manipulators
+
+## No-Goals
+
+- Perfect POSIX compliance (basic scripting is enough for now)
+- Multiline-scripts (we mostly target one-liners)
