@@ -403,4 +403,12 @@ describe(`Simple shell features`, () => {
       stdout: `hello world\n`
     });
   });
+
+  it(`should support input redirections`, async () => {
+    await expect(bufferResult(
+      `echo foo > bar`,
+    )).resolves.toMatchObject({
+      stderr: `Shell redirections aren't implemented yet.\n`,
+    });
+  });
 });

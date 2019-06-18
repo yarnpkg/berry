@@ -1,10 +1,31 @@
-export type CommandSegment = string |
-{type: `shell`, shell: ShellLine, quoted: boolean} |
-{type: `variable`, name: string, defaultValue?: Array<Array<CommandSegment>>, quoted: boolean};
+// From the top to the bottom:
+//
+// - A shell line is composed of multiple command lines, first separated by ";" and then chained by "&&" / "||"
+// - A command line is composed of multiple commands chained by "|" / "|&"
+// - A command is composed of multiple arguments separated by spaces
+// - An argument can be a value argument (sent to the underlying program), or a redirection
+// - A value argument is a combination of argument segments
+
+export type ArgumentSegment =
+  | {type: `text`, text: string}
+  | {type: `shell`, shell: ShellLine, quoted: boolean}
+  | {type: `variable`, name: string, defaultValue?: Array<ValueArgument>, quoted: boolean};
+
+export type Argument =
+  | {type: `redirection`, subtype: `>` | `<` | `>>` | `<<<`, args: Array<ValueArgument>}
+  | ValueArgument;
+
+export type ValueArgument =
+| {type: `argument`, segments: Array<ArgumentSegment>};
+
+export type EnvSegment = {
+  name: string,
+  args: [] | [ValueArgument],
+};
 
 export type Command = {
   type: `command`,
-  args: Array<Array<CommandSegment>>,
+  args: Array<Argument>,
   envs: Array<EnvSegment>,
 } | {
   type: `subshell`,
@@ -36,9 +57,3 @@ export type CommandLineThen = {
 export type ShellLine = Array<CommandLine>;
 
 export declare const parse: (code: string) => ShellLine;
-
-export type EnvSegment = {
-  name: string,
-  args: Array<Array<CommandSegment>>,
-};
-
