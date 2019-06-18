@@ -37,7 +37,8 @@ Command
   / S* envs:VariableAssignment+ S* { return { type: `envs`, envs } }
 
 Argument
-  = S* segments:ArgumentSegment+ { return [].concat(... segments) }
+  = S* redirect:(">" / ">>" / "<<<") S* segments:ArgumentSegment+ { return {type: `>`, segments: [].concat(... segments)} }
+  / S* segments:ArgumentSegment+ { return [].concat(... segments) }
 
 ArgumentSegment
   = string:SglQuoteString { return string }
