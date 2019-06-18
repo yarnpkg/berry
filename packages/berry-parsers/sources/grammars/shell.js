@@ -170,14 +170,14 @@ function peg$parse(input, options) {
       peg$c26 = function(envs, args) { return { type: `command`, args, envs } },
       peg$c27 = function(envs) { return { type: `envs`, envs } },
       peg$c28 = function(args) { return args },
-      peg$c29 = ">",
-      peg$c30 = peg$literalExpectation(">", false),
-      peg$c31 = ">>",
-      peg$c32 = peg$literalExpectation(">>", false),
-      peg$c33 = "<",
-      peg$c34 = peg$literalExpectation("<", false),
-      peg$c35 = "<<<",
-      peg$c36 = peg$literalExpectation("<<<", false),
+      peg$c29 = ">>",
+      peg$c30 = peg$literalExpectation(">>", false),
+      peg$c31 = ">",
+      peg$c32 = peg$literalExpectation(">", false),
+      peg$c33 = "<<<",
+      peg$c34 = peg$literalExpectation("<<<", false),
+      peg$c35 = "<",
+      peg$c36 = peg$literalExpectation("<", false),
       peg$c37 = function(redirect, arg) { return { type: `redirection`, subtype: redirect, args: [arg] } },
       peg$c38 = function(arg) { return arg },
       peg$c39 = function(segments) { return { type: `argument`, segments: [].concat(... segments) } },
@@ -1012,33 +1012,33 @@ function peg$parse(input, options) {
       s2 = peg$parseS();
     }
     if (s1 !== peg$FAILED) {
-      if (input.charCodeAt(peg$currPos) === 62) {
+      if (input.substr(peg$currPos, 2) === peg$c29) {
         s2 = peg$c29;
-        peg$currPos++;
+        peg$currPos += 2;
       } else {
         s2 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c30); }
       }
       if (s2 === peg$FAILED) {
-        if (input.substr(peg$currPos, 2) === peg$c31) {
+        if (input.charCodeAt(peg$currPos) === 62) {
           s2 = peg$c31;
-          peg$currPos += 2;
+          peg$currPos++;
         } else {
           s2 = peg$FAILED;
           if (peg$silentFails === 0) { peg$fail(peg$c32); }
         }
         if (s2 === peg$FAILED) {
-          if (input.charCodeAt(peg$currPos) === 60) {
+          if (input.substr(peg$currPos, 3) === peg$c33) {
             s2 = peg$c33;
-            peg$currPos++;
+            peg$currPos += 3;
           } else {
             s2 = peg$FAILED;
             if (peg$silentFails === 0) { peg$fail(peg$c34); }
           }
           if (s2 === peg$FAILED) {
-            if (input.substr(peg$currPos, 3) === peg$c35) {
+            if (input.charCodeAt(peg$currPos) === 60) {
               s2 = peg$c35;
-              peg$currPos += 3;
+              peg$currPos++;
             } else {
               s2 = peg$FAILED;
               if (peg$silentFails === 0) { peg$fail(peg$c36); }

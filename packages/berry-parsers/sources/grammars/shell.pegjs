@@ -40,7 +40,7 @@ CommandString
   = S* args:ValueArgument+ S* { return args }
 
 Argument
-  = S* redirect:(">" / ">>" / "<" / "<<<") arg:ValueArgument { return { type: `redirection`, subtype: redirect, args: [arg] } }
+  = S* redirect:(">>" / ">" / "<<<" / "<") arg:ValueArgument { return { type: `redirection`, subtype: redirect, args: [arg] } }
   / S* arg:ValueArgument { return arg }
 
 ValueArgument
