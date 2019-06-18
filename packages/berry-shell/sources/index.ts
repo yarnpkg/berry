@@ -1,10 +1,10 @@
-import {xfs, NodeFS, ppath, PortablePath}                                  from '@berry/fslib';
+import {xfs, NodeFS, ppath, PortablePath}                                            from '@berry/fslib';
 import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
-import {EnvSegment}                                                        from '@berry/parsers';
-import {PassThrough, Readable, Writable}                                   from 'stream';
+import {EnvSegment}                                                                  from '@berry/parsers';
+import {PassThrough, Readable, Writable}                                             from 'stream';
 
-import {Handle, ProtectedStream, Stdio, start}                             from './pipe';
-import {makeBuiltin, makeProcess}                                          from './pipe';
+import {Handle, ProtectedStream, Stdio, start}                                       from './pipe';
+import {makeBuiltin, makeProcess}                                                    from './pipe';
 
 export type UserOptions = {
   builtins: {[key: string]: ShellBuiltin},
@@ -248,7 +248,7 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
     for (const [subtype, targets] of redirections.entries())
       redirectionArgs.splice(redirectionArgs.length, 0, subtype, String(targets.length), ...targets);
 
-    interpolated.splice(0, 0, `setredirects`, ... redirectionArgs, `--`);
+    interpolated.splice(0, 0, `setredirects`, ...redirectionArgs, `--`);
   }
 
   return interpolated;
@@ -446,7 +446,7 @@ function locateArgsVariableInSegment(segment: ArgumentSegment): boolean {
     default: {
       return false;
     } break;
-  }  
+  }
 }
 
 function locateArgsVariableInArgument(arg: Argument): boolean {
