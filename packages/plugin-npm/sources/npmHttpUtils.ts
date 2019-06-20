@@ -1,7 +1,6 @@
 import {Configuration, Ident, httpUtils} from '@berry/core';
 import {MessageName, ReportError}        from '@berry/core';
 import inquirer                          from 'inquirer';
-import {resolve as resolveUrl}           from 'url';
 
 import * as npmConfigUtils               from './npmConfigUtils';
 import {MapLike}                         from './npmConfigUtils';
@@ -74,6 +73,10 @@ export async function put(path: string, body: httpUtils.Body, {configuration, he
     // Retrying request with OTP
     return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
   }
+}
+
+function resolveUrl(registry: string, path: string) {
+  return registry.replace(/\/+$/, ``) + path;
 }
 
 function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration}: {authType?: AuthType, configuration: Configuration}) {
