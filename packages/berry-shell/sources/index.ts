@@ -1,10 +1,10 @@
-import {xfs, NodeFS, ppath, PortablePath}                                 from '@berry/fslib';
-import {CommandSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
-import {EnvSegment}                                                       from '@berry/parsers';
-import {PassThrough, Readable, Writable}                                  from 'stream';
+import {xfs, NodeFS, ppath, PortablePath}                                            from '@berry/fslib';
+import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@berry/parsers';
+import {EnvSegment}                                                                  from '@berry/parsers';
+import {PassThrough, Readable, Writable}                                             from 'stream';
 
-import {Handle, ProtectedStream, Stdio, start}                            from './pipe';
-import {makeBuiltin, makeProcess}                                         from './pipe';
+import {Handle, ProtectedStream, Stdio, start}                                       from './pipe';
+import {makeBuiltin, makeProcess}                                                    from './pipe';
 
 export type UserOptions = {
   builtins: {[key: string]: ShellBuiltin},
@@ -84,6 +84,11 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     state.stdout.write(`${args.join(` `)}\n`);
     return 0;
   }],
+
+  [`setredirects`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
+    state.stderr.write(`Shell redirections aren't implemented yet.\n`);
+    return 1;
+  }],
 ]);
 
 async function executeBufferedSubshell(ast: ShellLine, opts: ShellOptions, state: ShellState) {
@@ -102,7 +107,7 @@ async function applyEnvVariables(environmentSegments: Array<EnvSegment>, opts: S
 
     return {
       name: envSegment.name,
-      value: interpolatedArgs.join(``),
+      value: interpolatedArgs.join(` `),
     };
   });
 
@@ -114,7 +119,9 @@ async function applyEnvVariables(environmentSegments: Array<EnvSegment>, opts: S
   }, {} as ShellState['environment']);
 }
 
-async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, opts: ShellOptions, state: ShellState) {
+async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOptions, state: ShellState) {
+  const redirections = new Map();
+
   const interpolated: Array<string> = [];
   let interpolatedSegments: Array<string> = [];
 
@@ -137,82 +144,111 @@ async function interpolateArguments(commandArgs: Array<Array<CommandSegment>>, o
     close();
   };
 
+  const redirect = (type: string, target: string) => {
+    let targets = redirections.get(type);
+
+    if (typeof targets === `undefined`)
+      redirections.set(type, targets = []);
+
+    targets.push(target);
+  };
+
   for (const commandArg of commandArgs) {
-    for (const segment of commandArg) {
-      if (typeof segment === 'string') {
-        push(segment);
-      } else {
-        switch (segment.type) {
-          case `shell`: {
-            const raw = await executeBufferedSubshell(segment.shell, opts, state);
-            if (segment.quoted) {
-              push(raw);
-            } else {
-              for (const part of split(raw)) {
-                pushAndClose(part);
+    switch (commandArg.type) {
+      case `redirection`: {
+        const interpolatedArgs = await interpolateArguments(commandArg.args, opts, state);
+        for (const interpolatedArg of interpolatedArgs) {
+          redirect(commandArg.subtype, interpolatedArg);
+        }
+      } break;
+
+      case `argument`: {
+        for (const segment of commandArg.segments) {
+          switch (segment.type) {
+            case `text`: {
+              push(segment.text);
+            } break;
+
+            case `shell`: {
+              const raw = await executeBufferedSubshell(segment.shell, opts, state);
+              if (segment.quoted) {
+                push(raw);
+              } else {
+                for (const part of split(raw)) {
+                  pushAndClose(part);
+                }
               }
-            }
-          } break;
+            } break;
 
-          case `variable`: {
-            switch (segment.name) {
-              case `#`: {
-                push(String(opts.args.length));
-              } break;
+            case `variable`: {
+              switch (segment.name) {
+                case `#`: {
+                  push(String(opts.args.length));
+                } break;
 
-              case `@`: {
-                if (segment.quoted) {
-                  for (const raw of opts.args) {
-                    pushAndClose(raw);
+                case `@`: {
+                  if (segment.quoted) {
+                    for (const raw of opts.args) {
+                      pushAndClose(raw);
+                    }
+                  } else {
+                    for (const raw of opts.args) {
+                      for (const part of split(raw)) {
+                        pushAndClose(part);
+                      }
+                    }
                   }
-                } else {
-                  for (const raw of opts.args) {
+                } break;
+
+                case `*`: {
+                  const raw = opts.args.join(` `);
+                  if (segment.quoted) {
+                    push(raw);
+                  } else {
                     for (const part of split(raw)) {
                       pushAndClose(part);
                     }
                   }
-                }
-              } break;
+                } break;
 
-              case `*`: {
-                const raw = opts.args.join(` `);
-                if (segment.quoted) {
-                  push(raw);
-                } else {
-                  for (const part of split(raw)) {
-                    pushAndClose(part);
-                  }
-                }
-              } break;
+                default: {
+                  const argIndex = parseInt(segment.name, 10);
 
-              default: {
-                const argIndex = parseInt(segment.name, 10);
-
-                if (Number.isFinite(argIndex)) {
-                  if (!(argIndex >= 0 && argIndex < opts.args.length)) {
-                    throw new Error(`Unbound argument #${argIndex}`);
+                  if (Number.isFinite(argIndex)) {
+                    if (!(argIndex >= 0 && argIndex < opts.args.length)) {
+                      throw new Error(`Unbound argument #${argIndex}`);
+                    } else {
+                      push(opts.args[argIndex]);
+                    }
                   } else {
-                    push(opts.args[argIndex]);
+                    if (Object.prototype.hasOwnProperty.call(state.variables, segment.name)) {
+                      push(state.variables[segment.name]);
+                    } else if (Object.prototype.hasOwnProperty.call(state.environment, segment.name)) {
+                      push(state.environment[segment.name]);
+                    } else if (segment.defaultValue) {
+                      push((await interpolateArguments(segment.defaultValue, opts, state)).join(` `));
+                    } else {
+                      throw new Error(`Unbound variable "${segment.name}"`);
+                    }
                   }
-                } else {
-                  if (Object.prototype.hasOwnProperty.call(state.variables, segment.name)) {
-                    push(state.variables[segment.name]);
-                  } else if (Object.prototype.hasOwnProperty.call(state.environment, segment.name)) {
-                    push(state.environment[segment.name]);
-                  } else if (segment.defaultValue) {
-                    push((await interpolateArguments(segment.defaultValue, opts, state)).join(` `));
-                  } else {
-                    throw new Error(`Unbound variable "${segment.name}"`);
-                  }
-                }
-              } break;
-            }
-          } break;
+                } break;
+              }
+            } break;
+          }
         }
-      }
+      } break;
     }
 
     close();
+  }
+
+  if (redirections.size > 0) {
+    const redirectionArgs: Array<string> = [];
+
+    for (const [subtype, targets] of redirections.entries())
+      redirectionArgs.splice(redirectionArgs.length, 0, subtype, String(targets.length), ...targets);
+
+    interpolated.splice(0, 0, `setredirects`, ...redirectionArgs, `--`);
   }
 
   return interpolated;
@@ -397,6 +433,34 @@ async function executeShellLine(node: ShellLine, opts: ShellOptions, state: Shel
   return rightMostExitCode;
 }
 
+function locateArgsVariableInSegment(segment: ArgumentSegment): boolean {
+  switch (segment.type) {
+    case `variable`: {
+      return segment.name === `@` || segment.name === `#` || segment.name === `*` || Number.isFinite(parseInt(segment.name, 10)) || (!!segment.defaultValue && segment.defaultValue.some(arg => locateArgsVariableInArgument(arg)));
+    } break;
+
+    case `shell`: {
+      return locateArgsVariable(segment.shell);
+    } break;
+
+    default: {
+      return false;
+    } break;
+  }
+}
+
+function locateArgsVariableInArgument(arg: Argument): boolean {
+  switch (arg.type) {
+    case `redirection`: {
+      return arg.args.some(arg => locateArgsVariableInArgument(arg));
+    } break;
+
+    case `argument`: {
+      return arg.segments.some(segment => locateArgsVariableInSegment(segment));
+    } break;
+  }
+}
+
 function locateArgsVariable(node: ShellLine): boolean {
   return node.some(command => {
     while (command) {
@@ -411,25 +475,10 @@ function locateArgsVariable(node: ShellLine): boolean {
           } break;
 
           case `command`: {
-            hasArgs = chain.args.some(arg => {
-              return arg.some(segment => {
-                if (typeof segment === 'string')
-                  return false;
-
-                switch (segment.type) {
-                  case `variable`: {
-                    return segment.name === `@` || segment.name === `#` || segment.name === `*` || Number.isFinite(parseInt(segment.name, 10));
-                  } break;
-
-                  case `shell`: {
-                    return locateArgsVariable(segment.shell);
-                  } break;
-
-                  default: {
-                    return false;
-                  } break;
-                }
-              });
+            hasArgs = chain.envs.some(env => env.args.some(arg => {
+              return locateArgsVariableInArgument(arg);
+            })) || chain.args.some(arg => {
+              return locateArgsVariableInArgument(arg);
             });
           } break;
         }
@@ -481,7 +530,7 @@ export async function execute(command: string, args: Array<string> = [], {
 
   // If the shell line doesn't use the args, inject it at the end of the
   // right-most command
-  if (!locateArgsVariable(ast) && ast.length > 0) {
+  if (!locateArgsVariable(ast) && ast.length > 0 && args.length > 0) {
     let command = ast[ast.length - 1];
     while (command.then)
       command = command.then.line;
@@ -492,7 +541,13 @@ export async function execute(command: string, args: Array<string> = [], {
 
     if (chain.type === `command`) {
       chain.args = chain.args.concat(args.map(arg => {
-        return [arg];
+        return {
+          type: `argument` as 'argument',
+          segments: [{
+            type: `text` as 'text',
+            text: arg,
+          }],
+        };
       }));
     }
   }

@@ -403,4 +403,52 @@ describe(`Simple shell features`, () => {
       stdout: `hello world\n`
     });
   });
+
+  it(`should support input redirections (file)`, async () => {
+    await expect(bufferResult(
+      `echo foo < bar`,
+    )).resolves.toMatchObject({
+      stderr: `Shell redirections aren't implemented yet.\n`,
+    });
+  });
+
+  it(`should support input redirections (string)`, async () => {
+    await expect(bufferResult(
+      `echo foo <<< bar`,
+    )).resolves.toMatchObject({
+      stderr: `Shell redirections aren't implemented yet.\n`,
+    });
+  });
+
+  it(`should support output redirections (overwrite)`, async () => {
+    await expect(bufferResult(
+      `echo foo > bar`,
+    )).resolves.toMatchObject({
+      stderr: `Shell redirections aren't implemented yet.\n`,
+    });
+  });
+
+  it(`should support output redirections (append)`, async () => {
+    await expect(bufferResult(
+      `echo foo >> bar`,
+    )).resolves.toMatchObject({
+      stderr: `Shell redirections aren't implemented yet.\n`,
+    });
+  });
+
+  it(`should support multiple outputs`, async () => {
+    await expect(bufferResult(
+      `echo foo > bar > baz`,
+    )).resolves.toMatchObject({
+      stderr: `Shell redirections aren't implemented yet.\n`,
+    });
+  });
+
+  it(`should support multiple inputs`, async () => {
+    await expect(bufferResult(
+      `echo foo < bar < baz`,
+    )).resolves.toMatchObject({
+      stderr: `Shell redirections aren't implemented yet.\n`,
+    });
+  });
 });

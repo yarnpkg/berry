@@ -28,16 +28,26 @@ CommandChainType
   / '|'
 
 VariableAssignment
-  = name:EnvVariable '=' args:ArgumentSegment+ S* { return { name, args } }
-  / name:EnvVariable '=' S* { return { name, args : [] } }
+  = name:EnvVariable '=' arg:StrictValueArgument S* { return { name, args: [arg] } }
+  / name:EnvVariable '=' S* { return { name, args: [] } }
 
 Command
   = S* "(" S* subshell:ShellLine S* ")" S* { return { type: `subshell`, subshell } }
   / S* envs:VariableAssignment* S* args:Argument+ S* { return { type: `command`, args, envs } }
   / S* envs:VariableAssignment+ S* { return { type: `envs`, envs } }
 
+CommandString
+  = S* args:ValueArgument+ S* { return args }
+
 Argument
-  = S* segments:ArgumentSegment+ { return [].concat(... segments) }
+  = S* redirect:(">>" / ">" / "<<<" / "<") arg:ValueArgument { return { type: `redirection`, subtype: redirect, args: [arg] } }
+  / S* arg:ValueArgument { return arg }
+
+ValueArgument
+  = S* arg:StrictValueArgument { return arg }
+
+StrictValueArgument
+  = segments:ArgumentSegment+ { return { type: `argument`, segments: [].concat(... segments) } }
 
 ArgumentSegment
   = string:SglQuoteString { return string }
@@ -45,10 +55,10 @@ ArgumentSegment
   / string:PlainString { return string }
 
 SglQuoteString
-  = "'" text:SglQuoteStringText "'" { return [ text ] }
+  = "'" text:SglQuoteStringText "'" { return [ { type: `text`, text } ] }
 
 DblQuoteString
-  = '"' segments:DblQuoteStringSegment* '"' { return [ ... segments ] }
+  = '"' segments:DblQuoteStringSegment* '"' { return segments }
 
 PlainString
   = segments:PlainStringSegment+ { return segments }
@@ -56,12 +66,12 @@ PlainString
 DblQuoteStringSegment
   = shell:Subshell { return { type: `shell`, shell, quoted: true } }
   / variable:Variable { return { type: `variable`, ...variable, quoted: true } }
-  / DblQuoteStringText
+  / text:DblQuoteStringText { return { type: `text`, text } }
 
 PlainStringSegment
   = shell:Subshell { return { type: `shell`, shell, quoted: false } }
   / variable:Variable { return { type: `variable`, ...variable, quoted: false } }
-  / PlainStringText
+  / text:PlainStringText { return { type: `text`, text } }
 
 SglQuoteStringText
   = chars:('\\' c:. { return c } / [^'])+ { return chars.join(``) }
@@ -76,7 +86,8 @@ Subshell
   = '$(' command:ShellLine ')' { return command }
 
 Variable
-  = '${' name:Identifier ':-' defaultValue:Argument+ '}' { return { name, defaultValue } }
+  = '${' name:Identifier ':-' arg:CommandString '}' { return { name, defaultValue: arg } }
+  / '${' name:Identifier ':-}' { return { name, defaultValue: [] } }
   / '${' name:Identifier '}' { return { name } }
   / '$' name:Identifier { return { name } }
 
