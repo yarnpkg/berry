@@ -56,7 +56,7 @@ export type ExecvpOptions = {
   strict?: boolean,
 };
 
-export async function execvp(fileName: string, args: Array<string>, opts: ExecvpOptions & {encoding: `buffer`}): Promise<{code: number, stdout: Buffer, stderr: Buffer}>;
+export async function execvp(fileName: string, args: Array<string>, opts: ExecvpOptions & {encoding: 'buffer'}): Promise<{code: number, stdout: Buffer, stderr: Buffer}>;
 export async function execvp(fileName: string, args: Array<string>, opts: ExecvpOptions & {encoding: string}): Promise<{code: number, stdout: string, stderr: string}>;
 export async function execvp(fileName: string, args: Array<string>, opts: ExecvpOptions): Promise<{code: number, stdout: string, stderr: string}>;
 

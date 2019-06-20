@@ -466,7 +466,7 @@ export class Configuration {
    * one listed on /foo/bar/.yarnrc, but not the other way around).
    */
 
-  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {strict = true}: {strict?: boolean} = {}) {
+  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {strict = true, useRc = true}: {strict?: boolean, useRc?: boolean} = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
@@ -486,6 +486,8 @@ export class Configuration {
       const dynamicPlugins = new Set();
 
       for (const {path, cwd, data} of rcFiles) {
+        if (!useRc)
+          continue;
         if (!Array.isArray(data.plugins))
           continue;
 
