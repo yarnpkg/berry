@@ -43,9 +43,7 @@ export async function bufferStream(stream: Readable) {
   return await new Promise<Buffer>((resolve, reject) => {
     const chunks: Array<Buffer> = [];
 
-    stream.on(`error`, error => {
-      reject(error);
-    });
+    stream.on(`error`, reject);
 
     stream.on(`data`, chunk => {
       chunks.push(chunk);

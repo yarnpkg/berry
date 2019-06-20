@@ -21,9 +21,7 @@ export function checksumFile(path: PortablePath) {
       hmac.update(chunk);
     })
 
-    stream.on(`error`, error => {
-      reject(error);
-    });
+    stream.on(`error`, reject);
 
     stream.on(`end`, () => {
       resolve(hmac.digest(`hex`));
