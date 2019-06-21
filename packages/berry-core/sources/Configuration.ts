@@ -334,14 +334,13 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
     return result;
 
   for (const [propKey, propValue] of Object.entries(value)) {
-    const name = camelcase(propKey);
-    const subPath = `${path}.${name}`;
-    const subDefinition = definition.properties[name];
+    const subPath = `${path}.${propKey}`;
+    const subDefinition = definition.properties[propKey];
 
     if (!subDefinition)
       throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`);
 
-    result.set(name, parseValue(configuration, subPath, propValue, definition.properties[name], folder));
+    result.set(propKey, parseValue(configuration, subPath, propValue, definition.properties[propKey], folder));
   }
 
   return result;
@@ -730,10 +729,8 @@ export class Configuration {
       data = data.berry;
 
     for (const key of Object.keys(data)) {
-      const name = camelcase(key);
-
       // The plugins have already been loaded at this point
-      if (name === `plugins`)
+      if (key === `plugins`)
         continue;
 
       // Some environment variables should be ignored when applying the configuration
@@ -741,10 +738,10 @@ export class Configuration {
         continue;
 
       // It wouldn't make much sense, would it?
-      if (name === `rcFilename`)
+      if (key === `rcFilename`)
         throw new UsageError(`The rcFilename settings can only be set via ${`${ENVIRONMENT_PREFIX}RC_FILENAME`.toUpperCase()}, not via a rc file`);
 
-      const definition = this.settings.get(name);
+      const definition = this.settings.get(key);
       if (!definition) {
         if (strict) {
           throw new UsageError(`${LEGACY_NAMES.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
@@ -754,11 +751,11 @@ export class Configuration {
         }
       }
 
-      if (this.sources.has(name) && !overwrite)
+      if (this.sources.has(key) && !overwrite)
         continue;
 
-      this.values.set(name, parseValue(this, name, data[key], definition, folder));
-      this.sources.set(name, source);
+      this.values.set(key, parseValue(this, key, data[key], definition, folder));
+      this.sources.set(key, source);
     }
   }
 
