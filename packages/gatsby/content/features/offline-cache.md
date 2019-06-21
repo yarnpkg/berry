@@ -20,7 +20,7 @@ At the moment Yarn doesn't purge your cache from unneeded packages when you remo
 
 Starting from Yarn v2, Yarn will by default configure the cache to be local to your project. This is done to make it easier for you to store it as part of your repository, which we believe is the best way to ensure .
 
-Still, this might not make sense in your case. For example you might be working on a small library and not care enough to bother with checking-in your cache. If that's your case just add the following line into a `.yarnrc` file local to your project. It will instruct Yarn to use a special path that will be shared by all projects that list the same configuration:
+Still, this might not make sense in your case. For example you might be working on a small library and not care enough to bother with checking-in your cache. If that's your case just add the following line into a `.yarnrc.yml` file local to your project. It will instruct Yarn to use a special path that will be shared by all projects that list the same configuration:
 
 ```yaml
 enableGlobalCache: true

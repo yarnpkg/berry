@@ -10,7 +10,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          await writeFile(`${path}/.yarnrc`, `pnp-shebang: "Hello World!"\n`);
+          await writeFile(`${path}/.yarnrc.yml`, `pnp-shebang: "Hello World!"\n`);
 
           expect(parseJsonStream(
             (await run(`config`, `--json`)).stdout,

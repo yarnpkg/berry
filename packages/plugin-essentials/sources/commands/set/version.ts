@@ -21,7 +21,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   }))
 
   .detail(`
-    This command will download a specific release of Yarn directly from the Yarn Github repository, will store it inside your project, and will change the \`yarn-path\` settings from your project \`.yarnrc\` file to point to the new file.
+    This command will download a specific release of Yarn directly from the Yarn Github repository, will store it inside your project, and will change the \`yarnPath\` settings from your project \`.yarnrc.yml\` file to point to the new file.
 
     A very good use case for this command is to enforce the version of Yarn used by the any single member of your team inside a same project - by doing this you ensure that you have control on Yarn upgrades and downgrades (including on your deployment servers), and get rid of most of the headaches related to someone using a slightly different version and getting a different behavior than you.
 

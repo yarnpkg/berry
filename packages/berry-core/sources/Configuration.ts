@@ -3,7 +3,6 @@ import {parseSyml, stringifySyml}                               from '@berry/par
 import camelcase                                                from 'camelcase';
 import chalk                                                    from 'chalk';
 import {UsageError}                                             from 'clipanion';
-import decamelize                                               from 'decamelize';
 import supportsColor                                            from 'supports-color';
 
 import {MultiFetcher}                                           from './MultiFetcher';
@@ -78,7 +77,7 @@ const LEGACY_NAMES = new Set([
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
-export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc`);
+export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc.yml`);
 export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
 
 export enum SettingsType {
@@ -639,34 +638,13 @@ export class Configuration {
       ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any
       : {};
 
-    const currentKeys = Object.keys(current);
-
-    // If some keys already use kebab-case then we keep using this style
-    const preferKebabCase = currentKeys.some(key => key.includes(`-`));
-
     let patched = false;
 
     if (typeof patch === `function`)
       patch = patch(current);
 
     for (const key of Object.keys(patch)) {
-      let currentKey;
-
-      if (currentKeys.includes(key)) {
-        currentKey = key;
-      } else {
-        currentKey = currentKeys.find(currentKey => camelcase(currentKey) === key);
-
-        if (typeof currentKey === `undefined`) {
-          if (preferKebabCase) {
-            currentKey = decamelize(key, `-`);
-          } else {
-            currentKey = key;
-          }
-        }
-      }
-
-      const currentValue = current[currentKey];
+      const currentValue = current[key];
 
       const nextValue = typeof patch[key] === `function`
         ? patch[key](currentValue)
@@ -675,7 +653,7 @@ export class Configuration {
       if (currentValue === nextValue)
         continue;
 
-      current[currentKey] = nextValue;
+      current[key] = nextValue;
       patched = true;
     }
 

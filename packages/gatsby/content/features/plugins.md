@@ -28,7 +28,7 @@ The official plugins (the ones whose development happen on the Yarn repository) 
 
   - `yarn plugins dl --list` will print the name of the available official plugins. Some of them might be marked experimental, in which case they might be subject to breaking changes between releases (they should be mostly stable in general, though).
 
-  - `yarn plugins dl <plugin-name>` will download one of the plugins from the list, store it within the `.yarn/plugins` directory, and modify your local `.yarnrc` file to reference it.
+  - `yarn plugins dl <plugin-name>` will download one of the plugins from the list, store it within the `.yarn/plugins` directory, and modify your local `.yarnrc.yml` file to reference it.
 
   - `yarn plugins dl <url>` will do the same thing, but because it uses a URL it will work with any plugin regardless of where the plugin is actually hosted.
 
@@ -38,7 +38,7 @@ The `yarn plugins dl` command is useful, but in case you prefer to setup your pr
 
   - Download the plugin you want to use and put it somewhere
 
-  - Update your project-level `.yarnrc` file by adding the following property:
+  - Update your project-level `.yarnrc.yml` file by adding the following property:
 
     ```
     plugins:

@@ -8,7 +8,8 @@ const YarnrcDoc = () => <>
   <Layout>
     <SymlContainer>
       <SymlMain>
-        Yarnrc files (named this way because they must be called <code>.yarnrc</code>) are the one place where you'll be able to configure Yarn's internal settings. While Yarn will automatically find them in the parent directories, they should usually be kept at the root of your project (often your repository). Starting from the v2, they <b>must</b> be written in valid Yaml.
+        <p>Yarnrc files (named this way because they must be called <code>.yarnrc.yml</code>) are the one place where you'll be able to configure Yarn's internal settings. While Yarn will automatically find them in the parent directories, they should usually be kept at the root of your project (often your repository). Starting from the v2, they <b>must</b> be written in valid Yaml and have the right extension (simply calling your file <code>.yarnrc</code> won't do).</p>
+        <p>Those settings can also be defined through environment variables (at least for the simpler ones; arrays and objects aren't supported yet). To do this, just prefix the names and write them in snake case: <code>YARN_CACHE_FOLDER</code> will set the cache folder (such values will overwrite any that might have been defined in the RC files - use them sparingly).</p>
       </SymlMain>
       <SymlScalarProperty
         name={`bstatePath`}
@@ -95,13 +96,6 @@ const YarnrcDoc = () => <>
         </>}
       />
       <SymlScalarProperty
-        name={`npmRegistryServer`}
-        placeholder={`https://registry.yarnpkg.com`}
-        description={<>
-          Defines the hostname of the remote server from where Yarn should fetch the metadata and archives when querying the npm registry.
-        </>}
-      />
-      <SymlScalarProperty
         name={`npmAlwaysAuth`}
         placeholder={`true`}
         description={<>
@@ -112,14 +106,14 @@ const YarnrcDoc = () => <>
         name={`npmAuthIdent`}
         placeholder={`username:password`}
         description={<>
-          Defines the authentication credentials to use for the default registry (equivalent to <code>_auth</code> in the v1). This settings is discouraged in favor of <code>npmAuthToken</code>.
+          Defines the authentication credentials to use by default when accessing your registries (equivalent to <code>_auth</code> in the v1). This settings is strongly discouraged in favor of <a href={`#npmAuthToken`}><code>npmAuthToken</code></a>.
         </>}
       />
       <SymlScalarProperty
         name={`npmAuthToken`}
         placeholder={`ffffffff-ffff-ffff-ffff-ffffffffffff`}
         description={<>
-          Defines the authentication credentials to use for the default registry (equivalent to <code>_authToken</code> in the v1).
+          Defines the authentication credentials to use by default when accessing your registries (equivalent to <code>_authToken</code> in the v1). If you're using <a href={`#npmScopes`}><code>npmScopes</code></a> to define multiple registries, the <a href={`#npmServer`}><code>npmServer</code></a> dictionary allows you to override these credentials on a per-registry basis.
         </>}
       />
       <SymlScalarProperty
@@ -176,6 +170,13 @@ const YarnrcDoc = () => <>
           />
         </SymlObjectProperty>
       </SymlObjectProperty>
+      <SymlScalarProperty
+        name={`npmRegistryServer`}
+        placeholder={`https://registry.yarnpkg.com`}
+        description={<>
+          Defines the hostname of the remote server from where Yarn should fetch the metadata and archives when querying the npm registry. Should you want to define different registries for different scopes, see <a href={`#npmScopes`}><code>npmScopes</code></a>. To define the authentication scheme for your servers, see <a href={`#npmAuthToken`}><code>npmAuthToken</code></a>.
+        </>}
+      />
       <SymlObjectProperty
         name={`npmScopes`}
         margin={true}
@@ -266,7 +267,7 @@ const YarnrcDoc = () => <>
       />
       <SymlScalarProperty
         name={`rcFilename`}
-        placeholder={`.yarnrc`}
+        placeholder={`.yarnrc.yml`}
         description={<>
           This setting defines the name of the files that Yarn looks for when resolving the rc files. For obvious reasons this settings cannot be set within rc files, and must be defined in the environment using the <code>YARN_RC_FILENAME</code> variable.
         </>}

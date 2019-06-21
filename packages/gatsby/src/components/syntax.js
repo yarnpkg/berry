@@ -46,6 +46,14 @@ export const Main = styled.div`
   & + * {
     margin-top: 0 !important;
   }
+
+  p {
+    margin-top: 0;
+  }
+
+  p:last-of-type {
+    margin-bottom: 0;
+  }
 `;
 
 const marginContainer = css`

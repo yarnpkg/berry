@@ -6,49 +6,42 @@ title: "Migration"
 
 Yarn v2 is a very different software from the v1. While one of our aim is to make the transition as easy as possible, some behaviors needed to be tweaked. To make things easier we've documented the most common problems that may arise when porting from one project to the other, along with suggestions to keep moving forward.
 
-## `A package is trying to access another package`
+## `A package is trying to access another package [...]`
 
 > A package is trying to access another package without the second one being listed as a dependency of the first one
 
-Some packages don't properly list their actual dependencies for a reason or another. Now that we've fully switched to Plug'n'Play and actually enforce dependency visibility, this might become more apparent than it previously was, and this error might start to appear.
+Some packages don't properly list their actual dependencies for a reason or another. Now that we've fully switched to Plug'n'Play and enforce boundaries between the various branches of the dependency tree, this kind of issue will start to become more apparent than it previously was.
 
-The long term fix is of course to submit a pull request upstream to add the missing dependency to the package listing. Given that it sometimes might take sometime before they get merged, we also have a more short-term fix available: open your `yarn.lock` file, locate the entry for the faulty package, manually add a new `dependencies` entry with the missing dependency, then run `yarn install` to apply your changes.
+The long term fix is to submit a pull request upstream to add the missing dependency to the package listing. Given that it sometimes might take sometime before they get merged, we also have a more short-term fix available: open your `yarn.lock` file, locate the entry for the faulty package, manually add a new `dependencies` entry with the missing dependency, then run `yarn install` to apply your changes.
 
-Note that the short-term fix isn't meant to be long-term: you'll need to reapply it each time the package version changes and its metadata are downloaded from the registry again.
+Note that the short-term fix isn't meant to be long-term: you'll need to reapply it each time the package version changes and its metadata are downloaded from the registry again. Making the fix upstream is the best way to ensure your workflow won't get disrupted in the future.
 
-## Yarn & lockfile format
+## Yarnrc files
 
-> Parse error when loading {path}; please check it's proper Yaml (in particular, make sure you list the colons after each key name)
+Yarn 2 uses a different style of configuration files than Yarn 1. While mostly invisible for the lockfile (because we import them on the fly), it might cause some issues for your rc files.
 
-Starting from the v2 Yarn expects proper Yaml files by default. We still can read old-style files, but they must start with a particular comment:
+- The main change is the name of the file. The v1 uses `.yarnrc`, but starting from the v2 we'll be moving to a different name: `.yarnrc.yml`. This is in part to make it easier to configure both tools at the same time, as they use different syntaxes and configuration keys.
 
-```yaml
-# yarn lockfile v1
-```
+- As evidenced by the new extension, the Yarnrc files now have to be written in [YAML](https://en.wikipedia.org/wiki/YAML). It's been requested for a long time, and we hope it'll allow easier integrations for the various third-party tools that interact with the Yarnrc files.
 
-Old-style files are very similar to Yaml, but with one major distinction: keys don't contain colons when their value is on the same line. The following old-style file:
+- The configuration keys themselves have changed. You can find the comprehensive list of the supported configuration settings on the [dedicated documentation page](/configuration/yarnrc), but some particular changes you might be interested in:
 
-```
-hello-world:
-  setting-a foo
-  setting-b bar
-```
+  - Custom registries are now configured via [`npmRegistryServer`](/configuration/yarnrc#npmRegistryServer).
 
-Would look like the following once converted into Yaml:
+  - Registry authentication tokens are now configuration via [`npmAuthToken`](/configuration/yarnrc#npmAuthToken).
 
-```yaml
-hello-world:
-  settings-a: foo
-  settings-b: foo
-```
+  - The `yarn-offline-mirror` has been removed, since the offline mirror has been merged with the cache as part of the [Zero-Install effort](/features/zero-installs).
 
-## Yarnrc file detection
 
-The Yarnrc files mechanisms have been changed and simplified. In particular:
+## Yarnrc resolution
 
-  - Yarn doesn't use the configuration from your `.npmrc` files anymore; we instead read all of our configuration from the `.yarnrc` files whose available settings can be found in [our documentation](/configuration/yarnrc).
+On top of their naming, the way we load the Yarnrc files has also been changed and simplified. In particular:
 
-  - All environment variables prefixed with `YARN_` are automatically used to override the matching configuration settings. So for example, adding `YARN_NPM_REGISTRY_SERVER` into your environment will change the value of [`npmRegistryServer`](/configuration/yarnrc#npmRegistryServer).
+- Yarn doesn't use the configuration from your `.npmrc` files anymore; we instead read all of our configuration from the `.yarnrc.yml` files whose available settings can be found in [our documentation](/configuration/yarnrc).
+
+- As mentioned in the previous section, the yarnrc files are now called `.yarnrc.yml`, with an extension. We've completely stopped reading the values from the regular `.yarnrc` files.
+
+- All environment variables prefixed with `YARN_` are automatically used to override the matching configuration settings. So for example, adding `YARN_NPM_REGISTRY_SERVER` into your environment will change the value of [`npmRegistryServer`](/configuration/yarnrc#npmRegistryServer).
 
 ## Yarnrc settings
 
@@ -73,4 +66,4 @@ Starting from the v2, Plug'n'Play is enabled by default. This might cause compat
 
 ## TypeScript
 
-If you're using TypeScript and particularly the `tsc` binary, read on the [/advanced/pnpify](PnPify) page to learn more about a way to transparently make `tsc` compatible with Plug'n'Play. We actually use it on the Yarn repository itself!
+If you're using TypeScript - and particularly the `tsc` binary - read on the [PnPify](/advanced/pnpify) page to learn more about a way to transparently make `tsc` compatible with Plug'n'Play. We actually use it on the Yarn repository itself!
