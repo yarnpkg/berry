@@ -100,7 +100,7 @@ function parseViaPeg(source: string) {
   return parse(source);
 }
 
-const LEGACY_REGEXP = /^(#.*\n)*?#\s+yarn\s+lockfile\s+v1\n/i;
+const LEGACY_REGEXP = /^(#.*(\r?\n))*?#\s+yarn\s+lockfile\s+v1\r?\n/i;
 
 function parseViaJsYaml(source: string) {
   if (LEGACY_REGEXP.test(source))
