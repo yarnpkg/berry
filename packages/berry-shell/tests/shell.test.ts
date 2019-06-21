@@ -1,5 +1,7 @@
+import {NodeFS, xfs} from '@berry/fslib';
 import {execute}     from '@berry/shell';
 import {PassThrough} from 'stream';
+import {fileSync}    from 'tmp';
 
 const ifNotWin32It = process.platform !== `win32`
   ? it
@@ -404,51 +406,83 @@ describe(`Simple shell features`, () => {
     });
   });
 
-  it(`should support input redirections (file)`, async () => {
+  it(`should support empty default arguments`, async () => {
     await expect(bufferResult(
-      `echo foo < bar`,
+      `echo "foo\${DOESNT_EXIST:-}bar"`,
     )).resolves.toMatchObject({
-      stderr: `Shell redirections aren't implemented yet.\n`,
+      stdout: `foobar\n`,
+    });
+  });
+
+  it(`should support input redirections (file)`, async () => {
+    const file = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
+    await xfs.writeFilePromise(file, `hello world\n`);
+
+    await expect(bufferResult(
+      `cat < "${file}"`,
+    )).resolves.toMatchObject({
+      stdout: `hello world\n`,
     });
   });
 
   it(`should support input redirections (string)`, async () => {
     await expect(bufferResult(
-      `echo foo <<< bar`,
+      `cat <<< "hello world"`,
     )).resolves.toMatchObject({
-      stderr: `Shell redirections aren't implemented yet.\n`,
+      stdout: `hello world\n`,
     });
   });
 
   it(`should support output redirections (overwrite)`, async () => {
+    const file = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
+
     await expect(bufferResult(
-      `echo foo > bar`,
+      `echo "hello world" > "${file}"`,
     )).resolves.toMatchObject({
-      stderr: `Shell redirections aren't implemented yet.\n`,
+      stdout: ``,
     });
+
+    await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
   });
 
   it(`should support output redirections (append)`, async () => {
+    const file = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
+    await xfs.writeFilePromise(file, `foo bar baz\n`);
+
     await expect(bufferResult(
-      `echo foo >> bar`,
+      `echo "hello world" >> "${file}"`,
     )).resolves.toMatchObject({
-      stderr: `Shell redirections aren't implemented yet.\n`,
+      stdout: ``,
     });
+
+    await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`foo bar baz\nhello world\n`);
   });
 
   it(`should support multiple outputs`, async () => {
+    const file1 = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
+    const file2 = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
+
     await expect(bufferResult(
-      `echo foo > bar > baz`,
+      `echo "hello world" > "${file1}" > "${file2}"`,
     )).resolves.toMatchObject({
-      stderr: `Shell redirections aren't implemented yet.\n`,
+      stdout: ``,
     });
+
+    await expect(xfs.readFilePromise(file1, `utf8`)).resolves.toEqual(`hello world\n`);
+    await expect(xfs.readFilePromise(file2, `utf8`)).resolves.toEqual(`hello world\n`);
   });
 
   it(`should support multiple inputs`, async () => {
+    const file1 = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
+    await xfs.writeFilePromise(file1, `foo bar baz\n`);
+
+    const file2 = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
+    await xfs.writeFilePromise(file2, `hello world\n`);
+
     await expect(bufferResult(
-      `echo foo < bar < baz`,
+      `cat < "${file1}" < "${file2}"`,
     )).resolves.toMatchObject({
-      stderr: `Shell redirections aren't implemented yet.\n`,
+      stdout: `foo bar baz\nhello world\n`,
     });
   });
 });

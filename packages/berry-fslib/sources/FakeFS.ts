@@ -10,6 +10,7 @@ export type CreateReadStreamOptions = Partial<{
 
 export type CreateWriteStreamOptions = Partial<{
   encoding: string,
+  flags: 'a',
 }>;
 
 export type WriteFileOptions = Partial<{

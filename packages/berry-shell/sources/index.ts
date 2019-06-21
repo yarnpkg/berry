@@ -86,8 +86,95 @@ const BUILTINS = new Map<string, ShellBuiltin>([
   }],
 
   [`setredirects`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
-    state.stderr.write(`Shell redirections aren't implemented yet.\n`);
-    return 1;
+    let stdin = state.stdin;
+    let stdout = state.stdout;
+    let stderr = state.stderr;
+
+    const inputs: Array<() => Readable> = [];
+    const outputs: Array<Writable> = [];
+
+    let t = 0;
+
+    while (args[t] !== `--`) {
+      const type = args[t++];
+
+      const count = Number(args[t++]);
+      const last = t + count;
+
+      for (let u = t; u < last; ++t, ++u) {
+        switch (type) {
+          case `<`: {
+            inputs.push(() => {
+              return xfs.createReadStream(ppath.resolve(state.cwd, NodeFS.toPortablePath(args[u])));
+            });
+          } break;
+          case `<<<`: {
+            inputs.push(() => {
+              const input = new PassThrough();
+              process.nextTick(() => {
+                input.write(`${args[u]}\n`);
+                input.end();
+              });
+              return input;
+            });
+          } break;
+          case `>`: {
+            outputs.push(xfs.createWriteStream(ppath.resolve(state.cwd, NodeFS.toPortablePath(args[u]))));
+          } break;
+          case `>>`: {
+            outputs.push(xfs.createWriteStream(ppath.resolve(state.cwd, NodeFS.toPortablePath(args[u])), {flags: `a`}));
+          } break;
+        }
+      }
+    }
+
+    if (inputs.length > 0) {
+      const pipe = new PassThrough();
+      stdin = pipe;
+
+      const bindInput = (n: number) => {
+        if (n === inputs.length) {
+          pipe.end();
+        } else {
+          const input = inputs[n]();
+          input.pipe(pipe, {end: false});
+          input.on(`end`, () => {
+            bindInput(n + 1);
+          });
+        }
+      };
+
+      bindInput(0);
+    }
+
+    if (outputs.length > 0) {
+      const pipe = new PassThrough();
+      stdout = pipe;
+
+      for (const output of outputs) {
+        pipe.pipe(output);
+      }
+    }
+
+    const exitCode = await start(makeCommandAction(args.slice(t + 1), opts, state), {
+      stdin: new ProtectedStream<Readable>(stdin),
+      stdout: new ProtectedStream<Writable>(stdout),
+      stderr: new ProtectedStream<Writable>(stderr),
+    }).run();
+
+    // Close all the outputs (since the shell never closes the output stream)
+    await Promise.all(outputs.map(output => {
+      output.end();
+
+      // Wait until the output got flushed to the disk
+      return new Promise(resolve => {
+        output.on(`close`, () => {
+          resolve();
+        });
+      });
+    }));
+
+    return exitCode;
   }],
 ]);
 

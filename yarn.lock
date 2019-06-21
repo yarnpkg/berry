@@ -1980,9 +1980,11 @@ __metadata:
     "@berry/parsers": "workspace:0.0.2"
     "@berry/pnpify": "workspace:0.0.4"
     "@types/cross-spawn": "npm:6.0.0"
+    "@types/tmp": "npm:0.1.0"
     cross-spawn: "npm:^6.0.5"
     execa: "npm:^1.0.0"
     stream-buffers: "npm:^3.0.2"
+    tmp: "npm:^0.0.33"
     typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
@@ -3438,6 +3440,13 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 59f95dde3333ff39fd7321105a406c274fcd1b0e2a8ef8124e9ba2ec806075481e1a95c3f520737e64c19eb851de75068748aa30412ccae0834396e453709bba
+  languageName: node
+  linkType: hard
+
+"@types/tmp@npm:0.1.0":
+  version: 0.1.0
+  resolution: "@types/tmp@npm:0.1.0"
+  checksum: 8f5132c25ea5cf18e9694d807628fb6d654cca303de0a440197807ffabe7ed3edf2e95fbfe45d40e432f625fb2ae5ecc8e7d3f35c5be127bdcf375f46d037675
   languageName: node
   linkType: hard
 
