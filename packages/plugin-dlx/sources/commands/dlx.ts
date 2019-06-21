@@ -34,7 +34,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     try {
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`package.json`)), `{}\n`);
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`yarn.lock`)), ``);
-      await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`.yarnrc`)), `enable-global-cache: true\n`);
+      await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`.yarnrc.yml`)), `enableGlobalCache: true\n`);
 
       if (packages.length === 0) {
         packages = [command];

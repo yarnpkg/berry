@@ -22,7 +22,7 @@ describe(`Features`, () => {
     }, async ({path, run, source}) => {
       await xfs.writeFilePromise(`${path}/plugin-a.js`, PLUGIN_A);
 
-      await xfs.writeFilePromise(`${path}/.yarnrc`, stringifySyml({
+      await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
         plugins: [`./plugin-a.js`],
       }));
 
@@ -39,7 +39,7 @@ describe(`Features`, () => {
       await xfs.writeFilePromise(`${path}/plugin-a.js`, PLUGIN_A);
       await xfs.writeFilePromise(`${path}/plugin-b.js`, PLUGIN_B);
 
-      await xfs.writeFilePromise(`${path}/.yarnrc`, stringifySyml({
+      await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
         plugins: [`./plugin-a.js`, `./plugin-b.js`],
       }));
 

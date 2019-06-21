@@ -19,7 +19,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   .describe(`add all yarn files to your vcs`)
 
   .detail(`
-    This command will add to your staging area the files belonging to Yarn (typically any modified \`package.json\` and \`.yarnrc\` files, but also linker-generated files, cache data, etc). It will take your ignore list into account, so the cache files won't be added if the cache is ignored in a \`.gitignore\` file (assuming you use Git).
+    This command will add to your staging area the files belonging to Yarn (typically any modified \`package.json\` and \`.yarnrc.yml\` files, but also linker-generated files, cache data, etc). It will take your ignore list into account, so the cache files won't be added if the cache is ignored in a \`.gitignore\` file (assuming you use Git).
 
     Running \`--reset\` will instead remove them from the staging area (the changes will still be there, but won't be committed until you stage them back).
 

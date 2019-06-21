@@ -8579,31 +8579,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         ]
       ],
       [
-        "@babel/runtime-corejs2",
-        [
-          [
-            "npm:7.4.3",
-            {
-              "packageLocation": "./.yarn/cache/@babel-runtime-corejs2-npm-7.4.3-495ef2b589f3e6f22795047981006b7a5d20fe751b635017f1ddb6a53daa4544.zip/node_modules/@babel/runtime-corejs2/",
-              "packageDependencies": [
-                [
-                  "@babel/runtime-corejs2",
-                  "npm:7.4.3"
-                ],
-                [
-                  "core-js",
-                  "npm:2.6.5"
-                ],
-                [
-                  "regenerator-runtime",
-                  "npm:0.13.2"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
         "@babel/template",
         [
           [
@@ -9069,10 +9044,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:5.2.0"
                 ],
                 [
-                  "@types/decamelize",
-                  "npm:3.0.3"
-                ],
-                [
                   "agentkeepalive",
                   "npm:4.0.2"
                 ],
@@ -9091,10 +9062,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "cross-spawn",
                   "npm:6.0.5"
-                ],
-                [
-                  "decamelize",
-                  "npm:3.2.0"
                 ],
                 [
                   "execa",
@@ -14178,27 +14145,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/debug",
                   "npm:0.0.29"
-                ]
-              ]
-            }
-          ]
-        ]
-      ],
-      [
-        "@types/decamelize",
-        [
-          [
-            "npm:3.0.3",
-            {
-              "packageLocation": "./.yarn/cache/@types-decamelize-npm-3.0.3-5f6c3a05ee6cb6bbce4eaca6e0071922fff53dcb8a86434e68607efc098b383e.zip/node_modules/@types/decamelize/",
-              "packageDependencies": [
-                [
-                  "@types/decamelize",
-                  "npm:3.0.3"
-                ],
-                [
-                  "decamelize",
-                  "npm:3.2.0"
                 ]
               ]
             }
@@ -24214,18 +24160,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             }
           ],
           [
-            "npm:2.6.5",
-            {
-              "packageLocation": "./.yarn/cache/core-js-npm-2.6.5-814567893dab56b9eb40efe0e8f2421d0d782e12c2d66d6909860b85a5fdeb55.zip/node_modules/core-js/",
-              "packageDependencies": [
-                [
-                  "core-js",
-                  "npm:2.6.5"
-                ]
-              ]
-            }
-          ],
-          [
             "npm:3.0.0",
             {
               "packageLocation": "./.yarn/cache/core-js-npm-3.0.0-2809e54832c9ac53e3d0e105107a7769692c0fc3bfcf8e70c84795ae4e06504a.zip/node_modules/core-js/",
@@ -25931,22 +25865,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "xregexp",
                   "npm:4.0.0"
-                ]
-              ]
-            }
-          ],
-          [
-            "npm:3.2.0",
-            {
-              "packageLocation": "./.yarn/cache/decamelize-npm-3.2.0-449ee57a5001409ca06a5d36596d2d4c58bbd3368d8211faa60b130dd49105b5.zip/node_modules/decamelize/",
-              "packageDependencies": [
-                [
-                  "decamelize",
-                  "npm:3.2.0"
-                ],
-                [
-                  "xregexp",
-                  "npm:4.2.4"
                 ]
               ]
             }
@@ -55841,18 +55759,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ]
               ]
             }
-          ],
-          [
-            "npm:0.13.2",
-            {
-              "packageLocation": "./.yarn/cache/regenerator-runtime-npm-0.13.2-50b4e6a65634c2788c113abb68d037d860929b51fb0ba37ba17a5d7592559398.zip/node_modules/regenerator-runtime/",
-              "packageDependencies": [
-                [
-                  "regenerator-runtime",
-                  "npm:0.13.2"
-                ]
-              ]
-            }
           ]
         ]
       ],
@@ -67568,22 +67474,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "xregexp",
                   "npm:4.0.0"
-                ]
-              ]
-            }
-          ],
-          [
-            "npm:4.2.4",
-            {
-              "packageLocation": "./.yarn/cache/xregexp-npm-4.2.4-44b27f93c7b18c8e0931788d02a13638b0189aa233bb1e49ece0bc9f9d703de4.zip/node_modules/xregexp/",
-              "packageDependencies": [
-                [
-                  "xregexp",
-                  "npm:4.2.4"
-                ],
-                [
-                  "@babel/runtime-corejs2",
-                  "npm:7.4.3"
                 ]
               ]
             }

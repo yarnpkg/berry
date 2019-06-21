@@ -10,7 +10,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          await writeFile(`${path}/.yarnrc`, `pnp-shebang: "Hello World!"\n`);
+          await writeFile(`${path}/.yarnrc.yml`, `pnpShebang: "Hello World!"\n`);
 
           expect(parseJsonStream(
             (await run(`config`, `--json`)).stdout,
@@ -29,7 +29,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          await writeFile(`${path}/.foobarrc`, `pnp-shebang: "Hello World!"\n`);
+          await writeFile(`${path}/.foobarrc`, `pnpShebang: "Hello World!"\n`);
 
           expect(parseJsonStream(
             (await run(`config`, `--json`, {rcFilename: `.foobarrc`})).stdout,

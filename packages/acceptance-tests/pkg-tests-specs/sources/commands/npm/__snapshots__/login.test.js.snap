@@ -18,9 +18,9 @@ Object {
 `;
 
 exports[`Commands npm login it should login a user with OTP to a specific scope 1`] = `
-"init-scope: berry-test
+"initScope: berry-test
 
-npm-registries:
+npmRegistries:
   \\"http://yarn.test.registry\\":
     npmAuthToken: 686159dc-64b3-413e-a244-2de2b8d1c36f
 
@@ -58,9 +58,9 @@ Object {
 `;
 
 exports[`Commands npm login it should login a user with no OTP setup to a specific scope 1`] = `
-"init-scope: berry-test
+"initScope: berry-test
 
-npm-registries:
+npmRegistries:
   \\"http://yarn.test.registry\\":
     npmAuthToken: 316158de-64b3-413e-a244-2de2b8d1c80f
 

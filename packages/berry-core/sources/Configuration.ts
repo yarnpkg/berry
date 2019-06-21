@@ -3,7 +3,6 @@ import {parseSyml, stringifySyml}                               from '@berry/par
 import camelcase                                                from 'camelcase';
 import chalk                                                    from 'chalk';
 import {UsageError}                                             from 'clipanion';
-import decamelize                                               from 'decamelize';
 import supportsColor                                            from 'supports-color';
 
 import {MultiFetcher}                                           from './MultiFetcher';
@@ -78,7 +77,7 @@ const LEGACY_NAMES = new Set([
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
-export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc`);
+export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc.yml`);
 export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
 
 export enum SettingsType {
@@ -335,14 +334,13 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
     return result;
 
   for (const [propKey, propValue] of Object.entries(value)) {
-    const name = camelcase(propKey);
-    const subPath = `${path}.${name}`;
-    const subDefinition = definition.properties[name];
+    const subPath = `${path}.${propKey}`;
+    const subDefinition = definition.properties[propKey];
 
     if (!subDefinition)
       throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`);
 
-    result.set(name, parseValue(configuration, subPath, propValue, definition.properties[name], folder));
+    result.set(propKey, parseValue(configuration, subPath, propValue, definition.properties[propKey], folder));
   }
 
   return result;
@@ -459,11 +457,12 @@ export class Configuration {
    * the other ones.
    *
    * One particularity: the plugin initialization order is quite strict, with
-   * plugins listed in /foo/bar/.yarnrc taking precedence over plugins listed
-   * in /foo/.yarnrc and /.yarnrc. Additionally, while plugins can depend on
-   * one another, they can only depend on plugins that have been instantiated
-   * before them (so a plugin listed in /foo/.yarnrc can depend on another
-   * one listed on /foo/bar/.yarnrc, but not the other way around).
+   * plugins listed in /foo/bar/.yarnrc.yml taking precedence over plugins
+   * listed in /foo/.yarnrc.yml and /.yarnrc.yml. Additionally, while plugins
+   * can depend on one another, they can only depend on plugins that have been
+   * instantiated before them (so a plugin listed in /foo/.yarnrc.yml can
+   * depend on another one listed on /foo/bar/.yarnrc.yml, but not the other
+   * way around).
    */
 
   static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {strict = true, useRc = true}: {strict?: boolean, useRc?: boolean} = {}) {
@@ -639,34 +638,13 @@ export class Configuration {
       ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any
       : {};
 
-    const currentKeys = Object.keys(current);
-
-    // If some keys already use kebab-case then we keep using this style
-    const preferKebabCase = currentKeys.some(key => key.includes(`-`));
-
     let patched = false;
 
     if (typeof patch === `function`)
       patch = patch(current);
 
     for (const key of Object.keys(patch)) {
-      let currentKey;
-
-      if (currentKeys.includes(key)) {
-        currentKey = key;
-      } else {
-        currentKey = currentKeys.find(currentKey => camelcase(currentKey) === key);
-
-        if (typeof currentKey === `undefined`) {
-          if (preferKebabCase) {
-            currentKey = decamelize(key, `-`);
-          } else {
-            currentKey = key;
-          }
-        }
-      }
-
-      const currentValue = current[currentKey];
+      const currentValue = current[key];
 
       const nextValue = typeof patch[key] === `function`
         ? patch[key](currentValue)
@@ -675,7 +653,7 @@ export class Configuration {
       if (currentValue === nextValue)
         continue;
 
-      current[currentKey] = nextValue;
+      current[key] = nextValue;
       patched = true;
     }
 
@@ -751,10 +729,8 @@ export class Configuration {
       data = data.berry;
 
     for (const key of Object.keys(data)) {
-      const name = camelcase(key);
-
       // The plugins have already been loaded at this point
-      if (name === `plugins`)
+      if (key === `plugins`)
         continue;
 
       // Some environment variables should be ignored when applying the configuration
@@ -762,10 +738,10 @@ export class Configuration {
         continue;
 
       // It wouldn't make much sense, would it?
-      if (name === `rcFilename`)
+      if (key === `rcFilename`)
         throw new UsageError(`The rcFilename settings can only be set via ${`${ENVIRONMENT_PREFIX}RC_FILENAME`.toUpperCase()}, not via a rc file`);
 
-      const definition = this.settings.get(name);
+      const definition = this.settings.get(key);
       if (!definition) {
         if (strict) {
           throw new UsageError(`${LEGACY_NAMES.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
@@ -775,11 +751,11 @@ export class Configuration {
         }
       }
 
-      if (this.sources.has(name) && !overwrite)
+      if (this.sources.has(key) && !overwrite)
         continue;
 
-      this.values.set(name, parseValue(this, name, data[key], definition, folder));
-      this.sources.set(name, source);
+      this.values.set(key, parseValue(this, key, data[key], definition, folder));
+      this.sources.set(key, source);
     }
   }
 

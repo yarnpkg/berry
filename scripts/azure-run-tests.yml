@@ -6,6 +6,10 @@ steps:
   displayName: 'Install Node.js'
 
 - bash: |
+    npm install -g yarn@1.17.2
+  displayName: "Install Yarn 1.17.2+"
+
+- bash: |
     set -e
     node --version
     node ./scripts/run-yarn.js build:cli

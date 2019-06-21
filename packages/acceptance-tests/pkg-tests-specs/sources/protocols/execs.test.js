@@ -15,7 +15,7 @@ describe(`Protocols`, () => {
           [`dynamic-pkg`]: `exec:./genpkg.js`,
         },
       }, async ({path, run, source}) => {
-        await xfs.writeFilePromise(`${path}/.yarnrc`, stringifySyml({
+        await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
           plugins: [require.resolve(`@berry/monorepo/scripts/plugin-exec.js`)],
         }));
   

@@ -15,6 +15,10 @@ jobs:
     displayName: 'Install Node.js'
 
   - bash: |
+      npm install -g yarn@1.17.2
+    displayName: "Install Yarn 1.17.2+"
+
+  - bash: |
       YARN_ENABLE_NETWORK=0 node ./scripts/run-yarn.js --frozen-lockfile
     displayName: "Check that the Yarn files don't change on new installs"
 

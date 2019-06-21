@@ -1375,16 +1375,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime-corejs2@npm:^7.2.0":
-  version: 7.4.3
-  resolution: "@babel/runtime-corejs2@npm:7.4.3"
-  dependencies:
-    core-js: "npm:^2.6.5"
-    regenerator-runtime: "npm:^0.13.2"
-  checksum: 49229146faf710c1214b944838eb4c19ec8bc124bb4ad6c7a6c4bcd5f304bb27f2a31c707d868843a6aad59e3001c4a0a715b44ec82199bd1563a8116ad88979
-  languageName: node
-  linkType: hard
-
 "@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2":
   version: 7.2.0
   resolution: "@babel/runtime@npm:7.2.0"
@@ -1558,13 +1548,11 @@ __metadata:
     "@berry/pnpify": "workspace:0.0.4"
     "@berry/shell": "workspace:0.0.1"
     "@types/camelcase": "npm:5.2.0"
-    "@types/decamelize": "npm:3.0.3"
     agentkeepalive: "npm:^4.0.2"
     camelcase: "npm:^5.3.1"
     chalk: "npm:^2.4.1"
     clipanion: "npm:^0.15.0"
     cross-spawn: "npm:^6.0.5"
-    decamelize: "npm:^3.2.0"
     execa: "npm:^1.0.0"
     globby: "npm:^8.0.1"
     got: "npm:^9.2.2"
@@ -2918,15 +2906,6 @@ __metadata:
   version: 0.0.29
   resolution: "@types/debug@npm:0.0.29"
   checksum: 5d5f8e268b891cd72a6cd2a98c86e44cccb7ee4b4817584302e40481b20b486be775d2118b3471399c1427785b3fce3af27533ca0c6b922423331d4778faf8f2
-  languageName: node
-  linkType: hard
-
-"@types/decamelize@npm:3.0.3":
-  version: 3.0.3
-  resolution: "@types/decamelize@npm:3.0.3"
-  dependencies:
-    decamelize: "npm:*"
-  checksum: 4fb67a77b15aad94fa06f18fdfd06e649e1e20fa29aca9d84bc4e38872845d2d08efedf349f215f8f2af22b9a2f821b915e79df6f7acc85443d2d160ddb0fb8b
   languageName: node
   linkType: hard
 
@@ -6773,13 +6752,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^2.6.5":
-  version: 2.6.5
-  resolution: "core-js@npm:2.6.5"
-  checksum: 8f2e2db09438c9ab1eada8a9815b5f08d6c2f1b9889d605708a4b403e0632d31e96802538791c372d3823e8f1db2b328c0a678b84541529818b2026c5d429ffb
-  languageName: node
-  linkType: hard
-
 "core-util-is@npm:1.0.2, core-util-is@npm:~1.0.0":
   version: 1.0.2
   resolution: "core-util-is@npm:1.0.2"
@@ -7368,15 +7340,6 @@ __metadata:
   dependencies:
     ms: "npm:2.0.0"
   checksum: 89445d84f47d4ae7eb07d176f5e6ead0c3e955c19df6111cb6b1e4ca648560f2d706db0a54a1c5b04a7499172886a3e2daad9278ca19221b5d2468fd63b9c36e
-  languageName: node
-  linkType: hard
-
-"decamelize@npm:*, decamelize@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "decamelize@npm:3.2.0"
-  dependencies:
-    xregexp: "npm:^4.2.4"
-  checksum: e31037bf3470b1f251eb0163dbc81c82d10dfb2524630b7c56df0c52bb3989f51bad630bc65ed393972fe7269ecf6653b9ab262f46fc885ff7ae5562019b8b43
   languageName: node
   linkType: hard
 
@@ -18337,13 +18300,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.13.2":
-  version: 0.13.2
-  resolution: "regenerator-runtime@npm:0.13.2"
-  checksum: 1f58d98304183f26d8a67180855cffd89ba350e4b6a67839fd617b4ae0126fa758d30834d8400ceb1ba8d4598024cd9357c7236149cb3b86491f2772e27f0159
-  languageName: node
-  linkType: hard
-
 "regenerator-transform@npm:^0.13.3":
   version: 0.13.3
   resolution: "regenerator-transform@npm:0.13.3"
@@ -22586,15 +22542,6 @@ __metadata:
   version: 4.0.0
   resolution: "xregexp@npm:4.0.0"
   checksum: cf025e7b54e0028502529a24ac16f1d46884554fce037b7c6d24b323dc3fcee074ca729641b2116dd3994dd1a44ed41093b5b916afef019299e18322b68c2dd3
-  languageName: node
-  linkType: hard
-
-"xregexp@npm:^4.2.4":
-  version: 4.2.4
-  resolution: "xregexp@npm:4.2.4"
-  dependencies:
-    "@babel/runtime-corejs2": "npm:^7.2.0"
-  checksum: 2491089a246595950e4eda83bf9e3d95eb0f8be69ffe2a3a55713476591f6e036f373543623d63c6338a007c977feead6690c93634495e83535bfbf60ea42c9b
   languageName: node
   linkType: hard
 

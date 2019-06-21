@@ -14,7 +14,7 @@ describe(`Commands`, () => {
     test(
       `it should print the npm registry username when config has a valid npmAuthToken`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthToken: "${AUTH_TOKEN}"\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthToken: "${AUTH_TOKEN}"\n`);
 
         let code;
         let stdout;
@@ -33,7 +33,7 @@ describe(`Commands`, () => {
     test(
       `it should print the npm registry username when config has a valid npmAuthIdent`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthIdent: "${AUTH_IDENT}"\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthIdent: "${AUTH_IDENT}"\n`);
 
         let code;
         let stdout;
@@ -54,7 +54,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({ path, run, source }) => {
         const url = startPackageServer();
 
-        await writeFile(`${path}/.yarnrc`, [
+        await writeFile(`${path}/.yarnrc.yml`, [
           `npmScopes:\n`,
           `  testScope:\n`,
           `    npmRegistryServer: "${url}"\n`,
@@ -87,7 +87,7 @@ describe(`Commands`, () => {
     test(
       `it should throw an error when config has an invalid npmAuthToken`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthToken: "${INVALID_AUTH_TOKEN}"\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthToken: "${INVALID_AUTH_TOKEN}"\n`);
         await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Authentication failed/);
       })
     );
@@ -95,7 +95,7 @@ describe(`Commands`, () => {
     test(
       `it should throw an error when config has an invalid npmAuthIdent`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthIdent: "${INVALID_AUTH_IDENT}"\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthIdent: "${INVALID_AUTH_IDENT}"\n`);
         await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Authentication failed/);
       })
     );
@@ -105,7 +105,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({ path, run, source }) => {
         const url = startPackageServer();
 
-        await writeFile(`${path}/.yarnrc`, [
+        await writeFile(`${path}/.yarnrc.yml`, [
           `npmScopes:\n`,
           `  testScope:\n`,
           `    npmRegistryServer: "${url}"\n`,

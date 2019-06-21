@@ -43,7 +43,7 @@ describe(`Auth tests`, () => {
         dependencies: {[`no-deps`]: `1.0.0`},
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc`, `npmAlwaysAuth: true\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `npmAlwaysAuth: true\n`);
 
         await expect(run(`install`)).rejects.toThrowError(/No authentication configured for request/);
       },
@@ -57,7 +57,7 @@ describe(`Auth tests`, () => {
         dependencies: {[`private-package`]: `1.0.0`},
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthToken: "${AUTH_TOKEN}"\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthToken: "${AUTH_TOKEN}"\n`);
 
         // Rejected by 401 error from registry so no validation on the error message
         await expect(run(`install`)).rejects.toThrow();
@@ -72,7 +72,7 @@ describe(`Auth tests`, () => {
         dependencies: {[`@private/package`]: `1.0.0`},
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthToken: "${AUTH_TOKEN}"\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthToken: "${AUTH_TOKEN}"\n`);
 
         await run(`install`);
 
@@ -91,7 +91,7 @@ describe(`Auth tests`, () => {
         dependencies: {[`private-package`]: `1.0.0`},
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthToken: "${AUTH_TOKEN}"\nnpmAlwaysAuth: true\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthToken: "${AUTH_TOKEN}"\nnpmAlwaysAuth: true\n`);
 
         await run(`install`);
 
@@ -110,7 +110,7 @@ describe(`Auth tests`, () => {
         dependencies: {[`private-package`]: `1.0.0`},
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthIdent: "${AUTH_IDENT}"\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthIdent: "${AUTH_IDENT}"\n`);
 
         // Rejected by 401 error from registry so no validation on the error message
         await expect(run(`install`)).rejects.toThrow();
@@ -125,7 +125,7 @@ describe(`Auth tests`, () => {
         dependencies: {[`@private/package`]: `1.0.0`},
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthIdent: "${AUTH_IDENT}"\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthIdent: "${AUTH_IDENT}"\n`);
 
         await run(`install`);
 
@@ -144,7 +144,7 @@ describe(`Auth tests`, () => {
         dependencies: {[`private-package`]: `1.0.0`},
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthIdent: "${AUTH_IDENT}"\nnpmAlwaysAuth: true\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthIdent: "${AUTH_IDENT}"\nnpmAlwaysAuth: true\n`);
 
         await run(`install`);
 
@@ -163,7 +163,7 @@ describe(`Auth tests`, () => {
         dependencies: {[`private-package`]: `1.0.0`},
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthToken: "${INVALID_AUTH_TOKEN}"\nnpmAlwaysAuth: true\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthToken: "${INVALID_AUTH_TOKEN}"\nnpmAlwaysAuth: true\n`);
 
         await expect(run(`install`)).rejects.toThrow();
       },
@@ -177,7 +177,7 @@ describe(`Auth tests`, () => {
         dependencies: {[`private-package`]: `1.0.0`},
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc`, `npmAuthIdent: "${INVALID_AUTH_IDENT}"\nnpmAlwaysAuth: true\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthIdent: "${INVALID_AUTH_IDENT}"\nnpmAlwaysAuth: true\n`);
 
         await expect(run(`install`)).rejects.toThrow();
       },

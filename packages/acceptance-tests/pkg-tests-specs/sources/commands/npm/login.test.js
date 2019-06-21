@@ -114,7 +114,8 @@ describe(`Commands`, () => {
         const homePath = await createTemporaryFolder();
 
         await writeFile(`${homePath}/${SPEC_RC_FILENAME}`, [
-          `init-scope: berry-test\n`,
+          `initScope:\n`,
+          `  berry-test\n`,
           `npmScopes:\n`,
           `  testScope:\n`,
           `    npmRegistryServer: "${url}"\n`,
@@ -153,7 +154,8 @@ describe(`Commands`, () => {
         const homePath = await createTemporaryFolder();
 
         const initialRcFileContent = [
-          `init-scope: berry-test\n`,
+          `initScope:\n`,
+          `  berry-test\n`,
           `npmScopes:\n`,
           `  testScope:\n`,
           `    npmRegistryServer: "${url}"\n`,

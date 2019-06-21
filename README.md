@@ -28,13 +28,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
 
 ## Install
 
-Because this repository is about the modern but experimental version of Yarn (aka Yarn v2), the install process is slightly different for the time being.
-
-- Open one of your project
-- First run `yarn policies set-version nightly` - to be sure that the next command will work
-- Then run `yarn policies set-version berry` - this will fetch the v2 bundle
-- And voilà! Just run any command, such as `yarn config -v` - they will use the v2
-- To revert, just remove the local change to your `.yarnrc` file
+Consult the [dedicated page](https://yarnpkg.github.io/berry/getting-started/install) for more details.
 
 ## Documentation
 
@@ -93,7 +87,7 @@ $> yarn build:cli
 
 **How it works**
 
-After building the CLI your global `yarn` will immediatly start to reflect your local changes. This is because Yarn will pick up the `yarn-path` settings in this repository's `.yarnrc`, which is configured to use the newly built CLI if available.
+After building the CLI your global `yarn` will immediatly start to reflect your local changes. This is because Yarn will pick up the `yarnPath` settings in this repository's `.yarnrc.yml`, which is configured to use the newly built CLI if available.
 
 **Works out of the box!**
 
