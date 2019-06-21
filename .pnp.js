@@ -10337,6 +10337,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-pnp"
                 ],
                 [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
                   "typescript",
                   "npm:3.3.3333"
                 ],
@@ -10371,6 +10375,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/pnp",
                   "workspace:packages/berry-pnp"
+                ],
+                [
+                  "cross-spawn",
+                  "npm:6.0.5"
                 ],
                 [
                   "typescript",
@@ -10409,6 +10417,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-pnp"
                 ],
                 [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
                   "typescript",
                   "npm:3.3.3333"
                 ],
@@ -10443,6 +10455,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/pnp",
                   "workspace:packages/berry-pnp"
+                ],
+                [
+                  "cross-spawn",
+                  "npm:6.0.5"
                 ],
                 [
                   "typescript",
@@ -10481,6 +10497,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-pnp"
                 ],
                 [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
                   "typescript",
                   "npm:3.3.3333"
                 ],
@@ -10515,6 +10535,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/pnp",
                   "workspace:packages/berry-pnp"
+                ],
+                [
+                  "cross-spawn",
+                  "npm:6.0.5"
                 ],
                 [
                   "typescript",
@@ -10553,6 +10577,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-pnp"
                 ],
                 [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
                   "typescript",
                   "npm:3.3.3333"
                 ],
@@ -10587,6 +10615,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/pnp",
                   "workspace:packages/berry-pnp"
+                ],
+                [
+                  "cross-spawn",
+                  "npm:6.0.5"
                 ],
                 [
                   "typescript",
@@ -10625,6 +10657,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-pnp"
                 ],
                 [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
                   "typescript",
                   "npm:3.3.3333"
                 ],
@@ -10661,6 +10697,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-pnp"
                 ],
                 [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
                   "typescript",
                   "npm:3.3.3333"
                 ],
@@ -10695,6 +10735,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/pnp",
                   "workspace:packages/berry-pnp"
+                ],
+                [
+                  "cross-spawn",
+                  "npm:6.0.5"
                 ],
                 [
                   "typescript",

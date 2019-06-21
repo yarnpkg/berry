@@ -5,7 +5,8 @@
   "bin": "./lib/bin.js",
   "sideEffects": false,
   "dependencies": {
-    "@berry/fslib": "workspace:0.0.6"
+    "@berry/fslib": "workspace:0.0.6",
+    "cross-spawn": "^6.0.5"
   },
   "devDependencies": {
     "@berry/builder": "workspace:0.0.0",
