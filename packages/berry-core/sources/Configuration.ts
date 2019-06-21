@@ -458,11 +458,12 @@ export class Configuration {
    * the other ones.
    *
    * One particularity: the plugin initialization order is quite strict, with
-   * plugins listed in /foo/bar/.yarnrc taking precedence over plugins listed
-   * in /foo/.yarnrc and /.yarnrc. Additionally, while plugins can depend on
-   * one another, they can only depend on plugins that have been instantiated
-   * before them (so a plugin listed in /foo/.yarnrc can depend on another
-   * one listed on /foo/bar/.yarnrc, but not the other way around).
+   * plugins listed in /foo/bar/.yarnrc.yml taking precedence over plugins
+   * listed in /foo/.yarnrc.yml and /.yarnrc.yml. Additionally, while plugins
+   * can depend on one another, they can only depend on plugins that have been
+   * instantiated before them (so a plugin listed in /foo/.yarnrc.yml can
+   * depend on another one listed on /foo/bar/.yarnrc.yml, but not the other
+   * way around).
    */
 
   static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {strict = true, useRc = true}: {strict?: boolean, useRc?: boolean} = {}) {
