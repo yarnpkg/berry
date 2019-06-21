@@ -1,5 +1,5 @@
 import {NodeFS, PortablePath, ppath} from '@berry/fslib';
-import {spawn}                       from 'child_process';
+import crossSpawn                    from 'cross-spawn';
 
 import {dynamicRequire}              from './dynamicRequire';
 import {generateSdk}                 from './generateSdk';
@@ -45,7 +45,7 @@ function run(name: string, argv: Array<string>) {
   let {NODE_OPTIONS} = process.env;
   NODE_OPTIONS = `${NODE_OPTIONS || ``} --require ${dynamicRequire.resolve(`@berry/pnpify/lib`)}`.trim();
 
-  const child = spawn(name, argv, {
+  const child = crossSpawn(name, argv, {
     env: {...process.env, NODE_OPTIONS},
     stdio: `inherit`,
   });

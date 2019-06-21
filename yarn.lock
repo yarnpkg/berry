@@ -1947,6 +1947,7 @@ __metadata:
     "@berry/builder": "workspace:0.0.0"
     "@berry/fslib": "workspace:0.0.6"
     "@berry/pnp": "workspace:0.0.3"
+    cross-spawn: "npm:^6.0.5"
     typescript: "npm:^3.3.3333"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:^3.2.1"
