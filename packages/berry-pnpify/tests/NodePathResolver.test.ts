@@ -60,6 +60,12 @@ describe('NodePathResolver', () => {
     expect(pnpPath).toEqual({ resolvedPath: nodePath });
   });
 
+  it('should not try to alter paths from a dotted node_modules entry', () => {
+    const nodePath = '/home/user/proj/node_modules/.foo/bar';
+    const pnpPath = resolver.resolvePath(nodePath);
+    expect(pnpPath).toEqual({ resolvedPath: nodePath });
+  });
+
   it('should resolve /home/user/proj path', () => {
     const nodePath = '/home/user/proj';
     const pnpPath = resolver.resolvePath(nodePath);

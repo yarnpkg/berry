@@ -669,8 +669,13 @@ class NodePathResolver_NodePathResolver {
      */
     resolvePath(nodePath) {
         const result = { resolvedPath: nodePath };
-        if (nodePath.indexOf(`/node_modules`) < 0)
-            // Non-node_modules paths should not be processed
+        const marker = `/node_modules`;
+        const index = nodePath.indexOf(marker);
+        // Non-node_modules paths should not be processed
+        if (index === -1 || (index + marker.length < nodePath.length && nodePath.charAt(index + marker.length) !== `/`))
+            return result;
+        // Directories that start with a dot are usually cache folders and shouldn't be touched
+        if (nodePath.charAt(index + marker.length + 1) === `.`)
             return result;
         // Extract first issuer from the path using PnP API
         let issuer = this.getIssuer(this.pnp, nodePath);
