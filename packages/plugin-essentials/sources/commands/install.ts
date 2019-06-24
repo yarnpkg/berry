@@ -7,7 +7,7 @@ import {Writable}                                                               
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`install [--frozen-lockfile?] [--inline-builds?]`)
+  .command(`install [--frozen-lockfile?] [--inline-builds?] [--cache-folder PATH]`)
   .describe(`install the project dependencies`)
 
   .detail(`
@@ -33,14 +33,28 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn install`,
   )
 
-  .action(async ({cwd, stdout, frozenLockfile, inlineBuilds}: {cwd: PortablePath, stdout: Writable, frozenLockfile: boolean, inlineBuilds: boolean}) => {
+  .action(async ({cwd, stdout, cacheFolder, frozenLockfile, inlineBuilds}: {cwd: PortablePath, stdout: Writable, cacheFolder: string | null, frozenLockfile: boolean, inlineBuilds: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
+    if (cacheFolder !== null) {
+      const cacheFolderReport = await StreamReport.start({configuration, stdout, footer: false}, async report => {
+        if (process.env.NETLIFY) {
+          report.reportWarning(MessageName.DEPRECATED_CLI_SETTINGS, `Netlify is trying to set a cache folder, ignoring!`);
+        } else {
+          report.reportError(MessageName.DEPRECATED_CLI_SETTINGS, `The cache-folder option got deprecated; use rc settings instead`);
+        }
+      });
+
+      if (cacheFolderReport.hasErrors()) {
+        return cacheFolderReport.exitCode();
+      }
+    }
+  
     if (frozenLockfile === null)
       frozenLockfile = configuration.get(`frozenInstalls`);
 
     if (configuration.projectCwd !== null) {
-      const fixReport = await StreamReport.start({configuration, stdout, footer: false}, async (report: StreamReport) => {
+      const fixReport = await StreamReport.start({configuration, stdout, footer: false}, async report => {
         if (await autofixMergeConflicts(configuration, frozenLockfile)) {
           report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically fixed merge conflicts 👍`);
         }

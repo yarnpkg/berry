@@ -26,6 +26,8 @@ const IGNORED_ENV_VARIABLES = new Set([
   `binFolder`,
   // "version" is set by Docker: https://github.com/nodejs/docker-node/blob/5a6a5e91999358c5b04fddd6c22a9a4eb0bf3fbf/10/alpine/Dockerfile#L51
   `version`,
+  // "flags" is set by Netlify; they use it to specify the flags to send to the CLI when running the automatic `yarn install`
+  `flags`,
 ]);
 
 const LEGACY_NAMES = new Set([
