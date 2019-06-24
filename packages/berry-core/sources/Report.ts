@@ -56,6 +56,8 @@ export enum MessageName {
   AUTOMERGE_FAILED_TO_PARSE = 46,
   AUTOMERGE_IMMUTABLE = 47,
   AUTOMERGE_SUCCESS = 48,
+  AUTOMERGE_REQUIRED = 49,
+  DEPRECATED_CLI_SETTINGS = 50,
 }
 
 export class ReportError extends Error {

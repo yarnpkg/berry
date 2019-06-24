@@ -256,12 +256,20 @@ When under this mode, Yarn isn't allowed to edit any file, not even for automati
 
 In order to solve this problem, try running `yarn install` again on your computer without the `--immutable` flag, then commit the changes if the command succeeded.
 
-## YN0048 - `AUTOMERGE_REQUIRED`
+## YN0048 - `AUTOMERGE_SUCCESS`
+
+This informational message is emitted when Git conflict tokens were found within the `yarn.lock` file but were automatically fixed by Yarn. There's nothing else to do, everything should work out of the box!
+
+## YN0049 - `AUTOMERGE_REQUIRED`
 
 This informational message is emitted when Git conflict tokens are found within the `yarn.lock` file. Yarn will then try to automatically resolve the conflict by following its internal heuristic.
 
 The automerge logic is pretty simple: it will take the lockfile from the pulled branch, modify it by adding the information from the local branch, and run `yarn install` again to fix anything that might have been lost in the process.
 
-## YN0049 - `AUTOMERGE_SUCCESS`
+## YN0050 - `DEPRECATED_CLI_SETTINGS`
 
-This informational message is emitted when Git conflict tokens were found within the `yarn.lock` file but were automatically fixed by Yarn. There's nothing else to do, everything should work out of the box!
+This error is triggered when passing options to a CLI command through its arguments (for example `--cache-folder`).
+
+Starting from the v2, this isn't supported anymore. The reason for this is that we've consolidated all of our configuration inside a single store that can be defined from a yarnrc file. This guarantees that all your commands run inside the same environments (which previously wasn't the case depending on whether you were using `--cache-folder` on all your commands or just the install). CLI options will now only be used to control the *one-time-behaviors* of a particular command (like `--verbose`).
+
+**Special note for Netlify users:** Netlify currently [automatically passes](https://github.com/netlify/build-image/blob/f9c7f9a87c10314e4d65b121d45d68dc976817a2/run-build-functions.sh#L109) the `--cache-folder` option to Yarn, and you cannot disable it. For this reason we decided to make it a warning rather than an error when we detect that Yarn is running on Netlify (we still ignore the flag). We suggest upvoting [the relevant issue](https://github.com/netlify/build-image/issues/319) on their repository, as we're likely to remove this special case in a future major release.
