@@ -87,7 +87,7 @@ $> yarn build:cli
 
 **How it works**
 
-After building the CLI your global `yarn` will immediatly start to reflect your local changes. This is because Yarn will pick up the `yarnPath` settings in this repository's `.yarnrc.yml`, which is configured to use the newly built CLI if available.
+After building the CLI your global `yarn` will immediately start to reflect your local changes. This is because Yarn will pick up the `yarnPath` settings in this repository's `.yarnrc.yml`, which is configured to use the newly built CLI if available.
 
 **Works out of the box!**
 
