@@ -16,7 +16,6 @@
     "chalk": "^2.4.1",
     "clipanion": "^0.15.0",
     "cross-spawn": "^6.0.5",
-    "execa": "^1.0.0",
     "globby": "^8.0.1",
     "got": "^9.2.2",
     "json-file-plus": "^3.3.1",
