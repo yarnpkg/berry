@@ -1,8 +1,7 @@
-import {Configuration, PluginConfiguration, Project}               from '@berry/core';
-import {scriptUtils}                                               from '@berry/core';
-import {NodeFS, PortablePath}                                      from '@berry/fslib';
-import execa                                                       from 'execa';
-import {Readable, Writable}                                        from 'stream';
+import {Configuration, PluginConfiguration, Project} from '@berry/core';
+import {execUtils, scriptUtils}                      from '@berry/core';
+import {PortablePath}                                from '@berry/fslib';
+import {Readable, Writable}                          from 'stream';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
@@ -28,13 +27,5 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     const env = await scriptUtils.makeScriptEnv(project);
 
-    try {
-      await execa(`node`, args, {cwd: NodeFS.fromPortablePath(cwd), stdin, stdout, stderr, env});
-    } catch (error) {
-      if (error.cmd) {
-        return error.code;
-      } else {
-        throw error;
-      }
-    }
+    return await execUtils.pipevp(`node`, args, {cwd, stdin, stdout, stderr, env});
   });

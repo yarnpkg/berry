@@ -8983,10 +8983,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "npm:0.15.0"
                 ],
                 [
-                  "execa",
-                  "npm:1.0.0"
-                ],
-                [
                   "semver",
                   "npm:5.6.0"
                 ],
@@ -9062,10 +9058,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "cross-spawn",
                   "npm:6.0.5"
-                ],
-                [
-                  "execa",
-                  "npm:1.0.0"
                 ],
                 [
                   "globby",
@@ -9743,10 +9735,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "clipanion",
                   "npm:0.15.0"
-                ],
-                [
-                  "execa",
-                  "npm:1.0.0"
                 ],
                 [
                   "inquirer",
@@ -10792,10 +10780,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "cross-spawn",
                   "npm:6.0.5"
-                ],
-                [
-                  "execa",
-                  "npm:1.0.0"
                 ],
                 [
                   "stream-buffers",
