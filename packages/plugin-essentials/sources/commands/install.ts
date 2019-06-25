@@ -49,7 +49,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         return cacheFolderReport.exitCode();
       }
     }
-  
+
     if (frozenLockfile === null)
       frozenLockfile = configuration.get(`frozenInstalls`);
 
