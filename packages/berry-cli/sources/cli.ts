@@ -60,6 +60,9 @@ async function run() {
       }
     }
   } else {
+    if (ignorePath)
+      delete process.env.YARN_IGNORE_PATH;
+
     for (const plugin of configuration.plugins.values())
       for (const command of plugin.commands || [])
         command(clipanion, pluginConfiguration);
