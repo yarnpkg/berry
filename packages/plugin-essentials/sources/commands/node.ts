@@ -1,6 +1,6 @@
 import {Configuration, PluginConfiguration, Project} from '@berry/core';
 import {execUtils, scriptUtils}                      from '@berry/core';
-import {NodeFS, PortablePath}                        from '@berry/fslib';
+import {PortablePath}                                from '@berry/fslib';
 import {Readable, Writable}                          from 'stream';
 
 // eslint-disable-next-line arca/no-default-export
