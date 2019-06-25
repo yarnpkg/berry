@@ -101,7 +101,7 @@ export function resolveUnqualified(unqualified: string, opts?: {extensions?: Arr
 
 The `resolveUnqualified` function is mostly provided as an helper; it reimplements the Node resolution for file extensions and folder indexes, but not the regular `node_modules` traversal. It makes it slightly easier to integrate PnP into some projects, although it isn't required in any way if you already have something that fits the bill.
 
-To give you an example `resolveUnqualified` isn't needed with `enhanced-resolved`, used by Webpack, because it already implements its own way the logic contained in `resolveUnqualified` (and more). Instead, we instead only have to leverage the lower-level `resolveToUnqualified` function and feed it to the regular resolver.
+To give you an example `resolveUnqualified` isn't needed with `enhanced-resolved`, used by Webpack, because it already implements its own way the logic contained in `resolveUnqualified` (and more). Instead, we only have to leverage the lower-level `resolveToUnqualified` function and feed it to the regular resolver.
 
 For example, the following:
 
