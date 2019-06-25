@@ -33,10 +33,10 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn install`,
   )
 
-  .action(async ({cwd, stdout, cacheFolder, frozenLockfile, inlineBuilds}: {cwd: PortablePath, stdout: Writable, cacheFolder: string | null, frozenLockfile: boolean, inlineBuilds: boolean}) => {
+  .action(async ({cwd, stdout, cacheFolder, frozenLockfile, inlineBuilds}: {cwd: PortablePath, stdout: Writable, cacheFolder: string | null | undefined, frozenLockfile: boolean, inlineBuilds: boolean}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
-    if (cacheFolder !== null) {
+    if (cacheFolder != null) {
       const cacheFolderReport = await StreamReport.start({configuration, stdout, footer: false}, async report => {
         if (process.env.NETLIFY) {
           report.reportWarning(MessageName.DEPRECATED_CLI_SETTINGS, `Netlify is trying to set a cache folder, ignoring!`);
@@ -49,7 +49,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         return cacheFolderReport.exitCode();
       }
     }
-  
+
     if (frozenLockfile === null)
       frozenLockfile = configuration.get(`frozenInstalls`);
 
