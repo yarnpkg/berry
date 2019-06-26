@@ -38,12 +38,14 @@ export class NodeFS extends BasePortableFakeFS {
     this.realFs.closeSync(fd);
   }
 
-  createReadStream(p: PortablePath, opts?: CreateReadStreamOptions) {
-    return this.realFs.createReadStream(NodeFS.fromPortablePath(p), opts);
+  createReadStream(p: PortablePath | null, opts?: CreateReadStreamOptions) {
+    const realPath = (p !== null ? NodeFS.fromPortablePath(p) : p) as fs.PathLike;
+    return this.realFs.createReadStream(realPath, opts);
   }
 
-  createWriteStream(p: PortablePath, opts?: CreateWriteStreamOptions) {
-    return this.realFs.createWriteStream(NodeFS.fromPortablePath(p), opts);
+  createWriteStream(p: PortablePath | null, opts?: CreateWriteStreamOptions) {
+    const realPath = (p !== null ? NodeFS.fromPortablePath(p) : p) as fs.PathLike;
+    return this.realFs.createWriteStream(realPath, opts);
   }
 
   async realpathPromise(p: PortablePath) {

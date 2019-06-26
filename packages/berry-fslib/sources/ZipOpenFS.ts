@@ -99,7 +99,10 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.baseFs.closeSync(fd);
   }
 
-  createReadStream(p: PortablePath, opts?: CreateReadStreamOptions) {
+  createReadStream(p: PortablePath | null, opts?: CreateReadStreamOptions) {
+    if (p === null)
+      return this.baseFs.createReadStream(p, opts);
+
     return this.makeCallSync(p, () => {
       return this.baseFs.createReadStream(p, opts);
     }, (zipFs, {subPath}) => {
@@ -107,7 +110,10 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  createWriteStream(p: PortablePath, opts?: CreateWriteStreamOptions) {
+  createWriteStream(p: PortablePath | null, opts?: CreateWriteStreamOptions) {
+    if (p === null)
+      return this.baseFs.createWriteStream(p, opts);
+
     return this.makeCallSync(p, () => {
       return this.baseFs.createWriteStream(p, opts);
     }, (zipFs, {subPath}) => {

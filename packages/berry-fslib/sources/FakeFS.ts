@@ -6,10 +6,12 @@ import {convertPath, ppath}                      from './path';
 
 export type CreateReadStreamOptions = Partial<{
   encoding: string,
+  fd: number,
 }>;
 
 export type CreateWriteStreamOptions = Partial<{
   encoding: string,
+  fd: number,
   flags: 'a',
 }>;
 
@@ -36,8 +38,8 @@ export abstract class FakeFS<P extends Path> {
   abstract closePromise(fd: number): void;
   abstract closeSync(fd: number): void;
 
-  abstract createWriteStream(p: P, opts?: CreateWriteStreamOptions): WriteStream;
-  abstract createReadStream(p: P, opts?: CreateReadStreamOptions): ReadStream;
+  abstract createWriteStream(p: P | null, opts?: CreateWriteStreamOptions): WriteStream;
+  abstract createReadStream(p: P | null, opts?: CreateReadStreamOptions): ReadStream;
 
   abstract realpathPromise(p: P): Promise<P>;
   abstract realpathSync(p: P): P;

@@ -33,12 +33,12 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     this.baseFs.closeSync(fd);
   }
 
-  createReadStream(p: P, opts?: CreateReadStreamOptions) {
-    return this.baseFs.createReadStream(this.mapToBase(p), opts);
+  createReadStream(p: P | null, opts?: CreateReadStreamOptions) {
+    return this.baseFs.createReadStream(p !== null ? this.mapToBase(p) : p, opts);
   }
 
-  createWriteStream(p: P, opts?: CreateWriteStreamOptions) {
-    return this.baseFs.createWriteStream(this.mapToBase(p), opts);
+  createWriteStream(p: P | null, opts?: CreateWriteStreamOptions) {
+    return this.baseFs.createWriteStream(p !== null ? this.mapToBase(p) : p, opts);
   }
 
   async realpathPromise(p: P) {
