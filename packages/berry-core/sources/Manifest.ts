@@ -16,6 +16,7 @@ export interface WorkspaceDefinition {
 
 export interface DependencyMeta {
   built?: boolean;
+  optionalBuild?: boolean;
   unplugged?: boolean;
 };
 
@@ -189,7 +190,7 @@ export class Manifest {
 
     if (typeof data.devDependencies === `object` && data.devDependencies !== null) {
       for (const [name, range] of Object.entries(data.devDependencies)) {
-        if (typeof range !== 'string') {
+        if (typeof range !== `string`) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           continue;
         }
@@ -315,6 +316,38 @@ export class Manifest {
 
       if (typeof data.publishConfig.module === `string`) {
         this.publishConfig.module = data.publishConfig.module;
+      }
+    }
+
+    // We treat optional dependencies after both the regular dependency field
+    // and the dependenciesMeta field have been generated (because we will
+    // override them)
+
+    if (typeof data.optionalDependencies === `object` && data.optionalDependencies !== null) {
+      for (const [name, range] of Object.entries(data.optionalDependencies)) {
+        if (typeof range !== `string`) {
+          errors.push(new Error(`Invalid dependency range for '${name}'`));
+          continue;
+        }
+
+        let ident;
+        try {
+          ident = structUtils.parseIdent(name);
+        } catch (error) {
+          errors.push(new Error(`Parsing failed for the dependency name '${name}'`));
+          continue;
+        }
+
+        // Note that we store the optional dependencies in the same store as
+        // the one that keep the regular dependencies, because they're
+        // effectively the same (the only difference is that optional
+        // dependencies have an extra field set in dependenciesMeta).
+
+        const descriptor = structUtils.makeDescriptor(ident, range);
+        this.dependencies.set(descriptor.identHash, descriptor);
+
+        const dependencyMeta = this.ensureDependencyMeta(descriptor);
+        Object.assign(dependencyMeta, {optionalBuild: true});
       }
     }
 
@@ -447,7 +480,32 @@ export class Manifest {
       }));
     }
 
-    data.dependencies = this.dependencies.size === 0 ? undefined : Object.assign({}, ...structUtils.sortDescriptors(this.dependencies.values()).map(dependency => {
+    const regularDependencies = [];
+    const optionalDependencies = [];
+
+    for (const dependency of this.dependencies.values()) {
+      const dependencyMetaSet = this.dependenciesMeta.get(structUtils.stringifyIdent(dependency));
+      let isOptionallyBuilt = false;
+
+      if (dependencyMetaSet) {
+        const meta = dependencyMetaSet.get(dependency.range);
+        if (meta && meta.optionalBuild) {
+          isOptionallyBuilt = true;
+        }
+      }
+
+      if (isOptionallyBuilt) {
+        optionalDependencies.push(dependency);
+      } else {
+        regularDependencies.push(dependency);
+      }
+    }
+
+    data.dependencies = regularDependencies.length === 0 ? undefined : Object.assign({}, ...structUtils.sortDescriptors(regularDependencies).map(dependency => {
+      return {[structUtils.stringifyIdent(dependency)]: dependency.range};
+    }));
+
+    data.optionalDependencies = optionalDependencies.length === 0 ? undefined : Object.assign({}, ...structUtils.sortDescriptors(optionalDependencies).map(dependency => {
       return {[structUtils.stringifyIdent(dependency)]: dependency.range};
     }));
 
@@ -467,7 +525,13 @@ export class Manifest {
           ? structUtils.stringifyDescriptor(structUtils.makeDescriptor(structUtils.parseIdent(identString), range))
           : identString;
 
-        data.dependenciesMeta[key] = meta;
+        const metaCopy = {... meta};
+        delete metaCopy.optionalBuild;
+
+        if (Object.keys(metaCopy).length === 0)
+          continue;
+
+        data.dependenciesMeta[key] = metaCopy;
       }
     }
 

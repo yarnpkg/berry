@@ -1121,10 +1121,19 @@ export class Project {
 
             if (exitCode === 0) {
               nextBState[pkg.locatorHash] = buildHash;
-            } else {
-              report.reportError(MessageName.BUILD_FAILED, `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${exitCode}, logs can be found here: ${logFile})`);
+              continue;
+            }
+
+            const dependencyMeta = this.getDependencyMeta(pkg, pkg.version);
+            const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${exitCode}, logs can be found here: ${logFile})`;
+
+            if (!dependencyMeta.optionalBuild) {
+              report.reportError(MessageName.BUILD_FAILED, buildMessage);
               break;
             }
+
+            nextBState[pkg.locatorHash] = buildHash;
+            report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
           }
         })());
       }
