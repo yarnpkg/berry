@@ -525,7 +525,7 @@ export class Manifest {
           ? structUtils.stringifyDescriptor(structUtils.makeDescriptor(structUtils.parseIdent(identString), range))
           : identString;
 
-        const metaCopy = {... meta};
+        const metaCopy = {...meta};
         delete metaCopy.optionalBuild;
 
         if (Object.keys(metaCopy).length === 0)
