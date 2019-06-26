@@ -68400,10 +68400,12 @@ class NodeFS extends FakeFS_1.BasePortableFakeFS {
         this.realFs.closeSync(fd);
     }
     createReadStream(p, opts) {
-        return this.realFs.createReadStream(NodeFS.fromPortablePath(p), opts);
+        const realPath = (p !== null ? NodeFS.fromPortablePath(p) : p);
+        return this.realFs.createReadStream(realPath, opts);
     }
     createWriteStream(p, opts) {
-        return this.realFs.createWriteStream(NodeFS.fromPortablePath(p), opts);
+        const realPath = (p !== null ? NodeFS.fromPortablePath(p) : p);
+        return this.realFs.createWriteStream(realPath, opts);
     }
     async realpathPromise(p) {
         return await new Promise((resolve, reject) => {
@@ -68611,10 +68613,10 @@ class ProxiedFS extends FakeFS_1.FakeFS {
         this.baseFs.closeSync(fd);
     }
     createReadStream(p, opts) {
-        return this.baseFs.createReadStream(this.mapToBase(p), opts);
+        return this.baseFs.createReadStream(p !== null ? this.mapToBase(p) : p, opts);
     }
     createWriteStream(p, opts) {
-        return this.baseFs.createWriteStream(this.mapToBase(p), opts);
+        return this.baseFs.createWriteStream(p !== null ? this.mapToBase(p) : p, opts);
     }
     async realpathPromise(p) {
         return this.mapFromBase(await this.baseFs.realpathPromise(this.mapToBase(p)));
@@ -69368,6 +69370,8 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
         throw new Error(`Unimplemented`);
     }
     createReadStream(p, { encoding } = {}) {
+        if (p === null)
+            throw new Error(`Unimplemented`);
         const stream = Object.assign(new stream_1.PassThrough(), {
             bytesRead: 0,
             path: p,
@@ -69390,6 +69394,8 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
         return stream;
     }
     createWriteStream(p, { encoding } = {}) {
+        if (p === null)
+            throw new Error(`Unimplemented`);
         const stream = Object.assign(new stream_1.PassThrough(), {
             bytesWritten: 0,
             path: p,
@@ -70334,6 +70340,8 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
         return this.baseFs.closeSync(fd);
     }
     createReadStream(p, opts) {
+        if (p === null)
+            return this.baseFs.createReadStream(p, opts);
         return this.makeCallSync(p, () => {
             return this.baseFs.createReadStream(p, opts);
         }, (zipFs, { subPath }) => {
@@ -70341,6 +70349,8 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
         });
     }
     createWriteStream(p, opts) {
+        if (p === null)
+            return this.baseFs.createWriteStream(p, opts);
         return this.makeCallSync(p, () => {
             return this.baseFs.createWriteStream(p, opts);
         }, (zipFs, { subPath }) => {

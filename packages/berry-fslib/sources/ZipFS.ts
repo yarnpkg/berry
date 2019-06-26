@@ -264,7 +264,10 @@ export class ZipFS extends BasePortableFakeFS {
     throw new Error(`Unimplemented`);
   }
 
-  createReadStream(p: PortablePath, {encoding}: CreateReadStreamOptions = {}): ReadStream {
+  createReadStream(p: PortablePath | null, {encoding}: CreateReadStreamOptions = {}): ReadStream {
+    if (p === null)
+      throw new Error(`Unimplemented`);
+
     const stream = Object.assign(new PassThrough(), {
       bytesRead: 0,
       path: p,
@@ -289,7 +292,10 @@ export class ZipFS extends BasePortableFakeFS {
     return stream;
   }
 
-  createWriteStream(p: PortablePath, {encoding}: CreateWriteStreamOptions = {}): WriteStream {
+  createWriteStream(p: PortablePath | null, {encoding}: CreateWriteStreamOptions = {}): WriteStream {
+    if (p === null)
+      throw new Error(`Unimplemented`);
+
     const stream = Object.assign(new PassThrough(), {
       bytesWritten: 0,
       path: p,
