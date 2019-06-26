@@ -102,6 +102,17 @@ const PackageJsonDoc = () => <>
         />
       </JsonObjectProperty>
       <JsonObjectProperty
+        name={`optionalDependencies`}
+        description={<>
+          Similar to the <code>devDependencies</code> field, except that these dependencies are not required to build properly should they have any build script. Note that such dependencies must still be resolvable and fetchable (otherwise we couldn't store it in the lockfile, which could lead to non-reproducible installs). Only the build part is optional.
+        </>}
+      >
+        <JsonScalarProperty
+          name={`fsevents`}
+          placeholder={`^5.0.0`}
+        />
+      </JsonObjectProperty>
+      <JsonObjectProperty
         name={`devDependencies`}
         description={<>
           Similar to the <code>dependencies</code> field, except that these dependencies are only installed on local installs and will never be installed by the consumers of your package. Note that because that would lead to different install trees depending on whether the install is made in "production" or "development" mode, Yarn doesn't offer a way to prevent the installation of dev dependencies at the moment.
@@ -153,6 +164,15 @@ const PackageJsonDoc = () => <>
             placeholder={false}
             description={<>
               If false, the package will never be built. When the global settings <code>enableScripts</code> is toggled off, setting this additional flag will also downgrade the warning into a simple notice for this specific package.
+            </>}
+          />
+          <JsonScalarProperty
+            name={`optionalBuild`}
+            anchor={`dependenciesMeta.optionalBuild`}
+            placeholder={false}
+            description={<>
+              <p>If true, the build isn't required to succeed for the install to be considered a success. It's what the <code>optionalDependencies</code> field compiles down to.</p>
+              <p><b>This settings will be applied even when found within a nested manifest</b> (although the highest requirement in the dependency will prevale).</p>
             </>}
           />
           <JsonScalarProperty
