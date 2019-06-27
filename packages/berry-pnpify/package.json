@@ -1,6 +1,6 @@
 {
   "name": "@berry/pnpify",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "./sources/index.ts",
   "bin": "./lib/bin.js",
   "sideEffects": false,

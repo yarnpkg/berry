@@ -11,7 +11,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.2.0",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.1.0",
-    "@berry/pnpify": "workspace:0.0.4",
+    "@berry/pnpify": "workspace:0.0.5",
     "@types/cross-spawn": "6.0.0",
     "@types/dateformat": "^1.0.1",
     "@types/emscripten": "^0.0.31",

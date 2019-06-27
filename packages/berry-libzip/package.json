@@ -3,7 +3,7 @@
   "version": "0.0.4",
   "main": "./sources/index.ts",
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.0.4",
+    "@berry/pnpify": "workspace:0.0.5",
     "typescript": "^3.3.3333"
   },
   "scripts": {
