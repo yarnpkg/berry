@@ -578,10 +578,12 @@ class NodeFS extends _FakeFS__WEBPACK_IMPORTED_MODULE_1__[/* BasePortableFakeFS 
         this.realFs.closeSync(fd);
     }
     createReadStream(p, opts) {
-        return this.realFs.createReadStream(NodeFS.fromPortablePath(p), opts);
+        const realPath = (p !== null ? NodeFS.fromPortablePath(p) : p);
+        return this.realFs.createReadStream(realPath, opts);
     }
     createWriteStream(p, opts) {
-        return this.realFs.createWriteStream(NodeFS.fromPortablePath(p), opts);
+        const realPath = (p !== null ? NodeFS.fromPortablePath(p) : p);
+        return this.realFs.createWriteStream(realPath, opts);
     }
     async realpathPromise(p) {
         return await new Promise((resolve, reject) => {
@@ -2913,7 +2915,7 @@ var path = __webpack_require__(0);
 // EXTERNAL MODULE: ../berry-fslib/sources/NodeFS.ts
 var NodeFS = __webpack_require__(5);
 
-// EXTERNAL MODULE: /Users/mael.nison/berry/.yarn/cache/cross-spawn-npm-6.0.5-0ba5f883cf582a4248c1c8575ef31c368634c587aa0b9731c596cf866746bf5e.zip/node_modules/cross-spawn/index.js
+// EXTERNAL MODULE: /mnt/d/berry/.yarn/cache/cross-spawn-npm-6.0.5-0ba5f883cf582a4248c1c8575ef31c368634c587aa0b9731c596cf866746bf5e.zip/node_modules/cross-spawn/index.js
 var cross_spawn = __webpack_require__(15);
 var cross_spawn_default = /*#__PURE__*/__webpack_require__.n(cross_spawn);
 

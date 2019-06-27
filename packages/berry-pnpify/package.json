@@ -25,7 +25,7 @@
   },
   "scripts": {
     "build:pnpify": "run webpack-cli --config webpack.config.pkg.js",
-    "prepack": "rm -rf lib && run build:pnpify && yarn pnpify tsc --emitDeclarationOnly --declaration",
+    "prepack": "rm -rf lib && run build:pnpify && ./lib/bin.js tsc --emitDeclarationOnly --declaration",
     "release": "yarn npm publish",
     "test:pnpify:watch": "run test:pnpify --watch",
     "test:pnpify": "run test:unit packages/berry-pnpify"

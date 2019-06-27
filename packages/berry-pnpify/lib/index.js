@@ -1091,10 +1091,12 @@ class NodeFS extends _FakeFS__WEBPACK_IMPORTED_MODULE_1__[/* BasePortableFakeFS 
         this.realFs.closeSync(fd);
     }
     createReadStream(p, opts) {
-        return this.realFs.createReadStream(NodeFS.fromPortablePath(p), opts);
+        const realPath = (p !== null ? NodeFS.fromPortablePath(p) : p);
+        return this.realFs.createReadStream(realPath, opts);
     }
     createWriteStream(p, opts) {
-        return this.realFs.createWriteStream(NodeFS.fromPortablePath(p), opts);
+        const realPath = (p !== null ? NodeFS.fromPortablePath(p) : p);
+        return this.realFs.createWriteStream(realPath, opts);
     }
     async realpathPromise(p) {
         return await new Promise((resolve, reject) => {
@@ -1309,10 +1311,10 @@ class ProxiedFS extends _FakeFS__WEBPACK_IMPORTED_MODULE_0__[/* FakeFS */ "b"] {
         this.baseFs.closeSync(fd);
     }
     createReadStream(p, opts) {
-        return this.baseFs.createReadStream(this.mapToBase(p), opts);
+        return this.baseFs.createReadStream(p !== null ? this.mapToBase(p) : p, opts);
     }
     createWriteStream(p, opts) {
-        return this.baseFs.createWriteStream(this.mapToBase(p), opts);
+        return this.baseFs.createWriteStream(p !== null ? this.mapToBase(p) : p, opts);
     }
     async realpathPromise(p) {
         return this.mapFromBase(await this.baseFs.realpathPromise(this.mapToBase(p)));
