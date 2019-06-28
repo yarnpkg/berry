@@ -38,6 +38,10 @@ jobs:
       node ./scripts/run-yarn.js test:lint
     displayName: 'Check the linting passes'
 
+  - bash: |
+      node /scripts/run-yarn.js constraints check
+    displayName: 'Check that the constraints pass'
+
 - job: Windows
   pool:
     vmImage: 'vs2017-win2016'
