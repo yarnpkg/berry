@@ -108,7 +108,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `should execute non-run command`,
+      `should execute 'node' command`,
       makeTemporaryEnv(
         {
           private: true,
@@ -123,7 +123,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `node`, `-p`, `require("./package.json").name`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `node`, `-p`, `require("./package.json").name`, { cwd: `${path}/packages/workspace-d` }));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }

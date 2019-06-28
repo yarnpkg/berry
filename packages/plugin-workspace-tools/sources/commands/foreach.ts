@@ -227,7 +227,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           const [stderr, stderrEnd] = createStream(report, {prefix, interlaced});
 
           try {
-            const exitCode = await clipanion.run(null, [command, ...rest], {
+            const result = await clipanion.run(null, [command, ...rest], {
               ...env,
               cwd: workspace.cwd,
               stdout: stdout,
@@ -240,10 +240,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
             const emptyStdout = await stdoutEnd;
             const emptyStderr = await stderrEnd;
 
-            if (verbose && emptyStdout && emptyStderr)
-              report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode || 0})`);
+            const exitCode = command === 'node' ? result.code : result || 0;
 
-            return command === 'run' ? exitCode : 0;
+            if (verbose && emptyStdout && emptyStderr)
+              report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode})`);
+
+            return exitCode;
           } catch (err) {
             stdout.end();
             stderr.end();

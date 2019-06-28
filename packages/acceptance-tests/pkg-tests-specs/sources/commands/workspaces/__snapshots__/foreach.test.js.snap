@@ -1,18 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Commands workspace foreach should execute non-run command 1`] = `
+exports[`Commands workspace foreach should execute 'node' command 1`] = `
 Object {
-  "code": 0,
+  "code": "ENOENT",
   "stderr": "",
-  "stdout": "➤ YN0000: undefined
-➤ YN0000: workspace-a
-➤ YN0000: workspace-c
-➤ YN0000: workspace-b
-➤ YN0000: workspace-d
-➤ YN0000: workspace-e
-➤ YN0000: workspace-f
-➤ YN0000: Done
-",
+  "stdout": "",
 }
 `;
 
