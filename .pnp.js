@@ -380,6 +380,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#workspace:packages/berry-pnpify"
                 ],
                 [
+                  "@types/camelcase",
+                  "npm:5.2.0"
+                ],
+                [
                   "@types/cross-spawn",
                   "npm:6.0.0"
                 ],
@@ -9036,10 +9040,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "workspace:packages/berry-shell"
                 ],
                 [
-                  "@types/camelcase",
-                  "npm:5.2.0"
-                ],
-                [
                   "agentkeepalive",
                   "npm:4.0.2"
                 ],
@@ -9403,6 +9403,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/pnpify",
                   "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#workspace:packages/berry-pnpify"
+                ],
+                [
+                  "@types/camelcase",
+                  "npm:5.2.0"
                 ],
                 [
                   "@types/cross-spawn",

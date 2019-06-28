@@ -10,7 +10,6 @@
     "@berry/pnp": "workspace:0.0.4",
     "@berry/pnpify": "workspace:0.0.6",
     "@berry/shell": "workspace:0.0.3",
-    "@types/camelcase": "5.2.0",
     "agentkeepalive": "^4.0.2",
     "camelcase": "^5.3.1",
     "chalk": "^2.4.1",

@@ -12,6 +12,7 @@
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.1.0",
     "@berry/pnpify": "workspace:0.0.6",
+    "@types/camelcase": "5.2.0",
     "@types/cross-spawn": "6.0.0",
     "@types/dateformat": "^1.0.1",
     "@types/emscripten": "^0.0.31",
