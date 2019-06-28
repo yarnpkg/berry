@@ -7,9 +7,12 @@ constraints_min_version(1).
 % This rule will prevent two of our workspaces from depending on different versions of a same dependency
 gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, Reason) :-
   % Iterates over all dependencies from all workspaces
-    workspace_has_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, _),
+    workspace_has_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType),
   % Iterates over similarly-named dependencies from all workspaces (again)
-    workspace_has_dependency(OtherWorkspaceCwd, DependencyIdent, DependencyRange2, _),
+    workspace_has_dependency(OtherWorkspaceCwd, DependencyIdent, DependencyRange2, DependencyType2),
+  % Ignore peer dependencies
+    DependencyType \= 'peerDependencies',
+    DependencyType2 \= 'peerDependencies',
   % Only consider those that have a different range than us
     DependencyRange \= DependencyRange2,
   % Don't emit a gen_invalid_dependency rule if there's already a gen_enforced_dependency rule
