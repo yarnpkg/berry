@@ -10770,14 +10770,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:f6b05c0c96572f15b37b07e6a95918dbb72c0b6c7422e81995c7aefe609ed0db5412726010c3491cb09be8f610af59ca47bb9917f495951e4b75d15aff3724e2#workspace:packages/berry-pnpify"
                 ],
                 [
-                  "@types/cross-spawn",
-                  "npm:6.0.0"
-                ],
-                [
-                  "@types/tmp",
-                  "npm:0.1.0"
-                ],
-                [
                   "cross-spawn",
                   "npm:6.0.5"
                 ],
@@ -15437,18 +15429,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@types/tmp",
                   "npm:0.0.33"
-                ]
-              ]
-            }
-          ],
-          [
-            "npm:0.1.0",
-            {
-              "packageLocation": "./.yarn/cache/@types-tmp-npm-0.1.0-1a3e4dadd4c2326666cf9e0083ca4c150d7c3c19dbf3055de73bff70167d5ca0.zip/node_modules/@types/tmp/",
-              "packageDependencies": [
-                [
-                  "@types/tmp",
-                  "npm:0.1.0"
                 ]
               ]
             }
