@@ -39,7 +39,7 @@ jobs:
     displayName: 'Check the linting passes'
 
   - bash: |
-      node /scripts/run-yarn.js constraints check
+      node ./scripts/run-yarn.js constraints check
     displayName: 'Check that the constraints pass'
 
 - job: Windows
