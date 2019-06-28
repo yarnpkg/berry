@@ -4,7 +4,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/builder": "workspace:0.0.0",
-    "@berry/core": "workspace:0.0.0",
+    "@berry/core": "workspace:0.0.1",
     "@berry/fslib": "workspace:0.0.6",
     "clipanion": "^0.15.0"
   },

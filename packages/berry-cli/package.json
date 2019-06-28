@@ -7,7 +7,7 @@
     "berry": "./bin/run.js"
   },
   "dependencies": {
-    "@berry/core": "workspace:0.0.0",
+    "@berry/core": "workspace:0.0.1",
     "@berry/fslib": "workspace:0.0.6",
     "@berry/parsers": "workspace:0.0.2",
     "@berry/shell": "workspace:0.0.1",

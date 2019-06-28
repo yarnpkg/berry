@@ -3,7 +3,7 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/core": "workspace:0.0.0",
+    "@berry/core": "workspace:0.0.1",
     "@berry/fslib": "workspace:0.0.6",
     "@berry/json-proxy": "workspace:0.0.0",
     "clipanion": "^0.15.0"
