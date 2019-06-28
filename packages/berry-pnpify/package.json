@@ -1,16 +1,16 @@
 {
   "name": "@berry/pnpify",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "./sources/index.ts",
   "bin": "./lib/bin.js",
   "sideEffects": false,
   "dependencies": {
-    "@berry/fslib": "workspace:0.0.6",
+    "@berry/fslib": "workspace:0.0.8",
     "cross-spawn": "^6.0.5"
   },
   "devDependencies": {
     "@berry/builder": "workspace:0.0.0",
-    "@berry/pnp": "workspace:0.0.3",
+    "@berry/pnp": "workspace:0.0.4",
     "typescript": "^3.3.3333",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1"
@@ -25,7 +25,7 @@
   },
   "scripts": {
     "build:pnpify": "run webpack-cli --config webpack.config.pkg.js",
-    "prepack": "rm -rf lib && run build:pnpify && ./lib/bin.js tsc --emitDeclarationOnly --declaration",
+    "prepack": "rm -rf lib && run build:pnpify && yarn pnpify tsc --emitDeclarationOnly --declaration",
     "release": "yarn npm publish",
     "test:pnpify:watch": "run test:pnpify --watch",
     "test:pnpify": "run test:unit packages/berry-pnpify"

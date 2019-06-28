@@ -1,9 +1,12 @@
 {
   "name": "@berry/parsers",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "main": "./sources/index.ts",
+  "dependencies": {
+    "js-yaml": "^3.10.0"
+  },
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.0.5",
+    "@berry/pnpify": "workspace:0.0.6",
     "pegjs": "^0.10.0",
     "typescript": "^3.3.3333"
   },
@@ -15,9 +18,6 @@
     "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
     "release": "yarn npm publish",
     "test:parsers": "run test:unit packages/berry-parsers"
-  },
-  "dependencies": {
-    "js-yaml": "npm:^3.10.0"
   },
   "publishConfig": {
     "main": "./lib/index.js",

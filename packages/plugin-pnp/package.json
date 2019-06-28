@@ -4,9 +4,9 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/cli": "workspace:2.0.0",
-    "@berry/core": "workspace:0.0.1",
-    "@berry/fslib": "workspace:0.0.6",
-    "@berry/pnp": "workspace:0.0.3"
+    "@berry/core": "workspace:0.0.6",
+    "@berry/fslib": "workspace:0.0.8",
+    "@berry/pnp": "workspace:0.0.4"
   },
   "devDependencies": {
     "@berry/plugin-stage": "workspace:0.0.0"

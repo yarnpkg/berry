@@ -3,8 +3,8 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/core": "workspace:0.0.1",
-    "@berry/fslib": "workspace:0.0.6"
+    "@berry/core": "workspace:0.0.6",
+    "@berry/fslib": "workspace:0.0.8"
   },
   "scripts": {
     "build": "tsc",
