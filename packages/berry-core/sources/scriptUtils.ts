@@ -10,7 +10,7 @@ import {StreamReport}                                                 from './St
 import {Workspace}                                                    from './Workspace';
 import * as execUtils                                                 from './execUtils';
 import * as structUtils                                               from './structUtils';
-import {Locator}                                                      from './types';
+import {LocatorHash, Locator}                                         from './types';
 
 async function makePathWrapper(location: PortablePath, name: Filename, argv0: NativePath, args: Array<string> = []) {
   if (process.platform === `win32`) {
@@ -194,14 +194,20 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
   const linkers = configuration.getLinkers();
   const linkerOptions = {project, report: new StreamReport({configuration, stdout})};
 
+  const visibleLocators: Set<LocatorHash> = new Set([locator.locatorHash]);
+
   for (const descriptor of pkg.dependencies.values()) {
     const resolution = project.storedResolutions.get(descriptor.descriptorHash);
     if (!resolution)
       throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(configuration, descriptor)}) should have been registered`);
 
-    const dependency = project.storedPackages.get(resolution);
+    visibleLocators.add(resolution);
+  }
+
+  for (const locatorHash of visibleLocators) {
+    const dependency = project.storedPackages.get(locatorHash);
     if (!dependency)
-      throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(configuration, descriptor)}) should have been registered`);
+      throw new Error(`Assertion failed: The package (${locatorHash}) should have been registered`);
 
     if (dependency.bin.size === 0)
       continue;
