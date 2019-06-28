@@ -104,7 +104,8 @@ const PackageJsonDoc = () => <>
       <JsonObjectProperty
         name={`optionalDependencies`}
         description={<>
-          Similar to the <code>devDependencies</code> field, except that these dependencies are not required to build properly should they have any build script. Note that such dependencies must still be resolvable and fetchable (otherwise we couldn't store it in the lockfile, which could lead to non-reproducible installs). Only the build part is optional.
+          <p>Similar to the <code>devDependencies</code> field, except that these dependencies are not required to build properly should they have any build script. Note that such dependencies must still be resolvable and fetchable (otherwise we couldn't store it in the lockfile, which could lead to non-reproducible installs). Only the build part is optional.</p>
+          <p><b>This field is usually not what you're looking for</b>, unless you depend on <code>fsevents</code>. If you need a package to be required only when a specific feature is used then use a peer dependency.</p>
         </>}
       >
         <JsonScalarProperty
@@ -167,12 +168,12 @@ const PackageJsonDoc = () => <>
             </>}
           />
           <JsonScalarProperty
-            name={`optionalBuild`}
-            anchor={`dependenciesMeta.optionalBuild`}
+            name={`optional`}
+            anchor={`dependenciesMeta.optional`}
             placeholder={false}
             description={<>
               <p>If true, the build isn't required to succeed for the install to be considered a success. It's what the <code>optionalDependencies</code> field compiles down to.</p>
-              <p><b>This settings will be applied even when found within a nested manifest</b> (although the highest requirement in the dependency will prevale).</p>
+              <p><b>This settings will be applied even when found within a nested manifest</b>, but the highest requirement in the dependency tree will prevale.</p>
             </>}
           />
           <JsonScalarProperty

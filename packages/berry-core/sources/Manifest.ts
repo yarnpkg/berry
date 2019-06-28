@@ -16,7 +16,7 @@ export interface WorkspaceDefinition {
 
 export interface DependencyMeta {
   built?: boolean;
-  optionalBuild?: boolean;
+  optional?: boolean;
   unplugged?: boolean;
 };
 
@@ -343,11 +343,12 @@ export class Manifest {
         // effectively the same (the only difference is that optional
         // dependencies have an extra field set in dependenciesMeta).
 
-        const descriptor = structUtils.makeDescriptor(ident, range);
-        this.dependencies.set(descriptor.identHash, descriptor);
+        const realDescriptor = structUtils.makeDescriptor(ident, range);
+        this.dependencies.set(realDescriptor.identHash, realDescriptor);
 
-        const dependencyMeta = this.ensureDependencyMeta(descriptor);
-        Object.assign(dependencyMeta, {optionalBuild: true});
+        const identDescriptor = structUtils.makeDescriptor(ident, `unknown`);
+        const dependencyMeta = this.ensureDependencyMeta(identDescriptor);
+        Object.assign(dependencyMeta, {optional: true});
       }
     }
 
@@ -440,7 +441,7 @@ export class Manifest {
     }
   }
 
-  exportTo(data: {[key: string]: any}) {
+  exportTo(data: {[key: string]: any}, {compatibilityMode = true}: {compatibilityMode?: boolean} = {}) {
     // Note that we even set the fields that we re-set later; it
     // allows us to preserve the key ordering
     Object.assign(data, this.raw);
@@ -487,10 +488,12 @@ export class Manifest {
       const dependencyMetaSet = this.dependenciesMeta.get(structUtils.stringifyIdent(dependency));
       let isOptionallyBuilt = false;
 
-      if (dependencyMetaSet) {
-        const meta = dependencyMetaSet.get(dependency.range);
-        if (meta && meta.optionalBuild) {
-          isOptionallyBuilt = true;
+      if (compatibilityMode) {
+        if (dependencyMetaSet) {
+          const meta = dependencyMetaSet.get(null);
+          if (meta && meta.optional) {
+            isOptionallyBuilt = true;
+          }
         }
       }
 
@@ -526,7 +529,9 @@ export class Manifest {
           : identString;
 
         const metaCopy = {...meta};
-        delete metaCopy.optionalBuild;
+
+        if (compatibilityMode && range === null)
+          delete metaCopy.optional;
 
         if (Object.keys(metaCopy).length === 0)
           continue;
