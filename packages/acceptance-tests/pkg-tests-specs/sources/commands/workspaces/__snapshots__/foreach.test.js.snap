@@ -1,5 +1,315 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Commands workspace foreach should execute non-run command 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Usage: yarn [-h,--help] [--cwd PATH] <command>
+➤ YN0000: 
+➤ YN0000: Where <command> is one of:
+➤ YN0000: 
+➤ YN0000:   add                 add dependencies to the project
+➤ YN0000:   bin                 get the path to a binary script
+➤ YN0000:   cache clean         remove the unused packages from the cache
+➤ YN0000:   config              display the current configuration
+➤ YN0000:   config set          change a configuration settings
+➤ YN0000:   dlx                 run a package in a temporary environment
+➤ YN0000:   help                print the program usage
+➤ YN0000:   init                create a new package
+➤ YN0000:   install             install the project dependencies
+➤ YN0000:   link                connect the local project to another one
+➤ YN0000:   node                run node with the hook already setup
+➤ YN0000:   pack                bundle local packages for publishing
+➤ YN0000:   plugin dl           list the active plugins
+➤ YN0000:   plugin list         list the active plugins
+➤ YN0000:   remove              remove dependencies from the project
+➤ YN0000:   run                 run a script defined in the package.json
+➤ YN0000:   set resolution      enforce a package resolution
+➤ YN0000:   set version         lock the Yarn version used by the project
+➤ YN0000:   unplug              force the unpacking of a list of packages
+➤ YN0000:   up                  upgrade dependencies across the project
+➤ YN0000:   why                 display the reason why a package is needed
+➤ YN0000: 
+➤ YN0000: Constraints-related commands:
+➤ YN0000: 
+➤ YN0000:   constraints check   check that the project constraints are met
+➤ YN0000:   constraints fix     make the project constraint-compliant if possible
+➤ YN0000:   constraints query   query the constraints fact database
+➤ YN0000:   constraints source  print the source code for the constraints
+➤ YN0000: 
+➤ YN0000: Npm-related commands:
+➤ YN0000: 
+➤ YN0000:   npm login           store new login info to access the npm registry
+➤ YN0000:   npm publish         publish the active workspace to the npm registry
+➤ YN0000:   npm whoami          display the name of the authenticated user
+➤ YN0000: 
+➤ YN0000: Workspace-related commands:
+➤ YN0000: 
+➤ YN0000:   workspaces foreach  run a command on all workspaces
+➤ YN0000:   workspaces list     list all available workspaces
+➤ YN0000: Usage: yarn [-h,--help] [--cwd PATH] <command>
+➤ YN0000: 
+➤ YN0000: Where <command> is one of:
+➤ YN0000: 
+➤ YN0000:   add                 add dependencies to the project
+➤ YN0000:   bin                 get the path to a binary script
+➤ YN0000:   cache clean         remove the unused packages from the cache
+➤ YN0000:   config              display the current configuration
+➤ YN0000:   config set          change a configuration settings
+➤ YN0000:   dlx                 run a package in a temporary environment
+➤ YN0000:   help                print the program usage
+➤ YN0000:   init                create a new package
+➤ YN0000:   install             install the project dependencies
+➤ YN0000:   link                connect the local project to another one
+➤ YN0000:   node                run node with the hook already setup
+➤ YN0000:   pack                bundle local packages for publishing
+➤ YN0000:   plugin dl           list the active plugins
+➤ YN0000:   plugin list         list the active plugins
+➤ YN0000:   remove              remove dependencies from the project
+➤ YN0000:   run                 run a script defined in the package.json
+➤ YN0000:   set resolution      enforce a package resolution
+➤ YN0000:   set version         lock the Yarn version used by the project
+➤ YN0000:   unplug              force the unpacking of a list of packages
+➤ YN0000:   up                  upgrade dependencies across the project
+➤ YN0000:   why                 display the reason why a package is needed
+➤ YN0000: 
+➤ YN0000: Constraints-related commands:
+➤ YN0000: 
+➤ YN0000:   constraints check   check that the project constraints are met
+➤ YN0000:   constraints fix     make the project constraint-compliant if possible
+➤ YN0000:   constraints query   query the constraints fact database
+➤ YN0000:   constraints source  print the source code for the constraints
+➤ YN0000: 
+➤ YN0000: Npm-related commands:
+➤ YN0000: 
+➤ YN0000:   npm login           store new login info to access the npm registry
+➤ YN0000:   npm publish         publish the active workspace to the npm registry
+➤ YN0000:   npm whoami          display the name of the authenticated user
+➤ YN0000: 
+➤ YN0000: Workspace-related commands:
+➤ YN0000: 
+➤ YN0000:   workspaces foreach  run a command on all workspaces
+➤ YN0000:   workspaces list     list all available workspaces
+➤ YN0000: Usage: yarn [-h,--help] [--cwd PATH] <command>
+➤ YN0000: 
+➤ YN0000: Where <command> is one of:
+➤ YN0000: 
+➤ YN0000:   add                 add dependencies to the project
+➤ YN0000:   bin                 get the path to a binary script
+➤ YN0000:   cache clean         remove the unused packages from the cache
+➤ YN0000:   config              display the current configuration
+➤ YN0000:   config set          change a configuration settings
+➤ YN0000:   dlx                 run a package in a temporary environment
+➤ YN0000:   help                print the program usage
+➤ YN0000:   init                create a new package
+➤ YN0000:   install             install the project dependencies
+➤ YN0000:   link                connect the local project to another one
+➤ YN0000:   node                run node with the hook already setup
+➤ YN0000:   pack                bundle local packages for publishing
+➤ YN0000:   plugin dl           list the active plugins
+➤ YN0000:   plugin list         list the active plugins
+➤ YN0000:   remove              remove dependencies from the project
+➤ YN0000:   run                 run a script defined in the package.json
+➤ YN0000:   set resolution      enforce a package resolution
+➤ YN0000:   set version         lock the Yarn version used by the project
+➤ YN0000:   unplug              force the unpacking of a list of packages
+➤ YN0000:   up                  upgrade dependencies across the project
+➤ YN0000:   why                 display the reason why a package is needed
+➤ YN0000: 
+➤ YN0000: Constraints-related commands:
+➤ YN0000: 
+➤ YN0000:   constraints check   check that the project constraints are met
+➤ YN0000:   constraints fix     make the project constraint-compliant if possible
+➤ YN0000:   constraints query   query the constraints fact database
+➤ YN0000:   constraints source  print the source code for the constraints
+➤ YN0000: 
+➤ YN0000: Npm-related commands:
+➤ YN0000: 
+➤ YN0000:   npm login           store new login info to access the npm registry
+➤ YN0000:   npm publish         publish the active workspace to the npm registry
+➤ YN0000:   npm whoami          display the name of the authenticated user
+➤ YN0000: 
+➤ YN0000: Workspace-related commands:
+➤ YN0000: 
+➤ YN0000:   workspaces foreach  run a command on all workspaces
+➤ YN0000:   workspaces list     list all available workspaces
+➤ YN0000: Usage: yarn [-h,--help] [--cwd PATH] <command>
+➤ YN0000: 
+➤ YN0000: Where <command> is one of:
+➤ YN0000: 
+➤ YN0000:   add                 add dependencies to the project
+➤ YN0000:   bin                 get the path to a binary script
+➤ YN0000:   cache clean         remove the unused packages from the cache
+➤ YN0000:   config              display the current configuration
+➤ YN0000:   config set          change a configuration settings
+➤ YN0000:   dlx                 run a package in a temporary environment
+➤ YN0000:   help                print the program usage
+➤ YN0000:   init                create a new package
+➤ YN0000:   install             install the project dependencies
+➤ YN0000:   link                connect the local project to another one
+➤ YN0000:   node                run node with the hook already setup
+➤ YN0000:   pack                bundle local packages for publishing
+➤ YN0000:   plugin dl           list the active plugins
+➤ YN0000:   plugin list         list the active plugins
+➤ YN0000:   remove              remove dependencies from the project
+➤ YN0000:   run                 run a script defined in the package.json
+➤ YN0000:   set resolution      enforce a package resolution
+➤ YN0000:   set version         lock the Yarn version used by the project
+➤ YN0000:   unplug              force the unpacking of a list of packages
+➤ YN0000:   up                  upgrade dependencies across the project
+➤ YN0000:   why                 display the reason why a package is needed
+➤ YN0000: 
+➤ YN0000: Constraints-related commands:
+➤ YN0000: 
+➤ YN0000:   constraints check   check that the project constraints are met
+➤ YN0000:   constraints fix     make the project constraint-compliant if possible
+➤ YN0000:   constraints query   query the constraints fact database
+➤ YN0000:   constraints source  print the source code for the constraints
+➤ YN0000: 
+➤ YN0000: Npm-related commands:
+➤ YN0000: 
+➤ YN0000:   npm login           store new login info to access the npm registry
+➤ YN0000:   npm publish         publish the active workspace to the npm registry
+➤ YN0000:   npm whoami          display the name of the authenticated user
+➤ YN0000: 
+➤ YN0000: Workspace-related commands:
+➤ YN0000: 
+➤ YN0000:   workspaces foreach  run a command on all workspaces
+➤ YN0000:   workspaces list     list all available workspaces
+➤ YN0000: Usage: yarn [-h,--help] [--cwd PATH] <command>
+➤ YN0000: 
+➤ YN0000: Where <command> is one of:
+➤ YN0000: 
+➤ YN0000:   add                 add dependencies to the project
+➤ YN0000:   bin                 get the path to a binary script
+➤ YN0000:   cache clean         remove the unused packages from the cache
+➤ YN0000:   config              display the current configuration
+➤ YN0000:   config set          change a configuration settings
+➤ YN0000:   dlx                 run a package in a temporary environment
+➤ YN0000:   help                print the program usage
+➤ YN0000:   init                create a new package
+➤ YN0000:   install             install the project dependencies
+➤ YN0000:   link                connect the local project to another one
+➤ YN0000:   node                run node with the hook already setup
+➤ YN0000:   pack                bundle local packages for publishing
+➤ YN0000:   plugin dl           list the active plugins
+➤ YN0000:   plugin list         list the active plugins
+➤ YN0000:   remove              remove dependencies from the project
+➤ YN0000:   run                 run a script defined in the package.json
+➤ YN0000:   set resolution      enforce a package resolution
+➤ YN0000:   set version         lock the Yarn version used by the project
+➤ YN0000:   unplug              force the unpacking of a list of packages
+➤ YN0000:   up                  upgrade dependencies across the project
+➤ YN0000:   why                 display the reason why a package is needed
+➤ YN0000: 
+➤ YN0000: Constraints-related commands:
+➤ YN0000: 
+➤ YN0000:   constraints check   check that the project constraints are met
+➤ YN0000:   constraints fix     make the project constraint-compliant if possible
+➤ YN0000:   constraints query   query the constraints fact database
+➤ YN0000:   constraints source  print the source code for the constraints
+➤ YN0000: 
+➤ YN0000: Npm-related commands:
+➤ YN0000: 
+➤ YN0000:   npm login           store new login info to access the npm registry
+➤ YN0000:   npm publish         publish the active workspace to the npm registry
+➤ YN0000:   npm whoami          display the name of the authenticated user
+➤ YN0000: 
+➤ YN0000: Workspace-related commands:
+➤ YN0000: 
+➤ YN0000:   workspaces foreach  run a command on all workspaces
+➤ YN0000:   workspaces list     list all available workspaces
+➤ YN0000: Usage: yarn [-h,--help] [--cwd PATH] <command>
+➤ YN0000: 
+➤ YN0000: Where <command> is one of:
+➤ YN0000: 
+➤ YN0000:   add                 add dependencies to the project
+➤ YN0000:   bin                 get the path to a binary script
+➤ YN0000:   cache clean         remove the unused packages from the cache
+➤ YN0000:   config              display the current configuration
+➤ YN0000:   config set          change a configuration settings
+➤ YN0000:   dlx                 run a package in a temporary environment
+➤ YN0000:   help                print the program usage
+➤ YN0000:   init                create a new package
+➤ YN0000:   install             install the project dependencies
+➤ YN0000:   link                connect the local project to another one
+➤ YN0000:   node                run node with the hook already setup
+➤ YN0000:   pack                bundle local packages for publishing
+➤ YN0000:   plugin dl           list the active plugins
+➤ YN0000:   plugin list         list the active plugins
+➤ YN0000:   remove              remove dependencies from the project
+➤ YN0000:   run                 run a script defined in the package.json
+➤ YN0000:   set resolution      enforce a package resolution
+➤ YN0000:   set version         lock the Yarn version used by the project
+➤ YN0000:   unplug              force the unpacking of a list of packages
+➤ YN0000:   up                  upgrade dependencies across the project
+➤ YN0000:   why                 display the reason why a package is needed
+➤ YN0000: 
+➤ YN0000: Constraints-related commands:
+➤ YN0000: 
+➤ YN0000:   constraints check   check that the project constraints are met
+➤ YN0000:   constraints fix     make the project constraint-compliant if possible
+➤ YN0000:   constraints query   query the constraints fact database
+➤ YN0000:   constraints source  print the source code for the constraints
+➤ YN0000: 
+➤ YN0000: Npm-related commands:
+➤ YN0000: 
+➤ YN0000:   npm login           store new login info to access the npm registry
+➤ YN0000:   npm publish         publish the active workspace to the npm registry
+➤ YN0000:   npm whoami          display the name of the authenticated user
+➤ YN0000: 
+➤ YN0000: Workspace-related commands:
+➤ YN0000: 
+➤ YN0000:   workspaces foreach  run a command on all workspaces
+➤ YN0000:   workspaces list     list all available workspaces
+➤ YN0000: Usage: yarn [-h,--help] [--cwd PATH] <command>
+➤ YN0000: 
+➤ YN0000: Where <command> is one of:
+➤ YN0000: 
+➤ YN0000:   add                 add dependencies to the project
+➤ YN0000:   bin                 get the path to a binary script
+➤ YN0000:   cache clean         remove the unused packages from the cache
+➤ YN0000:   config              display the current configuration
+➤ YN0000:   config set          change a configuration settings
+➤ YN0000:   dlx                 run a package in a temporary environment
+➤ YN0000:   help                print the program usage
+➤ YN0000:   init                create a new package
+➤ YN0000:   install             install the project dependencies
+➤ YN0000:   link                connect the local project to another one
+➤ YN0000:   node                run node with the hook already setup
+➤ YN0000:   pack                bundle local packages for publishing
+➤ YN0000:   plugin dl           list the active plugins
+➤ YN0000:   plugin list         list the active plugins
+➤ YN0000:   remove              remove dependencies from the project
+➤ YN0000:   run                 run a script defined in the package.json
+➤ YN0000:   set resolution      enforce a package resolution
+➤ YN0000:   set version         lock the Yarn version used by the project
+➤ YN0000:   unplug              force the unpacking of a list of packages
+➤ YN0000:   up                  upgrade dependencies across the project
+➤ YN0000:   why                 display the reason why a package is needed
+➤ YN0000: 
+➤ YN0000: Constraints-related commands:
+➤ YN0000: 
+➤ YN0000:   constraints check   check that the project constraints are met
+➤ YN0000:   constraints fix     make the project constraint-compliant if possible
+➤ YN0000:   constraints query   query the constraints fact database
+➤ YN0000:   constraints source  print the source code for the constraints
+➤ YN0000: 
+➤ YN0000: Npm-related commands:
+➤ YN0000: 
+➤ YN0000:   npm login           store new login info to access the npm registry
+➤ YN0000:   npm publish         publish the active workspace to the npm registry
+➤ YN0000:   npm whoami          display the name of the authenticated user
+➤ YN0000: 
+➤ YN0000: Workspace-related commands:
+➤ YN0000: 
+➤ YN0000:   workspaces foreach  run a command on all workspaces
+➤ YN0000:   workspaces list     list all available workspaces
+➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands workspace foreach should never run the scripts on workspaces that match the --exclude list 1`] = `
 Object {
   "code": 0,

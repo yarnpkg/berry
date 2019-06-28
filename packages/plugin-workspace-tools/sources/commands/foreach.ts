@@ -9,8 +9,8 @@ import {Writable}                                                            fro
 import * as yup                                                              from 'yup';
 
 type ForeachOptions = {
-  args: Array<string>;
   command: string;
+  rest: string[];
   cwd: PortablePath;
   exclude: string[];
   include: string[];
@@ -46,7 +46,7 @@ const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Projec
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`workspaces foreach <command> [...args] [-v,--verbose] [-p,--parallel] [-i,--interlaced] [-j,--jobs JOBS] [--topological] [--topological-dev] [--all] [--include WORKSPACES...] [--exclude WORKSPACES...]`)
+  .command(`workspaces foreach <command> [... rest] [-v,--verbose] [-p,--parallel] [-i,--interlaced] [-j,--jobs JOBS] [--topological] [--topological-dev] [--all] [--include WORKSPACES...] [--exclude WORKSPACES...]`)
   .categorize(`Workspace-related commands`)
   .describe(`run a command on all workspaces`)
   .flags({proxyArguments: true})
@@ -65,6 +65,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that musn't execute the script.
 
     Adding the \`-v,--verbose\` flag will cause Yarn to print more information; in particular the name of the workspace that generated the output will be printed at the front of each line.
+
+    If the command is \`run\` and the script being run does not exist the child workspace will be skipped without error.
   `)
 
   .validate(yup.object().shape({
@@ -77,7 +79,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
   }))
 
   .action(
-    async ({cwd, args, stdout, command, exclude, include, interlaced, parallel, topological, topologicalDev, all, verbose, jobs, ...env}: ForeachOptions) => {
+    async ({cwd, stdout, command, rest, exclude, include, interlaced, parallel, topological, topologicalDev, all, verbose, jobs, ...env}: ForeachOptions) => {
       const configuration = await Configuration.find(cwd, pluginConfiguration);
       const {project, workspace: cwdWorkspace} = await Project.find(configuration, cwd);
 
@@ -93,12 +95,15 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       const workspaces: Array<Workspace> = [];
 
       for (const workspace of candidates) {
-        if (!workspace.manifest.scripts.has(command))
+        if (command === 'run' && rest.length > 0 && !workspace.manifest.scripts.has(rest[0]))
           continue;
 
         // Prevents infinite loop in the case of configuring a script as such:
         //     "lint": "yarn workspaces foreach --all lint"
-        if (command === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
+        if ((command === 'run' && rest.length > 0 &&
+            rest[0] === process.env.npm_lifecycle_event ||
+            command === process.env.npm_lifecycle_event) &&
+            workspace.cwd === cwdWorkspace!.cwd)
           continue;
 
         if (include.length > 0 && !include.includes(workspace.locator.name))
@@ -205,7 +210,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           const [stderr, stderrEnd] = createStream(report, {prefix, interlaced});
 
           try {
-            const exitCode = await clipanion.run(null, [`run`, command, ...args], {
+            const exitCode = await clipanion.run(null, [command, ...rest], {
               ...env,
               cwd: workspace.cwd,
               stdout: stdout,
