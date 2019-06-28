@@ -123,7 +123,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `help`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `node`, `-p`, `require("./package.json").name`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }

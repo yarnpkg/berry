@@ -1787,6 +1787,8 @@ __metadata:
   dependencies:
     "@berry/core": "workspace:0.0.6"
     "@berry/fslib": "workspace:0.0.8"
+    "@berry/pnpify": "workspace:0.0.6"
+    typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
 
