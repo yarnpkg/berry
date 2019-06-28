@@ -707,7 +707,7 @@ export class Project {
         // Mark this package as being used (won't be removed from the lockfile)
         volatileDescriptors.delete(descriptor.descriptorHash);
 
-        // Detect whether this package is being required 
+        // Detect whether this package is being required
         let isOptional = optional;
         if (!isOptional) {
           const dependencyMetaSet = parentPackage.dependenciesMeta.get(structUtils.stringifyIdent(descriptor));
