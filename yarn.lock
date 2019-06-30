@@ -1995,6 +1995,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emotion/babel-plugin-jsx-pragmatic@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@emotion/babel-plugin-jsx-pragmatic@npm:0.1.2"
+  dependencies:
+    "@babel/plugin-syntax-jsx": "npm:^7.2.0"
+  peerDependencies:
+    "@babel/core": ^7.0.0
+  checksum: 731bbd2b0538bcfe82a0f3ee17efc7d27dc975172606933b5e45d6a458163d9c2b4131e4e186f7db312fdfbc2be3f1703cb447be9cde9d16e98519747ec3f63a
+  languageName: node
+  linkType: hard
+
+"@emotion/babel-preset-css-prop@npm:*":
+  version: 10.0.9
+  resolution: "@emotion/babel-preset-css-prop@npm:10.0.9"
+  dependencies:
+    "@babel/plugin-transform-react-jsx": "npm:^7.1.6"
+    "@emotion/babel-plugin-jsx-pragmatic": "npm:^0.1.2"
+    babel-plugin-emotion: "npm:^10.0.9"
+    object-assign: "npm:^4.1.1"
+  peerDependencies:
+    "@babel/core": ^7.0.0
+  checksum: a09b4a512c6b3afba512d982bd6ed66b231a58593171a83d459b1f76cfb7357850fb9c474f884a3397f76a069ba40e337162a9f97375512de0935d2f071b1fdf
+  languageName: node
+  linkType: hard
+
 "@emotion/babel-preset-css-prop@npm:^10.0.5":
   version: 10.0.7
   resolution: "@emotion/babel-preset-css-prop@npm:10.0.7"
@@ -2078,6 +2103,19 @@ __metadata:
     "@emotion/utils": "npm:0.11.1"
     csstype: "npm:^2.5.7"
   checksum: 8c050a9813b0654a86c05c15564df0f5b356fa29835fb3fdc400b227b367807a79508e72fbc9aa05b3e655541dd8e8696e9fa52dfea62e5395c4935c6f206d14
+  languageName: node
+  linkType: hard
+
+"@emotion/serialize@npm:^0.11.6":
+  version: 0.11.6
+  resolution: "@emotion/serialize@npm:0.11.6"
+  dependencies:
+    "@emotion/hash": "npm:0.7.1"
+    "@emotion/memoize": "npm:0.7.1"
+    "@emotion/unitless": "npm:0.7.3"
+    "@emotion/utils": "npm:0.11.1"
+    csstype: "npm:^2.5.7"
+  checksum: fff13b45d3f783bfc0213d0b51658fb96aa2b6101708b71565e2080c13c79edfd220d1eab02d4b91b89ecfa3377ae4a75dac460c9d51cf44b71c8982f2867b05
   languageName: node
   linkType: hard
 
@@ -4684,6 +4722,24 @@ __metadata:
     find-root: "npm:^1.1.0"
     source-map: "npm:^0.5.7"
   checksum: 4277ab08b026b0187456fd1994c366d4c3cd11cc69a01c035a03eec750a72123105ba19f5ff8e67372b20094b43542f3072a75b94b15306894f21004e315b67d
+  languageName: node
+  linkType: hard
+
+"babel-plugin-emotion@npm:^10.0.9":
+  version: 10.0.9
+  resolution: "babel-plugin-emotion@npm:10.0.9"
+  dependencies:
+    "@babel/helper-module-imports": "npm:^7.0.0"
+    "@emotion/hash": "npm:0.7.1"
+    "@emotion/memoize": "npm:0.7.1"
+    "@emotion/serialize": "npm:^0.11.6"
+    babel-plugin-macros: "npm:^2.0.0"
+    babel-plugin-syntax-jsx: "npm:^6.18.0"
+    convert-source-map: "npm:^1.5.0"
+    escape-string-regexp: "npm:^1.0.5"
+    find-root: "npm:^1.1.0"
+    source-map: "npm:^0.5.7"
+  checksum: 4aefd5e52801d292a0aaed728c638c0ad7070be0437a11994fe42d1e1aa67d917a81215020545fbc00361b388baef4939ad7a764d569c2e2cb515b1405497779
   languageName: node
   linkType: hard
 
@@ -10196,6 +10252,7 @@ __metadata:
     "@babel/polyfill": "npm:^7.0.0"
     "@babel/runtime": "npm:^7.0.0"
     "@babel/traverse": "npm:^7.0.0"
+    "@emotion/babel-preset-css-prop": "npm:*"
     "@gatsbyjs/relay-compiler": "npm:2.0.0-printer-fix.2"
     "@mikaelkristiansson/domready": "npm:^1.0.9"
     "@pieh/friendly-errors-webpack-plugin": "npm:1.7.0-chalk-2"
