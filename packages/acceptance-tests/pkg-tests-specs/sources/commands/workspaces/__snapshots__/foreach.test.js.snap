@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Commands workspace foreach should execute 'node' command 1`] = `
+Object {
+  "code": "ENOENT",
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
 exports[`Commands workspace foreach should never run the scripts on workspaces that match the --exclude list 1`] = `
 Object {
   "code": 0,

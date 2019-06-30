@@ -1483,7 +1483,7 @@ __metadata:
     "@berry/pnpify": "workspace:0.0.6"
     brfs: "npm:^2.0.1"
     buffer-loader: "npm:^0.1.0"
-    clipanion: "npm:^0.15.0"
+    clipanion: "npm:^0.16.1"
     joi: "npm:^13.6.0"
     pnp-webpack-plugin: "npm:^1.4.3"
     raw-loader: "npm:^0.5.1"
@@ -1527,7 +1527,7 @@ __metadata:
     "@berry/pnp": "workspace:0.0.4"
     "@berry/shell": "workspace:0.0.3"
     chalk: "npm:^2.4.1"
-    clipanion: "npm:^0.15.0"
+    clipanion: "npm:^0.16.1"
     semver: "npm:^5.6.0"
     tmp: "npm:^0.0.33"
     yup: "npm:^0.27.0"
@@ -1549,7 +1549,7 @@ __metadata:
     agentkeepalive: "npm:^4.0.2"
     camelcase: "npm:^5.3.1"
     chalk: "npm:^2.4.1"
-    clipanion: "npm:^0.15.0"
+    clipanion: "npm:^0.16.1"
     cross-spawn: "npm:^6.0.5"
     globby: "npm:^8.0.1"
     got: "npm:^9.2.2"
@@ -1738,7 +1738,7 @@ __metadata:
     "@berry/fslib": "workspace:0.0.8"
     "@berry/json-proxy": "workspace:0.0.0"
     "@berry/plugin-essentials": "workspace:0.0.0"
-    clipanion: "npm:^0.15.0"
+    clipanion: "npm:^0.16.1"
     tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
@@ -1752,7 +1752,7 @@ __metadata:
     "@berry/fslib": "workspace:0.0.8"
     "@berry/json-proxy": "workspace:0.0.0"
     "@berry/parsers": "workspace:0.0.4"
-    clipanion: "npm:^0.15.0"
+    clipanion: "npm:^0.16.1"
     inquirer: "npm:^6.2.0"
     semver: "npm:^5.6.0"
     treeify: "npm:^1.1.0"
@@ -1787,6 +1787,8 @@ __metadata:
   dependencies:
     "@berry/core": "workspace:0.0.6"
     "@berry/fslib": "workspace:0.0.8"
+    "@berry/pnpify": "workspace:0.0.6"
+    typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
 
@@ -1806,7 +1808,7 @@ __metadata:
     "@berry/core": "workspace:0.0.6"
     "@berry/fslib": "workspace:0.0.8"
     "@berry/json-proxy": "workspace:0.0.0"
-    clipanion: "npm:^0.15.0"
+    clipanion: "npm:^0.16.1"
   languageName: unknown
   linkType: soft
 
@@ -1828,7 +1830,7 @@ __metadata:
     "@berry/fslib": "workspace:0.0.8"
     "@berry/plugin-npm": "workspace:0.0.0"
     "@berry/plugin-pack": "workspace:0.0.0"
-    clipanion: "npm:^0.15.0"
+    clipanion: "npm:^0.16.1"
     inquirer: "npm:^6.2.0"
     ssri: "npm:^6.0.1"
     yup: "npm:^0.27.0"
@@ -1878,7 +1880,7 @@ __metadata:
     "@berry/builder": "workspace:0.0.0"
     "@berry/core": "workspace:0.0.6"
     "@berry/fslib": "workspace:0.0.8"
-    clipanion: "npm:^0.15.0"
+    clipanion: "npm:^0.16.1"
   languageName: unknown
   linkType: soft
 
@@ -1904,7 +1906,7 @@ __metadata:
     "@berry/fslib": "workspace:0.0.8"
     "@berry/plugin-pack": "workspace:0.0.0"
     "@types/semver": "npm:^5.5.0"
-    clipanion: "npm:^0.15.0"
+    clipanion: "npm:^0.16.1"
     semver: "npm:^5.6.0"
   languageName: unknown
   linkType: soft
@@ -1917,7 +1919,7 @@ __metadata:
     "@berry/cli": "workspace:2.0.0"
     "@berry/core": "workspace:0.0.6"
     "@berry/fslib": "workspace:0.0.8"
-    clipanion: "npm:^0.15.0"
+    clipanion: "npm:^0.16.1"
     p-limit: "npm:^2.2.0"
     yup: "npm:^0.27.0"
   languageName: unknown
@@ -6201,13 +6203,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipanion@npm:^0.15.0":
-  version: 0.15.0
-  resolution: "clipanion@npm:0.15.0"
+"clipanion@npm:^0.16.1":
+  version: 0.16.1
+  resolution: "clipanion@npm:0.16.1"
   dependencies:
     camelcase: "npm:^5.2.0"
     chalk: "npm:^1.1.3"
-  checksum: eff399d126736f55068acbb85ab727a6e87a4198947d1088ecd4d76b0e87e53b21be4577bee6ff33b3b582983d1cea28c635981bfeb73d755312f82f471cb5f6
+  checksum: a669b16b2438bb7fab2c0d32cca33b5546d77df30e343386e0a75eb2f431768c87eb0cb31545f8d0b8207bf66341b016a9aff95298901edaddb5ed1609cf2b84
   languageName: node
   linkType: hard
 

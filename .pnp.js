@@ -192,6 +192,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "virtual:6b4c2d71edc6d1de3be6a0b3e2bfffddf38aa1e4798904c560b430a76c6a0c56c261126836947828f04b83c91cf3915dd74c65d422fb04bf5d06f27be91c61d6#workspace:packages/berry-pnpify",
           "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#workspace:packages/berry-pnpify",
           "virtual:e2ecac46318b7293d10abbd3204f2d38fd4ddb0e57cbf70b5c3ca33b80040651674a508ab9c6a680ec7bb9a42bd8030d40fb48b320b774f4c6d9e1e1d36aa0c8#workspace:packages/berry-pnpify",
+          "virtual:f0f690039c21b7a4653daae1e920c807aadf4525fa7efa1ed15ea64cab70c739a1c30cdbb483eef9ae5f58ba60f9617c70d19d08f176143acd7105e6b4065377#workspace:packages/berry-pnpify",
           "virtual:f4d240d432c09c02b448fe8953b87497dc932bb8eef14c1f96e15d30a2f7c83203b9729fac558ad596ce07305a22905ae5155625d64068386e0e0423b324acf2#workspace:packages/berry-pnpify",
           "virtual:f6b05c0c96572f15b37b07e6a95918dbb72c0b6c7422e81995c7aefe609ed0db5412726010c3491cb09be8f610af59ca47bb9917f495951e4b75d15aff3724e2#workspace:packages/berry-pnpify",
           "workspace:packages/berry-pnpify"
@@ -8835,7 +8836,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.15.0"
+                  "npm:0.16.1"
                 ],
                 [
                   "joi",
@@ -8984,7 +8985,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.15.0"
+                  "npm:0.16.1"
                 ],
                 [
                   "semver",
@@ -9053,7 +9054,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.15.0"
+                  "npm:0.16.1"
                 ],
                 [
                   "cross-spawn",
@@ -9693,7 +9694,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.15.0"
+                  "npm:0.16.1"
                 ],
                 [
                   "tmp",
@@ -9738,7 +9739,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.15.0"
+                  "npm:0.16.1"
                 ],
                 [
                   "inquirer",
@@ -9842,6 +9843,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@berry/fslib",
                   "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@berry/pnpify",
+                  "virtual:f0f690039c21b7a4653daae1e920c807aadf4525fa7efa1ed15ea64cab70c739a1c30cdbb483eef9ae5f58ba60f9617c70d19d08f176143acd7105e6b4065377#workspace:packages/berry-pnpify"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
                 ]
               ]
             }
@@ -9899,7 +9908,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.15.0"
+                  "npm:0.16.1"
                 ]
               ]
             }
@@ -9998,7 +10007,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.15.0"
+                  "npm:0.16.1"
                 ],
                 [
                   "inquirer",
@@ -10121,7 +10130,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.15.0"
+                  "npm:0.16.1"
                 ]
               ]
             }
@@ -10203,7 +10212,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.15.0"
+                  "npm:0.16.1"
                 ],
                 [
                   "semver",
@@ -10244,7 +10253,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 ],
                 [
                   "clipanion",
-                  "npm:0.15.0"
+                  "npm:0.16.1"
                 ],
                 [
                   "p-limit",
@@ -10623,6 +10632,46 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "webpack-cli",
                   "virtual:5dc4321d4efc80e9fe6908fb4bef694ac4c7360a4ddbe90c61517bd499e08dc5afdb8ff81bde4c9eb57776ef2cd2235fe6eb0c22fd5ecca928cb2b714bc86435#npm:3.3.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:f0f690039c21b7a4653daae1e920c807aadf4525fa7efa1ed15ea64cab70c739a1c30cdbb483eef9ae5f58ba60f9617c70d19d08f176143acd7105e6b4065377#workspace:packages/berry-pnpify",
+            {
+              "packageLocation": "./.yarn/virtual/@berry-pnpify-virtual-dd342b9cc5dc9bd043058cc775464375237e910716804efdfff68b073d94c501/",
+              "packageDependencies": [
+                [
+                  "@berry/pnpify",
+                  "virtual:f0f690039c21b7a4653daae1e920c807aadf4525fa7efa1ed15ea64cab70c739a1c30cdbb483eef9ae5f58ba60f9617c70d19d08f176143acd7105e6b4065377#workspace:packages/berry-pnpify"
+                ],
+                [
+                  "@berry/builder",
+                  "workspace:packages/berry-builder"
+                ],
+                [
+                  "@berry/fslib",
+                  "workspace:packages/berry-fslib"
+                ],
+                [
+                  "@berry/pnp",
+                  "workspace:packages/berry-pnp"
+                ],
+                [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
+                  "typescript",
+                  "npm:3.3.3333"
+                ],
+                [
+                  "webpack",
+                  "npm:4.28.4"
+                ],
+                [
+                  "webpack-cli",
+                  "virtual:dd342b9cc5dc9bd043058cc775464375237e910716804efdfff68b073d94c50173df6dfe91670e4ad5282e85dcd92ef6e630271c887af4c5ed4c1fb089a88326#npm:3.3.2"
                 ]
               ]
             }
@@ -22925,13 +22974,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         "clipanion",
         [
           [
-            "npm:0.15.0",
+            "npm:0.16.1",
             {
-              "packageLocation": "./.yarn/cache/clipanion-npm-0.15.0-11cca8c9cf6cbc7a1744ebab32398fd02ae985523f60a7729e6fe35a3dd4c83a.zip/node_modules/clipanion/",
+              "packageLocation": "./.yarn/cache/clipanion-npm-0.16.1-685d6b56d924fe2445dfb585bbdd3a4e5c81a13a0e03680cb7d1ec1809606fd0.zip/node_modules/clipanion/",
               "packageDependencies": [
                 [
                   "clipanion",
-                  "npm:0.15.0"
+                  "npm:0.16.1"
                 ],
                 [
                   "camelcase",
@@ -65506,6 +65555,66 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "webpack-cli",
                   "virtual:c2ebc1d8d4ce2c3f1f78762fce3ac1e1162c11de01383a6923a5bf98c376510a88b6dd410484cc1dd8c531a7ca91b8bc64c9df6aa4de57ddce8aa96c8d17bf05#npm:3.3.2"
+                ],
+                [
+                  "chalk",
+                  "npm:2.4.2"
+                ],
+                [
+                  "cross-spawn",
+                  "npm:6.0.5"
+                ],
+                [
+                  "enhanced-resolve",
+                  "npm:4.1.0"
+                ],
+                [
+                  "findup-sync",
+                  "npm:2.0.0"
+                ],
+                [
+                  "global-modules",
+                  "npm:1.0.0"
+                ],
+                [
+                  "import-local",
+                  "npm:2.0.0"
+                ],
+                [
+                  "interpret",
+                  "npm:1.2.0"
+                ],
+                [
+                  "loader-utils",
+                  "npm:1.2.3"
+                ],
+                [
+                  "supports-color",
+                  "npm:5.5.0"
+                ],
+                [
+                  "v8-compile-cache",
+                  "npm:2.0.2"
+                ],
+                [
+                  "webpack",
+                  "npm:4.28.4"
+                ],
+                [
+                  "yargs",
+                  "npm:12.0.5"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:dd342b9cc5dc9bd043058cc775464375237e910716804efdfff68b073d94c50173df6dfe91670e4ad5282e85dcd92ef6e630271c887af4c5ed4c1fb089a88326#npm:3.3.2",
+            {
+              "packageLocation": "./.yarn/virtual/webpack-cli-virtual-2ff94fae2aaaaed35c1e83ad87b669ebdb89d209bedfeeaf325fd27511ea9a0d/node_modules/webpack-cli/",
+              "packageDependencies": [
+                [
+                  "webpack-cli",
+                  "virtual:dd342b9cc5dc9bd043058cc775464375237e910716804efdfff68b073d94c50173df6dfe91670e4ad5282e85dcd92ef6e630271c887af4c5ed4c1fb089a88326#npm:3.3.2"
                 ],
                 [
                   "chalk",

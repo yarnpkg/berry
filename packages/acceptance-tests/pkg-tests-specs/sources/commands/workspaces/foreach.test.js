@@ -97,7 +97,33 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `print`, { cwd: `${path}/packages/workspace-c` }));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `print`, { cwd: `${path}/packages/workspace-c` }));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          await expect({code, stdout, stderr}).toMatchSnapshot();
+        }
+      )
+    );
+
+    test(
+      `should execute 'node' command`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`]
+        },
+        async ({ path, run }) => {
+          await setupWorkspaces(path);
+
+          let code;
+          let stdout;
+          let stderr;
+
+          try {
+            await run(`install`);
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `node`, `-p`, `require("./package.json").name`, { cwd: `${path}/packages/workspace-d` }));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -123,7 +149,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--interlaced`, `--jobs=2`, `start`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--interlaced`, `--jobs=2`, `run`, `start`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -165,7 +191,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `--jobs=2`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `--jobs=2`, `run`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -191,7 +217,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--verbose`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--verbose`, `run`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -217,7 +243,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--verbose`, `--include`, `workspace-a`, `--include`, `workspace-b`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--verbose`, `--include`, `workspace-a`, `--include`, `workspace-b`, `run`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -243,7 +269,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--verbose`, `--exclude`, `workspace-a`, `--exclude`, `workspace-b`, `print`));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--verbose`, `--exclude`, `workspace-a`, `--exclude`, `workspace-b`, `run`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -259,7 +285,7 @@ describe(`Commands`, () => {
         {
           private: true,
           scripts: {
-            print: `yarn workspaces foreach --all print`
+            print: `yarn workspaces foreach --all run print`
           },
           workspaces: [`packages/*`]
         },
@@ -293,7 +319,7 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
 
           await run(`install`);
-          await expect(run(`workspaces`, `foreach`, `--jobs=2`, `print`)).rejects.toThrowError(/parallel must be set/);
+          await expect(run(`workspaces`, `foreach`, `--jobs=2`, `run`, `print`)).rejects.toThrowError(/parallel must be set/);
         }
       )
     );
@@ -309,7 +335,7 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
 
           await run(`install`);
-          await expect(run(`workspaces`, `foreach`, `--parallel`, `--jobs=1`, `print`)).rejects.toThrowError(/jobs must be greater/);
+          await expect(run(`workspaces`, `foreach`, `--parallel`, `--jobs=1`, `run`, `print`)).rejects.toThrowError(/jobs must be greater/);
         }
       )
     );
