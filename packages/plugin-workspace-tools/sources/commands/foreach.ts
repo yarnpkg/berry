@@ -101,19 +101,19 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       if (!all && !cwdWorkspace)
         throw new WorkspaceRequiredError(cwd);
 
+      const {commandPath, env: parsedEnv} = clipanion.parse([command, ...rest]);
+      const scriptName = commandPath.length === 1 && commandPath[0] === `run`
+        ? parsedEnv.name
+        : null;
+
       const rootWorkspace = all
         ? project.topLevelWorkspace
         : cwdWorkspace!;
 
       const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
-
       const workspaces: Array<Workspace> = [];
 
       for (const workspace of candidates) {
-        const scriptName = command === `run` && rest.length > 0
-          ? rest[0]
-          : null;
-
         if (scriptName && !workspace.manifest.scripts.has(scriptName))
           continue;
 

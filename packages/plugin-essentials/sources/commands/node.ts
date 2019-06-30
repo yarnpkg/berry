@@ -26,7 +26,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const {project} = await Project.find(configuration, cwd);
 
     const env = await scriptUtils.makeScriptEnv(project);
-    const {exitCode} = await execUtils.pipevp(`node`, args, {cwd, stdin, stdout, stderr, env});
+    const {code} = await execUtils.pipevp(`node`, args, {cwd, stdin, stdout, stderr, env});
 
-    return exitCode;
+    return code;
   });
