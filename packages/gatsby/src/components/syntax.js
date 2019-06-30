@@ -75,6 +75,14 @@ const DescriptionAnchor = styled.div`
 
   padding: 1.5em 0;
 
+  p {
+    margin-top: 0;
+  }
+
+  p:last-of-type {
+    margin-bottom: 0;
+  }
+
   &:target > div {
     background: ${props => props.theme.colors.highlight};
   }

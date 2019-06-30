@@ -178,6 +178,43 @@ describe(`Scripts tests`, () => {
   );
 
   test(
+    `it should abort with an error if a package can't be built`,
+    makeTemporaryEnv({dependencies: {[`no-deps-scripted-to-fail`]: `1.0.0`}}, async ({path, run, source}) => {
+      await expect(run(`install`)).rejects.toThrow();
+    }),
+  );
+
+  test(
+    `it shouldn't abort with an error if the package that can't be built is optional`,
+    makeTemporaryEnv({optionalDependencies: {[`no-deps-scripted-to-fail`]: `1.0.0`}}, async ({path, run, source}) => {
+      await run(`install`);
+
+      await expect(source(`require('no-deps-scripted-to-fail')`)).resolves.toMatchObject({
+        name: `no-deps-scripted-to-fail`,
+        version: `1.0.0`,
+      });
+    }),
+  );
+
+  test(
+    `it shouldn't abort with an error if the package that can't be built is a transitive dependency of an optional package`,
+    makeTemporaryEnv({optionalDependencies: {[`no-deps-scripted-to-deeply-fail`]: `1.0.0`}}, async ({path, run, source}) => {
+      await run(`install`);
+
+      await expect(source(`require('no-deps-scripted-to-deeply-fail')`)).resolves.toMatchObject({
+        name: `no-deps-scripted-to-deeply-fail`,
+        version: `1.0.0`,
+        dependencies: {
+          [`no-deps-scripted-to-fail`]: {
+            name: `no-deps-scripted-to-fail`,
+            version: `1.0.0`,
+          },
+        },
+      });
+    }),
+  );
+
+  test(
     `it should allow dependencies with install scripts to run the binaries exposed by their own dependencies`,
     makeTemporaryEnv(
       {

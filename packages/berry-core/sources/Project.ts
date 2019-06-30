@@ -65,6 +65,8 @@ export class Project {
   public storedPackages: Map<LocatorHash, Package> = new Map();
   public storedChecksums: Map<LocatorHash, string> = new Map();
 
+  public optionalBuilds: Set<LocatorHash> = new Set();
+
   static async find(configuration: Configuration, startingCwd: PortablePath): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
     if (!configuration.projectCwd)
       throw new Error(`No project found in the initial directory`);
@@ -644,6 +646,7 @@ export class Project {
 
     const hasBeenTraversed = new Set();
     const volatileDescriptors = new Set(this.resolutionAliases.values());
+    const optionalBuilds = new Set(allPackages.keys());
 
     const resolutionStack: Array<Locator> = [];
 
@@ -666,19 +669,22 @@ export class Project {
       throw new ReportError(MessageName.STACK_OVERFLOW_RESOLUTION, `Encountered a stack overflow when resolving peer dependencies; cf ${logFile}`);
     };
 
-    const resolvePeerDependencies = (parentLocator: Locator) => {
+    const resolvePeerDependencies = (parentLocator: Locator, optional: boolean) => {
       resolutionStack.push(parentLocator);
-      const result = resolvePeerDependenciesImpl(parentLocator);
+      const result = resolvePeerDependenciesImpl(parentLocator, optional);
       resolutionStack.pop();
 
       return result;
     };
 
-    const resolvePeerDependenciesImpl = (parentLocator: Locator) => {
+    const resolvePeerDependenciesImpl = (parentLocator: Locator, optional: boolean) => {
       if (hasBeenTraversed.has(parentLocator.locatorHash))
         return;
 
       hasBeenTraversed.add(parentLocator.locatorHash);
+
+      if (!optional)
+        optionalBuilds.delete(parentLocator.locatorHash);
 
       const parentPackage = allPackages.get(parentLocator.locatorHash);
       if (!parentPackage)
@@ -698,10 +704,20 @@ export class Project {
         if (parentPackage.peerDependencies.has(descriptor.identHash))
           continue;
 
+        // Mark this package as being used (won't be removed from the lockfile)
         volatileDescriptors.delete(descriptor.descriptorHash);
 
-        if (descriptor.range === `missing:`)
-          continue;
+        // Detect whether this package is being required
+        let isOptional = optional;
+        if (!isOptional) {
+          const dependencyMetaSet = parentPackage.dependenciesMeta.get(structUtils.stringifyIdent(descriptor));
+          if (typeof dependencyMetaSet !== `undefined`) {
+            const dependencyMeta = dependencyMetaSet.get(null);
+            if (typeof dependencyMeta !== `undefined` && dependencyMeta.optional) {
+              isOptional = true;
+            }
+          }
+        }
 
         const resolution = allResolutions.get(descriptor.descriptorHash);
         if (!resolution)
@@ -712,7 +728,7 @@ export class Project {
           throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
         if (pkg.peerDependencies.size === 0) {
-          resolvePeerDependencies(pkg);
+          resolvePeerDependencies(pkg, isOptional);
           continue;
         }
 
@@ -771,7 +787,7 @@ export class Project {
         });
 
         thirdPass.push(() => {
-          resolvePeerDependencies(virtualizedPackage);
+          resolvePeerDependencies(virtualizedPackage, isOptional);
         });
 
         fourthPass.push(() => {
@@ -795,7 +811,7 @@ export class Project {
 
     try {
       for (const workspace of this.workspaces) {
-        resolvePeerDependencies(workspace.anchoredLocator);
+        resolvePeerDependencies(workspace.anchoredLocator, false);
       }
     } catch (error) {
       if (error.name === `RangeError` && error.message === `Maximum call stack size exceeded`) {
@@ -830,6 +846,8 @@ export class Project {
     this.storedResolutions = allResolutions;
     this.storedDescriptors = allDescriptors;
     this.storedPackages = allPackages;
+
+    this.optionalBuilds = optionalBuilds;
   }
 
   async fetchEverything({cache, report, fetcher: userFetcher}: InstallOptions) {
@@ -1121,10 +1139,18 @@ export class Project {
 
             if (exitCode === 0) {
               nextBState[pkg.locatorHash] = buildHash;
-            } else {
-              report.reportError(MessageName.BUILD_FAILED, `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${exitCode}, logs can be found here: ${logFile})`);
+              continue;
+            }
+
+            const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${exitCode}, logs can be found here: ${logFile})`;
+
+            if (!this.optionalBuilds.has(pkg.locatorHash)) {
+              report.reportError(MessageName.BUILD_FAILED, buildMessage);
               break;
             }
+
+            nextBState[pkg.locatorHash] = buildHash;
+            report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
           }
         })());
       }
@@ -1279,7 +1305,9 @@ export class Project {
           manifest.dependencies.set(identHash, structUtils.devirtualizeDescriptor(descriptor));
 
       optimizedLockfile[key] = {
-        ...manifest.exportTo({}),
+        ...manifest.exportTo({}, {
+          compatibilityMode: false,
+        }),
 
         linkType: pkg.linkType,
 
