@@ -1142,7 +1142,6 @@ export class Project {
               continue;
             }
 
-            const dependencyMeta = this.getDependencyMeta(pkg, pkg.version);
             const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${exitCode}, logs can be found here: ${logFile})`;
 
             if (!this.optionalBuilds.has(pkg.locatorHash)) {
