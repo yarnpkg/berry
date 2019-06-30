@@ -3,6 +3,7 @@ import {Configuration, LocatorHash, PluginConfiguration, Project, Workspace} fro
 import {DescriptorHash, MessageName, Report, StreamReport}                   from '@berry/core';
 import {miscUtils, structUtils}                                              from '@berry/core';
 import {PortablePath}                                                        from '@berry/fslib';
+import {UsageError}                                                          from 'clipanion';
 import {cpus}                                                                from 'os';
 import pLimit                                                                from 'p-limit';
 import {Writable}                                                            from 'stream';
@@ -105,6 +106,9 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       const scriptName = commandPath.length === 1 && commandPath[0] === `run`
         ? parsedEnv.name
         : null;
+
+      if (commandPath.length === 0)
+        throw new UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
 
       const rootWorkspace = all
         ? project.topLevelWorkspace
