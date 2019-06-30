@@ -104,8 +104,8 @@ const PackageJsonDoc = () => <>
       <JsonObjectProperty
         name={`optionalDependencies`}
         description={<>
-          <p>Similar to the <code>devDependencies</code> field, except that these dependencies are not required to build properly should they have any build script. Note that such dependencies must still be resolvable and fetchable (otherwise we couldn't store it in the lockfile, which could lead to non-reproducible installs). Only the build part is optional.</p>
-          <p><b>This field is usually not what you're looking for</b>, unless you depend on <code>fsevents</code>. If you need a package to be required only when a specific feature is used then use a peer dependency.</p>
+          <p>Similar to the <code>dependencies</code> field, except that these entries will not be required to build properly should they have any build script. Note that such dependencies must still be resolvable and fetchable (otherwise we couldn't store it in the lockfile, which could lead to non-reproducible installs) - only the build step is optional.</p>
+          <p><b>This field is usually not what you're looking for</b>, unless you depend on the <code>fsevents</code> package. If you need a package to be required only when a specific feature is used then use an optional peer dependency. Your users will have to satisfy it should they use the feature, but it won't cause the build errors to be silently swallowed when the feature is needed.</p>
         </>}
       >
         <JsonScalarProperty
