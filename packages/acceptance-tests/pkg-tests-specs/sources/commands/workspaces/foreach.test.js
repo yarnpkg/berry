@@ -285,7 +285,7 @@ describe(`Commands`, () => {
         {
           private: true,
           scripts: {
-            print: `yarn workspaces foreach --all print`
+            print: `yarn workspaces foreach --all run print`
           },
           workspaces: [`packages/*`]
         },
