@@ -98,6 +98,9 @@ class PnpInstaller implements Installer {
     const packageLocation = this.normalizeDirectoryPath(packageRawLocation);
     const packageDependencies = new Map();
 
+    for (const descriptor of pkg.peerDependencies.values())
+      packageDependencies.set(structUtils.requirableIdent(descriptor), null);
+
     const packageStore = this.getPackageStore(key1);
     packageStore.set(key2, {packageLocation, packageDependencies});
 
@@ -110,18 +113,19 @@ class PnpInstaller implements Installer {
   async attachInternalDependencies(locator: Locator, dependencies: Array<[Descriptor, Locator]>) {
     const packageInformation = this.getPackageInformation(locator);
 
-    packageInformation.packageDependencies = new Map(dependencies.map(([descriptor, locator]) => {
+    for (const [descriptor, locator] of dependencies) {
       const target = !structUtils.areIdentsEqual(descriptor, locator)
         ? [structUtils.requirableIdent(locator), locator.reference] as [string, string]
         : locator.reference;
 
-      return [structUtils.requirableIdent(descriptor), target];
-    }) as Array<[string, string]>);
+      packageInformation.packageDependencies.set(structUtils.requirableIdent(descriptor), target);
+    }
   }
 
   async attachExternalDependents(locator: Locator, dependentPaths: Array<PortablePath>) {
     for (const dependentPath of dependentPaths) {
       const packageInformation = this.getDiskInformation(dependentPath);
+
       packageInformation.packageDependencies.set(structUtils.requirableIdent(locator), locator.reference);
     }
   }

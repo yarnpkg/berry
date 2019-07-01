@@ -216,6 +216,20 @@ describe(`Plug'n'Play`, () => {
         await run(`install`);
 
         await expect(source(`require('various-requires/invalid-require')`)).rejects.toBeTruthy();
+        await expect(source(`{ try { require('various-requires/invalid-require') } catch (error) { return error.code } }`)).resolves.toEqual(`UNDECLARED_DEPENDENCY`);
+      },
+    ),
+  );
+
+  test(
+    `it should throw an exception if a dependency tries to require a missing peer dependency`,
+    makeTemporaryEnv(
+      {dependencies: {[`peer-deps`]: `1.0.0`}},
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('peer-deps')`)).rejects.toBeTruthy();
+        await expect(source(`{ try { require('peer-deps') } catch (error) { return error.code } }`)).resolves.toEqual(`MISSING_PEER_DEPENDENCY`);
       },
     ),
   );
