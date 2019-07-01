@@ -1,5 +1,6 @@
 import {xfs, ppath}                                      from '@berry/fslib';
 import {parseSyml}                                       from '@berry/parsers';
+import semver                                            from 'semver';
 
 import {Project}                                         from './Project';
 import {MessageName, Report}                             from './Report';
@@ -39,12 +40,15 @@ export class YarnResolver implements Resolver {
     const resolutions = this.resolutions = new Map();
 
     for (const key of Object.keys(parsed)) {
-      const descriptor = structUtils.tryParseDescriptor(key);
+      let descriptor = structUtils.tryParseDescriptor(key);
 
       if (!descriptor) {
         report.reportWarning(MessageName.YARN_IMPORT_FAILED, `Failed to parse the string "${key}" into a proper descriptor`);
         continue;
       }
+
+      if (semver.validRange(descriptor.range))
+        descriptor = structUtils.makeDescriptor(descriptor, `npm:${descriptor.range}`);
 
       const {version, resolved} = (parsed as any)[key];
 
