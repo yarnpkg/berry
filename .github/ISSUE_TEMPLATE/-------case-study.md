@@ -1,7 +1,7 @@
 ---
 name: "\U0001F575️‍♀️ Case study"
 about: Describe how Yarn could better serve a project
-title: "[CASE STUDY]"
+title: "[Case Study]"
 labels: case study
 assignees: arcanis
 
