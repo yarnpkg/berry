@@ -1,6 +1,7 @@
 import styled     from '@emotion/styled';
 import React      from 'react';
 
+import Search     from '../components/search';
 import Layout     from '../components/layout';
 import {ifMobile} from '../components/responsive';
 import SEO        from '../components/seo';
@@ -11,21 +12,21 @@ const SearchContainer = styled.div`
   padding: 1.5em;
 `;
 
-const SearchBar = styled.input`
-  -webkit-appearance: none;
+// const SearchBar = styled.input`
+//   -webkit-appearance: none;
 
-  width: 100%;
+//   width: 100%;
 
-  padding: .5em;
+//   padding: .5em;
 
-  font-size: inherit;
+//   font-size: inherit;
 
-  border: 0;
-  border-radius: 0;
-  outline: 0;
+//   border: 0;
+//   border-radius: 0;
+//   outline: 0;
 
-  background: #ffffff;
-`;
+//   background: #ffffff;
+// `;
 
 const Hero = styled.div`
   width: 100%;
@@ -61,8 +62,8 @@ const HeroSubtitle = styled.div`
 const IndexPage = () => <>
   <Layout>
     <SEO title="Home" keywords={[`gatsby`, `application`, `react`]} />
-    <SearchContainer>
-      <SearchBar type={`search`} placeholder={`Search packages (i.e. babel, webpack, react...)`} autoFocus={true} />
+    <SearchContainer id="search">
+      <Search />
     </SearchContainer>
     <Hero>
       <HeroTitle>
