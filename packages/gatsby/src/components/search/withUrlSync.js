@@ -17,7 +17,7 @@ const searchStateToQueryString = searchState => ({
 
 const searchStateToUrl = searchState =>
   searchState
-    ? `/packages?${qs.stringify(
+    ? `/package?${qs.stringify(
         searchStateToQueryString(searchState)
       )}`
     : '';

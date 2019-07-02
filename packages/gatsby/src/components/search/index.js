@@ -12,7 +12,7 @@ const equals = (arr1, arr2) =>
 // package overview page
 // home page (/:lang/)
 const shouldFocus = path =>
-  path.includes('/packages') ||
+  path.includes('/package') ||
   path.replace(/\/[a-zA-Z-]+\/?/, '').length === 0;
 
 class RefinementList extends Component {
@@ -117,7 +117,7 @@ class Search extends Component {
             defaultRefinement={[...Array.from(this.state.owners)]}
             onRefine={this.onRefineOwner}
           />
-          <Results onTagClick={this.addTag} onOwnerClick={this.addOwner} />
+          <Results onTagClick={this.addTag} onOwnerClick={this.addOwner} setSearching={this.props.setSearching} />
         </InstantSearch>
       )} />
     );

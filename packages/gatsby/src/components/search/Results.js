@@ -4,13 +4,11 @@ import {
   CurrentRefinements,
   Stats,
   connectHits,
-  createConnector,
+  connectStateResults,
 } from 'react-instantsearch-dom';
 
 import Hit         from './Hit';
 import { isEmpty } from './util';
-
-const body = document.querySelector('body');
 
 const Hits = connectHits(({ hits, onTagClick, onOwnerClick }) =>
   hits.map(hit => (
@@ -58,50 +56,36 @@ const ResultsFound = ({ pagination, onTagClick, onOwnerClick }) => (
   </div>
 );
 
-const connectResults = createConnector({
-  displayName: 'ConnectResults',
-  getProvidedProps(props, searchState, searchResults) {
-    const pagination = searchResults.results
-      ? searchResults.results.nbPages > 1
-      : false;
-    const noResults = searchResults.results
-      ? searchResults.results.nbHits === 0
-      : false;
-    return { query: searchState.query, noResults, pagination };
-  },
-});
+const Results = ({ searchState, searchResults, onTagClick, onOwnerClick, setSearching }) => {
+  if (isEmpty(searchState.query)) {
+    setSearching(false);
+    return <span />;
+  } else if (searchResults && searchResults.nbHits === 0) {
+    setSearching(true);
+    const docMessage = 'Were you looking for something in the {documentation_link}?'.split(/[{}]+/);
+    docMessage[docMessage.indexOf('documentation_link')] = (
+      <a href={`/docs`}>documentation</a>
+    );
 
-const Results = connectResults(
-  ({ noResults, query, pagination, onTagClick, onOwnerClick }) => {
-    if (isEmpty(query)) {
-      body.classList.remove('searching');
-      return <span />;
-    } else if (noResults) {
-      body.classList.add('searching');
-      const docMessage = 'Were you looking for something in the {documentation_link}?'.split(/[{}]+/);
-      docMessage[docMessage.indexOf('documentation_link')] = (
-        <a href={`/docs`}>documentation</a>
-      );
-
-      return (
-        <div className="container text-center mt-5">
-          <p>{'No package {name} was found'.replace('{name}', query)}</p>
-          <p>
-            {docMessage.map((val, index) => <span key={index}>{val}</span>)}
-          </p>
-        </div>
-      );
-    } else {
-      body.classList.add('searching');
-      return (
-        <ResultsFound
-          pagination={pagination}
-          onTagClick={onTagClick}
-          onOwnerClick={onOwnerClick}
-        />
-      );
-    }
+    return (
+      <div className="container text-center mt-5">
+        <p>{'No package {name} was found'.replace('{name}', searchState.query)}</p>
+        <p>
+          {docMessage.map((val, index) => <span key={index}>{val}</span>)}
+        </p>
+      </div>
+    );
+  } else {
+    const pagination = searchResults.nbPages > 1;
+    setSearching(true);
+    return (
+      <ResultsFound
+        pagination={pagination}
+        onTagClick={onTagClick}
+        onOwnerClick={onOwnerClick}
+      />
+    );
   }
-);
+};
 
-export default Results;
+export default connectStateResults(Results);

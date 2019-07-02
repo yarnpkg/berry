@@ -150,7 +150,7 @@ export const packageLink = name =>
   }${name}`;
 
 export const searchLink = ({ query, keyword }) =>
-  `/packages?${query ? `q=${query}` : ''}${
+  `/package?${query ? `q=${query}` : ''}${
     keyword ? `&keywords%5B0%5D=${keyword}` : ''
   }`;
 
