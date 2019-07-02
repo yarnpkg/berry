@@ -1,0 +1,23 @@
+jobs:
+
+- job: Ecosystem E2E
+  pool:
+    vmImage: 'Ubuntu 16.04'
+
+  variables:
+    TERM: screen-256color
+    os_name: Linux
+
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: 10.x
+    displayName: 'Install Node.js'
+
+  - bash: |
+      npm install -g yarn@1.17.2
+    displayName: "Install Yarn 1.17.2+"
+
+  - bash: |
+      scripts/e2e/run.sh gatsby
+    displayName: "Gatsby"
