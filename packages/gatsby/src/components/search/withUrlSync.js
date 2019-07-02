@@ -34,15 +34,18 @@ const queryStringToSearchState = queryString => {
   };
 };
 
-const originalPathName = window.location.pathname;
+const originalPathName = typeof window !== 'undefined' && window.location.pathname;
 
 export default App =>
   class extends Component {
     constructor() {
       super();
-      this.state = {
-        searchState: queryStringToSearchState(window.location.search.slice(1)),
-      };
+      this.state = { searchState: { query: '', page: 1 } };
+    }
+
+    componentDidMount() {
+      this.setState({ searchState: queryStringToSearchState(window.location.search.slice(1)) });
+
       window.addEventListener('popstate', ({ state: searchState }) => {
         // check we are on a search result
         if (searchState !== null) {

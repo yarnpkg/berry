@@ -102,7 +102,7 @@ class Search extends Component {
             attributesToHighlight={['name', 'description', 'keywords']}
           />
           <SearchBox
-            autoFocus={shouldFocus(window.location.pathname)}
+            autoFocus={shouldFocus(typeof window !== 'undefined' ? window.location.pathname : '')}
             translations={{
               placeholder: 'Search packages (i.e. babel, webpack, react…)',
             }}

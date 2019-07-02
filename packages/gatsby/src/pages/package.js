@@ -13,7 +13,7 @@ export const PackagePage = () => {
   // const location = useLocation();
   // const {index} = useAlgolia();
 
-  const packageName = window.location.search.slice(1);
+  const packageName = typeof window !== 'undefined' && window.location.search.slice(1);
 
   return <Details objectID={packageName} />;
 
