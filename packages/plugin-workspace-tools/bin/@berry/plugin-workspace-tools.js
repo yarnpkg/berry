@@ -139,9 +139,10 @@ const cli_1 = __webpack_require__(2);
 const core_1 = __webpack_require__(3);
 const core_2 = __webpack_require__(3);
 const core_3 = __webpack_require__(3);
-const os_1 = __webpack_require__(4);
-const p_limit_1 = __importDefault(__webpack_require__(5));
-const yup = __importStar(__webpack_require__(7));
+const clipanion_1 = __webpack_require__(4);
+const os_1 = __webpack_require__(5);
+const p_limit_1 = __importDefault(__webpack_require__(6));
+const yup = __importStar(__webpack_require__(8));
 /**
  * Retrieves all the child workspaces of a given root workspace recursively
  *
@@ -162,7 +163,7 @@ const getWorkspaceChildrenRecursive = (rootWorkspace, project) => {
 };
 // eslint-disable-next-line arca/no-default-export
 exports.default = (clipanion, pluginConfiguration) => clipanion
-    .command(`workspaces foreach <command> [... rest] [-v,--verbose] [-p,--parallel] [-i,--interlaced] [-j,--jobs JOBS] [--topological] [--topological-dev] [--all] [--include WORKSPACES...] [--exclude WORKSPACES...]`)
+    .command(`workspaces foreach <command> [... rest] [-v,--verbose] [-p,--parallel] [-i,--interlaced] [-j,--jobs JOBS] [-t,--topological] [--topological-dev] [--all] [--include WORKSPACES...] [--exclude WORKSPACES...]`)
     .categorize(`Workspace-related commands`)
     .describe(`run a command on all workspaces`)
     .flags({ proxyArguments: true })
@@ -173,7 +174,7 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
 
     - If \`-p,--parallel\` and \`-i,--interlaced\` are both set, Yarn will print the lines from the output as it receives them. If \`-i,--interlaced\` wasn't set, it would instead buffer the output from each process and print the resulting buffers only after their source processes have exited.
 
-    - If \`--topological\` is set, Yarn will only run a command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--tological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
+    - If \`-t,--topological\` is set, Yarn will only run a command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--tological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
 
     - If \`--all\` is set, Yarn will run it on all the workspaces of a project. By default it runs the command only on child workspaces.
 
@@ -183,6 +184,9 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
 
     If the command is \`run\` and the script being run does not exist the child workspace will be skipped without error.
   `)
+    .example(`Publish all the packages in a workspace`, `yarn workspaces foreach npm publish --tolerate-republish`)
+    .example(`Run build script on all the packages in a workspace`, `yarn workspaces foreach run build`)
+    .example(`Run build script on all the packages in a workspace in parallel, building dependent packages first`, `yarn workspaces foreach -pt run build`)
     .validate(yup.object().shape({
     jobs: yup.number().min(2),
     parallel: yup.boolean().when(`jobs`, {
@@ -197,19 +201,23 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
     const { project, workspace: cwdWorkspace } = await core_1.Project.find(configuration, cwd);
     if (!all && !cwdWorkspace)
         throw new cli_1.WorkspaceRequiredError(cwd);
+    const { commandPath, env: parsedEnv } = clipanion.parse([command, ...rest]);
+    const scriptName = commandPath.length === 1 && commandPath[0] === `run`
+        ? parsedEnv.name
+        : null;
+    if (commandPath.length === 0)
+        throw new clipanion_1.UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
     const rootWorkspace = all
         ? project.topLevelWorkspace
         : cwdWorkspace;
     const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
     const workspaces = [];
     for (const workspace of candidates) {
-        if (command === 'run' && rest.length > 0 && !workspace.manifest.scripts.has(rest[0]))
+        if (scriptName && !workspace.manifest.scripts.has(scriptName))
             continue;
         // Prevents infinite loop in the case of configuring a script as such:
         //     "lint": "yarn workspaces foreach --all lint"
-        if ((command === 'run' && rest.length > 0 &&
-            rest[0] === process.env.npm_lifecycle_event ||
-            command === process.env.npm_lifecycle_event) &&
+        if ((scriptName || command) === process.env.npm_lifecycle_event &&
             workspace.cwd === cwdWorkspace.cwd)
             continue;
         if (include.length > 0 && !include.includes(workspace.locator.name))
@@ -287,14 +295,14 @@ exports.default = (clipanion, pluginConfiguration) => clipanion
             const [stdout, stdoutEnd] = createStream(report, { prefix, interlaced });
             const [stderr, stderrEnd] = createStream(report, { prefix, interlaced });
             try {
-                const exitCode = await clipanion.run(null, [command, ...rest], Object.assign({}, env, { cwd: workspace.cwd, stdout: stdout, stderr: stderr }));
+                const exitCode = (await clipanion.run(null, [command, ...rest], Object.assign({}, env, { cwd: workspace.cwd, stdout: stdout, stderr: stderr }))) || 0;
                 stdout.end();
                 stderr.end();
                 const emptyStdout = await stdoutEnd;
                 const emptyStderr = await stderrEnd;
                 if (verbose && emptyStdout && emptyStderr)
-                    report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode || 0})`);
-                return exitCode || 0;
+                    report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode})`);
+                return exitCode;
             }
             catch (err) {
                 stdout.end();
@@ -356,15 +364,21 @@ module.exports = require("@berry/core");
 /* 4 */
 /***/ (function(module, exports) {
 
-module.exports = require("os");
+module.exports = require("clipanion");
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+module.exports = require("os");
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-const pTry = __webpack_require__(6);
+const pTry = __webpack_require__(7);
 
 const pLimit = concurrency => {
 	if (concurrency < 1) {
@@ -418,7 +432,7 @@ module.exports.default = pLimit;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -430,7 +444,7 @@ module.exports = (callback, ...args) => new Promise(resolve => {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = require("yup");
