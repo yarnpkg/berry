@@ -1,3 +1,12 @@
+trigger:
+  schedules:
+    - cron: "0 0 * * *"
+      displayName: Daily midnight build
+      branches:
+        include:
+          - master
+      always: true
+
 jobs:
 
 - job: Ecosystem E2E
@@ -16,8 +25,9 @@ jobs:
 
   - bash: |
       npm install -g yarn@1.17.2
-    displayName: "Install Yarn 1.17.2+"
+    displayName: 'Install Yarn 1.17.2+'
 
   - bash: |
       scripts/e2e/run.sh gatsby
-    displayName: "Gatsby"
+    displayName: 'Gatsby'
+    continueOnError: true
