@@ -501,7 +501,11 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         if (canUseFallbacks) {
           for (let t = 0, T = fallbackLocators.length; dependencyReference === undefined && t < T; ++t) {
             const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
-            dependencyReference = fallbackInformation.packageDependencies.get(dependencyName);
+            const fallbackReference = fallbackInformation.packageDependencies.get(dependencyName);
+
+            if (fallbackReference !== null) {
+              dependencyReference = fallbackReference;
+            }
           }
         }
       }
