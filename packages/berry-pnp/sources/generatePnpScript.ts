@@ -1,6 +1,7 @@
 // @ts-ignore
 import template                  from '@berry/pnp/lib/hook';
 
+import {generatePrettyJson}      from './generatePrettyJson';
 import {generateSerializedState} from './generateSerializedState';
 import {SerializedState}         from './types';
 import {PnpSettings}             from './types';
@@ -30,7 +31,7 @@ function generateJsonString(data: SerializedState) {
 
 function generateInlinedSetup(data: SerializedState) {
   return [
-    `return hydrateRuntimeState(${generateJsonString(data)}, {basePath: __dirname});\n`,
+    `return hydrateRuntimeState(${generatePrettyJson(data)}, {basePath: __dirname});\n`,
   ].join(``);
 }
 
