@@ -1595,8 +1595,10 @@ __metadata:
     "@emotion/core": "npm:^10.0.7"
     "@emotion/styled": "npm:^10.0.7"
     "@emotion/styled-base": "npm:^10.0.7"
+    "@haroenv/react-sparklines": "npm:^1.7.1"
     "@reach/router": "npm:^1.1.1"
     algoliasearch: "npm:^3.32.1"
+    bytes: "npm:^3.1.0"
     date-fns: "npm:^2.0.0-beta.2"
     es6-promise: "npm:^4.2.6"
     gatsby: "npm:^2.13.6"
@@ -1627,6 +1629,7 @@ __metadata:
     react-helmet: "npm:^5.2.0"
     react-icons: "npm:^3.7.0"
     react-instantsearch-dom: "npm:^5.7.0"
+    react-transition-group: "npm:^1.2.1"
     remark-html: "npm:^9.0.0"
     remark-parse: "npm:^6.0.3"
     unescape-html: "npm:^1.1.0"
@@ -2298,6 +2301,18 @@ __metadata:
   dependencies:
     "@hapi/hoek": "npm:8.x.x"
   checksum: d9c1fd5710657f8c9b177c5fdcd416ae8933f7295a040222145dc5c39679a3871ec0436fd681bb358863a41726f1c0566d476920ef48c1ff9e2cc4f0aff30719
+  languageName: node
+  linkType: hard
+
+"@haroenv/react-sparklines@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "@haroenv/react-sparklines@npm:1.7.1"
+  dependencies:
+    prop-types: "npm:^15.5.10"
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
+  checksum: 12868d43436b1ef0d130f665aed5fe80806867c57a904ef45b5a6fb3203ee06cab79f4cc6ebd9fce362a078e0a33c6c3b38fa971bb0b135787cbf5ea60ff44c6
   languageName: node
   linkType: hard
 
@@ -5800,7 +5815,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bytes@npm:3.1.0":
+"bytes@npm:3.1.0, bytes@npm:^3.1.0":
   version: 3.1.0
   resolution: "bytes@npm:3.1.0"
   checksum: 875d3c3d89db2fef00499566dae500268e399f644119146d638d37041132f0647e58876320734a9d61f0f81ebd6cce66f1234b1ca904cbfa28db10a721c5ccb0
@@ -6095,6 +6110,13 @@ __metadata:
   version: 1.0.3
   resolution: "ccount@npm:1.0.3"
   checksum: f8337a6c7631ecec66bbe02db29d9ca965b9aa8596e2b9a66d825c27921fe01964064d24c3f93d1409738f00a623bde19a414f0ecfbc2d178c6508ce645f5005
+  languageName: node
+  linkType: hard
+
+"chain-function@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "chain-function@npm:1.0.1"
+  checksum: 09b6468c1dbdca5f6d60b52480cb091641077721b4173755a9e5a5aab2b0dbf446e78270f3c726bab1ff97b5b61e648156a1762b036f3ea9da63b2030b30d234
   languageName: node
   linkType: hard
 
@@ -8001,7 +8023,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dom-helpers@npm:^3.2.1":
+"dom-helpers@npm:^3.2.0, dom-helpers@npm:^3.2.1":
   version: 3.4.0
   resolution: "dom-helpers@npm:3.4.0"
   dependencies:
@@ -17916,7 +17938,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.5.10, prop-types@npm:^15.5.4, prop-types@npm:^15.7.2":
+"prop-types@npm:^15.5.10, prop-types@npm:^15.5.4, prop-types@npm:^15.5.6, prop-types@npm:^15.7.2":
   version: 15.7.2
   resolution: "prop-types@npm:15.7.2"
   dependencies:
@@ -18411,6 +18433,22 @@ __metadata:
   peerDependencies:
     react: ^0.13.0 || ^0.14.0 || ^15.0.0 || ^16.0.0
   checksum: 93e7e2deebc3f79f4e71a91996736a1e3e73dde53ac00c884e84993fea22fe6dc4f204565acf66899e9e7798579a0e103a5265699d1699fa98981458e2917b5e
+  languageName: node
+  linkType: hard
+
+"react-transition-group@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "react-transition-group@npm:1.2.1"
+  dependencies:
+    chain-function: "npm:^1.0.0"
+    dom-helpers: "npm:^3.2.0"
+    loose-envify: "npm:^1.3.1"
+    prop-types: "npm:^15.5.6"
+    warning: "npm:^3.0.0"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0
+    react-dom: ^15.0.0 || ^16.0.0
+  checksum: 85e6f4621822531a82d008a70b53c76398105195119f77c2ff83d6a9d528fc40b966b1cbc41c92e0786b76bef9b66730c8f830b23e0f9dcff4eec8850fd6e6e8
   languageName: node
   linkType: hard
 

@@ -9199,12 +9199,20 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:10.0.7"
                 ],
                 [
+                  "@haroenv/react-sparklines",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:1.7.1"
+                ],
+                [
                   "@reach/router",
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:1.2.1"
                 ],
                 [
                   "algoliasearch",
                   "npm:3.32.1"
+                ],
+                [
+                  "bytes",
+                  "npm:3.1.0"
                 ],
                 [
                   "date-fns",
@@ -9325,6 +9333,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "react-instantsearch-dom",
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:5.7.0"
+                ],
+                [
+                  "react-transition-group",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:1.2.1"
                 ],
                 [
                   "remark-html",
@@ -11856,6 +11868,51 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "@hapi/hoek",
                   "npm:8.0.2"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "@haroenv/react-sparklines",
+        [
+          [
+            "npm:1.7.1",
+            {
+              "packageLocation": "./.yarn/cache/@haroenv-react-sparklines-npm-1.7.1-2755f1bba42e3b2def2b21a20d2f86d6d8443d4e55e1b805fe32027b39de0bef.zip/node_modules/@haroenv/react-sparklines/",
+              "packageDependencies": [
+                [
+                  "@haroenv/react-sparklines",
+                  "npm:1.7.1"
+                ],
+                [
+                  "prop-types",
+                  "npm:15.7.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:1.7.1",
+            {
+              "packageLocation": "./.yarn/virtual/@haroenv-react-sparklines-virtual-bcabc2fb5fd29428a937910ef48d9c69535702d8279d250a59f63cf7636ddd6e/node_modules/@haroenv/react-sparklines/",
+              "packageDependencies": [
+                [
+                  "@haroenv/react-sparklines",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:1.7.1"
+                ],
+                [
+                  "prop-types",
+                  "npm:15.7.2"
+                ],
+                [
+                  "react",
+                  "npm:16.8.4"
+                ],
+                [
+                  "react-dom",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:16.8.4"
                 ]
               ]
             }
@@ -22712,6 +22769,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "ccount",
                   "npm:1.0.3"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "chain-function",
+        [
+          [
+            "npm:1.0.1",
+            {
+              "packageLocation": "./.yarn/cache/chain-function-npm-1.0.1-409e91dfd40ea0649424c97797971a783dc64c0df139cb93d78a2861e39ade94.zip/node_modules/chain-function/",
+              "packageDependencies": [
+                [
+                  "chain-function",
+                  "npm:1.0.1"
                 ]
               ]
             }
@@ -56345,6 +56419,83 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "shallowequal",
                   "npm:1.1.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "react-transition-group",
+        [
+          [
+            "npm:1.2.1",
+            {
+              "packageLocation": "./.yarn/cache/react-transition-group-npm-1.2.1-7236c988d92d3ea6690e69cca3ae263061533faaa28471aaf3d98cb9aa39d3b2.zip/node_modules/react-transition-group/",
+              "packageDependencies": [
+                [
+                  "react-transition-group",
+                  "npm:1.2.1"
+                ],
+                [
+                  "chain-function",
+                  "npm:1.0.1"
+                ],
+                [
+                  "dom-helpers",
+                  "npm:3.4.0"
+                ],
+                [
+                  "loose-envify",
+                  "npm:1.4.0"
+                ],
+                [
+                  "prop-types",
+                  "npm:15.7.2"
+                ],
+                [
+                  "warning",
+                  "npm:3.0.0"
+                ]
+              ]
+            }
+          ],
+          [
+            "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:1.2.1",
+            {
+              "packageLocation": "./.yarn/virtual/react-transition-group-virtual-b73173f616346ba489d3878ea726cbdc3f9ddd2d35528eb3ba709eb6a046ee04/node_modules/react-transition-group/",
+              "packageDependencies": [
+                [
+                  "react-transition-group",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:1.2.1"
+                ],
+                [
+                  "chain-function",
+                  "npm:1.0.1"
+                ],
+                [
+                  "dom-helpers",
+                  "npm:3.4.0"
+                ],
+                [
+                  "loose-envify",
+                  "npm:1.4.0"
+                ],
+                [
+                  "prop-types",
+                  "npm:15.7.2"
+                ],
+                [
+                  "react",
+                  "npm:16.8.4"
+                ],
+                [
+                  "react-dom",
+                  "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:16.8.4"
+                ],
+                [
+                  "warning",
+                  "npm:3.0.0"
                 ]
               ]
             }

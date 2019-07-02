@@ -7,8 +7,8 @@ import {
   connectStateResults,
 } from 'react-instantsearch-dom';
 
-import Hit         from './Hit';
-import { isEmpty } from './util';
+import Hit         from '../hit';
+import { isEmpty } from '../util';
 
 const Hits = connectHits(({ hits, onTagClick, onOwnerClick }) =>
   hits.map(hit => (
@@ -76,7 +76,7 @@ const Results = ({ searchState, searchResults, onTagClick, onOwnerClick, setSear
       </div>
     );
   } else {
-    const pagination = searchResults.nbPages > 1;
+    const pagination = searchResults && searchResults.nbPages > 1;
     setSearching(true);
     return (
       <ResultsFound

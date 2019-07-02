@@ -11,7 +11,7 @@ import {
   HighlightedMarkdown,
   i18nReplaceVars,
   isKnownRepositoryHost,
-} from './util';
+} from '../util';
 
 export const License = ({ type }) =>
   type ? <span className="ais-Hit-license">{type}</span> : null;
