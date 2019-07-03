@@ -209,7 +209,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableInlineBuilds: {
     description: `If true, the CLI will print the build output on the command line`,
     type: SettingsType.BOOLEAN,
-    default: !!process.env.CI,
+    default: false,
   },
   enableTimers: {
     description: `If true, the CLI is allowed to print the time spent executing commands`,
