@@ -31,7 +31,10 @@ describe(`Protocols`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(source(`{ try { require('one-fixed-dep') } catch (error) { return error.code } }`)).resolves.toEqual(`UNDECLARED_DEPENDENCY`);
+        await expect(source(`{ try { require('one-fixed-dep') } catch (error) { return error } }`)).resolves.toMatchObject({
+          code: `MODULE_NOT_FOUND`,
+          pnpCode: `UNDECLARED_DEPENDENCY`,
+        });
       }),
     );
 
