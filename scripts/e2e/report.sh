@@ -6,7 +6,7 @@ NAME="$1"
 shift
 
 if "$@"; then
-  printf '{"name": "%s", "failed": %d}' "${NAME}" 0 >> "${REPORT_PATH}"
+  printf '{"name": "%s", "failed": %d}\n' "${NAME}" 0 >> "${REPORT_PATH}"
 else
-  printf '{"name": "%s", "failed": %d}' "${NAME}" 1 >> "${REPORT_PATH}"
+  printf '{"name": "%s", "failed": %d}\n' "${NAME}" 1 >> "${REPORT_PATH}"
 fi
