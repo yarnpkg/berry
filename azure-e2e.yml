@@ -1,14 +1,14 @@
-trigger:
-  schedules:
-    - cron: "0 0 * * *"
-      displayName: Daily midnight build
-      branches:
-        include:
-          - master
-      always: true
+trigger: none
+
+schedules:
+- cron: "0 0 * * *"
+  displayName: Daily midnight build
+  branches:
+    include:
+    - master
+  always: true
 
 jobs:
-
 - job: Ecosystem E2E
   pool:
     vmImage: 'Ubuntu 16.04'
