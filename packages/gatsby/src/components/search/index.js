@@ -1,6 +1,7 @@
 import React, {Component}                                 from 'react';
 import {Configure, InstantSearch, connectRefinementList}  from 'react-instantsearch-dom';
 import {StaticQuery, graphql}                             from 'gatsby';
+import styled                                             from '@emotion/styled';
 
 import SearchBox   from './SearchBox';
 import Results     from './Results';
@@ -9,7 +10,12 @@ import withUrlSync from './withUrlSync';
 const equals = (arr1, arr2) =>
   arr1.length === arr2.length && arr1.reduce((a, b, i) => a && arr2[i], true);
 
-// package overview page
+const SearchContainer = styled.div`
+  background: #25799f;
+
+  padding: 1.5em;
+`;
+
 // home page (/:lang/)
 const shouldFocus = path =>
   path.endsWith('/') ||
@@ -74,51 +80,53 @@ class Search extends Component {
           }
         }`}
         render={({ site: { siteMetadata: { algolia }}}) => (
-        <InstantSearch
-          appId={algolia.appId}
-          apiKey={algolia.apiKey}
-          indexName={algolia.indexName}
-          searchState={searchState}
-          onSearchStateChange={onSearchStateChange}
-        >
-          <Configure
-            hitsPerPage={5}
-            facets={['keywords']}
-            analyticsTags={['yarnpkg.com']}
-            attributesToRetrieve={[
-              'deprecated',
-              'description',
-              'downloadsLast30Days',
-              'repository',
-              'homepage',
-              'humanDownloadsLast30Days',
-              'keywords',
-              'license',
-              'modified',
-              'name',
-              'owner',
-              'version',
-            ]}
-            attributesToHighlight={['name', 'description', 'keywords']}
-          />
-          <SearchBox
-            autoFocus={shouldFocus(typeof window !== 'undefined' ? window.location.pathname : '')}
-            translations={{
-              placeholder: 'Search packages (i.e. babel, webpack, react…)',
-            }}
-          />
-          <VirtualRefinementList
-            attribute="keywords"
-            defaultRefinement={[...Array.from(this.state.tags)]}
-            onRefine={this.onRefineTag}
-          />
-          <VirtualRefinementList
-            attribute="owner.name"
-            defaultRefinement={[...Array.from(this.state.owners)]}
-            onRefine={this.onRefineOwner}
-          />
-          <Results onTagClick={this.addTag} onOwnerClick={this.addOwner} setSearching={this.props.setSearching} />
-        </InstantSearch>
+        <SearchContainer>
+          <InstantSearch
+            appId={algolia.appId}
+            apiKey={algolia.apiKey}
+            indexName={algolia.indexName}
+            searchState={searchState}
+            onSearchStateChange={onSearchStateChange}
+          >
+            <Configure
+              hitsPerPage={5}
+              facets={['keywords']}
+              analyticsTags={['yarnpkg.com']}
+              attributesToRetrieve={[
+                'deprecated',
+                'description',
+                'downloadsLast30Days',
+                'repository',
+                'homepage',
+                'humanDownloadsLast30Days',
+                'keywords',
+                'license',
+                'modified',
+                'name',
+                'owner',
+                'version',
+              ]}
+              attributesToHighlight={['name', 'description', 'keywords']}
+            />
+            <SearchBox
+              autoFocus={shouldFocus(typeof window !== 'undefined' ? window.location.pathname : '')}
+              translations={{
+                placeholder: 'Search packages (i.e. babel, webpack, react…)',
+              }}
+            />
+            <VirtualRefinementList
+              attribute="keywords"
+              defaultRefinement={[...Array.from(this.state.tags)]}
+              onRefine={this.onRefineTag}
+            />
+            <VirtualRefinementList
+              attribute="owner.name"
+              defaultRefinement={[...Array.from(this.state.owners)]}
+              onRefine={this.onRefineOwner}
+            />
+            <Results onTagClick={this.addTag} onOwnerClick={this.addOwner} setSearching={this.props.setSearching} />
+          </InstantSearch>
+        </SearchContainer>
       )} />
     );
   }

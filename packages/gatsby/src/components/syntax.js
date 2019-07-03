@@ -57,11 +57,11 @@ export const Main = styled.div`
 `;
 
 const marginContainer = css`
-  & > :first-child {
+  & > :first-of-type {
     margin-top: -1.5em;
   }
 
-  & > :last-child {
+  & > :last-of-type {
     margin-bottom: -1.5em;
   }
 

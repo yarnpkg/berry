@@ -1,30 +1,99 @@
-import React, {Component} from 'react';
-import {SearchBox}        from 'react-instantsearch-dom';
+import React, {useState}           from 'react';
+import {connectSearchBox}          from 'react-instantsearch-dom';
+import styled                      from '@emotion/styled';
+import { IoIosSearch, IoIosClose } from "react-icons/io";
 
-class WrappedSearchBox extends Component {
-  state = { active: false };
+const SearchForm = styled.form`
+  display: flex;
+  background-color: white;
+  border-radius: 0.2em;
+  padding: 0.2em;
+  min-height: 38.8px;
+  transition: box-shadow 0.4s ease, background 0.4s ease;
+  box-shadow: 0 2px 2px 0 rgba(85,95,110,0.4);
+}`;
 
-  handleFocus = () =>
-    this.setState({
-      active: true,
-    });
-
-  handleBlur = () =>
-    this.setState({
-      active: false,
-    });
-
-  render() {
-    return (
-      <div className={this.state.active ? 'active' : ''}>
-        <SearchBox
-          onFocus={this.handleFocus}
-          onBlur={this.handleBlur}
-          {...this.props}
-        />
-      </div>
-    );
+const SearchInput = styled.input`
+  &::-webkit-search-cancel-button {
+    -webkit-appearance: none;
   }
-}
+  &:focus {
+    outline: none;
+  }
+  &::placeholder {
+    color: #46a7d4;
+    font-style: italic;
+    font-weight: 100;
+  }
+  -webkit-appearance: none;
+  order: 2;
+  flex-grow: 1;
+  background: none;
+  border: none;
+  border-radius: 0;
+  font: inherit;
+  color: #2c8ebb;
+  margin-left: 0.5em;
+`;
 
-export default WrappedSearchBox;
+const IconButton = styled.button`
+  &:focus {
+    outline: none;
+  }
+  font-size: 100%;
+  width: 2em;
+  height: 2em;
+  background: none;
+  border: none;
+  position: relative;
+  cursor: pointer;
+
+  svg {
+    width: 1.8em;
+    height: 1.8em;
+    fill: #2c8ebb;
+    position: absolute;
+    top: 0.2em;
+    left: 0.2em;
+  }
+`;
+
+const SubmitButton = styled(IconButton)`
+  order: 1;
+`;
+
+const ResetButton = styled(IconButton)`
+  order: 2;
+  svg {
+    top: 0;
+  }
+`;
+
+const SearchBox = ({ currentRefinement, isSearchStalled, refine, autoFocus }) => {
+  const [active, setActive] = useState(false);
+
+  const onSubmit = e => {
+    e.preventDefault();
+    e.stopPropagation();
+    refine(currentRefinement);
+  }
+
+  return (
+    <SearchForm noValidate action="" role="search" onSubmit={onSubmit}>
+      <SearchInput
+        placeholder="Search packages (i.e. babel, webpack, react…)"
+        autoFocus={autoFocus}
+        active={active}
+        type="search"
+        onFocus={() => setActive(true)}
+        onBlur={() => setActive(false)}
+        value={currentRefinement}
+        onChange={event => refine(event.currentTarget.value)}
+      />
+      <SubmitButton type="submit" title="Submit your search query."><IoIosSearch/></SubmitButton>
+      <ResetButton type="reset" title="Clear the search query." onClick={() => refine('')}><IoIosClose/></ResetButton>
+    </SearchForm>
+  );
+};
+
+export default connectSearchBox(SearchBox);

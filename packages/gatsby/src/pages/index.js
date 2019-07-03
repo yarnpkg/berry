@@ -6,28 +6,6 @@ import Layout            from '../components/layout';
 import {ifMobile}        from '../components/responsive';
 import SEO               from '../components/seo';
 
-const SearchContainer = styled.div`
-  background: #25799f;
-
-  padding: 1.5em;
-`;
-
-// const SearchBar = styled.input`
-//   -webkit-appearance: none;
-
-//   width: 100%;
-
-//   padding: .5em;
-
-//   font-size: inherit;
-
-//   border: 0;
-//   border-radius: 0;
-//   outline: 0;
-
-//   background: #ffffff;
-// `;
-
 const Hero = styled.div`
   width: 100%;
 
@@ -65,9 +43,7 @@ const IndexPage = () => {
   return (<>
     <Layout>
       <SEO title="Home" keywords={[`gatsby`, `application`, `react`]} />
-      <SearchContainer id="search">
-        <Search setSearching={setSearching}/>
-      </SearchContainer>
+      <Search setSearching={setSearching}/>
       {!searching && <Hero>
         <HeroTitle>
           Safe, stable, reproducible projects
