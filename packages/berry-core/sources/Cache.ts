@@ -1,6 +1,5 @@
 import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename} from '@berry/fslib';
 import {xfs, ppath, toFilename}                                from '@berry/fslib';
-import {lock, unlock}                                          from 'lockfile';
 import {promisify}                                             from 'util';
 
 import {Configuration}                                         from './Configuration';
