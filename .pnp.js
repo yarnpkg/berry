@@ -3450,7 +3450,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["globby", "npm:8.0.2"],
             ["got", "npm:9.6.0"],
             ["json-file-plus", "npm:3.3.1"],
-            ["lockfile", "npm:1.0.4"],
             ["logic-solver", "npm:2.0.1"],
             ["mkdirp", "npm:0.5.1"],
             ["p-limit", "npm:2.2.0"],
@@ -28284,14 +28283,41 @@ exports.ZipFS = ZipFS;
 
 "use strict";
 
+Object.defineProperty(exports, "__esModule", { value: true });
+var ErrorCode;
+(function (ErrorCode) {
+    ErrorCode["API_ERROR"] = "API_ERROR";
+    ErrorCode["BLACKLISTED"] = "BLACKLISTED";
+    ErrorCode["BUILTIN_NODE_RESOLUTION_FAILED"] = "BUILTIN_NODE_RESOLUTION_FAILED";
+    ErrorCode["MISSING_DEPENDENCY"] = "MISSING_DEPENDENCY";
+    ErrorCode["MISSING_PEER_DEPENDENCY"] = "MISSING_PEER_DEPENDENCY";
+    ErrorCode["QUALIFIED_PATH_RESOLUTION_FAILED"] = "QUALIFIED_PATH_RESOLUTION_FAILED";
+    ErrorCode["INTERNAL"] = "INTERNAL";
+    ErrorCode["UNDECLARED_DEPENDENCY"] = "UNDECLARED_DEPENDENCY";
+    ErrorCode["UNSUPPORTED"] = "UNSUPPORTED";
+})(ErrorCode = exports.ErrorCode || (exports.ErrorCode = {}));
+;
+// Some errors are exposed as MODULE_NOT_FOUND for compatibility with packages
+// that expect this umbrella error when the resolution fails
+const MODULE_NOT_FOUND_ERRORS = new Set([
+    ErrorCode.BLACKLISTED,
+    ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED,
+    ErrorCode.MISSING_DEPENDENCY,
+    ErrorCode.MISSING_PEER_DEPENDENCY,
+    ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED,
+    ErrorCode.UNDECLARED_DEPENDENCY,
+]);
 /**
  * Simple helper function that assign an error code to an error, so that it can more easily be caught and used
  * by third-parties.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-function makeError(code, message, data = {}) {
-    const error = new Error(message);
-    return Object.assign(error, { code, data });
+function makeError(pnpCode, message, data = {}) {
+    const code = MODULE_NOT_FOUND_ERRORS.has(pnpCode)
+        ? `MODULE_NOT_FOUND`
+        : pnpCode;
+    return Object.assign(new Error(message), {
+        code, pnpCode, data,
+    });
 }
 exports.makeError = makeError;
 /**
@@ -29366,7 +29392,7 @@ function applyPatch(pnpapi, opts) {
             optionNames.delete(`paths`);
             optionNames.delete(`plugnplay`);
             if (optionNames.size > 0) {
-                throw internalTools_1.makeError(`UNSUPPORTED`, `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(', ')})`);
+                throw internalTools_1.makeError(internalTools_1.ErrorCode.UNSUPPORTED, `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(', ')})`);
             }
             if (options.paths) {
                 issuers = options.paths.map((entry) => {
@@ -29589,7 +29615,7 @@ function makeApi(runtimeState, opts) {
     function getPackageInformationSafe(packageLocator) {
         const packageInformation = getPackageInformation(packageLocator);
         if (!packageInformation) {
-            throw internalTools_1.makeError(`INTERNAL`, `Couldn't find a matching entry in the dependency tree for the specified parent (this is probably an internal error)`);
+            throw internalTools_1.makeError(internalTools_1.ErrorCode.INTERNAL, `Couldn't find a matching entry in the dependency tree for the specified parent (this is probably an internal error)`);
         }
         return packageInformation;
     }
@@ -29710,7 +29736,7 @@ function makeApi(runtimeState, opts) {
      * If an new version of the Plug'n'Play standard is released and some extensions conflict with newly added
      * functions, they'll just have to fix the conflicts and bump their own version number.
      */
-    const VERSIONS = { std: 1 };
+    const VERSIONS = { std: 2 };
     /**
      * We export a special symbol for easy access to the top level locator.
      */
@@ -29760,7 +29786,7 @@ function makeApi(runtimeState, opts) {
             // paths, we're able to print a more helpful error message that points out that a third-party package is doing
             // something incompatible!
             if (locator === null) {
-                throw internalTools_1.makeError(`BLACKLISTED`, [
+                throw internalTools_1.makeError(internalTools_1.ErrorCode.BLACKLISTED, [
                     `A package has been resolved through a blacklisted path - this is usually caused by one of your tool`,
                     `calling "realpath" on the return value of "require.resolve". Since the returned values use symlinks to`,
                     `disambiguate peer dependencies, they must be passed untransformed to "require".`,
@@ -29794,7 +29820,7 @@ function makeApi(runtimeState, opts) {
         if (ignorePattern && issuer && ignorePattern.test(normalizePath(issuer))) {
             const result = callNativeResolution(request, issuer);
             if (result === false) {
-                throw internalTools_1.makeError(`BUILTIN_NODE_RESOLUTION_FAIL`, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${request}"\nRequired by: ${issuer}\n`, { request, issuer });
+                throw internalTools_1.makeError(internalTools_1.ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${request}"\nRequired by: ${issuer}\n`, { request, issuer });
             }
             return fslib_1.NodeFS.toPortablePath(result);
         }
@@ -29807,7 +29833,7 @@ function makeApi(runtimeState, opts) {
             }
             else {
                 if (!issuer) {
-                    throw internalTools_1.makeError(`API_ERROR`, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, { request, issuer });
+                    throw internalTools_1.makeError(internalTools_1.ErrorCode.API_ERROR, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, { request, issuer });
                 }
                 if (issuer.match(isDirRegExp)) {
                     unqualifiedPath = fslib_2.ppath.normalize(fslib_2.ppath.resolve(issuer, request));
@@ -29821,7 +29847,7 @@ function makeApi(runtimeState, opts) {
         // particular the exact version for the given location on the dependency tree
         else {
             if (!issuer) {
-                throw internalTools_1.makeError(`API_ERROR`, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, { request, issuer });
+                throw internalTools_1.makeError(internalTools_1.ErrorCode.API_ERROR, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, { request, issuer });
             }
             const [, dependencyName, subPath] = dependencyNameMatch;
             const issuerLocator = findPackageLocator(issuer);
@@ -29830,7 +29856,7 @@ function makeApi(runtimeState, opts) {
             if (!issuerLocator) {
                 const result = callNativeResolution(request, issuer);
                 if (result === false) {
-                    throw internalTools_1.makeError(`BUILTIN_NODE_RESOLUTION_FAIL`, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree)\n\nRequire path: "${request}"\nRequired by: ${issuer}\n`, { request, issuer });
+                    throw internalTools_1.makeError(internalTools_1.ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree)\n\nRequire path: "${request}"\nRequired by: ${issuer}\n`, { request, issuer });
                 }
                 return fslib_1.NodeFS.toPortablePath(result);
             }
@@ -29858,19 +29884,19 @@ function makeApi(runtimeState, opts) {
             // If we can't find the path, and if the package making the request is the top-level, we can offer nicer error messages
             if (dependencyReference === null) {
                 if (issuerLocator.name === null) {
-                    throw internalTools_1.makeError(`MISSING_PEER_DEPENDENCY`, `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, { request, issuer, dependencyName });
+                    throw internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_PEER_DEPENDENCY, `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, { request, issuer, dependencyName });
                 }
                 else {
-                    throw internalTools_1.makeError(`MISSING_PEER_DEPENDENCY`, `A package is trying to access a peer dependency that should be provided by its direct ancestor but isn't\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, { request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName });
+                    throw internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_PEER_DEPENDENCY, `A package is trying to access a peer dependency that should be provided by its direct ancestor but isn't\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, { request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName });
                 }
             }
             else if (dependencyReference === undefined) {
                 if (issuerLocator.name === null) {
-                    throw internalTools_1.makeError(`UNDECLARED_DEPENDENCY`, `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, { request, issuer, dependencyName });
+                    throw internalTools_1.makeError(internalTools_1.ErrorCode.UNDECLARED_DEPENDENCY, `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, { request, issuer, dependencyName });
                 }
                 else {
                     const candidates = Array.from(issuerInformation.packageDependencies.keys());
-                    throw internalTools_1.makeError(`UNDECLARED_DEPENDENCY`, `A package is trying to access another package without the second one being listed as a dependency of the first one\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, { request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName, candidates });
+                    throw internalTools_1.makeError(internalTools_1.ErrorCode.UNDECLARED_DEPENDENCY, `A package is trying to access another package without the second one being listed as a dependency of the first one\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, { request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName, candidates });
                 }
             }
             // We need to check that the package exists on the filesystem, because it might not have been installed
@@ -29879,7 +29905,7 @@ function makeApi(runtimeState, opts) {
                 : { name: dependencyName, reference: dependencyReference };
             const dependencyInformation = getPackageInformationSafe(dependencyLocator);
             if (!dependencyInformation.packageLocation) {
-                throw internalTools_1.makeError(`MISSING_DEPENDENCY`, `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, { request, issuer, dependencyLocator: Object.assign({}, dependencyLocator) });
+                throw internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_DEPENDENCY, `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, { request, issuer, dependencyLocator: Object.assign({}, dependencyLocator) });
             }
             // Now that we know which package we should resolve to, we only have to find out the file location
             const dependencyLocation = fslib_2.ppath.resolve(runtimeState.basePath, dependencyInformation.packageLocation);
@@ -29904,7 +29930,7 @@ function makeApi(runtimeState, opts) {
             return fslib_2.ppath.normalize(qualifiedPath);
         }
         else {
-            throw internalTools_1.makeError(`QUALIFIED_PATH_RESOLUTION_FAILED`, `Couldn't find a suitable Node resolution for the specified unqualified path\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected resolution: ${candidate}\n`).join(``)}`, { unqualifiedPath });
+            throw internalTools_1.makeError(internalTools_1.ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Couldn't find a suitable Node resolution for the specified unqualified path\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected resolution: ${candidate}\n`).join(``)}`, { unqualifiedPath });
         }
     }
     ;
@@ -29923,7 +29949,7 @@ function makeApi(runtimeState, opts) {
             return resolveUnqualified(unqualifiedPath, { extensions });
         }
         catch (resolutionError) {
-            if (resolutionError.code === 'QUALIFIED_PATH_RESOLUTION_FAILED')
+            if (resolutionError.pnpCode === 'QUALIFIED_PATH_RESOLUTION_FAILED')
                 Object.assign(resolutionError.data, { request, issuer });
             throw resolutionError;
         }
