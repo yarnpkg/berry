@@ -214,6 +214,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["babel-jest", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:24.5.0"],
             ["eslint", "npm:5.16.0"],
             ["eslint-plugin-arca", "npm:0.8.1"],
+            ["github-api", "npm:3.2.2"],
             ["jest", "npm:24.5.0"],
             ["jest-environment-node", "npm:24.5.0"],
             ["jest-junit", "npm:5.2.0"],
@@ -3590,6 +3591,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["babel-jest", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:24.5.0"],
             ["eslint", "npm:5.16.0"],
             ["eslint-plugin-arca", "npm:0.8.1"],
+            ["github-api", "npm:3.2.2"],
             ["jest", "npm:24.5.0"],
             ["jest-environment-node", "npm:24.5.0"],
             ["jest-junit", "npm:5.2.0"],
@@ -7042,6 +7044,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["axios", "npm:0.18.0"],
             ["follow-redirects", "npm:1.7.0"],
             ["is-buffer", "npm:1.1.6"]
+          ]
+        }],
+        ["npm:0.19.0", {
+          "packageLocation": "./.yarn/cache/axios-npm-0.19.0-77a2694dacff3059cb4d083f2cfe11febfc3439901b4db1257655929407a00ab.zip/node_modules/axios/",
+          "packageDependencies": [
+            ["axios", "npm:0.19.0"],
+            ["follow-redirects", "npm:1.5.10"],
+            ["is-buffer", "npm:2.0.3"]
           ]
         }]
       ]],
@@ -12392,6 +12402,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["follow-redirects", [
+        ["npm:1.5.10", {
+          "packageLocation": "./.yarn/cache/follow-redirects-npm-1.5.10-a33049119d4ddef254866e7c8f2486a592be32e1f143895b94f8d0946333ab63.zip/node_modules/follow-redirects/",
+          "packageDependencies": [
+            ["follow-redirects", "npm:1.5.10"],
+            ["debug", "npm:3.1.0"]
+          ]
+        }],
         ["npm:1.7.0", {
           "packageLocation": "./.yarn/cache/follow-redirects-npm-1.7.0-da339789bc1486b3179304e15380d3bf39ea2d110e5ea82e9781e638b0c7508c.zip/node_modules/follow-redirects/",
           "packageDependencies": [
@@ -13594,6 +13611,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageDependencies": [
             ["getpass", "npm:0.1.7"],
             ["assert-plus", "npm:1.0.0"]
+          ]
+        }]
+      ]],
+      ["github-api", [
+        ["npm:3.2.2", {
+          "packageLocation": "./.yarn/cache/github-api-npm-3.2.2-aeefdc64604614bb15de8a5e3a9312944b67ee84f513d74ed3e328ee69cd2a77.zip/node_modules/github-api/",
+          "packageDependencies": [
+            ["github-api", "npm:3.2.2"],
+            ["axios", "npm:0.19.0"],
+            ["debug", "npm:2.6.9"],
+            ["js-base64", "npm:2.5.1"],
+            ["utf8", "npm:2.1.2"]
           ]
         }]
       ]],
@@ -17022,6 +17051,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/jpeg-js-npm-0.3.4-abc2f892045142517cfcb04db805e037b73366cb4ed5c7a32508a7e326e6c8c5.zip/node_modules/jpeg-js/",
           "packageDependencies": [
             ["jpeg-js", "npm:0.3.4"]
+          ]
+        }]
+      ]],
+      ["js-base64", [
+        ["npm:2.5.1", {
+          "packageLocation": "./.yarn/cache/js-base64-npm-2.5.1-507c3ecd1570e5d9ade1aa6c0cbea299863f05ac51904f6f34e29f93c49b0224.zip/node_modules/js-base64/",
+          "packageDependencies": [
+            ["js-base64", "npm:2.5.1"]
           ]
         }]
       ]],
@@ -25066,6 +25103,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/use-npm-3.1.1-d2c9777e6d7c846aef0ffbe015b23f3797209358ff0ab70b7208a7d8fb8b0ace.zip/node_modules/use/",
           "packageDependencies": [
             ["use", "npm:3.1.1"]
+          ]
+        }]
+      ]],
+      ["utf8", [
+        ["npm:2.1.2", {
+          "packageLocation": "./.yarn/cache/utf8-npm-2.1.2-415fb1a673c755e67826b79cca420c320163ffa4c4680ce94ea71a692a7cbecd.zip/node_modules/utf8/",
+          "packageDependencies": [
+            ["utf8", "npm:2.1.2"]
           ]
         }]
       ]],

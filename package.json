@@ -51,6 +51,7 @@
     "babel-jest": "^24.5.0",
     "eslint": "^5.16.0",
     "eslint-plugin-arca": "^0.8.1",
+    "github-api": "^3.2.2",
     "jest": "^24.5.0",
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",

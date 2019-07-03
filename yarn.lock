@@ -1690,6 +1690,7 @@ __metadata:
     babel-jest: "npm:^24.5.0"
     eslint: "npm:^5.16.0"
     eslint-plugin-arca: "npm:^0.8.1"
+    github-api: "npm:^3.2.2"
     jest: "npm:^24.5.0"
     jest-environment-node: "npm:^24.5.0"
     jest-junit: "npm:^5.2.0"
@@ -4521,6 +4522,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^0.19.0":
+  version: 0.19.0
+  resolution: "axios@npm:0.19.0"
+  dependencies:
+    follow-redirects: "npm:1.5.10"
+    is-buffer: "npm:^2.0.2"
+  checksum: ae35864814032a49c6c93190d28261d02ba6c159c66db056f240924696f9de48ca7262fdaa0f555dc67190600c877234addd33f1a8907f79095779bc37cbc319
+  languageName: node
+  linkType: hard
+
 "axobject-query@npm:^2.0.2":
   version: 2.0.2
   resolution: "axobject-query@npm:2.0.2"
@@ -7306,6 +7317,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"debug@npm:=3.1.0, debug@npm:~3.1.0":
+  version: 3.1.0
+  resolution: "debug@npm:3.1.0"
+  dependencies:
+    ms: "npm:2.0.0"
+  checksum: 89445d84f47d4ae7eb07d176f5e6ead0c3e955c19df6111cb6b1e4ca648560f2d706db0a54a1c5b04a7499172886a3e2daad9278ca19221b5d2468fd63b9c36e
+  languageName: node
+  linkType: hard
+
 "debug@npm:^3.0.0, debug@npm:^3.1.0, debug@npm:^3.2.5, debug@npm:^3.2.6":
   version: 3.2.6
   resolution: "debug@npm:3.2.6"
@@ -7321,15 +7341,6 @@ __metadata:
   dependencies:
     ms: "npm:^2.1.1"
   checksum: 626f9e725386a7a0de0495fd2324be2bbdb9710c62fc31c704f8b86d46f78e8a2b72924d236fb71d49723ffad633d822b81b6a01c572ffd71c9c6c7fe9aa6e4a
-  languageName: node
-  linkType: hard
-
-"debug@npm:~3.1.0":
-  version: 3.1.0
-  resolution: "debug@npm:3.1.0"
-  dependencies:
-    ms: "npm:2.0.0"
-  checksum: 89445d84f47d4ae7eb07d176f5e6ead0c3e955c19df6111cb6b1e4ca648560f2d706db0a54a1c5b04a7499172886a3e2daad9278ca19221b5d2468fd63b9c36e
   languageName: node
   linkType: hard
 
@@ -9634,6 +9645,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"follow-redirects@npm:1.5.10":
+  version: 1.5.10
+  resolution: "follow-redirects@npm:1.5.10"
+  dependencies:
+    debug: "npm:=3.1.0"
+  checksum: 4d5f60c2e894f0625d3b3689b9563eaaac81222f9109d53b9d2885450e4bbe02e6d9efae9f5866d342bee80f49d1e85c6567b575ee53197e07d929ac139a9b5d
+  languageName: node
+  linkType: hard
+
 "follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.3.0":
   version: 1.7.0
   resolution: "follow-redirects@npm:1.7.0"
@@ -10490,6 +10510,18 @@ __metadata:
   dependencies:
     assert-plus: "npm:^1.0.0"
   checksum: 383a7d4227e44f1cbbbefbd9a301ebc781d7d9a999cc43affd79be95bd08fd2cf3fc64717cba45a468b21da91d06f46cfa226226b58cac354c49b1b2edbdf9b3
+  languageName: node
+  linkType: hard
+
+"github-api@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "github-api@npm:3.2.2"
+  dependencies:
+    axios: "npm:^0.19.0"
+    debug: "npm:^2.2.0"
+    js-base64: "npm:^2.1.9"
+    utf8: "npm:^2.1.1"
+  checksum: a1dae6959f825e971af422bb2333c70b14964fb4977085b8601c5d622e04f784cab52e8e171158b8107860f944bb363b0b44ddad26560d5da1e46e027cefedf8
   languageName: node
   linkType: hard
 
@@ -12102,7 +12134,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-buffer@npm:^2.0.0, is-buffer@npm:~2.0.3":
+"is-buffer@npm:^2.0.0, is-buffer@npm:^2.0.2, is-buffer@npm:~2.0.3":
   version: 2.0.3
   resolution: "is-buffer@npm:2.0.3"
   checksum: e26cceccb02cb95c9675eda6e516f11934ca39f0d2907f720d1972e74c1223b1a4a4b04fb2a1a960c2dcfa68454558bc54a5d56248348810d8edaaed056c4ca9
@@ -13639,6 +13671,13 @@ __metadata:
   version: 0.3.4
   resolution: "jpeg-js@npm:0.3.4"
   checksum: 82a887d48df0465e188e3d849a7f26810bd5556345cc72d4c37e57671a3b9f9e84bcc2d7f9e03789d6d9abe55974164f619a13fe3fd7939025be6aeb8484abca
+  languageName: node
+  linkType: hard
+
+"js-base64@npm:^2.1.9":
+  version: 2.5.1
+  resolution: "js-base64@npm:2.5.1"
+  checksum: 88f1ce4a638ed687b9c81b69887275fe04562d9e1845f41e32b27a839f5a9779b1da15bad7af36b79d3cf1803a9ca93f9881018cc31c61d194babc776fdc7e62
   languageName: node
   linkType: hard
 
@@ -21581,6 +21620,13 @@ __metadata:
   version: 3.1.1
   resolution: "use@npm:3.1.1"
   checksum: 2381a13692a787e3459a40e53dbf536be50c94dc768a14f66abe80d152c26a04b055f0d72b5b0e9e84ffa6aaba5747985ebebc63661ab4ff88b3360c10b19486
+  languageName: node
+  linkType: hard
+
+"utf8@npm:^2.1.1":
+  version: 2.1.2
+  resolution: "utf8@npm:2.1.2"
+  checksum: 44715ccd144828c1e7cb28d3415ac2fcb7a67762d8cf376f145be842f9b39ffda54916eefd457a08f03c44f7bc2099755c7ef673fb91e35fa64f49c6b77ea62b
   languageName: node
   linkType: hard
 

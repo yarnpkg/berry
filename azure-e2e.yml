@@ -32,8 +32,15 @@ jobs:
       git config --global user.name "John Doe"
     displayName: 'Setup Git configuration'
 
+  - bash: |
+      export REPORT_PATH="$(mktemp)"
+    displayName: 'Generate a temporary report'
 
   - bash: |
-      scripts/e2e/run.sh gatsby
+      scripts/e2e/report.sh Gatsby scripts/e2e/run.sh gatsby
     displayName: 'Gatsby'
     continueOnError: true
+
+  - bash: |
+      yarn node scripts/e2e/issues.js
+    displayName: 'Submitting the results'
