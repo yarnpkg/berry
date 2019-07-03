@@ -4,7 +4,7 @@ import Module                                                     from 'module';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types';
 
-import {makeError}                                                from './internalTools';
+import {ErrorCode, makeError}                                     from './internalTools';
 
 export type MakeApiOptions = {
   allowDebug?: boolean,
@@ -145,7 +145,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
     if (!packageInformation) {
       throw makeError(
-        `INTERNAL`,
+        ErrorCode.INTERNAL,
         `Couldn't find a matching entry in the dependency tree for the specified parent (this is probably an internal error)`,
       );
     }
@@ -299,7 +299,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * functions, they'll just have to fix the conflicts and bump their own version number.
    */
 
-  const VERSIONS = {std: 1};
+  const VERSIONS = {std: 2};
 
   /**
    * We export a special symbol for easy access to the top level locator.
@@ -367,7 +367,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       if (locator === null) {
         throw makeError(
-          `BLACKLISTED`,
+          ErrorCode.BLACKLISTED,
           [
             `A package has been resolved through a blacklisted path - this is usually caused by one of your tool`,
             `calling "realpath" on the return value of "require.resolve". Since the returned values use symlinks to`,
@@ -414,7 +414,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       if (result === false) {
         throw makeError(
-          `BUILTIN_NODE_RESOLUTION_FAIL`,
+          ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED,
           `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${request}"\nRequired by: ${issuer}\n`,
           {request, issuer},
         );
@@ -435,7 +435,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       } else {
         if (!issuer) {
           throw makeError(
-            `API_ERROR`,
+            ErrorCode.API_ERROR,
             `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`,
             {request, issuer},
           );
@@ -455,7 +455,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     else {
       if (!issuer) {
         throw makeError(
-          `API_ERROR`,
+          ErrorCode.API_ERROR,
           `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`,
           {request, issuer},
         );
@@ -473,7 +473,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
         if (result === false) {
           throw makeError(
-            `BUILTIN_NODE_RESOLUTION_FAIL`,
+            ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED,
             `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree)\n\nRequire path: "${request}"\nRequired by: ${issuer}\n`,
             {request, issuer},
           );
@@ -515,13 +515,13 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       if (dependencyReference === null) {
         if (issuerLocator.name === null) {
           throw makeError(
-            `MISSING_PEER_DEPENDENCY`,
+            ErrorCode.MISSING_PEER_DEPENDENCY,
             `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
             {request, issuer, dependencyName},
           );
         } else {
           throw makeError(
-            `MISSING_PEER_DEPENDENCY`,
+            ErrorCode.MISSING_PEER_DEPENDENCY,
             `A package is trying to access a peer dependency that should be provided by its direct ancestor but isn't\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
             {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
           );
@@ -529,14 +529,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       } else if (dependencyReference === undefined) {
         if (issuerLocator.name === null) {
           throw makeError(
-            `UNDECLARED_DEPENDENCY`,
+            ErrorCode.UNDECLARED_DEPENDENCY,
             `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
             {request, issuer, dependencyName},
           );
         } else {
           const candidates = Array.from(issuerInformation.packageDependencies.keys());
           throw makeError(
-            `UNDECLARED_DEPENDENCY`,
+            ErrorCode.UNDECLARED_DEPENDENCY,
             `A package is trying to access another package without the second one being listed as a dependency of the first one\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
             {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName, candidates},
           );
@@ -553,7 +553,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       if (!dependencyInformation.packageLocation) {
         throw makeError(
-          `MISSING_DEPENDENCY`,
+          ErrorCode.MISSING_DEPENDENCY,
           `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
           {request, issuer, dependencyLocator: Object.assign({}, dependencyLocator)},
         );
@@ -586,7 +586,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       return ppath.normalize(qualifiedPath);
     } else {
       throw makeError(
-        `QUALIFIED_PATH_RESOLUTION_FAILED`,
+        ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED,
         `Couldn't find a suitable Node resolution for the specified unqualified path\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected resolution: ${candidate}\n`).join(``)}`,
         {unqualifiedPath},
       );
@@ -610,7 +610,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     try {
       return resolveUnqualified(unqualifiedPath, {extensions});
     } catch (resolutionError) {
-      if (resolutionError.code === 'QUALIFIED_PATH_RESOLUTION_FAILED')
+      if (resolutionError.pnpCode === 'QUALIFIED_PATH_RESOLUTION_FAILED')
         Object.assign(resolutionError.data, {request, issuer});
 
       throw resolutionError;
