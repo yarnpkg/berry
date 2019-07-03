@@ -338,7 +338,7 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async lockPromise(affectedPath: P, callback: () => Promise<void>) {
+  async lockPromise<T>(affectedPath: P, callback: () => Promise<T>): Promise<T> {
     const lockPath = `${affectedPath}.lock` as P;
 
     const interval = 1000 / 60;
@@ -363,7 +363,7 @@ export abstract class FakeFS<P extends Path> {
     }
 
     try {
-      await callback();
+      return await callback();
     } finally {
       await this.closePromise(fd);
       await this.unlinkPromise(lockPath);

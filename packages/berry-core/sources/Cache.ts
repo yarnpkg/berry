@@ -49,9 +49,7 @@ export class Cache {
     const gitignoreExists = await xfs.existsPromise(gitignorePath);
 
     if (!gitignoreExists) {
-      await this.writeFileIntoCache(gitignorePath, async (file: PortablePath) => {
-        await xfs.writeFilePromise(file, `/.gitignore\n*.lock\n`);
-      });
+      await xfs.writeFilePromise(gitignorePath, `/.gitignore\n*.lock\n`);
     }
   }
 
@@ -141,18 +139,8 @@ export class Cache {
   }
 
   async writeFileIntoCache<T>(file: PortablePath, generator: (file: PortablePath) => Promise<T>) {
-    const lock = NodeFS.fromPortablePath(`${file}.lock` as PortablePath);
-
-    try {
-      await lockP(lock);
-    } catch (error) {
-      throw new Error(`Couldn't obtain a lock on ${file} (${error.message})`);
-    }
-
-    try {
+    return await xfs.lockPromise<T>(`${file}.lock` as PortablePath, async () => {
       return await generator(file);
-    } finally {
-      await unlockP(lock);
-    }
+    });
   }
 }
