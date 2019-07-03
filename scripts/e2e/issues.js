@@ -6,7 +6,7 @@ const gh = new GitHub({
 });
 
 const buildUrl = `${process.env.SYSTEM_TEAMFOUNDATIONCOLLECTIONURI}/${process.env.SYSTEM_TEAMPROJECT}/_build/results?buildId=${process.env.BUILD_BUILDID}&_a=summary`;
-const buildStatus = readFileSync(process.argv[2], `utf8`).trim().split(`\n`).map(line => JSON.parse(line));
+const buildStatus = readFileSync(process.env.REPORT_PATH, `utf8`).trim().split(`\n`).map(line => JSON.parse(line));
 
 const issues = gh.getIssues(`yarnpkg`, `berry`);
 
