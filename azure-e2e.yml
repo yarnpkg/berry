@@ -14,6 +14,7 @@ jobs:
     vmImage: 'Ubuntu 16.04'
 
   variables:
+    REPORT_PATH: /tmp/report.dat
     TERM: screen-256color
     os_name: Linux
 
@@ -31,10 +32,6 @@ jobs:
       git config --global user.email "you@example.com"
       git config --global user.name "John Doe"
     displayName: 'Setup Git configuration'
-
-  - bash: |
-      export REPORT_PATH="$(mktemp)"
-    displayName: 'Generate a temporary report'
 
   - bash: |
       scripts/e2e/report.sh Gatsby scripts/e2e/run.sh gatsby
