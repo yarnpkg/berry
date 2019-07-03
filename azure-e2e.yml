@@ -9,7 +9,7 @@ schedules:
   always: true
 
 jobs:
-- job: Ecosystem E2E
+- job: E2E
   pool:
     vmImage: 'Ubuntu 16.04'
 
