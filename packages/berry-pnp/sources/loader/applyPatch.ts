@@ -5,7 +5,7 @@ import path                                             from 'path';
 
 import {PackageLocator, PnpApi}                         from '../types';
 
-import {makeError, getIssuerModule}                     from './internalTools';
+import {ErrorCode, makeError, getIssuerModule}          from './internalTools';
 
 export type ApplyPatchOptions = {
   compatibilityMode?: boolean,
@@ -188,7 +188,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
       if (optionNames.size > 0) {
         throw makeError(
-          `UNSUPPORTED`,
+          ErrorCode.UNSUPPORTED,
           `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(', ')})`
         );
       }
