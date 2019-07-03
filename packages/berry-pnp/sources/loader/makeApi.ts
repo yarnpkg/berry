@@ -299,7 +299,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * functions, they'll just have to fix the conflicts and bump their own version number.
    */
 
-  const VERSIONS = {std: 1};
+  const VERSIONS = {std: 2};
 
   /**
    * We export a special symbol for easy access to the top level locator.
