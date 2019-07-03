@@ -9,7 +9,7 @@ describe(`Plug'n'Play API (v1)`, () => {
     makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
-      await expect(source(`require('pnpapi').VERSIONS`)).resolves.toMatchObject({std: 1});
+      await expect(source(`require('pnpapi').VERSIONS`)).resolves.toMatchObject({std: 2});
     }),
   );
 
