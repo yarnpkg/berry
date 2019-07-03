@@ -86,7 +86,15 @@ export class VirtualFetcher implements Fetcher {
         throw new Error(`Conflicting virtual paths (current ${currentLink} != new ${target})`);
 
       if (currentLink === undefined) {
-        await xfs.symlinkPromise(`${target}/` as PortablePath, virtualPath);
+        // We need to check whether the target is a directory because the
+        // Windows symlinks are typed and we need to create the right one
+        const stat = await xfs.statPromise(to);
+
+        if (stat.isDirectory()) {
+          await xfs.symlinkPromise(`${target}/` as PortablePath, virtualPath);
+        } else {
+          await xfs.symlinkPromise(target, virtualPath);
+        }
       }
     });
 
