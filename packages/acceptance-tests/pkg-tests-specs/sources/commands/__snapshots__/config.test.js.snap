@@ -12,6 +12,7 @@ Object {
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -60,6 +61,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
@@ -109,6 +111,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
+➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
@@ -158,6 +161,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
+➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
@@ -207,6 +211,7 @@ Object {
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -255,6 +260,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
@@ -304,6 +310,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
+➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
@@ -353,6 +360,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
+➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
@@ -402,6 +410,7 @@ Object {
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -450,6 +459,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
@@ -499,6 +509,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
+➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
@@ -548,6 +559,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
+➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
@@ -597,6 +609,7 @@ Object {
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -645,6 +658,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
@@ -694,6 +708,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
+➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
@@ -743,6 +758,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
+➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
@@ -792,6 +808,7 @@ Object {
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -840,6 +857,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
@@ -889,6 +907,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
+➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
@@ -938,6 +957,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
+➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
@@ -987,6 +1007,7 @@ Object {
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -1035,6 +1056,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
@@ -1084,6 +1106,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
+➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
@@ -1133,6 +1156,7 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
+➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false

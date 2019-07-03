@@ -26,6 +26,12 @@ jobs:
   - bash: |
       npm install -g yarn@1.17.2
     displayName: 'Install Yarn 1.17.2+'
+  
+  - bash: |
+      git config --global user.email "you@example.com"
+      git config --global user.name "John Doe"
+    displayName: 'Setup Git configuration'
+
 
   - bash: |
       scripts/e2e/run.sh gatsby

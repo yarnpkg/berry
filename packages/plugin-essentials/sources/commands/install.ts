@@ -3,12 +3,17 @@ import {Configuration, Cache, MessageName, PluginConfiguration, Project, ReportE
 import {xfs, PortablePath, ppath}                                                                   from '@berry/fslib';
 import {parseSyml, stringifySyml}                                                                   from '@berry/parsers';
 import {Writable}                                                                                   from 'stream';
+import * as yup                                                                                     from 'yup';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`install [--frozen-lockfile?] [--inline-builds?] [--cache-folder PATH]`)
+  .command(`install [--frozen-lockfile] [--inline-builds?] [--cache-folder PATH]`)
   .describe(`install the project dependencies`)
+
+  .validate(yup.object().shape({
+    cacheFolder: yup.string(),
+  }))
 
   .detail(`
     This command setup your project if needed. The installation is splitted in four different steps that each have their own characteristics:
@@ -33,7 +38,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn install`,
   )
 
-  .action(async ({cwd, stdout, cacheFolder, frozenLockfile, inlineBuilds}: {cwd: PortablePath, stdout: Writable, cacheFolder: string | null | undefined, frozenLockfile: boolean, inlineBuilds: boolean}) => {
+  .action(async ({cwd, stdout, cacheFolder, frozenLockfile, inlineBuilds}: {cwd: PortablePath, stdout: Writable, cacheFolder: string | null | undefined, frozenLockfile: boolean, inlineBuilds: boolean | undefined}) => {
     const configuration = await Configuration.find(cwd, pluginConfiguration);
 
     if (cacheFolder != null) {
