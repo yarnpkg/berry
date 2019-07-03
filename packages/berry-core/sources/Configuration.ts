@@ -206,6 +206,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: !!supportsColor.stdout,
     defaultText: `<dynamic>`,
   },
+  enableInlineBuilds: {
+    description: `If true, the CLI will print the build output on the command line`,
+    type: SettingsType.BOOLEAN,
+    default: !!process.env.CI,
+  },
   enableTimers: {
     description: `If true, the CLI is allowed to print the time spent executing commands`,
     type: SettingsType.BOOLEAN,

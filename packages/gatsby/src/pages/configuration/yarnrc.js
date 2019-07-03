@@ -54,6 +54,13 @@ const YarnrcDoc = () => <>
         </>}
       />
       <SymlScalarProperty
+        name={`enableInlineBuilds`}
+        placeholder={false}
+        description={<>
+          If true, Yarn will print the build output directly within the terminal instead of buffering it in a log file. This is the default for CI environments.
+        </>}
+      />
+      <SymlScalarProperty
         name={`enableNetwork`}
         placeholder={true}
         description={<>

@@ -896,7 +896,7 @@ export class Project {
     }
   }
 
-  async linkEverything({cache, report, inlineBuilds = false}: InstallOptions) {
+  async linkEverything({cache, report, inlineBuilds = this.configuration.get(`enableInlineBuilds`)}: InstallOptions) {
     const fetcher = this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
 
