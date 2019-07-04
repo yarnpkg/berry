@@ -127,7 +127,7 @@ const MenuEntry = styled(Link)`
   }
 `;
 
-const Header = () => {
+const Header = ({ children }) => {
   const data = useStaticQuery(graphql`
     query SiteQuery {
       site {
@@ -170,6 +170,7 @@ const Header = () => {
           </React.Fragment>)}
         </MenuNavigation>
       </MenuContainer>
+      {children}
     </HeaderContainer>
   </>
 };

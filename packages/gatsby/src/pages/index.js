@@ -1,10 +1,12 @@
 import styled            from '@emotion/styled';
 import React, {useState} from 'react';
 
-import Search            from '../components/search';
-import Layout            from '../components/layout';
-import {ifMobile}        from '../components/responsive';
-import SEO               from '../components/seo';
+import Header                                  from '../components/header';
+import {SearchBar, SearchResults, withUrlSync} from '../components/search';
+import {SearchProvider}                        from '../components/search';
+import Layout                                  from '../components/layout';
+import {ifMobile}                              from '../components/responsive';
+import SEO                                     from '../components/seo';
 
 const Hero = styled.div`
   width: 100%;
@@ -37,23 +39,44 @@ const HeroSubtitle = styled.div`
   color: #ffffff;
 `;
 
-const IndexPage = () => {
-  const [searching, setSearching] = useState(false);
+const IndexPage = ({ searchState, onSearchStateChange }) => {
+  const [tags, setTags] = useState([]);
+  const [owners, setOwners] = useState([]);
 
   return (<>
-    <Layout>
-      <SEO title="Home" keywords={[`gatsby`, `application`, `react`]} />
-      <Search setSearching={setSearching}/>
-      {!searching && <Hero>
-        <HeroTitle>
-          Safe, stable, reproducible projects
-        </HeroTitle>
-        <HeroSubtitle>
-          Yarn is a package manager that doubles down as project manager. Whether you work on one-shot projects or large monorepos, as a hobbyist or an enterprise user, we've got you covered.
-        </HeroSubtitle>
-      </Hero>}
-    </Layout>
+    <SearchProvider searchState={searchState} onSearchStateChange={onSearchStateChange}>
+      <Layout header=
+        {
+          <Header>
+            <SearchBar
+              searchState={searchState}
+              tags={tags}
+              setTags={setTags}
+              owners={owners}
+              setOwners={setOwners}
+            />
+          </Header>
+        }
+      >
+        <SEO title="Home" keywords={[`gatsby`, `application`, `react`]} />
+
+        <SearchResults
+          onTagClick={tag => setTags([...tags, tag])}
+          onOwnerClick={owner => setOwners([...owners, owner])}
+        />
+        {!searchState.query &&
+          <Hero>
+            <HeroTitle>
+              Safe, stable, reproducible projects
+            </HeroTitle>
+            <HeroSubtitle>
+              Yarn is a package manager that doubles down as project manager. Whether you work on one-shot projects or large monorepos, as a hobbyist or an enterprise user, we've got you covered.
+            </HeroSubtitle>
+          </Hero>
+        }
+      </Layout>
+    </SearchProvider>
   </>);
 };
 
-export default IndexPage;
+export default withUrlSync(IndexPage);

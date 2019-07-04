@@ -14,11 +14,11 @@ const SearchForm = styled.form`
 }`;
 
 const SearchInput = styled.input`
-  &::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-  }
   &:focus {
     outline: none;
+  }
+  &::-webkit-search-cancel-button {
+    -webkit-appearance: none;
   }
   &::placeholder {
     color: #46a7d4;
@@ -49,27 +49,28 @@ const IconButton = styled.button`
   cursor: pointer;
 
   svg {
+    top: 0.1em;
+    left: 0;
     width: 1.8em;
     height: 1.8em;
     fill: #2c8ebb;
     position: absolute;
-    top: 0.2em;
-    left: 0.2em;
   }
 `;
 
 const SubmitButton = styled(IconButton)`
   order: 1;
+  svg {
+    top: 0.2em;
+    left: 0.2em;
+  }
 `;
 
 const ResetButton = styled(IconButton)`
   order: 2;
-  svg {
-    top: 0;
-  }
 `;
 
-const SearchBox = ({ currentRefinement, isSearchStalled, refine, autoFocus }) => {
+const SearchBox = ({ currentRefinement, refine, autoFocus }) => {
   const [active, setActive] = useState(false);
 
   const onSubmit = e => {

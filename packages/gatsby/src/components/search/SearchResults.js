@@ -56,12 +56,10 @@ const ResultsFound = ({ pagination, onTagClick, onOwnerClick }) => (
   </div>
 );
 
-const Results = ({ searchState, searchResults, onTagClick, onOwnerClick, setSearching }) => {
+const SearchResults = ({ searchState, searchResults, onTagClick, onOwnerClick }) => {
   if (isEmpty(searchState.query)) {
-    setSearching(false);
-    return <span />;
+    return null;
   } else if (searchResults && searchResults.nbHits === 0) {
-    setSearching(true);
     const docMessage = 'Were you looking for something in the {documentation_link}?'.split(/[{}]+/);
     docMessage[docMessage.indexOf('documentation_link')] = (
       <a href={`/docs`}>documentation</a>
@@ -77,7 +75,6 @@ const Results = ({ searchState, searchResults, onTagClick, onOwnerClick, setSear
     );
   } else {
     const pagination = searchResults && searchResults.nbPages > 1;
-    setSearching(true);
     return (
       <ResultsFound
         pagination={pagination}
@@ -88,4 +85,4 @@ const Results = ({ searchState, searchResults, onTagClick, onOwnerClick, setSear
   }
 };
 
-export default connectStateResults(Results);
+export default connectStateResults(SearchResults);
