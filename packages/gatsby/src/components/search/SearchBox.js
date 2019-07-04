@@ -22,6 +22,7 @@ const SearchInput = styled.input`
   }
   &::placeholder {
     color: #46a7d4;
+    font-family: inherit;
     font-style: italic;
     font-weight: 100;
   }
