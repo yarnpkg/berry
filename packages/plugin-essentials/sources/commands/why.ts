@@ -78,7 +78,7 @@ function whySimple(project: Project, identHash: IdentHash, {configuration, peers
 
       if (node === null) {
         node = {} as TreeNode;
-    
+
         const label = `${structUtils.prettyLocator(configuration, pkg)}`;
         tree[label] = node;
       }
