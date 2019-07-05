@@ -1,14 +1,11 @@
-import React from 'react';
-import {
-  Pagination,
-  CurrentRefinements,
-  Stats,
-  connectHits,
-  connectStateResults,
-} from 'react-instantsearch-dom';
+import React                                   from 'react';
+import {CurrentRefinements, Stats}             from 'react-instantsearch-dom';
+import {connectHits, connectStateResults}      from 'react-instantsearch-dom';
+import styled                                  from '@emotion/styled';
 
-import Hit         from '../hit';
-import { isEmpty } from '../util';
+import Pagination from './Pagination';
+import Hit        from '../hit';
+import {isEmpty}  from '../util';
 
 const Hits = connectHits(({ hits, onTagClick, onOwnerClick }) =>
   hits.map(hit => (
@@ -21,9 +18,25 @@ const Hits = connectHits(({ hits, onTagClick, onOwnerClick }) =>
   ))
 );
 
+const ResultsContainer = styled.div`
+  margin: 0 auto 0 auto;
+  padding: 0 15px 0 15px;
+  width: 1140px;
+  max-width: 100%;
+`;
+
+const SearchFooter = styled.div`
+  text-align: center;
+  margin-bottom: 50px;
+`;
+
+const StatsText = styled.div`
+  padding: 0 16px 0 16px;
+`;
+
 const ResultsFound = ({ pagination, onTagClick, onOwnerClick }) => (
-  <div className="container">
-    <div className="mx-3">
+  <ResultsContainer>
+    <StatsText>
       <CurrentRefinements />
       <Stats
         translations={{
@@ -36,24 +49,18 @@ const ResultsFound = ({ pagination, onTagClick, onOwnerClick }) => (
               .replace('{time_search}', time),
         }}
       />
-    </div>
+    </StatsText>
     <Hits onTagClick={onTagClick} onOwnerClick={onOwnerClick} />
-    <div className="d-flex">
-      {pagination ? (
-        <Pagination showFirst={false} showLast={false} scrollTo={true} />
-      ) : (
-        <div style={{ height: '3rem' }} />
-      )}
-    </div>
-    <div className="search-footer">
+    <Pagination pagination={pagination} />
+    <SearchFooter>
       Search by Algolia
       {' - '}
       <a href="https://discourse.algolia.com/t/2016-algolia-community-gift-yarn-package-search/319">
         read how it works
       </a>
       .
-    </div>
-  </div>
+    </SearchFooter>
+  </ResultsContainer>
 );
 
 const SearchResults = ({ searchState, searchResults, onTagClick, onOwnerClick }) => {

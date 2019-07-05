@@ -1,6 +1,18 @@
 import React           from 'react';
 import formatDistance  from 'date-fns/formatDistance';
 import { Highlight }   from 'react-instantsearch-dom';
+import styled          from '@emotion/styled';
+
+import IcoDownload     from '../../images/search/ico-download.svg';
+import IcoHotT1        from '../../images/search/ico-hot-t1.svg';
+import IcoHotT2        from '../../images/search/ico-hot-t2.svg';
+import IcoHotT3        from '../../images/search/ico-hot-t3.svg';
+import IcoHotT4        from '../../images/search/ico-hot-t4.svg';
+import IcoNpm          from '../../images/search/ico-npm.svg';
+import IcoHome         from '../../images/search/ico-home.svg';
+import IcoBitBucket    from '../../images/search/ico-bitbucket.svg';
+import IcoGitHub       from '../../images/search/ico-github.svg';
+import IcoGitLab       from '../../images/search/ico-gitlab.svg';
 
 import {
   getDownloadBucket,
@@ -13,19 +25,58 @@ import {
   isKnownRepositoryHost,
 } from '../util';
 
+const HitLicense = styled.span`
+  font-size: 0.75rem;
+  border: solid 1px #ccc;
+  color: rgba(0,0,0,0.5);
+  padding: 2px 4px;
+  border-radius: 4px;
+  margin-right: 8px;
+  letter-spacing: 0.2px;
+`;
+
 export const License = ({ type }) =>
-  type ? <span className="ais-Hit-license">{type}</span> : null;
+  type ? <HitLicense>{type}</HitLicense> : null;
+
+const HitDeprecated = styled.span`
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  background-color: #ccc;
+  border: solid 1px #ccc;
+  color: white;
+  padding: 2px 4px;
+  border-radius: 4px;
+  margin-right: 8px;
+  letter-spacing: 0.2px;
+`;
 
 export const Deprecated = ({ deprecated }) =>
   deprecated ? (
-    <span className="ais-Hit-deprecated" title={deprecated}>
+    <HitDeprecated title={deprecated}>
       deprecated
-    </span>
+    </HitDeprecated>
   ) : null;
 
+const HitOwnerLink = styled.a`
+  font-size: 0.69rem;
+  font-weight: bold;
+  color: rgba(0,0,0,0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-right: 8px;
+`;
+
+const HitOwnerAvatar = styled.img`
+  border-radius: 4px;
+  margin-right: 4px;
+  position: relative;
+  top: -2px;
+  vertical-align: middle;
+  border-style: none;
+`;
+
 export const Owner = ({ link, avatar, name, onClick }) => (
-  <a
-    className="ais-Hit-ownerLink"
+  <HitOwnerLink
     href={link}
     onClick={e => {
       if (onClick && !(e.metaKey || e.ctrlKey)) {
@@ -34,94 +85,215 @@ export const Owner = ({ link, avatar, name, onClick }) => (
       }
     }}
   >
-    <img
+    <HitOwnerAvatar
       width="20"
       height="20"
-      className="ais-Hit-ownerAvatar"
       alt="owner"
       src={`https://res.cloudinary.com/hilnmyskv/image/fetch/w_40,h_40,f_auto,q_80,fl_lossy/${avatar}`}
     />
     {name}
-  </a>
+  </HitOwnerLink>
 );
 
+const HitPopular = styled.span`
+  font-size: 0.825rem;
+  color: rgba(0,0,0,0.5);
+  margin-right: 8px;
+  text-transform: uppercase;
+  &:before {
+    position: relative;
+    display: inline-block;
+    content: '';
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    background-image: url(${IcoDownload});
+    width: 15px;
+    height: 20px;
+    margin-right: 3px;
+    top: 2px;
+  }
+  &.hot-t1:before {
+    background-image: url(${IcoHotT1});
+  }
+  &.hot-t2:before {
+    background-image: url(${IcoHotT2});
+  }
+  &.hot-t3:before {
+    background-image: url(${IcoHotT3});
+  }
+  &.hot-t4:before {
+    background-image: url(${IcoHotT4});
+  }
+`;
+
 export const Downloads = ({ downloads = 0, humanDownloads }) => (
-  <span
-    className={`ais-Hit-popular ${getDownloadBucket(downloads)}`}
+  <HitPopular
+    className={`${getDownloadBucket(downloads)}`}
     title={'{count} downloads in the last 30 days'.replace(
       '{count}',
       downloads.toLocaleString('en')
     )}
   >
     {humanDownloads}
-  </span>
+  </HitPopular>
 );
+
+const HitLinkList = styled.div`
+  position: inherit;
+  top: calc(50% - 12px);
+  right: 1rem;
+`;
+
+const HitLink = styled.a`
+  display: block;
+  opacity: 0.5;
+  text-indent: -9000px;
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-left: 0.8em;
+  float: right;
+`;
+
+const HitLinkNpm = styled(HitLink)`
+  background-image: url(${IcoNpm});
+  width: 34px;
+  height: 26px;
+`;
+
+const HitLinkHomepage = styled(HitLink)`
+  background-image: url(${IcoHome});
+  width: 26px;
+  height: 26px;
+`;
+
+const RepoIcons = {
+  github: IcoGitHub,
+  gitlab: IcoGitLab,
+  bitbucket: IcoBitBucket
+}
+
+const HitRepoLink = styled(HitLink)`
+  background-image: url(${props => RepoIcons[props.provider]});
+  width: 26px;
+  height: 26px;
+`;
 
 const Repository = ({ repository, name }) => {
   const [provider] = repository.host.split('.');
 
   return (
-    <span className={`ais-Hit-link-${provider}`}>
-      <a
-        title={i18nReplaceVars('{provider} repository of {name}', {
-          provider,
-          name,
-        })}
-        href={`https://${repository.host}/${encode(repository.user)}/${encode(
-          repository.project
-        )}${repository.path || ''}`}
-      >
-        {provider}
-      </a>
-    </span>
+    <HitRepoLink
+      provider={provider}
+      title={i18nReplaceVars('{provider} repository of {name}', {
+        provider,
+        name,
+      })}
+      href={`https://${repository.host}/${encode(repository.user)}/${encode(
+        repository.project
+      )}${repository.path || ''}`}
+    >
+      {provider}
+    </HitRepoLink>
   );
 };
 
-export const Links = ({ name, homepage, repository, className }) => (
-  <div className={className}>
-    <span className="ais-Hit-link-npm">
-      <a
-        href={`https://www.npmjs.com/package/${name}`}
-        title={'npm page for {name}'.replace('{name}', name)}
-      >
-        npm
-      </a>
-    </span>
+export const Links = ({ name, homepage, repository }) => (
+  <HitLinkList>
+    <HitLinkNpm
+      href={`https://www.npmjs.com/package/${name}`}
+      title={'npm page for {name}'.replace('{name}', name)}
+    >
+      npm
+    </HitLinkNpm>
     {repository && isKnownRepositoryHost(repository.host) ? (
       <Repository name={name} repository={repository} />
     ) : null}
     {homepage ? (
-      <span className="ais-Hit-link-homepage">
-        <a title={`Homepage of ${name}`} href={homepage}>
-          Homepage
-        </a>
-      </span>
+      <HitLinkHomepage title={`Homepage of ${name}`} href={homepage}>
+        Homepage
+      </HitLinkHomepage>
     ) : null}
-  </div>
+  </HitLinkList>
 );
 
+const HitItem = styled.div`
+  padding: 1.5rem 1rem 2rem;
+  border-bottom: 1px solid #eceeef;
+  position: relative;
+`;
+
+const HitNameLink = styled.a`
+  &:hover, &:visited, &:focus {
+    text-decoration: none;
+    color: rgba(0,0,0,0.9);
+  }
+  font-size: 1.625rem;
+  font-weight: normal;
+  color: rgba(0,0,0,0.7);
+  margin-right: 8px;
+  position: relative;
+  top: 2px;
+  em {
+    border-bottom: dotted 1px;
+    font-style: normal;
+  }
+`;
+
+const HitVersion = styled.span`
+  font-size: 0.825rem;
+  color: rgba(0,0,0,0.5);
+  font-weight: bold;
+  max-width: 90px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
+`;
+
+const HitDescription = styled.p`
+  font-size: 0.875rem;
+  color: rgba(0,0,0,0.5);
+  margin: 0.6rem 0;
+
+  em {
+    font-style: italic;
+    border-bottom: dotted 1px;
+  }
+`;
+
+const HitLastUpdate = styled.span`
+  font-size: 0.825rem;
+  color: rgba(0,0,0,0.5);
+  font-style: italic;
+`;
+
+const HitHiddenKeywords = styled.span`
+  display: none !important;
+`;
+
 const Hit = ({ hit, onTagClick, onOwnerClick }) => (
-  <div className="ais-Hits-item">
-    <a className="ais-Hit-name" href={packageLink(hit.name)}>
+  <HitItem>
+    <HitNameLink href={packageLink(hit.name)}>
       <Highlight attribute="name" hit={hit} />
-    </a>
+    </HitNameLink>
     <Downloads
       downloads={hit.downloadsLast30Days}
       humanDownloads={hit.humanDownloadsLast30Days}
     />
     <License type={hit.license} />
     <Deprecated deprecated={hit.deprecated} />
-    <span className="ais-Hit-version">{hit.version}</span>
-    <p className="ais-Hit-description">
+    <HitVersion>{hit.version}</HitVersion>
+    <HitDescription>
       {hit.deprecated ? (
         hit.deprecated
       ) : (
         <HighlightedMarkdown attribute="description" hit={hit} />
       )}
-    </p>
+    </HitDescription>
     <Owner {...hit.owner} onClick={onOwnerClick} />
-    <span
-      className="ais-Hit-lastUpdate"
+    <HitLastUpdate
       title={'last updated {update_date}'.replace(
         '{update_date}',
         new Date(hit.modified).toLocaleDateString('en')
@@ -131,24 +303,23 @@ const Hit = ({ hit, onTagClick, onOwnerClick }) => (
         '{time_distance}',
         formatDistance(new Date(hit.modified), new Date())
       )}
-    </span>
+    </HitLastUpdate>
     {isEmpty(hit.keywords) ? null : (
-      <span className="ais-Hit-keywords hidden-sm-down">
+      <HitHiddenKeywords>
         {formatKeywords(
           hit.keywords,
           hit._highlightResult.keywords,
           4,
           onTagClick
         )}
-      </span>
+      </HitHiddenKeywords>
     )}
     <Links
-      className="ais-Hit-links"
       name={hit.name}
       homepage={hit.homepage}
       repository={hit.repository}
     />
-  </div>
+  </HitItem>
 );
 
 export default Hit;

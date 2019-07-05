@@ -11,6 +11,9 @@ const SearchForm = styled.form`
   min-height: 38.8px;
   transition: box-shadow 0.4s ease, background 0.4s ease;
   box-shadow: 0 2px 2px 0 rgba(85,95,110,0.4);
+  width: 1140px;
+  max-width: 100%;
+  margin: 0 auto 0 auto;
 }`;
 
 const SearchInput = styled.input`
