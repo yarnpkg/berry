@@ -91,6 +91,7 @@ const SearchBox = ({ currentRefinement, refine, autoFocus }) => {
         onBlur={() => setActive(false)}
         value={currentRefinement}
         onChange={event => refine(event.currentTarget.value)}
+        size="1"
       />
       <SubmitButton type="submit" title="Submit your search query."><IoIosSearch/></SubmitButton>
       <ResetButton type="reset" title="Clear the search query." onClick={() => refine('')}><IoIosClose/></ResetButton>
