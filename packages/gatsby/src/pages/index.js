@@ -20,6 +20,12 @@ const Hero = styled.div`
   }
 `;
 
+const HeroFrame = styled.div`
+  margin: 0 auto 0 auto;
+  width: 1140px;
+  max-width: 100%;
+`;
+
 const HeroTitle = styled.div`
   font-size: 4em;
   font-weight: bold;
@@ -66,12 +72,14 @@ const IndexPage = ({ searchState, onSearchStateChange }) => {
         />
         {!searchState.query &&
           <Hero>
-            <HeroTitle>
-              Safe, stable, reproducible projects
-            </HeroTitle>
-            <HeroSubtitle>
-              Yarn is a package manager that doubles down as project manager. Whether you work on one-shot projects or large monorepos, as a hobbyist or an enterprise user, we've got you covered.
-            </HeroSubtitle>
+            <HeroFrame>
+              <HeroTitle>
+                Safe, stable, reproducible projects
+              </HeroTitle>
+              <HeroSubtitle>
+                Yarn is a package manager that doubles down as project manager. Whether you work on one-shot projects or large monorepos, as a hobbyist or an enterprise user, we've got you covered.
+              </HeroSubtitle>
+            </HeroFrame>
           </Hero>
         }
       </Layout>

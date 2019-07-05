@@ -1,2 +1,2 @@
-export const ifMobile = () => `@media (max-width: 600px)`;
-export const ifDesktop = () => `@media (min-width: 601px)`;
+export const ifMobile = () => `@media (max-width: 760px)`;
+export const ifDesktop = () => `@media (min-width: 761px)`;
