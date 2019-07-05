@@ -38,56 +38,91 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     if (report.hasErrors())
       return report.exitCode();
 
-    type TreeNode = {[key: string]: TreeNode};
+    const identHash = structUtils.parseIdent(packageName).identHash;
 
-    const empty = {} as TreeNode;
-    const tree = {} as TreeNode;
+    const sortedWorkspaces = miscUtils.sortMap(project.workspaces, workspace => {
+      return structUtils.stringifyLocator(workspace.anchoredLocator);
+    });
 
-    const printed = new Set();
+    const seen: Set<LocatorHash> = new Set();
+    const dependents: Set<LocatorHash> = new Set();
 
-    const makeBuilder = (previous: (() => TreeNode) | null, pkg: Package, range: string | null) => {
-      return () => {
-        const target = previous ? previous() : tree;
-        if (target === empty)
-          return empty;
+    const markAllDependents = (pkg: Package) => {
+      if (seen.has(pkg.locatorHash))
+        return dependents.has(pkg.locatorHash);
 
-        const label = range !== null
-          ? `${structUtils.prettyLocator(configuration, pkg)} (via ${structUtils.prettyRange(configuration, range)})`
-          : `${structUtils.prettyLocator(configuration, pkg)}`;
+      seen.add(pkg.locatorHash);
 
-        if (!Object.prototype.hasOwnProperty.call(target, label)) {
-          if ((previous && project.tryWorkspaceByLocator(pkg)) || printed.has(pkg.locatorHash)) {
-            target[label] = empty;
-          } else {
-            target[label] = {} as TreeNode;
-          }
+      if (pkg.identHash === identHash) {
+        dependents.add(pkg.locatorHash);
+        return true;
+      }
+
+      let depends = false;
+
+      if (pkg.identHash === identHash)
+        depends = true;
+      
+      for (const dependency of pkg.dependencies.values()) {
+        if (!peers && pkg.peerDependencies.has(dependency.identHash))
+          continue;
+
+        const resolution = project.storedResolutions.get(dependency.descriptorHash);
+        if (!resolution)
+          throw new Error(`Assertion failed: The resolution should have been registered`);
+
+        const nextPkg = project.storedPackages.get(resolution);
+        if (!nextPkg)
+          throw new Error(`Assertion failed: The package should have been registered`);
+  
+        if (markAllDependents(nextPkg)) {
+          depends = true;
         }
+      }
 
-        printed.add(pkg.locatorHash);
-        return target[label];
-      };
+      if (depends)
+        dependents.add(pkg.locatorHash);
+
+      return depends;
     };
 
-    const processWorkspace = (workspace: Workspace) => {
-      const workspacePkg = project.storedPackages.get(workspace.anchoredLocator.locatorHash);
-      if (!workspacePkg)
+    for (const workspace of sortedWorkspaces) {
+      const pkg = project.storedPackages.get(workspace.anchoredLocator.locatorHash);
+      if (!pkg)
         throw new Error(`Assertion failed: The package should have been registered`);
 
-      traversePackage(makeBuilder(null, workspacePkg, null), workspacePkg, new Set());
-    };
+      markAllDependents(pkg);
+    }
 
-    const traversePackage = (builder: () => TreeNode, pkg: Package, seen: Set<LocatorHash>) => {
-      if (seen.has(pkg.locatorHash))
+    type TreeNode = {[key: string]: TreeNode};
+
+    const printed: Set<LocatorHash> = new Set();
+    const tree = {} as TreeNode;
+
+    const printAllDependents = (pkg: Package, tree: TreeNode, range: string | null) => {
+      if (!dependents.has(pkg.locatorHash))
         return;
 
-      if (structUtils.stringifyIdent(pkg) === packageName)
-        builder();
+      const label = range !== null
+        ? `${structUtils.prettyLocator(configuration, pkg)} (via ${structUtils.prettyRange(configuration, range)})`
+        : `${structUtils.prettyLocator(configuration, pkg)}`;
 
-      const nextSeen = new Set(seen);
-      nextSeen.add(pkg.locatorHash);
+      const node = {} as TreeNode;
+      tree[label] = node;
+
+      // We don't want to reprint the children for a package that already got
+      // printed as part of another branch
+      if (printed.has(pkg.locatorHash))
+        return;
+
+      printed.add(pkg.locatorHash);
+
+      // We don't want to print the children of our transitive workspace
+      // dependencies, as they will be printed in their own top-level branch
+      if (range !== null && project.tryWorkspaceByLocator(pkg))
+        return;
 
       for (const dependency of pkg.dependencies.values()) {
-        // We don't want to consider peer dependencies in "yarn why"
         if (!peers && pkg.peerDependencies.has(dependency.identHash))
           continue;
 
@@ -99,16 +134,17 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         if (!nextPkg)
           throw new Error(`Assertion failed: The package should have been registered`);
 
-        traversePackage(makeBuilder(builder, nextPkg, dependency.range), nextPkg, nextSeen);
+        printAllDependents(nextPkg, node, dependency.range);
       }
     };
 
-    const sortedWorkspaces = miscUtils.sortMap(project.workspaces, workspace => {
-      return structUtils.stringifyLocator(workspace.anchoredLocator);
-    });
+    for (const workspace of sortedWorkspaces) {
+      const pkg = project.storedPackages.get(workspace.anchoredLocator.locatorHash);
+      if (!pkg)
+        throw new Error(`Assertion failed: The package should have been registered`);
 
-    for (const workspace of sortedWorkspaces)
-      processWorkspace(workspace);
+        printAllDependents(pkg, tree, null);
+    }
 
     let treeOutput = asTree(tree, false, false);
 
