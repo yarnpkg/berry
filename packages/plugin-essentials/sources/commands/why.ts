@@ -1,6 +1,6 @@
 import {WorkspaceRequiredError}                                  from '@berry/cli';
 import {Cache, Configuration, LightReport, LocatorHash, Package} from '@berry/core';
-import {PluginConfiguration, Project, Workspace}                 from '@berry/core';
+import {PluginConfiguration, Project}                            from '@berry/core';
 import {miscUtils, structUtils}                                  from '@berry/core';
 import {PortablePath}                                            from '@berry/fslib';
 import {Writable}                                                from 'stream';
@@ -62,7 +62,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
       if (pkg.identHash === identHash)
         depends = true;
-      
+
       for (const dependency of pkg.dependencies.values()) {
         if (!peers && pkg.peerDependencies.has(dependency.identHash))
           continue;
@@ -74,7 +74,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const nextPkg = project.storedPackages.get(resolution);
         if (!nextPkg)
           throw new Error(`Assertion failed: The package should have been registered`);
-  
+
         if (markAllDependents(nextPkg)) {
           depends = true;
         }
@@ -143,7 +143,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       if (!pkg)
         throw new Error(`Assertion failed: The package should have been registered`);
 
-        printAllDependents(pkg, tree, null);
+      printAllDependents(pkg, tree, null);
     }
 
     let treeOutput = asTree(tree, false, false);
