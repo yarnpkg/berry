@@ -1,4 +1,5 @@
 trigger: none
+pr: none
 
 schedules:
 - cron: "0 0 * * *"
@@ -27,7 +28,7 @@ jobs:
   - bash: |
       npm install -g yarn@1.17.2
     displayName: 'Install Yarn 1.17.2+'
-  
+
   - bash: |
       git config --global user.email "you@example.com"
       git config --global user.name "John Doe"
