@@ -278,9 +278,9 @@ export function prettyIdent(configuration: Configuration, ident: Ident) {
   }
 }
 
-function prettyRangeNoColor(range: string): string {
+function prettyRangeNoColors(range: string): string {
   if (range.startsWith(VIRTUAL_PROTOCOL)) {
-    const nested = prettyRangeNoColor(range.substr(range.indexOf(`#`) + 1));
+    const nested = prettyRangeNoColors(range.substr(range.indexOf(`#`) + 1));
     const abbrev = range.substr(VIRTUAL_PROTOCOL.length, VIRTUAL_ABBREVIATE);
 
     // I'm not satisfied of how the virtual packages appear in the output
@@ -291,7 +291,7 @@ function prettyRangeNoColor(range: string): string {
 }
 
 export function prettyRange(configuration: Configuration, range: string) {
-  return `${configuration.format(prettyRangeNoColor(range), `#00afaf`)}`;
+  return `${configuration.format(prettyRangeNoColors(range), `#00afaf`)}`;
 }
 
 export function prettyDescriptor(configuration: Configuration, descriptor: Descriptor) {
@@ -299,11 +299,15 @@ export function prettyDescriptor(configuration: Configuration, descriptor: Descr
 }
 
 export function prettyReference(configuration: Configuration, reference: string) {
-  return `${configuration.format(prettyRangeNoColor(reference), `#87afff`)}`;
+  return `${configuration.format(prettyRangeNoColors(reference), `#87afff`)}`;
 }
 
 export function prettyLocator(configuration: Configuration, locator: Locator) {
   return `${prettyIdent(configuration, locator)}${configuration.format(`@`, `#87afff`)}${prettyReference(configuration, locator.reference)}`;
+}
+
+export function prettyLocatorNoColors(locator: Locator) {
+  return `${stringifyIdent(locator)}@${prettyRangeNoColors(locator.reference)}`;
 }
 
 export function sortDescriptors(descriptors: Iterable<Descriptor>) {
