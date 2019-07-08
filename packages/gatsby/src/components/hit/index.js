@@ -1,6 +1,7 @@
 import React           from 'react';
 import formatDistance  from 'date-fns/formatDistance';
 import { Highlight }   from 'react-instantsearch-dom';
+import { Link }        from 'gatsby';
 import styled          from '@emotion/styled';
 
 import IcoDownload     from '../../images/search/ico-download.svg';
@@ -223,7 +224,7 @@ const HitItem = styled.div`
   position: relative;
 `;
 
-const HitNameLink = styled.a`
+const HitNameLink = styled(Link)`
   &:hover, &:visited, &:focus {
     text-decoration: none;
     color: rgba(0,0,0,0.9);
@@ -273,9 +274,9 @@ const HitHiddenKeywords = styled.span`
   display: none !important;
 `;
 
-const Hit = ({ hit, onTagClick, onOwnerClick }) => (
+const Hit = ({ hit, onTagClick, onOwnerClick, searchState }) => (
   <HitItem>
-    <HitNameLink href={packageLink(hit.name)}>
+    <HitNameLink to={packageLink(hit.name)}>
       <Highlight attribute="name" hit={hit} />
     </HitNameLink>
     <Downloads

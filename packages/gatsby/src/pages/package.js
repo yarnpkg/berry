@@ -1,60 +1,136 @@
-import React                        from 'react';
+import React, {useState}                       from 'react';
+import styled                                  from '@emotion/styled';
+
+import Header                                  from '../components/header';
+import {SearchBar, SearchResults, withUrlSync} from '../components/search';
+import {SearchProvider}                        from '../components/search';
+import Layout                                  from '../components/layout';
+import SEO                                     from '../components/seo';
+import Details                                 from '../components/details';
+
+const Hero = styled.div`
+  position: relative;
+  margin: 0;
+  padding: 2rem 0;
+  color: white;
+  background-color: #2188b6;
+  background-size: 25px auto;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+`;
+
+const HeroFrame = styled.div`
+  padding: 0 15px;
+  margin: 0 auto 0 auto;
+  width: 1140px;
+  max-width: 100%;
+`;
+
+const HeroTitle = styled.div`
+  font-size: 3rem;
+  font-weight: 400;
+
+  color: #ffffff;
+  text-shadow: 5px 5px #1476a2
+`;
+
+const IndexPage = ({ searchState, onSearchStateChange }) => {
+  const [tags, setTags] = useState([]);
+  const [owners, setOwners] = useState([]);
+
+  const packageName = typeof window !== 'undefined' && window.location.search.slice(1);
+
+  return (<>
+    <SearchProvider searchState={searchState} onSearchStateChange={onSearchStateChange}>
+      <Layout header=
+        {
+          <Header>
+            <SearchBar
+              searchState={searchState}
+              tags={tags}
+              setTags={setTags}
+              owners={owners}
+              setOwners={setOwners}
+            />
+          </Header>
+        }
+      >
+        <SEO title="Home" keywords={[`gatsby`, `application`, `react`]} />
+
+        <SearchResults
+          onTagClick={tag => setTags([...tags, tag])}
+          onOwnerClick={owner => setOwners([...owners, owner])}
+        />
+        {!searchState.query &&
+          <>
+            <Hero>
+              <HeroFrame>
+                <HeroTitle>
+                  Package detail
+                </HeroTitle>
+              </HeroFrame>
+            </Hero>
+            <Details objectID={packageName} />
+          </>
+        }
+      </Layout>
+    </SearchProvider>
+  </>);
+};
+
+export default withUrlSync(IndexPage);
+
 // import React, {useEffect, useState} from 'react';
 
-import Details from '../components/details';
 // import {LayoutContentNav}           from '../components/layout-content-nav';
 // import {Markdown}                   from '../components/markdown';
 // import useAlgolia                   from '../utils/useAlgolia';
 // import useLocation                  from '../utils/useLocation';
 
-export const PackagePage = () => {
-  // const [data, setData] = useState(null);
+// export const PackagePage = () => {
+//   const [data, setData] = useState(null);
 
-  // const location = useLocation();
-  // const {index} = useAlgolia();
+//   const location = useLocation();
+//   const {index} = useAlgolia();
 
-  const packageName = typeof window !== 'undefined' && window.location.search.slice(1);
+//   useEffect(() => {
+//     let cancelled = false;
 
-  return <Details objectID={packageName} />;
+//     if (index !== null) {
+//       index.getObject(packageName).then(data => {
+//         if (!cancelled) {
+//           setData(data);
+//         }
+//       });
+//     } else {
+//       setData(null);
+//     }
 
-  // useEffect(() => {
-  //   let cancelled = false;
+//     return () => {
+//       cancelled = true;
+//     };
+//   }, [
+//     index,
+//     packageName,
+//   ]);
 
-  //   if (index !== null) {
-  //     index.getObject(packageName).then(data => {
-  //       if (!cancelled) {
-  //         setData(data);
-  //       }
-  //     });
-  //   } else {
-  //     setData(null);
-  //   }
+//   return <>
+//     <LayoutContentNav items={[{
+//       to: `/package?${packageName}`,
+//       name: `Information`,
+//     }, {
+//       to: `/package?${packageName}`,
+//       name: `Manifest File`,
+//     }, {
+//       to: `/package?${packageName}`,
+//       name: `File List`,
+//     }, {
+//       to: `/package?${packageName}`,
+//       name: `Dependency Tree`,
+//     }]}>
+//       {data && <Markdown>{data.readme}</Markdown>}
+//     </LayoutContentNav>
+//   </>;
+// }
 
-  //   return () => {
-  //     cancelled = true;
-  //   };
-  // }, [
-  //   index,
-  //   packageName,
-  // ]);
-
-  // return <>
-  //   <LayoutContentNav items={[{
-  //     to: `/package?${packageName}`,
-  //     name: `Information`,
-  //   }, {
-  //     to: `/package?${packageName}`,
-  //     name: `Manifest File`,
-  //   }, {
-  //     to: `/package?${packageName}`,
-  //     name: `File List`,
-  //   }, {
-  //     to: `/package?${packageName}`,
-  //     name: `Dependency Tree`,
-  //   }]}>
-  //     {data && <Markdown>{data.readme}</Markdown>}
-  //   </LayoutContentNav>
-  // </>;
-}
-
-export default PackagePage;
+// export default PackagePage;

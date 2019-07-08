@@ -7,13 +7,14 @@ import Pagination from './Pagination';
 import Hit        from '../hit';
 import {isEmpty}  from '../util';
 
-const Hits = connectHits(({ hits, onTagClick, onOwnerClick }) =>
+const Hits = connectHits(({ hits, onTagClick, onOwnerClick, searchState }) =>
   hits.map(hit => (
     <Hit
       onTagClick={onTagClick}
       onOwnerClick={onOwnerClick}
       hit={hit}
       key={hit.objectID}
+      searchState={searchState}
     />
   ))
 );
@@ -34,7 +35,7 @@ const StatsText = styled.div`
   padding: 0 16px 0 16px;
 `;
 
-const ResultsFound = ({ pagination, onTagClick, onOwnerClick }) => (
+const ResultsFound = ({ pagination, onTagClick, onOwnerClick, searchState }) => (
   <ResultsContainer>
     <StatsText>
       <CurrentRefinements />
@@ -50,7 +51,7 @@ const ResultsFound = ({ pagination, onTagClick, onOwnerClick }) => (
         }}
       />
     </StatsText>
-    <Hits onTagClick={onTagClick} onOwnerClick={onOwnerClick} />
+    <Hits onTagClick={onTagClick} onOwnerClick={onOwnerClick} searchState={searchState} />
     <Pagination pagination={pagination} />
     <SearchFooter>
       Search by Algolia
@@ -63,6 +64,13 @@ const ResultsFound = ({ pagination, onTagClick, onOwnerClick }) => (
   </ResultsContainer>
 );
 
+const NoPackagesFound = styled.div`
+  padding: 0 15px;
+  margin-top: 3rem;
+  text-align: center;
+  color: #5a5a5a;
+`;
+
 const SearchResults = ({ searchState, searchResults, onTagClick, onOwnerClick }) => {
   if (isEmpty(searchState.query)) {
     return null;
@@ -73,12 +81,12 @@ const SearchResults = ({ searchState, searchResults, onTagClick, onOwnerClick })
     );
 
     return (
-      <div className="container text-center mt-5">
+      <NoPackagesFound>
         <p>{'No package {name} was found'.replace('{name}', searchState.query)}</p>
         <p>
           {docMessage.map((val, index) => <span key={index}>{val}</span>)}
         </p>
-      </div>
+      </NoPackagesFound>
     );
   } else {
     const pagination = searchResults && searchResults.nbPages > 1;
@@ -87,6 +95,7 @@ const SearchResults = ({ searchState, searchResults, onTagClick, onOwnerClick })
         pagination={pagination}
         onTagClick={onTagClick}
         onOwnerClick={onOwnerClick}
+        searchState={searchState}
       />
     );
   }

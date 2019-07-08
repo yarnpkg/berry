@@ -1,16 +1,24 @@
-import React from 'react';
+import React                                      from 'react';
+import styled                                     from '@emotion/styled';
 
-import Install from './Install';
-import Cdn from './Cdn';
-import Links from './Links';
-import Activity from './Activity';
-import Popularity from './Popularity';
-import Usage from './Usage';
-import Versions from './Versions';
-import Contributors from './Contributors';
-import Tags from './Tags';
+import Install                                    from './Install';
+import Cdn                                        from './Cdn';
+import Links                                      from './Links';
+import Activity                                   from './Activity';
+import Popularity                                 from './Popularity';
+import Usage                                      from './Usage';
+import Versions                                   from './Versions';
+import Contributors                               from './Contributors';
+import Tags                                       from './Tags';
 import { packageJSONLink, isKnownRepositoryHost } from '../util';
-import GithubActivity from './GithubActivity';
+import GithubActivity                             from './GithubActivity';
+
+const AsideContainer = styled.aside`
+  border-left: 1px solid #cbcbcb;
+  float: left;
+  width: 33.3333333333%;
+  padding: 0 15px;
+`;
 
 const Aside = ({
   name,
@@ -32,7 +40,7 @@ const Aside = ({
   onOpenFileBrowser,
   jsDelivrHits,
 }) => (
-  <aside className="details-side col-lg-4">
+  <AsideContainer>
     <article className="details-side--links">
       <Links name={name} homepage={homepage} repository={repository} />
     </article>
@@ -64,7 +72,7 @@ const Aside = ({
     <Tags tags={tags} name={name} />
     <Versions versions={versions} />
     <Contributors contributors={contributors} />
-  </aside>
+  </AsideContainer>
 );
 
 export default Aside;

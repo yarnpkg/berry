@@ -17,7 +17,7 @@ const searchStateToQueryString = searchState => ({
 
 const searchStateToUrl = searchState =>
   searchState
-    ? `?${qs.stringify(
+    ? `/?${qs.stringify(
         searchStateToQueryString(searchState)
       )}`
     : '';
@@ -34,8 +34,6 @@ const queryStringToSearchState = queryString => {
   };
 };
 
-const originalPathName = typeof window !== 'undefined' && window.location.pathname;
-
 export default App =>
   class extends Component {
     constructor() {
@@ -44,6 +42,9 @@ export default App =>
     }
 
     componentDidMount() {
+      this.originalPathName = window.location.pathname;
+      this.originalHref = window.location.href;
+
       this.setState({ searchState: queryStringToSearchState(window.location.search.slice(1)) });
 
       window.addEventListener('popstate', ({ state: searchState }) => {
@@ -60,14 +61,14 @@ export default App =>
     onSearchStateChange = searchState => {
       clearTimeout(this.debouncedSetState);
 
+      console.log(window.location.pathname, this.originalPathName, searchState.query);
+
       if (searchState.query === '') {
-        if (window.location.pathname !== originalPathName) {
-          window.history.pushState(
-            null,
-            'Search packages | Yarn',
-            originalPathName
-          );
-        }
+        window.history.pushState(
+          null,
+          'Search packages | Yarn',
+          this.originalHref
+        );
       } else {
         this.debouncedSetState = setTimeout(() => {
           window.history.pushState(

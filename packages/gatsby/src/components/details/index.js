@@ -1,19 +1,20 @@
-import React, { Component } from 'react';
-import bytes from 'bytes';
-import algoliasearch from 'algoliasearch/lite';
-import qs from 'qs';
-import formatDistance from 'date-fns/formatDistance';
+import React, { Component }            from 'react';
+import bytes                           from 'bytes';
+import algoliasearch                   from 'algoliasearch/lite';
+import qs                              from 'qs';
+import formatDistance                  from 'date-fns/formatDistance';
+import styled                          from '@emotion/styled';
 
-import Aside from './Aside';
-import FileBrowser from './FileBrowser';
-import Copyable from './Copyable';
-import Header from './Header';
-import JSONLDItem from './JSONLDItem';
-import ReadMore from './ReadMore';
-import Markdown from './Markdown';
-import schema from '../schema';
-import { prefixURL, get, packageLink, i18nReplaceVars } from '../util';
-import { algolia } from '../config';
+import Aside                           from './Aside';
+import FileBrowser                     from './FileBrowser';
+import Copyable                        from './Copyable';
+import Header                          from './Header';
+import JSONLDItem                      from './JSONLDItem';
+import ReadMore                        from './ReadMore';
+import Markdown                        from './Markdown';
+import schema                          from '../schema';
+import { prefixURL, get, packageLink } from '../util';
+import { algolia }                     from '../config';
 
 const client = algoliasearch(algolia.appId, algolia.apiKey);
 const index = client.initIndex(algolia.indexName);
@@ -47,6 +48,24 @@ function setHead({ name, description }) {
 }
 
 const OBJECT_DOESNT_EXIST = 'ObjectID does not exist';
+
+const DetailsContainer = styled.div`
+  margin: 0 auto 0 auto;
+  padding: 0 15px 0 15px;
+  width: 1140px;
+  max-width: 100%;
+  &:after {
+    display: block;
+    content: "";
+    clear: both;
+  }
+`;
+
+const DetailsMain = styled.section`
+  padding: 0 15px;
+  float: left;
+  width: 66.6666666667%;
+`;
 
 class Details extends Component {
   constructor(props) {
@@ -168,15 +187,11 @@ class Details extends Component {
         url: `https://gitlab.com/api/v4/projects/${user}%2F${project}/repository/commits?per_page=1`,
         type: 'json',
       }).then(([{ committed_date }]) => {
+        const timeDistance = formatDistance(new Date(committed_date), new Date());
         this.setState({
           activity: {
-            lastCommit: i18nReplaceVars('{time_distance} ago', {
-              time_distance: formatDistance(
-                new Date(committed_date),
-                new Date()
-              ),
-            }),
-          },
+            lastCommit: `${timeDistance} ago`
+          }
         });
       });
 
@@ -224,12 +239,11 @@ class Details extends Component {
         url: `https://api.bitbucket.org/2.0/repositories/${user}/${project}/commits?pagelen=1`,
         type: 'json',
       }).then(({ values: [{ date }] }) => {
+        const timeDistance = formatDistance(new Date(date), new Date());
         this.setState({
           activity: {
-            lastCommit: i18nReplaceVars('{time_distance} ago', {
-              time_distance: formatDistance(new Date(date), new Date()),
-            }),
-          },
+            lastCommit: `${timeDistance} ago`
+          }
         });
       });
 
@@ -323,8 +337,8 @@ class Details extends Component {
 
   _renderDetails() {
     return (
-      <div className="details row">
-        <section className="details-main col-lg-8">
+      <DetailsContainer>
+        <DetailsMain>
           <Header
             name={this.state.name}
             owner={this.state.owner}
@@ -358,7 +372,7 @@ class Details extends Component {
               </ReadMore>
             </section>
           )}
-        </section>
+        </DetailsMain>
 
         {this._renderSidebar()}
 
@@ -367,7 +381,7 @@ class Details extends Component {
           description={this.state.description}
           keywords={this.state.keywords}
         />
-      </div>
+      </DetailsContainer>
     );
   }
 
