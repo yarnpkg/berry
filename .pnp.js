@@ -30305,11 +30305,7 @@ function makeApi(runtimeState, opts) {
             // paths, we're able to print a more helpful error message that points out that a third-party package is doing
             // something incompatible!
             if (locator === null) {
-                throw internalTools_1.makeError(internalTools_1.ErrorCode.BLACKLISTED, [
-                    `A package has been resolved through a blacklisted path - this is usually caused by one of your tool`,
-                    `calling 'realpath' on the return value of 'require.resolve'. Since the returned values use symlinks to`,
-                    `disambiguate peer dependencies, they must be passed untransformed to 'require'.`,
-                ].join(` `));
+                throw internalTools_1.makeError(internalTools_1.ErrorCode.BLACKLISTED, `A forbidden path has been used in the package resolution process - this is usually caused by one of your tool calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${location}`, { location });
             }
             return locator;
         }
@@ -30361,6 +30357,8 @@ function makeApi(runtimeState, opts) {
                     unqualifiedPath = fslib_2.ppath.normalize(fslib_2.ppath.resolve(fslib_2.ppath.dirname(issuer), request));
                 }
             }
+            // No need to use the return value; we just want to check the blacklist status
+            findPackageLocator(unqualifiedPath);
         }
         // Things are more hairy if it's a package require - we then need to figure out which package is needed, and in
         // particular the exact version for the given location on the dependency tree

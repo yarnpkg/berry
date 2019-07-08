@@ -153,7 +153,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     for (const [filter, patchFn] of patchedModules) {
       if (filter.test(request)) {
-        const issuer = parent && parent.filename ? pnpapi.findPackageLocator(parent.filename): null;
+        const issuer = parent && parent.filename ? pnpapi.findPackageLocator(parent.filename) : null;
         module.exports = patchFn(issuer, module.exports);
       }
     }
