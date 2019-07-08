@@ -346,7 +346,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
     for (let t = from; t < packageLocationLengths.length; ++t) {
       const locator = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]) as PortablePath);
-      if (!locator)
+      if (typeof locator === `undefined`)
         continue;
 
       // Ensures that the returned locator isn't a blacklisted one.
@@ -370,8 +370,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           ErrorCode.BLACKLISTED,
           [
             `A package has been resolved through a blacklisted path - this is usually caused by one of your tool`,
-            `calling "realpath" on the return value of "require.resolve". Since the returned values use symlinks to`,
-            `disambiguate peer dependencies, they must be passed untransformed to "require".`,
+            `calling 'realpath' on the return value of 'require.resolve'. Since the returned values use symlinks to`,
+            `disambiguate peer dependencies, they must be passed untransformed to 'require'.`,
           ].join(` `),
         );
       }
