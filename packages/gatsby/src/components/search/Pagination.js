@@ -51,6 +51,16 @@ const PaginationContainer = styled.div`
     background-color: #eceeef;
     border-color: #ddd;
   }
+
+  li.ais-Pagination-item:first-of-type .ais-Pagination-link {
+    border-bottom-left-radius: .25rem;
+    border-top-left-radius: .25rem;
+  }
+
+  li.ais-Pagination-item:last-of-type .ais-Pagination-link {
+    border-bottom-right-radius: .25rem;
+    border-top-right-radius: .25rem;
+  }
 `;
 
 const PaginationComponent = ({ pagination }) => (
