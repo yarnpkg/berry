@@ -368,7 +368,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       if (locator === null) {
         throw makeError(
           ErrorCode.BLACKLISTED,
-          `A forbidden path has been used in the package resolution process - this is usually caused by one of your tool calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${location}`,
+          `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${location}`,
           {location},
         );
       }

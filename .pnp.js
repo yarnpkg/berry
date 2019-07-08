@@ -30305,7 +30305,7 @@ function makeApi(runtimeState, opts) {
             // paths, we're able to print a more helpful error message that points out that a third-party package is doing
             // something incompatible!
             if (locator === null) {
-                throw internalTools_1.makeError(internalTools_1.ErrorCode.BLACKLISTED, `A forbidden path has been used in the package resolution process - this is usually caused by one of your tool calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${location}`, { location });
+                throw internalTools_1.makeError(internalTools_1.ErrorCode.BLACKLISTED, `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${location}`, { location });
             }
             return locator;
         }
