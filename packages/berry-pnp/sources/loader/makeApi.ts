@@ -346,7 +346,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
     for (let t = from; t < packageLocationLengths.length; ++t) {
       const locator = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]) as PortablePath);
-      if (!locator)
+      if (typeof locator === `undefined`)
         continue;
 
       // Ensures that the returned locator isn't a blacklisted one.
@@ -368,11 +368,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       if (locator === null) {
         throw makeError(
           ErrorCode.BLACKLISTED,
-          [
-            `A package has been resolved through a blacklisted path - this is usually caused by one of your tool`,
-            `calling "realpath" on the return value of "require.resolve". Since the returned values use symlinks to`,
-            `disambiguate peer dependencies, they must be passed untransformed to "require".`,
-          ].join(` `),
+          `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${location}`,
+          {location},
         );
       }
 
@@ -447,6 +444,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           unqualifiedPath = ppath.normalize(ppath.resolve(ppath.dirname(issuer), request));
         }
       }
+
+      // No need to use the return value; we just want to check the blacklist status
+      findPackageLocator(unqualifiedPath);
     }
 
     // Things are more hairy if it's a package require - we then need to figure out which package is needed, and in
@@ -620,6 +620,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   return {
     VERSIONS,
     topLevel,
+
 
     getPackageInformation: (locator: PackageLocator) => {
       const info = getPackageInformation(locator);

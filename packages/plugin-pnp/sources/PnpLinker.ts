@@ -58,7 +58,9 @@ export class PnpLinker implements Linker {
 
 class PnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
+
   private readonly unpluggedPaths: Set<string> = new Set();
+  private readonly blacklistedPaths: Set<string> = new Set();
 
   private readonly opts: LinkOptions;
 
@@ -89,7 +91,12 @@ class PnpInstaller implements Installer {
       buildScripts.length = 0;
     }
 
-    const packageFs = pkg.linkType !== LinkType.SOFT && (buildScripts.length > 0 || this.isUnplugged(pkg, dependencyMeta))
+    const hasVirtualInstances =
+      pkg.peerDependencies.size > 0 &&
+      !structUtils.isVirtualLocator(pkg) &&
+      !this.opts.project.tryWorkspaceByLocator(pkg);
+
+    const packageFs = !hasVirtualInstances && pkg.linkType !== LinkType.SOFT && (buildScripts.length > 0 || this.isUnplugged(pkg, dependencyMeta))
       ? await this.unplugPackage(pkg, fetchResult.packageFs)
       : fetchResult.packageFs;
 
@@ -103,6 +110,9 @@ class PnpInstaller implements Installer {
 
     const packageStore = this.getPackageStore(key1);
     packageStore.set(key2, {packageLocation, packageDependencies});
+
+    if (hasVirtualInstances)
+      this.blacklistedPaths.add(packageLocation);
 
     return {
       packageLocation,
@@ -140,7 +150,7 @@ class PnpInstaller implements Installer {
 
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
-    const blacklistedLocations = new Set<string>();
+    const blacklistedLocations = this.blacklistedPaths;
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
     const ignorePattern = this.opts.project.configuration.get(`pnpIgnorePattern`);
