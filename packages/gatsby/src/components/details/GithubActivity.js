@@ -35,7 +35,7 @@ const formatWeeksSinceLastCommit = weeks => {
   if (weeks === 1) {
     return 'one week ago';
   }
-  return '{count} weeks ago'.replace('{count}', weeks);
+  return `${weeks} weeks ago`;
 };
 
 const GithubActivity = ({ data = [], repository }) => {

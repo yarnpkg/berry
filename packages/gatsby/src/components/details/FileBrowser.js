@@ -46,10 +46,7 @@ export default class FileBrowser extends React.PureComponent {
     return (
       <div>
         <h2 className="m-2">
-          {'Files in {name}'.replace(
-            '{name}',
-            this.props.objectID
-          )}
+          {`Files in ${this.props.objectID}`}
         </h2>
         <button ref={this._setBackRef} onClick={this.props.onBackToDetails}>
           ← Back to Details
@@ -75,10 +72,7 @@ export default class FileBrowser extends React.PureComponent {
     if (this.state.error) {
       return (
         <div className="alert alert-danger" role="alert">
-          {'Could not load file listing: {error}'.replace(
-            '{error}',
-            this.state.error.message
-          )}
+          {`Could not load file listing: ${this.state.error.message}`}
         </div>
       );
     }

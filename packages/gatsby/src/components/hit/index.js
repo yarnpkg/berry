@@ -22,7 +22,6 @@ import {
   packageLink,
   isEmpty,
   HighlightedMarkdown,
-  i18nReplaceVars,
   isKnownRepositoryHost,
 } from '../util';
 
@@ -130,10 +129,7 @@ const HitPopular = styled.span`
 export const Downloads = ({ downloads = 0, humanDownloads }) => (
   <HitPopular
     className={`${getDownloadBucket(downloads)}`}
-    title={'{count} downloads in the last 30 days'.replace(
-      '{count}',
-      downloads.toLocaleString('en')
-    )}
+    title={`${downloads.toLocaleString('en')} downloads in the last 30 days`}
   >
     {humanDownloads}
   </HitPopular>
@@ -186,10 +182,7 @@ const Repository = ({ repository, name }) => {
   return (
     <HitRepoLink
       provider={provider}
-      title={i18nReplaceVars('{provider} repository of {name}', {
-        provider,
-        name,
-      })}
+      title={`${provider} repository of ${name}`}
       href={`https://${repository.host}/${encode(repository.user)}/${encode(
         repository.project
       )}${repository.path || ''}`}
@@ -203,7 +196,7 @@ export const Links = ({ name, homepage, repository }) => (
   <HitLinkList>
     <HitLinkNpm
       href={`https://www.npmjs.com/package/${name}`}
-      title={'npm page for {name}'.replace('{name}', name)}
+      title={`npm page for ${name}`}
     >
       npm
     </HitLinkNpm>
@@ -295,10 +288,7 @@ const Hit = ({ hit, onTagClick, onOwnerClick, searchState }) => (
     </HitDescription>
     <Owner {...hit.owner} onClick={onOwnerClick} />
     <HitLastUpdate
-      title={'last updated {update_date}'.replace(
-        '{update_date}',
-        new Date(hit.modified).toLocaleDateString('en')
-      )}
+      title={`last updated ${new Date(hit.modified).toLocaleDateString('en')}`}
     >
       {'{time_distance} ago'.replace(
         '{time_distance}',

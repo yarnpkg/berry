@@ -318,10 +318,7 @@ class Details extends Component {
     return (
       <section className="text-center d-flex flex-column">
         <h2 className="details-main--title d-inline-block m-2">
-          {'Whoa, {package_name} does not exist yet'.replace(
-            '{package_name}',
-            this.props.objectID
-          )}
+          {`Whoa, ${this.props.objectID} does not exist yet`}
         </h2>
         <p>But that means it is now yours!</p>
         <div className="text-left mx-auto">

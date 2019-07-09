@@ -42,12 +42,7 @@ const ResultsFound = ({ pagination, onTagClick, onOwnerClick, searchState }) => 
       <Stats
         translations={{
           stats: (num, time) =>
-            'found {number_packages} packages in {time_search}ms'
-              .replace(
-                '{number_packages}',
-                num.toLocaleString('en')
-              )
-              .replace('{time_search}', time),
+            `found ${num.toLocaleString('en')} packages in ${time}ms`
         }}
       />
     </StatsText>
@@ -82,7 +77,7 @@ const SearchResults = ({ searchState, searchResults, onTagClick, onOwnerClick })
 
     return (
       <NoPackagesFound>
-        <p>{'No package {name} was found'.replace('{name}', searchState.query)}</p>
+        <p>{`No package ${searchState.query} was found`}</p>
         <p>
           {docMessage.map((val, index) => <span key={index}>{val}</span>)}
         </p>
