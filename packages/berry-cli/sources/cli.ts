@@ -1,9 +1,10 @@
-import {Configuration}                                          from '@berry/core';
+import {Configuration, StreamReport, Project}                   from '@berry/core';
 import {xfs, NodeFS, ppath, PortablePath}                       from '@berry/fslib';
 import {execFileSync}                                           from 'child_process';
 import {Clipanion}                                              from 'clipanion';
 import * as yup                                                 from 'yup';
 
+import {WorkspaceRequiredError}                                 from './WorkspaceRequiredError';
 import {pluginConfiguration}                                    from './pluginConfiguration';
 
 const clipanion = new Clipanion({configKey: null});
@@ -38,6 +39,25 @@ function runBinary(path: PortablePath) {
   }
 }
 
+async function printAvailableScripts(configuration: Configuration) {
+  const stdout = process.stdout;
+  const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
+    const {workspace} = await Project.find(configuration, configuration.startingCwd);
+    if (!workspace)
+      throw new WorkspaceRequiredError(configuration.startingCwd);
+
+
+    var projectCommands: string[] = []
+    workspace!.manifest.scripts.forEach((value: string, key: string) => {
+      projectCommands.push(`${' '}- ${key}`)
+      projectCommands.push(`  ${' '} ${value}`)
+    });
+
+    report.reportInfo(null, `Project commands\r\n${projectCommands.join('\r\n')}`);
+  });
+  return report.exitCode()
+}
+
 async function run() {
   // Since we only care about a few very specific settings (yarn-path and ignore-path) we tolerate extra configuration key.
   // If we didn't, we wouldn't even be able to run `yarn config` (which is recommended in the invalid config error message)
@@ -67,9 +87,15 @@ async function run() {
       for (const command of plugin.commands || [])
         command(clipanion, pluginConfiguration);
 
-    clipanion.runExit(`yarn`, process.argv.slice(2), {
-      cwd: NodeFS.toPortablePath(process.cwd()),
-    });
+    // Print the list of available scripts if a `run` command is executed without the parameters
+    const noParamsPassedToRunCommand = process.argv.slice(2).length === 1 && process.argv[2] === `run`;
+    if (noParamsPassedToRunCommand) {
+      printAvailableScripts(configuration)
+    } else {
+      clipanion.runExit(`yarn`, process.argv.slice(2), {
+        cwd: NodeFS.toPortablePath(process.cwd()),
+      });
+    }
   }
 }
 
