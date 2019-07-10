@@ -108,8 +108,18 @@ export async function executePackageScript(locator: Locator, scriptName: string,
   if (!script)
     return;
 
-  try {
+  const realExecutor = async () => {
     return await execute(script, args, {cwd: realCwd, env, stdin, stdout, stderr});
+  };
+
+  const executor = await project.configuration.reduceHook(hooks => {
+    return hooks.wrapScriptExecution;
+  }, realExecutor, project, locator, scriptName, {
+    script, args, cwd: realCwd, env, stdin, stdout, stderr,
+  });
+
+  try {
+    return await executor();
   } finally {
     await xfs.removePromise(binFolder);
   }
