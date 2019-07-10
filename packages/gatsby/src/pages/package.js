@@ -17,6 +17,7 @@ const Hero = styled.div`
   background-size: 25px auto;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
+  margin: 0 0 3rem 0;
 `;
 
 const HeroFrame = styled.div`
@@ -30,11 +31,13 @@ const HeroTitle = styled.div`
   font-size: 3rem;
   font-weight: 400;
 
+  padding: 0 15px;
+
   color: #ffffff;
   text-shadow: 5px 5px #1476a2
 `;
 
-const IndexPage = ({ searchState, onSearchStateChange }) => {
+const PackagePage = ({ searchState, onSearchStateChange }) => {
   const [tags, setTags] = useState([]);
   const [owners, setOwners] = useState([]);
 
@@ -78,7 +81,7 @@ const IndexPage = ({ searchState, onSearchStateChange }) => {
   </>);
 };
 
-export default withUrlSync(IndexPage);
+export default withUrlSync(PackagePage);
 
 // import React, {useEffect, useState} from 'react';
 

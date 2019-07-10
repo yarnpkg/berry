@@ -1618,6 +1618,7 @@ __metadata:
     gatsby-source-filesystem: "npm:^2.0.23"
     gatsby-transformer-remark: "npm:^2.3.2"
     gatsby-transformer-sharp: "npm:^2.1.15"
+    highlight.js: "npm:^9.15.8"
     marked: "npm:^0.6.3"
     minimatch: "npm:^3.0.4"
     pify: "npm:^4.0.1"
@@ -11566,6 +11567,13 @@ __metadata:
   version: 1.1.0
   resolution: "hex-color-regex@npm:1.1.0"
   checksum: c74f00659e73248d1780e49f6bb47cda408e106e53a46ac66430273d6100c09cff2a902c213d3b9a66a03bfe0f3bf03005ce57357604e6172c42ef4d0c0b3877
+  languageName: node
+  linkType: hard
+
+"highlight.js@npm:^9.15.8":
+  version: 9.15.8
+  resolution: "highlight.js@npm:9.15.8"
+  checksum: c85bc290780e8b4caa167324df33b2fbf754e65ed722182e19eaf5615d20697af0a537922cf5711624d9a8fcb310ea389b67bca51d27d32a95ba14f87d030d99
   languageName: node
   linkType: hard
 

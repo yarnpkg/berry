@@ -13,8 +13,10 @@ import JSONLDItem                      from './JSONLDItem';
 import ReadMore                        from './ReadMore';
 import Markdown                        from './Markdown';
 import schema                          from '../schema';
-import { prefixURL, get, packageLink } from '../util';
+import { prefixURL, get }              from '../util';
 import { algolia }                     from '../config';
+
+import IcoReadme                       from '../../images/detail/ico-readme.svg';
 
 const client = algoliasearch(algolia.appId, algolia.apiKey);
 const index = client.initIndex(algolia.indexName);
@@ -30,22 +32,22 @@ export const Di = ({ icon, title, description }) => (
   </div>
 );
 
-function setHead({ name, description }) {
-  const head = document.querySelector('head');
-  const permalink = `https://yarnpkg.com${packageLink(name)}`;
-  head.querySelector('meta[property="og:title"]').setAttribute('content', name);
-  document.title = `${name} | Yarn`;
-  head
-    .querySelector('meta[name=description]')
-    .setAttribute('content', description);
-  head
-    .querySelector('meta[property="og:description"]')
-    .setAttribute('content', description);
-  head
-    .querySelector('meta[property="og:url"]')
-    .setAttribute('content', permalink);
-  head.querySelector('link[rel=canonical]').setAttribute('href', permalink);
-}
+// function setHead({ name, description }) {
+//   const head = document.querySelector('head');
+//   const permalink = `https://yarnpkg.com${packageLink(name)}`;
+//   head.querySelector('meta[property="og:title"]').setAttribute('content', name);
+//   document.title = `${name} | Yarn`;
+//   head
+//     .querySelector('meta[name=description]')
+//     .setAttribute('content', description);
+//   head
+//     .querySelector('meta[property="og:description"]')
+//     .setAttribute('content', description);
+//   head
+//     .querySelector('meta[property="og:url"]')
+//     .setAttribute('content', permalink);
+//   head.querySelector('link[rel=canonical]').setAttribute('href', permalink);
+// }
 
 const OBJECT_DOESNT_EXIST = 'ObjectID does not exist';
 
@@ -54,10 +56,15 @@ const DetailsContainer = styled.div`
   padding: 0 15px 0 15px;
   width: 1140px;
   max-width: 100%;
+  color: #5a5a5a;
   &:after {
     display: block;
     content: "";
     clear: both;
+  }
+
+  p {
+    margin: .5rem 0;
   }
 `;
 
@@ -65,6 +72,39 @@ const DetailsMain = styled.section`
   padding: 0 15px;
   float: left;
   width: 66.6666666667%;
+`;
+
+const Readme = styled.section`
+  margin: 2em;
+  margin-right: 0;
+`;
+
+const ReadmeTitle = styled.h3`
+  display: inline-block;
+  color: #666;
+  border-bottom: dotted 1px;
+  position: relative;
+  padding-top: .25rem;
+  padding-bottom: .25rem;
+  margin-top: 0;
+  margin-bottom: .5rem;
+  font-weight: 600;
+  line-height: 1.1;
+  font-size: 1.75rem;
+  a {
+    color: inherit;
+  }
+  &:before {
+    content: '';
+    position: absolute;
+    left: -1em;
+    top: 0.4em;
+    width: 0.8em;
+    height: 0.8em;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url(${IcoReadme});
+  }
 `;
 
 class Details extends Component {
@@ -81,17 +121,21 @@ class Details extends Component {
     index
       .getObject(this.props.objectID)
       .then(content => {
-        this.setState(prevState => ({ ...content, loaded: true }));
-        setHead(content);
-        this.getDocuments();
+        try {
+          this.setState(prevState => ({ ...content, loaded: true }));
+          // setHead(content);
+          this.getDocuments();
 
-        // Opens the file browser if the search has a 'files' param.
-        const { files } = qs.parse(window.location.search, {
-          ignoreQueryPrefix: true,
-        });
+          // Opens the file browser if the search has a 'files' param.
+          const { files } = qs.parse(window.location.search, {
+            ignoreQueryPrefix: true,
+          });
 
-        if (files !== undefined) {
-          this.setState({ isBrowsingFiles: true });
+          if (files !== undefined) {
+            this.setState({ isBrowsingFiles: true });
+          }
+        } catch (e) {
+          console.error(e.stack);
         }
       })
       .catch(e => {
@@ -133,7 +177,10 @@ class Details extends Component {
         get({
           url: changelogFilename,
           type: 'text',
-        }).then(res => this.setState({ changelog: res }));
+        }).then(res => {
+          console.log('res:', res);
+          this.setState({ changelog: res })
+        });
       }
 
       if (!hasReadme) {
@@ -289,10 +336,7 @@ class Details extends Component {
         return <div>no readme found <span role="img" aria-label="sad emotion">😢</span></div>;
       }
       return (
-        <ReadMore
-          text="Display full readme"
-          className="details-doc--content"
-        >
+        <ReadMore text="Display full readme">
           <Markdown
             source={this.state.readme}
             repository={this.state.repository}
@@ -347,21 +391,18 @@ class Details extends Component {
             keywords={this.state.keywords}
             version={this.state.version}
           />
-          <section id="readme" className="details-doc">
-            <h3 className="details-doc--title details-doc--title__readme py-1">
+          <Readme id="readme">
+            <ReadmeTitle>
               <a href="#readme">readme</a>
-            </h3>
+            </ReadmeTitle>
             {this.maybeRenderReadme()}
-          </section>
+          </Readme>
           {this.state.changelog && (
             <section id="changelog" className="details-doc">
               <h3 className="details-doc--title details-doc--title__changelog py-1">
                 <a href="#changelog">changelog</a>
               </h3>
-              <ReadMore
-                text="Display full changelog"
-                className="details-doc--content"
-              >
+              <ReadMore text="Display full changelog">
                 <Markdown
                   source={this.state.changelog}
                   repository={this.state.repository}

@@ -1,7 +1,8 @@
 import React from 'react';
 import marked from 'marked';
 import xss from 'xss';
-import hljs from '../../utils/highlight.pack';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/monokai.css';
 
 import { prefixURL, isKnownRepositoryHost } from '../util';
 

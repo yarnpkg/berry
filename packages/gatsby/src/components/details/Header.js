@@ -1,20 +1,43 @@
-import React from 'react';
+import React                                     from 'react';
+import styled                                    from '@emotion/styled';
+
 import { License, Deprecated, Owner, Downloads } from '../hit';
-import { Keywords, safeMarkdown } from '../util';
+import { Keywords, safeMarkdown }                from '../util';
+
+const DescriptionText = styled.p`
+  font-size: 1.25rem;
+  font-weight: 300;
+`;
+
+const DeprecatedText = styled.p``;
 
 const Description = ({ description, deprecated }) => (
   <div>
     {deprecated ? (
-      <p className="m-2">
+      <DeprecatedText className="m-2">
         <strong dangerouslySetInnerHTML={safeMarkdown(deprecated)} />
-      </p>
+      </DeprecatedText>
     ) : null}
-    <p
-      className="m-2 lead"
+    <DescriptionText
       dangerouslySetInnerHTML={safeMarkdown(description)}
     />
   </div>
 );
+
+const PackageTitle = styled.h2`
+  margin: .5rem .5rem .5rem 0;
+  display: inline-block;
+  font-weight: 600;
+  line-height: 1.1;
+  font-size: 2rem;
+`;
+
+const PackageInfo = styled.div`
+  display: inline-block;
+  line-height: 2.2rem;
+  margin: .5rem;
+  position: relative;
+`;
 
 const Header = ({
   name,
@@ -27,9 +50,9 @@ const Header = ({
   keywords,
   version,
 }) => (
-  <header className="details-main--header">
-    <h2 className="details-main--title d-inline-block m-2">{name}</h2>
-    <div className="details-main--info d-inline-block m-2">
+  <header>
+    <PackageTitle>{name}</PackageTitle>
+    <PackageInfo>
       <Owner {...owner} />
       <Downloads
         downloads={downloadsLast30Days}
@@ -38,7 +61,7 @@ const Header = ({
       <License type={license} />
       <Deprecated deprecated={deprecated} />
       <span className="ais-Hit-version">{version}</span>
-    </div>
+    </PackageInfo>
     <Description description={description} deprecated={deprecated} />
     <Keywords keywords={keywords} />
   </header>

@@ -9291,6 +9291,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:2.1.15"
                 ],
                 [
+                  "highlight.js",
+                  "npm:9.15.8"
+                ],
+                [
                   "marked",
                   "npm:0.6.3"
                 ],
@@ -38490,6 +38494,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "hex-color-regex",
                   "npm:1.1.0"
+                ]
+              ]
+            }
+          ]
+        ]
+      ],
+      [
+        "highlight.js",
+        [
+          [
+            "npm:9.15.8",
+            {
+              "packageLocation": "./.yarn/cache/highlight.js-npm-9.15.8-4891768991193f28e26fd1ce4b106c93532d9bc3a4510ea10ae0bf489b86fe91.zip/node_modules/highlight.js/",
+              "packageDependencies": [
+                [
+                  "highlight.js",
+                  "npm:9.15.8"
                 ]
               ]
             }

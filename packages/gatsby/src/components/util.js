@@ -4,6 +4,9 @@ import marked                               from 'marked';
 import xss                                  from 'xss';
 import unescape                             from 'unescape-html';
 import { HIGHLIGHT_TAGS, connectHighlight } from 'react-instantsearch-dom';
+import styled                               from '@emotion/styled';
+
+import IcoTag                               from '../images/search/ico-tag.svg'
 
 export const isEmpty = item => typeof item === 'undefined' || item.length < 1;
 
@@ -23,9 +26,24 @@ export function getDownloadBucket(dl) {
   }
 }
 
+const HitKeywords = styled.span`
+  font-size: 0.825rem;
+  color: rgba(0,0,0,0.5);
+  font-style: italic;
+  &:before {
+    display: inline-block;
+    content: '';
+    background: url(${IcoTag}) no-repeat;
+    width: 16px;
+    height: 8px;
+    margin-right: 4px;
+    opacity: 0.5;
+  }
+`;
+
 export const Keywords = ({ name, keywords = [], maxKeywords = 4 }) => {
   return isEmpty(keywords) ? null : (
-    <span className="ais-Hit-keywords hidden-sm-down">
+    <HitKeywords>
       {keywords
         .slice(0, maxKeywords)
         .map(keyword => (
@@ -37,7 +55,7 @@ export const Keywords = ({ name, keywords = [], maxKeywords = 4 }) => {
           </a>
         ))
         .reduce((prev, curr) => [prev, ', ', curr])}
-    </span>
+    </HitKeywords>
   );
 };
 

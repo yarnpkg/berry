@@ -63,7 +63,6 @@ const NoPackagesFound = styled.div`
   padding: 0 15px;
   margin-top: 3rem;
   text-align: center;
-  color: #5a5a5a;
 `;
 
 const SearchResults = ({ searchState, searchResults, onTagClick, onOwnerClick }) => {
