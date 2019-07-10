@@ -1,14 +1,17 @@
-import {Configuration, PluginConfiguration, Project, Workspace, Cache} from '@berry/core';
-import {LightReport}                                                   from '@berry/core';
-import {scriptUtils, structUtils}                                      from '@berry/core';
-import {PortablePath}                                                  from '@berry/fslib';
-import {UsageError}                                                    from 'clipanion';
-import {Readable, Writable}                                            from 'stream';
+import {WorkspaceRequiredError}                                                      from '@berry/cli';
+import {Configuration, PluginConfiguration, Project, Workspace, Cache, StreamReport} from '@berry/core';
+import {LightReport}                                                                 from '@berry/core';
+import {scriptUtils, structUtils}                                                    from '@berry/core';
+import {miscUtils}                                                                   from '@berry/core';
+import {PortablePath}                                                                from '@berry/fslib';
+import {UsageError}                                                                  from 'clipanion';
+import {Readable, Writable}                                                          from 'stream';
+import {inspect}                                                                     from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
 
-  .command(`run <name> [... args] [-T,--top-level]`)
+  .command(`run [... args] [-T,--top-level]`)
   .describe(`run a script defined in the package.json`)
   .flags({proxyArguments: true})
 
@@ -34,7 +37,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     `yarn test`,
   )
 
-  .action(async ({cwd, stdin, stdout, stderr, name, topLevel, args}: {cwd: PortablePath, stdin: Readable, stdout: Writable, stderr: Writable, name: string, topLevel: boolean, args: Array<string>}) => {
+  .action(async ({cwd, stdin, stdout, stderr, topLevel, args}: {cwd: PortablePath, stdin: Readable, stdout: Writable, stderr: Writable, topLevel: boolean, args: Array<string>}) => {
+    // Print the list of available scripts if the command is executed without the parameters
+    if (args.length === 0)
+      return printRunListing(cwd, pluginConfiguration, stdout)
+
+    const [name, ...rest] = args;
     const configuration = await Configuration.find(cwd, pluginConfiguration);
     const {project, workspace, locator} = await Project.find(configuration, cwd);
     const cache = await Cache.find(configuration);
@@ -54,7 +62,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     // for the given name
 
     if (await scriptUtils.hasPackageScript(effectiveLocator, name, {project}))
-      return await scriptUtils.executePackageScript(effectiveLocator, name, args, {project, stdin, stdout, stderr});
+      return await scriptUtils.executePackageScript(effectiveLocator, name, rest, {project, stdin, stdout, stderr});
 
     // If we can't find it, we then check whether one of the dependencies of the
     // current package exports a binary with the requested name
@@ -63,7 +71,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const binary = binaries.get(name);
 
     if (binary)
-      return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, name, args, {cwd, project, stdin, stdout, stderr});
+      return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, name, rest, {cwd, project, stdin, stdout, stderr});
 
     // When it fails, we try to check whether it's a global script (ie we look
     // into all the workspaces to find one that exports this script). We only do
@@ -83,7 +91,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       }) as Array<Workspace>;
 
       if (filteredWorkspaces.length === 1) {
-        return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], name, args, {stdin, stdout, stderr});
+        return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], name, rest, {stdin, stdout, stderr});
       }
     }
 
@@ -97,3 +105,27 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       throw new UsageError(`Couldn't find a script named "${name}".`);
     }
   });
+
+async function printRunListing(cwd: PortablePath, pluginConfiguration: PluginConfiguration, stdout: Writable) {
+  const configuration = await Configuration.find(cwd, pluginConfiguration);
+  const {workspace} = await Project.find(configuration, cwd);
+
+  if (!workspace)
+    throw new WorkspaceRequiredError(cwd);
+
+  const report = await StreamReport.start({configuration, stdout}, async report => {
+    const scripts = workspace!.manifest.scripts
+    const keys = miscUtils.sortMap(scripts.keys(), key => key);
+    const inspectConfig = {
+      breakLength: Infinity,
+      colors: configuration.get(`enableColors`),
+      maxArrayLength: 2,
+    };
+
+    const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
+    scripts.forEach((value: string, key: string) => {
+      report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(value, inspectConfig)}`);
+    });
+  });
+  return report.exitCode();
+}

@@ -100,6 +100,24 @@ describe(`Commands`, () => {
           },
         ),
       ); 
+      test(`it should print the list of available scripts if no parameters passed to command`,
+        makeTemporaryEnv(
+          {
+            scripts: {
+              foo: `echo hello`,
+              bar: `echo hi`
+            },
+          },
+          async ({path, run, source}) => {
+            let code;
+            let stdout;
+            let stderr;
+
+            ({code, stdout, stderr} = await run(`run`));
+            expect({code, stdout, stderr}).toMatchSnapshot();
+          }
+        )
+      );
     });
   }
 });
