@@ -834,6 +834,24 @@ export class Configuration {
     }
   }
 
+  async reduceHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => Promise<V>) | undefined, initialValue: V, ...args: U): Promise<V> {
+    let value = initialValue;
+
+    for (const plugin of this.plugins.values()) {
+      const hooks = plugin.hooks as HooksDefinition;
+      if (!hooks)
+        continue;
+
+      const hook = get(hooks);
+      if (!hook)
+        continue;
+
+      value = await hook(value, ...args);
+    }
+
+    return value;
+  }
+
   format(text: string, color: string) {
     if (this.get(`enableColors`)) {
       if (color.charAt(0) === `#`) {

@@ -1,8 +1,14 @@
+import {PortablePath}                            from '@berry/fslib';
+import {Writable, Readable}                      from 'stream';
+
 import {SettingsDefinition, PluginConfiguration} from './Configuration';
 import {Fetcher}                                 from './Fetcher';
 import {Linker}                                  from './Linker';
 import {Project}                                 from './Project';
 import {Resolver}                                from './Resolver';
+import {Locator}                                 from './types';
+
+type ProcessEnvironment = {[key: string]: string};
 
 export interface FetcherPlugin {
   new(): Fetcher;
@@ -27,9 +33,19 @@ export type Hooks = {
   // might enforce it later on).
   setupScriptEnvironment?: (
     project: Project,
-    env: {[key: string]: string},
+    env: ProcessEnvironment,
     makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>,
   ) => Promise<void>,
+
+  // When a script is getting executed. You must call the executor, or the
+  // script won't be called at all.
+  wrapScriptExecution?: (
+    executor: () => Promise<number>,
+    project: Project,
+    locator: Locator,
+    scriptName: string,
+    extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
+  ) => Promise<() => Promise<number>>,
 
   // Called after the `install` method from the `Project` class successfully
   // completed.
