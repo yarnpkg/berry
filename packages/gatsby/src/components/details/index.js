@@ -17,6 +17,7 @@ import { prefixURL, get }              from '../util';
 import { algolia }                     from '../config';
 
 import IcoReadme                       from '../../images/detail/ico-readme.svg';
+import IcoChangelog                    from '../../images/detail/ico-changelog.svg';
 
 const client = algoliasearch(algolia.appId, algolia.apiKey);
 const index = client.initIndex(algolia.indexName);
@@ -74,12 +75,28 @@ const DetailsMain = styled.section`
   width: 66.6666666667%;
 `;
 
-const Readme = styled.section`
+const Section = styled.section`
   margin: 2em;
   margin-right: 0;
+
+  code {
+    padding: .2rem .4rem;
+    font-size: 90%;
+    color: #bd4147;
+    background-color: #f7f7f9;
+    border-radius: .25rem;
+  }
+
+  pre code {
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+    background-color: transparent;
+    border-radius: 0;
+  }
 `;
 
-const ReadmeTitle = styled.h3`
+const SectionTitle = styled.h3`
   display: inline-block;
   color: #666;
   border-bottom: dotted 1px;
@@ -99,11 +116,11 @@ const ReadmeTitle = styled.h3`
     position: absolute;
     left: -1em;
     top: 0.4em;
-    width: 0.8em;
-    height: 0.8em;
+    width: 0.95em;
+    height: 0.95em;
     background-repeat: no-repeat;
     background-size: contain;
-    background-image: url(${IcoReadme});
+    background-image: url(${({icon}) => icon});
   }
 `;
 
@@ -391,24 +408,24 @@ class Details extends Component {
             keywords={this.state.keywords}
             version={this.state.version}
           />
-          <Readme id="readme">
-            <ReadmeTitle>
+          <Section id="readme">
+            <SectionTitle icon={IcoReadme}>
               <a href="#readme">readme</a>
-            </ReadmeTitle>
+            </SectionTitle>
             {this.maybeRenderReadme()}
-          </Readme>
+          </Section>
           {this.state.changelog && (
-            <section id="changelog" className="details-doc">
-              <h3 className="details-doc--title details-doc--title__changelog py-1">
+            <Section id="changelog">
+              <SectionTitle icon={IcoChangelog}>
                 <a href="#changelog">changelog</a>
-              </h3>
+              </SectionTitle>
               <ReadMore text="Display full changelog">
                 <Markdown
                   source={this.state.changelog}
                   repository={this.state.repository}
                 />
               </ReadMore>
-            </section>
+            </Section>
           )}
         </DetailsMain>
 
