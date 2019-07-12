@@ -55,6 +55,191 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       ["vscode-zipfs", ["workspace:packages/vscode-zipfs"]]
     ],
     "locationBlacklistData": [
+      "./.yarn/cache/@babel-cli-npm-7.2.3-7882d18ef38f5771e84d0c1b8bc8d7282c05762184005d1e9d3af56a4e8a6d2a.zip/node_modules/@babel/cli/",
+      "./.yarn/cache/@babel-helper-create-class-features-plugin-npm-7.3.2-7acdcb3c2952e257e31511331b753c3326edc2670fd0285aa85f17a07e3d6b04.zip/node_modules/@babel/helper-create-class-features-plugin/",
+      "./.yarn/cache/@babel-plugin-proposal-async-generator-functions-npm-7.2.0-a7273b5154f0d12dcc157eb570e42b9974e79f399b538412200cc01f16223422.zip/node_modules/@babel/plugin-proposal-async-generator-functions/",
+      "./.yarn/cache/@babel-plugin-proposal-class-properties-npm-7.3.3-83d20727b21a2483f04d4c44b826969cc39617b86569a68f1b529906442044bb.zip/node_modules/@babel/plugin-proposal-class-properties/",
+      "./.yarn/cache/@babel-plugin-proposal-json-strings-npm-7.2.0-d982dbfe549190f9aea0258f750122aaf5fb703ba5ba827579fac9f65f7b26f8.zip/node_modules/@babel/plugin-proposal-json-strings/",
+      "./.yarn/cache/@babel-plugin-proposal-object-rest-spread-npm-7.3.2-15da17b59be7365680405da503a1e3859d2811731119bfec9c860b692109e017.zip/node_modules/@babel/plugin-proposal-object-rest-spread/",
+      "./.yarn/cache/@babel-plugin-proposal-object-rest-spread-npm-7.4.0-c9cd405984d28bf6f1cf636b6f1e76bafe1969e8f361cb95f98d69b87f1bfdfc.zip/node_modules/@babel/plugin-proposal-object-rest-spread/",
+      "./.yarn/cache/@babel-plugin-proposal-optional-catch-binding-npm-7.2.0-d6022b0cc406b26ba0b41a0f319b951ba6f571f350af3a3c74b1dfc904e79f20.zip/node_modules/@babel/plugin-proposal-optional-catch-binding/",
+      "./.yarn/cache/@babel-plugin-proposal-unicode-property-regex-npm-7.2.0-83669a474ba9049cd1d5f34facee1af311b0d073feabb06921c929dd275f9999.zip/node_modules/@babel/plugin-proposal-unicode-property-regex/",
+      "./.yarn/cache/@babel-plugin-proposal-unicode-property-regex-npm-7.4.0-628c4c9ad2013b70784aebfcd91f27100c421b912a96507c0e4ddd33cee21fc5.zip/node_modules/@babel/plugin-proposal-unicode-property-regex/",
+      "./.yarn/cache/@babel-plugin-syntax-async-generators-npm-7.2.0-56052ba1fce800c355d1d0ae28a07ff7abb8f82fe18286cd21282998cef77e4b.zip/node_modules/@babel/plugin-syntax-async-generators/",
+      "./.yarn/cache/@babel-plugin-syntax-class-properties-npm-7.2.0-eb7d4ff7a6842895f5402a76eb473a3f80bbc6b7691ed7a2b188c773570281a2.zip/node_modules/@babel/plugin-syntax-class-properties/",
+      "./.yarn/cache/@babel-plugin-syntax-dynamic-import-npm-7.2.0-373b1c4d8207e2efd45f00f69a4d970c3e499104370d5f2826a1329836d130a5.zip/node_modules/@babel/plugin-syntax-dynamic-import/",
+      "./.yarn/cache/@babel-plugin-syntax-flow-npm-7.2.0-cf8d15e202cf59dceca64cfc27420d9846962c8b8ea2db8e0b6024f9b607eca9.zip/node_modules/@babel/plugin-syntax-flow/",
+      "./.yarn/cache/@babel-plugin-syntax-json-strings-npm-7.2.0-ace2a02bfc6722bd93afb2f190b9448731e8923b831fba06a088b96733e1dced.zip/node_modules/@babel/plugin-syntax-json-strings/",
+      "./.yarn/cache/@babel-plugin-syntax-jsx-npm-7.2.0-aacb3bb293af315341b1c3cfe1cc9281cc4d712c3c0ce8131302a2fe60610d15.zip/node_modules/@babel/plugin-syntax-jsx/",
+      "./.yarn/cache/@babel-plugin-syntax-object-rest-spread-npm-7.2.0-c9b7d141d0a582d35d17327bf1e9221946b886ad398cee4474b5db45d70d4a34.zip/node_modules/@babel/plugin-syntax-object-rest-spread/",
+      "./.yarn/cache/@babel-plugin-syntax-optional-catch-binding-npm-7.2.0-f92dd992101e1849714ebd5c74feb7f83ef1e577ff78f967f9006eae0ae23953.zip/node_modules/@babel/plugin-syntax-optional-catch-binding/",
+      "./.yarn/cache/@babel-plugin-syntax-typescript-npm-7.2.0-109ac0e4a9acf1b8705c66b3fc0b0822f4c5f037706c93dd13d856c3607b9526.zip/node_modules/@babel/plugin-syntax-typescript/",
+      "./.yarn/cache/@babel-plugin-transform-arrow-functions-npm-7.2.0-cbeb9261ce04540f7c1dcd00a0ab68123652051888de879794d59eda2f6eebb9.zip/node_modules/@babel/plugin-transform-arrow-functions/",
+      "./.yarn/cache/@babel-plugin-transform-async-to-generator-npm-7.2.0-7591f7c570cb1b66878f4e0f473e3e526b93d63a4d6318684de4ca652944b41c.zip/node_modules/@babel/plugin-transform-async-to-generator/",
+      "./.yarn/cache/@babel-plugin-transform-async-to-generator-npm-7.4.0-726c34ac2b7ac1f868f083e26ae91075a97b89634904d8da50ce5f27c0ab51b0.zip/node_modules/@babel/plugin-transform-async-to-generator/",
+      "./.yarn/cache/@babel-plugin-transform-block-scoped-functions-npm-7.2.0-de4d12683c496e4d4b5f11c741a629caab6c7540aea8a9d847295796a752e3ea.zip/node_modules/@babel/plugin-transform-block-scoped-functions/",
+      "./.yarn/cache/@babel-plugin-transform-block-scoping-npm-7.2.0-c9392426f279c0edc42a60fc514ba99268eae6b5415a8e10d066abcf87998944.zip/node_modules/@babel/plugin-transform-block-scoping/",
+      "./.yarn/cache/@babel-plugin-transform-block-scoping-npm-7.4.0-e3cccf417685b988b9ebaf4eb6e37b9505158cd5fce91f20924791cb24d957ea.zip/node_modules/@babel/plugin-transform-block-scoping/",
+      "./.yarn/cache/@babel-plugin-transform-classes-npm-7.2.2-c0c09d89b6586e0c89dc4e52eb13ed1d233591850e26f7157ee35fb5df29b6e0.zip/node_modules/@babel/plugin-transform-classes/",
+      "./.yarn/cache/@babel-plugin-transform-classes-npm-7.4.0-707f1db34c39d223b1dc2ad2432bbc49cabfaf24fa5304a5b8f8ad59b67ccd19.zip/node_modules/@babel/plugin-transform-classes/",
+      "./.yarn/cache/@babel-plugin-transform-computed-properties-npm-7.2.0-e7977a2d1cc8848bd978f17faa764f137954ba7e96f722418fb60e65365a1123.zip/node_modules/@babel/plugin-transform-computed-properties/",
+      "./.yarn/cache/@babel-plugin-transform-destructuring-npm-7.2.0-6dc3c4f3d20736b3dccc9624198d9c8b50e26ac041aabb393101b7fdff4d7f25.zip/node_modules/@babel/plugin-transform-destructuring/",
+      "./.yarn/cache/@babel-plugin-transform-destructuring-npm-7.4.0-c9f9b4886ff7ab10f5f79dad373b176ee5d2b7d39410f597f19e7c2f49b0ba22.zip/node_modules/@babel/plugin-transform-destructuring/",
+      "./.yarn/cache/@babel-plugin-transform-dotall-regex-npm-7.2.0-791ac483fd78885649483ad5ec0c06a2c0b9fe2129a5e345f7a9a57bb60ef622.zip/node_modules/@babel/plugin-transform-dotall-regex/",
+      "./.yarn/cache/@babel-plugin-transform-duplicate-keys-npm-7.2.0-c4766a2d8b9e0dfa11ce1f6623e2024c8522efb9fc6ade7b72a089e1c56e9b34.zip/node_modules/@babel/plugin-transform-duplicate-keys/",
+      "./.yarn/cache/@babel-plugin-transform-exponentiation-operator-npm-7.2.0-0732e6bddc9c1db7c97598a91a05656d793737bb280e8163eadff7dc53092a86.zip/node_modules/@babel/plugin-transform-exponentiation-operator/",
+      "./.yarn/cache/@babel-plugin-transform-flow-strip-types-npm-7.3.4-5e5608a819b1d0d3da30331de018bfbe6af42dd16319848f105f54218eb9faba.zip/node_modules/@babel/plugin-transform-flow-strip-types/",
+      "./.yarn/cache/@babel-plugin-transform-for-of-npm-7.2.0-83c1bb75b9059e949e8db717d37be2692294a0b8c7a23877a049bd0f77d684c4.zip/node_modules/@babel/plugin-transform-for-of/",
+      "./.yarn/cache/@babel-plugin-transform-for-of-npm-7.4.0-341b5ef43a1a83995094a2ec2c1191339aed40ea3d13974c1a3683e58635003a.zip/node_modules/@babel/plugin-transform-for-of/",
+      "./.yarn/cache/@babel-plugin-transform-function-name-npm-7.2.0-deb57d54816e9634f0a4e02a94112b0e7c26664cbae547b54c3f1216713141a5.zip/node_modules/@babel/plugin-transform-function-name/",
+      "./.yarn/cache/@babel-plugin-transform-literals-npm-7.2.0-eee5a4f7e945ef583859d1833176d07047dbac7276c3765281888aff9628d6be.zip/node_modules/@babel/plugin-transform-literals/",
+      "./.yarn/cache/@babel-plugin-transform-member-expression-literals-npm-7.2.0-c8bcb8208a98b7676e1607e933a23c29aa1a632a0fdafc72598007f52f543576.zip/node_modules/@babel/plugin-transform-member-expression-literals/",
+      "./.yarn/cache/@babel-plugin-transform-modules-amd-npm-7.2.0-fbf5d84872ff89cd34d62b80ddaddba5b1a23d97ff47d4f5726c558a7f360d95.zip/node_modules/@babel/plugin-transform-modules-amd/",
+      "./.yarn/cache/@babel-plugin-transform-modules-commonjs-npm-7.2.0-346bf9fa277630d87d5a9dc7249d29f7d4ebae4d60edfe1319a688210dd6ee06.zip/node_modules/@babel/plugin-transform-modules-commonjs/",
+      "./.yarn/cache/@babel-plugin-transform-modules-commonjs-npm-7.4.0-51f472eea9729d4763d8155ebb6ff6f8fe489db39dfb5430dcca772ddd1885b7.zip/node_modules/@babel/plugin-transform-modules-commonjs/",
+      "./.yarn/cache/@babel-plugin-transform-modules-systemjs-npm-7.2.0-2a9c06eb5d38ce23bbb3aabc0a7d538877883ab7f5b0c8e1c77b8c6cadecafb5.zip/node_modules/@babel/plugin-transform-modules-systemjs/",
+      "./.yarn/cache/@babel-plugin-transform-modules-systemjs-npm-7.4.0-f012876e1faf5bdaffcfc576acb41f8e4cdc9f923c69ef24a5c5d02a9965c353.zip/node_modules/@babel/plugin-transform-modules-systemjs/",
+      "./.yarn/cache/@babel-plugin-transform-modules-umd-npm-7.2.0-42b9e1286a92833b1d848ee9e47265008ccca0d30a4f7d99c9e4a9f725bfc757.zip/node_modules/@babel/plugin-transform-modules-umd/",
+      "./.yarn/cache/@babel-plugin-transform-named-capturing-groups-regex-npm-7.3.0-396fab466a0189150b540d31d812b09666971e62175acf1f91c19bf6d86b655e.zip/node_modules/@babel/plugin-transform-named-capturing-groups-regex/",
+      "./.yarn/cache/@babel-plugin-transform-named-capturing-groups-regex-npm-7.4.2-5035b8f76d75395bac0c34d8936716da2389d95169d3792c91a20cbdaafdf7ca.zip/node_modules/@babel/plugin-transform-named-capturing-groups-regex/",
+      "./.yarn/cache/@babel-plugin-transform-new-target-npm-7.0.0-1d112378e66772bbf3fa4afe630b74638fba85ee36119a1df8edee27cc78a6a6.zip/node_modules/@babel/plugin-transform-new-target/",
+      "./.yarn/cache/@babel-plugin-transform-new-target-npm-7.4.0-d9e00e8758fccfe85b1272368c5e4534cf824158af5db2fbed1f3e3274a75489.zip/node_modules/@babel/plugin-transform-new-target/",
+      "./.yarn/cache/@babel-plugin-transform-object-super-npm-7.2.0-03a71be53b2967aa68ebfa16500d65ebe3be20b39fba91232288cf8cabf5cbc7.zip/node_modules/@babel/plugin-transform-object-super/",
+      "./.yarn/cache/@babel-plugin-transform-parameters-npm-7.2.0-beb9e50abfa47eba373e80f735f1589704888bab4c580d42db64804e549d3716.zip/node_modules/@babel/plugin-transform-parameters/",
+      "./.yarn/cache/@babel-plugin-transform-parameters-npm-7.4.0-8632eea97f2e0c1eb76b40bdccd6f7e0ec260b9ef66aeeb6c9ab52015fb0caca.zip/node_modules/@babel/plugin-transform-parameters/",
+      "./.yarn/cache/@babel-plugin-transform-property-literals-npm-7.2.0-fab879c3a5833c9e2d9847ca68be0469e344601876aba899ecdbdf0a644068ec.zip/node_modules/@babel/plugin-transform-property-literals/",
+      "./.yarn/cache/@babel-plugin-transform-react-display-name-npm-7.2.0-871d02761b5340785d9d7e0dd0a41db8bf2ed7a35c87dff1560dd7030a9faff5.zip/node_modules/@babel/plugin-transform-react-display-name/",
+      "./.yarn/cache/@babel-plugin-transform-react-jsx-npm-7.3.0-36172ffd526b08029fda9b0d54d944eaa64b0329c3917c7d6e2816d0d30ae28d.zip/node_modules/@babel/plugin-transform-react-jsx/",
+      "./.yarn/cache/@babel-plugin-transform-react-jsx-self-npm-7.2.0-ae34dd00e76caa842404a2ebb3d9700825bf35d42daec825f40da9563f9144e0.zip/node_modules/@babel/plugin-transform-react-jsx-self/",
+      "./.yarn/cache/@babel-plugin-transform-react-jsx-source-npm-7.2.0-c984443351d3694bea9da599816c21c4e36729f1dfd55999b666fb4538f5d340.zip/node_modules/@babel/plugin-transform-react-jsx-source/",
+      "./.yarn/cache/@babel-plugin-transform-regenerator-npm-7.0.0-820fc5d4a8b96b845041736096950f909a72884337fa066beb37323a9ae00c53.zip/node_modules/@babel/plugin-transform-regenerator/",
+      "./.yarn/cache/@babel-plugin-transform-regenerator-npm-7.4.0-15ba1852a6933f9da756adb34af463ecbd07f82a66ac5ab1059cc5e5a3351e0e.zip/node_modules/@babel/plugin-transform-regenerator/",
+      "./.yarn/cache/@babel-plugin-transform-runtime-npm-7.3.4-9301bf1c783c18b9f77c4fade1feeca3d4f9b9891b11dccd99d7dc697be997ae.zip/node_modules/@babel/plugin-transform-runtime/",
+      "./.yarn/cache/@babel-plugin-transform-shorthand-properties-npm-7.2.0-f8349323b8de72e7b7fd41780eeaf9225670fb666c125d70fd49221e143767be.zip/node_modules/@babel/plugin-transform-shorthand-properties/",
+      "./.yarn/cache/@babel-plugin-transform-spread-npm-7.2.2-63441564cb32baa20545c29fcba0386cad080a5656baa3637f755b7f96ef00af.zip/node_modules/@babel/plugin-transform-spread/",
+      "./.yarn/cache/@babel-plugin-transform-sticky-regex-npm-7.2.0-4bc03f2b9d4a04e98fe22c3d34609ff1ebd139cafe6a69ac813941dcdf79005c.zip/node_modules/@babel/plugin-transform-sticky-regex/",
+      "./.yarn/cache/@babel-plugin-transform-template-literals-npm-7.2.0-86b3336904184b65f1e429db6ad46c099a59f9a93176e482d894b4f8e06e2078.zip/node_modules/@babel/plugin-transform-template-literals/",
+      "./.yarn/cache/@babel-plugin-transform-typeof-symbol-npm-7.2.0-e8fbbe6e15e9d8fa92f6a84c013538881df5a5703766bf1cb2a795c11159d6f8.zip/node_modules/@babel/plugin-transform-typeof-symbol/",
+      "./.yarn/cache/@babel-plugin-transform-typescript-npm-7.2.0-2cb5e456862199424f92d8fd251bbbb8efbee543860549d9b1209a52958d09af.zip/node_modules/@babel/plugin-transform-typescript/",
+      "./.yarn/cache/@babel-plugin-transform-unicode-regex-npm-7.2.0-5b47145042cc07690978d09a77ed63d5e7d2713c7466541ad88802ba519f1094.zip/node_modules/@babel/plugin-transform-unicode-regex/",
+      "./.yarn/cache/@babel-preset-env-npm-7.3.1-d91d2d9e373a298b5b883f106bdf7958886ecfec171d1b777dd6e0b7bff671cd.zip/node_modules/@babel/preset-env/",
+      "./.yarn/cache/@babel-preset-env-npm-7.4.2-c45251936abd16f742fc8fab79d784cefd6b8dcf4df84022909c258e3e7a2761.zip/node_modules/@babel/preset-env/",
+      "./.yarn/cache/@babel-preset-react-npm-7.0.0-64c0cb5df451c2cd8e36a54568888d6fd60883c4770fd2b8d3d705917548e3fb.zip/node_modules/@babel/preset-react/",
+      "./.yarn/cache/@babel-preset-typescript-npm-7.1.0-1520fbcdb109158ef3a19c252640edd05e92d3e6c9b52c64fa1819b3dc29d44d.zip/node_modules/@babel/preset-typescript/",
+      "./.yarn/cache/@babel-register-npm-7.0.0-78384d48fa930332c68a2d4f7c0bf8f593c45fb2a01e2a9bf999819d86907a98.zip/node_modules/@babel/register/",
+      "./.yarn/cache/@emotion-babel-plugin-jsx-pragmatic-npm-0.1.3-8aa616b624ef0c9f1c33dd3144b91a78174a06e4222890bc29596854d7833cb9.zip/node_modules/@emotion/babel-plugin-jsx-pragmatic/",
+      "./.yarn/cache/@emotion-babel-preset-css-prop-npm-10.0.14-5e5e5fd8e41ee1e603704f7eed9ae58d4d4b4c5c9afc1c39fcf33a51f61e32ef.zip/node_modules/@emotion/babel-preset-css-prop/",
+      "./.yarn/cache/@emotion-core-npm-10.0.7-5274efa733a526b425827da0d306370a8fd632062884ac19b67ba7c7bc0e2ba2.zip/node_modules/@emotion/core/",
+      "./.yarn/cache/@emotion-styled-base-npm-10.0.7-ac9b69c46c264d57052bb3d2deb4e474e261c946db386f1e924b7ef32987eff7.zip/node_modules/@emotion/styled-base/",
+      "./.yarn/cache/@gatsbyjs-relay-compiler-npm-2.0.0-printer-fix.2-a6501ae58e02eadea9889afa22b68b27b7d104815e830b53e466f150d9c285b0.zip/node_modules/@gatsbyjs/relay-compiler/",
+      "./.yarn/cache/@jimp-bmp-npm-0.5.4-fe99d6450c7aff876c1e9368180fd1b391329efdd2e8716f5c7abc11067739b0.zip/node_modules/@jimp/bmp/",
+      "./.yarn/cache/@jimp-gif-npm-0.5.0-6a8f02dd9b522a70a1d6eaff7c851ba50d1a40db7dc9e3020a5ad6588c4b6aaf.zip/node_modules/@jimp/gif/",
+      "./.yarn/cache/@jimp-jpeg-npm-0.5.4-d587f09d79d93af7d4e149620175343a813018c73b730154cac86846e25b01be.zip/node_modules/@jimp/jpeg/",
+      "./.yarn/cache/@jimp-plugin-blit-npm-0.5.4-f2c82af4ad21e8eaa6ec8a81ebde568865438e4200dce7307e8486765221406a.zip/node_modules/@jimp/plugin-blit/",
+      "./.yarn/cache/@jimp-plugin-blur-npm-0.5.0-dc5900c970139e661d926b217d748531e5ee5c1657470e6f37f137ce8b8863cf.zip/node_modules/@jimp/plugin-blur/",
+      "./.yarn/cache/@jimp-plugin-color-npm-0.5.5-3d533adc6ae6a66b4952af8a33ecf80298058a686a59369b84dd672cb1e1dd42.zip/node_modules/@jimp/plugin-color/",
+      "./.yarn/cache/@jimp-plugin-contain-npm-0.5.4-ef9936b67105760e1684e9a5ccc0758bddeaca2ad9f31add76dca2986fd5313f.zip/node_modules/@jimp/plugin-contain/",
+      "./.yarn/cache/@jimp-plugin-cover-npm-0.5.4-a7bcd194e0a76d7d13ab0e3d44371afb0e3f49eaedb2b0c1268ce2c466be8a88.zip/node_modules/@jimp/plugin-cover/",
+      "./.yarn/cache/@jimp-plugin-crop-npm-0.5.4-43984909c397f60e381b990383c5bd694bd3f7073b3351853f0712253b4be28b.zip/node_modules/@jimp/plugin-crop/",
+      "./.yarn/cache/@jimp-plugin-displace-npm-0.5.0-4bf4218ba5454f88f697d9d89016d0b61d72d96eb1de8715b183bd0510ccb948.zip/node_modules/@jimp/plugin-displace/",
+      "./.yarn/cache/@jimp-plugin-dither-npm-0.5.0-7b178d1c9c5fc93c557adb1b3456badeb9c2f0012d91af0eb5916ab2e8a635d1.zip/node_modules/@jimp/plugin-dither/",
+      "./.yarn/cache/@jimp-plugin-flip-npm-0.5.0-7752d8ccd007e16fa87cf20dbbb7e057db534c040f9d628163a77e48d240c921.zip/node_modules/@jimp/plugin-flip/",
+      "./.yarn/cache/@jimp-plugin-gaussian-npm-0.5.0-f25ddb4cc33f7620caf12fb385fa0e184b37cf7a982a112d8697278d1323c859.zip/node_modules/@jimp/plugin-gaussian/",
+      "./.yarn/cache/@jimp-plugin-invert-npm-0.5.0-235b7504a15c9b4a8c4eb6288e742337fec2ca93366f5c1ec6954be2a5eaca57.zip/node_modules/@jimp/plugin-invert/",
+      "./.yarn/cache/@jimp-plugin-mask-npm-0.5.4-ade4735526d2ba355340281a4b8b7ba59f1d7276ee0447f572d56b782523fad4.zip/node_modules/@jimp/plugin-mask/",
+      "./.yarn/cache/@jimp-plugin-normalize-npm-0.5.4-ace7b74fb40cfc9a10d7c3457216315fb9f8763e0e01b57ceade52ed882d2fbd.zip/node_modules/@jimp/plugin-normalize/",
+      "./.yarn/cache/@jimp-plugin-print-npm-0.5.4-0b588141f47eebda9b3466c10b350ebace6b9eda638374bc8f91a17a00238017.zip/node_modules/@jimp/plugin-print/",
+      "./.yarn/cache/@jimp-plugin-resize-npm-0.5.4-0ba338c8cb666c13ae5390a662b8c9f2fa75703ec853f350f6a0cf6587335d07.zip/node_modules/@jimp/plugin-resize/",
+      "./.yarn/cache/@jimp-plugin-rotate-npm-0.5.4-5b75c8476a0d9879485e549b57f557ae601478da1e7fcdbdbc90ca2c9bc1dbf4.zip/node_modules/@jimp/plugin-rotate/",
+      "./.yarn/cache/@jimp-plugin-scale-npm-0.5.0-740597fd8fcb5ac931806bdc69923eb43df650a38450d86e9c5ba57389d3ec56.zip/node_modules/@jimp/plugin-scale/",
+      "./.yarn/cache/@jimp-plugins-npm-0.5.5-99370c9ae106de6427ca4bf03edd345a611adab3db0fda508a787ff3c5feedaa.zip/node_modules/@jimp/plugins/",
+      "./.yarn/cache/@jimp-png-npm-0.5.4-fb79731751ebf5390055c146fa7f25be12189d5d5aa941c97f7cf73910fd4ef5.zip/node_modules/@jimp/png/",
+      "./.yarn/cache/@jimp-tiff-npm-0.5.4-bdb2bb9799f6fab6afd28d1838bacb13a849767b5b392365a285ce45abd10cfa.zip/node_modules/@jimp/tiff/",
+      "./.yarn/cache/@jimp-types-npm-0.5.4-ac88c37a659a58cb219e011b2235d1cd1c63cc9656d5394e75603ae3fe248a0d.zip/node_modules/@jimp/types/",
+      "./.yarn/cache/@pieh-friendly-errors-webpack-plugin-npm-1.7.0-chalk-2-e22bc11fe43b1937d6df6c08f041adfe0bff740e2db3e283bc4eb9c2d6d10147.zip/node_modules/@pieh/friendly-errors-webpack-plugin/",
+      "./.yarn/cache/@reach-router-npm-1.2.1-3db277e84b4c9933c0196c7f2e548ab74982ad00065ca5da91eaeb300716f686.zip/node_modules/@reach/router/",
+      "./.yarn/cache/@typescript-eslint-eslint-plugin-npm-1.7.0-230619961afc569eab1898c7470d3462edd4daeeda4944e2fa3f586e1bcbf2b7.zip/node_modules/@typescript-eslint/eslint-plugin/",
+      "./.yarn/cache/@typescript-eslint-parser-npm-1.6.0-c6faab4659a53992ee83c08aea9a18a3638282fa4c561c330d08f8c4618b8efe.zip/node_modules/@typescript-eslint/parser/",
+      "./.yarn/cache/@typescript-eslint-parser-npm-1.7.0-b24a712479c245caf99ef58e2c6f2753924e3a9149e46e0605147aa66063a00e.zip/node_modules/@typescript-eslint/parser/",
+      "./.yarn/cache/@typescript-eslint-typescript-estree-npm-1.6.0-ba49a4774f91da4e2ade95cfe5747776622295eb4e73e0542c765196a9d8c43b.zip/node_modules/@typescript-eslint/typescript-estree/",
+      "./.yarn/cache/@typescript-eslint-typescript-estree-npm-1.7.0-0cb010cb3ca1796caa52494a5674d011c658a448122540426335fa1995fe99de.zip/node_modules/@typescript-eslint/typescript-estree/",
+      "./.yarn/cache/acorn-dynamic-import-npm-4.0.0-cc7a315c0c0f7981594c381afca8e103261293d1e0c02cfc2e18cbe9466205a0.zip/node_modules/acorn-dynamic-import/",
+      "./.yarn/cache/acorn-jsx-npm-5.0.1-e00dde29d42c53ac34dca2e0ab289b1f6d4e639628962bbe63befc5ae5ef1a9a.zip/node_modules/acorn-jsx/",
+      "./.yarn/cache/ajv-errors-npm-1.0.1-dca22a24b3f71f40136d7cae54b8c7b72469639fd023f51cdb805498235c62a6.zip/node_modules/ajv-errors/",
+      "./.yarn/cache/ajv-keywords-npm-3.2.0-8736af26e5a517f621c1962374d967c4658ea54fa2158bf05bfe22e5dcdf672c.zip/node_modules/ajv-keywords/",
+      "./.yarn/cache/babel-core-npm-7.0.0-bridge.0-a27a036279978c7c5fc3417eca3cf44c0ca6ac25b00465145768c4113100caa5.zip/node_modules/babel-core/",
+      "./.yarn/cache/babel-jest-npm-23.6.0-b847cde1ac0e9b8d92d53a0a229df6cba2d909da0ae1ecf261336f677d7de2f7.zip/node_modules/babel-jest/",
+      "./.yarn/cache/babel-jest-npm-24.5.0-76e7a3eba43dc3882d27c52431cd9623499a05ea41ec84de35e28b72b78d9dcf.zip/node_modules/babel-jest/",
+      "./.yarn/cache/babel-loader-npm-8.0.5-dbfdf28d355c6fde7f2600b4b50739dbb422e5c037abb868c1f800a001570102.zip/node_modules/babel-loader/",
+      "./.yarn/cache/babel-plugin-remove-graphql-queries-npm-2.7.0-768bd413d84dddc174b8217f282fdc69ab9f6ac6e9b658a719af3225ebc9b2f2.zip/node_modules/babel-plugin-remove-graphql-queries/",
+      "./.yarn/cache/babel-preset-fbjs-npm-3.2.0-df7f46ea1c7f21293237c3159e8f1090ad3c9f253015049c6de04061694b32d3.zip/node_modules/babel-preset-fbjs/",
+      "./.yarn/cache/babel-preset-gatsby-npm-0.2.1-4465b25ca03db8dddf20327588865fe6cd07eba64b5e7c70080cfbc1a9207666.zip/node_modules/babel-preset-gatsby/",
+      "./.yarn/cache/babel-preset-jest-npm-24.3.0-f1597a456a3781154ba125edf4031d78fd770b550a4b69924948d0ce95701b80.zip/node_modules/babel-preset-jest/",
+      "./.yarn/cache/better-queue-memory-npm-1.0.3-e4544952df0b040cd25f00b33a71c6fbe037d18ccac223aa75c89e4887bf3e8d.zip/node_modules/better-queue-memory/",
+      "./.yarn/cache/create-react-context-npm-0.2.3-b1062f8646bbfac2b876bf97c6dd6395e1786a2d1b4947342021f9f34c975230.zip/node_modules/create-react-context/",
+      "./.yarn/cache/css-loader-npm-1.0.1-4309153078c7d067b3a54404572c47ad60e35ff0489df3e5756a766c362aca1c.zip/node_modules/css-loader/",
+      "./.yarn/cache/eslint-config-react-app-npm-3.0.8-5d1099ec17a72a97e8cc249a82636ece7215751319719b262cbbc7d3142b1b81.zip/node_modules/eslint-config-react-app/",
+      "./.yarn/cache/eslint-loader-npm-2.1.2-3a7619882eeb17b633f0f6bcd57f780f70eeed352fb510fe06f1ccb418e65a51.zip/node_modules/eslint-loader/",
+      "./.yarn/cache/eslint-plugin-flowtype-npm-2.50.3-32215d7af4bab9277fc00154e84736827b3922818de32d64f8155be37c9776e2.zip/node_modules/eslint-plugin-flowtype/",
+      "./.yarn/cache/eslint-plugin-graphql-npm-3.0.3-e1d455f654a09ca89d3f2890b4cb1f5edcfe854d8472ee20c6d78677bd514bec.zip/node_modules/eslint-plugin-graphql/",
+      "./.yarn/cache/eslint-plugin-import-npm-2.16.0-16ffabb92565ce7628160aa48a1de2fab845b26b7a69c7c988ce54deb017b83e.zip/node_modules/eslint-plugin-import/",
+      "./.yarn/cache/eslint-plugin-jsx-a11y-npm-6.2.1-bde1b59988f786421b0f2b46c7d7658d7ee6dce809f1c8677242a7b854eb7340.zip/node_modules/eslint-plugin-jsx-a11y/",
+      "./.yarn/cache/eslint-plugin-react-npm-7.12.4-c85283740558918c8fb3631bc72a819c853da036734370bd7dd87e6233e3bcc9.zip/node_modules/eslint-plugin-react/",
+      "./.yarn/cache/express-graphql-npm-0.7.1-a1012da8fde951790ddf18f4fa17c4751dfdc56d8ba89887f4c711ed965556e1.zip/node_modules/express-graphql/",
+      "./.yarn/cache/favicons-webpack-plugin-git+https-6866137cc2630f17cd89ff0b7abb0623375569f21405922cc4b9d36b6f0a2f68.zip/sources/",
+      "./.yarn/cache/file-loader-npm-1.1.11-b45a68d92a281329440ba45e25be347714b3264ed8d16bfe6923d11f0f0f2289.zip/node_modules/file-loader/",
+      "./.yarn/cache/gatsby-link-npm-2.2.0-37a81bdddb6a222009dbf26d3ba2eaa78f2e157ae9b5ee11d9b9c0cf055c51af.zip/node_modules/gatsby-link/",
+      "./.yarn/cache/gatsby-npm-2.13.6-c66fe9d396d5bf299f89e5a1268e7a87694e0e9963162a0f196aa98ef81628d5.zip/node_modules/gatsby/",
+      "./.yarn/cache/gatsby-page-utils-npm-0.0.2-0e307992567067f40c029f299cf2c04b20280799fa2b630c6ea510bccd499427.zip/node_modules/gatsby-page-utils/",
+      "./.yarn/cache/gatsby-plugin-catch-links-npm-2.0.13-7d9aaf36148158d3615545c7133fa3c70f515843eaa38be225adb9811b2f0851.zip/node_modules/gatsby-plugin-catch-links/",
+      "./.yarn/cache/gatsby-plugin-emotion-npm-4.0.6-444e7d4a02bc61a147cd80c5c7e3ff60b6e5b962af4d569e4817c8b8eaa2f26a.zip/node_modules/gatsby-plugin-emotion/",
+      "./.yarn/cache/gatsby-plugin-favicon-npm-3.1.5-eea7e1ef1e0fd20e9bafef94d36b134a1469a5d895b57649c32b6470035a44aa.zip/node_modules/gatsby-plugin-favicon/",
+      "./.yarn/cache/gatsby-plugin-manifest-npm-2.0.22-0d1a9f810006480779d3e3cd62cb15eaffba78da42892129d1453b2fd403cff6.zip/node_modules/gatsby-plugin-manifest/",
+      "./.yarn/cache/gatsby-plugin-offline-npm-2.0.24-61c8f8858aa657a107d973186f91e84e5158a92811da6c77d64b1641bbdd1a86.zip/node_modules/gatsby-plugin-offline/",
+      "./.yarn/cache/gatsby-plugin-page-creator-npm-2.1.2-5cbaebd9f96ecbdf0384afbb9238b62908f94cd0cfe21ee29d6898d8f9698443.zip/node_modules/gatsby-plugin-page-creator/",
+      "./.yarn/cache/gatsby-plugin-react-helmet-npm-3.0.8-c2ead5cfdb0d39bca26518c923e39b2d04273a3d96a0b7caf461ecb48a09666a.zip/node_modules/gatsby-plugin-react-helmet/",
+      "./.yarn/cache/gatsby-plugin-remove-trailing-slashes-npm-2.0.10-a01c6f21a67de38622ef0636892ca6f6ff0de41a3d6dceb71cdab094e3246d5d.zip/node_modules/gatsby-plugin-remove-trailing-slashes/",
+      "./.yarn/cache/gatsby-plugin-sharp-npm-2.0.25-1c7436e3c3ee261995000347065cc98a7367b1399ddb8e4af688354eeb4d4dc3.zip/node_modules/gatsby-plugin-sharp/",
+      "./.yarn/cache/gatsby-react-router-scroll-npm-2.1.1-7d68cb20b0649a4f83aa1c0e0f78563a204e1fd547fb4654adc4fa3400a43a64.zip/node_modules/gatsby-react-router-scroll/",
+      "./.yarn/cache/gatsby-remark-autolink-headers-npm-2.0.16-986e8151a1943146441cacbc133ec5ee56abfc420bf4c4cb8276ec5dc3c85a46.zip/node_modules/gatsby-remark-autolink-headers/",
+      "./.yarn/cache/gatsby-remark-prismjs-npm-3.2.9-102433ba369aebfa369205d9b6c9e76cbacc7a09ead648b6c0be3e61438d3bb3.zip/node_modules/gatsby-remark-prismjs/",
+      "./.yarn/cache/gatsby-source-filesystem-npm-2.0.23-4f2c8722c43922bce2285435d3a4a4c136328f5931e03e5bfdd8d29181ef9d2d.zip/node_modules/gatsby-source-filesystem/",
+      "./.yarn/cache/gatsby-transformer-remark-npm-2.3.2-da8b66eb5de51d5436a3e73551b9126f4ff3db98c433ce3756d34a00c8c5dcfe.zip/node_modules/gatsby-transformer-remark/",
+      "./.yarn/cache/gatsby-transformer-sharp-npm-2.1.15-96cff84a88163a65f1fdf02112da578f7b53f4300ec5e005b678673ae71c0c1a.zip/node_modules/gatsby-transformer-sharp/",
+      "./.yarn/cache/graphql-compose-npm-6.3.2-95fdde81591d405e40972a7bbfed0abeb83e4ae17be6accb3a75418b8220b24d.zip/node_modules/graphql-compose/",
+      "./.yarn/cache/graphql-config-npm-2.2.1-d8ad31b6c75ff515b2144da8dc4180c6b88731eb51f7a4b69c9d8f2821f406bd.zip/node_modules/graphql-config/",
+      "./.yarn/cache/graphql-import-npm-0.7.1-49008ad18b3443240064150c539b18cb49c298b2f30820d0c8b21d915aa6ac7c.zip/node_modules/graphql-import/",
+      "./.yarn/cache/graphql-playground-middleware-express-npm-1.7.12-bfacd9a2b3cb5f06d7fceeb4936024a614b9f4ec3f803401452057c287551fad.zip/node_modules/graphql-playground-middleware-express/",
+      "./.yarn/cache/graphql-type-json-npm-0.2.4-09dcafc394ce5595135dbdfb8c6447b3840ad6c790efe6336f89fda8ae560162.zip/node_modules/graphql-type-json/",
+      "./.yarn/cache/html-react-parser-npm-0.4.7-240b44d93cd2ed5dee077bfa9963a9dc8ffc1d7ab9fe70c9a338c8a0de9cde6f.zip/node_modules/html-react-parser/",
+      "./.yarn/cache/ink-npm-2.2.0-f4a3d0c0b8e701381e6b35b75b2264b840ccba383b4852cde1d9afa34652ed2a.zip/node_modules/ink/",
+      "./.yarn/cache/ink-spinner-npm-3.0.1-930482b02bf82dce0df64127906c7d878bab4da5bda6a4911a0e88199ef01137.zip/node_modules/ink-spinner/",
+      "./.yarn/cache/jest-pnp-resolver-npm-1.2.1-2e7db759835f0ebbac8d35556b65efac94cb32ae9eb82a78e8057da0359c3e84.zip/node_modules/jest-pnp-resolver/",
+      "./.yarn/cache/jest-resolve-dependencies-npm-24.5.0-aedcd7c71af142f443955476a199d2626ab79d454d16738c5a69d67d5bfcf548.zip/node_modules/jest-resolve-dependencies/",
+      "./.yarn/cache/jest-resolve-npm-24.5.0-853e8829ccc158a43d8501d64d281a2297cf21f003588d13fd9026d61b38949b.zip/node_modules/jest-resolve/",
+      "./.yarn/cache/jest-snapshot-npm-24.5.0-b75daca8d8ced033447bb646f51a4f62eb68ff6e4e58f97436b62426c87b090b.zip/node_modules/jest-snapshot/",
+      "./.yarn/cache/mini-css-extract-plugin-npm-0.4.5-c0aa7cb4b3f2ca468482a7f4fd6027498f0f54107257766c904a1ab66b319bb4.zip/node_modules/mini-css-extract-plugin/",
+      "./.yarn/cache/optimize-css-assets-webpack-plugin-npm-5.0.1-ce8b92be673a0d5403c2fccd3c9bea372d8d0cf95f8a94c6391f5b6ac131c936.zip/node_modules/optimize-css-assets-webpack-plugin/",
+      "./.yarn/cache/react-dom-core-npm-0.0.3-5f84fbc81c083473a27f45a447e1951143774a188b44ab692cfc6184830acd9f.zip/node_modules/react-dom-core/",
+      "./.yarn/cache/react-dom-npm-16.8.4-65052e4c5a08505466ca6c5462d5ce241ae3a0ef0d1e6f9873a1ff701ac2811b.zip/node_modules/react-dom/",
+      "./.yarn/cache/react-helmet-npm-5.2.0-8c7a6f5b4b6cfe9f886a880d7aee4d730c3404e4eadd43e5b828ea9702b97339.zip/node_modules/react-helmet/",
+      "./.yarn/cache/react-hot-loader-npm-4.8.8-7dd91750195448b3cf29b2ff144f93a5a67fb70bc75306bdde754da5406991e6.zip/node_modules/react-hot-loader/",
+      "./.yarn/cache/react-reconciler-npm-0.20.4-765af675b2297f8f6b06acb5034cdd2ab024e9e118febeb055392a60eb9616a0.zip/node_modules/react-reconciler/",
+      "./.yarn/cache/react-side-effect-npm-1.1.5-2c574e5195cbaf0dd9d260d704172ec08524a6e7ee31541e3f4826bfd2ec219a.zip/node_modules/react-side-effect/",
+      "./.yarn/cache/request-promise-core-npm-1.1.1-398fcdb78d7c839fbe6141710a69fa2a91dd900c6d465bfb23149dbe374072bf.zip/node_modules/request-promise-core/",
+      "./.yarn/cache/request-promise-native-npm-1.0.5-e5d28f2b3444612b7bb24a7407bea140f517fad328989ebbf29223e111bc6ca7.zip/node_modules/request-promise-native/",
+      "./.yarn/cache/terser-webpack-plugin-npm-1.2.1-6731c7229b9568c44af8937e6950aacc91c7cc1b089bc129bbc69346ac75ec3f.zip/node_modules/terser-webpack-plugin/",
+      "./.yarn/cache/terser-webpack-plugin-npm-1.2.4-6d3984fe511b547980fe04dae4ebb59cb7db72de95a7e2d3ff35572aa2985f06.zip/node_modules/terser-webpack-plugin/",
+      "./.yarn/cache/ts-loader-npm-5.3.3-9916b23c8340ea979063e1278a1c4a1d556d98705577aedae30048f2299e3e44.zip/node_modules/ts-loader/",
+      "./.yarn/cache/ts-pnp-npm-1.0.1-3fcffca98b4d9fa86bc6d8a1873cbbbacfc6eb17762f5ea6da9b742c21462c32.zip/node_modules/ts-pnp/",
+      "./.yarn/cache/ts-pnp-npm-1.1.2-908b85f2f22bd47799f853b00f82cb99992ebdd73f40cea9c1a4eff02ae9ea3e.zip/node_modules/ts-pnp/",
+      "./.yarn/cache/tsutils-npm-3.10.0-01997f355f4d4b922cc39ca5b6e0b40c9cc55d87ce6cc44511c4245147e52ca5.zip/node_modules/tsutils/",
+      "./.yarn/cache/url-loader-npm-1.1.2-15de7b7a3cb963d5009dbcebaba306e54f2aad8b478085e8b8570eb177b2a5a1.zip/node_modules/url-loader/",
+      "./.yarn/cache/val-loader-npm-1.1.1-710f48cc2ac47a2bdc967bd2090bbe7c45b7ca02ed47e9ece4f472e7317c4bf4.zip/node_modules/val-loader/",
+      "./.yarn/cache/webpack-cli-npm-3.3.2-578b4734ac72bebf6b5cbaaea4f6374e564192f85c75aa40c65d313bf2742bc0.zip/node_modules/webpack-cli/",
+      "./.yarn/cache/webpack-dev-middleware-npm-3.6.1-bff3098b7d721ee1ed26c63d3d6ddab5e26cee2b7339eb7ceee4e645c8dadcc7.zip/node_modules/webpack-dev-middleware/",
+      "./.yarn/cache/webpack-dev-server-npm-3.2.1-89ba4e09f40d7a6b86bee87115303ffb185065d2c7f6d3f1572bdd60e07c135b.zip/node_modules/webpack-dev-server/",
+      "./packages/gatsby/gatsby-plugin-clipanion-cli/"
     ],
     "locationLengthData": [
       220,
@@ -3784,7 +3969,8 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/core", "workspace:packages/berry-core"],
             ["@berry/fslib", "workspace:packages/berry-fslib"],
             ["@berry/plugin-stage", "workspace:packages/plugin-stage"],
-            ["@berry/pnp", "workspace:packages/berry-pnp"]
+            ["@berry/pnp", "workspace:packages/berry-pnp"],
+            ["clipanion", "npm:0.17.1"]
           ]
         }]
       ]],
@@ -27882,7 +28068,7 @@ class FakeFS {
             }
         }
         try {
-            await callback();
+            return await callback();
         }
         finally {
             await this.closePromise(fd);
@@ -29807,9 +29993,7 @@ function hydrateRuntimeState(data, { basePath }) {
                     }];
             }))];
     }));
-    const packageLocatorsByLocations = new Map(data.locationBlacklistData.map(location => {
-        return [location, null];
-    }));
+    const packageLocatorsByLocations = new Map();
     for (const [packageName, storeData] of data.packageRegistryData) {
         for (const [packageReference, packageInformationData] of storeData) {
             if ((packageName === null) !== (packageReference === null))
@@ -29819,6 +30003,8 @@ function hydrateRuntimeState(data, { basePath }) {
             packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
         }
     }
+    for (const location of data.locationBlacklistData)
+        packageLocatorsByLocations.set(location, null);
     const fallbackExclusionList = new Map(data.fallbackExclusionList.map(([packageName, packageReferences]) => {
         return [packageName, new Set(packageReferences)];
     }));
@@ -30102,7 +30288,7 @@ function makeApi(runtimeState, opts) {
             from += 1;
         for (let t = from; t < packageLocationLengths.length; ++t) {
             const locator = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]));
-            if (!locator)
+            if (typeof locator === `undefined`)
                 continue;
             // Ensures that the returned locator isn't a blacklisted one.
             //
@@ -30120,11 +30306,7 @@ function makeApi(runtimeState, opts) {
             // paths, we're able to print a more helpful error message that points out that a third-party package is doing
             // something incompatible!
             if (locator === null) {
-                throw internalTools_1.makeError(internalTools_1.ErrorCode.BLACKLISTED, [
-                    `A package has been resolved through a blacklisted path - this is usually caused by one of your tool`,
-                    `calling "realpath" on the return value of "require.resolve". Since the returned values use symlinks to`,
-                    `disambiguate peer dependencies, they must be passed untransformed to "require".`,
-                ].join(` `));
+                throw internalTools_1.makeError(internalTools_1.ErrorCode.BLACKLISTED, `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${location}`, { location });
             }
             return locator;
         }
@@ -30176,6 +30358,8 @@ function makeApi(runtimeState, opts) {
                     unqualifiedPath = fslib_2.ppath.normalize(fslib_2.ppath.resolve(fslib_2.ppath.dirname(issuer), request));
                 }
             }
+            // No need to use the return value; we just want to check the blacklist status
+            findPackageLocator(unqualifiedPath);
         }
         // Things are more hairy if it's a package require - we then need to figure out which package is needed, and in
         // particular the exact version for the given location on the dependency tree

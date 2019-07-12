@@ -1879,6 +1879,7 @@ __metadata:
     "@berry/fslib": "workspace:0.0.8"
     "@berry/plugin-stage": "workspace:0.0.0"
     "@berry/pnp": "workspace:0.0.4"
+    clipanion: "npm:^0.17.1"
   languageName: unknown
   linkType: soft
 

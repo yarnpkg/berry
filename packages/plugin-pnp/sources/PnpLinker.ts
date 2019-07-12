@@ -3,6 +3,7 @@ import {FetchResult, Descriptor, Ident, Locator, Package, BuildDirective, BuildT
 import {miscUtils, structUtils}                                                                              from '@berry/core';
 import {CwdFS, FakeFS, NodeFS, xfs, PortablePath, ppath, toFilename}                                         from '@berry/fslib';
 import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@berry/pnp';
+import {UsageError}                                                                                          from 'clipanion';
 
 // Some packages do weird stuff and MUST be unplugged. I don't like them.
 const FORCED_UNPLUG_PACKAGES = new Set([
@@ -20,7 +21,7 @@ export class PnpLinker implements Linker {
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
     const pnpPath = opts.project.configuration.get(`pnpPath`);
     if (!xfs.existsSync(pnpPath))
-      throw new Error(`Couldn't find the PnP package map at the root of the project - run an install to generate it`);
+      throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
 
     const physicalPath = NodeFS.fromPortablePath(pnpPath);
     const pnpFile = miscUtils.dynamicRequire(physicalPath);
@@ -30,7 +31,7 @@ export class PnpLinker implements Linker {
     const packageInformation = pnpFile.getPackageInformation(packageLocator);
 
     if (!packageInformation)
-      throw new Error(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed pnp map`);
+      throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed PnP map - running an install might help`);
 
     return NodeFS.toPortablePath(packageInformation.packageLocation);
   }
@@ -38,7 +39,7 @@ export class PnpLinker implements Linker {
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
     const pnpPath = opts.project.configuration.get(`pnpPath`);
     if (!xfs.existsSync(pnpPath))
-      throw new Error(`Couldn't find the PnP package map at the root of the project - run an install to generate it`);
+      throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
 
     const physicalPath = NodeFS.fromPortablePath(pnpPath);
     const pnpFile = miscUtils.dynamicRequire(physicalPath);
