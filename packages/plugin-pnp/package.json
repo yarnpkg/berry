@@ -6,7 +6,8 @@
     "@berry/cli": "workspace:2.0.0",
     "@berry/core": "workspace:0.0.6",
     "@berry/fslib": "workspace:0.0.8",
-    "@berry/pnp": "workspace:0.0.4"
+    "@berry/pnp": "workspace:0.0.4",
+    "clipanion": "^0.17.1"
   },
   "devDependencies": {
     "@berry/plugin-stage": "workspace:0.0.0"
