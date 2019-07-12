@@ -103,8 +103,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         throw new WorkspaceRequiredError(cwd);
 
       const {commandPath, env: parsedEnv} = clipanion.parse([command, ...rest]);
-      const scriptName = commandPath.length === 1 && commandPath[0] === `run`
-        ? parsedEnv.name
+      const scriptName = commandPath.length === 1 && commandPath[0] === `run` && parsedEnv.args.length > 0
+        ? parsedEnv.args[0]
         : null;
 
       if (commandPath.length === 0)
