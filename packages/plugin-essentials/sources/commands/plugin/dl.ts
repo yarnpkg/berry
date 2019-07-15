@@ -12,7 +12,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
 
   .command(`plugin dl [name] [-l,--list]`)
   .alias(`plugins dl`)
-  .describe(`list the active plugins`)
+  .describe(`download a plugin, or list the available official plugins`)
 
   .detail(`
     This command downloads the specified plugin from its remote location and updates the configuration to reference it in further CLI invocations.
