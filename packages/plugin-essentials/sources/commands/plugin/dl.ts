@@ -15,7 +15,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
   .describe(`list the active plugins`)
 
   .detail(`
-    This command download the specified plugin from its remote location and updates the configuration to reference it in further CLI invocations.
+    This command downloads the specified plugin from its remote location and updates the configuration to reference it in further CLI invocations.
 
     If the \`-l,--list\` option is present, Yarn will print the list of plugins available from the official Yarn repository. Those plugins are not mandatory or necessarily better than the ones provided by the community.
   `)
