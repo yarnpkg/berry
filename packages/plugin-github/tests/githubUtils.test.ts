@@ -19,6 +19,9 @@ const validScenarios = [{
   url: 'git://github.com/yarnpkg/berry.git#v2.0.0',
   username: 'yarnpkg', reponame: 'berry', branch: 'v2.0.0',
 }, {
+  url: 'git+ssh://git@github.com:yarnpkg/berry.git#123456',
+  username: 'yarnpkg', reponame: 'berry', branch: '123456',
+}, {
   url: 'git@github.com:yarnpkg/berry.git',
   username: 'yarnpkg', reponame: 'berry', branch: undefined,
 }, {
