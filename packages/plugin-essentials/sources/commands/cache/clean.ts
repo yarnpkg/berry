@@ -1,8 +1,7 @@
-import {Configuration, Cache, CommandContext, Project}                   from '@berry/core';
+import {Configuration, Cache, CommandContext, Project}                        from '@berry/core';
 import {LightReport, MessageName, StreamReport, VirtualFetcher}               from '@berry/core';
 import {NodeFS, xfs, PortablePath, ppath}                                     from '@berry/fslib';
-import {Command} from 'clipanion';
-import {Writable}                                                             from 'stream';
+import {Command}                                                              from 'clipanion';
 
 const PRESERVED_FILES = new Set([
   `.gitignore`,
@@ -30,7 +29,7 @@ export default class CacheCleanCommand extends Command<CommandContext> {
       `yarn cache clean`,
     ], [
       `Obtain the list of unused files from the current project`,
-      `yarn cache clean --dry-run --json`
+      `yarn cache clean --dry-run --json`,
     ]],
   });
 

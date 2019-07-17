@@ -1,13 +1,11 @@
-import {WorkspaceRequiredError}                                         from '@berry/cli';
-import {CommandContext, Configuration, Cache, Descriptor, PluginConfiguration, Project} from '@berry/core';
-import {StreamReport, Workspace}                                        from '@berry/core';
-import {structUtils}                                                    from '@berry/core';
-import {PortablePath}                                                   from '@berry/fslib';
-import {Command} from 'clipanion';
-import {Writable}                                                       from 'stream';
+import {WorkspaceRequiredError}                                                         from '@berry/cli';
+import {CommandContext, Configuration, Cache, Descriptor, Project}                      from '@berry/core';
+import {StreamReport, Workspace}                                                        from '@berry/core';
+import {structUtils}                                                                    from '@berry/core';
+import {Command}                                                                        from 'clipanion';
 
-import * as suggestUtils                                                from '../suggestUtils';
-import {Hooks}                                                          from '..';
+import * as suggestUtils                                                                from '../suggestUtils';
+import {Hooks}                                                                          from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RemoveCommand extends Command<CommandContext> {

@@ -1,9 +1,7 @@
-import {CommandContext, Configuration, MessageName, PluginConfiguration, SettingsType, StreamReport} from '@berry/core';
-import {miscUtils}                                                                   from '@berry/core';
-import {PortablePath}                                                                from '@berry/fslib';
-import {Command} from 'clipanion';
-import {Writable}                                                                    from 'stream';
-import {inspect}                                                                     from 'util';
+import {CommandContext, Configuration, MessageName, SettingsType, StreamReport}                      from '@berry/core';
+import {miscUtils}                                                                                   from '@berry/core';
+import {Command}                                                                                     from 'clipanion';
+import {inspect}                                                                                     from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigCommand extends Command<CommandContext> {
@@ -30,7 +28,7 @@ export default class ConfigCommand extends Command<CommandContext> {
     examples: [[
       `Print the active configuration settings`,
       `yarn config`,
-    ]],  
+    ]],
   });
 
   @Command.Path(`config`)

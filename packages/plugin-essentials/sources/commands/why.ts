@@ -1,11 +1,10 @@
-import {WorkspaceRequiredError}                                  from '@berry/cli';
+import {WorkspaceRequiredError}                                                  from '@berry/cli';
 import {Cache, CommandContext, Configuration, LightReport, LocatorHash, Package} from '@berry/core';
-import {IdentHash, PluginConfiguration, Project}                 from '@berry/core';
-import {miscUtils, structUtils}                                  from '@berry/core';
-import {PortablePath}                                            from '@berry/fslib';
-import {Command} from 'clipanion';
-import {Writable}                                                from 'stream';
-import {asTree}                                                  from 'treeify';
+import {IdentHash, Project}                                                      from '@berry/core';
+import {miscUtils, structUtils}                                                  from '@berry/core';
+import {Command}                                                                 from 'clipanion';
+import {Writable}                                                                from 'stream';
+import {asTree}                                                                  from 'treeify';
 
 type TreeNode = {[key: string]: TreeNode};
 

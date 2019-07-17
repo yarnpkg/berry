@@ -1,11 +1,9 @@
-import {openWorkspace}                     from '@berry/cli';
+import {openWorkspace}                                     from '@berry/cli';
 import {CommandContext, Configuration, MessageName}        from '@berry/core';
-import {PluginConfiguration, StreamReport} from '@berry/core';
-import {PortablePath}                      from '@berry/fslib';
-import {npmConfigUtils, npmHttpUtils}      from '@berry/plugin-npm';
-import {Command} from 'clipanion';
-import inquirer                            from 'inquirer';
-import {Readable, Writable}                from 'stream';
+import {StreamReport}                                      from '@berry/core';
+import {npmConfigUtils, npmHttpUtils}                      from '@berry/plugin-npm';
+import {Command}                                           from 'clipanion';
+import inquirer                                            from 'inquirer';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmLoginCommand extends Command<CommandContext> {

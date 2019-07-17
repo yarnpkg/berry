@@ -1,5 +1,4 @@
-import {CommandContext, Configuration} from '@berry/core';
-import {PortablePath}                       from '@berry/fslib';
+import {CommandContext, Configuration}      from '@berry/core';
 import {Command, UsageError}                from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export

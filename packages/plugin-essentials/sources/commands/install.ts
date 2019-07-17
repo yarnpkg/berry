@@ -1,10 +1,8 @@
-import {WorkspaceRequiredError}                                                                     from '@berry/cli';
-import {CommandContext, Configuration, Cache, MessageName, PluginConfiguration, Project, ReportError, StreamReport} from '@berry/core';
-import {xfs, PortablePath, ppath}                                                                   from '@berry/fslib';
-import {parseSyml, stringifySyml}                                                                   from '@berry/parsers';
-import {Command} from 'clipanion';
-import {Writable}                                                                                   from 'stream';
-import * as yup                                                                                     from 'yup';
+import {WorkspaceRequiredError}                                                                                     from '@berry/cli';
+import {CommandContext, Configuration, Cache, MessageName, Project, ReportError, StreamReport}                      from '@berry/core';
+import {xfs, ppath}                                                                                                 from '@berry/fslib';
+import {parseSyml, stringifySyml}                                                                                   from '@berry/parsers';
+import {Command}                                                                                                    from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InstallCommand extends Command<CommandContext> {

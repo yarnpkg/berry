@@ -1,7 +1,5 @@
-import {CommandContext, Configuration, PluginConfiguration, StreamReport}              from '@berry/core';
-import {PortablePath}                                                  from '@berry/fslib';
-import {Command}                                                     from 'clipanion';
-import {Writable}                                                      from 'stream';
+import {CommandContext, Configuration, StreamReport}                                   from '@berry/core';
+import {Command}                                                                       from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginListCommand extends Command<CommandContext> {

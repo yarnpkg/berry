@@ -1,12 +1,10 @@
-import {CommandContext, Configuration, Project, PluginConfiguration} from '@berry/core';
-import {MessageName, StreamReport}                   from '@berry/core';
-import {structUtils}                                 from '@berry/core';
-import {PortablePath}                                from '@berry/fslib';
-import {Command} from 'clipanion';
-import getPath                                       from 'lodash.get';
-import {Writable}                                    from 'stream';
+import {CommandContext, Configuration, Project}                      from '@berry/core';
+import {MessageName, StreamReport}                                   from '@berry/core';
+import {structUtils}                                                 from '@berry/core';
+import {Command}                                                     from 'clipanion';
+import getPath                                                       from 'lodash.get';
 
-import {Constraints}                                 from '../../Constraints';
+import {Constraints}                                                 from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsCheckCommand extends Command<CommandContext> {

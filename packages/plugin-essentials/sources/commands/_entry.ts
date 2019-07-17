@@ -1,6 +1,6 @@
 import {CommandContext} from '@berry/core';
-import {NodeFS, ppath} from '@berry/fslib';
-import {Command}       from 'clipanion';
+import {NodeFS, ppath}  from '@berry/fslib';
+import {Command}        from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class EntryCommand extends Command<CommandContext> {

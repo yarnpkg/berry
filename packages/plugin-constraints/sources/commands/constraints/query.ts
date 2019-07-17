@@ -1,10 +1,8 @@
-import {CommandContext, Configuration, Project, PluginConfiguration} from '@berry/core';
-import {StreamReport}                                from '@berry/core';
-import {PortablePath}                                from '@berry/fslib';
-import {Command}  from 'clipanion';
-import {Writable}                                    from 'stream';
+import {CommandContext, Configuration, Project}                      from '@berry/core';
+import {StreamReport}                                                from '@berry/core';
+import {Command}                                                     from 'clipanion';
 
-import {Constraints}                                 from '../../Constraints';
+import {Constraints}                                                 from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsQueryCommand extends Command<CommandContext> {
@@ -78,4 +76,3 @@ function getLinePrefix(index: number, count: number): string {
 
   return `│ `;
 }
-  

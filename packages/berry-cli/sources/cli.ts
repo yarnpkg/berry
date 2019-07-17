@@ -1,8 +1,7 @@
 import {Configuration, CommandContext}    from '@berry/core';
-import {xfs, NodeFS, ppath, PortablePath} from '@berry/fslib';
+import {xfs, NodeFS, PortablePath}        from '@berry/fslib';
 import {execFileSync}                     from 'child_process';
 import {Cli}                              from 'clipanion';
-import * as yup                           from 'yup';
 
 import {pluginConfiguration}              from './pluginConfiguration';
 

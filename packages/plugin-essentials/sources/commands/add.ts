@@ -1,14 +1,13 @@
-import {WorkspaceRequiredError}                                     from '@berry/cli';
+import {WorkspaceRequiredError}                                                     from '@berry/cli';
 import {Cache, CommandContext, Configuration, Descriptor, LightReport, MessageName} from '@berry/core';
-import {PluginConfiguration, Project, StreamReport, Workspace}      from '@berry/core';
-import {structUtils}                                                from '@berry/core';
-import {PortablePath}                                               from '@berry/fslib';
-import {Command}                                                  from 'clipanion';
-import inquirer                                                     from 'inquirer';
-import {Readable, Writable}                                         from 'stream';
+import {Project, StreamReport, Workspace}                                           from '@berry/core';
+import {structUtils}                                                                from '@berry/core';
+import {PortablePath}                                                               from '@berry/fslib';
+import {Command}                                                                    from 'clipanion';
+import inquirer                                                                     from 'inquirer';
 
-import * as suggestUtils                                            from '../suggestUtils';
-import {Hooks}                                                      from '..';
+import * as suggestUtils                                                            from '../suggestUtils';
+import {Hooks}                                                                      from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class AddCommand extends Command<CommandContext> {

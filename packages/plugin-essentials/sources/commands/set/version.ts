@@ -1,10 +1,8 @@
-import {CommandContext, Configuration, PluginConfiguration, Project, StreamReport, MessageName}                      from '@berry/core';
-import {httpUtils}                                                                                   from '@berry/core';
-import {xfs, PortablePath, ppath}                                                                    from '@berry/fslib';
-import {Command} from 'clipanion';
-import semver, {SemVer}                                                                              from 'semver';
-import {Readable, Writable}                                                                          from 'stream';
-import * as yup                                                                                      from 'yup';
+import {CommandContext, Configuration, Project, StreamReport, MessageName}                                           from '@berry/core';
+import {httpUtils}                                                                                                   from '@berry/core';
+import {xfs, PortablePath, ppath}                                                                                    from '@berry/fslib';
+import {Command}                                                                                                     from 'clipanion';
+import semver, {SemVer}                                                                                              from 'semver';
 
 const BUNDLE_REGEXP = /^yarn-[0-9]+\.[0-9]+\.[0-9]+\.js$/;
 const BERRY_RANGES = new Set([`berry`, `v2`, `2`, `nightly`, `nightlies`, `rc`]);

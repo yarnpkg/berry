@@ -1,11 +1,10 @@
-import {CommandContext, Configuration, PluginConfiguration, Project}                      from '@berry/core';
-import {NodeFS, xfs, PortablePath, ppath}                                 from '@berry/fslib';
-import {Command, UsageError}                                                       from 'clipanion';
-import {Writable}                                                         from 'stream';
+import {CommandContext, Configuration, Project}                                           from '@berry/core';
+import {NodeFS, xfs, PortablePath, ppath}                                                 from '@berry/fslib';
+import {Command, UsageError}                                                              from 'clipanion';
 
-import {Driver as GitDriver}                                              from '../drivers/GitDriver';
-import {Driver as MercurialDriver}                                        from '../drivers/MercurialDriver';
-import {Hooks}                                                            from '..';
+import {Driver as GitDriver}                                                              from '../drivers/GitDriver';
+import {Driver as MercurialDriver}                                                        from '../drivers/MercurialDriver';
+import {Hooks}                                                                            from '..';
 
 const ALL_DRIVERS = [
   GitDriver,

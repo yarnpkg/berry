@@ -1,7 +1,5 @@
-import {CommandContext, Configuration, PluginConfiguration, Project, StreamReport, structUtils} from '@berry/core';
-import {PortablePath}                                                           from '@berry/fslib';
-import {Command} from 'clipanion';
-import {Writable}                                                               from 'stream';
+import {CommandContext, Configuration, Project, StreamReport, structUtils}                      from '@berry/core';
+import {Command}                                                                                from 'clipanion';
 
 const DEPENDENCY_TYPES = ['devDependencies', 'dependencies'];
 

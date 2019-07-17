@@ -1,9 +1,7 @@
-import {CommandContext, Configuration, Project, PluginConfiguration} from '@berry/core';
-import {PortablePath}                                from '@berry/fslib';
-import {Command} from 'clipanion';
-import {Writable}                                    from 'stream';
+import {CommandContext, Configuration, Project}                      from '@berry/core';
+import {Command}                                                     from 'clipanion';
 
-import {Constraints}                                 from '../../Constraints';
+import {Constraints}                                                 from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsSourceCommand extends Command<CommandContext> {
@@ -22,7 +20,7 @@ export default class ConstraintsSourceCommand extends Command<CommandContext> {
     ], [
       `Print the source code and the fact database`,
       `yarn constraints source -v`,
-    ]],  
+    ]],
   });
 
   @Command.Path(`constraints`, `source`)

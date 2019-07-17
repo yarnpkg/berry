@@ -1,11 +1,9 @@
-import {Cache, CommandContext, Configuration, Project, PluginConfiguration} from '@berry/core';
-import {MessageName, StreamReport}                          from '@berry/core';
-import {structUtils}                                        from '@berry/core';
-import {PortablePath}                                       from '@berry/fslib';
-import {Command} from 'clipanion';
-import {Readable, Writable}                                 from 'stream';
+import {Cache, CommandContext, Configuration, Project}                      from '@berry/core';
+import {MessageName, StreamReport}                                          from '@berry/core';
+import {structUtils}                                                        from '@berry/core';
+import {Command}                                                            from 'clipanion';
 
-import {Constraints}                                        from '../../Constraints';
+import {Constraints}                                                        from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsFixCommand extends Command<CommandContext> {
@@ -20,7 +18,7 @@ export default class ConstraintsFixCommand extends Command<CommandContext> {
     examples: [[
       `Automatically fix as many things as possible in your project`,
       `yarn constraints fix`,
-    ]],  
+    ]],
   });
 
   @Command.Path(`constraints`, `fix`)

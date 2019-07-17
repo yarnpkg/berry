@@ -1,9 +1,8 @@
-import {WorkspaceRequiredError}                      from '@berry/cli';
-import {CommandContext, Configuration, PluginConfiguration, Project} from '@berry/core';
-import {PortablePath}                                from '@berry/fslib';
-import {Command, UsageError}                                  from 'clipanion';
-import semver                                        from 'semver';
-import * as yup                                      from 'yup';
+import {WorkspaceRequiredError}                                      from '@berry/cli';
+import {CommandContext, Configuration, Project}                      from '@berry/core';
+import {Command, UsageError}                                         from 'clipanion';
+import semver                                                        from 'semver';
+import * as yup                                                      from 'yup';
 
 const STRATEGIES = new Set([
   `major`,
@@ -15,7 +14,6 @@ const STRATEGIES = new Set([
   `prerelease`,
 ]);
 
-// eslint-disable-next-line arca/no-default-export
 @Command.Validate(yup.object().shape({
   strategy: yup.string().test({
     name: `strategy`,
@@ -26,6 +24,7 @@ const STRATEGIES = new Set([
     },
   }),
 }))
+// eslint-disable-next-line arca/no-default-export
 export default class VersionCommand extends Command<CommandContext> {
   @Command.String({required: false})
   strategy?: false;
@@ -56,7 +55,7 @@ export default class VersionCommand extends Command<CommandContext> {
       `yarn version major`,
     ], [
       `Prepare the version to be bumped to the next major`,
-      `yarn version major --deferred`
+      `yarn version major --deferred`,
     ]],
   });
 

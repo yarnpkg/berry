@@ -1,8 +1,6 @@
-import {CommandContext, Configuration, PluginConfiguration, Project} from '@berry/core';
-import {scriptUtils, structUtils}                    from '@berry/core';
-import {PortablePath}                                from '@berry/fslib';
-import {Command, UsageError}                                  from 'clipanion';
-import {Writable}                                    from 'stream';
+import {CommandContext, Configuration, Project}                      from '@berry/core';
+import {scriptUtils, structUtils}                                    from '@berry/core';
+import {Command, UsageError}                                         from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class BinCommand extends Command<CommandContext> {
@@ -25,7 +23,7 @@ export default class BinCommand extends Command<CommandContext> {
     ], [
       `Print the path to a specific binary`,
       `yarn bin eslint`,
-    ]],  
+    ]],
   });
 
   @Command.Path(`bin`)

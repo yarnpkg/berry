@@ -1,9 +1,7 @@
-import {WorkspaceRequiredError}                                           from '@berry/cli';
-import {Cache, CommandContext, Configuration, PluginConfiguration, Project, StreamReport} from '@berry/core';
-import {structUtils}                                                      from '@berry/core';
-import {PortablePath}                                                     from '@berry/fslib';
-import {Command} from 'clipanion';
-import {Writable}                                                         from 'stream';
+import {WorkspaceRequiredError}                                                           from '@berry/cli';
+import {Cache, CommandContext, Configuration, Project, StreamReport}                      from '@berry/core';
+import {structUtils}                                                                      from '@berry/core';
+import {Command}                                                                          from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnplugCommand extends Command<CommandContext> {
@@ -23,7 +21,7 @@ export default class UnplugCommand extends Command<CommandContext> {
     `,
     examples: [[
       `Unplug lodash`,
-      `yarn unplug lodash`
+      `yarn unplug lodash`,
     ], [
       `Unplug one specific version of lodash`,
       `yarn unplug lodash@1.2.3`,

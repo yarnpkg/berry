@@ -1,13 +1,13 @@
-import {WorkspaceRequiredError}                                              from '@berry/cli';
-import {CommandContext, Configuration, LocatorHash, PluginConfiguration, Project, Workspace} from '@berry/core';
-import {DescriptorHash, MessageName, Report, StreamReport}                   from '@berry/core';
-import {miscUtils, structUtils}                                              from '@berry/core';
-import {PortablePath}                                                        from '@berry/fslib';
-import {Command, UsageError}                                                          from 'clipanion';
-import {cpus}                                                                from 'os';
-import pLimit                                                                from 'p-limit';
-import {Writable}                                                            from 'stream';
-import * as yup                                                              from 'yup';
+import {WorkspaceRequiredError}                                                              from '@berry/cli';
+import {CommandContext, Configuration, LocatorHash, Project, Workspace}                      from '@berry/core';
+import {DescriptorHash, MessageName, Report, StreamReport}                                   from '@berry/core';
+import {miscUtils, structUtils}                                                              from '@berry/core';
+import {PortablePath}                                                                        from '@berry/fslib';
+import {Command, UsageError}                                                                 from 'clipanion';
+import {cpus}                                                                                from 'os';
+import pLimit                                                                                from 'p-limit';
+import {Writable}                                                                            from 'stream';
+import * as yup                                                                              from 'yup';
 
 type ForeachOptions = {
   command: string;
@@ -44,7 +44,6 @@ const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Projec
   return workspaceList;
 };
 
-// eslint-disable-next-line arca/no-default-export
 @Command.Validate(yup.object().shape({
   jobs: yup.number().min(2),
   parallel: yup.boolean().when(`jobs`, {
@@ -53,6 +52,7 @@ const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Projec
     otherwise: yup.boolean(),
   }),
 }))
+// eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends Command<CommandContext> {
   @Command.String()
   commandName!: string;

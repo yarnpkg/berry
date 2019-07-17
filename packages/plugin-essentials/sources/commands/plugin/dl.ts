@@ -1,9 +1,8 @@
-import {CommandContext, Configuration, MessageName, PluginConfiguration, Project, StreamReport, httpUtils, structUtils}                      from '@berry/core';
-import {xfs, PortablePath, ppath}                                                                                            from '@berry/fslib';
-import {parseSyml}                                                                                                           from '@berry/parsers';
-import {Command}                                                                                                           from 'clipanion';
-import {Writable}                                                                                                            from 'stream';
-import {runInNewContext}                                                                                                     from 'vm';
+import {CommandContext, Configuration, MessageName, Project, StreamReport, httpUtils, structUtils}                                           from '@berry/core';
+import {xfs, PortablePath, ppath}                                                                                                            from '@berry/fslib';
+import {parseSyml}                                                                                                                           from '@berry/parsers';
+import {Command}                                                                                                                             from 'clipanion';
+import {runInNewContext}                                                                                                                     from 'vm';
 
 const REMOTE_REGISTRY = `https://raw.githubusercontent.com/yarnpkg/berry/master/plugins.yml`;
 

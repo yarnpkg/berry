@@ -3,8 +3,7 @@ import {Cache, CommandContext, Configuration, Project}                          
 import {LightReport}                                                                                   from '@berry/core';
 import {scriptUtils, structUtils}                                                                      from '@berry/core';
 import {NodeFS, xfs, PortablePath, ppath, Filename, toFilename}                                        from '@berry/fslib';
-import {Command}                                                from 'clipanion';
-import {Readable, Writable}                                                                            from 'stream';
+import {Command}                                                                                       from 'clipanion';
 import tmp                                                                                             from 'tmp';
 
 // eslint-disable-next-line arca/no-default-export
@@ -35,7 +34,7 @@ export default class DlxCommand extends Command<CommandContext> {
     examples: [[
       `Use create-react-app to create a new React app`,
       `yarn dlx create-react-app ./my-app`,
-    ]],  
+    ]],
   });
 
   @Command.Path(`dlx`)

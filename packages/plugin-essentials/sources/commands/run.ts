@@ -1,12 +1,12 @@
-import {WorkspaceRequiredError}                                                      from '@berry/cli';
+import {WorkspaceRequiredError}                                                                      from '@berry/cli';
 import {CommandContext, Configuration, PluginConfiguration, Project, Workspace, Cache, StreamReport} from '@berry/core';
-import {LightReport}                                                                 from '@berry/core';
-import {scriptUtils, structUtils}                                                    from '@berry/core';
-import {miscUtils}                                                                   from '@berry/core';
-import {PortablePath}                                                                from '@berry/fslib';
-import {Command, UsageError}                                                                  from 'clipanion';
-import {Readable, Writable}                                                          from 'stream';
-import {inspect}                                                                     from 'util';
+import {LightReport}                                                                                 from '@berry/core';
+import {scriptUtils, structUtils}                                                                    from '@berry/core';
+import {miscUtils}                                                                                   from '@berry/core';
+import {PortablePath}                                                                                from '@berry/fslib';
+import {Command, UsageError}                                                                         from 'clipanion';
+import {Writable}                                                                                    from 'stream';
+import {inspect}                                                                                     from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends Command<CommandContext> {

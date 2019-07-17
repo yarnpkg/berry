@@ -1,11 +1,9 @@
-import {WorkspaceRequiredError}                                                     from '@berry/cli';
+import {WorkspaceRequiredError}                                                                     from '@berry/cli';
 import {AllDependencies, Cache, CommandContext, Configuration, IdentHash, LightReport, Manifest}    from '@berry/core';
-import {MessageName, PluginConfiguration, Project, StreamReport, WorkspaceResolver} from '@berry/core';
-import {Workspace, structUtils}                                                     from '@berry/core';
-import {PortablePath}                                                               from '@berry/fslib';
-import {Command, UsageError}                                                                 from 'clipanion';
-import semver                                                                       from 'semver';
-import {Writable}                                                                   from 'stream';
+import {MessageName, Project, StreamReport, WorkspaceResolver}                                      from '@berry/core';
+import {Workspace, structUtils}                                                                     from '@berry/core';
+import {Command, UsageError}                                                                        from 'clipanion';
+import semver                                                                                       from 'semver';
 
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
 const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
