@@ -31,8 +31,16 @@ const LinkIcon = styled.img`
   border-style: none;
 `;
 
-export const Link = ({ site, url, display, Tag = 'a' }) => {
-  const LinkBox = styled(Tag)`
+const LinkBox = styled.span`
+  a:hover {
+    color: #0a4a67;
+    text-decoration: underline;
+  }
+`;
+
+export const Link = ({ site, url, display, tag = 'a' }) => {
+
+  const LinkElement = styled(tag)`
     display: flex;
     align-items: center;
     color: #666666;
@@ -47,9 +55,11 @@ export const Link = ({ site, url, display, Tag = 'a' }) => {
   `;
 
   return (
-    <LinkBox href={url}>
-      <LinkIcon src={images[site]} alt="" />
-      {display}
+    <LinkBox>
+      <LinkElement href={url}>
+        <LinkIcon src={images[site]} alt="" />
+        {display}
+      </LinkElement>
     </LinkBox>
   );
 }
@@ -86,7 +96,7 @@ const Links = ({ name, homepage, repository, className }) => (
           </a>
         </Copyable>
       }
-      Tag="div"
+      tag="div"
     />
     {homepage ? (
       <Link

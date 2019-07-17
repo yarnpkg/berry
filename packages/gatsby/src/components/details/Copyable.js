@@ -7,7 +7,7 @@ import IcoCopySuccess            from '../../images/detail/ico-copy-success.svg'
 const images = {
   default: IcoCopyDefault,
   success: IcoCopySuccess
-};
+}
 
 const Button = styled.button`
   -webkit-user-select: none;
@@ -51,6 +51,10 @@ const CopyableContent = styled.div`
 
   a {
     color: #666666;
+    &:hover {
+      color: #0a4a67;
+      text-decoration: underline;
+    }
   }
 
   .text-hide {
