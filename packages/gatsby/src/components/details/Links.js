@@ -1,27 +1,58 @@
-import React from 'react';
+import React                             from 'react';
+import styled                            from '@emotion/styled';
 
 import { encode, isKnownRepositoryHost } from '../util';
-import Copyable from './Copyable';
+import Copyable                          from './Copyable';
+
+import IcoHome                           from '../../images/search/ico-home.svg';
+import IcoNpm                            from '../../images/search/ico-npm.svg';
+import IcoGithub                         from '../../images/search/ico-github.svg';
+import IcoYarn                           from '../../images/search/ico-yarn.svg';
+import IcoGitlab                         from '../../images/search/ico-gitlab.svg';
+import IcoBitbucket                      from '../../images/search/ico-bitbucket.svg';
+import IcoGit                            from '../../images/search/ico-git.svg';
 
 const images = {
-  homepage: '/assets/search/ico-home.svg',
-  npm: '/assets/search/ico-npm.svg',
-  github: '/assets/search/ico-github.svg',
-  yarn: '/assets/search/ico-yarn.svg',
-  gitlab: '/assets/search/ico-gitlab.svg',
-  bitbucket: '/assets/search/ico-bitbucket.svg',
-  generic_repo: '/assets/search/ico-git.svg',
+  homepage: IcoHome,
+  npm: IcoNpm,
+  github: IcoGithub,
+  yarn: IcoYarn,
+  gitlab: IcoGitlab,
+  bitbucket: IcoBitbucket,
+  generic_repo: IcoGit
 };
 
-export const Link = ({ site, url, display, Tag = 'a' }) => (
-  <Tag
-    href={url}
-    className={`details-links--link details-links--link__${site}`}
-  >
-    <img src={images[site]} alt="" />
-    {display}
-  </Tag>
-);
+const LinkIcon = styled.img`
+  margin-right: 0.2em;
+  height: 1em;
+  width: 2em;
+  opacity: 0.5;
+  vertical-align: middle;
+  border-style: none;
+`;
+
+export const Link = ({ site, url, display, Tag = 'a' }) => {
+  const LinkBox = styled(Tag)`
+    display: flex;
+    align-items: center;
+    color: #666666;
+    padding: 0.5em 1em;
+    margin: 0.2em;
+    border-radius: 0.2em;
+    border: 1px solid #cbcbcb;
+    font-size: 1em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  `;
+
+  return (
+    <LinkBox href={url}>
+      <LinkIcon src={images[site]} alt="" />
+      {display}
+    </LinkBox>
+  );
+}
 
 const RepositoryLink = ({ repository }) => {
   const { host, user, path, project } = repository;

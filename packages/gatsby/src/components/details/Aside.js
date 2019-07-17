@@ -20,6 +20,10 @@ const AsideContainer = styled.aside`
   padding: 0 15px;
 `;
 
+const DetailsLinks = styled.article`
+  margin-bottom: 2em;
+`;
+
 const Aside = ({
   name,
   homepage,
@@ -41,9 +45,9 @@ const Aside = ({
   jsDelivrHits,
 }) => (
   <AsideContainer>
-    <article className="details-side--links">
+    <DetailsLinks>
       <Links name={name} homepage={homepage} repository={repository} />
-    </article>
+    </DetailsLinks>
     <Install name={name} onOpenFileBrowser={onOpenFileBrowser} />
     <Cdn name={name} version={version} />
     <Popularity
