@@ -1,4 +1,5 @@
 import {PortablePath}                            from '@berry/fslib';
+import {CommandClass}                            from 'clipanion';
 import {Writable, Readable}                      from 'stream';
 
 import {SettingsDefinition, PluginConfiguration} from './Configuration';
@@ -9,6 +10,15 @@ import {Resolver}                                from './Resolver';
 import {Locator}                                 from './types';
 
 type ProcessEnvironment = {[key: string]: string};
+
+export type CommandContext = {
+  cwd: PortablePath;
+  plugins: PluginConfiguration;
+  quiet: boolean;
+  stdin: Readable;
+  stdout: Writable;
+  stderr: Writable;
+};
 
 export interface FetcherPlugin {
   new(): Fetcher;
@@ -56,7 +66,7 @@ export type Hooks = {
 
 export type Plugin = {
   configuration?: {[key: string]: SettingsDefinition},
-  commands?: Array<(clipanion: any, pluginConfiguration: PluginConfiguration) => any>,
+  commands?: Array<CommandClass<CommandContext>>,
   fetchers?: Array<FetcherPlugin>,
   linkers?: Array<LinkerPlugin>,
   resolvers?: Array<ResolverPlugin>,

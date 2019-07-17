@@ -1,42 +1,46 @@
 import {WorkspaceRequiredError}                                         from '@berry/cli';
-import {Configuration, Cache, Descriptor, PluginConfiguration, Project} from '@berry/core';
+import {CommandContext, Configuration, Cache, Descriptor, PluginConfiguration, Project} from '@berry/core';
 import {StreamReport, Workspace}                                        from '@berry/core';
 import {structUtils}                                                    from '@berry/core';
 import {PortablePath}                                                   from '@berry/fslib';
+import {Command} from 'clipanion';
 import {Writable}                                                       from 'stream';
 
 import * as suggestUtils                                                from '../suggestUtils';
 import {Hooks}                                                          from '..';
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class RemoveCommand extends Command<CommandContext> {
+  @Command.Boolean(`-A,--all`)
+  all: boolean = false;
 
-  .command(`remove [... names] [-A,--all]`)
-  .describe(`remove dependencies from the project`)
+  @Command.Rest()
+  names: Array<string> = [];
 
-  .detail(`
-    This command will remove the specified packages from the current workspace. If the \`-A,--all\` option is set, the operation will be applied to all workspaces from the current project.
-  `)
+  static usage = Command.Usage({
+    description: `remove dependencies from the project`,
+    details: `
+      This command will remove the specified packages from the current workspace. If the \`-A,--all\` option is set, the operation will be applied to all workspaces from the current project.
+    `,
+    examples: [[
+      `Remove a dependency from the current project`,
+      `yarn remove lodash`,
+    ], [
+      `Remove a dependency from all workspaces at once`,
+      `yarn remove lodash --all`,
+    ]],
+  });
 
-  .example(
-    `Remove a dependency from the current project`,
-    `yarn remove lodash`,
-  )
-
-  .example(
-    `Remove a dependency from all workspaces at once`,
-    `yarn remove lodash --all`,
-  )
-
-  .action(async ({cwd, stdout, names, all}: {cwd: PortablePath, stdout: Writable, names: Array<string>, all: boolean}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-    const {project, workspace} = await Project.find(configuration, cwd);
+  @Command.Path(`remove`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(cwd);
+      throw new WorkspaceRequiredError(this.context.cwd);
 
-    const affectedWorkspaces = all
+    const affectedWorkspaces = this.all
       ? project.workspaces
       : [workspace];
 
@@ -55,7 +59,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     ]> = [];
 
     for (const workspace of affectedWorkspaces) {
-      for (const entry of names) {
+      for (const entry of this.names) {
         const ident = structUtils.parseIdent(entry);
 
         for (const target of targets) {
@@ -82,10 +86,14 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         afterWorkspaceDependencyRemovalList,
       );
 
-      const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
+      const report = await StreamReport.start({
+        configuration,
+        stdout: this.context.stdout,
+      }, async (report: StreamReport) => {
         await project.install({cache, report});
       });
 
       return report.exitCode();
     }
-  });
+  }
+}

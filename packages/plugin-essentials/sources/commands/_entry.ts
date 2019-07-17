@@ -1,33 +1,30 @@
+import {CommandContext} from '@berry/core';
 import {NodeFS, ppath} from '@berry/fslib';
+import {Command}       from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any) => clipanion
+export default class EntryCommand extends Command<CommandContext> {
+  @Command.Proxy()
+  args: Array<string> = [];
 
-  .command(`entry [... args]`)
-  .describe(`select whether to use install or run`)
-  .flags({proxyArguments: true, defaultCommand: true, hiddenCommand: true})
-
-  .action(async ({cwd, version, args, stdout, ...env}: any) => {
+  async execute() {
     // berry --version
-    if (args.length === 1 && (args[0] === `--version` || args[0] === `-v`)) {
+    if (this.args.length === 1 && (this.args[0] === `--version` || this.args[0] === `-v`)) {
       // Injected via webpack DefinePlugin
-      stdout.write(`v${BERRY_VERSION}\n`);
-
-    // berry --help
-    } else if (args.length === 1 && (args[0] === `--help` || args[0] === `-h`)) {
-      clipanion.usage(env.argv0, {stream: stdout});
+      this.context.stdout.write(`v${BERRY_VERSION}\n`);
 
     // berry --frozen-lockfile
-    } else if (args.length === 0 || args[0].charAt(0) === `-`) {
-      return await clipanion.run(null, [`install`, ...args], {cwd, stdout, ...env});
+    } else if (this.args.length === 0 || this.args[0].charAt(0) === `-`) {
+      return await this.cli.run([`install`, ...this.args]);
 
     // berry ~/projects/foo install
-    } else if (args.length !== 0 && args[0].match(/[\\\/]/)) {
-      const newCwd = ppath.resolve(cwd, NodeFS.toPortablePath(args[0]));
-      return await clipanion.run(null, args.slice(1), {cwd: newCwd, stdout, ...env});
+    } else if (this.args.length !== 0 && this.args[0].match(/[\\\/]/)) {
+      const newCwd = ppath.resolve(this.context.cwd, NodeFS.toPortablePath(this.args[0]));
+      return await this.cli.run(this.args.slice(1), {cwd: newCwd});
 
     // berry start
     } else {
-      return await clipanion.run(null, [`run`, ...args], {cwd, stdout, ...env});
+      return await this.cli.run([`run`, ...this.args]);
     }
-  });
+  }
+}

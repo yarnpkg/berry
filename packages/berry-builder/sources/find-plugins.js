@@ -1,6 +1,6 @@
 const {UsageError} = require(`clipanion`);
 
-module.exports = function ({basedir, profile, plugin}) {
+module.exports = function ({basedir, profile, plugins}) {
   const pkgJson = require(`${basedir}/package.json`);
 
   if (!pkgJson[`@berry/builder`] || !pkgJson[`@berry/builder`].bundles)
@@ -16,5 +16,5 @@ module.exports = function ({basedir, profile, plugin}) {
 
   return Array.from(new Set(profiles.reduce((acc, profile) => {
     return acc.concat(pkgJson[`@berry/builder`].bundles[profile]);
-  }, plugin)));
+  }, plugins)));
 };

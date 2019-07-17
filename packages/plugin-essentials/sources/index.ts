@@ -7,7 +7,6 @@ import bin                                from './commands/bin';
 import cleanCache                         from './commands/cache/clean';
 import setConfig                          from './commands/config/set';
 import config                             from './commands/config';
-import help                               from './commands/help';
 import install                            from './commands/install';
 import link                               from './commands/link';
 import node                               from './commands/node';
@@ -63,7 +62,6 @@ const plugin: Plugin = {
     add,
     bin,
     config,
-    help,
     install,
     link,
     node,

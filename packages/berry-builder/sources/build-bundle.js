@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const {clipanion} = require(`clipanion`);
+const {Cli, Command} = require(`clipanion`);
 const path = require(`path`);
 const webpack = require(`webpack`);
 
@@ -14,16 +14,15 @@ const pkgJsonVersion = () => {
   return JSON.stringify(pkgJson["version"]);
 }
 
-clipanion
-  .command(`[-w,--watch] [--profile TYPE] [--plugin PLUGIN ...]`)
-  .action(async ({watch, profile, plugin, stdout, stderr}) => {
-    const plugins = findPlugins({basedir, profile, plugin});
+class BuildBundleCommand extends Command {
+  async execute() {
+    const plugins = findPlugins({basedir, profile: this.profile, plugins: this.plugins || []});
     const modules = Array.from(dynamicLibs).concat(plugins);
 
-    stdout.write(`The following plugins will be compiled in the final bundle:\n\n`);
+    this.context.stdout.write(`The following plugins will be compiled in the final bundle:\n\n`);
 
     for (const plugin of plugins)
-      stdout.write(`- ${plugin}\n`);
+      this.context.stdout.write(`- ${plugin}\n`);
 
     const compiler = webpack(makeConfig({
       context: basedir,
@@ -61,7 +60,7 @@ clipanion
       ],
     }));
 
-    if (!watch) {
+    if (!this.watch) {
       const buildErrors = await new Promise((resolve, reject) => {
         compiler.run((err, stats) => {
           if (err) {
@@ -75,12 +74,12 @@ clipanion
       });
 
       if (buildErrors) {
-        stdout.write(`\n`);
-        stderr.write(buildErrors);
-        stderr.write(`\n`);
+        this.context.stdout.write(`\n`);
+        this.context.stderr.write(buildErrors);
+        this.context.stderr.write(`\n`);
         return 1;
       } else {
-        stdout.write(`\nDone!\n`);
+        this.context.stdout.write(`\nDone!\n`);
         return 0;
       }
     } else {
@@ -94,19 +93,30 @@ clipanion
               erroredStats.push(stats.toString(`errors-only`));
 
           if (erroredStats.length === 0) {
-            stderr.write(String(`Build succeeded at ${new Date()}\n`));
+            this.context.stderr.write(String(`Build succeeded at ${new Date()}\n`));
           } else {
-            stderr.write(String(`Build failed at ${new Date()}\n`));
+            this.context.stderr.write(String(`Build failed at ${new Date()}\n`));
           }
 
           for (const stats of erroredStats) {
-            stderr.write(stats.toString(`errors-only`));
-            stderr.write(`\n`);
+            this.context.stderr.write(stats.toString(`errors-only`));
+            this.context.stderr.write(`\n`);
           }
         }
       });
     }
-  });
+  }
+};
 
-clipanion
-  .runExit(process.argv0, process.argv.slice(2));
+const cli = new Cli();
+
+Command.Boolean(`-w,--watch`)(BuildBundleCommand.prototype, `watch`);
+Command.String(`--profile`)(BuildBundleCommand.prototype, `profile`);
+Command.Array(`--plugin`)(BuildBundleCommand.prototype, `plugins`);
+
+cli.register(BuildBundleCommand);
+cli.runExit(process.argv.slice(2), {
+  stdin: process.stdin,
+  stdout: process.stdout,
+  stderr: process.stderr,
+});

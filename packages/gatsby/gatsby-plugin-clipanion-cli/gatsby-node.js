@@ -2,7 +2,7 @@ const {execFileSync}  = require(`child_process`);
 
 exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
   const {createNode} = actions;
-  const {commands} = JSON.parse(execFileSync(`node`, [opts.binary, `--clipanion-definitions`]));
+  const {commands} = JSON.parse(execFileSync(`node`, [opts.binary, `--clipanion=definitions`]));
 
   for (let t = 0; t < commands.length; ++t) {
     const command = commands[t];
