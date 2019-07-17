@@ -21,8 +21,7 @@ const Button = styled.button`
   color: #666666;
   white-space: nowrap;
   cursor: pointer;
-  padding: 0;
-  font-size: 16px;
+  font-size: 0.9em;
 
   &:focus {
     outline: none;
@@ -41,19 +40,33 @@ const Button = styled.button`
 
 const CopyableContent = styled.div`
   display: flex;
+  flex-grow: 1;
   font-size: 1em;
   color: #666666;
   whitespace: no-wrap;
   background-color: inherit;
+  line-height: 1.5;
   padding: 0;
   margin: 0;
-  width: calc(100% - 2.2em);
+
+  code {
+    padding: 0.2rem 0.4rem;
+  }
 
   a {
     color: #666666;
     &:hover {
       color: #0a4a67;
       text-decoration: underline;
+    }
+  }
+
+  button {
+    line-height: inherit;
+    vertical-align: middle;
+    &:hover {
+      color: #666666;
+      text-decoration: none;
     }
   }
 

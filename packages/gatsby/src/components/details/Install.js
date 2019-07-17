@@ -1,30 +1,77 @@
-import React, { Component } from 'react';
+import React    from 'react';
+import styled   from '@emotion/styled';
+
 import Copyable from './Copyable';
 
-export default class Install extends Component {
-  render() {
-    const { name, onOpenFileBrowser } = this.props;
-    return (
-      <article className="details-side--copy">
-        <h1>Use it</h1>
-        <Copyable pre="$ " tag="code">
-          yarn add {name}
-        </Copyable>
-        <div>
-          <a
-            className="details-side--runkit"
-            href={`https://runkit.com/npm/${name}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Try in RunKit
-          </a>
-          {' · '}
-          <button onClick={onOpenFileBrowser}>
-            Browse Files
-          </button>
-        </div>
-      </article>
-    );
+const UseBox = styled.article`
+  color: #117cad;
+
+  h1 {
+    color: #5a5a5a;
+    margin-top: 0;
+    margin-bottom: .5rem;
+    font-weight: 600;
+    font-size: 1.2em;
+    line-height: 1.1;
   }
-}
+
+  button {
+    background: none;
+    color: inherit;
+    border: none;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  button:hover, a:hover {
+    color: #0a4a67;
+    text-decoration: underline;
+  }
+`;
+
+const InstallCommand = styled.div`
+  display: flex;
+  width: 100%;
+  background-color: #eceeef;
+  padding: 1em;
+  margin: 0.5em 0 0.5em;
+
+  code {
+    line-height: 1.5;
+    flex-grow: 1;
+    background: none;
+    font-size: 90%;
+    color: #666666;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-size-adjust: 100%;
+  }
+`;
+
+const Install = ({ name, onOpenFileBrowser }) => (
+  <UseBox>
+    <h1>Use it</h1>
+    <InstallCommand>
+      <Copyable pre="$ " tag="code">
+        yarn add {name}
+      </Copyable>
+    </InstallCommand>
+    <div>
+      <a
+        href={`https://runkit.com/npm/${name}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Try in RunKit
+      </a>
+      {' · '}
+      <button onClick={onOpenFileBrowser}>
+        Browse Files
+      </button>
+    </div>
+  </UseBox>
+);
+
+export default Install;
