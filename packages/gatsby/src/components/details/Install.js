@@ -16,14 +16,6 @@ const InstallBox = styled.article`
     line-height: 1.1;
   }
 
-  button {
-    background: none;
-    color: inherit;
-    border: none;
-    font: inherit;
-    cursor: pointer;
-  }
-
   a:hover {
     color: #0a4a67;
     text-decoration: underline;
@@ -51,6 +43,20 @@ const InstallCommand = styled.div`
   }
 `;
 
+const BrowseFiles = styled.button`
+  background: none;
+  color: inherit;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    outline: none;
+    color: #0a4a67;
+    text-decoration: underline;
+  }
+`;
+
 const Install = ({ name, onOpenFileBrowser }) => (
   <InstallBox>
     <h1>Use it</h1>
@@ -68,9 +74,9 @@ const Install = ({ name, onOpenFileBrowser }) => (
         Try in RunKit
       </a>
       {' · '}
-      <button onClick={onOpenFileBrowser}>
+      <BrowseFiles onClick={onOpenFileBrowser}>
         Browse Files
-      </button>
+      </BrowseFiles>
     </div>
   </InstallBox>
 );

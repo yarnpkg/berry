@@ -33,6 +33,19 @@ const index = client.initIndex(algolia.indexName);
 
 const readmeErrorMessage = 'ERROR: No README data found!';
 
+const FileBrowserContainer = styled.div`
+  margin: 0 auto;
+  padding: 0 15px;
+  width: 1140px;
+  max-width: 100%;
+`;
+
+const FileBrowserColumn = styled.section`
+  float: left;
+  padding: 0 15px;
+  width: 66.6666666667%;
+`;
+
 const DiBox = styled.div`
   margin-bottom: 0.5em;
   width: 100%;
@@ -528,16 +541,16 @@ class Details extends Component {
 
   _renderFileBrowser() {
     return (
-      <div className="details row">
-        <section className="details-main col-lg-8">
+      <FileBrowserContainer>
+        <FileBrowserColumn>
           <FileBrowser
             objectID={this.props.objectID}
             version={this.state.version}
             onBackToDetails={this._closeFileBrowser}
           />
-        </section>
+        </FileBrowserColumn>
         {this._renderSidebar()}
-      </div>
+      </FileBrowserContainer>
     );
   }
 
