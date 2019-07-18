@@ -1,6 +1,7 @@
-import React from 'react';
+import React                          from 'react';
 import { Sparklines, SparklinesLine } from '@haroenv/react-sparklines';
-import { Di } from './';
+
+import { Di }                         from './';
 
 const Activity = ({
   graphData,
@@ -13,7 +14,7 @@ const Activity = ({
   }
 
   return (
-    <article className="details-side--activity">
+    <article>
       <h1>Activity</h1>
 
       {graphData && (

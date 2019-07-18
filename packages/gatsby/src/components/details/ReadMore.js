@@ -13,6 +13,9 @@ export const ReadMoreButton = styled.button`
   border: 1px solid #cbcbcb;
   background-color: transparent;
   cursor: pointer;
+  &:Focus {
+    outline: none;
+  }
 `;
 
 export const ReadMoreIcon = styled.img`

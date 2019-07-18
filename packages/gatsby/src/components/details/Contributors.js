@@ -1,20 +1,18 @@
-import React, { Component } from 'react';
-import { Owner } from '../hit';
+import React   from 'react';
 
-export default class Contributors extends Component {
-  render() {
-    const { contributors } = this.props;
-    return (
-      <article className="details-side--contributors">
-        <h1>Contributors</h1>
-        <ul className="list-unstyled m-2">
-          {contributors.map(contributor => (
-            <li className="mb-1" key={contributor.name}>
-              <Owner {...contributor} />
-            </li>
-          ))}
-        </ul>
-      </article>
-    );
-  }
-}
+import {Owner} from '../hit';
+
+const Contributors = ({ contributors }) => (
+  <article>
+    <h1>Contributors</h1>
+    <ul>
+      {contributors.map(contributor => (
+        <li key={contributor.name}>
+          <Owner {...contributor} />
+        </li>
+      ))}
+    </ul>
+  </article>
+);
+
+export default Contributors;

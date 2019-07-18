@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
-import { Di } from './';
-import { isKnownRepositoryHost } from '../util';
+import React                   from 'react';
+
+import {Di}                    from './';
+import {isKnownRepositoryHost} from '../util';
 
 const Stargazers = ({ stargazers, repository }) => {
   if (
@@ -65,7 +66,7 @@ const formatHits = (hits) => {
   return hits;
 };
 
-const JsDelivrHits = ({jsDelivrHits}) => (<Di
+const JsDelivrHits = ({ jsDelivrHits }) => (<Di
   icon="downloads"
   title="jsDelivr last 30 days"
   description={
@@ -75,38 +76,27 @@ const JsDelivrHits = ({jsDelivrHits}) => (<Di
   }
 />);
 
-class Popularity extends Component {
-  render() {
-    const {
-      name,
-      stargazers,
-      repository,
-      downloads,
-      humanDownloads,
-      dependents,
-      humanDependents,
-      jsDelivrHits
-    } = this.props;
-
-    if (downloads >= 0 || dependents >= 0 || stargazers >= 0 || jsDelivrHits >= 0) {
-      return (
-        <article className="details-side--popularity">
-          <h1>Popularity</h1>
-          <dl>
-            <Stargazers repository={repository} stargazers={stargazers} />
-            <Downloads downloads={downloads} humanDownloads={humanDownloads} />
-            <JsDelivrHits jsDelivrHits={jsDelivrHits} />
-            <Dependents
-              dependents={dependents}
-              humanDependents={humanDependents}
-              name={name}
-            />
-          </dl>
-        </article>
-      );
-    }
+const Popularity = ({ name, stargazers, repository,
+  downloads, humanDownloads, dependents, humanDependents, jsDelivrHits }) => {
+  if (downloads >= 0 || dependents >= 0 || stargazers >= 0 || jsDelivrHits >= 0) {
+    return (
+      <article>
+        <h1>Popularity</h1>
+        <dl>
+          <Stargazers repository={repository} stargazers={stargazers} />
+          <Downloads downloads={downloads} humanDownloads={humanDownloads} />
+          <JsDelivrHits jsDelivrHits={jsDelivrHits} />
+          <Dependents
+            dependents={dependents}
+            humanDependents={humanDependents}
+            name={name}
+          />
+        </dl>
+      </article>
+    );
+  } else {
     return null;
   }
-}
+};
 
 export default Popularity;
