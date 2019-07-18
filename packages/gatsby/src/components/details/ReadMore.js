@@ -3,7 +3,7 @@ import styled                               from '@emotion/styled';
 
 import IcoReadMore                          from '../../images/detail/ico-readmore.svg';
 
-const ReadMoreButton = styled.button`
+export const ReadMoreButton = styled.button`
   padding: 0.3em 0.8em;
   padding-right: 0;
   border-radius: 0.2em;
@@ -15,7 +15,7 @@ const ReadMoreButton = styled.button`
   cursor: pointer;
 `;
 
-const ReadMoreIcon = styled.img`
+export const ReadMoreIcon = styled.img`
   width: 0.8em;
   margin: 0 1em;
   vertical-align: middle;

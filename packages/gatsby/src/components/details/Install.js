@@ -3,8 +3,9 @@ import styled   from '@emotion/styled';
 
 import Copyable from './Copyable';
 
-const UseBox = styled.article`
+const InstallBox = styled.article`
   color: #117cad;
+  margin-bottom: 2em;
 
   h1 {
     color: #5a5a5a;
@@ -23,7 +24,7 @@ const UseBox = styled.article`
     cursor: pointer;
   }
 
-  button:hover, a:hover {
+  a:hover {
     color: #0a4a67;
     text-decoration: underline;
   }
@@ -51,7 +52,7 @@ const InstallCommand = styled.div`
 `;
 
 const Install = ({ name, onOpenFileBrowser }) => (
-  <UseBox>
+  <InstallBox>
     <h1>Use it</h1>
     <InstallCommand>
       <Copyable pre="$ " tag="code">
@@ -71,7 +72,7 @@ const Install = ({ name, onOpenFileBrowser }) => (
         Browse Files
       </button>
     </div>
-  </UseBox>
+  </InstallBox>
 );
 
 export default Install;

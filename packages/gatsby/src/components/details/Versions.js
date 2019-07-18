@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Di } from './';
+import { Di }               from './';
+
+import { ReadMoreButton, ReadMoreIcon } from './ReadMore';
+import IcoReadMore                      from '../../images/detail/ico-readmore.svg';
 
 const _localeVersion = pubDate =>
   new Date(pubDate).toLocaleDateString('en', {
@@ -46,18 +49,16 @@ export default class Versions extends Component {
           ))}
         </dl>
         {versionKeys.length > 3 && (
-          <button
+          <ReadMoreButton
             onClick={() => this._toggleShowMore()}
-            className="readMore--button"
           >
             {buttonText}
-            <img
-              src="/assets/detail/ico-readmore.svg"
+            <ReadMoreIcon
+              src={IcoReadMore}
               alt=""
-              className="readMore--icon"
               style={{ transform: isShowingMore ? 'rotate(180deg)' : '' }}
             />
-          </button>
+          </ReadMoreButton>
         )}
       </article>
     );

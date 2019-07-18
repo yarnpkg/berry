@@ -18,19 +18,80 @@ import { algolia }                     from '../config';
 
 import IcoReadme                       from '../../images/detail/ico-readme.svg';
 import IcoChangelog                    from '../../images/detail/ico-changelog.svg';
+import IcoCommits                      from '../../images/detail/ico-commits.svg';
+import IcoCommitsLast                  from '../../images/detail/ico-commits-last.svg';
+import IcoDependencies                 from '../../images/detail/ico-dependencies.svg';
+import IcoDependents                   from '../../images/detail/ico-dependents.svg';
+import IcoDevDependencies              from '../../images/detail/ico-devdependencies.svg';
+import IcoDownloadSize                 from '../../images/detail/ico-download-size.svg';
+import IcoDownloads                    from '../../images/detail/ico-downloads.svg';
+import IcoPackageJson                  from '../../images/detail/ico-package-json.svg';
+import IcoStargazers                   from '../../images/detail/ico-stargazers.svg';
 
 const client = algoliasearch(algolia.appId, algolia.apiKey);
 const index = client.initIndex(algolia.indexName);
 
 const readmeErrorMessage = 'ERROR: No README data found!';
 
+const DiBox = styled.div`
+  margin-bottom: 0.5em;
+  width: 100%;
+  display: flex;
+  font-size: 0.9rem;
+
+  dt {
+    details:focus, summary:focus {
+      outline: none;
+    }
+    font-weight: normal;
+    align-self: flex-end;
+    display: block;
+  }
+
+  span {
+    flex-grow: 1;
+    border-bottom: 1px dotted #666;
+    margin: 0 0.5em 5px 0.5em;
+  }
+
+  dd {
+    margin-left: 0;
+    font-weight: bold;
+    span {
+      margin: 0;
+      border: none;
+    }
+  }
+
+  img {
+    height: 1.4em;
+    width: 1.4em;
+    margin-right: 0.4em;
+    align-self: center;
+    vertical-align: middle;
+    border-style: none;
+  }
+`;
+
+const icons = {
+  commits: IcoCommits,
+  'commits-last': IcoCommitsLast,
+  dependencies: IcoDependencies,
+  dependents: IcoDependents,
+  devdependencies: IcoDevDependencies,
+  'download-size': IcoDownloadSize,
+  downloads: IcoDownloads,
+  'package-json': IcoPackageJson,
+  stargazers: IcoStargazers
+};
+
 export const Di = ({ icon, title, description }) => (
-  <div className="d-flex justify-items-between w-100">
-    {icon && <img src={`/assets/detail/ico-${icon}.svg`} alt="" />}
+  <DiBox>
+    {icon && <img src={icons[icon]} alt="" />}
     <dt>{title}</dt>
     <span className="dotted flex-grow" />
     <dd>{description}</dd>
-  </div>
+  </DiBox>
 );
 
 // function setHead({ name, description }) {

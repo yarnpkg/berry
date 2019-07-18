@@ -1,5 +1,18 @@
-import React, { Component } from 'react';
+import React  from 'react';
+import styled from '@emotion/styled';
+
 import { Di } from './';
+
+const CdnBox = styled.article`
+  h1 {
+    color: #5a5a5a;
+    margin-top: 0;
+    margin-bottom: .5rem;
+    font-weight: 600;
+    font-size: 1.2em;
+    line-height: 1.1;
+  }
+`;
 
 const JsDelivr = ({ name, version }) => (
   <Di
@@ -46,40 +59,32 @@ const BundleRun = ({ name, version }) => (
   />
 );
 
-class Cdn extends Component {
-  constructor(props) {
-    super(props);
+const Cdn = ({ name, version }) => {
+  const cdns = {
+    jsdelivr: JsDelivr,
+    unpkg: Unpkg,
+    bundlerun: BundleRun
+  };
 
-    this.cdns = {
-      jsdelivr: JsDelivr,
-      unpkg: Unpkg,
-      bundlerun: BundleRun,
-    };
+  const order = Object.keys(cdns).sort(() => Math.random() - 0.5);
 
-    this.order = Object.keys(this.cdns).sort(() => {
-      return Math.random() - 0.5;
-    });
-  }
-
-  render() {
-    const items = this.order.map(key => {
-      const Component = this.cdns[key];
-      return (
-        <Component
-          key={key}
-          name={this.props.name}
-          version={this.props.version}
-        />
-      );
-    });
-
+  const items = order.map(key => {
+    const Component = cdns[key];
     return (
-      <article className="details-side--cdns">
-        <h1>CDNs</h1>
-        <dl>{items}</dl>
-      </article>
+      <Component
+        key={key}
+        name={name}
+        version={version}
+      />
     );
-  }
-}
+  });
+
+  return (
+    <CdnBox>
+      <h1>CDNs</h1>
+      <dl>{items}</dl>
+    </CdnBox>
+  );
+};
 
 export default Cdn;
