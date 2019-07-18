@@ -1,7 +1,8 @@
 import {Descriptor, Plugin, SettingsType} from '@berry/core';
 import {Workspace}                        from '@berry/core';
 
-import entry                              from './commands/_entry';
+import installEntry                       from './commands/entries/install';
+import runEntry                           from './commands/entries/run';
 import add                                from './commands/add';
 import bin                                from './commands/bin';
 import cleanCache                         from './commands/cache/clean';
@@ -58,7 +59,8 @@ const plugin: Plugin = {
     setResolutionPolicy,
     setVersionPolicy,
     listWorkspaces,
-    entry,
+    installEntry,
+    runEntry,
     add,
     bin,
     config,

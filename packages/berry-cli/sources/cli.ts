@@ -7,6 +7,7 @@ import {pluginConfiguration}              from './pluginConfiguration';
 
 const cli = new Cli<CommandContext>({
   binaryName: `yarn`,
+  binaryVersion: BERRY_VERSION,
 });
 
 function runBinary(path: PortablePath) {
