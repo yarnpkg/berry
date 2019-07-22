@@ -74,7 +74,7 @@ const FilesHeader = styled.div`
 
   h2 {
     font-size: 32px;
-    font-weight: 500;
+    font-weight: 600;
     margin: 8px 0;
   }
 
@@ -93,6 +93,10 @@ const FilesHeader = styled.div`
       outline: none;
     }
   }
+`;
+
+const Alert = styled.div`
+  margin-top: -1.5rem;
 `;
 
 export default class FileBrowser extends React.PureComponent {
@@ -161,9 +165,9 @@ export default class FileBrowser extends React.PureComponent {
     }
     if (this.state.error) {
       return (
-        <div className="alert alert-danger" role="alert">
+        <Alert role="alert">
           {`Could not load file listing: ${this.state.error.message}`}
-        </div>
+        </Alert>
       );
     }
     return <div>Loading...</div>;
