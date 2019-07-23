@@ -92,9 +92,17 @@ const DiBox = styled.div`
   dd {
     margin-left: 0;
     font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-size-adjust: 100%;
     span {
       margin: 0;
       border: none;
+    }
+    a:hover {
+      color: #0a4a67;
+      text-decoration: underline;
     }
   }
 
