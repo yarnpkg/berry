@@ -5,6 +5,7 @@ import xss                                  from 'xss';
 import unescape                             from 'unescape-html';
 import { HIGHLIGHT_TAGS, connectHighlight } from 'react-instantsearch-dom';
 import styled                               from '@emotion/styled';
+import {withPrefix}                         from 'gatsby';
 
 import IcoTag                               from '../images/search/ico-tag.svg'
 
@@ -162,12 +163,12 @@ export const packageJSONLink = packageName => ({
 });
 
 export const packageLink = name =>
-  `/package${
+  `${withPrefix('/package')}${
     process.env.NODE_ENV === 'production' ? '/' : '?'
   }${name}`;
 
 export const searchLink = ({ query, keyword }) =>
-  `/?${query ? `q=${query}` : ''}${
+  `${withPrefix('/')}?${query ? `q=${query}` : ''}${
     keyword ? `&keywords%5B0%5D=${keyword}` : ''
   }`;
 

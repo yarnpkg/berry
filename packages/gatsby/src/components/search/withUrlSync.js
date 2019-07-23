@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import qs                 from 'qs';
+import {withPrefix}       from 'gatsby';
 
 const updateAfter = 700;
 const searchStateToQueryString = searchState => ({
@@ -17,7 +18,7 @@ const searchStateToQueryString = searchState => ({
 
 const searchStateToUrl = searchState =>
   searchState
-    ? `/?${qs.stringify(
+    ? `${withPrefix('/')}?${qs.stringify(
         searchStateToQueryString(searchState)
       )}`
     : '';
