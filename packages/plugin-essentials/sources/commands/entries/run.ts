@@ -13,7 +13,7 @@ export default class EntryCommand extends Command<CommandContext> {
   async execute() {
     if (this.leadingArgument.match(/[\\\/]/)) {
       const newCwd = ppath.resolve(this.context.cwd, NodeFS.toPortablePath(this.leadingArgument));
-      return await this.cli.run(this.args.slice(1), {cwd: newCwd});
+      return await this.cli.run(this.args, {cwd: newCwd});
     } else {
       return await this.cli.run([`run`, this.leadingArgument, ...this.args]);
     }
