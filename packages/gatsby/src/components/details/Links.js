@@ -41,7 +41,11 @@ const LinkBox = styled.span`
 export const Link = ({ site, url, display, tag = 'a' }) => {
 
   const LinkElement = styled(tag)`
-    display: flex;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-size-adjust: 100%;
     align-items: center;
     color: #666666;
     padding: 0.5em 1em;
@@ -57,7 +61,7 @@ export const Link = ({ site, url, display, tag = 'a' }) => {
   return (
     <LinkBox>
       <LinkElement href={url}>
-        <LinkIcon src={images[site]} alt="" />
+        {site && <LinkIcon src={images[site]} alt="" />}
         {display}
       </LinkElement>
     </LinkBox>
@@ -87,9 +91,9 @@ const RepositoryLink = ({ repository }) => {
 const Links = ({ name, homepage, repository }) => (
   <div>
     <Link
-      site="yarn"
       display={
         <Copyable>
+          <LinkIcon src={images['yarn']} alt="" />
           <a href={`https://yarn.pm/${name}`}>
             <span className="text-hide">https://</span>
             yarn.pm/{name}

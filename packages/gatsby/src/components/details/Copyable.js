@@ -107,6 +107,10 @@ const Copyable = ({ tag = 'div', pre, children }) => {
   const copyTextRef = useRef();
 
   const Content = styled(tag)`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-size-adjust: 100%;
     flex-grow: 1;
   `;
 
