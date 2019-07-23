@@ -10,10 +10,10 @@ export default class RunCommand extends Command<CommandContext> {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {workspace} = await Project.find(configuration, this.context.cwd);
-  
+
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
-  
+
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
@@ -25,8 +25,10 @@ export default class RunCommand extends Command<CommandContext> {
         colors: configuration.get(`enableColors`),
         maxArrayLength: 2,
       };
-  
-      const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
+
+      const maxKeyLength = keys.reduce((max, key) => {
+        return Math.max(max, key.length);
+      }, 0);
 
       for (const [key, value] of scripts.entries()) {
         report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(value, inspectConfig)}`);
@@ -36,4 +38,3 @@ export default class RunCommand extends Command<CommandContext> {
     return report.exitCode();
   }
 }
-  
