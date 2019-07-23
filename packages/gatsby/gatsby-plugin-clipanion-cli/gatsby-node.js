@@ -28,7 +28,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       `## Usage\n`,
       `\n`,
       `\`\`\`\n`,
-      `$> ${command.path} ${command.usage}\n`,
+      `$> ${command.usage}\n`,
       `\`\`\`\n`,
     ].join(``));
 
@@ -44,7 +44,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       sections.push([
         `## Examples\n`,
         `\n`,
-        ... command.examples.map(({description, example}) => [
+        ... command.examples.map(([description, example]) => [
           `${description}:\n`,
           `\`\`\`\n`,
           `${example}\n`,
