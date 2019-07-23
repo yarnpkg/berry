@@ -163,9 +163,7 @@ export const packageJSONLink = packageName => ({
 });
 
 export const packageLink = (name, prefix = true) =>
-  `${prefix ? withPrefix('/package/') : '/package/'}${
-    process.env.NODE_ENV === 'production' ? '/' : '?'
-  }${name}`;
+  `${prefix ? withPrefix('/package/') : '/package/'}?${name}`;
 
 export const prefixURL = (url, { base, user, project, head, path }) => {
   if (url.indexOf('//') > 0) {
