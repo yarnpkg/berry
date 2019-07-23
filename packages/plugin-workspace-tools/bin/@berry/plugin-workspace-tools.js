@@ -178,8 +178,8 @@ class WorkspacesForeachCommand extends clipanion_1.Command {
         if (!this.all && !cwdWorkspace)
             throw new cli_1.WorkspaceRequiredError(this.context.cwd);
         const command = this.cli.process([this.commandName, ...this.args]);
-        const scriptName = command.path.length === 1 && command.path[0] === `run` && command.args.length > 0
-            ? command.args[0]
+        const scriptName = command.path.length === 1 && command.path[0] === `run` && typeof command.scriptName !== `undefined`
+            ? command.scriptName
             : null;
         if (command.path.length === 0)
             throw new clipanion_1.UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);

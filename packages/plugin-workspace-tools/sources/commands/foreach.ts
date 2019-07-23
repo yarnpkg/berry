@@ -111,9 +111,9 @@ export default class WorkspacesForeachCommand extends Command<CommandContext> {
     if (!this.all && !cwdWorkspace)
       throw new WorkspaceRequiredError(this.context.cwd);
 
-    const command = this.cli.process([this.commandName, ...this.args]);
-    const scriptName = command.path.length === 1 && command.path[0] === `run` && (command as any).args.length > 0
-      ? (command as any).args[0]
+    const command = this.cli.process([this.commandName, ...this.args]) as {path: string[], scriptName?: string};
+    const scriptName = command.path.length === 1 && command.path[0] === `run` && typeof command.scriptName !== `undefined`
+      ? command.scriptName
       : null;
 
     if (command.path.length === 0)

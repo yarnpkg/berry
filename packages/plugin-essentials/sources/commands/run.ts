@@ -13,6 +13,9 @@ export default class RunCommand extends Command<CommandContext> {
   @Command.Boolean(`-T,--top-level`)
   topLevel: boolean = false;
 
+  @Command.String()
+  scriptName!: string;
+
   @Command.Proxy()
   args: Array<string> = [];
 
@@ -40,11 +43,6 @@ export default class RunCommand extends Command<CommandContext> {
 
   @Command.Path(`run`)
   async execute() {
-    // Print the list of available scripts if the command is executed without the parameters
-    if (this.args.length === 0)
-      return printRunListing(this.context.cwd, this.context.plugins, this.context.stdout)
-
-    const [name, ...rest] = this.args;
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace, locator} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
@@ -66,17 +64,17 @@ export default class RunCommand extends Command<CommandContext> {
     // First we check to see whether a script exist inside the current package
     // for the given name
 
-    if (await scriptUtils.hasPackageScript(effectiveLocator, name, {project}))
-      return await scriptUtils.executePackageScript(effectiveLocator, name, rest, {project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
+    if (await scriptUtils.hasPackageScript(effectiveLocator, this.scriptName, {project}))
+      return await scriptUtils.executePackageScript(effectiveLocator, this.scriptName, this.args, {project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
 
     // If we can't find it, we then check whether one of the dependencies of the
     // current package exports a binary with the requested name
 
     const binaries = await scriptUtils.getPackageAccessibleBinaries(effectiveLocator, {project});
-    const binary = binaries.get(name);
+    const binary = binaries.get(this.scriptName);
 
     if (binary)
-      return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, name, rest, {cwd: this.context.cwd, project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
+      return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, this.scriptName, this.args, {cwd: this.context.cwd, project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
 
     // When it fails, we try to check whether it's a global script (ie we look
     // into all the workspaces to find one that exports this script). We only do
@@ -86,9 +84,9 @@ export default class RunCommand extends Command<CommandContext> {
     // We also disable this logic for packages coming from third-parties (ie
     // not workspaces). Not particular reason except maybe security concerns.
 
-    if (!this.topLevel && workspace && name.includes(`:`)) {
+    if (!this.topLevel && workspace && this.scriptName.includes(`:`)) {
       let candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
-        return workspace.manifest.scripts.has(name) ? workspace : null;
+        return workspace.manifest.scripts.has(this.scriptName) ? workspace : null;
       }));
 
       let filteredWorkspaces = candidateWorkspaces.filter(workspace => {
@@ -96,42 +94,21 @@ export default class RunCommand extends Command<CommandContext> {
       }) as Array<Workspace>;
 
       if (filteredWorkspaces.length === 1) {
-        return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], name, rest, {stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
+        return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], this.scriptName, this.args, {stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
       }
     }
 
     if (this.topLevel) {
-      if (name === `node-gyp`) {
-        throw new UsageError(`Couldn't find a script name "${name}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}). This typically happens because some package depends on "node-gyp" to build itself, but didn't list it in their dependencies. To fix that, please run "yarn add node-gyp" into your top-level workspace. You also can open an issue on the repository of the specified package to suggest them to use an optional peer dependency.`);
+      if (this.scriptName === `node-gyp`) {
+        throw new UsageError(`Couldn't find a script name "${this.scriptName}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}). This typically happens because some package depends on "node-gyp" to build itself, but didn't list it in their dependencies. To fix that, please run "yarn add node-gyp" into your top-level workspace. You also can open an issue on the repository of the specified package to suggest them to use an optional peer dependency.`);
       } else {
-        throw new UsageError(`Couldn't find a script name "${name}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}).`);
+        throw new UsageError(`Couldn't find a script name "${this.scriptName}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}).`);
       }
     } else {
-      throw new UsageError(`Couldn't find a script named "${name}".`);
+      throw new UsageError(`Couldn't find a script named "${this.scriptName}".`);
     }
   }
 }
 
 async function printRunListing(cwd: PortablePath, pluginConfiguration: PluginConfiguration, stdout: Writable) {
-  const configuration = await Configuration.find(cwd, pluginConfiguration);
-  const {workspace} = await Project.find(configuration, cwd);
-
-  if (!workspace)
-    throw new WorkspaceRequiredError(cwd);
-
-  const report = await StreamReport.start({configuration, stdout}, async report => {
-    const scripts = workspace!.manifest.scripts
-    const keys = miscUtils.sortMap(scripts.keys(), key => key);
-    const inspectConfig = {
-      breakLength: Infinity,
-      colors: configuration.get(`enableColors`),
-      maxArrayLength: 2,
-    };
-
-    const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
-    scripts.forEach((value: string, key: string) => {
-      report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(value, inspectConfig)}`);
-    });
-  });
-  return report.exitCode();
 }

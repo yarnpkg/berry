@@ -16,6 +16,7 @@ import node                               from './commands/node';
 import pluginDl                           from './commands/plugin/dl';
 import pluginList                         from './commands/plugin/list';
 import remove                             from './commands/remove';
+import runIndex                           from './commands/runIndex';
 import run                                from './commands/run';
 import setResolutionPolicy                from './commands/set/resolution';
 import setVersionPolicy                   from './commands/set/version';
@@ -74,6 +75,7 @@ const plugin: Plugin = {
     pluginDl,
     pluginList,
     remove,
+    runIndex,
     run,
     up,
     why,
