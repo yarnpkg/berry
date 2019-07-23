@@ -61,8 +61,6 @@ export default App =>
     onSearchStateChange = searchState => {
       clearTimeout(this.debouncedSetState);
 
-      console.log(window.location.pathname, this.originalPathName, searchState.query);
-
       if (searchState.query === '') {
         window.history.pushState(
           null,

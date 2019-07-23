@@ -33,11 +33,33 @@ const index = client.initIndex(algolia.indexName);
 
 const readmeErrorMessage = 'ERROR: No README data found!';
 
-const FileBrowserContainer = styled.div`
+const Container = styled.div`
   margin: 0 auto;
   padding: 0 15px;
   width: 1140px;
   max-width: 100%;
+`;
+
+const InvalidPackage = styled(Container)`
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  color: #5a5a5a;
+
+  p, h2 {
+    margin: .5rem .5rem;
+    text-align: center;
+  }
+
+  section {
+    background-color: #eceeef;
+    padding: 1em;
+  }
+`;
+
+const Instructions = styled.div`
+  text-align: left;
+  margin: 0 auto;
 `;
 
 const FileBrowserColumn = styled.section`
@@ -269,7 +291,6 @@ class Details extends Component {
           url: changelogFilename,
           type: 'text',
         }).then(res => {
-          console.log('res:', res);
           this.setState({ changelog: res })
         });
       }
@@ -451,19 +472,19 @@ class Details extends Component {
 
   _renderInvalidPackage() {
     return (
-      <section className="text-center d-flex flex-column">
-        <h2 className="details-main--title d-inline-block m-2">
+      <InvalidPackage>
+        <h2>
           {`Whoa, ${this.props.objectID} does not exist yet`}
         </h2>
         <p>But that means it is now yours!</p>
-        <div className="text-left mx-auto">
+        <Instructions>
           <Copyable pre="$ ">mkdir {this.props.objectID}</Copyable>
           <Copyable pre="$ ">cd {this.props.objectID}</Copyable>
           <Copyable pre="$ ">yarn init</Copyable>
-          <p className="text-center">Make your package</p>
+          <p>Make your package</p>
           <Copyable pre="$ ">yarn publish</Copyable>
-        </div>
-      </section>
+        </Instructions>
+      </InvalidPackage>
     );
   }
 
@@ -541,7 +562,7 @@ class Details extends Component {
 
   _renderFileBrowser() {
     return (
-      <FileBrowserContainer>
+      <Container>
         <FileBrowserColumn>
           <FileBrowser
             objectID={this.props.objectID}
@@ -550,7 +571,7 @@ class Details extends Component {
           />
         </FileBrowserColumn>
         {this._renderSidebar()}
-      </FileBrowserContainer>
+      </Container>
     );
   }
 

@@ -38,16 +38,14 @@ const Button = styled.button`
   }
 `;
 
-const CopyableContent = styled.div`
+const CopyableContent = styled.section`
   display: flex;
-  flex-grow: 1;
+  width: 100%;
+  margin: 8px 0;
   font-size: 1em;
   color: #666666;
   whitespace: no-wrap;
-  background-color: inherit;
   line-height: 1.5;
-  padding: 0;
-  margin: 0;
 
   code {
     padding: 0.2rem 0.4rem;
