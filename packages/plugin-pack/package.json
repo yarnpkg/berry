@@ -7,6 +7,7 @@
     "@berry/core": "workspace:0.0.6",
     "@berry/fslib": "workspace:0.0.8",
     "@types/tar-stream": "1.6.0",
+    "clipanion": "2.0.0-rc.16",
     "micromatch": "^4.0.2",
     "tar-stream": "^2.0.1"
   }

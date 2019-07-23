@@ -1,61 +1,64 @@
-import {openWorkspace}                     from '@berry/cli';
-import {Configuration, MessageName}        from '@berry/core';
-import {PluginConfiguration, StreamReport} from '@berry/core';
-import {PortablePath}                      from '@berry/fslib';
-import {npmConfigUtils, npmHttpUtils}      from '@berry/plugin-npm';
-import inquirer                            from 'inquirer';
-import {Readable, Writable}                from 'stream';
+import {openWorkspace}                                     from '@berry/cli';
+import {CommandContext, Configuration, MessageName}        from '@berry/core';
+import {StreamReport}                                      from '@berry/core';
+import {npmConfigUtils, npmHttpUtils}                      from '@berry/plugin-npm';
+import {Command}                                           from 'clipanion';
+import inquirer                                            from 'inquirer';
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class NpmLoginCommand extends Command<CommandContext> {
+  @Command.String(`-s,--scope`)
+  scope?: string;
 
-  .command(`npm login [-s,--scope SCOPE] [--publish]`)
-  .categorize(`Npm-related commands`)
-  .describe(`store new login info to access the npm registry`)
+  @Command.Boolean(`--publish`)
+  publish: boolean = false;
 
-  .detail(`
-    This command will ask you for your username, password, and 2FA One-Time-Password (when it applies). It will then modify your local configuration (in your home folder, never in the project itself) to reference the new tokens thus generated.
+  static usage = Command.Usage({
+    category: `Npm-related commands`,
+    description: `store new login info to access the npm registry`,
+    details: `
+      This command will ask you for your username, password, and 2FA One-Time-Password (when it applies). It will then modify your local configuration (in your home folder, never in the project itself) to reference the new tokens thus generated.
 
-    Adding the \`-s,--scope\` flag will cause the authentication to be done against whatever registry is configured for the associated scope (see also \`npmScopes\`).
+      Adding the \`-s,--scope\` flag will cause the authentication to be done against whatever registry is configured for the associated scope (see also \`npmScopes\`).
 
-    Adding the \`--publish\` flag will cause the authentication to be done against the registry used when publishing the package (see also \`publishConfig.registry\` and \`npmPublishRegistry\`).
-  `)
+      Adding the \`--publish\` flag will cause the authentication to be done against the registry used when publishing the package (see also \`publishConfig.registry\` and \`npmPublishRegistry\`).
+    `,
+    examples: [[
+      `Login to the default registry`,
+      `yarn npm login`,
+    ], [
+      `Login to the registry linked to the @my-scope registry`,
+      `yarn npm login --scope my-scope`,
+    ], [
+      `Login to the publish registry for the current package`,
+      `yarn npm login --publish`,
+    ]],
+  });
 
-  .example(
-    `Login to the default registry`,
-    `yarn npm login`,
-  )
-
-  .example(
-    `Login to the registry linked to the @my-scope registry`,
-    `yarn npm login --scope my-scope`,
-  )
-
-  .example(
-    `Login to the publish registry for the current package`,
-    `yarn npm login --publish`,
-  )
-
-  .action(async ({cwd, stdin, stdout, scope, publish}: {cwd: PortablePath, stdin: Readable, stdout: Writable, scope: string, publish: boolean}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
+  @Command.Path(`npm`, `login`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
     // @ts-ignore
     const prompt = inquirer.createPromptModule({
-      input: stdin,
-      output: stdout,
+      input: this.context.stdin,
+      output: this.context.stdout,
     });
 
     let registry: string;
-    if (scope && publish)
-      registry = npmConfigUtils.getScopeRegistry(scope, {configuration, type: npmConfigUtils.RegistryType.PUBLISH_REGISTRY});
-    else if (scope)
-      registry = npmConfigUtils.getScopeRegistry(scope, {configuration});
-    else if (publish)
-      registry = npmConfigUtils.getPublishRegistry((await openWorkspace(configuration, cwd)).manifest, {configuration});
+    if (this.scope && this.publish)
+      registry = npmConfigUtils.getScopeRegistry(this.scope, {configuration, type: npmConfigUtils.RegistryType.PUBLISH_REGISTRY});
+    else if (this.scope)
+      registry = npmConfigUtils.getScopeRegistry(this.scope, {configuration});
+    else if (this.publish)
+      registry = npmConfigUtils.getPublishRegistry((await openWorkspace(configuration, this.context.cwd)).manifest, {configuration});
     else
       registry = npmConfigUtils.getDefaultRegistry({configuration});
 
-    const report = await StreamReport.start({configuration, stdout}, async report => {
+    const report = await StreamReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async report => {
       const credentials = await getCredentials(prompt);
       const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
 
@@ -77,7 +80,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     });
 
     return report.exitCode();
-  });
+  }
+}
 
 async function setAuthToken(registry: string, npmAuthToken: string, {configuration}: {configuration: Configuration}) {
   return await Configuration.updateHomeConfiguration({

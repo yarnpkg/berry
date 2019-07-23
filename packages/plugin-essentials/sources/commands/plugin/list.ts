@@ -1,30 +1,29 @@
-import {Configuration, PluginConfiguration, StreamReport}              from '@berry/core';
-import {PortablePath}                                                  from '@berry/fslib';
-import {Clipanion}                                                     from 'clipanion';
-import {Writable}                                                      from 'stream';
+import {CommandContext, Configuration, StreamReport}                                   from '@berry/core';
+import {Command}                                                                       from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) => clipanion
+export default class PluginListCommand extends Command<CommandContext> {
+  static usage = Command.Usage({
+    description: `list the active plugins`,
+    details: `
+      This command prints the currently active plugins. Will be displayed both builtin plugins and external plugins.
+    `,
+    examples: [[
+      `List the currently active plugins`,
+      `yarn plugin list`,
+    ]],
+  });
 
-  .command(`plugin list`)
-  .alias(`plugins list`)
-  .describe(`list the active plugins`)
+  @Command.Path(`plugin`, `list`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
-  .detail(`
-    This command prints the currently active plugins. Will be displayed both builtin plugins and external plugins.
-  `)
-
-  .example(
-    `List the currently active plugins`,
-    `yarn plugin list`,
-  )
-
-  .action(async ({cwd, stdout}: {cwd: PortablePath, stdout: Writable}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-
-    const report = await StreamReport.start({configuration, stdout}, async report => {
+    const report = await StreamReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async report => {
       for (const name of configuration.plugins.keys()) {
-        if (pluginConfiguration.plugins.has(name)) {
+        if (this.context.plugins.plugins.has(name)) {
           report.reportInfo(null, `${name} [builtin]`);
         } else {
           report.reportInfo(null, `${name}`);
@@ -33,4 +32,5 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
     });
 
     return report.exitCode();
-  });
+  }
+}

@@ -1,15 +1,21 @@
-import {Configuration, PluginConfiguration} from '@berry/core';
-import {PortablePath}                       from '@berry/fslib';
-import {UsageError}                         from 'clipanion';
+import {CommandContext, Configuration}      from '@berry/core';
+import {Command, UsageError}                from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class ConfigSetCommand extends Command<CommandContext> {
+  @Command.String()
+  name!: string;
 
-  .command(`config set <name> <value>`)
-  .describe(`change a configuration settings`)
+  @Command.String()
+  value!: string;
 
-  .action(async ({cwd, name, value}: {cwd: PortablePath, name: string, value: string}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
+  static usage = Command.Usage({
+    description: `change a configuration settings`,
+  });
+
+  @Command.Path(`config`, `set`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     if (!configuration.projectCwd)
       throw new UsageError(`This command must be run from within a project folder`);
 
@@ -18,6 +24,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       throw new UsageError(`Couldn't find a configuration settings named "${name}"`);
 
     await Configuration.updateConfiguration(configuration.projectCwd, {
-      [name]: value,
+      [this.name]: this.value,
     });
-  });
+  }
+}

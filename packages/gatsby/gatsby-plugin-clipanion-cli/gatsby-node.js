@@ -2,17 +2,19 @@ const {execFileSync}  = require(`child_process`);
 
 exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
   const {createNode} = actions;
-  const {commands} = JSON.parse(execFileSync(`node`, [opts.binary, `--clipanion-definitions`]));
+  const {commands} = JSON.parse(execFileSync(`node`, [opts.binary, `--clipanion=definitions`]));
 
   for (let t = 0; t < commands.length; ++t) {
     const command = commands[t];
     const sections = [];
 
+    const url = command.path.split(` `).slice(1).join(`/`);
+
     sections.push([
       `---\n`,
       `category: cli\n`,
-      `path: /cli/${command.path.join(`/`)}\n`,
-      `title: "\`${opts.argv0} ${command.path.join(` `)}\`"\n`,
+      `path: /cli/${url}\n`,
+      `title: "\`${command.path}\`"\n`,
       `---\n`,
     ].join(``));
 
@@ -26,7 +28,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       `## Usage\n`,
       `\n`,
       `\`\`\`\n`,
-      `$> ${[opts.argv0].concat(command.path).join(` `)} ${command.usage}\n`,
+      `$> ${command.usage}\n`,
       `\`\`\`\n`,
     ].join(``));
 
@@ -38,11 +40,11 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       ].join(``));
     }
 
-    if (command.examples.length > 0) {
+    if (command.examples && command.examples.length > 0) {
       sections.push([
         `## Examples\n`,
         `\n`,
-        ... command.examples.map(({description, example}) => [
+        ... command.examples.map(([description, example]) => [
           `${description}:\n`,
           `\`\`\`\n`,
           `${example}\n`,

@@ -1,32 +1,39 @@
-import {Configuration, MessageName, PluginConfiguration, SettingsType, StreamReport} from '@berry/core';
-import {miscUtils}                                                                   from '@berry/core';
-import {PortablePath}                                                                from '@berry/fslib';
-import {Writable}                                                                    from 'stream';
-import {inspect}                                                                     from 'util';
+import {CommandContext, Configuration, MessageName, SettingsType, StreamReport}                      from '@berry/core';
+import {miscUtils}                                                                                   from '@berry/core';
+import {Command}                                                                                     from 'clipanion';
+import {inspect}                                                                                     from 'util';
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class ConfigCommand extends Command<CommandContext> {
+  @Command.Boolean(`-v,--verbose`)
+  verbose: boolean = false;
 
-  .command(`config [-v,--verbose] [--why] [--json]`)
-  .describe(`display the current configuration`)
+  @Command.Boolean(`--why`)
+  why: boolean = false;
 
-  .detail(`
-    This command prints the current active configuration settings.
+  @Command.Boolean(`--json`)
+  json: boolean = false;
 
-    When used together with the \`-v,--verbose\` option, the output will contain the settings description on top of the regular key/value information.
+  static usage = Command.Usage({
+    description: `display the current configuration`,
+    details: `
+      This command prints the current active configuration settings.
 
-    When used together with the \`--why\` flag, the output will also contain the reason why a settings is set a particular way.
+      When used together with the \`-v,--verbose\` option, the output will contain the settings description on top of the regular key/value information.
 
-    Note that the paths settings will be normalized - especially on Windows. It means that paths such as \`C:\\project\` will be transparently shown as \`/mnt/c/project\`.
-  `)
+      When used together with the \`--why\` flag, the output will also contain the reason why a settings is set a particular way.
 
-  .example(
-    `Print the active configuration settings`,
-    `yarn config`,
-  )
+      Note that the paths settings will be normalized - especially on Windows. It means that paths such as \`C:\\project\` will be transparently shown as \`/mnt/c/project\`.
+    `,
+    examples: [[
+      `Print the active configuration settings`,
+      `yarn config`,
+    ]],
+  });
 
-  .action(async ({cwd, stdout, verbose, why, json}: {cwd: PortablePath, stdout: Writable, verbose: boolean, why: boolean, json: boolean}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration, {
+  @Command.Path(`config`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins, {
       strict: false,
     });
 
@@ -41,15 +48,19 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       }
     };
 
-    const report = await StreamReport.start({configuration, json, stdout}, async report => {
-      if (configuration.invalid.size > 0 && !json) {
+    const report = await StreamReport.start({
+      configuration,
+      json: this.json,
+      stdout: this.context.stdout,
+    }, async report => {
+      if (configuration.invalid.size > 0 && !this.json) {
         for (const [key, source] of configuration.invalid)
           report.reportError(MessageName.INVALID_CONFIGURATION_KEY, `Invalid configuration key "${key}" in ${source}`);
 
         report.reportSeparator();
       }
 
-      if (json) {
+      if (this.json) {
         const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
 
         for (const key of keys) {
@@ -58,7 +69,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           const effective = getValue(key);
           const source = configuration.sources.get(key);
 
-          if (verbose) {
+          if (this.verbose) {
             report.reportJson({key, effective, source});
           } else {
             report.reportJson({key, effective, source, ...data});
@@ -74,14 +85,14 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           maxArrayLength: 2,
         };
 
-        if (why || verbose) {
+        if (this.why || this.verbose) {
           const keysAndDescriptions = keys.map(key => {
             const setting = configuration.settings.get(key);
 
             if (!setting)
               throw new Error(`Assertion failed: This settings ("${key}") should have been registered`);
 
-            const description = why
+            const description = this.why
               ? configuration.sources.get(key) || `<default>`
               : setting.description;
 
@@ -104,4 +115,5 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     });
 
     return report.exitCode();
-  });
+  }
+}

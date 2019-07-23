@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const {clipanion} = require(`clipanion`);
+const {Cli, Command} = require(`clipanion`);
 const path = require(`path`);
 const {RawSource} = require(`webpack-sources`);
 const webpack = require(`webpack`);
@@ -25,10 +25,9 @@ const getNormalizedName = name => {
   return `@berry/${parsing[1]}`;
 };
 
-clipanion
-  .command(`[plugin-dir]`)
-  .action(async ({stdout, stderr, pluginDir = `.`}) => {
-    const pluginPath = path.resolve(process.cwd(), pluginDir);
+class BuildPluginCommand extends Command {
+  async execute() {
+    const pluginPath = path.resolve(process.cwd(), this.pluginDir || `.`);
     const {name} = require(`${pluginPath}/package.json`);
     const pluginName = getNormalizedName(name);
 
@@ -93,15 +92,24 @@ clipanion
     });
 
     if (buildErrors) {
-      stdout.write(`\n`);
-      stderr.write(buildErrors);
-      stderr.write(`\n`);
+      this.context.stdout.write(`\n`);
+      this.context.stderr.write(buildErrors);
+      this.context.stderr.write(`\n`);
       return 1;
     } else {
-      stdout.write(`\nDone!\n`);
+      this.context.stdout.write(`\nDone!\n`);
       return 0;
     }
-  });
+  }
+}
 
-clipanion
-  .runExit(process.argv0, process.argv.slice(2));
+const cli = new Cli();
+
+Command.String({required: false})(BuildPluginCommand.prototype, `pluginDir`);
+
+cli.register(BuildPluginCommand);
+cli.runExit(process.argv.slice(2), {
+  stdin: process.stdin,
+  stdout: process.stdout,
+  stderr: process.stderr,
+});

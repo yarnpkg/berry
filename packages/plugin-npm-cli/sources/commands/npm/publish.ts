@@ -1,45 +1,46 @@
-import {WorkspaceRequiredError}                                                                         from '@berry/cli';
-import {Configuration, MessageName, PluginConfiguration, Project, ReportError, StreamReport, Workspace} from '@berry/core';
-import {miscUtils, structUtils}                                                                         from '@berry/core';
-import {PortablePath}                                                                                   from '@berry/fslib';
-import {npmConfigUtils, npmHttpUtils}                                                                   from '@berry/plugin-npm';
-import {packUtils}                                                                                      from '@berry/plugin-pack';
-import {UsageError}                                                                                     from 'clipanion';
-import {createHash}                                                                                     from 'crypto';
-import ssri                                                                                             from 'ssri';
-import {Writable}                                                                                       from 'stream';
-import * as yup                                                                                         from 'yup';
+import {WorkspaceRequiredError}                                                                                         from '@berry/cli';
+import {Configuration, CommandContext, MessageName, Project, ReportError, StreamReport, Workspace}                      from '@berry/core';
+import {miscUtils, structUtils}                                                                                         from '@berry/core';
+import {npmConfigUtils, npmHttpUtils}                                                                                   from '@berry/plugin-npm';
+import {packUtils}                                                                                                      from '@berry/plugin-pack';
+import {Command, UsageError}                                                                                            from 'clipanion';
+import {createHash}                                                                                                     from 'crypto';
+import ssri                                                                                                             from 'ssri';
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class NpmPublishCommand extends Command<CommandContext> {
+  @Command.String(`--access`)
+  access?: string;
 
-  .command(`npm publish [--access ACCESS] [--tag TAG] [--tolerate-republish]`)
-  .categorize(`Npm-related commands`)
-  .describe(`publish the active workspace to the npm registry`)
+  @Command.String(`--tag`)
+  tag: string = `latest`;
 
-  .validate(yup.object().shape({
-    tag: yup.string().default(`latest`),
-  }))
+  @Command.Boolean(`--tolerate-republish`)
+  tolerateRepublish: boolean = false;
 
-  .detail(`
-    This command will pack the active workspace into a fresh archive and upload it to the npm registry.
+  static usage = Command.Usage({
+    category: `Npm-related commands`,
+    description: `publish the active workspace to the npm registry`,
+    details: `
+      This command will pack the active workspace into a fresh archive and upload it to the npm registry.
 
-    The package will by default be attached to the \`latest\` tag on the registry, but this behavior can be overriden by using the \`--tag\` option.
+      The package will by default be attached to the \`latest\` tag on the registry, but this behavior can be overriden by using the \`--tag\` option.
 
-    Note that for legacy reasons scoped packages are by default published with an access set to \`restricted\` (aka "private packages"). This requires you to register for a paid npm plan. In case you simply wish to publish a public scoped package to the registry (for free), just add the \`--access public\` flag. This behavior can be enabled by default through the \`npmPublishAccess\` settings.
-  `)
+      Note that for legacy reasons scoped packages are by default published with an access set to \`restricted\` (aka "private packages"). This requires you to register for a paid npm plan. In case you simply wish to publish a public scoped package to the registry (for free), just add the \`--access public\` flag. This behavior can be enabled by default through the \`npmPublishAccess\` settings.
+    `,
+    examples: [[
+      `Publish the active workspace`,
+      `yarn npm publish`,
+    ]],
+  });
 
-  .example(
-    `Publish the active workspace`,
-    `yarn npm publish`,
-  )
-
-  .action(async ({cwd, stdout, access, tag, tolerateRepublish}: {cwd: PortablePath, stdout: Writable, access: string | undefined, tag: string, tolerateRepublish: boolean}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-    const {workspace} = await Project.find(configuration, cwd);
+  @Command.Path(`npm`, `publish`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {workspace} = await Project.find(configuration, this.context.cwd);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(cwd);
+      throw new WorkspaceRequiredError(this.context.cwd);
 
     if (workspace.manifest.private)
       throw new UsageError(`Private workspaces cannot be published`);
@@ -52,9 +53,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
 
-    const report = await StreamReport.start({configuration, stdout}, async report => {
+    const report = await StreamReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async report => {
       // Not an error if --tolerate-republish is set
-      if (tolerateRepublish) {
+      if (this.tolerateRepublish) {
         try {
           const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
             configuration,
@@ -87,7 +91,10 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         const pack = await packUtils.genPackStream(workspace, files);
         const buffer = await miscUtils.bufferStream(pack);
 
-        const body = await makePublishBody(workspace, buffer, {access, tag});
+        const body = await makePublishBody(workspace, buffer, {
+          access: this.access,
+          tag: this.tag,
+        });
 
         try {
           await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
@@ -114,7 +121,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     });
 
     return report.exitCode();
-  });
+  }
+}
 
 async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag}: {access: string | undefined, tag: string}) {
   const configuration = workspace.project.configuration;

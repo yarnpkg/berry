@@ -1,53 +1,54 @@
-import {Configuration, Manifest, PluginConfiguration} from '@berry/core';
-import {structUtils}                                  from '@berry/core';
-import {xfs, PortablePath, ppath, toFilename}         from '@berry/fslib';
-import {updateAndSave}                                from '@berry/json-proxy';
-import {UsageError}                                   from 'clipanion';
+import {CommandContext, Configuration, Manifest}                      from '@berry/core';
+import {structUtils}                                                  from '@berry/core';
+import {xfs, ppath, toFilename}                                       from '@berry/fslib';
+import {updateAndSave}                                                from '@berry/json-proxy';
+import {Command, UsageError}                                          from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class InitCommand extends Command<CommandContext> {
+  @Command.Boolean(`-p,--private`)
+  private: boolean = false;
 
-  .command(`init [-p,--private]`)
-  .describe(`create a new package`)
+  static usage = Command.Usage({
+    description: `create a new package`,
+    details: `
+      This command will setup a new package in your local directory.
 
-  .detail(`
-    This command will setup a new package in your local directory.
+      If the \`-p,--private\` option is set, the package will be private by default.
 
-    If the \`-p,--private\` option is set, the package will be private by default.
+      The following settings can be used in order to affect what the generated package.json will look like:
 
-    The following settings can be used in order to affect what the generated package.json will look like:
+      - \`initLicense\`
+      - \`initScope\`
+      - \`initVersion\`
+    `,
+    examples: [[
+      `Create a new package in the local directory`,
+      `yarn init`,
+    ], [
+      `Create a new private package in the local directory`,
+      `yarn init -p`,
+    ]],
+  });
 
-    - \`initLicense\`
-    - \`initScope\`
-    - \`initVersion\`
-  `)
-
-  .example(
-    `Create a new package in the local directory`,
-    `yarn init`,
-  )
-
-  .example(
-    `Create a new private package in the local directory`,
-    `yarn init -p`,
-  )
-
-  .action(async ({cwd, private: notPublic}: {cwd: PortablePath, private: boolean}) => {
-    if (xfs.existsSync(ppath.join(cwd, toFilename(`package.json`))))
+  @Command.Path(`init`)
+  async execute() {
+    if (xfs.existsSync(ppath.join(this.context.cwd, toFilename(`package.json`))))
       throw new UsageError(`A package.json already exists in the specified directory`);
 
-    if (!xfs.existsSync(cwd))
-      await xfs.mkdirpPromise(cwd);
+    if (!xfs.existsSync(this.context.cwd))
+      await xfs.mkdirpPromise(this.context.cwd);
 
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
     const manifest = new Manifest();
-    manifest.name = structUtils.makeIdent(configuration.get(`initScope`), ppath.basename(cwd));
+    manifest.name = structUtils.makeIdent(configuration.get(`initScope`), ppath.basename(this.context.cwd));
     manifest.version = configuration.get(`initVersion`);
-    manifest.private = notPublic;
+    manifest.private = this.private;
     manifest.license = configuration.get(`initLicense`);
 
-    await updateAndSave(ppath.join(cwd, toFilename(`package.json`)), (tracker: Object) => {
+    await updateAndSave(ppath.join(this.context.cwd, toFilename(`package.json`)), (tracker: Object) => {
       manifest.exportTo(tracker);
     });
-  });
+  }
+}

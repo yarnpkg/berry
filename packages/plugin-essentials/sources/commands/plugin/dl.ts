@@ -1,45 +1,47 @@
-import {Configuration, MessageName, PluginConfiguration, Project, StreamReport, httpUtils, structUtils}                      from '@berry/core';
-import {xfs, PortablePath, ppath}                                                                                            from '@berry/fslib';
-import {parseSyml}                                                                                                           from '@berry/parsers';
-import {Clipanion}                                                                                                           from 'clipanion';
-import {Writable}                                                                                                            from 'stream';
-import {runInNewContext}                                                                                                     from 'vm';
+import {CommandContext, Configuration, MessageName, Project, StreamReport, httpUtils, structUtils}                                           from '@berry/core';
+import {xfs, PortablePath, ppath}                                                                                                            from '@berry/fslib';
+import {parseSyml}                                                                                                                           from '@berry/parsers';
+import {Command}                                                                                                                             from 'clipanion';
+import {runInNewContext}                                                                                                                     from 'vm';
 
 const REMOTE_REGISTRY = `https://raw.githubusercontent.com/yarnpkg/berry/master/plugins.yml`;
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) => clipanion
+export default class PluginDlCommand extends Command<CommandContext> {
+  @Command.String({required: false})
+  name?: string;
 
-  .command(`plugin dl [name] [-l,--list]`)
-  .alias(`plugins dl`)
-  .describe(`download a plugin, or list the available official plugins`)
+  @Command.Boolean(`-l,--list`)
+  list: boolean = false;
 
-  .detail(`
-    This command downloads the specified plugin from its remote location and updates the configuration to reference it in further CLI invocations.
+  static usage = Command.Usage({
+    description: `download a plugin, or list the available official plugins`,
+    details: `
+      This command downloads the specified plugin from its remote location and updates the configuration to reference it in further CLI invocations.
 
-    If the \`-l,--list\` option is present, Yarn will print the list of plugins available from the official Yarn repository. Those plugins are not mandatory or necessarily better than the ones provided by the community.
-  `)
+      If the \`-l,--list\` option is present, Yarn will print the list of plugins available from the official Yarn repository. Those plugins are not mandatory or necessarily better than the ones provided by the community.
+    `,
+    examples: [[
+      `Download and activate the "@berry/plugin-exec" plugin`,
+      `yarn plugin dl @berry/plugin-exec`,
+    ], [
+      `Download and activate a community plugin`,
+      `yarn plugin dl https://example.org/path/to/plugin.js`,
+    ], [
+      `List the official plugins`,
+      `yarn plugin dl --list`,
+    ]],
+  });
 
-  .example(
-    `Download and activate the "@berry/plugin-exec" plugin`,
-    `yarn plugin dl @berry/plugin-exec`,
-  )
+  @Command.Path(`plugin`, `dl`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
-  .example(
-    `Download and activate a community plugin`,
-    `yarn plugin dl https://example.org/path/to/plugin.js`,
-  )
-
-  .example(
-    `List the official plugins`,
-    `yarn plugin dl --list`,
-  )
-
-  .action(async ({cwd, stdout, list, name}: {cwd: PortablePath, stdout: Writable, list: boolean, name: string}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-
-    const report = await StreamReport.start({configuration, stdout}, async report => {
-      if (list) {
+    const report = await StreamReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async report => {
+      if (this.list) {
         const raw = await httpUtils.get(REMOTE_REGISTRY, {configuration});
         const data = parseSyml(raw.toString());
 
@@ -52,7 +54,7 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
           report.reportInfo(MessageName.UNNAMED, label);
         }
       } else {
-        const {project} = await Project.find(configuration, cwd);
+        const {project} = await Project.find(configuration, this.context.cwd);
         const ident = structUtils.tryParseIdent(name);
 
         let pluginUrl;
@@ -104,4 +106,5 @@ export default (clipanion: Clipanion, pluginConfiguration: PluginConfiguration) 
     });
 
     return report.exitCode();
-  });
+  }
+}

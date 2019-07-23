@@ -1,64 +1,73 @@
-import {WorkspaceRequiredError}                                     from '@berry/cli';
-import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@berry/core';
-import {PluginConfiguration, Project, StreamReport, Workspace}      from '@berry/core';
-import {structUtils}                                                from '@berry/core';
-import {PortablePath}                                               from '@berry/fslib';
-import inquirer                                                     from 'inquirer';
-import {Readable, Writable}                                         from 'stream';
+import {WorkspaceRequiredError}                                                     from '@berry/cli';
+import {Cache, CommandContext, Configuration, Descriptor, LightReport, MessageName} from '@berry/core';
+import {Project, StreamReport, Workspace}                                           from '@berry/core';
+import {structUtils}                                                                from '@berry/core';
+import {Command}                                                                    from 'clipanion';
+import inquirer                                                                     from 'inquirer';
 
-import * as suggestUtils                                            from '../suggestUtils';
-import {Hooks}                                                      from '..';
+import * as suggestUtils                                                            from '../suggestUtils';
+import {Hooks}                                                                      from '..';
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class UpCommand extends Command<CommandContext> {
+  @Command.Rest()
+  packages: Array<string> = [];
 
-  .command(`up [... packages] [-i,--interactive] [-v,--verbose] [-E,--exact] [-T,--tilde]`)
-  .describe(`upgrade dependencies across the project`)
+  @Command.Boolean(`-i,--interactive`)
+  interactive: boolean = false;
 
-  .detail(`
-    This command upgrades a list of packages to their latest available version across the whole project (regardless of whether they're part of \`dependencies\` or \`devDependencies\` - \`peerDependencies\` won't be affected). This is a project-wide command: all workspaces will be upgraded in the process. Note that because such dependencies are expected to be non-upgradable, dependencies relying on non-semver ranges won't be updated (this includes git dependencies that use a commit hash).
+  @Command.Boolean(`-v,--verbose`)
+  verbose: boolean = false;
 
-    If \`-i,--interactive\` is set (or if the \`preferInteractive\` settings is toggled on) the command will offer various choices, depending on the detected upgrade paths. Some upgrades require this flag in order to resolve ambiguities.
+  @Command.Boolean(`-E,--exact`)
+  exact: boolean = false;
 
-    The \`-E,--exact\` and  \`-T,--tilde\` options have the same meaning as in the \`add\` command (they change the modifier used when the range is missing or a tag, and are ignored when the range is explicitly set).
-  `)
+  @Command.Boolean(`-T,--tilde`)
+  tilde: boolean = false;
 
-  .example(
-    `Upgrade all instances of lodash to the latest release`,
-    `yarn up lodash`,
-  )
+  static usage = Command.Usage({
+    description: `upgrade dependencies across the project`,
+    details: `
+      This command upgrades a list of packages to their latest available version across the whole project (regardless of whether they're part of \`dependencies\` or \`devDependencies\` - \`peerDependencies\` won't be affected). This is a project-wide command: all workspaces will be upgraded in the process. Note that because such dependencies are expected to be non-upgradable, dependencies relying on non-semver ranges won't be updated (this includes git dependencies that use a commit hash).
 
-  .example(
-    `Upgrade all instances of lodash to the latest release, but ask confirmation for each`,
-    `yarn up lodash -i`,
-  )
+      If \`-i,--interactive\` is set (or if the \`preferInteractive\` settings is toggled on) the command will offer various choices, depending on the detected upgrade paths. Some upgrades require this flag in order to resolve ambiguities.
 
-  .example(
-    `Upgrade all instances of lodash to 1.2.3`,
-    `yarn up lodash@1.2.3`,
-  )
+      The \`-E,--exact\` and  \`-T,--tilde\` options have the same meaning as in the \`add\` command (they change the modifier used when the range is missing or a tag, and are ignored when the range is explicitly set).
+    `,
+    examples: [[
+      `Upgrade all instances of lodash to the latest release`,
+      `yarn up lodash`,
+    ], [
+      `Upgrade all instances of lodash to the latest release, but ask confirmation for each`,
+      `yarn up lodash -i`,
+    ], [
+      `Upgrade all instances of lodash to 1.2.3`,
+      `yarn up lodash@1.2.3`,
+    ]],
+  });
 
-  .action(async ({cwd, stdin, stdout, packages, exact, tilde, interactive}: {cwd: PortablePath, stdin: Readable, stdout: Writable, packages: Array<string>, exact: boolean, tilde: boolean, dev: boolean, peer: boolean, interactive: boolean}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-    const {project, workspace} = await Project.find(configuration, cwd);
+  @Command.Path(`up`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(cwd);
+      throw new WorkspaceRequiredError(this.context.cwd);
 
     // @ts-ignore
     const prompt = inquirer.createPromptModule({
-      input: stdin,
-      output: stdout,
+      input: this.context.stdin,
+      output: this.context.stdout,
     });
 
-    const modifier = exact
+    const modifier = this.exact
       ? suggestUtils.Modifier.EXACT
-      : tilde
+      : this.tilde
         ? suggestUtils.Modifier.TILDE
         : suggestUtils.Modifier.CARET;
 
-    const strategies = interactive ? [
+    const strategies = this.interactive ? [
       suggestUtils.Strategy.KEEP,
       suggestUtils.Strategy.REUSE,
       suggestUtils.Strategy.PROJECT,
@@ -70,7 +79,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     const allSuggestionsPromises = [];
 
-    for (const pseudoDescriptor of packages) {
+    for (const pseudoDescriptor of this.packages) {
       const descriptor = structUtils.parseDescriptor(pseudoDescriptor);
 
       for (const workspace of project.workspaces) {
@@ -98,7 +107,11 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     const allSuggestions = await Promise.all(allSuggestionsPromises);
 
-    const checkReport = await LightReport.start({configuration, stdout, suggestInstall: false}, async report => {
+    const checkReport = await LightReport.start({
+      configuration,
+      stdout: this.context.stdout,
+      suggestInstall: false,
+    }, async report => {
       for (const [/*workspace*/, /*target*/, existing, suggestions] of allSuggestions) {
         const nonNullSuggestions = suggestions.filter(suggestion => {
           return suggestion.descriptor !== null;
@@ -110,7 +123,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           } else {
             report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range`);
           }
-        } else if (nonNullSuggestions.length > 1 && !interactive) {
+        } else if (nonNullSuggestions.length > 1 && !this.interactive) {
           report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} has multiple possible upgrade strategies; use -i to disambiguate manually`);
         }
       }
@@ -184,12 +197,16 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       );
 
       if (askedQuestions)
-        stdout.write(`\n`);
+        this.context.stdout.write(`\n`);
 
-      const installReport = await StreamReport.start({configuration, stdout}, async report => {
+      const installReport = await StreamReport.start({
+        configuration,
+        stdout: this.context.stdout,
+      }, async report => {
         await project.install({cache, report});
       });
 
       return installReport.exitCode();
     }
-  });
+  }
+}

@@ -1,29 +1,12 @@
-import {WorkspaceRequiredError}                                              from '@berry/cli';
-import {Configuration, LocatorHash, PluginConfiguration, Project, Workspace} from '@berry/core';
-import {DescriptorHash, MessageName, Report, StreamReport}                   from '@berry/core';
-import {miscUtils, structUtils}                                              from '@berry/core';
-import {PortablePath}                                                        from '@berry/fslib';
-import {UsageError}                                                          from 'clipanion';
-import {cpus}                                                                from 'os';
-import pLimit                                                                from 'p-limit';
-import {Writable}                                                            from 'stream';
-import * as yup                                                              from 'yup';
-
-type ForeachOptions = {
-  command: string;
-  rest: string[];
-  cwd: PortablePath;
-  exclude: string[];
-  include: string[];
-  all: boolean;
-  interlaced: boolean;
-  jobs: number;
-  parallel: boolean;
-  stdout: Writable;
-  topologicalDev: boolean;
-  topological: boolean;
-  verbose: boolean;
-}
+import {WorkspaceRequiredError}                                                              from '@berry/cli';
+import {CommandContext, Configuration, LocatorHash, Project, Workspace}                      from '@berry/core';
+import {DescriptorHash, MessageName, Report, StreamReport}                                   from '@berry/core';
+import {miscUtils, structUtils}                                                              from '@berry/core';
+import {Command, UsageError}                                                                 from 'clipanion';
+import {cpus}                                                                                from 'os';
+import pLimit                                                                                from 'p-limit';
+import {Writable}                                                                            from 'stream';
+import * as yup                                                                              from 'yup';
 
 /**
  * Retrieves all the child workspaces of a given root workspace recursively
@@ -45,224 +28,253 @@ const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Projec
 };
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class WorkspacesForeachCommand extends Command<CommandContext> {
+  @Command.String()
+  commandName!: string;
 
-  .command(`workspaces foreach <command> [... rest] [-v,--verbose] [-p,--parallel] [-i,--interlaced] [-j,--jobs JOBS] [-t,--topological] [--topological-dev] [--all] [--include WORKSPACES...] [--exclude WORKSPACES...]`)
-  .categorize(`Workspace-related commands`)
-  .describe(`run a command on all workspaces`)
-  .flags({proxyArguments: true})
+  @Command.Proxy()
+  args: Array<string> = [];
 
-  .detail(`
-    This command will run a given sub-command on all child workspaces that define it (any workspace that doesn't define it will be just skiped). Various flags can alter the exact behavior of the command:
+  @Command.Boolean(`-a,--all`)
+  all: boolean = false;
 
-    - If \`-p,--parallel\` is set, the commands will run in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overriden via \`-j,--jobs\`.
+  @Command.Boolean(`-v,--verbose`)
+  verbose: boolean = false;
 
-    - If \`-p,--parallel\` and \`-i,--interlaced\` are both set, Yarn will print the lines from the output as it receives them. If \`-i,--interlaced\` wasn't set, it would instead buffer the output from each process and print the resulting buffers only after their source processes have exited.
+  @Command.Boolean(`-p,--parallel`)
+  parallel: boolean = false;
 
-    - If \`-t,--topological\` is set, Yarn will only run a command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--tological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
+  @Command.Boolean(`-i,--interlaced`)
+  interlaced: boolean = false;
 
-    - If \`--all\` is set, Yarn will run it on all the workspaces of a project. By default it runs the command only on child workspaces.
+  @Command.String(`-j,--jobs`)
+  jobs?: number;
 
-    - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that musn't execute the script.
+  @Command.Boolean(`-t,--topological`)
+  topological: boolean = false;
 
-    Adding the \`-v,--verbose\` flag will cause Yarn to print more information; in particular the name of the workspace that generated the output will be printed at the front of each line.
+  @Command.Boolean(`--topological-dev`)
+  topologicalDev: boolean = false;
 
-    If the command is \`run\` and the script being run does not exist the child workspace will be skipped without error.
-  `)
+  @Command.Array(`--include`)
+  include: Array<string> = [];
 
-  .example(
-    `Publish all the packages in a workspace`,
-    `yarn workspaces foreach npm publish --tolerate-republish`,
-  )
+  @Command.Array(`--exclude`)
+  exclude: Array<string> = [];
 
-  .example(
-    `Run build script on all the packages in a workspace`,
-    `yarn workspaces foreach run build`,
-  )
-
-  .example(
-    `Run build script on all the packages in a workspace in parallel, building dependent packages first`,
-    `yarn workspaces foreach -pt run build`,
-  )
-
-  .validate(yup.object().shape({
+  static schema = yup.object().shape({
     jobs: yup.number().min(2),
     parallel: yup.boolean().when(`jobs`, {
-      is: val => val > 1,
+      is: (val: number) => val > 1,
       then: yup.boolean().oneOf([true], `--parallel must be set when using --jobs`),
       otherwise: yup.boolean(),
     }),
-  }))
+  });
 
-  .action(
-    async ({cwd, stdout, command, rest, exclude, include, interlaced, parallel, topological, topologicalDev, all, verbose, jobs, ...env}: ForeachOptions) => {
-      const configuration = await Configuration.find(cwd, pluginConfiguration);
-      const {project, workspace: cwdWorkspace} = await Project.find(configuration, cwd);
+  static usage = Command.Usage({
+    category: `Workspace-related commands`,
+    description: `run a command on all workspaces`,
+    details: `
+      This command will run a given sub-command on all child workspaces that define it (any workspace that doesn't define it will be just skiped). Various flags can alter the exact behavior of the command:
 
-      if (!all && !cwdWorkspace)
-        throw new WorkspaceRequiredError(cwd);
+      - If \`-p,--parallel\` is set, the commands will run in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overriden via \`-j,--jobs\`.
 
-      const {commandPath, env: parsedEnv} = clipanion.parse([command, ...rest]);
-      const scriptName = commandPath.length === 1 && commandPath[0] === `run` && parsedEnv.args.length > 0
-        ? parsedEnv.args[0]
-        : null;
+      - If \`-p,--parallel\` and \`-i,--interlaced\` are both set, Yarn will print the lines from the output as it receives them. If \`-i,--interlaced\` wasn't set, it would instead buffer the output from each process and print the resulting buffers only after their source processes have exited.
 
-      if (commandPath.length === 0)
-        throw new UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
+      - If \`-t,--topological\` is set, Yarn will only run a command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--tological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
 
-      const rootWorkspace = all
-        ? project.topLevelWorkspace
-        : cwdWorkspace!;
+      - If \`--all\` is set, Yarn will run it on all the workspaces of a project. By default it runs the command only on child workspaces.
 
-      const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
-      const workspaces: Array<Workspace> = [];
+      - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that musn't execute the script.
 
-      for (const workspace of candidates) {
-        if (scriptName && !workspace.manifest.scripts.has(scriptName))
-          continue;
+      Adding the \`-v,--verbose\` flag will cause Yarn to print more information; in particular the name of the workspace that generated the output will be printed at the front of each line.
 
-        // Prevents infinite loop in the case of configuring a script as such:
-        //     "lint": "yarn workspaces foreach --all lint"
-        if ((scriptName || command) === process.env.npm_lifecycle_event &&
-            workspace.cwd === cwdWorkspace!.cwd)
-          continue;
+      If the command is \`run\` and the script being run does not exist the child workspace will be skipped without error.
+    `,
+    examples: [[
+      `Publish all the packages in a workspace`,
+      `yarn workspaces foreach npm publish --tolerate-republish`,
+    ], [
+      `Run build script on all the packages in a workspace`,
+      `yarn workspaces foreach run build`,
+    ], [
+      `Run build script on all the packages in a workspace in parallel, building dependent packages first`,
+      `yarn workspaces foreach -pt run build`,
+    ]],
+  });
 
-        if (include.length > 0 && !include.includes(workspace.locator.name))
-          continue;
+  @Command.Path(`workspaces`, `foreach`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project, workspace: cwdWorkspace} = await Project.find(configuration, this.context.cwd);
 
-        if (exclude.length > 0 && exclude.includes(workspace.locator.name))
-          continue;
+    if (!this.all && !cwdWorkspace)
+      throw new WorkspaceRequiredError(this.context.cwd);
 
-        workspaces.push(workspace);
+    const command = this.cli.process([this.commandName, ...this.args]) as {path: string[], scriptName?: string};
+    const scriptName = command.path.length === 1 && command.path[0] === `run` && typeof command.scriptName !== `undefined`
+      ? command.scriptName
+      : null;
+
+    if (command.path.length === 0)
+      throw new UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
+
+    const rootWorkspace = this.all
+      ? project.topLevelWorkspace
+      : cwdWorkspace!;
+
+    const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
+    const workspaces: Array<Workspace> = [];
+
+    for (const workspace of candidates) {
+      if (scriptName && !workspace.manifest.scripts.has(scriptName))
+        continue;
+
+      // Prevents infinite loop in the case of configuring a script as such:
+      // "lint": "yarn workspaces foreach --all lint"
+      if (scriptName === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
+        continue;
+
+      if (this.include.length > 0 && !this.include.includes(workspace.locator.name))
+        continue;
+
+      if (this.exclude.length > 0 && this.exclude.includes(workspace.locator.name))
+        continue;
+
+      workspaces.push(workspace);
+    }
+
+    let interlaced = this.interlaced;
+
+    // No need to buffer the output if we're executing the commands sequentially
+    if (!this.parallel)
+      interlaced = true;
+
+    const needsProcessing = new Map<LocatorHash, Workspace>();
+    const processing = new Set<DescriptorHash>();
+
+    const concurrency = this.parallel ? Math.max(1, cpus().length / 2) : 1;
+    const limit = pLimit(this.jobs || concurrency);
+
+    let commandCount = 0;
+
+    const report = await StreamReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async report => {
+      const runCommand = async (workspace: Workspace, {commandIndex}: {commandIndex: number}) => {
+        if (!this.parallel && this.verbose && commandIndex > 1)
+          report.reportSeparator();
+
+        const prefix = getPrefix(workspace, {configuration, verbose: this.verbose, commandIndex});
+
+        const [stdout, stdoutEnd] = createStream(report, {prefix, interlaced});
+        const [stderr, stderrEnd] = createStream(report, {prefix, interlaced});
+
+        try {
+          const exitCode = (await this.cli.run([this.commandName, ...this.args], {
+            cwd: workspace.cwd,
+            stdout,
+            stderr,
+          })) || 0;
+
+          stdout.end();
+          stderr.end();
+
+          const emptyStdout = await stdoutEnd;
+          const emptyStderr = await stderrEnd;
+
+          if (this.verbose && emptyStdout && emptyStderr)
+            report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode})`);
+
+          return exitCode;
+        } catch (err) {
+          stdout.end();
+          stderr.end();
+
+          await stdoutEnd;
+          await stderrEnd;
+
+          throw err;
+        }
       }
 
-      // No need to buffer the output if we're executing the commands sequentially
-      if (!parallel)
-        interlaced = true;
+      for (const workspace of workspaces)
+        needsProcessing.set(workspace.anchoredLocator.locatorHash, workspace);
 
-      const needsProcessing = new Map<LocatorHash, Workspace>();
-      const processing = new Set<DescriptorHash>();
+      while (needsProcessing.size > 0) {
+        if (report.hasErrors())
+          break;
 
-      const concurrency = parallel ? Math.max(1, cpus().length / 2) : 1;
-      const limit = pLimit(jobs || concurrency);
+        const commandPromises = [];
 
-      let commandCount = 0;
+        for (const [identHash, workspace] of needsProcessing) {
+          // If we are already running the command on that workspace, skip
+          if (processing.has(workspace.anchoredDescriptor.descriptorHash))
+            continue;
 
-      const report = await StreamReport.start({configuration, stdout}, async report => {
-        for (const workspace of workspaces)
-          needsProcessing.set(workspace.anchoredLocator.locatorHash, workspace);
+          let isRunnable = true;
 
-        while (needsProcessing.size > 0) {
-          if (report.hasErrors())
-            break;
+          if (this.topological || this.topologicalDev) {
+            const resolvedSet = this.topologicalDev
+              ? [...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]
+              : workspace.manifest.dependencies;
 
-          const commandPromises = [];
+            for (const [/*identHash*/, descriptor] of resolvedSet) {
+              const workspaces = project.findWorkspacesByDescriptor(descriptor);
 
-          for (const [identHash, workspace] of needsProcessing) {
-            // If we are already running the command on that workspace, skip
-            if (processing.has(workspace.anchoredDescriptor.descriptorHash))
-              continue;
-
-            let isRunnable = true;
-
-            if (topological || topologicalDev) {
-              const resolvedSet = topologicalDev
-                ? [...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]
-                : workspace.manifest.dependencies;
-
-              for (const [/*identHash*/, descriptor] of resolvedSet) {
-                const workspaces = project.findWorkspacesByDescriptor(descriptor);
-
-                isRunnable = !workspaces.some(workspace => {
-                  return needsProcessing.has(workspace.anchoredLocator.locatorHash);
-                });
-
-                if (!isRunnable) {
-                  break;
-                }
-              }
-            }
-
-            if (!isRunnable)
-              continue;
-
-            processing.add(workspace.anchoredDescriptor.descriptorHash);
-
-            commandPromises.push(limit(async () => {
-              const exitCode = await runCommand(workspace, {
-                commandIndex: ++commandCount,
+              isRunnable = !workspaces.some(workspace => {
+                return needsProcessing.has(workspace.anchoredLocator.locatorHash);
               });
 
-              needsProcessing.delete(identHash);
-              processing.delete(workspace.anchoredDescriptor.descriptorHash);
-
-              return exitCode;
-            }));
-
-            // If we're not executing processes in parallel we can just wait for it
-            // to finish outside of this loop (it'll then reenter it anyway)
-            if (!parallel) {
-              break;
+              if (!isRunnable) {
+                break;
+              }
             }
           }
 
-          if (commandPromises.length === 0) {
-            const cycle = Array.from(needsProcessing.values()).map(workspace => {
-              return structUtils.prettyLocator(configuration, workspace.anchoredLocator);
-            }).join(`, `);
+          if (!isRunnable)
+            continue;
 
-            return report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
-          }
+          processing.add(workspace.anchoredDescriptor.descriptorHash);
 
-          const exitCodes: Array<number> = await Promise.all(commandPromises);
+          commandPromises.push(limit(async () => {
+            const exitCode = await runCommand(workspace, {
+              commandIndex: ++commandCount,
+            });
 
-          if ((topological || topologicalDev) && exitCodes.some(exitCode => exitCode !== 0)) {
-            report.reportError(MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);
-          }
-        }
-
-        async function runCommand(workspace: Workspace, {commandIndex}: {commandIndex: number}) {
-          if (!parallel && verbose && commandIndex > 1)
-            report.reportSeparator();
-
-          const prefix = getPrefix(workspace, {configuration, verbose, commandIndex});
-
-          const [stdout, stdoutEnd] = createStream(report, {prefix, interlaced});
-          const [stderr, stderrEnd] = createStream(report, {prefix, interlaced});
-
-          try {
-            const exitCode = (await clipanion.run(null, [command, ...rest], {
-              ...env,
-              cwd: workspace.cwd,
-              stdout: stdout,
-              stderr: stderr,
-            })) || 0;
-
-            stdout.end();
-            stderr.end();
-
-            const emptyStdout = await stdoutEnd;
-            const emptyStderr = await stderrEnd;
-
-            if (verbose && emptyStdout && emptyStderr)
-              report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode})`);
+            needsProcessing.delete(identHash);
+            processing.delete(workspace.anchoredDescriptor.descriptorHash);
 
             return exitCode;
-          } catch (err) {
-            stdout.end();
-            stderr.end();
+          }));
 
-            await stdoutEnd;
-            await stderrEnd;
-
-            throw err;
+          // If we're not executing processes in parallel we can just wait for it
+          // to finish outside of this loop (it'll then reenter it anyway)
+          if (!this.parallel) {
+            break;
           }
         }
-      });
 
-      return report.exitCode();
-    }
-  );
+        if (commandPromises.length === 0) {
+          const cycle = Array.from(needsProcessing.values()).map(workspace => {
+            return structUtils.prettyLocator(configuration, workspace.anchoredLocator);
+          }).join(`, `);
+
+          return report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
+        }
+
+        const exitCodes: Array<number> = await Promise.all(commandPromises);
+
+        if ((this.topological || this.topologicalDev) && exitCodes.some(exitCode => exitCode !== 0)) {
+          report.reportError(MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);
+        }
+      }
+    });
+
+    return report.exitCode();
+  }
+}
 
 
 function createStream(report: Report, {prefix, interlaced}: {prefix: string | null, interlaced: boolean}): [Writable, Promise<boolean>] {

@@ -115,6 +115,12 @@ exports.default = plugin;
 
 "use strict";
 
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(2);
 const fslib_1 = __webpack_require__(3);
@@ -126,69 +132,99 @@ const ALL_DRIVERS = [
     MercurialDriver_1.Driver,
 ];
 // eslint-disable-next-line arca/no-default-export
-exports.default = (clipanion, pluginConfiguration) => clipanion
-    .command(`stage [-c,--commit] [-r,--reset] [-u,--update] [-n,--dry-run]`)
-    .describe(`add all yarn files to your vcs`)
-    .detail(`
-    This command will add to your staging area the files belonging to Yarn (typically any modified \`package.json\` and \`.yarnrc.yml\` files, but also linker-generated files, cache data, etc). It will take your ignore list into account, so the cache files won't be added if the cache is ignored in a \`.gitignore\` file (assuming you use Git).
-
-    Running \`--reset\` will instead remove them from the staging area (the changes will still be there, but won't be committed until you stage them back).
-
-    Since the staging area is a non-existent concept in Mercurial, Yarn will always create a new commit when running this command on Mercurial repositories. You can get this behavior when using Git by using the \`--commit\` flag which will directly create a commit.
-  `)
-    .example(`Adds all modified project files to the staging area`, `yarn stage`)
-    .example(`Creates a new commit containing all modified project files`, `yarn stage --commit`)
-    .action(async ({ cwd, stdout, commit, reset, update, dryRun }) => {
-    const configuration = await core_1.Configuration.find(cwd, pluginConfiguration);
-    const { project } = await core_1.Project.find(configuration, cwd);
-    let { driver, root } = await findDriver(project.cwd);
-    const basePaths = [
-        configuration.get(`bstatePath`),
-        configuration.get(`cacheFolder`),
-        configuration.get(`globalFolder`),
-        configuration.get(`virtualFolder`),
-        configuration.get(`yarnPath`),
-    ];
-    await configuration.triggerHook((hooks) => {
-        return hooks.populateYarnPaths;
-    }, project, (path) => {
-        basePaths.push(path);
-    });
-    const yarnPaths = new Set();
-    // We try to follow symlinks to properly add their targets (for example
-    // the cache folder could be a symlink to another folder from the repo)
-    for (const basePath of basePaths)
-        for (const path of resolveToVcs(root, basePath))
-            yarnPaths.add(path);
-    const yarnNames = new Set([
-        configuration.get(`rcFilename`),
-        configuration.get(`lockfileFilename`),
-        `package.json`,
-    ]);
-    const changeList = await driver.filterChanges(root, yarnPaths, yarnNames);
-    const commitMessage = await driver.genCommitMessage(root, changeList);
-    if (dryRun) {
-        if (commit) {
-            stdout.write(`${commitMessage}\n`);
+class StageCommand extends clipanion_1.Command {
+    constructor() {
+        super(...arguments);
+        this.commit = false;
+        this.reset = false;
+        this.update = false;
+        this.dryRun = false;
+    }
+    async execute() {
+        const configuration = await core_1.Configuration.find(this.context.cwd, this.context.plugins);
+        const { project } = await core_1.Project.find(configuration, this.context.cwd);
+        let { driver, root } = await findDriver(project.cwd);
+        const basePaths = [
+            configuration.get(`bstatePath`),
+            configuration.get(`cacheFolder`),
+            configuration.get(`globalFolder`),
+            configuration.get(`virtualFolder`),
+            configuration.get(`yarnPath`),
+        ];
+        await configuration.triggerHook((hooks) => {
+            return hooks.populateYarnPaths;
+        }, project, (path) => {
+            basePaths.push(path);
+        });
+        const yarnPaths = new Set();
+        // We try to follow symlinks to properly add their targets (for example
+        // the cache folder could be a symlink to another folder from the repo)
+        for (const basePath of basePaths)
+            for (const path of resolveToVcs(root, basePath))
+                yarnPaths.add(path);
+        const yarnNames = new Set([
+            configuration.get(`rcFilename`),
+            configuration.get(`lockfileFilename`),
+            `package.json`,
+        ]);
+        const changeList = await driver.filterChanges(root, yarnPaths, yarnNames);
+        const commitMessage = await driver.genCommitMessage(root, changeList);
+        if (this.dryRun) {
+            if (this.commit) {
+                this.context.stdout.write(`${commitMessage}\n`);
+            }
+            else {
+                for (const file of changeList) {
+                    this.context.stdout.write(`${fslib_1.NodeFS.fromPortablePath(file.path)}\n`);
+                }
+            }
         }
         else {
-            for (const file of changeList) {
-                stdout.write(`${fslib_1.NodeFS.fromPortablePath(file.path)}\n`);
+            if (changeList.length === 0) {
+                this.context.stdout.write(`No changes found!`);
+            }
+            else if (this.commit) {
+                await driver.makeCommit(root, changeList, commitMessage);
+            }
+            else if (this.reset) {
+                await driver.makeReset(root, changeList);
             }
         }
     }
-    else {
-        if (changeList.length === 0) {
-            stdout.write(`No changes found!`);
-        }
-        else if (commit) {
-            await driver.makeCommit(root, changeList, commitMessage);
-        }
-        else if (reset) {
-            await driver.makeReset(root, changeList);
-        }
-    }
+}
+StageCommand.usage = clipanion_1.Command.Usage({
+    description: `add all yarn files to your vcs`,
+    details: `
+      This command will add to your staging area the files belonging to Yarn (typically any modified \`package.json\` and \`.yarnrc.yml\` files, but also linker-generated files, cache data, etc). It will take your ignore list into account, so the cache files won't be added if the cache is ignored in a \`.gitignore\` file (assuming you use Git).
+
+      Running \`--reset\` will instead remove them from the staging area (the changes will still be there, but won't be committed until you stage them back).
+
+      Since the staging area is a non-existent concept in Mercurial, Yarn will always create a new commit when running this command on Mercurial repositories. You can get this behavior when using Git by using the \`--commit\` flag which will directly create a commit.
+    `,
+    examples: [[
+            `Adds all modified project files to the staging area`,
+            `yarn stage`,
+        ], [
+            `Creates a new commit containing all modified project files`,
+            `yarn stage --commit`,
+        ]],
 });
+__decorate([
+    clipanion_1.Command.Boolean(`-c,--commit`)
+], StageCommand.prototype, "commit", void 0);
+__decorate([
+    clipanion_1.Command.Boolean(`-r,--reset`)
+], StageCommand.prototype, "reset", void 0);
+__decorate([
+    clipanion_1.Command.Boolean(`-u,--update`)
+], StageCommand.prototype, "update", void 0);
+__decorate([
+    clipanion_1.Command.Boolean(`-n,--dry-run`)
+], StageCommand.prototype, "dryRun", void 0);
+__decorate([
+    clipanion_1.Command.Path(`stage`)
+], StageCommand.prototype, "execute", null);
+exports.default = StageCommand;
 async function findDriver(cwd) {
     let driver = null;
     let root = null;

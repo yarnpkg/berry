@@ -1,19 +1,22 @@
 import {Descriptor, Plugin, SettingsType} from '@berry/core';
 import {Workspace}                        from '@berry/core';
 
-import entry                              from './commands/_entry';
 import add                                from './commands/add';
 import bin                                from './commands/bin';
 import cleanCache                         from './commands/cache/clean';
 import setConfig                          from './commands/config/set';
 import config                             from './commands/config';
-import help                               from './commands/help';
+import clipanionEntry                     from './commands/entries/clipanion';
+import helpEntry                          from './commands/entries/help';
+import runEntry                           from './commands/entries/run';
+import versionEntry                       from './commands/entries/version';
 import install                            from './commands/install';
 import link                               from './commands/link';
 import node                               from './commands/node';
 import pluginDl                           from './commands/plugin/dl';
 import pluginList                         from './commands/plugin/list';
 import remove                             from './commands/remove';
+import runIndex                           from './commands/runIndex';
 import run                                from './commands/run';
 import setResolutionPolicy                from './commands/set/resolution';
 import setVersionPolicy                   from './commands/set/version';
@@ -59,17 +62,20 @@ const plugin: Plugin = {
     setResolutionPolicy,
     setVersionPolicy,
     listWorkspaces,
-    entry,
+    clipanionEntry,
+    helpEntry,
+    runEntry,
+    versionEntry,
     add,
     bin,
     config,
-    help,
     install,
     link,
     node,
     pluginDl,
     pluginList,
     remove,
+    runIndex,
     run,
     up,
     why,

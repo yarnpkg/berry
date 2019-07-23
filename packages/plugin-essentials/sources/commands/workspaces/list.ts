@@ -1,27 +1,36 @@
-import {Configuration, PluginConfiguration, Project, StreamReport, structUtils} from '@berry/core';
-import {PortablePath}                                                           from '@berry/fslib';
-import {Writable}                                                               from 'stream';
+import {CommandContext, Configuration, Project, StreamReport, structUtils}                      from '@berry/core';
+import {Command}                                                                                from 'clipanion';
 
 const DEPENDENCY_TYPES = ['devDependencies', 'dependencies'];
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class WorkspacesListCommand extends Command<CommandContext> {
+  @Command.Boolean(`-v,--verbose`)
+  verbose: boolean = false;
 
-  .command(`workspaces list [-v,--verbose] [--json]`)
+  @Command.Boolean(`--json`)
+  json: boolean = false;
 
-  .categorize(`Workspace-related commands`)
-  .describe(`list all available workspaces`)
+  static usage = Command.Usage({
+    category: `Workspace-related commands`,
+    description: `list all available workspaces`,
+  });
 
-  .action(async ({cwd, stdout, verbose, json}: {cwd: PortablePath, stdout: Writable, verbose: boolean, json: boolean}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-    const {project} = await Project.find(configuration, cwd);
+  @Command.Path(`workspaces`, `list`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project} = await Project.find(configuration, this.context.cwd);
 
-    const report = await StreamReport.start({configuration, json, stdout}, async report => {
+    const report = await StreamReport.start({
+      configuration,
+      json: this.json,
+      stdout: this.context.stdout,
+    }, async report => {
       for (const workspace of project.workspaces) {
         const {manifest} = workspace;
 
         let extra;
-        if (verbose) {
+        if (this.verbose) {
           const workspaceDependencies = new Set();
           const mismatchedWorkspaceDependencies = new Set();
 
@@ -66,4 +75,5 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     });
 
     return report.exitCode();
-  });
+  }
+}

@@ -1,54 +1,58 @@
-import {WorkspaceRequiredError}                                                     from '@berry/cli';
-import {AllDependencies, Cache, Configuration, IdentHash, LightReport, Manifest}    from '@berry/core';
-import {MessageName, PluginConfiguration, Project, StreamReport, WorkspaceResolver} from '@berry/core';
-import {Workspace, structUtils}                                                     from '@berry/core';
-import {PortablePath}                                                               from '@berry/fslib';
-import {UsageError}                                                                 from 'clipanion';
-import semver                                                                       from 'semver';
-import {Writable}                                                                   from 'stream';
+import {WorkspaceRequiredError}                                                                     from '@berry/cli';
+import {AllDependencies, Cache, CommandContext, Configuration, IdentHash, LightReport, Manifest}    from '@berry/core';
+import {MessageName, Project, StreamReport, WorkspaceResolver}                                      from '@berry/core';
+import {Workspace, structUtils}                                                                     from '@berry/core';
+import {Command, UsageError}                                                                        from 'clipanion';
+import semver                                                                                       from 'semver';
 
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
 const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class VersionApplyCommand extends Command<CommandContext> {
+  @Command.Boolean(`--all`)
+  all: boolean = false;
 
-  .command(`version apply [--all]`)
-  .categorize(`Release-related commands`)
-  .describe(`apply all the deferred version bumps at once`)
+  static usage = Command.Usage({
+    category: `Release-related commands`,
+    description: `apply all the deferred version bumps at once`,
+    details: `
+      This command will apply the deferred version changes (scheduled via \`yarn version major|minor|patch\`) on the current workspace (or all of them if \`--all\`) is specified.
 
-  .detail(`
-    This command will apply the deferred version changes (scheduled via \`yarn version major|minor|patch\`) on the current workspace (or all of them if \`--all\`) is specified.
+      It will also update the \`workspace:\` references across all your local workspaces so that they keep refering to the same workspace even after the version bump.
+    `,
+    examples: [[
+      `Apply the version change to the local workspace`,
+      `yarn version apply`,
+    ], [
+      `Apply the version change to all the workspaces in the local workspace`,
+      `yarn version apply --all`,
+    ]],
+  });
 
-    It will also update the \`workspace:\` references across all your local workspaces so that they keep refering to the same workspace even after the version bump.
-  `)
-
-  .example(
-    `Apply the version change to the local workspace`,
-    `yarn version apply`,
-  )
-
-  .example(
-    `Apply the version change to all the workspaces in the local workspace`,
-    `yarn version apply --all`,
-  )
-
-  .action(async ({cwd, stdout, all}: {cwd: PortablePath, stdout: Writable, all: boolean}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-    const {project, workspace} = await Project.find(configuration, cwd);
+  @Command.Path(`version`, `apply`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(cwd);
+      throw new WorkspaceRequiredError(this.context.cwd);
 
-    const resolutionReport = await LightReport.start({configuration, stdout}, async report => {
+    const resolutionReport = await LightReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async report => {
       await project.resolveEverything({lockfileOnly: true, cache, report});
     });
 
     if (resolutionReport.hasErrors())
       return resolutionReport.exitCode();
 
-    const applyReport = await StreamReport.start({configuration, stdout}, async report => {
+    const applyReport = await StreamReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async report => {
       const allDependents: Map<Workspace, Array<[
         Workspace,
         AllDependencies,
@@ -73,7 +77,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
             // When operating on a single workspace, we don't have to compute
             // the dependencies for the other ones
             const dependency = workspaces[0];
-            if (!all && dependency !== workspace)
+            if (!this.all && dependency !== workspace)
               continue;
 
             let dependents = allDependents.get(dependency);
@@ -97,7 +101,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         }
       };
 
-      if (!all) {
+      if (!this.all) {
         validateWorkspace(workspace);
       } else {
         for (const workspace of project.workspaces) {
@@ -159,7 +163,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         }
       };
 
-      if (!all) {
+      if (!this.all) {
         processWorkspace(workspace);
       } else {
         for (const workspace of project.workspaces) {
@@ -171,4 +175,5 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     });
 
     return applyReport.exitCode();
-  });
+  }
+}

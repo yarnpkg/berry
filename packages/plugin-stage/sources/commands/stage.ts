@@ -1,11 +1,10 @@
-import {Configuration, PluginConfiguration, Project}                      from '@berry/core';
-import {NodeFS, xfs, PortablePath, ppath}                                 from '@berry/fslib';
-import {UsageError}                                                       from 'clipanion';
-import {Writable}                                                         from 'stream';
+import {CommandContext, Configuration, Project}                                           from '@berry/core';
+import {NodeFS, xfs, PortablePath, ppath}                                                 from '@berry/fslib';
+import {Command, UsageError}                                                              from 'clipanion';
 
-import {Driver as GitDriver}                                              from '../drivers/GitDriver';
-import {Driver as MercurialDriver}                                        from '../drivers/MercurialDriver';
-import {Hooks}                                                            from '..';
+import {Driver as GitDriver}                                                              from '../drivers/GitDriver';
+import {Driver as MercurialDriver}                                                        from '../drivers/MercurialDriver';
+import {Hooks}                                                                            from '..';
 
 const ALL_DRIVERS = [
   GitDriver,
@@ -13,32 +12,41 @@ const ALL_DRIVERS = [
 ];
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class StageCommand extends Command<CommandContext> {
+  @Command.Boolean(`-c,--commit`)
+  commit: boolean = false;
 
-  .command(`stage [-c,--commit] [-r,--reset] [-u,--update] [-n,--dry-run]`)
-  .describe(`add all yarn files to your vcs`)
+  @Command.Boolean(`-r,--reset`)
+  reset: boolean = false;
 
-  .detail(`
-    This command will add to your staging area the files belonging to Yarn (typically any modified \`package.json\` and \`.yarnrc.yml\` files, but also linker-generated files, cache data, etc). It will take your ignore list into account, so the cache files won't be added if the cache is ignored in a \`.gitignore\` file (assuming you use Git).
+  @Command.Boolean(`-u,--update`)
+  update: boolean = false;
 
-    Running \`--reset\` will instead remove them from the staging area (the changes will still be there, but won't be committed until you stage them back).
+  @Command.Boolean(`-n,--dry-run`)
+  dryRun: boolean = false;
 
-    Since the staging area is a non-existent concept in Mercurial, Yarn will always create a new commit when running this command on Mercurial repositories. You can get this behavior when using Git by using the \`--commit\` flag which will directly create a commit.
-  `)
+  static usage = Command.Usage({
+    description: `add all yarn files to your vcs`,
+    details: `
+      This command will add to your staging area the files belonging to Yarn (typically any modified \`package.json\` and \`.yarnrc.yml\` files, but also linker-generated files, cache data, etc). It will take your ignore list into account, so the cache files won't be added if the cache is ignored in a \`.gitignore\` file (assuming you use Git).
 
-  .example(
-    `Adds all modified project files to the staging area`,
-    `yarn stage`,
-  )
+      Running \`--reset\` will instead remove them from the staging area (the changes will still be there, but won't be committed until you stage them back).
 
-  .example(
-    `Creates a new commit containing all modified project files`,
-    `yarn stage --commit`,
-  )
+      Since the staging area is a non-existent concept in Mercurial, Yarn will always create a new commit when running this command on Mercurial repositories. You can get this behavior when using Git by using the \`--commit\` flag which will directly create a commit.
+    `,
+    examples: [[
+      `Adds all modified project files to the staging area`,
+      `yarn stage`,
+    ], [
+      `Creates a new commit containing all modified project files`,
+      `yarn stage --commit`,
+    ]],
+  });
 
-  .action(async ({cwd, stdout, commit, reset, update, dryRun}: {cwd: PortablePath, stdout: Writable, commit: boolean, reset: boolean, update: boolean, dryRun: boolean}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-    const {project} = await Project.find(configuration, cwd);
+  @Command.Path(`stage`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project} = await Project.find(configuration, this.context.cwd);
 
     let {driver, root} = await findDriver(project.cwd);
 
@@ -73,24 +81,25 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     const changeList = await driver.filterChanges(root, yarnPaths, yarnNames);
     const commitMessage = await driver.genCommitMessage(root, changeList);
 
-    if (dryRun) {
-      if (commit) {
-        stdout.write(`${commitMessage}\n`);
+    if (this.dryRun) {
+      if (this.commit) {
+        this.context.stdout.write(`${commitMessage}\n`);
       } else {
         for (const file of changeList) {
-          stdout.write(`${NodeFS.fromPortablePath(file.path)}\n`);
+          this.context.stdout.write(`${NodeFS.fromPortablePath(file.path)}\n`);
         }
       }
     } else {
       if (changeList.length === 0) {
-        stdout.write(`No changes found!`);
-      } else if (commit) {
+        this.context.stdout.write(`No changes found!`);
+      } else if (this.commit) {
         await driver.makeCommit(root, changeList, commitMessage);
-      } else if (reset) {
+      } else if (this.reset) {
         await driver.makeReset(root, changeList);
       }
     }
-  });
+  }
+}
 
 async function findDriver(cwd: PortablePath) {
   let driver = null;

@@ -1,33 +1,30 @@
-import {Cache, Configuration, Project, PluginConfiguration} from '@berry/core';
-import {MessageName, StreamReport}                          from '@berry/core';
-import {structUtils}                                        from '@berry/core';
-import {PortablePath}                                       from '@berry/fslib';
-import {Readable, Writable}                                 from 'stream';
+import {Cache, CommandContext, Configuration, Project}                      from '@berry/core';
+import {MessageName, StreamReport}                                          from '@berry/core';
+import {structUtils}                                                        from '@berry/core';
+import {Command}                                                            from 'clipanion';
 
-import {Constraints}                                        from '../../Constraints';
+import {Constraints}                                                        from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class ConstraintsFixCommand extends Command<CommandContext> {
+  static usage = Command.Usage({
+    category: `Constraints-related commands`,
+    description: `make the project constraint-compliant if possible`,
+    details: `
+      This command will run constraints on your project and try its best to automatically fix any error it finds. If some errors cannot be automatically fixed (in particular all errors triggered by \`gen_invalid_dependency\` rules) the process will exit with a non-zero exit code, and an install will be automatically be ran otherwise.
 
-  .command(`constraints fix`)
+      For more information as to how to write constraints, please consult our dedicated page on our website: .
+    `,
+    examples: [[
+      `Automatically fix as many things as possible in your project`,
+      `yarn constraints fix`,
+    ]],
+  });
 
-  .categorize(`Constraints-related commands`)
-  .describe(`make the project constraint-compliant if possible`)
-
-  .detail(`
-    This command will run constraints on your project and try its best to automatically fix any error it finds. If some errors cannot be automatically fixed (in particular all errors triggered by \`gen_invalid_dependency\` rules) the process will exit with a non-zero exit code, and an install will be automatically be ran otherwise.
-
-    For more information as to how to write constraints, please consult our dedicated page on our website: .
-  `)
-
-  .example(
-    `Automatically fix as many things as possible in your project`,
-    `yarn constraints fix`,
-  )
-
-  .action(async ({cwd, stdin, stdout}: {cwd: PortablePath, stdin: Readable, stdout: Writable}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-    const {project} = await Project.find(configuration, cwd);
+  @Command.Path(`constraints`, `fix`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
     const constraints = await Constraints.find(project);
 
@@ -60,7 +57,10 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     let globalExitCode;
 
     if (result.invalidDependencies) {
-      const report = await StreamReport.start({configuration, stdout}, async report => {
+      const report = await StreamReport.start({
+        configuration,
+        stdout: this.context.stdout,
+      }, async report => {
         for (const {workspace, dependencyIdent, dependencyType, reason} of result.invalidDependencies) {
           const dependencyDescriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
 
@@ -78,9 +78,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
 
     if (modified) {
       if (result.invalidDependencies)
-        stdout.write(`\n`);
+        this.context.stdout.write(`\n`);
 
-      const report = await StreamReport.start({configuration, stdout}, async report => {
+      const report = await StreamReport.start({
+        configuration,
+        stdout: this.context.stdout,
+      }, async report => {
         await project.install({cache, report});
       });
 
@@ -91,4 +94,5 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     }
 
     return globalExitCode;
-  });
+  }
+}
