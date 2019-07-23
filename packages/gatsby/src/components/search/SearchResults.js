@@ -35,10 +35,34 @@ const StatsText = styled.div`
   padding: 0 16px 0 16px;
 `;
 
+const RefinementContainer = styled.div`
+  .ais-CurrentRefinements-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 0.5em;
+    font-size: 0.8125rem;
+  }
+
+  .ais-CurrentRefinements-category {
+    display: inline-block;
+    border: 1px solid #eceeef;
+    border-radius: 2px;
+    margin-right: 0.5em;
+    padding: 0 0.5em;
+  }
+
+  .ais-CurrentRefinements-delete {
+    background: none;
+    border: none;
+  }
+`;
+
 const ResultsFound = ({ pagination, onTagClick, onOwnerClick, searchState }) => (
   <ResultsContainer>
     <StatsText>
-      <CurrentRefinements />
+      <RefinementContainer>
+        <CurrentRefinements />
+      </RefinementContainer>
       <Stats
         translations={{
           stats: (num, time) =>

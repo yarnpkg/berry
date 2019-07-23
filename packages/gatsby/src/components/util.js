@@ -5,7 +5,7 @@ import xss                                  from 'xss';
 import unescape                             from 'unescape-html';
 import { HIGHLIGHT_TAGS, connectHighlight } from 'react-instantsearch-dom';
 import styled                               from '@emotion/styled';
-import {withPrefix}                         from 'gatsby';
+import {withPrefix}                         from 'gatsby'
 
 import IcoTag                               from '../images/search/ico-tag.svg'
 
@@ -49,7 +49,7 @@ export const Keywords = ({ name, keywords = [], maxKeywords = 4 }) => {
         .slice(0, maxKeywords)
         .map(keyword => (
           <a
-            href={searchLink({ keyword, query: ' ' })}
+            href={`${withPrefix('/')}?q=${' '}&keywords%5B0%5D=${keyword}`}
             key={`${name}-${keyword}`}
           >
             {keyword}
@@ -163,14 +163,9 @@ export const packageJSONLink = packageName => ({
 });
 
 export const packageLink = name =>
-  `${withPrefix('/package')}${
+  `${withPrefix('/package/')}${
     process.env.NODE_ENV === 'production' ? '/' : '?'
   }${name}`;
-
-export const searchLink = ({ query, keyword }) =>
-  `${withPrefix('/')}?${query ? `q=${query}` : ''}${
-    keyword ? `&keywords%5B0%5D=${keyword}` : ''
-  }`;
 
 export const prefixURL = (url, { base, user, project, head, path }) => {
   if (url.indexOf('//') > 0) {

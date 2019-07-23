@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import qs                 from 'qs';
-import {withPrefix}       from 'gatsby';
+import React, {Component}     from 'react';
+import qs                     from 'qs';
+import {withPrefix}           from 'gatsby';
 
 const updateAfter = 700;
 const searchStateToQueryString = searchState => ({

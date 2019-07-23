@@ -1,7 +1,7 @@
 import React           from 'react';
 import formatDistance  from 'date-fns/formatDistance';
-import { Highlight }   from 'react-instantsearch-dom';
 import { Link }        from 'gatsby';
+import { Highlight }   from 'react-instantsearch-dom';
 import styled          from '@emotion/styled';
 
 import IcoDownload     from '../../images/search/ico-download.svg';
