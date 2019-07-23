@@ -1,20 +1,15 @@
-import {Configuration}                                          from '@berry/core';
-import {xfs, NodeFS, ppath, PortablePath}                       from '@berry/fslib';
-import {execFileSync}                                           from 'child_process';
-import {Clipanion}                                              from 'clipanion';
-import * as yup                                                 from 'yup';
+import {Configuration, CommandContext}    from '@berry/core';
+import {xfs, NodeFS, PortablePath}        from '@berry/fslib';
+import {execFileSync}                     from 'child_process';
+import {Cli}                              from 'clipanion';
 
-import {pluginConfiguration}                                    from './pluginConfiguration';
+import {pluginConfiguration}              from './pluginConfiguration';
 
-const clipanion = new Clipanion({configKey: null});
-
-clipanion.topLevel(`[--cwd PATH]`)
-  .validate(yup.object().shape({
-    cwd: yup.string().transform((cwd = process.cwd()) => {
-      // Note that the `--cwd` option might be a relative path that we need to resolve
-      return ppath.resolve(NodeFS.toPortablePath(process.cwd()), NodeFS.toPortablePath(cwd));
-    }),
-  }));
+const cli = new Cli<CommandContext>({
+  binaryLabel: `Yarn Package Manager`,
+  binaryName: `yarn`,
+  binaryVersion: BERRY_VERSION,
+});
 
 function runBinary(path: PortablePath) {
   const physicalPath = NodeFS.fromPortablePath(path);
@@ -50,7 +45,7 @@ async function run() {
 
   if (yarnPath !== null && !ignorePath) {
     if (!xfs.existsSync(yarnPath)) {
-      clipanion.error(new Error(`The "yarn-path" option has been set (in ${configuration.sources.get(`yarnPath`)}), but the specified location doesn't exist (${yarnPath}).`), {stream: process.stderr});
+      process.stdout.write(cli.error(new Error(`The "yarn-path" option has been set (in ${configuration.sources.get(`yarnPath`)}), but the specified location doesn't exist (${yarnPath}).`)));
       process.exitCode = 1;
     } else {
       try {
@@ -65,15 +60,20 @@ async function run() {
 
     for (const plugin of configuration.plugins.values())
       for (const command of plugin.commands || [])
-        command(clipanion, pluginConfiguration);
+        cli.register(command);
 
-    clipanion.runExit(`yarn`, process.argv.slice(2), {
+    cli.runExit(process.argv.slice(2), {
       cwd: NodeFS.toPortablePath(process.cwd()),
+      plugins: pluginConfiguration,
+      quiet: false,
+      stdin: process.stdin,
+      stdout: process.stdout,
+      stderr: process.stdout,
     });
   }
 }
 
 run().catch(error => {
-  clipanion.error(error, {stream: process.stdout});
+  process.stdout.write(cli.error(error));
   process.exitCode = 1;
 });

@@ -14,7 +14,7 @@
     "@babel/register": "^7.0.0",
     "brfs": "^2.0.1",
     "buffer-loader": "^0.1.0",
-    "clipanion": "^0.17.1",
+    "clipanion": "2.0.0-rc.16",
     "joi": "^13.6.0",
     "pnp-webpack-plugin": "^1.4.3",
     "raw-loader": "^0.5.1",

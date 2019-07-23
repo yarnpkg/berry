@@ -1,86 +1,84 @@
-import {Configuration, PluginConfiguration, Project, StreamReport, MessageName}                      from '@berry/core';
-import {httpUtils}                                                                                   from '@berry/core';
-import {xfs, PortablePath, ppath}                                                                    from '@berry/fslib';
-import semver, {SemVer}                                                                              from 'semver';
-import {Readable, Writable}                                                                          from 'stream';
-import * as yup                                                                                      from 'yup';
+import {CommandContext, Configuration, Project, StreamReport, MessageName}                                           from '@berry/core';
+import {httpUtils}                                                                                                   from '@berry/core';
+import {xfs, PortablePath, ppath}                                                                                    from '@berry/fslib';
+import {Command}                                                                                                     from 'clipanion';
+import semver, {SemVer}                                                                                              from 'semver';
 
 const BUNDLE_REGEXP = /^yarn-[0-9]+\.[0-9]+\.[0-9]+\.js$/;
 const BERRY_RANGES = new Set([`berry`, `v2`, `2`, `nightly`, `nightlies`, `rc`]);
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class SetVersionCommand extends Command<CommandContext> {
+  @Command.String()
+  range!: string;
 
-  .command(`set version <range> [--allow-rc] [--dry-run]`)
-  .describe(`lock the Yarn version used by the project`)
+  @Command.Boolean(`--allow-rc`)
+  includePrereleases: boolean = false;
 
-  .aliases(`policies set-version`)
+  @Command.Boolean(`--dry-run`)
+  dryRun: boolean = false;
 
-  .validate(yup.object().shape({
-    range: yup.string().default(`berry`),
-  }))
+  static usage = Command.Usage({
+    description: `lock the Yarn version used by the project`,
+    details: `
+      This command will download a specific release of Yarn directly from the Yarn Github repository, will store it inside your project, and will change the \`yarnPath\` settings from your project \`.yarnrc.yml\` file to point to the new file.
 
-  .detail(`
-    This command will download a specific release of Yarn directly from the Yarn Github repository, will store it inside your project, and will change the \`yarnPath\` settings from your project \`.yarnrc.yml\` file to point to the new file.
+      A very good use case for this command is to enforce the version of Yarn used by the any single member of your team inside a same project - by doing this you ensure that you have control on Yarn upgrades and downgrades (including on your deployment servers), and get rid of most of the headaches related to someone using a slightly different version and getting a different behavior than you.
 
-    A very good use case for this command is to enforce the version of Yarn used by the any single member of your team inside a same project - by doing this you ensure that you have control on Yarn upgrades and downgrades (including on your deployment servers), and get rid of most of the headaches related to someone using a slightly different version and getting a different behavior than you.
+      The command will by default only consider stable releases as valid candidates, but releases candidates can be downloaded as well provided you add the \`--allow-rc\` flag or use an exact tag.
 
-    The command will by default only consider stable releases as valid candidates, but releases candidates can be downloaded as well provided you add the \`--allow-rc\` flag or use an exact tag.
+      Note that because you're on the v2 alpha trunk, running the command without parameter will always download the latest build straight from the repository. This behavior will be tweaked near the release to only download stable releases once more.
 
-    Note that because you're on the v2 alpha trunk, running the command without parameter will always download the latest build straight from the repository. This behavior will be tweaked near the release to only download stable releases once more.
+      Adding the \`--dry-run\` flag will cause Yarn not to persist the changes on the disk.
+    `,
+    examples: [[
+      `Download the latest release from the Yarn repository`,
+      `yarn set version latest`,
+    ], [
+      `Download the latest nightly release from the Yarn repository`,
+      `yarn set version nightly`,
+    ], [
+      `Switch back to Yarn v1`,
+      `yarn set version ^1`,
+    ], [
+      `Switch back to a specific release`,
+      `yarn set version 1.14.0`,
+    ]],
+  });
 
-    Adding the \`--dry-run\` flag will cause Yarn not to persist the changes on the disk.
-  `)
+  @Command.Path(`set`, `version`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project} = await Project.find(configuration, this.context.cwd);
 
-  .example(
-    `Download the latest release from the Yarn repository`,
-    `yarn set version latest`,
-  )
-
-  .example(
-    `Download the latest nightly release from the Yarn repository`,
-    `yarn set version nightly`,
-  )
-
-  .example(
-    `Switch back to Yarn v1`,
-    `yarn set version ^1`,
-  )
-
-  .example(
-    `Switch back to a specific release`,
-    `yarn set version 1.14.0`,
-  )
-
-  .action(async ({cwd, stdout, range, allowRc, dryRun}: {cwd: PortablePath, stdin: Readable, stdout: Writable, range: string, allowRc: boolean, dryRun: boolean}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-    const {project} = await Project.find(configuration, cwd);
-
-    const report = await StreamReport.start({configuration, stdout}, async (report: StreamReport) => {
-      if (range === `latest`)
-        range = `*`;
+    const report = await StreamReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async (report: StreamReport) => {
+      if (this.range === `latest`)
+        this.range = `*`;
 
       let candidates = [];
 
       let bundleUrl;
       let bundleVersion;
 
-      if (BERRY_RANGES.has(range)) {
+      if (BERRY_RANGES.has(this.range)) {
         bundleUrl = `https://github.com/yarnpkg/berry/raw/master/packages/berry-cli/bin/berry.js`;
         bundleVersion = `berry`;
         candidates = [bundleVersion];
-      } else if (range === `nightly-v1`) {
+      } else if (this.range === `nightly-v1`) {
         bundleUrl = `https://nightly.yarnpkg.com/latest.js`;
         bundleVersion = `nightly`;
         candidates = [bundleVersion];
-      } else if (semver.valid(range)) {
+      } else if (semver.valid(this.range)) {
         const {releases} = await fetchReleases(configuration, {
           includePrereleases: true,
         });
 
-        const release = releases.find(release => semver.eq(release.version, range));
+        const release = releases.find(release => semver.eq(release.version, this.range));
         if (!release)
-          throw new Error(`No matching release found for version ${range}.`);
+          throw new Error(`No matching release found for version ${this.range}.`);
 
         const asset = getBundleAsset(release);
         if (!asset)
@@ -91,18 +89,18 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         candidates = [bundleVersion];
       } else {
         const {releases, prereleases} = await fetchReleases(configuration, {
-          includePrereleases: allowRc,
+          includePrereleases: this.includePrereleases,
         });
 
-        const satisfying = releases.filter(release => semver.satisfies(release.version, range)).sort((a, b) => {
+        const satisfying = releases.filter(release => semver.satisfies(release.version, this.range)).sort((a, b) => {
           return semver.rcompare(a.version, b.version);
         });
 
         if (satisfying.length === 0) {
-          if (prereleases.find(release => semver.satisfies(release.version, range))) {
-            throw new Error(`No matching release found for range ${range}, but a candidate prerelease was found - run with --allow-rc to use it.`);
+          if (prereleases.find(release => semver.satisfies(release.version, this.range))) {
+            throw new Error(`No matching release found for range ${this.range}, but a candidate prerelease was found - run with --allow-rc to use it.`);
           } else {
-            throw new Error(`No matching release found for range ${range}.`);
+            throw new Error(`No matching release found for range ${this.range}.`);
           }
         }
 
@@ -122,7 +120,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         report.reportInfo(MessageName.UNNAMED, `Selecting the highest release amongst ${configuration.format(bundleVersion, `#87afff`)} and ${candidates.length - 1} other${candidates.length === 2 ? `` : `s`}`);
 
 
-      if (!dryRun) {
+      if (!this.dryRun) {
         report.reportInfo(MessageName.UNNAMED, `Downloading ${configuration.format(bundleUrl, `green`)}`);
         const releaseBuffer = await httpUtils.get(bundleUrl, {configuration});
 
@@ -141,7 +139,8 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     });
 
     return report.exitCode();
-  });
+  }
+}
 
 type ReleaseAsset = {
   id: any,

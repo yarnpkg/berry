@@ -1,34 +1,44 @@
 import {WorkspaceRequiredError}                                                                        from '@berry/cli';
-import {Cache, Configuration, PluginConfiguration, Project}                                            from '@berry/core';
+import {Cache, CommandContext, Configuration, Project}                                                 from '@berry/core';
 import {LightReport}                                                                                   from '@berry/core';
 import {scriptUtils, structUtils}                                                                      from '@berry/core';
 import {NodeFS, xfs, PortablePath, ppath, Filename, toFilename}                                        from '@berry/fslib';
-import {Readable, Writable}                                                                            from 'stream';
+import {Command}                                                                                       from 'clipanion';
 import tmp                                                                                             from 'tmp';
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class DlxCommand extends Command<CommandContext> {
+  @Command.String(`-p,--package`)
+  pkg: string | undefined;
 
-  .command(`dlx <command> [... args] [-p,--package NAME ...] [-q,--quiet]`)
-  .describe(`run a package in a temporary environment`)
-  .flags({proxyArguments: true})
+  @Command.Boolean(`-q,--quiet`)
+  quiet: boolean = false;
 
-  .detail(`
-    This command will install a package within a temporary environment, and run its binary script if it contains any. The binary will run within the current cwd.
+  @Command.String()
+  command!: string;
 
-    By default Yarn will download the package named \`command\`, but this can be changed through the use of the \`-p,--package\` flag which will instruct Yarn to still run the same command but from a different package.
+  @Command.Proxy()
+  args: Array<string> = [];
 
-    Also by default Yarn will print the full install logs when installing the given package. This behavior can be disabled by using the \`-q,--quiet\` flag which will instruct Yarn to only report critical errors.
+  static usage = Command.Usage({
+    description: `run a package in a temporary environment`,
+    details: `
+      This command will install a package within a temporary environment, and run its binary script if it contains any. The binary will run within the current cwd.
 
-    Using \`yarn dlx\` as a replacement of \`yarn add\` isn't recommended, as it makes your project non-deterministic (Yarn doesn't keep track of the packages installed through \`dlx\` - neither their name, nor their version).
-  `)
+      By default Yarn will download the package named \`command\`, but this can be changed through the use of the \`-p,--package\` flag which will instruct Yarn to still run the same command but from a different package.
 
-  .example(
-    `Use create-react-app to create a new React app`,
-    `yarn dlx create-react-app ./my-app`,
-  )
+      Also by default Yarn will print the full install logs when installing the given package. This behavior can be disabled by using the \`-q,--quiet\` flag which will instruct Yarn to only report critical errors.
 
-  .action(async ({cwd, stdin, stdout, stderr, command, package: packages, args, quiet, ...rest}: {cwd: PortablePath, stdin: Readable, stdout: Writable, stderr: Writable, command: string, package: Array<string>, args: Array<string>, quiet: boolean}) => {
+      Using \`yarn dlx\` as a replacement of \`yarn add\` isn't recommended, as it makes your project non-deterministic (Yarn doesn't keep track of the packages installed through \`dlx\` - neither their name, nor their version).
+    `,
+    examples: [[
+      `Use create-react-app to create a new React app`,
+      `yarn dlx create-react-app ./my-app`,
+    ]],
+  });
+
+  @Command.Path(`dlx`)
+  async execute() {
     const tmpDir = await createTemporaryDirectory(toFilename(`dlx-${process.pid}`));
 
     try {
@@ -36,41 +46,47 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`yarn.lock`)), ``);
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`.yarnrc.yml`)), `enableGlobalCache: true\n`);
 
-      if (packages.length === 0) {
-        packages = [command];
-        command = structUtils.parseDescriptor(command).name;
-      }
+      const pkgs = typeof this.pkg !== `undefined`
+        ? [this.pkg]
+        : [this.command];
 
-      const addOptions = [];
-      if (quiet)
-        addOptions.push(`--quiet`);
+      const command = structUtils.parseDescriptor(this.command).name;
 
-      const addExitCode = await clipanion.run(null, [`add`, ...addOptions, `--`, ...packages], {cwd: tmpDir, stdin, stdout, stderr, ...rest});
+      const addExitCode = await this.cli.run([`add`, `--`, ...pkgs], {cwd: tmpDir, quiet: this.quiet});
       if (addExitCode !== 0)
         return addExitCode;
 
-      if (!quiet)
-        stdout.write(`\n`);
+      if (!this.quiet)
+        this.context.stdout.write(`\n`);
 
-      const configuration = await Configuration.find(tmpDir, pluginConfiguration);
+      const configuration = await Configuration.find(tmpDir, this.context.plugins);
       const {project, workspace} = await Project.find(configuration, tmpDir);
       const cache = await Cache.find(configuration);
 
       if (workspace === null)
-        throw new WorkspaceRequiredError(cwd);
+        throw new WorkspaceRequiredError(this.context.cwd);
 
-      const report = await LightReport.start({configuration, stdout}, async (report: LightReport) => {
+      const report = await LightReport.start({
+        configuration,
+        stdout: this.context.stdout,
+      }, async (report: LightReport) => {
         await project.resolveEverything({lockfileOnly: true, cache, report});
       });
 
       if (report.hasErrors())
         return report.exitCode();
 
-      return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, args, {cwd, stdin, stdout, stderr});
+      return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, this.args, {
+        cwd: this.context.cwd,
+        stdin: this.context.stdin,
+        stdout: this.context.stdout,
+        stderr: this.context.stderr,
+      });
     } finally {
       await xfs.removePromise(tmpDir);
     }
-  });
+  }
+}
 
 function createTemporaryDirectory(name?: Filename) {
   return new Promise<PortablePath>((resolve, reject) => {

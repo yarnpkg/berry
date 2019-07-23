@@ -1,37 +1,37 @@
-import {Configuration, Project, PluginConfiguration} from '@berry/core';
-import {MessageName, StreamReport}                   from '@berry/core';
-import {structUtils}                                 from '@berry/core';
-import {PortablePath}                                from '@berry/fslib';
-import getPath                                       from 'lodash.get';
-import {Writable}                                    from 'stream';
+import {CommandContext, Configuration, Project}                      from '@berry/core';
+import {MessageName, StreamReport}                                   from '@berry/core';
+import {structUtils}                                                 from '@berry/core';
+import {Command}                                                     from 'clipanion';
+import getPath                                                       from 'lodash.get';
 
-import {Constraints}                                 from '../../Constraints';
+import {Constraints}                                                 from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class ConstraintsCheckCommand extends Command<CommandContext> {
+  static usage = Command.Usage({
+    category: `Constraints-related commands`,
+    description: `check that the project constraints are met`,
+    details: `
+      This command will run constraints on your project and emit errors for each one that is found but isn't met. If any error is emitted the process will exit with a non-zero exit code.
 
-  .command(`constraints check`)
+      For more information as to how to write constraints, please consult our dedicated page on our website: .
+    `,
+    examples: [[
+      `Check that all constraints are satisfied`,
+      `yarn constraints check`,
+    ]],
+  });
 
-  .categorize(`Constraints-related commands`)
-  .describe(`check that the project constraints are met`)
-
-  .detail(`
-    This command will run constraints on your project and emit errors for each one that is found but isn't met. If any error is emitted the process will exit with a non-zero exit code.
-
-    For more information as to how to write constraints, please consult our dedicated page on our website: .
-  `)
-
-  .example(
-    `Check that all constraints are satisfied`,
-    `yarn constraints check`,
-  )
-
-  .action(async ({cwd, stdout}: {cwd: PortablePath, stdout: Writable}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-    const {project} = await Project.find(configuration, cwd);
+  @Command.Path(`constraints`, `check`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project} = await Project.find(configuration, this.context.cwd);
     const constraints = await Constraints.find(project);
 
-    const report = await StreamReport.start({configuration, stdout}, async report => {
+    const report = await StreamReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async report => {
       const result = await constraints.process();
 
       for (const {workspace, dependencyIdent, dependencyRange, dependencyType} of result.enforcedDependencies) {
@@ -76,4 +76,5 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
     });
 
     return report.exitCode();
-  });
+  }
+}

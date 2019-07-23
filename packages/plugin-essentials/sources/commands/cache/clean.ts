@@ -1,42 +1,48 @@
-import {Configuration, Cache, PluginConfiguration, Project}                   from '@berry/core';
+import {Configuration, Cache, CommandContext, Project}                        from '@berry/core';
 import {LightReport, MessageName, StreamReport, VirtualFetcher}               from '@berry/core';
 import {NodeFS, xfs, PortablePath, ppath}                                     from '@berry/fslib';
-import {Writable}                                                             from 'stream';
+import {Command}                                                              from 'clipanion';
 
 const PRESERVED_FILES = new Set([
   `.gitignore`,
 ]);
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class CacheCleanCommand extends Command<CommandContext> {
+  @Command.Boolean(`--dry-run`)
+  dryRun: boolean = false;
 
-  .command(`cache clean [--dry-run] [--json]`)
-  .describe(`remove the unused packages from the cache`)
+  @Command.Boolean(`--json`)
+  json: boolean = false;
 
-  .detail(`
-    This command will locate the files that aren't used in the current project, and remove them (unless \`--dry-run\` is set).
+  static usage = Command.Usage({
+    description: `remove the unused packages from the cache`,
+    details: `
+      This command will locate the files that aren't used in the current project, and remove them (unless \`--dry-run\` is set).
 
-    In order to detect whether a file is used or not the command will run a partial install where it will paint the "fetched" packages on top of actually downloading them. Each package in the cache that hasn't been painted during the install will be reported as unused.
+      In order to detect whether a file is used or not the command will run a partial install where it will paint the "fetched" packages on top of actually downloading them. Each package in the cache that hasn't been painted during the install will be reported as unused.
 
-    One quirk of this system is that \`yarn cache clean\` cannot be used directly if your cache is used by multiple projects, as it won't be able to detect the files being used by other projects than the current one. The best way to support multiple projects with a single mirror is to use the \`--dry-run\` and \`--json\` flags in order to get the list of files that aren't used by one unique project. After running this command on all your projects, you'll just have to remove the intersection of all those file sets as they'll be guaranteed not to be used by any project.
-  `)
+      One quirk of this system is that \`yarn cache clean\` cannot be used directly if your cache is used by multiple projects, as it won't be able to detect the files being used by other projects than the current one. The best way to support multiple projects with a single mirror is to use the \`--dry-run\` and \`--json\` flags in order to get the list of files that aren't used by one unique project. After running this command on all your projects, you'll just have to remove the intersection of all those file sets as they'll be guaranteed not to be used by any project.
+    `,
+    examples: [[
+      `Remove all the unused cache files from the current project`,
+      `yarn cache clean`,
+    ], [
+      `Obtain the list of unused files from the current project`,
+      `yarn cache clean --dry-run --json`,
+    ]],
+  });
 
-  .example(
-    `Remove all the unused cache files from the current project`,
-    `yarn cache clean`,
-  )
-
-  .example(
-    `Obtain the list of unused files from the current project`,
-    `yarn cache clean --dry-run --json`
-  )
-
-  .action(async ({cwd, stdout, dryRun, json}: {cwd: PortablePath, stdout: Writable, dryRun: boolean, json: boolean}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-    const {project} = await Project.find(configuration, cwd);
+  @Command.Path(`cache`, `clean`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
-    const resolutionReport = await LightReport.start({configuration, stdout}, async (report: LightReport) => {
+    const resolutionReport = await LightReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async (report: LightReport) => {
       await project.resolveEverything({lockfileOnly: true, cache, report});
     });
 
@@ -82,16 +88,21 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
       }
     }
 
-    const unlinkReport = await StreamReport.start({configuration, json, stdout}, async report => {
+    const unlinkReport = await StreamReport.start({
+      configuration,
+      json: this.json,
+      stdout: this.context.stdout,
+    }, async report => {
       for (const path of dirtyPaths) {
         report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${ppath.basename(path)} seems to be unused`);
         report.reportJson({path: NodeFS.fromPortablePath(path)});
 
-        if (!dryRun) {
+        if (!this.dryRun) {
           await xfs.unlinkPromise(path);
         }
       }
     });
 
     return unlinkReport.exitCode();
-  });
+  }
+}

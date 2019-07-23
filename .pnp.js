@@ -3575,7 +3575,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/pnpify", "virtual:4618db608ddd5ff4b385ac4f8bba9302fe80be01f8be4f2c09326b6232f308ff5592ae5490aee3e37d21fb1703c6a7a0990d92b6e5f86a74e640f011f12da48b#workspace:packages/berry-pnpify"],
             ["brfs", "npm:2.0.1"],
             ["buffer-loader", "npm:0.1.0"],
-            ["clipanion", "npm:0.17.1"],
+            ["clipanion", "npm:2.0.0-rc.16"],
             ["joi", "npm:13.7.0"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["raw-loader", "npm:0.5.1"],
@@ -3616,7 +3616,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/pnp", "workspace:packages/berry-pnp"],
             ["@berry/shell", "workspace:packages/berry-shell"],
             ["chalk", "npm:2.4.2"],
-            ["clipanion", "npm:0.17.1"],
+            ["clipanion", "npm:2.0.0-rc.16"],
             ["semver", "npm:5.6.0"],
             ["tmp", "npm:0.0.33"],
             ["yup", "npm:0.27.0"]
@@ -3637,7 +3637,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["agentkeepalive", "npm:4.0.2"],
             ["camelcase", "npm:5.3.1"],
             ["chalk", "npm:2.4.2"],
-            ["clipanion", "npm:0.17.1"],
+            ["clipanion", "npm:2.0.0-rc.16"],
             ["cross-spawn", "npm:6.0.5"],
             ["globby", "npm:8.0.2"],
             ["got", "npm:9.6.0"],
@@ -3810,6 +3810,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/plugin-constraints", "workspace:packages/plugin-constraints"],
             ["@berry/core", "workspace:packages/berry-core"],
             ["@berry/fslib", "workspace:packages/berry-fslib"],
+            ["clipanion", "npm:2.0.0-rc.16"],
             ["inquirer", "npm:6.2.1"],
             ["lodash.get", "npm:4.4.2"],
             ["node-emoji", "npm:1.8.1"],
@@ -3827,7 +3828,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/fslib", "workspace:packages/berry-fslib"],
             ["@berry/json-proxy", "workspace:packages/berry-json-proxy"],
             ["@berry/plugin-essentials", "workspace:packages/plugin-essentials"],
-            ["clipanion", "npm:0.17.1"],
+            ["clipanion", "npm:2.0.0-rc.16"],
             ["tmp", "npm:0.0.33"]
           ]
         }]
@@ -3842,7 +3843,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/fslib", "workspace:packages/berry-fslib"],
             ["@berry/json-proxy", "workspace:packages/berry-json-proxy"],
             ["@berry/parsers", "workspace:packages/berry-parsers"],
-            ["clipanion", "npm:0.17.1"],
+            ["clipanion", "npm:2.0.0-rc.16"],
             ["inquirer", "npm:6.2.1"],
             ["semver", "npm:5.6.0"],
             ["treeify", "npm:1.1.0"],
@@ -3903,7 +3904,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/core", "workspace:packages/berry-core"],
             ["@berry/fslib", "workspace:packages/berry-fslib"],
             ["@berry/json-proxy", "workspace:packages/berry-json-proxy"],
-            ["clipanion", "npm:0.17.1"]
+            ["clipanion", "npm:2.0.0-rc.16"]
           ]
         }]
       ]],
@@ -3939,7 +3940,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/fslib", "workspace:packages/berry-fslib"],
             ["@berry/plugin-npm", "workspace:packages/plugin-npm"],
             ["@berry/plugin-pack", "workspace:packages/plugin-pack"],
-            ["clipanion", "npm:0.17.1"],
+            ["clipanion", "npm:2.0.0-rc.16"],
             ["inquirer", "npm:6.2.1"],
             ["ssri", "npm:6.0.1"],
             ["yup", "npm:0.27.0"]
@@ -3955,6 +3956,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/core", "workspace:packages/berry-core"],
             ["@berry/fslib", "workspace:packages/berry-fslib"],
             ["@types/tar-stream", "npm:1.6.0"],
+            ["clipanion", "npm:2.0.0-rc.16"],
             ["micromatch", "npm:4.0.2"],
             ["tar-stream", "npm:2.0.1"]
           ]
@@ -3970,7 +3972,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/fslib", "workspace:packages/berry-fslib"],
             ["@berry/plugin-stage", "workspace:packages/plugin-stage"],
             ["@berry/pnp", "workspace:packages/berry-pnp"],
-            ["clipanion", "npm:0.17.1"]
+            ["clipanion", "npm:2.0.0-rc.16"]
           ]
         }]
       ]],
@@ -3982,7 +3984,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/builder", "workspace:packages/berry-builder"],
             ["@berry/core", "workspace:packages/berry-core"],
             ["@berry/fslib", "workspace:packages/berry-fslib"],
-            ["clipanion", "npm:0.17.1"]
+            ["clipanion", "npm:2.0.0-rc.16"]
           ]
         }]
       ]],
@@ -4010,7 +4012,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/fslib", "workspace:packages/berry-fslib"],
             ["@berry/plugin-pack", "workspace:packages/plugin-pack"],
             ["@types/semver", "npm:5.5.0"],
-            ["clipanion", "npm:0.17.1"],
+            ["clipanion", "npm:2.0.0-rc.16"],
             ["semver", "npm:5.6.0"]
           ]
         }]
@@ -4024,7 +4026,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/cli", "workspace:packages/berry-cli"],
             ["@berry/core", "workspace:packages/berry-core"],
             ["@berry/fslib", "workspace:packages/berry-fslib"],
-            ["clipanion", "npm:0.17.1"],
+            ["clipanion", "npm:2.0.0-rc.16"],
             ["p-limit", "npm:2.2.0"],
             ["yup", "npm:0.27.0"]
           ]
@@ -8788,12 +8790,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["camelcase", "npm:5.0.0"]
           ]
         }],
-        ["npm:5.2.0", {
-          "packageLocation": "./.yarn/cache/camelcase-npm-5.2.0-06307f3cfecbcd07de82e036d25b37759a7b17a424ca38c039280c6b3b21123c.zip/node_modules/camelcase/",
-          "packageDependencies": [
-            ["camelcase", "npm:5.2.0"]
-          ]
-        }],
         ["npm:5.3.1", {
           "packageLocation": "./.yarn/cache/camelcase-npm-5.3.1-290063debfd59c275a9e2c0ff51faac5331b0a6c030316c531465e43e79dd3c4.zip/node_modules/camelcase/",
           "packageDependencies": [
@@ -9170,12 +9166,11 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["clipanion", [
-        ["npm:0.17.1", {
-          "packageLocation": "./.yarn/cache/clipanion-npm-0.17.1-8e8581a88377c3038ed91ae3fc548607175c28203065a4fafda2f17987db3783.zip/node_modules/clipanion/",
+        ["npm:2.0.0-rc.16", {
+          "packageLocation": "./.yarn/cache/clipanion-npm-2.0.0-rc.16-839ea81d216a4fa66254196a295ae025a68a405195bcbc8646ea15deeb171b3f.zip/node_modules/clipanion/",
           "packageDependencies": [
-            ["clipanion", "npm:0.17.1"],
-            ["camelcase", "npm:5.2.0"],
-            ["chalk", "npm:1.1.3"]
+            ["clipanion", "npm:2.0.0-rc.16"],
+            ["chalk", "npm:2.4.2"]
           ]
         }]
       ]],

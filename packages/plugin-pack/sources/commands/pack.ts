@@ -1,44 +1,51 @@
-import {WorkspaceRequiredError}                                                 from '@berry/cli';
-import {Configuration, MessageName, PluginConfiguration, Project, StreamReport} from '@berry/core';
-import {xfs, ppath, PortablePath, toFilename}                                   from '@berry/fslib';
-import {Writable}                                                               from 'stream';
+import {WorkspaceRequiredError}                                                                 from '@berry/cli';
+import {CommandContext, Configuration, MessageName, Project, StreamReport}                      from '@berry/core';
+import {xfs, ppath, toFilename}                                                                 from '@berry/fslib';
+import {Command}                                                                                from 'clipanion';
 
-import * as packUtils                                                           from '../packUtils';
+import * as packUtils                                                                           from '../packUtils';
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class PackCommand extends Command<CommandContext> {
+  @Command.Boolean(`-n,--dry-run`)
+  dryRun: boolean = false;
 
-  .command(`pack [-n,--dry-run] [--json]`)
-  .describe(`bundle local packages for publishing`)
+  @Command.Boolean(`--json`)
+  json: boolean = false;
 
-  .detail(`
-    This command will turn the local workspace into a compressed archive suitable for publishing.
+  static usage = Command.Usage({
+    description: `generate a tarball from the active workspace`,
+    details: `
+      This command will turn the active workspace into a compressed archive suitable for publishing.
 
-    If the \`-n,--dry-run\` flag is set the command will just print the file paths without actually generating the package archive.
+      If the \`-n,--dry-run\` flag is set the command will just print the file paths without actually generating the package archive.
 
-    If the \`--json\` flag is set the output will follow a JSON-stream output format instead of the regular user-readable one.
-  `)
+      If the \`--json\` flag is set the output will follow a JSON-stream output format instead of the regular user-readable one.
+    `,
+    examples: [[
+      `Create an archive from the active workspace`,
+      `yarn pack`,
+    ], [
+      `List the files that would be made part of the workspace's archive`,
+      `yarn pack --dry-run`,
+    ]],
+  });
 
-  .example(
-    `Create an archive from the active workspace`,
-    `yarn pack`,
-  )
-
-  .example(
-    `List the files that would be made part of the workspace's archive`,
-    `yarn pack --dry-run`,
-  )
-
-  .action(async ({cwd, stdout, dryRun, json}: {cwd: PortablePath, stdout: Writable, dryRun: boolean, json: boolean}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-    const {workspace} = await Project.find(configuration, cwd);
+  @Command.Path(`pack`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {workspace} = await Project.find(configuration, this.context.cwd);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(cwd);
+      throw new WorkspaceRequiredError(this.context.cwd);
 
     const target = ppath.resolve(workspace.cwd, toFilename(`package.tgz`));
 
-    const report = await StreamReport.start({configuration, stdout, json}, async report => {
+    const report = await StreamReport.start({
+      configuration,
+      stdout: this.context.stdout,
+      json: this.json,
+    }, async report => {
       await packUtils.prepareForPack(workspace, {report}, async () => {
         report.reportJson({base: workspace.cwd});
 
@@ -49,7 +56,7 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
           report.reportJson({location: file});
         }
 
-        if (!dryRun) {
+        if (!this.dryRun) {
           const pack = await packUtils.genPackStream(workspace, files);
           const write = xfs.createWriteStream(target);
 
@@ -61,11 +68,12 @@ export default (clipanion: any, pluginConfiguration: PluginConfiguration) => cli
         }
       });
 
-      if (!dryRun) {
+      if (!this.dryRun) {
         report.reportInfo(MessageName.UNNAMED, `Package archive generated in ${configuration.format(target, `magenta`)}`);
         report.reportJson({output: target});
       }
     });
 
     return report.exitCode();
-  });
+  }
+}

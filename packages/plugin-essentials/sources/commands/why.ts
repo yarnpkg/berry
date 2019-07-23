@@ -1,55 +1,67 @@
-import {WorkspaceRequiredError}                                  from '@berry/cli';
-import {Cache, Configuration, LightReport, LocatorHash, Package} from '@berry/core';
-import {IdentHash, PluginConfiguration, Project}                 from '@berry/core';
-import {miscUtils, structUtils}                                  from '@berry/core';
-import {PortablePath}                                            from '@berry/fslib';
-import {Writable}                                                from 'stream';
-import {asTree}                                                  from 'treeify';
+import {WorkspaceRequiredError}                                                  from '@berry/cli';
+import {Cache, CommandContext, Configuration, LightReport, LocatorHash, Package} from '@berry/core';
+import {IdentHash, Project}                                                      from '@berry/core';
+import {miscUtils, structUtils}                                                  from '@berry/core';
+import {Command}                                                                 from 'clipanion';
+import {Writable}                                                                from 'stream';
+import {asTree}                                                                  from 'treeify';
 
 type TreeNode = {[key: string]: TreeNode};
 
 // eslint-disable-next-line arca/no-default-export
-export default (clipanion: any, pluginConfiguration: PluginConfiguration) => clipanion
+export default class WhyCommand extends Command<CommandContext> {
+  @Command.String()
+  package!: string;
 
-  .command(`why <package> [-R,--recursive] [--peers]`)
-  .describe(`display the reason why a package is needed`)
+  @Command.Boolean(`-R,--recursive`)
+  recursive: boolean = false;
 
-  .detail(`
-    This command prints the exact reasons why a package appears in the dependency tree.
+  @Command.Boolean(`--peers`)
+  peers: boolean = false;
 
-    If \`-R,--recursive\` is set, the listing will go in depth and will list, for each workspaces, what are all the paths that lead to the dependency. Note that the display is somewhat optimized in that it will not print the package listing twice for a single package, so if you see a leaf named "Foo" when looking for "Bar", it means that "Foo" already got printed higher in the tree.
+  static usage = Command.Usage({
+    description: `display the reason why a package is needed`,
+    details: `
+      This command prints the exact reasons why a package appears in the dependency tree.
 
-    If \`--peers\` is set, the command will also print the peer dependencies that match the specified name.
-  `)
+      If \`-R,--recursive\` is set, the listing will go in depth and will list, for each workspaces, what are all the paths that lead to the dependency. Note that the display is somewhat optimized in that it will not print the package listing twice for a single package, so if you see a leaf named "Foo" when looking for "Bar", it means that "Foo" already got printed higher in the tree.
 
-  .example(
-    `Explain why lodash is used in your project`,
-    `yarn why lodash`,
-  )
+      If \`--peers\` is set, the command will also print the peer dependencies that match the specified name.
+    `,
+    examples: [[
+      `Explain why lodash is used in your project`,
+      `yarn why lodash`,
+    ]],
+  });
 
-  .action(async ({cwd, stdout, package: packageName, peers, recursive}: {cwd: PortablePath, stdout: Writable, package: string, peers: boolean, recursive: boolean}) => {
-    const configuration = await Configuration.find(cwd, pluginConfiguration);
-    const {project, workspace} = await Project.find(configuration, cwd);
+  @Command.Path(`why`)
+  async execute() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(cwd);
+      throw new WorkspaceRequiredError(this.context.cwd);
 
-    const report = await LightReport.start({configuration, stdout}, async (report: LightReport) => {
+    const report = await LightReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async (report: LightReport) => {
       await project.resolveEverything({lockfileOnly: true, cache, report});
     });
 
     if (report.hasErrors())
       return report.exitCode();
 
-    const identHash = structUtils.parseIdent(packageName).identHash;
+    const identHash = structUtils.parseIdent(this.package).identHash;
 
-    const whyTree = recursive
-      ? whyRecursive(project, identHash, {configuration, peers})
-      : whySimple(project, identHash, {configuration, peers});
+    const whyTree = this.recursive
+      ? whyRecursive(project, identHash, {configuration, peers: this.peers})
+      : whySimple(project, identHash, {configuration, peers: this.peers});
 
-    printTree(stdout, whyTree);
-  });
+    printTree(this.context.stdout, whyTree);
+  }
+}
 
 function whySimple(project: Project, identHash: IdentHash, {configuration, peers}: {configuration: Configuration, peers: boolean}) {
   const sortedPackages = miscUtils.sortMap(project.storedPackages.values(), pkg => {
