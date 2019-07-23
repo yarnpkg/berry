@@ -192,9 +192,8 @@ class WorkspacesForeachCommand extends clipanion_1.Command {
             if (scriptName && !workspace.manifest.scripts.has(scriptName))
                 continue;
             // Prevents infinite loop in the case of configuring a script as such:
-            //     "lint": "yarn workspaces foreach --all lint"
-            if ((scriptName || command) === process.env.npm_lifecycle_event &&
-                workspace.cwd === cwdWorkspace.cwd)
+            // "lint": "yarn workspaces foreach --all lint"
+            if (scriptName === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace.cwd)
                 continue;
             if (this.include.length > 0 && !this.include.includes(workspace.locator.name))
                 continue;

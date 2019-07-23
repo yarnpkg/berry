@@ -1,14 +1,15 @@
 import {Descriptor, Plugin, SettingsType} from '@berry/core';
 import {Workspace}                        from '@berry/core';
 
-import clipanionEntry                     from './commands/entries/clipanion';
-import helpEntry                          from './commands/entries/help';
-import runEntry                           from './commands/entries/run';
 import add                                from './commands/add';
 import bin                                from './commands/bin';
 import cleanCache                         from './commands/cache/clean';
 import setConfig                          from './commands/config/set';
 import config                             from './commands/config';
+import clipanionEntry                     from './commands/entries/clipanion';
+import helpEntry                          from './commands/entries/help';
+import runEntry                           from './commands/entries/run';
+import versionEntry                       from './commands/entries/version';
 import install                            from './commands/install';
 import link                               from './commands/link';
 import node                               from './commands/node';
@@ -63,6 +64,7 @@ const plugin: Plugin = {
     clipanionEntry,
     helpEntry,
     runEntry,
+    versionEntry,
     add,
     bin,
     config,
