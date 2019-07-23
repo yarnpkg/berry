@@ -1631,6 +1631,7 @@ __metadata:
     react-icons: "npm:^3.7.0"
     react-instantsearch-dom: "npm:^5.7.0"
     react-transition-group: "npm:^1.2.1"
+    regenerator-runtime: "npm:^0.13.3"
     remark-html: "npm:^9.0.0"
     remark-parse: "npm:^6.0.3"
     unescape-html: "npm:^1.1.0"
@@ -18786,6 +18787,13 @@ __metadata:
   version: 0.13.2
   resolution: "regenerator-runtime@npm:0.13.2"
   checksum: 1f58d98304183f26d8a67180855cffd89ba350e4b6a67839fd617b4ae0126fa758d30834d8400ceb1ba8d4598024cd9357c7236149cb3b86491f2772e27f0159
+  languageName: node
+  linkType: hard
+
+"regenerator-runtime@npm:^0.13.3":
+  version: 0.13.3
+  resolution: "regenerator-runtime@npm:0.13.3"
+  checksum: bac6a839a5baf2b3f486bb14dce8c5f4f3073dafc522712c9d1be2b7e3770a16c4034d2f64fcfaadb1ccd6047848470d897b949a1313f21c69ef1497d71c0135
   languageName: node
   linkType: hard
 

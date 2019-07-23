@@ -9343,6 +9343,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                   "virtual:1ab22410755ddd718f6bbb28ec915c54c9e86e751a8c542986d1cf164e744d7705ccbd6eb9a7ada61d6a42089ce9ddf9e6e3030b103c14fdeb1de082b52a07a6#npm:1.2.1"
                 ],
                 [
+                  "regenerator-runtime",
+                  "npm:0.13.3"
+                ],
+                [
                   "remark-html",
                   "npm:9.0.0"
                 ],
@@ -57224,6 +57228,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
                 [
                   "regenerator-runtime",
                   "npm:0.13.2"
+                ]
+              ]
+            }
+          ],
+          [
+            "npm:0.13.3",
+            {
+              "packageLocation": "./.yarn/cache/regenerator-runtime-npm-0.13.3-199fc7afd46a523df17bed8caba711673ae1e5463c8ac148e45b6e73421f3a7e.zip/node_modules/regenerator-runtime/",
+              "packageDependencies": [
+                [
+                  "regenerator-runtime",
+                  "npm:0.13.3"
                 ]
               ]
             }

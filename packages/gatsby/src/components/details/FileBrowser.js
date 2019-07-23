@@ -1,11 +1,12 @@
-import React              from 'react';
-import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import fetch              from 'unfetch';
-import bytes              from 'bytes';
-import styled             from '@emotion/styled';
+import React                                          from 'react';
+import {useState, useEffect, useLayoutEffect, useRef} from 'react'
+import CSSTransitionGroup                             from 'react-transition-group/CSSTransitionGroup';
+import fetch                                          from 'unfetch';
+import bytes                                          from 'bytes';
+import styled                                         from '@emotion/styled';
 
-import IcoFolder          from '../../images/detail/ico-folder.svg';
-import IcoFile            from '../../images/detail/ico-file.svg';
+import IcoFolder                                      from '../../images/detail/ico-folder.svg';
+import IcoFile                                        from '../../images/detail/ico-file.svg';
 
 const SORT_ORDER = { directory: 1, file: 2 };
 
@@ -99,141 +100,90 @@ const Alert = styled.div`
   margin-top: -1.5rem;
 `;
 
-export default class FileBrowser extends React.PureComponent {
-  state = {
-    expandedDirs: {
-      '/': true,
-    },
+const FileBrowser = ({ objectID, version, onBackToDetails }) => {
+  const [state, setState] = useState({ error: null, files: null, expandedDirs: { '/': true } });
+  const backRef = useRef();
+
+  const fetchFiles = () => {
+    (async () => {
+      const url = `https://data.jsdelivr.com/v1/package/npm/${objectID}@${version}`;
+      const response = await fetch(url);
+      const { error, files } = await response.json();
+
+      if (!response.ok) {
+        setState({ ...state, error });
+      } else {
+        setState({ ...state, files });
+      }
+    })();
   };
 
-  componentWillMount() {
-    this._fetchFiles();
-  }
+  useLayoutEffect(fetchFiles, [objectID, version]);
 
-  componentDidMount() {
-    if (this._backRef) {
-      this._backRef.focus();
-    }
-  }
+  useEffect(() => {
+    backRef.current.focus();
+  }, []);
 
-  _fetchFiles() {
-    this.setState({ error: null, files: null });
-    const url = this._getURLForPackageMetadata();
-    fetch(url)
-      .then(response => {
-        // If status code >= 400 handle it as an error.
-        if (!response.ok) {
-          return response.json().then(body => {
-            throw body;
-          });
-        }
-        return response;
-      })
-      .then(response => response.json())
-      .then(
-        files => this.setState({ files }),
-        error => this.setState({ error })
-      );
-  }
+  const toggleDir = path => {
+    setState({
+      ...state,
+      expandedDirs: {
+        ...state.expandedDirs,
+        [path]: !state.expandedDirs[path],
+      }
+    });
+  };
 
-  render() {
-    return (
-      <FilesHeader>
-        <h2>
-          {`Files in ${this.props.objectID}`}
-        </h2>
-        <button ref={this._setBackRef} onClick={this.props.onBackToDetails}>
-          ← Back to Details
-        </button>
-        {this._renderInner()}
-      </FilesHeader>
-    );
-  }
+  const renderInner = () => {
+    if (state.files) {
+      const baseURL = `https://cdn.jsdelivr.net/npm/${objectID}@${version}`;
 
-  _renderInner() {
-    if (this.state.files) {
       return (
         <Directory
           name="/"
           path="/"
-          baseURL={this._getBaseURL()}
-          dir={this.state.files}
-          expandedDirs={this.state.expandedDirs}
-          onToggleDir={this._toggleDir}
+          baseURL={baseURL}
+          files={state.files}
+          expandedDirs={state.expandedDirs}
+          onToggleDir={toggleDir}
         />
       );
-    }
-    if (this.state.error) {
+    } else if (state.error) {
       return (
         <Alert role="alert">
-          {`Could not load file listing: ${this.state.error.message}`}
+          {`Could not load file listing: ${state.error.message}`}
         </Alert>
       );
+    } else {
+      return <div>Loading...</div>;
     }
-    return <div>Loading...</div>;
   }
 
-  _getBaseURL() {
-    return `https://cdn.jsdelivr.net/npm/${this.props.objectID}@${
-      this.props.version
-    }`;
-  }
+  return (
+    <FilesHeader>
+      <h2>
+        {`Files in ${objectID}`}
+      </h2>
+      <button ref={backRef} onClick={onBackToDetails}>
+        ← Back to Details
+      </button>
+      {renderInner()}
+    </FilesHeader>
+  );
+};
 
-  _getURLForPackageMetadata() {
-    return `https://data.jsdelivr.com/v1/package/npm/${this.props.objectID}@${
-      this.props.version
-    }`;
-  }
+const Directory = ({ name, path, baseURL, expandedDirs, files, onToggleDir }) => {
+  const url = baseURL + path;
 
-  _toggleDir = path => {
-    this.setState(({ expandedDirs }) => ({
-      expandedDirs: {
-        ...expandedDirs,
-        [path]: !expandedDirs[path],
-      },
-    }));
+  const toggleDir = evt => {
+    onToggleDir(path);
+    evt.preventDefault();
   };
 
-  _setBackRef = ref => {
-    this._backRef = ref;
-  };
-}
-
-class Directory extends React.PureComponent {
-  render() {
-    const path = this.props.path;
-    const url = this.props.baseURL + path;
-    if (path === '/') {
-      // Special case for root - Only render the contents, not the outer
-      // wrapper.
-      return this._renderDirContents();
-    }
-    return (
-      <DirItem key={path}>
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={this._toggleDir}
-        >
-          {this.props.name}
-        </a>
-        <CSSTransitionGroup
-          transitionName="details-files"
-          transitionEnterTimeout={600}
-          transitionLeaveTimeout={600}
-        >
-          {this._renderDirContents()}
-        </CSSTransitionGroup>
-      </DirItem>
-    );
-  }
-
-  _renderDirContents() {
-    if (!this.props.expandedDirs[this.props.path]) {
+  const renderDirContents = () => {
+    if (!expandedDirs[path]) {
       return null;
     }
-    const files = this.props.dir.files;
 
     files.sort((a, b) => {
       // Sort by type (directories to the top)
@@ -250,13 +200,13 @@ class Directory extends React.PureComponent {
           if (file.type === 'directory') {
             return (
               <Directory
-                baseURL={this.props.baseURL}
-                dir={file}
+                baseURL={baseURL}
+                files={file.files}
                 name={file.name}
-                path={this.props.path + file.name + '/'}
-                expandedDirs={this.props.expandedDirs}
-                key={this.props.path + file.name}
-                onToggleDir={this.props.onToggleDir}
+                path={path + file.name + '/'}
+                expandedDirs={expandedDirs}
+                key={path + file.name}
+                onToggleDir={onToggleDir}
               />
             );
           } else {
@@ -264,8 +214,8 @@ class Directory extends React.PureComponent {
               <File
                 file={file}
                 name={file.name}
-                key={this.props.path + file.name}
-                url={this.props.baseURL + this.props.path + file.name}
+                key={path + file.name}
+                url={baseURL + path + file.name}
                 size={file.size}
               />
             );
@@ -273,13 +223,35 @@ class Directory extends React.PureComponent {
         })}
       </FileList>
     );
-  }
-
-  _toggleDir = evt => {
-    this.props.onToggleDir(this.props.path);
-    evt.preventDefault();
   };
-}
+
+
+  if (path === '/') {
+    // Special case for root - Only render the contents, not the outer
+    // wrapper.
+    return renderDirContents();
+  } else {
+    return (
+      <DirItem key={path}>
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={toggleDir}
+        >
+          {name}
+        </a>
+        <CSSTransitionGroup
+          transitionName="details-files"
+          transitionEnterTimeout={600}
+          transitionLeaveTimeout={600}
+        >
+          {renderDirContents()}
+        </CSSTransitionGroup>
+      </DirItem>
+    );
+  }
+};
 
 const File = ({ file, url, key, size }) => (
   <FileItem key={key}>
@@ -289,3 +261,5 @@ const File = ({ file, url, key, size }) => (
     <small>{bytes(size)}</small>
   </FileItem>
 );
+
+export default FileBrowser;
