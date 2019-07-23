@@ -59,6 +59,14 @@ export default App =>
       });
     }
 
+    componentWillReceiveProps(nextProps) {
+      if (nextProps.location.key !== this.props.location.key) {
+        this.originalPathName = window.location.pathname;
+        this.originalHref = window.location.href;
+        this.setState({ searchState: { query: '', page: 1 } });
+      }
+    }
+
     onSearchStateChange = searchState => {
       clearTimeout(this.debouncedSetState);
 

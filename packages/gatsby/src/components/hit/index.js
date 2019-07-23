@@ -269,7 +269,7 @@ const HitHiddenKeywords = styled.span`
 
 const Hit = ({ hit, onTagClick, onOwnerClick, searchState }) => (
   <HitItem>
-    <HitNameLink to={packageLink(hit.name)}>
+    <HitNameLink to={packageLink(hit.name, false)}>
       <Highlight attribute="name" hit={hit} />
     </HitNameLink>
     <Downloads

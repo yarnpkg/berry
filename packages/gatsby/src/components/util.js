@@ -162,8 +162,8 @@ export const packageJSONLink = packageName => ({
   packageJSONLink: `https://cdn.jsdelivr.net/npm/${packageName}/package.json`,
 });
 
-export const packageLink = name =>
-  `${withPrefix('/package/')}${
+export const packageLink = (name, prefix = true) =>
+  `${prefix ? withPrefix('/package/') : '/package/'}${
     process.env.NODE_ENV === 'production' ? '/' : '?'
   }${name}`;
 
