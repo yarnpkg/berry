@@ -27,6 +27,16 @@ export const ReadMoreIcon = styled.img`
 `;
 
 const ReadMoreContent = styled.div`
+  &.collapsed:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 250px;
+    width: 100%;
+    box-shadow: inset 0 -100px 60px -60px white;
+    pointer-events: none;
+  }
   overflow: hidden;
   position: relative;
   margin-bottom: 0.2em;
@@ -38,17 +48,6 @@ const ReadMoreContainer = styled.div`
     overflow: hidden;
     position: relative;
     margin-bottom: 0.2em;
-
-    &:after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 250px;
-      width: 100%;
-      box-shadow: inset 0 -100px 60px -60px white;
-      pointer-events: none;
-    }
   }
 
   h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
@@ -125,6 +124,7 @@ const ReadMore = ({text, height, children}) => {
   return (
     <ReadMoreContainer className={collapsed ? 'collapsed' : ''}>
       <ReadMoreContent
+        className={collapsed ? 'collapsed' : ''}
         collapsed={collapsed}
         contentHeight={height}
         ref={contentRef}
