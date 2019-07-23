@@ -114,7 +114,7 @@ const Copyable = ({ tag = 'div', pre, children }) => {
 
   return (
     <CopyableContent>
-      <Content className="copyable--content">
+      <Content>
         {pre}
         <span ref={copyTextRef}>{children}</span>
       </Content>

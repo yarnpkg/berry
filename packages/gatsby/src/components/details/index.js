@@ -102,7 +102,7 @@ export const Di = ({ icon, title, description }) => (
   <DiBox>
     {icon && <img src={icons[icon]} alt="" />}
     <dt>{title}</dt>
-    <span className="dotted flex-grow" />
+    <span />
     <dd>{description}</dd>
   </DiBox>
 );

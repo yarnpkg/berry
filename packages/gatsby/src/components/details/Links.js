@@ -84,8 +84,8 @@ const RepositoryLink = ({ repository }) => {
   );
 };
 
-const Links = ({ name, homepage, repository, className }) => (
-  <div className="detail-links">
+const Links = ({ name, homepage, repository }) => (
+  <div>
     <Link
       site="yarn"
       display={

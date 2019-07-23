@@ -39,7 +39,7 @@ const Usage = ({
   bundlesize,
   packageJSONLink,
 }) => (
-  <article className="details-side--usage">
+  <article>
     <h1>Usage</h1>
     <dl>
       <Di

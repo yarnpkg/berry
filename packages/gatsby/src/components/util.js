@@ -97,20 +97,19 @@ export function formatKeywords(
           const key = `split-${i}-${v.value}`;
           if (v.isHighlighted) {
             return (
-              <em key={key} className="ais-Highlight-highlighted">
+              <em key={key}>
                 {v.value}
               </em>
             );
           }
           return (
-            <span key={key} className="ais-Highlight-nonHighlighted">
+            <span key={key}>
               {v.value}
             </span>
           );
         });
         return (
           <span
-            className="ais-Hit-keyword"
             key={`${keyword}${keywordIndex}`}
             onClick={() => onClick(keyword)}
           >
@@ -213,7 +212,7 @@ export const get = ({ url, type, headers, ...rest }) =>
 
 export const HighlightedMarkdown = connectHighlight(
   ({ highlight, attribute, hit }) => (
-    <span className="ais-Hit-keyword">
+    <span>
       {highlight({
         attribute,
         hit,
@@ -223,13 +222,11 @@ export const HighlightedMarkdown = connectHighlight(
           v.isHighlighted ? (
             <em
               key={`split-${i}-${v.value}`}
-              className="ais-Highlight-highlighted"
               dangerouslySetInnerHTML={safeMarkdown(v.value)}
             />
           ) : (
             <span
               key={`split-${i}-${v.value}`}
-              className="ais-Highlight-nonHighlighted"
               dangerouslySetInnerHTML={safeMarkdown(v.value)}
             />
           )

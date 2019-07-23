@@ -14,7 +14,7 @@ const DeprecatedText = styled.p``;
 const Description = ({ description, deprecated }) => (
   <div>
     {deprecated ? (
-      <DeprecatedText className="m-2">
+      <DeprecatedText>
         <strong dangerouslySetInnerHTML={safeMarkdown(deprecated)} />
       </DeprecatedText>
     ) : null}
@@ -60,7 +60,7 @@ const Header = ({
       />
       <License type={license} />
       <Deprecated deprecated={deprecated} />
-      <span className="ais-Hit-version">{version}</span>
+      <span>{version}</span>
     </PackageInfo>
     <Description description={description} deprecated={deprecated} />
     <Keywords keywords={keywords} />
