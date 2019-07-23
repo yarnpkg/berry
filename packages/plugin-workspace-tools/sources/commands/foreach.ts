@@ -2,28 +2,11 @@ import {WorkspaceRequiredError}                                                 
 import {CommandContext, Configuration, LocatorHash, Project, Workspace}                      from '@berry/core';
 import {DescriptorHash, MessageName, Report, StreamReport}                                   from '@berry/core';
 import {miscUtils, structUtils}                                                              from '@berry/core';
-import {PortablePath}                                                                        from '@berry/fslib';
 import {Command, UsageError}                                                                 from 'clipanion';
 import {cpus}                                                                                from 'os';
 import pLimit                                                                                from 'p-limit';
 import {Writable}                                                                            from 'stream';
 import * as yup                                                                              from 'yup';
-
-type ForeachOptions = {
-  command: string;
-  rest: string[];
-  cwd: PortablePath;
-  exclude: string[];
-  include: string[];
-  all: boolean;
-  interlaced: boolean;
-  jobs: number;
-  parallel: boolean;
-  stdout: Writable;
-  topologicalDev: boolean;
-  topological: boolean;
-  verbose: boolean;
-}
 
 /**
  * Retrieves all the child workspaces of a given root workspace recursively
@@ -44,14 +27,6 @@ const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Projec
   return workspaceList;
 };
 
-@Command.Validate(yup.object().shape({
-  jobs: yup.number().min(2),
-  parallel: yup.boolean().when(`jobs`, {
-    is: val => val > 1,
-    then: yup.boolean().oneOf([true], `--parallel must be set when using --jobs`),
-    otherwise: yup.boolean(),
-  }),
-}))
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends Command<CommandContext> {
   @Command.String()
@@ -86,6 +61,15 @@ export default class WorkspacesForeachCommand extends Command<CommandContext> {
 
   @Command.Array(`--exclude`)
   exclude: Array<string> = [];
+
+  static schema = yup.object().shape({
+    jobs: yup.number().min(2),
+    parallel: yup.boolean().when(`jobs`, {
+      is: (val: number) => val > 1,
+      then: yup.boolean().oneOf([true], `--parallel must be set when using --jobs`),
+      otherwise: yup.boolean(),
+    }),
+  });
 
   static usage = Command.Usage({
     category: `Workspace-related commands`,
@@ -147,9 +131,8 @@ export default class WorkspacesForeachCommand extends Command<CommandContext> {
         continue;
 
       // Prevents infinite loop in the case of configuring a script as such:
-      //     "lint": "yarn workspaces foreach --all lint"
-      if ((scriptName || command) === process.env.npm_lifecycle_event &&
-          workspace.cwd === cwdWorkspace!.cwd)
+      // "lint": "yarn workspaces foreach --all lint"
+      if (scriptName === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
         continue;
 
       if (this.include.length > 0 && !this.include.includes(workspace.locator.name))

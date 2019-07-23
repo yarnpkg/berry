@@ -6,6 +6,7 @@ import {Cli}                              from 'clipanion';
 import {pluginConfiguration}              from './pluginConfiguration';
 
 const cli = new Cli<CommandContext>({
+  binaryLabel: `Yarn Package Manager`,
   binaryName: `yarn`,
   binaryVersion: BERRY_VERSION,
 });

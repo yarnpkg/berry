@@ -8,11 +8,13 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
     const command = commands[t];
     const sections = [];
 
+    const url = command.path.split(` `).slice(1).join(`/`);
+
     sections.push([
       `---\n`,
       `category: cli\n`,
-      `path: /cli/${command.path.join(`/`)}\n`,
-      `title: "\`${opts.argv0} ${command.path.join(` `)}\`"\n`,
+      `path: /cli/${url}\n`,
+      `title: "\`${command.path}\`"\n`,
       `---\n`,
     ].join(``));
 
@@ -26,7 +28,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       `## Usage\n`,
       `\n`,
       `\`\`\`\n`,
-      `$> ${[opts.argv0].concat(command.path).join(` `)} ${command.usage}\n`,
+      `$> ${command.path} ${command.usage}\n`,
       `\`\`\`\n`,
     ].join(``));
 
@@ -38,7 +40,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       ].join(``));
     }
 
-    if (command.examples.length > 0) {
+    if (command.examples && command.examples.length > 0) {
       sections.push([
         `## Examples\n`,
         `\n`,

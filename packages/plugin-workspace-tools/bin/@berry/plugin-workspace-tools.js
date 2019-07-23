@@ -159,8 +159,7 @@ const getWorkspaceChildrenRecursive = (rootWorkspace, project) => {
     return workspaceList;
 };
 // eslint-disable-next-line arca/no-default-export
-let WorkspacesForeachCommand = class WorkspacesForeachCommand extends clipanion_1.Command {
-    // eslint-disable-next-line arca/no-default-export
+class WorkspacesForeachCommand extends clipanion_1.Command {
     constructor() {
         super(...arguments);
         this.args = [];
@@ -300,7 +299,15 @@ let WorkspacesForeachCommand = class WorkspacesForeachCommand extends clipanion_
         });
         return report.exitCode();
     }
-};
+}
+WorkspacesForeachCommand.schema = yup.object().shape({
+    jobs: yup.number().min(2),
+    parallel: yup.boolean().when(`jobs`, {
+        is: (val) => val > 1,
+        then: yup.boolean().oneOf([true], `--parallel must be set when using --jobs`),
+        otherwise: yup.boolean(),
+    }),
+});
 WorkspacesForeachCommand.usage = clipanion_1.Command.Usage({
     category: `Workspace-related commands`,
     description: `run a command on all workspaces`,
@@ -368,16 +375,6 @@ __decorate([
 __decorate([
     clipanion_1.Command.Path(`workspaces`, `foreach`)
 ], WorkspacesForeachCommand.prototype, "execute", null);
-WorkspacesForeachCommand = __decorate([
-    clipanion_1.Command.Validate(yup.object().shape({
-        jobs: yup.number().min(2),
-        parallel: yup.boolean().when(`jobs`, {
-            is: val => val > 1,
-            then: yup.boolean().oneOf([true], `--parallel must be set when using --jobs`),
-            otherwise: yup.boolean(),
-        }),
-    }))
-], WorkspacesForeachCommand);
 exports.default = WorkspacesForeachCommand;
 function createStream(report, { prefix, interlaced }) {
     const streamReporter = report.createStreamReporter(prefix);

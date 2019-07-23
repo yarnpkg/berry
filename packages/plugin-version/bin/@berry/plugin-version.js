@@ -343,8 +343,7 @@ const STRATEGIES = new Set([
     `prerelease`,
 ]);
 // eslint-disable-next-line arca/no-default-export
-let VersionCommand = class VersionCommand extends clipanion_1.Command {
-    // eslint-disable-next-line arca/no-default-export
+class VersionCommand extends clipanion_1.Command {
     constructor() {
         super(...arguments);
         this.deferred = false;
@@ -371,7 +370,17 @@ let VersionCommand = class VersionCommand extends clipanion_1.Command {
             await this.cli.run([`version`, `apply`]);
         }
     }
-};
+}
+VersionCommand.schema = yup.object().shape({
+    strategy: yup.string().test({
+        name: `strategy`,
+        message: '${path} must be a semver range or one of ${strategies}',
+        params: { strategies: Array.from(STRATEGIES).join(`, `) },
+        test: (range) => {
+            return semver_1.default.valid(range) !== null || STRATEGIES.has(range);
+        },
+    }),
+});
 VersionCommand.usage = clipanion_1.Command.Usage({
     category: `Release-related commands`,
     description: `apply a new version to the current package`,
@@ -395,7 +404,7 @@ VersionCommand.usage = clipanion_1.Command.Usage({
             `yarn version major`,
         ], [
             `Prepare the version to be bumped to the next major`,
-            `yarn version major --deferred`
+            `yarn version major --deferred`,
         ]],
 });
 __decorate([
@@ -407,18 +416,6 @@ __decorate([
 __decorate([
     clipanion_1.Command.Path(`version`)
 ], VersionCommand.prototype, "execute", null);
-VersionCommand = __decorate([
-    clipanion_1.Command.Validate(yup.object().shape({
-        strategy: yup.string().test({
-            name: `strategy`,
-            message: '${path} must be a semver range or one of ${strategies}',
-            params: { strategies: Array.from(STRATEGIES).join(`, `) },
-            test: (range) => {
-                return semver_1.default.valid(range) !== null || STRATEGIES.has(range);
-            },
-        }),
-    }))
-], VersionCommand);
 exports.default = VersionCommand;
 
 

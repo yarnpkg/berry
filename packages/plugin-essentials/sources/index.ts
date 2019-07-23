@@ -1,7 +1,8 @@
 import {Descriptor, Plugin, SettingsType} from '@berry/core';
 import {Workspace}                        from '@berry/core';
 
-import installEntry                       from './commands/entries/install';
+import clipanionEntry                     from './commands/entries/clipanion';
+import helpEntry                          from './commands/entries/help';
 import runEntry                           from './commands/entries/run';
 import add                                from './commands/add';
 import bin                                from './commands/bin';
@@ -59,7 +60,8 @@ const plugin: Plugin = {
     setResolutionPolicy,
     setVersionPolicy,
     listWorkspaces,
-    installEntry,
+    clipanionEntry,
+    helpEntry,
     runEntry,
     add,
     bin,

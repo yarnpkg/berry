@@ -1492,7 +1492,7 @@ __metadata:
     "@berry/pnpify": "workspace:0.0.6"
     brfs: "npm:^2.0.1"
     buffer-loader: "npm:^0.1.0"
-    clipanion: "npm:2.0.0-rc.10"
+    clipanion: "npm:2.0.0-rc.15"
     joi: "npm:^13.6.0"
     pnp-webpack-plugin: "npm:^1.4.3"
     raw-loader: "npm:^0.5.1"
@@ -1536,7 +1536,7 @@ __metadata:
     "@berry/pnp": "workspace:0.0.4"
     "@berry/shell": "workspace:0.0.3"
     chalk: "npm:^2.4.1"
-    clipanion: "npm:2.0.0-rc.10"
+    clipanion: "npm:2.0.0-rc.15"
     semver: "npm:^5.6.0"
     tmp: "npm:^0.0.33"
     yup: "npm:^0.27.0"
@@ -1558,7 +1558,7 @@ __metadata:
     agentkeepalive: "npm:^4.0.2"
     camelcase: "npm:^5.3.1"
     chalk: "npm:^2.4.1"
-    clipanion: "npm:2.0.0-rc.10"
+    clipanion: "npm:2.0.0-rc.15"
     cross-spawn: "npm:^6.0.5"
     globby: "npm:^8.0.1"
     got: "npm:^9.2.2"
@@ -1731,7 +1731,7 @@ __metadata:
   dependencies:
     "@berry/core": "workspace:0.0.6"
     "@berry/fslib": "workspace:0.0.8"
-    clipanion: "npm:2.0.0-rc.10"
+    clipanion: "npm:2.0.0-rc.15"
     inquirer: "npm:^6.2.0"
     lodash.get: "npm:^4.4.2"
     node-emoji: "npm:^1.8.1"
@@ -1748,7 +1748,7 @@ __metadata:
     "@berry/fslib": "workspace:0.0.8"
     "@berry/json-proxy": "workspace:0.0.0"
     "@berry/plugin-essentials": "workspace:0.0.0"
-    clipanion: "npm:2.0.0-rc.10"
+    clipanion: "npm:2.0.0-rc.15"
     tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
@@ -1762,7 +1762,7 @@ __metadata:
     "@berry/fslib": "workspace:0.0.8"
     "@berry/json-proxy": "workspace:0.0.0"
     "@berry/parsers": "workspace:0.0.4"
-    clipanion: "npm:2.0.0-rc.10"
+    clipanion: "npm:2.0.0-rc.15"
     inquirer: "npm:^6.2.0"
     semver: "npm:^5.6.0"
     treeify: "npm:^1.1.0"
@@ -1818,7 +1818,7 @@ __metadata:
     "@berry/core": "workspace:0.0.6"
     "@berry/fslib": "workspace:0.0.8"
     "@berry/json-proxy": "workspace:0.0.0"
-    clipanion: "npm:2.0.0-rc.10"
+    clipanion: "npm:2.0.0-rc.15"
   languageName: unknown
   linkType: soft
 
@@ -1840,7 +1840,7 @@ __metadata:
     "@berry/fslib": "workspace:0.0.8"
     "@berry/plugin-npm": "workspace:0.0.0"
     "@berry/plugin-pack": "workspace:0.0.0"
-    clipanion: "npm:2.0.0-rc.10"
+    clipanion: "npm:2.0.0-rc.15"
     inquirer: "npm:^6.2.0"
     ssri: "npm:^6.0.1"
     yup: "npm:^0.27.0"
@@ -1866,7 +1866,7 @@ __metadata:
     "@berry/core": "workspace:0.0.6"
     "@berry/fslib": "workspace:0.0.8"
     "@types/tar-stream": "npm:1.6.0"
-    clipanion: "npm:2.0.0-rc.10"
+    clipanion: "npm:2.0.0-rc.15"
     micromatch: "npm:^4.0.2"
     tar-stream: "npm:^2.0.1"
   languageName: unknown
@@ -1881,7 +1881,7 @@ __metadata:
     "@berry/fslib": "workspace:0.0.8"
     "@berry/plugin-stage": "workspace:0.0.0"
     "@berry/pnp": "workspace:0.0.4"
-    clipanion: "npm:2.0.0-rc.10"
+    clipanion: "npm:2.0.0-rc.15"
   languageName: unknown
   linkType: soft
 
@@ -1892,7 +1892,7 @@ __metadata:
     "@berry/builder": "workspace:0.0.0"
     "@berry/core": "workspace:0.0.6"
     "@berry/fslib": "workspace:0.0.8"
-    clipanion: "npm:2.0.0-rc.10"
+    clipanion: "npm:2.0.0-rc.15"
   languageName: unknown
   linkType: soft
 
@@ -1918,7 +1918,7 @@ __metadata:
     "@berry/fslib": "workspace:0.0.8"
     "@berry/plugin-pack": "workspace:0.0.0"
     "@types/semver": "npm:^5.5.0"
-    clipanion: "npm:2.0.0-rc.10"
+    clipanion: "npm:2.0.0-rc.15"
     semver: "npm:^5.6.0"
   languageName: unknown
   linkType: soft
@@ -1931,7 +1931,7 @@ __metadata:
     "@berry/cli": "workspace:2.0.0"
     "@berry/core": "workspace:0.0.6"
     "@berry/fslib": "workspace:0.0.8"
-    clipanion: "npm:2.0.0-rc.10"
+    clipanion: "npm:2.0.0-rc.15"
     p-limit: "npm:^2.2.0"
     yup: "npm:^0.27.0"
   languageName: unknown
@@ -6346,12 +6346,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipanion@npm:2.0.0-rc.10":
-  version: 2.0.0-rc.10
-  resolution: "clipanion@npm:2.0.0-rc.10"
+"clipanion@npm:2.0.0-rc.15":
+  version: 2.0.0-rc.15
+  resolution: "clipanion@npm:2.0.0-rc.15"
   dependencies:
     chalk: "npm:^2.4.2"
-  checksum: 213ef6ef833393ad37eaeda617b7ee772681123d015d62a0145a69e322453384992021709eb7d632313d6f8a20dc93d83f4832d9049743babcb79f5b115463d9
+  checksum: 67dc5c8422ac2e10e2359ac2b3ae624e7443130d725dc403c9bd923162ff61cf9c61e96edce6174e2f574af61e0cc6037cf82cff32373df6d37fed6440dc7fb4
   languageName: node
   linkType: hard
 

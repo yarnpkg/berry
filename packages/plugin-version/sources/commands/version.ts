@@ -14,16 +14,6 @@ const STRATEGIES = new Set([
   `prerelease`,
 ]);
 
-@Command.Validate(yup.object().shape({
-  strategy: yup.string().test({
-    name: `strategy`,
-    message: '${path} must be a semver range or one of ${strategies}',
-    params: {strategies: Array.from(STRATEGIES).join(`, `)},
-    test: (range: string) => {
-      return semver.valid(range) !== null || STRATEGIES.has(range);
-    },
-  }),
-}))
 // eslint-disable-next-line arca/no-default-export
 export default class VersionCommand extends Command<CommandContext> {
   @Command.String({required: false})
@@ -31,6 +21,17 @@ export default class VersionCommand extends Command<CommandContext> {
 
   @Command.Boolean(`-d,--deferred`)
   deferred: boolean = false;
+
+  static schema = yup.object().shape({
+    strategy: yup.string().test({
+      name: `strategy`,
+      message: '${path} must be a semver range or one of ${strategies}',
+      params: {strategies: Array.from(STRATEGIES).join(`, `)},
+      test: (range: string) => {
+        return semver.valid(range) !== null || STRATEGIES.has(range);
+      },
+    }),
+  });
 
   static usage = Command.Usage({
     category: `Release-related commands`,
