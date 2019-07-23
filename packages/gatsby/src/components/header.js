@@ -99,35 +99,44 @@ const MenuNavigation = styled.div`
   }
 `;
 
-const MenuEntry = styled(Link)`
-  display: flex;
-  align-items: center;
+const MenuEntry = styled.div`
+  a {
+    display: flex;
+    align-items: center;
 
-  height: 4em;
+    height: 4em;
 
-  border: 3px solid transparent;
+    border: 3px solid transparent;
 
-  padding: 0 1em;
+    padding: 0 1em;
 
-  font-family: Abel;
-  font-weight: light;
-  text-decoration: none;
-  text-transform: uppercase;
+    font-family: Abel;
+    font-weight: light;
+    text-decoration: none;
+    text-transform: uppercase;
 
-  color: #000000;
+    color: #000000;
 
-  ${ifDesktop} {
-    &.active {
-      border-bottom-color: #2188b6;
+    ${ifDesktop} {
+      &.active {
+        border-bottom-color: #2188b6;
+      }
     }
-  }
 
-  ${ifMobile} {
-    width: 100%;
+    ${ifMobile} {
+      width: 100%;
+    }
   }
 `;
 
-const Header = () => {
+const isActive = ({ href, location }) => {
+  return ((href === '/' && ['/', '/package'].includes(location.pathname)) ||
+    (href !== '/' && location.pathname.startsWith(href))) ?
+      { className: 'active' } :
+      null;
+};
+
+const Header = ({ children }) => {
   const data = useStaticQuery(graphql`
     query SiteQuery {
       site {
@@ -164,12 +173,15 @@ const Header = () => {
 
         <MenuNavigation className={expanded ? `expanded` : ``}>
           {data.site.siteMetadata.menuLinks.map(({name, link}) => <React.Fragment key={name}>
-            <MenuEntry to={link} activeClassName={`active`} partiallyActive={link !== `/`}>
-              {name}
+            <MenuEntry>
+              <Link to={link} activeClassName={`active`} getProps={isActive}>
+                {name}
+              </Link>
             </MenuEntry>
           </React.Fragment>)}
         </MenuNavigation>
       </MenuContainer>
+      {children}
     </HeaderContainer>
   </>
 };

@@ -22,3 +22,8 @@ code {
   background: transparent !important;
   padding: unset !important;
 }
+
+a {
+  color: #117cad;
+  text-decoration: none;
+}
