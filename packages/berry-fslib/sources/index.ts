@@ -20,6 +20,7 @@ export {LazyFS}                   from './LazyFS';
 export {NodeFS}                   from './NodeFS';
 export {PosixFS}                  from './PosixFS';
 export {ProxiedFS}                from './ProxiedFS';
+export {VirtualFS}                from './VirtualFS';
 export {ZipFS}                    from './ZipFS';
 export {ZipOpenFS}                from './ZipOpenFS';
 

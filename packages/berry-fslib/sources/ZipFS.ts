@@ -73,12 +73,12 @@ function makeDefaultStats() {
   });
 }
 
-export type BufferOptions = {
+export type ZipBufferOptions = {
   readOnly?: boolean,
   stats?: Stats,
 };
 
-export type PathOptions = BufferOptions & {
+export type ZipPathOptions = ZipBufferOptions & {
   baseFs?: FakeFS<PortablePath>,
   create?: boolean,
 };
@@ -115,13 +115,13 @@ export class ZipFS extends BasePortableFakeFS {
 
   private ready = false;
 
-  constructor(p: PortablePath,opts: PathOptions);
-  constructor(data: Buffer, opts: BufferOptions);
+  constructor(p: PortablePath, opts: ZipPathOptions);
+  constructor(data: Buffer, opts: ZipBufferOptions);
 
-  constructor(source: PortablePath | Buffer, opts: PathOptions | BufferOptions) {
+  constructor(source: PortablePath | Buffer, opts: ZipPathOptions | ZipBufferOptions) {
     super();
 
-    const pathOptions = opts as PathOptions;
+    const pathOptions = opts as ZipPathOptions;
 
     if (typeof source === `string`) {
       const {baseFs = new NodeFS()} = pathOptions;

@@ -157,6 +157,7 @@ class PnpInstaller implements Installer {
     const ignorePattern = this.opts.project.configuration.get(`pnpIgnorePattern`);
     const packageRegistry = this.packageRegistry;
     const shebang = this.opts.project.configuration.get(`pnpShebang`);
+    const virtualRoots = [this.normalizeDirectoryPath(this.opts.project.configuration.get(`virtualFolder`))];
 
     if (pnpFallbackMode === `dependencies-only`)
       for (const pkg of this.opts.project.storedPackages.values())
@@ -166,7 +167,7 @@ class PnpInstaller implements Installer {
     const pnpPath = this.opts.project.configuration.get(`pnpPath`);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
 
-    const pnpSettings = {blacklistedLocations, enableTopLevelFallback, fallbackExclusionList, ignorePattern, packageRegistry, shebang};
+    const pnpSettings = {blacklistedLocations, enableTopLevelFallback, fallbackExclusionList, ignorePattern, packageRegistry, shebang, virtualRoots};
 
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
       const loaderFile = generateInlinedScript(pnpSettings);

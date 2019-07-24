@@ -169,7 +169,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: `./.yarn/cache`,
   },
   virtualFolder: {
-    description: `Folder where the symlinks generated for virtual packages must be written`,
+    description: `Folder where the virtual packages (cf doc) will be mapped on the disk`,
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.yarn/virtual`,
   },
