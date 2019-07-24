@@ -50,10 +50,6 @@ export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
     return this.pathUtils.resolve(this.baseFs.getRealPath(), this.target);
   }
 
-  async realpathPromise(p: PortablePath) {
-    return this.mapFromBase(await this.baseFs.realpathPromise(this.mapToBase(p)));
-  }
-
   realpathSync(p: PortablePath) {
     const match = p.match(this.mapToBaseRegExp);
     if (!match)
@@ -63,6 +59,18 @@ export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
       return p;
 
     const realpath = this.baseFs.realpathSync(this.mapToBase(p));
+    return VirtualFS.makeVirtualPath(this.virtual, match[3] as Filename, realpath);
+  }
+
+  async realpathPromise(p: PortablePath) {
+    const match = p.match(this.mapToBaseRegExp);
+    if (!match)
+      return await this.baseFs.realpathPromise(p);
+
+    if (!match[5])
+      return p;
+
+    const realpath = await this.baseFs.realpathPromise(this.mapToBase(p));
     return VirtualFS.makeVirtualPath(this.virtual, match[3] as Filename, realpath);
   }
 
