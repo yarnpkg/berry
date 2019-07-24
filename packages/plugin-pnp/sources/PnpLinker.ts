@@ -145,6 +145,8 @@ class PnpInstaller implements Installer {
     if (await this.shouldWarnNodeModules())
       this.opts.report.reportWarning(MessageName.DANGEROUS_NODE_MODULES, `One or more node_modules have been detected; they risk hiding legitimate problems until your application reaches production.`);
 
+    this.trimBlacklistedPackages();
+
     this.packageRegistry.set(null, new Map([
       [null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)],
     ]));
@@ -238,6 +240,16 @@ class PnpInstaller implements Installer {
     }
 
     return diskInformation;
+  }
+
+  private trimBlacklistedPackages() {
+    for (const packageStore of this.packageRegistry.values()) {
+      for (const [key2, packageInformation] of packageStore) {
+        if (this.blacklistedPaths.has(packageInformation.packageLocation)) {
+          packageStore.delete(key2);
+        }
+      }
+    }
   }
 
   private async shouldWarnNodeModules() {
