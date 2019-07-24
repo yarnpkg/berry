@@ -1,7 +1,7 @@
-import {Configuration, Cache, CommandContext, Project}                        from '@berry/core';
-import {LightReport, MessageName, StreamReport, VirtualFetcher}               from '@berry/core';
-import {NodeFS, xfs, PortablePath, ppath}                                     from '@berry/fslib';
-import {Command}                                                              from 'clipanion';
+import {Configuration, Cache, CommandContext, Project} from '@berry/core';
+import {LightReport, MessageName, StreamReport}        from '@berry/core';
+import {Filename, NodeFS, xfs, PortablePath, ppath}    from '@berry/fslib';
+import {Command}                                       from 'clipanion';
 
 const PRESERVED_FILES = new Set([
   `.gitignore`,
@@ -49,29 +49,22 @@ export default class CacheCleanCommand extends Command<CommandContext> {
     if (resolutionReport.hasErrors())
       return resolutionReport.exitCode();
 
-    const virtualFetcher = new VirtualFetcher();
-
-    const cacheEntries = new Set();
-    const virtualEntries = new Set();
+    const cacheEntries = new Set<Filename>();
 
     // We compute the name those packages would have if they were inside the
-    // cache or a virtual link. Note that we do this even for packages where
-    // it wouldn't make sense (for example we get the cache entry even for
-    // workspaces) but it doesn't matter in this case since we only need to
-    // know which ones amongst the existing entries aren't used anymore, and
-    // such packages would definitely not exist anyway.
-    for (const pkg of project.storedPackages.values()) {
+    // cache. Note that we do this even for packages where it wouldn't make
+    // sense (for example we get the cache entry even for workspaces) but it
+    // doesn't matter in this case since we only need to know which ones
+    // amongst the existing entries aren't used anymore, and such packages
+    // would definitely not exist anyway.
+    for (const pkg of project.storedPackages.values())
       cacheEntries.add(cache.getLocatorFilename(pkg));
-      virtualEntries.add(virtualFetcher.getLocatorFilename(pkg));
-    }
 
     const cacheFolder = cache.cwd;
-    const virtualFolder = configuration.get(`virtualFolder`);
 
     const dirtyPaths: Array<PortablePath> = [];
-    const dirtySources = [
+    const dirtySources: Array<[PortablePath, Set<Filename>]> = [
       [cacheFolder, cacheEntries],
-      [virtualFolder, virtualEntries],
     ];
 
     for (const [folder, entries] of dirtySources) {

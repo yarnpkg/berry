@@ -30,6 +30,12 @@ A locator is a combination of a package name (for example `lodash`) and a packag
 
 A manifest is a `package.json` file.
 
+### Peer-dependent Package
+
+A peer-dependent package is a package that lists peer dependencies.
+
+See also: [Virtual Packages](#virtualpackages)
+
 ### Plugin
 
 Plugins are a new concept introduced in Yarn 2+. Through the use of plugins Yarn can be extended and made even more powerful - whether it's through the addition of new <abbr>resolvers</abbr>, <abbr>fetchers</abbr>, or <abbr>linkers</abbr>.
@@ -44,7 +50,7 @@ See also: [Plug'n'Play](/features/pnp)
 
 ### PnP
 
-See Plug'n'Play
+See [Plug'n'Play](#plugnplay)
 
 ### Project
 
@@ -74,9 +80,13 @@ See also: [Architecture](/advanced/architecture)
 
 Scopes are a term linked inherited from the npm registry; they are used to describe a set of packages that all belong to the same entity. For example, all the Yarn packages related to the v2 belong to the `berry` scope on the npm registry. Scopes are traditionally prefixed with the `@` symbol.
 
-### Yarn
+### Virtual Package
 
-Yarn is a command line tool used to manage programming environments. Written in Javascript, it is mostly used along with others Javascript projects, but has capabilities that make it suitable to be used in various situations.
+Because peer-dependent packages effectively define a *template* of possible dependencies rather than an actual static list of dependencies, one peer-dependent packages may have multiple dependencies list that all map to the same files on the filesystem. Since the JS modules are instantiated based on their path (a file is never instantiated twice for any given path), the only way to instantiate those packages multiple times is to give them multiple paths. That's where virtual packages come handy.
+
+Virtual packages are specialized instances of a given peer-dependent packages that encode the position of this particular instance of the peer-dependent package in the dependency tree (meaning that peer-dependent packages gets instantiated once for each package that has a strong dependency on them, cf [Peer Dependencies](/advanced/peer-dependencies)).
+
+In the past they were implemented using symlinks, but we recently reimplemented them as a virtual filesystem layer - this circumvents the need to create many useless symlinks, and prevents issues when third-party tools try to call `realpath` on them. And since most virtual packages eventually target zipped packages, the filesystem layer was needed in any case.
 
 ### Workspace
 
@@ -91,6 +101,10 @@ See also: [Workspaces](/features/workspaces)
 A worktree is a private workspace that adds new child workspaces to the current <abbr>project</abbr>.
 
 See also: [Workspaces](/features/workspaces)
+
+### Yarn
+
+Yarn is a command line tool used to manage programming environments. Written in Javascript, it is mostly used along with others Javascript projects, but has capabilities that make it suitable to be used in various situations.
 
 ### Zero-Install
 

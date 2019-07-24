@@ -25,12 +25,14 @@ export type LocationLengthData = Array<number>;
 
 // This is what is stored within the .pnp.meta.json file
 export type SerializedState = {
+  __info: Array<string>;
   enableTopLevelFallback: boolean,
   fallbackExclusionList: Array<[string, Array<string>]>,
   ignorePatternData: string | null,
   locationBlacklistData: LocationBlacklistData,
   locationLengthData: LocationLengthData,
   packageRegistryData: PackageRegistryData,
+  virtualRoots: Array<PortablePath>,
 };
 
 // This is what `makeApi` actually consumes
@@ -42,6 +44,7 @@ export type RuntimeState = {
   packageLocationLengths: Array<number>,
   packageLocatorsByLocations: Map<PortablePath, PackageLocator | null>;
   packageRegistry: PackageRegistry,
+  virtualRoots: Array<PortablePath>,
 };
 
 // This is what the generation functions take as parameter
@@ -68,6 +71,10 @@ export type PnpSettings = {
   // The shebang to add at the top of the file, can be any string you want (the
   // default value should be enough most of the time)
   shebang?: string | null,
+
+  // Some paths where the hook will map virtual indirection (we use that to
+  // generate unique paths for each package that lists peer dependencies)
+  virtualRoots?: Array<PortablePath>,
 };
 
 export type PnpApi = {
