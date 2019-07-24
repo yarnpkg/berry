@@ -1,0 +1,9 @@
+{
+  "name": "@berry/plugin-git",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@berry/core": "workspace:0.0.6",
+    "@berry/fslib": "workspace:0.0.8"
+  }
+}

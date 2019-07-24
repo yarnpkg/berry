@@ -1523,6 +1523,7 @@ __metadata:
     "@berry/plugin-dlx": "workspace:0.0.0"
     "@berry/plugin-essentials": "workspace:0.0.0"
     "@berry/plugin-file": "workspace:0.0.0"
+    "@berry/plugin-git": "workspace:0.0.0"
     "@berry/plugin-github": "workspace:0.0.0"
     "@berry/plugin-http": "workspace:0.0.0"
     "@berry/plugin-init": "workspace:0.0.0"
@@ -1797,6 +1798,15 @@ __metadata:
 "@berry/plugin-file@workspace:0.0.0, @berry/plugin-file@workspace:packages/plugin-file":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-file@workspace:packages/plugin-file"
+  dependencies:
+    "@berry/core": "workspace:0.0.6"
+    "@berry/fslib": "workspace:0.0.8"
+  languageName: unknown
+  linkType: soft
+
+"@berry/plugin-git@workspace:0.0.0, @berry/plugin-git@workspace:packages/plugin-git":
+  version: 0.0.0-use.local
+  resolution: "@berry/plugin-git@workspace:packages/plugin-git"
   dependencies:
     "@berry/core": "workspace:0.0.6"
     "@berry/fslib": "workspace:0.0.8"

@@ -33,6 +33,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       ["@berry/plugin-essentials", ["workspace:packages/plugin-essentials"]],
       ["@berry/plugin-exec", ["workspace:packages/plugin-exec"]],
       ["@berry/plugin-file", ["workspace:packages/plugin-file"]],
+      ["@berry/plugin-git", ["workspace:packages/plugin-git"]],
       ["@berry/plugin-github", ["workspace:packages/plugin-github"]],
       ["@berry/plugin-http", ["workspace:packages/plugin-http"]],
       ["@berry/plugin-init", ["workspace:packages/plugin-init"]],
@@ -3608,6 +3609,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/plugin-dlx", "workspace:packages/plugin-dlx"],
             ["@berry/plugin-essentials", "workspace:packages/plugin-essentials"],
             ["@berry/plugin-file", "workspace:packages/plugin-file"],
+            ["@berry/plugin-git", "workspace:packages/plugin-git"],
             ["@berry/plugin-github", "workspace:packages/plugin-github"],
             ["@berry/plugin-http", "workspace:packages/plugin-http"],
             ["@berry/plugin-init", "workspace:packages/plugin-init"],
@@ -3886,6 +3888,16 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./packages/plugin-file/",
           "packageDependencies": [
             ["@berry/plugin-file", "workspace:packages/plugin-file"],
+            ["@berry/core", "workspace:packages/berry-core"],
+            ["@berry/fslib", "workspace:packages/berry-fslib"]
+          ]
+        }]
+      ]],
+      ["@berry/plugin-git", [
+        ["workspace:packages/plugin-git", {
+          "packageLocation": "./packages/plugin-git/",
+          "packageDependencies": [
+            ["@berry/plugin-git", "workspace:packages/plugin-git"],
             ["@berry/core", "workspace:packages/berry-core"],
             ["@berry/fslib", "workspace:packages/berry-fslib"]
           ]
