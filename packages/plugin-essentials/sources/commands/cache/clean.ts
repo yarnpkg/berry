@@ -1,7 +1,7 @@
-import {Configuration, Cache, CommandContext, Project}                        from '@berry/core';
-import {LightReport, MessageName, StreamReport, VirtualFetcher}               from '@berry/core';
-import {Filename, NodeFS, xfs, PortablePath, ppath}                                     from '@berry/fslib';
-import {Command}                                                              from 'clipanion';
+import {Configuration, Cache, CommandContext, Project} from '@berry/core';
+import {LightReport, MessageName, StreamReport}        from '@berry/core';
+import {Filename, NodeFS, xfs, PortablePath, ppath}    from '@berry/fslib';
+import {Command}                                       from 'clipanion';
 
 const PRESERVED_FILES = new Set([
   `.gitignore`,
