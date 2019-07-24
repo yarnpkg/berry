@@ -5,7 +5,6 @@ import {Filename, PortablePath, ppath} from './path';
 
 // https://github.com/benjamingr/RegExp.escape/blob/master/polyfill.js
 const escapeRegexp = (s: string) => s.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&');
-const escapeReplacement = (s: string) => s.replace(/[\\$]/g, '\\$&');
 
 export type VirtualFSOptions = {
   baseFs?: FakeFS<PortablePath>,
@@ -13,13 +12,12 @@ export type VirtualFSOptions = {
 };
 
 export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
+  protected readonly baseFs: FakeFS<PortablePath>;
+
   private readonly target: PortablePath;
   private readonly virtual: PortablePath;
 
   private readonly mapToBaseRegExp: RegExp;
-  private readonly mapFromBaseRegExp: RegExp;
-
-  protected readonly baseFs: FakeFS<PortablePath>;
 
   static makeVirtualPath(base: PortablePath, component: Filename, to: PortablePath) {
     // Obtains the relative distance between the virtual path and its actual target
@@ -40,13 +38,12 @@ export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
   constructor(virtual: PortablePath, {baseFs = new NodeFS()}: VirtualFSOptions = {}) {
     super(ppath);
 
+    this.baseFs = baseFs;
+
     this.target = ppath.dirname(virtual);
     this.virtual = virtual;
 
     this.mapToBaseRegExp = new RegExp(`^(${escapeRegexp(this.virtual)})((?:/([^\/]+)(?:/([^/]+))?)?((?:/.*)?))$`);
-    this.mapFromBaseRegExp = new RegExp(`^${escapeRegexp(this.target)}(/(?!${escapeRegexp(ppath.basename(this.virtual))}(?:/|$))|$)`);
-
-    this.baseFs = baseFs;
   }
 
   getRealPath() {
