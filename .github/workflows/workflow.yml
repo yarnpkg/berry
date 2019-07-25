@@ -1,0 +1,89 @@
+on: [push]
+
+name: Integration
+jobs:
+  chore:
+    name: Testing chores
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Use Node.js 10.x
+      uses: actions/setup-node@master
+      with:
+        version: 10.x
+
+    - name: Use Yarn 1.17.2
+      run: |
+        npm install -g yarn@1.17.2
+
+    - name: Check that the Yarn files don't change on new installs
+      run: |
+        YARN_ENABLE_NETWORK=0 node ./scripts/run-yarn.js --frozen-lockfile
+
+    - name: Check that the cache doesn't contain obsolete packages
+      run: |
+        [[ $(node ./scripts/run-yarn.js cache clean --dry-run --json | jq -c 'select(.path)' | wc -l) -eq 0 ]]
+
+    - name: 'Check that the cache files are consistent with their remote sources'
+      run: |
+        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- .yarn/{cache,virtual} | wc -l) -gt 0 ]]; then
+          rm -rf ./.yarn/cache
+          node ./scripts/run-yarn.js
+        fi
+      if: github.event.pull_request != ''
+      env:
+        TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
+
+    - name: Check for linting errors
+      run: |
+        node ./scripts/run-yarn.js test:lint
+
+    - name: Check for unmet constraints
+      run: |
+        node ./scripts/run-yarn.js constraints
+
+  acceptance:
+    strategy:
+      fail-fast: false
+      matrix:
+        nodejs_version: [8, 10]
+        platform: [ubuntu-latest, windows-latest, macos-latest]
+        exclude:
+        - platform: windows-latest
+          nodejs_version: 8
+
+    name: ${{matrix.platform}} w/ Node.js ${{matrix.nodejs_version}}.x
+    runs-on: ${{matrix.platform}}
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Use Node.js ${{matrix.nodejs_version}}.x
+      uses: actions/setup-node@master
+      with:
+        version: ${{matrix.nodejs_version}}.x
+
+    - name: Use Yarn 1.17.2
+      run: |
+        npm install -g yarn@1.17.2
+
+    - name: Build the standard bundle & plugins
+      run: |
+        set -e
+        node --version
+        node ./scripts/run-yarn.js build:cli
+        node ./scripts/run-yarn.js build:plugin-exec
+        node ./scripts/run-yarn.js build:plugin-stage
+        node ./scripts/run-yarn.js build:plugin-typescript
+        node ./scripts/run-yarn.js build:plugin-version
+        node ./scripts/run-yarn.js build:plugin-workspace-tools
+
+    - name: Run the integration tests
+      run: |
+        node ./scripts/run-yarn.js test:integration --runInBand
+
+    - name: Run the unit tests
+      run: |
+        node ./scripts/run-yarn.js test:unit

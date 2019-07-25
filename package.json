@@ -1,10 +1,15 @@
 {
   "name": "@berry/monorepo",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arcanis/berry-actions.git"
+  },
   "workspaces": [
     "packages/*"
   ],
   "dependencies": {
+    "@arcanis/sherlock": "^1.0.18",
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.3",
     "@babel/plugin-proposal-class-properties": "^7.3.3",
@@ -79,5 +84,10 @@
     "gen-tssdk": "pnpify --sdk scripts",
     "test:lint": "eslint packages/*/sources/**/*.ts",
     "test:unit": "jest"
+  },
+  "sherlock": {
+    "requireList": [
+      "scripts/actions/sherlock-prepare.js"
+    ]
   }
 }
