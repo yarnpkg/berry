@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 31);
+/******/ 	return __webpack_require__(__webpack_require__.s = 32);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -143,6 +143,7 @@ function toFilename(filename) {
 /* unused harmony export extendFs */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return xfs; });
 /* harmony import */ var _NodeFS__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
+
 
 
 
@@ -517,7 +518,7 @@ class FakeFS {
             }
         }
         try {
-            await callback();
+            return await callback();
         }
         finally {
             await this.closePromise(fd);
@@ -538,7 +539,7 @@ class BasePortableFakeFS extends FakeFS {
 
 /***/ }),
 
-/***/ 31:
+/***/ 32:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
