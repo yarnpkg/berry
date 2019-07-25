@@ -83,7 +83,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 32);
+/******/ 	return __webpack_require__(__webpack_require__.s = 33);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -142,6 +142,7 @@ function toFilename(filename) {
 /* unused harmony export extendFs */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return xfs; });
 /* harmony import */ var _NodeFS__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
+
 
 
 
@@ -514,7 +515,7 @@ class FakeFS {
             }
         }
         try {
-            await callback();
+            return await callback();
         }
         finally {
             await this.closePromise(fd);
@@ -777,15 +778,16 @@ const dynamicRequire =  true
 /* 12 */,
 /* 13 */,
 /* 14 */,
-/* 15 */
+/* 15 */,
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const cp = __webpack_require__(16);
-const parse = __webpack_require__(17);
-const enoent = __webpack_require__(30);
+const cp = __webpack_require__(17);
+const parse = __webpack_require__(18);
+const enoent = __webpack_require__(31);
 
 function spawn(command, args, options) {
     // Parse the arguments
@@ -823,24 +825,24 @@ module.exports._enoent = enoent;
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = require("child_process");
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 const path = __webpack_require__(4);
-const niceTry = __webpack_require__(18);
-const resolveCommand = __webpack_require__(19);
-const escape = __webpack_require__(25);
-const readShebang = __webpack_require__(26);
-const semver = __webpack_require__(29);
+const niceTry = __webpack_require__(19);
+const resolveCommand = __webpack_require__(20);
+const escape = __webpack_require__(26);
+const readShebang = __webpack_require__(27);
+const semver = __webpack_require__(30);
 
 const isWin = process.platform === 'win32';
 const isExecutableRegExp = /\.(?:com|exe)$/i;
@@ -961,7 +963,7 @@ module.exports = parse;
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -979,15 +981,15 @@ module.exports = function(fn) {
 }
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 const path = __webpack_require__(4);
-const which = __webpack_require__(20);
-const pathKey = __webpack_require__(24)();
+const which = __webpack_require__(21);
+const pathKey = __webpack_require__(25)();
 
 function resolveCommandAttempt(parsed, withoutPathExt) {
     const cwd = process.cwd();
@@ -1033,7 +1035,7 @@ module.exports = resolveCommand;
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = which
@@ -1045,7 +1047,7 @@ var isWindows = process.platform === 'win32' ||
 
 var path = __webpack_require__(4)
 var COLON = isWindows ? ';' : ':'
-var isexe = __webpack_require__(21)
+var isexe = __webpack_require__(22)
 
 function getNotFoundError (cmd) {
   var er = new Error('not found: ' + cmd)
@@ -1174,15 +1176,15 @@ function whichSync (cmd, opt) {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var fs = __webpack_require__(2)
 var core
 if (process.platform === 'win32' || global.TESTING_WINDOWS) {
-  core = __webpack_require__(22)
-} else {
   core = __webpack_require__(23)
+} else {
+  core = __webpack_require__(24)
 }
 
 module.exports = isexe
@@ -1237,7 +1239,7 @@ function sync (path, options) {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = isexe
@@ -1285,7 +1287,7 @@ function sync (path, options) {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = isexe
@@ -1332,7 +1334,7 @@ function checkMode (stat, options) {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1352,7 +1354,7 @@ module.exports = opts => {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1404,14 +1406,14 @@ module.exports.argument = escapeArgument;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 const fs = __webpack_require__(2);
-const shebangCommand = __webpack_require__(27);
+const shebangCommand = __webpack_require__(28);
 
 function readShebang(command) {
     // Read the first 150 bytes from the file
@@ -1443,12 +1445,12 @@ module.exports = readShebang;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var shebangRegex = __webpack_require__(28);
+var shebangRegex = __webpack_require__(29);
 
 module.exports = function (str) {
 	var match = str.match(shebangRegex);
@@ -1469,7 +1471,7 @@ module.exports = function (str) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1478,7 +1480,7 @@ module.exports = /^#!.*/;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports) {
 
 exports = module.exports = SemVer;
@@ -2836,7 +2838,7 @@ function coerce(version) {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2902,8 +2904,8 @@ module.exports = {
 
 
 /***/ }),
-/* 31 */,
-/* 32 */
+/* 32 */,
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2915,8 +2917,8 @@ var path = __webpack_require__(0);
 // EXTERNAL MODULE: ../berry-fslib/sources/NodeFS.ts
 var NodeFS = __webpack_require__(5);
 
-// EXTERNAL MODULE: /Users/mael.nison/berry/.yarn/cache/cross-spawn-npm-6.0.5-0ba5f883cf582a4248c1c8575ef31c368634c587aa0b9731c596cf866746bf5e.zip/node_modules/cross-spawn/index.js
-var cross_spawn = __webpack_require__(15);
+// EXTERNAL MODULE: /Users/victor/work/berry/.yarn/cache/cross-spawn-npm-6.0.5-0ba5f883cf582a4248c1c8575ef31c368634c587aa0b9731c596cf866746bf5e.zip/node_modules/cross-spawn/index.js
+var cross_spawn = __webpack_require__(16);
 var cross_spawn_default = /*#__PURE__*/__webpack_require__.n(cross_spawn);
 
 // EXTERNAL MODULE: ./sources/dynamicRequire.ts
