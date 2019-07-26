@@ -20,7 +20,7 @@ Open in a text editor a new file called `plugin-hello-world.js`, and type the fo
 module.exports = {
   name: `plugin-hello-world`,
   factory: require => ({
-    default: {}
+    default: {},
   })
 };
 ```
@@ -46,9 +46,9 @@ module.exports = {
       hooks: {
         setupScriptEnvironment(scriptEnv) {
           scriptEnv.HELLO_WORLD = `my first plugin!`;
-        }
-      }
-    }
+        },
+      },
+    },
   })
 };
 ```
@@ -67,12 +67,11 @@ module.exports = {
   factory: require => ({
     default: {
       commands: [
-        clipanion =>
-          clipanion.command(`hello world`).action(({ stdout }) => {
-            stdout.write(`This is my very own plugin 😎`);
-          })
-      ]
-    }
+        clipanion => clipanion.command(`hello world`).action(({stdout}) => {
+          stdout.write(`This is my very own plugin 😎`);
+        }),
+      ],
+    },
   })
 };
 ```
