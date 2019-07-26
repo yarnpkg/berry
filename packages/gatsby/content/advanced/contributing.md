@@ -24,12 +24,16 @@ The standard bundle is built using the following command from anywhere in the re
 $> yarn build:cli
 ```
 
-The standard bundle uses a predefined set of plugins defined in [`packages/berry-cli/package.json`](https://github.com/yarnpkg/berry/blob/master/packages/berry-cli/package.json#L43). If your PR aims to add a new plugin to the standard build you'll need to add it there (note that this decision should be left to core maintainers - please don't modify this settings yourself).
+Running this command will generate a file in `packages/berry-cli/bundles/berry.js`, and starting from now any Yarn command you'll run in this repository will always use your local build. In case it inadvertedly becomes corrupted, just remove this file and run `build:cli` again.
 
-For development purposes, you can build your plugin as part of your local bundle by using the `--plugin` option in the command line:
+## Builtin plugins
+
+The standard bundle uses a predefined set of plugins defined in [`packages/berry-cli/package.json`](https://github.com/yarnpkg/berry/blob/master/packages/berry-cli/package.json#L43). If your PR aims to add a new plugin to the standard build you'll need to add it there (note that this decision should be left to the core maintainers - please don't modify this setting yourself).
+
+For development purposes, you can build your plugin as part of your own local bundle by using the `--plugin` option in the command line:
 
 ```
-$> yarn build:cli --plugin @berry/typescript
+$> yarn build:cli --plugin @berry/plugin-typescript
 ```
 
 ## Testing your code
@@ -40,9 +44,7 @@ We currently have two testsuites, built for different purposes. The first one ar
 $> yarn test:unit
 ```
 
-Those unit tests can typically be found in the `packages/*/tests` directory.
-
-While various subcomponents are tested via unit tests (for example the portable shell library), Yarn itself isn't tested through unit tests - we instead rely on integration tests which are much closer from our users setup. Those tests can be triggered through the following command (again, from anywhere within the repository):
+While various subcomponents that have a strict JS interface contract are tested via unit tests (for example the portable shell library, or the various util libraries we ship), Yarn as a whole relies on integration tests. Being much closer from what our users experience, they give us a higher confidence when refactoring the application that everything will work according to plan. Those tests can be triggered by running the following command (again, from anywhere within the repository):
 
 ```
 $> yarn test:integration
@@ -54,6 +56,11 @@ In both cases the underlying framework we use is Jest, which means that you can 
 $> yarn test:unit berry-shell
 $> yarn test:integration -t 'it should correctly install a single dependency that contains no sub-dependencies'
 ```
+
+Should you need to write a test (and you will 😉), they are located in the following directories:
+
+  - **Unit tests:** `packages/*/tests`
+  - **Integration tests:** `packages/acceptance-tests/pkg-test-specs/sources`
 
 Don't forget that your PR will require all the tests to pass before being merged!
 
