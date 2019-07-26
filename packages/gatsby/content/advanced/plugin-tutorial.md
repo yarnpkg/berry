@@ -25,7 +25,7 @@ module.exports = {
 };
 ```
 
-We have our plugin, but now we need to register it so that Yarn knows where to find it. To do this, we'll just add an entry within the `.yarnrc` file at the root of the repository:
+We have our plugin, but now we need to register it so that Yarn knows where to find it. To do this, we'll just add an entry within the `.yarnrc.yml` file at the root of the repository:
 
 ```yaml
 plugins:
