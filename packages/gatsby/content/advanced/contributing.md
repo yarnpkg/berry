@@ -6,6 +6,16 @@ title: "Contributing"
 
 Thanks for being here! Yarn gives a lot of importance to being a community project, and we rely on your help as much as you rely on ours. In order to help you help us we've invested in an infra and documentation that should make contributing to Yarn very easy. If you have any feedback on what we could improve, please open an issue to discuss it!
 
+## Finding work to do
+
+It might be difficult to know where to start on a fresh codebase. To help a bit with this, we try to mark various issues with tags meant to highlight issues that we think don't require as much context as others:
+
+  - [Good First Issue](https://github.com/yarnpkg/berry/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) are typically self-contained features of a limited scope that are a good way to get some insight as to how Yarn works under the hood.
+
+  - [Help Wanted](https://github.com/yarnpkg/berry/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) are issues that don't require a lot of context but also have less impact than the ones who do, so no core maintainer has the bandwidth to work on them.
+
+Finally, feel free to pop on our [Discord channel](https://discordapp.com/invite/yarnpkg) to ask for help and guidance. We're always happy to see new blood, and will help you our best to make your first open-source contribution a success!
+
 ## Building the bundle
 
 The standard bundle is built using the following command from anywhere in the repository:
@@ -60,3 +70,17 @@ We use ESLint to check this, so using the `--fix` flag will cause ESLint to atte
 ```
 $> yarn test:lint --fix
 ```
+
+## Writing documentation
+
+Our website is stored within the `packages/gatsby` directory. *Do not manually edit the files in the `docs` folder!* Instead, just make your changes in the Gatsby directory (for example [this is this very page](https://github.com/yarnpkg/berry/blob/master/packages/gatsby/content/advanced/plugin-tutorial.md)), then run the following command to spawn a local server and see your changes:
+
+```
+$> yarn develop
+```
+
+Once you're happy with what the documentation looks like, just commit your local changes and open a PR. Netlify will pick up your changes and spawn a fresh preview for everyone to see:
+
+![](https://user-images.githubusercontent.com/1037931/61949789-3cc09300-afac-11e9-9817-89e97771a4e1.png)
+
+Once everything is green and a maintainer has reviewed your changes, we'll merge them and a bot will automatically trigger a rebuild of the website and update the `docs` folder 🙂
