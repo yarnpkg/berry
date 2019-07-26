@@ -103,6 +103,10 @@ const Content = styled.div`
   pre code {
     color: #ddddcc;
   }
+
+  img {
+    max-width: 100%;
+  }
 `;
 
 export const PrerenderedMarkdown = ({title, children}) => <>

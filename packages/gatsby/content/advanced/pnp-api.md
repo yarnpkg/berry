@@ -69,8 +69,6 @@ export function findPackageLocator(location: string): PackageLocator | null;
 
 Given a location on the disk, the `findPackageLocator` function will return the package that "owns" the path. For example, running this function on something conceptually similar to `/.../node_modules/foo/index.js` would return a package locator pointing to the `foo` package (and its exact version).
 
-Note that it's important that you don't call `realpath` on the path argument. The current Yarn implementation uses symlinks in order to disambiguate packages that list peer dependencies, and calling `realpath` would cause the PnP API to lose track of which virtual package owns the file. This would in turn cause `findPackageLocator` to return potentially boggus results.
-
 ### `resolveToUnqualified(...)`
 
 ```ts

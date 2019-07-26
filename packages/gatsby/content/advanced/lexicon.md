@@ -15,12 +15,15 @@ A descriptor is a combination of a package name (for example `lodash`) and a pac
 Fetchers are the components tasked from extracting the full package data from a <abbr>reference</abbr>. For example, the npm fetcher would download the package tarballs from the npm registry.
 
 See also: [Architecture](/advanced/architecture)
+See also: the [`Fetcher` interface](https://github.com/yarnpkg/berry/blob/master/packages/berry-core/sources/Fetcher.ts#L34)
 
 ### Linker
 
 Linkers are the components that consume both a dependency tree and a store of package data, and generate in return disk artifacts specific to the environment they target. For example, the <abbr>Plug'n'Play</abbr> linker generates a single `.pnp.js` file.
 
 See also: [Architecture](/advanced/architecture)
+See also: the [`Linker` interface](https://github.com/yarnpkg/berry/blob/master/packages/berry-core/sources/Linker.ts#L28)
+See also: the [`Installer` interface](https://github.com/yarnpkg/berry/blob/master/packages/berry-core/sources/Installer.ts#L18)
 
 ### Locator
 
@@ -41,6 +44,7 @@ See also: [Virtual Packages](#virtualpackages)
 Plugins are a new concept introduced in Yarn 2+. Through the use of plugins Yarn can be extended and made even more powerful - whether it's through the addition of new <abbr>resolvers</abbr>, <abbr>fetchers</abbr>, or <abbr>linkers</abbr>.
 
 See also: [Plugins](/features/plugins)
+See also: the [`Plugin` interface](https://github.com/yarnpkg/berry/blob/master/packages/berry-core/sources/Plugin.ts#L67)
 
 ### Plug'n'Play
 
@@ -75,6 +79,7 @@ See also: [Protocols](/features/protocols)
 Resolvers are the components tasked from converting <abbr>descriptors</abbr> into <abbr>locators</abbr>, and extracting the package <abbr>manifests</abbr> from the package <abbr>locators</abbr>. For example, the npm resolver would check what versions are available on the npm registry and return all the candidates that satisfy the <abbr>semver</abbr> requirements, then would query the npm registry to fetch the full metadata associated to the selected resolution.
 
 See also: [Architecture](/advanced/architecture)
+See also: the [`Resolver` interface](https://github.com/yarnpkg/berry/blob/master/packages/berry-core/sources/Resolver.ts#L43)
 
 ### Scope
 
@@ -82,11 +87,13 @@ Scopes are a term linked inherited from the npm registry; they are used to descr
 
 ### Virtual Package
 
-Because peer-dependent packages effectively define a *template* of possible dependencies rather than an actual static list of dependencies, one peer-dependent packages may have multiple dependencies list that all map to the same files on the filesystem. Since the JS modules are instantiated based on their path (a file is never instantiated twice for any given path), the only way to instantiate those packages multiple times is to give them multiple paths. That's where virtual packages come handy.
+Because peer-dependent packages effectively define a *template* of possible dependencies rather than an actual static list of dependencies, a single peer-dependent package may have multiple dependency lists - in which case it'll need to be instantiated multiple times (in practice, once for each strong dependent, cf [Peer Dependencies](/advanced/peer-dependencies)).
 
-Virtual packages are specialized instances of a given peer-dependent packages that encode the position of this particular instance of the peer-dependent package in the dependency tree (meaning that peer-dependent packages gets instantiated once for each package that has a strong dependency on them, cf [Peer Dependencies](/advanced/peer-dependencies)).
+Since in Node-land the JS modules are instantiated based on their path (a file is never instantiated twice for any given path), and since PnP makes it so that packages are installed only once in any given project, the only way to instantiate those packages multiple times is to give them multiple paths while still referencing to the same on-disk location. That's where virtual packages come handy.
 
-In the past they were implemented using symlinks, but we recently reimplemented them as a virtual filesystem layer - this circumvents the need to create many useless symlinks, and prevents issues when third-party tools try to call `realpath` on them. And since most virtual packages eventually target zipped packages, the filesystem layer was needed in any case.
+Virtual packages are specialized instances of the peer-dependent packages that encode the position of the package templates in the dependency tree. Each instance is given a unique path that ensures that the scripts it references will be instantiated with their proper dependency list, regardless of the execution order.
+
+In the past virtual packages were implemented using symlinks, but this recently changed and they are now implemented through a virtual filesystem layer. This circumvents the need to create many confusing symlinks, improves compatibility with Windows, and prevents issues when third-party tools try to call `realpath` on them.
 
 ### Workspace
 
