@@ -20,7 +20,7 @@ In order to make a project zero-install, you must be able to use it as soon as y
 
 - The cache folder is by default stored within your project folder (in `.yarn/cache`). Just make sure you add it to your repository (see also, [Offline Cache](/features/offline-cache)).
 
-- When running `yarn install`, Yarn will generate a `.pnp.js` and a `.yarn/virtuals` file. Add them both to your repository (the `virtuals` folder contains a bunch of symlinks used to disambiguate peer dependencies - it might look weird, but it's what allows `yarn link` to work A-OK with peer dependencies).
+- When running `yarn install`, Yarn will generate a `.pnp.js`. Add it to your repository as well (it contains the dependency tree that Node will use to load your packages).
 
 - Depending on whether you use install scripts or not (we advise you to disable them if you write Javascript, as most use cases for native packages are better solved by wasm-powered packages anyway) also add the `.yarn/unplugged` and `.yarn/build-state.yml` entries.
 
