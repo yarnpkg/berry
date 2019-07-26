@@ -24,9 +24,9 @@ The standard bundle is built using the following command from anywhere in the re
 $> yarn build:cli
 ```
 
-Running this command will generate a file in `packages/berry-cli/bundles/berry.js`, and starting from now any Yarn command you'll run in this repository will always use your local build. In case it inadvertedly becomes corrupted, just remove this file and run `build:cli` again.
+Running this command will generate a file in `packages/berry-cli/bundles/berry.js`, and starting from now any Yarn command you'll run in this repository will always use your local build. In case it inadvertently becomes corrupted, just remove this file and run `build:cli` again to get a fresh one.
 
-## Builtin plugins
+## Working on plugins
 
 The standard bundle uses a predefined set of plugins defined in [`packages/berry-cli/package.json`](https://github.com/yarnpkg/berry/blob/master/packages/berry-cli/package.json#L43). If your PR aims to add a new plugin to the standard build you'll need to add it there (note that this decision should be left to the core maintainers - please don't modify this setting yourself).
 
@@ -59,8 +59,8 @@ $> yarn test:integration -t 'it should correctly install a single dependency tha
 
 Should you need to write a test (and you will 😉), they are located in the following directories:
 
-  - **Unit tests:** `packages/*/tests`
-  - **Integration tests:** `packages/acceptance-tests/pkg-test-specs/sources`
+  - **Unit tests:** [`packages/*/tests`](https://github.com/search?utf8=%E2%9C%93&q=repo%3Ayarnpkg%2Fberry+filename%3Atest.ts+language%3ATypeScript+language%3ATypeScript&type=Code&ref=advsearch&l=TypeScript&l=TypeScript)
+  - **Integration tests:** [`packages/acceptance-tests/pkg-test-specs/sources`](https://github.com/yarnpkg/berry/tree/master/packages/acceptance-tests/pkg-tests-specs/sources)
 
 Don't forget that your PR will require all the tests to pass before being merged!
 
