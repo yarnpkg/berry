@@ -1,16 +1,23 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
-import {structUtils}                                     from '@berry/core';
+import {miscUtils, structUtils}                          from '@berry/core';
+import {LinkType}                                        from '@berry/core';
 import {Descriptor, Locator, Manifest}                   from '@berry/core';
 
 import {GIT_REGEXP}                                      from './constants';
 
 export class GitResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return descriptor.range.match(GIT_REGEXP);
+    if (descriptor.range.match(GIT_REGEXP))
+      return true;
+
+    return false;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    return locator.reference.match(GIT_REGEXP);
+    if (locator.reference.match(GIT_REGEXP))
+      return true;
+
+    return false;
   }
 
   shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
@@ -26,6 +33,27 @@ export class GitResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    // Requires fetcher implementation
+    const packageFetch = await opts.fetcher.fetch(locator, opts);
+
+    const manifest = await miscUtils.releaseAfterUseAsync(async () => {
+      return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
+    }, packageFetch.releaseFs);
+
+    return {
+      ...locator,
+
+      version: manifest.version || `0.0.0`,
+
+      languageName: opts.project.configuration.get(`defaultLanguageName`),
+      linkType: LinkType.HARD,
+
+      dependencies: manifest.dependencies,
+      peerDependencies: manifest.peerDependencies,
+
+      dependenciesMeta: manifest.dependenciesMeta,
+      peerDependenciesMeta: manifest.peerDependenciesMeta,
+
+      bin: manifest.bin,
+    };
   }
 }
