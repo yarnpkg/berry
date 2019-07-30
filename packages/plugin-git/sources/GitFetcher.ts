@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
 import {Locator, MessageName}                       from '@berry/core';
-import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
-import {PortablePath}                               from '@berry/fslib';
+import {miscUtils, structUtils, tgzUtils}           from '@berry/core';
+import {NodeFS, PortablePath, ppath}                from '@berry/fslib';
 
 import {GIT_REGEXP}                                 from './constants';
 import * as gitUtils                                from './gitUtils';
@@ -26,7 +26,7 @@ export class GitFetcher implements Fetcher {
       expectedChecksum,
       async () => {
         opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote repository`);
-        return await this.fetchFromNetwork(locator, opts); // TODO: This is a temp solution and will be replaced by `cloneFromRemote(...)`
+        return await this.cloneFromRemote(locator, opts);
       },
     );
 
@@ -38,18 +38,13 @@ export class GitFetcher implements Fetcher {
     };
   }
 
-  async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
-    const sourceBuffer = await httpUtils.get(this.getLocatorUrl(locator, opts), {
-      configuration: opts.project.configuration,
-    });
+  async cloneFromRemote(locator: Locator, opts: FetchOptions) {
+    const directory = await gitUtils.clone(locator.reference);
 
-    return await tgzUtils.makeArchive(sourceBuffer, {
-      stripComponents: 1,
-      prefixPath: `/sources` as PortablePath,
+    return await miscUtils.releaseAfterUseAsync(async () => {
+      return await tgzUtils.makeArchiveFromDirectory(directory, {
+        prefixPath: `/sources` as PortablePath,
+      });
     });
-  }
-
-  private getLocatorUrl(locator: Locator, opts: MinimalFetchOptions) {
-    return `https://github.com/facebook/react/archive/master.tar.gz`;
   }
 }

@@ -4,6 +4,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/core": "workspace:0.0.6",
-    "@berry/fslib": "workspace:0.0.8"
+    "@berry/fslib": "workspace:0.0.8",
+    "tmp": "^0.0.33"
   }
 }
