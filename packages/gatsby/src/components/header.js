@@ -17,10 +17,13 @@ const HeaderContainer = styled.div`
 const NewsContainer = styled.a`
   display: block;
 
-  padding: 0.8em 1em;
+  height: 2.5em;
+
+  padding: 0 1em;
 
   font-weight: light;
   text-decoration: none;
+  line-height: 2.5em;
 
   background: #2188b6;
   color: rgba(255, 255, 255, 0.8);

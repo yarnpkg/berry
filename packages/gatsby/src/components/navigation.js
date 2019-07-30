@@ -20,7 +20,7 @@ const Menu = styled.div`
     left: 0;
 
     width: 300px;
-    height: calc(100vh - 4em);
+    height: calc(100vh - 6.5em);
     overflow-y: auto;
 
     background: #d1dee8;

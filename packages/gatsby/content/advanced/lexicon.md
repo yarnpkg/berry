@@ -33,6 +33,12 @@ A locator is a combination of a package name (for example `lodash`) and a packag
 
 A manifest is a `package.json` file.
 
+### Monorepository
+
+A monorepository is a repository that contains multiple packages. For example, [Babel](https://github.com/babel/babel/tree/master/packages) and [Jest](https://github.com/facebook/jest/tree/master/packages) are examples of such repositories - they each contain dozen of small packages that each rely on one another.
+
+See also: [Workspaces](/features/workspaces)
+
 ### Peer-dependent Package
 
 A peer-dependent package is a package that lists peer dependencies.
