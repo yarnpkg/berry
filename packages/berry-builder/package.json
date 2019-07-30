@@ -28,7 +28,7 @@
     "webpack-virtual-modules": "^0.1.10"
   },
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.0.6",
+    "@berry/pnpify": "workspace:0.0.7",
     "typescript": "^3.3.3333"
   },
   "scripts": {

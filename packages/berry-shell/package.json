@@ -9,7 +9,7 @@
     "stream-buffers": "^3.0.2"
   },
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.0.6",
+    "@berry/pnpify": "workspace:0.0.7",
     "tmp": "^0.0.33",
     "typescript": "^3.3.3333"
   },

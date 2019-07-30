@@ -8,7 +8,7 @@
     "@berry/json-proxy": "workspace:0.0.0",
     "@berry/parsers": "workspace:0.0.4",
     "@berry/pnp": "workspace:0.0.4",
-    "@berry/pnpify": "workspace:0.0.6",
+    "@berry/pnpify": "workspace:0.0.7",
     "@berry/shell": "workspace:0.0.3",
     "agentkeepalive": "^4.0.2",
     "camelcase": "^5.3.1",
@@ -31,7 +31,7 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.0.6",
+    "@berry/pnpify": "workspace:0.0.7",
     "typescript": "^3.3.3333"
   },
   "scripts": {

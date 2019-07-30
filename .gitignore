@@ -1,15 +1,12 @@
 node_modules
 yarn-error.log
 
-.vscode
+.vscode/**
 .history
-tssdk
 
 junit.xml
 
 /.yarn/build-state.yml
-
-!/scripts/tssdk/lib
 
 # Those files are meant to be local-only
 /packages/*/bundles
@@ -22,3 +19,6 @@ lib
 
 # We check-in the PnP hook because it would be heavy to regenerate it before each bundle build
 !/packages/berry-pnp/lib/hook.js
+
+!/.vscode/pnpify
+!/.vscode/pnpify/**/lib

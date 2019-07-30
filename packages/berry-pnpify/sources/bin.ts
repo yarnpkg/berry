@@ -1,4 +1,4 @@
-import {NodeFS, PortablePath, ppath} from '@berry/fslib';
+import {NodeFS}                      from '@berry/fslib';
 import crossSpawn                    from 'cross-spawn';
 
 import {dynamicRequire}              from './dynamicRequire';
@@ -9,9 +9,7 @@ const [,, name, ...rest] = process.argv;
 if (name === `--help` || name === `-h`)
   help(false);
 else if (name === `--sdk` && rest.length === 0)
-  sdk(null);
-else if (name === `--sdk` && rest.length === 1)
-  sdk(ppath.resolve(NodeFS.toPortablePath(rest[0])));
+  sdk();
 else if (typeof name !== `undefined` && name[0] !== `-`)
   run(name, rest);
 else
@@ -29,13 +27,13 @@ function help(error: boolean) {
   logFn(`More info at https://yarnpkg.github.io/berry/advanced/pnpify`);
 }
 
-function sdk(targetFolder: PortablePath | null) {
+function sdk() {
   const {getPackageInformation, topLevel} = dynamicRequire(`pnpapi`);
   const {packageLocation} = getPackageInformation(topLevel);
 
   const projectRoot = NodeFS.toPortablePath(packageLocation);
 
-  generateSdk(projectRoot, targetFolder).catch(error => {
+  generateSdk(projectRoot).catch(error => {
     console.error(error.stack);
     process.exitCode = 1;
   });

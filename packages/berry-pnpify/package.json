@@ -1,6 +1,6 @@
 {
   "name": "@berry/pnpify",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "./sources/index.ts",
   "bin": "./lib/bin.js",
   "sideEffects": false,
@@ -11,14 +11,20 @@
   "devDependencies": {
     "@berry/builder": "workspace:0.0.0",
     "@berry/pnp": "workspace:0.0.4",
+    "@types/eslint": "4.16.6",
+    "eslint": "^5.16.0",
     "typescript": "^3.3.3333",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1"
   },
   "peerDependencies": {
+    "eslint": "*",
     "typescript": "*"
   },
   "peerDependenciesMeta": {
+    "eslint": {
+      "optional": true
+    },
     "typescript": {
       "optional": true
     }
