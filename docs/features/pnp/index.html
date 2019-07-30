@@ -84,6 +84,7 @@
 <h2 id="caveats-and-work-in-progress"><a href="#caveats-and-work-in-progress" aria-label="caveats and work in progress permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Caveats and work-in-progress</h2>
 <p>During the years that led to Plug'n'Play being designed and adopted as main install strategy, various projects came up with their own implementation of the Node Resolution Algorithm - usually to circumvent shortcomings of the <code class="language-text">require.resolve</code> API. Such projects can be Webpack (<code class="language-text">enhanced-resolve</code>), Babel (<code class="language-text">resolve</code>), Jest (<code class="language-text">jest-resolve</code>), Metro (<code class="language-text">metro-resolver</code>), ...</p>
 <p>The following compatibility table gives you an idea of the integration status with various tools from the community. Note that only CLI tools are listed there, as frontend libraries (such as <code class="language-text">react</code>, <code class="language-text">vue</code>, <code class="language-text">lodash</code>, ...) don't reimplement the Node resolution and as such don't need any special logic to take advantage from Plug'n'Play:</p>
+<p><strong><a href="https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugnplay.md">Suggest an addition to this table</a></strong></p>
 <table>
 <thead>
 <tr>
@@ -106,17 +107,27 @@
 <tr>
 <td>ESLint</td>
 <td>Native</td>
-<td>Some compatibility issues when used w/ shared configs</td>
+<td>Some compatibility issues w/ shared configs</td>
 </tr>
 <tr>
 <td>Gatsby</td>
 <td>Native</td>
-<td>Currently</td>
+<td>No comment</td>
+</tr>
+<tr>
+<td>Husky</td>
+<td>Native</td>
+<td>Starting from 2.6+ (<a href="https://github.com/typicode/husky/pull/511">#511</a>), improvements are coming (<a href="https://github.com/typicode/husky/pull/510">#510</a>)</td>
 </tr>
 <tr>
 <td>Jest</td>
 <td>Native</td>
 <td>Starting from 24.1+</td>
+</tr>
+<tr>
+<td>Prettier</td>
+<td>Native</td>
+<td>Starting from 1.17+</td>
 </tr>
 <tr>
 <td>Rollup</td>
@@ -126,12 +137,27 @@
 <tr>
 <td>TypeScript</td>
 <td>Plugin</td>
-<td>Via Webpack and <a href="https://github.com/arcanis/pnp-webpack-plugin#ts-loader-integration"><code class="language-text">ts-loader</code></a></td>
+<td>Via <a href="/berry/advanced/pnpify">PnPify</a>, or Webpack and <a href="https://github.com/arcanis/pnp-webpack-plugin#ts-loader-integration"><code class="language-text">ts-loader</code></a></td>
+</tr>
+<tr>
+<td>VSCode</td>
+<td>Plugin</td>
+<td>Via <a href="/berry/advanced/pnpify#vscode-support">PnPify</a></td>
 </tr>
 <tr>
 <td>Webpack</td>
 <td>Plugin</td>
-<td>Via <a href="https://github.com/arcanis/pnp-webpack-plugin"><code class="language-text">pnp-webpack-plugin</code></a></td>
+<td>Via <a href="https://github.com/arcanis/pnp-webpack-plugin"><code class="language-text">pnp-webpack-plugin</code></a>, will be native starting from 5+</td>
+</tr>
+<tr>
+<td>Typescript-Eslint</td>
+<td>Workaround</td>
+<td>Update the lockfile to add <code class="language-text">typescript: &quot;*&quot;</code> into its <code class="language-text">peerDependencies</code>. <a href="https://github.com/typescript-eslint/typescript-eslint/issues/770"><code class="language-text">Relevant Issue</code></a></td>
+</tr>
+<tr>
+<td>VSCode-ESLint</td>
+<td>Broken</td>
+<td>Work in progress over at <a href="https://github.com/microsoft/vscode-languageserver-node/issues/496">#496</a> and <a href="https://github.com/microsoft/vscode-eslint/issues/601">#601</a></td>
 </tr>
 </tbody>
 </table>
