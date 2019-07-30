@@ -13,11 +13,11 @@ const TEMPLATE = (relPnpApiPath: string, module: string, pnpify: boolean) => [
   `process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
   `process.env.NODE_OPTIONS += \` -r \${absPnpApiPath}\`;\n`,
   ...(pnpify ? [
-  `process.env.NODE_OPTIONS += \` -r \${require.resolve(\`@berry/pnpify/lib\`)}\`;\n`,
-  `\n`,
-  `// Apply PnPify to the current process\n`,
-  `require(\`@berry/pnpify/lib\`).patchFs();\n`,
-  `\n`
+    `process.env.NODE_OPTIONS += \` -r \${require.resolve(\`@berry/pnpify/lib\`)}\`;\n`,
+    `\n`,
+    `// Apply PnPify to the current process\n`,
+    `require(\`@berry/pnpify/lib\`).patchFs();\n`,
+    `\n`,
   ] : []),
   `// Defer to the real ${module} your application uses\n`,
   `module.exports = require(\`${module}\`);\n`,
@@ -28,7 +28,7 @@ const addVSCodeWorkspaceSettings = async (projectRoot: PortablePath, settings: a
   const content = await xfs.existsPromise(settingsPath) ? await xfs.readFilePromise(settingsPath, `utf8`) : `{}`;
 
   const data = JSON.parse(content);
-  const patched = `${JSON.stringify({ ...data, ...settings}, null, 2)}\n`;
+  const patched = `${JSON.stringify({...data, ...settings}, null, 2)}\n`;
 
   await xfs.mkdirpPromise(ppath.dirname(settingsPath));
   await xfs.changeFilePromise(settingsPath, patched);
