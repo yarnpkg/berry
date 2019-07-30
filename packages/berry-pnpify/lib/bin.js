@@ -2945,8 +2945,8 @@ const TEMPLATE = (relPnpApiPath, module, pnpify) => [
         `\n`,
         `// Apply PnPify to the current process\n`,
         `require(\`@berry/pnpify/lib\`).patchFs();\n`,
-        `\n`
     ] : []),
+    `\n`,
     `// Defer to the real ${module} your application uses\n`,
     `module.exports = require(\`${module}\`);\n`,
 ].join(``);
