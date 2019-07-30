@@ -1489,7 +1489,7 @@ __metadata:
     "@babel/preset-env": "npm:^7.3.1"
     "@babel/preset-typescript": "npm:^7.1.0"
     "@babel/register": "npm:^7.0.0"
-    "@berry/pnpify": "workspace:0.0.6"
+    "@berry/pnpify": "workspace:0.0.7"
     brfs: "npm:^2.0.1"
     buffer-loader: "npm:^0.1.0"
     clipanion: "npm:2.0.0-rc.16"
@@ -1553,7 +1553,7 @@ __metadata:
     "@berry/json-proxy": "workspace:0.0.0"
     "@berry/parsers": "workspace:0.0.4"
     "@berry/pnp": "workspace:0.0.4"
-    "@berry/pnpify": "workspace:0.0.6"
+    "@berry/pnpify": "workspace:0.0.7"
     "@berry/shell": "workspace:0.0.3"
     agentkeepalive: "npm:^4.0.2"
     camelcase: "npm:^5.3.1"
@@ -1583,7 +1583,7 @@ __metadata:
   resolution: "@berry/fslib@workspace:packages/berry-fslib"
   dependencies:
     "@berry/libzip": "workspace:0.0.5"
-    "@berry/pnpify": "workspace:0.0.6"
+    "@berry/pnpify": "workspace:0.0.7"
     typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
@@ -1646,7 +1646,7 @@ __metadata:
   resolution: "@berry/json-proxy@workspace:packages/berry-json-proxy"
   dependencies:
     "@berry/fslib": "workspace:0.0.8"
-    "@berry/pnpify": "workspace:0.0.6"
+    "@berry/pnpify": "workspace:0.0.7"
     typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
@@ -1655,7 +1655,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@berry/libzip@workspace:packages/berry-libzip"
   dependencies:
-    "@berry/pnpify": "workspace:0.0.6"
+    "@berry/pnpify": "workspace:0.0.7"
     typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
@@ -1670,7 +1670,7 @@ __metadata:
     "@babel/plugin-transform-modules-commonjs": "npm:^7.2.0"
     "@babel/preset-env": "npm:^7.3.1"
     "@babel/preset-typescript": "npm:^7.1.0"
-    "@berry/pnpify": "workspace:0.0.6"
+    "@berry/pnpify": "workspace:0.0.7"
     "@types/camelcase": "npm:5.2.0"
     "@types/cross-spawn": "npm:6.0.0"
     "@types/dateformat": "npm:^1.0.1"
@@ -1730,7 +1730,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@berry/parsers@workspace:packages/berry-parsers"
   dependencies:
-    "@berry/pnpify": "workspace:0.0.6"
+    "@berry/pnpify": "workspace:0.0.7"
     js-yaml: "npm:^3.10.0"
     pegjs: "npm:^0.10.0"
     typescript: "npm:^3.3.3333"
@@ -1809,7 +1809,7 @@ __metadata:
   dependencies:
     "@berry/core": "workspace:0.0.6"
     "@berry/fslib": "workspace:0.0.8"
-    "@berry/pnpify": "workspace:0.0.6"
+    "@berry/pnpify": "workspace:0.0.7"
     typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
@@ -1955,7 +1955,7 @@ __metadata:
   dependencies:
     "@berry/builder": "workspace:0.0.0"
     "@berry/fslib": "workspace:0.0.8"
-    "@berry/pnpify": "workspace:0.0.6"
+    "@berry/pnpify": "workspace:0.0.7"
     typescript: "npm:^3.3.3333"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:^3.2.1"
@@ -1963,14 +1963,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/pnpify@workspace:0.0.6, @berry/pnpify@workspace:packages/berry-pnpify":
+"@berry/pnpify@workspace:0.0.7, @berry/pnpify@workspace:packages/berry-pnpify":
   version: 0.0.0-use.local
   resolution: "@berry/pnpify@workspace:packages/berry-pnpify"
   dependencies:
     "@berry/builder": "workspace:0.0.0"
     "@berry/fslib": "workspace:0.0.8"
     "@berry/pnp": "workspace:0.0.4"
+    "@types/eslint": "npm:4.16.6"
     cross-spawn: "npm:^6.0.5"
+    eslint: "npm:^6.1.0"
     typescript: "npm:^3.3.3333"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:^3.2.1"
@@ -1990,7 +1992,7 @@ __metadata:
   dependencies:
     "@berry/fslib": "workspace:0.0.8"
     "@berry/parsers": "workspace:0.0.4"
-    "@berry/pnpify": "workspace:0.0.6"
+    "@berry/pnpify": "workspace:0.0.7"
     cross-spawn: "npm:^6.0.5"
     stream-buffers: "npm:^3.0.2"
     tmp: "npm:^0.0.33"
@@ -4066,6 +4068,18 @@ __metadata:
     json-schema-traverse: "npm:^0.4.1"
     uri-js: "npm:^4.2.2"
   checksum: fc7cbd837208951c082ca03ccdc26dfcef4b192b3419872b19d61c442f2193a886c1691619616ffb318f3460ff11fdbe930d9612312a68c8ae9fe526f9b8da31
+  languageName: node
+  linkType: hard
+
+"ajv@npm:^6.10.0":
+  version: 6.10.2
+  resolution: "ajv@npm:6.10.2"
+  dependencies:
+    fast-deep-equal: "npm:^2.0.1"
+    fast-json-stable-stringify: "npm:^2.0.0"
+    json-schema-traverse: "npm:^0.4.1"
+    uri-js: "npm:^4.2.2"
+  checksum: 284d0b208d08299fdbcd0d93a0147fc312eeaecf2059682640a6c3e5703265357de655d5adec9170dc5ce3598ad55b3571385b831527a25c2ab92607a59fc463
   languageName: node
   linkType: hard
 
@@ -8753,6 +8767,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-scope@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "eslint-scope@npm:5.0.0"
+  dependencies:
+    esrecurse: "npm:^4.1.0"
+    estraverse: "npm:^4.1.1"
+  checksum: fc9aae41f284634362acfc7f5588a27eb2c2de63c98848dc13b40c1cabd89a74be5b38834271b0479cf508d0fe8304ae3ac585598232ddb8362bf15e16e32e6a
+  languageName: node
+  linkType: hard
+
 "eslint-utils@npm:^1.3.1":
   version: 1.3.1
   resolution: "eslint-utils@npm:1.3.1"
@@ -8859,6 +8883,53 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "eslint@npm:6.1.0"
+  dependencies:
+    "@babel/code-frame": "npm:^7.0.0"
+    ajv: "npm:^6.10.0"
+    chalk: "npm:^2.1.0"
+    cross-spawn: "npm:^6.0.5"
+    debug: "npm:^4.0.1"
+    doctrine: "npm:^3.0.0"
+    eslint-scope: "npm:^5.0.0"
+    eslint-utils: "npm:^1.3.1"
+    eslint-visitor-keys: "npm:^1.0.0"
+    espree: "npm:^6.0.0"
+    esquery: "npm:^1.0.1"
+    esutils: "npm:^2.0.2"
+    file-entry-cache: "npm:^5.0.1"
+    functional-red-black-tree: "npm:^1.0.1"
+    glob-parent: "npm:^5.0.0"
+    globals: "npm:^11.7.0"
+    ignore: "npm:^4.0.6"
+    import-fresh: "npm:^3.0.0"
+    imurmurhash: "npm:^0.1.4"
+    inquirer: "npm:^6.4.1"
+    is-glob: "npm:^4.0.0"
+    js-yaml: "npm:^3.13.1"
+    json-stable-stringify-without-jsonify: "npm:^1.0.1"
+    levn: "npm:^0.3.0"
+    lodash: "npm:^4.17.14"
+    minimatch: "npm:^3.0.4"
+    mkdirp: "npm:^0.5.1"
+    natural-compare: "npm:^1.4.0"
+    optionator: "npm:^0.8.2"
+    progress: "npm:^2.0.0"
+    regexpp: "npm:^2.0.1"
+    semver: "npm:^6.1.2"
+    strip-ansi: "npm:^5.2.0"
+    strip-json-comments: "npm:^3.0.1"
+    table: "npm:^5.2.3"
+    text-table: "npm:^0.2.0"
+    v8-compile-cache: "npm:^2.0.3"
+  bin:
+    eslint: ./bin/eslint.js
+  checksum: e8e3cc9c2f573d3cb787c937b5c6dbbb18f1d80f89353ac6bf20bf3fd96297b65ba8c5a870aa89e5be143326b336a41c6bc27a79ec0a870f67078e266c84de67
+  languageName: node
+  linkType: hard
+
 "espree@npm:^5.0.1":
   version: 5.0.1
   resolution: "espree@npm:5.0.1"
@@ -8867,6 +8938,17 @@ __metadata:
     acorn-jsx: "npm:^5.0.0"
     eslint-visitor-keys: "npm:^1.0.0"
   checksum: bfd84f4c7a6f7fed9e4c980fac538ab0beac2499131aabf0571b00e5f7d0497c280a02ce53762cdb35fc9fd58a5c186d404d93e86fd4d136e8762064d9939520
+  languageName: node
+  linkType: hard
+
+"espree@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "espree@npm:6.0.0"
+  dependencies:
+    acorn: "npm:^6.0.7"
+    acorn-jsx: "npm:^5.0.0"
+    eslint-visitor-keys: "npm:^1.0.0"
+  checksum: ed8c8824c25f5d293ed58dae8d6b90289d19a6adab0d70a4c8808a7d8ce4a66d77f39a1bbacc2c9c1c22432a3c12da37e4cc55f41e1989a2453f480cba1342a2
   languageName: node
   linkType: hard
 
@@ -10844,6 +10926,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"glob-parent@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "glob-parent@npm:5.0.0"
+  dependencies:
+    is-glob: "npm:^4.0.1"
+  checksum: 2abd0fa364a0d5a77a74c5876e1cdf8163174c205c92fadf796815b6f565150c880e847f426be933626a99f8e7af717efe78cf39cf785f77c844ee99eba806ac
+  languageName: node
+  linkType: hard
+
 "glob-to-regexp@npm:^0.3.0":
   version: 0.3.0
   resolution: "glob-to-regexp@npm:0.3.0"
@@ -12251,6 +12342,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"inquirer@npm:^6.4.1":
+  version: 6.5.0
+  resolution: "inquirer@npm:6.5.0"
+  dependencies:
+    ansi-escapes: "npm:^3.2.0"
+    chalk: "npm:^2.4.2"
+    cli-cursor: "npm:^2.1.0"
+    cli-width: "npm:^2.0.0"
+    external-editor: "npm:^3.0.3"
+    figures: "npm:^2.0.0"
+    lodash: "npm:^4.17.12"
+    mute-stream: "npm:0.0.7"
+    run-async: "npm:^2.2.0"
+    rxjs: "npm:^6.4.0"
+    string-width: "npm:^2.1.0"
+    strip-ansi: "npm:^5.1.0"
+    through: "npm:^2.3.6"
+  checksum: 713969cccf24f3e2603fcd06cd90faf47a4cec5bbd0ad001e97054f1fea6c836f15da49a13e67cb5a02027dfff21561a12d2144fda80fdaa9c0c9d0b9004f5e0
+  languageName: node
+  linkType: hard
+
 "internal-ip@npm:^4.2.0":
   version: 4.2.0
   resolution: "internal-ip@npm:4.2.0"
@@ -12683,6 +12795,15 @@ __metadata:
   dependencies:
     is-extglob: "npm:^2.1.1"
   checksum: aaba8404d52ea1181baa29ffcc8e2069c70d98e2d5b87a095580689a31b795c4c634be66ade10e7af8041ad86e35e3ed0184565df271df6f86c41b95314266c4
+  languageName: node
+  linkType: hard
+
+"is-glob@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "is-glob@npm:4.0.1"
+  dependencies:
+    is-extglob: "npm:^2.1.1"
+  checksum: 63b44d01e4d566bb861301f7678e6e5b16930bebc66a83ade9658c5d9e053734ed27c13d5bdd3832dc0556e12c480f8419899c03a365d9283a6d0a96c3fdb72b
   languageName: node
   linkType: hard
 
@@ -14012,7 +14133,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:^3.13.0":
+"js-yaml@npm:^3.13.0, js-yaml@npm:^3.13.1":
   version: 3.13.1
   resolution: "js-yaml@npm:3.13.1"
   dependencies:
@@ -14703,6 +14824,13 @@ __metadata:
   version: 4.17.11
   resolution: "lodash@npm:4.17.11"
   checksum: 89cf6aa354d9ef04a7a77d406374c476e3508d11f98137484b00c072f9a25ba7dd29a918ce85c59afded55090d3d80a5fd92cd8d2a004cae6f3138d70c4d84f0
+  languageName: node
+  linkType: hard
+
+"lodash@npm:^4.17.12, lodash@npm:^4.17.14":
+  version: 4.17.15
+  resolution: "lodash@npm:4.17.15"
+  checksum: 2d9d81b464dd29416992eb6768a1b8dc6fd8046cfa77cc2eed20247aaf3585c0d4a49b781013eb3174ef56447c8637912cf2e06af926745252ac28836d2fd6db
   languageName: node
   linkType: hard
 
@@ -19639,6 +19767,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"semver@npm:^6.1.2":
+  version: 6.3.0
+  resolution: "semver@npm:6.3.0"
+  bin:
+    semver: ./bin/semver.js
+  checksum: 6592a5be5ecace445f832e5c81f11f62846b16f87ee00c21f2e35140b10cef32dafa78aa716029d1776db340564681cde32a6d98fd85c696658168f71c336853
+  languageName: node
+  linkType: hard
+
 "semver@npm:~5.3.0":
   version: 5.3.0
   resolution: "semver@npm:5.3.0"
@@ -20653,7 +20790,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strip-ansi@npm:^5.2.0":
+"strip-ansi@npm:^5.1.0, strip-ansi@npm:^5.2.0":
   version: 5.2.0
   resolution: "strip-ansi@npm:5.2.0"
   dependencies:
@@ -20726,6 +20863,13 @@ __metadata:
   version: 2.0.1
   resolution: "strip-json-comments@npm:2.0.1"
   checksum: aa2db57531627b0ce61ae9eb7ef749f130a246aa63f33dadcb93695f13f766ee4ba421f1f99817eca0fdbb2c6f842e7bc896ec53fdf483f3f8a72abdfdeb4b2f
+  languageName: node
+  linkType: hard
+
+"strip-json-comments@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "strip-json-comments@npm:3.0.1"
+  checksum: 4aa0092f111e1ce98bf557b27e600bcac7f68a419625bc26d0330255274276314bad11e7038645b0aa21a081a0729e6f9d1d2f572c90e1566308cfd9a695ce9a
   languageName: node
   linkType: hard
 
@@ -22222,6 +22366,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"v8-compile-cache@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "v8-compile-cache@npm:2.0.3"
+  checksum: 39db43720a79839494cccd02cf6304d81ed742a15f9850fffbc86c1643c39563f49d80cdab63f0da7715352fafbe1d060d921ac6672968554154a5075b1b236c
+  languageName: node
+  linkType: hard
+
 "val-loader@npm:^1.1.1":
   version: 1.1.1
   resolution: "val-loader@npm:1.1.1"
@@ -22381,7 +22532,7 @@ __metadata:
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
     "@berry/fslib": "workspace:0.0.8"
-    "@berry/pnpify": "workspace:0.0.6"
+    "@berry/pnpify": "workspace:0.0.7"
     pnp-webpack-plugin: "npm:^1.4.3"
     ts-loader: "npm:^5.3.3"
     typescript: "npm:^3.3.3333"

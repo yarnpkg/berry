@@ -7,7 +7,7 @@
   },
   "devDependencies": {
     "@berry/builder": "workspace:0.0.0",
-    "@berry/pnpify": "workspace:0.0.6",
+    "@berry/pnpify": "workspace:0.0.7",
     "typescript": "^3.3.3333",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1",

@@ -92,11 +92,11 @@ class BuildBundleCommand extends Command {
             if (stats.compilation.errors.length > 0)
               erroredStats.push(stats.toString(`errors-only`));
 
-          if (erroredStats.length === 0) {
+          if (erroredStats.length === 0) 
             this.context.stderr.write(String(`Build succeeded at ${new Date()}\n`));
-          } else {
+           else 
             this.context.stderr.write(String(`Build failed at ${new Date()}\n`));
-          }
+          
 
           for (const stats of erroredStats) {
             this.context.stderr.write(stats.toString(`errors-only`));

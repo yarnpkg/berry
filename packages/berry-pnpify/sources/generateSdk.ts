@@ -2,47 +2,73 @@ import {Filename, NodeFS, PortablePath, xfs, ppath} from '@berry/fslib';
 
 import {dynamicRequire}                             from './dynamicRequire';
 
-const TEMPLATE = (relPnpApiPath: string) => [
+const TEMPLATE = (relPnpApiPath: string, module: string, pnpify: boolean) => [
   `const relPnpApiPath = ${JSON.stringify(NodeFS.toPortablePath(relPnpApiPath))};\n`,
   `const absPnpApiPath = require(\`path\`).resolve(__dirname, relPnpApiPath);\n`,
   `\n`,
-  `// Setup the environment to be able to require @berry/pnpify\n`,
+  `// Setup the environment to be able to require ${module}\n`,
   `require(absPnpApiPath).setup();\n`,
   `\n`,
   `// Prepare the environment (to be ready in case of child_process.spawn etc)\n`,
   `process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
   `process.env.NODE_OPTIONS += \` -r \${absPnpApiPath}\`;\n`,
+  ...(pnpify ? [
   `process.env.NODE_OPTIONS += \` -r \${require.resolve(\`@berry/pnpify/lib\`)}\`;\n`,
   `\n`,
   `// Apply PnPify to the current process\n`,
   `require(\`@berry/pnpify/lib\`).patchFs();\n`,
-  `\n`,
-  `// Defer to the real typescript your application uses\n`,
-  `require(\`typescript/lib/tsserver\`);\n`,
+  `\n`
+  ] : []),
+  `// Defer to the real ${module} your application uses\n`,
+  `module.exports = require(\`${module}\`);\n`,
 ].join(``);
 
-export async function generateSdk(projectRoot: PortablePath, targetFolder: PortablePath | null) {
+const addVSCodeWorkspaceSettings = async (projectRoot: PortablePath, settings: any) => {
+  const settingsPath = ppath.join(projectRoot, `.vscode/settings.json` as PortablePath);
+  const content = await xfs.existsPromise(settingsPath) ? await xfs.readFilePromise(settingsPath, `utf8`) : `{}`;
+
+  const data = JSON.parse(content);
+  const patched = `${JSON.stringify({ ...data, ...settings}, null, 2)}\n`;
+
+  await xfs.mkdirpPromise(ppath.dirname(settingsPath));
+  await xfs.changeFilePromise(settingsPath, patched);
+}
+
+const generateTypescriptWrapper = async (projectRoot: PortablePath, tssdk: PortablePath) => {
+  const typescript = ppath.join(tssdk, `typescript` as PortablePath);
+  const manifest = ppath.join(typescript, `package.json` as PortablePath);
+  const tsserver = ppath.join(typescript, `lib/tsserver.js` as PortablePath);
+
+  const relPnpApiPath = ppath.relative(ppath.dirname(tsserver), ppath.join(projectRoot, `.pnp.js` as Filename));
+
+  await xfs.mkdirpPromise(ppath.dirname(tsserver));
+  await xfs.writeFilePromise(manifest, JSON.stringify({name: 'typescript', version: `${dynamicRequire('typescript/package.json').version}-pnpify`}, null, 2));
+  await xfs.writeFilePromise(tsserver, TEMPLATE(relPnpApiPath, "typescript/lib/tsserver", true));
+
+  await addVSCodeWorkspaceSettings(projectRoot, {'typescript.tsdk': NodeFS.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(tsserver)))});
+}
+
+export const generateEslintWrapper = async (projectRoot: PortablePath, tssdk: PortablePath) => {
+  const eslint = ppath.join(tssdk, `eslint` as PortablePath);
+  const manifest = ppath.join(eslint, `package.json` as PortablePath);
+  const api = ppath.join(eslint, `lib/api.js` as PortablePath);
+
+  const relPnpApiPath = ppath.relative(ppath.dirname(api), ppath.join(projectRoot, `.pnp.js` as Filename));
+
+  await xfs.mkdirpPromise(ppath.dirname(api));
+  await xfs.writeFilePromise(manifest, JSON.stringify({name: 'eslint', version: `${dynamicRequire('eslint/package.json').version}-pnpify`, main: 'lib/api.js'}, null, 2));
+  await xfs.writeFilePromise(api, TEMPLATE(relPnpApiPath, "eslint", false));
+
+  await addVSCodeWorkspaceSettings(projectRoot, {'eslint.nodePath': NodeFS.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(eslint)))});
+}
+
+export const generateSdk = async (projectRoot: PortablePath, targetFolder: PortablePath | null): Promise<any> => {
   if (targetFolder === null)
     targetFolder = projectRoot;
 
   const tssdk = ppath.join(targetFolder, `tssdk` as PortablePath);
-  const tssdkManifest = ppath.join(tssdk, `package.json` as PortablePath);
-  const tsserver = ppath.join(tssdk, `lib/tsserver.js` as PortablePath);
-
-  const relPnpApiPath = ppath.relative(ppath.dirname(tsserver), ppath.join(projectRoot, `.pnp.js` as Filename));
-
   await xfs.removePromise(tssdk);
-  await xfs.mkdirpPromise(ppath.dirname(tsserver));
-  await xfs.writeFilePromise(tssdkManifest, JSON.stringify({name: 'typescript', version: `${dynamicRequire('typescript/package.json').version}-pnpify`}, null, 2));
-  await xfs.writeFilePromise(tsserver, TEMPLATE(relPnpApiPath));
 
-  const settings = ppath.join(projectRoot, `.vscode/settings.json` as PortablePath);
-  const content = await xfs.existsPromise(settings) ? await xfs.readFilePromise(settings, `utf8`) : `{}`;
-
-  const data = JSON.parse(content);
-  data[`typescript.tsdk`] = NodeFS.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(tsserver)));
-  const patched = `${JSON.stringify(data, null, 2)}\n`;
-
-  await xfs.mkdirpPromise(ppath.dirname(settings));
-  await xfs.changeFilePromise(settings, patched);
+  await generateTypescriptWrapper(projectRoot, tssdk);
+  await generateEslintWrapper(projectRoot, tssdk);
 }
