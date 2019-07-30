@@ -1,5 +1,6 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions}               from '@berry/fslib';
 import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                     from '@berry/fslib';
+import {WatchOptions, WatchCallback, Watcher}                            from '@berry/fslib';
 import {NativePath, PortablePath, npath, ppath}                          from '@berry/fslib';
 import {PnpApi}                                                          from '@berry/pnp';
 
@@ -339,6 +340,17 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     return this.resolveLink(p, 'readlink',
       (_stats, targetPath) => targetPath,
       (targetPath) => this.baseFs.readlinkSync(this.resolveDirOrFilePath(targetPath))
+    );
+  }
+
+  watch(p: PortablePath, cb?: WatchCallback): Watcher;
+  watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
+  watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
+    return this.baseFs.watch(
+      p,
+      // @ts-ignore
+      a,
+      b,
     );
   }
 }
