@@ -1,7 +1,7 @@
 {
   "editor.tabSize": 2,
   "files.eol": "\n",
-  "typescript.tsdk": "scripts/tssdk/typescript/lib",
+  "typescript.tsdk": ".vscode/pnpify/typescript/lib",
   "eslint.validate": [
     "javascript",
     {
@@ -9,5 +9,5 @@
       "autoFix": true
     }
   ],
-  "eslint.nodePath": "scripts/tssdk"
+  "eslint.nodePath": ".vscode/pnpify"
 }

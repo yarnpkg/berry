@@ -2911,9 +2911,6 @@ module.exports = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// EXTERNAL MODULE: ../berry-fslib/sources/path.ts
-var path = __webpack_require__(0);
-
 // EXTERNAL MODULE: ../berry-fslib/sources/NodeFS.ts
 var NodeFS = __webpack_require__(5);
 
@@ -2924,13 +2921,16 @@ var cross_spawn_default = /*#__PURE__*/__webpack_require__.n(cross_spawn);
 // EXTERNAL MODULE: ./sources/dynamicRequire.ts
 var dynamicRequire = __webpack_require__(6);
 
+// EXTERNAL MODULE: ../berry-fslib/sources/path.ts
+var path = __webpack_require__(0);
+
 // EXTERNAL MODULE: ../berry-fslib/sources/index.ts
 var sources = __webpack_require__(1);
 
 // CONCATENATED MODULE: ./sources/generateSdk.ts
 
 
-const TEMPLATE = (relPnpApiPath, module, pnpify) => [
+const TEMPLATE = (relPnpApiPath, module, { usePnpify }) => [
     `const relPnpApiPath = ${JSON.stringify(NodeFS["a" /* NodeFS */].toPortablePath(relPnpApiPath))};\n`,
     `const absPnpApiPath = require(\`path\`).resolve(__dirname, relPnpApiPath);\n`,
     `\n`,
@@ -2940,7 +2940,7 @@ const TEMPLATE = (relPnpApiPath, module, pnpify) => [
     `// Prepare the environment (to be ready in case of child_process.spawn etc)\n`,
     `process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
     `process.env.NODE_OPTIONS += \` -r \${absPnpApiPath}\`;\n`,
-    ...(pnpify ? [
+    ...(usePnpify ? [
         `process.env.NODE_OPTIONS += \` -r \${require.resolve(\`@berry/pnpify/lib\`)}\`;\n`,
         `\n`,
         `// Apply PnPify to the current process\n`,
@@ -2958,33 +2958,31 @@ const addVSCodeWorkspaceSettings = async (projectRoot, settings) => {
     await sources["b" /* xfs */].mkdirpPromise(path["e" /* ppath */].dirname(settingsPath));
     await sources["b" /* xfs */].changeFilePromise(settingsPath, patched);
 };
-const generateTypescriptWrapper = async (projectRoot, tssdk) => {
-    const typescript = path["e" /* ppath */].join(tssdk, `typescript`);
+const generateTypescriptWrapper = async (projectRoot, target) => {
+    const typescript = path["e" /* ppath */].join(target, `typescript`);
     const manifest = path["e" /* ppath */].join(typescript, `package.json`);
     const tsserver = path["e" /* ppath */].join(typescript, `lib/tsserver.js`);
     const relPnpApiPath = path["e" /* ppath */].relative(path["e" /* ppath */].dirname(tsserver), path["e" /* ppath */].join(projectRoot, `.pnp.js`));
     await sources["b" /* xfs */].mkdirpPromise(path["e" /* ppath */].dirname(tsserver));
     await sources["b" /* xfs */].writeFilePromise(manifest, JSON.stringify({ name: 'typescript', version: `${Object(dynamicRequire["a" /* dynamicRequire */])('typescript/package.json').version}-pnpify` }, null, 2));
-    await sources["b" /* xfs */].writeFilePromise(tsserver, TEMPLATE(relPnpApiPath, "typescript/lib/tsserver", true));
+    await sources["b" /* xfs */].writeFilePromise(tsserver, TEMPLATE(relPnpApiPath, "typescript/lib/tsserver", { usePnpify: true }));
     await addVSCodeWorkspaceSettings(projectRoot, { 'typescript.tsdk': NodeFS["a" /* NodeFS */].fromPortablePath(path["e" /* ppath */].relative(projectRoot, path["e" /* ppath */].dirname(tsserver))) });
 };
-const generateEslintWrapper = async (projectRoot, tssdk) => {
-    const eslint = path["e" /* ppath */].join(tssdk, `eslint`);
+const generateEslintWrapper = async (projectRoot, target) => {
+    const eslint = path["e" /* ppath */].join(target, `eslint`);
     const manifest = path["e" /* ppath */].join(eslint, `package.json`);
     const api = path["e" /* ppath */].join(eslint, `lib/api.js`);
     const relPnpApiPath = path["e" /* ppath */].relative(path["e" /* ppath */].dirname(api), path["e" /* ppath */].join(projectRoot, `.pnp.js`));
     await sources["b" /* xfs */].mkdirpPromise(path["e" /* ppath */].dirname(api));
     await sources["b" /* xfs */].writeFilePromise(manifest, JSON.stringify({ name: 'eslint', version: `${Object(dynamicRequire["a" /* dynamicRequire */])('eslint/package.json').version}-pnpify`, main: 'lib/api.js' }, null, 2));
-    await sources["b" /* xfs */].writeFilePromise(api, TEMPLATE(relPnpApiPath, "eslint", false));
+    await sources["b" /* xfs */].writeFilePromise(api, TEMPLATE(relPnpApiPath, "eslint", { usePnpify: false }));
     await addVSCodeWorkspaceSettings(projectRoot, { 'eslint.nodePath': NodeFS["a" /* NodeFS */].fromPortablePath(path["e" /* ppath */].relative(projectRoot, path["e" /* ppath */].dirname(eslint))) });
 };
-const generateSdk = async (projectRoot, targetFolder) => {
-    if (targetFolder === null)
-        targetFolder = projectRoot;
-    const tssdk = path["e" /* ppath */].join(targetFolder, `tssdk`);
-    await sources["b" /* xfs */].removePromise(tssdk);
-    await generateTypescriptWrapper(projectRoot, tssdk);
-    await generateEslintWrapper(projectRoot, tssdk);
+const generateSdk = async (projectRoot) => {
+    const targetFolder = path["e" /* ppath */].join(projectRoot, `.vscode/pnpify`);
+    await sources["b" /* xfs */].removePromise(targetFolder);
+    await generateTypescriptWrapper(projectRoot, targetFolder);
+    await generateEslintWrapper(projectRoot, targetFolder);
 };
 
 // CONCATENATED MODULE: ./sources/bin.ts
@@ -2996,9 +2994,7 @@ const [, , bin_name, ...rest] = process.argv;
 if (bin_name === `--help` || bin_name === `-h`)
     help(false);
 else if (bin_name === `--sdk` && rest.length === 0)
-    sdk(null);
-else if (bin_name === `--sdk` && rest.length === 1)
-    sdk(path["e" /* ppath */].resolve(NodeFS["a" /* NodeFS */].toPortablePath(rest[0])));
+    sdk();
 else if (typeof bin_name !== `undefined` && bin_name[0] !== `-`)
     run(bin_name, rest);
 else
@@ -3012,11 +3008,11 @@ function help(error) {
     logFn(`Setups a TypeScript sdk for use within your VSCode editor instance`);
     logFn(`More info at https://yarnpkg.github.io/berry/advanced/pnpify`);
 }
-function sdk(targetFolder) {
+function sdk() {
     const { getPackageInformation, topLevel } = Object(dynamicRequire["a" /* dynamicRequire */])(`pnpapi`);
     const { packageLocation } = getPackageInformation(topLevel);
     const projectRoot = NodeFS["a" /* NodeFS */].toPortablePath(packageLocation);
-    generateSdk(projectRoot, targetFolder).catch(error => {
+    generateSdk(projectRoot).catch(error => {
         console.error(error.stack);
         process.exitCode = 1;
     });
