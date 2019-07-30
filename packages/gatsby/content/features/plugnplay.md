@@ -53,6 +53,7 @@ The following compatibility table gives you an idea of the integration status wi
 | Jest              | Native  | Starting from 24.1+ |
 | Rollup            | Plugin  | Via [`rollup-plugin-pnp-resolve`](https://github.com/arcanis/rollup-plugin-pnp-resolve) |
 | TypeScript        | Plugin  | Via Webpack and [`ts-loader`](https://github.com/arcanis/pnp-webpack-plugin#ts-loader-integration) |
+| @typescript-eslint/eslint-plugin| Dependency | Update yarn.lock and add `typescript: "*"` into `peerDependencies`. [`Relevant Issue`](https://github.com/typescript-eslint/typescript-eslint/issues/770) |
 | Webpack           | Plugin  | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) |
 
 This list is kept up-to-date based on the latest release we've published starting from the v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to an issue. And maybe a PR? 😊
