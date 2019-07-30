@@ -9,13 +9,15 @@ junit.xml
 
 /.yarn/build-state.yml
 
-!/scripts/tssdk/lib
-
 # Those files are meant to be local-only
 /packages/*/bundles
 
 # Those folders are meant to contain the prepack build artifacts; we don't commit them
 lib
+
+# PnP support in VS Code
+!/scripts/tssdk
+!/scripts/tssdk/**/lib
 
 # We check-in pnpify because we need it in order to compile the rest of the code
 !/packages/berry-pnpify/lib
