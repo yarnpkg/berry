@@ -44,15 +44,21 @@ During the years that led to Plug'n'Play being designed and adopted as main inst
 
 The following compatibility table gives you an idea of the integration status with various tools from the community. Note that only CLI tools are listed there, as frontend libraries (such as `react`, `vue`, `lodash`, ...) don't reimplement the Node resolution and as such don't need any special logic to take advantage from Plug'n'Play:
 
+**[Suggest an addition to this table](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugnplay.md)**
+
 | Project name | Status | Note |
 | ------------ | ------ | ---- |
 | Babel             | Native  | Starting from `resolve` 1.9+ |
 | Create-React-App  | Native  | Starting from 2.0+ |
-| ESLint            | Native  | Some compatibility issues when used w/ shared configs |
-| Gatsby            | Native  | Currently  |
+| ESLint            | Native  | Some compatibility issues w/ shared configs |
+| Gatsby            | Native  | No comment |
+| Husky             | Native  | Starting from 2.6+ ([#511](https://github.com/typicode/husky/pull/511)), improvements are coming ([#510](https://github.com/typicode/husky/pull/510)) |
 | Jest              | Native  | Starting from 24.1+ |
+| Prettier          | Native  | Starting from 1.17+ |
 | Rollup            | Plugin  | Via [`rollup-plugin-pnp-resolve`](https://github.com/arcanis/rollup-plugin-pnp-resolve) |
-| TypeScript        | Plugin  | Via Webpack and [`ts-loader`](https://github.com/arcanis/pnp-webpack-plugin#ts-loader-integration) |
-| Webpack           | Plugin  | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) |
+| TypeScript        | Plugin  | Via [PnPify](/advanced/pnpify), or Webpack and [`ts-loader`](https://github.com/arcanis/pnp-webpack-plugin#ts-loader-integration) |
+| VSCode            | Plugin  | Via [PnPify](/advanced/pnpify#vscode-support) |
+| Webpack           | Plugin  | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin), will be native from 5+ onward |
+| VSCode-ESLint     | Broken  | Work in progress over at [#496](https://github.com/microsoft/vscode-languageserver-node/issues/496) and [#601](https://github.com/microsoft/vscode-eslint/issues/601) |
 
 This list is kept up-to-date based on the latest release we've published starting from the v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to an issue. And maybe a PR? 😊
