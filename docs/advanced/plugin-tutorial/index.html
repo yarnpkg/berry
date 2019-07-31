@@ -87,12 +87,14 @@
       <span class="token punctuation">}</span>
     <span class="token punctuation">}</span>
 
-    <span class="token keyword">default</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
-      commands<span class="token punctuation">:</span> <span class="token punctuation">[</span>
-        HelloWorldCommand<span class="token punctuation">,</span>
-      <span class="token punctuation">]</span><span class="token punctuation">,</span>
-    <span class="token punctuation">}</span><span class="token punctuation">,</span>
-  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+      <span class="token keyword">default</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        commands<span class="token punctuation">:</span> <span class="token punctuation">[</span>
+          HelloWorldCommand<span class="token punctuation">,</span>
+        <span class="token punctuation">]</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
 <span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre></div>
 <p>Now, try to run <code class="language-text">yarn hello world</code>. You'll see your message appear! Note that you can use the full set of features provided by clipanion, including short options, long options, variadic argument lists, ... You can even validate your options using the <a href="https://github.com/jquense/yup"><code class="language-text">yup</code></a> library, which we provide. Here's an example where we only accept email addresses as parameter:</p>
 <div class="gatsby-highlight" data-language="js"><pre class="language-js"><code class="language-js">module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>

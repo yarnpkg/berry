@@ -25554,11 +25554,6 @@ class NodeFS extends FakeFS_1.BasePortableFakeFS {
     readlinkSync(p) {
         return NodeFS.toPortablePath(this.realFs.readlinkSync(NodeFS.fromPortablePath(p)));
     }
-    watch(p, a, b) {
-        return this.realFs.watch(NodeFS.fromPortablePath(p), 
-        // @ts-ignore
-        a, b);
-    }
     makeCallback(resolve, reject) {
         return (err, result) => {
             if (err) {
@@ -25726,11 +25721,6 @@ class ProxiedFS extends FakeFS_1.FakeFS {
     readlinkSync(p) {
         return this.mapFromBase(this.baseFs.readlinkSync(this.mapToBase(p)));
     }
-    watch(p, a, b) {
-        return this.baseFs.watch(this.mapToBase(p), 
-        // @ts-ignore
-        a, b);
-    }
 }
 exports.ProxiedFS = ProxiedFS;
 
@@ -25795,7 +25785,6 @@ function patchFs(patchedFs, fakeFs) {
         `symlinkSync`,
         `unlinkSync`,
         `utimesSync`,
-        `watch`,
         `writeFileSync`,
     ]);
     const ASYNC_IMPLEMENTATIONS = new Set([
@@ -26856,28 +26845,6 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
             throw Object.assign(new Error(`EINVAL: invalid argument, readlink '${p}'`), { code: `EINVAL` });
         return this.getFileSource(entry).toString();
     }
-    watch(p, a, b) {
-        let persistent;
-        switch (typeof a) {
-            case `function`:
-            case `string`:
-            case `undefined`:
-                {
-                    persistent = true;
-                }
-                break;
-            default:
-                {
-                    // @ts-ignore
-                    ({ persistent = true } = a);
-                }
-                break;
-        }
-        if (!persistent)
-            return { on: () => { }, close: () => { } };
-        const interval = setInterval(() => { }, 24 * 60 * 60 * 1000);
-        return { on: () => { }, close: () => { clearInterval(interval); } };
-    }
 }
 exports.ZipFS = ZipFS;
 ;
@@ -27817,17 +27784,6 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
             return this.baseFs.readlinkSync(p);
         }, (zipFs, { subPath }) => {
             return zipFs.readlinkSync(subPath);
-        });
-    }
-    watch(p, a, b) {
-        return this.makeCallSync(p, () => {
-            return this.baseFs.watch(p, 
-            // @ts-ignore
-            a, b);
-        }, (zipFs, { subPath }) => {
-            return zipFs.watch(subPath, 
-            // @ts-ignore
-            a, b);
         });
     }
     async makeCallPromise(p, discard, accept, { requireSubpath = true } = {}) {
