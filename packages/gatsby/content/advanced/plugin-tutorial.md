@@ -62,11 +62,10 @@ Hooks are numerous, and we're still working on them. Some might be added, remove
 Plugins can also register their own commands. To do this, we just have to write them using the [`clipanion`](https://github.com/arcanis/clipanion) library - and we don't even have to add it to our dependencies! Let's see an example:
 
 ```js
-
 module.exports = {
   name: `plugin-hello-world`,
   factory: require => {
-    const { Command } = require(`clipanion`);
+    const {Command} = require(`clipanion`);
 
     class HelloWorldCommand extends Command {
       async execute() {
