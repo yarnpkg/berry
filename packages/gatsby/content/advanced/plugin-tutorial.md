@@ -74,8 +74,10 @@ module.exports = {
   name: `plugin-hello-world`,
   factory: require => ({
     default: {
-      commands: [HelloWorldCommand]
-    }
+      commands: [
+        HelloWorldCommand,
+      ],
+    },
   })
 };
 ```
