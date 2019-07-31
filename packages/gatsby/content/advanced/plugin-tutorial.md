@@ -73,12 +73,14 @@ module.exports = {
       }
     }
 
-    default: {
-      commands: [
-        HelloWorldCommand,
-      ],
-    },
-  })
+    return {
+      default: {
+        commands: [
+          HelloWorldCommand,
+        ],
+      },
+    };
+  }
 };
 ```
 
