@@ -2,6 +2,7 @@ import {constants}                                                             f
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
 import {FakeFS, WriteFileOptions}                                              from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
 import {NodeFS}                                                                from './NodeFS';
 import {ZipFS}                                                                 from './ZipFS';
 import {PortablePath}                                                          from './path';
@@ -490,6 +491,26 @@ export class ZipOpenFS extends BasePortableFakeFS {
       return this.baseFs.readlinkSync(p);
     }, (zipFs, {subPath}) => {
       return zipFs.readlinkSync(subPath);
+    });
+  }
+
+  watch(p: PortablePath, cb?: WatchCallback): Watcher;
+  watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
+  watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.watch(
+        p,
+        // @ts-ignore
+        a,
+        b,
+      );
+    }, (zipFs, {subPath}) => {
+      return zipFs.watch(
+        subPath,
+        // @ts-ignore
+        a,
+        b,
+      );
     })
   }
 

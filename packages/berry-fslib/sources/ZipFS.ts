@@ -5,6 +5,7 @@ import {isDate}                                                                f
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
 import {FakeFS, WriteFileOptions}                                              from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
 import {NodeFS}                                                                from './NodeFS';
 import {PortablePath, ppath, Filename}                                         from './path';
 
@@ -912,5 +913,30 @@ export class ZipFS extends BasePortableFakeFS {
       throw Object.assign(new Error(`EINVAL: invalid argument, readlink '${p}'`), {code: `EINVAL`});
 
     return this.getFileSource(entry).toString() as PortablePath;
+  }
+
+  watch(p: PortablePath, cb?: WatchCallback): Watcher;
+  watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
+  watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
+    let persistent: boolean;
+
+    switch (typeof a) {
+      case `function`:
+      case `string`:
+      case `undefined`: {
+        persistent = true;
+      } break;
+
+      default: {
+        // @ts-ignore
+        ({persistent = true} = a);
+      } break;
+    }
+
+    if (!persistent)
+      return {on: () => {}, close: () => {}};
+
+    const interval = setInterval(() => {}, 24 * 60 * 60 * 1000);
+    return {on: () => {}, close: () => {clearInterval(interval)}};
   }
 };

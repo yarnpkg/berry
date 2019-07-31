@@ -6,6 +6,9 @@ import {NativePath}               from './path';
 
 export {CreateReadStreamOptions}  from './FakeFS';
 export {CreateWriteStreamOptions} from './FakeFS';
+export {WatchOptions}             from './FakeFS';
+export {WatchCallback}            from './FakeFS';
+export {Watcher}                  from './FakeFS';
 export {WriteFileOptions}         from './FakeFS';
 
 export {Path, PortablePath, NativePath, Filename} from './path';
@@ -42,6 +45,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `symlinkSync`,
     `unlinkSync`,
     `utimesSync`,
+    `watch`,
     `writeFileSync`,
   ]);
 

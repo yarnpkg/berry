@@ -3,7 +3,6 @@ import {ReadStream, Stats, WriteStream}          from 'fs';
 import {Path, PortablePath, PathUtils, Filename} from './path';
 import {convertPath, ppath}                      from './path';
 
-
 export type CreateReadStreamOptions = Partial<{
   encoding: string,
   fd: number,
@@ -20,6 +19,22 @@ export type WriteFileOptions = Partial<{
   mode: number,
   flag: string,
 }> | string;
+
+export type WatchOptions = Partial<{
+  persistent: boolean,
+  recursive: boolean,
+  encoding: string,
+}> | string;
+
+export type WatchCallback = (
+  eventType: string,
+  filename: string,
+) => void;
+
+export type Watcher = {
+  on: any,
+  close: () => void;
+};
 
 export abstract class FakeFS<P extends Path> {
   public readonly pathUtils: PathUtils<P>;
@@ -94,6 +109,9 @@ export abstract class FakeFS<P extends Path> {
 
   abstract readlinkPromise(p: P): Promise<P>;
   abstract readlinkSync(p: P): P;
+
+  abstract watch(p: P, cb?: WatchCallback): Watcher;
+  abstract watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
 
   async removePromise(p: P) {
     let stat;
