@@ -50,7 +50,7 @@ export default class NewPluginCommand extends Command {
       `  ],\n`,
       `};\n`,
       `\n`,
-      `export default plugin;\n`
+      `export default plugin;\n`,
     ].join(``));
 
     await xfs.writeFilePromise(ppath.join(target, `package.json` as Filename), JSON.stringify({

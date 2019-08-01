@@ -2,10 +2,10 @@
 
 import {Cli}              from 'clipanion';
 
-import NewPluginCommand   from './commands/new/plugin';
 import BuildBundleCommand from './commands/build/bundle';
 import BuildPluginCommand from './commands/build/plugin';
 import HelpCommand        from './commands/help';
+import NewPluginCommand   from './commands/new/plugin';
 
 const cli = new Cli({
   binaryName: `yarn builder`,

@@ -3,8 +3,8 @@ import {Command, UsageError} from 'clipanion';
 import filesize              from 'filesize';
 import fs                    from 'fs';
 import path                  from 'path';
-import webpack               from 'webpack';
 import {RawSource}           from 'webpack-sources';
+import webpack               from 'webpack';
 
 import {isDynamicLib}        from '../../data/dynamicLibs';
 import {makeConfig}          from '../../tools/makeConfig';
@@ -59,7 +59,7 @@ export default class BuildPluginCommand extends Command {
         // This plugin wraps the generated bundle so that it doesn't actually
         // get evaluated right now - until after we give it a custom require
         // function that will be able to fetch the dynamic modules.
-        { apply: (compiler: webpack.Compiler) => {
+        {apply: (compiler: webpack.Compiler) => {
           compiler.hooks.compilation.tap(`MyPlugin`, (compilation: webpack.compilation.Compilation) => {
             compilation.hooks.optimizeChunkAssets.tap(`MyPlugin`, (chunks: Array<webpack.compilation.Chunk>) => {
               for (const chunk of chunks) {
@@ -78,7 +78,7 @@ ${reindent(compilation.assets[file].source().replace(/^ +/, ``), 11)}
               }
             });
           });
-        } },
+        }},
       ],
     }));
 

@@ -1,7 +1,7 @@
-import webpack          from 'webpack';
-import merge            from 'webpack-merge';
 // @ts-ignore
 import PnpWebpackPlugin from 'pnp-webpack-plugin';
+import merge            from 'webpack-merge';
+import webpack          from 'webpack';
 
 // TypeScript (ts-loader) isn't able to find out the typeRoots when using zip
 // loading (because they're stored within the zip files). So we need to use
