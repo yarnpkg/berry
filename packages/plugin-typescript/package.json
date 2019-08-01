@@ -4,12 +4,12 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/cli": "workspace:2.0.0",
-    "@berry/core": "workspace:0.0.6",
+    "@berry/core": "workspace:0.1.0",
     "@berry/plugin-essentials": "workspace:0.0.0",
     "@berry/plugin-pack": "workspace:0.0.0"
   },
   "devDependencies": {
-    "@berry/builder": "workspace:0.0.0"
+    "@berry/builder": "workspace:0.1.0"
   },
   "scripts": {
     "build:plugin-typescript": "run @berry-build-plugin"

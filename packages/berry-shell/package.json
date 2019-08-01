@@ -1,15 +1,15 @@
 {
   "name": "@berry/shell",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/fslib": "workspace:0.0.8",
-    "@berry/parsers": "workspace:0.0.4",
+    "@berry/fslib": "workspace:0.1.0",
+    "@berry/parsers": "workspace:0.1.0",
     "cross-spawn": "^6.0.5",
     "stream-buffers": "^3.0.2"
   },
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.0.7",
+    "@berry/pnpify": "workspace:0.1.0",
     "tmp": "^0.0.33",
     "typescript": "^3.3.3333"
   },

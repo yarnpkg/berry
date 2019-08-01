@@ -1,12 +1,12 @@
 {
   "name": "@berry/json-proxy",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/fslib": "workspace:0.0.8"
+    "@berry/fslib": "workspace:0.1.0"
   },
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.0.7",
+    "@berry/pnpify": "workspace:0.1.0",
     "typescript": "^3.3.3333"
   },
   "scripts": {

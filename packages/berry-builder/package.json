@@ -1,6 +1,6 @@
 {
   "name": "@berry/builder",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "bin": {
     "@berry-build-bundle": "./sources/build-bundle.js",
     "@berry-build-plugin": "./sources/build-plugin.js",
@@ -28,7 +28,7 @@
     "webpack-virtual-modules": "^0.1.10"
   },
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.0.7",
+    "@berry/pnpify": "workspace:0.1.0",
     "typescript": "^3.3.3333"
   },
   "scripts": {

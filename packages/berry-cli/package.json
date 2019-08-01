@@ -7,10 +7,10 @@
     "berry": "./bin/run.js"
   },
   "dependencies": {
-    "@berry/core": "workspace:0.0.6",
-    "@berry/fslib": "workspace:0.0.8",
-    "@berry/parsers": "workspace:0.0.4",
-    "@berry/shell": "workspace:0.0.3",
+    "@berry/core": "workspace:0.1.0",
+    "@berry/fslib": "workspace:0.1.0",
+    "@berry/parsers": "workspace:0.1.0",
+    "@berry/shell": "workspace:0.1.0",
     "chalk": "^2.4.1",
     "clipanion": "2.0.0-rc.16",
     "semver": "^5.6.0",
@@ -18,7 +18,7 @@
     "yup": "^0.27.0"
   },
   "devDependencies": {
-    "@berry/builder": "workspace:0.0.0",
+    "@berry/builder": "workspace:0.1.0",
     "@berry/plugin-constraints": "workspace:0.0.0",
     "@berry/plugin-dlx": "workspace:0.0.0",
     "@berry/plugin-essentials": "workspace:0.0.0",
@@ -33,7 +33,7 @@
     "@berry/plugin-pnp": "workspace:0.0.0",
     "@berry/plugin-typescript": "workspace:0.0.0",
     "@berry/plugin-workspace-tools": "workspace:0.0.0",
-    "@berry/pnp": "workspace:0.0.4"
+    "@berry/pnp": "workspace:0.1.0"
   },
   "scripts": {
     "build:cli+hook": "run build:pnp:hook && run @berry-build-bundle",

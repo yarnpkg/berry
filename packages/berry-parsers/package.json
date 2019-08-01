@@ -1,12 +1,12 @@
 {
   "name": "@berry/parsers",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "main": "./sources/index.ts",
   "dependencies": {
     "js-yaml": "^3.10.0"
   },
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.0.7",
+    "@berry/pnpify": "workspace:0.1.0",
     "pegjs": "^0.10.0",
     "typescript": "^3.3.3333"
   },

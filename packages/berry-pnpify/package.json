@@ -1,16 +1,16 @@
 {
   "name": "@berry/pnpify",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "main": "./sources/index.ts",
   "bin": "./lib/bin.js",
   "sideEffects": false,
   "dependencies": {
-    "@berry/fslib": "workspace:0.0.8",
+    "@berry/fslib": "workspace:0.1.0",
     "cross-spawn": "^6.0.5"
   },
   "devDependencies": {
-    "@berry/builder": "workspace:0.0.0",
-    "@berry/pnp": "workspace:0.0.4",
+    "@berry/builder": "workspace:0.1.0",
+    "@berry/pnp": "workspace:0.1.0",
     "@types/eslint": "4.16.6",
     "eslint": "^5.16.0",
     "typescript": "^3.3.3333",

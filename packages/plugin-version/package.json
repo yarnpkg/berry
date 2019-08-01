@@ -4,14 +4,14 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/cli": "workspace:2.0.0",
-    "@berry/core": "workspace:0.0.6",
-    "@berry/fslib": "workspace:0.0.8",
+    "@berry/core": "workspace:0.1.0",
+    "@berry/fslib": "workspace:0.1.0",
     "@berry/plugin-pack": "workspace:0.0.0",
     "clipanion": "2.0.0-rc.16",
     "semver": "^5.6.0"
   },
   "devDependencies": {
-    "@berry/builder": "workspace:0.0.0",
+    "@berry/builder": "workspace:0.1.0",
     "@types/semver": "^5.5.0"
   },
   "scripts": {
