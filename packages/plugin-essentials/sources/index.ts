@@ -13,8 +13,9 @@ import versionEntry                       from './commands/entries/version';
 import install                            from './commands/install';
 import link                               from './commands/link';
 import node                               from './commands/node';
-import pluginDl                           from './commands/plugin/dl';
+import pluginImport                       from './commands/plugin/import';
 import pluginList                         from './commands/plugin/list';
+import pluginRuntime                      from './commands/plugin/runtime';
 import remove                             from './commands/remove';
 import runIndex                           from './commands/runIndex';
 import run                                from './commands/run';
@@ -72,8 +73,9 @@ const plugin: Plugin = {
     install,
     link,
     node,
-    pluginDl,
+    pluginImport,
     pluginList,
+    pluginRuntime,
     remove,
     runIndex,
     run,
