@@ -3,7 +3,7 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/builder": "workspace:0.1.0",
+    "@berry/builder": "workspace:0.2.6",
     "@berry/cli": "workspace:2.0.0",
     "@berry/core": "workspace:0.1.0",
     "@berry/fslib": "workspace:0.1.0",
@@ -12,6 +12,6 @@
     "yup": "^0.27.0"
   },
   "scripts": {
-    "build:plugin-workspace-tools": "run @berry-build-plugin"
+    "build:plugin-workspace-tools": "builder build plugin"
   }
 }

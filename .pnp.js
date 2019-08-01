@@ -417,6 +417,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@babel/preset-typescript", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:7.1.0"],
             ["@berry/pnpify", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#workspace:packages/berry-pnpify"],
             ["@types/camelcase", "npm:5.2.0"],
+            ["@types/chalk", "npm:2.2.0"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/dateformat", "npm:1.0.2"],
             ["@types/emscripten", "npm:0.0.31"],
@@ -424,6 +425,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/eventemitter3", "npm:2.0.2"],
             ["@types/execa", "npm:0.9.0"],
             ["@types/faker", "npm:4.1.4"],
+            ["@types/filesize", "npm:4.1.0"],
             ["@types/fs-extra", "npm:5.0.4"],
             ["@types/globby", "npm:8.0.0"],
             ["@types/got", "npm:8.3.5"],
@@ -449,6 +451,9 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/tmp", "npm:0.0.33"],
             ["@types/treeify", "npm:1.0.0"],
             ["@types/tunnel", "npm:0.0.0"],
+            ["@types/webpack", "npm:4.32.1"],
+            ["@types/webpack-merge", "npm:4.1.5"],
+            ["@types/webpack-sources", "npm:0.1.5"],
             ["@types/yup", "npm:0.26.12"],
             ["@typescript-eslint/eslint-plugin", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:1.7.0"],
             ["@typescript-eslint/parser", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:1.6.0"],
@@ -2882,15 +2887,19 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@babel/preset-env", "virtual:4618db608ddd5ff4b385ac4f8bba9302fe80be01f8be4f2c09326b6232f308ff5592ae5490aee3e37d21fb1703c6a7a0990d92b6e5f86a74e640f011f12da48b#npm:7.3.1"],
             ["@babel/preset-typescript", "virtual:4618db608ddd5ff4b385ac4f8bba9302fe80be01f8be4f2c09326b6232f308ff5592ae5490aee3e37d21fb1703c6a7a0990d92b6e5f86a74e640f011f12da48b#npm:7.1.0"],
             ["@babel/register", "virtual:4618db608ddd5ff4b385ac4f8bba9302fe80be01f8be4f2c09326b6232f308ff5592ae5490aee3e37d21fb1703c6a7a0990d92b6e5f86a74e640f011f12da48b#npm:7.0.0"],
+            ["@berry/fslib", "workspace:packages/berry-fslib"],
             ["@berry/pnpify", "virtual:4618db608ddd5ff4b385ac4f8bba9302fe80be01f8be4f2c09326b6232f308ff5592ae5490aee3e37d21fb1703c6a7a0990d92b6e5f86a74e640f011f12da48b#workspace:packages/berry-pnpify"],
             ["brfs", "npm:2.0.1"],
             ["buffer-loader", "npm:0.1.0"],
+            ["chalk", "npm:2.4.2"],
             ["clipanion", "npm:2.0.0-rc.16"],
+            ["filesize", "npm:4.1.2"],
             ["joi", "npm:13.7.0"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["raw-loader", "npm:0.5.1"],
             ["transform-loader", "npm:0.2.4"],
             ["ts-loader", "virtual:4618db608ddd5ff4b385ac4f8bba9302fe80be01f8be4f2c09326b6232f308ff5592ae5490aee3e37d21fb1703c6a7a0990d92b6e5f86a74e640f011f12da48b#npm:5.3.3"],
+            ["ts-node", "npm:7.0.1"],
             ["typescript", "npm:3.3.3333"],
             ["val-loader", "virtual:4618db608ddd5ff4b385ac4f8bba9302fe80be01f8be4f2c09326b6232f308ff5592ae5490aee3e37d21fb1703c6a7a0990d92b6e5f86a74e640f011f12da48b#npm:1.1.1"],
             ["webpack", "npm:4.28.4"],
@@ -3066,6 +3075,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@babel/preset-typescript", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:7.1.0"],
             ["@berry/pnpify", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#workspace:packages/berry-pnpify"],
             ["@types/camelcase", "npm:5.2.0"],
+            ["@types/chalk", "npm:2.2.0"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/dateformat", "npm:1.0.2"],
             ["@types/emscripten", "npm:0.0.31"],
@@ -3073,6 +3083,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/eventemitter3", "npm:2.0.2"],
             ["@types/execa", "npm:0.9.0"],
             ["@types/faker", "npm:4.1.4"],
+            ["@types/filesize", "npm:4.1.0"],
             ["@types/fs-extra", "npm:5.0.4"],
             ["@types/globby", "npm:8.0.0"],
             ["@types/got", "npm:8.3.5"],
@@ -3098,6 +3109,9 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/tmp", "npm:0.0.33"],
             ["@types/treeify", "npm:1.0.0"],
             ["@types/tunnel", "npm:0.0.0"],
+            ["@types/webpack", "npm:4.32.1"],
+            ["@types/webpack-merge", "npm:4.1.5"],
+            ["@types/webpack-sources", "npm:0.1.5"],
             ["@types/yup", "npm:0.26.12"],
             ["@typescript-eslint/eslint-plugin", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:1.7.0"],
             ["@typescript-eslint/parser", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:1.6.0"],
@@ -4484,6 +4498,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           ]
         }]
       ]],
+      ["@types/anymatch", [
+        ["npm:1.3.1", {
+          "packageLocation": "./.yarn/cache/@types-anymatch-npm-1.3.1-029c794fa8eb782d08518b93225d81f85c50ce372bfd53fe87496c4dde181421.zip/node_modules/@types/anymatch/",
+          "packageDependencies": [
+            ["@types/anymatch", "npm:1.3.1"]
+          ]
+        }]
+      ]],
       ["@types/babel__core", [
         ["npm:7.1.0", {
           "packageLocation": "./.yarn/cache/@types-babel__core-npm-7.1.0-451cefd46e6026cef941e7795cc6186ae63273589e305eb36a268d010e85e9ff.zip/node_modules/@types/babel__core/",
@@ -4547,6 +4569,15 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/@types-caseless-npm-0.12.1-18ead2346441234304c3a4f12121e43aa098642f1002c5b4df2ac9eca6aabaa6.zip/node_modules/@types/caseless/",
           "packageDependencies": [
             ["@types/caseless", "npm:0.12.1"]
+          ]
+        }]
+      ]],
+      ["@types/chalk", [
+        ["npm:2.2.0", {
+          "packageLocation": "./.yarn/cache/@types-chalk-npm-2.2.0-4897be940ee34b83cf47a11b7f7ba2cc32c27bfc5ff102154818052f8a631e4f.zip/node_modules/@types/chalk/",
+          "packageDependencies": [
+            ["@types/chalk", "npm:2.2.0"],
+            ["chalk", "npm:2.4.2"]
           ]
         }]
       ]],
@@ -4641,6 +4672,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/@types-faker-npm-4.1.4-b57898d70da524b60488238cda60835e91c6690d80114a4443e088872f9b3a34.zip/node_modules/@types/faker/",
           "packageDependencies": [
             ["@types/faker", "npm:4.1.4"]
+          ]
+        }]
+      ]],
+      ["@types/filesize", [
+        ["npm:4.1.0", {
+          "packageLocation": "./.yarn/cache/@types-filesize-npm-4.1.0-1ef0a2fad28222932249e57b64e67cc9cece3e7bf295e2d47396d9e41e4551aa.zip/node_modules/@types/filesize/",
+          "packageDependencies": [
+            ["@types/filesize", "npm:4.1.0"]
           ]
         }]
       ]],
@@ -5050,6 +5089,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           ]
         }]
       ]],
+      ["@types/source-list-map", [
+        ["npm:0.1.2", {
+          "packageLocation": "./.yarn/cache/@types-source-list-map-npm-0.1.2-3fd4ad9105c29718f36580c7696a6bde030891172653a873ff831e7264c62b6b.zip/node_modules/@types/source-list-map/",
+          "packageDependencies": [
+            ["@types/source-list-map", "npm:0.1.2"]
+          ]
+        }]
+      ]],
       ["@types/ssri", [
         ["npm:6.0.1", {
           "packageLocation": "./.yarn/cache/@types-ssri-npm-6.0.1-c6ea543c264a6fe96facee3ef7565f9b036330151237d36bb356d83ac4fd145a.zip/node_modules/@types/ssri/",
@@ -5080,6 +5127,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/@types-supports-color-npm-5.3.0-c80f98cd0ae66e734d0ea8e7593634ab8defddfded89dc2d0abb1b58075a37e7.zip/node_modules/@types/supports-color/",
           "packageDependencies": [
             ["@types/supports-color", "npm:5.3.0"]
+          ]
+        }]
+      ]],
+      ["@types/tapable", [
+        ["npm:1.0.4", {
+          "packageLocation": "./.yarn/cache/@types-tapable-npm-1.0.4-cf1027d75a93b84d30b803b74fcf2dcb10b7baa716f9f9bff10137d1a8cfee3d.zip/node_modules/@types/tapable/",
+          "packageDependencies": [
+            ["@types/tapable", "npm:1.0.4"]
           ]
         }]
       ]],
@@ -5149,6 +5204,15 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           ]
         }]
       ]],
+      ["@types/uglify-js", [
+        ["npm:3.0.4", {
+          "packageLocation": "./.yarn/cache/@types-uglify-js-npm-3.0.4-b5c2fc8499a7f67e61fc637379295c15c81e9faf6349b233bcc57c613c53720c.zip/node_modules/@types/uglify-js/",
+          "packageDependencies": [
+            ["@types/uglify-js", "npm:3.0.4"],
+            ["source-map", "npm:0.6.1"]
+          ]
+        }]
+      ]],
       ["@types/unist", [
         ["npm:2.0.3", {
           "packageLocation": "./.yarn/cache/@types-unist-npm-2.0.3-0fd06c1f671f616639b9125989530309e56a4148191f9e12d7aa09700db693c3.zip/node_modules/@types/unist/",
@@ -5183,6 +5247,39 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/@types-webassembly-js-api-npm-0.0.2-34b91f83db3de874c1dcf0068c60ffc7f7c3cd99b0b5d14a378ee471eabe8243.zip/node_modules/@types/webassembly-js-api/",
           "packageDependencies": [
             ["@types/webassembly-js-api", "npm:0.0.2"]
+          ]
+        }]
+      ]],
+      ["@types/webpack", [
+        ["npm:4.32.1", {
+          "packageLocation": "./.yarn/cache/@types-webpack-npm-4.32.1-032fe62aa2739f8796bddd3e2889799a0ec0fa6d38a2869c422a2d2e12156d13.zip/node_modules/@types/webpack/",
+          "packageDependencies": [
+            ["@types/webpack", "npm:4.32.1"],
+            ["@types/anymatch", "npm:1.3.1"],
+            ["@types/node", "npm:10.12.18"],
+            ["@types/tapable", "npm:1.0.4"],
+            ["@types/uglify-js", "npm:3.0.4"],
+            ["source-map", "npm:0.6.1"]
+          ]
+        }]
+      ]],
+      ["@types/webpack-merge", [
+        ["npm:4.1.5", {
+          "packageLocation": "./.yarn/cache/@types-webpack-merge-npm-4.1.5-c15c67fba64a6ef41296770eabbd4eeb48a7112b0bc164f1aa50f8067d438d90.zip/node_modules/@types/webpack-merge/",
+          "packageDependencies": [
+            ["@types/webpack-merge", "npm:4.1.5"],
+            ["@types/webpack", "npm:4.32.1"]
+          ]
+        }]
+      ]],
+      ["@types/webpack-sources", [
+        ["npm:0.1.5", {
+          "packageLocation": "./.yarn/cache/@types-webpack-sources-npm-0.1.5-ce5337bd478d4c20e7195037a61f908494bc47420283d343cf3a373ed1f055f7.zip/node_modules/@types/webpack-sources/",
+          "packageDependencies": [
+            ["@types/webpack-sources", "npm:0.1.5"],
+            ["@types/node", "npm:10.12.18"],
+            ["@types/source-list-map", "npm:0.1.2"],
+            ["source-map", "npm:0.6.1"]
           ]
         }]
       ]],
@@ -11272,6 +11369,12 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/filesize-npm-3.5.11-b215acae718b9c7314b02837b4021f7153b4436ce67f6fddc3a484fb8935258a.zip/node_modules/filesize/",
           "packageDependencies": [
             ["filesize", "npm:3.5.11"]
+          ]
+        }],
+        ["npm:4.1.2", {
+          "packageLocation": "./.yarn/cache/filesize-npm-4.1.2-e19da968ee00e3110e6f7b5e9e4c9be2c08cb43ec424de4afac1fc13d45681aa.zip/node_modules/filesize/",
+          "packageDependencies": [
+            ["filesize", "npm:4.1.2"]
           ]
         }]
       ]],
@@ -25554,6 +25657,11 @@ class NodeFS extends FakeFS_1.BasePortableFakeFS {
     readlinkSync(p) {
         return NodeFS.toPortablePath(this.realFs.readlinkSync(NodeFS.fromPortablePath(p)));
     }
+    watch(p, a, b) {
+        return this.realFs.watch(NodeFS.fromPortablePath(p), 
+        // @ts-ignore
+        a, b);
+    }
     makeCallback(resolve, reject) {
         return (err, result) => {
             if (err) {
@@ -25721,6 +25829,11 @@ class ProxiedFS extends FakeFS_1.FakeFS {
     readlinkSync(p) {
         return this.mapFromBase(this.baseFs.readlinkSync(this.mapToBase(p)));
     }
+    watch(p, a, b) {
+        return this.baseFs.watch(this.mapToBase(p), 
+        // @ts-ignore
+        a, b);
+    }
 }
 exports.ProxiedFS = ProxiedFS;
 
@@ -25785,6 +25898,7 @@ function patchFs(patchedFs, fakeFs) {
         `symlinkSync`,
         `unlinkSync`,
         `utimesSync`,
+        `watch`,
         `writeFileSync`,
     ]);
     const ASYNC_IMPLEMENTATIONS = new Set([
@@ -26845,6 +26959,28 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
             throw Object.assign(new Error(`EINVAL: invalid argument, readlink '${p}'`), { code: `EINVAL` });
         return this.getFileSource(entry).toString();
     }
+    watch(p, a, b) {
+        let persistent;
+        switch (typeof a) {
+            case `function`:
+            case `string`:
+            case `undefined`:
+                {
+                    persistent = true;
+                }
+                break;
+            default:
+                {
+                    // @ts-ignore
+                    ({ persistent = true } = a);
+                }
+                break;
+        }
+        if (!persistent)
+            return { on: () => { }, close: () => { } };
+        const interval = setInterval(() => { }, 24 * 60 * 60 * 1000);
+        return { on: () => { }, close: () => { clearInterval(interval); } };
+    }
 }
 exports.ZipFS = ZipFS;
 ;
@@ -27784,6 +27920,17 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
             return this.baseFs.readlinkSync(p);
         }, (zipFs, { subPath }) => {
             return zipFs.readlinkSync(subPath);
+        });
+    }
+    watch(p, a, b) {
+        return this.makeCallSync(p, () => {
+            return this.baseFs.watch(p, 
+            // @ts-ignore
+            a, b);
+        }, (zipFs, { subPath }) => {
+            return zipFs.watch(subPath, 
+            // @ts-ignore
+            a, b);
         });
     }
     async makeCallPromise(p, discard, accept, { requireSubpath = true } = {}) {
