@@ -9,6 +9,9 @@
     "@types/tmp": "^0.0.33",
     "tmp": "^0.0.33"
   },
+  "devDependencies": {
+    "typescript": "^3.3.3333"
+  },
   "scripts": {
     "build:plugin-exec": "builder build plugin"
   }

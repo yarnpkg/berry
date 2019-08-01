@@ -11,6 +11,9 @@
     "p-limit": "^2.2.0",
     "yup": "^0.27.0"
   },
+  "devDependencies": {
+    "typescript": "^3.3.3333"
+  },
   "scripts": {
     "build:plugin-workspace-tools": "builder build plugin"
   }

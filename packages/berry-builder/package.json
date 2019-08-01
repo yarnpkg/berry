@@ -1,31 +1,21 @@
 {
   "name": "@berry/builder",
   "version": "0.2.6",
-  "bin": "./lib/cli.js",
+  "version:next": "0.2.7",
+  "bin": "./sources/boot-dev.js",
   "dependencies": {
-    "@babel/core": "^7.3.3",
-    "@babel/plugin-proposal-class-properties": "^7.3.3",
-    "@babel/preset-env": "^7.3.1",
-    "@babel/preset-typescript": "^7.1.0",
-    "@babel/register": "^7.0.0",
     "@berry/core": "workspace:0.1.0",
     "@berry/fslib": "workspace:0.1.0",
     "@berry/pnpify": "workspace:0.1.0",
-    "brfs": "^2.0.1",
-    "buffer-loader": "^0.1.0",
     "chalk": "^2.4.1",
     "clipanion": "2.0.0-rc.16",
     "filesize": "^4.1.2",
-    "joi": "^13.6.0",
     "pnp-webpack-plugin": "^1.4.3",
-    "raw-loader": "^0.5.1",
-    "transform-loader": "^0.2.4",
     "ts-loader": "^5.3.3",
     "val-loader": "^1.1.1",
     "webpack": "^4.28.4",
     "webpack-merge": "^4.2.1",
-    "webpack-sources": "^1.3.0",
-    "webpack-virtual-modules": "^0.1.10"
+    "webpack-sources": "^1.3.0"
   },
   "devDependencies": {
     "ts-node": "^7.0.1",
@@ -38,6 +28,9 @@
     "build:pnpify": "rm -rf lib && mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
     "prepack": "run build:pnpify",
     "release": "yarn npm publish"
+  },
+  "publishConfig": {
+    "bin": "./lib/boot.js"
   },
   "files": [
     "/lib/**/*"

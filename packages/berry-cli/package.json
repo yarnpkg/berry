@@ -33,11 +33,12 @@
     "@berry/plugin-pnp": "workspace:0.0.0",
     "@berry/plugin-typescript": "workspace:0.0.0",
     "@berry/plugin-workspace-tools": "workspace:0.0.0",
-    "@berry/pnp": "workspace:0.1.0"
+    "@berry/pnp": "workspace:0.1.0",
+    "typescript": "^3.3.3333"
   },
   "scripts": {
     "build:cli+hook": "run build:pnp:hook && builder build bundle",
-    "build:cli": "builder build-bundle",
+    "build:cli": "builder build bundle",
     "run:cli": "builder run"
   },
   "@berry/builder": {

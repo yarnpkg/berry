@@ -1,5 +1,11 @@
-const makeConfig = require(`@berry/builder/sources/make-config.js`);
 const {RawSource} = require(`webpack-sources`);
+
+// We require it through a relative path rather than an actual dependency
+// because this file is only needed when building the PnPify tools (so from
+// within the repository), and it allows us to prevent a circular dependency
+// in the dependency tree (because `@berry/builder` has a dependency on
+// `@berry/pnpify`).
+const {makeConfig} = require(`../berry-builder/lib/tools/makeConfig.js`);
 
 module.exports = makeConfig({
   context: __dirname,

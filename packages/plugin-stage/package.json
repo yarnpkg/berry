@@ -8,6 +8,9 @@
     "@berry/fslib": "workspace:0.1.0",
     "clipanion": "2.0.0-rc.16"
   },
+  "devDependencies": {
+    "typescript": "^3.3.3333"
+  },
   "scripts": {
     "build:plugin-stage": "builder build plugin"
   }

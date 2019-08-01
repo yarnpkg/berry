@@ -9,7 +9,8 @@
     "@berry/plugin-pack": "workspace:0.0.0"
   },
   "devDependencies": {
-    "@berry/builder": "workspace:0.2.6"
+    "@berry/builder": "workspace:0.2.6",
+    "typescript": "^3.3.3333"
   },
   "scripts": {
     "build:plugin-typescript": "builder build plugin"
