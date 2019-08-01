@@ -35,7 +35,8 @@
     "typescript": "*"
   },
   "scripts": {
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "build:pnpify": "rm -rf lib && mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "prepack": "run build:pnpify",
     "release": "yarn npm publish"
   },
   "files": [

@@ -175,6 +175,7 @@ function patchFs(patchedFs, fakeFs) {
         `symlinkSync`,
         `unlinkSync`,
         `utimesSync`,
+        `watch`,
         `writeFileSync`,
     ]);
     const ASYNC_IMPLEMENTATIONS = new Set([
@@ -1013,6 +1014,11 @@ class NodeModulesFS_PortableNodeModulesFs extends FakeFS["b" /* FakeFS */] {
     readlinkSync(p) {
         return this.resolveLink(p, 'readlink', (_stats, targetPath) => targetPath, (targetPath) => this.baseFs.readlinkSync(this.resolveDirOrFilePath(targetPath)));
     }
+    watch(p, a, b) {
+        return this.baseFs.watch(p, 
+        // @ts-ignore
+        a, b);
+    }
 }
 
 // EXTERNAL MODULE: ./sources/dynamicRequire.ts
@@ -1251,6 +1257,11 @@ class NodeFS extends _FakeFS__WEBPACK_IMPORTED_MODULE_1__[/* BasePortableFakeFS 
     readlinkSync(p) {
         return NodeFS.toPortablePath(this.realFs.readlinkSync(NodeFS.fromPortablePath(p)));
     }
+    watch(p, a, b) {
+        return this.realFs.watch(NodeFS.fromPortablePath(p), 
+        // @ts-ignore
+        a, b);
+    }
     makeCallback(resolve, reject) {
         return (err, result) => {
             if (err) {
@@ -1430,6 +1441,11 @@ class ProxiedFS extends _FakeFS__WEBPACK_IMPORTED_MODULE_0__[/* FakeFS */ "b"] {
     }
     readlinkSync(p) {
         return this.mapFromBase(this.baseFs.readlinkSync(this.mapToBase(p)));
+    }
+    watch(p, a, b) {
+        return this.baseFs.watch(this.mapToBase(p), 
+        // @ts-ignore
+        a, b);
     }
 }
 

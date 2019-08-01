@@ -1,6 +1,7 @@
 {
   "name": "@berry/pnpify",
   "version": "0.1.0",
+  "version:next": "0.1.1",
   "main": "./sources/index.ts",
   "bin": "./lib/bin.js",
   "sideEffects": false,
@@ -9,7 +10,6 @@
     "cross-spawn": "^6.0.5"
   },
   "devDependencies": {
-    "@berry/builder": "workspace:0.2.6",
     "@berry/pnp": "workspace:0.1.0",
     "@types/eslint": "4.16.6",
     "eslint": "^5.16.0",
