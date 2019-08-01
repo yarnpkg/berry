@@ -1,7 +1,7 @@
 import {CommandContext, Configuration, MessageName, Project, StreamReport, httpUtils, structUtils}                                           from '@berry/core';
 import {xfs, PortablePath, ppath}                                                                                                            from '@berry/fslib';
 import {parseSyml}                                                                                                                           from '@berry/parsers';
-import {Command}                                                                                                                             from 'clipanion';
+import {Command, UsageError}                                                                                                                 from 'clipanion';
 import {runInNewContext}                                                                                                                     from 'vm';
 
 const REMOTE_REGISTRY = `https://raw.githubusercontent.com/yarnpkg/berry/master/plugins.yml`;
@@ -55,6 +55,10 @@ export default class PluginDlCommand extends Command<CommandContext> {
         }
       } else {
         const {project} = await Project.find(configuration, this.context.cwd);
+        const name = this.name;
+        if (!name)
+          throw new UsageError(`Missing plugin name`);
+
         const ident = structUtils.tryParseIdent(name);
 
         let pluginUrl;

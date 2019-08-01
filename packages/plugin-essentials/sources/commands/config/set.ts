@@ -19,9 +19,9 @@ export default class ConfigSetCommand extends Command<CommandContext> {
     if (!configuration.projectCwd)
       throw new UsageError(`This command must be run from within a project folder`);
 
-    const settings = configuration.settings.get(name);
+    const settings = configuration.settings.get(this.name);
     if (!settings)
-      throw new UsageError(`Couldn't find a configuration settings named "${name}"`);
+      throw new UsageError(`Couldn't find a configuration settings named "${this.name}"`);
 
     await Configuration.updateConfiguration(configuration.projectCwd, {
       [this.name]: this.value,
