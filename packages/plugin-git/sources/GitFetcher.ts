@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions}                         from '@berry/core';
 import {Locator, MessageName}                                               from '@berry/core';
 import {execUtils, miscUtils, scriptUtils, structUtils, tgzUtils}           from '@berry/core';
-import {NodeFS, PortablePath, ppath}                                        from '@berry/fslib';
+import {NodeFS, PortablePath, ppath, xfs}                                   from '@berry/fslib';
 
 import {GIT_REGEXP}                                                         from './constants';
 import * as gitUtils                                                        from './gitUtils';
@@ -46,7 +46,7 @@ export class GitFetcher implements Fetcher {
     await execUtils.execvp(`yarn`, [`pack`], {cwd: directory, env: env});
 
     const packagePath = ppath.join(directory, `package.tgz` as PortablePath);
-    const sourceBuffer = await new NodeFS().readFilePromise(packagePath);
+    const sourceBuffer = await xfs.readFilePromise(packagePath);
 
     return await miscUtils.releaseAfterUseAsync(async () => {
       return await tgzUtils.makeArchive(sourceBuffer, {

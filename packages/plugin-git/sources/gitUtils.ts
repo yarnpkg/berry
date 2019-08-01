@@ -10,9 +10,9 @@ export async function clone(repo: string) {
   return directory;
 }
 
-function createTemporaryFolder(name?: Filename): Promise<PortablePath> {
+function createTemporaryFolder(): Promise<PortablePath> {
   return new Promise<PortablePath>((resolve, reject) => {
-    tmp.dir({unsafeCleanup: true}, (error: any, dirPath: any) => {
+    tmp.dir({unsafeCleanup: true}, (error: Error, dirPath: PortablePath) => {
       if (error) {
         reject(error);
       } else {
@@ -21,12 +21,6 @@ function createTemporaryFolder(name?: Filename): Promise<PortablePath> {
     });
   }).then(async dirPath => {
     dirPath = await xfs.realpathPromise(NodeFS.toPortablePath(dirPath));
-
-    if (name) {
-      dirPath = ppath.join(dirPath, name as PortablePath);
-      await exports.mkdirp(dirPath);
-    }
-
     return dirPath;
   });
 };
