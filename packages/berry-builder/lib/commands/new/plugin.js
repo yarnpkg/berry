@@ -50,7 +50,7 @@ class NewPluginCommand extends clipanion_1.Command {
             `  ],\n`,
             `};\n`,
             `\n`,
-            `export default plugin;\n`
+            `export default plugin;\n`,
         ].join(``));
         await fslib_1.xfs.writeFilePromise(fslib_1.ppath.join(target, `package.json`), JSON.stringify({
             name: `berry-plugin-helloworld`,
