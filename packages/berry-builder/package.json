@@ -35,7 +35,6 @@
     "typescript": "*"
   },
   "scripts": {
-    "postpack": "rm -rf lib",
     "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
     "release": "yarn npm publish"
   },
