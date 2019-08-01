@@ -55,7 +55,7 @@ export default class PluginDlCommand extends Command<CommandContext> {
         }
       } else {
         const {project} = await Project.find(configuration, this.context.cwd);
-        const ident = structUtils.tryParseIdent(name);
+        const ident = structUtils.tryParseIdent(this.name);
 
         let pluginUrl;
         if (ident) {
@@ -71,12 +71,12 @@ export default class PluginDlCommand extends Command<CommandContext> {
         } else {
           try {
             // @ts-ignore We don't want to add the dom to the TS env just for this line
-            new URL(name);
+            new URL(this.name);
           } catch {
-            throw new Error(`Plugin specifier "${name}" is neither a plugin name nor a valid url`);
+            throw new Error(`Plugin specifier "${this.name}" is neither a plugin name nor a valid url`);
           }
 
-          pluginUrl = name;
+          pluginUrl = this.name;
         }
 
         report.reportInfo(MessageName.UNNAMED, `Downloading ${configuration.format(pluginUrl, `green`)}`);
