@@ -1,6 +1,6 @@
-import {CommandContext, Configuration, MessageName, StreamReport, httpUtils} from '@berry/core';
-import {parseSyml}                                                           from '@berry/parsers';
-import {Command}                                                             from 'clipanion';
+import {CommandContext, Configuration, StreamReport, httpUtils} from '@berry/core';
+import {parseSyml}                                              from '@berry/parsers';
+import {Command}                                                from 'clipanion';
 
 const REMOTE_REGISTRY = `https://raw.githubusercontent.com/yarnpkg/berry/master/plugins.yml`;
 
