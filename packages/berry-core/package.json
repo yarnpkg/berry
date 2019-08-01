@@ -1,6 +1,7 @@
 {
   "name": "@berry/core",
   "version": "0.1.0",
+  "version:next": "0.2.0",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
