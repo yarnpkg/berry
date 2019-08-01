@@ -4,10 +4,10 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/core": "workspace:0.1.0",
-    "@berry/fslib": "workspace:0.1.0"
+    "@berry/fslib": "workspace:0.1.1"
   },
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.1.0",
+    "@berry/pnpify": "workspace:0.1.1",
     "typescript": "^3.3.3333"
   },
   "scripts": {

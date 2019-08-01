@@ -5,7 +5,7 @@
   "dependencies": {
     "@berry/cli": "workspace:2.0.0",
     "@berry/core": "workspace:0.1.0",
-    "@berry/fslib": "workspace:0.1.0",
+    "@berry/fslib": "workspace:0.1.1",
     "@types/tar-stream": "1.6.0",
     "clipanion": "2.0.0-rc.16",
     "micromatch": "^4.0.2",

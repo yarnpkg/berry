@@ -1,12 +1,11 @@
 {
   "name": "@berry/pnpify",
-  "version": "0.1.0",
-  "version:next": "0.1.1",
+  "version": "0.1.1",
   "main": "./sources/index.ts",
   "bin": "./lib/bin.js",
   "sideEffects": false,
   "dependencies": {
-    "@berry/fslib": "workspace:0.1.0",
+    "@berry/fslib": "workspace:0.1.1",
     "cross-spawn": "^6.0.5"
   },
   "devDependencies": {

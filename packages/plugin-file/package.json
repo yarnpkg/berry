@@ -4,6 +4,6 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/core": "workspace:0.1.0",
-    "@berry/fslib": "workspace:0.1.0"
+    "@berry/fslib": "workspace:0.1.1"
   }
 }
