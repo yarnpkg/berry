@@ -58,6 +58,8 @@ export enum MessageName {
   AUTOMERGE_SUCCESS = 48,
   AUTOMERGE_REQUIRED = 49,
   DEPRECATED_CLI_SETTINGS = 50,
+  PLUGIN_NAME_NOT_FOUND = 51,
+  INVALID_PLUGIN_REFERENCE = 52,
 }
 
 export class ReportError extends Error {

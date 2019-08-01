@@ -45,16 +45,16 @@ export default class RunCommand extends Command<CommandContext> {
     const report = await LightReport.start({
       configuration,
       stdout: this.context.stdout,
-    }, async (report: LightReport) => {
+    }, async report => {
       await project.resolveEverything({lockfileOnly: true, cache, report});
     });
+
+    if (report.hasErrors())
+      return report.exitCode();
 
     const effectiveLocator = this.topLevel
       ? project.topLevelWorkspace.anchoredLocator
       : locator;
-
-    if (report.hasErrors())
-      return report.exitCode();
 
     // First we check to see whether a script exist inside the current package
     // for the given name
@@ -77,7 +77,7 @@ export default class RunCommand extends Command<CommandContext> {
     // this logic if multiple workspaces share the same script name.
     //
     // We also disable this logic for packages coming from third-parties (ie
-    // not workspaces). Not particular reason except maybe security concerns.
+    // not workspaces). No particular reason except maybe security concerns.
 
     if (!this.topLevel && workspace && this.scriptName.includes(`:`)) {
       let candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {

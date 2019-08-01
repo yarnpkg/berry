@@ -1,15 +1,26 @@
-import {CommandContext, Configuration, StreamReport}                                   from '@berry/core';
-import {Command}                                                                       from 'clipanion';
+import {CommandContext, Configuration, StreamReport, httpUtils} from '@berry/core';
+import {parseSyml}                                              from '@berry/parsers';
+import {Command}                                                from 'clipanion';
+
+const REMOTE_REGISTRY = `https://raw.githubusercontent.com/yarnpkg/berry/master/plugins.yml`;
+
+export async function getAvailablePlugins(configuration: Configuration) {
+  const raw = await httpUtils.get(REMOTE_REGISTRY, {configuration});
+  const data = parseSyml(raw.toString());
+
+  return data;
+}
 
 // eslint-disable-next-line arca/no-default-export
-export default class PluginListCommand extends Command<CommandContext> {
+export default class PluginDlCommand extends Command<CommandContext> {
   static usage = Command.Usage({
-    description: `list the active plugins`,
+    category: `Plugin-related commands`,
+    description: `list the available official plugins`,
     details: `
-      This command prints the currently active plugins. Will be displayed both builtin plugins and external plugins.
+      This command prints the plugins available directly from the Yarn repository. Only those plugins can be referenced by name in \`yarn plugin import\`.
     `,
     examples: [[
-      `List the currently active plugins`,
+      `List the official plugins`,
       `yarn plugin list`,
     ]],
   });
@@ -22,12 +33,15 @@ export default class PluginListCommand extends Command<CommandContext> {
       configuration,
       stdout: this.context.stdout,
     }, async report => {
-      for (const name of configuration.plugins.keys()) {
-        if (this.context.plugins.plugins.has(name)) {
-          report.reportInfo(null, `${name} [builtin]`);
-        } else {
-          report.reportInfo(null, `${name}`);
-        }
+      const data = await getAvailablePlugins(configuration);
+
+      for (const [name, {experimental}] of Object.entries(data)) {
+        let label = name;
+
+        if (experimental)
+          label += ` [experimental]`;
+
+        report.reportInfo(null, label);
       }
     });
 
