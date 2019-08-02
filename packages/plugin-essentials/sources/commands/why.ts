@@ -1,10 +1,10 @@
-import {WorkspaceRequiredError}                                                  from '@berry/cli';
-import {Cache, CommandContext, Configuration, LightReport, LocatorHash, Package} from '@berry/core';
-import {IdentHash, Project}                                                      from '@berry/core';
-import {miscUtils, structUtils}                                                  from '@berry/core';
-import {Command}                                                                 from 'clipanion';
-import {Writable}                                                                from 'stream';
-import {asTree}                                                                  from 'treeify';
+import {WorkspaceRequiredError}                              from '@berry/cli';
+import {CommandContext, Configuration, LocatorHash, Package} from '@berry/core';
+import {IdentHash, Project}                                  from '@berry/core';
+import {miscUtils, structUtils}                              from '@berry/core';
+import {Command}                                             from 'clipanion';
+import {Writable}                                            from 'stream';
+import {asTree}                                              from 'treeify';
 
 type TreeNode = {[key: string]: TreeNode};
 
@@ -38,20 +38,9 @@ export default class WhyCommand extends Command<CommandContext> {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration);
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
-
-    const report = await LightReport.start({
-      configuration,
-      stdout: this.context.stdout,
-    }, async (report: LightReport) => {
-      await project.resolveEverything({lockfileOnly: true, cache, report});
-    });
-
-    if (report.hasErrors())
-      return report.exitCode();
 
     const identHash = structUtils.parseIdent(this.package).identHash;
 

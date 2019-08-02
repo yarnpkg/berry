@@ -1,4 +1,6 @@
-const makeConfig = require(`@berry/builder/sources/make-config.js`);
+require(`@berry/pnpify/lib`).patchFs();
+
+const {makeConfig} = require(`@berry/builder/lib/tools/makeConfig`);
 
 module.exports = makeConfig({
   context: __dirname,

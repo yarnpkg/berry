@@ -1,8 +1,9 @@
 import fs                         from 'fs';
+import tmp                        from 'tmp';
 
 import {FakeFS}                   from './FakeFS';
 import {NodeFS}                   from './NodeFS';
-import {NativePath}               from './path';
+import {PortablePath, NativePath} from './path';
 
 export {CreateReadStreamOptions}  from './FakeFS';
 export {CreateWriteStreamOptions} from './FakeFS';
@@ -123,4 +124,54 @@ export function extendFs(realFs: typeof fs, fakeFs: FakeFS<NativePath>): typeof 
   return patchedFs;
 }
 
-export const xfs = new NodeFS();
+export type XFS = NodeFS & {
+  mktempSync(): PortablePath;
+  mktempSync<T>(cb: (p: PortablePath) => T): T;
+
+  mktempPromise(): Promise<PortablePath>;
+  mktempPromise<T>(cb: (p: PortablePath) => Promise<T>): Promise<T>;
+};
+
+export const xfs: XFS = Object.assign(new NodeFS(), {
+  mktempSync<T>(cb?: (p: PortablePath) => T) {
+    const {name, removeCallback} = tmp.dirSync({unsafeCleanup: true});
+    if (typeof cb === `undefined`) {
+      return NodeFS.toPortablePath(name);
+    } else {
+      try {
+        return cb(NodeFS.toPortablePath(name));
+      } finally {
+        removeCallback();
+      }
+    }
+  },
+  mktempPromise<T>(cb?: (p: PortablePath) => Promise<T>) {
+    if (typeof cb === `undefined`) {
+      return new Promise<PortablePath>((resolve, reject) => {
+        tmp.dir({unsafeCleanup: true}, (err, path) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(NodeFS.toPortablePath(path));
+          }
+        });
+      });
+    } else {
+      return new Promise<T>((resolve, reject) => {
+        tmp.dir({unsafeCleanup: true}, (err, path, cleanup) => {
+          if (err) {
+            reject(err);
+          } else {
+            Promise.resolve(NodeFS.toPortablePath(path)).then(cb).then(result => {
+              cleanup();
+              resolve(result);
+            }, error => {
+              cleanup();
+              reject(error);
+            });
+          }
+        });
+      });
+    }
+  },
+});

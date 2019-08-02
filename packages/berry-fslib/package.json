@@ -4,7 +4,8 @@
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@berry/libzip": "workspace:0.1.0"
+    "@berry/libzip": "workspace:0.1.0",
+    "tmp": "^0.0.33"
   },
   "devDependencies": {
     "@berry/pnpify": "workspace:0.1.1",

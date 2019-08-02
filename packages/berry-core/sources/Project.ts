@@ -94,6 +94,18 @@ export class Project {
     await project.setupResolutions();
     await project.setupWorkspaces();
 
+    applyVirtualResolutionMutations({
+      project,
+
+      allDescriptors: project.storedDescriptors,
+      allResolutions: project.storedResolutions,
+      allPackages: project.storedPackages,
+
+      report: null,
+
+      tolerateMissingPackages: true,
+    });
+
     // If we're in a workspace, no need to go any further to find which package we're in
     const workspace = project.tryWorkspaceByCwd(packageCwd);
     if (workspace)
@@ -214,7 +226,7 @@ export class Project {
     }
   }
 
-  async addWorkspace(workspaceCwd: PortablePath) {
+  private async addWorkspace(workspaceCwd: PortablePath) {
     const workspace = new Workspace(workspaceCwd, {project: this});
     await workspace.setup();
 
@@ -303,6 +315,16 @@ export class Project {
     }
   }
 
+  forgetVirtualResolutions() {
+    for (const pkg of this.storedPackages.values()) {
+      for (const [dependencyHash, dependency] of pkg.dependencies) {
+        if (structUtils.isVirtualDescriptor(dependency)) {
+          pkg.dependencies.set(dependencyHash, structUtils.devirtualizeDescriptor(dependency));
+        }
+      }
+    }
+  }
+
   getDependencyMeta(ident: Ident, version: string | null): DependencyMeta {
     const dependencyMeta = {};
 
@@ -345,6 +367,13 @@ export class Project {
   async resolveEverything({cache, report, lockfileOnly}: InstallOptions) {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
+
+    // Reverts the changes that have been applied to the tree because of any previous virtual resolution pass
+    this.forgetVirtualResolutions();
+
+    // Ensures that we notice it when dependencies are added / removed from all sources coming from the filesystem
+    if (!lockfileOnly)
+      await this.forgetTransientResolutions();
 
     // Note that the resolution process is "offline" until everything has been
     // successfully resolved; all the processing is expected to have zero side
@@ -644,182 +673,21 @@ export class Project {
     // descriptors that aren't depended upon by anything and can be safely
     // pruned.
 
-    const hasBeenTraversed = new Set();
     const volatileDescriptors = new Set(this.resolutionAliases.values());
     const optionalBuilds = new Set(allPackages.keys());
 
-    const resolutionStack: Array<Locator> = [];
+    applyVirtualResolutionMutations({
+      project: this,
 
-    const reportStackOverflow = (): never => {
-      const logFile = NodeFS.toPortablePath(
-        tmpNameSync({
-          prefix: `stacktrace-`,
-          postfix: `.log`,
-        }),
-      );
+      volatileDescriptors,
+      optionalBuilds,
 
-      const maxSize = String(resolutionStack.length + 1).length;
-      const content = resolutionStack.map((locator, index) => {
-        const prefix = `${index + 1}.`.padStart(maxSize, ` `);
-        return `${prefix} ${structUtils.stringifyLocator(locator)}\n`;
-      }).join(``);
+      allDescriptors,
+      allResolutions,
+      allPackages,
 
-      xfs.writeFileSync(logFile, content);
-
-      throw new ReportError(MessageName.STACK_OVERFLOW_RESOLUTION, `Encountered a stack overflow when resolving peer dependencies; cf ${logFile}`);
-    };
-
-    const resolvePeerDependencies = (parentLocator: Locator, optional: boolean) => {
-      resolutionStack.push(parentLocator);
-      const result = resolvePeerDependenciesImpl(parentLocator, optional);
-      resolutionStack.pop();
-
-      return result;
-    };
-
-    const resolvePeerDependenciesImpl = (parentLocator: Locator, optional: boolean) => {
-      if (hasBeenTraversed.has(parentLocator.locatorHash))
-        return;
-
-      hasBeenTraversed.add(parentLocator.locatorHash);
-
-      if (!optional)
-        optionalBuilds.delete(parentLocator.locatorHash);
-
-      const parentPackage = allPackages.get(parentLocator.locatorHash);
-      if (!parentPackage)
-        throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, parentLocator)}) should have been registered`);
-
-      const firstPass = [];
-      const secondPass = [];
-      const thirdPass = [];
-      const fourthPass = [];
-
-      // During this first pass we virtualize the descriptors. This allows us
-      // to reference them from their sibling without being order-dependent,
-      // which is required to solve cases where packages with peer dependencies
-      // have peer dependencies themselves.
-
-      for (const descriptor of Array.from(parentPackage.dependencies.values())) {
-        if (parentPackage.peerDependencies.has(descriptor.identHash))
-          continue;
-
-        // Mark this package as being used (won't be removed from the lockfile)
-        volatileDescriptors.delete(descriptor.descriptorHash);
-
-        // Detect whether this package is being required
-        let isOptional = optional;
-        if (!isOptional) {
-          const dependencyMetaSet = parentPackage.dependenciesMeta.get(structUtils.stringifyIdent(descriptor));
-          if (typeof dependencyMetaSet !== `undefined`) {
-            const dependencyMeta = dependencyMetaSet.get(null);
-            if (typeof dependencyMeta !== `undefined` && dependencyMeta.optional) {
-              isOptional = true;
-            }
-          }
-        }
-
-        const resolution = allResolutions.get(descriptor.descriptorHash);
-        if (!resolution)
-          throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
-
-        const pkg = allPackages.get(resolution);
-        if (!pkg)
-          throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
-
-        if (pkg.peerDependencies.size === 0) {
-          resolvePeerDependencies(pkg, isOptional);
-          continue;
-        }
-
-        let virtualizedDescriptor: Descriptor;
-        let virtualizedPackage: Package;
-
-        const missingPeerDependencies = new Set<IdentHash>();
-
-        firstPass.push(() => {
-          virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
-          virtualizedPackage = structUtils.virtualizePackage(pkg, parentLocator.locatorHash);
-
-          parentPackage.dependencies.delete(descriptor.identHash);
-          parentPackage.dependencies.set(virtualizedDescriptor.identHash, virtualizedDescriptor);
-
-          allResolutions.set(virtualizedDescriptor.descriptorHash, virtualizedPackage.locatorHash);
-          allDescriptors.set(virtualizedDescriptor.descriptorHash, virtualizedDescriptor);
-
-          allPackages.set(virtualizedPackage.locatorHash, virtualizedPackage);
-        });
-
-        secondPass.push(() => {
-          for (const peerRequest of virtualizedPackage.peerDependencies.values()) {
-            let peerDescriptor = parentPackage.dependencies.get(peerRequest.identHash);
-
-            if (!peerDescriptor && structUtils.areIdentsEqual(parentLocator, peerRequest)) {
-              peerDescriptor = structUtils.convertLocatorToDescriptor(parentLocator);
-
-              allDescriptors.set(peerDescriptor.descriptorHash, peerDescriptor);
-              allResolutions.set(peerDescriptor.descriptorHash, parentLocator.locatorHash);
-            }
-
-            if (!peerDescriptor) {
-              if (!parentPackage.peerDependencies.has(peerRequest.identHash)) {
-                const peerDependencyMeta = virtualizedPackage.peerDependenciesMeta.get(structUtils.stringifyIdent(peerRequest));
-
-                if (!peerDependencyMeta || !peerDependencyMeta.optional) {
-                  report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${structUtils.prettyLocator(this.configuration, parentLocator)} doesn't provide ${structUtils.prettyDescriptor(this.configuration, peerRequest)} requested by ${structUtils.prettyLocator(this.configuration, pkg)}`);
-                }
-              }
-
-              peerDescriptor = structUtils.makeDescriptor(peerRequest, `missing:`);
-            }
-
-            virtualizedPackage.dependencies.set(peerDescriptor.identHash, peerDescriptor);
-
-            if (peerDescriptor.range === `missing:`) {
-              missingPeerDependencies.add(peerDescriptor.identHash);
-            }
-          }
-
-          // Since we've had to add new dependencies we need to sort them all over again
-          virtualizedPackage.dependencies = new Map(miscUtils.sortMap(virtualizedPackage.dependencies, ([identHash, descriptor]) => {
-            return structUtils.stringifyIdent(descriptor);
-          }));
-        });
-
-        thirdPass.push(() => {
-          resolvePeerDependencies(virtualizedPackage, isOptional);
-        });
-
-        fourthPass.push(() => {
-          for (const missingPeerDependency of missingPeerDependencies) {
-            virtualizedPackage.dependencies.delete(missingPeerDependency);
-          }
-        });
-      }
-
-      const allPasses = [
-        ...firstPass,
-        ...secondPass,
-        ...thirdPass,
-        ...fourthPass,
-      ];
-
-      for (const fn of allPasses) {
-        fn();
-      }
-    };
-
-    try {
-      for (const workspace of this.workspaces) {
-        resolvePeerDependencies(workspace.anchoredLocator, false);
-      }
-    } catch (error) {
-      if (error.name === `RangeError` && error.message === `Maximum call stack size exceeded`) {
-        reportStackOverflow();
-      } else {
-        throw error;
-      }
-    }
+      report,
+    });
 
     // All descriptors still referenced within the volatileDescriptors set are
     // descriptors that aren't depended upon by anything in the dependency tree.
@@ -1226,10 +1094,6 @@ export class Project {
       // If we operate with a frozen lockfile, we take a snapshot of it to later make sure it didn't change
       const initialLockfile = opts.frozenLockfile ? this.generateLockfile() : null;
 
-      // Ensures that we notice it when dependencies are added / removed from all sources coming from the filesystem
-      if (!opts.lockfileOnly)
-        await this.forgetTransientResolutions();
-
       await this.resolveEverything(opts);
 
       if (opts.frozenLockfile && this.generateLockfile() !== initialLockfile) {
@@ -1355,6 +1219,228 @@ export class Project {
 
     for (const workspace of this.workspacesByCwd.values()) {
       await workspace.persistManifest();
+    }
+  }
+}
+
+/**
+ * This function is worth some documentation. It takes a set of packages,
+ * traverses them all, and generates virtual packages for each package that
+ * lists peer dependencies.
+ *
+ * We also take advantage of the tree traversal to detect which packages are
+ * actually used and which have disappeared, and to know which packages truly
+ * have an optional build (since a package may be optional in one part of the
+ * tree but not another).
+ */
+function applyVirtualResolutionMutations({
+  project,
+
+  allDescriptors,
+  allResolutions,
+  allPackages,
+
+  optionalBuilds = new Set(),
+  volatileDescriptors = new Set(),
+
+  report,
+
+  tolerateMissingPackages = false,
+}: {
+  project: Project,
+
+  allDescriptors: Map<DescriptorHash, Descriptor>,
+  allResolutions: Map<DescriptorHash, LocatorHash>,
+  allPackages: Map<LocatorHash, Package>,
+
+  optionalBuilds?: Set<LocatorHash>,
+  volatileDescriptors?: Set<DescriptorHash>,
+
+  report: Report | null,
+
+  tolerateMissingPackages?: boolean,
+}) {
+  const hasBeenTraversed = new Set();
+  const resolutionStack: Array<Locator> = [];
+
+  const reportStackOverflow = (): never => {
+    const logFile = NodeFS.toPortablePath(
+      tmpNameSync({
+        prefix: `stacktrace-`,
+        postfix: `.log`,
+      }),
+    );
+
+    const maxSize = String(resolutionStack.length + 1).length;
+    const content = resolutionStack.map((locator, index) => {
+      const prefix = `${index + 1}.`.padStart(maxSize, ` `);
+      return `${prefix} ${structUtils.stringifyLocator(locator)}\n`;
+    }).join(``);
+
+    xfs.writeFileSync(logFile, content);
+
+    throw new ReportError(MessageName.STACK_OVERFLOW_RESOLUTION, `Encountered a stack overflow when resolving peer dependencies; cf ${logFile}`);
+  };
+
+  const resolvePeerDependencies = (parentLocator: Locator, optional: boolean) => {
+    resolutionStack.push(parentLocator);
+    const result = resolvePeerDependenciesImpl(parentLocator, optional);
+    resolutionStack.pop();
+
+    return result;
+  };
+
+  const resolvePeerDependenciesImpl = (parentLocator: Locator, optional: boolean) => {
+    if (hasBeenTraversed.has(parentLocator.locatorHash))
+      return;
+
+    hasBeenTraversed.add(parentLocator.locatorHash);
+
+    if (!optional)
+      optionalBuilds.delete(parentLocator.locatorHash);
+
+    const parentPackage = allPackages.get(parentLocator.locatorHash);
+    if (!parentPackage) {
+      if (tolerateMissingPackages) {
+        return;
+      } else {
+        throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(project.configuration, parentLocator)}) should have been registered`);
+      }
+    }
+
+    const firstPass = [];
+    const secondPass = [];
+    const thirdPass = [];
+    const fourthPass = [];
+
+    // During this first pass we virtualize the descriptors. This allows us
+    // to reference them from their sibling without being order-dependent,
+    // which is required to solve cases where packages with peer dependencies
+    // have peer dependencies themselves.
+
+    for (const descriptor of Array.from(parentPackage.dependencies.values())) {
+      if (parentPackage.peerDependencies.has(descriptor.identHash))
+        continue;
+
+      // Mark this package as being used (won't be removed from the lockfile)
+      volatileDescriptors.delete(descriptor.descriptorHash);
+
+      // Detect whether this package is being required
+      let isOptional = optional;
+      if (!isOptional) {
+        const dependencyMetaSet = parentPackage.dependenciesMeta.get(structUtils.stringifyIdent(descriptor));
+        if (typeof dependencyMetaSet !== `undefined`) {
+          const dependencyMeta = dependencyMetaSet.get(null);
+          if (typeof dependencyMeta !== `undefined` && dependencyMeta.optional) {
+            isOptional = true;
+          }
+        }
+      }
+
+      const resolution = allResolutions.get(descriptor.descriptorHash);
+      if (!resolution) {
+        if (tolerateMissingPackages) {
+          continue;
+        } else {
+          throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
+        }
+      }
+
+      const pkg = allPackages.get(resolution);
+      if (!pkg)
+        throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
+
+      if (pkg.peerDependencies.size === 0) {
+        resolvePeerDependencies(pkg, isOptional);
+        continue;
+      }
+
+      let virtualizedDescriptor: Descriptor;
+      let virtualizedPackage: Package;
+
+      const missingPeerDependencies = new Set<IdentHash>();
+
+      firstPass.push(() => {
+        virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
+        virtualizedPackage = structUtils.virtualizePackage(pkg, parentLocator.locatorHash);
+
+        parentPackage.dependencies.delete(descriptor.identHash);
+        parentPackage.dependencies.set(virtualizedDescriptor.identHash, virtualizedDescriptor);
+
+        allResolutions.set(virtualizedDescriptor.descriptorHash, virtualizedPackage.locatorHash);
+        allDescriptors.set(virtualizedDescriptor.descriptorHash, virtualizedDescriptor);
+
+        allPackages.set(virtualizedPackage.locatorHash, virtualizedPackage);
+      });
+
+      secondPass.push(() => {
+        for (const peerRequest of virtualizedPackage.peerDependencies.values()) {
+          let peerDescriptor = parentPackage.dependencies.get(peerRequest.identHash);
+
+          if (!peerDescriptor && structUtils.areIdentsEqual(parentLocator, peerRequest)) {
+            peerDescriptor = structUtils.convertLocatorToDescriptor(parentLocator);
+
+            allDescriptors.set(peerDescriptor.descriptorHash, peerDescriptor);
+            allResolutions.set(peerDescriptor.descriptorHash, parentLocator.locatorHash);
+          }
+
+          if (!peerDescriptor) {
+            if (!parentPackage.peerDependencies.has(peerRequest.identHash)) {
+              const peerDependencyMeta = virtualizedPackage.peerDependenciesMeta.get(structUtils.stringifyIdent(peerRequest));
+
+              if (report !== null && (!peerDependencyMeta || !peerDependencyMeta.optional)) {
+                report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} doesn't provide ${structUtils.prettyDescriptor(project.configuration, peerRequest)} requested by ${structUtils.prettyLocator(project.configuration, pkg)}`);
+              }
+            }
+
+            peerDescriptor = structUtils.makeDescriptor(peerRequest, `missing:`);
+          }
+
+          virtualizedPackage.dependencies.set(peerDescriptor.identHash, peerDescriptor);
+
+          if (peerDescriptor.range === `missing:`) {
+            missingPeerDependencies.add(peerDescriptor.identHash);
+          }
+        }
+
+        // Since we've had to add new dependencies we need to sort them all over again
+        virtualizedPackage.dependencies = new Map(miscUtils.sortMap(virtualizedPackage.dependencies, ([identHash, descriptor]) => {
+          return structUtils.stringifyIdent(descriptor);
+        }));
+      });
+
+      thirdPass.push(() => {
+        resolvePeerDependencies(virtualizedPackage, isOptional);
+      });
+
+      fourthPass.push(() => {
+        for (const missingPeerDependency of missingPeerDependencies) {
+          virtualizedPackage.dependencies.delete(missingPeerDependency);
+        }
+      });
+    }
+
+    const allPasses = [
+      ...firstPass,
+      ...secondPass,
+      ...thirdPass,
+      ...fourthPass,
+    ];
+
+    for (const fn of allPasses) {
+      fn();
+    }
+  };
+
+  try {
+    for (const workspace of project.workspaces) {
+      resolvePeerDependencies(workspace.anchoredLocator, false);
+    }
+  } catch (error) {
+    if (error.name === `RangeError` && error.message === `Maximum call stack size exceeded`) {
+      reportStackOverflow();
+    } else {
+      throw error;
     }
   }
 }

@@ -1,5 +1,5 @@
 import {Configuration, Cache, CommandContext, Project} from '@berry/core';
-import {LightReport, MessageName, StreamReport}        from '@berry/core';
+import {MessageName, StreamReport}                     from '@berry/core';
 import {Filename, NodeFS, xfs, PortablePath, ppath}    from '@berry/fslib';
 import {Command}                                       from 'clipanion';
 
@@ -20,6 +20,8 @@ export default class CacheCleanCommand extends Command<CommandContext> {
     details: `
       This command will locate the files that aren't used in the current project, and remove them (unless \`--dry-run\` is set).
 
+      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
+
       In order to detect whether a file is used or not the command will run a partial install where it will paint the "fetched" packages on top of actually downloading them. Each package in the cache that hasn't been painted during the install will be reported as unused.
 
       One quirk of this system is that \`yarn cache clean\` cannot be used directly if your cache is used by multiple projects, as it won't be able to detect the files being used by other projects than the current one. The best way to support multiple projects with a single mirror is to use the \`--dry-run\` and \`--json\` flags in order to get the list of files that aren't used by one unique project. After running this command on all your projects, you'll just have to remove the intersection of all those file sets as they'll be guaranteed not to be used by any project.
@@ -38,16 +40,6 @@ export default class CacheCleanCommand extends Command<CommandContext> {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
-
-    const resolutionReport = await LightReport.start({
-      configuration,
-      stdout: this.context.stdout,
-    }, async (report: LightReport) => {
-      await project.resolveEverything({lockfileOnly: true, cache, report});
-    });
-
-    if (resolutionReport.hasErrors())
-      return resolutionReport.exitCode();
 
     const cacheEntries = new Set<Filename>();
 

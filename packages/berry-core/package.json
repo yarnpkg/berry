@@ -32,6 +32,8 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
+    "@berry/plugin-link": "workspace:0.0.0",
+    "@berry/plugin-pnp": "workspace:0.0.0",
     "@berry/pnpify": "workspace:0.1.1",
     "typescript": "^3.3.3333"
   },

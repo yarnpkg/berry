@@ -2,7 +2,7 @@
   "name": "@berry/pnpify",
   "version": "0.1.1",
   "main": "./sources/index.ts",
-  "bin": "./lib/bin.js",
+  "bin": "./sources/boot-dev.js",
   "sideEffects": false,
   "dependencies": {
     "@berry/fslib": "workspace:0.1.1",
@@ -12,6 +12,7 @@
     "@berry/pnp": "workspace:0.1.0",
     "@types/eslint": "4.16.6",
     "eslint": "^5.16.0",
+    "ts-node": "^7.0.1",
     "typescript": "^3.3.3333",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1"
@@ -29,14 +30,13 @@
     }
   },
   "scripts": {
-    "build:pnpify": "run webpack-cli --config webpack.config.pkg.js",
-    "prepack": "rm -rf lib && run build:pnpify && yarn pnpify tsc --emitDeclarationOnly --declaration",
-    "release": "yarn npm publish",
-    "test:pnpify:watch": "run test:pnpify --watch",
-    "test:pnpify": "run test:unit packages/berry-pnpify"
+    "postpack": "rm -rf lib",
+    "prepack": "pnpify tsc",
+    "release": "yarn npm publish"
   },
   "publishConfig": {
     "main": "./lib/index.js",
+    "bin": "./lib/boot.js",
     "types": "./lib/index.d.ts"
   },
   "files": [
