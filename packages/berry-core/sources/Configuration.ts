@@ -11,6 +11,7 @@ import {Plugin, Hooks}                                          from './Plugin';
 import {SemverResolver}                                         from './SemverResolver';
 import {TagResolver}                                            from './TagResolver';
 import {VirtualFetcher}                                         from './VirtualFetcher';
+import {VirtualResolver}                                        from './VirtualResolver';
 import {WorkspaceFetcher}                                       from './WorkspaceFetcher';
 import {WorkspaceResolver}                                      from './WorkspaceResolver';
 import * as folderUtils                                         from './folderUtils';
@@ -781,6 +782,7 @@ export class Configuration {
         pluginResolvers.push(new resolver());
 
     return new MultiResolver([
+      new VirtualResolver(),
       new WorkspaceResolver(),
       new SemverResolver(),
       new TagResolver(),

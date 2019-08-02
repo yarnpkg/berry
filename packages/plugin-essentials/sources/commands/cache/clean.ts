@@ -1,5 +1,5 @@
 import {Configuration, Cache, CommandContext, Project} from '@berry/core';
-import {LightReport, MessageName, StreamReport}        from '@berry/core';
+import {MessageName, StreamReport}                     from '@berry/core';
 import {Filename, NodeFS, xfs, PortablePath, ppath}    from '@berry/fslib';
 import {Command}                                       from 'clipanion';
 
@@ -38,16 +38,6 @@ export default class CacheCleanCommand extends Command<CommandContext> {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
-
-    const resolutionReport = await LightReport.start({
-      configuration,
-      stdout: this.context.stdout,
-    }, async (report: LightReport) => {
-      await project.resolveEverything({lockfileOnly: true, cache, report});
-    });
-
-    if (resolutionReport.hasErrors())
-      return resolutionReport.exitCode();
 
     const cacheEntries = new Set<Filename>();
 
