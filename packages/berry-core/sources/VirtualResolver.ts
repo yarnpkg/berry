@@ -1,5 +1,4 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator}                             from './types';
 
 export class VirtualResolver implements Resolver {

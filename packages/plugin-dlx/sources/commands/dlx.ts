@@ -66,6 +66,16 @@ export default class DlxCommand extends Command<CommandContext> {
       if (workspace === null)
         throw new WorkspaceRequiredError(this.context.cwd);
 
+      const report = await LightReport.start({
+        configuration,
+        stdout: this.context.stdout,
+      }, async (report: LightReport) => {
+        await project.resolveEverything({lockfileOnly: true, cache, report});
+      });
+
+      if (report.hasErrors())
+        return report.exitCode();
+
       return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, this.args, {
         cwd: this.context.cwd,
         stdin: this.context.stdin,
