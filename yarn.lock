@@ -2077,6 +2077,7 @@ __metadata:
     "@types/eslint": "npm:4.16.6"
     cross-spawn: "npm:^6.0.5"
     eslint: "npm:^5.16.0"
+    ts-node: "npm:^7.0.1"
     typescript: "npm:^3.3.3333"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:^3.2.1"
@@ -2089,7 +2090,7 @@ __metadata:
     typescript:
       optional: true
   bin:
-    pnpify: ./lib/bin.js
+    pnpify: ./sources/boot-dev.js
   languageName: unknown
   linkType: soft
 
