@@ -59,10 +59,10 @@ export default class DlxCommand extends Command<CommandContext> {
         this.context.stdout.write(`\n`);
 
       const configuration = await Configuration.find(tmpDir, this.context.plugins);
-      const {project, workspace} = await Project.find(configuration, tmpDir);
+      const {workspace} = await Project.find(configuration, tmpDir);
 
       if (workspace === null)
-        throw new WorkspaceRequiredError(this.context.cwd);
+        throw new WorkspaceRequiredError(tmpDir);
 
       return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, this.args, {
         cwd: this.context.cwd,
