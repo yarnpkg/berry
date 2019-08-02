@@ -43,15 +43,15 @@ export default class WhyCommand extends Command<CommandContext> {
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
 
-    const report = await LightReport.start({
+    const resolutionReport = await LightReport.start({
       configuration,
       stdout: this.context.stdout,
     }, async (report: LightReport) => {
       await project.resolveEverything({lockfileOnly: true, cache, report});
     });
 
-    if (report.hasErrors())
-      return report.exitCode();
+    if (resolutionReport.hasErrors())
+      return resolutionReport.exitCode();
 
     const identHash = structUtils.parseIdent(this.package).identHash;
 

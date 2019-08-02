@@ -32,15 +32,15 @@ export default class BinCommand extends Command<CommandContext> {
     const {project, locator} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
-    const report = await LightReport.start({
+    const resolutionReport = await LightReport.start({
       configuration,
       stdout: this.context.stdout,
-    }, async report => {
+    }, async (report: LightReport) => {
       await project.resolveEverything({lockfileOnly: true, cache, report});
     });
 
-    if (report.hasErrors())
-      return report.exitCode();
+    if (resolutionReport.hasErrors())
+      return resolutionReport.exitCode();
 
     const binaries = await scriptUtils.getPackageAccessibleBinaries(locator, {project});
 

@@ -42,15 +42,15 @@ export default class RunCommand extends Command<CommandContext> {
     const {project, workspace, locator} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
-    const report = await LightReport.start({
+    const resolutionReport = await LightReport.start({
       configuration,
       stdout: this.context.stdout,
-    }, async report => {
+    }, async (report: LightReport) => {
       await project.resolveEverything({lockfileOnly: true, cache, report});
     });
 
-    if (report.hasErrors())
-      return report.exitCode();
+    if (resolutionReport.hasErrors())
+      return resolutionReport.exitCode();
 
     const effectiveLocator = this.topLevel
       ? project.topLevelWorkspace.anchoredLocator
