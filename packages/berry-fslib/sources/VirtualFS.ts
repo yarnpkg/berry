@@ -80,7 +80,7 @@ export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
       return p;
 
     if (match[3])
-      return ppath.join(this.target, `../`.repeat(Number(match[4])) as PortablePath, match[5] as PortablePath);
+      return this.mapToBase(ppath.join(this.target, `../`.repeat(Number(match[4])) as PortablePath, match[5] as PortablePath));
 
     return this.target;
   }

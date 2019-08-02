@@ -3,13 +3,16 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/builder": "workspace:0.1.0",
+    "@berry/builder": "workspace:0.2.7",
     "@berry/core": "workspace:0.1.0",
-    "@berry/fslib": "workspace:0.1.0",
+    "@berry/fslib": "workspace:0.1.1",
     "@types/tmp": "^0.0.33",
     "tmp": "^0.0.33"
   },
+  "devDependencies": {
+    "typescript": "^3.3.3333"
+  },
   "scripts": {
-    "build:plugin-exec": "run @berry-build-plugin"
+    "build:plugin-exec": "builder build plugin"
   }
 }

@@ -28,6 +28,7 @@ export interface PublishConfig {
   access?: string;
   main?: PortablePath;
   module?: PortablePath;
+  bin?: Map<string, PortablePath>;
   registry?: string;
 };
 
@@ -314,8 +315,26 @@ export class Manifest {
       if (typeof data.publishConfig.registry === `string`)
         this.publishConfig.registry = data.publishConfig.registry;
 
-      if (typeof data.publishConfig.module === `string`) {
+      if (typeof data.publishConfig.module === `string`)
         this.publishConfig.module = data.publishConfig.module;
+
+      if (typeof data.publishConfig.bin === `string`) {
+        if (this.name !== null) {
+          this.publishConfig.bin = new Map([[this.name.name, data.publishConfig.bin]]);
+        } else {
+          errors.push(new Error(`String bin field, but no attached package name`));
+        }
+      } else if (typeof data.publishConfig.bin === `object` && data.publishConfig.bin !== null) {
+        this.publishConfig.bin = new Map();
+
+        for (const [key, value] of Object.entries(data.publishConfig.bin)) {
+          if (typeof value !== `string`) {
+            errors.push(new Error(`Invalid bin definition for '${key}'`));
+            continue;
+          }
+
+          this.publishConfig.bin.set(key, value as PortablePath);
+        }
       }
     }
 

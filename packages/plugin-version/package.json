@@ -5,16 +5,16 @@
   "dependencies": {
     "@berry/cli": "workspace:2.0.0",
     "@berry/core": "workspace:0.1.0",
-    "@berry/fslib": "workspace:0.1.0",
+    "@berry/fslib": "workspace:0.1.1",
     "@berry/plugin-pack": "workspace:0.0.0",
     "clipanion": "2.0.0-rc.16",
     "semver": "^5.6.0"
   },
   "devDependencies": {
-    "@berry/builder": "workspace:0.1.0",
-    "@types/semver": "^5.5.0"
+    "@berry/builder": "workspace:0.2.7",
+    "typescript": "^3.3.3333"
   },
   "scripts": {
-    "build:plugin-version": "run @berry-build-plugin"
+    "build:plugin-version": "builder build plugin"
   }
 }

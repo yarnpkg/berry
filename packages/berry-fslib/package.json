@@ -1,6 +1,6 @@
 {
   "name": "@berry/fslib",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
@@ -8,7 +8,7 @@
     "tmp": "^0.0.33"
   },
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.1.0",
+    "@berry/pnpify": "workspace:0.1.1",
     "typescript": "^3.3.3333"
   },
   "scripts": {

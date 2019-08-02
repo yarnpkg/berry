@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@berry/core": "workspace:0.1.0",
-    "@berry/fslib": "workspace:0.1.0",
+    "@berry/fslib": "workspace:0.1.1",
     "@berry/parsers": "workspace:0.1.0",
     "@berry/shell": "workspace:0.1.0",
     "chalk": "^2.4.1",
@@ -18,7 +18,7 @@
     "yup": "^0.27.0"
   },
   "devDependencies": {
-    "@berry/builder": "workspace:0.1.0",
+    "@berry/builder": "workspace:0.2.7",
     "@berry/plugin-constraints": "workspace:0.0.0",
     "@berry/plugin-dlx": "workspace:0.0.0",
     "@berry/plugin-essentials": "workspace:0.0.0",
@@ -33,12 +33,13 @@
     "@berry/plugin-pnp": "workspace:0.0.0",
     "@berry/plugin-typescript": "workspace:0.0.0",
     "@berry/plugin-workspace-tools": "workspace:0.0.0",
-    "@berry/pnp": "workspace:0.1.0"
+    "@berry/pnp": "workspace:0.1.0",
+    "typescript": "^3.3.3333"
   },
   "scripts": {
-    "build:cli+hook": "run build:pnp:hook && run @berry-build-bundle",
-    "build:cli": "run @berry-build-bundle",
-    "run:cli": "run @berry-run"
+    "build:cli+hook": "run build:pnp:hook && builder build bundle",
+    "build:cli": "builder build bundle",
+    "run:cli": "builder run"
   },
   "@berry/builder": {
     "bundles": {
