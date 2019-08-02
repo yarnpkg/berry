@@ -174,6 +174,7 @@ function patchFs(patchedFs, fakeFs) {
         `symlinkSync`,
         `unlinkSync`,
         `utimesSync`,
+        `watch`,
         `writeFileSync`,
     ]);
     const ASYNC_IMPLEMENTATIONS = new Set([
@@ -737,6 +738,11 @@ class NodeFS extends _FakeFS__WEBPACK_IMPORTED_MODULE_1__[/* BasePortableFakeFS 
     }
     readlinkSync(p) {
         return NodeFS.toPortablePath(this.realFs.readlinkSync(NodeFS.fromPortablePath(p)));
+    }
+    watch(p, a, b) {
+        return this.realFs.watch(NodeFS.fromPortablePath(p), 
+        // @ts-ignore
+        a, b);
     }
     makeCallback(resolve, reject) {
         return (err, result) => {

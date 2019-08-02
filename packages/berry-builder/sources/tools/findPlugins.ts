@@ -1,6 +1,6 @@
-const {UsageError} = require(`clipanion`);
+import {UsageError} from 'clipanion';
 
-module.exports = function ({basedir, profile, plugins}) {
+export function findPlugins({basedir, profile, plugins}: {basedir: string, profile: string, plugins: Array<string>}) {
   const pkgJson = require(`${basedir}/package.json`);
 
   if (!pkgJson[`@berry/builder`] || !pkgJson[`@berry/builder`].bundles)
@@ -10,11 +10,12 @@ module.exports = function ({basedir, profile, plugins}) {
     profile = `standard`;
 
   const profiles = profile.split(/\+/g);
+  const supported = new Set(Object.keys(pkgJson[`@berry/builder`].bundles));
 
-  if (!profiles.every(profile => Object.prototype.hasOwnProperty.call(pkgJson[`@berry/builder`].bundles, profile)))
-    throw new UsageError(`Invalid profile`);
+  if (profiles.some(profile => !supported.has(profile)))
+    throw new UsageError(`Invalid profile "${profile}", expected one of ${[...supported].join(`, `)}`);
 
   return Array.from(new Set(profiles.reduce((acc, profile) => {
     return acc.concat(pkgJson[`@berry/builder`].bundles[profile]);
   }, plugins)));
-};
+}

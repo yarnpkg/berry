@@ -1,4 +1,4 @@
-module.exports = new Set([
+export const dynamicLibs = new Set([
   `@berry/cli`,
   `@berry/core`,
   `@berry/fslib`,
@@ -13,3 +13,13 @@ module.exports = new Set([
   // This one register `exit` handlers; it would generate warnings on "foreach" if a plugin happened to use it
   `tmp`,
 ]);
+
+export const isDynamicLib = (request: string) => {
+  if (dynamicLibs.has(request))
+    return true;
+
+  if (request.match(/^@berry\/plugin-/))
+    return true;
+
+  return false;
+};

@@ -14,7 +14,8 @@ junit.xml
 # Those folders are meant to contain the prepack build artifacts; we don't commit them
 lib
 
-# We check-in pnpify because we need it in order to compile the rest of the code
+# We check-in pnpify and builder because we need them in order to compile the rest of the code
+!/packages/berry-builder/lib
 !/packages/berry-pnpify/lib
 
 # We check-in the PnP hook because it would be heavy to regenerate it before each bundle build

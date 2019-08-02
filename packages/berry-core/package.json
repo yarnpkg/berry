@@ -5,11 +5,11 @@
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@berry/fslib": "workspace:0.1.0",
+    "@berry/fslib": "workspace:0.1.1",
     "@berry/json-proxy": "workspace:0.1.0",
     "@berry/parsers": "workspace:0.1.0",
     "@berry/pnp": "workspace:0.1.0",
-    "@berry/pnpify": "workspace:0.1.0",
+    "@berry/pnpify": "workspace:0.1.1",
     "@berry/shell": "workspace:0.1.0",
     "agentkeepalive": "^4.0.2",
     "camelcase": "^5.3.1",
@@ -32,7 +32,7 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.1.0",
+    "@berry/pnpify": "workspace:0.1.1",
     "typescript": "^3.3.3333"
   },
   "scripts": {

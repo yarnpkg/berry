@@ -3,12 +3,15 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/builder": "workspace:0.1.0",
+    "@berry/builder": "workspace:0.2.7",
     "@berry/core": "workspace:0.1.0",
-    "@berry/fslib": "workspace:0.1.0",
+    "@berry/fslib": "workspace:0.1.1",
     "clipanion": "2.0.0-rc.16"
   },
+  "devDependencies": {
+    "typescript": "^3.3.3333"
+  },
   "scripts": {
-    "build:plugin-stage": "run @berry-build-plugin"
+    "build:plugin-stage": "builder build plugin"
   }
 }
