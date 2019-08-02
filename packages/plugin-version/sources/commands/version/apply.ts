@@ -1,9 +1,9 @@
-import {WorkspaceRequiredError}                                                                     from '@berry/cli';
-import {AllDependencies, Cache, CommandContext, Configuration, IdentHash, LightReport, Manifest}    from '@berry/core';
-import {MessageName, Project, StreamReport, WorkspaceResolver}                                      from '@berry/core';
-import {Workspace, structUtils}                                                                     from '@berry/core';
-import {Command, UsageError}                                                                        from 'clipanion';
-import semver                                                                                       from 'semver';
+import {WorkspaceRequiredError}                                                 from '@berry/cli';
+import {AllDependencies, CommandContext, Configuration, IdentHash, Manifest}    from '@berry/core';
+import {MessageName, Project, StreamReport, WorkspaceResolver}                  from '@berry/core';
+import {Workspace, structUtils}                                                 from '@berry/core';
+import {Command, UsageError}                                                    from 'clipanion';
+import semver                                                                   from 'semver';
 
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
 const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
@@ -34,20 +34,9 @@ export default class VersionApplyCommand extends Command<CommandContext> {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration);
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
-
-    const resolutionReport = await LightReport.start({
-      configuration,
-      stdout: this.context.stdout,
-    }, async report => {
-      await project.resolveEverything({lockfileOnly: true, cache, report});
-    });
-
-    if (resolutionReport.hasErrors())
-      return resolutionReport.exitCode();
 
     const applyReport = await StreamReport.start({
       configuration,

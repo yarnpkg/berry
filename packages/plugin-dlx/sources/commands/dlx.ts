@@ -1,6 +1,5 @@
 import {WorkspaceRequiredError}                                                                        from '@berry/cli';
-import {Cache, CommandContext, Configuration, Project}                                                 from '@berry/core';
-import {LightReport}                                                                                   from '@berry/core';
+import {CommandContext, Configuration, Project}                                                        from '@berry/core';
 import {scriptUtils, structUtils}                                                                      from '@berry/core';
 import {NodeFS, xfs, PortablePath, ppath, Filename, toFilename}                                        from '@berry/fslib';
 import {Command}                                                                                       from 'clipanion';
@@ -61,20 +60,9 @@ export default class DlxCommand extends Command<CommandContext> {
 
       const configuration = await Configuration.find(tmpDir, this.context.plugins);
       const {project, workspace} = await Project.find(configuration, tmpDir);
-      const cache = await Cache.find(configuration);
 
       if (workspace === null)
         throw new WorkspaceRequiredError(this.context.cwd);
-
-      const report = await LightReport.start({
-        configuration,
-        stdout: this.context.stdout,
-      }, async (report: LightReport) => {
-        await project.resolveEverything({lockfileOnly: true, cache, report});
-      });
-
-      if (report.hasErrors())
-        return report.exitCode();
 
       return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, this.args, {
         cwd: this.context.cwd,

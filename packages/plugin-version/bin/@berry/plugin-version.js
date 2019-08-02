@@ -143,17 +143,8 @@ module.exports.factory = function (require) {
       async execute() {
           const configuration = await core_1.Configuration.find(this.context.cwd, this.context.plugins);
           const { project, workspace } = await core_2.Project.find(configuration, this.context.cwd);
-          const cache = await core_1.Cache.find(configuration);
           if (!workspace)
               throw new cli_1.WorkspaceRequiredError(this.context.cwd);
-          const resolutionReport = await core_1.LightReport.start({
-              configuration,
-              stdout: this.context.stdout,
-          }, async (report) => {
-              await project.resolveEverything({ lockfileOnly: true, cache, report });
-          });
-          if (resolutionReport.hasErrors())
-              return resolutionReport.exitCode();
           const applyReport = await core_2.StreamReport.start({
               configuration,
               stdout: this.context.stdout,

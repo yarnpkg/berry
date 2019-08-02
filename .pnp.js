@@ -27180,7 +27180,7 @@ class VirtualFS extends ProxiedFS_1.ProxiedFS {
         if (!match)
             return p;
         if (match[3])
-            return path_1.ppath.join(this.target, `../`.repeat(Number(match[4])), match[5]);
+            return this.mapToBase(path_1.ppath.join(this.target, `../`.repeat(Number(match[4])), match[5]));
         return this.target;
     }
     mapFromBase(p) {
