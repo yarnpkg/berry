@@ -39,7 +39,7 @@ export class GitFetcher implements Fetcher {
   }
 
   async cloneFromRemote(locator: Locator, opts: FetchOptions) {
-    const directory = await gitUtils.clone(locator.reference);
+    const directory = await gitUtils.clone(locator.reference, opts.project.configuration);
 
     const env = await scriptUtils.makeScriptEnv(opts.project);
     await execUtils.execvp(`yarn`, [`install`], {cwd: directory, env: env});
