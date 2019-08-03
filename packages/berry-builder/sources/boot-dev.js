@@ -1,2 +1,3 @@
-require(`ts-node`).register({transpileOnly: true});
+require(`@berry/monorepo/scripts/setup-ts-execution`);
+
 require(`./boot`);
