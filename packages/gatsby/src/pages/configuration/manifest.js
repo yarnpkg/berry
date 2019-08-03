@@ -246,7 +246,7 @@ const PackageJsonDoc = () => <>
       >
         <JsonScalarProperty
           name={`access`}
-          anchor={`publishConfig.main`}
+          anchor={`publishConfig.access`}
           placeholder={`public`}
           description={<>
             Defines the package access level to use when publishing packages to the npm registry. Valid values are <code>public</code> and <code>restricted</code>, but <code>restricted</code> usually requires to register for a paid plan (this is up to the registry you use).
