@@ -1832,6 +1832,7 @@ __metadata:
     jest: "npm:^24.5.0"
     jest-environment-node: "npm:^24.5.0"
     jest-junit: "npm:^5.2.0"
+    typescript: "npm:^3.3.3333"
   dependenciesMeta:
     fsevents:
       built: false

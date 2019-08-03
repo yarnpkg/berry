@@ -467,7 +467,8 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["github-api", "npm:3.2.2"],
             ["jest", "npm:24.5.0"],
             ["jest-environment-node", "npm:24.5.0"],
-            ["jest-junit", "npm:5.2.0"]
+            ["jest-junit", "npm:5.2.0"],
+            ["typescript", "npm:3.3.3333"]
           ]
         }]
       ]],
@@ -2910,7 +2911,8 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["github-api", "npm:3.2.2"],
             ["jest", "npm:24.5.0"],
             ["jest-environment-node", "npm:24.5.0"],
-            ["jest-junit", "npm:5.2.0"]
+            ["jest-junit", "npm:5.2.0"],
+            ["typescript", "npm:3.3.3333"]
           ]
         }]
       ]],
@@ -3316,7 +3318,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/pnp", "workspace:packages/berry-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", "npm:5.16.0"],
-            ["typescript", null]
+            ["typescript", "npm:3.3.3333"]
           ]
         }],
         ["virtual:bd58bc5d7b5b92c5bcf0f3fdfe7193d42b81a0ede9685cf917a665649abbee9b09799855bbe8db0e369b12c31a66eb49a53ea6dc594ea7f4d906d7f691674156#workspace:packages/berry-pnpify", {
@@ -5150,7 +5152,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["regexpp", "npm:2.0.1"],
             ["requireindex", "npm:1.2.0"],
             ["tsutils", "virtual:f9e58f664f6b6dc31a25117844ddcacf65897d4cc8c48cd9e3d7f248cab3a6a31dd77858a2db60a1c1b0d9f2b2d3d6e89796c1abc7a5a2ce8bd7723942816fc2#npm:3.10.0"],
-            ["typescript", null]
+            ["typescript", "npm:3.3.3333"]
           ]
         }]
       ]],
@@ -5163,7 +5165,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["eslint", "npm:5.16.0"],
             ["eslint-scope", "npm:4.0.0"],
             ["eslint-visitor-keys", "npm:1.0.0"],
-            ["typescript", null]
+            ["typescript", "npm:3.3.3333"]
           ]
         }],
         ["virtual:f9e58f664f6b6dc31a25117844ddcacf65897d4cc8c48cd9e3d7f248cab3a6a31dd77858a2db60a1c1b0d9f2b2d3d6e89796c1abc7a5a2ce8bd7723942816fc2#npm:1.7.0", {
@@ -5174,7 +5176,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["eslint", "npm:5.16.0"],
             ["eslint-scope", "npm:4.0.0"],
             ["eslint-visitor-keys", "npm:1.0.0"],
-            ["typescript", null]
+            ["typescript", "npm:3.3.3333"]
           ]
         }]
       ]],
@@ -5185,7 +5187,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@typescript-eslint/typescript-estree", "virtual:2b70818a20278fbfd8ef1bef664aad30f2a416919febff57f0c9bc9ad08848c04ccbd4caf6fe1a48232042cf8711e959462a24960efc0014a98dbf1a9879e38c#npm:1.7.0"],
             ["lodash.unescape", "npm:4.0.1"],
             ["semver", "npm:5.5.0"],
-            ["typescript", null]
+            ["typescript", "npm:3.3.3333"]
           ]
         }],
         ["virtual:74c86260b219af9d51018daa214d7dff808ed00a2f96f289e84c7c2f94c6a58cd0cf0ce61b4e9026cdaaa36d66eb2114814734d4e0406c853ae69269966f7dc6#npm:1.6.0", {
@@ -5194,7 +5196,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@typescript-eslint/typescript-estree", "virtual:74c86260b219af9d51018daa214d7dff808ed00a2f96f289e84c7c2f94c6a58cd0cf0ce61b4e9026cdaaa36d66eb2114814734d4e0406c853ae69269966f7dc6#npm:1.6.0"],
             ["lodash.unescape", "npm:4.0.1"],
             ["semver", "npm:5.5.0"],
-            ["typescript", null]
+            ["typescript", "npm:3.3.3333"]
           ]
         }],
         ["virtual:f9e58f664f6b6dc31a25117844ddcacf65897d4cc8c48cd9e3d7f248cab3a6a31dd77858a2db60a1c1b0d9f2b2d3d6e89796c1abc7a5a2ce8bd7723942816fc2#npm:1.7.0", {
@@ -5203,7 +5205,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@typescript-eslint/typescript-estree", "virtual:f9e58f664f6b6dc31a25117844ddcacf65897d4cc8c48cd9e3d7f248cab3a6a31dd77858a2db60a1c1b0d9f2b2d3d6e89796c1abc7a5a2ce8bd7723942816fc2#npm:1.7.0"],
             ["lodash.unescape", "npm:4.0.1"],
             ["semver", "npm:5.5.0"],
-            ["typescript", null]
+            ["typescript", "npm:3.3.3333"]
           ]
         }]
       ]],
@@ -22857,7 +22859,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageDependencies": [
             ["tsutils", "virtual:f9e58f664f6b6dc31a25117844ddcacf65897d4cc8c48cd9e3d7f248cab3a6a31dd77858a2db60a1c1b0d9f2b2d3d6e89796c1abc7a5a2ce8bd7723942816fc2#npm:3.10.0"],
             ["tslib", "npm:1.9.3"],
-            ["typescript", null]
+            ["typescript", "npm:3.3.3333"]
           ]
         }]
       ]],
