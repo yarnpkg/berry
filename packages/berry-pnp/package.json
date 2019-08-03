@@ -14,9 +14,10 @@
     "webpack-sources": "^1.3.0"
   },
   "scripts": {
-    "build:pnp:hook": "run webpack-cli --config webpack.config.hook.js",
-    "build:pnp": "run webpack-cli --config webpack.config.pkg.js",
-    "prepack": "rm -rf lib && run build:pnp:hook && run build:pnp && yarn pnpify tsc --emitDeclarationOnly --declaration",
+    "build:pnp:hook": "run pnpify webpack-cli --config webpack.config.hook.js",
+    "build:pnp": "run pnpify webpack-cli --config webpack.config.pkg.js",
+    "postpack": "rm -rf lib",
+    "prepack": "run build:pnp:hook && run build:pnp && pnpify tsc --emitDeclarationOnly --declaration",
     "release": "yarn npm publish"
   },
   "publishConfig": {
