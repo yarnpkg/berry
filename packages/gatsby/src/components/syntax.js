@@ -128,8 +128,8 @@ const Key = ({theme, name, anchorTarget}) => <>
   <span style={{color: theme.colors.key}}>
     {anchorTarget ? <>
       <a style={{color: `inherit`}} href={`#${anchorTarget}`}>
-        <Anchor/> {theme.formatKey(name)}
-      </a>
+        <Anchor/>
+      </a> {theme.formatKey(name)}
     </> : <>
       {theme.formatKey(name)}
     </>}
