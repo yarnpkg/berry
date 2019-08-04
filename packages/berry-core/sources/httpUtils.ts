@@ -60,11 +60,17 @@ async function request(target: string, body: Body, {configuration, headers, json
       : globalHttpsAgent;
 
   const gotOptions = {agent, body, headers, json, method, encoding: null};
+  let hostname: string | undefined;
 
   const makeHooks = <T extends string | null>() => ({
+    beforeRequest: [
+      (options: GotOptions<T>) => {
+        hostname = options.hostname;
+      },
+    ],
     beforeRedirect: [
       (options: GotOptions<T>) => {
-        if (options.headers && options.headers.authorization) {
+        if (options.headers && options.headers.authorization && options.hostname !== hostname) {
           delete options.headers.authorization;
         }
       },
