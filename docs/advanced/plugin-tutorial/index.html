@@ -86,6 +86,8 @@
         <span class="token keyword">this</span><span class="token punctuation">.</span>context<span class="token punctuation">.</span>stdout<span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`This is my very own plugin 😎\n`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
       <span class="token punctuation">}</span>
     <span class="token punctuation">}</span>
+    
+    Command<span class="token punctuation">.</span><span class="token function">Path</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`hello`</span></span><span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token class-name">HelloWorldCommand</span><span class="token punctuation">.</span>prototype<span class="token punctuation">)</span><span class="token punctuation">;</span>
 
     <span class="token keyword">return</span> <span class="token punctuation">{</span>
       <span class="token keyword">default</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
@@ -96,7 +98,7 @@
     <span class="token punctuation">}</span><span class="token punctuation">;</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre></div>
-<p>Now, try to run <code class="language-text">yarn hello world</code>. You'll see your message appear! Note that you can use the full set of features provided by clipanion, including short options, long options, variadic argument lists, ... You can even validate your options using the <a href="https://github.com/jquense/yup"><code class="language-text">yup</code></a> library, which we provide. Here's an example where we only accept email addresses as parameter:</p>
+<p>Now, try to run <code class="language-text">yarn hello</code>. You'll see your message appear! Note that you can use the full set of features provided by clipanion, including short options, long options, variadic argument lists, ... You can even validate your options using the <a href="https://github.com/jquense/yup"><code class="language-text">yup</code></a> library, which we provide. Here's an example where we only accept email addresses as parameter:</p>
 <div class="gatsby-highlight" data-language="js"><pre class="language-js"><code class="language-js">module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
   name<span class="token punctuation">:</span> <span class="token template-string"><span class="token string">`plugin-hello-world`</span></span><span class="token punctuation">,</span>
   <span class="token function-variable function">factory</span><span class="token punctuation">:</span> <span class="token parameter">require</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
@@ -120,10 +122,24 @@
       email<span class="token punctuation">:</span> yup<span class="token punctuation">.</span><span class="token function">string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">required</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">email</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
     <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-    <span class="token keyword">default</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
-      commands<span class="token punctuation">:</span> <span class="token punctuation">[</span>
-        HelloWorldCommand<span class="token punctuation">,</span>
-      <span class="token punctuation">]</span><span class="token punctuation">,</span>
-    <span class="token punctuation">}</span><span class="token punctuation">,</span>
-  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+    <span class="token comment">// Show descriptive usage for a --help argument passed to this command</span>
+    HelloWorldCommand<span class="token punctuation">.</span>usage <span class="token operator">=</span> Command<span class="token punctuation">.</span><span class="token function">Usage</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+      description<span class="token punctuation">:</span> <span class="token template-string"><span class="token string">`hello world!`</span></span><span class="token punctuation">,</span>
+      details<span class="token punctuation">:</span> <span class="token template-string"><span class="token string">`
+        This command will print a nice message.
+      `</span></span><span class="token punctuation">,</span>
+      examples<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">[</span>
+        <span class="token template-string"><span class="token string">`Say hello to an email user`</span></span><span class="token punctuation">,</span>
+        <span class="token template-string"><span class="token string">`yarn hello --email acidburn@example.com`</span></span><span class="token punctuation">,</span>
+      <span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+      <span class="token keyword">default</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        commands<span class="token punctuation">:</span> <span class="token punctuation">[</span>
+          HelloWorldCommand<span class="token punctuation">,</span>
+        <span class="token punctuation">]</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
 <span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre></div></div></article></div></div></div></div></main></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/advanced/plugin-tutorial";window.webpackCompilationHash="44fbb5f22504ba5e797f";/*]]>*/</script><script id="gatsby-chunk-mapping">/*<![CDATA[*/window.___chunkMapping={"app":["/app-ae3f388b34fccbee89b8.js"],"component---src-templates-article-js":["/component---src-templates-article-js-1d37326f7bb36f5934c8.js"],"component---src-pages-index-js":["/component---src-pages-index-js-70672a3ecc57a4ffbb3d.js"],"component---src-pages-404-js":["/component---src-pages-404-js-0533b1e00339fda1f465.js"],"component---src-pages-configuration-manifest-js":["/component---src-pages-configuration-manifest-js-0c034cb87216dd3b26b9.js"],"component---src-pages-configuration-yarnrc-js":["/component---src-pages-configuration-yarnrc-js-fe81897ab7611ddb9c8f.js"],"component---src-pages-package-js":["/component---src-pages-package-js-fbdafeab0e49dadafb63.js"]};/*]]>*/</script><script src="/berry/webpack-runtime-5553f1c66b7d1353382e.js" async=""></script><script src="/berry/app-ae3f388b34fccbee89b8.js" async=""></script><script src="/berry/1-50f6d08b729e906fd7a6.js" async=""></script><script src="/berry/13-2d155786c82a3926738b.js" async=""></script><script src="/berry/component---src-templates-article-js-1d37326f7bb36f5934c8.js" async=""></script><script src="/berry/styles-c2afc350e05105068187.js" async=""></script></body></html>
