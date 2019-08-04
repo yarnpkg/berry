@@ -72,6 +72,8 @@ module.exports = {
         this.context.stdout.write(`This is my very own plugin 😎\n`);
       }
     }
+    
+    Command.Path(`hello`)(HelloWorldCommand.prototype);
 
     return {
       default: {
@@ -84,7 +86,7 @@ module.exports = {
 };
 ```
 
-Now, try to run `yarn hello world`. You'll see your message appear! Note that you can use the full set of features provided by clipanion, including short options, long options, variadic argument lists, ... You can even validate your options using the [`yup`](https://github.com/jquense/yup) library, which we provide. Here's an example where we only accept email addresses as parameter:
+Now, try to run `yarn hello`. You'll see your message appear! Note that you can use the full set of features provided by clipanion, including short options, long options, variadic argument lists, ... You can even validate your options using the [`yup`](https://github.com/jquense/yup) library, which we provide. Here's an example where we only accept email addresses as parameter:
 
 ```js
 module.exports = {
@@ -110,11 +112,25 @@ module.exports = {
       email: yup.string().required().email(),
     });
 
-    default: {
-      commands: [
-        HelloWorldCommand,
-      ],
-    },
-  })
+    // Show descriptive usage for a --help argument passed to this command
+    HelloWorldCommand.usage = Command.Usage({
+      description: `hello world!`,
+      details: `
+        This command will print a nice message.
+      `,
+      examples: [[
+        `Say hello to an email user`,
+        `yarn hello --email acidburn@example.com`,
+      ]],
+    });
+
+    return {
+      default: {
+        commands: [
+          HelloWorldCommand,
+        ],
+      },
+    };
+  }
 };
 ```
