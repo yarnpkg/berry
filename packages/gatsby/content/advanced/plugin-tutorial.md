@@ -111,19 +111,18 @@ module.exports = {
     HelloWorldCommand.schema = yup.object().shape({
       email: yup.string().required().email(),
     });
-    
+
     // Show descriptive usage for a --help argument passed to this command
-    const usage = Command.Usage({
-      description: `hello new world`,
+    HelloWorldCommand.usage = Command.Usage({
+      description: `hello world!`,
       details: `
         This command will print a nice message.
       `,
-      examples: [
-        [`Say hello to an email user`, `yarn hello --email acidburn@example.com`],
-      ]
+      examples: [[
+        `Say hello to an email user`,
+        `yarn hello --email acidburn@example.com`,
+      ]],
     });
-
-    HelloWorldCommand.usage = usage;
 
     return {
       default: {
