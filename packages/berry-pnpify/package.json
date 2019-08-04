@@ -9,13 +9,9 @@
     "cross-spawn": "^6.0.5"
   },
   "devDependencies": {
+    "@berry/monorepo": "workspace:0.0.0",
     "@berry/pnp": "workspace:0.1.0",
-    "@types/eslint": "4.16.6",
-    "eslint": "^5.16.0",
-    "ts-node": "^7.0.1",
-    "typescript": "^3.3.3333",
-    "webpack": "^4.28.4",
-    "webpack-cli": "^3.2.1"
+    "eslint": "^5.16.0"
   },
   "peerDependencies": {
     "eslint": "*",

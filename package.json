@@ -12,6 +12,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.2.0",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.1.0",
+    "@babel/register": "^7.5.5",
     "@berry/pnpify": "workspace:0.1.1",
     "@types/camelcase": "5.2.0",
     "@types/chalk": "2.2.0",
@@ -61,7 +62,6 @@
     "jest": "^24.5.0",
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
-    "ts-node": "^7.0.1",
     "typescript": "^3.3.3333"
   },
   "dependenciesMeta": {

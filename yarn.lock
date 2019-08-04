@@ -1444,6 +1444,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/register@npm:^7.5.5":
+  version: 7.5.5
+  resolution: "@babel/register@npm:7.5.5"
+  dependencies:
+    core-js: "npm:^3.0.0"
+    find-cache-dir: "npm:^2.0.0"
+    lodash: "npm:^4.17.13"
+    mkdirp: "npm:^0.5.1"
+    pirates: "npm:^4.0.0"
+    source-map-support: "npm:^0.5.9"
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 425be9237e196ca12dab221a71034609752e3121fb03938b3776167c9c7cc24b3decb5a74c455b2a7d1217225634ab60a9d5b629af185fd520c23c03122b41ca
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2":
   version: 7.2.0
   resolution: "@babel/runtime@npm:7.2.0"
@@ -1583,13 +1599,13 @@ __metadata:
   dependencies:
     "@berry/core": "workspace:0.1.0"
     "@berry/fslib": "workspace:0.1.1"
+    "@berry/monorepo": "workspace:0.0.0"
     "@berry/pnpify": "workspace:0.1.1"
     chalk: "npm:^2.4.1"
     clipanion: "npm:2.0.0-rc.16"
     filesize: "npm:^4.1.2"
     pnp-webpack-plugin: "npm:^1.4.3"
     ts-loader: "npm:^5.3.3"
-    ts-node: "npm:^7.0.1"
     typescript: "npm:^3.3.3333"
     val-loader: "npm:^1.1.1"
     webpack: "npm:^4.28.4"
@@ -1766,6 +1782,7 @@ __metadata:
     "@babel/plugin-transform-modules-commonjs": "npm:^7.2.0"
     "@babel/preset-env": "npm:^7.3.1"
     "@babel/preset-typescript": "npm:^7.1.0"
+    "@babel/register": "npm:^7.5.5"
     "@berry/pnpify": "workspace:0.1.1"
     "@types/camelcase": "npm:5.2.0"
     "@types/chalk": "npm:2.2.0"
@@ -1815,7 +1832,6 @@ __metadata:
     jest: "npm:^24.5.0"
     jest-environment-node: "npm:^24.5.0"
     jest-junit: "npm:^5.2.0"
-    ts-node: "npm:^7.0.1"
     typescript: "npm:^3.3.3333"
   dependenciesMeta:
     fsevents:
@@ -2073,14 +2089,10 @@ __metadata:
   resolution: "@berry/pnpify@workspace:packages/berry-pnpify"
   dependencies:
     "@berry/fslib": "workspace:0.1.1"
+    "@berry/monorepo": "workspace:0.0.0"
     "@berry/pnp": "workspace:0.1.0"
-    "@types/eslint": "npm:4.16.6"
     cross-spawn: "npm:^6.0.5"
     eslint: "npm:^5.16.0"
-    ts-node: "npm:^7.0.1"
-    typescript: "npm:^3.3.3333"
-    webpack: "npm:^4.28.4"
-    webpack-cli: "npm:^3.2.1"
   peerDependencies:
     eslint: "*"
     typescript: "*"
@@ -4626,7 +4638,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"arrify@npm:^1.0.0, arrify@npm:^1.0.1":
+"arrify@npm:^1.0.1":
   version: 1.0.1
   resolution: "arrify@npm:1.0.1"
   checksum: 5cb17c0ea150389f25fb0155e29ce5045ed3390949fdcdb4cd6ff6bb17f6508d9ef66690578ddf92cb22fc411deaf82143a6b9de936d560c621f1ac2a6191d70
@@ -5889,7 +5901,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"buffer-from@npm:^1.0.0, buffer-from@npm:^1.1.0":
+"buffer-from@npm:^1.0.0":
   version: 1.1.1
   resolution: "buffer-from@npm:1.1.1"
   checksum: 109a4f168ca06a669f736bda50e6deb628c3bdb8e1d4e24904c2eab876ccc92446b0482e31aacde1542b1aef0bc593e23616d1c86b8ed01a5fd11edbdddddc2f
@@ -7082,6 +7094,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"core-js@npm:^3.0.0":
+  version: 3.1.4
+  resolution: "core-js@npm:3.1.4"
+  checksum: 3162c0a487cc814578580612db330992d44ee4e0900ba3189a5f99b791e09bcd22530a021449ee0d6eb2027ac8c026621bb8fcf9577a8dfd3fee3197f86dfb97
+  languageName: node
+  linkType: hard
+
 "core-util-is@npm:1.0.2, core-util-is@npm:~1.0.0":
   version: 1.0.2
   resolution: "core-util-is@npm:1.0.2"
@@ -8059,7 +8078,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"diff@npm:^3.1.0, diff@npm:^3.2.0":
+"diff@npm:^3.2.0":
   version: 3.5.0
   resolution: "diff@npm:3.5.0"
   checksum: a8999fb3a5a6ea4b2d42421791b36069409eac989641782133133c7165898ff8a998401b899002e3bae1d4e33055f8134c7ed6b654d650e3124fe7298f8a2ba1
@@ -14871,13 +14890,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"make-error@npm:^1.1.1":
-  version: 1.3.5
-  resolution: "make-error@npm:1.3.5"
-  checksum: 873e37a0036870553f9d3aa26fcc012fc3707a9468914acdbef86b3e59e6a30ce86ece49cad5fee579cb6b6e33d991fadfde09b93681e02016c6d798e7e74bdc
-  languageName: node
-  linkType: hard
-
 "makeerror@npm:1.0.x":
   version: 1.0.11
   resolution: "makeerror@npm:1.0.11"
@@ -17083,7 +17095,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pirates@npm:^4.0.1":
+"pirates@npm:^4.0.0, pirates@npm:^4.0.1":
   version: 4.0.1
   resolution: "pirates@npm:4.0.1"
   dependencies:
@@ -20086,6 +20098,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"source-map-support@npm:^0.5.9":
+  version: 0.5.13
+  resolution: "source-map-support@npm:0.5.13"
+  dependencies:
+    buffer-from: "npm:^1.0.0"
+    source-map: "npm:^0.6.0"
+  checksum: 28e136eed951e0c81393007a0d3da88c2d35a62193ca4bc0791f381fd5fb108b95e806e69b6b4b3fd1124dfd7b15c01e04d1e2a940352893a522d03f81383a02
+  languageName: node
+  linkType: hard
+
 "source-map-url@npm:^0.4.0":
   version: 0.4.0
   resolution: "source-map-url@npm:0.4.0"
@@ -21374,24 +21396,6 @@ __metadata:
   peerDependencies:
     typescript: "*"
   checksum: f52e69900633f5d8647e7e5ef56e1662ba2201d1a7a8af369b948669a2ee3d33be38eb4605b66e9e8a1d2a7bab0cc395a422136066a01e7873e1ae180da39aa6
-  languageName: node
-  linkType: hard
-
-"ts-node@npm:^7.0.1":
-  version: 7.0.1
-  resolution: "ts-node@npm:7.0.1"
-  dependencies:
-    arrify: "npm:^1.0.0"
-    buffer-from: "npm:^1.1.0"
-    diff: "npm:^3.1.0"
-    make-error: "npm:^1.1.1"
-    minimist: "npm:^1.2.0"
-    mkdirp: "npm:^0.5.1"
-    source-map-support: "npm:^0.5.6"
-    yn: "npm:^2.0.0"
-  bin:
-    ts-node: dist/bin.js
-  checksum: 8147f69e3c6eb57947468e3a946572f171cd511efcc8bff96e57fecc5cf2418b7d265a9a9380851cd935aeb1a671e44518889291ba56f8b5922644313d52b02f
   languageName: node
   linkType: hard
 
@@ -23190,13 +23194,6 @@ __metadata:
   version: 0.1.2
   resolution: "yeast@npm:0.1.2"
   checksum: 01a31cbc08c216310af3a15d6593606d92cef97a8f69c980cf3bd8219e0ee541d0b9523223a00c24d3a964d1f3b953316c891f6560cecf04439356b0748ce06b
-  languageName: node
-  linkType: hard
-
-"yn@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "yn@npm:2.0.0"
-  checksum: 2054c3d800788a39e76669080d8db589af6099c0883894926c215507671a958095b2d92f6fe8216ff6cd694f49011cf1901f1180c3d0067e5e99c365aabc3319
   languageName: node
   linkType: hard
 

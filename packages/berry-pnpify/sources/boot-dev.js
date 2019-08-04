@@ -1,4 +1,5 @@
-process.env.NODE_OPTIONS += ` --require "${require.resolve(`ts-node/register/transpile-only`)}"`;
-require(`ts-node/register/transpile-only`);
+process.env.NODE_OPTIONS += ` --require "${require.resolve(`@berry/monorepo/scripts/setup-ts-execution`)}"`;
+
+require(`@berry/monorepo/scripts/setup-ts-execution`);
 
 require(`./boot`);
