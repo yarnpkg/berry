@@ -1600,7 +1600,7 @@ __metadata:
     "@berry/core": "workspace:0.1.0"
     "@berry/fslib": "workspace:0.1.1"
     "@berry/monorepo": "workspace:0.0.0"
-    "@berry/pnpify": "workspace:0.1.2"
+    "@berry/pnpify": "workspace:0.1.1"
     chalk: "npm:^2.4.1"
     clipanion: "npm:2.0.0-rc.16"
     filesize: "npm:^4.1.2"
@@ -1663,7 +1663,7 @@ __metadata:
     "@berry/plugin-link": "workspace:0.0.0"
     "@berry/plugin-pnp": "workspace:0.0.0"
     "@berry/pnp": "workspace:0.1.0"
-    "@berry/pnpify": "workspace:0.1.2"
+    "@berry/pnpify": "workspace:0.1.1"
     "@berry/shell": "workspace:0.1.0"
     agentkeepalive: "npm:^4.0.2"
     camelcase: "npm:^5.3.1"
@@ -1693,7 +1693,7 @@ __metadata:
   resolution: "@berry/fslib@workspace:packages/berry-fslib"
   dependencies:
     "@berry/libzip": "workspace:0.1.0"
-    "@berry/pnpify": "workspace:0.1.2"
+    "@berry/pnpify": "workspace:0.1.1"
     tmp: "npm:^0.0.33"
     typescript: "npm:^3.3.3333"
   languageName: unknown
@@ -1757,7 +1757,7 @@ __metadata:
   resolution: "@berry/json-proxy@workspace:packages/berry-json-proxy"
   dependencies:
     "@berry/fslib": "workspace:0.1.1"
-    "@berry/pnpify": "workspace:0.1.2"
+    "@berry/pnpify": "workspace:0.1.1"
     typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
@@ -1766,7 +1766,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@berry/libzip@workspace:packages/berry-libzip"
   dependencies:
-    "@berry/pnpify": "workspace:0.1.2"
+    "@berry/pnpify": "workspace:0.1.1"
     typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
@@ -1783,7 +1783,7 @@ __metadata:
     "@babel/preset-env": "npm:^7.3.1"
     "@babel/preset-typescript": "npm:^7.1.0"
     "@babel/register": "npm:^7.5.5"
-    "@berry/pnpify": "workspace:0.1.2"
+    "@berry/pnpify": "workspace:0.1.1"
     "@types/camelcase": "npm:5.2.0"
     "@types/chalk": "npm:2.2.0"
     "@types/cross-spawn": "npm:6.0.0"
@@ -1847,7 +1847,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@berry/parsers@workspace:packages/berry-parsers"
   dependencies:
-    "@berry/pnpify": "workspace:0.1.2"
+    "@berry/pnpify": "workspace:0.1.1"
     js-yaml: "npm:^3.10.0"
     pegjs: "npm:^0.10.0"
     typescript: "npm:^3.3.3333"
@@ -1927,7 +1927,7 @@ __metadata:
   dependencies:
     "@berry/core": "workspace:0.1.0"
     "@berry/fslib": "workspace:0.1.1"
-    "@berry/pnpify": "workspace:0.1.2"
+    "@berry/pnpify": "workspace:0.1.1"
     typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
@@ -2076,7 +2076,7 @@ __metadata:
   dependencies:
     "@berry/builder": "workspace:0.2.7"
     "@berry/fslib": "workspace:0.1.1"
-    "@berry/pnpify": "workspace:0.1.2"
+    "@berry/pnpify": "workspace:0.1.1"
     typescript: "npm:^3.3.3333"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:^3.2.1"
@@ -2084,7 +2084,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/pnpify@workspace:0.1.2, @berry/pnpify@workspace:packages/berry-pnpify":
+"@berry/pnpify@workspace:0.1.1, @berry/pnpify@workspace:packages/berry-pnpify":
   version: 0.0.0-use.local
   resolution: "@berry/pnpify@workspace:packages/berry-pnpify"
   dependencies:
@@ -2112,7 +2112,7 @@ __metadata:
   dependencies:
     "@berry/fslib": "workspace:0.1.1"
     "@berry/parsers": "workspace:0.1.0"
-    "@berry/pnpify": "workspace:0.1.2"
+    "@berry/pnpify": "workspace:0.1.1"
     cross-spawn: "npm:^6.0.5"
     stream-buffers: "npm:^3.0.2"
     tmp: "npm:^0.0.33"
@@ -22271,7 +22271,7 @@ __metadata:
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
     "@berry/fslib": "workspace:0.1.1"
-    "@berry/pnpify": "workspace:0.1.2"
+    "@berry/pnpify": "workspace:0.1.1"
     pnp-webpack-plugin: "npm:^1.4.3"
     ts-loader: "npm:^5.3.3"
     typescript: "npm:^3.3.3333"
