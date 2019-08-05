@@ -5,7 +5,7 @@
   "dependencies": {
     "@berry/core": "workspace:0.1.0",
     "@berry/fslib": "workspace:0.1.1",
-    "@berry/pnpify": "workspace:0.1.1",
+    "@berry/pnpify": "workspace:0.1.2",
     "chalk": "^2.4.1",
     "clipanion": "2.0.0-rc.16",
     "filesize": "^4.1.2",
