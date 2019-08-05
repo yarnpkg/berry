@@ -14,6 +14,9 @@ export default class WorkspacesListCommand extends Command<CommandContext> {
   static usage = Command.Usage({
     category: `Workspace-related commands`,
     description: `list all available workspaces`,
+    details: `
+      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
+    `,
   });
 
   @Command.Path(`workspaces`, `list`)

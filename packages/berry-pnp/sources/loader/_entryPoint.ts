@@ -1,14 +1,14 @@
-import {NodeFS, ZipOpenFS}             from '@berry/fslib';
-import fs                              from 'fs';
-import Module                          from 'module';
-import path                            from 'path';
-import StringDecoder                   from 'string_decoder';
+import {FakeFS, NodeFS, PortablePath, VirtualFS, ZipOpenFS} from '@berry/fslib';
+import fs                                                   from 'fs';
+import Module                                               from 'module';
+import path                                                 from 'path';
+import StringDecoder                                        from 'string_decoder';
 
-import {RuntimeState}                  from '../types';
+import {RuntimeState}                                       from '../types';
 
-import {applyPatch}                    from './applyPatch';
-import {hydrateRuntimeState}           from './hydrateRuntimeState';
-import {makeApi}                       from './makeApi';
+import {applyPatch}                                         from './applyPatch';
+import {hydrateRuntimeState}                                from './hydrateRuntimeState';
+import {makeApi}                                            from './makeApi';
 
 declare var __non_webpack_module__: NodeModule;
 declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState) => RuntimeState;
@@ -19,18 +19,22 @@ declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState) => RuntimeState;
 const localFs: typeof fs = {...fs};
 const nodeFs = new NodeFS(localFs);
 
-const zipOpenFs = new ZipOpenFS({baseFs: nodeFs});
+const runtimeState = $$SETUP_STATE(hydrateRuntimeState);
 
-module.exports = makeApi($$SETUP_STATE(hydrateRuntimeState), {
+let underlyingFs: FakeFS<PortablePath> = new ZipOpenFS({baseFs: nodeFs});
+for (const virtualRoot of runtimeState.virtualRoots)
+  underlyingFs = new VirtualFS(virtualRoot, {baseFs: underlyingFs});
+
+module.exports = makeApi(runtimeState, {
   compatibilityMode: true,
+  fakeFs: underlyingFs,
   pnpapiResolution: path.resolve(__dirname, __filename),
-  fakeFs: zipOpenFs,
 });
 
 module.exports.setup = () => {
   applyPatch(module.exports, {
     compatibilityMode: true,
-    fakeFs: zipOpenFs,
+    fakeFs: underlyingFs,
   });
 };
 

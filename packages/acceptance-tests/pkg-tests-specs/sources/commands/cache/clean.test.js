@@ -40,23 +40,5 @@ describe(`Commands`, () => {
 
       expect(fileCount2).toEqual(fileCount1 - 1);
     }));
-
-    test(`it should remove inactive virtual entries even when their underlying package still exists`, makeTemporaryEnv({
-      dependencies: {
-        [`no-deps`]: `1.0.0`,
-        [`peer-deps`]: `1.0.0`,
-      },
-    }, async ({path, run, source}) => {
-      await run(`install`);
-
-      const fileCount1 = (await readdir(`${path}/.yarn/virtual`)).length;
-
-      await run(`remove`, `peer-deps`);
-      await run(`cache`, `clean`);
-
-      const fileCount2 = (await readdir(`${path}/.yarn/virtual`)).length;
-
-      expect(fileCount2).toEqual(fileCount1 - 1);
-    }));
   });
 });

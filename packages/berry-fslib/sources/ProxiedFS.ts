@@ -1,12 +1,18 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS} from './FakeFS';
-import {WriteFileOptions}                                          from './FakeFS';
+import {WriteFileOptions, WatchCallback, WatchOptions, Watcher}    from './FakeFS';
 import {Path}                                                      from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
   protected abstract readonly baseFs: FakeFS<IP>;
 
+  /**
+   * Convert a path from the user format into what should be fed into the internal FS.
+   */
   protected abstract mapToBase(path: P): IP;
 
+  /**
+   * Convert a path from the format supported by the base FS into the user one.
+   */
   protected abstract mapFromBase(path: IP): P;
 
   resolve(path: P)  {
@@ -189,5 +195,16 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
 
   readlinkSync(p: P) {
     return this.mapFromBase(this.baseFs.readlinkSync(this.mapToBase(p)));
+  }
+
+  watch(p: P, cb?: WatchCallback): Watcher;
+  watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
+  watch(p: P, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
+    return this.baseFs.watch(
+      this.mapToBase(p),
+      // @ts-ignore
+      a,
+      b,
+    );
   }
 }

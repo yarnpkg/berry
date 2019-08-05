@@ -1,9 +1,8 @@
-import {AliasFS, NodeFS, PortablePath, xfs, ppath, npath}        from '@berry/fslib';
+import {AliasFS, VirtualFS, ppath}          from '@berry/fslib';
 
-import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from './Fetcher';
-import {MessageName, ReportError}                                from './Report';
-import * as structUtils                                          from './structUtils';
-import {Locator}                                                 from './types';
+import {Fetcher, FetchOptions, FetchResult} from './Fetcher';
+import * as structUtils                     from './structUtils';
+import {Locator}                            from './types';
 
 export class VirtualFetcher implements Fetcher {
   supports(locator: Locator) {
@@ -15,7 +14,6 @@ export class VirtualFetcher implements Fetcher {
 
   getLocalPath(locator: Locator, opts: FetchOptions) {
     const splitPoint = locator.reference.indexOf(`#`);
-
     if (splitPoint === -1)
       throw new Error(`Invalid virtual package reference`);
 
@@ -27,7 +25,6 @@ export class VirtualFetcher implements Fetcher {
 
   async fetch(locator: Locator, opts: FetchOptions) {
     const splitPoint = locator.reference.indexOf(`#`);
-
     if (splitPoint === -1)
       throw new Error(`Invalid virtual package reference`);
 
@@ -40,67 +37,19 @@ export class VirtualFetcher implements Fetcher {
   }
 
   getLocatorFilename(locator: Locator) {
-    return structUtils.slugifyLocator(locator)
-  }
-
-  getLocatorPath(locator: Locator, opts: MinimalFetchOptions) {
-    const virtualFolder = opts.project.configuration.get(`virtualFolder`);
-    const virtualPath = ppath.resolve(virtualFolder, this.getLocatorFilename(locator));
-
-    return virtualPath;
+    return structUtils.slugifyLocator(locator);
   }
 
   private async ensureVirtualLink(locator: Locator, sourceFetch: FetchResult, opts: FetchOptions) {
-    const virtualPath = this.getLocatorPath(locator, opts);
-
-    const from = ppath.dirname(virtualPath);
     const to = sourceFetch.packageFs.getRealPath();
 
-    let target = ppath.relative(from, to);
+    const virtualFolder = opts.project.configuration.get(`virtualFolder`);
+    const virtualName = this.getLocatorFilename(locator);
+    const virtualPath = VirtualFS.makeVirtualPath(virtualFolder, virtualName, to);
 
-    const fromParse = npath.parse(NodeFS.fromPortablePath(from));
-    const toParse = npath.parse(NodeFS.fromPortablePath(to));
+    // We then use an alias to tell anyone that asks us that we're operating within the virtual folder, while still using the same old fs
+    const aliasFs = new AliasFS(virtualPath, {baseFs: sourceFetch.packageFs, pathUtils: ppath});
 
-    if (fromParse.root !== toParse.root) {
-      if (opts.project.configuration.get(`enableAbsoluteVirtuals`)) {
-        target = to;
-      } else {
-        throw new ReportError(MessageName.CROSS_DRIVE_VIRTUAL_LOCAL, `The virtual folder (${fromParse.root}) must be on the same drive as the local package it references (${toParse.root})`);
-      }
-    }
-
-    // Doesn't need locking, and the folder must exist for the lock to succeed
-    await xfs.mkdirpPromise(ppath.dirname(virtualPath));
-
-    await xfs.lockPromise(virtualPath, async () => {
-      let currentLink;
-      try {
-        currentLink = await xfs.readlinkPromise(virtualPath);
-      } catch (error) {
-        if (error.code !== `ENOENT`) {
-          throw error;
-        }
-      }
-
-      if (currentLink !== undefined && currentLink !== target)
-        throw new Error(`Conflicting virtual paths (current ${currentLink} != new ${target})`);
-
-      if (currentLink === undefined) {
-        // We need to check whether the target is a directory because the
-        // Windows symlinks are typed and we need to create the right one
-        const stat = await xfs.statPromise(to);
-
-        if (stat.isDirectory()) {
-          await xfs.symlinkPromise(`${target}/` as PortablePath, virtualPath);
-        } else {
-          await xfs.symlinkPromise(target, virtualPath);
-        }
-      }
-    });
-
-    return {
-      ...sourceFetch,
-      packageFs: new AliasFS(virtualPath, {baseFs: sourceFetch.packageFs, pathUtils: ppath}),
-    };
+    return {...sourceFetch, packageFs: aliasFs};
   }
 }

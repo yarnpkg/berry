@@ -2,6 +2,7 @@ import fs, {Stats}                                         from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}              from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher}              from './FakeFS';
 import {PortablePath, NativePath, Filename, Path}          from './path';
 import {fromPortablePath, toPortablePath}                  from './path';
 
@@ -236,6 +237,17 @@ export class NodeFS extends BasePortableFakeFS {
 
   readlinkSync(p: PortablePath) {
     return NodeFS.toPortablePath(this.realFs.readlinkSync(NodeFS.fromPortablePath(p)));
+  }
+
+  watch(p: PortablePath, cb?: WatchCallback): Watcher;
+  watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
+  watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
+    return this.realFs.watch(
+      NodeFS.fromPortablePath(p),
+      // @ts-ignore
+      a,
+      b,
+    );
   }
 
   private makeCallback<T>(resolve: (value?: T) => void, reject: (reject: Error) => void) {

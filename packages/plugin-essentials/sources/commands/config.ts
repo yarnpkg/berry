@@ -23,6 +23,8 @@ export default class ConfigCommand extends Command<CommandContext> {
 
       When used together with the \`--why\` flag, the output will also contain the reason why a settings is set a particular way.
 
+      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
+
       Note that the paths settings will be normalized - especially on Windows. It means that paths such as \`C:\\project\` will be transparently shown as \`/mnt/c/project\`.
     `,
     examples: [[

@@ -16,8 +16,13 @@ make_build() {
 }
 
 make_build build:cli berry-cli berry.js
+echo
 make_build build:plugin-exec plugin-exec @berry/plugin-exec.js
+echo
 make_build build:plugin-stage plugin-stage @berry/plugin-stage.js
+echo
 make_build build:plugin-version plugin-version @berry/plugin-version.js
+echo
 make_build build:plugin-typescript plugin-typescript @berry/plugin-typescript.js
+echo
 make_build build:plugin-workspace-tools plugin-workspace-tools @berry/plugin-workspace-tools.js

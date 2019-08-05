@@ -1,13 +1,14 @@
 {
   "name": "@berry/fslib",
-  "version": "0.0.8",
+  "version": "0.1.1",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@berry/libzip": "workspace:0.0.5"
+    "@berry/libzip": "workspace:0.1.0",
+    "tmp": "^0.0.33"
   },
   "devDependencies": {
-    "@berry/pnpify": "workspace:0.0.6",
+    "@berry/pnpify": "workspace:0.1.1",
     "typescript": "^3.3.3333"
   },
   "scripts": {

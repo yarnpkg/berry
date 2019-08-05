@@ -212,11 +212,7 @@ This option is typically meant to be used on your CI and production servers, and
 
 ## YN0029 - `CROSS_DRIVE_VIRTUAL_LOCAL`
 
-The virtual package folder is located on a different disk than files referenced by your project.
-
-For technical reasons, and only on Windows, the virtual package folder (defined through the `virtualFolder` settings) usually cannot be set on a different drive than the files it references (which can potentially come from a whole variety of locations through the use of the `portal:` protocol, but usually come from either your cache and/or your project).
-
-To fix this, either move the virtual package folder to the same drive as the rest of your data or use the hidden `enableAbsoluteVirtuals` settings (this settings is hidden because it will cause Yarn to use absolute symlinks when generating the virtual links, which are likely to cause portability issues across systems and machines).
+This error code is deprecated.
 
 ## YN0030 - `FETCH_FAILED`
 

@@ -43,6 +43,10 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     return [packageName, new Set(packageReferences)] as [string, Set<string>];
   }));
 
+  const virtualRoots = data.virtualRoots.map(virtualRoot => {
+    return ppath.resolve(portablePath, virtualRoot);
+  });
+
   const enableTopLevelFallback = data.enableTopLevelFallback;
   const packageLocationLengths = data.locationLengthData;
 
@@ -54,5 +58,6 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     packageLocationLengths,
     packageLocatorsByLocations,
     packageRegistry,
+    virtualRoots,
   };
 }

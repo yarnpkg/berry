@@ -145,6 +145,8 @@ class PnpInstaller implements Installer {
     if (await this.shouldWarnNodeModules())
       this.opts.report.reportWarning(MessageName.DANGEROUS_NODE_MODULES, `One or more node_modules have been detected; they risk hiding legitimate problems until your application reaches production.`);
 
+    this.trimBlacklistedPackages();
+
     this.packageRegistry.set(null, new Map([
       [null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)],
     ]));
@@ -157,6 +159,7 @@ class PnpInstaller implements Installer {
     const ignorePattern = this.opts.project.configuration.get(`pnpIgnorePattern`);
     const packageRegistry = this.packageRegistry;
     const shebang = this.opts.project.configuration.get(`pnpShebang`);
+    const virtualRoots = [this.normalizeDirectoryPath(this.opts.project.configuration.get(`virtualFolder`))];
 
     if (pnpFallbackMode === `dependencies-only`)
       for (const pkg of this.opts.project.storedPackages.values())
@@ -166,7 +169,7 @@ class PnpInstaller implements Installer {
     const pnpPath = this.opts.project.configuration.get(`pnpPath`);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
 
-    const pnpSettings = {blacklistedLocations, enableTopLevelFallback, fallbackExclusionList, ignorePattern, packageRegistry, shebang};
+    const pnpSettings = {blacklistedLocations, enableTopLevelFallback, fallbackExclusionList, ignorePattern, packageRegistry, shebang, virtualRoots};
 
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
       const loaderFile = generateInlinedScript(pnpSettings);
@@ -237,6 +240,16 @@ class PnpInstaller implements Installer {
     }
 
     return diskInformation;
+  }
+
+  private trimBlacklistedPackages() {
+    for (const packageStore of this.packageRegistry.values()) {
+      for (const [key2, packageInformation] of packageStore) {
+        if (this.blacklistedPaths.has(packageInformation.packageLocation)) {
+          packageStore.delete(key2);
+        }
+      }
+    }
   }
 
   private async shouldWarnNodeModules() {

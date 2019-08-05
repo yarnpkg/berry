@@ -38,7 +38,7 @@ PnPify also is compatible with VSCode! Follow those steps to enable it:
    $> yarn add @berry/pnpify
    ```
 
-2. Run the following command, which will generate a new directory called `tssdk`:
+2. Run the following command, which will generate a new directory called `.vscode/pnpify`:
 
    ```
    $> yarn pnpify --sdk

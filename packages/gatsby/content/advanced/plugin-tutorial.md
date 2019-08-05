@@ -25,7 +25,7 @@ module.exports = {
 };
 ```
 
-We have our plugin, but now we need to register it so that Yarn knows where to find it. To do this, we'll just add an entry within the `.yarnrc` file at the root of the repository:
+We have our plugin, but now we need to register it so that Yarn knows where to find it. To do this, we'll just add an entry within the `.yarnrc.yml` file at the root of the repository:
 
 ```yaml
 plugins:
@@ -64,15 +64,23 @@ Plugins can also register their own commands. To do this, we just have to write 
 ```js
 module.exports = {
   name: `plugin-hello-world`,
-  factory: require => ({
-    default: {
-      commands: [
-        clipanion => clipanion.command(`hello world`).action(({stdout}) => {
-          stdout.write(`This is my very own plugin 😎`);
-        }),
-      ],
-    },
-  })
+  factory: require => {
+    const {Command} = require(`clipanion`);
+
+    class HelloWorldCommand extends Command {
+      async execute() {
+        this.context.stdout.write(`This is my very own plugin 😎\n`);
+      }
+    }
+
+    return {
+      default: {
+        commands: [
+          HelloWorldCommand,
+        ],
+      },
+    };
+  }
 };
 ```
 
@@ -82,19 +90,30 @@ Now, try to run `yarn hello world`. You'll see your message appear! Note that yo
 module.exports = {
   name: `plugin-hello-world`,
   factory: require => {
-    // We must require yup, but we don't have to add it to our dependencies! It's bundled with Yarn itself, and we can access it using the `require` function in parameter.
+    const {Command} = require(`clipanion`);
     const yup = require(`yup`);
 
-    return {
-      default: {
-        commands: [
-          clipanion => clipanion.command(`my login [--email EMAIL]`).validate({
-            email: yup.string().required().email(),
-          }).action(({stdout, email}) => {
-            stdout.write(`Logged to ${email} 💌`);
-          }),
-        ],
-      };
+    class HelloWorldCommand extends Command {
+      async execute() {
+        this.context.stdout.write(`Hello ${this.email} 💌\n`);
+      }
+    }
+
+    // Note: This curious syntax is because @Command.String is actually
+    // a decorator! But since they aren't supported in native JS at the
+    // moment, we need to call them manually.
+    Command.String(`--email`)(HelloWorldCommand.prototype, `email`);
+
+    // Similarly, native JS doesn't support member variable as of today,
+    // hence the awkward writing.
+    HelloWorldCommand.schema = yup.object().shape({
+      email: yup.string().required().email(),
+    });
+
+    default: {
+      commands: [
+        HelloWorldCommand,
+      ],
     },
   })
 };

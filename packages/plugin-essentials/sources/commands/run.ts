@@ -1,7 +1,6 @@
-import {CommandContext, Configuration, Project, Workspace, Cache} from '@berry/core';
-import {LightReport}                                              from '@berry/core';
-import {scriptUtils, structUtils}                                 from '@berry/core';
-import {Command, UsageError}                                      from 'clipanion';
+import {CommandContext, Configuration, Project, Workspace} from '@berry/core';
+import {scriptUtils, structUtils}                          from '@berry/core';
+import {Command, UsageError}                               from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends Command<CommandContext> {
@@ -40,21 +39,10 @@ export default class RunCommand extends Command<CommandContext> {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace, locator} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration);
-
-    const report = await LightReport.start({
-      configuration,
-      stdout: this.context.stdout,
-    }, async (report: LightReport) => {
-      await project.resolveEverything({lockfileOnly: true, cache, report});
-    });
 
     const effectiveLocator = this.topLevel
       ? project.topLevelWorkspace.anchoredLocator
       : locator;
-
-    if (report.hasErrors())
-      return report.exitCode();
 
     // First we check to see whether a script exist inside the current package
     // for the given name
@@ -77,7 +65,7 @@ export default class RunCommand extends Command<CommandContext> {
     // this logic if multiple workspaces share the same script name.
     //
     // We also disable this logic for packages coming from third-parties (ie
-    // not workspaces). Not particular reason except maybe security concerns.
+    // not workspaces). No particular reason except maybe security concerns.
 
     if (!this.topLevel && workspace && this.scriptName.includes(`:`)) {
       let candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {

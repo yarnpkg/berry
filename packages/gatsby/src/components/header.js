@@ -1,10 +1,10 @@
-import styled                          from '@emotion/styled';
-import {Link, graphql, useStaticQuery} from 'gatsby';
-import PropTypes                       from 'prop-types';
-import React, {useState}               from 'react';
+import styled                                      from '@emotion/styled';
+import {Link, graphql, useStaticQuery, withPrefix} from 'gatsby';
+import PropTypes                                   from 'prop-types';
+import React, {useState}                           from 'react';
 
-import Logo                            from './logo';
-import {ifDesktop, ifMobile}           from './responsive';
+import Logo                                        from './logo';
+import {ifDesktop, ifMobile}                       from './responsive';
 
 const HeaderContainer = styled.div`
   ${ifDesktop} {
@@ -17,10 +17,13 @@ const HeaderContainer = styled.div`
 const NewsContainer = styled.a`
   display: block;
 
-  padding: 0.8em 1em;
+  height: 2.5em;
+
+  padding: 0 1em;
 
   font-weight: light;
   text-decoration: none;
+  line-height: 2.5em;
 
   background: #2188b6;
   color: rgba(255, 255, 255, 0.8);
@@ -130,10 +133,17 @@ const MenuEntry = styled.div`
 `;
 
 const isActive = ({ href, location }) => {
-  return ((href === '/' && ['/', '/package'].includes(location.pathname)) ||
-    (href !== '/' && location.pathname.startsWith(href))) ?
-      { className: 'active' } :
-      null;
+  const homeUrl = withPrefix('/');
+  const packageInfoUrl = withPrefix('/package/');
+
+  // Make all menu links (except home) active when itself or deeper routes are be current
+  const isMenuLinkActive = href !== homeUrl && location.pathname.startsWith(href);
+
+  // Make home menu active when home or package info routes are current
+  const isHomeMenuLinkActive = href === homeUrl
+      && [homeUrl, packageInfoUrl].includes(location.pathname)
+
+  return isMenuLinkActive || isHomeMenuLinkActive ? { className: 'active' } : null;
 };
 
 const Header = ({ children }) => {
