@@ -2102,7 +2102,7 @@ __metadata:
     typescript:
       optional: true
   bin:
-    pnpify: ./sources/boot-dev.js
+    pnpify: ./sources/boot-cli-dev.js
   languageName: unknown
   linkType: soft
 

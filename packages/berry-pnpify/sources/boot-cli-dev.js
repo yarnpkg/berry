@@ -2,4 +2,4 @@ process.env.NODE_OPTIONS += ` --require ${require.resolve(`@berry/monorepo/scrip
 
 require(`@berry/monorepo/scripts/setup-ts-execution`);
 
-module.exports = require(`./index`);
+require(`./cli`);

@@ -1,8 +1,9 @@
 {
   "name": "@berry/pnpify",
   "version": "0.1.1",
-  "main": "./sources/index.ts",
-  "bin": "./sources/boot-dev.js",
+  "version:next": "0.1.2",
+  "main": "./sources/boot-dev.js",
+  "bin": "./sources/boot-cli-dev.js",
   "sideEffects": false,
   "dependencies": {
     "@berry/fslib": "workspace:0.1.1",
@@ -32,7 +33,7 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "bin": "./lib/boot.js",
+    "bin": "./lib/cli.js",
     "types": "./lib/index.d.ts"
   },
   "files": [
