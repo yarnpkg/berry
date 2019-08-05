@@ -1,12 +1,14 @@
 import {Hooks as CoreHooks, Plugin, Project, SettingsType}               from '@berry/core';
-import {NodeFS, xfs, PortablePath}                                       from '@berry/fslib';
+import {NodeFS, xfs, PortablePath, ppath, Filename}                      from '@berry/fslib';
 import {Hooks as StageHooks}                                             from '@berry/plugin-stage';
 
 import {PnpLinker}                                                       from './PnpLinker';
 import unplug                                                            from './commands/unplug';
 
+export const getPnpPath = (project: Project) => ppath.join(project.cwd, `.pnp.js` as Filename);
+
 async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
-  const pnpPath: PortablePath = project.configuration.get(`pnpPath`);
+  const pnpPath: PortablePath = getPnpPath(project);
   const pnpRequire = `--require ${NodeFS.fromPortablePath(pnpPath)}`;
 
   if (xfs.existsSync(pnpPath)) {
@@ -21,7 +23,7 @@ async function setupScriptEnvironment(project: Project, env: {[key: string]: str
 
 function populateYarnPaths(project: Project, definePath: (path: string | null) => void) {
   definePath(project.configuration.get(`pnpDataPath`));
-  definePath(project.configuration.get(`pnpPath`));
+  definePath(getPnpPath(project));
   definePath(project.configuration.get(`pnpUnpluggedFolder`));
 }
 
@@ -63,11 +65,6 @@ const plugin: Plugin = {
       description: `Path of the file where the PnP data (used by the loader) must be written`,
       type: SettingsType.ABSOLUTE_PATH,
       default: `./.pnp.data.json`,
-    },
-    pnpPath: {
-      description: `Path of the file where the PnP loader must be written`,
-      type: SettingsType.ABSOLUTE_PATH,
-      default: `./.pnp.js`,
     },
   },
   linkers: [
