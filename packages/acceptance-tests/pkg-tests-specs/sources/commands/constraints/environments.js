@@ -10,7 +10,7 @@ exports.environments = {
     await writeJson(`${path}/package.json`, {
       dependencies: {
         [`no-deps`]: `1.0.0`,
-      }
+      },
     });
   },
   [`two regular dependencies`]: async path => {

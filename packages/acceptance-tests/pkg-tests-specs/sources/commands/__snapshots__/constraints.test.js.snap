@@ -1,0 +1,595 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Commands constraints test (empty project / empty constraints) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_field (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_field (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_field (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_field (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / empty constraints) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_field (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_field (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_field (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_field (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / empty constraints) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_field (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_field (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_field (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_field (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / empty constraints) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_field (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_field (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_field (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_field (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / empty constraints) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_field (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_field (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_field (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_field (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / empty constraints) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_field (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_field (extraneous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_field (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_field (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Unknown Syntax Error: Extraneous positional argument (\\"check\\").
+
+$ yarn constraints [--fix]
+",
+}
+`;
