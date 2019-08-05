@@ -463,7 +463,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@typescript-eslint/parser", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:1.6.0"],
             ["babel-jest", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:24.5.0"],
             ["eslint", "npm:5.16.0"],
-            ["eslint-plugin-arca", "npm:0.8.1"],
+            ["eslint-plugin-arca", "npm:0.8.3"],
             ["github-api", "npm:3.2.2"],
             ["jest", "npm:24.5.0"],
             ["jest-environment-node", "npm:24.5.0"],
@@ -2907,7 +2907,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@typescript-eslint/parser", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:1.6.0"],
             ["babel-jest", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:24.5.0"],
             ["eslint", "npm:5.16.0"],
-            ["eslint-plugin-arca", "npm:0.8.1"],
+            ["eslint-plugin-arca", "npm:0.8.3"],
             ["github-api", "npm:3.2.2"],
             ["jest", "npm:24.5.0"],
             ["jest-environment-node", "npm:24.5.0"],
@@ -10165,10 +10165,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["eslint-plugin-arca", [
-        ["npm:0.8.1", {
-          "packageLocation": "./.yarn/cache/eslint-plugin-arca-npm-0.8.1-0334b926a3e7fd567b7dd513a05827a4382fc808c1cbb8cf1269b45a60bdb4a7.zip/node_modules/eslint-plugin-arca/",
+        ["npm:0.8.3", {
+          "packageLocation": "./.yarn/cache/eslint-plugin-arca-npm-0.8.3-ca2f46c22f507ae4725a597615ec0b9452e7fe61749d787f899bbeb0fa593e69.zip/node_modules/eslint-plugin-arca/",
           "packageDependencies": [
-            ["eslint-plugin-arca", "npm:0.8.1"],
+            ["eslint-plugin-arca", "npm:0.8.3"],
             ["requireindex", "npm:1.1.0"]
           ]
         }]
@@ -28448,6 +28448,7 @@ exports.hydrateRuntimeState = hydrateRuntimeState;
 
 "use strict";
 
+/// <reference path="../../types/module/index.d.ts"/>
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
