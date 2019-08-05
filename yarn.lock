@@ -1827,7 +1827,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^1.6.0"
     babel-jest: "npm:^24.5.0"
     eslint: "npm:^5.16.0"
-    eslint-plugin-arca: "npm:^0.8.1"
+    eslint-plugin-arca: "npm:^0.8.3"
     github-api: "npm:^3.2.2"
     jest: "npm:^24.5.0"
     jest-environment-node: "npm:^24.5.0"
@@ -8708,12 +8708,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-arca@npm:^0.8.1":
-  version: 0.8.1
-  resolution: "eslint-plugin-arca@npm:0.8.1"
+"eslint-plugin-arca@npm:^0.8.3":
+  version: 0.8.3
+  resolution: "eslint-plugin-arca@npm:0.8.3"
   dependencies:
     requireindex: "npm:~1.1.0"
-  checksum: d8a4d6c4cfbd6075ec9c26ce8206ae763bdc3f7b57b3224f45285a83b0ebc0f9e9be539c45abc5cd1d9840187f1beda29977dca13c2248957c588bbccd88622a
+  checksum: b898023388c666a4d85b464abcc33e334bb149b72b91aa2d1287c80fc5d642e4b2269dc6a288794b054869edd41cbb6cd40faf5a8aee7fa0062decfbae824aef
   languageName: node
   linkType: hard
 

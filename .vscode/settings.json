@@ -9,5 +9,6 @@
       "autoFix": true
     }
   ],
+  "eslint.autoFixOnSave": true,
   "eslint.nodePath": ".vscode/pnpify"
 }
