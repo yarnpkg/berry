@@ -38,7 +38,6 @@ Object {
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpFallbackMode\\",\\"effective\\":\\"none\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the generated PnP loader will follow the top-level fallback rule\\",\\"type\\":\\"STRING\\",\\"default\\":\\"dependencies-only\\"}
 {\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
 {\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -87,7 +86,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpFallbackMode - If true, the generated PnP loader will follow the top-level fallback rule - 'none'
 ➤ YN0000: pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
-➤ YN0000: pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
@@ -137,7 +135,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpFallbackMode - <environment> - 'none'
 ➤ YN0000: pnpIgnorePattern - <default> - null
-➤ YN0000: pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - <default> - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - <default> - false
@@ -187,7 +184,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpFallbackMode - 'none'
 ➤ YN0000: pnpIgnorePattern - null
-➤ YN0000: pnpPath - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - false
@@ -237,7 +233,6 @@ Object {
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpFallbackMode\\",\\"effective\\":\\"none\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the generated PnP loader will follow the top-level fallback rule\\",\\"type\\":\\"STRING\\",\\"default\\":\\"dependencies-only\\"}
 {\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
 {\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -286,7 +281,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpFallbackMode - If true, the generated PnP loader will follow the top-level fallback rule - 'none'
 ➤ YN0000: pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
-➤ YN0000: pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
@@ -336,7 +330,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpFallbackMode - <environment> - 'none'
 ➤ YN0000: pnpIgnorePattern - <default> - null
-➤ YN0000: pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - <default> - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - <default> - false
@@ -386,7 +379,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpFallbackMode - 'none'
 ➤ YN0000: pnpIgnorePattern - null
-➤ YN0000: pnpPath - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - false
@@ -436,7 +428,6 @@ Object {
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpFallbackMode\\",\\"effective\\":\\"none\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the generated PnP loader will follow the top-level fallback rule\\",\\"type\\":\\"STRING\\",\\"default\\":\\"dependencies-only\\"}
 {\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
 {\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -485,7 +476,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpFallbackMode - If true, the generated PnP loader will follow the top-level fallback rule - 'none'
 ➤ YN0000: pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
-➤ YN0000: pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
@@ -535,7 +525,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpFallbackMode - <environment> - 'none'
 ➤ YN0000: pnpIgnorePattern - <default> - null
-➤ YN0000: pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - <default> - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - <default> - false
@@ -585,7 +574,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpFallbackMode - 'none'
 ➤ YN0000: pnpIgnorePattern - null
-➤ YN0000: pnpPath - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - false
@@ -635,7 +623,6 @@ Object {
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpFallbackMode\\",\\"effective\\":\\"none\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the generated PnP loader will follow the top-level fallback rule\\",\\"type\\":\\"STRING\\",\\"default\\":\\"dependencies-only\\"}
 {\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
 {\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -684,7 +671,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpFallbackMode - If true, the generated PnP loader will follow the top-level fallback rule - 'none'
 ➤ YN0000: pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
-➤ YN0000: pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
@@ -734,7 +720,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpFallbackMode - <environment> - 'none'
 ➤ YN0000: pnpIgnorePattern - <default> - null
-➤ YN0000: pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - <default> - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - <default> - false
@@ -784,7 +769,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpFallbackMode - 'none'
 ➤ YN0000: pnpIgnorePattern - null
-➤ YN0000: pnpPath - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - false
@@ -834,7 +818,6 @@ Object {
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpFallbackMode\\",\\"effective\\":\\"none\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the generated PnP loader will follow the top-level fallback rule\\",\\"type\\":\\"STRING\\",\\"default\\":\\"dependencies-only\\"}
 {\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
 {\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -883,7 +866,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpFallbackMode - If true, the generated PnP loader will follow the top-level fallback rule - 'none'
 ➤ YN0000: pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
-➤ YN0000: pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
@@ -933,7 +915,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpFallbackMode - <environment> - 'none'
 ➤ YN0000: pnpIgnorePattern - <default> - null
-➤ YN0000: pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - <default> - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - <default> - false
@@ -983,7 +964,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpFallbackMode - 'none'
 ➤ YN0000: pnpIgnorePattern - null
-➤ YN0000: pnpPath - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - false
@@ -1033,7 +1013,6 @@ Object {
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpFallbackMode\\",\\"effective\\":\\"none\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the generated PnP loader will follow the top-level fallback rule\\",\\"type\\":\\"STRING\\",\\"default\\":\\"dependencies-only\\"}
 {\\"key\\":\\"pnpIgnorePattern\\",\\"effective\\":null,\\"description\\":\\"Regex defining a pattern of files that should use the classic resolution\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
 {\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -1082,7 +1061,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpFallbackMode - If true, the generated PnP loader will follow the top-level fallback rule - 'none'
 ➤ YN0000: pnpIgnorePattern - Regex defining a pattern of files that should use the classic resolution - null
-➤ YN0000: pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
@@ -1132,7 +1110,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpFallbackMode - <environment> - 'none'
 ➤ YN0000: pnpIgnorePattern - <default> - null
-➤ YN0000: pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - <default> - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - <default> - false
@@ -1182,7 +1159,6 @@ Object {
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpFallbackMode - 'none'
 ➤ YN0000: pnpIgnorePattern - null
-➤ YN0000: pnpPath - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferInteractive - false
