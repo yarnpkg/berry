@@ -30,7 +30,7 @@
     "@types/inquirer": "^0.0.43",
     "@types/joi": "^13.6.0",
     "@types/lockfile": "^1.0.0",
-    "@types/lodash.get": "^4.4.6",
+    "@types/lodash": "^4.14.136",
     "@types/micromatch": "^3.1.0",
     "@types/mkdirp": "^0.5.2",
     "@types/node": "^10.12.0",
