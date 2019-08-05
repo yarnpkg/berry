@@ -1,6 +1,6 @@
 import {Project}        from '@berry/core';
 import {PortablePath}   from '@berry/fslib';
-import getPath          from 'lodash.get';
+import getPath          from 'lodash/get';
 import pl               from 'tau-prolog';
 
 // eslint-disable-next-line @typescript-eslint/camelcase

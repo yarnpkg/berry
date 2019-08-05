@@ -5,6 +5,19 @@ import pl                                                                       
 
 import {linkProjectToSession}                                                                 from './tauModule';
 
+export type EnforcedDependency = {
+  workspace: Workspace,
+  dependencyIdent: Ident,
+  dependencyRange: string | null,
+  dependencyType: DependencyType,
+};
+
+export type EnforcedField = {
+  workspace: Workspace,
+  fieldPath: string,
+  fieldValue: string | null,
+};
+
 export const enum DependencyType {
   Dependencies = 'dependencies',
   DevDependencies = 'devDependencies',
@@ -113,11 +126,27 @@ class Session {
   }
 }
 
-function parseLink(link: pl.Link): string|null {
+function parseLink(link: pl.Link): string | null {
   if (link.id === `null`) {
     return null;
   } else {
     return `${link.toJavaScript()}`;
+  }
+}
+
+function parseLinkToJson(link: pl.Link): string | null {
+  if (link.id === `null`) {
+    return null;
+  } else {
+    const val = link.toJavaScript();
+    if (typeof val !== `string`)
+      return JSON.stringify(val);
+
+    try {
+      return JSON.stringify(JSON.parse(val));
+    } catch {
+      return JSON.stringify(val);
+    }
   }
 }
 
@@ -201,12 +230,7 @@ export class Constraints {
   }
 
   private async genEnforcedDependencies(session: Session) {
-    let enforcedDependencies: Array<{
-      workspace: Workspace,
-      dependencyIdent: Ident,
-      dependencyRange: string | null,
-      dependencyType: DependencyType,
-    }> = [];
+    let enforcedDependencies: Array<EnforcedDependency> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
       const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
@@ -231,16 +255,12 @@ export class Constraints {
   }
 
   private async genEnforcedFields(session: Session) {
-    let enforcedFields: Array<{
-      workspace: Workspace,
-      fieldPath: string,
-      fieldValue: string|null,
-    }> = [];
+    let enforcedFields: Array<EnforcedField> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), gen_enforced_field(WorkspaceCwd, FieldPath, FieldValue).`)) {
       const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
       const fieldPath = parseLink(answer.links.FieldPath);
-      const fieldValue = parseLink(answer.links.FieldValue);
+      let fieldValue = parseLinkToJson(answer.links.FieldValue);
 
       if (workspaceCwd === null || fieldPath === null)
         throw new Error(`Invalid rule`);

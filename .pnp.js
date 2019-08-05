@@ -436,7 +436,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/inquirer", "npm:0.0.43"],
             ["@types/joi", "npm:13.6.3"],
             ["@types/lockfile", "npm:1.0.0"],
-            ["@types/lodash.get", "npm:4.4.6"],
+            ["@types/lodash", "npm:4.14.136"],
             ["@types/micromatch", "npm:3.1.0"],
             ["@types/mkdirp", "npm:0.5.2"],
             ["@types/node", "npm:10.12.18"],
@@ -2880,7 +2880,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/inquirer", "npm:0.0.43"],
             ["@types/joi", "npm:13.6.3"],
             ["@types/lockfile", "npm:1.0.0"],
-            ["@types/lodash.get", "npm:4.4.6"],
+            ["@types/lodash", "npm:4.14.136"],
             ["@types/micromatch", "npm:3.1.0"],
             ["@types/mkdirp", "npm:0.5.2"],
             ["@types/node", "npm:10.12.18"],
@@ -2937,7 +2937,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/fslib", "workspace:packages/berry-fslib"],
             ["clipanion", "npm:2.0.0-rc.16"],
             ["inquirer", "npm:6.2.1"],
-            ["lodash.get", "npm:4.4.2"],
+            ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.49"]
           ]
@@ -4640,19 +4640,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["@types/lodash", [
-        ["npm:4.14.123", {
-          "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.123-c9d4ccb992ade10a2c0cbf33ab5f8dec69f7a6b1857c74e761b2d02eecf6355d.zip/node_modules/@types/lodash/",
+        ["npm:4.14.136", {
+          "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.136-ec0c36222916db2573581e8521427894274a34e39d41b928edebad46e4ed8ed3.zip/node_modules/@types/lodash/",
           "packageDependencies": [
-            ["@types/lodash", "npm:4.14.123"]
-          ]
-        }]
-      ]],
-      ["@types/lodash.get", [
-        ["npm:4.4.6", {
-          "packageLocation": "./.yarn/cache/@types-lodash.get-npm-4.4.6-6d10cfdb339bcfa15c1b34009448ad172d832deb03038988e7a7df7cef333575.zip/node_modules/@types/lodash.get/",
-          "packageDependencies": [
-            ["@types/lodash.get", "npm:4.4.6"],
-            ["@types/lodash", "npm:4.14.123"]
+            ["@types/lodash", "npm:4.14.136"]
           ]
         }]
       ]],
@@ -28448,6 +28439,7 @@ exports.hydrateRuntimeState = hydrateRuntimeState;
 
 "use strict";
 
+/// <reference path="../../types/module/index.d.ts"/>
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
