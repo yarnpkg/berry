@@ -1,21 +1,18 @@
 node_modules
 yarn-error.log
 
-.vscode/**
 .history
 
 junit.xml
 
+# This is the Yarn build state; it's local to each clone
 /.yarn/build-state.yml
 
 # Those files are meant to be local-only
 /packages/*/bundles
 
 # Those folders are meant to contain the prepack build artifacts; we don't commit them
-lib
+/packages/*/lib
 
 # We check-in the PnP hook because it would be heavy to regenerate it before each bundle build
 !/packages/berry-pnp/lib/hook.js
-
-!/.vscode/pnpify
-!/.vscode/pnpify/**/lib
