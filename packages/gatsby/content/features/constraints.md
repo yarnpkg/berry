@@ -100,7 +100,7 @@ The `FieldPath` can target properties of properties via `.` notation, e.g. a `Fi
 
 ### Constraint predicates
 
-The following predicates will affect the behavior of the `yarn constraints check` and `yarn constraints fix` commands.
+The following predicates will affect the behavior of the `yarn constraints` and `yarn constraints --fix` commands.
 
 The parameters to the predicates are prefixed with `+` and `-`. These have the same meaning as in the query predicates. In this context they mean
 
@@ -120,25 +120,7 @@ gen_enforced_dependency(
 
 The `gen_enforced_dependency` rule offers a neat way to inform the package manager that a specific workspace MUST either depend on a specific range of a specific dependency (if `DependencyRange` is non-null) or not depend at all on the dependency (if `DependencyRange` is null) in the `DependencyType` dependencies block.
 
-- **This predicate allows the package manager to autofix the problems.**
-
-#### `gen_invalid_dependency/4`
-
-```prolog
-gen_invalid_dependency(
-  +WorkspaceCwd,
-  -DependencyIdent,
-  +DependencyType,
-  -Reason
-).
-```
-
-The `gen_invalid_dependency` predicate is used to inform the package manager that a specific workspace cannot depend on its current version of the package defined by `DependencyIdent` in the `DependencyType` dependencies, the `Reason` parameter being offered as a way to express why the dependency is invalid.
-
-Contrary to `gen_enforced_dependency`, `gen_invalid_dependency` doesn't allow the package manager to autofix the problem. This makes `gen_invalid_dependency` suitable in case where the right fix would be ambiguous, and where the intervention of a human operator would be required (for example when two workspaces depend on two different versions of a same package).
-
-- The errors reported by this predicate **cannot** be auto-fixed
-- The reason parameter can be any string of your liking
+Running `yarn constraints --fix` will instruct Yarn to fix the detected errors the best it can, but in some cases ambiguities will arise. Those will have to be solved manually, although Yarn will help you in the process.
 
 #### `gen_enforced_field/3`
 
@@ -150,7 +132,25 @@ gen_enforced_field(
 ).
 ```
 
-The `gen_enforced_field` predicate tells the package manager that a specific workspace must have the given `FieldValue` in the manifest via the `FieldPath`. A `FieldValue` of `null` means the field has to be absent.
+The `gen_enforced_field` predicate tells the package manager that a specific workspace must have the given `FieldValue` in the manifest via the `FieldPath`. A `FieldValue` of `null` means the field has to be absent:
+
+```
+? gen_enforced_field(WorkspaceCwd, FieldPath, null).
+```
+
+Note that the value will be interpreted in JSON if possible, or as a regular string otherwise. So if you need to put a `null` value into a field, use the JSON syntax:
+
+```
+? gen_enforced_field(WorkspaceCwd, FieldPath, 'null').
+```
+
+Finally, if you need to put a string containing `null` into a field, use the JSON string syntax:
+
+```
+? gen_enforced_field(WorkspaceCwd, FieldPath, '"null"').
+```
+
+Running `yarn constraints --fix` will instruct Yarn to fix the detected errors the best it can, but in some cases ambiguities will arise. Those will have to be solved manually, although Yarn will help you in the process.
 
 ## Constraint recipes
 
