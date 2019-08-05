@@ -5,7 +5,7 @@ import {CwdFS, FakeFS, NodeFS, xfs, PortablePath, ppath, toFilename}            
 import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@berry/pnp';
 import {UsageError}                                                                                          from 'clipanion';
 
-import {getPnpPath}                                                                                          from '.';
+import {getPnpPath}                                                                                          from './index';
 
 // Some packages do weird stuff and MUST be unplugged. I don't like them.
 const FORCED_UNPLUG_PACKAGES = new Set([

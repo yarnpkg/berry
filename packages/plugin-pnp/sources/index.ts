@@ -22,8 +22,9 @@ async function setupScriptEnvironment(project: Project, env: {[key: string]: str
 }
 
 function populateYarnPaths(project: Project, definePath: (path: string | null) => void) {
-  definePath(project.configuration.get(`pnpDataPath`));
   definePath(getPnpPath(project));
+
+  definePath(project.configuration.get(`pnpDataPath`));
   definePath(project.configuration.get(`pnpUnpluggedFolder`));
 }
 
