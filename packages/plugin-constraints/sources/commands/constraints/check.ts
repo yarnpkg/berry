@@ -1,10 +1,10 @@
-import {CommandContext, Configuration, Project}                      from '@berry/core';
-import {MessageName, StreamReport}                                   from '@berry/core';
-import {structUtils}                                                 from '@berry/core';
-import {Command}                                                     from 'clipanion';
-import getPath                                                       from 'lodash.get';
+import {CommandContext, Configuration, IdentHash, Ident, Project, Workspace} from '@berry/core';
+import {MessageName, StreamReport, AllDependencies}                          from '@berry/core';
+import {structUtils}                                                         from '@berry/core';
+import {Command}                                                             from 'clipanion';
+import getPath                                                               from 'lodash.get';
 
-import {Constraints}                                                 from '../../Constraints';
+import {Constraints}                                                         from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsCheckCommand extends Command<CommandContext> {
@@ -34,27 +34,55 @@ export default class ConstraintsCheckCommand extends Command<CommandContext> {
     }, async report => {
       const result = await constraints.process();
 
-      for (const {workspace, dependencyIdent, dependencyRange, dependencyType} of result.enforcedDependencies) {
-        const dependencyDescriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
+      const allIdents: Map<IdentHash, Ident> = new Map();
+      const byWorkspaces: Map<Workspace, Map<IdentHash, Map<AllDependencies, Set<string | null>>>> = new Map();
 
-        if (dependencyRange !== null) {
-          if (!dependencyDescriptor) {
-            report.reportError(MessageName.CONSTRAINTS_MISSING_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} (via ${structUtils.prettyRange(configuration, dependencyRange)}) in ${dependencyType}, but doesn't`);
-          } else if (dependencyDescriptor.range !== dependencyRange) {
-            report.reportError(MessageName.CONSTRAINTS_INCOMPATIBLE_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} via ${structUtils.prettyRange(configuration, dependencyRange)} in ${dependencyType}, but uses ${structUtils.prettyRange(configuration, dependencyDescriptor.range)} instead`);
-          }
-        } else {
-          if (dependencyDescriptor) {
-            report.reportError(MessageName.CONSTRAINTS_EXTRANEOUS_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} has an extraneous dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)} in ${dependencyType}`);
-          }
-        }
+      for (const {workspace, dependencyIdent, dependencyRange, dependencyType} of result.enforcedDependencies) {
+        let byWorkspacesStore = byWorkspaces.get(workspace);
+        if (typeof byWorkspacesStore === `undefined`)
+          byWorkspaces.set(workspace, byWorkspacesStore = new Map());
+
+        let byIdentStore = byWorkspacesStore.get(dependencyIdent.identHash);
+        if (typeof byIdentStore === `undefined`)
+          byWorkspacesStore.set(dependencyIdent.identHash, byIdentStore = new Map());
+
+        let byDependencyTypeStore = byIdentStore.get(dependencyType);
+        if (typeof byDependencyTypeStore === `undefined`)
+          byIdentStore.set(dependencyType, byDependencyTypeStore = new Set());
+
+        allIdents.set(dependencyIdent.identHash, dependencyIdent);
+        byDependencyTypeStore.add(dependencyRange);
       }
 
-      for (const {workspace, dependencyIdent, dependencyType, reason} of result.invalidDependencies) {
-        const dependencyDescriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
+      for (const [workspace, byWorkspacesStore] of byWorkspaces) {
+        for (const [identHash, byIdentStore] of byWorkspacesStore) {
+          const dependencyIdent = allIdents.get(identHash);
+          if (typeof dependencyIdent === `undefined`)
+            throw new Error(`Assertion failed: The ident should have been registered`);
 
-        if (dependencyDescriptor) {
-          report.reportError(MessageName.CONSTRAINTS_INVALID_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} has an invalid dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)} in ${dependencyType} (invalid because ${reason})`);
+          for (const [dependencyType, byDependencyTypeStore] of byIdentStore) {
+            const dependencyRanges = [...byDependencyTypeStore];
+            if (byDependencyTypeStore.size > 2) {
+              report.reportError(MessageName.CONSTRAINTS_MISSING_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} via conflicting dependencies ${structUtils.prettyRange(configuration, String(dependencyRanges[0]))} and  ${structUtils.prettyRange(configuration, String(dependencyRanges[1]))} in ${dependencyType}`);
+            } else if (byDependencyTypeStore.size > 1) {
+              report.reportError(MessageName.CONSTRAINTS_MISSING_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} via conflicting dependencies ${dependencyRanges.slice(0, -1).map(dependencyRange => structUtils.prettyRange(configuration, String(dependencyRange))).join(`, `)}, and ${structUtils.prettyRange(configuration, String(dependencyRanges[dependencyRanges.length - 1]))} in ${dependencyType}`);
+            } else {
+              const dependencyDescriptor = workspace.manifest[dependencyType].get(dependencyIdent.identHash);
+              const [dependencyRange] = dependencyRanges;
+
+              if (dependencyRange !== null) {
+                if (!dependencyDescriptor) {
+                  report.reportError(MessageName.CONSTRAINTS_MISSING_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} (via ${structUtils.prettyRange(configuration, dependencyRange)}) in ${dependencyType}, but doesn't`);
+                } else if (dependencyDescriptor.range !== dependencyRange) {
+                  report.reportError(MessageName.CONSTRAINTS_INCOMPATIBLE_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} via ${structUtils.prettyRange(configuration, dependencyRange)} in ${dependencyType}, but uses ${structUtils.prettyRange(configuration, dependencyDescriptor.range)} instead`);
+                }
+              } else {
+                if (dependencyDescriptor) {
+                  report.reportError(MessageName.CONSTRAINTS_EXTRANEOUS_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} has an extraneous dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)} in ${dependencyType}`);
+                }
+              }
+            }
+          }
         }
       }
 

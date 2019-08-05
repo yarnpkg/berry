@@ -23,6 +23,7 @@ export default class ConstraintsFixCommand extends Command<CommandContext> {
 
   @Command.Path(`constraints`, `fix`)
   async execute() {
+    /*
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
@@ -94,5 +95,6 @@ export default class ConstraintsFixCommand extends Command<CommandContext> {
     }
 
     return globalExitCode;
+    */
   }
 }

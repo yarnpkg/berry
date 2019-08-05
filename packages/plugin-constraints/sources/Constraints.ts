@@ -177,9 +177,6 @@ export class Constraints {
     // (Cwd, DependencyIdent, DependencyRange, DependencyType)
     declarations += `gen_enforced_dependency(_, _, _, _) :- false.\n`;
 
-    // (Cwd, DependencyIdent, DependencyType, Reason)
-    declarations += `gen_invalid_dependency(_, _, _, _) :- false.\n`;
-
     // (Cwd, Path, Value)
     declarations += `gen_enforced_field(_, _, _) :- false.\n`;
 
@@ -197,6 +194,13 @@ export class Constraints {
   async process() {
     const session = this.createSession();
 
+    return {
+      enforcedDependencies: await this.genEnforcedDependencies(session),
+      enforcedFields: await this.genEnforcedFields(session),
+    };
+  }
+
+  private async genEnforcedDependencies(session: Session) {
     let enforcedDependencies: Array<{
       workspace: Workspace,
       dependencyIdent: Ident,
@@ -219,39 +223,14 @@ export class Constraints {
       enforcedDependencies.push({workspace, dependencyIdent, dependencyRange, dependencyType});
     }
 
-    enforcedDependencies = miscUtils.sortMap(enforcedDependencies, [
+    return miscUtils.sortMap(enforcedDependencies, [
       ({dependencyRange}) => dependencyRange !== null ? `0` : `1`,
       ({workspace}) => structUtils.stringifyIdent(workspace.locator),
       ({dependencyIdent}) => structUtils.stringifyIdent(dependencyIdent),
     ]);
+  }
 
-    let invalidDependencies: Array<{
-      workspace: Workspace,
-      dependencyIdent: Ident,
-      dependencyType: DependencyType,
-      reason: string | null,
-    }> = [];
-
-    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, Reason).`)) {
-      const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
-      const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
-      const dependencyType = parseLink(answer.links.DependencyType) as DependencyType;
-      const reason = parseLink(answer.links.Reason);
-
-      if (workspaceCwd === null || dependencyRawIdent === null)
-        throw new Error(`Invalid rule`);
-
-      const workspace = this.project.getWorkspaceByCwd(workspaceCwd);
-      const dependencyIdent = structUtils.parseIdent(dependencyRawIdent);
-
-      invalidDependencies.push({workspace, dependencyIdent, dependencyType, reason});
-    }
-
-    invalidDependencies = miscUtils.sortMap(invalidDependencies, [
-      ({workspace}) => structUtils.stringifyIdent(workspace.locator),
-      ({dependencyIdent}) => structUtils.stringifyIdent(dependencyIdent),
-    ]);
-
+  private async genEnforcedFields(session: Session) {
     let enforcedFields: Array<{
       workspace: Workspace,
       fieldPath: string,
@@ -271,12 +250,10 @@ export class Constraints {
       enforcedFields.push({workspace, fieldPath, fieldValue});
     }
 
-    enforcedFields = miscUtils.sortMap(enforcedFields, [
+    return miscUtils.sortMap(enforcedFields, [
       ({workspace}) => structUtils.stringifyIdent(workspace.locator),
       ({fieldPath}) => fieldPath,
     ]);
-
-    return {enforcedDependencies, invalidDependencies, enforcedFields};
   }
 
   async * query(query: string) {
