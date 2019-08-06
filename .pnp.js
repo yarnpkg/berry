@@ -2993,6 +2993,8 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/plugin-git", "workspace:packages/plugin-git"],
             ["@berry/core", "workspace:packages/berry-core"],
             ["@berry/fslib", "workspace:packages/berry-fslib"],
+            ["@types/git-url-parse", "npm:9.0.0"],
+            ["git-url-parse", "npm:11.1.2"],
             ["tmp", "npm:0.0.33"]
           ]
         }]
@@ -4601,6 +4603,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/@types-get-port-npm-0.0.4-a99917c3994a4f67324ef6f364c8ebababdac6643962eaa9e1f2db7f08c8077c.zip/node_modules/@types/get-port/",
           "packageDependencies": [
             ["@types/get-port", "npm:0.0.4"]
+          ]
+        }]
+      ]],
+      ["@types/git-url-parse", [
+        ["npm:9.0.0", {
+          "packageLocation": "./.yarn/cache/@types-git-url-parse-npm-9.0.0-18fe2aa1403e97cebc9b305897db44dd0e50acdf529ac6611b67ca881ff32828.zip/node_modules/@types/git-url-parse/",
+          "packageDependencies": [
+            ["@types/git-url-parse", "npm:9.0.0"]
           ]
         }]
       ]],
@@ -12187,6 +12197,15 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["git-up", "npm:4.0.1"],
             ["is-ssh", "npm:1.3.1"],
             ["parse-url", "npm:5.0.1"]
+          ]
+        }]
+      ]],
+      ["git-url-parse", [
+        ["npm:11.1.2", {
+          "packageLocation": "./.yarn/cache/git-url-parse-npm-11.1.2-36c60beb679f19539d5972bf24d1c2574a99bd4b79fd8a0c98080e8cbd6afc84.zip/node_modules/git-url-parse/",
+          "packageDependencies": [
+            ["git-url-parse", "npm:11.1.2"],
+            ["git-up", "npm:4.0.1"]
           ]
         }]
       ]],

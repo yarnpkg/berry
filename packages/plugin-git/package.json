@@ -5,6 +5,10 @@
   "dependencies": {
     "@berry/core": "workspace:0.1.0",
     "@berry/fslib": "workspace:0.1.1",
+    "git-url-parse": "11.1.2",
     "tmp": "^0.0.33"
+  },
+  "devDependencies": {
+    "@types/git-url-parse": "9.0.0"
   }
 }

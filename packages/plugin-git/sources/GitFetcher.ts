@@ -42,8 +42,10 @@ export class GitFetcher implements Fetcher {
     const directory = await gitUtils.clone(locator.reference, opts.project.configuration);
 
     const env = await scriptUtils.makeScriptEnv(opts.project);
-    await execUtils.execvp(`yarn`, [`install`], {cwd: directory, env: env});
-    await execUtils.execvp(`yarn`, [`pack`], {cwd: directory, env: env});
+    await execUtils.execvp(`yarn`, [`install`], {cwd: directory, env: env, strict: true});
+
+    // Exclude `.git` and everything declared in `.npmignore` from the archive.
+    await execUtils.execvp(`yarn`, [`pack`], {cwd: directory, env: env, strict: true});
 
     const packagePath = ppath.join(directory, `package.tgz` as PortablePath);
     const sourceBuffer = await xfs.readFilePromise(packagePath);
