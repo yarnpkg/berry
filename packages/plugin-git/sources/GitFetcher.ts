@@ -42,7 +42,12 @@ export class GitFetcher implements Fetcher {
     const directory = await gitUtils.clone(locator.reference, opts.project.configuration);
 
     const env = await scriptUtils.makeScriptEnv(opts.project);
-    await execUtils.execvp(`yarn`, [`install`], {cwd: directory, env: env, strict: true});
+    try {
+      await execUtils.execvp(`yarn`, [`install`], {cwd: directory, env: env, strict: true});
+    } catch (error) {
+      error.message = `Installing the dependencies from the cloned repoistory failed ${directory}`;
+      throw error;
+    }
 
     // Exclude `.git` and everything declared in `.npmignore` from the archive.
     await execUtils.execvp(`yarn`, [`pack`], {cwd: directory, env: env, strict: true});
