@@ -76,8 +76,7 @@ jobs:
         node ./scripts/run-yarn.js build:cli
         node ./scripts/run-yarn.js build:plugin-exec
         node ./scripts/run-yarn.js build:plugin-stage
-        node ./scripts/run-yarn.js build:plugin-typescript
-        node ./scripts/run-yarn.js build:plugin-version
+
         node ./scripts/run-yarn.js build:plugin-workspace-tools
 
     - name: Run the integration tests
