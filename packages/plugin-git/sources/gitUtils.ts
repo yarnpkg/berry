@@ -12,10 +12,10 @@ export async function clone(repo: string, configuration: Configuration) {
 
   // Check if git branch / git commit / git tag was specified.
   let gitUrl = parsedGitUrl.href;
-  if (hash) {
+  if (hash)
     // If `hash` was specified, we trim it off to clone the whole repository.
     gitUrl = parsedGitUrl.href.replace(`#${hash}`, ``);
-  }
+
 
   const directory = await xfs.mktempPromise();
   await execUtils.execvp(`git`, [`clone`, `${gitUrl}`, `${directory}`], {
@@ -24,13 +24,13 @@ export async function clone(repo: string, configuration: Configuration) {
       ...process.env,
       GIT_SSH_COMMAND: `ssh -o BatchMode=yes`, // An option passed to SSH by Git to prevent SSH asking for data and causing installs to hang when the SSH keys are missing.
     },
-    strict: true
+    strict: true,
   });
 
   // If `hash` was specified, check out git branch / git commit / git tag to point to the requested revision of the repository.
-  if (hash) {
+  if (hash)
     await execUtils.execvp(`git`, [`checkout`, `${hash}`], {cwd: directory, strict: true});
-  }
+
 
   return directory;
 }

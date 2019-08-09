@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions}                         from '@berry/core';
 import {Locator, MessageName}                                               from '@berry/core';
 import {execUtils, miscUtils, scriptUtils, structUtils, tgzUtils}           from '@berry/core';
-import {NodeFS, PortablePath, ppath, xfs}                                   from '@berry/fslib';
+import {PortablePath, ppath, xfs}                                           from '@berry/fslib';
 
 import {GIT_REGEXP}                                                         from './constants';
 import * as gitUtils                                                        from './gitUtils';
