@@ -1615,6 +1615,7 @@ __metadata:
     "@berry/plugin-essentials": "workspace:0.0.0"
     "@berry/plugin-file": "workspace:0.0.0"
     "@berry/plugin-git": "workspace:0.0.0"
+    "@berry/plugin-github": "workspace:0.0.0"
     "@berry/plugin-http": "workspace:0.0.0"
     "@berry/plugin-init": "workspace:0.0.0"
     "@berry/plugin-link": "workspace:0.0.0"
@@ -1917,7 +1918,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-github@workspace:packages/plugin-github":
+"@berry/plugin-github@workspace:0.0.0, @berry/plugin-github@workspace:packages/plugin-github":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-github@workspace:packages/plugin-github"
   dependencies:
