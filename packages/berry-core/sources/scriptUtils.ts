@@ -16,7 +16,7 @@ async function makePathWrapper(location: PortablePath, name: Filename, argv0: Na
   if (process.platform === `win32`) {
     await xfs.writeFilePromise(ppath.format({dir: location, name, ext: '.cmd'}), `@"${argv0}" ${args.join(` `)} %*\n`);
   } else {
-    await xfs.writeFilePromise(ppath.join(location, name), `#!/usr/bin/env bash\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
+    await xfs.writeFilePromise(ppath.join(location, name), `#!/bin/sh\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
     await xfs.chmodPromise(ppath.join(location, name), 0o755);
   }
 }
