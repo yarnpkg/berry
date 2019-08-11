@@ -10,51 +10,59 @@ Now that you have Yarn [installed](/getting-started/install), you can start usin
 >
 > We've been compiling helpful advices when porting over from Yarn 1 on the following [Migration Guide](/advanced/migration). Give it a look and contribute to it if you see things that aren't covered yet!
 
-**Starting a new project**
+### Accessing the list of commands
 
 ```
-$> yarn init
+yarn --help
 ```
 
-**Adding a dependency**
+### Starting a new project
 
 ```
-$> yarn add [package]
-$> yarn add [package]@[version]
-$> yarn add [package]@[tag]
+yarn init
 ```
 
-**Adding a dependency to different categories of dependencies**
+### Adding a dependency
+
+```
+yarn add [package]
+yarn add [package]@[version]
+yarn add [package]@[tag]
+```
+
+### Adding a dependency to different categories of dependencies
 
 Add to respectively [`devDependencies`](/configuration/manifest#devDependencies) or [`peerDependencies`](/configuration/manifest#peerDependencies):
 
 ```
-$> yarn add [package] --dev
-$> yarn add [package] --peer
+yarn add [package] --dev
+yarn add [package] --peer
 ```
 
-**Upgrading a dependency**
+### Upgrading a dependency
 
 ```
-$> yarn up [package]
-$> yarn up [package]@[version]
-$> yarn up [package]@[tag]
+yarn up [package]
+yarn up [package]@[version]
+yarn up [package]@[tag]
 ```
 
-**Removing a dependency**
+### Removing a dependency
 
 ```
-$> yarn remove [package]
+yarn remove [package]
 ```
 
-**Installing all the dependencies of project**
+### Installing all the dependencies of project
 
 ```
-$> yarn
+yarn install
 ```
 
-or
+The `install` keyword is optional; just calling `yarn` will have the same effect.
+
+### Upgrading Yarn itself
 
 ```
-$> yarn install
+yarn set version from sources
 ```
