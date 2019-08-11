@@ -2,7 +2,7 @@ import {WorkspaceRequiredError}                                                 
 import {Cache, CommandContext, Configuration, Descriptor, LightReport, MessageName} from '@berry/core';
 import {Project, StreamReport, Workspace}                                           from '@berry/core';
 import {structUtils}                                                                from '@berry/core';
-import {Command}                                                                    from 'clipanion';
+import {Command, UsageError}                                                        from 'clipanion';
 import inquirer                                                                     from 'inquirer';
 
 import * as suggestUtils                                                            from '../suggestUtils';
@@ -28,7 +28,7 @@ export default class UpCommand extends Command<CommandContext> {
   static usage = Command.Usage({
     description: `upgrade dependencies across the project`,
     details: `
-      This command upgrades a list of packages to their latest available version across the whole project (regardless of whether they're part of \`dependencies\` or \`devDependencies\` - \`peerDependencies\` won't be affected). This is a project-wide command: all workspaces will be upgraded in the process. Note that because such dependencies are expected to be non-upgradable, dependencies relying on non-semver ranges won't be updated (this includes git dependencies that use a commit hash).
+      This command upgrades a list of packages to their latest available version across the whole project (regardless of whether they're part of \`dependencies\` or \`devDependencies\` - \`peerDependencies\` won't be affected). This is a project-wide command: all workspaces will be upgraded in the process.
 
       If \`-i,--interactive\` is set (or if the \`preferInteractive\` settings is toggled on) the command will offer various choices, depending on the detected upgrade paths. Some upgrades require this flag in order to resolve ambiguities.
 
@@ -78,9 +78,11 @@ export default class UpCommand extends Command<CommandContext> {
     ];
 
     const allSuggestionsPromises = [];
+    const unreferencedPackages = [];
 
     for (const pseudoDescriptor of this.packages) {
       const descriptor = structUtils.parseDescriptor(pseudoDescriptor);
+      let isReferenced = false;
 
       for (const workspace of project.workspaces) {
         for (const target of [suggestUtils.Target.REGULAR, suggestUtils.Target.DEVELOPMENT]) {
@@ -101,9 +103,20 @@ export default class UpCommand extends Command<CommandContext> {
               Array<suggestUtils.Suggestion>
             ];
           }));
+
+          isReferenced = true;
         }
       }
+
+      if (!isReferenced) {
+        unreferencedPackages.push(structUtils.prettyIdent(configuration, descriptor));
+      }
     }
+
+    if (unreferencedPackages.length > 1)
+      throw new UsageError(`Packages ${unreferencedPackages.join(`, `)} aren't referenced by any workspace`);
+    if (unreferencedPackages.length > 0)
+      throw new UsageError(`Package ${unreferencedPackages[0]} isn't referenced by any workspace`);
 
     const allSuggestions = await Promise.all(allSuggestionsPromises);
 
