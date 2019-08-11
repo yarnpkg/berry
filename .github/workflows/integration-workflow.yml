@@ -48,22 +48,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        nodejs_version: [8, 10]
-        platform: [ubuntu-latest, windows-latest, macos-latest]
+        node:
+        - 8
+        - 10
+        - 12
+        platform:
+        - ubuntu-latest
+        - windows-latest
+        - macos-latest
         exclude:
-        - platform: windows-latest
-          nodejs_version: 8
+        - node: 8
+          platform: windows-latest
 
-    name: ${{matrix.platform}} w/ Node.js ${{matrix.nodejs_version}}.x
+    name: ${{matrix.platform}} w/ Node.js ${{matrix.node}}.x
     runs-on: ${{matrix.platform}}
 
     steps:
     - uses: actions/checkout@master
 
-    - name: Use Node.js ${{matrix.nodejs_version}}.x
+    - name: Use Node.js ${{matrix.node}}.x
       uses: actions/setup-node@master
       with:
-        version: ${{matrix.nodejs_version}}.x
+        version: ${{matrix.node}}.x
 
     - name: Use Yarn 1.17.2
       run: |
