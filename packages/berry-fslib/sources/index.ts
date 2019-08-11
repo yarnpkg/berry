@@ -14,7 +14,7 @@ export {WriteFileOptions}         from './FakeFS';
 
 export {Path, PortablePath, NativePath, Filename} from './path';
 export {ParsedPath, PathUtils, FormatInputPathObject} from './path';
-export {npath, ppath, toFilename} from './path';
+export {npath, ppath, toFilename, fromPortablePath, toPortablePath} from './path';
 
 export {AliasFS}                  from './AliasFS';
 export {FakeFS}                   from './FakeFS';
