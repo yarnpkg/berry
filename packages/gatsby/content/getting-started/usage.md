@@ -13,13 +13,20 @@ Now that you have Yarn [installed](/getting-started/install), you can start usin
 ### Accessing the list of commands
 
 ```
-yarn --help
+yarn help
 ```
 
 ### Starting a new project
 
 ```
 yarn init
+```
+
+### Installing all the dependencies
+
+```
+yarn
+yarn install
 ```
 
 ### Adding a dependency
@@ -32,11 +39,9 @@ yarn add [package]@[tag]
 
 ### Adding a dependency to different categories of dependencies
 
-Add to respectively [`devDependencies`](/configuration/manifest#devDependencies) or [`peerDependencies`](/configuration/manifest#peerDependencies):
-
 ```
-yarn add [package] --dev
-yarn add [package] --peer
+yarn add [package] --dev  # dev dependencies
+yarn add [package] --peer # peer dependencies
 ```
 
 ### Upgrading a dependency
@@ -52,14 +57,6 @@ yarn up [package]@[tag]
 ```
 yarn remove [package]
 ```
-
-### Installing all the dependencies of project
-
-```
-yarn install
-```
-
-The `install` keyword is optional; just calling `yarn` will have the same effect.
 
 ### Upgrading Yarn itself
 
