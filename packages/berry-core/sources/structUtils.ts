@@ -259,9 +259,15 @@ export function slugifyLocator(locator: Locator) {
     ? `${protocol}-${version}`
     : protocol;
 
-  // eCryptfs limits the filename size to less than the usual (255); they recommend 140 characters max
-  // https://unix.stackexchange.com/a/32834/24106
-  const hashTruncate = 128 / 2;
+  // 10 hex characters means that 47 different entries have 10^-9 chances of
+  // causing a hash collision. Since this hash is joined with the package name
+  // (making it highly unlikely you'll have more than a handful of instances
+  // of any single package), this should provide a good enough guard in most
+  // cases.
+  //
+  // Also note that eCryptfs eats some bytes, so the theoretical maximum for a
+  // file size is around 140 bytes (but we don't need as much, as explained).
+  const hashTruncate = 10;
 
   const slug = locator.scope
     ? `@${locator.scope}-${locator.name}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`
