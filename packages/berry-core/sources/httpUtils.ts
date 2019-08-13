@@ -1,9 +1,9 @@
-import HttpAgent, {HttpsAgent}   from 'agentkeepalive';
-import got, {GotOptions}         from 'got';
-import tunnel, {ProxyOptions}    from 'tunnel';
-import {URL}                     from 'url';
+import HttpAgent, {HttpsAgent} from 'agentkeepalive';
+import got, {GotOptions}       from 'got';
+import tunnel, {ProxyOptions}  from 'tunnel';
+import {URL}                   from 'url';
 
-import {Configuration}           from './Configuration';
+import {Configuration}         from './Configuration';
 
 const cache = new Map<string, Promise<Buffer>>();
 

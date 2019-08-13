@@ -1,9 +1,9 @@
-import {Plugin, Project, Workspace, structUtils}   from '@berry/core';
-import {MessageName, ReportError}                  from '@berry/core';
-import {PortablePath}                              from '@berry/fslib';
+import {Plugin, Project, Workspace, structUtils} from '@berry/core';
+import {MessageName, ReportError}                from '@berry/core';
+import {PortablePath}                            from '@berry/fslib';
 
-import pack                                        from './commands/pack';
-import * as packUtils                              from './packUtils';
+import pack                                      from './commands/pack';
+import * as packUtils                            from './packUtils';
 
 export {packUtils};
 

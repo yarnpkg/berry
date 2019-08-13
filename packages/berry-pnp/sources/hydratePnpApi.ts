@@ -1,11 +1,11 @@
-import {FakeFS, PortablePath}              from '@berry/fslib';
-import {readFile}                          from 'fs';
-import {dirname}                           from 'path';
-import {promisify}                         from 'util';
+import {FakeFS, PortablePath} from '@berry/fslib';
+import {readFile}             from 'fs';
+import {dirname}              from 'path';
+import {promisify}            from 'util';
 
-import {hydrateRuntimeState}               from './loader/hydrateRuntimeState';
-import {makeApi}                           from './loader/makeApi';
-import {SerializedState}                   from './types';
+import {hydrateRuntimeState}  from './loader/hydrateRuntimeState';
+import {makeApi}              from './loader/makeApi';
+import {SerializedState}      from './types';
 
 const readFileP = promisify(readFile);
 

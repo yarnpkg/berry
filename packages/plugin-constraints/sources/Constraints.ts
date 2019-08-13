@@ -1,9 +1,9 @@
-import {Ident, MessageName, Project, ReportError, Workspace}                                  from '@berry/core';
-import {miscUtils, structUtils}                                                               from '@berry/core';
-import {xfs, ppath, PortablePath, toFilename}                                                 from '@berry/fslib';
-import pl                                                                                     from 'tau-prolog';
+import {Ident, MessageName, Project, ReportError, Workspace} from '@berry/core';
+import {miscUtils, structUtils}                              from '@berry/core';
+import {xfs, ppath, PortablePath, toFilename}                from '@berry/fslib';
+import pl                                                    from 'tau-prolog';
 
-import {linkProjectToSession}                                                                 from './tauModule';
+import {linkProjectToSession}                                from './tauModule';
 
 export type EnforcedDependency = {
   workspace: Workspace,

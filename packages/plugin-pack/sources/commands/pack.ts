@@ -1,9 +1,9 @@
-import {WorkspaceRequiredError}                                                                 from '@berry/cli';
-import {CommandContext, Configuration, MessageName, Project, StreamReport}                      from '@berry/core';
-import {xfs, ppath, toFilename}                                                                 from '@berry/fslib';
-import {Command}                                                                                from 'clipanion';
+import {WorkspaceRequiredError}                                            from '@berry/cli';
+import {CommandContext, Configuration, MessageName, Project, StreamReport} from '@berry/core';
+import {xfs, ppath, toFilename}                                            from '@berry/fslib';
+import {Command}                                                           from 'clipanion';
 
-import * as packUtils                                                                           from '../packUtils';
+import * as packUtils                                                      from '../packUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PackCommand extends Command<CommandContext> {

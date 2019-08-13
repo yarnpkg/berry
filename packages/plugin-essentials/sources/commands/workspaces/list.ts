@@ -1,5 +1,5 @@
-import {CommandContext, Configuration, Project, StreamReport, structUtils}                      from '@berry/core';
-import {Command}                                                                                from 'clipanion';
+import {CommandContext, Configuration, Project, StreamReport, structUtils} from '@berry/core';
+import {Command}                                                           from 'clipanion';
 
 const DEPENDENCY_TYPES = ['devDependencies', 'dependencies'];
 

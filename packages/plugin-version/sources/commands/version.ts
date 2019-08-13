@@ -1,8 +1,8 @@
-import {WorkspaceRequiredError}                                      from '@berry/cli';
-import {CommandContext, Configuration, Project}                      from '@berry/core';
-import {Command, UsageError}                                         from 'clipanion';
-import semver                                                        from 'semver';
-import * as yup                                                      from 'yup';
+import {WorkspaceRequiredError}                 from '@berry/cli';
+import {CommandContext, Configuration, Project} from '@berry/core';
+import {Command, UsageError}                    from 'clipanion';
+import semver                                   from 'semver';
+import * as yup                                 from 'yup';
 
 const STRATEGIES = new Set([
   `major`,

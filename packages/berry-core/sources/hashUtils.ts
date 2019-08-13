@@ -1,5 +1,5 @@
-import {NodeFS, PortablePath}     from '@berry/fslib';
-import {createHmac}               from 'crypto';
+import {NodeFS, PortablePath} from '@berry/fslib';
+import {createHmac}           from 'crypto';
 
 export function makeHash<T>(...args: Array<string | null>): T {
   const hmac = createHmac(`sha512`, `berry`);
