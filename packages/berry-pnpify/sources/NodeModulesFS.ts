@@ -1,12 +1,12 @@
-import {CreateReadStreamOptions, CreateWriteStreamOptions}               from '@berry/fslib';
-import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                     from '@berry/fslib';
-import {WatchOptions, WatchCallback, Watcher}                            from '@berry/fslib';
-import {NativePath, PortablePath, npath, ppath}                          from '@berry/fslib';
-import {PnpApi}                                                          from '@berry/pnp';
+import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@berry/fslib';
+import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@berry/fslib';
+import {WatchOptions, WatchCallback, Watcher}              from '@berry/fslib';
+import {NativePath, PortablePath, npath, ppath}            from '@berry/fslib';
+import {PnpApi}                                            from '@berry/pnp';
 
-import fs                                                                from 'fs';
+import fs                                                  from 'fs';
 
-import {NodePathResolver, ResolvedPath}                                  from './NodePathResolver';
+import {NodePathResolver, ResolvedPath}                    from './NodePathResolver';
 
 export type NodeModulesFSOptions = {
   realFs?: typeof fs

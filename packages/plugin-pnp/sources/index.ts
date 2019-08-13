@@ -1,9 +1,9 @@
-import {Hooks as CoreHooks, Plugin, Project, SettingsType}               from '@berry/core';
-import {NodeFS, xfs, PortablePath}                                       from '@berry/fslib';
-import {Hooks as StageHooks}                                             from '@berry/plugin-stage';
+import {Hooks as CoreHooks, Plugin, Project, SettingsType} from '@berry/core';
+import {NodeFS, xfs, PortablePath}                         from '@berry/fslib';
+import {Hooks as StageHooks}                               from '@berry/plugin-stage';
 
-import {PnpLinker}                                                       from './PnpLinker';
-import unplug                                                            from './commands/unplug';
+import {PnpLinker}                                         from './PnpLinker';
+import unplug                                              from './commands/unplug';
 
 async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
   const pnpPath: PortablePath = project.configuration.get(`pnpPath`);

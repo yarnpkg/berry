@@ -1,5 +1,5 @@
-import {PortablePath, NodeFS}                         from '@berry/fslib';
-import {PnpApi, PackageInformation, PackageLocator}   from '@berry/pnp';
+import {PortablePath, NodeFS}                       from '@berry/fslib';
+import {PnpApi, PackageInformation, PackageLocator} from '@berry/pnp';
 
 /**
  * PnP API wrapper working with portable paths

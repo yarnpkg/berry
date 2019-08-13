@@ -1,6 +1,6 @@
-import {CommandContext, Configuration, Project}                      from '@berry/core';
-import {execUtils, scriptUtils}                                      from '@berry/core';
-import {Command}                                                     from 'clipanion';
+import {CommandContext, Configuration, Project} from '@berry/core';
+import {execUtils, scriptUtils}                 from '@berry/core';
+import {Command}                                from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NodeCommand extends Command<CommandContext> {

@@ -1,8 +1,8 @@
-import {NodeFS}                      from '@berry/fslib';
-import crossSpawn                    from 'cross-spawn';
+import {NodeFS}         from '@berry/fslib';
+import crossSpawn       from 'cross-spawn';
 
-import {dynamicRequire}              from './dynamicRequire';
-import {generateSdk}                 from './generateSdk';
+import {dynamicRequire} from './dynamicRequire';
+import {generateSdk}    from './generateSdk';
 
 const [,, name, ...rest] = process.argv;
 

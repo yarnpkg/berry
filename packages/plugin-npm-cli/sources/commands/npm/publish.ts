@@ -1,11 +1,11 @@
-import {WorkspaceRequiredError}                                                                                         from '@berry/cli';
-import {Configuration, CommandContext, MessageName, Project, ReportError, StreamReport, Workspace}                      from '@berry/core';
-import {miscUtils, structUtils}                                                                                         from '@berry/core';
-import {npmConfigUtils, npmHttpUtils}                                                                                   from '@berry/plugin-npm';
-import {packUtils}                                                                                                      from '@berry/plugin-pack';
-import {Command, UsageError}                                                                                            from 'clipanion';
-import {createHash}                                                                                                     from 'crypto';
-import ssri                                                                                                             from 'ssri';
+import {WorkspaceRequiredError}                                                                    from '@berry/cli';
+import {Configuration, CommandContext, MessageName, Project, ReportError, StreamReport, Workspace} from '@berry/core';
+import {miscUtils, structUtils}                                                                    from '@berry/core';
+import {npmConfigUtils, npmHttpUtils}                                                              from '@berry/plugin-npm';
+import {packUtils}                                                                                 from '@berry/plugin-pack';
+import {Command, UsageError}                                                                       from 'clipanion';
+import {createHash}                                                                                from 'crypto';
+import ssri                                                                                        from 'ssri';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends Command<CommandContext> {
