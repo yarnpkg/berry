@@ -134,7 +134,7 @@ export class StreamReport extends Report {
     if (!this.json) {
       this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
     } else {
-      this.reportJson({type: `info`, name, displayName: this.formatName(name), indent: this.formatIndent(), text})
+      this.reportJson({type: `info`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text})
     }
   }
 
@@ -147,7 +147,7 @@ export class StreamReport extends Report {
     if (!this.json) {
       this.stdout.write(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
     } else {
-      this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), text});
+      this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
   }
 
@@ -157,7 +157,7 @@ export class StreamReport extends Report {
     if (!this.json) {
       this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
     } else {
-      this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), text});
+      this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
   }
 
