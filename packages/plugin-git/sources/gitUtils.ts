@@ -30,8 +30,9 @@ export async function clone(repo: string, configuration: Configuration) {
     });
 
     // If `hash` was specified, check out git branch / git commit / git tag to point to the requested revision of the repository.
-    if (hash)
+    if (hash) {
       await execUtils.execvp(`git`, [`checkout`, `${hash}`], {cwd: directory, strict: true});
+    }
   } catch (error) {
     error.message = `Cloning the repository from (${gitUrl}) to (${directory}) failed`;
     throw error;

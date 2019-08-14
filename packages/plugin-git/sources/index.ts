@@ -1,7 +1,7 @@
-import {Plugin}         from '@berry/core';
+import {Plugin}      from '@berry/core';
 
-import {GitFetcher}     from './GitFetcher';
-import {GitResolver}    from './GitResolver';
+import {GitFetcher}  from './GitFetcher';
+import {GitResolver} from './GitResolver';
 
 const plugin: Plugin = {
   fetchers: [
