@@ -18,18 +18,24 @@ export async function clone(repo: string, configuration: Configuration) {
 
 
   const directory = await xfs.mktempPromise();
-  await execUtils.execvp(`git`, [`clone`, `${gitUrl}`, `${directory}`], {
-    cwd: directory,
-    env: {
-      ...process.env,
-      GIT_SSH_COMMAND: `ssh -o BatchMode=yes`, // An option passed to SSH by Git to prevent SSH asking for data and causing installs to hang when the SSH keys are missing.
-    },
-    strict: true,
-  });
 
-  // If `hash` was specified, check out git branch / git commit / git tag to point to the requested revision of the repository.
-  if (hash)
-    await execUtils.execvp(`git`, [`checkout`, `${hash}`], {cwd: directory, strict: true});
+  try {
+    await execUtils.execvp(`git`, [`clone`, `${gitUrl}`, `${directory}`], {
+      cwd: directory,
+      env: {
+        ...process.env,
+        GIT_SSH_COMMAND: `ssh -o BatchMode=yes`, // An option passed to SSH by Git to prevent SSH asking for data and causing installs to hang when the SSH keys are missing.
+      },
+      strict: true,
+    });
+
+    // If `hash` was specified, check out git branch / git commit / git tag to point to the requested revision of the repository.
+    if (hash)
+      await execUtils.execvp(`git`, [`checkout`, `${hash}`], {cwd: directory, strict: true});
+  } catch (error) {
+    error.message = `Cloning the repoistory from (${gitUrl}) to (${directory}) failed`;
+    throw error;
+  }
 
 
   return directory;

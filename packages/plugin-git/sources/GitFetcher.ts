@@ -45,12 +45,17 @@ export class GitFetcher implements Fetcher {
     try {
       await execUtils.execvp(`yarn`, [`install`], {cwd: directory, env: env, strict: true});
     } catch (error) {
-      error.message = `Installing the dependencies from the cloned repoistory failed ${directory}`;
+      error.message = `Installing the dependencies from the cloned repoistory failed (${directory})`;
       throw error;
     }
 
-    // Exclude `.git` and everything declared in `.npmignore` from the archive.
-    await execUtils.execvp(`yarn`, [`pack`], {cwd: directory, env: env, strict: true});
+    try {
+      // Exclude `.git` and everything declared in `.npmignore` from the archive.
+      await execUtils.execvp(`yarn`, [`pack`], {cwd: directory, env: env, strict: true});
+    } catch (error) {
+      error.message = `Generating a tarball from the cloned repoistory failed (${directory})`;
+      throw error;
+    }
 
     const packagePath = ppath.join(directory, `package.tgz` as PortablePath);
     const sourceBuffer = await xfs.readFilePromise(packagePath);
