@@ -1,7 +1,7 @@
-import {execUtils, Configuration}          from '@berry/core';
-import {xfs}                               from '@berry/fslib';
+import {execUtils, Configuration} from '@berry/core';
+import {xfs}                      from '@berry/fslib';
 
-const GitUrlParse = require(`git-url-parse`);
+import GitUrlParse                from 'git-url-parse';
 
 export async function clone(repo: string, configuration: Configuration) {
   if (!configuration.get(`enableNetwork`))

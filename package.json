@@ -30,6 +30,7 @@
     "@types/faker": "^4.1.4",
     "@types/filesize": "4.1.0",
     "@types/fs-extra": "^5.0.4",
+    "@types/git-url-parse": "9.0.0",
     "@types/globby": "^8.0.0",
     "@types/got": "^8.3.4",
     "@types/inquirer": "^0.0.43",

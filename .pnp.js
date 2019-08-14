@@ -417,6 +417,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/faker", "npm:4.1.4"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/fs-extra", "npm:5.0.4"],
+            ["@types/git-url-parse", "npm:9.0.0"],
             ["@types/globby", "npm:8.0.0"],
             ["@types/got", "npm:8.3.5"],
             ["@types/inquirer", "npm:0.0.43"],
@@ -2881,6 +2882,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/faker", "npm:4.1.4"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/fs-extra", "npm:5.0.4"],
+            ["@types/git-url-parse", "npm:9.0.0"],
             ["@types/globby", "npm:8.0.0"],
             ["@types/got", "npm:8.3.5"],
             ["@types/inquirer", "npm:0.0.43"],
@@ -3013,7 +3015,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/plugin-git", "workspace:packages/plugin-git"],
             ["@berry/core", "workspace:packages/berry-core"],
             ["@berry/fslib", "workspace:packages/berry-fslib"],
-            ["@types/git-url-parse", "npm:9.0.0"],
             ["git-url-parse", "npm:11.1.2"],
             ["tmp", "npm:0.0.33"]
           ]

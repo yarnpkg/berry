@@ -1820,6 +1820,7 @@ __metadata:
     "@types/faker": "npm:^4.1.4"
     "@types/filesize": "npm:4.1.0"
     "@types/fs-extra": "npm:^5.0.4"
+    "@types/git-url-parse": "npm:9.0.0"
     "@types/globby": "npm:^8.0.0"
     "@types/got": "npm:^8.3.4"
     "@types/inquirer": "npm:^0.0.43"
@@ -1952,7 +1953,6 @@ __metadata:
   dependencies:
     "@berry/core": "workspace:0.1.0"
     "@berry/fslib": "workspace:0.1.1"
-    "@types/git-url-parse": "npm:9.0.0"
     git-url-parse: "npm:11.1.2"
     tmp: "npm:^0.0.33"
   languageName: unknown
