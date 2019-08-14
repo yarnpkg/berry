@@ -15,7 +15,8 @@ const UPDATE_WORKFLOW = ({branch}: {branch: string}) => [
   [`git`, `fetch`, `origin`],
   [`git`, `reset`, `--hard`],
   [`git`, `clean`, `-dfx`],
-  [`git`, `checkout`, branch],
+  [`git`, `checkout`, `origin/${branch}`],
+  [`git`, `clean`, `-dfx`],
 ];
 
 const BUILD_WORKFLOW = [
