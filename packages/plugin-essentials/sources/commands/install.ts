@@ -6,6 +6,9 @@ import {Command}                                                                
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends Command<CommandContext> {
+  @Command.Boolean(`--json`)
+  json: boolean = false;
+
   @Command.Boolean(`--frozen-lockfile`)
   frozenLockfile: boolean = false;
 
@@ -33,6 +36,8 @@ export default class YarnCommand extends Command<CommandContext> {
       If the \`--frozen-lockfile\` option is used, Yarn will abort with an error exit code if anything in the install artifacts (\`yarn.lock\`, \`.pnp.js\`, ...) was to be modified.
 
       If the \`--inline-builds\` option is used, Yarn will verbosely print the output of the build steps of your dependencies (instead of writing them into individual files). This is likely useful mostly for debug purposes only when using Docker-like environments.
+
+      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
     `,
     examples: [[
       `Install the project`,
@@ -49,7 +54,7 @@ export default class YarnCommand extends Command<CommandContext> {
       const cacheFolderReport = await StreamReport.start({
         configuration,
         stdout: this.context.stdout,
-        footer: false,
+        includeFooter: false,
       }, async report => {
         if (process.env.NETLIFY) {
           report.reportWarning(MessageName.DEPRECATED_CLI_SETTINGS, `Netlify is trying to set a cache folder, ignoring!`);
@@ -70,8 +75,9 @@ export default class YarnCommand extends Command<CommandContext> {
     if (configuration.projectCwd !== null) {
       const fixReport = await StreamReport.start({
         configuration,
+        json: this.json,
         stdout: this.context.stdout,
-        footer: false,
+        includeFooter: false,
       }, async report => {
         if (await autofixMergeConflicts(configuration, frozenLockfile)) {
           report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically fixed merge conflicts 👍`);
@@ -99,7 +105,9 @@ export default class YarnCommand extends Command<CommandContext> {
 
     const report = await StreamReport.start({
       configuration,
+      json: this.json,
       stdout: this.context.stdout,
+      includeLogs: true,
     }, async (report: StreamReport) => {
       await project.install({cache, report, frozenLockfile, inlineBuilds: this.inlineBuilds});
     });

@@ -14,6 +14,9 @@ export default class AddCommand extends Command<CommandContext> {
   @Command.Rest()
   packages: Array<string> = [];
 
+  @Command.Boolean(`--json`)
+  json: boolean = false;
+
   @Command.Boolean(`-E,--exact`)
   exact: boolean = false;
 
@@ -43,9 +46,11 @@ export default class AddCommand extends Command<CommandContext> {
 
       - If the added package specifies a tag range (such as \`latest\` or \`rc\`), Yarn will resolve this tag to a semver version and use that in the resulting package.json entry (meaning that \`yarn add foo@latest\` will have exactly the same effect as \`yarn add foo\`).
 
+      If the \`--cached\` option is used, Yarn will preferably reuse the highest version already used somewhere within the project, even if through a transitive dependency.
+
       If the \`-i,--interactive\` option is used (or if the \`preferInteractive\` settings is toggled on) the command will first try to check whether other workspaces in the project use the specified package and, if so, will offer to reuse them.
 
-      If the \`--cached\` option is used, Yarn will preferably reuse the highest version already used somewhere within the project, even if through a transitive dependency.
+      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
 
       For a compilation of all the supported protocols, please consult the dedicated page from our website: .
     `,
@@ -212,23 +217,14 @@ export default class AddCommand extends Command<CommandContext> {
     if (askedQuestions)
       this.context.stdout.write(`\n`);
 
-    let installReport;
-
-    if (this.context.quiet) {
-      installReport = await LightReport.start({
-        configuration,
-        stdout: this.context.stdout,
-      }, async report => {
-        await project.install({cache, report});
-      });
-    } else {
-      installReport = await StreamReport.start({
-        configuration,
-        stdout: this.context.stdout,
-      }, async report => {
-        await project.install({cache, report});
-      });
-    }
+    let installReport = await StreamReport.start({
+      configuration,
+      json: this.json,
+      stdout: this.context.stdout,
+      includeLogs: !this.context.quiet,
+    }, async report => {
+      await project.install({cache, report});
+    });
 
     return installReport.exitCode();
   }
