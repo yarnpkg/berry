@@ -1,11 +1,11 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions}                                     from '@berry/core';
-import {Locator, MessageName}                                                           from '@berry/core';
-import {execUtils, scriptUtils, structUtils, tgzUtils}                                  from '@berry/core';
-import {NodeFS, xfs, ppath, PortablePath, toFilename}                                   from '@berry/fslib';
-import querystring                                                                      from 'querystring';
-import {dirSync, tmpNameSync}                                                           from 'tmp';
+import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@berry/core';
+import {Locator, MessageName}                          from '@berry/core';
+import {execUtils, scriptUtils, structUtils, tgzUtils} from '@berry/core';
+import {NodeFS, xfs, ppath, PortablePath, toFilename}  from '@berry/fslib';
+import querystring                                     from 'querystring';
+import {dirSync, tmpNameSync}                          from 'tmp';
 
-import {PROTOCOL}                                                                       from './constants';
+import {PROTOCOL}                                      from './constants';
 
 export class ExecFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {

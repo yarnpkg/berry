@@ -13,10 +13,10 @@ const TEMPLATE = (relPnpApiPath: string, module: string, {usePnpify}: {usePnpify
   `process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
   `process.env.NODE_OPTIONS += \` -r \${absPnpApiPath}\`;\n`,
   ...(usePnpify ? [
-    `process.env.NODE_OPTIONS += \` -r \${require.resolve(\`@berry/pnpify/lib\`)}\`;\n`,
+    `process.env.NODE_OPTIONS += \` -r \${require.resolve(\`@berry/pnpify\`)}\`;\n`,
     `\n`,
     `// Apply PnPify to the current process\n`,
-    `require(\`@berry/pnpify/lib\`).patchFs();\n`,
+    `require(\`@berry/pnpify\`).patchFs();\n`,
   ] : []),
   `\n`,
   `// Defer to the real ${module} your application uses\n`,

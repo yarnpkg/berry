@@ -1,8 +1,8 @@
-import {CommandContext, Configuration, Project, StreamReport, MessageName}                                           from '@berry/core';
-import {httpUtils}                                                                                                   from '@berry/core';
-import {xfs, PortablePath, ppath}                                                                                    from '@berry/fslib';
-import {Command}                                                                                                     from 'clipanion';
-import semver, {SemVer}                                                                                              from 'semver';
+import {CommandContext, Configuration, Project, StreamReport, MessageName, Report} from '@berry/core';
+import {httpUtils}                                                                 from '@berry/core';
+import {xfs, PortablePath, ppath}                                                  from '@berry/fslib';
+import {Command, UsageError}                                                       from 'clipanion';
+import semver, {SemVer}                                                            from 'semver';
 
 const BUNDLE_REGEXP = /^yarn-[0-9]+\.[0-9]+\.[0-9]+\.js$/;
 const BERRY_RANGES = new Set([`berry`, `v2`, `2`, `nightly`, `nightlies`, `rc`]);
@@ -58,10 +58,10 @@ export default class SetVersionCommand extends Command<CommandContext> {
       if (this.range === `latest`)
         this.range = `*`;
 
-      let candidates = [];
+      let candidates: Array<string> = [];
 
-      let bundleUrl;
-      let bundleVersion;
+      let bundleUrl: string;
+      let bundleVersion: string;
 
       if (BERRY_RANGES.has(this.range)) {
         bundleUrl = `https://github.com/yarnpkg/berry/raw/master/packages/berry-cli/bin/berry.js`;
@@ -87,7 +87,7 @@ export default class SetVersionCommand extends Command<CommandContext> {
         bundleUrl = asset.browser_download_url;
         bundleVersion = release.version.version;
         candidates = [bundleVersion];
-      } else {
+      } else if (semver.validRange(this.range)) {
         const {releases, prereleases} = await fetchReleases(configuration, {
           includePrereleases: this.includePrereleases,
         });
@@ -112,6 +112,8 @@ export default class SetVersionCommand extends Command<CommandContext> {
         bundleUrl = asset.browser_download_url;
         bundleVersion = release.version.version;
         candidates = satisfying.map(release => release.version.version);
+      } else {
+        throw new UsageError(`Invalid version descriptor "${this.range}"`);
       }
 
       if (candidates.length === 1)
@@ -122,19 +124,9 @@ export default class SetVersionCommand extends Command<CommandContext> {
 
       if (!this.dryRun) {
         report.reportInfo(MessageName.UNNAMED, `Downloading ${configuration.format(bundleUrl, `green`)}`);
-        const releaseBuffer = await httpUtils.get(bundleUrl, {configuration});
+        const bundleBuffer = await httpUtils.get(bundleUrl, {configuration});
 
-        const relativePath = `.yarn/releases/yarn-${bundleVersion}.js` as PortablePath;
-        const absolutePath = ppath.resolve(project.cwd, relativePath);
-
-        report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${configuration.format(relativePath, `magenta`)}`);
-        await xfs.mkdirpPromise(ppath.dirname(absolutePath));
-        await xfs.writeFilePromise(absolutePath, releaseBuffer);
-        await xfs.chmodPromise(absolutePath, 0o755);
-
-        await Configuration.updateConfiguration(project.cwd, {
-          yarnPath: relativePath,
-        });
+        await setVersion(project, bundleVersion, bundleBuffer, {report});
       }
     });
 
@@ -171,7 +163,7 @@ type FetchReleasesOptions = {
   includePrereleases: boolean,
 };
 
-async function fetchReleases(configuration: Configuration, {includePrereleases = false}: Partial<FetchReleasesOptions> = {}): Promise<{releases: Array<Release>, prereleases: Array<Release>}> {
+export async function fetchReleases(configuration: Configuration, {includePrereleases = false}: Partial<FetchReleasesOptions> = {}): Promise<{releases: Array<Release>, prereleases: Array<Release>}> {
   const request = await httpUtils.get(`https://api.github.com/repos/yarnpkg/yarn/releases`, {configuration});
   const apiData = (JSON.parse(request.toString()) as Array<Release>);
 
@@ -204,4 +196,18 @@ async function fetchReleases(configuration: Configuration, {includePrereleases =
   });
 
   return {releases, prereleases};
+}
+
+export async function setVersion(project: Project, bundleVersion: string, bundleBuffer: Buffer, {report}: {report: Report}) {
+  const relativePath = `.yarn/releases/yarn-${bundleVersion}.js` as PortablePath;
+  const absolutePath = ppath.resolve(project.cwd, relativePath);
+
+  report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${project.configuration.format(relativePath, `magenta`)}`);
+  await xfs.mkdirpPromise(ppath.dirname(absolutePath));
+  await xfs.writeFilePromise(absolutePath, bundleBuffer);
+  await xfs.chmodPromise(absolutePath, 0o755);
+
+  await Configuration.updateConfiguration(project.cwd, {
+    yarnPath: relativePath,
+  });
 }

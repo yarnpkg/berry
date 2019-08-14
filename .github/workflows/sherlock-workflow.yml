@@ -1,0 +1,35 @@
+on: [issues]
+
+name: Sherlock for Yarn
+jobs:
+  issue:
+    name: Running Sherlock
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Use Node.js 10.x
+        uses: actions/setup-node@master
+        with:
+          version: 10.x
+
+      - name: Use Yarn 1.17.2
+        run: |
+          npm install -g yarn@1.17.2
+
+      - name: Sherlock Payload
+        run: |
+          yarn sherlock payload
+
+      - name: Sherlock Execution
+        uses: docker://node:lts-jessie
+        with:
+          entrypoint: bash
+          args: scripts/actions/sherlock-docker.sh
+
+      - name: Sherlock Reporting
+        run: |
+          yarn sherlock report
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

@@ -1,6 +1,6 @@
-import {xfs, PortablePath}         from '@berry/fslib';
+import {xfs, PortablePath} from '@berry/fslib';
 
-import {makeTracker}               from './makeTracker';
+import {makeTracker}       from './makeTracker';
 
 export async function makeUpdater(filename: PortablePath) {
   let indent = `  `;

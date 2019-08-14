@@ -1,4 +1,4 @@
-import {xfs, Filename, PortablePath, ppath}   from '@berry/fslib';
+import {xfs, Filename, PortablePath, ppath} from '@berry/fslib';
 
 export enum ActionType {
   CREATE,

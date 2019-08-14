@@ -1,5 +1,5 @@
-import {CommandContext, Configuration}      from '@berry/core';
-import {Command, UsageError}                from 'clipanion';
+import {CommandContext, Configuration} from '@berry/core';
+import {Command, UsageError}           from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigSetCommand extends Command<CommandContext> {

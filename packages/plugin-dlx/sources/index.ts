@@ -1,6 +1,6 @@
-import {Plugin}               from '@berry/core';
+import {Plugin} from '@berry/core';
 
-import dlx                    from './commands/dlx';
+import dlx      from './commands/dlx';
 
 const plugin: Plugin = {
   commands: [

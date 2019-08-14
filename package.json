@@ -1,10 +1,15 @@
 {
   "name": "@berry/monorepo",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arcanis/berry-actions.git"
+  },
   "workspaces": [
     "packages/*"
   ],
   "dependencies": {
+    "@arcanis/sherlock": "^1.0.18",
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.3",
     "@babel/plugin-proposal-class-properties": "^7.3.3",
@@ -12,6 +17,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.2.0",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.1.0",
+    "@babel/register": "^7.5.5",
     "@berry/pnpify": "workspace:0.1.1",
     "@types/camelcase": "5.2.0",
     "@types/chalk": "2.2.0",
@@ -29,7 +35,7 @@
     "@types/inquirer": "^0.0.43",
     "@types/joi": "^13.6.0",
     "@types/lockfile": "^1.0.0",
-    "@types/lodash.get": "^4.4.6",
+    "@types/lodash": "^4.14.136",
     "@types/micromatch": "^3.1.0",
     "@types/mkdirp": "^0.5.2",
     "@types/node": "^10.12.0",
@@ -56,12 +62,11 @@
     "@typescript-eslint/parser": "^1.6.0",
     "babel-jest": "^24.5.0",
     "eslint": "^5.16.0",
-    "eslint-plugin-arca": "^0.8.1",
+    "eslint-plugin-arca": "^0.9.0",
     "github-api": "^3.2.2",
     "jest": "^24.5.0",
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
-    "ts-node": "^7.0.1",
     "typescript": "^3.3.3333"
   },
   "dependenciesMeta": {
@@ -79,5 +84,10 @@
     "gen-tssdk": "pnpify --sdk scripts",
     "test:lint": "eslint packages/*/sources/**/*.ts",
     "test:unit": "jest"
+  },
+  "sherlock": {
+    "requireList": [
+      "scripts/actions/sherlock-prepare.js"
+    ]
   }
 }

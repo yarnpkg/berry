@@ -1,7 +1,7 @@
-import {WorkspaceRequiredError}                                                           from '@berry/cli';
-import {Cache, CommandContext, Configuration, Project, StreamReport}                      from '@berry/core';
-import {structUtils}                                                                      from '@berry/core';
-import {Command}                                                                          from 'clipanion';
+import {WorkspaceRequiredError}                                      from '@berry/cli';
+import {Cache, CommandContext, Configuration, Project, StreamReport} from '@berry/core';
+import {structUtils}                                                 from '@berry/core';
+import {Command}                                                     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnplugCommand extends Command<CommandContext> {

@@ -17,7 +17,7 @@
     "webpack-sources": "^1.3.0"
   },
   "devDependencies": {
-    "ts-node": "^7.0.1",
+    "@berry/monorepo": "workspace:0.0.0",
     "typescript": "^3.3.3333"
   },
   "peerDependencies": {

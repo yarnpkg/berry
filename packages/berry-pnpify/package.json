@@ -1,21 +1,18 @@
 {
   "name": "@berry/pnpify",
   "version": "0.1.1",
-  "main": "./sources/index.ts",
-  "bin": "./sources/boot-dev.js",
+  "version:next": "0.1.2",
+  "main": "./sources/boot-dev.js",
+  "bin": "./sources/boot-cli-dev.js",
   "sideEffects": false,
   "dependencies": {
     "@berry/fslib": "workspace:0.1.1",
     "cross-spawn": "^6.0.5"
   },
   "devDependencies": {
+    "@berry/monorepo": "workspace:0.0.0",
     "@berry/pnp": "workspace:0.1.0",
-    "@types/eslint": "4.16.6",
-    "eslint": "^5.16.0",
-    "ts-node": "^7.0.1",
-    "typescript": "^3.3.3333",
-    "webpack": "^4.28.4",
-    "webpack-cli": "^3.2.1"
+    "eslint": "^5.16.0"
   },
   "peerDependencies": {
     "eslint": "*",
@@ -36,7 +33,7 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "bin": "./lib/boot.js",
+    "bin": "./lib/cli.js",
     "types": "./lib/index.d.ts"
   },
   "files": [

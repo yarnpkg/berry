@@ -1,11 +1,11 @@
-import {WorkspaceRequiredError}                                                         from '@berry/cli';
-import {CommandContext, Configuration, Cache, Descriptor, Project}                      from '@berry/core';
-import {StreamReport, Workspace}                                                        from '@berry/core';
-import {structUtils}                                                                    from '@berry/core';
-import {Command}                                                                        from 'clipanion';
+import {WorkspaceRequiredError}                                    from '@berry/cli';
+import {CommandContext, Configuration, Cache, Descriptor, Project} from '@berry/core';
+import {StreamReport, Workspace}                                   from '@berry/core';
+import {structUtils}                                               from '@berry/core';
+import {Command, UsageError}                                       from 'clipanion';
 
-import * as suggestUtils                                                                from '../suggestUtils';
-import {Hooks}                                                                          from '..';
+import * as suggestUtils                                           from '../suggestUtils';
+import {Hooks}                                                     from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RemoveCommand extends Command<CommandContext> {
@@ -18,7 +18,9 @@ export default class RemoveCommand extends Command<CommandContext> {
   static usage = Command.Usage({
     description: `remove dependencies from the project`,
     details: `
-      This command will remove the specified packages from the current workspace. If the \`-A,--all\` option is set, the operation will be applied to all workspaces from the current project.
+      This command will remove the specified packages from the current workspace.
+
+      If the \`-A,--all\` option is set, the operation will be applied to all workspaces from the current project.
     `,
     examples: [[
       `Remove a dependency from the current project`,
@@ -48,6 +50,7 @@ export default class RemoveCommand extends Command<CommandContext> {
       suggestUtils.Target.PEER,
     ];
 
+    const unreferencedPackages = [];
     let hasChanged = false;
 
     const afterWorkspaceDependencyRemovalList: Array<[
@@ -56,10 +59,11 @@ export default class RemoveCommand extends Command<CommandContext> {
       Descriptor
     ]> = [];
 
-    for (const workspace of affectedWorkspaces) {
-      for (const entry of this.names) {
-        const ident = structUtils.parseIdent(entry);
+    for (const entry of this.names) {
+      const ident = structUtils.parseIdent(entry);
+      let isReferenced = false;
 
+      for (const workspace of affectedWorkspaces) {
         for (const target of targets) {
           const current = workspace.manifest[target].get(ident.identHash);
 
@@ -73,10 +77,20 @@ export default class RemoveCommand extends Command<CommandContext> {
             ]);
 
             hasChanged = true;
+            isReferenced = true;
           }
         }
       }
+
+      if (!isReferenced) {
+        unreferencedPackages.push(structUtils.prettyIdent(configuration, ident));
+      }
     }
+
+    if (unreferencedPackages.length > 1)
+      throw new UsageError(`Packages ${unreferencedPackages.join(`, `)} aren't referenced by any workspace`);
+    if (unreferencedPackages.length > 0)
+      throw new UsageError(`Package ${unreferencedPackages[0]} isn't referenced by any workspace`);
 
     if (hasChanged) {
       await configuration.triggerMultipleHooks(

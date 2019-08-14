@@ -25,7 +25,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -57,7 +56,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -89,7 +87,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -121,43 +118,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
-gen_enforced_field(_, _, _) :- false.
-",
-}
-`;
-
-exports[`Commands constraints source test (empty project / gen_invalid_dependency (deep field path)) 1`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
-      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
-      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).<no line return>
-",
-}
-`;
-
-exports[`Commands constraints source test (empty project / gen_invalid_dependency (deep field path)) 2`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "dependency_type(dependencies).
-dependency_type(devDependencies).
-dependency_type(peerDependencies).
-workspace('.').
-workspace_ident('.', 'root-workspace-988eec').
-workspace_version('.', []).
-workspace(_) :- false.
-workspace_ident(_, _) :- false.
-workspace_version(_, _) :- false.
-workspace_has_dependency(_, _, _, _) :- false.
-
-gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
-      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
-      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
-gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -202,7 +162,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -248,7 +207,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -294,7 +252,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -340,57 +297,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
-gen_enforced_field(_, _, _) :- false.
-",
-}
-`;
-
-exports[`Commands constraints source test (multiple workspaces / gen_invalid_dependency (deep field path)) 1`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
-      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
-      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).<no line return>
-",
-}
-`;
-
-exports[`Commands constraints source test (multiple workspaces / gen_invalid_dependency (deep field path)) 2`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "dependency_type(dependencies).
-dependency_type(devDependencies).
-dependency_type(peerDependencies).
-workspace('.').
-workspace_ident('.', 'root-workspace-988eec').
-workspace_version('.', []).
-workspace('packages/workspace-a').
-workspace_ident('packages/workspace-a', 'workspace-a-01beb5').
-workspace_version('packages/workspace-a', []).
-workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
-workspace('packages/workspace-b').
-workspace_ident('packages/workspace-b', 'workspace-b-d95f30').
-workspace_version('packages/workspace-b', []).
-workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
-workspace(_) :- false.
-workspace_ident(_, _) :- false.
-workspace_version(_, _) :- false.
-workspace_has_dependency(_, _, _, _) :- false.
-
-gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
-      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
-      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
-gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -422,7 +328,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -455,7 +360,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -488,7 +392,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -521,44 +424,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
-gen_enforced_field(_, _, _) :- false.
-",
-}
-`;
-
-exports[`Commands constraints source test (one regular dependency / gen_invalid_dependency (deep field path)) 1`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
-      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
-      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).<no line return>
-",
-}
-`;
-
-exports[`Commands constraints source test (one regular dependency / gen_invalid_dependency (deep field path)) 2`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "dependency_type(dependencies).
-dependency_type(devDependencies).
-dependency_type(peerDependencies).
-workspace('.').
-workspace_ident('.', 'root-workspace-988eec').
-workspace_version('.', []).
-workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
-workspace(_) :- false.
-workspace_ident(_, _) :- false.
-workspace_version(_, _) :- false.
-workspace_has_dependency(_, _, _, _) :- false.
-
-gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
-      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
-      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
-gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -591,7 +456,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -625,7 +489,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -659,7 +522,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -693,45 +555,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
-gen_enforced_field(_, _, _) :- false.
-",
-}
-`;
-
-exports[`Commands constraints source test (two development dependencies / gen_invalid_dependency (deep field path)) 1`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
-      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
-      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).<no line return>
-",
-}
-`;
-
-exports[`Commands constraints source test (two development dependencies / gen_invalid_dependency (deep field path)) 2`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "dependency_type(dependencies).
-dependency_type(devDependencies).
-dependency_type(peerDependencies).
-workspace('.').
-workspace_ident('.', 'root-workspace-988eec').
-workspace_version('.', []).
-workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
-workspace(_) :- false.
-workspace_ident(_, _) :- false.
-workspace_version(_, _) :- false.
-workspace_has_dependency(_, _, _, _) :- false.
-
-gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
-      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
-      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
-gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -764,7 +587,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -798,7 +620,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -832,7 +653,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -866,45 +686,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
-gen_enforced_field(_, _, _) :- false.
-",
-}
-`;
-
-exports[`Commands constraints source test (two regular dependencies / gen_invalid_dependency (deep field path)) 1`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
-      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
-      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).<no line return>
-",
-}
-`;
-
-exports[`Commands constraints source test (two regular dependencies / gen_invalid_dependency (deep field path)) 2`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "dependency_type(dependencies).
-dependency_type(devDependencies).
-dependency_type(peerDependencies).
-workspace('.').
-workspace_ident('.', 'root-workspace-988eec').
-workspace_version('.', []).
-workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
-workspace(_) :- false.
-workspace_ident(_, _) :- false.
-workspace_version(_, _) :- false.
-workspace_has_dependency(_, _, _, _) :- false.
-
-gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
-      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
-      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
-gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -939,7 +720,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -975,7 +755,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -1011,7 +790,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }
@@ -1047,47 +825,6 @@ workspace_has_dependency(_, _, _, _) :- false.
 
 gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).
 gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
-gen_enforced_field(_, _, _) :- false.
-",
-}
-`;
-
-exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_invalid_dependency (deep field path)) 1`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
-      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
-      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).<no line return>
-",
-}
-`;
-
-exports[`Commands constraints source test (two regular dependencies, two development dependencies / gen_invalid_dependency (deep field path)) 2`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "dependency_type(dependencies).
-dependency_type(devDependencies).
-dependency_type(peerDependencies).
-workspace('.').
-workspace_ident('.', 'root-workspace-988eec').
-workspace_version('.', []).
-workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
-workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
-workspace(_) :- false.
-workspace_ident(_, _) :- false.
-workspace_version(_, _) :- false.
-workspace_has_dependency(_, _, _, _) :- false.
-
-gen_invalid_dependency(WorkspaceCwd, 'no-deps', DependencyType, 'no-deps is not allowed unless built is set to false') :-
-      workspace_has_dependency(WorkspaceCwd, 'no-deps', _, DependencyType),
-      \\\\+(workspace_field(WorkspaceCwd, 'dependenciesMeta.no-deps.built', false)).
-gen_enforced_dependency(_, _, _, _) :- false.
-gen_invalid_dependency(_, _, _, _) :- false.
 gen_enforced_field(_, _, _) :- false.
 ",
 }

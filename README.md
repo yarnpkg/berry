@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://dev.azure.com/yarnpkg/berry/_build"><img alt="Azure Pipelines status" src="https://dev.azure.com/yarnpkg/berry/_apis/build/status/yarnpkg.berry"></a>
+  <a href="https://github.com/yarnpkg/berry"><img alt="GitHub Actions status" src="https://github.com/yarnpkg/berry/workflows/Integration/badge.svg"></a>
   <a href="https://discord.gg/yarnpkg"><img alt="Discord Chat" src="https://img.shields.io/discord/226791405589233664.svg"></a>
   <img alt="Stable Release" src="https://img.shields.io/github/release/yarnpkg/yarn.svg?style=flat">
   <img alt="Prerelease" src="https://img.shields.io/github/release-pre/yarnpkg/yarn.svg?style=flat">

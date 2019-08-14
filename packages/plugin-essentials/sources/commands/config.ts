@@ -1,7 +1,7 @@
-import {CommandContext, Configuration, MessageName, SettingsType, StreamReport}                      from '@berry/core';
-import {miscUtils}                                                                                   from '@berry/core';
-import {Command}                                                                                     from 'clipanion';
-import {inspect}                                                                                     from 'util';
+import {CommandContext, Configuration, MessageName, SettingsType, StreamReport} from '@berry/core';
+import {miscUtils}                                                              from '@berry/core';
+import {Command}                                                                from 'clipanion';
+import {inspect}                                                                from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigCommand extends Command<CommandContext> {

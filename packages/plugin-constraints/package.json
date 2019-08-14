@@ -7,7 +7,7 @@
     "@berry/fslib": "workspace:0.1.1",
     "clipanion": "2.0.0-rc.16",
     "inquirer": "^6.2.0",
-    "lodash.get": "^4.4.2",
+    "lodash": "^4.17.15",
     "node-emoji": "^1.8.1",
     "tau-prolog": "^0.2.38"
   }

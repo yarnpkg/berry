@@ -1,10 +1,10 @@
-import {patchFs as fslibPatchFs}                    from '@berry/fslib';
-import {PnpApi}                                     from '@berry/pnp';
+import {patchFs as fslibPatchFs} from '@berry/fslib';
+import {PnpApi}                  from '@berry/pnp';
 
-import fs                                           from 'fs';
+import fs                        from 'fs';
 
-import {NodeModulesFS}                              from './NodeModulesFS';
-import {dynamicRequire}                             from './dynamicRequire';
+import {NodeModulesFS}           from './NodeModulesFS';
+import {dynamicRequire}          from './dynamicRequire';
 
 let fsPatched = false;
 

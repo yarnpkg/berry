@@ -127,4 +127,9 @@ export class Workspace {
     const content = `${JSON.stringify(data, null, this.manifest.indent)}\n`;
     await xfs.changeFilePromise(ppath.join(this.cwd, toFilename(`package.json`)), content);
   }
+
+  async persistRawManifest() {
+    const content = `${JSON.stringify(this.manifest.raw, null, this.manifest.indent)}\n`;
+    await xfs.changeFilePromise(ppath.join(this.cwd, toFilename(`package.json`)), content);
+  }
 }

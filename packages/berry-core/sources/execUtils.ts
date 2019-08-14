@@ -1,6 +1,6 @@
-import {NodeFS, PortablePath}             from '@berry/fslib';
-import crossSpawn                         from 'cross-spawn';
-import {Readable, Writable}               from 'stream';
+import {NodeFS, PortablePath} from '@berry/fslib';
+import crossSpawn             from 'cross-spawn';
+import {Readable, Writable}   from 'stream';
 
 export type PipevpOptions = {
   cwd: PortablePath,

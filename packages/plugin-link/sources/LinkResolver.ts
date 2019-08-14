@@ -52,7 +52,7 @@ export class LinkResolver implements Resolver {
       languageName: opts.project.configuration.get(`defaultLanguageName`),
       linkType: LinkType.SOFT,
 
-      dependencies: manifest.dependencies,
+      dependencies: new Map([...manifest.dependencies, ...manifest.devDependencies]),
       peerDependencies: manifest.peerDependencies,
 
       dependenciesMeta: manifest.dependenciesMeta,

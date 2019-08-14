@@ -64,7 +64,9 @@ export class NpmSemverResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const version = locator.reference.slice(PROTOCOL.length);
+    const version = semver.clean(locator.reference.slice(PROTOCOL.length));
+    if (version === null)
+      throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `The npm semver resolver got selected, but the version isn't semver`);
 
     const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(locator), {
       configuration: opts.project.configuration,

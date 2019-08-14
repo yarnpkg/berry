@@ -1,6 +1,4 @@
-require(`@berry/pnpify/lib`).patchFs();
-
-const {makeConfig} = require(`@berry/builder/lib/tools/makeConfig`);
+const {makeConfig} = require(`@berry/builder/sources/tools/makeConfig`);
 const {RawSource} = require(`webpack-sources`);
 
 module.exports = makeConfig({
