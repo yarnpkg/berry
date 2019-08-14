@@ -45,7 +45,7 @@ export class GitFetcher implements Fetcher {
     try {
       await execUtils.execvp(`yarn`, [`install`], {cwd: directory, env: env, strict: true});
     } catch (error) {
-      error.message = `Installing the dependencies from the cloned repoistory failed (${directory})`;
+      error.message = `Installing the dependencies from the cloned repository failed (${directory})`;
       throw error;
     }
 
@@ -53,7 +53,7 @@ export class GitFetcher implements Fetcher {
       // Exclude `.git` and everything declared in `.npmignore` from the archive.
       await execUtils.execvp(`yarn`, [`pack`], {cwd: directory, env: env, strict: true});
     } catch (error) {
-      error.message = `Generating a tarball from the cloned repoistory failed (${directory})`;
+      error.message = `Generating a tarball from the cloned repository failed (${directory})`;
       throw error;
     }
 

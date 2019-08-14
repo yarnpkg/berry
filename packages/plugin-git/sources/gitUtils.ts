@@ -33,7 +33,7 @@ export async function clone(repo: string, configuration: Configuration) {
     if (hash)
       await execUtils.execvp(`git`, [`checkout`, `${hash}`], {cwd: directory, strict: true});
   } catch (error) {
-    error.message = `Cloning the repoistory from (${gitUrl}) to (${directory}) failed`;
+    error.message = `Cloning the repository from (${gitUrl}) to (${directory}) failed`;
     throw error;
   }
 
