@@ -26,8 +26,13 @@ describe(`Protocols`, () => {
 
           await expect(lock).toMatchObject({
             [`util-deprecate@git://github.com/TooTallNate/util-deprecate.git#v1.0.1`]: {
-                "version": "1.0.1"
-            }
+              "version": "1.0.1",
+            },
+          });
+
+          await expect(source(`require('util-deprecate/package.json')`)).resolves.toMatchObject({
+            name: `util-deprecate`,
+            version: `1.0.1`,
           });
         },
       ),
@@ -53,8 +58,13 @@ describe(`Protocols`, () => {
 
           await expect(lock).toMatchObject({
             [`util-deprecate@git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1`]: {
-                "version": "1.0.1"
-            }
+              "version": "1.0.1",
+            },
+          });
+
+          await expect(source(`require('util-deprecate/package.json')`)).resolves.toMatchObject({
+            name: `util-deprecate`,
+            version: `1.0.1`,
           });
         },
       ),
@@ -80,8 +90,13 @@ describe(`Protocols`, () => {
 
           await expect(lock).toMatchObject({
             [`util-deprecate@https://github.com/TooTallNate/util-deprecate.git#v1.0.0`]: {
-                "version": "1.0.0"
-            }
+              "version": "1.0.0",
+            },
+          });
+
+          await expect(source(`require('util-deprecate/package.json')`)).resolves.toMatchObject({
+            name: `util-deprecate`,
+            version: `1.0.0`,
           });
         },
       ),
@@ -107,8 +122,13 @@ describe(`Protocols`, () => {
 
           await expect(lock).toMatchObject({
             [`util-deprecate@https://github.com/TooTallNate/util-deprecate.git#master`]: {
-                "version": "1.0.2"
-            }
+              "version": "1.0.2",
+            },
+          });
+
+          await expect(source(`require('util-deprecate/package.json')`)).resolves.toMatchObject({
+            name: `util-deprecate`,
+            version: `1.0.2`,
           });
         },
       ),
@@ -134,8 +154,13 @@ describe(`Protocols`, () => {
 
           await expect(lock).toMatchObject({
             [`util-deprecate@https://github.com/TooTallNate/util-deprecate.git#b3562c2`]: {
-                "version": "1.0.0"
-            }
+              "version": "1.0.0",
+            },
+          });
+
+          await expect(source(`require('util-deprecate/package.json')`)).resolves.toMatchObject({
+            name: `util-deprecate`,
+            version: `1.0.0`,
           });
         },
       ),
