@@ -337,23 +337,40 @@ module.exports.factory = function (require) {
       constructor() {
           super(...arguments);
           this.deferred = false;
+          this.force = false;
       }
       async execute() {
           const configuration = await core_1.Configuration.find(this.context.cwd, this.context.plugins);
           const { workspace } = await core_1.Project.find(configuration, this.context.cwd);
           if (!workspace)
               throw new cli_1.WorkspaceRequiredError(this.context.cwd);
-          if (workspace.manifest.version == null)
-              throw new clipanion_1.UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
-          const currentVersion = workspace.manifest.version;
-          if (typeof currentVersion !== `string` || !semver_1.default.valid(currentVersion))
-              throw new clipanion_1.UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
-          const nextVersion = semver_1.default.inc(currentVersion, this.strategy);
-          if (nextVersion === null)
-              throw new Error(`Assertion failed: Failed to increment the version number (${currentVersion})`);
+          const isSemver = semver_1.default.valid(this.strategy);
+          let nextVersion;
+          if (semver_1.default.valid(this.strategy)) {
+              nextVersion = this.strategy;
+          }
+          else {
+              if (workspace.manifest.version == null && !isSemver)
+                  throw new clipanion_1.UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
+              const currentVersion = workspace.manifest.version;
+              if (typeof currentVersion !== `string` || !semver_1.default.valid(currentVersion))
+                  throw new clipanion_1.UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
+              const bumpedVersion = semver_1.default.inc(currentVersion, this.strategy);
+              if (bumpedVersion === null)
+                  throw new Error(`Assertion failed: Failed to increment the version number (${currentVersion})`);
+              nextVersion = bumpedVersion;
+          }
           const deferredVersion = workspace.manifest.raw[`version:next`];
-          if (this.deferred && deferredVersion && semver_1.default.gte(deferredVersion, nextVersion))
-              return;
+          if (this.deferred && deferredVersion && semver_1.default.gte(deferredVersion, nextVersion)) {
+              if (isSemver) {
+                  if (!this.force) {
+                      throw new clipanion_1.UsageError(`The target version (${nextVersion}) is smaller than the one currently registered (${deferredVersion}); use -f,--force to overwrite.`);
+                  }
+              }
+              else {
+                  return;
+              }
+          }
           workspace.manifest.setRawField(`version:next`, nextVersion, { after: [`version`] });
           workspace.persistManifest();
           if (!this.deferred) {
@@ -398,11 +415,14 @@ module.exports.factory = function (require) {
           ]],
   });
   __decorate([
-      clipanion_1.Command.String({ required: false })
+      clipanion_1.Command.String()
   ], VersionCommand.prototype, "strategy", void 0);
   __decorate([
       clipanion_1.Command.Boolean(`-d,--deferred`)
   ], VersionCommand.prototype, "deferred", void 0);
+  __decorate([
+      clipanion_1.Command.Boolean(`-f,--force`)
+  ], VersionCommand.prototype, "force", void 0);
   __decorate([
       clipanion_1.Command.Path(`version`)
   ], VersionCommand.prototype, "execute", null);

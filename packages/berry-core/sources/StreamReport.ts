@@ -6,7 +6,10 @@ import {Locator}             from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
-  footer?: boolean,
+  includeFooter?: boolean,
+  includeInfos?: boolean,
+  includeLogs?: boolean,
+  includeWarnings?: boolean,
   json?: boolean,
   stdout: Writable,
 };
@@ -27,7 +30,9 @@ export class StreamReport extends Report {
   }
 
   private configuration: Configuration;
-  private footer: boolean;
+  private includeFooter: boolean;
+  private includeInfos: boolean;
+  private includeWarnings: boolean;
   private json: boolean;
   private stdout: Writable;
 
@@ -41,11 +46,13 @@ export class StreamReport extends Report {
 
   private indent: number = 0;
 
-  constructor({configuration, stdout, footer = true, json = false}: StreamReportOptions) {
+  constructor({configuration, stdout, json = false, includeFooter = true, includeLogs = !json, includeInfos = includeLogs, includeWarnings = includeLogs}: StreamReportOptions) {
     super();
 
     this.configuration = configuration;
-    this.footer = footer;
+    this.includeFooter = includeFooter;
+    this.includeInfos = includeInfos;
+    this.includeWarnings = includeWarnings;
     this.json = json;
     this.stdout = stdout;
   }
@@ -121,23 +128,37 @@ export class StreamReport extends Report {
   }
 
   reportInfo(name: MessageName | null, text: string) {
+    if (!this.includeInfos)
+      return;
+
     if (!this.json) {
       this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    } else {
+      this.reportJson({type: `info`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text})
     }
   }
 
   reportWarning(name: MessageName, text: string) {
     this.warningCount += 1;
 
+    if (!this.includeWarnings)
+      return;
+
     if (!this.json) {
       this.stdout.write(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    } else {
+      this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
   }
 
   reportError(name: MessageName, text: string) {
     this.errorCount += 1;
 
-    this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    if (!this.json) {
+      this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+    } else {
+      this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
+    }
   }
 
   reportJson(data: any) {
@@ -147,7 +168,7 @@ export class StreamReport extends Report {
   }
 
   async finalize() {
-    if (!this.footer)
+    if (!this.includeFooter)
       return;
 
     let installStatus = ``;
@@ -204,7 +225,7 @@ export class StreamReport extends Report {
     const num = name === null ? 0 : name;
     const label = `YN${num.toString(10).padStart(4, `0`)}`;
 
-    if (name === null) {
+    if (!this.json && name === null) {
       return this.configuration.format(label, `grey`);
     } else {
       return label;

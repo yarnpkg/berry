@@ -6,6 +6,6 @@ export default class VersionCommand extends Command<CommandContext> {
   @Command.Path(`-v`)
   @Command.Path(`--version`)
   async execute() {
-    this.context.stdout.write(`v${BERRY_VERSION}\n`);
+    this.context.stdout.write(`${BERRY_VERSION}\n`);
   }
 }

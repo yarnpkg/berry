@@ -16,11 +16,14 @@ const STRATEGIES = new Set([
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionCommand extends Command<CommandContext> {
-  @Command.String({required: false})
-  strategy?: false;
+  @Command.String()
+  strategy!: string;
 
   @Command.Boolean(`-d,--deferred`)
   deferred: boolean = false;
+
+  @Command.Boolean(`-f,--force`)
+  force: boolean = false;
 
   static schema = yup.object().shape({
     strategy: yup.string().test({
@@ -68,20 +71,36 @@ export default class VersionCommand extends Command<CommandContext> {
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
 
-    if (workspace.manifest.version == null)
-      throw new UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
+    const isSemver = semver.valid(this.strategy);
 
-    const currentVersion = workspace.manifest.version;
-    if (typeof currentVersion !== `string` || !semver.valid(currentVersion))
-      throw new UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
+    let nextVersion;
+    if (semver.valid(this.strategy)) {
+      nextVersion = this.strategy;
+    } else {
+      if (workspace.manifest.version == null && !isSemver)
+        throw new UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
 
-    const nextVersion = semver.inc(currentVersion, this.strategy as any);
-    if (nextVersion === null)
-      throw new Error(`Assertion failed: Failed to increment the version number (${currentVersion})`);
+      const currentVersion = workspace.manifest.version;
+      if (typeof currentVersion !== `string` || !semver.valid(currentVersion))
+        throw new UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
+
+      const bumpedVersion = semver.inc(currentVersion, this.strategy as any);
+      if (bumpedVersion === null)
+        throw new Error(`Assertion failed: Failed to increment the version number (${currentVersion})`);
+
+      nextVersion = bumpedVersion;
+    }
 
     const deferredVersion = workspace.manifest.raw[`version:next`];
-    if (this.deferred && deferredVersion && semver.gte(deferredVersion, nextVersion))
-      return;
+    if (this.deferred && deferredVersion && semver.gte(deferredVersion, nextVersion)) {
+      if (isSemver) {
+        if (!this.force) {
+          throw new UsageError(`The target version (${nextVersion}) is smaller than the one currently registered (${deferredVersion}); use -f,--force to overwrite.`);
+        }
+      } else {
+        return;
+      }
+    }
 
     workspace.manifest.setRawField(`version:next`, nextVersion, {after: [`version`]});
     workspace.persistManifest();
