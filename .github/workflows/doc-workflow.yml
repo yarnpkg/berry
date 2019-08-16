@@ -34,7 +34,7 @@ jobs:
       with:
         args: 'build:doc'
 
-    - name: 'Check for diffs'
+    - name: 'Check status'
       uses: ./scripts/actions/if-repo-changed
 
     - name: 'Make the commit'

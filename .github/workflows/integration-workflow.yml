@@ -14,14 +14,14 @@ jobs:
       with:
         version: 10.x
 
-    - name: 'Check that the Yarn files don\'t change on new installs'
+    - name: 'Check that the Yarn files don''t change on new installs'
       uses: ./scripts/actions/local-yarn-command
       with:
         args: '--frozen-lockfile'
       env:
         YARN_ENABLE_NETWORK: 0
 
-    - name: 'Check that the cache doesn\'t contain obsolete packages'
+    - name: 'Check that the cache doesn''t contain obsolete packages'
       run: |
         [[ $(node ./scripts/run-yarn.js cache clean --dry-run --json | jq -c 'select(.path)' | wc -l) -eq 0 ]]
 
