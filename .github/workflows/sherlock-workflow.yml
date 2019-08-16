@@ -29,4 +29,4 @@ jobs:
       with:
         args: 'sherlock report'
       env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        GITHUB_TOKEN: ${{secrets.YARNBOT_TOKEN}}

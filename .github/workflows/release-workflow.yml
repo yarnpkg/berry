@@ -33,9 +33,9 @@ jobs:
       with:
         message: 'Finalizes the commit'
       env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        GITHUB_TOKEN: ${{secrets.YARNBOT_TOKEN}}
 
     - name: 'Send the artifacts'
       uses: arcanis/release-action@master
       env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        GITHUB_TOKEN: ${{secrets.YARNBOT_TOKEN}}
