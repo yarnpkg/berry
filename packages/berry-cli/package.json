@@ -1,6 +1,7 @@
 {
   "name": "@berry/cli",
   "version": "2.0.0-rc.0",
+  "version:next": "2.0.0-rc.1",
   "private": true,
   "main": "./sources/index.ts",
   "bin": {
@@ -23,6 +24,7 @@
     "@berry/plugin-dlx": "workspace:2.0.0-rc.0",
     "@berry/plugin-essentials": "workspace:2.0.0-rc.0",
     "@berry/plugin-file": "workspace:2.0.0-rc.0",
+    "@berry/plugin-git": "workspace:0.0.0",
     "@berry/plugin-github": "workspace:2.0.0-rc.0",
     "@berry/plugin-http": "workspace:2.0.0-rc.0",
     "@berry/plugin-init": "workspace:2.0.0-rc.0",
@@ -50,6 +52,7 @@
         "@berry/plugin-dlx",
         "@berry/plugin-file",
         "@berry/plugin-github",
+        "@berry/plugin-git",
         "@berry/plugin-http",
         "@berry/plugin-init",
         "@berry/plugin-link",

@@ -1,4 +1,6 @@
-on: [push]
+on:
+- push
+- pull_request
 
 name: 'Integration'
 jobs:
@@ -15,9 +17,8 @@ jobs:
         version: 10.x
 
     - name: 'Check that the Yarn files don''t change on new installs'
-      uses: ./scripts/actions/local-yarn-command
-      with:
-        args: '--frozen-lockfile'
+      run: |
+        node ./scripts/run-yarn.js --frozen-lockfile
       env:
         YARN_ENABLE_NETWORK: 0
 
@@ -37,14 +38,12 @@ jobs:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
     - name: 'Check for linting errors'
-      uses: ./scripts/actions/local-yarn-command
-      with:
-        args: 'test:lint'
+      run: |
+        node ./scripts/run-yarn.js test:lint
 
     - name: 'Check for unmet constraints'
-      uses: ./scripts/actions/local-yarn-command
-      with:
-        args: 'constraints'
+      run: |
+        node ./scripts/run-yarn.js constraints
 
   acceptance:
     strategy:

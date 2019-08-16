@@ -36,6 +36,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       ["@berry/plugin-essentials", ["workspace:packages/plugin-essentials"]],
       ["@berry/plugin-exec", ["workspace:packages/plugin-exec"]],
       ["@berry/plugin-file", ["workspace:packages/plugin-file"]],
+      ["@berry/plugin-git", ["workspace:packages/plugin-git"]],
       ["@berry/plugin-github", ["workspace:packages/plugin-github"]],
       ["@berry/plugin-http", ["workspace:packages/plugin-http"]],
       ["@berry/plugin-init", ["workspace:packages/plugin-init"]],
@@ -416,6 +417,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/faker", "npm:4.1.4"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/fs-extra", "npm:5.0.4"],
+            ["@types/git-url-parse", "npm:9.0.0"],
             ["@types/globby", "npm:8.0.0"],
             ["@types/got", "npm:8.3.5"],
             ["@types/inquirer", "npm:0.0.43"],
@@ -2717,6 +2719,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/plugin-dlx", "workspace:packages/plugin-dlx"],
             ["@berry/plugin-essentials", "workspace:packages/plugin-essentials"],
             ["@berry/plugin-file", "workspace:packages/plugin-file"],
+            ["@berry/plugin-git", "workspace:packages/plugin-git"],
             ["@berry/plugin-github", "workspace:packages/plugin-github"],
             ["@berry/plugin-http", "workspace:packages/plugin-http"],
             ["@berry/plugin-init", "workspace:packages/plugin-init"],
@@ -2888,6 +2891,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/faker", "npm:4.1.4"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/fs-extra", "npm:5.0.4"],
+            ["@types/git-url-parse", "npm:9.0.0"],
             ["@types/globby", "npm:8.0.0"],
             ["@types/got", "npm:8.3.5"],
             ["@types/inquirer", "npm:0.0.43"],
@@ -3010,6 +3014,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/plugin-file", "workspace:packages/plugin-file"],
             ["@berry/core", "workspace:packages/berry-core"],
             ["@berry/fslib", "workspace:packages/berry-fslib"]
+          ]
+        }]
+      ]],
+      ["@berry/plugin-git", [
+        ["workspace:packages/plugin-git", {
+          "packageLocation": "./packages/plugin-git/",
+          "packageDependencies": [
+            ["@berry/plugin-git", "workspace:packages/plugin-git"],
+            ["@berry/core", "workspace:packages/berry-core"],
+            ["@berry/fslib", "workspace:packages/berry-fslib"],
+            ["git-url-parse", "npm:11.1.2"],
+            ["tmp", "npm:0.0.33"]
           ]
         }]
       ]],
@@ -4646,6 +4662,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/@types-get-port-npm-0.0.4-a99917c399.zip/node_modules/@types/get-port/",
           "packageDependencies": [
             ["@types/get-port", "npm:0.0.4"]
+          ]
+        }]
+      ]],
+      ["@types/git-url-parse", [
+        ["npm:9.0.0", {
+          "packageLocation": "./.yarn/cache/@types-git-url-parse-npm-9.0.0-18fe2aa140.zip/node_modules/@types/git-url-parse/",
+          "packageDependencies": [
+            ["@types/git-url-parse", "npm:9.0.0"]
           ]
         }]
       ]],
