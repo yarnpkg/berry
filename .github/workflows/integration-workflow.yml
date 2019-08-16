@@ -19,7 +19,7 @@ jobs:
       with:
         args: '--frozen-lockfile'
       env:
-        YARN_ENABLE_NETWORK=0
+        YARN_ENABLE_NETWORK: 0
 
     - name: 'Check that the cache doesn\'t contain obsolete packages'
       run: |
