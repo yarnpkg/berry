@@ -84,7 +84,7 @@ export default class VersionCommand extends Command<CommandContext> {
       const bumpedVersion = semver.inc(currentVersion, this.strategy as any);
       if (bumpedVersion === null)
         throw new Error(`Assertion failed: Failed to increment the version number (${currentVersion})`);
-      
+
       nextVersion = bumpedVersion;
     }
 
