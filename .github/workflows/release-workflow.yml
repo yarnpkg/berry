@@ -21,7 +21,7 @@ jobs:
     - name: 'Apply the new version numbers'
       uses: ./scripts/actions/local-yarn-command
       with:
-        args: 'version apply'
+        args: 'version apply --all'
 
     - name: 'Generate the artifacts'
       uses: ./scripts/actions/local-yarn-command
