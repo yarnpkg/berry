@@ -52,14 +52,14 @@ The following compatibility table gives you an idea of the integration status wi
 | Create-React-App  | Native     | Starting from 2.0+ |
 | ESLint            | Native     | Some compatibility issues w/ shared configs |
 | Gatsby            | Native     | No comment |
-| Husky             | Native     | Starting from 2.6+ ([#511](https://github.com/typicode/husky/pull/511)), improvements are coming ([#510](https://github.com/typicode/husky/pull/510)) |
+| Husky             | Native     | Starting from 4.0.0-1+ |
 | Jest              | Native     | Starting from 24.1+ |
 | Prettier          | Native     | Starting from 1.17+ |
 | Rollup            | Plugin     | Via [`rollup-plugin-pnp-resolve`](https://github.com/arcanis/rollup-plugin-pnp-resolve) |
 | TypeScript        | Plugin     | Via [PnPify](/advanced/pnpify), or Webpack and [`ts-loader`](https://github.com/arcanis/pnp-webpack-plugin#ts-loader-integration) |
+| VSCode-ESLint     | Plugin     | Via [PnPify](/advanced/pnpify#vscode-support) |
 | VSCode            | Plugin     | Via [PnPify](/advanced/pnpify#vscode-support) |
 | Webpack           | Plugin     | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin), will be native starting from 5+ |
 | Typescript-Eslint | Workaround | Update the lockfile to add `typescript: "*"` into its `peerDependencies`. [`Relevant Issue`](https://github.com/typescript-eslint/typescript-eslint/issues/770) |
-| VSCode-ESLint     | Broken     | Work in progress over at [#496](https://github.com/microsoft/vscode-languageserver-node/issues/496) and [#601](https://github.com/microsoft/vscode-eslint/issues/601) |
 
 This list is kept up-to-date based on the latest release we've published starting from the v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to an issue. And maybe a PR? 😊
