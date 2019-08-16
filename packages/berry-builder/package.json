@@ -1,7 +1,7 @@
 {
   "name": "@berry/builder",
   "version": "0.2.7",
-  "version:next": "2.0.0",
+  "version:next": "2.0.0-rc.0",
   "bin": "./sources/boot-dev.js",
   "dependencies": {
     "@berry/core": "workspace:0.1.0",

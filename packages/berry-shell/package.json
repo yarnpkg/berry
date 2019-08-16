@@ -1,7 +1,7 @@
 {
   "name": "@berry/shell",
   "version": "0.1.0",
-  "version:next": "2.0.0",
+  "version:next": "2.0.0-rc.0",
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/fslib": "workspace:0.1.1",

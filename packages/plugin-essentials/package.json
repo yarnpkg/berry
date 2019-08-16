@@ -14,5 +14,5 @@
     "treeify": "^1.1.0",
     "yup": "^0.27.0"
   },
-  "version:next": "2.0.0"
+  "version:next": "2.0.0-rc.0"
 }

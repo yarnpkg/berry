@@ -8,5 +8,5 @@
     "@berry/json-proxy": "workspace:0.1.0",
     "clipanion": "2.0.0-rc.16"
   },
-  "version:next": "2.0.0"
+  "version:next": "2.0.0-rc.0"
 }

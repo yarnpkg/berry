@@ -11,5 +11,5 @@
     "clipanion": "2.0.0-rc.16",
     "tmp": "^0.0.33"
   },
-  "version:next": "2.0.0"
+  "version:next": "2.0.0-rc.0"
 }

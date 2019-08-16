@@ -22,6 +22,9 @@ export default class VersionCommand extends Command<CommandContext> {
   @Command.Boolean(`-d,--deferred`)
   deferred: boolean = false;
 
+  @Command.Boolean(`-f,--force`)
+  force: boolean = false;
+
   static schema = yup.object().shape({
     strategy: yup.string().test({
       name: `strategy`,
@@ -89,8 +92,15 @@ export default class VersionCommand extends Command<CommandContext> {
     }
 
     const deferredVersion = workspace.manifest.raw[`version:next`];
-    if (this.deferred && deferredVersion && semver.gte(deferredVersion, nextVersion))
-      return;
+    if (this.deferred && deferredVersion && semver.gte(deferredVersion, nextVersion)) {
+      if (isSemver) {
+        if (!this.force) {
+          throw new UsageError(`The target version (${nextVersion}) is smaller than the one currently registered (${deferredVersion}); use -f,--force to overwrite.`);
+        }
+      } else {
+        return;
+      }
+    }
 
     workspace.manifest.setRawField(`version:next`, nextVersion, {after: [`version`]});
     workspace.persistManifest();
