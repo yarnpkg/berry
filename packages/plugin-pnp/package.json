@@ -3,14 +3,14 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/cli": "workspace:2.0.0",
-    "@berry/core": "workspace:0.1.0",
-    "@berry/fslib": "workspace:0.1.1",
-    "@berry/pnp": "workspace:0.1.0",
+    "@berry/cli": "workspace:2.0.0-rc.0",
+    "@berry/core": "workspace:2.0.0-rc.0",
+    "@berry/fslib": "workspace:2.0.0-rc.0",
+    "@berry/pnp": "workspace:2.0.0-rc.0",
     "clipanion": "2.0.0-rc.16"
   },
   "devDependencies": {
-    "@berry/plugin-stage": "workspace:0.0.0"
+    "@berry/plugin-stage": "workspace:2.0.0-rc.0"
   },
-  "version:next": "2.0.0-rc.0"
+  "version": "2.0.0-rc.0"
 }

@@ -1,17 +1,16 @@
 {
   "name": "@berry/pnpify",
-  "version": "0.1.1",
-  "version:next": "2.0.0-rc.0",
+  "version": "2.0.0-rc.0",
   "main": "./sources/boot-dev.js",
   "bin": "./sources/boot-cli-dev.js",
   "sideEffects": false,
   "dependencies": {
-    "@berry/fslib": "workspace:0.1.1",
+    "@berry/fslib": "workspace:2.0.0-rc.0",
     "cross-spawn": "^6.0.5"
   },
   "devDependencies": {
     "@berry/monorepo": "workspace:0.0.0",
-    "@berry/pnp": "workspace:0.1.0",
+    "@berry/pnp": "workspace:2.0.0-rc.0",
     "eslint": "^5.16.0"
   },
   "peerDependencies": {

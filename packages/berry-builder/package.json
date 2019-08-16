@@ -1,12 +1,11 @@
 {
   "name": "@berry/builder",
-  "version": "0.2.7",
-  "version:next": "2.0.0-rc.0",
+  "version": "2.0.0-rc.0",
   "bin": "./sources/boot-dev.js",
   "dependencies": {
-    "@berry/core": "workspace:0.1.0",
-    "@berry/fslib": "workspace:0.1.1",
-    "@berry/pnpify": "workspace:0.1.1",
+    "@berry/core": "workspace:2.0.0-rc.0",
+    "@berry/fslib": "workspace:2.0.0-rc.0",
+    "@berry/pnpify": "workspace:2.0.0-rc.0",
     "chalk": "^2.4.1",
     "clipanion": "2.0.0-rc.16",
     "filesize": "^4.1.2",

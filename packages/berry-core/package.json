@@ -1,16 +1,15 @@
 {
   "name": "@berry/core",
-  "version": "0.1.0",
-  "version:next": "2.0.0-rc.0",
+  "version": "2.0.0-rc.0",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@berry/fslib": "workspace:0.1.1",
-    "@berry/json-proxy": "workspace:0.1.0",
-    "@berry/parsers": "workspace:0.1.0",
-    "@berry/pnp": "workspace:0.1.0",
-    "@berry/pnpify": "workspace:0.1.1",
-    "@berry/shell": "workspace:0.1.0",
+    "@berry/fslib": "workspace:2.0.0-rc.0",
+    "@berry/json-proxy": "workspace:2.0.0-rc.0",
+    "@berry/parsers": "workspace:2.0.0-rc.0",
+    "@berry/pnp": "workspace:2.0.0-rc.0",
+    "@berry/pnpify": "workspace:2.0.0-rc.0",
+    "@berry/shell": "workspace:2.0.0-rc.0",
     "agentkeepalive": "^4.0.2",
     "camelcase": "^5.3.1",
     "chalk": "^2.4.1",
@@ -32,9 +31,9 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
-    "@berry/plugin-link": "workspace:0.0.0",
-    "@berry/plugin-pnp": "workspace:0.0.0",
-    "@berry/pnpify": "workspace:0.1.1",
+    "@berry/plugin-link": "workspace:2.0.0-rc.0",
+    "@berry/plugin-pnp": "workspace:2.0.0-rc.0",
+    "@berry/pnpify": "workspace:2.0.0-rc.0",
     "typescript": "^3.3.3333"
   },
   "scripts": {
