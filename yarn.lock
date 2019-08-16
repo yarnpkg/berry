@@ -4,9 +4,9 @@
 __metadata:
   version: 3
 
-"@arcanis/sherlock@npm:^1.0.18":
-  version: 1.0.18
-  resolution: "@arcanis/sherlock@npm:1.0.18"
+"@arcanis/sherlock@npm:^1.0.19":
+  version: 1.0.19
+  resolution: "@arcanis/sherlock@npm:1.0.19"
   dependencies:
     "@octokit/rest": "npm:^16.28.7"
     clipanion: "npm:2.0.0-rc.16"
@@ -23,7 +23,7 @@ __metadata:
       built: false
   bin:
     sherlock: lib/boot.js
-  checksum: 11c07858d7cdfe83b017f0c42628995008d9ca9397bab6490cb1de7dd1bf5f5956dbb0771ce251a10c68cbce8461e5b95e021d98ee507389178f80425117b860
+  checksum: 3fbf51ece7e3a1b5df85c2fae9e5983885a53634726157905e475e68750bd67ca98ff381f23380354031b30be5c6aa7c2c489c91452e69536947e663355f6277
   languageName: node
   linkType: hard
 
@@ -1801,7 +1801,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@berry/monorepo@workspace:."
   dependencies:
-    "@arcanis/sherlock": "npm:^1.0.18"
+    "@arcanis/sherlock": "npm:^1.0.19"
     "@babel/cli": "npm:^7.2.3"
     "@babel/core": "npm:^7.3.3"
     "@babel/plugin-proposal-class-properties": "npm:^7.3.3"

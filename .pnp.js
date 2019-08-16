@@ -396,7 +396,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         [null, {
           "packageLocation": "./",
           "packageDependencies": [
-            ["@arcanis/sherlock", "npm:1.0.18"],
+            ["@arcanis/sherlock", "npm:1.0.19"],
             ["@babel/cli", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:7.2.3"],
             ["@babel/core", "npm:7.3.3"],
             ["@babel/plugin-proposal-class-properties", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:7.3.3"],
@@ -460,10 +460,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["@arcanis/sherlock", [
-        ["npm:1.0.18", {
-          "packageLocation": "./.yarn/cache/@arcanis-sherlock-npm-1.0.18-6d5236b6bc.zip/node_modules/@arcanis/sherlock/",
+        ["npm:1.0.19", {
+          "packageLocation": "./.yarn/cache/@arcanis-sherlock-npm-1.0.19-869560494b.zip/node_modules/@arcanis/sherlock/",
           "packageDependencies": [
-            ["@arcanis/sherlock", "npm:1.0.18"],
+            ["@arcanis/sherlock", "npm:1.0.19"],
             ["@octokit/rest", "npm:16.28.7"],
             ["clipanion", "npm:2.0.0-rc.16"],
             ["expect", "npm:24.8.0"],
@@ -2870,7 +2870,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./",
           "packageDependencies": [
             ["@berry/monorepo", "workspace:."],
-            ["@arcanis/sherlock", "npm:1.0.18"],
+            ["@arcanis/sherlock", "npm:1.0.19"],
             ["@babel/cli", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:7.2.3"],
             ["@babel/core", "npm:7.3.3"],
             ["@babel/plugin-proposal-class-properties", "virtual:b93debf42822ec38d5fe4e99f4e6f09d7b47888d3ede2fd4d87aea17809e37e43f10d527dd26cf2c5a2c4646a93b42d7dcde25cae5bbb17e5c1c274d58d81e6f#npm:7.3.3"],
