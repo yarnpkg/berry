@@ -13,5 +13,6 @@
   },
   "scripts": {
     "build:plugin-stage": "builder build plugin"
-  }
+  },
+  "version:next": "2.0.0"
 }

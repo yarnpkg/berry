@@ -1,28 +1,27 @@
 on: [push]
 
-name: Integration
+name: 'Integration'
 jobs:
   chore:
-    name: Testing chores
+    name: 'Testing chores'
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@master
 
-    - name: Use Node.js 10.x
+    - name: 'Use Node.js 10.x'
       uses: actions/setup-node@master
       with:
         version: 10.x
 
-    - name: Use Yarn 1.17.2
-      run: |
-        npm install -g yarn@1.17.2
+    - name: 'Check that the Yarn files don\'t change on new installs'
+      uses: ./scripts/actions/local-yarn-command
+      with:
+        args: '--frozen-lockfile'
+      env:
+        YARN_ENABLE_NETWORK=0
 
-    - name: Check that the Yarn files don't change on new installs
-      run: |
-        YARN_ENABLE_NETWORK=0 node ./scripts/run-yarn.js --frozen-lockfile
-
-    - name: Check that the cache doesn't contain obsolete packages
+    - name: 'Check that the cache doesn\'t contain obsolete packages'
       run: |
         [[ $(node ./scripts/run-yarn.js cache clean --dry-run --json | jq -c 'select(.path)' | wc -l) -eq 0 ]]
 
@@ -32,17 +31,20 @@ jobs:
           rm -rf ./.yarn/cache
           node ./scripts/run-yarn.js
         fi
-      if: github.event.pull_request != ''
+      if: |
+        github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
-    - name: Check for linting errors
-      run: |
-        node ./scripts/run-yarn.js test:lint
+    - name: 'Check for linting errors'
+      uses: ./scripts/actions/local-yarn-command
+      with:
+        args: 'test:lint'
 
-    - name: Check for unmet constraints
-      run: |
-        node ./scripts/run-yarn.js constraints
+    - name: 'Check for unmet constraints'
+      uses: ./scripts/actions/local-yarn-command
+      with:
+        args: 'constraints'
 
   acceptance:
     strategy:
@@ -60,22 +62,22 @@ jobs:
         - node: 8
           platform: windows-latest
 
-    name: ${{matrix.platform}} w/ Node.js ${{matrix.node}}.x
+    name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x'
     runs-on: ${{matrix.platform}}
 
     steps:
     - uses: actions/checkout@master
 
-    - name: Use Node.js ${{matrix.node}}.x
+    - name: 'Use Node.js ${{matrix.node}}.x'
       uses: actions/setup-node@master
       with:
         version: ${{matrix.node}}.x
 
-    - name: Use Yarn 1.17.2
+    - name: 'Use Yarn 1.17.2'
       run: |
         npm install -g yarn@1.17.2
 
-    - name: Build the standard bundle & plugins
+    - name: 'Build the standard bundle & plugins'
       run: |
         set -e
         node --version
@@ -86,10 +88,10 @@ jobs:
         node ./scripts/run-yarn.js build:plugin-version
         node ./scripts/run-yarn.js build:plugin-workspace-tools
 
-    - name: Run the integration tests
+    - name: 'Run the integration tests'
       run: |
         node ./scripts/run-yarn.js test:integration --runInBand
 
-    - name: Run the unit tests
+    - name: 'Run the unit tests'
       run: |
         node ./scripts/run-yarn.js test:unit

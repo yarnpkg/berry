@@ -14,5 +14,6 @@
   },
   "scripts": {
     "build:plugin-typescript": "builder build plugin"
-  }
+  },
+  "version:next": "2.0.0"
 }

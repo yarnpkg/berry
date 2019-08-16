@@ -1,35 +1,32 @@
 on: [issues]
 
-name: Sherlock for Yarn
+name: 'Sherlock for Yarn'
 jobs:
   issue:
-    name: Running Sherlock
+    name: 'Running Sherlock'
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@master
+    - uses: actions/checkout@master
 
-      - name: Use Node.js 10.x
-        uses: actions/setup-node@master
-        with:
-          version: 10.x
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        version: 10.x
 
-      - name: Use Yarn 1.17.2
-        run: |
-          npm install -g yarn@1.17.2
+    - name: 'Sherlock Payload'
+      uses: ./scripts/actions/local-yarn-command
+      with:
+        args: 'sherlock payload'
 
-      - name: Sherlock Payload
-        run: |
-          yarn sherlock payload
+    - name: 'Sherlock Execution'
+      uses: ./scripts/actions/local-yarn-command
+      with:
+        args: 'sherlock exec'
 
-      - name: Sherlock Execution
-        uses: docker://node:lts-jessie
-        with:
-          entrypoint: bash
-          args: scripts/actions/sherlock-docker.sh
-
-      - name: Sherlock Reporting
-        run: |
-          yarn sherlock report
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    - name: 'Sherlock Reporting'
+      uses: ./scripts/actions/local-yarn-command
+      with:
+        args: 'sherlock report'
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

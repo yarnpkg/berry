@@ -16,5 +16,6 @@
   },
   "files": [
     "/lib"
-  ]
+  ],
+  "version:next": "2.0.0"
 }

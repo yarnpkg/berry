@@ -1,6 +1,7 @@
 {
   "name": "@berry/builder",
   "version": "0.2.7",
+  "version:next": "2.0.0",
   "bin": "./sources/boot-dev.js",
   "dependencies": {
     "@berry/core": "workspace:0.1.0",
@@ -10,6 +11,7 @@
     "clipanion": "2.0.0-rc.16",
     "filesize": "^4.1.2",
     "pnp-webpack-plugin": "^1.4.3",
+    "semver": "^5.6.0",
     "ts-loader": "^5.3.3",
     "val-loader": "^1.1.1",
     "webpack": "^4.28.4",

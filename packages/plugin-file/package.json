@@ -5,5 +5,6 @@
   "dependencies": {
     "@berry/core": "workspace:0.1.0",
     "@berry/fslib": "workspace:0.1.1"
-  }
+  },
+  "version:next": "2.0.0"
 }

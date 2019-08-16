@@ -1,6 +1,7 @@
 {
   "name": "@berry/fslib",
   "version": "0.1.1",
+  "version:next": "2.0.0",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {

@@ -1,0 +1,41 @@
+on: [release]
+
+name: 'Release'
+jobs:
+  cli:
+    name: 'Releasing the CLI'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 'Checks the action type'
+      run: |
+        [[ $(jq -r .action < "$GITHUB_EVENT_PATH") == "published" ]] || exit 78
+
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        version: 10.x
+
+    - name: 'Apply the new version numbers'
+      uses: ./scripts/actions/local-yarn-command
+      with:
+        args: 'version apply'
+
+    - name: 'Generate the artifacts'
+      uses: ./scripts/actions/local-yarn-command
+      with:
+        args: 'release:all'
+
+    - name: 'Make the commit'
+      uses: ./scripts/actions/make-commit
+      with:
+        message: 'Finalizes the commit'
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+    - name: 'Send the artifacts'
+      uses: arcanis/release-action@master
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

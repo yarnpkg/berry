@@ -1,6 +1,7 @@
 {
   "name": "@berry/cli",
   "version": "2.0.0",
+  "version:next": "2.0.0",
   "private": true,
   "main": "./sources/index.ts",
   "bin": {
@@ -32,6 +33,7 @@
     "@berry/plugin-pack": "workspace:0.0.0",
     "@berry/plugin-pnp": "workspace:0.0.0",
     "@berry/plugin-typescript": "workspace:0.0.0",
+    "@berry/plugin-version": "workspace:0.0.0",
     "@berry/plugin-workspace-tools": "workspace:0.0.0",
     "@berry/pnp": "workspace:0.1.0",
     "typescript": "^3.3.3333"
@@ -55,7 +57,8 @@
         "@berry/plugin-npm",
         "@berry/plugin-npm-cli",
         "@berry/plugin-pack",
-        "@berry/plugin-pnp"
+        "@berry/plugin-pnp",
+        "@berry/plugin-version"
       ]
     }
   }

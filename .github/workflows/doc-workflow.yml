@@ -1,0 +1,45 @@
+on: [push]
+
+name: 'Documentation'
+jobs:
+  documentation:
+    name: 'Building the documentation'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 'Check user'
+      uses: actions/bin/filter@master
+      with:
+        args: 'not actor yarnbot'
+
+    - uses: actions/checkout@master
+
+    - name: 'Check path'
+      uses: ./scripts/actions/if-path-changed
+      with:
+        args: '^packages'
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        version: 10.x
+
+    - name: 'Run Yarn install (for binary deps)'
+      uses: ./scripts/actions/local-yarn-command
+      with:
+        args: 'install --inline-builds'
+
+    - name: 'Build the documentation'
+      uses: ./scripts/actions/local-yarn-command
+      with:
+        args: 'build:doc'
+
+    - name: 'Check for diffs'
+      uses: ./scripts/actions/if-repo-changed
+
+    - name: 'Make the commit'
+      uses: ./scripts/actions/make-commit
+      with:
+        message: 'Updates the documentation website'
+      env:
+        GITHUB_TOKEN: ${{secrets.YARNBOT_TOKEN}}

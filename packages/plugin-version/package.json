@@ -8,7 +8,8 @@
     "@berry/fslib": "workspace:0.1.1",
     "@berry/plugin-pack": "workspace:0.0.0",
     "clipanion": "2.0.0-rc.16",
-    "semver": "^5.6.0"
+    "semver": "^5.6.0",
+    "yup": "^0.27.0"
   },
   "devDependencies": {
     "@berry/builder": "workspace:0.2.7",
@@ -16,5 +17,6 @@
   },
   "scripts": {
     "build:plugin-version": "builder build plugin"
-  }
+  },
+  "version:next": "2.0.0"
 }

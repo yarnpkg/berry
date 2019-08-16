@@ -1,6 +1,7 @@
 {
   "name": "@berry/parsers",
   "version": "0.1.0",
+  "version:next": "2.0.0",
   "main": "./sources/index.ts",
   "dependencies": {
     "js-yaml": "^3.10.0"

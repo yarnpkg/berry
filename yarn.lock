@@ -1628,6 +1628,7 @@ __metadata:
     clipanion: "npm:2.0.0-rc.16"
     filesize: "npm:^4.1.2"
     pnp-webpack-plugin: "npm:^1.4.3"
+    semver: "npm:^5.6.0"
     ts-loader: "npm:^5.3.3"
     typescript: "npm:^3.3.3333"
     val-loader: "npm:^1.1.1"
@@ -1662,6 +1663,7 @@ __metadata:
     "@berry/plugin-pack": "workspace:0.0.0"
     "@berry/plugin-pnp": "workspace:0.0.0"
     "@berry/plugin-typescript": "workspace:0.0.0"
+    "@berry/plugin-version": "workspace:0.0.0"
     "@berry/plugin-workspace-tools": "workspace:0.0.0"
     "@berry/pnp": "workspace:0.1.0"
     "@berry/shell": "workspace:0.1.0"
@@ -2064,7 +2066,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@berry/plugin-version@workspace:packages/plugin-version":
+"@berry/plugin-version@workspace:0.0.0, @berry/plugin-version@workspace:packages/plugin-version":
   version: 0.0.0-use.local
   resolution: "@berry/plugin-version@workspace:packages/plugin-version"
   dependencies:
@@ -2076,6 +2078,7 @@ __metadata:
     clipanion: "npm:2.0.0-rc.16"
     semver: "npm:^5.6.0"
     typescript: "npm:^3.3.3333"
+    yup: "npm:^0.27.0"
   languageName: unknown
   linkType: soft
 

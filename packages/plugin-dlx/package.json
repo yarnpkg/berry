@@ -10,5 +10,6 @@
     "@berry/plugin-essentials": "workspace:0.0.0",
     "clipanion": "2.0.0-rc.16",
     "tmp": "^0.0.33"
-  }
+  },
+  "version:next": "2.0.0"
 }

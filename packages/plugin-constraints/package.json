@@ -10,5 +10,6 @@
     "lodash": "^4.17.15",
     "node-emoji": "^1.8.1",
     "tau-prolog": "^0.2.38"
-  }
+  },
+  "version:next": "2.0.0"
 }

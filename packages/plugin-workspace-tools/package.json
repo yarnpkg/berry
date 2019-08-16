@@ -16,5 +16,6 @@
   },
   "scripts": {
     "build:plugin-workspace-tools": "builder build plugin"
-  }
+  },
+  "version:next": "2.0.0"
 }

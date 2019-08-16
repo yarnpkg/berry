@@ -14,5 +14,6 @@
   },
   "scripts": {
     "build:plugin-exec": "builder build plugin"
-  }
+  },
+  "version:next": "2.0.0"
 }
