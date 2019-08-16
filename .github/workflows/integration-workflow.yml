@@ -1,4 +1,6 @@
-on: [push]
+on:
+- push
+- pull_request
 
 name: 'Integration'
 jobs:
