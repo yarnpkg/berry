@@ -3,7 +3,7 @@ import fs, {Stats}                                         from 'fs';
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}              from './FakeFS';
 import {WatchOptions, WatchCallback, Watcher}              from './FakeFS';
-import {PortablePath, NativePath, Filename, Path}          from './path';
+import {FSPath, PortablePath, NativePath, Filename, Path}  from './path';
 import {fromPortablePath, toPortablePath}                  from './path';
 
 export class NodeFS extends BasePortableFakeFS {
@@ -131,21 +131,43 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.copyFileSync(NodeFS.fromPortablePath(sourceP), NodeFS.fromPortablePath(destP), flags);
   }
 
-  async writeFilePromise(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async appendFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return await new Promise<void>((resolve, reject) => {
+      const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
       if (opts) {
-        this.realFs.writeFile(NodeFS.fromPortablePath(p), content, opts, this.makeCallback(resolve, reject));
+        this.realFs.appendFile(fsNativePath, content, opts, this.makeCallback(resolve, reject));
       } else {
-        this.realFs.writeFile(NodeFS.fromPortablePath(p), content, this.makeCallback(resolve, reject));
+        this.realFs.appendFile(fsNativePath, content, this.makeCallback(resolve, reject));
+      }
+    });
+  }
+
+  appendFileSync(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
+    if (opts) {
+      this.realFs.appendFileSync(fsNativePath, content, opts);
+    } else {
+      this.realFs.appendFileSync(fsNativePath, content);
+    }
+  }
+
+  async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return await new Promise<void>((resolve, reject) => {
+      const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
+      if (opts) {
+        this.realFs.writeFile(fsNativePath, content, opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.writeFile(fsNativePath, content, this.makeCallback(resolve, reject));
       }
     });
   }
 
   writeFileSync(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
     if (opts) {
-      this.realFs.writeFileSync(NodeFS.fromPortablePath(p), content, opts);
+      this.realFs.writeFileSync(fsNativePath, content, opts);
     } else {
-      this.realFs.writeFileSync(NodeFS.fromPortablePath(p), content);
+      this.realFs.writeFileSync(fsNativePath, content);
     }
   }
 
@@ -203,18 +225,20 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.symlinkSync(NodeFS.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), NodeFS.fromPortablePath(p), type);
   }
 
-  readFilePromise(p: PortablePath, encoding: 'utf8'): Promise<string>;
-  readFilePromise(p: PortablePath, encoding?: string): Promise<Buffer>;
-  async readFilePromise(p: PortablePath, encoding?: string) {
+  readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: string): Promise<Buffer>;
+  async readFilePromise(p: FSPath<PortablePath>, encoding?: string) {
     return await new Promise<any>((resolve, reject) => {
-      this.realFs.readFile(NodeFS.fromPortablePath(p), encoding, this.makeCallback(resolve, reject));
+      const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
+      this.realFs.readFile(fsNativePath, encoding, this.makeCallback(resolve, reject));
     });
   }
 
-  readFileSync(p: PortablePath, encoding: 'utf8'): string;
-  readFileSync(p: PortablePath, encoding?: string): Buffer;
-  readFileSync(p: PortablePath, encoding?: string) {
-    return this.realFs.readFileSync(NodeFS.fromPortablePath(p), encoding);
+  readFileSync(p: FSPath<PortablePath>, encoding: 'utf8'): string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: string): Buffer;
+  readFileSync(p: FSPath<PortablePath>, encoding?: string) {
+    const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
+    return this.realFs.readFileSync(fsNativePath, encoding);
   }
 
   async readdirPromise(p: PortablePath) {

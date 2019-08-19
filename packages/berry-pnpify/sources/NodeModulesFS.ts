@@ -1,7 +1,7 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@berry/fslib';
 import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@berry/fslib';
 import {WatchOptions, WatchCallback, Watcher}              from '@berry/fslib';
-import {NativePath, PortablePath, npath, ppath}            from '@berry/fslib';
+import {FSPath, NativePath, PortablePath, npath, ppath}    from '@berry/fslib';
 import {PnpApi}                                            from '@berry/pnp';
 
 import fs                                                  from 'fs';
@@ -53,12 +53,21 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     return this.baseFs;
   }
 
-  private resolvePath(p: PortablePath): ResolvedPath & { fullOriginalPath: PortablePath } {
-    const fullOriginalPath = this.pathUtils.resolve(p);
-    return {...this.pathResolver.resolvePath(fullOriginalPath), fullOriginalPath};
+  private resolvePath(p: PortablePath): ResolvedPath<PortablePath> & { fullOriginalPath: PortablePath } {
+    if (typeof p === `number`) {
+      return {resolvedPath: p, fullOriginalPath: p};
+    } else {
+      const fullOriginalPath = this.pathUtils.resolve(p);
+      return {...this.pathResolver.resolvePath(fullOriginalPath), fullOriginalPath};
+    }
   }
 
-  private resolveFilePath(p: PortablePath): PortablePath {
+  private resolveFilePath(p: PortablePath): PortablePath;
+  private resolveFilePath(p: FSPath<PortablePath>): FSPath<PortablePath>;
+  private resolveFilePath(p: FSPath<PortablePath>): FSPath<PortablePath> {
+    if (typeof p === `number`)
+      return p;
+
     const pnpPath = this.resolvePath(p);
     if (!pnpPath.resolvedPath) {
       throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, stat '${p}'`);
@@ -99,7 +108,12 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     return Object.assign(new Error(`${code}: ${message}`), {code});
   }
 
-  private throwIfPathReadonly(op: string, p: PortablePath): PortablePath {
+  private throwIfPathReadonly(op: string, p: PortablePath): PortablePath;
+  private throwIfPathReadonly(op: string, p: FSPath<PortablePath>): FSPath<PortablePath>;
+  private throwIfPathReadonly(op: string, p: FSPath<PortablePath>): FSPath<PortablePath> {
+    if (typeof p === `number`)
+      return p;
+
     const pnpPath = this.resolvePath(p);
     if (pnpPath.resolvedPath !== pnpPath.fullOriginalPath) {
       throw PortableNodeModulesFs.createFsError('EPERM', `operation not permitted, ${op} '${p}'`);
@@ -235,11 +249,19 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     return this.baseFs.copyFileSync(this.resolveFilePath(sourceP), this.throwIfPathReadonly('copyFileSync', destP), flags);
   }
 
-  async writeFilePromise(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async appendFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return await this.baseFs.appendFilePromise(this.throwIfPathReadonly('appendFile', p), content, opts);
+  }
+
+  appendFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return this.baseFs.appendFileSync(this.throwIfPathReadonly('appendFileSync', p), content, opts);
+  }
+
+  async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return await this.baseFs.writeFilePromise(this.throwIfPathReadonly('writeFile', p), content, opts);
   }
 
-  writeFileSync(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  writeFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return this.baseFs.writeFileSync(this.throwIfPathReadonly('writeFileSync', p), content, opts);
   }
 
@@ -283,9 +305,9 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     return this.baseFs.symlinkSync(this.resolveDirOrFilePath(target), this.throwIfPathReadonly('symlinkSync', p));
   }
 
-  readFilePromise(p: PortablePath, encoding: 'utf8'): Promise<string>;
-  readFilePromise(p: PortablePath, encoding?: string): Promise<Buffer>;
-  async readFilePromise(p: PortablePath, encoding?: string) {
+  readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: string): Promise<Buffer>;
+  async readFilePromise(p: FSPath<PortablePath>, encoding?: string) {
     // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
     switch (encoding) {
       case `utf8`:
@@ -295,9 +317,9 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     }
   }
 
-  readFileSync(p: PortablePath, encoding: 'utf8'): string;
-  readFileSync(p: PortablePath, encoding?: string): Buffer;
-  readFileSync(p: PortablePath, encoding?: string) {
+  readFileSync(p: FSPath<PortablePath>, encoding: 'utf8'): string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: string): Buffer;
+  readFileSync(p: FSPath<PortablePath>, encoding?: string) {
     // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
     switch (encoding) {
       case `utf8`:

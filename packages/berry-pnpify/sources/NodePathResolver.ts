@@ -1,7 +1,7 @@
-import {PortablePath, Filename, toFilename, ppath} from '@berry/fslib';
-import {PnpApi, PackageInformation}                from '@berry/pnp';
+import {FSPath, PortablePath, Filename, toFilename, ppath} from '@berry/fslib';
+import {PnpApi, PackageInformation}                        from '@berry/pnp';
 
-import {PortablePnPApi}                            from './PortablePnPApi';
+import {PortablePnPApi}                                    from './PortablePnPApi';
 
 /**
  * Regexp for pathname that catches the following paths:
@@ -26,12 +26,12 @@ const NODE_MODULES_REGEXP = /(?:\/node_modules((?:\/@[^\/]+)?(?:\/[^@][^\/]+)?))
  * 2. And we need either fake stats or we can forward underlying fs to stat the issuer dir.
  *    The issuer dir exists on fs. We store issuer dir into `statPath` field
  */
-export interface ResolvedPath {
+export interface ResolvedPath<PathType extends FSPath<PortablePath>> {
   /**
    * Fully resolved path `/node_modules/...` path within PnP project,
    * `null` if path does not exist.
    */
-  resolvedPath: PortablePath | null;
+  resolvedPath: PathType | null;
 
   /**
    * The path that should be used for stats. This field is returned for pathes ending
@@ -107,8 +107,8 @@ export class NodePathResolver {
    *
    * @returns resolved path
    */
-  public resolvePath(nodePath: PortablePath): ResolvedPath {
-    const result: ResolvedPath = {resolvedPath: nodePath};
+  public resolvePath(nodePath: PortablePath): ResolvedPath<PortablePath> {
+    const result: ResolvedPath<PortablePath> = {resolvedPath: nodePath};
 
     const marker = `/node_modules`;
     const index = nodePath.indexOf(marker);
@@ -126,7 +126,7 @@ export class NodePathResolver {
 
     // If we have something left in a path to parse, do that
     if (issuer && nodePath.length > issuer.length) {
-      let request: PortablePath = nodePath.substring(issuer.length) as PortablePath;
+      let request: PortablePath = nodePath.slice(issuer.length) as PortablePath;
 
       let m;
       let rest;

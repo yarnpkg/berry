@@ -12,7 +12,7 @@ export {WatchCallback}            from './FakeFS';
 export {Watcher}                  from './FakeFS';
 export {WriteFileOptions}         from './FakeFS';
 
-export {Path, PortablePath, NativePath, Filename} from './path';
+export {FSPath, Path, PortablePath, NativePath, Filename} from './path';
 export {ParsedPath, PathUtils, FormatInputPathObject} from './path';
 export {npath, ppath, toFilename, fromPortablePath, toPortablePath} from './path';
 
@@ -31,6 +31,7 @@ export {ZipOpenFS}                from './ZipOpenFS';
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void {
   const SYNC_IMPLEMENTATIONS = new Set([
     `accessSync`,
+    `appendFileSync`,
     `createReadStream`,
     `chmodSync`,
     `copyFileSync`,
@@ -52,6 +53,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
   const ASYNC_IMPLEMENTATIONS = new Set([
     `accessPromise`,
+    `appendFilePromise`,
     `chmodPromise`,
     `copyFilePromise`,
     `lstatPromise`,
