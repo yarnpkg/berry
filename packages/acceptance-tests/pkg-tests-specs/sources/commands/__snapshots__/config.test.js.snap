@@ -41,6 +41,7 @@ Object {
 {\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
 {\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
+{\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -90,6 +91,7 @@ Object {
 ➤ YN0000: pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -140,6 +142,7 @@ Object {
 ➤ YN0000: pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - <default> - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -190,6 +193,7 @@ Object {
 ➤ YN0000: pnpPath - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -240,6 +244,7 @@ Object {
 {\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
 {\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
+{\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -289,6 +294,7 @@ Object {
 ➤ YN0000: pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -339,6 +345,7 @@ Object {
 ➤ YN0000: pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - <default> - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -389,6 +396,7 @@ Object {
 ➤ YN0000: pnpPath - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -439,6 +447,7 @@ Object {
 {\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
 {\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
+{\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -488,6 +497,7 @@ Object {
 ➤ YN0000: pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -538,6 +548,7 @@ Object {
 ➤ YN0000: pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - <default> - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -588,6 +599,7 @@ Object {
 ➤ YN0000: pnpPath - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -638,6 +650,7 @@ Object {
 {\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
 {\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
+{\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -687,6 +700,7 @@ Object {
 ➤ YN0000: pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -737,6 +751,7 @@ Object {
 ➤ YN0000: pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - <default> - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -787,6 +802,7 @@ Object {
 ➤ YN0000: pnpPath - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -837,6 +853,7 @@ Object {
 {\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
 {\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
+{\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -886,6 +903,7 @@ Object {
 ➤ YN0000: pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -936,6 +954,7 @@ Object {
 ➤ YN0000: pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - <default> - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -986,6 +1005,7 @@ Object {
 ➤ YN0000: pnpPath - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -1036,6 +1056,7 @@ Object {
 {\\"key\\":\\"pnpPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.js\\",\\"description\\":\\"Path of the file where the PnP loader must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.js\\"}
 {\\"key\\":\\"pnpShebang\\",\\"effective\\":\\"#!/usr/bin/env node\\",\\"description\\":\\"String to prepend to the generated PnP script\\",\\"type\\":\\"STRING\\",\\"default\\":\\"#!/usr/bin/env node\\"}
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
+{\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -1085,6 +1106,7 @@ Object {
 ➤ YN0000: pnpPath - Path of the file where the PnP loader must be written - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - String to prepend to the generated PnP script - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -1135,6 +1157,7 @@ Object {
 ➤ YN0000: pnpPath - <default> - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - <default> - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -1185,6 +1208,7 @@ Object {
 ➤ YN0000: pnpPath - 'WORKSPACE_ROOT/.pnp.js'
 ➤ YN0000: pnpShebang - '#!/usr/bin/env node'
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
+➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
