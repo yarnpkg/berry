@@ -7,7 +7,7 @@ import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} f
 import {FakeFS, WriteFileOptions}                                              from './FakeFS';
 import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
 import {NodeFS}                                                                from './NodeFS';
-import {PortablePath, ppath, Filename}                                         from './path';
+import {FSPath, PortablePath, ppath, Filename}                                 from './path';
 
 const S_IFMT = 0o170000;
 
@@ -158,7 +158,6 @@ export class ZipFS extends BasePortableFakeFS {
 
       if (typeof source === `string` && pathOptions.create)
         flags |= libzip.ZIP_CREATE | libzip.ZIP_TRUNCATE;
-
       if (opts.readOnly)
         flags |= libzip.ZIP_RDONLY;
 
@@ -465,7 +464,6 @@ export class ZipFS extends BasePortableFakeFS {
 
   private registerListing(p: PortablePath) {
     let listing = this.listings.get(p);
-
     if (listing)
       return listing;
 
@@ -490,7 +488,6 @@ export class ZipFS extends BasePortableFakeFS {
       throw Object.assign(new Error(`EBUSY: archive closed, ${reason}`), {code: `EBUSY`});
 
     let resolvedP = ppath.resolve(PortablePath.root, p);
-
     if (resolvedP === `/`)
       return PortablePath.root;
 
@@ -502,12 +499,10 @@ export class ZipFS extends BasePortableFakeFS {
 
       if (!isDir && !doesExist)
         throw Object.assign(new Error(`ENOENT: no such file or directory, ${reason}`), {code: `ENOENT`});
-
       if (!isDir)
         throw Object.assign(new Error(`ENOTDIR: not a directory, ${reason}`), {code: `ENOTDIR`});
 
       resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP));
-
       if (!resolveLastComponent)
         break;
 
@@ -670,8 +665,8 @@ export class ZipFS extends BasePortableFakeFS {
       throw Object.assign(new Error(`ENOSYS: unsupported clone operation, copyfile '${sourceP}' -> ${destP}'`), {code: `ENOSYS`});
 
     const resolvedSourceP = this.resolveFilename(`copyfile '${sourceP} -> ${destP}'`, sourceP);
-    const indexSource = this.entries.get(resolvedSourceP);
 
+    const indexSource = this.entries.get(resolvedSourceP);
     if (typeof indexSource === `undefined`)
       throw Object.assign(new Error(`EINVAL: invalid argument, copyfile '${sourceP}' -> '${destP}'`), {code: `EINVAL`});
 
@@ -689,18 +684,34 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  async writeFilePromise(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async appendFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return this.appendFileSync(p, content, opts);
+  }
+
+  appendFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts: WriteFileOptions = {}) {
+    if (typeof opts === `undefined`)
+      opts = {flag: `a`};
+    else if (typeof opts === `string`)
+      opts = {flag: `a`, encoding: opts};
+    else if (typeof opts.flag === `undefined`)
+      opts = {flag: `a`, ...opts};
+
     return this.writeFileSync(p, content, opts);
   }
 
-  writeFileSync(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+  async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return this.writeFileSync(p, content, opts);
+  }
 
+  writeFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    if (typeof p !== `string`)
+      throw Object.assign(new Error(`EBADF: bad file descriptor, read`), {code: `EBADF`});
+
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
     if (this.listings.has(resolvedP))
       throw Object.assign(new Error(`EISDIR: illegal operation on a directory, open '${p}'`), {code: `EISDIR`});
 
     const index = this.entries.get(resolvedP);
-
     if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
       content = Buffer.concat([this.getFileSource(index), Buffer.from(content as any)]);
 
@@ -715,7 +726,6 @@ export class ZipFS extends BasePortableFakeFS {
       content = content.toString(encoding);
 
     const newIndex = this.setFileSource(resolvedP, content);
-
     if (newIndex !== index) {
       this.registerEntry(resolvedP, newIndex);
     }
@@ -805,12 +815,10 @@ export class ZipFS extends BasePortableFakeFS {
 
     if (this.listings.has(resolvedP))
       throw Object.assign(new Error(`EISDIR: illegal operation on a directory, symlink '${target}' -> '${p}'`), {code: `EISDIR`});
-
     if (this.entries.has(resolvedP))
       throw Object.assign(new Error(`EEXIST: file already exists, symlink '${target}' -> '${p}'`), {code: `EEXIST`});
 
     const index = this.setFileSource(resolvedP, target);
-
     this.registerEntry(resolvedP, index);
 
     const rc = libzip.file.setExternalAttributes(this.zip, index, 0, 0, libzip.ZIP_OPSYS_UNIX, (0o120000 | 0o777) << 16);
@@ -819,8 +827,8 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  readFilePromise(p: PortablePath, encoding: 'utf8'): Promise<string>;
-  readFilePromise(p: PortablePath, encoding?: string): Promise<Buffer>;
+  readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: string): Promise<Buffer>;
   async readFilePromise(p: PortablePath, encoding?: string) {
     // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
     switch (encoding) {
@@ -831,16 +839,18 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  readFileSync(p: PortablePath, encoding: 'utf8'): string;
-  readFileSync(p: PortablePath, encoding?: string): Buffer;
-  readFileSync(p: PortablePath, encoding?: string) {
+  readFileSync(p: FSPath<PortablePath>, encoding: 'utf8'): string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: string): Buffer;
+  readFileSync(p: FSPath<PortablePath>, encoding?: string) {
+    if (typeof p !== `string`)
+      throw Object.assign(new Error(`EBADF: bad file descriptor, read`), {code: `EBADF`});
+
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
       // @ts-ignore
       encoding = encoding ? encoding.encoding : undefined;
 
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
-
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw Object.assign(new Error(`ENOENT: no such file or directory, open '${p}'`), {code: `ENOENT`});
 
@@ -866,12 +876,10 @@ export class ZipFS extends BasePortableFakeFS {
 
   readdirSync(p: PortablePath): Array<Filename> {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
-
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw Object.assign(new Error(`ENOENT: no such file or directory, scandir '${p}'`), {code: `ENOENT`});
 
     const directoryListing = this.listings.get(resolvedP);
-
     if (!directoryListing)
       throw Object.assign(new Error(`ENOTDIR: not a directory, scandir '${p}'`), {code: `ENOTDIR`});
 
@@ -884,7 +892,6 @@ export class ZipFS extends BasePortableFakeFS {
 
   readlinkSync(p: PortablePath): PortablePath {
     const resolvedP = this.resolveFilename(`readlink '${p}'`, p, false);
-
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw Object.assign(new Error(`ENOENT: no such file or directory, readlink '${p}'`), {code: `ENOENT`});
 
@@ -896,7 +903,6 @@ export class ZipFS extends BasePortableFakeFS {
       throw Object.assign(new Error(`EINVAL: invalid argument, readlink '${p}'`), {code: `EINVAL`});
 
     const entry = this.entries.get(resolvedP);
-
     if (entry === undefined)
       throw new Error(`Unreachable`);
 

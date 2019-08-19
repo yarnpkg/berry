@@ -11,6 +11,9 @@ export const PortablePath = {
 export type Filename = (PortablePath & NativePath) & { _filename: false };
 export type Path = PortablePath | NativePath;
 
+// Some of the FS functions support file descriptors
+export type FSPath<T extends Path> = T | number;
+
 export const npath: PathUtils<NativePath> = path as any;
 export const ppath: PathUtils<PortablePath> = path.posix as any;
 
