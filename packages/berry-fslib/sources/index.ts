@@ -31,6 +31,7 @@ export {ZipOpenFS}                from './ZipOpenFS';
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void {
   const SYNC_IMPLEMENTATIONS = new Set([
     `accessSync`,
+    `appendFileSync`,
     `createReadStream`,
     `chmodSync`,
     `copyFileSync`,
@@ -52,6 +53,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
   const ASYNC_IMPLEMENTATIONS = new Set([
     `accessPromise`,
+    `appendFilePromise`,
     `chmodPromise`,
     `copyFilePromise`,
     `lstatPromise`,
