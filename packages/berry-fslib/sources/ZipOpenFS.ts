@@ -5,7 +5,7 @@ import {FakeFS, WriteFileOptions}                                              f
 import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
 import {NodeFS}                                                                from './NodeFS';
 import {ZipFS}                                                                 from './ZipFS';
-import {PortablePath}                                                          from './path';
+import {FSPath, PortablePath}                                                  from './path';
 
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>,
@@ -330,7 +330,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async writeFilePromise(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.writeFilePromise(p, content, opts);
     }, async (zipFs, {archivePath, subPath}) => {
@@ -338,7 +338,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  writeFileSync(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  writeFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return this.makeCallSync(p, () => {
       return this.baseFs.writeFileSync(p, content, opts);
     }, (zipFs, {subPath}) => {
@@ -426,9 +426,9 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  readFilePromise(p: PortablePath, encoding: 'utf8'): Promise<string>;
-  readFilePromise(p: PortablePath, encoding?: string): Promise<Buffer>;
-  async readFilePromise(p: PortablePath, encoding?: string) {
+  readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: string): Promise<Buffer>;
+  async readFilePromise(p: FSPath<PortablePath>, encoding?: string) {
     return this.makeCallPromise(p, async () => {
       // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
       switch (encoding) {
@@ -442,9 +442,9 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  readFileSync(p: PortablePath, encoding: 'utf8'): string;
-  readFileSync(p: PortablePath, encoding?: string): Buffer;
-  readFileSync(p: PortablePath, encoding?: string) {
+  readFileSync(p: FSPath<PortablePath>, encoding: 'utf8'): string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: string): Buffer;
+  readFileSync(p: FSPath<PortablePath>, encoding?: string) {
     return this.makeCallSync(p, () => {
       // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
       switch (encoding) {
@@ -514,10 +514,13 @@ export class ZipOpenFS extends BasePortableFakeFS {
     })
   }
 
-  private async makeCallPromise<T>(p: PortablePath, discard: () => Promise<T>, accept: (zipFS: ZipFS, zipInfo: {archivePath: PortablePath, subPath: PortablePath}) => Promise<T>, {requireSubpath = true}: {requireSubpath?: boolean} = {}): Promise<T> {
-    p = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
+  private async makeCallPromise<T>(p: FSPath<PortablePath>, discard: () => Promise<T>, accept: (zipFS: ZipFS, zipInfo: {archivePath: PortablePath, subPath: PortablePath}) => Promise<T>, {requireSubpath = true}: {requireSubpath?: boolean} = {}): Promise<T> {
+    if (typeof p !== `string`)
+      return await discard();
 
-    const zipInfo = this.findZip(p);
+    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
+
+    const zipInfo = this.findZip(normalizedP);
     if (!zipInfo)
       return await discard();
 
@@ -527,10 +530,13 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return await this.getZipPromise(zipInfo.archivePath, async zipFs => await accept(zipFs, zipInfo));
   }
 
-  private makeCallSync<T>(p: PortablePath, discard: () => T, accept: (zipFS: ZipFS, zipInfo: {archivePath: PortablePath, subPath: PortablePath}) => T, {requireSubpath = true}: {requireSubpath?: boolean} = {}): T {
-    p = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
+  private makeCallSync<T>(p: FSPath<PortablePath>, discard: () => T, accept: (zipFS: ZipFS, zipInfo: {archivePath: PortablePath, subPath: PortablePath}) => T, {requireSubpath = true}: {requireSubpath?: boolean} = {}): T {
+    if (typeof p !== `string`)
+      return discard();
 
-    const zipInfo = this.findZip(p);
+    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
+
+    const zipInfo = this.findZip(normalizedP);
     if (!zipInfo)
       return discard();
 
