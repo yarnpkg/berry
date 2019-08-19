@@ -4,6 +4,11 @@ import {Command, UsageError}                    from 'clipanion';
 import semver                                   from 'semver';
 import * as yup                                 from 'yup';
 
+// This is a special strategy; Yarn won't change the semver version,
+// but will change the nonce. This will cause `yarn version check` to
+// stop reporting the package as having no explicit bump strategy.
+const DECLINE = `decline`;
+
 const STRATEGIES = new Set([
   `major`,
   `minor`,
@@ -12,6 +17,7 @@ const STRATEGIES = new Set([
   `preminor`,
   `prepatch`,
   `prerelease`,
+  DECLINE,
 ]);
 
 // eslint-disable-next-line arca/no-default-export
@@ -47,6 +53,7 @@ export default class VersionCommand extends Command<CommandContext> {
       - If \`patch\`, the third number from the semver range will be increased (\`0.0.X\`).
       - If prefixed by \`pre\` (\`premajor\`, ...), a \`-0\` suffix will be set (\`0.0.0-0\`).
       - If \`prerelease\`, the suffix will be increased (\`0.0.0-X\`); the third number from the semver range will also be increased if there was no suffix in the previous version.
+      - If \`decline\`, the nonce will be increased for \`yarn version check\` to pass without version bump.
       - If a valid semver range, it will be used as new version.
       - If unspecified, Yarn will ask you for guidance.
 
@@ -84,25 +91,38 @@ export default class VersionCommand extends Command<CommandContext> {
       if (typeof currentVersion !== `string` || !semver.valid(currentVersion))
         throw new UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
 
-      const bumpedVersion = semver.inc(currentVersion, this.strategy as any);
+      const bumpedVersion = this.strategy !== `decline`
+        ? semver.inc(currentVersion, this.strategy as any)
+        : currentVersion;
+
       if (bumpedVersion === null)
         throw new Error(`Assertion failed: Failed to increment the version number (${currentVersion})`);
 
       nextVersion = bumpedVersion;
     }
 
-    const deferredVersion = workspace.manifest.raw[`version:next`];
-    if (this.deferred && deferredVersion && semver.gte(deferredVersion, nextVersion)) {
-      if (isSemver) {
-        if (!this.force) {
-          throw new UsageError(`The target version (${nextVersion}) is smaller than the one currently registered (${deferredVersion}); use -f,--force to overwrite.`);
+    if (workspace.manifest.raw.nextVersion) {
+      const deferredVersion = workspace.manifest.raw.nextVersion.next;
+      if (this.deferred && deferredVersion && semver.gte(deferredVersion, nextVersion)) {
+        if (isSemver) {
+          if (!this.force) {
+            throw new UsageError(`The target version (${nextVersion}) is smaller than the one currently registered (${deferredVersion}); use -f,--force to overwrite.`);
+          }
+        } else {
+          if (this.strategy === DECLINE) {
+            nextVersion = deferredVersion;
+          } else {
+            return;
+          }
         }
-      } else {
-        return;
       }
     }
 
-    workspace.manifest.setRawField(`version:next`, nextVersion, {after: [`version`]});
+    workspace.manifest.setRawField(`nextVersion`, {
+      semver: nextVersion,
+      nonce: String(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)),
+    }, {after: [`version`]});
+
     workspace.persistManifest();
 
     if (!this.deferred) {

@@ -13,6 +13,9 @@ export default class VersionApplyCommand extends Command<CommandContext> {
   @Command.Boolean(`--all`)
   all: boolean = false;
 
+  @Command.Boolean(`--dependents`)
+  dependents: boolean = false;
+
   static usage = Command.Usage({
     category: `Release-related commands`,
     description: `apply all the deferred version bumps at once`,
@@ -102,15 +105,15 @@ export default class VersionApplyCommand extends Command<CommandContext> {
       // proceed to update everything at once using our accumulated knowledge.
 
       const processWorkspace = (workspace: Workspace) => {
-        if (!workspace.manifest.raw || !workspace.manifest.raw[`version:next`])
+        if (!workspace.manifest.raw.nextVersion || !workspace.manifest.raw.nextVersion.semver)
           return;
 
-        const newVersion = workspace.manifest.raw[`version:next`];
+        const newVersion = workspace.manifest.raw.nextVersion.semver;
         if (typeof newVersion !== `string`)
           throw new Error(`Assertion failed: The version should have been a string`);
 
         workspace.manifest.version = newVersion;
-        workspace.manifest.raw[`version:next`] = undefined;
+        workspace.manifest.raw.nextVersion = undefined;
 
         report.reportInfo(MessageName.UNNAMED, `${structUtils.prettyLocator(configuration, workspace.anchoredLocator)}: Bumped to ${newVersion}`);
 

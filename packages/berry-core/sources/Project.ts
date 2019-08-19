@@ -219,6 +219,10 @@ export class Project {
 
         const workspace = await this.addWorkspace(workspaceCwd);
 
+        const workspacePkg = this.storedPackages.get(workspace.anchoredLocator.locatorHash);
+        if (workspacePkg)
+          workspace.dependencies = workspacePkg.dependencies;
+
         for (const workspaceCwd of workspace.workspacesCwds) {
           workspaceCwds.push(workspaceCwd);
         }
@@ -264,6 +268,26 @@ export class Project {
       throw new Error(`Workspace not found (${workspaceCwd})`);
 
     return workspace;
+  }
+
+  getWorkspaceByFilePath(filePath: PortablePath) {
+    let bestWorkspace = null;
+
+    for (const workspace of this.workspaces) {
+      const rel = ppath.relative(workspace.cwd, filePath);
+      if (rel.startsWith(`../`))
+        continue;
+
+      if (bestWorkspace && bestWorkspace.cwd.length >= workspace.cwd.length)
+        continue;
+
+      bestWorkspace = workspace;
+    }
+
+    if (!bestWorkspace)
+      throw new Error(`Workspace not found (${filePath})`);
+
+    return bestWorkspace;
   }
 
   tryWorkspaceByLocator(locator: Locator) {
