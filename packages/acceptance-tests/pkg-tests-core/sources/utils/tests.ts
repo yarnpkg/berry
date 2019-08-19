@@ -1,7 +1,7 @@
 /* @flow */
 
 import {IncomingMessage, ServerResponse} from 'http';
-import {Gzip}           from 'zlib';
+import {Gzip}                            from 'zlib';
 
 const crypto = require('crypto');
 const deepResolve = require('super-resolve');
@@ -39,9 +39,9 @@ exports.setPackageWhitelist = async function whitelistPackages(
 let packageRegistryPromise = null;
 
 exports.getPackageRegistry = function getPackageRegistry(): Promise<PackageRegistry> {
-  if (packageRegistryPromise) {
+  if (packageRegistryPromise)
     return packageRegistryPromise;
-  }
+
 
   return (packageRegistryPromise = (async () => {
     const packageRegistry = new Map();
@@ -270,14 +270,14 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
       const otp = request.headers['npm-otp'];
       const user = validLogins[username];
 
-      if (!user) {
+      if (!user)
         return processError(response, 401, `Unauthorized`);
-      }
+
 
       if (user.requiresOtp && user.otp !== otp) {
         response.writeHead(401, {
           [`Content-Type`]: `application/json`,
-          [`www-authenticate`]: `OTP`
+          [`www-authenticate`]: `OTP`,
         });
 
         return response.end();
@@ -295,13 +295,13 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
           return processError(response, 401, `Unauthorized`);
         }
 
-        if (body.username !== user.username || body.password !== user.password) {
+        if (body.username !== user.username || body.password !== user.password)
           return processError(response, 401, `Unauthorized`);
-        }
+
 
         const data = JSON.stringify({token: user.npmAuthToken});
 
-        response.writeHead(200, { [`Content-Type`]: `application/json` });
+        response.writeHead(200, {[`Content-Type`]: `application/json`});
 
         return response.end(data);
       });
@@ -369,18 +369,18 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
       password: `password`,
       requiresOtp: true,
       otp: `1234`,
-      npmAuthToken: `686159dc-64b3-413e-a244-2de2b8d1c36f`
+      npmAuthToken: `686159dc-64b3-413e-a244-2de2b8d1c36f`,
     },
     anotherTestUser: {
       password: `password123`,
       requiresOtp: false,
-      npmAuthToken: `316158de-64b3-413e-a244-2de2b8d1c80f`
+      npmAuthToken: `316158de-64b3-413e-a244-2de2b8d1c80f`,
     },
   };
 
   const validAuthorizations = [
     `Bearer 686159dc-64b3-413e-a244-2de2b8d1c36f`,
-    `Basic dXNlcm5hbWU6YSB2ZXJ5IHNlY3VyZSBwYXNzd29yZA==` // username:a very secure password
+    `Basic dXNlcm5hbWU6YSB2ZXJ5IHNlY3VyZSBwYXNzd29yZA==`, // username:a very secure password
   ];
 
   return new Promise((resolve, reject) => {
@@ -476,7 +476,7 @@ exports.generatePkgDriver = function generatePkgDriver({
             source,
           });
         } catch (error) {
-          error.message = `Temporary fixture folder: ${path}\n\n` + error.message;
+          error.message = `Temporary fixture folder: ${path}\n\n${error.message}`;
           throw error;
         }
       });

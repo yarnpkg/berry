@@ -97,7 +97,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
         report.reportSeparator();
 
         report.reportInfo(MessageName.UNNAMED, `This command detected that at least some workspaces have received modifications but no explicit instructions as to how they had to be released (if needed).`);
-        report.reportInfo(MessageName.UNNAMED, `To correct these errors, run \`yarn version ...\` in each of them with the adequate bump strategies, then run \`yarn version check\` again.`);
+        report.reportInfo(MessageName.UNNAMED, `To correct these errors, run \`yarn version ... --deferred\` in each of them with the adequate bump strategies, then run \`yarn version check\` again.`);
       }
     });
 
@@ -112,7 +112,10 @@ async function fetchChangedFiles(cwd: PortablePath, {base}: {base: string}) {
   const {stdout: diffStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, base], {cwd, strict: true});
   const files = diffStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
 
-  return files;
+  const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd, strict: true});
+  const moreFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
+
+  return [...files, ...moreFiles];
 }
 
 async function fetchPreviousNonce(workspace: Workspace, {base}: {base: string}) {

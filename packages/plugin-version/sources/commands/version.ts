@@ -26,7 +26,10 @@ export default class VersionCommand extends Command<CommandContext> {
   strategy!: string;
 
   @Command.Boolean(`-d,--deferred`)
-  deferred: boolean = false;
+  deferred?: boolean;
+
+  @Command.Boolean(`-i,--immediate`)
+  immediate?: boolean;
 
   @Command.Boolean(`-f,--force`)
   force: boolean = false;
@@ -57,9 +60,7 @@ export default class VersionCommand extends Command<CommandContext> {
       - If a valid semver range, it will be used as new version.
       - If unspecified, Yarn will ask you for guidance.
 
-      Adding the \`--deferred\` flag will cause Yarn to "buffer" the version bump and only apply it during the next call to \`yarn version apply\`. This is recommended for monorepos that receive contributions from the open-source, as Yarn will remember multiple invocations to \`yarn version <strategy>\` and only apply the highest bump needed (so for example running \`yarn version major --deferred\` twice would only increase the first number of the semver range by a single increment).
-
-      Note that the deferred value is lost when you call \`yarn version\` without the \`--deferred\` flag.
+      For more information about the \`--deferred\` flag, consult our documentation ("Managing Releases").
     `,
     examples: [[
       `Immediatly bump the version to the next major`,
@@ -77,6 +78,12 @@ export default class VersionCommand extends Command<CommandContext> {
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
+
+    let deferred = configuration.get(`preferDeferredVersions`);
+    if (this.deferred)
+      deferred = true;
+    if (this.immediate)
+      deferred = false;
 
     const isSemver = semver.valid(this.strategy);
 
@@ -103,7 +110,7 @@ export default class VersionCommand extends Command<CommandContext> {
 
     if (workspace.manifest.raw.nextVersion) {
       const deferredVersion = workspace.manifest.raw.nextVersion.next;
-      if (this.deferred && deferredVersion && semver.gte(deferredVersion, nextVersion)) {
+      if (deferred && deferredVersion && semver.gte(deferredVersion, nextVersion)) {
         if (isSemver) {
           if (!this.force) {
             throw new UsageError(`The target version (${nextVersion}) is smaller than the one currently registered (${deferredVersion}); use -f,--force to overwrite.`);
