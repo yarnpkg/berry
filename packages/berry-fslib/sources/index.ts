@@ -12,7 +12,7 @@ export {WatchCallback}            from './FakeFS';
 export {Watcher}                  from './FakeFS';
 export {WriteFileOptions}         from './FakeFS';
 
-export {Path, PortablePath, NativePath, Filename} from './path';
+export {FSPath, Path, PortablePath, NativePath, Filename} from './path';
 export {ParsedPath, PathUtils, FormatInputPathObject} from './path';
 export {npath, ppath, toFilename, fromPortablePath, toPortablePath} from './path';
 

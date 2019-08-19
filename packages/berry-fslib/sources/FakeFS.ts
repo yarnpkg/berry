@@ -92,6 +92,9 @@ export abstract class FakeFS<P extends Path> {
   abstract copyFilePromise(sourceP: P, destP: P, flags?: number): Promise<void>;
   abstract copyFileSync(sourceP: P, destP: P, flags?: number): void;
 
+  abstract appendFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
+  abstract appendFileSync(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
+
   abstract writeFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
   abstract writeFileSync(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
 

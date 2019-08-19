@@ -111,6 +111,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.copyFileSync(this.mapToBase(sourceP), this.mapToBase(destP), flags);
   }
 
+  appendFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return this.baseFs.appendFilePromise(this.fsMapToBase(p), content, opts);
+  }
+
+  appendFileSync(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return this.baseFs.appendFileSync(this.fsMapToBase(p), content, opts);
+  }
+
   writeFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return this.baseFs.writeFilePromise(this.fsMapToBase(p), content, opts);
   }

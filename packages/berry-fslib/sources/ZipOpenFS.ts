@@ -79,7 +79,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async openPromise(p: PortablePath, flags: string, mode?: number) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.openPromise(p, flags, mode);
-    }, async (zipFs, {archivePath, subPath}) => {
+    }, async () => {
       throw new Error(`Unsupported action (we wouldn't be able to disambiguate the close)`);
     });
   }
@@ -87,7 +87,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   openSync(p: PortablePath, flags: string, mode?: number) {
     return this.makeCallSync(p, () => {
       return this.baseFs.openSync(p, flags, mode);
-    }, (zipFs, {archivePath, subPath}) => {
+    }, () => {
       throw new Error(`Unsupported action (we wouldn't be able to disambiguate the close)`);
     });
   }
@@ -141,7 +141,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async existsPromise(p: PortablePath) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.existsPromise(p);
-    }, async (zipFs, {archivePath, subPath}) => {
+    }, async (zipFs, {subPath}) => {
       return await zipFs.existsPromise(subPath);
     });
   }
@@ -157,7 +157,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async accessPromise(p: PortablePath, mode?: number) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.accessPromise(p, mode);
-    }, async (zipFs, {archivePath, subPath}) => {
+    }, async (zipFs, {subPath}) => {
       return await zipFs.accessPromise(subPath, mode);
     });
   }
@@ -173,7 +173,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async statPromise(p: PortablePath) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.statPromise(p);
-    }, async (zipFs, {archivePath, subPath}) => {
+    }, async (zipFs, {subPath}) => {
       return await zipFs.statPromise(subPath);
     });
   }
@@ -189,7 +189,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async lstatPromise(p: PortablePath) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.lstatPromise(p);
-    }, async (zipFs, {archivePath, subPath}) => {
+    }, async (zipFs, {subPath}) => {
       return await zipFs.lstatPromise(subPath);
     });
   }
@@ -205,7 +205,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async chmodPromise(p: PortablePath, mask: number) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.chmodPromise(p, mask);
-    }, async (zipFs, {archivePath, subPath}) => {
+    }, async (zipFs, {subPath}) => {
       return await zipFs.chmodPromise(subPath, mask);
     });
   }
@@ -225,10 +225,10 @@ export class ZipOpenFS extends BasePortableFakeFS {
       }, async () => {
         throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
       });
-    }, async (zipFsO, {archivePath: archivePathO, subPath: subPathO}) => {
+    }, async (zipFsO, {subPath: subPathO}) => {
       return await this.makeCallPromise(newP, async () => {
         throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
-      }, async (zipFsN, {archivePath: archivePathN, subPath: subPathN}) => {
+      }, async (zipFsN, {subPath: subPathN}) => {
         if (zipFsO !== zipFsN) {
           throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
         } else {
@@ -245,10 +245,10 @@ export class ZipOpenFS extends BasePortableFakeFS {
       }, async () => {
         throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
       });
-    }, (zipFsO, {archivePath: archivePathO, subPath: subPathO}) => {
+    }, (zipFsO, {subPath: subPathO}) => {
       return this.makeCallSync(newP, () => {
         throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
-      }, (zipFsN, {archivePath: archivePathN, subPath: subPathN}) => {
+      }, (zipFsN, {subPath: subPathN}) => {
         if (zipFsO !== zipFsN) {
           throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
         } else {
@@ -278,13 +278,13 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return await this.makeCallPromise(sourceP, async () => {
       return await this.makeCallPromise(destP, async () => {
         return await this.baseFs.copyFilePromise(sourceP, destP, flags);
-      }, async (zipFsD, {archivePath: archivePathD, subPath: subPathD}) => {
+      }, async (zipFsD, {subPath: subPathD}) => {
         return await fallback(this.baseFs, sourceP, zipFsD, subPathD);
       });
-    }, async (zipFsS, {archivePath: archivePathS, subPath: subPathS}) => {
+    }, async (zipFsS, {subPath: subPathS}) => {
       return await this.makeCallPromise(destP, async () => {
         return await fallback(zipFsS, subPathS, this.baseFs, destP);
-      }, async (zipFsD, {archivePath: archivePathD, subPath: subPathD}) => {
+      }, async (zipFsD, {subPath: subPathD}) => {
         if (zipFsS !== zipFsD) {
           return await fallback(zipFsS, subPathS, zipFsD, subPathD);
         } else {
@@ -314,13 +314,13 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(sourceP, () => {
       return this.makeCallSync(destP, () => {
         return this.baseFs.copyFileSync(sourceP, destP, flags);
-      }, (zipFsD, {archivePath: archivePathD, subPath: subPathD}) => {
+      }, (zipFsD, {subPath: subPathD}) => {
         return fallback(this.baseFs, sourceP, zipFsD, subPathD);
       });
-    }, (zipFsS, {archivePath: archivePathS, subPath: subPathS}) => {
+    }, (zipFsS, {subPath: subPathS}) => {
       return this.makeCallSync(destP, () => {
         return fallback(zipFsS, subPathS, this.baseFs, destP);
-      }, (zipFsD, {archivePath: archivePathD, subPath: subPathD}) => {
+      }, (zipFsD, {subPath: subPathD}) => {
         if (zipFsS !== zipFsD) {
           return fallback(zipFsS, subPathS, zipFsD, subPathD);
         } else {
@@ -330,10 +330,26 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
+  async appendFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.appendFilePromise(p, content, opts);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.appendFilePromise(subPath, content, opts);
+    });
+  }
+
+  appendFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.appendFileSync(p, content, opts);
+    }, (zipFs, {subPath}) => {
+      return zipFs.appendFileSync(subPath, content, opts);
+    });
+  }
+
   async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.writeFilePromise(p, content, opts);
-    }, async (zipFs, {archivePath, subPath}) => {
+    }, async (zipFs, {subPath}) => {
       return await zipFs.writeFilePromise(subPath, content, opts);
     });
   }
@@ -349,7 +365,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async unlinkPromise(p: PortablePath) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.unlinkPromise(p);
-    }, async (zipFs, {archivePath, subPath}) => {
+    }, async (zipFs, {subPath}) => {
       return await zipFs.unlinkPromise(subPath);
     });
   }
@@ -381,7 +397,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async mkdirPromise(p: PortablePath) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.mkdirPromise(p);
-    }, async (zipFs, {archivePath, subPath}) => {
+    }, async (zipFs, {subPath}) => {
       return await zipFs.mkdirPromise(subPath);
     });
   }
@@ -397,7 +413,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async rmdirPromise(p: PortablePath) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.rmdirPromise(p);
-    }, async (zipFs, {archivePath, subPath}) => {
+    }, async (zipFs, {subPath}) => {
       return await zipFs.rmdirPromise(subPath);
     });
   }
@@ -413,7 +429,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async symlinkPromise(target: PortablePath, p: PortablePath) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.symlinkPromise(target, p);
-    }, async (zipFs, {archivePath, subPath}) => {
+    }, async (zipFs, {subPath}) => {
       return await zipFs.symlinkPromise(target, subPath);
     });
   }
@@ -461,7 +477,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async readdirPromise(p: PortablePath) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.readdirPromise(p);
-    }, async (zipFs, {archivePath, subPath}) => {
+    }, async (zipFs, {subPath}) => {
       return await zipFs.readdirPromise(subPath);
     }, {
       requireSubpath: false,
@@ -481,7 +497,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async readlinkPromise(p: PortablePath) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.readlinkPromise(p);
-    }, async (zipFs, {archivePath, subPath}) => {
+    }, async (zipFs, {subPath}) => {
       return await zipFs.readlinkPromise(subPath);
     });
   }

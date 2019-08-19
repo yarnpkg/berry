@@ -131,6 +131,26 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.copyFileSync(NodeFS.fromPortablePath(sourceP), NodeFS.fromPortablePath(destP), flags);
   }
 
+  async appendFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return await new Promise<void>((resolve, reject) => {
+      const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
+      if (opts) {
+        this.realFs.appendFile(fsNativePath, content, opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.appendFile(fsNativePath, content, this.makeCallback(resolve, reject));
+      }
+    });
+  }
+
+  appendFileSync(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
+    if (opts) {
+      this.realFs.appendFileSync(fsNativePath, content, opts);
+    } else {
+      this.realFs.appendFileSync(fsNativePath, content);
+    }
+  }
+
   async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     return await new Promise<void>((resolve, reject) => {
       const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
