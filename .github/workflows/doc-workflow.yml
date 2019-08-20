@@ -34,8 +34,9 @@ jobs:
       run: |
         node ./scripts/run-yarn.js build:doc
 
-    - name: 'Check status'
-      uses: ./scripts/actions/if-repo-dirty
+    - name: 'Check whether a new deploy is needed'
+      run: |
+        [[ -n $(git status --short) ]] || exit 78
 
     - name: 'Make the commit'
       uses: ./scripts/actions/make-commit
