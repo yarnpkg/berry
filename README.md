@@ -49,7 +49,7 @@ The following packages are generic and can be used in a variety of purposes (inc
 
 ## Yarn plugins
 
-The following packages are plugins for Berry and can be installed through `berry add plugin <plugin-name>`. Note that some of them are typically already shipped with the regular Yarn bundles. Such plugins are marked with a star (★).
+The following packages are plugins for Berry and can be installed through `yarn plugin import <plugin-name>`. Note that some of them are typically already shipped with the regular Yarn bundles. Such plugins are marked with a star (★).
 
 - [plugin-constraints★](packages/plugin-constraints) adds support for `yarn constraints check` and `yarn constraints fix`.
 - [plugin-dlx★](packages/plugin-dlx) adds support for the [`yarn dlx`](https://yarnpkg.github.io/berry/cli/dlx) command.
