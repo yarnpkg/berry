@@ -35,7 +35,7 @@ jobs:
         node ./scripts/run-yarn.js build:doc
 
     - name: 'Check status'
-      uses: ./scripts/actions/if-repo-changed
+      uses: ./scripts/actions/if-repo-dirty
 
     - name: 'Make the commit'
       uses: ./scripts/actions/make-commit
