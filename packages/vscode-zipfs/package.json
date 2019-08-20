@@ -62,8 +62,8 @@
     }
   },
   "devDependencies": {
-    "@berry/fslib": "workspace:0.1.1",
-    "@berry/pnpify": "workspace:0.1.1",
+    "@berry/fslib": "workspace:2.0.0-rc.0",
+    "@berry/pnpify": "workspace:2.0.0-rc.0",
     "pnp-webpack-plugin": "^1.4.3",
     "ts-loader": "^5.3.3",
     "typescript": "^3.3.3333",

@@ -1,6 +1,6 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
 import {structUtils, tgzUtils}                      from '@berry/core';
-import {Locator, MessageName}                       from '@berry/core';
+import {Locator, MessageName, ReportError}          from '@berry/core';
 import {PortablePath}                               from '@berry/fslib';
 import semver                                       from 'semver';
 
@@ -65,7 +65,9 @@ export class NpmFetcher implements Fetcher {
   }
 
   private getLocatorUrl(locator: Locator, opts: FetchOptions) {
-    const version = locator.reference.slice(PROTOCOL.length);
+    const version = semver.clean(locator.reference.slice(PROTOCOL.length));
+    if (version === null)
+      throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `The npm semver resolver got selected, but the version isn't semver`);
 
     return `${npmHttpUtils.getIdentUrl(locator)}/-/${locator.name}-${version}.tgz`;
   }

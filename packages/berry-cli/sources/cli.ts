@@ -1,9 +1,9 @@
-import {Configuration, CommandContext}    from '@berry/core';
-import {xfs, NodeFS, PortablePath}        from '@berry/fslib';
-import {execFileSync}                     from 'child_process';
-import {Cli}                              from 'clipanion';
+import {Configuration, CommandContext} from '@berry/core';
+import {xfs, NodeFS, PortablePath}     from '@berry/fslib';
+import {execFileSync}                  from 'child_process';
+import {Cli}                           from 'clipanion';
 
-import {pluginConfiguration}              from './pluginConfiguration';
+import {pluginConfiguration}           from './pluginConfiguration';
 
 const cli = new Cli<CommandContext>({
   binaryLabel: `Yarn Package Manager`,

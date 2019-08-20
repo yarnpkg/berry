@@ -21,6 +21,8 @@ export const Container = styled.div`
   color: ${props => props.theme.colors.documentation};
 
   a[href^="#"] {
+    margin-left: -15px;
+    padding: 15px;
     text-decoration: none;
   }
 
@@ -128,8 +130,8 @@ const Key = ({theme, name, anchorTarget}) => <>
   <span style={{color: theme.colors.key}}>
     {anchorTarget ? <>
       <a style={{color: `inherit`}} href={`#${anchorTarget}`}>
-        <Anchor/> {theme.formatKey(name)}
-      </a>
+        <Anchor/>
+      </a>{theme.formatKey(name)}
     </> : <>
       {theme.formatKey(name)}
     </>}

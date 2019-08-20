@@ -20,6 +20,7 @@ import remove                             from './commands/remove';
 import runIndex                           from './commands/runIndex';
 import run                                from './commands/run';
 import setResolutionPolicy                from './commands/set/resolution';
+import setVersionFromSources              from './commands/set/version/sources';
 import setVersionPolicy                   from './commands/set/version';
 import up                                 from './commands/up';
 import why                                from './commands/why';
@@ -61,6 +62,7 @@ const plugin: Plugin = {
     cleanCache,
     setConfig,
     setResolutionPolicy,
+    setVersionFromSources,
     setVersionPolicy,
     listWorkspaces,
     clipanionEntry,

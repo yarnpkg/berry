@@ -1,9 +1,9 @@
-import {FakeFS, PortablePath}               from '@berry/fslib';
+import {FakeFS, PortablePath} from '@berry/fslib';
 
-import {Cache}                              from './Cache';
-import {Project}                            from './Project';
-import {Report}                             from './Report';
-import {LocatorHash, Locator}               from './types';
+import {Cache}                from './Cache';
+import {Project}              from './Project';
+import {Report}               from './Report';
+import {LocatorHash, Locator} from './types';
 
 export type MinimalFetchOptions = {
   project: Project,

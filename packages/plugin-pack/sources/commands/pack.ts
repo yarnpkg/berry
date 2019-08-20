@@ -1,9 +1,9 @@
-import {WorkspaceRequiredError}                                                                 from '@berry/cli';
-import {CommandContext, Configuration, MessageName, Project, StreamReport}                      from '@berry/core';
-import {xfs, ppath, toFilename}                                                                 from '@berry/fslib';
-import {Command}                                                                                from 'clipanion';
+import {WorkspaceRequiredError}                                            from '@berry/cli';
+import {CommandContext, Configuration, MessageName, Project, StreamReport} from '@berry/core';
+import {xfs, ppath, toFilename}                                            from '@berry/fslib';
+import {Command}                                                           from 'clipanion';
 
-import * as packUtils                                                                           from '../packUtils';
+import * as packUtils                                                      from '../packUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PackCommand extends Command<CommandContext> {
@@ -20,7 +20,7 @@ export default class PackCommand extends Command<CommandContext> {
 
       If the \`-n,--dry-run\` flag is set the command will just print the file paths without actually generating the package archive.
 
-      If the \`--json\` flag is set the output will follow a JSON-stream output format instead of the regular user-readable one.
+      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
     `,
     examples: [[
       `Create an archive from the active workspace`,

@@ -1,9 +1,9 @@
-import {Hooks as CoreHooks, Plugin, Project, SettingsType}               from '@berry/core';
-import {NodeFS, xfs, PortablePath, ppath, Filename}                      from '@berry/fslib';
-import {Hooks as StageHooks}                                             from '@berry/plugin-stage';
+import {Hooks as CoreHooks, Plugin, Project, SettingsType} from '@berry/core';
+import {Filename, NodeFS, PortablePath, ppath, xfs}        from '@berry/fslib';
+import {Hooks as StageHooks}                               from '@berry/plugin-stage';
 
-import {PnpLinker}                                                       from './PnpLinker';
-import unplug                                                            from './commands/unplug';
+import {PnpLinker}                                         from './PnpLinker';
+import unplug                                              from './commands/unplug';
 
 export const getPnpPath = (project: Project) => ppath.join(project.cwd, `.pnp.js` as Filename);
 

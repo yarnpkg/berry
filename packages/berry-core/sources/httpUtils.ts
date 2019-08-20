@@ -1,5 +1,5 @@
 import HttpAgent, {HttpsAgent} from 'agentkeepalive';
-import got                     from 'got';
+import got, {GotOptions}       from 'got';
 import tunnel, {ProxyOptions}  from 'tunnel';
 import {URL}                   from 'url';
 
@@ -59,9 +59,31 @@ async function request(target: string, body: Body, {configuration, headers, json
       ? tunnel.httpsOverHttp(parseProxy(httpsProxy))
       : globalHttpsAgent;
 
-  // @ts-ignore
-  const res = await got(target, {agent, body, headers, json, method, encoding: null});
+  const gotOptions = {agent, body, headers, json, method, encoding: null};
+  let hostname: string | undefined;
 
+  const makeHooks = <T extends string | null>() => ({
+    beforeRequest: [
+      (options: GotOptions<T>) => {
+        hostname = options.hostname;
+      },
+    ],
+    beforeRedirect: [
+      (options: GotOptions<T>) => {
+        if (options.headers && options.headers.authorization && options.hostname !== hostname) {
+          delete options.headers.authorization;
+        }
+      },
+    ],
+  });
+
+  //@ts-ignore
+  const gotClient = got.extend({
+    ...gotOptions,
+    hooks: makeHooks(),
+  });
+
+  const res = await gotClient(target);
   return await res.body;
 }
 

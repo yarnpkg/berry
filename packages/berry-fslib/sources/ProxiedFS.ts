@@ -1,6 +1,6 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS} from './FakeFS';
 import {WriteFileOptions, WatchCallback, WatchOptions, Watcher}    from './FakeFS';
-import {Path}                                                      from './path';
+import {FSPath, Path}                                              from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
   protected abstract readonly baseFs: FakeFS<IP>;
@@ -111,12 +111,20 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.copyFileSync(this.mapToBase(sourceP), this.mapToBase(destP), flags);
   }
 
-  writeFilePromise(p: P, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    return this.baseFs.writeFilePromise(this.mapToBase(p), content, opts);
+  appendFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return this.baseFs.appendFilePromise(this.fsMapToBase(p), content, opts);
   }
 
-  writeFileSync(p: P, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    return this.baseFs.writeFileSync(this.mapToBase(p), content, opts);
+  appendFileSync(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return this.baseFs.appendFileSync(this.fsMapToBase(p), content, opts);
+  }
+
+  writeFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return this.baseFs.writeFilePromise(this.fsMapToBase(p), content, opts);
+  }
+
+  writeFileSync(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    return this.baseFs.writeFileSync(this.fsMapToBase(p), content, opts);
   }
 
   unlinkPromise(p: P) {
@@ -159,25 +167,25 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.symlinkSync(this.mapToBase(target), this.mapToBase(p));
   }
 
-  readFilePromise(p: P, encoding: 'utf8'): Promise<string>;
-  readFilePromise(p: P, encoding?: string): Promise<Buffer>;
-  readFilePromise(p: P, encoding?: string) {
+  readFilePromise(p: FSPath<P>, encoding: 'utf8'): Promise<string>;
+  readFilePromise(p: FSPath<P>, encoding?: string): Promise<Buffer>;
+  readFilePromise(p: FSPath<P>, encoding?: string) {
     // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
     if (encoding === 'utf8') {
-      return this.baseFs.readFilePromise(this.mapToBase(p), encoding);
+      return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
     } else {
-      return this.baseFs.readFilePromise(this.mapToBase(p), encoding);
+      return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
     }
   }
 
-  readFileSync(p: P, encoding: 'utf8'): string;
-  readFileSync(p: P, encoding?: string): Buffer;
-  readFileSync(p: P, encoding?: string) {
+  readFileSync(p: FSPath<P>, encoding: 'utf8'): string;
+  readFileSync(p: FSPath<P>, encoding?: string): Buffer;
+  readFileSync(p: FSPath<P>, encoding?: string) {
     // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
     if (encoding === 'utf8') {
-      return this.baseFs.readFileSync(this.mapToBase(p), encoding);
+      return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
     } else  {
-      return this.baseFs.readFileSync(this.mapToBase(p), encoding);
+      return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
     }
   }
 
@@ -206,5 +214,13 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
       a,
       b,
     );
+  }
+
+  private fsMapToBase(p: FSPath<P>) {
+    if (typeof p === `number`) {
+      return p;
+    } else {
+      return this.mapToBase(p);
+    }
   }
 }

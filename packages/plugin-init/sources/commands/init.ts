@@ -1,8 +1,8 @@
-import {CommandContext, Configuration, Manifest}                      from '@berry/core';
-import {structUtils}                                                  from '@berry/core';
-import {xfs, ppath, toFilename}                                       from '@berry/fslib';
-import {updateAndSave}                                                from '@berry/json-proxy';
-import {Command, UsageError}                                          from 'clipanion';
+import {CommandContext, Configuration, Manifest} from '@berry/core';
+import {structUtils}                             from '@berry/core';
+import {xfs, ppath, toFilename}                  from '@berry/fslib';
+import {updateAndSave}                           from '@berry/json-proxy';
+import {Command, UsageError}                     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InitCommand extends Command<CommandContext> {

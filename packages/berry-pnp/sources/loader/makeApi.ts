@@ -1,3 +1,5 @@
+/// <reference path="../../types/module/index.d.ts"/>
+
 import {FakeFS, NodeFS, PortablePath, NativePath, Path}           from '@berry/fslib';
 import {ppath, toFilename}                                        from '@berry/fslib';
 import Module                                                     from 'module';
