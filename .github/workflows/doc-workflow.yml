@@ -21,11 +21,6 @@ jobs:
 
     - uses: actions/checkout@master
 
-    - name: 'Check path'
-      uses: ./scripts/actions/if-path-changed
-      with:
-        args: '^packages'
-
     - name: 'Use Node.js 10.x'
       uses: actions/setup-node@master
       with:
