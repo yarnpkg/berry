@@ -79,14 +79,14 @@ export class Manifest {
     return manifest;
   }
 
-  static async fromText(text: string) {
+  static fromText(text: string) {
     const manifest = new Manifest();
-    await manifest.loadFromText(text);
+    manifest.loadFromText(text);
 
     return manifest;
   }
 
-  async loadFromText(text: string) {
+  loadFromText(text: string) {
     let data;
     try {
       data = JSON.parse(text || `{}`);

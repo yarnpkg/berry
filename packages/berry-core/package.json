@@ -1,7 +1,10 @@
 {
   "name": "@berry/core",
   "version": "2.0.0-rc.0",
-  "version:next": "2.0.0-rc.1",
+  "nextVersion": {
+    "semver": "2.0.0-rc.1",
+    "nonce": "foo"
+  },
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {

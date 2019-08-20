@@ -1,8 +1,11 @@
 {
   "name": "@berry/cli",
   "version": "2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.1",
+    "nonce": 6439546968756325
+  },
   "version:next": "2.0.0-rc.1",
-  "private": true,
   "main": "./sources/index.ts",
   "bin": {
     "berry": "./bin/run.js"
