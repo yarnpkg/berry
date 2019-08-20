@@ -14,8 +14,8 @@ describe(`Features`, () => {
             (await run(`config`, `--json`)).stdout,
             `key`,
           )).toMatchObject({
-            [`pnpPath`]: {
-              effective: `${path}/.pnp.js`,
+            [`cacheFolder`]: {
+              effective: `${path}/.yarn/cache`,
             },
           });
         },
@@ -35,8 +35,8 @@ describe(`Features`, () => {
             (await run(`config`, `--json`, {cwd: `${path}/subfolder`})).stdout,
             `key`,
           )).toMatchObject({
-            [`pnpPath`]: {
-              effective: `${path}/.pnp.js`,
+            [`cacheFolder`]: {
+              effective: `${path}/.yarn/cache`,
             },
           });
         },
@@ -57,8 +57,8 @@ describe(`Features`, () => {
             (await run(`config`, `--json`, {cwd: `${path}/subfolder`})).stdout,
             `key`,
           )).toMatchObject({
-            [`pnpPath`]: {
-              effective: `${path}/subfolder/.pnp.js`,
+            [`cacheFolder`]: {
+              effective: `${path}/subfolder/.yarn/cache`,
             },
           });
         },

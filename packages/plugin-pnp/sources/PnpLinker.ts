@@ -5,6 +5,8 @@ import {CwdFS, FakeFS, NodeFS, xfs, PortablePath, ppath, toFilename}            
 import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@berry/pnp';
 import {UsageError}                                                                                          from 'clipanion';
 
+import {getPnpPath}                                                                                          from './index';
+
 // Some packages do weird stuff and MUST be unplugged. I don't like them.
 const FORCED_UNPLUG_PACKAGES = new Set([
   structUtils.makeIdent(null, `nan`).identHash,
@@ -19,7 +21,7 @@ export class PnpLinker implements Linker {
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
-    const pnpPath = opts.project.configuration.get(`pnpPath`);
+    const pnpPath = getPnpPath(opts.project);
     if (!xfs.existsSync(pnpPath))
       throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
 
@@ -37,7 +39,7 @@ export class PnpLinker implements Linker {
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
-    const pnpPath = opts.project.configuration.get(`pnpPath`);
+    const pnpPath = getPnpPath(opts.project);
     if (!xfs.existsSync(pnpPath))
       throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
 
@@ -166,7 +168,7 @@ class PnpInstaller implements Installer {
         if (this.opts.project.tryWorkspaceByLocator(pkg))
           fallbackExclusionList.push({name: structUtils.requirableIdent(pkg), reference: pkg.reference});
 
-    const pnpPath = this.opts.project.configuration.get(`pnpPath`);
+    const pnpPath = getPnpPath(this.opts.project);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
 
     const pnpSettings = {blacklistedLocations, enableTopLevelFallback, fallbackExclusionList, ignorePattern, packageRegistry, shebang, virtualRoots};
