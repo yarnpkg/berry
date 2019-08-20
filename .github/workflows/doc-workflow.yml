@@ -2,6 +2,10 @@ on:
   push:
     branches:
     - master
+    paths:
+    - .github/workflows/doc-workflow.yml
+    - packages/*/sources/commands/**/*.ts
+    - packages/gatsby/**/*
 
 name: 'Documentation'
 jobs:
@@ -17,28 +21,22 @@ jobs:
 
     - uses: actions/checkout@master
 
-    - name: 'Check path'
-      uses: ./scripts/actions/if-path-changed
-      with:
-        args: '^packages'
-
     - name: 'Use Node.js 10.x'
       uses: actions/setup-node@master
       with:
         version: 10.x
 
     - name: 'Run Yarn install (for binary deps)'
-      uses: ./scripts/actions/local-yarn-command
-      with:
-        args: 'install --inline-builds'
+      run: |
+        node ./scripts/run-yarn.js install --inline-builds
 
     - name: 'Build the documentation'
-      uses: ./scripts/actions/local-yarn-command
-      with:
-        args: 'build:doc'
+      run: |
+        node ./scripts/run-yarn.js build:doc
 
-    - name: 'Check status'
-      uses: ./scripts/actions/if-repo-changed
+    - name: 'Check whether a new deploy is needed'
+      run: |
+        [[ -n $(git status --short) ]] || exit 78
 
     - name: 'Make the commit'
       uses: ./scripts/actions/make-commit
@@ -46,3 +44,5 @@ jobs:
         message: 'Updates the documentation website'
       env:
         GITHUB_TOKEN: ${{secrets.YARNBOT_TOKEN}}
+
+#

@@ -19,14 +19,12 @@ jobs:
         version: 10.x
 
     - name: 'Apply the new version numbers'
-      uses: ./scripts/actions/local-yarn-command
-      with:
-        args: 'version apply --all'
+      run: |
+        node ./scripts/run-yarn.js version apply --all
 
     - name: 'Generate the artifacts'
-      uses: ./scripts/actions/local-yarn-command
-      with:
-        args: 'release:all'
+      run: |
+        node ./scripts/run-yarn.js release:all
 
     - name: 'Make the commit'
       uses: ./scripts/actions/make-commit

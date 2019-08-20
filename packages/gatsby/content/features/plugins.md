@@ -26,15 +26,15 @@ Plugins are single-file JS scripts built via the `@berry/builder` tools. They ar
 
 The official plugins (the ones whose development happen on the Yarn repository) can be installed using the following commands:
 
-  - `yarn plugins dl --list` will print the name of the available official plugins. Some of them might be marked experimental, in which case they might be subject to breaking changes between releases (they should be mostly stable in general, though).
+  - `yarn plugin list` will print the name of the available official plugins. Some of them might be marked experimental, in which case they might be subject to breaking changes between releases (they should be mostly stable in general, though).
 
-  - `yarn plugins dl <plugin-name>` will download one of the plugins from the list, store it within the `.yarn/plugins` directory, and modify your local `.yarnrc.yml` file to reference it.
+  - `yarn plugin import <plugin-name>` will download one of the plugins from the list, store it within the `.yarn/plugins` directory, and modify your local `.yarnrc.yml` file to reference it.
 
-  - `yarn plugins dl <url>` will do the same thing, but because it uses a URL it will work with any plugin regardless of where the plugin is actually hosted.
+  - `yarn plugin import <url>` will do the same thing, but because it uses a URL it will work with any plugin regardless of where the plugin is actually hosted.
 
 ### Manual setup
 
-The `yarn plugins dl` command is useful, but in case you prefer to setup your project yourself:
+The `yarn plugin import` command is useful, but in case you prefer to setup your project yourself:
 
   - Download the plugin you want to use and put it somewhere
 

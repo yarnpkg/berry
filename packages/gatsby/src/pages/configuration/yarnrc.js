@@ -245,13 +245,6 @@ const YarnrcDoc = () => <>
         </>}
       />
       <SymlScalarProperty
-        name={`pnpPath`}
-        placeholder={`./.pnp.js`}
-        description={<>
-          The location where Yarn will read and write the <code>.pnp.js</code> file.
-        </>}
-      />
-      <SymlScalarProperty
         name={`pnpShebang`}
         placeholder={`#!/usr/bin/env node`}
         description={<>
