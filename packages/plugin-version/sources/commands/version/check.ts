@@ -1,7 +1,7 @@
 import {WorkspaceRequiredError}                                                                                         from '@berry/cli';
 import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, execUtils, structUtils, Manifest} from '@berry/core';
-import {Filename, PortablePath, fromPortablePath, ppath, toPortablePath}                                                from '@berry/fslib';
-import {Command}                                                                                                        from 'clipanion';
+import {Filename, PortablePath, fromPortablePath, ppath, toPortablePath, xfs}                                           from '@berry/fslib';
+import {Command, UsageError}                                                                                            from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionApplyCommand extends Command<CommandContext> {
@@ -105,9 +105,30 @@ export default class VersionApplyCommand extends Command<CommandContext> {
   }
 }
 
+async function fetchRoot(initialCwd: PortablePath) {
+  // Note: We can't just use `git rev-parse --show-toplevel`, because on Windows
+  // it may return long paths even when the cwd uses short paths, and we have no
+  // way to detect it from Node (not even realpath).
+
+  let match: PortablePath | null = null;
+
+  let cwd: PortablePath;
+  let nextCwd = initialCwd;
+  do {
+    cwd = nextCwd;
+    if (await xfs.existsPromise(ppath.join(cwd, `.git` as Filename)))
+      match = cwd;
+    nextCwd = ppath.dirname(cwd);
+  } while (match === null && nextCwd !== cwd);
+
+  if (match === null)
+    throw new UsageError(`This command can only be run from within a Git repository`);
+
+  return match;
+}
+
 async function fetchChangedFiles(cwd: PortablePath, {base}: {base: string}) {
-  const {stdout: topLevelStdout} = await execUtils.execvp(`git`, [`rev-parse`, `--show-toplevel`], {cwd, strict: true});
-  const root = toPortablePath(topLevelStdout.trim());
+  const root = await fetchRoot(cwd);
 
   const {stdout: diffStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, base], {cwd, strict: true});
   const files = diffStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
