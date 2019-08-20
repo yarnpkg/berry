@@ -3,6 +3,7 @@ on:
     branches:
     - master
     paths:
+    - .github/workflows/doc-workflow.yml
     - packages/*/sources/commands/**/*.ts
     - packages/gatsby/**/*
 
