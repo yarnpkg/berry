@@ -2,14 +2,9 @@ import {Configuration, CommandContext} from '@berry/core';
 import {xfs, NodeFS, PortablePath}     from '@berry/fslib';
 import {execFileSync}                  from 'child_process';
 import {Cli}                           from 'clipanion';
+import path                            from 'path';
 
 import {pluginConfiguration}           from './pluginConfiguration';
-
-const cli = new Cli<CommandContext>({
-  binaryLabel: `Yarn Package Manager`,
-  binaryName: `yarn`,
-  binaryVersion: BERRY_VERSION,
-});
 
 function runBinary(path: PortablePath) {
   const physicalPath = NodeFS.fromPortablePath(path);
@@ -33,7 +28,22 @@ function runBinary(path: PortablePath) {
   }
 }
 
-async function run() {
+async function run(): Promise<void> {
+  const cli = new Cli<CommandContext>({
+    binaryLabel: `Yarn Package Manager`,
+    binaryName: `yarn`,
+    binaryVersion: BERRY_VERSION,
+  });
+
+  try {
+    await exec(cli);
+  } catch (error) {
+    process.stdout.write(cli.error(error));
+    process.exitCode = 1;
+  }
+}
+
+async function exec(cli: Cli<CommandContext>): Promise<void> {
   // Since we only care about a few very specific settings (yarn-path and ignore-path) we tolerate extra configuration key.
   // If we didn't, we wouldn't even be able to run `yarn config` (which is recommended in the invalid config error message)
   const configuration = await Configuration.find(NodeFS.toPortablePath(process.cwd()), pluginConfiguration, {
@@ -62,7 +72,17 @@ async function run() {
       for (const command of plugin.commands || [])
         cli.register(command);
 
-    cli.runExit(process.argv.slice(2), {
+    const command = cli.process(process.argv.slice(2));
+
+    // @ts-ignore: The cwd is a global option defined by BaseCommand
+    const cwd: string | null = typeof command.cwd === `string` ? path.resolve(command.cwd) : null;
+
+    if (cwd !== null && cwd !== process.cwd()) {
+      process.chdir(cwd);
+      return await run();
+    }
+
+    cli.runExit(command, {
       cwd: NodeFS.toPortablePath(process.cwd()),
       plugins: pluginConfiguration,
       quiet: false,
@@ -74,6 +94,6 @@ async function run() {
 }
 
 run().catch(error => {
-  process.stdout.write(cli.error(error));
+  console.error(error.stack);
   process.exitCode = 1;
 });

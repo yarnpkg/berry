@@ -1,10 +1,11 @@
-import {WorkspaceRequiredError}                                                       from '@berry/cli';
-import {CommandContext, Configuration, MessageName, Project, StreamReport, execUtils} from '@berry/core';
-import {Filename, PortablePath, ppath, toPortablePath, xfs}                           from '@berry/fslib';
-import {Command}                                                                      from 'clipanion';
-import {tmpdir}                                                                       from 'os';
+import {BaseCommand}                                                  from '@berry/cli';
+import {WorkspaceRequiredError}                                       from '@berry/cli';
+import {Configuration, MessageName, Project, StreamReport, execUtils} from '@berry/core';
+import {Filename, PortablePath, ppath, toPortablePath, xfs}           from '@berry/fslib';
+import {Command}                                                      from 'clipanion';
+import {tmpdir}                                                       from 'os';
 
-import {setVersion}                                                                   from '../version';
+import {setVersion}                                                   from '../version';
 
 const CLONE_WORKFLOW = ({repository, branch}: {repository: string, branch: string}) => [
   [`git`, `clone`, repository, `.`],
@@ -24,7 +25,7 @@ const BUILD_WORKFLOW = [
 ];
 
 // eslint-disable-next-line arca/no-default-export
-export default class SetVersionCommand extends Command<CommandContext> {
+export default class SetVersionCommand extends BaseCommand {
   @Command.String(`--path`)
   installPath?: string;
 

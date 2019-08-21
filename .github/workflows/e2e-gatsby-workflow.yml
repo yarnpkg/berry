@@ -1,0 +1,26 @@
+on:
+- push
+
+name: 'E2E Gatsby'
+jobs:
+  chore:
+    name: 'Validating Gatsby'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        yarn dlx gatsby new my-gatsby && cd my-gatsby
+        yarn build

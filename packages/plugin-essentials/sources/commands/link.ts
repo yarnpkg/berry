@@ -1,10 +1,10 @@
-import {WorkspaceRequiredError}                                                   from '@berry/cli';
-import {Cache, CommandContext, Configuration, Project, StreamReport, structUtils} from '@berry/core';
-import {NodeFS, ppath}                                                            from '@berry/fslib';
-import {Command, UsageError}                                                      from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                      from '@berry/cli';
+import {Cache, Configuration, Project, StreamReport, structUtils} from '@berry/core';
+import {NodeFS, ppath}                                            from '@berry/fslib';
+import {Command, UsageError}                                      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default class LinkCommand extends Command<CommandContext> {
+export default class LinkCommand extends BaseCommand {
   @Command.String()
   destination!: string;
 

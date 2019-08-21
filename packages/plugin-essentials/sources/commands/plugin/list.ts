@@ -1,6 +1,7 @@
-import {CommandContext, Configuration, StreamReport, httpUtils} from '@berry/core';
-import {parseSyml}                                              from '@berry/parsers';
-import {Command}                                                from 'clipanion';
+import {BaseCommand}                            from '@berry/cli';
+import {Configuration, StreamReport, httpUtils} from '@berry/core';
+import {parseSyml}                              from '@berry/parsers';
+import {Command}                                from 'clipanion';
 
 const REMOTE_REGISTRY = `https://raw.githubusercontent.com/yarnpkg/berry/master/plugins.yml`;
 
@@ -12,7 +13,7 @@ export async function getAvailablePlugins(configuration: Configuration) {
 }
 
 // eslint-disable-next-line arca/no-default-export
-export default class PluginDlCommand extends Command<CommandContext> {
+export default class PluginDlCommand extends BaseCommand {
   static usage = Command.Usage({
     category: `Plugin-related commands`,
     description: `list the available official plugins`,

@@ -1,9 +1,10 @@
-import {CommandContext, Configuration, Project, Workspace} from '@berry/core';
-import {scriptUtils, structUtils}                          from '@berry/core';
-import {Command, UsageError}                               from 'clipanion';
+import {BaseCommand}                       from '@berry/cli';
+import {Configuration, Project, Workspace} from '@berry/core';
+import {scriptUtils, structUtils}          from '@berry/core';
+import {Command, UsageError}               from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default class RunCommand extends Command<CommandContext> {
+export default class RunCommand extends BaseCommand {
   @Command.Boolean(`-T,--top-level`)
   topLevel: boolean = false;
 

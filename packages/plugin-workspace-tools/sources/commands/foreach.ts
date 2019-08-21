@@ -1,12 +1,12 @@
-import {WorkspaceRequiredError}                                         from '@berry/cli';
-import {CommandContext, Configuration, LocatorHash, Project, Workspace} from '@berry/core';
-import {DescriptorHash, MessageName, Report, StreamReport}              from '@berry/core';
-import {miscUtils, structUtils}                                         from '@berry/core';
-import {Command, UsageError}                                            from 'clipanion';
-import {cpus}                                                           from 'os';
-import pLimit                                                           from 'p-limit';
-import {Writable}                                                       from 'stream';
-import * as yup                                                         from 'yup';
+import {BaseCommand, WorkspaceRequiredError}               from '@berry/cli';
+import {Configuration, LocatorHash, Project, Workspace}    from '@berry/core';
+import {DescriptorHash, MessageName, Report, StreamReport} from '@berry/core';
+import {miscUtils, structUtils}                            from '@berry/core';
+import {Command, UsageError}                               from 'clipanion';
+import {cpus}                                              from 'os';
+import pLimit                                              from 'p-limit';
+import {Writable}                                          from 'stream';
+import * as yup                                            from 'yup';
 
 /**
  * Retrieves all the child workspaces of a given root workspace recursively
@@ -28,7 +28,7 @@ const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Projec
 };
 
 // eslint-disable-next-line arca/no-default-export
-export default class WorkspacesForeachCommand extends Command<CommandContext> {
+export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.String()
   commandName!: string;
 

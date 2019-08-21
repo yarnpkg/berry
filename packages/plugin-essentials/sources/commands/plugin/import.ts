@@ -1,12 +1,14 @@
-import {CommandContext, Configuration, MessageName, Project, StreamReport, httpUtils, structUtils, ReportError} from '@berry/core';
-import {xfs, NodeFS, PortablePath, ppath}                                                                       from '@berry/fslib';
-import {Command}                                                                                                from 'clipanion';
-import {runInNewContext}                                                                                        from 'vm';
+import {BaseCommand}                                                    from '@berry/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport} from '@berry/core';
+import {httpUtils, structUtils}                                         from '@berry/core';
+import {xfs, NodeFS, PortablePath, ppath}                               from '@berry/fslib';
+import {Command}                                                        from 'clipanion';
+import {runInNewContext}                                                from 'vm';
 
-import {getAvailablePlugins}                                                                                    from './list';
+import {getAvailablePlugins}                                            from './list';
 
 // eslint-disable-next-line arca/no-default-export
-export default class PluginDlCommand extends Command<CommandContext> {
+export default class PluginDlCommand extends BaseCommand {
   @Command.String()
   name!: string;
 
