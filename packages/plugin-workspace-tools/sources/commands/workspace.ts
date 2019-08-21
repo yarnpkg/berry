@@ -92,7 +92,7 @@ export default class WorkspaceCommand extends Command<CommandContext> {
     const workspace = candidates[workspaceIndex];
 
     if (workspace === undefined) {
-      throw new Error(
+      throw new UsageError(
         `Workspace '${
           this.workspaceName
         }' not found. Did you mean any of the following:\n  - ${candiateNames.join(
