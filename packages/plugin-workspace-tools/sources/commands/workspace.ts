@@ -1,12 +1,7 @@
-import { WorkspaceRequiredError } from "@berry/cli";
-import {
-  CommandContext,
-  Configuration,
-  Project,
-  Workspace
-} from "@berry/core";
-import { scriptUtils, structUtils } from "@berry/core";
-import { Command } from "clipanion";
+import {WorkspaceRequiredError}                            from "@berry/cli";
+import {CommandContext, Configuration, Project, Workspace} from "@berry/core";
+import {structUtils}                                       from "@berry/core";
+import {Command, UsageError}                               from "clipanion";
 
 /**
  * Retrieves all the child workspaces of a given root workspace recursively
@@ -53,13 +48,13 @@ export default class WorkspaceCommand extends Command<CommandContext> {
     examples: [
       [
         `Add a package to a single workspace`,
-        `yarn workspace components add -D react`
+        `yarn workspace components add -D react`,
       ],
       [
         `Run build script on a single workspace`,
-        `yarn workspace components run build`
-      ]
-    ]
+        `yarn workspace components run build`,
+      ],
+    ],
   });
 
   @Command.Path(`workspace`)
@@ -68,7 +63,7 @@ export default class WorkspaceCommand extends Command<CommandContext> {
       this.context.cwd,
       this.context.plugins
     );
-    const { project, workspace: cwdWorkspace } = await Project.find(
+    const {project, workspace: cwdWorkspace} = await Project.find(
       configuration,
       this.context.cwd
     );
@@ -79,14 +74,14 @@ export default class WorkspaceCommand extends Command<CommandContext> {
 
     const candidates = [
       rootWorkspace,
-      ...getWorkspaceChildrenRecursive(rootWorkspace, project)
-    ]
+      ...getWorkspaceChildrenRecursive(rootWorkspace, project),
+    ];
     const candiateNames = candidates.map(workspace => {
       const ident = structUtils.convertToIdent(workspace.locator);
       return structUtils.stringifyIdent(ident);
     });
 
-    const workspaceIndex = candiateNames.find(workspaceName => {
+    const workspaceIndex = candiateNames.findIndex(workspaceName => {
       return workspaceName === this.workspaceName;
     });
     const workspace = candidates[workspaceIndex];
@@ -101,17 +96,11 @@ export default class WorkspaceCommand extends Command<CommandContext> {
       );
     }
 
-    return scriptUtils.executePackageShellcode(
-      workspace.anchoredLocator,
-      `yarn ${this.commandName}`,
-      this.args,
-      {
-        cwd: workspace.relativeCwd,
-        project: workspace.project,
-        stderr: this.context.stderr,
-        stdin: this.context.stdin,
-        stdout: this.context.stdout
-      }
-    );
+    return this.cli.run([this.commandName, ...this.args], {
+      cwd: workspace.cwd,
+      stderr: this.context.stderr,
+      stdin: this.context.stdin,
+      stdout: this.context.stdout,
+    });
   }
 }
