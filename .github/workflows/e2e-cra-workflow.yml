@@ -1,7 +1,7 @@
 on:
 - push
 
-name: 'E2E Create-React-App'
+name: 'E2E CRA'
 jobs:
   chore:
     name: 'Validating Create-React-App'
