@@ -95,9 +95,9 @@ export default class WorkspaceCommand extends Command<CommandContext> {
       throw new UsageError(
         `Workspace '${
           this.workspaceName
-        }' not found. Did you mean any of the following:\n  - ${candiateNames.join(
-          "\n  - "
-        )}?`
+        }' not found. Did you mean any of the following:\n  - ${candiateNames
+          .sort()
+          .join("\n  - ")}?`
       );
     }
 
