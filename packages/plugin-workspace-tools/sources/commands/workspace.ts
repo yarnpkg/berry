@@ -1,7 +1,7 @@
-import {WorkspaceRequiredError}                 from "@berry/cli";
-import {CommandContext, Configuration, Project} from "@berry/core";
-import {structUtils}                            from "@berry/core";
-import {Command, UsageError}                    from "clipanion";
+import {WorkspaceRequiredError}                            from "@berry/cli";
+import {CommandContext, Configuration, Project, Workspace} from "@berry/core";
+import {structUtils}                                       from "@berry/core";
+import {Command, UsageError}                               from "clipanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspaceCommand extends Command<CommandContext> {
@@ -46,23 +46,25 @@ export default class WorkspaceCommand extends Command<CommandContext> {
     if (!cwdWorkspace) throw new WorkspaceRequiredError(this.context.cwd);
 
     const candidates = project.workspaces;
-    const candiateNames = candidates.map(workspace => {
-      const ident = structUtils.convertToIdent(workspace.locator);
-      return structUtils.stringifyIdent(ident);
-    });
+    const candidatesByName = new Map(
+      candidates.map(
+        (workspace): [string, Workspace] => {
+          const ident = structUtils.convertToIdent(workspace.locator);
+          return [structUtils.stringifyIdent(ident), workspace];
+        }
+      )
+    );
 
-    const workspaceIndex = candiateNames.findIndex(workspaceName => {
-      return workspaceName === this.workspaceName;
-    });
-    const workspace = candidates[workspaceIndex];
+    const workspace = candidatesByName.get(this.workspaceName);
 
     if (workspace === undefined) {
+      const otherNames = Array.from(candidatesByName.keys()).sort();
       throw new UsageError(
         `Workspace '${
           this.workspaceName
-        }' not found. Did you mean any of the following:\n  - ${candiateNames
-          .sort()
-          .join("\n  - ")}?`
+        }' not found. Did you mean any of the following:\n  - ${otherNames.join(
+          "\n  - "
+        )}?`
       );
     }
 
