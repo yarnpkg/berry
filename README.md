@@ -26,6 +26,13 @@ Yarn is a modern package manager split into various packages. Its novel architec
 - Yarn is first and foremost a Node API that can be used programmatically (via [berry-core](packages/berry-core))
 - Yarn is written in TypeScript, and fully typechecked
 
+## Current status
+
+| Toolchain | E2E Tests |
+| --- | --- |
+| Create-React-App | ![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg) |
+| Gatsby | ![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg) |
+
 ## Install
 
 Consult the [dedicated page](https://yarnpkg.github.io/berry/getting-started/install) for more details.
