@@ -89,7 +89,7 @@ export default class WorkspaceCommand extends Command<CommandContext> {
     const workspaceIndex = candiateNames.find(workspaceName => {
       return workspaceName === this.workspaceName;
     });
-    const workspace = candiates[workspaceIndex];
+    const workspace = candidates[workspaceIndex];
 
     if (workspace === undefined) {
       throw new Error(
