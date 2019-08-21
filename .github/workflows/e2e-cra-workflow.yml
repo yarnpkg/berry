@@ -15,6 +15,10 @@ jobs:
       with:
         version: 10.x
 
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
