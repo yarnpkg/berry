@@ -21,6 +21,7 @@ import {RunInstallPleaseResolver}                     from './RunInstallPleaseRe
 import {ThrowReport}                                  from './ThrowReport';
 import {Workspace}                                    from './Workspace';
 import {YarnResolver}                                 from './YarnResolver';
+import {isFolderInside}                               from './folderUtils';
 import * as miscUtils                                 from './miscUtils';
 import * as scriptUtils                               from './scriptUtils';
 import * as structUtils                               from './structUtils';
@@ -1142,6 +1143,10 @@ export class Project {
       await this.linkEverything(opts);
     });
 
+    await opts.report.startTimerPromise(`Cache cleanup step`, async() => {
+      await this.cacheCleanup(opts);
+    })
+
     await this.configuration.triggerHook(hooks => {
       return hooks.afterAllInstalled;
     }, this);
@@ -1251,6 +1256,35 @@ export class Project {
     for (const workspace of this.workspacesByCwd.values()) {
       await workspace.persistManifest();
     }
+  }
+
+  async cacheCleanup({cache, report}: InstallOptions)  {
+    const cachePath = cache.cwd;
+
+    const PRESERVED_FILES = new Set([
+      `.gitignore`,
+    ]);
+
+    if (!xfs.existsSync(cachePath))
+      return;
+
+    if (!isFolderInside(cachePath, this.cwd))
+      return report.reportInfo(MessageName.CACHE_OUTSIDE_PROJECT, `skipping cleanup since cache folder is not inside project folder`);
+
+    for (const entry of await xfs.readdirPromise(cachePath)) {
+      const entryPath = ppath.resolve(cachePath, entry);
+
+      if (PRESERVED_FILES.has(entry))
+        continue;
+
+      if (!cache.markedFiles.has(entryPath)) {
+        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${ppath.basename(entryPath)} seems to be unused`);
+
+        await xfs.unlinkPromise(entryPath);
+      }
+    }
+
+    cache.markedFiles.clear();
   }
 }
 

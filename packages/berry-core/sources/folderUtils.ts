@@ -18,3 +18,9 @@ export function getDefaultGlobalFolder() {
 export function getHomeFolder() {
   return NodeFS.toPortablePath(homedir() || '/usr/local/share');
 }
+
+export function isFolderInside(target: PortablePath, parent: PortablePath) {
+  const relative = ppath.relative(parent, target);
+
+  return relative && !relative.startsWith('..') && !ppath.isAbsolute(relative);
+}

@@ -41,6 +41,9 @@ Object {
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
+➤ YN0000: ┌ Cache cleanup step
+➤ YN0019: │ no-deps-npm-1.0.0-7b98016e47.zip seems to be unused
+➤ YN0000: └ Completed
 ➤ YN0000: Done
 ",
 }

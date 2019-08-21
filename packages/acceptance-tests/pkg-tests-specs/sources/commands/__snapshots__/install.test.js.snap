@@ -15,6 +15,8 @@ exports[`Commands add it should print the logs to the standard output when using
 ➤ YN0000: │ no-deps-scripted@npm:1.0.0 STDOUT postinstall out
 ➤ YN0000: │ no-deps-scripted@npm:1.0.0 STDERR postinstall err
 ➤ YN0000: └ Completed
+➤ YN0000: ┌ Cache cleanup step
+➤ YN0000: └ Completed
 ➤ YN0000: Done
 "
 `;

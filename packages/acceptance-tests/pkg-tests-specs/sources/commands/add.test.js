@@ -1,5 +1,6 @@
+const {readdir} = require(`fs-extra`);
 const {
-  fs: {readJson, readFile},
+  fs: {createTemporaryFolder, readJson, readFile},
   tests: {getPackageDirectoryPath},
 } = require('pkg-tests-core');
 const {parseSyml} = require('@berry/parsers');
@@ -116,5 +117,50 @@ describe(`Commands`, () => {
         });
       }),
     );
+
+    test(`it should clean the cache when cache lives inside the project`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      let code;
+      let stdout;
+      let stderr;
+
+      await run(`install`);
+
+      expect(await readdir(`${path}/.yarn/cache`)).toMatchSnapshot();
+
+      ({ code, stdout, stderr } = await run(`add`, `no-deps@2.0.0`));
+
+      await expect({code, stdout, stderr}).toMatchSnapshot();
+
+      expect(await readdir(`${path}/.yarn/cache`)).toMatchSnapshot();
+    }));
+
+    test(`it should not clean the cache when cache lives outside the project`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      const sharedCachePath = await createTemporaryFolder();
+      const env = {
+        YARN_CACHE_FOLDER: sharedCachePath
+      };
+
+      let code;
+      let stdout;
+      let stderr;
+
+      await run(`install`, {env});
+
+      expect(await readdir(sharedCachePath)).toMatchSnapshot();
+
+      ({ code, stdout, stderr } = await run(`add`, `no-deps@2.0.0`, {env}));
+
+      await expect({code, stdout, stderr}).toMatchSnapshot();
+
+      expect(await readdir(sharedCachePath)).toMatchSnapshot();
+    }));
   });
 });
