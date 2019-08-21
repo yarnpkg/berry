@@ -7,7 +7,7 @@
     "@berry/core": "workspace:2.0.0-rc.0",
     "@berry/fslib": "workspace:2.0.0-rc.0",
     "@berry/plugin-pack": "workspace:2.0.0-rc.0",
-    "clipanion": "2.0.0-rc.16",
+    "clipanion": "^2.1.0",
     "semver": "^5.6.0",
     "yup": "^0.27.0"
   },

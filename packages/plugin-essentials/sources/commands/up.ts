@@ -1,15 +1,15 @@
-import {WorkspaceRequiredError}                                                     from '@berry/cli';
-import {Cache, CommandContext, Configuration, Descriptor, LightReport, MessageName} from '@berry/core';
-import {Project, StreamReport, Workspace}                                           from '@berry/core';
-import {structUtils}                                                                from '@berry/core';
-import {Command, UsageError}                                                        from 'clipanion';
-import inquirer                                                                     from 'inquirer';
+import {BaseCommand, WorkspaceRequiredError}                        from '@berry/cli';
+import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@berry/core';
+import {Project, StreamReport, Workspace}                           from '@berry/core';
+import {structUtils}                                                from '@berry/core';
+import {Command, UsageError}                                        from 'clipanion';
+import inquirer                                                     from 'inquirer';
 
-import * as suggestUtils                                                            from '../suggestUtils';
-import {Hooks}                                                                      from '..';
+import * as suggestUtils                                            from '../suggestUtils';
+import {Hooks}                                                      from '..';
 
 // eslint-disable-next-line arca/no-default-export
-export default class UpCommand extends Command<CommandContext> {
+export default class UpCommand extends BaseCommand {
   @Command.Rest()
   packages: Array<string> = [];
 

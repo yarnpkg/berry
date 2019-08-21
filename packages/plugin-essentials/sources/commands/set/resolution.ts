@@ -1,10 +1,10 @@
-import {WorkspaceRequiredError}                                      from '@berry/cli';
-import {CommandContext, Configuration, Cache, Project, StreamReport} from '@berry/core';
-import {structUtils}                                                 from '@berry/core';
-import {Command}                                                     from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}         from '@berry/cli';
+import {Configuration, Cache, Project, StreamReport} from '@berry/core';
+import {structUtils}                                 from '@berry/core';
+import {Command}                                     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default class SetResolutionCommand extends Command<CommandContext> {
+export default class SetResolutionCommand extends BaseCommand {
   @Command.String()
   descriptor!: string;
 

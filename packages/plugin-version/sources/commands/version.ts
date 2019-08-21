@@ -1,8 +1,8 @@
-import {WorkspaceRequiredError}                 from '@berry/cli';
-import {CommandContext, Configuration, Project} from '@berry/core';
-import {Command, UsageError}                    from 'clipanion';
-import semver                                   from 'semver';
-import * as yup                                 from 'yup';
+import {BaseCommand, WorkspaceRequiredError} from '@berry/cli';
+import {Configuration, Project}              from '@berry/core';
+import {Command, UsageError}                 from 'clipanion';
+import semver                                from 'semver';
+import * as yup                              from 'yup';
 
 const STRATEGIES = new Set([
   `major`,
@@ -15,7 +15,7 @@ const STRATEGIES = new Set([
 ]);
 
 // eslint-disable-next-line arca/no-default-export
-export default class VersionCommand extends Command<CommandContext> {
+export default class VersionCommand extends BaseCommand {
   @Command.String()
   strategy!: string;
 

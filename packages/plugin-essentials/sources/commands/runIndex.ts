@@ -1,11 +1,11 @@
-import {WorkspaceRequiredError}                               from '@berry/cli';
-import {CommandContext, Configuration, Project, StreamReport} from '@berry/core';
-import {miscUtils}                                            from '@berry/core';
-import {Command}                                              from 'clipanion';
-import {inspect}                                              from 'util';
+import {BaseCommand, WorkspaceRequiredError}  from '@berry/cli';
+import {Configuration, Project, StreamReport} from '@berry/core';
+import {miscUtils}                            from '@berry/core';
+import {Command}                              from 'clipanion';
+import {inspect}                              from 'util';
 
 // eslint-disable-next-line arca/no-default-export
-export default class RunCommand extends Command<CommandContext> {
+export default class RunCommand extends BaseCommand {
   @Command.Path(`run`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);

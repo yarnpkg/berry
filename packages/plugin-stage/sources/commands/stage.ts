@@ -1,10 +1,11 @@
-import {CommandContext, Configuration, Project} from '@berry/core';
-import {NodeFS, xfs, PortablePath, ppath}       from '@berry/fslib';
-import {Command, UsageError}                    from 'clipanion';
+import {BaseCommand}                      from '@berry/cli';
+import {Configuration, Project}           from '@berry/core';
+import {NodeFS, xfs, PortablePath, ppath} from '@berry/fslib';
+import {Command, UsageError}              from 'clipanion';
 
-import {Driver as GitDriver}                    from '../drivers/GitDriver';
-import {Driver as MercurialDriver}              from '../drivers/MercurialDriver';
-import {Hooks}                                  from '..';
+import {Driver as GitDriver}              from '../drivers/GitDriver';
+import {Driver as MercurialDriver}        from '../drivers/MercurialDriver';
+import {Hooks}                            from '..';
 
 const ALL_DRIVERS = [
   GitDriver,
@@ -12,7 +13,7 @@ const ALL_DRIVERS = [
 ];
 
 // eslint-disable-next-line arca/no-default-export
-export default class StageCommand extends Command<CommandContext> {
+export default class StageCommand extends BaseCommand {
   @Command.Boolean(`-c,--commit`)
   commit: boolean = false;
 

@@ -1,9 +1,10 @@
-import {CommandContext, Configuration, Project} from '@berry/core';
-import {scriptUtils, structUtils}               from '@berry/core';
-import {Command, UsageError}                    from 'clipanion';
+import {BaseCommand}              from '@berry/cli';
+import {Configuration, Project}   from '@berry/core';
+import {scriptUtils, structUtils} from '@berry/core';
+import {Command, UsageError}      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default class BinCommand extends Command<CommandContext> {
+export default class BinCommand extends BaseCommand {
   @Command.String({required: false})
   name?: string;
 

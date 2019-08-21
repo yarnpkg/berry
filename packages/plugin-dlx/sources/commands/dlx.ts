@@ -1,12 +1,12 @@
-import {WorkspaceRequiredError}                                 from '@berry/cli';
-import {CommandContext, Configuration, Project}                 from '@berry/core';
+import {BaseCommand, WorkspaceRequiredError}                    from '@berry/cli';
+import {Configuration, Project}                                 from '@berry/core';
 import {scriptUtils, structUtils}                               from '@berry/core';
 import {NodeFS, xfs, PortablePath, ppath, Filename, toFilename} from '@berry/fslib';
 import {Command}                                                from 'clipanion';
 import tmp                                                      from 'tmp';
 
 // eslint-disable-next-line arca/no-default-export
-export default class DlxCommand extends Command<CommandContext> {
+export default class DlxCommand extends BaseCommand {
   @Command.String(`-p,--package`)
   pkg: string | undefined;
 

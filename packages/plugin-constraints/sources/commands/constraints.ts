@@ -1,15 +1,16 @@
-import {CommandContext, Configuration, IdentHash, Ident, Project, Workspace} from '@berry/core';
-import {MessageName, StreamReport, AllDependencies, Report}                  from '@berry/core';
-import {structUtils}                                                         from '@berry/core';
-import {Command}                                                             from 'clipanion';
-import getPath                                                               from 'lodash/get';
-import setPath                                                               from 'lodash/set';
-import unsetPath                                                             from 'lodash/unset';
+import {BaseCommand}                                         from '@berry/cli';
+import {Configuration, IdentHash, Ident, Project, Workspace} from '@berry/core';
+import {MessageName, StreamReport, AllDependencies, Report}  from '@berry/core';
+import {structUtils}                                         from '@berry/core';
+import {Command}                                             from 'clipanion';
+import getPath                                               from 'lodash/get';
+import setPath                                               from 'lodash/set';
+import unsetPath                                             from 'lodash/unset';
 
-import {Constraints, EnforcedDependency, EnforcedField}                      from '../Constraints';
+import {Constraints, EnforcedDependency, EnforcedField}      from '../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
-export default class ConstraintsCheckCommand extends Command<CommandContext> {
+export default class ConstraintsCheckCommand extends BaseCommand {
   @Command.Boolean(`--fix`)
   fix: boolean = false;
 

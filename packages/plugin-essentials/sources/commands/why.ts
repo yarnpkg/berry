@@ -1,15 +1,15 @@
-import {WorkspaceRequiredError}                              from '@berry/cli';
-import {CommandContext, Configuration, LocatorHash, Package} from '@berry/core';
-import {IdentHash, Project}                                  from '@berry/core';
-import {miscUtils, structUtils}                              from '@berry/core';
-import {Command}                                             from 'clipanion';
-import {Writable}                                            from 'stream';
-import {asTree}                                              from 'treeify';
+import {BaseCommand, WorkspaceRequiredError} from '@berry/cli';
+import {Configuration, LocatorHash, Package} from '@berry/core';
+import {IdentHash, Project}                  from '@berry/core';
+import {miscUtils, structUtils}              from '@berry/core';
+import {Command}                             from 'clipanion';
+import {Writable}                            from 'stream';
+import {asTree}                              from 'treeify';
 
 type TreeNode = {[key: string]: TreeNode};
 
 // eslint-disable-next-line arca/no-default-export
-export default class WhyCommand extends Command<CommandContext> {
+export default class WhyCommand extends BaseCommand {
   @Command.String()
   package!: string;
 

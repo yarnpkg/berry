@@ -1,14 +1,15 @@
-import {Configuration, Cache, CommandContext, Project} from '@berry/core';
-import {MessageName, StreamReport}                     from '@berry/core';
-import {Filename, NodeFS, xfs, PortablePath, ppath}    from '@berry/fslib';
-import {Command}                                       from 'clipanion';
+import {BaseCommand}                                from '@berry/cli';
+import {Configuration, Cache, Project}              from '@berry/core';
+import {MessageName, StreamReport}                  from '@berry/core';
+import {Filename, NodeFS, xfs, PortablePath, ppath} from '@berry/fslib';
+import {Command}                                    from 'clipanion';
 
 const PRESERVED_FILES = new Set([
   `.gitignore`,
 ]);
 
 // eslint-disable-next-line arca/no-default-export
-export default class CacheCleanCommand extends Command<CommandContext> {
+export default class CacheCleanCommand extends BaseCommand {
   @Command.Boolean(`--dry-run`)
   dryRun: boolean = false;
 
