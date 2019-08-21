@@ -16,7 +16,7 @@ export default class WorkspaceCommand extends Command<CommandContext> {
 
   static usage = Command.Usage({
     category: `Workspace-related commands`,
-    description: `run a command on the specified namespace`,
+    description: `run a command within the specified workspace`,
     details: `
       This command will run a given sub-command on a single workspace.
     `,
