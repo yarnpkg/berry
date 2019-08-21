@@ -43,7 +43,8 @@ export default class WorkspaceCommand extends Command<CommandContext> {
       this.context.cwd
     );
 
-    if (!cwdWorkspace) throw new WorkspaceRequiredError(this.context.cwd);
+    if (!cwdWorkspace)
+      throw new WorkspaceRequiredError(this.context.cwd);
 
     const candidates = project.workspaces;
     const candidatesByName = new Map(
