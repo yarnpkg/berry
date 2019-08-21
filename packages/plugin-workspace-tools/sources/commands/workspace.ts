@@ -1,32 +1,7 @@
-import {WorkspaceRequiredError}                            from "@berry/cli";
-import {CommandContext, Configuration, Project, Workspace} from "@berry/core";
-import {structUtils}                                       from "@berry/core";
-import {Command, UsageError}                               from "clipanion";
-
-/**
- * Retrieves all the child workspaces of a given root workspace recursively
- *
- * @param rootWorkspace root workspace
- * @param project project
- *
- * @returns all the child workspaces
- */
-const getWorkspaceChildrenRecursive = (
-  rootWorkspace: Workspace,
-  project: Project
-): Array<Workspace> => {
-  const workspaceList = [];
-  for (const childWorkspaceCwd of rootWorkspace.workspacesCwds) {
-    const childWorkspace = project.workspacesByCwd.get(childWorkspaceCwd);
-    if (childWorkspace) {
-      workspaceList.push(
-        childWorkspace,
-        ...getWorkspaceChildrenRecursive(childWorkspace, project)
-      );
-    }
-  }
-  return workspaceList;
-};
+import {WorkspaceRequiredError}                 from "@berry/cli";
+import {CommandContext, Configuration, Project} from "@berry/core";
+import {structUtils}                            from "@berry/core";
+import {Command, UsageError}                    from "clipanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspaceCommand extends Command<CommandContext> {
@@ -70,12 +45,7 @@ export default class WorkspaceCommand extends Command<CommandContext> {
 
     if (!cwdWorkspace) throw new WorkspaceRequiredError(this.context.cwd);
 
-    const rootWorkspace = cwdWorkspace;
-
-    const candidates = [
-      rootWorkspace,
-      ...getWorkspaceChildrenRecursive(rootWorkspace, project),
-    ];
+    const candidates = project.workspaces;
     const candiateNames = candidates.map(workspace => {
       const ident = structUtils.convertToIdent(workspace.locator);
       return structUtils.stringifyIdent(ident);
