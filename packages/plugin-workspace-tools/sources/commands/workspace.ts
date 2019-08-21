@@ -98,6 +98,7 @@ export default class WorkspaceCommand extends Command<CommandContext> {
 
     return this.cli.run([this.commandName, ...this.args], {
       cwd: workspace.cwd,
+      plugins: this.context.plugins,
       stderr: this.context.stderr,
       stdin: this.context.stdin,
       stdout: this.context.stdout,
