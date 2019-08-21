@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Commands workspace <workspace-name> <sub-command> runs a given command in the specified workspace 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Usage Error: Couldn't find a script named \\"workspace package-a print\\".
+
+$ yarn run [-T,--top-level] <arg> ...
+",
+}
+`;
+
+exports[`Commands workspace <workspace-name> <sub-command> when the given workspace doesnt exist lists all possible workspaces 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Usage Error: Couldn't find a script named \\"workspace pakcage-typo-a print\\".
+
+$ yarn run [-T,--top-level] <arg> ...
+",
+}
+`;
