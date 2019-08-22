@@ -1,6 +1,10 @@
 {
   "name": "@berry/shell",
   "version": "2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.0",
+    "nonce": "4825854156497667"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/fslib": "workspace:2.0.0-rc.0",
