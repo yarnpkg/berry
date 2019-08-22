@@ -45,10 +45,10 @@ export default class VersionApplyCommand extends Command<CommandContext> {
       let hasDiffErrors = false;
       let hasDepsErrors = false;
 
-      report.reportInfo(MessageName.UNNAMED, `Your PR was started right after ${configuration.format(base.message, `magenta`)}`);
+      report.reportInfo(MessageName.UNNAMED, `Your PR was started right after ${configuration.format(base.hash.slice(0, 7), `yellow`)} ${configuration.format(base.message, `magenta`)}`);
 
       if (files.length > 0) {
-        report.reportInfo(MessageName.UNNAMED, `The following files have changed since then:`)
+        report.reportInfo(MessageName.UNNAMED, `you have changed the following files since then:`)
         for (const file of files) {
           report.reportInfo(null, file);
         }
@@ -57,23 +57,29 @@ export default class VersionApplyCommand extends Command<CommandContext> {
       // First we check which workspaces have received modifications but no release strategies
       for (const workspace of workspaces) {
         const currentNonce = getNonce(workspace.manifest);
-        const previousNonce = await fetchPreviousNonce(workspace, {base: base.hash});
+        const previousNonce = await fetchPreviousNonce(workspace, {root, base: base.hash});
 
+        // If the nonce is the same, it means that the user didn't run one of the `yarn version <>` variants since they started working on this diff
         if (currentNonce === previousNonce) {
           if (!hasDiffErrors && files.length > 0)
             report.reportSeparator();
 
           report.reportError(MessageName.UNNAMED, `${structUtils.prettyLocator(configuration, workspace.anchoredLocator)} has been modified but doesn't have a bump strategy attached`);
           hasDiffErrors = true;
-        } else if (willBeReleased(workspace.manifest)) {
-          releases.add(workspace.anchoredLocator.locatorHash);
+        } else {
+          // If it changed and a bump is planned, we mark it so that we can check that its dependents also chose whether they want to be bumped or not
+          if (willBeReleased(workspace.manifest)) {
+            releases.add(workspace.anchoredLocator.locatorHash);
+          }
         }
       }
 
       // Then we check which workspaces depend on packages that will be released again but have no release strategies themselves
       for (const workspace of project.workspaces) {
-        if (!willBeReleased(workspace.manifest))
+        // We don't need to check whether the dependencies of packages that will be bumped changed
+        if (willBeReleased(workspace.manifest))
           continue;
+        // We also don't need to check whether the dependencies of private packages changed, as they are supposed to only make sense within the context of the monorepo
         if (workspace.manifest.private)
           continue;
 
@@ -86,13 +92,22 @@ export default class VersionApplyCommand extends Command<CommandContext> {
           if (typeof pkg === `undefined`)
             throw new Error(`Assertion failed: The package should have been registered`);
 
-          if (releases.has(resolution)) {
-            if (!hasDepsErrors && (files.length > 0 || hasDiffErrors))
-              report.reportSeparator();
+          // We only care about workspaces, and we only care about workspaces that will be bumped
+          if (!releases.has(resolution))
+            continue;
 
-            report.reportError(MessageName.UNNAMED, `${structUtils.prettyLocator(configuration, workspace.anchoredLocator)} doesn't have a bump strategy attached, but depends on ${structUtils.prettyLocator(configuration, pkg)} which will be re-released.`);
-            hasDepsErrors = true;
-          }
+          // Quick note: we don't want to check whether the workspace pointer
+          // by `resolution` is private, because while it doesn't makes sense
+          // to bump a private package because its dependencies changed, the
+          // opposite isn't true: a (public) package might need to be bumped
+          // because one of its dev dependencies is a (private) package whose
+          // behavior sensibly changed.
+
+          if (!hasDepsErrors && (files.length > 0 || hasDiffErrors))
+            report.reportSeparator();
+
+          report.reportError(MessageName.UNNAMED, `${structUtils.prettyLocator(configuration, workspace.anchoredLocator)} doesn't have a bump strategy attached, but depends on ${structUtils.prettyLocator(configuration, pkg)} which will be re-released.`);
+          hasDepsErrors = true;
         }
       }
 
@@ -163,8 +178,8 @@ async function fetchChangedFiles(root: PortablePath, {base}: {base: string}) {
   return [...files, ...moreFiles];
 }
 
-async function fetchPreviousNonce(workspace: Workspace, {base}: {base: string}) {
-  const {code, stdout} = await execUtils.execvp(`git`, [`show`, `${base}:${fromPortablePath(ppath.join(workspace.cwd, `package.json` as Filename))}`], {cwd: workspace.cwd});
+async function fetchPreviousNonce(workspace: Workspace, {root, base}: {root: PortablePath, base: string}) {
+  const {code, stdout} = await execUtils.execvp(`git`, [`show`, `${base}:${fromPortablePath(ppath.relative(root, ppath.join(workspace.cwd, `package.json` as Filename)))}`], {cwd: workspace.cwd});
 
   if (code === 0) {
     return getNonce(Manifest.fromText(stdout));
