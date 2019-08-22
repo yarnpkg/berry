@@ -114,10 +114,10 @@ export default class VersionCommand extends BaseCommand {
     }
 
     if (workspace.manifest.raw.nextVersion) {
-      const deferredVersion = workspace.manifest.raw.nextVersion.next as string | undefined;
+      const deferredVersion = workspace.manifest.raw.nextVersion.semver as string | undefined;
       if (typeof deferredVersion !== `undefined`) {
         if (!isDeclined) {
-          if (semver.gte(deferredVersion, nextVersion!) && !this.force) {
+          if (semver.gt(deferredVersion, nextVersion!) && !this.force) {
             throw new UsageError(`The target version (${nextVersion}) is smaller than the one currently registered (${deferredVersion}); use -f,--force to overwrite.`);
           }
         } else {
