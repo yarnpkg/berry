@@ -105,12 +105,17 @@ export default class VersionApplyCommand extends BaseCommand {
       // proceed to update everything at once using our accumulated knowledge.
 
       const processWorkspace = (workspace: Workspace) => {
-        if (!workspace.manifest.raw.nextVersion || !workspace.manifest.raw.nextVersion.semver)
+        const nextVersion = workspace.manifest.raw.nextVersion;
+        if (typeof nextVersion === `undefined`)
           return;
+        if (typeof nextVersion !== `object` || nextVersion === null)
+          throw new Error(`Assertion failed: The nextVersion field should have been an object`);
 
         const newVersion = workspace.manifest.raw.nextVersion.semver;
+        if (typeof newVersion === `undefined`)
+          return;
         if (typeof newVersion !== `string`)
-          throw new Error(`Assertion failed: The version should have been a string`);
+          throw new Error(`Assertion failed: The nextVersion.semver should have been a string`);
 
         workspace.manifest.version = newVersion;
         workspace.manifest.raw.nextVersion = undefined;

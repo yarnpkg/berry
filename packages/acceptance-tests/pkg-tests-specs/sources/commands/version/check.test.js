@@ -53,7 +53,24 @@ describe(`Commands`, () => {
         await git(`checkout`, `-b`, `my-feature`);
 
         await writeJson(`${path}/packages/pkg-a/wip.json`, {});
-        await run(`packages/pkg-a`, `version`, `decline`, `--deferred`);
+        await run(`packages/pkg-a`, `version`, `patch`, `--deferred`);
+
+        await expect(run(`version`, `check`)).rejects.toThrow();
+      }),
+    );
+
+    test(
+      `it should detect that a dependent workspace changed vs master, even when the current workspace already has a bump scheduled`,
+      makeVersionCheckEnv(async ({path, run, source, git}) => {
+        await run(`packages/pkg-c`, `version`, `patch`, `--deferred`);
+
+        await git(`add`, `.`);
+        await git(`commit`, `-m`, `Bumping pkg-c`)
+
+        await git(`checkout`, `-b`, `my-feature`);
+
+        await writeJson(`${path}/packages/pkg-a/wip.json`, {});
+        await run(`packages/pkg-a`, `version`, `patch`, `--deferred`);
 
         await expect(run(`version`, `check`)).rejects.toThrow();
       }),

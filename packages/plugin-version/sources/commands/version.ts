@@ -86,51 +86,52 @@ export default class VersionCommand extends BaseCommand {
       deferred = false;
 
     const isSemver = semver.valid(this.strategy);
+    const isDeclined = this.strategy === DECLINE;
 
-    let nextVersion;
-    if (semver.valid(this.strategy)) {
+    let nextVersion: string | null;
+    if (isSemver) {
       nextVersion = this.strategy;
     } else {
-      if (workspace.manifest.version == null && !isSemver)
-        throw new UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
+      let currentVersion = workspace.manifest.version;
 
-      const currentVersion = workspace.manifest.version;
-      if (typeof currentVersion !== `string` || !semver.valid(currentVersion))
-        throw new UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
+      if (!isDeclined) {
+        if (currentVersion === null)
+          throw new UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
 
-      const bumpedVersion = this.strategy !== `decline`
-        ? semver.inc(currentVersion, this.strategy as any)
+        if (typeof currentVersion !== `string` || !semver.valid(currentVersion)) {
+          throw new UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
+        }
+      }
+
+      const bumpedVersion = !isDeclined
+        ? semver.inc(currentVersion!, this.strategy as any)
         : currentVersion;
 
-      if (bumpedVersion === null)
+      if (!isDeclined && bumpedVersion === null)
         throw new Error(`Assertion failed: Failed to increment the version number (${currentVersion})`);
 
       nextVersion = bumpedVersion;
     }
 
     if (workspace.manifest.raw.nextVersion) {
-      const deferredVersion = workspace.manifest.raw.nextVersion.next;
-      if (deferred && deferredVersion && semver.gte(deferredVersion, nextVersion)) {
-        if (isSemver) {
-          if (!this.force) {
+      const deferredVersion = workspace.manifest.raw.nextVersion.semver as string | undefined;
+      if (typeof deferredVersion !== `undefined`) {
+        if (!isDeclined) {
+          if (semver.gt(deferredVersion, nextVersion!) && !this.force) {
             throw new UsageError(`The target version (${nextVersion}) is smaller than the one currently registered (${deferredVersion}); use -f,--force to overwrite.`);
           }
         } else {
-          if (this.strategy === DECLINE) {
-            nextVersion = deferredVersion;
-          } else {
-            return;
-          }
+          nextVersion = deferredVersion;
         }
       }
     }
 
     workspace.manifest.setRawField(`nextVersion`, {
-      semver: nextVersion,
+      semver: nextVersion !== workspace.manifest.version ? nextVersion : undefined,
       nonce: String(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)),
     }, {after: [`version`]});
 
-    workspace.persistManifest();
+    await workspace.persistManifest();
 
     if (!deferred) {
       await this.cli.run([`version`, `apply`]);
