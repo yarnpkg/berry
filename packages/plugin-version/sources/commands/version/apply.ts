@@ -105,7 +105,7 @@ export default class VersionApplyCommand extends BaseCommand {
       // proceed to update everything at once using our accumulated knowledge.
 
       const processWorkspace = (workspace: Workspace) => {
-        const nextVersion = workspace.manifest.raw.nextVersion.semver;
+        const nextVersion = workspace.manifest.raw.nextVersion;
         if (typeof nextVersion === `undefined`)
           return;
         if (typeof nextVersion !== `object` || nextVersion === null)

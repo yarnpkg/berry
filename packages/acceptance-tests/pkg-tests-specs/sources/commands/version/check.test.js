@@ -47,7 +47,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    test(
+    test.only(
       `it should detect that a dependent workspace changed vs master`,
       makeVersionCheckEnv(async ({path, run, source, git}) => {
         await git(`checkout`, `-b`, `my-feature`);

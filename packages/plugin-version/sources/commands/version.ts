@@ -131,7 +131,7 @@ export default class VersionCommand extends BaseCommand {
       nonce: String(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)),
     }, {after: [`version`]});
 
-    workspace.persistManifest();
+    await workspace.persistManifest();
 
     if (!deferred) {
       await this.cli.run([`version`, `apply`]);
