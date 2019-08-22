@@ -214,7 +214,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-create-class-features-plugin@npm:^7.3.0, @babel/helper-create-class-features-plugin@npm:^7.4.4":
+"@babel/helper-create-class-features-plugin@npm:^7.3.0, @babel/helper-create-class-features-plugin@npm:^7.4.4, @babel/helper-create-class-features-plugin@npm:^7.5.5":
   version: 7.5.5
   resolution: "@babel/helper-create-class-features-plugin@npm:7.5.5"
   dependencies:
@@ -1297,15 +1297,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-typescript@npm:^7.1.0":
-  version: 7.2.0
-  resolution: "@babel/plugin-transform-typescript@npm:7.2.0"
+"@babel/plugin-transform-typescript@npm:^7.3.2":
+  version: 7.5.5
+  resolution: "@babel/plugin-transform-typescript@npm:7.5.5"
   dependencies:
+    "@babel/helper-create-class-features-plugin": "npm:^7.5.5"
     "@babel/helper-plugin-utils": "npm:^7.0.0"
     "@babel/plugin-syntax-typescript": "npm:^7.2.0"
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 7124967aad02ff48ff4ea16d79c3d8e833feb7895eee1fb04a9687c59717b87babbaf7a52cc0b325eae36ff03fc686c8571597ddeae3d4b6be9e2960c5e9a383
+  checksum: 0f783f35a96bb7764f23e18fbcdfe7e902b39537312a16fb5fc7732240abc81c6a0c668f3a708480211e58e9ba46f18d74e9ac69f416244623fc3401de3543bf
   languageName: node
   linkType: hard
 
@@ -1455,15 +1456,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-typescript@npm:^7.1.0":
-  version: 7.1.0
-  resolution: "@babel/preset-typescript@npm:7.1.0"
+"@babel/preset-typescript@npm:^7.3.3":
+  version: 7.3.3
+  resolution: "@babel/preset-typescript@npm:7.3.3"
   dependencies:
     "@babel/helper-plugin-utils": "npm:^7.0.0"
-    "@babel/plugin-transform-typescript": "npm:^7.1.0"
+    "@babel/plugin-transform-typescript": "npm:^7.3.2"
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 306297ca4e05ff84c325c98b579bcd07985ddbd85fe3c1f99e648e33312a66b88bf3ce6a8bae38efade05f908d507bef27d4ae215d491871af56bd8ca948e35d
+  checksum: 0e5ffb82c8e4f3d3aab9fec881cccf716bb0ba0086093359bdc49778d2faa5c9ca4bcb46bb7f251236b425dbe0efc77c113b4991c4661b6ab169181c2d213a2e
   languageName: node
   linkType: hard
 
@@ -1808,7 +1809,7 @@ __metadata:
     "@babel/plugin-proposal-decorators": "npm:^7.4.4"
     "@babel/plugin-transform-modules-commonjs": "npm:^7.2.0"
     "@babel/preset-env": "npm:^7.3.1"
-    "@babel/preset-typescript": "npm:^7.1.0"
+    "@babel/preset-typescript": "npm:^7.3.3"
     "@babel/register": "npm:^7.5.5"
     "@berry/pnpify": "workspace:2.0.0-rc.0"
     "@types/camelcase": "npm:5.2.0"
