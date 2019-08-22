@@ -7,6 +7,8 @@ import {NodeFS}                                                                f
 import {ZipFS}                                                                 from './ZipFS';
 import {FSPath, PortablePath}                                                  from './path';
 
+const ZIP_FD = 0x80000000;
+
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>,
   filter?: RegExp | null,
@@ -35,6 +37,9 @@ export class ZipOpenFS extends BasePortableFakeFS {
   private readonly baseFs: FakeFS<PortablePath>;
 
   private readonly zipInstances: Map<string, ZipFS> | null;
+
+  private readonly fdMap: Map<number, [ZipFS, number]> = new Map();
+  private nextFd = 3;
 
   private readonly filter?: RegExp | null;
 
@@ -76,28 +81,126 @@ export class ZipOpenFS extends BasePortableFakeFS {
     }
   }
 
+  private remapFd(zipFs: ZipFS, fd: number) {
+    const remappedFd = this.nextFd++ | ZIP_FD;
+    this.fdMap.set(remappedFd, [zipFs, fd]);
+    return remappedFd;
+  }
+
   async openPromise(p: PortablePath, flags: string, mode?: number) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.openPromise(p, flags, mode);
-    }, async () => {
-      throw new Error(`Unsupported action (we wouldn't be able to disambiguate the close)`);
+    }, async (zipFs, {subPath}) => {
+      return this.remapFd(zipFs, await zipFs.openPromise(subPath, flags, mode));
     });
   }
 
   openSync(p: PortablePath, flags: string, mode?: number) {
     return this.makeCallSync(p, () => {
       return this.baseFs.openSync(p, flags, mode);
-    }, () => {
-      throw new Error(`Unsupported action (we wouldn't be able to disambiguate the close)`);
+    }, (zipFs, {subPath}) => {
+      return this.remapFd(zipFs, zipFs.openSync(subPath, flags, mode));
     });
   }
 
+  async readPromise(fd: number, buffer: Buffer, offset: number, length: number, position: number) {
+    if ((fd & ZIP_FD) === 0)
+      return await this.baseFs.readPromise(fd, buffer, offset, length, position);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw Object.assign(new Error(`EBADF: bad file descriptor, read`), {code: `EBADF`});
+
+    const [zipFs, realFd] = entry;
+    return await zipFs.readPromise(realFd, buffer, offset, length, position);
+  }
+
+  readSync(fd: number, buffer: Buffer, offset: number, length: number, position: number) {
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.readSync(fd, buffer, offset, length, position);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw Object.assign(new Error(`EBADF: bad file descriptor, read`), {code: `EBADF`});
+
+    const [zipFs, realFd] = entry;
+    return zipFs.readSync(realFd, buffer, offset, length, position);
+  }
+
+  writePromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): Promise<number>;
+  writePromise(fd: number, buffer: string, position?: number): Promise<number>;
+  async writePromise(fd: number, buffer: Buffer | string, offset?: number, length?: number, position?: number): Promise<number> {
+    if ((fd & ZIP_FD) === 0) {
+      if (typeof buffer === `string`) {
+        return await this.baseFs.writePromise(fd, buffer, offset);
+      } else {
+        return await this.baseFs.writePromise(fd, buffer, offset, length, position);
+      }
+    }
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw Object.assign(new Error(`EBADF: bad file descriptor, write`), {code: `EBADF`});
+
+    const [zipFs, realFd] = entry;
+
+    if (typeof buffer === `string`) {
+      return await zipFs.writePromise(realFd, buffer, offset);
+    } else {
+      return await zipFs.writePromise(realFd, buffer, offset, length, position);
+    }
+  }
+
+  writeSync(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): number;
+  writeSync(fd: number, buffer: string, position?: number): number;
+  writeSync(fd: number, buffer: Buffer | string, offset?: number, length?: number, position?: number): number {
+    if ((fd & ZIP_FD) === 0) {
+      if (typeof buffer === `string`) {
+        return this.baseFs.writeSync(fd, buffer, offset);
+      } else {
+        return this.baseFs.writeSync(fd, buffer, offset, length, position);
+      }
+    }
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw Object.assign(new Error(`EBADF: bad file descriptor, write`), {code: `EBADF`});
+
+    const [zipFs, realFd] = entry;
+
+    if (typeof buffer === `string`) {
+      return zipFs.writeSync(realFd, buffer, offset);
+    } else {
+      return zipFs.writeSync(realFd, buffer, offset, length, position);
+    }
+  }
+
   async closePromise(fd: number) {
-    return await this.baseFs.closePromise(fd);
+    if ((fd & ZIP_FD) === 0)
+      return await this.baseFs.closePromise(fd);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw Object.assign(new Error(`EBADF: bad file descriptor, close`), {code: `EBADF`});
+
+    this.fdMap.delete(fd);
+
+    const [zipFs, realFd] = entry;
+    return await zipFs.closePromise(realFd);
   }
 
   closeSync(fd: number) {
-    return this.baseFs.closeSync(fd);
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.closeSync(fd);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw Object.assign(new Error(`EBADF: bad file descriptor, close`), {code: `EBADF`});
+
+    this.fdMap.delete(fd);
+
+    const [zipFs, realFd] = entry;
+    return zipFs.closeSync(realFd);
   }
 
   createReadStream(p: PortablePath | null, opts?: CreateReadStreamOptions) {
