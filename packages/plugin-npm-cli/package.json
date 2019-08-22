@@ -8,10 +8,14 @@
     "@berry/fslib": "workspace:2.0.0-rc.0",
     "@berry/plugin-npm": "workspace:2.0.0-rc.0",
     "@berry/plugin-pack": "workspace:2.0.0-rc.0",
-    "clipanion": "^2.1.0",
+    "clipanion": "^2.1.1",
     "inquirer": "^6.2.0",
     "ssri": "^6.0.1",
     "yup": "^0.27.0"
   },
-  "version": "2.0.0-rc.0"
+  "version": "2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.0",
+    "nonce": "3806729867463899"
+  }
 }

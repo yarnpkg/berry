@@ -2,8 +2,8 @@
   "name": "@berry/core",
   "version": "2.0.0-rc.0",
   "nextVersion": {
-    "semver": "2.0.0-rc.1",
-    "nonce": "2388828565641077"
+    "semver": "2.0.0-rc.0",
+    "nonce": "8908794280584613"
   },
   "main": "./sources/index.ts",
   "sideEffects": false,
@@ -17,7 +17,7 @@
     "agentkeepalive": "^4.0.2",
     "camelcase": "^5.3.1",
     "chalk": "^2.4.1",
-    "clipanion": "^2.1.0",
+    "clipanion": "^2.1.1",
     "cross-spawn": "^6.0.5",
     "globby": "^8.0.1",
     "got": "^9.2.2",

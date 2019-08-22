@@ -8,8 +8,12 @@
     "@berry/fslib": "workspace:2.0.0-rc.0",
     "@berry/json-proxy": "workspace:2.0.0-rc.0",
     "@berry/plugin-essentials": "workspace:2.0.0-rc.0",
-    "clipanion": "^2.1.0",
+    "clipanion": "^2.1.1",
     "tmp": "^0.0.33"
   },
-  "version": "2.0.0-rc.0"
+  "version": "2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.0",
+    "nonce": "1380984411791127"
+  }
 }

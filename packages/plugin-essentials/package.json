@@ -8,11 +8,15 @@
     "@berry/fslib": "workspace:2.0.0-rc.0",
     "@berry/json-proxy": "workspace:2.0.0-rc.0",
     "@berry/parsers": "workspace:2.0.0-rc.0",
-    "clipanion": "^2.1.0",
+    "clipanion": "^2.1.1",
     "inquirer": "^6.2.0",
     "semver": "^5.6.0",
     "treeify": "^1.1.0",
     "yup": "^0.27.0"
   },
-  "version": "2.0.0-rc.0"
+  "version": "2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.0",
+    "nonce": "4531894687001921"
+  }
 }
