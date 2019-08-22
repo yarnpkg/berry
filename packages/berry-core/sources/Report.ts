@@ -61,6 +61,7 @@ export enum MessageName {
   PLUGIN_NAME_NOT_FOUND = 51,
   INVALID_PLUGIN_REFERENCE = 52,
   CONSTRAINTS_AMBIGUITY = 53,
+  CACHE_OUTSIDE_PROJECT = 54,
 }
 
 export class ReportError extends Error {

@@ -1,5 +1,6 @@
+const {readdir} = require(`fs-extra`);
 const {
-  fs: {readJson, readFile},
+  fs: {createTemporaryFolder, readJson, readFile},
   tests: {getPackageDirectoryPath},
 } = require('pkg-tests-core');
 const {parseSyml} = require('@berry/parsers');
@@ -116,5 +117,56 @@ describe(`Commands`, () => {
         });
       }),
     );
+
+    test(`it should clean the cache when cache lives inside the project`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      let code;
+      let stdout;
+      let stderr;
+
+      await run(`install`);
+
+      const preUpgradeCache = await readdir(`${path}/.yarn/cache`);
+
+      expect(preUpgradeCache.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeDefined();
+
+      ({ code, stdout, stderr } = await run(`add`, `no-deps@2.0.0`));
+
+      await expect({code, stdout, stderr}).toMatchSnapshot();
+
+      const postUpgradeCache = await readdir(`${path}/.yarn/cache`);
+
+      expect(postUpgradeCache.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeUndefined();
+      expect(postUpgradeCache.find(entry => entry.includes('no-deps-npm-2.0.0'))).toBeDefined();
+    }));
+
+    test(`it should not clean the cache when cache lives outside the project`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      const sharedCachePath = await createTemporaryFolder();
+      const env = {
+        YARN_CACHE_FOLDER: sharedCachePath
+      };
+
+      let cacheContent;
+
+      await run(`install`, {env});
+
+      cacheContent = await readdir(sharedCachePath);
+
+      expect(cacheContent.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeDefined();
+
+      await run(`add`, `no-deps@2.0.0`, {env});
+
+      cacheContent = await readdir(sharedCachePath);
+
+      expect(cacheContent.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeDefined();
+      expect(cacheContent.find(entry => entry.includes('no-deps-npm-2.0.0'))).toBeDefined();
+    }));
   });
 });

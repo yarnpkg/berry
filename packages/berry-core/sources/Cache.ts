@@ -14,6 +14,7 @@ export type FetchFromCacheOptions = {
 export class Cache {
   public readonly configuration: Configuration;
   public readonly cwd: PortablePath;
+  public readonly markedFiles: Set<PortablePath>;
 
   private mutexes: Map<LocatorHash, Promise<string>> = new Map();
 
@@ -27,6 +28,7 @@ export class Cache {
   constructor(cacheCwd: PortablePath, {configuration}: {configuration: Configuration}) {
     this.configuration = configuration;
     this.cwd = cacheCwd;
+    this.markedFiles = new Set();
   }
 
   getLocatorFilename(locator: Locator) {
@@ -51,6 +53,8 @@ export class Cache {
   async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, loader?: () => Promise<ZipFS>): Promise<[FakeFS<PortablePath>, () => void, string]> {
     const cachePath = this.getLocatorPath(locator);
     const baseFs = new NodeFS();
+
+    this.markedFiles.add(cachePath);
 
     const validateFile = async (path: PortablePath) => {
       const actualChecksum = await hashUtils.checksumFile(path);
