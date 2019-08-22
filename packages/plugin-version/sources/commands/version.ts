@@ -132,7 +132,7 @@ export default class VersionCommand extends BaseCommand {
 
     workspace.persistManifest();
 
-    if (!this.deferred) {
+    if (!deferred) {
       await this.cli.run([`version`, `apply`]);
     }
   }

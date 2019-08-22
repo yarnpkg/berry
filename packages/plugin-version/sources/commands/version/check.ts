@@ -69,7 +69,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
 
       // Then we check which workspaces depend on packages that will be released again but have no release strategies themselves
       for (const workspace of project.workspaces) {
-        if (willBeReleased(workspace.manifest))
+        if (!willBeReleased(workspace.manifest))
           continue;
         if (workspace.manifest.private)
           continue;
