@@ -1135,6 +1135,7 @@ export class Project {
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
+      await this.cacheCleanup(opts);
     });
 
     await this.persist();
@@ -1142,10 +1143,6 @@ export class Project {
     await opts.report.startTimerPromise(`Link step`, async () => {
       await this.linkEverything(opts);
     });
-
-    await opts.report.startTimerPromise(`Cache cleanup step`, async() => {
-      await this.cacheCleanup(opts);
-    })
 
     await this.configuration.triggerHook(hooks => {
       return hooks.afterAllInstalled;
@@ -1259,20 +1256,18 @@ export class Project {
   }
 
   async cacheCleanup({cache, report}: InstallOptions)  {
-    const cachePath = cache.cwd;
-
     const PRESERVED_FILES = new Set([
       `.gitignore`,
     ]);
 
-    if (!xfs.existsSync(cachePath))
+    if (!xfs.existsSync(cache.cwd))
       return;
 
-    if (!isFolderInside(cachePath, this.cwd))
-      return report.reportInfo(MessageName.CACHE_OUTSIDE_PROJECT, `skipping cleanup since cache folder is not inside project folder`);
+    if (!isFolderInside(cache.cwd, this.cwd))
+      return;
 
-    for (const entry of await xfs.readdirPromise(cachePath)) {
-      const entryPath = ppath.resolve(cachePath, entry);
+    for (const entry of await xfs.readdirPromise(cache.cwd)) {
+      const entryPath = ppath.resolve(cache.cwd, entry);
 
       if (PRESERVED_FILES.has(entry))
         continue;

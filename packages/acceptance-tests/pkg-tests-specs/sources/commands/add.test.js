@@ -129,13 +129,18 @@ describe(`Commands`, () => {
 
       await run(`install`);
 
-      expect(await readdir(`${path}/.yarn/cache`)).toMatchSnapshot();
+      const preUpgradeCache = await readdir(`${path}/.yarn/cache`);
+
+      expect(preUpgradeCache.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeDefined();
 
       ({ code, stdout, stderr } = await run(`add`, `no-deps@2.0.0`));
 
       await expect({code, stdout, stderr}).toMatchSnapshot();
 
-      expect(await readdir(`${path}/.yarn/cache`)).toMatchSnapshot();
+      const postUpgradeCache = await readdir(`${path}/.yarn/cache`);
+
+      expect(postUpgradeCache.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeUndefined();
+      expect(postUpgradeCache.find(entry => entry.includes('no-deps-npm-2.0.0'))).toBeDefined();
     }));
 
     test(`it should not clean the cache when cache lives outside the project`, makeTemporaryEnv({
@@ -148,19 +153,20 @@ describe(`Commands`, () => {
         YARN_CACHE_FOLDER: sharedCachePath
       };
 
-      let code;
-      let stdout;
-      let stderr;
+      let cacheContent;
 
       await run(`install`, {env});
 
-      expect(await readdir(sharedCachePath)).toMatchSnapshot();
+      cacheContent = await readdir(sharedCachePath);
 
-      ({ code, stdout, stderr } = await run(`add`, `no-deps@2.0.0`, {env}));
+      expect(cacheContent.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeDefined();
 
-      await expect({code, stdout, stderr}).toMatchSnapshot();
+      await run(`add`, `no-deps@2.0.0`, {env});
 
-      expect(await readdir(sharedCachePath)).toMatchSnapshot();
+      cacheContent = await readdir(sharedCachePath);
+
+      expect(cacheContent.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeDefined();
+      expect(cacheContent.find(entry => entry.includes('no-deps-npm-2.0.0'))).toBeDefined();
     }));
   });
 });
