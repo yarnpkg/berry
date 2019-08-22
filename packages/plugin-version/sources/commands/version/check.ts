@@ -31,21 +31,24 @@ export default class VersionApplyCommand extends Command<CommandContext> {
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
 
-    const base = `master`;
-
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
     }, async report => {
-      const files = await fetchChangedFiles(this.context.cwd, {base});
+      const root = await fetchRoot(this.context.cwd);
+      const base = await fetchBase(root);
+
+      const files = await fetchChangedFiles(root, {base: base.hash});
       const workspaces = new Set(files.map(file => project.getWorkspaceByFilePath(file)));
 
       const releases = new Set();
       let hasDiffErrors = false;
       let hasDepsErrors = false;
 
+      report.reportInfo(MessageName.UNNAMED, `Your PR was started right after ${configuration.format(base.message, `magenta`)}`);
+
       if (files.length > 0) {
-        report.reportInfo(MessageName.UNNAMED, `The following files have changed compared to ${base}:`)
+        report.reportInfo(MessageName.UNNAMED, `The following files have changed since then:`)
         for (const file of files) {
           report.reportInfo(null, file);
         }
@@ -54,7 +57,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
       // First we check which workspaces have received modifications but no release strategies
       for (const workspace of workspaces) {
         const currentNonce = getNonce(workspace.manifest);
-        const previousNonce = await fetchPreviousNonce(workspace, {base});
+        const previousNonce = await fetchPreviousNonce(workspace, {base: base.hash});
 
         if (currentNonce === previousNonce) {
           if (!hasDiffErrors && files.length > 0)
@@ -105,6 +108,29 @@ export default class VersionApplyCommand extends Command<CommandContext> {
   }
 }
 
+async function fetchBase(root: PortablePath) {
+  const candidateBases = [`master`, `origin/master`, `upstream/master`];
+  const ancestorBases = [];
+
+  for (const candidate of candidateBases) {
+    const {code} = await execUtils.execvp(`git`, [`merge-base`, candidate, `HEAD`], {cwd: root});
+    if (code === 0) {
+      ancestorBases.push(candidate);
+    }
+  }
+
+  if (ancestorBases.length === 0)
+    throw new UsageError(`No ancestor could be found between any of HEAD and ${candidateBases.join(`, `)}`);
+
+  const {stdout: mergeBaseStdout} = await execUtils.execvp(`git`, [`merge-base`, `HEAD`, ...ancestorBases], {cwd: root, strict: true});
+  const hash = mergeBaseStdout.trim();
+
+  const {stdout: showStdout} = await execUtils.execvp(`git`, [`show`, `--quiet`, `--pretty=format:%s`, hash], {cwd: root, strict: true});
+  const message = showStdout.trim();
+
+  return {hash, message};
+}
+
 async function fetchRoot(initialCwd: PortablePath) {
   // Note: We can't just use `git rev-parse --show-toplevel`, because on Windows
   // it may return long paths even when the cwd uses short paths, and we have no
@@ -127,13 +153,11 @@ async function fetchRoot(initialCwd: PortablePath) {
   return match;
 }
 
-async function fetchChangedFiles(cwd: PortablePath, {base}: {base: string}) {
-  const root = await fetchRoot(cwd);
-
-  const {stdout: diffStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, base], {cwd, strict: true});
+async function fetchChangedFiles(root: PortablePath, {base}: {base: string}) {
+  const {stdout: diffStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, base], {cwd: root, strict: true});
   const files = diffStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
 
-  const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd, strict: true});
+  const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd: root, strict: true});
   const moreFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
 
   return [...files, ...moreFiles];
