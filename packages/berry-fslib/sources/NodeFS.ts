@@ -29,6 +29,44 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.openSync(NodeFS.fromPortablePath(p), flags, mode);
   }
 
+  async readPromise(fd: number, buffer: Buffer, offset: number = 0, length: number = 0, position: number | null = -1) {
+    return await new Promise<number>((resolve, reject) => {
+      this.realFs.read(fd, buffer, offset, length, position, (error, bytesRead) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(bytesRead);
+        }
+      });
+    });
+  }
+
+  readSync(fd: number, buffer: Buffer, offset: number, length: number, position: number) {
+    return this.realFs.readSync(fd, buffer, offset, length, position);
+  }
+
+  writePromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): Promise<number>;
+  writePromise(fd: number, buffer: string, position?: number): Promise<number>;
+  async writePromise(fd: number, buffer: Buffer | string, offset?: number, length?: number, position?: number): Promise<number> {
+    return await new Promise<number>((resolve, reject) => {
+      if (typeof buffer === `string`) {
+        return this.realFs.write(fd, buffer, offset, this.makeCallback(resolve, reject));
+      } else {
+        return this.realFs.write(fd, buffer, offset, length, position, this.makeCallback(resolve, reject));
+      }
+    });
+  }
+
+  writeSync(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): number;
+  writeSync(fd: number, buffer: string, position?: number): number;
+  writeSync(fd: number, buffer: Buffer | string, offset?: number, length?: number, position?: number) {
+    if (typeof buffer === `string`) {
+      return this.realFs.writeSync(fd, buffer, offset);
+    } else {
+      return this.realFs.writeSync(fd, buffer, offset, length, position);
+    }
+  }
+
   async closePromise(fd: number) {
     await new Promise<void>((resolve, reject) => {
       this.realFs.close(fd, this.makeCallback(resolve, reject));

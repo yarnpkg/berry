@@ -1,6 +1,10 @@
 {
   "name": "@berry/json-proxy",
   "version": "2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.0",
+    "nonce": "4714569269821577"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@berry/fslib": "workspace:2.0.0-rc.0"
