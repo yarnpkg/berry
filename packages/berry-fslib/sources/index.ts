@@ -34,9 +34,11 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `appendFileSync`,
     `createReadStream`,
     `chmodSync`,
+    `closeSync`,
     `copyFileSync`,
     `lstatSync`,
     `openSync`,
+    `readSync`,
     `readlinkSync`,
     `readFileSync`,
     `readdirSync`,
@@ -49,12 +51,14 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `utimesSync`,
     `watch`,
     `writeFileSync`,
+    `writeSync`,
   ]);
 
   const ASYNC_IMPLEMENTATIONS = new Set([
     `accessPromise`,
     `appendFilePromise`,
     `chmodPromise`,
+    `closePromise`,
     `copyFilePromise`,
     `lstatPromise`,
     `openPromise`,
@@ -69,6 +73,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `unlinkPromise`,
     `utimesPromise`,
     `writeFilePromise`,
+    `writeSync`,
   ]);
 
   (patchedFs as any).existsSync = (p: string) => {
@@ -79,15 +84,29 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     }
   };
 
-  (patchedFs as any).exists = (p: string, callback?: (result: boolean) => any) => {
-    fakeFs.existsPromise(p).then(result => {
-      if (callback) {
-        callback(result);
-      }
-    }, () => {
-      if (callback) {
+  (patchedFs as any).exists = (p: string, ...args: any[]) => {
+    const hasCallback = typeof args[args.length - 1] === `function`;
+    const callback = hasCallback ? args.pop() : () => {};
+
+    process.nextTick(() => {
+      fakeFs.existsPromise(p).then(exists => {
+        callback(exists);
+      }, () => {
         callback(false);
-      }
+      });
+    });
+  };
+
+  (patchedFs as any).read = (p: number, buffer: Buffer, ...args: any[]) => {
+    const hasCallback = typeof args[args.length - 1] === `function`;
+    const callback = hasCallback ? args.pop() : () => {};
+
+    process.nextTick(() => {
+      fakeFs.readPromise(p, buffer, ...args).then(bytesRead => {
+        callback(undefined, bytesRead, buffer);
+      }, error => {
+        callback(error);
+      });
     });
   };
 
@@ -99,10 +118,12 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
 
-      fakeImpl(...args).then((result: any) => {
-        callback(undefined, result);
-      }, (error: Error) => {
-        callback(error);
+      process.nextTick(() => {
+        fakeImpl(...args).then((result: any) => {
+          callback(undefined, result);
+        }, (error: Error) => {
+          callback(error);
+        });
       });
     };
   }

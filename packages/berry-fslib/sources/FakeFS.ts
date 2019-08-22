@@ -50,6 +50,14 @@ export abstract class FakeFS<P extends Path> {
   abstract openPromise(p: P, flags: string, mode?: number): Promise<number>;
   abstract openSync(p: P, flags: string, mode?: number): number;
 
+  abstract readPromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number | null): Promise<number>;
+  abstract readSync(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number | null): number;
+
+  abstract writePromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): Promise<number>;
+  abstract writePromise(fd: number, buffer: string, position?: number): Promise<number>;
+  abstract writeSync(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): number;
+  abstract writeSync(fd: number, buffer: string, position?: number): number;
+
   abstract closePromise(fd: number): void;
   abstract closeSync(fd: number): void;
 
