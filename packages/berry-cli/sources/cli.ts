@@ -2,7 +2,7 @@ import {Configuration, CommandContext} from '@berry/core';
 import {xfs, NodeFS, PortablePath}     from '@berry/fslib';
 import {execFileSync}                  from 'child_process';
 import {Cli}                           from 'clipanion';
-import path                            from 'path';
+import {realpathSync}                  from 'fs';
 
 import {pluginConfiguration}           from './pluginConfiguration';
 
@@ -75,11 +75,16 @@ async function exec(cli: Cli<CommandContext>): Promise<void> {
     const command = cli.process(process.argv.slice(2));
 
     // @ts-ignore: The cwd is a global option defined by BaseCommand
-    const cwd: string | null = typeof command.cwd === `string` ? path.resolve(command.cwd) : null;
+    const cwd: string | undefined = command.cwd;
 
-    if (cwd !== null && cwd !== process.cwd()) {
-      process.chdir(cwd);
-      return await run();
+    if (typeof cwd !== `undefined`) {
+      const iAmHere = realpathSync(process.cwd());
+      const iShouldBeHere = realpathSync(cwd);
+
+      if (iAmHere !== iShouldBeHere) {
+        process.chdir(cwd);
+        return await run();
+      }
     }
 
     cli.runExit(command, {
