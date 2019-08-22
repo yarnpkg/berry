@@ -1278,7 +1278,7 @@ export class Project {
         continue;
 
       if (!cache.markedFiles.has(entryPath)) {
-        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${ppath.basename(entryPath)} seems to be unused`);
+        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${ppath.basename(entryPath)} appears to be unused - removing`);
 
         await xfs.unlinkPromise(entryPath);
       }
