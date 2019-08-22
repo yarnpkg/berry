@@ -55,7 +55,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspace package-a print`));
+            ({code, stdout, stderr} = await run(`workspace`, `component-a`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -81,7 +81,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspace pakcage-typo-a print`));
+            ({code, stdout, stderr} = await run(`workspace`, `compoment-a`, `print`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }

@@ -2,11 +2,9 @@
 
 exports[`Commands workspace <workspace-name> <sub-command> runs a given command in the specified workspace 1`] = `
 Object {
-  "code": 1,
+  "code": 0,
   "stderr": "",
-  "stdout": "Usage Error: Couldn't find a script named \\"workspace package-a print\\".
-
-$ yarn run [-T,--top-level] <arg> ...
+  "stdout": "Test Component A
 ",
 }
 `;
@@ -15,9 +13,13 @@ exports[`Commands workspace <workspace-name> <sub-command> when the given worksp
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "Usage Error: Couldn't find a script named \\"workspace pakcage-typo-a print\\".
+  "stdout": "Usage Error: Workspace 'compoment-a' not found. Did you mean any of the following:
+  - component-a
+  - component-b
+  - docs
+  - root-workspace-988eec?
 
-$ yarn run [-T,--top-level] <arg> ...
+$ yarn workspace <arg> <arg> ...
 ",
 }
 `;
