@@ -53,7 +53,7 @@ describe(`Commands`, () => {
         await git(`checkout`, `-b`, `my-feature`);
 
         await writeJson(`${path}/packages/pkg-a/wip.json`, {});
-        await run(`packages/pkg-a`, `version`, `decline`, `--deferred`);
+        await run(`packages/pkg-a`, `version`, `patch`, `--deferred`);
 
         await expect(run(`version`, `check`)).rejects.toThrow();
       }),
