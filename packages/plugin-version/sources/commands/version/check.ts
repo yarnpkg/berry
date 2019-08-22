@@ -57,7 +57,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
       // First we check which workspaces have received modifications but no release strategies
       for (const workspace of workspaces) {
         const currentNonce = getNonce(workspace.manifest);
-        const previousNonce = await fetchPreviousNonce(workspace, {base: base.hash});
+        const previousNonce = await fetchPreviousNonce(workspace, {root, base: base.hash});
 
         if (currentNonce === previousNonce) {
           if (!hasDiffErrors && files.length > 0)
@@ -163,8 +163,8 @@ async function fetchChangedFiles(root: PortablePath, {base}: {base: string}) {
   return [...files, ...moreFiles];
 }
 
-async function fetchPreviousNonce(workspace: Workspace, {base}: {base: string}) {
-  const {code, stdout} = await execUtils.execvp(`git`, [`show`, `${base}:${fromPortablePath(ppath.join(workspace.cwd, `package.json` as Filename))}`], {cwd: workspace.cwd});
+async function fetchPreviousNonce(workspace: Workspace, {root, base}: {root: PortablePath, base: string}) {
+  const {code, stdout} = await execUtils.execvp(`git`, [`show`, `${base}:${fromPortablePath(ppath.relative(root, ppath.join(workspace.cwd, `package.json` as Filename)))}`], {cwd: workspace.cwd});
 
   if (code === 0) {
     return getNonce(Manifest.fromText(stdout));
