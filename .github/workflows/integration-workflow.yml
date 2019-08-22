@@ -89,6 +89,18 @@ jobs:
         node ./scripts/run-yarn.js build:plugin-version
         node ./scripts/run-yarn.js build:plugin-workspace-tools
 
+    - name: 'Build dist'
+      if: matrix.node == '12' && matrix.platform == 'ubuntu-latest'
+      run: |
+        ./scripts/build-dist.sh
+
+    - name: 'Upload dist'
+      uses: actions/upload-artifact@master
+      if: matrix.node == '12' && matrix.platform == 'ubuntu-latest'
+      with:
+        name: dist
+        path: artifacts
+
     - name: 'Run the integration tests'
       run: |
         node ./scripts/run-yarn.js test:integration --runInBand
@@ -96,3 +108,30 @@ jobs:
     - name: 'Run the unit tests'
       run: |
         node ./scripts/run-yarn.js test:unit
+
+  build-deb:
+    needs: [acceptance]
+    name: 'Build Linux Packages'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/download-artifact@master
+      with:
+        name: dist
+        path: artifacts
+
+    - name: 'Extract dist'
+      run: |
+        set -ex
+        mkdir dist
+        tar zvxf artifacts/*.tar.gz -C dist --strip=1
+
+    - name: 'Build packages'
+      uses: ./scripts/actions/build-deb
+
+    - name: 'Upload packages'
+      uses: actions/upload-artifact@master
+      with:
+        name: packages
+        path: artifacts
