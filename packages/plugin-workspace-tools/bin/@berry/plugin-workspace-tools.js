@@ -158,7 +158,7 @@ module.exports.factory = function (require) {
       return workspaceList;
   };
   // eslint-disable-next-line arca/no-default-export
-  class WorkspacesForeachCommand extends clipanion_1.Command {
+  class WorkspacesForeachCommand extends cli_1.BaseCommand {
       constructor() {
           super(...arguments);
           this.args = [];

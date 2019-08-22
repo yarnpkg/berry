@@ -1,11 +1,12 @@
-import {CommandContext, Configuration, Project} from '@berry/core';
-import {StreamReport}                           from '@berry/core';
-import {Command}                                from 'clipanion';
+import {BaseCommand}            from '@berry/cli';
+import {Configuration, Project} from '@berry/core';
+import {StreamReport}           from '@berry/core';
+import {Command}                from 'clipanion';
 
-import {Constraints}                            from '../../Constraints';
+import {Constraints}            from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
-export default class ConstraintsQueryCommand extends Command<CommandContext> {
+export default class ConstraintsQueryCommand extends BaseCommand {
   @Command.String()
   query!: string;
 

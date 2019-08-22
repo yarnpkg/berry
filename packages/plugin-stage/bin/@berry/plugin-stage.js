@@ -121,17 +121,18 @@ module.exports.factory = function (require) {
       return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   Object.defineProperty(exports, "__esModule", { value: true });
-  const core_1 = __webpack_require__(2);
-  const fslib_1 = __webpack_require__(3);
-  const clipanion_1 = __webpack_require__(4);
-  const GitDriver_1 = __webpack_require__(5);
-  const MercurialDriver_1 = __webpack_require__(7);
+  const cli_1 = __webpack_require__(2);
+  const core_1 = __webpack_require__(3);
+  const fslib_1 = __webpack_require__(4);
+  const clipanion_1 = __webpack_require__(5);
+  const GitDriver_1 = __webpack_require__(6);
+  const MercurialDriver_1 = __webpack_require__(8);
   const ALL_DRIVERS = [
       GitDriver_1.Driver,
       MercurialDriver_1.Driver,
   ];
   // eslint-disable-next-line arca/no-default-export
-  class StageCommand extends clipanion_1.Command {
+  class StageCommand extends cli_1.BaseCommand {
       constructor() {
           super(...arguments);
           this.commit = false;
@@ -279,22 +280,28 @@ module.exports.factory = function (require) {
   /* 2 */
   /***/ (function(module, exports) {
 
-  module.exports = require("@berry/core");
+  module.exports = require("@berry/cli");
 
   /***/ }),
   /* 3 */
   /***/ (function(module, exports) {
 
-  module.exports = require("@berry/fslib");
+  module.exports = require("@berry/core");
 
   /***/ }),
   /* 4 */
   /***/ (function(module, exports) {
 
-  module.exports = require("clipanion");
+  module.exports = require("@berry/fslib");
 
   /***/ }),
   /* 5 */
+  /***/ (function(module, exports) {
+
+  module.exports = require("clipanion");
+
+  /***/ }),
+  /* 6 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -307,9 +314,9 @@ module.exports.factory = function (require) {
       return result;
   };
   Object.defineProperty(exports, "__esModule", { value: true });
-  const core_1 = __webpack_require__(2);
-  const fslib_1 = __webpack_require__(3);
-  const stageUtils = __importStar(__webpack_require__(6));
+  const core_1 = __webpack_require__(3);
+  const fslib_1 = __webpack_require__(4);
+  const stageUtils = __importStar(__webpack_require__(7));
   const MESSAGE_MARKER = `Commit generated via \`yarn stage\``;
   const COMMIT_DEPTH = 11;
   async function getLastCommitHash(cwd) {
@@ -449,13 +456,13 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 6 */
+  /* 7 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
   Object.defineProperty(exports, "__esModule", { value: true });
-  const fslib_1 = __webpack_require__(3);
+  const fslib_1 = __webpack_require__(4);
   var ActionType;
   (function (ActionType) {
       ActionType[ActionType["CREATE"] = 0] = "CREATE";
@@ -587,7 +594,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 7 */
+  /* 8 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -600,8 +607,8 @@ module.exports.factory = function (require) {
       return result;
   };
   Object.defineProperty(exports, "__esModule", { value: true });
-  const fslib_1 = __webpack_require__(3);
-  const stageUtils = __importStar(__webpack_require__(6));
+  const fslib_1 = __webpack_require__(4);
+  const stageUtils = __importStar(__webpack_require__(7));
   exports.Driver = {
       async findRoot(cwd) {
           return await stageUtils.findVcsRoot(cwd, { marker: fslib_1.toFilename(`.hg`) });

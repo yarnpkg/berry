@@ -21,6 +21,7 @@ import {RunInstallPleaseResolver}                     from './RunInstallPleaseRe
 import {ThrowReport}                                  from './ThrowReport';
 import {Workspace}                                    from './Workspace';
 import {YarnResolver}                                 from './YarnResolver';
+import {isFolderInside}                               from './folderUtils';
 import * as miscUtils                                 from './miscUtils';
 import * as scriptUtils                               from './scriptUtils';
 import * as structUtils                               from './structUtils';
@@ -1134,6 +1135,7 @@ export class Project {
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
+      await this.cacheCleanup(opts);
     });
 
     await this.persist();
@@ -1251,6 +1253,33 @@ export class Project {
     for (const workspace of this.workspacesByCwd.values()) {
       await workspace.persistManifest();
     }
+  }
+
+  async cacheCleanup({cache, report}: InstallOptions)  {
+    const PRESERVED_FILES = new Set([
+      `.gitignore`,
+    ]);
+
+    if (!xfs.existsSync(cache.cwd))
+      return;
+
+    if (!isFolderInside(cache.cwd, this.cwd))
+      return;
+
+    for (const entry of await xfs.readdirPromise(cache.cwd)) {
+      const entryPath = ppath.resolve(cache.cwd, entry);
+
+      if (PRESERVED_FILES.has(entry))
+        continue;
+
+      if (!cache.markedFiles.has(entryPath)) {
+        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${ppath.basename(entryPath)} appears to be unused - removing`);
+
+        await xfs.unlinkPromise(entryPath);
+      }
+    }
+
+    cache.markedFiles.clear();
   }
 }
 

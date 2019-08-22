@@ -114,6 +114,9 @@ export class ZipFS extends BasePortableFakeFS {
   private readonly listings: Map<PortablePath, Set<Filename>> = new Map();
   private readonly entries: Map<PortablePath, number> = new Map();
 
+  private readonly fds: Map<number, {cursor: number, p: PortablePath}> = new Map();
+  private nextFd: number = 0;
+
   private ready = false;
 
   constructor(p: PortablePath, opts: ZipPathOptions);
@@ -248,20 +251,71 @@ export class ZipFS extends BasePortableFakeFS {
     this.ready = false;
   }
 
-  async openPromise(p: string, flags: string, mode?: number) {
+  async openPromise(p: PortablePath, flags: string, mode?: number) {
     return this.openSync(p, flags, mode);
   }
 
-  openSync(p: string, flags: string, mode?: number): never {
+  openSync(p: PortablePath, flags: string, mode?: number) {
+    const fd = this.nextFd++;
+    this.fds.set(fd, {cursor: 0, p});
+    return fd;
+  }
+
+  async readPromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number | null) {
+    return this.readSync(fd, buffer, offset, length, position);
+  }
+
+  readSync(fd: number, buffer: Buffer, offset: number = 0, length: number = 0, position: number | null = -1) {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`)
+      throw Object.assign(new Error(`EBADF: bad file descriptor, read`), {code: `EBADF`});
+
+    let realPosition;
+    if (position === -1 || position === null)
+      realPosition = entry.cursor;
+    else
+      realPosition = position;
+
+    const source = this.readFileSync(entry.p);
+    source.copy(buffer, offset, realPosition, realPosition + length);
+
+    const bytesRead = Math.max(0, Math.min(source.length - realPosition, length));
+    if (position === -1)
+      entry.cursor += bytesRead;
+
+    return bytesRead;
+  }
+
+  writePromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): Promise<number>;
+  writePromise(fd: number, buffer: string, position?: number): Promise<number>;
+  async writePromise(fd: number, buffer: Buffer | string, offset?: number, length?: number, position?: number): Promise<number> {
+    if (typeof buffer === `string`) {
+      return this.writeSync(fd, buffer, position);
+    } else {
+      return this.writeSync(fd, buffer, offset, length, position);
+    }
+  }
+
+  writeSync(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): number;
+  writeSync(fd: number, buffer: string, position?: number): number;
+  writeSync(fd: number, buffer: Buffer | string, offset?: number, length?: number, position?: number): never {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`)
+      throw Object.assign(new Error(`EBADF: bad file descriptor, read`), {code: `EBADF`});
+
     throw new Error(`Unimplemented`);
   }
 
   async closePromise(fd: number) {
-    this.closeSync(fd);
+    return this.closeSync(fd);
   }
 
-  closeSync(fd: number): never {
-    throw new Error(`Unimplemented`);
+  closeSync(fd: number) {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`)
+      throw Object.assign(new Error(`EBADF: bad file descriptor, read`), {code: `EBADF`});
+
+    this.fds.delete(fd);
   }
 
   createReadStream(p: PortablePath | null, {encoding}: CreateReadStreamOptions = {}): ReadStream {

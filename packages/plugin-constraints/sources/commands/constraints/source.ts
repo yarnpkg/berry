@@ -1,10 +1,11 @@
-import {CommandContext, Configuration, Project} from '@berry/core';
-import {Command}                                from 'clipanion';
+import {BaseCommand}            from '@berry/cli';
+import {Configuration, Project} from '@berry/core';
+import {Command}                from 'clipanion';
 
-import {Constraints}                            from '../../Constraints';
+import {Constraints}            from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
-export default class ConstraintsSourceCommand extends Command<CommandContext> {
+export default class ConstraintsSourceCommand extends BaseCommand {
   @Command.Boolean(`-v,--verbose`)
   verbose: boolean = false;
 

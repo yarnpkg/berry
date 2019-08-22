@@ -1,11 +1,11 @@
-import {openWorkspace}                              from '@berry/cli';
-import {Configuration, CommandContext, MessageName} from '@berry/core';
-import {StreamReport}                               from '@berry/core';
-import {npmConfigUtils, npmHttpUtils}               from '@berry/plugin-npm';
-import {Command}                                    from 'clipanion';
+import {BaseCommand, openWorkspace}   from '@berry/cli';
+import {Configuration, MessageName}   from '@berry/core';
+import {StreamReport}                 from '@berry/core';
+import {npmConfigUtils, npmHttpUtils} from '@berry/plugin-npm';
+import {Command}                      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default class NpmWhoamiCommand extends Command<CommandContext> {
+export default class NpmWhoamiCommand extends BaseCommand {
   @Command.String(`-s,--scope`)
   scope?: string;
 

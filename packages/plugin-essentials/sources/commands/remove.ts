@@ -1,14 +1,14 @@
-import {WorkspaceRequiredError}                                    from '@berry/cli';
-import {CommandContext, Configuration, Cache, Descriptor, Project} from '@berry/core';
-import {StreamReport, Workspace}                                   from '@berry/core';
-import {structUtils}                                               from '@berry/core';
-import {Command, UsageError}                                       from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}       from '@berry/cli';
+import {Configuration, Cache, Descriptor, Project} from '@berry/core';
+import {StreamReport, Workspace}                   from '@berry/core';
+import {structUtils}                               from '@berry/core';
+import {Command, UsageError}                       from 'clipanion';
 
-import * as suggestUtils                                           from '../suggestUtils';
-import {Hooks}                                                     from '..';
+import * as suggestUtils                           from '../suggestUtils';
+import {Hooks}                                     from '..';
 
 // eslint-disable-next-line arca/no-default-export
-export default class RemoveCommand extends Command<CommandContext> {
+export default class RemoveCommand extends BaseCommand {
   @Command.Boolean(`-A,--all`)
   all: boolean = false;
 

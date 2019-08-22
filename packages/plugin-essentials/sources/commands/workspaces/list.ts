@@ -1,10 +1,11 @@
-import {CommandContext, Configuration, Project, StreamReport, structUtils} from '@berry/core';
-import {Command}                                                           from 'clipanion';
+import {BaseCommand}                                       from '@berry/cli';
+import {Configuration, Project, StreamReport, structUtils} from '@berry/core';
+import {Command}                                           from 'clipanion';
 
 const DEPENDENCY_TYPES = ['devDependencies', 'dependencies'];
 
 // eslint-disable-next-line arca/no-default-export
-export default class WorkspacesListCommand extends Command<CommandContext> {
+export default class WorkspacesListCommand extends BaseCommand {
   @Command.Boolean(`-v,--verbose`)
   verbose: boolean = false;
 

@@ -10,6 +10,6 @@
 
 ...
 
-**Have you run `yarn version [major|minor|patch] --deferred` in those packages?**
+**Have you run `yarn version prerelease` in those packages?**
 
 - [ ] Yes

@@ -143,6 +143,34 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     return this.baseFs.openSync(this.resolveFilePath(p), flags, mode);
   }
 
+  async readPromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number) {
+    return await this.baseFs.readPromise(fd, buffer, offset, length, position);
+  }
+
+  readSync(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number) {
+    return this.baseFs.readSync(fd, buffer, offset, length, position);
+  }
+
+  writePromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): Promise<number>;
+  writePromise(fd: number, buffer: string, position?: number): Promise<number>;
+  async writePromise(fd: number, buffer: Buffer | string, offset?: number, length?: number, position?: number): Promise<number> {
+    if (typeof buffer === `string`) {
+      return await this.baseFs.writePromise(fd, buffer, offset);
+    } else {
+      return await this.baseFs.writePromise(fd, buffer, offset, length, position);
+    }
+  }
+
+  writeSync(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): number;
+  writeSync(fd: number, buffer: string, position?: number): number;
+  writeSync(fd: number, buffer: Buffer | string, offset?: number, length?: number, position?: number) {
+    if (typeof buffer === `string`) {
+      return this.baseFs.writeSync(fd, buffer, offset);
+    } else {
+      return this.baseFs.writeSync(fd, buffer, offset, length, position);
+    }
+  }
+
   async closePromise(fd: number) {
     await this.baseFs.closePromise(fd);
   }

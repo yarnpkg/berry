@@ -1,11 +1,11 @@
-import {WorkspaceRequiredError}                                                                from '@berry/cli';
-import {CommandContext, Configuration, Cache, MessageName, Project, ReportError, StreamReport} from '@berry/core';
-import {xfs, ppath}                                                                            from '@berry/fslib';
-import {parseSyml, stringifySyml}                                                              from '@berry/parsers';
-import {Command}                                                                               from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                   from '@berry/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport} from '@berry/core';
+import {xfs, ppath}                                                            from '@berry/fslib';
+import {parseSyml, stringifySyml}                                              from '@berry/parsers';
+import {Command}                                                               from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default class YarnCommand extends Command<CommandContext> {
+export default class YarnCommand extends BaseCommand {
   @Command.Boolean(`--json`)
   json: boolean = false;
 
