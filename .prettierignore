@@ -1,0 +1,4 @@
+# We don't use Prettier in this repository
+# cf https://github.com/yarnpkg/berry/pull/94#issuecomment-486579979
+
+**/*

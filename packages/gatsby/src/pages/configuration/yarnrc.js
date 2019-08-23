@@ -54,6 +54,20 @@ const YarnrcDoc = () => <>
         </>}
       />
       <SymlScalarProperty
+        name={`enableImmutableCache`}
+        placeholder={false}
+        description={<>
+          If true, Yarn will refuse the change the cache in any way (whether it would add files or remove them) when running <code>yarn install</code>.
+        </>}
+      />
+      <SymlScalarProperty
+        name={`enableImmutableInstalls`}
+        placeholder={false}
+        description={<>
+          If true, Yarn will refuse to change the installation artifacts (apart the cache) when running an install. This flag is quite intrusive, you typically should only set it on your CI by manually passing the <code>--immutable</code> flag to <code>yarn install</code>.
+        </>}
+      />
+      <SymlScalarProperty
         name={`enableInlineBuilds`}
         placeholder={false}
         description={<>
@@ -256,6 +270,13 @@ const YarnrcDoc = () => <>
         placeholder={`./yarn/unplugged`}
         description={<>
           The path where unplugged packages will be stored on the disk.
+        </>}
+      />
+      <SymlScalarProperty
+        name={`preferDeferredVersions`}
+        placeholder={false}
+        description={<>
+          If true, Yarn will use the deferred versioning (<code>--deferred</code>) by default when running the <code>yarn version</code> family of commands. This can be overruled on a by-command basis by manually setting the <code>--immediate</code> flag.
         </>}
       />
       <SymlScalarProperty
