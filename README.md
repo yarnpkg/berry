@@ -38,10 +38,10 @@ The documentation is being reworked to contain an updated content and a refreshe
 
 On top of our classic integration tests, we also run Yarn every day against the latest versions of the toolchains used by our community - just in case, really. Everything should be green!
 
-| Toolchain | E2E Tests |
-| --- | --- |
-| Create-React-App | [![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg)]() |
-| Gatsby | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg)]() |
+| Toolchain | E2E Tests | Tooling | E2E Tests |
+| --- | --- | --- | --- |
+| Create-React-App | [![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg)]() | ESLint | [![](https://github.com/yarnpkg/berry/workflows/E2E%20ESLint/badge.svg)]() |
+| Gatsby | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg)]() | Prettier | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg)]() |
 
 ## Build your own bundle
 
