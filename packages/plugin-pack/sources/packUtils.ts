@@ -18,6 +18,9 @@ const NEVER_IGNORE = [
 
   `/licence`,
   `/licence.*`,
+
+  `/changelog`,
+  `/changelog.*`,
 ];
 
 const ALWAYS_IGNORE = [
