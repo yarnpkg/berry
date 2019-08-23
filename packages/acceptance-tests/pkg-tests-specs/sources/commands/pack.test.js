@@ -191,14 +191,14 @@ describe(`Commands`, () => {
     test(
       `it should replace the workspace: protocol correctly`,
       makeTemporaryEnv({
-        workspaces: ['./dependency', './dependant']
+        workspaces: ['./dependency', './dependant'],
       }, async({path, run, source}) => {
         const dependency = `@test/dependency`;
         const dependant = `@test/dependant`;
 
         await fsUtils.writeJson(`${path}/dependency/package.json`, {
           name: dependency,
-          version: '1.0.0'
+          version: '1.0.0',
         });
 
         await fsUtils.writeJson(`${path}/dependant/package.json`, {
@@ -217,7 +217,7 @@ describe(`Commands`, () => {
 
         await run(`install`);
         await run(`pack`, {
-          cwd: `${path}/dependant`
+          cwd: `${path}/dependant`,
         });
 
         await fsUtils.unpackToDirectory(path, `${path}/dependant/package.tgz`);
@@ -234,6 +234,25 @@ describe(`Commands`, () => {
         expect(originalManifest.devDependencies[dependency]).toBe(`workspace:^1.0.0`);
         expect(originalManifest.peerDependencies[dependency]).toBe(`workspace:dependency`);
       }),
-    )
+    );
+
+    test(
+      `it should always include README (and its variants), even with a "files" field`,
+      makeTemporaryEnv({
+        files: [
+          `/lib/*.js`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/lib/README`, `explaining lib`);
+        await fsUtils.writeFile(`${path}/README.md`, `explaining the package`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        await expect(stdout).not.toMatch(/lib\/README/);
+        await expect(stdout).toMatch(/README\.md/);
+        await expect(stdout).toMatch(/package\.json/);
+      }),
+    );
   });
 });
