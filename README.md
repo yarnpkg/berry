@@ -40,8 +40,8 @@ On top of our classic integration tests, we also run Yarn every day against the 
 
 | Toolchain | E2E Tests | Tooling | E2E Tests |
 | --- | --- | --- | --- |
-| Create-React-App | [![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg)]() | ESLint | [![](https://github.com/yarnpkg/berry/workflows/E2E%20ESLint/badge.svg)]() |
-| Gatsby | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg)]() | Prettier | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg)]() |
+| [Create-React-App](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-cra-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg)]() | [ESLint](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-eslint-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20ESLint/badge.svg)]() |
+| [Gatsby](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-gatsby-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg)]() | [Prettier](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-prettier-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg)]() |
 
 ## Build your own bundle
 
@@ -61,12 +61,13 @@ Note that no other command is needed! Given that our dependencies are checked-in
 
 ## Yarn plugins
 
-The following packages are plugins for Berry and can be installed through `yarn plugin import <plugin-name>`. Note that some of them are typically already shipped with the regular Yarn bundles. Such plugins are marked with a star (★).
+### Default plugins
+
+Those plugins typically come bundled with Yarn. You don't need to do anything special to use them.
 
 - [★ plugin-constraints](packages/plugin-constraints) adds support for `yarn constraints check` and `yarn constraints fix`.
 - [★ plugin-dlx](packages/plugin-dlx) adds support for the [`yarn dlx`](https://yarnpkg.github.io/berry/cli/dlx) command.
 - [★ plugin-essentials](packages/plugin-essentials) adds various commands deemed necessary for a package manager (add, remove, ...).
-- [☆ plugin-exec](packages/plugin-exec) adds support for using `exec:` references as dependencies.
 - [★ plugin-file](packages/plugin-file) adds support for using `file:` references as dependencies.
 - [★ plugin-github](packages/plugin-github) adds support for using Github references as dependencies. [This plugin doesn't use git.](https://stackoverflow.com/a/13636954/880703)
 - [★ plugin-http](packages/plugin-http) adds support for using straight URL references as dependencies (tgz archives only).
@@ -75,10 +76,22 @@ The following packages are plugins for Berry and can be installed through `yarn 
 - [★ plugin-npm](packages/plugin-npm) adds support for using [semver ranges]() as dependencies, resolving them to an NPM-like registry.
 - [★ plugin-npm-cli](packages/plugin-npm-cli) adds support for the NPM-specific commands (`yarn npm login`, [`yarn npm publish`](https://yarnpkg.github.io/berry/cli/npm/publish), ...).
 - [★ plugin-pack](packages/plugin-pack) adds support for the [`yarn pack`](https://yarnpkg.github.io/berry/cli/pack) command.
-- [plugin-stage](packages/plugin-pack) adds support for the [`yarn stage`](https://yarnpkg.github.io/berry/cli/stage) command.
 - [★ plugin-pnp](packages/plugin-pnp) adds support for installing Javascript dependencies through the [Plug'n'Play](https://yarnpkg.github.io/berry/features/pnp) specification.
+
+### Contrib plugins
+
+Although developed on the same repository as Yarn itself, those plugins are optionals and need to be explicitly installed through `yarn plugin import @berry/<plugin-name>`.
+
+- [☆ plugin-exec](packages/plugin-exec) adds support for using `exec:` references as dependencies.
+- [☆ plugin-stage](packages/plugin-pack) adds support for the [`yarn stage`](https://yarnpkg.github.io/berry/cli/stage) command.
 - [☆ plugin-typescript](packages/plugin-typescript) improves the user experience when working with TypeScript.
 - [☆ plugin-workspace-tools](packages/plugin-workspace-tools) adds support for the [`yarn workspaces foreach`](https://yarnpkg.github.io/berry/cli/workspaces/foreach) command.
+
+### Third-party plugins
+
+Plugins can be developed by third-party entities. To use them within your applications, just specify the full plugin URL when calling [`yarn plugin import`](https://yarnpkg.github.io/berry/cli/plugin/import). Note that plugins aren't fetched from the npm registry at this time - they must be distributed as a single JavaScript file.
+
+### Creating a new plugin
 
 To create your own plugin, please refer to the [documentation](https://yarnpkg.github.io/berry/features/plugins).
 
@@ -101,4 +114,3 @@ The following packages are meant to be used by Yarn itself, and probably won't b
 
 - [@berry/builder](packages/berry-builder) contains a CLI tool to package berry and its plugins.
 - [@berry/cli](packages/berry-cli) is a CLI entry point built on top of [@berry/core](packages/berry-core).
-
