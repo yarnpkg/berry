@@ -346,6 +346,8 @@ describe(`Commands`, () => {
         workspaces: [`packages/*`],
       },
       async ({path, run}) => {
+        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-workspace-tools.js`))}\n`);
+
         await writeJson(`${path}/packages/package-a/package.json`, {
           name: `workspace-a`,
           version: `1.0.0`,
