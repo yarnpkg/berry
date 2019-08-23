@@ -52,7 +52,7 @@ export interface Hooks {
 
 const plugin: Plugin = {
   configuration: {
-    frozenInstalls: {
+    enableImmutableInstalls: {
       description: `If true, prevents the install command from modifying the lockfile`,
       type: SettingsType.BOOLEAN,
       default: false,
