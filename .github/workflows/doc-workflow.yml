@@ -4,6 +4,7 @@ on:
     - master
     paths:
     - .github/workflows/doc-workflow.yml
+    - .yarn/cache/clipanion-*.zip
     - packages/*/sources/commands/**/*.ts
     - packages/gatsby/**/*
 

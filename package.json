@@ -91,5 +91,8 @@
     "requireList": [
       "scripts/actions/sherlock-prepare.js"
     ]
+  },
+  "nextVersion": {
+    "nonce": "6668117343518271"
   }
 }

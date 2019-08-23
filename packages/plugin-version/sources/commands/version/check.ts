@@ -56,6 +56,10 @@ export default class VersionApplyCommand extends Command<CommandContext> {
 
       // First we check which workspaces have received modifications but no release strategies
       for (const workspace of workspaces) {
+        // Let's assume that packages without versions don't need to see their version increased
+        if (workspace.manifest.version === null)
+          continue;
+
         const currentNonce = getNonce(workspace.manifest);
         const previousNonce = await fetchPreviousNonce(workspace, {root, base: base.hash});
 
@@ -76,11 +80,14 @@ export default class VersionApplyCommand extends Command<CommandContext> {
 
       // Then we check which workspaces depend on packages that will be released again but have no release strategies themselves
       for (const workspace of project.workspaces) {
-        // We don't need to check whether the dependencies of packages that will be bumped changed
-        if (willBeReleased(workspace.manifest))
+        // We don't need to check whether the dependencies of packages that will be bumped because of this PR changed
+        if (releases.has(workspace.anchoredLocator.locatorHash))
           continue;
         // We also don't need to check whether the dependencies of private packages changed, as they are supposed to only make sense within the context of the monorepo
         if (workspace.manifest.private)
+          continue;
+        // Let's assume that packages without versions don't need to see their version increased
+        if (workspace.manifest.version === null)
           continue;
 
         for (const descriptor of workspace.dependencies.values()) {
