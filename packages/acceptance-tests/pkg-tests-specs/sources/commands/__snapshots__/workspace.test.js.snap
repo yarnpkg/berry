@@ -19,7 +19,7 @@ Object {
   - docs
   - root-workspace-988eec?
 
-$ yarn workspace <arg> <arg> ...
+$ yarn workspace <workspaceName> <commandName> ...
 ",
 }
 `;
