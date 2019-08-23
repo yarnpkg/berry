@@ -287,5 +287,19 @@ describe(`Commands`, () => {
         await expect(stdout).toMatch(/package\.json/);
       }),
     );
+
+    test(
+      `can generate an archive with a descriptive name`,
+      makeTemporaryEnv({
+        name: '@berry/core',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--name-archive`);
+        await expect(stdout).toMatch(/package\.json/);
+        await expect(stdout).toMatch(/Package archive generated in .+?\/berry-core-0\.0\.1\.tgz/);
+      }),
+    );
   });
 });
