@@ -258,6 +258,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: true,
   },
+  enableImmutableCache: {
+    description: `If true, the cache is reputed immutable and actions that would modify it will throw`,
+    type: SettingsType.BOOLEAN,
+    default: false,
+  },
   checksumBehavior: {
     description: `Enumeration defining what to do when a checksum doesn't match expectations`,
     type: SettingsType.STRING,

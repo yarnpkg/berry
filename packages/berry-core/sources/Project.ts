@@ -40,7 +40,7 @@ export type InstallOptions = {
   cache: Cache,
   fetcher?: Fetcher,
   report: Report,
-  frozenLockfile?: boolean,
+  immutable?: boolean,
   lockfileOnly?: boolean,
   inlineBuilds?: boolean,
 };
@@ -1124,11 +1124,11 @@ export class Project {
   async install(opts: InstallOptions) {
     await opts.report.startTimerPromise(`Resolution step`, async () => {
       // If we operate with a frozen lockfile, we take a snapshot of it to later make sure it didn't change
-      const initialLockfile = opts.frozenLockfile ? this.generateLockfile() : null;
+      const initialLockfile = opts.immutable ? this.generateLockfile() : null;
 
       await this.resolveEverything(opts);
 
-      if (opts.frozenLockfile && this.generateLockfile() !== initialLockfile) {
+      if (opts.immutable && this.generateLockfile() !== initialLockfile) {
         throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been modified by this install, which is explicitly forbidden`);
       }
     });
@@ -1267,14 +1267,17 @@ export class Project {
       return;
 
     for (const entry of await xfs.readdirPromise(cache.cwd)) {
-      const entryPath = ppath.resolve(cache.cwd, entry);
-
       if (PRESERVED_FILES.has(entry))
         continue;
 
-      if (!cache.markedFiles.has(entryPath)) {
-        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${ppath.basename(entryPath)} appears to be unused - removing`);
+      const entryPath = ppath.resolve(cache.cwd, entry);
+      if (cache.markedFiles.has(entryPath))
+        continue;
 
+      if (cache.immutable) {
+        report.reportError(MessageName.IMMUTABLE_CACHE, `${ppath.basename(entryPath)} appears to be unused and would marked for deletion, but the cache is immutable`);
+      } else {
+        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${ppath.basename(entryPath)} appears to be unused - removing`);
         await xfs.unlinkPromise(entryPath);
       }
     }
