@@ -141,7 +141,7 @@ export class Cache {
       await mutex;
 
     const checksum = baseFs.existsSync(cachePath)
-      ? await validateFile(cachePath)
+      ? await validateFile(cachePath, cachePath)
       : await loadPackageThroughMutex();
 
     let zipFs: ZipFS | null = null;
