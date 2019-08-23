@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Commands workspace <workspace-name> <sub-command> runs a given command in the specified workspace 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "Test Component A
+",
+}
+`;
+
+exports[`Commands workspace <workspace-name> <sub-command> when the given workspace doesnt exist lists all possible workspaces 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "Usage Error: Workspace 'compoment-a' not found. Did you mean any of the following:
+  - component-a
+  - component-b
+  - docs
+  - root-workspace-988eec?
+
+$ yarn workspace <workspaceName> <commandName> ...
+",
+}
+`;

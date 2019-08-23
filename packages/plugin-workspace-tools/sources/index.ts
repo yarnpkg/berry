@@ -1,10 +1,12 @@
-import {Plugin} from '@berry/core';
+import {Plugin}  from '@berry/core';
 
-import foreach  from './commands/foreach';
+import foreach   from './commands/foreach';
+import workspace from './commands/workspace';
 
 const plugin: Plugin = {
   commands: [
     foreach,
+    workspace,
   ],
 };
 
