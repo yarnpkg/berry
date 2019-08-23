@@ -205,14 +205,14 @@ describe(`Commands`, () => {
     test(
       `it should replace the workspace: protocol correctly`,
       makeTemporaryEnv({
-        workspaces: ['./dependency', './dependant']
+        workspaces: ['./dependency', './dependant'],
       }, async({path, run, source}) => {
         const dependency = `@test/dependency`;
         const dependant = `@test/dependant`;
 
         await fsUtils.writeJson(`${path}/dependency/package.json`, {
           name: dependency,
-          version: '1.0.0'
+          version: '1.0.0',
         });
 
         await fsUtils.writeJson(`${path}/dependant/package.json`, {
@@ -231,7 +231,7 @@ describe(`Commands`, () => {
 
         await run(`install`);
         await run(`pack`, {
-          cwd: `${path}/dependant`
+          cwd: `${path}/dependant`,
         });
 
         await fsUtils.unpackToDirectory(path, `${path}/dependant/package.tgz`);
