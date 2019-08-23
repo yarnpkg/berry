@@ -1,0 +1,41 @@
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-prettier-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E Prettier'
+jobs:
+  chore:
+    name: 'Validating Prettier'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn init -p
+        yarn add prettier
+
+        echo 'semi: true' > .prettierrc
+
+        echo '42;' > ok.js
+        yarn prettier --check ok.js
+
+        echo '42' > ko.js
+        ! yarn prettier --check ko.js
