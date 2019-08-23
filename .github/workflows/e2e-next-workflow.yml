@@ -1,5 +1,11 @@
 on:
-- push
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-eslint-workflow.yml
+    - scripts/e2e-setup-ci.sh
 
 name: 'E2E Next'
 jobs:
