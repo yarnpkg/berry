@@ -70,7 +70,7 @@
 
   - Running `yarn config --why` will tell you the source for each value in your configuration. We recommend using it when you're not sure to understand why Yarn would have a particular settings.
   
-  - Running `yarn pack` will no longer always include nested README, CHANGELOG, LICENSE or LICENCE files. If you rely on this behavior you can add those files manually to the `files` field of your `package.json`. Including these nested files was never intended behavior for `npm pack`.
+  - Running `yarn pack` will no longer always include nested README, CHANGELOG, LICENSE or LICENCE files. If you rely on this behavior you can add those files manually to the `files` field of your `package.json`. Including these nested files was never intended behavior of `npm pack`.
 
 ### Miscellaneous
 
