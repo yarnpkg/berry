@@ -1275,7 +1275,7 @@ export class Project {
         continue;
 
       if (cache.immutable) {
-        report.reportError(MessageName.UNUSED_CACHE_ENTRY, `${ppath.basename(entryPath)} appears to be unused and would marked for deletion, but the cache is immutable`);
+        report.reportError(MessageName.IMMUTABLE_CACHE, `${ppath.basename(entryPath)} appears to be unused and would marked for deletion, but the cache is immutable`);
       } else {
         report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${ppath.basename(entryPath)} appears to be unused - removing`);
         await xfs.unlinkPromise(entryPath);

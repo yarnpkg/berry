@@ -15,6 +15,9 @@ export default class YarnCommand extends BaseCommand {
   @Command.Boolean(`--immutable-cache`)
   immutableCache?: boolean;
 
+  @Command.Boolean(`--check-cache`)
+  checkCache: boolean = false;
+
   @Command.Boolean(`--frozen-lockfile`)
   frozenLockfile?: boolean;
 
@@ -127,7 +130,7 @@ export default class YarnCommand extends BaseCommand {
     }
 
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration, {immutable: this.immutableCache});
+    const cache = await Cache.find(configuration, {immutable: this.immutableCache, check: this.checkCache});
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);

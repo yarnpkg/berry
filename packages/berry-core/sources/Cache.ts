@@ -72,17 +72,18 @@ export class Cache {
 
     this.markedFiles.add(cachePath);
 
-    const validateFile = async (path: PortablePath, cachePath: PortablePath) => {
+    const validateFile = async (path: PortablePath, refetchPath: PortablePath | null = null) => {
       const actualChecksum = await hashUtils.checksumFile(path);
 
-      if (this.check && xfs.existsSync(cachePath)) {
-        const previousChecksum = await hashUtils.checksumFile(cachePath);
+      if (refetchPath !== null) {
+        const previousChecksum = await hashUtils.checksumFile(refetchPath);
         if (actualChecksum !== previousChecksum) {
           throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `${structUtils.prettyLocator(this.configuration, locator)} doesn't resolve to an archive that matches what's stored in the cache - has the cache been tampered?`);
         }
       }
 
       if (expectedChecksum !== null && actualChecksum !== expectedChecksum) {
+        // Using --check-cache overrides any preconfigured checksum behavior
         const checksumBehavior = this.check
           ? this.configuration.get(`checksumBehavior`)
           : `throw`;
@@ -104,9 +105,25 @@ export class Cache {
       return actualChecksum;
     };
 
+    const validateFileAgainstRemote = async (cachePath: PortablePath) => {
+      if (!loader)
+        throw new Error(`Cache check required but no loader configured for ${structUtils.prettyLocator(this.configuration, locator)}`);
+
+      const zipFs = await loader();
+      const refetchPath = zipFs.getRealPath();
+
+      zipFs.saveAndClose();
+
+      await xfs.chmodPromise(refetchPath, 0o644);
+
+      return await validateFile(cachePath, refetchPath);
+    };
+
     const loadPackage = async () => {
-      if (!loader || this.immutable)
+      if (!loader)
         throw new Error(`Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
+      if (this.immutable)
+        throw new ReportError(MessageName.IMMUTABLE_CACHE, `Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
 
       return await this.writeFileIntoCache(cachePath, async () => {
         const zipFs = await loader();
@@ -117,7 +134,7 @@ export class Cache {
         await xfs.chmodPromise(originalPath, 0o644);
 
         // Do this before moving the file so that we don't pollute the cache with corrupted archives
-        const checksum = await validateFile(originalPath, cachePath);
+        const checksum = await validateFile(originalPath);
 
         // Doing a move is important to ensure atomic writes (todo: cross-drive?)
         await xfs.movePromise(originalPath, cachePath);
@@ -140,9 +157,11 @@ export class Cache {
     for (let mutex; mutex = this.mutexes.get(locator.locatorHash);)
       await mutex;
 
-    const checksum = baseFs.existsSync(cachePath)
-      ? await validateFile(cachePath, cachePath)
-      : await loadPackageThroughMutex();
+    const checksum = !baseFs.existsSync(cachePath)
+      ? await loadPackageThroughMutex()
+      : this.check
+        ? await validateFileAgainstRemote(cachePath)
+        : await validateFile(cachePath);
 
     let zipFs: ZipFS | null = null;
 
