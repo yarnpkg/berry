@@ -23,7 +23,7 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
 
-        yarn init -y
+        yarn init -p
         yarn add eslint
 
         echo '{"rules": {"semi": ["error", "always"]}}' > .eslintrc
