@@ -14,7 +14,7 @@ global.packageJsonAndInstall = async (data) => {
 };
 
 global.yarn = async (...args) => {
-    const {stdout} = await execFileP(process.execPath, [`${__dirname}/../../packages/berry-cli/bin/berry.js`, ...args], {
+    const {stdout} = await execFileP(process.execPath, [`${__dirname}/../../packages/berry-cli/bundles/berry.js`, ...args], {
         env: {...process.env, YARN_IGNORE_PATH: 1},
     });
 
