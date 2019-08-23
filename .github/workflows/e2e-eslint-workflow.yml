@@ -1,0 +1,35 @@
+on:
+- push
+
+name: 'E2E ESLint'
+jobs:
+  chore:
+    name: 'Validating ESLint'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn init -p
+        yarn add eslint
+
+        echo '{"rules": {"semi": ["error", "always"]}}' > .eslintrc
+
+        echo '42;' > ok.js
+        yarn eslint ok.js
+
+        echo '42' > ko.js
+        ! yarn eslint ko.js
