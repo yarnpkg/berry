@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Commands workspace foreach can run on public workspaces only 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace A
+➤ YN0000: Test Workspace C
+➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands workspace foreach should execute 'node' command 1`] = `
 Object {
   "code": "ENOENT",

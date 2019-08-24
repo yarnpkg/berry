@@ -12,11 +12,12 @@ Object {
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -61,11 +62,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
+➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
-➤ YN0000: frozenInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
@@ -111,11 +113,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
+➤ YN0000: enableImmutableCache - <default> - false
+➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
-➤ YN0000: frozenInstalls - <default> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
@@ -161,11 +164,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
+➤ YN0000: enableImmutableCache - false
+➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
-➤ YN0000: frozenInstalls - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
@@ -211,11 +215,12 @@ Object {
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -260,11 +265,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
+➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
-➤ YN0000: frozenInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
@@ -310,11 +316,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
+➤ YN0000: enableImmutableCache - <default> - false
+➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
-➤ YN0000: frozenInstalls - <default> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
@@ -360,11 +367,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
+➤ YN0000: enableImmutableCache - false
+➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
-➤ YN0000: frozenInstalls - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
@@ -410,11 +418,12 @@ Object {
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -459,11 +468,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
+➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
-➤ YN0000: frozenInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
@@ -509,11 +519,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
+➤ YN0000: enableImmutableCache - <default> - false
+➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
-➤ YN0000: frozenInstalls - <default> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
@@ -559,11 +570,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
+➤ YN0000: enableImmutableCache - false
+➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
-➤ YN0000: frozenInstalls - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
@@ -609,11 +621,12 @@ Object {
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -658,11 +671,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
+➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
-➤ YN0000: frozenInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
@@ -708,11 +722,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
+➤ YN0000: enableImmutableCache - <default> - false
+➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
-➤ YN0000: frozenInstalls - <default> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
@@ -758,11 +773,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
+➤ YN0000: enableImmutableCache - false
+➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
-➤ YN0000: frozenInstalls - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
@@ -808,11 +824,12 @@ Object {
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -857,11 +874,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
+➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
-➤ YN0000: frozenInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
@@ -907,11 +925,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
+➤ YN0000: enableImmutableCache - <default> - false
+➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
-➤ YN0000: frozenInstalls - <default> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
@@ -957,11 +976,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
+➤ YN0000: enableImmutableCache - false
+➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
-➤ YN0000: frozenInstalls - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
@@ -1007,11 +1027,12 @@ Object {
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"frozenInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -1056,11 +1077,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
+➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
+➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
-➤ YN0000: frozenInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
@@ -1106,11 +1128,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
+➤ YN0000: enableImmutableCache - <default> - false
+➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
-➤ YN0000: frozenInstalls - <default> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
@@ -1156,11 +1179,12 @@ Object {
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
+➤ YN0000: enableImmutableCache - false
+➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
-➤ YN0000: frozenInstalls - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.berry/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null

@@ -18,6 +18,9 @@ const NEVER_IGNORE = [
 
   `/licence`,
   `/licence.*`,
+
+  `/changelog`,
+  `/changelog.*`,
 ];
 
 const ALWAYS_IGNORE = [
@@ -363,9 +366,9 @@ function isMatchBasename(path: string, patterns: Array<string>) {
     }
   }
 
-  if (mm.isMatch(path, paths as any, {dot: true}))
+  if (mm.isMatch(path, paths as any, {dot: true, nocase: true}))
     return true;
-  if (mm.isMatch(path, basenames as any, {dot: true, basename: true}))
+  if (mm.isMatch(path, basenames as any, {dot: true, basename: true, nocase: true}))
     return true;
 
   return false;

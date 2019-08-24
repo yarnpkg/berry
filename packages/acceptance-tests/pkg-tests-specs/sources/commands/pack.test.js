@@ -248,6 +248,44 @@ describe(`Commands`, () => {
         expect(originalManifest.devDependencies[dependency]).toBe(`workspace:^1.0.0`);
         expect(originalManifest.peerDependencies[dependency]).toBe(`workspace:dependency`);
       }),
-    )
+    );
+
+    test(
+      `it should always include README (and its variants), even with a "files" field`,
+      makeTemporaryEnv({
+        files: [
+          `/lib/*.js`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/lib/README`, `explaining lib`);
+        await fsUtils.writeFile(`${path}/README.md`, `explaining the package`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        await expect(stdout).not.toMatch(/lib\/README/);
+        await expect(stdout).toMatch(/README\.md/);
+        await expect(stdout).toMatch(/package\.json/);
+      }),
+    );
+
+    test(
+      `it should always include CHANGELOG (and its variants), even with a "files" field`,
+      makeTemporaryEnv({
+        files: [
+          `/lib/*.js`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/lib/changelog`, `lib specific changelog`);
+        await fsUtils.writeFile(`${path}/CHANGELOG.md`, `package changelog`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        await expect(stdout).not.toMatch(/lib\/changelog/);
+        await expect(stdout).toMatch(/CHANGELOG\.md/);
+        await expect(stdout).toMatch(/package\.json/);
+      }),
+    );
   });
 });

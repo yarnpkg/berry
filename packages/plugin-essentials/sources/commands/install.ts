@@ -9,8 +9,17 @@ export default class YarnCommand extends BaseCommand {
   @Command.Boolean(`--json`)
   json: boolean = false;
 
+  @Command.Boolean(`--immutable`)
+  immutable?: boolean;
+
+  @Command.Boolean(`--immutable-cache`)
+  immutableCache?: boolean;
+
+  @Command.Boolean(`--check-cache`)
+  checkCache: boolean = false;
+
   @Command.Boolean(`--frozen-lockfile`)
-  frozenLockfile: boolean = false;
+  frozenLockfile?: boolean;
 
   @Command.Boolean(`--inline-builds`)
   inlineBuilds?: boolean;
@@ -33,15 +42,25 @@ export default class YarnCommand extends BaseCommand {
 
       Note that running this command is not part of the recommended workflow. Yarn supports zero-installs, which means that as long as you store your cache and your .pnp.js file inside your repository, everything will work without requiring any install right after cloning your repository or switching branches.
 
-      If the \`--frozen-lockfile\` option is used, Yarn will abort with an error exit code if anything in the install artifacts (\`yarn.lock\`, \`.pnp.js\`, ...) was to be modified.
+      If the \`--immutable\` option is set, Yarn will abort with an error exit code if anything in the install artifacts (\`yarn.lock\`, \`.pnp.js\`, ...) was to be modified. For backward compatibility we offer an alias under the name of \`--frozen-lockfile\`, but it will be removed in a later release.
 
-      If the \`--inline-builds\` option is used, Yarn will verbosely print the output of the build steps of your dependencies (instead of writing them into individual files). This is likely useful mostly for debug purposes only when using Docker-like environments.
+      If the \`--immutable-cache\` option is set, Yarn will abort with an error exit code if the cache folder was to be modified (either because files would be added, or because they'd be removed).
+
+      If the \`--check-cache\` option is set, Yarn will always refetch the packages and will ensure that their checksum matches what's 1/ described in the lockfile 2/ inside the existing cache files (if present). This is recommended as part of your CI workflow if you're both following the Zero-Installs model and accepting PRs from third-parties, as they'd otherwise have the ability to alter the checked-in packages before submitting them.
+
+      If the \`--inline-builds\` option is set, Yarn will verbosely print the output of the build steps of your dependencies (instead of writing them into individual files). This is likely useful mostly for debug purposes only when using Docker-like environments.
 
       If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
     `,
     examples: [[
       `Install the project`,
       `yarn install`,
+    ], [
+      `Validate a project when using Zero-Installs`,
+      `yarn install --immutable --immutable-cache`,
+    ], [
+      `Validate a project when using Zero-Installs (slightly safer if you accept external PRs)`,
+      `yarn install --immutable --immutable-cache --check-cache`,
     ]],
   });
 
@@ -50,6 +69,27 @@ export default class YarnCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
+    // We want to prevent people from using --frozen-lockfile
+    // Note: it's been deprecated because we're now locking more than just the
+    // lockfile - for example the PnP artifacts will also be locked.
+    if (typeof this.frozenLockfile !== `undefined`) {
+      const frozenLockfileReport = await StreamReport.start({
+        configuration,
+        stdout: this.context.stdout,
+        includeFooter: false,
+      }, async report => {
+        report.reportWarning(MessageName.DEPRECATED_CLI_SETTINGS, `The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`);
+      });
+
+      if (frozenLockfileReport.hasErrors()) {
+        return frozenLockfileReport.exitCode();
+      }
+    }
+
+    // We also want to prevent them from using --cache-folder
+    // Note: it's been deprecated because the cache folder should be set from
+    // the settings. Otherwise there would be a very high chance that multiple
+    // Yarn commands would use different caches, causing unexpected behaviors.
     if (this.cacheFolder != null) {
       const cacheFolderReport = await StreamReport.start({
         configuration,
@@ -59,7 +99,7 @@ export default class YarnCommand extends BaseCommand {
         if (process.env.NETLIFY) {
           report.reportWarning(MessageName.DEPRECATED_CLI_SETTINGS, `Netlify is trying to set a cache folder, ignoring!`);
         } else {
-          report.reportError(MessageName.DEPRECATED_CLI_SETTINGS, `The cache-folder option got deprecated; use rc settings instead`);
+          report.reportError(MessageName.DEPRECATED_CLI_SETTINGS, `The cache-folder option has been deprecated; use rc settings instead`);
         }
       });
 
@@ -68,9 +108,9 @@ export default class YarnCommand extends BaseCommand {
       }
     }
 
-    const frozenLockfile = typeof this.frozenLockfile === `undefined`
-      ? configuration.get(`frozenInstalls`)
-      : this.frozenLockfile;
+    const immutable = typeof this.immutable === `undefined` && typeof this.frozenLockfile === `undefined`
+      ? configuration.get(`enableImmutableInstalls`)
+      : this.immutable || this.frozenLockfile;
 
     if (configuration.projectCwd !== null) {
       const fixReport = await StreamReport.start({
@@ -79,7 +119,7 @@ export default class YarnCommand extends BaseCommand {
         stdout: this.context.stdout,
         includeFooter: false,
       }, async report => {
-        if (await autofixMergeConflicts(configuration, frozenLockfile)) {
+        if (await autofixMergeConflicts(configuration, immutable)) {
           report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically fixed merge conflicts 👍`);
         }
       });
@@ -90,7 +130,7 @@ export default class YarnCommand extends BaseCommand {
     }
 
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration);
+    const cache = await Cache.find(configuration, {immutable: this.immutableCache, check: this.checkCache});
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
@@ -109,7 +149,7 @@ export default class YarnCommand extends BaseCommand {
       stdout: this.context.stdout,
       includeLogs: true,
     }, async (report: StreamReport) => {
-      await project.install({cache, report, frozenLockfile, inlineBuilds: this.inlineBuilds});
+      await project.install({cache, report, immutable, inlineBuilds: this.inlineBuilds});
     });
 
     return report.exitCode();
@@ -121,7 +161,7 @@ const MERGE_CONFLICT_END = `>>>>>>>`;
 const MERGE_CONFLICT_SEP = `=======`;
 const MERGE_CONFLICT_START = `<<<<<<<`;
 
-async function autofixMergeConflicts(configuration: Configuration, frozenLockfile: boolean) {
+async function autofixMergeConflicts(configuration: Configuration, immutable: boolean) {
   if (!configuration.projectCwd)
     return false;
 
@@ -133,8 +173,8 @@ async function autofixMergeConflicts(configuration: Configuration, frozenLockfil
   if (!file.includes(MERGE_CONFLICT_START))
     return false;
 
-  if (frozenLockfile)
-    throw new ReportError(MessageName.AUTOMERGE_IMMUTABLE, `Cannot autofix a lockfile when operating with a frozen lockfile`);
+  if (immutable)
+    throw new ReportError(MessageName.AUTOMERGE_IMMUTABLE, `Cannot autofix a lockfile when running an immutable install`);
 
   const [left, right] = getVariants(file);
 

@@ -6,13 +6,13 @@ on:
     - master
   pull_request:
     paths:
-    - .github/workflows/e2e-eslint-workflow.yml
+    - .github/workflows/e2e-prettier-workflow.yml
     - scripts/e2e-setup-ci.sh
 
-name: 'E2E Next'
+name: 'E2E Prettier'
 jobs:
   chore:
-    name: 'Validating Next.js'
+    name: 'Validating Prettier'
     runs-on: ubuntu-latest
 
     steps:
@@ -30,5 +30,14 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-        yarn dlx create-react-app my-cra && cd my-cra
-        yarn build
+
+        yarn init -p
+        yarn add prettier
+
+        echo 'semi: true' > .prettierrc
+
+        echo '42;' > ok.js
+        yarn prettier --check ok.js
+
+        echo '42' > ko.js
+        ! yarn prettier --check ko.js
