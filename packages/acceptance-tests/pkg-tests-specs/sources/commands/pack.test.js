@@ -146,6 +146,20 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should ignore the folders covered by the local npmignore file`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await fsUtils.mkdirp(`${path}/__tests__/`);
+        await fsUtils.writeFile(`${path}/__tests__/index.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/.npmignore`, `__tests__\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        await expect(stdout).not.toMatch(/__tests__/);
+      }),
+    );
+
+    test(
       `it should ignore the patterns from a gitignore if a npmignore exists`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await fsUtils.writeFile(`${path}/a.js`, `module.exports = 42;\n`);
