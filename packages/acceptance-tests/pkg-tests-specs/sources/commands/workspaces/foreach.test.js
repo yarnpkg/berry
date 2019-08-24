@@ -15,7 +15,7 @@ async function setupWorkspaces(path) {
     scripts: {
       print: `echo Test Workspace A`,
       start: `node server.js`,
-    }
+    },
   });
 
   await writeFile(`${path}/packages/workspace-b/client.js`, getClientContent(`${path}/mutexes/workspace-b`, `PONG`));
@@ -24,24 +24,24 @@ async function setupWorkspaces(path) {
     version: `1.0.0`,
     scripts: {
       print: `echo Test Workspace B`,
-      start: `node client.js`
+      start: `node client.js`,
     },
     dependencies: {
       [`workspace-a`]: `workspace:*`,
-      [`workspace-c`]: `workspace:*`
-    }
+      [`workspace-c`]: `workspace:*`,
+    },
   });
 
   await writeJson(`${path}/packages/workspace-c/package.json`, {
     name: `workspace-c`,
     version: `1.0.0`,
     scripts: {
-      print: `echo Test Workspace C`
+      print: `echo Test Workspace C`,
     },
     workspaces: [`packages/*`],
     dependencies: {
       [`workspace-a`]: `workspace:*`,
-    }
+    },
   });
 
   await writeJson(`${path}/packages/workspace-c/packages/workspace-d/package.json`, {
@@ -49,33 +49,33 @@ async function setupWorkspaces(path) {
     version: `1.0.0`,
     workspaces: [`packages/*`],
     scripts: {
-      print: `echo Test Workspace D`
+      print: `echo Test Workspace D`,
     },
     dependencies: {
-      [`workspace-b`]: `workspace:*`
-    }
+      [`workspace-b`]: `workspace:*`,
+    },
   });
 
   await writeJson(`${path}/packages/workspace-c/packages/workspace-d/packages/workspace-e/package.json`, {
     name: `workspace-e`,
     version: `1.0.0`,
     scripts: {
-      print: `echo Test Workspace E`
+      print: `echo Test Workspace E`,
     },
     dependencies: {
-      [`workspace-d`]: `workspace:*`
-    }
+      [`workspace-d`]: `workspace:*`,
+    },
   });
 
   await writeJson(`${path}/packages/workspace-c/packages/workspace-f/package.json`, {
     name: `workspace-f`,
     version: `1.0.0`,
     scripts: {
-      print: `echo Test Workspace F`
+      print: `echo Test Workspace F`,
     },
     dependencies: {
-      [`workspace-e`]: `workspace:*`
-    }
+      [`workspace-e`]: `workspace:*`,
+    },
   });
 }
 
@@ -86,9 +86,9 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`]
+          workspaces: [`packages/*`],
         },
-        async ({ path, run }) => {
+        async ({path, run}) => {
           await setupWorkspaces(path);
 
           let code;
@@ -97,7 +97,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `print`, { cwd: `${path}/packages/workspace-c` }));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `print`, {cwd: `${path}/packages/workspace-c`}));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -112,9 +112,9 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`]
+          workspaces: [`packages/*`],
         },
-        async ({ path, run }) => {
+        async ({path, run}) => {
           await setupWorkspaces(path);
 
           let code;
@@ -123,7 +123,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `node`, `-p`, `require("./package.json").name`, { cwd: `${path}/packages/workspace-d` }));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `node`, `-p`, `require("./package.json").name`, {cwd: `${path}/packages/workspace-d`}));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -138,9 +138,9 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`]
+          workspaces: [`packages/*`],
         },
-        async ({ path, run }) => {
+        async ({path, run}) => {
           await setupWorkspaces(path);
 
           let code;
@@ -165,10 +165,10 @@ describe(`Commands`, () => {
           expect(code).toBe(0);
           expect(stderr).toBe(``);
 
-          for (let i = 1; i < lines.length / 2; i++) {
+          for (let i = 1; i < lines.length / 2; i++)
             if (firstLine !== lines[i])
               isInterlaced = true;
-          }
+
 
           expect(isInterlaced).toBe(true);
         }
@@ -180,9 +180,9 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`]
+          workspaces: [`packages/*`],
         },
-        async ({ path, run }) => {
+        async ({path, run}) => {
           await setupWorkspaces(path);
 
           let code;
@@ -206,9 +206,9 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`]
+          workspaces: [`packages/*`],
         },
-        async ({ path, run }) => {
+        async ({path, run}) => {
           await setupWorkspaces(path);
 
           let code;
@@ -232,9 +232,9 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`]
+          workspaces: [`packages/*`],
         },
-        async ({ path, run }) => {
+        async ({path, run}) => {
           await setupWorkspaces(path);
 
           let code;
@@ -258,9 +258,9 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`]
+          workspaces: [`packages/*`],
         },
-        async ({ path, run }) => {
+        async ({path, run}) => {
           await setupWorkspaces(path);
 
           let code;
@@ -285,11 +285,11 @@ describe(`Commands`, () => {
         {
           private: true,
           scripts: {
-            print: `yarn workspaces foreach --all run print`
+            print: `yarn workspaces foreach --all run print`,
           },
-          workspaces: [`packages/*`]
+          workspaces: [`packages/*`],
         },
-        async ({ path, run }) => {
+        async ({path, run}) => {
           await setupWorkspaces(path);
 
           let code;
@@ -313,9 +313,9 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`]
+          workspaces: [`packages/*`],
         },
-        async ({ path, run }) => {
+        async ({path, run}) => {
           await setupWorkspaces(path);
 
           await run(`install`);
@@ -329,9 +329,9 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`]
+          workspaces: [`packages/*`],
         },
-        async ({ path, run }) => {
+        async ({path, run}) => {
           await setupWorkspaces(path);
 
           await run(`install`);
@@ -339,6 +339,55 @@ describe(`Commands`, () => {
         }
       )
     );
+
+    test(`can run on public workspaces only`, makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`packages/*`],
+      },
+      async ({path, run}) => {
+        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-workspace-tools.js`))}\n`);
+
+        await writeJson(`${path}/packages/package-a/package.json`, {
+          name: `workspace-a`,
+          version: `1.0.0`,
+          scripts: {
+            print: `echo Test Workspace A`,
+          },
+        });
+
+        await writeJson(`${path}/packages/package-b/package.json`, {
+          name: `workspace-b`,
+          version: `1.0.0`,
+          private: true,
+          scripts: {
+            print: `echo Test Workspace B`,
+          },
+        });
+
+        await writeJson(`${path}/packages/package-c/package.json`, {
+          name: `workspace-c`,
+          version: `1.0.0`,
+          private: false,
+          scripts: {
+            print: `echo Test Workspace C`,
+          },
+        });
+
+        let code;
+        let stdout;
+        let stderr;
+
+        try {
+          await run(`install`);
+          ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--no-private`, `run`, `print`));
+        } catch (error) {
+          ({code, stdout, stderr} = error);
+        }
+
+        await expect({code, stdout, stderr}).toMatchSnapshot();
+      }
+    ))
   });
 });
 
