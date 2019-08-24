@@ -1,15 +1,16 @@
-import {BaseCommand}                                                  from '@berry/cli';
-import {WorkspaceRequiredError}                                       from '@berry/cli';
-import {Configuration, MessageName, Project, StreamReport, execUtils} from '@berry/core';
-import {Filename, PortablePath, ppath, toPortablePath, xfs}           from '@berry/fslib';
-import {Command}                                                      from 'clipanion';
-import {tmpdir}                                                       from 'os';
+import {BaseCommand}                                                          from '@berry/cli';
+import {WorkspaceRequiredError}                                               from '@berry/cli';
+import {Configuration, MessageName, Project, StreamReport, execUtils}         from '@berry/core';
+import {Filename, PortablePath, ppath, toPortablePath, xfs, fromPortablePath} from '@berry/fslib';
+import {Command}                                                              from 'clipanion';
+import {tmpdir}                                                               from 'os';
 
-import {setVersion}                                                   from '../version';
+import {setVersion}                                                           from '../version';
 
-const CLONE_WORKFLOW = ({repository, branch}: {repository: string, branch: string}) => [
-  [`git`, `clone`, repository, `.`],
-  [`git`, `checkout`, branch],
+const CLONE_WORKFLOW = ({repository, branch}: {repository: string, branch: string}, target: PortablePath) => [
+  [`git`, `clone`, repository, fromPortablePath(target)],
+  [`git`, `config`, `advice.detachedHead`, `false`],
+  [`git`, `checkout`, `origin/${branch}`],
 ];
 
 const UPDATE_WORKFLOW = ({branch}: {branch: string}) => [
@@ -62,15 +63,16 @@ export default class SetVersionCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async (report: StreamReport) => {
-      await xfs.mkdirpPromise(target);
-
       let workflow;
-      if (xfs.existsSync(target)) {
+      if (xfs.existsSync(ppath.join(target, `.git` as Filename))) {
         report.reportInfo(MessageName.UNNAMED, `Fetching the latest commits`);
         workflow = UPDATE_WORKFLOW(this);
       } else {
         report.reportInfo(MessageName.UNNAMED, `Cloning the remote repository`);
-        workflow = CLONE_WORKFLOW(this);
+        workflow = CLONE_WORKFLOW(this, target);
+
+        await xfs.removePromise(target);
+        await xfs.mkdirpPromise(target);
       }
 
       report.reportSeparator();
