@@ -62,8 +62,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.Array(`--exclude`)
   exclude: Array<string> = [];
 
-  @Command.Boolean(`--public`)
-  public: boolean = false;
+  @Command.Boolean(`--private`)
+  private: boolean = true;
 
   static schema = yup.object().shape({
     jobs: yup.number().min(2),
@@ -144,7 +144,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       if (this.exclude.length > 0 && this.exclude.includes(workspace.locator.name))
         continue;
 
-      if (this.public === true && workspace.manifest['private'] === true)
+      if (this.private === false && workspace.manifest['private'] === true)
         continue
 
       workspaces.push(workspace);

@@ -380,7 +380,7 @@ describe(`Commands`, () => {
 
         try {
           await run(`install`);
-          ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--public`, `run`, `print`));
+          ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--no-private`, `run`, `print`));
         } catch (error) {
           ({code, stdout, stderr} = error);
         }
