@@ -62,15 +62,16 @@ export default class SetVersionCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async (report: StreamReport) => {
-      await xfs.mkdirpPromise(target);
-
       let workflow;
-      if (xfs.existsSync(target)) {
+      if (xfs.existsSync(ppath.join(target, `.git` as Filename))) {
         report.reportInfo(MessageName.UNNAMED, `Fetching the latest commits`);
         workflow = UPDATE_WORKFLOW(this);
       } else {
         report.reportInfo(MessageName.UNNAMED, `Cloning the remote repository`);
         workflow = CLONE_WORKFLOW(this);
+
+        await xfs.removePromise(target);
+        await xfs.mkdirpPromise(target);
       }
 
       report.reportSeparator();
