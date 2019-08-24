@@ -1,0 +1,45 @@
+# Handles packaging Yarn into Debian and RPM packages
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "scripts/actions/build-deb/"
+      - ".github/workflows/package-workflow.yml"
+  pull_request:
+    paths:
+      - "scripts/actions/build-deb/"
+      - ".github/workflows/package-workflow.yml"
+
+name: "Release Packages"
+jobs:
+  linux-packages:
+    name: "Linux Packages"
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@master
+      with:
+        version: 12.x
+
+    - name: 'Install Yarn 1.17.3'
+      run: |
+        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+        echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+        sudo apt-get update && sudo apt-get install yarn=1.17.3-1 --no-install-recommends
+
+    - name: 'Build'
+      run: |
+        set -ex
+        node ./scripts/run-yarn.js build:cli
+        ./scripts/build-dist.sh
+
+    - name: 'Build packages'
+      uses: ./scripts/actions/build-deb
+
+    - name: 'Upload packages'
+      uses: actions/upload-artifact@master
+      with:
+        name: packages
+        path: artifacts
