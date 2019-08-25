@@ -5,7 +5,6 @@
     "semver": "2.0.0-rc.1",
     "nonce": "5762992896342831"
   },
-  "version:next": "2.0.0-rc.1",
   "main": "./sources/index.ts",
   "bin": {
     "berry": "./bin/run.js"

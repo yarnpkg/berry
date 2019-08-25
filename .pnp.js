@@ -3449,7 +3449,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@berry/pnp", "workspace:packages/berry-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", "npm:5.16.0"],
-            ["typescript", null]
+            ["typescript", "npm:3.3.3333"]
           ]
         }]
       ]],
@@ -25429,6 +25429,39 @@ class NodeFS extends FakeFS_1.BasePortableFakeFS {
     openSync(p, flags, mode) {
         return this.realFs.openSync(NodeFS.fromPortablePath(p), flags, mode);
     }
+    async readPromise(fd, buffer, offset = 0, length = 0, position = -1) {
+        return await new Promise((resolve, reject) => {
+            this.realFs.read(fd, buffer, offset, length, position, (error, bytesRead) => {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve(bytesRead);
+                }
+            });
+        });
+    }
+    readSync(fd, buffer, offset, length, position) {
+        return this.realFs.readSync(fd, buffer, offset, length, position);
+    }
+    async writePromise(fd, buffer, offset, length, position) {
+        return await new Promise((resolve, reject) => {
+            if (typeof buffer === `string`) {
+                return this.realFs.write(fd, buffer, offset, this.makeCallback(resolve, reject));
+            }
+            else {
+                return this.realFs.write(fd, buffer, offset, length, position, this.makeCallback(resolve, reject));
+            }
+        });
+    }
+    writeSync(fd, buffer, offset, length, position) {
+        if (typeof buffer === `string`) {
+            return this.realFs.writeSync(fd, buffer, offset);
+        }
+        else {
+            return this.realFs.writeSync(fd, buffer, offset, length, position);
+        }
+    }
     async closePromise(fd) {
         await new Promise((resolve, reject) => {
             this.realFs.close(fd, this.makeCallback(resolve, reject));
@@ -25511,22 +25544,44 @@ class NodeFS extends FakeFS_1.BasePortableFakeFS {
     copyFileSync(sourceP, destP, flags = 0) {
         return this.realFs.copyFileSync(NodeFS.fromPortablePath(sourceP), NodeFS.fromPortablePath(destP), flags);
     }
-    async writeFilePromise(p, content, opts) {
+    async appendFilePromise(p, content, opts) {
         return await new Promise((resolve, reject) => {
+            const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
             if (opts) {
-                this.realFs.writeFile(NodeFS.fromPortablePath(p), content, opts, this.makeCallback(resolve, reject));
+                this.realFs.appendFile(fsNativePath, content, opts, this.makeCallback(resolve, reject));
             }
             else {
-                this.realFs.writeFile(NodeFS.fromPortablePath(p), content, this.makeCallback(resolve, reject));
+                this.realFs.appendFile(fsNativePath, content, this.makeCallback(resolve, reject));
+            }
+        });
+    }
+    appendFileSync(p, content, opts) {
+        const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
+        if (opts) {
+            this.realFs.appendFileSync(fsNativePath, content, opts);
+        }
+        else {
+            this.realFs.appendFileSync(fsNativePath, content);
+        }
+    }
+    async writeFilePromise(p, content, opts) {
+        return await new Promise((resolve, reject) => {
+            const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
+            if (opts) {
+                this.realFs.writeFile(fsNativePath, content, opts, this.makeCallback(resolve, reject));
+            }
+            else {
+                this.realFs.writeFile(fsNativePath, content, this.makeCallback(resolve, reject));
             }
         });
     }
     writeFileSync(p, content, opts) {
+        const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
         if (opts) {
-            this.realFs.writeFileSync(NodeFS.fromPortablePath(p), content, opts);
+            this.realFs.writeFileSync(fsNativePath, content, opts);
         }
         else {
-            this.realFs.writeFileSync(NodeFS.fromPortablePath(p), content);
+            this.realFs.writeFileSync(fsNativePath, content);
         }
     }
     async unlinkPromise(p) {
@@ -25573,11 +25628,13 @@ class NodeFS extends FakeFS_1.BasePortableFakeFS {
     }
     async readFilePromise(p, encoding) {
         return await new Promise((resolve, reject) => {
-            this.realFs.readFile(NodeFS.fromPortablePath(p), encoding, this.makeCallback(resolve, reject));
+            const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
+            this.realFs.readFile(fsNativePath, encoding, this.makeCallback(resolve, reject));
         });
     }
     readFileSync(p, encoding) {
-        return this.realFs.readFileSync(NodeFS.fromPortablePath(p), encoding);
+        const fsNativePath = typeof p === `string` ? NodeFS.fromPortablePath(p) : p;
+        return this.realFs.readFileSync(fsNativePath, encoding);
     }
     async readdirPromise(p) {
         return await new Promise((resolve, reject) => {
@@ -25649,6 +25706,28 @@ class ProxiedFS extends FakeFS_1.FakeFS {
     openSync(p, flags, mode) {
         return this.baseFs.openSync(this.mapToBase(p), flags, mode);
     }
+    async readPromise(fd, buffer, offset, length, position) {
+        return await this.baseFs.readPromise(fd, buffer, offset, length, position);
+    }
+    readSync(fd, buffer, offset, length, position) {
+        return this.baseFs.readSync(fd, buffer, offset, length, position);
+    }
+    async writePromise(fd, buffer, offset, length, position) {
+        if (typeof buffer === `string`) {
+            return await this.baseFs.writePromise(fd, buffer, offset);
+        }
+        else {
+            return await this.baseFs.writePromise(fd, buffer, offset, length, position);
+        }
+    }
+    writeSync(fd, buffer, offset, length, position) {
+        if (typeof buffer === `string`) {
+            return this.baseFs.writeSync(fd, buffer, offset);
+        }
+        else {
+            return this.baseFs.writeSync(fd, buffer, offset, length, position);
+        }
+    }
     closePromise(fd) {
         return this.baseFs.closePromise(fd);
     }
@@ -25709,11 +25788,17 @@ class ProxiedFS extends FakeFS_1.FakeFS {
     copyFileSync(sourceP, destP, flags = 0) {
         return this.baseFs.copyFileSync(this.mapToBase(sourceP), this.mapToBase(destP), flags);
     }
+    appendFilePromise(p, content, opts) {
+        return this.baseFs.appendFilePromise(this.fsMapToBase(p), content, opts);
+    }
+    appendFileSync(p, content, opts) {
+        return this.baseFs.appendFileSync(this.fsMapToBase(p), content, opts);
+    }
     writeFilePromise(p, content, opts) {
-        return this.baseFs.writeFilePromise(this.mapToBase(p), content, opts);
+        return this.baseFs.writeFilePromise(this.fsMapToBase(p), content, opts);
     }
     writeFileSync(p, content, opts) {
-        return this.baseFs.writeFileSync(this.mapToBase(p), content, opts);
+        return this.baseFs.writeFileSync(this.fsMapToBase(p), content, opts);
     }
     unlinkPromise(p) {
         return this.baseFs.unlinkPromise(this.mapToBase(p));
@@ -25748,19 +25833,19 @@ class ProxiedFS extends FakeFS_1.FakeFS {
     readFilePromise(p, encoding) {
         // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
         if (encoding === 'utf8') {
-            return this.baseFs.readFilePromise(this.mapToBase(p), encoding);
+            return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
         }
         else {
-            return this.baseFs.readFilePromise(this.mapToBase(p), encoding);
+            return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
         }
     }
     readFileSync(p, encoding) {
         // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
         if (encoding === 'utf8') {
-            return this.baseFs.readFileSync(this.mapToBase(p), encoding);
+            return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
         }
         else {
-            return this.baseFs.readFileSync(this.mapToBase(p), encoding);
+            return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
         }
     }
     readdirPromise(p) {
@@ -25779,6 +25864,14 @@ class ProxiedFS extends FakeFS_1.FakeFS {
         return this.baseFs.watch(this.mapToBase(p), 
         // @ts-ignore
         a, b);
+    }
+    fsMapToBase(p) {
+        if (typeof p === `number`) {
+            return p;
+        }
+        else {
+            return this.mapToBase(p);
+        }
     }
 }
 exports.ProxiedFS = ProxiedFS;
@@ -25808,6 +25901,8 @@ var path_2 = __webpack_require__(0);
 exports.npath = path_2.npath;
 exports.ppath = path_2.ppath;
 exports.toFilename = path_2.toFilename;
+exports.fromPortablePath = path_2.fromPortablePath;
+exports.toPortablePath = path_2.toPortablePath;
 var AliasFS_1 = __webpack_require__(14);
 exports.AliasFS = AliasFS_1.AliasFS;
 var FakeFS_1 = __webpack_require__(6);
@@ -25833,11 +25928,14 @@ exports.ZipOpenFS = ZipOpenFS_1.ZipOpenFS;
 function patchFs(patchedFs, fakeFs) {
     const SYNC_IMPLEMENTATIONS = new Set([
         `accessSync`,
+        `appendFileSync`,
         `createReadStream`,
         `chmodSync`,
+        `closeSync`,
         `copyFileSync`,
         `lstatSync`,
         `openSync`,
+        `readSync`,
         `readlinkSync`,
         `readFileSync`,
         `readdirSync`,
@@ -25850,10 +25948,13 @@ function patchFs(patchedFs, fakeFs) {
         `utimesSync`,
         `watch`,
         `writeFileSync`,
+        `writeSync`,
     ]);
     const ASYNC_IMPLEMENTATIONS = new Set([
         `accessPromise`,
+        `appendFilePromise`,
         `chmodPromise`,
+        `closePromise`,
         `copyFilePromise`,
         `lstatPromise`,
         `openPromise`,
@@ -25868,6 +25969,7 @@ function patchFs(patchedFs, fakeFs) {
         `unlinkPromise`,
         `utimesPromise`,
         `writeFilePromise`,
+        `writeSync`,
     ]);
     patchedFs.existsSync = (p) => {
         try {
@@ -25877,15 +25979,26 @@ function patchFs(patchedFs, fakeFs) {
             return false;
         }
     };
-    patchedFs.exists = (p, callback) => {
-        fakeFs.existsPromise(p).then(result => {
-            if (callback) {
-                callback(result);
-            }
-        }, () => {
-            if (callback) {
+    patchedFs.exists = (p, ...args) => {
+        const hasCallback = typeof args[args.length - 1] === `function`;
+        const callback = hasCallback ? args.pop() : () => { };
+        process.nextTick(() => {
+            fakeFs.existsPromise(p).then(exists => {
+                callback(exists);
+            }, () => {
                 callback(false);
-            }
+            });
+        });
+    };
+    patchedFs.read = (p, buffer, ...args) => {
+        const hasCallback = typeof args[args.length - 1] === `function`;
+        const callback = hasCallback ? args.pop() : () => { };
+        process.nextTick(() => {
+            fakeFs.readPromise(p, buffer, ...args).then(bytesRead => {
+                callback(undefined, bytesRead, buffer);
+            }, error => {
+                callback(error);
+            });
         });
     };
     for (const fnName of ASYNC_IMPLEMENTATIONS) {
@@ -25894,10 +26007,12 @@ function patchFs(patchedFs, fakeFs) {
         patchedFs[origName] = (...args) => {
             const hasCallback = typeof args[args.length - 1] === `function`;
             const callback = hasCallback ? args.pop() : () => { };
-            fakeImpl(...args).then((result) => {
-                callback(undefined, result);
-            }, (error) => {
-                callback(error);
+            process.nextTick(() => {
+                fakeImpl(...args).then((result) => {
+                    callback(undefined, result);
+                }, (error) => {
+                    callback(error);
+                });
             });
         };
     }
@@ -26356,6 +26471,8 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
         super();
         this.listings = new Map();
         this.entries = new Map();
+        this.fds = new Map();
+        this.nextFd = 0;
         this.ready = false;
         const pathOptions = opts;
         if (typeof source === `string`) {
@@ -26469,13 +26586,51 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
         return this.openSync(p, flags, mode);
     }
     openSync(p, flags, mode) {
+        const fd = this.nextFd++;
+        this.fds.set(fd, { cursor: 0, p });
+        return fd;
+    }
+    async readPromise(fd, buffer, offset, length, position) {
+        return this.readSync(fd, buffer, offset, length, position);
+    }
+    readSync(fd, buffer, offset = 0, length = 0, position = -1) {
+        const entry = this.fds.get(fd);
+        if (typeof entry === `undefined`)
+            throw Object.assign(new Error(`EBADF: bad file descriptor, read`), { code: `EBADF` });
+        let realPosition;
+        if (position === -1 || position === null)
+            realPosition = entry.cursor;
+        else
+            realPosition = position;
+        const source = this.readFileSync(entry.p);
+        source.copy(buffer, offset, realPosition, realPosition + length);
+        const bytesRead = Math.max(0, Math.min(source.length - realPosition, length));
+        if (position === -1)
+            entry.cursor += bytesRead;
+        return bytesRead;
+    }
+    async writePromise(fd, buffer, offset, length, position) {
+        if (typeof buffer === `string`) {
+            return this.writeSync(fd, buffer, position);
+        }
+        else {
+            return this.writeSync(fd, buffer, offset, length, position);
+        }
+    }
+    writeSync(fd, buffer, offset, length, position) {
+        const entry = this.fds.get(fd);
+        if (typeof entry === `undefined`)
+            throw Object.assign(new Error(`EBADF: bad file descriptor, read`), { code: `EBADF` });
         throw new Error(`Unimplemented`);
     }
     async closePromise(fd) {
-        this.closeSync(fd);
+        return this.closeSync(fd);
     }
     closeSync(fd) {
-        throw new Error(`Unimplemented`);
+        const entry = this.fds.get(fd);
+        if (typeof entry === `undefined`)
+            throw Object.assign(new Error(`EBADF: bad file descriptor, read`), { code: `EBADF` });
+        this.fds.delete(fd);
     }
     createReadStream(p, { encoding } = {}) {
         if (p === null)
@@ -26797,10 +26952,24 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
             this.registerEntry(resolvedDestP, newIndex);
         }
     }
+    async appendFilePromise(p, content, opts) {
+        return this.appendFileSync(p, content, opts);
+    }
+    appendFileSync(p, content, opts = {}) {
+        if (typeof opts === `undefined`)
+            opts = { flag: `a` };
+        else if (typeof opts === `string`)
+            opts = { flag: `a`, encoding: opts };
+        else if (typeof opts.flag === `undefined`)
+            opts = Object.assign({ flag: `a` }, opts);
+        return this.writeFileSync(p, content, opts);
+    }
     async writeFilePromise(p, content, opts) {
         return this.writeFileSync(p, content, opts);
     }
     writeFileSync(p, content, opts) {
+        if (typeof p !== `string`)
+            throw Object.assign(new Error(`EBADF: bad file descriptor, read`), { code: `EBADF` });
         const resolvedP = this.resolveFilename(`open '${p}'`, p);
         if (this.listings.has(resolvedP))
             throw Object.assign(new Error(`EISDIR: illegal operation on a directory, open '${p}'`), { code: `EISDIR` });
@@ -26900,6 +27069,8 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
         }
     }
     readFileSync(p, encoding) {
+        if (typeof p !== `string`)
+            throw Object.assign(new Error(`EBADF: bad file descriptor, read`), { code: `EBADF` });
         // This is messed up regarding the TS signatures
         if (typeof encoding === `object`)
             // @ts-ignore
@@ -28142,9 +28313,12 @@ const FakeFS_1 = __webpack_require__(6);
 const NodeFS_1 = __webpack_require__(1);
 const ZipFS_1 = __webpack_require__(9);
 const path_1 = __webpack_require__(0);
+const ZIP_FD = 0x80000000;
 class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     constructor({ baseFs = new NodeFS_1.NodeFS(), filter = null, useCache = true } = {}) {
         super();
+        this.fdMap = new Map();
+        this.nextFd = 3;
         this.isZip = new Set();
         this.notZip = new Set();
         this.baseFs = baseFs;
@@ -28190,25 +28364,102 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
             }
         }
     }
+    remapFd(zipFs, fd) {
+        const remappedFd = this.nextFd++ | ZIP_FD;
+        this.fdMap.set(remappedFd, [zipFs, fd]);
+        return remappedFd;
+    }
     async openPromise(p, flags, mode) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.openPromise(p, flags, mode);
-        }, async (zipFs, { archivePath, subPath }) => {
-            throw new Error(`Unsupported action (we wouldn't be able to disambiguate the close)`);
+        }, async (zipFs, { subPath }) => {
+            return this.remapFd(zipFs, await zipFs.openPromise(subPath, flags, mode));
         });
     }
     openSync(p, flags, mode) {
         return this.makeCallSync(p, () => {
             return this.baseFs.openSync(p, flags, mode);
-        }, (zipFs, { archivePath, subPath }) => {
-            throw new Error(`Unsupported action (we wouldn't be able to disambiguate the close)`);
+        }, (zipFs, { subPath }) => {
+            return this.remapFd(zipFs, zipFs.openSync(subPath, flags, mode));
         });
     }
+    async readPromise(fd, buffer, offset, length, position) {
+        if ((fd & ZIP_FD) === 0)
+            return await this.baseFs.readPromise(fd, buffer, offset, length, position);
+        const entry = this.fdMap.get(fd);
+        if (typeof entry === `undefined`)
+            throw Object.assign(new Error(`EBADF: bad file descriptor, read`), { code: `EBADF` });
+        const [zipFs, realFd] = entry;
+        return await zipFs.readPromise(realFd, buffer, offset, length, position);
+    }
+    readSync(fd, buffer, offset, length, position) {
+        if ((fd & ZIP_FD) === 0)
+            return this.baseFs.readSync(fd, buffer, offset, length, position);
+        const entry = this.fdMap.get(fd);
+        if (typeof entry === `undefined`)
+            throw Object.assign(new Error(`EBADF: bad file descriptor, read`), { code: `EBADF` });
+        const [zipFs, realFd] = entry;
+        return zipFs.readSync(realFd, buffer, offset, length, position);
+    }
+    async writePromise(fd, buffer, offset, length, position) {
+        if ((fd & ZIP_FD) === 0) {
+            if (typeof buffer === `string`) {
+                return await this.baseFs.writePromise(fd, buffer, offset);
+            }
+            else {
+                return await this.baseFs.writePromise(fd, buffer, offset, length, position);
+            }
+        }
+        const entry = this.fdMap.get(fd);
+        if (typeof entry === `undefined`)
+            throw Object.assign(new Error(`EBADF: bad file descriptor, write`), { code: `EBADF` });
+        const [zipFs, realFd] = entry;
+        if (typeof buffer === `string`) {
+            return await zipFs.writePromise(realFd, buffer, offset);
+        }
+        else {
+            return await zipFs.writePromise(realFd, buffer, offset, length, position);
+        }
+    }
+    writeSync(fd, buffer, offset, length, position) {
+        if ((fd & ZIP_FD) === 0) {
+            if (typeof buffer === `string`) {
+                return this.baseFs.writeSync(fd, buffer, offset);
+            }
+            else {
+                return this.baseFs.writeSync(fd, buffer, offset, length, position);
+            }
+        }
+        const entry = this.fdMap.get(fd);
+        if (typeof entry === `undefined`)
+            throw Object.assign(new Error(`EBADF: bad file descriptor, write`), { code: `EBADF` });
+        const [zipFs, realFd] = entry;
+        if (typeof buffer === `string`) {
+            return zipFs.writeSync(realFd, buffer, offset);
+        }
+        else {
+            return zipFs.writeSync(realFd, buffer, offset, length, position);
+        }
+    }
     async closePromise(fd) {
-        return await this.baseFs.closePromise(fd);
+        if ((fd & ZIP_FD) === 0)
+            return await this.baseFs.closePromise(fd);
+        const entry = this.fdMap.get(fd);
+        if (typeof entry === `undefined`)
+            throw Object.assign(new Error(`EBADF: bad file descriptor, close`), { code: `EBADF` });
+        this.fdMap.delete(fd);
+        const [zipFs, realFd] = entry;
+        return await zipFs.closePromise(realFd);
     }
     closeSync(fd) {
-        return this.baseFs.closeSync(fd);
+        if ((fd & ZIP_FD) === 0)
+            return this.baseFs.closeSync(fd);
+        const entry = this.fdMap.get(fd);
+        if (typeof entry === `undefined`)
+            throw Object.assign(new Error(`EBADF: bad file descriptor, close`), { code: `EBADF` });
+        this.fdMap.delete(fd);
+        const [zipFs, realFd] = entry;
+        return zipFs.closeSync(realFd);
     }
     createReadStream(p, opts) {
         if (p === null)
@@ -28245,7 +28496,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     async existsPromise(p) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.existsPromise(p);
-        }, async (zipFs, { archivePath, subPath }) => {
+        }, async (zipFs, { subPath }) => {
             return await zipFs.existsPromise(subPath);
         });
     }
@@ -28259,7 +28510,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     async accessPromise(p, mode) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.accessPromise(p, mode);
-        }, async (zipFs, { archivePath, subPath }) => {
+        }, async (zipFs, { subPath }) => {
             return await zipFs.accessPromise(subPath, mode);
         });
     }
@@ -28273,7 +28524,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     async statPromise(p) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.statPromise(p);
-        }, async (zipFs, { archivePath, subPath }) => {
+        }, async (zipFs, { subPath }) => {
             return await zipFs.statPromise(subPath);
         });
     }
@@ -28287,7 +28538,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     async lstatPromise(p) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.lstatPromise(p);
-        }, async (zipFs, { archivePath, subPath }) => {
+        }, async (zipFs, { subPath }) => {
             return await zipFs.lstatPromise(subPath);
         });
     }
@@ -28301,7 +28552,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     async chmodPromise(p, mask) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.chmodPromise(p, mask);
-        }, async (zipFs, { archivePath, subPath }) => {
+        }, async (zipFs, { subPath }) => {
             return await zipFs.chmodPromise(subPath, mask);
         });
     }
@@ -28319,10 +28570,10 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
             }, async () => {
                 throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
             });
-        }, async (zipFsO, { archivePath: archivePathO, subPath: subPathO }) => {
+        }, async (zipFsO, { subPath: subPathO }) => {
             return await this.makeCallPromise(newP, async () => {
                 throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
-            }, async (zipFsN, { archivePath: archivePathN, subPath: subPathN }) => {
+            }, async (zipFsN, { subPath: subPathN }) => {
                 if (zipFsO !== zipFsN) {
                     throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
                 }
@@ -28339,10 +28590,10 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
             }, async () => {
                 throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
             });
-        }, (zipFsO, { archivePath: archivePathO, subPath: subPathO }) => {
+        }, (zipFsO, { subPath: subPathO }) => {
             return this.makeCallSync(newP, () => {
                 throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
-            }, (zipFsN, { archivePath: archivePathN, subPath: subPathN }) => {
+            }, (zipFsN, { subPath: subPathN }) => {
                 if (zipFsO !== zipFsN) {
                     throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), { code: `EEXDEV` });
                 }
@@ -28370,13 +28621,13 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
         return await this.makeCallPromise(sourceP, async () => {
             return await this.makeCallPromise(destP, async () => {
                 return await this.baseFs.copyFilePromise(sourceP, destP, flags);
-            }, async (zipFsD, { archivePath: archivePathD, subPath: subPathD }) => {
+            }, async (zipFsD, { subPath: subPathD }) => {
                 return await fallback(this.baseFs, sourceP, zipFsD, subPathD);
             });
-        }, async (zipFsS, { archivePath: archivePathS, subPath: subPathS }) => {
+        }, async (zipFsS, { subPath: subPathS }) => {
             return await this.makeCallPromise(destP, async () => {
                 return await fallback(zipFsS, subPathS, this.baseFs, destP);
-            }, async (zipFsD, { archivePath: archivePathD, subPath: subPathD }) => {
+            }, async (zipFsD, { subPath: subPathD }) => {
                 if (zipFsS !== zipFsD) {
                     return await fallback(zipFsS, subPathS, zipFsD, subPathD);
                 }
@@ -28404,13 +28655,13 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
         return this.makeCallSync(sourceP, () => {
             return this.makeCallSync(destP, () => {
                 return this.baseFs.copyFileSync(sourceP, destP, flags);
-            }, (zipFsD, { archivePath: archivePathD, subPath: subPathD }) => {
+            }, (zipFsD, { subPath: subPathD }) => {
                 return fallback(this.baseFs, sourceP, zipFsD, subPathD);
             });
-        }, (zipFsS, { archivePath: archivePathS, subPath: subPathS }) => {
+        }, (zipFsS, { subPath: subPathS }) => {
             return this.makeCallSync(destP, () => {
                 return fallback(zipFsS, subPathS, this.baseFs, destP);
-            }, (zipFsD, { archivePath: archivePathD, subPath: subPathD }) => {
+            }, (zipFsD, { subPath: subPathD }) => {
                 if (zipFsS !== zipFsD) {
                     return fallback(zipFsS, subPathS, zipFsD, subPathD);
                 }
@@ -28420,10 +28671,24 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
             });
         });
     }
+    async appendFilePromise(p, content, opts) {
+        return await this.makeCallPromise(p, async () => {
+            return await this.baseFs.appendFilePromise(p, content, opts);
+        }, async (zipFs, { subPath }) => {
+            return await zipFs.appendFilePromise(subPath, content, opts);
+        });
+    }
+    appendFileSync(p, content, opts) {
+        return this.makeCallSync(p, () => {
+            return this.baseFs.appendFileSync(p, content, opts);
+        }, (zipFs, { subPath }) => {
+            return zipFs.appendFileSync(subPath, content, opts);
+        });
+    }
     async writeFilePromise(p, content, opts) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.writeFilePromise(p, content, opts);
-        }, async (zipFs, { archivePath, subPath }) => {
+        }, async (zipFs, { subPath }) => {
             return await zipFs.writeFilePromise(subPath, content, opts);
         });
     }
@@ -28437,7 +28702,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     async unlinkPromise(p) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.unlinkPromise(p);
-        }, async (zipFs, { archivePath, subPath }) => {
+        }, async (zipFs, { subPath }) => {
             return await zipFs.unlinkPromise(subPath);
         });
     }
@@ -28465,7 +28730,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     async mkdirPromise(p) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.mkdirPromise(p);
-        }, async (zipFs, { archivePath, subPath }) => {
+        }, async (zipFs, { subPath }) => {
             return await zipFs.mkdirPromise(subPath);
         });
     }
@@ -28479,7 +28744,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     async rmdirPromise(p) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.rmdirPromise(p);
-        }, async (zipFs, { archivePath, subPath }) => {
+        }, async (zipFs, { subPath }) => {
             return await zipFs.rmdirPromise(subPath);
         });
     }
@@ -28493,7 +28758,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     async symlinkPromise(target, p) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.symlinkPromise(target, p);
-        }, async (zipFs, { archivePath, subPath }) => {
+        }, async (zipFs, { subPath }) => {
             return await zipFs.symlinkPromise(target, subPath);
         });
     }
@@ -28533,7 +28798,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     async readdirPromise(p) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.readdirPromise(p);
-        }, async (zipFs, { archivePath, subPath }) => {
+        }, async (zipFs, { subPath }) => {
             return await zipFs.readdirPromise(subPath);
         }, {
             requireSubpath: false,
@@ -28551,7 +28816,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     async readlinkPromise(p) {
         return await this.makeCallPromise(p, async () => {
             return await this.baseFs.readlinkPromise(p);
-        }, async (zipFs, { archivePath, subPath }) => {
+        }, async (zipFs, { subPath }) => {
             return await zipFs.readlinkPromise(subPath);
         });
     }
@@ -28574,8 +28839,10 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
         });
     }
     async makeCallPromise(p, discard, accept, { requireSubpath = true } = {}) {
-        p = this.pathUtils.normalize(this.pathUtils.resolve(path_1.PortablePath.root, p));
-        const zipInfo = this.findZip(p);
+        if (typeof p !== `string`)
+            return await discard();
+        const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(path_1.PortablePath.root, p));
+        const zipInfo = this.findZip(normalizedP);
         if (!zipInfo)
             return await discard();
         if (requireSubpath && zipInfo.subPath === `/`)
@@ -28583,8 +28850,10 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
         return await this.getZipPromise(zipInfo.archivePath, async (zipFs) => await accept(zipFs, zipInfo));
     }
     makeCallSync(p, discard, accept, { requireSubpath = true } = {}) {
-        p = this.pathUtils.normalize(this.pathUtils.resolve(path_1.PortablePath.root, p));
-        const zipInfo = this.findZip(p);
+        if (typeof p !== `string`)
+            return discard();
+        const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(path_1.PortablePath.root, p));
+        const zipInfo = this.findZip(normalizedP);
         if (!zipInfo)
             return discard();
         if (requireSubpath && zipInfo.subPath === `/`)

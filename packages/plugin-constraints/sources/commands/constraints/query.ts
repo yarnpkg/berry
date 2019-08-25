@@ -7,6 +7,9 @@ import {Constraints}            from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsQueryCommand extends BaseCommand {
+  @Command.Boolean(`--json`)
+  json: boolean = false;
+
   @Command.String()
   query!: string;
 
@@ -15,6 +18,8 @@ export default class ConstraintsQueryCommand extends BaseCommand {
     description: `query the constraints fact database`,
     details: `
       This command will output all matches to the given prolog query.
+
+      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
     `,
     examples: [[
       `List all dependencies throughout the workspace`,
@@ -34,6 +39,7 @@ export default class ConstraintsQueryCommand extends BaseCommand {
 
     const report = await StreamReport.start({
       configuration,
+      json: this.json,
       stdout: this.context.stdout,
     }, async report => {
       for await (const result of constraints.query(query)) {
@@ -46,6 +52,8 @@ export default class ConstraintsQueryCommand extends BaseCommand {
           const [variableName, value] = lines[i];
           report.reportInfo(null, `${getLinePrefix(i, lineCount)}${variableName.padEnd(maxVariableNameLength, ` `)} = ${valueToString(value)}`);
         }
+
+        report.reportJson(result);
       }
     });
 
