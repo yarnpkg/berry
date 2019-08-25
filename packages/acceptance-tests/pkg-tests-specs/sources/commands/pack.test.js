@@ -317,6 +317,20 @@ describe(`Commands`, () => {
     );
 
     test(
+      `the descriptive name doesn't add empty slug parts if the package has no scope`,
+      makeTemporaryEnv({
+        name: 'core',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--out`, `./%n.tgz`);
+        await expect(stdout).toMatch(/package\.json/);
+        await expect(stdout).toMatch(/Package archive generated in .+?\/core-0\.0\.1\.tgz/);
+      }),
+    );
+
+    test(
       `can output the archive in a absolute destination`,
       makeTemporaryEnv({
         name: '@berry/core',
