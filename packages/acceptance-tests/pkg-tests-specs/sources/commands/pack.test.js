@@ -1,4 +1,4 @@
-import {npath}         from '@berry/fslib';
+import {npath, xfs}    from '@berry/fslib';
 import {fs as fsUtils} from 'pkg-tests-core';
 
 describe(`Commands`, () => {
@@ -311,9 +311,9 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        const {stdout} = await run(`pack`, `--out`, `./%n.tgz`);
-        await expect(stdout).toMatch(/package\.json/);
-        await expect(stdout).toMatch(/Package archive generated in .+?\/berry-core-0\.0\.1\.tgz/);
+        await run(`pack`, `--out`, `./%n.tgz`);
+
+        expect(xfs.existsSync(`${path}/berry-core-0.0.1.tgz`)).toEqual(true);
       }),
     );
 
@@ -325,9 +325,9 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        const {stdout} = await run(`pack`, `--out`, `./%n.tgz`);
-        await expect(stdout).toMatch(/package\.json/);
-        await expect(stdout).toMatch(/Package archive generated in .+?\/core-0\.0\.1\.tgz/);
+        await run(`pack`, `--out`, `./%n.tgz`);
+
+        expect(xfs.existsSync(`${path}/core-0.0.1.tgz`)).toEqual(true);
       }),
     );
 
