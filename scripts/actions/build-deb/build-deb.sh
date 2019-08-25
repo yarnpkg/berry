@@ -6,6 +6,7 @@ set -ex
 ensureAvailable() {
   command -v "$1" >/dev/null 2>&1 || (echo "You need to install $1" && exit 2)
 }
+
 ensureAvailable dpkg-deb
 ensureAvailable fpm
 ensureAvailable fakeroot
@@ -14,9 +15,9 @@ ensureAvailable rpmbuild
 
 CONTENTS_DIR=./scripts/actions/build-deb/contents
 PACKAGE_TMPDIR=tmp/debian_pkg
-VERSION=`./dist/bin/yarn --version`
+VERSION=$(./dist/bin/yarn --version)
 OUTPUT_DIR=artifacts
-DEB_PACKAGE_NAME=yarn-next_$VERSION'_all.deb'
+DEB_PACKAGE_NAME=yarn-next-$VERSION'.deb'
 
 mkdir -p $OUTPUT_DIR
 # Remove old packages
