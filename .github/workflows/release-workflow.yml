@@ -22,16 +22,14 @@ jobs:
       run: |
         node ./scripts/run-yarn.js release:all
 
-    - id: check-if-deb-is-needed
-      name: 'Check whether the deb package must be rebuilt'
+    - name: 'Check whether the deb package must be rebuilt'
       run: |
-        compgen -G './artifacts/yarn-*.js' > /dev/null
+        compgen -G 'artifacts/yarn-*.js'
       continue-on-error: true
 
-    - id: build-dep
-      name: 'Build the deb archive'
+    - name: 'Build the deb archive'
       uses: ./scripts/actions/build-deb
-      if: job.steps.check-if-deb-is-needed.status == 'success'
+      if: success()
 
     - name: 'Make the commit'
       uses: ./scripts/actions/make-commit
