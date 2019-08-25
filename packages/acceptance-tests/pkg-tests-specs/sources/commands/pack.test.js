@@ -1,5 +1,5 @@
-import {npath, xfs}    from '@berry/fslib';
-import {fs as fsUtils} from 'pkg-tests-core';
+import {xfs,toPortablePath, fromPortablePath} from '@berry/fslib';
+import {fs as fsUtils}                        from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   describe(`pack`, () => {
@@ -346,7 +346,7 @@ describe(`Commands`, () => {
           ({stderr} = error);
         }
 
-        const expectedPath = `${npath.sep}${npath.join('artifacts', 'berry-core.tgz')}`;
+        const expectedPath = fromPortablePath(toPortablePath('/artifacts/berry-core.tgz'));
         await expect(stderr).toMatch(`no such file or directory, open '${expectedPath}'`);
       }),
     );
