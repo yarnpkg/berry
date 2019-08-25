@@ -318,6 +318,20 @@ describe(`Commands`, () => {
     );
 
     test(
+      `the descriptive name can include the version`,
+      makeTemporaryEnv({
+        name: '@berry/core',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`pack`, `--out`, `./package-%v.tgz`);
+
+        expect(xfs.existsSync(`${path}/package-0.0.1.tgz`)).toEqual(true);
+      }),
+    );
+
+    test(
       `the descriptive name doesn't add empty slug parts if the package has no scope`,
       makeTemporaryEnv({
         name: 'core',

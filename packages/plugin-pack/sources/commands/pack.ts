@@ -47,7 +47,9 @@ export default class PackCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
 
-    const archiveName = this.out.replace('%s', prettyWorkspaceSlug(workspace));
+    const archiveName = this.out
+      .replace("%s", prettyWorkspaceSlug(workspace))
+      .replace("%v", String(workspace.manifest.version));
     const target = ppath.resolve(workspace.cwd, toPortablePath(archiveName));
 
     const report = await StreamReport.start({
