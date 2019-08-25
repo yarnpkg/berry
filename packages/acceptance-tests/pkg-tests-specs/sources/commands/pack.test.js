@@ -311,7 +311,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        await run(`pack`, `--out`, `./%s.tgz`);
+        await run(`pack`, `--out`, `./%s-%v.tgz`);
 
         expect(xfs.existsSync(`${path}/berry-core-0.0.1.tgz`)).toEqual(true);
       }),
@@ -339,7 +339,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        await run(`pack`, `--out`, `./%s.tgz`);
+        await run(`pack`, `--out`, `./%s-%v.tgz`);
 
         expect(xfs.existsSync(`${path}/core-0.0.1.tgz`)).toEqual(true);
       }),

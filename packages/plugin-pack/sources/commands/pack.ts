@@ -25,7 +25,7 @@ export default class PackCommand extends BaseCommand {
 
       If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
 
-      If the \`-o,---out\` is set the archive will be created at the specified path.
+      If the \`-o,---out\` is set the archive will be created at the specified path. The \`%s\` and \`%v\` variables can be used within the path and will be respectively replaced by the package name and version.
     `,
     examples: [[
       `Create an archive from the active workspace`,
@@ -35,7 +35,7 @@ export default class PackCommand extends BaseCommand {
       `yarn pack --dry-run`,
     ], [
       `Name and output the archive in a dedicated folder`,
-      `yarn pack /artifacts/%s.tgz`,
+      `yarn pack /artifacts/%s-%v.tgz`,
     ]],
   });
 
@@ -91,17 +91,11 @@ export default class PackCommand extends BaseCommand {
 
 /**
  * @param workspace
- * @returns string - string following the format of scope-name-version
+ * @returns string - string following the format of scope-name
  */
 function prettyWorkspaceSlug(workspace: Workspace): string {
-  return [
-    workspace.locator.scope,
-    workspace.locator.name,
-    workspace.manifest.version,
-  ]
-    .filter(
-      (maybeString: unknown): maybeString is string =>
-        typeof maybeString === "string" && maybeString.length > 0
-    )
-    .join("-");
+  if (workspace.locator.scope == null)
+    return workspace.locator.name;
+
+  return `${workspace.locator.scope}-${workspace.locator.name}`;
 }
