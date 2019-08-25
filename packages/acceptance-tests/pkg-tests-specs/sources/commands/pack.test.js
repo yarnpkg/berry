@@ -289,6 +289,20 @@ describe(`Commands`, () => {
     );
 
     test(
+      `the filename is non-descriptive by default`,
+      makeTemporaryEnv({
+        name: '@berry/core',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        const {stdout} = await run(`pack`);
+        await expect(stdout).toMatch(/package\.json/);
+        await expect(stdout).toMatch(/Package archive generated in .+?\/package\.tgz/);
+      }),
+    );
+
+    test(
       `can generate an archive with a descriptive name`,
       makeTemporaryEnv({
         name: '@berry/core',
@@ -296,9 +310,28 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        const {stdout} = await run(`pack`, `--name-archive`);
+        const {stdout} = await run(`pack`, `--out`, `./%n.tgz`);
         await expect(stdout).toMatch(/package\.json/);
         await expect(stdout).toMatch(/Package archive generated in .+?\/berry-core-0\.0\.1\.tgz/);
+      }),
+    );
+
+    test(
+      `can output the archive in a absolute destination`,
+      makeTemporaryEnv({
+        name: '@berry/core',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        let stderr;
+        try {
+          ({stderr} = await run(`pack`, `--out`, `/artifacts/berry-core.tgz`));
+        } catch (error) {
+          ({stderr} = error);
+        }
+
+        await expect(stderr).toMatch(/no such file or directory, open '\/artifacts\/berry-core.tgz'/);
       }),
     );
   });

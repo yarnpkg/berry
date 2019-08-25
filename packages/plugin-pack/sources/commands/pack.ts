@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                          from '@berry/cli';
 import {Configuration, MessageName, Project, StreamReport, Workspace} from '@berry/core';
-import {xfs, ppath, toFilename}                                       from '@berry/fslib';
+import {xfs, ppath, toPortablePath}                                   from '@berry/fslib';
 import {Command}                                                      from 'clipanion';
 
 import * as packUtils                                                 from '../packUtils';
@@ -13,8 +13,8 @@ export default class PackCommand extends BaseCommand {
   @Command.Boolean(`--json`)
   json: boolean = false;
 
-  @Command.Boolean(`--name-archive`)
-  nameArchive: boolean = false;
+  @Command.String(`-o,--out`)
+  out: string = './package.tgz';
 
   static usage = Command.Usage({
     description: `generate a tarball from the active workspace`,
@@ -42,11 +42,8 @@ export default class PackCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
 
-    const archiveName = this.nameArchive
-      ? `${prettyWorkspaceSlug(workspace)}.tgz`
-      : `package.tgz`;
-
-    const target = ppath.resolve(workspace.cwd, toFilename(archiveName));
+    const archiveName = this.out.replace('%n', prettyWorkspaceSlug(workspace));
+    const target = ppath.resolve(workspace.cwd, toPortablePath(archiveName));
 
     const report = await StreamReport.start({
       configuration,
