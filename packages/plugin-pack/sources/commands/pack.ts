@@ -35,7 +35,7 @@ export default class PackCommand extends BaseCommand {
       `yarn pack --dry-run`,
     ], [
       `Name and output the archive in a dedicated folder`,
-      `yarn pack /artifacts/%n.tgz`,
+      `yarn pack /artifacts/%s.tgz`,
     ]],
   });
 
@@ -47,7 +47,7 @@ export default class PackCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
 
-    const archiveName = this.out.replace('%n', prettyWorkspaceSlug(workspace));
+    const archiveName = this.out.replace('%s', prettyWorkspaceSlug(workspace));
     const target = ppath.resolve(workspace.cwd, toPortablePath(archiveName));
 
     const report = await StreamReport.start({
