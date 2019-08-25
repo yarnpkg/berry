@@ -99,9 +99,11 @@ module.exports.factory = function (require) {
   };
   Object.defineProperty(exports, "__esModule", { value: true });
   const foreach_1 = __importDefault(__webpack_require__(1));
+  const workspace_1 = __importDefault(__webpack_require__(9));
   const plugin = {
       commands: [
           foreach_1.default,
+          workspace_1.default,
       ],
   };
   // eslint-disable-next-line arca/no-default-export
@@ -170,6 +172,7 @@ module.exports.factory = function (require) {
           this.topologicalDev = false;
           this.include = [];
           this.exclude = [];
+          this.private = true;
       }
       async execute() {
           const configuration = await core_1.Configuration.find(this.context.cwd, this.context.plugins);
@@ -197,6 +200,8 @@ module.exports.factory = function (require) {
               if (this.include.length > 0 && !this.include.includes(workspace.locator.name))
                   continue;
               if (this.exclude.length > 0 && this.exclude.includes(workspace.locator.name))
+                  continue;
+              if (this.private === false && workspace.manifest['private'] === true)
                   continue;
               workspaces.push(workspace);
           }
@@ -371,6 +376,9 @@ module.exports.factory = function (require) {
       clipanion_1.Command.Array(`--exclude`)
   ], WorkspacesForeachCommand.prototype, "exclude", void 0);
   __decorate([
+      clipanion_1.Command.Boolean(`--private`)
+  ], WorkspacesForeachCommand.prototype, "private", void 0);
+  __decorate([
       clipanion_1.Command.Path(`workspaces`, `foreach`)
   ], WorkspacesForeachCommand.prototype, "execute", null);
   exports.default = WorkspacesForeachCommand;
@@ -507,6 +515,76 @@ module.exports.factory = function (require) {
   /***/ (function(module, exports) {
 
   module.exports = require("yup");
+
+  /***/ }),
+  /* 9 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+  var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+      else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
+  Object.defineProperty(exports, "__esModule", { value: true });
+  const cli_1 = __webpack_require__(2);
+  const core_1 = __webpack_require__(3);
+  const core_2 = __webpack_require__(3);
+  const clipanion_1 = __webpack_require__(4);
+  // eslint-disable-next-line arca/no-default-export
+  class WorkspaceCommand extends clipanion_1.Command {
+      constructor() {
+          super(...arguments);
+          this.args = [];
+      }
+      async execute() {
+          const configuration = await core_1.Configuration.find(this.context.cwd, this.context.plugins);
+          const { project, workspace: cwdWorkspace } = await core_1.Project.find(configuration, this.context.cwd);
+          if (!cwdWorkspace)
+              throw new cli_1.WorkspaceRequiredError(this.context.cwd);
+          const candidates = project.workspaces;
+          const candidatesByName = new Map(candidates.map((workspace) => {
+              const ident = core_2.structUtils.convertToIdent(workspace.locator);
+              return [core_2.structUtils.stringifyIdent(ident), workspace];
+          }));
+          const workspace = candidatesByName.get(this.workspaceName);
+          if (workspace === undefined) {
+              const otherNames = Array.from(candidatesByName.keys()).sort();
+              throw new clipanion_1.UsageError(`Workspace '${this.workspaceName}' not found. Did you mean any of the following:\n  - ${otherNames.join("\n  - ")}?`);
+          }
+          return this.cli.run([this.commandName, ...this.args], { cwd: workspace.cwd });
+      }
+  }
+  WorkspaceCommand.usage = clipanion_1.Command.Usage({
+      category: `Workspace-related commands`,
+      description: `run a command within the specified workspace`,
+      details: `
+        This command will run a given sub-command on a single workspace.
+      `,
+      examples: [[
+              `Add a package to a single workspace`,
+              `yarn workspace components add -D react`,
+          ], [
+              `Run build script on a single workspace`,
+              `yarn workspace components run build`,
+          ]],
+  });
+  __decorate([
+      clipanion_1.Command.String()
+  ], WorkspaceCommand.prototype, "workspaceName", void 0);
+  __decorate([
+      clipanion_1.Command.String()
+  ], WorkspaceCommand.prototype, "commandName", void 0);
+  __decorate([
+      clipanion_1.Command.Proxy()
+  ], WorkspaceCommand.prototype, "args", void 0);
+  __decorate([
+      clipanion_1.Command.Path(`workspace`)
+  ], WorkspaceCommand.prototype, "execute", null);
+  exports.default = WorkspaceCommand;
+
 
   /***/ })
   /******/ ]);

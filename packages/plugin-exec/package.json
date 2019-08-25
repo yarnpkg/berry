@@ -15,5 +15,9 @@
   "scripts": {
     "build:plugin-exec": "builder build plugin"
   },
-  "version": "2.0.0-rc.0"
+  "version": "2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.1",
+    "nonce": "2295487307022255"
+  }
 }

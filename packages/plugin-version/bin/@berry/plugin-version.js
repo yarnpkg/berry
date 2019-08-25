@@ -155,6 +155,7 @@ module.exports.factory = function (require) {
       constructor() {
           super(...arguments);
           this.all = false;
+          this.json = false;
           this.dependents = false;
       }
       async execute() {
@@ -164,6 +165,7 @@ module.exports.factory = function (require) {
               throw new cli_1.WorkspaceRequiredError(this.context.cwd);
           const applyReport = await core_2.StreamReport.start({
               configuration,
+              json: this.json,
               stdout: this.context.stdout,
           }, async (report) => {
               const allDependents = new Map();
@@ -194,10 +196,17 @@ module.exports.factory = function (require) {
               }
               // First a quick sanity check before we start modifying stuff
               const validateWorkspace = (workspace) => {
-                  if (!workspace.manifest.raw || !workspace.manifest.raw[`version:next`])
+                  const nextVersion = workspace.manifest.raw.nextVersion;
+                  if (typeof nextVersion === `undefined`)
                       return;
-                  const newVersion = workspace.manifest.raw[`version:next`];
-                  if (typeof newVersion !== `string` || !semver_1.default.valid(newVersion)) {
+                  if (typeof nextVersion !== `object` || nextVersion === null)
+                      throw new Error(`Assertion failed: The nextVersion field should have been an object`);
+                  const newVersion = workspace.manifest.raw.nextVersion.semver;
+                  if (typeof newVersion === `undefined`)
+                      return;
+                  if (typeof newVersion !== `string`)
+                      throw new Error(`Assertion failed: The nextVersion.semver should have been a string`);
+                  if (!semver_1.default.valid(newVersion)) {
                       throw new clipanion_1.UsageError(`Can't apply the version bump if the resulting version (${newVersion}) isn't valid semver`);
                   }
               };
@@ -212,14 +221,24 @@ module.exports.factory = function (require) {
               // Now that we know which workspaces depend on which others, we can
               // proceed to update everything at once using our accumulated knowledge.
               const processWorkspace = (workspace) => {
-                  if (!workspace.manifest.raw.nextVersion || !workspace.manifest.raw.nextVersion.semver)
+                  const nextVersion = workspace.manifest.raw.nextVersion;
+                  if (typeof nextVersion === `undefined`)
                       return;
+                  if (typeof nextVersion !== `object` || nextVersion === null)
+                      throw new Error(`Assertion failed: The nextVersion field should have been an object`);
                   const newVersion = workspace.manifest.raw.nextVersion.semver;
+                  if (typeof newVersion === `undefined`)
+                      return;
                   if (typeof newVersion !== `string`)
-                      throw new Error(`Assertion failed: The version should have been a string`);
+                      throw new Error(`Assertion failed: The nextVersion.semver should have been a string`);
+                  const oldVersion = workspace.manifest.version;
                   workspace.manifest.version = newVersion;
                   workspace.manifest.raw.nextVersion = undefined;
+                  const identString = workspace.manifest.name !== null
+                      ? core_3.structUtils.stringifyIdent(workspace.manifest.name)
+                      : null;
                   report.reportInfo(core_2.MessageName.UNNAMED, `${core_3.structUtils.prettyLocator(configuration, workspace.anchoredLocator)}: Bumped to ${newVersion}`);
+                  report.reportJson({ cwd: workspace.cwd, ident: identString, oldVersion, newVersion });
                   const dependents = allDependents.get(workspace);
                   if (typeof dependents === `undefined`)
                       return;
@@ -270,6 +289,8 @@ module.exports.factory = function (require) {
         This command will apply the deferred version changes (scheduled via \`yarn version major|minor|patch\`) on the current workspace (or all of them if \`--all\`) is specified.
 
         It will also update the \`workspace:\` references across all your local workspaces so that they keep refering to the same workspace even after the version bump.
+
+        If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
       `,
       examples: [[
               `Apply the version change to the local workspace`,
@@ -282,6 +303,9 @@ module.exports.factory = function (require) {
   __decorate([
       clipanion_1.Command.Boolean(`--all`)
   ], VersionApplyCommand.prototype, "all", void 0);
+  __decorate([
+      clipanion_1.Command.Boolean(`--json`)
+  ], VersionApplyCommand.prototype, "json", void 0);
   __decorate([
       clipanion_1.Command.Boolean(`--dependents`)
   ], VersionApplyCommand.prototype, "dependents", void 0);
@@ -333,41 +357,55 @@ module.exports.factory = function (require) {
           const { project, workspace } = await core_1.Project.find(configuration, this.context.cwd);
           if (!workspace)
               throw new cli_1.WorkspaceRequiredError(this.context.cwd);
-          const base = `master`;
           const report = await core_1.StreamReport.start({
               configuration,
               stdout: this.context.stdout,
           }, async (report) => {
-              const files = await fetchChangedFiles(this.context.cwd, { base });
+              const root = await fetchRoot(this.context.cwd);
+              const base = await fetchBase(root);
+              const files = await fetchChangedFiles(root, { base: base.hash });
               const workspaces = new Set(files.map(file => project.getWorkspaceByFilePath(file)));
               const releases = new Set();
               let hasDiffErrors = false;
               let hasDepsErrors = false;
+              report.reportInfo(core_1.MessageName.UNNAMED, `Your PR was started right after ${configuration.format(base.hash.slice(0, 7), `yellow`)} ${configuration.format(base.message, `magenta`)}`);
               if (files.length > 0) {
-                  report.reportInfo(core_1.MessageName.UNNAMED, `The following files have changed compared to ${base}:`);
+                  report.reportInfo(core_1.MessageName.UNNAMED, `you have changed the following files since then:`);
                   for (const file of files) {
                       report.reportInfo(null, file);
                   }
               }
               // First we check which workspaces have received modifications but no release strategies
               for (const workspace of workspaces) {
+                  // Let's assume that packages without versions don't need to see their version increased
+                  if (workspace.manifest.version === null)
+                      continue;
                   const currentNonce = getNonce(workspace.manifest);
-                  const previousNonce = await fetchPreviousNonce(workspace, { base });
+                  const previousNonce = await fetchPreviousNonce(workspace, { root, base: base.hash });
+                  // If the nonce is the same, it means that the user didn't run one of the `yarn version <>` variants since they started working on this diff
                   if (currentNonce === previousNonce) {
                       if (!hasDiffErrors && files.length > 0)
                           report.reportSeparator();
                       report.reportError(core_1.MessageName.UNNAMED, `${core_1.structUtils.prettyLocator(configuration, workspace.anchoredLocator)} has been modified but doesn't have a bump strategy attached`);
                       hasDiffErrors = true;
                   }
-                  else if (willBeReleased(workspace.manifest)) {
-                      releases.add(workspace.anchoredLocator.locatorHash);
+                  else {
+                      // If it changed and a bump is planned, we mark it so that we can check that its dependents also chose whether they want to be bumped or not
+                      if (willBeReleased(workspace.manifest)) {
+                          releases.add(workspace.anchoredLocator.locatorHash);
+                      }
                   }
               }
               // Then we check which workspaces depend on packages that will be released again but have no release strategies themselves
               for (const workspace of project.workspaces) {
-                  if (willBeReleased(workspace.manifest))
+                  // We don't need to check whether the dependencies of packages that will be bumped because of this PR changed
+                  if (releases.has(workspace.anchoredLocator.locatorHash))
                       continue;
+                  // We also don't need to check whether the dependencies of private packages changed, as they are supposed to only make sense within the context of the monorepo
                   if (workspace.manifest.private)
+                      continue;
+                  // Let's assume that packages without versions don't need to see their version increased
+                  if (workspace.manifest.version === null)
                       continue;
                   for (const descriptor of workspace.dependencies.values()) {
                       const resolution = project.storedResolutions.get(descriptor.descriptorHash);
@@ -376,12 +414,19 @@ module.exports.factory = function (require) {
                       const pkg = project.storedPackages.get(resolution);
                       if (typeof pkg === `undefined`)
                           throw new Error(`Assertion failed: The package should have been registered`);
-                      if (releases.has(resolution)) {
-                          if (!hasDepsErrors && (files.length > 0 || hasDiffErrors))
-                              report.reportSeparator();
-                          report.reportError(core_1.MessageName.UNNAMED, `${core_1.structUtils.prettyLocator(configuration, workspace.anchoredLocator)} doesn't have a bump strategy attached, but depends on ${core_1.structUtils.prettyLocator(configuration, pkg)} which will be re-released.`);
-                          hasDepsErrors = true;
-                      }
+                      // We only care about workspaces, and we only care about workspaces that will be bumped
+                      if (!releases.has(resolution))
+                          continue;
+                      // Quick note: we don't want to check whether the workspace pointer
+                      // by `resolution` is private, because while it doesn't makes sense
+                      // to bump a private package because its dependencies changed, the
+                      // opposite isn't true: a (public) package might need to be bumped
+                      // because one of its dev dependencies is a (private) package whose
+                      // behavior sensibly changed.
+                      if (!hasDepsErrors && (files.length > 0 || hasDiffErrors))
+                          report.reportSeparator();
+                      report.reportError(core_1.MessageName.UNNAMED, `${core_1.structUtils.prettyLocator(configuration, workspace.anchoredLocator)} doesn't have a bump strategy attached, but depends on ${core_1.structUtils.prettyLocator(configuration, pkg)} which will be re-released.`);
+                      hasDepsErrors = true;
                   }
               }
               if (hasDiffErrors || hasDepsErrors) {
@@ -414,6 +459,23 @@ module.exports.factory = function (require) {
       clipanion_1.Command.Path(`version`, `check`)
   ], VersionApplyCommand.prototype, "execute", null);
   exports.default = VersionApplyCommand;
+  async function fetchBase(root) {
+      const candidateBases = [`master`, `origin/master`, `upstream/master`];
+      const ancestorBases = [];
+      for (const candidate of candidateBases) {
+          const { code } = await core_1.execUtils.execvp(`git`, [`merge-base`, candidate, `HEAD`], { cwd: root });
+          if (code === 0) {
+              ancestorBases.push(candidate);
+          }
+      }
+      if (ancestorBases.length === 0)
+          throw new clipanion_1.UsageError(`No ancestor could be found between any of HEAD and ${candidateBases.join(`, `)}`);
+      const { stdout: mergeBaseStdout } = await core_1.execUtils.execvp(`git`, [`merge-base`, `HEAD`, ...ancestorBases], { cwd: root, strict: true });
+      const hash = mergeBaseStdout.trim();
+      const { stdout: showStdout } = await core_1.execUtils.execvp(`git`, [`show`, `--quiet`, `--pretty=format:%s`, hash], { cwd: root, strict: true });
+      const message = showStdout.trim();
+      return { hash, message };
+  }
   async function fetchRoot(initialCwd) {
       // Note: We can't just use `git rev-parse --show-toplevel`, because on Windows
       // it may return long paths even when the cwd uses short paths, and we have no
@@ -431,16 +493,15 @@ module.exports.factory = function (require) {
           throw new clipanion_1.UsageError(`This command can only be run from within a Git repository`);
       return match;
   }
-  async function fetchChangedFiles(cwd, { base }) {
-      const root = await fetchRoot(cwd);
-      const { stdout: diffStdout } = await core_1.execUtils.execvp(`git`, [`diff`, `--name-only`, base], { cwd, strict: true });
+  async function fetchChangedFiles(root, { base }) {
+      const { stdout: diffStdout } = await core_1.execUtils.execvp(`git`, [`diff`, `--name-only`, base], { cwd: root, strict: true });
       const files = diffStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => fslib_1.ppath.resolve(root, fslib_1.toPortablePath(file)));
-      const { stdout: untrackedStdout } = await core_1.execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], { cwd, strict: true });
+      const { stdout: untrackedStdout } = await core_1.execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], { cwd: root, strict: true });
       const moreFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => fslib_1.ppath.resolve(root, fslib_1.toPortablePath(file)));
       return [...files, ...moreFiles];
   }
-  async function fetchPreviousNonce(workspace, { base }) {
-      const { code, stdout } = await core_1.execUtils.execvp(`git`, [`show`, `${base}:${fslib_1.fromPortablePath(fslib_1.ppath.join(workspace.cwd, `package.json`))}`], { cwd: workspace.cwd });
+  async function fetchPreviousNonce(workspace, { root, base }) {
+      const { code, stdout } = await core_1.execUtils.execvp(`git`, [`show`, `${base}:${fslib_1.fromPortablePath(fslib_1.ppath.relative(root, fslib_1.ppath.join(workspace.cwd, `package.json`)))}`], { cwd: workspace.cwd });
       if (code === 0) {
           return getNonce(core_1.Manifest.fromText(stdout));
       }
@@ -531,47 +592,46 @@ module.exports.factory = function (require) {
           if (this.immediate)
               deferred = false;
           const isSemver = semver_1.default.valid(this.strategy);
+          const isDeclined = this.strategy === DECLINE;
           let nextVersion;
-          if (semver_1.default.valid(this.strategy)) {
+          if (isSemver) {
               nextVersion = this.strategy;
           }
           else {
-              if (workspace.manifest.version == null && !isSemver)
-                  throw new clipanion_1.UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
-              const currentVersion = workspace.manifest.version;
-              if (typeof currentVersion !== `string` || !semver_1.default.valid(currentVersion))
-                  throw new clipanion_1.UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
-              const bumpedVersion = this.strategy !== `decline`
+              let currentVersion = workspace.manifest.version;
+              if (!isDeclined) {
+                  if (currentVersion === null)
+                      throw new clipanion_1.UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
+                  if (typeof currentVersion !== `string` || !semver_1.default.valid(currentVersion)) {
+                      throw new clipanion_1.UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
+                  }
+              }
+              const bumpedVersion = !isDeclined
                   ? semver_1.default.inc(currentVersion, this.strategy)
                   : currentVersion;
-              if (bumpedVersion === null)
+              if (!isDeclined && bumpedVersion === null)
                   throw new Error(`Assertion failed: Failed to increment the version number (${currentVersion})`);
               nextVersion = bumpedVersion;
           }
           if (workspace.manifest.raw.nextVersion) {
-              const deferredVersion = workspace.manifest.raw.nextVersion.next;
-              if (deferred && deferredVersion && semver_1.default.gte(deferredVersion, nextVersion)) {
-                  if (isSemver) {
-                      if (!this.force) {
+              const deferredVersion = workspace.manifest.raw.nextVersion.semver;
+              if (typeof deferredVersion !== `undefined`) {
+                  if (!isDeclined) {
+                      if (semver_1.default.gt(deferredVersion, nextVersion) && !this.force) {
                           throw new clipanion_1.UsageError(`The target version (${nextVersion}) is smaller than the one currently registered (${deferredVersion}); use -f,--force to overwrite.`);
                       }
                   }
                   else {
-                      if (this.strategy === DECLINE) {
-                          nextVersion = deferredVersion;
-                      }
-                      else {
-                          return;
-                      }
+                      nextVersion = deferredVersion;
                   }
               }
           }
           workspace.manifest.setRawField(`nextVersion`, {
-              semver: nextVersion,
+              semver: nextVersion !== workspace.manifest.version ? nextVersion : undefined,
               nonce: String(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)),
           }, { after: [`version`] });
-          workspace.persistManifest();
-          if (!this.deferred) {
+          await workspace.persistManifest();
+          if (!deferred) {
               await this.cli.run([`version`, `apply`]);
           }
       }
