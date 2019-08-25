@@ -16,7 +16,7 @@ junit.xml
 /packages/*/bundles
 
 # Those folders are meant to contain the prepack build artifacts; we don't commit them
-/packages/*/lib
+/packages/*/lib/*
 
 # We check-in the PnP hook because it would be heavy to regenerate it before each bundle build
 !/packages/berry-pnp/lib/hook.js
