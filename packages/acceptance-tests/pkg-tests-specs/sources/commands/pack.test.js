@@ -1,4 +1,5 @@
-import {fs as fsUtils} from 'pkg-tests-core';
+import {xfs,toPortablePath, fromPortablePath} from '@berry/fslib';
+import {fs as fsUtils}                        from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   describe(`pack`, () => {
@@ -285,6 +286,128 @@ describe(`Commands`, () => {
         await expect(stdout).not.toMatch(/lib\/changelog/);
         await expect(stdout).toMatch(/CHANGELOG\.md/);
         await expect(stdout).toMatch(/package\.json/);
+      }),
+    );
+
+    test(
+      `it should make the filename non-descriptive by default`,
+      makeTemporaryEnv({
+        name: '@berry/core',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`pack`);
+        expect(xfs.existsSync(`${path}/package.tgz`)).toEqual(true);
+      }),
+    );
+
+    test(
+      `it should put the file relative to the workspace root by default`,
+      makeTemporaryEnv({
+        name: '@scope/test',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await xfs.mkdirpPromise(`${path}/subdir`);
+
+        await run(`install`);
+
+        await run(`pack`, {cwd: `${path}/subdir`});
+        expect(xfs.existsSync(`${path}/package.tgz`)).toEqual(true);
+      }),
+    );
+
+    test(
+      `it should generate an archive with a custom name when using \`--out\``,
+      makeTemporaryEnv({
+        name: '@scope/test',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`pack`, `--out`, `my-package.tgz`);
+        expect(xfs.existsSync(`${path}/my-package.tgz`)).toEqual(true);
+      }),
+    );
+
+    test(
+      `it should put the file relative to the cwd when using \`--out\``,
+      makeTemporaryEnv({
+        name: '@scope/test',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await xfs.mkdirpPromise(`${path}/subdir`);
+
+        await run(`install`);
+
+        await run(`pack`, `--out`, `my-package.tgz`, {cwd: `${path}/subdir`});
+        expect(xfs.existsSync(`${path}/subdir/my-package.tgz`)).toEqual(true);
+      }),
+    );
+
+    test(
+      `it should replace the \`%s\` pattern in \`--out\``,
+      makeTemporaryEnv({
+        name: '@scope/test',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`pack`, `--out`, `%s.tgz`);
+        expect(xfs.existsSync(`${path}/@scope-test.tgz`)).toEqual(true);
+      }),
+    );
+
+    test(
+      `it should replace the \`%v\` pattern in \`--out\``,
+      makeTemporaryEnv({
+        name: '@scope/test',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`pack`, `--out`, `%v.tgz`);
+        expect(xfs.existsSync(`${path}/0.0.1.tgz`)).toEqual(true);
+      }),
+    );
+
+    test(
+      `it should replace as many patterns as needed in \`--out\``,
+      makeTemporaryEnv({
+        name: '@scope/test',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`pack`, `--out`, `%s-%v.tgz`);
+        expect(xfs.existsSync(`${path}/@scope-test-0.0.1.tgz`)).toEqual(true);
+      }),
+    );
+
+    test(
+      `it should replace \`%s\` even if the package has no scope`,
+      makeTemporaryEnv({
+        name: 'test',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`pack`, `--out`, `%s-%v.tgz`);
+        expect(xfs.existsSync(`${path}/test-0.0.1.tgz`)).toEqual(true);
+      }),
+    );
+
+    test(
+      `could output the archive in a absolute destination`,
+      makeTemporaryEnv({
+        name: '@berry/core',
+        version: '0.0.1',
+      }, async ({path, run, source}) => {
+        await run(`install`);
+        const tmpDir = await xfs.mktempPromise()
+
+        await run(`pack`, `--out`, `${tmpDir}/berry-core.tgz`);;
+        expect(xfs.existsSync(`${tmpDir}/berry-core.tgz`)).toEqual(true);
       }),
     );
   });

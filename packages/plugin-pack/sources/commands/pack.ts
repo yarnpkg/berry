@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}               from '@berry/cli';
-import {Configuration, MessageName, Project, StreamReport} from '@berry/core';
-import {xfs, ppath, toFilename}                            from '@berry/fslib';
-import {Command}                                           from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                       from '@berry/cli';
+import {Configuration, MessageName, Project, StreamReport, Workspace, structUtils} from '@berry/core';
+import {Filename, xfs, ppath, toPortablePath}                                      from '@berry/fslib';
+import {Command}                                                                   from 'clipanion';
 
-import * as packUtils                                      from '../packUtils';
+import * as packUtils                                                              from '../packUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PackCommand extends BaseCommand {
@@ -13,14 +13,19 @@ export default class PackCommand extends BaseCommand {
   @Command.Boolean(`--json`)
   json: boolean = false;
 
+  @Command.String(`-o,--out`)
+  out?: string;
+
   static usage = Command.Usage({
     description: `generate a tarball from the active workspace`,
     details: `
-      This command will turn the active workspace into a compressed archive suitable for publishing.
+      This command will turn the active workspace into a compressed archive suitable for publishing. The archive will by default be stored at the root of the workspace (\`package.tgz\`).
 
       If the \`-n,--dry-run\` flag is set the command will just print the file paths without actually generating the package archive.
 
       If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
+
+      If the \`-o,---out\` is set the archive will be created at the specified path. The \`%s\` and \`%v\` variables can be used within the path and will be respectively replaced by the package name and version.
     `,
     examples: [[
       `Create an archive from the active workspace`,
@@ -28,6 +33,9 @@ export default class PackCommand extends BaseCommand {
     ], [
       `List the files that would be made part of the workspace's archive`,
       `yarn pack --dry-run`,
+    ], [
+      `Name and output the archive in a dedicated folder`,
+      `yarn pack /artifacts/%s-%v.tgz`,
     ]],
   });
 
@@ -39,7 +47,9 @@ export default class PackCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
 
-    const target = ppath.resolve(workspace.cwd, toFilename(`package.tgz`));
+    const target = typeof this.out !== `undefined`
+      ? ppath.resolve(this.context.cwd, interpolateOutputName(this.out, {workspace}))
+      : ppath.resolve(workspace.cwd, `package.tgz` as Filename);
 
     const report = await StreamReport.start({
       configuration,
@@ -75,5 +85,29 @@ export default class PackCommand extends BaseCommand {
     });
 
     return report.exitCode();
+  }
+}
+
+function interpolateOutputName(name: string, {workspace}: {workspace: Workspace}) {
+  const interpolated = name
+    .replace(`%s`, prettyWorkspaceIdent(workspace))
+    .replace(`%v`, prettyWorkspaceVersion(workspace));
+
+  return toPortablePath(interpolated);
+}
+
+function prettyWorkspaceIdent(workspace: Workspace) {
+  if (workspace.manifest.name !== null) {
+    return structUtils.slugifyIdent(workspace.manifest.name);
+  } else {
+    return `package`;
+  }
+}
+
+function prettyWorkspaceVersion(workspace: Workspace) {
+  if (workspace.manifest.version !== null) {
+    return workspace.manifest.version;
+  } else {
+    return `unknown`;
   }
 }
