@@ -3,9 +3,9 @@
     "private": true,
     "main": "./sources/index.js",
     "dependencies": {
-        "@berry/fslib": "workspace:2.0.0-rc.0",
+        "@berry/fslib": "workspace:2.0.0-rc.1",
         "@berry/monorepo": "workspace:0.0.0",
-        "@berry/parsers": "workspace:2.0.0-rc.0",
+        "@berry/parsers": "workspace:2.0.0-rc.1",
         "fs-extra": "^7.0.1",
         "pkg-tests-core": "workspace:0.0.0",
         "semver": "^5.6.0"

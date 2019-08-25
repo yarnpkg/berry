@@ -4,10 +4,6 @@
   "displayName": "ZipFS - a zip file system",
   "description": "Allows to easily inspect and modify files stored within zip archives.",
   "version": "0.1.0",
-  "nextVersion": {
-    "semver": "0.1.0",
-    "nonce": "8583351816150539"
-  },
   "engines": {
     "vscode": "^1.23.0"
   },
@@ -66,8 +62,8 @@
     }
   },
   "devDependencies": {
-    "@berry/fslib": "workspace:2.0.0-rc.0",
-    "@berry/pnpify": "workspace:2.0.0-rc.0",
+    "@berry/fslib": "workspace:2.0.0-rc.1",
+    "@berry/pnpify": "workspace:2.0.0-rc.1",
     "pnp-webpack-plugin": "^1.4.3",
     "ts-loader": "^5.3.3",
     "typescript": "^3.3.3333",

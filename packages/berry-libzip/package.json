@@ -1,13 +1,9 @@
 {
   "name": "@berry/libzip",
-  "version": "2.0.0-rc.0",
-  "nextVersion": {
-    "semver": "2.0.0-rc.1",
-    "nonce": "3168660184001661"
-  },
+  "version": "2.0.0-rc.1",
   "main": "./sources/index.ts",
   "devDependencies": {
-    "@berry/pnpify": "workspace:2.0.0-rc.0",
+    "@berry/pnpify": "workspace:2.0.0-rc.1",
     "typescript": "^3.3.3333"
   },
   "scripts": {

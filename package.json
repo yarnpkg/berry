@@ -18,7 +18,7 @@
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.3.3",
     "@babel/register": "^7.5.5",
-    "@berry/pnpify": "workspace:2.0.0-rc.0",
+    "@berry/pnpify": "workspace:2.0.0-rc.1",
     "@types/camelcase": "5.2.0",
     "@types/chalk": "2.2.0",
     "@types/cross-spawn": "6.0.0",
