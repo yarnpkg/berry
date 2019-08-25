@@ -27,6 +27,11 @@ jobs:
         compgen -G 'artifacts/yarn-*.js'
       continue-on-error: true
 
+    - name: 'Build the deb dist folder'
+      run: |
+        ./scripts/build-dist.sh
+      if: success()
+
     - name: 'Build the deb archive'
       uses: ./scripts/actions/build-deb
       if: success()
