@@ -346,7 +346,7 @@ describe(`Commands`, () => {
           ({stderr} = error);
         }
 
-        const expectedPath = npath.resolve('/artifacts/berry-core.tgz');
+        const expectedPath = `${npath.sep}${npath.join('artifacts', 'berry-core.tgz')}`;
         await expect(stderr).toMatch(`no such file or directory, open '${expectedPath}'`);
       }),
     );
