@@ -1,5 +1,5 @@
-import {ppath}         from '@berry/fslib';
-import {fs as fsUtils} from 'pkg-tests-core';
+import {fromPortablePath} from '@berry/fslib';
+import {fs as fsUtils}    from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   describe(`pack`, () => {
@@ -346,7 +346,7 @@ describe(`Commands`, () => {
           ({stderr} = error);
         }
 
-        await expect(stderr).toMatch(`no such file or directory, open '${ppath.resolve('/artifacts/berry-core.tgz')}'`);
+        await expect(stderr).toMatch(`no such file or directory, open '${fromPortablePath('/artifacts/berry-core.tgz')}'`);
       }),
     );
   });
