@@ -1,6 +1,10 @@
 {
   "name": "@berry/parsers",
   "version": "2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.1",
+    "nonce": "3138253992714865"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "js-yaml": "^3.10.0"

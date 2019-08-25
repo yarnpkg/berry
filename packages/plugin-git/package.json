@@ -1,6 +1,8 @@
 {
   "name": "@berry/plugin-git",
-  "version:next": "^2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.0"
+  },
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {

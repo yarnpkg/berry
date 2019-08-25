@@ -18,13 +18,20 @@ jobs:
       with:
         version: 10.x
 
-    - name: 'Apply the new version numbers'
-      run: |
-        node ./scripts/run-yarn.js version apply --all
-
     - name: 'Generate the artifacts'
       run: |
         node ./scripts/run-yarn.js release:all
+
+    - id: check-if-deb-is-needed
+      name: 'Check whether the deb package must be rebuilt'
+      run: |
+        compgen -G './artifacts/yarn-*.js' > /dev/null
+      continue-on-error: true
+
+    - id: build-dep
+      name: 'Build the deb archive'
+      uses: ./scripts/actions/build-deb
+      if: job.steps.check-if-deb-is-needed.status == failure
 
     - name: 'Make the commit'
       uses: ./scripts/actions/make-commit
@@ -35,5 +42,12 @@ jobs:
 
     - name: 'Send the artifacts'
       uses: arcanis/release-action@master
+      env:
+        GITHUB_TOKEN: ${{secrets.YARNBOT_TOKEN}}
+
+    - name: 'Publish the packages'
+      run: |
+        YARN_NPM_PUBLISH_REGISTRY=https://npm.pkg.github.com YARN_NPM_AUTH_TOKEN="${GITHUB_TOKEN}" \
+          node ./scripts/run-yarn.js workspaces foreach npm publish --topological --tolerate-republish
       env:
         GITHUB_TOKEN: ${{secrets.YARNBOT_TOKEN}}

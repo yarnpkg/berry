@@ -2137,6 +2137,7 @@ __metadata:
     "@berry/pnp": "workspace:2.0.0-rc.0"
     cross-spawn: "npm:^6.0.5"
     eslint: "npm:^5.16.0"
+    typescript: "npm:^3.3.3333"
   peerDependencies:
     eslint: "*"
     typescript: "*"

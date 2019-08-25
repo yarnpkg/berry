@@ -5,7 +5,6 @@
     "semver": "2.0.0-rc.1",
     "nonce": "6974102271407775"
   },
-  "version:next": "2.0.0-rc.1",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {

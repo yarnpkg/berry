@@ -74,10 +74,6 @@ jobs:
       with:
         version: ${{matrix.node}}.x
 
-    - name: 'Use Yarn 1.17.2'
-      run: |
-        npm install -g yarn@1.17.2
-
     - name: 'Build the standard bundle & plugins'
       run: |
         set -e

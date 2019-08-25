@@ -15,7 +15,8 @@
   "devDependencies": {
     "@berry/monorepo": "workspace:0.0.0",
     "@berry/pnp": "workspace:2.0.0-rc.0",
-    "eslint": "^5.16.0"
+    "eslint": "^5.16.0",
+    "typescript": "^3.3.3333"
   },
   "peerDependencies": {
     "eslint": "*",

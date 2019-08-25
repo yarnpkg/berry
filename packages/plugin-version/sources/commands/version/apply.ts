@@ -13,6 +13,9 @@ export default class VersionApplyCommand extends BaseCommand {
   @Command.Boolean(`--all`)
   all: boolean = false;
 
+  @Command.Boolean(`--json`)
+  json: boolean = false;
+
   @Command.Boolean(`--dependents`)
   dependents: boolean = false;
 
@@ -23,6 +26,8 @@ export default class VersionApplyCommand extends BaseCommand {
       This command will apply the deferred version changes (scheduled via \`yarn version major|minor|patch\`) on the current workspace (or all of them if \`--all\`) is specified.
 
       It will also update the \`workspace:\` references across all your local workspaces so that they keep refering to the same workspace even after the version bump.
+
+      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
     `,
     examples: [[
       `Apply the version change to the local workspace`,
@@ -43,6 +48,7 @@ export default class VersionApplyCommand extends BaseCommand {
 
     const applyReport = await StreamReport.start({
       configuration,
+      json: this.json,
       stdout: this.context.stdout,
     }, async report => {
       const allDependents: Map<Workspace, Array<[
@@ -84,11 +90,19 @@ export default class VersionApplyCommand extends BaseCommand {
       // First a quick sanity check before we start modifying stuff
 
       const validateWorkspace = (workspace: Workspace) => {
-        if (!workspace.manifest.raw || !workspace.manifest.raw[`version:next`])
+        const nextVersion = workspace.manifest.raw.nextVersion;
+        if (typeof nextVersion === `undefined`)
           return;
+        if (typeof nextVersion !== `object` || nextVersion === null)
+          throw new Error(`Assertion failed: The nextVersion field should have been an object`);
 
-        const newVersion = workspace.manifest.raw[`version:next`];
-        if (typeof newVersion !== `string` || !semver.valid(newVersion)) {
+        const newVersion = workspace.manifest.raw.nextVersion.semver;
+        if (typeof newVersion === `undefined`)
+          return;
+        if (typeof newVersion !== `string`)
+          throw new Error(`Assertion failed: The nextVersion.semver should have been a string`);
+
+        if (!semver.valid(newVersion)) {
           throw new UsageError(`Can't apply the version bump if the resulting version (${newVersion}) isn't valid semver`);
         }
       };
@@ -117,10 +131,16 @@ export default class VersionApplyCommand extends BaseCommand {
         if (typeof newVersion !== `string`)
           throw new Error(`Assertion failed: The nextVersion.semver should have been a string`);
 
+        const oldVersion = workspace.manifest.version;
         workspace.manifest.version = newVersion;
         workspace.manifest.raw.nextVersion = undefined;
 
+        const identString = workspace.manifest.name !== null
+          ? structUtils.stringifyIdent(workspace.manifest.name)
+          : null;
+
         report.reportInfo(MessageName.UNNAMED, `${structUtils.prettyLocator(configuration, workspace.anchoredLocator)}: Bumped to ${newVersion}`);
+        report.reportJson({cwd: workspace.cwd, ident: identString, oldVersion, newVersion});
 
         const dependents = allDependents.get(workspace);
         if (typeof dependents === `undefined`)
