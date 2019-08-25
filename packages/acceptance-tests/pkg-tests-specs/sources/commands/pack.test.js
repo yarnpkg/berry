@@ -352,16 +352,11 @@ describe(`Commands`, () => {
         version: '0.0.1',
       }, async ({path, run, source}) => {
         await run(`install`);
+        const tmpDir = await xfs.mktempPromise()
 
-        let stderr;
-        try {
-          ({stderr} = await run(`pack`, `--out`, `/artifacts/berry-core.tgz`));
-        } catch (error) {
-          ({stderr} = error);
-        }
+        await run(`pack`, `--out`, `${tmpDir}/berry-core.tgz`);;
 
-        const expectedPath = fromPortablePath(toPortablePath('/artifacts/berry-core.tgz'));
-        await expect(stderr).toMatch(`no such file or directory, open '${expectedPath}'`);
+        expect(xfs.existsSync(`${tmpDir}/berry-core.tgz`)).toEqual(true);
       }),
     );
   });
