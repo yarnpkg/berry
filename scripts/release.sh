@@ -42,6 +42,9 @@ build_package() {
 # Bump the packages, and store which ones have been bumped (and thus need to be re-released)
 PACKAGES_TO_RELEASE=( $(node "$REPO_DIR"/scripts/run-yarn.js version apply --all --json | jq -r .ident) )
 
+# Don't forget to update the lockfile to apply the new versions
+node "$REPO_DIR"/scripts/run-yarn.js install
+
 build_cli
 
 build_plugin plugin-exec
