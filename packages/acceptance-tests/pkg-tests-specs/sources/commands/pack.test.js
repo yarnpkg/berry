@@ -332,7 +332,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `can output the archive in a absolute destination`,
+      `could output the archive in a absolute destination`,
       makeTemporaryEnv({
         name: '@berry/core',
         version: '0.0.1',
