@@ -14,7 +14,7 @@ ensureAvailable rpmbuild
 
 CONTENTS_DIR=./scripts/actions/build-deb/contents
 PACKAGE_TMPDIR=tmp/debian_pkg
-VERSION=`node ./dist/berry.js --version`
+VERSION=`./dist/bin/yarn --version`
 OUTPUT_DIR=artifacts
 DEB_PACKAGE_NAME=yarn-next_$VERSION'_all.deb'
 
@@ -29,14 +29,18 @@ umask 0022 # Ensure permissions are correct (0755 for dirs, 0644 for files)
 PACKAGE_TMPDIR_ABSOLUTE=$(readlink -f $PACKAGE_TMPDIR)
 
 # Create Linux package structure
-mkdir -p $PACKAGE_TMPDIR/usr/bin/
 mkdir -p $PACKAGE_TMPDIR/usr/share/yarn-next/
 mkdir -p $PACKAGE_TMPDIR/usr/share/doc/yarn-next/
-cp dist/* $PACKAGE_TMPDIR/usr/share/yarn-next/
-chmod 0755 $PACKAGE_TMPDIR/usr/share/yarn-next/
+cp -r dist/* $PACKAGE_TMPDIR/usr/share/yarn-next/
 cp $CONTENTS_DIR/copyright $PACKAGE_TMPDIR/usr/share/doc/yarn-next/copyright
+chmod 0755 $PACKAGE_TMPDIR/usr/share/yarn-next/
 
-ln -s ../share/yarn-next/berry.js $PACKAGE_TMPDIR/usr/bin/yarn-next
+# The Yarn executable expects to be in the same directory as the libraries, so
+# we can't just copy it directly to /usr/bin. Symlink them instead.
+mkdir -p $PACKAGE_TMPDIR/usr/bin/
+ln -s ../share/yarn-next/bin/yarn $PACKAGE_TMPDIR/usr/bin/yarn-next
+# Alias as "yarnpkg" too.
+ln -s ../share/yarn-next/bin/yarn $PACKAGE_TMPDIR/usr/bin/yarnpkg-next
 
 # Common FPM parameters for all packages we'll build using FPM
 FPM="fpm --input-type dir --chdir $PACKAGE_TMPDIR --name yarn-next --version $VERSION "`

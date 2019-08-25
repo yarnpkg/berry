@@ -7,14 +7,20 @@ umask 0022 # Ensure permissions are correct (0755 for dirs, 0644 for files)
 
 version=$(yarn --version)
 
+rm -rf dist
 mkdir -p artifacts
-mkdir -p dist
+mkdir -p dist/bin
 
 cp README.md dist/
 cp LICENSE.md dist/
-cp packages/berry-cli/bundles/berry.js dist/berry.js
-# TODO: Create .cmd wrapper for Windows
-chmod +x dist/berry.js
+cp packages/berry-cli/bundles/berry.js dist/bin/yarn.js
+cp scripts/dist-scripts/yarn dist/bin/yarn
+cp scripts/dist-scripts/yarn.cmd dist/bin/yarn.cmd
+cp scripts/dist-scripts/yarn.ps1 dist/bin/yarn.ps1
+# Create yarnpkg as symlink to yarn
+ln -s yarn dist/bin/yarnpkg
+# Ensure all scripts are executable
+chmod +x dist/bin/*
 
 case "$(tar --version)" in
   *GNU*)

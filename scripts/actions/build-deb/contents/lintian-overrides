@@ -1,14 +1,4 @@
 # No changelog file at the moment
 yarn-next: debian-changelog-file-missing
-# node-gyp throws this
-yarn-next: python-script-but-no-python-dep
-# Some .js files in node_modules have 0777 permissions instead of 0666
-yarn-next: executable-not-elf-or-script
-# Some node_modules have node in shebang
-yarn-next: unusual-interpreter
-# Third-party licenses
-yarn-next: extra-license-file
-# lib/async.js in node_modules
-yarn-next: embedded-javascript-library
 # No manpage... yet!
 yarn-next: binary-without-manpage
