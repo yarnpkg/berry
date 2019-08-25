@@ -116,7 +116,6 @@ export function areLocatorsEqual(a: Locator, b: Locator) {
 
 export function parseIdent(string: string): Ident {
   const ident = tryParseIdent(string);
-
   if (!ident)
     throw new Error(`Invalid ident (${string})`);
 
@@ -125,17 +124,20 @@ export function parseIdent(string: string): Ident {
 
 export function tryParseIdent(string: string): Ident | null {
   const match = string.match(/^(?:@([^\/]+?)\/)?([^\/]+)$/);
-
   if (!match)
     return null;
 
   const [, scope, name] = match;
-  return makeIdent(scope, name);
+
+  const realScope = typeof scope !== `undefined`
+    ? scope
+    : null;
+
+  return makeIdent(realScope, name);
 }
 
 export function parseDescriptor(string: string, strict: boolean = false): Descriptor {
   const descriptor = tryParseDescriptor(string, strict);
-
   if (!descriptor)
     throw new Error(`Invalid descriptor (${string})`);
 
@@ -150,20 +152,23 @@ export function tryParseDescriptor(string: string, strict: boolean = false): Des
   if (!match)
     return null;
 
-  let [, scope, name, range] = match;
-
+  const [, scope, name, range] = match;
   if (range === `unknown`)
     throw new Error(`Invalid range (${string})`);
 
-  if (!range)
-    range = `unknown`;
+  const realScope = typeof scope !== `undefined`
+    ? scope
+    : null;
 
-  return makeDescriptor(makeIdent(scope, name), range);
+  const realRange = typeof range !== `undefined`
+    ? range
+    : `unknown`;
+
+  return makeDescriptor(makeIdent(realScope, name), realRange);
 }
 
 export function parseLocator(string: string, strict: boolean = false): Locator {
   const locator = tryParseLocator(string, strict);
-
   if (!locator)
     throw new Error(`Invalid locator (${string})`);
 
@@ -178,15 +183,19 @@ export function tryParseLocator(string: string, strict: boolean = false): Locato
   if (!match)
     return null;
 
-  let [, scope, name, reference] = match;
-
+  const [, scope, name, reference] = match;
   if (reference === `unknown`)
     throw new Error(`Invalid reference (${string})`);
 
-  if (!reference)
-    reference = `unknown`;
+  const realScope = typeof scope !== `undefined`
+    ? scope
+    : null;
 
-  return makeLocator(makeIdent(scope, name), reference);
+  const realReference = typeof reference !== `undefined`
+    ? reference
+    : `unknown`;
+
+  return makeLocator(makeIdent(realScope, name), realReference);
 }
 
 export function parseRange(range: string) {
@@ -244,6 +253,14 @@ export function stringifyLocator(locator: Locator) {
   }
 }
 
+export function slugifyIdent(ident: Ident) {
+  if (ident.scope !== null) {
+    return `@${ident.scope}-${ident.name}`;
+  } else {
+    return ident.name;
+  }
+}
+
 export function slugifyLocator(locator: Locator) {
   const protocolIndex = locator.reference.indexOf(`:`);
 
@@ -270,8 +287,8 @@ export function slugifyLocator(locator: Locator) {
   const hashTruncate = 10;
 
   const slug = locator.scope
-    ? `@${locator.scope}-${locator.name}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`
-    : `${locator.name}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`;
+    ? `${slugifyIdent(locator)}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`
+    : `${slugifyIdent(locator)}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`;
 
   return toFilename(slug);
 }
