@@ -24,6 +24,8 @@ export default class PackCommand extends BaseCommand {
       If the \`-n,--dry-run\` flag is set the command will just print the file paths without actually generating the package archive.
 
       If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
+
+      If the \`-o,---out\` is set the archive will be created at the specified path.
     `,
     examples: [[
       `Create an archive from the active workspace`,
@@ -31,6 +33,9 @@ export default class PackCommand extends BaseCommand {
     ], [
       `List the files that would be made part of the workspace's archive`,
       `yarn pack --dry-run`,
+    ], [
+      `Name and output the archive in a dedicated folder`,
+      `yarn pack /artifacts/%n.tgz`,
     ]],
   });
 
