@@ -18,12 +18,12 @@ Object {
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"initLicense\\",\\"effective\\":null,\\"description\\":\\"License used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"initScope\\",\\"effective\\":\\"berry-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"initScope\\",\\"effective\\":\\"my-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
@@ -68,12 +68,12 @@ Object {
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
-➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
 ➤ YN0000: ignorePath - If true, the local executable will be ignored when using the global one - false
 ➤ YN0000: initLicense - License used when creating packages via the init command - null
-➤ YN0000: initScope - Scope used when creating packages via the init command - 'berry-test'
+➤ YN0000: initScope - Scope used when creating packages via the init command - 'my-test'
 ➤ YN0000: initVersion - Version used when creating packages via the init command - null
 ➤ YN0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null
 ➤ YN0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
@@ -119,12 +119,12 @@ Object {
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
-➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
 ➤ YN0000: ignorePath - <default> - false
 ➤ YN0000: initLicense - <default> - null
-➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'berry-test'
+➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'my-test'
 ➤ YN0000: initVersion - <default> - null
 ➤ YN0000: lastUpdateCheck - <default> - null
 ➤ YN0000: lockfileFilename - <default> - 'yarn.lock'
@@ -170,12 +170,12 @@ Object {
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
-➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
 ➤ YN0000: ignorePath - false
 ➤ YN0000: initLicense - null
-➤ YN0000: initScope - 'berry-test'
+➤ YN0000: initScope - 'my-test'
 ➤ YN0000: initVersion - null
 ➤ YN0000: lastUpdateCheck - null
 ➤ YN0000: lockfileFilename - 'yarn.lock'
@@ -221,12 +221,12 @@ Object {
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"initLicense\\",\\"effective\\":null,\\"description\\":\\"License used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"initScope\\",\\"effective\\":\\"berry-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"initScope\\",\\"effective\\":\\"my-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":\\"1555784893958\\",\\"source\\":\\"WORKSPACE_ROOT/.spec-yarnrc\\",\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
@@ -271,12 +271,12 @@ Object {
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
-➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
 ➤ YN0000: ignorePath - If true, the local executable will be ignored when using the global one - false
 ➤ YN0000: initLicense - License used when creating packages via the init command - null
-➤ YN0000: initScope - Scope used when creating packages via the init command - 'berry-test'
+➤ YN0000: initScope - Scope used when creating packages via the init command - 'my-test'
 ➤ YN0000: initVersion - Version used when creating packages via the init command - null
 ➤ YN0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - '1555784893958'
 ➤ YN0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
@@ -322,12 +322,12 @@ Object {
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
-➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
 ➤ YN0000: ignorePath - <default> - false
 ➤ YN0000: initLicense - <default> - null
-➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'berry-test'
+➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'my-test'
 ➤ YN0000: initVersion - <default> - null
 ➤ YN0000: lastUpdateCheck - WORKSPACE_ROOT/.spec-yarnrc - '1555784893958'
 ➤ YN0000: lockfileFilename - <default> - 'yarn.lock'
@@ -373,12 +373,12 @@ Object {
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
-➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
 ➤ YN0000: ignorePath - false
 ➤ YN0000: initLicense - null
-➤ YN0000: initScope - 'berry-test'
+➤ YN0000: initScope - 'my-test'
 ➤ YN0000: initVersion - null
 ➤ YN0000: lastUpdateCheck - '1555784893958'
 ➤ YN0000: lockfileFilename - 'yarn.lock'
@@ -424,12 +424,12 @@ Object {
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"initLicense\\",\\"effective\\":null,\\"description\\":\\"License used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"initScope\\",\\"effective\\":\\"berry-test\\",\\"source\\":\\"WORKSPACE_ROOT/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"initScope\\",\\"effective\\":\\"my-test\\",\\"source\\":\\"WORKSPACE_ROOT/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":\\"1555784893958\\",\\"source\\":\\"WORKSPACE_ROOT/.spec-yarnrc\\",\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
@@ -474,12 +474,12 @@ Object {
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
-➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
 ➤ YN0000: ignorePath - If true, the local executable will be ignored when using the global one - false
 ➤ YN0000: initLicense - License used when creating packages via the init command - null
-➤ YN0000: initScope - Scope used when creating packages via the init command - 'berry-test'
+➤ YN0000: initScope - Scope used when creating packages via the init command - 'my-test'
 ➤ YN0000: initVersion - Version used when creating packages via the init command - null
 ➤ YN0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - '1555784893958'
 ➤ YN0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
@@ -525,12 +525,12 @@ Object {
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
-➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
 ➤ YN0000: ignorePath - <default> - false
 ➤ YN0000: initLicense - <default> - null
-➤ YN0000: initScope - WORKSPACE_ROOT/.spec-yarnrc - 'berry-test'
+➤ YN0000: initScope - WORKSPACE_ROOT/.spec-yarnrc - 'my-test'
 ➤ YN0000: initVersion - <default> - null
 ➤ YN0000: lastUpdateCheck - WORKSPACE_ROOT/.spec-yarnrc - '1555784893958'
 ➤ YN0000: lockfileFilename - <default> - 'yarn.lock'
@@ -576,12 +576,12 @@ Object {
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
-➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
 ➤ YN0000: ignorePath - false
 ➤ YN0000: initLicense - null
-➤ YN0000: initScope - 'berry-test'
+➤ YN0000: initScope - 'my-test'
 ➤ YN0000: initVersion - null
 ➤ YN0000: lastUpdateCheck - '1555784893958'
 ➤ YN0000: lockfileFilename - 'yarn.lock'
@@ -627,12 +627,12 @@ Object {
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"initLicense\\",\\"effective\\":null,\\"description\\":\\"License used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"initScope\\",\\"effective\\":\\"berry-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"initScope\\",\\"effective\\":\\"my-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":\\"1555784893958\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/.spec-yarnrc\\",\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
@@ -677,12 +677,12 @@ Object {
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
-➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
 ➤ YN0000: ignorePath - If true, the local executable will be ignored when using the global one - false
 ➤ YN0000: initLicense - License used when creating packages via the init command - null
-➤ YN0000: initScope - Scope used when creating packages via the init command - 'berry-test'
+➤ YN0000: initScope - Scope used when creating packages via the init command - 'my-test'
 ➤ YN0000: initVersion - Version used when creating packages via the init command - null
 ➤ YN0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - '1555784893958'
 ➤ YN0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
@@ -728,12 +728,12 @@ Object {
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
-➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
 ➤ YN0000: ignorePath - <default> - false
 ➤ YN0000: initLicense - <default> - null
-➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'berry-test'
+➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'my-test'
 ➤ YN0000: initVersion - <default> - null
 ➤ YN0000: lastUpdateCheck - WORKSPACE_ROOT/subfolder/.spec-yarnrc - '1555784893958'
 ➤ YN0000: lockfileFilename - <default> - 'yarn.lock'
@@ -779,12 +779,12 @@ Object {
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
-➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
 ➤ YN0000: ignorePath - false
 ➤ YN0000: initLicense - null
-➤ YN0000: initScope - 'berry-test'
+➤ YN0000: initScope - 'my-test'
 ➤ YN0000: initVersion - null
 ➤ YN0000: lastUpdateCheck - '1555784893958'
 ➤ YN0000: lockfileFilename - 'yarn.lock'
@@ -830,12 +830,12 @@ Object {
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"initLicense\\",\\"effective\\":null,\\"description\\":\\"License used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
-{\\"key\\":\\"initScope\\",\\"effective\\":\\"berry-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
+{\\"key\\":\\"initScope\\",\\"effective\\":\\"my-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"initVersion\\",\\"effective\\":null,\\"description\\":\\"Version used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lockfileFilename\\",\\"effective\\":\\"yarn.lock\\",\\"description\\":\\"Name of the files where the Yarn dependency tree entries must be stored\\",\\"type\\":\\"STRING\\",\\"default\\":\\"yarn.lock\\"}
@@ -880,12 +880,12 @@ Object {
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
-➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
 ➤ YN0000: ignorePath - If true, the local executable will be ignored when using the global one - false
 ➤ YN0000: initLicense - License used when creating packages via the init command - null
-➤ YN0000: initScope - Scope used when creating packages via the init command - 'berry-test'
+➤ YN0000: initScope - Scope used when creating packages via the init command - 'my-test'
 ➤ YN0000: initVersion - Version used when creating packages via the init command - null
 ➤ YN0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null
 ➤ YN0000: lockfileFilename - Name of the files where the Yarn dependency tree entries must be stored - 'yarn.lock'
@@ -931,12 +931,12 @@ Object {
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
-➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
 ➤ YN0000: ignorePath - <default> - false
 ➤ YN0000: initLicense - <default> - null
-➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'berry-test'
+➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'my-test'
 ➤ YN0000: initVersion - <default> - null
 ➤ YN0000: lastUpdateCheck - <default> - null
 ➤ YN0000: lockfileFilename - <default> - 'yarn.lock'
@@ -982,12 +982,12 @@ Object {
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
-➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
 ➤ YN0000: ignorePath - false
 ➤ YN0000: initLicense - null
-➤ YN0000: initScope - 'berry-test'
+➤ YN0000: initScope - 'my-test'
 ➤ YN0000: initVersion - null
 ➤ YN0000: lastUpdateCheck - null
 ➤ YN0000: lockfileFilename - 'yarn.lock'
@@ -1033,7 +1033,7 @@ Object {
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
-{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.berry/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
+{\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"ignorePath\\",\\"effective\\":false,\\"description\\":\\"If true, the local executable will be ignored when using the global one\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -1083,7 +1083,7 @@ Object {
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
-➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
 ➤ YN0000: ignorePath - If true, the local executable will be ignored when using the global one - false
@@ -1134,7 +1134,7 @@ Object {
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
-➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
 ➤ YN0000: ignorePath - <default> - false
@@ -1185,7 +1185,7 @@ Object {
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
-➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.berry/global'
+➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
 ➤ YN0000: ignorePath - false
