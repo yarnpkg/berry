@@ -18,9 +18,11 @@ As you can guess, this philosophy (coupled with the high number of external cont
 
   - **Plugins can add new commands.** Each plugin can ship as many commands as they see fit, which will be injected into our CLI (also making them available through `yarn --help`). Because the Yarn plugins are dynamically linked with the running Yarn process, they can be very small and guaranteed to share the exact same behavior as your package manager (which wouldn't be the case if you were to reimplement the workspace detection, for example).
 
+  - **Plugins can be integrated with each other.** Each plugin has the ability to trigger special actions called hooks, and to register themselves to any defined hook. So for example, you could make a plugin that would execute an action each time a package is added as dependency of one of your workspaces!
+
 ## How to use plugins?
 
-Plugins are single-file JS scripts built via the `@berry/builder` tools. They are easy to use:
+Plugins are single-file JS scripts built via the `@yarnpkg/builder` tools. They are easy to use:
 
 ### Automatic setup
 
@@ -40,7 +42,7 @@ The `yarn plugin import` command is useful, but in case you prefer to setup your
 
   - Update your project-level `.yarnrc.yml` file by adding the following property:
 
-    ```
+    ```yaml
     plugins:
       - "./my-plugin.js"
     ```
