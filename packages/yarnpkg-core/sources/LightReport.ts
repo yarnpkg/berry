@@ -84,7 +84,7 @@ export class LightReport extends Report {
       this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} Errors happened when preparing the environment required to run this command.\n`);
 
       if (this.suggestInstall) {
-        this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} This might be caused by packages being missing from the lockfile, in which case running "berry install" might help.\n`);
+        this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} This might be caused by packages being missing from the lockfile, in which case running "yarn install" might help.\n`);
       }
     }
   }

@@ -1,6 +1,6 @@
-# `@berry/shell`
+# `@yarnpkg/shell`
 
-A Javascript implementation of a bash-like shell (we use it in Yarn 2 to provide cross-platform scripting). This package contains the parser and interpreter merged together; for the parser only you can check the `@berry/parsers` package, but you probably won't need it.
+A Javascript implementation of a bash-like shell (we use it in Yarn 2 to provide cross-platform scripting). This package exposes an API that abstracts both the parser and the interpreter; should you only need the parser you can check out `@yarnpkg/parsers`, but you probably won't need it.
 
 ## Usage
 
@@ -26,11 +26,11 @@ process.exitCode = await execute(`ls "$1" | wc -l`, [process.cwd()]);
 
 ## Help Wanted
 
-- Stream redirections (`> foo`)
 - Glob support (`ls *.txt`)
 - More string manipulators
 
-## No-Goals
+## Non-Goals
 
 - Perfect POSIX compliance (basic scripting is enough for now)
-- Multiline-scripts (we mostly target one-liners)
+- Multiline scripts (we mostly target one-liners)
+- Control structures (same reason)

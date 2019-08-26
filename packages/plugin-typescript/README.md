@@ -1,4 +1,4 @@
-# `@berry/plugin-typescript`
+# `@yarnpkg/plugin-typescript`
 
 This plugin automatically adds `@types/` packages into your dependencies when you add a package that's covered by one.
 
@@ -10,16 +10,16 @@ Note that for performance reasons the plugin doesn't try to check whether the ad
 
 1. [Install Yarn](https://github.com/yarnpkg/berry#install)
 
-2. Install the `@berry/plugin-typescript` plugin:
+2. Install the `@yarnpkg/plugin-typescript` plugin:
 
    ```
-   $ yarn plugin add @berry/plugin-typescript
+   $ yarn plugin import @yarnpkg/plugin-typescript
    ```
 
 ## Example
 
 ```
-❯ berry/packages/plugin-typescript ❯ yarn add lodash
+❯ yarn/packages/plugin-typescript ❯ yarn add lodash
 
 ➤ BR0000: ┌ Resolution step
 ➤ BR0002: │ babel-preset-jest@npm:24.1.0 doesn't provide @babel/core@^7.0.0-0 requested by @babel/plugin-syntax-object-rest-spread@npm:7.2.0

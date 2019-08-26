@@ -57,7 +57,7 @@ export default class SetVersionCommand extends BaseCommand {
 
     const target = typeof this.installPath !== `undefined`
       ? ppath.resolve(this.context.cwd, toPortablePath(this.installPath))
-      : ppath.resolve(toPortablePath(tmpdir()), `berry` as Filename);
+      : ppath.resolve(toPortablePath(tmpdir()), `yarnpkg-sources` as Filename);
 
     const report = await StreamReport.start({
       configuration,
@@ -103,10 +103,10 @@ export default class SetVersionCommand extends BaseCommand {
 
       report.reportSeparator();
 
-      const bundlePath = ppath.resolve(target, `packages/berry-cli/bundles/berry.js` as PortablePath);
+      const bundlePath = ppath.resolve(target, `packages/yarnpkg-cli/bundles/yarn.js` as PortablePath);
       const bundleBuffer = await xfs.readFilePromise(bundlePath);
 
-      await setVersion(project, `berry`, bundleBuffer, {
+      await setVersion(project, `yarn-sources`, bundleBuffer, {
         report,
       });
     });

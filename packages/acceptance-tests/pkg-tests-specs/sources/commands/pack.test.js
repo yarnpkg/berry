@@ -400,14 +400,14 @@ describe(`Commands`, () => {
     test(
       `could output the archive in a absolute destination`,
       makeTemporaryEnv({
-        name: '@yarnpkg/core',
+        name: 'test',
         version: '0.0.1',
       }, async ({path, run, source}) => {
         await run(`install`);
         const tmpDir = await xfs.mktempPromise()
 
-        await run(`pack`, `--out`, `${tmpDir}/berry-core.tgz`);;
-        expect(xfs.existsSync(`${tmpDir}/berry-core.tgz`)).toEqual(true);
+        await run(`pack`, `--out`, `${tmpDir}/test.tgz`);;
+        expect(xfs.existsSync(`${tmpDir}/test.tgz`)).toEqual(true);
       }),
     );
   });

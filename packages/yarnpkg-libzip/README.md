@@ -1,4 +1,4 @@
-# `@berry/libzip`
+# `@yarnpkg/libzip`
 
 This package contains a wasm-compiled version of the libzip.
 

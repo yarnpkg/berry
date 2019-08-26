@@ -146,7 +146,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: null,
   },
 
-  // Settings related to the proxying Berry to a specific executable
+  // Settings related to proxying all Yarn calls to a specific executable
   yarnPath: {
     description: `Path to the local executable that must be used over the global one`,
     type: SettingsType.ABSOLUTE_PATH,
@@ -738,9 +738,6 @@ export class Configuration {
   }
 
   use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
-    if (typeof data.berry === `object` && data.berry !== null)
-      data = data.berry;
-
     for (const key of Object.keys(data)) {
       // The plugins have already been loaded at this point
       if (key === `plugins`)
