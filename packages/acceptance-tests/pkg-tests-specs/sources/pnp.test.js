@@ -1,4 +1,4 @@
-const {NodeFS, xfs} = require(`@berry/fslib`);
+const {NodeFS, xfs} = require(`@yarnpkg/fslib`);
 const cp = require(`child_process`);
 const {rename} = require(`fs-extra`);
 const {relative, isAbsolute} = require(`path`);

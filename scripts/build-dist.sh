@@ -5,7 +5,7 @@ set -o pipefail
 
 umask 0022 # Ensure permissions are correct (0755 for dirs, 0644 for files)
 
-version=$(node packages/berry-cli/bundles/berry.js --version)
+version=$(node packages/yarnpkg-cli/bundles/yarn.js --version)
 
 rm -rf dist
 mkdir -p artifacts
@@ -13,7 +13,7 @@ mkdir -p dist/bin
 
 cp README.md dist/
 cp LICENSE.md dist/
-cp packages/berry-cli/bundles/berry.js dist/bin/yarn.js
+cp packages/yarnpkg-cli/bundles/yarn.js dist/bin/yarn.js
 cp scripts/dist-scripts/yarn dist/bin/yarn
 cp scripts/dist-scripts/yarn.cmd dist/bin/yarn.cmd
 cp scripts/dist-scripts/yarn.ps1 dist/bin/yarn.ps1

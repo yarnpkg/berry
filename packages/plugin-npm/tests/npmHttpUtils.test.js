@@ -1,22 +1,22 @@
-import {Configuration, httpUtils} from '@berry/core';
-import {get}                      from '@berry/plugin-npm/sources/npmHttpUtils';
+import {Configuration, httpUtils} from '@yarnpkg/core';
+import {get}                      from '@yarnpkg/plugin-npm/sources/npmHttpUtils';
 
-jest.mock(`@berry/core`, () => ({
-  ... require.requireActual(`@berry/core`),
+jest.mock(`@yarnpkg/core`, () => ({
+  ... require.requireActual(`@yarnpkg/core`),
   httpUtils: {
-    ... require.requireActual(`@berry/core`).httpUtils,
+    ... require.requireActual(`@yarnpkg/core`).httpUtils,
     get: jest.fn(() => Promise.resolve()),
   },
 }));
 
 const makeConfiguration = () => Configuration.find(__dirname, {
   modules: new Map([
-    [`@berry/core`, require(`@berry/core`)],
-    [`@berry/fslib`, require(`@berry/core`)],
-    [`@berry/plugin-npm`, require(`@berry/plugin-npm`)],
+    [`@yarnpkg/core`, require(`@yarnpkg/core`)],
+    [`@yarnpkg/fslib`, require(`@yarnpkg/core`)],
+    [`@yarnpkg/plugin-npm`, require(`@yarnpkg/plugin-npm`)],
   ]),
   plugins: new Set([
-    `@berry/plugin-npm`,
+    `@yarnpkg/plugin-npm`,
   ]),
 }, {
   useRc: false,

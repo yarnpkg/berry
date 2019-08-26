@@ -1,7 +1,7 @@
-import {BaseCommand}                                               from '@berry/cli';
-import {Configuration, Project, StreamReport, MessageName, Report} from '@berry/core';
-import {httpUtils}                                                 from '@berry/core';
-import {xfs, PortablePath, ppath}                                  from '@berry/fslib';
+import {BaseCommand}                                               from '@yarnpkg/cli';
+import {Configuration, Project, StreamReport, MessageName, Report} from '@yarnpkg/core';
+import {httpUtils}                                                 from '@yarnpkg/core';
+import {xfs, PortablePath, ppath}                                  from '@yarnpkg/fslib';
 import {Command, UsageError}                                       from 'clipanion';
 import semver, {SemVer}                                            from 'semver';
 

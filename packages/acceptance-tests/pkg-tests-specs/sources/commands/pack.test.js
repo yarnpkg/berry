@@ -1,4 +1,4 @@
-import {xfs,toPortablePath, fromPortablePath} from '@berry/fslib';
+import {xfs,toPortablePath, fromPortablePath} from '@yarnpkg/fslib';
 import {fs as fsUtils}                        from 'pkg-tests-core';
 
 describe(`Commands`, () => {
@@ -292,7 +292,7 @@ describe(`Commands`, () => {
     test(
       `it should make the filename non-descriptive by default`,
       makeTemporaryEnv({
-        name: '@berry/core',
+        name: '@yarnpkg/core',
         version: '0.0.1',
       }, async ({path, run, source}) => {
         await run(`install`);
@@ -400,7 +400,7 @@ describe(`Commands`, () => {
     test(
       `could output the archive in a absolute destination`,
       makeTemporaryEnv({
-        name: '@berry/core',
+        name: '@yarnpkg/core',
         version: '0.0.1',
       }, async ({path, run, source}) => {
         await run(`install`);

@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                                       from '@berry/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace} from '@berry/core';
-import {miscUtils, structUtils}                                                    from '@berry/core';
-import {npmConfigUtils, npmHttpUtils}                                              from '@berry/plugin-npm';
-import {packUtils}                                                                 from '@berry/plugin-pack';
+import {BaseCommand, WorkspaceRequiredError}                                       from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace} from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                    from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                              from '@yarnpkg/plugin-npm';
+import {packUtils}                                                                 from '@yarnpkg/plugin-pack';
 import {Command, UsageError}                                                       from 'clipanion';
 import {createHash}                                                                from 'crypto';
 import ssri                                                                        from 'ssri';

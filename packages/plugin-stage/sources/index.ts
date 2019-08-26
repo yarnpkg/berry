@@ -1,5 +1,5 @@
-import {Plugin, Project} from '@berry/core';
-import {PortablePath}    from '@berry/fslib';
+import {Plugin, Project} from '@yarnpkg/core';
+import {PortablePath}    from '@yarnpkg/fslib';
 
 import stage             from './commands/stage';
 

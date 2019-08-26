@@ -241,7 +241,7 @@ const YarnrcDoc = () => <>
         name={`pnpEnableInlining`}
         placeholder={`true`}
         description={<>
-          If true (the default), Yarn will generate a single <code>.pnp.js</code> file that contains all the required data for your project to work properly. If toggled off, Yarn will also generate a <code>.pnp.data.json</code> file meant to be consumed by the <code>@berry/pnp</code> package.
+          If true (the default), Yarn will generate a single <code>.pnp.js</code> file that contains all the required data for your project to work properly. If toggled off, Yarn will also generate a <code>.pnp.data.json</code> file meant to be consumed by the <code>@yarnpkg/pnp</code> package.
         </>}
       />
       <SymlScalarProperty

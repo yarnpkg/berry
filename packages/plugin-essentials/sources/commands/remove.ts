@@ -1,7 +1,7 @@
-import {BaseCommand, WorkspaceRequiredError}       from '@berry/cli';
-import {Configuration, Cache, Descriptor, Project} from '@berry/core';
-import {StreamReport, Workspace}                   from '@berry/core';
-import {structUtils}                               from '@berry/core';
+import {BaseCommand, WorkspaceRequiredError}       from '@yarnpkg/cli';
+import {Configuration, Cache, Descriptor, Project} from '@yarnpkg/core';
+import {StreamReport, Workspace}                   from '@yarnpkg/core';
+import {structUtils}                               from '@yarnpkg/core';
 import {Command, UsageError}                       from 'clipanion';
 
 import * as suggestUtils                           from '../suggestUtils';

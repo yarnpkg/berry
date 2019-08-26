@@ -1,4 +1,4 @@
-import {Plugin, SettingsType} from '@berry/core';
+import {Plugin, SettingsType} from '@yarnpkg/core';
 
 import login                  from './commands/npm/login';
 import npmPublish             from './commands/npm/publish';

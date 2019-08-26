@@ -1,5 +1,5 @@
-import {MessageName, ReportError, Report, Workspace, scriptUtils} from '@berry/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename}     from '@berry/fslib';
+import {MessageName, ReportError, Report, Workspace, scriptUtils} from '@yarnpkg/core';
+import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename}     from '@yarnpkg/fslib';
 import mm                                                         from 'micromatch';
 import {PassThrough}                                              from 'stream';
 import tar                                                        from 'tar-stream';

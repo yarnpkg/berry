@@ -1,7 +1,7 @@
-import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest} from '@berry/core';
-import {Descriptor, Locator}                                                                 from '@berry/core';
-import {LinkType}                                                                            from '@berry/core';
-import {structUtils}                                                                         from '@berry/core';
+import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest} from '@yarnpkg/core';
+import {Descriptor, Locator}                                                                 from '@yarnpkg/core';
+import {LinkType}                                                                            from '@yarnpkg/core';
+import {structUtils}                                                                         from '@yarnpkg/core';
 import semver                                                                                from 'semver';
 
 import {PROTOCOL}                                                                            from './constants';

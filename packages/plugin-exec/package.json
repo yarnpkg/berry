@@ -1,12 +1,12 @@
 {
-  "name": "@berry/plugin-exec",
+  "name": "@yarnpkg/plugin-exec",
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/builder": "workspace:2.0.0-rc.1",
-    "@berry/core": "workspace:2.0.0-rc.1",
-    "@berry/fslib": "workspace:2.0.0-rc.1",
     "@types/tmp": "^0.0.33",
+    "@yarnpkg/builder": "workspace:2.0.0-rc.1",
+    "@yarnpkg/core": "workspace:2.0.0-rc.1",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.1",
     "tmp": "^0.0.33"
   },
   "devDependencies": {

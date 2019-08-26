@@ -15,14 +15,14 @@ make_build() {
   cp "$src" "$dest"
 }
 
-make_build build:cli berry-cli berry.js
+make_build build:cli yarnpkg-cli yarn.js
 echo
-make_build build:plugin-exec plugin-exec @berry/plugin-exec.js
+make_build build:plugin-exec plugin-exec @yarnpkg/plugin-exec.js
 echo
-make_build build:plugin-stage plugin-stage @berry/plugin-stage.js
+make_build build:plugin-stage plugin-stage @yarnpkg/plugin-stage.js
 echo
-make_build build:plugin-version plugin-version @berry/plugin-version.js
+make_build build:plugin-version plugin-version @yarnpkg/plugin-version.js
 echo
-make_build build:plugin-typescript plugin-typescript @berry/plugin-typescript.js
+make_build build:plugin-typescript plugin-typescript @yarnpkg/plugin-typescript.js
 echo
-make_build build:plugin-workspace-tools plugin-workspace-tools @berry/plugin-workspace-tools.js
+make_build build:plugin-workspace-tools plugin-workspace-tools @yarnpkg/plugin-workspace-tools.js

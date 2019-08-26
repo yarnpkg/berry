@@ -1,6 +1,6 @@
-import {BaseCommand}                      from '@berry/cli';
-import {Configuration, Project}           from '@berry/core';
-import {NodeFS, xfs, PortablePath, ppath} from '@berry/fslib';
+import {BaseCommand}                      from '@yarnpkg/cli';
+import {Configuration, Project}           from '@yarnpkg/core';
+import {NodeFS, xfs, PortablePath, ppath} from '@yarnpkg/fslib';
 import {Command, UsageError}              from 'clipanion';
 
 import {Driver as GitDriver}              from '../drivers/GitDriver';

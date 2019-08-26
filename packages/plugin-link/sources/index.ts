@@ -1,4 +1,4 @@
-import {Plugin}          from '@berry/core';
+import {Plugin}          from '@yarnpkg/core';
 
 import {LinkFetcher}     from './LinkFetcher';
 import {LinkResolver}    from './LinkResolver';

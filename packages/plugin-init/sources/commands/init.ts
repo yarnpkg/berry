@@ -1,8 +1,8 @@
-import {BaseCommand}             from '@berry/cli';
-import {Configuration, Manifest} from '@berry/core';
-import {structUtils}             from '@berry/core';
-import {xfs, ppath, toFilename}  from '@berry/fslib';
-import {updateAndSave}           from '@berry/json-proxy';
+import {BaseCommand}             from '@yarnpkg/cli';
+import {Configuration, Manifest} from '@yarnpkg/core';
+import {structUtils}             from '@yarnpkg/core';
+import {xfs, ppath, toFilename}  from '@yarnpkg/fslib';
+import {updateAndSave}           from '@yarnpkg/json-proxy';
 import {Command, UsageError}     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export

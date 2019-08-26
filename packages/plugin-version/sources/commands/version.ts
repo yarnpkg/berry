@@ -1,5 +1,5 @@
-import {BaseCommand, WorkspaceRequiredError} from '@berry/cli';
-import {Configuration, Project}              from '@berry/core';
+import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
+import {Configuration, Project}              from '@yarnpkg/core';
 import {Command, UsageError}                 from 'clipanion';
 import semver                                from 'semver';
 import * as yup                              from 'yup';

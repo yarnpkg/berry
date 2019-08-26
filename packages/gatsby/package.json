@@ -1,5 +1,5 @@
 {
-  "name": "@berry/gatsby",
+  "name": "@yarnpkg/gatsby",
   "private": true,
   "dependencies": {
     "@emotion/core": "^10.0.7",

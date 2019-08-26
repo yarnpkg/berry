@@ -1,5 +1,5 @@
-import {Descriptor, Plugin, SettingsType} from '@berry/core';
-import {Workspace}                        from '@berry/core';
+import {Descriptor, Plugin, SettingsType} from '@yarnpkg/core';
+import {Workspace}                        from '@yarnpkg/core';
 
 import add                                from './commands/add';
 import bin                                from './commands/bin';

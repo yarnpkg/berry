@@ -1,7 +1,7 @@
-import {BaseCommand, openWorkspace}   from '@berry/cli';
-import {Configuration, MessageName}   from '@berry/core';
-import {StreamReport}                 from '@berry/core';
-import {npmConfigUtils, npmHttpUtils} from '@berry/plugin-npm';
+import {BaseCommand, openWorkspace}   from '@yarnpkg/cli';
+import {Configuration, MessageName}   from '@yarnpkg/core';
+import {StreamReport}                 from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils} from '@yarnpkg/plugin-npm';
 import {Command}                      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export

@@ -1,5 +1,5 @@
-import {Plugin, SettingsType} from '@berry/core';
-import {SettingsDefinition}   from '@berry/core';
+import {Plugin, SettingsType} from '@yarnpkg/core';
+import {SettingsDefinition}   from '@yarnpkg/core';
 
 import {NpmFetcher}           from './NpmFetcher';
 import {NpmRemapResolver}     from './NpmRemapResolver';

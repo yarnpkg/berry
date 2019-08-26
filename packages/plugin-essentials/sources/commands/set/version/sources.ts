@@ -1,7 +1,7 @@
-import {BaseCommand}                                                          from '@berry/cli';
-import {WorkspaceRequiredError}                                               from '@berry/cli';
-import {Configuration, MessageName, Project, StreamReport, execUtils}         from '@berry/core';
-import {Filename, PortablePath, ppath, toPortablePath, xfs, fromPortablePath} from '@berry/fslib';
+import {BaseCommand}                                                          from '@yarnpkg/cli';
+import {WorkspaceRequiredError}                                               from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, StreamReport, execUtils}         from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, toPortablePath, xfs, fromPortablePath} from '@yarnpkg/fslib';
 import {Command}                                                              from 'clipanion';
 import {tmpdir}                                                               from 'os';
 

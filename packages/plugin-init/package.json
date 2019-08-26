@@ -1,12 +1,12 @@
 {
-  "name": "@berry/plugin-init",
+  "name": "@yarnpkg/plugin-init",
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/cli": "workspace:2.0.0-rc.1",
-    "@berry/core": "workspace:2.0.0-rc.1",
-    "@berry/fslib": "workspace:2.0.0-rc.1",
-    "@berry/json-proxy": "workspace:2.0.0-rc.0",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.1",
+    "@yarnpkg/core": "workspace:2.0.0-rc.1",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.1",
+    "@yarnpkg/json-proxy": "workspace:2.0.0-rc.0",
     "clipanion": "^2.1.1"
   },
   "version": "2.0.0-rc.0"

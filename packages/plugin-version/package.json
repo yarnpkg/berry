@@ -1,18 +1,18 @@
 {
-  "name": "@berry/plugin-version",
+  "name": "@yarnpkg/plugin-version",
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/cli": "workspace:2.0.0-rc.1",
-    "@berry/core": "workspace:2.0.0-rc.1",
-    "@berry/fslib": "workspace:2.0.0-rc.1",
-    "@berry/plugin-pack": "workspace:2.0.0-rc.1",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.1",
+    "@yarnpkg/core": "workspace:2.0.0-rc.1",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.1",
+    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.1",
     "clipanion": "^2.1.1",
     "semver": "^5.6.0",
     "yup": "^0.27.0"
   },
   "devDependencies": {
-    "@berry/builder": "workspace:2.0.0-rc.1",
+    "@yarnpkg/builder": "workspace:2.0.0-rc.1",
     "typescript": "^3.3.3333"
   },
   "scripts": {

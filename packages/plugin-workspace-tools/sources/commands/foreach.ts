@@ -1,7 +1,7 @@
-import {BaseCommand, WorkspaceRequiredError}               from '@berry/cli';
-import {Configuration, LocatorHash, Project, Workspace}    from '@berry/core';
-import {DescriptorHash, MessageName, Report, StreamReport} from '@berry/core';
-import {miscUtils, structUtils}                            from '@berry/core';
+import {BaseCommand, WorkspaceRequiredError}               from '@yarnpkg/cli';
+import {Configuration, LocatorHash, Project, Workspace}    from '@yarnpkg/core';
+import {DescriptorHash, MessageName, Report, StreamReport} from '@yarnpkg/core';
+import {miscUtils, structUtils}                            from '@yarnpkg/core';
 import {Command, UsageError}                               from 'clipanion';
 import {cpus}                                              from 'os';
 import pLimit                                              from 'p-limit';

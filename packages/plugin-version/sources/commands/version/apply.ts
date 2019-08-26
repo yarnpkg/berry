@@ -1,7 +1,7 @@
-import {BaseCommand, WorkspaceRequiredError}                   from '@berry/cli';
-import {AllDependencies, Configuration, IdentHash, Manifest}   from '@berry/core';
-import {MessageName, Project, StreamReport, WorkspaceResolver} from '@berry/core';
-import {Workspace, structUtils}                                from '@berry/core';
+import {BaseCommand, WorkspaceRequiredError}                   from '@yarnpkg/cli';
+import {AllDependencies, Configuration, IdentHash, Manifest}   from '@yarnpkg/core';
+import {MessageName, Project, StreamReport, WorkspaceResolver} from '@yarnpkg/core';
+import {Workspace, structUtils}                                from '@yarnpkg/core';
 import {Command, UsageError}                                   from 'clipanion';
 import semver                                                  from 'semver';
 

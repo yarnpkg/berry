@@ -1,5 +1,5 @@
-import {CommandContext, structUtils} from '@berry/core';
-import {NodeFS, ppath}               from '@berry/fslib';
+import {CommandContext, structUtils} from '@yarnpkg/core';
+import {NodeFS, ppath}               from '@yarnpkg/fslib';
 import {Command}                     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export

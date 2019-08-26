@@ -1,7 +1,7 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@berry/core';
-import {Locator, MessageName}                          from '@berry/core';
-import {execUtils, scriptUtils, structUtils, tgzUtils} from '@berry/core';
-import {NodeFS, xfs, ppath, PortablePath, toFilename}  from '@berry/fslib';
+import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
+import {Locator, MessageName}                          from '@yarnpkg/core';
+import {execUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
+import {NodeFS, xfs, ppath, PortablePath, toFilename}  from '@yarnpkg/fslib';
 import querystring                                     from 'querystring';
 import {dirSync, tmpNameSync}                          from 'tmp';
 

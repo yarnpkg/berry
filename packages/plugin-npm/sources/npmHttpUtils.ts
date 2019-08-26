@@ -1,5 +1,5 @@
-import {Configuration, Ident, httpUtils} from '@berry/core';
-import {MessageName, ReportError}        from '@berry/core';
+import {Configuration, Ident, httpUtils} from '@yarnpkg/core';
+import {MessageName, ReportError}        from '@yarnpkg/core';
 import inquirer                          from 'inquirer';
 
 import * as npmConfigUtils               from './npmConfigUtils';
