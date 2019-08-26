@@ -1,0 +1,46 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-jest-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E Jest'
+jobs:
+  chore:
+    name: 'Validating Jest'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn init -p
+        yarn add jest
+
+        echo "it('should pass', () => { expect(true).toBeTruthy(); });" > pass.test.js
+        yarn jest pass.test.js
+
+        echo "it('should fail', () => { expect(false).toBeTruthy(); });" > fail.test.js
+        ! yarn jest fail.test.js
+
+        yarn add left-pad
+
+        echo "const leftPad = require('left-pad'); it('should resolve a module', () => { expect(typeof leftPad).toBe('function');});" > module.test.js
+        yarn jest module.test.js
