@@ -34,8 +34,8 @@ jobs:
         yarn init -p
         yarn add jest
 
-        echo "it('should pass', () => { \n expect(true).toBeTruthy(); });" > pass.test.js
+        echo "it('should pass', () => { expect(true).toBeTruthy(); });" > pass.test.js
         yarn jest pass.test.js
 
-        echo "it('should fail', () => { \n expect(false).toBeTruthy(); });" > fail.test.js
+        echo "it('should fail', () => { expect(false).toBeTruthy(); });" > fail.test.js
         ! yarn jest fail.test.js
