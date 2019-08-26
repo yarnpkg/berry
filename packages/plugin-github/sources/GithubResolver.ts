@@ -1,7 +1,7 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@berry/core';
-import {miscUtils, structUtils}                          from '@berry/core';
-import {LinkType}                                        from '@berry/core';
-import {Descriptor, Locator, Manifest}                   from '@berry/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
+import {miscUtils, structUtils}                          from '@yarnpkg/core';
+import {LinkType}                                        from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
 
 import * as githubUtils                                  from './githubUtils';
 

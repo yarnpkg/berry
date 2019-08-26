@@ -1,4 +1,4 @@
-import {Plugin, SettingsType} from '@berry/core';
+import {Plugin, SettingsType} from '@yarnpkg/core';
 
 import versionApply           from './commands/version/apply';
 import versionCheck           from './commands/version/check';

@@ -8,7 +8,7 @@ Starting from the v2, Yarn now supports plugins. For more information about what
 
 ## What does a plugin look like?
 
-Plugins are scripts that get loaded at runtime by Yarn, and that can inject new behaviors into it. They also can require some packages provided by Yarn itself, such as `@berry/core`. This allows you to use the exact same core API as the Yarn binary currently in use, kinda like if it was a peer dependency!
+Plugins are scripts that get loaded at runtime by Yarn, and that can inject new behaviors into it. They also can require some packages provided by Yarn itself, such as `@yarnpkg/core`. This allows you to use the exact same core API as the Yarn binary currently in use, kinda like if it was a peer dependency!
 
 > **Important:** Since plugins are loaded before Yarn starts (and thus before you make your first install), it's strongly advised to write your plugins in such a way that they work without dependencies. If that becomes difficult, know that we provide a tool that can bundle your plugins into a single Javascript file, ready to be published.
 

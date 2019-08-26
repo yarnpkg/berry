@@ -1,7 +1,7 @@
-import {BaseCommand}                                                          from '@berry/cli';
-import {WorkspaceRequiredError}                                               from '@berry/cli';
-import {Configuration, MessageName, Project, StreamReport, execUtils}         from '@berry/core';
-import {Filename, PortablePath, ppath, toPortablePath, xfs, fromPortablePath} from '@berry/fslib';
+import {BaseCommand}                                                          from '@yarnpkg/cli';
+import {WorkspaceRequiredError}                                               from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, StreamReport, execUtils}         from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, toPortablePath, xfs, fromPortablePath} from '@yarnpkg/fslib';
 import {Command}                                                              from 'clipanion';
 import {tmpdir}                                                               from 'os';
 
@@ -57,7 +57,7 @@ export default class SetVersionCommand extends BaseCommand {
 
     const target = typeof this.installPath !== `undefined`
       ? ppath.resolve(this.context.cwd, toPortablePath(this.installPath))
-      : ppath.resolve(toPortablePath(tmpdir()), `berry` as Filename);
+      : ppath.resolve(toPortablePath(tmpdir()), `yarnpkg-sources` as Filename);
 
     const report = await StreamReport.start({
       configuration,
@@ -103,10 +103,10 @@ export default class SetVersionCommand extends BaseCommand {
 
       report.reportSeparator();
 
-      const bundlePath = ppath.resolve(target, `packages/berry-cli/bundles/berry.js` as PortablePath);
+      const bundlePath = ppath.resolve(target, `packages/yarnpkg-cli/bundles/yarn.js` as PortablePath);
       const bundleBuffer = await xfs.readFilePromise(bundlePath);
 
-      await setVersion(project, `berry`, bundleBuffer, {
+      await setVersion(project, `yarn-sources`, bundleBuffer, {
         report,
       });
     });

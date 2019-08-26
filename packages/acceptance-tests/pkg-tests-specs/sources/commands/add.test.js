@@ -3,7 +3,7 @@ const {
   fs: {createTemporaryFolder, readJson, readFile},
   tests: {getPackageDirectoryPath},
 } = require('pkg-tests-core');
-const {parseSyml} = require('@berry/parsers');
+const {parseSyml} = require('@yarnpkg/parsers');
 
 describe(`Commands`, () => {
   describe(`add`, () => {

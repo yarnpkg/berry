@@ -1,6 +1,6 @@
-import {BaseCommand, WorkspaceRequiredError}  from '@berry/cli';
-import {Configuration, Project, StreamReport} from '@berry/core';
-import {miscUtils}                            from '@berry/core';
+import {BaseCommand, WorkspaceRequiredError}  from '@yarnpkg/cli';
+import {Configuration, Project, StreamReport} from '@yarnpkg/core';
+import {miscUtils}                            from '@yarnpkg/core';
 import {Command}                              from 'clipanion';
 import {inspect}                              from 'util';
 

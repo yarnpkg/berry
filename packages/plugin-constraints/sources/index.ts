@@ -1,4 +1,4 @@
-import {Plugin}          from '@berry/core';
+import {Plugin}          from '@yarnpkg/core';
 
 import queryConstraints  from './commands/constraints/query';
 import sourceConstraints from './commands/constraints/source';

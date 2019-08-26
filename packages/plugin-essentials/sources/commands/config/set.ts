@@ -1,5 +1,5 @@
-import {BaseCommand}         from '@berry/cli';
-import {Configuration}       from '@berry/core';
+import {BaseCommand}         from '@yarnpkg/cli';
+import {Configuration}       from '@yarnpkg/core';
 import {Command, UsageError} from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export

@@ -1,7 +1,7 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {Locator, MessageName}                       from '@berry/core';
-import {httpUtils, structUtils, tgzUtils}           from '@berry/core';
-import {PortablePath}                               from '@berry/fslib';
+import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
+import {Locator, MessageName}                       from '@yarnpkg/core';
+import {httpUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
+import {PortablePath}                               from '@yarnpkg/fslib';
 
 import * as githubUtils                             from './githubUtils';
 

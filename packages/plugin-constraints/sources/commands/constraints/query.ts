@@ -1,6 +1,6 @@
-import {BaseCommand}            from '@berry/cli';
-import {Configuration, Project} from '@berry/core';
-import {StreamReport}           from '@berry/core';
+import {BaseCommand}            from '@yarnpkg/cli';
+import {Configuration, Project} from '@yarnpkg/core';
+import {StreamReport}           from '@yarnpkg/core';
 import {Command}                from 'clipanion';
 
 import {Constraints}            from '../../Constraints';

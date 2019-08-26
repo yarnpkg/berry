@@ -1,7 +1,7 @@
-import {BaseCommand}                                         from '@berry/cli';
-import {Configuration, IdentHash, Ident, Project, Workspace} from '@berry/core';
-import {MessageName, StreamReport, AllDependencies, Report}  from '@berry/core';
-import {structUtils}                                         from '@berry/core';
+import {BaseCommand}                                         from '@yarnpkg/cli';
+import {Configuration, IdentHash, Ident, Project, Workspace} from '@yarnpkg/core';
+import {MessageName, StreamReport, AllDependencies, Report}  from '@yarnpkg/core';
+import {structUtils}                                         from '@yarnpkg/core';
 import {Command}                                             from 'clipanion';
 import getPath                                               from 'lodash/get';
 import setPath                                               from 'lodash/set';

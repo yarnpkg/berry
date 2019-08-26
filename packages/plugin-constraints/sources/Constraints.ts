@@ -1,6 +1,6 @@
-import {Ident, MessageName, Project, ReportError, Workspace} from '@berry/core';
-import {miscUtils, structUtils}                              from '@berry/core';
-import {xfs, ppath, PortablePath, toFilename}                from '@berry/fslib';
+import {Ident, MessageName, Project, ReportError, Workspace} from '@yarnpkg/core';
+import {miscUtils, structUtils}                              from '@yarnpkg/core';
+import {xfs, ppath, PortablePath, toFilename}                from '@yarnpkg/fslib';
 import pl                                                    from 'tau-prolog';
 
 import {linkProjectToSession}                                from './tauModule';

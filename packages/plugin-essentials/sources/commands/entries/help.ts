@@ -1,4 +1,4 @@
-import {CommandContext} from '@berry/core';
+import {CommandContext} from '@yarnpkg/core';
 import {Command}        from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export

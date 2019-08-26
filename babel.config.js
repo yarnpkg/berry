@@ -8,6 +8,6 @@ module.exports = {
     `@babel/preset-typescript`,
   ],
   ignore: [
-    `packages/berry-libzip/sources/libzip.js`,
+    `packages/yarnpkg-libzip/sources/libzip.js`,
   ],
 };

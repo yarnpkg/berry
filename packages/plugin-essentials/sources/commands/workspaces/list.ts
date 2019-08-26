@@ -1,5 +1,5 @@
-import {BaseCommand}                                       from '@berry/cli';
-import {Configuration, Project, StreamReport, structUtils} from '@berry/core';
+import {BaseCommand}                                       from '@yarnpkg/cli';
+import {Configuration, Project, StreamReport, structUtils} from '@yarnpkg/core';
 import {Command}                                           from 'clipanion';
 
 const DEPENDENCY_TYPES = ['devDependencies', 'dependencies'];

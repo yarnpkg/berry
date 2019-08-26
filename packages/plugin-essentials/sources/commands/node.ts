@@ -1,6 +1,6 @@
-import {BaseCommand}            from '@berry/cli';
-import {Configuration, Project} from '@berry/core';
-import {execUtils, scriptUtils} from '@berry/core';
+import {BaseCommand}            from '@yarnpkg/cli';
+import {Configuration, Project} from '@yarnpkg/core';
+import {execUtils, scriptUtils} from '@yarnpkg/core';
 import {Command}                from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export

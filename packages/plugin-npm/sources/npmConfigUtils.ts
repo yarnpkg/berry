@@ -1,4 +1,4 @@
-import {Configuration, Manifest} from '@berry/core';
+import {Configuration, Manifest} from '@yarnpkg/core';
 
 export enum RegistryType {
   FETCH_REGISTRY = 'npmRegistryServer',

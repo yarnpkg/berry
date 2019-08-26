@@ -1,4 +1,4 @@
-const {xfs} = require(`@berry/fslib`);
+const {xfs} = require(`@yarnpkg/fslib`);
 const {
   fs: {createTemporaryFolder, readJson, writeJson},
   tests: {getPackageDirectoryPath},

@@ -1,4 +1,4 @@
-const {NodeFS} = require(`@berry/fslib`);
+const {NodeFS} = require(`@yarnpkg/fslib`);
 const {satisfies} = require(`semver`);
 
 const {

@@ -18,14 +18,14 @@ How it works is simple: when a non-PnP-compliant project tries to access the `no
 
 1. Add PnPify to your dependencies:
 
-   ```
-   $> yarn add @berry/pnpify
+   ```bash
+   yarn add @yarnpkg/pnpify
    ```
 
 2. Use pnpify to run the incompatible tool:
 
-   ```
-   $> yarn pnpify tsc
+   ```bash
+   yarn pnpify tsc
    ```
 
 ## VSCode Support
@@ -34,14 +34,14 @@ PnPify also is compatible with VSCode! Follow those steps to enable it:
 
 1. Add PnPify to your dependencies:
 
-   ```
-   $> yarn add @berry/pnpify
+   ```bash
+   yarn add @yarnpkg/pnpify
    ```
 
 2. Run the following command, which will generate a new directory called `.vscode/pnpify`:
 
-   ```
-   $> yarn pnpify --sdk
+   ```bash
+   yarn pnpify --sdk
    ```
 
 3. For safety reason VSCode requires you to explicitly activate the custom TS settings:

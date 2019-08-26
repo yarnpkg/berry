@@ -1,0 +1,24 @@
+{
+  "name": "@yarnpkg/json-proxy",
+  "version": "2.0.0-rc.0",
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.1"
+  },
+  "devDependencies": {
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.1",
+    "typescript": "^3.3.3333"
+  },
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "release": "yarn npm publish"
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ]
+}

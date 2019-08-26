@@ -1,6 +1,6 @@
-import {Hooks as CoreHooks, Plugin, Project, SettingsType} from '@berry/core';
-import {Filename, NodeFS, PortablePath, ppath, xfs}        from '@berry/fslib';
-import {Hooks as StageHooks}                               from '@berry/plugin-stage';
+import {Hooks as CoreHooks, Plugin, Project, SettingsType} from '@yarnpkg/core';
+import {Filename, NodeFS, PortablePath, ppath, xfs}        from '@yarnpkg/fslib';
+import {Hooks as StageHooks}                               from '@yarnpkg/plugin-stage';
 
 import {PnpLinker}                                         from './PnpLinker';
 import unplug                                              from './commands/unplug';

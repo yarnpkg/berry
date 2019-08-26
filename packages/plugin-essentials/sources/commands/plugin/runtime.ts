@@ -1,5 +1,5 @@
-import {BaseCommand}                 from '@berry/cli';
-import {Configuration, StreamReport} from '@berry/core';
+import {BaseCommand}                 from '@yarnpkg/cli';
+import {Configuration, StreamReport} from '@yarnpkg/core';
 import {Command}                     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export

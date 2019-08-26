@@ -6,9 +6,9 @@ title: "Architecture"
 
 ## General architecture
 
-Yarn works through a core package (published as `@berry/core`) that exposes the various base components that make up a project. Some of components are classes that you might recognize from the API: `Configuration`, `Project`, `Workspace`, `Cache`, `Manifest`, and others. All those are provided by the core package.
+Yarn works through a core package (published as `@yarnpkg/core`) that exposes the various base components that make up a project. Some of components are classes that you might recognize from the API: `Configuration`, `Project`, `Workspace`, `Cache`, `Manifest`, and others. All those are provided by the core package.
 
-The core itself doesn't do much - it merely contains the logic required to manage a project. In order to use this logic from the command-line Yarn provides an indirection called `@berry/cli` which, interestingly, doesn't do much either. It however has two very important responsibilities: it hydrates a project instance based on the current directory (`cwd`), and inject the prebuilt Yarn plugins into the environment.
+The core itself doesn't do much - it merely contains the logic required to manage a project. In order to use this logic from the command-line Yarn provides an indirection called `@yarnpkg/cli` which, interestingly, doesn't do much either. It however has two very important responsibilities: it hydrates a project instance based on the current directory (`cwd`), and inject the prebuilt Yarn plugins into the environment.
 
 See, Yarn is built in modular way that allow most of the business logic related to third-party interactions to be externalized inside their own package - for example the [npm resolver](https://github.com/yarnpkg/berry/tree/master/packages/plugin-npm) is but one plugin amongst many others. This design gives us a much simpler codebase to work with (hence an increased development speed and stabler product), and offers plugin authors the ability to write their own external logic without having to modify the Yarn codebase itself.
 

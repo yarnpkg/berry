@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                        from '@berry/cli';
-import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@berry/core';
-import {Project, StreamReport, Workspace}                           from '@berry/core';
-import {structUtils}                                                from '@berry/core';
-import {PortablePath}                                               from '@berry/fslib';
+import {BaseCommand, WorkspaceRequiredError}                        from '@yarnpkg/cli';
+import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@yarnpkg/core';
+import {Project, StreamReport, Workspace}                           from '@yarnpkg/core';
+import {structUtils}                                                from '@yarnpkg/core';
+import {PortablePath}                                               from '@yarnpkg/fslib';
 import {Command}                                                    from 'clipanion';
 import inquirer                                                     from 'inquirer';
 

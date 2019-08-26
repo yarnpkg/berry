@@ -1,4 +1,4 @@
-import {PortablePath, toFilename} from '@berry/fslib';
+import {PortablePath, toFilename} from '@yarnpkg/fslib';
 
 import * as stageUtils            from '../stageUtils';
 

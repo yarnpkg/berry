@@ -17,7 +17,7 @@
     "@typescript-eslint/indent": ["error", 2, {"SwitchCase": 1}],
     "@typescript-eslint/no-unused-vars": [2, {"args": "none", "ignoreRestSiblings": true}],
     "arca/curly": 2,
-      "arca/import-align": [2, {"collapseExtraSpaces": true}],
+    "arca/import-align": [2, {"collapseExtraSpaces": true}],
     "arca/import-ordering": 2,
     "arca/newline-after-import-section": 2,
     "arca/no-default-export": 2,

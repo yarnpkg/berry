@@ -1,12 +1,12 @@
-import {BaseCommand}                                               from '@berry/cli';
-import {Configuration, Project, StreamReport, MessageName, Report} from '@berry/core';
-import {httpUtils}                                                 from '@berry/core';
-import {xfs, PortablePath, ppath}                                  from '@berry/fslib';
+import {BaseCommand}                                               from '@yarnpkg/cli';
+import {Configuration, Project, StreamReport, MessageName, Report} from '@yarnpkg/core';
+import {httpUtils}                                                 from '@yarnpkg/core';
+import {xfs, PortablePath, ppath}                                  from '@yarnpkg/fslib';
 import {Command, UsageError}                                       from 'clipanion';
 import semver, {SemVer}                                            from 'semver';
 
 const BUNDLE_REGEXP = /^yarn-[0-9]+\.[0-9]+\.[0-9]+\.js$/;
-const BERRY_RANGES = new Set([`berry`, `v2`, `2`, `nightly`, `nightlies`, `rc`]);
+const BERRY_RANGES = new Set([`berry`, `nightly`, `nightlies`, `rc`]);
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetVersionCommand extends BaseCommand {
@@ -65,12 +65,12 @@ export default class SetVersionCommand extends BaseCommand {
       let bundleVersion: string;
 
       if (BERRY_RANGES.has(this.range)) {
-        bundleUrl = `https://github.com/yarnpkg/berry/raw/master/packages/berry-cli/bin/berry.js`;
-        bundleVersion = `berry`;
+        bundleUrl = `https://github.com/yarnpkg/berry/raw/master/packages/yarnpkg-cli/bin/yarn.js`;
+        bundleVersion = `rc`;
         candidates = [bundleVersion];
       } else if (this.range === `nightly-v1`) {
         bundleUrl = `https://nightly.yarnpkg.com/latest.js`;
-        bundleVersion = `nightly`;
+        bundleVersion = `classic`;
         candidates = [bundleVersion];
       } else if (semver.valid(this.range)) {
         const {releases} = await fetchReleases(configuration, {

@@ -1,6 +1,6 @@
-import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace} from '@berry/core';
-import {structUtils}                                                                                  from '@berry/core';
-import {ppath, PortablePath}                                                                          from '@berry/fslib';
+import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace} from '@yarnpkg/core';
+import {structUtils}                                                                                  from '@yarnpkg/core';
+import {ppath, PortablePath}                                                                          from '@yarnpkg/fslib';
 import semver                                                                                         from 'semver';
 
 export type Suggestion = {

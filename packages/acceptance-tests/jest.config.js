@@ -1,4 +1,4 @@
-module.exports = Object.assign({}, require(`@berry/monorepo/jest.config.js`), {
+module.exports = Object.assign({}, require(`@yarnpkg/monorepo/jest.config.js`), {
   modulePathIgnorePatterns: [`pkg-tests-fixtures`],
-  setupFilesAfterEnv: [require.resolve(`./berry.setup.js`)],
+  setupFilesAfterEnv: [require.resolve(`./yarn.setup.js`)],
 });

@@ -1,7 +1,7 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {Locator, MessageName}                       from '@berry/core';
-import {miscUtils, structUtils, tgzUtils}           from '@berry/core';
-import {NodeFS, PortablePath, ppath}                from '@berry/fslib';
+import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
+import {Locator, MessageName}                       from '@yarnpkg/core';
+import {miscUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
+import {NodeFS, PortablePath, ppath}                from '@yarnpkg/fslib';
 import querystring                                  from 'querystring';
 
 import {TARBALL_REGEXP, PROTOCOL}                   from './constants';

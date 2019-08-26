@@ -7,7 +7,7 @@ describe(`Plugins`, () => {
     test(
       `it should automatically add @types to development`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
-        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-typescript.js`))}\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
         await run(`add`, `no-deps`);
 
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
@@ -24,7 +24,7 @@ describe(`Plugins`, () => {
     test(
       `it should automatically add @types for scoped packages`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
-        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-typescript.js`))}\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
         await run(`add`, `@scoped/package`);
 
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
@@ -41,7 +41,7 @@ describe(`Plugins`, () => {
     test(
       `it should not generate a @types dependency if @types package doesn't exist`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
-        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-typescript.js`))}\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
         await run(`add`, `resolve`);
 
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
@@ -55,7 +55,7 @@ describe(`Plugins`, () => {
     test(
       `it should not add @types for transient dependencies`,
       makeTemporaryEnv({}, async ({ path, run, source }) => {
-        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-typescript.js`))}\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
         await run(`add`, `one-fixed-dep`);
 
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
@@ -76,7 +76,7 @@ describe(`Plugins`, () => {
           [`@types/no-deps`]: `2.0.0`
         },
       }, async ({ path, run, source }) => {
-        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-typescript.js`))}\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
         await run(`remove`, `no-deps`);
 
         await expect(readJson(`${path}/package.json`)).resolves.not.toHaveProperty(`devDependencies.@types/no-deps`);
@@ -93,7 +93,7 @@ describe(`Plugins`, () => {
           [`@types/scoped__package`]: `1.0.0`
         },
       }, async ({ path, run, source }) => {
-        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-typescript.js`))}\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
         await run(`remove`, `@scoped/package`);
 
         await expect(readJson(`${path}/package.json`)).resolves.not.toHaveProperty(`devDependencies.@types/scoped__package`);
@@ -110,7 +110,7 @@ describe(`Plugins`, () => {
           typings: `./published-typings.d.ts`,
         },
       }, async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-typescript.js`))}\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
 
         await run(`install`);
         await run(`pack`);

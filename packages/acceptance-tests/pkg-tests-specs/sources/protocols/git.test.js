@@ -1,7 +1,7 @@
 const {
   fs: {readFile},
 } = require('pkg-tests-core');
-const {parseSyml} = require('@berry/parsers');
+const {parseSyml} = require('@yarnpkg/parsers');
 
 const TESTED_URLS = {
   // We've picked util-deprecate because it doesn't have any dependency, and thus

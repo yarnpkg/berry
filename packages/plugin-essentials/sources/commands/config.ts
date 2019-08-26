@@ -1,6 +1,6 @@
-import {BaseCommand}                                            from '@berry/cli';
-import {Configuration, MessageName, SettingsType, StreamReport} from '@berry/core';
-import {miscUtils}                                              from '@berry/core';
+import {BaseCommand}                                            from '@yarnpkg/cli';
+import {Configuration, MessageName, SettingsType, StreamReport} from '@yarnpkg/core';
+import {miscUtils}                                              from '@yarnpkg/core';
 import {Command}                                                from 'clipanion';
 import {inspect}                                                from 'util';
 

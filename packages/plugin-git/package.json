@@ -1,10 +1,10 @@
 {
-  "name": "@berry/plugin-git",
+  "name": "@yarnpkg/plugin-git",
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@berry/core": "workspace:2.0.0-rc.1",
-    "@berry/fslib": "workspace:2.0.0-rc.1",
+    "@yarnpkg/core": "workspace:2.0.0-rc.1",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.1",
     "git-url-parse": "11.1.2",
     "tmp": "^0.0.33"
   },

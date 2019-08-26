@@ -4,7 +4,7 @@ const {
 
 
 async function setupWorkspaces(path) {
-  await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@berry/monorepo/scripts/plugin-workspace-tools.js`))}\n`);
+  await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`))}\n`);
 
   await writeJson(`${path}/docs/package.json`, {
     name: `docs`,

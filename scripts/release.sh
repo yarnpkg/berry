@@ -18,24 +18,24 @@ contains_element() {
 }
 
 build_cli() {
-  if contains_element @berry/cli "${PACKAGES_TO_RELEASE[@]}"; then
+  if contains_element @yarnpkg/cli "${PACKAGES_TO_RELEASE[@]}"; then
     node "$REPO_DIR"/scripts/run-yarn.js build:cli
     CLI_VERSION=$(node "$REPO_DIR"/scripts/run-yarn.js --version)
-    cp "$REPO_DIR"/packages/berry-cli/bundles/berry.js "$ARTIFACT_DIR"/yarn-"$CLI_VERSION".js
+    cp "$REPO_DIR"/packages/yarnpkg-cli/bundles/yarn.js "$ARTIFACT_DIR"/yarn-"$CLI_VERSION".js
   fi
 }
 
 build_plugin() {
-  if contains_element @berry/"$1" "${PACKAGES_TO_RELEASE[@]}"; then
+  if contains_element @yarnpkg/"$1" "${PACKAGES_TO_RELEASE[@]}"; then
     node "$REPO_DIR"/scripts/run-yarn.js build:"$1"
     PLUGIN_VERSION=$(jq -r .version packages/$1/package.json)
-    cp "$REPO_DIR"/packages/"$1"/bundles/@berry/"$1".js "$ARTIFACT_DIR"/"$1"-"$PLUGIN_VERSION".js
+    cp "$REPO_DIR"/packages/"$1"/bundles/@yarnpkg/"$1".js "$ARTIFACT_DIR"/"$1"-"$PLUGIN_VERSION".js
   fi
 }
 
 build_package() {
-  if contains_element @berry/"$1" "${PACKAGES_TO_RELEASE[@]}"; then
-    node "$REPO_DIR"/scripts/run-yarn.js packages/berry-"$1" pack -o "$ARTIFACT_DIR"/"%s-%v.tgz"
+  if contains_element @yarnpkg/"$1" "${PACKAGES_TO_RELEASE[@]}"; then
+    node "$REPO_DIR"/scripts/run-yarn.js packages/yarn-"$1" pack -o "$ARTIFACT_DIR"/"%s-%v.tgz"
   fi
 }
 

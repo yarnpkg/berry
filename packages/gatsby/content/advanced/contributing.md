@@ -33,7 +33,7 @@ The standard bundle uses a predefined set of plugins defined in [`packages/berry
 For development purposes, you can build your plugin as part of your own local bundle by using the `--plugin` option in the command line:
 
 ```
-$> yarn build:cli --plugin @berry/plugin-typescript
+$> yarn build:cli --plugin @yarnpkg/plugin-typescript
 ```
 
 ## Testing your code

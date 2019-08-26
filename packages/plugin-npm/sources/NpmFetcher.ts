@@ -1,7 +1,7 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@berry/core';
-import {structUtils, tgzUtils}                      from '@berry/core';
-import {Locator, MessageName, ReportError}          from '@berry/core';
-import {PortablePath}                               from '@berry/fslib';
+import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
+import {structUtils, tgzUtils}                      from '@yarnpkg/core';
+import {Locator, MessageName, ReportError}          from '@yarnpkg/core';
+import {PortablePath}                               from '@yarnpkg/fslib';
 import semver                                       from 'semver';
 
 import {PROTOCOL}                                   from './constants';

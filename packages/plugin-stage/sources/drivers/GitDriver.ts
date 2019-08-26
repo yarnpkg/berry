@@ -1,5 +1,5 @@
-import {execUtils, Manifest, structUtils, IdentHash, Descriptor} from '@berry/core';
-import {NodeFS, PortablePath, ppath, toFilename}                 from '@berry/fslib';
+import {execUtils, Manifest, structUtils, IdentHash, Descriptor} from '@yarnpkg/core';
+import {NodeFS, PortablePath, ppath, toFilename}                 from '@yarnpkg/fslib';
 
 import * as stageUtils                                           from '../stageUtils';
 

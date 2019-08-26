@@ -1,5 +1,5 @@
-import {Project}      from '@berry/core';
-import {PortablePath} from '@berry/fslib';
+import {Project}      from '@yarnpkg/core';
+import {PortablePath} from '@yarnpkg/fslib';
 import getPath        from 'lodash/get';
 import pl             from 'tau-prolog';
 

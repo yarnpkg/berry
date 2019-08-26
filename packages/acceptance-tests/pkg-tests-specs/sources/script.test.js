@@ -1,4 +1,4 @@
-const {NodeFS, xfs} = require(`@berry/fslib`);
+const {NodeFS, xfs} = require(`@yarnpkg/fslib`);
 const {isAbsolute, resolve} = require('path');
 
 const {

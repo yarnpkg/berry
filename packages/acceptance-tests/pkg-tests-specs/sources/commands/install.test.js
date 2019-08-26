@@ -1,4 +1,4 @@
-import {xfs} from '@berry/fslib';
+import {xfs} from '@yarnpkg/fslib';
 
 describe(`Commands`, () => {
   describe(`add`, () => {

@@ -1,7 +1,7 @@
-import {BaseCommand}                                from '@berry/cli';
-import {Configuration, Cache, Project}              from '@berry/core';
-import {MessageName, StreamReport}                  from '@berry/core';
-import {Filename, NodeFS, xfs, PortablePath, ppath} from '@berry/fslib';
+import {BaseCommand}                                from '@yarnpkg/cli';
+import {Configuration, Cache, Project}              from '@yarnpkg/core';
+import {MessageName, StreamReport}                  from '@yarnpkg/core';
+import {Filename, NodeFS, xfs, PortablePath, ppath} from '@yarnpkg/fslib';
 import {Command}                                    from 'clipanion';
 
 const PRESERVED_FILES = new Set([

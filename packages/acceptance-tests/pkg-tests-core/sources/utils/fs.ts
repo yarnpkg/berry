@@ -1,5 +1,5 @@
 import {Gzip}          from 'zlib';
-import {xfs, NodeFS, PortablePath, ppath, Filename}   from '@berry/fslib';
+import {xfs, NodeFS, PortablePath, ppath, Filename}   from '@yarnpkg/fslib';
 
 const klaw = require('klaw');
 const tarFs = require('tar-fs');

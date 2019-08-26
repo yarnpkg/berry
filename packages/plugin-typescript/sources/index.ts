@@ -1,8 +1,8 @@
-import {Cache, Descriptor, Plugin, Workspace} from '@berry/core';
-import {structUtils}                          from '@berry/core';
-import {Hooks as EssentialsHooks}             from '@berry/plugin-essentials';
-import {suggestUtils}                         from '@berry/plugin-essentials';
-import {Hooks as PackHooks}                   from '@berry/plugin-pack';
+import {Cache, Descriptor, Plugin, Workspace} from '@yarnpkg/core';
+import {structUtils}                          from '@yarnpkg/core';
+import {Hooks as EssentialsHooks}             from '@yarnpkg/plugin-essentials';
+import {suggestUtils}                         from '@yarnpkg/plugin-essentials';
+import {Hooks as PackHooks}                   from '@yarnpkg/plugin-pack';
 
 const getTypesName = (descriptor: Descriptor) => {
   return descriptor.scope

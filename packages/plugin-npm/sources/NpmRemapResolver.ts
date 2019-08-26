@@ -1,5 +1,5 @@
-import {Descriptor, Locator, MinimalResolveOptions, ResolveOptions, Resolver} from '@berry/core';
-import {structUtils}                                                          from '@berry/core';
+import {Descriptor, Locator, MinimalResolveOptions, ResolveOptions, Resolver} from '@yarnpkg/core';
+import {structUtils}                                                          from '@yarnpkg/core';
 
 import {PROTOCOL}                                                             from './constants';
 

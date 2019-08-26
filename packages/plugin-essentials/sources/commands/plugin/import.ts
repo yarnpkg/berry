@@ -1,7 +1,7 @@
-import {BaseCommand}                                                    from '@berry/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport} from '@berry/core';
-import {httpUtils, structUtils}                                         from '@berry/core';
-import {xfs, NodeFS, PortablePath, ppath}                               from '@berry/fslib';
+import {BaseCommand}                                                    from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport} from '@yarnpkg/core';
+import {httpUtils, structUtils}                                         from '@yarnpkg/core';
+import {xfs, NodeFS, PortablePath, ppath}                               from '@yarnpkg/fslib';
 import {Command}                                                        from 'clipanion';
 import {runInNewContext}                                                from 'vm';
 
@@ -24,11 +24,11 @@ export default class PluginDlCommand extends BaseCommand {
       - Third-party plugins can be referenced directly through their public urls.
       - Local plugins can be referenced by their path on the disk.
 
-      Plugins cannot be downloaded from the npm registry, and aren't allowed to have dependencies (they need to be bundled into a single file, possibly thanks to the \`@berry/builder\` package).
+      Plugins cannot be downloaded from the npm registry, and aren't allowed to have dependencies (they need to be bundled into a single file, possibly thanks to the \`@yarnpkg/builder\` package).
     `,
     examples: [[
-      `Download and activate the "@berry/plugin-exec" plugin`,
-      `yarn plugin import @berry/plugin-exec`,
+      `Download and activate the "@yarnpkg/plugin-exec" plugin`,
+      `yarn plugin import @yarnpkg/plugin-exec`,
     ], [
       `Download and activate a community plugin`,
       `yarn plugin import https://example.org/path/to/plugin.js`,
@@ -62,7 +62,7 @@ export default class PluginDlCommand extends BaseCommand {
           const data = await getAvailablePlugins(configuration);
 
           if (!Object.prototype.hasOwnProperty.call(data, key))
-            throw new ReportError(MessageName.PLUGIN_NAME_NOT_FOUND, `Couldn't find a plugin named "${key}" on the remote registry. Note that only the plugins referenced on our website (https://github.com/yarnpkg/berry/blob/master/plugins.yml) can be referenced by their name; any other plugin will have to be referenced through its public url (for example https://github.com/yarnpkg/berry/raw/master/packages/plugin-typescript/bin/%40berry/plugin-typescript.js).`);
+            throw new ReportError(MessageName.PLUGIN_NAME_NOT_FOUND, `Couldn't find a plugin named "${key}" on the remote registry. Note that only the plugins referenced on our website (https://github.com/yarnpkg/berry/blob/master/plugins.yml) can be referenced by their name; any other plugin will have to be referenced through its public url (for example https://github.com/yarnpkg/berry/raw/master/packages/plugin-typescript/bin/%40yarnpkg/plugin-typescript.js).`);
 
           pluginUrl = data[key].url;
         } else {

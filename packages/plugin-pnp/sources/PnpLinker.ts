@@ -1,8 +1,8 @@
-import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName, DependencyMeta} from '@berry/core';
-import {FetchResult, Descriptor, Ident, Locator, Package, BuildDirective, BuildType}                         from '@berry/core';
-import {miscUtils, structUtils}                                                                              from '@berry/core';
-import {CwdFS, FakeFS, NodeFS, xfs, PortablePath, ppath, toFilename}                                         from '@berry/fslib';
-import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@berry/pnp';
+import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName, DependencyMeta} from '@yarnpkg/core';
+import {FetchResult, Descriptor, Ident, Locator, Package, BuildDirective, BuildType}                         from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                                              from '@yarnpkg/core';
+import {CwdFS, FakeFS, NodeFS, xfs, PortablePath, ppath, toFilename}                                         from '@yarnpkg/fslib';
+import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@yarnpkg/pnp';
 import {UsageError}                                                                                          from 'clipanion';
 
 import {getPnpPath}                                                                                          from './index';

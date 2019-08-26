@@ -23,7 +23,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
 - Yarn supports Node by default but isn't limited to it - plugins can add support for other languages
 - Yarn supports [workspaces](https://yarnpkg.github.io/berry/features/workspaces) natively, and its CLI takes advantage of that
 - Yarn uses a portable shell to execute package scripts, guaranteeing they work the same way on Windows and Linux
-- Yarn is first and foremost a Node API that can be used programmatically (via [@berry/core](packages/berry-core))
+- Yarn is first and foremost a Node API that can be used programmatically (via [@yarnpkg/core](packages/yarnpkg-core))
 - Yarn is written in TypeScript, and fully typechecked
 
 ## Install
@@ -47,8 +47,8 @@ On top of our classic integration tests, we also run Yarn every day against the 
 
 Clone this repository, then run the following commands:
 
-```
-$> yarn build:cli
+```bash
+yarn build:cli
 ```
 
 **How it works**
@@ -68,21 +68,21 @@ Those plugins typically come bundled with Yarn. You don't need to do anything sp
 - [★ plugin-constraints](packages/plugin-constraints) adds support for `yarn constraints check` and `yarn constraints fix`.
 - [★ plugin-dlx](packages/plugin-dlx) adds support for the [`yarn dlx`](https://yarnpkg.github.io/berry/cli/dlx) command.
 - [★ plugin-essentials](packages/plugin-essentials) adds various commands deemed necessary for a package manager (add, remove, ...).
-- [★ plugin-file](packages/plugin-file) adds support for using `file:` references as dependencies.
+- [★ plugin-file](packages/plugin-file) adds support for using the `file:` protocol within your dependencies.
 - [★ plugin-github](packages/plugin-github) adds support for using Github references as dependencies. [This plugin doesn't use git.](https://stackoverflow.com/a/13636954/880703)
 - [★ plugin-http](packages/plugin-http) adds support for using straight URL references as dependencies (tgz archives only).
 - [★ plugin-init](packages/plugin-init) adds support for the [`yarn init`](https://yarnpkg.github.io/berry/cli/init) command.
 - [★ plugin-link](packages/plugin-link) adds support for using `link:` and `portal:` references as dependencies.
-- [★ plugin-npm](packages/plugin-npm) adds support for using [semver ranges]() as dependencies, resolving them to an NPM-like registry.
-- [★ plugin-npm-cli](packages/plugin-npm-cli) adds support for the NPM-specific commands (`yarn npm login`, [`yarn npm publish`](https://yarnpkg.github.io/berry/cli/npm/publish), ...).
+- [★ plugin-npm](packages/plugin-npm) adds support for using [semver ranges](https://semver.org) as dependencies, resolving them to an NPM-like registry.
+- [★ plugin-npm-cli](packages/plugin-npm-cli) adds support for the NPM-specific commands ([`yarn npm login`](https://yarnpkg.github.io/berry/cli/npm/login), [`yarn npm publish`](https://yarnpkg.github.io/berry/cli/npm/publish), ...).
 - [★ plugin-pack](packages/plugin-pack) adds support for the [`yarn pack`](https://yarnpkg.github.io/berry/cli/pack) command.
 - [★ plugin-pnp](packages/plugin-pnp) adds support for installing Javascript dependencies through the [Plug'n'Play](https://yarnpkg.github.io/berry/features/pnp) specification.
 
 ### Contrib plugins
 
-Although developed on the same repository as Yarn itself, those plugins are optionals and need to be explicitly installed through `yarn plugin import @berry/<plugin-name>`.
+Although developed on the same repository as Yarn itself, those plugins are optionals and need to be explicitly installed through `yarn plugin import @yarnpkg/<plugin-name>`.
 
-- [☆ plugin-exec](packages/plugin-exec) adds support for using `exec:` references as dependencies.
+- [☆ plugin-exec](packages/plugin-exec) adds support for using the `exec:` protocol within your dependencies.
 - [☆ plugin-stage](packages/plugin-pack) adds support for the [`yarn stage`](https://yarnpkg.github.io/berry/cli/stage) command.
 - [☆ plugin-typescript](packages/plugin-typescript) improves the user experience when working with TypeScript.
 - [☆ plugin-workspace-tools](packages/plugin-workspace-tools) adds support for the [`yarn workspaces foreach`](https://yarnpkg.github.io/berry/cli/workspaces/foreach) command.
@@ -99,18 +99,18 @@ To create your own plugin, please refer to the [documentation](https://yarnpkg.g
 
 The following packages are generic and can be used in a variety of purposes (including to implement other package managers, but not only):
 
-- [@berry/core](packages/berry-core) allows any application to manipulate a project programmatically.
-- [@berry/fslib](packages/berry-fslib) is a set of tools to efficiently abstract filesystem accesses.
-- [@berry/json-proxy](packages/berry-json-proxy) allows to temporarily convert any POD object to an immutable object.
-- [@berry/libzip](packages/berry-libzip) contains zlib+libzip bindings compiled to WebAssembly.
-- [@berry/parsers](packages/berry-parsers) can be used to parse [Syml]() and the language used by [berry-shell](packages/berry-shell).
-- [@berry/pnp](packages/berry-pnp) can be used to generate [Plug'n'Play](https://yarnpkg.github.io/berry/features/pnp)-compatible hooks.
-- [@berry/pnpify](packages/berry-pnpify) is a CLI tool to transparently add PnP support to various tools.
-- [@berry/shell](packages/berry-shell) is a portable bash-like shell interpreter.
+- [@yarnpkg/core](packages/yarnpkg-core) allows any application to manipulate a project programmatically.
+- [@yarnpkg/fslib](packages/yarnpkg-fslib) is a set of tools to abstract the filesystem through type-safe primitives.
+- [@yarnpkg/json-proxy](packages/yarnpkg-json-proxy) allows to temporarily convert any POD object to an immutable object.
+- [@yarnpkg/libzip](packages/yarnpkg-libzip) contains zlib+libzip bindings compiled to WebAssembly.
+- [@yarnpkg/parsers](packages/yarnpkg-parsers) can be used to parse the language used by [@yarnpkg/shell](packages/yarnpkg-shell).
+- [@yarnpkg/pnp](packages/yarnpkg-pnp) can be used to generate [Plug'n'Play](https://yarnpkg.github.io/berry/features/pnp)-compatible hooks.
+- [@yarnpkg/pnpify](packages/yarnpkg-pnpify) is a CLI tool to transparently add PnP support to various tools.
+- [@yarnpkg/shell](packages/yarnpkg-shell) is a portable bash-like shell interpreter.
 
 ## Yarn packages
 
 The following packages are meant to be used by Yarn itself, and probably won't be useful to other applications:
 
-- [@berry/builder](packages/berry-builder) contains a CLI tool to package berry and its plugins.
-- [@berry/cli](packages/berry-cli) is a CLI entry point built on top of [@berry/core](packages/berry-core).
+- [@yarnpkg/builder](packages/yarnpkg-builder) contains a CLI tool to package berry and its plugins.
+- [@yarnpkg/cli](packages/yarnpkg-cli) is a CLI entry point built on top of [@yarnpkg/core](packages/yarnpkg-core).

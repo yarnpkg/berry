@@ -1,4 +1,4 @@
-import {NodeFS} from '@berry/fslib';
+import {NodeFS} from '@yarnpkg/fslib';
 
 const {
   fs: {createTemporaryFolder, mkdirp, readJson, writeJson},

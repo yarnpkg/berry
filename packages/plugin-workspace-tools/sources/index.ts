@@ -1,4 +1,4 @@
-import {Plugin}  from '@berry/core';
+import {Plugin}  from '@yarnpkg/core';
 
 import foreach   from './commands/foreach';
 import workspace from './commands/workspace';

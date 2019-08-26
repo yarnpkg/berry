@@ -1,5 +1,5 @@
-import {execUtils, Configuration} from '@berry/core';
-import {xfs}                      from '@berry/fslib';
+import {execUtils, Configuration} from '@yarnpkg/core';
+import {xfs}                      from '@yarnpkg/fslib';
 
 import GitUrlParse                from 'git-url-parse';
 

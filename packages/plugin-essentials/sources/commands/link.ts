@@ -1,6 +1,6 @@
-import {BaseCommand, WorkspaceRequiredError}                      from '@berry/cli';
-import {Cache, Configuration, Project, StreamReport, structUtils} from '@berry/core';
-import {NodeFS, ppath}                                            from '@berry/fslib';
+import {BaseCommand, WorkspaceRequiredError}                      from '@yarnpkg/cli';
+import {Cache, Configuration, Project, StreamReport, structUtils} from '@yarnpkg/core';
+import {NodeFS, ppath}                                            from '@yarnpkg/fslib';
 import {Command, UsageError}                                      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export

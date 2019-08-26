@@ -1,0 +1,65 @@
+{
+  "name": "@yarnpkg/cli",
+  "version": "2.0.0-rc.1",
+  "main": "./sources/index.ts",
+  "bin": {
+    "yarn": "./bin/run.js"
+  },
+  "dependencies": {
+    "@yarnpkg/core": "workspace:2.0.0-rc.1",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.1",
+    "@yarnpkg/parsers": "workspace:2.0.0-rc.1",
+    "@yarnpkg/shell": "workspace:2.0.0-rc.0",
+    "chalk": "^2.4.1",
+    "clipanion": "^2.1.1",
+    "semver": "^5.6.0",
+    "tmp": "^0.0.33",
+    "yup": "^0.27.0"
+  },
+  "devDependencies": {
+    "@yarnpkg/builder": "workspace:2.0.0-rc.1",
+    "@yarnpkg/plugin-constraints": "workspace:2.0.0-rc.0",
+    "@yarnpkg/plugin-dlx": "workspace:2.0.0-rc.0",
+    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.1",
+    "@yarnpkg/plugin-file": "workspace:2.0.0-rc.0",
+    "@yarnpkg/plugin-git": "workspace:2.0.0-rc.0",
+    "@yarnpkg/plugin-github": "workspace:2.0.0-rc.0",
+    "@yarnpkg/plugin-http": "workspace:2.0.0-rc.0",
+    "@yarnpkg/plugin-init": "workspace:2.0.0-rc.0",
+    "@yarnpkg/plugin-link": "workspace:2.0.0-rc.0",
+    "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.0",
+    "@yarnpkg/plugin-npm-cli": "workspace:2.0.0-rc.0",
+    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.1",
+    "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.0",
+    "@yarnpkg/plugin-typescript": "workspace:2.0.0-rc.1",
+    "@yarnpkg/plugin-version": "workspace:2.0.0-rc.1",
+    "@yarnpkg/plugin-workspace-tools": "workspace:2.0.0-rc.1",
+    "@yarnpkg/pnp": "workspace:2.0.0-rc.1",
+    "typescript": "^3.3.3333"
+  },
+  "scripts": {
+    "build:cli+hook": "run build:pnp:hook && builder build bundle",
+    "build:cli": "builder build bundle",
+    "run:cli": "builder run"
+  },
+  "@yarnpkg/builder": {
+    "bundles": {
+      "standard": [
+        "@yarnpkg/plugin-essentials",
+        "@yarnpkg/plugin-constraints",
+        "@yarnpkg/plugin-dlx",
+        "@yarnpkg/plugin-file",
+        "@yarnpkg/plugin-github",
+        "@yarnpkg/plugin-git",
+        "@yarnpkg/plugin-http",
+        "@yarnpkg/plugin-init",
+        "@yarnpkg/plugin-link",
+        "@yarnpkg/plugin-npm",
+        "@yarnpkg/plugin-npm-cli",
+        "@yarnpkg/plugin-pack",
+        "@yarnpkg/plugin-pnp",
+        "@yarnpkg/plugin-version"
+      ]
+    }
+  }
+}

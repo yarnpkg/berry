@@ -1,15 +1,15 @@
-import {xfs}           from '@berry/fslib';
-import {stringifySyml} from '@berry/parsers';
+import {xfs}           from '@yarnpkg/fslib';
+import {stringifySyml} from '@yarnpkg/parsers';
 
 const PLUGIN_A = `
 const factory = () => { console.log('Hello world A'); return {default:{}}; };
-const name = '@berry/plugin-a';
+const name = '@yarnpkg/plugin-a';
 module.exports = {factory, name};
 `;
 
 const PLUGIN_B = `
 const factory = () => { console.log('Hello world B'); return {default:{}}; };
-const name = '@berry/plugin-b';
+const name = '@yarnpkg/plugin-b';
 module.exports = {factory, name};
 `;
 

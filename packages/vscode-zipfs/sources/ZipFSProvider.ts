@@ -1,4 +1,4 @@
-import {ZipOpenFS, PortablePath} from '@berry/fslib';
+import {ZipOpenFS, PortablePath} from '@yarnpkg/fslib';
 import {posix}                   from 'path';
 import * as vscode               from 'vscode';
 

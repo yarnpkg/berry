@@ -1,7 +1,7 @@
-import {BaseCommand, WorkspaceRequiredError} from '@berry/cli';
-import {Configuration, LocatorHash, Package} from '@berry/core';
-import {IdentHash, Project}                  from '@berry/core';
-import {miscUtils, structUtils}              from '@berry/core';
+import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
+import {Configuration, LocatorHash, Package} from '@yarnpkg/core';
+import {IdentHash, Project}                  from '@yarnpkg/core';
+import {miscUtils, structUtils}              from '@yarnpkg/core';
 import {Command}                             from 'clipanion';
 import {Writable}                            from 'stream';
 import {asTree}                              from 'treeify';
