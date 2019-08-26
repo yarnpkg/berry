@@ -251,7 +251,7 @@ module.exports.factory = function (require) {
                       if (range.startsWith(core_2.WorkspaceResolver.protocol)) {
                           range = range.slice(core_2.WorkspaceResolver.protocol.length);
                           useWorkspaceProtocol = true;
-                          // Workspaces referenced through their path never get upgraded ("workspace:packages/berry-core")
+                          // Workspaces referenced through their path never get upgraded ("workspace:packages/yarnpkg-core")
                           if (range === workspace.relativeCwd) {
                               continue;
                           }
