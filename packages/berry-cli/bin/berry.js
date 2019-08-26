@@ -1,0 +1,1 @@
+../../yarnpkg-cli/bin/yarn.js
