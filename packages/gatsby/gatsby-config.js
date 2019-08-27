@@ -3,6 +3,7 @@ module.exports = {
   siteMetadata: {
     title: `Yarn - Package Manager`,
     description: `Fast, reliable, and secure dependency management.`,
+    author: `yarnpkg`,
     menuLinks: [{
       name: `Home`,
       link: `/`,
