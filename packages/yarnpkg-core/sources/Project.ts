@@ -1122,6 +1122,25 @@ export class Project {
   }
 
   async install(opts: InstallOptions) {
+    const validationErrors: Array<string> = [];
+    for (const workspace of this.workspaces) {
+      for (const manifestError of workspace.manifest.errors) {
+        const workspaceName =
+          workspace.manifest.name === null
+            ? "unknown"
+            : structUtils.stringifyIdent(workspace.manifest.name);
+        validationErrors.push(`${workspaceName}: ${manifestError.message}`);
+      }
+    }
+
+    if (validationErrors.length > 0) {
+      await opts.report.startTimerPromise(`Validation step`, async () => {
+        for (const validationError of validationErrors) {
+          opts.report.reportWarning(MessageName.INVALID_WORKSPACE, validationError)
+        }
+      });
+    }
+
     await opts.report.startTimerPromise(`Resolution step`, async () => {
       // If we operate with a frozen lockfile, we take a snapshot of it to later make sure it didn't change
       const initialLockfile = opts.immutable ? this.generateLockfile() : null;

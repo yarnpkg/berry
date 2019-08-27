@@ -65,6 +65,11 @@ export class Manifest {
 
   public raw: {[key: string]: any} = {};
 
+  /**
+   * errors found in the raw manifest while loading
+   */
+  public readonly errors: Array<Error> = [];
+
   static readonly allDependencies: Array<AllDependencies> = [`dependencies`, `devDependencies`, `peerDependencies`];
   static readonly hardDependencies: Array<HardDependencies> = [`dependencies`, `devDependencies`];
 
@@ -371,7 +376,8 @@ export class Manifest {
       }
     }
 
-    return errors;
+    // @ts-ignore: It's ok to initialize it now
+    this.errors = errors;
   }
 
   getForScope(type: string) {
