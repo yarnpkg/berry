@@ -21,8 +21,9 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const {project, workspace: cwdWorkspace} = await Project.find(configuration, this.context.cwd);
 
     const locatorsByIdent: Map<IdentHash, Set<LocatorHash>> = new Map();
-    for (const descriptor of project.storedDescriptors.values()) {
-      const value = project.storedResolutions.get(descriptor.descriptorHash)!;
+    for (const [descriptorHash, locatorHash] of project.storedResolutions.entries()) {
+      const value = locatorHash;
+      const descriptor = project.storedDescriptors.get(descriptorHash)!
       const key = descriptor.identHash;
 
       const descriptors = locatorsByIdent.get(key);
@@ -33,12 +34,16 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       }
     }
 
-    for (const [descriptorHash, descriptor] of project.storedDescriptors.entries()) {
-      const locators = locatorsByIdent.get(descriptor.identHash);
+    for (const [descriptorHash, locatorHash] of project.storedResolutions.entries()) {
+      const descriptor = project.storedDescriptors.get(descriptorHash)!
+      const locatorHashes = locatorsByIdent.get(descriptor.identHash)!;
 
-      if (locators !== undefined && locators.size > 1) {
-        const candidates = Array.from(locators).filter(candidateHash => {
+      if (locatorHashes !== undefined && locatorHashes.size > 1) {
+        const candidates = Array.from(locatorHashes).filter(candidateHash => {
           const pkg  = project.storedPackages.get(candidateHash)!
+
+          if (structUtils.isVirtualLocator(pkg))
+            return false
 
           if (pkg.version === null)
             return false
@@ -62,15 +67,15 @@ export default class WorkspacesForeachCommand extends BaseCommand {
             //project.storedResolutions.set(descriptorHash, newLocator);
             const newPkg = project.storedPackages.get(newLocator)!;
             const oldPkg = project.storedPackages.get(oldLocator)!;
-            console.log(`${oldPkg.name}@${descriptor.range} -> ${newPkg.name}@${newPkg.version}`)
-            //console.log(`${descriptor.name}@${descriptor.range} was ${oldLocator} new ${newLocator} ${newPkg.version}`)
-          } else {
-            //console.log(`${descriptor.name} already highest`)
+
+            console.log(`${descriptor.scope}/${descriptor.name}@${descriptor.range} can be upgraded from ${oldPkg.name}@${oldPkg.version} to ${newPkg.name}@${newPkg.version}`)
+
+            project.storedResolutions.set(descriptorHash, newLocator);
           }
         }
       }
     }
 
-    // await project.persistLockfile();
+    await project.persistLockfile();
   }
 }
