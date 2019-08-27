@@ -11,7 +11,7 @@
   "devDependencies": {
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.1",
     "tmp": "^0.0.33",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.5.3"
   },
   "scripts": {
     "postpack": "rm -rf lib",

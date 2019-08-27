@@ -64,7 +64,7 @@
     "jest": "^24.5.0",
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.5.3"
   },
   "dependenciesMeta": {
     "fsevents": {

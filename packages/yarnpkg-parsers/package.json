@@ -8,7 +8,7 @@
   "devDependencies": {
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.1",
     "pegjs": "^0.10.0",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.5.3"
   },
   "scripts": {
     "grammar:shell": "run pegjs -o sources/grammars/shell.js sources/grammars/shell.pegjs",

@@ -39,7 +39,7 @@
     "@yarnpkg/plugin-version": "workspace:2.0.0-rc.1",
     "@yarnpkg/plugin-workspace-tools": "workspace:2.0.0-rc.1",
     "@yarnpkg/pnp": "workspace:2.0.0-rc.1",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.5.3"
   },
   "scripts": {
     "build:cli+hook": "run build:pnp:hook && builder build bundle",

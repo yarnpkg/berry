@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@yarnpkg/monorepo": "workspace:0.0.0",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.5.3"
   },
   "peerDependencies": {
     "typescript": "*"

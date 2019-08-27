@@ -8,7 +8,7 @@
   "devDependencies": {
     "@yarnpkg/builder": "workspace:2.0.0-rc.1",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.1",
-    "typescript": "^3.3.3333",
+    "typescript": "^3.5.3",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1",
     "webpack-sources": "^1.3.0"
