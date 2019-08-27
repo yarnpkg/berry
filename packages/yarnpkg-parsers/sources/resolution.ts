@@ -13,7 +13,7 @@ export type Resolution = {
 
 export function parseResolution(source: string): Resolution {
   if (source.indexOf('**') !== -1)
-    throw new Error(`The resolution '${source}' includes a glob pattern which is discouraged in v2 since it has no longer an effect.`)
+    throw new Error(`The resolution '${source}' includes a glob pattern. Glob patterns have been removed since their behaviours don't match what you'd expect.`)
 
   try {
     return parse(source) as Resolution;
