@@ -1,0 +1,60 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-typescript-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E TypeScript'
+jobs:
+  chore:
+    name: 'Validating TypeScript'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn init -p
+        yarn add typescript
+        yarn link --all $GITHUB_WORKSPACE
+
+        echo '{"compilerOptions": {"baseUrl": ".", "strict": true}}' > tsconfig.json
+
+        echo "const foo: number = 42;" > file.ts
+        yarn pnpify tsc --noEmit
+
+        echo "const foo: number = 'error';" > file.ts
+        ! yarn pnpify tsc --noEmit
+
+        yarn add ts-pnp
+
+        echo "require('ts-pnp')('', '', {} as any, {} as any);"
+        yarn pnpify tsc --noEmit
+
+        echo "require('ts-pnp') + 42;"
+        ! yarn pnpify tsc --noEmit
+
+        yarn add left-pad @types/left-pad
+
+        echo "require('left-pad')('hello', 42, ' ');"
+        yarn pnpify tsc --noEmit
+
+        echo "require('left-pad') + 42;"
+        ! yarn pnpify tsc --noEmit
