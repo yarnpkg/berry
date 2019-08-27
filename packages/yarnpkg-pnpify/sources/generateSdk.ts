@@ -32,7 +32,7 @@ const addVSCodeWorkspaceSettings = async (projectRoot: PortablePath, settings: a
 
   await xfs.mkdirpPromise(ppath.dirname(settingsPath));
   await xfs.changeFilePromise(settingsPath, patched);
-}
+};
 
 const generateTypescriptWrapper = async (projectRoot: PortablePath, target: PortablePath) => {
   const typescript = ppath.join(target, `typescript` as PortablePath);
@@ -46,7 +46,7 @@ const generateTypescriptWrapper = async (projectRoot: PortablePath, target: Port
   await xfs.writeFilePromise(tsserver, TEMPLATE(relPnpApiPath, "typescript/lib/tsserver", {usePnpify: true}));
 
   await addVSCodeWorkspaceSettings(projectRoot, {'typescript.tsdk': NodeFS.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(tsserver)))});
-}
+};
 
 export const generateEslintWrapper = async (projectRoot: PortablePath, target: PortablePath) => {
   const eslint = ppath.join(target, `eslint` as PortablePath);
@@ -60,7 +60,7 @@ export const generateEslintWrapper = async (projectRoot: PortablePath, target: P
   await xfs.writeFilePromise(api, TEMPLATE(relPnpApiPath, "eslint", {usePnpify: false}));
 
   await addVSCodeWorkspaceSettings(projectRoot, {'eslint.nodePath': NodeFS.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(eslint)))});
-}
+};
 
 export const generateSdk = async (projectRoot: PortablePath): Promise<any> => {
   const targetFolder = ppath.join(projectRoot, `.vscode/pnpify` as PortablePath);
@@ -68,4 +68,4 @@ export const generateSdk = async (projectRoot: PortablePath): Promise<any> => {
 
   await generateTypescriptWrapper(projectRoot, targetFolder);
   await generateEslintWrapper(projectRoot, targetFolder);
-}
+};

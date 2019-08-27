@@ -77,8 +77,8 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
   });
 
   subprocess.stderr.on(`data`, (chunk: Buffer) => {
-    stderrChunks.push(chunk)
-  })
+    stderrChunks.push(chunk);
+  });
 
   return await new Promise((resolve, reject) => {
     subprocess.on(`close`, (code: number) => {

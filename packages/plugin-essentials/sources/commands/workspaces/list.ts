@@ -48,7 +48,7 @@ export default class WorkspacesListCommand extends BaseCommand {
                 }
               } else {
                 for (const workspaceDependency of matchingWorkspaces) {
-                  workspaceDependencies.add(workspaceDependency)
+                  workspaceDependencies.add(workspaceDependency);
                 }
               }
             }

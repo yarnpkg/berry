@@ -8,7 +8,7 @@ export async function clone(repo: string, configuration: Configuration) {
     throw new Error(`Network access has been disabled by configuration (${repo})`);
 
   const parsedGitUrl = GitUrlParse(repo);
-  const hash = parsedGitUrl.hash
+  const hash = parsedGitUrl.hash;
 
   // Check if git branch / git commit / git tag was specified.
   let gitUrl = parsedGitUrl.href;

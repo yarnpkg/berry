@@ -48,7 +48,7 @@ function extractErrorImpl(value: any): any {
       case `syntax_error/1`:
         return new ReportError(MessageName.PROLOG_SYNTAX_ERROR, `Syntax error: ${extractErrorImpl(value.args[0])}`);
       case `existence_error/2`:
-        return new ReportError(MessageName.PROLOG_EXISTENCE_ERROR, `Existence error: ${extractErrorImpl(value.args[0])} ${extractErrorImpl(value.args[1])} not found`)
+        return new ReportError(MessageName.PROLOG_EXISTENCE_ERROR, `Existence error: ${extractErrorImpl(value.args[0])} ${extractErrorImpl(value.args[1])} not found`);
       case `line/1`:
         return {line: extractErrorImpl(value.args[0])};
       case `column/1`:
@@ -58,7 +58,7 @@ function extractErrorImpl(value: any): any {
       case `./2`:
         return [extractErrorImpl(value.args[0])].concat(extractErrorImpl(value.args[1]));
       case `//2`:
-        return `${extractErrorImpl(value.args[0])}/${extractErrorImpl(value.args[1])}`
+        return `${extractErrorImpl(value.args[0])}/${extractErrorImpl(value.args[1])}`;
     }
   }
 
@@ -171,14 +171,14 @@ export class Constraints {
     let database = ``;
 
     for (const dependencyType of DEPENDENCY_TYPES)
-      database += `dependency_type(${dependencyType}).\n`
+      database += `dependency_type(${dependencyType}).\n`;
 
     for (const workspace of this.project.workspacesByCwd.values()) {
       const relativeCwd = workspace.relativeCwd;
 
       database += `workspace(${escape(relativeCwd)}).\n`;
-      database += `workspace_ident(${escape(relativeCwd)}, ${escape(structUtils.stringifyIdent(workspace.locator))}).\n`
-      database += `workspace_version(${escape(relativeCwd)}, ${escape(workspace.manifest.version)}).\n`
+      database += `workspace_ident(${escape(relativeCwd)}, ${escape(structUtils.stringifyIdent(workspace.locator))}).\n`;
+      database += `workspace_version(${escape(relativeCwd)}, ${escape(workspace.manifest.version)}).\n`;
 
       for (const dependencyType of DEPENDENCY_TYPES) {
         for (const dependency of workspace.manifest[dependencyType].values()) {

@@ -35,6 +35,7 @@
     "padded-blocks": ["error", "never"],
     "prefer-template": 2,
     "rest-spread-spacing": 2,
+    "semi": 2,
     "template-curly-spacing": 2
   }
 }

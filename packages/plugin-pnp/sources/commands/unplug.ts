@@ -43,7 +43,7 @@ export default class UnplugCommand extends BaseCommand {
       const descriptor = structUtils.parseDescriptor(pattern);
       const dependencyMeta = topLevelWorkspace.manifest.ensureDependencyMeta(descriptor);
 
-      dependencyMeta.unplugged = true;0
+      dependencyMeta.unplugged = true;0;
     }
 
     await topLevelWorkspace.persistManifest();
