@@ -1,13 +1,12 @@
-import {BaseCommand, WorkspaceRequiredError}                                           from '@yarnpkg/cli';
-import {Configuration, LocatorHash, Project, Workspace, IdentHash,Descriptor, Package} from '@yarnpkg/core';
-import {DescriptorHash, MessageName, Report, StreamReport}                             from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                        from '@yarnpkg/core';
-import {Command, UsageError}                                                           from 'clipanion';
-import * as semver                                                                     from 'semver';
+import {BaseCommand}                                    from '@yarnpkg/cli';
+import {Configuration, LocatorHash, Project, IdentHash} from '@yarnpkg/core';
+import {structUtils}                                    from '@yarnpkg/core';
+import {Command}                                        from 'clipanion';
+import * as semver                                      from 'semver';
 
 
 // eslint-disable-next-line arca/no-default-export
-export default class WorkspacesForeachCommand extends BaseCommand {
+export default class DeduplicateCommand extends BaseCommand {
   static usage = Command.Usage({
     category: `Workspace-related commands`,
     description: `Reduces dependencies with overlapping ranges to a minimal set of packages`,
@@ -18,7 +17,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.Path(`deduplicate`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace: cwdWorkspace} = await Project.find(configuration, this.context.cwd);
+    const {project} = await Project.find(configuration, this.context.cwd);
 
     const locatorsByIdent: Map<IdentHash, Set<LocatorHash>> = new Map();
     for (const [descriptorHash, locatorHash] of project.storedResolutions.entries()) {
@@ -34,7 +33,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       }
     }
 
-    for (const [descriptorHash, locatorHash] of project.storedResolutions.entries()) {
+    for (const descriptorHash of project.storedResolutions.keys()) {
       const descriptor = project.storedDescriptors.get(descriptorHash)!
       const locatorHashes = locatorsByIdent.get(descriptor.identHash)!;
 
@@ -60,17 +59,15 @@ export default class WorkspacesForeachCommand extends BaseCommand {
         });
 
         if (candidates.length > 1) {
-          const newLocator = candidates[0];
-          const oldLocator = project.storedResolutions.get(descriptorHash)!
+          const newLocatorHash = candidates[0];
+          const oldLocatorHash = project.storedResolutions.get(descriptorHash)!
+          const newPkg = project.storedPackages.get(newLocatorHash)!;
+          const oldPkg = project.storedPackages.get(oldLocatorHash)!;
 
-          if (newLocator !== oldLocator) {
-            //project.storedResolutions.set(descriptorHash, newLocator);
-            const newPkg = project.storedPackages.get(newLocator)!;
-            const oldPkg = project.storedPackages.get(oldLocator)!;
+          if (structUtils.areLocatorsEqual(oldPkg, newPkg) === false) {
+            console.log(`${structUtils.stringifyDescriptor(descriptor)} can be deduplicated from ${oldPkg.name}@${oldPkg.version} to ${newPkg.name}@${newPkg.version}`)
 
-            console.log(`${descriptor.scope}/${descriptor.name}@${descriptor.range} can be upgraded from ${oldPkg.name}@${oldPkg.version} to ${newPkg.name}@${newPkg.version}`)
-
-            project.storedResolutions.set(descriptorHash, newLocator);
+            project.storedResolutions.set(descriptorHash, newLocatorHash);
           }
         }
       }
