@@ -23,6 +23,7 @@
   "devDependencies": {
     "@yarnpkg/builder": "workspace:2.0.0-rc.4",
     "@yarnpkg/plugin-constraints": "workspace:2.0.0-rc.1",
+    "@yarnpkg/plugin-deduplicate": "workspace:2.0.0-rc.0",
     "@yarnpkg/plugin-dlx": "workspace:2.0.0-rc.1",
     "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.3",
     "@yarnpkg/plugin-file": "workspace:2.0.0-rc.1",
