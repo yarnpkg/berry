@@ -33,7 +33,9 @@ jobs:
 
         yarn init -p
         yarn add typescript
+
         yarn link --all $GITHUB_WORKSPACE
+        yarn add @yarnpkg/pnpify
 
         echo '{"compilerOptions": {"baseUrl": ".", "strict": true}}' > tsconfig.json
 
