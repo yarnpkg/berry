@@ -26,6 +26,7 @@ jobs:
     - name: 'Build the standard bundle'
       run: |
         node ./scripts/run-yarn.js build:cli
+        node ./scripts/run-yarn workspace run @yarnpkg/pnpify pack
 
     - name: 'Running the integration test'
       run: |
@@ -33,9 +34,7 @@ jobs:
 
         yarn init -p
         yarn add typescript
-
-        yarn link --all $GITHUB_WORKSPACE
-        yarn add @yarnpkg/pnpify
+        yarn add @yarnpkg/pnpify@file:$GITHUB_WORKSPACE/packages/yarnpkg-pnpify/package.tgz
 
         echo '{"compilerOptions": {"baseUrl": ".", "strict": true}}' > tsconfig.json
 
