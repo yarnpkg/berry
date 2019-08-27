@@ -14,7 +14,10 @@ export default function Template({data, pageContext: {category}}) {
       to: node.frontmatter.path,
       name: node.frontmatter.title,
     }))}>
-      <SEO keywords={['package manager', 'yarn', frontmatter.path.split('/').reverse()[0]]} title={frontmatter.title} />
+      <SEO
+        title={frontmatter.title}
+        keywords={[`package manager`, `yarn`, `yarnpkg`, frontmatter.path.split('/').reverse()[0]]}
+      />
       <PrerenderedMarkdown title={frontmatter.title}>
         {html}
       </PrerenderedMarkdown>
