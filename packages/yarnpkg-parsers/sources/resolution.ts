@@ -12,6 +12,9 @@ export type Resolution = {
 };
 
 export function parseResolution(source: string): Resolution {
+  if (source.indexOf('**') !== -1)
+    throw new Error(`The resolution '${source}' includes a glob pattern which is discouraged in v2 since it has no longer an effect.`)
+
   try {
     return parse(source) as Resolution;
   } catch (error) {

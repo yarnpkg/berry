@@ -34,5 +34,19 @@ describe(`Features`, () => {
         },
       ),
     );
+
+    test(
+      `it should error when legacy glob syntax is used`,
+      makeTemporaryEnv(
+        {
+          resolutions: {
+            [`**/no-deps`]: `1.2.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).rejects.toThrow(`The resolution '**/no-deps' includes a glob pattern which is discouraged in v2 since it has no longer an effect.`);
+        },
+      ),
+    );
   });
 });
