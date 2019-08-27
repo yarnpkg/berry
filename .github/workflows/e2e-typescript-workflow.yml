@@ -26,6 +26,7 @@ jobs:
     - name: 'Build the standard bundle'
       run: |
         node ./scripts/run-yarn.js build:cli
+        node ./scripts/run-yarn workspace @yarnpkg/fslib pack
         node ./scripts/run-yarn workspace @yarnpkg/pnpify pack
 
     - name: 'Running the integration test'
@@ -34,7 +35,11 @@ jobs:
 
         yarn init -p
         yarn add typescript
-        yarn add @yarnpkg/pnpify@file:$GITHUB_WORKSPACE/packages/yarnpkg-pnpify/package.tgz
+
+        jq '.resolutions["@yarnpkg/fslib"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-fslib/package.tgz"' package.json | sponge package.json
+        jq '.resolutions["@yarnpkg/pnpify"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-pnpify/package.tgz"' package.json | sponge package.json
+
+        yarn add @yarnpkg/pnpify@*
 
         echo '{"compilerOptions": {"baseUrl": ".", "strict": true}}' > tsconfig.json
 
