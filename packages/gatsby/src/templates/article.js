@@ -3,6 +3,7 @@ import React                 from 'react';
 
 import {LayoutContentNav}    from '../components/layout-content-nav';
 import {PrerenderedMarkdown} from '../components/markdown';
+import SEO                   from '../components/seo';
 
 export default function Template({data, pageContext: {category}}) {
   const {allMarkdownRemark, markdownRemark} = data;
@@ -13,6 +14,10 @@ export default function Template({data, pageContext: {category}}) {
       to: node.frontmatter.path,
       name: node.frontmatter.title,
     }))}>
+      <SEO
+        title={frontmatter.title}
+        keywords={[`package manager`, `yarn`, `yarnpkg`, frontmatter.path.split('/').reverse()[0]]}
+      />
       <PrerenderedMarkdown title={frontmatter.title}>
         {html}
       </PrerenderedMarkdown>

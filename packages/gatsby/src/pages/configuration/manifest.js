@@ -4,9 +4,15 @@ import {JsonContainer, JsonMain, JsonScalar}   from '../../components/json';
 import {JsonArrayProperty, JsonObjectProperty} from '../../components/json';
 import {JsonScalarProperty}                    from '../../components/json';
 import Layout                                  from '../../components/layout-configuration';
+import SEO                                     from '../../components/seo';
 
 const PackageJsonDoc = () => <>
   <Layout>
+    <SEO
+      title={`Manifest fields`}
+      description={`List of all the supported fields for a Yarn project manifest (package.json files)`}
+      keywords={[`package manager`, `yarn`, `yarnpkg`, `configuration`, `package.json`]}
+    />
     <JsonContainer>
       <JsonMain>
         Manifest files (also called <code>package.json</code> because of their name) contain everything needed to describe the settings unique to one particular package. Project will contain multiple such manifests if they use the workspace feature, as each workspace is described through its own manifest.
