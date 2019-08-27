@@ -2,8 +2,7 @@ module.exports = {
   pathPrefix: process.env.NETLIFY ? `/` : `/berry`,
   siteMetadata: {
     title: `Yarn - Package Manager`,
-    description: `Foo`,
-    author: ``,
+    description: `Fast, reliable, and secure dependency management.`,
     menuLinks: [{
       name: `Home`,
       link: `/`,
