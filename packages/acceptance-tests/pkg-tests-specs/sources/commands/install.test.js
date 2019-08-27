@@ -1,5 +1,9 @@
 import {xfs} from '@yarnpkg/fslib';
 
+const {
+  fs: {writeJson},
+} = require('pkg-tests-core');
+
 describe(`Commands`, () => {
   describe(`install`, () => {
     test(
@@ -128,6 +132,25 @@ describe(`Commands`, () => {
           bin: "./bin/cli.js",
         },
         async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toMatchSnapshot();
+        }
+      )
+    );
+
+    test(
+      "displays validation issues of nested workspaces",
+      makeTemporaryEnv(
+        {
+          workspaces: ["packages"],
+        },
+        async ({path, run, source}) => {
+          await writeJson(`${path}/packages/package.json`, {
+            workspaces: ["package-a"],
+          });
+          await writeJson(`${path}/packages/package-a/package.json`, {
+            bin: "./bin/cli.js",
+          });
+
           await expect(run(`install`)).resolves.toMatchSnapshot();
         }
       )
