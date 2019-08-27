@@ -103,7 +103,7 @@ export default class VersionApplyCommand extends BaseCommand {
           throw new Error(`Assertion failed: The nextVersion.semver should have been a string`);
 
         if (!semver.valid(newVersion)) {
-          throw new UsageError(`Can't apply the version bump if the resulting version (${newVersion}) isn't valid semver`);
+          throw new UsageError(`Can't apply the version bump if the resulting version (${newVersion}) isn't valid semver (in ${structUtils.prettyLocator(configuration, workspace.anchoredLocator)})`);
         }
       };
 
