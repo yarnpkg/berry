@@ -36,8 +36,8 @@ jobs:
         yarn init -p
         yarn add typescript
 
-        jq '.resolutions["@yarnpkg/fslib"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-fslib/package.tgz"' package.json | sponge package.json
-        jq '.resolutions["@yarnpkg/pnpify"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-pnpify/package.tgz"' package.json | sponge package.json
+        jq '.resolutions["@yarnpkg/fslib"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-fslib/package.tgz"' <<< "$(cat package.json)" > package.json
+        jq '.resolutions["@yarnpkg/pnpify"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-pnpify/package.tgz"' <<< "$(cat package.json)" > package.json
 
         yarn add @yarnpkg/pnpify@*
 
