@@ -4,7 +4,10 @@ describe(`Commands`, () => {
       `fails if the next version isn't a valid semver`,
       makeTemporaryEnv(
         {
-          'version:next': '^2.0.0-rc.0',
+          nextVersion: {
+            semver: '^2.0.0-rc.0',
+            nonce: '1',
+          },
           name: '@scope/test',
         },
         async ({path, run}) => {
