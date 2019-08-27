@@ -26,7 +26,7 @@ jobs:
     - name: 'Build the standard bundle'
       run: |
         node ./scripts/run-yarn.js build:cli
-        node ./scripts/run-yarn workspace run @yarnpkg/pnpify pack
+        node ./scripts/run-yarn workspace @yarnpkg/pnpify pack
 
     - name: 'Running the integration test'
       run: |
