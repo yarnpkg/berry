@@ -37,6 +37,10 @@ export default class DeduplicateCommand extends BaseCommand {
       const descriptor = project.storedDescriptors.get(descriptorHash)!;
       const locatorHashes = locatorsByIdent.get(descriptor.identHash)!;
 
+      const semverMatch = descriptor.range.match(/^npm:(.*)$/);
+      if (semverMatch === null)
+        continue;
+
       if (locatorHashes !== undefined && locatorHashes.size > 1) {
         const candidates = Array.from(locatorHashes).filter(candidateHash => {
           const pkg  = project.storedPackages.get(candidateHash)!;
@@ -45,10 +49,6 @@ export default class DeduplicateCommand extends BaseCommand {
             return false;
 
           if (pkg.version === null)
-            return false;
-
-          const semverMatch = descriptor.range.match(/^npm:(.*)$/);
-          if (semverMatch === null)
             return false;
 
           return semver.satisfies(pkg.version, semverMatch[1]);
