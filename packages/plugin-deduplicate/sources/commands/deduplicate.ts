@@ -22,14 +22,14 @@ export default class DeduplicateCommand extends BaseCommand {
     const locatorsByIdent: Map<IdentHash, Set<LocatorHash>> = new Map();
     for (const [descriptorHash, locatorHash] of project.storedResolutions.entries()) {
       const value = locatorHash;
-      const descriptor = project.storedDescriptors.get(descriptorHash)!
+      const descriptor = project.storedDescriptors.get(descriptorHash)!;
       const key = descriptor.identHash;
 
-      const descriptors = locatorsByIdent.get(key);
-      if (descriptors === undefined) {
+      const locators = locatorsByIdent.get(key);
+      if (locators === undefined) {
         locatorsByIdent.set(key, new Set([value]));
       } else {
-        locatorsByIdent.set(key, descriptors.add(value));
+        locatorsByIdent.set(key, locators.add(value));
       }
     }
 
