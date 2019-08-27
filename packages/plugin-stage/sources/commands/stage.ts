@@ -65,7 +65,7 @@ export default class StageCommand extends BaseCommand {
       basePaths.push(path);
     });
 
-    const yarnPaths = new Set();
+    const yarnPaths = new Set<PortablePath>();
 
     // We try to follow symlinks to properly add their targets (for example
     // the cache folder could be a symlink to another folder from the repo)

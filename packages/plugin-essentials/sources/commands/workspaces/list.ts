@@ -1,6 +1,6 @@
-import {BaseCommand}                                       from '@yarnpkg/cli';
-import {Configuration, Project, StreamReport, structUtils} from '@yarnpkg/core';
-import {Command}                                           from 'clipanion';
+import {BaseCommand}                                                              from '@yarnpkg/cli';
+import {Configuration, Project, StreamReport, structUtils, Descriptor, Workspace} from '@yarnpkg/core';
+import {Command}                                                                  from 'clipanion';
 
 const DEPENDENCY_TYPES = ['devDependencies', 'dependencies'];
 
@@ -35,8 +35,8 @@ export default class WorkspacesListCommand extends BaseCommand {
 
         let extra;
         if (this.verbose) {
-          const workspaceDependencies = new Set();
-          const mismatchedWorkspaceDependencies = new Set();
+          const workspaceDependencies = new Set<Workspace>();
+          const mismatchedWorkspaceDependencies = new Set<Descriptor>();
 
           for (const dependencyType of DEPENDENCY_TYPES) {
             for (const [identHash, descriptor]  of manifest.getForScope(dependencyType)) {

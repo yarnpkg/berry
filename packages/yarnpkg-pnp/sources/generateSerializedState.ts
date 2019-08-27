@@ -86,7 +86,7 @@ function generateLocationBlacklistData(settings: PnpSettings): LocationBlacklist
 }
 
 function generateLocationLengthData(settings: PnpSettings): LocationLengthData {
-  const lengths = new Set();
+  const lengths = new Set<number>();
 
   for (const packageInformationStore of settings.packageRegistry.values())
     for (const {packageLocation} of packageInformationStore.values())
