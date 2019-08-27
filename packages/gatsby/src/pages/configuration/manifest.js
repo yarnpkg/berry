@@ -8,7 +8,11 @@ import SEO                                     from '../../components/seo';
 
 const PackageJsonDoc = () => <>
   <Layout>
-    <SEO description="Available fields in manifest (package.json)" keywords={['package manager, yarn, configuration']} title="Manifest" />
+    <SEO
+      title={`Manifest fields`}
+      description={`List of all the supported fields for a Yarn project manifest (package.json files)`}
+      keywords={[`package manager`, `yarn`, `yarnpkg`, `configuration`, `package.json`]}
+    />
     <JsonContainer>
       <JsonMain>
         Manifest files (also called <code>package.json</code> because of their name) contain everything needed to describe the settings unique to one particular package. Project will contain multiple such manifests if they use the workspace feature, as each workspace is described through its own manifest.
