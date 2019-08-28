@@ -14,7 +14,7 @@ export type Resolution = {
 export function parseResolution(source: string): Resolution {
   const legacyResolution = source.match(/^\*{1,2}\/(.*)/);
   if (legacyResolution)
-    throw new Error(`The override for '${source}' includes a glob pattern. Glob patterns have been removed since their behaviours don't match what you'd expect. Set the override to '${legacyResolution[1]}' instead.`)
+    throw new Error(`The override for '${source}' includes a glob pattern. Glob patterns have been removed since their behaviours don't match what you'd expect. Set the override to '${legacyResolution[1]}' instead.`);
 
   try {
     return parse(source) as Resolution;
