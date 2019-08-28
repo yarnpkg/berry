@@ -44,6 +44,7 @@ On top of our classic integration tests, we also run Yarn every day against the 
 | [Gatsby](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-gatsby-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg)]() | [Husky](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-husky-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Husky/badge.svg)]() |
 | | | [Prettier](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-prettier-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg)]() |
 | | | [Jest](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-jest-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Jest/badge.svg)]() |
+| | | [Mocha](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-mocha-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Mocha/badge.svg)]() |
 | | | [TypeScript](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-typescript-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20TypeScript/badge.svg)]() |
 
 ## Build your own bundle
