@@ -34,13 +34,13 @@ jobs:
         yarn init -p
         yarn add jest
 
-        echo "it('should pass', () => { expect(true).toBeTruthy(); });" > pass.test.js
+        echo "it('should pass', () => { expect(true).toBeTruthy(); });" | tee pass.test.js
         yarn jest pass.test.js
 
-        echo "it('should fail', () => { expect(false).toBeTruthy(); });" > fail.test.js
+        echo "it('should fail', () => { expect(false).toBeTruthy(); });" | tee fail.test.js
         ! yarn jest fail.test.js
 
         yarn add left-pad
 
-        echo "const leftPad = require('left-pad'); it('should resolve a module', () => { expect(typeof leftPad).toBe('function');});" > module.test.js
+        echo "const leftPad = require('left-pad'); it('should resolve a module', () => { expect(typeof leftPad).toBe('function');});" | tee module.test.js
         yarn jest module.test.js

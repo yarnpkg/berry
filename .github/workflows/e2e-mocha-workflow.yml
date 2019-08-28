@@ -35,13 +35,13 @@ jobs:
         yarn add mocha
         mkdir test
 
-        echo "const assert = require('assert'); it('should pass', function() { assert.equal(true, true); });" > pass.test.js
+        echo "const assert = require('assert'); it('should pass', function() { assert.equal(true, true); });" | tee pass.test.js
         yarn mocha pass.test.js
 
-        echo "const assert = require('assert'); it('should fail', function() { assert.equal(true, false); });" > fail.test.js
+        echo "const assert = require('assert'); it('should fail', function() { assert.equal(true, false); });" | tee fail.test.js
         ! yarn mocha fail.test.js
 
         yarn add left-pad
 
-        echo "const assert = require('assert'); const leftPad = require('left-pad'); it('should resolve a module', () => { assert.equal(typeof leftPad, 'function');});" > module.test.js
+        echo "const assert = require('assert'); const leftPad = require('left-pad'); it('should resolve a module', () => { assert.equal(typeof leftPad, 'function');});" | tee module.test.js
         yarn mocha module.test.js

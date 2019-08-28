@@ -1,0 +1,74 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-typescript-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E TypeScript'
+jobs:
+  chore:
+    name: 'Validating TypeScript'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+        node ./scripts/run-yarn workspace @yarnpkg/fslib pack
+        node ./scripts/run-yarn workspace @yarnpkg/libzip pack
+        node ./scripts/run-yarn workspace @yarnpkg/pnpify pack
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn init -p
+
+        jq '.resolutions["@yarnpkg/fslib"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-fslib/package.tgz"' <<< "$(cat package.json)" > package.json
+        jq '.resolutions["@yarnpkg/libzip"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-libzip/package.tgz"' <<< "$(cat package.json)" > package.json
+        jq '.resolutions["@yarnpkg/pnpify"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-pnpify/package.tgz"' <<< "$(cat package.json)" > package.json
+
+        jq '.scripts.tsc = "pnpify tsc"' <<< "$(cat package.json)" > package.json
+
+        yarn add typescript @yarnpkg/pnpify@*
+        yarn add ts-pnp left-pad @types/left-pad
+
+        echo '{"compilerOptions": {"baseUrl": ".", "strict": true, "esModuleInterop": true}}' > tsconfig.json
+
+        echo "const foo: number = 42;" | tee file.ts
+        yarn tsc --noEmit
+
+        echo "const foo: number = 'error';" | tee file.ts
+        ! yarn tsc --noEmit
+
+        echo "import {resolveModuleName} from 'ts-pnp'; const foo: (...args: any[]) => any = resolveModuleName;" | tee file.ts
+        yarn tsc --noEmit
+
+        echo "import {resolveModuleName} from 'ts-pnp'; const foo: number = resolveModuleName;" | tee file.ts
+        ! yarn tsc --noEmit
+
+        echo "import leftPad from 'left-pad'; const foo: string = leftPad('hello', 42, ' ');" | tee file.ts
+        yarn tsc --noEmit
+
+        echo "import leftPad from 'left-pad'; const foo: number = leftPad('hello', 42, ' ');" | tee file.ts
+        ! yarn tsc --noEmit
+
+        echo "process.exit(42);" | tee file.ts
+        ! yarn tsc --noEmit
+
+        yarn add @types/node
+
+        echo "process.exit(42);" | tee file.ts
+        yarn tsc --noEmit
