@@ -1133,7 +1133,7 @@ export class Project {
     if (validationErrors.length > 0) {
       await opts.report.startTimerPromise(`Validation step`, async () => {
         for (const validationError of validationErrors) {
-          opts.report.reportWarning(MessageName.INVALID_WORKSPACE, validationError);
+          opts.report.reportWarning(MessageName.INVALID_MANIFEST, validationError);
         }
       });
     }
