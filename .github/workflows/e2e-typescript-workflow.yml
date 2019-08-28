@@ -59,6 +59,12 @@ jobs:
         echo "import {resolveModuleName} from 'ts-pnp'; const foo: number = resolveModuleName;" | tee file.ts
         ! yarn tsc --noEmit
 
+        echo "import leftPad from 'left-pad'; const foo: string = leftPad('hello', 42, ' ');" | tee file.js
+        yarn tsc --noEmit
+
+        echo "import leftPad from 'left-pad'; const foo: number = leftPad('hello', 42, ' ');" | tee file.js
+        ! yarn tsc --noEmit
+
         yarn add @types/node
 
         echo "const {resolveModuleName} = require('ts-pnp'); const foo: (...args: any[]) => any = resolveModuleName;" | tee file.ts
