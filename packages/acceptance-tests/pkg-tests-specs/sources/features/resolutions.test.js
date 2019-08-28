@@ -44,7 +44,7 @@ describe(`Features`, () => {
           },
         },
         async ({path, run, source}) => {
-          await expect(run(`install`)).rejects.toThrow(`The resolution '**/no-deps' includes a glob pattern which is discouraged in v2 since it has no longer an effect.`);
+          await expect(run(`install`)).rejects.toThrow(`The override for '**/no-deps' includes a glob pattern. Glob patterns have been removed since their behaviours don't match what you'd expect. Set the override to 'no-deps' instead.`);
         },
       ),
     );
