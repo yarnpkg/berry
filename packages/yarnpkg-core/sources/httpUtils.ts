@@ -1,5 +1,6 @@
 import HttpAgent, {HttpsAgent} from 'agentkeepalive';
 import got, {GotOptions}       from 'got';
+import micromatch              from 'micromatch';
 import tunnel, {ProxyOptions}  from 'tunnel';
 import {URL}                   from 'url';
 
@@ -44,6 +45,9 @@ async function request(target: string, body: Body, {configuration, headers, json
     throw new Error(`Network access have been disabled by configuration (${method} ${target})`);
 
   const url = new URL(target);
+  if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
+    throw new Error(`Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
+
   let agent;
 
   const httpProxy = configuration.get(`httpProxy`);

@@ -4862,6 +4862,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./packages/yarnpkg-core/",
           "packageDependencies": [
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
+            ["@types/micromatch", "npm:3.1.0"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
@@ -4879,6 +4880,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["got", "npm:9.6.0"],
             ["json-file-plus", "npm:3.3.1"],
             ["logic-solver", "npm:2.0.1"],
+            ["micromatch", "npm:4.0.2"],
             ["mkdirp", "npm:0.5.1"],
             ["p-limit", "npm:2.2.0"],
             ["pluralize", "npm:7.0.0"],

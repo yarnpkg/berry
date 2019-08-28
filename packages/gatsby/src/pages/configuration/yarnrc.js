@@ -1,7 +1,7 @@
 import React                                    from 'react';
 
 import Layout                                   from '../../components/layout-configuration';
-import {SymlContainer, SymlMain}                from '../../components/syml';
+import {SymlContainer, SymlMain, SymlArrayProperty, SymlScalar}                from '../../components/syml';
 import {SymlObjectProperty, SymlScalarProperty} from '../../components/syml';
 import SEO                                      from '../../components/seo';
 
@@ -299,6 +299,19 @@ const YarnrcDoc = () => <>
           This setting defines the name of the files that Yarn looks for when resolving the rc files. For obvious reasons this settings cannot be set within rc files, and must be defined in the environment using the <code>YARN_RC_FILENAME</code> variable.
         </>}
       />
+      <SymlArrayProperty
+        name={`unsafeHttpWhitelist`}
+        description={<>
+          This setting lists the hostnames for which using the HTTP protocol is allowed. Any other hostname will be required to use HTTPS instead.
+        </>}
+      >
+        <SymlScalar
+          placeholder={`*.example.org`}
+        />
+        <SymlScalar
+          placeholder={`example.org`}
+        />
+      </SymlArrayProperty>
       <SymlScalarProperty
         name={`virtualFolder`}
         placeholder={`./.yarn/virtual`}

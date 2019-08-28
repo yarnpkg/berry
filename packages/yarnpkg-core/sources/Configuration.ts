@@ -251,6 +251,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.STRING,
     default: null,
   },
+  unsafeHttpWhitelist: {
+    description: `List of the hostnames for which http queries are allowed (glob patterns are supported)`,
+    type: SettingsType.STRING,
+    default: [],
+    isArray: true,
+  },
 
   // Settings related to security
   enableScripts: {
