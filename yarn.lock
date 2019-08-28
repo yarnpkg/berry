@@ -3707,7 +3707,7 @@ __metadata:
     pnp-webpack-plugin: "npm:^1.4.3"
     semver: "npm:^5.6.0"
     ts-loader: "npm:^5.3.3"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
     val-loader: "npm:^1.1.1"
     webpack: "npm:^4.28.4"
     webpack-merge: "npm:^4.2.1"
@@ -3749,7 +3749,7 @@ __metadata:
     clipanion: "npm:^2.1.1"
     semver: "npm:^5.6.0"
     tmp: "npm:^0.0.33"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
     yup: "npm:^0.27.0"
   bin:
     yarn: ./bin/run.js
@@ -3787,7 +3787,7 @@ __metadata:
     tar: "npm:^4.4.6"
     tmp: "npm:^0.0.33"
     tunnel: "npm:^0.0.6"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
 
@@ -3798,7 +3798,7 @@ __metadata:
     "@yarnpkg/libzip": "workspace:2.0.0-rc.1"
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.1"
     tmp: "npm:^0.0.33"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
 
@@ -3861,7 +3861,7 @@ __metadata:
   dependencies:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.1"
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.1"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
 
@@ -3870,7 +3870,7 @@ __metadata:
   resolution: "@yarnpkg/libzip@workspace:packages/yarnpkg-libzip"
   dependencies:
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.1"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
 
@@ -3937,7 +3937,7 @@ __metadata:
     jest: "npm:^24.5.0"
     jest-environment-node: "npm:^24.5.0"
     jest-junit: "npm:^5.2.0"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
   dependenciesMeta:
     fsevents:
       built: false
@@ -3955,7 +3955,7 @@ __metadata:
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.1"
     js-yaml: "npm:^3.10.0"
     pegjs: "npm:^0.10.0"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
 
@@ -4014,7 +4014,7 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.1"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.1"
     tmp: "npm:^0.0.33"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
 
@@ -4045,7 +4045,7 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.1"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.1"
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.1"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
 
@@ -4142,7 +4142,7 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.1"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.1"
     clipanion: "npm:^2.1.1"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
 
@@ -4155,7 +4155,7 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.1"
     "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.1"
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.1"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
 
@@ -4170,7 +4170,7 @@ __metadata:
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.1"
     clipanion: "npm:^2.1.1"
     semver: "npm:^5.6.0"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
     yup: "npm:^0.27.0"
   languageName: unknown
   linkType: soft
@@ -4185,7 +4185,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.1"
     clipanion: "npm:^2.1.1"
     p-limit: "npm:^2.2.0"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
     yup: "npm:^0.27.0"
   languageName: unknown
   linkType: soft
@@ -4197,7 +4197,7 @@ __metadata:
     "@yarnpkg/builder": "workspace:2.0.0-rc.1"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.1"
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.1"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:^3.2.1"
     webpack-sources: "npm:^1.3.0"
@@ -4213,7 +4213,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:2.0.0-rc.1"
     cross-spawn: "npm:^6.0.5"
     eslint: "npm:^5.16.0"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
   peerDependencies:
     eslint: "*"
     typescript: "*"
@@ -4237,7 +4237,7 @@ __metadata:
     cross-spawn: "npm:^6.0.5"
     stream-buffers: "npm:^3.0.2"
     tmp: "npm:^0.0.33"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
 
@@ -21964,13 +21964,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^3.3.3333":
-  version: 3.3.3333
-  resolution: "typescript@npm:3.3.3333"
+"typescript@npm:^3.5.3":
+  version: 3.5.3
+  resolution: "typescript@npm:3.5.3"
   bin:
     tsc: ./bin/tsc
     tsserver: ./bin/tsserver
-  checksum: 4940686782b53c701504d599f950f5bab4728b234ee79b556cca352cb038aa36ee8b9e8d5d3004e62c05460b3a57311b88acfac5c3a2205b1682fbcd8168addb
+  checksum: 4e0027f35b67a55482e89917a384cb87e39fad11b03c0e660f098eac887656373168bc680302c45976a7e08179a470da2fe17c8864ad831275d343f2d1c627c2
   languageName: node
   linkType: hard
 
@@ -22799,7 +22799,7 @@ __metadata:
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.1"
     pnp-webpack-plugin: "npm:^1.4.3"
     ts-loader: "npm:^5.3.3"
-    typescript: "npm:^3.3.3333"
+    typescript: "npm:^3.5.3"
     vsce: "npm:^1.54.0"
     webpack: "npm:^4.28.4"
     webpack-cli: "npm:^3.2.1"
