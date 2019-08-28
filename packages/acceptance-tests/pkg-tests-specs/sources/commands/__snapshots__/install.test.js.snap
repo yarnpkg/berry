@@ -1,6 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Commands add it should print the logs to the standard output when using --inline-builds 1`] = `
+exports[`Commands install displays validation issues of nested workspaces 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: ┌ Validation step
+➤ YN0057: │ package-a-cafaf2: String bin field, but no attached package name
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Resolution step
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed
+➤ YN0000: Done with warnings
+",
+}
+`;
+
+exports[`Commands install it should print the logs to the standard output when using --inline-builds 1`] = `
 "➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
@@ -17,4 +35,22 @@ exports[`Commands add it should print the logs to the standard output when using
 ➤ YN0000: └ Completed
 ➤ YN0000: Done
 "
+`;
+
+exports[`Commands install reports warning if published binary field is a path but no package name is set 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: ┌ Validation step
+➤ YN0057: │ root-workspace-988eec: String bin field, but no attached package name
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Resolution step
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed
+➤ YN0000: Done with warnings
+",
+}
 `;
