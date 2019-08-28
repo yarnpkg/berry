@@ -36,7 +36,6 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
-    "@types/micromatch": "3.1.0",
     "@yarnpkg/plugin-link": "workspace:2.0.0-rc.0",
     "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.0",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.1",
