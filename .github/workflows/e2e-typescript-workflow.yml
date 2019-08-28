@@ -45,24 +45,24 @@ jobs:
 
         echo '{"compilerOptions": {"baseUrl": ".", "strict": true}}' > tsconfig.json
 
-        echo "const foo: number = 42;" > file.ts
+        echo "const foo: number = 42;" | tee file.ts
         yarn pnpify tsc --noEmit
 
-        echo "const foo: number = 'error';" > file.ts
+        echo "const foo: number = 'error';" | tee file.ts
         ! yarn pnpify tsc --noEmit
 
         yarn add ts-pnp
 
-        echo "require('ts-pnp')('', '', {} as any, {} as any);"
+        echo "require('ts-pnp')('', '', {} as any, {} as any);" | tee file.ts
         yarn pnpify tsc --noEmit
 
-        echo "require('ts-pnp') + 42;"
+        echo "require('ts-pnp') + 42;" | tee file.ts
         ! yarn pnpify tsc --noEmit
 
         yarn add left-pad @types/left-pad
 
-        echo "require('left-pad')('hello', 42, ' ');"
+        echo "require('left-pad')('hello', 42, ' ');" | tee file.js
         yarn pnpify tsc --noEmit
 
-        echo "require('left-pad') + 42;"
+        echo "require('left-pad') + 42;" | tee file.js
         ! yarn pnpify tsc --noEmit

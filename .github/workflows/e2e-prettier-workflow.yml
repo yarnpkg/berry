@@ -36,8 +36,8 @@ jobs:
 
         echo 'semi: true' > .prettierrc
 
-        echo '42;' > ok.js
+        echo '42;' | tee ok.js
         yarn prettier --check ok.js
 
-        echo '42' > ko.js
+        echo '42' | tee ko.js
         ! yarn prettier --check ko.js
