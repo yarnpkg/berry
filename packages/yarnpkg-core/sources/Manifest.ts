@@ -68,7 +68,7 @@ export class Manifest {
   /**
    * errors found in the raw manifest while loading
    */
-  public readonly errors: Array<Error> = [];
+  public errors: ReadonlyArray<Error> = [];
 
   static readonly allDependencies: Array<AllDependencies> = [`dependencies`, `devDependencies`, `peerDependencies`];
   static readonly hardDependencies: Array<HardDependencies> = [`dependencies`, `devDependencies`];
@@ -376,7 +376,6 @@ export class Manifest {
       }
     }
 
-    // @ts-ignore: It's ok to initialize it now
     this.errors = errors;
   }
 
