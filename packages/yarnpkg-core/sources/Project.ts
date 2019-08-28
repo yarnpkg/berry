@@ -1125,10 +1125,7 @@ export class Project {
     const validationErrors: Array<string> = [];
     for (const workspace of this.workspaces) {
       for (const manifestError of workspace.manifest.errors) {
-        const workspaceName =
-          workspace.manifest.name === null
-            ? "unknown"
-            : structUtils.stringifyIdent(workspace.manifest.name);
+        const workspaceName = structUtils.prettyWorkspace(this.configuration, workspace);
         validationErrors.push(`${workspaceName}: ${manifestError.message}`);
       }
     }
