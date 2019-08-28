@@ -3,9 +3,15 @@ import React                                    from 'react';
 import Layout                                   from '../../components/layout-configuration';
 import {SymlContainer, SymlMain}                from '../../components/syml';
 import {SymlObjectProperty, SymlScalarProperty} from '../../components/syml';
+import SEO                                      from '../../components/seo';
 
 const YarnrcDoc = () => <>
   <Layout>
+    <SEO
+      title={`Configuration options`}
+      description={`List of all the configuration option for Yarn (yarnrc files)`}
+      keywords={[`package manager`, `yarn`, `yarnpkg`, `configuration`, `yarnrc`]}
+    />
     <SymlContainer>
       <SymlMain>
         <p>Yarnrc files (named this way because they must be called <code>.yarnrc.yml</code>) are the one place where you'll be able to configure Yarn's internal settings. While Yarn will automatically find them in the parent directories, they should usually be kept at the root of your project (often your repository). Starting from the v2, they <b>must</b> be written in valid Yaml and have the right extension (simply calling your file <code>.yarnrc</code> won't do).</p>

@@ -55,7 +55,7 @@ export default class WhyCommand extends BaseCommand {
 function whySimple(project: Project, identHash: IdentHash, {configuration, peers}: {configuration: Configuration, peers: boolean}) {
   const sortedPackages = miscUtils.sortMap(project.storedPackages.values(), pkg => {
     return structUtils.stringifyLocator(pkg);
-  })
+  });
 
   const tree = {} as TreeNode;
 

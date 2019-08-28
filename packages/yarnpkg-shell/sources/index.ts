@@ -362,7 +362,7 @@ function makeCommandAction(args: Array<string>, opts: ShellOptions, state: Shell
 
   const builtin = opts.builtins.get(name);
   if (typeof builtin === `undefined`)
-    throw new Error(`Assertion failed: A builtin should exist for "${name}"`)
+    throw new Error(`Assertion failed: A builtin should exist for "${name}"`);
 
   return makeBuiltin(async ({stdin, stdout, stderr}) => {
     state.stdin = stdin;

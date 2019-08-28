@@ -147,7 +147,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
             if (strategies.includes(Strategy.KEEP))
               continue;
 
-          let reason = `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)} (originally used by ${structUtils.prettyLocator(project.configuration, locators[0])}`
+          let reason = `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)} (originally used by ${structUtils.prettyLocator(project.configuration, locators[0])}`;
 
           reason += locators.length > 1
             ? ` and ${locators.length - 1} other${locators.length > 2 ? `s` : ``})`
@@ -173,7 +173,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
           if (workspace.manifest.version) {
             suggested.push({descriptor: workspace.anchoredDescriptor, reason});
           } else {
-            suggested.push({descriptor: workspace.anchoredDescriptor, reason})
+            suggested.push({descriptor: workspace.anchoredDescriptor, reason});
           }
         }
       } break;
@@ -181,10 +181,10 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
       case Strategy.LATEST: {
         if (request.range !== `unknown`) {
           const reason = `Use ${structUtils.prettyRange(project.configuration, request.range)} (explicit range requested)`;
-          suggested.push({descriptor: request, reason})
+          suggested.push({descriptor: request, reason});
         } else if (target === Target.PEER) {
           const reason = `Use * (catch-all peer dependency pattern)`;
-          suggested.push({descriptor: structUtils.makeDescriptor(request, `*`), reason})
+          suggested.push({descriptor: structUtils.makeDescriptor(request, `*`), reason});
         } else if (!project.configuration.get(`enableNetwork`)) {
           const reason = `Resolve from latest ${project.configuration.format(`(unavailable because enableNetwork is toggled off)`, `grey`)}`;
           suggested.push({descriptor: null, reason});

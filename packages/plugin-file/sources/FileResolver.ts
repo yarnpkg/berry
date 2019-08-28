@@ -32,6 +32,9 @@ export class FileResolver implements Resolver {
     if (FILE_REGEXP.test(descriptor.range))
       descriptor = structUtils.makeDescriptor(descriptor, `file:${descriptor.range}`);
 
+    if (descriptor.range.includes(`?`))
+      return descriptor;
+
     return structUtils.bindDescriptor(descriptor, {
       locator: structUtils.stringifyLocator(fromLocator),
     });

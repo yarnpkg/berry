@@ -5,8 +5,18 @@ import {Command, UsageError}               from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
-  @Command.Boolean(`-T,--top-level`)
+  // This flag is mostly used to give users a way to configure node-gyp. They
+  // just have to add it as a top-level workspace.
+  @Command.Boolean(`-T,--top-level`, {hidden: true})
   topLevel: boolean = false;
+
+  // The v1 used to print the Yarn version header when using "yarn run", which
+  // was messing with the output of things like `--version` & co. We don't do
+  // this anymore, but many workflows use `yarn run --silent` to make sure that
+  // they don't get this header, and it makes sense to support it as well (even
+  // if it's a no-op in our case).
+  @Command.Boolean(`--silent`, {hidden: true})
+  silent?: boolean;
 
   @Command.String()
   scriptName!: string;

@@ -10,7 +10,7 @@
     "clipanion": "^2.1.1"
   },
   "devDependencies": {
-    "typescript": "^3.3.3333"
+    "typescript": "^3.5.3"
   },
   "scripts": {
     "build:plugin-stage": "builder build plugin"

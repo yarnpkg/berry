@@ -121,11 +121,11 @@ async function getCredentials(prompt: any) {
   return {
     name: username,
     password,
-  }
+  };
 }
 
 function validateRequiredInput(input: string, message: string) {
   return input.length > 0
     ? true
-    : `${message} is required`
+    : `${message} is required`;
 }

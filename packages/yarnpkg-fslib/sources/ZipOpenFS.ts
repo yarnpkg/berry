@@ -630,7 +630,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
         a,
         b,
       );
-    })
+    });
   }
 
   private async makeCallPromise<T>(p: FSPath<PortablePath>, discard: () => Promise<T>, accept: (zipFS: ZipFS, zipInfo: {archivePath: PortablePath, subPath: PortablePath}) => Promise<T>, {requireSubpath = true}: {requireSubpath?: boolean} = {}): Promise<T> {

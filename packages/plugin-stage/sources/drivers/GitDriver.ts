@@ -27,7 +27,7 @@ async function genCommitMessage(cwd: PortablePath, changes: Array<stageUtils.Fil
     const relativePath = ppath.relative(cwd, path);
 
     if (action === stageUtils.ActionType.MODIFY) {
-      const commitHash = await getLastCommitHash(cwd)
+      const commitHash = await getLastCommitHash(cwd);
       const {stdout: prevSource} = await execUtils.execvp(`git`, [`show`, `${commitHash}:${relativePath}`], {cwd, strict: true});
 
       const prevManifest = await Manifest.fromText(prevSource);
@@ -41,7 +41,7 @@ async function genCommitMessage(cwd: PortablePath, changes: Array<stageUtils.Fil
         const currDep = allCurrDeps.get(indentHash);
 
         if (!currDep) {
-          actions.push([stageUtils.ActionType.REMOVE, pkgName])
+          actions.push([stageUtils.ActionType.REMOVE, pkgName]);
         } else if (currDep.range !== value.range) {
           actions.push([stageUtils.ActionType.MODIFY, `${pkgName} to ${currDep.range}`]);
         }
@@ -54,12 +54,12 @@ async function genCommitMessage(cwd: PortablePath, changes: Array<stageUtils.Fil
       }
     } else if (action === stageUtils.ActionType.CREATE) {
       // New package.json
-      const manifest = await Manifest.fromFile(path)
+      const manifest = await Manifest.fromFile(path);
 
       if (manifest.name) {
-        actions.push([stageUtils.ActionType.CREATE, structUtils.stringifyIdent(manifest.name)])
+        actions.push([stageUtils.ActionType.CREATE, structUtils.stringifyIdent(manifest.name)]);
       } else {
-        actions.push([stageUtils.ActionType.CREATE, `a package`])
+        actions.push([stageUtils.ActionType.CREATE, `a package`]);
       }
     } else if (action === stageUtils.ActionType.DELETE) {
       const commitHash = await getLastCommitHash(cwd);

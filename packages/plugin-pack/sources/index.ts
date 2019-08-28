@@ -67,7 +67,7 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
       }
     }
   }
-}
+};
 
 const plugin: Plugin = {
   hooks: {

@@ -48,7 +48,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
       report.reportInfo(MessageName.UNNAMED, `Your PR was started right after ${configuration.format(base.hash.slice(0, 7), `yellow`)} ${configuration.format(base.message, `magenta`)}`);
 
       if (files.length > 0) {
-        report.reportInfo(MessageName.UNNAMED, `you have changed the following files since then:`)
+        report.reportInfo(MessageName.UNNAMED, `you have changed the following files since then:`);
         for (const file of files) {
           report.reportInfo(null, file);
         }

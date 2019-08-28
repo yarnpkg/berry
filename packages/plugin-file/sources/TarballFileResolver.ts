@@ -40,7 +40,7 @@ export class TarballFileResolver implements Resolver {
       descriptor = structUtils.makeDescriptor(descriptor, `file:${descriptor.range}`);
 
     if (descriptor.range.includes(`?`))
-      throw new Error(`File-type dependencies cannot contain the character "?"`);
+      return descriptor;
 
     return structUtils.makeDescriptor(descriptor, `${descriptor.range}?${querystring.stringify({
       locator: structUtils.stringifyLocator(fromLocator),

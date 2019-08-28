@@ -145,7 +145,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
         continue;
 
       if (this.private === false && workspace.manifest['private'] === true)
-        continue
+        continue;
 
       workspaces.push(workspace);
     }
@@ -203,7 +203,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
           throw err;
         }
-      }
+      };
 
       for (const workspace of workspaces)
         needsProcessing.set(workspace.anchoredLocator.locatorHash, workspace);

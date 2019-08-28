@@ -19,7 +19,7 @@ export function checksumFile(path: PortablePath) {
 
     stream.on(`data`, chunk => {
       hmac.update(chunk);
-    })
+    });
 
     stream.on(`error`, error => {
       reject(error);

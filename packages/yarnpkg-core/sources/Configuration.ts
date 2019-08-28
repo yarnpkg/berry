@@ -594,7 +594,7 @@ export class Configuration {
           let tip = ``;
 
           if (content.match(/^\s+(?!-)[^:]+\s+\S+/m))
-            tip = ` (in particular, make sure you list the colons after each key name)`
+            tip = ` (in particular, make sure you list the colons after each key name)`;
 
           throw new UsageError(`Parse error when loading ${rcPath}; please check it's proper Yaml${tip}`);
         }

@@ -42,5 +42,5 @@ export function parseGithubUrl(urlStr: string): ParsedGithubUrl {
 }
 
 export function invalidGithubUrlMessage(url: string): string {
-  return `Input cannot be parsed as a valid Github URL ('${url}').`
+  return `Input cannot be parsed as a valid Github URL ('${url}').`;
 }

@@ -35,7 +35,7 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
       if (entryStat.isDirectory()) {
         results.push([entry, vscode.FileType.Directory] as [string, vscode.FileType]);
       } else {
-        results.push([entry, vscode.FileType.File] as [string, vscode.FileType])
+        results.push([entry, vscode.FileType.File] as [string, vscode.FileType]);
       }
     }
 

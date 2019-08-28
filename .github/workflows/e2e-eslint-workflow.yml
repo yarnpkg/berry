@@ -36,8 +36,8 @@ jobs:
 
         echo '{"rules": {"semi": ["error", "always"]}}' > .eslintrc
 
-        echo '42;' > ok.js
+        echo '42;' | tee ok.js
         yarn eslint ok.js
 
-        echo '42' > ko.js
+        echo '42' | tee ko.js
         ! yarn eslint ko.js

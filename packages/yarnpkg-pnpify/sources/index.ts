@@ -21,7 +21,7 @@ export const patchFs = () => {
     fslibPatchFs(fs, nodeModulesFS);
     fsPatched = true;
   }
-}
+};
 
 if (!process.mainModule)
   patchFs();

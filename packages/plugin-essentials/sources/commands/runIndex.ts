@@ -18,7 +18,7 @@ export default class RunCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async report => {
-      const scripts = workspace!.manifest.scripts
+      const scripts = workspace!.manifest.scripts;
       const keys = miscUtils.sortMap(scripts.keys(), key => key);
       const inspectConfig = {
         breakLength: Infinity,
