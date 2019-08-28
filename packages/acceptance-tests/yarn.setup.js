@@ -2,6 +2,7 @@
 
 const {delimiter} = require(`path`);
 const isWsl = require(`is-wsl`);
+const {URL} = require(`url`);
 
 const {
   tests: {generatePkgDriver, startPackageServer, getPackageRegistry},
@@ -39,14 +40,15 @@ global.makeTemporaryEnv = generatePkgDriver({
         [`TEST_ENV`]: `true`,
         [`YARN_GLOBAL_FOLDER`]: `${nativePath}/.yarn/global`,
         [`YARN_NPM_REGISTRY_SERVER`]: registryUrl,
+        [`YARN_UNSAFE_HTTP_WHITELIST`]: new URL(registryUrl).hostname,
         // Otherwise the tests would break when C:\tmp is on a different drive than the repo
         [`YARN_ENABLE_ABSOLUTE_VIRTUALS`]: `true`,
         // Otherwise the output isn't stable between runs
         [`YARN_ENABLE_TIMERS`]: `false`,
         // Otherwise we would more often test the fallback rather than the real logic
         [`YARN_PNP_FALLBACK_MODE`]: `none`,
-        ... rcEnv,
-        ... env,
+        ...rcEnv,
+        ...env,
       },
     });
 
@@ -61,9 +63,9 @@ global.makeTemporaryEnv = generatePkgDriver({
   },
 });
 
-if (process.platform === `win32` || isWsl || process.platform === `darwin`) {
+if (process.platform === `win32` || isWsl || process.platform === `darwin`)
   jest.setTimeout(10000);
-}
+
 
 beforeEach(async () => {
   await startPackageServer();

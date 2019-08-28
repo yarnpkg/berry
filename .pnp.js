@@ -4879,6 +4879,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["got", "npm:9.6.0"],
             ["json-file-plus", "npm:3.3.1"],
             ["logic-solver", "npm:2.0.1"],
+            ["micromatch", "npm:4.0.2"],
             ["mkdirp", "npm:0.5.1"],
             ["p-limit", "npm:2.2.0"],
             ["pluralize", "npm:7.0.0"],

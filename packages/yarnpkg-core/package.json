@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.1",
   "nextVersion": {
     "semver": "2.0.0-rc.2",
-    "nonce": "1549700732762159"
+    "nonce": "1237830869746545"
   },
   "main": "./sources/index.ts",
   "sideEffects": false,
@@ -23,6 +23,7 @@
     "got": "^9.2.2",
     "json-file-plus": "^3.3.1",
     "logic-solver": "^2.0.1",
+    "micromatch": "^4.0.2",
     "mkdirp": "^0.5.1",
     "p-limit": "^2.2.0",
     "pluralize": "^7.0.0",
