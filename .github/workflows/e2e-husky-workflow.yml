@@ -31,6 +31,7 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
 
+        git init
         yarn init -p
         yarn add -D husky@^4.0.0-beta.1 @commitlint/{cli,config-conventional}
 
