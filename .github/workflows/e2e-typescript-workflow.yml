@@ -35,34 +35,40 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add typescript
 
         jq '.resolutions["@yarnpkg/fslib"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-fslib/package.tgz"' <<< "$(cat package.json)" > package.json
         jq '.resolutions["@yarnpkg/libzip"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-libzip/package.tgz"' <<< "$(cat package.json)" > package.json
         jq '.resolutions["@yarnpkg/pnpify"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-pnpify/package.tgz"' <<< "$(cat package.json)" > package.json
 
-        yarn add @yarnpkg/pnpify@*
+        jq '.scripts.tsc = "pnpify tsc"' <<< "$(cat package.json)" > package.json
 
-        echo '{"compilerOptions": {"baseUrl": ".", "strict": true}}' > tsconfig.json
+        yarn add typescript @yarnpkg/pnpify@*
+        yarn add ts-pnp left-pad @types/left-pad
+
+        echo '{"compilerOptions": {"baseUrl": ".", "strict": true, "esModuleInterop": true}}' > tsconfig.json
 
         echo "const foo: number = 42;" | tee file.ts
-        yarn pnpify tsc --noEmit
+        yarn tsc --noEmit
 
         echo "const foo: number = 'error';" | tee file.ts
-        ! yarn pnpify tsc --noEmit
+        ! yarn tsc --noEmit
 
-        yarn add ts-pnp
+        echo "import tsPnp from 'ts-pnp'; tsPnp('', '', {} as any, {} as any);" | tee file.ts
+        yarn tsc --noEmit
+
+        echo "import tsPnP from 'ts-pnp'; tsPnp + 42;" | tee file.ts
+        ! yarn tsc --noEmit
+
+        yarn add @types/node
 
         echo "require('ts-pnp')('', '', {} as any, {} as any);" | tee file.ts
-        yarn pnpify tsc --noEmit
+        yarn tsc --noEmit
 
         echo "require('ts-pnp') + 42;" | tee file.ts
-        ! yarn pnpify tsc --noEmit
-
-        yarn add left-pad @types/left-pad
+        ! yarn tsc --noEmit
 
         echo "require('left-pad')('hello', 42, ' ');" | tee file.js
-        yarn pnpify tsc --noEmit
+        yarn tsc --noEmit
 
         echo "require('left-pad') + 42;" | tee file.js
-        ! yarn pnpify tsc --noEmit
+        ! yarn tsc --noEmit
