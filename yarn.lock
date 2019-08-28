@@ -2969,7 +2969,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/micromatch@npm:3.1.0, @types/micromatch@npm:^3.1.0":
+"@types/micromatch@npm:^3.1.0":
   version: 3.1.0
   resolution: "@types/micromatch@npm:3.1.0"
   dependencies:
@@ -3763,7 +3763,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
-    "@types/micromatch": "npm:3.1.0"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.1"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.0"
     "@yarnpkg/parsers": "workspace:2.0.0-rc.1"

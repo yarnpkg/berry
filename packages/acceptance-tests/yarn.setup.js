@@ -2,6 +2,7 @@
 
 const {delimiter} = require(`path`);
 const isWsl = require(`is-wsl`);
+const {URL} = require(`url`);
 
 const {
   tests: {generatePkgDriver, startPackageServer, getPackageRegistry},
