@@ -1,0 +1,47 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-husky-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E Husky'
+jobs:
+  chore:
+    name: 'Validating Husky'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        git init
+        echo '/.yarn' > .gitignore
+
+        yarn init -p
+        yarn add -D husky@^4.0.0-beta.1 @commitlint/{cli,config-conventional}
+
+        echo 'module.exports = {extends: ["@commitlint/config-conventional"]};' > commitlint.config.js
+
+        echo '{"hooks": {"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"}}' > .huskyrc
+
+        git add .
+        ! git commit -m "Invalid commit message should fail pre-commit check"
+
+        git commit -m "test: lint on commitmsg should pass pre-commit check"
