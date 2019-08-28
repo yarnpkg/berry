@@ -1,7 +1,7 @@
-import {WorkspaceRequiredError}                                                                                         from '@yarnpkg/cli';
-import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, execUtils, structUtils, Manifest} from '@yarnpkg/core';
-import {Filename, PortablePath, fromPortablePath, ppath, toPortablePath, xfs}                                           from '@yarnpkg/fslib';
-import {Command, UsageError}                                                                                            from 'clipanion';
+import {WorkspaceRequiredError}                                                                                                      from '@yarnpkg/cli';
+import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, execUtils, structUtils, Manifest, LocatorHash} from '@yarnpkg/core';
+import {Filename, PortablePath, fromPortablePath, ppath, toPortablePath, xfs}                                                        from '@yarnpkg/fslib';
+import {Command, UsageError}                                                                                                         from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionApplyCommand extends Command<CommandContext> {
@@ -39,9 +39,8 @@ export default class VersionApplyCommand extends Command<CommandContext> {
       const base = await fetchBase(root);
 
       const files = await fetchChangedFiles(root, {base: base.hash});
-      const workspaces = new Set(files.map(file => project.getWorkspaceByFilePath(file)));
+      const workspaces = [...new Set(files.map(file => project.getWorkspaceByFilePath(file)))];
 
-      const releases = new Set();
       let hasDiffErrors = false;
       let hasDepsErrors = false;
 
@@ -54,68 +53,27 @@ export default class VersionApplyCommand extends Command<CommandContext> {
         }
       }
 
-      // First we check which workspaces have received modifications but no release strategies
-      for (const workspace of workspaces) {
-        // Let's assume that packages without versions don't need to see their version increased
-        if (workspace.manifest.version === null)
-          continue;
+      const {decided, undecided} = await fetchWorkspacesStatus(workspaces, {root, base: base.hash});
 
-        const currentNonce = getNonce(workspace.manifest);
-        const previousNonce = await fetchPreviousNonce(workspace, {root, base: base.hash});
+      if (undecided.length > 0) {
+        if (!hasDiffErrors && files.length > 0)
+          report.reportSeparator();
 
-        // If the nonce is the same, it means that the user didn't run one of the `yarn version <>` variants since they started working on this diff
-        if (currentNonce === previousNonce) {
-          if (!hasDiffErrors && files.length > 0)
-            report.reportSeparator();
-
+        for (const workspace of undecided)
           report.reportError(MessageName.UNNAMED, `${structUtils.prettyLocator(configuration, workspace.anchoredLocator)} has been modified but doesn't have a bump strategy attached`);
-          hasDiffErrors = true;
-        } else {
-          // If it changed and a bump is planned, we mark it so that we can check that its dependents also chose whether they want to be bumped or not
-          if (willBeReleased(workspace.manifest)) {
-            releases.add(workspace.anchoredLocator.locatorHash);
-          }
-        }
+
+        hasDiffErrors = true;
       }
 
+      const undecidedDependents = await fetchUndecidedDependentWorkspaces(decided, {project});
+
       // Then we check which workspaces depend on packages that will be released again but have no release strategies themselves
-      for (const workspace of project.workspaces) {
-        // We don't need to check whether the dependencies of packages that will be bumped because of this PR changed
-        if (releases.has(workspace.anchoredLocator.locatorHash))
-          continue;
-        // We also don't need to check whether the dependencies of private packages changed, as they are supposed to only make sense within the context of the monorepo
-        if (workspace.manifest.private)
-          continue;
-        // Let's assume that packages without versions don't need to see their version increased
-        if (workspace.manifest.version === null)
-          continue;
+      for (const [workspace, dependency] of undecidedDependents) {
+        if (!hasDepsErrors && (files.length > 0 || hasDiffErrors))
+          report.reportSeparator();
 
-        for (const descriptor of workspace.dependencies.values()) {
-          const resolution = project.storedResolutions.get(descriptor.descriptorHash);
-          if (typeof resolution === `undefined`)
-            throw new Error(`Assertion failed: The resolution should have been registered`);
-
-          const pkg = project.storedPackages.get(resolution);
-          if (typeof pkg === `undefined`)
-            throw new Error(`Assertion failed: The package should have been registered`);
-
-          // We only care about workspaces, and we only care about workspaces that will be bumped
-          if (!releases.has(resolution))
-            continue;
-
-          // Quick note: we don't want to check whether the workspace pointer
-          // by `resolution` is private, because while it doesn't makes sense
-          // to bump a private package because its dependencies changed, the
-          // opposite isn't true: a (public) package might need to be bumped
-          // because one of its dev dependencies is a (private) package whose
-          // behavior sensibly changed.
-
-          if (!hasDepsErrors && (files.length > 0 || hasDiffErrors))
-            report.reportSeparator();
-
-          report.reportError(MessageName.UNNAMED, `${structUtils.prettyLocator(configuration, workspace.anchoredLocator)} doesn't have a bump strategy attached, but depends on ${structUtils.prettyLocator(configuration, pkg)} which will be re-released.`);
-          hasDepsErrors = true;
-        }
+        report.reportError(MessageName.UNNAMED, `${structUtils.prettyLocator(configuration, workspace.anchoredLocator)} doesn't have a bump strategy attached, but depends on ${structUtils.prettyWorkspace(configuration, dependency)} which will be re-released.`);
+        hasDepsErrors = true;
       }
 
       if (hasDiffErrors || hasDepsErrors) {
@@ -128,6 +86,81 @@ export default class VersionApplyCommand extends Command<CommandContext> {
 
     return report.exitCode();
   }
+}
+
+async function fetchWorkspacesStatus(workspaces: Array<Workspace>, {root, base}: { root: PortablePath, base: string }) {
+  const decided: Array<Workspace> = [];
+  const undecided: Array<Workspace> = [];
+  const declined: Array<Workspace> = [];
+
+  // First we check which workspaces have received modifications but no release strategies
+  for (const workspace of workspaces) {
+    // Let's assume that packages without versions don't need to see their version increased
+    if (workspace.manifest.version === null)
+      continue;
+
+    const currentNonce = getNonce(workspace.manifest);
+    const previousNonce = await fetchPreviousNonce(workspace, {root, base});
+
+    // If the nonce is the same, it means that the user didn't run one of the `yarn version <>` variants since they started working on this diff
+    if (currentNonce === previousNonce) {
+      undecided.push(workspace);
+    } else {
+      if (willBeReleased(workspace.manifest)) {
+        decided.push(workspace);
+      } else {
+        declined.push(workspace);
+      }
+    }
+  }
+
+  return {decided, undecided, declined};
+}
+
+async function fetchUndecidedDependentWorkspaces(workspaces: Array<Workspace>, {project}: {project: Project}) {
+  const undecided = [];
+
+  const bumpedWorkspaces = new Map(workspaces.map<[LocatorHash, Workspace]>(workspace => {
+    return [workspace.anchoredLocator.locatorHash, workspace];
+  }));
+
+  // Then we check which workspaces depend on packages that will be released again but have no release strategies themselves
+  for (const workspace of project.workspaces) {
+    // We don't need to check whether the dependencies of packages that will be bumped because of this PR changed
+    if (bumpedWorkspaces.has(workspace.anchoredLocator.locatorHash))
+      continue;
+    // We also don't need to check whether the dependencies of private packages changed, as they are supposed to only make sense within the context of the monorepo
+    if (workspace.manifest.private)
+      continue;
+    // Let's assume that packages without versions don't need to see their version increased
+    if (workspace.manifest.version === null)
+      continue;
+
+    for (const descriptor of workspace.dependencies.values()) {
+      const resolution = project.storedResolutions.get(descriptor.descriptorHash);
+      if (typeof resolution === `undefined`)
+        throw new Error(`Assertion failed: The resolution should have been registered`);
+
+      const pkg = project.storedPackages.get(resolution);
+      if (typeof pkg === `undefined`)
+        throw new Error(`Assertion failed: The package should have been registered`);
+
+      // We only care about workspaces, and we only care about workspaces that will be bumped
+      if (!bumpedWorkspaces.has(resolution))
+        continue;
+
+      // Quick note: we don't want to check whether the workspace pointer
+      // by `resolution` is private, because while it doesn't makes sense
+      // to bump a private package because its dependencies changed, the
+      // opposite isn't true: a (public) package might need to be bumped
+      // because one of its dev dependencies is a (private) package whose
+      // behavior sensibly changed.
+
+      undecided.push([workspace, bumpedWorkspaces.get(resolution)!]);
+    }
+  }
+
+  return undecided;
 }
 
 async function fetchBase(root: PortablePath) {
