@@ -27,6 +27,7 @@ jobs:
       run: |
         node ./scripts/run-yarn.js build:cli
         node ./scripts/run-yarn workspace @yarnpkg/fslib pack
+        node ./scripts/run-yarn workspace @yarnpkg/libzip pack
         node ./scripts/run-yarn workspace @yarnpkg/pnpify pack
 
     - name: 'Running the integration test'
@@ -37,6 +38,7 @@ jobs:
         yarn add typescript
 
         jq '.resolutions["@yarnpkg/fslib"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-fslib/package.tgz"' <<< "$(cat package.json)" > package.json
+        jq '.resolutions["@yarnpkg/libzip"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-libzip/package.tgz"' <<< "$(cat package.json)" > package.json
         jq '.resolutions["@yarnpkg/pnpify"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-pnpify/package.tgz"' <<< "$(cat package.json)" > package.json
 
         yarn add @yarnpkg/pnpify@*
