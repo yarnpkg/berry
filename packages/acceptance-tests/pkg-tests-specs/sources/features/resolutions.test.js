@@ -1,5 +1,6 @@
 const {
   fs: {writeFile, writeJson},
+  tests: {getPackageArchivePath, getPackageDirectoryPath}
 } = require('pkg-tests-core');
 
 describe(`Features`, () => {
@@ -29,6 +30,62 @@ describe(`Features`, () => {
             version: `1.0.0`,
             dependencies: {
               [`no-deps`]: 42,
+            },
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should support overriding packages with tarballs`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`one-fixed-dep`]: `1.0.0`,
+          },
+          resolutions: {
+            [`no-deps`]: getPackageArchivePath(`no-deps`, `2.0.0`),
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
+            name: `one-fixed-dep`,
+            version: `1.0.0`,
+            dependencies: {
+              [`no-deps`]: {
+                name: `no-deps`,
+                version: `2.0.0`,
+              },
+            },
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should support overriding packages with directories`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`one-fixed-dep`]: `1.0.0`,
+          },
+          resolutions: {
+            [`no-deps`]: getPackageDirectoryPath(`no-deps`, `2.0.0`),
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
+            name: `one-fixed-dep`,
+            version: `1.0.0`,
+            dependencies: {
+              [`no-deps`]: {
+                name: `no-deps`,
+                version: `2.0.0`,
+              },
             },
           });
         },
