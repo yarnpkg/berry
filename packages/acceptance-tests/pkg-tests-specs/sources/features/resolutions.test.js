@@ -37,6 +37,20 @@ describe(`Features`, () => {
     );
 
     test(
+      `it should error when legacy glob syntax is used`,
+      makeTemporaryEnv(
+        {
+          resolutions: {
+            [`**/no-deps`]: `1.2.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).rejects.toThrow(`The override for '**/no-deps' includes a glob pattern. Glob patterns have been removed since their behaviours don't match what you'd expect. Set the override to 'no-deps' instead.`);
+        },
+      ),
+    );
+
+    test(
       `it should support overriding packages with tarballs`,
       makeTemporaryEnv(
         {
