@@ -65,16 +65,10 @@ jobs:
         echo "import leftPad from 'left-pad'; const foo: number = leftPad('hello', 42, ' ');" | tee file.ts
         ! yarn tsc --noEmit
 
+        echo "process.exit(42);" | tee file.ts
+        ! yarn tsc --noEmit
+
         yarn add @types/node
 
-        echo "const {resolveModuleName} = require('ts-pnp'); const foo: (...args: any[]) => any = resolveModuleName;" | tee file.ts
+        echo "process.exit(42);" | tee file.ts
         yarn tsc --noEmit
-
-        echo "const {resolveModuleName} = require('ts-pnp'); const foo: number = resolveModuleName;" | tee file.ts
-        ! yarn tsc --noEmit
-
-        echo "const leftPad = require('left-pad'); const foo: string = leftPad('hello', 42, ' ');" | tee file.ts
-        yarn tsc --noEmit
-
-        echo "const leftPad = require('left-pad'); const foo: number = leftPad('hello', 42, ' ');" | tee file.ts
-        ! yarn tsc --noEmit
