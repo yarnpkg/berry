@@ -53,22 +53,22 @@ jobs:
         echo "const foo: number = 'error';" | tee file.ts
         ! yarn tsc --noEmit
 
-        echo "import tsPnp from 'ts-pnp'; tsPnp('', '', {} as any, {} as any);" | tee file.ts
+        echo "import {resolveModuleName} from 'ts-pnp'; const foo: (...args: any[]) => any = resolveModuleName;" | tee file.ts
         yarn tsc --noEmit
 
-        echo "import tsPnP from 'ts-pnp'; tsPnp + 42;" | tee file.ts
+        echo "import {resolveModuleName} from 'ts-pnp'; const foo: number = resolveModuleName;" | tee file.ts
         ! yarn tsc --noEmit
 
         yarn add @types/node
 
-        echo "require('ts-pnp')('', '', {} as any, {} as any);" | tee file.ts
+        echo "const {resolveModuleName} = require('ts-pnp'); const foo: (...args: any[]) => any = resolveModuleName;" | tee file.ts
         yarn tsc --noEmit
 
-        echo "require('ts-pnp') + 42;" | tee file.ts
+        echo "const {resolveModuleName} = require('ts-pnp'); const foo: number = resolveModuleName;" | tee file.ts
         ! yarn tsc --noEmit
 
-        echo "require('left-pad')('hello', 42, ' ');" | tee file.js
+        echo "const leftPad = require('left-pad'); const foo: string = leftPad('hello', 42, ' ');" | tee file.js
         yarn tsc --noEmit
 
-        echo "require('left-pad') + 42;" | tee file.js
+        echo "const leftPad = require('left-pad'); const foo: number = leftPad('hello', 42, ' ');" | tee file.js
         ! yarn tsc --noEmit
