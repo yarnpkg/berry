@@ -3,7 +3,7 @@ import libzip from './libzip';
 const number64 = [
   `number`, // low
   `number`, // high
-];
+] as 'number'[];
 
 // eslint-disable-next-line arca/no-default-export
 export default {
@@ -53,7 +53,7 @@ export default {
   open: libzip.cwrap(`zip_open`, `number`, [`string`, `number`, `number`]),
   openFromSource: libzip.cwrap(`zip_open_from_source`, `number`, [`number`, `number`, `number`]),
   close: libzip.cwrap(`zip_close`, `number`, [`number`]),
-  discard: libzip.cwrap(`zip_discard`, `void`, [`number`]),
+  discard: libzip.cwrap(`zip_discard`, null, [`number`]),
 
   getError: libzip.cwrap(`zip_get_error`, `number`, [`number`]),
   getName: libzip.cwrap(`zip_get_name`, `string`, [`number`, `number`, `number`]),
@@ -81,7 +81,7 @@ export default {
   },
 
   error: {
-    initWithCode: libzip.cwrap(`zip_error_init_with_code`, `void`, [`number`, `number`]),
+    initWithCode: libzip.cwrap(`zip_error_init_with_code`, null, [`number`, `number`]),
     strerror: libzip.cwrap(`zip_error_strerror`, `string`, [`number`]),
   },
 
@@ -92,7 +92,7 @@ export default {
   source: {
     fromUnattachedBuffer: libzip.cwrap(`zip_source_buffer_create`, `number`, [`number`, `number`, `number`, `number`]),
     fromBuffer: libzip.cwrap(`zip_source_buffer`, `number`, [`number`, `number`, ...number64, `number`]),
-    free: libzip.cwrap(`zip_source_free`, `void`, [`number`]),
+    free: libzip.cwrap(`zip_source_free`, null, [`number`]),
   },
 
   struct: {

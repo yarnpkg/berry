@@ -2745,12 +2745,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/emscripten@npm:^0.0.31":
-  version: 0.0.31
-  resolution: "@types/emscripten@npm:0.0.31"
-  dependencies:
-    "@types/webassembly-js-api": "npm:*"
-  checksum: b2db2509e55715d288ac098672f9c57060fc5cf3ffeae307648dfa6f2c8816bc530aa2b70ef99d9044ebc5f98e95e9ef306f48da49c11c456a967a4c4f7090e4
+"@types/emscripten@npm:^1.38.0":
+  version: 1.38.0
+  resolution: "@types/emscripten@npm:1.38.0"
+  checksum: fef75985cd9a0bb04c9a942a456e3d0e6117014f2dd1133982d4fb01f132b4b1a2fa0f4fcfad2e9822ed8b5a9493c7de36cd5993412f4bc556158e581a308db4
   languageName: node
   linkType: hard
 
@@ -2887,6 +2885,16 @@ __metadata:
   version: 4.7.2
   resolution: "@types/history@npm:4.7.2"
   checksum: ffdef7b977a44568ab053052b1f638d7a6eaa0c2116fd74b66c10de4f5c101395d343c7110d671ebfe1a062ffbd38a9790b0cc4192dd20c2a97d2ad4525be42d
+  languageName: node
+  linkType: hard
+
+"@types/hoist-non-react-statics@npm:^3.3.0":
+  version: 3.3.1
+  resolution: "@types/hoist-non-react-statics@npm:3.3.1"
+  dependencies:
+    "@types/react": "npm:*"
+    hoist-non-react-statics: "npm:^3.3.0"
+  checksum: f2d0eb21d4a672a01146e6857547e71531a7e0ce18f73d9f8958a22e241ce475925d920db1bf91d33a780736b2da6697cdff97f38890ef3634353fbe0ced2b36
   languageName: node
   linkType: hard
 
@@ -3047,13 +3055,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-redux@npm:^6.0.9":
-  version: 6.0.13
-  resolution: "@types/react-redux@npm:6.0.13"
+"@types/react-redux@npm:^7.1.2":
+  version: 7.1.2
+  resolution: "@types/react-redux@npm:7.1.2"
   dependencies:
+    "@types/hoist-non-react-statics": "npm:^3.3.0"
     "@types/react": "npm:*"
+    hoist-non-react-statics: "npm:^3.3.0"
     redux: "npm:^4.0.0"
-  checksum: 91ba2b663b440991907c3d8d90f320cbfeec0ceeccf3dd74fde5677f652fa90976415abd0bc9c8f8cbd409649268e070fead81e1ce5cb7dcebf9e8b7358e6727
+  checksum: 3338f26e4ec2493f92117069ebf7b710f0dd05dd9e4f0ce2b946a38847bb1cb95d07f9fd1536238802dc29fdd9a96a50e8b6074fa938798810475918aaa10398
   languageName: node
   linkType: hard
 
@@ -3374,13 +3384,6 @@ __metadata:
     "@types/unist": "npm:*"
     "@types/vfile-message": "npm:*"
   checksum: 72b1f3f167ed8b5ab2be3bd347fb898f2fd9018a20da7caf67433eb0314de623ed50cb0dc7d22f58947838a51eb3480ef328f3faeb6b6eaac401670baae804d4
-  languageName: node
-  linkType: hard
-
-"@types/webassembly-js-api@npm:*":
-  version: 0.0.2
-  resolution: "@types/webassembly-js-api@npm:0.0.2"
-  checksum: aa87cda6eb100910b57f367693a74deef8bcb5a57abad2be3a4de8f79157bc98bc0787bc5cb7eeec67fc53dca65d7a104823a11a371f8ee38f71bf8c39df8096
   languageName: node
   linkType: hard
 
@@ -3891,7 +3894,7 @@ __metadata:
     "@types/chalk": "npm:2.2.0"
     "@types/cross-spawn": "npm:6.0.0"
     "@types/dateformat": "npm:^1.0.1"
-    "@types/emscripten": "npm:^0.0.31"
+    "@types/emscripten": "npm:^1.38.0"
     "@types/eslint": "npm:4.16.6"
     "@types/eventemitter3": "npm:^2.0.2"
     "@types/execa": "npm:^0.9.0"
@@ -3911,7 +3914,7 @@ __metadata:
     "@types/node-emoji": "npm:^1.8.0"
     "@types/node-fetch": "npm:^2.1.2"
     "@types/react": "npm:^16.4.14"
-    "@types/react-redux": "npm:^6.0.9"
+    "@types/react-redux": "npm:^7.1.2"
     "@types/redux-saga": "npm:^0.10.5"
     "@types/request": "npm:^2.47.1"
     "@types/semver": "npm:^5.5.0"

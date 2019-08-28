@@ -408,7 +408,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/chalk", "npm:2.2.0"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/dateformat", "npm:1.0.2"],
-            ["@types/emscripten", "npm:0.0.31"],
+            ["@types/emscripten", "npm:1.38.0"],
             ["@types/eslint", "npm:4.16.6"],
             ["@types/eventemitter3", "npm:2.0.2"],
             ["@types/execa", "npm:0.9.0"],
@@ -428,7 +428,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/node-emoji", "npm:1.8.0"],
             ["@types/node-fetch", "npm:2.1.4"],
             ["@types/react", "npm:16.7.20"],
-            ["@types/react-redux", "npm:6.0.13"],
+            ["@types/react-redux", "npm:7.1.2"],
             ["@types/redux-saga", "npm:0.10.5"],
             ["@types/request", "npm:2.48.1"],
             ["@types/semver", "npm:5.5.0"],
@@ -3669,11 +3669,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["@types/emscripten", [
-        ["npm:0.0.31", {
-          "packageLocation": "./.yarn/cache/@types-emscripten-npm-0.0.31-afc8476899.zip/node_modules/@types/emscripten/",
+        ["npm:1.38.0", {
+          "packageLocation": "./.yarn/cache/@types-emscripten-npm-1.38.0-bba12fa5d3.zip/node_modules/@types/emscripten/",
           "packageDependencies": [
-            ["@types/emscripten", "npm:0.0.31"],
-            ["@types/webassembly-js-api", "npm:0.0.2"]
+            ["@types/emscripten", "npm:1.38.0"]
           ]
         }]
       ]],
@@ -3815,6 +3814,16 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/@types-history-npm-4.7.2-55ec3ddb3a.zip/node_modules/@types/history/",
           "packageDependencies": [
             ["@types/history", "npm:4.7.2"]
+          ]
+        }]
+      ]],
+      ["@types/hoist-non-react-statics", [
+        ["npm:3.3.1", {
+          "packageLocation": "./.yarn/cache/@types-hoist-non-react-statics-npm-3.3.1-cd260a54b5.zip/node_modules/@types/hoist-non-react-statics/",
+          "packageDependencies": [
+            ["@types/hoist-non-react-statics", "npm:3.3.1"],
+            ["@types/react", "npm:16.7.20"],
+            ["hoist-non-react-statics", "npm:3.3.0"]
           ]
         }]
       ]],
@@ -4001,11 +4010,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["@types/react-redux", [
-        ["npm:6.0.13", {
-          "packageLocation": "./.yarn/cache/@types-react-redux-npm-6.0.13-ddd59f0426.zip/node_modules/@types/react-redux/",
+        ["npm:7.1.2", {
+          "packageLocation": "./.yarn/cache/@types-react-redux-npm-7.1.2-7faed1c3f1.zip/node_modules/@types/react-redux/",
           "packageDependencies": [
-            ["@types/react-redux", "npm:6.0.13"],
+            ["@types/react-redux", "npm:7.1.2"],
+            ["@types/hoist-non-react-statics", "npm:3.3.1"],
             ["@types/react", "npm:16.7.20"],
+            ["hoist-non-react-statics", "npm:3.3.0"],
             ["redux", "npm:4.0.1"]
           ]
         }]
@@ -4317,14 +4328,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/vfile-message", "npm:1.0.1"],
             ["@types/node", "npm:10.12.18"],
             ["@types/unist", "npm:2.0.3"]
-          ]
-        }]
-      ]],
-      ["@types/webassembly-js-api", [
-        ["npm:0.0.2", {
-          "packageLocation": "./.yarn/cache/@types-webassembly-js-api-npm-0.0.2-34b91f83db.zip/node_modules/@types/webassembly-js-api/",
-          "packageDependencies": [
-            ["@types/webassembly-js-api", "npm:0.0.2"]
           ]
         }]
       ]],
@@ -4995,7 +4998,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/chalk", "npm:2.2.0"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/dateformat", "npm:1.0.2"],
-            ["@types/emscripten", "npm:0.0.31"],
+            ["@types/emscripten", "npm:1.38.0"],
             ["@types/eslint", "npm:4.16.6"],
             ["@types/eventemitter3", "npm:2.0.2"],
             ["@types/execa", "npm:0.9.0"],
@@ -5015,7 +5018,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/node-emoji", "npm:1.8.0"],
             ["@types/node-fetch", "npm:2.1.4"],
             ["@types/react", "npm:16.7.20"],
-            ["@types/react-redux", "npm:6.0.13"],
+            ["@types/react-redux", "npm:7.1.2"],
             ["@types/redux-saga", "npm:0.10.5"],
             ["@types/request", "npm:2.48.1"],
             ["@types/semver", "npm:5.5.0"],
