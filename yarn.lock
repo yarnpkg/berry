@@ -4185,7 +4185,7 @@ __metadata:
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.1"
     clipanion: "npm:^2.1.1"
     ink: "npm:^2.3.0"
-    react: "npm:^16.9.0"
+    react: "npm:^16.8.4"
     semver: "npm:^5.6.0"
     typescript: "npm:^3.5.3"
     yup: "npm:^0.27.0"
@@ -18884,17 +18884,6 @@ __metadata:
     prop-types: "npm:^15.6.2"
     scheduler: "npm:^0.13.4"
   checksum: 590041ffec2db5d160bb81e9313333bbc1c9a988082073e3f38f350438b2557dde57adc44598fe339a9a14b28b15e4c8c843c9b0ea65fd560ca9d7404b273b21
-  languageName: node
-  linkType: hard
-
-"react@npm:^16.9.0":
-  version: 16.9.0
-  resolution: "react@npm:16.9.0"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-    object-assign: "npm:^4.1.1"
-    prop-types: "npm:^15.6.2"
-  checksum: df923801678ebbeb56ad367121c05932f4d06898a831fff45c4b2feaec25236eb53b164eec41648262eb936234d73baf553e6035ebf71392ba658ee848a8500e
   languageName: node
   linkType: hard
 

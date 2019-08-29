@@ -5301,7 +5301,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/plugin-pack", "workspace:packages/plugin-pack"],
             ["clipanion", "npm:2.1.1"],
             ["ink", "virtual:72cb5b73d46f84500ce1908d1a34897ae35075515a09e27961f50621854464b077677fb265f078365969da534b0f4ae525413d2ddbce9d63d386bbd404a500c8#npm:2.3.0"],
-            ["react", "npm:16.9.0"],
+            ["react", "npm:16.8.4"],
             ["semver", "npm:5.6.0"],
             ["typescript", "npm:3.5.3"],
             ["yup", "npm:0.27.0"]
@@ -13745,7 +13745,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["lodash.throttle", "npm:4.1.1"],
             ["log-update", "npm:3.2.0"],
             ["prop-types", "npm:15.6.2"],
-            ["react", "npm:16.9.0"],
+            ["react", "npm:16.8.4"],
             ["react-reconciler", "virtual:17bc8024fecb04dfacfacbdfeabf79a2ae3be396439aebf35e9263bd983b9b6d1ac2f5bafebff8a32a887f42838564eb23752fcb4b42b8e7ff80bde7b6facb63#npm:0.20.4"],
             ["scheduler", "npm:0.13.4"],
             ["signal-exit", "npm:3.0.2"],
@@ -20065,15 +20065,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["prop-types", "npm:15.6.2"],
             ["scheduler", "npm:0.13.4"]
           ]
-        }],
-        ["npm:16.9.0", {
-          "packageLocation": "./.yarn/cache/react-npm-16.9.0-abf99733d2.zip/node_modules/react/",
-          "packageDependencies": [
-            ["react", "npm:16.9.0"],
-            ["loose-envify", "npm:1.4.0"],
-            ["object-assign", "npm:4.1.1"],
-            ["prop-types", "npm:15.6.2"]
-          ]
         }]
       ]],
       ["react-dev-utils", [
@@ -20235,7 +20226,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["loose-envify", "npm:1.4.0"],
             ["object-assign", "npm:4.1.1"],
             ["prop-types", "npm:15.6.2"],
-            ["react", "npm:16.9.0"],
+            ["react", "npm:16.8.4"],
             ["scheduler", "npm:0.13.6"]
           ]
         }],
