@@ -21,10 +21,34 @@ export enum Modifier {
 };
 
 export enum Strategy {
+  /**
+   * If set, the suggest engine will offer to keep the current version if the
+   * local workspace already depends on it.
+   */
   KEEP = 'keep',
+
+  /**
+   * If set, the suggest engine will offer to fulfill the request by looking at
+   * the ranges currently used by the other workspaces in the project.
+   */
   REUSE = 'reuse',
+
+  /**
+   * If set, the suggest engine will offer to fulfill the request by using any
+   * workspace whose name would match the request.
+   */
   PROJECT = 'project',
+
+  /**
+   * If set, the suggest engine will offer to fulfill the request by using
+   * whatever `<request-name>@latest` would return.
+   */
   LATEST = 'latest',
+
+  /**
+   * If set, the suggest engine will offer to fulfill the request based on the
+   * versions of the package that are already within our cache.
+   */
   CACHE = 'cache',
 };
 
@@ -167,14 +191,13 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
       } break;
 
       case Strategy.PROJECT: {
+        // Don't suggest a workspace to depend on itself
+        if (workspace.manifest.name !== null && request.identHash === workspace.manifest.name.identHash)
+          continue;
+
         for (const workspace of project.workspacesByIdent.get(request.identHash) || []) {
           const reason = `Attach ${structUtils.prettyWorkspace(project.configuration, workspace)} (local workspace at ${workspace.cwd})`;
-
-          if (workspace.manifest.version) {
-            suggested.push({descriptor: workspace.anchoredDescriptor, reason});
-          } else {
-            suggested.push({descriptor: workspace.anchoredDescriptor, reason});
-          }
+          suggested.push({descriptor: workspace.anchoredDescriptor, reason});
         }
       } break;
 
