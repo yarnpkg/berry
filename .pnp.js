@@ -192,6 +192,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       "./.yarn/cache/eslint-plugin-import-npm-2.16.0-16ffabb925.zip/node_modules/eslint-plugin-import/",
       "./.yarn/cache/eslint-plugin-jsx-a11y-npm-6.2.1-bde1b59988.zip/node_modules/eslint-plugin-jsx-a11y/",
       "./.yarn/cache/eslint-plugin-react-npm-7.12.4-c852837405.zip/node_modules/eslint-plugin-react/",
+      "./.yarn/cache/eslint-plugin-react-npm-7.14.3-8b420f7882.zip/node_modules/eslint-plugin-react/",
       "./.yarn/cache/express-graphql-npm-0.7.1-a1012da8fd.zip/node_modules/express-graphql/",
       "./.yarn/cache/favicons-webpack-plugin-git+https-6866137cc2.zip/sources/",
       "./.yarn/cache/file-loader-npm-1.1.11-b45a68d92a.zip/node_modules/file-loader/",
@@ -220,6 +221,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       "./.yarn/cache/graphql-type-json-npm-0.2.4-09dcafc394.zip/node_modules/graphql-type-json/",
       "./.yarn/cache/html-react-parser-npm-0.4.7-240b44d93c.zip/node_modules/html-react-parser/",
       "./.yarn/cache/ink-npm-2.2.0-f4a3d0c0b8.zip/node_modules/ink/",
+      "./.yarn/cache/ink-npm-2.3.0-495b9d5feb.zip/node_modules/ink/",
       "./.yarn/cache/ink-spinner-npm-3.0.1-930482b02b.zip/node_modules/ink-spinner/",
       "./.yarn/cache/jest-pnp-resolver-npm-1.2.1-2e7db75983.zip/node_modules/jest-pnp-resolver/",
       "./.yarn/cache/jest-resolve-dependencies-npm-24.5.0-aedcd7c71a.zip/node_modules/jest-resolve-dependencies/",
@@ -427,7 +429,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/node", "npm:10.12.18"],
             ["@types/node-emoji", "npm:1.8.0"],
             ["@types/node-fetch", "npm:2.1.4"],
-            ["@types/react", "npm:16.7.20"],
+            ["@types/react", "npm:16.9.2"],
             ["@types/react-redux", "npm:7.1.2"],
             ["@types/redux-saga", "npm:0.10.5"],
             ["@types/request", "npm:2.48.1"],
@@ -450,6 +452,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["babel-jest", "virtual:59fd2c3409940b79c28868586cca74c9ba39be6b9424e71de420939b2bde6a55439f63f9a10bbd85ee25e4aa794a6c7c8d25f9fd5c571ce6da3d155ec0cc13d0#npm:24.5.0"],
             ["eslint", "npm:5.16.0"],
             ["eslint-plugin-arca", "npm:0.9.0"],
+            ["eslint-plugin-react", "virtual:59fd2c3409940b79c28868586cca74c9ba39be6b9424e71de420939b2bde6a55439f63f9a10bbd85ee25e4aa794a6c7c8d25f9fd5c571ce6da3d155ec0cc13d0#npm:7.14.3"],
             ["github-api", "npm:3.2.2"],
             ["jest", "npm:24.5.0"],
             ["jest-environment-node", "npm:24.5.0"],
@@ -4007,6 +4010,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/prop-types", "npm:15.5.8"],
             ["csstype", "npm:2.6.0"]
           ]
+        }],
+        ["npm:16.9.2", {
+          "packageLocation": "./.yarn/cache/@types-react-npm-16.9.2-23d1c7f8f7.zip/node_modules/@types/react/",
+          "packageDependencies": [
+            ["@types/react", "npm:16.9.2"],
+            ["@types/prop-types", "npm:15.5.8"],
+            ["csstype", "npm:2.6.0"]
+          ]
         }]
       ]],
       ["@types/react-redux", [
@@ -5018,7 +5029,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/node", "npm:10.12.18"],
             ["@types/node-emoji", "npm:1.8.0"],
             ["@types/node-fetch", "npm:2.1.4"],
-            ["@types/react", "npm:16.7.20"],
+            ["@types/react", "npm:16.9.2"],
             ["@types/react-redux", "npm:7.1.2"],
             ["@types/redux-saga", "npm:0.10.5"],
             ["@types/request", "npm:2.48.1"],
@@ -5041,6 +5052,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["babel-jest", "virtual:59fd2c3409940b79c28868586cca74c9ba39be6b9424e71de420939b2bde6a55439f63f9a10bbd85ee25e4aa794a6c7c8d25f9fd5c571ce6da3d155ec0cc13d0#npm:24.5.0"],
             ["eslint", "npm:5.16.0"],
             ["eslint-plugin-arca", "npm:0.9.0"],
+            ["eslint-plugin-react", "virtual:59fd2c3409940b79c28868586cca74c9ba39be6b9424e71de420939b2bde6a55439f63f9a10bbd85ee25e4aa794a6c7c8d25f9fd5c571ce6da3d155ec0cc13d0#npm:7.14.3"],
             ["github-api", "npm:3.2.2"],
             ["jest", "npm:24.5.0"],
             ["jest-environment-node", "npm:24.5.0"],
@@ -5288,6 +5300,8 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-pack", "workspace:packages/plugin-pack"],
             ["clipanion", "npm:2.1.1"],
+            ["ink", "virtual:72cb5b73d46f84500ce1908d1a34897ae35075515a09e27961f50621854464b077677fb265f078365969da534b0f4ae525413d2ddbce9d63d386bbd404a500c8#npm:2.3.0"],
+            ["react", "npm:16.8.4"],
             ["semver", "npm:5.6.0"],
             ["typescript", "npm:3.5.3"],
             ["yup", "npm:0.27.0"]
@@ -10435,6 +10449,22 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["eslint-plugin-react", [
+        ["virtual:59fd2c3409940b79c28868586cca74c9ba39be6b9424e71de420939b2bde6a55439f63f9a10bbd85ee25e4aa794a6c7c8d25f9fd5c571ce6da3d155ec0cc13d0#npm:7.14.3", {
+          "packageLocation": "./.yarn/virtual/eslint-plugin-react-virtual-a756adba55/0/cache/eslint-plugin-react-npm-7.14.3-8b420f7882.zip/node_modules/eslint-plugin-react/",
+          "packageDependencies": [
+            ["eslint-plugin-react", "virtual:59fd2c3409940b79c28868586cca74c9ba39be6b9424e71de420939b2bde6a55439f63f9a10bbd85ee25e4aa794a6c7c8d25f9fd5c571ce6da3d155ec0cc13d0#npm:7.14.3"],
+            ["array-includes", "npm:3.0.3"],
+            ["doctrine", "npm:2.1.0"],
+            ["eslint", "npm:5.16.0"],
+            ["has", "npm:1.0.3"],
+            ["jsx-ast-utils", "npm:2.2.1"],
+            ["object.entries", "npm:1.1.0"],
+            ["object.fromentries", "npm:2.0.0"],
+            ["object.values", "npm:1.1.0"],
+            ["prop-types", "npm:15.7.2"],
+            ["resolve", "npm:1.12.0"]
+          ]
+        }],
         ["virtual:a5119905f0e6b92fc17baa02aba345a8c8c783ae099ae7c1fb6b1a288d804334ec2ab49be6615d1124124e7432b18c3ed52a0f4828e2a5d3cb857efb96f01a04#npm:7.12.4", {
           "packageLocation": "./.yarn/virtual/eslint-plugin-react-virtual-11a18bf343/0/cache/eslint-plugin-react-npm-7.12.4-c852837405.zip/node_modules/eslint-plugin-react/",
           "packageDependencies": [
@@ -13701,6 +13731,31 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["ink", [
+        ["virtual:72cb5b73d46f84500ce1908d1a34897ae35075515a09e27961f50621854464b077677fb265f078365969da534b0f4ae525413d2ddbce9d63d386bbd404a500c8#npm:2.3.0", {
+          "packageLocation": "./.yarn/virtual/ink-virtual-17bc8024fe/0/cache/ink-npm-2.3.0-495b9d5feb.zip/node_modules/ink/",
+          "packageDependencies": [
+            ["ink", "virtual:72cb5b73d46f84500ce1908d1a34897ae35075515a09e27961f50621854464b077677fb265f078365969da534b0f4ae525413d2ddbce9d63d386bbd404a500c8#npm:2.3.0"],
+            ["@types/react", "npm:16.8.18"],
+            ["arrify", "npm:1.0.1"],
+            ["auto-bind", "npm:2.1.0"],
+            ["chalk", "npm:2.4.2"],
+            ["cli-cursor", "npm:2.1.0"],
+            ["cli-truncate", "npm:1.1.0"],
+            ["is-ci", "npm:2.0.0"],
+            ["lodash.throttle", "npm:4.1.1"],
+            ["log-update", "npm:3.2.0"],
+            ["prop-types", "npm:15.6.2"],
+            ["react", "npm:16.8.4"],
+            ["react-reconciler", "virtual:17bc8024fecb04dfacfacbdfeabf79a2ae3be396439aebf35e9263bd983b9b6d1ac2f5bafebff8a32a887f42838564eb23752fcb4b42b8e7ff80bde7b6facb63#npm:0.20.4"],
+            ["scheduler", "npm:0.13.4"],
+            ["signal-exit", "npm:3.0.2"],
+            ["slice-ansi", "npm:1.0.0"],
+            ["string-length", "npm:2.0.0"],
+            ["widest-line", "npm:2.0.1"],
+            ["wrap-ansi", "npm:5.1.0"],
+            ["yoga-layout-prebuilt", "npm:1.9.3"]
+          ]
+        }],
         ["virtual:c1b88d30019fac2125ed9435876e4027efa1b2384480b384ef7edf9cf15ca40dd1533912bf1fdfacc977657039a9ed198c6d34e57bfd47098dba97c29715b59c#npm:2.2.0", {
           "packageLocation": "./.yarn/virtual/ink-virtual-ebe229e1d7/0/cache/ink-npm-2.2.0-f4a3d0c0b8.zip/node_modules/ink/",
           "packageDependencies": [
@@ -15987,6 +16042,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageDependencies": [
             ["jsx-ast-utils", "npm:2.0.1"],
             ["array-includes", "npm:3.0.3"]
+          ]
+        }],
+        ["npm:2.2.1", {
+          "packageLocation": "./.yarn/cache/jsx-ast-utils-npm-2.2.1-bf96ce6286.zip/node_modules/jsx-ast-utils/",
+          "packageDependencies": [
+            ["jsx-ast-utils", "npm:2.2.1"],
+            ["array-includes", "npm:3.0.3"],
+            ["object.assign", "npm:4.1.0"]
           ]
         }]
       ]],
@@ -20156,6 +20219,17 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["react-reconciler", [
+        ["virtual:17bc8024fecb04dfacfacbdfeabf79a2ae3be396439aebf35e9263bd983b9b6d1ac2f5bafebff8a32a887f42838564eb23752fcb4b42b8e7ff80bde7b6facb63#npm:0.20.4", {
+          "packageLocation": "./.yarn/virtual/react-reconciler-virtual-04377667af/0/cache/react-reconciler-npm-0.20.4-765af675b2.zip/node_modules/react-reconciler/",
+          "packageDependencies": [
+            ["react-reconciler", "virtual:17bc8024fecb04dfacfacbdfeabf79a2ae3be396439aebf35e9263bd983b9b6d1ac2f5bafebff8a32a887f42838564eb23752fcb4b42b8e7ff80bde7b6facb63#npm:0.20.4"],
+            ["loose-envify", "npm:1.4.0"],
+            ["object-assign", "npm:4.1.1"],
+            ["prop-types", "npm:15.6.2"],
+            ["react", "npm:16.8.4"],
+            ["scheduler", "npm:0.13.6"]
+          ]
+        }],
         ["virtual:ebe229e1d7b21dc1829b19b86e8dd741ce78c07580e0aded0971881b76677c205d0085632541b9545767001fcdadc7f2a67ccb1fd65ebe98faf9e6ba36e37bac#npm:0.20.4", {
           "packageLocation": "./.yarn/virtual/react-reconciler-virtual-080901e030/0/cache/react-reconciler-npm-0.20.4-765af675b2.zip/node_modules/react-reconciler/",
           "packageDependencies": [
@@ -20961,6 +21035,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/resolve-npm-1.11.1-467596df34.zip/node_modules/resolve/",
           "packageDependencies": [
             ["resolve", "npm:1.11.1"],
+            ["path-parse", "npm:1.0.6"]
+          ]
+        }],
+        ["npm:1.12.0", {
+          "packageLocation": "./.yarn/cache/resolve-npm-1.12.0-7029abc62b.zip/node_modules/resolve/",
+          "packageDependencies": [
+            ["resolve", "npm:1.12.0"],
             ["path-parse", "npm:1.0.6"]
           ]
         }],

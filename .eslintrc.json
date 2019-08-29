@@ -9,13 +9,14 @@
   },
   "plugins": [
     "@typescript-eslint",
-    "arca"
+    "arca",
+    "react"
   ],
   "rules": {
     "@typescript-eslint/camelcase": ["error", {"allow": ["__non_webpack_module__", "__non_webpack_require__", "^npm(_[a-z]+)+$"]}],
     "@typescript-eslint/class-name-casing": 2,
     "@typescript-eslint/indent": ["error", 2, {"SwitchCase": 1}],
-    "@typescript-eslint/no-unused-vars": [2, {"args": "none", "ignoreRestSiblings": true}],
+    "@typescript-eslint/no-unused-vars": [1, {"args": "none", "ignoreRestSiblings": true}],
     "arca/curly": 2,
     "arca/import-align": [2, {"collapseExtraSpaces": true}],
     "arca/import-ordering": 2,
@@ -34,6 +35,8 @@
     "object-curly-spacing": 2,
     "padded-blocks": ["error", "never"],
     "prefer-template": 2,
+    "react/jsx-uses-react": 1,
+    "react/jsx-uses-vars": 1,
     "rest-spread-spacing": 2,
     "semi": 2,
     "template-curly-spacing": 2
