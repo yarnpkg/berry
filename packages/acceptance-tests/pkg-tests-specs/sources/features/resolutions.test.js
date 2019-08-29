@@ -1,6 +1,6 @@
 const {
   fs: {writeFile, writeJson},
-  tests: {getPackageArchivePath, getPackageDirectoryPath}
+  tests: {getPackageArchivePath, getPackageDirectoryPath},
 } = require('pkg-tests-core');
 
 describe(`Features`, () => {
@@ -45,7 +45,9 @@ describe(`Features`, () => {
           },
         },
         async ({path, run, source}) => {
-          await expect(run(`install`)).rejects.toThrow(`The override for '**/no-deps' includes a glob pattern. Glob patterns have been removed since their behaviours don't match what you'd expect. Set the override to 'no-deps' instead.`);
+          const {stdout} = await run(`install`);
+
+          expect(stdout).toContain(`YN0057`);
         },
       ),
     );

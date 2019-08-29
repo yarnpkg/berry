@@ -3067,13 +3067,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^16.4.14":
+"@types/react@npm:*":
   version: 16.7.20
   resolution: "@types/react@npm:16.7.20"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^2.2.0"
   checksum: d3828bbd7aec9929e2c2c9ebebeb145c7f236e689b704881ab4cdedc994c3bea19675451631fb866b1d9d18f9898ab1070cc653addbb46092e2bbcecef2d3b6d
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^16.8.0":
+  version: 16.9.2
+  resolution: "@types/react@npm:16.9.2"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    csstype: "npm:^2.2.0"
+  checksum: 666c856b9c9be891916a7cff4f260220fb82d483e1f7b7ceb4d1a62ece707faf8cf7838833dd79bb1db7bc52bf800fcfa621f8fed7b9bcfc80e3e9b446d7b88d
   languageName: node
   linkType: hard
 
@@ -3914,7 +3924,7 @@ __metadata:
     "@types/node": "npm:^10.12.0"
     "@types/node-emoji": "npm:^1.8.0"
     "@types/node-fetch": "npm:^2.1.2"
-    "@types/react": "npm:^16.4.14"
+    "@types/react": "npm:^16.8.0"
     "@types/react-redux": "npm:^7.1.2"
     "@types/redux-saga": "npm:^0.10.5"
     "@types/request": "npm:^2.47.1"
@@ -3937,6 +3947,7 @@ __metadata:
     babel-jest: "npm:^24.5.0"
     eslint: "npm:^5.16.0"
     eslint-plugin-arca: "npm:^0.9.0"
+    eslint-plugin-react: "npm:^7.14.3"
     github-api: "npm:^3.2.2"
     jest: "npm:^24.5.0"
     jest-environment-node: "npm:^24.5.0"
@@ -4173,6 +4184,8 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.1"
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.1"
     clipanion: "npm:^2.1.1"
+    ink: "npm:^2.3.0"
+    react: "npm:^16.8.4"
     semver: "npm:^5.6.0"
     typescript: "npm:^3.5.3"
     yup: "npm:^0.27.0"
@@ -8986,6 +8999,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-react@npm:^7.14.3":
+  version: 7.14.3
+  resolution: "eslint-plugin-react@npm:7.14.3"
+  dependencies:
+    array-includes: "npm:^3.0.3"
+    doctrine: "npm:^2.1.0"
+    has: "npm:^1.0.3"
+    jsx-ast-utils: "npm:^2.1.0"
+    object.entries: "npm:^1.1.0"
+    object.fromentries: "npm:^2.0.0"
+    object.values: "npm:^1.1.0"
+    prop-types: "npm:^15.7.2"
+    resolve: "npm:^1.10.1"
+  peerDependencies:
+    eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0
+  checksum: 3e90281b81940d4acc66a2d93b8ff0ad03727ac494199d18eef792f9c9153477d14fe3012a2f0aab270d611b6a3a1c2220db1d94da3ace64d2b25bd99d46b4a1
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-react@npm:^7.8.2":
   version: 7.12.4
   resolution: "eslint-plugin-react@npm:7.12.4"
@@ -12451,6 +12483,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ink@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "ink@npm:2.3.0"
+  dependencies:
+    "@types/react": "npm:^16.8.6"
+    arrify: "npm:^1.0.1"
+    auto-bind: "npm:^2.0.0"
+    chalk: "npm:^2.4.1"
+    cli-cursor: "npm:^2.1.0"
+    cli-truncate: "npm:^1.1.0"
+    is-ci: "npm:^2.0.0"
+    lodash.throttle: "npm:^4.1.1"
+    log-update: "npm:^3.0.0"
+    prop-types: "npm:^15.6.2"
+    react-reconciler: "npm:^0.20.0"
+    scheduler: "npm:^0.13.2"
+    signal-exit: "npm:^3.0.2"
+    slice-ansi: "npm:^1.0.0"
+    string-length: "npm:^2.0.0"
+    widest-line: "npm:^2.0.0"
+    wrap-ansi: "npm:^5.0.0"
+    yoga-layout-prebuilt: "npm:^1.9.3"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 79a1b017998764040927c2544721c96c69ab9f0d90bcb4610cb6788b020db5ac5b947491b9c7a30e7b31c4c57bb5b03bb23a25a4ec2decfb096881ca1b0e4509
+  languageName: node
+  linkType: hard
+
 "inquirer@npm:3.3.0":
   version: 3.3.0
   resolution: "inquirer@npm:3.3.0"
@@ -14577,6 +14637,16 @@ __metadata:
   dependencies:
     array-includes: "npm:^3.0.3"
   checksum: 68589b0cff85957748356d3298b5f3248f7e0889bc434b21113fefb634acde3ca2e62bfbe25df12e8f4b801518fc870085f5e37337fdb3cc4e7776898b2e02d3
+  languageName: node
+  linkType: hard
+
+"jsx-ast-utils@npm:^2.1.0":
+  version: 2.2.1
+  resolution: "jsx-ast-utils@npm:2.2.1"
+  dependencies:
+    array-includes: "npm:^3.0.3"
+    object.assign: "npm:^4.1.0"
+  checksum: 590550d484c5ee06d6fbf7931c82bbc0d1c3fa8b45496cd07aae6fe3c994c4af7ea67c6beb63eeede8a259a31bfd3a15320595bc1e101368cbd6f27e7ba339d3
   languageName: node
   linkType: hard
 
@@ -19670,6 +19740,15 @@ __metadata:
   dependencies:
     path-parse: "npm:^1.0.6"
   checksum: 6bfd694af89626fc43649593c3ef689b9f5ecc7d7abc79f806d9314177ee9f83d181f2a33d38f709573fdf8de43898c77e42fe50d587533818d2df9daeb582e0
+  languageName: node
+  linkType: hard
+
+"resolve@npm:^1.10.1":
+  version: 1.12.0
+  resolution: "resolve@npm:1.12.0"
+  dependencies:
+    path-parse: "npm:^1.0.6"
+  checksum: ce62c6cad2f0a838bcfb2a437e2f876729ef06355d9bdb0f6606c5c519821bf7a5ee7dbf8f07ab9a739a3f0b705b9577e1e624d6e9c6f30edd1616b2f83288e4
   languageName: node
   linkType: hard
 

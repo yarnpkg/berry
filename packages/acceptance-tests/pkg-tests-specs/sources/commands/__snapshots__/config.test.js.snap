@@ -44,6 +44,7 @@ Object {
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
+{\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
 {\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
@@ -94,6 +95,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - Path to the local executable that must be used over the global one - null
 ➤ YN0000: Done
@@ -145,6 +147,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - <default> - null
 ➤ YN0000: Done
@@ -196,6 +199,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
 ➤ YN0000: rcFilename - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - null
 ➤ YN0000: Done
@@ -247,6 +251,7 @@ Object {
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
+{\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
 {\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
@@ -297,6 +302,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - Path to the local executable that must be used over the global one - null
 ➤ YN0000: Done
@@ -348,6 +354,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - <default> - null
 ➤ YN0000: Done
@@ -399,6 +406,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
 ➤ YN0000: rcFilename - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - null
 ➤ YN0000: Done
@@ -450,6 +458,7 @@ Object {
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
+{\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
 {\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
@@ -500,6 +509,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - Path to the local executable that must be used over the global one - null
 ➤ YN0000: Done
@@ -551,6 +561,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - <default> - null
 ➤ YN0000: Done
@@ -602,6 +613,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
 ➤ YN0000: rcFilename - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - null
 ➤ YN0000: Done
@@ -653,6 +665,7 @@ Object {
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
+{\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
 {\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
@@ -703,6 +716,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - Path to the local executable that must be used over the global one - null
 ➤ YN0000: Done
@@ -754,6 +768,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - <default> - null
 ➤ YN0000: Done
@@ -805,6 +820,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
 ➤ YN0000: rcFilename - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - null
 ➤ YN0000: Done
@@ -856,6 +872,7 @@ Object {
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
+{\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
 {\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
@@ -906,6 +923,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - Path to the local executable that must be used over the global one - null
 ➤ YN0000: Done
@@ -957,6 +975,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - <default> - null
 ➤ YN0000: Done
@@ -1008,6 +1027,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
 ➤ YN0000: rcFilename - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - null
 ➤ YN0000: Done
@@ -1059,6 +1079,7 @@ Object {
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
+{\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
 {\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
@@ -1109,6 +1130,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - Path to the local executable that must be used over the global one - null
 ➤ YN0000: Done
@@ -1160,6 +1182,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - <default> - null
 ➤ YN0000: Done
@@ -1211,6 +1234,7 @@ Object {
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
 ➤ YN0000: rcFilename - '.spec-yarnrc'
+➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
 ➤ YN0000: yarnPath - null
 ➤ YN0000: Done
