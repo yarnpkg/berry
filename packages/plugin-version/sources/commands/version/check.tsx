@@ -2,9 +2,19 @@ import {WorkspaceRequiredError}                                                 
 import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, execUtils, structUtils, Manifest, LocatorHash} from '@yarnpkg/core';
 import {Filename, PortablePath, fromPortablePath, ppath, toPortablePath, xfs}                                                        from '@yarnpkg/fslib';
 import {Command, UsageError}                                                                                                         from 'clipanion';
+import {AppContext, Box, Color, StdinContext, render}                                                                                from 'ink';
+import React, {useCallback, useContext, useEffect, useState}                                                                         from 'react';
+import semver                                                                                                                        from 'semver';
+
+type Decision = 'undecided' | 'decline' | 'major' | 'minor' | 'patch' | 'prerelease';
+type Decisions = Map<Workspace, Decision>;
+type Status = {decided: Array<Workspace >, undecided: Array<Workspace>, declined: Array<Workspace>};
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionApplyCommand extends Command<CommandContext> {
+  @Command.Boolean(`-i,--interactive`)
+  interactive?: boolean;
+
   static usage = Command.Usage({
     category: `Release-related commands`,
     description: `check that all the relevant packages have been bumped`,
@@ -25,6 +35,231 @@ export default class VersionApplyCommand extends Command<CommandContext> {
 
   @Command.Path(`version`, `check`)
   async execute() {
+    if (this.interactive) {
+      return await this.executeInteractive();
+    } else {
+      return await this.executeStandard();
+    }
+  }
+
+  async executeInteractive() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+
+    if (!workspace)
+      throw new WorkspaceRequiredError(this.context.cwd);
+
+    const root = await fetchRoot(this.context.cwd);
+    const base = await fetchBase(root);
+
+    const files = await fetchChangedFiles(root, {base: base.hash});
+    const workspaces = [...new Set(files.map(file => project.getWorkspaceByFilePath(file)))];
+    if (workspaces.length === 0)
+      return;
+
+    const status = await fetchWorkspacesStatus(workspaces, {root, base: base.hash});
+    if (status.undecided.length === 0)
+      if (fetchUndecidedDependentWorkspaces(status.decided, {project}).length === 0)
+        return;
+
+    const useListInput = function <T>(value: T, values: Array<T>, {active, minus, plus, set}: {active: boolean, minus: string, plus: string, set: (value: T) => void}) {
+      const {stdin} = useContext(StdinContext);
+
+      useEffect(() => {
+        if (!active)
+          return;
+
+        const cb = (ch: any, key: any) => {
+          const index = values.indexOf(value);
+          switch (key.name) {
+            case minus: {
+              set(values[(values.length + index - 1) % values.length]);
+            } break;
+            case plus: {
+              set(values[(index + 1) % values.length]);
+            } break;
+          }
+        };
+
+        stdin.on(`keypress`, cb);
+        return () => {
+          stdin.off(`keypress`, cb);
+        };
+      }, [values, value, active]);
+    };
+
+    const Undecided = ({workspace, active, decision, setDecision}: {workspace: Workspace, active: boolean, decision: Decision, setDecision: (decision: Decision) => void}) => {
+      const currentVersion = workspace.manifest.version;
+      if (currentVersion === null)
+        throw new Error(`Assertion failed: The version should have been set`);
+
+      const strategies: Array<Decision> = semver.prerelease(currentVersion) === null
+        ? [`undecided`, `decline`, `patch`, `minor`, `major`, `prerelease`]
+        : [`undecided`, `decline`, `prerelease`, `major`];
+
+      useListInput(decision, strategies, {
+        active,
+        minus: `left`,
+        plus: `right`,
+        set: setDecision,
+      });
+
+      const nextVersion = decision === `undecided`
+        ? <Color yellow>{currentVersion}</Color>
+        : decision === `decline`
+          ? <Color green>{currentVersion}</Color>
+          : <><Color magenta>{currentVersion}</Color> → <Color green>{semver.inc(currentVersion, decision)}</Color></>;
+
+      return <Box marginBottom={1}>
+        <Box marginLeft={2} marginRight={2}>
+          {active ? <Color cyan>▶</Color> : ` `}
+        </Box>
+        <Box flexDirection={`column`}>
+          <Box>
+            {structUtils.prettyLocator(configuration, workspace.anchoredLocator)} - {nextVersion}
+          </Box>
+          <Box>
+            {strategies.map(strategy => {
+              if (strategy === decision) {
+                return <Box key={strategy} paddingLeft={2}><Color green>◼</Color> {strategy}</Box>;
+              } else {
+                return <Box key={strategy} paddingLeft={2}><Color yellow>◻</Color> {strategy}</Box>;
+              }
+            })}
+          </Box>
+        </Box>
+      </Box>;
+    };
+
+    const useDecisions = (): [Map<Workspace, Decision>, (workspace: Workspace, decision: Decision) => void] => {
+      const [decisions, setDecisions] = useState<Map<Workspace, Decision>>(new Map());
+
+      const setDecision = useCallback((workspace: Workspace, decision: Decision) => {
+        const copy = new Map(decisions);
+
+        if (decision !== `undecided`)
+          copy.set(workspace, decision);
+        else
+          copy.delete(workspace);
+
+        setDecisions(copy);
+      }, [decisions, setDecisions]);
+
+      return [decisions, setDecision];
+    };
+
+    const applyDecisions = (status: Status, decisions: Decisions) => {
+      const decidedWithDecisions = [...status.decided];
+
+      for (const [workspace, decision] of decisions)
+        if (decision !== `undecided` && decision !== `decline`)
+          decidedWithDecisions.push(workspace);
+
+      const undecidedDependents = fetchUndecidedDependentWorkspaces(decidedWithDecisions, {project, skipBumped: false});
+
+      return {
+        undecidedWorkspaces: status.undecided,
+        undecidedDependents,
+        allUndecided: [
+          ...status.undecided,
+          ...undecidedDependents.map(([workspace]) => workspace),
+        ],
+      };
+    };
+
+    const App = ({status, useSubmit}: {status: Status, useSubmit: (value: Decisions) => void}) => {
+      const {setRawMode} = useContext(StdinContext);
+      useEffect(() => {
+        if (setRawMode) {
+          setRawMode(true);
+        }
+      }, []);
+
+      const [decisions, setDecision] = useDecisions();
+      useSubmit(decisions);
+
+      const {undecidedWorkspaces, undecidedDependents, allUndecided} = applyDecisions(status, decisions);
+
+      const [active, setActive] = useState<Workspace>(allUndecided[0]);
+      useListInput(active, allUndecided, {
+        active: true,
+        minus: `up`,
+        plus: `down`,
+        set: setActive,
+      });
+
+      return <Box width={80} flexDirection={`column`}>
+        <Box textWrap={`wrap`}>
+          The following files have been modified in your local checkout.
+        </Box>
+        <Box flexDirection={`column`} marginTop={1} marginBottom={1} paddingLeft={2}>
+          {files.map(file => <Box key={file}>
+            <Color grey>{root}</Color>/{ppath.relative(root, file)}
+          </Box>)}
+        </Box>
+        {undecidedWorkspaces.length > 0 && <>
+          <Box textWrap={`wrap`}>
+            Because of those files having been modified, the following workspaces may need to be released again (note that private workspaces are also shown here, because even though they won't be published, bumping them will allow us to flag their dependents for potential re-release):
+          </Box>
+          <Box marginTop={1}>
+            {undecidedWorkspaces.map(workspace => {
+              return <Undecided key={workspace.cwd} workspace={workspace} active={active === workspace} decision={decisions.get(workspace) || `undecided`} setDecision={decision => setDecision(workspace, decision)} />;
+            })}
+          </Box>
+        </>}
+        {undecidedDependents.length > 0 && <>
+          <Box textWrap={`wrap`}>
+            The following workspaces depend on other workspaces that have been bumped, and thus may need to receive a bump of their own:
+          </Box>
+          <Box marginTop={1}>
+            {undecidedDependents.map(([workspace]) => {
+              return <Undecided key={workspace.cwd} workspace={workspace} active={active === workspace} decision={decisions.get(workspace) || `undecided`} setDecision={decision => setDecision(workspace, decision)} />;
+            })}
+          </Box>
+        </>}
+      </Box>;
+    };
+
+    const renderForm = async function <T>(UserComponent: any, props: any) {
+      let returnedValue: T | undefined;
+
+      const {waitUntilExit} = render(React.cloneElement(<UserComponent {...props}/>, {
+        useSubmit(value: T) {
+          const {exit} = useContext(AppContext);
+          const {stdin} = useContext(StdinContext);
+
+          useEffect(() => {
+            const cb = (ch: any, key: any) => {
+              if (key.name === `return`) {
+                returnedValue = value;
+                exit();
+              }
+            };
+
+            stdin.on(`keypress`, cb);
+            return () => {
+              stdin.off(`keypress`, cb);
+            };
+          }, [stdin, exit, value]);
+        },
+      }));
+
+      await waitUntilExit();
+      return returnedValue;
+    };
+
+    const decisions = await renderForm<Decisions>(App, {status});
+    if (typeof decisions === `undefined`)
+      return 1;
+
+    for (const [workspace, decision] of decisions.entries()) {
+      if (decision !== `undecided`) {
+        await this.cli.run([workspace.cwd, `version`, decision, `--deferred`]);
+      }
+    }
+  }
+
+  async executeStandard() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
 
@@ -117,7 +352,7 @@ async function fetchWorkspacesStatus(workspaces: Array<Workspace>, {root, base}:
   return {decided, undecided, declined};
 }
 
-async function fetchUndecidedDependentWorkspaces(workspaces: Array<Workspace>, {project}: {project: Project}) {
+function fetchUndecidedDependentWorkspaces(workspaces: Array<Workspace>, {project, skipBumped = true}: {project: Project, skipBumped?: boolean}) {
   const undecided = [];
 
   const bumpedWorkspaces = new Map(workspaces.map<[LocatorHash, Workspace]>(workspace => {
@@ -127,7 +362,7 @@ async function fetchUndecidedDependentWorkspaces(workspaces: Array<Workspace>, {
   // Then we check which workspaces depend on packages that will be released again but have no release strategies themselves
   for (const workspace of project.workspaces) {
     // We don't need to check whether the dependencies of packages that will be bumped because of this PR changed
-    if (bumpedWorkspaces.has(workspace.anchoredLocator.locatorHash))
+    if (skipBumped && bumpedWorkspaces.has(workspace.anchoredLocator.locatorHash))
       continue;
     // We also don't need to check whether the dependencies of private packages changed, as they are supposed to only make sense within the context of the monorepo
     if (workspace.manifest.private)
@@ -215,7 +450,7 @@ async function fetchChangedFiles(root: PortablePath, {base}: {base: string}) {
   const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd: root, strict: true});
   const moreFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
 
-  return [...files, ...moreFiles];
+  return [...files, ...moreFiles].sort();
 }
 
 async function fetchPreviousNonce(workspace: Workspace, {root, base}: {root: PortablePath, base: string}) {
