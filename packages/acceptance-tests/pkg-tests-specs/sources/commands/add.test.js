@@ -1,6 +1,6 @@
-const {readdir} = require(`fs-extra`);
+import {xfs} from '@yarnpkg/fslib';
+
 const {
-  fs: {createTemporaryFolder, readJson, readFile},
   tests: {getPackageDirectoryPath},
 } = require('pkg-tests-core');
 const {parseSyml} = require('@yarnpkg/parsers');
@@ -12,7 +12,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps@1.0.0`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `1.0.0`,
           },
@@ -25,7 +25,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `^2.0.0`,
           },
@@ -38,7 +38,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-T`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `~2.0.0`,
           },
@@ -51,7 +51,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-E`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `2.0.0`,
           },
@@ -66,7 +66,7 @@ describe(`Commands`, () => {
 
         await run(`add`, packagePath);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: packagePath,
           },
@@ -79,7 +79,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-D`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
           devDependencies: {
             [`no-deps`]: `^2.0.0`,
           },
@@ -92,7 +92,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-P`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
           peerDependencies: {
             [`no-deps`]: `*`,
           },
@@ -101,21 +101,58 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should add node-gyp dependency to yarn.lock if a script uses it`,
+      `it should add a node-gyp dependency to the lockfile if a script uses it`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `inject-node-gyp`);
 
-        const content = await readFile(`${path}/yarn.lock`, `utf8`);
+        const content = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
         const lock = parseSyml(content);
 
         await expect(lock).toMatchObject({
           [`inject-node-gyp@npm:^1.0.0`]: {
             dependencies: {
-              "node-gyp": "npm:*"
-            }
-          }
+              "node-gyp": "npm:*",
+            },
+          },
         });
       }),
+    );
+
+    test(
+      `it should suggest a workspace if it would match the request`,
+      makeTemporaryEnv({
+        private: true,
+        workspaces: [`packages/*`],
+      }, async ({path, run, source}) => {
+        await xfs.mkdirpPromise(`${path}/packages/no-deps`);
+
+        await xfs.writeJsonPromise(`${path}/packages/no-deps/package.json`, {
+          name: `no-deps`,
+        });
+
+        await run(`add`, `no-deps`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `workspace:packages/no-deps`,
+          },
+        });
+      })
+    );
+
+    test(
+      `it shouldn't suggest a workspace to fulfill its own dependency`,
+      makeTemporaryEnv({
+        name: `no-deps`,
+      }, async ({path, run, source}) => {
+        await run(`add`, `no-deps`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+        });
+      })
     );
 
     test(`it should clean the cache when cache lives inside the project`, makeTemporaryEnv({
@@ -129,15 +166,15 @@ describe(`Commands`, () => {
 
       await run(`install`);
 
-      const preUpgradeCache = await readdir(`${path}/.yarn/cache`);
+      const preUpgradeCache = await xfs.readdirPromise(`${path}/.yarn/cache`);
 
       expect(preUpgradeCache.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeDefined();
 
-      ({ code, stdout, stderr } = await run(`add`, `no-deps@2.0.0`));
+      ({code, stdout, stderr} = await run(`add`, `no-deps@2.0.0`));
 
       await expect({code, stdout, stderr}).toMatchSnapshot();
 
-      const postUpgradeCache = await readdir(`${path}/.yarn/cache`);
+      const postUpgradeCache = await xfs.readdirPromise(`${path}/.yarn/cache`);
 
       expect(postUpgradeCache.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeUndefined();
       expect(postUpgradeCache.find(entry => entry.includes('no-deps-npm-2.0.0'))).toBeDefined();
@@ -148,22 +185,22 @@ describe(`Commands`, () => {
         [`no-deps`]: `1.0.0`,
       },
     }, async ({path, run, source}) => {
-      const sharedCachePath = await createTemporaryFolder();
+      const sharedCachePath = await xfs.mktempPromise();
       const env = {
-        YARN_CACHE_FOLDER: sharedCachePath
+        YARN_CACHE_FOLDER: sharedCachePath,
       };
 
       let cacheContent;
 
       await run(`install`, {env});
 
-      cacheContent = await readdir(sharedCachePath);
+      cacheContent = await xfs.readdirPromise(sharedCachePath);
 
       expect(cacheContent.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeDefined();
 
       await run(`add`, `no-deps@2.0.0`, {env});
 
-      cacheContent = await readdir(sharedCachePath);
+      cacheContent = await xfs.readdirPromise(sharedCachePath);
 
       expect(cacheContent.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeDefined();
       expect(cacheContent.find(entry => entry.includes('no-deps-npm-2.0.0'))).toBeDefined();

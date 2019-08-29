@@ -398,6 +398,36 @@ export abstract class FakeFS<P extends Path> {
       await this.unlinkPromise(lockPath);
     }
   }
+
+  async readJsonPromise(p: P) {
+    const content = await this.readFilePromise(p, `utf8`);
+
+    try {
+      return JSON.parse(content);
+    } catch (error) {
+      error.message += ` (in ${p})`;
+      throw error;
+    }
+  }
+
+  async readJsonSync(p: P) {
+    const content = this.readFileSync(p, `utf8`);
+
+    try {
+      return JSON.parse(content);
+    } catch (error) {
+      error.message += ` (in ${p})`;
+      throw error;
+    }
+  }
+
+  async writeJsonPromise(p: P, data: any) {
+    return await this.writeFilePromise(p, `${JSON.stringify(data, null, 2)}\n`);
+  }
+
+  writeJsonSync(p: P, data: any) {
+    return this.writeFileSync(p, `${JSON.stringify(data, null, 2)}\n`);
+  }
 };
 
 export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
