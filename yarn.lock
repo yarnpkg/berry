@@ -3067,33 +3067,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*":
-  version: 16.7.20
-  resolution: "@types/react@npm:16.7.20"
-  dependencies:
-    "@types/prop-types": "npm:*"
-    csstype: "npm:^2.2.0"
-  checksum: d3828bbd7aec9929e2c2c9ebebeb145c7f236e689b704881ab4cdedc994c3bea19675451631fb866b1d9d18f9898ab1070cc653addbb46092e2bbcecef2d3b6d
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^16.8.0":
+"@types/react@npm:*, @types/react@npm:^16.8.0, @types/react@npm:^16.8.12, @types/react@npm:^16.8.6":
   version: 16.9.2
   resolution: "@types/react@npm:16.9.2"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^2.2.0"
   checksum: 666c856b9c9be891916a7cff4f260220fb82d483e1f7b7ceb4d1a62ece707faf8cf7838833dd79bb1db7bc52bf800fcfa621f8fed7b9bcfc80e3e9b446d7b88d
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^16.8.12, @types/react@npm:^16.8.6":
-  version: 16.8.18
-  resolution: "@types/react@npm:16.8.18"
-  dependencies:
-    "@types/prop-types": "npm:*"
-    csstype: "npm:^2.2.0"
-  checksum: f01b60a7c18e47cb8615fc55dce91d3a3b1fff31ac229481cf3eecef732e05fba56eef1d797ef0b79ddb436e9b0a97171844bd1d4fd4310d48aec0e4822d2bdf
   languageName: node
   linkType: hard
 

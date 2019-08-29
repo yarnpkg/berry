@@ -3825,7 +3825,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/@types-hoist-non-react-statics-npm-3.3.1-cd260a54b5.zip/node_modules/@types/hoist-non-react-statics/",
           "packageDependencies": [
             ["@types/hoist-non-react-statics", "npm:3.3.1"],
-            ["@types/react", "npm:16.7.20"],
+            ["@types/react", "npm:16.9.2"],
             ["hoist-non-react-statics", "npm:3.3.0"]
           ]
         }]
@@ -3990,27 +3990,11 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageDependencies": [
             ["@types/reach__router", "npm:1.2.3"],
             ["@types/history", "npm:4.7.2"],
-            ["@types/react", "npm:16.7.20"]
+            ["@types/react", "npm:16.9.2"]
           ]
         }]
       ]],
       ["@types/react", [
-        ["npm:16.7.20", {
-          "packageLocation": "./.yarn/cache/@types-react-npm-16.7.20-77ca39fedd.zip/node_modules/@types/react/",
-          "packageDependencies": [
-            ["@types/react", "npm:16.7.20"],
-            ["@types/prop-types", "npm:15.5.8"],
-            ["csstype", "npm:2.6.0"]
-          ]
-        }],
-        ["npm:16.8.18", {
-          "packageLocation": "./.yarn/cache/@types-react-npm-16.8.18-ed7e3ed322.zip/node_modules/@types/react/",
-          "packageDependencies": [
-            ["@types/react", "npm:16.8.18"],
-            ["@types/prop-types", "npm:15.5.8"],
-            ["csstype", "npm:2.6.0"]
-          ]
-        }],
         ["npm:16.9.2", {
           "packageLocation": "./.yarn/cache/@types-react-npm-16.9.2-23d1c7f8f7.zip/node_modules/@types/react/",
           "packageDependencies": [
@@ -4026,7 +4010,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageDependencies": [
             ["@types/react-redux", "npm:7.1.2"],
             ["@types/hoist-non-react-statics", "npm:3.3.1"],
-            ["@types/react", "npm:16.7.20"],
+            ["@types/react", "npm:16.9.2"],
             ["hoist-non-react-statics", "npm:3.3.0"],
             ["redux", "npm:4.0.1"]
           ]
@@ -6315,7 +6299,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/auto-bind-npm-2.1.0-87f7cb309b.zip/node_modules/auto-bind/",
           "packageDependencies": [
             ["auto-bind", "npm:2.1.0"],
-            ["@types/react", "npm:16.8.18"]
+            ["@types/react", "npm:16.9.2"]
           ]
         }]
       ]],
@@ -13735,7 +13719,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/virtual/ink-virtual-17bc8024fe/0/cache/ink-npm-2.3.0-495b9d5feb.zip/node_modules/ink/",
           "packageDependencies": [
             ["ink", "virtual:72cb5b73d46f84500ce1908d1a34897ae35075515a09e27961f50621854464b077677fb265f078365969da534b0f4ae525413d2ddbce9d63d386bbd404a500c8#npm:2.3.0"],
-            ["@types/react", "npm:16.8.18"],
+            ["@types/react", "npm:16.9.2"],
             ["arrify", "npm:1.0.1"],
             ["auto-bind", "npm:2.1.0"],
             ["chalk", "npm:2.4.2"],
@@ -13760,7 +13744,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/virtual/ink-virtual-ebe229e1d7/0/cache/ink-npm-2.2.0-f4a3d0c0b8.zip/node_modules/ink/",
           "packageDependencies": [
             ["ink", "virtual:c1b88d30019fac2125ed9435876e4027efa1b2384480b384ef7edf9cf15ca40dd1533912bf1fdfacc977657039a9ed198c6d34e57bfd47098dba97c29715b59c#npm:2.2.0"],
-            ["@types/react", "npm:16.8.18"],
+            ["@types/react", "npm:16.9.2"],
             ["arrify", "npm:1.0.1"],
             ["auto-bind", "npm:2.1.0"],
             ["chalk", "npm:2.4.2"],
