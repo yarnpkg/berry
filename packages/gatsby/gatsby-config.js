@@ -1,9 +1,13 @@
+const isNetlify = process.env.NETLIFY;
+
 module.exports = {
-  pathPrefix: process.env.NETLIFY ? `/` : `/berry`,
+  pathPrefix: isNetlify ? `/` : `/berry`,
   siteMetadata: {
     title: `Yarn - Package Manager`,
     description: `Fast, reliable, and secure dependency management.`,
     author: `yarnpkg`,
+    shouldRedirectToNext: !isNetlify && process.env.NODE_ENV !== "development",
+    nextHostname: "next.yarnpkg.com",
     menuLinks: [{
       name: `Home`,
       link: `/`,
