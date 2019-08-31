@@ -84,7 +84,7 @@ export class Cache {
 
       if (expectedChecksum !== null && actualChecksum !== expectedChecksum) {
         // Using --check-cache overrides any preconfigured checksum behavior
-        const checksumBehavior = this.check
+        const checksumBehavior = !this.check
           ? this.configuration.get(`checksumBehavior`)
           : `throw`;
 
