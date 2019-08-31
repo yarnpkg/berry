@@ -7,25 +7,18 @@ export default class ConfigSetCommand extends BaseCommand {
   @Command.String()
   name!: string;
 
-  @Command.String()
-  value!: string;
-
   static usage = Command.Usage({
-    description: `change a configuration settings`,
+    description: `read a configuration settings`,
   });
 
-  @Command.Path(`config`, `set`)
+  @Command.Path(`config`, `get`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    if (!configuration.projectCwd)
-      throw new UsageError(`This command must be run from within a project folder`);
 
     const setting = configuration.settings.get(this.name);
     if (typeof setting === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${this.name}"`);
 
-    await Configuration.updateConfiguration(configuration.projectCwd, {
-      [this.name]: this.value,
-    });
+    this.context.stdout.write(`${configuration.get(this.name)}\n`);
   }
 }
