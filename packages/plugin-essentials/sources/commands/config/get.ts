@@ -19,6 +19,6 @@ export default class ConfigSetCommand extends BaseCommand {
     if (typeof setting === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${this.name}"`);
 
-    this.context.stdout.write(`${setting}\n`);
+    this.context.stdout.write(`${configuration.get(this.name)}\n`);
   }
 }
