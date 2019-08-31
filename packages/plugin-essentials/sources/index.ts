@@ -4,6 +4,7 @@ import {Workspace}                        from '@yarnpkg/core';
 import add                                from './commands/add';
 import bin                                from './commands/bin';
 import cleanCache                         from './commands/cache/clean';
+import getConfig                          from './commands/config/get';
 import setConfig                          from './commands/config/set';
 import config                             from './commands/config';
 import clipanionEntry                     from './commands/entries/clipanion';
@@ -60,6 +61,7 @@ const plugin: Plugin = {
   },
   commands: [
     cleanCache,
+    getConfig,
     setConfig,
     setResolutionPolicy,
     setVersionFromSources,
