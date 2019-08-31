@@ -24,7 +24,7 @@ function help(error: boolean) {
   logFn(`Usage: yarn pnpify <program> [...argv]`);
   logFn();
   logFn(`Setups a TypeScript sdk for use within your VSCode editor instance`);
-  logFn(`More info at https://yarnpkg.github.io/berry/advanced/pnpify`);
+  logFn(`More info at https://next.yarnpkg.com/advanced/pnpify`);
 }
 
 function sdk() {

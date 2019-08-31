@@ -22,7 +22,7 @@ export default class ConstraintsCheckCommand extends BaseCommand {
 
       If the \`--fix\` flag is used, Yarn will attempt to automatically fix the issues the best it can, following a multi-pass process (with a maximum of 10 iterations). Some ambiguous patterns cannot be autofixed, in which case you'll have to manually specify the right resolution.
 
-      For more information as to how to write constraints, please consult our dedicated page on our website: https://yarnpkg.github.io/berry/features/constraints.
+      For more information as to how to write constraints, please consult our dedicated page on our website: https://next.yarnpkg.com/features/constraints.
     `,
     examples: [[
       `Check that all constraints are satisfied`,

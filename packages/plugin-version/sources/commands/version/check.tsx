@@ -59,7 +59,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
 
     const status = await fetchWorkspacesStatus(workspaces, {root, base: base.hash});
     if (status.undecided.length === 0)
-      if (fetchUndecidedDependentWorkspaces(status.decided, {project}).length === 0)
+      if (fetchUndecidedDependentWorkspaces(status, {project}).length === 0)
         return;
 
     const useListInput = function <T>(value: T, values: Array<T>, {active, minus, plus, set}: {active: boolean, minus: string, plus: string, set: (value: T) => void}) {
@@ -150,19 +150,35 @@ export default class VersionApplyCommand extends Command<CommandContext> {
 
     const applyDecisions = (status: Status, decisions: Decisions) => {
       const decidedWithDecisions = [...status.decided];
+      const declinedWithDecisions = [...status.declined];
 
-      for (const [workspace, decision] of decisions)
-        if (decision !== `undecided` && decision !== `decline`)
+      for (const [workspace, decision] of decisions) {
+        if (decision === `undecided`)
+          continue;
+
+        if (decision !== `decline`) {
           decidedWithDecisions.push(workspace);
+        } else {
+          declinedWithDecisions.push(workspace);
+        }
+      }
 
-      const undecidedDependents = fetchUndecidedDependentWorkspaces(decidedWithDecisions, {project, skipBumped: false});
+      const undecidedDependents = fetchUndecidedDependentWorkspaces({
+        decided: decidedWithDecisions,
+        declined: declinedWithDecisions,
+      }, {project, include: new Set(decisions.keys())});
+
+      const undecidedDependentsNoDuplicates: Array<Workspace> = [];
+      for (const [workspace] of undecidedDependents)
+        if (!undecidedDependentsNoDuplicates.includes(workspace))
+          undecidedDependentsNoDuplicates.push(workspace);
 
       return {
         undecidedWorkspaces: status.undecided,
-        undecidedDependents,
+        undecidedDependents: undecidedDependentsNoDuplicates,
         allUndecided: [
           ...status.undecided,
-          ...undecidedDependents.map(([workspace]) => workspace),
+          ...undecidedDependentsNoDuplicates,
         ],
       };
     };
@@ -201,7 +217,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
           <Box textWrap={`wrap`}>
             Because of those files having been modified, the following workspaces may need to be released again (note that private workspaces are also shown here, because even though they won't be published, bumping them will allow us to flag their dependents for potential re-release):
           </Box>
-          <Box marginTop={1}>
+          <Box marginTop={1} flexDirection={`column`}>
             {undecidedWorkspaces.map(workspace => {
               return <Undecided key={workspace.cwd} workspace={workspace} active={active === workspace} decision={decisions.get(workspace) || `undecided`} setDecision={decision => setDecision(workspace, decision)} />;
             })}
@@ -211,8 +227,8 @@ export default class VersionApplyCommand extends Command<CommandContext> {
           <Box textWrap={`wrap`}>
             The following workspaces depend on other workspaces that have been bumped, and thus may need to receive a bump of their own:
           </Box>
-          <Box marginTop={1}>
-            {undecidedDependents.map(([workspace]) => {
+          <Box marginTop={1} flexDirection={`column`}>
+            {undecidedDependents.map(workspace => {
               return <Undecided key={workspace.cwd} workspace={workspace} active={active === workspace} decision={decisions.get(workspace) || `undecided`} setDecision={decision => setDecision(workspace, decision)} />;
             })}
           </Box>
@@ -288,19 +304,19 @@ export default class VersionApplyCommand extends Command<CommandContext> {
         }
       }
 
-      const {decided, undecided} = await fetchWorkspacesStatus(workspaces, {root, base: base.hash});
+      const status = await fetchWorkspacesStatus(workspaces, {root, base: base.hash});
 
-      if (undecided.length > 0) {
+      if (status.undecided.length > 0) {
         if (!hasDiffErrors && files.length > 0)
           report.reportSeparator();
 
-        for (const workspace of undecided)
+        for (const workspace of status.undecided)
           report.reportError(MessageName.UNNAMED, `${structUtils.prettyLocator(configuration, workspace.anchoredLocator)} has been modified but doesn't have a bump strategy attached`);
 
         hasDiffErrors = true;
       }
 
-      const undecidedDependents = await fetchUndecidedDependentWorkspaces(decided, {project});
+      const undecidedDependents = await fetchUndecidedDependentWorkspaces(status, {project});
 
       // Then we check which workspaces depend on packages that will be released again but have no release strategies themselves
       for (const [workspace, dependency] of undecidedDependents) {
@@ -323,7 +339,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
   }
 }
 
-async function fetchWorkspacesStatus(workspaces: Array<Workspace>, {root, base}: { root: PortablePath, base: string }) {
+async function fetchWorkspacesStatus(workspaces: Array<Workspace>, {root, base}: { root: PortablePath, base: string }): Promise<Status> {
   const decided: Array<Workspace> = [];
   const undecided: Array<Workspace> = [];
   const declined: Array<Workspace> = [];
@@ -352,21 +368,33 @@ async function fetchWorkspacesStatus(workspaces: Array<Workspace>, {root, base}:
   return {decided, undecided, declined};
 }
 
-function fetchUndecidedDependentWorkspaces(workspaces: Array<Workspace>, {project, skipBumped = true}: {project: Project, skipBumped?: boolean}) {
+function fetchUndecidedDependentWorkspaces({decided, declined}: {decided: Array<Workspace>, declined: Array<Workspace>}, {project, include = new Set()}: {project: Project, include?: Set<Workspace>}) {
   const undecided = [];
 
-  const bumpedWorkspaces = new Map(workspaces.map<[LocatorHash, Workspace]>(workspace => {
+  const bumpedWorkspaces = new Map(decided.map<[LocatorHash, Workspace]>(workspace => {
+    return [workspace.anchoredLocator.locatorHash, workspace];
+  }));
+
+  const declinedWorkspaces = new Map(declined.map<[LocatorHash, Workspace]>(workspace => {
     return [workspace.anchoredLocator.locatorHash, workspace];
   }));
 
   // Then we check which workspaces depend on packages that will be released again but have no release strategies themselves
   for (const workspace of project.workspaces) {
-    // We don't need to check whether the dependencies of packages that will be bumped because of this PR changed
-    if (skipBumped && bumpedWorkspaces.has(workspace.anchoredLocator.locatorHash))
-      continue;
-    // We also don't need to check whether the dependencies of private packages changed, as they are supposed to only make sense within the context of the monorepo
+    // We allow to overrule the following check because the interactive mode wants to keep displaying the previously-undecided packages even after they have been decided
+    if (!include.has(workspace)) {
+      // We don't need to run the check for packages that have already been decided
+      if (declinedWorkspaces.has(workspace.anchoredLocator.locatorHash))
+        continue;
+      if (bumpedWorkspaces.has(workspace.anchoredLocator.locatorHash)) {
+        continue;
+      }
+    }
+
+    // We also don't need to run the check for private packages (is that true? I'm not really sure)
     if (workspace.manifest.private)
       continue;
+
     // Let's assume that packages without versions don't need to see their version increased
     if (workspace.manifest.version === null)
       continue;
