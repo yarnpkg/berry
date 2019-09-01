@@ -18,7 +18,7 @@ jobs:
       with:
         version: 10.x
 
-    - name: 'Check that the Yarn files don''t change on new installs' (fix w/ "yarn install")
+    - name: 'Check that the Yarn files don''t change on new installs (fix w/ "yarn install")'
       run: |
         node ./scripts/run-yarn.js --immutable --immutable-cache
       env:
