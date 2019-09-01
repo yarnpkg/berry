@@ -1318,7 +1318,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/virtual/@babel-plugin-syntax-jsx-virtual-a8f1ff50b9/0/cache/@babel-plugin-syntax-jsx-npm-7.2.0-aacb3bb293.zip/node_modules/@babel/plugin-syntax-jsx/",
           "packageDependencies": [
             ["@babel/plugin-syntax-jsx", "virtual:46f4b4029234c0ca647f6396c643e810c9004781e89082a9b3bd5f1b27dead68719dcf69b8d4abd6da8e7de8bca0120725caae7393e9f936f413715244297cb8#npm:7.2.0"],
-            ["@babel/core", null],
+            ["@babel/core", "npm:7.3.3"],
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ]
         }],
@@ -1350,7 +1350,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/virtual/@babel-plugin-syntax-jsx-virtual-a733e6dbc9/0/cache/@babel-plugin-syntax-jsx-npm-7.2.0-aacb3bb293.zip/node_modules/@babel/plugin-syntax-jsx/",
           "packageDependencies": [
             ["@babel/plugin-syntax-jsx", "virtual:c6a6c9123a8c20f6afe05128a699650aba65d2d0f94b3e2bddb8a49b3362a4bc985cc9c339733f740293f576983eb7741d194114aaf45c7f9c422baf53299fc1#npm:7.2.0"],
-            ["@babel/core", null],
+            ["@babel/core", "npm:7.3.3"],
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ]
         }]
@@ -2091,7 +2091,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/virtual/@babel-plugin-transform-react-jsx-virtual-46f4b40292/0/cache/@babel-plugin-transform-react-jsx-npm-7.3.0-36172ffd52.zip/node_modules/@babel/plugin-transform-react-jsx/",
           "packageDependencies": [
             ["@babel/plugin-transform-react-jsx", "virtual:de8a7b256d52af2ef006605b9013e93242ee74ab19275439c6bb6c7fe2e487cbdddb03f91db1c01e0455a10c4f1dec0c7bed44f72893b35da26470c4acb366b5#npm:7.3.0"],
-            ["@babel/core", null],
+            ["@babel/core", "npm:7.3.3"],
             ["@babel/helper-builder-react-jsx", "npm:7.3.0"],
             ["@babel/helper-plugin-utils", "npm:7.0.0"],
             ["@babel/plugin-syntax-jsx", "virtual:46f4b4029234c0ca647f6396c643e810c9004781e89082a9b3bd5f1b27dead68719dcf69b8d4abd6da8e7de8bca0120725caae7393e9f936f413715244297cb8#npm:7.2.0"]
@@ -2607,7 +2607,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/virtual/@emotion-babel-plugin-jsx-pragmatic-virtual-c6a6c9123a/0/cache/@emotion-babel-plugin-jsx-pragmatic-npm-0.1.3-8aa616b624.zip/node_modules/@emotion/babel-plugin-jsx-pragmatic/",
           "packageDependencies": [
             ["@emotion/babel-plugin-jsx-pragmatic", "virtual:de8a7b256d52af2ef006605b9013e93242ee74ab19275439c6bb6c7fe2e487cbdddb03f91db1c01e0455a10c4f1dec0c7bed44f72893b35da26470c4acb366b5#npm:0.1.3"],
-            ["@babel/core", null],
+            ["@babel/core", "npm:7.3.3"],
             ["@babel/plugin-syntax-jsx", "virtual:c6a6c9123a8c20f6afe05128a699650aba65d2d0f94b3e2bddb8a49b3362a4bc985cc9c339733f740293f576983eb7741d194114aaf45c7f9c422baf53299fc1#npm:7.2.0"]
           ]
         }]
@@ -2628,7 +2628,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/virtual/@emotion-babel-preset-css-prop-virtual-de8a7b256d/0/cache/@emotion-babel-preset-css-prop-npm-10.0.17-8ae85f7d1c.zip/node_modules/@emotion/babel-preset-css-prop/",
           "packageDependencies": [
             ["@emotion/babel-preset-css-prop", "virtual:e1931b83333af5e6179e9ceb86a9dfc29852be48d626dc2e0fe567dd4d8c69e44074a6111d4180b98a6341692d2227f60c9ab02675f6414978de975fb6c20ab8#npm:10.0.17"],
-            ["@babel/core", null],
+            ["@babel/core", "npm:7.3.3"],
             ["@babel/plugin-transform-react-jsx", "virtual:de8a7b256d52af2ef006605b9013e93242ee74ab19275439c6bb6c7fe2e487cbdddb03f91db1c01e0455a10c4f1dec0c7bed44f72893b35da26470c4acb366b5#npm:7.3.0"],
             ["@babel/runtime", "npm:7.5.5"],
             ["@emotion/babel-plugin-jsx-pragmatic", "virtual:de8a7b256d52af2ef006605b9013e93242ee74ab19275439c6bb6c7fe2e487cbdddb03f91db1c01e0455a10c4f1dec0c7bed44f72893b35da26470c4acb366b5#npm:0.1.3"],
@@ -12404,6 +12404,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/virtual/gatsby-plugin-emotion-virtual-e1931b8333/0/cache/gatsby-plugin-emotion-npm-4.1.4-571f572b99.zip/node_modules/gatsby-plugin-emotion/",
           "packageDependencies": [
             ["gatsby-plugin-emotion", "virtual:845bd4fd988683c7772a289f1c7e08ed2812b627ae4cfad1e77ee9f08508ca053e8316e4b9c37de893956b61f64f28a193b4538dbe53260e44c537807670d73a#npm:4.1.4"],
+            ["@babel/core", "npm:7.3.3"],
             ["@babel/runtime", "npm:7.5.5"],
             ["@emotion/babel-preset-css-prop", "virtual:e1931b83333af5e6179e9ceb86a9dfc29852be48d626dc2e0fe567dd4d8c69e44074a6111d4180b98a6341692d2227f60c9ab02675f6414978de975fb6c20ab8#npm:10.0.17"],
             ["@emotion/core", "virtual:845bd4fd988683c7772a289f1c7e08ed2812b627ae4cfad1e77ee9f08508ca053e8316e4b9c37de893956b61f64f28a193b4538dbe53260e44c537807670d73a#npm:10.0.7"],

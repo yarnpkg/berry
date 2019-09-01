@@ -11065,6 +11065,7 @@ __metadata:
   version: 4.1.4
   resolution: "gatsby-plugin-emotion@npm:4.1.4"
   dependencies:
+    "@babel/core": "npm:^7.0.0"
     "@babel/runtime": "npm:^7.5.5"
     "@emotion/babel-preset-css-prop": "npm:^10.0.14"
   peerDependencies:
