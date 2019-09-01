@@ -10,7 +10,7 @@ import {IdentHash, DescriptorHash, LocatorHash} from './types';
 import {Ident, Descriptor, Locator, Package}    from './types';
 
 const VIRTUAL_PROTOCOL = `virtual:`;
-const VIRTUAL_ABBREVIATE = 12;
+const VIRTUAL_ABBREVIATE = 5;
 
 export function makeIdent(scope: string | null, name: string): Ident {
   return {identHash: hashUtils.makeHash<IdentHash>(scope, name), scope, name};
@@ -307,7 +307,7 @@ function prettyRangeNoColors(range: string): string {
     const abbrev = range.substr(VIRTUAL_PROTOCOL.length, VIRTUAL_ABBREVIATE);
 
     // I'm not satisfied of how the virtual packages appear in the output
-    return false ? `${nested} (virtual:${abbrev})` : `${nested} [V]`;
+    return false ? `${nested} (virtual:${abbrev})` : `${nested} [${abbrev}]`;
   } else {
     return range.replace(/\?.*/, `?[...]`);
   }
