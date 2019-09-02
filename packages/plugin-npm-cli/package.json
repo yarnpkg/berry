@@ -3,9 +3,9 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.2",
-    "@yarnpkg/core": "workspace:2.0.0-rc.2",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.2",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.3",
+    "@yarnpkg/core": "workspace:2.0.0-rc.3",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
     "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.1",
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.2",
     "clipanion": "^2.1.1",

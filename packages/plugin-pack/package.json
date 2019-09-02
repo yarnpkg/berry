@@ -4,9 +4,9 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/tar-stream": "1.6.0",
-    "@yarnpkg/cli": "workspace:2.0.0-rc.2",
-    "@yarnpkg/core": "workspace:2.0.0-rc.2",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.2",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.3",
+    "@yarnpkg/core": "workspace:2.0.0-rc.3",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
     "clipanion": "^2.1.1",
     "micromatch": "^4.0.2",
     "tar-stream": "^2.0.1"

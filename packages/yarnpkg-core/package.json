@@ -1,19 +1,15 @@
 {
   "name": "@yarnpkg/core",
-  "version": "2.0.0-rc.2",
-  "nextVersion": {
-    "semver": "2.0.0-rc.3",
-    "nonce": "6077566707515581"
-  },
+  "version": "2.0.0-rc.3",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.2",
-    "@yarnpkg/json-proxy": "workspace:2.0.0-rc.1",
-    "@yarnpkg/parsers": "workspace:2.0.0-rc.2",
-    "@yarnpkg/pnp": "workspace:2.0.0-rc.2",
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.2",
-    "@yarnpkg/shell": "workspace:2.0.0-rc.1",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
+    "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2",
+    "@yarnpkg/parsers": "workspace:2.0.0-rc.3",
+    "@yarnpkg/pnp": "workspace:2.0.0-rc.3",
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
+    "@yarnpkg/shell": "workspace:2.0.0-rc.2",
     "agentkeepalive": "^4.0.2",
     "camelcase": "^5.3.1",
     "chalk": "^2.4.1",
@@ -38,7 +34,7 @@
   "devDependencies": {
     "@yarnpkg/plugin-link": "workspace:2.0.0-rc.1",
     "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.1",
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.2",
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
     "typescript": "^3.5.3"
   },
   "scripts": {
