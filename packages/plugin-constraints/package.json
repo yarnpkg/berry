@@ -12,5 +12,9 @@
     "node-emoji": "^1.8.1",
     "tau-prolog": "^0.2.38"
   },
-  "version": "2.0.0-rc.1"
+  "version": "2.0.0-rc.1",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
+  }
 }

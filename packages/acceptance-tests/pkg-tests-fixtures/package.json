@@ -6,5 +6,9 @@
     },
     "scripts": {
         "copy-index": "find packages -type d -mindepth 1 -maxdepth 1 | while read pkg; do cp default-index.js \"$pkg/index.js\"; done"
+    },
+    "repository": {
+        "type": "git",
+        "url": "ssh://git@github.com/yarnpkg/berry.git"
     }
 }

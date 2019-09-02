@@ -61,5 +61,9 @@
         "@yarnpkg/plugin-version"
       ]
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
   }
 }

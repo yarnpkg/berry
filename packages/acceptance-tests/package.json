@@ -13,5 +13,9 @@
     },
     "scripts": {
         "test:integration": "run test:unit --config \"$(pwd)/jest.config.js\""
+    },
+    "repository": {
+        "type": "git",
+        "url": "ssh://git@github.com/yarnpkg/berry.git"
     }
 }

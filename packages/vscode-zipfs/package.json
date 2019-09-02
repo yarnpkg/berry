@@ -76,5 +76,9 @@
     "build": "run pnpify webpack-cli",
     "watch": "run pnpify webpack-cli --watch",
     "code": "code --extensionDevelopmentPath=\"$(pwd)\" \"$(pwd)\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
   }
 }

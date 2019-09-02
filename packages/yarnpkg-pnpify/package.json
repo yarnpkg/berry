@@ -39,5 +39,9 @@
   "files": [
     "/lib/**/*",
     "/bin.js"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
+  }
 }

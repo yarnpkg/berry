@@ -91,5 +91,9 @@
   },
   "nextVersion": {
     "nonce": "6668117343518271"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
   }
 }

@@ -50,7 +50,7 @@ jobs:
 
     - name: 'Publish the packages'
       run: |
-        YARN_NPM_PUBLISH_REGISTRY=https://npm.pkg.github.com YARN_NPM_AUTH_TOKEN="${GITHUB_TOKEN}" \
+        YARN_NPM_PUBLISH_REGISTRY=https://npm.pkg.github.com YARN_NPM_AUTH_TOKEN="$GITHUB_TOKEN" \
           node ./scripts/run-yarn.js workspaces foreach --no-private --topological \
             npm publish --tolerate-republish
       env:

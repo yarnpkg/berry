@@ -9,5 +9,9 @@
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2",
     "clipanion": "^2.1.1"
   },
-  "version": "2.0.0-rc.1"
+  "version": "2.0.0-rc.1",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
+  }
 }

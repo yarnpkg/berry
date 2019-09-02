@@ -11,5 +11,9 @@
     "micromatch": "^4.0.2",
     "tar-stream": "^2.0.1"
   },
-  "version": "2.0.0-rc.2"
+  "version": "2.0.0-rc.2",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
+  }
 }

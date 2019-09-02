@@ -15,5 +15,9 @@
   "scripts": {
     "build:plugin-stage": "builder build plugin"
   },
-  "version": "2.0.0-rc.2"
+  "version": "2.0.0-rc.2",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
+  }
 }

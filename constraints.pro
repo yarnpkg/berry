@@ -30,3 +30,9 @@ gen_enforced_dependency(WorkspaceCwd, DependencyIdent, WorkspaceRange, Dependenc
 % This rule will prevent all workspaces from depending on tslib
 gen_enforced_dependency(WorkspaceCwd, 'tslib', null, DependencyType) :-
   workspace_has_dependency(WorkspaceCwd, 'tslib', _, DependencyType).
+
+% Required to make the package work with the GitHub Package Registry
+gen_enforced_field(WorkspaceCwd, 'repository.type', 'git') :-
+  workspace(WorkspacedCwd).
+gen_enforced_field(WorkspaceCwd, 'repository.url', 'ssh://git@github.com/yarnpkg/berry.git') :-
+  workspace(WorkspacedCwd).

@@ -12,5 +12,9 @@
         "super-resolve": "^1.0.0",
         "tar-fs": "^1.16.0",
         "tmp": "^0.0.33"
+    },
+    "repository": {
+        "type": "git",
+        "url": "ssh://git@github.com/yarnpkg/berry.git"
     }
 }
