@@ -1,5 +1,6 @@
 {
   "name": "vscode-zipfs",
+  "private": true,
   "publisher": "arcanis",
   "displayName": "ZipFS - a zip file system",
   "description": "Allows to easily inspect and modify files stored within zip archives.",
