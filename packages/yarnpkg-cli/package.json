@@ -6,7 +6,7 @@
     "yarn": "./bin/run.js"
   },
   "dependencies": {
-    "@yarnpkg/core": "workspace:2.0.0-rc.4",
+    "@yarnpkg/core": "workspace:2.0.0-rc.3",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
     "@yarnpkg/parsers": "workspace:2.0.0-rc.3",
     "@yarnpkg/shell": "workspace:2.0.0-rc.2",
