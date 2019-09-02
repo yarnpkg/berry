@@ -16,7 +16,7 @@
   "scripts": {
     "build:pnp:hook": "run pnpify webpack-cli --config webpack.config.hook.js",
     "build:pnp": "run pnpify webpack-cli --config webpack.config.pkg.js",
-    "postpack": "rm -rf lib",
+    "postpack": "find lib -mindepth 1 ! -path 'lib/hook.js' -exec rm -rf '{}' +",
     "prepack": "run build:pnp:hook && run build:pnp && pnpify tsc --emitDeclarationOnly --declaration",
     "release": "yarn npm publish"
   },
