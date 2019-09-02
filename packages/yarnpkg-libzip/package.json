@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/libzip",
   "version": "2.0.0-rc.1",
+  "nextVersion": {
+    "semver": "2.0.0-rc.2",
+    "nonce": "5783541885068581"
+  },
   "main": "./sources/index.ts",
   "devDependencies": {
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.1",

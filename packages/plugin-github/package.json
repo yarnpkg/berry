@@ -17,5 +17,9 @@
   "files": [
     "/lib"
   ],
-  "version": "2.0.0-rc.0"
+  "version": "2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.1",
+    "nonce": "8184962569902325"
+  }
 }

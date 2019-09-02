@@ -2,7 +2,8 @@
   "name": "@yarnpkg/json-proxy",
   "version": "2.0.0-rc.0",
   "nextVersion": {
-    "nonce": "4560223586915181"
+    "semver": "2.0.0-rc.1",
+    "nonce": "945023821174007"
   },
   "main": "./sources/index.ts",
   "dependencies": {

@@ -17,5 +17,9 @@
   "scripts": {
     "build:plugin-workspace-tools": "builder build plugin"
   },
-  "version": "2.0.0-rc.1"
+  "version": "2.0.0-rc.1",
+  "nextVersion": {
+    "semver": "2.0.0-rc.2",
+    "nonce": "5657430109351717"
+  }
 }

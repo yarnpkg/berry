@@ -8,5 +8,9 @@
     "inquirer": "^6.2.0",
     "semver": "^5.6.0"
   },
-  "version": "2.0.0-rc.0"
+  "version": "2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.1",
+    "nonce": "3376894197601251"
+  }
 }

@@ -12,5 +12,9 @@
   "devDependencies": {
     "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.1"
   },
-  "version": "2.0.0-rc.0"
+  "version": "2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.1",
+    "nonce": "1787058571676991"
+  }
 }

@@ -8,5 +8,9 @@
     "git-url-parse": "11.1.2",
     "tmp": "^0.0.33"
   },
-  "version": "2.0.0-rc.0"
+  "version": "2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.1",
+    "nonce": "867005423982883"
+  }
 }
