@@ -35,7 +35,7 @@ build_plugin() {
 
 build_package() {
   if contains_element @yarnpkg/"$1" "${PACKAGES_TO_RELEASE[@]}"; then
-    node "$REPO_DIR"/scripts/run-yarn.js packages/yarn-"$1" pack -o "$ARTIFACT_DIR"/"%s-%v.tgz"
+    node "$REPO_DIR"/scripts/run-yarn.js packages/yarnpkg-"$1" pack -o "$ARTIFACT_DIR"/"%s-%v.tgz"
   fi
 }
 
