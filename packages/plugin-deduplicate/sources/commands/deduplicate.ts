@@ -42,24 +42,25 @@ export default class DeduplicateCommand extends BaseCommand {
         continue;
 
       if (locatorHashes !== undefined && locatorHashes.size > 1) {
-        const candidates = Array.from(locatorHashes).filter(candidateHash => {
-          const pkg  = project.storedPackages.get(candidateHash)!;
+        const candidates = Array.from(locatorHashes).map(locatorHash => {
+          const pkg  = project.storedPackages.get(locatorHash)!;
+          if (structUtils.isVirtualLocator(pkg)) {
+            const sourceLocator = structUtils.devirtualizeLocator(pkg);
+            return project.storedPackages.get(sourceLocator.locatorHash)!;
+          }
 
-          if (structUtils.isVirtualLocator(pkg))
+          return pkg;
+        }).filter(sourcePackage => {
+          if (sourcePackage.version === null)
             return false;
 
-          if (pkg.version === null)
-            return false;
-
-          return semver.satisfies(pkg.version, semverMatch[1]);
+          return semver.satisfies(sourcePackage.version, semverMatch[1]);
         }).sort((a, b) => {
-          const pkgA  = project.storedPackages.get(a)!;
-          const pkgB  = project.storedPackages.get(b)!;
-          return semver.gt(pkgA.version!, pkgB.version!) ? -1: 1;
+          return semver.gt(a.version!, b.version!) ? -1: 1;
         });
 
         if (candidates.length > 1) {
-          const newLocatorHash = candidates[0];
+          const newLocatorHash = candidates[0].locatorHash;
           const oldLocatorHash = project.storedResolutions.get(descriptorHash)!;
           const newPkg = project.storedPackages.get(newLocatorHash)!;
           const oldPkg = project.storedPackages.get(oldLocatorHash)!;
