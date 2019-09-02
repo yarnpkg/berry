@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.3",
   "bin": "./sources/boot-dev.js",
   "dependencies": {
-    "@yarnpkg/core": "workspace:2.0.0-rc.3",
+    "@yarnpkg/core": "workspace:2.0.0-rc.4",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
     "chalk": "^2.4.1",
