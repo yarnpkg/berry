@@ -3826,13 +3826,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/semver@npm:6.0.1":
-  version: 6.0.1
-  resolution: "@types/semver@npm:6.0.1"
-  checksum: 1cb3146076de31346e34af9df1575f5e06442159825fa9ca1083fd6cec37ccb02e0f81bfbf0a4999052e656a751661d4dfeea33ff193d8cfdd6fae0b94521a0f
-  languageName: node
-  linkType: hard
-
 "@types/semver@npm:^5.5.0":
   version: 5.5.0
   resolution: "@types/semver@npm:5.5.0"
@@ -4792,13 +4785,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-deduplicate@workspace:packages/plugin-deduplicate"
   dependencies:
-    "@types/semver": "npm:6.0.1"
+    "@types/semver": "npm:^5.5.0"
     "@yarnpkg/builder": "workspace:2.0.0-rc.1"
     "@yarnpkg/cli": "workspace:2.0.0-rc.1"
     "@yarnpkg/core": "workspace:2.0.0-rc.1"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.1"
     clipanion: "npm:^2.1.1"
-    semver: "npm:^6.3.0"
+    semver: "npm:^5.6.0"
     typescript: "npm:^3.3.3333"
   languageName: unknown
   linkType: soft
@@ -21182,15 +21175,6 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   bin:
     semver: ./bin/semver.js
   checksum: ad91a22581e29e7cbd7fc713d8e5b9f463b37d27fe14bd6dfa72a29e703e96d4cda7b00ab0c3d9b128e0b7a43d9c755309308fd2539c9c9a213e3bb2fbf1c60d
-  languageName: node
-  linkType: hard
-
-"semver@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "semver@npm:6.3.0"
-  bin:
-    semver: ./bin/semver.js
-  checksum: 6592a5be5ecace445f832e5c81f11f62846b16f87ee00c21f2e35140b10cef32dafa78aa716029d1776db340564681cde32a6d98fd85c696658168f71c336853
   languageName: node
   linkType: hard
 
