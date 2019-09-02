@@ -27,14 +27,8 @@ jobs:
         compgen -G 'artifacts/yarn-*.js'
       continue-on-error: true
 
-    - name: Dump steps context
-      env:
-        STEPS_CONTEXT: ${{ toJson(steps) }}
-      run: echo "$STEPS_CONTEXT"
-    - name: Dump runner context
-      env:
-        RUNNER_CONTEXT: ${{ toJson(runner) }}
-      run: echo "$RUNNER_CONTEXT"
+    # I haven't found out yet how to prevent the deb from being built
+    # when the CLI didn't change.
 
     # - name: 'Build the deb dist folder'
     #   run: |
