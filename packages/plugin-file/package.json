@@ -3,12 +3,8 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/core": "workspace:2.0.0-rc.1",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.1"
+    "@yarnpkg/core": "workspace:2.0.0-rc.2",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.2"
   },
-  "version": "2.0.0-rc.0",
-  "nextVersion": {
-    "semver": "2.0.0-rc.1",
-    "nonce": "5416070178423569"
-  }
+  "version": "2.0.0-rc.1"
 }

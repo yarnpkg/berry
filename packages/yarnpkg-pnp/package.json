@@ -1,17 +1,13 @@
 {
   "name": "@yarnpkg/pnp",
-  "version": "2.0.0-rc.1",
-  "nextVersion": {
-    "semver": "2.0.0-rc.2",
-    "nonce": "8386932084456681"
-  },
+  "version": "2.0.0-rc.2",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.1"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.2"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:2.0.0-rc.1",
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.1",
+    "@yarnpkg/builder": "workspace:2.0.0-rc.2",
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.2",
     "typescript": "^3.5.3",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1",

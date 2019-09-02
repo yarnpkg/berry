@@ -1,16 +1,12 @@
 {
   "name": "@yarnpkg/parsers",
-  "version": "2.0.0-rc.1",
-  "nextVersion": {
-    "semver": "2.0.0-rc.2",
-    "nonce": "3541344258061243"
-  },
+  "version": "2.0.0-rc.2",
   "main": "./sources/index.ts",
   "dependencies": {
     "js-yaml": "^3.10.0"
   },
   "devDependencies": {
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.1",
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.2",
     "pegjs": "^0.10.0",
     "typescript": "^3.5.3"
   },

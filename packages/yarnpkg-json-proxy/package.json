@@ -1,16 +1,12 @@
 {
   "name": "@yarnpkg/json-proxy",
-  "version": "2.0.0-rc.0",
-  "nextVersion": {
-    "semver": "2.0.0-rc.1",
-    "nonce": "945023821174007"
-  },
+  "version": "2.0.0-rc.1",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.1"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.2"
   },
   "devDependencies": {
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.1",
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.2",
     "typescript": "^3.5.3"
   },
   "scripts": {

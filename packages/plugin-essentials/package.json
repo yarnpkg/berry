@@ -3,20 +3,16 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.1",
-    "@yarnpkg/core": "workspace:2.0.0-rc.1",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.1",
-    "@yarnpkg/json-proxy": "workspace:2.0.0-rc.0",
-    "@yarnpkg/parsers": "workspace:2.0.0-rc.1",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.2",
+    "@yarnpkg/core": "workspace:2.0.0-rc.2",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.2",
+    "@yarnpkg/json-proxy": "workspace:2.0.0-rc.1",
+    "@yarnpkg/parsers": "workspace:2.0.0-rc.2",
     "clipanion": "^2.1.1",
     "inquirer": "^6.2.0",
     "semver": "^5.6.0",
     "treeify": "^1.1.0",
     "yup": "^0.27.0"
   },
-  "version": "2.0.0-rc.1",
-  "nextVersion": {
-    "semver": "2.0.0-rc.2",
-    "nonce": "7235753757797797"
-  }
+  "version": "2.0.0-rc.2"
 }

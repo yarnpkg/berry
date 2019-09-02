@@ -1,18 +1,14 @@
 {
   "name": "@yarnpkg/fslib",
-  "version": "2.0.0-rc.1",
-  "nextVersion": {
-    "semver": "2.0.0-rc.2",
-    "nonce": "5658492532737145"
-  },
+  "version": "2.0.0-rc.2",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/libzip": "workspace:2.0.0-rc.1",
+    "@yarnpkg/libzip": "workspace:2.0.0-rc.2",
     "tmp": "^0.0.33"
   },
   "devDependencies": {
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.1",
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.2",
     "typescript": "^3.5.3"
   },
   "scripts": {

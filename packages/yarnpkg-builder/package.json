@@ -1,15 +1,11 @@
 {
   "name": "@yarnpkg/builder",
-  "version": "2.0.0-rc.1",
-  "nextVersion": {
-    "semver": "2.0.0-rc.2",
-    "nonce": "7833052519381603"
-  },
+  "version": "2.0.0-rc.2",
   "bin": "./sources/boot-dev.js",
   "dependencies": {
-    "@yarnpkg/core": "workspace:2.0.0-rc.1",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.1",
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.1",
+    "@yarnpkg/core": "workspace:2.0.0-rc.2",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.2",
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.2",
     "chalk": "^2.4.1",
     "clipanion": "^2.1.1",
     "filesize": "^4.1.2",
