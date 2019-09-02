@@ -9,7 +9,7 @@ import * as semver                                      from 'semver';
 export default class DeduplicateCommand extends BaseCommand {
   static usage = Command.Usage({
     category: `Workspace-related commands`,
-    description: `Reduces dependencies with overlapping ranges to a minimal set of packages`,
+    description: `Reduces dependencies with overlapping ranges to a smaller set of packages`,
     details: `https://github.com/atlassian/yarn-deduplicate for yarn v2`,
     examples: [],
   });
