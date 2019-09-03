@@ -8,23 +8,23 @@ Unveiled in September 2018, Plug'n'Play is a new innovative installation strateg
 
 ## The node_modules problem
 
-The way installs used to work was simple: when running `yarn install` Yarn would generate a `node_modules` directory that Node was then able to consume thanks to its builtin [Node Resolution Algorithm](https://nodejs.org/api/modules.html#modules_all_together). In this context, Node didn't have to know the first thing about what a "package" was: it only reasoned in terms of files. "Does this file exists here? No? Let's look in the parent `node_modules` then. Does it exists here? Still no? Too bad...", and it kept going until it found the right one. This process was vastly inefficient, and for a lot of reasons:
+The way installs used to work was simple: when running `yarn install` Yarn would generate a `node_modules` directory that Node was then able to consume thanks to its builtin [Node Resolution Algorithm](https://nodejs.org/api/modules.html#modules_all_together). In this context, Node didn't have to know the first thing about what a "package" was: it only reasoned in terms of files. "Does this file exist here? No? Let's look in the parent `node_modules` then. Does it exist here? Still no? Too bad...", and it kept going until it found the right one. This process was vastly inefficient, and for a lot of reasons:
 
-- The `node_modules` directories typically contained gargantuan amounts of files. Generating them could make up for more than 70% of the time needed to run `yarn install`. Even having preexisting installations wouldn't save you, as package managers still had to diff the existing `node_modules` with what it should have beeen.
+- The `node_modules` directories typically contained gargantuan amounts of files. Generating them could make up for more than 70% of the time needed to run `yarn install`. Even having preexisting installations wouldn't save you, as package managers still had to diff the existing `node_modules` with what it should have been.
 
 - Because the `node_modules` generation was an I/O-heavy operation, package managers didn't have a lot of leeway to optimize it much further than just doing a simple file copy - and even though we could have used hardlinks or copy-on-write when possible, we would still have needed to diff the current state of the filesystem before making a bunch of syscalls to manipulate the disk.
 
-- Because Node had no concept of package, it didn't know either whether a file was _meant_ to be accessed (versus being available by the sheer virtue of hoisting). It was entirely possible that the code you wrote worked one day in development but broke later in production because you forgot to list one of your dependencies in your `package.json`.
+- Because Node had no concept of packages, it also didn't know whether a file was _meant_ to be accessed (versus being available by the sheer virtue of hoisting). It was entirely possible that the code you wrote worked one day in development but broke later in production because you forgot to list one of your dependencies in your `package.json`.
 
-- Even at runtime, the Node resolution had to make a bunch of `stat` and `readdir` calls in order to figure out from where to load every single required file. It was extremely wasteful, and was part of why booting Node applications took so much time.
+- Even at runtime, the Node resolution had to make a bunch of `stat` and `readdir` calls to figure out where to load every single required file from. It was extremely wasteful, and was part of why booting Node applications took so much time.
 
 - Finally, the very design of the `node_modules` folder was impractical in that it didn't allow package managers to properly dedupe packages. Even though some algorithms could be employed to optimize the tree layout (hoisting), we still ended up unable to optimize some particular patterns - causing not only the disk usage to be higher than needed, but also some packages to be instantiated multiple times in memory.
 
 ## Fixing node_modules
 
-When you think about it, Yarn already knows everything about your dependency tree - after all it even installs it on the disk for you. So the question becomes: why do we let it to Node to locate the packages? Why didn't we simply tell Node where to find them, and inform it that any require call to X by Y was meant to access the files from a specific set of dependencies? This is from this postulate that Plug'n'Play was created.
+When you think about it, Yarn already knows everything about your dependency tree - after all it even installs it on the disk for you. So the question becomes: why do we leave it to Node to locate the packages? Why don't we simply tell Node where to find them, and inform it that any require call to X by Y was meant to access the files from a specific set of dependencies? It's from this postulate that Plug'n'Play was created.
 
-In this install mode (now the default starting from Yarn v2), Yarn generates a single `.pnp.js` file instead of the usual `node_modules`. Instead of containing the source code of the installed packages, the `.pnp.js` file contains a map linking a package name and version to a location on the disk, and another map linking a package name and version to its set of dependencies. Thanks to this efficient system, Node can directly know where to look for files being required - regardless who asks for them!
+In this install mode (now the default starting from Yarn v2), Yarn generates a single `.pnp.js` file instead of the usual `node_modules`. Instead of containing the source code of the installed packages, the `.pnp.js` file contains a map linking a package name and version to a location on the disk, and another map linking a package name and version to its set of dependencies. Thanks to this efficient system, Node can directly know where to look for files being required - regardless of who asks for them!
 
 This approach as various benefits:
 
