@@ -88,6 +88,20 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should upgrade the existing development dependency in the current project`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `no-deps@1.0.0`, `-D`);
+        await run(`add`, `no-deps`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+          devDependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
       `it should add a new peer dependency to the current project`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-P`);
@@ -97,6 +111,36 @@ describe(`Commands`, () => {
             [`no-deps`]: `*`,
           },
         });
+      }),
+    );
+
+    test(
+      `it should throw an error when existing regular dependency is added using --dev`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `no-deps`);
+        await expect(
+          run(`add`, `no-deps`, `-D`)
+        ).rejects.toThrowError(/already a regular dependency/)
+      }),
+    );
+
+    test(
+      `it should throw an error when existing regular dependency is added using --peer`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `no-deps`);
+        await expect(
+          run(`add`, `no-deps`, `-P`)
+        ).rejects.toThrowError(/already a regular dependency/)
+      }),
+    );
+
+    test(
+      `it should throw an error when existing peer dependency is added without --peer|--dev`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `no-deps`, `-P`);
+        await expect(
+          run(`add`, `no-deps`)
+        ).rejects.toThrowError(/already a peer dependency/)
       }),
     );
 

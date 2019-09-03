@@ -1,9 +1,9 @@
 import {BaseCommand, WorkspaceRequiredError}                        from '@yarnpkg/cli';
 import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@yarnpkg/core';
-import {Project, StreamReport, Workspace}                           from '@yarnpkg/core';
+import {Project, StreamReport, Workspace, IdentHash}                from '@yarnpkg/core';
 import {structUtils}                                                from '@yarnpkg/core';
 import {PortablePath}                                               from '@yarnpkg/fslib';
-import {Command}                                                    from 'clipanion';
+import {Command, UsageError}                                        from 'clipanion';
 import inquirer                                                     from 'inquirer';
 
 import * as suggestUtils                                            from '../suggestUtils';
@@ -25,6 +25,9 @@ export default class AddCommand extends BaseCommand {
 
   @Command.Boolean(`-D,--dev`)
   dev: boolean = false;
+
+  @Command.Boolean(`--prefer-dev`)
+  preferDev: boolean = false;
 
   @Command.Boolean(`-P,--peer`)
   peer: boolean = false;
@@ -78,12 +81,6 @@ export default class AddCommand extends BaseCommand {
       output: this.context.stdout,
     });
 
-    const target = this.peer
-      ? suggestUtils.Target.PEER
-      : this.dev
-        ? suggestUtils.Target.DEVELOPMENT
-        : suggestUtils.Target.REGULAR;
-
     const modifier = this.exact
       ? suggestUtils.Modifier.EXACT
       : this.tilde
@@ -110,9 +107,11 @@ export default class AddCommand extends BaseCommand {
         ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor as PortablePath, {cache, cwd: this.context.cwd, workspace})
         : structUtils.parseDescriptor(pseudoDescriptor);
 
+      const target = suggestTarget(this, workspace, request.identHash);
+
       const suggestions = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies, maxResults});
 
-      return [request, suggestions] as [Descriptor, Array<suggestUtils.Suggestion>];
+      return [request, suggestions, target] as [Descriptor, Array<suggestUtils.Suggestion>, suggestUtils.Target];
     }));
 
     const checkReport = await LightReport.start({
@@ -153,7 +152,7 @@ export default class AddCommand extends BaseCommand {
       Descriptor
     ]> = [];
 
-    for (const [/*request*/, suggestions] of allSuggestions) {
+    for (const [/*request*/, suggestions, target] of allSuggestions) {
       let selected;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {
@@ -228,4 +227,26 @@ export default class AddCommand extends BaseCommand {
 
     return installReport.exitCode();
   }
+}
+
+function suggestTarget(command: AddCommand, workspace: Workspace, identHash: IdentHash) {
+  const inRegular = workspace.manifest[suggestUtils.Target.REGULAR].get(identHash);
+  const inDev = workspace.manifest[suggestUtils.Target.DEVELOPMENT].get(identHash);
+  const inPeer = workspace.manifest[suggestUtils.Target.PEER].get(identHash);
+
+  if (typeof inRegular !== `undefined` && (command.dev || command.peer))
+    throw new UsageError(`Package "${inRegular.name}" is already a regular dependency`);
+
+  if (typeof inPeer !== `undefined` && !(command.dev || command.peer))
+    throw new UsageError(`Package "${inPeer.name}" is already a peer dependency`);
+
+  return inRegular
+    ? suggestUtils.Target.REGULAR
+    : inDev
+      ? suggestUtils.Target.DEVELOPMENT
+      : command.peer
+        ? suggestUtils.Target.PEER
+        : command.dev || command.preferDev
+          ? suggestUtils.Target.DEVELOPMENT
+          : suggestUtils.Target.REGULAR;
 }
