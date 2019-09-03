@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/cli",
   "version": "2.0.0-rc.3",
+  "nextVersion": {
+    "semver": "2.0.0-rc.4",
+    "nonce": "5463887435994073"
+  },
   "main": "./sources/index.ts",
   "bin": {
     "yarn": "./bin/run.js"

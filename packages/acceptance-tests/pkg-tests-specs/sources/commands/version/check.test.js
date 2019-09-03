@@ -24,6 +24,28 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it shouldn't detect a change when pulling master`,
+      makeVersionCheckEnv(async ({path, run, source, git}) => {
+        // First we create a copy of master
+        await git(`checkout`, `-b`, `my-feature`);
+
+        // Then we push some changes on master
+        await git(`checkout`, `master`);
+        await writeJson(`${path}/packages/pkg-c/wip.json`, {});
+        await git(`add`, `.`);
+        await git(`commit`, `-m`, `wip`);
+
+        // Then we merge master into our feature branch
+        await git(`checkout`, `my-feature`);
+        await git(`merge`, `master`);
+
+        // Our feature branch shouldn't report `pkg-c` as potentially requiring
+        // a bump, since we haven't modified it ourselves
+        await run(`version`, `check`);
+      }),
+    );
+
+    test(
       `it shouldn't throw if a modified workspace has been bumped`,
       makeVersionCheckEnv(async ({path, run, source, git}) => {
         await git(`checkout`, `-b`, `my-feature`);
@@ -65,7 +87,7 @@ describe(`Commands`, () => {
         await run(`packages/pkg-c`, `version`, `patch`, `--deferred`);
 
         await git(`add`, `.`);
-        await git(`commit`, `-m`, `Bumping pkg-c`)
+        await git(`commit`, `-m`, `Bumping pkg-c`);
 
         await git(`checkout`, `-b`, `my-feature`);
 
