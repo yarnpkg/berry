@@ -167,7 +167,7 @@ export default class AddCommand extends BaseCommand {
         ({answer: selected} = await prompt({
           type: `list`,
           name: `answer`,
-          message: `Which range to you want to use?`,
+          message: `Which range do you want to use?`,
           choices: suggestions.map(({descriptor, reason}) => descriptor ? {
             name: reason,
             value: descriptor as Descriptor,
