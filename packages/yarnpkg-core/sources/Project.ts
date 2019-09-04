@@ -1361,15 +1361,15 @@ function applyVirtualResolutionMutations({
     throw new ReportError(MessageName.STACK_OVERFLOW_RESOLUTION, `Encountered a stack overflow when resolving peer dependencies; cf ${logFile}`);
   };
 
-  const resolvePeerDependencies = (parentLocator: Locator, optional: boolean) => {
+  const resolvePeerDependencies = (parentLocator: Locator, first: boolean, optional: boolean) => {
     resolutionStack.push(parentLocator);
-    const result = resolvePeerDependenciesImpl(parentLocator, optional);
+    const result = resolvePeerDependenciesImpl(parentLocator, first, optional);
     resolutionStack.pop();
 
     return result;
   };
 
-  const resolvePeerDependenciesImpl = (parentLocator: Locator, optional: boolean) => {
+  const resolvePeerDependenciesImpl = (parentLocator: Locator, first: boolean, optional: boolean) => {
     if (hasBeenTraversed.has(parentLocator.locatorHash))
       return;
 
@@ -1398,7 +1398,10 @@ function applyVirtualResolutionMutations({
     // have peer dependencies themselves.
 
     for (const descriptor of Array.from(parentPackage.dependencies.values())) {
-      if (parentPackage.peerDependencies.has(descriptor.identHash))
+      // We shouldn't virtualize the package if it was obtained through a peer
+      // dependency (which can't be the case for workspaces when resolved
+      // through their top-level)
+      if (parentPackage.peerDependencies.has(descriptor.identHash) && !first)
         continue;
 
       // Mark this package as being used (won't be removed from the lockfile)
@@ -1430,7 +1433,7 @@ function applyVirtualResolutionMutations({
         throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
 
       if (pkg.peerDependencies.size === 0) {
-        resolvePeerDependencies(pkg, isOptional);
+        resolvePeerDependencies(pkg, false, isOptional);
         continue;
       }
 
@@ -1489,7 +1492,7 @@ function applyVirtualResolutionMutations({
       });
 
       thirdPass.push(() => {
-        resolvePeerDependencies(virtualizedPackage, isOptional);
+        resolvePeerDependencies(virtualizedPackage, false, isOptional);
       });
 
       fourthPass.push(() => {
@@ -1513,7 +1516,7 @@ function applyVirtualResolutionMutations({
 
   try {
     for (const workspace of project.workspaces) {
-      resolvePeerDependencies(workspace.anchoredLocator, false);
+      resolvePeerDependencies(workspace.anchoredLocator, true, false);
     }
   } catch (error) {
     if (error.name === `RangeError` && error.message === `Maximum call stack size exceeded`) {

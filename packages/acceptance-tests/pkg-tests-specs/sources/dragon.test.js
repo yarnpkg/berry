@@ -142,7 +142,7 @@ describe(`Dragon tests`, () => {
     ),
   );
 
-  test.only(
+  test(
     `it should pass the dragon test 4`,
     makeTemporaryEnv(
       {
