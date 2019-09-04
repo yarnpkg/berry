@@ -1,9 +1,9 @@
 import {BaseCommand, WorkspaceRequiredError}                        from '@yarnpkg/cli';
 import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@yarnpkg/core';
-import {Project, StreamReport, Workspace}                           from '@yarnpkg/core';
+import {Project, StreamReport, Workspace, Ident}                    from '@yarnpkg/core';
 import {structUtils}                                                from '@yarnpkg/core';
 import {PortablePath}                                               from '@yarnpkg/fslib';
-import {Command}                                                    from 'clipanion';
+import {Command, UsageError}                                        from 'clipanion';
 import inquirer                                                     from 'inquirer';
 
 import * as suggestUtils                                            from '../suggestUtils';
@@ -29,6 +29,9 @@ export default class AddCommand extends BaseCommand {
   @Command.Boolean(`-P,--peer`)
   peer: boolean = false;
 
+  @Command.Boolean(`--prefer-dev`)
+  preferDev: boolean = false;
+
   @Command.Boolean(`-i,--interactive`)
   interactive: boolean = false;
 
@@ -40,7 +43,11 @@ export default class AddCommand extends BaseCommand {
     details: `
       This command adds a package to the package.json for the nearest workspace.
 
-      - The package will by default be added to the regular \`dependencies\` field, but this behavior can be overriden thanks to the \`-D,--dev\` flag (which will cause the dependency to be added to the \`devDependencies\` field instead) and the \`-P,--peer\` flag (which will do the same but for \`peerDependencies\`).
+      - If it didn't exist before, the package will by default be added to the regular \`dependencies\` field, but this behavior can be overriden thanks to the \`-D,--dev\` flag (which will cause the dependency to be added to the \`devDependencies\` field instead) and the \`-P,--peer\` flag (which will do the same but for \`peerDependencies\`).
+
+      - If the package was already listed in your dependencies, it will by default be upgraded whether it's part of your \`dependencies\` or \`devDependencies\` (it won't ever update \`peerDependencies\`, though).
+
+      - If set, the \`--prefer-dev\` flag will operate as a more flexible \`-D,--dev\` in that it will add the package to your \`devDependencies\` if it isn't already listed in either \`dependencies\` or \`devDependencies\`, but it will also happily upgrade your \`dependencies\` if that's what you already use (whereas \`-D,--dev\` would throw an exception).
 
       - If the added package doesn't specify a range at all its \`latest\` tag will be resolved and the returned version will be used to generate a new semver range (using the \`^\` modifier by default, or the \`~\` modifier if \`-T,--tilde\` is specified, or no modifier at all if \`-E,--exact\` is specified). Two exceptions to this rule: the first one is that if the package is a workspace then its local version will be used, and the second one is that if you use \`-P,--peer\` the default range will be \`*\` and won't be resolved at all.
 
@@ -78,12 +85,6 @@ export default class AddCommand extends BaseCommand {
       output: this.context.stdout,
     });
 
-    const target = this.peer
-      ? suggestUtils.Target.PEER
-      : this.dev
-        ? suggestUtils.Target.DEVELOPMENT
-        : suggestUtils.Target.REGULAR;
-
     const modifier = this.exact
       ? suggestUtils.Modifier.EXACT
       : this.tilde
@@ -110,9 +111,15 @@ export default class AddCommand extends BaseCommand {
         ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor as PortablePath, {cache, cwd: this.context.cwd, workspace})
         : structUtils.parseDescriptor(pseudoDescriptor);
 
+      const target = suggestTarget(workspace, request, {
+        dev: this.dev,
+        peer: this.peer,
+        preferDev: this.preferDev,
+      });
+
       const suggestions = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies, maxResults});
 
-      return [request, suggestions] as [Descriptor, Array<suggestUtils.Suggestion>];
+      return [request, suggestions, target] as [Descriptor, Array<suggestUtils.Suggestion>, suggestUtils.Target];
     }));
 
     const checkReport = await LightReport.start({
@@ -153,7 +160,7 @@ export default class AddCommand extends BaseCommand {
       Descriptor
     ]> = [];
 
-    for (const [/*request*/, suggestions] of allSuggestions) {
+    for (const [/*request*/, suggestions, target] of allSuggestions) {
       let selected;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {
@@ -167,7 +174,7 @@ export default class AddCommand extends BaseCommand {
         ({answer: selected} = await prompt({
           type: `list`,
           name: `answer`,
-          message: `Which range to you want to use?`,
+          message: `Which range do you want to use?`,
           choices: suggestions.map(({descriptor, reason}) => descriptor ? {
             name: reason,
             value: descriptor as Descriptor,
@@ -228,4 +235,27 @@ export default class AddCommand extends BaseCommand {
 
     return installReport.exitCode();
   }
+}
+
+function suggestTarget(workspace: Workspace, ident: Ident, {dev, peer, preferDev}: {dev: boolean, peer: boolean, preferDev: boolean}) {
+  const hasRegular = workspace.manifest[suggestUtils.Target.REGULAR].has(ident.identHash);
+  const hasDev = workspace.manifest[suggestUtils.Target.DEVELOPMENT].has(ident.identHash);
+  const hasPeer = workspace.manifest[suggestUtils.Target.PEER].has(ident.identHash);
+
+  if ((dev || peer) && hasRegular)
+    throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a regular dependency - remove the -D,-P flags or remove it from your dependencies first`);
+  if (!dev && !peer && hasPeer)
+    throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a peer dependency - use either of -D or -P, or remove it from your peer dependencies first`);
+
+  if (hasRegular)
+    return suggestUtils.Target.REGULAR;
+  if (hasDev)
+    return suggestUtils.Target.DEVELOPMENT;
+
+  if (peer)
+    return suggestUtils.Target.PEER;
+  if (dev || preferDev)
+    return suggestUtils.Target.DEVELOPMENT;
+
+  return suggestUtils.Target.REGULAR;
 }
