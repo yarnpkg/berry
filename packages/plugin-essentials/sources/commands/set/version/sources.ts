@@ -8,13 +8,13 @@ import {tmpdir}                                                               fr
 import {setVersion}                                                           from '../version';
 
 const CLONE_WORKFLOW = ({repository, branch}: {repository: string, branch: string}, target: PortablePath) => [
-  [`git`, `clone`, repository, fromPortablePath(target)],
+  [`git`, `clone`, repository, fromPortablePath(target), `--depth`, `1`],
   [`git`, `config`, `advice.detachedHead`, `false`],
   [`git`, `checkout`, `origin/${branch}`],
 ];
 
 const UPDATE_WORKFLOW = ({branch}: {branch: string}) => [
-  [`git`, `fetch`, `origin`],
+  [`git`, `fetch`, `origin`, `--depth`, `1`],
   [`git`, `reset`, `--hard`],
   [`git`, `clean`, `-dfx`],
   [`git`, `checkout`, `origin/${branch}`],
