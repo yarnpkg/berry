@@ -5,10 +5,12 @@ on:
     - master
     paths:
     - scripts/actions/build-deb
+    - scripts/winsetup
     - .github/workflows/package-workflow.yml
   pull_request:
     paths:
     - scripts/actions/build-deb
+    - scripts/winsetup
     - .github/workflows/package-workflow.yml
 
 name: 'Release Packages'
@@ -25,13 +27,39 @@ jobs:
         version: 12.x
 
     - name: 'Build the standard bundle'
-      run: |
-        set -ex
-        node ./scripts/run-yarn.js build:cli
+      run: node ./scripts/run-yarn.js build:cli
 
     - name: 'Build the dist directory'
-      run: |
-        ./scripts/build-dist.sh
+      run: ./scripts/build-dist.sh
 
     - name: 'Build the deb archive'
       uses: ./scripts/actions/build-deb
+
+  windows-installer:
+    name: 'Windows Installer'
+    runs-on: windows-2016
+
+    steps:
+    - uses: actions/checkout@master
+
+    - uses: actions/setup-node@master
+      with:
+        version: 12.x
+
+    - name: 'Build the standard bundle'
+      run: node ./scripts/run-yarn.js build:cli
+
+    - name: 'Build the dist directory'
+      run: bash ./scripts/build-dist.sh
+
+    - name: 'Setup MSBuild'
+      uses: warrenbuckley/Setup-MSBuild@v1
+
+    - name: 'Build the Windows installer'
+      run: MSBuild.exe scripts\winsetup\YarnSetup.wixproj /p:Configuration=Release
+      shell: cmd
+
+    - uses: actions/upload-artifact@master
+      with:
+        name: windows-installer
+        path: artifacts

@@ -23,3 +23,9 @@ package.tgz
 
 # We check-in the PnP hook because it would be heavy to regenerate it before each bundle build
 !/packages/yarnpkg-pnp/lib/hook.js
+
+# Output from the Windows installer build
+/scripts/winsetup/generated.wxs
+/scripts/winsetup/obj
+/scripts/winsetup/bin
+/scripts/winsetup/.vs
