@@ -69,7 +69,7 @@
     "ts-loader": "^5.3.3",
     "typescript": "^3.5.3",
     "vsce": "^1.54.0",
-    "webpack": "^4.28.4",
+    "webpack": "^4.39.3",
     "webpack-cli": "^3.2.1"
   },
   "scripts": {
