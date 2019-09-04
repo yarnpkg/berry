@@ -481,7 +481,7 @@ async function fetchChangedFiles(root: PortablePath, {base}: {base: string}) {
   const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd: root, strict: true});
   const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
 
-  return [...branchFiles, ...localFiles, ...untrackedFiles].sort();
+  return [...new Set([...branchFiles, ...localFiles, ...untrackedFiles].sort())];
 }
 
 async function fetchPreviousNonce(workspace: Workspace, {root, base}: {root: PortablePath, base: string}) {
