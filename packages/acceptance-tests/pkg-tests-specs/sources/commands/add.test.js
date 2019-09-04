@@ -88,9 +88,80 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should upgrade the existing development dependency in the current project`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        await run(`add`, `no-deps@1.0.0`, `-D`);
+      `it should upgrade the existing regular dependency in the current project (--prefer-dev)`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`add`, `no-deps`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should upgrade the existing regular dependency in the current project (implicit)`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`add`, `no-deps`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should upgrade the existing development dependency in the current project (-D)`,
+      makeTemporaryEnv({
+        devDependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`add`, `no-deps`, `-D`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+          devDependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should upgrade the existing development dependency in the current project (--prefer-dev)`,
+      makeTemporaryEnv({
+        devDependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`add`, `no-deps`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+          devDependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should upgrade the existing development dependency in the current project (implicit)`,
+      makeTemporaryEnv({
+        devDependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
         await run(`add`, `no-deps`);
 
         await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
@@ -120,7 +191,7 @@ describe(`Commands`, () => {
         await run(`add`, `no-deps`);
         await expect(
           run(`add`, `no-deps`, `-D`)
-        ).rejects.toThrowError(/already a regular dependency/)
+        ).rejects.toThrowError(/already listed as a regular dependency/);
       }),
     );
 
@@ -130,7 +201,7 @@ describe(`Commands`, () => {
         await run(`add`, `no-deps`);
         await expect(
           run(`add`, `no-deps`, `-P`)
-        ).rejects.toThrowError(/already a regular dependency/)
+        ).rejects.toThrowError(/already listed as a regular dependency/);
       }),
     );
 
@@ -140,7 +211,7 @@ describe(`Commands`, () => {
         await run(`add`, `no-deps`, `-P`);
         await expect(
           run(`add`, `no-deps`)
-        ).rejects.toThrowError(/already a peer dependency/)
+        ).rejects.toThrowError(/already listed as a peer dependency/);
       }),
     );
 

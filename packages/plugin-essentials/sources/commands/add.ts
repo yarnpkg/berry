@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                        from '@yarnpkg/cli';
 import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@yarnpkg/core';
-import {Project, StreamReport, Workspace, IdentHash}                from '@yarnpkg/core';
+import {Project, StreamReport, Workspace, Ident}                    from '@yarnpkg/core';
 import {structUtils}                                                from '@yarnpkg/core';
 import {PortablePath}                                               from '@yarnpkg/fslib';
 import {Command, UsageError}                                        from 'clipanion';
@@ -26,11 +26,11 @@ export default class AddCommand extends BaseCommand {
   @Command.Boolean(`-D,--dev`)
   dev: boolean = false;
 
-  @Command.Boolean(`--prefer-dev`)
-  preferDev: boolean = false;
-
   @Command.Boolean(`-P,--peer`)
   peer: boolean = false;
+
+  @Command.Boolean(`--prefer-dev`)
+  preferDev: boolean = false;
 
   @Command.Boolean(`-i,--interactive`)
   interactive: boolean = false;
@@ -43,7 +43,11 @@ export default class AddCommand extends BaseCommand {
     details: `
       This command adds a package to the package.json for the nearest workspace.
 
-      - The package will by default be added to the regular \`dependencies\` field, but this behavior can be overriden thanks to the \`-D,--dev\` flag (which will cause the dependency to be added to the \`devDependencies\` field instead) and the \`-P,--peer\` flag (which will do the same but for \`peerDependencies\`).
+      - If it didn't exist before, the package will by default be added to the regular \`dependencies\` field, but this behavior can be overriden thanks to the \`-D,--dev\` flag (which will cause the dependency to be added to the \`devDependencies\` field instead) and the \`-P,--peer\` flag (which will do the same but for \`peerDependencies\`).
+
+      - If the package was already listed in your dependencies, it will by default be upgraded whether it's part of your \`dependencies\` or \`devDependencies\` (it won't ever update \`peerDependencies\`, though).
+
+      - If set, the \`--prefer-dev\` flag will operate as a more flexible \`-D,--dev\` in that it will add the package to your \`devDependencies\` if it isn't already listed in either \`dependencies\` or \`devDependencies\`, but it will also happily upgrade your \`dependencies\` if that's what you already use (whereas \`-D,--dev\` would throw an exception).
 
       - If the added package doesn't specify a range at all its \`latest\` tag will be resolved and the returned version will be used to generate a new semver range (using the \`^\` modifier by default, or the \`~\` modifier if \`-T,--tilde\` is specified, or no modifier at all if \`-E,--exact\` is specified). Two exceptions to this rule: the first one is that if the package is a workspace then its local version will be used, and the second one is that if you use \`-P,--peer\` the default range will be \`*\` and won't be resolved at all.
 
@@ -107,7 +111,11 @@ export default class AddCommand extends BaseCommand {
         ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor as PortablePath, {cache, cwd: this.context.cwd, workspace})
         : structUtils.parseDescriptor(pseudoDescriptor);
 
-      const target = suggestTarget(this, workspace, request.identHash);
+      const target = suggestTarget(workspace, request, {
+        dev: this.dev,
+        peer: this.peer,
+        preferDev: this.preferDev,
+      });
 
       const suggestions = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies, maxResults});
 
@@ -229,24 +237,25 @@ export default class AddCommand extends BaseCommand {
   }
 }
 
-function suggestTarget(command: AddCommand, workspace: Workspace, identHash: IdentHash) {
-  const inRegular = workspace.manifest[suggestUtils.Target.REGULAR].get(identHash);
-  const inDev = workspace.manifest[suggestUtils.Target.DEVELOPMENT].get(identHash);
-  const inPeer = workspace.manifest[suggestUtils.Target.PEER].get(identHash);
+function suggestTarget(workspace: Workspace, ident: Ident, {dev, peer, preferDev}: {dev: boolean, peer: boolean, preferDev: boolean}) {
+  const hasRegular = workspace.manifest[suggestUtils.Target.REGULAR].has(ident.identHash);
+  const hasDev = workspace.manifest[suggestUtils.Target.DEVELOPMENT].has(ident.identHash);
+  const hasPeer = workspace.manifest[suggestUtils.Target.PEER].has(ident.identHash);
 
-  if (typeof inRegular !== `undefined` && (command.dev || command.peer))
-    throw new UsageError(`Package "${inRegular.name}" is already a regular dependency`);
+  if ((dev || peer) && hasRegular)
+    throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a regular dependency - remove the -D,-P flags or remove it from your dependencies first`);
+  if (!dev && !peer && hasPeer)
+    throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a peer dependency - use either of -D or -P, or remove it from your peer dependencies first`);
 
-  if (typeof inPeer !== `undefined` && !(command.dev || command.peer))
-    throw new UsageError(`Package "${inPeer.name}" is already a peer dependency`);
+  if (hasRegular)
+    return suggestUtils.Target.REGULAR;
+  if (hasDev)
+    return suggestUtils.Target.DEVELOPMENT;
 
-  return inRegular
-    ? suggestUtils.Target.REGULAR
-    : inDev
-      ? suggestUtils.Target.DEVELOPMENT
-      : command.peer
-        ? suggestUtils.Target.PEER
-        : command.dev || command.preferDev
-          ? suggestUtils.Target.DEVELOPMENT
-          : suggestUtils.Target.REGULAR;
+  if (peer)
+    return suggestUtils.Target.PEER;
+  if (dev || preferDev)
+    return suggestUtils.Target.DEVELOPMENT;
+
+  return suggestUtils.Target.REGULAR;
 }
