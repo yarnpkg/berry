@@ -67,7 +67,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.0.0, @babel/core@npm:^7.3.3":
+"@babel/core@npm:^7.0.0":
   version: 7.3.3
   resolution: "@babel/core@npm:7.3.3"
   dependencies:
@@ -4688,7 +4688,7 @@ __metadata:
   dependencies:
     "@arcanis/sherlock": "npm:^1.0.19"
     "@babel/cli": "npm:^7.2.3"
-    "@babel/core": "npm:^7.3.3"
+    "@babel/core": "npm:^7.5.5"
     "@babel/plugin-proposal-class-properties": "npm:^7.3.3"
     "@babel/plugin-proposal-decorators": "npm:^7.4.4"
     "@babel/plugin-transform-modules-commonjs": "npm:^7.2.0"
