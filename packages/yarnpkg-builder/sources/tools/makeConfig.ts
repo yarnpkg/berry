@@ -32,12 +32,25 @@ export const makeConfig = (config: webpack.Configuration) => merge({
     rules: [{
       test: /\.tsx?$/,
       exclude: /\.d\.ts$/,
-      loader: require.resolve(`ts-loader`),
-      options: PnpWebpackPlugin.tsLoaderOptions({
-        compilerOptions: {
-          declaration: false,
+      use: [{
+        loader: require.resolve(`babel-loader`),
+        options: {
+          plugins: [
+            [require.resolve("@babel/plugin-syntax-decorators"), {"legacy": true}],
+            [require.resolve("@babel/plugin-syntax-class-properties"), {"loose": true}],
+            require.resolve(`babel-plugin-lazy-import`),
+          ],
         },
-      }),
+      }, {
+        loader: require.resolve(`ts-loader`),
+        options: PnpWebpackPlugin.tsLoaderOptions({
+          compilerOptions: {
+            declaration: false,
+            module: `ES6`,
+            moduleResolution: `Node`,
+          },
+        }),
+      }],
     }],
   },
 
@@ -50,5 +63,6 @@ export const makeConfig = (config: webpack.Configuration) => merge({
   plugins: [
     new webpack.IgnorePlugin(/^encoding$/, /node-fetch/),
     new webpack.DefinePlugin({[`IS_WEBPACK`]: `true`}),
+    new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
   ],
 }, config);
