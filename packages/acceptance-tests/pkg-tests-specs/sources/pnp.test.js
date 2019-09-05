@@ -124,7 +124,7 @@ describe(`Plug'n'Play`, () => {
     `it should fallback to the top-level dependencies when it cannot require a transitive dependency require`,
     makeTemporaryEnv(
       {
-        dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`}
+        dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`},
       },
       {
         // By default tests are executed with the fallback disabled; this
@@ -220,7 +220,7 @@ describe(`Plug'n'Play`, () => {
           code: `MODULE_NOT_FOUND`,
           pnpCode: `UNDECLARED_DEPENDENCY`,
         });
-    },
+      },
     ),
   );
 
@@ -236,6 +236,75 @@ describe(`Plug'n'Play`, () => {
           code: `MODULE_NOT_FOUND`,
           pnpCode: `MISSING_PEER_DEPENDENCY`,
         });
+      },
+    ),
+  );
+
+  test(
+    `does not throw if undeclared peer dependencies are listed as dev deps`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`component-a`]: `1.0.0`, [`no-deps`]: `1.0.0`},
+        private: true,
+        workspaces: ['component-*'],
+      },
+      async ({path, run, source}) => {
+        await writeJson(`${path}/component-a/package.json`, {
+          name: `component-a`,
+          version: `1.0.0`,
+          devDependencies: {[`no-deps`]: `1.0.0`},
+        });
+        await writeFile(`${path}/component-a/index.js`, `require('no-deps');`);
+        await run(`install`);
+
+        await expect(source(`require('component-a')`)).resolves.toBeTruthy();
+      },
+    ),
+  );
+
+  test(
+    `does throw an undeclared dependency if it's not listed in devDependencies`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`component-a`]: `1.0.0`, [`no-deps`]: `1.0.0`},
+        private: true,
+        workspaces: ['component-*'],
+      },
+      async ({path, run, source}) => {
+        await writeJson(`${path}/component-a/package.json`, {
+          name: `component-a`,
+          version: `1.0.0`,
+        });
+        await writeFile(`${path}/component-a/index.js`, `require('no-deps');`);
+        await run(`install`);
+
+        await expect(source(`require('component-a')`)).rejects.toThrow(
+          /A package is trying to access another package without the second one being listed as a dependency/
+        );
+      },
+    ),
+  );
+
+  test(
+    `does throw an undeclared dependency if it's not listed in devDependencies`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`component-a`]: `1.0.0`, [`no-deps`]: `1.0.0`},
+        private: true,
+        workspaces: ['component-*'],
+      },
+      async ({path, run, source}) => {
+        await writeJson(`${path}/component-a/package.json`, {
+          name: `component-a`,
+          version: `1.0.0`,
+          peerDependencies: {
+            [`no-deps`]: `^1.0.0`,
+          },
+        });
+        await writeFile(`${path}/component-a/index.js`, `require('no-deps');`);
+        await run(`install`);
+
+        await expect(source(`require('component-a')`)).resolves.toBeTruthy();
       },
     ),
   );
