@@ -33,6 +33,11 @@ while read line; do
   VERSION=$(jq -r .newVersion <<< "$line")
 
   COMMIT_MESSAGE="$COMMIT_MESSAGE| \`$IDENT\` | \`$VERSION\` |$NL"
+
+  yarn workspace "$IDENT" prepack |& : || (
+    echo "Couldn't run prepack on $IDENT"
+    exit 1
+  )
 done <<< "$RELEASE_DETAILS"
 
 git add "$REPO_DIR"
@@ -49,4 +54,3 @@ while read line; do
 
   git tag -a "$TAG" -m "$IDENT"
 done <<< "$RELEASE_DETAILS"
-
