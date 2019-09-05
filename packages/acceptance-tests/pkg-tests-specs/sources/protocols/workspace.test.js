@@ -4,7 +4,7 @@ const {fs: {writeJson}} = require('pkg-tests-core');
 describe('Protocols', () => {
   describe('workspace:', () => {
     test(
-      `regcognizes prereleases in wildcard ranges`,
+      `it should recognize prereleases in wildcard ranges`,
       makeTemporaryEnv(
         {
           private: true,
