@@ -100,6 +100,9 @@ export class Workspace {
     if (protocol === WorkspaceResolver.protocol && pathname === this.relativeCwd)
       return true;
 
+    if (protocol === WorkspaceResolver.protocol && pathname === `*`)
+      return true;
+
     if (!semver.validRange(pathname))
       return false;
 
