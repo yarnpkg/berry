@@ -236,6 +236,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/helper-call-delegate@npm:^7.4.4":
+  version: 7.4.4
+  resolution: "@babel/helper-call-delegate@npm:7.4.4"
+  dependencies:
+    "@babel/helper-hoist-variables": "npm:^7.4.4"
+    "@babel/traverse": "npm:^7.4.4"
+    "@babel/types": "npm:^7.4.4"
+  checksum: 4994d56e56dabda778151a13f72887084cb1715904dd4b975b826d67e38e3e3e87f1ebec3e07cdd9c1f1affc0b293a71fdaf4ee8e8fe6880d8cde664164b8445
+  languageName: node
+  linkType: hard
+
 "@babel/helper-create-class-features-plugin@npm:^7.3.0, @babel/helper-create-class-features-plugin@npm:^7.4.4, @babel/helper-create-class-features-plugin@npm:^7.5.5":
   version: 7.5.5
   resolution: "@babel/helper-create-class-features-plugin@npm:7.5.5"
@@ -319,6 +330,15 @@ __metadata:
   dependencies:
     "@babel/types": "npm:^7.4.0"
   checksum: 7108fc6e3e07c68764344fca025438f6bce7c0dfd820c0fae955454fc3e97c996a2ac0f228163cc15b4fac0c1576d0f64524ac65580d2ccfda41a1f1f9ee7615
+  languageName: node
+  linkType: hard
+
+"@babel/helper-hoist-variables@npm:^7.4.4":
+  version: 7.4.4
+  resolution: "@babel/helper-hoist-variables@npm:7.4.4"
+  dependencies:
+    "@babel/types": "npm:^7.4.4"
+  checksum: 2ec9e2214fc6fa42996346ed04bdf5c40b4b4115f405a58054a09dd93b2b45e4962ad655fb31b73bcf2cefda78d96b98b70872965953b4a37fb806519052c148
   languageName: node
   linkType: hard
 
@@ -1192,6 +1212,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/plugin-transform-parameters@npm:^7.4.4":
+  version: 7.4.4
+  resolution: "@babel/plugin-transform-parameters@npm:7.4.4"
+  dependencies:
+    "@babel/helper-call-delegate": "npm:^7.4.4"
+    "@babel/helper-get-function-arity": "npm:^7.0.0"
+    "@babel/helper-plugin-utils": "npm:^7.0.0"
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 5785cbde286340fe5dd791a17961009a20493af1647f468e23bc404f5a274d7861d2f2fbb6aa38b58a0551fd92b1846098df76c3e7dfd080923e66fff7bd6771
+  languageName: node
+  linkType: hard
+
 "@babel/plugin-transform-property-literals@npm:^7.0.0":
   version: 7.2.0
   resolution: "@babel/plugin-transform-property-literals@npm:7.2.0"
@@ -1623,7 +1656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/traverse@npm:^7.5.5":
+"@babel/traverse@npm:^7.4.4, @babel/traverse@npm:^7.5.5":
   version: 7.5.5
   resolution: "@babel/traverse@npm:7.5.5"
   dependencies:
@@ -6113,9 +6146,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   resolution: babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import
   dependencies:
     "@babel/helper-module-transforms": "npm:^7.5.5"
+    "@babel/helper-plugin-utils": "npm:^7.0.0"
     "@babel/helpers": "npm:^7.5.5"
+    "@babel/plugin-transform-parameters": "npm:^7.4.4"
     "@babel/template": "npm:^7.4.4"
-  checksum: 20b5e88ad38f8196f46ee77519200fe5145ce6241e0449c3e277a809ef86a7e9f73b8e7f1782cdf42b3e37627b11311e3ec490db1e8f43662faaa1dd3417df73
+  peerDependencies:
+    "@babel/core": ^7
+  checksum: e4f81cff69c0704d176b8f80fbe756643d013bcb20e8664164d6d6d943b3f977a0d90d0cc76f1697ccf4e01c3b5a2debc3a1f5ba68fe48e7a680db67ecbfb3a6
   languageName: node
   linkType: hard
 

@@ -91,7 +91,7 @@ async function request(target: string, body: Body, {configuration, headers, json
   return await res.body;
 }
 
-export function get(target: string, {configuration, json, ...rest}: Options) {
+export async function get(target: string, {configuration, json, ...rest}: Options) {
   let entry = cache.get(target);
 
   if (!entry) {
@@ -100,9 +100,9 @@ export function get(target: string, {configuration, json, ...rest}: Options) {
   }
 
   if (json) {
-    return entry.then(buffer => JSON.parse(buffer.toString()));
+    return await entry.then(buffer => JSON.parse(buffer.toString()));
   } else {
-    return entry;
+    return await entry;
   }
 }
 

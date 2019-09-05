@@ -63,5 +63,6 @@ export const makeConfig = (config: webpack.Configuration) => merge({
   plugins: [
     new webpack.IgnorePlugin(/^encoding$/, /node-fetch/),
     new webpack.DefinePlugin({[`IS_WEBPACK`]: `true`}),
+    new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
   ],
 }, config);
