@@ -1,16 +1,12 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "2.0.0-rc.3",
-  "nextVersion": {
-    "semver": "2.0.0-rc.4",
-    "nonce": "1053386781220579"
-  },
+  "version": "2.0.0-rc.4",
   "main": "./sources/index.ts",
   "bin": {
     "yarn": "./bin/run.js"
   },
   "dependencies": {
-    "@yarnpkg/core": "workspace:2.0.0-rc.4",
+    "@yarnpkg/core": "workspace:2.0.0-rc.5",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
     "@yarnpkg/parsers": "workspace:2.0.0-rc.3",
     "@yarnpkg/shell": "workspace:2.0.0-rc.2",
@@ -21,22 +17,22 @@
     "yup": "^0.27.0"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:2.0.0-rc.3",
+    "@yarnpkg/builder": "workspace:2.0.0-rc.4",
     "@yarnpkg/plugin-constraints": "workspace:2.0.0-rc.1",
     "@yarnpkg/plugin-dlx": "workspace:2.0.0-rc.1",
-    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.2",
+    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.3",
     "@yarnpkg/plugin-file": "workspace:2.0.0-rc.1",
     "@yarnpkg/plugin-git": "workspace:2.0.0-rc.1",
     "@yarnpkg/plugin-github": "workspace:2.0.0-rc.1",
     "@yarnpkg/plugin-http": "workspace:2.0.0-rc.1",
     "@yarnpkg/plugin-init": "workspace:2.0.0-rc.1",
     "@yarnpkg/plugin-link": "workspace:2.0.0-rc.1",
-    "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.1",
-    "@yarnpkg/plugin-npm-cli": "workspace:2.0.0-rc.1",
+    "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.2",
+    "@yarnpkg/plugin-npm-cli": "workspace:2.0.0-rc.2",
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.2",
     "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.1",
     "@yarnpkg/plugin-typescript": "workspace:2.0.0-rc.2",
-    "@yarnpkg/plugin-version": "workspace:2.0.0-rc.2",
+    "@yarnpkg/plugin-version": "workspace:2.0.0-rc.3",
     "@yarnpkg/plugin-workspace-tools": "workspace:2.0.0-rc.2",
     "@yarnpkg/pnp": "workspace:2.0.0-rc.3",
     "typescript": "^3.5.3"

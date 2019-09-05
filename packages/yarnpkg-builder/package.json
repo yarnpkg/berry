@@ -1,14 +1,10 @@
 {
   "name": "@yarnpkg/builder",
-  "version": "2.0.0-rc.3",
-  "nextVersion": {
-    "semver": "2.0.0-rc.4",
-    "nonce": "7685170686345921"
-  },
+  "version": "2.0.0-rc.4",
   "bin": "./sources/boot-dev.js",
   "dependencies": {
     "@babel/core": "^7.5.5",
-    "@yarnpkg/core": "workspace:2.0.0-rc.4",
+    "@yarnpkg/core": "workspace:2.0.0-rc.5",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
     "babel-loader": "^8.0.6",
