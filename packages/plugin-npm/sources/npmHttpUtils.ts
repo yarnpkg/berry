@@ -18,7 +18,7 @@ type AuthOptions = {
 
 type RegistryOptions = {
   ident: Ident,
-  registry?: void,
+  registry?: string,
 } | {
   ident?: void,
   registry: string;
@@ -35,7 +35,7 @@ export function getIdentUrl(ident: Ident) {
 }
 
 export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
-  if (ident)
+  if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
   if (ident && ident.scope && typeof authType === `undefined`)
     authType = AuthType.BEST_EFFORT;
@@ -51,7 +51,7 @@ export async function get(path: string, {configuration, headers, ident, authType
 }
 
 export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options) {
-  if (ident)
+  if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
 
   if (typeof registry !== `string`)
