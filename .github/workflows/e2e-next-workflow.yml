@@ -34,13 +34,13 @@ jobs:
 
         # Required
         yarn add next@^9.0.6-canary.1 react react-dom pnp-webpack-plugin
-        echo 'module.exports = {webpack: config => { config.resolve.plugins = [require("pnp-webpack-plugin")]; config.resolveLoader.plugins = [require("pnp-webpack-plugin")]; }};' > next.config.js
+        echo 'module.exports = {webpack: config => { config.resolve.plugins = [require("pnp-webpack-plugin")]; config.resolveLoader.plugins = [require("pnp-webpack-plugin")]; }};' | tee next.config.js
 
         # Test itself
         yarn add raw-loader
 
         mkdir pages
-        echo 'import text from "raw-loader!./text.txt"; export default () => <div>{text}</div>;' > pages/index.js
-        echo 'hello world!' > pages/text.txt
+        echo 'import text from "raw-loader!./text.txt"; export default () => <div>{text}</div>;' | tee pages/index.js
+        echo 'hello world!' | tee pages/text.txt
 
         yarn next build
