@@ -6,7 +6,7 @@ on:
     - master
   pull_request:
     paths:
-    - .github/workflows/e2e-eslint-workflow.yml
+    - .github/workflows/e2e-next-workflow.yml
     - scripts/e2e-setup-ci.sh
 
 name: 'E2E Next'
@@ -30,5 +30,17 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-        yarn dlx create-react-app my-cra && cd my-cra
-        yarn build
+        yarn init
+
+        # Required
+        yarn add next@^9.0.6-canary.1 react react-dom pnp-webpack-plugin
+        echo 'module.exports = {webpack: config => { config.resolve.plugins = [require("pnp-webpack-plugin")]; config.resolveLoader.plugins = [require("pnp-webpack-plugin")]; return config; }};' | tee next.config.js
+
+        # Test itself
+        yarn add raw-loader
+
+        mkdir pages
+        echo 'import text from "raw-loader!./text.txt"; export default () => <div>{text}</div>;' | tee pages/index.js
+        echo 'hello world!' | tee pages/text.txt
+
+        yarn next build

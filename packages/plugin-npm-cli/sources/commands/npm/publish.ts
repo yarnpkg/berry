@@ -63,6 +63,7 @@ export default class NpmPublishCommand extends BaseCommand {
           const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
             configuration,
             registry,
+            ident,
             json: true,
           });
 
