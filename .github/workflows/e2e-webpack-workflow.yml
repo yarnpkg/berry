@@ -46,7 +46,7 @@ jobs:
         rm -rf dist src webpack.config.js
 
         # ts-loader
-        yarn add -D ts-loader typescript
+        yarn add -D ts-loader typescript pnp-webpack-plugin
 
         echo "const PnpWebpackPlugin = require('pnp-webpack-plugin'); module.exports = {mode: 'none', entry: './src/index.ts',output: { filename: 'main.js'}, resolve: { extensions: ['.ts', '.tsx', '.js']},module: { rules: [ { test: /\.tsx?$/, loader: require.resolve('ts-loader'),options: PnpWebpackPlugin.tsLoaderOptions({/* ... regular options go there ... */}) }  ]}};" | tee webpack.config.js
 
