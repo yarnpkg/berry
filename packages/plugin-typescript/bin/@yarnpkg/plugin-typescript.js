@@ -6,6 +6,12 @@ module.exports.factory = function (require) {
   /******/ 	// The module cache
   /******/ 	var installedModules = {};
   /******/
+  /******/ 	// object to store loaded chunks
+  /******/ 	// "0" means "already loaded"
+  /******/ 	var installedChunks = {
+  /******/ 		0: 0
+  /******/ 	};
+  /******/
   /******/ 	// The require function
   /******/ 	function __webpack_require__(moduleId) {
   /******/
@@ -83,6 +89,13 @@ module.exports.factory = function (require) {
   /******/ 	// __webpack_public_path__
   /******/ 	__webpack_require__.p = "";
   /******/
+  /******/ 	// uncaught error handler for webpack runtime
+  /******/ 	__webpack_require__.oe = function(err) {
+  /******/ 		process.nextTick(function() {
+  /******/ 			throw err; // catch this error by using import().catch()
+  /******/ 		});
+  /******/ 	};
+  /******/
   /******/
   /******/ 	// Load entry module and return exports
   /******/ 	return __webpack_require__(__webpack_require__.s = 0);
@@ -90,79 +103,92 @@ module.exports.factory = function (require) {
   /************************************************************************/
   /******/ ([
   /* 0 */
-  /***/ (function(module, exports, __webpack_require__) {
+  /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
   "use strict";
-
-  Object.defineProperty(exports, "__esModule", { value: true });
-  const core_1 = __webpack_require__(1);
-  const core_2 = __webpack_require__(1);
-  const plugin_essentials_1 = __webpack_require__(2);
-  const getTypesName = (descriptor) => {
-      return descriptor.scope
-          ? `${descriptor.scope}__${descriptor.name}`
-          : `${descriptor.name}`;
+  __webpack_require__.r(__webpack_exports__);
+  const getTypesName = descriptor => {
+    return descriptor.scope ? `${descriptor.scope}__${descriptor.name}` : `${descriptor.name}`;
   };
+
   const afterWorkspaceDependencyAddition = async (workspace, dependencyTarget, descriptor) => {
-      if (descriptor.scope === `types`)
-          return;
-      const project = workspace.project;
-      const configuration = project.configuration;
-      const cache = await core_1.Cache.find(configuration);
-      const typesName = getTypesName(descriptor);
-      const target = plugin_essentials_1.suggestUtils.Target.DEVELOPMENT;
-      const modifier = plugin_essentials_1.suggestUtils.Modifier.EXACT;
-      const strategies = [plugin_essentials_1.suggestUtils.Strategy.LATEST];
-      const request = core_2.structUtils.makeDescriptor(core_2.structUtils.makeIdent(`types`, typesName), `unknown`);
-      const suggestions = await plugin_essentials_1.suggestUtils.getSuggestedDescriptors(request, { workspace, project, cache, target, modifier, strategies });
-      const nonNullSuggestions = suggestions.filter(suggestion => suggestion.descriptor !== null);
-      if (nonNullSuggestions.length === 0)
-          return;
-      const selected = nonNullSuggestions[0].descriptor;
-      if (selected === null)
-          return;
-      workspace.manifest[target].set(selected.identHash, selected);
-  };
-  const afterWorkspaceDependencyRemoval = async (workspace, dependencyTarget, descriptor) => {
-      if (descriptor.scope === `types`)
-          return;
-      const target = plugin_essentials_1.suggestUtils.Target.DEVELOPMENT;
-      const typesName = getTypesName(descriptor);
-      const ident = core_2.structUtils.makeIdent(`types`, typesName);
-      const current = workspace.manifest[target].get(ident.identHash);
-      if (typeof current === `undefined`)
-          return;
-      workspace.manifest[target].delete(ident.identHash);
-  };
-  const beforeWorkspacePacking = (workspace, rawManifest) => {
-      if (rawManifest.publishConfig && rawManifest.publishConfig.typings)
-          rawManifest.typings = rawManifest.publishConfig.typings;
-      if (rawManifest.publishConfig && rawManifest.publishConfig.types) {
-          rawManifest.types = rawManifest.publishConfig.types;
-      }
-  };
-  const plugin = {
-      hooks: {
-          afterWorkspaceDependencyAddition,
-          afterWorkspaceDependencyRemoval,
-          beforeWorkspacePacking,
-      },
-  };
-  // eslint-disable-next-line arca/no-default-export
-  exports.default = plugin;
+    const _ref4 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 1, 7));
 
+    const _ref2 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 2, 7));
+
+    const _ref = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 2, 7));
+
+    if (descriptor.scope === `types`) return;
+    const project = workspace.project;
+    const configuration = project.configuration;
+    const cache = await _ref.Cache.find(configuration);
+    const typesName = getTypesName(descriptor);
+    const target = _ref4.suggestUtils.Target.DEVELOPMENT;
+    const modifier = _ref4.suggestUtils.Modifier.EXACT;
+    const strategies = [_ref4.suggestUtils.Strategy.LATEST];
+
+    const request = _ref2.structUtils.makeDescriptor(_ref2.structUtils.makeIdent(`types`, typesName), `unknown`);
+
+    const suggestions = await _ref4.suggestUtils.getSuggestedDescriptors(request, {
+      workspace,
+      project,
+      cache,
+      target,
+      modifier,
+      strategies
+    });
+    const nonNullSuggestions = suggestions.filter(suggestion => suggestion.descriptor !== null);
+    if (nonNullSuggestions.length === 0) return;
+    const selected = nonNullSuggestions[0].descriptor;
+    if (selected === null) return;
+    workspace.manifest[target].set(selected.identHash, selected);
+  };
+
+  const afterWorkspaceDependencyRemoval = async (workspace, dependencyTarget, descriptor) => {
+    const _ref5 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 1, 7));
+
+    const _ref3 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 2, 7));
+
+    if (descriptor.scope === `types`) return;
+    const target = _ref5.suggestUtils.Target.DEVELOPMENT;
+    const typesName = getTypesName(descriptor);
+
+    const ident = _ref3.structUtils.makeIdent(`types`, typesName);
+
+    const current = workspace.manifest[target].get(ident.identHash);
+    if (typeof current === `undefined`) return;
+    workspace.manifest[target].delete(ident.identHash);
+  };
+
+  const beforeWorkspacePacking = (workspace, rawManifest) => {
+    if (rawManifest.publishConfig && rawManifest.publishConfig.typings) rawManifest.typings = rawManifest.publishConfig.typings;
+
+    if (rawManifest.publishConfig && rawManifest.publishConfig.types) {
+      rawManifest.types = rawManifest.publishConfig.types;
+    }
+  };
+
+  const plugin = {
+    hooks: {
+      afterWorkspaceDependencyAddition,
+      afterWorkspaceDependencyRemoval,
+      beforeWorkspacePacking
+    }
+  }; // eslint-disable-next-line arca/no-default-export
+
+  /* harmony default export */ __webpack_exports__["default"] = (plugin);
 
   /***/ }),
   /* 1 */
   /***/ (function(module, exports) {
 
-  module.exports = require("@yarnpkg/core");
+  module.exports = require("@yarnpkg/plugin-essentials");
 
   /***/ }),
   /* 2 */
   /***/ (function(module, exports) {
 
-  module.exports = require("@yarnpkg/plugin-essentials");
+  module.exports = require("@yarnpkg/core");
 
   /***/ })
   /******/ ]);
