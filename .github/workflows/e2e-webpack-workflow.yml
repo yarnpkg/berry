@@ -1,0 +1,65 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-webpack-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E Webpack'
+jobs:
+  chore:
+    name: 'Validating Webpack'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn init -p
+        yarn add -D webpack@^5.0.0-alpha.24 webpack-cli@^3.3.8 lodash
+
+        # Vanilla webpack
+        echo "const path = require('path'); module.exports = { entry: './src/index.js', output: { filename: 'main.js', path: path.resolve(__dirname, 'dist')} };" | tee webpack.config.js
+
+        mkdir src
+        echo "import _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'webpack'], ' '))}; printHello();" | tee src/index.js
+
+        yarn webpack
+        [[ "$(node dist/main.js)" = "Hello webpack" ]]
+
+        rm -rf dist src webpack.config.js
+
+        # ts-loader
+        yarn add -D ts-loader typescript
+
+        echo "const PnpWebpackPlugin = require('pnp-webpack-plugin'); module.exports = {mode: 'none', entry: './src/index.ts',output: { filename: 'main.js'}, resolve: { extensions: ['.ts', '.tsx', '.js']},module: { rules: [ { test: /\.tsx?$/, loader: require.resolve('ts-loader'),options: PnpWebpackPlugin.tsLoaderOptions({/* ... regular options go there ... */}) }  ]}};" | tee webpack.config.js
+
+        echo "{\"compilerOptions\": {\"sourceMap\": true}}" | tee tsconfig.json
+
+        mkdir src
+        echo "import * as _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'ts-loader'], ' '))}; printHello();" | tee src/index.ts
+
+        yarn webpack
+        [[ "$(node dist/main.js)" = "Hello ts-loader" ]]
+
+        rm -rf dist src webpack.config.js
+
+
+
+
