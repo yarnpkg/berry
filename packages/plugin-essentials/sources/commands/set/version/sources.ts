@@ -31,7 +31,7 @@ export default class SetVersionCommand extends BaseCommand {
   installPath?: string;
 
   @Command.String(`--repository`)
-  repository: string = `git@github.com:yarnpkg/berry`;
+  repository: string = `https://github.com/yarnpkg/berry.git`;
 
   @Command.String(`--branch`)
   branch: string = `master`;
