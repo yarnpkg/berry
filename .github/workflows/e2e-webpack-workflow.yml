@@ -45,6 +45,18 @@ jobs:
 
         rm -rf dist src webpack.config.js
 
+        # raw-loader (imported)
+        yarn add raw-loader
+
+        mkdir src
+        echo 'import text from "raw-loader!./text.txt"; console.log(text);' | tee src/index.js
+        echo 'Hello raw-loader' | tee src/text.txt
+
+        yarn webpack
+        [[ "$(node dist/main.js)" = "Hello raw-loader" ]]
+
+        rm -rf dist src webpack.config.js
+
         # ts-loader
         yarn add -D ts-loader typescript pnp-webpack-plugin @types/lodash
 
