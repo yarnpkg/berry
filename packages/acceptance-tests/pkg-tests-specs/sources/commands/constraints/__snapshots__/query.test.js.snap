@@ -20,6 +20,24 @@ Object {
 }
 `;
 
+exports[`Commands constraints query test (empty project / filter w/ workspace_field_test/3) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (empty project / filter w/ workspace_field_test/4) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands constraints query test (empty project / single predicate with ignored variable) 1`] = `
 Object {
   "code": 0,
@@ -86,13 +104,33 @@ Object {
 }
 `;
 
+exports[`Commands constraints query test (multiple workspaces / filter w/ workspace_field_test/3) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: WorkspaceCwd = 'packages/workspace-a'
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (multiple workspaces / filter w/ workspace_field_test/4) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: WorkspaceCwd = 'packages/workspace-b'
+➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands constraints query test (multiple workspaces / single predicate with ignored variable) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
-➤ YN0000: WorkspaceName = 'workspace-a-01beb5'
-➤ YN0000: WorkspaceName = 'workspace-b-d95f30'
+➤ YN0000: WorkspaceName = 'workspace-a'
+➤ YN0000: WorkspaceName = 'workspace-b'
 ➤ YN0000: Done
 ",
 }
@@ -129,6 +167,24 @@ Object {
   "stdout": "➤ YN0000: DependencyType = devDependencies
 ➤ YN0000: DependencyType = peerDependencies
 ➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (one regular dependency / filter w/ workspace_field_test/3) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (one regular dependency / filter w/ workspace_field_test/4) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -181,6 +237,24 @@ Object {
 }
 `;
 
+exports[`Commands constraints query test (two development dependencies / filter w/ workspace_field_test/3) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two development dependencies / filter w/ workspace_field_test/4) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands constraints query test (two development dependencies / single predicate with ignored variable) 1`] = `
 Object {
   "code": 0,
@@ -225,6 +299,24 @@ Object {
   "stdout": "➤ YN0000: DependencyType = devDependencies
 ➤ YN0000: DependencyType = peerDependencies
 ➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies / filter w/ workspace_field_test/3) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies / filter w/ workspace_field_test/4) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -279,6 +371,24 @@ Object {
   "stdout": "➤ YN0000: DependencyType = devDependencies
 ➤ YN0000: DependencyType = peerDependencies
 ➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies, two development dependencies / filter w/ workspace_field_test/3) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies, two development dependencies / filter w/ workspace_field_test/4) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;

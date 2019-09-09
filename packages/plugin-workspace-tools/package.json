@@ -15,12 +15,13 @@
     "typescript": "^3.5.3"
   },
   "scripts": {
-    "build:plugin-workspace-tools": "builder build plugin"
+    "build:plugin-workspace-tools": "builder build plugin",
+    "update-local": "yarn build:plugin-workspace-tools && rsync -a --delete bundles/ bin/"
   },
   "version": "2.0.0-rc.2",
   "nextVersion": {
     "semver": "2.0.0-rc.3",
-    "nonce": "2665449092093787"
+    "nonce": "6003780831728721"
   },
   "repository": {
     "type": "git",

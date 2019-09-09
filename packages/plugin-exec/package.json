@@ -13,9 +13,14 @@
     "typescript": "^3.5.3"
   },
   "scripts": {
-    "build:plugin-exec": "builder build plugin"
+    "build:plugin-exec": "builder build plugin",
+    "update-local": "yarn build:plugin-workspace-tools && rsync -a --delete bundles/ bin/"
   },
   "version": "2.0.0-rc.2",
+  "nextVersion": {
+    "semver": "2.0.0-rc.3",
+    "nonce": "1914314242878837"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

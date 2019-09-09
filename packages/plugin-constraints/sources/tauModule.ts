@@ -2,9 +2,10 @@ import {Project}      from '@yarnpkg/core';
 import {PortablePath} from '@yarnpkg/fslib';
 import getPath        from 'lodash/get';
 import pl             from 'tau-prolog';
+import vm             from 'vm';
 
 // eslint-disable-next-line @typescript-eslint/camelcase
-const {is_atom: isAtom} = pl.type;
+const {is_atom: isAtom, is_instantiated_list: isInstantiatedList} = pl.type;
 
 function prependGoals(thread: pl.type.Thread, point: pl.type.State, goals: pl.type.Term<number, string>[]): void {
   thread.prepend(goals.map(
@@ -56,8 +57,60 @@ const tauModule = new pl.type.Module(`constraints`, {
       new pl.type.Term(String(value)),
     ])]);
   },
+
+  [`workspace_field_test/3`]: (thread, point, atom) => {
+    const [workspaceCwd, fieldName, checkCode] = atom.args;
+
+    thread.prepend([new pl.type.State(
+      point.goal.replace(new pl.type.Term(`workspace_field_test`, [
+        workspaceCwd,
+        fieldName,
+        checkCode,
+        new pl.type.Term(`[]`, []),
+      ])),
+      point.substitution,
+      point,
+    )]);
+  },
+
+  [`workspace_field_test/4`]: (thread, point, atom) => {
+    const [workspaceCwd, fieldName, checkCode, checkArgv] = atom.args;
+
+    if (!isAtom(workspaceCwd) || !isAtom(fieldName) || !isAtom(checkCode) || !isInstantiatedList(checkArgv)) {
+      thread.throwError(pl.error.instantiation(atom.indicator));
+      return;
+    }
+
+    const project = getProject(thread);
+    const workspace = project.tryWorkspaceByCwd(workspaceCwd.id as PortablePath);
+
+    // Workspace not found => this predicate can never match
+    // We might want to throw here? We can be pretty sure the user did
+    // something wrong at this point
+    if (workspace == null)
+      return;
+
+    const value = getPath(workspace.manifest.raw!, fieldName.id);
+
+    // Field is not present => this predicate can never match
+    if (typeof value === `undefined`)
+      return;
+
+    // Inject the variables into a sandbox
+    const vars: {[key: string]: any} = {$$: value};
+    for (const [index, value] of (checkArgv.toJavaScript() as string[]).entries())
+      vars[`$${index}`] = value;
+
+    const result = vm.runInNewContext(checkCode.id, vars);
+
+    if (result) {
+      thread.success(point);
+    }
+  },
 }, [
   `workspace_field/3`,
+  `workspace_field_test/3`,
+  `workspace_field_test/4`,
 ]);
 
 export function linkProjectToSession(session: pl.type.Session, project: Project) {

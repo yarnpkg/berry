@@ -4495,7 +4495,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/builder@workspace:2.0.0-rc.4, @yarnpkg/builder@workspace:packages/yarnpkg-builder":
+"@yarnpkg/builder@workspace:2.0.0-rc.5, @yarnpkg/builder@workspace:packages/yarnpkg-builder":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/builder@workspace:packages/yarnpkg-builder"
   dependencies:
@@ -4526,17 +4526,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/cli@workspace:2.0.0-rc.4, @yarnpkg/cli@workspace:packages/yarnpkg-cli":
+"@yarnpkg/cli@workspace:2.0.0-rc.5, @yarnpkg/cli@workspace:packages/yarnpkg-cli":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
-    "@yarnpkg/builder": "workspace:2.0.0-rc.4"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/parsers": "workspace:2.0.0-rc.3"
     "@yarnpkg/plugin-constraints": "workspace:2.0.0-rc.1"
     "@yarnpkg/plugin-dlx": "workspace:2.0.0-rc.1"
-    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.3"
+    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.4"
     "@yarnpkg/plugin-file": "workspace:2.0.0-rc.1"
     "@yarnpkg/plugin-git": "workspace:2.0.0-rc.1"
     "@yarnpkg/plugin-github": "workspace:2.0.0-rc.1"
@@ -4551,6 +4551,7 @@ __metadata:
     "@yarnpkg/plugin-version": "workspace:2.0.0-rc.3"
     "@yarnpkg/plugin-workspace-tools": "workspace:2.0.0-rc.2"
     "@yarnpkg/pnp": "workspace:2.0.0-rc.3"
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3"
     "@yarnpkg/shell": "workspace:2.0.0-rc.2"
     chalk: "npm:^2.4.1"
     clipanion: "npm:^2.1.1"
@@ -4772,14 +4773,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-constraints@workspace:packages/plugin-constraints"
   dependencies:
-    "@yarnpkg/cli": "workspace:2.0.0-rc.4"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     clipanion: "npm:^2.1.1"
     inquirer: "npm:^6.2.0"
     lodash: "npm:^4.17.15"
     node-emoji: "npm:^1.8.1"
-    tau-prolog: "npm:^0.2.38"
+    tau-prolog: "npm:^0.2.66"
   languageName: unknown
   linkType: soft
 
@@ -4787,21 +4788,21 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-dlx@workspace:packages/plugin-dlx"
   dependencies:
-    "@yarnpkg/cli": "workspace:2.0.0-rc.4"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2"
-    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.3"
+    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.4"
     clipanion: "npm:^2.1.1"
     tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-essentials@workspace:2.0.0-rc.3, @yarnpkg/plugin-essentials@workspace:packages/plugin-essentials":
+"@yarnpkg/plugin-essentials@workspace:2.0.0-rc.4, @yarnpkg/plugin-essentials@workspace:packages/plugin-essentials":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
-    "@yarnpkg/cli": "workspace:2.0.0-rc.4"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2"
@@ -4819,7 +4820,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-exec@workspace:packages/plugin-exec"
   dependencies:
     "@types/tmp": "npm:^0.0.33"
-    "@yarnpkg/builder": "workspace:2.0.0-rc.4"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     tmp: "npm:^0.0.33"
@@ -4871,7 +4872,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-init@workspace:packages/plugin-init"
   dependencies:
-    "@yarnpkg/cli": "workspace:2.0.0-rc.4"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2"
@@ -4892,7 +4893,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-npm-cli@workspace:packages/plugin-npm-cli"
   dependencies:
-    "@yarnpkg/cli": "workspace:2.0.0-rc.4"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.2"
@@ -4920,7 +4921,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-pack@workspace:packages/plugin-pack"
   dependencies:
     "@types/tar-stream": "npm:1.6.0"
-    "@yarnpkg/cli": "workspace:2.0.0-rc.4"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     clipanion: "npm:^2.1.1"
@@ -4933,7 +4934,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
-    "@yarnpkg/cli": "workspace:2.0.0-rc.4"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.2"
@@ -4946,8 +4947,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-stage@workspace:packages/plugin-stage"
   dependencies:
-    "@yarnpkg/builder": "workspace:2.0.0-rc.4"
-    "@yarnpkg/cli": "workspace:2.0.0-rc.4"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.5"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     clipanion: "npm:^2.1.1"
@@ -4959,10 +4960,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
-    "@yarnpkg/builder": "workspace:2.0.0-rc.4"
-    "@yarnpkg/cli": "workspace:2.0.0-rc.4"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.5"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
-    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.3"
+    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.4"
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.2"
     typescript: "npm:^3.5.3"
   languageName: unknown
@@ -4972,8 +4973,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-version@workspace:packages/plugin-version"
   dependencies:
-    "@yarnpkg/builder": "workspace:2.0.0-rc.4"
-    "@yarnpkg/cli": "workspace:2.0.0-rc.4"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.5"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.2"
@@ -4990,8 +4991,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
   dependencies:
-    "@yarnpkg/builder": "workspace:2.0.0-rc.4"
-    "@yarnpkg/cli": "workspace:2.0.0-rc.4"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.5"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     clipanion: "npm:^2.1.1"
@@ -5005,7 +5006,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnp@workspace:packages/yarnpkg-pnp"
   dependencies:
-    "@yarnpkg/builder": "workspace:2.0.0-rc.4"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.3"
     typescript: "npm:^3.5.3"
@@ -7883,6 +7884,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 1.2.8
   resolution: "command-exists@npm:1.2.8"
   checksum: 70a5ea5a8db9d1999424fa052f2be509af265ee98e85a7e3fd8da6c167356c4a8f4696f0d4da801738c795466e0035d23671cf28562393839f80dab24b524be8
+  languageName: node
+  linkType: hard
+
+"commander@npm:2.12.2":
+  version: 2.12.2
+  resolution: "commander@npm:2.12.2"
+  checksum: dff2e519e62c2855615b505e4df2b2206f5094c0ca7f955cb1a6d927ca27395905e5b06603562f1e5e990eca9987c2b2ee5561979684ec7666b84ec917414786
   languageName: node
   linkType: hard
 
@@ -11266,6 +11274,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 1.0.0
   resolution: "fs.realpath@npm:1.0.0"
   checksum: f259ee062dea37e195afda57b68b7577f14480b01150867f34a553accb2bb5198901075a2bafdb6ec8b01771073a6588dd9ec1871f46709fb5e5d732cdbd9d75
+  languageName: node
+  linkType: hard
+
+"fs@npm:0.0.1-security":
+  version: 0.0.1-security
+  resolution: "fs@npm:0.0.1-security"
+  checksum: a669763a5b5c5bd14814c2ff72c3d3bf364071ec475d5fec89314fc747545698da032bf3fd1168cebdb2cd9454eb73655ee3c71ff7b0b64414ed05e981ee82ce
   languageName: node
   linkType: hard
 
@@ -15329,6 +15344,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"js-reporters@npm:1.2.1":
+  version: 1.2.1
+  resolution: "js-reporters@npm:1.2.1"
+  checksum: 70a95f37c69542852c62275e2442da2de20e77b70e3c9b07d3bf9a56e0a5bac6147857d887cee8512a8e0d790b10b438f9225d7917e42df965399180103feffe
+  languageName: node
+  linkType: hard
+
 "js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
@@ -16772,7 +16794,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^3.0.2, minimatch@npm:^3.0.3, minimatch@npm:^3.0.4":
+"minimatch@npm:3.0.4, minimatch@npm:^3.0.2, minimatch@npm:^3.0.3, minimatch@npm:^3.0.4":
   version: 3.0.4
   resolution: "minimatch@npm:3.0.4"
   dependencies:
@@ -17288,6 +17310,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   dependencies:
     semver: "npm:^5.3.0"
   checksum: dde354fabfbb592dc16c6bffde7b63582750d2d5ce8dd1de2b30803ce6bb8fdd9330da0e9fce860e704c1100b7d9a20833343b3dd6fbca3fde49d5344563df2b
+  languageName: node
+  linkType: hard
+
+"node-watch@npm:0.6.0":
+  version: 0.6.0
+  resolution: "node-watch@npm:0.6.0"
+  checksum: 6bb9cd517a5ee6203dbcd71e7288007a045bae2f3d0f1bdf238d17ead24ff8d23ac98a646c7cb4c5625b7e76d93b5008495605e1d9a0d5203e24460a4b320829
   languageName: node
   linkType: hard
 
@@ -19624,6 +19653,21 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"qunit@npm:^2.8.0":
+  version: 2.9.2
+  resolution: "qunit@npm:2.9.2"
+  dependencies:
+    commander: "npm:2.12.2"
+    js-reporters: "npm:1.2.1"
+    minimatch: "npm:3.0.4"
+    node-watch: "npm:0.6.0"
+    resolve: "npm:1.9.0"
+  bin:
+    qunit: bin/qunit.js
+  checksum: ec75cd0bbaeb88fa2e7ca0904b82b6d26f148d9aa509434b45feaf7691d5970428fcd35cc465c7788c921f3fc2e3b1dbe2dd7b9db8439570197b114c323e5ce6
+  languageName: node
+  linkType: hard
+
 "randomatic@npm:^3.0.0":
   version: 3.1.1
   resolution: "randomatic@npm:3.1.1"
@@ -20110,6 +20154,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     micromatch: "npm:^3.1.10"
     readable-stream: "npm:^2.0.2"
   checksum: 753638a72dc701ac02b591b7dde6c2d332a205c7bc5fa17d4f24d1d1b223985233091f8f40fe7ed098c25bdd89d410ec77af9eaee346b4e9615e57b1fed4cd66
+  languageName: node
+  linkType: hard
+
+"readline-sync@npm:1.4.9":
+  version: 1.4.9
+  resolution: "readline-sync@npm:1.4.9"
+  checksum: 188e9fec7f006b917a393abea07026d84039f9f09584383ae76e38474910be80971a8ab1d5b6559516e772f7b986f27dbe44d7cfd3c533f7dba8371092fa969a
   languageName: node
   linkType: hard
 
@@ -20770,7 +20821,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"resolve@npm:^1.1.7, resolve@npm:^1.3.2, resolve@npm:^1.5.0, resolve@npm:^1.8.1, resolve@npm:^1.9.0":
+"resolve@npm:1.9.0, resolve@npm:^1.1.7, resolve@npm:^1.3.2, resolve@npm:^1.5.0, resolve@npm:^1.8.1, resolve@npm:^1.9.0":
   version: 1.9.0
   resolution: "resolve@npm:1.9.0"
   dependencies:
@@ -22518,10 +22569,14 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"tau-prolog@npm:^0.2.38":
-  version: 0.2.49
-  resolution: "tau-prolog@npm:0.2.49"
-  checksum: deebf6b45ba61d5fd7ddd9bee39db2746d6cc41a7f119b03e6a60e86494ce0410e3e54d1f90a89e4e86978f4d97c2a6fc101e49aad71a920d653e87d9410ce77
+"tau-prolog@npm:^0.2.66":
+  version: 0.2.66
+  resolution: "tau-prolog@npm:0.2.66"
+  dependencies:
+    fs: "npm:0.0.1-security"
+    qunit: "npm:^2.8.0"
+    readline-sync: "npm:1.4.9"
+  checksum: 8985a97bb2715b576d6e1f16757aed74b10a8f3e8df71512707381a3a33ac271140a746212959ac5544349192e47d26e0ea335e2f99817d6c0626f36f654f410
   languageName: node
   linkType: hard
 

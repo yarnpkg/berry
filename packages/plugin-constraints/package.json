@@ -10,9 +10,13 @@
     "inquirer": "^6.2.0",
     "lodash": "^4.17.15",
     "node-emoji": "^1.8.1",
-    "tau-prolog": "^0.2.38"
+    "tau-prolog": "^0.2.66"
   },
   "version": "2.0.0-rc.1",
+  "nextVersion": {
+    "semver": "2.0.0-rc.2",
+    "nonce": "4228626192505345"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
