@@ -138,13 +138,13 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       if (scriptName === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
         continue;
 
-      if (this.include.length > 0 && !this.include.includes(workspace.locator.name))
+      if (this.include.length > 0 && !this.include.includes(structUtils.stringifyIdent(workspace.locator)))
         continue;
 
-      if (this.exclude.length > 0 && this.exclude.includes(workspace.locator.name))
+      if (this.exclude.length > 0 && this.exclude.includes(structUtils.stringifyIdent(workspace.locator)))
         continue;
 
-      if (this.private === false && workspace.manifest['private'] === true)
+      if (this.private === false && workspace.manifest.private === true)
         continue;
 
       workspaces.push(workspace);
