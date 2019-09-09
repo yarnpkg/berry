@@ -6,7 +6,7 @@
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:2.0.0-rc.4",
+    "@yarnpkg/builder": "workspace:2.0.0-rc.5",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
     "typescript": "^3.5.3",
     "webpack": "^4.39.3",
