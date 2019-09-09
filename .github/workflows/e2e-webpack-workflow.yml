@@ -70,8 +70,23 @@ jobs:
         yarn webpack
         [[ "$(node dist/main.js)" = "Hello ts-loader" ]]
 
+        rm -rf dist src webpack.config.js tsconfig.json
+
+        # less-loader
+        yarn add -D less less-loader css-loader style-loader file-loader bootstrap-less
+
+        echo "const path = require('path'); module.exports = { mode: 'none', entry: './src/index.js', output: { filename: 'main.js', path: path.resolve(__dirname, 'dist') }, module: { rules: [ { test: /\.less$/, use: ['style-loader', 'css-loader', 'less-loader'] }, { test: /\.(png|svg|jpg|gif)$/, use: ['file-loader'] }, { test: /\.(woff|woff2|eot|ttf|otf)$/, use: ['file-loader'] } ] } }; " | tee webpack.config.js
+
+        mkdir src
+        echo "import './main.less';" | tee src/index.js
+        echo "@import '~bootstrap-less/bootstrap/index.less';@import './other.less';.box:extend(.hotpink) {width: 200px;height: 200px;}" | tee src/main.less
+        echo ".hotpink {background: hotpink;}" | tee src/other.less
+
+        yarn webpack
+
+        ls dist | grep "main.js"
+        ls dist | grep ".svg"
+        ls dist | grep ".woff2"
+
         rm -rf dist src webpack.config.js
-
-
-
 
