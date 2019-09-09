@@ -90,3 +90,19 @@ jobs:
 
         rm -rf dist src webpack.config.js
 
+        # thread-loader, babel-loader and sass-loader (source: https://github.com/webpack-contrib/thread-loader/tree/master/example)
+        yarn add -D thread-loader babel-loader  @babel/core babel-preset-env @babel/plugin-proposal-object-rest-spread node-sass sass-loader css-loader style-loader react lodash-es
+
+        echo "const path = require('path'); const threadLoader = require('thread-loader'); module.exports = (env = { threads: 0, watch: true }) => { const workerPool = { workers: +env.threads, poolTimeout: env.watch ? Infinity : 2000 }; const workerPoolSass = { workers: +env.threads, workerParallelJobs: 2, poolTimeout: env.watch ? Infinity : 2000 }; if (+env.threads > 0) { threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env']); threadLoader.warmup(workerPoolSass, ['sass-loader', 'css-loader']); } return { mode: 'none', context: __dirname, entry: ['./src/index.js', 'react', 'lodash-es'], output: { path: path.resolve('dist'), filename: 'main.js' }, module: { rules: [ { test: /\.js$/, use: [ env.threads !== 0 && { loader: threadLoader.loader, options: workerPool }, 'babel-loader' ].filter(Boolean) }, { test: /\.scss$/, use: [ 'style-loader', env.threads !== 0 && { loader: threadLoader.loader, options: workerPoolSass }, 'css-loader', 'sass-loader' ].filter(Boolean) } ] }, stats: { children: false } }; };" | tee webpack.config.js
+        echo "{\"presets\": [[\"env\", {\"useBuiltIns\": true, \"targets\": {\"node\": \"6.9.0\"}, \"exclude\": [\"transform-async-to-generator\", \"transform-regenerator\"]}]], \"plugins\": [[\"@babel/plugin-proposal-object-rest-spread\", {\"useBuiltIns\": true}]], \"env\": {\"test\": {\"presets\": [\"env\"], \"plugins\": [\"@babel/plugin-proposal-object-rest-spread\"]}}} " | tee .babelrc
+
+        mkdir src
+        echo "import './main.scss';" | tee src/index.js
+        echo "@import './_other.scss';.box {width: 200px;height: 200px; background-color: \$base-color}" | tee src/main.scss
+        echo "\$base-color: hotpink;" | tee src/_other.scss
+
+        yarn webpack
+        ls dist | grep "main.js"
+
+
+
