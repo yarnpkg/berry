@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/cli",
   "version": "2.0.0-rc.5",
+  "nextVersion": {
+    "semver": "2.0.0-rc.6",
+    "nonce": "69222162825417"
+  },
   "main": "./sources/index.ts",
   "bin": {
     "yarn": "./bin/run.js"
@@ -35,13 +39,26 @@
     "@yarnpkg/plugin-version": "workspace:2.0.0-rc.3",
     "@yarnpkg/plugin-workspace-tools": "workspace:2.0.0-rc.2",
     "@yarnpkg/pnp": "workspace:2.0.0-rc.3",
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
     "typescript": "^3.5.3"
   },
   "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "mkdir -p lib && pnpify tsc",
     "build:cli+hook": "run build:pnp:hook && builder build bundle",
     "build:cli": "builder build bundle",
     "run:cli": "builder run"
   },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "types": "./lib/index.d.ts",
+    "bin": null
+  },
+  "files": [
+    "/lib/**/*",
+    "!/lib/pluginConfiguration.*",
+    "!/lib/cli.*"
+  ],
   "@yarnpkg/builder": {
     "bundles": {
       "standard": [
