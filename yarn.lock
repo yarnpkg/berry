@@ -11985,6 +11985,23 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"git-http-backend@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "git-http-backend@npm:1.0.2"
+  dependencies:
+    git-side-band-message: "npm:~0.0.3"
+    inherits: "npm:~2.0.1"
+  checksum: 9faea74c8b550a19c5aebf176cfaad008e8f0b4d6dde1b63bde33e960ebced184ff8b0aad3e215b15b5d7310ff045f8a8664ab48c562f8de5eb049832c24efa4
+  languageName: node
+  linkType: hard
+
+"git-side-band-message@npm:~0.0.3":
+  version: 0.0.3
+  resolution: "git-side-band-message@npm:0.0.3"
+  checksum: 0bdb7ccf6216dce6f40649305e867c978402f5ba13261df03e3ed158dc761e1d3309a333ffd535cd050aa568bea044fc74807f350a35021fea55293f8092c323
+  languageName: node
+  linkType: hard
+
 "git-up@npm:4.0.1, git-up@npm:^4.0.0":
   version: 4.0.1
   resolution: "git-up@npm:4.0.1"
@@ -18601,6 +18618,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   resolution: "pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core"
   dependencies:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
+    git-http-backend: "npm:^1.0.2"
     invariant: "npm:^2.2.4"
     klaw: "npm:^2.1.1"
     minimatch: "npm:^3.0.4"

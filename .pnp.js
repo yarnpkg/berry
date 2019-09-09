@@ -13514,6 +13514,24 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           ]
         }]
       ]],
+      ["git-http-backend", [
+        ["npm:1.0.2", {
+          "packageLocation": "./.yarn/cache/git-http-backend-npm-1.0.2-bc63117cb7.zip/node_modules/git-http-backend/",
+          "packageDependencies": [
+            ["git-http-backend", "npm:1.0.2"],
+            ["git-side-band-message", "npm:0.0.3"],
+            ["inherits", "npm:2.0.3"]
+          ]
+        }]
+      ]],
+      ["git-side-band-message", [
+        ["npm:0.0.3", {
+          "packageLocation": "./.yarn/cache/git-side-band-message-npm-0.0.3-17dcbefbed.zip/node_modules/git-side-band-message/",
+          "packageDependencies": [
+            ["git-side-band-message", "npm:0.0.3"]
+          ]
+        }]
+      ]],
       ["git-up", [
         ["npm:4.0.1", {
           "packageLocation": "./.yarn/cache/git-up-npm-4.0.1-ebf85d0f03.zip/node_modules/git-up/",
@@ -20019,6 +20037,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageDependencies": [
             ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
+            ["git-http-backend", "npm:1.0.2"],
             ["invariant", "npm:2.2.4"],
             ["klaw", "npm:2.1.1"],
             ["minimatch", "npm:3.0.4"],

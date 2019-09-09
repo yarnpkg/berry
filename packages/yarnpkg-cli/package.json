@@ -49,7 +49,6 @@
         "@yarnpkg/plugin-constraints",
         "@yarnpkg/plugin-dlx",
         "@yarnpkg/plugin-file",
-        "@yarnpkg/plugin-github",
         "@yarnpkg/plugin-git",
         "@yarnpkg/plugin-http",
         "@yarnpkg/plugin-init",

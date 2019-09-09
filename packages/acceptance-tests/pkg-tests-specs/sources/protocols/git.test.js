@@ -33,6 +33,8 @@ describe(`Protocols`, () => {
             const content = await readFile(`${path}/yarn.lock`, `utf8`);
             const lock = parseSyml(content);
 
+            console.log(path, lock);
+
             await expect(lock).toMatchObject({
               [`util-deprecate@${url}`]: {
                 version,
