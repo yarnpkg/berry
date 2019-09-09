@@ -46,6 +46,7 @@ On top of our classic integration tests, we also run Yarn every day against the 
 | | | [Jest](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-jest-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Jest/badge.svg)]() |
 | | | [Mocha](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-mocha-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Mocha/badge.svg)]() |
 | | | [TypeScript](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-typescript-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20TypeScript/badge.svg)]() |
+| | | [Webpack](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-webpack-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Webpack/badge.svg)]() |
 
 ## Build your own bundle
 
