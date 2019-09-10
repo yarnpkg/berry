@@ -5044,11 +5044,9 @@ __metadata:
   dependencies:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/parsers": "workspace:2.0.0-rc.3"
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3"
     cross-spawn: "npm:^6.0.5"
     stream-buffers: "npm:^3.0.2"
     tmp: "npm:^0.0.33"
-    typescript: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
 

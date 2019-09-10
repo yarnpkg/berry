@@ -9,13 +9,11 @@
     "stream-buffers": "^3.0.2"
   },
   "devDependencies": {
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
-    "tmp": "^0.0.33",
-    "typescript": "^3.5.3"
+    "tmp": "^0.0.33"
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && yarn build:tsc packages/yarnpkg-shell",
     "release": "yarn npm publish",
     "test:shell": "run test:unit packages/yarnpkg-shell"
   },
