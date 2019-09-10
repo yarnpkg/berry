@@ -36,3 +36,16 @@ gen_enforced_field(WorkspaceCwd, 'repository.type', 'git') :-
   workspace(WorkspacedCwd).
 gen_enforced_field(WorkspaceCwd, 'repository.url', 'ssh://git@github.com/yarnpkg/berry.git') :-
   workspace(WorkspacedCwd).
+
+% This rule will require that the plugins that aren't embed in the CLI list a specific script that'll
+% be called as part of our release process (to rebuild them in the context of our repository)
+gen_enforced_field(WorkspaceCwd, 'scripts.update-local', '<any value>') :-
+  % Obtain the path for the CLI
+    workspace_ident(CliCwd, '@yarnpkg/cli'),
+  % Iterates over all workspaces whose name is prefixed with "@yarnpkg/plugin-"
+    workspace_ident(WorkspaceCwd, WorkspaceIdent),
+    atom_concat('@yarnpkg/plugin-', _, WorkspaceIdent),
+  % Select those that are not included in the CLI bundle array
+    \+ workspace_field_test(CliCwd, '@yarnpkg/builder.bundles.standard', '$$.includes($0)', [WorkspaceIdent]),
+  % Only if they don't have a script set
+    \+ workspace_field(WorkspaceCwd, 'scripts.update-local', _).

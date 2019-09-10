@@ -218,9 +218,9 @@ module.exports.factory = function (require) {
         // "lint": "yarn workspaces foreach --all lint"
 
         if (scriptName === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace.cwd) continue;
-        if (this.include.length > 0 && !this.include.includes(workspace.locator.name)) continue;
-        if (this.exclude.length > 0 && this.exclude.includes(workspace.locator.name)) continue;
-        if (this.private === false && workspace.manifest['private'] === true) continue;
+        if (this.include.length > 0 && !this.include.includes(_yarnpkg_core__WEBPACK_IMPORTED_MODULE_1__["structUtils"].stringifyIdent(workspace.locator))) continue;
+        if (this.exclude.length > 0 && this.exclude.includes(_yarnpkg_core__WEBPACK_IMPORTED_MODULE_1__["structUtils"].stringifyIdent(workspace.locator))) continue;
+        if (this.private === false && workspace.manifest.private === true) continue;
         workspaces.push(workspace);
       }
 

@@ -98,6 +98,22 @@ True if the workspace described by the `WorkspaceCwd` has the given `FieldValue`
 
 The `FieldPath` can target properties of properties via `.` notation, e.g. a `FieldPath` of `'publishConfig.registry'` will set `FieldValue` to the value of the `registry` inside `publishConfig`.
 
+### `workspace_field_test/3`
+
+```prolog
+workspace_field(
+  +WorkspaceCwd,
+  +FieldPath,
+  +CheckCode
+).
+```
+
+True if the workspace described by the `WorkspaceCwd` has a value in the manifest at `FieldPath`, and if this value passes the check of `CheckCode`.
+
+The `CheckCode` script is meant to be written in JavaScript, with the special variable `$$` representing the value obtained from the manifest. This makes `workspace_field_test` an escape hatch for some operations that would be too inconvenient to implement in Prolog (for example checking that a value is present within a JS array, etc).
+
+The `Arguments` parameter is expected to be an optional Prolog list of atoms that will be passed to `CheckCode` through `$0`, `$1`, etc.
+
 ### Constraint predicates
 
 The following predicates will affect the behavior of the `yarn constraints` and `yarn constraints --fix` commands.

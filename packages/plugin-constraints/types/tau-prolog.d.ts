@@ -85,6 +85,8 @@ declare module 'tau-prolog' {
         public search(expr: Term<number, string>): boolean;
 
         public compare(other: this): -1|0|1;
+
+        public toJavaScript(): string|number|(string|number)[];
       }
 
       class Substitution {
@@ -233,6 +235,8 @@ declare module 'tau-prolog' {
       function is_module(obj: any): obj is Term<1, 'module/1'>;
 
       function is_error(obj: any): obj is Term<1, 'throw/1'>;
+
+      function is_instantiated_list(obj: any): obj is Term<2, './2'>;
     }
 
     namespace error {
