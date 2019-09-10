@@ -464,7 +464,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/react-redux", "npm:7.1.2"],
             ["@types/redux-saga", "npm:0.10.5"],
             ["@types/request", "npm:2.48.1"],
-            ["@types/semver", "npm:5.5.0"],
+            ["@types/semver", "npm:6.0.2"],
             ["@types/ssri", "npm:6.0.1"],
             ["@types/stream-to-promise", "npm:2.2.0"],
             ["@types/supports-color", "npm:5.3.0"],
@@ -4879,10 +4879,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["@types/semver", [
-        ["npm:5.5.0", {
-          "packageLocation": "./.yarn/cache/@types-semver-npm-5.5.0-12309742d7.zip/node_modules/@types/semver/",
+        ["npm:6.0.2", {
+          "packageLocation": "./.yarn/cache/@types-semver-npm-6.0.2-6b61b57558.zip/node_modules/@types/semver/",
           "packageDependencies": [
-            ["@types/semver", "npm:5.5.0"]
+            ["@types/semver", "npm:6.0.2"]
           ]
         }]
       ]],
@@ -5943,7 +5943,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/react-redux", "npm:7.1.2"],
             ["@types/redux-saga", "npm:0.10.5"],
             ["@types/request", "npm:2.48.1"],
-            ["@types/semver", "npm:5.5.0"],
+            ["@types/semver", "npm:6.0.2"],
             ["@types/ssri", "npm:6.0.1"],
             ["@types/stream-to-promise", "npm:2.2.0"],
             ["@types/supports-color", "npm:5.3.0"],
@@ -6064,6 +6064,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["git-url-parse", "npm:11.1.2"],
+            ["semver", "npm:5.6.0"],
             ["tmp", "npm:0.0.33"]
           ]
         }]
@@ -13514,24 +13515,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           ]
         }]
       ]],
-      ["git-http-backend", [
-        ["npm:1.0.2", {
-          "packageLocation": "./.yarn/cache/git-http-backend-npm-1.0.2-bc63117cb7.zip/node_modules/git-http-backend/",
-          "packageDependencies": [
-            ["git-http-backend", "npm:1.0.2"],
-            ["git-side-band-message", "npm:0.0.3"],
-            ["inherits", "npm:2.0.3"]
-          ]
-        }]
-      ]],
-      ["git-side-band-message", [
-        ["npm:0.0.3", {
-          "packageLocation": "./.yarn/cache/git-side-band-message-npm-0.0.3-17dcbefbed.zip/node_modules/git-side-band-message/",
-          "packageDependencies": [
-            ["git-side-band-message", "npm:0.0.3"]
-          ]
-        }]
-      ]],
       ["git-up", [
         ["npm:4.0.1", {
           "packageLocation": "./.yarn/cache/git-up-npm-4.0.1-ebf85d0f03.zip/node_modules/git-up/",
@@ -20037,7 +20020,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageDependencies": [
             ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["git-http-backend", "npm:1.0.2"],
             ["invariant", "npm:2.2.4"],
             ["klaw", "npm:2.1.1"],
             ["minimatch", "npm:3.0.4"],
