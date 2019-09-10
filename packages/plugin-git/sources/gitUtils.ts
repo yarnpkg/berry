@@ -33,7 +33,10 @@ export function splitRepoUrl(url: string) {
     }
   }
 
-  return {repo, treeish: {protocol, request}};
+  return {
+    repo: repo.replace(/^git\+https:/, `https:`),
+    treeish: {protocol, request},
+  };
 }
 
 export async function lsRemote(repo: string, configuration: Configuration) {
