@@ -1,5 +1,5 @@
 import {execUtils, Configuration} from '@yarnpkg/core';
-import {xfs}                      from '@yarnpkg/fslib';
+import {fromPortablePath, xfs}    from '@yarnpkg/fslib';
 import semver                     from 'semver';
 
 function makeGitEnvironment() {
@@ -160,10 +160,10 @@ export async function clone(url: string, configuration: Configuration) {
   const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
 
   try {
-    await execUtils.execvp(`git`, [`clone`, `${repo}`, `${directory}`], execOpts);
+    await execUtils.execvp(`git`, [`clone`, `${repo}`, fromPortablePath(directory)], execOpts);
     await execUtils.execvp(`git`, [`checkout`, `${request}`], execOpts);
   } catch (error) {
-    error.message = `Cloning the repository failed (${error.message})`;
+    error.message = `Repository clone failed`;
     throw error;
   }
 
