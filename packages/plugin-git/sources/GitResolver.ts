@@ -4,6 +4,7 @@ import {LinkType}                                        from '@yarnpkg/core';
 import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
 
 import {GIT_REGEXP}                                      from './constants';
+import * as gitUtils                                     from './gitUtils';
 
 export class GitResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -29,7 +30,10 @@ export class GitResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
-    return [structUtils.convertDescriptorToLocator(descriptor)];
+    const reference = await gitUtils.resolveUrl(descriptor.range, opts.project.configuration);
+    const locator = structUtils.makeLocator(descriptor, reference);
+
+    return [locator];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

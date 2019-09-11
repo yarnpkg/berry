@@ -3829,10 +3829,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/semver@npm:^5.5.0":
-  version: 5.5.0
-  resolution: "@types/semver@npm:5.5.0"
-  checksum: 9d37c7fa2048fa6102813c17d406bc6b7fff837fac7a051c73e7f88fd21a75d2f555334057a707685a048299853b64e464354d60eb7b54f1a7c31b3a84af6a01
+"@types/semver@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "@types/semver@npm:6.0.2"
+  checksum: 212d9a825f7f49a8db7a5616462741fe02d5b5b493d88336f5b32e81cb23e14e303ae62e969630904bbd69ebfba7432e9546cb63f03fc5cd736d21aa9f6991ba
   languageName: node
   linkType: hard
 
@@ -4723,7 +4723,7 @@ __metadata:
     "@types/react-redux": "npm:^7.1.2"
     "@types/redux-saga": "npm:^0.10.5"
     "@types/request": "npm:^2.47.1"
-    "@types/semver": "npm:^5.5.0"
+    "@types/semver": "npm:^6.0.2"
     "@types/ssri": "npm:^6.0.1"
     "@types/stream-to-promise": "npm:^2.2.0"
     "@types/supports-color": "npm:^5.3.0"
@@ -4844,6 +4844,7 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     git-url-parse: "npm:11.1.2"
+    semver: "npm:^5.6.0"
     tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
@@ -10619,7 +10620,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
 
 "favicons-webpack-plugin@git+https://github.com/Creatiwity/favicons-webpack-plugin.git#0872de414061baaad0a2853c77ae75bc38b8bbbf":
   version: 0.0.9
-  resolution: "favicons-webpack-plugin@git+https://github.com/Creatiwity/favicons-webpack-plugin.git#0872de414061baaad0a2853c77ae75bc38b8bbbf"
+  resolution: "favicons-webpack-plugin@https://github.com/Creatiwity/favicons-webpack-plugin.git#commit:0872de414061baaad0a2853c77ae75bc38b8bbbf"
   dependencies:
     core-js: "npm:^2.5.7"
     favicons: "npm:^5.1.1"
@@ -10627,7 +10628,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     lodash: "npm:^4.17.10"
   peerDependencies:
     webpack: ^1.13.0 || ^2.0.0 || ^3.0.0 || ^4.0.0
-  checksum: 81ea6440c41a3a62a9a4b33147244e4f03642c2f5039fa46602e9ccf9d7383ddcc975be9d9b28762effa79c0c3ebc272c2a4d062770d372b055d7ce9b87e275d
+  checksum: 5f563b9c499605e06978ad8c82b3b18278777681484c5862e82ac3cf5334583ecc43b0676a592cabb52cf9073d42590eca848d4e2206db76d760d650bfd3cf0e
   languageName: node
   linkType: hard
 

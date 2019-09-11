@@ -227,7 +227,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
       "./.yarn/cache/eslint-plugin-react-npm-7.12.4-c852837405.zip/node_modules/eslint-plugin-react/",
       "./.yarn/cache/eslint-plugin-react-npm-7.14.3-8b420f7882.zip/node_modules/eslint-plugin-react/",
       "./.yarn/cache/express-graphql-npm-0.7.1-a1012da8fd.zip/node_modules/express-graphql/",
-      "./.yarn/cache/favicons-webpack-plugin-git+https-9c99770d87.zip/sources/",
+      "./.yarn/cache/favicons-webpack-plugin-https-4b45e0c03b.zip/sources/",
       "./.yarn/cache/file-loader-npm-1.1.11-b45a68d92a.zip/node_modules/file-loader/",
       "./.yarn/cache/gatsby-link-npm-2.2.0-37a81bdddb.zip/node_modules/gatsby-link/",
       "./.yarn/cache/gatsby-npm-2.13.6-c66fe9d396.zip/node_modules/gatsby/",
@@ -464,7 +464,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/react-redux", "npm:7.1.2"],
             ["@types/redux-saga", "npm:0.10.5"],
             ["@types/request", "npm:2.48.1"],
-            ["@types/semver", "npm:5.5.0"],
+            ["@types/semver", "npm:6.0.2"],
             ["@types/ssri", "npm:6.0.1"],
             ["@types/stream-to-promise", "npm:2.2.0"],
             ["@types/supports-color", "npm:5.3.0"],
@@ -4879,10 +4879,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["@types/semver", [
-        ["npm:5.5.0", {
-          "packageLocation": "./.yarn/cache/@types-semver-npm-5.5.0-12309742d7.zip/node_modules/@types/semver/",
+        ["npm:6.0.2", {
+          "packageLocation": "./.yarn/cache/@types-semver-npm-6.0.2-6b61b57558.zip/node_modules/@types/semver/",
           "packageDependencies": [
-            ["@types/semver", "npm:5.5.0"]
+            ["@types/semver", "npm:6.0.2"]
           ]
         }]
       ]],
@@ -5944,7 +5944,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/react-redux", "npm:7.1.2"],
             ["@types/redux-saga", "npm:0.10.5"],
             ["@types/request", "npm:2.48.1"],
-            ["@types/semver", "npm:5.5.0"],
+            ["@types/semver", "npm:6.0.2"],
             ["@types/ssri", "npm:6.0.1"],
             ["@types/stream-to-promise", "npm:2.2.0"],
             ["@types/supports-color", "npm:5.3.0"],
@@ -6065,6 +6065,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["git-url-parse", "npm:11.1.2"],
+            ["semver", "npm:5.6.0"],
             ["tmp", "npm:0.0.33"]
           ]
         }]
@@ -12227,10 +12228,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["favicons-webpack-plugin", [
-        ["virtual:68e22c83d2001684a619b4a2da54a538ddd2e80bc2b1c70307bdd0aa29ecb806ffe0e6120ead5124b0104fef79f3846aefb1ec10b2541d428b72499d9b867abc#git+https://github.com/Creatiwity/favicons-webpack-plugin.git#0872de414061baaad0a2853c77ae75bc38b8bbbf", {
-          "packageLocation": "./.yarn/virtual/favicons-webpack-plugin-virtual-ca52d16658/0/cache/favicons-webpack-plugin-git+https-9c99770d87.zip/sources/",
+        ["virtual:68e22c83d2001684a619b4a2da54a538ddd2e80bc2b1c70307bdd0aa29ecb806ffe0e6120ead5124b0104fef79f3846aefb1ec10b2541d428b72499d9b867abc#https://github.com/Creatiwity/favicons-webpack-plugin.git#commit:0872de414061baaad0a2853c77ae75bc38b8bbbf", {
+          "packageLocation": "./.yarn/virtual/favicons-webpack-plugin-virtual-86fd795935/0/cache/favicons-webpack-plugin-https-4b45e0c03b.zip/sources/",
           "packageDependencies": [
-            ["favicons-webpack-plugin", "virtual:68e22c83d2001684a619b4a2da54a538ddd2e80bc2b1c70307bdd0aa29ecb806ffe0e6120ead5124b0104fef79f3846aefb1ec10b2541d428b72499d9b867abc#git+https://github.com/Creatiwity/favicons-webpack-plugin.git#0872de414061baaad0a2853c77ae75bc38b8bbbf"],
+            ["favicons-webpack-plugin", "virtual:68e22c83d2001684a619b4a2da54a538ddd2e80bc2b1c70307bdd0aa29ecb806ffe0e6120ead5124b0104fef79f3846aefb1ec10b2541d428b72499d9b867abc#https://github.com/Creatiwity/favicons-webpack-plugin.git#commit:0872de414061baaad0a2853c77ae75bc38b8bbbf"],
             ["core-js", "npm:2.6.2"],
             ["favicons", "npm:5.3.0"],
             ["loader-utils", "npm:1.2.3"],
@@ -13176,7 +13177,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/virtual/gatsby-plugin-favicon-virtual-68e22c83d2/0/cache/gatsby-plugin-favicon-npm-3.1.6-e8c1a79185.zip/node_modules/gatsby-plugin-favicon/",
           "packageDependencies": [
             ["gatsby-plugin-favicon", "virtual:845bd4fd988683c7772a289f1c7e08ed2812b627ae4cfad1e77ee9f08508ca053e8316e4b9c37de893956b61f64f28a193b4538dbe53260e44c537807670d73a#npm:3.1.6"],
-            ["favicons-webpack-plugin", "virtual:68e22c83d2001684a619b4a2da54a538ddd2e80bc2b1c70307bdd0aa29ecb806ffe0e6120ead5124b0104fef79f3846aefb1ec10b2541d428b72499d9b867abc#git+https://github.com/Creatiwity/favicons-webpack-plugin.git#0872de414061baaad0a2853c77ae75bc38b8bbbf"],
+            ["favicons-webpack-plugin", "virtual:68e22c83d2001684a619b4a2da54a538ddd2e80bc2b1c70307bdd0aa29ecb806ffe0e6120ead5124b0104fef79f3846aefb1ec10b2541d428b72499d9b867abc#https://github.com/Creatiwity/favicons-webpack-plugin.git#commit:0872de414061baaad0a2853c77ae75bc38b8bbbf"],
             ["gatsby", "virtual:845bd4fd988683c7772a289f1c7e08ed2812b627ae4cfad1e77ee9f08508ca053e8316e4b9c37de893956b61f64f28a193b4538dbe53260e44c537807670d73a#npm:2.13.6"],
             ["html-react-parser", "virtual:68e22c83d2001684a619b4a2da54a538ddd2e80bc2b1c70307bdd0aa29ecb806ffe0e6120ead5124b0104fef79f3846aefb1ec10b2541d428b72499d9b867abc#npm:0.6.4"],
             ["lodash", "npm:4.17.11"],
