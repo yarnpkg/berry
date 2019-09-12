@@ -9,9 +9,11 @@ const TESTED_URLS = {
   // made our own repository (and maybe we will), but it was simpler this way.
   [`git://github.com/TooTallNate/util-deprecate.git#v1.0.1`]: {version: `1.0.1`, ci: false},
   [`git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1`]: {version: `1.0.1`, ci: false},
+  [`https://github.com/TooTallNate/util-deprecate.git#semver:^1.0.0`]: {version: `1.0.2`, ci: false},
+  [`https://github.com/TooTallNate/util-deprecate.git#semver:>=1.0.0 <1.0.2`]: {version: `1.0.1`, ci: false},
   [`https://github.com/TooTallNate/util-deprecate.git#v1.0.0`]: {version: `1.0.0`},
   [`https://github.com/TooTallNate/util-deprecate.git#master`]: {version: `1.0.2`},
-  [`https://github.com/TooTallNate/util-deprecate.git#b3562c2`]: {version: `1.0.0`},
+  [`https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d`]: {version: `1.0.0`},
 };
 
 describe(`Protocols`, () => {
@@ -33,12 +35,10 @@ describe(`Protocols`, () => {
             const content = await readFile(`${path}/yarn.lock`, `utf8`);
             const lock = parseSyml(content);
 
-            await expect(lock).toMatchObject({
-              [`util-deprecate@${url}`]: {
-                version,
-                resolution: `util-deprecate@${url}`,
-              },
-            });
+            const key = `util-deprecate@${url}`;
+
+            expect(lock).toMatchObject({[key]: {version}});
+            expect(lock[`util-deprecate@${url}`].resolution).toMatchSnapshot();
 
             await expect(source(`require('util-deprecate/package.json')`)).resolves.toMatchObject({
               name: `util-deprecate`,

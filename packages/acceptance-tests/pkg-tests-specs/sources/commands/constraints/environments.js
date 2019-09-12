@@ -51,6 +51,7 @@ exports.environments = {
     await mkdirp(`${path}/packages/workspace-b`);
 
     await writeJson(`${path}/packages/workspace-a/package.json`, {
+      name: `workspace-a`,
       dependencies: {
         [`no-deps`]: `1.0.0`,
         [`no-deps-bin`]: `1.0.0`,
@@ -62,6 +63,7 @@ exports.environments = {
     });
 
     await writeJson(`${path}/packages/workspace-b/package.json`, {
+      name: `workspace-b`,
       dependencies: {
         [`no-deps`]: `1.0.0`,
         [`no-deps-bin`]: `1.0.0`,
