@@ -79,11 +79,11 @@
     }
   },
   "scripts": {
+    "build:compile": "pnpify tsc -p",
     "gen-tssdk": "pnpify --sdk scripts",
     "release:all": "./scripts/release.sh",
     "test:lint": "eslint packages/*/sources/**/*.ts",
-    "test:unit": "jest",
-    "build:tsc": "pnpify tsc -p"
+    "test:unit": "jest"
   },
   "sherlock": {
     "requireList": [
