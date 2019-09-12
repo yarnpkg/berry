@@ -24056,8 +24056,10 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3"
     pnp-webpack-plugin: "npm:^1.4.3"
     ts-loader: "npm:^5.3.3"
+    typescript: "npm:^3.5.3"
     vsce: "npm:^1.54.0"
     webpack: "npm:^4.39.3"
     webpack-cli: "npm:^3.2.1"

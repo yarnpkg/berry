@@ -21,7 +21,7 @@ module.exports = {
       test: /\.ts$/,
       loader: 'ts-loader',
       options: PnpWebpackPlugin.tsLoaderOptions(),
-    }], 
+    }],
   },
 
   externals: {
