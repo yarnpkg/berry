@@ -7,7 +7,6 @@
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
   },
   "scripts": {
-    "build": "run build:compile packages/plugin-github",
     "test": "run test:unit packages/plugin-github"
   },
   "files": [
