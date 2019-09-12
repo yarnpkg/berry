@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/builder",
   "version": "2.0.0-rc.5",
+  "nextVersion": {
+    "nonce": "4691680159291785"
+  },
   "bin": "./sources/boot-dev.js",
   "dependencies": {
     "@babel/core": "^7.5.5",
@@ -23,15 +26,14 @@
     "webpack-sources": "^1.3.0"
   },
   "devDependencies": {
-    "@yarnpkg/monorepo": "workspace:0.0.0",
-    "typescript": "^3.5.3"
+    "@yarnpkg/monorepo": "workspace:0.0.0"
   },
   "peerDependencies": {
     "typescript": "*"
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-builder",
     "release": "yarn npm publish"
   },
   "publishConfig": {

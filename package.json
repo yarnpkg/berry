@@ -79,6 +79,7 @@
     }
   },
   "scripts": {
+    "build:compile": "pnpify tsc -p",
     "gen-tssdk": "pnpify --sdk scripts",
     "release:all": "./scripts/release.sh",
     "test:lint": "eslint packages/*/sources/**/*.ts",

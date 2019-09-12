@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/shell",
   "version": "2.0.0-rc.2",
+  "nextVersion": {
+    "nonce": "8687279553403317"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
@@ -9,13 +12,11 @@
     "stream-buffers": "^3.0.2"
   },
   "devDependencies": {
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
-    "tmp": "^0.0.33",
-    "typescript": "^3.5.3"
+    "tmp": "^0.0.33"
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-shell",
     "release": "yarn npm publish",
     "test:shell": "run test:unit packages/yarnpkg-shell"
   },
