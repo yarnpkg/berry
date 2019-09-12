@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/pnpify",
   "version": "2.0.0-rc.3",
+  "nextVersion": {
+    "nonce": "817844653480653"
+  },
   "main": "./sources/boot-dev.js",
   "bin": "./sources/boot-cli-dev.js",
   "sideEffects": false,

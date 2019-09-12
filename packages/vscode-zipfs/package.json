@@ -5,6 +5,9 @@
   "displayName": "ZipFS - a zip file system",
   "description": "Allows to easily inspect and modify files stored within zip archives.",
   "version": "0.1.1-1",
+  "nextVersion": {
+    "nonce": "2942063452620931"
+  },
   "engines": {
     "vscode": "^1.23.0"
   },

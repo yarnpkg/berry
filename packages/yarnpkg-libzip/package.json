@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/libzip",
   "version": "2.0.0-rc.3",
+  "nextVersion": {
+    "nonce": "6800962703661165"
+  },
   "main": "./sources/index.ts",
   "scripts": {
     "build:libzip:wasm": "cd ./artifacts && ./build.sh",
