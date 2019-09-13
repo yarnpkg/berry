@@ -4558,8 +4558,6 @@ __metadata:
     tmp: "npm:^0.0.33"
     typescript: "npm:^3.5.3"
     yup: "npm:^0.27.0"
-  bin:
-    yarn: ./bin/run.js
   languageName: unknown
   linkType: soft
 
@@ -4995,6 +4993,8 @@ __metadata:
   dependencies:
     "@yarnpkg/builder": "workspace:2.0.0-rc.5"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3"
+    typescript: "npm:^3.5.3"
     webpack: "npm:^4.39.3"
     webpack-cli: "npm:^3.2.1"
     webpack-sources: "npm:^1.3.0"

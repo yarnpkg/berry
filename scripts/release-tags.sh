@@ -28,17 +28,25 @@ NL=$'\n'
 COMMIT_MESSAGE="$COMMIT_MESSAGE$NL$NL| Package name | Version |$NL"
 COMMIT_MESSAGE="$COMMIT_MESSAGE| --- | --- |$NL"
 
+UPDATE_ARGUMENTS=()
+
 while read line; do
   IDENT=$(jq -r .ident <<< "$line")
   VERSION=$(jq -r .newVersion <<< "$line")
 
   COMMIT_MESSAGE="$COMMIT_MESSAGE| \`$IDENT\` | \`$VERSION\` |$NL"
+  UPDATE_ARGUMENTS+=(--include "$IDENT")
 
-  yarn workspace "$IDENT" prepack |& : || (
+  yarn workspace "$IDENT" pack --dry-run >& /dev/null || (
     echo "Couldn't run prepack on $IDENT"
     exit 1
   )
 done <<< "$RELEASE_DETAILS"
+
+# Regenerate the local versions for the elements that get released
+YARN_NPM_PUBLISH_REGISTRY=https://npm.pkg.github.com yarn workspaces foreach \
+  --verbose --topological --no-private "${UPDATE_ARGUMENTS[@]}" \
+  run update-local
 
 git add "$REPO_DIR"
 git commit -m "$COMMIT_MESSAGE"

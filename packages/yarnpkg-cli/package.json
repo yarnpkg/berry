@@ -6,9 +6,6 @@
     "nonce": "2434853068055069"
   },
   "main": "./sources/index.ts",
-  "bin": {
-    "yarn": "./bin/run.js"
-  },
   "dependencies": {
     "@yarnpkg/core": "workspace:2.0.0-rc.5",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
@@ -47,7 +44,8 @@
     "prepack": "mkdir -p lib && pnpify tsc",
     "build:cli+hook": "run build:pnp:hook && builder build bundle",
     "build:cli": "builder build bundle",
-    "run:cli": "builder run"
+    "run:cli": "builder run",
+    "update-local": "run build:cli && rsync -a --delete bundles/ bin/"
   },
   "publishConfig": {
     "main": "./lib/index.js",

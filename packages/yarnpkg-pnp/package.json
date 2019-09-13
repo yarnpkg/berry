@@ -10,6 +10,8 @@
   },
   "devDependencies": {
     "@yarnpkg/builder": "workspace:2.0.0-rc.5",
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
+    "typescript": "^3.5.3",
     "webpack": "^4.39.3",
     "webpack-cli": "^3.2.1",
     "webpack-sources": "^1.3.0"
@@ -18,8 +20,9 @@
     "build:pnp:hook": "run pnpify webpack-cli --config webpack.config.hook.js",
     "build:pnp": "run pnpify webpack-cli --config webpack.config.pkg.js",
     "postpack": "find lib -mindepth 1 ! -path 'lib/hook.js' -exec rm -rf '{}' +",
-    "prepack": "run build:pnp:hook && run build:pnp && run build:compile packages/yarnpkg-pnp --emitDeclarationOnly --declaration",
-    "release": "yarn npm publish"
+    "prepack": "run build:pnp && run build:compile packages/yarnpkg-pnp --emitDeclarationOnly --declaration",
+    "release": "yarn npm publish",
+    "update-local": "run build:pnp:hook"
   },
   "publishConfig": {
     "main": "./lib/index.js",

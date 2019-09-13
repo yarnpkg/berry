@@ -13,11 +13,10 @@ fi
 RELEASE_ARGUMENTS=()
 
 maybe_release_package() {
-  if git describe --match "$1/*" HEAD |& :; then
+  if git describe --match "$1/*" HEAD >& /dev/null; then
     RELEASE_ARGUMENTS+=(--include "$1")
   fi
 }
-
 
 while read ident; do
   maybe_release_package "$ident"
@@ -27,10 +26,10 @@ if [[ ${#RELEASE_ARGUMENTS[@]} -eq 0 ]]; then
   exit 0
 fi
 
-echo YARN_NPM_PUBLISH_REGISTRY=https://npm.pkg.github.com yarn workspaces foreach \
-  --verbose --topological --no-private ${RELEASE_ARGUMENTS[@]} \
+YARN_NPM_PUBLISH_REGISTRY=https://npm.pkg.github.com yarn workspaces foreach \
+  --verbose --topological --no-private "${RELEASE_ARGUMENTS[@]}" \
   npm publish --tolerate-republish
 
 yarn workspaces foreach \
-  --verbose --topological --no-private ${RELEASE_ARGUMENTS[@]} \
+  --verbose --topological --no-private "${RELEASE_ARGUMENTS[@]}" \
   npm publish --tolerate-republish
