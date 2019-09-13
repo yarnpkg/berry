@@ -1,3 +1,5 @@
+import {xfs} from '@yarnpkg/fslib';
+
 describe(`Protocols`, () => {
   describe(`npm:`, () => {
     test(
@@ -30,6 +32,46 @@ describe(`Protocols`, () => {
             name: `no-deps`,
             version: `1.0.0`,
           });
+        },
+      ),
+    );
+
+    test(
+      `it should allow fetching packages that have an unconventional url (semver)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`unconventional-tarball`]: `1.0.0`},
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('unconventional-tarball')`)).resolves.toMatchObject({
+            name: `unconventional-tarball`,
+            version: `1.0.0`,
+          });
+
+          await xfs.removePromise(`${path}/.yarn`);
+          await run(`install`);
+        },
+      ),
+    );
+
+    test(
+      `it should allow fetching packages that have an unconventional url (tag)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`unconventional-tarball`]: `latest`},
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('unconventional-tarball')`)).resolves.toMatchObject({
+            name: `unconventional-tarball`,
+            version: `1.0.0`,
+          });
+
+          await xfs.removePromise(`${path}/.yarn`);
+          await run(`install`);
         },
       ),
     );

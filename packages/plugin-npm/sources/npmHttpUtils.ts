@@ -47,7 +47,7 @@ export async function get(path: string, {configuration, headers, ident, authType
   if (auth)
     headers = {...headers, authorization: auth};
 
-  return await httpUtils.get(resolveUrl(registry, path), {configuration, headers, ...rest});
+  return await httpUtils.get(registry + path, {configuration, headers, ...rest});
 }
 
 export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options) {
@@ -62,7 +62,7 @@ export async function put(path: string, body: httpUtils.Body, {configuration, he
     headers = {...headers, authorization: auth};
 
   try {
-    return await httpUtils.put(resolveUrl(registry, path), body, {configuration, headers, ...rest});
+    return await httpUtils.put(registry + path, body, {configuration, headers, ...rest});
   } catch (error) {
     if (!isOtpError(error))
       throw error;
@@ -73,10 +73,6 @@ export async function put(path: string, body: httpUtils.Body, {configuration, he
     // Retrying request with OTP
     return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
   }
-}
-
-function resolveUrl(registry: string, path: string) {
-  return registry.replace(/\/+$/, ``) + path;
 }
 
 function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration}: {authType?: AuthType, configuration: Configuration}) {

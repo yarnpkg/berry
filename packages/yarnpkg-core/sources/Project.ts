@@ -285,11 +285,8 @@ export class Project {
       bestWorkspace = workspace;
     }
 
-    if (!bestWorkspace) {
-      for (const workspace of this.workspaces)
-        console.log(workspace.cwd);
+    if (!bestWorkspace)
       throw new Error(`Workspace not found (${filePath})`);
-    }
 
     return bestWorkspace;
   }

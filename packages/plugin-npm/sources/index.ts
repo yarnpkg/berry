@@ -1,8 +1,9 @@
 import {Plugin, SettingsType} from '@yarnpkg/core';
 import {SettingsDefinition}   from '@yarnpkg/core';
 
-import {NpmFetcher}           from './NpmFetcher';
+import {NpmHttpFetcher}       from './NpmHttpFetcher';
 import {NpmRemapResolver}     from './NpmRemapResolver';
+import {NpmSemverFetcher}     from './NpmSemverFetcher';
 import {NpmSemverResolver}    from './NpmSemverResolver';
 import {NpmTagResolver}       from './NpmTagResolver';
 import * as npmConfigUtils    from './npmConfigUtils';
@@ -72,7 +73,8 @@ const plugin: Plugin = {
     },
   },
   fetchers: [
-    NpmFetcher,
+    NpmHttpFetcher,
+    NpmSemverFetcher,
   ],
   resolvers: [
     NpmRemapResolver,

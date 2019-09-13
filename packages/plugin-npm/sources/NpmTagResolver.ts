@@ -1,7 +1,9 @@
 import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
 import {structUtils}                                                               from '@yarnpkg/core';
 import {Descriptor, Locator, Package}                                              from '@yarnpkg/core';
+import querystring                                                                 from 'querystring';
 
+import {NpmSemverFetcher}                                                          from './NpmSemverFetcher';
 import {PROTOCOL}                                                                  from './constants';
 import * as npmHttpUtils                                                           from './npmHttpUtils';
 
@@ -49,11 +51,20 @@ export class NpmTagResolver implements Resolver {
     if (!Object.prototype.hasOwnProperty.call(distTags, tag))
       throw new ReportError(MessageName.REMOTE_NOT_FOUND, `Registry failed to return tag "${tag}"`);
 
-    return [structUtils.makeLocator(descriptor, `${PROTOCOL}${distTags[tag]}`)];
+    const version = distTags[tag];
+    const versionLocator = structUtils.makeLocator(descriptor, `${PROTOCOL}${version}`);
+
+    const archiveUrl = registryData.versions[version].dist.tarball;
+
+    if (NpmSemverFetcher.isConventionalTarballUrl(versionLocator, archiveUrl, {configuration: opts.project.configuration})) {
+      return [versionLocator];
+    } else {
+      return [structUtils.makeLocator(versionLocator, `${versionLocator.reference}?${querystring.stringify({archiveUrl})}`)];
+    }
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
-    // Once transformed into locators, the tags are resolved by the NpmSemverResolver
+    // Once transformed into locators (through getCandidates), the tags are resolved by the NpmSemverResolver
     throw new Error(`Unreachable`);
   }
 }

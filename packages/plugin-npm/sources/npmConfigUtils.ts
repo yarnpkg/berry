@@ -1,4 +1,5 @@
-import {Configuration, Manifest} from '@yarnpkg/core';
+import {Configuration, Ident, Manifest, structUtils} from '@yarnpkg/core';
+import {PortablePath}                                from '@yarnpkg/fslib';
 
 export enum RegistryType {
   FETCH_REGISTRY = 'npmRegistryServer',
@@ -9,9 +10,13 @@ export interface MapLike {
   get(key: string): any;
 }
 
+function normalizeRegistry(registry: string) {
+  return registry.replace(/\/$/, ``);
+}
+
 export function getPublishRegistry(manifest: Manifest, {configuration}: {configuration: Configuration}) {
   if (manifest.publishConfig && manifest.publishConfig.registry)
-    return manifest.publishConfig.registry;
+    return normalizeRegistry(manifest.publishConfig.registry);
 
   if (manifest.name)
     return getScopeRegistry(manifest.name.scope, {configuration, type: RegistryType.PUBLISH_REGISTRY});
@@ -28,15 +33,15 @@ export function getScopeRegistry(scope: string | null, {configuration, type = Re
   if (scopeRegistry === null)
     return getDefaultRegistry({configuration, type});
 
-  return scopeRegistry;
+  return normalizeRegistry(scopeRegistry);
 }
 
 export function getDefaultRegistry({configuration, type = RegistryType.FETCH_REGISTRY}: {configuration: Configuration, type?: RegistryType}): string {
   const defaultRegistry = configuration.get(type);
   if (defaultRegistry !== null)
-    return defaultRegistry;
+    return normalizeRegistry(defaultRegistry);
 
-  return configuration.get(RegistryType.FETCH_REGISTRY);
+  return normalizeRegistry(configuration.get(RegistryType.FETCH_REGISTRY));
 }
 
 export function getRegistryConfiguration(registry: string, {configuration}: {configuration: Configuration}): MapLike | null {
@@ -64,4 +69,8 @@ export function getScopeConfiguration(scope: string | null, {configuration}: {co
     return null;
 
   return scopeConfiguration;
+}
+
+export function getVendorPath(ident: Ident) {
+  return `/node_modules/${structUtils.requirableIdent(ident)}` as PortablePath;
 }
