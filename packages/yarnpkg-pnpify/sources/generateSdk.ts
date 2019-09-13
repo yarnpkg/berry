@@ -64,7 +64,7 @@ export const generateEslintWrapper = async (projectRoot: PortablePath, target: P
 
 const isPackageInstalled = (name: string): boolean => {
   try {
-    dynamicRequire(name);
+    dynamicRequire.resolve(name);
     return true;
   } catch (e) {
     if (e.code && e.code === 'MODULE_NOT_FOUND') {
