@@ -2,6 +2,7 @@ import {Configuration, Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpk
 import {structUtils, tgzUtils}                                     from '@yarnpkg/core';
 import {Locator, MessageName, ReportError}                         from '@yarnpkg/core';
 import semver                                                      from 'semver';
+import {URL}                                                       from 'url';
 
 import {PROTOCOL}                                                  from './constants';
 import * as npmConfigUtils                                         from './npmConfigUtils';
