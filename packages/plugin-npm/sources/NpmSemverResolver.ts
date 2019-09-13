@@ -2,8 +2,11 @@ import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOption
 import {Descriptor, Locator}                                                                 from '@yarnpkg/core';
 import {LinkType}                                                                            from '@yarnpkg/core';
 import {structUtils}                                                                         from '@yarnpkg/core';
+import querystring                                                                           from 'querystring';
 import semver                                                                                from 'semver';
+import {URL}                                                                                 from 'url';
 
+import {NpmSemverFetcher}                                                                    from './NpmSemverFetcher';
 import {PROTOCOL}                                                                            from './constants';
 import * as npmHttpUtils                                                                     from './npmHttpUtils';
 
@@ -25,7 +28,9 @@ export class NpmSemverResolver implements Resolver {
     if (!locator.reference.startsWith(PROTOCOL))
       return false;
 
-    if (!semver.valid(locator.reference.slice(PROTOCOL.length)))
+    const url = new URL(locator.reference);
+
+    if (!semver.valid(url.pathname))
       return false;
 
     return true;
@@ -42,9 +47,6 @@ export class NpmSemverResolver implements Resolver {
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
     const range = descriptor.range.slice(PROTOCOL.length);
 
-    if (semver.valid(range))
-      return [structUtils.convertDescriptorToLocator(descriptor)];
-
     const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {
       configuration: opts.project.configuration,
       ident: descriptor,
@@ -59,12 +61,19 @@ export class NpmSemverResolver implements Resolver {
     });
 
     return candidates.map(version => {
-      return structUtils.makeLocator(descriptor, `${PROTOCOL}${version}`);
+      const versionLocator = structUtils.makeLocator(descriptor, `${PROTOCOL}${version}`);
+      const archiveUrl = registryData.versions[version].dist.tarball;
+
+      if (NpmSemverFetcher.isConventionalTarballUrl(versionLocator, archiveUrl, {configuration: opts.project.configuration})) {
+        return versionLocator;
+      } else {
+        return structUtils.makeLocator(versionLocator, `${versionLocator.reference}?${querystring.stringify({archiveUrl})}`);
+      }
     });
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const version = semver.clean(locator.reference.slice(PROTOCOL.length));
+    const version = semver.clean(new URL(locator.reference).pathname);
     if (version === null)
       throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `The npm semver resolver got selected, but the version isn't semver`);
 

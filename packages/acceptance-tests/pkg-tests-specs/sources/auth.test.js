@@ -1,6 +1,5 @@
 const {
   fs: {writeFile},
-  tests: {getPackageArchivePath, getPackageHttpArchivePath, getPackageDirectoryPath},
 } = require('pkg-tests-core');
 
 const AUTH_TOKEN = `686159dc-64b3-413e-a244-2de2b8d1c36f`;

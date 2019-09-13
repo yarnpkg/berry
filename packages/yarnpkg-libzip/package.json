@@ -1,15 +1,14 @@
 {
   "name": "@yarnpkg/libzip",
   "version": "2.0.0-rc.3",
-  "main": "./sources/index.ts",
-  "devDependencies": {
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
-    "typescript": "^3.5.3"
+  "nextVersion": {
+    "nonce": "6800962703661165"
   },
+  "main": "./sources/index.ts",
   "scripts": {
     "build:libzip:wasm": "cd ./artifacts && ./build.sh",
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-libzip",
     "release": "yarn npm publish"
   },
   "publishConfig": {

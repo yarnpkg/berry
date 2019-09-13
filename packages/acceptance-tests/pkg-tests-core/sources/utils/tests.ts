@@ -139,8 +139,10 @@ exports.getPackageHttpArchivePath = async function getPackageHttpArchivePath(
   if (!packageVersionEntry)
     throw new Error(`Unknown version "${version}" for package "${name}"`);
 
+  const localName = name.replace(/^@[^\/]+\//, ``);
+
   const serverUrl = await exports.startPackageServer();
-  const archiveUrl = `${serverUrl}/${name}/-/${name}-${version}.tgz`;
+  const archiveUrl = `${serverUrl}/${name}/-/${localName}-${version}.tgz`;
 
   return archiveUrl;
 };
@@ -217,7 +219,9 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
                 [version as string]: Object.assign({}, packageVersionEntry.packageJson, {
                   dist: {
                     shasum: await exports.getPackageArchiveHash(name, version),
-                    tarball: await exports.getPackageHttpArchivePath(name, version),
+                    tarball: localName === `unconventional-tarball`
+                      ? (await exports.getPackageHttpArchivePath(name, version)).replace(`/-/`, `/tralala/`)
+                      : await exports.getPackageHttpArchivePath(name, version),
                   },
                 }),
               };
@@ -344,8 +348,11 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
         scope,
         localName,
       };
-    } else if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)\/-\/\2-(.*)\.tgz$/)) {
-      const [_, scope, localName, version] = match;
+    } else if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)\/(-|tralala)\/\2-(.*)\.tgz$/)) {
+      const [_, scope, localName, split, version] = match;
+
+      if (localName === `unconventional-tarball` && split === `-`)
+        return null;
 
       return {
         type: RequestType.PackageTarball,
