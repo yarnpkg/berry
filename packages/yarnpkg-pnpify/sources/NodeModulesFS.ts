@@ -179,12 +179,12 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     this.baseFs.closeSync(fd);
   }
 
-  createReadStream(p: PortablePath, opts?: CreateReadStreamOptions) {
-    return this.baseFs.createReadStream(this.resolveFilePath(p), opts);
+  createReadStream(p: PortablePath | null, opts?: CreateReadStreamOptions) {
+    return this.baseFs.createReadStream(p !== null ? this.resolveFilePath(p) : p, opts);
   }
 
-  createWriteStream(p: PortablePath, opts?: CreateWriteStreamOptions) {
-    return this.baseFs.createWriteStream(this.throwIfPathReadonly('createWriteStream', p), opts);
+  createWriteStream(p: PortablePath | null, opts?: CreateWriteStreamOptions) {
+    return this.baseFs.createWriteStream(p !== null ? this.throwIfPathReadonly('createWriteStream', p) : p, opts);
   }
 
   async realpathPromise(p: PortablePath) {
