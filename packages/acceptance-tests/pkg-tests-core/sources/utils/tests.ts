@@ -139,8 +139,10 @@ exports.getPackageHttpArchivePath = async function getPackageHttpArchivePath(
   if (!packageVersionEntry)
     throw new Error(`Unknown version "${version}" for package "${name}"`);
 
+  const localName = name.replace(/^@[^\/]+\//, ``);
+
   const serverUrl = await exports.startPackageServer();
-  const archiveUrl = `${serverUrl}/${name}/-/${name}-${version}.tgz`;
+  const archiveUrl = `${serverUrl}/${name}/-/${localName}-${version}.tgz`;
 
   return archiveUrl;
 };
