@@ -81,7 +81,9 @@ export const generateSdk = async (projectRoot: PortablePath): Promise<any> => {
 
   const targetFolder = ppath.join(projectRoot, `.vscode/pnpify` as PortablePath);
 
-  if (hasTypescript || hasEslint)
+  if (!hasTypescript && !hasEslint)
+    console.warn(`Neither 'typescript' nor 'eslint' are installed. Nothing to do.`);
+  else
     await xfs.removePromise(targetFolder);
 
   if (hasTypescript)
