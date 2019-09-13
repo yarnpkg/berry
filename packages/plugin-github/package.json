@@ -6,18 +6,16 @@
     "@yarnpkg/core": "workspace:2.0.0-rc.5",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
   },
-  "devDependencies": {
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
-    "typescript": "^3.5.3"
-  },
   "scripts": {
-    "build": "pnpify tsc",
     "test": "run test:unit packages/plugin-github"
   },
   "files": [
     "/lib"
   ],
   "version": "2.0.0-rc.1",
+  "nextVersion": {
+    "nonce": "3459548056382557"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

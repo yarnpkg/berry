@@ -12,7 +12,6 @@
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2",
     "@yarnpkg/parsers": "workspace:2.0.0-rc.3",
     "@yarnpkg/pnp": "workspace:2.0.0-rc.3",
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
     "@yarnpkg/shell": "workspace:2.0.0-rc.2",
     "agentkeepalive": "^4.0.2",
     "camelcase": "^5.3.1",
@@ -37,13 +36,11 @@
   },
   "devDependencies": {
     "@yarnpkg/plugin-link": "workspace:2.0.0-rc.1",
-    "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.1",
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
-    "typescript": "^3.5.3"
+    "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.1"
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc"
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-core"
   },
   "publishConfig": {
     "main": "./lib/index.js",

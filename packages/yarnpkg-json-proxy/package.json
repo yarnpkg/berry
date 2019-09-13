@@ -1,17 +1,16 @@
 {
   "name": "@yarnpkg/json-proxy",
   "version": "2.0.0-rc.2",
+  "nextVersion": {
+    "nonce": "1769303232969387"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
   },
-  "devDependencies": {
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
-    "typescript": "^3.5.3"
-  },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-json-proxy",
     "release": "yarn npm publish"
   },
   "publishConfig": {

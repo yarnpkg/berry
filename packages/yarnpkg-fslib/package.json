@@ -1,19 +1,18 @@
 {
   "name": "@yarnpkg/fslib",
   "version": "2.0.0-rc.3",
+  "nextVersion": {
+    "nonce": "7060976144934501"
+  },
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/libzip": "workspace:2.0.0-rc.3",
     "tmp": "^0.0.33"
   },
-  "devDependencies": {
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.3",
-    "typescript": "^3.5.3"
-  },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && pnpify tsc",
+    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-fslib",
     "release": "yarn npm publish",
     "test:fslib": "run test:unit packages/yarnpkg-fslib",
     "test:watch:fslib": "run test:unit --watch packages/yarnpkg-fslib"
