@@ -62,10 +62,34 @@ export const generateEslintWrapper = async (projectRoot: PortablePath, target: P
   await addVSCodeWorkspaceSettings(projectRoot, {'eslint.nodePath': NodeFS.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(eslint)))});
 };
 
-export const generateSdk = async (projectRoot: PortablePath): Promise<any> => {
-  const targetFolder = ppath.join(projectRoot, `.vscode/pnpify` as PortablePath);
-  await xfs.removePromise(targetFolder);
+const isPackageInstalled = (name: string): boolean => {
+  try {
+    dynamicRequire.resolve(name);
+    return true;
+  } catch (e) {
+    if (e.code && e.code === 'MODULE_NOT_FOUND') {
+      return false;
+    } else  {
+      throw e;
+    }
+  }
+};
 
-  await generateTypescriptWrapper(projectRoot, targetFolder);
-  await generateEslintWrapper(projectRoot, targetFolder);
+export const generateSdk = async (projectRoot: PortablePath): Promise<any> => {
+  const hasTypescript = isPackageInstalled('typescript');
+  const hasEslint = isPackageInstalled('eslint');
+
+  const targetFolder = ppath.join(projectRoot, `.vscode/pnpify` as PortablePath);
+
+  if (!hasTypescript && !hasEslint)
+    console.warn(`Neither 'typescript' nor 'eslint' are installed. Nothing to do.`);
+  else
+    await xfs.removePromise(targetFolder);
+
+  if (hasTypescript)
+    await generateTypescriptWrapper(projectRoot, targetFolder);
+
+  if (hasEslint) {
+    await generateEslintWrapper(projectRoot, targetFolder);
+  }
 };
