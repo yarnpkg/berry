@@ -77,8 +77,8 @@ export class NpmSemverFetcher implements Fetcher {
     url = url.replace(/^https?:(\/\/(?:[^\/]+\.)?npmjs.org(?:$|\/))/, `https:$1`);
 
     // The yarnpkg and npmjs registries are interchangeable for that matter, so we uniformize them
-    registry = registry.replace(/^https:\/\/registry\.npmjs\.com(?:$|\/)/, `https://registry.yarnpkg.com$1`);
-    url = url.replace(/^https:\/\/registry\.npmjs\.com(?:$|\/)/, `https://registry.yarnpkg.com$1`);
+    registry = registry.replace(/^https:\/\/registry\.npmjs\.org($|\/)/, `https://registry.yarnpkg.com$1`);
+    url = url.replace(/^https:\/\/registry\.npmjs\.org($|\/)/, `https://registry.yarnpkg.com$1`);
 
     if (url === registry + path)
       return true;
