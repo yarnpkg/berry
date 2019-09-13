@@ -32,6 +32,24 @@ describe(`NpmSemverFetcher`, () => {
 
       expect(NpmSemverFetcher.isConventionalTarballUrl(locator, url, {configuration})).toEqual(true);
     });
+
+    it(`it should detect non-conventional path (different registry)`, async () => {
+      const configuration = await makeConfiguration();
+
+      const locator = structUtils.makeLocator(structUtils.makeIdent(null, `foo`), `npm:1.0.0`);
+      const url = `https://not-the-right-registry/foo/-/foo-1.0.0.tgz`;
+
+      expect(NpmSemverFetcher.isConventionalTarballUrl(locator, url, {configuration})).toEqual(false);
+    });
+
+    it(`it should detect non-conventional path (different path)`, async () => {
+      const configuration = await makeConfiguration();
+
+      const locator = structUtils.makeLocator(structUtils.makeIdent(null, `foo`), `npm:1.0.0`);
+      const url = `${configuration.get(`npmRegistryServer`)}/archives/foo/foo-1.0.0.tgz`;
+
+      expect(NpmSemverFetcher.isConventionalTarballUrl(locator, url, {configuration})).toEqual(false);
+    });
   });
 });
 
