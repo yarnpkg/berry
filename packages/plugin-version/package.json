@@ -3,8 +3,8 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.5",
-    "@yarnpkg/core": "workspace:2.0.0-rc.5",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.6",
+    "@yarnpkg/core": "workspace:2.0.0-rc.6",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.2",
     "clipanion": "^2.1.1",
@@ -14,7 +14,7 @@
     "yup": "^0.27.0"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:2.0.0-rc.5",
+    "@yarnpkg/builder": "workspace:2.0.0-rc.6",
     "typescript": "^3.5.3"
   },
   "scripts": {

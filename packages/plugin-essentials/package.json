@@ -3,8 +3,8 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.5",
-    "@yarnpkg/core": "workspace:2.0.0-rc.5",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.6",
+    "@yarnpkg/core": "workspace:2.0.0-rc.6",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2",
     "@yarnpkg/parsers": "workspace:2.0.0-rc.3",
