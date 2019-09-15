@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                   from '@yarnpkg/cli';
-import {AllDependencies, Configuration, IdentHash, Manifest}   from '@yarnpkg/core';
-import {MessageName, Project, StreamReport, WorkspaceResolver} from '@yarnpkg/core';
-import {Workspace, structUtils}                                from '@yarnpkg/core';
-import {Command, UsageError}                                   from 'clipanion';
-import semver                                                  from 'semver';
+import {BaseCommand, WorkspaceRequiredError}                        from '@yarnpkg/cli';
+import {AllDependencies, Cache, Configuration, IdentHash, Manifest} from '@yarnpkg/core';
+import {MessageName, Project, StreamReport, WorkspaceResolver}      from '@yarnpkg/core';
+import {Workspace, structUtils}                                     from '@yarnpkg/core';
+import {Command, UsageError}                                        from 'clipanion';
+import semver                                                       from 'semver';
 
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
 const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
@@ -42,6 +42,7 @@ export default class VersionApplyCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const cache = await Cache.find(configuration);
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
@@ -188,7 +189,7 @@ export default class VersionApplyCommand extends BaseCommand {
         }
       }
 
-      await project.persist();
+      await project.install({cache, report});
     });
 
     return applyReport.exitCode();
