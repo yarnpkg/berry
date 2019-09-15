@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import {NodeFS}         from '@yarnpkg/fslib';
 import crossSpawn       from 'cross-spawn';
 
