@@ -1,3 +1,4 @@
+import * as bridgeUtils from './bridgeUtils';
 import * as execUtils   from './execUtils';
 import * as folderUtils from './folderUtils';
 import * as httpUtils   from './httpUtils';
@@ -26,6 +27,7 @@ export {IdentHash, DescriptorHash, LocatorHash}                                 
 export {Ident, Descriptor, Locator, Package}                                             from './types';
 export {LinkType}                                                                        from './types';
 
+export {bridgeUtils};
 export {httpUtils};
 export {execUtils};
 export {folderUtils};

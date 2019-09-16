@@ -1,0 +1,13 @@
+{
+  "name": "@yarnpkg/plugin-bridge-cpp-to-js",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@yarnpkg/builder": "workspace:2.0.0-rc.6",
+    "@yarnpkg/core": "workspace:2.0.0-rc.6",
+    "typescript": "^3.5.3"
+  },
+  "devDependencies": {
+    "@types/typescript": "2.0.0"
+  }
+}
