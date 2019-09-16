@@ -28,6 +28,7 @@ Note that it's sometimes hard to keep track of everyone (the v1 trunk has 500+ c
 
 - Daniel Lo Nigro (Release workflow)
 - Jeff Valore (Audit)
+- Haroen Viaene (Website)
 
 ## 1.0.0 - 1.9.0 (~13 months)
 
@@ -39,6 +40,7 @@ Note that it's sometimes hard to keep track of everyone (the v1 trunk has 500+ c
 ### Active contributors
 
 - Daniel Lo Nigro (Release workflow)
+- Haroen Viaene (Website)
 - Kaylie Kwon (Resolution overrides)
 - Jeff Valore (Various)
 
@@ -51,6 +53,7 @@ Note that it's sometimes hard to keep track of everyone (the v1 trunk has 500+ c
 ### Active contributors:
 
 - Daniel Lo Nigro (Release workflow)
+- Haroen Viaene (Website)
 - Jeff Valore (Various)
 - Maël Nison (Various)
 - Simon Vocella (Infra)
