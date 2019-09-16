@@ -9,6 +9,7 @@ import {Project}                                                      from './Pr
 import {StreamReport}                                                 from './StreamReport';
 import {Workspace}                                                    from './Workspace';
 import * as execUtils                                                 from './execUtils';
+import * as miscUtils                                                 from './miscUtils';
 import * as structUtils                                               from './structUtils';
 import {LocatorHash, Locator}                                         from './types';
 
@@ -49,7 +50,11 @@ export async function makeScriptEnv(project: Project, lifecycleScript?: string) 
   scriptEnv.npm_execpath = `${nativeBinFolder}${npath.sep}yarn`;
   scriptEnv.npm_node_execpath = `${nativeBinFolder}${npath.sep}node`;
 
-  scriptEnv.npm_config_user_agent = `yarn/? npm/? node/${process.versions.node} ${process.platform} ${process.arch}`;
+  const version = typeof YARN_VERSION !== `undefined`
+    ? `yarn/${YARN_VERSION}`
+    : `yarn/${miscUtils.dynamicRequire(`@yarnpkg/core`).version}-core`;
+
+  scriptEnv.npm_config_user_agent = `${version} npm/? node/${process.versions.node} ${process.platform} ${process.arch}`;
 
   if (lifecycleScript)
     scriptEnv.npm_lifecycle_event = lifecycleScript;
