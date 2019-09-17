@@ -111,7 +111,7 @@ export async function executePackageScript(locator: Locator, scriptName: string,
 
   const script = manifest.scripts.get(scriptName);
   if (!script)
-    return;
+    return 0;
 
   const realExecutor = async () => {
     return await execute(script, args, {cwd: realCwd, env, stdin, stdout, stderr});

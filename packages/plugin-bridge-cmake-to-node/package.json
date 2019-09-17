@@ -1,0 +1,11 @@
+{
+  "name": "@yarnpkg/plugin-bridge-cmake-to-node",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@yarnpkg/builder": "workspace:2.0.0-rc.6",
+    "@yarnpkg/core": "workspace:2.0.0-rc.6",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
+    "typescript": "^3.5.3"
+  }
+}

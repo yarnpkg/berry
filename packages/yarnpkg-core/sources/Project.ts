@@ -21,6 +21,7 @@ import {RunInstallPleaseResolver}                     from './RunInstallPleaseRe
 import {ThrowReport}                                  from './ThrowReport';
 import {Workspace}                                    from './Workspace';
 import {YarnResolver}                                 from './YarnResolver';
+import * as bridgeUtils                               from './bridgeUtils';
 import {isFolderInside}                               from './folderUtils';
 import * as miscUtils                                 from './miscUtils';
 import * as scriptUtils                               from './scriptUtils';
@@ -400,18 +401,6 @@ export class Project {
     if (!lockfileOnly)
       await this.forgetTransientResolutions();
 
-    // Note that the resolution process is "offline" until everything has been
-    // successfully resolved; all the processing is expected to have zero side
-    // effects until we're ready to set all the variables at once (the one
-    // exception being when a resolver needs to fetch a package, in which case
-    // we might need to populate the cache).
-    //
-    // This makes it possible to use the same Project instance for multiple
-    // purposes at the same time (since `resolveEverything` is async, it might
-    // happen that we want to do something while waiting for it to end; if we
-    // were to mutate the project then it would end up in a partial state that
-    // could lead to hard-to-debug issues).
-
     const yarnResolver = new YarnResolver();
     await yarnResolver.setup(this, {report});
 
@@ -425,34 +414,61 @@ export class Project {
 
     const resolverOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, resolver};
 
+    // Those stores are the one that will get injected within the class once
+    // the resolution is done.
+    //
+    // Note that the resolution process is "offline" until everything has been
+    // successfully resolved; all the processing is expected to have zero side
+    // effects until we're ready to set all the variables at once (the one
+    // exception being when a resolver needs to fetch a package, in which case
+    // we might need to populate the cache).
+    //
+    // This makes it possible to use the same Project instance for multiple
+    // purposes at the same time (since `resolveEverything` is async, it might
+    // happen that we want to do something while waiting for it to end; if we
+    // were to mutate the project then it would end up in a partial state that
+    // could lead to hard-to-debug issues).
     const allDescriptors = new Map<DescriptorHash, Descriptor>();
     const allPackages = new Map<LocatorHash, Package>();
     const allResolutions = new Map<DescriptorHash, LocatorHash>();
 
+    // We keep track of the descriptors which have been aliased (because of the
+    // `resolutionAliases` special hook) because we will start by skipping
+    // their resolution, resolving their aliases instead, and finally copy the
+    // resolution into the aliased descriptors.
     const haveBeenAliased = new Set<DescriptorHash>();
 
-    let mustBeResolved = new Set<DescriptorHash>();
+    // The resolution as implemented in Yarn is multi-steps: starting from the
+    // workspaces, we find out their dependencies. Then we find out their
+    // dependencies' dependencies. Then we find out ... etc. We never
+    // backtrack, which is sub-optimal but a reasonable compromise in terms of
+    // correctness and speed.
+    let mustBeResolved = new Map<DescriptorHash, Set<string>>();
 
     for (const workspace of this.workspaces) {
       const workspaceDescriptor = workspace.anchoredDescriptor;
 
       allDescriptors.set(workspaceDescriptor.descriptorHash, workspaceDescriptor);
-      mustBeResolved.add(workspaceDescriptor.descriptorHash);
+      mustBeResolved.set(workspaceDescriptor.descriptorHash, new Set([]));
     }
 
     while (mustBeResolved.size !== 0) {
       // We remove from the "mustBeResolved" list all packages that have
       // already been resolved previously.
 
-      for (const descriptorHash of mustBeResolved)
-        if (allResolutions.has(descriptorHash))
-          mustBeResolved.delete(descriptorHash);
+      for (const descriptorHash of mustBeResolved.keys()) {
+        const resolution = allResolutions.get(descriptorHash);
+        if (typeof resolution === `undefined`)
+          continue;
+
+        mustBeResolved.delete(descriptorHash);
+      }
 
       // Then we request the resolvers for the list of possible references that
       // match the given ranges. That will give us a set of candidate references
       // for each descriptor.
 
-      const passCandidates = new Map(await Promise.all(Array.from(mustBeResolved).map(async descriptorHash => {
+      const passCandidates = new Map(await Promise.all(Array.from(mustBeResolved.keys()).map(async descriptorHash => {
         const descriptor = allDescriptors.get(descriptorHash);
         if (!descriptor)
           throw new Error(`Assertion failed: The descriptor should have been registered`);
@@ -599,9 +615,9 @@ export class Project {
       // resolvers return)
 
       const haveBeenResolved = mustBeResolved;
-      mustBeResolved = new Set();
+      mustBeResolved = new Map();
 
-      for (const descriptorHash of haveBeenResolved) {
+      for (const descriptorHash of haveBeenResolved.keys()) {
         const locator = passResolutions.get(descriptorHash);
         if (!locator)
           throw new Error(`Assertion failed: The locator should have been registered`);
@@ -615,43 +631,80 @@ export class Project {
         allPackages.set(pkg.locatorHash, pkg);
 
         for (const descriptor of pkg.dependencies.values()) {
-          allDescriptors.set(descriptor.descriptorHash, descriptor);
-          mustBeResolved.add(descriptor.descriptorHash);
-
           // We must check and make sure that the descriptor didn't get aliased
           // to something else
           const aliasHash = this.resolutionAliases.get(descriptor.descriptorHash);
-          if (aliasHash === undefined)
+
+          if (typeof aliasHash === `undefined` || descriptor.descriptorHash === aliasHash) {
+            let dependentLanguageNames = mustBeResolved.get(descriptor.descriptorHash);
+            if (typeof dependentLanguageNames === `undefined`)
+              dependentLanguageNames = new Set();
+
+            allDescriptors.set(descriptor.descriptorHash, descriptor);
+            mustBeResolved.set(descriptor.descriptorHash, dependentLanguageNames);
+
+            dependentLanguageNames.add(pkg.languageName);
+          } else {
+            const alias = this.storedDescriptors.get(aliasHash);
+            if (!alias)
+              throw new Error(`Assertion failed: The alias should have been registered`);
+
+            // If it's already been "resolved" (in reality it will be the temporary
+            // resolution we've set in the next few lines) we simply must skip it
+            if (allResolutions.has(descriptor.descriptorHash))
+              continue;
+
+            // Temporarily set an invalid resolution so that it won't be resolved
+            // multiple times if it is found multiple times in the dependency
+            // tree (this is only temporary, we will replace it by the actual
+            // resolution once we've finished resolving everything)
+            allResolutions.set(descriptor.descriptorHash, `temporary` as LocatorHash);
+
+            let dependentLanguageNames = mustBeResolved.get(aliasHash);
+            if (typeof dependentLanguageNames === `undefined`)
+              dependentLanguageNames = new Set();
+
+            // We can now replace the descriptor by its alias in the list of
+            // descriptors that must be resolved
+            mustBeResolved.delete(descriptor.descriptorHash);
+            mustBeResolved.set(aliasHash, dependentLanguageNames);
+
+            dependentLanguageNames.add(pkg.languageName);
+
+            allDescriptors.set(aliasHash, alias);
+
+            haveBeenAliased.add(descriptor.descriptorHash);
+          }
+        }
+      }
+
+      // In this pass we find all the packages which crossed the language
+      // boundaries, and generate a bridge for each of them. Bridges are
+      // intermediary packages that are generated each time a package from one
+      // type has a dependency on a package from another type. It will generate
+      // a "bridge package" from the host type that will be able to reference
+      // the install path of the guest package in its install scripts.
+
+      for (const [descriptorHash, dependentLanguageNames] of haveBeenResolved) {
+        const locator = passResolutions.get(descriptorHash);
+        if (typeof locator === `undefined`)
+          throw new Error(`Assertion failed: The locator should have been registered`);
+
+        const pkg = allPackages.get(locator.locatorHash);
+        if (typeof pkg === `undefined`)
+          throw new Error(`Assertion failed: The package should have been registered`);
+
+        for (const dependentLanguageName of dependentLanguageNames) {
+          if (dependentLanguageName === pkg.languageName)
+            continue;
+          if (dependentLanguageName === `unknown`)
             continue;
 
-          // It doesn't cost us much to support the case where a descriptor is
-          // equal to its own alias (which should mean "no alias")
-          if (descriptor.descriptorHash === aliasHash)
-            continue;
+          const bridge = bridgeUtils.makeBridgeFor(dependentLanguageName, pkg);
+          const bridgeDescriptor = structUtils.makeDescriptor(pkg, bridge);
 
-          const alias = this.storedDescriptors.get(aliasHash);
-          if (!alias)
-            throw new Error(`Assertion failed: The alias should have been registered`);
-
-          // If it's already been "resolved" (in reality it will be the temporary
-          // resolution we've set in the next few lines) we simply must skip it
-          if (allResolutions.has(descriptor.descriptorHash))
-            continue;
-
-          // Temporarily set an invalid resolution so that it won't be resolved
-          // multiple times if it is found multiple times in the dependency
-          // tree (this is only temporary, we will replace it by the actual
-          // resolution after we've finished resolving everything)
-          allResolutions.set(descriptor.descriptorHash, `temporary` as LocatorHash);
-
-          // We can now replace the descriptor by its alias in the list of
-          // descriptors that must be resolved
-          mustBeResolved.delete(descriptor.descriptorHash);
-          mustBeResolved.add(aliasHash);
-
-          allDescriptors.set(aliasHash, alias);
-
-          haveBeenAliased.add(descriptor.descriptorHash);
+          mustBeResolved.set(bridgeDescriptor.descriptorHash, new Set([dependentLanguageName]));
+          allDescriptors.set(bridgeDescriptor.descriptorHash, bridgeDescriptor);
         }
       }
     }
@@ -1388,6 +1441,37 @@ function applyVirtualResolutionMutations({
     const secondPass = [];
     const thirdPass = [];
     const fourthPass = [];
+
+    for (const descriptor of Array.from(parentPackage.dependencies.values())) {
+      if (parentPackage.peerDependencies.has(descriptor.identHash) && !first)
+        continue;
+
+      const resolution = allResolutions.get(descriptor.descriptorHash);
+      if (!resolution) {
+        if (tolerateMissingPackages) {
+          continue;
+        } else {
+          throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
+        }
+      }
+
+      const pkg = allPackages.get(resolution);
+      if (!pkg)
+        throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
+
+      if (parentPackage.languageName === pkg.languageName)
+        continue;
+      if (parentPackage.languageName === `unknown`)
+        continue;
+
+      const bridge = bridgeUtils.makeBridgeFor(parentPackage.languageName, pkg);
+      const bridgeDescriptor = structUtils.makeDescriptor(descriptor, bridge);
+
+      if (parentLocator.reference === bridge)
+        continue;
+
+      parentPackage.dependencies.set(bridgeDescriptor.identHash, bridgeDescriptor);
+    }
 
     // During this first pass we virtualize the descriptors. This allows us
     // to reference them from their sibling without being order-dependent,

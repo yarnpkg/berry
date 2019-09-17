@@ -60,7 +60,7 @@ const plugin: Plugin = {
     pnpUnpluggedFolder: {
       description: `Folder where the unplugged packages must be stored`,
       type: SettingsType.ABSOLUTE_PATH,
-      default: `./.yarn/unplugged`,
+      default: `./.yarn/unplugged/pnp`,
     },
     pnpDataPath: {
       description: `Path of the file where the PnP data (used by the loader) must be written`,

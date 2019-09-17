@@ -3944,15 +3944,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/typescript@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@types/typescript@npm:2.0.0"
-  dependencies:
-    typescript: "npm:*"
-  checksum: 6e01f8ea8b7754020e691dff861ecd4325b3ce8fd4378a3a163774456eea61fbdcd1a932c28c3e8b8507130156735531a13be89f1dd0bd37eb5e0ded7e6950c7
-  languageName: node
-  linkType: hard
-
 "@types/uglify-js@npm:*":
   version: 3.0.4
   resolution: "@types/uglify-js@npm:3.0.4"
@@ -4764,13 +4755,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-bridge-cpp-to-js@workspace:packages/plugin-bridge-cpp-to-js":
+"@yarnpkg/plugin-bridge-cmake-to-node@workspace:packages/plugin-bridge-cmake-to-node":
   version: 0.0.0-use.local
-  resolution: "@yarnpkg/plugin-bridge-cpp-to-js@workspace:packages/plugin-bridge-cpp-to-js"
+  resolution: "@yarnpkg/plugin-bridge-cmake-to-node@workspace:packages/plugin-bridge-cmake-to-node"
   dependencies:
-    "@types/typescript": "npm:2.0.0"
     "@yarnpkg/builder": "workspace:2.0.0-rc.6"
     "@yarnpkg/core": "workspace:2.0.0-rc.6"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
+    typescript: "npm:^3.5.3"
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/plugin-cmake@workspace:packages/plugin-cmake":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/plugin-cmake@workspace:packages/plugin-cmake"
+  dependencies:
+    "@yarnpkg/builder": "workspace:2.0.0-rc.6"
+    "@yarnpkg/core": "workspace:2.0.0-rc.6"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
+    clipanion: "npm:^2.1.1"
     typescript: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
@@ -23237,7 +23240,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"typescript@npm:*, typescript@npm:^3.5.3":
+"typescript@npm:^3.5.3":
   version: 3.5.3
   resolution: "typescript@npm:3.5.3"
   bin:

@@ -1,0 +1,7 @@
+{
+    "name": "one-fixed-dep-crosslink",
+    "version": "1.0.0",
+    "dependencies": {
+        "no-deps-cmake": "1.0.0"
+    }
+}

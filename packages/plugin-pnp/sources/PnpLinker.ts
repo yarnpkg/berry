@@ -17,7 +17,7 @@ const FORCED_UNPLUG_PACKAGES = new Set([
 
 export class PnpLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
-    return true;
+    return pkg.languageName === `node` || pkg.languageName === `unknown`;
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
@@ -118,7 +118,7 @@ class PnpInstaller implements Installer {
       this.blacklistedPaths.add(packageLocation);
 
     return {
-      packageLocation,
+      packageLocation: packageLocation,
       buildDirective: buildScripts.length > 0 ? buildScripts as BuildDirective[] : null,
     };
   }
@@ -309,6 +309,8 @@ class PnpInstaller implements Installer {
 
     await xfs.mkdirpPromise(unplugPath);
     await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: packageFs, overwrite: false});
+
+    console.log(`bar`, unplugPath, locator, xfs.existsSync(unplugPath));
 
     return new CwdFS(unplugPath);
   }
