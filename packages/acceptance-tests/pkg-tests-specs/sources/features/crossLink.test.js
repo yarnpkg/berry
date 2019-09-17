@@ -1,6 +1,6 @@
 describe(`Features`, () => {
   describe(`Cross-Link`, () => {
-    test(
+    test.skip(
       `it should allow Yarn to install packages from another language`,
       makeTemporaryEnv({
         dependencies: {
