@@ -247,7 +247,7 @@ describe(`Scripts tests`, () => {
       async ({path, run, source}) => {
         await run(`install`, {env: {}});
 
-        const [itemPath] = await walk(`${path}/.yarn/unplugged/`, {filter: `/binding-gyp-scripts-*/node_modules/binding-gyp-scripts/build.node`});
+        const [itemPath] = await walk(`${path}/.yarn/unplugged/pnp/`, {filter: `/binding-gyp-scripts-*/node_modules/binding-gyp-scripts/build.node`});
 
         expect(itemPath).toBeDefined();
 
