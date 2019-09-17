@@ -310,8 +310,6 @@ class PnpInstaller implements Installer {
     await xfs.mkdirpPromise(unplugPath);
     await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: packageFs, overwrite: false});
 
-    console.log(`bar`, unplugPath, locator, xfs.existsSync(unplugPath));
-
     return new CwdFS(unplugPath);
   }
 

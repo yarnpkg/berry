@@ -631,6 +631,8 @@ export class Project {
         allPackages.set(pkg.locatorHash, pkg);
 
         for (const descriptor of pkg.dependencies.values()) {
+          allDescriptors.set(descriptor.descriptorHash, descriptor);
+
           // We must check and make sure that the descriptor didn't get aliased
           // to something else
           const aliasHash = this.resolutionAliases.get(descriptor.descriptorHash);
@@ -640,9 +642,7 @@ export class Project {
             if (typeof dependentLanguageNames === `undefined`)
               dependentLanguageNames = new Set();
 
-            allDescriptors.set(descriptor.descriptorHash, descriptor);
             mustBeResolved.set(descriptor.descriptorHash, dependentLanguageNames);
-
             dependentLanguageNames.add(pkg.languageName);
           } else {
             const alias = this.storedDescriptors.get(aliasHash);
@@ -664,16 +664,11 @@ export class Project {
             if (typeof dependentLanguageNames === `undefined`)
               dependentLanguageNames = new Set();
 
-            // We can now replace the descriptor by its alias in the list of
-            // descriptors that must be resolved
-            mustBeResolved.delete(descriptor.descriptorHash);
-            mustBeResolved.set(aliasHash, dependentLanguageNames);
-
-            dependentLanguageNames.add(pkg.languageName);
-
             allDescriptors.set(aliasHash, alias);
-
             haveBeenAliased.add(descriptor.descriptorHash);
+
+            mustBeResolved.set(aliasHash, dependentLanguageNames);
+            dependentLanguageNames.add(pkg.languageName);
           }
         }
       }

@@ -124,7 +124,7 @@ describe(`Plug'n'Play`, () => {
     `it should fallback to the top-level dependencies when it cannot require a transitive dependency require`,
     makeTemporaryEnv(
       {
-        dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`}
+        dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`},
       },
       {
         // By default tests are executed with the fallback disabled; this
@@ -220,7 +220,7 @@ describe(`Plug'n'Play`, () => {
           code: `MODULE_NOT_FOUND`,
           pnpCode: `UNDECLARED_DEPENDENCY`,
         });
-    },
+      },
     ),
   );
 
@@ -784,11 +784,11 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged/pnp`);
         expect(listing).toHaveLength(1);
 
         await writeFile(
-          `${path}/.yarn/unplugged/${listing[0]}/node_modules/no-deps/index.js`,
+          `${path}/.yarn/unplugged/pnp/${listing[0]}/node_modules/no-deps/index.js`,
           `module.exports = "unplugged";\n`,
         );
 
@@ -813,11 +813,11 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged/pnp`);
         expect(listing).toHaveLength(1);
 
         await writeFile(
-          `${path}/.yarn/unplugged/${listing[0]}/node_modules/no-deps/index.js`,
+          `${path}/.yarn/unplugged/pnp/${listing[0]}/node_modules/no-deps/index.js`,
           `module.exports = "unplugged";\n`,
         );
 
@@ -847,7 +847,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged/pnp`);
         expect(listing).toHaveLength(2);
       },
     ),
@@ -870,7 +870,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged/pnp`);
         expect(listing).toHaveLength(1);
 
         expect(listing[0]).toMatch(/1.0.0/);
@@ -963,11 +963,11 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged/pnp`);
         expect(listing).toHaveLength(1);
 
         await writeFile(
-          `${path}/.yarn/unplugged/${listing[0]}/node_modules/no-deps/index.js`,
+          `${path}/.yarn/unplugged/pnp/${listing[0]}/node_modules/no-deps/index.js`,
           `module.exports = "unplugged";\n`,
         );
 
@@ -989,7 +989,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        expect(xfs.existsSync(`${path}/.yarn/unplugged`)).toEqual(false);
+        expect(xfs.existsSync(`${path}/.yarn/unplugged/pnp`)).toEqual(false);
       },
     ),
   );
@@ -1003,7 +1003,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged/pnp`);
         expect(listing).toHaveLength(1);
       },
     ),
