@@ -2,7 +2,8 @@
   "name": "@yarnpkg/parsers",
   "version": "2.0.0-rc.3",
   "nextVersion": {
-    "nonce": "1329262964018395"
+    "semver": "2.0.0-rc.4",
+    "nonce": "2089419777492787"
   },
   "main": "./sources/index.ts",
   "dependencies": {
@@ -16,7 +17,7 @@
     "grammar:resolution": "run pegjs -o sources/grammars/resolution.js sources/grammars/resolution.pegjs",
     "grammar:syml": "run pegjs -o sources/grammars/syml.js sources/grammars/syml.pegjs",
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-parsers",
+    "prepack": "mkdir -p lib && rsync -a --include '*.d.ts' --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-parsers",
     "release": "yarn npm publish",
     "test:parsers": "run test:unit packages/yarnpkg-parsers"
   },
