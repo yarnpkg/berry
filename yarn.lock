@@ -4671,7 +4671,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/monorepo@workspace:., @yarnpkg/monorepo@workspace:0.0.0":
+"@yarnpkg/monorepo@workspace:*, @yarnpkg/monorepo@workspace:., @yarnpkg/monorepo@workspace:0.0.0":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/monorepo@workspace:."
   dependencies:
@@ -4871,6 +4871,16 @@ __metadata:
   dependencies:
     "@yarnpkg/core": "workspace:2.0.0-rc.6"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules"
+  dependencies:
+    "@yarnpkg/core": "workspace:2.0.0-rc.6"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
+    "@yarnpkg/monorepo": "workspace:*"
   languageName: unknown
   linkType: soft
 
