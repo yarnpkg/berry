@@ -5,9 +5,12 @@
   "dependencies": {
     "@yarnpkg/core": "workspace:2.0.0-rc.6",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
-    "@yarnpkg/monorepo": "workspace:*"
+    "@yarnpkg/monorepo": "workspace:0.0.0"
   },
   "version": "2.0.0-rc.1",
+  "nextVersion": {
+    "nonce": "3962840708862217"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
