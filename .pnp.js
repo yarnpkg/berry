@@ -5762,6 +5762,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/plugin-http", "workspace:packages/plugin-http"],
             ["@yarnpkg/plugin-init", "workspace:packages/plugin-init"],
             ["@yarnpkg/plugin-link", "workspace:packages/plugin-link"],
+            ["@yarnpkg/plugin-node-modules", "workspace:packages/plugin-node-modules"],
             ["@yarnpkg/plugin-npm", "workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-npm-cli", "workspace:packages/plugin-npm-cli"],
             ["@yarnpkg/plugin-pack", "workspace:packages/plugin-pack"],
