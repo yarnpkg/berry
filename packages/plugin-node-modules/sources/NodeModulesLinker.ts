@@ -4,7 +4,7 @@ import {PortablePath}                                             from '@yarnpkg
 
 export class NodeModulesLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions): boolean {
-    return true;
+    return opts.project.configuration.get('nodeLinker') === 'node-modules';
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions): Promise<PortablePath> {
@@ -38,5 +38,8 @@ class NodeModulesInstaller implements Installer {
   }
 
   async finalizeInstall(): Promise<void> {
+    if (this.opts.project.configuration.get('nodeLinker') !== 'node-modules') {
+      return;
+    }
   }
 }

@@ -37,6 +37,11 @@ const plugin: Plugin = {
     StageHooks
   ),
   configuration: {
+    nodeLinker: {
+      description: `The linker used for installing Node packages, one of: "pnp", "node-modules"`,
+      type: SettingsType.STRING,
+      default: `pnp`,
+    },
     pnpShebang: {
       description: `String to prepend to the generated PnP script`,
       type: SettingsType.STRING,

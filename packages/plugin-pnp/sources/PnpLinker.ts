@@ -17,7 +17,7 @@ const FORCED_UNPLUG_PACKAGES = new Set([
 
 export class PnpLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
-    return true;
+    return opts.project.configuration.get('nodeLinker') === 'pnp';
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
@@ -144,6 +144,9 @@ class PnpInstaller implements Installer {
   }
 
   async finalizeInstall() {
+    if (this.opts.project.configuration.get('nodeLinker') !== 'pnp')
+      return;
+
     if (await this.shouldWarnNodeModules())
       this.opts.report.reportWarning(MessageName.DANGEROUS_NODE_MODULES, `One or more node_modules have been detected; they risk hiding legitimate problems until your application reaches production.`);
 
