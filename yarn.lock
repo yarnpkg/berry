@@ -3512,6 +3512,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/invariant@npm:^2.2.30":
+  version: 2.2.30
+  resolution: "@types/invariant@npm:2.2.30"
+  checksum: 0bbec84107076a3671757d155a950f94bd9d64b486e7f2408292671c28510e8333897a30b9d5d1643f3e6c6f231b035a341b1798714a1814303c9405633f6d65
+  languageName: node
+  linkType: hard
+
 "@types/istanbul-lib-coverage@npm:*, @types/istanbul-lib-coverage@npm:^2.0.0":
   version: 2.0.1
   resolution: "@types/istanbul-lib-coverage@npm:2.0.1"
@@ -3545,6 +3552,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/jest-diff@npm:*":
+  version: 20.0.1
+  resolution: "@types/jest-diff@npm:20.0.1"
+  checksum: c193d901556c7c2240b0190fc9ef902f2f9713100a1b3833214e5109b6985a14b769c39577215ce41ad41d0c38b4b5d41cb0e8ecbebc5eafbab889e7f5de344f
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:^24.0.18":
+  version: 24.0.18
+  resolution: "@types/jest@npm:24.0.18"
+  dependencies:
+    "@types/jest-diff": "npm:*"
+  checksum: 60caf5ad4551767e308f5dd94312736b366a1aa69fdcf3b74554142ab640cef1ed557bf3d2bc57eb2d5e142cf29e4812d46a90fe2d14ca6ee1ca18226d782c7a
+  languageName: node
+  linkType: hard
+
 "@types/joi@npm:^13.6.0":
   version: 13.6.3
   resolution: "@types/joi@npm:13.6.3"
@@ -3556,6 +3579,15 @@ __metadata:
   version: 7.0.3
   resolution: "@types/json-schema@npm:7.0.3"
   checksum: 6d10208a973b6022011dd1f2ace747de76a10d245e4777509b610d6020512366132a06a711531795555c947a1c185a11b4b7641894645e3e9657402f96d97141
+  languageName: node
+  linkType: hard
+
+"@types/klaw@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@types/klaw@npm:3.0.0"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 17148bc63386e3cb1182748309f45d78206ad215bed9b71afc3484bb9bd119e98ff1d2fd8af840ec14f966ed090b112eb37d5995822186ef99be50b231e17609
   languageName: node
   linkType: hard
 
@@ -3582,7 +3614,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/minimatch@npm:*":
+"@types/minimatch@npm:*, @types/minimatch@npm:^3.0.3":
   version: 3.0.3
   resolution: "@types/minimatch@npm:3.0.3"
   checksum: 6454142840437d901a4a348b6c27a5974cbfae22e42776a6180cbdecc3393598fa70678dc7dcaf720a257658f13ee572ae427b870a5bb511bda6dd1013b65d8b
@@ -3877,6 +3909,15 @@ __metadata:
   version: 1.0.4
   resolution: "@types/tapable@npm:1.0.4"
   checksum: 61e802c2793294b7a3b6a99800b0cd31041ea9980bb42da147de0055b9a90693a08d82f5e3a63f166d8c4c0ee9f020934d0c0d67df854b6bf03c66cd3c96eaed
+  languageName: node
+  linkType: hard
+
+"@types/tar-fs@npm:^1.16.1":
+  version: 1.16.1
+  resolution: "@types/tar-fs@npm:1.16.1"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: f3a4b13411a87bc2d5bd381f9607e39a98783b1af649a94a9f89eb037b82e38716e1593514abab2954fc00fab98f86d0961ff76d41123c3a4c6722a931c5d800
   languageName: node
   linkType: hard
 
@@ -18612,6 +18653,11 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 0.0.0-use.local
   resolution: "pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core"
   dependencies:
+    "@types/invariant": "npm:^2.2.30"
+    "@types/jest": "npm:^24.0.18"
+    "@types/klaw": "npm:^3.0.0"
+    "@types/minimatch": "npm:^3.0.3"
+    "@types/tar-fs": "npm:^1.16.1"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     invariant: "npm:^2.2.4"
     klaw: "npm:^2.1.1"

@@ -1,7 +1,7 @@
 {
     "name": "pkg-tests-core",
     "private": true,
-    "main": "./sources/index.js",
+    "main": "./sources/index.ts",
     "dependencies": {
         "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
         "invariant": "^2.2.4",
@@ -16,5 +16,12 @@
     "repository": {
         "type": "git",
         "url": "ssh://git@github.com/yarnpkg/berry.git"
+    },
+    "devDependencies": {
+        "@types/invariant": "^2.2.30",
+        "@types/jest": "^24.0.18",
+        "@types/klaw": "^3.0.0",
+        "@types/minimatch": "^3.0.3",
+        "@types/tar-fs": "^1.16.1"
     }
 }

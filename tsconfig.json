@@ -12,7 +12,7 @@
         "lib": ["dom", "es2017", "esnext.asynciterable"]
     },
     "include": [
-        "packages/*/sources/**/*",
-        "packages/*/types/**/*"
+        "packages/**/sources/**/*",
+        "packages/**/types/**/*"
     ]
 }
