@@ -11,17 +11,25 @@ import {Gzip}                            from 'zlib';
 
 const deepResolve = require('super-resolve');
 
+import {ExecResult} from './exec';
 import * as fsUtils from './fs';
 
 
 export type PackageEntry = Map<string, {path: string, packageJson: Object}>;
 export type PackageRegistry = Map<string, PackageEntry>;
 
+interface RunDriverOptions extends Record<string, any> {
+  cwd?: string;
+  projectFolder?: string;
+  registryUrl?: string;
+  env?: Record<string, string>;
+}
+
 export type PackageRunDriver = (
   command: string,
   args: Array<string>,
-  opts: {registryUrl: string},
-) => Promise<{stdout: Buffer, stderr: Buffer}>;
+  opts: RunDriverOptions,
+) => Promise<ExecResult>;
 
 export type PackageDriver = any;
 
@@ -309,9 +317,8 @@ export const startPackageServer = (): Promise<string> => {
           return processError(response, 401, `Unauthorized`);
         }
 
-        if (body.username !== username || body.password !== user.password)
+        if (body.name !== username || body.password !== user.password)
           return processError(response, 401, `Unauthorized`);
-
 
         const data = JSON.stringify({token: user.npmAuthToken});
 
@@ -464,7 +471,7 @@ type RunFunction = (
   {path, run, source}:
   {
     path: string,
-    run: (...args: any[]) => Promise<{ stdout: Buffer; stderr: Buffer; }>,
+    run: (...args: any[]) => Promise<ExecResult>,
     source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>
   }
 ) => void;

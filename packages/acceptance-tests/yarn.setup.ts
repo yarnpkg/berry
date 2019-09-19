@@ -1,17 +1,16 @@
-/* @flow */
 
-const {delimiter} = require(`path`);
-const isWsl = require(`is-wsl`);
-const {URL} = require(`url`);
+import {NodeFS}          from '@yarnpkg/fslib';
+import isWsl             from 'is-wsl';
+import {delimiter}       from 'path';
 
-const {
-  tests: {generatePkgDriver, startPackageServer, getPackageRegistry},
-  exec: {execFile},
-  fs: {createTemporaryFolder},
-} = require(`pkg-tests-core`);
-const {NodeFS} = require('@yarnpkg/fslib');
+import {tests, exec, fs} from 'pkg-tests-core';
+import {URL}             from 'url';
 
-global.makeTemporaryEnv = generatePkgDriver({
+const {generatePkgDriver, startPackageServer, getPackageRegistry} = tests;
+const {execFile} = exec;
+const {createTemporaryFolder} = fs;
+
+(global as any).makeTemporaryEnv = generatePkgDriver({
   getName() {
     return `yarn`;
   },
@@ -21,8 +20,8 @@ global.makeTemporaryEnv = generatePkgDriver({
     {cwd, projectFolder, registryUrl, env, ...config},
   ) {
     const rcEnv = {};
-    for (const [key, value] of Object.entries(config))
-      rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = value;
+    for (const key of Object.keys(config))
+      rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = config[key];
 
     const nativePath = NodeFS.fromPortablePath(path);
     const tempHomeFolder = NodeFS.fromPortablePath(await createTemporaryFolder());

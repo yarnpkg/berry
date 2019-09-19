@@ -3,13 +3,23 @@ import cp       from 'child_process';
 
 interface Options {
   cwd: string;
+  env?: Record<string, string>;
 }
+
+export type ExecResult = {
+  stdout: string;
+  stderr: string;
+  code: number;
+} | Error & {
+  stdout: string;
+  stderr: string;
+};
 
 export const execFile = (
   path: string,
   args: Array<string>,
   options: Options,
-): Promise<Error | {code: number}> => {
+): Promise<ExecResult> => {
   return new Promise((resolve, reject) => {
     cp.execFile(path, args, {
       ...options,
@@ -26,13 +36,14 @@ export const execFile = (
       if (error)
         error.message += `\n\n===== stdout:\n\n\`\`\`\n${stdout}\`\`\`\n\n===== stderr:\n\n\`\`\`\n${stderr}\`\`\`\n\n`;
 
-      const result = error ? error : {code: 0};
-      Object.assign(result, {stdout, stderr});
-
       if (error) {
-        reject(result);
+        reject(Object.assign(error, {stdout, stderr}));
       } else {
-        resolve(result);
+        resolve({
+          code: 0,
+          stdout,
+          stderr,
+        });
       }
     });
   });

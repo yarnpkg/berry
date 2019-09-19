@@ -6486,7 +6486,8 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["acceptance-tests-06d141", "workspace:packages/acceptance-tests"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
-            ["is-wsl", "npm:1.1.0"]
+            ["is-wsl", "npm:1.1.0"],
+            ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"]
           ]
         }]
       ]],
