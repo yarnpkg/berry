@@ -1,5 +1,5 @@
 const {
-  fs: {createTemporaryFolder, readFile, writeFile},
+  fs: {writeFile},
   tests: {startPackageServer},
 } = require('pkg-tests-core');
 

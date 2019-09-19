@@ -1,6 +1,5 @@
 const {
   fs: {readJson},
-  exec: {execFile},
 } = require('pkg-tests-core');
 
 describe(`Commands`, () => {

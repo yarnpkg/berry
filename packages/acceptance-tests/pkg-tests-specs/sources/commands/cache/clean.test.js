@@ -1,9 +1,5 @@
 const {readdir} = require(`fs-extra`);
 
-const {
-  fs: {createTemporaryFolder, mkdirp, readJson},
-} = require('pkg-tests-core');
-
 describe(`Commands`, () => {
   describe(`cache clean`, () => {
     test(`it should remove inactive entries from the cache`, makeTemporaryEnv({

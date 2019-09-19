@@ -22,7 +22,7 @@ const bufferResult = async (command: string, args: Array<string> = [], options: 
     stderrChunks.push(chunk);
   });
 
-  const exitCode = await execute(command, args, {... options, stdout, stderr, builtins: {
+  const exitCode = await execute(command, args, {...options, stdout, stderr, builtins: {
     [`test-builtin`]: async (args, opts, state) => {
       const stdinChunks = [];
 
@@ -302,7 +302,7 @@ describe(`Simple shell features`, () => {
       `node -p 'JSON.stringify(process.argv.slice(1))' "$@"`,
       [`hello`, `world`],
     )).resolves.toMatchObject({
-      stdout: `["hello","world"]\n`
+      stdout: `["hello","world"]\n`,
     });
   });
 
@@ -402,7 +402,7 @@ describe(`Simple shell features`, () => {
     await expect(bufferResult(
       `echo "\${DOESNT_EXIST:-hello world}"`,
     )).resolves.toMatchObject({
-      stdout: `hello world\n`
+      stdout: `hello world\n`,
     });
   });
 

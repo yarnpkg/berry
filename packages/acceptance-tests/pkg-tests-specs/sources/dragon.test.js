@@ -156,13 +156,13 @@ describe(`Dragon tests`, () => {
         // peer dependencies and its dev dependencies, and that it itself has a peer
         // depencency. In those circumstances, we've had issues where the peer dependency
         // wasn't being properly resolved.
-        
+
         await xfs.mkdirpPromise(`${path}/my-workspace`);
         await xfs.writeJsonPromise(`${path}/my-workspace/package.json`, {
           name: `my-workspace`,
           peerDependencies: {
             [`no-deps`]: `*`,
-            [`peer-deps`]: `*`, 
+            [`peer-deps`]: `*`,
           },
           devDependencies: {
             [`no-deps`]: `1.0.0`,
@@ -173,7 +173,7 @@ describe(`Dragon tests`, () => {
         await run(`install`);
 
         await expect(source(`require('peer-deps')`, {
-          cwd: `${path}/my-workspace`
+          cwd: `${path}/my-workspace`,
         })).resolves.toMatchObject({
           name: `peer-deps`,
           version: `1.0.0`,

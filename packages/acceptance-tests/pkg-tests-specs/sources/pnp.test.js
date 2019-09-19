@@ -1,11 +1,9 @@
 const {NodeFS, xfs} = require(`@yarnpkg/fslib`);
 const cp = require(`child_process`);
-const {rename} = require(`fs-extra`);
-const {relative, isAbsolute} = require(`path`);
 const {satisfies} = require(`semver`);
 
 const {
-  fs: {createTemporaryFolder, readFile, readJson, writeFile, writeJson},
+  fs: {createTemporaryFolder, readFile, writeFile, writeJson},
   tests: {getPackageDirectoryPath, testIf},
 } = require(`pkg-tests-core`);
 
@@ -124,7 +122,7 @@ describe(`Plug'n'Play`, () => {
     `it should fallback to the top-level dependencies when it cannot require a transitive dependency require`,
     makeTemporaryEnv(
       {
-        dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`}
+        dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`},
       },
       {
         // By default tests are executed with the fallback disabled; this
@@ -220,7 +218,7 @@ describe(`Plug'n'Play`, () => {
           code: `MODULE_NOT_FOUND`,
           pnpCode: `UNDECLARED_DEPENDENCY`,
         });
-    },
+      },
     ),
   );
 
