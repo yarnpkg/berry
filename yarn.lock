@@ -5103,7 +5103,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     is-wsl: "npm:^1.1.0"
-    pkg-tests-core: "workspace:*"
+    pkg-tests-core: "workspace:0.0.0"
   languageName: unknown
   linkType: soft
 
@@ -18655,7 +18655,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"pkg-tests-core@workspace:*, pkg-tests-core@workspace:0.0.0, pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core":
+"pkg-tests-core@workspace:0.0.0, pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core":
   version: 0.0.0-use.local
   resolution: "pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core"
   dependencies:
