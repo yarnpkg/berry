@@ -195,6 +195,8 @@ export const startPackageServer = (): Promise<string> => {
 
   const processors: {[requestType in RequestType]:(parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
     async [RequestType.PackageInfo](parsedRequest, _, response) {
+      if (parsedRequest.type !== RequestType.PackageInfo)
+        throw new Error(`Assertion failed: Invalid request type`);
       const {scope, localName} = parsedRequest;
       const name = scope ? `${scope}/${localName}` : localName;
 
@@ -218,7 +220,7 @@ export const startPackageServer = (): Promise<string> => {
               invariant(packageVersionEntry, 'This can only exist');
 
               return {
-                [version as string]: Object.assign({}, packageVersionEntry.packageJson, {
+                [version as string]: Object.assign({}, packageVersionEntry!.packageJson, {
                   dist: {
                     shasum: await getPackageArchiveHash(name, version),
                     tarball: localName === `unconventional-tarball`
@@ -238,6 +240,9 @@ export const startPackageServer = (): Promise<string> => {
     },
 
     async [RequestType.PackageTarball](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.PackageTarball)
+        throw new Error(`Assertion failed: Invalid request type`);
+
       const {scope, localName, version} = parsedRequest;
       const name = scope ? `${scope}/${localName}` : localName;
 
@@ -247,7 +252,7 @@ export const startPackageServer = (): Promise<string> => {
         return;
       }
 
-      const packageVersionEntry = packageEntry.get(version);
+      const packageVersionEntry = packageEntry.get(version!);
       if (!packageVersionEntry) {
         processError(response, 404, `Package not found: ${name}@${version}`);
         return;
@@ -258,7 +263,7 @@ export const startPackageServer = (): Promise<string> => {
         ['Transfer-Encoding']: 'chunked',
       });
 
-      const packStream = fsUtils.packToStream(packageVersionEntry.path, {virtualPath: NodeFS.toPortablePath('/package')});
+      const packStream = fsUtils.packToStream(NodeFS.toPortablePath(packageVersionEntry.path), {virtualPath: NodeFS.toPortablePath('/package')});
       packStream.pipe(response);
     },
 
@@ -272,6 +277,9 @@ export const startPackageServer = (): Promise<string> => {
     },
 
     async [RequestType.Login](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.Login)
+        throw new Error(`Assertion failed: Invalid request type`);
+
       const {username} = parsedRequest;
       const otp = request.headers['npm-otp'];
       const user = validLogins[username];
@@ -301,7 +309,7 @@ export const startPackageServer = (): Promise<string> => {
           return processError(response, 401, `Unauthorized`);
         }
 
-        if (body.username !== user.username || body.password !== user.password)
+        if (body.username !== username || body.password !== user.password)
           return processError(response, 401, `Unauthorized`);
 
 
@@ -367,13 +375,34 @@ export const startPackageServer = (): Promise<string> => {
     return null;
   };
 
-  const needsAuth = ({scope, localName, type}: Request): boolean => {
-    return (scope != null && scope.startsWith('@private'))
-      || localName && localName.startsWith('private')
-      || type === RequestType.Whoami;
+  const needsAuth = (parsedRequest: Request): boolean => {
+    switch (parsedRequest.type) {
+      case RequestType.Whoami:
+        return true;
+
+      case RequestType.PackageInfo:
+      case RequestType.PackageTarball: {
+        if (parsedRequest.scope && parsedRequest.scope.startsWith('@private')) {
+          return true;
+        } else {
+          return parsedRequest.localName.startsWith(`private`);
+        }
+      }
+
+      default: {
+        return false;
+      }
+    }
   };
 
-  const validLogins = {
+  interface Login {
+    password: string;
+    requiresOtp: boolean;
+    otp?: string;
+    npmAuthToken: string;
+  }
+
+  const validLogins: Record<string, Login> = {
     testUser: {
       password: `password`,
       requiresOtp: true,
@@ -514,7 +543,8 @@ export const generatePkgDriver = ({
   return withConfig({});
 };
 
-export const testIf = (condition: () => boolean, name: string, execute?: jest.ProvidesCallback | undefined, timeout?: number | undefined) => {
+export const testIf = (condition: () => boolean, name: string,
+  execute?: jest.ProvidesCallback | undefined, timeout?: number | undefined) => {
   if (condition()) {
     test(name, execute, timeout);
   }

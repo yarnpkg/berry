@@ -16,12 +16,5 @@
     "repository": {
         "type": "git",
         "url": "ssh://git@github.com/yarnpkg/berry.git"
-    },
-    "devDependencies": {
-        "@types/invariant": "^2.2.30",
-        "@types/jest": "^24.0.18",
-        "@types/klaw": "^3.0.0",
-        "@types/minimatch": "^3.0.3",
-        "@types/tar-fs": "^1.16.1"
     }
 }
