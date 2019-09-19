@@ -1,4 +1,3 @@
-
 import {NodeFS}          from '@yarnpkg/fslib';
 import isWsl             from 'is-wsl';
 import {delimiter}       from 'path';
@@ -10,7 +9,7 @@ const {generatePkgDriver, startPackageServer, getPackageRegistry} = tests;
 const {execFile} = exec;
 const {createTemporaryFolder} = fs;
 
-(global as any).makeTemporaryEnv = generatePkgDriver({
+global.makeTemporaryEnv = generatePkgDriver({
   getName() {
     return `yarn`;
   },

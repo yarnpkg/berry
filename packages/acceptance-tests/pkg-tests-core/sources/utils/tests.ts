@@ -1,5 +1,3 @@
-/// <reference types="jest" />
-
 import {NodeFS, toFilename}              from '@yarnpkg/fslib';
 import crypto                            from 'crypto';
 import {IncomingMessage, ServerResponse} from 'http';
@@ -11,9 +9,7 @@ import {Gzip}                            from 'zlib';
 
 const deepResolve = require('super-resolve');
 
-import {ExecResult} from './exec';
 import * as fsUtils from './fs';
-
 
 export type PackageEntry = Map<string, {path: string, packageJson: Object}>;
 export type PackageRegistry = Map<string, PackageEntry>;
@@ -30,8 +26,6 @@ export type PackageRunDriver = (
   args: Array<string>,
   opts: RunDriverOptions,
 ) => Promise<ExecResult>;
-
-export type PackageDriver = any;
 
 let whitelist = new Map();
 
@@ -467,15 +461,6 @@ export const startPackageServer = (): Promise<string> => {
   });
 };
 
-type RunFunction = (
-  {path, run, source}:
-  {
-    path: string,
-    run: (...args: any[]) => Promise<ExecResult>,
-    source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>
-  }
-) => void;
-
 export const generatePkgDriver = ({
   getName,
   runDriver,
@@ -484,9 +469,9 @@ export const generatePkgDriver = ({
   runDriver: PackageRunDriver,
 }): PackageDriver => {
   const withConfig = (definition: Record<string, any>): PackageDriver => {
-    const makeTemporaryEnv = (packageJson: Record<string, any>, subDefinition: any, fn: RunFunction) => {
+    const makeTemporaryEnv: PackageDriver = (packageJson, subDefinition, fn) => {
       if (typeof subDefinition === 'function') {
-        fn = subDefinition;
+        fn = subDefinition as RunFunction;
         subDefinition = {};
       }
 
@@ -524,7 +509,7 @@ export const generatePkgDriver = ({
         };
 
         try {
-          await fn({
+          await fn!({
             path,
             run,
             source,

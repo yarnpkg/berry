@@ -6,15 +6,6 @@ interface Options {
   env?: Record<string, string>;
 }
 
-export type ExecResult = {
-  stdout: string;
-  stderr: string;
-  code: number;
-} | Error & {
-  stdout: string;
-  stderr: string;
-};
-
 export const execFile = (
   path: string,
   args: Array<string>,
