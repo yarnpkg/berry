@@ -180,9 +180,8 @@ export const createTemporaryFile = async (filePath: PortablePath): Promise<Porta
   }
 };
 
-export const mkdirp = async (target: PortablePath): Promise<void> => {
+export const mkdirp = async (target: PortablePath): Promise<void> =>
   await xfs.mkdirpPromise(target);
-};
 
 export const writeFile = async (target: PortablePath, body: string | Buffer): Promise<void> => {
   await xfs.mkdirpPromise(ppath.dirname(target));
