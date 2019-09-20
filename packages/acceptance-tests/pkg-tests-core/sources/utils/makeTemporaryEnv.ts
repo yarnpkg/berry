@@ -11,7 +11,7 @@ const {generatePkgDriver} = tests;
 const {execFile} = exec;
 const {createTemporaryFolder} = fs;
 
-global.makeTemporaryEnv = generatePkgDriver({
+const mte = generatePkgDriver({
   getName() {
     return `yarn`;
   },
@@ -62,3 +62,9 @@ global.makeTemporaryEnv = generatePkgDriver({
     return res;
   },
 });
+
+(global as any).makeTemporaryEnv = mte;
+
+declare global {
+  var makeTemporaryEnv: typeof mte;
+}

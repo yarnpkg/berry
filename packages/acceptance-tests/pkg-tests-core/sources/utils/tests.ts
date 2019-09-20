@@ -9,6 +9,7 @@ import {Gzip}                            from 'zlib';
 
 const deepResolve = require('super-resolve');
 
+import {ExecResult} from './exec';
 import * as fsUtils from './fs';
 
 export type PackageEntry = Map<string, {path: string, packageJson: Object}>;
@@ -460,6 +461,21 @@ export const startPackageServer = (): Promise<string> => {
     });
   });
 };
+
+export interface PackageDriver {
+  (packageJson: Record<string, any>, subDefinition: Record<string, any> | RunFunction, fn?: RunFunction): any;
+  getPackageManagerName: () => string;
+  withConfig: (definition: Record<string, any>) => PackageDriver;
+}
+
+type RunFunction = (
+  {path, run, source}:
+  {
+    path: string,
+    run: (...args: any[]) => Promise<ExecResult>,
+    source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>
+  }
+) => void;
 
 export const generatePkgDriver = ({
   getName,

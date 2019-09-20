@@ -1,5 +1,3 @@
-/// <reference path="../types/global.d.ts" />
-
 import './utils/makeTemporaryEnv';
 
 import * as exec  from './utils/exec';
