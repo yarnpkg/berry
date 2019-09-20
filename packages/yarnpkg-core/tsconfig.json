@@ -5,6 +5,7 @@
     "declaration": true
   },
   "include": [
-    "sources/**/*"
+    "sources/**/*",
+    "types/**/*"
   ]
 }
