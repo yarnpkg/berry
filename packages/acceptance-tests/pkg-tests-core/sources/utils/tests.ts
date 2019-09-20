@@ -17,7 +17,7 @@ export type PackageRegistry = Map<string, PackageEntry>;
 interface RunDriverOptions extends Record<string, any> {
   cwd?: string;
   projectFolder?: string;
-  registryUrl?: string;
+  registryUrl: string;
   env?: Record<string, string>;
 }
 

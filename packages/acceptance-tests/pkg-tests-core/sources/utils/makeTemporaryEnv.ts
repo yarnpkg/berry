@@ -39,8 +39,8 @@ global.makeTemporaryEnv = generatePkgDriver({
         [`PATH`]: `${nativePath}/bin${delimiter}${process.env.PATH}`,
         [`TEST_ENV`]: `true`,
         [`YARN_GLOBAL_FOLDER`]: `${nativePath}/.yarn/global`,
-        [`YARN_NPM_REGISTRY_SERVER`]: registryUrl!,
-        [`YARN_UNSAFE_HTTP_WHITELIST`]: new URL(registryUrl!).hostname,
+        [`YARN_NPM_REGISTRY_SERVER`]: registryUrl,
+        [`YARN_UNSAFE_HTTP_WHITELIST`]: new URL(registryUrl).hostname,
         // Otherwise the tests would break when C:\tmp is on a different drive than the repo
         [`YARN_ENABLE_ABSOLUTE_VIRTUALS`]: `true`,
         // Otherwise the output isn't stable between runs
