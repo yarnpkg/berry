@@ -1,8 +1,6 @@
 const path = require('path');
 require('../../../.pnp.js').setup();
 
-process.env.NODE_OPTIONS += ` --require ${'../../../.pnp.js'} --require ${require.resolve(`@yarnpkg/monorepo/scripts/setup-ts-execution`)}`;
-
 require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
 global.YARN_VERSION = require('@yarnpkg/core').version;
 const dynamicLibs = require('@yarnpkg/builder/sources/data/dynamicLibs').dynamicLibs;
