@@ -1,18 +1,28 @@
 const path = require('path');
-require('../../../.pnp.js').setup();
 
+// Makes it possible to access our dependencies
+require(`../../../.pnp.js`).setup();
+
+// Adds TS support to Node
 require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
-global.YARN_VERSION = require('@yarnpkg/core').version;
-const dynamicLibs = require('@yarnpkg/builder/sources/data/dynamicLibs').dynamicLibs;
-const plugins = require('@yarnpkg/builder/sources/tools/findPlugins.ts').findPlugins({basedir: path.dirname(require.resolve(`@yarnpkg/cli/package.json`)), plugins: []});
 
+// Exposes the CLI version as like for the bundle
+global.YARN_VERSION = require('@yarnpkg/cli/package.json').version;
+
+// Finds the plugins - only the builtin ones are supported in dev for now
+const dynamicLibs = require('@yarnpkg/builder/sources/data/dynamicLibs').dynamicLibs;
+const plugins = require('@yarnpkg/builder/sources/tools/findPlugins.ts').findPlugins({
+  basedir: path.dirname(require.resolve(`@yarnpkg/cli/package.json`)),
+  plugins: [],
+});
+
+// Inject the plugins in the runtime. With Webpack that would be through
+// val-loader which would execute pluginConfiguration.raw.js, so in Node
+// we need to do something similar and mutate the require cache.
 const PLUGIN_CONFIG_MODULE = './pluginConfiguration.raw.js';
 require.cache[require.resolve(PLUGIN_CONFIG_MODULE)] = {
   exports: {
-    modules: Array.from(dynamicLibs).concat(plugins).reduce((acc, module) => {
-      acc.set(module, require(module));
-      return acc;
-    }, new Map()),
+    modules: new Map(Array.from(dynamicLibs).concat(plugins).map(module => [module, require(module)])),
     plugins: new Set(plugins),
   },
 };
