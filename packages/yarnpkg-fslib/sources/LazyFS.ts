@@ -22,6 +22,10 @@ export class LazyFS<P extends Path> extends ProxiedFS<P, P> {
     return this.instance;
   }
 
+  protected set baseFs(value) {
+    this.instance = value;
+  }
+
   protected mapFromBase(p: P) {
     return p;
   }

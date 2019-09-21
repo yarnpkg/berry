@@ -96,5 +96,8 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.0.0"
   }
 }
