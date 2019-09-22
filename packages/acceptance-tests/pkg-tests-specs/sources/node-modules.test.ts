@@ -1,8 +1,7 @@
-const {
-  fs: {writeFile},
-} = require('pkg-tests-core');
+import {NodeFS} from '@yarnpkg/fslib';
+import {fs}     from 'pkg-tests-core';
 
-declare var makeTemporaryEnv: any;
+const {writeFile} = fs;
 
 describe('Node_Modules', () => {
   it('should install one dependency',
@@ -11,7 +10,7 @@ describe('Node_Modules', () => {
         dependencies: {[`repeat-string`]: `1.6.1`},
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: "node-modules"\n`);
+        await writeFile(NodeFS.toPortablePath(`${path}/.yarnrc.yml`), `nodeLinker: "node-modules"\n`);
 
         // await expect(run(`install`)).resolves.toBe('abc');
       },
