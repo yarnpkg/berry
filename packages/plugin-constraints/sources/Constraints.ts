@@ -18,7 +18,7 @@ export type EnforcedField = {
   fieldValue: string | null,
 };
 
-export const enum DependencyType {
+export enum DependencyType {
   Dependencies = 'dependencies',
   DevDependencies = 'devDependencies',
   PeerDependencies = 'peerDependencies',

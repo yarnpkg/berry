@@ -62,3 +62,20 @@ while read line; do
 
   git tag -a "$TAG" -m "$IDENT"
 done <<< "$RELEASE_DETAILS"
+
+BASE_TAG=$(date +%Y-%m-%d)
+for TAG_SUFFIX in '' {a..z}; do
+    TAG="$BASE_TAG$TAG_SUFFIX"
+
+    if ! [[ -z $(git tag -l "$TAG") ]]; then
+        if git merge-base --is-ancestor tags/"$TAG" HEAD; then
+            continue
+        else
+            git tag --delete "$TAG"
+        fi
+    fi
+
+    git tag -a "$TAG" "$TAG"
+done
+
+printf "%s" "$COMMIT_MESSAGE"
