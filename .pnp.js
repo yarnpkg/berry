@@ -453,10 +453,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/globby", "npm:8.0.0"],
             ["@types/got", "npm:8.3.5"],
             ["@types/inquirer", "npm:0.0.43"],
+            ["@types/invariant", "npm:2.2.30"],
+            ["@types/jest", "npm:24.0.18"],
             ["@types/joi", "npm:13.6.3"],
+            ["@types/klaw", "npm:3.0.0"],
             ["@types/lockfile", "npm:1.0.0"],
             ["@types/lodash", "npm:4.14.136"],
             ["@types/micromatch", "npm:3.1.0"],
+            ["@types/minimatch", "npm:3.0.3"],
             ["@types/mkdirp", "npm:0.5.2"],
             ["@types/node", "npm:10.12.18"],
             ["@types/node-emoji", "npm:1.8.0"],
@@ -470,6 +474,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/stream-to-promise", "npm:2.2.0"],
             ["@types/supports-color", "npm:5.3.0"],
             ["@types/tar", "npm:4.0.0"],
+            ["@types/tar-fs", "npm:1.16.1"],
             ["@types/tar-stream", "npm:1.6.0"],
             ["@types/tmp", "npm:0.0.33"],
             ["@types/treeify", "npm:1.0.0"],
@@ -4626,6 +4631,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           ]
         }]
       ]],
+      ["@types/invariant", [
+        ["npm:2.2.30", {
+          "packageLocation": "./.yarn/cache/@types-invariant-npm-2.2.30-c6a23afc76.zip/node_modules/@types/invariant/",
+          "packageDependencies": [
+            ["@types/invariant", "npm:2.2.30"]
+          ]
+        }]
+      ]],
       ["@types/istanbul-lib-coverage", [
         ["npm:1.1.0", {
           "packageLocation": "./.yarn/cache/@types-istanbul-lib-coverage-npm-1.1.0-1687dab26e.zip/node_modules/@types/istanbul-lib-coverage/",
@@ -4659,6 +4672,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           ]
         }]
       ]],
+      ["@types/jest", [
+        ["npm:24.0.18", {
+          "packageLocation": "./.yarn/cache/@types-jest-npm-24.0.18-0a7271e00d.zip/node_modules/@types/jest/",
+          "packageDependencies": [
+            ["@types/jest", "npm:24.0.18"],
+            ["@types/jest-diff", "npm:20.0.1"]
+          ]
+        }]
+      ]],
+      ["@types/jest-diff", [
+        ["npm:20.0.1", {
+          "packageLocation": "./.yarn/cache/@types-jest-diff-npm-20.0.1-1610c1f387.zip/node_modules/@types/jest-diff/",
+          "packageDependencies": [
+            ["@types/jest-diff", "npm:20.0.1"]
+          ]
+        }]
+      ]],
       ["@types/joi", [
         ["npm:13.6.3", {
           "packageLocation": "./.yarn/cache/@types-joi-npm-13.6.3-702732a54e.zip/node_modules/@types/joi/",
@@ -4672,6 +4702,15 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/@types-json-schema-npm-7.0.3-2bcfc9a0ee.zip/node_modules/@types/json-schema/",
           "packageDependencies": [
             ["@types/json-schema", "npm:7.0.3"]
+          ]
+        }]
+      ]],
+      ["@types/klaw", [
+        ["npm:3.0.0", {
+          "packageLocation": "./.yarn/cache/@types-klaw-npm-3.0.0-2fa689076a.zip/node_modules/@types/klaw/",
+          "packageDependencies": [
+            ["@types/klaw", "npm:3.0.0"],
+            ["@types/node", "npm:10.12.18"]
           ]
         }]
       ]],
@@ -5013,6 +5052,15 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/@types-tar-npm-4.0.0-d33f2e435f.zip/node_modules/@types/tar/",
           "packageDependencies": [
             ["@types/tar", "npm:4.0.0"],
+            ["@types/node", "npm:10.12.18"]
+          ]
+        }]
+      ]],
+      ["@types/tar-fs", [
+        ["npm:1.16.1", {
+          "packageLocation": "./.yarn/cache/@types-tar-fs-npm-1.16.1-9dcabb94a8.zip/node_modules/@types/tar-fs/",
+          "packageDependencies": [
+            ["@types/tar-fs", "npm:1.16.1"],
             ["@types/node", "npm:10.12.18"]
           ]
         }]
@@ -5999,10 +6047,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/globby", "npm:8.0.0"],
             ["@types/got", "npm:8.3.5"],
             ["@types/inquirer", "npm:0.0.43"],
+            ["@types/invariant", "npm:2.2.30"],
+            ["@types/jest", "npm:24.0.18"],
             ["@types/joi", "npm:13.6.3"],
+            ["@types/klaw", "npm:3.0.0"],
             ["@types/lockfile", "npm:1.0.0"],
             ["@types/lodash", "npm:4.14.136"],
             ["@types/micromatch", "npm:3.1.0"],
+            ["@types/minimatch", "npm:3.0.3"],
             ["@types/mkdirp", "npm:0.5.2"],
             ["@types/node", "npm:10.12.18"],
             ["@types/node-emoji", "npm:1.8.0"],
@@ -6016,6 +6068,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/stream-to-promise", "npm:2.2.0"],
             ["@types/supports-color", "npm:5.3.0"],
             ["@types/tar", "npm:4.0.0"],
+            ["@types/tar-fs", "npm:1.16.1"],
             ["@types/tar-stream", "npm:1.6.0"],
             ["@types/tmp", "npm:0.0.33"],
             ["@types/treeify", "npm:1.0.0"],
@@ -6508,7 +6561,8 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["acceptance-tests-06d141", "workspace:packages/acceptance-tests"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
-            ["is-wsl", "npm:1.1.0"]
+            ["is-wsl", "npm:1.1.0"],
+            ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"]
           ]
         }]
       ]],

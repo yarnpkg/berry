@@ -61,7 +61,7 @@ describe(`githubUtils`, () => {
   describe('isGithubUrl', () => {
     it('should handle undefined', () => {
       expect(isGithubUrl(undefined)).not.toBeTruthy();
-    })
+    });
 
     for (const scenario of validScenarios) {
       it(`should properly detect GitHub urls (${scenario.url})`, () => {
@@ -74,7 +74,7 @@ describe(`githubUtils`, () => {
         expect(isGithubUrl(scenario.url)).not.toBeTruthy();
       });
     }
-  })
+  });
 
   describe('parseGithubUrl', () => {
     for (const scenario of validScenarios) {
@@ -98,4 +98,4 @@ describe(`githubUtils`, () => {
       }).toThrow(expected);
     });
   });
-})
+});

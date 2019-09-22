@@ -9,7 +9,8 @@
     "dependencies": {
         "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
         "@yarnpkg/monorepo": "workspace:0.0.0",
-        "is-wsl": "^1.1.0"
+        "is-wsl": "^1.1.0",
+        "pkg-tests-core": "workspace:0.0.0"
     },
     "scripts": {
         "test:integration": "run test:unit --config \"$(pwd)/jest.config.js\""

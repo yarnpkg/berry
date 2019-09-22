@@ -38,7 +38,7 @@ describe(`Legacy tests`, () => {
         await expect(source(`require('no-deps')`)).resolves.toMatchObject({
           name: `no-deps`,
           version: `1.0.0`,
-        })
+        });
       },
     )
   );
@@ -56,7 +56,7 @@ describe(`Legacy tests`, () => {
         await expect(source(`require('no-deps')`)).resolves.toMatchObject({
           name: `no-deps`,
           version: `2.0.0`,
-        })
+        });
       },
     )
   );

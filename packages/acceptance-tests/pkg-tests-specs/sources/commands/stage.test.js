@@ -69,7 +69,7 @@ describe(`Commands`, () => {
         name: `my-commit-package`,
         dependencies: {
           [`deps1`]: `1.0.0`,
-          [`deps2`]: `2.0.0`
+          [`deps2`]: `2.0.0`,
         },
       }, async ({path, run, source}) => {
         await execFile(`git`, [`init`], {cwd: path});
@@ -83,7 +83,7 @@ describe(`Commands`, () => {
         await run(`${path}/new-package`, `init`);
 
         await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({
-          stdout: `chore(yarn): Creates my-commit-package (and one other)\n`
+          stdout: `chore(yarn): Creates my-commit-package (and one other)\n`,
         });
 
         await execFile(`git`, [`add`, `.`], {cwd: path});
@@ -94,12 +94,12 @@ describe(`Commands`, () => {
           name: `my-commit-package`,
           dependencies: {
             [`deps1`]: `2.0.0`,
-            [`deps3`]: `2.0.0`
+            [`deps3`]: `2.0.0`,
           },
         });
 
         await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({
-          stdout: `chore(yarn): Deletes new-package, adds deps3, removes deps2, updates deps1 to 2.0.0\n`
+          stdout: `chore(yarn): Deletes new-package, adds deps3, removes deps2, updates deps1 to 2.0.0\n`,
         });
       }),
     );

@@ -1,33 +1,39 @@
-/* @flow */
-
+import {NodeFS, toFilename}              from '@yarnpkg/fslib';
+import crypto                            from 'crypto';
 import {IncomingMessage, ServerResponse} from 'http';
+import http                              from 'http';
+import invariant                         from 'invariant';
+import {AddressInfo}                     from 'net';
+import semver                            from 'semver';
 import {Gzip}                            from 'zlib';
 
-const crypto = require('crypto');
 const deepResolve = require('super-resolve');
-const http = require('http');
-const invariant = require('invariant');
-const semver = require('semver');
 
-const fsUtils = require('./fs');
+import {ExecResult} from './exec';
+import * as fsUtils from './fs';
 
 export type PackageEntry = Map<string, {path: string, packageJson: Object}>;
 export type PackageRegistry = Map<string, PackageEntry>;
 
+interface RunDriverOptions extends Record<string, any> {
+  cwd?: string;
+  projectFolder?: string;
+  registryUrl: string;
+  env?: Record<string, string>;
+}
+
 export type PackageRunDriver = (
   command: string,
   args: Array<string>,
-  opts: {registryUrl: string},
-) => Promise<{stdout: Buffer, stderr: Buffer}>;
-
-export type PackageDriver = any;
+  opts: RunDriverOptions,
+) => Promise<ExecResult>;
 
 let whitelist = new Map();
 
-exports.setPackageWhitelist = async function whitelistPackages(
+export const setPackageWhitelist = async (
   packages: Map<string, Set<string>>,
   fn: () => Promise<void>,
-) {
+) => {
   whitelist = packages;
   try {
     await fn();
@@ -36,16 +42,15 @@ exports.setPackageWhitelist = async function whitelistPackages(
   }
 };
 
-let packageRegistryPromise = null;
+let packageRegistryPromise: Promise<PackageRegistry> | null = null;
 
-exports.getPackageRegistry = function getPackageRegistry(): Promise<PackageRegistry> {
+export const getPackageRegistry = (): Promise<PackageRegistry> => {
   if (packageRegistryPromise)
     return packageRegistryPromise;
 
-
   return (packageRegistryPromise = (async () => {
     const packageRegistry = new Map();
-    for (const packageFile of await fsUtils.walk(`${require(`pkg-tests-fixtures`)}/packages`, {
+    for (const packageFile of await fsUtils.walk(NodeFS.toPortablePath(`${require(`pkg-tests-fixtures`)}/packages`), {
       filter: ['package.json'],
     })) {
       const packageJson = await fsUtils.readJson(packageFile);
@@ -68,14 +73,14 @@ exports.getPackageRegistry = function getPackageRegistry(): Promise<PackageRegis
   })());
 };
 
-exports.getPackageEntry = async function getPackageEntry(name: string): Promise<PackageEntry | undefined> {
-  const packageRegistry = await exports.getPackageRegistry();
+export const getPackageEntry = async (name: string): Promise<PackageEntry | undefined> => {
+  const packageRegistry = await getPackageRegistry();
 
   return packageRegistry.get(name);
 };
 
-exports.getPackageArchiveStream = async function getPackageArchiveStream(name: string, version: string): Promise<Gzip> {
-  const packageEntry = await exports.getPackageEntry(name);
+export const getPackageArchiveStream = async (name: string, version: string): Promise<Gzip> => {
+  const packageEntry = await getPackageEntry(name);
   if (!packageEntry)
     throw new Error(`Unknown package "${name}"`);
 
@@ -83,13 +88,13 @@ exports.getPackageArchiveStream = async function getPackageArchiveStream(name: s
   if (!packageVersionEntry)
     throw new Error(`Unknown version "${version}" for package "${name}"`);
 
-  return fsUtils.packToStream(packageVersionEntry.path, {
-    virtualPath: '/package',
+  return fsUtils.packToStream(NodeFS.toPortablePath(packageVersionEntry.path), {
+    virtualPath: NodeFS.toPortablePath('/package'),
   });
 };
 
-exports.getPackageArchivePath = async function getPackageArchivePath(name: string, version: string): Promise<string> {
-  const packageEntry = await exports.getPackageEntry(name);
+export const getPackageArchivePath = async (name: string, version: string): Promise<string> => {
+  const packageEntry = await getPackageEntry(name);
   if (!packageEntry)
     throw new Error(`Unknown package "${name}"`);
 
@@ -97,20 +102,20 @@ exports.getPackageArchivePath = async function getPackageArchivePath(name: strin
   if (!packageVersionEntry)
     throw new Error(`Unknown version "${version}" for package "${name}"`);
 
-  const archivePath = await fsUtils.createTemporaryFile(`${name}-${version}.tar.gz`);
+  const archivePath = await fsUtils.createTemporaryFile(toFilename(`${name}-${version}.tar.gz`));
 
-  await fsUtils.packToFile(archivePath, packageVersionEntry.path, {
-    virtualPath: '/package',
+  await fsUtils.packToFile(archivePath, NodeFS.toPortablePath(packageVersionEntry.path), {
+    virtualPath: NodeFS.toPortablePath('/package'),
   });
 
   return archivePath;
 };
 
-exports.getPackageArchiveHash = async function getPackageArchiveHash(
+export const getPackageArchiveHash = async (
   name: string,
   version: string,
-): Promise<string | Buffer> {
-  const stream = await exports.getPackageArchiveStream(name, version);
+): Promise<string | Buffer> => {
+  const stream = await getPackageArchiveStream(name, version);
 
   return new Promise((resolve, reject) => {
     const hash = crypto.createHash('sha1');
@@ -127,11 +132,11 @@ exports.getPackageArchiveHash = async function getPackageArchiveHash(
   });
 };
 
-exports.getPackageHttpArchivePath = async function getPackageHttpArchivePath(
+export const getPackageHttpArchivePath = async (
   name: string,
   version: string,
-): Promise<string> {
-  const packageEntry = await exports.getPackageEntry(name);
+): Promise<string> => {
+  const packageEntry = await getPackageEntry(name);
   if (!packageEntry)
     throw new Error(`Unknown package "${name}"`);
 
@@ -141,17 +146,17 @@ exports.getPackageHttpArchivePath = async function getPackageHttpArchivePath(
 
   const localName = name.replace(/^@[^\/]+\//, ``);
 
-  const serverUrl = await exports.startPackageServer();
+  const serverUrl = await startPackageServer();
   const archiveUrl = `${serverUrl}/${name}/-/${localName}-${version}.tgz`;
 
   return archiveUrl;
 };
 
-exports.getPackageDirectoryPath = async function getPackageDirectoryPath(
+export const getPackageDirectoryPath = async (
   name: string,
   version: string,
-): Promise<string> {
-  const packageEntry = await exports.getPackageEntry(name);
+): Promise<string> => {
+  const packageEntry = await getPackageEntry(name);
   if (!packageEntry)
     throw new Error(`Unknown package "${name}"`);
 
@@ -162,11 +167,11 @@ exports.getPackageDirectoryPath = async function getPackageDirectoryPath(
   return packageVersionEntry.path;
 };
 
-let packageServerUrl = null;
+let packageServerUrl: string | null = null;
 
-exports.startPackageServer = function startPackageServer(): Promise<string> {
+export const startPackageServer = (): Promise<string> => {
   if (packageServerUrl !== null)
-    return packageServerUrl;
+    return Promise.resolve(packageServerUrl);
 
   enum RequestType {
     Login = 'login',
@@ -192,11 +197,13 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
   }
 
   const processors: {[requestType in RequestType]:(parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
-    async [RequestType.PackageInfo](parsedRequest, request, response) {
+    async [RequestType.PackageInfo](parsedRequest, _, response) {
+      if (parsedRequest.type !== RequestType.PackageInfo)
+        throw new Error(`Assertion failed: Invalid request type`);
       const {scope, localName} = parsedRequest;
       const name = scope ? `${scope}/${localName}` : localName;
 
-      const packageEntry = await exports.getPackageEntry(name);
+      const packageEntry = await getPackageEntry(name);
       if (!packageEntry)
         return processError(response, 404, `Package not found: ${name}`);
 
@@ -216,12 +223,12 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
               invariant(packageVersionEntry, 'This can only exist');
 
               return {
-                [version as string]: Object.assign({}, packageVersionEntry.packageJson, {
+                [version as string]: Object.assign({}, packageVersionEntry!.packageJson, {
                   dist: {
-                    shasum: await exports.getPackageArchiveHash(name, version),
+                    shasum: await getPackageArchiveHash(name, version),
                     tarball: localName === `unconventional-tarball`
-                      ? (await exports.getPackageHttpArchivePath(name, version)).replace(`/-/`, `/tralala/`)
-                      : await exports.getPackageHttpArchivePath(name, version),
+                      ? (await getPackageHttpArchivePath(name, version)).replace(`/-/`, `/tralala/`)
+                      : await getPackageHttpArchivePath(name, version),
                   },
                 }),
               };
@@ -236,16 +243,19 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
     },
 
     async [RequestType.PackageTarball](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.PackageTarball)
+        throw new Error(`Assertion failed: Invalid request type`);
+
       const {scope, localName, version} = parsedRequest;
       const name = scope ? `${scope}/${localName}` : localName;
 
-      const packageEntry = await exports.getPackageEntry(name);
+      const packageEntry = await getPackageEntry(name);
       if (!packageEntry) {
         processError(response, 404, `Package not found: ${name}`);
         return;
       }
 
-      const packageVersionEntry = packageEntry.get(version);
+      const packageVersionEntry = packageEntry.get(version!);
       if (!packageVersionEntry) {
         processError(response, 404, `Package not found: ${name}@${version}`);
         return;
@@ -256,7 +266,7 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
         ['Transfer-Encoding']: 'chunked',
       });
 
-      const packStream = fsUtils.packToStream(packageVersionEntry.path, {virtualPath: '/package'});
+      const packStream = fsUtils.packToStream(NodeFS.toPortablePath(packageVersionEntry.path), {virtualPath: NodeFS.toPortablePath('/package')});
       packStream.pipe(response);
     },
 
@@ -270,6 +280,9 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
     },
 
     async [RequestType.Login](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.Login)
+        throw new Error(`Assertion failed: Invalid request type`);
+
       const {username} = parsedRequest;
       const otp = request.headers['npm-otp'];
       const user = validLogins[username];
@@ -299,9 +312,8 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
           return processError(response, 401, `Unauthorized`);
         }
 
-        if (body.username !== user.username || body.password !== user.password)
+        if (body.name !== username || body.password !== user.password)
           return processError(response, 401, `Unauthorized`);
-
 
         const data = JSON.stringify({token: user.npmAuthToken});
 
@@ -312,25 +324,25 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
     },
   };
 
-  function sendError(res: ServerResponse, statusCode: number, errorMessage: string): void {
+  const sendError = (res: ServerResponse, statusCode: number, errorMessage: string): void => {
     res.writeHead(statusCode);
     res.end(errorMessage);
-  }
+  };
 
-  function processError(res: ServerResponse, statusCode: number, errorMessage: string): void {
+  const processError = (res: ServerResponse, statusCode: number, errorMessage: string): void => {
     if (statusCode !== 404 && statusCode !== 401)
       console.error(errorMessage);
 
     sendError(res, statusCode, errorMessage);
-  }
+  };
 
-  function parseRequest(url: string): Request|null {
+  const parseRequest = (url: string): Request | null => {
     let match: RegExpMatchArray|null;
 
     url = url.replace(/%2f/g, '/');
 
     if (match = url.match(/^\/-\/user\/org\.couchdb\.user:(.+)/)) {
-      const [_, username] = match;
+      const [, username] = match;
 
       return {
         type: RequestType.Login,
@@ -341,7 +353,7 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
         type: RequestType.Whoami,
       };
     } else if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)$/)) {
-      const [_, scope, localName] = match;
+      const [, scope, localName] = match;
 
       return {
         type: RequestType.PackageInfo,
@@ -349,7 +361,7 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
         localName,
       };
     } else if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)\/(-|tralala)\/\2-(.*)\.tgz$/)) {
-      const [_, scope, localName, split, version] = match;
+      const [, scope, localName, split, version] = match;
 
       if (localName === `unconventional-tarball` && split === `-`)
         return null;
@@ -363,15 +375,36 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
     }
 
     return null;
+  };
+
+  const needsAuth = (parsedRequest: Request): boolean => {
+    switch (parsedRequest.type) {
+      case RequestType.Whoami:
+        return true;
+
+      case RequestType.PackageInfo:
+      case RequestType.PackageTarball: {
+        if (parsedRequest.scope && parsedRequest.scope.startsWith('@private')) {
+          return true;
+        } else {
+          return parsedRequest.localName.startsWith(`private`);
+        }
+      }
+
+      default: {
+        return false;
+      }
+    }
+  };
+
+  interface Login {
+    password: string;
+    requiresOtp: boolean;
+    otp?: string;
+    npmAuthToken: string;
   }
 
-  function needsAuth({scope, localName, type}: Request): boolean {
-    return (scope != null && scope.startsWith('@private'))
-      || localName && localName.startsWith('private')
-      || type === RequestType.Whoami;
-  }
-
-  const validLogins = {
+  const validLogins: Record<string, Login> = {
     testUser: {
       password: `password`,
       requiresOtp: true,
@@ -395,7 +428,7 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
       (req, res) =>
         void (async () => {
           try {
-            const parsedRequest = parseRequest(req.url);
+            const parsedRequest = parseRequest(req.url!);
 
             if (parsedRequest == null) {
               processError(res, 404, `Invalid route: ${req.url}`);
@@ -423,23 +456,38 @@ exports.startPackageServer = function startPackageServer(): Promise<string> {
     // We don't want the server to prevent the process from exiting
     server.unref();
     server.listen(() => {
-      const {port} = server.address();
+      const {port} = server.address() as AddressInfo;
       resolve((packageServerUrl = `http://localhost:${port}`));
     });
   });
 };
 
-exports.generatePkgDriver = function generatePkgDriver({
+export interface PackageDriver {
+  (packageJson: Record<string, any>, subDefinition: Record<string, any> | RunFunction, fn?: RunFunction): any;
+  getPackageManagerName: () => string;
+  withConfig: (definition: Record<string, any>) => PackageDriver;
+}
+
+type RunFunction = (
+  {path, run, source}:
+  {
+    path: string,
+    run: (...args: any[]) => Promise<ExecResult>,
+    source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>
+  }
+) => void;
+
+export const generatePkgDriver = ({
   getName,
   runDriver,
 }: {
   getName: () => string,
   runDriver: PackageRunDriver,
-}): PackageDriver {
-  function withConfig(definition): PackageDriver {
-    const makeTemporaryEnv = (packageJson, subDefinition, fn) => {
+}): PackageDriver => {
+  const withConfig = (definition: Record<string, any>): PackageDriver => {
+    const makeTemporaryEnv: PackageDriver = (packageJson, subDefinition, fn) => {
       if (typeof subDefinition === 'function') {
-        fn = subDefinition;
+        fn = subDefinition as RunFunction;
         subDefinition = {};
       }
 
@@ -450,15 +498,15 @@ exports.generatePkgDriver = function generatePkgDriver({
         );
       }
 
-      return Object.assign(async function(): Promise<void> {
+      return Object.assign(async (): Promise<void> => {
         const path = await fsUtils.realpath(await fsUtils.createTemporaryFolder());
 
-        const registryUrl = await exports.startPackageServer();
+        const registryUrl = await startPackageServer();
 
         // Writes a new package.json file into our temporary directory
-        await fsUtils.writeJson(`${path}/package.json`, await deepResolve(packageJson));
+        await fsUtils.writeJson(NodeFS.toPortablePath(`${path}/package.json`), await deepResolve(packageJson));
 
-        const run = (...args) => {
+        const run = (...args: any[]) => {
           let callDefinition = {};
 
           if (args.length > 0 && typeof args[args.length - 1] === 'object')
@@ -472,12 +520,12 @@ exports.generatePkgDriver = function generatePkgDriver({
           });
         };
 
-        const source = async (script, callDefinition = {}) => {
+        const source = async (script: string, callDefinition: Record<string, any> = {}): Promise<Record<string, any>> => {
           return JSON.parse((await run('node', '-p', `JSON.stringify((() => ${script})())`, callDefinition)).stdout.toString());
         };
 
         try {
-          await fn({
+          await fn!({
             path,
             run,
             source,
@@ -493,17 +541,18 @@ exports.generatePkgDriver = function generatePkgDriver({
       return getName();
     };
 
-    makeTemporaryEnv.withConfig = subDefinition => {
+    makeTemporaryEnv.withConfig = (subDefinition: Record<string, any>) => {
       return withConfig({...definition, ...subDefinition});
     };
 
     return makeTemporaryEnv;
-  }
+  };
 
   return withConfig({});
 };
 
-exports.testIf = function testIf(condition, name, execute, timeout) {
+export const testIf = (condition: () => boolean, name: string,
+  execute?: jest.ProvidesCallback | undefined, timeout?: number | undefined) => {
   if (condition()) {
     test(name, execute, timeout);
   }
