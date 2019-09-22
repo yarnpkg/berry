@@ -2,7 +2,7 @@
   "name": "@yarnpkg/libzip",
   "version": "2.0.0-rc.3",
   "nextVersion": {
-    "nonce": "6800962703661165"
+    "nonce": "8628512050952369"
   },
   "main": "./sources/index.ts",
   "scripts": {

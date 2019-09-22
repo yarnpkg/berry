@@ -8,7 +8,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(run(... args, `foo`)).resolves.toMatchObject({
+        await expect(run(...args, `foo`)).resolves.toMatchObject({
           stdout: `hello\n`,
         });
       }));
@@ -20,7 +20,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(run(... args, `foo`)).rejects.toMatchObject({
+        await expect(run(...args, `foo`)).rejects.toMatchObject({
           code: 42,
         });
       }));
@@ -35,14 +35,14 @@ describe(`Commands`, () => {
           },
           async ({path, run, source}) => {
             await run(`install`);
-    
+
             await expect(run(`run`, `has-bin-entries`, `success`)).resolves.toMatchObject({
               stdout: `success\n`,
             });
           },
         ),
       );
-    
+
 
       test(
         `it should prefer scripts over binaries`,
@@ -57,14 +57,14 @@ describe(`Commands`, () => {
           },
           async ({path, run, source}) => {
             await run(`install`);
-    
+
             await expect(run(`run`, `has-bin-entries`)).resolves.toMatchObject({
               stdout: `hello world\n`,
             });
           },
         ),
       );
-    
+
       test(
         `it shouldn't require the "--" flag to stop interpreting options after "run" commands (scripts)`,
         makeTemporaryEnv(
@@ -75,13 +75,13 @@ describe(`Commands`, () => {
           },
           async ({path, run, source}) => {
             await run(`install`);
-    
+
             await expect(run(`run`, `hello`, `--hello`)).resolves.toMatchObject({
               stdout: `--hello\n`,
             });
           },
         ),
-      );    
+      );
 
       test(
         `it shouldn't require the "--" flag to stop interpreting options after "run" commands (binaries)`,
@@ -93,19 +93,19 @@ describe(`Commands`, () => {
           },
           async ({path, run, source}) => {
             await run(`install`);
-    
+
             await expect(run(`run`, `has-bin-entries`, `--hello`)).resolves.toMatchObject({
               stdout: `--hello\n`,
             });
           },
         ),
-      ); 
+      );
       test(`it should print the list of available scripts if no parameters passed to command`,
         makeTemporaryEnv(
           {
             scripts: {
               foo: `echo hello`,
-              bar: `echo hi`
+              bar: `echo hi`,
             },
           },
           async ({path, run, source}) => {

@@ -1,5 +1,4 @@
 const {
-  fs: {writeFile, writeJson},
   tests: {setPackageWhitelist},
 } = require('pkg-tests-core');
 

@@ -1,7 +1,7 @@
 {
     "name": "pkg-tests-core",
     "private": true,
-    "main": "./sources/index.js",
+    "main": "./sources/index.ts",
     "dependencies": {
         "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
         "invariant": "^2.2.4",

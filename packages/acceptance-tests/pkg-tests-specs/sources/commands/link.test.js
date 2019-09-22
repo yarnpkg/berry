@@ -1,7 +1,7 @@
 import {NodeFS} from '@yarnpkg/fslib';
 
 const {
-  fs: {createTemporaryFolder, mkdirp, readJson, writeJson},
+  fs: {createTemporaryFolder, readJson, writeJson},
 } = require('pkg-tests-core');
 
 describe(`Commands`, () => {
@@ -38,7 +38,7 @@ describe(`Commands`, () => {
           await writeJson(`${tmp}/my-package/package.json`, {
             name: `my-package`,
           });
-    
+
           await writeJson(`${path}/packages/workspace/package.json`, {
             name: `workspace`,
           });

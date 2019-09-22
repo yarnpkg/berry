@@ -1,29 +1,28 @@
-const {Minimatch} = require('minimatch');
-const {posix} = require('path');
+import {Minimatch} from 'minimatch';
+import {posix}     from 'path';
 
-exports.stringPatternMatch = function stringPatternMatch(
+export const stringPatternMatch = (
   string: string,
   patterns: Array<string>,
   {matchBase = false, dot = true}: {matchBase?: boolean, dot?: boolean} = {},
-): boolean {
+): boolean => {
   const compiledPatterns = (Array.isArray(patterns) ? patterns : [patterns]).map(
     pattern => new Minimatch(pattern, {matchBase, dot}),
   );
 
   // If there's only negated patterns, we assume that everything should match by default
-  let status = compiledPatterns.every(compiledPattern => compiledPattern.negated);
+  let status = compiledPatterns.every(compiledPattern => (compiledPattern as any).negated);
 
   for (const compiledPattern of compiledPatterns) {
-    if (compiledPattern.negated) {
-      if (!status) {
+    if ((compiledPattern as any).negated) {
+      if (!status)
         continue;
-      }
+
 
       status = compiledPattern.match(string) === false;
     } else {
-      if (status) {
+      if (status)
         continue;
-      }
 
       status = compiledPattern.match(string) === true;
     }
@@ -32,28 +31,28 @@ exports.stringPatternMatch = function stringPatternMatch(
   return status;
 };
 
-exports.filePatternMatch = function filePatternMatch(
+export const filePatternMatch = (
   filePath: string,
   patterns: Array<string>,
   {matchBase = true, dot = true}: {matchBase?: boolean, dot?: boolean} = {},
-): boolean {
+): boolean => {
   return exports.stringPatternMatch(posix.resolve('/', filePath), patterns, {matchBase, dot});
 };
 
-exports.parseJsonStream = function parseJsonStream(
+export const parseJsonStream = (
   stream: string,
   key?: string,
-): any {
+): any => {
   const lines = stream.match(/.+\n/g);
-  const entries = lines.map(line => JSON.parse(line));
+  const entries: Array<Record<string, any>> = lines!.map(line => JSON.parse(line));
 
   if (typeof key === `undefined`)
     return entries;
 
-  const data = {};
+  const data: Record<string, any> = {};
 
   for (const entry of entries)
     data[entry[key]] = entry;
 
   return data;
-}
+};

@@ -1,17 +1,17 @@
-/* @flow */
+import {NodeFS}    from '@yarnpkg/fslib';
+import {delimiter} from 'path';
 
-const {delimiter} = require(`path`);
-const isWsl = require(`is-wsl`);
-const {URL} = require(`url`);
+import {URL}       from 'url';
 
-const {
-  tests: {generatePkgDriver, startPackageServer, getPackageRegistry},
-  exec: {execFile},
-  fs: {createTemporaryFolder},
-} = require(`pkg-tests-core`);
-const {NodeFS} = require('@yarnpkg/fslib');
+import * as exec   from './exec';
+import * as fs     from './fs';
+import * as tests  from './tests';
 
-global.makeTemporaryEnv = generatePkgDriver({
+const {generatePkgDriver} = tests;
+const {execFile} = exec;
+const {createTemporaryFolder} = fs;
+
+const mte = generatePkgDriver({
   getName() {
     return `yarn`;
   },
@@ -20,9 +20,9 @@ global.makeTemporaryEnv = generatePkgDriver({
     [command, ...args],
     {cwd, projectFolder, registryUrl, env, ...config},
   ) {
-    const rcEnv = {};
-    for (const [key, value] of Object.entries(config))
-      rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = value;
+    const rcEnv: Record<string, any> = {};
+    for (const key of Object.keys(config))
+      rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = config[key];
 
     const nativePath = NodeFS.fromPortablePath(path);
     const tempHomeFolder = NodeFS.fromPortablePath(await createTemporaryFolder());
@@ -31,7 +31,7 @@ global.makeTemporaryEnv = generatePkgDriver({
       ? [projectFolder]
       : [];
 
-    const res = await execFile(process.execPath, [`${__dirname}/../../scripts/run-yarn.js`, ...cwdArgs, command, ...args], {
+    const res = await execFile(process.execPath, [`${__dirname}/../../../../../scripts/run-yarn.js`, ...cwdArgs, command, ...args], {
       cwd: cwd || path,
       env: {
         [`HOME`]: tempHomeFolder,
@@ -63,11 +63,8 @@ global.makeTemporaryEnv = generatePkgDriver({
   },
 });
 
-if (process.platform === `win32` || isWsl || process.platform === `darwin`)
-  jest.setTimeout(10000);
+(global as any).makeTemporaryEnv = mte;
 
-
-beforeEach(async () => {
-  await startPackageServer();
-  await getPackageRegistry();
-});
+declare global {
+  var makeTemporaryEnv: typeof mte;
+}

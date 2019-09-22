@@ -1,4 +1,4 @@
-import { NodeFS } from '../sources/NodeFS';
+import {NodeFS} from '../sources/NodeFS';
 
 describe(`Portable paths`, () => {
   for (const platform of [`darwin`, `win32`]) {
