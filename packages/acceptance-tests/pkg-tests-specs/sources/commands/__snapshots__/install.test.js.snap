@@ -5,7 +5,7 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: ┌ Validation step
-➤ YN0057: │ package-a-cafaf2: String bin field, but no attached package name
+➤ YN0057: │ package-a-ddd35d: String bin field, but no attached package name
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
@@ -42,7 +42,7 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: ┌ Validation step
-➤ YN0057: │ root-workspace-988eec: String bin field, but no attached package name
+➤ YN0057: │ root-workspace-0b6124: String bin field, but no attached package name
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
