@@ -17,7 +17,7 @@ Object {
   - component-a
   - component-b
   - docs
-  - root-workspace-988eec?
+  - root-workspace-0b6124?
 
 $ yarn workspace <workspaceName> <commandName> ...
 ",

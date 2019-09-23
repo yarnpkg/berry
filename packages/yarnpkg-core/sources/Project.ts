@@ -1,6 +1,6 @@
 import {xfs, NodeFS, PortablePath, ppath, toFilename} from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                     from '@yarnpkg/parsers';
-import {createHmac}                                   from 'crypto';
+import {createHash}                                   from 'crypto';
 // @ts-ignore
 import Logic                                          from 'logic-solver';
 import pLimit                                         from 'p-limit';
@@ -916,7 +916,7 @@ export class Project {
     // later to improve this further by explaining *why* a rebuild happened.
 
     const getBuildHash = (locator: Locator) => {
-      const hash = createHmac(`sha512`, `berry`);
+      const hash = createHash(`sha512`);
 
       const traverse = (locatorHash: LocatorHash, seenPackages: Set<string> = new Set()) => {
         hash.update(locatorHash);

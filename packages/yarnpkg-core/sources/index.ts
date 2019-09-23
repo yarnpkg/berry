@@ -1,5 +1,6 @@
 import * as execUtils   from './execUtils';
 import * as folderUtils from './folderUtils';
+import * as hashUtils   from './hashUtils';
 import * as httpUtils   from './httpUtils';
 import * as miscUtils   from './miscUtils';
 import * as scriptUtils from './scriptUtils';
@@ -26,6 +27,7 @@ export {IdentHash, DescriptorHash, LocatorHash}                                 
 export {Ident, Descriptor, Locator, Package}                                             from './types';
 export {LinkType}                                                                        from './types';
 
+export {hashUtils};
 export {httpUtils};
 export {execUtils};
 export {folderUtils};
