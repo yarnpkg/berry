@@ -36,6 +36,9 @@ export default class YarnCommand extends BaseCommand {
   @Command.String(`--cache-folder`)
   cacheFolder?: string;
 
+  @Command.Boolean(`--silent`, {hidden: true})
+  silent?: boolean = false;
+
   static usage = Command.Usage({
     description: `install the project dependencies`,
     details: `
