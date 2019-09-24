@@ -112,7 +112,7 @@ class PnpInstaller implements Installer {
       packageDependencies.set(structUtils.requirableIdent(descriptor), null);
 
     const packageStore = this.getPackageStore(key1);
-    packageStore.set(key2, {packageLocation, packageDependencies});
+    packageStore.set(key2, {packageLocation, packageDependencies, linkType: pkg.linkType});
 
     if (hasVirtualInstances)
       this.blacklistedPaths.add(packageLocation);
@@ -156,6 +156,7 @@ class PnpInstaller implements Installer {
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
     const blacklistedLocations = this.blacklistedPaths;
+    const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
     const ignorePattern = this.opts.project.configuration.get(`pnpIgnorePattern`);
@@ -171,7 +172,16 @@ class PnpInstaller implements Installer {
     const pnpPath = getPnpPath(this.opts.project);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
 
-    const pnpSettings = {blacklistedLocations, enableTopLevelFallback, fallbackExclusionList, ignorePattern, packageRegistry, shebang, virtualRoots};
+    const pnpSettings = {
+      blacklistedLocations,
+      dependencyTreeRoots,
+      enableTopLevelFallback,
+      fallbackExclusionList,
+      ignorePattern,
+      packageRegistry,
+      shebang,
+      virtualRoots,
+    };
 
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
       const loaderFile = generateInlinedScript(pnpSettings);
@@ -238,6 +248,7 @@ class PnpInstaller implements Installer {
       packageStore.set(normalizedPath, diskInformation = {
         packageLocation: normalizedPath,
         packageDependencies: new Map(),
+        linkType: LinkType.SOFT,
       });
     }
 

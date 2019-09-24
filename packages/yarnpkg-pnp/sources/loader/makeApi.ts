@@ -301,7 +301,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * functions, they'll just have to fix the conflicts and bump their own version number.
    */
 
-  const VERSIONS = {std: 2};
+  const VERSIONS = {std: 3};
 
   /**
    * We export a special symbol for easy access to the top level locator.
@@ -623,6 +623,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     VERSIONS,
     topLevel,
 
+    getDependencyTreeRoots: () => {
+      return [...runtimeState.dependencyTreeRoots];
+    },
 
     getPackageInformation: (locator: PackageLocator) => {
       const info = getPackageInformation(locator);

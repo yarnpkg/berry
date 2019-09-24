@@ -6,13 +6,15 @@ import {NativePath, PortablePath, Path} from '@yarnpkg/fslib';
 // Apart from that, note that the "Data"-suffixed types are the ones stored
 // within the state files (hence why they only use JSON datatypes).
 
+export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'};
+
 export type PhysicalPackageLocator = {name: string, reference: string};
 export type TopLevelPackageLocator = {name: null, reference: null};
 
 export type PackageLocator = PhysicalPackageLocator | TopLevelPackageLocator;
 
-export type PackageInformation<P extends Path> = {packageLocation: P, packageDependencies: Map<string, string | [string, string] | null>};
-export type PackageInformationData<P extends Path> = {packageLocation: P, packageDependencies: Array<[string, string | [string, string] | null]>};
+export type PackageInformation<P extends Path> = {packageLocation: P, packageDependencies: Map<string, string | [string, string] | null>, linkType: LinkType};
+export type PackageInformationData<P extends Path> = {packageLocation: P, packageDependencies: Array<[string, string | [string, string] | null]>, linkType: LinkType};
 
 export type PackageStore = Map<string | null, PackageInformation<PortablePath>>;
 export type PackageStoreData = Array<[string | null, PackageInformationData<PortablePath>]>;
@@ -32,6 +34,7 @@ export type SerializedState = {
   locationBlacklistData: LocationBlacklistData,
   locationLengthData: LocationLengthData,
   packageRegistryData: PackageRegistryData,
+  dependencyTreeRoots: Array<PackageLocator>,
   virtualRoots: Array<PortablePath>,
 };
 
@@ -44,6 +47,7 @@ export type RuntimeState = {
   packageLocationLengths: Array<number>,
   packageLocatorsByLocations: Map<PortablePath, PackageLocator | null>;
   packageRegistry: PackageRegistry,
+  dependencyTreeRoots: Array<PackageLocator>,
   virtualRoots: Array<PortablePath>,
 };
 
@@ -75,12 +79,18 @@ export type PnpSettings = {
   // Some paths where the hook will map virtual indirection (we use that to
   // generate unique paths for each package that lists peer dependencies)
   virtualRoots?: Array<PortablePath>,
+
+  // The following locators will be made available in the API through the
+  // getDependencyTreeRoots function. They are typically the workspace
+  // locators.
+  dependencyTreeRoots: Array<PackageLocator>,
 };
 
 export type PnpApi = {
   VERSIONS: {std: number, [key: string]: number},
   topLevel: {name: null, reference: null},
 
+  getDependencyTreeRoots: () => Array<PackageLocator>,
   getPackageInformation: (locator: PackageLocator) => PackageInformation<NativePath> | null,
   findPackageLocator: (location: NativePath) => PackageLocator | null,
 
