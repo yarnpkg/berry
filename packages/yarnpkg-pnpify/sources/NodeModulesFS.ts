@@ -79,7 +79,6 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   }
 
   private watchPnpFile(pnpFilePath: NativePath) {
-    this.baseFs.writeFileSync(NodeFS.toPortablePath('/tmp/pnpify.log'), '');
     this.baseFs.watch(NodeFS.toPortablePath(pnpFilePath), () => {
       delete require.cache[pnpFilePath];
       const pnp = require(pnpFilePath);
