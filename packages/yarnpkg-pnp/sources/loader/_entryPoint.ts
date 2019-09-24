@@ -65,7 +65,7 @@ if (process.mainModule === __non_webpack_module__) {
 
   const processResolution = (request: string, issuer: string) => {
     try {
-      reportSuccess(module.exports.resolveRequest(request, issuer));
+      reportSuccess(api.resolveRequest(request, issuer));
     } catch (error) {
       reportError(error.code, error.message, error.data);
     }
