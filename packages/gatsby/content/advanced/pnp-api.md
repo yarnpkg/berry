@@ -31,10 +31,13 @@ Note that one package locator is different from the others: the top-level locato
 export type PackageInformation = {
   packageLocation: string,
   packageDependencies: Map<string, string>,
+  linkType: 'HARD' | 'SOFT',
 };
 ```
 
 The package information set describes the location where the package can be found on the disk, and the exact set of dependencies it is allowed to require. The `packageDependencies` values are valid references that, when associated with their key, constitute a valid `PackageLocator` object.
+
+The `linkType` field is only useful in specific cases - it describes whether the producer of the PnP API was asked to make the package available through an hard linkage (in which case all the `packageLocation` field is reputed being owned by the linker) or a soft linkage (in which case the `packageLocation` field represents a location outside of the sphere of influence of the linker).
 
 ## Runtime Constants
 
