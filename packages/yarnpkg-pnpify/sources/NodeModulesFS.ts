@@ -1,9 +1,10 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@yarnpkg/fslib';
 import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@yarnpkg/fslib';
-import {WatchOptions, WatchCallback, Watcher}              from '@yarnpkg/fslib';
+import {Filename, WatchOptions, WatchCallback, Watcher}    from '@yarnpkg/fslib';
 import {FSPath, NativePath, PortablePath, npath, ppath}    from '@yarnpkg/fslib';
 import {PnpApi}                                            from '@yarnpkg/pnp';
 
+import {EventEmitter}                                      from 'events';
 import fs                                                  from 'fs';
 
 import {NodePathResolver, ResolvedPath}                    from './NodePathResolver';
@@ -11,6 +12,27 @@ import {NodePathResolver, ResolvedPath}                    from './NodePathResol
 export type NodeModulesFSOptions = {
   realFs?: typeof fs
 };
+
+class WatchEventEmitter extends EventEmitter {
+  private watchedDirs: WatchedDirMap;
+  private watchPath: PortablePath;
+  private watcherId: number;
+
+  public constructor(watchedDirs: WatchedDirMap, watchPath: PortablePath, watcherId: number) {
+    super();
+    this.watchedDirs = watchedDirs;
+    this.watchPath = watchPath;
+    this.watcherId = watcherId;
+  }
+
+  public close() {
+    const watchedDir = this.watchedDirs.get(this.watchPath)!;
+    delete watchedDir.watchers[this.watcherId];
+    if (Object.keys(watchedDir.watchers).length === 0) {
+      this.watchedDirs.delete(this.watchPath);
+    }
+  }
+}
 
 export class NodeModulesFS extends ProxiedFS<NativePath, PortablePath> {
   protected readonly baseFs: FakeFS<PortablePath>;
@@ -34,15 +56,51 @@ type PortableNodeModulesFSOptions = {
   baseFs?: FakeFS<PortablePath>
 };
 
+type WatchedDirMap = Map<PortablePath, WatchedDir>;
+
+interface WatchedDir {
+  lastWatcherId: number;
+  watchers: { [watcherId: number]: Watcher & EventEmitter };
+  entries: Filename[];
+}
+
 class PortableNodeModulesFs extends FakeFS<PortablePath> {
   private readonly baseFs: FakeFS<PortablePath>;
-  private readonly pathResolver: NodePathResolver;
+  private readonly watchedDirs: WatchedDirMap = new Map();
+  private pathResolver: NodePathResolver;
 
   constructor(pnp: PnpApi, {baseFs = new NodeFS()}: PortableNodeModulesFSOptions = {}) {
     super(ppath);
 
     this.baseFs = baseFs;
     this.pathResolver = new NodePathResolver(pnp);
+    const pnpFilePath = npath.join(pnp.getPackageInformation(pnp.topLevel)!.packageLocation, '.pnp.js');
+    this.watchPnpFile(pnpFilePath);
+  }
+
+  private watchPnpFile(pnpFilePath: NativePath) {
+    this.baseFs.writeFileSync(NodeFS.toPortablePath('/tmp/pnpify.log'), '');
+    this.baseFs.watch(NodeFS.toPortablePath(pnpFilePath), () => {
+      delete require.cache[pnpFilePath];
+      const pnp = require(pnpFilePath);
+      // Sometimes pnp object is empty, which is weird, but eventually it comes correctly filled
+      if (Object.keys(pnp).length > 0) {
+        this.pathResolver = new NodePathResolver(pnp);
+
+        for (const [watchPath, watchedDir] of this.watchedDirs) {
+          const newEntries = this.resolvePath(watchPath).dirList || [];
+          // Difference between new and old directory contents
+          const entryDiff = newEntries.filter(entry => !watchedDir.entries.includes(entry))
+            .concat(watchedDir.entries.filter(entry => !newEntries.includes(entry)));
+          for (const entry of entryDiff) {
+            for (const watcher of Object.values(watchedDir.watchers)) {
+              watcher.emit('rename', entry);
+            }
+          }
+          watchedDir.entries = newEntries;
+        }
+      }
+    });
   }
 
   resolve(path: PortablePath) {
@@ -396,11 +454,28 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
-    return this.baseFs.watch(
-      p,
-      // @ts-ignore
-      a,
-      b,
-    );
+    const pnpPath = this.resolvePath(p);
+    const watchPath = pnpPath.resolvedPath;
+    if (watchPath && pnpPath.dirList) {
+      let watchedDir = this.watchedDirs.get(watchPath);
+      if (!watchedDir) {
+        watchedDir = {lastWatcherId: 0, watchers: {}, entries: pnpPath.dirList};
+        this.watchedDirs.set(watchPath, watchedDir);
+      }
+      const watcherId = watchedDir.lastWatcherId++;
+
+      const watchEmitter = new WatchEventEmitter(this.watchedDirs, watchPath, watcherId);
+      watchedDir.watchers[watcherId] = watchEmitter;
+
+      const callback: WatchCallback = typeof a === 'function' ? a : typeof b === 'function' ? b : () => {};
+      watchEmitter.on('rename', (filename: string) => callback('rename', filename));
+    } else {
+      return this.baseFs.watch(
+        p,
+        // @ts-ignore
+        a,
+        b,
+      );
+    }
   }
 }
