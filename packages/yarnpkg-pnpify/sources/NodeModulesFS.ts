@@ -1,13 +1,13 @@
-import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@yarnpkg/fslib';
-import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@yarnpkg/fslib';
-import {Filename, WatchOptions, WatchCallback, Watcher}    from '@yarnpkg/fslib';
-import {FSPath, NativePath, PortablePath, npath, ppath}    from '@yarnpkg/fslib';
-import {PnpApi}                                            from '@yarnpkg/pnp';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, toFilename} from '@yarnpkg/fslib';
+import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                   from '@yarnpkg/fslib';
+import {Filename, WatchOptions, WatchCallback, Watcher}                from '@yarnpkg/fslib';
+import {FSPath, NativePath, PortablePath, npath, ppath}                from '@yarnpkg/fslib';
 
-import {EventEmitter}                                      from 'events';
-import fs                                                  from 'fs';
+import {PnpApi}                                                        from '@yarnpkg/pnp';
+import {EventEmitter}                                                  from 'events';
+import fs                                                              from 'fs';
 
-import {NodePathResolver, ResolvedPath}                    from './NodePathResolver';
+import {NodePathResolver, ResolvedPath}                                from './NodePathResolver';
 
 export type NodeModulesFSOptions = {
   realFs?: typeof fs
@@ -74,29 +74,33 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
     this.baseFs = baseFs;
     this.pathResolver = new NodePathResolver(pnp);
-    const pnpFilePath = npath.join(pnp.getPackageInformation(pnp.topLevel)!.packageLocation, '.pnp.js');
-    this.watchPnpFile(pnpFilePath);
+
+    const pnpRootPath = NodeFS.toPortablePath(pnp.getPackageInformation(pnp.topLevel)!.packageLocation);
+    this.watchPnpFile(pnpRootPath);
   }
 
-  private watchPnpFile(pnpFilePath: NativePath) {
-    this.baseFs.watch(NodeFS.toPortablePath(pnpFilePath), () => {
-      delete require.cache[pnpFilePath];
-      const pnp = require(pnpFilePath);
-      // Sometimes pnp object is empty, which is weird, but eventually it comes correctly filled
-      if (Object.keys(pnp).length > 0) {
-        this.pathResolver = new NodePathResolver(pnp);
+  private watchPnpFile(pnpRootPath: PortablePath) {
+    const pnpFilePath = ppath.join(NodeFS.toPortablePath(pnpRootPath), toFilename('.pnp.js'));
+    this.baseFs.watch(pnpRootPath, {persistent: false},  (_, filename) => {
+      if (filename === '.pnp.js') {
+        delete require.cache[pnpFilePath];
+        const pnp = require(pnpFilePath);
+        // Sometimes pnp object is empty, which is weird, but eventually it comes correctly filled
+        if (Object.keys(pnp).length > 0) {
+          this.pathResolver = new NodePathResolver(pnp);
 
-        for (const [watchPath, watchedDir] of this.watchedDirs) {
-          const newEntries = this.resolvePath(watchPath).dirList || [];
-          // Difference between new and old directory contents
-          const entryDiff = newEntries.filter(entry => !watchedDir.entries.includes(entry))
-            .concat(watchedDir.entries.filter(entry => !newEntries.includes(entry)));
-          for (const entry of entryDiff) {
-            for (const watcher of Object.values(watchedDir.watchers)) {
-              watcher.emit('rename', entry);
+          for (const [watchPath, watchedDir] of this.watchedDirs) {
+            const newEntries = this.resolvePath(watchPath).dirList || [];
+            // Difference between new and old directory contents
+            const entryDiff = newEntries.filter(entry => !watchedDir.entries.includes(entry))
+              .concat(watchedDir.entries.filter(entry => !newEntries.includes(entry)));
+            for (const entry of entryDiff) {
+              for (const watcher of Object.values(watchedDir.watchers)) {
+                watcher.emit('rename', entry);
+              }
             }
+            watchedDir.entries = newEntries;
           }
-          watchedDir.entries = newEntries;
         }
       }
     });
