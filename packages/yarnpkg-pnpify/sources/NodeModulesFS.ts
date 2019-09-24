@@ -80,27 +80,24 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   }
 
   private watchPnpFile(pnpRootPath: PortablePath) {
-    const pnpFilePath = ppath.join(NodeFS.toPortablePath(pnpRootPath), toFilename('.pnp.js'));
+    const pnpFilePath = ppath.join(pnpRootPath, toFilename('.pnp.js'));
     this.baseFs.watch(pnpRootPath, {persistent: false},  (_, filename) => {
       if (filename === '.pnp.js') {
         delete require.cache[pnpFilePath];
         const pnp = require(pnpFilePath);
-        // Sometimes pnp object is empty, which is weird, but eventually it comes correctly filled
-        if (Object.keys(pnp).length > 0) {
-          this.pathResolver = new NodePathResolver(pnp);
+        this.pathResolver = new NodePathResolver(pnp);
 
-          for (const [watchPath, watchedDir] of this.watchedDirs) {
-            const newEntries = this.resolvePath(watchPath).dirList || [];
-            // Difference between new and old directory contents
-            const entryDiff = newEntries.filter(entry => !watchedDir.entries.includes(entry))
-              .concat(watchedDir.entries.filter(entry => !newEntries.includes(entry)));
-            for (const entry of entryDiff) {
-              for (const watcher of Object.values(watchedDir.watchers)) {
-                watcher.emit('rename', entry);
-              }
+        for (const [watchPath, watchedDir] of this.watchedDirs) {
+          const newEntries = this.resolvePath(watchPath).dirList || [];
+          // Difference between new and old directory contents
+          const entryDiff = newEntries.filter(entry => !watchedDir.entries.includes(entry))
+            .concat(watchedDir.entries.filter(entry => !newEntries.includes(entry)));
+          for (const entry of entryDiff) {
+            for (const watcher of Object.values(watchedDir.watchers)) {
+              watcher.emit('rename', entry);
             }
-            watchedDir.entries = newEntries;
           }
+          watchedDir.entries = newEntries;
         }
       }
     });
