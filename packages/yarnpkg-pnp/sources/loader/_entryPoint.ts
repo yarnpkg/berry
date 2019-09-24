@@ -38,6 +38,7 @@ const api = Object.assign(makeApi(runtimeState, {
   },
 });
 
+// eslint-disable-next-line arca/no-default-export
 export default api;
 
 if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
