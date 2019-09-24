@@ -14,22 +14,22 @@ export type NodeModulesFSOptions = {
 };
 
 class WatchEventEmitter extends EventEmitter {
-  private watchedDirs: WatchedDirMap;
+  private dirWatchers: DirectoryWatcherMap;
   private watchPath: PortablePath;
   private watcherId: number;
 
-  public constructor(watchedDirs: WatchedDirMap, watchPath: PortablePath, watcherId: number) {
+  public constructor(dirWatchers: DirectoryWatcherMap, watchPath: PortablePath, watcherId: number) {
     super();
-    this.watchedDirs = watchedDirs;
+    this.dirWatchers = dirWatchers;
     this.watchPath = watchPath;
     this.watcherId = watcherId;
   }
 
   public close() {
-    const watchedDir = this.watchedDirs.get(this.watchPath)!;
-    delete watchedDir.watchers[this.watcherId];
-    if (Object.keys(watchedDir.watchers).length === 0) {
-      this.watchedDirs.delete(this.watchPath);
+    const dirWatcher = this.dirWatchers.get(this.watchPath)!;
+    dirWatcher.eventEmitters.delete(this.watcherId);
+    if (Object.keys(dirWatcher.eventEmitters).length === 0) {
+      this.dirWatchers.delete(this.watchPath);
     }
   }
 }
@@ -56,17 +56,17 @@ type PortableNodeModulesFSOptions = {
   baseFs?: FakeFS<PortablePath>
 };
 
-type WatchedDirMap = Map<PortablePath, WatchedDir>;
+type DirectoryWatcherMap = Map<PortablePath, DirectoryWatcher>;
 
-interface WatchedDir {
+interface DirectoryWatcher {
   lastWatcherId: number;
-  watchers: { [watcherId: number]: Watcher & EventEmitter };
-  entries: Filename[];
+  eventEmitters: Map<number, Watcher & EventEmitter>;
+  dirEntries: Set<Filename>;
 }
 
 class PortableNodeModulesFs extends FakeFS<PortablePath> {
   private readonly baseFs: FakeFS<PortablePath>;
-  private readonly watchedDirs: WatchedDirMap = new Map();
+  private readonly dirWatchers: DirectoryWatcherMap = new Map();
   private pathResolver: NodePathResolver;
 
   constructor(pnp: PnpApi, {baseFs = new NodeFS()}: PortableNodeModulesFSOptions = {}) {
@@ -87,17 +87,27 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
         const pnp = require(pnpFilePath);
         this.pathResolver = new NodePathResolver(pnp);
 
-        for (const [watchPath, watchedDir] of this.watchedDirs) {
-          const newEntries = this.resolvePath(watchPath).dirList || [];
+        for (const [watchPath, dirWatcher] of this.dirWatchers) {
+          const newDirEntries = this.resolvePath(watchPath).dirList || new Set();
           // Difference between new and old directory contents
-          const entryDiff = newEntries.filter(entry => !watchedDir.entries.includes(entry))
-            .concat(watchedDir.entries.filter(entry => !newEntries.includes(entry)));
-          for (const entry of entryDiff) {
-            for (const watcher of Object.values(watchedDir.watchers)) {
+          const dirEntryDiff = new Set();
+          for (const entry of newDirEntries) {
+            if (!dirWatcher.dirEntries.has(entry)) {
+              dirEntryDiff.add(entry);
+            }
+          }
+          for (const entry of dirWatcher.dirEntries) {
+            if (!newDirEntries.has(entry)) {
+              dirEntryDiff.add(entry);
+            }
+          }
+
+          for (const entry of dirEntryDiff) {
+            for (const watcher of Object.values(dirWatcher.eventEmitters)) {
               watcher.emit('rename', entry);
             }
           }
-          watchedDir.entries = newEntries;
+          dirWatcher.dirEntries = newDirEntries;
         }
       }
     });
@@ -420,7 +430,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     if (!pnpPath.resolvedPath) {
       throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, scandir '${p}'`);
     } else if (pnpPath.dirList) {
-      return pnpPath.dirList;
+      return Array.from(pnpPath.dirList);
     } else {
       return await this.baseFs.readdirPromise(pnpPath.resolvedPath);
     }
@@ -431,7 +441,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     if (!pnpPath.resolvedPath) {
       throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, scandir '${p}'`);
     } else if (pnpPath.dirList) {
-      return pnpPath.dirList;
+      return Array.from(pnpPath.dirList);
     } else {
       return this.baseFs.readdirSync(pnpPath.resolvedPath);
     }
@@ -457,18 +467,18 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     const pnpPath = this.resolvePath(p);
     const watchPath = pnpPath.resolvedPath;
     if (watchPath && pnpPath.dirList) {
-      let watchedDir = this.watchedDirs.get(watchPath);
-      if (!watchedDir) {
-        watchedDir = {lastWatcherId: 0, watchers: {}, entries: pnpPath.dirList};
-        this.watchedDirs.set(watchPath, watchedDir);
+      let dirWatcher = this.dirWatchers.get(watchPath);
+      if (!dirWatcher) {
+        dirWatcher = {lastWatcherId: 0, eventEmitters: new Map(), dirEntries: pnpPath.dirList};
+        this.dirWatchers.set(watchPath, dirWatcher);
       }
-      const watcherId = watchedDir.lastWatcherId++;
+      const watcherId = dirWatcher.lastWatcherId++;
 
-      const watchEmitter = new WatchEventEmitter(this.watchedDirs, watchPath, watcherId);
-      watchedDir.watchers[watcherId] = watchEmitter;
+      const watchEventEmitter = new WatchEventEmitter(this.dirWatchers, watchPath, watcherId);
+      dirWatcher.eventEmitters.set(watcherId, watchEventEmitter);
 
       const callback: WatchCallback = typeof a === 'function' ? a : typeof b === 'function' ? b : () => {};
-      watchEmitter.on('rename', (filename: string) => callback('rename', filename));
+      watchEventEmitter.on('rename', (filename: string) => callback('rename', filename));
     } else {
       return this.baseFs.watch(
         p,

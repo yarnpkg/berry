@@ -33,7 +33,8 @@
   "scripts": {
     "postpack": "rm -rf lib",
     "prepack": "run build:compile packages/yarnpkg-pnpify",
-    "release": "yarn npm publish"
+    "release": "yarn npm publish",
+    "test": "run test:unit packages/yarnpkg-pnpify"
   },
   "publishConfig": {
     "main": "./lib/index.js",

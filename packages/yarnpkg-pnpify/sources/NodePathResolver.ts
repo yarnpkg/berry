@@ -45,7 +45,7 @@ export interface ResolvedPath<PathType extends FSPath<PortablePath>> {
   /**
    * Directory entries list, returned for pathes ending with `/node_modules[/@scope]`
    */
-  dirList?: Filename[]
+  dirList?: Set<Filename>
 }
 
 /**
@@ -74,7 +74,7 @@ export class NodePathResolver {
    *
    * @returns `undefined` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
    */
-  public readDir(issuerInfo: PackageInformation<PortablePath>, scope: string | null): Filename[] | undefined {
+  public readDir(issuerInfo: PackageInformation<PortablePath>, scope: string | null): Set<Filename> | undefined {
     const result = new Set<Filename>();
     for (const key of issuerInfo.packageDependencies.keys()) {
       const [pkgNameOrScope, pkgName] = key.split('/');
@@ -87,7 +87,7 @@ export class NodePathResolver {
       }
     }
 
-    return result.size === 0 ? undefined : Array.from(result);
+    return result.size === 0 ? undefined : result;
   }
 
   private getIssuer(pnp: PortablePnPApi, pathname: PortablePath): PortablePath | undefined {
