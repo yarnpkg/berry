@@ -15,13 +15,15 @@ On top of being a simple install strategy, Plug'n'Play also provides a API that 
 ```ts
 export type PackageLocator = {
   name: string,
-  reference: string,
+  reference: string | null
 };
 ```
 
 A package locator is an object describing one unique instance of a package in the dependency tree. The `name` field is guaranteed to be the name of the package itself, but the `reference` field should be considered an opaque string whose value may be whatever the PnP implementation decides to put there.
 
-Note that one package locator is different from the others: the top-level locator (available through `pnp.topLevel`, cf below) sets both `name` and `reference` to `null`. It will always point to the project folder (which is generally the root of the repository, even when working with workspaces).
+If `reference` is `null`, it means that the dependency hasn't been fulfilled at all - this typically only occurs when a package lists a peer dependency that its parent doesn't provide.
+
+Note that one package locator is different from the others: the top-level locator (available through `pnp.topLevel`, cf below) sets *both* `name` and `reference` to `null`. This special locator will always point to the project folder (which is generally the root of the repository, even when working with workspaces).
 
 ### `PackageInformation`
 
@@ -209,7 +211,8 @@ const traverseDependencyTree = (parent: PackageLocator) => {
   seen.add(parentKey);
 
   for (const [name, reference] of pkg.packageDependencies)
-    traverseDependencyTree({name, reference});
+    if (reference !== null) // Check against unmet peer dependencies
+      traverseDependencyTree({name, reference});
 
   seen.remove(parentKey);
 
