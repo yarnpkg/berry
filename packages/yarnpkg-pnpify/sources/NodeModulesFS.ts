@@ -1,38 +1,17 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions, toFilename} from '@yarnpkg/fslib';
 import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                   from '@yarnpkg/fslib';
-import {Filename, WatchOptions, WatchCallback, Watcher}                from '@yarnpkg/fslib';
+import {WatchOptions, WatchCallback, Watcher}                          from '@yarnpkg/fslib';
 import {FSPath, NativePath, PortablePath, npath, ppath}                from '@yarnpkg/fslib';
 
 import {PnpApi}                                                        from '@yarnpkg/pnp';
-import {EventEmitter}                                                  from 'events';
 import fs                                                              from 'fs';
 
 import {NodePathResolver, ResolvedPath}                                from './NodePathResolver';
+import {WatchManager}                                                  from './WatchManager';
 
 export type NodeModulesFSOptions = {
   realFs?: typeof fs
 };
-
-class WatchEventEmitter extends EventEmitter {
-  private dirWatchers: DirectoryWatcherMap;
-  private watchPath: PortablePath;
-  private watcherId: number;
-
-  public constructor(dirWatchers: DirectoryWatcherMap, watchPath: PortablePath, watcherId: number) {
-    super();
-    this.dirWatchers = dirWatchers;
-    this.watchPath = watchPath;
-    this.watcherId = watcherId;
-  }
-
-  public close() {
-    const dirWatcher = this.dirWatchers.get(this.watchPath)!;
-    dirWatcher.eventEmitters.delete(this.watcherId);
-    if (Object.keys(dirWatcher.eventEmitters).length === 0) {
-      this.dirWatchers.delete(this.watchPath);
-    }
-  }
-}
 
 export class NodeModulesFS extends ProxiedFS<NativePath, PortablePath> {
   protected readonly baseFs: FakeFS<PortablePath>;
@@ -56,17 +35,9 @@ type PortableNodeModulesFSOptions = {
   baseFs?: FakeFS<PortablePath>
 };
 
-type DirectoryWatcherMap = Map<PortablePath, DirectoryWatcher>;
-
-interface DirectoryWatcher {
-  lastWatcherId: number;
-  eventEmitters: Map<number, Watcher & EventEmitter>;
-  dirEntries: Set<Filename>;
-}
-
 class PortableNodeModulesFs extends FakeFS<PortablePath> {
   private readonly baseFs: FakeFS<PortablePath>;
-  private readonly dirWatchers: DirectoryWatcherMap = new Map();
+  private readonly watchManager: WatchManager;
   private pathResolver: NodePathResolver;
 
   constructor(pnp: PnpApi, {baseFs = new NodeFS()}: PortableNodeModulesFSOptions = {}) {
@@ -74,6 +45,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
     this.baseFs = baseFs;
     this.pathResolver = new NodePathResolver(pnp);
+    this.watchManager = new WatchManager();
 
     const pnpRootPath = NodeFS.toPortablePath(pnp.getPackageInformation(pnp.topLevel)!.packageLocation);
     this.watchPnpFile(pnpRootPath);
@@ -87,28 +59,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
         const pnp = require(pnpFilePath);
         this.pathResolver = new NodePathResolver(pnp);
 
-        for (const [watchPath, dirWatcher] of this.dirWatchers) {
-          const newDirEntries = this.resolvePath(watchPath).dirList || new Set();
-          // Difference between new and old directory contents
-          const dirEntryDiff = new Set();
-          for (const entry of newDirEntries) {
-            if (!dirWatcher.dirEntries.has(entry)) {
-              dirEntryDiff.add(entry);
-            }
-          }
-          for (const entry of dirWatcher.dirEntries) {
-            if (!newDirEntries.has(entry)) {
-              dirEntryDiff.add(entry);
-            }
-          }
-
-          for (const entry of dirEntryDiff) {
-            for (const watcher of Object.values(dirWatcher.eventEmitters)) {
-              watcher.emit('rename', entry);
-            }
-          }
-          dirWatcher.dirEntries = newDirEntries;
-        }
+        this.watchManager.notifyWatchers(this.pathResolver);
       }
     });
   }
@@ -467,18 +418,8 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     const pnpPath = this.resolvePath(p);
     const watchPath = pnpPath.resolvedPath;
     if (watchPath && pnpPath.dirList) {
-      let dirWatcher = this.dirWatchers.get(watchPath);
-      if (!dirWatcher) {
-        dirWatcher = {lastWatcherId: 0, eventEmitters: new Map(), dirEntries: pnpPath.dirList};
-        this.dirWatchers.set(watchPath, dirWatcher);
-      }
-      const watcherId = dirWatcher.lastWatcherId++;
-
-      const watchEventEmitter = new WatchEventEmitter(this.dirWatchers, watchPath, watcherId);
-      dirWatcher.eventEmitters.set(watcherId, watchEventEmitter);
-
       const callback: WatchCallback = typeof a === 'function' ? a : typeof b === 'function' ? b : () => {};
-      watchEventEmitter.on('rename', (filename: string) => callback('rename', filename));
+      this.watchManager.addWatcher(watchPath, pnpPath.dirList, callback);
     } else {
       return this.baseFs.watch(
         p,
