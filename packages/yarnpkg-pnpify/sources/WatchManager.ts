@@ -19,7 +19,7 @@ class WatchEventEmitter extends EventEmitter {
   public close() {
     const dirWatcher = this.dirWatchers.get(this.watchPath)!;
     dirWatcher.eventEmitters.delete(this.watcherId);
-    if (Object.keys(dirWatcher.eventEmitters).length === 0) {
+    if (dirWatcher.eventEmitters.size === 0) {
       this.dirWatchers.delete(this.watchPath);
     }
   }
@@ -36,7 +36,7 @@ interface DirectoryWatcher {
 export class WatchManager extends EventEmitter {
   private readonly dirWatchers: DirectoryWatcherMap = new Map();
 
-  public addWatcher(watchPath: PortablePath, dirList: Set<Filename>, callback: WatchCallback) {
+  public registerWatcher(watchPath: PortablePath, dirList: Set<Filename>, callback: WatchCallback) {
     let dirWatcher = this.dirWatchers.get(watchPath);
     if (!dirWatcher) {
       dirWatcher = {lastWatcherId: 0, eventEmitters: new Map(), dirEntries: dirList};
@@ -67,8 +67,8 @@ export class WatchManager extends EventEmitter {
       }
 
       for (const entry of dirEntryDiff) {
-        for (const watcher of Object.values(dirWatcher.eventEmitters)) {
-          watcher.emit('rename', entry);
+        for (const watchEventEmitter of dirWatcher.eventEmitters.values()) {
+          watchEventEmitter.emit('rename', entry);
         }
       }
       dirWatcher.dirEntries = newDirEntries;

@@ -419,7 +419,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     const watchPath = pnpPath.resolvedPath;
     if (watchPath && pnpPath.dirList) {
       const callback: WatchCallback = typeof a === 'function' ? a : typeof b === 'function' ? b : () => {};
-      this.watchManager.addWatcher(watchPath, pnpPath.dirList, callback);
+      this.watchManager.registerWatcher(watchPath, pnpPath.dirList, callback);
     } else {
       return this.baseFs.watch(
         p,
