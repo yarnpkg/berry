@@ -209,7 +209,7 @@ const traverseDependencyTree = (parent: PackageLocator) => {
   seen.add(parentKey);
 
   for (const [name, reference] of pkg.packageDependencies)
-    traverseDependencyTree({name, reference}, depMap);
+    traverseDependencyTree({name, reference});
 
   seen.remove(parentKey);
 
