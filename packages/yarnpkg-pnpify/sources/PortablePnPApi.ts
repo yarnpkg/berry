@@ -23,6 +23,7 @@ export class PortablePnPApi {
       portableInfo = {
         packageLocation: NodeFS.toPortablePath(nativeInfo.packageLocation),
         packageDependencies: nativeInfo.packageDependencies,
+        linkType: nativeInfo.linkType,
       };
     }
     return portableInfo;
