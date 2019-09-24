@@ -18,6 +18,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
       return [packageReference, {
         packageLocation: ppath.resolve(portablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
+        linkType: packageInformationData.linkType,
       }] as [string | null, PackageInformation<PortablePath>];
     }))] as [string | null, PackageStore];
   }));
@@ -47,11 +48,13 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     return ppath.resolve(portablePath, virtualRoot);
   });
 
+  const dependencyTreeRoots = data.dependencyTreeRoots;
   const enableTopLevelFallback = data.enableTopLevelFallback;
   const packageLocationLengths = data.locationLengthData;
 
   return {
     basePath: portablePath,
+    dependencyTreeRoots,
     enableTopLevelFallback,
     fallbackExclusionList,
     ignorePattern,

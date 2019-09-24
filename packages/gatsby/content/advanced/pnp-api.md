@@ -31,10 +31,13 @@ Note that one package locator is different from the others: the top-level locato
 export type PackageInformation = {
   packageLocation: string,
   packageDependencies: Map<string, string>,
+  linkType: 'HARD' | 'SOFT',
 };
 ```
 
 The package information set describes the location where the package can be found on the disk, and the exact set of dependencies it is allowed to require. The `packageDependencies` values are valid references that, when associated with their key, constitute a valid `PackageLocator` object.
+
+The `linkType` field is only useful in specific cases - it describes whether the producer of the PnP API was asked to make the package available through an hard linkage (in which case all the `packageLocation` field is reputed being owned by the linker) or a soft linkage (in which case the `packageLocation` field represents a location outside of the sphere of influence of the linker).
 
 ## Runtime Constants
 
@@ -68,6 +71,8 @@ export const VERSIONS: {std: number, [key: string]: number};
 
 The `VERSIONS` object contains a set of numbers that detail which version of the API is currently exposed. The only version that is guaranteed to be there is `std`, which will refer to the version of this document. Other keys are meant to be used to describe extensions provided by third-party implementors.
 
+**Note:** The current version is 3. We bump it responsibly and strive to make each version backward-compatible with the previous ones, but as you can probably guess some features are only available with the latest versions.
+
 ### `topLevel`
 
 ```ts
@@ -77,6 +82,16 @@ export const topLevel: {name: null, reference: null};
 The `topLevel` object is a simple package locator pointing to the top-level package of the dependency tree. Note that even when using workspaces you'll still only have one single top-level for the entire project.
 
 This object is provided for convenience and doesn't necessarily needs to be used; you may create your own top-level locator by using your own locator literal with both fields set to `null`.
+
+### `getDependencyTreeRoots(...)`
+
+```ts
+export function getDependencyTreeRoots(): PackageLocator[];
+```
+
+The `getDependencyTreeRoots` function will return the set of locators that constitute the roots of individual dependency trees. In Yarn, there is exactly one such locator for each workspace in the project.
+
+**Note:** The top-level locator (referenced by the `topLevel` field above) isn't required to be stored in this array as long as it is replaced by another locator that points to the exact same information.
 
 ### `getPackageInformation(...)`
 
@@ -121,7 +136,7 @@ Note that in some cases you may just have a folder to work with as `issuer` para
 ### `resolveUnqualified(...)`
 
 ```ts
-export function resolveUnqualified(unqualified: string, opts?: {extensions?: Array<string>}): string;
+export function resolveUnqualified(unqualified: string, opts?: {extensions?: string[]}): string;
 ```
 
 The `resolveUnqualified` function is mostly provided as an helper; it reimplements the Node resolution for file extensions and folder indexes, but not the regular `node_modules` traversal. It makes it slightly easier to integrate PnP into some projects, although it isn't required in any way if you already have something that fits the bill.
@@ -143,7 +158,7 @@ Might very well be resolved into:
 ### `resolveRequest(...)`
 
 ```ts
-export function resolveRequest(request: string, issuer: string | null, opts?: {considerBuiltins?: boolean, extensions?: Array<string>}): string | null;
+export function resolveRequest(request: string, issuer: string | null, opts?: {considerBuiltins?: boolean, extensions?: string[]]}): string | null;
 ```
 
 The `resolveRequest` function is a wrapper around both `resolveToUnqualified` and `resolveUnqualified`. In essence, it's a bit like calling `resolveUnqualified(resolveToUnqualified(...))`, but shorter.
@@ -192,8 +207,6 @@ console.log(crossFs.readFileSync(`C:\\path\\to\\archive.zip\\package.json`));
 
 ## Traversing the dependency tree
 
-**Note:** Althought workspaces are properly encoded in the PnP map, their locators aren't exposed at the moment, making them unreachable for traversal. This will be fixed in a later release.\
-
 ```ts
 const pnp = require(`pnpapi`);
 const seen = new Set();
@@ -218,4 +231,9 @@ const traverseDependencyTree = (parent: PackageLocator) => {
 
   return depMap;
 };
+
+// Iterate on each workspace
+for (const locator of pnp.getDependencyTreeRoots()) {
+  traverseDependencyTree(locator);
+}
 ```

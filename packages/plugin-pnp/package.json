@@ -13,6 +13,10 @@
     "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.3"
   },
   "version": "2.0.0-rc.1",
+  "nextVersion": {
+    "semver": "2.0.0-rc.2",
+    "nonce": "7008877293200469"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

@@ -2,7 +2,8 @@
   "name": "@yarnpkg/pnp",
   "version": "2.0.0-rc.3",
   "nextVersion": {
-    "nonce": "460148469419547"
+    "semver": "2.0.0-rc.4",
+    "nonce": "8027151479158413"
   },
   "main": "./sources/index.ts",
   "dependencies": {
