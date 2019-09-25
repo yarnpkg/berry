@@ -28,26 +28,28 @@ class WatchEventEmitter extends EventEmitter {
 type DirectoryWatcherMap = Map<PortablePath, DirectoryWatcher>;
 
 interface DirectoryWatcher {
-  lastWatcherId: number;
   eventEmitters: Map<number, Watcher & EventEmitter>;
   dirEntries: Set<Filename>;
 }
 
 export class WatchManager extends EventEmitter {
   private readonly dirWatchers: DirectoryWatcherMap = new Map();
+  private lastWatcherId: number = 0;
 
-  public registerWatcher(watchPath: PortablePath, dirList: Set<Filename>, callback: WatchCallback) {
+  public registerWatcher(watchPath: PortablePath, dirList: Set<Filename>, callback: WatchCallback): WatchEventEmitter {
     let dirWatcher = this.dirWatchers.get(watchPath);
     if (!dirWatcher) {
-      dirWatcher = {lastWatcherId: 0, eventEmitters: new Map(), dirEntries: dirList};
+      dirWatcher = {eventEmitters: new Map(), dirEntries: dirList};
       this.dirWatchers.set(watchPath, dirWatcher);
     }
-    const watcherId = dirWatcher.lastWatcherId++;
+    const watcherId = this.lastWatcherId++;
 
     const watchEventEmitter = new WatchEventEmitter(this.dirWatchers, watchPath, watcherId);
     dirWatcher.eventEmitters.set(watcherId, watchEventEmitter);
 
     watchEventEmitter.on('rename', (filename: string) => callback('rename', filename));
+
+    return watchEventEmitter;
   }
 
   public notifyWatchers(pathResolver: NodePathResolver) {
