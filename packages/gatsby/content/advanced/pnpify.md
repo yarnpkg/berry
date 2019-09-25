@@ -58,7 +58,7 @@ Note that VSCode might ask you to do Step 4 again from time to time, but apart f
 
 - Due to how PnPify emulates the `node_modules` directory, some problems are to be expected, especially with tools that watch directories inside `node_modules`.
 
-- The `pnpify` is not designed as a long-term solution, the purpose of the `pnpify` is to help projects with transition to Plug'n'Play module resolution scheme.
+- PnPify isn't designed to be a long-term solution; its purpose is purely to help projects during their transition to the stricter Plug'n'Play module resolution scheme. Relying on PnPify doesn't allow you to take full advantage of everything Plug'n'Play has to offer, in particular perfect flattening and boundary checks.
 
 ## Alternatives
 
