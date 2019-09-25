@@ -5,7 +5,7 @@ import {NodePathResolver} from '../sources/NodePathResolver';
 
 type PkgMap = { [pkg: string]: { packageLocation: string, packageDependencies: Map<string, string> } };
 
-const pnpApiMock = (pkgMap: PkgMap): PnpApi => {
+const makePnpApiMock = (pkgMap: PkgMap): PnpApi => {
   return ({
     VERSIONS: {std: 1},
     topLevel: {name: null, reference: null},
@@ -51,7 +51,7 @@ describe('NodePathResolver', () => {
   let resolver: NodePathResolver;
 
   beforeAll(() => {
-    resolver = new NodePathResolver(pnpApiMock(posixPkgMap));
+    resolver = new NodePathResolver(makePnpApiMock(posixPkgMap));
   });
 
   it('should not change paths outside of pnp project', () => {

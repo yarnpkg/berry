@@ -6,7 +6,7 @@ import {FSPath, NativePath, PortablePath, npath, ppath}                from '@ya
 import {PnpApi}                                                        from '@yarnpkg/pnp';
 import fs                                                              from 'fs';
 
-import {NodePathResolver, ResolvedPath}                                from './NodePathResolver';
+import {NodePathResolver, PathResolver, ResolvedPath}                  from './NodePathResolver';
 import {WatchManager}                                                  from './WatchManager';
 
 export type NodeModulesFSOptions = {
@@ -38,7 +38,7 @@ type PortableNodeModulesFSOptions = {
 class PortableNodeModulesFs extends FakeFS<PortablePath> {
   private readonly baseFs: FakeFS<PortablePath>;
   private readonly watchManager: WatchManager;
-  private pathResolver: NodePathResolver;
+  private pathResolver: PathResolver;
 
   constructor(pnp: PnpApi, {baseFs = new NodeFS()}: PortableNodeModulesFSOptions = {}) {
     super(ppath);
@@ -72,7 +72,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     return this.baseFs;
   }
 
-  private resolvePath(p: PortablePath): ResolvedPath<PortablePath> & { fullOriginalPath: PortablePath } {
+  private resolvePath(p: PortablePath): ResolvedPath & { fullOriginalPath: PortablePath } {
     if (typeof p === `number`) {
       return {resolvedPath: p, fullOriginalPath: p};
     } else {

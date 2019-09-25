@@ -1,7 +1,7 @@
-import {FSPath, PortablePath, Filename, toFilename, ppath} from '@yarnpkg/fslib';
-import {PnpApi, PackageInformation}                        from '@yarnpkg/pnp';
+import {PortablePath, Filename, toFilename, ppath} from '@yarnpkg/fslib';
+import {PnpApi, PackageInformation}                from '@yarnpkg/pnp';
 
-import {PortablePnPApi}                                    from './PortablePnPApi';
+import {PortablePnPApi}                            from './PortablePnPApi';
 
 /**
  * Regexp for pathname that catches the following paths:
@@ -26,12 +26,12 @@ const NODE_MODULES_REGEXP = /(?:\/node_modules((?:\/@[^\/]+)?(?:\/[^@][^\/]+)?))
  * 2. And we need either fake stats or we can forward underlying fs to stat the issuer dir.
  *    The issuer dir exists on fs. We store issuer dir into `statPath` field
  */
-export interface ResolvedPath<PathType extends FSPath<PortablePath>> {
+export interface ResolvedPath {
   /**
    * Fully resolved path `/node_modules/...` path within PnP project,
    * `null` if path does not exist.
    */
-  resolvedPath: PathType | null;
+  resolvedPath: PortablePath | null;
 
   /**
    * The path that should be used for stats. This field is returned for pathes ending
@@ -48,13 +48,23 @@ export interface ResolvedPath<PathType extends FSPath<PortablePath>> {
   dirList?: Set<Filename>
 }
 
+/** Module path resolver */
+export interface PathResolver {
+  /**
+   * @param nodePath full path to Node module file
+   *
+   * @returns resolved path
+   */
+  resolvePath(nodePath: PortablePath): ResolvedPath;
+}
+
 /**
  * Resolves `node_modules` paths inside PnP projects.
  *
  * The idea: for path like `node_modules/foo/node_modules/bar` we use `foo` as an issuer
  * and resolve `bar` for this issuer using `pnpapi`.
  */
-export class NodePathResolver {
+export class NodePathResolver implements PathResolver {
   private pnp: PortablePnPApi;
 
   /**
@@ -107,8 +117,8 @@ export class NodePathResolver {
    *
    * @returns resolved path
    */
-  public resolvePath(nodePath: PortablePath): ResolvedPath<PortablePath> {
-    const result: ResolvedPath<PortablePath> = {resolvedPath: nodePath};
+  public resolvePath(nodePath: PortablePath): ResolvedPath {
+    const result: ResolvedPath = {resolvedPath: nodePath};
 
     const marker = `/node_modules`;
     const index = nodePath.indexOf(marker);
