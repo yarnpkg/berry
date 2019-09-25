@@ -2,7 +2,7 @@ import {Filename, PortablePath, Watcher, WatchCallback} from '@yarnpkg/fslib';
 
 import {EventEmitter}                                   from 'events';
 
-import {PathResolver}                                   from './NodePathResolver';
+import {NodePathResolver}                               from './NodePathResolver';
 
 class WatchEventEmitter extends EventEmitter {
   private dirWatchers: DirectoryWatcherMap;
@@ -52,7 +52,7 @@ export class WatchManager extends EventEmitter {
     return watchEventEmitter;
   }
 
-  public notifyWatchers(pathResolver: PathResolver) {
+  public notifyWatchers(pathResolver: NodePathResolver) {
     for (const [watchPath, dirWatcher] of this.dirWatchers) {
       const newDirEntries = pathResolver.resolvePath(watchPath).dirList || new Set();
       // Difference between new and old directory contents
