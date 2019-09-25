@@ -34,16 +34,16 @@ export default class SetVersionCommand extends BaseCommand {
     `,
     examples: [[
       `Download the latest release from the Yarn repository`,
-      `yarn set version latest`,
+      `$0 set version latest`,
     ], [
       `Download the latest nightly release from the Yarn repository`,
-      `yarn set version nightly`,
+      `$0 set version nightly`,
     ], [
       `Switch back to Yarn v1`,
-      `yarn set version ^1`,
+      `$0 set version ^1`,
     ], [
       `Switch back to a specific release`,
-      `yarn set version 1.14.0`,
+      `$0 set version 1.14.0`,
     ]],
   });
 

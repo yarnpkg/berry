@@ -39,10 +39,10 @@ export default class RunCommand extends BaseCommand {
     `,
     examples: [[
       `Run the tests from the local workspace`,
-      `yarn run test`,
+      `$0 run test`,
     ], [
       `Same thing, but without the "run" keyword`,
-      `yarn test`,
+      `$0 test`,
     ]],
   });
 

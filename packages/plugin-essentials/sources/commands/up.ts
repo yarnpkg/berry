@@ -36,13 +36,13 @@ export default class UpCommand extends BaseCommand {
     `,
     examples: [[
       `Upgrade all instances of lodash to the latest release`,
-      `yarn up lodash`,
+      `$0 up lodash`,
     ], [
       `Upgrade all instances of lodash to the latest release, but ask confirmation for each`,
-      `yarn up lodash -i`,
+      `$0 up lodash -i`,
     ], [
       `Upgrade all instances of lodash to 1.2.3`,
-      `yarn up lodash@1.2.3`,
+      `$0 up lodash@1.2.3`,
     ]],
   });
 

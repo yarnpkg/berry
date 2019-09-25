@@ -24,10 +24,10 @@ export default class RemoveCommand extends BaseCommand {
     `,
     examples: [[
       `Remove a dependency from the current project`,
-      `yarn remove lodash`,
+      `$0 remove lodash`,
     ], [
       `Remove a dependency from all workspaces at once`,
-      `yarn remove lodash --all`,
+      `$0 remove lodash --all`,
     ]],
   });
 

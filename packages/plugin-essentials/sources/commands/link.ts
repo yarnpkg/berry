@@ -28,10 +28,10 @@ export default class LinkCommand extends BaseCommand {
     `,
     examples: [[
       `Register a remote workspace for use in the current project`,
-      `yarn link ~/ts-loader`,
+      `$0 link ~/ts-loader`,
     ], [
       `Register all workspaces from a remote project for use in the current project`,
-      `yarn link ~/jest --all`,
+      `$0 link ~/jest --all`,
     ]],
   });
 

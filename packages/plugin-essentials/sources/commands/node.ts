@@ -17,7 +17,7 @@ export default class NodeCommand extends BaseCommand {
     `,
     examples: [[
       `Run a Node script`,
-      `yarn node ./my-script.js`,
+      `$0 node ./my-script.js`,
     ]],
   });
 

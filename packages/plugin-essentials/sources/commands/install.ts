@@ -60,13 +60,13 @@ export default class YarnCommand extends BaseCommand {
     `,
     examples: [[
       `Install the project`,
-      `yarn install`,
+      `$0 install`,
     ], [
       `Validate a project when using Zero-Installs`,
-      `yarn install --immutable --immutable-cache`,
+      `$0 install --immutable --immutable-cache`,
     ], [
       `Validate a project when using Zero-Installs (slightly safer if you accept external PRs)`,
-      `yarn install --immutable --immutable-cache --check-cache`,
+      `$0 install --immutable --immutable-cache --check-cache`,
     ]],
   });
 
