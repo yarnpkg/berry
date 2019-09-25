@@ -6318,7 +6318,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["babel-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:8.0.6"],
             ["babel-plugin-lazy-import", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#arcanis/babel-plugin-lazy-import"],
             ["chalk", "npm:2.4.2"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["filesize", "npm:4.1.2"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
@@ -6345,7 +6345,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["babel-loader", "virtual:072f27a31cbe952151939700e7ac0f3c447d2fdf815b92d721d827c0a72aa53fee996d1e5cb74d10b8f20f69cc5986f42a71a87018a1a994d2e5e9ea16bc2e54#npm:8.0.6"],
             ["babel-plugin-lazy-import", "virtual:072f27a31cbe952151939700e7ac0f3c447d2fdf815b92d721d827c0a72aa53fee996d1e5cb74d10b8f20f69cc5986f42a71a87018a1a994d2e5e9ea16bc2e54#arcanis/babel-plugin-lazy-import"],
             ["chalk", "npm:2.4.2"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["filesize", "npm:4.1.2"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
@@ -6372,7 +6372,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["babel-loader", "virtual:6e96308926dfd56e8075e9c128cbf5e8ec8d6ded8adbd6a240d765216465282b02e8c3b124de61e9b40ab522f1c7ce788aef4a55e8f748554e746ba588f03a3e#npm:8.0.6"],
             ["babel-plugin-lazy-import", "virtual:6e96308926dfd56e8075e9c128cbf5e8ec8d6ded8adbd6a240d765216465282b02e8c3b124de61e9b40ab522f1c7ce788aef4a55e8f748554e746ba588f03a3e#arcanis/babel-plugin-lazy-import"],
             ["chalk", "npm:2.4.2"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["filesize", "npm:4.1.2"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
@@ -6399,7 +6399,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["babel-loader", "virtual:4a011c7936b4b035e29a3ca4d7eed5af279f34195ebb4109bbbd184393a4b7ee62c17b499854077f215852da1044ea3cb1b37d4560d9b597e41746992b58fd97#npm:8.0.6"],
             ["babel-plugin-lazy-import", "virtual:4a011c7936b4b035e29a3ca4d7eed5af279f34195ebb4109bbbd184393a4b7ee62c17b499854077f215852da1044ea3cb1b37d4560d9b597e41746992b58fd97#arcanis/babel-plugin-lazy-import"],
             ["chalk", "npm:2.4.2"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["filesize", "npm:4.1.2"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
@@ -6426,7 +6426,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["babel-loader", "virtual:e6cf778e9311712e1a7bd91f6020b69a9a53a4b7bd556e35d93c48c6119715959daff77f560bc9b5bf48e33ca98f434d15f8922cdb1a9b606745cd81442762fb#npm:8.0.6"],
             ["babel-plugin-lazy-import", "virtual:e6cf778e9311712e1a7bd91f6020b69a9a53a4b7bd556e35d93c48c6119715959daff77f560bc9b5bf48e33ca98f434d15f8922cdb1a9b606745cd81442762fb#arcanis/babel-plugin-lazy-import"],
             ["chalk", "npm:2.4.2"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["filesize", "npm:4.1.2"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
@@ -6453,7 +6453,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["babel-loader", "virtual:73993763fb0017c07abf22974ac69c975d00ddab694cb6a4ec57a79e74171c4b2fe6c6dfbb828352b97bfb3c514bd86ab949e206cd51894ab886d965da365392#npm:8.0.6"],
             ["babel-plugin-lazy-import", "virtual:73993763fb0017c07abf22974ac69c975d00ddab694cb6a4ec57a79e74171c4b2fe6c6dfbb828352b97bfb3c514bd86ab949e206cd51894ab886d965da365392#arcanis/babel-plugin-lazy-import"],
             ["chalk", "npm:2.4.2"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["filesize", "npm:4.1.2"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
@@ -6480,7 +6480,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["babel-loader", "virtual:37ee7f20c5c5fb7ea018f38868e8b120425a66a73e740ad437351031ab2467c456075dbc75ced4bb6828f6f94f2a2f3045f51f446f6af77f080f0117f8022836#npm:8.0.6"],
             ["babel-plugin-lazy-import", "virtual:37ee7f20c5c5fb7ea018f38868e8b120425a66a73e740ad437351031ab2467c456075dbc75ced4bb6828f6f94f2a2f3045f51f446f6af77f080f0117f8022836#arcanis/babel-plugin-lazy-import"],
             ["chalk", "npm:2.4.2"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["filesize", "npm:4.1.2"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
@@ -6507,7 +6507,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["babel-loader", "virtual:5d170a96e3bd35439131aba7820e7b850e9381656d638624d34e228d96fc2f134ebf73b7eb6235db8cb822a7bcd252e04750d4dfcaeb49408c4e561390950138#npm:8.0.6"],
             ["babel-plugin-lazy-import", "virtual:5d170a96e3bd35439131aba7820e7b850e9381656d638624d34e228d96fc2f134ebf73b7eb6235db8cb822a7bcd252e04750d4dfcaeb49408c4e561390950138#arcanis/babel-plugin-lazy-import"],
             ["chalk", "npm:2.4.2"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["filesize", "npm:4.1.2"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
@@ -6551,7 +6551,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnpify", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/yarnpkg-pnpify"],
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
             ["chalk", "npm:2.4.2"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["semver", "npm:5.6.0"],
             ["tmp", "npm:0.0.33"],
             ["typescript", "npm:3.5.3"],
@@ -6575,7 +6575,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["agentkeepalive", "npm:4.0.2"],
             ["camelcase", "npm:5.3.1"],
             ["chalk", "npm:2.4.2"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["cross-spawn", "npm:6.0.5"],
             ["globby", "npm:8.0.2"],
             ["got", "npm:9.6.0"],
@@ -6776,7 +6776,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["inquirer", "npm:6.2.1"],
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
@@ -6795,7 +6795,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/plugin-essentials", "workspace:packages/plugin-essentials"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["tmp", "npm:0.0.33"]
           ],
           "linkType": "SOFT"
@@ -6811,7 +6811,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["inquirer", "npm:6.2.1"],
             ["semver", "npm:5.6.0"],
             ["treeify", "npm:1.1.0"],
@@ -6891,7 +6891,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
-            ["clipanion", "npm:2.1.1"]
+            ["clipanion", "npm:2.1.2"]
           ],
           "linkType": "SOFT"
         }]
@@ -6930,7 +6930,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-npm", "workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-pack", "workspace:packages/plugin-pack"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["inquirer", "npm:6.2.1"],
             ["ssri", "npm:6.0.1"],
             ["yup", "npm:0.27.0"]
@@ -6947,7 +6947,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["micromatch", "npm:4.0.2"],
             ["tar-stream", "npm:2.0.1"]
           ],
@@ -6964,7 +6964,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.1"]
+            ["clipanion", "npm:2.1.2"]
           ],
           "linkType": "SOFT"
         }]
@@ -6978,7 +6978,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["typescript", "npm:3.5.3"]
           ],
           "linkType": "SOFT"
@@ -7009,7 +7009,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-pack", "workspace:packages/plugin-pack"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["ink", "virtual:35104c47575f2fe378d8d20383ae667f19d4dd801df8cc4c76848603aa6b4a2234a00142ff12fd557f6f48bd2810880e31c40c767010ea61a31fca302c2cc5e0#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:5.6.0"],
@@ -7028,7 +7028,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["p-limit", "npm:2.2.0"],
             ["typescript", "npm:3.5.3"],
             ["yup", "npm:0.27.0"]
@@ -10287,10 +10287,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           ],
           "linkType": "HARD"
         }],
-        ["npm:2.1.1", {
-          "packageLocation": "./.yarn/cache/clipanion-npm-2.1.1-9a25f72e68.zip/node_modules/clipanion/",
+        ["npm:2.1.2", {
+          "packageLocation": "./.yarn/cache/clipanion-npm-2.1.2-c336a6a3f8.zip/node_modules/clipanion/",
           "packageDependencies": [
-            ["clipanion", "npm:2.1.1"],
+            ["clipanion", "npm:2.1.2"],
             ["chalk", "npm:2.4.2"]
           ],
           "linkType": "HARD"
