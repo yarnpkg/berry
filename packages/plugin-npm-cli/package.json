@@ -14,6 +14,9 @@
     "yup": "^0.27.0"
   },
   "version": "2.0.0-rc.2",
+  "nextVersion": {
+    "nonce": "8941417461628267"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

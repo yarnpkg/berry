@@ -12,6 +12,9 @@
     "tar-stream": "^2.0.1"
   },
   "version": "2.0.0-rc.2",
+  "nextVersion": {
+    "nonce": "3457249053533299"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

@@ -12,6 +12,9 @@
     "tmp": "^0.0.33"
   },
   "version": "2.0.0-rc.1",
+  "nextVersion": {
+    "nonce": "1702975010361821"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
