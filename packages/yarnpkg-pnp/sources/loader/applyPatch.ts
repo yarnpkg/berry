@@ -171,9 +171,17 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       return originalModuleResolveFilename.call(Module, request, parent, isMain, options);
 
     if (options && options.plugnplay === false) {
+      const {plugnplay, ...rest} = options;
+
+      // Workaround a bug present in some version of Node (now fixed)
+      // https://github.com/nodejs/node/pull/28078
+      const forwardedOptions = Object.keys(rest).length > 0
+        ? rest
+        : undefined;
+
       try {
         enableNativeHooks = false;
-        return originalModuleResolveFilename.call(Module, request, parent, isMain, options);
+        return originalModuleResolveFilename.call(Module, request, parent, isMain, forwardedOptions);
       } finally {
         enableNativeHooks = true;
       }

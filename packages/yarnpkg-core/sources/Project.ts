@@ -156,7 +156,7 @@ export class Project {
           const version = manifest.version;
 
           const languageName = manifest.languageName || defaultLanguageName;
-          const linkType = data.linkType as LinkType;
+          const linkType = data.linkType.toUpperCase() as LinkType;
 
           const dependencies = manifest.dependencies;
           const peerDependencies = manifest.peerDependencies;
@@ -1238,7 +1238,7 @@ export class Project {
           compatibilityMode: false,
         }),
 
-        linkType: pkg.linkType,
+        linkType: pkg.linkType.toLowerCase(),
 
         resolution: structUtils.stringifyLocator(pkg),
         checksum: this.storedChecksums.get(pkg.locatorHash),
