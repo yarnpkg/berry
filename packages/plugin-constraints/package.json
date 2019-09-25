@@ -6,7 +6,7 @@
     "@yarnpkg/cli": "workspace:2.0.0-rc.6",
     "@yarnpkg/core": "workspace:2.0.0-rc.6",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
-    "clipanion": "^2.1.1",
+    "clipanion": "^2.1.2",
     "inquirer": "^6.2.0",
     "lodash": "^4.17.15",
     "node-emoji": "^1.8.1",
@@ -14,7 +14,7 @@
   },
   "version": "2.0.0-rc.2",
   "nextVersion": {
-    "nonce": "1908357428363369"
+    "nonce": "6240349763602849"
   },
   "repository": {
     "type": "git",

@@ -7,7 +7,7 @@
     "@yarnpkg/core": "workspace:2.0.0-rc.6",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.2",
-    "clipanion": "^2.1.1",
+    "clipanion": "^2.1.2",
     "ink": "^2.3.0",
     "react": "^16.8.4",
     "semver": "^5.6.0",
@@ -23,7 +23,7 @@
   "version": "2.0.0-rc.3",
   "nextVersion": {
     "semver": "2.0.0-rc.4",
-    "nonce": "864756570755459"
+    "nonce": "876401076151755"
   },
   "repository": {
     "type": "git",

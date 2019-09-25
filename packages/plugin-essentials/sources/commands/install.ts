@@ -18,8 +18,14 @@ export default class YarnCommand extends BaseCommand {
   @Command.Boolean(`--check-cache`)
   checkCache: boolean = false;
 
-  @Command.Boolean(`--frozen-lockfile`)
+  @Command.Boolean(`--frozen-lockfile`, {hidden: true})
   frozenLockfile?: boolean;
+
+  @Command.Boolean(`--prefer-offline`, {hidden: true})
+  preferOffline?: boolean;
+
+  @Command.Boolean(`--ignore-engine`, {hidden: true})
+  ignoreEngine?: boolean;
 
   @Command.Boolean(`--inline-builds`)
   inlineBuilds?: boolean;
@@ -69,20 +75,68 @@ export default class YarnCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    // We want to prevent people from using --frozen-lockfile
-    // Note: it's been deprecated because we're now locking more than just the
-    // lockfile - for example the PnP artifacts will also be locked.
-    if (typeof this.frozenLockfile !== `undefined`) {
-      const frozenLockfileReport = await StreamReport.start({
+    const isZeitNow = !!process.env.NOW_BUILDER;
+    const isNetlify = !!process.env.NETLIFY;
+
+    const reportDeprecation = async (message: string, {error}: {error: boolean}) => {
+      const deprecationReport = await StreamReport.start({
         configuration,
         stdout: this.context.stdout,
         includeFooter: false,
       }, async report => {
-        report.reportWarning(MessageName.DEPRECATED_CLI_SETTINGS, `The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`);
+        if (error) {
+          report.reportError(MessageName.DEPRECATED_CLI_SETTINGS, message);
+        } else {
+          report.reportWarning(MessageName.DEPRECATED_CLI_SETTINGS, message);
+        }
       });
 
-      if (frozenLockfileReport.hasErrors()) {
-        return frozenLockfileReport.exitCode();
+      if (deprecationReport.hasErrors()) {
+        return deprecationReport.exitCode();
+      }
+    };
+
+    // The ignoreEngine flag isn't implemented at the moment. I'm still
+    // considering how it should work in the context of plugins - would it
+    // make sense to allow them (or direct dependencies) to define new
+    // "engine check"? Since it has implications regarding the architecture,
+    // I prefer to postpone the decision to later. Also it wouldn't be a flag,
+    // it would definitely be a configuration setting.
+    if (typeof this.ignoreEngine !== `undefined`) {
+      const exitCode = await reportDeprecation(`The --ignore-engine option is deprecated; engine checking isn't a core feature anymore`, {
+        error: !isZeitNow,
+      });
+
+      if (typeof exitCode !== `undefined`) {
+        return exitCode;
+      }
+    }
+
+    // Thie preferOffline flag doesn't make much sense with our architecture.
+    // It would require the fetchers to also act as resolvers, which is
+    // doable but quirky. Since a similar behavior is available via the
+    // --cached flag in yarn add, I prefer to move it outside of the core and
+    // let someone implement this "resolver-that-reads-the-cache" logic.
+    if (typeof this.preferOffline !== `undefined`) {
+      const exitCode = await reportDeprecation(`The --prefer-offline flag is deprecated; use the --cached flag with 'yarn add' instead`, {
+        error: !isZeitNow,
+      });
+
+      if (typeof exitCode !== `undefined`) {
+        return exitCode;
+      }
+    }
+
+    // We want to prevent people from using --frozen-lockfile
+    // Note: it's been deprecated because we're now locking more than just the
+    // lockfile - for example the PnP artifacts will also be locked.
+    if (typeof this.frozenLockfile !== `undefined`) {
+      const exitCode = await reportDeprecation(`The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`, {
+        error: true,
+      });
+
+      if (typeof exitCode !== `undefined`) {
+        return exitCode;
       }
     }
 
@@ -90,21 +144,13 @@ export default class YarnCommand extends BaseCommand {
     // Note: it's been deprecated because the cache folder should be set from
     // the settings. Otherwise there would be a very high chance that multiple
     // Yarn commands would use different caches, causing unexpected behaviors.
-    if (this.cacheFolder != null) {
-      const cacheFolderReport = await StreamReport.start({
-        configuration,
-        stdout: this.context.stdout,
-        includeFooter: false,
-      }, async report => {
-        if (process.env.NETLIFY) {
-          report.reportWarning(MessageName.DEPRECATED_CLI_SETTINGS, `Netlify is trying to set a cache folder, ignoring!`);
-        } else {
-          report.reportError(MessageName.DEPRECATED_CLI_SETTINGS, `The cache-folder option has been deprecated; use rc settings instead`);
-        }
+    if (typeof this.cacheFolder !== `undefined`) {
+      const exitCode = await reportDeprecation(`The cache-folder option has been deprecated; use rc settings instead`, {
+        error: !isNetlify,
       });
 
-      if (cacheFolderReport.hasErrors()) {
-        return cacheFolderReport.exitCode();
+      if (typeof exitCode !== `undefined`) {
+        return exitCode;
       }
     }
 

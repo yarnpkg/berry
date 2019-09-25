@@ -4550,7 +4550,7 @@ __metadata:
     babel-loader: "npm:^8.0.6"
     babel-plugin-lazy-import: arcanis/babel-plugin-lazy-import
     chalk: "npm:^2.4.1"
-    clipanion: "npm:^2.1.1"
+    clipanion: "npm:^2.1.2"
     filesize: "npm:^4.1.2"
     pnp-webpack-plugin: "npm:^1.4.3"
     semver: "npm:^5.6.0"
@@ -4595,7 +4595,7 @@ __metadata:
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.4"
     "@yarnpkg/shell": "workspace:2.0.0-rc.2"
     chalk: "npm:^2.4.1"
-    clipanion: "npm:^2.1.1"
+    clipanion: "npm:^2.1.2"
     semver: "npm:^5.6.0"
     tmp: "npm:^0.0.33"
     typescript: "npm:^3.5.3"
@@ -4617,7 +4617,7 @@ __metadata:
     agentkeepalive: "npm:^4.0.2"
     camelcase: "npm:^5.3.1"
     chalk: "npm:^2.4.1"
-    clipanion: "npm:^2.1.1"
+    clipanion: "npm:^2.1.2"
     cross-spawn: "npm:^6.0.5"
     globby: "npm:^8.0.1"
     got: "npm:^9.2.2"
@@ -4810,7 +4810,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:2.0.0-rc.6"
     "@yarnpkg/core": "workspace:2.0.0-rc.6"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
-    clipanion: "npm:^2.1.1"
+    clipanion: "npm:^2.1.2"
     inquirer: "npm:^6.2.0"
     lodash: "npm:^4.17.15"
     node-emoji: "npm:^1.8.1"
@@ -4827,7 +4827,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2"
     "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.4"
-    clipanion: "npm:^2.1.1"
+    clipanion: "npm:^2.1.2"
     tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
@@ -4841,7 +4841,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2"
     "@yarnpkg/parsers": "workspace:2.0.0-rc.3"
-    clipanion: "npm:^2.1.1"
+    clipanion: "npm:^2.1.2"
     inquirer: "npm:^6.2.0"
     semver: "npm:^5.6.0"
     treeify: "npm:^1.1.0"
@@ -4909,7 +4909,7 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.6"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2"
-    clipanion: "npm:^2.1.1"
+    clipanion: "npm:^2.1.2"
   languageName: unknown
   linkType: soft
 
@@ -4931,7 +4931,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.3"
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.2"
-    clipanion: "npm:^2.1.1"
+    clipanion: "npm:^2.1.2"
     inquirer: "npm:^6.2.0"
     ssri: "npm:^6.0.1"
     yup: "npm:^0.27.0"
@@ -4957,7 +4957,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:2.0.0-rc.6"
     "@yarnpkg/core": "workspace:2.0.0-rc.6"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
-    clipanion: "npm:^2.1.1"
+    clipanion: "npm:^2.1.2"
     micromatch: "npm:^4.0.2"
     tar-stream: "npm:^2.0.1"
   languageName: unknown
@@ -4972,7 +4972,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.3"
     "@yarnpkg/pnp": "workspace:2.0.0-rc.3"
-    clipanion: "npm:^2.1.1"
+    clipanion: "npm:^2.1.2"
   languageName: unknown
   linkType: soft
 
@@ -4984,7 +4984,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:2.0.0-rc.6"
     "@yarnpkg/core": "workspace:2.0.0-rc.6"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
-    clipanion: "npm:^2.1.1"
+    clipanion: "npm:^2.1.2"
     typescript: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
@@ -5011,7 +5011,7 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.6"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.2"
-    clipanion: "npm:^2.1.1"
+    clipanion: "npm:^2.1.2"
     ink: "npm:^2.3.0"
     react: "npm:^16.8.4"
     semver: "npm:^5.6.0"
@@ -5028,7 +5028,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:2.0.0-rc.6"
     "@yarnpkg/core": "workspace:2.0.0-rc.6"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
-    clipanion: "npm:^2.1.1"
+    clipanion: "npm:^2.1.2"
     p-limit: "npm:^2.2.0"
     typescript: "npm:^3.5.3"
     yup: "npm:^0.27.0"
@@ -7695,12 +7695,12 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"clipanion@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "clipanion@npm:2.1.1"
+"clipanion@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "clipanion@npm:2.1.2"
   dependencies:
     chalk: "npm:^2.4.2"
-  checksum: 03c0c3767a896718b775a8aa2f05d2f62c2c04aa902c16560c736a6595aef03c170149b8ed89eefefa5919132cd0ebfa0d9f65e176c8ca7afe411d71dc2a40c1
+  checksum: 83a1cfa00cd326ba0053adda2408078dfb6f9406bfb4b59c5525f7ff58ce5cbe8c736e1f10f748918c67cc2faea3f166da1511eb58dc25dd4f4b8396f7b5e80d
   languageName: node
   linkType: hard
 
