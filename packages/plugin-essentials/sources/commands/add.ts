@@ -63,10 +63,10 @@ export default class AddCommand extends BaseCommand {
     `,
     examples: [[
       `Add a regular package to the current workspace`,
-      `yarn add lodash`,
+      `$0 add lodash`,
     ], [
       `Add a specific version for a package to the current workspace`,
-      `yarn add lodash@1.2.3`,
+      `$0 add lodash@1.2.3`,
     ]],
   });
 

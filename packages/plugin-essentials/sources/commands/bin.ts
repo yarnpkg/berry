@@ -20,10 +20,10 @@ export default class BinCommand extends BaseCommand {
     `,
     examples: [[
       `List all the available binaries`,
-      `yarn bin`,
+      `$0 bin`,
     ], [
       `Print the path to a specific binary`,
-      `yarn bin eslint`,
+      `$0 bin eslint`,
     ]],
   });
 

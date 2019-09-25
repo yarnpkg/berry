@@ -29,10 +29,10 @@ export default class CacheCleanCommand extends BaseCommand {
     `,
     examples: [[
       `Remove all the unused cache files from the current project`,
-      `yarn cache clean`,
+      `$0 cache clean`,
     ], [
       `Obtain the list of unused files from the current project`,
-      `yarn cache clean --dry-run --json`,
+      `$0 cache clean --dry-run --json`,
     ]],
   });
 

@@ -30,7 +30,7 @@ export default class WhyCommand extends BaseCommand {
     `,
     examples: [[
       `Explain why lodash is used in your project`,
-      `yarn why lodash`,
+      `$0 why lodash`,
     ]],
   });
 

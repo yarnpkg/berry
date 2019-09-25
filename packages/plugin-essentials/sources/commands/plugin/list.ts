@@ -22,7 +22,7 @@ export default class PluginDlCommand extends BaseCommand {
     `,
     examples: [[
       `List the official plugins`,
-      `yarn plugin list`,
+      `$0 plugin list`,
     ]],
   });
 

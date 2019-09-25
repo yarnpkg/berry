@@ -43,7 +43,7 @@ export default class SetVersionCommand extends BaseCommand {
     `,
     examples: [[
       `Build Yarn from master`,
-      `yarn set version from sources`,
+      `$0 set version from sources`,
     ]],
   });
 
