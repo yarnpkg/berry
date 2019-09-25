@@ -48,23 +48,13 @@ export interface ResolvedPath {
   dirList?: Set<Filename>
 }
 
-/** Module path resolver */
-export interface PathResolver {
-  /**
-   * @param nodePath full path to Node module file
-   *
-   * @returns resolved path
-   */
-  resolvePath(nodePath: PortablePath): ResolvedPath;
-}
-
 /**
  * Resolves `node_modules` paths inside PnP projects.
  *
  * The idea: for path like `node_modules/foo/node_modules/bar` we use `foo` as an issuer
  * and resolve `bar` for this issuer using `pnpapi`.
  */
-export class NodePathResolver implements PathResolver {
+export class NodePathResolver {
   private pnp: PortablePnPApi;
 
   /**
@@ -84,7 +74,7 @@ export class NodePathResolver implements PathResolver {
    *
    * @returns `undefined` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
    */
-  public readDir(issuerInfo: PackageInformation<PortablePath>, scope: string | null): Set<Filename> | undefined {
+  private readDir(issuerInfo: PackageInformation<PortablePath>, scope: string | null): Set<Filename> | undefined {
     const result = new Set<Filename>();
     for (const key of issuerInfo.packageDependencies.keys()) {
       const [pkgNameOrScope, pkgName] = key.split('/');

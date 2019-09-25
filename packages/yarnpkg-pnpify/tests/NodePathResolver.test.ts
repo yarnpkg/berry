@@ -11,6 +11,7 @@ const makePnpApiMock = (pkgMap: PkgMap): PnpApi => {
     topLevel: {name: null, reference: null},
     resolveUnqualified: jest.fn(),
     resolveRequest: jest.fn(),
+    getDependencyTreeRoots: jest.fn(),
     findPackageLocator: jest.fn().mockImplementation((pathname: string) => {
       if (pathname.indexOf(pkgMap.foo.packageLocation) === 0) {
         return {package: 'foo'};
