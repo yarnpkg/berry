@@ -30,7 +30,7 @@ describe('WatchManager', () => {
     expect(watcherCallback).toBeCalledWith('file5.ts');
   });
 
-  it('should trigger callback when dir entries added', () => {
+  it('should trigger callback when dir entries removed', () => {
     const manager = new WatchManager();
     const dirPath = NodeFS.toPortablePath('/abc');
     const dirList = new Set(['file1.ts', 'file2.ts', 'file3.ts', 'file4.ts'].map(x => toFilename(x)));
