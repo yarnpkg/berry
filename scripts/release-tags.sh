@@ -75,7 +75,8 @@ for TAG_SUFFIX in '' {a..z}; do
         fi
     fi
 
-    git tag -a "$TAG" "$TAG"
+    git tag -a "$TAG" -m "$TAG"
+    break
 done
 
 printf "%s" "$COMMIT_MESSAGE"
