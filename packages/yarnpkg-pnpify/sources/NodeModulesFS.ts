@@ -1,12 +1,13 @@
-import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@yarnpkg/fslib';
-import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@yarnpkg/fslib';
-import {WatchOptions, WatchCallback, Watcher}              from '@yarnpkg/fslib';
-import {FSPath, NativePath, PortablePath, npath, ppath}    from '@yarnpkg/fslib';
-import {PnpApi}                                            from '@yarnpkg/pnp';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, toFilename} from '@yarnpkg/fslib';
+import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                   from '@yarnpkg/fslib';
+import {WatchOptions, WatchCallback, Watcher}                          from '@yarnpkg/fslib';
+import {FSPath, NativePath, PortablePath, npath, ppath}                from '@yarnpkg/fslib';
 
-import fs                                                  from 'fs';
+import {PnpApi}                                                        from '@yarnpkg/pnp';
+import fs                                                              from 'fs';
 
-import {NodePathResolver, ResolvedPath}                    from './NodePathResolver';
+import {NodePathResolver, ResolvedPath}                                from './NodePathResolver';
+import {WatchManager}                                                  from './WatchManager';
 
 export type NodeModulesFSOptions = {
   realFs?: typeof fs
@@ -36,13 +37,31 @@ type PortableNodeModulesFSOptions = {
 
 class PortableNodeModulesFs extends FakeFS<PortablePath> {
   private readonly baseFs: FakeFS<PortablePath>;
-  private readonly pathResolver: NodePathResolver;
+  private readonly watchManager: WatchManager;
+  private pathResolver: NodePathResolver;
 
   constructor(pnp: PnpApi, {baseFs = new NodeFS()}: PortableNodeModulesFSOptions = {}) {
     super(ppath);
 
     this.baseFs = baseFs;
     this.pathResolver = new NodePathResolver(pnp);
+    this.watchManager = new WatchManager();
+
+    const pnpRootPath = NodeFS.toPortablePath(pnp.getPackageInformation(pnp.topLevel)!.packageLocation);
+    this.watchPnpFile(pnpRootPath);
+  }
+
+  private watchPnpFile(pnpRootPath: PortablePath) {
+    const pnpFilePath = ppath.join(pnpRootPath, toFilename('.pnp.js'));
+    this.baseFs.watch(pnpRootPath, {persistent: false},  (_, filename) => {
+      if (filename === '.pnp.js') {
+        delete require.cache[pnpFilePath];
+        const pnp = require(pnpFilePath);
+        this.pathResolver = new NodePathResolver(pnp);
+
+        this.watchManager.notifyWatchers(this.pathResolver);
+      }
+    });
   }
 
   resolve(path: PortablePath) {
@@ -53,7 +72,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     return this.baseFs;
   }
 
-  private resolvePath(p: PortablePath): ResolvedPath<PortablePath> & { fullOriginalPath: PortablePath } {
+  private resolvePath(p: PortablePath): ResolvedPath & { fullOriginalPath: PortablePath } {
     if (typeof p === `number`) {
       return {resolvedPath: p, fullOriginalPath: p};
     } else {
@@ -362,7 +381,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     if (!pnpPath.resolvedPath) {
       throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, scandir '${p}'`);
     } else if (pnpPath.dirList) {
-      return pnpPath.dirList;
+      return Array.from(pnpPath.dirList);
     } else {
       return await this.baseFs.readdirPromise(pnpPath.resolvedPath);
     }
@@ -373,7 +392,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     if (!pnpPath.resolvedPath) {
       throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, scandir '${p}'`);
     } else if (pnpPath.dirList) {
-      return pnpPath.dirList;
+      return Array.from(pnpPath.dirList);
     } else {
       return this.baseFs.readdirSync(pnpPath.resolvedPath);
     }
@@ -395,12 +414,19 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
-  watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
-    return this.baseFs.watch(
-      p,
-      // @ts-ignore
-      a,
-      b,
-    );
+  watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback): Watcher {
+    const pnpPath = this.resolvePath(p);
+    const watchPath = pnpPath.resolvedPath;
+    if (watchPath && pnpPath.dirList) {
+      const callback: WatchCallback = typeof a === 'function' ? a : typeof b === 'function' ? b : () => {};
+      return this.watchManager.registerWatcher(watchPath, pnpPath.dirList, callback);
+    } else {
+      return this.baseFs.watch(
+        p,
+        // @ts-ignore
+        a,
+        b,
+      );
+    }
   }
 }

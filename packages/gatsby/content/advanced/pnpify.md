@@ -56,9 +56,9 @@ Note that VSCode might ask you to do Step 4 again from time to time, but apart f
 
 ## Caveat
 
-- Due to how PnPify emulates the `node_modules` directory, some problems are to be expected with packages listing peer dependencies.
+- Due to how PnPify emulates the `node_modules` directory, some problems are to be expected, especially with tools that watch directories inside `node_modules`.
 
-- Since the files don't actually exist on the disk, it will mess with watch mechanisms (modifications in files from your project will be properly picked up, but dependencies being added or removed might not be picked up by the engine). We're considering adding support for `fs.watchFile` even for dependencies, but it will require significant work.
+- PnPify isn't designed to be a long-term solution; its purpose is purely to help projects during their transition to the stricter Plug'n'Play module resolution scheme. Relying on PnPify doesn't allow you to take full advantage of everything Plug'n'Play has to offer, in particular perfect flattening and boundary checks.
 
 ## Alternatives
 

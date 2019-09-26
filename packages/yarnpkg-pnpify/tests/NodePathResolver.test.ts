@@ -1,11 +1,17 @@
+import {NodeFS}           from '@yarnpkg/fslib';
 import {PnpApi}           from '@yarnpkg/pnp';
 
 import {NodePathResolver} from '../sources/NodePathResolver';
 
 type PkgMap = { [pkg: string]: { packageLocation: string, packageDependencies: Map<string, string> } };
 
-const pnpApiMock = (pkgMap: PkgMap): PnpApi => {
+const makePnpApiMock = (pkgMap: PkgMap): PnpApi => {
   return ({
+    VERSIONS: {std: 1},
+    topLevel: {name: null, reference: null},
+    resolveUnqualified: jest.fn(),
+    resolveRequest: jest.fn(),
+    getDependencyTreeRoots: jest.fn(),
     findPackageLocator: jest.fn().mockImplementation((pathname: string) => {
       if (pathname.indexOf(pkgMap.foo.packageLocation) === 0) {
         return {package: 'foo'};
@@ -46,76 +52,76 @@ describe('NodePathResolver', () => {
   let resolver: NodePathResolver;
 
   beforeAll(() => {
-    resolver = new NodePathResolver(pnpApiMock(posixPkgMap));
+    resolver = new NodePathResolver(makePnpApiMock(posixPkgMap));
   });
 
   it('should not change paths outside of pnp project', () => {
-    const pnpPath = resolver.resolvePath('/home/user/node_modules/a/b/c');
+    const pnpPath = resolver.resolvePath(NodeFS.toPortablePath('/home/user/node_modules/a/b/c'));
     expect(pnpPath.resolvedPath).toEqual('/home/user/node_modules/a/b/c');
   });
 
   it('should not try to alter paths without node_modules inside pnp project', () => {
-    const nodePath = '/home/user/proj/.cache/foo';
+    const nodePath = NodeFS.toPortablePath('/home/user/proj/.cache/foo');
     const pnpPath = resolver.resolvePath(nodePath);
     expect(pnpPath).toEqual({resolvedPath: nodePath});
   });
 
   it('should not try to alter paths from a dotted node_modules entry', () => {
-    const nodePath = '/home/user/proj/node_modules/.foo/bar';
+    const nodePath = NodeFS.toPortablePath('/home/user/proj/node_modules/.foo/bar');
     const pnpPath = resolver.resolvePath(nodePath);
     expect(pnpPath).toEqual({resolvedPath: nodePath});
   });
 
   it('should resolve /home/user/proj path', () => {
-    const nodePath = '/home/user/proj';
+    const nodePath = NodeFS.toPortablePath('/home/user/proj');
     const pnpPath = resolver.resolvePath(nodePath);
     expect(pnpPath).toEqual({resolvedPath: '/home/user/proj'});
   });
 
   it('should resolve /home/user/proj/node_modules path', () => {
-    const nodePath = '/home/user/proj/node_modules';
+    const nodePath = NodeFS.toPortablePath('/home/user/proj/node_modules');
     const pnpPath = resolver.resolvePath(nodePath);
-    expect(pnpPath).toEqual({resolvedPath: '/home/user/proj/node_modules', statPath: '/home/user/proj', dirList: ['foo', 'bar', '@scope']});
+    expect(pnpPath).toEqual({resolvedPath: '/home/user/proj/node_modules', statPath: '/home/user/proj', dirList: new Set(['foo', 'bar', '@scope'])});
   });
 
   it('should partially resolve /home/user/proj/node_modules/@scope path', () => {
-    const nodePath = '/home/user/proj/node_modules/@scope';
+    const nodePath = NodeFS.toPortablePath('/home/user/proj/node_modules/@scope');
     const pnpPath = resolver.resolvePath(nodePath);
-    expect(pnpPath).toEqual({resolvedPath: '/home/user/proj/node_modules/@scope', statPath: '/home/user/proj', dirList: ['baz']});
+    expect(pnpPath).toEqual({resolvedPath: '/home/user/proj/node_modules/@scope', statPath: '/home/user/proj', dirList: new Set(['baz'])});
   });
 
   it('should not change path inside pnp dependency', () => {
-    const nodePath = '/home/user/proj/.cache/foo/node_modules/foo';
+    const nodePath = NodeFS.toPortablePath('/home/user/proj/.cache/foo/node_modules/foo');
     const pnpPath = resolver.resolvePath(nodePath);
     expect(pnpPath).toEqual({resolvedPath: nodePath});
   });
 
   it('should resolve /home/user/proj/node_modules/foo path', () => {
-    const nodePath = '/home/user/proj/node_modules/foo';
+    const nodePath = NodeFS.toPortablePath('/home/user/proj/node_modules/foo');
     const pnpPath = resolver.resolvePath(nodePath);
     expect(pnpPath).toEqual({resolvedPath: '/home/user/proj/.cache/foo/node_modules/foo'});
   });
 
   it('should enter resolve package and leave request intact in /home/user/proj/node_modules/foo/a/b/c/index.js', () => {
-    const nodePath = '/home/user/proj/node_modules/foo/a/b/c/index.js';
+    const nodePath = NodeFS.toPortablePath('/home/user/proj/node_modules/foo/a/b/c/index.js');
     const pnpPath = resolver.resolvePath(nodePath);
     expect(pnpPath).toEqual({resolvedPath: '/home/user/proj/.cache/foo/node_modules/foo/a/b/c/index.js'});
   });
 
   it('should enter into two packages in a path and leave request intact', () => {
-    const nodePath = '/home/user/proj/node_modules/foo/node_modules/bar/a/b/c/index.js';
+    const nodePath = NodeFS.toPortablePath('/home/user/proj/node_modules/foo/node_modules/bar/a/b/c/index.js');
     const pnpPath = resolver.resolvePath(nodePath);
     expect(pnpPath).toEqual({resolvedPath: '/home/user/proj/.cache/bar/node_modules/bar/a/b/c/index.js'});
   });
 
   it('should return null if issuer has no given dependency', () => {
-    const nodePath = '/home/user/proj/node_modules/bar';
+    const nodePath = NodeFS.toPortablePath('/home/user/proj/node_modules/bar');
     const pnpPath = resolver.resolvePath(nodePath);
     expect(pnpPath).toEqual({resolvedPath: null});
   });
 
   it('should return null if packages dependends on itself', () => {
-    const nodePath = '/home/user/proj/node_modules/foo/node_modules/foo';
+    const nodePath = NodeFS.toPortablePath('/home/user/proj/node_modules/foo/node_modules/foo');
     const pnpPath = resolver.resolvePath(nodePath);
     expect(pnpPath).toEqual({resolvedPath: null});
   });

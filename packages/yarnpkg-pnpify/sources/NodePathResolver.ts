@@ -1,7 +1,7 @@
-import {FSPath, PortablePath, Filename, toFilename, ppath} from '@yarnpkg/fslib';
-import {PnpApi, PackageInformation}                        from '@yarnpkg/pnp';
+import {PortablePath, Filename, toFilename, ppath} from '@yarnpkg/fslib';
+import {PnpApi, PackageInformation}                from '@yarnpkg/pnp';
 
-import {PortablePnPApi}                                    from './PortablePnPApi';
+import {PortablePnPApi}                            from './PortablePnPApi';
 
 /**
  * Regexp for pathname that catches the following paths:
@@ -26,12 +26,12 @@ const NODE_MODULES_REGEXP = /(?:\/node_modules((?:\/@[^\/]+)?(?:\/[^@][^\/]+)?))
  * 2. And we need either fake stats or we can forward underlying fs to stat the issuer dir.
  *    The issuer dir exists on fs. We store issuer dir into `statPath` field
  */
-export interface ResolvedPath<PathType extends FSPath<PortablePath>> {
+export interface ResolvedPath {
   /**
    * Fully resolved path `/node_modules/...` path within PnP project,
    * `null` if path does not exist.
    */
-  resolvedPath: PathType | null;
+  resolvedPath: PortablePath | null;
 
   /**
    * The path that should be used for stats. This field is returned for pathes ending
@@ -45,7 +45,7 @@ export interface ResolvedPath<PathType extends FSPath<PortablePath>> {
   /**
    * Directory entries list, returned for pathes ending with `/node_modules[/@scope]`
    */
-  dirList?: Filename[]
+  dirList?: Set<Filename>
 }
 
 /**
@@ -74,7 +74,7 @@ export class NodePathResolver {
    *
    * @returns `undefined` - if dir does not exist, or `readdir`-like list of subdirs in the virtual dir
    */
-  public readDir(issuerInfo: PackageInformation<PortablePath>, scope: string | null): Filename[] | undefined {
+  private readDir(issuerInfo: PackageInformation<PortablePath>, scope: string | null): Set<Filename> | undefined {
     const result = new Set<Filename>();
     for (const key of issuerInfo.packageDependencies.keys()) {
       const [pkgNameOrScope, pkgName] = key.split('/');
@@ -87,7 +87,7 @@ export class NodePathResolver {
       }
     }
 
-    return result.size === 0 ? undefined : Array.from(result);
+    return result.size === 0 ? undefined : result;
   }
 
   private getIssuer(pnp: PortablePnPApi, pathname: PortablePath): PortablePath | undefined {
@@ -107,8 +107,8 @@ export class NodePathResolver {
    *
    * @returns resolved path
    */
-  public resolvePath(nodePath: PortablePath): ResolvedPath<PortablePath> {
-    const result: ResolvedPath<PortablePath> = {resolvedPath: nodePath};
+  public resolvePath(nodePath: PortablePath): ResolvedPath {
+    const result: ResolvedPath = {resolvedPath: nodePath};
 
     const marker = `/node_modules`;
     const index = nodePath.indexOf(marker);
