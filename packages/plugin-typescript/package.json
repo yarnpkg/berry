@@ -3,13 +3,13 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.6",
-    "@yarnpkg/core": "workspace:2.0.0-rc.6",
-    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.4",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.7",
+    "@yarnpkg/core": "workspace:2.0.0-rc.7",
+    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.5",
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.2"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:2.0.0-rc.6",
+    "@yarnpkg/builder": "workspace:2.0.0-rc.7",
     "typescript": "^3.5.3"
   },
   "scripts": {

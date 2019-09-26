@@ -3,22 +3,18 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.6",
-    "@yarnpkg/core": "workspace:2.0.0-rc.6",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.7",
+    "@yarnpkg/core": "workspace:2.0.0-rc.7",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2",
-    "@yarnpkg/parsers": "workspace:2.0.0-rc.3",
+    "@yarnpkg/parsers": "workspace:2.0.0-rc.4",
     "clipanion": "^2.1.2",
     "inquirer": "^6.2.0",
     "semver": "^5.6.0",
     "treeify": "^1.1.0",
     "yup": "^0.27.0"
   },
-  "version": "2.0.0-rc.4",
-  "nextVersion": {
-    "semver": "2.0.0-rc.5",
-    "nonce": "5450499372672619"
-  },
+  "version": "2.0.0-rc.5",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

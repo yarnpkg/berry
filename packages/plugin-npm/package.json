@@ -3,7 +3,7 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/core": "workspace:2.0.0-rc.6",
+    "@yarnpkg/core": "workspace:2.0.0-rc.7",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
     "inquirer": "^6.2.0",
     "semver": "^5.6.0"
