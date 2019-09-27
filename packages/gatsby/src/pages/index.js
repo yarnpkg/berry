@@ -133,8 +133,6 @@ const IndexPage = ({ data, searchState, onSearchStateChange }) => {
   const [tags, setTags] = useState([]);
   const [owners, setOwners] = useState([]);
 
-  console.log(data);
-
   return (<>
     <SearchProvider searchState={searchState} onSearchStateChange={onSearchStateChange}>
       <Layout header=
