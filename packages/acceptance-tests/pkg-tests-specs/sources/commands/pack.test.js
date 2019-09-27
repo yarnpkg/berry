@@ -77,6 +77,24 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should support excluding folders from the "files" field`,
+      makeTemporaryEnv({
+        files: [
+          `/lib`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/lib/a.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/lib/b.js`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        await expect(stdout).toMatch(/lib\/a\.js/);
+        await expect(stdout).toMatch(/lib\/b\.js/);
+      }),
+    );
+
+    test(
       `it shouldn't add .gitignore files to the package files`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await fsUtils.writeFile(`${path}/.gitignore`, ``);
