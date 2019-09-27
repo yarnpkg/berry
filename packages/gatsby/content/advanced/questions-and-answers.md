@@ -31,3 +31,15 @@ At the time Yarn got released Yarn was effectively much faster than some of its 
 Put simply, our differences lie in our priorities. Different projects make different tradeoffs, and it's exactly what happens here. We prioritized workspaces because we felt like monorepos were providing significant value. We've spent significant resources pushing for Plug'n'Play (including through [dozens of contributions to third-party projects](https://github.com/pulls?utf8=%E2%9C%93&q=is%3Apr+author%3Aarcanis+archived%3Afalse+is%3Aclosed+pnp+-user%3Ayarnpkg+)) because we felt like this was important for the ecosystem. This is the main difference: we make our own informed decisions regarding the project roadmap.
 
 Speed is relative and a temporary state. Processes, roadmaps and core values are what sticks.
+
+## Should lockfiles be committed to the repository?
+
+**Yes**
+
+Lockfiles are meant to always be stored along with your project sources - and this regardless of whether you're writing a standalone application or a distributed library.
+
+One persisting argument against checking-in the lockfile in the repository is about being made aware of potential problems against the latest versions of the library. People saying this argue that the lockfile being present prevents contributors from seeing such issues, as all dependencies are locked and appear fine until a consumer install the library and uses more recent (and incompatible) dependencies.
+
+Although tempting, this reasoning has a fatal flaw: removing the lockfile from the repository doesn't prevent this problem from happening. Contributors won't test against new versions unless they run an install, so older projects may never even notice such incompatibilities. Then, years later, users that want to work on an old project won't even be able to install it because it's latest known good state didn't get checked-in. Even without going all the way to "years later", new contributors will always have to ponder whether things broke because of their changes or because of an incompatible dependency - decreasing the amount of contributions you'll receive.
+
+Lockfiles should **always** be kept within the repository. Continuous integration testing is a good idea, but should be left to continuous integration systems. For example, Yarn itself runs [daily tests](https://github.com/yarnpkg/berry#current-status) against the latest versions of major open-source frameworks and tools. [Dependabot](https://dependabot.com/#how-it-works) is also a good tool that allows you to track your dependencies updates in a more integrated way.
