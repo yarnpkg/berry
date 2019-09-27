@@ -1,4 +1,4 @@
-const {NodeFS, xfs} = require(`@yarnpkg/fslib`);
+const {NodeFS, ppath, xfs} = require(`@yarnpkg/fslib`);
 const cp = require(`child_process`);
 const {satisfies} = require(`semver`);
 
@@ -220,6 +220,52 @@ describe(`Plug'n'Play`, () => {
         });
       },
     ),
+  );
+
+  test(
+    `it should throw different semantic errors based on whether the project or a sub-dependency requires something it doesn't own`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`various-requires`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        const rootMessage = await source(`{ try { require('no-deps') } catch (error) { return error.message } }`);
+        const dependencyMessage = await source(`{ try { require('various-requires/invalid-require') } catch (error) { return error.message } }`);
+
+        const filter = message => message.replace(/^(.*):.*/gm, `$1: Something`);
+
+        expect(filter(rootMessage)).not.toEqual(filter(dependencyMessage));
+      },
+    )
+  );
+
+  test(
+    `it should throw the same error than the root when a workspace requires something it doesn't own`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`packages/*`],
+      },
+      async ({path, run, source}) => {
+        const workspacePath = ppath.join(path, `packages/workspace-a`);
+
+        await xfs.mkdirpPromise(workspacePath);
+        await xfs.writeJsonPromise(ppath.join(workspacePath, `package.json`), {name: `workspace-a`});
+
+        await run(`install`);
+
+        const code = `{ try { require('no-deps') } catch (error) { return error.message } }`;
+
+        const rootMessage = await source(code);
+        const workspaceMessage = await source(code, {cwd: ppath.join(workspacePath)});
+
+        const filter = message => message.replace(/^(.*):.*/gm, `$1: Something`);
+
+        expect(filter(workspaceMessage)).toEqual(filter(rootMessage));
+      },
+    )
   );
 
   test(
