@@ -205,7 +205,7 @@ export async function genPackList(workspace: Workspace) {
     ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.module));
 
   if (workspace.manifest.files !== null) {
-    ignoreList.reject.push(`*`);
+    ignoreList.reject.push(`/*`);
 
     for (const pattern of workspace.manifest.files) {
       addIgnorePattern(ignoreList.accept, pattern, {cwd: PortablePath.root});
