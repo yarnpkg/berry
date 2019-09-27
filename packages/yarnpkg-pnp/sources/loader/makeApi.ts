@@ -156,6 +156,20 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   }
 
   /**
+   * Returns whether the specified locator is a dependency tree root (in which case it's part of the project) or not
+   */
+  function isDependencyTreeRoot(packageLocator: PackageLocator) {
+    if (packageLocator.name === null)
+      return true;
+
+    for (const dependencyTreeRoot of runtimeState.dependencyTreeRoots)
+      if (dependencyTreeRoot.name === packageLocator.name && dependencyTreeRoot.reference === packageLocator.reference)
+        return true;
+
+    return false;
+  }
+
+  /**
    * Implements the node resolution for folder access and extension selection
    */
 
@@ -515,7 +529,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       // If we can't find the path, and if the package making the request is the top-level, we can offer nicer error messages
 
       if (dependencyReference === null) {
-        if (issuerLocator.name === null) {
+        if (isDependencyTreeRoot(issuerLocator)) {
           throw makeError(
             ErrorCode.MISSING_PEER_DEPENDENCY,
             `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
@@ -529,7 +543,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           );
         }
       } else if (dependencyReference === undefined) {
-        if (issuerLocator.name === null) {
+        if (isDependencyTreeRoot(issuerLocator)) {
           throw makeError(
             ErrorCode.UNDECLARED_DEPENDENCY,
             `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
