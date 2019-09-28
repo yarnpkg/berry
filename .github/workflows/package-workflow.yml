@@ -53,7 +53,7 @@ jobs:
       run: bash ./scripts/build-dist.sh
 
     - name: 'Setup MSBuild'
-      uses: warrenbuckley/Setup-MSBuild@v1
+      uses: warrenbuckley/Setup-MSBuild@1176db82e64cd53b4944f0e57c2abec104b4782d
 
     - name: 'Build the Windows installer'
       run: MSBuild.exe scripts\winsetup\YarnSetup.wixproj /p:Configuration=Release

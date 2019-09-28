@@ -44,7 +44,7 @@
 				<Environment
 					Id="BinPath"
 					Name="PATH"
-					Value="[LocalAppDataFolder]Yarn\bin"
+					Value="[LocalAppDataFolder]Yarn\Berry\bin"
 					Permanent="no"
 					Part="last"
 					Action="set"
