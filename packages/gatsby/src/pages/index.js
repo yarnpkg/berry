@@ -1,6 +1,5 @@
 import {css}             from '@emotion/core';
 import styled            from '@emotion/styled';
-import {graphql}         from 'gatsby';
 import React, {useState} from 'react';
 
 import Header                                  from '../components/header';
