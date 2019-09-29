@@ -352,6 +352,8 @@ module.exports.factory = function (require) {
     category: `Workspace-related commands`,
     description: `run a command on all workspaces`,
     details: `
+        > In order to use this command you need to add \`@yarnpkg/plugin-workspace-tools\` to your plugins.
+
         This command will run a given sub-command on all child workspaces that define it (any workspace that doesn't define it will be just skiped). Various flags can alter the exact behavior of the command:
 
         - If \`-p,--parallel\` is set, the commands will run in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overriden via \`-j,--jobs\`.
@@ -524,6 +526,8 @@ module.exports.factory = function (require) {
     category: `Workspace-related commands`,
     description: `run a command within the specified workspace`,
     details: `
+        > In order to use this command you need to add \`@yarnpkg/plugin-workspace-tools\` to your plugins.
+
         This command will run a given sub-command on a single workspace.
       `,
     examples: [[`Add a package to a single workspace`, `yarn workspace components add -D react`], [`Run build script on a single workspace`, `yarn workspace components run build`]]
