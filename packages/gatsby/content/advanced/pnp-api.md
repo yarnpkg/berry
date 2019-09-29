@@ -15,13 +15,11 @@ On top of being a simple install strategy, Plug'n'Play also provides a API that 
 ```ts
 export type PackageLocator = {
   name: string,
-  reference: string | null
+  reference: string,
 };
 ```
 
 A package locator is an object describing one unique instance of a package in the dependency tree. The `name` field is guaranteed to be the name of the package itself, but the `reference` field should be considered an opaque string whose value may be whatever the PnP implementation decides to put there.
-
-If `reference` is `null`, it means that the dependency hasn't been fulfilled at all - this typically only occurs when a package lists a peer dependency that its parent doesn't provide.
 
 Note that one package locator is different from the others: the top-level locator (available through `pnp.topLevel`, cf below) sets *both* `name` and `reference` to `null`. This special locator will always point to the project folder (which is generally the root of the repository, even when working with workspaces).
 
@@ -30,12 +28,18 @@ Note that one package locator is different from the others: the top-level locato
 ```ts
 export type PackageInformation = {
   packageLocation: string,
-  packageDependencies: Map<string, string>,
+  packageDependencies: Map<string, null | string | [string, string]>,
   linkType: 'HARD' | 'SOFT',
 };
 ```
 
-The package information set describes the location where the package can be found on the disk, and the exact set of dependencies it is allowed to require. The `packageDependencies` values are valid references that, when associated with their key, constitute a valid `PackageLocator` object.
+The package information set describes the location where the package can be found on the disk, and the exact set of dependencies it is allowed to require. The `packageDependencies` values are meant to be interpreted as such:
+
+- If a string, the value is meant to be used as a reference in a locator whose name is the dependency name.
+
+- If a `[string, string]` tuple, the value is meant to be used as a locator whose name is the first element of the tuple and reference is the second one. This typically occurs with package aliases (such as `"foo": "npm:bar@1.2.3"`).
+
+- If `null`, the specified dependency isn't available at all. This typically occurs when a package's peer dependency didn't get provided by its direct parent in the dependency tree.
 
 The `linkType` field is only useful in specific cases - it describes whether the producer of the PnP API was asked to make the package available through an hard linkage (in which case all the `packageLocation` field is reputed being owned by the linker) or a soft linkage (in which case the `packageLocation` field represents a location outside of the sphere of influence of the linker).
 
@@ -133,6 +137,8 @@ As you can see, the `.js` extension didn't get added. This is due to the differe
 
 Note that in some cases you may just have a folder to work with as `issuer` parameter. When this happens, just suffix the issuer with an extra slash (`/`) to indicate to the PnP API that the issuer is a folder.
 
+This function will return `null` if the request is a builtin module, unless `considerBuiltins` is set to `false`.
+
 ### `resolveUnqualified(...)`
 
 ```ts
@@ -176,6 +182,8 @@ Might very well be resolved into:
 ```
 /my/cache/lodash/1.0.0/node_modules/lodash/uniq/index.js
 ```
+
+This function will return `null` if the request is a builtin module, unless `considerBuiltins` is set to `false`.
 
 ## Qualified vs Unqualified Resolutions
 
