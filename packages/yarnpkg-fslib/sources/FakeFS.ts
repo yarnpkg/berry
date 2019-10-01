@@ -368,19 +368,53 @@ export abstract class FakeFS<P extends Path> {
   }
 
   async lockPromise<T>(affectedPath: P, callback: () => Promise<T>): Promise<T> {
-    const lockPath = `${affectedPath}.lock` as P;
+    const lockPath = `${affectedPath}.flock` as P;
 
     const interval = 1000 / 60;
-    const timeout = Date.now() + 60 * 1000;
+    const startTime = Date.now();
 
     let fd = null;
+
+    // Even when we detect that a lock file exists, we still look inside to see
+    // whether the pid that created it is still alive. It's not foolproof
+    // (there are false positive), but there are no false negative and that's
+    // all that matters in 99% of the cases.
+    const isAlive = async () => {
+      let pid: number;
+
+      try {
+        ([pid] = await this.readJsonPromise(lockPath));
+      } catch (error) {
+        // If we can't read the file repeatedly, we assume the process was
+        // aborted before even writing finishing writing the payload.
+        return Date.now() - startTime < 500;
+      }
+
+      try {
+        // "As a special case, a signal of 0 can be used to test for the
+        // existence of a process" - so we check whether it's alive.
+        process.kill(pid, 0);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    };
 
     while (fd === null) {
       try {
         fd = await this.openPromise(lockPath, `wx`);
       } catch (error) {
         if (error.code === `EEXIST`) {
-          if (Date.now() < timeout) {
+          if (!await isAlive()) {
+            try {
+              await this.unlinkPromise(lockPath);
+              continue;
+            } catch (error) {
+              // No big deal if we can't remove it. Just fallback to wait for
+              // it to be eventually released by its owner.
+            }
+          }
+          if (Date.now() - startTime < 60 * 1000) {
             await new Promise(resolve => setTimeout(resolve, interval));
           } else {
             throw new Error(`Couldn't acquire a lock in a reasonable time (via ${lockPath})`);
@@ -390,6 +424,8 @@ export abstract class FakeFS<P extends Path> {
         }
       }
     }
+
+    await this.writePromise(fd, JSON.stringify([process.pid]));
 
     try {
       return await callback();

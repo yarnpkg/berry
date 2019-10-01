@@ -10659,7 +10659,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     lodash: "npm:^4.17.10"
   peerDependencies:
     webpack: ^1.13.0 || ^2.0.0 || ^3.0.0 || ^4.0.0
-  checksum: 3a8e222b3a8d061c4e543fc87db44f72b5d43d4f1723c70cec1f24e66d512ae06253b022bbf992c91715a794b0a2793f62466b8200a0e96e3856aa49869f5a54
+  checksum: 905553bb7b5db99faede848e1d9b13d621444b0b3d9d0c3bcb58638793f4d541d6adfb329a89942668d3f10f292f43a5cae7b03c58734d3f8204c89c5a485d09
   languageName: node
   linkType: hard
 

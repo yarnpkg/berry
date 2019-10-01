@@ -2,7 +2,8 @@
   "name": "@yarnpkg/fslib",
   "version": "2.0.0-rc.3",
   "nextVersion": {
-    "nonce": "6784880059602653"
+    "semver": "2.0.0-rc.4",
+    "nonce": "8877118851865601"
   },
   "main": "./sources/index.ts",
   "sideEffects": false,
