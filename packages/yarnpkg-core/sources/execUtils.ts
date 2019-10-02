@@ -36,12 +36,12 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
   });
 
   if (!hasFd(stdin) && stdin !== null)
-    stdin.pipe(subprocess.stdin as any as Writable);
+    stdin.pipe(subprocess.stdin!);
 
   if (!hasFd(stdout))
-    (subprocess.stdout as any as Readable).pipe(stdout);
+    subprocess.stdout!.pipe(stdout);
   if (!hasFd(stderr))
-    (subprocess.stderr as any as Readable).pipe(stderr);
+    subprocess.stderr!.pipe(stderr);
 
   return new Promise((resolve, reject) => {
     subprocess.on(`close`, (code: number) => {

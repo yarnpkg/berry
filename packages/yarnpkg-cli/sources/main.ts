@@ -3,7 +3,6 @@ import {xfs, NodeFS, PortablePath}                          from '@yarnpkg/fslib
 import {execFileSync}                                       from 'child_process';
 import {Cli}                                                from 'clipanion';
 import {realpathSync}                                       from 'fs';
-import {Readable, Writable}                                 from 'stream';
 
 function runBinary(path: PortablePath) {
   const physicalPath = NodeFS.fromPortablePath(path);
