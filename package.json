@@ -88,7 +88,8 @@
     "gen-tssdk": "pnpify --sdk scripts",
     "release:all": "./scripts/release.sh",
     "test:lint": "eslint \"packages/**/@(sources|tests)/**/!(libzip).@(ts|js)\"",
-    "test:unit": "jest"
+    "test:unit": "jest",
+    "typecheck:all": "pnpify tsc --noEmit"
   },
   "sherlock": {
     "requireList": [

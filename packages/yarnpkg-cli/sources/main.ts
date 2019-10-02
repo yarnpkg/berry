@@ -91,9 +91,9 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
         cwd: NodeFS.toPortablePath(process.cwd()),
         plugins: pluginConfiguration,
         quiet: false,
-        stdin: process.stdin as any as Readable,
-        stdout: process.stdout as any as Writable,
-        stderr: process.stderr as any as Writable,
+        stdin: process.stdin,
+        stdout: process.stdout,
+        stderr: process.stderr,
       });
     }
   }

@@ -8,6 +8,7 @@ enum Pipe {
   STDERR = 0b10,
 };
 
+// This is hell to type
 export type Stdio = [
   any,
   any,
@@ -48,14 +49,14 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
     ]});
 
     if (stdio[0] instanceof Transform)
-      stdio[0].pipe(child.stdin);
+      stdio[0].pipe(child.stdin!);
     if (stdio[1] instanceof Transform)
-      child.stdout.pipe(stdio[1], {end: stdio[1] !== opts.initialStdout});
+      child.stdout!.pipe(stdio[1], {end: stdio[1] !== opts.initialStdout});
     if (stdio[2] instanceof Transform)
-      child.stderr.pipe(stdio[2], {end: stdio[2] !== opts.initialStderr});
+      child.stderr!.pipe(stdio[2], {end: stdio[2] !== opts.initialStderr});
 
     return {
-      stdin: child.stdin,
+      stdin: child.stdin!,
       promise: new Promise(resolve => {
         child.on(`error`, error => {
           // @ts-ignore
