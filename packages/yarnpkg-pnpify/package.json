@@ -2,7 +2,7 @@
   "name": "@yarnpkg/pnpify",
   "version": "2.0.0-rc.5",
   "nextVersion": {
-    "nonce": "2023929591147737"
+    "nonce": "7014347471810219"
   },
   "main": "./sources/boot-dev.js",
   "bin": "./sources/boot-cli-dev.js",
@@ -15,7 +15,7 @@
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnp": "workspace:2.0.0-rc.4",
     "eslint": "^5.16.0",
-    "typescript": "^3.5.3"
+    "typescript": "next"
   },
   "peerDependencies": {
     "eslint": "*",

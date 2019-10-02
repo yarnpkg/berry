@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.7",
   "nextVersion": {
     "semver": "2.0.0-rc.8",
-    "nonce": "8166890150451011"
+    "nonce": "5236174999985805"
   },
   "main": "./sources/index.ts",
   "dependencies": {
@@ -38,7 +38,7 @@
     "@yarnpkg/plugin-workspace-tools": "workspace:2.0.0-rc.3",
     "@yarnpkg/pnp": "workspace:2.0.0-rc.4",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.5",
-    "typescript": "^3.5.3"
+    "typescript": "next"
   },
   "scripts": {
     "postpack": "rm -rf lib",

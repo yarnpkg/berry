@@ -15,12 +15,15 @@
   },
   "devDependencies": {
     "@yarnpkg/builder": "workspace:2.0.0-rc.7",
-    "typescript": "^3.5.3"
+    "typescript": "next"
   },
   "scripts": {
     "build:plugin-version": "builder build plugin"
   },
   "version": "2.0.0-rc.4",
+  "nextVersion": {
+    "nonce": "8033542721581057"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

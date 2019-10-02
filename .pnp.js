@@ -604,7 +604,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/micromatch", "npm:3.1.0"],
             ["@types/minimatch", "npm:3.0.3"],
             ["@types/mkdirp", "npm:0.5.2"],
-            ["@types/node", "npm:10.12.18"],
+            ["@types/node", "npm:12.7.9"],
             ["@types/node-emoji", "npm:1.8.0"],
             ["@types/node-fetch", "npm:2.1.4"],
             ["@types/react", "npm:16.9.2"],
@@ -636,7 +636,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["jest", "npm:24.9.0"],
             ["jest-environment-node", "npm:24.5.0"],
             ["jest-junit", "npm:5.2.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }]
@@ -5324,6 +5324,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           ],
           "linkType": "HARD"
         }],
+        ["npm:12.7.9", {
+          "packageLocation": "./.yarn/cache/@types-node-npm-12.7.9-e8254bd60c.zip/node_modules/@types/node/",
+          "packageDependencies": [
+            ["@types/node", "npm:12.7.9"]
+          ],
+          "linkType": "HARD"
+        }],
         ["npm:7.10.5", {
           "packageLocation": "./.yarn/cache/@types-node-npm-7.10.5-ab79c19027.zip/node_modules/@types/node/",
           "packageDependencies": [
@@ -5841,7 +5848,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["regexpp", "npm:2.0.1"],
             ["requireindex", "npm:1.2.0"],
             ["tsutils", "virtual:45cefb3a778deece82fc842b2b72f0afc757b6c0484407b9caa29c093b750350155ac2abd0f56e4ac93885a167aa5c99574da658766a7bf001a0aae00168eb82#npm:3.10.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }]
@@ -5855,7 +5862,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["eslint", "npm:5.16.0"],
             ["eslint-scope", "npm:4.0.0"],
             ["eslint-visitor-keys", "npm:1.0.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }],
@@ -5867,7 +5874,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["eslint", "npm:5.16.0"],
             ["eslint-scope", "npm:4.0.0"],
             ["eslint-visitor-keys", "npm:1.0.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }]
@@ -5879,7 +5886,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@typescript-eslint/typescript-estree", "virtual:45cefb3a778deece82fc842b2b72f0afc757b6c0484407b9caa29c093b750350155ac2abd0f56e4ac93885a167aa5c99574da658766a7bf001a0aae00168eb82#npm:1.7.0"],
             ["lodash.unescape", "npm:4.0.1"],
             ["semver", "npm:5.5.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }],
@@ -5889,7 +5896,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@typescript-eslint/typescript-estree", "virtual:bfa1be041c3441f42d8084416d506c098f5d87c94257ba8071bc06f54ed63c6f4d25b65e9a9a00381fba100ea420f8292bdbb46aba934494d04b934bde020f8f#npm:1.7.0"],
             ["lodash.unescape", "npm:4.0.1"],
             ["semver", "npm:5.5.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }],
@@ -5899,7 +5906,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@typescript-eslint/typescript-estree", "virtual:ff06455a03203405a685c6cd9fdf9d52a1edfcf9823c2863e47073dc4b909d1caf4c56089e0e555f60d533525cfac4a3a03973c38530b867aa8c08d16b21d872#npm:1.6.0"],
             ["lodash.unescape", "npm:4.0.1"],
             ["semver", "npm:5.5.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }]
@@ -6323,7 +6330,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
             ["ts-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:5.3.3"],
-            ["typescript", "npm:3.5.3"],
+            ["typescript", "npm:3.7.0-dev.20191002"],
             ["val-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:1.1.1"],
             ["webpack", "npm:4.39.3"],
             ["webpack-merge", "npm:4.2.1"],
@@ -6350,7 +6357,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
             ["ts-loader", "virtual:072f27a31cbe952151939700e7ac0f3c447d2fdf815b92d721d827c0a72aa53fee996d1e5cb74d10b8f20f69cc5986f42a71a87018a1a994d2e5e9ea16bc2e54#npm:5.3.3"],
-            ["typescript", "npm:3.5.3"],
+            ["typescript", "npm:3.7.0-dev.20191002"],
             ["val-loader", "virtual:072f27a31cbe952151939700e7ac0f3c447d2fdf815b92d721d827c0a72aa53fee996d1e5cb74d10b8f20f69cc5986f42a71a87018a1a994d2e5e9ea16bc2e54#npm:1.1.1"],
             ["webpack", "npm:4.39.3"],
             ["webpack-merge", "npm:4.2.1"],
@@ -6377,7 +6384,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
             ["ts-loader", "virtual:6e96308926dfd56e8075e9c128cbf5e8ec8d6ded8adbd6a240d765216465282b02e8c3b124de61e9b40ab522f1c7ce788aef4a55e8f748554e746ba588f03a3e#npm:5.3.3"],
-            ["typescript", "npm:3.5.3"],
+            ["typescript", "npm:3.7.0-dev.20191002"],
             ["val-loader", "virtual:6e96308926dfd56e8075e9c128cbf5e8ec8d6ded8adbd6a240d765216465282b02e8c3b124de61e9b40ab522f1c7ce788aef4a55e8f748554e746ba588f03a3e#npm:1.1.1"],
             ["webpack", "npm:4.39.3"],
             ["webpack-merge", "npm:4.2.1"],
@@ -6404,7 +6411,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
             ["ts-loader", "virtual:4a011c7936b4b035e29a3ca4d7eed5af279f34195ebb4109bbbd184393a4b7ee62c17b499854077f215852da1044ea3cb1b37d4560d9b597e41746992b58fd97#npm:5.3.3"],
-            ["typescript", "npm:3.5.3"],
+            ["typescript", "npm:3.7.0-dev.20191002"],
             ["val-loader", "virtual:4a011c7936b4b035e29a3ca4d7eed5af279f34195ebb4109bbbd184393a4b7ee62c17b499854077f215852da1044ea3cb1b37d4560d9b597e41746992b58fd97#npm:1.1.1"],
             ["webpack", "npm:4.39.3"],
             ["webpack-merge", "npm:4.2.1"],
@@ -6431,7 +6438,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
             ["ts-loader", "virtual:e6cf778e9311712e1a7bd91f6020b69a9a53a4b7bd556e35d93c48c6119715959daff77f560bc9b5bf48e33ca98f434d15f8922cdb1a9b606745cd81442762fb#npm:5.3.3"],
-            ["typescript", "npm:3.5.3"],
+            ["typescript", "npm:3.7.0-dev.20191002"],
             ["val-loader", "virtual:e6cf778e9311712e1a7bd91f6020b69a9a53a4b7bd556e35d93c48c6119715959daff77f560bc9b5bf48e33ca98f434d15f8922cdb1a9b606745cd81442762fb#npm:1.1.1"],
             ["webpack", "npm:4.39.3"],
             ["webpack-merge", "npm:4.2.1"],
@@ -6458,7 +6465,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
             ["ts-loader", "virtual:73993763fb0017c07abf22974ac69c975d00ddab694cb6a4ec57a79e74171c4b2fe6c6dfbb828352b97bfb3c514bd86ab949e206cd51894ab886d965da365392#npm:5.3.3"],
-            ["typescript", "npm:3.5.3"],
+            ["typescript", "npm:3.7.0-dev.20191002"],
             ["val-loader", "virtual:73993763fb0017c07abf22974ac69c975d00ddab694cb6a4ec57a79e74171c4b2fe6c6dfbb828352b97bfb3c514bd86ab949e206cd51894ab886d965da365392#npm:1.1.1"],
             ["webpack", "npm:4.39.3"],
             ["webpack-merge", "npm:4.2.1"],
@@ -6485,7 +6492,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:5.6.0"],
             ["ts-loader", "virtual:37ee7f20c5c5fb7ea018f38868e8b120425a66a73e740ad437351031ab2467c456075dbc75ced4bb6828f6f94f2a2f3045f51f446f6af77f080f0117f8022836#npm:5.3.3"],
-            ["typescript", "npm:3.5.3"],
+            ["typescript", "npm:3.7.0-dev.20191002"],
             ["val-loader", "virtual:37ee7f20c5c5fb7ea018f38868e8b120425a66a73e740ad437351031ab2467c456075dbc75ced4bb6828f6f94f2a2f3045f51f446f6af77f080f0117f8022836#npm:1.1.1"],
             ["webpack", "npm:4.39.3"],
             ["webpack-merge", "npm:4.2.1"],
@@ -6554,7 +6561,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["clipanion", "npm:2.1.2"],
             ["semver", "npm:5.6.0"],
             ["tmp", "npm:0.0.33"],
-            ["typescript", "npm:3.5.3"],
+            ["typescript", "npm:3.7.0-dev.20191002"],
             ["yup", "npm:0.27.0"]
           ],
           "linkType": "SOFT"
@@ -6720,7 +6727,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/micromatch", "npm:3.1.0"],
             ["@types/minimatch", "npm:3.0.3"],
             ["@types/mkdirp", "npm:0.5.2"],
-            ["@types/node", "npm:10.12.18"],
+            ["@types/node", "npm:12.7.9"],
             ["@types/node-emoji", "npm:1.8.0"],
             ["@types/node-fetch", "npm:2.1.4"],
             ["@types/react", "npm:16.9.2"],
@@ -6752,7 +6759,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["jest", "npm:24.9.0"],
             ["jest-environment-node", "npm:24.5.0"],
             ["jest-junit", "npm:5.2.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }]
@@ -6830,7 +6837,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["tmp", "npm:0.0.33"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }]
@@ -6979,7 +6986,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.2"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }]
@@ -6994,7 +7001,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/plugin-essentials", "workspace:packages/plugin-essentials"],
             ["@yarnpkg/plugin-pack", "workspace:packages/plugin-pack"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }]
@@ -7013,7 +7020,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["ink", "virtual:35104c47575f2fe378d8d20383ae667f19d4dd801df8cc4c76848603aa6b4a2234a00142ff12fd557f6f48bd2810880e31c40c767010ea61a31fca302c2cc5e0#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:5.6.0"],
-            ["typescript", "npm:3.5.3"],
+            ["typescript", "npm:3.7.0-dev.20191002"],
             ["yup", "npm:0.27.0"]
           ],
           "linkType": "SOFT"
@@ -7030,7 +7037,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.2"],
             ["p-limit", "npm:2.2.0"],
-            ["typescript", "npm:3.5.3"],
+            ["typescript", "npm:3.7.0-dev.20191002"],
             ["yup", "npm:0.27.0"]
           ],
           "linkType": "SOFT"
@@ -7044,7 +7051,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
-            ["typescript", "npm:3.5.3"],
+            ["typescript", "npm:3.7.0-dev.20191002"],
             ["webpack", "npm:4.39.3"],
             ["webpack-cli", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.3.2"],
             ["webpack-sources", "npm:1.3.0"]
@@ -7062,7 +7069,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }],
@@ -7075,7 +7082,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }],
@@ -7088,7 +7095,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }],
@@ -7101,7 +7108,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }],
@@ -7114,7 +7121,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }],
@@ -7127,7 +7134,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }],
@@ -7153,7 +7160,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }],
@@ -7166,7 +7173,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }],
@@ -7179,7 +7186,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }],
@@ -7192,7 +7199,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", "npm:5.16.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }],
@@ -7205,7 +7212,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }],
@@ -7218,7 +7225,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", "npm:5.16.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }]
@@ -26997,7 +27004,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["loader-utils", "npm:1.2.3"],
             ["micromatch", "npm:3.1.10"],
             ["semver", "npm:5.6.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }],
@@ -27010,7 +27017,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["loader-utils", "npm:1.2.3"],
             ["micromatch", "npm:3.1.10"],
             ["semver", "npm:5.6.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }],
@@ -27023,7 +27030,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["loader-utils", "npm:1.2.3"],
             ["micromatch", "npm:3.1.10"],
             ["semver", "npm:5.6.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }],
@@ -27036,7 +27043,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["loader-utils", "npm:1.2.3"],
             ["micromatch", "npm:3.1.10"],
             ["semver", "npm:5.6.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }],
@@ -27062,7 +27069,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["loader-utils", "npm:1.2.3"],
             ["micromatch", "npm:3.1.10"],
             ["semver", "npm:5.6.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }],
@@ -27075,7 +27082,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["loader-utils", "npm:1.2.3"],
             ["micromatch", "npm:3.1.10"],
             ["semver", "npm:5.6.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }],
@@ -27088,7 +27095,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["loader-utils", "npm:1.2.3"],
             ["micromatch", "npm:3.1.10"],
             ["semver", "npm:5.6.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }],
@@ -27101,7 +27108,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["loader-utils", "npm:1.2.3"],
             ["micromatch", "npm:3.1.10"],
             ["semver", "npm:5.6.0"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }]
@@ -27139,7 +27146,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageDependencies": [
             ["tsutils", "virtual:45cefb3a778deece82fc842b2b72f0afc757b6c0484407b9caa29c093b750350155ac2abd0f56e4ac93885a167aa5c99574da658766a7bf001a0aae00168eb82#npm:3.10.0"],
             ["tslib", "npm:1.9.3"],
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }]
@@ -27248,10 +27255,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
         }]
       ]],
       ["typescript", [
-        ["npm:3.5.3", {
-          "packageLocation": "./.yarn/cache/typescript-npm-3.5.3-7e285f86b3.zip/node_modules/typescript/",
+        ["npm:3.7.0-dev.20191002", {
+          "packageLocation": "./.yarn/cache/typescript-npm-3.7.0-dev.20191002-ba0d465a86.zip/node_modules/typescript/",
           "packageDependencies": [
-            ["typescript", "npm:3.5.3"]
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "HARD"
         }]
@@ -28246,7 +28253,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnpify", "virtual:4bb0e72ae00ec402a28e80560124ee13357b1a5221665b7175877ddc6b8b2b98eebe4584a111245801ecf7cecb9de577d076505c0dbcf9292aaff35440a2302f#workspace:packages/yarnpkg-pnpify"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["ts-loader", "virtual:4bb0e72ae00ec402a28e80560124ee13357b1a5221665b7175877ddc6b8b2b98eebe4584a111245801ecf7cecb9de577d076505c0dbcf9292aaff35440a2302f#npm:5.3.3"],
-            ["typescript", "npm:3.5.3"],
+            ["typescript", "npm:3.7.0-dev.20191002"],
             ["vsce", "npm:1.61.0"],
             ["webpack", "npm:4.39.3"],
             ["webpack-cli", "virtual:4bb0e72ae00ec402a28e80560124ee13357b1a5221665b7175877ddc6b8b2b98eebe4584a111245801ecf7cecb9de577d076505c0dbcf9292aaff35440a2302f#npm:3.3.2"]

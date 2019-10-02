@@ -10,7 +10,7 @@
     "clipanion": "^2.1.2"
   },
   "devDependencies": {
-    "typescript": "^3.5.3"
+    "typescript": "next"
   },
   "scripts": {
     "build:plugin-stage": "builder build plugin",
@@ -18,7 +18,7 @@
   },
   "version": "2.0.0-rc.3",
   "nextVersion": {
-    "nonce": "4700262295511087"
+    "nonce": "4515465489455871"
   },
   "repository": {
     "type": "git",

@@ -21,7 +21,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
 
   if (stdin === null)
     stdio[0] = `ignore`;
-  else if (stdin === process.stdin)
+  else if (hasFd(stdin))
     stdio[0] = stdin;
 
   if (hasFd(stdout))
@@ -36,12 +36,12 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
   });
 
   if (!hasFd(stdin) && stdin !== null)
-    stdin.pipe(subprocess.stdin);
+    stdin.pipe(subprocess.stdin!);
 
   if (!hasFd(stdout))
-    subprocess.stdout.pipe(stdout);
+    subprocess.stdout!.pipe(stdout);
   if (!hasFd(stderr))
-    subprocess.stderr.pipe(stderr);
+    subprocess.stderr!.pipe(stderr);
 
   return new Promise((resolve, reject) => {
     subprocess.on(`close`, (code: number) => {
@@ -77,11 +77,11 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
     stdio,
   });
 
-  subprocess.stdout.on(`data`, (chunk: Buffer) => {
+  subprocess.stdout!.on(`data`, (chunk: Buffer) => {
     stdoutChunks.push(chunk);
   });
 
-  subprocess.stderr.on(`data`, (chunk: Buffer) => {
+  subprocess.stderr!.on(`data`, (chunk: Buffer) => {
     stderrChunks.push(chunk);
   });
 

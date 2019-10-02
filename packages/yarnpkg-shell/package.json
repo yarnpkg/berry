@@ -2,7 +2,7 @@
   "name": "@yarnpkg/shell",
   "version": "2.0.0-rc.2",
   "nextVersion": {
-    "nonce": "4595189911093391"
+    "nonce": "5214773214552495"
   },
   "main": "./sources/index.ts",
   "dependencies": {

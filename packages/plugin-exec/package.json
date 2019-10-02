@@ -10,13 +10,16 @@
     "tmp": "^0.0.33"
   },
   "devDependencies": {
-    "typescript": "^3.5.3"
+    "typescript": "next"
   },
   "scripts": {
     "build:plugin-exec": "builder build plugin",
     "update-local": "yarn build:plugin-exec && rsync -a --delete bundles/ bin/"
   },
   "version": "2.0.0-rc.3",
+  "nextVersion": {
+    "nonce": "1526826040035333"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
