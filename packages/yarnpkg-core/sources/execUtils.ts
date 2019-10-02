@@ -11,6 +11,11 @@ export type PipevpOptions = {
   stderr: Writable,
 };
 
+function hasFd(stream: null | Readable | Writable) {
+  // @ts-ignore: Not sure how to typecheck this field
+  return stream !== null && typeof stream.fd === `number`;
+}
+
 export async function pipevp(fileName: string, args: Array<string>, {cwd, env = process.env, strict = false, stdin = null, stdout, stderr}: PipevpOptions): Promise<{code: number}> {
   const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
 
@@ -19,9 +24,9 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
   else if (stdin === process.stdin)
     stdio[0] = stdin;
 
-  if (stdout === process.stdout)
+  if (hasFd(stdout))
     stdio[1] = stdout;
-  if (stderr === process.stderr)
+  if (hasFd(stderr))
     stdio[2] = stderr;
 
   const subprocess = crossSpawn(fileName, args, {
@@ -30,12 +35,12 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
     stdio,
   });
 
-  if (stdin !== process.stdin && stdin !== null)
+  if (!hasFd(stdin) && stdin !== null)
     stdin.pipe(subprocess.stdin);
 
-  if (stdout !== process.stdout)
+  if (!hasFd(stdout))
     subprocess.stdout.pipe(stdout);
-  if (stderr !== process.stderr)
+  if (!hasFd(stderr))
     subprocess.stderr.pipe(stderr);
 
   return new Promise((resolve, reject) => {
