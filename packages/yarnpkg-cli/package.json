@@ -38,7 +38,7 @@
     "@yarnpkg/plugin-workspace-tools": "workspace:2.0.0-rc.3",
     "@yarnpkg/pnp": "workspace:2.0.0-rc.4",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.5",
-    "typescript": "^3.5.3"
+    "typescript": "next"
   },
   "scripts": {
     "postpack": "rm -rf lib",

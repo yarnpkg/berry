@@ -70,7 +70,7 @@
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.5",
     "pnp-webpack-plugin": "^1.4.3",
     "ts-loader": "^5.3.3",
-    "typescript": "^3.5.3",
+    "typescript": "next",
     "vsce": "^1.54.0",
     "webpack": "^4.39.3",
     "webpack-cli": "^3.2.1"

@@ -3,6 +3,7 @@ import {xfs, NodeFS, PortablePath}                          from '@yarnpkg/fslib
 import {execFileSync}                                       from 'child_process';
 import {Cli}                                                from 'clipanion';
 import {realpathSync}                                       from 'fs';
+import {Readable, Writable}                                 from 'stream';
 
 function runBinary(path: PortablePath) {
   const physicalPath = NodeFS.fromPortablePath(path);
@@ -90,9 +91,9 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
         cwd: NodeFS.toPortablePath(process.cwd()),
         plugins: pluginConfiguration,
         quiet: false,
-        stdin: process.stdin,
-        stdout: process.stdout,
-        stderr: process.stderr,
+        stdin: process.stdin as any as Readable,
+        stdout: process.stdout as any as Writable,
+        stderr: process.stderr as any as Writable,
       });
     }
   }

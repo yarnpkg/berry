@@ -3653,10 +3653,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^10.12.0":
+"@types/node@npm:*":
   version: 10.12.18
   resolution: "@types/node@npm:10.12.18"
   checksum: e5f2df8fda273bd96ed0a96d659b5f4e2a57b5dfc533636ed9cd1319ab7fc56caae64d09ee55cf19cb7ab2cbbf05420e9b752e40401b49f58e751ca450a9c3ff
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^12.7.9":
+  version: 12.7.9
+  resolution: "@types/node@npm:12.7.9"
+  checksum: f2c670e6d4fbce4e29a8db8b478789f008353cff372b4286188fe5cb442b1e0697284e92f912193629c812b55bbcca543aa16744ca33106ea05d92604f462101
   languageName: node
   linkType: hard
 
@@ -4598,7 +4605,7 @@ __metadata:
     clipanion: "npm:^2.1.2"
     semver: "npm:^5.6.0"
     tmp: "npm:^0.0.33"
-    typescript: "npm:^3.5.3"
+    typescript: "npm:next"
     yup: "npm:^0.27.0"
   languageName: unknown
   linkType: soft
@@ -4751,7 +4758,7 @@ __metadata:
     "@types/micromatch": "npm:^3.1.0"
     "@types/minimatch": "npm:^3.0.3"
     "@types/mkdirp": "npm:^0.5.2"
-    "@types/node": "npm:^10.12.0"
+    "@types/node": "npm:^12.7.9"
     "@types/node-emoji": "npm:^1.8.0"
     "@types/node-fetch": "npm:^2.1.2"
     "@types/react": "npm:^16.8.0"
@@ -4783,7 +4790,7 @@ __metadata:
     jest: "npm:^24.9.0"
     jest-environment-node: "npm:^24.5.0"
     jest-junit: "npm:^5.2.0"
-    typescript: "npm:^3.5.3"
+    typescript: "npm:next"
   dependenciesMeta:
     fsevents:
       built: false
@@ -4858,7 +4865,7 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.7"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     tmp: "npm:^0.0.33"
-    typescript: "npm:^3.5.3"
+    typescript: "npm:next"
   languageName: unknown
   linkType: soft
 
@@ -4985,7 +4992,7 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.7"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     clipanion: "npm:^2.1.2"
-    typescript: "npm:^3.5.3"
+    typescript: "npm:next"
   languageName: unknown
   linkType: soft
 
@@ -4998,7 +5005,7 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.7"
     "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.5"
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.2"
-    typescript: "npm:^3.5.3"
+    typescript: "npm:next"
   languageName: unknown
   linkType: soft
 
@@ -5015,7 +5022,7 @@ __metadata:
     ink: "npm:^2.3.0"
     react: "npm:^16.8.4"
     semver: "npm:^5.6.0"
-    typescript: "npm:^3.5.3"
+    typescript: "npm:next"
     yup: "npm:^0.27.0"
   languageName: unknown
   linkType: soft
@@ -5030,7 +5037,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     clipanion: "npm:^2.1.2"
     p-limit: "npm:^2.2.0"
-    typescript: "npm:^3.5.3"
+    typescript: "npm:next"
     yup: "npm:^0.27.0"
   languageName: unknown
   linkType: soft
@@ -5042,7 +5049,7 @@ __metadata:
     "@yarnpkg/builder": "workspace:2.0.0-rc.7"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.5"
-    typescript: "npm:^3.5.3"
+    typescript: "npm:next"
     webpack: "npm:^4.39.3"
     webpack-cli: "npm:^3.2.1"
     webpack-sources: "npm:^1.3.0"
@@ -5058,7 +5065,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:2.0.0-rc.4"
     cross-spawn: "npm:^6.0.5"
     eslint: "npm:^5.16.0"
-    typescript: "npm:^3.5.3"
+    typescript: "npm:next"
   peerDependencies:
     eslint: "*"
     typescript: "*"
@@ -23266,13 +23273,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"typescript@npm:^3.5.3":
-  version: 3.5.3
-  resolution: "typescript@npm:3.5.3"
+"typescript@npm:next":
+  version: 3.7.0-dev.20191002
+  resolution: "typescript@npm:3.7.0-dev.20191002"
   bin:
     tsc: ./bin/tsc
     tsserver: ./bin/tsserver
-  checksum: d5ad3637dc8a1f65e4cd6c717ce3254fb1546f28c48de181652984605933b21cb6b730b576425e4d628b7474599240d32e26b7d70551bd5c645027422208bb63
+  checksum: f476b84fbbb6458543052b8b8945ee3206292b123a4a9123969dd028949eb2ef483659178de48ed7276fbd1105b394d147deec4d16039ae6a0c2728879a1d048
   languageName: node
   linkType: hard
 
@@ -24108,7 +24115,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.5"
     pnp-webpack-plugin: "npm:^1.4.3"
     ts-loader: "npm:^5.3.3"
-    typescript: "npm:^3.5.3"
+    typescript: "npm:next"
     vsce: "npm:^1.54.0"
     webpack: "npm:^4.39.3"
     webpack-cli: "npm:^3.2.1"
