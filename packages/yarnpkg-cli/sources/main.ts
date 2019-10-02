@@ -92,7 +92,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
         quiet: false,
         stdin: process.stdin,
         stdout: process.stdout,
-        stderr: process.stdout,
+        stderr: process.stderr,
       });
     }
   }
