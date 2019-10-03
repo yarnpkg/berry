@@ -27,6 +27,21 @@ describe('RawHoister', () => {
     expect(toObject(result)).toEqual({0: [1, 2]});
   });
 
+  it('should strip cycles', () => {
+    const tree = toTree({
+      0: [1],
+      1: [2],
+      2: [1],
+    });
+    const packageMap = new Map([
+      [0, {name: 'app', weight: 1}],
+      [1, {name: 'webpack', weight: 1}],
+      [2, {name: 'watchpack', weight: 1}],
+    ]);
+    const result = hoister.hoist(tree, packageMap);
+    expect(toObject(result)).toEqual({0: [1, 2]});
+  });
+
   it('should not hoist different package with the same name', () => {
     const tree = toTree({
       0: [1, 3],

@@ -49,8 +49,6 @@ export type PackageMap = Map<PackageId, PackageInfo>;
  */
 type WeightMap = Map<PackageId, Weight>;
 
-type Voidable<T> = T | void;
-
 const NO_DEPS = new Set<PackageId>();
 
 /**
@@ -85,10 +83,16 @@ export class RawHoister {
     // Make normalized tree copy, which will be mutated by hoisting algorithm
     const normalizedTree = this.normalize(tree);
 
-    // Apply mutating hoisting algorithm on each tree node starting from the root
-    this.traverse(normalizedTree, 0, (nodeId) => {
+    const hoistSubTree = (nodeId: PackageId) => {
+      // Apply mutating hoisting algorithm on each tree node starting from the root
       this.hoistInplace(normalizedTree, nodeId, packageMap, nohoist);
-    });
+
+      for (const depId of normalizedTree.get(nodeId) || NO_DEPS) {
+        hoistSubTree(depId);
+      }
+    };
+
+    hoistSubTree(0);
 
     // Take care of hoisting results to have deterministic form
     const result = new Map();
@@ -134,28 +138,10 @@ export class RawHoister {
 
     removeHoistedDeps(rootId);
 
-    const nodeDepIds = tree.get(rootId)!;
+    const nodeDepIds = tree.get(rootId) || new Set();
     for (const depId of hoistedDepIds) {
       // Add hoisted packages to the subtree root
       nodeDepIds.add(depId);
-    }
-  }
-
-  /**
-   * Traverses the package tree by visting each package and executing callback,
-   * starting from the package with id `rootId`
-   *
-   * @param tree package tree
-   * @param rootId root node id
-   * @param visitNode visitor callback
-   */
-  private traverse(tree: PackageTree, rootId: PackageId, visitNode: (nodeId: PackageId, depIds: Set<PackageId>) => Voidable<() => void>) {
-    const depIds = tree.get(rootId) || NO_DEPS;
-    const cleanup = visitNode(rootId, depIds);
-    for (const depId of depIds)
-      this.traverse(tree, depId, visitNode);
-    if (cleanup) {
-      cleanup();
     }
   }
 
@@ -167,11 +153,21 @@ export class RawHoister {
    * @param packageMap package map
    */
   private validate(tree: PackageTree, packageMap: PackageMap): void {
-    this.traverse(tree, 0, (nodeId: PackageId) => {
-      if (!packageMap.has(nodeId)) {
+    const seenIds = new Set();
+
+    const validateNode = (nodeId: PackageId) => {
+      if (!packageMap.has(nodeId))
         throw new Error(`Package with id ${nodeId} must be present in package map`);
+
+      seenIds.add(nodeId);
+      for (const depId of tree.get(nodeId) || NO_DEPS) {
+        if (!seenIds.has(depId)) {
+          validateNode(depId);
+        }
       }
-    });
+    };
+
+    validateNode(0);
   }
 
   /**
@@ -189,25 +185,27 @@ export class RawHoister {
     // Normalized tree copy
     const normalTree = new Map();
 
-    this.traverse(tree, 0, (nodeId, depIds) => {
+    const normalizeAndCopyNode = (nodeId: PackageId) => {
       seenIds.add(nodeId);
 
       // Normalized dependenciess
       // We strip dependency ids that produce cycles, e.g. 1 -> 2 -> 1, we left 1 -> 2 in this case
       const normalDepIds = new Set();
 
+      const depIds = tree.get(nodeId) || NO_DEPS;
       for (const depId of depIds) {
         allDepIds.add(depId);
         if (!seenIds.has(depId)) {
+          normalizeAndCopyNode(depId);
           normalDepIds.add(depId);
         }
       }
 
-      return () => {
-        normalTree.set(nodeId, normalDepIds);
-        seenIds.delete(nodeId);
-      };
-    });
+      normalTree.set(nodeId, normalDepIds);
+      seenIds.delete(nodeId);
+    };
+
+    normalizeAndCopyNode(0);
 
     return normalTree;
   }
@@ -226,11 +224,16 @@ export class RawHoister {
   private weighPackages(tree: PackageTree, rootId: PackageId, packageMap: PackageMap, nohoist: Set<PackageId>): WeightMap {
     const weights: WeightMap = new Map();
 
-    this.traverse(tree, rootId, (nodeId) => {
+    const addUpNodeWeight = (nodeId: PackageId) => {
       if (!nohoist.has(nodeId)) {
         weights.set(nodeId, packageMap.get(nodeId)!.weight + (weights.get(nodeId) || 0));
+        for (const depId of tree.get(nodeId) || NO_DEPS) {
+          addUpNodeWeight(depId);
+        }
       }
-    });
+    };
+
+    addUpNodeWeight(rootId);
 
     return weights;
   }
