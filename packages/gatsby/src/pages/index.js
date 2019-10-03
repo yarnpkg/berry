@@ -178,7 +178,7 @@ const IndexPage = ({ data, searchState, onSearchStateChange }) => {
               </SellingPoint>
               <SellingPoint imgUrl={noteIcon}>
                 <h3>Documentation</h3>
-                Special care is put our documentation, and we keep improving it based on your feedback.
+                Special care is put into our documentation, and we keep improving it based on your feedback.
               </SellingPoint>
               <SellingPoint imgUrl={puzzleIcon}>
                 <h3>Plugins</h3>
