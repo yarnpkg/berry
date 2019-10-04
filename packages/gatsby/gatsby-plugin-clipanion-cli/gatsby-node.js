@@ -47,7 +47,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
         ... command.examples.map(([description, example]) => [
           `${description}:\n`,
           `\`\`\`\n`,
-          `${example}\n`,
+          `${example.replace("$0", "yarn")}\n`,
           `\`\`\`\n`,
         ].join(``)),
       ].join(``));
