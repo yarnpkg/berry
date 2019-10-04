@@ -153,21 +153,16 @@ export class RawHoister {
    * @param packageMap package map
    */
   private validate(tree: PackageTree, packageMap: PackageMap): void {
-    const seenIds = new Set();
+    for (const [pkgId, depIds] of tree) {
+      if (!packageMap.has(pkgId))
+        throw new Error(`Package with id ${pkgId} must be present in package map`);
 
-    const validateNode = (nodeId: PackageId) => {
-      if (!packageMap.has(nodeId))
-        throw new Error(`Package with id ${nodeId} must be present in package map`);
-
-      seenIds.add(nodeId);
-      for (const depId of tree.get(nodeId) || NO_DEPS) {
-        if (!seenIds.has(depId)) {
-          validateNode(depId);
+      for (const depId of depIds) {
+        if (!packageMap.has(depId)) {
+          throw new Error(`Package with id ${pkgId} must be present in package map`);
         }
       }
-    };
-
-    validateNode(0);
+    }
   }
 
   /**
@@ -178,10 +173,10 @@ export class RawHoister {
    * @returns normalized package tree
    */
   private normalize(tree: PackageTree): PackageTree {
-    // All dependent package ids (values in the map)
-    const allDepIds = new Set();
     // Seen package ids - all seen package ids in the path from tree root to current node
     const seenIds = new Set();
+    // Visited package ids
+    const visitedIds = new Set();
     // Normalized tree copy
     const normalTree = new Map();
 
@@ -194,14 +189,16 @@ export class RawHoister {
 
       const depIds = tree.get(nodeId) || NO_DEPS;
       for (const depId of depIds) {
-        allDepIds.add(depId);
-        if (!seenIds.has(depId)) {
+        if (!seenIds.has(depId) && !visitedIds.has(nodeId)) {
           normalizeAndCopyNode(depId);
           normalDepIds.add(depId);
         }
       }
 
-      normalTree.set(nodeId, normalDepIds);
+      if (normalDepIds.size > 0)
+        normalTree.set(nodeId, normalDepIds);
+
+      visitedIds.add(nodeId);
       seenIds.delete(nodeId);
     };
 
