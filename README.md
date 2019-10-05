@@ -85,7 +85,7 @@ Those plugins typically come bundled with Yarn. You don't need to do anything sp
 
 ### Contrib plugins
 
-Although developed on the same repository as Yarn itself, those plugins are optionals and need to be explicitly installed through `yarn plugin import @yarnpkg/<plugin-name>`.
+Although developed on the same repository as Yarn itself, those plugins are optional and need to be explicitly installed through `yarn plugin import @yarnpkg/<plugin-name>`.
 
 - [☆ plugin-exec](packages/plugin-exec) adds support for using the `exec:` protocol within your dependencies.
 - [☆ plugin-stage](packages/plugin-pack) adds support for the [`yarn stage`](https://next.yarnpkg.com/cli/stage) command.
