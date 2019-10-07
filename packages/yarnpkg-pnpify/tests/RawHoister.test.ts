@@ -1,11 +1,5 @@
 import {RawHoister, PackageTree} from '../sources/RawHoister';
 
-const toTree = (obj: Record<string, number[]>) => new Map(
-  Object.entries(obj).map(
-    tuple => [Number(tuple[0]), new Set(tuple[1])]
-  )
-);
-
 const toObject = (tree: PackageTree): Record<string, number[]> =>
   [...tree.entries()].reduce((obj: Record<string, number[]>,
     [key, value]) => (obj[key] = [...value].sort(), obj), {});
@@ -14,9 +8,9 @@ describe('RawHoister', () => {
   const hoister = new RawHoister();
 
   it('should support empty tree', () => {
-    const tree = toTree({
-      0: [],
-    });
+    const tree = new Map([
+      [0, new Set([])],
+    ]);
     const packageMap = new Map([
       [0, {name: 'app', weight: 1}],
     ]);
@@ -25,10 +19,10 @@ describe('RawHoister', () => {
   });
 
   it('should do very basic hoisting', () => {
-    const tree = toTree({
-      0: [1],
-      1: [2],
-    });
+    const tree = new Map([
+      [0, new Set([1])],
+      [1, new Set([2])],
+    ]);
     const packageMap = new Map([
       [0, {name: 'app', weight: 1}],
       [1, {name: 'webpack', weight: 1}],
@@ -39,10 +33,10 @@ describe('RawHoister', () => {
   });
 
   it('should not hoist different package with the same name', () => {
-    const tree = toTree({
-      0: [1, 3],
-      1: [2],
-    });
+    const tree = new Map([
+      [0, new Set([1, 3])],
+      [1, new Set([2])],
+    ]);
     const packageMap = new Map([
       [0, {name: 'app', weight: 1}],
       [1, {name: 'webpack', weight: 1}],
@@ -55,12 +49,12 @@ describe('RawHoister', () => {
 
   it('should not hoist package that has several versions on the same tree path', () => {
     // . → A → B@X → C → B@Y, B@Y should not be hoisted
-    const tree = toTree({
-      0: [1],
-      1: [2],
-      2: [3],
-      3: [4],
-    });
+    const tree = new Map([
+      [0, new Set([1])],
+      [1, new Set([2])],
+      [2, new Set([3])],
+      [3, new Set([4])],
+    ]);
     const packageMap = new Map([
       [0, {name: 'R', weight: 1}],
       [1, {name: 'A', weight: 1}],
@@ -73,11 +67,11 @@ describe('RawHoister', () => {
   });
 
   it('should perform deep hoisting', () => {
-    const tree = toTree({
-      0: [1, 3, 4],
-      1: [2, 4],
-      2: [5],
-    });
+    const tree = new Map([
+      [0, new Set([1, 3, 4])],
+      [1, new Set([2, 4])],
+      [2, new Set([5])],
+    ]);
     const packageMap = new Map([
       [0, {name: 'app', weight: 1}],
       [1, {name: 'webpack', weight: 1}],
@@ -91,12 +85,12 @@ describe('RawHoister', () => {
   });
 
   it('should honor weight when hoisting', () => {
-    const tree = toTree({
-      0: [1],
-      1: [2, 3, 5],
-      2: [4],
-      5: [4],
-    });
+    const tree = new Map([
+      [0, new Set([1])],
+      [1, new Set([2, 3, 5])],
+      [2, new Set([4])],
+      [5, new Set([4])],
+    ]);
     const packageMap = new Map([
       [0, {name: 'app', weight: 1}],
       [1, {name: 'webpack', weight: 1}],
