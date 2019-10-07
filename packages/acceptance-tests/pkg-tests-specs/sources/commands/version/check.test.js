@@ -1,5 +1,5 @@
 const {
-  fs: {writeJson},
+  fs: {writeFile, writeJson},
   exec: {execFile},
 } = require('pkg-tests-core');
 
@@ -123,6 +123,32 @@ describe(`Commands`, () => {
         await run(`version`, `check`);
       }),
     );
+
+    test(`it shouldn't throw if changes were reverted`, makeTemporaryEnv({
+      private: true,
+      version: '0.0.1',
+    }, async ({path, run, ...rest}) => {
+      const git = (...args) => execFile(`git`, args, {cwd: path});
+
+      await run(`install`);
+      await git(`init`, `.`);
+      // Otherwise we can't always commit
+      await git(`config`, `user.name`, `John Doe`);
+      await git(`config`, `user.email`, `john.doe@example.org`);
+      await writeFile(`${path}/state`, 'Initial');
+      await git(`add`, `.`);
+      await git(`commit`, `-m`, `First commit`);
+
+      await git(`checkout`, `-b`, `feature-branch`);
+
+      await writeFile(`${path}/state`, 'Next');
+      await git(`commit`, `-am`, `WIP`);
+
+      await writeFile(`${path}/state`, 'Initial');
+      await git(`commit`, `-am`, `Revert WIP`);
+
+      await expect(run(`version`, `check`)).resolves.toBeTruthy();
+    }));
   });
 });
 
