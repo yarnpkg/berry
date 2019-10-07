@@ -8,12 +8,12 @@
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2",
     "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.5",
-    "clipanion": "^2.1.2",
+    "clipanion": "^2.1.3",
     "tmp": "^0.0.33"
   },
   "version": "2.0.0-rc.1",
   "nextVersion": {
-    "nonce": "1702975010361821"
+    "nonce": "5028875255691919"
   },
   "repository": {
     "type": "git",

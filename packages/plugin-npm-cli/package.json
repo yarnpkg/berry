@@ -8,14 +8,14 @@
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
     "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.3",
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.2",
-    "clipanion": "^2.1.2",
+    "clipanion": "^2.1.3",
     "inquirer": "^6.2.0",
     "ssri": "^6.0.1",
     "yup": "^0.27.0"
   },
   "version": "2.0.0-rc.2",
   "nextVersion": {
-    "nonce": "8941417461628267"
+    "nonce": "4488439202014749"
   },
   "repository": {
     "type": "git",
