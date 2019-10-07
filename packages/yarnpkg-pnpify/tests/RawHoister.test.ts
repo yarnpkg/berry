@@ -8,7 +8,7 @@ const toTree = (obj: Record<string, number[]>) => new Map(
 
 const toObject = (tree: PackageTree): Record<string, number[]> =>
   [...tree.entries()].reduce((obj: Record<string, number[]>,
-    [key, value]) => (obj[key] = [...value], obj), {});
+    [key, value]) => (obj[key] = [...value].sort(), obj), {});
 
 describe('RawHoister', () => {
   const hoister = new RawHoister();
@@ -17,21 +17,6 @@ describe('RawHoister', () => {
     const tree = toTree({
       0: [1],
       1: [2],
-    });
-    const packageMap = new Map([
-      [0, {name: 'app', weight: 1}],
-      [1, {name: 'webpack', weight: 1}],
-      [2, {name: 'watchpack', weight: 1}],
-    ]);
-    const result = hoister.hoist(tree, packageMap);
-    expect(toObject(result)).toEqual({0: [1, 2]});
-  });
-
-  it('should strip cycles', () => {
-    const tree = toTree({
-      0: [1],
-      1: [2],
-      2: [1],
     });
     const packageMap = new Map([
       [0, {name: 'app', weight: 1}],

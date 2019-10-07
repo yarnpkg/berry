@@ -77,30 +77,21 @@ export class RawHoister {
    *                but only to the package itself, they cannot be hoisted to the nohoist package parent
    */
   public hoist(tree: PackageTree, packageMap: PackageMap, nohoist: Set<PackageId> = new Set()): PackageTree {
-    // Validate the tree and package map first
-    this.validate(tree, packageMap);
-
     // Make normalized tree copy, which will be mutated by hoisting algorithm
-    const normalizedTree = this.normalize(tree);
+    const treeCopy = this.cloneTree(tree);
 
     const hoistSubTree = (nodeId: PackageId) => {
       // Apply mutating hoisting algorithm on each tree node starting from the root
-      this.hoistInplace(normalizedTree, nodeId, packageMap, nohoist);
+      this.hoistInplace(treeCopy, nodeId, packageMap, nohoist);
 
-      for (const depId of normalizedTree.get(nodeId) || NO_DEPS) {
+      for (const depId of treeCopy.get(nodeId) || NO_DEPS) {
         hoistSubTree(depId);
       }
     };
 
     hoistSubTree(0);
 
-    // Take care of hoisting results to have deterministic form
-    const result = new Map();
-    const pkgIds = Array.from(normalizedTree.keys()).sort();
-    for (const pkgId of pkgIds)
-      result.set(pkgId, new Set(Array.from(normalizedTree.get(pkgId)!).sort()));
-
-    return result;
+    return treeCopy;
   }
 
   /**
@@ -146,65 +137,19 @@ export class RawHoister {
   }
 
   /**
-   * Checks if information about every package in the tree is available in packageMap
-   * and throws if it is not so.
-   *
-   * @param tree package tree
-   * @param packageMap package map
-   */
-  private validate(tree: PackageTree, packageMap: PackageMap): void {
-    for (const [pkgId, depIds] of tree) {
-      if (!packageMap.has(pkgId))
-        throw new Error(`Package with id ${pkgId} must be present in package map`);
-
-      for (const depId of depIds) {
-        if (!packageMap.has(depId)) {
-          throw new Error(`Package with id ${pkgId} must be present in package map`);
-        }
-      }
-    }
-  }
-
-  /**
-   * Creates normalized package tree copy by removing cycles, 1 -> 2 -> 1 is converted to 1 -> 2.
+   * Creates package tree copy.
    *
    * @param tree package tree
    *
-   * @returns normalized package tree
+   * @returns package tree copy
    */
-  private normalize(tree: PackageTree): PackageTree {
-    // Seen package ids - all seen package ids in the path from tree root to current node
-    const seenIds = new Set();
-    // Visited package ids
-    const visitedIds = new Set();
-    // Normalized tree copy
-    const normalTree = new Map();
+  private cloneTree(tree: PackageTree): PackageTree {
+    const treeCopy: PackageTree = new Map();
 
-    const normalizeAndCopyNode = (nodeId: PackageId) => {
-      seenIds.add(nodeId);
+    for (const [nodeId, depIds] of tree)
+      treeCopy.set(nodeId, new Set(depIds));
 
-      // Normalized dependenciess
-      // We strip dependency ids that produce cycles, e.g. 1 -> 2 -> 1, we left 1 -> 2 in this case
-      const normalDepIds = new Set();
-
-      const depIds = tree.get(nodeId) || NO_DEPS;
-      for (const depId of depIds) {
-        if (!seenIds.has(depId) && !visitedIds.has(nodeId)) {
-          normalizeAndCopyNode(depId);
-          normalDepIds.add(depId);
-        }
-      }
-
-      if (normalDepIds.size > 0)
-        normalTree.set(nodeId, normalDepIds);
-
-      visitedIds.add(nodeId);
-      seenIds.delete(nodeId);
-    };
-
-    normalizeAndCopyNode(0);
-
-    return normalTree;
+    return treeCopy;
   }
 
   /**
