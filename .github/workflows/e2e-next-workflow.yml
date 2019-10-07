@@ -33,8 +33,7 @@ jobs:
         yarn init
 
         # Required
-        yarn add next@^9.0.6-canary.1 react react-dom pnp-webpack-plugin
-        echo 'module.exports = {webpack: config => { config.resolve.plugins = [require("pnp-webpack-plugin")]; config.resolveLoader.plugins = [require("pnp-webpack-plugin")]; return config; }};' | tee next.config.js
+        yarn add next@^9.0.8 react react-dom
 
         # Test itself
         yarn add raw-loader
