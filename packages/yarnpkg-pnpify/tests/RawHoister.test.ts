@@ -42,6 +42,25 @@ describe('RawHoister', () => {
     expect(toObject(result)).toEqual({0: [1, 3], 1: [2]});
   });
 
+  it('should not hoist package that has several versions on the same tree path', () => {
+    // . → A → B@X → C → B@Y, B@Y should not be hoisted
+    const tree = toTree({
+      0: [1],
+      1: [2],
+      2: [3],
+      3: [4],
+    });
+    const packageMap = new Map([
+      [0, {name: 'R', weight: 1}],
+      [1, {name: 'A', weight: 1}],
+      [2, {name: 'B', weight: 1}],
+      [3, {name: 'C', weight: 1}],
+      [4, {name: 'B', weight: 100}],
+    ]);
+    const result = hoister.hoist(tree, packageMap);
+    expect(toObject(result)).toEqual({0: [1, 2, 3], 3: [4]});
+  });
+
   it('should perform deep hoisting', () => {
     const tree = toTree({
       0: [1, 3, 4],

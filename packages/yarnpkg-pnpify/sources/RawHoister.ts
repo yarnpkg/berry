@@ -77,8 +77,8 @@ export class RawHoister {
    *                but only to the package itself, they cannot be hoisted to the nohoist package parent
    */
   public hoist(tree: PackageTree, packageMap: PackageMap, nohoist: Set<PackageId> = new Set()): PackageTree {
-    // Make normalized tree copy, which will be mutated by hoisting algorithm
-    const treeCopy = this.cloneTree(tree);
+    // Make tree copy, which will be mutated by hoisting algorithm
+    const treeCopy = RawHoister.cloneTree(tree);
 
     const hoistSubTree = (nodeId: PackageId) => {
       // Apply mutating hoisting algorithm on each tree node starting from the root
@@ -143,7 +143,7 @@ export class RawHoister {
    *
    * @returns package tree copy
    */
-  private cloneTree(tree: PackageTree): PackageTree {
+  private static cloneTree(tree: PackageTree): PackageTree {
     const treeCopy: PackageTree = new Map();
 
     for (const [nodeId, depIds] of tree)
@@ -219,26 +219,39 @@ export class RawHoister {
    */
   private computeHoistCandidates(tree: PackageTree, rootId: PackageId, packageMap: PackageMap, nohoist: Set<PackageId>): Set<PackageId> {
     // Get current package dependency package names
-    const curDepNames = new Map<PackageName, PackageId>();
+    const rootDepNames = new Map<PackageName, PackageId>();
     for (const depId of tree.get(rootId) || NO_DEPS)
-      curDepNames.set(packageMap.get(depId)!.name, depId);
+      rootDepNames.set(packageMap.get(depId)!.name, depId);
 
-    // At first all the packages in the subtree are hoist candidates, we weigh them all
-    const hoistCandidateWeights = this.weighPackages(tree, rootId, packageMap, nohoist);
+    // Weigh all the packages in the subtree
+    const packageWeights = this.weighPackages(tree, rootId, packageMap, nohoist);
 
-    // Current package cannot be hoisted to itself, so we remove it from candidates
-    hoistCandidateWeights.delete(rootId);
+    const hoistCandidateWeights: WeightMap = new Map();
+    const seenPackageNames = new Set<PackageName>();
 
-    for (const [candidateId] of hoistCandidateWeights) {
-      const pkgName = packageMap.get(candidateId)!.name;
-      const curDepId = curDepNames.get(pkgName);
-      if (curDepId && curDepId !== candidateId) {
-        // We cannot hoist package with the same name but different id, remove it from candidates
-        hoistCandidateWeights.delete(candidateId);
+    const findHoistCandidates = (nodeId: PackageId) => {
+      const name = packageMap.get(nodeId)!.name;
+      // Package names that exist only in a single instance in the tree path are hoist candidates
+      if (!seenPackageNames.has(name)) {
+        seenPackageNames.add(name);
+        const rootDepId = rootDepNames.get(name);
+        // If the hoisting candidate has the same name as existing root subtree dependency,
+        // we can only hoist it if its id is also the same
+        // . → A → B@X → C → B@Y, - we can hoist only B@X here
+        if (nodeId !== rootId && (!rootDepId || rootDepId === nodeId))
+          hoistCandidateWeights.set(nodeId, packageWeights.get(nodeId)!);
+
+        for (const depId of tree.get(nodeId) || NO_DEPS)
+          findHoistCandidates(depId);
+
+        seenPackageNames.delete(name);
       }
-    }
+    };
 
-    // Among all hoist candidates left choose the heaviest
+    // Find packages names that are candidates for hoisting
+    findHoistCandidates(rootId);
+
+    // Among all hoist candidates choose the heaviest
     return this.getHeaviestPackages(hoistCandidateWeights, packageMap);
   }
 };
