@@ -70,11 +70,15 @@ export class RawHoister {
    * root package, we do this for each dependency, then move further down to dependencies of
    * dependencies, etc.
    *
+   * This function does not mutate its arguments, it hoists and returns tree copy
+   *
    * @param tree package tree
    * @param packageMap package map
    * @param nohoist package ids that should be excluded from applying hoisting algorithm. Nohoist
    *                packages can be hoisted themselves, and their dependencies can be hoisted too,
    *                but only to the package itself, they cannot be hoisted to the nohoist package parent
+   *
+   * @returns hoisted tree copy
    */
   public hoist(tree: PackageTree, packageMap: PackageMap, nohoist: Set<PackageId> = new Set()): PackageTree {
     // Make tree copy, which will be mutated by hoisting algorithm
