@@ -54,7 +54,22 @@ export interface ResolvedPath {
  * The idea: for path like `node_modules/foo/node_modules/bar` we use `foo` as an issuer
  * and resolve `bar` for this issuer using `pnpapi`.
  */
-export class NodePathResolver {
+export interface PathResolver {
+  /**
+   * Resolves paths containing `/node_modules` inside PnP projects. If path is outside PnP
+   * project it is not changed.
+   *
+   * This method extracts `.../node_modules/pkgName/...` from the path
+   * and uses previous package as an issuer for the next package.
+   *
+   * @param nodePath full path containing `node_modules`
+   *
+   * @returns resolved path
+   */
+  resolvePath(nodePath: PortablePath): ResolvedPath;
+}
+
+export class NodePathResolver implements PathResolver {
   private pnp: PortablePnPApi;
 
   /**
@@ -96,17 +111,6 @@ export class NodePathResolver {
     return !info ? undefined : info.packageLocation;
   }
 
-  /**
-   * Resolves paths containing `/node_modules` inside PnP projects. If path is outside PnP
-   * project it is not changed.
-   *
-   * This method extracts `.../node_modules/pkgName/...` from the path
-   * and uses previous package as an issuer for the next package.
-   *
-   * @param nodePath full path containing `node_modules`
-   *
-   * @returns resolved path
-   */
   public resolvePath(nodePath: PortablePath): ResolvedPath {
     const result: ResolvedPath = {resolvedPath: nodePath};
 
