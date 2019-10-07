@@ -97,18 +97,21 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   private resolveLink(p: PortablePath, op: string, onSymlink: (stats: fs.Stats, targetPath: PortablePath) => any, onRealPath: (targetPath: PortablePath) => any) {
     const pnpPath = this.resolvePath(p);
+      console.log(pnpPath);
     if (!pnpPath.resolvedPath) {
       throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, ${op} '${p}'`);
     } else {
       if (pnpPath.resolvedPath !== pnpPath.fullOriginalPath) {
+        let stat;
         try {
-          const stats = this.baseFs.lstatSync(pnpPath.statPath || pnpPath.resolvedPath);
-          if (stats.isDirectory()) {
+          stat = this.baseFs.lstatSync(pnpPath.statPath || pnpPath.resolvedPath);
+        } catch (e) {}
+
+        if (stat) {
+          if (!pnpPath.isSymlink && stat.isDirectory())
             throw PortableNodeModulesFs.createFsError('EINVAL', `invalid argument, ${op} '${p}'`);
-          } else {
-            return onSymlink(stats, this.pathUtils.relative(this.pathUtils.dirname(pnpPath.fullOriginalPath), pnpPath.statPath || pnpPath.resolvedPath));
-          }
-        } catch (e) {
+
+          return onSymlink(stat, this.pathUtils.relative(this.pathUtils.dirname(pnpPath.fullOriginalPath), pnpPath.statPath || pnpPath.resolvedPath));
         }
       }
     }
