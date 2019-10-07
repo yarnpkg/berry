@@ -13,6 +13,17 @@ const toObject = (tree: PackageTree): Record<string, number[]> =>
 describe('RawHoister', () => {
   const hoister = new RawHoister();
 
+  it('should support empty tree', () => {
+    const tree = toTree({
+      0: [],
+    });
+    const packageMap = new Map([
+      [0, {name: 'app', weight: 1}],
+    ]);
+    const result = hoister.hoist(tree, packageMap);
+    expect(toObject(result)).toEqual({0: []});
+  });
+
   it('should do very basic hoisting', () => {
     const tree = toTree({
       0: [1],
