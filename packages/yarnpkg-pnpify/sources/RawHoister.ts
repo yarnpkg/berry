@@ -203,8 +203,8 @@ export class RawHoister {
     }
 
     const heavyPackageIds = new Set<PackageId>();
-    for (const [,pkg] of heaviestPackages)
-      heavyPackageIds.add(pkg.pkgId);
+    for (const {pkgId} of heaviestPackages.values())
+      heavyPackageIds.add(pkgId);
 
     return heavyPackageIds;
   }
