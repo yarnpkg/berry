@@ -192,7 +192,7 @@ export class RawHoister {
     const heaviestPackages = new Map<PackageName, {weight: Weight, pkgId: PackageId}>();
     for (const [pkgId, weight] of weights) {
       const pkgName = packageMap.get(pkgId)!.name;
-      let heaviestPkg = heaviestPackages.get(pkgName)!;
+      let heaviestPkg = heaviestPackages.get(pkgName);
       if (!heaviestPkg) {
         heaviestPkg = {weight, pkgId};
         heaviestPackages.set(pkgName, heaviestPkg);
