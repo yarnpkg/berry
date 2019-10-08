@@ -608,6 +608,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/node", "npm:12.7.9"],
             ["@types/node-emoji", "npm:1.8.0"],
             ["@types/node-fetch", "npm:2.1.4"],
+            ["@types/promise.prototype.finally", "npm:2.0.3"],
             ["@types/react", "npm:16.9.2"],
             ["@types/react-redux", "npm:7.1.2"],
             ["@types/redux-saga", "npm:0.10.5"],
@@ -5378,6 +5379,15 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "linkType": "HARD"
         }]
       ]],
+      ["@types/promise.prototype.finally", [
+        ["npm:2.0.3", {
+          "packageLocation": "./.yarn/cache/@types-promise.prototype.finally-npm-2.0.3-0b88982846.zip/node_modules/@types/promise.prototype.finally/",
+          "packageDependencies": [
+            ["@types/promise.prototype.finally", "npm:2.0.3"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["@types/prop-types", [
         ["npm:15.5.8", {
           "packageLocation": "./.yarn/cache/@types-prop-types-npm-15.5.8-ed72e782b0.zip/node_modules/@types/prop-types/",
@@ -6579,6 +6589,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
             ["chalk", "npm:2.4.2"],
             ["clipanion", "npm:2.1.3"],
+            ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:5.6.0"],
             ["tmp", "npm:0.0.33"],
             ["typescript", "npm:3.7.0-dev.20191002"],
@@ -6752,6 +6763,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/node", "npm:12.7.9"],
             ["@types/node-emoji", "npm:1.8.0"],
             ["@types/node-fetch", "npm:2.1.4"],
+            ["@types/promise.prototype.finally", "npm:2.0.3"],
             ["@types/react", "npm:16.9.2"],
             ["@types/react-redux", "npm:7.1.2"],
             ["@types/redux-saga", "npm:0.10.5"],
@@ -12593,6 +12605,23 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["is-callable", "npm:1.1.4"],
             ["is-regex", "npm:1.0.4"],
             ["object-keys", "npm:1.0.12"]
+          ],
+          "linkType": "HARD"
+        }],
+        ["npm:1.15.0", {
+          "packageLocation": "./.yarn/cache/es-abstract-npm-1.15.0-8432207718.zip/node_modules/es-abstract/",
+          "packageDependencies": [
+            ["es-abstract", "npm:1.15.0"],
+            ["es-to-primitive", "npm:1.2.0"],
+            ["function-bind", "npm:1.1.1"],
+            ["has", "npm:1.0.3"],
+            ["has-symbols", "npm:1.0.0"],
+            ["is-callable", "npm:1.1.4"],
+            ["is-regex", "npm:1.0.4"],
+            ["object-inspect", "npm:1.6.0"],
+            ["object-keys", "npm:1.1.1"],
+            ["string.prototype.trimleft", "npm:2.1.0"],
+            ["string.prototype.trimright", "npm:2.1.0"]
           ],
           "linkType": "HARD"
         }]
@@ -21024,6 +21053,15 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "linkType": "HARD"
         }]
       ]],
+      ["object-inspect", [
+        ["npm:1.6.0", {
+          "packageLocation": "./.yarn/cache/object-inspect-npm-1.6.0-f5298815ad.zip/node_modules/object-inspect/",
+          "packageDependencies": [
+            ["object-inspect", "npm:1.6.0"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["object-keys", [
         ["npm:1.0.12", {
           "packageLocation": "./.yarn/cache/object-keys-npm-1.0.12-9e93882d4d.zip/node_modules/object-keys/",
@@ -21036,6 +21074,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/object-keys-npm-1.1.0-2c8014f1c5.zip/node_modules/object-keys/",
           "packageDependencies": [
             ["object-keys", "npm:1.1.0"]
+          ],
+          "linkType": "HARD"
+        }],
+        ["npm:1.1.1", {
+          "packageLocation": "./.yarn/cache/object-keys-npm-1.1.1-1bf2f1be93.zip/node_modules/object-keys/",
+          "packageDependencies": [
+            ["object-keys", "npm:1.1.1"]
           ],
           "linkType": "HARD"
         }]
@@ -23043,6 +23088,18 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/promise-inflight-npm-1.0.1-5bb925afac.zip/node_modules/promise-inflight/",
           "packageDependencies": [
             ["promise-inflight", "npm:1.0.1"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
+      ["promise.prototype.finally", [
+        ["npm:3.1.1", {
+          "packageLocation": "./.yarn/cache/promise.prototype.finally-npm-3.1.1-7411fe3e10.zip/node_modules/promise.prototype.finally/",
+          "packageDependencies": [
+            ["promise.prototype.finally", "npm:3.1.1"],
+            ["define-properties", "npm:1.1.3"],
+            ["es-abstract", "npm:1.15.0"],
+            ["function-bind", "npm:1.1.1"]
           ],
           "linkType": "HARD"
         }]
@@ -25985,6 +26042,28 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["string.prototype.trim", "npm:1.1.2"],
             ["define-properties", "npm:1.1.3"],
             ["es-abstract", "npm:1.13.0"],
+            ["function-bind", "npm:1.1.1"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
+      ["string.prototype.trimleft", [
+        ["npm:2.1.0", {
+          "packageLocation": "./.yarn/cache/string.prototype.trimleft-npm-2.1.0-7bb7868754.zip/node_modules/string.prototype.trimleft/",
+          "packageDependencies": [
+            ["string.prototype.trimleft", "npm:2.1.0"],
+            ["define-properties", "npm:1.1.3"],
+            ["function-bind", "npm:1.1.1"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
+      ["string.prototype.trimright", [
+        ["npm:2.1.0", {
+          "packageLocation": "./.yarn/cache/string.prototype.trimright-npm-2.1.0-0e21113344.zip/node_modules/string.prototype.trimright/",
+          "packageDependencies": [
+            ["string.prototype.trimright", "npm:2.1.0"],
+            ["define-properties", "npm:1.1.3"],
             ["function-bind", "npm:1.1.1"]
           ],
           "linkType": "HARD"

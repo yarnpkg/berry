@@ -45,6 +45,7 @@ const mte = generatePkgDriver({
         [`YARN_ENABLE_ABSOLUTE_VIRTUALS`]: `true`,
         // Otherwise the output isn't stable between runs
         [`YARN_ENABLE_TIMERS`]: `false`,
+        [`YARN_ENABLE_PROGRESS_BARS`]: `false`,
         // Otherwise we would more often test the fallback rather than the real logic
         [`YARN_PNP_FALLBACK_MODE`]: `none`,
         ...rcEnv,

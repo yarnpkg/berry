@@ -3690,6 +3690,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/promise.prototype.finally@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "@types/promise.prototype.finally@npm:2.0.3"
+  checksum: bc3e6f5b7795d62051df52ee502c26a9bbb3bf86d2edff448c6d3077a18627942e5c4d0843ec3644e9139192afa9cd49cd9184e15edc844d0f6435dcbf25e009
+  languageName: node
+  linkType: hard
+
 "@types/prop-types@npm:*":
   version: 15.5.8
   resolution: "@types/prop-types@npm:15.5.8"
@@ -4619,6 +4626,7 @@ __metadata:
     "@yarnpkg/shell": "workspace:2.0.0-rc.2"
     chalk: "npm:^2.4.1"
     clipanion: "npm:^2.1.3"
+    promise.prototype.finally: "npm:^3.1.1"
     semver: "npm:^5.6.0"
     tmp: "npm:^0.0.33"
     typescript: "npm:next"
@@ -4779,6 +4787,7 @@ __metadata:
     "@types/node": "npm:^12.7.9"
     "@types/node-emoji": "npm:^1.8.0"
     "@types/node-fetch": "npm:^2.1.2"
+    "@types/promise.prototype.finally": "npm:^2.0.3"
     "@types/react": "npm:^16.8.0"
     "@types/react-redux": "npm:^7.1.2"
     "@types/redux-saga": "npm:^0.10.5"
@@ -9770,6 +9779,24 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     is-regex: "npm:^1.0.4"
     object-keys: "npm:^1.0.12"
   checksum: 86b54b7bd80ad24e1e036a0a6153055a7ddf65583d63e9317f02dfc16751e0af2fa0aacd82ec9a24c2f7bff0e3ff346f0ae93332c09f5543df10f152b5f5f3d8
+  languageName: node
+  linkType: hard
+
+"es-abstract@npm:^1.13.0":
+  version: 1.15.0
+  resolution: "es-abstract@npm:1.15.0"
+  dependencies:
+    es-to-primitive: "npm:^1.2.0"
+    function-bind: "npm:^1.1.1"
+    has: "npm:^1.0.3"
+    has-symbols: "npm:^1.0.0"
+    is-callable: "npm:^1.1.4"
+    is-regex: "npm:^1.0.4"
+    object-inspect: "npm:^1.6.0"
+    object-keys: "npm:^1.1.1"
+    string.prototype.trimleft: "npm:^2.1.0"
+    string.prototype.trimright: "npm:^2.1.0"
+  checksum: 9d1a8fa70e54c432c67ce47536012348260f32bd9c5190a2ce6f6fddcc5e384b9b0f3c08594d58905fb6e5f3675447f45becea3669d56f5ea363998590ee0bdc
   languageName: node
   linkType: hard
 
@@ -17623,6 +17650,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"object-inspect@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "object-inspect@npm:1.6.0"
+  checksum: 0f7e9831d2e3e16176569edf98eeef123f32486cbe8c9c5f822a97b5454fd6d9d52ff0d8b98269cd16140acea0ae9f84893f3f46a482c125b57d6c753356c2cc
+  languageName: node
+  linkType: hard
+
 "object-keys@npm:^1.0.11, object-keys@npm:^1.0.12":
   version: 1.0.12
   resolution: "object-keys@npm:1.0.12"
@@ -17634,6 +17668,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 1.1.0
   resolution: "object-keys@npm:1.1.0"
   checksum: 54a49d07b4cd8a713cfa970b39f4ddb6469f06be987515c480703fdd27e27cf6961cf954b8ec37384ae4cebdafb806837ab618341b58f57aea9b1dcbd191e9c2
+  languageName: node
+  linkType: hard
+
+"object-keys@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "object-keys@npm:1.1.1"
+  checksum: 520e29aea8cde1e8862359e09831f21de4cdb8ad85d3c4a3223b258bf600b0b058d9b6635ffa51d91afec2f1cf51c62dd6eed6deb52b9d332f88c98e864d3845
   languageName: node
   linkType: hard
 
@@ -19439,6 +19480,17 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 1.0.1
   resolution: "promise-inflight@npm:1.0.1"
   checksum: 352f5d51633f241bb934461df86096e0559a6f75c455aeaa72f482c42bc0e4c8bbb7ce5b59380f87d85b6cbb39805f5e19d77cdbabb4e7992f868af6d746c519
+  languageName: node
+  linkType: hard
+
+"promise.prototype.finally@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "promise.prototype.finally@npm:3.1.1"
+  dependencies:
+    define-properties: "npm:^1.1.3"
+    es-abstract: "npm:^1.13.0"
+    function-bind: "npm:^1.1.1"
+  checksum: 173e17636e25f96bc274cf1ca7dea466bb0b4411a3b04f4f8ae9694af4310930d8825d8b20994f62f4245906fc716874af32de1b6ba8c8764dba10cf852f362c
   languageName: node
   linkType: hard
 
@@ -22185,6 +22237,26 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     es-abstract: "npm:^1.5.0"
     function-bind: "npm:^1.0.2"
   checksum: b660bbc72c4dbcb498a865305384b4585dcf0845cdca053eff74f703d89aa93afdbb3f63f9406c5efa8c7becaa7450492634a3619d920433e34c7e4131659015
+  languageName: node
+  linkType: hard
+
+"string.prototype.trimleft@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "string.prototype.trimleft@npm:2.1.0"
+  dependencies:
+    define-properties: "npm:^1.1.3"
+    function-bind: "npm:^1.1.1"
+  checksum: 466f7e3ceec24620d6ad075954dfbe5299489807253a5e7fa551481882034762626364a3619e5efad1dbc82b834b6c09e16ff638662bd89abcf2894591ce2d1f
+  languageName: node
+  linkType: hard
+
+"string.prototype.trimright@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "string.prototype.trimright@npm:2.1.0"
+  dependencies:
+    define-properties: "npm:^1.1.3"
+    function-bind: "npm:^1.1.1"
+  checksum: de5524e39c36cb211f29cd867bbe1ea7dc73e9e8d8e4b25cdbc230b5896ddfb7a8561a802dc3c98724293db0b778d99627749a287ab3949d5db007861b51b6da
   languageName: node
   linkType: hard
 
