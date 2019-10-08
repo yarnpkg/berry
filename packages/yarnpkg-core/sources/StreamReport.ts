@@ -252,7 +252,7 @@ export class StreamReport extends Report {
   }
 
   private clearProgress({delta = 0, clear = false}: {delta?: number, clear?: boolean}) {
-    if (!this.configuration.get(`enableProgressBars`))
+    if (!this.configuration.get(`enableProgressBars`) || this.json)
       return;
 
     if (this.progress.size + delta > 0) {
@@ -264,7 +264,7 @@ export class StreamReport extends Report {
   }
 
   private writeProgress() {
-    if (!this.configuration.get(`enableProgressBars`))
+    if (!this.configuration.get(`enableProgressBars`) || this.json)
       return;
 
     const now = Date.now();
