@@ -7,32 +7,31 @@ import {tmpdir}                                                               fr
 
 import {setVersion}                                                           from '../version';
 
-const CLONE_WORKFLOW = ({repository, branch, prs}: {repository: string, branch: string, prs: Array<string>}, target: PortablePath) => [
-  [`git`, `clone`, repository, fromPortablePath(target), ...prs.length > 0 ? [] : [`--depth`, `1`]],
-  [`git`, `checkout`, `origin/${branch}`],
+const PR_REGEXP = /^[0-9]+$/;
+
+function getBranchRef(branch: string) {
+  if (PR_REGEXP.test(branch)) {
+    return `pull/${branch}/head`;
+  } else {
+    return branch;
+  }
+}
+
+const CLONE_WORKFLOW = ({repository, branch}: {repository: string, branch: string}, target: PortablePath) => [
+  [`git`, `init`, fromPortablePath(target)],
+  [`git`, `remote`, `add`, `origin`, repository],
+  [`git`, `fetch`, `origin`, getBranchRef(branch)],
+  [`git`, `reset`, `--hard`, `FETCH_HEAD`],
 ];
 
-const UPDATE_WORKFLOW = ({branch, prs}: {branch: string, prs: Array<string>}) => [
-  [`git`, `fetch`, `origin`, branch, ...prs.length > 0 ? [`--depth`, `1`] : []],
-  [`git`, `reset`, `--hard`],
+const UPDATE_WORKFLOW = ({branch}: {branch: string}) => [
+  [`git`, `fetch`, `origin`, getBranchRef(branch), `--force`],
+  [`git`, `reset`, `--hard`, `FETCH_HEAD`],
   [`git`, `clean`, `-dfx`],
-  [`git`, `checkout`, `origin/${branch}`],
-  [`git`, `clean`, `-dfx`],
 ];
 
-const PR_WORKFLOW = ({branch}: {branch: string}, pr: string) => [
-  [`git`, `fetch`, `--force`, `origin`, `pull/${pr}/head:pr-${pr}`],
-  [`git`, `checkout`, `pr-${pr}`],
-  [`git`, `checkout`, `--detach`],
-  [`git`, `reset`, `origin/${branch}`, `--`, `**/package.json`],
-  [`git`, `reset`, `origin/${branch}`, `--`, `packages/*/bin/**/*`],
-  [`git`, `commit`, `--allow-empty`, `-m`, `Cleaning the repository`],
-  [`git`, `checkout`, `origin/${branch}`],
-  [`git`, `merge`, `--no-edit`, `-`],
-];
-
-const BUILD_WORKFLOW = [
-  [`yarn`, `build:cli`],
+const BUILD_WORKFLOW = ({plugins}: {plugins: Array<string>}) => [
+  [`yarn`, `build:cli`, ...new Array<string>().concat(...plugins.map(plugin => [`--plugin`, plugin])), `|`],
 ];
 
 // eslint-disable-next-line arca/no-default-export
@@ -46,8 +45,8 @@ export default class SetVersionCommand extends BaseCommand {
   @Command.String(`--branch`)
   branch: string = `master`;
 
-  @Command.Array(`--pr`)
-  prs: Array<string> = [];
+  @Command.Array(`--plugin`)
+  plugins: Array<string> = [];
 
   @Command.Boolean(`-f,--force`)
   force: boolean = false;
@@ -81,20 +80,37 @@ export default class SetVersionCommand extends BaseCommand {
     }, async (report: StreamReport) => {
       const runWorkflow = async (workflow: Array<Array<string>>) => {
         for (const [fileName, ...args] of workflow) {
-          this.context.stdout.write(`${configuration.format(`  $ ${[fileName, ...args].join(` `)}`, `grey`)}\n`);
+          const usePipe = args[args.length - 1] === `|`;
+          if (usePipe)
+            args.pop();
 
-          try {
-            await execUtils.execvp(fileName, args, {cwd: target, strict: true});
-          } catch (error) {
-            this.context.stdout.write(error.stdout);
-            throw error;
+          if (usePipe) {
+            await execUtils.pipevp(fileName, args, {
+              cwd: target,
+              stdin: this.context.stdin,
+              stdout: this.context.stdout,
+              stderr: this.context.stderr,
+              strict: true,
+            });
+          } else {
+            this.context.stdout.write(`${configuration.format(`  $ ${[fileName, ...args].join(` `)}`, `grey`)}\n`);
+
+            try {
+              await execUtils.execvp(fileName, args, {
+                cwd: target,
+                strict: true,
+              });
+            } catch (error) {
+              this.context.stdout.write(error.stdout || error.stack);
+              throw error;
+            }
           }
         }
       };
 
       let ready = false;
 
-      if (!this.force && xfs.existsSync(ppath.join(target, `.git` as Filename)) && (this.prs.length === 0 || !xfs.existsSync(ppath.join(target, `.git/shallow` as PortablePath)))) {
+      if (!this.force && xfs.existsSync(ppath.join(target, `.git` as Filename))) {
         report.reportInfo(MessageName.UNNAMED, `Fetching the latest commits`);
         report.reportSeparator();
 
@@ -117,19 +133,11 @@ export default class SetVersionCommand extends BaseCommand {
         await runWorkflow(CLONE_WORKFLOW(this, target));
       }
 
-      for (const pr of this.prs) {
-        report.reportSeparator();
-        report.reportInfo(MessageName.UNNAMED, `Merging https://github.com/yarnpkg/berry/pull/${pr}`);
-        report.reportSeparator();
-
-        await runWorkflow(PR_WORKFLOW(this, pr));
-      }
-
       report.reportSeparator();
       report.reportInfo(MessageName.UNNAMED, `Building a fresh bundle`);
       report.reportSeparator();
 
-      await runWorkflow(BUILD_WORKFLOW);
+      await runWorkflow(BUILD_WORKFLOW(this));
 
       report.reportSeparator();
 
