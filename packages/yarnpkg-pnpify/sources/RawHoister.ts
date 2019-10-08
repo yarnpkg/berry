@@ -108,7 +108,7 @@ export class RawHoister {
    *
    * @param tree package tree
    * @param rootId package subtree root package id
-   * @param packages package map
+   * @param packages package infos
    * @param nohoist nohoist package ids
    */
   private hoistInplace(tree: PackageTree, rootId: PackageId, packages: ReadonlyArray<PackageInfo>, nohoist: ReadonlySet<PackageId>): void {
@@ -154,7 +154,7 @@ export class RawHoister {
    *
    * @param tree package tree
    * @param rootId root package id of the subtree
-   * @param packages package map
+   * @param packages package infos
    * @param nohoist nohoist package ids, that shouldn't be weighed
    *
    * @return map of package weights: package id -> total weight
@@ -185,7 +185,7 @@ export class RawHoister {
    * Finds packages that have the max weight among the packages with the same name
    *
    * @param weights package weights map: package id -> total weight
-   * @param packages package info map: package id -> package name
+   * @param packages package infos
    *
    * @returns package ids with max weights among the packages with the same name
    */
@@ -215,7 +215,7 @@ export class RawHoister {
    *
    * @param tree package tree
    * @param rootId package id that should be regarded as subtree root
-   * @param packages package map
+   * @param packages package infos
    * @param nohoist nohoist package ids
    */
   private computeHoistCandidates(tree: ReadonlyPackageTree, rootId: PackageId, packages: ReadonlyArray<PackageInfo>, nohoist: ReadonlySet<PackageId>): ReadonlySet<PackageId> {
