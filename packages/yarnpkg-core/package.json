@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.7",
   "nextVersion": {
     "semver": "2.0.0-rc.8",
-    "nonce": "3891002942349287"
+    "nonce": "6239321021039889"
   },
   "main": "./sources/index.ts",
   "sideEffects": false,
@@ -30,7 +30,7 @@
     "pretty-bytes": "^5.1.0",
     "semver": "^5.6.0",
     "stream-to-promise": "^2.2.0",
-    "supports-color": "^5.5.0",
+    "supports-color": "^7.1.0",
     "tar": "^4.4.6",
     "tmp": "^0.0.33",
     "tunnel": "^0.0.6"
