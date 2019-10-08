@@ -16,6 +16,7 @@ export type StreamReportOptions = {
 
 const PROGRESS_FRAMES = [`⠋`, `⠙`, `⠹`, `⠸`, `⠼`, `⠴`, `⠦`, `⠧`, `⠇`, `⠏`];
 const PROGRESS_INTERVAL = 80;
+const PROGRESS_SIZE = 80;
 
 export class StreamReport extends Report {
   static async start(opts: StreamReportOptions, cb: (report: StreamReport) => Promise<void>) {
@@ -251,6 +252,9 @@ export class StreamReport extends Report {
   }
 
   private clearProgress({delta = 0, clear = false}: {delta?: number, clear?: boolean}) {
+    if (!this.configuration.get(`enableProgressBars`))
+      return;
+
     if (this.progress.size + delta > 0) {
       this.stdout.write(`\x1b[${this.progress.size + delta}A`);
       if (delta > 0 || clear) {
@@ -260,7 +264,8 @@ export class StreamReport extends Report {
   }
 
   private writeProgress() {
-    const progressSize = 80;
+    if (!this.configuration.get(`enableProgressBars`))
+      return;
 
     const now = Date.now();
 
@@ -272,8 +277,8 @@ export class StreamReport extends Report {
     const spinner = PROGRESS_FRAMES[this.progressFrame];
 
     for (const {progress} of this.progress.values()) {
-      const ok = `=`.repeat(Math.floor(progressSize * progress));
-      const ko = `-`.repeat(progressSize - ok.length);
+      const ok = `=`.repeat(Math.floor(PROGRESS_SIZE * progress));
+      const ko = `-`.repeat(PROGRESS_SIZE - ok.length);
 
       this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(null)}: ${spinner} ${ok}${ko}\n`);
     }
