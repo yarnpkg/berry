@@ -46,6 +46,8 @@ const mte = generatePkgDriver({
         // Otherwise the output isn't stable between runs
         [`YARN_ENABLE_TIMERS`]: `false`,
         [`YARN_ENABLE_PROGRESS_BARS`]: `false`,
+        // Otherwise the output wouldn't be the same on CI vs non-CI
+        [`YARN_ENABLE_INLINE_BUILDS`]: `false`,
         // Otherwise we would more often test the fallback rather than the real logic
         [`YARN_PNP_FALLBACK_MODE`]: `none`,
         ...rcEnv,
