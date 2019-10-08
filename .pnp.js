@@ -7325,6 +7325,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./packages/acceptance-tests/",
           "packageDependencies": [
             ["acceptance-tests-229a13", "workspace:packages/acceptance-tests"],
+            ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["is-wsl", "npm:1.1.0"],

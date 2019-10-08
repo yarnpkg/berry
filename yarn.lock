@@ -5138,6 +5138,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "acceptance-tests-229a13@workspace:packages/acceptance-tests"
   dependencies:
+    "@yarnpkg/cli": "workspace:2.0.0-rc.7"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     is-wsl: "npm:^1.1.0"
