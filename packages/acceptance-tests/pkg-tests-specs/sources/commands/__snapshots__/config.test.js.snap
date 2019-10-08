@@ -14,7 +14,7 @@ Object {
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -119,7 +119,7 @@ Object {
 ➤ YN0000: enableGlobalCache - <default> - false
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
-➤ YN0000: enableInlineBuilds - <default> - false
+➤ YN0000: enableInlineBuilds - <environment> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
@@ -225,7 +225,7 @@ Object {
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -330,7 +330,7 @@ Object {
 ➤ YN0000: enableGlobalCache - <default> - false
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
-➤ YN0000: enableInlineBuilds - <default> - false
+➤ YN0000: enableInlineBuilds - <environment> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
@@ -436,7 +436,7 @@ Object {
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -541,7 +541,7 @@ Object {
 ➤ YN0000: enableGlobalCache - <default> - false
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
-➤ YN0000: enableInlineBuilds - <default> - false
+➤ YN0000: enableInlineBuilds - <environment> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
@@ -647,7 +647,7 @@ Object {
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -752,7 +752,7 @@ Object {
 ➤ YN0000: enableGlobalCache - <default> - false
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
-➤ YN0000: enableInlineBuilds - <default> - false
+➤ YN0000: enableInlineBuilds - <environment> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
@@ -858,7 +858,7 @@ Object {
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -963,7 +963,7 @@ Object {
 ➤ YN0000: enableGlobalCache - <default> - false
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
-➤ YN0000: enableInlineBuilds - <default> - false
+➤ YN0000: enableInlineBuilds - <environment> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
@@ -1069,7 +1069,7 @@ Object {
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -1174,7 +1174,7 @@ Object {
 ➤ YN0000: enableGlobalCache - <default> - false
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
-➤ YN0000: enableInlineBuilds - <default> - false
+➤ YN0000: enableInlineBuilds - <environment> - false
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
