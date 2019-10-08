@@ -3319,6 +3319,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/ci-info@npm:*":
+  version: 2.0.0
+  resolution: "@types/ci-info@npm:2.0.0"
+  checksum: 384e4f4899aa00be3f01f2760a1d31ef716fc437c4f8582888886038a07bb8173a8d7514d3dca2c05f77d023a20cf87960a606e11510936e24ef8a8b7b45394f
+  languageName: node
+  linkType: hard
+
 "@types/configstore@npm:^2.1.1":
   version: 2.1.1
   resolution: "@types/configstore@npm:2.1.1"
@@ -3516,6 +3523,15 @@ __metadata:
   version: 2.2.30
   resolution: "@types/invariant@npm:2.2.30"
   checksum: fb2334009e4a75555f717f46710d6f4db194e5bc8eff829568d41eebe449fd5213449b2f453bc10536f1b261be1aa9f5a7d9260c19b3ea1ea5ad86a01d647f7f
+  languageName: node
+  linkType: hard
+
+"@types/is-ci@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@types/is-ci@npm:2.0.0"
+  dependencies:
+    "@types/ci-info": "npm:*"
+  checksum: d456ff400af73c9d9f54aa01893e1c674b0940f738518cc8e3bc3b895711c7c5804423c7f23125e8590c442465997911aef3002357b684f573422fb3a74239c8
   languageName: node
   linkType: hard
 
@@ -4628,6 +4644,7 @@ __metadata:
     cross-spawn: "npm:^6.0.5"
     globby: "npm:^8.0.1"
     got: "npm:^9.2.2"
+    is-ci: "npm:^2.0.0"
     json-file-plus: "npm:^3.3.1"
     logic-solver: "npm:^2.0.1"
     micromatch: "npm:^4.0.2"
@@ -4750,6 +4767,7 @@ __metadata:
     "@types/got": "npm:^8.3.4"
     "@types/inquirer": "npm:^0.0.43"
     "@types/invariant": "npm:^2.2.30"
+    "@types/is-ci": "npm:^2.0.0"
     "@types/jest": "npm:^24.0.18"
     "@types/joi": "npm:^13.6.0"
     "@types/klaw": "npm:^3.0.0"

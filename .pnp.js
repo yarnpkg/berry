@@ -596,6 +596,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/got", "npm:8.3.5"],
             ["@types/inquirer", "npm:0.0.43"],
             ["@types/invariant", "npm:2.2.30"],
+            ["@types/is-ci", "npm:2.0.0"],
             ["@types/jest", "npm:24.0.18"],
             ["@types/joi", "npm:13.6.3"],
             ["@types/klaw", "npm:3.0.0"],
@@ -4944,6 +4945,15 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "linkType": "HARD"
         }]
       ]],
+      ["@types/ci-info", [
+        ["npm:2.0.0", {
+          "packageLocation": "./.yarn/cache/@types-ci-info-npm-2.0.0-92ce16a39f.zip/node_modules/@types/ci-info/",
+          "packageDependencies": [
+            ["@types/ci-info", "npm:2.0.0"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["@types/configstore", [
         ["npm:2.1.1", {
           "packageLocation": "./.yarn/cache/@types-configstore-npm-2.1.1-bb3144db15.zip/node_modules/@types/configstore/",
@@ -5174,6 +5184,16 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/@types-invariant-npm-2.2.30-726e43b330.zip/node_modules/@types/invariant/",
           "packageDependencies": [
             ["@types/invariant", "npm:2.2.30"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
+      ["@types/is-ci", [
+        ["npm:2.0.0", {
+          "packageLocation": "./.yarn/cache/@types-is-ci-npm-2.0.0-1007c71303.zip/node_modules/@types/is-ci/",
+          "packageDependencies": [
+            ["@types/is-ci", "npm:2.0.0"],
+            ["@types/ci-info", "npm:2.0.0"]
           ],
           "linkType": "HARD"
         }]
@@ -6586,6 +6606,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["cross-spawn", "npm:6.0.5"],
             ["globby", "npm:8.0.2"],
             ["got", "npm:9.6.0"],
+            ["is-ci", "npm:2.0.0"],
             ["json-file-plus", "npm:3.3.1"],
             ["logic-solver", "npm:2.0.1"],
             ["micromatch", "npm:4.0.2"],
@@ -6719,6 +6740,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/got", "npm:8.3.5"],
             ["@types/inquirer", "npm:0.0.43"],
             ["@types/invariant", "npm:2.2.30"],
+            ["@types/is-ci", "npm:2.0.0"],
             ["@types/jest", "npm:24.0.18"],
             ["@types/joi", "npm:13.6.3"],
             ["@types/klaw", "npm:3.0.0"],

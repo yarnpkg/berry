@@ -30,6 +30,7 @@
     "@types/got": "^8.3.4",
     "@types/inquirer": "^0.0.43",
     "@types/invariant": "^2.2.30",
+    "@types/is-ci": "^2.0.0",
     "@types/jest": "^24.0.18",
     "@types/joi": "^13.6.0",
     "@types/klaw": "^3.0.0",
