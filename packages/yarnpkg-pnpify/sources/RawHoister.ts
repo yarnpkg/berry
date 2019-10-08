@@ -21,14 +21,14 @@ export type PackageName = string;
 export type Weight = number;
 
 /**
- * Package tree - is simply a map, with key being package id and the value - the dependencies
- * of that package.
+ * Package tree - is simply an array, with index being package id and the value - the dependencies
+ * of that package. Package tree can contain cycles.
  *
  * Hoisted package tree has the same type, but values should be treated as not necesseraly
  * dependencies, but rather hoisted packages.
  */
-export type PackageTree = Map<PackageId, Set<PackageId>>;
-type ReadonlyPackageTree = ReadonlyMap<PackageId, Set<PackageId>>
+export type PackageTree = Array<Set<PackageId> | undefined>;
+type ReadonlyPackageTree = ReadonlyArray<Set<PackageId> | undefined>
 
 /**
  * Initial information about the package.
@@ -41,34 +41,12 @@ export interface PackageInfo {
 }
 
 /**
- * A map with initial information about each package
- */
-export type PackageMap = Map<PackageId, PackageInfo>;
-type ReadonlyPackageMap = ReadonlyMap<PackageId, PackageInfo>;
-
-/**
  * The results of weighting each package with its transitive dependencies in some subtree.
  */
 type WeightMap = Map<PackageId, Weight>;
 type ReadonlyWeightMap = ReadonlyMap<PackageId, Weight>;
 
 const NO_DEPS: ReadonlySet<PackageId> = new Set<PackageId>();
-
-/**
- * Creates package tree copy.
- *
- * @param tree package tree
- *
- * @returns package tree copy
- */
-const cloneTree = (tree: ReadonlyPackageTree): PackageTree => {
-  const treeCopy: PackageTree = new Map();
-
-  for (const [nodeId, depIds] of tree)
-    treeCopy.set(nodeId, new Set(depIds));
-
-  return treeCopy;
-};
 
 /**
  * The raw hoister is responsible for transforming a tree of dependencies to reduce tree
@@ -91,28 +69,35 @@ export class RawHoister {
    *
    * This function does not mutate its arguments, it hoists and returns tree copy
    *
-   * @param tree package tree
-   * @param packageMap package map
+   * @param tree package tree (cycles in the tree are allowed)
+   * @param packageInfos package infos
    * @param nohoist package ids that should be excluded from applying hoisting algorithm. Nohoist
    *                packages can be hoisted themselves, and their dependencies can be hoisted too,
    *                but only to the package itself, they cannot be hoisted to the nohoist package parent
    *
    * @returns hoisted tree copy
    */
-  public hoist(tree: ReadonlyPackageTree, packageMap: ReadonlyPackageMap, nohoist: ReadonlySet<PackageId> = new Set()): PackageTree {
+  public hoist(tree: ReadonlyPackageTree, packageInfos: ReadonlyArray<PackageInfo>, nohoist: ReadonlySet<PackageId> = new Set()): PackageTree {
     // Make tree copy, which will be mutated by hoisting algorithm
-    const treeCopy = cloneTree(tree);
+    const treeCopy = tree.map(depIds => new Set(depIds));
+
+    const seenIds = new Set<PackageId>();
 
     const hoistSubTree = (nodeId: PackageId) => {
-      // Apply mutating hoisting algorithm on each tree node starting from the root
-      this.hoistInplace(treeCopy, nodeId, packageMap, nohoist);
+      seenIds.add(nodeId);
 
-      for (const depId of treeCopy.get(nodeId) || NO_DEPS) {
-        hoistSubTree(depId);
+      // Apply mutating hoisting algorithm on each tree node starting from the root
+      this.hoistInplace(treeCopy, nodeId, packageInfos, nohoist);
+
+      for (const depId of treeCopy[nodeId] || NO_DEPS) {
+        if (!seenIds.has(depId)) {
+          hoistSubTree(depId);
+        }
       }
     };
 
-    hoistSubTree(0);
+    if (treeCopy.length > 0 && treeCopy[0].size > 0)
+      hoistSubTree(0);
 
     return treeCopy;
   }
@@ -123,22 +108,26 @@ export class RawHoister {
    *
    * @param tree package tree
    * @param rootId package subtree root package id
-   * @param packageMap package map
+   * @param packages package map
    * @param nohoist nohoist package ids
    */
-  private hoistInplace(tree: PackageTree, rootId: PackageId, packageMap: ReadonlyPackageMap, nohoist: ReadonlySet<PackageId>): void {
+  private hoistInplace(tree: PackageTree, rootId: PackageId, packages: ReadonlyArray<PackageInfo>, nohoist: ReadonlySet<PackageId>): void {
     // Get the list of package ids that can and should be hoisted to the subtree root
-    const hoistedDepIds = this.computeHoistCandidates(tree, rootId, packageMap, nohoist);
+    const hoistedDepIds = this.computeHoistCandidates(tree, rootId, packages, nohoist);
+    const seenIds = new Set<PackageId>();
 
     const removeHoistedDeps = (nodeId: PackageId) => {
+      seenIds.add(nodeId);
       // No need to traverse past nohoist node
       if (nohoist.has(nodeId))
         return;
 
-      const depIds = tree.get(nodeId) || NO_DEPS as Set<PackageId>;
+      const depIds = tree[nodeId] || NO_DEPS as Set<PackageId>;
       for (const depId of depIds) {
         // First traverse to deeper levels
-        removeHoistedDeps(depId);
+        if (!seenIds.has(depId))
+          removeHoistedDeps(depId);
+
         // Then remove hoisted deps from current node
         if (hoistedDepIds.has(depId)) {
           depIds.delete(depId);
@@ -146,13 +135,13 @@ export class RawHoister {
       }
       // Remove node without deps
       if (nodeId !== rootId && depIds.size === 0) {
-        tree.delete(nodeId);
+        tree[nodeId] = undefined;
       }
     };
 
     removeHoistedDeps(rootId);
 
-    const nodeDepIds = tree.get(rootId) || new Set();
+    const nodeDepIds = tree[rootId] || new Set();
     for (const depId of hoistedDepIds) {
       // Add hoisted packages to the subtree root
       nodeDepIds.add(depId);
@@ -165,19 +154,24 @@ export class RawHoister {
    *
    * @param tree package tree
    * @param rootId root package id of the subtree
-   * @param packageMap package map
+   * @param packages package map
    * @param nohoist nohoist package ids, that shouldn't be weighed
    *
    * @return map of package weights: package id -> total weight
    */
-  private weighPackages(tree: ReadonlyPackageTree, rootId: PackageId, packageMap: ReadonlyPackageMap, nohoist: ReadonlySet<PackageId>): ReadonlyWeightMap {
+  private weighPackages(tree: ReadonlyPackageTree, rootId: PackageId, packages: ReadonlyArray<PackageInfo>, nohoist: ReadonlySet<PackageId>): ReadonlyWeightMap {
     const weights: WeightMap = new Map();
+    const seenIds = new Set<PackageId>();
 
     const addUpNodeWeight = (nodeId: PackageId) => {
+      seenIds.add(nodeId);
+
       if (!nohoist.has(nodeId)) {
-        weights.set(nodeId, packageMap.get(nodeId)!.weight + (weights.get(nodeId) || 0));
-        for (const depId of tree.get(nodeId) || NO_DEPS) {
-          addUpNodeWeight(depId);
+        weights.set(nodeId, packages[nodeId].weight + (weights.get(nodeId) || 0));
+        for (const depId of tree[nodeId] || NO_DEPS) {
+          if (!seenIds.has(depId)) {
+            addUpNodeWeight(depId);
+          }
         }
       }
     };
@@ -191,14 +185,14 @@ export class RawHoister {
    * Finds packages that have the max weight among the packages with the same name
    *
    * @param weights package weights map: package id -> total weight
-   * @param packageMap package info map: package id -> package name
+   * @param packages package info map: package id -> package name
    *
    * @returns package ids with max weights among the packages with the same name
    */
-  private getHeaviestPackages(weights: ReadonlyWeightMap, packageMap: ReadonlyPackageMap): ReadonlySet<PackageId> {
+  private getHeaviestPackages(weights: ReadonlyWeightMap, packages: ReadonlyArray<PackageInfo>): ReadonlySet<PackageId> {
     const heaviestPackages = new Map<PackageName, {weight: Weight, pkgId: PackageId}>();
     for (const [pkgId, weight] of weights) {
-      const pkgName = packageMap.get(pkgId)!.name;
+      const pkgName = packages[pkgId].name;
       let heaviestPkg = heaviestPackages.get(pkgName);
       if (!heaviestPkg) {
         heaviestPkg = {weight, pkgId};
@@ -221,23 +215,25 @@ export class RawHoister {
    *
    * @param tree package tree
    * @param rootId package id that should be regarded as subtree root
-   * @param packageMap package map
+   * @param packages package map
    * @param nohoist nohoist package ids
    */
-  private computeHoistCandidates(tree: ReadonlyPackageTree, rootId: PackageId, packageMap: ReadonlyPackageMap, nohoist: ReadonlySet<PackageId>): ReadonlySet<PackageId> {
+  private computeHoistCandidates(tree: ReadonlyPackageTree, rootId: PackageId, packages: ReadonlyArray<PackageInfo>, nohoist: ReadonlySet<PackageId>): ReadonlySet<PackageId> {
     // Get current package dependency package names
     const rootDepNames = new Map<PackageName, PackageId>();
-    for (const depId of tree.get(rootId) || NO_DEPS)
-      rootDepNames.set(packageMap.get(depId)!.name, depId);
+    for (const depId of tree[rootId] || NO_DEPS)
+      rootDepNames.set(packages[depId].name, depId);
 
     // Weigh all the packages in the subtree
-    const packageWeights = this.weighPackages(tree, rootId, packageMap, nohoist);
+    const packageWeights = this.weighPackages(tree, rootId, packages, nohoist);
 
     const hoistCandidateWeights: WeightMap = new Map();
     const seenPackageNames = new Set<PackageName>();
+    const seenPackageIds = new Set<PackageId>();
 
     const findHoistCandidates = (nodeId: PackageId) => {
-      const name = packageMap.get(nodeId)!.name;
+      seenPackageIds.add(nodeId);
+      const name = packages[nodeId].name;
       // Package names that exist only in a single instance in the tree path are hoist candidates
       if (!seenPackageNames.has(name)) {
         seenPackageNames.add(name);
@@ -248,8 +244,9 @@ export class RawHoister {
         if (nodeId !== rootId && (!rootDepId || rootDepId === nodeId))
           hoistCandidateWeights.set(nodeId, packageWeights.get(nodeId)!);
 
-        for (const depId of tree.get(nodeId) || NO_DEPS)
-          findHoistCandidates(depId);
+        for (const depId of tree[nodeId] || NO_DEPS)
+          if (!seenPackageIds.has(depId))
+            findHoistCandidates(depId);
 
         seenPackageNames.delete(name);
       }
@@ -259,6 +256,6 @@ export class RawHoister {
     findHoistCandidates(rootId);
 
     // Among all hoist candidates choose the heaviest
-    return this.getHeaviestPackages(hoistCandidateWeights, packageMap);
+    return this.getHeaviestPackages(hoistCandidateWeights, packages);
   }
 };
