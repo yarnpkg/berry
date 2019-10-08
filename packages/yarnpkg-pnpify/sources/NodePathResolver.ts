@@ -45,7 +45,12 @@ export interface ResolvedPath {
   /**
    * Directory entries list, returned for pathes ending with `/node_modules[/@scope]`
    */
-  dirList?: Set<Filename>
+  dirList?: Set<Filename>;
+
+  /**
+   * If true, the entry is meant to be a symbolic link to the location pointed by resolvedPath.
+   */
+  isSymlink?: boolean;
 }
 
 /**
@@ -124,6 +129,9 @@ export class NodePathResolver {
     // Extract first issuer from the path using PnP API
     let issuer = this.getIssuer(this.pnp, nodePath);
 
+    // Keep track of whether the last component is meant to be a symlink or not
+    let isSymlink = false;
+
     // If we have something left in a path to parse, do that
     if (issuer && nodePath.length > issuer.length) {
       let request: PortablePath = nodePath.slice(issuer.length) as PortablePath;
@@ -144,7 +152,8 @@ export class NodePathResolver {
             if (pkgName.length > 0 && (pkgName[0] !== '@' || pkgName.indexOf(ppath.sep) > 0)) {
               try {
                 let res = this.pnp.resolveToUnqualified(pkgName, ppath.join(issuer, ppath.sep));
-                issuer = res === null || res === issuer ? undefined : res;
+                isSymlink = res === issuer;
+                issuer = res === null ? undefined : res;
               } catch (e) {
                 issuer = undefined;
                 break;
@@ -176,6 +185,14 @@ export class NodePathResolver {
           }
         } else {
           result.resolvedPath = ppath.join(issuer, request);
+
+          if (isSymlink) {
+            // We only enforce a symlink if the target is exactly the folder of
+            // the issuer. If it's a file inside it, we just use the actual entry.
+            if (!request) {
+              result.isSymlink = isSymlink;
+            }
+          }
         }
       } else {
         // If we don't have issuer here, it means the path cannot exist in PnP project
