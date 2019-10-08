@@ -758,6 +758,9 @@ export class Project {
     const limit = pLimit(5);
     let firstError = false;
 
+    const progress = Report.progressViaCounter(locatorHashes.length);
+    report.reportProgress(progress);
+
     await Promise.all(locatorHashes.map(locatorHash => limit(async () => {
       const pkg = this.storedPackages.get(locatorHash);
       if (!pkg)
@@ -782,6 +785,8 @@ export class Project {
       if (fetchResult.releaseFs) {
         fetchResult.releaseFs();
       }
+    }).finally(() => {
+      progress.tick();
     })));
 
     if (firstError) {

@@ -88,6 +88,13 @@ const YarnrcDoc = () => <>
         </>}
       />
       <SymlScalarProperty
+        name={`enableProgressBars`}
+        placeholder={true}
+        description={<>
+          If true, Yarn will show progress bars for long-running events. It's disabled by default for CI environments.
+        </>}
+      />
+      <SymlScalarProperty
         name={`enableTimers`}
         placeholder={true}
         description={<>

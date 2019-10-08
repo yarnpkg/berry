@@ -28,6 +28,12 @@ export class ThrowReport extends Report {
   reportError(name: MessageName, text: string) {
   }
 
+  async reportProgress(progress: AsyncIterable<{progress: number, title?: string}>) {
+    for await (const {} of progress) {
+      // No need to do anything; we just want to consume the progress events
+    }
+  }
+
   reportJson(data: any) {
     // Just ignore the json output
   }

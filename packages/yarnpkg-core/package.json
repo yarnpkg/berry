@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.7",
   "nextVersion": {
     "semver": "2.0.0-rc.8",
-    "nonce": "366244373002505"
+    "nonce": "2181301525551149"
   },
   "main": "./sources/index.ts",
   "sideEffects": false,
@@ -20,6 +20,7 @@
     "cross-spawn": "^6.0.5",
     "globby": "^8.0.1",
     "got": "^9.2.2",
+    "is-ci": "^2.0.0",
     "json-file-plus": "^3.3.1",
     "logic-solver": "^2.0.1",
     "micromatch": "^4.0.2",

@@ -1,8 +1,8 @@
-import {Writable}            from 'stream';
+import {Writable}                                from 'stream';
 
-import {Configuration}       from './Configuration';
-import {Report, MessageName} from './Report';
-import {Locator}             from './types';
+import {Configuration}                           from './Configuration';
+import {ProgressDefinition, Report, MessageName} from './Report';
+import {Locator}                                 from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
@@ -13,6 +13,10 @@ export type StreamReportOptions = {
   json?: boolean,
   stdout: Writable,
 };
+
+const PROGRESS_FRAMES = [`⠋`, `⠙`, `⠹`, `⠸`, `⠼`, `⠴`, `⠦`, `⠧`, `⠇`, `⠏`];
+const PROGRESS_INTERVAL = 80;
+const PROGRESS_SIZE = 80;
 
 export class StreamReport extends Report {
   static async start(opts: StreamReportOptions, cb: (report: StreamReport) => Promise<void>) {
@@ -45,6 +49,10 @@ export class StreamReport extends Report {
   private startTime: number = Date.now();
 
   private indent: number = 0;
+
+  private progress: Map<AsyncIterable<ProgressDefinition>, ProgressDefinition> = new Map();
+  private progressTime: number = 0;
+  private progressFrame: number = 0;
 
   constructor({configuration, stdout, json = false, includeFooter = true, includeLogs = !json, includeInfos = includeLogs, includeWarnings = includeLogs}: StreamReportOptions) {
     super();
@@ -121,7 +129,7 @@ export class StreamReport extends Report {
 
   reportSeparator() {
     if (this.indent === 0) {
-      this.stdout.write(`\n`);
+      this.writeLine(``);
     } else {
       this.reportInfo(null, ``);
     }
@@ -132,7 +140,7 @@ export class StreamReport extends Report {
       return;
 
     if (!this.json) {
-      this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+      this.writeLine(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `info`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -145,7 +153,7 @@ export class StreamReport extends Report {
       return;
 
     if (!this.json) {
-      this.stdout.write(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+      this.writeLine(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -155,15 +163,37 @@ export class StreamReport extends Report {
     this.errorCount += 1;
 
     if (!this.json) {
-      this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+      this.writeLine(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
   }
 
+  async reportProgress(progressIt: AsyncIterable<{progress: number, title?: string}>) {
+    const progressDefinition: ProgressDefinition = {
+      progress: 0,
+      title: undefined,
+    };
+
+    this.progress.set(progressIt, progressDefinition);
+    this.refreshProgress(-1);
+
+    for await (const {progress, title} of progressIt) {
+      if (progressDefinition.progress === progress && progressDefinition.title === title)
+        continue;
+
+      progressDefinition.progress = progress;
+      progressDefinition.title = title;
+      this.refreshProgress();
+    }
+
+    this.progress.delete(progressIt);
+    this.refreshProgress(+1);
+  }
+
   reportJson(data: any) {
     if (this.json) {
-      this.stdout.write(`${JSON.stringify(data)}\n`);
+      this.writeLine(`${JSON.stringify(data)}`);
     }
   }
 
@@ -213,6 +243,50 @@ export class StreamReport extends Report {
     } else {
       this.reportInfo(MessageName.UNNAMED, message);
     }
+  }
+
+  private writeLine(str: string) {
+    this.clearProgress({clear: true});
+    this.stdout.write(`${str}\n`);
+    this.writeProgress();
+  }
+
+  private clearProgress({delta = 0, clear = false}: {delta?: number, clear?: boolean}) {
+    if (!this.configuration.get(`enableProgressBars`) || this.json)
+      return;
+
+    if (this.progress.size + delta > 0) {
+      this.stdout.write(`\x1b[${this.progress.size + delta}A`);
+      if (delta > 0 || clear) {
+        this.stdout.write(`\x1b[0J`);
+      }
+    }
+  }
+
+  private writeProgress() {
+    if (!this.configuration.get(`enableProgressBars`) || this.json)
+      return;
+
+    const now = Date.now();
+
+    if (now - this.progressTime > PROGRESS_INTERVAL) {
+      this.progressFrame = (this.progressFrame + 1) % PROGRESS_FRAMES.length;
+      this.progressTime = now;
+    }
+
+    const spinner = PROGRESS_FRAMES[this.progressFrame];
+
+    for (const {progress} of this.progress.values()) {
+      const ok = `=`.repeat(Math.floor(PROGRESS_SIZE * progress));
+      const ko = `-`.repeat(PROGRESS_SIZE - ok.length);
+
+      this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(null)}: ${spinner} ${ok}${ko}\n`);
+    }
+  }
+
+  private refreshProgress(delta: number = 0) {
+    this.clearProgress({delta});
+    this.writeProgress();
   }
 
   private formatTiming(timing: number) {

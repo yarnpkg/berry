@@ -3,6 +3,7 @@ import {parseSyml, stringifySyml}                               from '@yarnpkg/p
 import camelcase                                                from 'camelcase';
 import chalk                                                    from 'chalk';
 import {UsageError}                                             from 'clipanion';
+import isCI                                                     from 'is-ci';
 import supportsColor                                            from 'supports-color';
 
 import {MultiFetcher}                                           from './MultiFetcher';
@@ -210,7 +211,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableInlineBuilds: {
     description: `If true, the CLI will print the build output on the command line`,
     type: SettingsType.BOOLEAN,
-    default: false,
+    default: isCI,
+  },
+  enableProgressBars: {
+    description: `If true, the CLI is allowed to show a progress bar for long-running events`,
+    type: SettingsType.BOOLEAN,
+    default: !isCI,
   },
   enableTimers: {
     description: `If true, the CLI is allowed to print the time spent executing commands`,

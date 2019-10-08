@@ -1,3 +1,5 @@
+import './polyfills';
+
 import {main}                from './main';
 import {pluginConfiguration} from './pluginConfiguration';
 

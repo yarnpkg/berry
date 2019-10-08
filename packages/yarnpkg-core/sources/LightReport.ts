@@ -75,6 +75,12 @@ export class LightReport extends Report {
     this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${text}\n`);
   }
 
+  async reportProgress(progress: AsyncIterable<{progress: number, title?: string}>) {
+    for await (const {} of progress) {
+      // No need to do anything; we just want to consume the progress events
+    }
+  }
+
   reportJson(data: any) {
     // Just ignore the json output
   }
