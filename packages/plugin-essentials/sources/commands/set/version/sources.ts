@@ -7,22 +7,31 @@ import {tmpdir}                                                               fr
 
 import {setVersion}                                                           from '../version';
 
+const PR_REGEXP = /^[0-9]+$/;
+
+function getBranchRef(branch: string) {
+  if (PR_REGEXP.test(branch)) {
+    return `pull/${branch}/head`;
+  } else {
+    return branch;
+  }
+}
+
 const CLONE_WORKFLOW = ({repository, branch}: {repository: string, branch: string}, target: PortablePath) => [
-  [`git`, `clone`, repository, fromPortablePath(target), `--depth`, `1`],
-  [`git`, `config`, `advice.detachedHead`, `false`],
-  [`git`, `checkout`, `origin/${branch}`],
+  [`git`, `init`, fromPortablePath(target)],
+  [`git`, `remote`, `add`, `origin`, repository],
+  [`git`, `fetch`, `origin`, getBranchRef(branch)],
+  [`git`, `reset`, `--hard`, `FETCH_HEAD`],
 ];
 
 const UPDATE_WORKFLOW = ({branch}: {branch: string}) => [
-  [`git`, `fetch`, `origin`, `--depth`, `1`],
-  [`git`, `reset`, `--hard`],
-  [`git`, `clean`, `-dfx`],
-  [`git`, `checkout`, `origin/${branch}`],
+  [`git`, `fetch`, `origin`, getBranchRef(branch), `--force`],
+  [`git`, `reset`, `--hard`, `FETCH_HEAD`],
   [`git`, `clean`, `-dfx`],
 ];
 
-const BUILD_WORKFLOW = [
-  [`yarn`, `build:cli`],
+const BUILD_WORKFLOW = ({plugins}: {plugins: Array<string>}) => [
+  [`yarn`, `build:cli`, ...new Array<string>().concat(...plugins.map(plugin => [`--plugin`, plugin])), `|`],
 ];
 
 // eslint-disable-next-line arca/no-default-export
@@ -35,6 +44,12 @@ export default class SetVersionCommand extends BaseCommand {
 
   @Command.String(`--branch`)
   branch: string = `master`;
+
+  @Command.Array(`--plugin`)
+  plugins: Array<string> = [];
+
+  @Command.Boolean(`-f,--force`)
+  force: boolean = false;
 
   static usage = Command.Usage({
     description: `build Yarn from master`,
@@ -63,43 +78,66 @@ export default class SetVersionCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async (report: StreamReport) => {
-      let workflow;
-      if (xfs.existsSync(ppath.join(target, `.git` as Filename))) {
+      const runWorkflow = async (workflow: Array<Array<string>>) => {
+        for (const [fileName, ...args] of workflow) {
+          const usePipe = args[args.length - 1] === `|`;
+          if (usePipe)
+            args.pop();
+
+          if (usePipe) {
+            await execUtils.pipevp(fileName, args, {
+              cwd: target,
+              stdin: this.context.stdin,
+              stdout: this.context.stdout,
+              stderr: this.context.stderr,
+              strict: true,
+            });
+          } else {
+            this.context.stdout.write(`${configuration.format(`  $ ${[fileName, ...args].join(` `)}`, `grey`)}\n`);
+
+            try {
+              await execUtils.execvp(fileName, args, {
+                cwd: target,
+                strict: true,
+              });
+            } catch (error) {
+              this.context.stdout.write(error.stdout || error.stack);
+              throw error;
+            }
+          }
+        }
+      };
+
+      let ready = false;
+
+      if (!this.force && xfs.existsSync(ppath.join(target, `.git` as Filename))) {
         report.reportInfo(MessageName.UNNAMED, `Fetching the latest commits`);
-        workflow = UPDATE_WORKFLOW(this);
-      } else {
+        report.reportSeparator();
+
+        try {
+          await runWorkflow(UPDATE_WORKFLOW(this));
+          ready = true;
+        } catch (error) {
+          report.reportSeparator();
+          report.reportWarning(MessageName.UNNAMED, `Repository update failed; we'll try to regenerate it`);
+        }
+      }
+
+      if (!ready) {
         report.reportInfo(MessageName.UNNAMED, `Cloning the remote repository`);
-        workflow = CLONE_WORKFLOW(this, target);
+        report.reportSeparator();
 
         await xfs.removePromise(target);
         await xfs.mkdirpPromise(target);
-      }
 
-      report.reportSeparator();
-
-      for (const [fileName, ...args] of workflow) {
-        await execUtils.pipevp(fileName, args, {
-          cwd: target,
-          stdin: this.context.stdin,
-          stdout: this.context.stdout,
-          stderr: this.context.stderr,
-          strict: true,
-        });
+        await runWorkflow(CLONE_WORKFLOW(this, target));
       }
 
       report.reportSeparator();
       report.reportInfo(MessageName.UNNAMED, `Building a fresh bundle`);
       report.reportSeparator();
 
-      for (const [fileName, ...args] of BUILD_WORKFLOW) {
-        await execUtils.pipevp(fileName, args, {
-          cwd: target,
-          stdin: this.context.stdin,
-          stdout: this.context.stdout,
-          stderr: this.context.stderr,
-          strict: true,
-        });
-      }
+      await runWorkflow(BUILD_WORKFLOW(this));
 
       report.reportSeparator();
 
