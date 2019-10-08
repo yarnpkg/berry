@@ -16,6 +16,7 @@ Object {
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
@@ -67,6 +68,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
+➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
@@ -119,6 +121,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
+➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
@@ -171,6 +174,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
+➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
@@ -223,6 +227,7 @@ Object {
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
@@ -274,6 +279,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
+➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
@@ -326,6 +332,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
+➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
@@ -378,6 +385,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
+➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
@@ -430,6 +438,7 @@ Object {
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
@@ -481,6 +490,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
+➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
@@ -533,6 +543,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
+➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
@@ -585,6 +596,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
+➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
@@ -637,6 +649,7 @@ Object {
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
@@ -688,6 +701,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
+➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
@@ -740,6 +754,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
+➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
@@ -792,6 +807,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
+➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
@@ -844,6 +860,7 @@ Object {
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
@@ -895,6 +912,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
+➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
@@ -947,6 +965,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
+➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
@@ -999,6 +1018,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
+➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
@@ -1051,6 +1071,7 @@ Object {
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
@@ -1102,6 +1123,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
+➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
@@ -1154,6 +1176,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <default> - false
 ➤ YN0000: enableNetwork - <default> - true
+➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
@@ -1206,6 +1229,7 @@ Object {
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
 ➤ YN0000: enableNetwork - true
+➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
