@@ -4662,7 +4662,7 @@ __metadata:
     pretty-bytes: "npm:^5.1.0"
     semver: "npm:^5.6.0"
     stream-to-promise: "npm:^2.2.0"
-    supports-color: "npm:^5.5.0"
+    supports-color: "npm:^7.1.0"
     tar: "npm:^4.4.6"
     tmp: "npm:^0.0.33"
     tunnel: "npm:^0.0.6"
@@ -12642,6 +12642,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 3.0.0
   resolution: "has-flag@npm:3.0.0"
   checksum: c69624d2a38d77d4d715b40932cd55635426d75c7c0e72a609a67b4d251905517ca6d1ff6f69ee3b0cfa95a39b31e25af9e3fe04f46b092699ea5f26371d14ab
+  languageName: node
+  linkType: hard
+
+"has-flag@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "has-flag@npm:4.0.0"
+  checksum: 8c9a32ef47dfc77c5caf80a0e33a2d921414006ce954047d2274a8774e07cd916f2dd546aed7d89017504cb3fe66248dabb64f9c5bd893520cdd4c81e95d1198
   languageName: node
   linkType: hard
 
@@ -22509,6 +22516,15 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   dependencies:
     has-flag: "npm:^3.0.0"
   checksum: 164253b8eff0712e1fec3b862d0c4a8cff151e1b3ce7fb4f69a6a59a86d104dc05c4e2b3834ed3f2b5bb279da8fb221b964f6c7984fbd8af56867c95a0e1a8b9
+  languageName: node
+  linkType: hard
+
+"supports-color@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "supports-color@npm:7.1.0"
+  dependencies:
+    has-flag: "npm:^4.0.0"
+  checksum: 932a1d07cd46dc7c5b189e18bf9cba4484cc331a23befbfdffe908576b67d83f5e9313cca093cdc72f807b50f89edb60d8b1befd42db4718e2b7c704a289da66
   languageName: node
   linkType: hard
 

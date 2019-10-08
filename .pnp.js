@@ -6649,7 +6649,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["pretty-bytes", "npm:5.1.0"],
             ["semver", "npm:5.6.0"],
             ["stream-to-promise", "npm:2.2.0"],
-            ["supports-color", "npm:5.5.0"],
+            ["supports-color", "npm:7.1.0"],
             ["tar", "npm:4.4.8"],
             ["tmp", "npm:0.0.33"],
             ["tunnel", "npm:0.0.6"]
@@ -15650,6 +15650,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./.yarn/cache/has-flag-npm-3.0.0-16ac11fe05.zip/node_modules/has-flag/",
           "packageDependencies": [
             ["has-flag", "npm:3.0.0"]
+          ],
+          "linkType": "HARD"
+        }],
+        ["npm:4.0.0", {
+          "packageLocation": "./.yarn/cache/has-flag-npm-4.0.0-32af9f0536.zip/node_modules/has-flag/",
+          "packageDependencies": [
+            ["has-flag", "npm:4.0.0"]
           ],
           "linkType": "HARD"
         }]
@@ -26352,6 +26359,14 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageDependencies": [
             ["supports-color", "npm:6.1.0"],
             ["has-flag", "npm:3.0.0"]
+          ],
+          "linkType": "HARD"
+        }],
+        ["npm:7.1.0", {
+          "packageLocation": "./.yarn/cache/supports-color-npm-7.1.0-df2ba1e338.zip/node_modules/supports-color/",
+          "packageDependencies": [
+            ["supports-color", "npm:7.1.0"],
+            ["has-flag", "npm:4.0.0"]
           ],
           "linkType": "HARD"
         }]
