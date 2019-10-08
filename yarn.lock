@@ -3676,10 +3676,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^12.7.9":
-  version: 12.7.9
-  resolution: "@types/node@npm:12.7.9"
-  checksum: f2c670e6d4fbce4e29a8db8b478789f008353cff372b4286188fe5cb442b1e0697284e92f912193629c812b55bbcca543aa16744ca33106ea05d92604f462101
+"@types/node@npm:^12.7.11":
+  version: 12.7.11
+  resolution: "@types/node@npm:12.7.11"
+  checksum: a66a58ff693fc031fa8ee54a4376dd6ce4a4bd3b2c0bcdb2a8afd1319264f8d859d1c21d17baeca38268ef5e34d7fa8290b550fe2872c397b10b9ae843d7ceb0
   languageName: node
   linkType: hard
 
@@ -4785,7 +4785,7 @@ __metadata:
     "@types/micromatch": "npm:^3.1.0"
     "@types/minimatch": "npm:^3.0.3"
     "@types/mkdirp": "npm:^0.5.2"
-    "@types/node": "npm:^12.7.9"
+    "@types/node": "npm:^12.7.11"
     "@types/node-emoji": "npm:^1.8.0"
     "@types/node-fetch": "npm:^2.1.2"
     "@types/promise.prototype.finally": "npm:^2.0.3"
