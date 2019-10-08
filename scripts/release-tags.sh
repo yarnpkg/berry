@@ -31,6 +31,8 @@ COMMIT_MESSAGE="$COMMIT_MESSAGE| --- | --- |$NL"
 UPDATE_ARGUMENTS=()
 
 while read line; do
+  echo $line
+
   IDENT=$(jq -r .ident <<< "$line")
   VERSION=$(jq -r .newVersion <<< "$line")
 

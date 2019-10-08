@@ -40,7 +40,7 @@
     "@types/micromatch": "^3.1.0",
     "@types/minimatch": "^3.0.3",
     "@types/mkdirp": "^0.5.2",
-    "@types/node": "^12.7.9",
+    "@types/node": "^12.7.11",
     "@types/node-emoji": "^1.8.0",
     "@types/node-fetch": "^2.1.2",
     "@types/promise.prototype.finally": "^2.0.3",

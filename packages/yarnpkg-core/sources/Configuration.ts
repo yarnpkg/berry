@@ -212,11 +212,13 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `If true, the CLI will print the build output on the command line`,
     type: SettingsType.BOOLEAN,
     default: isCI,
+    defaultText: `<dynamic>`,
   },
   enableProgressBars: {
     description: `If true, the CLI is allowed to show a progress bar for long-running events`,
     type: SettingsType.BOOLEAN,
-    default: !isCI,
+    default: !isCI && process.stdout.isTTY,
+    defaultText: `<dynamic>`,
   },
   enableTimers: {
     description: `If true, the CLI is allowed to print the time spent executing commands`,
