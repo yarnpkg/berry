@@ -89,10 +89,16 @@ describe('NodePathResolver', () => {
     expect(pnpPath).toEqual({resolvedPath: '/home/user/proj/node_modules', statPath: '/home/user/proj', dirList: new Set(['monorepo', 'foo', 'bar', '@scope'])});
   });
 
-  it('should resolve /home/user/proj/node_modules/monorepo path', () => {
+  it('should resolve /home/user/proj/node_modules/monorepo path as a symlink to itself', () => {
     const nodePath = NodeFS.toPortablePath('/home/user/proj/node_modules/monorepo');
     const pnpPath = resolver.resolvePath(nodePath);
     expect(pnpPath).toEqual({resolvedPath: '/home/user/proj', isSymlink: true});
+  });
+
+  it('should resolve /home/user/proj/node_modules/monorepo/index.js without it being reported a symlink', () => {
+    const nodePath = NodeFS.toPortablePath('/home/user/proj/node_modules/monorepo/index.js');
+    const pnpPath = resolver.resolvePath(nodePath);
+    expect(pnpPath).toEqual({resolvedPath: '/home/user/proj/index.js'});
   });
 
   it('should partially resolve /home/user/proj/node_modules/@scope path', () => {

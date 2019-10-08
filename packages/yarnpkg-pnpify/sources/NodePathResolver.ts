@@ -187,7 +187,11 @@ export class NodePathResolver {
           result.resolvedPath = ppath.join(issuer, request);
 
           if (isSymlink) {
-            result.isSymlink = isSymlink;
+            // We only enforce a symlink if the target is exactly the folder of
+            // the issuer. If it's a file inside it, we just use the actual entry.
+            if (!request) {
+              result.isSymlink = isSymlink;
+            }
           }
         }
       } else {
