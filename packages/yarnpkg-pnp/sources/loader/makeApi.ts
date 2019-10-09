@@ -50,7 +50,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   if (runtimeState.enableTopLevelFallback === true)
     fallbackLocators.push(topLevelLocator);
 
-  if (opts.compatibilityMode) {
+  if (opts.compatibilityMode !== false) {
     // ESLint currently doesn't have any portable way for shared configs to
     // specify their own plugins that should be used (cf issue #10125). This
     // will likely get fixed at some point but it'll take time, so in the
