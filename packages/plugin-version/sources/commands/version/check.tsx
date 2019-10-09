@@ -472,16 +472,13 @@ async function fetchRoot(initialCwd: PortablePath) {
 }
 
 async function fetchChangedFiles(root: PortablePath, {base}: {base: string}) {
-  const {stdout: branchStdout} = await execUtils.execvp(`git`, [`log`, `--format=`, `--name-only`, `${base}..HEAD`], {cwd: root, strict: true});
-  const branchFiles = branchStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
-
-  const {stdout: localStdout} = await execUtils.execvp(`git`, [`diff`, `HEAD`, `--name-only`], {cwd: root, strict: true});
-  const localFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
+  const {stdout: localStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, `${base}`], {cwd: root, strict: true});
+  const trackedFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
 
   const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd: root, strict: true});
   const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
 
-  return [...new Set([...branchFiles, ...localFiles, ...untrackedFiles].sort())];
+  return [...new Set([...trackedFiles, ...untrackedFiles].sort())];
 }
 
 async function fetchPreviousNonce(workspace: Workspace, {root, base}: {root: PortablePath, base: string}) {
