@@ -30648,17 +30648,50 @@ class FakeFS_FakeFS {
   }
 
   async lockPromise(affectedPath, callback) {
-    const lockPath = `${affectedPath}.lock`;
+    const lockPath = `${affectedPath}.flock`;
     const interval = 1000 / 60;
-    const timeout = Date.now() + 60 * 1000;
-    let fd = null;
+    const startTime = Date.now();
+    let fd = null; // Even when we detect that a lock file exists, we still look inside to see
+    // whether the pid that created it is still alive. It's not foolproof
+    // (there are false positive), but there are no false negative and that's
+    // all that matters in 99% of the cases.
+
+    const isAlive = async () => {
+      let pid;
+
+      try {
+        [pid] = await this.readJsonPromise(lockPath);
+      } catch (error) {
+        // If we can't read the file repeatedly, we assume the process was
+        // aborted before even writing finishing writing the payload.
+        return Date.now() - startTime < 500;
+      }
+
+      try {
+        // "As a special case, a signal of 0 can be used to test for the
+        // existence of a process" - so we check whether it's alive.
+        process.kill(pid, 0);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    };
 
     while (fd === null) {
       try {
         fd = await this.openPromise(lockPath, `wx`);
       } catch (error) {
         if (error.code === `EEXIST`) {
-          if (Date.now() < timeout) {
+          if (!(await isAlive())) {
+            try {
+              await this.unlinkPromise(lockPath);
+              continue;
+            } catch (error) {// No big deal if we can't remove it. Just fallback to wait for
+              // it to be eventually released by its owner.
+            }
+          }
+
+          if (Date.now() - startTime < 60 * 1000) {
             await new Promise(resolve => setTimeout(resolve, interval));
           } else {
             throw new Error(`Couldn't acquire a lock in a reasonable time (via ${lockPath})`);
@@ -30668,6 +30701,8 @@ class FakeFS_FakeFS {
         }
       }
     }
+
+    await this.writePromise(fd, JSON.stringify([process.pid]));
 
     try {
       return await callback();
@@ -33093,6 +33128,16 @@ class ProxiedFS_ProxiedFS extends FakeFS_FakeFS {
 const escapeRegexp = s => s.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&');
 
 class VirtualFS_VirtualFS extends ProxiedFS_ProxiedFS {
+  constructor(virtual, {
+    baseFs = new NodeFS_NodeFS()
+  } = {}) {
+    super(ppath);
+    this.baseFs = baseFs;
+    this.target = ppath.dirname(virtual);
+    this.virtual = virtual;
+    this.mapToBaseRegExp = new RegExp(`^(${escapeRegexp(this.virtual)})((?:/([^\/]+)(?:/([^/]+))?)?((?:/.*)?))$`);
+  }
+
   static makeVirtualPath(base, component, to) {
     // Obtains the relative distance between the virtual path and its actual target
     const target = ppath.relative(ppath.dirname(base), to);
@@ -33105,16 +33150,6 @@ class VirtualFS_VirtualFS extends ProxiedFS_ProxiedFS {
     const finalSegments = segments.slice(depth);
     const fullVirtualPath = ppath.join(base, component, String(depth), ...finalSegments);
     return fullVirtualPath;
-  }
-
-  constructor(virtual, {
-    baseFs = new NodeFS_NodeFS()
-  } = {}) {
-    super(ppath);
-    this.baseFs = baseFs;
-    this.target = ppath.dirname(virtual);
-    this.virtual = virtual;
-    this.mapToBaseRegExp = new RegExp(`^(${escapeRegexp(this.virtual)})((?:/([^\/]+)(?:/([^/]+))?)?((?:/.*)?))$`);
   }
 
   getRealPath() {
@@ -34220,7 +34255,7 @@ function makeApi(runtimeState, opts) {
       const info = getPackageInformation(locator);
       if (info === null) return null;
       const packageLocation = NodeFS_NodeFS.fromPortablePath(info.packageLocation);
-      const nativeInfo = Object.assign({}, info, {
+      const nativeInfo = Object.assign(Object.assign({}, info), {
         packageLocation
       });
       return nativeInfo;
@@ -34273,6 +34308,9 @@ const api = Object.assign(makeApi(_entryPoint_runtimeState, {
   fakeFs: underlyingFs,
   pnpapiResolution: external_path_default.a.resolve(__dirname, __filename)
 }), {
+  makeApi: opts => {
+    return makeApi(_entryPoint_runtimeState, opts);
+  },
   setup: () => {
     applyPatch(api, {
       compatibilityMode: true,
