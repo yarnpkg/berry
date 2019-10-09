@@ -124,31 +124,24 @@ describe(`Commands`, () => {
       }),
     );
 
-    test(`it shouldn't throw if changes were reverted`, makeTemporaryEnv({
-      private: true,
-      version: '0.0.1',
-    }, async ({path, run, ...rest}) => {
-      const git = (...args) => execFile(`git`, args, {cwd: path});
+    test(
+      `it shouldn't throw if changes were reverted`,
+      makeVersionCheckEnv(async ({path, run, source, git}) => {
+        await writeFile(`${path}/packages/pkg-a/state`, `Initial`);
+        await git(`add`, `.`);
+        await git(`commit`, `-m`, `Initial state`);
 
-      await run(`install`);
-      await git(`init`, `.`);
-      // Otherwise we can't always commit
-      await git(`config`, `user.name`, `John Doe`);
-      await git(`config`, `user.email`, `john.doe@example.org`);
-      await writeFile(`${path}/state`, 'Initial');
-      await git(`add`, `.`);
-      await git(`commit`, `-m`, `First commit`);
+        await git(`checkout`, `-b`, `feature-branch`);
 
-      await git(`checkout`, `-b`, `feature-branch`);
+        await writeFile(`${path}/packages/pkg-a/state`, `Next`);
+        await git(`commit`, `-am`, `WIP`);
 
-      await writeFile(`${path}/state`, 'Next');
-      await git(`commit`, `-am`, `WIP`);
+        await writeFile(`${path}/packages/pkg-a/state`, `Initial`);
+        await git(`commit`, `-am`, `Revert WIP`);
 
-      await writeFile(`${path}/state`, 'Initial');
-      await git(`commit`, `-am`, `Revert WIP`);
-
-      await expect(run(`version`, `check`)).resolves.toBeTruthy();
-    }));
+        await expect(run(`version`, `check`)).resolves.toBeTruthy();
+      }),
+    );
   });
 });
 
