@@ -5094,6 +5094,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:2.0.0-rc.5"
     cross-spawn: "npm:^6.0.5"
     eslint: "npm:^5.16.0"
+    json5: "npm:^2.1.0"
     typescript: "npm:next"
   peerDependencies:
     eslint: "*"

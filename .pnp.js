@@ -7127,6 +7127,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
+            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7140,6 +7141,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
+            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7153,6 +7155,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
+            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7166,6 +7169,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
+            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7179,6 +7183,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
+            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7192,6 +7197,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
+            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7205,6 +7211,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
+            ["json5", "npm:2.1.0"],
             ["typescript", null]
           ],
           "linkType": "SOFT"
@@ -7218,6 +7225,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
+            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7231,6 +7239,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
+            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7244,6 +7253,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
+            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7257,6 +7267,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", "npm:5.16.0"],
+            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7270,6 +7281,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
+            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7283,6 +7295,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", "npm:5.16.0"],
+            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
