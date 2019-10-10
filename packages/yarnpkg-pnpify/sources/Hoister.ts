@@ -1,7 +1,8 @@
-import {PortablePath, Filename, NodeFS, toFilename, ppath} from '@yarnpkg/fslib';
-import {PnpApi, PackageLocator}                            from '@yarnpkg/pnp';
+import {PortablePath, Filename, NodeFS, toFilename, ppath}       from '@yarnpkg/fslib';
+import {PnpApi, PackageLocator, LinkType}                        from '@yarnpkg/pnp';
 
-import {RawHoister, PackageTree, PackageId, PackageInfo}   from './RawHoister';
+import {RawHoister, ReadonlyPackageTree, PackageId, PackageInfo} from './RawHoister';
+import {HoistedTree, PackageTree}                                from './RawHoister';
 
 type PnpWalkApi = Pick<PnpApi, 'getPackageInformation' | 'getDependencyTreeRoots' | 'topLevel'>;
 
@@ -12,7 +13,7 @@ interface NodeModulesMap {
   /** Directory entries for `../node_modules` and `../node_modules/@foo` directories */
   dirEntries: Map<PortablePath, Set<Filename>>;
   /** Package location mapping: `../node_modules/@foo/bar` -> `pnp package location` */
-  packageLocations: Map<PortablePath, PortablePath>;
+  packageLocations: Map<PortablePath, [PortablePath, LinkType]>;
 };
 
 /** node_modules path segment */
@@ -36,7 +37,7 @@ export class Hoister {
    *
    * @returns package tree, packages info and locators
    */
-  private buildPackageTree(pnp: PnpWalkApi): { packageTree: PackageTree, packages: PackageInfo[], locators: PackageLocator[] } {
+  private buildPackageTree(pnp: PnpWalkApi): { packageTree: ReadonlyPackageTree, packages: PackageInfo[], locators: PackageLocator[] } {
     const packageTree: PackageTree = [];
     const packages: PackageInfo[] = [];
     const locators: PackageLocator[] = [];
@@ -67,7 +68,7 @@ export class Hoister {
       const pkg = pnp.getPackageInformation(parent);
       if (pkg) {
         const depIds = new Set<PackageId>();
-        packageTree.push(depIds);
+        packageTree.push({deps: depIds, peerDeps: new Set<PackageId>()});
 
         for (const [name, reference] of pkg.packageDependencies) {
           if (reference) {
@@ -97,13 +98,15 @@ export class Hoister {
    *
    * @returns node modules map
    */
-  private buildNodeModulesMap(pnp: PnpWalkApi, hoistedTree: PackageTree, locators: PackageLocator[]): NodeModulesMap {
+  private buildNodeModulesMap(pnp: PnpWalkApi, hoistedTree: HoistedTree, locators: PackageLocator[]): NodeModulesMap {
     const dirEntries: Map<PortablePath, Set<Filename>> = new Map();
-    const packageLocations: Map<PortablePath, PortablePath> = new Map();
+    const packageLocations: Map<PortablePath, [PortablePath, LinkType]> = new Map();
 
     const NO_DEPS = new Set<PackageId>();
-    const getLocation = (locator: PackageLocator): PortablePath =>
-      NodeFS.toPortablePath(pnp.getPackageInformation(locator)!.packageLocation);
+    const getLocation = (locator: PackageLocator): [PortablePath, LinkType] => {
+      const info = pnp.getPackageInformation(locator)!;
+      return [NodeFS.toPortablePath(info.packageLocation), info.linkType];
+    };
     const getPackageName = (locator: PackageLocator): { name: Filename, scope: Filename | null } => {
       const [nameOrScope, name] = locator.name!.split('/');
       return name ? {scope: toFilename(nameOrScope), name: toFilename(name)} : {scope: null, name: toFilename(nameOrScope)};
@@ -150,7 +153,7 @@ export class Hoister {
       }
     };
 
-    const rootPrefix = getLocation(locators[0]);
+    const [rootPrefix] = getLocation(locators[0]);
     buildLocationTree(0, rootPrefix);
 
     return {dirEntries, packageLocations};

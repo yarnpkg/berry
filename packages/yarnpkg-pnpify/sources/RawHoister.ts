@@ -20,6 +20,18 @@ export type PackageName = string;
  */
 export type Weight = number;
 
+export interface Dependencies
+{
+  deps: Set<PackageId>,
+  peerDeps: Set<PackageId>
+}
+
+export interface ReadonlyDependencies
+{
+  deps: ReadonlySet<PackageId>,
+  peerDeps: ReadonlySet<PackageId>
+}
+
 /**
  * Package tree - is simply an array, with index being package id and the value - the dependencies
  * of that package. Package tree can contain cycles.
@@ -27,8 +39,9 @@ export type Weight = number;
  * Hoisted package tree has the same type, but values should be treated as not necesseraly
  * dependencies, but rather hoisted packages.
  */
-export type PackageTree = Array<Set<PackageId> | undefined>;
-type ReadonlyPackageTree = ReadonlyArray<Set<PackageId> | undefined>
+export type ReadonlyPackageTree = ReadonlyArray<ReadonlyDependencies>;
+export type PackageTree = Dependencies[];
+export type HoistedTree = Array<Set<PackageId>>;
 
 /**
  * Initial information about the package.
@@ -46,18 +59,12 @@ export interface PackageInfo {
 type WeightMap = Map<PackageId, Weight>;
 type ReadonlyWeightMap = ReadonlyMap<PackageId, Weight>;
 
-const NO_DEPS: ReadonlySet<PackageId> = new Set<PackageId>();
-
 /**
  * The raw hoister is responsible for transforming a tree of dependencies to reduce tree
  * height as much as possible. It uses the fact that if dependency is not found for some
  * package, it will be searched over the folder of its parent package dependencies. And
  * hence we can lift dependencies that have different names to the parent package "dependencies",
  * thus reducing tree height.
- *
- * Theoretical computational complexity of hoisting algorhitm is O(n^2) (when no hoisting can be
- * done on all the tree), but in practice it should make much less iterations over tree, due to
- * real dependency trees more often then not can be almost fully hoisted.
  */
 export class RawHoister {
   /**
@@ -77,9 +84,9 @@ export class RawHoister {
    *
    * @returns hoisted tree copy
    */
-  public hoist(tree: ReadonlyPackageTree, packageInfos: ReadonlyArray<PackageInfo>, nohoist: ReadonlySet<PackageId> = new Set()): PackageTree {
+  public hoist(tree: ReadonlyPackageTree, packageInfos: ReadonlyArray<PackageInfo>, nohoist: ReadonlySet<PackageId> = new Set()): HoistedTree {
     // Make tree copy, which will be mutated by hoisting algorithm
-    const treeCopy = tree.map(depIds => new Set(depIds));
+    const treeCopy: PackageTree = tree.map(({deps, peerDeps}) => ({deps: new Set(deps), peerDeps: new Set(peerDeps)}));
 
     const seenIds = new Set<PackageId>();
 
@@ -89,17 +96,17 @@ export class RawHoister {
       // Apply mutating hoisting algorithm on each tree node starting from the root
       this.hoistInplace(treeCopy, nodeId, packageInfos, nohoist);
 
-      for (const depId of treeCopy[nodeId] || NO_DEPS) {
+      for (const depId of treeCopy[nodeId].deps) {
         if (!seenIds.has(depId)) {
           hoistSubTree(depId);
         }
       }
     };
 
-    if (treeCopy.length > 0 && treeCopy[0].size > 0)
+    if (treeCopy.length > 0 && treeCopy[0].deps.size > 0)
       hoistSubTree(0);
 
-    return treeCopy;
+    return treeCopy.map(({deps}) => deps);
   }
 
   /**
@@ -122,7 +129,7 @@ export class RawHoister {
       if (nohoist.has(nodeId))
         return;
 
-      const depIds = tree[nodeId] || NO_DEPS as Set<PackageId>;
+      const depIds = tree[nodeId].deps;
       for (const depId of depIds) {
         // First traverse to deeper levels
         if (!seenIds.has(depId))
@@ -133,15 +140,11 @@ export class RawHoister {
           depIds.delete(depId);
         }
       }
-      // Remove node without deps
-      if (nodeId !== rootId && depIds.size === 0) {
-        tree[nodeId] = undefined;
-      }
     };
 
     removeHoistedDeps(rootId);
 
-    const nodeDepIds = tree[rootId] || new Set();
+    const nodeDepIds = tree[rootId].deps;
     for (const depId of hoistedDepIds) {
       // Add hoisted packages to the subtree root
       nodeDepIds.add(depId);
@@ -159,7 +162,7 @@ export class RawHoister {
    *
    * @return map of package weights: package id -> total weight
    */
-  private weighPackages(tree: ReadonlyPackageTree, rootId: PackageId, packages: ReadonlyArray<PackageInfo>, nohoist: ReadonlySet<PackageId>): ReadonlyWeightMap {
+  private weighPackages(tree: ReadonlyPackageTree, rootId: PackageId, packages: ReadonlyArray<PackageInfo>, nohoist: ReadonlySet<PackageId>): WeightMap {
     const weights: WeightMap = new Map();
     const seenIds = new Set<PackageId>();
 
@@ -168,7 +171,7 @@ export class RawHoister {
 
       if (!nohoist.has(nodeId)) {
         weights.set(nodeId, packages[nodeId].weight + (weights.get(nodeId) || 0));
-        for (const depId of tree[nodeId] || NO_DEPS) {
+        for (const depId of tree[nodeId].deps) {
           if (!seenIds.has(depId)) {
             addUpNodeWeight(depId);
           }
@@ -189,7 +192,7 @@ export class RawHoister {
    *
    * @returns package ids with max weights among the packages with the same name
    */
-  private getHeaviestPackages(weights: ReadonlyWeightMap, packages: ReadonlyArray<PackageInfo>): ReadonlySet<PackageId> {
+  private getHeaviestPackages(weights: ReadonlyWeightMap, packages: ReadonlyArray<PackageInfo>): Set<PackageId> {
     const heaviestPackages = new Map<PackageName, {weight: Weight, pkgId: PackageId}>();
     for (const [pkgId, weight] of weights) {
       const pkgName = packages[pkgId].name;
@@ -218,16 +221,17 @@ export class RawHoister {
    * @param packages package infos
    * @param nohoist nohoist package ids
    */
-  private computeHoistCandidates(tree: ReadonlyPackageTree, rootId: PackageId, packages: ReadonlyArray<PackageInfo>, nohoist: ReadonlySet<PackageId>): ReadonlySet<PackageId> {
+  private computeHoistCandidates(tree: PackageTree, rootId: PackageId, packages: ReadonlyArray<PackageInfo>, nohoist: ReadonlySet<PackageId>): Set<PackageId> {
     // Get current package dependency package names
     const rootDepNames = new Map<PackageName, PackageId>();
-    for (const depId of tree[rootId] || NO_DEPS)
+    for (const depId of tree[rootId].deps)
       rootDepNames.set(packages[depId].name, depId);
 
     // Weigh all the packages in the subtree
     const packageWeights = this.weighPackages(tree, rootId, packages, nohoist);
 
     const hoistCandidateWeights: WeightMap = new Map();
+    const hoistPeerDepCandidates = new Set<PackageId>();
     const seenPackageNames = new Set<PackageName>();
     const seenPackageIds = new Set<PackageId>();
 
@@ -241,10 +245,16 @@ export class RawHoister {
         // If the hoisting candidate has the same name as existing root subtree dependency,
         // we can only hoist it if its id is also the same
         // . → A → B@X → C → B@Y, - we can hoist only B@X here
-        if (nodeId !== rootId && (!rootDepId || rootDepId === nodeId))
-          hoistCandidateWeights.set(nodeId, packageWeights.get(nodeId)!);
+        if (nodeId !== rootId && (!rootDepId || rootDepId === nodeId)) {
+          const pkg = tree[nodeId];
+          if (pkg.peerDeps.size > 0) {
+            hoistPeerDepCandidates.add(nodeId);
+          } else {
+            hoistCandidateWeights.set(nodeId, packageWeights.get(nodeId)!);
+          }
+        }
 
-        for (const depId of tree[nodeId] || NO_DEPS)
+        for (const depId of tree[nodeId].deps)
           if (!seenPackageIds.has(depId))
             findHoistCandidates(depId);
 
@@ -256,6 +266,27 @@ export class RawHoister {
     findHoistCandidates(rootId);
 
     // Among all hoist candidates choose the heaviest
-    return this.getHeaviestPackages(hoistCandidateWeights, packages);
+    const hoistCandidates = this.getHeaviestPackages(hoistCandidateWeights, packages);
+
+    let hoistCandidatesChanged;
+    // Loop until hoist candidates set changes
+    do {
+      hoistCandidatesChanged = false;
+      for (const peerDepCandId of hoistPeerDepCandidates) {
+        const peerDeps = tree[peerDepCandId].peerDeps;
+        for (const peerDepId of peerDeps)
+          if (hoistCandidates.has(peerDepId))
+            // Remove all the packages that are going to be hoisted from current peer deps
+            peerDeps.delete(peerDepId);
+        if (peerDeps.size === 0) {
+          // Peer dependent package can be hoisted if all of its peer deps are going to be hoisted
+          hoistCandidates.add(peerDepCandId);
+          hoistPeerDepCandidates.delete(peerDepCandId);
+          hoistCandidatesChanged = true;
+        }
+      }
+    } while (hoistCandidatesChanged);
+
+    return hoistCandidates;
   }
 };
