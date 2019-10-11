@@ -21,7 +21,7 @@ jobs:
     - name: 'Use Node.js 10.x'
       uses: actions/setup-node@master
       with:
-        version: 10.x
+        node-version: 10.x
 
     - name: 'Build the standard bundle'
       run: |
@@ -105,6 +105,3 @@ jobs:
 
         yarn webpack
         ls dist | grep "main.js"
-
-
-
