@@ -22,7 +22,7 @@ jobs:
 
     - uses: actions/setup-node@master
       with:
-        version: 12.x
+        node-version: 12.x
 
     - name: 'Build the standard bundle'
       run: |
