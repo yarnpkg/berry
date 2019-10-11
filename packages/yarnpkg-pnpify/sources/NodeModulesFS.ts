@@ -1,13 +1,14 @@
-import {CreateReadStreamOptions, CreateWriteStreamOptions, toFilename} from '@yarnpkg/fslib';
-import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                   from '@yarnpkg/fslib';
-import {WatchOptions, WatchCallback, Watcher}                          from '@yarnpkg/fslib';
-import {FSPath, NativePath, PortablePath, npath, ppath}                from '@yarnpkg/fslib';
+import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@yarnpkg/fslib';
+import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@yarnpkg/fslib';
+import {WatchOptions, WatchCallback, Watcher, toFilename}  from '@yarnpkg/fslib';
+import {FSPath, NativePath, PortablePath, npath, ppath}    from '@yarnpkg/fslib';
 
-import {PnpApi}                                                        from '@yarnpkg/pnp';
-import fs                                                              from 'fs';
+import {PnpApi}                                            from '@yarnpkg/pnp';
+import fs                                                  from 'fs';
 
-import {NodePathResolver, ResolvedPath}                                from './NodePathResolver';
-import {WatchManager}                                                  from './WatchManager';
+import {HoistedPathResolver}                               from './HoistedPathResolver';
+import {NodePathResolver, PathResolver, ResolvedPath}      from './NodePathResolver';
+import {WatchManager}                                      from './WatchManager';
 
 export type NodeModulesFSOptions = {
   realFs?: typeof fs
@@ -38,12 +39,13 @@ type PortableNodeModulesFSOptions = {
 class PortableNodeModulesFs extends FakeFS<PortablePath> {
   private readonly baseFs: FakeFS<PortablePath>;
   private readonly watchManager: WatchManager;
-  private pathResolver: NodePathResolver;
+  private pathResolver: PathResolver;
 
   constructor(pnp: PnpApi, {baseFs = new NodeFS()}: PortableNodeModulesFSOptions = {}) {
     super(ppath);
 
     this.baseFs = baseFs;
+    // this.pathResolver = pnp.VERSIONS.std >= 3 ? new HoistedPathResolver(pnp) : new NodePathResolver(pnp);
     this.pathResolver = new NodePathResolver(pnp);
     this.watchManager = new WatchManager();
 

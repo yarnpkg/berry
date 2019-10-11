@@ -11,14 +11,14 @@ type PnpWalkApi = Pick<PnpApi, 'getPackageInformation' | 'getDependencyTreeRoots
 /**
  * Node modules mapping
  */
-interface NodeModulesMap {
+export interface NodeModulesMap {
   /** Directory entries for `../node_modules` and `../node_modules/@foo` directories */
   dirEntries: Map<PortablePath, Set<Filename>>;
   /** Package location mapping: `../node_modules/@foo/bar` -> `pnp package location`, `link type` */
   packageLocations: Map<PortablePath, [PortablePath, LinkType]>;
 };
 
-interface HoisterOptions {
+export interface HoisterOptions {
   optimizeSizeOnDisk: boolean;
 }
 

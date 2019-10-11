@@ -75,7 +75,7 @@ export interface PathResolver {
 }
 
 export class NodePathResolver implements PathResolver {
-  private pnp: PortablePnPApi;
+  private readonly pnp: PortablePnPApi;
 
   /**
    * Constructs new instance of Node path resolver
