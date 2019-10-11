@@ -783,11 +783,11 @@ export class Configuration {
     }
   }
 
-  get(key: string) {
+  get<T = any>(key: string) {
     if (!this.values.has(key))
       throw new Error(`Invalid configuration key "${key}"`);
 
-    return this.values.get(key);
+    return this.values.get(key) as T;
   }
 
   makeResolver() {

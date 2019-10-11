@@ -58,6 +58,11 @@ const plugin: Plugin = {
       type: SettingsType.BOOLEAN,
       default: false,
     },
+    yarnUpdatePath: {
+      description: `Path of the file where the Yarn releases must be stored by \`yarn set version\``,
+      type: SettingsType.ABSOLUTE_PATH,
+      default: null,
+    },
   },
   commands: [
     cleanCache,
