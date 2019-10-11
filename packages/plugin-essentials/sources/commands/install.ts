@@ -24,8 +24,8 @@ export default class YarnCommand extends BaseCommand {
   @Command.Boolean(`--prefer-offline`, {hidden: true})
   preferOffline?: boolean;
 
-  @Command.Boolean(`--ignore-engine`, {hidden: true})
-  ignoreEngine?: boolean;
+  @Command.Boolean(`--ignore-engines`, {hidden: true})
+  ignoreEngines?: boolean;
 
   @Command.Boolean(`--inline-builds`)
   inlineBuilds?: boolean;
@@ -96,14 +96,14 @@ export default class YarnCommand extends BaseCommand {
       }
     };
 
-    // The ignoreEngine flag isn't implemented at the moment. I'm still
+    // The ignoreEngines flag isn't implemented at the moment. I'm still
     // considering how it should work in the context of plugins - would it
     // make sense to allow them (or direct dependencies) to define new
     // "engine check"? Since it has implications regarding the architecture,
     // I prefer to postpone the decision to later. Also it wouldn't be a flag,
     // it would definitely be a configuration setting.
-    if (typeof this.ignoreEngine !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --ignore-engine option is deprecated; engine checking isn't a core feature anymore`, {
+    if (typeof this.ignoreEngines !== `undefined`) {
+      const exitCode = await reportDeprecation(`The --ignore-engines option is deprecated; engine checking isn't a core feature anymore`, {
         error: !isZeitNow,
       });
 
