@@ -200,27 +200,19 @@ export async function fetchReleases(configuration: Configuration, {includePrerel
 }
 
 export async function setVersion(project: Project, bundleVersion: string, bundleBuffer: Buffer, {report}: {report: Report}) {
-  let absolutePath = project.configuration.get<PortablePath | null>(`yarnUpdatePath`);
-
-  let updateConfig = false;
-  let removeParent = false;
-
-  if (absolutePath === null) {
-    absolutePath = ppath.resolve(project.cwd, `.yarn/releases/yarn-${bundleVersion}.js` as PortablePath);
-
-    updateConfig = true;
-    removeParent = true;
-  }
+  const absolutePath = ppath.resolve(project.cwd, `.yarn/releases/yarn-${bundleVersion}.js` as PortablePath);
 
   const displayPath = ppath.relative(project.configuration.startingCwd, absolutePath);
   const projectPath = ppath.relative(project.cwd, absolutePath);
 
+  const yarnPath = project.configuration.get(`yarnPath`);
+  const updateConfig = yarnPath === null || yarnPath === projectPath;
+
   report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${project.configuration.format(displayPath, `magenta`)}`);
 
-  if (removeParent)
-    await xfs.removePromise(ppath.dirname(absolutePath));
-
+  await xfs.removePromise(ppath.dirname(absolutePath));
   await xfs.mkdirpPromise(ppath.dirname(absolutePath));
+
   await xfs.writeFilePromise(absolutePath, bundleBuffer);
   await xfs.chmodPromise(absolutePath, 0o755);
 
