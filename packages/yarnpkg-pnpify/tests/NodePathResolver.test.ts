@@ -25,7 +25,9 @@ const makePnpApiMock = (pkgMap: PkgMap): PnpApi => {
     }),
     getPackageInformation: jest.fn().mockImplementation((info: { package: string }) => pkgMap[info.package]),
     resolveToUnqualified: jest.fn().mockImplementation((request: string, issuer: string) => {
-      if (issuer === `${pkgMap.monorepo.packageLocation}/` && request === 'foo') {
+      if (issuer === `${pkgMap.monorepo.packageLocation}/` && request === 'monorepo') {
+        return pkgMap.monorepo.packageLocation;
+      } else if (issuer === `${pkgMap.monorepo.packageLocation}/` && request === 'foo') {
         return pkgMap.foo.packageLocation;
       } else if (issuer === `${pkgMap.foo.packageLocation}/` && request === 'bar') {
         return pkgMap.bar.packageLocation;
@@ -39,13 +41,16 @@ const makePnpApiMock = (pkgMap: PkgMap): PnpApi => {
 const posixPkgMap: PkgMap = {
   monorepo: {
     packageLocation: '/home/user/proj',
-    packageDependencies: new Map([['foo', '1.0.0'], ['bar', '1.0.0'], ['@scope/baz', '2.0.0']]),
+    packageDependencies: new Map([['monorepo', '1.0.0'], ['foo', '1.0.0'], ['bar', '1.0.0'], ['@scope/baz', '2.0.0']]),
   },
   foo: {
     packageLocation: '/home/user/proj/.cache/foo/node_modules/foo',
     packageDependencies: new Map([['bar', '1.0.0']]),
   },
-  bar: {packageLocation: '/home/user/proj/.cache/bar/node_modules/bar', packageDependencies: new Map()},
+  bar: {
+    packageLocation: '/home/user/proj/.cache/bar/node_modules/bar',
+    packageDependencies: new Map(),
+  },
 };
 
 describe('NodePathResolver', () => {
@@ -81,7 +86,19 @@ describe('NodePathResolver', () => {
   it('should resolve /home/user/proj/node_modules path', () => {
     const nodePath = NodeFS.toPortablePath('/home/user/proj/node_modules');
     const pnpPath = resolver.resolvePath(nodePath);
-    expect(pnpPath).toEqual({resolvedPath: '/home/user/proj/node_modules', statPath: '/home/user/proj', dirList: new Set(['foo', 'bar', '@scope'])});
+    expect(pnpPath).toEqual({resolvedPath: '/home/user/proj/node_modules', statPath: '/home/user/proj', dirList: new Set(['monorepo', 'foo', 'bar', '@scope'])});
+  });
+
+  it('should resolve /home/user/proj/node_modules/monorepo path as a symlink to itself', () => {
+    const nodePath = NodeFS.toPortablePath('/home/user/proj/node_modules/monorepo');
+    const pnpPath = resolver.resolvePath(nodePath);
+    expect(pnpPath).toEqual({resolvedPath: '/home/user/proj', isSymlink: true});
+  });
+
+  it('should resolve /home/user/proj/node_modules/monorepo/index.js without it being reported a symlink', () => {
+    const nodePath = NodeFS.toPortablePath('/home/user/proj/node_modules/monorepo/index.js');
+    const pnpPath = resolver.resolvePath(nodePath);
+    expect(pnpPath).toEqual({resolvedPath: '/home/user/proj/index.js'});
   });
 
   it('should partially resolve /home/user/proj/node_modules/@scope path', () => {

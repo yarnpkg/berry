@@ -3,4 +3,5 @@ module.exports = {
   transformIgnorePatterns: [`${__dirname}/packages/yarnpkg-libzip/sources/libzip.js$`, `/.pnp.js$`],
   modulePathIgnorePatterns: [`<rootDir>/packages/acceptance-tests`],
   reporters: [`default`, [require.resolve(`jest-junit`), {output: `<rootDir>/junit.xml`}]],
+  setupFiles: [`@yarnpkg/cli/sources/polyfills.ts`],
 };

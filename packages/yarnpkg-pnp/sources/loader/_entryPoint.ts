@@ -8,7 +8,7 @@ import {RuntimeState}                                       from '../types';
 
 import {applyPatch}                                         from './applyPatch';
 import {hydrateRuntimeState}                                from './hydrateRuntimeState';
-import {makeApi}                                            from './makeApi';
+import {MakeApiOptions, makeApi}                            from './makeApi';
 
 declare var __non_webpack_module__: NodeModule;
 declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState) => RuntimeState;
@@ -30,6 +30,9 @@ const api = Object.assign(makeApi(runtimeState, {
   fakeFs: underlyingFs,
   pnpapiResolution: path.resolve(__dirname, __filename),
 }), {
+  makeApi: (opts: MakeApiOptions) => {
+    return makeApi(runtimeState, opts);
+  },
   setup: () => {
     applyPatch(api, {
       compatibilityMode: true,

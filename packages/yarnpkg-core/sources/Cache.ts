@@ -184,7 +184,7 @@ export class Cache {
   }
 
   async writeFileIntoCache<T>(file: PortablePath, generator: (file: PortablePath) => Promise<T>) {
-    return await xfs.lockPromise<T>(`${file}.lock` as PortablePath, async () => {
+    return await xfs.lockPromise<T>(file, async () => {
       return await generator(file);
     });
   }
