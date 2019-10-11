@@ -78,6 +78,22 @@ We use ESLint to check this, so using the `--fix` flag will cause ESLint to atte
 $> yarn test:lint --fix
 ```
 
+## Preparing your PR to be released
+
+In order to track which packages need to be released we use the workflow described in the [following document](https://next.yarnpkg.com/advanced/managing-releases). To summarize, you must run `yarn version check --interactive` on each PR you make, and select which packages should be released again for your changes to be effective (and to which version), if any.
+
+If you expect a package to have to be released again but Yarn doesn't offer you this choice, first check whether the name of your local branch is `master`. If that's the case, Yarn might not be able to detect your changes (since it will do it against `master`, which is yourself). Run the following commands:
+
+```
+git checkout -b my-feature
+git checkout -
+git reset --hard upstream/master
+git checkout -
+yarn version check --interactive
+```
+
+If it fails and you have no idea why, feel free to ping a maintainer and we'll do our best to help you.
+
 ## Writing documentation
 
 Our website is stored within the [`packages/gatsby`](https://github.com/yarnpkg/berry/tree/master/packages/gatsby) directory. *Do not manually edit the html files in the `docs` folder!* Instead, just make your changes in the Gatsby directory (for example you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/gatsby/content/advanced/plugin-tutorial.md)), then run the following command to spawn a local server and see your changes:
