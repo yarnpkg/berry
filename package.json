@@ -34,6 +34,7 @@
     "@types/is-ci": "^2.0.0",
     "@types/jest": "^24.0.18",
     "@types/joi": "^13.6.0",
+    "@types/json5": "^0.0.30",
     "@types/klaw": "^3.0.0",
     "@types/lockfile": "^1.0.0",
     "@types/lodash": "^4.14.136",

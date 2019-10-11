@@ -600,6 +600,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/is-ci", "npm:2.0.0"],
             ["@types/jest", "npm:24.0.18"],
             ["@types/joi", "npm:13.6.3"],
+            ["@types/json5", "npm:0.0.30"],
             ["@types/klaw", "npm:3.0.0"],
             ["@types/lockfile", "npm:1.0.0"],
             ["@types/lodash", "npm:4.14.136"],
@@ -5295,6 +5296,15 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "linkType": "HARD"
         }]
       ]],
+      ["@types/json5", [
+        ["npm:0.0.30", {
+          "packageLocation": "./.yarn/cache/@types-json5-npm-0.0.30-f1e41a4c3a.zip/node_modules/@types/json5/",
+          "packageDependencies": [
+            ["@types/json5", "npm:0.0.30"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["@types/klaw", [
         ["npm:3.0.0", {
           "packageLocation": "./.yarn/cache/@types-klaw-npm-3.0.0-edc61311f0.zip/node_modules/@types/klaw/",
@@ -6777,6 +6787,7 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/is-ci", "npm:2.0.0"],
             ["@types/jest", "npm:24.0.18"],
             ["@types/joi", "npm:13.6.3"],
+            ["@types/json5", "npm:0.0.30"],
             ["@types/klaw", "npm:3.0.0"],
             ["@types/lockfile", "npm:1.0.0"],
             ["@types/lodash", "npm:4.14.136"],
