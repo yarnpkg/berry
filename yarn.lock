@@ -3598,6 +3598,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/json5@npm:^0.0.30":
+  version: 0.0.30
+  resolution: "@types/json5@npm:0.0.30"
+  checksum: 323ee848bab2893453ee4af677240c5cbef715f1d36300bacca27b4cf43bb0fb3960890b8941d2b812c4fb462dbfc503a4cd246e2e98e1d0a36768d6265de43b
+  languageName: node
+  linkType: hard
+
 "@types/klaw@npm:^3.0.0":
   version: 3.0.0
   resolution: "@types/klaw@npm:3.0.0"
@@ -4779,6 +4786,7 @@ __metadata:
     "@types/is-ci": "npm:^2.0.0"
     "@types/jest": "npm:^24.0.18"
     "@types/joi": "npm:^13.6.0"
+    "@types/json5": "npm:^0.0.30"
     "@types/klaw": "npm:^3.0.0"
     "@types/lockfile": "npm:^1.0.0"
     "@types/lodash": "npm:^4.14.136"
@@ -5094,6 +5102,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:2.0.0-rc.5"
     cross-spawn: "npm:^6.0.5"
     eslint: "npm:^5.16.0"
+    json5: "npm:^2.1.0"
     typescript: "npm:next"
   peerDependencies:
     eslint: "*"
