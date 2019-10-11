@@ -1,6 +1,8 @@
 import {PortablePath, Filename, NodeFS, toFilename, ppath}       from '@yarnpkg/fslib';
 import {PnpApi, PackageLocator, LinkType}                        from '@yarnpkg/pnp';
 
+import fs                                                        from 'fs';
+
 import {RawHoister, ReadonlyPackageTree, PackageId, PackageInfo} from './RawHoister';
 import {HoistedTree, PackageTree}                                from './RawHoister';
 
@@ -12,9 +14,13 @@ type PnpWalkApi = Pick<PnpApi, 'getPackageInformation' | 'getDependencyTreeRoots
 interface NodeModulesMap {
   /** Directory entries for `../node_modules` and `../node_modules/@foo` directories */
   dirEntries: Map<PortablePath, Set<Filename>>;
-  /** Package location mapping: `../node_modules/@foo/bar` -> `pnp package location` */
+  /** Package location mapping: `../node_modules/@foo/bar` -> `pnp package location`, `link type` */
   packageLocations: Map<PortablePath, [PortablePath, LinkType]>;
 };
+
+interface HoisterOptions {
+  optimizeSizeOnDisk: boolean;
+}
 
 /** node_modules path segment */
 const NODE_MODULES = toFilename('node_modules');
@@ -28,7 +34,14 @@ type LocatorKey = string;
  */
 export class Hoister {
   /** Raw hoister which does all the hoisting heavy lifting */
-  private rawHoister = new RawHoister();
+  private readonly rawHoister = new RawHoister();
+
+  /** Hoister options */
+  private readonly options: HoisterOptions;
+
+  public constructor(options: HoisterOptions = {optimizeSizeOnDisk: false}) {
+    this.options = options;
+  }
 
   /**
    * Traverses PnP tree and produces input for the `RawHoister`
@@ -49,14 +62,14 @@ export class Hoister {
 
     const getLocatorKey = (locator: PackageLocator): LocatorKey => `${locator.name}:${locator.reference}`;
 
-    const assignPackageId = (locator: PackageLocator) => {
+    const assignPackageId = (locator: PackageLocator, weight: number) => {
       const locatorKey = getLocatorKey(locator);
       let pkgId = locatorToPackageMap.get(locatorKey);
       if (!pkgId) {
         pkgId = lastPkgId++;
         locatorToPackageMap.set(locatorKey, pkgId);
         locators.push(locator);
-        packages.push({name: locator.name!, weight: 1});
+        packages.push({name: locator.name!, weight});
       }
       return pkgId;
     };
@@ -73,7 +86,9 @@ export class Hoister {
         for (const [name, reference] of pkg.packageDependencies) {
           if (reference) {
             const locator = typeof reference === 'string' ? {name, reference} : {name: reference[0], reference: reference[1]};
-            const pkgId = assignPackageId(locator);
+            const weight = !this.options.optimizeSizeOnDisk || pkg.packageLocation.indexOf('.zip/node_modules') < 0 ? 1 : fs.statSync(pkg.packageLocation.split('/node_modules')[0]).size;
+            const pkgId = assignPackageId(locator, weight);
+
             depIds.add(pkgId);
             if (!packageTree[pkgId]) {
               addPackageToTree(locator, pkgId);
@@ -105,7 +120,13 @@ export class Hoister {
     const NO_DEPS = new Set<PackageId>();
     const getLocation = (locator: PackageLocator): [PortablePath, LinkType] => {
       const info = pnp.getPackageInformation(locator)!;
-      return [NodeFS.toPortablePath(info.packageLocation), info.linkType];
+      if (info.linkType === LinkType.SOFT && locator.reference!.indexOf('virtual:') === 0) {
+        const realLocator = {name: locator.name!, reference: locator.reference!.split('#')[1]};
+        const realInfo = pnp.getPackageInformation(realLocator)!;
+        return [NodeFS.toPortablePath(realInfo.packageLocation), realInfo.linkType];
+      } else {
+        return [NodeFS.toPortablePath(info.packageLocation), info.linkType];
+      }
     };
     const getPackageName = (locator: PackageLocator): { name: Filename, scope: Filename | null } => {
       const [nameOrScope, name] = locator.name!.split('/');
