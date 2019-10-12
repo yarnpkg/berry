@@ -87,7 +87,7 @@ export class ExecFetcher implements Fetcher {
 
   private async generatePackage(locator: Locator, generatorPath: PortablePath, opts: FetchOptions) {
     const cwd = NodeFS.toPortablePath(dirSync().name);
-    const env = await scriptUtils.makeScriptEnv(opts.project);
+    const env = await scriptUtils.makeScriptEnv({project: opts.project});
 
     const logFile = NodeFS.toPortablePath(tmpNameSync({
       prefix: `buildfile-`,
