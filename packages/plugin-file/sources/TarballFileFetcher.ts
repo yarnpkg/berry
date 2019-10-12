@@ -67,7 +67,7 @@ export class TarballFileFetcher implements Fetcher {
     const sourceBuffer = await sourceFs.readFilePromise(sourcePath);
 
     return await miscUtils.releaseAfterUseAsync(async () => {
-      return await tgzUtils.makeArchive(sourceBuffer, {
+      return await tgzUtils.convertToZip(sourceBuffer, {
         stripComponents: 1,
         prefixPath: `/sources` as PortablePath,
       });

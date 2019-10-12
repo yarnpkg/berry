@@ -1,9 +1,10 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {Locator, MessageName}                       from '@yarnpkg/core';
-import {httpUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
-import {PortablePath}                               from '@yarnpkg/fslib';
+import {Fetcher, FetchOptions, MinimalFetchOptions}      from '@yarnpkg/core';
+import {Locator, MessageName}                            from '@yarnpkg/core';
+import {httpUtils, scriptUtils, structUtils, tgzUtils}   from '@yarnpkg/core';
+import {PortablePath, CwdFS, ppath, xfs, toPortablePath} from '@yarnpkg/fslib';
+import {tmpNameSync}                                     from 'tmp';
 
-import * as githubUtils                             from './githubUtils';
+import * as githubUtils                                  from './githubUtils';
 
 export class GithubFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -42,8 +43,19 @@ export class GithubFetcher implements Fetcher {
       configuration: opts.project.configuration,
     });
 
-    return await tgzUtils.makeArchive(sourceBuffer, {
+    const extractPath = toPortablePath(tmpNameSync());
+    const extractTarget = new CwdFS(extractPath);
+
+    await tgzUtils.extractArchiveTo(sourceBuffer, extractTarget, {
       stripComponents: 1,
+    });
+
+    const packagePath = ppath.join(extractPath, `package.tgz` as PortablePath);
+    await scriptUtils.prepareExternalProject(extractPath, packagePath);
+
+    const packedBuffer = await xfs.readFilePromise(packagePath);
+
+    return await tgzUtils.convertToZip(packedBuffer, {
       prefixPath: `/sources` as PortablePath,
     });
   }

@@ -16,14 +16,16 @@ export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = n
   return zipFs;
 }
 
-interface MakeArchiveOptions {
+interface ExtractBufferOptions {
   prefixPath?: PortablePath,
   stripComponents?: number,
 };
 
-export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath = PortablePath.dot}: MakeArchiveOptions = {}): Promise<ZipFS> {
-  const zipFs = new ZipFS(NodeFS.toPortablePath(tmpNameSync()), {create: true});
+export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
+  return await extractArchiveTo(tgz, new ZipFS(NodeFS.toPortablePath(tmpNameSync()), {create: true}), opts);
+}
 
+export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buffer, targetFs: T, {stripComponents = 0, prefixPath = PortablePath.dot}: ExtractBufferOptions = {}): Promise<T> {
   // 1980-01-01, like Fedora
   const defaultTime = 315532800;
 
@@ -71,39 +73,39 @@ export async function makeArchive(tgz: Buffer, {stripComponents = 0, prefixPath 
     entry.on(`end`, () => {
       switch (entry.type) {
         case `Directory`: {
-          zipFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+          targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
-          zipFs.mkdirSync(mappedPath);
-          zipFs.chmodSync(mappedPath, mode);
-          zipFs.utimesSync(mappedPath, defaultTime, defaultTime);
+          targetFs.mkdirSync(mappedPath);
+          targetFs.chmodSync(mappedPath, mode);
+          targetFs.utimesSync(mappedPath, defaultTime, defaultTime);
         } break;
 
         case `OldFile`:
         case `File`: {
-          zipFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+          targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
-          zipFs.writeFileSync(mappedPath, Buffer.concat(chunks));
-          zipFs.chmodSync(mappedPath, mode);
-          zipFs.utimesSync(mappedPath, defaultTime, defaultTime);
+          targetFs.writeFileSync(mappedPath, Buffer.concat(chunks));
+          targetFs.chmodSync(mappedPath, mode);
+          targetFs.utimesSync(mappedPath, defaultTime, defaultTime);
         } break;
 
         case `SymbolicLink`: {
-          zipFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+          targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
-          zipFs.symlinkSync(entry.linkpath, mappedPath);
-          zipFs.lutimesSync(mappedPath, defaultTime, defaultTime);
+          targetFs.symlinkSync(entry.linkpath, mappedPath);
+          targetFs.lutimesSync!(mappedPath, defaultTime, defaultTime);
         } break;
       }
     });
   });
 
-  return await new Promise<ZipFS>((resolve, reject) =>  {
+  return await new Promise<T>((resolve, reject) =>  {
     parser.on(`error`, (error: Error) => {
       reject(error);
     });
 
     parser.on(`close`, () => {
-      resolve(zipFs);
+      resolve(targetFs);
     });
 
     parser.end(tgz);

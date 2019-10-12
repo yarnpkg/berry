@@ -5745,6 +5745,13 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/tmp", "npm:0.0.33"]
           ],
           "linkType": "HARD"
+        }],
+        ["npm:0.1.0", {
+          "packageLocation": "./.yarn/cache/@types-tmp-npm-0.1.0-2b1dac0b33.zip/node_modules/@types/tmp/",
+          "packageDependencies": [
+            ["@types/tmp", "npm:0.1.0"]
+          ],
+          "linkType": "HARD"
         }]
       ]],
       ["@types/tough-cookie", [
@@ -6930,8 +6937,10 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./packages/plugin-github/",
           "packageDependencies": [
             ["@yarnpkg/plugin-github", "workspace:packages/plugin-github"],
+            ["@types/tmp", "npm:0.1.0"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
-            ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"]
+            ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
+            ["tmp", "npm:0.0.33"]
           ],
           "linkType": "SOFT"
         }]

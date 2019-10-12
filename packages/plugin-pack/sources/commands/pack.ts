@@ -13,6 +13,7 @@ export default class PackCommand extends BaseCommand {
   @Command.Boolean(`--json`)
   json: boolean = false;
 
+  @Command.String(`--filename`, {hidden: false})
   @Command.String(`-o,--out`)
   out?: string;
 
