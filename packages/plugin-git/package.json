@@ -10,6 +10,10 @@
     "tmp": "^0.0.33"
   },
   "version": "2.0.0-rc.3",
+  "nextVersion": {
+    "semver": "2.0.0-rc.4",
+    "nonce": "719874040475053"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
