@@ -247,6 +247,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 
   // Settings related to network access
+  enableMirror: {
+    description: `If true, the downloaded packages will be retrieved and stored in both the local and global folders`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
   enableNetwork: {
     description: `If false, the package manager will refuse to use the network if required to`,
     type: SettingsType.BOOLEAN,

@@ -49,6 +49,14 @@ export class Cache {
     this.check = check;
   }
 
+  get mirrorCwd() {
+    if (!this.configuration.get(`enableMirror`))
+      return null;
+
+    const mirrorCwd = `${this.configuration.get(`globalFolder`)}/cache` as PortablePath;
+    return mirrorCwd !== this.cwd ? mirrorCwd : null;
+  }
+
   getLocatorFilename(locator: Locator) {
     return `${structUtils.slugifyLocator(locator)}.zip` as Filename;
   }
@@ -58,9 +66,8 @@ export class Cache {
   }
 
   getLocatorMirrorPath(locator: Locator) {
-    const mirrorCwd = `${this.configuration.get(`globalFolder`)}/cache` as PortablePath;
-
-    return mirrorCwd !== this.cwd ? ppath.resolve(mirrorCwd, this.getLocatorFilename(locator)) : null;
+    const mirrorCwd = this.mirrorCwd;
+    return mirrorCwd !== null ? ppath.resolve(mirrorCwd, this.getLocatorFilename(locator)) : null;
   }
 
   async setup() {

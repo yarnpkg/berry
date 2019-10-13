@@ -1,15 +1,16 @@
-import {BaseCommand}                                from '@yarnpkg/cli';
-import {Configuration, Cache, Project}              from '@yarnpkg/core';
-import {MessageName, StreamReport}                  from '@yarnpkg/core';
-import {Filename, NodeFS, xfs, PortablePath, ppath} from '@yarnpkg/fslib';
-import {Command}                                    from 'clipanion';
-
-const PRESERVED_FILES = new Set([
-  `.gitignore`,
-]);
+import {BaseCommand}                        from '@yarnpkg/cli';
+import {Configuration, Cache, StreamReport} from '@yarnpkg/core';
+import {PortablePath, xfs}                  from '@yarnpkg/fslib';
+import {Command}                            from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class CacheCleanCommand extends BaseCommand {
+  @Command.Boolean(`--mirror`)
+  mirror: boolean = false;
+
+  @Command.Boolean(`--all`)
+  all: boolean = false;
+
   static usage = Command.Usage({
     description: `remove the shared cache files`,
     details: `
@@ -24,15 +25,23 @@ export default class CacheCleanCommand extends BaseCommand {
   @Command.Path(`cache`, `clean`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const cache = await Cache.find(configuration);
 
-    const unlinkReport = await StreamReport.start({
+    const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
     }, async () => {
-      const globalCacheFolder = `${configuration.get(`globalFolder`)}/cache` as PortablePath;
-      await xfs.removePromise(globalCacheFolder);
+      const cleanMirror = (this.all || this.mirror) && cache.mirrorCwd !== null;
+      const cleanCache = !this.mirror;
+
+      if (cleanMirror)
+        await xfs.removePromise(cache.mirrorCwd!);
+
+      if (cleanCache) {
+        await xfs.removePromise(cache.cwd);
+      }
     });
 
-    return unlinkReport.exitCode();
+    return report.exitCode();
   }
 }
