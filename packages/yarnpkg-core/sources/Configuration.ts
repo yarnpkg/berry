@@ -726,25 +726,6 @@ export class Configuration {
     }
   }
 
-  extend(data: {[key: string]: unknown}) {
-    const newConfiguration = Object.create(Configuration.prototype);
-
-    newConfiguration.startingCwd = this.startingCwd;
-    newConfiguration.projectCwd = this.projectCwd;
-
-    newConfiguration.plugins = new Map(this.plugins);
-
-    newConfiguration.settings = new Map(this.settings);
-    newConfiguration.values = new Map(this.values);
-    newConfiguration.sources = new Map(this.sources);
-
-    newConfiguration.invalid = new Map(this.invalid);
-
-    newConfiguration.useWithSource(`<internal override>`, data, this.startingCwd, {override: true});
-
-    return newConfiguration;
-  }
-
   useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
     try {
       this.use(source, data, folder, {strict, overwrite});
@@ -805,12 +786,12 @@ export class Configuration {
       const stderrLineReporter = report.createStreamReporter(`${prefix} ${this.format(`STDERR`, `red`)}`);
 
       stdout = new PassThrough();
-      stdout.pipe(logStream);
       stdout.pipe(stdoutLineReporter);
+      stdout.pipe(logStream);
 
       stderr = new PassThrough();
-      stderr.pipe(logStream);
       stderr.pipe(stderrLineReporter);
+      stderr.pipe(logStream);
     } else {
       stdout = logStream;
       stderr = logStream;

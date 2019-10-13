@@ -75,6 +75,9 @@ export default class YarnCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
+    if (typeof this.inlineBuilds !== `undefined`)
+      configuration.useWithSource(`<cli>`, {enableInlineBuilds: this.inlineBuilds}, configuration.startingCwd, {overwrite: true});
+
     const isZeitNow = !!process.env.NOW_BUILDER;
     const isNetlify = !!process.env.NETLIFY;
 
@@ -195,7 +198,7 @@ export default class YarnCommand extends BaseCommand {
       stdout: this.context.stdout,
       includeLogs: true,
     }, async (report: StreamReport) => {
-      await project.install({cache, report, immutable, inlineBuilds: this.inlineBuilds});
+      await project.install({cache, report, immutable});
     });
 
     return report.exitCode();

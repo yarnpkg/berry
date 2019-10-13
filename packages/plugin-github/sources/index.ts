@@ -1,14 +1,10 @@
-import {Plugin}         from '@yarnpkg/core';
+import {Plugin}        from '@yarnpkg/core';
 
-import {GithubFetcher}  from './GithubFetcher';
-import {GithubResolver} from './GithubResolver';
+import {GithubFetcher} from './GithubFetcher';
 
 const plugin: Plugin = {
   fetchers: [
     GithubFetcher,
-  ],
-  resolvers: [
-    GithubResolver,
   ],
 };
 

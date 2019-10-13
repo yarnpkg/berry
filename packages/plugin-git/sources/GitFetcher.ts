@@ -3,15 +3,11 @@ import {Locator, MessageName}                          from '@yarnpkg/core';
 import {miscUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
 import {PortablePath, ppath, xfs}                      from '@yarnpkg/fslib';
 
-import {GIT_REGEXP}                                    from './constants';
 import * as gitUtils                                   from './gitUtils';
 
 export class GitFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (locator.reference.match(GIT_REGEXP))
-      return true;
-
-    return false;
+    return gitUtils.isGitUrl(locator.reference);
   }
 
   getLocalPath(locator: Locator, opts: FetchOptions) {

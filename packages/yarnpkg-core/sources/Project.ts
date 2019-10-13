@@ -42,7 +42,6 @@ export type InstallOptions = {
   report: Report,
   immutable?: boolean,
   lockfileOnly?: boolean,
-  inlineBuilds?: boolean,
 };
 
 export class Project {
@@ -766,8 +765,10 @@ export class Project {
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
 
-      let fetchResult;
+      if (structUtils.isVirtualLocator(pkg))
+        return;
 
+      let fetchResult;
       try {
         fetchResult = await fetcher.fetch(pkg, fetcherOptions);
       } catch (error) {
@@ -794,7 +795,7 @@ export class Project {
     }
   }
 
-  async linkEverything({cache, report, inlineBuilds = this.configuration.get(`enableInlineBuilds`)}: InstallOptions) {
+  async linkEverything({cache, report}: InstallOptions) {
     const fetcher = this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
 

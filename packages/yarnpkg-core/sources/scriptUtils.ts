@@ -83,16 +83,24 @@ export async function makeScriptEnv({project, lifecycleScript}: {project?: Proje
 export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report}: {configuration: Configuration, report: Report}) {
   const env = await makeScriptEnv();
 
-  const stdin = null;
-  const {logFile, stdout, stderr} = configuration.getSubprocessStreams(cwd, {report});
+  {
+    const stdin = null;
+    const {logFile, stdout, stderr} = configuration.getSubprocessStreams(cwd, {report});
 
-  const installProcess = await execUtils.pipevp(`yarn`, [`install`], {cwd, env, stdin, stdout, stderr});
-  if (installProcess.code !== 0)
-    throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Installing the package dependencies failed (exit code ${installProcess.code}, logs can be found here: ${logFile})`);
+    const {code} = await execUtils.pipevp(`yarn`, [`install`], {cwd, env, stdin, stdout, stderr});
+    if (code !== 0) {
+      throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Installing the package dependencies failed (exit code ${code}, logs can be found here: ${logFile})`);
+    }
+  }
 
-  const packProcess = await execUtils.pipevp(`yarn`, [`pack`, `--filename`, fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
-  if (packProcess.code !== 0) {
-    throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${packProcess.code}, logs can be found here: ${logFile})`);
+  {
+    const stdin = null;
+    const {logFile, stdout, stderr} = configuration.getSubprocessStreams(cwd, {report});
+
+    const {code} = await execUtils.pipevp(`yarn`, [`pack`, `--filename`, fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
+    if (code !== 0) {
+      throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${code}, logs can be found here: ${logFile})`);
+    }
   }
 }
 
