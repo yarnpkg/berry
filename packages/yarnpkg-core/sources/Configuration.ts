@@ -800,7 +800,7 @@ export class Configuration {
     const logFile = NodeFS.toPortablePath(tmpNameSync({prefix: `logfile-`, postfix: `.log`}));
     const logStream = xfs.createWriteStream(logFile);
 
-    if (this.get(`inlineBuilds`)) {
+    if (this.get(`enableInlineBuilds`)) {
       const stdoutLineReporter = report.createStreamReporter(`${prefix} ${this.format(`STDOUT`, `green`)}`);
       const stderrLineReporter = report.createStreamReporter(`${prefix} ${this.format(`STDERR`, `red`)}`);
 
