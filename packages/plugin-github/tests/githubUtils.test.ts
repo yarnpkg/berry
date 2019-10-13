@@ -1,50 +1,26 @@
 import {isGithubUrl, parseGithubUrl, invalidGithubUrlMessage} from '../sources/githubUtils';
 
 const validScenarios = [{
-  url: 'git://github.com/owner/repo.git#ff786f9f',
-  username: 'owner', reponame: 'repo', branch: 'ff786f9f',
-}, {
-  url: 'git://github.com/owner/repo.git#foo_bar',
-  username: 'owner', reponame: 'repo', branch: 'foo_bar',
-}, {
-  url: 'git://github.com/owner/repo.git#master',
-  username: 'owner', reponame: 'repo', branch: 'master',
-}, {
-  url: 'git://github.com/owner/repo.git#Foo-Bar',
-  username: 'owner', reponame: 'repo', branch: 'Foo-Bar',
-}, {
-  url: 'git://github.com/owner/repo.git#foo_bar',
-  username: 'owner', reponame: 'repo', branch: 'foo_bar',
-}, {
-  url: 'git://github.com/owner/repo.git#v2.0.0',
-  username: 'owner', reponame: 'repo', branch: 'v2.0.0',
-}, {
-  url: 'git+ssh://git@github.com:owner/repo.git#123456',
-  username: 'owner', reponame: 'repo', branch: '123456',
-}, {
-  url: 'git@github.com:owner/repo.git',
-  username: 'owner', reponame: 'repo', branch: undefined,
-}, {
-  url: 'git@github.com:owner/other-repo.git',
-  username: 'owner', reponame: 'other-repo', branch: undefined,
-}, {
-  url: 'git@github.com:owner/other-repo.git',
-  username: 'owner', reponame: 'other-repo', branch: undefined,
-}, {
   url: 'http://github.com/owner/repo.git',
-  username: 'owner', reponame: 'repo', branch: undefined,
+  auth: undefined, username: 'owner', reponame: 'repo', treeish: `master`,
 }, {
   url: 'https://github.com/owner/repo.git',
-  username: 'owner', reponame: 'repo', branch: undefined,
+  auth: undefined, username: 'owner', reponame: 'repo', treeish: `master`,
 }, {
   url: 'https://yarnpkg::;*%$:@github.com/owner/repo.git',
-  username: 'owner', reponame: 'repo', branch: undefined,
+  auth: `yarnpkg::;*%$:`, username: 'owner', reponame: 'repo', treeish: `master`,
 }, {
   url: 'https://yarnpkg:$fooABC@:@github.com/owner/repo.git',
-  username: 'owner', reponame: 'repo', branch: undefined,
+  auth: `yarnpkg:$fooABC@:`, username: 'owner', reponame: 'repo', treeish: `master`,
 }, {
   url: 'https://yarnpkg:password@github.com/owner/repo.git',
-  username: 'owner', reponame: 'repo', branch: undefined,
+  auth: `yarnpkg:password`, username: 'owner', reponame: 'repo', treeish: `master`,
+}, {
+  url: 'https://github.com/owner/repo.git#commit:abcdef',
+  auth: undefined, username: 'owner', reponame: 'repo', treeish: `abcdef`,
+}, {
+  url: 'https://github.com/owner/repo.git#abcdef',
+  auth: undefined, username: 'owner', reponame: 'repo', treeish: `abcdef`,
 }];
 
 const invalidScenarios = [{
@@ -82,9 +58,10 @@ describe(`githubUtils`, () => {
         let parsed = parseGithubUrl(scenario.url);
 
         expect(parsed).toMatchObject({
+          auth: scenario.auth,
           username: scenario.username,
           reponame: scenario.reponame,
-          branch: scenario.branch,
+          treeish: scenario.treeish,
         });
       });
     }

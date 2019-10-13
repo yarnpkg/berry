@@ -1,12 +1,13 @@
 type ParsedGithubUrl = {
+  auth?: string;
   username: string;
   reponame: string;
-  branch?: string;
+  treeish: string;
 };
 
 const githubPatterns = [
-  /^https?:\/\/(?:.+?@)?github.com\/([^\/#]+)\/([^\/#]+)\/tarball\/([^\/#]+)(?:#(.*))?$/,
-  /^https?:\/\/(?:.+?@)?github.com\/([^\/#]+)\/([^\/#]+?)(?:\.git)?(?:#(.*))?$/,
+  /^https?:\/\/(?:([^/]+?)@)?github.com\/([^\/#]+)\/([^\/#]+)\/tarball\/([^\/#]+)(?:#(.*))?$/,
+  /^https?:\/\/(?:([^/]+?)@)?github.com\/([^\/#]+)\/([^\/#]+?)(?:\.git)?(?:#(.*))?$/,
 ];
 
 /**
@@ -32,12 +33,11 @@ export function parseGithubUrl(urlStr: string): ParsedGithubUrl {
   if (!match)
     throw new Error(invalidGithubUrlMessage(urlStr));
 
-  let [, username, reponame, branch] = match;
+  let [, auth, username, reponame, treeish = `master`] = match;
 
-  if (branch.startsWith(`commit:`))
-    branch = branch.slice(7);
+  treeish = treeish.replace(/[^:]*:/, ``);
 
-  return {username, reponame, branch};
+  return {auth, username, reponame, treeish};
 }
 
 export function invalidGithubUrlMessage(url: string): string {

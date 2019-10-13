@@ -65,8 +65,8 @@ export class GithubFetcher implements Fetcher {
   }
 
   private getLocatorUrl(locator: Locator, opts: MinimalFetchOptions) {
-    const {username, reponame, branch = `master`} = githubUtils.parseGithubUrl(locator.reference);
+    const {auth, username, reponame, treeish} = githubUtils.parseGithubUrl(locator.reference);
 
-    return `https://github.com/${username}/${reponame}/archive/${branch}.tar.gz`;
+    return `https://${auth}github.com/${username}/${reponame}/archive/${treeish}.tar.gz`;
   }
 }
