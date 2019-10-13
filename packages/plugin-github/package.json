@@ -21,8 +21,5 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
-  },
-  "devDependencies": {
-    "@types/tmp": "0.1.0"
   }
 }

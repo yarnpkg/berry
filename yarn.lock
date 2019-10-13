@@ -3985,13 +3985,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/tmp@npm:0.1.0":
-  version: 0.1.0
-  resolution: "@types/tmp@npm:0.1.0"
-  checksum: 8124031b1dbe31643ee50244fb1c514757479b58ff761a86c8fa29b41f455764079dbd9b7cd2e3b862866ae3a6bc64a2c80082db9be5502b202ca7a96a501b42
-  languageName: node
-  linkType: hard
-
 "@types/tmp@npm:^0.0.32":
   version: 0.0.32
   resolution: "@types/tmp@npm:0.0.32"
@@ -4904,7 +4897,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-exec@workspace:packages/plugin-exec"
   dependencies:
-    "@types/tmp": "npm:^0.0.33"
     "@yarnpkg/builder": "workspace:2.0.0-rc.7"
     "@yarnpkg/core": "workspace:2.0.0-rc.8"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.4"
@@ -4938,7 +4930,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-github@workspace:packages/plugin-github"
   dependencies:
-    "@types/tmp": "npm:0.1.0"
     "@yarnpkg/core": "workspace:2.0.0-rc.8"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.4"
     tmp: "npm:^0.0.33"

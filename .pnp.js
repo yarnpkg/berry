@@ -5755,13 +5755,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
             ["@types/tmp", "npm:0.0.33"]
           ],
           "linkType": "HARD"
-        }],
-        ["npm:0.1.0", {
-          "packageLocation": "./.yarn/cache/@types-tmp-npm-0.1.0-2b1dac0b33.zip/node_modules/@types/tmp/",
-          "packageDependencies": [
-            ["@types/tmp", "npm:0.1.0"]
-          ],
-          "linkType": "HARD"
         }]
       ]],
       ["@types/tough-cookie", [
@@ -6908,7 +6901,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./packages/plugin-exec/",
           "packageDependencies": [
             ["@yarnpkg/plugin-exec", "workspace:packages/plugin-exec"],
-            ["@types/tmp", "npm:0.0.33"],
             ["@yarnpkg/builder", "virtual:5c9b18e72c6bf2a313495ce02d85a15383929c995578ac10c55b57189e10ed07dae3201182cdfd3f3a14c43f0345c1cc640e6e349d8eaf753d59f44d060686fc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -6948,7 +6940,6 @@ function $$SETUP_STATE(hydrateRuntimeState) {
           "packageLocation": "./packages/plugin-github/",
           "packageDependencies": [
             ["@yarnpkg/plugin-github", "workspace:packages/plugin-github"],
-            ["@types/tmp", "npm:0.1.0"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["tmp", "npm:0.0.33"]
