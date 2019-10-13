@@ -16,7 +16,7 @@ jobs:
     - name: 'Use Node.js 10.x'
       uses: actions/setup-node@master
       with:
-        version: 10.x
+        node-version: 10.x
 
     - name: 'Check that the Yarn files don''t change on new installs (fix w/ "yarn install")'
       run: |
@@ -73,7 +73,7 @@ jobs:
     - name: 'Use Node.js ${{matrix.node}}.x'
       uses: actions/setup-node@master
       with:
-        version: ${{matrix.node}}.x
+        node-version: ${{matrix.node}}.x
 
     - name: 'Build the standard bundle & plugins'
       run: |

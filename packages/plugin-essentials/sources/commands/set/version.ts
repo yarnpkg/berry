@@ -1,7 +1,7 @@
 import {BaseCommand}                                               from '@yarnpkg/cli';
 import {Configuration, Project, StreamReport, MessageName, Report} from '@yarnpkg/core';
 import {httpUtils}                                                 from '@yarnpkg/core';
-import {xfs, PortablePath, ppath}                                  from '@yarnpkg/fslib';
+import {Filename, PortablePath, ppath, xfs}                        from '@yarnpkg/fslib';
 import {Command, UsageError}                                       from 'clipanion';
 import semver, {SemVer}                                            from 'semver';
 
@@ -200,15 +200,26 @@ export async function fetchReleases(configuration: Configuration, {includePrerel
 }
 
 export async function setVersion(project: Project, bundleVersion: string, bundleBuffer: Buffer, {report}: {report: Report}) {
-  const relativePath = `.yarn/releases/yarn-${bundleVersion}.js` as PortablePath;
-  const absolutePath = ppath.resolve(project.cwd, relativePath);
+  const releaseFolder = ppath.resolve(project.cwd, `.yarn/releases` as PortablePath);
+  const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.js` as Filename);
 
-  report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${project.configuration.format(relativePath, `magenta`)}`);
+  const displayPath = ppath.relative(project.configuration.startingCwd, absolutePath);
+  const projectPath = ppath.relative(project.cwd, absolutePath);
+
+  const yarnPath = project.configuration.get(`yarnPath`);
+  const updateConfig = yarnPath === null || yarnPath.startsWith(`${releaseFolder}/`);
+
+  report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${project.configuration.format(displayPath, `magenta`)}`);
+
+  await xfs.removePromise(ppath.dirname(absolutePath));
   await xfs.mkdirpPromise(ppath.dirname(absolutePath));
+
   await xfs.writeFilePromise(absolutePath, bundleBuffer);
   await xfs.chmodPromise(absolutePath, 0o755);
 
-  await Configuration.updateConfiguration(project.cwd, {
-    yarnPath: relativePath,
-  });
+  if (updateConfig) {
+    await Configuration.updateConfiguration(project.cwd, {
+      yarnPath: projectPath,
+    });
+  }
 }
