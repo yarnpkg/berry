@@ -4,11 +4,14 @@ import camelcase                                                from 'camelcase'
 import chalk                                                    from 'chalk';
 import {UsageError}                                             from 'clipanion';
 import isCI                                                     from 'is-ci';
+import {PassThrough, Writable}                                  from 'stream';
 import supportsColor                                            from 'supports-color';
+import {tmpNameSync}                                            from 'tmp';
 
 import {MultiFetcher}                                           from './MultiFetcher';
 import {MultiResolver}                                          from './MultiResolver';
 import {Plugin, Hooks}                                          from './Plugin';
+import {Report}                                                 from './Report';
 import {SemverResolver}                                         from './SemverResolver';
 import {TagResolver}                                            from './TagResolver';
 import {VirtualFetcher}                                         from './VirtualFetcher';
@@ -788,6 +791,36 @@ export class Configuration {
       throw new Error(`Invalid configuration key "${key}"`);
 
     return this.values.get(key);
+  }
+
+  getSubprocessStreams(prefix: string, {header, report}: {header?: string, report: Report}) {
+    let stdout: Writable;
+    let stderr: Writable;
+
+    const logFile = NodeFS.toPortablePath(tmpNameSync({prefix: `logfile-`, postfix: `.log`}));
+    const logStream = xfs.createWriteStream(logFile);
+
+    if (this.get(`inlineBuilds`)) {
+      const stdoutLineReporter = report.createStreamReporter(`${prefix} ${this.format(`STDOUT`, `green`)}`);
+      const stderrLineReporter = report.createStreamReporter(`${prefix} ${this.format(`STDERR`, `red`)}`);
+
+      stdout = new PassThrough();
+      stdout.pipe(logStream);
+      stdout.pipe(stdoutLineReporter);
+
+      stderr = new PassThrough();
+      stderr.pipe(logStream);
+      stderr.pipe(stderrLineReporter);
+    } else {
+      stdout = logStream;
+      stderr = logStream;
+
+      if (typeof header !== `undefined`) {
+        stdout.write(`${header}\n`);
+      }
+    }
+
+    return {logFile, stdout, stderr};
   }
 
   makeResolver() {

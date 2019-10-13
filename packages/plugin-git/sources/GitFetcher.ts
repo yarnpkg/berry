@@ -42,7 +42,10 @@ export class GitFetcher implements Fetcher {
     const cloneTarget = await gitUtils.clone(locator.reference, opts.project.configuration);
 
     const packagePath = ppath.join(cloneTarget, `package.tgz` as PortablePath);
-    await scriptUtils.prepareExternalProject(cloneTarget, packagePath);
+    await scriptUtils.prepareExternalProject(cloneTarget, packagePath, {
+      configuration: opts.project.configuration,
+      report: opts.report,
+    });
 
     const sourceBuffer = await xfs.readFilePromise(packagePath);
 

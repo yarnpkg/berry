@@ -51,7 +51,10 @@ export class GithubFetcher implements Fetcher {
     });
 
     const packagePath = ppath.join(extractPath, `package.tgz` as PortablePath);
-    await scriptUtils.prepareExternalProject(extractPath, packagePath);
+    await scriptUtils.prepareExternalProject(extractPath, packagePath, {
+      configuration: opts.project.configuration,
+      report: opts.report,
+    });
 
     const packedBuffer = await xfs.readFilePromise(packagePath);
 

@@ -1005,41 +1005,23 @@ export class Project {
 
         buildPromises.push((async () => {
           for (const [buildType, scriptName] of buildDirective) {
-            const logFile = NodeFS.toPortablePath(
-              tmpNameSync({
-                prefix: `buildfile-`,
-                postfix: `.log`,
-              }),
-            );
-
-            const stdin = null;
-
-            let stdout;
-            let stderr;
-
-            if (inlineBuilds) {
-              stdout = report.createStreamReporter(`${structUtils.prettyLocator(this.configuration, pkg)} ${this.configuration.format(`STDOUT`, `green`)}`);
-              stderr = report.createStreamReporter(`${structUtils.prettyLocator(this.configuration, pkg)} ${this.configuration.format(`STDERR`, `red`)}`);
-            } else {
-              stdout = xfs.createWriteStream(logFile);
-              stderr = stdout;
-
-              stdout.write(`# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`);
-
-              switch (buildType) {
-                case BuildType.SCRIPT: {
-                  stdout.write(`# Script name: ${scriptName}\n`);
-                } break;
-                case BuildType.SHELLCODE: {
-                  stdout.write(`# Script code: ${scriptName}\n`);
-                } break;
-              }
-
-              stdout.write(`\n`);
+            let header = `# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`;
+            switch (buildType) {
+              case BuildType.SCRIPT: {
+                header += `# Script name: ${scriptName}\n`;
+              } break;
+              case BuildType.SHELLCODE: {
+                header += `# Script code: ${scriptName}\n`;
+              } break;
             }
 
-            let exitCode;
+            const stdin = null;
+            const {logFile, stdout, stderr} = this.configuration.getSubprocessStreams(structUtils.prettyLocator(this.configuration, pkg), {
+              header,
+              report,
+            });
 
+            let exitCode;
             try {
               switch (buildType) {
                 case BuildType.SCRIPT: {
