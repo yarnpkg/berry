@@ -119,10 +119,10 @@ export class ZipFS extends BasePortableFakeFS {
 
   private ready = false;
 
-  constructor(p: PortablePath, opts: ZipPathOptions);
-  constructor(data: Buffer, opts: ZipBufferOptions);
+  constructor(p: PortablePath, opts?: ZipPathOptions);
+  constructor(data: Buffer, opts?: ZipBufferOptions);
 
-  constructor(source: PortablePath | Buffer, opts: ZipPathOptions | ZipBufferOptions) {
+  constructor(source: PortablePath | Buffer, opts: ZipPathOptions | ZipBufferOptions = {}) {
     super();
 
     const pathOptions = opts as ZipPathOptions;

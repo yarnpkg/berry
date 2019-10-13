@@ -4897,7 +4897,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-exec@workspace:packages/plugin-exec"
   dependencies:
-    "@types/tmp": "npm:^0.0.33"
     "@yarnpkg/builder": "workspace:2.0.0-rc.7"
     "@yarnpkg/core": "workspace:2.0.0-rc.8"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.4"
@@ -4933,6 +4932,7 @@ __metadata:
   dependencies:
     "@yarnpkg/core": "workspace:2.0.0-rc.8"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.4"
+    tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
 
@@ -6222,7 +6222,7 @@ __metadata:
 
 babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 1.0.0
-  resolution: babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import
+  resolution: "babel-plugin-lazy-import@https://github.com/arcanis/babel-plugin-lazy-import.git#commit:ff060e230afb4f2f36a1c495be65271c14ae2e4b"
   dependencies:
     "@babel/helper-module-transforms": "npm:^7.5.5"
     "@babel/helper-plugin-utils": "npm:^7.0.0"
@@ -6231,7 +6231,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     "@babel/template": "npm:^7.4.4"
   peerDependencies:
     "@babel/core": ^7
-  checksum: ad61b624f5ca6cc808ffd56ef749d003a3ffe668438e97481e9cf0fd254f868a4ec63f95d967f6c48f7bfe82a36dbcc7b58337deab92d0b0d19183a0f5dbc673
+  checksum: 61ffcbad2446e14f6302edf26f71fab23f80b62c6a7f3cdbf969b7b3b24208815bd7ef7fcb9fbf391ccc786414a4f6475d141e9b8be418896610df9d95a5f8ef
   languageName: node
   linkType: hard
 

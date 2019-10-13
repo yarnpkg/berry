@@ -55,7 +55,7 @@ export class NpmHttpFetcher implements Fetcher {
       configuration: opts.project.configuration,
     });
 
-    return await tgzUtils.makeArchive(sourceBuffer, {
+    return await tgzUtils.convertToZip(sourceBuffer, {
       stripComponents: 1,
       prefixPath: npmConfigUtils.getVendorPath(locator),
     });

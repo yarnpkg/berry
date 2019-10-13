@@ -1,40 +1,41 @@
-const {readdir} = require(`fs-extra`);
+import {xfs} from '@yarnpkg/fslib';
 
 describe(`Commands`, () => {
   describe(`cache clean`, () => {
-    test(`it should remove inactive entries from the cache`, makeTemporaryEnv({
-      dependencies: {
-        [`one-fixed-dep`]: `1.0.0`,
-      },
-    }, async ({path, run, source}) => {
-      await run(`install`);
-
-      const fileCount1 = (await readdir(`${path}/.yarn/cache`)).length;
-
-      await run(`remove`, `one-fixed-dep`);
-      await run(`cache`, `clean`);
-
-      const fileCount2 = (await readdir(`${path}/.yarn/cache`)).length;
-
-      expect(fileCount2).toEqual(fileCount1 - 2);
-    }));
-
-    test(`it shouldn't remove active entries from the cache`, makeTemporaryEnv({
+    test(`it should remove the cache by default`, makeTemporaryEnv({
       dependencies: {
         [`no-deps`]: `1.0.0`,
-        [`one-fixed-dep`]: `1.0.0`,
       },
     }, async ({path, run, source}) => {
       await run(`install`);
-
-      const fileCount1 = (await readdir(`${path}/.yarn/cache`)).length;
-
-      await run(`remove`, `one-fixed-dep`);
       await run(`cache`, `clean`);
 
-      const fileCount2 = (await readdir(`${path}/.yarn/cache`)).length;
+      expect(xfs.existsSync(`${path}/.yarn/cache`)).toEqual(false);
+      expect(xfs.existsSync(`${path}/.yarn/global/cache`)).toEqual(true);
+    }));
 
-      expect(fileCount2).toEqual(fileCount1 - 1);
+    test(`it should remove the mirror with --mirror`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+      await run(`cache`, `clean`, `--mirror`);
+
+      expect(xfs.existsSync(`${path}/.yarn/cache`)).toEqual(true);
+      expect(xfs.existsSync(`${path}/.yarn/global/cache`)).toEqual(false);
+    }));
+
+    test(`it should remove both cache and mirror with --all`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+      await run(`cache`, `clean`, `--all`);
+
+      expect(xfs.existsSync(`${path}/.yarn/cache`)).toEqual(false);
+      expect(xfs.existsSync(`${path}/.yarn/global/cache`)).toEqual(false);
     }));
   });
 });

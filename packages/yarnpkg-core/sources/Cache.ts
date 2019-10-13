@@ -1,11 +1,13 @@
-import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename} from '@yarnpkg/fslib';
-import {xfs, ppath, toFilename}                                from '@yarnpkg/fslib';
+import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename, toPortablePath} from '@yarnpkg/fslib';
+import {xfs, ppath, toFilename}                                                from '@yarnpkg/fslib';
+import fs                                                                      from 'fs';
+import {tmpNameSync}                                                           from 'tmp';
 
-import {Configuration}                                         from './Configuration';
-import {MessageName, ReportError}                              from './Report';
-import * as hashUtils                                          from './hashUtils';
-import * as structUtils                                        from './structUtils';
-import {LocatorHash, Locator}                                  from './types';
+import {Configuration}                                                         from './Configuration';
+import {MessageName, ReportError}                                              from './Report';
+import * as hashUtils                                                          from './hashUtils';
+import * as structUtils                                                        from './structUtils';
+import {LocatorHash, Locator}                                                  from './types';
 
 export type FetchFromCacheOptions = {
   checksums: Map<LocatorHash, Locator>,
@@ -47,6 +49,14 @@ export class Cache {
     this.check = check;
   }
 
+  get mirrorCwd() {
+    if (!this.configuration.get(`enableMirror`))
+      return null;
+
+    const mirrorCwd = `${this.configuration.get(`globalFolder`)}/cache` as PortablePath;
+    return mirrorCwd !== this.cwd ? mirrorCwd : null;
+  }
+
   getLocatorFilename(locator: Locator) {
     return `${structUtils.slugifyLocator(locator)}.zip` as Filename;
   }
@@ -55,19 +65,28 @@ export class Cache {
     return ppath.resolve(this.cwd, this.getLocatorFilename(locator));
   }
 
+  getLocatorMirrorPath(locator: Locator) {
+    const mirrorCwd = this.mirrorCwd;
+    return mirrorCwd !== null ? ppath.resolve(mirrorCwd, this.getLocatorFilename(locator)) : null;
+  }
+
   async setup() {
-    await xfs.mkdirpPromise(this.cwd);
+    if (!this.configuration.get(`enableGlobalCache`)) {
+      await xfs.mkdirpPromise(this.cwd);
 
-    const gitignorePath = ppath.resolve(this.cwd, toFilename(`.gitignore`));
-    const gitignoreExists = await xfs.existsPromise(gitignorePath);
+      const gitignorePath = ppath.resolve(this.cwd, toFilename(`.gitignore`));
+      const gitignoreExists = await xfs.existsPromise(gitignorePath);
 
-    if (!gitignoreExists) {
-      await xfs.writeFilePromise(gitignorePath, `/.gitignore\n*.lock\n`);
+      if (!gitignoreExists) {
+        await xfs.writeFilePromise(gitignorePath, `/.gitignore\n*.lock\n`);
+      }
     }
   }
 
   async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, loader?: () => Promise<ZipFS>): Promise<[FakeFS<PortablePath>, () => void, string]> {
     const cachePath = this.getLocatorPath(locator);
+    const mirrorPath = this.getLocatorMirrorPath(locator);
+
     const baseFs = new NodeFS();
 
     this.markedFiles.add(cachePath);
@@ -78,7 +97,7 @@ export class Cache {
       if (refetchPath !== null) {
         const previousChecksum = await hashUtils.checksumFile(refetchPath);
         if (actualChecksum !== previousChecksum) {
-          throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `${structUtils.prettyLocator(this.configuration, locator)} doesn't resolve to an archive that matches what's stored in the cache - has the cache been tampered?`);
+          throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote archive doesn't match the local checksum - has the local cache been corrupted?`);
         }
       }
 
@@ -97,8 +116,8 @@ export class Cache {
 
           default:
           case `throw`: {
-            throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `${structUtils.prettyLocator(this.configuration, locator)} doesn't resolve to an archive that matches the expected checksum`);
-          } break;
+            throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote archive doesn't match the expected checksum`);
+          }
         }
       }
 
@@ -119,27 +138,41 @@ export class Cache {
       return await validateFile(cachePath, refetchPath);
     };
 
+    const loadPackageThroughMirror = async () => {
+      if (mirrorPath === null || !xfs.existsSync(mirrorPath))
+        return await loader!();
+
+      const tempPath = toPortablePath(tmpNameSync());
+      await xfs.copyFilePromise(mirrorPath, tempPath, fs.constants.COPYFILE_FICLONE);
+      return new ZipFS(tempPath);
+    };
+
     const loadPackage = async () => {
       if (!loader)
         throw new Error(`Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
       if (this.immutable)
         throw new ReportError(MessageName.IMMUTABLE_CACHE, `Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
 
-      return await this.writeFileIntoCache(cachePath, async () => {
-        const zipFs = await loader();
-        const originalPath = zipFs.getRealPath();
+      return await this.writeFileWithLock(cachePath, async () => {
+        return await this.writeFileWithLock(mirrorPath, async () => {
+          const zipFs = await loadPackageThroughMirror();
+          const originalPath = zipFs.getRealPath();
 
-        zipFs.saveAndClose();
+          zipFs.saveAndClose();
 
-        await xfs.chmodPromise(originalPath, 0o644);
+          await xfs.chmodPromise(originalPath, 0o644);
 
-        // Do this before moving the file so that we don't pollute the cache with corrupted archives
-        const checksum = await validateFile(originalPath);
+          // Do this before moving the file so that we don't pollute the cache with corrupted archives
+          const checksum = await validateFile(originalPath);
 
-        // Doing a move is important to ensure atomic writes (todo: cross-drive?)
-        await xfs.movePromise(originalPath, cachePath);
+          // Doing a move is important to ensure atomic writes (todo: cross-drive?)
+          await xfs.movePromise(originalPath, cachePath);
 
-        return checksum;
+          if (mirrorPath !== null)
+            await xfs.copyFilePromise(cachePath, mirrorPath, fs.constants.COPYFILE_FICLONE);
+
+          return checksum;
+        });
       });
     };
 
@@ -183,9 +216,14 @@ export class Cache {
     return [lazyFs, releaseFs, checksum];
   }
 
-  async writeFileIntoCache<T>(file: PortablePath, generator: (file: PortablePath) => Promise<T>) {
-    return await xfs.lockPromise<T>(file, async () => {
-      return await generator(file);
+  private async writeFileWithLock<T>(file: PortablePath | null, generator: () => Promise<T>) {
+    if (file === null)
+      return await generator();
+
+    await xfs.mkdirpPromise(ppath.dirname(file));
+
+    return await xfs.lockPromise(file, async () => {
+      return await generator();
     });
   }
 }

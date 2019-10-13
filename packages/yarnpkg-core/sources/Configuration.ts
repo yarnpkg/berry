@@ -4,11 +4,14 @@ import camelcase                                                from 'camelcase'
 import chalk                                                    from 'chalk';
 import {UsageError}                                             from 'clipanion';
 import isCI                                                     from 'is-ci';
+import {PassThrough, Writable}                                  from 'stream';
 import supportsColor                                            from 'supports-color';
+import {tmpNameSync}                                            from 'tmp';
 
 import {MultiFetcher}                                           from './MultiFetcher';
 import {MultiResolver}                                          from './MultiResolver';
 import {Plugin, Hooks}                                          from './Plugin';
+import {Report}                                                 from './Report';
 import {SemverResolver}                                         from './SemverResolver';
 import {TagResolver}                                            from './TagResolver';
 import {VirtualFetcher}                                         from './VirtualFetcher';
@@ -244,6 +247,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 
   // Settings related to network access
+  enableMirror: {
+    description: `If true, the downloaded packages will be retrieved and stored in both the local and global folders`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
   enableNetwork: {
     description: `If false, the package manager will refuse to use the network if required to`,
     type: SettingsType.BOOLEAN,
@@ -723,25 +731,6 @@ export class Configuration {
     }
   }
 
-  extend(data: {[key: string]: unknown}) {
-    const newConfiguration = Object.create(Configuration.prototype);
-
-    newConfiguration.startingCwd = this.startingCwd;
-    newConfiguration.projectCwd = this.projectCwd;
-
-    newConfiguration.plugins = new Map(this.plugins);
-
-    newConfiguration.settings = new Map(this.settings);
-    newConfiguration.values = new Map(this.values);
-    newConfiguration.sources = new Map(this.sources);
-
-    newConfiguration.invalid = new Map(this.invalid);
-
-    newConfiguration.useWithSource(`<internal override>`, data, this.startingCwd, {override: true});
-
-    return newConfiguration;
-  }
-
   useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
     try {
       this.use(source, data, folder, {strict, overwrite});
@@ -788,6 +777,36 @@ export class Configuration {
       throw new Error(`Invalid configuration key "${key}"`);
 
     return this.values.get(key) as T;
+  }
+
+  getSubprocessStreams(prefix: string, {header, report}: {header?: string, report: Report}) {
+    let stdout: Writable;
+    let stderr: Writable;
+
+    const logFile = NodeFS.toPortablePath(tmpNameSync({prefix: `logfile-`, postfix: `.log`}));
+    const logStream = xfs.createWriteStream(logFile);
+
+    if (this.get(`enableInlineBuilds`)) {
+      const stdoutLineReporter = report.createStreamReporter(`${prefix} ${this.format(`STDOUT`, `green`)}`);
+      const stderrLineReporter = report.createStreamReporter(`${prefix} ${this.format(`STDERR`, `red`)}`);
+
+      stdout = new PassThrough();
+      stdout.pipe(stdoutLineReporter);
+      stdout.pipe(logStream);
+
+      stderr = new PassThrough();
+      stderr.pipe(stderrLineReporter);
+      stderr.pipe(logStream);
+    } else {
+      stdout = logStream;
+      stderr = logStream;
+
+      if (typeof header !== `undefined`) {
+        stdout.write(`${header}\n`);
+      }
+    }
+
+    return {logFile, stdout, stderr};
   }
 
   makeResolver() {

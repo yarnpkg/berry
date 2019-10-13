@@ -64,7 +64,8 @@ export enum MessageName {
   CACHE_OUTSIDE_PROJECT = 54,
   IMMUTABLE_INSTALL = 55,
   IMMUTABLE_CACHE = 56,
-  INVALID_MANIFEST = 57
+  INVALID_MANIFEST = 57,
+  PACKAGE_PREPARATION_FAILED = 58,
 }
 
 export class ReportError extends Error {

@@ -31,7 +31,7 @@ export default class NodeCommand extends BaseCommand {
       stdin: this.context.stdin,
       stdout: this.context.stdout,
       stderr: this.context.stderr,
-      env: await scriptUtils.makeScriptEnv(project),
+      env: await scriptUtils.makeScriptEnv({project}),
     });
 
     return code;

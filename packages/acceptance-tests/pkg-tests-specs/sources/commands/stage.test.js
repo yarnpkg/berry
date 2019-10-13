@@ -53,6 +53,7 @@ describe(`Commands`, () => {
         await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
           stdout: [
             `${NodeFS.fromPortablePath(`${path}/.pnp.js`)}\n`,
+            `${NodeFS.fromPortablePath(`${path}/.yarn/global/cache/no-deps-npm-1.0.0-cf533b267a.zip`)}\n`,
             `${NodeFS.fromPortablePath(`${path}/.yarn/cache/.gitignore`)}\n`,
             `${NodeFS.fromPortablePath(`${path}/.yarn/cache/no-deps-npm-1.0.0-cf533b267a.zip`)}\n`,
             `${NodeFS.fromPortablePath(`${path}/.yarnrc.yml`)}\n`,

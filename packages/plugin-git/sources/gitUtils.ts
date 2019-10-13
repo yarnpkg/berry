@@ -10,6 +10,21 @@ function makeGitEnvironment() {
   };
 }
 
+const gitPatterns = [
+  /^git:/,
+  /^git\+ssh:/,
+  /^https?:[^#]+\/[^#]+\.git(?:#.+)?$/,
+  /^git@[^#]+\/[^#]+\.git(?:#.+)?$/,
+  /^([a-z\d](?:[a-z\d]|-(?=[a-z\d]))+)\/([a-z\d](?:[a-z\d]|-(?=[a-z\d]))+)$/,
+];
+
+/**
+ * Determines whether a given url is a valid github git url via regex
+ */
+export function isGitUrl(url: string): boolean {
+  return url ? gitPatterns.some(pattern => !!url.match(pattern)) : false;
+}
+
 export function splitRepoUrl(url: string) {
   let repo: string;
   let protocol: string | null;
@@ -18,7 +33,7 @@ export function splitRepoUrl(url: string) {
   const hashIndex = url.indexOf(`#`);
   if (hashIndex === -1) {
     repo = url;
-    protocol = `branch`;
+    protocol = `head`;
     request = `master`;
   } else {
     repo = url.slice(0, hashIndex);
@@ -33,8 +48,15 @@ export function splitRepoUrl(url: string) {
     }
   }
 
+  // "git+https://" isn't an actual Git protocol. It's just a way to
+  // disambiguate that this URL points to a Git repository.
+  repo = repo.replace(/^git\+https:/, `https:`);
+
+  // We support this as an alias to Github repositories
+  repo = repo.replace(/^(?:github:)?([a-z\d](?:[a-z\d]|-(?=[a-z\d]))+)\/([a-z\d](?:[a-z\d]|-(?=[a-z\d]))+)$/, `https://github.com/$1/$2.git`);
+
   return {
-    repo: repo.replace(/^git\+https:/, `https:`),
+    repo,
     treeish: {protocol, request},
   };
 }

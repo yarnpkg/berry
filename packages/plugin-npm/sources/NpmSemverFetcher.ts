@@ -64,7 +64,7 @@ export class NpmSemverFetcher implements Fetcher {
       });
     }
 
-    return await tgzUtils.makeArchive(sourceBuffer, {
+    return await tgzUtils.convertToZip(sourceBuffer, {
       stripComponents: 1,
       prefixPath: npmConfigUtils.getVendorPath(locator),
     });

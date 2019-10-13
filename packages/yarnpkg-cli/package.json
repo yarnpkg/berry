@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.8",
   "nextVersion": {
     "semver": "2.0.0-rc.9",
-    "nonce": "8329409799740029"
+    "nonce": "8053834372293183"
   },
   "main": "./sources/index.ts",
   "dependencies": {
@@ -66,8 +66,8 @@
         "@yarnpkg/plugin-constraints",
         "@yarnpkg/plugin-dlx",
         "@yarnpkg/plugin-file",
-        "@yarnpkg/plugin-git",
         "@yarnpkg/plugin-github",
+        "@yarnpkg/plugin-git",
         "@yarnpkg/plugin-http",
         "@yarnpkg/plugin-init",
         "@yarnpkg/plugin-link",

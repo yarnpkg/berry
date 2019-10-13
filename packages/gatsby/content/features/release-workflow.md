@@ -1,7 +1,7 @@
 ---
-category: advanced
-path: /advanced/managing-releases
-title: "Managing Releases"
+category: features
+path: /features/release-workflow
+title: "Release Workflow"
 ---
 
 An hard task when working in a monorepo, and in particular when managing multiple packages, is to figure out which packages should be bumped when doing a new release. Yarn offers a few tools that aim to make this workflow easier without need for third-party softwares, althought it's possible to leverage those tools and build more integrated workflows.

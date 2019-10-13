@@ -7,12 +7,14 @@ import {UsageError}                                                             
 
 import {getPnpPath}                                                                                          from './index';
 
-// Some packages do weird stuff and MUST be unplugged. I don't like them.
 const FORCED_UNPLUG_PACKAGES = new Set([
+  // Some packages do weird stuff and MUST be unplugged. I don't like them.
   structUtils.makeIdent(null, `nan`).identHash,
   structUtils.makeIdent(null, `node-gyp`).identHash,
   structUtils.makeIdent(null, `node-pre-gyp`).identHash,
   structUtils.makeIdent(null, `node-addon-api`).identHash,
+  // Those ones contain native builds (*.node), and Node loads them through dlopen
+  structUtils.makeIdent(null, `fsevents`).identHash,
 ]);
 
 export class PnpLinker implements Linker {
