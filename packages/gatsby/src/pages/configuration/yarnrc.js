@@ -81,6 +81,13 @@ const YarnrcDoc = () => <>
         </>}
       />
       <SymlScalarProperty
+        name={`enableMirror`}
+        placeholder={true}
+        description={<>
+          If enabled (which is the default), Yarn will use the global folder as indirection between the network and the actual cache. This makes installs much faster for projects that don't already benefit from Zero-Installs.
+        </>}
+      />
+      <SymlScalarProperty
         name={`enableNetwork`}
         placeholder={true}
         description={<>
