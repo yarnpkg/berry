@@ -6,7 +6,7 @@
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.4"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.5"
   },
   "scripts": {
     "postpack": "rm -rf lib",
