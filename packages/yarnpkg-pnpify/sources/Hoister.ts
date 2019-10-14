@@ -9,14 +9,9 @@ import {HoistedTree, PackageTree}                                from './RawHois
 type PnpWalkApi = Pick<PnpApi, 'getPackageInformation' | 'getDependencyTreeRoots' | 'topLevel'>;
 
 /**
- * Node modules mapping
+ * Node modules tree.
  */
-export interface NodeModulesMap {
-  /** Directory entries for `../node_modules` and `../node_modules/@foo` directories */
-  dirEntries: Map<PortablePath, Set<Filename>>;
-  /** Package location mapping: `../node_modules/@foo/bar` -> `pnp package location`, `link type` */
-  packageLocations: Map<PortablePath, [PortablePath, LinkType]>;
-};
+export type NodeModulesTree = Map<PortablePath, Set<Filename> | [PortablePath, LinkType]>;
 
 export interface HoisterOptions {
   optimizeSizeOnDisk: boolean;
@@ -113,9 +108,8 @@ export class Hoister {
    *
    * @returns node modules map
    */
-  private buildNodeModulesMap(pnp: PnpWalkApi, hoistedTree: HoistedTree, locators: PackageLocator[]): NodeModulesMap {
-    const dirEntries: Map<PortablePath, Set<Filename>> = new Map();
-    const packageLocations: Map<PortablePath, [PortablePath, LinkType]> = new Map();
+  private buildNodeModulesTree(pnp: PnpWalkApi, hoistedTree: HoistedTree, locators: PackageLocator[]): NodeModulesTree {
+    const tree: NodeModulesTree = new Map();
 
     const NO_DEPS = new Set<PackageId>();
     const getLocation = (locator: PackageLocator): [PortablePath, LinkType] => {
@@ -134,50 +128,53 @@ export class Hoister {
     };
 
     const seenPkgIds = new Set();
-    const buildLocationTree = (nodeId: PackageId, prefix: PortablePath) => {
+    const buildTree = (nodeId: PackageId, prefix: PortablePath) => {
       seenPkgIds.add(nodeId);
-      const entries = new Map<Filename, PackageLocator | null>();
-      const scopeMap = new Map<Filename, Map<Filename, PackageLocator>>();
+      // const entries = new Map<Filename, PackageLocator | null>();
       const depIds = hoistedTree[nodeId] || NO_DEPS;
       for (const depId of depIds) {
         const locator = locators[depId];
         const {name, scope} = getPackageName(locator);
-        let depPrefix = ppath.join(...([prefix, NODE_MODULES].concat(scope ? [scope, name] : [name])));
-        if (!seenPkgIds.has(nodeId))
-          buildLocationTree(depId, depPrefix);
-        if (scope) {
-          let scopeEntries = scopeMap.get(scope);
-          if (!scopeEntries) {
-            scopeEntries = new Map();
-            scopeMap.set(scope, scopeEntries);
-          }
-          scopeEntries.set(name, locator);
-          entries.set(scope, null);
-        } else {
-          entries.set(name, locator);
-        }
-      }
-
-      if (entries.size > 0) {
-        dirEntries.set(ppath.join(prefix, NODE_MODULES), new Set(Array.from(entries.keys()).sort()));
-        for (const [entry, locator] of entries) {
-          if (locator) {
-            packageLocations.set(ppath.join(prefix, NODE_MODULES, entry), getLocation(locator));
-          } else {
-            const scopeEntries = scopeMap.get(entry)!;
-            dirEntries.set(ppath.join(prefix, NODE_MODULES, entry), new Set(Array.from(scopeEntries.keys()).sort()));
-            for (const [scopeEntry, locator] of scopeEntries) {
-              packageLocations.set(ppath.join(prefix, NODE_MODULES, entry, scopeEntry), getLocation(locator));
+        const packageNameParts = scope ? [scope, name] : [name];
+        const nodeModulesDirPath = ppath.join(prefix, NODE_MODULES);
+        let depPrefix = ppath.join(...([nodeModulesDirPath].concat(packageNameParts)));
+        if (!seenPkgIds.has(depId)) {
+          tree.set(depPrefix, getLocation(locator));
+          const segments = depPrefix.split(ppath.sep);
+          let count = segments.length - 1;
+          while (count > 0) {
+            const nodePath = NodeFS.toPortablePath(segments.slice(0, count).join(ppath.sep) || '/');
+            const subdirs = tree.get(nodePath);
+            const nextSegment = toFilename(segments[count]);
+            if (!subdirs) {
+              tree.set(nodePath, new Set([nextSegment]));
+            } else if (subdirs instanceof Set) {
+              if (subdirs.has(nextSegment)) {
+                break;
+              } else {
+                subdirs.add(nextSegment);
+              }
             }
+
+            count--;
           }
+          buildTree(depId, depPrefix);
         }
       }
     };
 
     const [rootPrefix] = getLocation(locators[0]);
-    buildLocationTree(0, rootPrefix);
+    buildTree(0, rootPrefix);
 
-    return {dirEntries, packageLocations};
+    const sortedTree: NodeModulesTree = new Map();
+
+    const keys = Array.from(tree.keys()).sort();
+    for (const key of keys) {
+      const val = tree.get(key)!;
+      sortedTree.set(key, val instanceof Set ? new Set(Array.from(val).sort()) : val);
+    }
+
+    return sortedTree;
   }
 
   /**
@@ -188,11 +185,11 @@ export class Hoister {
    *
    * @returns hoisted `node_modules` directories representation in-memory
    */
-  public hoist(pnp: PnpWalkApi): NodeModulesMap {
+  public hoist(pnp: PnpWalkApi): NodeModulesTree {
     const {packageTree, packages, locators} = this.buildPackageTree(pnp);
 
     const hoistedTree = this.rawHoister.hoist(packageTree, packages);
 
-    return this.buildNodeModulesMap(pnp, hoistedTree, locators);
+    return this.buildNodeModulesTree(pnp, hoistedTree, locators);
   }
 }

@@ -45,12 +45,15 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     super(ppath);
 
     this.baseFs = baseFs;
-    // this.pathResolver = pnp.VERSIONS.std >= 3 ? new HoistedPathResolver(pnp) : new NodePathResolver(pnp);
-    this.pathResolver = new NodePathResolver(pnp);
+    this.pathResolver = this.createPathResolver(pnp);
     this.watchManager = new WatchManager();
 
     const pnpRootPath = NodeFS.toPortablePath(pnp.getPackageInformation(pnp.topLevel)!.packageLocation);
     this.watchPnpFile(pnpRootPath);
+  }
+
+  private createPathResolver(pnp: PnpApi) {
+    return pnp.VERSIONS.std >= 3 ? new HoistedPathResolver(pnp) : new NodePathResolver(pnp);
   }
 
   private watchPnpFile(pnpRootPath: PortablePath) {
@@ -59,7 +62,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
       if (filename === '.pnp.js') {
         delete require.cache[pnpFilePath];
         const pnp = require(pnpFilePath);
-        this.pathResolver = new NodePathResolver(pnp);
+        this.pathResolver = this.createPathResolver(pnp);
 
         this.watchManager.notifyWatchers(this.pathResolver);
       }
