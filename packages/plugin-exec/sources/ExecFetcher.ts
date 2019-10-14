@@ -45,7 +45,7 @@ export class ExecFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: `/sources` as PortablePath,
+      prefixPath: structUtils.getIdentVendorPath(locator),
       localPath: this.getLocalPath(locator, opts),
       checksum,
     };
@@ -81,7 +81,7 @@ export class ExecFetcher implements Fetcher {
       throw new Error(`The script should have generated a build directory`);
 
     return await tgzUtils.makeArchiveFromDirectory(ppath.join(cwd, toFilename(`build`)), {
-      prefixPath: `/sources` as PortablePath,
+      prefixPath: structUtils.getIdentVendorPath(locator),
     });
   }
 

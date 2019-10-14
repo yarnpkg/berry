@@ -1,7 +1,15 @@
-import {Plugin}      from '@yarnpkg/core';
+import {FetchOptions, FetchResult, Locator, Plugin} from '@yarnpkg/core';
 
-import {GitFetcher}  from './GitFetcher';
-import {GitResolver} from './GitResolver';
+import {GitFetcher}                                 from './GitFetcher';
+import {GitResolver}                                from './GitResolver';
+
+export interface Hooks {
+  fetchHostedRepository?: (
+    current: FetchResult | null,
+    locator: Locator,
+    opts: FetchOptions,
+  ) => Promise<FetchResult | null>,
+}
 
 const plugin: Plugin = {
   fetchers: [

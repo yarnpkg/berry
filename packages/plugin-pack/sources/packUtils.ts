@@ -1,5 +1,6 @@
 import {MessageName, ReportError, Report, Workspace, scriptUtils} from '@yarnpkg/core';
 import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename}     from '@yarnpkg/fslib';
+import {Hooks as StageHooks}                                      from '@yarnpkg/plugin-stage';
 import mm                                                         from 'micromatch';
 import {PassThrough}                                              from 'stream';
 import tar                                                        from 'tar-stream';
@@ -175,7 +176,7 @@ export async function genPackList(workspace: Workspace) {
   maybeRejectPath(configuration.get(`virtualFolder`));
   maybeRejectPath(configuration.get(`yarnPath`));
 
-  await configuration.triggerHook((hooks: Hooks) => {
+  await configuration.triggerHook((hooks: StageHooks) => {
     return hooks.populateYarnPaths;
   }, project, (path: PortablePath | null) => {
     maybeRejectPath(path);

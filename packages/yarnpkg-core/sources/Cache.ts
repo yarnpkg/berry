@@ -9,6 +9,10 @@ import * as hashUtils                                                          f
 import * as structUtils                                                        from './structUtils';
 import {LocatorHash, Locator}                                                  from './types';
 
+// Each time we'll bump this number the cache hashes will change, which will
+// cause all files to be fetched again. Use with caution.
+const CACHE_VERSION = 1;
+
 export type FetchFromCacheOptions = {
   checksums: Map<LocatorHash, Locator>,
 };
@@ -58,7 +62,7 @@ export class Cache {
   }
 
   getLocatorFilename(locator: Locator) {
-    return `${structUtils.slugifyLocator(locator)}.zip` as Filename;
+    return `${structUtils.slugifyLocator(locator)}-${CACHE_VERSION}.zip` as Filename;
   }
 
   getLocatorPath(locator: Locator) {

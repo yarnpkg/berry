@@ -12,8 +12,8 @@ const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>
   // These ones come from Git urls
   [/^git\+(?:https|ssh):\/\/.*\.git#.*$/, (version, $0) => $0],
   // These ones come from the GitHub HTTP endpoints
-  [/^https:\/\/codeload\.github\.com\/([^\/]+\/[^\/]+)\/tar\.gz\/([0-9a-f]+)$/, (version, $0, $1, $2) => `github:${$1}#${$2}`],
-  [/^https:\/\/github\.com\/([^\/]+\/[^\/]+)#([0-9a-f]+)$/, (version, $0, $1, $2) => `github:${$1}#${$2}`],
+  [/^https:\/\/((?:[^/]+?)@)?codeload\.github\.com\/([^\/]+\/[^\/]+)\/tar\.gz\/([0-9a-f]+)$/, (version, $0, $1 = ``, $2, $3) => `https://${$1}github.com/${$2}.git#commit:${$3}`],
+  [/^https:\/\/((?:[^/]+?)@)?github\.com\/([^\/]+\/[^\/]+?)(?:\.git)?#([0-9a-f]+)$/, (version, $0, $1 = ``, $2, $3) => `https://${$1}github.com/${$2}.git#commit:${$3}`],
   // These ones come from the npm registry
   [/^https?:\/\/[^\/]+\/(?:@[^\/]+\/)?([^\/]+)\/-\/\1-[^\/]+\.tgz(?:#|$)/, version => `npm:${version}`],
   // These ones come from the old Yarn offline mirror - we assume they came from npm

@@ -64,11 +64,11 @@ export type Hooks = {
   ) => void,
 };
 
-export type Plugin = {
+export type Plugin<PluginHooks = Hooks> = {
   configuration?: {[key: string]: SettingsDefinition},
   commands?: Array<CommandClass<CommandContext>>,
   fetchers?: Array<FetcherPlugin>,
   linkers?: Array<LinkerPlugin>,
   resolvers?: Array<ResolverPlugin>,
-  hooks?: {[key: string]: any},
+  hooks?: PluginHooks,
 };

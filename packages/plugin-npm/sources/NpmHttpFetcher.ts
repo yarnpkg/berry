@@ -5,7 +5,6 @@ import semver                                       from 'semver';
 import {URL}                                        from 'url';
 
 import {PROTOCOL}                                   from './constants';
-import * as npmConfigUtils                          from './npmConfigUtils';
 
 export class NpmHttpFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -41,7 +40,7 @@ export class NpmHttpFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: npmConfigUtils.getVendorPath(locator),
+      prefixPath: structUtils.getIdentVendorPath(locator),
       checksum,
     };
   }
@@ -57,7 +56,7 @@ export class NpmHttpFetcher implements Fetcher {
 
     return await tgzUtils.convertToZip(sourceBuffer, {
       stripComponents: 1,
-      prefixPath: npmConfigUtils.getVendorPath(locator),
+      prefixPath: structUtils.getIdentVendorPath(locator),
     });
   }
 }

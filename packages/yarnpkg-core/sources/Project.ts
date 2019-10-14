@@ -810,9 +810,20 @@ export class Project {
     const packageLocations: Map<LocatorHash, PortablePath> = new Map();
     const packageBuildDirectives: Map<LocatorHash, BuildDirective[]> = new Map();
 
+    // We can skip installing packages that have been split into virtual
+    // packages, except for our workspaces (because they also exist by
+    // themselves, outside of the typical dependency considerations)
+    const skipPackageLink = (pkg: Package) =>
+      pkg.peerDependencies.size > 0 &&
+      !structUtils.isVirtualLocator(pkg) &&
+      !this.tryWorkspaceByLocator(pkg);
+
     // Step 1: Installing the packages on the disk
 
     for (const pkg of this.storedPackages.values()) {
+      if (skipPackageLink(pkg))
+        continue;
+
       const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
       if (!linker)
         throw new ReportError(MessageName.LINKER_NOT_FOUND, `${structUtils.prettyLocator(this.configuration, pkg)} isn't supported by any available linker`);
@@ -845,6 +856,9 @@ export class Project {
     const externalDependents: Map<LocatorHash, Array<PortablePath>> = new Map();
 
     for (const pkg of this.storedPackages.values()) {
+      if (skipPackageLink(pkg))
+        continue;
+
       const packageLinker = packageLinkers.get(pkg.locatorHash);
       if (!packageLinker)
         throw new Error(`Assertion failed: The linker should have been found`);
