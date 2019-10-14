@@ -6233,7 +6233,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     "@babel/template": "npm:^7.4.4"
   peerDependencies:
     "@babel/core": ^7
-  checksum: 61ffcbad2446e14f6302edf26f71fab23f80b62c6a7f3cdbf969b7b3b24208815bd7ef7fcb9fbf391ccc786414a4f6475d141e9b8be418896610df9d95a5f8ef
+  checksum: 09ae94fff0253cd9c4bb6f9094ea8193cdb67ace0631f60f71dd4257462d0e405a5fd2093c362538bed5e2e8c4171f05d8eb54bca7db572740aec0d3c5808028
   languageName: node
   linkType: hard
 
@@ -10725,7 +10725,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     lodash: "npm:^4.17.10"
   peerDependencies:
     webpack: ^1.13.0 || ^2.0.0 || ^3.0.0 || ^4.0.0
-  checksum: 905553bb7b5db99faede848e1d9b13d621444b0b3d9d0c3bcb58638793f4d541d6adfb329a89942668d3f10f292f43a5cae7b03c58734d3f8204c89c5a485d09
+  checksum: b1a8cc792a504fd91a4970e39cc409169319b8e65a1012c8952b53d55a0f71ed9ac354b6c6635fa0de5e768ceaa9842455d4efdc5ab83d5357b687352706cb36
   languageName: node
   linkType: hard
 
