@@ -19,7 +19,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // The callback function gets called to wrap the return value of the module names matching the regexp
   const patchedModules: Array<[RegExp, (issuer: PackageLocator | null, exports: any) => any]> = [];
 
-  if (opts.compatibilityMode) {
+  if (opts.compatibilityMode !== false) {
     // Modern versions of `resolve` support a specific entry point that custom resolvers can use
     // to inject a specific resolution logic without having to patch the whole package.
     //

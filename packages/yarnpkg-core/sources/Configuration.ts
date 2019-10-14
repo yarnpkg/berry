@@ -233,6 +233,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
+  progressBarStyle: {
+    description: `Which style of progress bar should be used (only when progress bars are enabled)`,
+    type: SettingsType.STRING,
+    default: undefined,
+    defaultText: `<dynamic>`,
+  },
 
   // Settings related to how packages are interpreted by default
   defaultLanguageName: {
