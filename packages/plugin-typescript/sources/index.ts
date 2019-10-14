@@ -73,14 +73,12 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
   }
 };
 
-const plugin: Plugin = {
+const plugin: Plugin<EssentialsHooks & PackHooks> = {
   hooks: {
     afterWorkspaceDependencyAddition,
     afterWorkspaceDependencyRemoval,
     beforeWorkspacePacking,
-  } as (
-    EssentialsHooks & PackHooks
-  ),
+  },
 };
 
 // eslint-disable-next-line arca/no-default-export

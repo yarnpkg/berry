@@ -5,6 +5,7 @@
   "dependencies": {
     "@yarnpkg/core": "workspace:2.0.0-rc.8",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.4",
+    "@yarnpkg/plugin-git": "workspace:2.0.0-rc.3",
     "tmp": "^0.0.33"
   },
   "scripts": {
@@ -16,7 +17,7 @@
   "version": "2.0.0-rc.1",
   "nextVersion": {
     "semver": "2.0.0-rc.2",
-    "nonce": "2440275943509917"
+    "nonce": "4842091580033871"
   },
   "repository": {
     "type": "git",

@@ -4932,6 +4932,7 @@ __metadata:
   dependencies:
     "@yarnpkg/core": "workspace:2.0.0-rc.8"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.4"
+    "@yarnpkg/plugin-git": "workspace:2.0.0-rc.3"
     tmp: "npm:^0.0.33"
   languageName: unknown
   linkType: soft
@@ -5001,6 +5002,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:2.0.0-rc.8"
     "@yarnpkg/core": "workspace:2.0.0-rc.8"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.4"
+    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.3"
     clipanion: "npm:^2.1.3"
     micromatch: "npm:^4.0.2"
     tar-stream: "npm:^2.0.1"

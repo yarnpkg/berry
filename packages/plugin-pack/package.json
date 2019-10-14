@@ -7,6 +7,7 @@
     "@yarnpkg/cli": "workspace:2.0.0-rc.8",
     "@yarnpkg/core": "workspace:2.0.0-rc.8",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.4",
+    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.3",
     "clipanion": "^2.1.3",
     "micromatch": "^4.0.2",
     "tar-stream": "^2.0.1"
@@ -14,7 +15,7 @@
   "version": "2.0.0-rc.3",
   "nextVersion": {
     "semver": "2.0.0-rc.4",
-    "nonce": "7259190604730543"
+    "nonce": "4949567931842139"
   },
   "repository": {
     "type": "git",

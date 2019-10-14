@@ -38,7 +38,7 @@ export class TarballFileFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: `/sources` as PortablePath,
+      prefixPath: structUtils.getIdentVendorPath(locator),
       checksum,
     };
   }
@@ -69,7 +69,7 @@ export class TarballFileFetcher implements Fetcher {
     return await miscUtils.releaseAfterUseAsync(async () => {
       return await tgzUtils.convertToZip(sourceBuffer, {
         stripComponents: 1,
-        prefixPath: `/sources` as PortablePath,
+        prefixPath: structUtils.getIdentVendorPath(locator),
       });
     }, effectiveParentFetch.releaseFs);
   }
