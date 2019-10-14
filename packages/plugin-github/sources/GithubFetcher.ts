@@ -33,7 +33,7 @@ export class GithubFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: `/sources` as PortablePath,
+      prefixPath: structUtils.getIdentVendorPath(locator),
       checksum,
     };
   }
@@ -60,7 +60,7 @@ export class GithubFetcher implements Fetcher {
 
     return await tgzUtils.convertToZip(packedBuffer, {
       stripComponents: 1,
-      prefixPath: `/sources` as PortablePath,
+      prefixPath: structUtils.getIdentVendorPath(locator),
     });
   }
 

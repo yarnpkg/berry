@@ -1,9 +1,10 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
-import {Locator, MessageName}                          from '@yarnpkg/core';
-import {miscUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
-import {PortablePath, ppath, xfs}                      from '@yarnpkg/fslib';
+import {Fetcher, FetchOptions, MinimalFetchOptions, FetchResult} from '@yarnpkg/core';
+import {Locator, MessageName}                                    from '@yarnpkg/core';
+import {miscUtils, scriptUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
+import {PortablePath, ppath, xfs}                                from '@yarnpkg/fslib';
 
-import * as gitUtils                                   from './gitUtils';
+import * as gitUtils                                             from './gitUtils';
+import {Hooks}                                                   from './index';
 
 export class GitFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -17,6 +18,10 @@ export class GitFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 
+    const result = await this.downloadHosted(locator, opts);
+    if (result !== null)
+      return result;
+
     const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(
       locator,
       expectedChecksum,
@@ -29,9 +34,15 @@ export class GitFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: `/sources` as PortablePath,
+      prefixPath: structUtils.getIdentVendorPath(locator),
       checksum,
     };
+  }
+
+  async downloadHosted(locator: Locator, opts: FetchOptions) {
+    return opts.project.configuration.reduceHook((hooks: Hooks) => {
+      return hooks.fetchHostedRepository;
+    }, null as FetchResult | null, locator, opts);
   }
 
   async cloneFromRemote(locator: Locator, opts: FetchOptions) {
@@ -48,7 +59,7 @@ export class GitFetcher implements Fetcher {
     return await miscUtils.releaseAfterUseAsync(async () => {
       return await tgzUtils.convertToZip(sourceBuffer, {
         stripComponents: 1,
-        prefixPath: `/sources` as PortablePath,
+        prefixPath: structUtils.getIdentVendorPath(locator),
       });
     });
   }

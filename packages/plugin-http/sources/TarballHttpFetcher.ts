@@ -1,7 +1,6 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator, MessageName}                       from '@yarnpkg/core';
 import {httpUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
-import {PortablePath}                               from '@yarnpkg/fslib';
 
 import {TARBALL_REGEXP, PROTOCOL_REGEXP}            from './constants';
 
@@ -35,7 +34,7 @@ export class TarballHttpFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: `/sources` as PortablePath,
+      prefixPath: structUtils.getIdentVendorPath(locator),
       checksum,
     };
   }
@@ -47,7 +46,7 @@ export class TarballHttpFetcher implements Fetcher {
 
     return await tgzUtils.convertToZip(sourceBuffer, {
       stripComponents: 1,
-      prefixPath: `/sources` as PortablePath,
+      prefixPath: structUtils.getIdentVendorPath(locator),
     });
   }
 }

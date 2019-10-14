@@ -6942,6 +6942,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-github", "workspace:packages/plugin-github"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
+            ["@yarnpkg/plugin-git", "workspace:packages/plugin-git"],
             ["tmp", "npm:0.0.33"]
           ],
           "linkType": "SOFT"
@@ -7023,6 +7024,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
+            ["@yarnpkg/plugin-stage", "workspace:packages/plugin-stage"],
             ["clipanion", "npm:2.1.3"],
             ["micromatch", "npm:4.0.2"],
             ["tar-stream", "npm:2.0.1"]

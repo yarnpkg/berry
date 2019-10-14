@@ -1,18 +1,12 @@
-import {Plugin, Project, Workspace, structUtils} from '@yarnpkg/core';
-import {MessageName, ReportError}                from '@yarnpkg/core';
-import {PortablePath}                            from '@yarnpkg/fslib';
+import {Hooks as CoreHooks, Plugin, Workspace, structUtils} from '@yarnpkg/core';
+import {MessageName, ReportError}                           from '@yarnpkg/core';
 
-import pack                                      from './commands/pack';
-import * as packUtils                            from './packUtils';
+import pack                                                 from './commands/pack';
+import * as packUtils                                       from './packUtils';
 
 export {packUtils};
 
 export interface Hooks {
-  populateYarnPaths?: (
-    project: Project,
-    definePath: (path: PortablePath | null) => void,
-  ) => Promise<void>,
-
   beforeWorkspacePacking?: (
     workspace: Workspace,
     rawManifest: object,
@@ -69,10 +63,10 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
   }
 };
 
-const plugin: Plugin = {
+const plugin: Plugin<CoreHooks & Hooks> = {
   hooks: {
     beforeWorkspacePacking,
-  } as Hooks,
+  },
   commands: [
     pack,
   ],

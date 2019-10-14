@@ -42,7 +42,7 @@ export class NpmSemverFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: npmConfigUtils.getVendorPath(locator),
+      prefixPath: structUtils.getIdentVendorPath(locator),
       checksum,
     };
   }
@@ -66,7 +66,7 @@ export class NpmSemverFetcher implements Fetcher {
 
     return await tgzUtils.convertToZip(sourceBuffer, {
       stripComponents: 1,
-      prefixPath: npmConfigUtils.getVendorPath(locator),
+      prefixPath: structUtils.getIdentVendorPath(locator),
     });
   }
 

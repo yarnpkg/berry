@@ -1,4 +1,4 @@
-import {toFilename}                             from '@yarnpkg/fslib';
+import {PortablePath, toFilename}               from '@yarnpkg/fslib';
 import querystring                              from 'querystring';
 import semver                                   from 'semver';
 
@@ -348,4 +348,19 @@ export function prettyWorkspace(configuration: Configuration, workspace: Workspa
   } else {
     return prettyLocator(configuration, workspace.anchoredLocator);
   }
+}
+
+/**
+ * The presence of a `node_modules` directory in the path is extremely common
+ * in the JavaScript ecosystem to denote whether a path belongs to a vendor
+ * or not. I considered using a more generic path for packages that aren't
+ * always JS-only (such as when using the Git fetcher), but that unfortunately
+ * caused various JS apps to start showing errors when working with git repos.
+ *
+ * As a result, all packages from all languages will follow this convention. At
+ * least it'll be consistent, and linkers will always have the ability to remap
+ * them to a different location if that's a critical requirement.
+ */
+export function getIdentVendorPath(ident: Ident) {
+  return `/node_modules/${requirableIdent(ident)}` as PortablePath;
 }
