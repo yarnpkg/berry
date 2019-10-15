@@ -7,7 +7,7 @@ import {PathResolver, ResolvedPath}               from './NodePathResolver';
 interface HoistedResolverOptions extends HoisterOptions {
 }
 
-const NODE_MODULES = 'node_modules';
+const NODE_MODULES_SUFFIX = '/node_modules';
 
 export class HoistedPathResolver implements PathResolver {
   private readonly nodeModulesTree: NodeModulesTree;
@@ -23,33 +23,31 @@ export class HoistedPathResolver implements PathResolver {
 
   public resolvePath(nodePath: PortablePath): ResolvedPath {
     const result: ResolvedPath = {resolvedPath: nodePath};
-    if (nodePath.indexOf(ppath.sep + NODE_MODULES) < 0)
+    if (nodePath.indexOf(NODE_MODULES_SUFFIX) < 0)
       return result;
-    const segments = nodePath.split(ppath.sep);
-    let segCount = 1;
-    let seenNodeModules = false;
-    let statPath;
-    while (segCount <= segments.length) {
-      const curPath = NodeFS.toPortablePath(segments.slice(0, segCount).join(ppath.sep) || '/');
-      const curNode = this.nodeModulesTree.get(curPath);
-      if (!curNode) {
-        break;
-      } else if (Array.isArray(curNode)) {
-        const [location, linkType] = curNode;
-        delete result.dirList;
-        result.isSymlink = linkType === LinkType.SOFT && segCount === segments.length;
-        result.resolvedPath = NodeFS.toPortablePath(ppath.join(location, ...segments.slice(segCount, segments.length).map(x => toFilename(x))));
-        break;
-      } else if (seenNodeModules && segCount === segments.length) {
-        result.dirList = curNode;
-        result.statPath = statPath;
-        break;
+    let lastIdx = nodePath.lastIndexOf(NODE_MODULES_SUFFIX) + NODE_MODULES_SUFFIX.length;
+    let targetPath = nodePath.substring(0, lastIdx);
+    let remainderParts = nodePath.substring(lastIdx).split(ppath.sep).slice(1);
+    let requestStartIdx = 0;
+    if (remainderParts.length > 0) {
+      if (remainderParts[0][0] !== '@' || remainderParts.length === 1)
+        requestStartIdx = 1;
+      else
+        requestStartIdx = 2;
+
+      targetPath = targetPath + ppath.sep + remainderParts.slice(0, requestStartIdx).join(ppath.sep);
+    }
+    const request = remainderParts.slice(requestStartIdx).join(ppath.sep);
+    const node = this.nodeModulesTree.get(NodeFS.toPortablePath(targetPath));
+    if (node) {
+      if (Array.isArray(node)) {
+        const [location, linkType] = node;
+        result.isSymlink = linkType === LinkType.SOFT;
+        result.resolvedPath = NodeFS.toPortablePath(location + (request ? ppath.sep + request : ''));
+      } else if (!request) {
+        result.dirList = node;
+        result.statPath = NodeFS.toPortablePath(nodePath.substring(0, nodePath.indexOf(NODE_MODULES_SUFFIX)));
       }
-      if (segCount > 0 && segments[segCount - 1] === NODE_MODULES && !seenNodeModules) {
-        statPath = ppath.dirname(curPath);
-        seenNodeModules = true;
-      }
-      segCount++;
     }
     return result;
   }

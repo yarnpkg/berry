@@ -18,7 +18,8 @@ export interface HoisterOptions {
 }
 
 /** node_modules path segment */
-const NODE_MODULES = toFilename('node_modules');
+const NODE_MODULES = toFilename(`node_modules`);
+const NODE_MODULES_SUFFIX = `/node_modules`;
 
 /** Package locator key for usage inside maps */
 type LocatorKey = string;
@@ -81,7 +82,7 @@ export class Hoister {
         for (const [name, reference] of pkg.packageDependencies) {
           if (reference) {
             const locator = typeof reference === 'string' ? {name, reference} : {name: reference[0], reference: reference[1]};
-            const weight = !this.options.optimizeSizeOnDisk || pkg.packageLocation.indexOf('.zip/node_modules') < 0 ? 1 : fs.statSync(pkg.packageLocation.split('/node_modules')[0]).size;
+            const weight = !this.options.optimizeSizeOnDisk || pkg.packageLocation.indexOf(`.zip${NODE_MODULES_SUFFIX}`) < 0 ? 1 : fs.statSync(pkg.packageLocation.split(NODE_MODULES_SUFFIX)[0]).size;
             const pkgId = assignPackageId(locator, weight);
 
             depIds.add(pkgId);
@@ -140,23 +141,33 @@ export class Hoister {
         let depPrefix = ppath.join(...([nodeModulesDirPath].concat(packageNameParts)));
         if (!seenPkgIds.has(depId)) {
           tree.set(depPrefix, getLocation(locator));
-          const segments = depPrefix.split(ppath.sep);
-          let count = segments.length - 1;
-          while (count > 0) {
-            const nodePath = NodeFS.toPortablePath(segments.slice(0, count).join(ppath.sep) || '/');
-            const subdirs = tree.get(nodePath);
-            const nextSegment = toFilename(segments[count]);
-            if (!subdirs) {
-              tree.set(nodePath, new Set([nextSegment]));
-            } else if (subdirs instanceof Set) {
-              if (subdirs.has(nextSegment)) {
-                break;
-              } else {
-                subdirs.add(nextSegment);
+          const segments = depPrefix.split(NODE_MODULES_SUFFIX);
+          let segCount = segments.length - 1;
+          while (segCount > 0) {
+            const nodePath = NodeFS.toPortablePath(segments.slice(0, segCount).join(NODE_MODULES_SUFFIX));
+            const pathSubdirs = segments[segCount].split(ppath.sep).slice(1);
+            let pathSubdirCount = pathSubdirs.length - 1;
+            let hasTreeNodes = false;
+            while (pathSubdirCount >= 0) {
+              const dirPath = ppath.join(nodePath, NODE_MODULES, ...pathSubdirs.slice(0, pathSubdirCount).map(x => toFilename(x)));
+              const targetDir = toFilename(pathSubdirs[pathSubdirCount]);
+              const subdirs = tree.get(dirPath);
+              if (!subdirs) {
+                tree.set(dirPath, new Set([targetDir]));
+              } else if (subdirs instanceof Set) {
+                if (subdirs.has(targetDir)) {
+                  hasTreeNodes = true;
+                  break;
+                } else {
+                  subdirs.add(targetDir);
+                }
               }
+              pathSubdirCount--;
             }
+            if (hasTreeNodes)
+              break;
 
-            count--;
+            segCount--;
           }
           buildTree(depId, depPrefix);
         }
