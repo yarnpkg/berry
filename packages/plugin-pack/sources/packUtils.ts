@@ -205,21 +205,23 @@ export async function genPackList(workspace: Workspace) {
   else if (workspace.manifest.module)
     ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.module));
 
-  if (workspace.manifest.files !== null) {
+  const hasExplicitFileList = workspace.manifest.files !== null;
+  if (hasExplicitFileList) {
     ignoreList.reject.push(`/*`);
 
-    for (const pattern of workspace.manifest.files) {
+    for (const pattern of workspace.manifest.files!) {
       addIgnorePattern(ignoreList.accept, pattern, {cwd: PortablePath.root});
     }
   }
 
   return await walk(workspace.cwd, {
+    hasExplicitFileList,
     globalList,
     ignoreList,
   });
 }
 
-async function walk(initialCwd: PortablePath, {globalList, ignoreList}: {globalList: IgnoreList, ignoreList: IgnoreList}) {
+async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, ignoreList}: {hasExplicitFileList: boolean, globalList: IgnoreList, ignoreList: IgnoreList}) {
   const list: PortablePath[] = [];
 
   const cwdFs = new JailFS(initialCwd);
@@ -238,9 +240,11 @@ async function walk(initialCwd: PortablePath, {globalList, ignoreList}: {globalL
       let hasGitIgnore = false;
       let hasNpmIgnore = false;
 
-      for (const entry of entries) {
-        hasGitIgnore = hasGitIgnore || entry === `.gitignore`;
-        hasNpmIgnore = hasNpmIgnore || entry === `.npmignore`;
+      if (!hasExplicitFileList || cwd !== PortablePath.root) {
+        for (const entry of entries) {
+          hasGitIgnore = hasGitIgnore || entry === `.gitignore`;
+          hasNpmIgnore = hasNpmIgnore || entry === `.npmignore`;
+        }
       }
 
       const localIgnoreList = hasNpmIgnore
