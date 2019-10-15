@@ -119,6 +119,24 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should ignore root .gitignore files when using the 'files' field`,
+      makeTemporaryEnv({
+        files: [
+          `lib`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/.gitignore`, `lib`);
+
+        await run(`install`);
+
+        await fsUtils.writeFile(`${path}/lib/foo.js`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        await expect(stdout).toMatch(/lib\/foo\.js/);
+      }),
+    );
+
+    test(
       `it shouldn't add the cache to the package files`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`install`);
