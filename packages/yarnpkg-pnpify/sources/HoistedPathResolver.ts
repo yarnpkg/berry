@@ -1,4 +1,4 @@
-import {NodeFS, PortablePath, ppath, toFilename}  from '@yarnpkg/fslib';
+import {NodeFS, PortablePath, ppath}              from '@yarnpkg/fslib';
 import {PnpApi, LinkType}                         from '@yarnpkg/pnp';
 
 import {HoisterOptions, NodeModulesTree, Hoister} from './Hoister';
