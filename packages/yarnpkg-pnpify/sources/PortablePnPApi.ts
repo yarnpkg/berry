@@ -1,4 +1,4 @@
-import {PortablePath, NodeFS}                       from '@yarnpkg/fslib';
+import {PortablePath, npath}                        from '@yarnpkg/fslib';
 import {PnpApi, PackageInformation, PackageLocator} from '@yarnpkg/pnp';
 
 /**
@@ -21,7 +21,7 @@ export class PortablePnPApi {
     let portableInfo: PackageInformation<PortablePath> | null = null;
     if (nativeInfo) {
       portableInfo = {
-        packageLocation: NodeFS.toPortablePath(nativeInfo.packageLocation),
+        packageLocation: npath.toPortablePath(nativeInfo.packageLocation),
         packageDependencies: nativeInfo.packageDependencies,
         linkType: nativeInfo.linkType,
       };
@@ -30,20 +30,20 @@ export class PortablePnPApi {
   }
 
   public findPackageLocator(location: PortablePath): PackageLocator | null {
-    return this.pnp.findPackageLocator(NodeFS.fromPortablePath(location));
+    return this.pnp.findPackageLocator(npath.fromPortablePath(location));
   }
 
   public resolveToUnqualified(request: string, issuer: PortablePath | null, opts?: {considerBuiltins?: boolean}): PortablePath | null {
-    const result = this.pnp.resolveToUnqualified(request, !issuer ? null : NodeFS.fromPortablePath(issuer), opts);
-    return !result ? null : NodeFS.toPortablePath(result);
+    const result = this.pnp.resolveToUnqualified(request, !issuer ? null : npath.fromPortablePath(issuer), opts);
+    return !result ? null : npath.toPortablePath(result);
   }
 
   public resolveUnqualified(unqualified: PortablePath, opts?: {extensions?: Array<string>}): PortablePath {
-    return NodeFS.toPortablePath(this.pnp.resolveUnqualified(NodeFS.fromPortablePath(unqualified), opts));
+    return npath.toPortablePath(this.pnp.resolveUnqualified(npath.fromPortablePath(unqualified), opts));
   }
 
   public resolveRequest(request: string, issuer: PortablePath | null, opts?: {considerBuiltins?: boolean, extensions?: Array<string>}): PortablePath | null {
-    const result = this.pnp.resolveRequest(request, !issuer ? null : NodeFS.fromPortablePath(issuer), opts);
-    return !result ? null : NodeFS.toPortablePath(result);
+    const result = this.pnp.resolveRequest(request, !issuer ? null : npath.fromPortablePath(issuer), opts);
+    return !result ? null : npath.toPortablePath(result);
   }
 }

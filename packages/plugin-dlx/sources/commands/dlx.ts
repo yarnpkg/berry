@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                    from '@yarnpkg/cli';
-import {Configuration, Project}                                 from '@yarnpkg/core';
-import {scriptUtils, structUtils}                               from '@yarnpkg/core';
-import {NodeFS, xfs, PortablePath, ppath, Filename, toFilename} from '@yarnpkg/fslib';
-import {Command}                                                from 'clipanion';
-import tmp                                                      from 'tmp';
+import {BaseCommand, WorkspaceRequiredError}                   from '@yarnpkg/cli';
+import {Configuration, Project}                                from '@yarnpkg/core';
+import {scriptUtils, structUtils}                              from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import {Command}                                               from 'clipanion';
+import tmp                                                     from 'tmp';
 
 // eslint-disable-next-line arca/no-default-export
 export default class DlxCommand extends BaseCommand {
@@ -82,7 +82,7 @@ function createTemporaryDirectory(name?: Filename) {
       if (error) {
         reject(error);
       } else {
-        resolve(NodeFS.toPortablePath(dirPath));
+        resolve(npath.toPortablePath(dirPath));
       }
     });
   }).then(async dirPath => {

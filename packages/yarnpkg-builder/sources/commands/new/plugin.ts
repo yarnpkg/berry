@@ -1,7 +1,7 @@
-import {Filename, NodeFS, ppath, xfs} from '@yarnpkg/fslib';
-import chalk                          from 'chalk';
-import {Command, UsageError}          from 'clipanion';
-import path                           from 'path';
+import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
+import chalk                         from 'chalk';
+import {Command, UsageError}         from 'clipanion';
+import path                          from 'path';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NewPluginCommand extends Command {
@@ -14,7 +14,7 @@ export default class NewPluginCommand extends Command {
 
   @Command.Path(`new`, `plugin`)
   async execute() {
-    const target = NodeFS.toPortablePath(path.resolve(this.target));
+    const target = npath.toPortablePath(path.resolve(this.target));
     if (await xfs.existsPromise(target)) {
       const listing = await xfs.readdirPromise(target);
       if (listing.length !== 0) {
@@ -80,6 +80,6 @@ export default class NewPluginCommand extends Command {
       ],
     }, null, 2));
 
-    this.context.stdout.write(`Scaffolding done! Just go into ${chalk.magenta(NodeFS.fromPortablePath(target))} and run ${chalk.cyan(`yarn && yarn build`)} 🙂\n`);
+    this.context.stdout.write(`Scaffolding done! Just go into ${chalk.magenta(npath.fromPortablePath(target))} and run ${chalk.cyan(`yarn && yarn build`)} 🙂\n`);
   }
 }

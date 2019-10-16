@@ -1,5 +1,4 @@
-import {Configuration, Ident, Manifest, structUtils} from '@yarnpkg/core';
-import {PortablePath}                                from '@yarnpkg/fslib';
+import {Configuration, Manifest} from '@yarnpkg/core';
 
 export enum RegistryType {
   FETCH_REGISTRY = 'npmRegistryServer',

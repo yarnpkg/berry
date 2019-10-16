@@ -2,7 +2,7 @@ import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
 import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
 import {LinkType}                                        from '@yarnpkg/core';
 import {miscUtils, structUtils}                          from '@yarnpkg/core';
-import {NodeFS}                                          from '@yarnpkg/fslib';
+import {npath}                                           from '@yarnpkg/fslib';
 import querystring                                       from 'querystring';
 
 import {PROTOCOL}                                        from './constants';
@@ -41,7 +41,7 @@ export class ExecResolver implements Resolver {
     if (path.startsWith(PROTOCOL))
       path = path.slice(PROTOCOL.length);
 
-    return [structUtils.makeLocator(descriptor, `${PROTOCOL}${NodeFS.toPortablePath(path)}`)];
+    return [structUtils.makeLocator(descriptor, `${PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

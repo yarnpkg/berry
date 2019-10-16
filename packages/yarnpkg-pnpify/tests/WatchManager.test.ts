@@ -1,12 +1,12 @@
-import {NodeFS, toFilename} from '@yarnpkg/fslib';
+import {npath, toFilename} from '@yarnpkg/fslib';
 
-import {WatchManager}       from '../sources/WatchManager';
+import {WatchManager}      from '../sources/WatchManager';
 
 describe('WatchManager', () => {
   const manager = new WatchManager();
 
   it('should trigger callback when dir entries added', () => {
-    const dirPath = NodeFS.toPortablePath('/abc');
+    const dirPath = npath.toPortablePath('/abc');
     const dirList = new Set(['file1.ts', 'file2.ts'].map(x => toFilename(x)));
     const callback = jest.fn();
     const watcherCallback = jest.fn();
@@ -32,7 +32,7 @@ describe('WatchManager', () => {
 
   it('should trigger callback when dir entries removed', () => {
     const manager = new WatchManager();
-    const dirPath = NodeFS.toPortablePath('/abc');
+    const dirPath = npath.toPortablePath('/abc');
     const dirList = new Set(['file1.ts', 'file2.ts', 'file3.ts', 'file4.ts'].map(x => toFilename(x)));
     const callback = jest.fn();
     const watcherCallback = jest.fn();
@@ -56,7 +56,7 @@ describe('WatchManager', () => {
   });
 
   it('should not trigger closed callback', () => {
-    const dirPath = NodeFS.toPortablePath('/abc');
+    const dirPath = npath.toPortablePath('/abc');
     const dirList = new Set(['file1.ts'].map(x => toFilename(x)));
     const callback = jest.fn();
     const watcherCallback = jest.fn();

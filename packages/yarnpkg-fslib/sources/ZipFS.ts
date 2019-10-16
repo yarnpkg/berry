@@ -7,7 +7,7 @@ import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} f
 import {FakeFS, WriteFileOptions}                                              from './FakeFS';
 import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
 import {NodeFS}                                                                from './NodeFS';
-import {FSPath, PortablePath, ppath, Filename}                                 from './path';
+import {FSPath, PortablePath, npath, ppath, Filename}                          from './path';
 
 const S_IFMT = 0o170000;
 
@@ -165,7 +165,7 @@ export class ZipFS extends BasePortableFakeFS {
         flags |= libzip.ZIP_RDONLY;
 
       if (typeof source === `string`) {
-        this.zip = libzip.open(NodeFS.fromPortablePath(source), flags, errPtr);
+        this.zip = libzip.open(npath.fromPortablePath(source), flags, errPtr);
       } else {
         const lzSource = this.allocateUnattachedSource(source);
 

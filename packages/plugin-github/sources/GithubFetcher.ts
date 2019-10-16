@@ -1,10 +1,10 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions}      from '@yarnpkg/core';
-import {Locator, MessageName}                            from '@yarnpkg/core';
-import {httpUtils, scriptUtils, structUtils, tgzUtils}   from '@yarnpkg/core';
-import {PortablePath, CwdFS, ppath, xfs, toPortablePath} from '@yarnpkg/fslib';
-import {tmpNameSync}                                     from 'tmp';
+import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
+import {Locator, MessageName}                          from '@yarnpkg/core';
+import {httpUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
+import {PortablePath, CwdFS, npath, ppath, xfs}        from '@yarnpkg/fslib';
+import {tmpNameSync}                                   from 'tmp';
 
-import * as githubUtils                                  from './githubUtils';
+import * as githubUtils                                from './githubUtils';
 
 export class GithubFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -43,7 +43,7 @@ export class GithubFetcher implements Fetcher {
       configuration: opts.project.configuration,
     });
 
-    const extractPath = toPortablePath(tmpNameSync());
+    const extractPath = npath.toPortablePath(tmpNameSync());
     const extractTarget = new CwdFS(extractPath);
 
     await tgzUtils.extractArchiveTo(sourceBuffer, extractTarget, {

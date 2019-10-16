@@ -23,11 +23,11 @@ export class NodeModulesFS extends ProxiedFS<NativePath, PortablePath> {
   }
 
   protected mapFromBase(path: PortablePath) {
-    return NodeFS.fromPortablePath(path);
+    return npath.fromPortablePath(path);
   }
 
   protected mapToBase(path: NativePath) {
-    return NodeFS.toPortablePath(path);
+    return npath.toPortablePath(path);
   }
 }
 
@@ -47,7 +47,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     this.pathResolver = new NodePathResolver(pnp);
     this.watchManager = new WatchManager();
 
-    const pnpRootPath = NodeFS.toPortablePath(pnp.getPackageInformation(pnp.topLevel)!.packageLocation);
+    const pnpRootPath = npath.toPortablePath(pnp.getPackageInformation(pnp.topLevel)!.packageLocation);
     this.watchPnpFile(pnpRootPath);
   }
 

@@ -1,4 +1,4 @@
-import {NodeFS}    from '@yarnpkg/fslib';
+import {npath}     from '@yarnpkg/fslib';
 import {delimiter} from 'path';
 
 import {URL}       from 'url';
@@ -24,8 +24,8 @@ const mte = generatePkgDriver({
     for (const key of Object.keys(config))
       rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = config[key];
 
-    const nativePath = NodeFS.fromPortablePath(path);
-    const tempHomeFolder = NodeFS.fromPortablePath(await createTemporaryFolder());
+    const nativePath = npath.fromPortablePath(path);
+    const tempHomeFolder = npath.fromPortablePath(await createTemporaryFolder());
 
     const cwdArgs = typeof projectFolder !== `undefined`
       ? [projectFolder]

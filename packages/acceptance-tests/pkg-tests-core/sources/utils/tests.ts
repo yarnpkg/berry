@@ -1,4 +1,4 @@
-import {NodeFS, toFilename}              from '@yarnpkg/fslib';
+import {npath, toFilename}               from '@yarnpkg/fslib';
 import crypto                            from 'crypto';
 import {IncomingMessage, ServerResponse} from 'http';
 import http                              from 'http';
@@ -50,7 +50,7 @@ export const getPackageRegistry = (): Promise<PackageRegistry> => {
 
   return (packageRegistryPromise = (async () => {
     const packageRegistry = new Map();
-    for (const packageFile of await fsUtils.walk(NodeFS.toPortablePath(`${require(`pkg-tests-fixtures`)}/packages`), {
+    for (const packageFile of await fsUtils.walk(npath.toPortablePath(`${require(`pkg-tests-fixtures`)}/packages`), {
       filter: ['package.json'],
     })) {
       const packageJson = await fsUtils.readJson(packageFile);
@@ -88,8 +88,8 @@ export const getPackageArchiveStream = async (name: string, version: string): Pr
   if (!packageVersionEntry)
     throw new Error(`Unknown version "${version}" for package "${name}"`);
 
-  return fsUtils.packToStream(NodeFS.toPortablePath(packageVersionEntry.path), {
-    virtualPath: NodeFS.toPortablePath('/package'),
+  return fsUtils.packToStream(npath.toPortablePath(packageVersionEntry.path), {
+    virtualPath: npath.toPortablePath('/package'),
   });
 };
 
@@ -104,8 +104,8 @@ export const getPackageArchivePath = async (name: string, version: string): Prom
 
   const archivePath = await fsUtils.createTemporaryFile(toFilename(`${name}-${version}.tar.gz`));
 
-  await fsUtils.packToFile(archivePath, NodeFS.toPortablePath(packageVersionEntry.path), {
-    virtualPath: NodeFS.toPortablePath('/package'),
+  await fsUtils.packToFile(archivePath, npath.toPortablePath(packageVersionEntry.path), {
+    virtualPath: npath.toPortablePath('/package'),
   });
 
   return archivePath;
@@ -266,7 +266,7 @@ export const startPackageServer = (): Promise<string> => {
         ['Transfer-Encoding']: 'chunked',
       });
 
-      const packStream = fsUtils.packToStream(NodeFS.toPortablePath(packageVersionEntry.path), {virtualPath: NodeFS.toPortablePath('/package')});
+      const packStream = fsUtils.packToStream(npath.toPortablePath(packageVersionEntry.path), {virtualPath: npath.toPortablePath('/package')});
       packStream.pipe(response);
     },
 
@@ -504,7 +504,7 @@ export const generatePkgDriver = ({
         const registryUrl = await startPackageServer();
 
         // Writes a new package.json file into our temporary directory
-        await fsUtils.writeJson(NodeFS.toPortablePath(`${path}/package.json`), await deepResolve(packageJson));
+        await fsUtils.writeJson(npath.toPortablePath(`${path}/package.json`), await deepResolve(packageJson));
 
         const run = (...args: any[]) => {
           let callDefinition = {};

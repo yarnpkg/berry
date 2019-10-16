@@ -1,11 +1,11 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
-import {Locator, MessageName}                          from '@yarnpkg/core';
-import {execUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
-import {NodeFS, xfs, ppath, PortablePath, toFilename}  from '@yarnpkg/fslib';
-import querystring                                     from 'querystring';
-import {dirSync, tmpNameSync}                          from 'tmp';
+import {Fetcher, FetchOptions, MinimalFetchOptions}          from '@yarnpkg/core';
+import {Locator, MessageName}                                from '@yarnpkg/core';
+import {execUtils, scriptUtils, structUtils, tgzUtils}       from '@yarnpkg/core';
+import {NodeFS, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import querystring                                           from 'querystring';
+import {dirSync, tmpNameSync}                                from 'tmp';
 
-import {PROTOCOL}                                      from './constants';
+import {PROTOCOL}                                            from './constants';
 
 export class ExecFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -86,10 +86,10 @@ export class ExecFetcher implements Fetcher {
   }
 
   private async generatePackage(locator: Locator, generatorPath: PortablePath, opts: FetchOptions) {
-    const cwd = NodeFS.toPortablePath(dirSync().name);
+    const cwd = npath.toPortablePath(dirSync().name);
     const env = await scriptUtils.makeScriptEnv({project: opts.project});
 
-    const logFile = NodeFS.toPortablePath(tmpNameSync({
+    const logFile = npath.toPortablePath(tmpNameSync({
       prefix: `buildfile-`,
       postfix: `.log`,
     }));
@@ -101,7 +101,7 @@ export class ExecFetcher implements Fetcher {
     stdout.write(`# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`);
     stdout.write(`\n`);
 
-    const {code} = await execUtils.pipevp(process.execPath, [NodeFS.fromPortablePath(generatorPath), structUtils.stringifyIdent(locator)], {cwd, env, stdin, stdout, stderr});
+    const {code} = await execUtils.pipevp(process.execPath, [npath.fromPortablePath(generatorPath), structUtils.stringifyIdent(locator)], {cwd, env, stdin, stdout, stderr});
     if (code !== 0)
       throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${logFile})`);
 
