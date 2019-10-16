@@ -1,4 +1,4 @@
-import {npath} from '../sources/paths';
+import {npath} from '../sources/path';
 
 describe(`Portable paths`, () => {
   for (const platform of [`darwin`, `win32`]) {
