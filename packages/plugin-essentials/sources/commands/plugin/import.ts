@@ -1,7 +1,7 @@
 import {BaseCommand}                                                    from '@yarnpkg/cli';
 import {Configuration, MessageName, Project, ReportError, StreamReport} from '@yarnpkg/core';
 import {httpUtils, structUtils}                                         from '@yarnpkg/core';
-import {xfs, NodeFS, PortablePath, ppath}                               from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, xfs}                                from '@yarnpkg/fslib';
 import {Command}                                                        from 'clipanion';
 import {runInNewContext}                                                from 'vm';
 
@@ -46,7 +46,7 @@ export default class PluginDlCommand extends BaseCommand {
       const {project} = await Project.find(configuration, this.context.cwd);
 
       const name = this.name!;
-      const candidatePath = ppath.resolve(this.context.cwd, NodeFS.toPortablePath(name));
+      const candidatePath = ppath.resolve(this.context.cwd, npath.toPortablePath(name));
 
       let pluginBuffer;
 

@@ -1,7 +1,7 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName, DependencyMeta} from '@yarnpkg/core';
 import {FetchResult, Descriptor, Ident, Locator, Package, BuildDirective, BuildType}                         from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                                              from '@yarnpkg/core';
-import {CwdFS, FakeFS, NodeFS, xfs, PortablePath, ppath, toFilename}                                         from '@yarnpkg/fslib';
+import {CwdFS, FakeFS, PortablePath, npath, ppath, toFilename, xfs}                                          from '@yarnpkg/fslib';
 import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@yarnpkg/pnp';
 import {UsageError}                                                                                          from 'clipanion';
 
@@ -27,7 +27,7 @@ export class PnpLinker implements Linker {
     if (!xfs.existsSync(pnpPath))
       throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
 
-    const physicalPath = NodeFS.fromPortablePath(pnpPath);
+    const physicalPath = npath.fromPortablePath(pnpPath);
     const pnpFile = miscUtils.dynamicRequire(physicalPath);
     delete require.cache[physicalPath];
 
@@ -37,7 +37,7 @@ export class PnpLinker implements Linker {
     if (!packageInformation)
       throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed PnP map - running an install might help`);
 
-    return NodeFS.toPortablePath(packageInformation.packageLocation);
+    return npath.toPortablePath(packageInformation.packageLocation);
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
@@ -45,11 +45,11 @@ export class PnpLinker implements Linker {
     if (!xfs.existsSync(pnpPath))
       throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
 
-    const physicalPath = NodeFS.fromPortablePath(pnpPath);
+    const physicalPath = npath.fromPortablePath(pnpPath);
     const pnpFile = miscUtils.dynamicRequire(physicalPath);
     delete require.cache[physicalPath];
 
-    const locator = pnpFile.findPackageLocator(NodeFS.fromPortablePath(location));
+    const locator = pnpFile.findPackageLocator(npath.fromPortablePath(location));
     if (!locator)
       return null;
 

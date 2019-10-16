@@ -1,4 +1,4 @@
-const {NodeFS, xfs} = require(`@yarnpkg/fslib`);
+const {npath, xfs} = require(`@yarnpkg/fslib`);
 const {
   fs: {writeFile, writeJson},
 } = require('pkg-tests-core');
@@ -80,9 +80,9 @@ describe(`Plug'n'Play API`, () => {
           await run(`install`);
 
           await expect(
-            source(`require('pnpapi').resolveRequest('pnpapi', ${JSON.stringify(`${NodeFS.fromPortablePath(path)}/`)})`),
+            source(`require('pnpapi').resolveRequest('pnpapi', ${JSON.stringify(`${npath.fromPortablePath(path)}/`)})`),
           ).resolves.toEqual(
-            NodeFS.fromPortablePath(`${path}/.pnp.js`),
+            npath.fromPortablePath(`${path}/.pnp.js`),
           );
         }),
       );
@@ -93,7 +93,7 @@ describe(`Plug'n'Play API`, () => {
           await run(`install`);
 
           await expect(
-            source(`require('pnpapi').resolveRequest('fs', ${JSON.stringify(`${NodeFS.fromPortablePath(path)}/`)})`)
+            source(`require('pnpapi').resolveRequest('fs', ${JSON.stringify(`${npath.fromPortablePath(path)}/`)})`)
           ).resolves.toEqual(
             null,
           );
@@ -119,9 +119,9 @@ describe(`Plug'n'Play API`, () => {
             await run(`install`);
 
             await expect(
-              source(`require('pnpapi').resolveRequest('fs', ${JSON.stringify(`${NodeFS.fromPortablePath(path)}/`)}, {considerBuiltins: false})`),
+              source(`require('pnpapi').resolveRequest('fs', ${JSON.stringify(`${npath.fromPortablePath(path)}/`)}, {considerBuiltins: false})`),
             ).resolves.toEqual(
-              NodeFS.fromPortablePath(`${path}/fs/index.js`),
+              npath.fromPortablePath(`${path}/fs/index.js`),
             );
           },
         ),
@@ -137,9 +137,9 @@ describe(`Plug'n'Play API`, () => {
           await run(`install`);
 
           await expect(
-            source(`require('pnpapi').resolveRequest('./foo', ${JSON.stringify(`${NodeFS.fromPortablePath(path)}/`)}, {extensions: ['.bar']})`),
+            source(`require('pnpapi').resolveRequest('./foo', ${JSON.stringify(`${npath.fromPortablePath(path)}/`)}, {extensions: ['.bar']})`),
           ).resolves.toEqual(
-            NodeFS.fromPortablePath(`${path}/foo.bar`),
+            npath.fromPortablePath(`${path}/foo.bar`),
           );
         }),
       );

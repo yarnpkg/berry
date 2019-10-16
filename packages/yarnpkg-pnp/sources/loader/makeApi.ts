@@ -1,6 +1,6 @@
 /// <reference path="../../types/module/index.d.ts"/>
 
-import {FakeFS, NodeFS, PortablePath, NativePath, Path}           from '@yarnpkg/fslib';
+import {FakeFS, NativePath, Path, PortablePath, npath}            from '@yarnpkg/fslib';
 import {ppath, toFilename}                                        from '@yarnpkg/fslib';
 import Module                                                     from 'module';
 
@@ -272,7 +272,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function normalizePath(p: Path) {
-    return NodeFS.toPortablePath(p);
+    return npath.toPortablePath(p);
   }
 
   /**
@@ -287,7 +287,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // would give us the paths to give to _resolveFilename), we can as well not use
     // the {paths} option at all, since it internally makes _resolveFilename create another
     // fake module anyway.
-    return Module._resolveFilename(request, makeFakeModule(NodeFS.fromPortablePath(issuer)), false, {plugnplay: false});
+    return Module._resolveFilename(request, makeFakeModule(npath.fromPortablePath(issuer)), false, {plugnplay: false});
   }
 
   /**
@@ -395,7 +395,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
 
     if (request === `pnpapi`)
-      return NodeFS.toPortablePath(opts.pnpapiResolution);
+      return npath.toPortablePath(opts.pnpapiResolution);
 
     // Bailout if the request is a native module
 
@@ -417,7 +417,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         );
       }
 
-      return NodeFS.toPortablePath(result);
+      return npath.toPortablePath(result);
     }
 
     let unqualifiedPath: PortablePath;
@@ -479,7 +479,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           );
         }
 
-        return NodeFS.toPortablePath(result);
+        return npath.toPortablePath(result);
       }
 
       const issuerInformation = getPackageInformationSafe(issuerLocator);
@@ -631,38 +631,38 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       if (info === null)
         return null;
 
-      const packageLocation = NodeFS.fromPortablePath(info.packageLocation);
+      const packageLocation = npath.fromPortablePath(info.packageLocation);
       const nativeInfo = {...info, packageLocation};
 
       return nativeInfo;
     },
 
     findPackageLocator: (path: string) => {
-      return findPackageLocator(NodeFS.toPortablePath(path));
+      return findPackageLocator(npath.toPortablePath(path));
     },
 
     resolveToUnqualified: maybeLog(`resolveToUnqualified`, (request: NativePath, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => {
-      const portableIssuer = issuer !== null ?  NodeFS.toPortablePath(issuer) : null;
+      const portableIssuer = issuer !== null ?  npath.toPortablePath(issuer) : null;
 
-      const resolution = resolveToUnqualified(NodeFS.toPortablePath(request), portableIssuer, opts);
+      const resolution = resolveToUnqualified(npath.toPortablePath(request), portableIssuer, opts);
       if (resolution === null)
         return null;
 
-      return NodeFS.fromPortablePath(resolution);
+      return npath.fromPortablePath(resolution);
     }),
 
     resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath: NativePath, opts?: ResolveUnqualifiedOptions) => {
-      return NodeFS.fromPortablePath(resolveUnqualified(NodeFS.toPortablePath(unqualifiedPath), opts));
+      return npath.fromPortablePath(resolveUnqualified(npath.toPortablePath(unqualifiedPath), opts));
     }),
 
     resolveRequest: maybeLog(`resolveRequest`, (request: NativePath, issuer: NativePath | null, opts?: ResolveRequestOptions) => {
-      const portableIssuer = issuer !== null ? NodeFS.toPortablePath(issuer) : null;
+      const portableIssuer = issuer !== null ? npath.toPortablePath(issuer) : null;
 
-      const resolution = resolveRequest(NodeFS.toPortablePath(request), portableIssuer, opts);
+      const resolution = resolveRequest(npath.toPortablePath(request), portableIssuer, opts);
       if (resolution === null)
         return null;
 
-      return NodeFS.fromPortablePath(resolution);
+      return npath.fromPortablePath(resolution);
     }),
   };
 }

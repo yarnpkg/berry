@@ -1,27 +1,27 @@
-import {xfs, NodeFS, PortablePath, ppath, Filename, toFilename} from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                               from '@yarnpkg/parsers';
-import camelcase                                                from 'camelcase';
-import chalk                                                    from 'chalk';
-import {UsageError}                                             from 'clipanion';
-import isCI                                                     from 'is-ci';
-import {PassThrough, Writable}                                  from 'stream';
-import supportsColor                                            from 'supports-color';
-import {tmpNameSync}                                            from 'tmp';
+import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                              from '@yarnpkg/parsers';
+import camelcase                                               from 'camelcase';
+import chalk                                                   from 'chalk';
+import {UsageError}                                            from 'clipanion';
+import isCI                                                    from 'is-ci';
+import {PassThrough, Writable}                                 from 'stream';
+import supportsColor                                           from 'supports-color';
+import {tmpNameSync}                                           from 'tmp';
 
-import {MultiFetcher}                                           from './MultiFetcher';
-import {MultiResolver}                                          from './MultiResolver';
-import {Plugin, Hooks}                                          from './Plugin';
-import {Report}                                                 from './Report';
-import {SemverResolver}                                         from './SemverResolver';
-import {TagResolver}                                            from './TagResolver';
-import {VirtualFetcher}                                         from './VirtualFetcher';
-import {VirtualResolver}                                        from './VirtualResolver';
-import {WorkspaceFetcher}                                       from './WorkspaceFetcher';
-import {WorkspaceResolver}                                      from './WorkspaceResolver';
-import * as folderUtils                                         from './folderUtils';
-import * as miscUtils                                           from './miscUtils';
-import * as nodeUtils                                           from './nodeUtils';
-import * as structUtils                                         from './structUtils';
+import {MultiFetcher}                                          from './MultiFetcher';
+import {MultiResolver}                                         from './MultiResolver';
+import {Plugin, Hooks}                                         from './Plugin';
+import {Report}                                                from './Report';
+import {SemverResolver}                                        from './SemverResolver';
+import {TagResolver}                                           from './TagResolver';
+import {VirtualFetcher}                                        from './VirtualFetcher';
+import {VirtualResolver}                                       from './VirtualResolver';
+import {WorkspaceFetcher}                                      from './WorkspaceFetcher';
+import {WorkspaceResolver}                                     from './WorkspaceResolver';
+import * as folderUtils                                        from './folderUtils';
+import * as miscUtils                                          from './miscUtils';
+import * as nodeUtils                                          from './nodeUtils';
+import * as structUtils                                        from './structUtils';
 
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});
@@ -355,7 +355,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
 
   switch (definition.type) {
     case SettingsType.ABSOLUTE_PATH:
-      return ppath.resolve(folder, NodeFS.toPortablePath(value));
+      return ppath.resolve(folder, npath.toPortablePath(value));
     case SettingsType.LOCATOR_LOOSE:
       return structUtils.parseLocator(value, false);
     case SettingsType.LOCATOR:
@@ -532,8 +532,8 @@ export class Configuration {
           continue;
 
         for (const userProvidedPath of data.plugins) {
-          const pluginPath = ppath.resolve(cwd, NodeFS.toPortablePath(userProvidedPath));
-          const {factory, name} = nodeUtils.dynamicRequire(NodeFS.fromPortablePath(pluginPath));
+          const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
+          const {factory, name} = nodeUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
 
           // Prevent plugin redefinition so that the ones declared deeper in the
           // filesystem always have precedence over the ones below.
@@ -789,7 +789,7 @@ export class Configuration {
     let stdout: Writable;
     let stderr: Writable;
 
-    const logFile = NodeFS.toPortablePath(tmpNameSync({prefix: `logfile-`, postfix: `.log`}));
+    const logFile = npath.toPortablePath(tmpNameSync({prefix: `logfile-`, postfix: `.log`}));
     const logStream = xfs.createWriteStream(logFile);
 
     if (this.get(`enableInlineBuilds`)) {

@@ -1,11 +1,11 @@
-import {BaseCommand}                                                          from '@yarnpkg/cli';
-import {WorkspaceRequiredError}                                               from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, StreamReport, execUtils}         from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, toPortablePath, xfs, fromPortablePath} from '@yarnpkg/fslib';
-import {Command}                                                              from 'clipanion';
-import {tmpdir}                                                               from 'os';
+import {BaseCommand}                                                  from '@yarnpkg/cli';
+import {WorkspaceRequiredError}                                       from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, StreamReport, execUtils} from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, xfs}                    from '@yarnpkg/fslib';
+import {Command}                                                      from 'clipanion';
+import {tmpdir}                                                       from 'os';
 
-import {setVersion}                                                           from '../version';
+import {setVersion}                                                   from '../version';
 
 const PR_REGEXP = /^[0-9]+$/;
 
@@ -18,7 +18,7 @@ function getBranchRef(branch: string) {
 }
 
 const CLONE_WORKFLOW = ({repository, branch}: {repository: string, branch: string}, target: PortablePath) => [
-  [`git`, `init`, fromPortablePath(target)],
+  [`git`, `init`, npath.fromPortablePath(target)],
   [`git`, `remote`, `add`, `origin`, repository],
   [`git`, `fetch`, `origin`, getBranchRef(branch)],
   [`git`, `reset`, `--hard`, `FETCH_HEAD`],
@@ -71,8 +71,8 @@ export default class SetVersionCommand extends BaseCommand {
       throw new WorkspaceRequiredError(this.context.cwd);
 
     const target = typeof this.installPath !== `undefined`
-      ? ppath.resolve(this.context.cwd, toPortablePath(this.installPath))
-      : ppath.resolve(toPortablePath(tmpdir()), `yarnpkg-sources` as Filename);
+      ? ppath.resolve(this.context.cwd, npath.toPortablePath(this.installPath))
+      : ppath.resolve(npath.toPortablePath(tmpdir()), `yarnpkg-sources` as Filename);
 
     const report = await StreamReport.start({
       configuration,

@@ -1,6 +1,6 @@
 import {WorkspaceRequiredError}                                                                                                      from '@yarnpkg/cli';
 import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, execUtils, structUtils, Manifest, LocatorHash} from '@yarnpkg/core';
-import {Filename, PortablePath, fromPortablePath, ppath, toPortablePath, xfs}                                                        from '@yarnpkg/fslib';
+import {Filename, PortablePath, npath, ppath, xfs}                                                        from '@yarnpkg/fslib';
 import {Command, UsageError}                                                                                                         from 'clipanion';
 import {AppContext, Box, Color, StdinContext, render}                                                                                from 'ink';
 import React, {useCallback, useContext, useEffect, useState}                                                                         from 'react';
@@ -473,16 +473,16 @@ async function fetchRoot(initialCwd: PortablePath) {
 
 async function fetchChangedFiles(root: PortablePath, {base}: {base: string}) {
   const {stdout: localStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, `${base}`], {cwd: root, strict: true});
-  const trackedFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
+  const trackedFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
 
   const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd: root, strict: true});
-  const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
+  const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
 
   return [...new Set([...trackedFiles, ...untrackedFiles].sort())];
 }
 
 async function fetchPreviousNonce(workspace: Workspace, {root, base}: {root: PortablePath, base: string}) {
-  const {code, stdout} = await execUtils.execvp(`git`, [`show`, `${base}:${fromPortablePath(ppath.relative(root, ppath.join(workspace.cwd, `package.json` as Filename)))}`], {cwd: workspace.cwd});
+  const {code, stdout} = await execUtils.execvp(`git`, [`show`, `${base}:${npath.fromPortablePath(ppath.relative(root, ppath.join(workspace.cwd, `package.json` as Filename)))}`], {cwd: workspace.cwd});
 
   if (code === 0) {
     return getNonce(Manifest.fromText(stdout));

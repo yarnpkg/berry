@@ -1,4 +1,4 @@
-const {NodeFS, ppath, xfs} = require(`@yarnpkg/fslib`);
+const {npath, ppath, xfs} = require(`@yarnpkg/fslib`);
 const cp = require(`child_process`);
 const {satisfies} = require(`semver`);
 
@@ -452,8 +452,8 @@ describe(`Plug'n'Play`, () => {
         await expect(
           source(
             `require(require.resolve('no-deps', {paths: ${JSON.stringify([
-              `${NodeFS.fromPortablePath(path)}/workspace-a`,
-              `${NodeFS.fromPortablePath(path)}/workspace-b`,
+              `${npath.fromPortablePath(path)}/workspace-a`,
+              `${npath.fromPortablePath(path)}/workspace-b`,
             ])}}))`,
           ),
         ).resolves.toMatchObject({
@@ -547,7 +547,7 @@ describe(`Plug'n'Play`, () => {
         await writeFile(`${tmp}/index.js`, `require(process.argv[2])`);
         await writeFile(`${path}/index.js`, `require('no-deps')`);
 
-        await run(`node`, `${NodeFS.fromPortablePath(tmp)}/index.js`, `${path}/index.js`);
+        await run(`node`, `${npath.fromPortablePath(tmp)}/index.js`, `${path}/index.js`);
       },
     ),
   );
@@ -1092,7 +1092,7 @@ describe(`Plug'n'Play`, () => {
         await expect(
           source(
             `JSON.parse(require('child_process').execFileSync(process.execPath, [${JSON.stringify(
-              `${NodeFS.fromPortablePath(path)}/script.js`,
+              `${npath.fromPortablePath(path)}/script.js`,
             )}]).toString())`,
           ),
         ).resolves.toMatchObject({
@@ -1117,7 +1117,7 @@ describe(`Plug'n'Play`, () => {
         await writeFile(
           `${path}/main.js`,
           `console.log(require('child_process').execFileSync(process.execPath, [${JSON.stringify(
-            `${NodeFS.fromPortablePath(path)}/sub.js`,
+            `${npath.fromPortablePath(path)}/sub.js`,
           )}]).toString())`,
         );
 
@@ -1137,7 +1137,7 @@ describe(`Plug'n'Play`, () => {
       await writeFile(`${path}/foo.js`, `console.log(42);`);
 
       await expect(
-        run(`node`, `-e`, `console.log(21);`, {env: {NODE_OPTIONS: `--require ${NodeFS.fromPortablePath(path)}/foo`}}),
+        run(`node`, `-e`, `console.log(21);`, {env: {NODE_OPTIONS: `--require ${npath.fromPortablePath(path)}/foo`}}),
       ).resolves.toMatchObject({
         // Note that '42' is present twice: the first one because Node executes Yarn, and the second one because Yarn spawns Node
         stdout: `42\n42\n21\n`,

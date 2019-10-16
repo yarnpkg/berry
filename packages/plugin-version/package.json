@@ -21,6 +21,10 @@
     "build:plugin-version": "builder build plugin"
   },
   "version": "2.0.0-rc.5",
+  "nextVersion": {
+    "semver": "2.0.0-rc.6",
+    "nonce": "2482302254186549"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

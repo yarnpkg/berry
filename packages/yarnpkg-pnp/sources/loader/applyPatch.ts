@@ -1,11 +1,11 @@
-import {FakeFS, NodeFS, PosixFS, patchFs, PortablePath} from '@yarnpkg/fslib';
-import fs                                               from 'fs';
-import Module                                           from 'module';
-import path                                             from 'path';
+import {FakeFS, PosixFS, npath, patchFs, PortablePath} from '@yarnpkg/fslib';
+import fs                                              from 'fs';
+import Module                                          from 'module';
+import path                                            from 'path';
 
-import {PackageLocator, PnpApi}                         from '../types';
+import {PackageLocator, PnpApi}                        from '../types';
 
-import {ErrorCode, makeError, getIssuerModule}          from './internalTools';
+import {ErrorCode, makeError, getIssuerModule}         from './internalTools';
 
 export type ApplyPatchOptions = {
   compatibilityMode?: boolean,
@@ -210,7 +210,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     if (!issuers) {
       const issuerModule = getIssuerModule(parent);
-      const issuer = issuerModule ? issuerModule.filename : `${NodeFS.toPortablePath(process.cwd())}/`;
+      const issuer = issuerModule ? issuerModule.filename : `${npath.toPortablePath(process.cwd())}/`;
 
       issuers = [issuer];
     }
@@ -220,7 +220,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     // We test it for an absolute Windows path and convert it to a portable path.
     // We should probably always call toPortablePath and check for this directly
     if (/^[A-Z]:.*/.test(request))
-      request = NodeFS.toPortablePath(request);
+      request = npath.toPortablePath(request);
 
     let firstError;
 

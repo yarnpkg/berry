@@ -1,13 +1,13 @@
-import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename, toPortablePath} from '@yarnpkg/fslib';
-import {xfs, ppath, toFilename}                                                from '@yarnpkg/fslib';
-import fs                                                                      from 'fs';
-import {tmpNameSync}                                                           from 'tmp';
+import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename} from '@yarnpkg/fslib';
+import {npath, ppath, toFilename, xfs}                         from '@yarnpkg/fslib';
+import fs                                                      from 'fs';
+import {tmpNameSync}                                           from 'tmp';
 
-import {Configuration}                                                         from './Configuration';
-import {MessageName, ReportError}                                              from './Report';
-import * as hashUtils                                                          from './hashUtils';
-import * as structUtils                                                        from './structUtils';
-import {LocatorHash, Locator}                                                  from './types';
+import {Configuration}                                         from './Configuration';
+import {MessageName, ReportError}                              from './Report';
+import * as hashUtils                                          from './hashUtils';
+import * as structUtils                                        from './structUtils';
+import {LocatorHash, Locator}                                  from './types';
 
 // Each time we'll bump this number the cache hashes will change, which will
 // cause all files to be fetched again. Use with caution.
@@ -146,7 +146,7 @@ export class Cache {
       if (mirrorPath === null || !xfs.existsSync(mirrorPath))
         return await loader!();
 
-      const tempPath = toPortablePath(tmpNameSync());
+      const tempPath = npath.toPortablePath(tmpNameSync());
       await xfs.copyFilePromise(mirrorPath, tempPath, fs.constants.COPYFILE_FICLONE);
       return new ZipFS(tempPath);
     };

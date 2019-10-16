@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                      from '@yarnpkg/cli';
 import {Cache, Configuration, Project, StreamReport, structUtils} from '@yarnpkg/core';
-import {NodeFS, ppath}                                            from '@yarnpkg/fslib';
+import {npath, ppath}                                             from '@yarnpkg/fslib';
 import {Command, UsageError}                                      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
@@ -44,7 +44,7 @@ export default class LinkCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
 
-    const absoluteDestination = ppath.resolve(this.context.cwd, NodeFS.toPortablePath(this.destination));
+    const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(this.destination));
 
     const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins);
     const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);

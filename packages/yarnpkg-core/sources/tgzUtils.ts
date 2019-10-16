@@ -1,6 +1,6 @@
-import {FakeFS, PortablePath, ZipFS, NodeFS, ppath} from '@yarnpkg/fslib';
-import {Parse}                                      from 'tar';
-import {tmpNameSync}                                from 'tmp';
+import {FakeFS, PortablePath, ZipFS, NodeFS, npath, ppath} from '@yarnpkg/fslib';
+import {Parse}                                             from 'tar';
+import {tmpNameSync}                                       from 'tmp';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>,
@@ -8,7 +8,7 @@ interface MakeArchiveFromDirectoryOptions {
 };
 
 export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
-  const zipFs = new ZipFS(NodeFS.toPortablePath(tmpNameSync()), {create: true});
+  const zipFs = new ZipFS(npath.toPortablePath(tmpNameSync()), {create: true});
   const target = ppath.resolve(PortablePath.root, prefixPath!);
 
   await zipFs.copyPromise(target, source, {baseFs});
@@ -22,7 +22,7 @@ interface ExtractBufferOptions {
 };
 
 export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
-  return await extractArchiveTo(tgz, new ZipFS(NodeFS.toPortablePath(tmpNameSync()), {create: true}), opts);
+  return await extractArchiveTo(tgz, new ZipFS(npath.toPortablePath(tmpNameSync()), {create: true}), opts);
 }
 
 export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buffer, targetFs: T, {stripComponents = 0, prefixPath = PortablePath.dot}: ExtractBufferOptions = {}): Promise<T> {
