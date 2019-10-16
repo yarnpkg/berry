@@ -1,4 +1,4 @@
-import {NodeFS} from '@yarnpkg/fslib';
+import {npath} from '@yarnpkg/fslib';
 
 const {
   fs: {createTemporaryFolder, readJson, writeJson},
@@ -19,7 +19,7 @@ describe(`Commands`, () => {
 
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
           resolutions: {
-            [`my-package`]: `portal:${NodeFS.toPortablePath(`${tmp}/my-package`)}`,
+            [`my-package`]: `portal:${npath.toPortablePath(`${tmp}/my-package`)}`,
           },
         });
       }),
@@ -49,7 +49,7 @@ describe(`Commands`, () => {
 
           await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
             resolutions: {
-              [`my-package`]: `portal:${NodeFS.toPortablePath(`${tmp}/my-package`)}`,
+              [`my-package`]: `portal:${npath.toPortablePath(`${tmp}/my-package`)}`,
             },
           });
         },
@@ -78,8 +78,8 @@ describe(`Commands`, () => {
 
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
           resolutions: {
-            [`workspace-a`]: `portal:${NodeFS.toPortablePath(`${tmp}/my-workspace/packages/workspace-a`)}`,
-            [`workspace-b`]: `portal:${NodeFS.toPortablePath(`${tmp}/my-workspace/packages/workspace-b`)}`,
+            [`workspace-a`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-a`)}`,
+            [`workspace-b`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-b`)}`,
           },
         });
       }),
@@ -108,7 +108,7 @@ describe(`Commands`, () => {
 
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
           resolutions: {
-            [`workspace-a`]: `portal:${NodeFS.toPortablePath(`${tmp}/my-workspace/packages/workspace-a`)}`,
+            [`workspace-a`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-a`)}`,
           },
         });
 
@@ -143,8 +143,8 @@ describe(`Commands`, () => {
 
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
           resolutions: {
-            [`workspace-a`]: `portal:${NodeFS.toPortablePath(`${tmp}/my-workspace/packages/workspace-a`)}`,
-            [`workspace-b`]: `portal:${NodeFS.toPortablePath(`${tmp}/my-workspace/packages/workspace-b`)}`,
+            [`workspace-a`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-a`)}`,
+            [`workspace-b`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-b`)}`,
           },
         });
       }),

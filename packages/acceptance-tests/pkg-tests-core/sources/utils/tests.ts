@@ -1,4 +1,4 @@
-import {npath, toFilename}               from '@yarnpkg/fslib';
+import {PortablePath, npath, toFilename} from '@yarnpkg/fslib';
 import crypto                            from 'crypto';
 import {IncomingMessage, ServerResponse} from 'http';
 import http                              from 'http';
@@ -16,14 +16,14 @@ export type PackageEntry = Map<string, {path: string, packageJson: Object}>;
 export type PackageRegistry = Map<string, PackageEntry>;
 
 interface RunDriverOptions extends Record<string, any> {
-  cwd?: string;
-  projectFolder?: string;
+  cwd?: PortablePath;
+  projectFolder?: PortablePath;
   registryUrl: string;
   env?: Record<string, string>;
 }
 
 export type PackageRunDriver = (
-  command: string,
+  path: PortablePath,
   args: Array<string>,
   opts: RunDriverOptions,
 ) => Promise<ExecResult>;

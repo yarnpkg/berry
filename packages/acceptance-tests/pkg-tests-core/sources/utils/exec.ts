@@ -1,8 +1,8 @@
-import {npath} from '@yarnpkg/fslib';
-import cp      from 'child_process';
+import {PortablePath, npath} from '@yarnpkg/fslib';
+import cp                    from 'child_process';
 
 interface Options {
-  cwd: string;
+  cwd: PortablePath;
   env?: Record<string, string>;
 }
 
