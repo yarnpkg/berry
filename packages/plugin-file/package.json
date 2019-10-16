@@ -3,14 +3,10 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/core": "workspace:2.0.0-rc.9",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.5"
+    "@yarnpkg/core": "workspace:2.0.0-rc.10",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.6"
   },
-  "version": "2.0.0-rc.2",
-  "nextVersion": {
-    "semver": "2.0.0-rc.3",
-    "nonce": "1092319637125435"
-  },
+  "version": "2.0.0-rc.3",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

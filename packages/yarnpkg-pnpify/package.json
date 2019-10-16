@@ -8,7 +8,7 @@
   "bin": "./sources/boot-cli-dev.js",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.5",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.6",
     "cross-spawn": "^6.0.5",
     "json5": "^2.1.0"
   },
