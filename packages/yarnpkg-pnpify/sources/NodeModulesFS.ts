@@ -95,6 +95,20 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     }
   }
 
+  private resolveDirOrFilePath(p: PortablePath): PortablePath;
+  private resolveDirOrFilePath(p: FSPath<PortablePath>): FSPath<PortablePath>;
+  private resolveDirOrFilePath(p: FSPath<PortablePath>): FSPath<PortablePath> {
+    if (typeof p === `number`)
+      return p;
+
+    const pnpPath = this.resolvePath(p);
+    if (!pnpPath.resolvedPath) {
+      throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, stat '${p}'`);
+    } else {
+      return pnpPath.statPath || pnpPath.resolvedPath;
+    }
+  }
+
   private resolveLink(p: PortablePath, op: string, onSymlink: (stats: fs.Stats, targetPath: PortablePath) => any, onRealPath: (targetPath: PortablePath) => any) {
     const pnpPath = this.resolvePath(p);
     if (!pnpPath.resolvedPath) {
@@ -127,15 +141,6 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   private static createFsError(code: string, message: string) {
     return Object.assign(new Error(`${code}: ${message}`), {code});
-  }
-
-  private resolveDirOrFilePath(p: PortablePath): PortablePath {
-    const pnpPath = this.resolvePath(p);
-    if (!pnpPath.resolvedPath) {
-      throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, stat '${p}'`);
-    } else {
-      return pnpPath.statPath || pnpPath.resolvedPath;
-    }
   }
 
   getRealPath() {
