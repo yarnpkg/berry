@@ -22,7 +22,7 @@ const nodeFs = new NodeFS(localFs);
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
 const defaultPnpapiResolution = path.resolve(__dirname, __filename);
 
-let defaultFsLayer: FakeFS<PortablePath> = new ZipOpenFS({baseFs: nodeFs});
+let defaultFsLayer: FakeFS<PortablePath> = new ZipOpenFS({baseFs: nodeFs, readOnlyArchives: true});
 for (const virtualRoot of defaultRuntimeState.virtualRoots)
   defaultFsLayer = new VirtualFS(virtualRoot, {baseFs: defaultFsLayer});
 
