@@ -24,11 +24,11 @@ The standard bundle is built using the following command from anywhere in the re
 $> yarn build:cli
 ```
 
-Running this command will generate a file in `packages/berry-cli/bundles/berry.js`, and starting from now any Yarn command you'll run in this repository will always use your local build. In case it inadvertently becomes corrupted, just remove this file and run `build:cli` again to get a fresh one.
+Running this command will generate a file in `packages/yarnpkg-cli/bundles/berry.js`, and starting from now any Yarn command you'll run in this repository will always use your local build. In case it inadvertently becomes corrupted, just remove this file and run `build:cli` again to get a fresh one.
 
 ## Working on plugins
 
-The standard bundle uses a predefined set of plugins defined in [`packages/berry-cli/package.json`](https://github.com/yarnpkg/berry/blob/master/packages/berry-cli/package.json#L43). If your PR aims to add a new plugin to the standard build you'll need to add it there (note that this decision should be left to the core maintainers - please don't modify this setting yourself).
+The standard bundle uses a predefined set of plugins defined in [`packages/yarnpkg-cli/package.json`](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-cli/package.json#L64). If your PR aims to add a new plugin to the standard build you'll need to add it there (note that this decision should be left to the core maintainers - please don't modify this setting yourself).
 
 For development purposes, you can build your plugin as part of your own local bundle by using the `--plugin` option in the command line:
 
