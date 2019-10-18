@@ -22,6 +22,9 @@ export default class BuildBundleCommand extends Command {
   @Command.Array(`--plugin`)
   plugins: Array<string> = [];
 
+  @Command.Boolean(`--no-minify`)
+  noMinify: boolean = false;
+
   static usage = Command.Usage({
     description: `build the local bundle`,
   });
@@ -38,6 +41,10 @@ export default class BuildBundleCommand extends Command {
       entry: `./sources/cli.ts`,
 
       bail: true,
+
+      ...!this.noMinify && {
+        mode: `production`,
+      },
 
       output: {
         filename: path.basename(output),
