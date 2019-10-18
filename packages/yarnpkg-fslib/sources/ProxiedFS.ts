@@ -1,6 +1,6 @@
-import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS} from './FakeFS';
-import {WriteFileOptions, WatchCallback, WatchOptions, Watcher}    from './FakeFS';
-import {FSPath, Path}                                              from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS}            from './FakeFS';
+import {MkdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher} from './FakeFS';
+import {FSPath, Path}                                                         from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
   protected abstract readonly baseFs: FakeFS<IP>;
@@ -171,12 +171,12 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.utimesSync(this.mapToBase(p), atime, mtime);
   }
 
-  mkdirPromise(p: P) {
-    return this.baseFs.mkdirPromise(this.mapToBase(p));
+  mkdirPromise(p: P, opts?: MkdirOptions) {
+    return this.baseFs.mkdirPromise(this.mapToBase(p), opts);
   }
 
-  mkdirSync(p: P) {
-    return this.baseFs.mkdirSync(this.mapToBase(p));
+  mkdirSync(p: P, opts?: MkdirOptions) {
+    return this.baseFs.mkdirSync(this.mapToBase(p), opts);
   }
 
   rmdirPromise(p: P) {

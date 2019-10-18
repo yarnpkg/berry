@@ -1,9 +1,9 @@
-import fs, {Stats}                                         from 'fs';
+import fs, {Stats}                                          from 'fs';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions} from './FakeFS';
-import {BasePortableFakeFS, WriteFileOptions}              from './FakeFS';
-import {WatchOptions, WatchCallback, Watcher}              from './FakeFS';
-import {FSPath, PortablePath, Filename, npath}             from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions}  from './FakeFS';
+import {BasePortableFakeFS, WriteFileOptions}               from './FakeFS';
+import {MkdirOptions, WatchOptions, WatchCallback, Watcher} from './FakeFS';
+import {FSPath, PortablePath, Filename, npath}              from './path';
 
 export class NodeFS extends BasePortableFakeFS {
   private readonly realFs: typeof fs;
@@ -228,14 +228,14 @@ export class NodeFS extends BasePortableFakeFS {
     this.realFs.utimesSync(npath.fromPortablePath(p), atime, mtime);
   }
 
-  async mkdirPromise(p: PortablePath) {
+  async mkdirPromise(p: PortablePath, opts?: MkdirOptions) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.mkdir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      this.realFs.mkdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
     });
   }
 
-  mkdirSync(p: PortablePath) {
-    return this.realFs.mkdirSync(npath.fromPortablePath(p));
+  mkdirSync(p: PortablePath, opts?: MkdirOptions) {
+    return this.realFs.mkdirSync(npath.fromPortablePath(p), opts);
   }
 
   async rmdirPromise(p: PortablePath) {
