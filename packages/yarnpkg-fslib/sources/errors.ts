@@ -33,3 +33,7 @@ export function EISDIR(reason: string) {
 export function EEXIST(reason: string) {
   return makeError(`EEXIST`, `file already exists, ${reason}`);
 }
+
+export function EROFS(reason: string) {
+  return makeError(`EROFS`, `read-only filesyste, ${reason}`);
+}

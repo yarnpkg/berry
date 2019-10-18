@@ -119,6 +119,7 @@ export class ZipFS extends BasePortableFakeFS {
   private nextFd: number = 0;
 
   private ready = false;
+  private readOnly = false;
 
   constructor(p: PortablePath, opts?: ZipPathOptions);
   constructor(data: Buffer, opts?: ZipBufferOptions);
@@ -162,8 +163,11 @@ export class ZipFS extends BasePortableFakeFS {
 
       if (typeof source === `string` && pathOptions.create)
         flags |= libzip.ZIP_CREATE | libzip.ZIP_TRUNCATE;
-      if (opts.readOnly)
+
+      if (opts.readOnly) {
         flags |= libzip.ZIP_RDONLY;
+        this.readOnly = true;
+      }
 
       if (typeof source === `string`) {
         this.zip = libzip.open(npath.fromPortablePath(source), flags, errPtr);
@@ -227,6 +231,9 @@ export class ZipFS extends BasePortableFakeFS {
     if (!this.ready)
       throw errors.EBUSY(`archive closed, close`);
 
+    if (this.readOnly)
+      return this.discardAndClose();
+
     const previousMod = this.baseFs.existsSync(this.path)
       ? this.baseFs.statSync(this.path).mode & 0o777
       : null;
@@ -247,6 +254,9 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   discardAndClose() {
+    if (!this.ready)
+      throw errors.EBUSY(`archive closed, close`);
+
     libzip.discard(this.zip);
 
     this.ready = false;
@@ -348,6 +358,9 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   createWriteStream(p: PortablePath | null, {encoding}: CreateWriteStreamOptions = {}): WriteStream {
+    if (this.readOnly)
+      throw errors.EROFS(`open '${p}'`);
+
     if (p === null)
       throw new Error(`Unimplemented`);
 
@@ -684,6 +697,9 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   chmodSync(p: PortablePath, mask: number) {
+    if (this.readOnly)
+      throw errors.EROFS(`chmod '${p}'`);
+
     const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
 
     // We silently ignore chmod requests for directories
@@ -716,6 +732,9 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   copyFileSync(sourceP: PortablePath, destP: PortablePath, flags: number = 0) {
+    if (this.readOnly)
+      throw errors.EROFS(`copyfile '${sourceP} -> '${destP}'`);
+
     if ((flags & constants.COPYFILE_FICLONE_FORCE) !== 0)
       throw errors.ENOSYS(`unsupported clone operation`, `copyfile '${sourceP}' -> ${destP}'`);
 
@@ -744,6 +763,9 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   appendFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts: WriteFileOptions = {}) {
+    if (this.readOnly)
+      throw errors.EROFS(`open '${p}'`);
+
     if (typeof opts === `undefined`)
       opts = {flag: `a`};
     else if (typeof opts === `string`)
@@ -761,6 +783,9 @@ export class ZipFS extends BasePortableFakeFS {
   writeFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     if (typeof p !== `string`)
       throw errors.EBADF(`read`);
+
+    if (this.readOnly)
+      throw errors.EROFS(`open '${p}'`);
 
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
     if (this.listings.has(resolvedP))
@@ -799,6 +824,9 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   utimesSync(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+    if (this.readOnly)
+      throw errors.EROFS(`utimes '${p}'`);
+
     const resolvedP = this.resolveFilename(`chmod '${p}'`, p);
 
     return this.utimesImpl(resolvedP, mtime);
@@ -809,6 +837,9 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   lutimesSync(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+    if (this.readOnly)
+      throw errors.EROFS(`lutimes '${p}'`);
+
     const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
 
     return this.utimesImpl(resolvedP, mtime);
@@ -834,8 +865,11 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   mkdirSync(p: PortablePath, opts?: MkdirOptions) {
-    if (opts?.recursive)
+    if (opts && opts.recursive)
       return this.mkdirpSync(p, {chmod: opts.mode});
+
+    if (this.readOnly)
+      throw errors.EROFS(`mkdir '${p}'`);
 
     const resolvedP = this.resolveFilename(`mkdir '${p}'`, p);
 
@@ -869,6 +903,9 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   symlinkSync(target: PortablePath, p: PortablePath) {
+    if (this.readOnly)
+      throw errors.EROFS(`symlink '${target}' -> '${p}'`);
+
     const resolvedP = this.resolveFilename(`symlink '${target}' -> '${p}'`, p);
 
     if (this.listings.has(resolvedP))
