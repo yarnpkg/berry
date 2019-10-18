@@ -742,15 +742,21 @@ export class ZipOpenFS extends BasePortableFakeFS {
   }
 
   private getZipSync<T>(p: PortablePath, accept: (zipFs: ZipFS) => T) {
+    const getZipOptions = () => ({
+      baseFs: this.baseFs,
+      readOnly: this.readOnlyArchives,
+      stats: this.baseFs.statSync(p),
+    });
+
     if (this.zipInstances) {
       let zipFs = this.zipInstances.get(p);
 
       if (!zipFs)
-        this.zipInstances.set(p, zipFs = new ZipFS(p, {baseFs: this.baseFs}));
+        this.zipInstances.set(p, zipFs = new ZipFS(p, getZipOptions()));
 
       return accept(zipFs);
     } else {
-      const zipFs = new ZipFS(p, {baseFs: this.baseFs});
+      const zipFs = new ZipFS(p, getZipOptions());
 
       try {
         return accept(zipFs);

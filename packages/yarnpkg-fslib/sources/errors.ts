@@ -1,4 +1,4 @@
-function makeError(message: string, code: string) {
+function makeError(code: string, message: string) {
   return Object.assign(new Error(`${code}: ${message}`), {code});
 }
 
@@ -35,5 +35,5 @@ export function EEXIST(reason: string) {
 }
 
 export function EROFS(reason: string) {
-  return makeError(`EROFS`, `read-only filesyste, ${reason}`);
+  return makeError(`EROFS`, `read-only filesystem, ${reason}`);
 }
