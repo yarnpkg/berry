@@ -12,6 +12,7 @@ const ZIP_FD = 0x80000000;
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>,
   filter?: RegExp | null,
+  readOnlyArchives?: boolean,
   useCache?: boolean,
 };
 
@@ -42,11 +43,12 @@ export class ZipOpenFS extends BasePortableFakeFS {
   private nextFd = 3;
 
   private readonly filter?: RegExp | null;
+  private readonly readOnlyArchives?: boolean;
 
   private isZip: Set<string> = new Set();
   private notZip: Set<string> = new Set();
 
-  constructor({baseFs = new NodeFS(), filter = null, useCache = true}: ZipOpenFSOptions = {}) {
+  constructor({baseFs = new NodeFS(), filter = null, readOnlyArchives = false, useCache = true}: ZipOpenFSOptions = {}) {
     super();
 
     this.baseFs = baseFs;
@@ -54,6 +56,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     this.zipInstances = useCache ? new Map() : null;
 
     this.filter = filter;
+    this.readOnlyArchives = readOnlyArchives;
 
     this.isZip = new Set();
     this.notZip = new Set();
@@ -714,15 +717,21 @@ export class ZipOpenFS extends BasePortableFakeFS {
   }
 
   private async getZipPromise<T>(p: PortablePath, accept: (zipFs: ZipFS) => Promise<T>) {
+    const getZipOptions = async () => ({
+      baseFs: this.baseFs,
+      readOnly: this.readOnlyArchives,
+      stats: await this.baseFs.statPromise(p),
+    });
+
     if (this.zipInstances) {
       let zipFs = this.zipInstances.get(p);
 
       if (!zipFs)
-        this.zipInstances.set(p, zipFs = new ZipFS(p, {baseFs: this.baseFs, stats: await this.baseFs.statPromise(p)}));
+        this.zipInstances.set(p, zipFs = new ZipFS(p, await getZipOptions()));
 
       return await accept(zipFs);
     } else {
-      const zipFs = new ZipFS(p, {baseFs: this.baseFs, stats: await this.baseFs.statPromise(p)});
+      const zipFs = new ZipFS(p, await getZipOptions());
 
       try {
         return await accept(zipFs);
