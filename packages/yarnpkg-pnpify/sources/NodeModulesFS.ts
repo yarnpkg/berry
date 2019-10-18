@@ -129,20 +129,6 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     return Object.assign(new Error(`${code}: ${message}`), {code});
   }
 
-  private throwIfPathReadonly(op: string, p: PortablePath): PortablePath;
-  private throwIfPathReadonly(op: string, p: FSPath<PortablePath>): FSPath<PortablePath>;
-  private throwIfPathReadonly(op: string, p: FSPath<PortablePath>): FSPath<PortablePath> {
-    if (typeof p === `number`)
-      return p;
-
-    const pnpPath = this.resolvePath(p);
-    if (pnpPath.resolvedPath !== pnpPath.fullOriginalPath) {
-      throw PortableNodeModulesFs.createFsError('EPERM', `operation not permitted, ${op} '${p}'`);
-    } else {
-      return p;
-    }
-  }
-
   private resolveDirOrFilePath(p: PortablePath): PortablePath {
     const pnpPath = this.resolvePath(p);
     if (!pnpPath.resolvedPath) {
@@ -205,7 +191,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   }
 
   createWriteStream(p: PortablePath | null, opts?: CreateWriteStreamOptions) {
-    return this.baseFs.createWriteStream(p !== null ? this.throwIfPathReadonly('createWriteStream', p) : p, opts);
+    return this.baseFs.createWriteStream(p !== null ? p : p, opts);
   }
 
   async realpathPromise(p: PortablePath) {
@@ -275,51 +261,51 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   }
 
   async chmodPromise(p: PortablePath, mask: number) {
-    return await this.baseFs.chmodPromise(this.throwIfPathReadonly('chmod', p), mask);
+    return await this.baseFs.chmodPromise(p, mask);
   }
 
   chmodSync(p: PortablePath, mask: number) {
-    return this.baseFs.chmodSync(this.throwIfPathReadonly('chmodSync', p), mask);
+    return this.baseFs.chmodSync(p, mask);
   }
 
   async renamePromise(oldP: PortablePath, newP: PortablePath) {
-    return await this.baseFs.renamePromise(this.throwIfPathReadonly('rename', oldP), this.throwIfPathReadonly('rename', newP));
+    return await this.baseFs.renamePromise(oldP, newP);
   }
 
   renameSync(oldP: PortablePath, newP: PortablePath) {
-    return this.baseFs.renameSync(this.throwIfPathReadonly('renameSync', oldP), this.throwIfPathReadonly('renameSync', newP));
+    return this.baseFs.renameSync(oldP, newP);
   }
 
   async copyFilePromise(sourceP: PortablePath, destP: PortablePath, flags?: number) {
-    return await this.baseFs.copyFilePromise(this.resolveFilePath(sourceP), this.throwIfPathReadonly('copyFile', destP), flags);
+    return await this.baseFs.copyFilePromise(this.resolveFilePath(sourceP), destP, flags);
   }
 
   copyFileSync(sourceP: PortablePath, destP: PortablePath, flags?: number) {
-    return this.baseFs.copyFileSync(this.resolveFilePath(sourceP), this.throwIfPathReadonly('copyFileSync', destP), flags);
+    return this.baseFs.copyFileSync(this.resolveFilePath(sourceP), destP, flags);
   }
 
   async appendFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    return await this.baseFs.appendFilePromise(this.throwIfPathReadonly('appendFile', p), content, opts);
+    return await this.baseFs.appendFilePromise(p, content, opts);
   }
 
   appendFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    return this.baseFs.appendFileSync(this.throwIfPathReadonly('appendFileSync', p), content, opts);
+    return this.baseFs.appendFileSync(p, content, opts);
   }
 
   async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    return await this.baseFs.writeFilePromise(this.throwIfPathReadonly('writeFile', p), content, opts);
+    return await this.baseFs.writeFilePromise(p, content, opts);
   }
 
   writeFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    return this.baseFs.writeFileSync(this.throwIfPathReadonly('writeFileSync', p), content, opts);
+    return this.baseFs.writeFileSync(p, content, opts);
   }
 
   async unlinkPromise(p: PortablePath) {
-    return await this.baseFs.unlinkPromise(this.throwIfPathReadonly('unlink', p));
+    return await this.baseFs.unlinkPromise(p);
   }
 
   unlinkSync(p: PortablePath) {
-    return this.baseFs.unlinkSync(this.throwIfPathReadonly('unlinkSync', p));
+    return this.baseFs.unlinkSync(p);
   }
 
   async utimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
@@ -331,27 +317,27 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   }
 
   async mkdirPromise(p: PortablePath) {
-    return await this.baseFs.mkdirPromise(this.throwIfPathReadonly('mkdir', p));
+    return await this.baseFs.mkdirPromise(p);
   }
 
   mkdirSync(p: PortablePath) {
-    return this.baseFs.mkdirSync(this.throwIfPathReadonly('mkdirSync', p));
+    return this.baseFs.mkdirSync(p);
   }
 
   async rmdirPromise(p: PortablePath) {
-    return await this.baseFs.rmdirPromise(this.throwIfPathReadonly('rmdir', p));
+    return await this.baseFs.rmdirPromise(p);
   }
 
   rmdirSync(p: PortablePath) {
-    return this.baseFs.rmdirSync(this.throwIfPathReadonly('rmdirSync', p));
+    return this.baseFs.rmdirSync(p);
   }
 
   async symlinkPromise(target: PortablePath, p: PortablePath) {
-    return await this.baseFs.symlinkPromise(this.resolveDirOrFilePath(target), this.throwIfPathReadonly('symlink', p));
+    return await this.baseFs.symlinkPromise(this.resolveDirOrFilePath(target), p);
   }
 
   symlinkSync(target: PortablePath, p: PortablePath) {
-    return this.baseFs.symlinkSync(this.resolveDirOrFilePath(target), this.throwIfPathReadonly('symlinkSync', p));
+    return this.baseFs.symlinkSync(this.resolveDirOrFilePath(target), p);
   }
 
   readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
