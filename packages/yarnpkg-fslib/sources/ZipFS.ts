@@ -4,7 +4,7 @@ import {PassThrough}                                                           f
 import {isDate}                                                                from 'util';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
-import {FakeFS, WriteFileOptions}                                              from './FakeFS';
+import {FakeFS, MkdirOptions, WriteFileOptions}                                from './FakeFS';
 import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
 import {NodeFS}                                                                from './NodeFS';
 import * as errors                                                             from './errors';
@@ -829,11 +829,14 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  async mkdirPromise(p: PortablePath) {
-    return this.mkdirSync(p);
+  async mkdirPromise(p: PortablePath, opts?: MkdirOptions) {
+    return this.mkdirSync(p, opts);
   }
 
-  mkdirSync(p: PortablePath) {
+  mkdirSync(p: PortablePath, opts?: MkdirOptions) {
+    if (opts?.recursive)
+      return this.mkdirpSync(p, {chmod: opts.mode});
+
     const resolvedP = this.resolveFilename(`mkdir '${p}'`, p);
 
     if (this.entries.has(resolvedP) || this.listings.has(resolvedP))

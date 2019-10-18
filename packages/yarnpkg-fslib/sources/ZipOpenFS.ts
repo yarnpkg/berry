@@ -1,7 +1,7 @@
 import {constants}                                                             from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
-import {FakeFS, WriteFileOptions}                                              from './FakeFS';
+import {FakeFS, MkdirOptions, WriteFileOptions}                                from './FakeFS';
 import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
 import {NodeFS}                                                                from './NodeFS';
 import {ZipFS}                                                                 from './ZipFS';
@@ -497,19 +497,19 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async mkdirPromise(p: PortablePath) {
+  async mkdirPromise(p: PortablePath, opts?: MkdirOptions) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.mkdirPromise(p);
+      return await this.baseFs.mkdirPromise(p, opts);
     }, async (zipFs, {subPath}) => {
-      return await zipFs.mkdirPromise(subPath);
+      return await zipFs.mkdirPromise(subPath, opts);
     });
   }
 
-  mkdirSync(p: PortablePath) {
+  mkdirSync(p: PortablePath, opts?: MkdirOptions) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.mkdirSync(p);
+      return this.baseFs.mkdirSync(p, opts);
     }, (zipFs, {subPath}) => {
-      return zipFs.mkdirSync(subPath);
+      return zipFs.mkdirSync(subPath, opts);
     });
   }
 
