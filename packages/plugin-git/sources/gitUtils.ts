@@ -13,9 +13,9 @@ function makeGitEnvironment() {
 const gitPatterns = [
   /^git:/,
   /^git\+ssh:/,
-  /^https?:[^#]+\/[^#]+\.git(?:#.+)?$/,
-  /^git@[^#]+\/[^#]+\.git(?:#.+)?$/,
-  /^([a-z\d](?:[a-z\d]|-(?=[a-z\d]))+)\/([a-z\d](?:[a-z\d]|-(?=[a-z\d]))+)$/,
+  /^https?:[^#]+\/[^#]+\.git(?:#.*)?$/,
+  /^git@[^#]+\/[^#]+\.git(?:#.*)?$/,
+  /^(?:github:)?([a-z\d](?:[a-z\d]|-(?=[a-z\d]))+)\/([a-z\d](?:[a-z\d]|-(?=[a-z\d]))+)(?:#.*)?$/,
 ];
 
 /**
@@ -53,7 +53,7 @@ export function splitRepoUrl(url: string) {
   repo = repo.replace(/^git\+https:/, `https:`);
 
   // We support this as an alias to Github repositories
-  repo = repo.replace(/^(?:github:)?([a-z\d](?:[a-z\d]|-(?=[a-z\d]))+)\/([a-z\d](?:[a-z\d]|-(?=[a-z\d]))+)$/, `https://github.com/$1/$2.git`);
+  repo = repo.replace(/^(?:github:)?([a-z\d](?:[a-z\d]|-(?=[a-z\d]))+)\/([a-z\d](?:[a-z\d]|-(?=[a-z\d]))+)(#.*)?$/, `https://github.com/$1/$2.git$3`);
 
   return {
     repo,
