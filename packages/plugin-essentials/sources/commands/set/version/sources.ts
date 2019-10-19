@@ -30,7 +30,7 @@ const UPDATE_WORKFLOW = ({branch}: {branch: string}) => [
   [`git`, `clean`, `-dfx`],
 ];
 
-const BUILD_WORKFLOW = ({plugins, noMinify}: {plugins: Array<string>}) => [
+const BUILD_WORKFLOW = ({plugins, noMinify}: {noMinify: boolean, plugins: Array<string>}) => [
   [`yarn`, `build:cli`, ...new Array<string>().concat(...plugins.map(plugin => [`--plugin`, plugin])), ...noMinify ? [`--no-minify`] : [], `|`],
 ];
 
