@@ -4593,7 +4593,7 @@ __metadata:
     semver: "npm:^5.6.0"
     ts-loader: "npm:^5.3.3"
     val-loader: "npm:^1.1.1"
-    webpack: "npm:^4.39.3"
+    webpack: "npm:^4.41.2"
     webpack-merge: "npm:^4.2.1"
     webpack-sources: "npm:^1.3.0"
   peerDependencies:
@@ -6691,7 +6691,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"bluebird@npm:^3.5.0, bluebird@npm:^3.5.3":
+"bluebird@npm:^3.5.0":
   version: 3.5.3
   resolution: "bluebird@npm:3.5.3"
   checksum: 5623167816b95ebb01c9ccefae7b0f2b0a7ce3857fb2b09c362878e73b10675950e41b07eed56086d22de0eaf77c7ccb5b3049bffaaf4ca867ab4c09ab57fa1b
@@ -7137,28 +7137,6 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 3.1.0
   resolution: "bytes@npm:3.1.0"
   checksum: 4810d53e395e3b5d2cd54df0f1b4433ac01670efee10d74785625fa8ca4ce364975f152ad13408c796aa925ccab2a14423bd56c9107837ab4a114853ab988a76
-  languageName: node
-  linkType: hard
-
-"cacache@npm:^11.0.2":
-  version: 11.3.2
-  resolution: "cacache@npm:11.3.2"
-  dependencies:
-    bluebird: "npm:^3.5.3"
-    chownr: "npm:^1.1.1"
-    figgy-pudding: "npm:^3.5.1"
-    glob: "npm:^7.1.3"
-    graceful-fs: "npm:^4.1.15"
-    lru-cache: "npm:^5.1.1"
-    mississippi: "npm:^3.0.0"
-    mkdirp: "npm:^0.5.1"
-    move-concurrently: "npm:^1.0.1"
-    promise-inflight: "npm:^1.0.1"
-    rimraf: "npm:^2.6.2"
-    ssri: "npm:^6.0.1"
-    unique-filename: "npm:^1.1.1"
-    y18n: "npm:^4.0.0"
-  checksum: 422d2928d949e433c2425adb6f6724170df0d6ff24bd54bb10ac99d4cb4913ea512578aa08bd5f219011dc34550b936bd054f06238402e3b01f13e61432a22ac
   languageName: node
   linkType: hard
 
@@ -21371,13 +21349,6 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"serialize-javascript@npm:^1.4.0":
-  version: 1.6.1
-  resolution: "serialize-javascript@npm:1.6.1"
-  checksum: 078e021b649eea9fe1b237a6dcc3666fb9a59e09fb1fb28cef130093376c4cf74c96cb2290d56db0f97ab7605df3c64b168ebd0c6641e05bfa4760728027ad94
-  languageName: node
-  linkType: hard
-
 "serialize-javascript@npm:^1.7.0":
   version: 1.7.0
   resolution: "serialize-javascript@npm:1.7.0"
@@ -21827,7 +21798,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:^0.5.6, source-map-support@npm:~0.5.10, source-map-support@npm:~0.5.6":
+"source-map-support@npm:^0.5.6, source-map-support@npm:~0.5.10":
   version: 0.5.10
   resolution: "source-map-support@npm:0.5.10"
   dependencies:
@@ -22784,25 +22755,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"terser-webpack-plugin@npm:^1.1.0":
-  version: 1.2.1
-  resolution: "terser-webpack-plugin@npm:1.2.1"
-  dependencies:
-    cacache: "npm:^11.0.2"
-    find-cache-dir: "npm:^2.0.0"
-    schema-utils: "npm:^1.0.0"
-    serialize-javascript: "npm:^1.4.0"
-    source-map: "npm:^0.6.1"
-    terser: "npm:^3.8.1"
-    webpack-sources: "npm:^1.1.0"
-    worker-farm: "npm:^1.5.2"
-  peerDependencies:
-    webpack: ^4.0.0
-  checksum: 9dd27eac2f5896a21b5dacb026f0c3e6e9d045f7121679301489f7de8a9be1742cb6d99622202083c74dab58c88d9c4b0d2546ba63fbb9551e56cadc2b2db837
-  languageName: node
-  linkType: hard
-
-"terser-webpack-plugin@npm:^1.4.1":
+"terser-webpack-plugin@npm:^1.1.0, terser-webpack-plugin@npm:^1.4.1":
   version: 1.4.1
   resolution: "terser-webpack-plugin@npm:1.4.1"
   dependencies:
@@ -22834,29 +22787,16 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"terser@npm:^3.8.1":
-  version: 3.14.1
-  resolution: "terser@npm:3.14.1"
-  dependencies:
-    commander: "npm:~2.17.1"
-    source-map: "npm:~0.6.1"
-    source-map-support: "npm:~0.5.6"
-  bin:
-    terser: bin/uglifyjs
-  checksum: 80a3267aaeb4162963b10ab2461e6ea804b13f32275f0a68543920e4244cf36321a4702e8cec0017d4318ed5470c60567ba7ed09e3e11e9ed84f1ab854de2109
-  languageName: node
-  linkType: hard
-
 "terser@npm:^4.1.2":
-  version: 4.2.1
-  resolution: "terser@npm:4.2.1"
+  version: 4.3.9
+  resolution: "terser@npm:4.3.9"
   dependencies:
     commander: "npm:^2.20.0"
     source-map: "npm:~0.6.1"
     source-map-support: "npm:~0.5.12"
   bin:
-    terser: bin/uglifyjs
-  checksum: c317917a85324eb078c0786b42f04dff0781f9c4c22a4638dcb2a5d3f2465af1fe38b0b4df8dad54a35729bae37ffab9b609a235d1fe3edcb21f86355e654407
+    terser: bin/terser
+  checksum: 6006abcbf944f0637bfcfeb909eeaf53d12ee84a50bbd3189ebe4f48bdf7f833c1e69b72b098c23ef15ad27db0cef75bc728a4a9f1e28e06049747bf678aa0a2
   languageName: node
   linkType: hard
 
@@ -24507,6 +24447,39 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"webpack@npm:4.41.2, webpack@npm:^4.41.2":
+  version: 4.41.2
+  resolution: "webpack@npm:4.41.2"
+  dependencies:
+    "@webassemblyjs/ast": "npm:1.8.5"
+    "@webassemblyjs/helper-module-context": "npm:1.8.5"
+    "@webassemblyjs/wasm-edit": "npm:1.8.5"
+    "@webassemblyjs/wasm-parser": "npm:1.8.5"
+    acorn: "npm:^6.2.1"
+    ajv: "npm:^6.10.2"
+    ajv-keywords: "npm:^3.4.1"
+    chrome-trace-event: "npm:^1.0.2"
+    enhanced-resolve: "npm:^4.1.0"
+    eslint-scope: "npm:^4.0.3"
+    json-parse-better-errors: "npm:^1.0.2"
+    loader-runner: "npm:^2.4.0"
+    loader-utils: "npm:^1.2.3"
+    memory-fs: "npm:^0.4.1"
+    micromatch: "npm:^3.1.10"
+    mkdirp: "npm:^0.5.1"
+    neo-async: "npm:^2.6.1"
+    node-libs-browser: "npm:^2.2.1"
+    schema-utils: "npm:^1.0.0"
+    tapable: "npm:^1.1.3"
+    terser-webpack-plugin: "npm:^1.4.1"
+    watchpack: "npm:^1.6.0"
+    webpack-sources: "npm:^1.4.1"
+  bin:
+    webpack: ./bin/webpack.js
+  checksum: e10f929485fa86f1be501b8d9b41fc7a075f0d86553f7df2c07ea3cf8bab921af74ca12024f9f61e8a8adfe467f2785041ae7f092acfe22d33baf3d98709f26f
+  languageName: node
+  linkType: hard
+
 "websocket-driver@npm:>=0.5.1":
   version: 0.7.0
   resolution: "websocket-driver@npm:0.7.0"
@@ -24803,15 +24776,6 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 3.6.3
   resolution: "workbox-sw@npm:3.6.3"
   checksum: 6c7ea8189ce634e5c8fe99f74c24f48ae31bc5c38b1d699065555f3429a23bc03c50fb37b4c53f58531f0cf7523f99a72f80fb29fc09ec6d56429e97459b52da
-  languageName: node
-  linkType: hard
-
-"worker-farm@npm:^1.5.2":
-  version: 1.6.0
-  resolution: "worker-farm@npm:1.6.0"
-  dependencies:
-    errno: "npm:~0.1.7"
-  checksum: f2b6490f9ca607aa652b3978eb00c174084aee449cd85a0ac6a5ea3e8e9e01823c359a3607bba4bc6ed162e8c5d3d77b036503551bd7981cee1f25a8596199dc
   languageName: node
   linkType: hard
 
