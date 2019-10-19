@@ -191,7 +191,7 @@ module.exports.factory = function (require) {
           this.context.stdout.write(`${commitMessage}\n`);
         } else {
           for (const file of changeList) {
-            this.context.stdout.write(`${_yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["NodeFS"].fromPortablePath(file.path)}\n`);
+            this.context.stdout.write(`${_yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["npath"].fromPortablePath(file.path)}\n`);
           }
         }
       } else {
@@ -497,7 +497,7 @@ module.exports.factory = function (require) {
 
       const _ref4 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 7, 7));
 
-      const localPaths = changeList.map(file => _ref6.NodeFS.fromPortablePath(file.path));
+      const localPaths = changeList.map(file => _ref6.npath.fromPortablePath(file.path));
       await _ref4.execUtils.execvp(`git`, [`add`, `-N`, `--`, ...localPaths], {
         cwd,
         strict: true
@@ -513,7 +513,7 @@ module.exports.factory = function (require) {
 
       const _ref5 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 7, 7));
 
-      const localPaths = changeList.map(path => _ref7.NodeFS.fromPortablePath(path.path));
+      const localPaths = changeList.map(path => _ref7.npath.fromPortablePath(path.path));
       await _ref5.execUtils.execvp(`git`, [`reset`, `HEAD`, `--`, ...localPaths], {
         cwd,
         strict: true

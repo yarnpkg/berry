@@ -30,8 +30,8 @@ const UPDATE_WORKFLOW = ({branch}: {branch: string}) => [
   [`git`, `clean`, `-dfx`],
 ];
 
-const BUILD_WORKFLOW = ({plugins}: {plugins: Array<string>}) => [
-  [`yarn`, `build:cli`, ...new Array<string>().concat(...plugins.map(plugin => [`--plugin`, plugin])), `|`],
+const BUILD_WORKFLOW = ({plugins, noMinify}: {noMinify: boolean, plugins: Array<string>}) => [
+  [`yarn`, `build:cli`, ...new Array<string>().concat(...plugins.map(plugin => [`--plugin`, plugin])), ...noMinify ? [`--no-minify`] : [], `|`],
 ];
 
 // eslint-disable-next-line arca/no-default-export
@@ -47,6 +47,9 @@ export default class SetVersionCommand extends BaseCommand {
 
   @Command.Array(`--plugin`)
   plugins: Array<string> = [];
+
+  @Command.Boolean(`--no-minify`)
+  noMinify: boolean = false;
 
   @Command.Boolean(`-f,--force`)
   force: boolean = false;

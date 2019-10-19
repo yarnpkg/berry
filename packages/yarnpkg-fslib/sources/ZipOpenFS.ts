@@ -1,7 +1,7 @@
 import {constants}                                                             from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
-import {FakeFS, WriteFileOptions}                                              from './FakeFS';
+import {FakeFS, MkdirOptions, WriteFileOptions}                                from './FakeFS';
 import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
 import {NodeFS}                                                                from './NodeFS';
 import {ZipFS}                                                                 from './ZipFS';
@@ -12,6 +12,7 @@ const ZIP_FD = 0x80000000;
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>,
   filter?: RegExp | null,
+  readOnlyArchives?: boolean,
   useCache?: boolean,
 };
 
@@ -42,11 +43,12 @@ export class ZipOpenFS extends BasePortableFakeFS {
   private nextFd = 3;
 
   private readonly filter?: RegExp | null;
+  private readonly readOnlyArchives?: boolean;
 
   private isZip: Set<string> = new Set();
   private notZip: Set<string> = new Set();
 
-  constructor({baseFs = new NodeFS(), filter = null, useCache = true}: ZipOpenFSOptions = {}) {
+  constructor({baseFs = new NodeFS(), filter = null, readOnlyArchives = false, useCache = true}: ZipOpenFSOptions = {}) {
     super();
 
     this.baseFs = baseFs;
@@ -54,6 +56,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     this.zipInstances = useCache ? new Map() : null;
 
     this.filter = filter;
+    this.readOnlyArchives = readOnlyArchives;
 
     this.isZip = new Set();
     this.notZip = new Set();
@@ -497,19 +500,19 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async mkdirPromise(p: PortablePath) {
+  async mkdirPromise(p: PortablePath, opts?: MkdirOptions) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.mkdirPromise(p);
+      return await this.baseFs.mkdirPromise(p, opts);
     }, async (zipFs, {subPath}) => {
-      return await zipFs.mkdirPromise(subPath);
+      return await zipFs.mkdirPromise(subPath, opts);
     });
   }
 
-  mkdirSync(p: PortablePath) {
+  mkdirSync(p: PortablePath, opts?: MkdirOptions) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.mkdirSync(p);
+      return this.baseFs.mkdirSync(p, opts);
     }, (zipFs, {subPath}) => {
-      return zipFs.mkdirSync(subPath);
+      return zipFs.mkdirSync(subPath, opts);
     });
   }
 
@@ -714,15 +717,21 @@ export class ZipOpenFS extends BasePortableFakeFS {
   }
 
   private async getZipPromise<T>(p: PortablePath, accept: (zipFs: ZipFS) => Promise<T>) {
+    const getZipOptions = async () => ({
+      baseFs: this.baseFs,
+      readOnly: this.readOnlyArchives,
+      stats: await this.baseFs.statPromise(p),
+    });
+
     if (this.zipInstances) {
       let zipFs = this.zipInstances.get(p);
 
       if (!zipFs)
-        this.zipInstances.set(p, zipFs = new ZipFS(p, {baseFs: this.baseFs, stats: await this.baseFs.statPromise(p)}));
+        this.zipInstances.set(p, zipFs = new ZipFS(p, await getZipOptions()));
 
       return await accept(zipFs);
     } else {
-      const zipFs = new ZipFS(p, {baseFs: this.baseFs, stats: await this.baseFs.statPromise(p)});
+      const zipFs = new ZipFS(p, await getZipOptions());
 
       try {
         return await accept(zipFs);
@@ -733,15 +742,21 @@ export class ZipOpenFS extends BasePortableFakeFS {
   }
 
   private getZipSync<T>(p: PortablePath, accept: (zipFs: ZipFS) => T) {
+    const getZipOptions = () => ({
+      baseFs: this.baseFs,
+      readOnly: this.readOnlyArchives,
+      stats: this.baseFs.statSync(p),
+    });
+
     if (this.zipInstances) {
       let zipFs = this.zipInstances.get(p);
 
       if (!zipFs)
-        this.zipInstances.set(p, zipFs = new ZipFS(p, {baseFs: this.baseFs}));
+        this.zipInstances.set(p, zipFs = new ZipFS(p, getZipOptions()));
 
       return accept(zipFs);
     } else {
-      const zipFs = new ZipFS(p, {baseFs: this.baseFs});
+      const zipFs = new ZipFS(p, getZipOptions());
 
       try {
         return accept(zipFs);
