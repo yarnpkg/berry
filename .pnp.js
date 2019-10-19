@@ -33666,7 +33666,7 @@ function applyPatch(pnpapi, opts) {
   const originalModuleResolveFilename = external_module_default.a._resolveFilename;
 
   external_module_default.a._resolveFilename = function (request, parent, isMain, options) {
-    if (request === `pnpapi`) return request;
+    if (request === `pnpapi`) return pnpapi.resolveToUnqualified(`pnpapi`, null);
     if (!enableNativeHooks) return originalModuleResolveFilename.call(external_module_default.a, request, parent, isMain, options);
 
     if (options && options.plugnplay === false) {

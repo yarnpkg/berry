@@ -165,7 +165,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   Module._resolveFilename = function(request: string, parent: NodeModule | null, isMain: boolean, options?: {[key: string]: any}) {
     if (request === `pnpapi`)
-      return request;
+      return pnpapi.resolveToUnqualified(`pnpapi`, null)!;
 
     if (!enableNativeHooks)
       return originalModuleResolveFilename.call(Module, request, parent, isMain, options);

@@ -565,6 +565,18 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should return the path to the PnP file when calling require.resolve('pnpapi')`,
+    makeTemporaryEnv(
+      {},
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(xfs.existsSync(await source(`require.resolve('pnpapi')`))).toEqual(true);
+      },
+    ),
+  );
+
+  test(
     `it should expose the PnP version through 'process.versions.pnp'`,
     makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
