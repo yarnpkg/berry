@@ -56,6 +56,7 @@
     "@types/tar": "^4.0.0",
     "@types/tar-fs": "^1.16.1",
     "@types/tar-stream": "1.6.0",
+    "@types/terser-webpack-plugin": "^1.2.1",
     "@types/tmp": "^0.0.33",
     "@types/treeify": "^1.0.0",
     "@types/tunnel": "^0.0.0",

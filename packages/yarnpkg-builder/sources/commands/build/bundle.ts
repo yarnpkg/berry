@@ -3,6 +3,7 @@ import {Command}     from 'clipanion';
 import filesize      from 'filesize';
 import fs            from 'fs';
 import path          from 'path';
+import TerserPlugin  from 'terser-webpack-plugin';
 import webpack       from 'webpack';
 
 import {dynamicLibs} from '../../data/dynamicLibs';
@@ -44,6 +45,17 @@ export default class BuildBundleCommand extends Command {
 
       ...!this.noMinify && {
         mode: `production`,
+      },
+
+      ...!this.noMinify && {
+        optimization: {
+          minimizer: [
+            new TerserPlugin({
+              cache: false,
+              extractComments: false,
+            }),
+          ],
+        },
       },
 
       output: {
