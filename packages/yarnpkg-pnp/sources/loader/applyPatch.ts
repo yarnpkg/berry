@@ -242,14 +242,14 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   const originalFindPath = Module._findPath;
 
-  Module._findPath = function(request: string, paths: Array<string>, isMain: boolean) {
+  Module._findPath = function(request: string, paths: Array<string>|null, isMain: boolean) {
     if (request === `pnpapi`)
       return false;
 
     if (!enableNativeHooks)
       return originalFindPath.call(Module, request, paths, isMain);
 
-    for (const path of paths) {
+    for (const path of paths || []) {
       let resolution;
 
       try {
