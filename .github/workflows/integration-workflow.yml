@@ -78,7 +78,6 @@ jobs:
 
     - name: 'Build the standard bundle & plugins'
       run: |
-        set -e
         node --version
         node ./scripts/run-yarn.js build:cli
         node ./scripts/run-yarn.js build:plugin-exec
