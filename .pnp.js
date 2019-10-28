@@ -30076,7 +30076,7 @@ function fileSync(options) {
   const name = tmpNameSync(opts);
   var fd = fs.openSync(name, CREATE_FLAGS, opts.mode || FILE_MODE);
   if (opts.discardDescriptor) {
-    fs.closeSync(fd);
+    fs.closeSync(fd); 
     fd = undefined;
   }
 
@@ -33313,7 +33313,7 @@ class VirtualFS_VirtualFS extends ProxiedFS_ProxiedFS {
     const match = p.match(this.mapToBaseRegExp);
     if (!match) return p;
     if (match[3]) return this.mapToBase(ppath.join(this.target, `../`.repeat(Number(match[4])), match[5]));
-    return p;
+    return this.target;
   }
 
   mapFromBase(p) {
@@ -34592,14 +34592,13 @@ function makeApi(runtimeState, opts) {
   });
 
   function resolveVirtual(request) {
-    const initialRequest = request;
+    const initialRequest = ppath.normalize(request);
     let currentRequest = request;
     let nextRequest = request;
 
     do {
       currentRequest = nextRequest;
 
-console.log({currentRequest});
       for (const mapper of virtualMappers) {
         nextRequest = mapper.mapToBase(nextRequest);
 

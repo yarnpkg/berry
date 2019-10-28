@@ -185,6 +185,16 @@ Might very well be resolved into:
 
 This function will return `null` if the request is a builtin module, unless `considerBuiltins` is set to `false`.
 
+### `resolveVirtual(...)`
+
+```ts
+export function resolveVirtual(path: string): string | null;
+```
+
+**Important:** This function is not part of the Plug'n'Play specification and only available as a Yarn extension. In order to use it, you first must check that the `versions` object contains a valid `resolveVirtual` property.
+
+The `resolveVirtual` function will accept any path as parameter and return the same path minus any [virtual component](/advanced/lexicon#virtual-package). This makes it easier to store the location to the files in a portable way as long as you don't care about losing the dependency tree information in the process (requiring files through those paths will prevent them from accessing their peer dependencies).
+
 ## Qualified vs Unqualified Resolutions
 
 This document detailed two types of resolutions: qualified and unqualified. Although similar, they present different characteristics that make them suitable in different settings.
@@ -220,24 +230,37 @@ const pnp = require(`pnpapi`);
 const seen = new Set();
 
 const getLocatorKey = locator => JSON.stringify(locator);
-const traverseDependencyTree = (parent: PackageLocator) => {
+const traverseDependencyTree = (locator: PackageLocator) => {
   // Prevent infinite recursion when A depends on B which depends on A
-  const parentKey = getLocatorKey(parent);
-  if (seen.has(parentKey))
+  const key = getLocatorKey(locator);
+  if (seen.has(key))
     return;
 
-  const pkg = pnp.getPackageInformation(parentLocator);
+  const pkg = pnp.getPackageInformation(locator);
   console.assert(pkg, `The package information should be available`);
 
-  seen.add(parentKey);
+  seen.add(key);
 
-  for (const [name, reference] of pkg.packageDependencies)
-    if (reference !== null) // Check against unmet peer dependencies
-      traverseDependencyTree({name, reference});
+  for (const [name, reference] of pkg.packageDependencies) {
+    // Unmet peer dependencies
+    if (reference === null)
+      continue;
+    
+    // Dependency aliases ("underscore": "lodash@1.0.0")
+    if (Array.isArray(reference)) {
+      traverseDependencyTree({
+        name: reference[0],
+        reference: reference[1],
+      });
+    } else {
+      traverseDependencyTree({
+        name,
+        reference,
+      });
+    }
+  }
 
-  seen.remove(parentKey);
-
-  return depMap;
+  seen.remove(key);
 };
 
 // Iterate on each workspace

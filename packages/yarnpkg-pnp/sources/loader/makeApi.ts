@@ -627,7 +627,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   });
 
   function resolveVirtual(request: PortablePath) {
-    const initialRequest = request;
+    const initialRequest = ppath.normalize(request);
 
     let currentRequest = request;
     let nextRequest = request;
