@@ -420,11 +420,14 @@ export class ZipFS extends BasePortableFakeFS {
     return this.accessSync(p, mode);
   }
 
-  accessSync(p: PortablePath, mode?: number) {
+  accessSync(p: PortablePath, mode: number = constants.F_OK) {
     const resolvedP = this.resolveFilename(`access '${p}'`, p);
 
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) {
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`access '${p}'`);
+
+    if (this.readOnly && (mode & constants.W_OK)) {
+      throw errors.EROFS(`access '${p}'`);
     }
   }
 
