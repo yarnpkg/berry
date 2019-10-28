@@ -61,6 +61,7 @@ jobs:
         - 8
         - 10
         - 12
+        - 13
         platform:
         - ubuntu-latest
         - windows-latest

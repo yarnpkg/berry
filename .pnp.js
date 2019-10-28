@@ -33329,7 +33329,7 @@ var external_module_default = /*#__PURE__*/__webpack_require__.n(external_module
 var external_string_decoder_ = __webpack_require__(7);
 var external_string_decoder_default = /*#__PURE__*/__webpack_require__.n(external_string_decoder_);
 
-// EXTERNAL MODULE: /Users/mael.nison/berry/.yarn/cache/tmp-npm-0.0.33-bcbf65df2a-1.zip/node_modules/tmp/lib/tmp.js
+// EXTERNAL MODULE: /Users/sander/prg/js/berry/.yarn/cache/tmp-npm-0.0.33-bcbf65df2a-1.zip/node_modules/tmp/lib/tmp.js
 var tmp = __webpack_require__(4);
 var tmp_default = /*#__PURE__*/__webpack_require__.n(tmp);
 
@@ -33740,7 +33740,7 @@ function applyPatch(pnpapi, opts) {
     if (request === `pnpapi`) return false;
     if (!enableNativeHooks) return originalFindPath.call(external_module_default.a, request, paths, isMain);
 
-    for (const path of paths) {
+    for (const path of paths || []) {
       let resolution;
 
       try {
