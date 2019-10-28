@@ -45,6 +45,9 @@ export async function makeScriptEnv({project, lifecycleScript}: {project?: Proje
   await makePathWrapper(binFolder, toFilename(`node`), process.execPath);
   await makePathWrapper(binFolder, toFilename(`node-gyp`), process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]);
 
+  if (project)
+    scriptEnv.INIT_CWD = project.configuration.startingCwd;
+
   scriptEnv.PATH = scriptEnv.PATH
     ? `${nativeBinFolder}${npath.delimiter}${scriptEnv.PATH}`
     : `${nativeBinFolder}`;
