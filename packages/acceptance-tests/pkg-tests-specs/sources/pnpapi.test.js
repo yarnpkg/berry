@@ -13,7 +13,7 @@ describe(`Plug'n'Play API`, () => {
     }),
   );
 
-  describe(`v1`, () => {
+  describe(`std - v1`, () => {
     test(
       `it should expose resolveToUnqualified`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
@@ -146,7 +146,7 @@ describe(`Plug'n'Play API`, () => {
     });
   });
 
-  describe(`v2`, () => {
+  describe(`std - v2`, () => {
     test(
       `it should use .pnpCode to expose semantic errors`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
@@ -159,7 +159,7 @@ describe(`Plug'n'Play API`, () => {
     );
   });
 
-  describe(`v3`, () => {
+  describe(`std - v3`, () => {
     test(
       `it should expose getDependencyTreeRoots`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
@@ -251,6 +251,46 @@ describe(`Plug'n'Play API`, () => {
             expect.objectContaining({name: `workspace-a`}),
             expect.objectContaining({name: `workspace-b`}),
           ]);
+        }),
+      );
+    });
+  });
+
+  describe(`resolveVirtual - v1`, () => {
+    describe(`resolveVirtual`, () => {
+      test(
+        `it should return null when the specified path isn't a virtual`,
+        makeTemporaryEnv({
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        }, async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(
+            source(`require('pnpapi').resolveVirtual(require.resolve('no-deps'))`),
+          ).resolves.toEqual(null);
+        }),
+      );
+
+      test(
+        `it should return the transformed path when possible`,
+        makeTemporaryEnv({
+          dependencies: {
+            [`peer-deps`]: `1.0.0`,
+          },
+        }, async ({path, run, source}) => {
+          await run(`install`);
+
+          const virtualPath = await source(`require.resolve('peer-deps')`);
+
+          // Sanity check: to ensure that the test actually tests something :)
+          expect(xfs.existsSync(virtualPath)).toEqual(false);
+
+          const physicalPath = await source(`require('pnpapi').resolveVirtual(require.resolve('peer-deps'))`);
+
+          expect(typeof physicalPath).toEqual(`string`);
+          expect(xfs.existsSync(physicalPath)).toEqual(true);
         }),
       );
     });

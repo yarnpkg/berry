@@ -29773,7 +29773,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 15);
+/******/ 	return __webpack_require__(__webpack_require__.s = 14);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -29820,7 +29820,7 @@ module.exports = require("path");
 const fs = __webpack_require__(2);
 const path = __webpack_require__(3);
 const crypto = __webpack_require__(6);
-const osTmpDir = __webpack_require__(14);
+const osTmpDir = __webpack_require__(13);
 const _c = process.binding('constants');
 
 /*
@@ -30448,8 +30448,7 @@ module.exports = require("util");
 /* 10 */,
 /* 11 */,
 /* 12 */,
-/* 13 */,
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30481,7 +30480,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -31691,11 +31690,12 @@ class ZipFS_ZipFS extends FakeFS_BasePortableFakeFS {
     return this.accessSync(p, mode);
   }
 
-  accessSync(p, mode) {
+  accessSync(p, mode = external_fs_["constants"].F_OK) {
     const resolvedP = this.resolveFilename(`access '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`access '${p}'`);
 
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) {
-      throw ENOENT(`access '${p}'`);
+    if (this.readOnly && mode & external_fs_["constants"].W_OK) {
+      throw EROFS(`access '${p}'`);
     }
   }
 
@@ -33329,7 +33329,7 @@ var external_module_default = /*#__PURE__*/__webpack_require__.n(external_module
 var external_string_decoder_ = __webpack_require__(7);
 var external_string_decoder_default = /*#__PURE__*/__webpack_require__.n(external_string_decoder_);
 
-// EXTERNAL MODULE: /Users/sander/prg/js/berry/.yarn/cache/tmp-npm-0.0.33-bcbf65df2a-1.zip/node_modules/tmp/lib/tmp.js
+// EXTERNAL MODULE: /Users/mael.nison/berry/.yarn/cache/tmp-npm-0.0.33-bcbf65df2a-1.zip/node_modules/tmp/lib/tmp.js
 var tmp = __webpack_require__(4);
 var tmp_default = /*#__PURE__*/__webpack_require__.n(tmp);
 
@@ -33814,6 +33814,217 @@ function hydrateRuntimeState(data, {
     virtualRoots
   };
 }
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/NoFS.ts
+
+
+
+const NoFS_makeError = () => Object.assign(new Error(`ENOSYS: unsupported filesystem access`), {
+  code: `ENOSYS`
+});
+
+class NoFS_NoFS extends FakeFS_FakeFS {
+  constructor() {
+    super(ppath);
+  }
+
+  getRealPath() {
+    throw NoFS_makeError();
+  }
+
+  resolve() {
+    throw NoFS_makeError();
+  }
+
+  async openPromise() {
+    throw NoFS_makeError();
+  }
+
+  openSync() {
+    throw NoFS_makeError();
+  }
+
+  async readPromise() {
+    throw NoFS_makeError();
+  }
+
+  readSync() {
+    throw NoFS_makeError();
+  }
+
+  async writePromise() {
+    throw NoFS_makeError();
+  }
+
+  writeSync() {
+    throw NoFS_makeError();
+  }
+
+  async closePromise() {
+    throw NoFS_makeError();
+  }
+
+  closeSync() {
+    throw NoFS_makeError();
+  }
+
+  createWriteStream() {
+    throw NoFS_makeError();
+  }
+
+  createReadStream() {
+    throw NoFS_makeError();
+  }
+
+  async realpathPromise() {
+    throw NoFS_makeError();
+  }
+
+  realpathSync() {
+    throw NoFS_makeError();
+  }
+
+  async readdirPromise() {
+    throw NoFS_makeError();
+  }
+
+  readdirSync() {
+    throw NoFS_makeError();
+  }
+
+  async existsPromise(p) {
+    throw NoFS_makeError();
+  }
+
+  existsSync(p) {
+    throw NoFS_makeError();
+  }
+
+  async accessPromise() {
+    throw NoFS_makeError();
+  }
+
+  accessSync() {
+    throw NoFS_makeError();
+  }
+
+  async statPromise() {
+    throw NoFS_makeError();
+  }
+
+  statSync() {
+    throw NoFS_makeError();
+  }
+
+  async lstatPromise(p) {
+    throw NoFS_makeError();
+  }
+
+  lstatSync(p) {
+    throw NoFS_makeError();
+  }
+
+  async chmodPromise() {
+    throw NoFS_makeError();
+  }
+
+  chmodSync() {
+    throw NoFS_makeError();
+  }
+
+  async mkdirPromise() {
+    throw NoFS_makeError();
+  }
+
+  mkdirSync() {
+    throw NoFS_makeError();
+  }
+
+  async rmdirPromise() {
+    throw NoFS_makeError();
+  }
+
+  rmdirSync() {
+    throw NoFS_makeError();
+  }
+
+  async symlinkPromise() {
+    throw NoFS_makeError();
+  }
+
+  symlinkSync() {
+    throw NoFS_makeError();
+  }
+
+  async renamePromise() {
+    throw NoFS_makeError();
+  }
+
+  renameSync() {
+    throw NoFS_makeError();
+  }
+
+  async copyFilePromise() {
+    throw NoFS_makeError();
+  }
+
+  copyFileSync() {
+    throw NoFS_makeError();
+  }
+
+  async appendFilePromise() {
+    throw NoFS_makeError();
+  }
+
+  appendFileSync() {
+    throw NoFS_makeError();
+  }
+
+  async writeFilePromise() {
+    throw NoFS_makeError();
+  }
+
+  writeFileSync() {
+    throw NoFS_makeError();
+  }
+
+  async unlinkPromise() {
+    throw NoFS_makeError();
+  }
+
+  unlinkSync() {
+    throw NoFS_makeError();
+  }
+
+  async utimesPromise() {
+    throw NoFS_makeError();
+  }
+
+  utimesSync() {
+    throw NoFS_makeError();
+  }
+
+  async readFilePromise() {
+    throw NoFS_makeError();
+  }
+
+  readFileSync() {
+    throw NoFS_makeError();
+  }
+
+  async readlinkPromise() {
+    throw NoFS_makeError();
+  }
+
+  readlinkSync() {
+    throw NoFS_makeError();
+  }
+
+  watch() {
+    throw NoFS_makeError();
+  }
+
+}
+NoFS_NoFS.instance = new NoFS_NoFS();
 // CONCATENATED MODULE: ./sources/loader/makeApi.ts
 /// <reference path="../../types/module/index.d.ts"/>
 
@@ -34073,7 +34284,8 @@ function makeApi(runtimeState, opts) {
 
 
   const VERSIONS = {
-    std: 3
+    std: 3,
+    resolveVirtual: 1
   };
   /**
    * We export a special symbol for easy access to the top level locator.
@@ -34368,6 +34580,41 @@ function makeApi(runtimeState, opts) {
   }
 
   ;
+  /**
+   * Note: this function is an extension provided under the `resolveVirtual`
+   * version keyword. Not all PnP implementation will have it.
+   */
+
+  const virtualMappers = runtimeState.virtualRoots.map(root => {
+    return new VirtualFS_VirtualFS(root, {
+      baseFs: NoFS_NoFS.instance
+    });
+  });
+
+  function resolveVirtual(request) {
+    const initialRequest = ppath.normalize(request);
+    let currentRequest = request;
+    let nextRequest = request;
+
+    do {
+      currentRequest = nextRequest;
+
+      for (const mapper of virtualMappers) {
+        nextRequest = mapper.mapToBase(nextRequest);
+
+        if (nextRequest !== currentRequest) {
+          break;
+        }
+      }
+    } while (nextRequest !== currentRequest);
+
+    if (currentRequest !== initialRequest) {
+      return currentRequest;
+    } else {
+      return null;
+    }
+  }
+
   return {
     VERSIONS,
     topLevel,
@@ -34400,6 +34647,15 @@ function makeApi(runtimeState, opts) {
       const resolution = resolveRequest(npath.toPortablePath(request), portableIssuer, opts);
       if (resolution === null) return null;
       return npath.fromPortablePath(resolution);
+    }),
+    resolveVirtual: maybeLog(`resolveVirtual`, path => {
+      const result = resolveVirtual(npath.toPortablePath(path));
+
+      if (result !== null) {
+        return npath.fromPortablePath(result);
+      } else {
+        return null;
+      }
     })
   };
 }

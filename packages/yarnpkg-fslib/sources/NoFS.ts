@@ -4,6 +4,8 @@ import {PortablePath, ppath} from './path';
 const makeError = () => Object.assign(new Error(`ENOSYS: unsupported filesystem access`), {code: `ENOSYS`});
 
 export class NoFS extends FakeFS<PortablePath> {
+  static readonly instance = new NoFS();
+
   constructor() {
     super(ppath);
   }

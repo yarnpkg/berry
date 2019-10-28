@@ -97,4 +97,7 @@ export type PnpApi = {
   resolveToUnqualified: (request: string, issuer: NativePath | null, opts?: {considerBuiltins?: boolean}) => NativePath | null,
   resolveUnqualified: (unqualified: NativePath, opts?: {extensions?: Array<string>}) => NativePath,
   resolveRequest: (request: string, issuer: NativePath | null, opts?: {considerBuiltins?: boolean, extensions?: Array<string>}) => NativePath | null,
+
+  // Extension method
+  resolveVirtual?: (p: NativePath) => NativePath | null,
 };

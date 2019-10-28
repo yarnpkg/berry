@@ -1,12 +1,12 @@
 /// <reference path="../../types/module/index.d.ts"/>
 
-import {FakeFS, NativePath, Path, PortablePath, npath}            from '@yarnpkg/fslib';
-import {ppath, toFilename}                                        from '@yarnpkg/fslib';
-import Module                                                     from 'module';
+import {FakeFS, NativePath, NoFS, Path, PortablePath, VirtualFS, npath} from '@yarnpkg/fslib';
+import {ppath, toFilename}                                              from '@yarnpkg/fslib';
+import Module                                                           from 'module';
 
-import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types';
+import {PackageInformation, PackageLocator, PnpApi, RuntimeState}       from '../types';
 
-import {ErrorCode, makeError}                                     from './internalTools';
+import {ErrorCode, makeError}                                           from './internalTools';
 
 export type MakeApiOptions = {
   allowDebug?: boolean,
@@ -299,7 +299,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * functions, they'll just have to fix the conflicts and bump their own version number.
    */
 
-  const VERSIONS = {std: 3};
+  const VERSIONS = {std: 3, resolveVirtual: 1};
 
   /**
    * We export a special symbol for easy access to the top level locator.
@@ -617,6 +617,39 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     }
   };
 
+  /**
+   * Note: this function is an extension provided under the `resolveVirtual`
+   * version keyword. Not all PnP implementation will have it.
+   */
+
+  const virtualMappers = runtimeState.virtualRoots.map(root => {
+    return new VirtualFS(root, {baseFs: NoFS.instance});
+  });
+
+  function resolveVirtual(request: PortablePath) {
+    const initialRequest = ppath.normalize(request);
+
+    let currentRequest = request;
+    let nextRequest = request;
+
+    do {
+      currentRequest = nextRequest;
+
+      for (const mapper of virtualMappers) {
+        nextRequest = mapper.mapToBase(nextRequest);
+        if (nextRequest !== currentRequest) {
+          break;
+        }
+      }
+    } while (nextRequest !== currentRequest);
+
+    if (currentRequest !== initialRequest) {
+      return currentRequest;
+    } else {
+      return null;
+    }
+  }
+
   return {
     VERSIONS,
     topLevel,
@@ -663,6 +696,16 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         return null;
 
       return npath.fromPortablePath(resolution);
+    }),
+
+    resolveVirtual: maybeLog(`resolveVirtual`, (path: NativePath) => {
+      const result = resolveVirtual(npath.toPortablePath(path));
+
+      if (result !== null) {
+        return npath.fromPortablePath(result);
+      } else {
+        return null;
+      }
     }),
   };
 }
