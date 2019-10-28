@@ -7,6 +7,9 @@ import {Command, UsageError}     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InitCommand extends BaseCommand {
+  @Command.Boolean(`-y,--yes`, {hidden: true})
+  yes: boolean = false;
+
   @Command.Boolean(`-p,--private`)
   private: boolean = false;
 
