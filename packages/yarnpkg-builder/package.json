@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.8",
   "nextVersion": {
     "semver": "2.0.0-rc.9",
-    "nonce": "2115064498229597"
+    "nonce": "354015226970949"
   },
   "bin": "./sources/boot-dev.js",
   "dependencies": {
