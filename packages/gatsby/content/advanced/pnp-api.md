@@ -225,14 +225,21 @@ console.log(crossFs.readFileSync(`C:\\path\\to\\archive.zip\\package.json`));
 
 ## Traversing the dependency tree
 
+Note that the following implementation iterates over all the nodes in the tree and doesn't try at all to skip previously seen nodes. It results in an execution time of a few seconds for each workspace, which can quickly add up. Optimize as needed 🙂
+
 ```ts
 const pnp = require(`pnpapi`);
 const seen = new Set();
 
-const getLocatorKey = locator => JSON.stringify(locator);
-const traverseDependencyTree = (locator: PackageLocator) => {
+const getKey = locator =>
+  JSON.stringify(locator);
+
+const isPeerDependency = (pkg, parentPkg, name) =>
+  getKey(pkg.packageDependencies.get(name)) === getKey(parentPkg.packageDependencies.get(name));
+
+const traverseDependencyTree = (locator, parentPkg = null) => {
   // Prevent infinite recursion when A depends on B which depends on A
-  const key = getLocatorKey(locator);
+  const key = getKey(locator);
   if (seen.has(key))
     return;
 
@@ -245,26 +252,35 @@ const traverseDependencyTree = (locator: PackageLocator) => {
     // Unmet peer dependencies
     if (reference === null)
       continue;
-    
+
+    // Avoid iterating on peer dependencies - very expensive
+    if (parentPkg !== null && isPeerDependency(pkg, parentPkg, name))
+      continue;
+
+    let childLocator;
+
     // Dependency aliases ("underscore": "lodash@1.0.0")
     if (Array.isArray(reference)) {
-      traverseDependencyTree({
+      childLocator = {
         name: reference[0],
         reference: reference[1],
-      });
+      };
     } else {
-      traverseDependencyTree({
+      childLocator = {
         name,
         reference,
-      });
+      };
     }
+
+    traverseDependencyTree(childLocator, pkg);
   }
 
-  seen.remove(key);
+  seen.delete(key);
 };
 
 // Iterate on each workspace
 for (const locator of pnp.getDependencyTreeRoots()) {
+  console.log(locator.name);
   traverseDependencyTree(locator);
 }
 ```
