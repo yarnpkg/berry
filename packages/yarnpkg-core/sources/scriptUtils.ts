@@ -1,17 +1,19 @@
-import {CwdFS, ZipOpenFS, NodeFS, NativePath, PortablePath, Filename} from '@yarnpkg/fslib';
-import {xfs, npath, ppath, toFilename}                                from '@yarnpkg/fslib';
-import {execute}                                                      from '@yarnpkg/shell';
-import {PassThrough, Readable, Writable}                              from 'stream';
-import {dirSync}                                                      from 'tmp';
+import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fslib';
+import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
+import {execute}                                              from '@yarnpkg/shell';
+import {PassThrough, Readable, Writable}                      from 'stream';
+import {dirSync}                                              from 'tmp';
 
-import {Manifest}                                                     from './Manifest';
-import {Project}                                                      from './Project';
-import {StreamReport}                                                 from './StreamReport';
-import {Workspace}                                                    from './Workspace';
-import * as execUtils                                                 from './execUtils';
-import * as miscUtils                                                 from './miscUtils';
-import * as structUtils                                               from './structUtils';
-import {LocatorHash, Locator}                                         from './types';
+import {Configuration}                                        from './Configuration';
+import {Manifest}                                             from './Manifest';
+import {Project}                                              from './Project';
+import {MessageName, ReportError, Report}                     from './Report';
+import {StreamReport}                                         from './StreamReport';
+import {Workspace}                                            from './Workspace';
+import * as execUtils                                         from './execUtils';
+import * as miscUtils                                         from './miscUtils';
+import * as structUtils                                       from './structUtils';
+import {LocatorHash, Locator}                                 from './types';
 
 async function makePathWrapper(location: PortablePath, name: Filename, argv0: NativePath, args: Array<string> = []) {
   if (process.platform === `win32`) {
@@ -22,14 +24,14 @@ async function makePathWrapper(location: PortablePath, name: Filename, argv0: Na
   }
 }
 
-export async function makeScriptEnv(project: Project, lifecycleScript?: string) {
+export async function makeScriptEnv({project, lifecycleScript}: {project?: Project, lifecycleScript?: string} = {}) {
   const scriptEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(process.env))
     if (typeof value !== `undefined`)
       scriptEnv[key.toLowerCase() !== `path` ? key : `PATH`] = value;
 
   const nativeBinFolder = dirSync().name;
-  const binFolder = NodeFS.toPortablePath(nativeBinFolder);
+  const binFolder = npath.toPortablePath(nativeBinFolder);
 
   // We expose the base folder in the environment so that we can later add the
   // binaries for the dependencies of the active package
@@ -42,6 +44,9 @@ export async function makeScriptEnv(project: Project, lifecycleScript?: string) 
   await makePathWrapper(binFolder, toFilename(`yarnpkg`), process.execPath, [process.argv[1]]);
   await makePathWrapper(binFolder, toFilename(`node`), process.execPath);
   await makePathWrapper(binFolder, toFilename(`node-gyp`), process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]);
+
+  if (project)
+    scriptEnv.INIT_CWD = project.configuration.startingCwd;
 
   scriptEnv.PATH = scriptEnv.PATH
     ? `${nativeBinFolder}${npath.delimiter}${scriptEnv.PATH}`
@@ -59,16 +64,47 @@ export async function makeScriptEnv(project: Project, lifecycleScript?: string) 
   if (lifecycleScript)
     scriptEnv.npm_lifecycle_event = lifecycleScript;
 
-  await project.configuration.triggerHook(
-    hook => hook.setupScriptEnvironment,
-    project,
-    scriptEnv,
-    async (name: string, argv0: string, args: Array<string>) => {
-      return await makePathWrapper(binFolder, toFilename(name), argv0, args);
-    },
-  );
+  if (project) {
+    await project.configuration.triggerHook(
+      hook => hook.setupScriptEnvironment,
+      project,
+      scriptEnv,
+      async (name: string, argv0: string, args: Array<string>) => {
+        return await makePathWrapper(binFolder, toFilename(name), argv0, args);
+      },
+    );
+  }
 
   return scriptEnv as (typeof scriptEnv) & {BERRY_BIN_FOLDER: string};
+}
+
+/**
+ * Given a folder, prepares this project for use. Runs `yarn install` then
+ * `yarn build` if a `package.json` is found.
+ */
+
+export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report}: {configuration: Configuration, report: Report}) {
+  const env = await makeScriptEnv();
+
+  {
+    const stdin = null;
+    const {logFile, stdout, stderr} = configuration.getSubprocessStreams(cwd, {report});
+
+    const {code} = await execUtils.pipevp(`yarn`, [`install`], {cwd, env, stdin, stdout, stderr});
+    if (code !== 0) {
+      throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Installing the package dependencies failed (exit code ${code}, logs can be found here: ${logFile})`);
+    }
+  }
+
+  {
+    const stdin = null;
+    const {logFile, stdout, stderr} = configuration.getSubprocessStreams(cwd, {report});
+
+    const {code} = await execUtils.pipevp(`yarn`, [`pack`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
+    if (code !== 0) {
+      throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${code}, logs can be found here: ${logFile})`);
+    }
+  }
 }
 
 type HasPackageScriptOption = {
@@ -155,8 +191,8 @@ async function initializePackageEnvironment(locator: Locator, {project, cwd, lif
     if (!linker)
       throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
 
-    const env = await makeScriptEnv(project, lifecycleScript);
-    const binFolder = NodeFS.toPortablePath(env.BERRY_BIN_FOLDER);
+    const env = await makeScriptEnv({project, lifecycleScript});
+    const binFolder = npath.toPortablePath(env.BERRY_BIN_FOLDER);
 
     for (const [binaryName, [, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
       await makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]);
@@ -236,7 +272,7 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
     const packageLocation = await linker.findPackageLocation(dependency, linkerOptions);
 
     for (const [name, target] of dependency.bin) {
-      binaries.set(name, [dependency, NodeFS.fromPortablePath(ppath.resolve(packageLocation, target))]);
+      binaries.set(name, [dependency, npath.fromPortablePath(ppath.resolve(packageLocation, target))]);
     }
   }
 
@@ -281,7 +317,7 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
     throw new Error(`Binary not found (${binaryName}) for ${structUtils.prettyLocator(project.configuration, locator)}`);
 
   const [, binaryPath] = binary;
-  const env = await makeScriptEnv(project);
+  const env = await makeScriptEnv({project});
 
   for (const [binaryName, [, binaryPath]] of packageAccessibleBinaries)
     await makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath]);

@@ -14,6 +14,11 @@ export type CreateWriteStreamOptions = Partial<{
   flags: 'a',
 }>;
 
+export type MkdirOptions = Partial<{
+  recursive: boolean,
+  mode: number,
+}>;
+
 export type WriteFileOptions = Partial<{
   encoding: string,
   mode: number,
@@ -85,8 +90,8 @@ export abstract class FakeFS<P extends Path> {
   abstract chmodPromise(p: P, mask: number): Promise<void>;
   abstract chmodSync(p: P, mask: number): void;
 
-  abstract mkdirPromise(p: P): Promise<void>;
-  abstract mkdirSync(p: P): void;
+  abstract mkdirPromise(p: P, opts?: MkdirOptions): Promise<void>;
+  abstract mkdirSync(p: P, opts?: MkdirOptions): void;
 
   abstract rmdirPromise(p: P): Promise<void>;
   abstract rmdirSync(p: P): void;
@@ -111,6 +116,9 @@ export abstract class FakeFS<P extends Path> {
 
   abstract utimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
   abstract utimesSync(p: P, atime: Date | string | number, mtime: Date | string | number): void;
+
+  lutimesPromise?(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
+  lutimesSync?(p: P, atime: Date | string | number, mtime: Date | string | number): void;
 
   abstract readFilePromise(p: FSPath<P>, encoding: 'utf8'): Promise<string>;
   abstract readFilePromise(p: FSPath<P>, encoding?: string): Promise<Buffer>;

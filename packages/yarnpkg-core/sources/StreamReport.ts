@@ -16,7 +16,50 @@ export type StreamReportOptions = {
 
 const PROGRESS_FRAMES = [`⠋`, `⠙`, `⠹`, `⠸`, `⠼`, `⠴`, `⠦`, `⠧`, `⠇`, `⠏`];
 const PROGRESS_INTERVAL = 80;
-const PROGRESS_SIZE = 80;
+
+const now = new Date();
+
+// We only want to support environments that will out-of-the-box accept the
+// characters we want to use. Others can enforce the style from the project
+// configuration.
+const supportsEmojis = [`iTerm.app`, `Apple_Terminal`].includes(process.env.TERM_PROGRAM!);
+
+const makeRecord = <T>(obj: {[key: string]: T}) => obj;
+const PROGRESS_STYLES = makeRecord({
+  patrick: {
+    date: [17, 3],
+    chars: [`🍀`, `🌱`],
+    size: 40,
+  },
+  simba: {
+    date: [19, 7],
+    chars: [`🌟`, `✨`],
+    size: 40,
+  },
+  jack: {
+    date: [31, 10],
+    chars: [`🎃`, `🦇`],
+    size: 40,
+  },
+  yearly: {
+    date: [31, 12],
+    chars: [`🎉`, `🕛`],
+    size: 40,
+  },
+  default: {
+    chars: [`=`, `-`],
+    size: 80,
+  },
+});
+
+const defaultStyle = (supportsEmojis && Object.keys(PROGRESS_STYLES).find(name => {
+  const style = PROGRESS_STYLES[name];
+
+  if (style.date && (style.date[0] !== now.getDate() || style.date[1] !== now.getMonth() + 1))
+    return false;
+
+  return true;
+})) || `default`;
 
 export class StreamReport extends Report {
   static async start(opts: StreamReportOptions, cb: (report: StreamReport) => Promise<void>) {
@@ -276,9 +319,18 @@ export class StreamReport extends Report {
 
     const spinner = PROGRESS_FRAMES[this.progressFrame];
 
+    let styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
+    if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
+      throw new Error(`Assertion failed: Invalid progress bar style`);
+
+    // @ts-ignore
+    const style = PROGRESS_STYLES[styleName];
+
     for (const {progress} of this.progress.values()) {
-      const ok = `=`.repeat(Math.floor(PROGRESS_SIZE * progress));
-      const ko = `-`.repeat(PROGRESS_SIZE - ok.length);
+      const okSize = Math.floor(style.size * progress);
+
+      const ok = style.chars[0].repeat(okSize);
+      const ko = style.chars[1].repeat(style.size - okSize);
 
       this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(null)}: ${spinner} ${ok}${ko}\n`);
     }

@@ -1,4 +1,4 @@
-import {xfs, NodeFS, ppath, PortablePath}                                            from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, xfs}                                             from '@yarnpkg/fslib';
 import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
 import {EnvSegment}                                                                  from '@yarnpkg/parsers';
 import {PassThrough, Readable, Writable}                                             from 'stream';
@@ -51,7 +51,7 @@ function cloneState(state: ShellState, mergeWith: Partial<ShellState> = {}) {
 
 const BUILTINS = new Map<string, ShellBuiltin>([
   [`cd`, async ([target, ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
-    const resolvedTarget = ppath.resolve(state.cwd, NodeFS.toPortablePath(target));
+    const resolvedTarget = ppath.resolve(state.cwd, npath.toPortablePath(target));
     const stat = await xfs.statPromise(resolvedTarget);
 
     if (!stat.isDirectory()) {
@@ -64,7 +64,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
   }],
 
   [`pwd`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
-    state.stdout.write(`${NodeFS.fromPortablePath(state.cwd)}\n`);
+    state.stdout.write(`${npath.fromPortablePath(state.cwd)}\n`);
     return 0;
   }],
 
@@ -105,7 +105,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
         switch (type) {
           case `<`: {
             inputs.push(() => {
-              return xfs.createReadStream(ppath.resolve(state.cwd, NodeFS.toPortablePath(args[u])));
+              return xfs.createReadStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u])));
             });
           } break;
           case `<<<`: {
@@ -119,10 +119,10 @@ const BUILTINS = new Map<string, ShellBuiltin>([
             });
           } break;
           case `>`: {
-            outputs.push(xfs.createWriteStream(ppath.resolve(state.cwd, NodeFS.toPortablePath(args[u]))));
+            outputs.push(xfs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u]))));
           } break;
           case `>>`: {
-            outputs.push(xfs.createWriteStream(ppath.resolve(state.cwd, NodeFS.toPortablePath(args[u])), {flags: `a`}));
+            outputs.push(xfs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u])), {flags: `a`}));
           } break;
         }
       }
@@ -355,7 +355,7 @@ function makeCommandAction(args: Array<string>, opts: ShellOptions, state: Shell
   const [name, ...rest] = args;
   if (name === `command`) {
     return makeProcess(rest[0], rest.slice(1), opts, {
-      cwd: NodeFS.fromPortablePath(state.cwd),
+      cwd: npath.fromPortablePath(state.cwd),
       env: state.environment,
     });
   }
@@ -591,7 +591,7 @@ function locateArgsVariable(node: ShellLine): boolean {
 
 export async function execute(command: string, args: Array<string> = [], {
   builtins = {},
-  cwd = NodeFS.toPortablePath(process.cwd()),
+  cwd = npath.toPortablePath(process.cwd()),
   env = process.env,
   stdin = process.stdin,
   stdout = process.stdout,

@@ -1,3 +1,3 @@
-const {NodeFS} = require('@yarnpkg/fslib');
+const {npath} = require('@yarnpkg/fslib');
 
-module.exports = NodeFS.toPortablePath(__dirname);
+module.exports = npath.toPortablePath(__dirname);

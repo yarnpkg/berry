@@ -15,6 +15,7 @@ Object {
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableMirror\\",\\"effective\\":true,\\"description\\":\\"If true, the downloaded packages will be retrieved and stored in both the local and global folders\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -44,6 +45,7 @@ Object {
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -67,6 +69,7 @@ Object {
 ➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
+➤ YN0000: enableMirror - If true, the downloaded packages will be retrieved and stored in both the local and global folders - true
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
@@ -96,6 +99,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -120,6 +124,7 @@ Object {
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <environment> - false
+➤ YN0000: enableMirror - <default> - true
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
@@ -149,6 +154,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
+➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -173,6 +179,7 @@ Object {
 ➤ YN0000: enableImmutableCache - false
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
+➤ YN0000: enableMirror - true
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
@@ -202,6 +209,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
+➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -226,6 +234,7 @@ Object {
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableMirror\\",\\"effective\\":true,\\"description\\":\\"If true, the downloaded packages will be retrieved and stored in both the local and global folders\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -255,6 +264,7 @@ Object {
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -278,6 +288,7 @@ Object {
 ➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
+➤ YN0000: enableMirror - If true, the downloaded packages will be retrieved and stored in both the local and global folders - true
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
@@ -307,6 +318,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -331,6 +343,7 @@ Object {
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <environment> - false
+➤ YN0000: enableMirror - <default> - true
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
@@ -360,6 +373,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
+➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -384,6 +398,7 @@ Object {
 ➤ YN0000: enableImmutableCache - false
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
+➤ YN0000: enableMirror - true
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
@@ -413,6 +428,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
+➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -437,6 +453,7 @@ Object {
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableMirror\\",\\"effective\\":true,\\"description\\":\\"If true, the downloaded packages will be retrieved and stored in both the local and global folders\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -466,6 +483,7 @@ Object {
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -489,6 +507,7 @@ Object {
 ➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
+➤ YN0000: enableMirror - If true, the downloaded packages will be retrieved and stored in both the local and global folders - true
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
@@ -518,6 +537,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -542,6 +562,7 @@ Object {
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <environment> - false
+➤ YN0000: enableMirror - <default> - true
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
@@ -571,6 +592,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
+➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -595,6 +617,7 @@ Object {
 ➤ YN0000: enableImmutableCache - false
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
+➤ YN0000: enableMirror - true
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
@@ -624,6 +647,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
+➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -648,6 +672,7 @@ Object {
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableMirror\\",\\"effective\\":true,\\"description\\":\\"If true, the downloaded packages will be retrieved and stored in both the local and global folders\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -677,6 +702,7 @@ Object {
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -700,6 +726,7 @@ Object {
 ➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
+➤ YN0000: enableMirror - If true, the downloaded packages will be retrieved and stored in both the local and global folders - true
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
@@ -729,6 +756,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -753,6 +781,7 @@ Object {
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <environment> - false
+➤ YN0000: enableMirror - <default> - true
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
@@ -782,6 +811,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
+➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -806,6 +836,7 @@ Object {
 ➤ YN0000: enableImmutableCache - false
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
+➤ YN0000: enableMirror - true
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
@@ -835,6 +866,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
+➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -859,6 +891,7 @@ Object {
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableMirror\\",\\"effective\\":true,\\"description\\":\\"If true, the downloaded packages will be retrieved and stored in both the local and global folders\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -888,6 +921,7 @@ Object {
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -911,6 +945,7 @@ Object {
 ➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
+➤ YN0000: enableMirror - If true, the downloaded packages will be retrieved and stored in both the local and global folders - true
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
@@ -940,6 +975,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -964,6 +1000,7 @@ Object {
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <environment> - false
+➤ YN0000: enableMirror - <default> - true
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
@@ -993,6 +1030,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
+➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -1017,6 +1055,7 @@ Object {
 ➤ YN0000: enableImmutableCache - false
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
+➤ YN0000: enableMirror - true
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
@@ -1046,6 +1085,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
+➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -1070,6 +1110,7 @@ Object {
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableMirror\\",\\"effective\\":true,\\"description\\":\\"If true, the downloaded packages will be retrieved and stored in both the local and global folders\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
@@ -1099,6 +1140,7 @@ Object {
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -1122,6 +1164,7 @@ Object {
 ➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
+➤ YN0000: enableMirror - If true, the downloaded packages will be retrieved and stored in both the local and global folders - true
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
 ➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
@@ -1151,6 +1194,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -1175,6 +1219,7 @@ Object {
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
 ➤ YN0000: enableInlineBuilds - <environment> - false
+➤ YN0000: enableMirror - <default> - true
 ➤ YN0000: enableNetwork - <default> - true
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
@@ -1204,6 +1249,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
+➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -1228,6 +1274,7 @@ Object {
 ➤ YN0000: enableImmutableCache - false
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
+➤ YN0000: enableMirror - true
 ➤ YN0000: enableNetwork - true
 ➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
@@ -1257,6 +1304,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
+➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'

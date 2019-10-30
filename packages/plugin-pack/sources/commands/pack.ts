@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                       from '@yarnpkg/cli';
 import {Configuration, MessageName, Project, StreamReport, Workspace, structUtils} from '@yarnpkg/core';
-import {Filename, xfs, ppath, toPortablePath}                                      from '@yarnpkg/fslib';
+import {Filename, npath, ppath, xfs}                                               from '@yarnpkg/fslib';
 import {Command}                                                                   from 'clipanion';
 
 import * as packUtils                                                              from '../packUtils';
@@ -13,6 +13,7 @@ export default class PackCommand extends BaseCommand {
   @Command.Boolean(`--json`)
   json: boolean = false;
 
+  @Command.String(`--filename`, {hidden: false})
   @Command.String(`-o,--out`)
   out?: string;
 
@@ -93,7 +94,7 @@ function interpolateOutputName(name: string, {workspace}: {workspace: Workspace}
     .replace(`%s`, prettyWorkspaceIdent(workspace))
     .replace(`%v`, prettyWorkspaceVersion(workspace));
 
-  return toPortablePath(interpolated);
+  return npath.toPortablePath(interpolated);
 }
 
 function prettyWorkspaceIdent(workspace: Workspace) {

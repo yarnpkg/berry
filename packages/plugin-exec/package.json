@@ -3,10 +3,9 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@types/tmp": "^0.0.33",
-    "@yarnpkg/builder": "workspace:2.0.0-rc.7",
-    "@yarnpkg/core": "workspace:2.0.0-rc.8",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.4",
+    "@yarnpkg/builder": "workspace:2.0.0-rc.8",
+    "@yarnpkg/core": "workspace:2.0.0-rc.10",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.6",
     "tmp": "^0.0.33"
   },
   "devDependencies": {
@@ -16,9 +15,10 @@
     "build:plugin-exec": "builder build plugin",
     "update-local": "yarn build:plugin-exec && rsync -a --delete bundles/ bin/"
   },
-  "version": "2.0.0-rc.3",
+  "version": "2.0.0-rc.5",
   "nextVersion": {
-    "nonce": "1526826040035333"
+    "semver": "2.0.0-rc.6",
+    "nonce": "7172163810900511"
   },
   "repository": {
     "type": "git",

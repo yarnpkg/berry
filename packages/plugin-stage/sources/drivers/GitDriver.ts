@@ -1,5 +1,5 @@
 import {execUtils, Manifest, structUtils, IdentHash, Descriptor} from '@yarnpkg/core';
-import {NodeFS, PortablePath, ppath, toFilename}                 from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, toFilename}                  from '@yarnpkg/fslib';
 
 import * as stageUtils                                           from '../stageUtils';
 
@@ -146,14 +146,14 @@ export const Driver = {
   },
 
   async makeCommit(cwd: PortablePath, changeList: Array<stageUtils.FileAction>, commitMessage: string) {
-    const localPaths = changeList.map(file => NodeFS.fromPortablePath(file.path));
+    const localPaths = changeList.map(file => npath.fromPortablePath(file.path));
 
     await execUtils.execvp(`git`, [`add`, `-N`, `--`, ...localPaths], {cwd, strict: true});
     await execUtils.execvp(`git`, [`commit`, `-m`, `${commitMessage}\n\n${MESSAGE_MARKER}\n`, `--`, ...localPaths], {cwd, strict: true});
   },
 
   async makeReset(cwd: PortablePath, changeList: Array<stageUtils.FileAction>) {
-    const localPaths = changeList.map(path => NodeFS.fromPortablePath(path.path));
+    const localPaths = changeList.map(path => npath.fromPortablePath(path.path));
 
     await execUtils.execvp(`git`, [`reset`, `HEAD`, `--`, ...localPaths], {cwd, strict: true});
   },

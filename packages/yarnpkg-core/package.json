@@ -1,16 +1,17 @@
 {
   "name": "@yarnpkg/core",
-  "version": "2.0.0-rc.8",
+  "version": "2.0.0-rc.10",
   "nextVersion": {
-    "nonce": "6703241370841745"
+    "semver": "2.0.0-rc.11",
+    "nonce": "4705316244438203"
   },
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.4",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.6",
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2",
     "@yarnpkg/parsers": "workspace:2.0.0-rc.4",
-    "@yarnpkg/pnp": "workspace:2.0.0-rc.5",
+    "@yarnpkg/pnp": "workspace:2.0.0-rc.6",
     "@yarnpkg/shell": "workspace:2.0.0-rc.2",
     "agentkeepalive": "^4.0.2",
     "camelcase": "^5.3.1",
@@ -35,8 +36,8 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
-    "@yarnpkg/plugin-link": "workspace:2.0.0-rc.1",
-    "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.2"
+    "@yarnpkg/plugin-link": "workspace:2.0.0-rc.2",
+    "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.4"
   },
   "scripts": {
     "postpack": "rm -rf lib",

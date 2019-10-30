@@ -17,7 +17,7 @@ function generateLoader(shebang: string | null | undefined, loader: string) {
     `\n`,
     `var __non_webpack_module__ = module;\n`,
     `\n`,
-    `function $$SETUP_STATE(hydrateRuntimeState) {\n`,
+    `function $$SETUP_STATE(hydrateRuntimeState, basePath) {\n`,
     loader.replace(/^/gm, `  `),
     `}\n`,
     `\n`,
@@ -31,14 +31,14 @@ function generateJsonString(data: SerializedState) {
 
 function generateInlinedSetup(data: SerializedState) {
   return [
-    `return hydrateRuntimeState(${generatePrettyJson(data)}, {basePath: __dirname});\n`,
+    `return hydrateRuntimeState(${generatePrettyJson(data)}, {basePath: basePath || __dirname});\n`,
   ].join(``);
 }
 
 function generateSplitSetup(dataLocation: string) {
   return [
     `var dataLocation = path.resolve(__dirname, ${JSON.stringify(dataLocation)});\n`,
-    `return hydrateRuntimeState(require(dataLocation), {basePath: path.dirname(dataLocation)});\n`,
+    `return hydrateRuntimeState(require(dataLocation), {basePath: basePath || path.dirname(dataLocation)});\n`,
   ].join(``);
 }
 

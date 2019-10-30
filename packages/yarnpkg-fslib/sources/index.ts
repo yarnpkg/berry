@@ -1,9 +1,9 @@
-import fs                         from 'fs';
-import tmp                        from 'tmp';
+import fs                                from 'fs';
+import tmp                               from 'tmp';
 
-import {FakeFS}                   from './FakeFS';
-import {NodeFS}                   from './NodeFS';
-import {PortablePath, NativePath} from './path';
+import {FakeFS}                          from './FakeFS';
+import {NodeFS}                          from './NodeFS';
+import {PortablePath, NativePath, npath} from './path';
 
 export {CreateReadStreamOptions}  from './FakeFS';
 export {CreateWriteStreamOptions} from './FakeFS';
@@ -14,13 +14,14 @@ export {WriteFileOptions}         from './FakeFS';
 
 export {FSPath, Path, PortablePath, NativePath, Filename} from './path';
 export {ParsedPath, PathUtils, FormatInputPathObject} from './path';
-export {npath, ppath, toFilename, fromPortablePath, toPortablePath} from './path';
+export {npath, ppath, toFilename} from './path';
 
 export {AliasFS}                  from './AliasFS';
 export {FakeFS}                   from './FakeFS';
 export {CwdFS}                    from './CwdFS';
 export {JailFS}                   from './JailFS';
 export {LazyFS}                   from './LazyFS';
+export {NoFS}                     from './NoFS';
 export {NodeFS}                   from './NodeFS';
 export {PosixFS}                  from './PosixFS';
 export {ProxiedFS}                from './ProxiedFS';
@@ -37,6 +38,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `closeSync`,
     `copyFileSync`,
     `lstatSync`,
+    `mkdirSync`,
     `openSync`,
     `readSync`,
     `readlinkSync`,
@@ -44,6 +46,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `readdirSync`,
     `readlinkSync`,
     `realpathSync`,
+    `renameSync`,
     `rmdirSync`,
     `statSync`,
     `symlinkSync`,
@@ -61,12 +64,14 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `closePromise`,
     `copyFilePromise`,
     `lstatPromise`,
+    `mkdirPromise`,
     `openPromise`,
     `readdirPromise`,
     `realpathPromise`,
     `readFilePromise`,
     `readdirPromise`,
     `readlinkPromise`,
+    `renamePromise`,
     `rmdirPromise`,
     `statPromise`,
     `symlinkPromise`,
@@ -159,10 +164,10 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
   mktempSync<T>(cb?: (p: PortablePath) => T) {
     const {name, removeCallback} = tmp.dirSync({unsafeCleanup: true});
     if (typeof cb === `undefined`) {
-      return NodeFS.toPortablePath(name);
+      return npath.toPortablePath(name);
     } else {
       try {
-        return cb(NodeFS.toPortablePath(name));
+        return cb(npath.toPortablePath(name));
       } finally {
         removeCallback();
       }
@@ -175,7 +180,7 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
           if (err) {
             reject(err);
           } else {
-            resolve(NodeFS.toPortablePath(path));
+            resolve(npath.toPortablePath(path));
           }
         });
       });
@@ -185,7 +190,7 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
           if (err) {
             reject(err);
           } else {
-            Promise.resolve(NodeFS.toPortablePath(path)).then(cb).then(result => {
+            Promise.resolve(npath.toPortablePath(path)).then(cb).then(result => {
               cleanup();
               resolve(result);
             }, error => {

@@ -1,33 +1,33 @@
-import {xfs, NodeFS, PortablePath, ppath, toFilename} from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                     from '@yarnpkg/parsers';
-import {createHash}                                   from 'crypto';
+import {PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                    from '@yarnpkg/parsers';
+import {createHash}                                  from 'crypto';
 // @ts-ignore
-import Logic                                          from 'logic-solver';
-import pLimit                                         from 'p-limit';
-import semver                                         from 'semver';
-import {tmpNameSync}                                  from 'tmp';
+import Logic                                         from 'logic-solver';
+import pLimit                                        from 'p-limit';
+import semver                                        from 'semver';
+import {tmpNameSync}                                 from 'tmp';
 
-import {AliasResolver}                                from './AliasResolver';
-import {Cache}                                        from './Cache';
-import {Configuration}                                from './Configuration';
-import {Fetcher}                                      from './Fetcher';
-import {Installer, BuildDirective, BuildType}         from './Installer';
-import {Linker}                                       from './Linker';
-import {LockfileResolver}                             from './LockfileResolver';
-import {DependencyMeta, Manifest}                     from './Manifest';
-import {MultiResolver}                                from './MultiResolver';
-import {Report, ReportError, MessageName}             from './Report';
-import {RunInstallPleaseResolver}                     from './RunInstallPleaseResolver';
-import {ThrowReport}                                  from './ThrowReport';
-import {Workspace}                                    from './Workspace';
-import {YarnResolver}                                 from './YarnResolver';
-import {isFolderInside}                               from './folderUtils';
-import * as miscUtils                                 from './miscUtils';
-import * as scriptUtils                               from './scriptUtils';
-import * as structUtils                               from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash}       from './types';
-import {Descriptor, Ident, Locator, Package}          from './types';
-import {LinkType}                                     from './types';
+import {AliasResolver}                               from './AliasResolver';
+import {Cache}                                       from './Cache';
+import {Configuration}                               from './Configuration';
+import {Fetcher}                                     from './Fetcher';
+import {Installer, BuildDirective, BuildType}        from './Installer';
+import {Linker}                                      from './Linker';
+import {LockfileResolver}                            from './LockfileResolver';
+import {DependencyMeta, Manifest}                    from './Manifest';
+import {MultiResolver}                               from './MultiResolver';
+import {Report, ReportError, MessageName}            from './Report';
+import {RunInstallPleaseResolver}                    from './RunInstallPleaseResolver';
+import {ThrowReport}                                 from './ThrowReport';
+import {Workspace}                                   from './Workspace';
+import {YarnResolver}                                from './YarnResolver';
+import {isFolderInside}                              from './folderUtils';
+import * as miscUtils                                from './miscUtils';
+import * as scriptUtils                              from './scriptUtils';
+import * as structUtils                              from './structUtils';
+import {IdentHash, DescriptorHash, LocatorHash}      from './types';
+import {Descriptor, Ident, Locator, Package}         from './types';
+import {LinkType}                                    from './types';
 
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
@@ -42,7 +42,6 @@ export type InstallOptions = {
   report: Report,
   immutable?: boolean,
   lockfileOnly?: boolean,
-  inlineBuilds?: boolean,
 };
 
 export class Project {
@@ -766,8 +765,10 @@ export class Project {
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
 
-      let fetchResult;
+      if (structUtils.isVirtualLocator(pkg))
+        return;
 
+      let fetchResult;
       try {
         fetchResult = await fetcher.fetch(pkg, fetcherOptions);
       } catch (error) {
@@ -794,7 +795,7 @@ export class Project {
     }
   }
 
-  async linkEverything({cache, report, inlineBuilds = this.configuration.get(`enableInlineBuilds`)}: InstallOptions) {
+  async linkEverything({cache, report}: InstallOptions) {
     const fetcher = this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
 
@@ -809,9 +810,20 @@ export class Project {
     const packageLocations: Map<LocatorHash, PortablePath> = new Map();
     const packageBuildDirectives: Map<LocatorHash, BuildDirective[]> = new Map();
 
+    // We can skip installing packages that have been split into virtual
+    // packages, except for our workspaces (because they also exist by
+    // themselves, outside of the typical dependency considerations)
+    const skipPackageLink = (pkg: Package) =>
+      pkg.peerDependencies.size > 0 &&
+      !structUtils.isVirtualLocator(pkg) &&
+      !this.tryWorkspaceByLocator(pkg);
+
     // Step 1: Installing the packages on the disk
 
     for (const pkg of this.storedPackages.values()) {
+      if (skipPackageLink(pkg))
+        continue;
+
       const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
       if (!linker)
         throw new ReportError(MessageName.LINKER_NOT_FOUND, `${structUtils.prettyLocator(this.configuration, pkg)} isn't supported by any available linker`);
@@ -844,6 +856,9 @@ export class Project {
     const externalDependents: Map<LocatorHash, Array<PortablePath>> = new Map();
 
     for (const pkg of this.storedPackages.values()) {
+      if (skipPackageLink(pkg))
+        continue;
+
       const packageLinker = packageLinkers.get(pkg.locatorHash);
       if (!packageLinker)
         throw new Error(`Assertion failed: The linker should have been found`);
@@ -1005,41 +1020,23 @@ export class Project {
 
         buildPromises.push((async () => {
           for (const [buildType, scriptName] of buildDirective) {
-            const logFile = NodeFS.toPortablePath(
-              tmpNameSync({
-                prefix: `buildfile-`,
-                postfix: `.log`,
-              }),
-            );
-
-            const stdin = null;
-
-            let stdout;
-            let stderr;
-
-            if (inlineBuilds) {
-              stdout = report.createStreamReporter(`${structUtils.prettyLocator(this.configuration, pkg)} ${this.configuration.format(`STDOUT`, `green`)}`);
-              stderr = report.createStreamReporter(`${structUtils.prettyLocator(this.configuration, pkg)} ${this.configuration.format(`STDERR`, `red`)}`);
-            } else {
-              stdout = xfs.createWriteStream(logFile);
-              stderr = stdout;
-
-              stdout.write(`# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`);
-
-              switch (buildType) {
-                case BuildType.SCRIPT: {
-                  stdout.write(`# Script name: ${scriptName}\n`);
-                } break;
-                case BuildType.SHELLCODE: {
-                  stdout.write(`# Script code: ${scriptName}\n`);
-                } break;
-              }
-
-              stdout.write(`\n`);
+            let header = `# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`;
+            switch (buildType) {
+              case BuildType.SCRIPT: {
+                header += `# Script name: ${scriptName}\n`;
+              } break;
+              case BuildType.SHELLCODE: {
+                header += `# Script code: ${scriptName}\n`;
+              } break;
             }
 
-            let exitCode;
+            const stdin = null;
+            const {logFile, stdout, stderr} = this.configuration.getSubprocessStreams(structUtils.prettyLocator(this.configuration, pkg), {
+              header,
+              report,
+            });
 
+            let exitCode;
             try {
               switch (buildType) {
                 case BuildType.SCRIPT: {
@@ -1345,7 +1342,7 @@ function applyVirtualResolutionMutations({
   const resolutionStack: Array<Locator> = [];
 
   const reportStackOverflow = (): never => {
-    const logFile = NodeFS.toPortablePath(
+    const logFile = npath.toPortablePath(
       tmpNameSync({
         prefix: `stacktrace-`,
         postfix: `.log`,

@@ -1,11 +1,11 @@
-import {FakeFS, NodeFS, PosixFS, patchFs, PortablePath} from '@yarnpkg/fslib';
-import fs                                               from 'fs';
-import Module                                           from 'module';
-import path                                             from 'path';
+import {FakeFS, PosixFS, npath, patchFs, PortablePath} from '@yarnpkg/fslib';
+import fs                                              from 'fs';
+import Module                                          from 'module';
+import path                                            from 'path';
 
-import {PackageLocator, PnpApi}                         from '../types';
+import {PackageLocator, PnpApi}                        from '../types';
 
-import {ErrorCode, makeError, getIssuerModule}          from './internalTools';
+import {ErrorCode, makeError, getIssuerModule}         from './internalTools';
 
 export type ApplyPatchOptions = {
   compatibilityMode?: boolean,
@@ -19,7 +19,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // The callback function gets called to wrap the return value of the module names matching the regexp
   const patchedModules: Array<[RegExp, (issuer: PackageLocator | null, exports: any) => any]> = [];
 
-  if (opts.compatibilityMode) {
+  if (opts.compatibilityMode !== false) {
     // Modern versions of `resolve` support a specific entry point that custom resolvers can use
     // to inject a specific resolution logic without having to patch the whole package.
     //
@@ -165,7 +165,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   Module._resolveFilename = function(request: string, parent: NodeModule | null, isMain: boolean, options?: {[key: string]: any}) {
     if (request === `pnpapi`)
-      return request;
+      return pnpapi.resolveToUnqualified(`pnpapi`, null)!;
 
     if (!enableNativeHooks)
       return originalModuleResolveFilename.call(Module, request, parent, isMain, options);
@@ -210,7 +210,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     if (!issuers) {
       const issuerModule = getIssuerModule(parent);
-      const issuer = issuerModule ? issuerModule.filename : `${NodeFS.toPortablePath(process.cwd())}/`;
+      const issuer = issuerModule ? issuerModule.filename : `${npath.toPortablePath(process.cwd())}/`;
 
       issuers = [issuer];
     }
@@ -220,7 +220,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     // We test it for an absolute Windows path and convert it to a portable path.
     // We should probably always call toPortablePath and check for this directly
     if (/^[A-Z]:.*/.test(request))
-      request = NodeFS.toPortablePath(request);
+      request = npath.toPortablePath(request);
 
     let firstError;
 
@@ -242,14 +242,14 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   const originalFindPath = Module._findPath;
 
-  Module._findPath = function(request: string, paths: Array<string>, isMain: boolean) {
+  Module._findPath = function(request: string, paths: Array<string>|null, isMain: boolean) {
     if (request === `pnpapi`)
       return false;
 
     if (!enableNativeHooks)
       return originalFindPath.call(Module, request, paths, isMain);
 
-    for (const path of paths) {
+    for (const path of paths || []) {
       let resolution;
 
       try {

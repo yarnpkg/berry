@@ -1,12 +1,12 @@
 /// <reference path="../../types/module/index.d.ts"/>
 
-import {FakeFS, NodeFS, PortablePath, NativePath, Path}           from '@yarnpkg/fslib';
-import {ppath, toFilename}                                        from '@yarnpkg/fslib';
-import Module                                                     from 'module';
+import {FakeFS, NativePath, NoFS, Path, PortablePath, VirtualFS, npath} from '@yarnpkg/fslib';
+import {ppath, toFilename}                                              from '@yarnpkg/fslib';
+import Module                                                           from 'module';
 
-import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types';
+import {PackageInformation, PackageLocator, PnpApi, RuntimeState}       from '../types';
 
-import {ErrorCode, makeError}                                     from './internalTools';
+import {ErrorCode, makeError}                                           from './internalTools';
 
 export type MakeApiOptions = {
   allowDebug?: boolean,
@@ -50,7 +50,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   if (runtimeState.enableTopLevelFallback === true)
     fallbackLocators.push(topLevelLocator);
 
-  if (opts.compatibilityMode) {
+  if (opts.compatibilityMode !== false) {
     // ESLint currently doesn't have any portable way for shared configs to
     // specify their own plugins that should be used (cf issue #10125). This
     // will likely get fixed at some point but it'll take time, so in the
@@ -272,7 +272,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function normalizePath(p: Path) {
-    return NodeFS.toPortablePath(p);
+    return npath.toPortablePath(p);
   }
 
   /**
@@ -287,7 +287,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // would give us the paths to give to _resolveFilename), we can as well not use
     // the {paths} option at all, since it internally makes _resolveFilename create another
     // fake module anyway.
-    return Module._resolveFilename(request, makeFakeModule(NodeFS.fromPortablePath(issuer)), false, {plugnplay: false});
+    return Module._resolveFilename(request, makeFakeModule(npath.fromPortablePath(issuer)), false, {plugnplay: false});
   }
 
   /**
@@ -299,7 +299,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * functions, they'll just have to fix the conflicts and bump their own version number.
    */
 
-  const VERSIONS = {std: 3};
+  const VERSIONS = {std: 3, resolveVirtual: 1};
 
   /**
    * We export a special symbol for easy access to the top level locator.
@@ -395,7 +395,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
 
     if (request === `pnpapi`)
-      return NodeFS.toPortablePath(opts.pnpapiResolution);
+      return npath.toPortablePath(opts.pnpapiResolution);
 
     // Bailout if the request is a native module
 
@@ -417,7 +417,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         );
       }
 
-      return NodeFS.toPortablePath(result);
+      return npath.toPortablePath(result);
     }
 
     let unqualifiedPath: PortablePath;
@@ -479,7 +479,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           );
         }
 
-        return NodeFS.toPortablePath(result);
+        return npath.toPortablePath(result);
       }
 
       const issuerInformation = getPackageInformationSafe(issuerLocator);
@@ -617,6 +617,39 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     }
   };
 
+  /**
+   * Note: this function is an extension provided under the `resolveVirtual`
+   * version keyword. Not all PnP implementation will have it.
+   */
+
+  const virtualMappers = runtimeState.virtualRoots.map(root => {
+    return new VirtualFS(root, {baseFs: NoFS.instance});
+  });
+
+  function resolveVirtual(request: PortablePath) {
+    const initialRequest = ppath.normalize(request);
+
+    let currentRequest = request;
+    let nextRequest = request;
+
+    do {
+      currentRequest = nextRequest;
+
+      for (const mapper of virtualMappers) {
+        nextRequest = mapper.mapToBase(nextRequest);
+        if (nextRequest !== currentRequest) {
+          break;
+        }
+      }
+    } while (nextRequest !== currentRequest);
+
+    if (currentRequest !== initialRequest) {
+      return currentRequest;
+    } else {
+      return null;
+    }
+  }
+
   return {
     VERSIONS,
     topLevel,
@@ -631,38 +664,48 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       if (info === null)
         return null;
 
-      const packageLocation = NodeFS.fromPortablePath(info.packageLocation);
+      const packageLocation = npath.fromPortablePath(info.packageLocation);
       const nativeInfo = {...info, packageLocation};
 
       return nativeInfo;
     },
 
     findPackageLocator: (path: string) => {
-      return findPackageLocator(NodeFS.toPortablePath(path));
+      return findPackageLocator(npath.toPortablePath(path));
     },
 
     resolveToUnqualified: maybeLog(`resolveToUnqualified`, (request: NativePath, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => {
-      const portableIssuer = issuer !== null ?  NodeFS.toPortablePath(issuer) : null;
+      const portableIssuer = issuer !== null ?  npath.toPortablePath(issuer) : null;
 
-      const resolution = resolveToUnqualified(NodeFS.toPortablePath(request), portableIssuer, opts);
+      const resolution = resolveToUnqualified(npath.toPortablePath(request), portableIssuer, opts);
       if (resolution === null)
         return null;
 
-      return NodeFS.fromPortablePath(resolution);
+      return npath.fromPortablePath(resolution);
     }),
 
     resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath: NativePath, opts?: ResolveUnqualifiedOptions) => {
-      return NodeFS.fromPortablePath(resolveUnqualified(NodeFS.toPortablePath(unqualifiedPath), opts));
+      return npath.fromPortablePath(resolveUnqualified(npath.toPortablePath(unqualifiedPath), opts));
     }),
 
     resolveRequest: maybeLog(`resolveRequest`, (request: NativePath, issuer: NativePath | null, opts?: ResolveRequestOptions) => {
-      const portableIssuer = issuer !== null ? NodeFS.toPortablePath(issuer) : null;
+      const portableIssuer = issuer !== null ? npath.toPortablePath(issuer) : null;
 
-      const resolution = resolveRequest(NodeFS.toPortablePath(request), portableIssuer, opts);
+      const resolution = resolveRequest(npath.toPortablePath(request), portableIssuer, opts);
       if (resolution === null)
         return null;
 
-      return NodeFS.fromPortablePath(resolution);
+      return npath.fromPortablePath(resolution);
+    }),
+
+    resolveVirtual: maybeLog(`resolveVirtual`, (path: NativePath) => {
+      const result = resolveVirtual(npath.toPortablePath(path));
+
+      if (result !== null) {
+        return npath.fromPortablePath(result);
+      } else {
+        return null;
+      }
     }),
   };
 }

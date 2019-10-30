@@ -3,22 +3,15 @@ import {miscUtils, structUtils}                          from '@yarnpkg/core';
 import {LinkType}                                        from '@yarnpkg/core';
 import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
 
-import {GIT_REGEXP}                                      from './constants';
 import * as gitUtils                                     from './gitUtils';
 
 export class GitResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (descriptor.range.match(GIT_REGEXP))
-      return true;
-
-    return false;
+    return gitUtils.isGitUrl(descriptor.range);
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (locator.reference.match(GIT_REGEXP))
-      return true;
-
-    return false;
+    return gitUtils.isGitUrl(locator.reference);
   }
 
   shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {

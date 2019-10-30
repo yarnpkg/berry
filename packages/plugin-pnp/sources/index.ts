@@ -1,5 +1,5 @@
 import {Hooks as CoreHooks, Plugin, Project, SettingsType} from '@yarnpkg/core';
-import {Filename, NodeFS, PortablePath, ppath, xfs}        from '@yarnpkg/fslib';
+import {Filename, PortablePath, npath, ppath, xfs}         from '@yarnpkg/fslib';
 import {Hooks as StageHooks}                               from '@yarnpkg/plugin-stage';
 
 import {PnpLinker}                                         from './PnpLinker';
@@ -9,7 +9,7 @@ export const getPnpPath = (project: Project) => ppath.join(project.cwd, `.pnp.js
 
 async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
   const pnpPath: PortablePath = getPnpPath(project);
-  const pnpRequire = `--require ${NodeFS.fromPortablePath(pnpPath)}`;
+  const pnpRequire = `--require ${npath.fromPortablePath(pnpPath)}`;
 
   if (xfs.existsSync(pnpPath)) {
     let nodeOptions = env.NODE_OPTIONS || ``;

@@ -1,11 +1,11 @@
-import {xfs, NodeFS, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
-import klaw                                         from 'klaw';
-import tarFs                                        from 'tar-fs';
-import tmp                                          from 'tmp';
-import zlib                                         from 'zlib';
-import {Gzip}                                       from 'zlib';
+import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import klaw                                        from 'klaw';
+import tarFs                                       from 'tar-fs';
+import tmp                                         from 'tmp';
+import zlib                                        from 'zlib';
+import {Gzip}                                      from 'zlib';
 
-import * as miscUtils                               from './misc';
+import * as miscUtils                              from './misc';
 
 const IS_WIN32 = process.platform === `win32`;
 
@@ -16,12 +16,12 @@ export const walk = (
   return new Promise((resolve) => {
     const paths: PortablePath[] = [];
 
-    const walker = klaw(NodeFS.fromPortablePath(source), {
+    const walker = klaw(npath.fromPortablePath(source), {
       filter: (sourcePath: string) => {
         if (!filter)
           return true;
 
-        const itemPath = NodeFS.toPortablePath(sourcePath);
+        const itemPath = npath.toPortablePath(sourcePath);
         const stat = xfs.statSync(itemPath);
 
         if (stat.isDirectory())
@@ -37,7 +37,7 @@ export const walk = (
     });
 
     walker.on('data', ({path: sourcePath}) => {
-      const itemPath = NodeFS.toPortablePath(sourcePath);
+      const itemPath = npath.toPortablePath(sourcePath);
       const relativePath = ppath.relative(source, itemPath);
 
       if (!filter || miscUtils.filePatternMatch(relativePath, filter))
@@ -67,9 +67,9 @@ export const packToStream = (
 
   const zipperStream = zlib.createGzip();
 
-  const packStream = tarFs.pack(NodeFS.fromPortablePath(source), {
+  const packStream = tarFs.pack(npath.fromPortablePath(source), {
     map: (header: any) => {
-      header.name = NodeFS.toPortablePath(header.name);
+      header.name = npath.toPortablePath(header.name);
 
       if (true) {
         header.name = ppath.resolve(PortablePath.root, header.name);
@@ -118,7 +118,7 @@ export const packToFile = (target: PortablePath, source: PortablePath, options: 
 export const unpackToDirectory = (target: PortablePath, source: PortablePath): Promise<void> => {
   const tarballStream = xfs.createReadStream(source);
   const gunzipStream =  zlib.createUnzip();
-  const extractStream = tarFs.extract(NodeFS.fromPortablePath(target));
+  const extractStream = tarFs.extract(npath.fromPortablePath(target));
 
   tarballStream.pipe(gunzipStream).pipe(extractStream);
 
@@ -147,7 +147,7 @@ export const createTemporaryFolder = (name?: Filename): Promise<PortablePath> =>
       if (error) {
         reject(error);
       } else {
-        let realPath = await xfs.realpathPromise(NodeFS.toPortablePath(dirPath));
+        let realPath = await xfs.realpathPromise(npath.toPortablePath(dirPath));
 
         if (name) {
           realPath = ppath.join(realPath, name as PortablePath);
@@ -173,7 +173,7 @@ export const createTemporaryFile = async (filePath: PortablePath): Promise<Porta
         if (error) {
           reject(error);
         } else {
-          resolve(NodeFS.toPortablePath(filePath));
+          resolve(npath.toPortablePath(filePath));
         }
       });
     });

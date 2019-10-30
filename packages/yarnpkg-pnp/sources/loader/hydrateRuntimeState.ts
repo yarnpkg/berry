@@ -1,4 +1,4 @@
-import {NodeFS, ppath, PortablePath}                                                     from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath}                                                      from '@yarnpkg/fslib';
 
 import {PackageInformation, PackageLocator, PackageStore, RuntimeState, SerializedState} from '../types';
 
@@ -7,7 +7,7 @@ export type HydrateRuntimeStateOptions = {
 };
 
 export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRuntimeStateOptions): RuntimeState {
-  const portablePath = NodeFS.toPortablePath(basePath);
+  const portablePath = npath.toPortablePath(basePath);
 
   const ignorePattern = data.ignorePatternData !== null
     ? new RegExp(data.ignorePatternData)

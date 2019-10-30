@@ -1,24 +1,27 @@
-import {xfs, NodeFS, PortablePath, ppath, Filename, toFilename} from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                               from '@yarnpkg/parsers';
-import camelcase                                                from 'camelcase';
-import chalk                                                    from 'chalk';
-import {UsageError}                                             from 'clipanion';
-import isCI                                                     from 'is-ci';
-import supportsColor                                            from 'supports-color';
+import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                              from '@yarnpkg/parsers';
+import camelcase                                               from 'camelcase';
+import chalk                                                   from 'chalk';
+import {UsageError}                                            from 'clipanion';
+import isCI                                                    from 'is-ci';
+import {PassThrough, Writable}                                 from 'stream';
+import supportsColor                                           from 'supports-color';
+import {tmpNameSync}                                           from 'tmp';
 
-import {MultiFetcher}                                           from './MultiFetcher';
-import {MultiResolver}                                          from './MultiResolver';
-import {Plugin, Hooks}                                          from './Plugin';
-import {SemverResolver}                                         from './SemverResolver';
-import {TagResolver}                                            from './TagResolver';
-import {VirtualFetcher}                                         from './VirtualFetcher';
-import {VirtualResolver}                                        from './VirtualResolver';
-import {WorkspaceFetcher}                                       from './WorkspaceFetcher';
-import {WorkspaceResolver}                                      from './WorkspaceResolver';
-import * as folderUtils                                         from './folderUtils';
-import * as miscUtils                                           from './miscUtils';
-import * as nodeUtils                                           from './nodeUtils';
-import * as structUtils                                         from './structUtils';
+import {MultiFetcher}                                          from './MultiFetcher';
+import {MultiResolver}                                         from './MultiResolver';
+import {Plugin, Hooks}                                         from './Plugin';
+import {Report}                                                from './Report';
+import {SemverResolver}                                        from './SemverResolver';
+import {TagResolver}                                           from './TagResolver';
+import {VirtualFetcher}                                        from './VirtualFetcher';
+import {VirtualResolver}                                       from './VirtualResolver';
+import {WorkspaceFetcher}                                      from './WorkspaceFetcher';
+import {WorkspaceResolver}                                     from './WorkspaceResolver';
+import * as folderUtils                                        from './folderUtils';
+import * as miscUtils                                          from './miscUtils';
+import * as nodeUtils                                          from './nodeUtils';
+import * as structUtils                                        from './structUtils';
 
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});
@@ -230,6 +233,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
+  progressBarStyle: {
+    description: `Which style of progress bar should be used (only when progress bars are enabled)`,
+    type: SettingsType.STRING,
+    default: undefined,
+    defaultText: `<dynamic>`,
+  },
 
   // Settings related to how packages are interpreted by default
   defaultLanguageName: {
@@ -244,6 +253,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 
   // Settings related to network access
+  enableMirror: {
+    description: `If true, the downloaded packages will be retrieved and stored in both the local and global folders`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
   enableNetwork: {
     description: `If false, the package manager will refuse to use the network if required to`,
     type: SettingsType.BOOLEAN,
@@ -341,7 +355,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
 
   switch (definition.type) {
     case SettingsType.ABSOLUTE_PATH:
-      return ppath.resolve(folder, NodeFS.toPortablePath(value));
+      return ppath.resolve(folder, npath.toPortablePath(value));
     case SettingsType.LOCATOR_LOOSE:
       return structUtils.parseLocator(value, false);
     case SettingsType.LOCATOR:
@@ -518,8 +532,8 @@ export class Configuration {
           continue;
 
         for (const userProvidedPath of data.plugins) {
-          const pluginPath = ppath.resolve(cwd, NodeFS.toPortablePath(userProvidedPath));
-          const {factory, name} = nodeUtils.dynamicRequire(NodeFS.fromPortablePath(pluginPath));
+          const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
+          const {factory, name} = nodeUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
 
           // Prevent plugin redefinition so that the ones declared deeper in the
           // filesystem always have precedence over the ones below.
@@ -723,25 +737,6 @@ export class Configuration {
     }
   }
 
-  extend(data: {[key: string]: unknown}) {
-    const newConfiguration = Object.create(Configuration.prototype);
-
-    newConfiguration.startingCwd = this.startingCwd;
-    newConfiguration.projectCwd = this.projectCwd;
-
-    newConfiguration.plugins = new Map(this.plugins);
-
-    newConfiguration.settings = new Map(this.settings);
-    newConfiguration.values = new Map(this.values);
-    newConfiguration.sources = new Map(this.sources);
-
-    newConfiguration.invalid = new Map(this.invalid);
-
-    newConfiguration.useWithSource(`<internal override>`, data, this.startingCwd, {override: true});
-
-    return newConfiguration;
-  }
-
   useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
     try {
       this.use(source, data, folder, {strict, overwrite});
@@ -783,11 +778,41 @@ export class Configuration {
     }
   }
 
-  get(key: string) {
+  get<T = any>(key: string) {
     if (!this.values.has(key))
       throw new Error(`Invalid configuration key "${key}"`);
 
-    return this.values.get(key);
+    return this.values.get(key) as T;
+  }
+
+  getSubprocessStreams(prefix: string, {header, report}: {header?: string, report: Report}) {
+    let stdout: Writable;
+    let stderr: Writable;
+
+    const logFile = npath.toPortablePath(tmpNameSync({prefix: `logfile-`, postfix: `.log`}));
+    const logStream = xfs.createWriteStream(logFile);
+
+    if (this.get(`enableInlineBuilds`)) {
+      const stdoutLineReporter = report.createStreamReporter(`${prefix} ${this.format(`STDOUT`, `green`)}`);
+      const stderrLineReporter = report.createStreamReporter(`${prefix} ${this.format(`STDERR`, `red`)}`);
+
+      stdout = new PassThrough();
+      stdout.pipe(stdoutLineReporter);
+      stdout.pipe(logStream);
+
+      stderr = new PassThrough();
+      stderr.pipe(stderrLineReporter);
+      stderr.pipe(logStream);
+    } else {
+      stdout = logStream;
+      stderr = logStream;
+
+      if (typeof header !== `undefined`) {
+        stdout.write(`${header}\n`);
+      }
+    }
+
+    return {logFile, stdout, stderr};
   }
 
   makeResolver() {

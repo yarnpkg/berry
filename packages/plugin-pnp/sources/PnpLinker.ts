@@ -1,18 +1,20 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName, DependencyMeta} from '@yarnpkg/core';
 import {FetchResult, Descriptor, Ident, Locator, Package, BuildDirective, BuildType}                         from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                                              from '@yarnpkg/core';
-import {CwdFS, FakeFS, NodeFS, xfs, PortablePath, ppath, toFilename}                                         from '@yarnpkg/fslib';
+import {CwdFS, FakeFS, PortablePath, npath, ppath, toFilename, xfs}                                          from '@yarnpkg/fslib';
 import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@yarnpkg/pnp';
 import {UsageError}                                                                                          from 'clipanion';
 
 import {getPnpPath}                                                                                          from './index';
 
-// Some packages do weird stuff and MUST be unplugged. I don't like them.
 const FORCED_UNPLUG_PACKAGES = new Set([
+  // Some packages do weird stuff and MUST be unplugged. I don't like them.
   structUtils.makeIdent(null, `nan`).identHash,
   structUtils.makeIdent(null, `node-gyp`).identHash,
   structUtils.makeIdent(null, `node-pre-gyp`).identHash,
   structUtils.makeIdent(null, `node-addon-api`).identHash,
+  // Those ones contain native builds (*.node), and Node loads them through dlopen
+  structUtils.makeIdent(null, `fsevents`).identHash,
 ]);
 
 export class PnpLinker implements Linker {
@@ -25,7 +27,7 @@ export class PnpLinker implements Linker {
     if (!xfs.existsSync(pnpPath))
       throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
 
-    const physicalPath = NodeFS.fromPortablePath(pnpPath);
+    const physicalPath = npath.fromPortablePath(pnpPath);
     const pnpFile = miscUtils.dynamicRequire(physicalPath);
     delete require.cache[physicalPath];
 
@@ -35,7 +37,7 @@ export class PnpLinker implements Linker {
     if (!packageInformation)
       throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed PnP map - running an install might help`);
 
-    return NodeFS.toPortablePath(packageInformation.packageLocation);
+    return npath.toPortablePath(packageInformation.packageLocation);
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
@@ -43,11 +45,11 @@ export class PnpLinker implements Linker {
     if (!xfs.existsSync(pnpPath))
       throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
 
-    const physicalPath = NodeFS.fromPortablePath(pnpPath);
+    const physicalPath = npath.fromPortablePath(pnpPath);
     const pnpFile = miscUtils.dynamicRequire(physicalPath);
     delete require.cache[physicalPath];
 
-    const locator = pnpFile.findPackageLocator(NodeFS.fromPortablePath(location));
+    const locator = pnpFile.findPackageLocator(npath.fromPortablePath(location));
     if (!locator)
       return null;
 

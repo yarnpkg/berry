@@ -1,4 +1,4 @@
-const {NodeFS, xfs} = require(`@yarnpkg/fslib`);
+const {npath, xfs} = require(`@yarnpkg/fslib`);
 const {isAbsolute, resolve} = require('path');
 
 const {
@@ -252,7 +252,7 @@ describe(`Scripts tests`, () => {
         expect(itemPath).toBeDefined();
 
         const content = await readFile(itemPath, 'utf8');
-        await expect(content).toEqual(NodeFS.fromPortablePath(itemPath));
+        await expect(content).toEqual(npath.fromPortablePath(itemPath));
       },
     ),
   );

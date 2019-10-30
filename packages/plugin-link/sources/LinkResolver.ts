@@ -2,7 +2,7 @@ import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
 import {Descriptor, Locator, Manifest, Package}          from '@yarnpkg/core';
 import {LinkType}                                        from '@yarnpkg/core';
 import {miscUtils, structUtils}                          from '@yarnpkg/core';
-import {NodeFS}                                          from '@yarnpkg/fslib';
+import {npath}                                           from '@yarnpkg/fslib';
 
 import {LINK_PROTOCOL}                                   from './constants';
 
@@ -34,7 +34,7 @@ export class LinkResolver implements Resolver {
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
     const path = descriptor.range.slice(LINK_PROTOCOL.length);
 
-    return [structUtils.makeLocator(descriptor, `${LINK_PROTOCOL}${NodeFS.toPortablePath(path)}`)];
+    return [structUtils.makeLocator(descriptor, `${LINK_PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {

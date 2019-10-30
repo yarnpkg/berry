@@ -1,4 +1,4 @@
-const {NodeFS} = require(`@yarnpkg/fslib`);
+const {npath} = require(`@yarnpkg/fslib`);
 const {satisfies} = require(`semver`);
 
 const {
@@ -137,7 +137,7 @@ describe(`Require tests`, () => {
 
       await writeFile(`${tmp}/file.js`, `module.exports = 42;`);
 
-      await expect(source(`require(${JSON.stringify(NodeFS.fromPortablePath(tmp))} + "/file")`)).resolves.toEqual(42);
+      await expect(source(`require(${JSON.stringify(npath.fromPortablePath(tmp))} + "/file")`)).resolves.toEqual(42);
     }),
   );
 
@@ -216,8 +216,8 @@ describe(`Require tests`, () => {
         await expect(
           source(
             `require(require.resolve('no-deps', {paths: ${JSON.stringify([
-              `${NodeFS.fromPortablePath(path)}/workspace-a`,
-              `${NodeFS.fromPortablePath(path)}/workspace-b`,
+              `${npath.fromPortablePath(path)}/workspace-a`,
+              `${npath.fromPortablePath(path)}/workspace-b`,
             ])}}))`,
           ),
         ).resolves.toMatchObject({

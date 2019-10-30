@@ -1,6 +1,6 @@
-import {NodeFS, PortablePath} from '@yarnpkg/fslib';
-import crossSpawn             from 'cross-spawn';
-import {Readable, Writable}   from 'stream';
+import {PortablePath, npath} from '@yarnpkg/fslib';
+import crossSpawn            from 'cross-spawn';
+import {Readable, Writable}  from 'stream';
 
 export type PipevpOptions = {
   cwd: PortablePath,
@@ -30,7 +30,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
     stdio[2] = stderr;
 
   const subprocess = crossSpawn(fileName, args, {
-    cwd: NodeFS.fromPortablePath(cwd),
+    cwd: npath.fromPortablePath(cwd),
     env,
     stdio,
   });
@@ -72,7 +72,7 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
   const stderrChunks: Array<Buffer> = [];
 
   const subprocess = crossSpawn(fileName, args, {
-    cwd: NodeFS.fromPortablePath(cwd),
+    cwd: npath.fromPortablePath(cwd),
     env,
     stdio,
   });
