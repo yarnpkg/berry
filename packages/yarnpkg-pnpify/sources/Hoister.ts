@@ -65,7 +65,11 @@ export class Hoister {
       if (!pkgId) {
         pkgId = lastPkgId;
         lastPkgId++;
-        const weight = !this.options.optimizeSizeOnDisk || pkg.packageLocation.indexOf(`.zip${NODE_MODULES_SUFFIX}`) < 0 ? 1 : fs.statSync(pkg.packageLocation.split(NODE_MODULES_SUFFIX)[0]).size;
+        const packagePath = npath.toPortablePath(pkg.packageLocation);
+        let weight = 1;
+        if (this.options.optimizeSizeOnDisk && packagePath.indexOf(`.zip${NODE_MODULES_SUFFIX}`) > 0)
+          weight = fs.statSync(packagePath.split(NODE_MODULES_SUFFIX)[0]).size;
+
         locatorToPackageMap.set(locatorKey, pkgId);
         locators.push(locator);
         packages.push({name: locator.name!, weight});
@@ -186,7 +190,6 @@ export class Hoister {
     const seenPkgIds = new Set();
     const buildTree = (nodeId: PackageId, prefix: PortablePath) => {
       seenPkgIds.add(nodeId);
-      // const entries = new Map<Filename, PackageLocator | null>();
       const depIds = hoistedTree[nodeId] || NO_DEPS;
       for (const depId of depIds) {
         const locator = locators[depId];
@@ -254,8 +257,6 @@ export class Hoister {
   public hoist(pnp: PnpWalkApi): NodeModulesTree {
     const {packageTree, packages, locators} = this.buildPackageTree(pnp);
 
-    // console.log('packages:\n', require('util').inspect(packages.map((x, idx) => [idx, x]), {maxArrayLength: null, depth: null}));
-    // console.log('packageTree:\n', require('util').inspect(packageTree.map((x, idx) => [idx, x]), {maxArrayLength: null, depth: null}));
     const hoistedTree = this.rawHoister.hoist(packageTree, packages);
 
     return this.buildNodeModulesTree(pnp, hoistedTree, locators);
