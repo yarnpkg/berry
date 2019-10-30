@@ -6,8 +6,7 @@ import {FSPath, NativePath, PortablePath, npath, ppath}    from '@yarnpkg/fslib'
 import {PnpApi}                                            from '@yarnpkg/pnp';
 import fs                                                  from 'fs';
 
-import {HoistedPathResolver}                               from './HoistedPathResolver';
-import {PathResolver, ResolvedPath}                        from './NodePathResolver';
+import {PathResolver, ResolvedPath, HoistedPathResolver}   from './HoistedPathResolver';
 import {WatchManager}                                      from './WatchManager';
 
 export type NodeModulesFSOptions = {
@@ -79,7 +78,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   private resolvePath(p: PortablePath): ResolvedPath & { fullOriginalPath: PortablePath } {
     if (typeof p === `number`) {
-      return {resolvedPath: p, fullOriginalPath: p};
+      return {resolvedPath: p, realPath: p, fullOriginalPath: p};
     } else {
       const fullOriginalPath = this.pathUtils.resolve(p);
       return {...this.pathResolver.resolvePath(fullOriginalPath), fullOriginalPath};
@@ -93,11 +92,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
       return p;
 
     const pnpPath = this.resolvePath(p);
-    if (!pnpPath.resolvedPath) {
-      throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, stat '${p}'`);
-    } else {
-      return pnpPath.resolvedPath;
-    }
+    return pnpPath.resolvedPath;
   }
 
   private resolveDirOrFilePath(p: PortablePath): PortablePath;
@@ -107,30 +102,19 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
       return p;
 
     const pnpPath = this.resolvePath(p);
-    if (!pnpPath.resolvedPath) {
-      throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, stat '${p}'`);
-    } else {
-      return pnpPath.statPath || pnpPath.resolvedPath;
-    }
+    return pnpPath.statPath || pnpPath.resolvedPath;
   }
 
   private resolveLink(p: PortablePath, op: string, onSymlink: (stats: fs.Stats, targetPath: PortablePath) => any, onRealPath: (targetPath: PortablePath) => any) {
     const pnpPath = this.resolvePath(p);
-    if (!pnpPath.resolvedPath) {
-      throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, ${op} '${p}'`);
-    } else {
-      if (pnpPath.resolvedPath !== pnpPath.fullOriginalPath) {
-        let stat;
-        try {
-          stat = this.baseFs.lstatSync(pnpPath.statPath || pnpPath.resolvedPath);
-        } catch (e) {}
+    if (pnpPath.realPath !== p) {
+      let stat;
+      try {
+        stat = this.baseFs.lstatSync(pnpPath.realPath);
+      } catch (e) {}
 
-        if (stat) {
-          if (!pnpPath.isSymlink && stat.isDirectory())
-            throw PortableNodeModulesFs.createFsError('EINVAL', `invalid argument, ${op} '${p}'`);
-
-          return onSymlink(stat, this.pathUtils.relative(this.pathUtils.dirname(pnpPath.fullOriginalPath), pnpPath.statPath || pnpPath.resolvedPath));
-        }
+      if (stat) {
+        return onSymlink(stat, this.pathUtils.relative(this.pathUtils.dirname(pnpPath.fullOriginalPath), pnpPath.realPath));
       }
     }
     return onRealPath(pnpPath.statPath || pnpPath.resolvedPath);
@@ -205,24 +189,25 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   }
 
   async realpathPromise(p: PortablePath) {
-    const targetPath = this.resolveFilePath(p);
-    const stats = await this.baseFs.statPromise(targetPath);
-    // We return the symlink paths for folder to try to keep virtual paths alive as long as we can
-    return stats.isDirectory() ? targetPath : await this.baseFs.realpathPromise(targetPath);
+    if (typeof p === `number`)
+      return p;
+
+    const pnpPath = this.resolvePath(p);
+    return pnpPath.realPath !== p ? pnpPath.realPath : await this.baseFs.realpathPromise(p);
   }
 
   realpathSync(p: PortablePath) {
-    const targetPath = this.resolveFilePath(p);
-    const stats = this.baseFs.statSync(targetPath);
-    // We return the symlink paths for folder to try to keep virtual paths alive as long as we can
-    return stats.isDirectory() ? targetPath : this.baseFs.realpathSync(targetPath);
+    if (typeof p === `number`)
+      return p;
+
+    const pnpPath = this.resolvePath(p);
+
+    return pnpPath.realPath !== p ? pnpPath.realPath : this.baseFs.realpathSync(p);
   }
 
   async existsPromise(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    if (!pnpPath.resolvedPath) {
-      return false;
-    } else if (pnpPath.statPath) {
+    if (pnpPath.statPath) {
       return true;
     } else {
       return await this.baseFs.existsPromise(pnpPath.resolvedPath);
@@ -231,9 +216,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   existsSync(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    if (!pnpPath.resolvedPath) {
-      return false;
-    } else if (pnpPath.statPath) {
+    if (pnpPath.statPath) {
       return true;
     } else {
       return this.baseFs.existsSync(pnpPath.resolvedPath);
@@ -376,9 +359,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   async readdirPromise(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    if (!pnpPath.resolvedPath) {
-      throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, scandir '${p}'`);
-    } else if (pnpPath.dirList) {
+    if (pnpPath.dirList) {
       return Array.from(pnpPath.dirList);
     } else {
       return await this.baseFs.readdirPromise(pnpPath.resolvedPath);
@@ -387,9 +368,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   readdirSync(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    if (!pnpPath.resolvedPath) {
-      throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, scandir '${p}'`);
-    } else if (pnpPath.dirList) {
+    if (pnpPath.dirList) {
       return Array.from(pnpPath.dirList);
     } else {
       return this.baseFs.readdirSync(pnpPath.resolvedPath);

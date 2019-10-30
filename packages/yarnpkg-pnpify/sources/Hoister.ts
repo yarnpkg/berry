@@ -98,7 +98,6 @@ export class Hoister {
       }
 
       const allDepIds = new Set(Array.from(deps).concat(Array.from(peerDeps)));
-      // console.log('pkgId', pkgId, 'parentDepIds', Array.from(parentDepIds), 'depIds', Array.from(allDepIds), 'deps', deps, 'peerDeps', peerDeps);
       for (const depId of allDepIds) {
         const depPkg = packageInfos[depId];
         if (depPkg && !addedIds.has(depId)) {
@@ -255,6 +254,8 @@ export class Hoister {
   public hoist(pnp: PnpWalkApi): NodeModulesTree {
     const {packageTree, packages, locators} = this.buildPackageTree(pnp);
 
+    // console.log('packages:\n', require('util').inspect(packages.map((x, idx) => [idx, x]), {maxArrayLength: null, depth: null}));
+    // console.log('packageTree:\n', require('util').inspect(packageTree.map((x, idx) => [idx, x]), {maxArrayLength: null, depth: null}));
     const hoistedTree = this.rawHoister.hoist(packageTree, packages);
 
     return this.buildNodeModulesTree(pnp, hoistedTree, locators);
