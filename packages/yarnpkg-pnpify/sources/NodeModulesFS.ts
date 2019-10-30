@@ -53,7 +53,8 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   }
 
   private createPathResolver(pnp: PnpApi) {
-    return pnp.VERSIONS.std >= 3 ? new HoistedPathResolver(pnp) : new NodePathResolver(pnp);
+    return new NodePathResolver(pnp);
+    // return pnp.VERSIONS.std >= 3 ? new HoistedPathResolver(pnp) : new NodePathResolver(pnp);
   }
 
   private watchPnpFile(pnpRootPath: PortablePath) {

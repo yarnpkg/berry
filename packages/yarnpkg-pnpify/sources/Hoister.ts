@@ -1,4 +1,4 @@
-import {PortablePath, Filename, NodeFS, toFilename, ppath}       from '@yarnpkg/fslib';
+import {PortablePath, Filename, toFilename, npath, ppath}        from '@yarnpkg/fslib';
 import {PnpApi, PackageLocator, LinkType}                        from '@yarnpkg/pnp';
 
 import fs                                                        from 'fs';
@@ -118,9 +118,9 @@ export class Hoister {
       if (info.linkType === LinkType.SOFT && locator.reference!.indexOf('virtual:') === 0) {
         const realLocator = {name: locator.name!, reference: locator.reference!.split('#')[1]};
         const realInfo = pnp.getPackageInformation(realLocator)!;
-        return [NodeFS.toPortablePath(realInfo.packageLocation), realInfo.linkType];
+        return [npath.toPortablePath(realInfo.packageLocation), realInfo.linkType];
       } else {
-        return [NodeFS.toPortablePath(info.packageLocation), info.linkType];
+        return [npath.toPortablePath(info.packageLocation), info.linkType];
       }
     };
     const getPackageName = (locator: PackageLocator): { name: Filename, scope: Filename | null } => {
@@ -144,7 +144,7 @@ export class Hoister {
           const segments = depPrefix.split(NODE_MODULES_SUFFIX);
           let segCount = segments.length - 1;
           while (segCount > 0) {
-            const nodePath = NodeFS.toPortablePath(segments.slice(0, segCount).join(NODE_MODULES_SUFFIX));
+            const nodePath = npath.toPortablePath(segments.slice(0, segCount).join(NODE_MODULES_SUFFIX));
             const pathSubdirs = segments[segCount].split(ppath.sep).slice(1);
             let pathSubdirCount = pathSubdirs.length - 1;
             let hasTreeNodes = false;

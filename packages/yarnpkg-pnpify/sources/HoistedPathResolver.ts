@@ -1,4 +1,4 @@
-import {NodeFS, PortablePath, ppath}              from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath}               from '@yarnpkg/fslib';
 import {PnpApi, LinkType}                         from '@yarnpkg/pnp';
 
 import {HoisterOptions, NodeModulesTree, Hoister} from './Hoister';
@@ -38,15 +38,15 @@ export class HoistedPathResolver implements PathResolver {
       targetPath = targetPath + ppath.sep + remainderParts.slice(0, requestStartIdx).join(ppath.sep);
     }
     const request = remainderParts.slice(requestStartIdx).join(ppath.sep);
-    const node = this.nodeModulesTree.get(NodeFS.toPortablePath(targetPath));
+    const node = this.nodeModulesTree.get(npath.toPortablePath(targetPath));
     if (node) {
       if (Array.isArray(node)) {
         const [location, linkType] = node;
         result.isSymlink = linkType === LinkType.SOFT;
-        result.resolvedPath = NodeFS.toPortablePath(location + (request ? ppath.sep + request : ''));
+        result.resolvedPath = npath.toPortablePath(location + (request ? ppath.sep + request : ''));
       } else if (!request) {
         result.dirList = node;
-        result.statPath = NodeFS.toPortablePath(nodePath.substring(0, nodePath.indexOf(NODE_MODULES_SUFFIX)));
+        result.statPath = npath.toPortablePath(nodePath.substring(0, nodePath.indexOf(NODE_MODULES_SUFFIX)));
       }
     }
     return result;
