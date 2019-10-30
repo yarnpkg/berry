@@ -1,5 +1,5 @@
 import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
-import CJSON from 'comment-json';
+import CJSON                                       from 'comment-json';
 
 import {dynamicRequire}                            from './dynamicRequire';
 
