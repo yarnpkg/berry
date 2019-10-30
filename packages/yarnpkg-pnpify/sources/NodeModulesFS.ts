@@ -7,7 +7,7 @@ import {PnpApi}                                            from '@yarnpkg/pnp';
 import fs                                                  from 'fs';
 
 import {HoistedPathResolver}                               from './HoistedPathResolver';
-import {NodePathResolver, PathResolver, ResolvedPath}      from './NodePathResolver';
+import {PathResolver, ResolvedPath}                        from './NodePathResolver';
 import {WatchManager}                                      from './WatchManager';
 
 export type NodeModulesFSOptions = {
@@ -53,8 +53,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   }
 
   private createPathResolver(pnp: PnpApi) {
-    return new NodePathResolver(pnp);
-    // return pnp.VERSIONS.std >= 3 ? new HoistedPathResolver(pnp) : new NodePathResolver(pnp);
+    return new HoistedPathResolver(pnp);
   }
 
   private watchPnpFile(pnpRootPath: PortablePath) {

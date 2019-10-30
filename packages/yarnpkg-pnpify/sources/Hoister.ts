@@ -1,12 +1,12 @@
-import {PortablePath, Filename, toFilename, npath, ppath}        from '@yarnpkg/fslib';
-import {PnpApi, PackageLocator, LinkType}                        from '@yarnpkg/pnp';
+import {NativePath, PortablePath, Filename, toFilename, npath, ppath} from '@yarnpkg/fslib';
+import {PnpApi, PackageLocator, LinkType, PackageInformation}         from '@yarnpkg/pnp';
 
-import fs                                                        from 'fs';
+import fs                                                             from 'fs';
 
-import {RawHoister, ReadonlyPackageTree, PackageId, PackageInfo} from './RawHoister';
-import {HoistedTree, PackageTree}                                from './RawHoister';
+import {RawHoister, ReadonlyPackageTree, PackageId, PackageInfo}      from './RawHoister';
+import {HoistedTree, PackageTree}                                     from './RawHoister';
 
-type PnpWalkApi = Pick<PnpApi, 'getPackageInformation' | 'getDependencyTreeRoots' | 'topLevel'>;
+type PnpWalkApi = Pick<PnpApi, 'getPackageInformation' | 'getDependencyTreeRoots' | 'topLevel' | 'resolveVirtual'>;
 
 /**
  * Node modules tree.
@@ -51,6 +51,7 @@ export class Hoister {
     const packages: PackageInfo[] = [];
     const locators: PackageLocator[] = [];
     const locatorToPackageMap = new Map<LocatorKey, PackageId>();
+    const packageInfos: PackageInformation<NativePath>[] = [];
 
     const pnpRoots = pnp.getDependencyTreeRoots ? pnp.getDependencyTreeRoots() : [pnp.topLevel];
 
@@ -58,44 +59,83 @@ export class Hoister {
 
     const getLocatorKey = (locator: PackageLocator): LocatorKey => `${locator.name}:${locator.reference}`;
 
-    const assignPackageId = (locator: PackageLocator, weight: number) => {
+    const assignPackageId = (locator: PackageLocator, pkg: PackageInformation<NativePath>) => {
       const locatorKey = getLocatorKey(locator);
       let pkgId = locatorToPackageMap.get(locatorKey);
       if (!pkgId) {
-        pkgId = lastPkgId++;
+        pkgId = lastPkgId;
+        lastPkgId++;
+        const weight = !this.options.optimizeSizeOnDisk || pkg.packageLocation.indexOf(`.zip${NODE_MODULES_SUFFIX}`) < 0 ? 1 : fs.statSync(pkg.packageLocation.split(NODE_MODULES_SUFFIX)[0]).size;
         locatorToPackageMap.set(locatorKey, pkgId);
         locators.push(locator);
         packages.push({name: locator.name!, weight});
+        packageInfos.push(pkg);
       }
       return pkgId;
     };
 
-    const seenIds = new Set<PackageId>();
+    const getPackageId = (locator: PackageLocator) => locatorToPackageMap.get(getLocatorKey(locator));
 
-    const addPackageToTree = (parent: PackageLocator,  parentPkgId: PackageId) => {
-      seenIds.add(parentPkgId);
-      const pkg = pnp.getPackageInformation(parent);
-      if (pkg) {
-        const depIds = new Set<PackageId>();
-        packageTree.push({deps: depIds, peerDeps: new Set<PackageId>()});
+    const addedIds = new Set<PackageId>();
+    const addPackageToTree = (pkg: PackageInformation<NativePath>, pkgId: PackageId, parentDepIds: Set<PackageId>) => {
+      addedIds.add(pkgId);
+      const deps = new Set<PackageId>();
+      const peerDeps = new Set<PackageId>();
+      packageTree[pkgId] = {deps, peerDeps};
 
-        for (const [name, reference] of pkg.packageDependencies) {
-          if (reference) {
-            const locator = typeof reference === 'string' ? {name, reference} : {name: reference[0], reference: reference[1]};
-            const weight = !this.options.optimizeSizeOnDisk || pkg.packageLocation.indexOf(`.zip${NODE_MODULES_SUFFIX}`) < 0 ? 1 : fs.statSync(pkg.packageLocation.split(NODE_MODULES_SUFFIX)[0]).size;
-            const pkgId = assignPackageId(locator, weight);
+      for (const [name, reference] of pkg.packageDependencies) {
+        if (reference) {
+          const locator = typeof reference === 'string' ? {name, reference} : {name: reference[0], reference: reference[1]};
+          const depPkgId = getPackageId(locator);
+          if (depPkgId) {
+            if (parentDepIds.has(depPkgId) && depPkgId !== pkgId) {
+              peerDeps.add(depPkgId);
+            } else {
+              deps.add(depPkgId);
+            }
+          }
+        }
+      }
 
-            depIds.add(pkgId);
-            if (!packageTree[pkgId]) {
-              addPackageToTree(locator, pkgId);
+      const allDepIds = new Set(Array.from(deps).concat(Array.from(peerDeps)));
+      // console.log('pkgId', pkgId, 'parentDepIds', Array.from(parentDepIds), 'depIds', Array.from(allDepIds), 'deps', deps, 'peerDeps', peerDeps);
+      for (const depId of allDepIds) {
+        const depPkg = packageInfos[depId];
+        if (depPkg && !addedIds.has(depId)) {
+          addPackageToTree(depPkg, depId, allDepIds);
+        }
+      }
+    };
+
+    const assignedIds = new Set<PackageId>();
+    const assignPackageIds = (pkgId: PackageId) => {
+      assignedIds.add(pkgId);
+      const pkg = packageInfos[pkgId];
+      for (const [name, reference] of pkg.packageDependencies) {
+        if (reference) {
+          const locator = typeof reference === 'string' ? {name, reference} : {name: reference[0], reference: reference[1]};
+          const depPkg = pnp.getPackageInformation(locator);
+          if (depPkg) {
+            const depPkgId = assignPackageId(locator, depPkg);
+            if (!assignedIds.has(depPkgId)) {
+              assignPackageIds(depPkgId);
             }
           }
         }
       }
     };
 
-    for (const locator of pnpRoots)
-      addPackageToTree(locator, 0);
+    const pkg = pnp.getPackageInformation(pnp.topLevel)!;
+    const topLocatorKey = getLocatorKey(pnp.topLevel);
+    for (const locator of pnpRoots) {
+      if (getLocatorKey(locator) !== topLocatorKey) {
+        pkg.packageDependencies.set(locator.name!, locator.reference);
+      }
+    }
+    const pkgId = assignPackageId(pnp.topLevel, pkg);
+    assignPackageIds(pkgId);
+
+    addPackageToTree(pkg, pkgId, new Set<number>());
 
     return {packageTree, packages, locators};
   }
@@ -112,15 +152,31 @@ export class Hoister {
   private buildNodeModulesTree(pnp: PnpWalkApi, hoistedTree: HoistedTree, locators: PackageLocator[]): NodeModulesTree {
     const tree: NodeModulesTree = new Map();
 
+    // Hard link Regex heuristics, needed for old PnP API versions support
+    const HARD_LINK_REGEX = /((\.zip|-integrity)[\\/]node_modules[\\/]|-virtual-[0-9a-f]{10})/;
+
     const NO_DEPS = new Set<PackageId>();
     const getLocation = (locator: PackageLocator): [PortablePath, LinkType] => {
       const info = pnp.getPackageInformation(locator)!;
-      if (info.linkType === LinkType.SOFT && locator.reference!.indexOf('virtual:') === 0) {
-        const realLocator = {name: locator.name!, reference: locator.reference!.split('#')[1]};
-        const realInfo = pnp.getPackageInformation(realLocator)!;
-        return [npath.toPortablePath(realInfo.packageLocation), realInfo.linkType];
+      if (pnp.resolveVirtual) {
+        return [npath.toPortablePath(
+          locator.reference && locator.reference.indexOf('virtual:') === 0 ?
+            pnp.resolveVirtual(info.packageLocation)! :
+            info.packageLocation
+        ), info.linkType];
       } else {
-        return [npath.toPortablePath(info.packageLocation), info.linkType];
+        const linkType = info.linkType || HARD_LINK_REGEX.test(info.packageLocation) ? LinkType.HARD : LinkType.SOFT;
+        if (linkType === LinkType.SOFT && locator.reference && locator.reference!.indexOf('virtual:') === 0) {
+          const realLocator = {name: locator.name!, reference: locator.reference!.split('#')[1]};
+          const realInfo = pnp.getPackageInformation(realLocator)!;
+          if (!realInfo) {
+            return [npath.toPortablePath(info.packageLocation), LinkType.HARD];
+          } else {
+            return [npath.toPortablePath(realInfo.packageLocation), linkType];
+          }
+        } else {
+          return [npath.toPortablePath(info.packageLocation), linkType];
+        }
       }
     };
     const getPackageName = (locator: PackageLocator): { name: Filename, scope: Filename | null } => {
