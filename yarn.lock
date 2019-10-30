@@ -3326,6 +3326,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/comment-json@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@types/comment-json@npm:1.1.1"
+  checksum: 1bb037b97e6056776426ec1155d5c64f750b9ecec5da5ac45e093c8c6203375fce8e1180d14d65faf3dbca3fd921f67d6e76a4d837afe9838b9d041277610d1f
+  languageName: node
+  linkType: hard
+
 "@types/configstore@npm:^2.1.1":
   version: 2.1.1
   resolution: "@types/configstore@npm:2.1.1"
@@ -3595,13 +3602,6 @@ __metadata:
   version: 7.0.3
   resolution: "@types/json-schema@npm:7.0.3"
   checksum: c7ca9fae5651d3da22096bad276ea25de60be13348f7ed1bf032b1b2e12bc4bda26073b46df79fe2a4fa609f7392fe09d24b76df795114e15d072a0ea0d2b363
-  languageName: node
-  linkType: hard
-
-"@types/json5@npm:^0.0.30":
-  version: 0.0.30
-  resolution: "@types/json5@npm:0.0.30"
-  checksum: 323ee848bab2893453ee4af677240c5cbef715f1d36300bacca27b4cf43bb0fb3960890b8941d2b812c4fb462dbfc503a4cd246e2e98e1d0a36768d6265de43b
   languageName: node
   linkType: hard
 
@@ -4780,6 +4780,7 @@ __metadata:
     "@babel/register": "npm:^7.5.5"
     "@types/camelcase": "npm:5.2.0"
     "@types/chalk": "npm:2.2.0"
+    "@types/comment-json": "npm:^1.1.1"
     "@types/cross-spawn": "npm:6.0.0"
     "@types/dateformat": "npm:^1.0.1"
     "@types/emscripten": "npm:^1.38.0"
@@ -4797,7 +4798,6 @@ __metadata:
     "@types/is-ci": "npm:^2.0.0"
     "@types/jest": "npm:^24.0.18"
     "@types/joi": "npm:^13.6.0"
-    "@types/json5": "npm:^0.0.30"
     "@types/klaw": "npm:^3.0.0"
     "@types/lockfile": "npm:^1.0.0"
     "@types/lodash": "npm:^4.14.136"
@@ -5114,9 +5114,9 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.6"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/pnp": "workspace:2.0.0-rc.6"
+    comment-json: "npm:^2.2.0"
     cross-spawn: "npm:^6.0.5"
     eslint: "npm:^5.16.0"
-    json5: "npm:^2.1.0"
     typescript: "npm:next"
   peerDependencies:
     eslint: "*"
@@ -8044,6 +8044,18 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"comment-json@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "comment-json@npm:2.2.0"
+  dependencies:
+    core-util-is: "npm:^1.0.2"
+    esprima: "npm:^4.0.1"
+    has-own-prop: "npm:^2.0.0"
+    repeat-string: "npm:^1.6.1"
+  checksum: 4934f6efb43c18ec0adc6d0a9ed535a2ac1360c2f3b53c1af677c9e87ee9ef5841d3ebc85600aad760e4097e9762718a716a423a3db54019b6ccd547719bddd7
+  languageName: node
+  linkType: hard
+
 "common-tags@npm:^1.4.0":
   version: 1.8.0
   resolution: "common-tags@npm:1.8.0"
@@ -8340,7 +8352,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"core-util-is@npm:1.0.2, core-util-is@npm:~1.0.0":
+"core-util-is@npm:1.0.2, core-util-is@npm:^1.0.2, core-util-is@npm:~1.0.0":
   version: 1.0.2
   resolution: "core-util-is@npm:1.0.2"
   checksum: b2aeb723279455a85125383b7067e66d650187adee4151b6587bc28d8334c9d5ebbc6e4bd6c344355191865e1add46fdec83f2a7f4d83889cfe7e586d9fd50b6
@@ -10241,7 +10253,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"esprima@npm:^4.0.0":
+"esprima@npm:^4.0.0, esprima@npm:^4.0.1":
   version: 4.0.1
   resolution: "esprima@npm:4.0.1"
   bin:
@@ -12730,6 +12742,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 4.0.0
   resolution: "has-flag@npm:4.0.0"
   checksum: 8c9a32ef47dfc77c5caf80a0e33a2d921414006ce954047d2274a8774e07cd916f2dd546aed7d89017504cb3fe66248dabb64f9c5bd893520cdd4c81e95d1198
+  languageName: node
+  linkType: hard
+
+"has-own-prop@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "has-own-prop@npm:2.0.0"
+  checksum: 4827d2a15aec3cc55742eab2703a57fde43f962f4e29086413e43e326885727a38422c020a050cd2ac485918127669cda7372bc64acabd1c3b09922e9aa8f8d2
   languageName: node
   linkType: hard
 

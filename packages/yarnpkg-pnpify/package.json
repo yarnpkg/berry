@@ -10,6 +10,7 @@
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.6",
+    "comment-json": "^2.2.0",
     "cross-spawn": "^6.0.5"
   },
   "devDependencies": {

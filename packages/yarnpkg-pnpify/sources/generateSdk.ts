@@ -1,4 +1,5 @@
 import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import CJSON from 'comment-json';
 
 import {dynamicRequire}                            from './dynamicRequire';
 
@@ -27,8 +28,8 @@ const addVSCodeWorkspaceSettings = async (projectRoot: PortablePath, settings: a
   const settingsPath = ppath.join(projectRoot, `.vscode/settings.json` as PortablePath);
   const content = await xfs.existsPromise(settingsPath) ? await xfs.readFilePromise(settingsPath, `utf8`) : `{}`;
 
-  const data = JSON.parse(content);
-  const patched = `${JSON.stringify({...data, ...settings}, null, 2)}\n`;
+  const data = CJSON.parse(content);
+  const patched = `${CJSON.stringify({...data, ...settings}, null, 2)}\n`;
 
   await xfs.mkdirpPromise(ppath.dirname(settingsPath));
   await xfs.changeFilePromise(settingsPath, patched);

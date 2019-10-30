@@ -17,6 +17,7 @@
     "@babel/register": "^7.5.5",
     "@types/camelcase": "5.2.0",
     "@types/chalk": "2.2.0",
+    "@types/comment-json": "^1.1.1",
     "@types/cross-spawn": "6.0.0",
     "@types/dateformat": "^1.0.1",
     "@types/emscripten": "^1.38.0",

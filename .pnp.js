@@ -362,6 +362,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.5.5"],
             ["@types/camelcase", "npm:5.2.0"],
             ["@types/chalk", "npm:2.2.0"],
+            ["@types/comment-json", "npm:1.1.1"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/dateformat", "npm:1.0.2"],
             ["@types/emscripten", "npm:1.38.0"],
@@ -379,7 +380,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/is-ci", "npm:2.0.0"],
             ["@types/jest", "npm:24.0.18"],
             ["@types/joi", "npm:13.6.3"],
-            ["@types/json5", "npm:0.0.30"],
             ["@types/klaw", "npm:3.0.0"],
             ["@types/lockfile", "npm:1.0.0"],
             ["@types/lodash", "npm:4.14.136"],
@@ -4758,6 +4758,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }]
       ]],
+      ["@types/comment-json", [
+        ["npm:1.1.1", {
+          "packageLocation": "./.yarn/cache/@types-comment-json-npm-1.1.1-39a82b149a-1.zip/node_modules/@types/comment-json/",
+          "packageDependencies": [
+            ["@types/comment-json", "npm:1.1.1"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["@types/configstore", [
         ["npm:2.1.1", {
           "packageLocation": "./.yarn/cache/@types-configstore-npm-2.1.1-bb3144db15-1.zip/node_modules/@types/configstore/",
@@ -5072,15 +5081,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-json-schema-npm-7.0.3-ffbcd28c6e-1.zip/node_modules/@types/json-schema/",
           "packageDependencies": [
             ["@types/json-schema", "npm:7.0.3"]
-          ],
-          "linkType": "HARD"
-        }]
-      ]],
-      ["@types/json5", [
-        ["npm:0.0.30", {
-          "packageLocation": "./.yarn/cache/@types-json5-npm-0.0.30-f1e41a4c3a-1.zip/node_modules/@types/json5/",
-          "packageDependencies": [
-            ["@types/json5", "npm:0.0.30"]
           ],
           "linkType": "HARD"
         }]
@@ -6569,6 +6569,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.5.5"],
             ["@types/camelcase", "npm:5.2.0"],
             ["@types/chalk", "npm:2.2.0"],
+            ["@types/comment-json", "npm:1.1.1"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/dateformat", "npm:1.0.2"],
             ["@types/emscripten", "npm:1.38.0"],
@@ -6586,7 +6587,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/is-ci", "npm:2.0.0"],
             ["@types/jest", "npm:24.0.18"],
             ["@types/joi", "npm:13.6.3"],
-            ["@types/json5", "npm:0.0.30"],
             ["@types/klaw", "npm:3.0.0"],
             ["@types/lockfile", "npm:1.0.0"],
             ["@types/lodash", "npm:4.14.136"],
@@ -6938,9 +6938,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -6952,9 +6952,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -6966,9 +6966,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -6980,9 +6980,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -6994,9 +6994,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7008,9 +7008,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7022,9 +7022,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["json5", "npm:2.1.0"],
             ["typescript", null]
           ],
           "linkType": "SOFT"
@@ -7036,9 +7036,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7050,9 +7050,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7064,9 +7064,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7078,9 +7078,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", "npm:5.16.0"],
-            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7092,9 +7092,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", null],
-            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -7106,9 +7106,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", "npm:5.16.0"],
-            ["json5", "npm:2.1.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
@@ -10503,6 +10503,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["commander", "npm:2.8.1"],
             ["graceful-readlink", "npm:1.0.1"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
+      ["comment-json", [
+        ["npm:2.2.0", {
+          "packageLocation": "./.yarn/cache/comment-json-npm-2.2.0-e203e48fe7-1.zip/node_modules/comment-json/",
+          "packageDependencies": [
+            ["comment-json", "npm:2.2.0"],
+            ["core-util-is", "npm:1.0.2"],
+            ["esprima", "npm:4.0.1"],
+            ["has-own-prop", "npm:2.0.0"],
+            ["repeat-string", "npm:1.6.1"]
           ],
           "linkType": "HARD"
         }]
@@ -15549,6 +15562,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/has-flag-npm-4.0.0-32af9f0536-1.zip/node_modules/has-flag/",
           "packageDependencies": [
             ["has-flag", "npm:4.0.0"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
+      ["has-own-prop", [
+        ["npm:2.0.0", {
+          "packageLocation": "./.yarn/cache/has-own-prop-npm-2.0.0-d895adfe8c-1.zip/node_modules/has-own-prop/",
+          "packageDependencies": [
+            ["has-own-prop", "npm:2.0.0"]
           ],
           "linkType": "HARD"
         }]
