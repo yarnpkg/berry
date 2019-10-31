@@ -2,6 +2,7 @@ import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@yarnpkg/fslib'
 import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@yarnpkg/fslib';
 import {WatchOptions, WatchCallback, Watcher, toFilename}  from '@yarnpkg/fslib';
 import {FSPath, NativePath, PortablePath, npath, ppath}    from '@yarnpkg/fslib';
+import {Filename}                                          from '@yarnpkg/fslib';
 
 import {PnpApi}                                            from '@yarnpkg/pnp';
 import fs                                                  from 'fs';
@@ -66,6 +67,14 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
         this.watchManager.notifyWatchers(this.pathResolver);
       }
     });
+  }
+
+  private persistPath(pnpPath: ResolvedPath) {
+    if (pnpPath.treePath) {
+      if (!this.baseFs.existsSync(pnpPath.treePath)) {
+        this.baseFs.mkdirSync(pnpPath.treePath);
+      }
+    }
   }
 
   resolve(path: PortablePath) {
@@ -189,19 +198,12 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   }
 
   async realpathPromise(p: PortablePath) {
-    if (typeof p === `number`)
-      return p;
-
     const pnpPath = this.resolvePath(p);
-    return pnpPath.realPath !== pnpPath.fullOriginalPath ? pnpPath.realPath : await this.baseFs.realpathPromise(p);
+    return pnpPath.realPath !== pnpPath.fullOriginalPath ? pnpPath.realPath : this.baseFs.realpathPromise(p);
   }
 
   realpathSync(p: PortablePath) {
-    if (typeof p === `number`)
-      return p;
-
     const pnpPath = this.resolvePath(p);
-
     return pnpPath.realPath !== pnpPath.fullOriginalPath ? pnpPath.realPath : this.baseFs.realpathSync(p);
   }
 
@@ -310,11 +312,15 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   }
 
   async mkdirPromise(p: PortablePath) {
-    return await this.baseFs.mkdirPromise(this.resolveDirOrFilePath(p));
+    const pnpPath = this.resolvePath(p);
+    this.persistPath(pnpPath);
+    return this.baseFs.mkdirPromise(pnpPath.resolvedPath);
   }
 
   mkdirSync(p: PortablePath) {
-    return this.baseFs.mkdirSync(this.resolveDirOrFilePath(p));
+    const pnpPath = this.resolvePath(p);
+    this.persistPath(pnpPath);
+    return this.baseFs.mkdirSync(pnpPath.resolvedPath);
   }
 
   async rmdirPromise(p: PortablePath) {
@@ -360,7 +366,13 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   async readdirPromise(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
     if (pnpPath.dirList) {
-      return Array.from(pnpPath.dirList);
+      let fsDirList: Filename[] = [];
+      try {
+        fsDirList = await this.baseFs.readdirPromise(pnpPath.resolvedPath);
+      } catch (e) {
+        // Ignore errors
+      }
+      return Array.from(pnpPath.dirList).concat(fsDirList).sort();
     } else {
       return await this.baseFs.readdirPromise(pnpPath.resolvedPath);
     }
@@ -369,7 +381,13 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   readdirSync(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
     if (pnpPath.dirList) {
-      return Array.from(pnpPath.dirList);
+      let fsDirList: Filename[] = [];
+      try {
+        fsDirList = this.baseFs.readdirSync(pnpPath.resolvedPath);
+      } catch (e) {
+        // Ignore errors
+      }
+      return Array.from(pnpPath.dirList).concat(fsDirList).sort();
     } else {
       return this.baseFs.readdirSync(pnpPath.resolvedPath);
     }

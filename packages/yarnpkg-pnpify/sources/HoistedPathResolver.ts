@@ -27,8 +27,11 @@ export interface ResolvedPath {
    */
   resolvedPath: PortablePath;
 
-  /** Real path */
+  /** Realpath to be returned to the user */
   realPath: PortablePath;
+
+  /** Last path inside node_modules tree */
+  treePath?: PortablePath;
 
   /**
    * The path that should be used for stats. This field is returned for pathes ending
@@ -94,8 +97,10 @@ export class HoistedPathResolver implements PathResolver {
       targetPath = targetPath + ppath.sep + remainderParts.slice(0, requestStartIdx).join(ppath.sep);
     }
     const request = remainderParts.slice(requestStartIdx).join(ppath.sep);
-    const node = this.nodeModulesTree.get(npath.toPortablePath(targetPath));
+    const treePath = npath.toPortablePath(targetPath);
+    const node = this.nodeModulesTree.get(treePath);
     if (node) {
+      result.treePath = treePath;
       if (Array.isArray(node)) {
         const [location, linkType] = node;
         result.resolvedPath = npath.toPortablePath(location + (request ? ppath.sep + request : ''));
