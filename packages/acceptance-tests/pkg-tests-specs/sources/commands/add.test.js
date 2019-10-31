@@ -60,6 +60,48 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should add a new regular dependency to the current project (implicit caret)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`config`, `set`, `defaultSemverRangePrefix`, `~`);
+        await run(`add`, `no-deps`, `-C`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should add a new regular dependency to the current project (tilde via defaultSemverRangePrefix)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`config`, `set`, `defaultSemverRangePrefix`, `~`);
+        await run(`add`, `no-deps`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `~2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should add a new regular dependency to the current project (exact via defaultSemverRangePrefix)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`config`, `set`, `defaultSemverRangePrefix`, ``);
+        await run(`add`, `no-deps`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
       `it should add a new regular dependency to the current project (unnamed path)`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const packagePath = await getPackageDirectoryPath(`no-deps`, `1.0.0`);
