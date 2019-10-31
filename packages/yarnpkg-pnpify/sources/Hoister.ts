@@ -1,10 +1,15 @@
 import {NativePath, PortablePath, Filename, toFilename, npath, ppath} from '@yarnpkg/fslib';
-import {PnpApi, PackageLocator, LinkType, PackageInformation}         from '@yarnpkg/pnp';
+import {PnpApi, PackageLocator, PackageInformation}                   from '@yarnpkg/pnp';
 
 import fs                                                             from 'fs';
 
 import {RawHoister, ReadonlyPackageTree, PackageId, PackageInfo}      from './RawHoister';
 import {HoistedTree, PackageTree}                                     from './RawHoister';
+
+// Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
+// But because of this TypeScript requires @yarnpkg/pnp during runtime
+// To prevent this we redeclare LinkType enum here, to not depend on @yarnpkg/pnp during runtime
+export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'};
 
 type PnpWalkApi = Pick<PnpApi, 'getPackageInformation' | 'getDependencyTreeRoots' | 'topLevel' | 'resolveVirtual'>;
 

@@ -1,7 +1,7 @@
-import {PortablePath, Filename, npath, ppath}     from '@yarnpkg/fslib';
-import {PnpApi, LinkType}                         from '@yarnpkg/pnp';
+import {PortablePath, Filename, npath, ppath}               from '@yarnpkg/fslib';
+import {PnpApi}                                             from '@yarnpkg/pnp';
 
-import {HoisterOptions, NodeModulesTree, Hoister} from './Hoister';
+import {HoisterOptions, NodeModulesTree, Hoister, LinkType} from './Hoister';
 
 interface HoistedResolverOptions extends HoisterOptions {
 }
