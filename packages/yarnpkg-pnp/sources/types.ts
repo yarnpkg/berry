@@ -13,8 +13,8 @@ export type TopLevelPackageLocator = {name: null, reference: null};
 
 export type PackageLocator = PhysicalPackageLocator | TopLevelPackageLocator;
 
-export type PackageInformation<P extends Path> = {packageLocation: P, packageDependencies: Map<string, string | [string, string] | null>, linkType: LinkType};
-export type PackageInformationData<P extends Path> = {packageLocation: P, packageDependencies: Array<[string, string | [string, string] | null]>, linkType: LinkType};
+export type PackageInformation<P extends Path> = {packageLocation: P, packageDependencies: Map<string, string | [string, string] | null>, packagePeers: Set<string>, linkType: LinkType};
+export type PackageInformationData<P extends Path> = {packageLocation: P, packageDependencies: Array<[string, string | [string, string] | null]>, packagePeers?: Array<string>, linkType: LinkType};
 
 export type PackageStore = Map<string | null, PackageInformation<PortablePath>>;
 export type PackageStoreData = Array<[string | null, PackageInformationData<PortablePath>]>;
