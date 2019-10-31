@@ -176,9 +176,7 @@ export class Hoister {
       const info = pnp.getPackageInformation(locator)!;
       if (pnp.resolveVirtual) {
         return [npath.toPortablePath(
-          locator.reference && locator.reference.indexOf('virtual:') === 0 ?
-            pnp.resolveVirtual(info.packageLocation)! :
-            info.packageLocation
+          pnp.resolveVirtual(info.packageLocation) || info.packageLocation
         ), info.linkType];
       } else {
         const linkType = info.linkType || HARD_LINK_REGEX.test(info.packageLocation) ? LinkType.HARD : LinkType.SOFT;
