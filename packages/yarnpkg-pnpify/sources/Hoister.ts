@@ -97,10 +97,18 @@ export class Hoister {
           const locator = typeof reference === 'string' ? {name, reference} : {name: reference[0], reference: reference[1]};
           const depPkgId = getPackageId(locator);
           if (depPkgId) {
-            if (parentDepIds.has(depPkgId) && depPkgId !== pkgId) {
-              peerDeps.add(depPkgId);
+            if (pkg.packagePeers) {
+              if (pkg.packagePeers.has(name)) {
+                peerDeps.add(depPkgId);
+              } else {
+                deps.add(depPkgId);
+              }
             } else {
-              deps.add(depPkgId);
+              if (parentDepIds.has(depPkgId) && depPkgId !== pkgId) {
+                peerDeps.add(depPkgId);
+              } else {
+                deps.add(depPkgId);
+              }
             }
           }
         }
