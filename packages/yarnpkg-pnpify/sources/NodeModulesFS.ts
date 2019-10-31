@@ -107,7 +107,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   private resolveLink(p: PortablePath, op: string, onSymlink: (stats: fs.Stats, targetPath: PortablePath) => any, onRealPath: (targetPath: PortablePath) => any) {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.realPath !== p) {
+    if (pnpPath.realPath !== pnpPath.fullOriginalPath) {
       let stat;
       try {
         stat = this.baseFs.lstatSync(pnpPath.realPath);
@@ -193,7 +193,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
       return p;
 
     const pnpPath = this.resolvePath(p);
-    return pnpPath.realPath !== p ? pnpPath.realPath : await this.baseFs.realpathPromise(p);
+    return pnpPath.realPath !== pnpPath.fullOriginalPath ? pnpPath.realPath : await this.baseFs.realpathPromise(p);
   }
 
   realpathSync(p: PortablePath) {
@@ -202,7 +202,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
     const pnpPath = this.resolvePath(p);
 
-    return pnpPath.realPath !== p ? pnpPath.realPath : this.baseFs.realpathSync(p);
+    return pnpPath.realPath !== pnpPath.fullOriginalPath ? pnpPath.realPath : this.baseFs.realpathSync(p);
   }
 
   async existsPromise(p: PortablePath) {
