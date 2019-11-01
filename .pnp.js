@@ -33351,7 +33351,7 @@ var external_module_default = /*#__PURE__*/__webpack_require__.n(external_module
 var external_string_decoder_ = __webpack_require__(7);
 var external_string_decoder_default = /*#__PURE__*/__webpack_require__.n(external_string_decoder_);
 
-// EXTERNAL MODULE: /Users/mael.nison/berry/.yarn/cache/tmp-npm-0.0.33-bcbf65df2a-1.zip/node_modules/tmp/lib/tmp.js
+// EXTERNAL MODULE: /mnt/d/berry/.yarn/cache/tmp-npm-0.0.33-bcbf65df2a-1.zip/node_modules/tmp/lib/tmp.js
 var tmp = __webpack_require__(4);
 var tmp_default = /*#__PURE__*/__webpack_require__.n(tmp);
 
@@ -34700,7 +34700,9 @@ var _entryPoint_rest = undefined && undefined.__rest || function (s, e) {
 
 
 
- // We must copy the fs into a local, because otherwise
+
+const IS_PRELOADED = __non_webpack_module__.parent && __non_webpack_module__.parent.id === `internal/preload`;
+const IS_MAIN = process.mainModule === __non_webpack_module__; // We must copy the fs into a local, because otherwise
 // 1. we would make the NodeFS instance use the function that we patched (infinite loop)
 // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
 
@@ -34708,17 +34710,23 @@ const localFs = Object.assign({}, external_fs_default.a);
 const nodeFs = new NodeFS_NodeFS(localFs);
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
 const defaultPnpapiResolution = external_path_default.a.resolve(__dirname, __filename);
-let defaultFsLayer = new ZipOpenFS_ZipOpenFS({
+let patchFsLayer = new ZipOpenFS_ZipOpenFS({
   baseFs: nodeFs,
   readOnlyArchives: true
 });
 
-for (const virtualRoot of defaultRuntimeState.virtualRoots) defaultFsLayer = new VirtualFS_VirtualFS(virtualRoot, {
-  baseFs: defaultFsLayer
-});
+for (const virtualRoot of defaultRuntimeState.virtualRoots) patchFsLayer = new VirtualFS_VirtualFS(virtualRoot, {
+  baseFs: patchFsLayer
+}); // If the PnP API is preloaded we can just use the "real" fs module because
+// it'll have been patched to support in-zip loading (and possibly extended by
+// other tools, such as PnPify). Otherwise we use our own patched FS in order to
+// be sure that `resolveUnqualified` and `resolveRequest` work (note that in
+// this case, tools like PnPify won't be able to affect the file detection).
 
+
+const defaultFsLayer = IS_PRELOADED ? new NodeFS_NodeFS(external_fs_default.a) : patchFsLayer;
 const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
-  fakeFs: defaultFsLayer,
+  fakeFs: new NodeFS_NodeFS(external_fs_default.a),
   pnpapiResolution: defaultPnpapiResolution
 }), {
   /**
@@ -34729,7 +34737,7 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
   makeApi: _a => {
     var {
       basePath = undefined,
-      fakeFs = defaultFsLayer,
+      fakeFs = new NodeFS_NodeFS(external_fs_default.a),
       pnpapiResolution = defaultPnpapiResolution
     } = _a,
         rest = _entryPoint_rest(_a, ["basePath", "fakeFs", "pnpapiResolution"]);
@@ -34746,15 +34754,17 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
    * automatically called when the hook is loaded through `--require`.
    */
   setup: api => {
-    applyPatch(api || defaultApi, {
-      fakeFs: defaultFsLayer
+    applyPatch(api || defaultApi.makeApi({
+      fakeFs: new NodeFS_NodeFS(external_fs_default.a)
+    }), {
+      fakeFs: patchFsLayer
     });
   }
 }); // eslint-disable-next-line arca/no-default-export
 
 /* harmony default export */ var _entryPoint = __webpack_exports__["default"] = (defaultApi);
 
-if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
+if (IS_PRELOADED) {
   defaultApi.setup();
 
   if (__non_webpack_module__.filename) {
@@ -34766,7 +34776,7 @@ if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'inter
 } // @ts-ignore
 
 
-if (process.mainModule === __non_webpack_module__) {
+if (IS_MAIN) {
   const reportError = (code, message, data) => {
     process.stdout.write(`${JSON.stringify([{
       code,
