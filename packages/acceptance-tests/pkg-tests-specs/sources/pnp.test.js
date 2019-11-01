@@ -1197,7 +1197,7 @@ describe(`Plug'n'Play`, () => {
           fs.realpathSync = p => realRealpathSync(p.replace('this-is-a-test.js', 'index.js'));
 
           return require.resolve('no-deps/this-is-a-test.js');
-        }`);
+        }`.replace(/\n/g, ``));
       },
     ),
   );
