@@ -69,11 +69,15 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     });
   }
 
-  private persistPath(pnpPath: ResolvedPath) {
-    if (pnpPath.treePath) {
-      if (!this.baseFs.existsSync(pnpPath.treePath)) {
-        this.baseFs.mkdirSync(pnpPath.treePath);
-      }
+  private persistPath(dir: PortablePath) {
+    const pathStack = [];
+    let curPath = dir;
+    while (!this.baseFs.existsSync(curPath)) {
+      pathStack.push(curPath);
+      curPath = ppath.dirname(curPath);
+    }
+    for (const fullPath of pathStack.reverse()) {
+      this.baseFs.mkdirSync(fullPath);
     }
   }
 
@@ -116,14 +120,14 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   private resolveLink(p: PortablePath, op: string, onSymlink: (stats: fs.Stats, targetPath: PortablePath) => any, onRealPath: (targetPath: PortablePath) => any) {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.realPath !== pnpPath.fullOriginalPath) {
+    if (pnpPath.isSymlink) {
       let stat;
       try {
-        stat = this.baseFs.lstatSync(pnpPath.realPath);
+        stat = this.baseFs.lstatSync(pnpPath.resolvedPath);
       } catch (e) {}
 
       if (stat) {
-        return onSymlink(stat, this.pathUtils.relative(this.pathUtils.dirname(pnpPath.fullOriginalPath), pnpPath.realPath));
+        return onSymlink(stat, this.pathUtils.relative(this.pathUtils.dirname(pnpPath.fullOriginalPath), pnpPath.resolvedPath));
       }
     }
     return onRealPath(pnpPath.statPath || pnpPath.resolvedPath);
@@ -313,13 +317,18 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   async mkdirPromise(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    this.persistPath(pnpPath);
+    const parentPath = this.resolvePath(ppath.dirname(p));
+    if (parentPath.statPath)
+      this.persistPath(parentPath.resolvedPath);
+
     return this.baseFs.mkdirPromise(pnpPath.resolvedPath);
   }
 
   mkdirSync(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    this.persistPath(pnpPath);
+    const parentPath = this.resolvePath(ppath.dirname(p));
+    if (parentPath.statPath)
+      this.persistPath(parentPath.resolvedPath);
     return this.baseFs.mkdirSync(pnpPath.resolvedPath);
   }
 
