@@ -23,6 +23,7 @@ export class PortablePnPApi {
       portableInfo = {
         packageLocation: npath.toPortablePath(nativeInfo.packageLocation),
         packageDependencies: nativeInfo.packageDependencies,
+        packagePeers: nativeInfo.packagePeers,
         linkType: nativeInfo.linkType,
       };
     }
