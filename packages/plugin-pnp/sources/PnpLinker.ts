@@ -108,13 +108,16 @@ class PnpInstaller implements Installer {
     const packageRawLocation = ppath.resolve(packageFs.getRealPath(), ppath.relative(PortablePath.root, fetchResult.prefixPath));
 
     const packageLocation = this.normalizeDirectoryPath(packageRawLocation);
-    const packageDependencies = new Map();
+    const packageDependencies = new Map<string, string | [string, string] | null>();
+    const packagePeers = new Set<string>();
 
-    for (const descriptor of pkg.peerDependencies.values())
+    for (const descriptor of pkg.peerDependencies.values()) {
       packageDependencies.set(structUtils.requirableIdent(descriptor), null);
+      packagePeers.add(descriptor.name);
+    }
 
     const packageStore = this.getPackageStore(key1);
-    packageStore.set(key2, {packageLocation, packageDependencies, linkType: pkg.linkType});
+    packageStore.set(key2, {packageLocation, packageDependencies, packagePeers, linkType: pkg.linkType});
 
     if (hasVirtualInstances)
       this.blacklistedPaths.add(packageLocation);
@@ -250,6 +253,7 @@ class PnpInstaller implements Installer {
       packageStore.set(normalizedPath, diskInformation = {
         packageLocation: normalizedPath,
         packageDependencies: new Map(),
+        packagePeers: new Set(),
         linkType: LinkType.SOFT,
       });
     }
