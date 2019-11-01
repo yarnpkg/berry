@@ -13,6 +13,9 @@ import {MakeApiOptions, makeApi}                                        from './
 declare var __non_webpack_module__: NodeModule;
 declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState, basePath?: NativePath) => RuntimeState;
 
+const IS_PRELOADED = __non_webpack_module__.parent && __non_webpack_module__.parent.id === `internal/preload`;
+const IS_MAIN = process.mainModule === __non_webpack_module__;
+
 // We must copy the fs into a local, because otherwise
 // 1. we would make the NodeFS instance use the function that we patched (infinite loop)
 // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
@@ -22,12 +25,21 @@ const nodeFs = new NodeFS(localFs);
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
 const defaultPnpapiResolution = path.resolve(__dirname, __filename);
 
-let defaultFsLayer: FakeFS<PortablePath> = new ZipOpenFS({baseFs: nodeFs, readOnlyArchives: true});
+let patchFsLayer: FakeFS<PortablePath> = new ZipOpenFS({baseFs: nodeFs, readOnlyArchives: true});
 for (const virtualRoot of defaultRuntimeState.virtualRoots)
-  defaultFsLayer = new VirtualFS(virtualRoot, {baseFs: defaultFsLayer});
+  patchFsLayer = new VirtualFS(virtualRoot, {baseFs: patchFsLayer});
+
+// If the PnP API is preloaded we can just use the "real" fs module because
+// it'll have been patched to support in-zip loading (and possibly extended by
+// other tools, such as PnPify). Otherwise we use our own patched FS in order to
+// be sure that `resolveUnqualified` and `resolveRequest` work (note that in
+// this case, tools like PnPify won't be able to affect the file detection).
+const defaultFsLayer = IS_PRELOADED
+  ? new NodeFS(fs)
+  : patchFsLayer;
 
 const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
-  fakeFs: defaultFsLayer,
+  fakeFs: new NodeFS(fs),
   pnpapiResolution: defaultPnpapiResolution,
 }), {
   /**
@@ -37,7 +49,7 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
    */
   makeApi: ({
     basePath = undefined,
-    fakeFs = defaultFsLayer,
+    fakeFs = new NodeFS(fs),
     pnpapiResolution = defaultPnpapiResolution,
     ...rest
   }: Partial<MakeApiOptions> & {basePath?: NativePath}) => {
@@ -56,8 +68,10 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
    * automatically called when the hook is loaded through `--require`.
    */
   setup: (api?: PnpApi) => {
-    applyPatch(api || defaultApi, {
-      fakeFs: defaultFsLayer,
+    applyPatch(api || defaultApi.makeApi({
+      fakeFs: new NodeFS(fs),
+    }), {
+      fakeFs: patchFsLayer,
     });
   },
 });
@@ -65,7 +79,7 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
 // eslint-disable-next-line arca/no-default-export
 export default defaultApi;
 
-if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
+if (IS_PRELOADED) {
   defaultApi.setup();
 
   if (__non_webpack_module__.filename) {
@@ -78,7 +92,7 @@ if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'inter
 }
 
 // @ts-ignore
-if (process.mainModule === __non_webpack_module__) {
+if (IS_MAIN) {
   const reportError = (code: string, message: string, data: Object) => {
     process.stdout.write(`${JSON.stringify([{code, message, data}, null])}\n`);
   };
