@@ -125,7 +125,7 @@ const prettyJsonMachine: PrettyJsonMachine = {
   // "packageRegistryData": [
   //   [..., [
   //     [..., {
-  //       "packageDependencies": [
+  //       "packagePeers": [
   //         ...
   //       ]
   //     }]
@@ -202,9 +202,15 @@ function generateCollapsedObject(data: {[key: string]: any}, state: PrettyJsonSt
   result += `{`;
 
   for (let t = 0, T = keys.length; t < T; ++t) {
-    result += JSON.stringify(keys[t]);
+    const key = keys[t];
+    const value = data[key];
+
+    if (typeof value === `undefined`)
+      continue;
+
+    result += JSON.stringify(key);
     result += `: `;
-    result += generateNext(keys[t], data[keys[t]], state, indent).replace(/^ +/g, ``);
+    result += generateNext(key, value, state, indent).replace(/^ +/g, ``);
     if (t + 1 < T) {
       result += `, `;
     }
@@ -225,10 +231,16 @@ function generateExpandedObject(data: {[key: string]: any}, state: PrettyJsonSta
   result += `{\n`;
 
   for (let t = 0, T = keys.length; t < T; ++t) {
+    const key = keys[t];
+    const value = data[key];
+
+    if (typeof value === `undefined`)
+      continue;
+
     result += nextIndent;
-    result += JSON.stringify(keys[t]);
+    result += JSON.stringify(key);
     result += `: `;
-    result += generateNext(keys[t], data[keys[t]], state, nextIndent).replace(/^ +/g, ``);
+    result += generateNext(key, value, state, nextIndent).replace(/^ +/g, ``);
 
     if (t + 1 < T)
       result += `,`;

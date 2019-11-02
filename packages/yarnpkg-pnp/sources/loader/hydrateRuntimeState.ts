@@ -18,6 +18,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
       return [packageReference, {
         packageLocation: ppath.resolve(portablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
+        packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
       }] as [string | null, PackageInformation<PortablePath>];
     }))] as [string | null, PackageStore];

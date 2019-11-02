@@ -29,6 +29,7 @@ Note that one package locator is different from the others: the top-level locato
 export type PackageInformation = {
   packageLocation: string,
   packageDependencies: Map<string, null | string | [string, string]>,
+  packagePeers: Set<string>,
   linkType: 'HARD' | 'SOFT',
 };
 ```
@@ -40,6 +41,8 @@ The package information set describes the location where the package can be foun
 - If a `[string, string]` tuple, the value is meant to be used as a locator whose name is the first element of the tuple and reference is the second one. This typically occurs with package aliases (such as `"foo": "npm:bar@1.2.3"`).
 
 - If `null`, the specified dependency isn't available at all. This typically occurs when a package's peer dependency didn't get provided by its direct parent in the dependency tree.
+
+The `packagePeers` field, if present, indicates which dependencies have an enforced contract on using the exact same instance as the package that depends on them. This field is rarely useful in pure PnP context (because our instantiation guarantees are stricter and more predictable than this), but is required to properly generate a `node_modules` directory from a PnP map.
 
 The `linkType` field is only useful in specific cases - it describes whether the producer of the PnP API was asked to make the package available through an hard linkage (in which case all the `packageLocation` field is reputed being owned by the linker) or a soft linkage (in which case the `packageLocation` field represents a location outside of the sphere of influence of the linker).
 
@@ -191,7 +194,7 @@ This function will return `null` if the request is a builtin module, unless `con
 export function resolveVirtual(path: string): string | null;
 ```
 
-**Important:** This function is not part of the Plug'n'Play specification and only available as a Yarn extension. In order to use it, you first must check that the `versions` object contains a valid `resolveVirtual` property.
+**Important:** This function is not part of the Plug'n'Play specification and only available as a Yarn extension. In order to use it, you first must check that the [`VERSIONS`](/advanced/pnp-api#versions) dictionary contains a valid `resolveVirtual` property.
 
 The `resolveVirtual` function will accept any path as parameter and return the same path minus any [virtual component](/advanced/lexicon#virtual-package). This makes it easier to store the location to the files in a portable way as long as you don't care about losing the dependency tree information in the process (requiring files through those paths will prevent them from accessing their peer dependencies).
 
