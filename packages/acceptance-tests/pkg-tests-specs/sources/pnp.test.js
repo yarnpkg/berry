@@ -1175,30 +1175,4 @@ describe(`Plug'n'Play`, () => {
     ),
     15000,
   );
-
-  test(
-    `it should use external filesystem patches during the resolution`,
-    makeTemporaryEnv(
-      {
-        dependencies: {
-          [`no-deps`]: `1.0.0`,
-        },
-      },
-      async ({path, run, source}) => {
-        await run(`install`);
-
-        await source(`{
-          const fs = require('fs');
-
-          const realStatSync = fs.statSync;
-          fs.statSync = p => realStatSync(p.replace('this-is-a-test.js', 'index.js'));
-
-          const realRealpathSync = fs.realpathSync;
-          fs.realpathSync = p => realRealpathSync(p.replace('this-is-a-test.js', 'index.js'));
-
-          return require.resolve('no-deps/this-is-a-test.js');
-        }`);
-      },
-    ),
-  );
 });
