@@ -46,6 +46,13 @@ const YarnrcDoc = () => <>
         </>}
       />
       <SymlScalarProperty
+        name={`defaultSemverRangePrefix`}
+        placeholder={`^`}
+        description={<>
+          The default prefix for semantic version depenency ranges, which is used for new dependencies that are installed to a manifest. Possible values are <code>"^"</code> (the default), <code>"~"</code> or <code>""</code>.
+        </>}
+      />
+      <SymlScalarProperty
         name={`enableColors`}
         placeholder={true}
         description={<>

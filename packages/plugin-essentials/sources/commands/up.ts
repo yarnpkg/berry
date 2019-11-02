@@ -25,6 +25,9 @@ export default class UpCommand extends BaseCommand {
   @Command.Boolean(`-T,--tilde`)
   tilde: boolean = false;
 
+  @Command.Boolean(`-C,--caret`)
+  caret: boolean = false;
+
   static usage = Command.Usage({
     description: `upgrade dependencies across the project`,
     details: `
@@ -32,7 +35,7 @@ export default class UpCommand extends BaseCommand {
 
       If \`-i,--interactive\` is set (or if the \`preferInteractive\` settings is toggled on) the command will offer various choices, depending on the detected upgrade paths. Some upgrades require this flag in order to resolve ambiguities.
 
-      The \`-E,--exact\` and  \`-T,--tilde\` options have the same meaning as in the \`add\` command (they change the modifier used when the range is missing or a tag, and are ignored when the range is explicitly set).
+      The, \`-C,--caret\`, \`-E,--exact\` and  \`-T,--tilde\` options have the same meaning as in the \`add\` command (they change the modifier used when the range is missing or a tag, and are ignored when the range is explicitly set).
     `,
     examples: [[
       `Upgrade all instances of lodash to the latest release`,
@@ -61,11 +64,7 @@ export default class UpCommand extends BaseCommand {
       output: this.context.stdout,
     });
 
-    const modifier = this.exact
-      ? suggestUtils.Modifier.EXACT
-      : this.tilde
-        ? suggestUtils.Modifier.TILDE
-        : suggestUtils.Modifier.CARET;
+    const modifier = suggestUtils.getModifier(this, project);
 
     const strategies = this.interactive ? [
       suggestUtils.Strategy.KEEP,

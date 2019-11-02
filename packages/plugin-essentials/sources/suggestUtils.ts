@@ -52,6 +52,16 @@ export enum Strategy {
   CACHE = 'cache',
 };
 
+export function getModifier(flags: {exact: boolean; caret: boolean; tilde: boolean}, project: Project): Modifier {
+  if (flags.exact)
+    return Modifier.EXACT;
+  if (flags.caret)
+    return Modifier.CARET;
+  if (flags.tilde)
+    return Modifier.TILDE;
+  return project.configuration.get<Modifier>('defaultSemverRangePrefix');
+}
+
 export function applyModifier(descriptor: Descriptor, modifier: Modifier) {
   let {protocol, source, selector} = structUtils.parseRange(descriptor.range);
 
