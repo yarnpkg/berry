@@ -11,16 +11,17 @@ import {PathResolver, ResolvedPath, HoistedPathResolver}   from './HoistedPathRe
 import {WatchManager}                                      from './WatchManager';
 
 export type NodeModulesFSOptions = {
-  realFs?: typeof fs
+  realFs?: typeof fs,
+  pnpifyFs?: boolean;
 };
 
 export class NodeModulesFS extends ProxiedFS<NativePath, PortablePath> {
   protected readonly baseFs: FakeFS<PortablePath>;
 
-  constructor(pnp: PnpApi, {realFs = fs}: NodeModulesFSOptions = {}) {
+  constructor(pnp: PnpApi, {realFs = fs, pnpifyFs = true}: NodeModulesFSOptions = {}) {
     super(npath);
 
-    this.baseFs = new PortableNodeModulesFs(pnp, {baseFs: new NodeFS(realFs)});
+    this.baseFs = new PortableNodeModulesFs(pnp, {baseFs: new NodeFS(realFs), pnpifyFs});
   }
 
   protected mapFromBase(path: PortablePath) {
@@ -34,17 +35,20 @@ export class NodeModulesFS extends ProxiedFS<NativePath, PortablePath> {
 
 type PortableNodeModulesFSOptions = {
   baseFs?: FakeFS<PortablePath>
+  pnpifyFs?: boolean;
 };
 
 class PortableNodeModulesFs extends FakeFS<PortablePath> {
   private readonly baseFs: FakeFS<PortablePath>;
   private readonly watchManager: WatchManager;
   private pathResolver: PathResolver;
+  private pnpifyFs: boolean;
 
-  constructor(pnp: PnpApi, {baseFs = new NodeFS()}: PortableNodeModulesFSOptions = {}) {
+  constructor(pnp: PnpApi, {baseFs = new NodeFS(), pnpifyFs = true}: PortableNodeModulesFSOptions = {}) {
     super(ppath);
 
     this.baseFs = baseFs;
+    this.pnpifyFs = pnpifyFs;
     this.pathResolver = this.createPathResolver(pnp);
     this.watchManager = new WatchManager();
 
@@ -53,7 +57,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
   }
 
   private createPathResolver(pnp: PnpApi) {
-    return new HoistedPathResolver(pnp);
+    return new HoistedPathResolver(pnp, {pnpifyFs: this.pnpifyFs});
   }
 
   private watchPnpFile(pnpRootPath: PortablePath) {
@@ -120,7 +124,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   private resolveLink(p: PortablePath, op: string, onSymlink: (stats: fs.Stats, targetPath: PortablePath) => any, onRealPath: (targetPath: PortablePath) => any) {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.isSymlink) {
+    if (pnpPath.isSymlink || (this.pnpifyFs && pnpPath.treePath && pnpPath.resolvedPath !== pnpPath.treePath)) {
       let stat;
       try {
         stat = this.baseFs.lstatSync(pnpPath.resolvedPath);
@@ -203,12 +207,20 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   async realpathPromise(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    return (pnpPath.statPath || pnpPath.resolvedPath !== pnpPath.fullOriginalPath) ? pnpPath.realPath : this.baseFs.realpathPromise(p);
+    if (pnpPath.treePath === pnpPath.fullOriginalPath) {
+      return pnpPath.fullOriginalPath;
+    } else {
+      return this.baseFs.realpathPromise(pnpPath.resolvedPath);
+    }
   }
 
   realpathSync(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    return (pnpPath.statPath || pnpPath.resolvedPath !== pnpPath.fullOriginalPath) ? pnpPath.realPath : this.baseFs.realpathSync(p);
+    if (pnpPath.treePath === pnpPath.fullOriginalPath) {
+      return pnpPath.fullOriginalPath;
+    } else {
+      return this.baseFs.realpathSync(pnpPath.resolvedPath);
+    }
   }
 
   async existsPromise(p: PortablePath) {

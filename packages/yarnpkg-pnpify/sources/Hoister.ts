@@ -19,7 +19,8 @@ type PnpWalkApi = Pick<PnpApi, 'getPackageInformation' | 'getDependencyTreeRoots
 export type NodeModulesTree = Map<PortablePath, Set<Filename> | [PortablePath, LinkType]>;
 
 export interface HoisterOptions {
-  optimizeSizeOnDisk: boolean;
+  optimizeSizeOnDisk?: boolean;
+  pnpifyFs?: boolean;
 }
 
 /** node_modules path segment */
@@ -175,7 +176,7 @@ export class Hoister {
     const getLocation = (locator: PackageLocator): [PortablePath, LinkType] => {
       const info = pnp.getPackageInformation(locator)!;
       if (pnp.resolveVirtual) {
-        const truePath = (locator.reference && locator.reference.startsWith('virtual:')) ? pnp.resolveVirtual(info.packageLocation) : info.packageLocation;
+        const truePath = (!this.options.pnpifyFs && locator.reference && locator.reference.startsWith('virtual:')) ? pnp.resolveVirtual(info.packageLocation) : info.packageLocation;
         return [npath.toPortablePath(truePath || info.packageLocation), info.linkType];
       } else {
         const linkType = info.linkType || HARD_LINK_REGEX.test(info.packageLocation) ? LinkType.HARD : LinkType.SOFT;
@@ -268,6 +269,9 @@ export class Hoister {
     const {packageTree, packages, locators} = this.buildPackageTree(pnp);
 
     const hoistedTree = this.rawHoister.hoist(packageTree, packages);
+    // const util = require('util');
+    // console.log(util.inspect(packages.map((x, idx) => [idx, x]), {depth: null, maxArrayLength: null}));
+    // console.log(util.inspect(packageTree.map((x, idx) => [idx, x]), {depth: null, maxArrayLength: null}));
 
     return this.buildNodeModulesTree(pnp, hoistedTree, locators);
   }
