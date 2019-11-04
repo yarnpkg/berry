@@ -9,6 +9,7 @@ Object {
 {\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"defaultSemverRangePrefix\\",\\"effective\\":\\"^\\",\\"description\\":\\"The default save prefix: '^', '~' or ''\\",\\"type\\":\\"STRING\\",\\"default\\":\\"^\\"}
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -63,6 +64,7 @@ Object {
 ➤ YN0000: checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
 ➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - The default save prefix: '^', '~' or '' - '^'
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
@@ -118,6 +120,7 @@ Object {
 ➤ YN0000: checksumBehavior - <default> - 'throw'
 ➤ YN0000: defaultLanguageName - <default> - 'node'
 ➤ YN0000: defaultProtocol - <default> - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - <default> - '^'
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
@@ -173,6 +176,7 @@ Object {
 ➤ YN0000: checksumBehavior - 'throw'
 ➤ YN0000: defaultLanguageName - 'node'
 ➤ YN0000: defaultProtocol - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - '^'
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
@@ -228,6 +232,7 @@ Object {
 {\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"defaultSemverRangePrefix\\",\\"effective\\":\\"^\\",\\"description\\":\\"The default save prefix: '^', '~' or ''\\",\\"type\\":\\"STRING\\",\\"default\\":\\"^\\"}
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -282,6 +287,7 @@ Object {
 ➤ YN0000: checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
 ➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - The default save prefix: '^', '~' or '' - '^'
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
@@ -337,6 +343,7 @@ Object {
 ➤ YN0000: checksumBehavior - <default> - 'throw'
 ➤ YN0000: defaultLanguageName - <default> - 'node'
 ➤ YN0000: defaultProtocol - <default> - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - <default> - '^'
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
@@ -392,6 +399,7 @@ Object {
 ➤ YN0000: checksumBehavior - 'throw'
 ➤ YN0000: defaultLanguageName - 'node'
 ➤ YN0000: defaultProtocol - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - '^'
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
@@ -447,6 +455,7 @@ Object {
 {\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"python\\",\\"source\\":\\"HOME/.spec-yarnrc\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"defaultSemverRangePrefix\\",\\"effective\\":\\"^\\",\\"description\\":\\"The default save prefix: '^', '~' or ''\\",\\"type\\":\\"STRING\\",\\"default\\":\\"^\\"}
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -501,6 +510,7 @@ Object {
 ➤ YN0000: checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
 ➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'python'
 ➤ YN0000: defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - The default save prefix: '^', '~' or '' - '^'
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
@@ -556,6 +566,7 @@ Object {
 ➤ YN0000: checksumBehavior - <default> - 'throw'
 ➤ YN0000: defaultLanguageName - HOME/.spec-yarnrc - 'python'
 ➤ YN0000: defaultProtocol - <default> - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - <default> - '^'
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
@@ -611,6 +622,7 @@ Object {
 ➤ YN0000: checksumBehavior - 'throw'
 ➤ YN0000: defaultLanguageName - 'python'
 ➤ YN0000: defaultProtocol - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - '^'
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
@@ -666,6 +678,7 @@ Object {
 {\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"defaultSemverRangePrefix\\",\\"effective\\":\\"^\\",\\"description\\":\\"The default save prefix: '^', '~' or ''\\",\\"type\\":\\"STRING\\",\\"default\\":\\"^\\"}
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -720,6 +733,7 @@ Object {
 ➤ YN0000: checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
 ➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - The default save prefix: '^', '~' or '' - '^'
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
@@ -775,6 +789,7 @@ Object {
 ➤ YN0000: checksumBehavior - <default> - 'throw'
 ➤ YN0000: defaultLanguageName - <default> - 'node'
 ➤ YN0000: defaultProtocol - <default> - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - <default> - '^'
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
@@ -830,6 +845,7 @@ Object {
 ➤ YN0000: checksumBehavior - 'throw'
 ➤ YN0000: defaultLanguageName - 'node'
 ➤ YN0000: defaultProtocol - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - '^'
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
@@ -885,6 +901,7 @@ Object {
 {\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"defaultSemverRangePrefix\\",\\"effective\\":\\"^\\",\\"description\\":\\"The default save prefix: '^', '~' or ''\\",\\"type\\":\\"STRING\\",\\"default\\":\\"^\\"}
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -939,6 +956,7 @@ Object {
 ➤ YN0000: checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
 ➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - The default save prefix: '^', '~' or '' - '^'
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
@@ -994,6 +1012,7 @@ Object {
 ➤ YN0000: checksumBehavior - <default> - 'throw'
 ➤ YN0000: defaultLanguageName - <default> - 'node'
 ➤ YN0000: defaultProtocol - <default> - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - <default> - '^'
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
@@ -1049,6 +1068,7 @@ Object {
 ➤ YN0000: checksumBehavior - 'throw'
 ➤ YN0000: defaultLanguageName - 'node'
 ➤ YN0000: defaultProtocol - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - '^'
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
@@ -1104,6 +1124,7 @@ Object {
 {\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"defaultSemverRangePrefix\\",\\"effective\\":\\"^\\",\\"description\\":\\"The default save prefix: '^', '~' or ''\\",\\"type\\":\\"STRING\\",\\"default\\":\\"^\\"}
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
@@ -1158,6 +1179,7 @@ Object {
 ➤ YN0000: checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
 ➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - The default save prefix: '^', '~' or '' - '^'
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
@@ -1213,6 +1235,7 @@ Object {
 ➤ YN0000: checksumBehavior - <default> - 'throw'
 ➤ YN0000: defaultLanguageName - <default> - 'node'
 ➤ YN0000: defaultProtocol - <default> - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - <default> - '^'
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
@@ -1268,6 +1291,7 @@ Object {
 ➤ YN0000: checksumBehavior - 'throw'
 ➤ YN0000: defaultLanguageName - 'node'
 ➤ YN0000: defaultProtocol - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - '^'
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
