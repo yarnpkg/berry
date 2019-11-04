@@ -70,6 +70,7 @@ export interface PathResolver {
 
 export class HoistedPathResolver implements PathResolver {
   private readonly nodeModulesTree: NodeModulesTree;
+  private readonly options: HoistedResolverOptions;
 
   /**
    * Constructs new instance of Node path resolver
@@ -78,6 +79,7 @@ export class HoistedPathResolver implements PathResolver {
    */
   constructor(pnp: PnpApi, options: HoistedResolverOptions = {optimizeSizeOnDisk: false}) {
     this.nodeModulesTree = new Hoister(options).hoist(pnp);
+    this.options = options;
   }
 
   public resolvePath(nodePath: PortablePath): ResolvedPath {
@@ -107,6 +109,9 @@ export class HoistedPathResolver implements PathResolver {
         if (linkType === LinkType.SOFT) {
           result.realPath = result.resolvedPath;
           result.isSymlink = !request;
+        } else if (linkType === LinkType.HARD && this.options.pnpifyFs) {
+          result.isSymlink = true;
+          result.realPath = result.resolvedPath;
         }
       } else if (!request) {
         result.dirList = node;

@@ -209,7 +209,11 @@ export class Hoister {
         const nodeModulesDirPath = ppath.join(prefix, NODE_MODULES);
         let depPrefix = ppath.join(...([nodeModulesDirPath].concat(packageNameParts)));
         if (!seenPkgIds.has(depId)) {
-          tree.set(depPrefix, getLocation(locator));
+          const nodeVal = getLocation(locator);
+          tree.set(depPrefix, nodeVal);
+          if (this.options.pnpifyFs && nodeVal[1] === LinkType.HARD)
+            tree.set(ppath.join(nodeVal[0], NODE_MODULES), [ppath.join(depPrefix, NODE_MODULES), LinkType.SOFT]);
+
           const segments = depPrefix.split(NODE_MODULES_SUFFIX);
           let segCount = segments.length - 1;
           while (segCount > 0) {
@@ -269,9 +273,6 @@ export class Hoister {
     const {packageTree, packages, locators} = this.buildPackageTree(pnp);
 
     const hoistedTree = this.rawHoister.hoist(packageTree, packages);
-    // const util = require('util');
-    // console.log(util.inspect(packages.map((x, idx) => [idx, x]), {depth: null, maxArrayLength: null}));
-    // console.log(util.inspect(packageTree.map((x, idx) => [idx, x]), {depth: null, maxArrayLength: null}));
 
     return this.buildNodeModulesTree(pnp, hoistedTree, locators);
   }

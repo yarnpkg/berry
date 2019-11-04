@@ -124,7 +124,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   private resolveLink(p: PortablePath, op: string, onSymlink: (stats: fs.Stats, targetPath: PortablePath) => any, onRealPath: (targetPath: PortablePath) => any) {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.isSymlink || (this.pnpifyFs && pnpPath.treePath && pnpPath.resolvedPath !== pnpPath.treePath)) {
+    if (pnpPath.isSymlink) {
       let stat;
       try {
         stat = this.baseFs.lstatSync(pnpPath.resolvedPath);
@@ -386,14 +386,14 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   async readdirPromise(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.dirList) {
+    if (pnpPath.dirList || pnpPath.treePath === pnpPath.fullOriginalPath) {
       let fsDirList: Filename[] = [];
       try {
         fsDirList = await this.baseFs.readdirPromise(pnpPath.resolvedPath);
       } catch (e) {
         // Ignore errors
       }
-      return Array.from(pnpPath.dirList).concat(fsDirList).sort();
+      return Array.from(pnpPath.dirList || [toFilename('node_modules')]).concat(fsDirList).sort();
     } else {
       return await this.baseFs.readdirPromise(pnpPath.resolvedPath);
     }
@@ -401,14 +401,14 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   readdirSync(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.dirList) {
+    if (pnpPath.dirList || pnpPath.treePath === pnpPath.fullOriginalPath) {
       let fsDirList: Filename[] = [];
       try {
         fsDirList = this.baseFs.readdirSync(pnpPath.resolvedPath);
       } catch (e) {
         // Ignore errors
       }
-      return Array.from(pnpPath.dirList).concat(fsDirList).sort();
+      return Array.from(pnpPath.dirList || [toFilename('node_modules')]).concat(fsDirList).sort();
     } else {
       return this.baseFs.readdirSync(pnpPath.resolvedPath);
     }
