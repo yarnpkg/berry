@@ -211,8 +211,6 @@ export class Hoister {
         if (!seenPkgIds.has(depId)) {
           const nodeVal = getLocation(locator);
           tree.set(depPrefix, nodeVal);
-          if (this.options.pnpifyFs && nodeVal[1] === LinkType.HARD)
-            tree.set(ppath.join(nodeVal[0], NODE_MODULES), [ppath.join(depPrefix, NODE_MODULES), LinkType.SOFT]);
 
           const segments = depPrefix.split(NODE_MODULES_SUFFIX);
           let segCount = segments.length - 1;
@@ -249,6 +247,18 @@ export class Hoister {
 
     const [rootPrefix] = getLocation(locators[0]);
     buildTree(0, rootPrefix);
+
+    if (this.options.pnpifyFs) {
+      for (const key of tree.keys()) {
+        const nodeVal = tree.get(key);
+        if (nodeVal instanceof Array && nodeVal[1] === LinkType.HARD) {
+          const nodeModulesDir = ppath.join(key, NODE_MODULES);
+          if (tree.has(nodeModulesDir)) {
+            tree.set(ppath.join(nodeVal[0], NODE_MODULES), [nodeModulesDir, LinkType.SOFT]);
+          }
+        }
+      }
+    }
 
     const sortedTree: NodeModulesTree = new Map();
 

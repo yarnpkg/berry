@@ -127,7 +127,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     if (pnpPath.isSymlink) {
       let stat;
       try {
-        stat = this.baseFs.lstatSync(pnpPath.resolvedPath);
+        stat = this.baseFs.lstatSync(this.resolvePath(pnpPath.resolvedPath).statPath || pnpPath.resolvedPath);
       } catch (e) {}
 
       if (stat) {
