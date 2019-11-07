@@ -114,6 +114,35 @@ export function areLocatorsEqual(a: Locator, b: Locator) {
   return a.locatorHash === b.locatorHash;
 }
 
+/**
+ * Virtual packages are considered equivalent when they belong to the same
+ * package identity and have the same dependencies. Note that equivalence
+ * is not the same as equality.
+ */
+export function areVirtualPackagesEquivalent(a: Package, b: Package) {
+  if (!isVirtualLocator(a))
+    throw new Error(`Not a virtual package`);
+
+  if (!isVirtualLocator(b))
+    throw new Error(`Not a virtual package`);
+
+  if (!areIdentsEqual(a, b))
+    return false;
+
+  if (a.dependencies.size !== b.dependencies.size)
+    return false;
+  for (const dependencyDescriptorA of a.dependencies.values()) {
+    const dependencyDescriptorB = b.dependencies.get(dependencyDescriptorA.identHash);
+    const match = dependencyDescriptorB
+      && areDescriptorsEqual(dependencyDescriptorA, dependencyDescriptorB);
+    if (!match) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export function parseIdent(string: string): Ident {
   const ident = tryParseIdent(string);
   if (!ident)
