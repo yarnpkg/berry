@@ -46,6 +46,13 @@ const YarnrcDoc = () => <>
         </>}
       />
       <SymlScalarProperty
+        name={`defaultSemverRangePrefix`}
+        placeholder={`^`}
+        description={<>
+          The default prefix for semantic version depenency ranges, which is used for new dependencies that are installed to a manifest. Possible values are <code>"^"</code> (the default), <code>"~"</code> or <code>""</code>.
+        </>}
+      />
+      <SymlScalarProperty
         name={`enableColors`}
         placeholder={true}
         description={<>
@@ -99,6 +106,13 @@ const YarnrcDoc = () => <>
         placeholder={true}
         description={<>
           If true, Yarn will show progress bars for long-running events. It's disabled by default for CI environments.
+        </>}
+      />
+      <SymlScalarProperty
+        name={`enableScripts`}
+        placeholder={false}
+        description={<>
+          If disabled, Yarn will not execute the <code>postInstall</code> scripts when installing the project. Note that you can now also disable scripts on a per-package basis thanks to <code>dependenciesMeta</code>.
         </>}
       />
       <SymlScalarProperty
@@ -235,7 +249,7 @@ const YarnrcDoc = () => <>
           <SymlScalarProperty
             name={`npmPublishRegistry`}
             anchor={`npmScopes.npmPublishRegistry`}
-            placeholder={true}
+            placeholder={`https://registry.yarnpkg.com`}
             description={<>
               See <a href={`#npmPublishRegistry`}><code>npmPublishRegistry</code></a>.
             </>}
@@ -243,7 +257,7 @@ const YarnrcDoc = () => <>
           <SymlScalarProperty
             name={`npmRegistryServer`}
             anchor={`npmScopes.npmRegistryServer`}
-            placeholder={true}
+            placeholder={`https://registry.yarnpkg.com`}
             description={<>
               See <a href={`#npmRegistryServer`}><code>npmRegistryServer</code></a>.
             </>}
@@ -338,6 +352,13 @@ const YarnrcDoc = () => <>
         placeholder={`./scripts/yarn-2.0.0-rc001.js`}
         description={<>
           The path of a Yarn binary, which will be executed instead of any other (including the global one) for any command run within the directory covered by the rc file. If the file extension ends with <code>.js</code> it will be required, and will be spawned in any other case.
+        </>}
+      />
+      <SymlScalarProperty
+        name={`yarnUpgradePath`}
+        placeholder={`./scripts/yarn-2.0.0-rc001.js`}
+        description={<>
+          If set, the <code>yarn set version</code> command will store the downloaded file at this location instead of the one referenced by <code>yarnPath</code>. This settings is useful if you want the file referenced in <code>yarnPath</code> to be a wrapper, and the real Yarn binary to be stored elsewhere.
         </>}
       />
     </SymlContainer>

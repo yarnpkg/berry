@@ -23,6 +23,9 @@ export default class AddCommand extends BaseCommand {
   @Command.Boolean(`-T,--tilde`)
   tilde: boolean = false;
 
+  @Command.Boolean(`-C,--caret`)
+  caret: boolean = false;
+
   @Command.Boolean(`-D,--dev`)
   dev: boolean = false;
 
@@ -49,7 +52,7 @@ export default class AddCommand extends BaseCommand {
 
       - If set, the \`--prefer-dev\` flag will operate as a more flexible \`-D,--dev\` in that it will add the package to your \`devDependencies\` if it isn't already listed in either \`dependencies\` or \`devDependencies\`, but it will also happily upgrade your \`dependencies\` if that's what you already use (whereas \`-D,--dev\` would throw an exception).
 
-      - If the added package doesn't specify a range at all its \`latest\` tag will be resolved and the returned version will be used to generate a new semver range (using the \`^\` modifier by default, or the \`~\` modifier if \`-T,--tilde\` is specified, or no modifier at all if \`-E,--exact\` is specified). Two exceptions to this rule: the first one is that if the package is a workspace then its local version will be used, and the second one is that if you use \`-P,--peer\` the default range will be \`*\` and won't be resolved at all.
+      - If the added package doesn't specify a range at all its \`latest\` tag will be resolved and the returned version will be used to generate a new semver range (using the \`^\` modifier by default unless otherwise configured via the \`savePrefix\` configuration, or the \`~\` modifier if \`-T,--tilde\` is specified, or no modifier at all if \`-E,--exact\` is specified). Two exceptions to this rule: the first one is that if the package is a workspace then its local version will be used, and the second one is that if you use \`-P,--peer\` the default range will be \`*\` and won't be resolved at all.
 
       - If the added package specifies a tag range (such as \`latest\` or \`rc\`), Yarn will resolve this tag to a semver version and use that in the resulting package.json entry (meaning that \`yarn add foo@latest\` will have exactly the same effect as \`yarn add foo\`).
 
@@ -85,11 +88,7 @@ export default class AddCommand extends BaseCommand {
       output: this.context.stdout,
     });
 
-    const modifier = this.exact
-      ? suggestUtils.Modifier.EXACT
-      : this.tilde
-        ? suggestUtils.Modifier.TILDE
-        : suggestUtils.Modifier.CARET;
+    const modifier = suggestUtils.getModifier(this, project);
 
     const strategies = [
       ...this.interactive ? [
