@@ -1342,7 +1342,10 @@ function applyVirtualResolutionMutations({
 }) {
   const hasBeenTraversed = new Set();
   const resolutionStack: Array<Locator> = [];
-  const allVirtualizedDescriptorsByRealLocator: Map<LocatorHash, Set<Descriptor>> = new Map();
+
+  // We'll be keeping track of all virtual descriptors; once they have all
+  // been generated we'll check whether they can be consolidated into one.
+  const allVirtualizedDescriptorsByPhysicalLocator = new Map<LocatorHash, Set<Descriptor>>();
   const allVirtualizedDescriptorsDependents = new Map<DescriptorHash, Set<LocatorHash>>();
 
   const reportStackOverflow = (): never => {
@@ -1424,6 +1427,11 @@ function applyVirtualResolutionMutations({
 
       const resolution = allResolutions.get(descriptor.descriptorHash);
       if (!resolution) {
+        // Note that we can't use `getPackageFromDescriptor` (defined below,
+        // because when doing the initial tree building right after loading the
+        // project it's possible that we get some entries that haven't been
+        // registered into the lockfile yet - for example when the user has
+        // manually changed the package.json dependencies)
         if (tolerateMissingPackages) {
           continue;
         } else {
@@ -1444,14 +1452,6 @@ function applyVirtualResolutionMutations({
       let virtualizedPackage: Package;
 
       const missingPeerDependencies = new Set<IdentHash>();
-      const getWithDefault = <K, V>(map: Map<K, V>, key: K, defaultValue: V) => {
-        const value = map.get(key);
-        if (!value) {
-          map.set(key, defaultValue);
-          return defaultValue;
-        }
-        return value;
-      };
 
       firstPass.push(() => {
         virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
@@ -1465,10 +1465,12 @@ function applyVirtualResolutionMutations({
 
         allPackages.set(virtualizedPackage.locatorHash, virtualizedPackage);
 
-        // Hold onto a reference of every virtual descriptor for post processing purposes.
-        const virtualizedDescriptors = getWithDefault(allVirtualizedDescriptorsByRealLocator, pkg.locatorHash, new Set());
+        const virtualizedDescriptors = miscUtils.getSetWithDefault(allVirtualizedDescriptorsByPhysicalLocator, pkg.locatorHash);
         virtualizedDescriptors.add(virtualizedDescriptor);
-        allVirtualizedDescriptorsDependents.set(virtualizedDescriptor.descriptorHash, new Set([parentPackage.locatorHash]));
+
+        allVirtualizedDescriptorsDependents.set(virtualizedDescriptor.descriptorHash, new Set([
+          parentPackage.locatorHash,
+        ]));
       });
 
       secondPass.push(() => {
@@ -1495,10 +1497,11 @@ function applyVirtualResolutionMutations({
           }
 
           virtualizedPackage.dependencies.set(peerDescriptor.identHash, peerDescriptor);
+
           // Need to track when a virtual descriptor is set as a dependency in case
           // the descriptor will be consolidated.
           if (structUtils.isVirtualDescriptor(peerDescriptor)) {
-            const dependents = getWithDefault(allVirtualizedDescriptorsDependents, peerDescriptor.descriptorHash, new Set());
+            const dependents = miscUtils.getSetWithDefault(allVirtualizedDescriptorsDependents, peerDescriptor.descriptorHash);
             dependents.add(virtualizedPackage.locatorHash);
           }
 
@@ -1549,12 +1552,14 @@ function applyVirtualResolutionMutations({
   }
 
   const getPackageFromDescriptor = (descriptor: Descriptor): Package => {
-    const packageLocatorHash = allResolutions.get(descriptor.descriptorHash);
-    if (packageLocatorHash === undefined)
+    const resolution = allResolutions.get(descriptor.descriptorHash);
+    if (typeof resolution === `undefined`)
       throw new Error(`Assertion failed: The resolution should have been registered`);
-    const pkg = allPackages.get(packageLocatorHash);
+
+    const pkg = allPackages.get(resolution);
     if (!pkg)
       throw new Error(`Assertion failed: The package could not be found`);
+
     return pkg;
   };
 
@@ -1566,13 +1571,18 @@ function applyVirtualResolutionMutations({
   // could lead to more virtual packages sharing the same dependencies consolidation
   // is run until a full pass yields no more consolidation.
   //
-  let consolidatedVirtualPackages = false;
-  do {
+  let consolidatedVirtualPackages = true;
+
+  while (consolidatedVirtualPackages) {
     consolidatedVirtualPackages = false;
-    for (const virtualDescriptors of allVirtualizedDescriptorsByRealLocator.values()) {
+
+    for (const virtualDescriptors of allVirtualizedDescriptorsByPhysicalLocator.values()) {
+      if (virtualDescriptors.size === 0)
+        continue;
+
       // Group the descriptors based on whether they share the same dependencies.
       const descriptorGroups = [];
-      for (const virtualDescriptor of virtualDescriptors.values()) {
+      for (const virtualDescriptor of virtualDescriptors) {
         if (!descriptorGroups.length) {
           descriptorGroups.push([virtualDescriptor]);
           continue;
@@ -1598,14 +1608,17 @@ function applyVirtualResolutionMutations({
       // and removed from the system.
       for (const descriptorGroup of descriptorGroups) {
         const [primaryDescriptor, ...duplicates] = descriptorGroup;
+
         for (const duplicateDescriptor of duplicates) {
           const dependents = allVirtualizedDescriptorsDependents.get(duplicateDescriptor.descriptorHash);
           if (!dependents)
             throw new Error(`Assertion failed: The virtual package should have a list of dependents`);
-          for (const dependentLocatorHash of dependents.values()) {
+
+          for (const dependentLocatorHash of dependents) {
             const dependentPackage = allPackages.get(dependentLocatorHash);
             if (!dependentPackage)
               throw new Error(`Assertion failed: The dependent package could not be found`);
+
             dependentPackage.dependencies.set(primaryDescriptor.identHash, primaryDescriptor);
           }
 
@@ -1617,5 +1630,5 @@ function applyVirtualResolutionMutations({
         }
       }
     }
-  } while (consolidatedVirtualPackages);
+  }
 }
