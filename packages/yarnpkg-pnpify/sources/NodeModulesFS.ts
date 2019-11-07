@@ -1,5 +1,5 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions, toFilename} from '@yarnpkg/fslib';
-import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                   from '@yarnpkg/fslib';
+import {NodeFS, FakeFS, MkdirOptions, WriteFileOptions, ProxiedFS}     from '@yarnpkg/fslib';
 import {WatchOptions, WatchCallback, Watcher}                          from '@yarnpkg/fslib';
 import {FSPath, NativePath, PortablePath, npath, ppath}                from '@yarnpkg/fslib';
 
@@ -321,12 +321,12 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     return this.baseFs.utimesSync(this.resolveDirOrFilePath(p), atime, mtime);
   }
 
-  async mkdirPromise(p: PortablePath) {
-    return await this.baseFs.mkdirPromise(this.resolveDirOrFilePath(p));
+  async mkdirPromise(p: PortablePath, opts: MkdirOptions) {
+    return await this.baseFs.mkdirPromise(this.resolveDirOrFilePath(p), opts);
   }
 
-  mkdirSync(p: PortablePath) {
-    return this.baseFs.mkdirSync(this.resolveDirOrFilePath(p));
+  mkdirSync(p: PortablePath, opts: MkdirOptions) {
+    return this.baseFs.mkdirSync(this.resolveDirOrFilePath(p), opts);
   }
 
   async rmdirPromise(p: PortablePath) {
