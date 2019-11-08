@@ -1,5 +1,23 @@
 import {Readable, Transform} from 'stream';
 
+export function getSetWithDefault<K, T>(map: Map<K, Set<T>>, key: K) {
+  let value = map.get(key);
+
+  if (typeof value === `undefined`)
+    map.set(key, value = new Set<T>());
+
+  return value;
+}
+
+export function getMapWithDefault<K, MK, MV>(map: Map<K, Map<MK, MV>>, key: K) {
+  let value = map.get(key);
+
+  if (typeof value === `undefined`)
+    map.set(key, value = new Map<MK, MV>());
+
+  return value;
+}
+
 // Executes a chunk of code and calls a cleanup function once it returns (even
 // if it throws an exception)
 

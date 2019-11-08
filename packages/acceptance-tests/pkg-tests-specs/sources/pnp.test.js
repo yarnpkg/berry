@@ -335,14 +335,17 @@ describe(`Plug'n'Play`, () => {
     `it should install in such a way that two identical packages with different peer dependencies are different instances`,
     makeTemporaryEnv(
       {
-        dependencies: {[`provides-peer-deps-1-0-0`]: `1.0.0`, [`provides-peer-deps-2-0-0`]: `1.0.0`},
+        dependencies: {
+          [`provides-peer-deps-1-0-0`]: `1.0.0`,
+          [`provides-peer-deps-2-0-0`]: `1.0.0`,
+        },
       },
       async ({path, run, source}) => {
         await run(`install`);
 
         await expect(
-          source(`require('provides-peer-deps-1-0-0') !== require('provides-peer-deps-2-0-0')`),
-        ).resolves.toEqual(true);
+          source(`require('provides-peer-deps-1-0-0').dependencies['peer-deps'] === require('provides-peer-deps-2-0-0').dependencies['peer-deps']`),
+        ).resolves.toEqual(false);
 
         await expect(source(`require('provides-peer-deps-1-0-0')`)).resolves.toMatchObject({
           name: `provides-peer-deps-1-0-0`,
@@ -385,6 +388,65 @@ describe(`Plug'n'Play`, () => {
             },
           },
         });
+      },
+    ),
+  );
+
+  test(
+    `it should install in such a way that two identical packages with the same peer dependencies are the same instances (simple)`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`provides-peer-deps-1-0-0`]: `1.0.0`,
+          [`provides-peer-deps-1-0-0-too`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(
+          source(`require('provides-peer-deps-1-0-0').dependencies['peer-deps'] === require('provides-peer-deps-1-0-0-too').dependencies['peer-deps']`),
+        ).resolves.toEqual(true);
+      },
+    ),
+  );
+
+  test(
+    `it should install in such a way that two identical packages with the same peer dependencies are the same instances (complex)`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`forward-peer-deps`]: `1.0.0`,
+          [`forward-peer-deps-too`]: `1.0.0`,
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(
+          source(`require('forward-peer-deps').dependencies['peer-deps'] === require('forward-peer-deps-too').dependencies['peer-deps']`),
+        ).resolves.toEqual(true);
+      },
+    ),
+  );
+
+  test(
+    `it shouldn't deduplicate two packages with similar peer dependencies but different names`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`peer-deps`]: `1.0.0`,
+          [`peer-deps-too`]: `1.0.0`,
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(
+          source(`require('peer-deps') === require('peer-deps-too')`),
+        ).resolves.toEqual(false);
       },
     ),
   );
