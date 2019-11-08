@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.11",
   "nextVersion": {
     "semver": "2.0.0-rc.12",
-    "nonce": "8728707341249083"
+    "nonce": "3707983391710503"
   },
   "main": "./sources/index.ts",
   "sideEffects": false,

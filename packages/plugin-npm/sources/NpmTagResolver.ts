@@ -1,7 +1,6 @@
 import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
 import {structUtils}                                                               from '@yarnpkg/core';
 import {Descriptor, Locator, Package}                                              from '@yarnpkg/core';
-import querystring                                                                 from 'querystring';
 
 import {NpmSemverFetcher}                                                          from './NpmSemverFetcher';
 import {PROTOCOL}                                                                  from './constants';
@@ -59,7 +58,7 @@ export class NpmTagResolver implements Resolver {
     if (NpmSemverFetcher.isConventionalTarballUrl(versionLocator, archiveUrl, {configuration: opts.project.configuration})) {
       return [versionLocator];
     } else {
-      return [structUtils.makeLocator(versionLocator, `${versionLocator.reference}?${querystring.stringify({archiveUrl})}`)];
+      return [structUtils.bindLocator(versionLocator, {__archiveUrl: archiveUrl})];
     }
   }
 

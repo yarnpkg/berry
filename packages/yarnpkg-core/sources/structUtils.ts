@@ -1,6 +1,7 @@
 import {PortablePath, toFilename}               from '@yarnpkg/fslib';
 import querystring                              from 'querystring';
 import semver                                   from 'semver';
+import {URL}                                    from 'url';
 
 import {Configuration}                          from './Configuration';
 import {Workspace}                              from './Workspace';
@@ -100,6 +101,13 @@ export function bindDescriptor(descriptor: Descriptor, params: {[key: string]: s
     return descriptor;
 
   return makeDescriptor(descriptor, `${descriptor.range}?${querystring.stringify(params)}`);
+}
+
+export function bindLocator(locator: Locator, params: {[key: string]: string}) {
+  if (locator.reference.includes(`?`))
+    return locator;
+
+  return makeLocator(locator, `${locator.reference}?${querystring.stringify(params)}`);
 }
 
 export function areIdentsEqual(a: Ident, b: Ident) {
@@ -249,6 +257,22 @@ export function makeRange({protocol, source, selector}: {protocol: string | null
     range += `${source}#`;
 
   return range + selector;
+}
+
+/**
+ * The range used internally may differ from the range stored in the
+ * Manifest (package.json). This removes any params indicated for internal use.
+ * An internal param starts with "__".
+ * @param range range to convert
+ */
+export function convertToManifestRange(range: string) {
+  const url = new URL(range);
+  for (const [name] of url.searchParams) {
+    if (name.startsWith('__')) {
+      url.searchParams.delete(name);
+    }
+  }
+  return url.toString();
 }
 
 export function requirableIdent(ident: Ident) {
