@@ -9,6 +9,6 @@ require(`@babel/register`)({
   root,
   extensions: [`.tsx`, `.ts`],
   only: [
-    p => p.startsWith(root),
+    p => `/`,
   ],
 });
