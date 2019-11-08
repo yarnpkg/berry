@@ -19,6 +19,10 @@
     "update-local": "yarn build:plugin-workspace-tools && rsync -a --delete bundles/ bin/"
   },
   "version": "2.0.0-rc.4",
+  "nextVersion": {
+    "semver": "2.0.0-rc.5",
+    "nonce": "1720503893361785"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

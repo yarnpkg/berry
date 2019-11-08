@@ -2,7 +2,8 @@
   "name": "@yarnpkg/builder",
   "version": "2.0.0-rc.9",
   "nextVersion": {
-    "nonce": "4191562914705311"
+    "semver": "2.0.0-rc.10",
+    "nonce": "247034447775533"
   },
   "bin": "./sources/boot-dev.js",
   "dependencies": {

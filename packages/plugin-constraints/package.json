@@ -14,7 +14,8 @@
   },
   "version": "2.0.0-rc.2",
   "nextVersion": {
-    "nonce": "7353211014571621"
+    "semver": "2.0.0-rc.3",
+    "nonce": "2623401925716365"
   },
   "repository": {
     "type": "git",
