@@ -10,6 +10,11 @@ export default class RunCommand extends BaseCommand {
   @Command.Boolean(`-T,--top-level`, {hidden: true})
   topLevel: boolean = false;
 
+  // Some tools (for example text editors) want to call the real binaries, not
+  // what their users might have remapped them to in their `scripts` field.
+  @Command.Boolean(`-B,--binaries-only`, {hidden: true})
+  binariesOnly: boolean = false;
+
   // The v1 used to print the Yarn version header when using "yarn run", which
   // was messing with the output of things like `--version` & co. We don't do
   // this anymore, but many workflows use `yarn run --silent` to make sure that
@@ -58,7 +63,7 @@ export default class RunCommand extends BaseCommand {
     // First we check to see whether a script exist inside the current package
     // for the given name
 
-    if (await scriptUtils.hasPackageScript(effectiveLocator, this.scriptName, {project}))
+    if (!this.binariesOnly && await scriptUtils.hasPackageScript(effectiveLocator, this.scriptName, {project}))
       return await scriptUtils.executePackageScript(effectiveLocator, this.scriptName, this.args, {project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
 
     // If we can't find it, we then check whether one of the dependencies of the
@@ -78,7 +83,7 @@ export default class RunCommand extends BaseCommand {
     // We also disable this logic for packages coming from third-parties (ie
     // not workspaces). No particular reason except maybe security concerns.
 
-    if (!this.topLevel && workspace && this.scriptName.includes(`:`)) {
+    if (!this.topLevel && !this.binariesOnly && workspace && this.scriptName.includes(`:`)) {
       let candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
         return workspace.manifest.scripts.has(this.scriptName) ? workspace : null;
       }));
