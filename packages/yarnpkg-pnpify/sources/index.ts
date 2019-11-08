@@ -1,10 +1,10 @@
-import {patchFs as fslibPatchFs} from '@yarnpkg/fslib';
-import {PnpApi}                  from '@yarnpkg/pnp';
+import {patchFs as fslibPatchFs}              from '@yarnpkg/fslib';
+import {PnpApi}                               from '@yarnpkg/pnp';
 
-import fs                        from 'fs';
+import fs                                     from 'fs';
 
-import {NodeModulesFS}           from './NodeModulesFS';
-import {dynamicRequire}          from './dynamicRequire';
+import {NodeModulesFS, PortableNodeModulesFs} from './NodeModulesFS';
+import {dynamicRequire}                       from './dynamicRequire';
 
 let fsPatched = false;
 
@@ -26,4 +26,4 @@ export const patchFs = () => {
 if (!process.mainModule)
   patchFs();
 
-export {NodeModulesFS};
+export {NodeModulesFS, PortableNodeModulesFs};

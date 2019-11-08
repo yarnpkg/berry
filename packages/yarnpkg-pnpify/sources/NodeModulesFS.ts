@@ -7,8 +7,10 @@ import {Filename}                                          from '@yarnpkg/fslib'
 import {PnpApi}                                            from '@yarnpkg/pnp';
 import fs                                                  from 'fs';
 
-import {PathResolver, ResolvedPath, HoistedPathResolver}   from './HoistedPathResolver';
 import {WatchManager}                                      from './WatchManager';
+import {buildNodeModulesTree}                              from './buildNodeModulesTree';
+import {NodeModulesTreeOptions, NodeModulesTree}           from './buildNodeModulesTree';
+import {resolveNodeModulesPath, ResolvedPath}              from './resolveNodeModulesPath';
 
 export type NodeModulesFSOptions = {
   realFs?: typeof fs,
@@ -33,31 +35,27 @@ export class NodeModulesFS extends ProxiedFS<NativePath, PortablePath> {
   }
 }
 
-type PortableNodeModulesFSOptions = {
+interface PortableNodeModulesFSOptions extends NodeModulesTreeOptions {
   baseFs?: FakeFS<PortablePath>
   pnpifyFs?: boolean;
 };
 
-class PortableNodeModulesFs extends FakeFS<PortablePath> {
+export class PortableNodeModulesFs extends FakeFS<PortablePath> {
   private readonly baseFs: FakeFS<PortablePath>;
+  private readonly options: PortableNodeModulesFSOptions;
   private readonly watchManager: WatchManager;
-  private pathResolver: PathResolver;
-  private pnpifyFs: boolean;
+  private nodeModulesTree: NodeModulesTree;
 
-  constructor(pnp: PnpApi, {baseFs = new NodeFS(), pnpifyFs = true}: PortableNodeModulesFSOptions = {}) {
+  constructor(pnp: PnpApi, {baseFs = new NodeFS(), pnpifyFs = true, optimizeSizeOnDisk = false}: PortableNodeModulesFSOptions = {}) {
     super(ppath);
 
+    this.options = {baseFs, pnpifyFs, optimizeSizeOnDisk};
     this.baseFs = baseFs;
-    this.pnpifyFs = pnpifyFs;
-    this.pathResolver = this.createPathResolver(pnp);
+    this.nodeModulesTree = buildNodeModulesTree(pnp, this.options);
     this.watchManager = new WatchManager();
 
     const pnpRootPath = npath.toPortablePath(pnp.getPackageInformation(pnp.topLevel)!.packageLocation);
     this.watchPnpFile(pnpRootPath);
-  }
-
-  private createPathResolver(pnp: PnpApi) {
-    return new HoistedPathResolver(pnp, {pnpifyFs: this.pnpifyFs});
   }
 
   private watchPnpFile(pnpRootPath: PortablePath) {
@@ -66,9 +64,8 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
       if (filename === '.pnp.js') {
         delete require.cache[pnpFilePath];
         const pnp = require(pnpFilePath);
-        this.pathResolver = this.createPathResolver(pnp);
-
-        this.watchManager.notifyWatchers(this.pathResolver);
+        this.nodeModulesTree = buildNodeModulesTree(pnp, this.options);
+        this.watchManager.notifyWatchers(nodePath => resolveNodeModulesPath(nodePath, this.nodeModulesTree, this.options));
       }
     });
   }
@@ -98,7 +95,7 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
       return {resolvedPath: p, realPath: p, fullOriginalPath: p};
     } else {
       const fullOriginalPath = this.pathUtils.resolve(p);
-      return {...this.pathResolver.resolvePath(fullOriginalPath), fullOriginalPath};
+      return {...resolveNodeModulesPath(fullOriginalPath, this.nodeModulesTree, this.options), fullOriginalPath};
     }
   }
 
