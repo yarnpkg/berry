@@ -90,7 +90,6 @@
     }
   },
   "scripts": {
-    "foo": "echo \"$@\"",
     "build:compile": "pnpify tsc -p",
     "gen-tssdk": "pnpify --sdk scripts",
     "release:all": "./scripts/release.sh",
