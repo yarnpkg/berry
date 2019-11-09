@@ -266,7 +266,7 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   // Per the requirements exposed in Resolver.ts, the best is the first one
   const bestLocator = candidateLocators[0];
 
-  let {protocol, source, selector} = structUtils.parseRange(bestLocator.reference);
+  let {protocol, source, selector} = structUtils.parseRange(structUtils.convertToManifestRange(bestLocator.reference));
   if (protocol === project.configuration.get(`defaultProtocol`))
     protocol = null;
 
