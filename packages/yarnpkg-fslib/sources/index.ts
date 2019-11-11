@@ -109,7 +109,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
     process.nextTick(() => {
       fakeFs.readPromise(p, buffer, ...args).then(bytesRead => {
-        callback(undefined, bytesRead, buffer);
+        callback(null, bytesRead, buffer);
       }, error => {
         callback(error);
       });
@@ -126,7 +126,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
       process.nextTick(() => {
         fakeImpl(...args).then((result: any) => {
-          callback(undefined, result);
+          callback(null, result);
         }, (error: Error) => {
           callback(error);
         });
