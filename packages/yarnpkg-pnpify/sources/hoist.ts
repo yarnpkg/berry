@@ -288,17 +288,29 @@ const computeHoistCandidates = (tree: HoisterPackageTree, rootId: HoisterPackage
   for (const pkgId of hoistCandidates)
     hoistCandidateNames.set(packages[pkgId].name, pkgId);
 
-  let hoistCandidatesChanged;
-  // Loop until hoist candidates set changes
-  do {
-    hoistCandidatesChanged = false;
+  let newHoistCandidates = hoistCandidates;
+  // Loop until new hoist candidates appear
+  while (newHoistCandidates.size > 0) {
+    let nextHoistCandidates = new Set<HoisterPackageId>();
+
     for (const peerDepCandId of hoistCandidatesWithPeerDeps) {
       // Peer dependencies that are going to be hoisted to the top, or were hoisted above the top
       const nonHoistedPeerDeps = tree[peerDepCandId].nonHoistedPeerDeps;
-      for (const peerDepId of nonHoistedPeerDeps)
-        if (hoistCandidates.has(peerDepId))
-          // Remove all the packages that are going to be hoisted from current peer deps
-          nonHoistedPeerDeps.delete(peerDepId);
+
+      /* eslint-disable arca/curly */
+      if (nonHoistedPeerDeps.size < newHoistCandidates.size) {
+        for (const peerDepId of nonHoistedPeerDeps)
+          if (newHoistCandidates.has(peerDepId))
+            // Remove all the packages that are going to be hoisted from current peer deps
+            nonHoistedPeerDeps.delete(peerDepId);
+      } else {
+        for (const candidateId of newHoistCandidates)
+          if (nonHoistedPeerDeps.has(candidateId))
+            // Remove all the packages that are going to be hoisted from current peer deps
+            nonHoistedPeerDeps.delete(candidateId);
+      }
+      /* eslint-enable arca/curly */
+
       if (nonHoistedPeerDeps.size === 0) {
         // Check that we don't already have the package with the same name but different version
         // among hoist candidates
@@ -308,17 +320,18 @@ const computeHoistCandidates = (tree: HoisterPackageTree, rootId: HoisterPackage
         // Recheck rule 1 for the peer dependent package that is going to be hoisted
         if (!hoistedPkgId || hoistedPkgId === peerDepCandId) {
           // Peer dependent package can be hoisted if all of its peer deps are going to be hoisted
-          hoistCandidates.add(peerDepCandId);
+          nextHoistCandidates.add(peerDepCandId);
           hoistCandidateNames.set(name, peerDepCandId);
           hoistCandidatesWithPeerDeps.delete(peerDepCandId);
-          hoistCandidatesChanged = true;
         } else {
           // We cannot hoist this package without breaking rule 1, stop trying
           hoistCandidatesWithPeerDeps.delete(peerDepCandId);
         }
       }
     }
-  } while (hoistCandidatesChanged);
+
+    newHoistCandidates = nextHoistCandidates;
+  }
 
   return hoistCandidates;
 };
