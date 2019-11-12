@@ -233,4 +233,31 @@ describe('hoist', () => {
       new Set(),
     ]);
   });
+
+  it('should honor peer dependency promise for the same version of dependency', () => {
+    // . → A → B → C
+    //   ⟶ B
+    // Should be hoisted to (B@X must not be hoisted to the top):
+    // . → A → B
+    //   → C
+    const packages = [
+      {name: '.', weight: 1},
+      {name: 'A', weight: 1},
+      {name: 'B', weight: 1},
+      {name: 'C', weight: 1},
+    ];
+    const tree = [
+      {deps: new Set([1]), peerDeps: new Set<number>([2])},
+      {deps: new Set([2]), peerDeps: new Set<number>()},
+      {deps: new Set([3]), peerDeps: new Set<number>()},
+      {deps: new Set<number>(), peerDeps: new Set<number>()},
+    ];
+    const result = hoist(tree, packages);
+    expect(sortDeps(result)).toEqual([
+      new Set([1, 3]),
+      new Set([2]),
+      new Set(),
+      new Set(),
+    ]);
+  });
 });

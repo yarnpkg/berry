@@ -70,23 +70,6 @@ type ReadonlyWeightMap = ReadonlyMap<HoisterPackageId, HoisterWeight>;
  *
  * This function does not mutate its arguments, it hoists and returns tree copy
  *
- * Rules of hoisting packages to the current tree root:
- * 1. Must keep require promise:
- *    A package cannot be hoisted to the top over the package with the same name, but different version
- *    . → A@X → B@X → C@X → B@Y → A@Y → D@Y
- *      ⟶ D@X
- *    It is forbidden to hoist B@Y to the top, because C@X will require B@X instead of B@Y
- *    It is also forbidden to hoist A@Y to the top, because A@X is already there
- *    And it is forbidded to hoist D@Y to the top, because the top peer depends on D@X already
- * 2. Must keep peer dependency promise:
- *    A package cannot be hoisted to the top, if it has peer dependencies that cannot be hoisted to the top or above the top
- *    . → A@X → B@X
- *            → C@X ⟶ B@X
- *      → B@Y
- *    It is forbidden to hoist C@X to the top, because it has peer dependency B@X that cannot
- *    be hoisted to the top, and C@X will require B@Y instead of B@X
- *    It is also forbidden to hoist D@Y to the top, because it already peer depends on D@X
- *
  * @param tree package tree (cycles in the tree are allowed)
  * @param packageInfos package infos
  * @param nohoist package ids that should be excluded from applying hoisting algorithm. Nohoist
@@ -174,20 +157,20 @@ const hoistInplace = (tree: HoisterPackageTree, rootId: HoisterPackageId, packag
  * @return map of package weights: package id -> total weight
  */
 const weighPackages = (weighCanidates: ReadonlySet<HoisterPackageId>, tree: ReadonlyHoisterPackageTree, packages: ReadonlyArray<HoisterPackageInfo>, nohoist: ReadonlySet<HoisterPackageId>): WeightMap => {
-  const allWeights: WeightMap = new Map();
+  const nodeWeights: WeightMap = new Map();
 
   const weighNode = (nodeId: HoisterPackageId): HoisterWeight => {
-    if (!allWeights.has(nodeId)) {
-      allWeights.set(nodeId, 0);
+    if (!nodeWeights.has(nodeId)) {
+      nodeWeights.set(nodeId, 0);
 
       if (!nohoist.has(nodeId)) {
         let totalWeigth = packages[nodeId].weight;
         for (const depId of tree[nodeId].deps)
           totalWeigth += weighNode(depId);
-        allWeights.set(nodeId, totalWeigth);
+        nodeWeights.set(nodeId, totalWeigth);
       }
     }
-    return allWeights.get(nodeId)!;
+    return nodeWeights.get(nodeId)!;
   };
 
   const weights: WeightMap = new Map();
@@ -229,6 +212,23 @@ const getHeaviestPackages = (weights: ReadonlyWeightMap, packages: ReadonlyArray
 /**
  * Find the packages that can be hoisted to the subtree root `rootId`.
  *
+ * Rules of hoisting packages to the current tree root:
+ * 1. Must keep require promise:
+ *    A package cannot be hoisted to the top over the package with the same name, but different version
+ *    . → A@X → B@X → C@X → B@Y → A@Y → D@Y
+ *      ⟶ D@X
+ *    It is forbidden to hoist B@Y to the top, because C@X will require B@X instead of B@Y
+ *    It is also forbidden to hoist A@Y to the top, because A@X is already there
+ *    And it is forbidded to hoist D@Y to the top, because the top peer depends on D@X already
+ * 2. Must keep peer dependency promise:
+ *    A package cannot be hoisted to the top, if it has peer dependencies that cannot be hoisted to the top or above the top
+ *    . → A@X → B@X
+ *            → C@X ⟶ B@X
+ *      → B@Y
+ *    It is forbidden to hoist C@X to the top, because it has peer dependency B@X that cannot
+ *    be hoisted to the top, and C@X will require B@Y instead of B@X
+ *    It is also forbidden to hoist D@Y to the top, because it already peer depends on D@X
+ *
  * @param tree package tree
  * @param rootId package id that should be regarded as subtree root
  * @param packages package infos
@@ -253,16 +253,8 @@ const computeHoistCandidates = (tree: HoisterPackageTree, rootId: HoisterPackage
     const name = packages[nodeId].name;
     const seenPkgId = seenDepNames.get(name);
     const pkg = tree[nodeId];
-    /**
-     * Enforce rule 1. Must keep require promise:
-     * A package cannot be hoisted to the top over the package with the same name, but different version
-     *   . → A@X → B@X → C@X → B@Y → A@Y → D@Y
-     *     ⟶ D@X
-     * It is forbidden to hoist B@Y to the top, because C@X will require B@X instead of B@Y
-     * It is also forbidden to hoist A@Y to the top, because A@X is already there
-     * And it is forbidded to hoist D@Y to the top, because the top peer depends on D@X already
-     */
-    if (!seenPkgId || seenPkgId === nodeId) {
+
+    if (!tree[rootId].peerDeps.has(nodeId) && (!seenPkgId || seenPkgId === nodeId)) {
       if (pkg.nonHoistedPeerDeps.size > 0) {
         hoistCandidatesWithPeerDeps.add(nodeId);
       } else {
@@ -296,15 +288,6 @@ const computeHoistCandidates = (tree: HoisterPackageTree, rootId: HoisterPackage
   for (const pkgId of hoistCandidates)
     hoistCandidateNames.set(packages[pkgId].name, pkgId);
 
-  /**
-   * Enforce rule 2. Must keep peer dependency promise:
-   * A package cannot be hoisted to the top, if it has peer dependencies that cannot be hoisted to the top or above the top
-   *   . → A@X → B@X
-   *           → C@X ⟶ B@X
-   *     → B@Y
-   * It is forbidden to hoist C@X to the top, because it has peer dependency B@X that cannot
-   * be hoisted to the top, and C@X will require B@Y instead of B@X
-   */
   let hoistCandidatesChanged;
   // Loop until hoist candidates set changes
   do {
