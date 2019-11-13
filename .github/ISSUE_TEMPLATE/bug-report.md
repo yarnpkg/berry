@@ -7,14 +7,17 @@ assignees: ''
 
 ---
 
+- [ ] I'd be willing to implement a fix
+
 **Describe the bug**
 
 A clear and concise description of what the bug is.
 
 **To Reproduce**
 
-The _minimal_ information needed to reproduce your issue (ideally a package.json with a single dep).
-Note that bugs without minimal reproductions might be closed.
+The _minimal_ information needed to reproduce your issue (ideally a package.json with a single dep). Note that bugs without minimal reproductions might be closed.
+
+IMPORTANT: We strongly prefer reproductions that use Sherlock. Please check our documentation for more information: https://next.yarnpkg.com/advanced/sherlock
 
 **Screenshots**
 
