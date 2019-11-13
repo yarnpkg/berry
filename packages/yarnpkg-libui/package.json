@@ -1,0 +1,25 @@
+{
+  "name": "@yarnpkg/libui",
+  "version": "2.0.0-rc.0",
+  "nextVersion": {
+    "semver": "2.0.0-rc.1",
+    "nonce": "6958309365485939"
+  },
+  "private": true,
+  "sideEffects": false,
+  "peerDependencies": {
+    "ink": "^2.3.0",
+    "react": "^16.8.4"
+  },
+  "devDependencies": {
+    "ink": "^2.3.0",
+    "react": "^16.8.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "dependencies": {
+    "redux": "npm:^4.0.0"
+  }
+}

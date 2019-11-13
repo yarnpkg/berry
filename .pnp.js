@@ -66,6 +66,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:packages/plugin-init"
       },
       {
+        "name": "@yarnpkg/plugin-interactive-tools",
+        "reference": "workspace:packages/plugin-interactive-tools"
+      },
+      {
         "name": "@yarnpkg/plugin-link",
         "reference": "workspace:packages/plugin-link"
       },
@@ -126,6 +130,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:packages/yarnpkg-json-proxy"
       },
       {
+        "name": "@yarnpkg/libui",
+        "reference": "workspace:packages/yarnpkg-libui"
+      },
+      {
         "name": "@yarnpkg/libzip",
         "reference": "workspace:packages/yarnpkg-libzip"
       },
@@ -170,6 +178,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@yarnpkg/fslib", ["workspace:packages/yarnpkg-fslib"]],
       ["@yarnpkg/gatsby", ["workspace:packages/gatsby"]],
       ["@yarnpkg/json-proxy", ["workspace:packages/yarnpkg-json-proxy"]],
+      ["@yarnpkg/libui", ["virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-libui", "workspace:packages/yarnpkg-libui"]],
       ["@yarnpkg/libzip", ["workspace:packages/yarnpkg-libzip"]],
       ["@yarnpkg/monorepo", ["workspace:."]],
       ["@yarnpkg/parsers", ["workspace:packages/yarnpkg-parsers"]],
@@ -182,6 +191,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@yarnpkg/plugin-github", ["workspace:packages/plugin-github"]],
       ["@yarnpkg/plugin-http", ["workspace:packages/plugin-http"]],
       ["@yarnpkg/plugin-init", ["workspace:packages/plugin-init"]],
+      ["@yarnpkg/plugin-interactive-tools", ["workspace:packages/plugin-interactive-tools"]],
       ["@yarnpkg/plugin-link", ["workspace:packages/plugin-link"]],
       ["@yarnpkg/plugin-npm", ["workspace:packages/plugin-npm"]],
       ["@yarnpkg/plugin-npm-cli", ["workspace:packages/plugin-npm-cli"]],
@@ -331,6 +341,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       47,
       44,
       43,
+      36,
       34,
       30,
       29,
@@ -365,6 +376,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/comment-json", "npm:1.1.1"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/dateformat", "npm:1.0.2"],
+            ["@types/diff", "npm:4.0.2"],
             ["@types/emscripten", "npm:1.38.0"],
             ["@types/eslint", "npm:4.16.6"],
             ["@types/eventemitter3", "npm:2.0.2"],
@@ -4907,6 +4919,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }]
       ]],
+      ["@types/diff", [
+        ["npm:4.0.2", {
+          "packageLocation": "./.yarn/cache/@types-diff-npm-4.0.2-e0c9c256aa-1.zip/node_modules/@types/diff/",
+          "packageDependencies": [
+            ["@types/diff", "npm:4.0.2"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["@types/emscripten", [
         ["npm:1.38.0", {
           "packageLocation": "./.yarn/cache/@types-emscripten-npm-1.38.0-17ced398fd-1.zip/node_modules/@types/emscripten/",
@@ -6491,6 +6512,36 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"
         }]
       ]],
+      ["@yarnpkg/libui", [
+        ["virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-libui", {
+          "packageLocation": "./.yarn/virtual/@yarnpkg-libui-virtual-c04767462f/1/packages/yarnpkg-libui/",
+          "packageDependencies": [
+            ["@yarnpkg/libui", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-libui"],
+            ["ink", "virtual:35104c47575f2fe378d8d20383ae667f19d4dd801df8cc4c76848603aa6b4a2234a00142ff12fd557f6f48bd2810880e31c40c767010ea61a31fca302c2cc5e0#npm:2.3.0"],
+            ["react", "npm:16.8.4"],
+            ["redux", "npm:4.0.1"]
+          ],
+          "packagePeers": [
+            "ink",
+            "react"
+          ],
+          "linkType": "SOFT"
+        }],
+        ["workspace:packages/yarnpkg-libui", {
+          "packageLocation": "./packages/yarnpkg-libui/",
+          "packageDependencies": [
+            ["@yarnpkg/libui", "workspace:packages/yarnpkg-libui"],
+            ["ink", "virtual:35104c47575f2fe378d8d20383ae667f19d4dd801df8cc4c76848603aa6b4a2234a00142ff12fd557f6f48bd2810880e31c40c767010ea61a31fca302c2cc5e0#npm:2.3.0"],
+            ["react", "npm:16.8.4"],
+            ["redux", "npm:4.0.1"]
+          ],
+          "packagePeers": [
+            "ink",
+            "react"
+          ],
+          "linkType": "SOFT"
+        }]
+      ]],
       ["@yarnpkg/libzip", [
         ["workspace:packages/yarnpkg-libzip", {
           "packageLocation": "./packages/yarnpkg-libzip/",
@@ -6521,6 +6572,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/comment-json", "npm:1.1.1"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/dateformat", "npm:1.0.2"],
+            ["@types/diff", "npm:4.0.2"],
             ["@types/emscripten", "npm:1.38.0"],
             ["@types/eslint", "npm:4.16.6"],
             ["@types/eventemitter3", "npm:2.0.2"],
@@ -6718,6 +6770,25 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["clipanion", "npm:2.1.4"]
+          ],
+          "linkType": "SOFT"
+        }]
+      ]],
+      ["@yarnpkg/plugin-interactive-tools", [
+        ["workspace:packages/plugin-interactive-tools", {
+          "packageLocation": "./packages/plugin-interactive-tools/",
+          "packageDependencies": [
+            ["@yarnpkg/plugin-interactive-tools", "workspace:packages/plugin-interactive-tools"],
+            ["@yarnpkg/builder", "virtual:86c95fabbcd56c56f5f2d2e080e64a1095e3fe233877aa9f7958f317f88a95627e0be2765e89c0cff02c9f08f27b64b7cbc9d5c3960c1df509d5e6ea98cca4f4#workspace:packages/yarnpkg-builder"],
+            ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
+            ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
+            ["@yarnpkg/libui", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-libui"],
+            ["@yarnpkg/plugin-essentials", "workspace:packages/plugin-essentials"],
+            ["clipanion", "npm:2.1.4"],
+            ["diff", "npm:4.0.1"],
+            ["ink", "virtual:35104c47575f2fe378d8d20383ae667f19d4dd801df8cc4c76848603aa6b4a2234a00142ff12fd557f6f48bd2810880e31c40c767010ea61a31fca302c2cc5e0#npm:2.3.0"],
+            ["react", "npm:16.8.4"],
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }]
@@ -11627,6 +11698,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/diff-npm-3.5.0-a321a0df19-1.zip/node_modules/diff/",
           "packageDependencies": [
             ["diff", "npm:3.5.0"]
+          ],
+          "linkType": "HARD"
+        }],
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/diff-npm-4.0.1-4d86a500e8-1.zip/node_modules/diff/",
+          "packageDependencies": [
+            ["diff", "npm:4.0.1"]
           ],
           "linkType": "HARD"
         }]

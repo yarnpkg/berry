@@ -9,11 +9,11 @@ require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
 // Exposes the CLI version as like for the bundle
 global.YARN_VERSION = require('@yarnpkg/cli/package.json').version;
 
-// Finds the plugins - only the builtin ones are supported in dev for now
+// Finds the plugins
 const dynamicLibs = require('@yarnpkg/builder/sources/data/dynamicLibs').dynamicLibs;
 const plugins = require('@yarnpkg/builder/sources/tools/findPlugins.ts').findPlugins({
   basedir: path.dirname(require.resolve(`@yarnpkg/cli/package.json`)),
-  plugins: [],
+  plugins: findCustomPlugins(),
 });
 
 // Inject the plugins in the runtime. With Webpack that would be through
@@ -28,3 +28,24 @@ require.cache[require.resolve(PLUGIN_CONFIG_MODULE)] = {
 };
 
 module.exports = require(`./cli`);
+
+// Helper function that takes a semicolon-separated list of plugin names and
+// resolves them. Non-builtin plugins can be compiled at runtime using their
+// path instead of their name: `DEV=/path/to/plugin yarn`
+function findCustomPlugins() {
+  const devspec = process.env.DEV || ``;
+  const plugins = [];
+
+  for (const ref of devspec.split(`;`)) {
+    let plugin = null;
+    try {
+      plugin = require.resolve(ref);
+    } catch {}
+
+    if (plugin !== null) {
+      plugins.push(plugin);
+    }
+  }
+
+  return plugins;
+};

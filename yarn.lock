@@ -3363,6 +3363,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/diff@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "@types/diff@npm:4.0.2"
+  checksum: 78828313b42c06c6b87170b553cebc206850eb9c73c225bb8b655563823351a5ee702a2eb9c5645f616c83570fe4b6d5425f7925b61eac0cb0e70da64ca9d546
+  languageName: node
+  linkType: hard
+
 "@types/emscripten@npm:^1.38.0":
   version: 1.38.0
   resolution: "@types/emscripten@npm:1.38.0"
@@ -4757,6 +4764,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@yarnpkg/libui@workspace:2.0.0-rc.0, @yarnpkg/libui@workspace:packages/yarnpkg-libui":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/libui@workspace:packages/yarnpkg-libui"
+  dependencies:
+    ink: "npm:^2.3.0"
+    react: "npm:^16.8.4"
+    redux: "npm:^4.0.0"
+  peerDependencies:
+    ink: ^2.3.0
+    react: ^16.8.4
+  languageName: unknown
+  linkType: soft
+
 "@yarnpkg/libzip@workspace:2.0.0-rc.3, @yarnpkg/libzip@workspace:packages/yarnpkg-libzip":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libzip@workspace:packages/yarnpkg-libzip"
@@ -4783,6 +4803,7 @@ __metadata:
     "@types/comment-json": "npm:^1.1.1"
     "@types/cross-spawn": "npm:6.0.0"
     "@types/dateformat": "npm:^1.0.1"
+    "@types/diff": "npm:^4.0.2"
     "@types/emscripten": "npm:^1.38.0"
     "@types/eslint": "npm:4.16.6"
     "@types/eventemitter3": "npm:^2.0.2"
@@ -4967,6 +4988,23 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2"
     clipanion: "npm:^2.1.4"
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/plugin-interactive-tools@workspace:packages/plugin-interactive-tools":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/plugin-interactive-tools@workspace:packages/plugin-interactive-tools"
+  dependencies:
+    "@yarnpkg/builder": "workspace:2.0.0-rc.10"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.12"
+    "@yarnpkg/core": "workspace:2.0.0-rc.12"
+    "@yarnpkg/libui": "workspace:2.0.0-rc.0"
+    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.10"
+    clipanion: "npm:^2.1.4"
+    diff: "npm:^4.0.1"
+    ink: "npm:^2.3.0"
+    react: "npm:^16.8.4"
+    typescript: "npm:next"
   languageName: unknown
   linkType: soft
 
@@ -9336,6 +9374,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 3.5.0
   resolution: "diff@npm:3.5.0"
   checksum: ab282ff9c61908a3cee72de88ccef155572f398549ccd43225379859c865d197f04200d9a8f1dd63de0c787505593a2047fb6acc1a0b1e21339e9baf0210c928
+  languageName: node
+  linkType: hard
+
+"diff@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "diff@npm:4.0.1"
+  checksum: da6198d424409f23d4ba822c783319543007fb74f8fc27d9e3581d099ac5f09f1e3ff8065cf2912dc5de589664c7ff2ea1e015f1b033c5e98ea0e9d2f0d9bbad
   languageName: node
   linkType: hard
 
