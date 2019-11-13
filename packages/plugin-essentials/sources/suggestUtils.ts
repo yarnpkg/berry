@@ -59,16 +59,24 @@ export function getModifier(flags: {exact: boolean; caret: boolean; tilde: boole
     return Modifier.CARET;
   if (flags.tilde)
     return Modifier.TILDE;
-  return project.configuration.get<Modifier>('defaultSemverRangePrefix');
+  return project.configuration.get<Modifier>(`defaultSemverRangePrefix`);
+}
+
+const SIMPLE_SEMVER = /^([\^~]?)[0-9+](?:\.[0-9]+){0,2}(?:-\S+)?$/;
+
+export function extractModifier(descriptor: Descriptor, {project}: {project: Project}) {
+  const match = descriptor.range.match(SIMPLE_SEMVER);
+
+  return match ? match[1] : project.configuration.get<Modifier>(`defaultSemverRangePrefix`);
 }
 
 export function applyModifier(descriptor: Descriptor, modifier: Modifier) {
-  let {protocol, source, selector} = structUtils.parseRange(descriptor.range);
+  let {protocol, source, params, selector} = structUtils.parseRange(descriptor.range);
 
   if (semver.valid(selector))
     selector = `${modifier}${descriptor.range}`;
 
-  return structUtils.makeDescriptor(descriptor, structUtils.makeRange({protocol, source, selector}));
+  return structUtils.makeDescriptor(descriptor, structUtils.makeRange({protocol, source, params, selector}));
 }
 
 export async function findProjectDescriptors(ident: Ident, {project, target}: {project: Project, target: Target}) {
@@ -256,7 +264,7 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   let candidateLocators;
   try {
     candidateLocators = await resolver.getCandidates(latestDescriptor, resolverOptions);
-  } catch (error) {
+  } catch {
     return null;
   }
 
@@ -266,9 +274,14 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   // Per the requirements exposed in Resolver.ts, the best is the first one
   const bestLocator = candidateLocators[0];
 
-  let {protocol, source, selector} = structUtils.parseRange(structUtils.convertToManifestRange(bestLocator.reference));
+  let {protocol, source, params, selector} = structUtils.parseRange(structUtils.convertToManifestRange(bestLocator.reference));
   if (protocol === project.configuration.get(`defaultProtocol`))
     protocol = null;
 
-  return structUtils.makeDescriptor(bestLocator, structUtils.makeRange({protocol, source, selector}));
+  if (semver.valid(selector)) {
+    const modifier = extractModifier(latestDescriptor, {project});
+    selector = modifier + selector;
+  }
+
+  return structUtils.makeDescriptor(bestLocator, structUtils.makeRange({protocol, source, params, selector}));
 }

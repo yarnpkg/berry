@@ -20,6 +20,7 @@
     "@types/comment-json": "^1.1.1",
     "@types/cross-spawn": "6.0.0",
     "@types/dateformat": "^1.0.1",
+    "@types/diff": "^4.0.2",
     "@types/emscripten": "^1.38.0",
     "@types/eslint": "4.16.6",
     "@types/eventemitter3": "^2.0.2",
@@ -93,7 +94,7 @@
     "build:compile": "pnpify tsc -p",
     "gen-tssdk": "pnpify --sdk scripts",
     "release:all": "./scripts/release.sh",
-    "test:lint": "eslint \"packages/**/@(sources|tests)/**/!(libzip).@(ts|js)\"",
+    "test:lint": "eslint \"packages/**/@(sources|tests)/**/!(libzip).@(tsx|ts|js)\"",
     "test:unit": "jest",
     "typecheck:all": "pnpify tsc --noEmit"
   },

@@ -14,5 +14,6 @@
     }
   ],
   "eslint.autoFixOnSave": true,
+  "eslint.enable": true,
   "eslint.nodePath": ".vscode/pnpify"
 }
