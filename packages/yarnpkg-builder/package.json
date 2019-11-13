@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/builder",
   "version": "2.0.0-rc.10",
+  "nextVersion": {
+    "nonce": "7648653460083903"
+  },
   "bin": "./sources/boot-dev.js",
   "dependencies": {
     "@babel/core": "^7.5.5",

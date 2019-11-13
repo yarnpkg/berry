@@ -1,7 +1,6 @@
 import {PortablePath, toFilename}               from '@yarnpkg/fslib';
 import querystring                              from 'querystring';
 import semver                                   from 'semver';
-import {URL}                                    from 'url';
 
 import {Configuration}                          from './Configuration';
 import {Workspace}                              from './Workspace';
@@ -242,13 +241,18 @@ export function parseRange(range: string) {
   const protocolRest = protocolIndex !== -1 ? range.slice(protocolIndex + 1) : range;
 
   const hashIndex = protocolRest.indexOf(`#`);
-  const source = hashIndex !== -1 ? protocolRest.slice(0, hashIndex) : null;
+  const sourceWithQs = hashIndex !== -1 ? protocolRest.slice(0, hashIndex) : null;
   const selector = hashIndex !== -1 ? protocolRest.slice(hashIndex + 1) : protocolRest;
 
-  return {protocol, source, selector};
+
+  const queryIndex = sourceWithQs !== null ? sourceWithQs.indexOf(`?`) : -1;
+  const source = queryIndex !== -1 ? sourceWithQs!.slice(0, queryIndex) : sourceWithQs;
+  const params = queryIndex !== -1 ? querystring.parse(sourceWithQs!.slice(queryIndex + 1)) : null;
+
+  return {protocol, source, params, selector};
 }
 
-export function makeRange({protocol, source, selector}: {protocol: string | null, source: string | null, selector: string}) {
+export function makeRange({protocol, source, selector, params}: {protocol: string | null, source: string | null, selector: string, params: querystring.ParsedUrlQuery | null}) {
   let range = ``;
 
   if (protocol !== null)
@@ -266,13 +270,21 @@ export function makeRange({protocol, source, selector}: {protocol: string | null
  * @param range range to convert
  */
 export function convertToManifestRange(range: string) {
-  const url = new URL(range);
-  for (const [name] of url.searchParams) {
-    if (name.startsWith('__')) {
-      url.searchParams.delete(name);
-    }
-  }
-  return url.toString();
+  const {protocol, source, selector} = parseRange(range);
+  if (!source)
+    return range;
+
+  const queryIndex = source.indexOf(`?`);
+  if (queryIndex === -1)
+    return range;
+
+  const params = querystring.parse(source.slice(queryIndex + 1));
+
+  for (const name of Object.keys(params))
+    if (name.startsWith(`__`))
+      delete params[name];
+
+  return makeRange({protocol, source, params, selector});
 }
 
 export function requirableIdent(ident: Ident) {

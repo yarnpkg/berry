@@ -86,6 +86,7 @@ jobs:
         node --version
         node ./scripts/run-yarn.js build:cli
         node ./scripts/run-yarn.js build:plugin-exec
+        node ./scripts/run-yarn.js build:plugin-interactive-tools
         node ./scripts/run-yarn.js build:plugin-stage
         node ./scripts/run-yarn.js build:plugin-typescript
         node ./scripts/run-yarn.js build:plugin-version
