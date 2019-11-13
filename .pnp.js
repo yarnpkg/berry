@@ -33073,7 +33073,7 @@ function patchFs(patchedFs, fakeFs) {
     const callback = hasCallback ? args.pop() : () => {};
     process.nextTick(() => {
       fakeFs.readPromise(p, buffer, ...args).then(bytesRead => {
-        callback(undefined, bytesRead, buffer);
+        callback(null, bytesRead, buffer);
       }, error => {
         callback(error);
       });
@@ -33089,7 +33089,7 @@ function patchFs(patchedFs, fakeFs) {
       const callback = hasCallback ? args.pop() : () => {};
       process.nextTick(() => {
         fakeImpl(...args).then(result => {
-          callback(undefined, result);
+          callback(null, result);
         }, error => {
           callback(error);
         });
