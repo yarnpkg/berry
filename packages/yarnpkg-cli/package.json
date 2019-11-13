@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/cli",
   "version": "2.0.0-rc.12",
+  "nextVersion": {
+    "nonce": "4110222124485203"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/core": "workspace:2.0.0-rc.12",
