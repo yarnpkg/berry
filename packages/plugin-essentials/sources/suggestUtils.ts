@@ -232,9 +232,9 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
         } else {
           let latest;
           try {
-            latest = await fetchDescriptorFrom(request, `latest`, {project, cache});
-          } catch (error) {
-          // Just ignore errors
+            latest = await fetchDescriptorFrom(request, `latest`, {project, cache, preserveModifier: false});
+          } catch {
+            // Just ignore errors
           }
 
           if (latest) {
@@ -251,7 +251,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
   return suggested.slice(0, maxResults);
 }
 
-export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache}: {project: Project, cache: Cache}) {
+export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache, preserveModifier = true}: {project: Project, cache: Cache, preserveModifier?: boolean}) {
   const latestDescriptor = structUtils.makeDescriptor(ident, range);
 
   const report = new ThrowReport();
@@ -278,7 +278,7 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   if (protocol === project.configuration.get(`defaultProtocol`))
     protocol = null;
 
-  if (semver.valid(selector)) {
+  if (semver.valid(selector) && preserveModifier) {
     const modifier = extractModifier(latestDescriptor, {project});
     selector = modifier + selector;
   }
