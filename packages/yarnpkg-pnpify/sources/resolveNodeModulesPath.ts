@@ -2,7 +2,7 @@ import {PortablePath, Filename, npath, ppath}              from '@yarnpkg/fslib'
 
 import {NodeModulesTreeOptions, NodeModulesTree, LinkType} from './buildNodeModulesTree';
 
-const NODE_MODULES_SUFFIX = '/node_modules';
+const NODE_MODULES = 'node_modules';
 
 /**
  * Resolved `/node_modules` path inside PnP project info.
@@ -60,11 +60,13 @@ export interface ResolvedPath {
  */
 export const resolveNodeModulesPath = (nodePath: PortablePath, nodeModulesTree: NodeModulesTree, options?: NodeModulesTreeOptions): ResolvedPath => {
   const result: ResolvedPath = {resolvedPath: nodePath, realPath: nodePath};
-  if (nodePath.indexOf(NODE_MODULES_SUFFIX) < 0)
+  const segments = nodePath.split(ppath.sep);
+  const lastNodeModulesIdx = segments.lastIndexOf(NODE_MODULES);
+  if (lastNodeModulesIdx < 0)
     return result;
-  let lastIdx = nodePath.lastIndexOf(NODE_MODULES_SUFFIX) + NODE_MODULES_SUFFIX.length;
-  let targetPath = nodePath.substring(0, lastIdx);
-  let remainderParts = nodePath.substring(lastIdx).split(ppath.sep).slice(1);
+
+  let targetPath = segments.slice(0, lastNodeModulesIdx + 1).join(ppath.sep);
+  let remainderParts = segments.slice(lastNodeModulesIdx + 1);
   let requestStartIdx = 0;
   if (remainderParts.length > 0) {
     if (remainderParts[0][0] !== '@' || remainderParts.length === 1)
@@ -79,19 +81,18 @@ export const resolveNodeModulesPath = (nodePath: PortablePath, nodeModulesTree: 
   const node = nodeModulesTree.get(treePath);
   if (node) {
     result.treePath = treePath;
-    if (Array.isArray(node)) {
-      const [location, linkType] = node;
-      result.resolvedPath = npath.toPortablePath(location + (request ? ppath.sep + request : ''));
-      if (linkType === LinkType.SOFT) {
+    if (!node.dirList) {
+      result.resolvedPath = npath.toPortablePath(node.target + (request ? ppath.sep + request : ''));
+      if (node.linkType === LinkType.SOFT) {
         result.realPath = result.resolvedPath;
         result.isSymlink = !request;
-      } else if (linkType === LinkType.HARD && options && options.pnpifyFs) {
+      } else if (node.linkType === LinkType.HARD && options && options.pnpifyFs) {
         result.isSymlink = true;
         result.realPath = result.resolvedPath;
       }
     } else if (!request) {
-      result.dirList = node;
-      result.statPath = npath.toPortablePath(nodePath.substring(0, nodePath.indexOf(NODE_MODULES_SUFFIX)));
+      result.dirList = node.dirList;
+      result.statPath = npath.toPortablePath(segments.slice(0, segments.indexOf(NODE_MODULES)).join(ppath.sep));
     }
   }
   return result;

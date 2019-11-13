@@ -14,7 +14,7 @@ export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'};
 /**
  * Node modules tree.
  */
-export type NodeModulesTree = Map<PortablePath, Set<Filename> | [PortablePath, LinkType]>;
+export type NodeModulesTree = Map<PortablePath, {dirList: Set<Filename>} | {dirList?: undefined, target: PortablePath, linkType: LinkType}>;
 
 export interface NodeModulesTreeOptions {
   optimizeSizeOnDisk?: boolean;
@@ -82,8 +82,6 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     return pkgId;
   };
 
-  const getPackageId = (locator: PackageLocator) => locatorToPackageMap.get(getLocatorKey(locator));
-
   const addedIds = new Set<HoisterPackageId>();
   const addPackageToTree = (pkg: PackageInformation<NativePath>, pkgId: HoisterPackageId, parentDepIds: Set<HoisterPackageId>) => {
     addedIds.add(pkgId);
@@ -94,48 +92,21 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     for (const [name, reference] of pkg.packageDependencies) {
       if (reference) {
         const locator = typeof reference === 'string' ? {name, reference} : {name: reference[0], reference: reference[1]};
-        const depPkgId = getPackageId(locator);
-        if (depPkgId) {
-          if (pkg.packagePeers) {
-            if (pkg.packagePeers.has(name)) {
-              peerDeps.add(depPkgId);
-            } else {
-              deps.add(depPkgId);
-            }
-          } else {
-            if (parentDepIds.has(depPkgId) && depPkgId !== pkgId) {
-              peerDeps.add(depPkgId);
-            } else {
-              deps.add(depPkgId);
-            }
-          }
+        const depPkg = pnp.getPackageInformation(locator)!;
+        const depPkgId = assignPackageId(locator, depPkg);
+        if (pkg.packagePeers.has(name)) {
+          peerDeps.add(depPkgId);
+        } else {
+          deps.add(depPkgId);
         }
       }
     }
 
-    const allDepIds = new Set(Array.from(deps).concat(Array.from(peerDeps)));
+    const allDepIds = new Set([...deps, ...peerDeps]);
     for (const depId of allDepIds) {
       const depPkg = packageInfos[depId];
       if (depPkg && !addedIds.has(depId)) {
         addPackageToTree(depPkg, depId, allDepIds);
-      }
-    }
-  };
-
-  const assignedIds = new Set<HoisterPackageId>();
-  const assignPackageIds = (pkgId: HoisterPackageId) => {
-    assignedIds.add(pkgId);
-    const pkg = packageInfos[pkgId];
-    for (const [name, reference] of pkg.packageDependencies) {
-      if (reference) {
-        const locator = typeof reference === 'string' ? {name, reference} : {name: reference[0], reference: reference[1]};
-        const depPkg = pnp.getPackageInformation(locator);
-        if (depPkg) {
-          const depPkgId = assignPackageId(locator, depPkg);
-          if (!assignedIds.has(depPkgId)) {
-            assignPackageIds(depPkgId);
-          }
-        }
       }
     }
   };
@@ -148,9 +119,8 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       pkg.packageDependencies.set(locator.name!, locator.reference);
     }
   }
-  const pkgId = assignPackageId(topLocator, pkg);
-  assignPackageIds(pkgId);
 
+  const pkgId = assignPackageId(topLocator, pkg);
   addPackageToTree(pkg, pkgId, new Set<number>());
 
   return {packageTree, packages, locators};
@@ -169,11 +139,12 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators: PackageLocator[], options: NodeModulesTreeOptions): NodeModulesTree => {
   const tree: NodeModulesTree = new Map();
 
-  const getLocation = (locator: PackageLocator): [PortablePath, LinkType] => {
+  const makeLeafNode = (locator: PackageLocator): {target: PortablePath, linkType: LinkType} => {
     const info = pnp.getPackageInformation(locator)!;
     const truePath = (!options.pnpifyFs && pnp.resolveVirtual && locator.reference && locator.reference.startsWith('virtual:')) ? pnp.resolveVirtual(info.packageLocation) : info.packageLocation;
-    return [npath.toPortablePath(truePath || info.packageLocation), info.linkType];
+    return {target: npath.toPortablePath(truePath || info.packageLocation), linkType: info.linkType};
   };
+
   const getPackageName = (locator: PackageLocator): { name: Filename, scope: Filename | null } => {
     const [nameOrScope, name] = locator.name!.split('/');
     return name ? {scope: toFilename(nameOrScope), name: toFilename(name)} : {scope: null, name: toFilename(nameOrScope)};
@@ -192,10 +163,9 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
 
       const packageNameParts = scope ? [scope, name] : [name];
       const nodeModulesDirPath = ppath.join(prefix, NODE_MODULES);
-      let depPrefix = ppath.join(...([nodeModulesDirPath].concat(packageNameParts)));
+      const depPrefix = ppath.join(nodeModulesDirPath, ...packageNameParts);
 
-      const nodeVal = getLocation(locator);
-      tree.set(depPrefix, nodeVal);
+      tree.set(depPrefix, makeLeafNode(locator));
 
       const segments = depPrefix.split('/');
       const nodeModulesIdx = segments.indexOf(NODE_MODULES);
@@ -207,7 +177,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
 
         const subdirs = tree.get(dirPath);
         if (!subdirs) {
-          tree.set(dirPath, new Set([targetDir]));
+          tree.set(dirPath, {dirList: new Set([targetDir])});
         } else if (subdirs instanceof Set) {
           if (subdirs.has(targetDir)) {
             break;
@@ -222,28 +192,20 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
     }
   };
 
-  const [rootPrefix] = getLocation(locators[0]);
+  const rootNode = makeLeafNode(locators[0]);
+  const rootPrefix = rootNode.target && rootNode.target;
   buildTree(0, rootPrefix);
 
   if (options.pnpifyFs) {
-    for (const key of tree.keys()) {
-      const nodeVal = tree.get(key);
-      if (nodeVal instanceof Array && nodeVal[1] === LinkType.HARD) {
+    for (const [key, val] of tree.entries()) {
+      if (val instanceof Array && val[1] === LinkType.HARD) {
         const nodeModulesDir = ppath.join(key, NODE_MODULES);
         if (tree.has(nodeModulesDir)) {
-          tree.set(ppath.join(nodeVal[0], NODE_MODULES), [nodeModulesDir, LinkType.SOFT]);
+          tree.set(ppath.join(val[0], NODE_MODULES), {target: nodeModulesDir, linkType: LinkType.SOFT});
         }
       }
     }
   }
 
-  const sortedTree: NodeModulesTree = new Map();
-
-  const keys = Array.from(tree.keys()).sort();
-  for (const key of keys) {
-    const val = tree.get(key)!;
-    sortedTree.set(key, val instanceof Set ? new Set(Array.from(val).sort()) : val);
-  }
-
-  return sortedTree;
+  return tree;
 };
