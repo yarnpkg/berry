@@ -7,7 +7,7 @@ hidden: true
 
 In order to simplify our work maintaining Yarn, we ask you to help us by providing reproductions for the bugs you encounter. We can't stress this enough: under normal circumstances, **no reproduction will mean no help** and your issue may be closed for this reason.
 
-To help you help us, we use a tool called [Sherlock](https://github.com/arcanis/sherlock) which allows you to attach reproduction testcases to your repository. In a sense, it's a bit like if you were writing a Jest test directly in your issue. By using this system we can quickly check whether a problem can be reproduced, and whether our fix is the right one. It's win-win for everyone!
+To help you help us, we use a tool called [Sherlock](https://github.com/arcanis/sherlock) which allows you to attach reproduction testcases to your issues. In a sense, it's a bit like if you were writing a Jest test directly in your issue. By using this system we can quickly check whether a problem can be reproduced, and whether our fix is the right one. It's win-win for everyone!
 
 ## Adding a reproduction to your issue
 
@@ -75,6 +75,16 @@ https://github.com/yarnpkg/berry/issues?q=is%3Aissue+label%3Areproducible+is%3Ac
 
 
 ## Q&A
+
+### Can I develop my reproduction offline?
+
+It's a bit annoying to build a reproduction directly on the repository tracker as you'll get flooded with the email notifications from the bot. Until we improve this part of the workflow, you can use this tip to easily build a reproduction offline and only share it once it's ready:
+
+1. Clone our [repository](https://github.com/yarnpkg/berry)
+2. Go into it, and write your issue in a markdown file (as if you were on GitHub)
+3. Once ready, run `yarn sherlock <my-file.md>` to make Sherlock run your reproduction locally
+
+Note that you must write the issue itself, not only the reproduction, so don't forget to add the codefence etc. Once you are done, copy-paste the result on GitHub and the bot will promptly review your code and approve it.
 
 ### The Sherlock bot doesn't label my message
 
