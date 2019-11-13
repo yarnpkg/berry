@@ -4995,6 +4995,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-interactive-tools@workspace:packages/plugin-interactive-tools"
   dependencies:
+    "@yarnpkg/builder": "workspace:2.0.0-rc.10"
     "@yarnpkg/cli": "workspace:2.0.0-rc.12"
     "@yarnpkg/core": "workspace:2.0.0-rc.12"
     "@yarnpkg/libui": "workspace:2.0.0-rc.0"
@@ -5003,6 +5004,7 @@ __metadata:
     diff: "npm:^4.0.1"
     ink: "npm:^2.3.0"
     react: "npm:^16.8.4"
+    typescript: "npm:next"
   languageName: unknown
   linkType: soft
 

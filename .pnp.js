@@ -6779,6 +6779,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/plugin-interactive-tools/",
           "packageDependencies": [
             ["@yarnpkg/plugin-interactive-tools", "workspace:packages/plugin-interactive-tools"],
+            ["@yarnpkg/builder", "virtual:86c95fabbcd56c56f5f2d2e080e64a1095e3fe233877aa9f7958f317f88a95627e0be2765e89c0cff02c9f08f27b64b7cbc9d5c3960c1df509d5e6ea98cca4f4#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/libui", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-libui"],
@@ -6786,7 +6787,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.4"],
             ["diff", "npm:4.0.1"],
             ["ink", "virtual:35104c47575f2fe378d8d20383ae667f19d4dd801df8cc4c76848603aa6b4a2234a00142ff12fd557f6f48bd2810880e31c40c767010ea61a31fca302c2cc5e0#npm:2.3.0"],
-            ["react", "npm:16.8.4"]
+            ["react", "npm:16.8.4"],
+            ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"
         }]

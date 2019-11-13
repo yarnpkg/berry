@@ -1,6 +1,11 @@
 {
   "name": "@yarnpkg/plugin-interactive-tools",
   "private": true,
+  "version": "2.0.0-rc.3",
+  "nextVersion": {
+    "semver": "2.0.0-rc.4",
+    "nonce": "5605583541845851"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/cli": "workspace:2.0.0-rc.12",
@@ -12,13 +17,16 @@
     "ink": "^2.3.0",
     "react": "^16.8.4"
   },
-  "version": "2.0.0-rc.3",
-  "nextVersion": {
-    "semver": "2.0.0-rc.4",
-    "nonce": "5605583541845851"
+  "devDependencies": {
+    "@yarnpkg/builder": "workspace:2.0.0-rc.10",
+    "typescript": "next"
   },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "scripts": {
+    "build:plugin-interactive-tools": "builder build plugin",
+    "update-local": "yarn build:plugin-interactive-tools && rsync -a --delete bundles/ bin/"
   }
 }
