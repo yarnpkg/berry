@@ -6,6 +6,10 @@ title: "Contributing"
 
 Thanks for being here! Yarn gives a lot of importance to being a community project, and we rely on your help as much as you rely on ours. In order to help you help us we've invested in an infra and documentation that should make contributing to Yarn very easy. If you have any feedback on what we could improve, please open an issue to discuss it!
 
+## Opening an issue
+
+We have some rules regarding our issues. Please check [the following page](/advanced/sherlock) for more details.
+
 ## Finding work to do
 
 It might be difficult to know where to start on a fresh codebase. To help a bit with this, we try to mark various issues with tags meant to highlight issues that we think don't require as much context as others:

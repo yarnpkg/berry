@@ -26,9 +26,9 @@ export default function Template({data, pageContext: {category}}) {
 }
 
 export const pageQuery = graphql`
-  query($path: String!, $category: String!) {
+  query($path: String!, $category: String) {
     allMarkdownRemark(
-      filter: {frontmatter: {category: {eq: $category}}}
+      filter: {frontmatter: {category: {eq: $category}, hidden: {ne: true}}}
       sort: {order: ASC, fields: [frontmatter___title]}
     ) {
       edges {
