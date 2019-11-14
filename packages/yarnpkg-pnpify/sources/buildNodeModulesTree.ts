@@ -1,7 +1,5 @@
-import {NativePath, PortablePath, Filename, toFilename, npath, ppath}            from '@yarnpkg/fslib';
+import {NativePath, PortablePath, Filename, toFilename, npath, ppath, xfs}       from '@yarnpkg/fslib';
 import {PnpApi, PackageLocator, PackageInformation}                              from '@yarnpkg/pnp';
-
-import fs                                                                        from 'fs';
 
 import {hoist, ReadonlyHoisterPackageTree, HoisterPackageId, HoisterPackageInfo} from './hoist';
 import {HoistedTree, HoisterPackageTree}                                         from './hoist';
@@ -26,6 +24,37 @@ const NODE_MODULES = toFilename(`node_modules`);
 
 /** Package locator key for usage inside maps */
 type LocatorKey = string;
+
+/**
+ * Returns path to archive, if package location is inside the archive.
+ *
+ * @param packagePath package location
+ *
+ * @returns path to archive is location is insde the archive or null otherwise
+ */
+const getArchivePath = (packagePath: PortablePath): PortablePath | null =>
+  packagePath.indexOf(`.zip/${NODE_MODULES}/`) >= 0 ?
+    npath.toPortablePath(packagePath.split(`/${NODE_MODULES}/`)[0]) :
+    null;
+
+/**
+ * Determines package's weight relative to other packages for hoisting purposes.
+ * If optimizeSizeOnDisk is `true`, we use archive size in bytes as a weight,
+ * otherwise weight 1 is assigned to each package.
+ *
+ * @param packagePath package path
+ * @param optimizeSizeOnDisk whether size on disk should be optimized during hoisting
+ */
+const getPackageWeight = (packagePath: PortablePath, {optimizeSizeOnDisk}: NodeModulesTreeOptions) => {
+  if (!optimizeSizeOnDisk)
+    return 1;
+
+  const archivePath = getArchivePath(packagePath);
+  if (archivePath === null)
+    return 1;
+
+  return xfs.statSync(archivePath).size;
+};
 
 /**
  * Retrieve full package list and build hoisted `node_modules` directories
@@ -71,9 +100,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
     const newPkgId = lastPkgId++;
     const packagePath = npath.toPortablePath(pkg.packageLocation);
-    let weight = 1;
-    if (options.optimizeSizeOnDisk && packagePath.indexOf(`.zip/${NODE_MODULES}/`) > 0)
-      weight = fs.statSync(packagePath.split(`/${NODE_MODULES}/`)[0]).size;
+    const weight = getPackageWeight(packagePath, options);
 
     locatorToPackageMap.set(locatorKey, newPkgId);
     locators.push(locator);
