@@ -17,7 +17,7 @@ export class NpmSemverFetcher implements Fetcher {
 
     if (!semver.valid(url.pathname))
       return false;
-    if (url.searchParams.has(`archiveUrl`))
+    if (url.searchParams.has(`__archiveUrl`))
       return false;
 
     return true;

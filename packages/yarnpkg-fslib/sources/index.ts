@@ -7,6 +7,7 @@ import {PortablePath, NativePath, npath} from './path';
 
 export {CreateReadStreamOptions}  from './FakeFS';
 export {CreateWriteStreamOptions} from './FakeFS';
+export {MkdirOptions}             from './FakeFS';
 export {WatchOptions}             from './FakeFS';
 export {WatchCallback}            from './FakeFS';
 export {Watcher}                  from './FakeFS';
@@ -108,7 +109,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
     process.nextTick(() => {
       fakeFs.readPromise(p, buffer, ...args).then(bytesRead => {
-        callback(undefined, bytesRead, buffer);
+        callback(null, bytesRead, buffer);
       }, error => {
         callback(error);
       });
@@ -125,7 +126,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
       process.nextTick(() => {
         fakeImpl(...args).then((result: any) => {
-          callback(undefined, result);
+          callback(null, result);
         }, (error: Error) => {
           callback(error);
         });

@@ -2,7 +2,7 @@
     "name": "pkg-tests-fixtures",
     "private": true,
     "dependencies": {
-        "@yarnpkg/fslib": "workspace:2.0.0-rc.7"
+        "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
     },
     "scripts": {
         "copy-index": "find packages -type d -mindepth 1 -maxdepth 1 | while read pkg; do cp default-index.js \"$pkg/index.js\"; done"

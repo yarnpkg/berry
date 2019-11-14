@@ -15,7 +15,7 @@ export class NpmHttpFetcher implements Fetcher {
 
     if (!semver.valid(url.pathname))
       return false;
-    if (!url.searchParams.has(`archiveUrl`))
+    if (!url.searchParams.has(`__archiveUrl`))
       return false;
 
     return true;
@@ -46,7 +46,7 @@ export class NpmHttpFetcher implements Fetcher {
   }
 
   async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
-    const archiveUrl = new URL(locator.reference).searchParams.get(`archiveUrl`);
+    const archiveUrl = new URL(locator.reference).searchParams.get(`__archiveUrl`);
     if (archiveUrl === null)
       throw new Error(`Assertion failed: The archiveUrl querystring parameter should have been available`);
 

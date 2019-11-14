@@ -1,15 +1,15 @@
-import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@yarnpkg/fslib';
-import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@yarnpkg/fslib';
-import {WatchOptions, WatchCallback, Watcher, toFilename}  from '@yarnpkg/fslib';
+import {Filename, MkdirOptions}                            from '@yarnpkg/fslib';
 import {FSPath, NativePath, PortablePath, npath, ppath}    from '@yarnpkg/fslib';
-import {Filename}                                          from '@yarnpkg/fslib';
+import {WatchOptions, WatchCallback, Watcher, toFilename}  from '@yarnpkg/fslib';
+import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@yarnpkg/fslib';
+import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@yarnpkg/fslib';
 
 import {PnpApi}                                            from '@yarnpkg/pnp';
 import fs                                                  from 'fs';
 
 import {WatchManager}                                      from './WatchManager';
-import {buildNodeModulesTree}                              from './buildNodeModulesTree';
 import {NodeModulesTreeOptions, NodeModulesTree}           from './buildNodeModulesTree';
+import {buildNodeModulesTree}                              from './buildNodeModulesTree';
 import {resolveNodeModulesPath, ResolvedPath}              from './resolveNodeModulesPath';
 
 export type NodeModulesFSOptions = {
@@ -327,21 +327,21 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
     return this.baseFs.utimesSync(this.resolveDirOrFilePath(p), atime, mtime);
   }
 
-  async mkdirPromise(p: PortablePath) {
+  async mkdirPromise(p: PortablePath, opts: MkdirOptions) {
     const pnpPath = this.resolvePath(p);
     const parentPath = this.resolvePath(ppath.dirname(p));
     if (parentPath.statPath)
       this.persistPath(parentPath.resolvedPath);
 
-    return this.baseFs.mkdirPromise(pnpPath.resolvedPath);
+    return this.baseFs.mkdirPromise(pnpPath.resolvedPath, opts);
   }
 
-  mkdirSync(p: PortablePath) {
+  mkdirSync(p: PortablePath, opts: MkdirOptions) {
     const pnpPath = this.resolvePath(p);
     const parentPath = this.resolvePath(ppath.dirname(p));
     if (parentPath.statPath)
       this.persistPath(parentPath.resolvedPath);
-    return this.baseFs.mkdirSync(pnpPath.resolvedPath);
+    return this.baseFs.mkdirSync(pnpPath.resolvedPath, opts);
   }
 
   async rmdirPromise(p: PortablePath) {

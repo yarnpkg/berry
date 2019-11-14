@@ -2,11 +2,11 @@
   "name": "@yarnpkg/json-proxy",
   "version": "2.0.0-rc.2",
   "nextVersion": {
-    "nonce": "7097349072948591"
+    "nonce": "5678756921901805"
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.7"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
   },
   "scripts": {
     "postpack": "rm -rf lib",

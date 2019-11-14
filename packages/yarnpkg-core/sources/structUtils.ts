@@ -102,6 +102,13 @@ export function bindDescriptor(descriptor: Descriptor, params: {[key: string]: s
   return makeDescriptor(descriptor, `${descriptor.range}?${querystring.stringify(params)}`);
 }
 
+export function bindLocator(locator: Locator, params: {[key: string]: string}) {
+  if (locator.reference.includes(`?`))
+    return locator;
+
+  return makeLocator(locator, `${locator.reference}?${querystring.stringify(params)}`);
+}
+
 export function areIdentsEqual(a: Ident, b: Ident) {
   return a.identHash === b.identHash;
 }
@@ -112,6 +119,36 @@ export function areDescriptorsEqual(a: Descriptor, b: Descriptor) {
 
 export function areLocatorsEqual(a: Locator, b: Locator) {
   return a.locatorHash === b.locatorHash;
+}
+
+/**
+ * Virtual packages are considered equivalent when they belong to the same
+ * package identity and have the same dependencies. Note that equivalence
+ * is not the same as equality, as the references may be different.
+ */
+export function areVirtualPackagesEquivalent(a: Package, b: Package) {
+  if (!isVirtualLocator(a))
+    throw new Error(`Invalid package type`);
+  if (!isVirtualLocator(b))
+    throw new Error(`Invalid package type`);
+
+  if (!areIdentsEqual(a, b))
+    return false;
+
+  if (a.dependencies.size !== b.dependencies.size)
+    return false;
+
+  for (const dependencyDescriptorA of a.dependencies.values()) {
+    const dependencyDescriptorB = b.dependencies.get(dependencyDescriptorA.identHash);
+    if (!dependencyDescriptorB)
+      return false;
+
+    if (!areDescriptorsEqual(dependencyDescriptorA, dependencyDescriptorB)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 export function parseIdent(string: string): Ident {
@@ -204,13 +241,18 @@ export function parseRange(range: string) {
   const protocolRest = protocolIndex !== -1 ? range.slice(protocolIndex + 1) : range;
 
   const hashIndex = protocolRest.indexOf(`#`);
-  const source = hashIndex !== -1 ? protocolRest.slice(0, hashIndex) : null;
+  const sourceWithQs = hashIndex !== -1 ? protocolRest.slice(0, hashIndex) : null;
   const selector = hashIndex !== -1 ? protocolRest.slice(hashIndex + 1) : protocolRest;
 
-  return {protocol, source, selector};
+
+  const queryIndex = sourceWithQs !== null ? sourceWithQs.indexOf(`?`) : -1;
+  const source = queryIndex !== -1 ? sourceWithQs!.slice(0, queryIndex) : sourceWithQs;
+  const params = queryIndex !== -1 ? querystring.parse(sourceWithQs!.slice(queryIndex + 1)) : null;
+
+  return {protocol, source, params, selector};
 }
 
-export function makeRange({protocol, source, selector}: {protocol: string | null, source: string | null, selector: string}) {
+export function makeRange({protocol, source, selector, params}: {protocol: string | null, source: string | null, selector: string, params: querystring.ParsedUrlQuery | null}) {
   let range = ``;
 
   if (protocol !== null)
@@ -219,6 +261,30 @@ export function makeRange({protocol, source, selector}: {protocol: string | null
     range += `${source}#`;
 
   return range + selector;
+}
+
+/**
+ * The range used internally may differ from the range stored in the
+ * Manifest (package.json). This removes any params indicated for internal use.
+ * An internal param starts with "__".
+ * @param range range to convert
+ */
+export function convertToManifestRange(range: string) {
+  const {protocol, source, selector} = parseRange(range);
+  if (!source)
+    return range;
+
+  const queryIndex = source.indexOf(`?`);
+  if (queryIndex === -1)
+    return range;
+
+  const params = querystring.parse(source.slice(queryIndex + 1));
+
+  for (const name of Object.keys(params))
+    if (name.startsWith(`__`))
+      delete params[name];
+
+  return makeRange({protocol, source, params, selector});
 }
 
 export function requirableIdent(ident: Ident) {
