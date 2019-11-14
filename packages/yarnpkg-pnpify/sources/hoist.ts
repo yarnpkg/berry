@@ -92,15 +92,12 @@ type AncestorMap = Array<Set<HoisterPackageId>>;
  * @returns hoisted tree copy
  */
 export const hoist = (tree: ReadonlyHoisterPackageTree, packageInfos: ReadonlyArray<HoisterPackageInfo>, nohoist: ReadonlySet<HoisterPackageId> = new Set()): HoistedTree => {
-  // Build ancestor map, used for comparing package weights before hoisting
-  const ancestorMap = buildAncestorMap(tree);
-
   // Make tree copy, which will be mutated by hoisting algorithm
   const treeCopy: TrackedHoisterPackageTree = tree.map(({deps, peerDeps}) => ({deps: new Set(deps), peerDeps: new Set(peerDeps), nonHoistedPeerDeps: new Set(peerDeps)}));
 
   const seenIds = new Set<HoisterPackageId>();
 
-  const hoistSubTree = (nodeId: HoisterPackageId) => {
+  const hoistSubTree = (nodeId: HoisterPackageId, ancestorMap: AncestorMap) => {
     seenIds.add(nodeId);
 
     // Apply mutating hoisting algorithm on each tree node starting from the root
@@ -108,13 +105,13 @@ export const hoist = (tree: ReadonlyHoisterPackageTree, packageInfos: ReadonlyAr
 
     for (const depId of treeCopy[nodeId].deps) {
       if (!seenIds.has(depId)) {
-        hoistSubTree(depId);
+        hoistSubTree(depId, ancestorMap);
       }
     }
   };
 
   if (treeCopy.length > 0 && treeCopy[0].deps.size > 0)
-    hoistSubTree(0);
+    hoistSubTree(0, buildAncestorMap(tree));
 
   return treeCopy.map(({deps}) => deps);
 };
