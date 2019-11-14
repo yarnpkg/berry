@@ -10,7 +10,13 @@ import {HoistedTree, HoisterPackageTree}                                        
 export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'};
 
 /**
- * Node modules tree.
+ * Node modules tree - a map of every folder within the node_modules, along with their
+ * directory listing and whether they are a symlink and their location.
+ *
+ * Sample contents:
+ * /home/user/project/node_modules -> {dirList: ['foo', 'bar']}
+ * /home/user/project/node_modules/foo -> {target: '/home/user/project/.yarn/.cache/foo.zip/node_modules/foo', linkType: 'HARD'}
+ * /home/user/project/node_modules/bar -> {target: '/home/user/project/packages/bar', linkType: 'SOFT'}
  */
 export type NodeModulesTree = Map<PortablePath, {dirList: Set<Filename>} | {dirList?: undefined, target: PortablePath, linkType: LinkType}>;
 
@@ -225,10 +231,17 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
 
   if (options.pnpifyFs) {
     for (const [key, val] of tree.entries()) {
-      if (val instanceof Array && val[1] === LinkType.HARD) {
+      if (!val.dirList && val.linkType === LinkType.HARD) {
+        // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
+        // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
+        // To make this fs layout work with legacy tools we make
+        // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
+        // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
+        // This is far from perfect, but this is the best we can do to both let PnP API work as is and
+        // at the same provide the maximum possible compatibility to the legacy node_modules tools running under pnpify
         const nodeModulesDir = ppath.join(key, NODE_MODULES);
         if (tree.has(nodeModulesDir)) {
-          tree.set(ppath.join(val[0], NODE_MODULES), {target: nodeModulesDir, linkType: LinkType.SOFT});
+          tree.set(ppath.join(val.target, NODE_MODULES), {target: nodeModulesDir, linkType: LinkType.SOFT});
         }
       }
     }
