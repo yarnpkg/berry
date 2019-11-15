@@ -134,6 +134,14 @@ describe('hoist', () => {
   });
 
   it('should honor weight when hoisting', () => {
+    // . → webpack → watchpack → lodash@2
+    //             → lodash@1#3
+    //             → enhanced-resolve → lodash@2
+    // Should be hoisted to:
+    // . → webpack
+    //   → watchpack → lodash@2
+    //   → lodash@1#3
+    //   → enhanced-resolve → lodash@2
     const tree = [
       {deps: new Set([1]), peerDeps: new Set<number>()},
       {deps: new Set([2, 3, 5]), peerDeps: new Set<number>()},

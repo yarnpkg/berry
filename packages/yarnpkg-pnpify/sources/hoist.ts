@@ -326,6 +326,7 @@ const computeHoistCandidates = (tree: TrackedHoisterPackageTree, rootId: Hoister
         if (pkgId) {
           packagesToHoist.delete(pkgId);
           pureHoistCandidates.add(pkgId);
+          pureHoistCandidates.add(nodeId);
         } else {
           packagesToHoist.add(nodeId);
           packagesToHoistNames.set(name, nodeId);

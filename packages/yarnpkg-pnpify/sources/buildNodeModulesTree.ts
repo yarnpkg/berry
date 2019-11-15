@@ -211,11 +211,11 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
         const subdirs = tree.get(dirPath);
         if (!subdirs) {
           tree.set(dirPath, {dirList: new Set([targetDir])});
-        } else if (subdirs instanceof Set) {
-          if (subdirs.has(targetDir)) {
+        } else if (subdirs.dirList) {
+          if (subdirs.dirList.has(targetDir)) {
             break;
           } else {
-            subdirs.add(targetDir);
+            subdirs.dirList.add(targetDir);
           }
         }
 
@@ -229,23 +229,27 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
   const rootPrefix = rootNode.target && rootNode.target;
   buildTree(0, rootPrefix);
 
-  if (options.pnpifyFs) {
-    for (const [key, val] of tree.entries()) {
-      if (!val.dirList && val.linkType === LinkType.HARD) {
-        // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
-        // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
-        // To make this fs layout work with legacy tools we make
-        // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
-        // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
-        // This is far from perfect, but this is the best we can do to both let PnP API work as is and
-        // at the same provide the maximum possible compatibility to the legacy node_modules tools running under pnpify
-        const nodeModulesDir = ppath.join(key, NODE_MODULES);
-        if (tree.has(nodeModulesDir)) {
-          tree.set(ppath.join(val.target, NODE_MODULES), {target: nodeModulesDir, linkType: LinkType.SOFT});
-        }
-      }
-    }
+  return tree;
+};
+
+/**
+ * Sorts the tree.
+ *
+ * The function is used for troubleshooting purposes
+ *
+ * @param tree node_modules tree
+ *
+ * @returns sorted node_modules tree
+ */
+// eslint-disable-next-line
+const sortTree = (tree: NodeModulesTree): NodeModulesTree => {
+  const sortedTree: NodeModulesTree = new Map();
+
+  const keys = Array.from(tree.keys()).sort();
+  for (const key of keys) {
+    const val = tree.get(key)!;
+    sortedTree.set(key, val.dirList ? {dirList: new Set(Array.from(val.dirList).sort())} : val);
   }
 
-  return tree;
+  return sortedTree;
 };
