@@ -1348,6 +1348,23 @@ function applyVirtualResolutionMutations({
   const allVirtualizedDescriptorsByPhysicalLocator = new Map<LocatorHash, Set<Descriptor>>();
   const allVirtualizedDescriptorsDependents = new Map<DescriptorHash, Set<LocatorHash>>();
 
+  // We must keep a copy of the workspaces original dependencies, because they
+  // may be overriden during the virtual package resolution - cf Dragon Test #5
+  const originalWorkspaceDefinitions = new Map<LocatorHash, Package | null>(project.workspaces.map(workspace => {
+    const locatorHash = workspace.anchoredLocator.locatorHash;
+    const pkg = allPackages.get(locatorHash);
+
+    if (typeof pkg === `undefined`) {
+      if (tolerateMissingPackages) {
+        return [locatorHash, null];
+      } else {
+        throw new Error(`Assertion failed: The workspace should have an associated package`);
+      }
+    }
+
+    return [locatorHash, structUtils.copyPackage(pkg)];
+  }));
+
   const reportStackOverflow = (): never => {
     const logFile = npath.toPortablePath(
       tmpNameSync({
@@ -1410,6 +1427,11 @@ function applyVirtualResolutionMutations({
       if (parentPackage.peerDependencies.has(descriptor.identHash) && !first)
         continue;
 
+      // We had some issues where virtual packages were incorrectly set inside
+      // workspaces, causing leaks. Check the Dragon Test #5 for more details.
+      if (structUtils.isVirtualDescriptor(descriptor))
+        throw new Error(`Assertion failed: Virtual packages shouldn't be encountered when virtualizing a branch`);
+
       // Mark this package as being used (won't be removed from the lockfile)
       volatileDescriptors.delete(descriptor.descriptorHash);
 
@@ -1439,7 +1461,7 @@ function applyVirtualResolutionMutations({
         }
       }
 
-      const pkg = allPackages.get(resolution);
+      const pkg = originalWorkspaceDefinitions.get(resolution) || allPackages.get(resolution);
       if (!pkg)
         throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
 
