@@ -13,7 +13,7 @@
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-fslib",
+    "prepack": "run build:compile \"$(pwd)\"",
     "release": "yarn npm publish",
     "test:fslib": "run test:unit packages/yarnpkg-fslib",
     "test:watch:fslib": "run test:unit --watch packages/yarnpkg-fslib"

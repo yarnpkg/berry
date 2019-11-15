@@ -27,60 +27,17 @@ import * as structUtils                                        from './structUti
 const ctx: any = new chalk.constructor({enabled: true});
 
 const IGNORED_ENV_VARIABLES = new Set([
-  // "binFolder" is the magic location where the parent process stored the current binaries; not an actual configuration settings
+  // "binFolder" is the magic location where the parent process stored the
+  // current binaries; not an actual configuration settings
   `binFolder`,
-  // "version" is set by Docker: https://github.com/nodejs/docker-node/blob/5a6a5e91999358c5b04fddd6c22a9a4eb0bf3fbf/10/alpine/Dockerfile#L51
-  `version`,
-  // "flags" is set by Netlify; they use it to specify the flags to send to the CLI when running the automatic `yarn install`
-  `flags`,
-]);
 
-const LEGACY_NAMES = new Set([
-  `networkConcurrency`,
-  `childConcurrency`,
-  `networkTimeout`,
-  `proxy`,
-  `strictSsl`,
-  `ca`,
-  `cert`,
-  `key`,
-  `lastUpdateCheck`,
-  `plugnplayOverride`,
-  `plugnplayShebang`,
-  `plugnplayBlacklist`,
-  `workspacesExperimental`,
-  `workspacesNohoistExperimental`,
-  `offlineCacheFolder`,
-  `yarnOfflineMirrorPruning`,
-  `enableMetaFolder`,
-  `yarnEnableLockfileVersions`,
-  `yarnLinkFileDependencies`,
-  `experimentalPackScriptPackagesInMirror`,
-  `unsafeDisableIntegrityMigration`,
-  `production`,
-  `noProgress`,
-  `registry`,
-  `versionCommitHooks`,
-  `versionGitTag`,
-  `versionGitMessage`,
-  `versionSignGitTag`,
-  `versionTagPrefix`,
-  `savePrefix`,
-  `saveExact`,
-  `initAuthorName`,
-  `initAuthorEmail`,
-  `initAuthorUrl`,
-  `initVersion`,
-  `initLicense`,
-  `initPrivate`,
-  `ignoreScripts`,
-  `ignorePlatform`,
-  `ignoreEngines`,
-  `ignoreOptional`,
-  `force`,
-  `disableSelfUpdateCheck`,
-  `username`,
-  `email`,
+  // "version" is set by Docker:
+  // https://github.com/nodejs/docker-node/blob/5a6a5e91999358c5b04fddd6c22a9a4eb0bf3fbf/10/alpine/Dockerfile#L51
+  `version`,
+
+  // "flags" is set by Netlify; they use it to specify the flags to send to the
+  // CLI when running the automatic `yarn install`
+  `flags`,
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
@@ -97,6 +54,24 @@ export enum SettingsType {
   SHAPE = 'SHAPE',
   MAP = 'MAP',
 };
+
+export enum FormatType {
+  NAME = 'NAME',
+  NUMBER = 'NUMBER',
+  PATH = 'PATH',
+  RANGE = 'RANGE',
+  REFERENCE = 'REFERENCE',
+  SCOPE = 'SCOPE',
+};
+
+export const formatColors = new Map([
+  [FormatType.NAME, `#d7875f`],
+  [FormatType.RANGE, `#00afaf`],
+  [FormatType.REFERENCE, `#87afff`],
+  [FormatType.NUMBER, `yellow`],
+  [FormatType.PATH, `cyan`],
+  [FormatType.SCOPE, `#d75f00`],
+]);
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   description: string,
@@ -414,9 +389,12 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         result.set(propKey, getDefaultValue(configuration, propDefinition));
 
       return result;
-    }
-    case SettingsType.MAP:
+    } break;
+
+    case SettingsType.MAP: {
       return new Map<string, any>();
+    } break;
+
     case SettingsType.ABSOLUTE_PATH: {
       if (definition.default === null)
         return null;
@@ -434,9 +412,11 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
           return ppath.resolve(configuration.projectCwd, definition.default);
         }
       }
-    }
-    default:
+    } break;
+
+    default: {
       return definition.default;
+    } break;
   }
 }
 
@@ -466,6 +446,12 @@ function getRcFilename() {
 
   return DEFAULT_RC_FILENAME;
 }
+
+export enum ProjectLookup {
+  LOCKFILE,
+  MANIFEST,
+  NONE,
+};
 
 export class Configuration {
   public startingCwd: PortablePath;
@@ -506,16 +492,18 @@ export class Configuration {
    * way around).
    */
 
-  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {strict = true, useRc = true}: {strict?: boolean, useRc?: boolean} = {}) {
+  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, useRc = true}: {lookup?: ProjectLookup, strict?: boolean, useRc?: boolean} = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
     const rcFiles = await Configuration.findRcFiles(startingCwd);
     const plugins = new Map();
 
+    const interop = (obj: any) => obj.__esModule ? obj.default : obj;
+
     if (pluginConfiguration !== null) {
       for (const request of pluginConfiguration.plugins.keys())
-        plugins.set(request, pluginConfiguration.modules.get(request).default);
+        plugins.set(request, interop(pluginConfiguration.modules.get(request)));
 
       const requireEntries = new Map();
       for (const request of nodeUtils.builtinModules())
@@ -578,7 +566,24 @@ export class Configuration {
       }
     }
 
-    const projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
+    let projectCwd: PortablePath | null;
+    switch (lookup) {
+      case ProjectLookup.LOCKFILE: {
+        projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
+      } break;
+
+      case ProjectLookup.MANIFEST: {
+        projectCwd = await Configuration.findProjectCwd(startingCwd, null);
+      } break;
+
+      case ProjectLookup.NONE: {
+        if (xfs.existsSync(ppath.join(startingCwd, `package.json` as Filename))) {
+          projectCwd = ppath.resolve(startingCwd);
+        } else {
+          projectCwd = null;
+        }
+      } break;
+    }
 
     const configuration = new Configuration(startingCwd, projectCwd, plugins);
     configuration.useWithSource(`<environment>`, environmentSettings, startingCwd, {strict});
@@ -650,7 +655,7 @@ export class Configuration {
     return null;
   }
 
-  static async findProjectCwd(startingCwd: PortablePath, lockfileFilename: Filename) {
+  static async findProjectCwd(startingCwd: PortablePath, lockfileFilename: Filename | null) {
     let projectCwd = null;
 
     let nextCwd = startingCwd;
@@ -662,7 +667,11 @@ export class Configuration {
       if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`))))
         projectCwd = currentCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, lockfileFilename)))
+      const topLevelFound = lockfileFilename !== null
+        ? xfs.existsSync(ppath.join(currentCwd, lockfileFilename))
+        : projectCwd !== null;
+
+      if (topLevelFound)
         break;
 
       nextCwd = ppath.dirname(currentCwd);
@@ -763,7 +772,7 @@ export class Configuration {
       const definition = this.settings.get(key);
       if (!definition) {
         if (strict) {
-          throw new UsageError(`${LEGACY_NAMES.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
+          throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
         } else {
           this.invalid.set(key, source);
           continue;
@@ -895,15 +904,18 @@ export class Configuration {
     return value;
   }
 
-  format(text: string, color: string) {
-    if (this.get(`enableColors`)) {
-      if (color.charAt(0) === `#`) {
-        return ctx.hex(color)(text);
-      } else {
-        return ctx[color](text);
-      }
-    } else {
+  format(text: string, colorRequest: FormatType | string) {
+    if (!this.get(`enableColors`))
       return text;
-    }
+
+    let color = formatColors.get(colorRequest as FormatType);
+    if (typeof color === `undefined`)
+      color = colorRequest;
+
+    const fn = color.startsWith(`#`)
+      ? ctx.hex(color)
+      : ctx[color];
+
+    return fn(text);
   }
 }

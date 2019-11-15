@@ -41,7 +41,7 @@
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-core"
+    "prepack": "run build:compile \"$(pwd)\""
   },
   "publishConfig": {
     "main": "./lib/index.js",

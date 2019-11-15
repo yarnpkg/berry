@@ -6,8 +6,9 @@ import {dirSync}                                              from 'tmp';
 
 import {Configuration}                                        from './Configuration';
 import {Manifest}                                             from './Manifest';
+import {MessageName}                                          from './MessageName';
 import {Project}                                              from './Project';
-import {MessageName, ReportError, Report}                     from './Report';
+import {ReportError, Report}                                  from './Report';
 import {StreamReport}                                         from './StreamReport';
 import {Workspace}                                            from './Workspace';
 import * as execUtils                                         from './execUtils';

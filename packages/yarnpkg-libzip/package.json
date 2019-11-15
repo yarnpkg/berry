@@ -8,7 +8,7 @@
   "scripts": {
     "build:libzip:wasm": "cd ./artifacts && ./build.sh",
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-libzip",
+    "prepack": "run build:compile \"$(pwd)\"",
     "release": "yarn npm publish"
   },
   "publishConfig": {

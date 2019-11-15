@@ -4,7 +4,8 @@ import fs                                                      from 'fs';
 import {tmpNameSync}                                           from 'tmp';
 
 import {Configuration}                                         from './Configuration';
-import {MessageName, ReportError}                              from './Report';
+import {MessageName}                                           from './MessageName';
+import {ReportError}                                           from './Report';
 import * as hashUtils                                          from './hashUtils';
 import * as structUtils                                        from './structUtils';
 import {LocatorHash, Locator}                                  from './types';

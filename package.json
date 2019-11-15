@@ -68,6 +68,7 @@
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^1.6.0",
     "@yarnpkg/cli": "workspace:2.0.0-rc.12",
+    "@yarnpkg/core": "workspace:2.0.0-rc.12",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.9",
     "babel-jest": "^24.5.0",
     "eslint": "^5.16.0",
@@ -91,7 +92,7 @@
     }
   },
   "scripts": {
-    "build:compile": "pnpify tsc -p",
+    "build:compile": "mkdir -p \"$0\"/lib && rsync -a --include '*.d.ts' --exclude '*.ts' \"$0\"/sources/ \"$0\"/lib/ && pnpify tsc -p \"$0\"",
     "gen-tssdk": "pnpify --sdk scripts",
     "release:all": "./scripts/release.sh",
     "test:lint": "eslint \"packages/**/@(sources|tests)/**/!(libzip).@(tsx|ts|js)\"",
