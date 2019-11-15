@@ -1,8 +1,9 @@
-import {NativePath, PortablePath, Filename, toFilename, npath, ppath, xfs}       from '@yarnpkg/fslib';
-import {PnpApi, PackageLocator, PackageInformation}                              from '@yarnpkg/pnp';
+import {NativePath, PortablePath, Filename, toFilename, npath, ppath, xfs}                                    from '@yarnpkg/fslib';
+import {PnpApi, PackageLocator, PackageInformation}                                                           from '@yarnpkg/pnp';
 
-import {hoist, ReadonlyHoisterPackageTree, HoisterPackageId, HoisterPackageInfo} from './hoist';
-import {HoistedTree, HoisterPackageTree}                                         from './hoist';
+import {hoist, ReadonlyHoisterPackageTree, HoisterPackageId, HoisterPackageInfo, ReadonlyHoisterDependencies} from './hoist';
+import {HoistedTree, HoisterPackageTree}                                                                      from './hoist';
+
 
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
@@ -185,12 +186,11 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
 
   const seenPkgIds = new Set();
   const buildTree = (nodeId: HoisterPackageId, prefix: PortablePath) => {
+    if (seenPkgIds.has(nodeId))
+      return;
     seenPkgIds.add(nodeId);
 
     for (const depId of hoistedTree[nodeId]) {
-      if (seenPkgIds.has(depId))
-        continue;
-
       const locator = locators[depId];
       const {name, scope} = getPackageName(locator);
 
@@ -226,23 +226,42 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
   };
 
   const rootNode = makeLeafNode(locators[0]);
-  const rootPrefix = rootNode.target && rootNode.target;
-  buildTree(0, rootPrefix);
+  const rootPath = rootNode.target && rootNode.target;
+  buildTree(0, rootPath);
+
+  if (options.pnpifyFs) {
+    for (const [key, val] of tree.entries()) {
+      if (!val.dirList && val.linkType === LinkType.HARD) {
+        // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
+        // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
+        // To make this fs layout work with legacy tools we make
+        // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
+        // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
+        // This is far from perfect, but this is the best we can do to both let PnP API work as is and
+        // at the same provide the maximum possible compatibility to the legacy node_modules tools running under pnpify
+        const nodeModulesDir = ppath.join(key, NODE_MODULES);
+        if (tree.has(nodeModulesDir)) {
+          tree.set(ppath.join(val.target, NODE_MODULES), {target: nodeModulesDir, linkType: LinkType.SOFT});
+        }
+      }
+    }
+  }
 
   return tree;
 };
 
 /**
- * Sorts the tree.
+ * Pretty-prints node_modules tree.
  *
- * The function is used for troubleshooting purposes
+ * The function is used for troubleshooting purposes only.
  *
  * @param tree node_modules tree
+ * @param rootPath top-level project root folder
  *
  * @returns sorted node_modules tree
  */
-// eslint-disable-next-line
-const sortTree = (tree: NodeModulesTree): NodeModulesTree => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const dumpNodeModulesTree = (tree: NodeModulesTree, rootPath: PortablePath): string => {
   const sortedTree: NodeModulesTree = new Map();
 
   const keys = Array.from(tree.keys()).sort();
@@ -251,5 +270,73 @@ const sortTree = (tree: NodeModulesTree): NodeModulesTree => {
     sortedTree.set(key, val.dirList ? {dirList: new Set(Array.from(val.dirList).sort())} : val);
   }
 
-  return sortedTree;
+  const seenPaths = new Set();
+  const dumpTree = (nodePath: PortablePath, prefix: string = '', dirPrefix = ''): string => {
+    const node = sortedTree.get(nodePath);
+    if (!node)
+      return '';
+    seenPaths.add(nodePath);
+    let str = '';
+    if (node.dirList) {
+      const dirs = Array.from(node.dirList);
+      for (let idx = 0; idx < dirs.length; idx++) {
+        const dir = dirs[idx];
+        str += `${prefix}${idx < dirs.length - 1 ? '├─' : '└─'}${dirPrefix}${dir}\n`;
+        str += dumpTree(ppath.join(nodePath, dir), `${prefix}${idx < dirs.length - 1 ?'│ ' : '  '}`);
+      }
+    } else {
+      const {target, linkType} = node;
+      str += dumpTree(ppath.join(nodePath, NODE_MODULES), `${prefix}│ `, `${NODE_MODULES}/`);
+      str += `${prefix}└─${linkType === LinkType.SOFT ? 's>' : '>'}${target}\n`;
+    }
+    return str;
+  };
+
+  let str = dumpTree(ppath.join(rootPath, NODE_MODULES));
+  for (const key of sortedTree.keys()) {
+    if (!seenPaths.has(key)) {
+      str += `${key.replace(rootPath, '')}\n${dumpTree(key)}`;
+    }
+  }
+  return str;
+};
+
+/**
+ * Pretty-prints dependency tree in the `yarn why`-like format
+ *
+ * The function is used for troubleshooting purposes only.
+ *
+ * @param tree node_modules tree
+ *
+ * @returns sorted node_modules tree
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const dumpDepTree = (tree: ReadonlyHoisterPackageTree | HoistedTree, locators: PackageLocator[], nodeId: number = 0, prefix = '', seenIds = new Set()) => {
+  if (seenIds.has(nodeId))
+    return '';
+  seenIds.add(nodeId);
+
+  const dumpLocator = (locator: PackageLocator): string => {
+    if (locator.reference === 'workspace:.') {
+      return '.';
+    } else if (!locator.reference) {
+      return `${locator.name!}@${locator.reference}`;
+    } else {
+      const version = (locator.reference.indexOf('#') > 0 ? locator.reference.split('#')[1] : locator.reference).replace('npm:', '');
+      if (locator.reference.startsWith('virtual')) {
+        return `v:${locator.name!}@${version}`;
+      } else {
+        return `${locator.name!}@${version}`;
+      }
+    }
+  };
+
+  const deps: number[] = Array.from(((tree[nodeId] as ReadonlyHoisterDependencies).deps || tree[nodeId])).filter(depId => depId !== nodeId);
+  let str = '';
+  for (let idx = 0; idx < deps.length; idx++) {
+    const depId = deps[idx];
+    str += `${prefix}${idx < deps.length - 1 ? '├─' : '└─'}${dumpLocator(locators[depId])}\n`;
+    str += dumpDepTree(tree, locators, depId, `${prefix}${idx < deps.length - 1 ?'│ ' : '  '}`, seenIds);
+  }
+  return str;
 };

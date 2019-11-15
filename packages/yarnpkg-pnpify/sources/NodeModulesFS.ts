@@ -68,7 +68,7 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
         delete require.cache[pnpFilePath];
         const pnp = require(pnpFilePath);
         this.nodeModulesTree = buildNodeModulesTree(pnp, this.options);
-        this.watchManager.notifyWatchers(nodePath => resolveNodeModulesPath(nodePath, this.nodeModulesTree, this.options));
+        this.watchManager.notifyWatchers((nodePath: PortablePath) => resolveNodeModulesPath(nodePath, this.nodeModulesTree, this.options));
       }
     });
   }
@@ -108,7 +108,11 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
     if (typeof p === `number`)
       return p;
 
-    const pnpPath = this.resolvePath(p);
+    let pnpPath = this.resolvePath(p);
+    if (this.options.pnpifyFs)
+      // Additional pass to resolve symlinks that point inside node_modules tree
+      pnpPath = this.resolvePath(pnpPath.resolvedPath);
+
     return pnpPath.resolvedPath;
   }
 
@@ -118,7 +122,11 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
     if (typeof p === `number`)
       return p;
 
-    const pnpPath = this.resolvePath(p);
+    let pnpPath = this.resolvePath(p);
+    if (this.options.pnpifyFs)
+      // Additional pass to resolve symlinks that point inside node_modules tree
+      pnpPath = this.resolvePath(pnpPath.resolvedPath);
+
     return pnpPath.statPath || pnpPath.resolvedPath;
   }
 

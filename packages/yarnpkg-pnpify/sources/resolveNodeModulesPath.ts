@@ -65,35 +65,34 @@ export const resolveNodeModulesPath = (nodePath: PortablePath, nodeModulesTree: 
   if (lastNodeModulesIdx < 0)
     return result;
 
-  let targetPath = segments.slice(0, lastNodeModulesIdx + 1).join(ppath.sep);
+  let nodeModulesPath = segments.slice(0, lastNodeModulesIdx + 1).join(ppath.sep);
   let remainderParts = segments.slice(lastNodeModulesIdx + 1);
-  let requestStartIdx = 0;
-  if (remainderParts.length > 0) {
-    if (remainderParts[0][0] !== '@' || remainderParts.length === 1)
-      requestStartIdx = 1;
-    else
-      requestStartIdx = 2;
+  let segCount = remainderParts.length;
 
-    targetPath = targetPath + ppath.sep + remainderParts.slice(0, requestStartIdx).join(ppath.sep);
-  }
-  const request = remainderParts.slice(requestStartIdx).join(ppath.sep);
-  const treePath = npath.toPortablePath(targetPath);
-  const node = nodeModulesTree.get(treePath);
-  if (node) {
-    result.treePath = treePath;
-    if (!node.dirList) {
-      result.resolvedPath = npath.toPortablePath(node.target + (request ? ppath.sep + request : ''));
-      if (node.linkType === LinkType.SOFT) {
-        result.realPath = result.resolvedPath;
-        result.isSymlink = !request;
-      } else if (node.linkType === LinkType.HARD && options && options.pnpifyFs) {
-        result.isSymlink = true;
-        result.realPath = result.resolvedPath;
+  while (segCount >= 0) {
+    const targetPath = [nodeModulesPath, ...remainderParts.slice(0, segCount)].join(ppath.sep);
+    const request = remainderParts.slice(segCount).join(ppath.sep);
+    const treePath = npath.toPortablePath(targetPath);
+    const node = nodeModulesTree.get(treePath);
+    if (node) {
+      result.treePath = treePath;
+      if (!node.dirList) {
+        result.resolvedPath = npath.toPortablePath(node.target + (request ? ppath.sep + request : ''));
+        if (node.linkType === LinkType.SOFT) {
+          result.realPath = result.resolvedPath;
+          result.isSymlink = !request;
+        } else if (node.linkType === LinkType.HARD && options && options.pnpifyFs) {
+          result.isSymlink = true;
+          result.realPath = result.resolvedPath;
+        }
+      } else if (!request) {
+        result.dirList = node.dirList;
+        result.statPath = npath.toPortablePath(segments.slice(0, segments.indexOf(NODE_MODULES)).join(ppath.sep));
       }
-    } else if (!request) {
-      result.dirList = node.dirList;
-      result.statPath = npath.toPortablePath(segments.slice(0, segments.indexOf(NODE_MODULES)).join(ppath.sep));
+      break;
     }
+    segCount--;
   }
+
   return result;
 };
