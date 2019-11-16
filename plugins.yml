@@ -5,7 +5,7 @@
   experimental: true
   description: "Adds a new protocol to Yarn (`exec:`) that dynamically generate packages instead of downloading them."
 
-"@yarnpkg/plugin-workspace-tools":
+"@yarnpkg/plugin-interactive-tools":
   url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-interactive-tools/bin/%40yarnpkg/plugin-interactive-tools.js"
   experimental: true
   description: "Adds various commands providing a more high-level control on your project through terminal interfaces."
