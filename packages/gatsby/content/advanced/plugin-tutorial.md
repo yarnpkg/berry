@@ -20,7 +20,6 @@ Open in a text editor a new file called `plugin-hello-world.js`, and type the fo
 module.exports = {
   name: `plugin-hello-world`,
   factory: require => ({
-    default: {},
   })
 };
 ```
@@ -42,11 +41,9 @@ Plugins can register to various events in the Yarn lifetime, and provide them ad
 module.exports = {
   name: `plugin-hello-world`,
   factory: require => ({
-    default: {
-      hooks: {
-        setupScriptEnvironment(scriptEnv) {
-          scriptEnv.HELLO_WORLD = `my first plugin!`;
-        },
+    hooks: {
+      setupScriptEnvironment(scriptEnv) {
+        scriptEnv.HELLO_WORLD = `my first plugin!`;
       },
     },
   })
@@ -76,11 +73,9 @@ module.exports = {
     Command.Path(`hello`)(HelloWorldCommand.prototype);
 
     return {
-      default: {
-        commands: [
-          HelloWorldCommand,
-        ],
-      },
+      commands: [
+        HelloWorldCommand,
+      ],
     };
   }
 };
@@ -125,11 +120,9 @@ module.exports = {
     });
 
     return {
-      default: {
-        commands: [
-          HelloWorldCommand,
-        ],
-      },
+      commands: [
+        HelloWorldCommand,
+      ],
     };
   }
 };

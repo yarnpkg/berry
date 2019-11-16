@@ -6,9 +6,27 @@ title: "Lexicon"
 
 <!-- Note that all entries within this file must be alphabetically sorted -->
 
+### Dependency
+
+A dependency (listed in the [`dependencies` field](/configuration/manifest#dependencies) of the manifest) describes a relationship between two packages.
+
+When a package A has a dependency B, Yarn guarantees that A will be able to access B if the install is successful. Note that this is the only promise we make regarding regular dependencies: in particular, there is no guarantee that the package B will be the same version than the one used in other parts of the application.
+
+See also: [Development Dependencies](#developmentdependencies)
+See also: [Peer Dependency](#peerdependency)
+
 ### Descriptor
 
 A descriptor is a combination of a package name (for example `lodash`) and a package <abbr>range</abbr> (for example `^1.0.0`). Descriptors are used to identify a set of packages rather than one unique package.
+
+### Development Dependency
+
+A dependency (listed in the [`devDependencies` field](/configuration/manifest#devDependencies) of the manifest) describes a relationship between two packages.
+
+Development dependencies are very much like regular dependencies except that they only matter for local packages. Packages fetched from remote registries such as npm will not be able to access their development dependencies, but packages installed from local sources (such as [workspaces](#workspaces) or the [`portal:` protocol](#portals)) will.
+
+See also: [Dependency](#dependency)
+See also: [Peer Dependency](#peerdependency)
 
 ### Fetcher
 
@@ -39,6 +57,16 @@ A monorepository is a repository that contains multiple packages. For example, [
 
 See also: [Workspaces](/features/workspaces)
 
+### Peer dependency
+
+A dependency (listed in the [`peerDependencies` field](/configuration/manifest#peerDependencies) of the manifest) describes a relationship between two packages.
+
+Contrary to regular dependencies, a package A with a peer dependency on B doesn't guarantee that A will be able to access B - it's up to the package that depends on A to manually provide a version of B compatible with with request from A. This drawback has a good side too: the package instance of B that A will access is guaranteed to be the exact same one as the one used by the ancestor of A. This matters a lot when B uses `instanceof` checks or singletons.
+
+See also: [Development Dependencies](#developmentdependencies)
+See also: [Peer Dependency](#peerdependency)
+See also: [Singleton Package](#singletonpackage)
+
 ### Peer-dependent Package
 
 A peer-dependent package is a package that lists peer dependencies.
@@ -54,13 +82,19 @@ See also: the [`Plugin` interface](https://github.com/yarnpkg/berry/blob/master/
 
 ### Plug'n'Play
 
-Plug'n'Play is an alternative installation strategy that, instead of generating the typical `node_modules` directories, generate one single file that is then injected into Node to let it know where to find the installed packages. Starting from the v2, Plug'n'Play became the default strategy for Javascript projects.
+Plug'n'Play is an alternative installation strategy that, instead of generating the typical `node_modules` directories, generate one single file that is then injected into Node to let it know where to find the installed packages. Starting from the v2, Plug'n'Play becomes the default installation strategy for Javascript projects.
 
 See also: [Plug'n'Play](/features/pnp)
 
 ### PnP
 
 See [Plug'n'Play](#plugnplay)
+
+### Portal
+
+A portal is a dependency that uses the `portal:` protocol, pointing to a package located on the disk.
+
+Contrary to the `link:` protocol (which can point to any location but cannot have dependencies), Yarn will setup its dependency map in such a way that not only will the dependent package be able to access the file referenced through the portal, but the portal itself will also be able to access its own dependencies. Even peer dependencies!
 
 ### Project
 
@@ -91,19 +125,27 @@ See also: the [`Resolver` interface](https://github.com/yarnpkg/berry/blob/maste
 
 Scopes are a term linked inherited from the npm registry; they are used to describe a set of packages that all belong to the same entity. For example, all the Yarn packages related to the v2 belong to the `berry` scope on the npm registry. Scopes are traditionally prefixed with the `@` symbol.
 
+### Singleton Package
+
+A singleton package is a package which is instantiated a single time across the dependency tree.
+
+While singleton packages aren't a first-class citizen, they can be easily created using [peer dependencies](#peerdependency) by using one of their properties: since packages depended upon by peer dependencies are guaranteed to be the exact same instance as the one used by their direct ancestor, using peer dependencies across the entire dependency branch all the way up to the nearest workspace will ensure that a single instance of the package is ever created - making it a de-facto singleton package.
+
+See also: [Peer Dependency](#peerdependency)
+
 ### Virtual Package
 
-Because peer-dependent packages effectively define a *template* of possible dependencies rather than an actual static list of dependencies, a single peer-dependent package may have multiple dependency lists - in which case it'll need to be instantiated multiple times (in practice, once for each strong dependent, cf [Peer Dependencies](/advanced/peer-dependencies)).
+Because [peer-dependent packages](#peerdependentpackage) effectively define an *horizon* of possible dependency sets rather than an single static set of dependencies, a peer-dependent package may have multiple dependency sets. When this happens, the package will need to be instantiated at least once for each such set.
 
 Since in Node-land the JS modules are instantiated based on their path (a file is never instantiated twice for any given path), and since PnP makes it so that packages are installed only once in any given project, the only way to instantiate those packages multiple times is to give them multiple paths while still referencing to the same on-disk location. That's where virtual packages come handy.
 
-Virtual packages are specialized instances of the peer-dependent packages that encode the position of the package templates in the dependency tree. Each instance is given a unique path that ensures that the scripts it references will be instantiated with their proper dependency list, regardless of the execution order.
+Virtual packages are specialized instances of the peer-dependent packages that encode the set of dependencies that this particular instance should use. Each virtual package is given a unique filesystem path that ensures that the scripts it references will be instantiated with their proper dependency set.
 
-In the past virtual packages were implemented using symlinks, but this recently changed and they are now implemented through a virtual filesystem layer. This circumvents the need to create many confusing symlinks, improves compatibility with Windows, and prevents issues when third-party tools try to call `realpath` on them.
+In the past virtual packages were implemented using symlinks, but this recently changed and they are now implemented through a virtual filesystem layer. This circumvents the need to create hundreds of confusing symlinks, improving compatibility with Windows and preventing issues that would arise with third-party tools calling `realpath`.
 
 ### Workspace
 
-Generally speaking, workspaces are a Yarn features used to work on multiple projects stored within the same repository.
+Generally speaking workspaces are a Yarn features used to work on multiple projects stored within the same repository.
 
 In the context of Yarn's vocabulary, workspaces are packages that are of a single <abbr>project</abbr>.
 

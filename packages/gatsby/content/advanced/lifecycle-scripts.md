@@ -22,10 +22,10 @@ Note that we don't support every single lifecycle script originally present in n
 
 Postinstall scripts have very real consequences for your users. In most cases Yarn will keep the installed packages in its cache under their archive form, and will instruct Node to load the files directly from there. This lead to much smaller installs, and eventually to [Zero-Installs](/features/zero-installs).
 
-Unfortunately postinstall scripts break this model because they signal Yarn that those packages may need to mutate their own directory, forcing them to be extracted into their own directories. It leads to heavier, slower, and less stable installs.
+Unfortunately postinstall scripts break this model because they signal Yarn that those packages may need to mutate their own directory, forcing them to be extracted into physical locations on the disk and leading to heavier, slower, and less stable installs.
 
 Depending on your use case, here's how you can avoid postinstall scripts:
 
-- Native packages can be built to [WebAssembly](https://webassembly.org), which is already supported in Node 12 and beyond. On top of being portable and fast, WebAssembly packages also have the benefit to make your libraries available not only to Node but also to your browser users. And since their compilation is made upfront, your users won't be impacted by slow compilation time problems.
+ - Native packages can be built to [WebAssembly](https://webassembly.org), which is already supported in Node 12 and beyond. On top of being portable and fast, WebAssembly packages also have the benefit to make your libraries available not only to Node but also to your browser users. And since their compilation is made upfront, your users won't be impacted by slow compilation time problems.
 
 - Project sustainability is a big topic, but the gist is that we don't think postinstall scripts are a viable solution. We however are committed to provide a specific field in the package.json that would signal to the package managers that a project would like to communicate its existence with the user in an integrated and respectful way.
