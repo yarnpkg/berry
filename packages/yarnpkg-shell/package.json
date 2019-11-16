@@ -13,7 +13,7 @@
     "stream-buffers": "^3.0.2"
   },
   "devDependencies": {
-    "tmp": "^0.0.33"
+    "tmp": "^0.1.0"
   },
   "scripts": {
     "postpack": "rm -rf lib",

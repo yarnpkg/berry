@@ -10,7 +10,7 @@
     "@yarnpkg/builder": "workspace:2.0.0-rc.10",
     "@yarnpkg/core": "workspace:2.0.0-rc.12",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8",
-    "tmp": "^0.0.33"
+    "tmp": "^0.1.0"
   },
   "devDependencies": {
     "typescript": "next"

@@ -2,9 +2,9 @@
 // return value is what's used within the bundle (cf val-loader).
 
 module.exports = ({modules, plugins}) => {
-  return {code: `module.exports = {\n  modules: new Map([\n${modules.map(request =>
+  return {code: `exports.getPluginConfiguration = () => ({\n  modules: new Map([\n${modules.map(request =>
     `    [${JSON.stringify(request)}, require(${JSON.stringify(request)})],\n`
   ).join(``)}\n  ]),\n  plugins: new Set([\n${plugins.map(request =>
     `    ${JSON.stringify(request)},\n`
-  ).join(``)}\n  ]),\n};\n`};
+  ).join(``)}\n  ]),\n});\n`};
 };

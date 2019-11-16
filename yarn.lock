@@ -4667,7 +4667,7 @@ __metadata:
     clipanion: "npm:^2.1.4"
     promise.prototype.finally: "npm:^3.1.1"
     semver: "npm:^5.6.0"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
     typescript: "npm:next"
     yup: "npm:^0.27.0"
   peerDependencies:
@@ -4705,7 +4705,7 @@ __metadata:
     stream-to-promise: "npm:^2.2.0"
     supports-color: "npm:^7.1.0"
     tar: "npm:^4.4.6"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
     tunnel: "npm:^0.0.6"
   languageName: unknown
   linkType: soft
@@ -4715,7 +4715,7 @@ __metadata:
   resolution: "@yarnpkg/fslib@workspace:packages/yarnpkg-fslib"
   dependencies:
     "@yarnpkg/libzip": "workspace:2.0.0-rc.3"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
   languageName: unknown
   linkType: soft
 
@@ -4922,7 +4922,7 @@ __metadata:
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2"
     "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.10"
     clipanion: "npm:^2.1.4"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
   languageName: unknown
   linkType: soft
 
@@ -4950,7 +4950,7 @@ __metadata:
     "@yarnpkg/builder": "workspace:2.0.0-rc.10"
     "@yarnpkg/core": "workspace:2.0.0-rc.12"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
     typescript: "npm:next"
   languageName: unknown
   linkType: soft
@@ -4972,7 +4972,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
     git-url-parse: "npm:11.1.2"
     semver: "npm:^5.6.0"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
   languageName: unknown
   linkType: soft
 
@@ -4983,7 +4983,7 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.12"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
     "@yarnpkg/plugin-git": "workspace:2.0.0-rc.6"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
   languageName: unknown
   linkType: soft
 
@@ -5194,7 +5194,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:2.0.0-rc.4"
     cross-spawn: "npm:^6.0.5"
     stream-buffers: "npm:^3.0.2"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
   languageName: unknown
   linkType: soft
 
@@ -19005,7 +19005,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     semver: "npm:^5.6.0"
     super-resolve: "npm:^1.0.0"
     tar-fs: "npm:^1.16.0"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
   languageName: unknown
   linkType: soft
 
