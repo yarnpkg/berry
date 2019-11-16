@@ -40,9 +40,14 @@ export function convertPackageToLocator(pkg: Package): Locator {
   return {identHash: pkg.identHash, scope: pkg.scope, name: pkg.name, locatorHash: pkg.locatorHash, reference: pkg.reference};
 }
 
-export function renamePackage(pkg: Package, locator: Locator) {
+export function renamePackage(pkg: Package, locator: Locator): Package {
   return {
-    ...locator,
+    identHash: locator.identHash,
+    scope: locator.scope,
+    name: locator.name,
+
+    locatorHash: locator.locatorHash,
+    reference: locator.reference,
 
     version: pkg.version,
 
@@ -57,6 +62,10 @@ export function renamePackage(pkg: Package, locator: Locator) {
 
     bin: new Map(pkg.bin),
   };
+}
+
+export function copyPackage(pkg: Package) {
+  return renamePackage(pkg, pkg);
 }
 
 export function virtualizeDescriptor(descriptor: Descriptor, entropy: string): Descriptor {

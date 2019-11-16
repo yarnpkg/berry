@@ -24,7 +24,7 @@ What happens when running `yarn install` can be summarized in a few different st
 
     - Once it has obtained a new list of package metadata, the core starts a new resolution pass on the transitive dependencies of the newly added packages. This will be repeated until it figures out that all packages from the dependency tree now have their metadata stored within the lockfile.
 
-    - Finally, once every package range from the dependency tree has been resolved into metadata, the core builds the tree in memory one last time in order to generate what we call "virtual packages". In short those virtual packages are split instances of a same base package - we use them to disambiguate all packages that list peer dependencies, whose dependency set would change depending on their location in the dependency tree (consult [this advanced article](/advanced/peer-dependencies) for more information).
+    - Finally, once every package range from the dependency tree has been resolved into metadata, the core builds the tree in memory one last time in order to generate what we call "virtual packages". In short those virtual packages are split instances of a same base package - we use them to disambiguate all packages that list peer dependencies, whose dependency set would change depending on their location in the dependency tree (consult [this lexicon entry](/advanced/lexicon#virtualpackages) for more information).
 
 2. Once the resolution is done, we enter the "fetch step":
 

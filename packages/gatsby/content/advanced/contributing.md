@@ -10,6 +10,16 @@ Thanks for being here! Yarn gives a lot of importance to being a community proje
 
 We have some rules regarding our issues. Please check [the following page](/advanced/sherlock) for more details.
 
+## How can you help?
+
+  - Review our documentation! We often aren't native english speakers, and our grammar might be a bit off. Any help we can get that makes our documentation more digest is appreciated!
+
+  - Talk about Yarn in your local meetups! Even our users aren't always aware of some of our features. Learn, then share your knowledge to your own circles!
+
+  - Help with our infra! There are always small improvements to do: run tests faster, uniformize the test names, improve the way our version numbers are setup, ...
+
+  - Write code! We have so many features we want to implement, and so little time to actually do it... Any help you can afford will be appreciated, and you will have the satisfaction to know that your work helped literally millions of developers!
+
 ## Finding work to do
 
 It might be difficult to know where to start on a fresh codebase. To help a bit with this, we try to mark various issues with tags meant to highlight issues that we think don't require as much context as others:
@@ -19,16 +29,6 @@ It might be difficult to know where to start on a fresh codebase. To help a bit 
   - [Help Wanted](https://github.com/yarnpkg/berry/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) are issues that don't require a lot of context but also have less impact than the ones who do, so no core maintainer has the bandwidth to work on them.
 
 Finally, feel free to pop on our [Discord channel](https://discordapp.com/invite/yarnpkg) to ask for help and guidance. We're always happy to see new blood, and will help you our best to make your first open-source contribution a success!
-
-## Building the bundle
-
-The standard bundle is built using the following command from anywhere in the repository:
-
-```
-$> yarn build:cli
-```
-
-Running this command will generate a file in `packages/yarnpkg-cli/bundles/berry.js`, and starting from now any Yarn command you'll run in this repository will always use your local build. In case it inadvertently becomes corrupted, just remove this file and run `build:cli` again to get a fresh one.
 
 ## Working on plugins
 
@@ -51,22 +51,25 @@ $> yarn test:unit
 While various subcomponents that have a strict JS interface contract are tested via unit tests (for example the portable shell library, or the various util libraries we ship), Yarn as a whole relies on integration tests. Being much closer from what our users experience, they give us a higher confidence when refactoring the application that everything will work according to plan. Those tests can be triggered by running the following command (again, from anywhere within the repository):
 
 ```
+$> yarn build:cli
 $> yarn test:integration
 ```
 
-In both cases the underlying framework we use is Jest, which means that you can filter the tests you want to run by using the `-t` flag (or simply the file path):
+Note that because we want to avoid adding the `@babel/register` overhead to each Yarn call the CLI will need to be prebuilt in order for the integration tests to run - that's what the `yarn build:cli` command is for. This unfortunately means that you will need to rebuild the CLI after each modification if you want the integration tests to pick up your changes.
+
+Both unit tests and integration tests use Jest, which means that you can filter the tests you want to run by using the `-t` flag (or simply the file path):
 
 ```
 $> yarn test:unit berry-shell
 $> yarn test:integration -t 'it should correctly install a single dependency that contains no sub-dependencies'
 ```
 
-Should you need to write a test (and you will 😉), they are located in the following directories:
+Should you need to write a test (and you certainly will if you add a feature or fix a bug 😉), they are located in the following directories:
 
   - **Unit tests:** [`packages/*/tests`](https://github.com/search?utf8=%E2%9C%93&q=repo%3Ayarnpkg%2Fberry+filename%3Atest.ts+language%3ATypeScript+language%3ATypeScript&type=Code&ref=advsearch&l=TypeScript&l=TypeScript)
   - **Integration tests:** [`packages/acceptance-tests/pkg-test-specs/sources`](https://github.com/yarnpkg/berry/tree/master/packages/acceptance-tests/pkg-tests-specs/sources)
 
-Don't forget that your PR will require all the tests to pass before being merged!
+The `makeTemporaryEnv` utility generates a very basic temporary environment just for the context of your test. The first parameter will be used to generate a `package.json` file, the second to generate a `.yarnrc.yml` file, and the third is the callback that will be run once the temporary environment has been created.
 
 ## Formatting your code
 

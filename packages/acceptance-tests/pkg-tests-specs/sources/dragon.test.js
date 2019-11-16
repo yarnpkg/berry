@@ -187,4 +187,80 @@ describe(`Dragon tests`, () => {
       },
     ),
   );
+
+  test(
+    `it should pass the dragon test 5`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [
+          `packages/*`,
+        ],
+      },
+      async ({path, run, source}) => {
+        // This test is related to the way Yarn is resolving peer dependencies
+        // into virtual packages (check our documentation for more details). In
+        // short, we create copies of packages when they have peer dependencies,
+        // and update their immediate parents to instead reference the copy.
+        //
+        // Since parents have been copied themselves if there's a possibility
+        // they would resolve to different versions (because it only happens
+        // when they have peer dependencies themselves) the patch operation is
+        // safe. There's one catch though: workspaces aren't traversed this way
+        // in our implementation, so they aren't copied, and the dependency
+        // replacements may end up being mirrored in the other unrelated
+        // instances of the same package.
+        //
+        // To reproduce this situation, we have:
+        //
+        // . -> A -> X -> Y (peer deps)
+        //        -> Y
+        //        -> Z (peer deps)
+        //
+        //   -> B -> A
+        //        -> Z
+        //
+        // This setup has the following characteristics:
+        //
+        //   - A and B are both workspaces, and X,Y,Z are packages we don't
+        //     care about too much (except that X has a peer dep on Y).
+        //
+        //   - Since A has a peer dependency, two different instances of it
+        //     exist: one as an independant workspace, and another as a
+        //     dependency of B. This is critical because otherwise Yarn will
+        //     just skip the second traversal of A (since we know its
+        //     dependencies have already been virtualized).
+        //
+        // This causes the bug to appear: A gets traversed, we see that it
+        // depends on X which has a peer dependency, so we virtualize X and
+        // modify A to point to this new package instead of the original X.
+        // Then once we traverse B we check the dependencies of A, but by
+        // this time they have already been modified, leading to a boggus
+        // install.
+
+        await xfs.mkdirpPromise(`${path}/packages/a`);
+        await xfs.writeJsonPromise(`${path}/packages/a/package.json`, {
+          name: `a`,
+          peerDependencies: {
+            [`various-requires`]: `*`,
+          },
+          devDependencies: {
+            [`no-deps`]: `1.0.0`,
+            [`peer-deps`]: `1.0.0`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/b`);
+        await xfs.writeJsonPromise(`${path}/packages/b/package.json`, {
+          name: `b`,
+          devDependencies: {
+            [`a`]: `workspace:*`,
+            [`various-requires`]: `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+      },
+    ),
+  );
 });
