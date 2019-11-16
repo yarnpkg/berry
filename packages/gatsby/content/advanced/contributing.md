@@ -20,8 +20,6 @@ We have some rules regarding our issues. Please check [the following page](/adva
 
   - Write code! We have so many features we want to implement, and so little time to actually do it... Any help you can afford will be appreciated, and you will have the satisfaction to know that your work helped literally millions of developers!
 
-  - Enable the [monitoring plugin](), which gives us a better idea of how Yarn is used and which errors are the most frequent. You'll even get rewarded for it since you'll be made aware of any new release we can send your way!
-
 ## Finding work to do
 
 It might be difficult to know where to start on a fresh codebase. To help a bit with this, we try to mark various issues with tags meant to highlight issues that we think don't require as much context as others:
