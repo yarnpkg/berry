@@ -97,7 +97,7 @@ export class StreamReport extends Report {
   private progress: Map<AsyncIterable<ProgressDefinition>, ProgressDefinition> = new Map();
   private progressTime: number = 0;
   private progressFrame: number = 0;
-  private progressTimeout: NodeJS.Timeout | null = null;
+  private progressTimeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor({configuration, stdout, json = false, includeFooter = true, includeLogs = !json, includeInfos = includeLogs, includeWarnings = includeLogs}: StreamReportOptions) {
     super();
