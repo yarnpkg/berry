@@ -13,6 +13,7 @@
     "clipanion": "^2.1.4",
     "globby": "^8.0.1",
     "micromatch": "^4.0.2",
+    "p-limit": "^2.2.0",
     "typescript": "next"
   },
   "devDependencies": {

@@ -6377,6 +6377,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.4"],
             ["globby", "npm:8.0.2"],
             ["micromatch", "npm:4.0.2"],
+            ["p-limit", "npm:2.2.0"],
             ["typescript", "npm:3.7.0-dev.20191002"]
           ],
           "linkType": "SOFT"

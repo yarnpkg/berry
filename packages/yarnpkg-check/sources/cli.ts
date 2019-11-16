@@ -1,13 +1,14 @@
-import {getPluginConfiguration}                                                                                                                                                          from '@yarnpkg/cli';
-import {Cache, Configuration, Project, Report, Workspace, structUtils, ProjectLookup, Manifest, Descriptor, HardDependencies, ThrowReport, StreamReport, MessageName, FormatType, Ident} from '@yarnpkg/core';
-import {PortablePath, npath, ppath, xfs}                                                                                                                                                 from '@yarnpkg/fslib';
-import {Cli, Command}                                                                                                                                                                    from 'clipanion';
-import globby                                                                                                                                                                            from 'globby';
-import micromatch                                                                                                                                                                        from 'micromatch';
-import module                                                                                                                                                                            from 'module';
-import * as ts                                                                                                                                                                           from 'typescript';
+import {getPluginConfiguration}                                                                                                                                              from '@yarnpkg/cli';
+import {Cache, Configuration, Project, Report, Workspace, structUtils, ProjectLookup, Manifest, Descriptor, HardDependencies, ThrowReport, StreamReport, MessageName, Ident} from '@yarnpkg/core';
+import {PortablePath, npath, ppath, xfs}                                                                                                                                     from '@yarnpkg/fslib';
+import {Cli, Command}                                                                                                                                                        from 'clipanion';
+import globby                                                                                                                                                                from 'globby';
+import micromatch                                                                                                                                                            from 'micromatch';
+import module                                                                                                                                                                from 'module';
+import pLimit                                                                                                                                                                from 'p-limit';
+import * as ts                                                                                                                                                               from 'typescript';
 
-import * as ast                                                                                                                                                                          from './ast';
+import * as ast                                                                                                                                                              from './ast';
 
 const BUILTINS = new Set([...module.builtinModules || [], `pnpapi`]);
 
@@ -43,9 +44,27 @@ async function parseFile(p: PortablePath) {
   );
 }
 
-function extractIdent(name: string) {
-  const match = name.match(/^(?!\.{0,2}(\/|$))(@[^\/]*\/)?([^\/]+)/);
-  return match ? structUtils.tryParseIdent(match[0]) : null;
+function extractIdents(name: string) {
+  // We also support webpack loaders
+  const parts = name.split(/!/);
+  const idents = [];
+
+  for (const part of parts) {
+    // Webpack loaders can have query strings
+    const partWithQs = part.replace(/\?.*/, ``);
+
+    const match = partWithQs.match(/^(?!\.{0,2}(\/|$))(@[^\/]*\/)?([^\/]+)/);
+    if (!match)
+      continue;
+
+    const ident = structUtils.tryParseIdent(match[0]);
+    if (!ident)
+      continue;
+
+    idents.push(ident);
+  }
+
+  return idents;
 }
 
 function isValidDependency(ident: Ident, {workspace}: {workspace: Workspace}) {
@@ -62,12 +81,15 @@ function checkForUndeclaredDependency(workspace: Workspace, referenceNode: ts.No
   if (BUILTINS.has(moduleName))
     return;
 
-  const ident = extractIdent(moduleName);
-  if (ident === null || isValidDependency(ident, {workspace}))
-    return;
+  const idents = extractIdents(moduleName);
 
-  const prettyLocation = ast.prettyNodeLocation(configuration, referenceNode);
-  report.reportError(MessageName.UNNAMED, `${prettyLocation}: Undeclared dependency on ${structUtils.prettyIdent(configuration, ident)}`);
+  for (const ident of idents) {
+    if (isValidDependency(ident, {workspace}))
+      continue;
+
+    const prettyLocation = ast.prettyNodeLocation(configuration, referenceNode);
+    report.reportError(MessageName.UNNAMED, `${prettyLocation}: Undeclared dependency on ${structUtils.prettyIdent(configuration, ident)}`);
+  }
 }
 
 function checkForUnsafeWebpackLoaderAccess(workspace: Workspace, initializerNode: ts.Node, {configuration, report}: {configuration: Configuration, report: Report}) {
@@ -77,7 +99,7 @@ function checkForUnsafeWebpackLoaderAccess(workspace: Workspace, initializerNode
     return;
 
   const prettyLocation = ast.prettyNodeLocation(configuration, initializerNode);
-  report.reportWarning(MessageName.UNNAMED, `${prettyLocation}: Webpack configs on non-private packages should avoid referencing loaders without require.resolve`);
+  report.reportWarning(MessageName.UNNAMED, `${prettyLocation}: Webpack configs from non-private packages should avoid referencing loaders without require.resolve`);
 }
 
 function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, report}: {configuration: Configuration, report: Report}) {
@@ -233,13 +255,22 @@ async function processManifest(workspace: Workspace, {configuration, report}: {c
 }
 
 async function processWorkspace(workspace: Workspace, {configuration, fileList, report}: {configuration: Configuration, fileList: Array<PortablePath>, report: Report}) {
-  const parsedFiles = await Promise.all(fileList.map(p => parseFile(p)));
+  const progress = StreamReport.progressViaCounter(fileList.length + 1);
+  const reportedProgress = report.reportProgress(progress);
 
-  for (const file of parsedFiles)
-    if (file !== null)
-      processFile(workspace, file, {configuration, report});
+  for (const p of fileList) {
+    const parsed = await parseFile(p);
+
+    if (parsed !== null)
+      processFile(workspace, parsed, {configuration, report});
+
+    progress.tick();
+  }
 
   await processManifest(workspace, {configuration, report});
+  progress.tick();
+
+  await reportedProgress;
 }
 
 class EntryCommand extends Command {
