@@ -1,14 +1,21 @@
 {
   "name": "@yarnpkg/plugin-http",
-  "private": true,
+  "version": "2.0.0-rc.2",
+  "nextVersion": {
+    "semver": "2.0.0-rc.3",
+    "nonce": "237496043188591"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/core": "workspace:2.0.0-rc.12",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
   },
-  "version": "2.0.0-rc.2",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\""
   }
 }

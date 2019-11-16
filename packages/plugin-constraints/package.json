@@ -1,6 +1,14 @@
 {
   "name": "@yarnpkg/plugin-constraints",
-  "private": true,
+  "version": "2.0.0-rc.3",
+  "nextVersion": {
+    "semver": "2.0.0-rc.4",
+    "nonce": "599453533998555"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/cli": "workspace:2.0.0-rc.12",
@@ -12,9 +20,8 @@
     "node-emoji": "^1.8.1",
     "tau-prolog": "^0.2.66"
   },
-  "version": "2.0.0-rc.3",
-  "repository": {
-    "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git"
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\""
   }
 }

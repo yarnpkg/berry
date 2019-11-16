@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-stage",
-  "private": true,
+  "version": "2.0.0-rc.6",
+  "nextVersion": {
+    "semver": "2.0.0-rc.7",
+    "nonce": "6528545952390807"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/builder": "workspace:2.0.0-rc.10",
@@ -14,9 +18,10 @@
   },
   "scripts": {
     "build:plugin-stage": "builder build plugin",
-    "update-local": "yarn build:plugin-stage && rsync -a --delete bundles/ bin/"
+    "update-local": "yarn build:plugin-stage && rsync -a --delete bundles/ bin/",
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\""
   },
-  "version": "2.0.0-rc.6",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

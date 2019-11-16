@@ -2,7 +2,8 @@
   "name": "@yarnpkg/builder",
   "version": "2.0.0-rc.10",
   "nextVersion": {
-    "nonce": "4106707045091205"
+    "semver": "2.0.0-rc.11",
+    "nonce": "362265147078383"
   },
   "bin": "./sources/boot-dev.js",
   "dependencies": {
@@ -34,7 +35,7 @@
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-builder",
+    "prepack": "run build:compile \"$(pwd)\"",
     "release": "yarn npm publish"
   },
   "publishConfig": {

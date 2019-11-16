@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.12",
   "nextVersion": {
     "semver": "2.0.0-rc.13",
-    "nonce": "3497361319583277"
+    "nonce": "3093580981455347"
   },
   "main": "./sources/index.ts",
   "sideEffects": false,
@@ -32,7 +32,7 @@
     "stream-to-promise": "^2.2.0",
     "supports-color": "^7.1.0",
     "tar": "^4.4.6",
-    "tmp": "^0.0.33",
+    "tmp": "^0.1.0",
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
@@ -41,7 +41,7 @@
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-core"
+    "prepack": "run build:compile \"$(pwd)\""
   },
   "publishConfig": {
     "main": "./lib/index.js",

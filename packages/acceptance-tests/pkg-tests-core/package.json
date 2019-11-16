@@ -1,20 +1,22 @@
 {
-    "name": "pkg-tests-core",
-    "private": true,
-    "main": "./sources/index.ts",
-    "dependencies": {
-        "@yarnpkg/fslib": "workspace:2.0.0-rc.8",
-        "invariant": "^2.2.4",
-        "klaw": "^2.1.1",
-        "minimatch": "^3.0.4",
-        "pkg-tests-fixtures": "workspace:0.0.0",
-        "semver": "^5.6.0",
-        "super-resolve": "^1.0.0",
-        "tar-fs": "^1.16.0",
-        "tmp": "^0.0.33"
-    },
-    "repository": {
-        "type": "git",
-        "url": "ssh://git@github.com/yarnpkg/berry.git"
-    }
+  "name": "pkg-tests-core",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@yarnpkg/cli": "workspace:2.0.0-rc.12",
+    "@yarnpkg/core": "workspace:2.0.0-rc.12",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.8",
+    "invariant": "^2.2.4",
+    "klaw": "^2.1.1",
+    "minimatch": "^3.0.4",
+    "pkg-tests-fixtures": "workspace:0.0.0",
+    "semver": "^5.6.0",
+    "super-resolve": "^1.0.0",
+    "tar-fs": "^1.16.0",
+    "tmp": "^0.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
+  }
 }

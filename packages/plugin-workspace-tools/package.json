@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-workspace-tools",
-  "private": true,
+  "version": "2.0.0-rc.5",
+  "nextVersion": {
+    "semver": "2.0.0-rc.6",
+    "nonce": "2080415401529691"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/builder": "workspace:2.0.0-rc.10",
@@ -16,12 +20,9 @@
   },
   "scripts": {
     "build:plugin-workspace-tools": "builder build plugin",
-    "update-local": "yarn build:plugin-workspace-tools && rsync -a --delete bundles/ bin/"
-  },
-  "version": "2.0.0-rc.5",
-  "nextVersion": {
-    "semver": "2.0.0-rc.6",
-    "nonce": "7637056459161819"
+    "update-local": "yarn build:plugin-workspace-tools && rsync -a --delete bundles/ bin/",
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\""
   },
   "repository": {
     "type": "git",

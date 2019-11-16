@@ -1,20 +1,25 @@
 {
   "name": "@yarnpkg/plugin-github",
-  "private": true,
+  "version": "2.0.0-rc.3",
+  "nextVersion": {
+    "semver": "2.0.0-rc.4",
+    "nonce": "7482071379225381"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/core": "workspace:2.0.0-rc.12",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8",
     "@yarnpkg/plugin-git": "workspace:2.0.0-rc.6",
-    "tmp": "^0.0.33"
+    "tmp": "^0.1.0"
   },
   "scripts": {
-    "test": "run test:unit packages/plugin-github"
+    "test": "run test:unit packages/plugin-github",
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\""
   },
   "files": [
     "/lib"
   ],
-  "version": "2.0.0-rc.3",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

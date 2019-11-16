@@ -63,11 +63,17 @@ export default class BuildBundleCommand extends Command {
         path: path.dirname(output),
       },
 
+      resolve: {
+        alias: {
+          [path.resolve(basedir, `./sources/tools/getPluginConfiguration.ts`)]: path.resolve(basedir, `./sources/tools/getPluginConfiguration.val.js`),
+        },
+      },
+
       module: {
         rules: [{
           // This file is particular in that it exposes the bundle
           // configuration to the bundle itself (primitive introspection).
-          test: path.resolve(basedir, `sources/pluginConfiguration.raw.js`),
+          test: /[\\\/]getPluginConfiguration\.val\.js$/,
           use: {
             loader: require.resolve(`val-loader`),
             options: {modules, plugins},

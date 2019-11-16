@@ -6,8 +6,9 @@ import {dirSync}                                              from 'tmp';
 
 import {Configuration}                                        from './Configuration';
 import {Manifest}                                             from './Manifest';
+import {MessageName}                                          from './MessageName';
 import {Project}                                              from './Project';
-import {MessageName, ReportError, Report}                     from './Report';
+import {ReportError, Report}                                  from './Report';
 import {StreamReport}                                         from './StreamReport';
 import {Workspace}                                            from './Workspace';
 import * as execUtils                                         from './execUtils';
@@ -39,11 +40,14 @@ export async function makeScriptEnv({project, lifecycleScript}: {project?: Proje
 
   // Register some binaries that must be made available in all subprocesses
   // spawned by Yarn (we thus ensure that they always use the right version)
-  await makePathWrapper(binFolder, toFilename(`run`), process.execPath, [process.argv[1], `run`]);
-  await makePathWrapper(binFolder, toFilename(`yarn`), process.execPath, [process.argv[1]]);
-  await makePathWrapper(binFolder, toFilename(`yarnpkg`), process.execPath, [process.argv[1]]);
   await makePathWrapper(binFolder, toFilename(`node`), process.execPath);
-  await makePathWrapper(binFolder, toFilename(`node-gyp`), process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]);
+
+  if (typeof YARN_VERSION !== `undefined`) {
+    await makePathWrapper(binFolder, toFilename(`run`), process.execPath, [process.argv[1], `run`]);
+    await makePathWrapper(binFolder, toFilename(`yarn`), process.execPath, [process.argv[1]]);
+    await makePathWrapper(binFolder, toFilename(`yarnpkg`), process.execPath, [process.argv[1]]);
+    await makePathWrapper(binFolder, toFilename(`node-gyp`), process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]);
+  }
 
   if (project)
     scriptEnv.INIT_CWD = project.configuration.startingCwd;

@@ -1,5 +1,6 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from './Fetcher';
-import {MessageName, ReportError}                   from './Report';
+import {MessageName}                                from './MessageName';
+import {ReportError}                                from './Report';
 import * as structUtils                             from './structUtils';
 import {Locator}                                    from './types';
 

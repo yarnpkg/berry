@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-essentials",
-  "private": true,
+  "version": "2.0.0-rc.10",
+  "nextVersion": {
+    "semver": "2.0.0-rc.11",
+    "nonce": "4891596081259931"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/cli": "workspace:2.0.0-rc.12",
@@ -14,13 +18,12 @@
     "treeify": "^1.1.0",
     "yup": "^0.27.0"
   },
-  "version": "2.0.0-rc.10",
-  "nextVersion": {
-    "semver": "2.0.0-rc.11",
-    "nonce": "7521931692480303"
-  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\""
   }
 }

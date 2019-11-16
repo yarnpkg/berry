@@ -1,5 +1,14 @@
 import {Readable, Transform} from 'stream';
 
+export function getArrayWithDefault<K, T>(map: Map<K, Array<T>>, key: K) {
+  let value = map.get(key);
+
+  if (typeof value === `undefined`)
+    map.set(key, value = []);
+
+  return value;
+}
+
 export function getSetWithDefault<K, T>(map: Map<K, Set<T>>, key: K) {
   let value = map.get(key);
 

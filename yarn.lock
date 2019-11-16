@@ -4621,6 +4621,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@yarnpkg/check@workspace:packages/yarnpkg-check":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/check@workspace:packages/yarnpkg-check"
+  dependencies:
+    "@yarnpkg/cli": "workspace:2.0.0-rc.12"
+    "@yarnpkg/core": "workspace:2.0.0-rc.12"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
+    "@yarnpkg/monorepo": "workspace:0.0.0"
+    clipanion: "npm:^2.1.4"
+    globby: "npm:^8.0.1"
+    micromatch: "npm:^4.0.2"
+    p-limit: "npm:^2.2.0"
+    typescript: "npm:next"
+  bin:
+    check: ./sources/boot-cli-dev.js
+  languageName: unknown
+  linkType: soft
+
 "@yarnpkg/cli@workspace:2.0.0-rc.12, @yarnpkg/cli@workspace:packages/yarnpkg-cli":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
@@ -4643,19 +4661,18 @@ __metadata:
     "@yarnpkg/plugin-npm-cli": "workspace:2.0.0-rc.3"
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.6"
     "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.5"
-    "@yarnpkg/plugin-typescript": "workspace:2.0.0-rc.4"
     "@yarnpkg/plugin-version": "workspace:2.0.0-rc.7"
-    "@yarnpkg/plugin-workspace-tools": "workspace:2.0.0-rc.5"
-    "@yarnpkg/pnp": "workspace:2.0.0-rc.8"
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.9"
     "@yarnpkg/shell": "workspace:2.0.0-rc.2"
     chalk: "npm:^2.4.1"
     clipanion: "npm:^2.1.4"
     promise.prototype.finally: "npm:^3.1.1"
     semver: "npm:^5.6.0"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
     typescript: "npm:next"
     yup: "npm:^0.27.0"
+  peerDependencies:
+    "@yarnpkg/core": "*"
   languageName: unknown
   linkType: soft
 
@@ -4689,7 +4706,7 @@ __metadata:
     stream-to-promise: "npm:^2.2.0"
     supports-color: "npm:^7.1.0"
     tar: "npm:^4.4.6"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
     tunnel: "npm:^0.0.6"
   languageName: unknown
   linkType: soft
@@ -4699,7 +4716,7 @@ __metadata:
   resolution: "@yarnpkg/fslib@workspace:packages/yarnpkg-fslib"
   dependencies:
     "@yarnpkg/libzip": "workspace:2.0.0-rc.3"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
   languageName: unknown
   linkType: soft
 
@@ -4851,6 +4868,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^1.7.0"
     "@typescript-eslint/parser": "npm:^1.6.0"
     "@yarnpkg/cli": "workspace:2.0.0-rc.12"
+    "@yarnpkg/core": "workspace:2.0.0-rc.12"
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.9"
     babel-jest: "npm:^24.5.0"
     eslint: "npm:^5.16.0"
@@ -4905,7 +4923,7 @@ __metadata:
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2"
     "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.10"
     clipanion: "npm:^2.1.4"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
   languageName: unknown
   linkType: soft
 
@@ -4933,7 +4951,7 @@ __metadata:
     "@yarnpkg/builder": "workspace:2.0.0-rc.10"
     "@yarnpkg/core": "workspace:2.0.0-rc.12"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
     typescript: "npm:next"
   languageName: unknown
   linkType: soft
@@ -4955,7 +4973,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
     git-url-parse: "npm:11.1.2"
     semver: "npm:^5.6.0"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
   languageName: unknown
   linkType: soft
 
@@ -4966,7 +4984,7 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.12"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
     "@yarnpkg/plugin-git": "workspace:2.0.0-rc.6"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
   languageName: unknown
   linkType: soft
 
@@ -5085,7 +5103,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-typescript@workspace:2.0.0-rc.4, @yarnpkg/plugin-typescript@workspace:packages/plugin-typescript":
+"@yarnpkg/plugin-typescript@workspace:packages/plugin-typescript":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
@@ -5116,7 +5134,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-workspace-tools@workspace:2.0.0-rc.5, @yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools":
+"@yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
   dependencies:
@@ -5177,7 +5195,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:2.0.0-rc.4"
     cross-spawn: "npm:^6.0.5"
     stream-buffers: "npm:^3.0.2"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
   languageName: unknown
   linkType: soft
 
@@ -5200,6 +5218,7 @@ __metadata:
   resolution: "acceptance-tests-229a13@workspace:packages/acceptance-tests"
   dependencies:
     "@yarnpkg/cli": "workspace:2.0.0-rc.12"
+    "@yarnpkg/core": "workspace:2.0.0-rc.12"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     is-wsl: "npm:^1.1.0"
@@ -18977,6 +18996,8 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 0.0.0-use.local
   resolution: "pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core"
   dependencies:
+    "@yarnpkg/cli": "workspace:2.0.0-rc.12"
+    "@yarnpkg/core": "workspace:2.0.0-rc.12"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
     invariant: "npm:^2.2.4"
     klaw: "npm:^2.1.1"
@@ -18985,7 +19006,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     semver: "npm:^5.6.0"
     super-resolve: "npm:^1.0.0"
     tar-fs: "npm:^1.16.0"
-    tmp: "npm:^0.0.33"
+    tmp: "npm:^0.1.0"
   languageName: unknown
   linkType: soft
 

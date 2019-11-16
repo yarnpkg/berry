@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-pnp",
-  "private": true,
+  "version": "2.0.0-rc.5",
+  "nextVersion": {
+    "semver": "2.0.0-rc.6",
+    "nonce": "6851712456807079"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/cli": "workspace:2.0.0-rc.12",
@@ -12,9 +16,12 @@
   "devDependencies": {
     "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.6"
   },
-  "version": "2.0.0-rc.5",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\""
   }
 }

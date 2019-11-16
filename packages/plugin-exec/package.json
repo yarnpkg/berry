@@ -1,21 +1,26 @@
 {
   "name": "@yarnpkg/plugin-exec",
-  "private": true,
+  "version": "2.0.0-rc.6",
+  "nextVersion": {
+    "semver": "2.0.0-rc.7",
+    "nonce": "6503798591375267"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/builder": "workspace:2.0.0-rc.10",
     "@yarnpkg/core": "workspace:2.0.0-rc.12",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8",
-    "tmp": "^0.0.33"
+    "tmp": "^0.1.0"
   },
   "devDependencies": {
     "typescript": "next"
   },
   "scripts": {
     "build:plugin-exec": "builder build plugin",
-    "update-local": "yarn build:plugin-exec && rsync -a --delete bundles/ bin/"
+    "update-local": "yarn build:plugin-exec && rsync -a --delete bundles/ bin/",
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\""
   },
-  "version": "2.0.0-rc.6",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

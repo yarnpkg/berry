@@ -3,24 +3,12 @@
   "version": "2.0.0-rc.12",
   "nextVersion": {
     "semver": "2.0.0-rc.13",
-    "nonce": "5495764503173505"
+    "nonce": "3282002841380729"
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/core": "workspace:2.0.0-rc.12",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.8",
     "@yarnpkg/parsers": "workspace:2.0.0-rc.4",
-    "@yarnpkg/shell": "workspace:2.0.0-rc.2",
-    "chalk": "^2.4.1",
-    "clipanion": "^2.1.4",
-    "promise.prototype.finally": "^3.1.1",
-    "semver": "^5.6.0",
-    "tmp": "^0.0.33",
-    "yup": "^0.27.0"
-  },
-  "devDependencies": {
-    "@yarnpkg/builder": "workspace:2.0.0-rc.10",
-    "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/plugin-constraints": "workspace:2.0.0-rc.3",
     "@yarnpkg/plugin-dlx": "workspace:2.0.0-rc.3",
     "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.10",
@@ -34,16 +22,28 @@
     "@yarnpkg/plugin-npm-cli": "workspace:2.0.0-rc.3",
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.6",
     "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.5",
-    "@yarnpkg/plugin-typescript": "workspace:2.0.0-rc.4",
     "@yarnpkg/plugin-version": "workspace:2.0.0-rc.7",
-    "@yarnpkg/plugin-workspace-tools": "workspace:2.0.0-rc.5",
-    "@yarnpkg/pnp": "workspace:2.0.0-rc.8",
+    "@yarnpkg/shell": "workspace:2.0.0-rc.2",
+    "chalk": "^2.4.1",
+    "clipanion": "^2.1.4",
+    "promise.prototype.finally": "^3.1.1",
+    "semver": "^5.6.0",
+    "tmp": "^0.1.0",
+    "yup": "^0.27.0"
+  },
+  "devDependencies": {
+    "@yarnpkg/builder": "workspace:2.0.0-rc.10",
+    "@yarnpkg/core": "workspace:2.0.0-rc.12",
+    "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.9",
     "typescript": "next"
   },
+  "peerDependencies": {
+    "@yarnpkg/core": "*"
+  },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && pnpify tsc",
+    "prepack": "run build:compile \"$(pwd)\"",
     "build:cli+hook": "run build:pnp:hook && builder build bundle",
     "build:cli": "builder build bundle",
     "run:cli": "builder run",

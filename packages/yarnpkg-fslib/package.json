@@ -3,17 +3,17 @@
   "version": "2.0.0-rc.8",
   "nextVersion": {
     "semver": "2.0.0-rc.9",
-    "nonce": "2320963729725089"
+    "nonce": "3260042008878297"
   },
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/libzip": "workspace:2.0.0-rc.3",
-    "tmp": "^0.0.33"
+    "tmp": "^0.1.0"
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "mkdir -p lib && rsync -a --exclude '*.ts' sources/ lib/ && run build:compile packages/yarnpkg-fslib",
+    "prepack": "run build:compile \"$(pwd)\"",
     "release": "yarn npm publish",
     "test:fslib": "run test:unit packages/yarnpkg-fslib",
     "test:watch:fslib": "run test:unit --watch packages/yarnpkg-fslib"

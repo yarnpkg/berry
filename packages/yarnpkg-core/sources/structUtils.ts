@@ -2,7 +2,7 @@ import {PortablePath, toFilename}               from '@yarnpkg/fslib';
 import querystring                              from 'querystring';
 import semver                                   from 'semver';
 
-import {Configuration}                          from './Configuration';
+import {Configuration, FormatType}              from './Configuration';
 import {Workspace}                              from './Workspace';
 import * as hashUtils                           from './hashUtils';
 import * as miscUtils                           from './miscUtils';
@@ -370,9 +370,9 @@ export function slugifyLocator(locator: Locator) {
 
 export function prettyIdent(configuration: Configuration, ident: Ident) {
   if (ident.scope) {
-    return `${configuration.format(`@${ident.scope}/`, `#d75f00`)}${configuration.format(ident.name, `#d7875f`)}`;
+    return `${configuration.format(`@${ident.scope}/`, FormatType.SCOPE)}${configuration.format(ident.name, FormatType.NAME)}`;
   } else {
-    return `${configuration.format(ident.name, `#d7875f`)}`;
+    return `${configuration.format(ident.name, FormatType.NAME)}`;
   }
 }
 
@@ -389,19 +389,19 @@ function prettyRangeNoColors(range: string): string {
 }
 
 export function prettyRange(configuration: Configuration, range: string) {
-  return `${configuration.format(prettyRangeNoColors(range), `#00afaf`)}`;
+  return `${configuration.format(prettyRangeNoColors(range), FormatType.RANGE)}`;
 }
 
 export function prettyDescriptor(configuration: Configuration, descriptor: Descriptor) {
-  return `${prettyIdent(configuration, descriptor)}${configuration.format(`@`, `#00afaf`)}${prettyRange(configuration, descriptor.range)}`;
+  return `${prettyIdent(configuration, descriptor)}${configuration.format(`@`, FormatType.RANGE)}${prettyRange(configuration, descriptor.range)}`;
 }
 
 export function prettyReference(configuration: Configuration, reference: string) {
-  return `${configuration.format(prettyRangeNoColors(reference), `#87afff`)}`;
+  return `${configuration.format(prettyRangeNoColors(reference), FormatType.REFERENCE)}`;
 }
 
 export function prettyLocator(configuration: Configuration, locator: Locator) {
-  return `${prettyIdent(configuration, locator)}${configuration.format(`@`, `#87afff`)}${prettyReference(configuration, locator.reference)}`;
+  return `${prettyIdent(configuration, locator)}${configuration.format(`@`, FormatType.REFERENCE)}${prettyReference(configuration, locator.reference)}`;
 }
 
 export function prettyLocatorNoColors(locator: Locator) {

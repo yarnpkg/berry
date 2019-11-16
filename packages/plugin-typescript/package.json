@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-typescript",
-  "private": true,
+  "version": "2.0.0-rc.4",
+  "nextVersion": {
+    "semver": "2.0.0-rc.5",
+    "nonce": "261235728663275"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/cli": "workspace:2.0.0-rc.12",
@@ -14,9 +18,10 @@
   },
   "scripts": {
     "build:plugin-typescript": "builder build plugin",
-    "update-local": "yarn build:plugin-typescript && rsync -a --delete bundles/ bin/"
+    "update-local": "yarn build:plugin-typescript && rsync -a --delete bundles/ bin/",
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\""
   },
-  "version": "2.0.0-rc.4",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

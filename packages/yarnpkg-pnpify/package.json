@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.9",
   "nextVersion": {
     "semver": "2.0.0-rc.10",
-    "nonce": "7054363729142683"
+    "nonce": "634229662692597"
   },
   "main": "./sources/boot-dev.js",
   "bin": "./sources/boot-cli-dev.js",
@@ -33,7 +33,7 @@
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "run build:compile packages/yarnpkg-pnpify",
+    "prepack": "run build:compile \"$(pwd)\"",
     "release": "yarn npm publish",
     "test": "run test:unit packages/yarnpkg-pnpify"
   },

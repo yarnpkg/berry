@@ -58,7 +58,6 @@ jobs:
       fail-fast: false
       matrix:
         node:
-        - 8
         - 10
         - 12
         - 13
@@ -66,9 +65,6 @@ jobs:
         - ubuntu-latest
         - windows-latest
         - macos-latest
-        exclude:
-        - node: 8
-          platform: windows-latest
 
     name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x'
     runs-on: ${{matrix.platform}}
@@ -84,7 +80,7 @@ jobs:
     - name: 'Build the standard bundle & plugins'
       run: |
         node --version
-        node ./scripts/run-yarn.js build:cli
+        node ./scripts/run-yarn.js build:cli --no-minify
         node ./scripts/run-yarn.js build:plugin-exec
         node ./scripts/run-yarn.js build:plugin-interactive-tools
         node ./scripts/run-yarn.js build:plugin-stage
