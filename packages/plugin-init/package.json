@@ -1,16 +1,12 @@
 {
   "name": "@yarnpkg/plugin-init",
-  "version": "2.0.0-rc.3",
-  "nextVersion": {
-    "semver": "2.0.0-rc.4",
-    "nonce": "8208197073193881"
-  },
+  "version": "2.0.0-rc.4",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.12",
-    "@yarnpkg/core": "workspace:2.0.0-rc.12",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.8",
-    "@yarnpkg/json-proxy": "workspace:2.0.0-rc.2",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.13",
+    "@yarnpkg/core": "workspace:2.0.0-rc.13",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.9",
+    "@yarnpkg/json-proxy": "workspace:2.0.0-rc.3",
     "clipanion": "^2.1.4"
   },
   "repository": {
