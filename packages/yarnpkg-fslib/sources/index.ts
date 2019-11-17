@@ -1,5 +1,4 @@
 import fs                                from 'fs';
-import tmp                               from 'tmp';
 
 import {FakeFS}                          from './FakeFS';
 import {NodeFS}                          from './NodeFS';
@@ -163,6 +162,13 @@ export type XFS = NodeFS & {
 
 export const xfs: XFS = Object.assign(new NodeFS(), {
   mktempSync<T>(cb?: (p: PortablePath) => T) {
+    // We lazily load `tmp` because it injects itself into the `process`
+    // events (to clean the folders at exit time), and it may lead to
+    // large memory leaks. Better avoid loading it until we can't do
+    // otherwise (ideally the fix would be for `tmp` itself to only
+    // attach cleaners after the first call).
+    const tmp = require(`tmp`);
+
     const {name, removeCallback} = tmp.dirSync({unsafeCleanup: true});
     if (typeof cb === `undefined`) {
       return npath.toPortablePath(name);
@@ -174,10 +180,18 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
       }
     }
   },
+
   mktempPromise<T>(cb?: (p: PortablePath) => Promise<T>) {
+    // We lazily load `tmp` because it injects itself into the `process`
+    // events (to clean the folders at exit time), and it may lead to
+    // large memory leaks. Better avoid loading it until we can't do
+    // otherwise (ideally the fix would be for `tmp` itself to only
+    // attach cleaners after the first call).
+    const tmp = require(`tmp`);
+
     if (typeof cb === `undefined`) {
       return new Promise<PortablePath>((resolve, reject) => {
-        tmp.dir({unsafeCleanup: true}, (err, path) => {
+        tmp.dir({unsafeCleanup: true}, (err: Error | null, path: NativePath) => {
           if (err) {
             reject(err);
           } else {
@@ -187,7 +201,7 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
       });
     } else {
       return new Promise<T>((resolve, reject) => {
-        tmp.dir({unsafeCleanup: true}, (err, path, cleanup) => {
+        tmp.dir({unsafeCleanup: true}, (err: Error | null, path: NativePath, cleanup: () => void) => {
           if (err) {
             reject(err);
           } else {

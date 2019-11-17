@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-essentials",
   "version": "2.0.0-rc.11",
+  "nextVersion": {
+    "nonce": "4569853904343305"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/cli": "workspace:2.0.0-rc.13",

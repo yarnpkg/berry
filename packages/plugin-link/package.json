@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-link",
   "version": "2.0.0-rc.3",
+  "nextVersion": {
+    "nonce": "3660548769659453"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/core": "workspace:2.0.0-rc.13",

@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-http",
   "version": "2.0.0-rc.3",
+  "nextVersion": {
+    "nonce": "7899233566328569"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/core": "workspace:2.0.0-rc.13",

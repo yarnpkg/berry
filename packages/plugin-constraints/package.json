@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-constraints",
   "version": "2.0.0-rc.4",
+  "nextVersion": {
+    "nonce": "7782734775761707"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"

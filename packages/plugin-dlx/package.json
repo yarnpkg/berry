@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-dlx",
   "version": "2.0.0-rc.4",
+  "nextVersion": {
+    "nonce": "2472217859823041"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/cli": "workspace:2.0.0-rc.13",

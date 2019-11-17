@@ -28,8 +28,18 @@ export class PnpLinker implements Linker {
       throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
 
     const physicalPath = npath.fromPortablePath(pnpPath);
-    const pnpFile = miscUtils.dynamicRequire(physicalPath);
+
+    const currentCacheEntry = require.cache[physicalPath];
     delete require.cache[physicalPath];
+
+    const pnpFile = miscUtils.dynamicRequire(physicalPath);
+    const freshCacheEntry = require.cache[physicalPath];
+
+    require.cache[physicalPath] = currentCacheEntry;
+
+    const freshCacheIndex = module.children.indexOf(freshCacheEntry);
+    if (freshCacheIndex !== -1)
+      module.children.splice(freshCacheIndex, 1);
 
     const packageLocator = {name: structUtils.requirableIdent(locator), reference: locator.reference};
     const packageInformation = pnpFile.getPackageInformation(packageLocator);
