@@ -21,21 +21,18 @@ async function setupScriptEnvironment(project: Project, env: {[key: string]: str
   }
 }
 
-function populateYarnPaths(project: Project, definePath: (path: string | null) => void) {
+async function populateYarnPaths(project: Project, definePath: (path: PortablePath | null) => void) {
   definePath(getPnpPath(project));
 
   definePath(project.configuration.get(`pnpDataPath`));
   definePath(project.configuration.get(`pnpUnpluggedFolder`));
 }
 
-const plugin: Plugin = {
+const plugin: Plugin<CoreHooks & StageHooks> = {
   hooks: {
     populateYarnPaths,
     setupScriptEnvironment,
-  } as (
-    CoreHooks &
-    StageHooks
-  ),
+  },
   configuration: {
     pnpShebang: {
       description: `String to prepend to the generated PnP script`,
@@ -77,4 +74,4 @@ const plugin: Plugin = {
 };
 
 // eslint-disable-next-line arca/no-default-export
-export default plugin;
+export default plugin as Plugin;

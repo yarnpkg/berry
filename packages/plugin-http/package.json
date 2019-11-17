@@ -6,8 +6,13 @@
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/core": "workspace:2.0.0-rc.13",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
+  },
+  "peerDependencies": {
+    "@yarnpkg/core": "^2.0.0-rc.13"
+  },
+  "devDependencies": {
+    "@yarnpkg/core": "workspace:2.0.0-rc.13"
   },
   "repository": {
     "type": "git",

@@ -5,15 +5,15 @@ set -e
 THIS_DIR=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 REPO_DIR="$THIS_DIR/.."
 
-if ! [[ -z $(git status --porcelain) ]]; then
-  echo 'This command must be executed on a clean repository'
-  exit 1
-fi
+#if ! [[ -z $(git status --porcelain) ]]; then
+#  echo 'This command must be executed on a clean repository'
+#  exit 1
+#fi
 
 RELEASE_ARGUMENTS=()
 
 maybe_release_package() {
-  if git describe --match "$1/*" HEAD >& /dev/null; then
+  if true || git describe --match "$1/*" HEAD >& /dev/null; then
     RELEASE_ARGUMENTS+=(--include "$1")
   fi
 }

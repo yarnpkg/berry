@@ -4680,6 +4680,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
+    "@yarnpkg/cli": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.3"
     "@yarnpkg/parsers": "workspace:2.0.0-rc.5"
@@ -4910,6 +4911,9 @@ __metadata:
     lodash: "npm:^4.17.15"
     node-emoji: "npm:^1.8.1"
     tau-prolog: "npm:^0.2.66"
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.14
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
@@ -4921,9 +4925,11 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.13"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.3"
-    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.11"
     clipanion: "npm:^2.1.4"
     tmp: "npm:^0.1.0"
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.14
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
@@ -4941,6 +4947,9 @@ __metadata:
     semver: "npm:^5.6.0"
     treeify: "npm:^1.1.0"
     yup: "npm:^0.27.0"
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.14
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
@@ -4953,6 +4962,8 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
     tmp: "npm:^0.1.0"
     typescript: "npm:next"
+  peerDependencies:
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
@@ -4962,6 +4973,8 @@ __metadata:
   dependencies:
     "@yarnpkg/core": "workspace:2.0.0-rc.13"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
+  peerDependencies:
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
@@ -4974,6 +4987,8 @@ __metadata:
     git-url-parse: "npm:11.1.2"
     semver: "npm:^5.6.0"
     tmp: "npm:^0.1.0"
+  peerDependencies:
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
@@ -4985,6 +5000,9 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
     "@yarnpkg/plugin-git": "workspace:2.0.0-rc.7"
     tmp: "npm:^0.1.0"
+  peerDependencies:
+    "@yarnpkg/core": ^2.0.0-rc.13
+    "@yarnpkg/plugin-git": ^2.0.0-rc.7
   languageName: unknown
   linkType: soft
 
@@ -4994,6 +5012,8 @@ __metadata:
   dependencies:
     "@yarnpkg/core": "workspace:2.0.0-rc.13"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
+  peerDependencies:
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
@@ -5006,6 +5026,9 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.3"
     clipanion: "npm:^2.1.4"
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.14
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
@@ -5023,6 +5046,10 @@ __metadata:
     ink: "npm:^2.3.0"
     react: "npm:^16.8.4"
     typescript: "npm:next"
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.14
+    "@yarnpkg/core": ^2.0.0-rc.13
+    "@yarnpkg/plugin-essentials": ^2.0.0-rc.11
   languageName: unknown
   linkType: soft
 
@@ -5032,6 +5059,8 @@ __metadata:
   dependencies:
     "@yarnpkg/core": "workspace:2.0.0-rc.13"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
+  peerDependencies:
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
@@ -5048,6 +5077,11 @@ __metadata:
     inquirer: "npm:^6.2.0"
     ssri: "npm:^6.0.1"
     yup: "npm:^0.27.0"
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.14
+    "@yarnpkg/core": ^2.0.0-rc.13
+    "@yarnpkg/plugin-npm": ^2.0.0-rc.6
+    "@yarnpkg/plugin-pack": ^2.0.0-rc.7
   languageName: unknown
   linkType: soft
 
@@ -5059,6 +5093,8 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
     inquirer: "npm:^6.2.0"
     semver: "npm:^5.6.0"
+  peerDependencies:
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
@@ -5070,10 +5106,12 @@ __metadata:
     "@yarnpkg/cli": "workspace:2.0.0-rc.14"
     "@yarnpkg/core": "workspace:2.0.0-rc.13"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
-    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.7"
     clipanion: "npm:^2.1.4"
     micromatch: "npm:^4.0.2"
     tar-stream: "npm:^2.0.1"
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.14
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
@@ -5087,6 +5125,9 @@ __metadata:
     "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.7"
     "@yarnpkg/pnp": "workspace:2.0.0-rc.10"
     clipanion: "npm:^2.1.4"
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.14
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
@@ -5100,6 +5141,9 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
     clipanion: "npm:^2.1.4"
     typescript: "npm:next"
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.14
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
@@ -5113,6 +5157,10 @@ __metadata:
     "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.11"
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.7"
     typescript: "npm:next"
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.14
+    "@yarnpkg/core": ^2.0.0-rc.13
+    "@yarnpkg/plugin-essentials": ^2.0.0-rc.11
   languageName: unknown
   linkType: soft
 
@@ -5131,6 +5179,10 @@ __metadata:
     semver: "npm:^5.6.0"
     typescript: "npm:next"
     yup: "npm:^0.27.0"
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.14
+    "@yarnpkg/core": 62.0.0-rc.13
+    "@yarnpkg/plugin-pack": ^2.0.0-rc.7
   languageName: unknown
   linkType: soft
 
@@ -5146,6 +5198,9 @@ __metadata:
     p-limit: "npm:^2.2.0"
     typescript: "npm:next"
     yup: "npm:^0.27.0"
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.14
+    "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
