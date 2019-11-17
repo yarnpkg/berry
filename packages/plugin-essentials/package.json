@@ -6,9 +6,9 @@
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.13",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.14",
     "@yarnpkg/core": "workspace:2.0.0-rc.13",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.9",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.10",
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.3",
     "@yarnpkg/parsers": "workspace:2.0.0-rc.5",
     "clipanion": "^2.1.4",

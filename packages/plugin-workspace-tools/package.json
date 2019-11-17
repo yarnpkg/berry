@@ -7,9 +7,9 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/builder": "workspace:2.0.0-rc.11",
-    "@yarnpkg/cli": "workspace:2.0.0-rc.13",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.14",
     "@yarnpkg/core": "workspace:2.0.0-rc.13",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.9",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.10",
     "clipanion": "^2.1.4",
     "p-limit": "^2.2.0",
     "yup": "^0.27.0"

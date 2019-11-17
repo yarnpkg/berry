@@ -1,13 +1,9 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "2.0.0-rc.13",
-  "nextVersion": {
-    "semver": "2.0.0-rc.14",
-    "nonce": "6948604286428801"
-  },
+  "version": "2.0.0-rc.14",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.9",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.10",
     "@yarnpkg/parsers": "workspace:2.0.0-rc.5",
     "@yarnpkg/plugin-constraints": "workspace:2.0.0-rc.4",
     "@yarnpkg/plugin-dlx": "workspace:2.0.0-rc.4",
@@ -21,7 +17,7 @@
     "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.6",
     "@yarnpkg/plugin-npm-cli": "workspace:2.0.0-rc.4",
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.7",
-    "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.6",
+    "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.7",
     "@yarnpkg/plugin-version": "workspace:2.0.0-rc.8",
     "@yarnpkg/shell": "workspace:2.0.0-rc.3",
     "chalk": "^2.4.1",
