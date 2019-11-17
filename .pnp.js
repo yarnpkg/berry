@@ -403,7 +403,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/micromatch", "npm:3.1.0"],
             ["@types/minimatch", "npm:3.0.3"],
             ["@types/mkdirp", "npm:0.5.2"],
-            ["@types/node", "npm:12.7.11"],
+            ["@types/node", "npm:12.12.8"],
             ["@types/node-emoji", "npm:1.8.0"],
             ["@types/node-fetch", "npm:2.1.4"],
             ["@types/promise.prototype.finally", "npm:2.0.3"],
@@ -5287,10 +5287,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD"
         }],
-        ["npm:12.7.11", {
-          "packageLocation": "./.yarn/cache/@types-node-npm-12.7.11-e135d61909-1.zip/node_modules/@types/node/",
+        ["npm:12.12.8", {
+          "packageLocation": "./.yarn/cache/@types-node-npm-12.12.8-227242fc81-1.zip/node_modules/@types/node/",
           "packageDependencies": [
-            ["@types/node", "npm:12.7.11"]
+            ["@types/node", "npm:12.12.8"]
           ],
           "linkType": "HARD"
         }],
@@ -6656,7 +6656,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/micromatch", "npm:3.1.0"],
             ["@types/minimatch", "npm:3.0.3"],
             ["@types/mkdirp", "npm:0.5.2"],
-            ["@types/node", "npm:12.7.11"],
+            ["@types/node", "npm:12.12.8"],
             ["@types/node-emoji", "npm:1.8.0"],
             ["@types/node-fetch", "npm:2.1.4"],
             ["@types/promise.prototype.finally", "npm:2.0.3"],

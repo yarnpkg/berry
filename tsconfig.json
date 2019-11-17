@@ -1,18 +1,14 @@
 {
-    "compilerOptions": {
-        "baseUrl": ".",
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true,
-        "experimentalDecorators": true,
-        "forceConsistentCasingInFileNames": true,
-        "jsx": "react",
-        "module": "commonjs",
-        "strict": true,
-        "target": "es2017",
-        "lib": ["dom", "es2017", "esnext.asynciterable"]
-    },
-    "include": [
-        "packages/**/sources/**/*",
-        "packages/**/types/**/*"
-    ]
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "lib": ["dom", "es2017", "esnext.asynciterable"],
+    "module": "commonjs",
+    "strict": true,
+    "target": "es2017"
+  }
 }

@@ -24,6 +24,7 @@ export {ThrowReport}                                                            
 export {VirtualFetcher}                                                                                  from './VirtualFetcher';
 export {WorkspaceResolver}                                                                               from './WorkspaceResolver';
 export {Workspace}                                                                                       from './Workspace';
+export {YarnVersion}                                                                                     from './YarnVersion';
 export {IdentHash, DescriptorHash, LocatorHash}                                                          from './types';
 export {Ident, Descriptor, Locator, Package}                                                             from './types';
 export {LinkType}                                                                                        from './types';
