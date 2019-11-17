@@ -82,4 +82,4 @@ const plugin: Plugin<EssentialsHooks & PackHooks> = {
 };
 
 // eslint-disable-next-line arca/no-default-export
-export default plugin as Plugin;
+export default plugin;

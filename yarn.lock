@@ -5106,6 +5106,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:2.0.0-rc.14"
     "@yarnpkg/core": "workspace:2.0.0-rc.13"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
+    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.7"
     clipanion: "npm:^2.1.4"
     micromatch: "npm:^4.0.2"
     tar-stream: "npm:^2.0.1"
@@ -5122,7 +5123,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:2.0.0-rc.14"
     "@yarnpkg/core": "workspace:2.0.0-rc.13"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
-    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.7"
+    "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.7"
     "@yarnpkg/pnp": "workspace:2.0.0-rc.10"
     clipanion: "npm:^2.1.4"
   peerDependencies:
@@ -5131,7 +5132,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-stage@workspace:2.0.0-rc.7, @yarnpkg/plugin-stage@workspace:packages/plugin-stage":
+"@yarnpkg/plugin-stage@workspace:2.0.0-rc.7, @yarnpkg/plugin-stage@workspace:^2.0.0-rc.7, @yarnpkg/plugin-stage@workspace:packages/plugin-stage":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-stage@workspace:packages/plugin-stage"
   dependencies:

@@ -4,6 +4,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.10",
+    "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.7",
     "@yarnpkg/pnp": "workspace:2.0.0-rc.10",
     "clipanion": "^2.1.4"
   },
@@ -13,8 +14,7 @@
   },
   "devDependencies": {
     "@yarnpkg/cli": "workspace:2.0.0-rc.14",
-    "@yarnpkg/core": "workspace:2.0.0-rc.13",
-    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.7"
+    "@yarnpkg/core": "workspace:2.0.0-rc.13"
   },
   "repository": {
     "type": "git",
