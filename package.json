@@ -92,7 +92,7 @@
     }
   },
   "scripts": {
-    "build:compile": "mkdir -p \"$0\"/lib && rsync -a --include '*.d.ts' --exclude '*.ts' \"$0\"/sources/ \"$0\"/lib/ && pnpify tsc -p \"$0\"",
+    "build:compile": "rm -rf \"$0\" mkdir -p \"$0\"/lib && rsync -a --include '*.d.ts' --exclude '*.ts' \"$0\"/sources/ \"$0\"/lib/ && pnpify tsc -p \"$0\"",
     "gen-tssdk": "pnpify --sdk scripts",
     "release:all": "./scripts/release.sh",
     "test:lint": "eslint \"packages/**/@(sources|tests)/**/!(libzip).@(tsx|ts|js)\"",
