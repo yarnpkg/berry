@@ -1,13 +1,9 @@
 {
   "name": "@yarnpkg/check",
-  "version": "2.0.0-rc.3",
-  "nextVersion": {
-    "semver": "2.0.0-rc.4",
-    "nonce": "7716437507334553"
-  },
+  "version": "2.0.0-rc.4",
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.16",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.17",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
     "clipanion": "^2.1.4",

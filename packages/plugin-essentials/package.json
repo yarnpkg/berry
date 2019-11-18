@@ -1,10 +1,6 @@
 {
   "name": "@yarnpkg/plugin-essentials",
-  "version": "2.0.0-rc.13",
-  "nextVersion": {
-    "semver": "2.0.0-rc.14",
-    "nonce": "6433377421078405"
-  },
+  "version": "2.0.0-rc.14",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
@@ -21,7 +17,7 @@
     "@yarnpkg/core": "^2.0.0-rc.13"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.16",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.17",
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
   },
   "repository": {

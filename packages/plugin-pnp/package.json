@@ -1,14 +1,10 @@
 {
   "name": "@yarnpkg/plugin-pnp",
-  "version": "2.0.0-rc.9",
-  "nextVersion": {
-    "semver": "2.0.0-rc.10",
-    "nonce": "3735288381148237"
-  },
+  "version": "2.0.0-rc.10",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
-    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.9",
+    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.10",
     "@yarnpkg/pnp": "workspace:2.0.0-rc.11",
     "clipanion": "^2.1.4"
   },
@@ -17,7 +13,7 @@
     "@yarnpkg/core": "^2.0.0-rc.13"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.16",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.17",
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
   },
   "repository": {

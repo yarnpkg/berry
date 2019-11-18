@@ -1,10 +1,6 @@
 {
   "name": "@yarnpkg/plugin-interactive-tools",
-  "version": "2.0.0-rc.6",
-  "nextVersion": {
-    "semver": "2.0.0-rc.7",
-    "nonce": "3341309026442109"
-  },
+  "version": "2.0.0-rc.7",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/libui": "workspace:2.0.0-rc.1",
@@ -20,9 +16,9 @@
   },
   "devDependencies": {
     "@yarnpkg/builder": "workspace:2.0.0-rc.12",
-    "@yarnpkg/cli": "workspace:2.0.0-rc.16",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.17",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
-    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.13",
+    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.14",
     "typescript": "next"
   },
   "repository": {

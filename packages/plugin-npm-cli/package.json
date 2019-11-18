@@ -1,10 +1,6 @@
 {
   "name": "@yarnpkg/plugin-npm-cli",
-  "version": "2.0.0-rc.6",
-  "nextVersion": {
-    "semver": "2.0.0-rc.7",
-    "nonce": "178023207101357"
-  },
+  "version": "2.0.0-rc.7",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
@@ -20,10 +16,10 @@
     "@yarnpkg/plugin-pack": "^2.0.0-rc.7"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.16",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.17",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
-    "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.8",
-    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.9"
+    "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.9",
+    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.10"
   },
   "repository": {
     "type": "git",
