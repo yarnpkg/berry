@@ -1,10 +1,6 @@
 {
   "name": "@yarnpkg/plugin-pack",
-  "version": "2.0.0-rc.8",
-  "nextVersion": {
-    "semver": "2.0.0-rc.9",
-    "nonce": "5920911593854815"
-  },
+  "version": "2.0.0-rc.9",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/tar-stream": "1.6.0",
@@ -20,7 +16,7 @@
   "devDependencies": {
     "@yarnpkg/cli": "workspace:2.0.0-rc.15",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
-    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.8"
+    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.9"
   },
   "repository": {
     "type": "git",

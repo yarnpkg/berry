@@ -1,13 +1,9 @@
 {
   "name": "@yarnpkg/plugin-typescript",
-  "version": "2.0.0-rc.6",
-  "nextVersion": {
-    "semver": "2.0.0-rc.7",
-    "nonce": "8722929193635551"
-  },
+  "version": "2.0.0-rc.7",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.8"
+    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.9"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^2.0.0-rc.14",
@@ -18,7 +14,7 @@
     "@yarnpkg/builder": "workspace:2.0.0-rc.12",
     "@yarnpkg/cli": "workspace:2.0.0-rc.15",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
-    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.12",
+    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.13",
     "typescript": "next"
   },
   "scripts": {

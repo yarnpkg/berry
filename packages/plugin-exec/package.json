@@ -1,10 +1,6 @@
 {
   "name": "@yarnpkg/plugin-exec",
-  "version": "2.0.0-rc.8",
-  "nextVersion": {
-    "semver": "2.0.0-rc.9",
-    "nonce": "8261015122226211"
-  },
+  "version": "2.0.0-rc.9",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/builder": "workspace:2.0.0-rc.12",
