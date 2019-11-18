@@ -21,7 +21,7 @@ const PackageJsonDoc = () => <>
         name={`name`}
         placeholder={`@scope/name`}
         description={<>
-          The name of the package. Used to identify it accross the application, especially amongst multiple workspaces. The first part of the name (here <code>@scope/</code>) is optional and is used as a namespace).
+          The name of the package. Used to identify it across the application, especially amongst multiple workspaces. The first part of the name (here <code>@scope/</code>) is optional and is used as a namespace).
         </>}
       />
       <JsonScalarProperty
@@ -133,7 +133,7 @@ const PackageJsonDoc = () => <>
       <JsonObjectProperty
         name={`peerDependencies`}
         description={<>
-          Peer dependencies are inherited dependencies - the consumer of your package will be tasked to provide them. This is typically what you want when writting plugins, for example. Be careful: listing peer dependencies will have side effects on the way your package will be executed by your consumers. Check the documentation for more information.
+          Peer dependencies are inherited dependencies - the consumer of your package will be tasked to provide them. This is typically what you want when writing plugins, for example. Be careful: listing peer dependencies will have side effects on the way your package will be executed by your consumers. Check the documentation for more information.
         </>}
       >
         <JsonScalarProperty
