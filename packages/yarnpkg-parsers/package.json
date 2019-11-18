@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/parsers",
   "version": "2.0.0-rc.5",
+  "nextVersion": {
+    "semver": "2.0.0-rc.6",
+    "nonce": "1675883075532795"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "js-yaml": "^3.10.0"

@@ -2,7 +2,8 @@
   "name": "@yarnpkg/plugin-essentials",
   "version": "2.0.0-rc.11",
   "nextVersion": {
-    "nonce": "4569853904343305"
+    "semver": "2.0.0-rc.12",
+    "nonce": "1330368298504169"
   },
   "main": "./sources/index.ts",
   "dependencies": {

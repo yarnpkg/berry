@@ -2,7 +2,8 @@
   "name": "@yarnpkg/plugin-dlx",
   "version": "2.0.0-rc.4",
   "nextVersion": {
-    "nonce": "2472217859823041"
+    "semver": "2.0.0-rc.5",
+    "nonce": "732115750637111"
   },
   "main": "./sources/index.ts",
   "dependencies": {

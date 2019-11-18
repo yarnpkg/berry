@@ -2,7 +2,8 @@
   "name": "@yarnpkg/plugin-constraints",
   "version": "2.0.0-rc.4",
   "nextVersion": {
-    "nonce": "7782734775761707"
+    "semver": "2.0.0-rc.5",
+    "nonce": "1914291181079877"
   },
   "repository": {
     "type": "git",
