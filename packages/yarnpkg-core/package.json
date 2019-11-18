@@ -32,7 +32,7 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.15",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.16",
     "@yarnpkg/plugin-link": "workspace:2.0.0-rc.5",
     "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.9"
   },

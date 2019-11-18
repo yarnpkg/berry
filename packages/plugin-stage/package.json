@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@yarnpkg/builder": "workspace:2.0.0-rc.12",
-    "@yarnpkg/cli": "workspace:2.0.0-rc.15",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.16",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "typescript": "next"
   },

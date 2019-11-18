@@ -12,7 +12,7 @@
     "@yarnpkg/core": "^2.0.0-rc.13"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.15",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.16",
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
   },
   "repository": {
