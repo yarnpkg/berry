@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-constraints",
   "version": "2.0.0-rc.5",
+  "nextVersion": {
+    "semver": "2.0.0-rc.6",
+    "nonce": "5296508228350879"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
@@ -25,5 +29,12 @@
   "scripts": {
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
-  }
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ]
 }

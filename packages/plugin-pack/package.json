@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-pack",
   "version": "2.0.0-rc.8",
+  "nextVersion": {
+    "semver": "2.0.0-rc.9",
+    "nonce": "5920911593854815"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/tar-stream": "1.6.0",
@@ -25,5 +29,12 @@
   "scripts": {
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
-  }
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ]
 }

@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-essentials",
   "version": "2.0.0-rc.12",
+  "nextVersion": {
+    "semver": "2.0.0-rc.13",
+    "nonce": "7473523863954647"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
@@ -27,5 +31,12 @@
   "scripts": {
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
-  }
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ]
 }

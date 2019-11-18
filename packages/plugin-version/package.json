@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-version",
   "version": "2.0.0-rc.9",
+  "nextVersion": {
+    "semver": "2.0.0-rc.10",
+    "nonce": "5680732129431369"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",

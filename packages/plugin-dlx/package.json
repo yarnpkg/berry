@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-dlx",
   "version": "2.0.0-rc.5",
+  "nextVersion": {
+    "semver": "2.0.0-rc.6",
+    "nonce": "8451945649528511"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
@@ -23,5 +27,12 @@
   "scripts": {
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
-  }
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ]
 }

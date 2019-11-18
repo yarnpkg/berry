@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-interactive-tools",
   "version": "2.0.0-rc.5",
+  "nextVersion": {
+    "semver": "2.0.0-rc.6",
+    "nonce": "3623244616751937"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/libui": "workspace:2.0.0-rc.1",
@@ -30,5 +34,12 @@
     "update-local": "yarn build:plugin-interactive-tools && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
-  }
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ]
 }

@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-exec",
   "version": "2.0.0-rc.8",
+  "nextVersion": {
+    "semver": "2.0.0-rc.9",
+    "nonce": "8261015122226211"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/builder": "workspace:2.0.0-rc.12",
@@ -23,5 +27,12 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
-  }
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ]
 }
