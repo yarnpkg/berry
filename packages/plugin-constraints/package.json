@@ -1,17 +1,13 @@
 {
   "name": "@yarnpkg/plugin-constraints",
-  "version": "2.0.0-rc.4",
-  "nextVersion": {
-    "semver": "2.0.0-rc.5",
-    "nonce": "1914291181079877"
-  },
+  "version": "2.0.0-rc.5",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.10",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
     "clipanion": "^2.1.4",
     "inquirer": "^6.2.0",
     "lodash": "^4.17.15",
@@ -23,8 +19,8 @@
     "@yarnpkg/core": "^2.0.0-rc.13"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.14",
-    "@yarnpkg/core": "workspace:2.0.0-rc.13"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.15",
+    "@yarnpkg/core": "workspace:2.0.0-rc.14"
   },
   "scripts": {
     "postpack": "rm -rf lib",

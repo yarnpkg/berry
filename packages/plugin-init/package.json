@@ -1,14 +1,10 @@
 {
   "name": "@yarnpkg/plugin-init",
-  "version": "2.0.0-rc.4",
-  "nextVersion": {
-    "semver": "2.0.0-rc.5",
-    "nonce": "8953755684979445"
-  },
+  "version": "2.0.0-rc.5",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.10",
-    "@yarnpkg/json-proxy": "workspace:2.0.0-rc.3",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
+    "@yarnpkg/json-proxy": "workspace:2.0.0-rc.4",
     "clipanion": "^2.1.4"
   },
   "peerDependencies": {
@@ -16,8 +12,8 @@
     "@yarnpkg/core": "^2.0.0-rc.13"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.14",
-    "@yarnpkg/core": "workspace:2.0.0-rc.13"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.15",
+    "@yarnpkg/core": "workspace:2.0.0-rc.14"
   },
   "repository": {
     "type": "git",

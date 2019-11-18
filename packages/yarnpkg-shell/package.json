@@ -1,14 +1,10 @@
 {
   "name": "@yarnpkg/shell",
-  "version": "2.0.0-rc.3",
-  "nextVersion": {
-    "semver": "2.0.0-rc.4",
-    "nonce": "7568004156362579"
-  },
+  "version": "2.0.0-rc.4",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.10",
-    "@yarnpkg/parsers": "workspace:2.0.0-rc.5",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
+    "@yarnpkg/parsers": "workspace:2.0.0-rc.6",
     "cross-spawn": "^6.0.5",
     "stream-buffers": "^3.0.2"
   },
