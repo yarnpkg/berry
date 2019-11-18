@@ -3,7 +3,7 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.17",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.18",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
     "invariant": "^2.2.4",
