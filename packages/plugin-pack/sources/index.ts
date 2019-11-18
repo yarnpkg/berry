@@ -73,4 +73,4 @@ const plugin: Plugin<CoreHooks & Hooks> = {
 };
 
 // eslint-disable-next-line arca/no-default-export
-export default plugin;
+export default plugin as Plugin;

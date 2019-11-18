@@ -20,8 +20,7 @@ const plugin: Plugin<GitHooks> = {
       }
     },
   },
-  fetchers: [],
 };
 
 // eslint-disable-next-line arca/no-default-export
-export default plugin;
+export default plugin as Plugin;

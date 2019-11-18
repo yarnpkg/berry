@@ -1,14 +1,18 @@
 {
   "name": "@yarnpkg/plugin-http",
-  "version": "2.0.0-rc.2",
+  "version": "2.0.0-rc.3",
   "nextVersion": {
-    "semver": "2.0.0-rc.3",
-    "nonce": "237496043188591"
+    "nonce": "7899233566328569"
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/core": "workspace:2.0.0-rc.12",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.8"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.10"
+  },
+  "peerDependencies": {
+    "@yarnpkg/core": "^2.0.0-rc.13"
+  },
+  "devDependencies": {
+    "@yarnpkg/core": "workspace:2.0.0-rc.13"
   },
   "repository": {
     "type": "git",

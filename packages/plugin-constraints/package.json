@@ -1,9 +1,8 @@
 {
   "name": "@yarnpkg/plugin-constraints",
-  "version": "2.0.0-rc.3",
+  "version": "2.0.0-rc.4",
   "nextVersion": {
-    "semver": "2.0.0-rc.4",
-    "nonce": "599453533998555"
+    "nonce": "7782734775761707"
   },
   "repository": {
     "type": "git",
@@ -11,14 +10,20 @@
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.12",
-    "@yarnpkg/core": "workspace:2.0.0-rc.12",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.8",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.10",
     "clipanion": "^2.1.4",
     "inquirer": "^6.2.0",
     "lodash": "^4.17.15",
     "node-emoji": "^1.8.1",
     "tau-prolog": "^0.2.66"
+  },
+  "peerDependencies": {
+    "@yarnpkg/cli": "^2.0.0-rc.14",
+    "@yarnpkg/core": "^2.0.0-rc.13"
+  },
+  "devDependencies": {
+    "@yarnpkg/cli": "workspace:2.0.0-rc.14",
+    "@yarnpkg/core": "workspace:2.0.0-rc.13"
   },
   "scripts": {
     "postpack": "rm -rf lib",

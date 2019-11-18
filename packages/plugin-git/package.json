@@ -1,17 +1,21 @@
 {
   "name": "@yarnpkg/plugin-git",
-  "version": "2.0.0-rc.6",
+  "version": "2.0.0-rc.7",
   "nextVersion": {
-    "semver": "2.0.0-rc.7",
-    "nonce": "6731180751827473"
+    "nonce": "1238819157668593"
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/core": "workspace:2.0.0-rc.12",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.8",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.10",
     "git-url-parse": "11.1.2",
     "semver": "^5.6.0",
     "tmp": "^0.1.0"
+  },
+  "peerDependencies": {
+    "@yarnpkg/core": "^2.0.0-rc.13"
+  },
+  "devDependencies": {
+    "@yarnpkg/core": "workspace:2.0.0-rc.13"
   },
   "repository": {
     "type": "git",

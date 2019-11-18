@@ -11,6 +11,7 @@ import {Project}                                              from './Project';
 import {ReportError, Report}                                  from './Report';
 import {StreamReport}                                         from './StreamReport';
 import {Workspace}                                            from './Workspace';
+import {YarnVersion}                                          from './YarnVersion';
 import * as execUtils                                         from './execUtils';
 import * as miscUtils                                         from './miscUtils';
 import * as structUtils                                       from './structUtils';
@@ -42,7 +43,7 @@ export async function makeScriptEnv({project, lifecycleScript}: {project?: Proje
   // spawned by Yarn (we thus ensure that they always use the right version)
   await makePathWrapper(binFolder, toFilename(`node`), process.execPath);
 
-  if (typeof YARN_VERSION !== `undefined`) {
+  if (YarnVersion !== null) {
     await makePathWrapper(binFolder, toFilename(`run`), process.execPath, [process.argv[1], `run`]);
     await makePathWrapper(binFolder, toFilename(`yarn`), process.execPath, [process.argv[1]]);
     await makePathWrapper(binFolder, toFilename(`yarnpkg`), process.execPath, [process.argv[1]]);
@@ -59,8 +60,8 @@ export async function makeScriptEnv({project, lifecycleScript}: {project?: Proje
   scriptEnv.npm_execpath = `${nativeBinFolder}${npath.sep}yarn`;
   scriptEnv.npm_node_execpath = `${nativeBinFolder}${npath.sep}node`;
 
-  const version = typeof YARN_VERSION !== `undefined`
-    ? `yarn/${YARN_VERSION}`
+  const version = YarnVersion !== null
+    ? `yarn/${YarnVersion}`
     : `yarn/${miscUtils.dynamicRequire(`@yarnpkg/core`).version}-core`;
 
   scriptEnv.npm_config_user_agent = `${version} npm/? node/${process.versions.node} ${process.platform} ${process.arch}`;

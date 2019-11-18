@@ -1,4 +1,4 @@
-/// <reference path="../../types/module/index.d.ts"/>
+/// <reference path="./module.d.ts"/>
 
 import {FakeFS, NativePath, NoFS, Path, PortablePath, VirtualFS, npath} from '@yarnpkg/fslib';
 import {ppath, toFilename}                                              from '@yarnpkg/fslib';

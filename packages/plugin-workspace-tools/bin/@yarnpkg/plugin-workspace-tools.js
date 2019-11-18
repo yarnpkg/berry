@@ -352,7 +352,7 @@ module.exports.factory = function (require) {
     category: `Workspace-related commands`,
     description: `run a command on all workspaces`,
     details: `
-        > In order to use this command you need to add \`@yarnpkg/plugin-workspace-tools\` to your plugins.
+        > In order to use this command you will need to add \`@yarnpkg/plugin-workspace-tools\` to your plugins. Check the documentation for \`yarn plugin import\` for more details.
 
         This command will run a given sub-command on all child workspaces that define it (any workspace that doesn't define it will be just skiped). Various flags can alter the exact behavior of the command:
 

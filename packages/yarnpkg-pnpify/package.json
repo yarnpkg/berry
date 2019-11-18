@@ -1,21 +1,20 @@
 {
   "name": "@yarnpkg/pnpify",
-  "version": "2.0.0-rc.9",
+  "version": "2.0.0-rc.10",
   "nextVersion": {
-    "semver": "2.0.0-rc.10",
-    "nonce": "634229662692597"
+    "nonce": "1611158090893505"
   },
   "main": "./sources/boot-dev.js",
   "bin": "./sources/boot-cli-dev.js",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.8",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.10",
     "comment-json": "^2.2.0",
     "cross-spawn": "^6.0.5"
   },
   "devDependencies": {
     "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/pnp": "workspace:2.0.0-rc.8",
+    "@yarnpkg/pnp": "workspace:2.0.0-rc.10",
     "eslint": "^5.16.0",
     "typescript": "next"
   },
