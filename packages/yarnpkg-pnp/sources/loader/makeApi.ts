@@ -654,6 +654,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     VERSIONS,
     topLevel,
 
+    getLocator: (name: string, referencish: [string, string] | string): PackageLocator => {
+      if (Array.isArray(referencish)) {
+        return {name: referencish[0], reference: referencish[1]};
+      } else {
+        return {name, reference: referencish};
+      }
+    },
+
     getDependencyTreeRoots: () => {
       return [...runtimeState.dependencyTreeRoots];
     },

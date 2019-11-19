@@ -88,7 +88,9 @@ export type PnpSettings = {
 
 export type PnpApi = {
   VERSIONS: {std: number, [key: string]: number},
+
   topLevel: {name: null, reference: null},
+  getLocator: (name: string, referencish: string | [string, string]) => PackageLocator,
 
   getDependencyTreeRoots: () => Array<PackageLocator>,
   getPackageInformation: (locator: PackageLocator) => PackageInformation<NativePath> | null,
