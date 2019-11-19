@@ -42351,6 +42351,19 @@ function makeApi(runtimeState, opts) {
   return {
     VERSIONS,
     topLevel,
+    getLocator: (name, referencish) => {
+      if (Array.isArray(referencish)) {
+        return {
+          name: referencish[0],
+          reference: referencish[1]
+        };
+      } else {
+        return {
+          name,
+          reference: referencish
+        };
+      }
+    },
     getDependencyTreeRoots: () => {
       return [...runtimeState.dependencyTreeRoots];
     },
