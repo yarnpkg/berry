@@ -11,7 +11,7 @@
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
     "@yarnpkg/monorepo": "workspace:0.0.0",
-    "is-wsl": "^1.1.0",
+    "is-wsl": "^2.1.1",
     "pkg-tests-core": "workspace:0.0.0"
   },
   "scripts": {

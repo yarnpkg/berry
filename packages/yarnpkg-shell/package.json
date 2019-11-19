@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/shell",
   "version": "2.0.0-rc.4",
+  "nextVersion": {
+    "nonce": "2425446161881599"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
@@ -9,6 +12,8 @@
     "stream-buffers": "^3.0.2"
   },
   "devDependencies": {
+    "@types/cross-spawn": "6.0.0",
+    "@types/tmp": "^0.0.33",
     "tmp": "^0.1.0"
   },
   "scripts": {

@@ -3,6 +3,11 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
+    "@types/invariant": "^2.2.30",
+    "@types/minimatch": "^3.0.3",
+    "@types/semver": "^6.0.2",
+    "@types/tar-fs": "^1.16.1",
+    "@types/tmp": "^0.0.33",
     "@yarnpkg/cli": "workspace:2.0.0-rc.18",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",

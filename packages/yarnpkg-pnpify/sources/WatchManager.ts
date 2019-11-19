@@ -52,7 +52,7 @@ export class WatchManager extends EventEmitter {
     return watchEventEmitter;
   }
 
-  public notifyWatchers(pathResolver: NodePathResolver) {
+  public notifyWatchers(pathResolver: Pick<NodePathResolver, 'resolvePath'>) {
     for (const [watchPath, dirWatcher] of this.dirWatchers) {
       const newDirEntries = pathResolver.resolvePath(watchPath).dirList || new Set();
       // Difference between new and old directory contents

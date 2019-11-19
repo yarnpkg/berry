@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.18",
   "nextVersion": {
     "semver": "2.0.0-rc.19",
-    "nonce": "4154750493775263"
+    "nonce": "4023024388173495"
   },
   "main": "./sources/index.ts",
   "dependencies": {
@@ -32,6 +32,7 @@
     "yup": "^0.27.0"
   },
   "devDependencies": {
+    "@types/promise.prototype.finally": "^2.0.3",
     "@yarnpkg/builder": "workspace:2.0.0-rc.12",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "@yarnpkg/monorepo": "workspace:0.0.0",

@@ -1,18 +1,22 @@
 {
   "name": "@yarnpkg/check",
   "version": "2.0.0-rc.6",
+  "nextVersion": {
+    "nonce": "3053539837600437"
+  },
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
     "@yarnpkg/cli": "workspace:2.0.0-rc.18",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
     "clipanion": "^2.1.4",
-    "globby": "^8.0.1",
+    "globby": "^10.0.1",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
     "typescript": "next"
   },
   "devDependencies": {
+    "@types/micromatch": "^3.1.0",
     "@yarnpkg/monorepo": "workspace:0.0.0"
   },
   "scripts": {

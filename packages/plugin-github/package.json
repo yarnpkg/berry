@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-github",
   "version": "2.0.0-rc.7",
+  "nextVersion": {
+    "nonce": "622959463003707"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
@@ -11,6 +14,7 @@
     "@yarnpkg/plugin-git": "^2.0.0-rc.7"
   },
   "devDependencies": {
+    "@types/tmp": "^0.0.33",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "@yarnpkg/plugin-git": "workspace:2.0.0-rc.10"
   },

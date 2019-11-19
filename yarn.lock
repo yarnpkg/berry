@@ -3114,10 +3114,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nodelib/fs.scandir@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@nodelib/fs.scandir@npm:2.1.3"
+  dependencies:
+    "@nodelib/fs.stat": "npm:2.0.3"
+    run-parallel: "npm:^1.1.9"
+  checksum: d5e81e8aa4d9dffa96889ece754d3d8fa85b83a8d87969c35d348c62bb51106c0f7619c5113c09b834ec038ea85e99facaff4904cf2d98828c0824969c1363ce
+  languageName: node
+  linkType: hard
+
+"@nodelib/fs.stat@npm:2.0.3, @nodelib/fs.stat@npm:^2.0.2":
+  version: 2.0.3
+  resolution: "@nodelib/fs.stat@npm:2.0.3"
+  checksum: de906cc5a58d86d0ddecc78894b8af5daeeccf412934b74f4e2be3c361e32b214f4ee3be313a31346ef834b035f3e904418932507f74e3f0c594d94ba5f1e1a4
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.stat@npm:^1.1.2":
   version: 1.1.3
   resolution: "@nodelib/fs.stat@npm:1.1.3"
   checksum: 911e770e7cb529b2d47244cd7d298776cf14563d536d82b23d7f6ad44da21989f68398c2c0b53ce3618e5fffe22bf0b3f11f54c7f962fcdf8f8c1e583981e96f
+  languageName: node
+  linkType: hard
+
+"@nodelib/fs.walk@npm:^1.2.3":
+  version: 1.2.4
+  resolution: "@nodelib/fs.walk@npm:1.2.4"
+  dependencies:
+    "@nodelib/fs.scandir": "npm:2.1.3"
+    fastq: "npm:^1.6.0"
+  checksum: ba08321f204dbe27b2b6340c559539813580c068a7485067d4656d9b6b7a2391bf5398e2a801341a634cde25288d47f34a804e5c2458b655bdb619b9a7b9354f
   languageName: node
   linkType: hard
 
@@ -3465,17 +3492,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/glob@npm:*":
-  version: 7.1.1
-  resolution: "@types/glob@npm:7.1.1"
-  dependencies:
-    "@types/events": "npm:*"
-    "@types/minimatch": "npm:*"
-    "@types/node": "npm:*"
-  checksum: 6b33e589a6d9ca47da1571ba153b41b055697af1a5849f6d13b527fbf4a05f82b3c5ddaae435bf6cb57b8e6db31ee45c05004f4f50c561a1f50bd87daf546e60
-  languageName: node
-  linkType: hard
-
 "@types/glob@npm:^5.0.30":
   version: 5.0.36
   resolution: "@types/glob@npm:5.0.36"
@@ -3487,13 +3503,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/globby@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "@types/globby@npm:8.0.0"
+"@types/glob@npm:^7.1.1":
+  version: 7.1.1
+  resolution: "@types/glob@npm:7.1.1"
   dependencies:
-    "@types/glob": "npm:*"
-    fast-glob: "npm:^2.0.2"
-  checksum: 9ffc6654a10d2e8c96f6edb8b50c5b95aadd04ba071dc53da157cf665b6b97726724c5c8f89543e6140d2f5f50ed242fd128517cf020c201fb683faba774db75
+    "@types/events": "npm:*"
+    "@types/minimatch": "npm:*"
+    "@types/node": "npm:*"
+  checksum: 6b33e589a6d9ca47da1571ba153b41b055697af1a5849f6d13b527fbf4a05f82b3c5ddaae435bf6cb57b8e6db31ee45c05004f4f50c561a1f50bd87daf546e60
   languageName: node
   linkType: hard
 
@@ -4597,6 +4614,11 @@ __metadata:
     "@babel/core": "npm:^7.5.5"
     "@babel/plugin-syntax-class-properties": "npm:^7.2.0"
     "@babel/plugin-syntax-decorators": "npm:^7.2.0"
+    "@types/filesize": "npm:4.1.0"
+    "@types/terser-webpack-plugin": "npm:^1.2.1"
+    "@types/webpack": "npm:^4.32.1"
+    "@types/webpack-merge": "npm:^4.1.5"
+    "@types/webpack-sources": "npm:^0.1.5"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
     "@yarnpkg/monorepo": "workspace:0.0.0"
@@ -4625,12 +4647,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/check@workspace:packages/yarnpkg-check"
   dependencies:
+    "@types/micromatch": "npm:^3.1.0"
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     clipanion: "npm:^2.1.4"
-    globby: "npm:^8.0.1"
+    globby: "npm:^10.0.1"
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
     typescript: "npm:next"
@@ -4643,6 +4666,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
+    "@types/promise.prototype.finally": "npm:^2.0.3"
     "@yarnpkg/builder": "workspace:2.0.0-rc.12"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
@@ -4680,6 +4704,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
+    "@types/cross-spawn": "npm:6.0.0"
+    "@types/got": "npm:^8.3.4"
+    "@types/is-ci": "npm:^2.0.0"
+    "@types/micromatch": "npm:^3.1.0"
+    "@types/semver": "npm:^6.0.2"
+    "@types/supports-color": "npm:^5.3.0"
+    "@types/tar": "npm:^4.0.0"
+    "@types/tmp": "npm:^0.0.33"
+    "@types/tunnel": "npm:^0.0.0"
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.4"
@@ -4693,7 +4726,7 @@ __metadata:
     chalk: "npm:^2.4.1"
     clipanion: "npm:^2.1.4"
     cross-spawn: "npm:^6.0.5"
-    globby: "npm:^8.0.1"
+    globby: "npm:^10.0.1"
     got: "npm:^9.2.2"
     is-ci: "npm:^2.0.0"
     json-file-plus: "npm:^3.3.1"
@@ -4786,6 +4819,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libui@workspace:packages/yarnpkg-libui"
   dependencies:
+    "@types/react": "npm:^16.8.0"
     ink: "npm:^2.3.0"
     react: "npm:^16.8.4"
     redux: "npm:^4.0.0"
@@ -4830,7 +4864,6 @@ __metadata:
     "@types/filesize": "npm:4.1.0"
     "@types/fs-extra": "npm:^5.0.4"
     "@types/git-url-parse": "npm:9.0.0"
-    "@types/globby": "npm:^8.0.0"
     "@types/got": "npm:^8.3.4"
     "@types/inquirer": "npm:^0.0.43"
     "@types/invariant": "npm:^2.2.30"
@@ -4903,6 +4936,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-constraints@workspace:packages/plugin-constraints"
   dependencies:
+    "@types/lodash": "npm:^4.14.136"
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
@@ -4921,6 +4955,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-dlx@workspace:packages/plugin-dlx"
   dependencies:
+    "@types/tmp": "npm:^0.0.33"
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
@@ -4937,6 +4972,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
+    "@types/inquirer": "npm:^0.0.43"
+    "@types/semver": "npm:^6.0.2"
+    "@types/treeify": "npm:^1.0.0"
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
@@ -4957,6 +4995,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-exec@workspace:packages/plugin-exec"
   dependencies:
+    "@types/tmp": "npm:^0.0.33"
     "@yarnpkg/builder": "workspace:2.0.0-rc.12"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
@@ -4982,6 +5021,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-git@workspace:packages/plugin-git"
   dependencies:
+    "@types/semver": "npm:^6.0.2"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
     git-url-parse: "npm:11.1.2"
@@ -4996,6 +5036,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-github@workspace:packages/plugin-github"
   dependencies:
+    "@types/tmp": "npm:^0.0.33"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
     "@yarnpkg/plugin-git": "workspace:2.0.0-rc.10"
@@ -5036,6 +5077,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-interactive-tools@workspace:packages/plugin-interactive-tools"
   dependencies:
+    "@types/diff": "npm:^4.0.2"
+    "@types/react": "npm:^16.8.0"
     "@yarnpkg/builder": "workspace:2.0.0-rc.12"
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
@@ -5068,6 +5111,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-npm-cli@workspace:packages/plugin-npm-cli"
   dependencies:
+    "@types/inquirer": "npm:^0.0.43"
+    "@types/ssri": "npm:^6.0.1"
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
@@ -5089,6 +5134,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
+    "@types/inquirer": "npm:^0.0.43"
+    "@types/semver": "npm:^6.0.2"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
     inquirer: "npm:^6.2.0"
@@ -5102,6 +5149,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pack@workspace:packages/plugin-pack"
   dependencies:
+    "@types/micromatch": "npm:^3.1.0"
     "@types/tar-stream": "npm:1.6.0"
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
@@ -5169,6 +5217,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-version@workspace:packages/plugin-version"
   dependencies:
+    "@types/react": "npm:^16.8.0"
+    "@types/semver": "npm:^6.0.2"
+    "@types/yup": "npm:0.26.12"
     "@yarnpkg/builder": "workspace:2.0.0-rc.12"
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
@@ -5191,6 +5242,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
   dependencies:
+    "@types/yup": "npm:0.26.12"
     "@yarnpkg/builder": "workspace:2.0.0-rc.12"
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
@@ -5223,6 +5275,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify"
   dependencies:
+    "@types/comment-json": "npm:^1.1.1"
+    "@types/cross-spawn": "npm:6.0.0"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/pnp": "workspace:2.0.0-rc.11"
@@ -5247,6 +5301,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/shell@workspace:packages/yarnpkg-shell"
   dependencies:
+    "@types/cross-spawn": "npm:6.0.0"
+    "@types/tmp": "npm:^0.0.33"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
     "@yarnpkg/parsers": "workspace:2.0.0-rc.6"
     cross-spawn: "npm:^6.0.5"
@@ -5277,7 +5333,7 @@ __metadata:
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
     "@yarnpkg/monorepo": "workspace:0.0.0"
-    is-wsl: "npm:^1.1.0"
+    is-wsl: "npm:^2.1.1"
     pkg-tests-core: "workspace:0.0.0"
   languageName: unknown
   linkType: soft
@@ -5808,6 +5864,13 @@ __metadata:
   dependencies:
     array-uniq: "npm:^1.0.1"
   checksum: 4c3a504e4caf40ead2d9a2cdd2c3167a2c7abc5a310f09375b1585d268564faa4b968934f44aee1f11c5301e9e54d720e00e0dcbb6474912d38cc073b4060059
+  languageName: node
+  linkType: hard
+
+"array-union@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "array-union@npm:2.1.0"
+  checksum: 60994e65b1cad2548478f36195c6829e7e9f7c9a46f2cca32bbf98f048fc9d4fc045b735559442a7a7c573453aa5d4aff2ee3d07e87621078e0fa74513000ad5
   languageName: node
   linkType: hard
 
@@ -9480,6 +9543,15 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"dir-glob@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "dir-glob@npm:3.0.1"
+  dependencies:
+    path-type: "npm:^4.0.0"
+  checksum: 39531b593f4df4289e3006b00b003ef37ff6297342bb81601d35ad07864134dcbf83fe170165ba9eb4dc078592e568ad202edd47a6b58c50771cea2d4d2faf22
+  languageName: node
+  linkType: hard
+
 "dns-equal@npm:^1.0.0":
   version: 1.0.0
   resolution: "dns-equal@npm:1.0.0"
@@ -10866,6 +10938,19 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"fast-glob@npm:^3.0.3":
+  version: 3.1.0
+  resolution: "fast-glob@npm:3.1.0"
+  dependencies:
+    "@nodelib/fs.stat": "npm:^2.0.2"
+    "@nodelib/fs.walk": "npm:^1.2.3"
+    glob-parent: "npm:^5.1.0"
+    merge2: "npm:^1.3.0"
+    micromatch: "npm:^4.0.2"
+  checksum: b5e5f504eb6de30b020251e5d09ce3240e782816b953c5defba7db16e2c00cf2dfc8714f7f315ec3c3d6c19ed10836b1c707983ea76fa9397994dcad3835978c
+  languageName: node
+  linkType: hard
+
 "fast-json-stable-stringify@npm:^2.0.0":
   version: 2.0.0
   resolution: "fast-json-stable-stringify@npm:2.0.0"
@@ -10884,6 +10969,15 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 1.1.2
   resolution: "fastparse@npm:1.1.2"
   checksum: 1303efc48a37bd267d7040c4ea800c317fd187a34eb0769f8ed9e68323b6da7e14d9dc52a71b1dd82931f3ba1cacca10c3e265777e6eb6949311f47754c34932
+  languageName: node
+  linkType: hard
+
+"fastq@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "fastq@npm:1.6.0"
+  dependencies:
+    reusify: "npm:^1.0.0"
+  checksum: 80812d7a9c69df16edcaf8da14bd9f0a0571a5314e89fe13486fa4d4d41e32f7e62656ae73d0db81cc7b43d66c96a9e09e20bb1d25f7af08a01e1fc476117397
   languageName: node
   linkType: hard
 
@@ -12376,6 +12470,15 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"glob-parent@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "glob-parent@npm:5.1.0"
+  dependencies:
+    is-glob: "npm:^4.0.1"
+  checksum: fa1b02ced1be635d5849476e90fc12b01678bd1726aa2cc3a94fb05fb47d02728a7315c1319be8d7cce3a05ccb66127912e46c776d999f3faf0630315d95c01a
+  languageName: node
+  linkType: hard
+
 "glob-to-regexp@npm:^0.3.0":
   version: 0.3.0
   resolution: "glob-to-regexp@npm:0.3.0"
@@ -12481,6 +12584,22 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 9.18.0
   resolution: "globals@npm:9.18.0"
   checksum: a54fe099a28d313297b267e823b8fc7af9cfe8e48d18eba38c659fb9c132de4cec7d08f92842df3fdaa24a4dd64cd0f9e18e0b889f3919afc37cfb134e216b78
+  languageName: node
+  linkType: hard
+
+"globby@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "globby@npm:10.0.1"
+  dependencies:
+    "@types/glob": "npm:^7.1.1"
+    array-union: "npm:^2.1.0"
+    dir-glob: "npm:^3.0.1"
+    fast-glob: "npm:^3.0.3"
+    glob: "npm:^7.1.3"
+    ignore: "npm:^5.1.1"
+    merge2: "npm:^1.2.3"
+    slash: "npm:^3.0.0"
+  checksum: 7c113286389ff8df12be6e1806837d37ab0f2d020528e7042ba7dac3b2d31ab6054b3a642566028a5d386d3553f6ed5681ddc5d2b339fbba3c4b4c846fa288cc
   languageName: node
   linkType: hard
 
@@ -13483,6 +13602,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"ignore@npm:^5.1.1":
+  version: 5.1.4
+  resolution: "ignore@npm:5.1.4"
+  checksum: fede475966a10c234369ac949144d7256b38ad197c54b13e8bc1ba6235f6522999af65bc271896e141c6321089389262cdf518f9cdfe3dfc3b2f2c800879660c
+  languageName: node
+  linkType: hard
+
 "image-size@npm:^0.5.0":
   version: 0.5.5
   resolution: "image-size@npm:0.5.5"
@@ -14263,6 +14389,15 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"is-glob@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "is-glob@npm:4.0.1"
+  dependencies:
+    is-extglob: "npm:^2.1.1"
+  checksum: f9cd5a68c8a2ea0573053a11819a0e79e16f549ec80efa134977004cf8bfa935850de157bb52f29116b33dc0277f29544a70206ec95e27acec01fa4888d019e5
+  languageName: node
+  linkType: hard
+
 "is-hexadecimal@npm:^1.0.0":
   version: 1.0.2
   resolution: "is-hexadecimal@npm:1.0.2"
@@ -14594,6 +14729,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 1.1.0
   resolution: "is-wsl@npm:1.1.0"
   checksum: b74ad4284411257afed846a6f8e63306720707e04e838ee8422068219864975da093cb1f26d06fc65c706b76aebdc0f5f58bba3a2ec5ac5cc4c886a42e703f2b
+  languageName: node
+  linkType: hard
+
+"is-wsl@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "is-wsl@npm:2.1.1"
+  checksum: 8e1f3e12e7ab835d8161c7fae0096a9b275b12c6b5f21e88d3120a2f2a5011ca95ec3abf70a8972c5520d283fe916424de94ee3497dbeabf73d746aa5db60dc9
   languageName: node
   linkType: hard
 
@@ -16928,6 +17070,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"merge2@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "merge2@npm:1.3.0"
+  checksum: dbcb0fa83b00cab318e82b8c370d13291a7583d2432521959246fc8048549a3d9c4fec3a7f52d17a2c071499b56dcaacceb9f543c08475235cf99d6b9ff9109f
+  languageName: node
+  linkType: hard
+
 "methods@npm:~1.1.2":
   version: 1.1.2
   resolution: "methods@npm:1.1.2"
@@ -18869,6 +19018,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"path-type@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "path-type@npm:4.0.0"
+  checksum: 2b11a18b110715261f17bb450bf8e87d2a45bb41762b52658c1301fe89524be49b1bde75635ddfbfe7289d90ea59f46acfbdd2776d55f195ce393af59c0668b5
+  languageName: node
+  linkType: hard
+
 "path@npm:^0.12.7":
   version: 0.12.7
   resolution: "path@npm:0.12.7"
@@ -19052,6 +19208,11 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 0.0.0-use.local
   resolution: "pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core"
   dependencies:
+    "@types/invariant": "npm:^2.2.30"
+    "@types/minimatch": "npm:^3.0.3"
+    "@types/semver": "npm:^6.0.2"
+    "@types/tar-fs": "npm:^1.16.1"
+    "@types/tmp": "npm:^0.0.33"
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
@@ -21320,6 +21481,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"reusify@npm:^1.0.0":
+  version: 1.0.4
+  resolution: "reusify@npm:1.0.4"
+  checksum: 73f05f896cdefea23f5dddb6d30e50fef159ec77f3a239547cff990956e2e70b9f2d6090180fc98f25a3af912bce2544d7cb246d4fa067524c5bcf02f3ac314b
+  languageName: node
+  linkType: hard
+
 "rgb-regex@npm:^1.0.1":
   version: 1.0.1
   resolution: "rgb-regex@npm:1.0.1"
@@ -21379,6 +21547,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   dependencies:
     is-promise: "npm:^2.1.0"
   checksum: 3f32934686f10c185cfd70fa336b91e004efb5de7c196f0d1d28d056e25a9b465cdf436d1d98454601a4453498ae371c50c10936ae4c796d7df6db5779142c9f
+  languageName: node
+  linkType: hard
+
+"run-parallel@npm:^1.1.9":
+  version: 1.1.9
+  resolution: "run-parallel@npm:1.1.9"
+  checksum: b0dd73a2dfe893825e5a564cbcd24dae7b2aa35da1068d2d422193d86b7a93a8250091560f12488ff363be9cb89f47b6c7e71b1174c41d9ad90e4ed8bc6ac39a
   languageName: node
   linkType: hard
 
@@ -21947,6 +22122,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 2.0.0
   resolution: "slash@npm:2.0.0"
   checksum: 93ae16664d6ca373786020815ec88a5762c7f0f473346dc514480dc894c864fad76450b069930740a9e25ac3aa34eb8b91bc26582da202d1f21579cffea2fe80
+  languageName: node
+  linkType: hard
+
+"slash@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "slash@npm:3.0.0"
+  checksum: ce51757f17a5527c418ba0357ec96806a587383b48120abec4983aea914f7eed82693ea4dcf7d740bf9edc8b2d45ea46c32af2bf18ef0d7f56bc772febab6ba6
   languageName: node
   linkType: hard
 

@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-npm",
   "version": "2.0.0-rc.9",
+  "nextVersion": {
+    "nonce": "7783623320635343"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
@@ -11,6 +14,8 @@
     "@yarnpkg/core": "^2.0.0-rc.13"
   },
   "devDependencies": {
+    "@types/inquirer": "^0.0.43",
+    "@types/semver": "^6.0.2",
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
   },
   "repository": {

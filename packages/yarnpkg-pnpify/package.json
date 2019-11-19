@@ -2,7 +2,7 @@
   "name": "@yarnpkg/pnpify",
   "version": "2.0.0-rc.11",
   "nextVersion": {
-    "nonce": "7262994845631711"
+    "nonce": "2354979574895407"
   },
   "main": "./sources/boot-dev.js",
   "bin": "./sources/boot-cli-dev.js",
@@ -13,6 +13,8 @@
     "cross-spawn": "^6.0.5"
   },
   "devDependencies": {
+    "@types/comment-json": "^1.1.1",
+    "@types/cross-spawn": "6.0.0",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnp": "workspace:2.0.0-rc.11",
     "eslint": "^5.16.0",

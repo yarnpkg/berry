@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/libui",
   "version": "2.0.0-rc.1",
+  "nextVersion": {
+    "nonce": "6952745337238731"
+  },
   "private": true,
   "sideEffects": false,
   "peerDependencies": {
@@ -8,6 +11,7 @@
     "react": "^16.8.4"
   },
   "devDependencies": {
+    "@types/react": "^16.8.0",
     "ink": "^2.3.0",
     "react": "^16.8.4"
   },

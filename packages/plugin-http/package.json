@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-http",
   "version": "2.0.0-rc.6",
+  "nextVersion": {
+    "nonce": "2806497296813905"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"

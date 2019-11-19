@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-exec",
   "version": "2.0.0-rc.10",
+  "nextVersion": {
+    "nonce": "1226748469624903"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/builder": "workspace:2.0.0-rc.12",
@@ -11,6 +14,7 @@
     "@yarnpkg/core": "^2.0.0-rc.13"
   },
   "devDependencies": {
+    "@types/tmp": "^0.0.33",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "typescript": "next"
   },
