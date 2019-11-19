@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-stage",
   "version": "2.0.0-rc.10",
+  "nextVersion": {
+    "nonce": "7312414136561789"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",

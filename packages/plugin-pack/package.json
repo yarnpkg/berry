@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-pack",
   "version": "2.0.0-rc.10",
+  "nextVersion": {
+    "nonce": "3901214687314623"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/tar-stream": "1.6.0",

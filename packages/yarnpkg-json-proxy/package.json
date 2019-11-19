@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/json-proxy",
   "version": "2.0.0-rc.4",
+  "nextVersion": {
+    "nonce": "4328590085497677"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
