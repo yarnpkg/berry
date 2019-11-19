@@ -16,6 +16,39 @@ const S_IFDIR = 0o040000;
 const S_IFREG = 0o100000;
 const S_IFLNK = 0o120000;
 
+class DirEntry {
+  public name: string = ``;
+  public mode: number = 0;
+
+  isBlockDevice() {
+    return false;
+  }
+
+  isCharacterDevice() {
+    return false;
+  }
+
+  isDirectory() {
+    return (this.mode & S_IFMT) === S_IFDIR;
+  }
+
+  isFIFO() {
+    return false;
+  }
+
+  isFile() {
+    return (this.mode & S_IFMT) === S_IFREG;
+  }
+
+  isSocket() {
+    return false;
+  }
+
+  isSymbolicLink() {
+    return (this.mode & S_IFMT) === S_IFLNK;
+  }
+}
+
 class StatEntry {
   public dev: number = 0;
   public ino: number = 0;
@@ -968,11 +1001,19 @@ export class ZipFS extends BasePortableFakeFS {
     return encoding ? data.toString(encoding) : data;
   }
 
-  async readdirPromise(p: PortablePath) {
-    return this.readdirSync(p);
+  async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<DirEntry>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<DirEntry>>;
+  async readdirPromise(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<DirEntry>> {
+    return this.readdirSync(p, {withFileTypes: withFileTypes as any});
   }
 
-  readdirSync(p: PortablePath): Array<Filename> {
+  readdirSync(p: PortablePath): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: false}): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<DirEntry>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<DirEntry>;
+  readdirSync(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<DirEntry> {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`scandir '${p}'`);
@@ -981,7 +1022,15 @@ export class ZipFS extends BasePortableFakeFS {
     if (!directoryListing)
       throw errors.ENOTDIR(`scandir '${p}'`);
 
-    return Array.from(directoryListing);
+    const entries = [...directoryListing];
+    if (!withFileTypes)
+      return entries;
+
+    return entries.map(name => {
+      return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
+        name,
+      });
+    });
   }
 
   async readlinkPromise(p: PortablePath) {

@@ -17,6 +17,9 @@
     "@yarnpkg/core": "^2.0.0-rc.13"
   },
   "devDependencies": {
+    "@types/inquirer": "^0.0.43",
+    "@types/semver": "^6.0.2",
+    "@types/treeify": "^1.0.0",
     "@yarnpkg/cli": "workspace:2.0.0-rc.18",
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
   },

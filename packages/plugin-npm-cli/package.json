@@ -16,6 +16,8 @@
     "@yarnpkg/plugin-pack": "^2.0.0-rc.7"
   },
   "devDependencies": {
+    "@types/inquirer": "^0.0.43",
+    "@types/ssri": "^6.0.1",
     "@yarnpkg/cli": "workspace:2.0.0-rc.18",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.9",

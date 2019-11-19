@@ -11,8 +11,8 @@ const bufferResult = async (command: string, args: Array<string> = [], options: 
   const stdout = new PassThrough();
   const stderr = new PassThrough();
 
-  const stdoutChunks = [];
-  const stderrChunks = [];
+  const stdoutChunks: Array<Buffer> = [];
+  const stderrChunks: Array<Buffer> = [];
 
   stdout.on(`data`, chunk => {
     stdoutChunks.push(chunk);
@@ -24,7 +24,7 @@ const bufferResult = async (command: string, args: Array<string> = [], options: 
 
   const exitCode = await execute(command, args, {...options, stdout, stderr, builtins: {
     [`test-builtin`]: async (args, opts, state) => {
-      const stdinChunks = [];
+      const stdinChunks: Array<Buffer> = [];
 
       state.stdin.on(`data`, chunk => {
         stdinChunks.push(chunk);

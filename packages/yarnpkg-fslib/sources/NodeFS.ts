@@ -1,4 +1,4 @@
-import fs, {Stats}                                          from 'fs';
+import fs, {Dirent, Stats}                                  from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions}  from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}               from './FakeFS';
@@ -278,14 +278,30 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.readFileSync(fsNativePath, encoding);
   }
 
-  async readdirPromise(p: PortablePath) {
-    return await new Promise<Array<string>>((resolve, reject) => {
-      this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
-    }) as Filename[];
+  async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
+  async readdirPromise(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<Dirent>> {
+    return await new Promise<Array<Filename> | Array<Dirent>>((resolve, reject) => {
+      if (withFileTypes) {
+        this.realFs.readdir(npath.fromPortablePath(p), {withFileTypes: true}, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback(value => resolve(value as Filename[]), reject));
+      }
+    });
   }
 
-  readdirSync(p: PortablePath) {
-    return this.realFs.readdirSync(npath.fromPortablePath(p)) as Filename[];
+  readdirSync(p: PortablePath): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: false}): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<Dirent>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
+  readdirSync(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<Dirent> {
+    if (withFileTypes) {
+      return this.realFs.readdirSync(npath.fromPortablePath(p), {withFileTypes: true});
+    } else {
+      return this.realFs.readdirSync(npath.fromPortablePath(p)) as Filename[];
+    }
   }
 
   async readlinkPromise(p: PortablePath) {

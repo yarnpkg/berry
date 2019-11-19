@@ -10,5 +10,8 @@
     "module": "commonjs",
     "strict": true,
     "target": "es2017"
-  }
+  },
+  "exclude": [
+    "packages/yarnpkg-check/fixtures"
+  ]
 }

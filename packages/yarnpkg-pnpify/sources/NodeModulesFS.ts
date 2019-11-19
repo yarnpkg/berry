@@ -1,10 +1,9 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions, toFilename} from '@yarnpkg/fslib';
 import {NodeFS, FakeFS, MkdirOptions, WriteFileOptions, ProxiedFS}     from '@yarnpkg/fslib';
 import {WatchOptions, WatchCallback, Watcher}                          from '@yarnpkg/fslib';
-import {FSPath, NativePath, PortablePath, npath, ppath}                from '@yarnpkg/fslib';
-
+import {FSPath, Filename, NativePath, PortablePath, npath, ppath}      from '@yarnpkg/fslib';
 import {PnpApi}                                                        from '@yarnpkg/pnp';
-import fs                                                              from 'fs';
+import fs, {Dirent}                                                    from 'fs';
 
 import {NodePathResolver, ResolvedPath}                                from './NodePathResolver';
 import {WatchManager}                                                  from './WatchManager';
@@ -369,25 +368,37 @@ class PortableNodeModulesFs extends FakeFS<PortablePath> {
     }
   }
 
-  async readdirPromise(p: PortablePath) {
+  async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
+  async readdirPromise(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<Dirent>> {
     const pnpPath = this.resolvePath(p);
     if (!pnpPath.resolvedPath) {
       throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, scandir '${p}'`);
     } else if (pnpPath.dirList) {
+      if (withFileTypes)
+        throw new Error(`Unimplemented option withFileTypes w/ n_m`);
       return Array.from(pnpPath.dirList);
     } else {
-      return await this.baseFs.readdirPromise(pnpPath.resolvedPath);
+      return await this.baseFs.readdirPromise(pnpPath.resolvedPath, {withFileTypes: withFileTypes as any});
     }
   }
 
-  readdirSync(p: PortablePath) {
+  readdirSync(p: PortablePath): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: false}): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<Dirent>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
+  readdirSync(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<Dirent> {
     const pnpPath = this.resolvePath(p);
     if (!pnpPath.resolvedPath) {
       throw PortableNodeModulesFs.createFsError('ENOENT', `no such file or directory, scandir '${p}'`);
     } else if (pnpPath.dirList) {
+      if (withFileTypes)
+        throw new Error(`Unimplemented option withFileTypes w/ n_m`);
       return Array.from(pnpPath.dirList);
     } else {
-      return this.baseFs.readdirSync(pnpPath.resolvedPath);
+      return this.baseFs.readdirSync(pnpPath.resolvedPath, {withFileTypes: withFileTypes as any});
     }
   }
 

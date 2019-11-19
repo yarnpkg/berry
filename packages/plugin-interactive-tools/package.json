@@ -15,6 +15,8 @@
     "@yarnpkg/plugin-essentials": "^2.0.0-rc.11"
   },
   "devDependencies": {
+    "@types/diff": "^4.0.2",
+    "@types/react": "^16.8.0",
     "@yarnpkg/builder": "workspace:2.0.0-rc.12",
     "@yarnpkg/cli": "workspace:2.0.0-rc.18",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",

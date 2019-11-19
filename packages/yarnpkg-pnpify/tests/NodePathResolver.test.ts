@@ -9,6 +9,13 @@ const makePnpApiMock = (pkgMap: PkgMap): PnpApi => {
   return ({
     VERSIONS: {std: 1},
     topLevel: {name: null, reference: null},
+    getLocator: (name: string, reference: string | [string, string]) => {
+      if (Array.isArray(reference)) {
+        return {name: reference[0], reference: reference[1]};
+      } else {
+        return {name, reference};
+      }
+    },
     resolveUnqualified: jest.fn(),
     resolveRequest: jest.fn(),
     getDependencyTreeRoots: jest.fn(),
