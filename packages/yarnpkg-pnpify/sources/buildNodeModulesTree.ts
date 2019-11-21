@@ -118,6 +118,8 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   const addedIds = new Set<HoisterPackageId>();
   const addPackageToTree = (pkg: PackageInformation<NativePath>, pkgId: HoisterPackageId, parentDepIds: Set<HoisterPackageId>) => {
+    if (addedIds.has(pkgId))
+      return;
     addedIds.add(pkgId);
     const deps = new Set<HoisterPackageId>();
     const peerDeps = new Set<HoisterPackageId>();
@@ -139,7 +141,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     const allDepIds = new Set([...deps, ...peerDeps]);
     for (const depId of allDepIds) {
       const depPkg = packageInfos[depId];
-      if (depPkg && !addedIds.has(depId)) {
+      if (depPkg) {
         addPackageToTree(depPkg, depId, allDepIds);
       }
     }
@@ -242,6 +244,26 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
   buildTree(0, rootPath);
 
   return tree;
+};
+
+/**
+ * Benchmarks raw hoisting performance.
+ *
+ * The function is used for troubleshooting purposes only.
+ *
+ * @param packageTree package tree
+ * @param packages package info
+ *
+ * @returns average raw hoisting time
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const benchmarkRawHoisting = (packageTree: ReadonlyHoisterPackageTree, packages: HoisterPackageInfo[]) => {
+  const iterCount = 100;
+  const startTime = Date.now();
+  for (let iter = 0; iter < iterCount; iter++)
+    hoist(packageTree, packages);
+  const endTime = Date.now();
+  return (endTime - startTime) / iterCount;
 };
 
 /**
