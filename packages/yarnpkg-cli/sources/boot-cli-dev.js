@@ -1,8 +1,17 @@
 const fs = require(`fs`);
 
-// Makes it possible to access our dependencies
-require(`../../../.pnp.js`).setup();
-
+try {
+  // Makes it possible to access our dependencies
+  require(`../../../.pnp.js`).setup();
+} catch (e) {
+  if (e.code === 'MODULE_NOT_FOUND') {
+    console.warn('No .pnp.js found, using binary Yarn version');
+    require('../../yarnpkg-cli/bin/yarn');
+    return;
+  } else {
+    throw e;
+  }
+}
 // Adds TS support to Node
 require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
 
