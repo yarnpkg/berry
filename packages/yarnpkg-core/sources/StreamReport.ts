@@ -1,8 +1,9 @@
-import {Writable}                                from 'stream';
+import {Writable}                   from 'stream';
 
-import {Configuration}                           from './Configuration';
-import {ProgressDefinition, Report, MessageName} from './Report';
-import {Locator}                                 from './types';
+import {Configuration}              from './Configuration';
+import {MessageName}                from './MessageName';
+import {ProgressDefinition, Report} from './Report';
+import {Locator}                    from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
@@ -96,6 +97,7 @@ export class StreamReport extends Report {
   private progress: Map<AsyncIterable<ProgressDefinition>, ProgressDefinition> = new Map();
   private progressTime: number = 0;
   private progressFrame: number = 0;
+  private progressTimeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor({configuration, stdout, json = false, includeFooter = true, includeLogs = !json, includeInfos = includeLogs, includeWarnings = includeLogs}: StreamReportOptions) {
     super();
@@ -212,26 +214,43 @@ export class StreamReport extends Report {
     }
   }
 
-  async reportProgress(progressIt: AsyncIterable<{progress: number, title?: string}>) {
-    const progressDefinition: ProgressDefinition = {
-      progress: 0,
-      title: undefined,
+  reportProgress(progressIt: AsyncIterable<{progress: number, title?: string}>) {
+    let stopped = false;
+
+    const promise = Promise.resolve().then(async () => {
+      const progressDefinition: ProgressDefinition = {
+        progress: 0,
+        title: undefined,
+      };
+
+      this.progress.set(progressIt, progressDefinition);
+      this.refreshProgress(-1);
+
+      for await (const {progress, title} of progressIt) {
+        if (stopped)
+          continue;
+        if (progressDefinition.progress === progress && progressDefinition.title === title)
+          continue;
+
+        progressDefinition.progress = progress;
+        progressDefinition.title = title;
+        this.refreshProgress();
+      }
+
+      stop();
+    });
+
+    const stop = () => {
+      if (stopped)
+        return;
+
+      stopped = true;
+
+      this.progress.delete(progressIt);
+      this.refreshProgress(+1);
     };
 
-    this.progress.set(progressIt, progressDefinition);
-    this.refreshProgress(-1);
-
-    for await (const {progress, title} of progressIt) {
-      if (progressDefinition.progress === progress && progressDefinition.title === title)
-        continue;
-
-      progressDefinition.progress = progress;
-      progressDefinition.title = title;
-      this.refreshProgress();
-    }
-
-    this.progress.delete(progressIt);
-    this.refreshProgress(+1);
+    return {...promise, stop};
   }
 
   reportJson(data: any) {
@@ -310,6 +329,14 @@ export class StreamReport extends Report {
     if (!this.configuration.get(`enableProgressBars`) || this.json)
       return;
 
+    if (this.progressTimeout !== null)
+      clearTimeout(this.progressTimeout);
+
+    this.progressTimeout = null;
+
+    if (this.progress.size === 0)
+      return;
+
     const now = Date.now();
 
     if (now - this.progressTime > PROGRESS_INTERVAL) {
@@ -334,6 +361,10 @@ export class StreamReport extends Report {
 
       this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(null)}: ${spinner} ${ok}${ko}\n`);
     }
+
+    this.progressTimeout = setTimeout(() => {
+      this.refreshProgress();
+    }, 1000 / 60);
   }
 
   private refreshProgress(delta: number = 0) {

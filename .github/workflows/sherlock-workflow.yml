@@ -41,3 +41,7 @@ jobs:
         args: 'sherlock report'
       env:
         GITHUB_TOKEN: ${{secrets.YARNBOT_TOKEN}}
+    
+    - name: 'Swallowing Errors'
+      if: always()
+      run: 'true'

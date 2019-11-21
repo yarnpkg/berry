@@ -43,23 +43,6 @@ On top of their naming, the way we load the Yarnrc files has also been changed a
 
 - All environment variables prefixed with `YARN_` are automatically used to override the matching configuration settings. So for example, adding `YARN_NPM_REGISTRY_SERVER` into your environment will change the value of [`npmRegistryServer`](/configuration/yarnrc#npmRegistryServer).
 
-## Yarnrc settings
-
-The settings available in the yarnrc file have changed. Using old, unsupported settings will cause Yarn to throw an exception at boot time unless properly guarded.
-
-We recommend you to make sure you only use [modern settings](/configuration/yarnrc) if possible. In case a particular feature you relied on in the v1 is missing in the v2, feel free to open an issue on our repository to discuss whether we should add it back.
-
-If you absolutely need to keep in your file hierarchy both v1 and v2 settings, you can use the special field named `berry`. Should Yarn v2+ find this field, it will use its content and ignore any other field. For example, the following file will work as expected on both the v1 and v2+ releases:
-
-```yaml
-# v1 settings
-workspaces-experimental true
-
-berry:
-  # v2 settings
-  enable-global-cache true
-```
-
 ## Plug'n'Play
 
 Starting from the v2, Plug'n'Play is enabled by default. This might cause compatibility issues in a few corner cases for projects that kept relying on unsafe patterns. Keep an eye on the [dedicated page](/features/pnp), and try to avoid those projects until they correct the situation. Also feel free to open an issue on Yarn's repository as well so that we can keep track of them and offer our help.

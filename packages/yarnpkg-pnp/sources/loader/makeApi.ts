@@ -1,4 +1,4 @@
-/// <reference path="../../types/module/index.d.ts"/>
+/// <reference path="./module.d.ts"/>
 
 import {FakeFS, NativePath, NoFS, Path, PortablePath, VirtualFS, npath} from '@yarnpkg/fslib';
 import {ppath, toFilename}                                              from '@yarnpkg/fslib';
@@ -653,6 +653,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   return {
     VERSIONS,
     topLevel,
+
+    getLocator: (name: string, referencish: [string, string] | string): PackageLocator => {
+      if (Array.isArray(referencish)) {
+        return {name: referencish[0], reference: referencish[1]};
+      } else {
+        return {name, reference: referencish};
+      }
+    },
 
     getDependencyTreeRoots: () => {
       return [...runtimeState.dependencyTreeRoots];

@@ -27,9 +27,7 @@ export class PnpLinker implements Linker {
     if (!xfs.existsSync(pnpPath))
       throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
 
-    const physicalPath = npath.fromPortablePath(pnpPath);
-    const pnpFile = miscUtils.dynamicRequire(physicalPath);
-    delete require.cache[physicalPath];
+    const pnpFile = miscUtils.dynamicRequireNoCache(pnpPath);
 
     const packageLocator = {name: structUtils.requirableIdent(locator), reference: locator.reference};
     const packageInformation = pnpFile.getPackageInformation(packageLocator);

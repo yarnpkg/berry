@@ -2,7 +2,7 @@ import {npath} from '../sources/path';
 
 describe(`Portable paths`, () => {
   for (const platform of [`darwin`, `win32`]) {
-    let realPlatform;
+    let realPlatform: string;
 
     describe(`Platform ${platform}`, () => {
       beforeAll(() => {

@@ -76,8 +76,8 @@ export interface PathUtils<P extends Path> {
 }
 
 export interface ConvertUtils {
-  fromPortablePath: (p: PortablePath) => NativePath;
-  toPortablePath: (p: NativePath) => PortablePath;
+  fromPortablePath: (p: Path) => NativePath;
+  toPortablePath: (p: Path) => PortablePath;
 }
 
 const WINDOWS_PATH_REGEXP = /^[a-zA-Z]:.*$/;

@@ -2,8 +2,9 @@ import {xfs, ppath}                                      from '@yarnpkg/fslib';
 import {parseSyml}                                       from '@yarnpkg/parsers';
 import semver                                            from 'semver';
 
+import {MessageName}                                     from './MessageName';
 import {Project}                                         from './Project';
-import {MessageName, Report}                             from './Report';
+import {Report}                                          from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
 import {DescriptorHash, Descriptor, Locator}             from './types';

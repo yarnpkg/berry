@@ -49,7 +49,7 @@ const YarnrcDoc = () => <>
         name={`defaultSemverRangePrefix`}
         placeholder={`^`}
         description={<>
-          The default prefix for semantic version depenency ranges, which is used for new dependencies that are installed to a manifest. Possible values are <code>"^"</code> (the default), <code>"~"</code> or <code>""</code>.
+          The default prefix for semantic version dependency ranges, which is used for new dependencies that are installed to a manifest. Possible values are <code>"^"</code> (the default), <code>"~"</code> or <code>""</code>.
         </>}
       />
       <SymlScalarProperty
@@ -119,7 +119,7 @@ const YarnrcDoc = () => <>
         name={`enableTimers`}
         placeholder={true}
         description={<>
-          If true, Yarn will print the time spent running each substep when running various commands. Disabling this feature is typically needed for testing purposes, when you want each execution to have exactly the same output as the previous ones.
+          If true, Yarn will print the time spent running each sub-step when running various commands. Disabling this feature is typically needed for testing purposes, when you want each execution to have exactly the same output as the previous ones.
         </>}
       />
       <SymlScalarProperty
@@ -182,7 +182,7 @@ const YarnrcDoc = () => <>
         name={`npmPublishRegistry`}
         placeholder={`https://npm.pkg.github.com`}
         description={<>
-          Defines the registry that must be used when pushing packages. Doesn't need to be defined, in which case the value of <code>npmRegistryServer</code> will be used. Overriden by <code>publishConfig.registry</code>.
+          Defines the registry that must be used when pushing packages. Doesn't need to be defined, in which case the value of <code>npmRegistryServer</code> will be used. Overridden by <code>publishConfig.registry</code>.
         </>}
       />
       <SymlObjectProperty
