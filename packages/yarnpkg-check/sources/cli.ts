@@ -176,6 +176,7 @@ function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, 
         checkForNodeModuleStrings(stringNode, {configuration, report} );
       } break;
     }
+
     ts.forEachChild(node, processNode);
   };
 
