@@ -1547,9 +1547,7 @@ function applyVirtualResolutionMutations({
             // When the parent provides the peer dependency request it must be checked to ensure
             // it is a compatible version.
             const peerPackage = getPackageFromDescriptor(peerDescriptor);
-            if (!semver.validRange(peerRequest.range)) {
-              report.reportWarning(MessageName.INVALID_RANGE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, pkg)} requests peer dependency ${structUtils.prettyDescriptor(project.configuration, peerRequest)} which is not a valid semver range. Cannot ensure peer accuracy with the provided package ${structUtils.prettyLocator(project.configuration, peerPackage)}`);
-            } else if (semverUtils.satisfiesWithPrereleases(peerPackage.version, peerRequest.range)) {
+            if (!semverUtils.satisfiesWithPrereleases(peerPackage.version, peerRequest.range)) {
               report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} provides ${structUtils.prettyLocator(project.configuration, peerPackage)} with version ${peerPackage.version} which does not satisfy the range ${structUtils.prettyDescriptor(project.configuration, peerRequest)} requested by ${structUtils.prettyLocator(project.configuration, pkg)}`);
             }
           }
