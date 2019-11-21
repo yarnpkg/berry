@@ -104,6 +104,14 @@ function checkForUnsafeWebpackLoaderAccess(workspace: Workspace, initializerNode
   report.reportWarning(MessageName.UNNAMED, `${prettyLocation}: Webpack configs from non-private packages should avoid referencing loaders without require.resolve`);
 }
 
+function checkForNodeModuleStrings(stringishNode: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral | ts.TemplateExpression , {configuration, report}: {configuration: Configuration, report: Report}) {
+  const match =  /node_modules/g.test(stringishNode.getText());
+  if (match) {
+    const prettyLocation = ast.prettyNodeLocation(configuration, stringishNode);
+    report.reportError(MessageName.UNNAMED, `${prettyLocation}: Strings should not contain "node_modules"`);
+  }
+}
+
 function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, report}: {configuration: Configuration, report: Report}) {
   const importedModules = new Set<string>();
 
@@ -150,8 +158,24 @@ function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, 
           checkForUnsafeWebpackLoaderAccess(workspace, property.initializer, {configuration, report});
         }
       } break;
-    }
 
+      case ts.SyntaxKind.StringLiteral: {
+        const stringNode = node as ts.StringLiteral;
+        checkForNodeModuleStrings( stringNode, {configuration, report} );
+      } break;
+
+      case ts.SyntaxKind.NoSubstitutionTemplateLiteral: {
+        const stringNode = node as ts.NoSubstitutionTemplateLiteral;
+
+        checkForNodeModuleStrings( stringNode, {configuration, report} );
+      } break;
+
+      case ts.SyntaxKind.TemplateExpression: {
+        const stringNode = node as ts.TemplateExpression;
+
+        checkForNodeModuleStrings( stringNode, {configuration, report} );
+      } break;
+    }
     ts.forEachChild(node, processNode);
   };
 
