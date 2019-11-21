@@ -406,7 +406,14 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
         // Ignore errors
       }
       const entries = Array.from(pnpPath.dirList || [toFilename('node_modules')]).concat(fsDirList).sort();
-      return entries;
+      if (!withFileTypes)
+        return entries;
+
+      return entries.map(name => {
+        return Object.assign(this.lstatSync(ppath.join(p, name)), {
+          name,
+        });
+      });
     } else {
       return await this.baseFs.readdirPromise(pnpPath.resolvedPath, {withFileTypes: withFileTypes as any});
     }
@@ -426,7 +433,14 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
         // Ignore errors
       }
       const entries = Array.from(pnpPath.dirList || [toFilename('node_modules')]).concat(fsDirList).sort();
-      return entries;
+      if (!withFileTypes)
+        return entries;
+
+      return entries.map(name => {
+        return Object.assign(this.lstatSync(ppath.join(p, name)), {
+          name,
+        });
+      });
     } else {
       return this.baseFs.readdirSync(pnpPath.resolvedPath, {withFileTypes: withFileTypes as any});
     }
