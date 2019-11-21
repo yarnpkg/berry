@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import {getPluginConfiguration}                                                                                                                                              from '@yarnpkg/cli';
 import {Cache, Configuration, Project, Report, Workspace, structUtils, ProjectLookup, Manifest, Descriptor, HardDependencies, ThrowReport, StreamReport, MessageName, Ident} from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                                                                                                                     from '@yarnpkg/fslib';

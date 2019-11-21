@@ -1,14 +1,14 @@
 {
   "name": "@yarnpkg/plugin-essentials",
-  "version": "2.0.0-rc.11",
+  "version": "2.0.0-rc.14",
   "nextVersion": {
-    "nonce": "4569853904343305"
+    "nonce": "458508494332507"
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.10",
-    "@yarnpkg/json-proxy": "workspace:2.0.0-rc.3",
-    "@yarnpkg/parsers": "workspace:2.0.0-rc.5",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
+    "@yarnpkg/json-proxy": "workspace:2.0.0-rc.4",
+    "@yarnpkg/parsers": "workspace:2.0.0-rc.6",
     "clipanion": "^2.1.4",
     "inquirer": "^6.2.0",
     "semver": "^5.6.0",
@@ -20,8 +20,11 @@
     "@yarnpkg/core": "^2.0.0-rc.13"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:2.0.0-rc.14",
-    "@yarnpkg/core": "workspace:2.0.0-rc.13"
+    "@types/inquirer": "^0.0.43",
+    "@types/semver": "^6.0.2",
+    "@types/treeify": "^1.0.0",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.18",
+    "@yarnpkg/core": "workspace:2.0.0-rc.14"
   },
   "repository": {
     "type": "git",
@@ -30,5 +33,12 @@
   "scripts": {
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
-  }
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ]
 }

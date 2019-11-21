@@ -1,11 +1,11 @@
-import {constants}                                                             from 'fs';
+import {Dirent, constants}                                                     from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
 import {FakeFS, MkdirOptions, WriteFileOptions}                                from './FakeFS';
 import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
 import {NodeFS}                                                                from './NodeFS';
 import {ZipFS}                                                                 from './ZipFS';
-import {FSPath, PortablePath}                                                  from './path';
+import {Filename, FSPath, PortablePath}                                        from './path';
 
 const ZIP_FD = 0x80000000;
 
@@ -580,21 +580,29 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async readdirPromise(p: PortablePath) {
+  async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
+  async readdirPromise(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<Dirent>> {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.readdirPromise(p);
+      return await this.baseFs.readdirPromise(p, {withFileTypes: withFileTypes as any});
     }, async (zipFs, {subPath}) => {
-      return await zipFs.readdirPromise(subPath);
+      return await zipFs.readdirPromise(subPath, {withFileTypes: withFileTypes as any});
     }, {
       requireSubpath: false,
     });
   }
 
-  readdirSync(p: PortablePath) {
+  readdirSync(p: PortablePath): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: false}): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<Dirent>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
+  readdirSync(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<Dirent> {
     return this.makeCallSync(p, () => {
-      return this.baseFs.readdirSync(p);
+      return this.baseFs.readdirSync(p, {withFileTypes: withFileTypes as any});
     }, (zipFs, {subPath}) => {
-      return zipFs.readdirSync(subPath);
+      return zipFs.readdirSync(subPath, {withFileTypes: withFileTypes as any});
     }, {
       requireSubpath: false,
     });
