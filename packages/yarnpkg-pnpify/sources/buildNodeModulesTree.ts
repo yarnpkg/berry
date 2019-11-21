@@ -175,8 +175,12 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
 
   const makeLeafNode = (locator: PackageLocator): {target: PortablePath, linkType: LinkType} => {
     const info = pnp.getPackageInformation(locator)!;
-    const truePath = (!options.pnpifyFs && pnp.resolveVirtual && locator.reference && locator.reference.startsWith('virtual:')) ? pnp.resolveVirtual(info.packageLocation) : info.packageLocation;
-    return {target: npath.toPortablePath(truePath || info.packageLocation), linkType: info.linkType};
+    if (options.pnpifyFs) {
+      return {target: npath.toPortablePath(info.packageLocation), linkType: LinkType.SOFT};
+    } else {
+      const truePath = pnp.resolveVirtual && locator.reference && locator.reference.startsWith('virtual:') ? pnp.resolveVirtual(info.packageLocation) : info.packageLocation;
+      return {target: npath.toPortablePath(truePath || info.packageLocation), linkType: info.linkType};
+    }
   };
 
   const getPackageName = (locator: PackageLocator): { name: Filename, scope: Filename | null } => {
@@ -185,7 +189,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
   };
 
   const seenPkgIds = new Set();
-  const buildTree = (nodeId: HoisterPackageId, prefix: PortablePath) => {
+  const buildTree = (nodeId: HoisterPackageId, locationPrefix: PortablePath) => {
     if (seenPkgIds.has(nodeId))
       return;
     seenPkgIds.add(nodeId);
@@ -195,12 +199,14 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
       const {name, scope} = getPackageName(locator);
 
       const packageNameParts = scope ? [scope, name] : [name];
-      const nodeModulesDirPath = ppath.join(prefix, NODE_MODULES);
-      const depPrefix = ppath.join(nodeModulesDirPath, ...packageNameParts);
 
-      tree.set(depPrefix, makeLeafNode(locator));
+      const nodeModulesDirPath = ppath.join(locationPrefix, NODE_MODULES);
+      const nodeModulesLocation = ppath.join(nodeModulesDirPath, ...packageNameParts);
 
-      const segments = depPrefix.split('/');
+      const leafNode = makeLeafNode(locator);
+      tree.set(nodeModulesLocation, leafNode);
+
+      const segments = nodeModulesLocation.split('/');
       const nodeModulesIdx = segments.indexOf(NODE_MODULES);
 
       let segCount = segments.length - 1;
@@ -221,31 +227,19 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
 
         segCount--;
       }
-      buildTree(depId, depPrefix);
+
+      // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
+      // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
+      // To make this fs layout work with legacy tools we make
+      // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
+      // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
+      buildTree(depId, options.pnpifyFs ? leafNode.target: nodeModulesLocation);
     }
   };
 
   const rootNode = makeLeafNode(locators[0]);
   const rootPath = rootNode.target && rootNode.target;
   buildTree(0, rootPath);
-
-  if (options.pnpifyFs) {
-    for (const [key, val] of tree.entries()) {
-      if (!val.dirList && val.linkType === LinkType.HARD) {
-        // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
-        // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
-        // To make this fs layout work with legacy tools we make
-        // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
-        // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
-        // This is far from perfect, but this is the best we can do to both let PnP API work as is and
-        // at the same provide the maximum possible compatibility to the legacy node_modules tools running under pnpify
-        const nodeModulesDir = ppath.join(key, NODE_MODULES);
-        if (tree.has(nodeModulesDir)) {
-          tree.set(ppath.join(val.target, NODE_MODULES), {target: nodeModulesDir, linkType: LinkType.SOFT});
-        }
-      }
-    }
-  }
 
   return tree;
 };

@@ -88,6 +88,10 @@ export const resolveNodeModulesPath = (nodePath: PortablePath, nodeModulesTree: 
       } else if (!request) {
         result.dirList = node.dirList;
         result.statPath = npath.toPortablePath(segments.slice(0, segments.indexOf(NODE_MODULES)).join(ppath.sep));
+        // If node_modules is inside .zip archive, we use parent folder as a statPath instead
+        if (result.statPath.endsWith('.zip')) {
+          result.statPath = ppath.dirname(result.statPath);
+        }
       }
       break;
     }
