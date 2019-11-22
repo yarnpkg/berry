@@ -215,20 +215,12 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   async realpathPromise(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.treePath === pnpPath.fullOriginalPath) {
-      return pnpPath.fullOriginalPath;
-    } else {
-      return this.baseFs.realpathPromise(pnpPath.resolvedPath);
-    }
+    return pnpPath.statPath ? pnpPath.resolvedPath : this.baseFs.realpathPromise(pnpPath.resolvedPath);
   }
 
   realpathSync(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.treePath === pnpPath.fullOriginalPath) {
-      return pnpPath.fullOriginalPath;
-    } else {
-      return this.baseFs.realpathSync(pnpPath.resolvedPath);
-    }
+    return pnpPath.statPath ? pnpPath.resolvedPath : this.baseFs.realpathSync(pnpPath.resolvedPath);
   }
 
   async existsPromise(p: PortablePath) {
