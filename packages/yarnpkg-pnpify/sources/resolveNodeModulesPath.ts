@@ -1,6 +1,7 @@
-import {PortablePath, Filename, npath, ppath}              from '@yarnpkg/fslib';
+import {PortablePath, Filename}    from '@yarnpkg/fslib';
+import {toFilename, npath, ppath}  from '@yarnpkg/fslib';
 
-import {NodeModulesTreeOptions, NodeModulesTree, LinkType} from './buildNodeModulesTree';
+import {NodeModulesTree, LinkType} from './buildNodeModulesTree';
 
 const NODE_MODULES = 'node_modules';
 
@@ -52,41 +53,59 @@ export interface ResolvedPath {
  *
  * @returns resolved path
  */
-export const resolveNodeModulesPath = (inputPath: PortablePath, nodeModulesTree: NodeModulesTree, options?: NodeModulesTreeOptions): ResolvedPath => {
+export const resolveNodeModulesPath = (inputPath: PortablePath, nodeModulesTree: NodeModulesTree): ResolvedPath => {
   const result: ResolvedPath = {resolvedPath: inputPath};
   const segments = inputPath.split(ppath.sep);
-  const lastNodeModulesIdx = segments.lastIndexOf(NODE_MODULES);
-  if (lastNodeModulesIdx < 0)
+
+  const firstIdx = segments.indexOf(NODE_MODULES);
+  if (firstIdx < 0)
     return result;
+  let lastIdx = segments.lastIndexOf(NODE_MODULES);
+  if (typeof segments[lastIdx + 1] !== 'undefined')
+    // We have the situation .../node_modules/{something or @something}
+    lastIdx++;
+  if (segments[lastIdx][0] === '@' && typeof segments[lastIdx + 1] !== 'undefined')
+    // We have the situation .../node_modules/@something/{foo}
+    lastIdx++;
 
-  let nodeModulesPath = segments.slice(0, lastNodeModulesIdx + 1).join(ppath.sep);
-  let remainderParts = segments.slice(lastNodeModulesIdx + 1);
-  let segCount = remainderParts.length;
+  // We lookup all the path substrings that end on [firstIdx..lastIdx] in the node_modules tree
+  // and follow them if they are symlinks
+  let locationCandidate = npath.toPortablePath(segments.slice(0, firstIdx).join(ppath.sep));
+  let node, lastNode, lastNodeLocation: PortablePath;
+  let curIdx = firstIdx;
 
-  while (segCount >= 0) {
-    const targetPath = [nodeModulesPath, ...remainderParts.slice(0, segCount)].join(ppath.sep);
-    const request = remainderParts.slice(segCount).join(ppath.sep);
-    const nodePath = npath.toPortablePath(targetPath);
-    const node = nodeModulesTree.get(nodePath);
+  let request = PortablePath.dot;
+  while (curIdx <= lastIdx) {
+    const curSegment = toFilename(segments[curIdx]);
+    locationCandidate = ppath.join(locationCandidate, curSegment);
+    node = nodeModulesTree.get(locationCandidate);
     if (node) {
-      if (!node.dirList) {
-        result.resolvedPath = npath.toPortablePath(node.target + (request ? ppath.sep + request : ''));
-        if (node.linkType === LinkType.SOFT) {
-          result.isSymlink = !request;
-        } else if (node.linkType === LinkType.HARD && options && options.pnpifyFs) {
-          result.isSymlink = true;
-        }
-      } else if (!request) {
-        result.dirList = node.dirList;
-        result.statPath = npath.toPortablePath(segments.slice(0, segments.indexOf(NODE_MODULES)).join(ppath.sep));
-        // If node_modules is inside .zip archive, we use parent folder as a statPath instead
-        if (result.statPath.endsWith('.zip')) {
-          result.statPath = ppath.dirname(result.statPath);
-        }
-      }
-      break;
+      if ((node as any).linkType === LinkType.SOFT)
+        locationCandidate = (node as any).target;
+      lastNode = node;
+      request = PortablePath.dot;
+      lastNodeLocation = locationCandidate;
+    } else {
+      request = ppath.join(request, curSegment);
     }
-    segCount--;
+
+    curIdx++;
+  }
+
+  request = ppath.join(request, ...segments.slice(lastIdx + 1).map(x => toFilename(x)));
+
+  if (lastNode) {
+    if (!lastNode.dirList || request !== PortablePath.dot) {
+      result.resolvedPath = ppath.join(lastNodeLocation!, request);
+      result.isSymlink = lastNode && (lastNode as any).linkType === LinkType.SOFT && request === PortablePath.dot;
+    } else if (request === PortablePath.dot) {
+      result.dirList = lastNode.dirList;
+      result.statPath = npath.toPortablePath(segments.slice(0, firstIdx).join(ppath.sep));
+      // If node_modules is inside .zip archive, we use parent folder as a statPath instead
+      if (result.statPath.endsWith('.zip')) {
+        result.statPath = ppath.dirname(result.statPath);
+      }
+    }
   }
 
   return result;

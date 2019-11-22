@@ -68,7 +68,7 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
         delete require.cache[pnpFilePath];
         const pnp = require(pnpFilePath);
         this.nodeModulesTree = buildNodeModulesTree(pnp, this.options);
-        this.watchManager.notifyWatchers((nodePath: PortablePath) => resolveNodeModulesPath(nodePath, this.nodeModulesTree, this.options));
+        this.watchManager.notifyWatchers((nodePath: PortablePath) => resolveNodeModulesPath(nodePath, this.nodeModulesTree));
       }
     });
   }
@@ -98,7 +98,7 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
       return {resolvedPath: p, fullOriginalPath: p};
     } else {
       const fullOriginalPath = this.pathUtils.resolve(p);
-      return {...resolveNodeModulesPath(fullOriginalPath, this.nodeModulesTree, this.options), fullOriginalPath};
+      return {...resolveNodeModulesPath(fullOriginalPath, this.nodeModulesTree), fullOriginalPath};
     }
   }
 
@@ -109,9 +109,6 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
       return p;
 
     let pnpPath = this.resolvePath(p);
-    if (this.options.pnpifyFs)
-      // Additional pass to resolve symlinks that point inside node_modules tree
-      pnpPath = this.resolvePath(pnpPath.resolvedPath);
 
     return pnpPath.resolvedPath;
   }
@@ -123,9 +120,6 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
       return p;
 
     let pnpPath = this.resolvePath(p);
-    if (this.options.pnpifyFs)
-      // Additional pass to resolve symlinks that point inside node_modules tree
-      pnpPath = this.resolvePath(pnpPath.resolvedPath);
 
     return pnpPath.statPath || pnpPath.resolvedPath;
   }
@@ -135,7 +129,7 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
     if (pnpPath.isSymlink) {
       let stat;
       try {
-        stat = this.baseFs.lstatSync(this.resolvePath(pnpPath.resolvedPath).statPath || pnpPath.resolvedPath);
+        stat = this.baseFs.lstatSync(pnpPath.resolvedPath);
       } catch (e) {}
 
       if (stat) {
