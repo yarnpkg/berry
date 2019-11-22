@@ -121,7 +121,7 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
     let pnpPath = this.resolvePath(p);
 
-    return pnpPath.statPath || pnpPath.resolvedPath;
+    return pnpPath.forwardedDirPath || pnpPath.resolvedPath;
   }
 
   private resolveLink(p: PortablePath, op: string, onSymlink: (stats: fs.Stats, targetPath: PortablePath) => any, onRealPath: (targetPath: PortablePath) => any) {
@@ -136,7 +136,7 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
         return onSymlink(stat, this.pathUtils.relative(this.pathUtils.dirname(pnpPath.fullOriginalPath), pnpPath.resolvedPath));
       }
     }
-    return onRealPath(pnpPath.statPath || pnpPath.resolvedPath);
+    return onRealPath(pnpPath.forwardedDirPath || pnpPath.resolvedPath);
   }
 
   private static makeSymlinkStats(stats: fs.Stats): fs.Stats {
@@ -209,17 +209,17 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   async realpathPromise(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    return pnpPath.statPath ? pnpPath.resolvedPath : this.baseFs.realpathPromise(pnpPath.resolvedPath);
+    return pnpPath.dirList ? pnpPath.resolvedPath : this.baseFs.realpathPromise(pnpPath.resolvedPath);
   }
 
   realpathSync(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    return pnpPath.statPath ? pnpPath.resolvedPath : this.baseFs.realpathSync(pnpPath.resolvedPath);
+    return pnpPath.dirList ? pnpPath.resolvedPath : this.baseFs.realpathSync(pnpPath.resolvedPath);
   }
 
   async existsPromise(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.statPath) {
+    if (pnpPath.dirList) {
       return true;
     } else {
       return await this.baseFs.existsPromise(pnpPath.resolvedPath);
@@ -228,7 +228,7 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   existsSync(p: PortablePath) {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.statPath) {
+    if (pnpPath.dirList) {
       return true;
     } else {
       return this.baseFs.existsSync(pnpPath.resolvedPath);
@@ -324,7 +324,7 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
   async mkdirPromise(p: PortablePath, opts: MkdirOptions) {
     const pnpPath = this.resolvePath(p);
     const parentPath = this.resolvePath(ppath.dirname(p));
-    if (parentPath.statPath)
+    if (parentPath.dirList)
       this.persistPath(parentPath.resolvedPath);
 
     return this.baseFs.mkdirPromise(pnpPath.resolvedPath, opts);
@@ -333,7 +333,7 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
   mkdirSync(p: PortablePath, opts: MkdirOptions) {
     const pnpPath = this.resolvePath(p);
     const parentPath = this.resolvePath(ppath.dirname(p));
-    if (parentPath.statPath)
+    if (parentPath.dirList)
       this.persistPath(parentPath.resolvedPath);
     return this.baseFs.mkdirSync(pnpPath.resolvedPath, opts);
   }

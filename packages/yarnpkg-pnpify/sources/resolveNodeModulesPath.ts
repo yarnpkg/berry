@@ -25,13 +25,13 @@ export interface ResolvedPath {
   resolvedPath: PortablePath;
 
   /**
-   * The path that should be used for stats. This field is returned for pathes ending
-   * with `/node_modules[/@scope]`.
+   * This field is returned for pathes ending with `/node_modules[/@scope]`.
    *
    * These pathes are special in the sense they do not exists as physical dirs in PnP projects.
-   * We emulate these pathes by forwarding issuer path to underlying fs.
+   *
+   * We emulate these pathes by forwarding to real physical path on underlying fs.
    */
-  statPath?: PortablePath;
+  forwardedDirPath?: PortablePath;
 
   /**
    * Directory entries list, returned for pathes ending with `/node_modules[/@scope]`
@@ -100,10 +100,10 @@ export const resolveNodeModulesPath = (inputPath: PortablePath, nodeModulesTree:
       result.isSymlink = lastNode && (lastNode as any).linkType === LinkType.SOFT && request === PortablePath.dot;
     } else if (request === PortablePath.dot) {
       result.dirList = lastNode.dirList;
-      result.statPath = npath.toPortablePath(segments.slice(0, firstIdx).join(ppath.sep));
+      result.forwardedDirPath = npath.toPortablePath(segments.slice(0, firstIdx).join(ppath.sep));
       // If node_modules is inside .zip archive, we use parent folder as a statPath instead
-      if (result.statPath.endsWith('.zip')) {
-        result.statPath = ppath.dirname(result.statPath);
+      if (result.forwardedDirPath.endsWith('.zip')) {
+        result.forwardedDirPath = ppath.dirname(result.forwardedDirPath);
       }
     }
   }
