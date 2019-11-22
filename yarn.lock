@@ -4690,6 +4690,7 @@ __metadata:
     "@yarnpkg/shell": "workspace:2.0.0-rc.4"
     chalk: "npm:^2.4.1"
     clipanion: "npm:^2.1.4"
+    minimatch: "npm:^3.0.4"
     promise.prototype.finally: "npm:^3.1.1"
     semver: "npm:^5.6.0"
     tmp: "npm:^0.1.0"
