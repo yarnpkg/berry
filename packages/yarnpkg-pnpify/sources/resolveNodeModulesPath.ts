@@ -23,12 +23,6 @@ export interface ResolvedPath {
    */
   resolvedPath: PortablePath;
 
-  /** Realpath to be returned to the user */
-  realPath: PortablePath;
-
-  /** Last path inside node_modules tree */
-  treePath?: PortablePath;
-
   /**
    * The path that should be used for stats. This field is returned for pathes ending
    * with `/node_modules[/@scope]`.
@@ -54,13 +48,13 @@ export interface ResolvedPath {
  * Resolves paths containing `/node_modules` inside PnP projects. If path is outside PnP
  * project it is not changed.
  *
- * @param nodePath full path containing `node_modules`
+ * @param inputPath full path containing `node_modules`
  *
  * @returns resolved path
  */
-export const resolveNodeModulesPath = (nodePath: PortablePath, nodeModulesTree: NodeModulesTree, options?: NodeModulesTreeOptions): ResolvedPath => {
-  const result: ResolvedPath = {resolvedPath: nodePath, realPath: nodePath};
-  const segments = nodePath.split(ppath.sep);
+export const resolveNodeModulesPath = (inputPath: PortablePath, nodeModulesTree: NodeModulesTree, options?: NodeModulesTreeOptions): ResolvedPath => {
+  const result: ResolvedPath = {resolvedPath: inputPath};
+  const segments = inputPath.split(ppath.sep);
   const lastNodeModulesIdx = segments.lastIndexOf(NODE_MODULES);
   if (lastNodeModulesIdx < 0)
     return result;
@@ -72,18 +66,15 @@ export const resolveNodeModulesPath = (nodePath: PortablePath, nodeModulesTree: 
   while (segCount >= 0) {
     const targetPath = [nodeModulesPath, ...remainderParts.slice(0, segCount)].join(ppath.sep);
     const request = remainderParts.slice(segCount).join(ppath.sep);
-    const treePath = npath.toPortablePath(targetPath);
-    const node = nodeModulesTree.get(treePath);
+    const nodePath = npath.toPortablePath(targetPath);
+    const node = nodeModulesTree.get(nodePath);
     if (node) {
-      result.treePath = treePath;
       if (!node.dirList) {
         result.resolvedPath = npath.toPortablePath(node.target + (request ? ppath.sep + request : ''));
         if (node.linkType === LinkType.SOFT) {
-          result.realPath = result.resolvedPath;
           result.isSymlink = !request;
         } else if (node.linkType === LinkType.HARD && options && options.pnpifyFs) {
           result.isSymlink = true;
-          result.realPath = result.resolvedPath;
         }
       } else if (!request) {
         result.dirList = node.dirList;
