@@ -1,10 +1,10 @@
-import {WorkspaceRequiredError}                                                                                                      from '@yarnpkg/cli';
-import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, execUtils, structUtils, Manifest, LocatorHash} from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs}                                                                                   from '@yarnpkg/fslib';
-import {Command, UsageError}                                                                                                         from 'clipanion';
-import {AppContext, Box, Color, StdinContext, render}                                                                                from 'ink';
-import React, {useCallback, useContext, useEffect, useRef, useState}                                                                 from 'react';
-import semver                                                                                                                        from 'semver';
+import {WorkspaceRequiredError}                                                                                                                   from '@yarnpkg/cli';
+import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, execUtils, structUtils, Manifest, LocatorHash, ThrowReport} from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
+import {Command, UsageError}                                                                                                                      from 'clipanion';
+import {AppContext, Box, Color, StdinContext, render}                                                                                             from 'ink';
+import React, {useCallback, useContext, useEffect, useRef, useState}                                                                              from 'react';
+import semver                                                                                                                                     from 'semver';
 
 type Decision = 'undecided' | 'decline' | 'major' | 'minor' | 'patch' | 'prerelease';
 type Decisions = Map<Workspace, Decision>;
@@ -48,6 +48,11 @@ export default class VersionApplyCommand extends Command<CommandContext> {
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
+
+    await project.resolveEverything({
+      lockfileOnly: true,
+      report: new ThrowReport(),
+    });
 
     const root = await fetchRoot(this.context.cwd);
     const base = await fetchBase(root);
@@ -294,6 +299,11 @@ export default class VersionApplyCommand extends Command<CommandContext> {
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
+
+    await project.resolveEverything({
+      lockfileOnly: true,
+      report: new ThrowReport(),
+    });
 
     const report = await StreamReport.start({
       configuration,

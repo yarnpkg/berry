@@ -5,7 +5,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 3
+  version: 4
 
 \\"no-deps@npm:*\\":
 <<<<<<< HEAD
@@ -24,7 +24,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: \\"root-workspace-0b6124@workspace:.\\"
   dependencies:
-    no-deps: \\"npm:*\\"
+    no-deps: \\"*\\"
   languageName: unknown
   linkType: soft
 "
