@@ -261,9 +261,6 @@ describe(`Commands`, () => {
           devDependencies: {
             [dependency]: `workspace:^1.0.0`,
           },
-          peerDependencies: {
-            [dependency]: `workspace:dependency`,
-          },
         });
 
         await run(`install`);
@@ -277,13 +274,11 @@ describe(`Commands`, () => {
 
         expect(packedManifest.dependencies[dependency]).toBe(`1.0.0`);
         expect(packedManifest.devDependencies[dependency]).toBe(`^1.0.0`);
-        expect(packedManifest.peerDependencies[dependency]).toBe(`1.0.0`);
 
         const originalManifest = await fsUtils.readJson(`${path}/dependant/package.json`);
 
         expect(originalManifest.dependencies[dependency]).toBe(`workspace:*`);
         expect(originalManifest.devDependencies[dependency]).toBe(`workspace:^1.0.0`);
-        expect(originalManifest.peerDependencies[dependency]).toBe(`workspace:dependency`);
       }),
     );
 
