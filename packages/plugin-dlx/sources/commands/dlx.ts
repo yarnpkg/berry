@@ -1,5 +1,5 @@
 import {BaseCommand, WorkspaceRequiredError}                   from '@yarnpkg/cli';
-import {Configuration, Project}                                from '@yarnpkg/core';
+import {Configuration, Project, ThrowReport}                   from '@yarnpkg/core';
 import {scriptUtils, structUtils}                              from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 import {Command}                                               from 'clipanion';
@@ -59,10 +59,15 @@ export default class DlxCommand extends BaseCommand {
         this.context.stdout.write(`\n`);
 
       const configuration = await Configuration.find(tmpDir, this.context.plugins);
-      const {workspace} = await Project.find(configuration, tmpDir);
+      const {project, workspace} = await Project.find(configuration, tmpDir);
 
       if (workspace === null)
         throw new WorkspaceRequiredError(tmpDir);
+
+      await project.resolveEverything({
+        lockfileOnly: true,
+        report: new ThrowReport(),
+      });
 
       return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, this.args, {
         cwd: this.context.cwd,

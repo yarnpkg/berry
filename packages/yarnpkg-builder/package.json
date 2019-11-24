@@ -2,11 +2,11 @@
   "name": "@yarnpkg/builder",
   "version": "2.0.0-rc.12",
   "nextVersion": {
-    "nonce": "2543985490622549"
+    "nonce": "1924920781114213"
   },
   "bin": "./sources/boot-dev.js",
   "dependencies": {
-    "@babel/core": "^7.5.5",
+    "@babel/core": "^7.7.4",
     "@babel/plugin-syntax-class-properties": "^7.2.0",
     "@babel/plugin-syntax-decorators": "^7.2.0",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",

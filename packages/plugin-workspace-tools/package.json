@@ -2,7 +2,7 @@
   "name": "@yarnpkg/plugin-workspace-tools",
   "version": "2.0.0-rc.9",
   "nextVersion": {
-    "nonce": "155527456770601"
+    "nonce": "8789523357119941"
   },
   "main": "./sources/index.ts",
   "dependencies": {

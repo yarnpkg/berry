@@ -264,6 +264,39 @@ const YarnrcDoc = () => <>
           />
         </SymlObjectProperty>
       </SymlObjectProperty>
+      <SymlObjectProperty
+        name={`packageExtensions`}
+        margin={true}
+        description={<>
+          Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The <code>packageExtensions</code> fields offer a way to extend the existing package definitions with additional information.
+        </>}
+      >
+        <SymlObjectProperty
+          name={`webpack@*`}
+          description={<>
+            Each key is a descriptor covering a semver range. The extensions will be applied to any package whose version matches the specified range. This is true regardless of where the package comes from, so no distinction on whether they come from git or a registry, for example. Only the version matters.
+          </>}
+        >
+          <SymlObjectProperty
+            name={`dependencies`}
+            anchor={`packageExtensions.dependencies`}
+          >
+            <SymlScalarProperty
+              name={`lodash`}
+              placeholder={`^4.15.0`}
+            />
+          </SymlObjectProperty>
+          <SymlObjectProperty
+            name={`peerDependencies`}
+            anchor={`packageExtensions.peerDependencies`}
+          >
+            <SymlScalarProperty
+              name={`webpack-cli`}
+              placeholder={`*`}
+            />
+          </SymlObjectProperty>
+        </SymlObjectProperty>
+      </SymlObjectProperty>
       <SymlScalarProperty
         name={`pnpDataPath`}
         placeholder={`./.pnp.meta.json`}
@@ -344,7 +377,7 @@ const YarnrcDoc = () => <>
         name={`virtualFolder`}
         placeholder={`./.yarn/virtual`}
         description={<>
-          Due to a particularity in how Yarn install packages, some symlinks have to be created when working with packages containing peer dependencies (check this article to learn more about the subject). This setting defines where should those symlinks go. It is perfectly safe to share it between multiple projects.
+          Due to a particularity in how Yarn installs packages which list peer dependencies, some packages will be mapped to multiple virtual directories that don't actually exist on the filesystem. This settings tells Yarn where to put them.
         </>}
       />
       <SymlScalarProperty
