@@ -3250,6 +3250,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/babel__core@npm:7.1.3":
+  version: 7.1.3
+  resolution: "@types/babel__core@npm:7.1.3"
+  dependencies:
+    "@babel/parser": ^7.1.0
+    "@babel/types": ^7.0.0
+    "@types/babel__generator": "*"
+    "@types/babel__template": "*"
+    "@types/babel__traverse": "*"
+  checksum: 13f1606ff22cf27d1794b2a3c55210f5736ccbff4eab065257b62f90804aa9218b6163b897b0ed4f915ba9b53f2acc0d5a61261f0a95c8d808975a8cd7e6ed32
+  languageName: node
+  linkType: hard
+
 "@types/babel__core@npm:^7.1.0":
   version: 7.1.0
   resolution: "@types/babel__core@npm:7.1.0"
@@ -4735,11 +4748,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/gatsby@workspace:packages/gatsby"
   dependencies:
+    "@babel/core": "npm:^7.0.0"
     "@emotion/core": ^10.0.7
     "@emotion/styled": ^10.0.17
     "@emotion/styled-base": ^10.0.7
     "@haroenv/react-sparklines": ^1.7.1
     "@reach/router": "npm:^1.1.1"
+    "@types/babel__core": 7.1.3
     algoliasearch: ^3.32.1
     bytes: ^3.1.0
     date-fns: ^2.0.0-beta.2
