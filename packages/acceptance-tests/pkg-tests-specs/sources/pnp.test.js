@@ -332,6 +332,38 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should not warn when the peer dependency resolution is compatible`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`peer-deps-fixed`]: `1.0.0`,
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        const {stdout} = await run(`install`);
+        expect(stdout).not.toEqual(expect.stringContaining('YN0060'));
+      }
+    ),
+  );
+
+  test(
+    `it should warn when the peer dependency resolution is incompatible`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`peer-deps-fixed`]: `1.0.0`,
+          [`no-deps`]: `2.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        const {stdout} = await run(`install`);
+        expect(stdout).toEqual(expect.stringContaining('YN0060'));
+      },
+    ),
+  );
+
+  test(
     `it should install in such a way that two identical packages with different peer dependencies are different instances`,
     makeTemporaryEnv(
       {
