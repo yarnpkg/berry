@@ -170,6 +170,8 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
 
   const suggested = [];
 
+  console.log(request);
+
   for (const strategy of strategies) {
     if (suggested.length >= maxResults)
       break;

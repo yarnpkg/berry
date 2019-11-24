@@ -13,6 +13,7 @@ import {Manifest}                                              from './Manifest'
 import {MultiFetcher}                                          from './MultiFetcher';
 import {MultiResolver}                                         from './MultiResolver';
 import {Plugin, Hooks}                                         from './Plugin';
+import {ProtocolResolver}                                      from './ProtocolResolver';
 import {Report}                                                from './Report';
 import {VirtualFetcher}                                        from './VirtualFetcher';
 import {VirtualResolver}                                       from './VirtualResolver';
@@ -22,7 +23,7 @@ import * as folderUtils                                        from './folderUti
 import * as miscUtils                                          from './miscUtils';
 import * as nodeUtils                                          from './nodeUtils';
 import * as structUtils                                        from './structUtils';
-import {IdentHash, Package}                                    from './types';
+import {IdentHash, Package, Descriptor}                        from './types';
 
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});
@@ -869,6 +870,7 @@ export class Configuration {
     return new MultiResolver([
       new VirtualResolver(),
       new WorkspaceResolver(),
+      new ProtocolResolver(),
 
       ...pluginResolvers,
     ]);
@@ -922,6 +924,16 @@ export class Configuration {
     }
   }
 
+  normalizeDescriptor(original: Descriptor) {
+    const defaultProtocol = this.get<string>(`defaultProtocol`);
+
+    if (semver.validRange(original.range) || TAG_REGEXP.test(original.range)) {
+      return structUtils.makeDescriptor(original, `${defaultProtocol}${original.range}`);
+    } else {
+      return original;
+    }
+  }
+
   normalizePackage(original: Package) {
     const pkg = structUtils.copyPackage(original);
 
@@ -943,19 +955,8 @@ export class Configuration {
       }
     }
 
-    // We inject the default protocol in front of all the dependencies that
-    // don't already include them (only for semver and tags, as we assume that
-    // otherwise their sheer pattern is enough to encode the protocol, for
-    // example for git urls)
-
-    const defaultProtocol = this.get<string>(`defaultProtocol`);
-
-    for (const [identHash, descriptor] of pkg.dependencies)
-      if (semver.validRange(descriptor.range) || TAG_REGEXP.test(descriptor.range))
-        pkg.dependencies.set(identHash, structUtils.makeDescriptor(descriptor, `${defaultProtocol}${descriptor.range}`));
-
-    // We sort them so that further iterations always occur in the same order,
-    // regardless how the various registries formatted their output
+    // We sort the dependencies so that further iterations always occur in the
+    // same order, regardless how the various registries formatted their output
 
     pkg.dependencies = new Map(miscUtils.sortMap(pkg.dependencies, ([, descriptor]) => descriptor.name));
     pkg.peerDependencies = new Map(miscUtils.sortMap(pkg.peerDependencies, ([, descriptor]) => descriptor.name));
