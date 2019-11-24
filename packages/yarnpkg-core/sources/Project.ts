@@ -322,9 +322,9 @@ export class Project {
     const resolver = this.configuration.makeResolver();
     const forgottenPackages = new Set();
 
-    for (const pkg of this.storedPackages.values()) {
+    for (const pkg of this.originalPackages.values()) {
       if (!resolver.shouldPersistResolution(pkg, {project: this, resolver})) {
-        this.storedPackages.delete(pkg.locatorHash);
+        this.originalPackages.delete(pkg.locatorHash);
         forgottenPackages.add(pkg.locatorHash);
       }
     }
