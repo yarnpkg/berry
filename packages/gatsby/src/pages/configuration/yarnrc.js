@@ -264,6 +264,40 @@ const YarnrcDoc = () => <>
           />
         </SymlObjectProperty>
       </SymlObjectProperty>
+      <SymlObjectProperty
+        name={`packageExtensions`}
+        margin={true}
+        description={<>
+          Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The <code>packageExtensions</code> fields offer a way to extend the existing package definitions with additional information.
+        </>}
+      >
+        <SymlObjectProperty
+          name={`webpack@*`}
+          margin={true}
+          description={<>
+            Each key is a descriptor that must be connected to a semver range. The extension will apply to any package whose version matches the specified range. Note that this will apply regardless of where the package comes from (no distinction on whether they come from git or a registry, for example).
+          </>}
+        >
+          <SymlObjectProperty
+            name={`dependencies`}
+            anchor={`packageExtensions.dependencies`}
+          >
+            <SymlScalarProperty
+              name={`lodash`}
+              placeholder={`^4.15.0`}
+            />
+          </SymlObjectProperty>
+          <SymlObjectProperty
+            name={`peerDependencies`}
+            anchor={`packageExtensions.peerDependencies`}
+          >
+            <SymlScalarProperty
+              name={`webpack-cli`}
+              placeholder={`*`}
+            />
+          </SymlObjectProperty>
+        </SymlObjectProperty>
+      </SymlObjectProperty>
       <SymlScalarProperty
         name={`pnpDataPath`}
         placeholder={`./.pnp.meta.json`}

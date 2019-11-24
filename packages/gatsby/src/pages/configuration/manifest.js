@@ -238,10 +238,6 @@ const PackageJsonDoc = () => <>
           name={`@babel/core@npm:7.0.0/@babel/generator`}
           placeholder={`7.3.4`}
         />
-        <JsonScalarProperty
-          name={`@babel/core/@npm:babel/generator@npm:^7.0.0`}
-          placeholder={`7.3.4`}
-        />
       </JsonObjectProperty>
       <JsonObjectProperty
         name={`publishConfig`}
