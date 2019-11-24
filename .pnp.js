@@ -511,7 +511,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/code-frame", "npm:7.0.0"],
             ["@babel/generator", "npm:7.2.2"],
             ["@babel/helpers", "npm:7.2.0"],
-            ["@babel/parser", "npm:7.2.3"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/template", "npm:7.2.2"],
             ["@babel/traverse", "npm:7.2.3"],
             ["@babel/types", "npm:7.2.2"],
@@ -532,7 +532,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/code-frame", "npm:7.0.0"],
             ["@babel/generator", "npm:7.3.3"],
             ["@babel/helpers", "npm:7.2.0"],
-            ["@babel/parser", "npm:7.3.3"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/template", "npm:7.2.2"],
             ["@babel/traverse", "npm:7.2.3"],
             ["@babel/types", "npm:7.3.3"],
@@ -553,7 +553,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/code-frame", "npm:7.5.5"],
             ["@babel/generator", "npm:7.5.5"],
             ["@babel/helpers", "npm:7.5.5"],
-            ["@babel/parser", "npm:7.5.5"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/template", "npm:7.4.4"],
             ["@babel/traverse", "npm:7.5.5"],
             ["@babel/types", "npm:7.5.5"],
@@ -1018,31 +1018,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@babel/parser", [
-        ["npm:7.2.3", {
-          "packageLocation": "./.yarn/cache/@babel-parser-npm-7.2.3-a2213f2233-1.zip/node_modules/@babel/parser/",
+        ["npm:7.7.4", {
+          "packageLocation": "./.yarn/cache/@babel-parser-npm-7.7.4-b01a453c28-1.zip/node_modules/@babel/parser/",
           "packageDependencies": [
-            ["@babel/parser", "npm:7.2.3"]
-          ],
-          "linkType": "HARD"
-        }],
-        ["npm:7.3.3", {
-          "packageLocation": "./.yarn/cache/@babel-parser-npm-7.3.3-c8fc21904f-1.zip/node_modules/@babel/parser/",
-          "packageDependencies": [
-            ["@babel/parser", "npm:7.3.3"]
-          ],
-          "linkType": "HARD"
-        }],
-        ["npm:7.4.2", {
-          "packageLocation": "./.yarn/cache/@babel-parser-npm-7.4.2-be53c06619-1.zip/node_modules/@babel/parser/",
-          "packageDependencies": [
-            ["@babel/parser", "npm:7.4.2"]
-          ],
-          "linkType": "HARD"
-        }],
-        ["npm:7.5.5", {
-          "packageLocation": "./.yarn/cache/@babel-parser-npm-7.5.5-90149d22bf-1.zip/node_modules/@babel/parser/",
-          "packageDependencies": [
-            ["@babel/parser", "npm:7.5.5"]
+            ["@babel/parser", "npm:7.7.4"]
           ],
           "linkType": "HARD"
         }]
@@ -2769,7 +2748,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@babel/template", "npm:7.2.2"],
             ["@babel/code-frame", "npm:7.0.0"],
-            ["@babel/parser", "npm:7.2.3"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/types", "npm:7.2.2"]
           ],
           "linkType": "HARD"
@@ -2779,7 +2758,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@babel/template", "npm:7.4.4"],
             ["@babel/code-frame", "npm:7.0.0"],
-            ["@babel/parser", "npm:7.5.5"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/types", "npm:7.5.5"]
           ],
           "linkType": "HARD"
@@ -2794,7 +2773,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/generator", "npm:7.2.2"],
             ["@babel/helper-function-name", "npm:7.1.0"],
             ["@babel/helper-split-export-declaration", "npm:7.0.0"],
-            ["@babel/parser", "npm:7.2.3"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/types", "npm:7.2.2"],
             ["debug", "npm:4.1.1"],
             ["globals", "npm:11.10.0"],
@@ -2810,7 +2789,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/generator", "npm:7.4.0"],
             ["@babel/helper-function-name", "npm:7.1.0"],
             ["@babel/helper-split-export-declaration", "npm:7.4.0"],
-            ["@babel/parser", "npm:7.4.2"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/types", "npm:7.4.0"],
             ["debug", "npm:4.1.1"],
             ["globals", "npm:11.10.0"],
@@ -2826,7 +2805,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/generator", "npm:7.5.5"],
             ["@babel/helper-function-name", "npm:7.1.0"],
             ["@babel/helper-split-export-declaration", "npm:7.4.4"],
-            ["@babel/parser", "npm:7.5.5"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/types", "npm:7.5.5"],
             ["debug", "npm:4.1.1"],
             ["globals", "npm:11.10.0"],
@@ -3157,7 +3136,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@gatsbyjs/relay-compiler", "virtual:903fd8a0538a4ecbde9db540abeb1c65ceb8fc79141717de7035ad4e4271cde1b5eada59e38f3128bd9d93b73bf1ea99485e4c7d061e18212d45ca2eaa9da67b#npm:2.0.0-printer-fix.2"],
             ["@babel/core", "npm:7.3.3"],
             ["@babel/generator", "npm:7.2.2"],
-            ["@babel/parser", "npm:7.2.3"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/polyfill", "npm:7.2.5"],
             ["@babel/runtime", "npm:7.2.0"],
             ["@babel/traverse", "npm:7.2.3"],
@@ -4605,7 +4584,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-babel__core-npm-7.1.0-5a61c5ad24-1.zip/node_modules/@types/babel__core/",
           "packageDependencies": [
             ["@types/babel__core", "npm:7.1.0"],
-            ["@babel/parser", "npm:7.3.3"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/types", "npm:7.2.2"],
             ["@types/babel__generator", "npm:7.0.2"],
             ["@types/babel__template", "npm:7.0.2"],
@@ -4617,7 +4596,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-babel__core-npm-7.1.3-250c75bf68-1.zip/node_modules/@types/babel__core/",
           "packageDependencies": [
             ["@types/babel__core", "npm:7.1.3"],
-            ["@babel/parser", "npm:7.3.3"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/types", "npm:7.2.2"],
             ["@types/babel__generator", "npm:7.0.2"],
             ["@types/babel__template", "npm:7.0.2"],
@@ -4641,7 +4620,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-babel__template-npm-7.0.2-32d369837a-1.zip/node_modules/@types/babel__template/",
           "packageDependencies": [
             ["@types/babel__template", "npm:7.0.2"],
-            ["@babel/parser", "npm:7.3.3"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/types", "npm:7.2.2"]
           ],
           "linkType": "HARD"
@@ -12313,7 +12292,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["babel-eslint", "npm:9.0.0"],
             ["@babel/code-frame", "npm:7.0.0"],
-            ["@babel/parser", "npm:7.2.3"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/traverse", "npm:7.2.3"],
             ["@babel/types", "npm:7.2.2"],
             ["eslint-scope", "npm:3.7.1"],
@@ -18396,7 +18375,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.13.6"],
             ["@babel/code-frame", "npm:7.0.0"],
             ["@babel/core", "npm:7.3.3"],
-            ["@babel/parser", "npm:7.2.3"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/polyfill", "npm:7.2.5"],
             ["@babel/runtime", "npm:7.2.0"],
             ["@babel/traverse", "npm:7.2.3"],
@@ -21894,7 +21873,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["istanbul-lib-instrument", "npm:3.0.1"],
             ["@babel/generator", "npm:7.2.2"],
-            ["@babel/parser", "npm:7.2.3"],
+            ["@babel/parser", "npm:7.7.4"],
             ["@babel/template", "npm:7.2.2"],
             ["@babel/traverse", "npm:7.2.3"],
             ["@babel/types", "npm:7.2.2"],

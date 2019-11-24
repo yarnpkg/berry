@@ -557,39 +557,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.0.0, @babel/parser@npm:^7.2.2, @babel/parser@npm:^7.2.3":
-  version: 7.2.3
-  resolution: "@babel/parser@npm:7.2.3"
+"@babel/parser@npm:^7.0.0, @babel/parser@npm:^7.1.0, @babel/parser@npm:^7.2.2, @babel/parser@npm:^7.2.3, @babel/parser@npm:^7.3.3, @babel/parser@npm:^7.4.0, @babel/parser@npm:^7.4.4, @babel/parser@npm:^7.5.5":
+  version: 7.7.4
+  resolution: "@babel/parser@npm:7.7.4"
   bin:
     parser: ./bin/babel-parser.js
-  checksum: 633dd175ae1370ef2b720b4e9ce703ee8d0dd77d29da0b2a8f04c17c2ddeca7dd42df50ddaa1fbde56527004df02707a5ddf94aa667f35883f0aa6357adad54e
-  languageName: node
-  linkType: hard
-
-"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.3.3":
-  version: 7.3.3
-  resolution: "@babel/parser@npm:7.3.3"
-  bin:
-    parser: ./bin/babel-parser.js
-  checksum: 4480d96c4461707801aae828f5ecdde54bc3368b66a3348dd1b0e72a63fbcd926c937f750944a2d0f0360ecbd461b9336714ce2be0cdb605f5f1c42487580572
-  languageName: node
-  linkType: hard
-
-"@babel/parser@npm:^7.4.0":
-  version: 7.4.2
-  resolution: "@babel/parser@npm:7.4.2"
-  bin:
-    parser: ./bin/babel-parser.js
-  checksum: 08880bdb39e6f423493304ce6a40d21966743832b89978bf2adfc00c83b9f76b3f508b6e1d6afab846a2eca4e4fa3ff8af884d0950623ad5569fa319a08baf56
-  languageName: node
-  linkType: hard
-
-"@babel/parser@npm:^7.4.4, @babel/parser@npm:^7.5.5":
-  version: 7.5.5
-  resolution: "@babel/parser@npm:7.5.5"
-  bin:
-    parser: ./bin/babel-parser.js
-  checksum: 921a6e3b987bde03e976a19622e6249776ecc3cca2f060e6499088315486df99b18219c2866d65a8eb8466e9299d450c71aaff1d3103335b846d540a95ced7dd
+  checksum: 5ee93a55e096c840954b0ba3c2bc4570f60a37036f874ca0ee350da86b153d0b478aef2226db7c1ae97d27f0226ab6a676445d25f830d41ec08d936b668d127e
   languageName: node
   linkType: hard
 
