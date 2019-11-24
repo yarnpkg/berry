@@ -273,9 +273,8 @@ const YarnrcDoc = () => <>
       >
         <SymlObjectProperty
           name={`webpack@*`}
-          margin={true}
           description={<>
-            Each key is a descriptor that must be connected to a semver range. The extension will apply to any package whose version matches the specified range. Note that this will apply regardless of where the package comes from (no distinction on whether they come from git or a registry, for example).
+            Each key is a descriptor covering a semver range. The extensions will be applied to any package whose version matches the specified range. This is true regardless of where the package comes from, so no distinction on whether they come from git or a registry, for example. Only the version matters.
           </>}
         >
           <SymlObjectProperty
@@ -378,7 +377,7 @@ const YarnrcDoc = () => <>
         name={`virtualFolder`}
         placeholder={`./.yarn/virtual`}
         description={<>
-          Due to a particularity in how Yarn install packages, some symlinks have to be created when working with packages containing peer dependencies (check this article to learn more about the subject). This setting defines where should those symlinks go. It is perfectly safe to share it between multiple projects.
+          Due to a particularity in how Yarn installs packages which list peer dependencies, some packages will be mapped to multiple virtual directories that don't actually exist on the filesystem. This settings tells Yarn where to put them.
         </>}
       />
       <SymlScalarProperty

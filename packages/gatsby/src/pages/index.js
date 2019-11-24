@@ -153,7 +153,8 @@ const IndexPage = ({ data, searchState, onSearchStateChange }) => {
           onTagClick={tag => setTags([...tags, tag])}
           onOwnerClick={owner => setOwners([...owners, owner])}
         />
-        {!searchState.query &&
+
+        {!searchState.query && <>
           <Hero>
             <SectionContent>
               <HeroTitle>
@@ -164,38 +165,41 @@ const IndexPage = ({ data, searchState, onSearchStateChange }) => {
               </HeroSubtitle>
             </SectionContent>
           </Hero>
-        }
-        <Section>
-          <SectionContent>
-            <SellingPoints>
-              <SellingPoint imgUrl={agendaIcon}>
-                <h3>Workspaces</h3>
-                Split your project into sub-components kept within a single repository.
-              </SellingPoint>
-              <SellingPoint imgUrl={laptopIcon}>
-                <h3>Stability</h3>
-                Yarn guarantees that an install that works now will continue to work the same way in the future.
-              </SellingPoint>
-              <SellingPoint imgUrl={noteIcon}>
-                <h3>Documentation</h3>
-                Special care is put into our documentation, and we keep improving it based on your feedback.
-              </SellingPoint>
-              <SellingPoint imgUrl={puzzleIcon}>
-                <h3>Plugins</h3>
-                Yarn cannot solve all your problems - but it can be the foundation for others to do it.
-              </SellingPoint>
-              <SellingPoint imgUrl={rocketIcon}>
-                <h3>Innovation</h3>
-                We believe in challenging the status quo. What should the ideal developer experience be like?
-              </SellingPoint>
-              <SellingPoint imgUrl={worldwideIcon}>
-                <h3>Openness</h3>
-                Yarn is an independent open-source project tied to no company. Your support make us thrive.
-              </SellingPoint>
-            </SellingPoints>
-          </SectionContent>
-        </Section>
+
+          <Section>
+            <SectionContent>
+              <SellingPoints>
+                <SellingPoint imgUrl={agendaIcon}>
+                  <h3>Workspaces</h3>
+                  Split your project into sub-components kept within a single repository.
+                </SellingPoint>
+                <SellingPoint imgUrl={laptopIcon}>
+                  <h3>Stability</h3>
+                  Yarn guarantees that an install that works now will continue to work the same way in the future.
+                </SellingPoint>
+                <SellingPoint imgUrl={noteIcon}>
+                  <h3>Documentation</h3>
+                  Special care is put into our documentation, and we keep improving it based on your feedback.
+                </SellingPoint>
+                <SellingPoint imgUrl={puzzleIcon}>
+                  <h3>Plugins</h3>
+                  Yarn cannot solve all your problems - but it can be the foundation for others to do it.
+                </SellingPoint>
+                <SellingPoint imgUrl={rocketIcon}>
+                  <h3>Innovation</h3>
+                  We believe in challenging the status quo. What should the ideal developer experience be like?
+                </SellingPoint>
+                <SellingPoint imgUrl={worldwideIcon}>
+                  <h3>Openness</h3>
+                  Yarn is an independent open-source project tied to no company. Your support make us thrive.
+                </SellingPoint>
+              </SellingPoints>
+            </SectionContent>
+          </Section>
+        </>}
+
         <hr/>
+
         <Section style={{paddingTop: `1em`, paddingBottom: `1em`}}>
           <SectionContent>
             <Copy>
